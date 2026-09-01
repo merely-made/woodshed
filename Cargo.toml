@@ -88,6 +88,7 @@ genet-winit-host = { git = "https://github.com/merely-made/genet.git", branch = 
 genet-clipboard = { git = "https://github.com/merely-made/genet.git", branch = "main" }
 genet-probe = { git = "https://github.com/merely-made/genet.git", branch = "main" }
 genet-host-api = { git = "https://github.com/merely-made/genet.git", branch = "main" }
+workbench = { git = "https://github.com/merely-made/genet.git", branch = "main" }
 image = { version = "0.25", default-features = false, features = ["png"] }
 netrender = { git = "https://github.com/merely-made/netrender.git", branch = "main" }
 paint_list_api = { git = "https://github.com/merely-made/netrender.git", branch = "main" }

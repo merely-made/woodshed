@@ -29,8 +29,8 @@ use genet_host_api::settings::{
     SettingControl, SettingMovement, SettingMutability, SettingOption, SettingScope,
     SettingSecurity, SettingSpec, SettingValue, SettingsError, SettingsProvider,
 };
-use genet_host_api::tile::SettingsRef;
 use serde::{Deserialize, Serialize};
+use workbench::SettingsRef;
 
 /// Environment variable naming the release feed, shared by every transport.
 pub const FEED_ENV: &str = "HOCKET_UPDATE_FEED";
