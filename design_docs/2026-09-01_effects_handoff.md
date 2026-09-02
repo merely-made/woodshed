@@ -37,7 +37,9 @@ few reasons. In rough order of how much time each cost:
 `AddEffect` into an **app-created** bank is audible and complete: 13 effect
 types, the full per-effect parameter vocabulary (`rpc::PARAMETER_KEYS`),
 `bypass` works, chains render past the app's four-effect limit, `MoveEffect`
-and `RemoveEffect` work at any index. Metronome bpm/num write; `den` does not.
+and `RemoveEffect` work at any index. Metronome bpm/num/`den` write, `den`
+only within its `{1,2,4,16}` whitelist (H24); 8 and 32 are on the panel and
+silently refused over RPC.
 `SwitchBank` drives the panel. `SetBankName` works on a populated bank.
 
 **So: a client can send someone a tone for a bank they already have.**
@@ -47,8 +49,9 @@ and `RemoveEffect` work at any index. Metronome bpm/num write; `den` does not.
 - **Creating a playable bank.** `AddBank` *inserts* at an index, shifts every
   later bank along, pushes the ninth off the end of the profile — and the bank
   it creates never renders (H38). No known way to make a new playable bank.
-- **`den`**, Delay's SYNC note-value key (25+ names refused), and whether the
-  unexplained transient after a multi-effect write is real (H37, downgraded).
+- **`den` outside its whitelist** (why 8 and 32 are refused), Delay's SYNC
+  note-value key (25+ names refused), and whether the unexplained transient
+  after a multi-effect write is real (H37, downgraded).
 - **Durability.** The vendor app overwrites the whole profile when it connects
   (H32). Every write is volatile until then.
 

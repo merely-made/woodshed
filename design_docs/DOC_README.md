@@ -42,6 +42,8 @@ shell, receipt-driven validation).
 |---|---|
 | [`DOC_POLICY.md`](DOC_POLICY.md) | Documentation governance (canonical core + ringdown addendum). |
 | [`2026-08-27_ringdown_founding.md`](2026-08-27_ringdown_founding.md) | Founding plan: the decision, crate layout, phases with done-conditions, and the full recovered protocol map (Findings). |
+| [`2026-09-01_effects_handoff.md`](2026-09-01_effects_handoff.md) | Handoff from the effects hardware session: what is established (H27–H38), what is open, the failure modes that cost time, and the instrument's state. |
+| [`2026-09-02_client_surface_plan.md`](2026-09-02_client_surface_plan.md) | Client surface: typed planners in the core, driver guards and typed writes, a shadow profile, and the bank-creation research. |
 
 `PROJECT_DESCRIPTION.md` (maintainer-owned, DOC_POLICY §7) is not yet written;
 the founding plan carries the product intent until it is.

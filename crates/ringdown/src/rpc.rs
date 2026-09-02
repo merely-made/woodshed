@@ -618,8 +618,10 @@ pub struct Effect {
     /// `AddEffect` refuses any other name, reliably.
     #[serde(rename = "type")]
     pub kind: String,
-    /// Loaded but switched off. Accepted by the firmware; whether it actually
-    /// silences the effect is not yet established by ear.
+    /// Loaded but switched off. A real toggle, established by ear on a factory
+    /// bank: a single bypassed Pitch is dry, and four bypassed effects around a
+    /// live one leave only the live one audible (H37). A client can A/B an
+    /// effect without removing it.
     pub bypass: bool,
     /// Knob overrides. Empty means "the preset's values" and is always
     /// accepted; a partial list is accepted too. Must be present — `null` or
@@ -705,9 +707,12 @@ pub mod params {
     /// **An empty tile is not a bank.** The factory profile leaves slot 8
     /// empty, and it is tempting as scratch space, but `AddEffect` there
     /// stores a chain the DSP never plays and `SetBankName` labels a tile with
-    /// no bank behind it — both answering `true`. Creating a bank in an empty
-    /// tile needs `AddBank`; `AddEffect` only *modifies* a bank that exists.
-    /// See the founding doc, H36.
+    /// no bank behind it — both answering `true` (H36). `AddBank` does not
+    /// help: it *inserts* a bank at the index, renumbers every later slot,
+    /// pushes the ninth off the profile, and the bank it makes never renders
+    /// (H38). The vendor app creates and places banks with this same method,
+    /// so the object it sends differs from what that test sent; how is open
+    /// (see `2026-09-02_client_surface_plan.md`, Phase D).
     ///
     /// Note that `ReadBank` answers `""` for every index, populated or not, so
     /// it cannot be used to check whether a bank is empty — or to verify that a
