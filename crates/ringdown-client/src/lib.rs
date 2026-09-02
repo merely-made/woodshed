@@ -4,7 +4,7 @@
 //! the radio is — the request/reply loop, acknowledgement handling for split
 //! messages, the two framing generations, file transfer with its checksum, and
 //! the device methods themselves. It reaches the instrument through a
-//! [`Link`](ringdown::link::Link), so a platform supplies four I/O operations
+//! [`Link`], so a platform supplies four I/O operations
 //! and inherits all of this.
 //!
 //! # Why this is its own crate

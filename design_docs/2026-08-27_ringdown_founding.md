@@ -213,6 +213,11 @@ Done-conditions:
   connects and switches banks, proving the sibling-consumer topology end to
   end.
 
+> **2026-09-02.** The `ReadBank` round-trip receipt above is not available on
+> this firmware (H25). The typed write surface, its receipts, and the open
+> question of bank creation are planned in `2026-09-02_client_surface_plan.md`;
+> the feature target here is unchanged.
+
 ### Phase 2.5 — LLT2 (inserted 2026-08-27, discovered by hardware)
 
 **Feature target:** ringdown speaks the transport this firmware actually uses,
@@ -2372,3 +2377,14 @@ is the truth, whatever the APK said.
   again and confounds the bypass reading; test pending on a reset slot. Also:
   the panel cannot edit an effect's parameters at all — only the app can —
   which is exactly the surface a desktop client earns (woodshed W3).
+- **2026-09-01 — effects session closed out (H32–H38).** The phantom slot is
+  explained: slot 8 was an empty tile with no bank record, so everything stored
+  there was silent (H34–H36). On a real bank `AddEffect` is audible, `bypass`
+  is a true toggle, the DSP renders past four, and `MoveEffect`/`RemoveEffect`
+  honour any index (H36, H37). `AddBank` inserts and renumbers, and the bank it
+  makes never renders, so a client can edit banks but not create a playable one
+  (H38). The vendor app overwrites the whole profile on connect, so every write
+  is volatile until then (H32). `SetBankName` only takes on a populated slot
+  (H33). Two retractions in the batch, both from stale indices. State, open
+  questions and the session's failure modes are in
+  `2026-09-01_effects_handoff.md`.

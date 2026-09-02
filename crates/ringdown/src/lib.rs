@@ -24,15 +24,21 @@
 //!
 //! # Status
 //!
-//! The transport ([`llt`], [`handshake`]) and the JSON-RPC layer ([`rpc`]) are
-//! implemented and tested. The domain model beyond [`rpc::Status`] is not yet
-//! written.
+//! Both transports ([`llt`], [`llt2`] with [`compress`]), the banner
+//! ([`handshake`]) and the JSON-RPC layer ([`rpc`]) are implemented, tested,
+//! and **confirmed against a real instrument**. As of 2026-09-01 that covers
+//! `GetStatus`, the metronome, bank selection and naming, and the effect
+//! chain: `AddEffect`, `RemoveEffect`, `MoveEffect`, `bypass`, and every key
+//! in [`rpc::PARAMETER_KEYS`], all audible on a factory bank. The typed model
+//! so far is [`rpc::Status`], [`rpc::Effect`] and [`rpc::Parameter`]; banks
+//! are addressed by grid index (see [`rpc::params::bank`]) and have no
+//! read-back.
 //!
 //! Everything here was recovered by static analysis of the vendor's Android
-//! application. As of 2026-08-27 the GATT surface, the version banner, and a
-//! full `GetStatus` round-trip are **confirmed against a real instrument**;
-//! the rest remains a hypothesis until exercised. See
-//! `design_docs/2026-08-27_ringdown_founding.md`.
+//! application and then exercised against hardware; a method not named above
+//! is still a hypothesis. `ReadConfig` wedges the firmware and `AddBank` is
+//! destructive to the profile. See
+//! `design_docs/2026-08-27_ringdown_founding.md`, Findings H1–H38.
 //!
 //! # Interoperability
 //!
