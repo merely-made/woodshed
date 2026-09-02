@@ -224,7 +224,9 @@ ringdown-probe — confirm the recovered HyVibe protocol against a real guitar
 
   --scan-secs <n>    how long to scan (default 10)
   --write-len <n>    override the assumed write length (default 514)
-  --config <path>    also run ReadConfig and write the result here
+  --config <path>    also run ReadConfig and write the result here (wedges the
+                     firmware until power-cycled, H18; the driver refuses it
+                     unless the probe asks)
   --bank <n|a-b>     also run ReadBank for one bank or a range (e.g. 0-7)
   --call <m> [json]  call any method by wire name, including ones ringdown has
                      no variant for (e.g. --call PrintBank '{\"bank_num\":0}').
@@ -507,7 +509,15 @@ async fn session(guitar: &mut Guitar, args: &Args) -> Result<(), TransportError>
     if let Some(path) = args.config_out.as_deref() {
         println!("\n[extra] ReadConfig — the live effect catalog...");
         println!("        this is the test of how an over-MTU response arrives (Finding F11).");
-        let config = guitar.read_config().await?;
+        println!("        WARNING: ReadConfig wedges this firmware's RPC handler (H18); expect");
+        println!("        to power-cycle the guitar afterwards. The driver refuses it by default.");
+        guitar.allow_wedging_calls();
+        let config = guitar
+            .call(
+                ringdown::rpc::Method::ReadConfig,
+                ringdown::rpc::params::none(),
+            )
+            .await?;
         let pretty = serde_json::to_string_pretty(&config)
             .unwrap_or_else(|_| String::from("<unserializable>"));
         match std::fs::write(path, &pretty) {

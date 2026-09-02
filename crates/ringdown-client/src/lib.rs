@@ -14,6 +14,22 @@
 //! driver — the dependency it was trying to escape. Splitting it out is what
 //! makes a second platform cost a transport rather than a fork.
 //!
+//! # What it refuses
+//!
+//! One method, `ReadConfig`, wedges the instrument's RPC handler until the
+//! guitar is power-cycled (H18). The driver refuses it in code, for every
+//! consumer, rather than each consumer keeping its own list; see
+//! [`WEDGING_METHODS`] and [`Guitar::allow_wedging_calls`] for the probe's way
+//! past it.
+//!
+//! # What a reply proves
+//!
+//! Only that the instrument parsed the request (H27). The typed writes return
+//! a [`Sent`], not a success, and each one's doc names the receipt that does
+//! verify it — the panel, the owner's ears, `ReadMetronome`, or the
+//! remove-until-`false` count. The planners in [`ringdown::plan`] carry the
+//! full account per write.
+//!
 //! Getting a connection is still the platform's business: discovery, pairing
 //! and reconnection differ too much to abstract usefully. `ringdown-ble` does
 //! that for desktop and hands back a [`Guitar`].
@@ -21,10 +37,12 @@
 use std::time::Duration;
 
 use ringdown::{
+    effects::{BankSpec, Effect, ParamError},
     handshake::Banner,
     link::Link,
     llt::{self, Ack, LltCode},
     llt2,
+    plan::{self, Call},
     rpc::{self, Method, RequestIds, Response, Status},
 };
 use serde_json::Value;
@@ -96,6 +114,24 @@ pub enum TransportError {
     #[error("rpc failed: {0}")]
     Rpc(#[from] rpc::RpcError),
 
+    /// A method this driver refuses to send, because it wedges the instrument.
+    ///
+    /// See [`WEDGING_METHODS`]. The refusal happens before anything is
+    /// written, so the link is untouched.
+    #[error(
+        "{method} refused: it wedges the instrument's RPC handler until the guitar is \
+         power-cycled (H18); Guitar::allow_wedging_calls sends it anyway"
+    )]
+    Refused {
+        /// The method as the caller named it.
+        method: String,
+    },
+
+    /// The protocol core refused to build the request, because the firmware
+    /// would parse it and change nothing.
+    #[error("refused before the wire: {0}")]
+    Param(#[from] ParamError),
+
     /// The connect-time version banner could not be parsed.
     #[error("device sent an unrecognised version banner: {0:?}")]
     BadBanner(String),
@@ -164,6 +200,42 @@ fn decode_hex(text: &str) -> Option<Vec<u8>> {
         .collect()
 }
 
+/// Methods the driver will not send unless told to.
+///
+/// `ReadConfig` returns nothing and wedges the instrument's RPC handler:
+/// every later request, including ones that worked moments before, is met
+/// with silence until the guitar is power-cycled (H18). Its contents are
+/// reachable by composing calls that work, so there is nothing to gain and a
+/// power cycle to lose. The failure it causes looks like an unrelated bug,
+/// which is why the refusal is code rather than a comment. Matched
+/// case-insensitively, since whether the firmware is strict about case is
+/// untested and the cost of guessing wrong is a wedged instrument.
+pub const WEDGING_METHODS: &[&str] = &["ReadConfig"];
+
+/// What a typed write got back: the request id and the raw reply.
+///
+/// Named for what it proves. A reply of `true` from this firmware means the
+/// request was **parsed**, not that the instrument changed (H27): `den`
+/// outside its whitelist, `SetBankName` on an empty tile and `AddEffect` into
+/// a bank that cannot render all answer `true` and do nothing. What verifies
+/// a write is named on the method that sent it. `RemoveEffect` is the one
+/// exception where `true` does mean stored (H31).
+#[derive(Debug, Clone, PartialEq)]
+pub struct Sent {
+    /// The request id, for correlating with a trace.
+    pub id: i64,
+    /// The reply's `result`, uninterpreted.
+    pub reply: Value,
+}
+
+impl Sent {
+    /// Whether the reply was the literal `true`: the instrument parsed the
+    /// request. Says nothing about whether it was applied.
+    pub fn parsed(&self) -> bool {
+        self.reply == Value::Bool(true)
+    }
+}
+
 /// A connected guitar.
 ///
 /// Generic over its transport. A platform — btleplug on desktop, CoreBluetooth,
@@ -177,6 +249,7 @@ pub struct Guitar<L: Link> {
     request_timeout: Duration,
     trace: bool,
     transport: Transport,
+    allow_wedging: bool,
 }
 
 /// Which of the two transports this instrument speaks.
@@ -210,6 +283,7 @@ where
             request_timeout: REQUEST_TIMEOUT,
             trace: false,
             transport,
+            allow_wedging: false,
         }
     }
 
@@ -230,6 +304,21 @@ where
     /// device that said something unexpected.
     pub fn set_trace(&mut self, on: bool) {
         self.trace = on;
+    }
+
+    /// Let [`WEDGING_METHODS`] through for the rest of this connection.
+    ///
+    /// For the probe, whose job includes sending the instrument things that
+    /// break it. A client has no reason to call this; the guard exists
+    /// because the failure it prevents costs a power cycle and looks like
+    /// somebody else's bug.
+    pub fn allow_wedging_calls(&mut self) {
+        self.allow_wedging = true;
+    }
+
+    /// The transport underneath, for what only the platform can answer.
+    pub fn link(&self) -> &L {
+        &self.link
     }
 
     /// Subscribe and print traffic for a while without sending anything.
@@ -308,12 +397,32 @@ where
     ///
     /// The compressor's keyword dictionary names methods the vendor's own app
     /// never calls, and the only way to learn whether they are callable, and
-    /// what they want, is to ask the instrument. This is how.
+    /// what they want, is to ask the instrument. This is how. One name is
+    /// refused whatever the caller says: see [`WEDGING_METHODS`].
     pub async fn call_named(
         &mut self,
         method: &str,
         params: Value,
     ) -> Result<Value, TransportError> {
+        Ok(self.call_raw(method, params).await?.1)
+    }
+
+    /// The request/reply loop under every call: refuse what wedges, allocate
+    /// an id, encode, send over whichever transport, wait for the answer.
+    async fn call_raw(
+        &mut self,
+        method: &str,
+        params: Value,
+    ) -> Result<(i64, Value), TransportError> {
+        if !self.allow_wedging
+            && WEDGING_METHODS
+                .iter()
+                .any(|m| m.eq_ignore_ascii_case(method))
+        {
+            return Err(TransportError::Refused {
+                method: method.to_string(),
+            });
+        }
         let id = self.ids.next_id();
         let encoded = serde_json::to_string(&serde_json::json!({
             "jsonrpc": ringdown::rpc::JSONRPC_VERSION,
@@ -329,7 +438,7 @@ where
         }
 
         let response = self.await_response(id).await?;
-        Ok(response.into_result()?)
+        Ok((id, response.into_result()?))
     }
 
     /// Send via the older transport: JSON frames, acknowledged as JSON.
@@ -411,9 +520,133 @@ where
         Ok(serde_json::from_value(value).map_err(|e| rpc::RpcError::Decode(e.to_string()))?)
     }
 
-    /// Read the full configuration, including the live effect catalog.
-    pub async fn read_config(&mut self) -> Result<Value, TransportError> {
-        self.call(Method::ReadConfig, rpc::params::none()).await
+    // -- Typed writes ------------------------------------------------------
+    //
+    // One method per planner in `ringdown::plan`. The planner's doc is the
+    // full account of what the write does and which receipt proves it;
+    // these repeat only the receipt.
+
+    /// Send a planned call and carry back what the instrument replied.
+    ///
+    /// The one path under every typed write below, and the way to send a
+    /// [`Call`] built elsewhere.
+    pub async fn send(&mut self, call: Call) -> Result<Sent, TransportError> {
+        let (id, reply) = self.call_raw(call.method.wire_name(), call.params).await?;
+        Ok(Sent { id, reply })
+    }
+
+    /// Append `effect` to the chain in `slot`. **Receipt: ears.** See
+    /// [`plan::add_effect`].
+    pub async fn add_effect(&mut self, slot: i64, effect: &Effect) -> Result<Sent, TransportError> {
+        self.send(plan::add_effect(slot, effect)).await
+    }
+
+    /// Replace the effect at `index` in `slot`. **Receipt: ears**, less
+    /// established than `add_effect`. See [`plan::update_effect`].
+    pub async fn update_effect(
+        &mut self,
+        slot: i64,
+        index: i64,
+        effect: &Effect,
+    ) -> Result<Sent, TransportError> {
+        self.send(plan::update_effect(slot, index, effect)).await
+    }
+
+    /// Remove the effect at `index` from `slot`. **Receipt: the reply**, the
+    /// one `true` that means stored; `false` on an empty chain is how a chain
+    /// is counted (H31). See [`plan::remove_effect`].
+    pub async fn remove_effect(&mut self, slot: i64, index: i64) -> Result<Sent, TransportError> {
+        self.send(plan::remove_effect(slot, index)).await
+    }
+
+    /// Move the effect at `from` in `slot` to `to`. **Receipt: none from
+    /// software.** See [`plan::move_effect`].
+    pub async fn move_effect(
+        &mut self,
+        slot: i64,
+        from: i64,
+        to: i64,
+    ) -> Result<Sent, TransportError> {
+        self.send(plan::move_effect(slot, from, to)).await
+    }
+
+    /// Select `slot` on the panel. **Receipt: panel.** Never while the owner
+    /// is comparing by ear. See [`plan::switch_bank`].
+    pub async fn switch_bank(&mut self, slot: i64) -> Result<Sent, TransportError> {
+        self.send(plan::switch_bank(slot)).await
+    }
+
+    /// Rename the bank in `slot`. **Receipt: panel**, and only on a slot that
+    /// already holds an effect (H33). See [`plan::set_bank_name`].
+    pub async fn set_bank_name(&mut self, slot: i64, name: &str) -> Result<Sent, TransportError> {
+        self.send(plan::set_bank_name(slot, name)).await
+    }
+
+    /// Set the output gain of `slot` in decibels. **Receipt: none.** See
+    /// [`plan::set_gain_bank`].
+    pub async fn set_gain_bank(&mut self, slot: i64, gain_db: f32) -> Result<Sent, TransportError> {
+        self.send(plan::set_gain_bank(slot, gain_db)).await
+    }
+
+    /// Sustain-killer state for `slot`. **Receipt: none.** See
+    /// [`plan::sustain_killer`].
+    pub async fn sustain_killer(
+        &mut self,
+        slot: i64,
+        killed: Option<bool>,
+        reset: Option<bool>,
+    ) -> Result<Sent, TransportError> {
+        self.send(plan::sustain_killer(slot, killed, reset)).await
+    }
+
+    /// Move the bank at `from` to `to`. **Receipt: panel**; unexercised. See
+    /// [`plan::move_bank`].
+    pub async fn move_bank(&mut self, from: i64, to: i64) -> Result<Sent, TransportError> {
+        self.send(plan::move_bank(from, to)).await
+    }
+
+    /// Remove the bank in `slot`, shifting later slots down. **Receipt:
+    /// panel**; unexercised. See [`plan::remove_bank`].
+    pub async fn remove_bank(&mut self, slot: i64) -> Result<Sent, TransportError> {
+        self.send(plan::remove_bank(slot)).await
+    }
+
+    /// **Insert** `bank` at `slot`, renumbering every later slot (H38).
+    /// **Receipt: panel, then ears.** Whether the object renders is the open
+    /// research question; see [`plan::add_bank`].
+    pub async fn add_bank(&mut self, slot: i64, bank: &BankSpec) -> Result<Sent, TransportError> {
+        self.send(plan::add_bank(slot, bank)).await
+    }
+
+    /// Start the metronome. **Receipt: `ReadMetronome`.** A `den` the
+    /// firmware would drop is refused before the wire (H24). See
+    /// [`plan::start_metronome`].
+    pub async fn start_metronome(
+        &mut self,
+        bpm: i64,
+        num: Option<i64>,
+        den: Option<i64>,
+        bars: Option<i64>,
+    ) -> Result<Sent, TransportError> {
+        self.send(plan::start_metronome(bpm, num, den, bars)?).await
+    }
+
+    /// Change the running metronome. **Receipt: `ReadMetronome`.** See
+    /// [`plan::update_metronome`].
+    pub async fn update_metronome(
+        &mut self,
+        bpm: i64,
+        num: Option<i64>,
+        den: Option<i64>,
+        bars: Option<i64>,
+    ) -> Result<Sent, TransportError> {
+        self.send(plan::update_metronome(bpm, num, den, bars)?)
+            .await
+    }
+
+    /// Stop the metronome. **Receipt: ears.**
+    pub async fn stop_metronome(&mut self) -> Result<Sent, TransportError> {
+        self.send(plan::stop_metronome()).await
     }
 
     /// Size and checksum of a stored file.
@@ -738,5 +971,169 @@ mod tests {
         assert_eq!(decode_hex("").unwrap(), Vec::<u8>::new());
         assert!(decode_hex("52494").is_none(), "odd length is not hex");
         assert!(decode_hex("52ZZ4646").is_none(), "non-hex digits");
+    }
+
+    use core::cell::RefCell;
+    use ringdown::effects::EffectKind;
+    use std::collections::VecDeque;
+
+    /// A link that answers from a script instead of a radio.
+    ///
+    /// Every write is recorded as the text it was, and the next scripted
+    /// result is queued as a reply under the id that request carried. Unsplit
+    /// LLT is the bare JSON message, so the id is there to read.
+    struct ScriptedLink {
+        written: RefCell<Vec<String>>,
+        results: RefCell<VecDeque<Value>>,
+        inbox: RefCell<VecDeque<Vec<u8>>>,
+    }
+
+    impl ScriptedLink {
+        fn answering(results: impl IntoIterator<Item = Value>) -> Self {
+            ScriptedLink {
+                written: RefCell::new(Vec::new()),
+                results: RefCell::new(results.into_iter().collect()),
+                inbox: RefCell::new(VecDeque::new()),
+            }
+        }
+
+        fn written(&self) -> Vec<String> {
+            self.written.borrow().clone()
+        }
+    }
+
+    impl Link for ScriptedLink {
+        type Error = core::convert::Infallible;
+
+        async fn write(&self, bytes: &[u8], _with_response: bool) -> Result<(), Self::Error> {
+            let text = String::from_utf8(bytes.to_vec()).expect("unsplit LLT is JSON text");
+            let request: Value = serde_json::from_str(&text).expect("a well-formed request");
+            let id = request["id"].as_i64().expect("an integer id");
+            self.written.borrow_mut().push(text);
+            if let Some(result) = self.results.borrow_mut().pop_front() {
+                let reply = serde_json::json!({ "jsonrpc": "2.0", "id": id, "result": result });
+                self.inbox
+                    .borrow_mut()
+                    .push_back(reply.to_string().into_bytes());
+            }
+            Ok(())
+        }
+
+        async fn read_response(&self) -> Result<Vec<u8>, Self::Error> {
+            Ok(b"S1.2.2_E1.3.0\n".to_vec())
+        }
+
+        async fn next_notification(&mut self, _within: Duration) -> Option<Vec<u8>> {
+            self.inbox.borrow_mut().pop_front()
+        }
+
+        async fn disconnect(self) -> Result<(), Self::Error> {
+            Ok(())
+        }
+    }
+
+    fn guitar(results: impl IntoIterator<Item = Value>) -> Guitar<ScriptedLink> {
+        Guitar::over(ScriptedLink::answering(results), Transport::Llt)
+    }
+
+    /// The guard fires before anything touches the link, by name in any case,
+    /// and the override is what lets the probe through.
+    #[tokio::test]
+    async fn read_config_is_refused_before_anything_is_written() {
+        let mut g = guitar([Value::Bool(true)]);
+
+        let err = g
+            .call(Method::ReadConfig, rpc::params::none())
+            .await
+            .unwrap_err();
+        assert!(
+            matches!(err, TransportError::Refused { ref method } if method == "ReadConfig"),
+            "{err}"
+        );
+        assert!(g.link().written().is_empty(), "nothing may reach the link");
+
+        let err = g
+            .call_named("readconfig", rpc::params::none())
+            .await
+            .unwrap_err();
+        assert!(matches!(err, TransportError::Refused { .. }));
+        assert!(format!("{err}").contains("allow_wedging_calls"), "{err}");
+
+        g.allow_wedging_calls();
+        let reply = g
+            .call(Method::ReadConfig, rpc::params::none())
+            .await
+            .unwrap();
+        assert_eq!(reply, Value::Bool(true));
+        assert_eq!(g.link().written().len(), 1);
+    }
+
+    /// A typed write sends exactly the planner's bytes under the next id, and
+    /// carries the reply back uninterpreted: `false` is an answer, not an
+    /// error, because that is how a chain is counted (H31).
+    #[tokio::test]
+    async fn a_typed_write_sends_the_planned_bytes_and_carries_the_reply() {
+        let mut g = guitar([Value::Bool(true), Value::Bool(false)]);
+        let octave = Effect::new(EffectKind::Pitch).with("Shift", -12.0).unwrap();
+
+        let sent = g.add_effect(4, &octave).await.unwrap();
+        assert_eq!(sent.id, 1);
+        assert!(sent.parsed());
+        assert_eq!(
+            g.link().written()[0],
+            r#"{"jsonrpc":2.0,"id":1,"method":"AddEffect","params":{"bank_num":4,"effect":{"preset":"default","type":"Pitch","bypass":false,"params":[{"key":"Shift","value":-12.0}]}}}"#
+        );
+
+        let sent = g.remove_effect(4, 0).await.unwrap();
+        assert_eq!(sent.id, 2);
+        assert!(!sent.parsed());
+        assert_eq!(sent.reply, Value::Bool(false));
+    }
+
+    /// A `den` the firmware would silently drop is refused in the core and
+    /// never reaches the link; the whitelist goes through.
+    #[tokio::test]
+    async fn a_refused_den_never_reaches_the_link() {
+        let mut g = guitar([Value::Bool(true)]);
+        let err = g
+            .update_metronome(96, Some(6), Some(8), None)
+            .await
+            .unwrap_err();
+        assert!(
+            matches!(err, TransportError::Param(ParamError::DenNotAccepted(8))),
+            "{err}"
+        );
+        assert!(g.link().written().is_empty());
+
+        let sent = g
+            .update_metronome(96, Some(6), Some(4), None)
+            .await
+            .unwrap();
+        assert!(sent.parsed());
+        assert!(g.link().written()[0].ends_with(r#""params":{"bpm":96,"num":6,"den":4}}"#));
+    }
+
+    #[tokio::test]
+    async fn bank_methods_send_their_documented_params() {
+        let mut g = guitar([Value::Bool(true), Value::Bool(true), Value::Bool(true)]);
+        g.switch_bank(3).await.unwrap();
+        g.set_bank_name(8, "ringdown").await.unwrap();
+        g.add_bank(4, &BankSpec::new("octave")).await.unwrap();
+        let w = g.link().written();
+        assert!(
+            w[0].ends_with(r#""method":"SwitchBank","params":{"bank_num":3}}"#),
+            "{}",
+            w[0]
+        );
+        assert!(
+            w[1].ends_with(r#""method":"SetBankName","params":{"bank_num":8,"name":"ringdown"}}"#),
+            "{}",
+            w[1]
+        );
+        assert!(
+            w[2].ends_with(r#""method":"AddBank","params":{"bank_num":4,"bank":{"name":"octave","effects":[]}}}"#),
+            "{}",
+            w[2]
+        );
     }
 }
