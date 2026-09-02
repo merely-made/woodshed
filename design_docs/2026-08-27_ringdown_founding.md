@@ -649,6 +649,43 @@ Worth noting how it was found: not by testing, but by writing down what each
 method's parameters *are* and comparing that to what the code emits. The
 declaration was the instrument.
 
+**H34 — Slot 8 is not in the audio path. Everything added there all session
+was stored but never played.** (2026-09-01, decisive by ear.)
+
+A default `Distortion` — the effect that fed back on a G in bank 0 earlier
+today — was added to slot 8 with `bypass: false`, the owner selected the tile
+(panel-named "ringdown") and played a G at volume: **no feedback, no sound.**
+In bank 0 that same effect is unmistakable. So slot 8, the tile that had been
+Factory Standard's empty `+`, is not routed to the DSP.
+
+The protocol never lied about *storing*: `AddEffect` answered `true`,
+`RemoveEffect` counted the chain 34 deep (H31). But **stored is not audible**,
+and slot 8 was where nearly every effect experiment this session was run.
+Confirmed-audible effects only ever happened in **bank 0** (H26/H29 — the
+Distortion that fed back). Those stand. What falls:
+
+- **The `bypass` conclusion (H31's close) is retracted.** "Sounds like one,
+  not a wall" for a ten-deep bypassed chain was taken as proof `bypass`
+  silences an effect. That chain was in slot 8, which is silent regardless, so
+  the observation was about some other live bank and proves nothing about
+  `bypass`. Whether `bypass` works is now **unknown**.
+- Every "is this audible" question answered against slot 8 is void. The
+  vocabulary table (H31) is **not** affected: it rests on the `true`/`false`
+  parse oracle, which is independent of routing — `Chorus.Gain` is refused and
+  `Distortion.Gain` accepted whether or not the slot ever plays.
+
+**Why slot 8 is silent is the open question.** The leading hypothesis: the
+empty `+` slot is not a committed bank, and `AddEffect` to `bank_num: 8` fills
+a working copy the DSP does not play until it is committed — `SaveConfig`, or
+`AddBank` to actually create a bank in the slot. Untested. It would explain
+every silent slot-8 result at a stroke, and would mean **`SaveConfig` is a
+required step this project has never exercised.**
+
+The methodological lesson, again and sharper: the audible oracle (feedback on
+a G, H33) is only meaningful in a bank known to be routed. Slot choice is a
+variable, and it was never controlled — bank 0 was audible, slot 8 was not,
+and the difference was invisible because `AddEffect` says `true` either way.
+
 **H33 — `SetBankName` takes only on a populated slot; an unnamed populated
 slot shows its neighbour's name.** (2026-09-01, three panel reads by the owner.)
 
