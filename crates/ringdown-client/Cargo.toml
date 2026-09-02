@@ -20,3 +20,7 @@ thiserror = "2"
 # abstracted; see the crate docs on why the Link trait takes a Duration rather
 # than an Instant.
 tokio = { version = "1", features = ["time"] }
+
+[dev-dependencies]
+# The scripted-link tests drive the async driver on a current-thread runtime.
+tokio = { version = "1", features = ["macros", "rt"] }

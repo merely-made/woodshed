@@ -2,8 +2,9 @@
 
 **Date:** 2026-09-02
 **Status:** in progress. Decisions 1–4 below were taken by Mark on
-2026-09-02. **Phase A landed 2026-09-02** (uncommitted at time of writing);
-Phases B–D not started.
+2026-09-02. **Phase A landed 2026-09-02** (commit 77207ef). **Phase B landed 2026-09-02**
+(uncommitted at time of writing), verified against a scripted link only, not
+against the instrument. Phases C–D not started.
 
 Findings that ground this live in `2026-08-27_ringdown_founding.md` (H25–H38)
 and the session handoff `2026-09-01_effects_handoff.md`. This plan does not
@@ -224,3 +225,30 @@ listen; count before indexing; nothing sent while he is comparing by ear.
     until it handles the `Result`; its wire-order test also passes `den: 8`,
     which is now refused. Woodshed is its own repo; the change there is one
     `?` and one literal, to be made when it next takes ringdown.
+- **2026-09-02 — Phase B landed** in `ringdown-client`, desk-verified only.
+  - `WEDGING_METHODS` (`ReadConfig`) is refused in `call_raw`, the one loop
+    under `call`, `call_named` and every typed write, before anything is
+    written; the error is `TransportError::Refused` and its message names
+    the override. Matching is case-insensitive, since whether the firmware
+    is strict about case is untested and a wrong guess costs a power cycle.
+    `Guitar::allow_wedging_calls()` lifts it; the name stands as proposed.
+    `Guitar::read_config` is gone; the probe's `--config` flag calls the
+    override and prints a warning first.
+  - `Sent { id, reply }` with `parsed()` is what every typed write returns.
+    `Guitar::send(Call)` is the one path under fourteen typed methods, one
+    per Phase A planner, each doc repeating only the receipt and linking the
+    planner for the full account. `ParamError` maps into
+    `TransportError::Param` so a refused `den` surfaces from the driver too.
+  - `Guitar::link()` added, public: a platform accessor the tests needed and
+    a consumer may too.
+  - Tests over a `ScriptedLink` (records writes as text, answers the next
+    scripted result under the request's id): the guard fires before the
+    link is touched and the override passes; a typed write sends the exact
+    planned envelope and carries `false` back as an answer rather than an
+    error; a refused `den` never reaches the link; three bank methods send
+    their documented params. The link is `#[cfg(test)]` in the client for
+    now and is what Phase C's profile tests will build on.
+  - 139 tests across the workspace, clippy and rustdoc clean. **Not
+    hardware-verified:** nothing here changes bytes on the wire for a call
+    that worked before, but the probe's `--call` and `--config` paths have
+    only been compiled, not run against the guitar.
