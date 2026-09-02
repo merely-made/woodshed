@@ -508,158 +508,22 @@ const RECORDING: &[ParamKey] = &[req("free")];
 const SUSTAIN_KILLER: &[ParamKey] = &[req("bank_num"), opt("killed"), opt("reset")];
 const FILE: &[ParamKey] = &[req("name")];
 
-/// Every parameter key the firmware accepts, per effect type.
+// The effect vocabulary and the typed bank model live in
+// [`crate::effects`]; they are re-exported here because `rpc::Effect`
+// and `rpc::PARAMETER_KEYS` are the paths consumers learned first.
+pub use crate::effects::{
+    BANK_CHAIN_KEY, BankSpec, EFFECT_TYPES, Effect, EffectKind, PARAMETER_KEYS, ParamError,
+    Parameter,
+};
+
+/// The metronome denominators this firmware applies.
 ///
-/// Established key by key against the instrument on 2026-09-01: each entry
-/// answered `true` to a single-parameter `AddEffect`, and four cross-effect
-/// controls (`Chorus.Gain`, `Reverb.Attack`, ...) answered `false`, so this is
-/// per-effect vocabulary rather than one shared list. Keys match
-/// case-insensitively but are recorded as the app's own words.
-///
-/// Tremolo's single FREQ knob is `LFO` -- twenty-two other names were refused
-/// first, including `Frequency`, which every other FREQ knob uses. Delay's
-/// SYNC note-value knob is absent because its key is still unknown after
-/// twenty-five refusals; the working hypothesis is that with `Sync: 1` the
-/// note fraction travels in `DelayTime`. See the founding doc, H31.
-pub const PARAMETER_KEYS: &[(&str, &[&str])] = &[
-    ("Chorus", &["Frequency", "DryWet"]),
-    (
-        "Compressor",
-        &[
-            "Attack",
-            "Release",
-            "Threshold",
-            "Ratio",
-            "DryGain",
-            "WetGain",
-        ],
-    ),
-    (
-        "Delay",
-        &[
-            "DelayTime",
-            "Sync",
-            "Lowpass",
-            "Highpass",
-            "Feedback",
-            "DryWet",
-        ],
-    ),
-    ("Distortion", &["Gain", "Volume", "Lowpass", "Highpass"]),
-    (
-        "Equalizer",
-        &[
-            "GainBand1",
-            "GainBand2",
-            "GainBand3",
-            "GainBand4",
-            "GainBand5",
-            "GainBand6",
-            "GainBand7",
-            "Gain",
-        ],
-    ),
-    ("Gate", &["Threshold", "Range", "Release", "Attack"]),
-    ("Highpass", &["Frequency", "Q"]),
-    ("Lowpass", &["Frequency", "Q"]),
-    ("Notch", &["Frequency", "Q"]),
-    ("Phaser", &["Frequency", "Feedback", "DryWet"]),
-    ("Pitch", &["Shift"]),
-    ("Reverb", &["Decay", "DryWet"]),
-    ("Tremolo", &["LFO"]),
-];
-
-/// The thirteen effect types the firmware will insert (H28, H29).
-pub const EFFECT_TYPES: [&str; 13] = [
-    "Chorus",
-    "Compressor",
-    "Delay",
-    "Distortion",
-    "Equalizer",
-    "Gate",
-    "Highpass",
-    "Lowpass",
-    "Notch",
-    "Phaser",
-    "Pitch",
-    "Reverb",
-    "Tremolo",
-];
-
-/// One knob of an effect, as the wire carries it.
-///
-/// Field order is the wire order, and the wire is order-sensitive (H24), so
-/// this is a struct rather than a map: serde emits struct fields in
-/// declaration order whatever the map type does.
-#[derive(Debug, Clone, PartialEq, Serialize)]
-pub struct Parameter {
-    /// The knob's **full word**, not its panel label: `Gain`, `Volume`,
-    /// `Lowpass`, `Highpass` — where the app shows `GAIN`, `VOL`, `LP`, `HP`.
-    /// Matched case-insensitively. One key the firmware does not know refuses
-    /// the whole `AddEffect` (H29).
-    pub key: String,
-    /// In the knob's own units, unconverted: dB for gains, Hz for corner
-    /// frequencies. `Lowpass: 1800` is what the app displays as `1.8 kHz`.
-    pub value: f64,
-}
-
-/// An effect in a bank's chain, as the wire carries it.
-///
-/// Declaration order is wire order — `preset, type, bypass, params` — and
-/// must stay so (H24, H29).
-#[derive(Debug, Clone, PartialEq, Serialize)]
-pub struct Effect {
-    /// A named voicing of this type. `"default"` — lowercase, as the app
-    /// displays it — is always valid.
-    pub preset: String,
-    /// One of the thirteen the firmware implements (H28): `Chorus`,
-    /// `Compressor`, `Delay`, `Distortion`, `Equalizer`, `Gate`, `Highpass`,
-    /// `Lowpass`, `Notch`, `Phaser`, `Pitch`, `Reverb`, `Tremolo`.
-    /// `AddEffect` refuses any other name, reliably.
-    #[serde(rename = "type")]
-    pub kind: String,
-    /// Loaded but switched off. A real toggle, established by ear on a factory
-    /// bank: a single bypassed Pitch is dry, and four bypassed effects around a
-    /// live one leave only the live one audible (H37). A client can A/B an
-    /// effect without removing it.
-    pub bypass: bool,
-    /// Knob overrides. Empty means "the preset's values" and is always
-    /// accepted; a partial list is accepted too. Must be present — `null` or
-    /// absent is refused (H26).
-    pub params: Vec<Parameter>,
-}
-
-impl Effect {
-    /// An effect of `kind` at its `default` preset with no overrides.
-    pub fn new(kind: &str) -> Effect {
-        Effect {
-            preset: String::from("default"),
-            kind: String::from(kind),
-            bypass: false,
-            params: Vec::new(),
-        }
-    }
-
-    /// Add a knob override.
-    pub fn with(mut self, key: &str, value: f64) -> Effect {
-        self.params.push(Parameter {
-            key: String::from(key),
-            value,
-        });
-        self
-    }
-
-    /// Load it switched off.
-    pub fn bypassed(mut self) -> Effect {
-        self.bypass = true;
-        self
-    }
-
-    /// The JSON the wire wants, fields in wire order.
-    pub fn to_value(&self) -> Value {
-        serde_json::to_value(self).expect("an Effect is always serialisable")
-    }
-}
+/// Mapped exhaustively on 2026-08-28: every value 1–32 and 256 written from
+/// a known baseline with a read between. These four apply; every other
+/// value is dropped with a `true` reply, including the 8 and 32 the
+/// instrument's own panel offers (H24). [`params::metronome`] refuses the
+/// rest at build time.
+pub const METRONOME_DEN_ACCEPTED: [i64; 4] = [1, 2, 4, 16];
 
 /// Builders for each method's arguments.
 ///
@@ -846,13 +710,27 @@ pub mod params {
     ///
     /// `bpm` and `num` write normally, each field applies independently, and
     /// `ReadMetronome` always reports the true state.
-    pub fn metronome(bpm: i64, num: Option<i64>, den: Option<i64>, bars: Option<i64>) -> Value {
-        object(&[
+    ///
+    /// A `den` outside the whitelist is **refused here** rather than sent,
+    /// so the caller sees the refusal the instrument would hide. See
+    /// [`METRONOME_DEN_ACCEPTED`].
+    pub fn metronome(
+        bpm: i64,
+        num: Option<i64>,
+        den: Option<i64>,
+        bars: Option<i64>,
+    ) -> Result<Value, ParamError> {
+        if let Some(den) = den
+            && !METRONOME_DEN_ACCEPTED.contains(&den)
+        {
+            return Err(ParamError::DenNotAccepted(den));
+        }
+        Ok(object(&[
             ("bpm", Some(json!(bpm))),
             ("num", num.map(|v| json!(v))),
             ("den", den.map(|v| json!(v))),
             ("bars", bars.map(|v| json!(v))),
-        ])
+        ]))
     }
 
     /// Set the instrument's clock.
@@ -906,6 +784,38 @@ impl RequestIds {
 /// Collect every wire name, for tooling that needs the vocabulary.
 pub fn all_method_names() -> Vec<&'static str> {
     Method::ALL.iter().map(|m| m.wire_name()).collect()
+}
+
+/// Assert `params` fits the declared shape of `method`: no undeclared key,
+/// every required key present. Test-only; shared with `plan`'s tests so
+/// the planners are held to the same table as the builders.
+#[cfg(test)]
+pub(crate) fn assert_matches_shape(method: Method, params: &Value) {
+    let object = params
+        .as_object()
+        .unwrap_or_else(|| panic!("{method:?} params are not an object: {params}"));
+    match param_shape(method) {
+        ParamShape::None => assert!(
+            object.is_empty(),
+            "{method:?} takes nothing but was given {params}"
+        ),
+        ParamShape::Object(keys) => {
+            for emitted in object.keys() {
+                assert!(
+                    keys.iter().any(|k| k.name == emitted),
+                    "{method:?} emitted undeclared key {emitted}"
+                );
+            }
+            for key in keys.iter().filter(|k| k.required) {
+                assert!(
+                    object.contains_key(key.name),
+                    "{method:?} omitted required key {}",
+                    key.name
+                );
+            }
+        }
+        ParamShape::Unrecovered => {}
+    }
 }
 
 #[cfg(test)]
@@ -1245,11 +1155,11 @@ mod tests {
             (Method::AuxOutDryWet, params::value(0.5)),
             (
                 Method::StartMetronome,
-                params::metronome(120, Some(4), None, None),
+                params::metronome(120, Some(4), None, None).unwrap(),
             ),
             (
                 Method::UpdateMetronome,
-                params::metronome(96, None, None, None),
+                params::metronome(96, None, None, None).unwrap(),
             ),
             (Method::StartRecording, params::start_recording(true)),
             (
@@ -1265,31 +1175,7 @@ mod tests {
         ];
 
         for (method, value) in &cases {
-            let object = value
-                .as_object()
-                .unwrap_or_else(|| panic!("{method:?} params are not an object: {value}"));
-            match param_shape(*method) {
-                ParamShape::None => assert!(
-                    object.is_empty(),
-                    "{method:?} takes nothing but was given {value}"
-                ),
-                ParamShape::Object(keys) => {
-                    for emitted in object.keys() {
-                        assert!(
-                            keys.iter().any(|k| k.name == emitted),
-                            "{method:?} emitted undeclared key {emitted}"
-                        );
-                    }
-                    for key in keys.iter().filter(|k| k.required) {
-                        assert!(
-                            object.contains_key(key.name),
-                            "{method:?} omitted required key {}",
-                            key.name
-                        );
-                    }
-                }
-                ParamShape::Unrecovered => {}
-            }
+            assert_matches_shape(*method, value);
         }
     }
 
@@ -1298,7 +1184,7 @@ mod tests {
     /// different requests.
     #[test]
     fn absent_optionals_are_omitted_rather_than_nulled() {
-        let m = params::metronome(120, None, None, None);
+        let m = params::metronome(120, None, None, None).unwrap();
         assert_eq!(m, serde_json::json!({ "bpm": 120 }));
         assert!(!m.as_object().unwrap().contains_key("den"));
 
@@ -1309,7 +1195,7 @@ mod tests {
         assert!(!c.as_object().unwrap().contains_key("min"));
 
         // Present ones still travel.
-        let full = params::metronome(96, Some(5), Some(8), Some(2));
+        let full = params::metronome(96, Some(5), Some(16), Some(2)).unwrap();
         assert_eq!(full.as_object().unwrap().len(), 4);
     }
 
@@ -1321,7 +1207,7 @@ mod tests {
     /// anyone "tidies" the feature away.
     #[test]
     fn metronome_params_keep_wire_order_not_alphabetical() {
-        let p = params::metronome(93, Some(6), Some(8), None);
+        let p = params::metronome(93, Some(6), Some(4), None).unwrap();
         let text = serde_json::to_string(&p).unwrap();
         let pos = |k: &str| {
             text.find(k)
@@ -1333,49 +1219,19 @@ mod tests {
         );
     }
 
-    /// The vocabulary table covers every real effect type exactly once, with
-    /// no key listed twice.
+    /// A denominator the firmware would silently drop is refused before it
+    /// reaches the wire (H24). The values are exactly the panel's 8 and 32.
     #[test]
-    fn the_parameter_table_covers_every_effect_that_takes_parameters() {
-        for (kind, keys) in PARAMETER_KEYS {
-            assert!(EFFECT_TYPES.contains(kind), "{kind} is not an effect type");
-            assert!(!keys.is_empty());
-            for (i, a) in keys.iter().enumerate() {
-                assert!(!keys[i + 1..].contains(a), "{kind} lists {a} twice");
-            }
+    fn a_den_outside_the_whitelist_is_refused_not_sent() {
+        for den in [8, 32, 3, 0, 256] {
+            assert_eq!(
+                params::metronome(120, Some(4), Some(den), None),
+                Err(ParamError::DenNotAccepted(den))
+            );
         }
-        let with_keys: alloc::vec::Vec<&str> = PARAMETER_KEYS.iter().map(|(k, _)| *k).collect();
-        for kind in EFFECT_TYPES {
-            assert!(with_keys.contains(&kind), "{kind} has no parameter entry");
+        for den in METRONOME_DEN_ACCEPTED {
+            assert!(params::metronome(120, Some(4), Some(den), None).is_ok());
         }
-        assert_eq!(with_keys.len(), EFFECT_TYPES.len());
-    }
-
-    /// The effect object must serialise in wire order, because the firmware
-    /// drops fields that arrive out of sequence. This is the exact four-knob
-    /// Distortion the instrument accepted on 2026-09-01 (H29).
-    #[test]
-    fn a_typed_effect_serialises_in_wire_order() {
-        let e = Effect::new("Distortion")
-            .with("Gain", 50.0)
-            .with("Volume", -25.0)
-            .with("Lowpass", 1800.0)
-            .with("Highpass", 94.0)
-            .bypassed();
-        let text = serde_json::to_string(&e.to_value()).unwrap();
-        assert_eq!(
-            text,
-            r#"{"preset":"default","type":"Distortion","bypass":true,"params":[{"key":"Gain","value":50.0},{"key":"Volume","value":-25.0},{"key":"Lowpass","value":1800.0},{"key":"Highpass","value":94.0}]}"#
-        );
-    }
-
-    /// An effect with no overrides still carries `params: []` — the one shape
-    /// the firmware accepts for "use the preset" (H26).
-    #[test]
-    fn a_bare_effect_still_sends_an_empty_params_array() {
-        let v = Effect::new("Tremolo").to_value();
-        assert_eq!(v["params"], serde_json::json!([]));
-        assert_eq!(v["preset"], "default");
     }
 
     /// The two reorder methods use different key names for the same idea. It

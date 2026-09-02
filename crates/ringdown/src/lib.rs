@@ -29,10 +29,12 @@
 //! and **confirmed against a real instrument**. As of 2026-09-01 that covers
 //! `GetStatus`, the metronome, bank selection and naming, and the effect
 //! chain: `AddEffect`, `RemoveEffect`, `MoveEffect`, `bypass`, and every key
-//! in [`rpc::PARAMETER_KEYS`], all audible on a factory bank. The typed model
-//! so far is [`rpc::Status`], [`rpc::Effect`] and [`rpc::Parameter`]; banks
-//! are addressed by grid index (see [`rpc::params::bank`]) and have no
-//! read-back.
+//! in [`effects::PARAMETER_KEYS`], all audible on a factory bank. The typed
+//! model is [`effects`] (the closed vocabulary as [`effects::EffectKind`],
+//! [`effects::Effect`] and the provisional [`effects::BankSpec`]) and the
+//! planners in [`plan`], one per verified write, each naming the receipt that
+//! proves it. Banks are addressed by grid index (see [`rpc::params::bank`])
+//! and have no read-back.
 //!
 //! Everything here was recovered by static analysis of the vendor's Android
 //! application and then exercised against hardware; a method not named above
@@ -54,11 +56,13 @@ extern crate alloc;
 
 pub mod compress;
 pub mod crc32;
+pub mod effects;
 pub mod handshake;
 pub mod link;
 pub mod llt;
 pub mod llt2;
 pub mod loopfile;
+pub mod plan;
 pub mod rpc;
 
 /// The guitar's GATT service.
