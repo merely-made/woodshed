@@ -1,8 +1,9 @@
 # Client surface plan: typed writes, a shadow profile, and the bank-creation question
 
 **Date:** 2026-09-02
-**Status:** plan. Decisions 1–4 below were taken by Mark on 2026-09-02; no
-crate has been touched under this plan yet.
+**Status:** in progress. Decisions 1–4 below were taken by Mark on
+2026-09-02. **Phase A landed 2026-09-02** (uncommitted at time of writing);
+Phases B–D not started.
 
 Findings that ground this live in `2026-08-27_ringdown_founding.md` (H25–H38)
 and the session handoff `2026-09-01_effects_handoff.md`. This plan does not
@@ -197,3 +198,29 @@ listen; count before indexing; nothing sent while he is comparing by ear.
   moved from H36 to H38, stale `bypass` and crate-status docs, README
   capability line, one rustdoc warning. Workspace green: 123 tests, clippy
   and rustdoc clean.
+- **2026-09-02 — Phase A landed.** Two new modules in the core, both
+  `no_std`:
+  - `ringdown::effects`: `EffectKind` (thirteen variants, `wire_name`,
+    `keys`, `from_wire_name`, case-insensitive `canonical_key`), generated
+    from one table with `PARAMETER_KEYS` and `EFFECT_TYPES` so they cannot
+    drift. `Effect::new(EffectKind)` is the checked path and `with` refuses a
+    wrong key with the kind's accepted list in the error; `Effect::unchecked`
+    and `with_unchecked` are the probe's path and check nothing. `BankSpec`
+    carries the H28 bank model with `BANK_CHAIN_KEY` as the one provisional
+    line Phase D will change. `ParamError` is the type for "the firmware
+    would answer `true` and do nothing".
+  - `ringdown::plan`: a `Call { method, params }` per verified write, each
+    doc naming its receipt; the metronome pair return `Result` because
+    `params::metronome` now refuses `den` outside `METRONOME_DEN_ACCEPTED`.
+  - `rpc` re-exports the moved types, so `rpc::Effect` and
+    `rpc::PARAMETER_KEYS` still resolve. `rpc.rs` shrank from 1397 to 1258
+    lines; `effects.rs` is 527 and `plan.rs` 344.
+  - Tests: every planner pinned to its exact wire bytes, one with the full
+    envelope; every planner checked against `param_shape`; the den refusal;
+    the wrong-key refusal; the unchecked path. 135 tests across the
+    workspace, clippy and rustdoc clean.
+  - **Consumer impact, not yet addressed:** `woodshed-instrument` calls
+    `rpc::params::metronome` and will not compile against this ringdown
+    until it handles the `Result`; its wire-order test also passes `den: 8`,
+    which is now refused. Woodshed is its own repo; the change there is one
+    `?` and one literal, to be made when it next takes ringdown.
