@@ -649,6 +649,43 @@ Worth noting how it was found: not by testing, but by writing down what each
 method's parameters *are* and comparing that to what the code emits. The
 declaration was the instrument.
 
+**H35 — What the phantom slot invalidates, and what survives it.**
+(2026-09-01, prompted by the owner's domain pushback.)
+
+H34 established slot 8 is not a real bank. Nearly every effect *audibility* and
+*capacity* claim this session was measured there, so they fall together:
+
+- **"The firmware does not cap a chain at four" (H31) is RETRACTED.** The
+  thirty-four-deep count was `AddEffect` into slot 8, a phantom that is not a
+  playable bank. It proves nothing about a real bank's capacity. The app
+  enforces four, and four is now the best estimate for the firmware too;
+  real-bank capacity is **untested**.
+- **`bypass` behaviour is unknown** (as H34 said).
+- **`AddEffect` inserting an *audible* effect into a real bank is unconfirmed.**
+  Re-examined, the one "audible" event (H26/H29) was `SwitchBank 0` followed by
+  `AddEffect Distortion`, and the owner heard "tons of reverb and feedback" —
+  the *reverb* is bank 0's own pre-existing effect, made live by the switch.
+  The added distortion's contribution was never isolated. So "effects reach the
+  audio path" is downgraded to: **switching to a bank makes its stored chain
+  audible; whether our `AddEffect` adds to that chain audibly is not shown.**
+
+What genuinely survives, because none of it depends on audibility or on slot 8:
+
+- The transport, codec, framing, file transfer (all hardware-verified earlier).
+- Metronome read; `UpdateMetronome` bpm/num (panel-confirmed); `den` not
+  writable; `StartMetronome` (started with no hand on the guitar).
+- `SwitchBank` moves the panel selection (panel-confirmed).
+- **The `AddEffect` parse oracle and the parameter vocabulary (H28–H31).**
+  These rest on `true`/`false` *validation*, which is independent of routing:
+  the firmware refuses `Chorus.Gain` and accepts `Distortion.Gain` whether or
+  not the slot ever plays. The thirteen types and their keys stand.
+
+The through-line of the day's errors: `true` means parsed (H27), and this
+session repeatedly read it as *done* — stored, audible, capped, bypassed. It is
+only ever parsed. Audibility needs a bank known to be routed and an effect
+chosen not to mask what is already there; neither was controlled until the
+owner said so.
+
 **H34 — Slot 8 is not in the audio path. Everything added there all session
 was stored but never played.** (2026-09-01, decisive by ear.)
 
