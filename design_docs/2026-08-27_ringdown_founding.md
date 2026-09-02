@@ -649,6 +649,40 @@ Worth noting how it was found: not by testing, but by writing down what each
 method's parameters *are* and comparing that to what the code emits. The
 declaration was the instrument.
 
+**H36 — `AddEffect` audibly modifies a real bank. Proven, and it explains the
+phantom.** (2026-09-01, by ear, orthogonal effect, factory bank.)
+
+`Pitch {Shift: -12}` added to **bank 4** — the factory *Tremolo* tile — and the
+owner selected it and played: **tremolo plus an octave below.** An octave down
+cannot be masked by amplitude modulation and nothing else in that bank touches
+pitch, so this is the clean audible confirmation the session had been missing.
+
+**What it restores.** H35 downgraded "effects reach the audio path" because the
+only supporting event was ambiguous. It is now established — but on *new*
+evidence, not by rehabilitating the old: a chosen-orthogonal effect, a bank
+known to be real, and selection driven by the owner rather than by a
+`SwitchBank` that could move things underneath. The content-sharing path is
+real: a client can put a specific effect, with parameters, into a player's bank
+and they will hear it.
+
+**And it explains slot 8.** The owner's framing settled it — the app separates
+*Change* (swap which bank occupies a tile) from *Modify* (edit a bank's chain,
+up to four). Slot 8 was Factory Standard's empty `+`. `SetBankName` gave it a
+name and `AddEffect` stored a chain, both answering `true`, but **no bank
+record was ever created there**, so the DSP had nothing to load. A name is not
+a bank, and a stored chain is not a bank either. To fill an empty tile a client
+must `AddBank` first; `AddEffect` alone writes into a gap.
+
+That is the sixth and last hypothesis for the silence, after: wrong parameter
+values, `UpdateEffect` not applying, `SaveConfig` not committing, delay units,
+and chain overflow. Each was tested and each was wrong. The one that held came
+from the owner's knowledge of the app's own verbs, not from the protocol.
+
+**Now testable on real banks, and all still open:** whether `bypass` silences
+an effect; a real bank's chain capacity (the app enforces four; the 34 counted
+in slot 8 measured a phantom and proves nothing); and `AddBank`'s wire shape,
+which is what a client needs to create a bank rather than only edit one.
+
 **H35 — What the phantom slot invalidates, and what survives it.**
 (2026-09-01, prompted by the owner's domain pushback.)
 

@@ -697,8 +697,14 @@ pub mod params {
     /// entry. `SwitchBank` moves the panel selection, hardware-confirmed.
     ///
     /// There is no scratch slot: `bank_num: 0` is the player's first preset,
-    /// and a write aimed there edits something they use. The factory profile
-    /// leaves slot 8 empty, which is the closest thing to safe scratch space.
+    /// and a write aimed there edits something they use.
+    ///
+    /// **An empty tile is not a bank.** The factory profile leaves slot 8
+    /// empty, and it is tempting as scratch space, but `AddEffect` there
+    /// stores a chain the DSP never plays and `SetBankName` labels a tile with
+    /// no bank behind it — both answering `true`. Creating a bank in an empty
+    /// tile needs `AddBank`; `AddEffect` only *modifies* a bank that exists.
+    /// See the founding doc, H36.
     ///
     /// Note that `ReadBank` answers `""` for every index, populated or not, so
     /// it cannot be used to check whether a bank is empty — or to verify that a
