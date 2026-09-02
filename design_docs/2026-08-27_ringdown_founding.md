@@ -649,6 +649,41 @@ Worth noting how it was found: not by testing, but by writing down what each
 method's parameters *are* and comparing that to what the code emits. The
 declaration was the instrument.
 
+**H37 — Bounds of the boon: `bypass` works, no render cap at four, and a bank
+must be re-selected for edits to settle.** (2026-09-01, on bank 4 — a real
+factory bank — using the octave-down Pitch as an unmaskable oracle.)
+
+- **`bypass: true` silences an effect.** Bank 4 drained to exactly one bypassed
+  `Pitch {Shift: -12}`: dry, no octave. Then four bypassed effects (Chorus,
+  Phaser, Reverb, Gate) alongside one live Pitch: only the octave. So it is a
+  real toggle and a client can A/B an effect without removing it. This
+  **supersedes** the retraction in H34/H35 — that retraction was correct at the
+  time, since the evidence then came from the phantom slot; the behaviour is
+  now established on a real bank with a single variable.
+- **The DSP renders past four.** With four bypassed effects ahead of it, an
+  audible Pitch in **fifth position** sounds. Six effects added to a real bank
+  and six drained back out, so storage is at least six too. **The four-effect
+  limit is the vendor app's UI convention, not a firmware constraint** — a
+  client may exceed it, which is a capability the vendor's own app does not
+  expose. (H31's "no cap" claim was retracted in H35 for measuring the phantom
+  slot; the conclusion happens to be right, but only this test earns it.)
+- **Edits do not settle until the bank is re-selected.** Immediately after the
+  five-effect write the owner heard the octave "and definitely more"; switching
+  off the tile and back left exactly the octave. Stale audio persists across a
+  chain edit. **A client should re-select the bank after editing it**, and this
+  plausibly accounts for some of the day's ambiguous listens.
+
+**A correction against myself in the same batch.** From a drain that counted
+three where I expected two, I concluded — and told the owner — that
+`RemoveEffect` ignores a non-zero index. A count-only test disproved it
+immediately: three added, one removed at index 1, two left. `RemoveEffect`
+honours any index. The real cause was arithmetic: **the factory Tremolo bank
+held two effects, not one**, so index 1 was a factory effect rather than the
+Pitch I meant to remove — which is also why the octave survived the first
+bypass attempt. The lesson is narrow and repeatable: *count the bank before
+indexing into it*, because `ReadBank` will not tell you and an assumed length
+turns every index into a guess.
+
 **H36 — `AddEffect` audibly modifies a real bank. Proven, and it explains the
 phantom.** (2026-09-01, by ear, orthogonal effect, factory bank.)
 
