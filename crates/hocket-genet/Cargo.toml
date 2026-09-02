@@ -46,8 +46,6 @@ before-packaging-command = "cargo clean -p hocket-genet --release && cargo build
 signing-identity = "Developer ID Application: Mark Boykim (HWVZ5S7ACJ)"
 
 [dependencies]
-# AccessKit tree/action types for the a11y bridge (genet_winit_host::AccessKitBridge).
-accesskit = { workspace = true }
 hocket-model = { workspace = true }
 hocket-engine = { workspace = true }
 audio-primitives = { workspace = true }
@@ -55,19 +53,15 @@ cambium = { workspace = true }
 sprigging = { workspace = true }
 luggage = { workspace = true }
 velopack = { workspace = true }
-layout-dom-api = { workspace = true }
-genet-scripted-dom = { workspace = true }
-genet-layout = { workspace = true }
-genet-winit-host = { workspace = true }
+cambium-genet-winit-host = { workspace = true }
 genet-clipboard = { workspace = true }
 genet-probe = { workspace = true }
 genet-host-api = { workspace = true }
+workbench = { workspace = true }
 image = { workspace = true }
 netrender = { workspace = true }
 paint_list_api = { workspace = true }
-paint_list_render = { workspace = true }
 wgpu = { workspace = true }
-winit = { workspace = true }
 muniment = { workspace = true, features = ["zip"] }
 armillary = { workspace = true }
 personae = { workspace = true }

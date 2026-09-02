@@ -17,9 +17,6 @@ repository = "https://github.com/merely-made/hocket"
 rust-version = "1.96"
 
 [workspace.dependencies]
-# AccessKit tree/action types for the genet host's a11y bridge (must track
-# genet's accesskit pin so `TreeUpdate` unifies across genet-winit-host).
-accesskit = "0.24"
 # Internal crates. The `hocket` (app) and `hocket-headless` (audio
 # test harness) binaries are workspace members but not dependency
 # targets, so they don't appear here.
@@ -66,10 +63,11 @@ firewheel = { version = "0.10", features = [
 
 winit = "0.30"
 
-# UI — Genet host (2026-07-08 genet-host refactor). The new UI stack;
-# mirrors Woodshed's Genet section. Git deps on the owned repos; local
-# checkouts ride the gitignored .cargo/config.toml source-specific [patch].
-# Build hocket-genet from the hocket cwd so that patch applies.
+# UI — Genet host. `cambium-genet-winit-host` owns the retained
+# Livery/Buckram layout, paint, input, and accessibility assembly; Hocket
+# supplies its state, views, leaves, workers, and update policy through hooks.
+# Git deps on the owned repos. Build hocket-genet from the hocket cwd so this
+# workspace's root Cargo patches apply.
 # From genet's git, NOT crates.io. The published pair depends on the
 # crates.io `paint_list_api`, while we (and the rest of the genet stack)
 # git-dep netrender's — two `paint_list_api` crates in one graph, so a
@@ -83,16 +81,17 @@ cambium = { git = "https://github.com/merely-made/genet.git", branch = "main" }
 sprigging = { git = "https://github.com/merely-made/genet.git", branch = "main" }
 layout-dom-api = { git = "https://github.com/merely-made/genet.git", branch = "main", version = "=0.1.0" }
 genet-scripted-dom = { git = "https://github.com/merely-made/genet.git", branch = "main", version = "=0.1.0" }
-genet-layout = { git = "https://github.com/merely-made/genet.git", branch = "main" }
-genet-winit-host = { git = "https://github.com/merely-made/genet.git", branch = "main" }
+cambium-genet-winit-host = { git = "https://github.com/merely-made/genet.git", branch = "main" }
 genet-clipboard = { git = "https://github.com/merely-made/genet.git", branch = "main" }
 genet-probe = { git = "https://github.com/merely-made/genet.git", branch = "main" }
 genet-host-api = { git = "https://github.com/merely-made/genet.git", branch = "main" }
 workbench = { git = "https://github.com/merely-made/genet.git", branch = "main" }
 image = { version = "0.25", default-features = false, features = ["png"] }
-netrender = { git = "https://github.com/merely-made/netrender.git", branch = "main" }
-paint_list_api = { git = "https://github.com/merely-made/netrender.git", branch = "main" }
-paint_list_render = { git = "https://github.com/merely-made/netrender.git", branch = "main" }
+# Match Genet's immutable Netrender source identity. A branch reference here
+# creates a second `ExternalTexturePlacement` beside the host's renderer API.
+netrender = { git = "https://github.com/merely-made/netrender.git", rev = "6f1a4fe70a58a57ba6b248acfa662f0ec4e44a25" }
+paint_list_api = { git = "https://github.com/merely-made/netrender.git", rev = "6f1a4fe70a58a57ba6b248acfa662f0ec4e44a25" }
+paint_list_render = { git = "https://github.com/merely-made/netrender.git", rev = "6f1a4fe70a58a57ba6b248acfa662f0ec4e44a25" }
 # Host-side surface/compose types only; backend features come from
 # netrender's per-target split. Single wgpu 29 tree now the Masonry app
 # (wgpu 28) is retired.
@@ -153,14 +152,13 @@ genet-scripted-dom = { git = "https://github.com/merely-made/genet.git", branch 
 # reintroduced the pre-rename fork beside genet-stylo, and
 # `links = "servo_style_crate"` (one Stylo per graph) made that a hard error.
 #
-# stylo_taffy MUST be patched for the same reason: the registry copy names
-# crates.io stylo, which would pull a second Stylo into the graph. The sibling
-# paths keep Cargo from treating Genet's large workspace as a crates.io patch
-# source, while its vendored adapter consumes the published genet-stylo family.
-stylo_taffy = { path = "../genet/support/patches/stylo_taffy" }
-# genet's vendored forks (taffy float-layout, in-process ipc-channel).
-taffy = { path = "../genet/support/patches/taffy" }
-ipc-channel = { path = "../genet/support/patches/ipc-channel" }
+# The Stylo compatibility cone retired from Genet. Livery/Buckram use the
+# renamed `genet-taffy` fork and Genet's Parley fork directly, so a clean
+# consumer must mirror those source identities at its own workspace root.
+taffy = { package = "genet-taffy", git = "https://github.com/merely-made/genet.git", branch = "main", version = "=0.14.0" }
+parley = { git = "https://github.com/merely-made/genet.git", branch = "main" }
+# Genet's in-process ipc-channel fork is also a root-level Cargo patch.
+ipc-channel = { git = "https://github.com/merely-made/genet.git", branch = "main" }
 
 # Vello on wgpu 30. Upstream vello 0.10 still requires wgpu 29, so netrender
 # (and through it this app's render path) takes vello from the owned fork:

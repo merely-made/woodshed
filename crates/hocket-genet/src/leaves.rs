@@ -13,10 +13,13 @@
 use std::collections::{HashMap, HashSet};
 
 use audio_primitives::WaveformPeak;
-use sprigging::{ColorF, Leaf, LeafRegistry, PaintCx, Path, RenderedLeaves, Size, SizeHint};
-use paint_list_api::PaintCmd;
-use genet_layout::LeafPaintSource;
 use hocket_model::{MediaRef, PhraseId, TrackColor, TrackId};
+use sprigging::{ColorF, Leaf, LeafRegistry, PaintCx, Path, Size, SizeHint};
+
+#[cfg(test)]
+use paint_list_api::PaintCmd;
+#[cfg(test)]
+use sprigging::RenderedLeaves;
 
 use crate::state::AppState;
 
@@ -356,35 +359,6 @@ fn ensure_meter(registry: &mut LeafRegistry<u64>, key: u64, level: f32, peak: f3
         };
         m.set_level(level, Some(peak));
         registry.insert(key, Box::new(m));
-    }
-}
-
-// --- LeafPaintSource adapter -------------------------------------------
-
-/// Forwards genet-layout's per-leaf command query to chisel's rendered cache.
-/// A newtype because both traits live in other crates (orphan rule).
-pub struct LeafSource<'a>(pub &'a RenderedLeaves);
-
-impl LeafPaintSource for LeafSource<'_> {
-    fn leaf_commands(&self, key: u64) -> Option<&[PaintCmd]> {
-        self.0.get(key)
-    }
-}
-
-// --- LeafA11ySource adapter --------------------------------------------
-
-/// Forwards genet-layout's a11y walk to each leaf's own `accessibility()`.
-/// genet-layout knows `<chisel-leaf>` as an element but not chisel's types, so
-/// the host bridges: the output meters announce as meters carrying their level,
-/// and any leaf that declares an action becomes routable like a DOM control.
-/// A newtype for the same orphan-rule reason as [`LeafSource`].
-pub struct LeafA11y<'a>(pub &'a mut LeafRegistry<u64>);
-
-impl genet_layout::LeafA11ySource for LeafA11y<'_> {
-    fn describe_leaf(&mut self, key: u64, node: &mut accesskit::Node) {
-        if let Some(leaf) = self.0.get_mut(&key) {
-            leaf.accessibility(node);
-        }
     }
 }
 

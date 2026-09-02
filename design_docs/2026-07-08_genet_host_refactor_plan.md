@@ -10,6 +10,15 @@ S0 (scaffold) → S1 (UI) → S2 (model) → S5 (chisel leaves) → engine → S
 
 Code samples are illustrative unless marked implementation-ready.
 
+**Current-host note (2026-09-02):** Genet retired the Stylo and
+`genet-layout` compatibility cone on 2026-08-21. Hocket now consumes the
+shared `cambium-genet-winit-host` boundary: it retains the product's views,
+Firewheel tick, project/update workers, chisel waveform and meter leaves, and
+scenario capture hooks, while Genet owns the desktop lifecycle, Livery/Buckram
+layout, paint, input, and Accessibility projection. The old direct
+`IncrementalLayout`/`SurfaceHost` assembly and its `stylo_taffy` patch are
+retired from this workspace.
+
 ---
 
 ## Why

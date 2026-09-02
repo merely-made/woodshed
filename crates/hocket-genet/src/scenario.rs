@@ -16,7 +16,7 @@
 
 use std::path::{Path, PathBuf};
 
-use genet_winit_host::SurfaceHost;
+use cambium_genet_winit_host::Surface;
 use image::ImageEncoder;
 use netrender::ExternalTexturePlacement;
 
@@ -33,8 +33,8 @@ pub struct Run {
 /// cannot mean anything.
 pub fn load() -> Option<Run> {
     let path = PathBuf::from(std::env::var_os("HOCKET_SCENARIO")?);
-    let body =
-        std::fs::read_to_string(&path).unwrap_or_else(|error| panic!("read scenario {path:?}: {error}"));
+    let body = std::fs::read_to_string(&path)
+        .unwrap_or_else(|error| panic!("read scenario {path:?}: {error}"));
     let scenario =
         Scenario::parse(&body).unwrap_or_else(|error| panic!("parse scenario {path:?}: {error}"));
     let dir = std::env::var_os("HOCKET_CAPTURE_DIR")
@@ -59,13 +59,13 @@ pub fn write_done(dir: &Path, outcome: &Outcome) {
 /// `view` a normal frame presents into a `COPY_SRC` target and reads it back, so
 /// the receipt is the presented frame, immune to occlusion and focus theft.
 pub fn capture_frame(
-    host: &SurfaceHost,
+    surface: &dyn Surface,
     view: &wgpu::TextureView,
     width: u32,
     height: u32,
     path: &Path,
 ) -> bool {
-    let target = host.device().create_texture(&wgpu::TextureDescriptor {
+    let target = surface.device().create_texture(&wgpu::TextureDescriptor {
         label: Some("hocket scenario capture"),
         size: wgpu::Extent3d {
             width,
@@ -80,7 +80,7 @@ pub fn capture_frame(
         view_formats: &[],
     });
     let target_view = target.create_view(&wgpu::TextureViewDescriptor::default());
-    host.renderer().compose_external_texture(
+    surface.renderer().compose_external_texture(
         view,
         &target_view,
         wgpu::TextureFormat::Rgba8Unorm,
@@ -88,7 +88,7 @@ pub fn capture_frame(
         height,
         ExternalTexturePlacement::new([0.0, 0.0, width as f32, height as f32]),
     );
-    let rgba = read_texture_rgba(host.device(), host.queue(), &target, width, height);
+    let rgba = read_texture_rgba(surface.device(), surface.queue(), &target, width, height);
     if rgba.is_empty() {
         return false;
     }

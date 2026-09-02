@@ -125,10 +125,11 @@ section whenever a durable working insight emerges from a session.
 - **The model is framework-agnostic.** `hocket-model` does not depend
   on cpal, xilem, masonry, or any UI/audio framework. The audio
   engine, the UI, and the sync layer all consume it as a peer.
-- **The UI rides Genet, not Masonry (from 2026-07-08).** The active host is
-  `xilem_serval` with `chisel` leaves for waveform and meter drawing. Structure
-  is native Genet views plus tinct CSS. The Masonry application and fork were
-  retired; the audio spine remains independent. See
+- **The UI rides Genet, not Masonry (from 2026-07-08; current host 2026-09-02).**
+  The active host is `cambium-genet-winit-host`, with chisel leaves for waveform
+  and meter drawing. Structure is native Cambium views plus tinct CSS. The
+  Masonry application and fork were retired; the audio spine remains
+  independent. See
   [2026-07-08_genet_host_refactor_plan.md](2026-07-08_genet_host_refactor_plan.md).
 - **Async-first collaboration**, never real-time multiplayer jamming.
   The product's identity is sequential turn-taking over Moothold; that
