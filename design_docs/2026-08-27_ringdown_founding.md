@@ -649,6 +649,41 @@ Worth noting how it was found: not by testing, but by writing down what each
 method's parameters *are* and comparing that to what the code emits. The
 declaration was the instrument.
 
+**H38 — `AddBank` inserts and shifts, and the bank it makes is audio-dead.**
+(2026-09-01, read off the panel by the owner.)
+
+`AddBank {bank_num: 4, bank: {...}}` sent to a nine-tile profile **inserted** a
+bank at index 4 and pushed every later bank along one place: Tremolo 4→5,
+Octaver 5→6, Disto 6→7, Boost 7→8, and the ninth — the tile named "ringdown" —
+**off the end of the list entirely.** The method is literal: it *adds* a bank
+to an ordered list, it does not replace the one at that index.
+
+The bank it creates is real to the panel and dead to the DSP:
+
+- It takes the `name` from the bank object and shows it on the tile.
+- It occupies an index and displaces its neighbours.
+- **Neither its own `effects` chain nor effects added to it afterwards
+  render.** Slot 8 had the same signature for the same reason — it received an
+  `AddBank` too.
+
+So a client can *edit* banks the app created (H36: `AddEffect` into a real bank
+is audible) but cannot *create* a playable one. Creating a bank appears to
+need something `AddBank` alone does not supply.
+
+**Two retractions against myself, both from this sequence.** I reported that
+`AddBank` "poisons" a bank, and that bank 4 no longer accepted working effects.
+Neither was true: bank 4's Tremolo was **displaced to index 5**, and my
+follow-up `AddEffect` went into the freshly-inserted octave bank rather than
+the Tremolo one. Every `bank_num` I used after the insert was off by one, and I
+read the resulting silence as damage.
+
+**The operational rule this yields is sharp: `AddBank` renumbers everything
+after it.** A client holding bank indices across an `AddBank` is holding stale
+indices, and on a full profile it will silently push the last bank out of
+existence. Treat it as destructive to the *profile*, not to a bank — and note
+that `ReadBank` gives no way to re-read the layout afterwards, so only the
+player can see what happened.
+
 **H37 — Bounds of the boon: `bypass` works, no render cap at four, and a bank
 must be re-selected for edits to settle.** (2026-09-01, on bank 4 — a real
 factory bank — using the octave-down Pitch as an unmaskable oracle.)

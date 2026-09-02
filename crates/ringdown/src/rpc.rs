@@ -98,7 +98,10 @@ define_methods! {
     ReadBank => "ReadBank",
     /// Make a bank the active one.
     SwitchBank => "SwitchBank",
-    /// Append a bank.
+    /// **Insert** a bank at an index, shifting every later bank along one
+    /// place. On a full nine-tile profile the last bank is pushed off the end
+    /// and lost. The bank it creates shows its name on the panel but never
+    /// renders audio, nor do effects added to it afterwards. See H38.
     AddBank => "AddBank",
     /// Delete a bank.
     RemoveBank => "RemoveBank",
