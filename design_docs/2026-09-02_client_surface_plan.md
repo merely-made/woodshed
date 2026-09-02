@@ -3,8 +3,9 @@
 **Date:** 2026-09-02
 **Status:** in progress. Decisions 1–4 below were taken by Mark on
 2026-09-02. **Phase A landed 2026-09-02** (commit 77207ef). **Phase B landed 2026-09-02**
-(uncommitted at time of writing), verified against a scripted link only, not
-against the instrument. Phases C–D not started.
+(commit 3611c55). **Phase C landed 2026-09-02** (uncommitted at time of
+writing). B and C are verified against a scripted link only, not against the
+instrument. Phase D not started.
 
 Findings that ground this live in `2026-08-27_ringdown_founding.md` (H25–H38)
 and the session handoff `2026-09-01_effects_handoff.md`. This plan does not
@@ -252,3 +253,46 @@ listen; count before indexing; nothing sent while he is comparing by ear.
     hardware-verified:** nothing here changes bytes on the wire for a call
     that worked before, but the probe's `--call` and `--config` paths have
     only been compiled, not run against the guitar.
+- **2026-09-02 — Phase C landed**, desk-verified only. Four departures from
+  the phase as written, each a simplification rather than a change of
+  intent:
+  - **The shadow lives in the core, not the client.** `ringdown::profile`
+    is pure state with no I/O, which by this repo's own discipline belongs
+    in the sans-io crate; the client keeps the async half. `Profile` is nine
+    slots, serialises as a bare array with `null` for empty, refuses a file
+    with the wrong slot count, and uses `BankSpec`'s field names rather than
+    the wire's so a saved profile survives the wire shape changing.
+  - **`BankSpec` is the slot's content;** there is no separate `BankShadow`.
+    Same four fields, one type, two serialisations kept deliberately apart:
+    serde derive for persistence, `to_value` for the wire.
+  - **`plan::Edit` is the vocabulary.** A profile-changing write as data;
+    `Edit::call()` plans the same bytes as the function of the same name
+    (pinned for every variant) and `Profile::apply` consumes the same value,
+    so the wire and the record cannot describe different writes. `apply`
+    returns the bank that left the profile, pushed off by `AddBank` on a
+    full grid (H38) or taken out by `RemoveBank`; a failed apply changes
+    nothing.
+  - **Three driver operations instead of two:** `drain_chain` (the H31
+    count, destructive by construction and documented as such), `push_bank`
+    (chain first, then name, then gain and sustain, the H33 order) and
+    `restore_bank` (drain, then push, returning `Restored { drained,
+    expected, pushed }` where `drained != expected` is the discrepancy
+    signal). `Guitar::edit(&mut profile, &edit)` checks the shadow before
+    sending and applies only on a parsed reply; an edit into an empty slot
+    never reaches the link. `set_listening(true)` refuses every typed write,
+    not only the verify, since any write voids an A/B; reads and the raw
+    `call` path are not gated.
+  - The shadow cannot know a factory bank's own chain. `restore_bank` on
+    such a slot drains effects the shadow never recorded, and they stay
+    gone until the vendor app reconnects (H32). Documented on both
+    operations; a client should restore only slots it built up itself, or
+    accept that.
+  - Tests: profile semantics in the core (H38's insert-and-shift by name,
+    remove-and-shift, chain edits, every refusal with the state left
+    untouched, serde round trip with exact JSON and the wrong-count
+    refusal); `Edit` against every planner; in the client over the scripted
+    link, `edit` records a parsed reply and not a refused one and refuses an
+    empty slot before the link, `restore_bank` drains to `false` and pushes
+    in H33 order with the exact method sequence, and listening refuses
+    writes while `status` still answers. 148 tests, clippy and rustdoc
+    clean.

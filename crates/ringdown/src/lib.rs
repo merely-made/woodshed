@@ -34,7 +34,9 @@
 //! [`effects::Effect`] and the provisional [`effects::BankSpec`]) and the
 //! planners in [`plan`], one per verified write, each naming the receipt that
 //! proves it. Banks are addressed by grid index (see [`rpc::params::bank`])
-//! and have no read-back.
+//! and have no read-back, which is why [`profile`] exists: the client's own
+//! record of what it sent, applied from the same [`plan::Edit`] the wire is
+//! planned from.
 //!
 //! Everything here was recovered by static analysis of the vendor's Android
 //! application and then exercised against hardware; a method not named above
@@ -63,6 +65,7 @@ pub mod llt;
 pub mod llt2;
 pub mod loopfile;
 pub mod plan;
+pub mod profile;
 pub mod rpc;
 
 /// The guitar's GATT service.
