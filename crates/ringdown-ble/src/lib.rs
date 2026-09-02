@@ -25,8 +25,8 @@ use ringdown::{handshake::Banner, link::Link, llt2};
 use uuid::Uuid;
 
 pub use ringdown_client::{
-    ASSUMED_WRITE_LEN, FileInfo, MAX_FILE_CHUNK, REQUEST_TIMEOUT, Sent, Transport, TransportError,
-    WEDGING_METHODS,
+    ASSUMED_WRITE_LEN, FileInfo, MAX_DRAIN, MAX_FILE_CHUNK, REQUEST_TIMEOUT, Restored, Sent,
+    Transport, TransportError, WEDGING_METHODS,
 };
 
 /// A guitar reached over desktop Bluetooth.

@@ -17,6 +17,8 @@
 
 use serde_json::Value;
 
+use alloc::string::String;
+
 use crate::effects::{BankSpec, Effect, ParamError};
 use crate::rpc::{Method, Request, RpcError, params};
 
@@ -186,6 +188,119 @@ pub fn add_bank(slot: i64, bank: &BankSpec) -> Call {
     }
 }
 
+// -- Edits as data -------------------------------------------------------
+
+/// A profile-changing write as a value, so that the wire and the shadow
+/// profile consume the same thing.
+///
+/// [`Edit::call`] is the planner for it; [`crate::profile::Profile::apply`]
+/// is what it does to the client's record. Selection (`SwitchBank`) and the
+/// metronome are not here because they change no profile state.
+#[derive(Debug, Clone, PartialEq)]
+pub enum Edit {
+    /// [`add_effect`].
+    AddEffect {
+        /// Grid slot.
+        slot: i64,
+        /// What to append.
+        effect: Effect,
+    },
+    /// [`update_effect`].
+    UpdateEffect {
+        /// Grid slot.
+        slot: i64,
+        /// Position in the chain.
+        index: i64,
+        /// The replacement.
+        effect: Effect,
+    },
+    /// [`remove_effect`].
+    RemoveEffect {
+        /// Grid slot.
+        slot: i64,
+        /// Position in the chain.
+        index: i64,
+    },
+    /// [`move_effect`].
+    MoveEffect {
+        /// Grid slot.
+        slot: i64,
+        /// Current position.
+        from: i64,
+        /// Destination position.
+        to: i64,
+    },
+    /// [`set_bank_name`].
+    SetBankName {
+        /// Grid slot.
+        slot: i64,
+        /// The new name.
+        name: String,
+    },
+    /// [`set_gain_bank`].
+    SetGainBank {
+        /// Grid slot.
+        slot: i64,
+        /// Decibels.
+        gain_db: f32,
+    },
+    /// [`sustain_killer`].
+    SustainKiller {
+        /// Grid slot.
+        slot: i64,
+        /// Engaged, or leave alone.
+        killed: Option<bool>,
+        /// Momentary reset, or leave alone.
+        reset: Option<bool>,
+    },
+    /// [`move_bank`].
+    MoveBank {
+        /// Current slot.
+        from: i64,
+        /// Destination slot.
+        to: i64,
+    },
+    /// [`remove_bank`].
+    RemoveBank {
+        /// Grid slot.
+        slot: i64,
+    },
+    /// [`add_bank`].
+    AddBank {
+        /// Grid slot to insert at.
+        slot: i64,
+        /// The bank object.
+        bank: BankSpec,
+    },
+}
+
+impl Edit {
+    /// The call this edit is sent as. Same bytes as the planner of the same
+    /// name, pinned by test.
+    pub fn call(&self) -> Call {
+        match self {
+            Edit::AddEffect { slot, effect } => add_effect(*slot, effect),
+            Edit::UpdateEffect {
+                slot,
+                index,
+                effect,
+            } => update_effect(*slot, *index, effect),
+            Edit::RemoveEffect { slot, index } => remove_effect(*slot, *index),
+            Edit::MoveEffect { slot, from, to } => move_effect(*slot, *from, *to),
+            Edit::SetBankName { slot, name } => set_bank_name(*slot, name),
+            Edit::SetGainBank { slot, gain_db } => set_gain_bank(*slot, *gain_db),
+            Edit::SustainKiller {
+                slot,
+                killed,
+                reset,
+            } => sustain_killer(*slot, *killed, *reset),
+            Edit::MoveBank { from, to } => move_bank(*from, *to),
+            Edit::RemoveBank { slot } => remove_bank(*slot),
+            Edit::AddBank { slot, bank } => add_bank(*slot, bank),
+        }
+    }
+}
+
 // -- Metronome -----------------------------------------------------------
 
 /// Start the metronome at `bpm`, optionally setting meter and loop length.
@@ -314,6 +429,76 @@ mod tests {
             update_metronome(96, Some(6), Some(8), None).unwrap_err(),
             ParamError::DenNotAccepted(8)
         );
+    }
+
+    /// An edit as data plans the same call as the function of the same name,
+    /// for every variant, so the shadow and the wire cannot diverge.
+    #[test]
+    fn every_edit_plans_the_same_call_as_its_planner() {
+        let bank = BankSpec::new("b");
+        let pairs: Vec<(Edit, Call)> = alloc::vec![
+            (
+                Edit::AddEffect {
+                    slot: 4,
+                    effect: octave()
+                },
+                add_effect(4, &octave())
+            ),
+            (
+                Edit::UpdateEffect {
+                    slot: 4,
+                    index: 1,
+                    effect: octave()
+                },
+                update_effect(4, 1, &octave())
+            ),
+            (
+                Edit::RemoveEffect { slot: 4, index: 0 },
+                remove_effect(4, 0)
+            ),
+            (
+                Edit::MoveEffect {
+                    slot: 4,
+                    from: 0,
+                    to: 1
+                },
+                move_effect(4, 0, 1)
+            ),
+            (
+                Edit::SetBankName {
+                    slot: 8,
+                    name: "ringdown".into()
+                },
+                set_bank_name(8, "ringdown")
+            ),
+            (
+                Edit::SetGainBank {
+                    slot: 0,
+                    gain_db: -5.0
+                },
+                set_gain_bank(0, -5.0)
+            ),
+            (
+                Edit::SustainKiller {
+                    slot: 8,
+                    killed: Some(false),
+                    reset: None
+                },
+                sustain_killer(8, Some(false), None)
+            ),
+            (Edit::MoveBank { from: 0, to: 1 }, move_bank(0, 1)),
+            (Edit::RemoveBank { slot: 4 }, remove_bank(4)),
+            (
+                Edit::AddBank {
+                    slot: 4,
+                    bank: bank.clone()
+                },
+                add_bank(4, &bank)
+            ),
+        ];
+        for (edit, call) in &pairs {
+            assert_eq!(&edit.call(), call, "{edit:?}");
+        }
     }
 
     /// Every planner's output satisfies the declared params shape for its

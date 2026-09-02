@@ -17,7 +17,7 @@ use alloc::{
     string::{String, ToString},
     vec::Vec,
 };
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
 /// Define the effect table once and derive the enum, the lookup tables and
@@ -196,7 +196,7 @@ impl core::error::Error for ParamError {}
 /// Field order is the wire order, and the wire is order-sensitive (H24), so
 /// this is a struct rather than a map: serde emits struct fields in
 /// declaration order whatever the map type does.
-#[derive(Debug, Clone, PartialEq, Serialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Parameter {
     /// The knob's **full word**, not its panel label: `Gain`, `Volume`,
     /// `Lowpass`, `Highpass` — where the app shows `GAIN`, `VOL`, `LP`, `HP`.
@@ -218,7 +218,7 @@ pub struct Parameter {
 /// string by [`Effect::unchecked`], nothing is checked: that path exists for
 /// the probe, whose job is to send the instrument things this crate does not
 /// yet know about.
-#[derive(Debug, Clone, PartialEq, Serialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Effect {
     /// A named voicing of this type. `"default"` — lowercase, as the app
     /// displays it — is always valid.
@@ -326,7 +326,13 @@ pub const BANK_CHAIN_KEY: &str = "effects";
 /// (H38 put it on the tile). The others follow the app's model and the
 /// vocabulary of the per-field methods (`gain` from `SetGainBank`, `killed`
 /// from `SustainKiller`), which is a hypothesis, not a finding.
-#[derive(Debug, Clone, PartialEq)]
+///
+/// Two serialisations, on purpose. The serde derive uses these field names
+/// and is the **persistence** form, what a saved [`crate::profile::Profile`]
+/// holds; [`BankSpec::to_value`] is the **wire** form and is provisional.
+/// Keeping them apart means the research can change the wire without
+/// invalidating anyone's saved profile.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct BankSpec {
     /// Shown on the panel tile.
     pub name: String,

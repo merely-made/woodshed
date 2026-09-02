@@ -42,7 +42,8 @@ use ringdown::{
     link::Link,
     llt::{self, Ack, LltCode},
     llt2,
-    plan::{self, Call},
+    plan::{self, Call, Edit},
+    profile::{Profile, ProfileError},
     rpc::{self, Method, RequestIds, Response, Status},
 };
 use serde_json::Value;
@@ -131,6 +132,17 @@ pub enum TransportError {
     /// would parse it and change nothing.
     #[error("refused before the wire: {0}")]
     Param(#[from] ParamError),
+
+    /// The shadow profile refused the edit before it was sent: the slot is
+    /// empty, out of range, or the index beyond what the shadow knows.
+    #[error("refused by the shadow profile: {0}")]
+    Profile(#[from] ProfileError),
+
+    /// The owner is comparing by ear, and this write would move the
+    /// selection or change a chain under them. See
+    /// [`Guitar::set_listening`].
+    #[error("refused: the owner is listening, and a write now would void the comparison")]
+    Listening,
 
     /// The connect-time version banner could not be parsed.
     #[error("device sent an unrecognised version banner: {0:?}")]
@@ -236,6 +248,29 @@ impl Sent {
     }
 }
 
+/// What [`Guitar::restore_bank`] found and did.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct Restored {
+    /// Effects the slot held before, by the remove-until-`false` count.
+    pub drained: usize,
+    /// Effects the shadow said it should hold. A difference from `drained`
+    /// is the discrepancy signal: more means the instrument held effects
+    /// the shadow did not know of, fewer means some of the shadow's were
+    /// not there.
+    pub expected: usize,
+    /// Writes made to put the shadow back: chain, name, and any gain or
+    /// sustain setting.
+    pub pushed: usize,
+}
+
+/// Removals [`Guitar::drain_chain`] will attempt before deciding the
+/// firmware is never going to say `false`.
+///
+/// The deepest chain counted so far was thirty-four (H31). A chain this
+/// long is far more likely a firmware that stopped refusing than a real
+/// chain.
+pub const MAX_DRAIN: usize = 128;
+
 /// A connected guitar.
 ///
 /// Generic over its transport. A platform — btleplug on desktop, CoreBluetooth,
@@ -250,6 +285,7 @@ pub struct Guitar<L: Link> {
     trace: bool,
     transport: Transport,
     allow_wedging: bool,
+    listening: bool,
 }
 
 /// Which of the two transports this instrument speaks.
@@ -284,6 +320,7 @@ where
             trace: false,
             transport,
             allow_wedging: false,
+            listening: false,
         }
     }
 
@@ -314,6 +351,18 @@ where
     /// somebody else's bug.
     pub fn allow_wedging_calls(&mut self) {
         self.allow_wedging = true;
+    }
+
+    /// The owner is comparing by ear: refuse every typed write until told
+    /// otherwise.
+    ///
+    /// A `SwitchBank` moves the selection under them and a chain write
+    /// changes what they are hearing; either voids the comparison, and
+    /// most of the ambiguous results in the hardware sessions came from
+    /// exactly that (H33, H37). Reads still go through. The raw `call`
+    /// path is not gated, since the probe is the research instrument.
+    pub fn set_listening(&mut self, on: bool) {
+        self.listening = on;
     }
 
     /// The transport underneath, for what only the platform can answer.
@@ -531,6 +580,9 @@ where
     /// The one path under every typed write below, and the way to send a
     /// [`Call`] built elsewhere.
     pub async fn send(&mut self, call: Call) -> Result<Sent, TransportError> {
+        if self.listening {
+            return Err(TransportError::Listening);
+        }
         let (id, reply) = self.call_raw(call.method.wire_name(), call.params).await?;
         Ok(Sent { id, reply })
     }
@@ -647,6 +699,102 @@ where
     /// Stop the metronome. **Receipt: ears.**
     pub async fn stop_metronome(&mut self) -> Result<Sent, TransportError> {
         self.send(plan::stop_metronome()).await
+    }
+
+    // -- Through the shadow profile ----------------------------------------
+
+    /// Send `edit` and record it in `profile` if the instrument parsed it.
+    ///
+    /// The shadow is consulted first: an edit into an empty slot, or at an
+    /// index beyond what the shadow knows, is refused before anything is
+    /// written, because the firmware would take it with `true` and store it
+    /// where nothing plays (H33, H34). On a reply of `false` the shadow is
+    /// left alone and the [`Sent`] says so.
+    pub async fn edit(
+        &mut self,
+        profile: &mut Profile,
+        edit: &Edit,
+    ) -> Result<Sent, TransportError> {
+        profile.check(edit)?;
+        let sent = self.send(edit.call()).await?;
+        if sent.parsed() {
+            profile.apply(edit)?;
+        }
+        Ok(sent)
+    }
+
+    /// Empty the chain in `slot` and report how many effects it held.
+    ///
+    /// The only count this protocol offers (H31): remove at index 0 until
+    /// the reply is `false`. **Destructive by construction.** Everything in
+    /// the chain is gone afterwards, including a factory bank's own effects
+    /// that no shadow could know about, until the vendor app next connects
+    /// and restores its profile (H32). Refused while the owner is listening.
+    pub async fn drain_chain(&mut self, slot: i64) -> Result<usize, TransportError> {
+        let mut count = 0;
+        loop {
+            if !self.send(plan::remove_effect(slot, 0)).await?.parsed() {
+                return Ok(count);
+            }
+            count += 1;
+            if count >= MAX_DRAIN {
+                return Err(TransportError::Shape(format!(
+                    "the chain in slot {slot} did not drain after {MAX_DRAIN} removals"
+                )));
+            }
+        }
+    }
+
+    /// Send everything `bank` holds into `slot`, in the order the firmware
+    /// needs: the chain first, then the name, then gain and sustain.
+    ///
+    /// A name sent to a slot with no chain is dropped with `true` (H33), so
+    /// the effects go first. Appends to whatever the slot already holds;
+    /// see [`Guitar::restore_bank`] to make the slot *be* the shadow.
+    pub async fn push_bank(
+        &mut self,
+        slot: i64,
+        bank: &BankSpec,
+    ) -> Result<Vec<Sent>, TransportError> {
+        let mut sent = Vec::new();
+        for effect in &bank.chain {
+            sent.push(self.send(plan::add_effect(slot, effect)).await?);
+        }
+        sent.push(self.send(plan::set_bank_name(slot, &bank.name)).await?);
+        if let Some(gain) = bank.gain_db {
+            sent.push(self.send(plan::set_gain_bank(slot, gain)).await?);
+        }
+        if let Some(killed) = bank.sustain_killed {
+            sent.push(
+                self.send(plan::sustain_killer(slot, Some(killed), None))
+                    .await?,
+            );
+        }
+        Ok(sent)
+    }
+
+    /// Make `slot` hold exactly what `bank` says: drain it, count what was
+    /// there, then push the shadow.
+    ///
+    /// Two uses, one operation. After the vendor app has connected and put
+    /// its own profile back (H32), this re-establishes the client's edits.
+    /// At any other time, [`Restored::drained`] against the shadow's chain
+    /// length is the only check this protocol offers that the instrument
+    /// still holds what the client believes. Read the caution on
+    /// [`Guitar::drain_chain`]: whatever was drained beyond the shadow is
+    /// gone until the app returns. Refused while the owner is listening.
+    pub async fn restore_bank(
+        &mut self,
+        slot: i64,
+        bank: &BankSpec,
+    ) -> Result<Restored, TransportError> {
+        let drained = self.drain_chain(slot).await?;
+        let pushed = self.push_bank(slot, bank).await?.len();
+        Ok(Restored {
+            drained,
+            expected: bank.chain.len(),
+            pushed,
+        })
     }
 
     /// Size and checksum of a stored file.
@@ -1134,6 +1282,132 @@ mod tests {
             w[2].ends_with(r#""method":"AddBank","params":{"bank_num":4,"bank":{"name":"octave","effects":[]}}}"#),
             "{}",
             w[2]
+        );
+    }
+
+    fn tremolo_slot() -> Profile {
+        let mut p = Profile::empty();
+        p.set_slot(4, Some(BankSpec::new("Tremolo"))).unwrap();
+        p
+    }
+
+    /// The shadow records a parsed edit and not a refused one, and refuses an
+    /// edit into an empty slot before the link sees anything.
+    #[tokio::test]
+    async fn edit_applies_to_the_shadow_only_when_the_reply_parsed() {
+        let mut g = guitar([Value::Bool(true), Value::Bool(false)]);
+        let mut p = tremolo_slot();
+        let octave = Effect::new(EffectKind::Pitch).with("Shift", -12.0).unwrap();
+        let add = Edit::AddEffect {
+            slot: 4,
+            effect: octave.clone(),
+        };
+
+        assert!(g.edit(&mut p, &add).await.unwrap().parsed());
+        assert_eq!(p.slot(4).unwrap().chain.len(), 1);
+
+        assert!(!g.edit(&mut p, &add).await.unwrap().parsed());
+        assert_eq!(
+            p.slot(4).unwrap().chain.len(),
+            1,
+            "a refusal is not recorded"
+        );
+
+        let err = g
+            .edit(
+                &mut p,
+                &Edit::AddEffect {
+                    slot: 8,
+                    effect: octave,
+                },
+            )
+            .await
+            .unwrap_err();
+        assert!(
+            matches!(err, TransportError::Profile(ProfileError::EmptySlot(8))),
+            "{err}"
+        );
+        assert_eq!(
+            g.link().written().len(),
+            2,
+            "the refused edit never reached the link"
+        );
+    }
+
+    /// Restore drains until the firmware says `false`, reports the count, and
+    /// pushes the shadow in the order H33 requires: chain, then name, then
+    /// the rest.
+    #[tokio::test]
+    async fn restore_bank_drains_to_false_then_pushes_in_h33_order() {
+        let mut g = guitar([
+            Value::Bool(true),
+            Value::Bool(true),
+            Value::Bool(false),
+            Value::Bool(true),
+            Value::Bool(true),
+            Value::Bool(true),
+        ]);
+        let bank = BankSpec::new("trem")
+            .gain_db(-5.0)
+            .with_effect(Effect::new(EffectKind::Pitch).with("Shift", -12.0).unwrap());
+
+        let restored = g.restore_bank(4, &bank).await.unwrap();
+        assert_eq!(
+            restored,
+            Restored {
+                drained: 2,
+                expected: 1,
+                pushed: 3
+            }
+        );
+
+        let methods: Vec<String> = g
+            .link()
+            .written()
+            .iter()
+            .map(|w| {
+                let v: Value = serde_json::from_str(w).unwrap();
+                v["method"].as_str().unwrap().to_string()
+            })
+            .collect();
+        assert_eq!(
+            methods,
+            [
+                "RemoveEffect",
+                "RemoveEffect",
+                "RemoveEffect",
+                "AddEffect",
+                "SetBankName",
+                "SetGainBank"
+            ]
+        );
+        assert!(g.link().written()[0].contains(r#""params":{"bank_num":4,"effect_num":0}"#));
+    }
+
+    /// While the owner listens, every typed write is refused before the link
+    /// and reads still go through.
+    #[tokio::test]
+    async fn listening_refuses_writes_but_not_reads() {
+        let mut g = guitar([serde_json::json!({ "batt_left": 46.0 })]);
+        g.set_listening(true);
+
+        assert!(matches!(
+            g.switch_bank(3).await.unwrap_err(),
+            TransportError::Listening
+        ));
+        assert!(matches!(
+            g.drain_chain(4).await.unwrap_err(),
+            TransportError::Listening
+        ));
+        assert!(g.link().written().is_empty());
+
+        let status = g.status().await.unwrap();
+        assert_eq!(status.battery_percent, 46.0);
+
+        g.set_listening(false);
+        assert!(
+            g.switch_bank(3).await.is_err(),
+            "no scripted reply: a timeout, not a refusal"
         );
     }
 }
