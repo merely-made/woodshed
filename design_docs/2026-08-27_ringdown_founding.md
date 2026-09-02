@@ -667,11 +667,15 @@ factory bank — using the octave-down Pitch as an unmaskable oracle.)
   client may exceed it, which is a capability the vendor's own app does not
   expose. (H31's "no cap" claim was retracted in H35 for measuring the phantom
   slot; the conclusion happens to be right, but only this test earns it.)
-- **Edits do not settle until the bank is re-selected.** Immediately after the
-  five-effect write the owner heard the octave "and definitely more"; switching
-  off the tile and back left exactly the octave. Stale audio persists across a
-  chain edit. **A client should re-select the bank after editing it**, and this
-  plausibly accounts for some of the day's ambiguous listens.
+- ~~**Edits do not settle until the bank is re-selected.**~~ **Downgraded, not
+  established.** After the five-effect write the owner heard the octave "and
+  definitely more", and switching off the tile and back left exactly the
+  octave — but on reflection the owner reports hearing edits land *live* all
+  session without switching, which is the larger sample. One transient with at
+  least two competing explanations (DSP settling lag, monitoring volume) does
+  not support a rule, and it was written up as one on a single observation.
+  What stands: an unexplained transient after a multi-effect write. Whether a
+  re-select is ever needed is **untested**.
 
 **A correction against myself in the same batch.** From a drain that counted
 three where I expected two, I concluded — and told the owner — that
