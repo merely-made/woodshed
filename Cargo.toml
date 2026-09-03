@@ -11,7 +11,7 @@ members = [
 
 [workspace.package]
 edition = "2024"
-license = "MIT OR Apache-2.0"
+license = "MPL-2.0"
 authors = ["Mark <sgt.mark3@gmail.com>"]
 repository = "https://github.com/merely-made/hocket"
 rust-version = "1.96"
