@@ -3,8 +3,8 @@
 **Status (2026-09-04): ACTIVE.** The product direction and **Redshank** name are
 endorsed. Phase 0 is complete: Symphonia plus a bounded range source is the
 shipping default, and Genet/GStreamer is the retained browser-conformance
-fallback. Phase 1 is in progress; its general Genet boundary is landed, while
-the deterministic player core and unified source vocabulary remain open.
+fallback. Phase 1 is complete: its general Genet boundary, deterministic player
+core, and unified source vocabulary are landed. Phase 2 is the next code gate.
 
 ## Ruling
 
@@ -348,6 +348,10 @@ time, and a synchronous playback snapshot at the general player boundary.
 
 ### Phase 1: capture-grade player contract
 
+**Complete (2026-09-04).** Genet now exposes capture-grade decoded chunks and
+synchronous snapshots plus a deterministic, product-neutral controller over
+caller-supplied source and sink traits.
+
 Extend or wrap the Genet contract with a synchronous snapshot and a decoded
 audio chunk carrying channel layout, sample rate, and presentation time. Keep
 source, decoder, cache, and sink separable.
@@ -375,8 +379,16 @@ Progress receipt, 2026-09-04:
 - The same probe synchronously read a playing snapshot at 1.0801978 s with a
   60.024 s duration and sequence `1`; the host frame/queue snapshot read 1.06 s.
 - The pre-existing GLib signal-disconnect warning still occurs at shutdown.
-- Phase 1 remains open on its fake source/sink state matrix, unified
-  local/HTTP/host-blob commands, and typed capability failures.
+- Genet commit `f089da339f4` adds the fake-driven controller. Seven focused
+  tests cover play, pause, seek, buffering, end-of-stream, errors,
+  sink-authoritative snapshots, and one `Load` command across local, HTTP, and
+  host-blob sources.
+- Unsupported seek and playback-rate operations return typed errors. The
+  controller's normal dependency graph contains neither CPAL nor Woodshed,
+  Redshank, or Hocket product code.
+- Focused player tests, dummy-backend tests, the GStreamer backend check, and
+  strict Clippy all pass with an isolated target. Clippy still prints Genet's
+  pre-existing unreachable-type warning from `.clippy.toml`.
 
 ### Phase 2: port model and standalone storage
 
