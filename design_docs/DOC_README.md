@@ -13,6 +13,12 @@ before any other doc in this directory.
 
 ## Active Plans
 
+- [2026-09-01_listening_annotation_port_plan.md](2026-09-01_listening_annotation_port_plan.md)
+  **Active; Phase 0 complete.** Redshank is a separate audio-listening and timed
+  text/voice-annotation port incubated in this repository. Symphonia plus a
+  bounded range source is the shipping playback default; Genet/GStreamer is the
+  retained conformance path, and Turnstone is the planned second host. It is not
+  part of the Woodshed product graph.
 - [2026-08-27_smart_instrument_plan.md](2026-08-27_smart_instrument_plan.md)
   — **Plan; nothing implemented.** Woodshed drives a HyVibe smart guitar over
   Bluetooth through [ringdown](https://crates.io/crates/ringdown), whose

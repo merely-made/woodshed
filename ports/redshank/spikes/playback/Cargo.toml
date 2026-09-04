@@ -1,0 +1,15 @@
+[workspace]
+resolver = "3"
+members = ["common", "symphonia-path", "gstreamer-path"]
+
+[workspace.package]
+edition = "2024"
+license = "MIT OR Apache-2.0"
+rust-version = "1.97"
+
+[workspace.dependencies]
+anyhow = "1"
+firewheel = { version = "0.10", default-features = false, features = ["std", "cpal", "stream_nodes", "tracing"] }
+redshank-playback-spike-common = { path = "common" }
+symphonia = { version = "0.5.5", default-features = false, features = ["aac", "isomp4", "mp3"] }
+ureq = { version = "3.4", default-features = false }
