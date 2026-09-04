@@ -6,7 +6,8 @@ shipping default, and Genet/GStreamer is the retained browser-conformance
 fallback. Phase 1 is complete: its general Genet boundary, deterministic player
 core, and unified source vocabulary are landed. Phase 2 is complete with the
 unpublished model and generation store. Phase 3 is complete with shared podcast
-feed facts and GUID-stable Turnstone projection. Phase 4 is the next code gate.
+feed facts and GUID-stable Turnstone projection. Phase 4 is active with the
+first reusable Cambium surface slice landed.
 
 ## Ruling
 
@@ -464,6 +465,10 @@ Receipt:
 
 ### Phase 4: sovereign and embeddable surfaces
 
+**In progress (2026-09-04).** The first slice adds independent Player and
+Capture components plus their compact composition. The standalone host and the
+full Library, Queue, Notes, and Settings surfaces remain open.
+
 Build Player, Library, Queue, Notes, Capture, and Settings surfaces in Cambium,
 then mount them in the standalone Genet host.
 
@@ -477,6 +482,19 @@ Done when:
 - missing output devices, offline sources, and cache exhaustion appear as
   useful degraded states;
 - a headed scenario proves playback, restart/resume, and one text annotation.
+
+Progress receipt:
+
+- `redshank-surfaces` depends on Cambium and `redshank-model`, not on Woodshed
+  product crates. Its compact state contains current-item presentation facts,
+  transport state, configured skip intervals, capture state, and a typed command
+  queue. It contains no library, storage, fetch, decoder, or device authority.
+- Player and Capture mount separately or as one compact surface. Native buttons
+  carry screen-reader names and shortcut metadata for play/pause, skipping,
+  text notes, and voice-note start/finish. An unavailable output state is spoken
+  and rejects transport commands.
+- Three headless Cambium interaction tests pass. The complete isolated Redshank
+  workspace passes eight tests, and workspace-wide strict Clippy passes.
 
 ### Phase 5: voice capture and open annotation target
 
@@ -659,3 +677,7 @@ rejected for the reasons recorded in the 2026-09-01 planning pass.
 - **2026-09-04:** Phase 3 landed in Mere `5630e256cdd` and Turnstone
   `a0b91a97cba`. Parser, model, restart, duplicate-suppression, relative-URL,
   diagnostics, and graph-member continuity tests pass. Phase 4 is next.
+- **2026-09-04:** Phase 4 began with the reusable `redshank-surfaces` compact
+  Player/Capture slice. Independent mounting, semantic controls, command
+  emission, and unavailable-output degradation pass headlessly. The standalone
+  host and remaining full surfaces are still open.

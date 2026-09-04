@@ -1,0 +1,33 @@
+.redshank-compact {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background-color: #17201f;
+  color: #edf2ef;
+  font-family: sans-serif;
+}
+
+.redshank-player,
+.redshank-capture,
+.redshank-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.redshank-title {
+  font-weight: 600;
+}
+
+.redshank-status,
+.redshank-time {
+  color: #b5c4bd;
+}
+
+.redshank-control {
+  padding: 6px 10px;
+  border-radius: 5px;
+  background-color: #293a36;
+  color: #edf2ef;
+}

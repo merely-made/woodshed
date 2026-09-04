@@ -8,7 +8,10 @@ Current packages:
 
 - `redshank-model`: durable library, queue, progress, settings, representation
   receipts, text notes, audio notes, and host adapter traits;
-- `redshank-storage`: a local JSON store using immutable numbered generations.
+- `redshank-storage`: a local JSON store using immutable numbered generations;
+- `redshank-surfaces`: reusable Cambium Player and Capture surfaces. The compact
+  composition depends only on its presentation snapshot and command queue, so a
+  host can mount it without the Library.
 
 The storage package writes and flushes a pending generation before publishing
 it with a same-directory rename. Loading walks completed generations newest to

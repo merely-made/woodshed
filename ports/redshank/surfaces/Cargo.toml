@@ -1,0 +1,15 @@
+[package]
+name = "redshank-surfaces"
+version = "0.0.0"
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+publish = false
+
+[dependencies]
+cambium.workspace = true
+redshank-model.workspace = true
+
+[dev-dependencies]
+genet-scripted-dom.workspace = true
+layout-dom-api.workspace = true
