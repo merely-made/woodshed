@@ -11,7 +11,10 @@ Current packages:
 - `redshank-storage`: a local JSON store using immutable numbered generations;
 - `redshank-surfaces`: reusable Cambium Player and Capture surfaces. The compact
   composition depends only on its presentation snapshot and command queue, so a
-  host can mount it without the Library.
+  host can mount it without the Library;
+- `redshank-desktop`: the sovereign executable over Mere's Cambium/Genet winit
+  host. It restores the first queued item into the compact surface. Playback
+  commands currently degrade explicitly until the Symphonia adapter lands.
 
 The storage package writes and flushes a pending generation before publishing
 it with a same-directory rename. Loading walks completed generations newest to

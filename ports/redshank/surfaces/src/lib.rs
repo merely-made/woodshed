@@ -82,7 +82,7 @@ impl CompactPlayerState {
         self.commands.drain(..)
     }
 
-    fn push(&mut self, command: CompactCommand) {
+    pub fn request(&mut self, command: CompactCommand) {
         self.commands.push(command);
     }
 }
@@ -111,7 +111,7 @@ fn control(label: &'static str, shortcut: &'static str, command: CompactCommand)
     Box::new(
         button(label, move |state: &mut CompactPlayerState, _| {
             if enabled(state) {
-                state.push(command.clone());
+                state.request(command.clone());
             }
         })
         .attr("class", "redshank-control")

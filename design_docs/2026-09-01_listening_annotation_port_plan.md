@@ -7,7 +7,7 @@ fallback. Phase 1 is complete: its general Genet boundary, deterministic player
 core, and unified source vocabulary are landed. Phase 2 is complete with the
 unpublished model and generation store. Phase 3 is complete with shared podcast
 feed facts and GUID-stable Turnstone projection. Phase 4 is active with the
-first reusable Cambium surface slice landed.
+reusable Cambium controls and Mere-hosted sovereign shell landed.
 
 ## Ruling
 
@@ -17,7 +17,7 @@ Woodshed feature:
 ```text
 woodshed/
   ports/redshank/          listening model, actions, and Cambium surfaces
-  ports/redshank/desktop/  sovereign Genet/Cambium host
+  ports/redshank/desktop/  sovereign Mere/Cambium host over Genet
 ```
 
 This topology is illustrative, not compile-ready. The committed Phase 0
@@ -465,12 +465,13 @@ Receipt:
 
 ### Phase 4: sovereign and embeddable surfaces
 
-**In progress (2026-09-04).** The first slice adds independent Player and
-Capture components plus their compact composition. The standalone host and the
-full Library, Queue, Notes, and Settings surfaces remain open.
+**In progress (2026-09-04).** Independent Player and Capture components, their
+compact composition, and the standalone Mere/Cambium shell are landed. Live
+playback/capture adapters, a headed receipt, and the full Library, Queue, Notes,
+and Settings surfaces remain open.
 
 Build Player, Library, Queue, Notes, Capture, and Settings surfaces in Cambium,
-then mount them in the standalone Genet host.
+then mount them in Mere's standalone Cambium/Genet winit host.
 
 Done when:
 
@@ -493,8 +494,19 @@ Progress receipt:
   carry screen-reader names and shortcut metadata for play/pause, skipping,
   text notes, and voice-note start/finish. An unavailable output state is spoken
   and rejects transport commands.
-- Three headless Cambium interaction tests pass. The complete isolated Redshank
-  workspace passes eight tests, and workspace-wide strict Clippy passes.
+- `redshank-desktop` consumes `cambium-genet-winit-host` from Mere commit
+  `9f8f44047ed`, restores the first queued item and its progress from the
+  generation store, and mounts the same compact surface. Until the live
+  Symphonia and capture adapters land, commands produce an explicit unavailable
+  state.
+- Cambium, Rootstock, Sprigging, Workbench, and the desktop host resolve from
+  Mere. Genet remains the owner of the lower DOM, Livery, render, and winit
+  engine contracts at Mere's exact `115d348dedd` pin. The standalone workspace
+  restates Mere's Parley and in-process IPC patches because Cargo does not
+  inherit root patches through git dependencies.
+- Three headless surface tests and three desktop boot/degradation tests pass.
+  The complete isolated Redshank workspace passes eleven tests, and
+  workspace-wide strict Clippy passes.
 
 ### Phase 5: voice capture and open annotation target
 
@@ -679,5 +691,9 @@ rejected for the reasons recorded in the 2026-09-01 planning pass.
   diagnostics, and graph-member continuity tests pass. Phase 4 is next.
 - **2026-09-04:** Phase 4 began with the reusable `redshank-surfaces` compact
   Player/Capture slice. Independent mounting, semantic controls, command
-  emission, and unavailable-output degradation pass headlessly. The standalone
-  host and remaining full surfaces are still open.
+  emission, and unavailable-output degradation pass headlessly.
+- **2026-09-04:** Corrected the post-move ownership boundary: Redshank's
+  Cambium packages and sovereign winit host come from Mere, while Genet retains
+  their lower engine contracts. `redshank-desktop` now restores queued progress
+  and mounts the compact surface. Live audio, headed acceptance, and the
+  remaining full surfaces are still open.
