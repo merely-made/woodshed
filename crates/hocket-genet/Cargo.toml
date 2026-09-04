@@ -56,7 +56,7 @@ velopack = { workspace = true }
 cambium-genet-winit-host = { workspace = true }
 genet-clipboard = { workspace = true }
 genet-probe = { workspace = true }
-genet-host-api = { workspace = true }
+mere-surface-api = { workspace = true }
 workbench = { workspace = true }
 image = { workspace = true }
 netrender = { workspace = true }

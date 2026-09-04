@@ -31,7 +31,7 @@ use std::fmt;
 use std::io;
 use std::path::{Path, PathBuf};
 
-use genet_host_api::settings::{
+use mere_surface_api::settings::{
     SettingControl, SettingMovement, SettingMutability, SettingOption, SettingScope,
     SettingSecurity, SettingSpec, SettingValue, SettingsError, SettingsProvider,
 };
