@@ -5,7 +5,8 @@ endorsed. Phase 0 is complete: Symphonia plus a bounded range source is the
 shipping default, and Genet/GStreamer is the retained browser-conformance
 fallback. Phase 1 is complete: its general Genet boundary, deterministic player
 core, and unified source vocabulary are landed. Phase 2 is complete with the
-unpublished model and generation store. Phase 3 is the next code gate.
+unpublished model and generation store. Phase 3 is complete with shared podcast
+feed facts and GUID-stable Turnstone projection. Phase 4 is the next code gate.
 
 ## Ruling
 
@@ -426,6 +427,10 @@ Receipt:
 
 ### Phase 3: podcast facts
 
+**Complete (2026-09-04).** Errand now retains product-neutral podcast feed
+facts, and Turnstone resolves, stores, and projects them without taking on
+listener policy.
+
 Extend Errand's feed facts and adapt Turnstone's feed projection without adding
 listener policy to either layer.
 
@@ -438,6 +443,24 @@ Done when:
   without a diagnostic;
 - duplicate suppression prefers GUID and has a documented fallback;
 - ordinary non-podcast feed tests stay green.
+
+Receipt:
+
+- Mere commit `5630e256cdd` adds RSS and Atom GUIDs and enclosures, iTunes
+  duration and artwork, Podcasting 2.0 chapter and transcript references, feed
+  artwork, declared enclosure lengths, and explicit diagnostics for unknown
+  namespace extensions or invalid lengths.
+- Errand's focused suite passes 37 tests with one live-network test ignored;
+  its doctest also passes. The corpus includes ordinary RSS and Atom alongside
+  podcast RSS and Atom fixtures.
+- Turnstone commit `a0b91a97cba` resolves relative podcast URLs against the
+  fetched feed URL, persists the retained facts, suppresses duplicates by GUID
+  with URL as the fallback, and migrates earlier URL-keyed stored entries when
+  a GUID arrives.
+- Five focused feed-model tests and three application projection tests pass.
+  A changed episode link with a stable GUID navigates the existing graph member
+  in place rather than creating a second node. The broad test build emits 51
+  pre-existing unused-code warnings under `--no-default-features`.
 
 ### Phase 4: sovereign and embeddable surfaces
 
@@ -612,6 +635,9 @@ rejected for the reasons recorded in the 2026-09-01 planning pass.
 - **2026-09-03:** The GStreamer caller-renderer path works but emits a repeatable
   GLib signal-disconnect warning at shutdown. Treat that as backend debt rather
   than adding a Redshank workaround.
+- **2026-09-04:** Errand and Turnstone now retain podcast enclosure and stable
+  episode-identity facts. GUID is the primary duplicate key; resolved entry URL
+  is the documented fallback. Unknown namespace extensions produce diagnostics.
 
 ## Progress
 
@@ -630,3 +656,6 @@ rejected for the reasons recorded in the 2026-09-01 planning pass.
   the press-time tests pass 2/2; both local formats and the bounded HTTP seek
   ran successfully; release sizes, dependency counts, startup behavior, and
   Windows packaging constraints are recorded above.
+- **2026-09-04:** Phase 3 landed in Mere `5630e256cdd` and Turnstone
+  `a0b91a97cba`. Parser, model, restart, duplicate-suppression, relative-URL,
+  diagnostics, and graph-member continuity tests pass. Phase 4 is next.
