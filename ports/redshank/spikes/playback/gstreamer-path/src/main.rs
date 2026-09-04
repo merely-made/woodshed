@@ -11,7 +11,7 @@ use anyhow::{Context, Result, anyhow, bail};
 use redshank_playback_spike_common::{FirewheelHost, FirewheelSink};
 use servo_media::player::{
     PlayerEvent, StreamType,
-    audio::AudioRenderer,
+    audio::{AudioRenderer, DecodedAudioChunk},
     context::{GlApi, GlContext, NativeDisplay, PlayerGLContext},
     ipc_channel::ipc,
 };
@@ -52,8 +52,13 @@ fn parse_args() -> Result<Args> {
 #[derive(Default)]
 struct RendererStats {
     callbacks: u64,
+    legacy_callbacks: u64,
     first_callback_ms: Option<u128>,
     last_channel: Option<u32>,
+    sample_rate: Option<u32>,
+    channels: Option<u32>,
+    channel_positions: Vec<u32>,
+    last_presentation_time: Option<Duration>,
     push_errors: u64,
 }
 
@@ -65,12 +70,28 @@ struct FirewheelRenderer {
 
 impl AudioRenderer for FirewheelRenderer {
     fn render(&mut self, sample: Box<dyn AsRef<[f32]>>, channel: u32) {
+        self.stats.legacy_callbacks += 1;
         self.stats.callbacks += 1;
         self.stats
             .first_callback_ms
             .get_or_insert_with(|| self.started.elapsed().as_millis());
         self.stats.last_channel = Some(channel);
         if self.sink.push_mono(sample.as_ref().as_ref()).is_err() {
+            self.stats.push_errors += 1;
+        }
+    }
+
+    fn render_chunk(&mut self, chunk: DecodedAudioChunk) {
+        self.stats.callbacks += 1;
+        self.stats
+            .first_callback_ms
+            .get_or_insert_with(|| self.started.elapsed().as_millis());
+        self.stats.last_channel = chunk.channel_positions().last().copied();
+        self.stats.sample_rate = Some(chunk.sample_rate());
+        self.stats.channels = Some(chunk.channels());
+        self.stats.channel_positions = chunk.channel_positions().to_vec();
+        self.stats.last_presentation_time = chunk.presentation_time();
+        if chunk.channels() != 1 || self.sink.push_mono(chunk.samples()).is_err() {
             self.stats.push_errors += 1;
         }
     }
@@ -162,11 +183,16 @@ fn main() -> Result<()> {
         }
         thread::sleep(Duration::from_millis(5));
     }
-    player
-        .lock()
-        .map_err(|_| anyhow!("player lock poisoned"))?
-        .pause()
-        .map_err(|error| anyhow!("pause failed: {error:?}"))?;
+    let playback_snapshot = {
+        let player = player.lock().map_err(|_| anyhow!("player lock poisoned"))?;
+        let snapshot = player
+            .snapshot()
+            .map_err(|error| anyhow!("snapshot failed: {error:?}"))?;
+        player
+            .pause()
+            .map_err(|error| anyhow!("pause failed: {error:?}"))?;
+        snapshot
+    };
     host.drain(Duration::from_secs(2))?;
 
     let renderer = renderer
@@ -191,8 +217,23 @@ fn main() -> Result<()> {
     println!("firewheel_output_sample_rate={}", host.output_sample_rate());
     println!("firewheel_output_channels={}", host.output_channels());
     println!("renderer_callbacks={}", renderer.stats.callbacks);
+    println!(
+        "renderer_legacy_callbacks={}",
+        renderer.stats.legacy_callbacks
+    );
     println!("renderer_last_channel={:?}", renderer.stats.last_channel);
+    println!("renderer_sample_rate={:?}", renderer.stats.sample_rate);
+    println!("renderer_channels={:?}", renderer.stats.channels);
+    println!(
+        "renderer_channel_positions={:?}",
+        renderer.stats.channel_positions
+    );
+    println!(
+        "renderer_last_presentation_time={:?}",
+        renderer.stats.last_presentation_time
+    );
     println!("renderer_push_errors={}", renderer.stats.push_errors);
+    println!("player_snapshot={playback_snapshot:?}");
     println!("accepted_frames={}", sink_stats.accepted_frames);
     println!("dropped_frames={}", sink_stats.dropped_frames);
     println!("position_events={position_events}");

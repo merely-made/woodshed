@@ -1,9 +1,10 @@
 # Redshank: listening and annotation port plan
 
-**Status (2026-09-03): ACTIVE.** The product direction and **Redshank** name are
+**Status (2026-09-04): ACTIVE.** The product direction and **Redshank** name are
 endorsed. Phase 0 is complete: Symphonia plus a bounded range source is the
 shipping default, and Genet/GStreamer is the retained browser-conformance
-fallback. Phase 1 is the next code gate.
+fallback. Phase 1 is in progress; its general Genet boundary is landed, while
+the deterministic player core and unified source vocabulary remain open.
 
 ## Ruling
 
@@ -16,7 +17,7 @@ woodshed/
   ports/redshank/desktop/  sovereign Genet/Cambium host
 ```
 
-This topology is illustrative, not compile-ready. The unpublished Phase 0
+This topology is illustrative, not compile-ready. The committed Phase 0
 workspace lives at `ports/redshank/spikes/playback` without entering Woodshed's
 root workspace. Shipping package names remain gated by the public-name check.
 
@@ -342,10 +343,8 @@ GStreamer callback are block-quantized; annotation authority must use the
 frame/queue snapshot, not the 500 ms GStreamer position event.
 
 The Genet path also emitted a repeatable GLib signal-disconnect warning during
-shutdown. Its renderer contract reports a buffer and channel mask but omits
-sample rate, whole-stream channel layout, and presentation time. Phase 1 must
-add those facts at the general player boundary before stereo or annotation
-capture depends on the contract.
+shutdown. Phase 1a added sample rate, whole-stream channel layout, presentation
+time, and a synchronous playback snapshot at the general player boundary.
 
 ### Phase 1: capture-grade player contract
 
@@ -362,6 +361,22 @@ Done when:
 - local, HTTP, and host-blob sources use one player command vocabulary;
 - the player and decoder packages contain no CPAL or product-library code;
 - unsupported rate or seek operations return typed capability errors.
+
+Progress receipt, 2026-09-04:
+
+- Genet commit `eb1b03686b7` adds the additive `PlaybackSnapshot` and
+  `DecodedAudioChunk` contracts. Legacy renderers and external `Player`
+  implementations retain default adapters.
+- Focused `servo-media-player` tests, `servo-media-dummy` tests, and the
+  `servo-media-gstreamer` check pass on Windows with an isolated target.
+- The Redshank GStreamer probe received 45 whole-buffer callbacks and zero
+  legacy callbacks or dropped frames. It retained 48 kHz, one channel, channel
+  position `0`, and a final presentation timestamp of 1.056 s.
+- The same probe synchronously read a playing snapshot at 1.0801978 s with a
+  60.024 s duration and sequence `1`; the host frame/queue snapshot read 1.06 s.
+- The pre-existing GLib signal-disconnect warning still occurs at shutdown.
+- Phase 1 remains open on its fake source/sink state matrix, unified
+  local/HTTP/host-blob commands, and typed capability failures.
 
 ### Phase 2: port model and standalone storage
 
