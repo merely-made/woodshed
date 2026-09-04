@@ -4,7 +4,8 @@
 endorsed. Phase 0 is complete: Symphonia plus a bounded range source is the
 shipping default, and Genet/GStreamer is the retained browser-conformance
 fallback. Phase 1 is complete: its general Genet boundary, deterministic player
-core, and unified source vocabulary are landed. Phase 2 is the next code gate.
+core, and unified source vocabulary are landed. Phase 2 is complete with the
+unpublished model and generation store. Phase 3 is the next code gate.
 
 ## Ruling
 
@@ -392,6 +393,10 @@ Progress receipt, 2026-09-04:
 
 ### Phase 2: port model and standalone storage
 
+**Complete (2026-09-04).** The isolated `ports/redshank` workspace now contains
+unpublished model and storage packages without a headed UI or Woodshed product
+dependency.
+
 Create the separate Woodshed `ports/redshank` packages. Implement the library,
 queue, progress, settings, annotations, and host adapter traits without a headed
 UI.
@@ -405,6 +410,19 @@ Done when:
 - text and audio annotation documents round-trip with their representation
   receipts;
 - storage failure leaves the previous durable state readable.
+
+Receipt:
+
+- `redshank-model` owns local audio and feed episodes, queue order, progress,
+  listener settings, timed text and audio notes, representation receipts, and
+  playback/audio-capture host traits.
+- `redshank-storage` publishes immutable numbered JSON generations. Restart
+  tests round-trip the complete model; injected pre-publication failure and a
+  corrupt newer generation both preserve the previous readable state. A later
+  successful save advances past an abandoned pending generation.
+- Two model tests and three storage tests pass on Windows. Workspace-wide
+  strict Clippy passes, and the normal dependency tree contains no
+  `woodshed-core`, `woodshed-audio`, or `woodshed-views` package.
 
 ### Phase 3: podcast facts
 
