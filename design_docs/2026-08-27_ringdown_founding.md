@@ -654,6 +654,205 @@ Worth noting how it was found: not by testing, but by writing down what each
 method's parameters *are* and comparing that to what the code emits. The
 declaration was the instrument.
 
+**H47 — A CLIENT CAN CREATE A PLAYABLE BANK. `AddBank` always worked; the
+bank object needs a non-zero `gain`.** (2026-09-02, tile 8 of a factory
+profile restored by the vendor app, owner at the panel and playing.)
+
+Eight `AddBank` calls into the empty tile, each `RemoveBank`-ed first, each
+one variable from the last, each judged by ear:
+
+| Bank object | Heard |
+|---|---|
+| `{name, gain: 20.0, effects, fbk_onoff, fbk_params}` + `SaveConfig` + `SwitchBank` | **octave down** |
+| `{name, gain: 20.0, effects, fbk_onoff, fbk_params}`, nothing after | **octave down** |
+| `{name, gain: 20.0, effects}` | **octave down** |
+| `{id: 100, name, gain: 0, effects}` (the D4 object, `Shift +12`) | dry |
+| `{name, gain: 0, effects}` | dry |
+| `{name, gain: 0.0, effects}` (float zero) | dry |
+| `{name, gain: 20.0, effects}` with **`Shift +12`** | **octave up** |
+
+So: `gain` is required to be non-zero for a bank to render. Neither
+`fbk_onoff`/`fbk_params` (H39, the vendor app sends them on every bank) nor
+the stray `id` key nor the JSON number type has any bearing. `SaveConfig`
+and `SwitchBank` afterwards are the app's habit (H42), not a requirement —
+the bank plays the moment it is added.
+
+**Exactly what is proven, and by which pair.** `floatzero` and `gain20up`
+differ in one thing — `gain` 0.0 against 20.0 — with the same `Shift +12`,
+the same fields, the same profile, minutes apart. One is dry and one sounds.
+So a non-zero gain is **necessary**, and in that comparison sufficient.
+
+**What is not proven, and the owner said so before this was written.** That
+gain is the *only* requirement, and that gain is what silenced the earlier
+attempts:
+
+- D4 and H38 ran on a profile the vendor app had not yet rebuilt — H38's
+  own `AddBank` had shifted it and pushed a tile off the end — and the app
+  pushed a fresh `SetConfig` before this session. So those failures have a
+  second candidate cause that this run cannot separate from the gain. Gain
+  explains them plausibly; it does not explain them provably.
+- Untested: the audible floor (is 1.0 enough? is the factory Reverb's −5
+  audible?), a bank with no `name` or no `effects` key at all, and whether
+  the stray `id` is harmless alongside a working gain. Every object that
+  played here carried `name`, a non-zero `gain` and `effects` together, so
+  the trio is what is demonstrated, not the gain alone.
+
+**H38's central claim is retracted regardless.** "The bank it creates never
+renders" is false: `AddBank` inserts, shifts and renumbers (all still true)
+**and creates a bank the DSP plays.** The client surface plan's D1–D10
+conclusions rest on the same silence and go with it. The capture is what
+supplied a known-good object to work backwards from; without it the search
+was guessing at a field the app had been sending all along.
+
+**Two retractions of my own, same hour.** I first reported the cause as the
+two feedback fields, on a single comparison against D4 that changed four
+things at once — exactly the error this document keeps recording. One test
+that dropped only those fields killed it. Then the owner pointed out that
+every bank tested had been `Pitch −12`, so a chain the DSP had kept loaded
+and a freshly loaded one would sound identical; `Shift +12` became the
+discriminating oracle for the rest of the run and cleared it.
+
+**`gain: 0` is a sentinel, not a level.** Three more banks, same tile, one
+variable each, after the owner suggested that gain might act differently per
+effect:
+
+| Bank | Heard |
+|---|---|
+| `{name, gain: 0.0, effects: [Distortion, H29's four knobs]}` | clean |
+| `{name, gain: -5.0, same Distortion}` | **distortion** |
+
+With `{gain: 20.0}` audible from the Pitch runs above, **0 is a silent hole
+between two audible values, −5 and 20.** A level cannot do that. So the
+firmware reads 0 as "no gain set" and declines to load the bank, rather than
+attenuating it to nothing. That the same 0 silences both a Pitch and a
+Distortion — two effects with nothing in common — puts the behaviour in the
+bank, not the effect.
+
+The owner's per-effect hypothesis survives in a narrower form, and the app's
+own numbers support it: Reverb −5, Disto 15, Chorus 20, Boost 23, Echo 28,
+Phaser 30, Tremolo 40, **Octaver 50**. The pitch-shifting bank carries the
+highest gain of the eight and the reverb the lowest, which reads as
+per-effect level compensation. So the *working range* is effect-dependent
+even though the 0 sentinel is not.
+
+Still untested: whether any other value behaves as a sentinel, what the
+scale's units are, and whether `SetGainBank(slot, 0)` silences a bank that
+is already playing — which would make D2 of the client surface plan a
+misfire rather than a null result, since it sent exactly that to a bank it
+was trying to revive.
+
+**H46 — The vendor app never reads. Its only refusals are its own.** (Both
+captures, 573 decoded messages.) No `ReadBank`, `ReadConfig`, `PrintBank` or
+`AddEffect` in 307 writes; nothing arrives from the instrument unprompted;
+every reply is `true` except fifteen `GetStatus` objects and five `false`s,
+all of them the app's own `UpdateMetronome {"den": 8}` (H43). H7 and H19 are
+confirmed from the wire, and H32's "the app is authoritative by
+construction" is now a sequence rather than an inference (H40).
+
+**H45 — The ATT MTU is 500, not 517.** The app requests 527 and the
+instrument answers 500; every LLT2 frame the app sends is 497 bytes. The
+driver's `ASSUMED_WRITE_LEN` of 514 is wrong for this instrument and has
+never been tested, since ringdown has never sent a write over 497 bytes.
+Corrected to 497 in the driver.
+
+**H44 — The vocabulary from the app's own writes: `Gate` has six knobs,
+Delay's SYNC key is `DelaySync`, the equalizer writes six bands.** Read off
+every effect object in both captures (`SetConfig`, `AddBank`,
+`UpdateEffect`):
+
+| Effect | Keys the app sends |
+|---|---|
+| Gate | `Threshold`, `Hysteresis`, `Range`, `Hold`, `Release`, `Attack` |
+| Delay | `Sync`, `DelayTime`, `DelaySync`, `Lowpass`, `Highpass`, `Feedback`, `DryWet` |
+| Equalizer | `GainBand1`–`GainBand6`, `Gain` |
+| the other ten | exactly H31's lists |
+
+`Hysteresis` and `Hold` were never tried in H31. `DelaySync` is the
+"effect type" F15 listed that is really a parameter, the same story as
+`LFO`, and closes H31's twenty-five refusals. Its value is **milliseconds of
+a note value at the current tempo**: 375 at 120 bpm (a dotted eighth of a
+500 ms beat), 750 and 562.5 at 80 bpm (quarter and dotted eighth of 750
+ms). One library bank carried `4.0` when first placed, before any tempo was
+applied to it, so the library form may be a note-value code the app converts;
+unresolved. `GainBand7`, which H31 found accepted, is a key the firmware
+parses and the app never sends. `preset` is `"default"`, `"None"` and
+`"Default"` within one profile: lenient. A parameter may carry
+`"control":{"source":"Slider","min":..,"max":..}` inline; the app sends it on
+every `UpdateEffect` of a bound knob and *also* sends `SetController`
+separately when the binding is made. `bypass` is never `true` in the app's
+traffic.
+
+**H43 — A metronome field sent alone is a proper oracle; H24's "without
+`bpm` the call returns `false`" was wrong.** The app writes one field at a
+time: `UpdateMetronome {"bpm": 119}`, `{"num": 6}`, `{"den": 2}`. Thirty-nine
+such writes: every `bpm` and `num` value `true` (`num` up to 12), `den` 2, 4
+and 16 `true`, and `den` 8 **`false`, five times out of five**. So the reply
+is "at least one field applied": with `bpm` alongside, a refused `den` hides
+behind `bpm`'s `true` (H24); alone, it is refused out loud. The whitelist
+stands, and the vendor's own denominator control is broken over this path,
+live, in their app. `bpm` is optional on the wire; the `params::metronome`
+builder and the `METRONOME` shape are corrected. `StartMetronome` is sent
+with `{}`.
+
+**H42 — What the app does after each edit, and the asterisk.** Knob turns
+are `UpdateEffect` with the *whole* effect object, about three a second, no
+`SaveConfig` after them. Bank-structure changes (`AddBank`, `RemoveBank`,
+`MoveBank`) and every metronome tick are each followed by `SaveConfig`, and
+bank changes by a `SwitchBank` to the affected slot. Placing a bank is
+`AddBank`, `SaveConfig`, `SwitchBank`. Editing a library bank's knob renames
+it with a trailing asterisk (`SetBankName "Octaver*"`), which is what the
+panel's `echo*` means: modified from the library. `MoveBank {src, dst}` is
+the drag on the grid; `RemoveBank {bank_num}` is how a tile is emptied.
+Recording is `StartRecording {"free": true}` / `StopRecording {}`.
+
+**H41 — `SetConfig` recovered: the whole profile, and it may hold nine
+banks.** Was `ParamShape::Unrecovered`. The object:
+
+```
+{ file_type: "config", version: 1.0,
+  favorite_banks: [ <bank>, ... ],                 8 or 9 of them
+  calibration_on, metronome: {bpm, num, den, nbbars},
+  equalizer: {params: [GainBand1..6, Gain]},
+  aux_in_drywet, aux_in_on, aux_out_drywet, aux_out_on,
+  factory_reset, version_stm, version_esp, cpu_id, free_space }
+```
+
+Factory Standard has eight banks, which is why tile 8 is empty; the owner's
+edited profile has nine, `Vintage*` in the ninth, and the firmware took it.
+The push is three to six LLT2 frames of 497 bytes, each acknowledged. The
+identity fields at the end are the app echoing `GetStatus` back.
+
+**H40 — The app pushes its profile on every connect, then saves it.** Both
+captures open the same way: `GetStatus`, `SetDate`, `GetStatus`, `SetDate`,
+**`SetConfig`** with the full profile, `SwitchBank 0`, `GetStatus`,
+`SetDate`, then `SaveConfig`. Switching profiles in the app is another
+`SetConfig`. This is H32 exactly, from the wire: every write ringdown makes
+lives until the app next connects.
+
+**H39 — The bank object, from the vendor app itself.** (2026-09-02, two
+PacketLogger captures of the iPhone app on an Apple-silicon Mac, decoded with
+`ringdown-probe --decode-pklg`.) Verbatim, capture 1, id 23:
+
+```
+{"bank_num":8,"bank":{"name":"Crystals","gain":20.0,"effects":[...],
+                     "fbk_onoff":true,"fbk_params":[]}}
+```
+
+Five keys, in that order: `name`, `gain`, `effects`, **`fbk_onoff`**,
+**`fbk_params`**. The last two are the per-bank feedback-suppression state,
+dictionary words (F15) that had been read as calibration config; every bank
+in every profile carries them, `fbk_onoff` `true` or `false`, `fbk_params`
+always `[]` in these captures. No `id`. Gains are signed decibels from −5 to
+50. The effect objects are `{preset, type, bypass, params}` exactly as
+ringdown sends them.
+
+Against this, every ringdown `AddBank` to date (H38, and D4 of the client
+surface plan) sent `name`, `effects` and sometimes `gain` and `id`, never
+the feedback fields. That is the one remaining difference between an object
+the DSP plays and one it stores and ignores, and it is the next single
+variable on the wire. Whether the DSP requires the fields or merely a bank
+whose `fbk_onoff` it can read is what that test will say.
+
 **H38 — `AddBank` inserts and shifts, and the bank it makes is audio-dead.**
 (2026-09-01, read off the panel by the owner.)
 
@@ -2388,3 +2587,15 @@ is the truth, whatever the APK said.
   (H33). Two retractions in the batch, both from stale indices. State, open
   questions and the session's failure modes are in
   `2026-09-01_effects_handoff.md`.
+- **2026-09-02 — the vendor app captured on the wire (H39–H46).** Two
+  PacketLogger captures of the iPhone app on an Apple-silicon Mac, decoded
+  by a new `--decode-pklg` mode on the probe that reads the `.pklg` format
+  directly and runs every payload through the crate's codec. The bank
+  object is on record (`fbk_onoff`, `fbk_params` were the missing fields),
+  `SetConfig` is recovered, the app's connect and edit sequences are exact,
+  the metronome reply is an oracle after all and H24 is corrected, Gate and
+  Delay gain keys, the MTU is 500 not 517. Captures and decoded logs are
+  preserved under `Code/testing/ringdown/captures/2026-09-02_hyvibe_app_mac/`.
+  The bank-creation test with the app's field set is the next wire step;
+  the crate corrections (H41, H43, H44, H45) follow in the client surface
+  plan.

@@ -175,10 +175,13 @@ pub fn remove_bank(slot: i64) -> Call {
 ///
 /// **Receipt: panel, then ears.** The name appears on the tile at `slot`
 /// and every later tile moves; on a full nine-tile profile the last is
-/// pushed off (H38). The bank the H38 object made never rendered, and the
-/// vendor app creates playable banks with this same method, so the object
-/// the firmware wants is what the client surface plan's Phase D is finding.
-/// [`BankSpec`] is the current hypothesis, marked as such.
+/// pushed off (H38).
+///
+/// **The bank plays** — hardware-verified 2026-09-02 (H47), the moment it
+/// is added, with no `SaveConfig` or `SwitchBank` needed after it. The one
+/// requirement is a non-zero [`BankSpec::gain_db`]: a bank at 0 is named,
+/// selectable and silent, which is what made this method look broken for
+/// two sessions.
 ///
 /// A client holding slot indices across this call is holding stale ones.
 pub fn add_bank(slot: i64, bank: &BankSpec) -> Call {
@@ -309,7 +312,7 @@ impl Edit {
 /// owner's ears. `den` outside `{1, 2, 4, 16}` is refused here because the
 /// firmware would answer `true` and drop it (H24).
 pub fn start_metronome(
-    bpm: i64,
+    bpm: Option<i64>,
     num: Option<i64>,
     den: Option<i64>,
     bars: Option<i64>,
@@ -322,11 +325,11 @@ pub fn start_metronome(
 
 /// Change tempo, meter or loop length while the metronome runs.
 ///
-/// **Receipt: `ReadMetronome`.** Fields apply independently: a refused
-/// `den` would not stop `bpm` from applying, which is why the refusal is
-/// here and not on the wire (H24).
+/// **Receipt: `ReadMetronome`**, and the reply itself when one field is
+/// sent alone, which is how the app does it (H43): `false` then means the
+/// field was refused. A `den` outside the whitelist is refused here first.
 pub fn update_metronome(
-    bpm: i64,
+    bpm: Option<i64>,
     num: Option<i64>,
     den: Option<i64>,
     bars: Option<i64>,
@@ -410,23 +413,32 @@ mod tests {
         assert_eq!(wire(&remove_bank(4)), r#"{"bank_num":4}"#);
         assert_eq!(
             wire(&add_bank(4, &BankSpec::new("octave").with_effect(octave()))),
-            r#"{"bank_num":4,"bank":{"name":"octave","effects":[{"preset":"default","type":"Pitch","bypass":false,"params":[{"key":"Shift","value":-12.0}]}]}}"#
+            r#"{"bank_num":4,"bank":{"name":"octave","gain":20.0,"effects":[{"preset":"default","type":"Pitch","bypass":false,"params":[{"key":"Shift","value":-12.0}]}],"fbk_onoff":true,"fbk_params":[]}}"#
         );
     }
 
     #[test]
     fn metronome_planners_pin_their_wire_bytes_and_refuse_bad_den() {
         assert_eq!(
-            wire(&start_metronome(200, Some(7), Some(4), Some(4)).unwrap()),
+            wire(&start_metronome(Some(200), Some(7), Some(4), Some(4)).unwrap()),
             r#"{"bpm":200,"num":7,"den":4,"bars":4}"#
         );
         assert_eq!(
-            wire(&update_metronome(96, None, None, None).unwrap()),
+            wire(&update_metronome(Some(96), None, None, None).unwrap()),
             r#"{"bpm":96}"#
         );
         assert_eq!(wire(&stop_metronome()), r#"{}"#);
+        // The app's forms (H42, H43).
         assert_eq!(
-            update_metronome(96, Some(6), Some(8), None).unwrap_err(),
+            wire(&start_metronome(None, None, None, None).unwrap()),
+            r#"{}"#
+        );
+        assert_eq!(
+            wire(&update_metronome(None, Some(6), None, None).unwrap()),
+            r#"{"num":6}"#
+        );
+        assert_eq!(
+            update_metronome(None, None, Some(8), None).unwrap_err(),
             ParamError::DenNotAccepted(8)
         );
     }
@@ -518,8 +530,8 @@ mod tests {
             move_bank(0, 1),
             remove_bank(0),
             add_bank(0, &bank),
-            start_metronome(120, Some(4), Some(4), None).unwrap(),
-            update_metronome(120, None, None, None).unwrap(),
+            start_metronome(None, None, None, None).unwrap(),
+            update_metronome(Some(120), None, None, None).unwrap(),
             stop_metronome(),
         ];
         for call in &calls {

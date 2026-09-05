@@ -19,6 +19,8 @@
 //! ringdown-probe --scan-secs 20        scan for longer
 //! ```
 
+mod pklg;
+
 use std::time::Duration;
 
 use ringdown_ble::{Guitar, MAX_FILE_CHUNK, MatchedBy, TransportError, discover};
@@ -39,6 +41,7 @@ struct Args {
     fetch: Option<String>,
     fetch_bytes: Option<usize>,
     index: bool,
+    decode_pklg: Option<String>,
 }
 
 /// Parse call parameters as JSON, or as comma-separated `key=value` pairs.
@@ -149,6 +152,7 @@ fn parse_args() -> Result<Args, String> {
         fetch: None,
         fetch_bytes: None,
         index: false,
+        decode_pklg: None,
     };
     let mut argv = std::env::args().skip(1).peekable();
     while let Some(arg) = argv.next() {
@@ -201,6 +205,9 @@ fn parse_args() -> Result<Args, String> {
             }
             "--dirs" => args.dirs = true,
             "--index" => args.index = true,
+            "--decode-pklg" => {
+                args.decode_pklg = Some(argv.next().ok_or("--decode-pklg needs a .pklg file")?);
+            }
             "--files" => {
                 args.files = Some(argv.next().ok_or("--files needs a directory")?);
             }
@@ -249,6 +256,8 @@ ringdown-probe — confirm the recovered HyVibe protocol against a real guitar
                      each file's 92-byte header. Read-only, and cheap: a header
                      is one round trip where a whole loop is ten minutes.
   --trace            print every notification as it arrives
+  --decode-pklg <f>  no guitar: decode a PacketLogger capture (.pklg) of the
+                     vendor app talking to one, and print the conversation
   --diagnose         if GetStatus is unanswered, try candidate encodings and
                      report which, if any, the device replies to
   -h, --help         this text
@@ -269,6 +278,14 @@ async fn main() {
             std::process::exit(2);
         }
     };
+
+    if let Some(path) = args.decode_pklg.as_deref() {
+        if let Err(e) = pklg::decode_file(path) {
+            eprintln!("error: {e}");
+            std::process::exit(1);
+        }
+        return;
+    }
 
     if let Err(e) = run(args).await {
         eprintln!("\nFAILED: {e}");

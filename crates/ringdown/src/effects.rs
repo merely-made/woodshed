@@ -111,23 +111,29 @@ define_effects! {
     Chorus => "Chorus" ["Frequency", "DryWet"],
     /// Attack, Release, Threshold, Ratio, DryGain, WetGain, as labelled.
     Compressor => "Compressor" ["Attack", "Release", "Threshold", "Ratio", "DryGain", "WetGain"],
-    /// TIME, SYNC, LP, HP, FEEDBACK, DRY/WET.
+    /// SYNC, TIME, the SYNC note value, LP, HP, FEEDBACK, DRY/WET, in the
+    /// order the app writes them.
     ///
-    /// The SYNC note-value knob's key is **unknown** after twenty-five
-    /// refusals (H31); it is not listed rather than guessed. The working
-    /// hypothesis is that with `Sync: 1` the note fraction travels in
-    /// `DelayTime`, testable only by ear against a running metronome.
-    Delay => "Delay" ["DelayTime", "Sync", "Lowpass", "Highpass", "Feedback", "DryWet"],
+    /// `DelaySync` is the note-value key H31 could not find in twenty-five
+    /// guesses; the app's own writes name it (H44). Its value is
+    /// milliseconds of a note at the current tempo: 375 at 120 bpm, 562.5
+    /// or 750 at 80 bpm. One library bank carried `4.0` before any tempo
+    /// was applied, so the library form may be a note code; unresolved.
+    Delay => "Delay" ["Sync", "DelayTime", "DelaySync", "Lowpass", "Highpass", "Feedback", "DryWet"],
     /// GAIN (dB), VOL (dB), LP (Hz), HP (Hz). The app abbreviates; the wire
     /// wants the full words (H29).
     Distortion => "Distortion" ["Gain", "Volume", "Lowpass", "Highpass"],
-    /// Seven band sliders and an overall gain. `GainBand8` and up are refused.
+    /// Band sliders and an overall gain. The app writes six bands (H44);
+    /// `GainBand7` is parsed by the firmware (H31) and never sent by the
+    /// app, and `GainBand8` and up are refused.
     Equalizer => "Equalizer" [
         "GainBand1", "GainBand2", "GainBand3", "GainBand4",
         "GainBand5", "GainBand6", "GainBand7", "Gain",
     ],
-    /// Threshold, Range, Release, Attack, as labelled.
-    Gate => "Gate" ["Threshold", "Range", "Release", "Attack"],
+    /// Threshold, Hysteresis, Range, Hold, Release, Attack, in the order
+    /// the app writes them (H44). `Hysteresis` and `Hold` were never tried
+    /// in H31's sweep.
+    Gate => "Gate" ["Threshold", "Hysteresis", "Range", "Hold", "Release", "Attack"],
     /// FREQ, Q.
     Highpass => "Highpass" ["Frequency", "Q"],
     /// FREQ, Q. `Q` is by pattern with the other filters and untested (H31).
@@ -206,6 +212,26 @@ pub struct Parameter {
     /// In the knob's own units, unconverted: dB for gains, Hz for corner
     /// frequencies. `Lowpass: 1800` is what the app displays as `1.8 kHz`.
     pub value: f64,
+    /// A physical control bound to this knob, with its range. Omitted from
+    /// the wire when absent. The app carries it inline on every
+    /// `UpdateEffect` of a bound knob and also sends `SetController` when
+    /// the binding is made (H44).
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub control: Option<Control>,
+}
+
+/// A physical control bound to a parameter, as the wire carries it.
+///
+/// Only `"Slider"` has been seen as a `source` (H44); the range is in the
+/// parameter's own units.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct Control {
+    /// The control, by the app's name for it.
+    pub source: String,
+    /// Value at the control's minimum.
+    pub min: f64,
+    /// Value at the control's maximum.
+    pub max: f64,
 }
 
 /// An effect in a bank's chain, as the wire carries it.
@@ -281,7 +307,11 @@ impl Effect {
                 .to_string(),
             None => key.to_string(),
         };
-        self.params.push(Parameter { key, value });
+        self.params.push(Parameter {
+            key,
+            value,
+            control: None,
+        });
         Ok(self)
     }
 
@@ -293,7 +323,22 @@ impl Effect {
         self.params.push(Parameter {
             key: key.to_string(),
             value,
+            control: None,
         });
+        self
+    }
+
+    /// Bind a physical control to the knob most recently added.
+    ///
+    /// The app's form: the binding rides inside the parameter (H44).
+    pub fn bound_to(mut self, source: &str, min: f64, max: f64) -> Effect {
+        if let Some(last) = self.params.last_mut() {
+            last.control = Some(Control {
+                source: source.to_string(),
+                min,
+                max,
+            });
+        }
         self
     }
 
@@ -311,48 +356,72 @@ impl Effect {
 
 /// The key under which a bank object carries its chain.
 ///
-/// **Provisional.** `effects` is what the H38 `AddBank` sent, and that bank
-/// never rendered; the app's own word for the field is unrecovered. Kept as
-/// one constant so the bank-creation research (client surface plan, Phase D)
-/// changes one line when it learns the answer.
+/// `effects`, as the vendor app itself sends it (H39).
 pub const BANK_CHAIN_KEY: &str = "effects";
 
-/// A bank as the app models it: a named container of gain, sustain-killer
-/// state and an effect chain (H28).
+/// The gain a new [`BankSpec`] carries.
 ///
-/// This is the unit of tone-sharing, and `AddBank` is its transport. What the
-/// firmware wants the object to look like is **not yet established**: of the
-/// keys [`BankSpec::to_value`] emits, only `name` has been seen to take effect
-/// (H38 put it on the tile). The others follow the app's model and the
-/// vocabulary of the per-field methods (`gain` from `SetGainBank`, `killed`
-/// from `SustainKiller`), which is a hypothesis, not a finding.
+/// 20 dB, which is what the vendor app gives a placed `Chorus` or
+/// `Crystals` bank (H39) and what the bank-creation tests were heard
+/// through (H47). Zero would be silent.
+pub const DEFAULT_BANK_GAIN: f32 = 20.0;
+
+/// A bank as the app sends it: a named container of gain, an effect chain,
+/// and the per-bank feedback-suppression state (H39).
+///
+/// This is the unit of tone-sharing, and `AddBank` is its transport. The
+/// wire shape is the vendor app's own, read off the wire on 2026-09-02:
+/// `name`, `gain`, `effects`, `fbk_onoff`, `fbk_params`, in that order. The
+/// two feedback fields are what every ringdown bank object had lacked while
+/// the instrument stored the bank and never played it (H38, client surface
+/// plan Phase D); whether they are what the DSP needs is the next test on
+/// the wire.
 ///
 /// Two serialisations, on purpose. The serde derive uses these field names
 /// and is the **persistence** form, what a saved [`crate::profile::Profile`]
-/// holds; [`BankSpec::to_value`] is the **wire** form and is provisional.
-/// Keeping them apart means the research can change the wire without
-/// invalidating anyone's saved profile.
+/// holds; [`BankSpec::to_value`] is the **wire** form. `sustain_killed` is
+/// shadow-only state from `SustainKiller`, which the wire object does not
+/// carry.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct BankSpec {
     /// Shown on the panel tile.
     pub name: String,
-    /// Output gain in decibels, signed and small (`Gain -5`, `Gain 2` on the
-    /// app's display, H28). `None` leaves it out.
-    pub gain_db: Option<f32>,
-    /// Sustain-killer engaged. `None` leaves it out.
-    pub sustain_killed: Option<bool>,
+    /// The bank's gain, and **0 is a sentinel: a bank at 0 never plays**
+    /// (H47). Not an attenuation — −5 and 20 are both audible, so 0 is a
+    /// silent hole between them and the firmware reads it as "no gain set".
+    /// The units and the working range are unestablished; the app picks a
+    /// value per effect, from −5 for a reverb to 50 for an octaver, which
+    /// looks like level compensation.
+    pub gain_db: f32,
+    /// Feedback suppression on for this bank. Every factory bank carries it,
+    /// most `true` (H39).
+    pub fbk_onoff: bool,
+    /// Feedback-suppression parameters. Always `[]` in every capture so far;
+    /// kept as raw JSON until one is seen.
+    pub fbk_params: Vec<Value>,
     /// The chain, in signal order.
     pub chain: Vec<Effect>,
+    /// Sustain-killer engaged, as last written by `SustainKiller`. Not part
+    /// of the wire object; `None` means never written.
+    #[serde(default)]
+    pub sustain_killed: Option<bool>,
 }
 
 impl BankSpec {
-    /// An empty bank with this name.
+    /// An empty bank with this name, at [`DEFAULT_BANK_GAIN`], feedback
+    /// suppression on.
+    ///
+    /// The gain default is deliberately not 0: a bank at 0 is created,
+    /// named, selectable and **silent** (H47), which is the failure this
+    /// project spent two sessions on.
     pub fn new(name: &str) -> BankSpec {
         BankSpec {
             name: String::from(name),
-            gain_db: None,
-            sustain_killed: None,
+            gain_db: DEFAULT_BANK_GAIN,
+            fbk_onoff: true,
+            fbk_params: Vec::new(),
             chain: Vec::new(),
+            sustain_killed: None,
         }
     }
 
@@ -364,30 +433,36 @@ impl BankSpec {
 
     /// Set the output gain.
     pub fn gain_db(mut self, gain: f32) -> BankSpec {
-        self.gain_db = Some(gain);
+        self.gain_db = gain;
         self
     }
 
-    /// Set the sustain-killer state.
+    /// Set feedback suppression for this bank.
+    pub fn feedback_suppression(mut self, on: bool) -> BankSpec {
+        self.fbk_onoff = on;
+        self
+    }
+
+    /// Set the sustain-killer state (shadow-only; see the struct doc).
     pub fn sustain_killed(mut self, killed: bool) -> BankSpec {
         self.sustain_killed = Some(killed);
         self
     }
 
-    /// The bank object, keys in the order `name, gain, killed, <chain>`,
-    /// absent optionals omitted rather than sent as `null`.
+    /// The bank object, keys in the app's order: `name, gain, effects,
+    /// fbk_onoff, fbk_params`.
     pub fn to_value(&self) -> Value {
         let mut map = serde_json::Map::new();
         map.insert("name".to_string(), Value::from(self.name.as_str()));
-        if let Some(gain) = self.gain_db {
-            map.insert("gain".to_string(), Value::from(gain));
-        }
-        if let Some(killed) = self.sustain_killed {
-            map.insert("killed".to_string(), Value::from(killed));
-        }
+        map.insert("gain".to_string(), Value::from(self.gain_db));
         map.insert(
             BANK_CHAIN_KEY.to_string(),
             Value::Array(self.chain.iter().map(Effect::to_value).collect()),
+        );
+        map.insert("fbk_onoff".to_string(), Value::from(self.fbk_onoff));
+        map.insert(
+            "fbk_params".to_string(),
+            Value::Array(self.fbk_params.clone()),
         );
         Value::Object(map)
     }
@@ -473,6 +548,21 @@ mod tests {
     /// Tremolo's one knob is `LFO`; `Frequency` is the refused guess every
     /// other FREQ knob would suggest (H31).
     #[test]
+    fn gate_and_delay_take_the_keys_the_app_writes() {
+        assert!(
+            Effect::new(EffectKind::Gate)
+                .with("Hysteresis", 3.0)
+                .is_ok()
+        );
+        assert!(Effect::new(EffectKind::Gate).with("Hold", 10.0).is_ok());
+        assert!(
+            Effect::new(EffectKind::Delay)
+                .with("DelaySync", 375.0)
+                .is_ok()
+        );
+    }
+
+    #[test]
     fn tremolo_takes_lfo_and_not_frequency() {
         assert!(Effect::new(EffectKind::Tremolo).with("LFO", 4.0).is_ok());
         assert!(
@@ -505,23 +595,52 @@ mod tests {
         assert_eq!(d.params[0].key, "NoteValue");
     }
 
+    /// The app's exact `AddBank` object from the capture, rebuilt from the
+    /// typed model, byte for byte (H39, capture 1, id 23; chain shortened).
+    #[test]
+    fn the_captured_bank_object_is_reproducible() {
+        let bank = BankSpec::new("Crystals").gain_db(20.0).with_effect(
+            Effect::unchecked("Chorus")
+                .with_unchecked("Frequency", 0.7)
+                .bound_to("Slider", 0.6, 3.0)
+                .with_unchecked("DryWet", 0.6),
+        );
+        assert_eq!(
+            serde_json::to_string(&bank.to_value()).unwrap(),
+            r#"{"name":"Crystals","gain":20.0,"effects":[{"preset":"default","type":"Chorus","bypass":false,"params":[{"key":"Frequency","value":0.7,"control":{"source":"Slider","min":0.6,"max":3.0}},{"key":"DryWet","value":0.6}]}],"fbk_onoff":true,"fbk_params":[]}"#
+        );
+        // And the wire form reads back into the model.
+        let e: Effect = serde_json::from_value(bank.chain[0].to_value()).unwrap();
+        assert_eq!(e.params[0].control.as_ref().unwrap().source, "Slider");
+        assert_eq!(e.params[1].control, None);
+    }
+
     #[test]
     fn a_bank_spec_serialises_in_model_order_and_omits_absent_fields() {
         let bare = BankSpec::new("octave").to_value();
         assert_eq!(
             serde_json::to_string(&bare).unwrap(),
-            r#"{"name":"octave","effects":[]}"#
+            r#"{"name":"octave","gain":20.0,"effects":[],"fbk_onoff":true,"fbk_params":[]}"#
         );
 
         let full = BankSpec::new("octave")
             .gain_db(-5.0)
-            .sustain_killed(false)
+            .feedback_suppression(false)
             .with_effect(Effect::new(EffectKind::Pitch).with("Shift", -12.0).unwrap())
             .to_value();
         assert_eq!(
             serde_json::to_string(&full).unwrap(),
-            r#"{"name":"octave","gain":-5.0,"killed":false,"effects":[{"preset":"default","type":"Pitch","bypass":false,"params":[{"key":"Shift","value":-12.0}]}]}"#
+            r#"{"name":"octave","gain":-5.0,"effects":[{"preset":"default","type":"Pitch","bypass":false,"params":[{"key":"Shift","value":-12.0}]}],"fbk_onoff":false,"fbk_params":[]}"#
         );
+    }
+
+    /// A new bank is audible by default. A bank at gain 0 is created,
+    /// named, selectable and silent (H47), so the constructor must not
+    /// hand anyone one by accident.
+    #[test]
+    fn a_new_bank_does_not_default_to_a_silent_gain() {
+        assert_ne!(BankSpec::new("x").gain_db, 0.0);
+        assert_eq!(BankSpec::new("x").gain_db, DEFAULT_BANK_GAIN);
     }
 
     #[test]
