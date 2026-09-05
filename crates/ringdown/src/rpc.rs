@@ -382,14 +382,6 @@ pub enum ParamShape {
     None,
     /// An object with these keys.
     Object(&'static [ParamKey]),
-    /// The method exists but its parameters were never recovered.
-    ///
-    /// Distinct from [`ParamShape::None`] on purpose: "takes nothing" and "we
-    /// do not know what it takes" look identical at a call site and are
-    /// opposite facts. `SetConfig` is the live example — it certainly takes a
-    /// configuration, and `ReadConfig` wedging the firmware (H18) means the
-    /// shape it would mirror has never been seen.
-    Unrecovered,
 }
 
 /// What `params` a method expects.
@@ -414,7 +406,7 @@ pub fn param_shape(method: Method) -> ParamShape {
 
         // -- Configuration --
         ReadConfig | SaveConfig => ParamShape::None,
-        SetConfig => ParamShape::Unrecovered,
+        SetConfig => ParamShape::Object(CONFIG),
 
         // -- Banks --
         ReadBank | SwitchBank | RemoveBank => ParamShape::Object(BANK),
@@ -498,11 +490,36 @@ const VALUE: &[ParamKey] = &[req("value")];
 /// **`den` writes, with two conditions** — the fields must be in declaration
 /// order (`bpm, num, den`; the parser drops a `den` that precedes `num`), and
 /// the value must be in the firmware's whitelist `{1, 2, 4, 16}`; 8 and 32
-/// exist on the instrument's panel but are silently refused over RPC. Sent
-/// without `bpm` the call returns `false` outright. See [`params::metronome`].
-/// `ReadMetronome` reports the field correctly, so a caller can always tell
-/// what the instrument is actually set to.
-const METRONOME: &[ParamKey] = &[req("bpm"), opt("num"), opt("den"), opt("bars")];
+/// exist on the instrument's panel but are refused over RPC. Every field is
+/// optional and the app writes them one at a time (H43); `StartMetronome`
+/// is sent as `{}`. See [`params::metronome`]. `ReadMetronome` reports the
+/// field correctly, so a caller can always tell what the instrument is
+/// actually set to.
+const METRONOME: &[ParamKey] = &[opt("bpm"), opt("num"), opt("den"), opt("bars")];
+
+/// The whole profile, as the vendor app pushes it on every connect (H40,
+/// H41). `favorite_banks` is the array of bank objects
+/// ([`crate::effects::BankSpec::to_value`]), eight or nine of them;
+/// `metronome` is `{bpm, num, den, nbbars}`; `equalizer` is `{params: [..]}`
+/// with `GainBand1`–`GainBand6` and `Gain`; the identity fields at the end
+/// are the app echoing `GetStatus`. Three to six LLT2 frames on the wire.
+const CONFIG: &[ParamKey] = &[
+    req("file_type"),
+    req("version"),
+    req("favorite_banks"),
+    req("calibration_on"),
+    req("metronome"),
+    req("equalizer"),
+    req("aux_in_drywet"),
+    req("aux_in_on"),
+    req("aux_out_drywet"),
+    req("aux_out_on"),
+    req("factory_reset"),
+    req("version_stm"),
+    req("version_esp"),
+    req("cpu_id"),
+    req("free_space"),
+];
 
 const RECORDING: &[ParamKey] = &[req("free")];
 const SUSTAIN_KILLER: &[ParamKey] = &[req("bank_num"), opt("killed"), opt("reset")];
@@ -709,13 +726,16 @@ pub mod params {
     ///    result.
     ///
     /// `bpm` and `num` write normally, each field applies independently, and
-    /// `ReadMetronome` always reports the true state.
+    /// `ReadMetronome` always reports the true state. Every field is
+    /// optional: the app writes one at a time (H43).
     ///
-    /// A `den` outside the whitelist is **refused here** rather than sent,
-    /// so the caller sees the refusal the instrument would hide. See
+    /// The reply means "at least one field applied". So a refused `den`
+    /// hides behind a `bpm` in the same message, and is answered `false`
+    /// when sent alone (H43, correcting H24). A `den` outside the whitelist
+    /// is **refused here** rather than sent either way. See
     /// [`METRONOME_DEN_ACCEPTED`].
     pub fn metronome(
-        bpm: i64,
+        bpm: Option<i64>,
         num: Option<i64>,
         den: Option<i64>,
         bars: Option<i64>,
@@ -726,7 +746,7 @@ pub mod params {
             return Err(ParamError::DenNotAccepted(den));
         }
         Ok(object(&[
-            ("bpm", Some(json!(bpm))),
+            ("bpm", bpm.map(|v| json!(v))),
             ("num", num.map(|v| json!(v))),
             ("den", den.map(|v| json!(v))),
             ("bars", bars.map(|v| json!(v))),
@@ -814,7 +834,6 @@ pub(crate) fn assert_matches_shape(method: Method, params: &Value) {
                 );
             }
         }
-        ParamShape::Unrecovered => {}
     }
 }
 
@@ -1070,7 +1089,6 @@ mod tests {
     fn the_shape_table_covers_every_method_with_variety() {
         let mut nones = 0;
         let mut objects = 0;
-        let mut unrecovered = 0;
         for &m in Method::ALL {
             match param_shape(m) {
                 ParamShape::None => nones += 1,
@@ -1078,17 +1096,16 @@ mod tests {
                     assert!(!keys.is_empty(), "{m:?} declares an object with no keys");
                     objects += 1;
                 }
-                ParamShape::Unrecovered => unrecovered += 1,
             }
         }
-        assert_eq!(nones + objects + unrecovered, Method::ALL.len());
+        assert_eq!(nones + objects, Method::ALL.len());
         assert!(nones > 0 && objects > 0, "the table lost its distinctions");
-        // SetConfig is the one method whose shape was never recovered, because
-        // ReadConfig — the call whose reply would show it — wedges the
-        // firmware. If this becomes 0 the shape was found; if it grows,
-        // something was demoted and the Findings should say why.
-        assert_eq!(unrecovered, 1, "exactly SetConfig should be unrecovered");
-        assert_eq!(param_shape(Method::SetConfig), ParamShape::Unrecovered);
+        // SetConfig was the one unrecovered shape until the vendor app was
+        // captured sending it (H41); every method is now declared.
+        assert!(matches!(
+            param_shape(Method::SetConfig),
+            ParamShape::Object(_)
+        ));
     }
 
     /// No key is declared twice for one method, which a hand-written table
@@ -1155,11 +1172,11 @@ mod tests {
             (Method::AuxOutDryWet, params::value(0.5)),
             (
                 Method::StartMetronome,
-                params::metronome(120, Some(4), None, None).unwrap(),
+                params::metronome(Some(120), Some(4), None, None).unwrap(),
             ),
             (
                 Method::UpdateMetronome,
-                params::metronome(96, None, None, None).unwrap(),
+                params::metronome(Some(96), None, None, None).unwrap(),
             ),
             (Method::StartRecording, params::start_recording(true)),
             (
@@ -1184,7 +1201,7 @@ mod tests {
     /// different requests.
     #[test]
     fn absent_optionals_are_omitted_rather_than_nulled() {
-        let m = params::metronome(120, None, None, None).unwrap();
+        let m = params::metronome(Some(120), None, None, None).unwrap();
         assert_eq!(m, serde_json::json!({ "bpm": 120 }));
         assert!(!m.as_object().unwrap().contains_key("den"));
 
@@ -1195,7 +1212,7 @@ mod tests {
         assert!(!c.as_object().unwrap().contains_key("min"));
 
         // Present ones still travel.
-        let full = params::metronome(96, Some(5), Some(16), Some(2)).unwrap();
+        let full = params::metronome(Some(96), Some(5), Some(16), Some(2)).unwrap();
         assert_eq!(full.as_object().unwrap().len(), 4);
     }
 
@@ -1207,7 +1224,7 @@ mod tests {
     /// anyone "tidies" the feature away.
     #[test]
     fn metronome_params_keep_wire_order_not_alphabetical() {
-        let p = params::metronome(93, Some(6), Some(4), None).unwrap();
+        let p = params::metronome(Some(93), Some(6), Some(4), None).unwrap();
         let text = serde_json::to_string(&p).unwrap();
         let pos = |k: &str| {
             text.find(k)
@@ -1225,13 +1242,18 @@ mod tests {
     fn a_den_outside_the_whitelist_is_refused_not_sent() {
         for den in [8, 32, 3, 0, 256] {
             assert_eq!(
-                params::metronome(120, Some(4), Some(den), None),
+                params::metronome(Some(120), Some(4), Some(den), None),
                 Err(ParamError::DenNotAccepted(den))
             );
         }
         for den in METRONOME_DEN_ACCEPTED {
-            assert!(params::metronome(120, Some(4), Some(den), None).is_ok());
+            assert!(params::metronome(Some(120), Some(4), Some(den), None).is_ok());
         }
+        // The app's own form: one field, no bpm (H43).
+        assert_eq!(
+            params::metronome(None, None, Some(4), None).unwrap(),
+            serde_json::json!({ "den": 4 })
+        );
     }
 
     /// The two reorder methods use different key names for the same idea. It

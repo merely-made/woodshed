@@ -5,7 +5,8 @@
 2026-09-02. **Phase A landed 2026-09-02** (commit 77207ef). **Phase B landed 2026-09-02**
 (commit 3611c55). **Phase C landed 2026-09-02** (uncommitted at time of
 writing). B and C are verified against a scripted link only, not against the
-instrument. Phase D not started.
+instrument. **Phase D closed 2026-09-02**: bank creation works (H47). Phases A–C landed
+(77207ef, 3611c55, 86c266a); the session log is at the foot.
 
 Findings that ground this live in `2026-08-27_ringdown_founding.md` (H25–H38)
 and the session handoff `2026-09-01_effects_handoff.md`. This plan does not
@@ -296,3 +297,257 @@ listen; count before indexing; nothing sent while he is comparing by ear.
     in H33 order with the exact method sequence, and listening refuses
     writes while `status` still answers. 148 tests, clippy and rustdoc
     clean.
+
+## Phase D session log (2026-09-02, H2-CC340, owner at the panel)
+
+State on arrival: profile still shifted from H38 (`octave` at 4, Tremolo 5,
+Octaver 6, Disto 7, Boost 8); the vendor app has not connected since.
+
+- **D0 — control.** `GetStatus` answered with live values (battery 51%,
+  STM V1.2.3, ESP V1.3.0). `PrintBank {bank_num: 5}` on the populated
+  Tremolo bank: `true`, nothing followed within the 800 ms drain. That
+  method was only ever tried on an empty instrument (H9, H11); it is now a
+  dead end on a bank with content too.
+- **D1 — baseline.** Owner selects tile 4 (`octave`), plays a G: dry, no
+  octave. H38 reproduced before touching anything.
+- **D2 — gain hypothesis: killed.** `SetGainBank {bank_num: 4, gain: 0}`
+  (decibels, H28): `true`. Owner plays without touching the panel: dry.
+  Switches away and back to tile 4, plays: dry. So a zero-dB gain write does
+  not revive the H38 bank, and the re-select changes nothing either.
+  Caveat carried: `SetGainBank` has no receipt of its own (H27, H28), so this
+  kills "the bank lacks a gain and `SetGainBank` supplies it", not "the bank
+  has no gain problem".
+- **Desk finding, before the session.** The compressor dictionary
+  (`compress::KEYWORDS`) holds `effects`, `name`, `gain`, `id`, `preset`,
+  `default` and `bank`, and not `chain`, `fx`, `sustain` or `killed`. So the
+  `effects` key H38 sent is a firmware word, hypothesis 1 of this plan is
+  largely dead on the desk, and `id` joins the candidate bank fields.
+- **D3 — `RemoveBank` hardware-verified; the list model holds.**
+  `RemoveBank {bank_num: 4}`: `true`. Owner reads the panel: off, reverb,
+  chorus, echo*, phaser, tremolo, octave, dist, boost, off. With the leading
+  `off` as the panel's off position and the trailing one the empty tile,
+  that is the factory layout: Tremolo back at 4, Octaver 5, Disto 6, Boost 7,
+  tile 8 empty. So `RemoveBank` takes a bank out and shifts every later one
+  down, as `Profile::apply` models it. The `ringdown` tile H38 pushed off is
+  not back; it left the profile.
+  Two observations carried, not interpreted: tile 4 (Tremolo) "sounds like
+  octave -12", most likely a stray Pitch from the H36/H37 session in that
+  bank; and the owner marks echo with an asterisk on the panel.
+- **D4 — full-object hypothesis: killed.** Into the empty tile 8, recorded
+  verbatim: `AddBank {"bank_num":8,"bank":{"id":100,"name":"ringdown",
+  "gain":0,"effects":[{"preset":"default","type":"Pitch","bypass":false,
+  "params":[{"key":"Shift","value":-12}]}]}}` → `true`, 73 bytes out. Panel:
+  tile 8 reads `ringdown`, tiles 4–7 unmoved (no shift into an empty tile, as
+  expected). Ears: dry. So `id` and `gain` alongside `name` and `effects` do
+  not make the bank render. Same signature as H38, now reproducible.
+- **D5 — `SwitchBank` will not select the `AddBank` bank.** `SwitchBank
+  {bank_num: 8}`: `true`, and the panel selection did not move; the owner
+  selected tile 8 by hand and played: dry. Control: `SwitchBank {bank_num:
+  5}`: `true`, panel moved to Octaver on its own. So `SwitchBank` drives the
+  panel today (H25 holds) and refuses, with `true`, the bank `AddBank` made.
+  The firmware keeps the tile's name and does not treat what is behind it as
+  selectable. A name is not a bank, now from the selection side as well as
+  the audio side.
+- **D6 — `SaveConfig` commit hypothesis: killed.** With Mark's explicit go
+  (persistent config): `SaveConfig {}` → `true`. Owner selects tile 8 by
+  hand, plays: dry. The bank is not waiting for a commit.
+- **D5 RETRACTED, same session.** The "refusal" was stale state: in D4 the
+  owner had selected tile 8 by hand to listen, so the D5 `SwitchBank 8`
+  found the selection already there and "did not move" was no observation
+  at all. Re-run with the selection moved away first (D6c): `SwitchBank 8`
+  moved the panel to tile 8. `SwitchBank` selects the `AddBank` bank like
+  any other; H25 holds without exception. What stands from D5 is only the
+  control. The lesson is the handoff's rule 4 in another form: know the
+  state before reading a non-change as a result.
+- **D6c, ears — selection-by-RPC hypothesis: killed.** With the selection
+  put on tile 8 by `SwitchBank` rather than by hand, the owner played: dry.
+- **D7 — `SwitchBank 8` from the panel's off position: no change.** Owner
+  put the panel on off (the position before tile 0), `SwitchBank {bank_num:
+  8}` → `true`, panel stayed on off, dry. Whether `SwitchBank` can leave the
+  off state at all is the control that follows (D7b).
+- **D7b — `SwitchBank` cannot leave the off state.** Control: from off,
+  `SwitchBank {bank_num: 5}` (Octaver, a real bank) → `true`, panel stayed
+  on off. So D7 was not about bank 8: the panel's off position is a state
+  no `SwitchBank` overrides, and the reply is `true` regardless (H27). A
+  client cannot turn the effects on from the wire with this method; whether
+  another method can is untested (`on`, `BypassEffect` are dictionary words).
+- **D8 — `AddEffect` into the `AddBank` bank, clean state: dry.** Pitch −12
+  into bank 8 → `true`; owner selects tile 8 by hand (panel on 8, not off),
+  plays: dry. H38's "nor effects added afterwards" holds with correct
+  indices.
+- **D9 — the inline chain was stored.** Drain of bank 8 by `RemoveEffect`
+  at 0: `true, true, false, false, false, false` — two effects, the inline
+  Pitch from the D4 object and the D8 one. So `AddBank` stores its `effects`
+  array; the record has a name, a chain, accepts more effects, is selectable,
+  survives `SaveConfig`, and does not render. Then one fresh Pitch −12 added
+  (`true`) for a listen on a known one-effect chain.
+- **Owner's caution, carried into the log:** the panel's off state answers
+  `true` to everything and sounds like a dead bank. Today's tile-8 listens
+  were made with the panel seen on tile 8; earlier-session silences without
+  a panel read now carry that doubt.
+- **D9, ears: dry.** One fresh Pitch −12 as the whole chain of bank 8,
+  panel on 8: dry. The chain's contents are not the problem.
+- **D10 — power cycle: the bank persists and stays silent.** After a
+  restart the nine tiles read the same (factory layout, `ringdown` at 8), so
+  the saved configuration carries the `AddBank` record; tile 8, panel on 8:
+  dry. The DSP does not build a playable bank from it at boot either.
+
+### Where the bank-creation question stands after this session
+
+Killed today, each by one variable with the panel read and the octave
+oracle: a missing gain (D2); the object lacking `id`/`gain` (D4); a commit
+by `SaveConfig` (D6); loading on selection by RPC (D6c); the inline chain
+being ignored (D9: it is stored); a reboot after save (D10). Established on
+the way: `RemoveBank` shifts down as modelled (D3); `SwitchBank` selects the
+`AddBank` bank like any other (D6c) but cannot leave the panel's off state
+for any bank (D7b); `PrintBank` prints nothing over the air on a populated
+bank (D0).
+
+What is left is not another guessed key. The `AddBank` record is complete
+by every measure this protocol offers and the DSP ignores it, which says
+the vendor app does something this session has not seen. Next round:
+
+1. **Capture the app.** The app placing a library bank onto the empty tile
+   is the one event that produces a playable bank, and its bytes are
+   obtainable: Android's HCI snoop log (developer options) or, for an
+   iPhone (which this is), Apple's Bluetooth logging profile on the phone,
+   then a sysdiagnose whose packet log opens in PacketLogger or Wireshark on
+   a Mac; or, on an Apple-silicon Mac that can run the iPhone app, a live
+   PacketLogger capture with no phone involved.
+   `compress::decode` turns the captured LLT2 payloads back into JSON. This
+   answers whether the app sends `AddBank` at all, with what object, and
+   what precedes and follows it. It is the only hypothesis whose outcome is
+   not a coin toss, and it replaces guessing at `preset`, `default`, `on`
+   or `control` at the bank level, which stay listed only as fallbacks.
+2. **The alternative the wording of H32 suggests:** the app may push the
+   whole profile through `SetConfig` (shape unrecovered, F-series) rather
+   than build banks one call at a time, and `AddBank` may be a path the
+   firmware half-implements. The capture settles this too.
+3. **Off state.** No method yet found brings the panel out of off; `on` and
+   `BypassEffect` are dictionary words to try, read-only-safe, some other
+   session.
+
+### Instrument state at close
+
+Factory layout restored by D3 (Tremolo 4, Octaver 5, Disto 6, Boost 7).
+Tile 8 holds the `ringdown` `AddBank` record with one Pitch −12, dead. Tile
+4 (Tremolo) carries a stray octave from the H36/H37 session. All of it is
+in the saved configuration (D6) and survives a restart (D10). Opening the
+vendor app restores the factory profile (H32).
+- **2026-09-02 — capture decoder landed** (`apps/probe/src/pklg.rs`,
+  `ringdown-probe --decode-pklg <file>`), written while the owner set up the
+  capture. Reads Apple PacketLogger's `.pklg` directly (record layout per
+  Wireshark's `packetlogger.c`, byte order detected from the first record),
+  reassembles ACL fragments into L2CAP, keeps ATT, names the guitar's two
+  characteristics from service discovery when the capture holds it, and
+  decodes every write and notification through the crate's own codec: bare
+  compressed messages, LLT2 frames reassembled per object id, LLT2 and LLT1
+  acks, plain JSON, the banner. `AddBank`, `SetConfig`, `AddEffect` and
+  `UpdateEffect` from the app are pretty-printed where they occur; the
+  summary lists every method the app sent. Nine tests, including a
+  compressed `AddBank` round trip through the decoder. Untested against a
+  real capture until one exists.
+
+### The capture (2026-09-02, vendor app on an Apple-silicon Mac, PacketLogger)
+
+Two captures of the iPhone app running on Mayola's M4, decoded with
+`--decode-pklg` on its first meeting with real traffic: 1,540 and 8,994
+records, 40 and 267 writes, every one decoded. The first PacketLogger file
+was empty (one log record, no HCI) until Apple's macOS Bluetooth logging
+profile was installed.
+
+- **The bank object, verbatim from the app** (`AddBank`, capture 1, id 23):
+  `{"bank_num":8,"bank":{"name":"Crystals","gain":20.0,"effects":[...],
+  "fbk_onoff":true,"fbk_params":[]}}`. Keys in that order. **`fbk_onoff` and
+  `fbk_params`** are the two fields no ringdown object ever carried; both
+  are dictionary words (F15) read as calibration config until now. No `id`.
+  Effect entries are `{preset, type, bypass, params}` as ringdown sends
+  them; `preset` is `"default"`, `"None"` or `"Default"` in the same
+  profile, so it is lenient. A param may carry
+  `"control":{"source":"Slider","min":..,"max":..}` inline, which is the
+  `SetController` binding embedded in the effect.
+- **The app's sequence on connect:** `GetStatus`, `SetDate`, `GetStatus`,
+  `SetDate`, then **`SetConfig` with the whole profile** (three to six LLT2
+  frames of 497 bytes), then `SwitchBank 0`, then `SaveConfig`. That is H32
+  made exact: the app pushes its profile and the instrument keeps it. After
+  an edit: the per-edit method, then `SaveConfig`. Placing a bank:
+  `AddBank`, `SaveConfig`, `SwitchBank`.
+- **`SetConfig` recovered** (was `ParamShape::Unrecovered`): `{file_type:
+  "config", version: 1.0, favorite_banks: [8 banks], calibration_on,
+  metronome: {bpm, num, den, nbbars}, equalizer: {params: [GainBand1–6,
+  Gain]}, aux_in_drywet, aux_in_on, aux_out_drywet, aux_out_on,
+  factory_reset, version_stm, version_esp, cpu_id, free_space}`. Eight
+  banks, not nine: the ninth tile is the profile's empty slot.
+- **Delay's SYNC note-value key is `DelaySync`** (values 375, 562.5, 750,
+  4.0 seen; unit to establish). Another F15 "effect type" that is a
+  parameter, like `LFO`. Closes the H31 unknown.
+- **The equalizer has six bands** in the app's own writes (`GainBand1–6` +
+  `Gain`); H31's accepted `GainBand7` is a key the firmware parses and the
+  app never sends.
+- **ATT MTU is 500**, negotiated by the app (request 527, response 500), so
+  the app's write length is 497, which is what every LLT2 frame in the
+  capture measures. `ASSUMED_WRITE_LEN` of 514 is wrong for this
+  instrument; ringdown has never sent a write over 497 bytes, which is why
+  it never failed. To fix in the driver.
+- **The only `false` replies in 267 writes:** five `UpdateMetronome
+  {"den":8}` from the app, `den` alone without `bpm`, exactly the refusal
+  H24 recorded. The vendor app's own denominator control does not work
+  over this path, live.
+- Vocabulary confirmed from the app's own writes: `UpdateEffect` carries a
+  whole effect with `control` inline; `SetController {bank_num, effect_num,
+  parameter, source, min, max}`; `MoveBank {src, dst}`; `RemoveBank
+  {bank_num}`; `SetBankName`; `StartMetronome {}`; `UpdateMetronome {bpm}`;
+  `StartRecording {free: true}`; `StopRecording {}`. `SwitchBank` is sent
+  after nearly every edit.
+- **2026-09-02 — corrections from the capture, desk-verified** (H39–H45 in
+  the founding doc). `BankSpec` is now the app's object: `name`, `gain`
+  (always sent), `effects`, `fbk_onoff`, `fbk_params`, in the app's order,
+  with `sustain_killed` kept as shadow-only state; the captured `Crystals`
+  object is rebuilt from the typed model byte for byte in a test.
+  `Parameter` carries an optional `control` binding and `Effect::bound_to`
+  sets it. `Gate` gains `Hysteresis` and `Hold`, `Delay` gains `DelaySync`,
+  both in the app's key order. `params::metronome` and the two metronome
+  planners take `bpm` as an option, since the app writes one field at a
+  time and the reply is then an oracle (H43); the `METRONOME` shape is all
+  optional. `SetConfig` has a declared shape and `ParamShape::Unrecovered`
+  is gone: every method is declared. `ASSUMED_WRITE_LEN` is 497 (H45).
+  Persisted profiles change shape (`fbk_onoff`, `fbk_params` added,
+  `gain_db` required); none exist yet outside tests. Consumer note: the
+  metronome signature changes again for woodshed. 156 tests, clippy and
+  rustdoc clean.
+- **Next on the wire, when the guitar is on:** `AddBank` into an empty tile
+  with `BankSpec::new("ringdown").gain_db(20.0)` and the octave, the app's
+  field set exactly; then the owner's ear. If it renders, Phase D closes
+  and `AddBank`, `SaveConfig`, `SwitchBank` is the app's own recipe (H42).
+
+### Phase D closed (2026-09-02): the client can create a playable bank
+
+After the capture supplied a known-good object, eight `AddBank` calls into
+tile 8 of an app-restored factory profile, one variable each, judged by ear.
+The full series and both retractions are H47 in the founding doc. In short:
+
+- **`AddBank` creates a bank the DSP plays**, the moment it is added. No
+  `SaveConfig`, no `SwitchBank` needed after it; those are the app's habit
+  (H42). H38's "the bank it creates never renders" is retracted, and D1–D10
+  above rest on the same silence and go with it.
+- **The requirement is `gain != 0`.** Not the feedback fields, not `id`, not
+  the JSON number type. And 0 is a **sentinel rather than a level**: −5 and
+  20 are both audible, so 0 is a silent hole between them.
+- Two errors of mine, caught in the hour: blaming the feedback fields on a
+  comparison that changed four things at once, and claiming gain explained
+  the earlier failures when those ran on a profile the app had not yet
+  rebuilt. The owner caught a third — every test bank had been `Pitch −12`,
+  so a stale chain and a fresh one were indistinguishable until `Shift +12`
+  became the oracle.
+
+**Done-conditions, against the phase as written:** a playable bank is
+created and its recipe is pinned in `BankSpec` (`DEFAULT_BANK_GAIN` is 20,
+and a test refuses a silent default); every object sent is recorded verbatim
+in H47; the instrument is left with a test bank in tile 8 that the vendor
+app will clear on its next connect.
+
+**What Phase D leaves open**, and it is no longer blocking anything:
+the gain scale's units and working range (the app compensates per effect,
+−5 for a reverb to 50 for an octaver); whether `SetGainBank(slot, 0)`
+silences a bank that is already playing; and whether a bank object needs
+`name` and `effects` at all, since every object that played carried both.

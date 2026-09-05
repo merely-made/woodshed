@@ -664,8 +664,8 @@ where
     }
 
     /// **Insert** `bank` at `slot`, renumbering every later slot (H38).
-    /// **Receipt: panel, then ears.** Whether the object renders is the open
-    /// research question; see [`plan::add_bank`].
+    /// **Receipt: panel, then ears.** The bank plays as soon as it is added,
+    /// provided its gain is not 0 (H47); see [`plan::add_bank`].
     pub async fn add_bank(&mut self, slot: i64, bank: &BankSpec) -> Result<Sent, TransportError> {
         self.send(plan::add_bank(slot, bank)).await
     }
@@ -675,7 +675,7 @@ where
     /// [`plan::start_metronome`].
     pub async fn start_metronome(
         &mut self,
-        bpm: i64,
+        bpm: Option<i64>,
         num: Option<i64>,
         den: Option<i64>,
         bars: Option<i64>,
@@ -687,7 +687,7 @@ where
     /// [`plan::update_metronome`].
     pub async fn update_metronome(
         &mut self,
-        bpm: i64,
+        bpm: Option<i64>,
         num: Option<i64>,
         den: Option<i64>,
         bars: Option<i64>,
@@ -761,9 +761,7 @@ where
             sent.push(self.send(plan::add_effect(slot, effect)).await?);
         }
         sent.push(self.send(plan::set_bank_name(slot, &bank.name)).await?);
-        if let Some(gain) = bank.gain_db {
-            sent.push(self.send(plan::set_gain_bank(slot, gain)).await?);
-        }
+        sent.push(self.send(plan::set_gain_bank(slot, bank.gain_db)).await?);
         if let Some(killed) = bank.sustain_killed {
             sent.push(
                 self.send(plan::sustain_killer(slot, Some(killed), None))
@@ -1077,19 +1075,17 @@ fn timeout_message(waited: &Duration, heard: &[String]) -> String {
 /// this cannot be discovered the way the vendor's client discovers it, and a
 /// number has to be chosen.
 ///
-/// The choice is 514, matching what the vendor's client gets after asking for
-/// an MTU of 517, on the reasoning that the device is built to accept it and
-/// modern platform stacks negotiate high MTUs unprompted. That is an inference,
-/// not a measurement, and it is the assumption most likely to be wrong on this
-/// page.
+/// **497, measured.** The vendor app requests an MTU of 527 and this
+/// instrument answers **500**, and every large frame the app then sends is
+/// 497 bytes (H45, from a capture of the app on 2026-09-02). The earlier
+/// value here, 514, was inferred from the app's request rather than the
+/// instrument's answer and was never exercised, since ringdown had not sent a
+/// write over 497 bytes.
 ///
-/// The two failure modes are not symmetric, which is why the optimistic value
-/// wins: assuming the 20-byte floor would make every message fail, since 20 is
-/// too small to carry even one LLT frame, whereas assuming too much fails
-/// visibly on the write that overruns. Neither corrupts anything. If writes are
-/// rejected, lower it with [`Guitar::set_write_len`] until they are not — and
-/// record the value that worked.
-pub const ASSUMED_WRITE_LEN: usize = 514;
+/// If writes are rejected on some other instrument, lower it with
+/// [`Guitar::set_write_len`] until they are not, and record the value that
+/// worked.
+pub const ASSUMED_WRITE_LEN: usize = 497;
 
 #[cfg(test)]
 mod tests {
@@ -1244,7 +1240,7 @@ mod tests {
     async fn a_refused_den_never_reaches_the_link() {
         let mut g = guitar([Value::Bool(true)]);
         let err = g
-            .update_metronome(96, Some(6), Some(8), None)
+            .update_metronome(None, None, Some(8), None)
             .await
             .unwrap_err();
         assert!(
@@ -1254,7 +1250,7 @@ mod tests {
         assert!(g.link().written().is_empty());
 
         let sent = g
-            .update_metronome(96, Some(6), Some(4), None)
+            .update_metronome(Some(96), Some(6), Some(4), None)
             .await
             .unwrap();
         assert!(sent.parsed());
@@ -1279,7 +1275,7 @@ mod tests {
             w[1]
         );
         assert!(
-            w[2].ends_with(r#""method":"AddBank","params":{"bank_num":4,"bank":{"name":"octave","effects":[]}}}"#),
+            w[2].ends_with(r#""method":"AddBank","params":{"bank_num":4,"bank":{"name":"octave","gain":20.0,"effects":[],"fbk_onoff":true,"fbk_params":[]}}}"#),
             "{}",
             w[2]
         );

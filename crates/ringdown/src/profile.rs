@@ -197,7 +197,7 @@ impl Profile {
                 Ok(None)
             }
             Edit::SetGainBank { slot, gain_db } => {
-                self.bank_mut(*slot)?.gain_db = Some(*gain_db);
+                self.bank_mut(*slot)?.gain_db = *gain_db;
                 Ok(None)
             }
             Edit::SustainKiller { slot, killed, .. } => {
@@ -366,7 +366,7 @@ mod tests {
         .unwrap();
         let b = p.slot(4).unwrap();
         assert_eq!(b.name, "trem");
-        assert_eq!(b.gain_db, Some(-5.0));
+        assert_eq!(b.gain_db, -5.0);
         assert_eq!(b.sustain_killed, None, "reset alone leaves no state");
     }
 
@@ -425,7 +425,7 @@ mod tests {
         let text = serde_json::to_string(&p).unwrap();
         assert_eq!(
             text,
-            r#"[null,null,null,null,{"name":"Tremolo","gain_db":-5.0,"sustain_killed":null,"chain":[{"preset":"default","type":"Pitch","bypass":false,"params":[{"key":"Shift","value":-12.0}]}]},null,null,null,null]"#
+            r#"[null,null,null,null,{"name":"Tremolo","gain_db":-5.0,"fbk_onoff":true,"fbk_params":[],"chain":[{"preset":"default","type":"Pitch","bypass":false,"params":[{"key":"Shift","value":-12.0}]}],"sustain_killed":null},null,null,null,null]"#
         );
         let back: Profile = serde_json::from_str(&text).unwrap();
         assert_eq!(back, p);
