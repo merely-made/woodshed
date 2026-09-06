@@ -49,6 +49,12 @@ impl LibraryItem {
             Self::LocalAudio { source, .. } | Self::FeedEpisode { source, .. } => source,
         }
     }
+
+    pub fn title(&self) -> &str {
+        match self {
+            Self::LocalAudio { title, .. } | Self::FeedEpisode { title, .. } => title,
+        }
+    }
 }
 
 #[derive(Clone, Debug, Default, Deserialize, Eq, PartialEq, Serialize)]
@@ -69,6 +75,9 @@ pub struct TimedTarget {
     pub offset_ms: u64,
     pub representation: RepresentationReceipt,
 }
+
+/// A host-frozen target used while capturing a text or voice note.
+pub type CaptureAnchor = TimedTarget;
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 #[serde(tag = "kind", rename_all = "snake_case")]
@@ -128,6 +137,8 @@ pub struct RedshankModel {
     pub schema_version: u32,
     pub library: BTreeMap<ItemId, LibraryItem>,
     pub queue: Vec<ItemId>,
+    #[serde(default)]
+    pub selected_item: Option<ItemId>,
     pub progress: BTreeMap<ItemId, Progress>,
     pub annotations: BTreeMap<AnnotationId, Annotation>,
     pub settings: ListenerSettings,
@@ -139,6 +150,7 @@ impl Default for RedshankModel {
             schema_version: 1,
             library: BTreeMap::new(),
             queue: Vec::new(),
+            selected_item: None,
             progress: BTreeMap::new(),
             annotations: BTreeMap::new(),
             settings: ListenerSettings::default(),
@@ -152,6 +164,7 @@ pub enum ModelError {
     MissingItem(ItemId),
     DuplicateAnnotation(AnnotationId),
     MissingAnnotation(AnnotationId),
+    InvalidQueuePosition(usize),
 }
 
 impl RedshankModel {
@@ -180,6 +193,30 @@ impl RedshankModel {
         Ok(())
     }
 
+    pub fn reorder_queue(&mut self, from: usize, to: usize) -> Result<(), ModelError> {
+        if from >= self.queue.len() || to >= self.queue.len() {
+            return Err(ModelError::InvalidQueuePosition(from.max(to)));
+        }
+        let item = self.queue.remove(from);
+        self.queue.insert(to, item);
+        Ok(())
+    }
+
+    pub fn remove_item(&mut self, id: &ItemId) -> Result<LibraryItem, ModelError> {
+        let item = self
+            .library
+            .remove(id)
+            .ok_or_else(|| ModelError::MissingItem(id.clone()))?;
+        self.queue.retain(|queued| queued != id);
+        if self.selected_item.as_ref() == Some(id) {
+            self.selected_item = None;
+        }
+        self.progress.remove(id);
+        self.annotations
+            .retain(|_, note| note.target.item_id != *id);
+        Ok(item)
+    }
+
     pub fn set_progress(&mut self, id: &ItemId, progress: Progress) -> Result<(), ModelError> {
         self.require_item(id)?;
         self.progress.insert(id.clone(), progress);
@@ -194,6 +231,47 @@ impl RedshankModel {
         }
         self.annotations.insert(id, annotation);
         Ok(())
+    }
+
+    pub fn add_text_annotation(
+        &mut self,
+        id: AnnotationId,
+        anchor: CaptureAnchor,
+        plain_text: String,
+        created_at_ms: u64,
+    ) -> Result<(), ModelError> {
+        self.add_annotation(Annotation {
+            id,
+            target: anchor,
+            body: NoteBody::Text { plain_text },
+            created_at_ms,
+        })
+    }
+
+    pub fn update_text_annotation(
+        &mut self,
+        id: &AnnotationId,
+        plain_text: String,
+    ) -> Result<(), ModelError> {
+        let annotation = self
+            .annotations
+            .get_mut(id)
+            .ok_or_else(|| ModelError::MissingAnnotation(id.clone()))?;
+        match &mut annotation.body {
+            NoteBody::Text { plain_text: text } => *text = plain_text,
+            NoteBody::Audio { .. } => return Err(ModelError::MissingAnnotation(id.clone())),
+        }
+        Ok(())
+    }
+
+    pub fn annotations_for_item(&self, id: &ItemId) -> Vec<&Annotation> {
+        let mut notes: Vec<_> = self
+            .annotations
+            .values()
+            .filter(|note| note.target.item_id == *id)
+            .collect();
+        notes.sort_by_key(|note| (&note.target.offset_ms, &note.id));
+        notes
     }
 
     pub fn delete_annotation(&mut self, id: &AnnotationId) -> Result<(), ModelError> {
@@ -288,6 +366,62 @@ mod tests {
         assert_eq!(
             model.add_annotation(annotation),
             Err(ModelError::MissingItem(ItemId("missing".into())))
+        );
+    }
+
+    #[test]
+    fn queue_reorder_and_item_removal_preserve_invariants() {
+        let mut model = RedshankModel::default();
+        for id in ["a", "b", "c"] {
+            model.add_item(local_item(id)).unwrap();
+            model.enqueue(&ItemId(id.into())).unwrap();
+        }
+        model.reorder_queue(0, 2).unwrap();
+        assert_eq!(
+            model.queue,
+            [ItemId("b".into()), ItemId("c".into()), ItemId("a".into())]
+        );
+        model.remove_item(&ItemId("c".into())).unwrap();
+        assert_eq!(model.queue, [ItemId("b".into()), ItemId("a".into())]);
+        assert!(!model.library.contains_key(&ItemId("c".into())));
+    }
+
+    #[test]
+    fn selected_item_is_optional_and_clears_when_removed() {
+        let mut model = RedshankModel::default();
+        let id = ItemId("a".into());
+        model.add_item(local_item("a")).unwrap();
+        model.selected_item = Some(id.clone());
+        model.remove_item(&id).unwrap();
+        assert_eq!(model.selected_item, None);
+    }
+
+    #[test]
+    fn text_edit_keeps_the_original_capture_anchor() {
+        let mut model = RedshankModel::default();
+        let item = ItemId("a".into());
+        model.add_item(local_item("a")).unwrap();
+        let anchor = CaptureAnchor {
+            item_id: item,
+            offset_ms: 12_345,
+            representation: RepresentationReceipt {
+                complete_digest: Some("blake3:fixed".into()),
+                ..RepresentationReceipt::default()
+            },
+        };
+        model
+            .add_text_annotation(AnnotationId("n".into()), anchor.clone(), "first".into(), 1)
+            .unwrap();
+        model
+            .update_text_annotation(&AnnotationId("n".into()), "edited".into())
+            .unwrap();
+        let note = model.annotations.get(&AnnotationId("n".into())).unwrap();
+        assert_eq!(note.target, anchor);
+        assert_eq!(
+            note.body,
+            NoteBody::Text {
+                plain_text: "edited".into()
+            }
         );
     }
 }

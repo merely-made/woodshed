@@ -202,6 +202,7 @@ mod tests {
             })
             .unwrap();
         model.enqueue(&episode).unwrap();
+        model.selected_item = Some(episode.clone());
         model
             .set_progress(
                 &episode,
@@ -255,6 +256,22 @@ mod tests {
     }
 
     #[test]
+    fn earlier_schema_one_without_selection_keeps_progress_and_notes() {
+        let directory = tempdir().unwrap();
+        let store = JsonDirectoryStore::new(directory.path());
+        let mut expected = populated_model();
+        expected.selected_item = None;
+        let mut document = serde_json::to_value(&expected).unwrap();
+        document.as_object_mut().unwrap().remove("selected_item");
+        fs::write(
+            store.generation_path(1),
+            serde_json::to_vec(&document).unwrap(),
+        )
+        .unwrap();
+        assert_eq!(store.load().unwrap(), Some(expected));
+    }
+
+    #[test]
     fn library_progress_queue_and_annotations_survive_restart() {
         let directory = tempdir().unwrap();
         let expected = populated_model();
@@ -298,5 +315,20 @@ mod tests {
         fs::write(store.generation_path(2), b"not json").unwrap();
 
         assert_eq!(store.load().unwrap(), Some(expected));
+    }
+
+    #[test]
+    fn schema_one_without_selected_item_still_loads() {
+        let directory = tempdir().unwrap();
+        fs::write(
+            directory.path().join("state-00000000000000000001.json"),
+            br#"{"schema_version":1,"library":{},"queue":[],"progress":{},"annotations":{},"settings":{"capture_playback":"pause","skip_forward_ms":30000,"skip_backward_ms":15000}}"#,
+        )
+        .unwrap();
+        let loaded = JsonDirectoryStore::new(directory.path())
+            .load()
+            .unwrap()
+            .unwrap();
+        assert_eq!(loaded.selected_item, None);
     }
 }

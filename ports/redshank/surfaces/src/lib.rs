@@ -7,8 +7,8 @@
 //! annotation adapters. The compact surface deliberately has no library,
 //! storage, network, or audio-device authority.
 
-use cambium::{AnyView, GenetCtx, GenetElement, button, el, text};
-use redshank_model::ItemId;
+use cambium::{AnyView, GenetCtx, GenetElement, TextInput, button, el, lens, text, textarea};
+use redshank_model::{AnnotationId, CaptureAnchor, ItemId, LibraryItem, ListenerSettings};
 
 pub const COMPACT_SHEET: &str = include_str!("compact.css");
 
@@ -52,6 +52,27 @@ pub enum CompactCommand {
     AddTextNote,
     BeginVoiceNote,
     FinishVoiceNote,
+    BeginTextNote,
+    CancelTextNote,
+    SaveTextNote {
+        anchor: CaptureAnchor,
+        plain_text: String,
+    },
+    SelectItem(ItemId),
+    Enqueue(ItemId),
+    Dequeue(ItemId),
+    MoveQueue {
+        from: usize,
+        to: usize,
+    },
+    DeleteNote(AnnotationId),
+    EditNote {
+        id: AnnotationId,
+        plain_text: String,
+    },
+    BeginEditNote(AnnotationId),
+    OpenLocalFile,
+    UpdateSettings(ListenerSettings),
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
@@ -62,6 +83,47 @@ pub struct CompactPlayerState {
     pub skip_forward_ms: u64,
     pub voice_capture_active: bool,
     commands: Vec<CompactCommand>,
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct TextCapture {
+    /// This anchor is supplied by the host at BeginTextNote time.
+    pub anchor: CaptureAnchor,
+    pub draft: String,
+}
+
+#[derive(Clone, Debug, Eq, PartialEq, Default)]
+pub struct RedshankSurfaceState {
+    pub compact: CompactPlayerState,
+    pub library: Vec<LibraryItem>,
+    pub queue: Vec<ItemId>,
+    pub notes: Vec<(AnnotationId, u64, String)>,
+    pub settings: ListenerSettings,
+    pub text_capture: Option<TextCapture>,
+    pub text_editor: TextInput,
+    pub notice: Option<String>,
+    pub editing_note: Option<AnnotationId>,
+    commands: Vec<CompactCommand>,
+}
+
+impl RedshankSurfaceState {
+    pub fn drain_commands(&mut self) -> impl Iterator<Item = CompactCommand> + '_ {
+        let mut commands: Vec<_> = self.compact.drain_commands().collect();
+        commands.append(&mut self.commands);
+        commands.into_iter()
+    }
+
+    pub fn request(&mut self, command: CompactCommand) {
+        self.commands.push(command);
+    }
+
+    pub fn set_text_draft(&mut self, draft: impl Into<String>) {
+        let draft = draft.into();
+        if let Some(capture) = &mut self.text_capture {
+            capture.draft = draft.clone();
+        }
+        self.text_editor = TextInput::new(draft);
+    }
 }
 
 impl Default for CompactPlayerState {
@@ -103,11 +165,16 @@ fn enabled(state: &CompactPlayerState) -> bool {
     state.now_playing.is_some()
         && !matches!(
             state.transport,
-            TransportState::Empty | TransportState::Unavailable(_)
+            TransportState::Empty | TransportState::Buffering | TransportState::Unavailable(_)
         )
 }
 
-fn control(label: &'static str, shortcut: &'static str, command: CompactCommand) -> CompactView {
+fn control(
+    label: &'static str,
+    shortcut: &'static str,
+    command: CompactCommand,
+    available: bool,
+) -> CompactView {
     Box::new(
         button(label, move |state: &mut CompactPlayerState, _| {
             if enabled(state) {
@@ -116,7 +183,9 @@ fn control(label: &'static str, shortcut: &'static str, command: CompactCommand)
         })
         .attr("class", "redshank-control")
         .attr("aria-label", label)
-        .attr("aria-keyshortcuts", shortcut),
+        .attr("aria-keyshortcuts", shortcut)
+        .attr("aria-disabled", if available { "false" } else { "true" })
+        .attr("tabindex", if available { "0" } else { "-1" }),
     )
 }
 
@@ -131,7 +200,7 @@ pub fn player_surface(state: &CompactPlayerState) -> CompactView {
                 item.title.clone(),
                 format!("{} / {duration}", format_time(item.position_ms)),
             )
-        }
+        },
         None => ("Nothing playing".into(), "0:00 / unknown".into()),
     };
     let (play_label, play_command) = if state.transport == TransportState::Playing {
@@ -160,12 +229,14 @@ pub fn player_surface(state: &CompactPlayerState) -> CompactView {
                             "Skip backward",
                             "ArrowLeft",
                             CompactCommand::SkipBackward(backward),
+                            enabled(state),
                         ),
-                        control(play_label, "Space", play_command),
+                        control(play_label, "Space", play_command, enabled(state)),
                         control(
                             "Skip forward",
                             "ArrowRight",
                             CompactCommand::SkipForward(forward),
+                            enabled(state),
                         ),
                     ),
                 )
@@ -188,8 +259,13 @@ pub fn capture_surface(state: &CompactPlayerState) -> CompactView {
         el(
             "section",
             (
-                control("Add text note", "N", CompactCommand::AddTextNote),
-                control(voice_label, "R", voice_command),
+                control(
+                    "Add text note",
+                    "N",
+                    CompactCommand::AddTextNote,
+                    enabled(state),
+                ),
+                control(voice_label, "R", voice_command, enabled(state)),
             ),
         )
         .attr("class", "redshank-capture")
@@ -205,6 +281,288 @@ pub fn compact_surface(state: &CompactPlayerState) -> CompactView {
     )
 }
 
+pub type FullView = Box<dyn AnyView<RedshankSurfaceState, (), GenetCtx, GenetElement>>;
+
+fn full_control(label: &'static str, shortcut: &'static str, command: CompactCommand) -> FullView {
+    Box::new(
+        button(label, move |state: &mut RedshankSurfaceState, _| {
+            state.request(command.clone());
+        })
+        .attr("class", "redshank-control")
+        .attr("aria-label", label)
+        .attr("aria-keyshortcuts", shortcut),
+    )
+}
+
+/// The complete reusable listener surface. It projects host-provided state and
+/// emits commands; files, audio, clocks, and persistence remain host-owned.
+pub fn surface(state: &RedshankSurfaceState) -> FullView {
+    let library = state.library.iter().flat_map(|item| {
+        let id = item.id().clone();
+        let title = item.title().to_owned();
+        let select = Box::new(
+            button(title, move |state: &mut RedshankSurfaceState, _| {
+                state.request(CompactCommand::SelectItem(id.clone()));
+            })
+            .attr("aria-label", "Select library item"),
+        ) as FullView;
+        let enqueue_id = item.id().clone();
+        let enqueue_title = item.title().to_owned();
+        let enqueue = Box::new(
+            button(
+                "Add to queue",
+                move |state: &mut RedshankSurfaceState, _| {
+                    state.request(CompactCommand::Enqueue(enqueue_id.clone()));
+                },
+            )
+            .attr("aria-label", format!("Add {} to queue", enqueue_title)),
+        ) as FullView;
+        [select, enqueue]
+    });
+    let queue = state.queue.iter().enumerate().flat_map(|(index, id)| {
+        let id = id.clone();
+        let title = state
+            .library
+            .iter()
+            .find(|item| item.id() == &id)
+            .map(LibraryItem::title)
+            .unwrap_or("Unknown item")
+            .to_owned();
+        let select_id = id.clone();
+        let select = Box::new(
+            button(
+                format!("Queue {}: {}", index + 1, title),
+                move |state: &mut RedshankSurfaceState, _| {
+                    state.request(CompactCommand::SelectItem(select_id.clone()));
+                },
+            )
+            .attr("aria-label", format!("Select queued item {}", title)),
+        ) as FullView;
+        let up = Box::new(
+            button(
+                "Move queue item up",
+                move |state: &mut RedshankSurfaceState, _| {
+                    if index > 0 {
+                        state.request(CompactCommand::MoveQueue {
+                            from: index,
+                            to: index - 1,
+                        });
+                    }
+                },
+            )
+            .attr("aria-label", format!("Move {} up", title)),
+        ) as FullView;
+        let down_title = title.clone();
+        let down = Box::new(
+            button(
+                "Move queue item down",
+                move |state: &mut RedshankSurfaceState, _| {
+                    if index + 1 < state.queue.len() {
+                        state.request(CompactCommand::MoveQueue {
+                            from: index,
+                            to: index + 1,
+                        });
+                    }
+                },
+            )
+            .attr("aria-label", format!("Move {} down", down_title)),
+        ) as FullView;
+        let remove_id = id.clone();
+        let remove_title = title.clone();
+        let remove = Box::new(
+            button(
+                "Remove from queue",
+                move |state: &mut RedshankSurfaceState, _| {
+                    state.request(CompactCommand::Dequeue(remove_id.clone()));
+                },
+            )
+            .attr("aria-label", format!("Remove {} from queue", remove_title)),
+        ) as FullView;
+        [select, up, down, remove]
+    });
+    let notes = state.notes.iter().flat_map(|(id, offset, body)| {
+        let id = id.clone();
+        let edit_id = id.clone();
+        let edit = Box::new(
+            button(
+                format!("Edit note at {} ms: {}", offset, body),
+                move |state: &mut RedshankSurfaceState, _| {
+                    state.request(CompactCommand::BeginEditNote(edit_id.clone()));
+                },
+            )
+            .attr("aria-label", "Edit note"),
+        ) as FullView;
+        let delete = Box::new(
+            button("Delete note", move |state: &mut RedshankSurfaceState, _| {
+                state.request(CompactCommand::DeleteNote(id.clone()));
+            })
+            .attr("aria-label", "Delete note"),
+        ) as FullView;
+        [edit, delete]
+    });
+    let save = state.text_capture.as_ref().map(|capture| {
+        let anchor = capture.anchor.clone();
+        Box::new(
+            button(
+                "Save text note",
+                move |state: &mut RedshankSurfaceState, _| {
+                    let plain_text = state.text_editor.text().to_owned();
+                    if let Some(id) = state.editing_note.clone() {
+                        state.request(CompactCommand::EditNote { id, plain_text });
+                    } else {
+                        state.request(CompactCommand::SaveTextNote {
+                            anchor: anchor.clone(),
+                            plain_text,
+                        });
+                    }
+                },
+            )
+            .attr("aria-label", "Save text note")
+            .attr("aria-keyshortcuts", "Control+Enter"),
+        ) as FullView
+    });
+    let save = save.into_iter();
+    let editor: Option<FullView> = state.text_capture.as_ref().map(|_| {
+        Box::new(lens(
+            |input: &mut TextInput| textarea(input),
+            |state: &mut RedshankSurfaceState| &mut state.text_editor,
+        )) as FullView
+    });
+    let editor = editor.into_iter();
+    let begin_text = Box::new(
+        button("Begin text note", |state: &mut RedshankSurfaceState, _| {
+            state.request(CompactCommand::BeginTextNote);
+        })
+        .attr("aria-label", "Begin text note")
+        .attr("aria-keyshortcuts", "N"),
+    ) as FullView;
+    let cancel_text = Box::new(
+        button("Cancel text note", |state: &mut RedshankSurfaceState, _| {
+            state.request(CompactCommand::CancelTextNote)
+        })
+        .attr("aria-label", "Cancel text note"),
+    ) as FullView;
+    Box::new(
+        el(
+            "main",
+            (
+                state.notice.as_ref().map(|notice| {
+                    el("p", text(notice.clone()))
+                        .attr("role", "status")
+                        .attr("class", "redshank-notice")
+                }),
+                el(
+                    "section",
+                    Box::new(lens(
+                        |compact: &mut CompactPlayerState| compact_surface(compact),
+                        |state: &mut RedshankSurfaceState| &mut state.compact,
+                    )),
+                )
+                .attr("role", "region")
+                .attr("aria-label", "Player"),
+                el("section", library.collect::<Vec<_>>())
+                    .attr("role", "region")
+                    .attr("aria-label", "Library"),
+                el(
+                    "section",
+                    (
+                        queue.collect::<Vec<_>>(),
+                        full_control(
+                            "Open local file",
+                            "Control+O",
+                            CompactCommand::OpenLocalFile,
+                        ),
+                    ),
+                )
+                .attr("role", "region")
+                .attr("aria-label", "Queue"),
+                el(
+                    "section",
+                    (
+                        notes.collect::<Vec<_>>(),
+                        state.text_capture.as_ref().map(|capture| {
+                            let title = state
+                                .library
+                                .iter()
+                                .find(|item| item.id() == &capture.anchor.item_id)
+                                .map(LibraryItem::title)
+                                .unwrap_or(&capture.anchor.item_id.0);
+                            el(
+                                "p",
+                                text(format!(
+                                    "Note for {title} at {}",
+                                    format_time(capture.anchor.offset_ms)
+                                )),
+                            )
+                            .attr("aria-label", "Captured note target")
+                        }),
+                        el("div", editor.collect::<Vec<_>>())
+                            .attr("id", "redshank-text-editor")
+                            .attr("class", "redshank-text-editor"),
+                        save.collect::<Vec<_>>(),
+                        begin_text,
+                        cancel_text,
+                    ),
+                )
+                .attr("role", "region")
+                .attr("aria-label", "Notes"),
+                el(
+                    "section",
+                    (
+                        text(format!(
+                            "Playback settings: back {} ms, forward {} ms",
+                            state.settings.skip_backward_ms, state.settings.skip_forward_ms
+                        )),
+                        full_control(
+                            "Increase forward skip",
+                            "",
+                            CompactCommand::UpdateSettings(ListenerSettings {
+                                skip_backward_ms: state.settings.skip_backward_ms,
+                                skip_forward_ms: state
+                                    .settings
+                                    .skip_forward_ms
+                                    .saturating_add(5_000),
+                                capture_playback: state.settings.capture_playback,
+                            }),
+                        ),
+                        full_control(
+                            "Decrease forward skip",
+                            "",
+                            CompactCommand::UpdateSettings(ListenerSettings {
+                                skip_backward_ms: state.settings.skip_backward_ms,
+                                skip_forward_ms: state
+                                    .settings
+                                    .skip_forward_ms
+                                    .saturating_sub(5_000),
+                                capture_playback: state.settings.capture_playback,
+                            }),
+                        ),
+                        full_control(
+                            "Pause during capture",
+                            "",
+                            CompactCommand::UpdateSettings(ListenerSettings {
+                                capture_playback: redshank_model::CapturePlaybackBehavior::Pause,
+                                ..state.settings.clone()
+                            }),
+                        ),
+                        full_control(
+                            "Continue during capture",
+                            "",
+                            CompactCommand::UpdateSettings(ListenerSettings {
+                                capture_playback: redshank_model::CapturePlaybackBehavior::Continue,
+                                ..state.settings.clone()
+                            }),
+                        ),
+                    ),
+                )
+                .attr("role", "region")
+                .attr("aria-label", "Settings"),
+            ),
+        )
+        .attr("class", "redshank-surface"),
+    )
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -216,6 +574,8 @@ mod tests {
 
     type Logic = fn(&CompactPlayerState) -> CompactView;
     type Runner = GenetAppRunner<CompactPlayerState, Logic, CompactView, ()>;
+    type FullLogic = fn(&RedshankSurfaceState) -> FullView;
+    type FullRunner = GenetAppRunner<RedshankSurfaceState, FullLogic, FullView, ()>;
 
     fn playing_state() -> CompactPlayerState {
         CompactPlayerState {
@@ -233,6 +593,11 @@ mod tests {
     fn runner(logic: Logic) -> Runner {
         let dom: DomHandle = Rc::new(RefCell::new(ScriptedDom::new()));
         Runner::new(dom, logic, playing_state())
+    }
+
+    fn full_runner(state: RedshankSurfaceState) -> FullRunner {
+        let dom: DomHandle = Rc::new(RefCell::new(ScriptedDom::new()));
+        FullRunner::new(dom, surface, state)
     }
 
     fn node_with_label(dom: &ScriptedDom, root: NodeId, label: &str) -> NodeId {
@@ -306,6 +671,106 @@ mod tests {
                 .borrow()
                 .outer_html(runner.root())
                 .contains("Output device unavailable")
+        );
+    }
+
+    fn anchored_state() -> RedshankSurfaceState {
+        let mut state = RedshankSurfaceState {
+            compact: playing_state(),
+            ..Default::default()
+        };
+        state.library.push(LibraryItem::LocalAudio {
+            id: ItemId("episode-42".into()),
+            title: "Wetland".into(),
+            source: redshank_model::MediaSource::Local {
+                path: "wetland.mp3".into(),
+            },
+        });
+        state.queue = vec![ItemId("episode-42".into()), ItemId("second".into())];
+        state.text_capture = Some(TextCapture {
+            anchor: CaptureAnchor {
+                item_id: ItemId("episode-42".into()),
+                offset_ms: 62_000,
+                representation: redshank_model::RepresentationReceipt {
+                    complete_digest: Some("blake3:frozen".into()),
+                    ..Default::default()
+                },
+            },
+            draft: String::new(),
+        });
+        state.set_text_draft("typed after capture");
+        state
+    }
+
+    #[test]
+    fn full_surface_mounts_compact_player_and_queue_reorder_controls() {
+        let mut runner = full_runner(anchored_state());
+        let markup = runner.dom().borrow().outer_html(runner.root());
+        assert!(markup.contains("aria-label=\"Player\""));
+        assert!(markup.contains("aria-label=\"Pause\""));
+        assert!(markup.contains("Move Wetland down"));
+        let move_up = node_with_label(&runner.dom().borrow(), runner.root(), "Move Wetland up");
+        runner.dispatch_click(move_up, PointerClick::at((1.0, 1.0)));
+        let mut no_op = Vec::new();
+        runner.update(|state| no_op.extend(state.drain_commands()));
+        assert!(no_op.is_empty());
+        let move_down = node_with_label(&runner.dom().borrow(), runner.root(), "Move Wetland down");
+        runner.dispatch_click(move_down, PointerClick::at((1.0, 1.0)));
+        let pause = node_with_label(&runner.dom().borrow(), runner.root(), "Pause");
+        runner.dispatch_click(pause, PointerClick::at((1.0, 1.0)));
+        let mut commands = Vec::new();
+        runner.update(|state| commands.extend(state.drain_commands()));
+        assert_eq!(
+            commands,
+            [
+                CompactCommand::Pause,
+                CompactCommand::MoveQueue { from: 0, to: 1 },
+            ]
+        );
+    }
+
+    #[test]
+    fn save_text_note_uses_editor_text_and_frozen_anchor() {
+        let mut runner = full_runner(anchored_state());
+        assert!(
+            runner
+                .dom()
+                .borrow()
+                .outer_html(runner.root())
+                .contains("<textarea")
+        );
+        let save = node_with_label(&runner.dom().borrow(), runner.root(), "Save text note");
+        runner.dispatch_click(save, PointerClick::at((1.0, 1.0)));
+        let mut commands = Vec::new();
+        runner.update(|state| commands.extend(state.drain_commands()));
+        assert_eq!(commands.len(), 1);
+        assert!(
+            matches!(&commands[0], CompactCommand::SaveTextNote { plain_text, anchor }
+            if plain_text == "typed after capture" && anchor.representation.complete_digest.as_deref() == Some("blake3:frozen"))
+        );
+    }
+
+    #[test]
+    fn buffering_disables_transport_and_settings_emit_changed_values() {
+        let mut state = anchored_state();
+        state.compact.transport = TransportState::Buffering;
+        let mut runner = full_runner(state);
+        let markup = runner.dom().borrow().outer_html(runner.root());
+        assert!(markup.contains("aria-label=\"Play\""));
+        assert!(markup.contains("aria-disabled=\"true\""));
+        let play = node_with_label(&runner.dom().borrow(), runner.root(), "Play");
+        runner.dispatch_click(play, PointerClick::at((1.0, 1.0)));
+        let increase = node_with_label(
+            &runner.dom().borrow(),
+            runner.root(),
+            "Increase forward skip",
+        );
+        runner.dispatch_click(increase, PointerClick::at((1.0, 1.0)));
+        let mut commands = Vec::new();
+        runner.update(|state| commands.extend(state.drain_commands()));
+        assert_eq!(commands.len(), 1);
+        assert!(
+            matches!(&commands[0], CompactCommand::UpdateSettings(settings) if settings.skip_forward_ms == 35_000)
         );
     }
 }

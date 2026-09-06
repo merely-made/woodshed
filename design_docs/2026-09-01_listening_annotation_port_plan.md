@@ -465,10 +465,10 @@ Receipt:
 
 ### Phase 4: sovereign and embeddable surfaces
 
-**In progress (2026-09-04).** Independent Player and Capture components, their
-compact composition, and the standalone Mere/Cambium shell are landed. Live
-playback/capture adapters, a headed receipt, and the full Library, Queue, Notes,
-and Settings surfaces remain open.
+**In progress (2026-09-06).** The local listening implementation now adds a
+Symphonia/Firewheel worker and full Library, Queue, Notes, and Settings
+composition around the existing compact Player/Capture surfaces. This is a
+bounded local-file slice; the Phase 4 done-conditions below still apply.
 
 Build Player, Library, Queue, Notes, Capture, and Settings surfaces in Cambium,
 then mount them in Mere's standalone Cambium/Genet winit host.
@@ -507,6 +507,70 @@ Progress receipt:
 - Three headless surface tests and three desktop boot/degradation tests pass.
   The complete isolated Redshank workspace passes eleven tests, and
   workspace-wide strict Clippy passes.
+
+#### Local listening implementation, 2026-09-06
+
+The preceding Phase 4 receipt describes the September 4 shell. The September 6
+working implementation replaces its unavailable-playback placeholder:
+
+- A dedicated decoder worker owns local-file I/O and a single Firewheel/CPAL
+  output runtime. It publishes load-token-correlated clocks and representation
+  receipts. Queue order and the selected recording are independent; stale
+  snapshots cannot supply another item's progress or capture target.
+- The full surface composes the existing compact controls. The library opens
+  local files; the queue supports selection, insertion, removal, and reordering.
+  Text notes have an editable Cambium field and explicit save/edit/delete/cancel
+  actions. Settings control skip intervals and Pause/Continue text capture.
+- The standalone host routes text focus and keyboard shortcuts, freezes note
+  anchors before applying capture playback behavior, and retains those anchors
+  across playback selection changes. Selection and per-item progress survive
+  restart. The optional `selected_item` field reads older schema-1 documents.
+- Persistence runs on a serial worker with revision acknowledgments. A failed
+  save retains the draft and dirty model. Closing saves the nonempty draft and
+  final progress before exiting; save failure leaves the window open. Editing
+  during an outstanding close/save keeps the newer draft open.
+- A worker-generated BLAKE3 digest replaces capture-time file metadata reads.
+  Hashing then rewinding an ordinary file is not an immutable-byte snapshot
+  under concurrent modification. Phase 6 identity/mismatch behavior remains
+  unimplemented, and no annotation remapping claim follows from this digest.
+
+The current worker has its own runtime commands and snapshots and does **not**
+yet implement Genet's `PlaybackController` source/sink contracts. That is an
+explicit integration gap: the local runtime is an experimental adapter, not a
+second admitted generic player API. Admission requires mapping its decoder and
+sink to the existing controller and running the shared conformance cases.
+
+Phase 4 remains open for subscriptions, HTTP/progressive cache playback and its
+error cases, controller conformance, and the headed playback/restart/text-note
+scenario. Voice input, ducking, rate/volume controls, media-fragment export,
+representation drift, and Turnstone as a second host also remain open in their
+respective phases. No physical listening or microphone receipt is implied by
+the source changes.
+
+Validation on the final September 6 working tree:
+
+- The isolated workspace passes **29 tests**: desktop 6, model 5, playback 7,
+  storage 5, and surfaces 6. Two codec-fixture tests are ignored by default and
+  were run explicitly with `REDSHANK_PHASE4_FIXTURES`; both pass.
+- The original generated fixtures are two-second, 48 kHz stereo tones (440 Hz
+  left, 660 Hz right), encoded to MP3 and AAC/M4A with FFmpeg 8.1.1. They prove
+  distinct decoded channels and decoder-clock resume near one second. M4A's
+  absent track channel layout exposed and fixed a real issue: the adapter now
+  obtains channel count from the first decoded frame when necessary.
+- Desktop tests exercise the actual host keyboard/editor path, stale load
+  tokens, queue/selection independence, frozen draft targets, failed save and
+  retry, and edits arriving while an earlier save completes. Storage includes
+  literal schema-1 compatibility and preservation of existing notes/progress.
+- `cargo clippy --workspace --all-targets -- -D warnings` passes. Formatting
+  and `git diff --check` pass. Commands run from `C:/t` with the isolated
+  Redshank manifest, `--offline --locked`, and target
+  `C:/t/redshank-phase4-mere`; this avoids the parent checkout's local patches.
+- `cargo build -p redshank-desktop` passes on the same route, producing
+  `C:/t/redshank-phase4-mere/debug/redshank-desktop.exe`.
+- Fixture provenance, SHA-256 values, and test logs are in
+  `Code/testing/woodshed/redshank-phase4-20260906/`. These are software and
+  windowless host receipts. Output-device playback, acoustic timing, headed
+  layout, and the full headed restart scenario remain unverified.
 
 ### Phase 5: voice capture and open annotation target
 

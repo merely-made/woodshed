@@ -31,3 +31,64 @@
   background-color: #293a36;
   color: #edf2ef;
 }
+
+.redshank-surface {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  max-height: 100vh;
+  overflow: auto;
+  padding: 16px;
+  background: #101716;
+  color: #edf2ef;
+  font-family: sans-serif;
+}
+
+.redshank-surface > section,
+.redshank-surface > main > section {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding: 10px;
+  border: 1px solid #30423d;
+  border-radius: 6px;
+}
+
+.redshank-surface [aria-label="Library"],
+.redshank-surface [aria-label="Queue"],
+.redshank-surface [aria-label="Notes"] {
+  align-items: stretch;
+  flex-direction: column;
+}
+
+.redshank-text-editor {
+  width: 100%;
+  min-height: 92px;
+}
+
+.redshank-text-editor textarea {
+  width: 100%;
+  min-height: 80px;
+  padding: 8px;
+  background: #182321;
+  color: #edf2ef;
+  border: 1px solid #49645c;
+}
+
+.redshank-control:focus,
+.redshank-text-editor textarea:focus {
+  outline: 2px solid #d3e8dc;
+  outline-offset: 2px;
+}
+
+.redshank-control[aria-disabled="true"] {
+  opacity: .55;
+  cursor: not-allowed;
+}
+
+.redshank-notice {
+  margin: 0;
+  padding: 8px;
+  background: #493c24;
+}

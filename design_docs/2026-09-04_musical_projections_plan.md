@@ -1,10 +1,10 @@
 # Musical Projections Plan
 
-**Status (2026-09-04): plan only; nothing implemented.** Written while another
-session re-homes the Cambium dependencies from genet.git to mere.git and adds
-the Stage export example; implementation waits for that commit and a clean
-build. Implementation runs on haiku/sonnet subagents, one slice at a time,
-each slice reviewed before the next opens.
+**Status (2026-09-06): S1-S4 remain planned.** Bounded comparison exports and
+browser consumer proofs exist, as recorded below. The musical subsystem review
+and isolated enumeration probe below are research, not implementation of these
+slices. Luna/Terra are the requested implementation agents; each musical slice
+still needs its reviewed done-conditions before opening.
 
 Child of [2026-07-11_stage_set_tools_plan.md](2026-07-11_stage_set_tools_plan.md):
 this is P4e item 6 (voice leading placed by motion cost) and the reasons half
@@ -58,11 +58,12 @@ and what the code has for each today:
   so a scale or chord formula at a root becomes a concrete set. Reuse the
   transposition `Interval` already provides.
 - `shared(a, b) -> PitchClassSet`, `moved(a, b) -> Vec<(from, to)>` as a
-  minimum-motion assignment of the differing tones, and
-  `motion_cost(a, b) -> f32` matching the semantics of
-  `voice_leading_distance` in `woodshed-graph` so the two layers never
-  disagree on a number. Move that function's circular-distance core into
-  `woodshedding` and have `woodshed-graph` call it, rather than keep two.
+  proposed minimum-motion assignment of the differing tones, and a separately
+  named assignment cost if that metric is adopted. The existing catalog
+  `voice_leading_distance` is symmetric mean-nearest distance and is not an
+  assignment. Preserve its behavior; shared circular-distance arithmetic does
+  not make the two measures equivalent. Cardinality and unmatched-tone policy
+  must be explicit before the assignment API is implemented.
 
 `stage_scene` gains, for every pair of staged occurrences whose materials
 resolve to a keyed set (Scale, Chord; Riff and Path do not):
@@ -82,7 +83,9 @@ tone names spelled from the scale's own root where one is present.
 
 Done when: `Set` holding C Major (chord) and A Minor (chord) yields a
 `keeps-tones` relation naming C and E and a `moves-to` naming G to A; the
-same two formulas at roots a tritone apart yield neither; adding a C Major
+same two formulas at roots a tritone apart yield no `keeps-tones`; a
+`moves-to` result depends on the selected metric and threshold (the existing
+mean-nearest rule admits C Major/F-sharp Minor); adding a C Major
 scale card yields `diatonic-in` for both chords; the existing formula-level
 relations still appear alongside, unchanged; `woodshed-graph` tests pass
 against the moved distance function; and the Set tray's relation inventory
@@ -196,6 +199,156 @@ resolve before their affected slices open:
   changing only `card_voicing` would leave another visible disagreement.
 
 ## Order and sign-off
+
+### Musical subsystem research (2026-09-06)
+
+The maintainer asked to research musical meaning, inference, analysis,
+generation, and comparison, including comfortable routes into the next bar or
+line. This section records the current seams and research recommendations.
+Comfort models and analysis runtimes remain choices for the next implementation slice.
+
+#### What the current subsystems actually do
+
+| Subsystem | Current owner and behavior | Missing contract |
+| --- | --- | --- |
+| Musical meaning | `woodshedding::{pitch,interval,chord,scale,progression,rehearsal}` preserves spelling, formulas, keyed progression roles, and Card material/setting/touch/timing. `woodshed-graph` derives formula-level relations. | One Card realization shared by display, audition, and comparison; contextual harmonic readings distinct from exact tone membership. |
+| Inference and recommendation | `woodshed-core::related_material` resolves catalog neighbors; `related_material_with_history` promotes prior staged transitions. `RelatedSettings` filters/diversifies them. | Alternative interpretations with explicit context; separate interest, practice, performance, and player preference evidence. Existing rank scores are not probabilities. |
+| Audio analysis | `woodshed-audio::input` has configurable monophonic pitch analysis; onset/tap-tempo lives beside it. The offline benchmark has normalized note events and a scorer. | A measured transcription adapter, observation-run provenance, alignment to expected events, and uncertainty-preserving catalog resolution. See the audio-material analysis plan. |
+| Generation | `woodshedding` enumerates voicings, applies progression roles in a key, and generates named exercises; core generates arpeggio shapes. | Bounded candidate search across a phrase, constraints and objectives supplied by the player, stable candidate identity, and explicit acceptance into Set. |
+| Comparison | Formula relations carry independent reasons/measurements. Stage keeps occurrence identity; the comparison export handles bounded C/Am membership. | Distinct tone, sounding-voice, hand-position, fingering, rhythm, and performance comparisons, each disclosing its input and units. |
+
+The intelligence-stack names in the July analysis plan have moved: Vates and
+Sibylla are compatibility re-exports of Mere's `esp::infer` and `esp::embed`.
+Neither is a music-analysis implementation. Structured note observations and
+music-specific interpretation stay in Woodshed's analysis/resolution contract;
+ESP remains replaceable inference/embedding execution plumbing.
+
+#### Five comparisons, five questions
+
+1. **Tone membership:** which pitch classes are shared, added, or removed?
+   Set arithmetic answers this exactly. Keep spelling/context for display;
+   enharmonic equality does not erase the intended name.
+2. **Sounding voices:** which actual pitches move, remain, enter, or leave?
+   Preserve octave, repeated voices, bass, and optionally voice identity.
+   Pitch-class sets cannot distinguish a doubled root or an octave displacement.
+3. **Neck positions:** which strings/frets change? Current `ChordVoicing` can
+   supply this geometric comparison, including mute/play changes. It cannot
+   establish that a particular finger stays planted.
+4. **Fingerings:** which finger contacts, barres, releases, stretches, and hand
+   shifts occur? `ChordVoicing` has no finger assignments. Exercises carry a
+   suggested `finger`, but that is not a general chord-contact model.
+5. **Performance:** where did recorded events differ from intended events?
+   This needs alignment, tempo/latency context, and confidence before naming a
+   missed note or late attack. Sensor silence is not proof of player failure.
+
+Harmonic function is another interpretation over a passage. “Shares C and E”
+is an exact fact; “prepares a resolution” depends on key, phrase, and stylistic
+context. Preserve multiple readings when the evidence admits them. Research
+on harmonic analysis explicitly identifies segmentation, key, and treatment
+of non-harmonic notes as interdependent sources of ambiguity:
+[Micchi et al., 2020](https://transactions.ismir.net/articles/10.5334/tismir.45).
+
+#### Comfortable next position, and lookahead over a line
+
+Treat the next bar/line as a bounded sequence of events with candidate
+realizations. A bar boundary alone is too coarse when notes sustain through a
+change or the last note constrains the next hand position.
+
+Separate **constraints** (required tones, bass/inversion, sustained contacts,
+available instrument, pinned fingering, allowed span) from **preferences**
+(position shifts, stretch, barres, open strings, timbre, texture, and practice
+target). A failed constraint returns no compatible candidate with a reason;
+it must not silently omit a chord tone. Preferences produce a cost breakdown,
+not a universal comfort percentage.
+
+For a first deterministic search, retain bounded candidate layers and use
+dynamic programming over static shape costs plus transition costs. The result
+is optimal only for those candidates, weights, and modeled state. A bounded
+beam or candidate cap must be disclosed if introduced. Phrase lookahead and
+locks should be settings. Costs which depend on held fingers or prior motion
+need that history in the state; a pairwise fret difference alone cannot carry
+it. The literature supplies direct precedent for separate static/transition
+features, whole-sequence search, and learning preferences from examples:
+[Radisavljevic and Driessen, 2004](https://www.mistic.ece.uvic.ca/publications/2004_icmc_pdl.pdf).
+An earlier single-note study also uses string/fret/finger states, but targets
+robots, so it is algorithm evidence rather than validation of human comfort:
+[Itoh and Hayashida, 2004](https://doi.org/10.1541/ieejeiss.124.1396).
+
+First product choices could be **least movement**, **keep this position**, and
+**practice a shift**, with two or three alternatives and a reason beside each.
+“Keep this finger planted” is available only after finger assignment exists.
+Player feedback should compare concrete alternatives under the same context;
+choosing a harder exercise is not evidence that the player finds it easier.
+Measured fret distance in millimeters additionally needs scale length and
+instrument geometry. A numeric fret delta alone is not physical distance.
+
+#### Live enumeration probe and corrections
+
+The isolated research workspace is
+`Code/testing/woodshed/musical-meaning-20260906/`. Its `Cargo.lock`, source and
+`receipt.json` reproduce enumeration through the real `woodshedding` path
+dependency at Woodshed `42920669145cc5c64ef8a4ff086e403526a1abc4`.
+`fretboard.rs` SHA-256:
+`12e96e356bc56ec061dcc7d20478c65c1006eae475d304374b00e7171165dadb`.
+
+- Standard guitar, 12 frets, windows starting 0 through 9 with span 3,
+  root-position C-Am-F-G, deduplicated without candidate truncation:
+  **152/145/44/150** candidates. The starting C is `x32010`.
+- The illustrative transition sum is absolute fret change on each continuing
+  string, 2 for a mute/play change, 0 for two muted states. It has no finger,
+  duration, texture, or timbre model. Greedy costs **19**; dynamic programming
+  costs **16**. The latter moves to three-string voicings. This is a search
+  demonstration and an example of an incomplete objective, not a comfort win.
+- Constraining every chord to five played strings yields **52/46/11/52**
+  candidates. Greedy and lookahead both cost **20** for this phrase. Lookahead
+  does not guarantee a strict improvement on every passage.
+- The current mean-nearest pitch-class calculation gives **4/3** for C Major
+  versus F-sharp Minor and **0.125** for C versus Cmaj7. Neither number is total
+  voice displacement; the former falls below the plan's old 1.5 threshold.
+- **Re-entrant bass defect:** high-G ukulele G Major candidate `0,2,x,2`
+  sounds MIDI `67,62,71` (G4,D4,B4). Root-bass enumeration accepts it because
+  `validate_voicing` takes the first played string, though D4 is the actual
+  bass. Resolve bass by sounding pitch before advertising tuning-general
+  inversion or comfortable-route recommendations. No product fix was made in
+  this research pass.
+- **Practice evidence mismatch:** `EngagementKind::is_practice` excludes only
+  `Previewed`, despite its comment distinguishing staging from practice.
+  `related_transition_count` uses this predicate, and the UI emits
+  `PracticedAfter` with “Previously staged from here.” Preserve existing raw
+  engagements; classify interest/practice/performance explicitly before
+  deriving mastery, neglect, or difficulty scores.
+- `find_chord_voicings_for_bass` enumerates the Cartesian product, requires all
+  chord pitch classes and at least three played strings, and has no finger or
+  barre feasibility pass. Arbitrary tuning support does not establish arbitrary
+  instrument technique or scalable candidate generation.
+
+The four existing Python benchmark tests pass in this session. No audio model,
+physical fingering evaluation, human preference fit, or full Woodshed host test
+was run. Synthetic note fixtures validate scoring, not transcription quality.
+
+#### Recommended implementation order and done-conditions
+
+1. **Realization and evidence corrections:** one resolver takes effective
+   tuning, capo/concert-pitch convention, fret window, bass policy, and selected
+   voicing. Audition and board agree on the same resolved pitches. Test the
+   high-G counterexample, custom tuning, invalid selection, repeated Card
+   identities, and staging versus completed-practice classification.
+2. **Exact comparison:** ship keyed membership and explicit added/removed
+   tones; keep the catalog's current metric named separately. Snapshot and
+   audition agree, unknown material stays unknown, and graph filters never
+   alter the candidate distance table or Set truth.
+3. **Position-route generator:** bound a whole phrase, retain locked choices,
+   expose texture and movement preferences, show component costs and alternate
+   paths. A fixture must distinguish greedy from global search, another must
+   tie them, and both must preserve declared musical constraints. Label results
+   as position suggestions until finger feasibility is modeled and checked.
+4. **Analysis and comparison:** follow R2-R4 in the audio-material analysis
+   plan with a generated corpus plus independent held-out human recordings.
+   Report transcription, alignment, and interpretation separately; then test
+   whether recommendations help a player identify or practice a passage.
+
+These recommendations extend the existing plans with explicit inputs,
+constraints, and acceptance evidence for each subsystem.
 
 ### Bounded co-op proof (2026-09-04, verified in current working tree)
 

@@ -9,17 +9,40 @@ Current packages:
 - `redshank-model`: durable library, queue, progress, settings, representation
   receipts, text notes, audio notes, and host adapter traits;
 - `redshank-storage`: a local JSON store using immutable numbered generations;
-- `redshank-surfaces`: reusable Cambium Player and Capture surfaces. The compact
+- `redshank-surfaces`: reusable Cambium Player and Capture surfaces, plus the
+  full Library, Queue, Notes, and Settings composition. The compact
   composition depends only on its presentation snapshot and command queue, so a
   host can mount it without the Library;
+- `redshank-playback`: an experimental local MP3/AAC decoder worker using
+  Symphonia and one host-owned Firewheel/CPAL output. HTTP and host blobs report
+  unsupported-source errors. Genet controller conformance is still pending;
 - `redshank-desktop`: the sovereign executable over Mere's Cambium/Genet winit
-  host. It restores the first queued item into the compact surface. Playback
-  commands currently degrade explicitly until the Symphonia adapter lands.
+  host. It restores selection and per-item progress, opens local files, and
+  saves text notes with frozen item/time/representation targets. Disk writes
+  and the file picker run outside the UI thread.
 
 The storage package writes and flushes a pending generation before publishing
 it with a same-directory rename. Loading walks completed generations newest to
 oldest and selects the first valid document. An interrupted or corrupt newer
 write therefore leaves the last valid state readable.
+
+The desktop waits for a storage acknowledgment before clearing a saved note.
+Editing retains the original target. Changing playback selection or queue order
+does not retarget an open draft. Closing saves a nonempty draft and progress;
+a save failure leaves the window and draft open. `REDSHANK_DATA_DIR` overrides
+the local storage directory for isolated runs.
+
+Open a local recording using **Open local file**, `Ctrl+O`, or a file path as
+the executable's first argument. Outside the editor, Space toggles playback,
+Left/Right skip by the configured interval, and N begins a text note.
+`Ctrl+Enter` saves the editor. Text capture supports Pause and Continue.
+
+This is a local listening slice of Phase 4. Subscription, HTTP fetching/cache,
+voice capture, rate/volume controls, representation-drift warnings/remapping,
+and Turnstone embedding remain open. A local digest is computed before decode
+from the opened file; it does not make a concurrently modified file immutable.
+See the [canonical plan](../../design_docs/2026-09-01_listening_annotation_port_plan.md)
+for current validation receipts and the remaining done-conditions.
 
 Run the isolated model and storage gates from outside the repository's parent
 Cargo configuration:

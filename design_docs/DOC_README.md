@@ -12,16 +12,18 @@ before any other doc in this directory.
 ## Active Plans
 
 - [2026-09-04_musical_projections_plan.md](2026-09-04_musical_projections_plan.md)
-  — Musical slices S1-S4 remain planned. The bounded comparison export and
-  two-peer co-op proof passed; review corrections and Mere receipt pointers
-  distinguish that fixture evidence from a shipped product mode.
+  — Musical slices S1-S4 remain planned. The September 6 subsystem research
+  maps meaning, inference, analysis, generation, and comparison; a live
+  enumeration probe records lookahead/texture tradeoffs and the re-entrant
+  bass defect. Bounded comparison and co-op proofs remain fixture evidence.
 
 - [2026-09-01_listening_annotation_port_plan.md](2026-09-01_listening_annotation_port_plan.md)
-  **Active; Phase 0 complete.** Redshank is a separate audio-listening and timed
-  text/voice-annotation port incubated in this repository. Symphonia plus a
-  bounded range source is the shipping playback default; Genet/GStreamer is the
-  retained conformance path, and Turnstone is the planned second host. It is not
-  part of the Woodshed product graph.
+  **Active; Phases 0-3 complete, Phase 4 in progress.** Redshank is a separate audio-listening and timed
+  text/voice-annotation port incubated in this repository. The September 6
+  local-file slice adds a Symphonia/Firewheel worker, full listening surfaces,
+  and saved text-note editing. Controller conformance, HTTP/cache playback,
+  headed acceptance, and Turnstone as second host remain open. It is separate
+  from the Woodshed product graph.
 - [2026-07-11_stage_set_tools_plan.md](2026-07-11_stage_set_tools_plan.md)
   — **In progress; product authority.** P1-P3 remain partial. P4a/P4b landed;
   the scene canvas and single-Card expansion have receipts, while the full P4e
@@ -45,8 +47,9 @@ before any other doc in this directory.
   Cambium surface. Initial names and marker semantics landed; the wider Tier
   0-3 audit remains open.
 - [2026-07-11_audio_material_analysis_plan.md](2026-07-11_audio_material_analysis_plan.md)
-  — **Active research.** The model-neutral benchmark and scorer landed; no
-  transcription or reasoning model is selected for the product.
+  — **Active research.** The model-neutral benchmark and scorer landed; the
+  September 6 refresh specifies held-out evaluation, alignment, provenance,
+  and ESP ownership. No transcription or reasoning model is selected.
 - [2026-07-14_instruments_and_fretboard_rendering_plan.md](2026-07-14_instruments_and_fretboard_rendering_plan.md)
   — **Open.** Tuning-general catalog expansion and configurable note-region,
   spacing, extent, marker, and fill rendering.

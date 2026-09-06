@@ -2,8 +2,10 @@
 
 ## Status
 
-**ACTIVE RESEARCH, 2026-07-11.** The benchmark contract and scorer are landed.
-No transcription or reasoning model is selected for the product.
+**ACTIVE RESEARCH, 2026-09-06.** The benchmark contract and scorer are landed;
+its four smoke tests passed again in the musical-subsystem review. No
+transcription or reasoning model is selected for the product. The research
+refresh below narrows the next benchmark and identifies the current ESP owner.
 
 This plan supersedes the recommendation in
 [`2026-05-15_polyphonic_pitch_spike.md`](2026-05-15_polyphonic_pitch_spike.md).
@@ -346,6 +348,74 @@ analysis runs at all.
 - Do not merge analysis observations into catalog truth.
 
 ## Progress
+
+### Research refresh, 2026-09-06
+
+The current generation/comparison/inference map and the live voicing-search
+probe are recorded once in
+[the musical projections plan](2026-09-04_musical_projections_plan.md#musical-subsystem-research-2026-09-06).
+The July references to Strophe mean Hocket. New inference integrations should
+target Mere's `esp::infer`; embeddings target `esp::embed`. Vates and Sibylla
+now re-export those contracts for compatibility. Woodshed currently has neither
+as an audio-analysis provider.
+
+Keep three outputs distinct: **observations** (estimated notes/onsets and
+uncertainty), **interpretations** (candidate material under stated context),
+and **suggestions** (a proposed exercise or realization serving a player goal).
+Known Card pitches are ground truth for rendered fixtures, but using expected
+Card context to resolve a recording can conceal a wrong performance. Always
+retain a blind result beside the constrained result and test deliberately
+wrong supplied context.
+
+Basic Pitch remains a reasonable first baseline, not a selection made from a
+model leaderboard. Its official implementation says it works best on one
+instrument at a time; note-event CSV output supports the existing normalizer.
+Its current packaging makes Windows runtime selection Python-version-dependent:
+the ONNX default applies below Python 3.11, while newer Python selectors pull
+TensorFlow. Pin interpreter, package, runtime, model bytes, and invocation;
+record cold/warm runtime and memory separately. No model installation or run
+was performed in this review.
+[Official README](https://github.com/spotify/basic-pitch),
+[package selectors](https://github.com/spotify/basic-pitch/blob/main/pyproject.toml),
+[model paper](https://arxiv.org/abs/2203.09893).
+
+R2-R4 should produce one reproducible report with these groups:
+
+- Generated known material, including altered chords, doubled voices,
+  arpeggiated attacks, rests, repeated notes, and timing variation.
+- Independent human recordings held out by player and musical passage, not
+  random windows of recordings already used to choose thresholds. GuitarSet
+  supplies guitar audio and annotations; pin a version and known-error
+  exclusions from its official repository. Treat any suggested fingering as
+  an alternative realization unless string/fret evidence actually supports it.
+  [GuitarSet record](https://zenodo.org/records/3371780),
+  [known annotation errors](https://github.com/marl/GuitarSet).
+- Robustness cases: silence, incomplete notes, detuning, distorted/roomy audio,
+  wrong tuning/capo hints, out-of-catalog material, repetitions, skipped bars,
+  and interrupted capture. Report abstention and confidently wrong cases.
+
+Report onset/pitch F1 and onset/pitch/offset F1 separately, with documented
+tolerances, then catalog retrieval and user-correction burden. The existing
+scorer performs maximum one-to-one matching, but its four tests and synthetic
+JSON pair are not a transcription benchmark. It does not yet require the full
+source-digest/analyzer/model/run provenance listed in this plan. Tighten that
+validation when the first real adapter enters. Use the independent reference
+metrics for a published comparison:
+[mir_eval transcription](https://mir-eval.readthedocs.io/latest/api/transcription.html).
+
+Performance comparison requires an alignment result of its own. A monotonic
+time alignment can help with local tempo drift, but repeated/skipped sections
+need explicit structural handling and uncertainty; ordinary DTW is inadequate
+for those cases. The first acceptance corpus must include a restart and skipped
+bar before the UI calls a passage wrong.
+[Grachten et al., 2013](https://www.cp.jku.at/research/papers/Grachten_etal_Ismir_2013.pdf).
+
+The strongest first product experiment is an isolated recorded phrase against
+a known Card/Set, with uncertain events visible and correction available.
+Rendering varied practice phrases is already a deterministic generation task;
+an LLM may explain or propose a typed candidate through ESP later, while the
+same musical validator checks it. No selected model or confidence floor is
+claimed until R2-R4 produce held-out evidence.
 
 ### 2026-07-11
 
