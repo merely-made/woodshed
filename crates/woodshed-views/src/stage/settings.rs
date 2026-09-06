@@ -7,7 +7,7 @@ use woodshedding::rehearsal::SetGraphEdgeKind;
 use workbench::SettingsRef;
 
 use super::{BoardLayout, SettingsPage, UiChild, UiState};
-use crate::settings_provider::{WoodshedSettingsProvider, APPEARANCE_REFERENCE};
+use crate::settings_provider::{APPEARANCE_REFERENCE, WoodshedSettingsProvider};
 
 /// MIDI device panel (audio-depth slice 13): port pickers, clock-slave /
 /// clock-master toggles, and a live status + event readout. The host
@@ -370,6 +370,18 @@ fn stage_page(ui: &UiState) -> UiChild {
         "Set arrangement: {}",
         ui.app_settings.stage.set_arrangement.label()
     );
+    let reading = format!(
+        "Set reading: {}",
+        ui.app_settings.stage.set_graph_reading.label()
+    );
+    let context = if ui.app_settings.stage.context.enabled {
+        format!(
+            "Circle context: on · {} nodes",
+            ui.app_settings.stage.context.node_limit()
+        )
+    } else {
+        "Circle context: off".to_string()
+    };
     let (set_graph_width, set_graph_height) = ui.app_settings.stage.set_graph_size();
     let set_graph_size = format!("Set canvas: {set_graph_width} × {set_graph_height} · reset");
     let hidden_count = ui.app_settings.stage.related.dismissed_ids.len();
@@ -446,6 +458,28 @@ fn stage_page(ui: &UiState) -> UiChild {
                     el("div", text(set_arrangement)).attr("class", "side-item"),
                     |ui: &mut UiState, _| {
                         ui.set_graph_arrangement(ui.app_settings.stage.set_arrangement.next());
+                    },
+                ),
+                clickable(
+                    el("div", text(reading)).attr("class", "side-item"),
+                    |ui: &mut UiState, _| {
+                        let reading = ui.app_settings.stage.set_graph_reading.next();
+                        ui.set_graph_reading(reading);
+                    },
+                ),
+                clickable(
+                    el("div", text(context)).attr("class", "side-item"),
+                    |ui: &mut UiState, _| {
+                        ui.app_settings.stage.context.enabled =
+                            !ui.app_settings.stage.context.enabled;
+                    },
+                ),
+                clickable(
+                    el("div", text("Context breadth: next")).attr("class", "side-item"),
+                    |ui: &mut UiState, _| {
+                        let limit = ui.app_settings.stage.context.node_limit();
+                        ui.app_settings.stage.context.node_limit =
+                            if limit >= 36 { 12 } else { limit + 12 };
                     },
                 ),
                 clickable(

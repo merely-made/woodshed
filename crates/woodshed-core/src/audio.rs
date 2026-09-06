@@ -85,12 +85,19 @@ pub struct TunerState {
 /// Nothing here carries a correlation id, because nothing here has an answer
 /// that could arrive late: results (recording status, calibration progress,
 /// measured latency) are polled from the backend each frame.
-#[derive(Clone, Copy, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum AudioRequest {
     /// Rewind the song transport to its start.
     SongRewind,
     /// Voice the current lens or rehearsal card.
     PreviewVoicing,
+    /// Audition a resolved selection. Carrying its pitches keeps later focus
+    /// or section changes from redirecting a queued context audition.
+    PreviewPitches {
+        pitches: Vec<f32>,
+        duration_s: f32,
+        strum_s: f32,
+    },
     /// Play one note at this frequency (Hz).
     PreviewNote(f32),
     /// Begin latency calibration.

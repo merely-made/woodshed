@@ -1,6 +1,7 @@
 # Musical Projections Plan
 
-**Status (2026-09-06): S1-S4 remain planned.** Bounded comparison exports and
+**Status (2026-09-06): first Circle-of-Fifths context slice landed; S1-S4
+remain planned except where explicitly recorded below.** Bounded comparison exports and
 browser consumer proofs exist, as recorded below. The musical subsystem review
 and isolated enumeration probe below are research, not implementation of these
 slices. Luna/Terra are the requested implementation agents; each musical slice
@@ -48,6 +49,94 @@ and what the code has for each today:
   measure a miss.
 
 ## Slices
+
+### Context around the Set (2026-09-06)
+
+The user's current direction makes comparison an emphasis over a wider musical
+graph. Shared tones, differing tones, and nearby or more distant material remain
+available together. Background material is real catalog-derived material with a
+stable identity; a repeated staged Card remains a separate occurrence.
+
+Confirmed interaction decisions:
+
+- Clicking background material focuses it and reveals its connections. Audition
+  and **Add to Set** are separate, explicit actions.
+- Focusing preserves existing positions and expands nearby. View-local focus,
+  retained positions, and exploration never silently author Set membership.
+- The arrangement determines the relevant background and its placement. A
+  universal recommendation halo followed by a different geometric layout does
+  not meet this requirement. Existing Grid/Snake/Circle names describe geometry;
+  they do not establish musical meaning such as a circle of fifths.
+- Relations between background nodes must be available, so the graph provides
+  connected routes for exploration beyond the selected cards' intersection.
+- Context visibility and breadth are user preferences. Dense remote detail may
+  be reduced visually without misrepresenting membership or musical facts.
+
+First-slice done-conditions: one explicitly musical arrangement defines a
+bounded, explainable context; catalog candidates and repeated staged occurrences
+are distinguishable through the scene and accessible UI; focus preserves the
+Set and existing placement; audition and Add to Set act on the focused material;
+and comparison reports shared and differing tones without reducing graph
+membership to those tones. The wider arrangement catalog, fingering motion,
+practice inference, and generative recommendations retain their separate gates.
+
+**Implementation (2026-09-06):** `stage_scene.rs` maps each instance to either a
+stable Card occurrence or a keyed catalog reference.
+`StageState::neighborhood_snapshot` supplies a separate center-to-neighbor graph.
+The existing ten `GraphArrangement` variants operate on count/edges/focus, without
+keyed musical coordinates or a context query. Implementation was divided between
+Terra (core identity/context/projection) and Luna (focus/actions/presentation),
+with integration and validation owned by the parent task.
+
+**First arrangement:** Circle of fifths is the first implemented musical
+reading. The existing geometric layouts remain under Set. Major chords provide
+landmarks around all twelve tonic positions; relative minor chords and keyed
+scales occupy separate rings. The normal opening shows up to 16 context items,
+focus expands to the user's 24-item default, and Show more can expand to the
+36-item ceiling. Lower limits remain available in Stage settings. Existing
+positions survive expansion; an explicit new reading releases old view pins.
+
+The keyed identity and catalog resolution live in `woodshed-core::harmony`;
+exact shared/exclusive pitch-set arithmetic lives in
+`woodshedding::pitch_class_set`. This is the set-comparison foundation for S1,
+not a voice assignment, ergonomic movement estimate, or completed S1-S4 feature.
+Repeated Set occurrences retain Card IDs while context names a formula plus
+tonic. Keyed and formula-level relations keep separate slugs.
+
+**Presentation:** fixed tonic slots and separate rings preserve spatial bearings.
+The graph uses 20-pixel hit targets, a square opening canvas, and a focus/action
+panel beside the graph where space permits. A quiet major-chord fifth chain
+remains visible; focusing material reveals its incident relations. Other derived
+background relations become visible when their material is focused. The current
+comparison covers the selected Set card and one focused context item; arbitrary
+multi-card comparison remains open. Pitch-class labels currently use sharps.
+
+Audition queues resolved pitches, so changing the board before the host drains
+the request cannot change what is heard. Focus, positions, and retained context
+are view state. Arrangement, context visibility, and breadth are saved settings.
+At the context ceiling, **Explore from here** explicitly refreshes the disclosed
+neighborhood around focus; fixed musical coordinates still preserve bearings.
+Reducing breadth preserves the focused material. Compact labels stay adjacent
+to their tonic slots instead of moving with the disclosed edges.
+
+**Validation (2026-09-06):** 332 tests passed across `woodshedding` (169),
+`woodshed-core` (89 plus 10 example tests), `woodshed-graph` (14), and
+`woodshed-views` (50). The desktop build passed. Both commands ran from `C:/t`
+with the Woodshed manifest, `--locked --offline`, and target directory
+`C:/t/woodshed-context-target`, bypassing the ignored local Cargo overrides that
+reference a missing worktree. Existing unused-import/dead-code warnings remain.
+
+`scenarios/p4e_musical_context.scn` passed through actual pointer targets:
+choose the arrangement, focus A minor without changing Set membership/cursor,
+inspect C/E shared and G/A exclusive tones, explicitly Add, and hide context.
+The final rendered receipt is
+`Code/testing/woodshed/musical-context-20260906/run06/`; `receipt.json` in its
+parent records the source commit and artifact hashes. Unit regressions cover
+immutable audition pitches, stable expansion/hiding, stale callbacks, focused
+material at reduced breadth, the complete major-key fifth chain through staged
+C, and duplicate-free shared-tone routes. Physical audio output was not checked
+in this graph receipt. Denser label/edge treatment, key-aware enharmonic spelling,
+other musical arrangements, and multi-card comparison remain follow-up work.
 
 ### S1. Keyed occurrence relations
 

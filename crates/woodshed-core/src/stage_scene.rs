@@ -23,10 +23,10 @@
 //! `woodshed-graph` relates catalog formulas (`Major 7` extends `Major`
 //! whatever the tonic). Staged cards carry roots, so the Stage layer is where
 //! keyed relations (diatonic in, dominant of, resolves to) would eventually be
-//! derived. They are not derived here: this founding lifts the formula-level
-//! relations onto occurrences, and the keyed layer is its own slice.
+//! derived. The Set reading preserves those formula relations. The optional
+//! musical context adds separate keyed shared-tone and chord-in-scale facts.
 
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, BTreeSet};
 
 use sceno::{
     Footprint, InstanceId, ProjectedItem, Rect, Representation, RoutedRelation, Scene, Size2,
@@ -34,12 +34,16 @@ use sceno::{
 };
 use scenotime::{RelationId, Revision, SceneEpoch, SceneSnapshot};
 use woodshed_graph::{
-    chord_id, exercise_id, relations_between, scale_id, MaterialRelation, RelationAuthority,
-    RelationKind,
+    MaterialRelation, RelationAuthority, RelationKind, chord_id, exercise_id, relations_between,
+    scale_id,
 };
 use woodshedding::rehearsal::{CardId, Material, Set};
 
-use crate::arrangement::{arrange_graph, GraphArrangement};
+use crate::arrangement::{GraphArrangement, arrange_graph};
+use crate::harmony::KeyedCatalogRef;
+use crate::stage_context::{
+    StageContextOptions, StageNodeId, StageNodeKind, circle_of_fifths_context,
+};
 
 /// The adapter name every Stage source ref carries, so a viewer with no
 /// woodshed access still knows which product minted the id.
@@ -76,6 +80,9 @@ pub struct StageSceneOptions {
     /// Product-selected arrangement. It changes placement only; occurrence and
     /// relation identity are assigned after the arrangement is resolved.
     pub arrangement: GraphArrangement,
+    /// Optional quiet keyed catalog context. It is derived from the Set and
+    /// focus only; it cannot change authored cards or their sequence.
+    pub context: Option<StageContextOptions>,
 }
 
 impl Default for StageSceneOptions {
@@ -87,6 +94,7 @@ impl Default for StageSceneOptions {
             relation_kinds: None,
             sequence: true,
             arrangement: GraphArrangement::Snake,
+            context: None,
         }
     }
 }
@@ -101,8 +109,33 @@ impl Default for StageSceneOptions {
 #[derive(Clone, Debug)]
 pub struct StageGraphSnapshot {
     pub snapshot: SceneSnapshot,
-    /// Occurrence identity per instance, indexed by [`InstanceId`].
+    /// Staged occurrence identities in Set order. Kept for existing consumers;
+    /// context items are addressed through [`Self::node_of`].
     pub cards: Vec<CardId>,
+    /// Product meaning per dense scene instance, including quiet context.
+    pub nodes: Vec<StageSceneNode>,
+}
+
+/// Product meaning recovered from a generic scene item.
+#[derive(Clone, Debug)]
+pub struct StageSceneNode {
+    pub id: StageNodeId,
+    pub label: String,
+    pub kind: StageNodeKind,
+    pub material: Option<Material>,
+    pub keyed: Option<KeyedCatalogRef>,
+    pub foreground: bool,
+}
+
+/// Generic relation disclosure for a scene containing catalog context. The
+/// established [`StageRelationDetail`] remains the occurrence-only Set API.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct StageSceneRelationDetail {
+    pub reference: StageRelationRef,
+    pub from: StageNodeId,
+    pub to: StageNodeId,
+    pub kind: String,
+    pub label: String,
 }
 
 /// Epoch-qualified item identity used by Cambium callbacks. A stale event from
@@ -174,7 +207,14 @@ impl StageGraphSnapshot {
     }
 
     pub fn card_of(&self, instance: InstanceId) -> Option<CardId> {
-        self.cards.get(instance.0 as usize).copied()
+        match &self.nodes.get(instance.0 as usize)?.id {
+            StageNodeId::Card(card) => Some(*card),
+            StageNodeId::Catalog(_) => None,
+        }
+    }
+
+    pub fn node_of(&self, instance: InstanceId) -> Option<&StageSceneNode> {
+        self.nodes.get(instance.0 as usize)
     }
 
     pub fn card_of_ref(&self, reference: StageInstanceRef) -> Option<CardId> {
@@ -184,9 +224,16 @@ impl StageGraphSnapshot {
     }
 
     pub fn instance_of(&self, card: CardId) -> Option<InstanceId> {
-        self.cards
+        self.nodes
             .iter()
-            .position(|c| *c == card)
+            .position(|node| node.id == StageNodeId::Card(card))
+            .map(|i| InstanceId(i as u32))
+    }
+
+    pub fn instance_of_node(&self, node_id: &StageNodeId) -> Option<InstanceId> {
+        self.nodes
+            .iter()
+            .position(|node| &node.id == node_id)
             .map(|i| InstanceId(i as u32))
     }
 
@@ -242,6 +289,18 @@ impl StageGraphSnapshot {
             });
         }
 
+        if key.kind.starts_with("woodshed:keyed-") || key.kind == "woodshed:circle-of-fifths" {
+            let detail = self.scene_relation_detail(reference)?;
+            return Some(StageRelationDetail {
+                reference,
+                key,
+                label: detail.label.clone(),
+                explanation: detail.label,
+                authority: "Computed",
+                weight: (self.relation(reference)?.weight.unwrap_or(0.0) * 100.0).round() as u16,
+            });
+        }
+
         let reason = self
             .reasons(key.from, key.to, set)
             .into_iter()
@@ -292,6 +351,49 @@ impl StageGraphSnapshot {
                 ))
             })
             .collect()
+    }
+
+    /// Explain a context relation without forcing it into the occurrence-only
+    /// `StageRelationKey` contract used by the existing Set inventory.
+    pub fn scene_relation_detail(
+        &self,
+        reference: StageRelationRef,
+    ) -> Option<StageSceneRelationDetail> {
+        let relation = self.relation(reference)?;
+        let from = self.node_of(relation.from)?.id.clone();
+        let to = self.node_of(relation.to)?.id.clone();
+        let kind = relation.kind.clone().unwrap_or_else(|| "relation".into());
+        let label = match kind.as_str() {
+            "woodshed:keyed-shared-tones" => {
+                let left = self.node_of(relation.from)?.keyed.as_ref()?;
+                let right = self.node_of(relation.to)?.keyed.as_ref()?;
+                let comparison = crate::harmony::compare_pitch_sets(left, right)?;
+                let names = comparison
+                    .shared
+                    .iter()
+                    .map(|tone| {
+                        let pitch = woodshedding::pitch::Pitch::from_midi(
+                            60 + i32::from(tone.value()),
+                            woodshedding::pitch::Spelling::Sharps,
+                        );
+                        format!("{}{}", pitch.name, pitch.accidental)
+                    })
+                    .collect::<Vec<_>>()
+                    .join(" ");
+                format!("shares tones: {names}")
+            },
+            "woodshed:keyed-diatonic" => "diatonic in".into(),
+            "woodshed:circle-of-fifths" => "roots a fifth apart".into(),
+            SEQUENCE_KIND => "sequence".into(),
+            _ => kind.clone(),
+        };
+        Some(StageSceneRelationDetail {
+            reference,
+            from,
+            to,
+            kind,
+            label,
+        })
     }
 
     /// Every reason two staged occurrences are related, in display order.
@@ -371,6 +473,8 @@ pub fn stage_scene(set: &Set, options: &StageSceneOptions) -> StageGraphSnapshot
     let mut scene = Scene::new();
     let graph = set.graph();
     let mut cards = Vec::with_capacity(graph.nodes.len());
+    let mut nodes = Vec::with_capacity(graph.nodes.len());
+    let mut occurrence_offsets = BTreeMap::<KeyedCatalogRef, usize>::new();
     let graph_edges = graph
         .edges
         .iter()
@@ -406,13 +510,28 @@ pub fn stage_scene(set: &Set, options: &StageSceneOptions) -> StageGraphSnapshot
             .map(|heat| vec![(RECENCY_CHANNEL.to_string(), *heat)])
             .unwrap_or_default();
 
+        let keyed = KeyedCatalogRef::from_material(&card.material);
+        let position = if options.context.is_some() {
+            keyed.as_ref().map(|keyed| {
+                let occurrence = occurrence_offsets.entry(keyed.clone()).or_default();
+                let base = circle_context_position(keyed);
+                let offset = *occurrence as f32 * 18.0;
+                *occurrence += 1;
+                Vec2::new(base.x + offset, base.y + offset)
+            })
+        } else {
+            None
+        }
+        .unwrap_or_else(|| {
+            Vec2::new(
+                (positions[node.index].0 - 0.5) * span,
+                (positions[node.index].1 - 0.5) * span,
+            )
+        });
         scene.items.push(ProjectedItem {
             source,
             space: Scene::WORLD,
-            transform: Transform2::translation(
-                (positions[node.index].0 - 0.5) * span,
-                (positions[node.index].1 - 0.5) * span,
-            ),
+            transform: Transform2::translation(position.x, position.y),
             footprint: Footprint::Rect {
                 size: options.card_size,
             },
@@ -423,6 +542,17 @@ pub fn stage_scene(set: &Set, options: &StageSceneOptions) -> StageGraphSnapshot
             channels,
         });
         cards.push(card.id);
+        nodes.push(StageSceneNode {
+            id: StageNodeId::Card(card.id),
+            label: card.label.clone(),
+            kind: keyed
+                .as_ref()
+                .map(keyed_kind)
+                .unwrap_or(StageNodeKind::Card),
+            material: Some(card.material.clone()),
+            keyed,
+            foreground: true,
+        });
     }
 
     let instance = |id: CardId| {
@@ -431,14 +561,6 @@ pub fn stage_scene(set: &Set, options: &StageSceneOptions) -> StageGraphSnapshot
             .position(|c| *c == id)
             .map(|i| InstanceId(i as u32))
     };
-    let centre = |i: InstanceId| {
-        scene
-            .items
-            .get(i.0 as usize)
-            .map(|item| Vec2::new(item.transform.translate.x, item.transform.translate.y))
-            .unwrap_or(Vec2::new(0.0, 0.0))
-    };
-
     // Set order, straight from the Set's own graph so sequence truth stays
     // woodshedding's.
     let mut relations = Vec::new();
@@ -451,7 +573,7 @@ pub fn stage_scene(set: &Set, options: &StageSceneOptions) -> StageGraphSnapshot
                 from,
                 to,
                 space: Scene::WORLD,
-                points: vec![centre(from), centre(to)],
+                points: vec![item_centre(&scene, from), item_centre(&scene, to)],
                 kind: Some(SEQUENCE_KIND.to_string()),
                 weight: Some(1.0),
             });
@@ -487,15 +609,252 @@ pub fn stage_scene(set: &Set, options: &StageSceneOptions) -> StageGraphSnapshot
                     from,
                     to,
                     space: Scene::WORLD,
-                    points: vec![centre(from), centre(to)],
+                    points: vec![item_centre(&scene, from), item_centre(&scene, to)],
                     kind: Some(relation_slug(relation.kind).to_string()),
                     weight: Some(f32::from(relation.weight) / 100.0),
                 });
             }
         }
     }
+
+    // Quiet context is a separate keyed reading. Its positions derive from
+    // tonic slots on a fixed circle around the current focus, rather than from
+    // the number of disclosed nodes, so expanding breadth cannot renormalize
+    // material already on screen.
+    if let Some(context_options) = &options.context {
+        let focused = context_options
+            .focus
+            .as_ref()
+            .and_then(|focus| match focus {
+                StageNodeId::Card(card) => set
+                    .card(*card)
+                    .and_then(|card| KeyedCatalogRef::from_material(&card.material))
+                    .map(|keyed| (StageNodeId::Card(*card), keyed)),
+                StageNodeId::Catalog(keyed) => Some((focus.clone(), keyed.clone())),
+            })
+            .or_else(|| {
+                set.cursor_id().and_then(|card| {
+                    set.card(card)
+                        .and_then(|card| KeyedCatalogRef::from_material(&card.material))
+                        .map(|keyed| (StageNodeId::Card(card), keyed))
+                })
+            });
+        if let Some((focus_id, focus_keyed)) = focused {
+            let omitted = nodes
+                .iter()
+                .filter_map(|node| node.keyed.clone())
+                .collect::<BTreeSet<_>>();
+            let context = circle_of_fifths_context(
+                &focus_keyed,
+                context_options.node_limit,
+                &omitted,
+                &context_options.retained,
+            );
+            let mut context_instances = BTreeMap::new();
+            for node in &context.nodes {
+                let point = circle_context_position(&node.keyed);
+                let source =
+                    scene.intern_source(SourceRef::new(ADAPTER, node.keyed.formula_id.clone()));
+                let instance = InstanceId(scene.items.len() as u32);
+                scene.items.push(ProjectedItem {
+                    source,
+                    space: Scene::WORLD,
+                    transform: Transform2::translation(point.x, point.y),
+                    footprint: Footprint::Rect {
+                        size: options.card_size,
+                    },
+                    representation: Representation::Card,
+                    layer: -1,
+                    visible: true,
+                    hit: None,
+                    channels: Vec::new(),
+                });
+                context_instances.insert(node.id.clone(), instance);
+                nodes.push(StageSceneNode {
+                    id: node.id.clone(),
+                    label: node.label.clone(),
+                    kind: node.kind,
+                    material: node.keyed.to_material(),
+                    keyed: Some(node.keyed.clone()),
+                    foreground: false,
+                });
+            }
+            for relation in context.relations {
+                let from_id = if relation.from == StageNodeId::Catalog(focus_keyed.clone()) {
+                    &focus_id
+                } else {
+                    &relation.from
+                };
+                let to_id = if relation.to == StageNodeId::Catalog(focus_keyed.clone()) {
+                    &focus_id
+                } else {
+                    &relation.to
+                };
+                let from = instance_of_node_id(&nodes, from_id)
+                    .or_else(|| context_instances.get(from_id).copied());
+                let to = instance_of_node_id(&nodes, to_id)
+                    .or_else(|| context_instances.get(to_id).copied());
+                let (Some(from), Some(to)) = (from, to) else {
+                    continue;
+                };
+                relations.push(RoutedRelation {
+                    from,
+                    to,
+                    space: Scene::WORLD,
+                    points: vec![item_centre(&scene, from), item_centre(&scene, to)],
+                    kind: Some(relation.kind.slug().to_string()),
+                    weight: Some((relation.shared_tones.max(1) as f32 / 12.0).min(1.0)),
+                });
+            }
+        }
+    }
+    // Keyed relations are a reading over every displayed keyed realization,
+    // including non-focused staged cards. Formula relations above remain
+    // intact; this adds only the tonic-aware facts and deduplicates the routes
+    // already emitted by the bounded context builder.
+    if options.context.is_some() {
+        let mut seen = BTreeSet::new();
+        for route in &relations {
+            if let Some(kind) = route.kind.as_deref().filter(|kind| {
+                kind.starts_with("woodshed:keyed-") || *kind == "woodshed:circle-of-fifths"
+            }) {
+                if let (Some(from), Some(to)) = (
+                    nodes.get(route.from.0 as usize),
+                    nodes.get(route.to.0 as usize),
+                ) {
+                    let (from, to) = if kind == "woodshed:keyed-shared-tones"
+                        || kind == "woodshed:circle-of-fifths"
+                    {
+                        canonical_endpoints(from.id.clone(), to.id.clone())
+                    } else {
+                        (from.id.clone(), to.id.clone())
+                    };
+                    seen.insert((from, to, kind.to_string()));
+                }
+            }
+        }
+        for left_index in 0..nodes.len() {
+            for right_index in (left_index + 1)..nodes.len() {
+                let (Some(left), Some(right)) = (
+                    nodes[left_index].keyed.as_ref(),
+                    nodes[right_index].keyed.as_ref(),
+                ) else {
+                    continue;
+                };
+                let (Some(left_set), Some(right_set)) =
+                    (left.pitch_classes(), right.pitch_classes())
+                else {
+                    continue;
+                };
+                let shared = left_set.intersection(&right_set).count();
+                let from = nodes[left_index].id.clone();
+                let to = nodes[right_index].id.clone();
+                let append = |relations: &mut Vec<RoutedRelation>, kind: &str, weight: f32| {
+                    relations.push(RoutedRelation {
+                        from: InstanceId(left_index as u32),
+                        to: InstanceId(right_index as u32),
+                        space: Scene::WORLD,
+                        points: vec![
+                            item_centre(&scene, InstanceId(left_index as u32)),
+                            item_centre(&scene, InstanceId(right_index as u32)),
+                        ],
+                        kind: Some(kind.to_string()),
+                        weight: Some(weight),
+                    });
+                };
+                let shared_endpoints = canonical_endpoints(from.clone(), to.clone());
+                if shared > 0
+                    && seen.insert((
+                        shared_endpoints.0,
+                        shared_endpoints.1,
+                        "woodshed:keyed-shared-tones".into(),
+                    ))
+                {
+                    append(
+                        &mut relations,
+                        "woodshed:keyed-shared-tones",
+                        shared as f32 / 12.0,
+                    );
+                }
+                let tonic_delta = (left.root.value() + 12 - right.root.value()) % 12;
+                let fifth_endpoints = canonical_endpoints(from.clone(), to.clone());
+                if (tonic_delta == 5 || tonic_delta == 7)
+                    && seen.insert((
+                        fifth_endpoints.0,
+                        fifth_endpoints.1,
+                        "woodshed:circle-of-fifths".into(),
+                    ))
+                {
+                    append(&mut relations, "woodshed:circle-of-fifths", 1.0);
+                }
+                let (chord_index, scale_index) = match (keyed_kind(left), keyed_kind(right)) {
+                    (StageNodeKind::Chord, StageNodeKind::Scale) => (left_index, right_index),
+                    (StageNodeKind::Scale, StageNodeKind::Chord) => (right_index, left_index),
+                    _ => continue,
+                };
+                let chord = nodes[chord_index]
+                    .keyed
+                    .as_ref()
+                    .unwrap()
+                    .pitch_classes()
+                    .unwrap();
+                let scale = nodes[scale_index]
+                    .keyed
+                    .as_ref()
+                    .unwrap()
+                    .pitch_classes()
+                    .unwrap();
+                let from = nodes[chord_index].id.clone();
+                let to = nodes[scale_index].id.clone();
+                if chord.is_subset(&scale)
+                    && seen.insert((from, to, "woodshed:keyed-diatonic".into()))
+                {
+                    relations.push(RoutedRelation {
+                        from: InstanceId(chord_index as u32),
+                        to: InstanceId(scale_index as u32),
+                        space: Scene::WORLD,
+                        points: vec![
+                            item_centre(&scene, InstanceId(chord_index as u32)),
+                            item_centre(&scene, InstanceId(scale_index as u32)),
+                        ],
+                        kind: Some("woodshed:keyed-diatonic".into()),
+                        weight: Some(chord.len() as f32 / 12.0),
+                    });
+                }
+            }
+        }
+    }
+    let mut emitted = BTreeSet::new();
+    relations.retain(|route| {
+        let Some(kind) = route.kind.as_deref() else {
+            return true;
+        };
+        let symmetric = matches!(
+            kind,
+            "woodshed:keyed-shared-tones" | "woodshed:circle-of-fifths"
+        );
+        if !symmetric && kind != "woodshed:keyed-diatonic" {
+            return true;
+        }
+        let (Some(from), Some(to)) = (
+            nodes.get(route.from.0 as usize),
+            nodes.get(route.to.0 as usize),
+        ) else {
+            return false;
+        };
+        let (from, to) = if symmetric {
+            canonical_endpoints(from.id.clone(), to.id.clone())
+        } else {
+            (from.id.clone(), to.id.clone())
+        };
+        emitted.insert((from, to, kind.to_string()))
+    });
     scene.relations = relations;
-    let item_bounds = lane_bounds(&scene, options.card_size);
+    let item_bounds = if options.context.is_some() {
+        Rect::new(Vec2::new(-900.0, -900.0), Size2::new(1800.0, 1800.0))
+    } else {
+        lane_bounds(&scene, options.card_size)
+    };
     let floor_padding = 48.0;
     let floor_bounds = Rect::new(
         Vec2::new(
@@ -527,7 +886,62 @@ pub fn stage_scene(set: &Set, options: &StageSceneOptions) -> StageGraphSnapshot
     let snapshot = SceneSnapshot::from_dense(epoch, Revision(0), scene)
         .unwrap_or_else(|error| panic!("Woodshed produced an invalid Stage scene: {error:?}"));
 
-    StageGraphSnapshot { snapshot, cards }
+    StageGraphSnapshot {
+        snapshot,
+        cards,
+        nodes,
+    }
+}
+
+fn keyed_kind(keyed: &KeyedCatalogRef) -> StageNodeKind {
+    if keyed.formula_id.starts_with("scale:") {
+        StageNodeKind::Scale
+    } else {
+        StageNodeKind::Chord
+    }
+}
+
+fn canonical_endpoints(a: StageNodeId, b: StageNodeId) -> (StageNodeId, StageNodeId) {
+    if a <= b { (a, b) } else { (b, a) }
+}
+
+fn instance_of_node_id(nodes: &[StageSceneNode], id: &StageNodeId) -> Option<InstanceId> {
+    nodes
+        .iter()
+        .position(|node| &node.id == id)
+        .map(|index| InstanceId(index as u32))
+}
+
+fn item_centre(scene: &Scene, instance: InstanceId) -> Vec2 {
+    scene
+        .items
+        .get(instance.0 as usize)
+        .map(|item| Vec2::new(item.transform.translate.x, item.transform.translate.y))
+        .unwrap_or(Vec2::new(0.0, 0.0))
+}
+
+/// Fixed Circle-of-Fifths slots. Relative major/minor share a tonic position:
+/// A minor aligns with C major, and their distinct formula ids remain visible.
+fn circle_context_position(keyed: &KeyedCatalogRef) -> Vec2 {
+    let relative_offset = if keyed.formula_id.contains("Minor") {
+        3_i16
+    } else {
+        0
+    };
+    let pitch = (i16::from(keyed.root.value()) + relative_offset).rem_euclid(12) as f32;
+    let fifth_steps = (pitch * 7.0).rem_euclid(12.0);
+    let angle = fifth_steps / 12.0 * std::f32::consts::TAU - std::f32::consts::FRAC_PI_2;
+    let radius = match keyed.formula_id.as_str() {
+        "chord:Major" => 580.0,
+        "chord:Minor" => 340.0,
+        "scale:Major" => 820.0,
+        "scale:Minor" => 460.0,
+        "chord:Major 7" => 640.0,
+        "chord:Dominant 7" => 700.0,
+        "chord:Minor 7" => 760.0,
+        _ => 820.0,
+    };
+    Vec2::new(angle.cos() * radius, angle.sin() * radius)
 }
 
 /// A dense projection starts a fresh, content-addressed epoch whenever any
@@ -817,9 +1231,11 @@ mod tests {
                 && !detail.authority.is_empty()
                 && detail.weight > 0
         }));
-        assert!(snake_details
-            .iter()
-            .any(|detail| detail.authority == "Set" && detail.key.kind == SEQUENCE_KIND));
+        assert!(
+            snake_details
+                .iter()
+                .any(|detail| detail.authority == "Set" && detail.key.kind == SEQUENCE_KIND)
+        );
     }
 
     #[test]
@@ -882,6 +1298,120 @@ mod tests {
     }
 
     #[test]
+    fn circle_context_keeps_relative_pairs_and_extensions_in_distinct_slots() {
+        let set = set_of(&[
+            ("C major", chord("Major")),
+            (
+                "A minor",
+                Material::Chord {
+                    name: "Minor".into(),
+                    root: PitchClass::new(9),
+                },
+            ),
+        ]);
+        let snapshot = stage_scene(
+            &set,
+            &StageSceneOptions {
+                context: Some(StageContextOptions {
+                    node_limit: 12,
+                    ..StageContextOptions::default()
+                }),
+                ..StageSceneOptions::default()
+            },
+        );
+        let positions = snapshot
+            .snapshot
+            .tables
+            .items
+            .iter()
+            .flatten()
+            .map(|item| {
+                (
+                    item.transform.translate.x.to_bits(),
+                    item.transform.translate.y.to_bits(),
+                )
+            })
+            .collect::<BTreeSet<_>>();
+        assert_eq!(positions.len(), snapshot.snapshot.active_item_count());
+    }
+
+    #[test]
+    fn circle_context_completes_the_twelve_major_fifth_links_through_a_staged_c() {
+        let set = set_of(&[("C", chord("Major"))]);
+        let snapshot = stage_scene(
+            &set,
+            &StageSceneOptions {
+                context: Some(StageContextOptions {
+                    node_limit: 36,
+                    ..StageContextOptions::default()
+                }),
+                ..StageSceneOptions::default()
+            },
+        );
+        let major = |instance: InstanceId| {
+            snapshot
+                .node_of(instance)
+                .and_then(|node| node.keyed.as_ref())
+                .is_some_and(|keyed| keyed.formula_id == "chord:Major")
+        };
+        let fifths = snapshot
+            .relations()
+            .into_iter()
+            .filter(|(_, relation)| {
+                relation.kind.as_deref() == Some("woodshed:circle-of-fifths")
+                    && major(relation.from)
+                    && major(relation.to)
+            })
+            .map(|(_, relation)| {
+                canonical_endpoints(
+                    snapshot.node_of(relation.from).unwrap().id.clone(),
+                    snapshot.node_of(relation.to).unwrap().id.clone(),
+                )
+            })
+            .collect::<BTreeSet<_>>();
+        assert_eq!(fifths.len(), 12, "expected the complete major-key circle");
+        let c = StageNodeId::Card(set.cards[0].id);
+        for root in [5, 7] {
+            assert!(fifths.contains(&canonical_endpoints(
+                c.clone(),
+                StageNodeId::Catalog(KeyedCatalogRef {
+                    formula_id: "chord:Major".into(),
+                    root: PitchClass::new(root),
+                }),
+            )));
+        }
+    }
+
+    #[test]
+    fn focused_catalog_context_has_no_duplicate_symmetric_shared_tone_routes() {
+        let set = set_of(&[("C", chord("Major"))]);
+        let focus = KeyedCatalogRef {
+            formula_id: "chord:Major".into(),
+            root: PitchClass::new(2),
+        };
+        let snapshot = stage_scene(
+            &set,
+            &StageSceneOptions {
+                context: Some(StageContextOptions {
+                    focus: Some(StageNodeId::Catalog(focus)),
+                    node_limit: 24,
+                    ..StageContextOptions::default()
+                }),
+                ..StageSceneOptions::default()
+            },
+        );
+        let mut keys = BTreeSet::new();
+        for (_, relation) in snapshot.relations() {
+            if relation.kind.as_deref() != Some("woodshed:keyed-shared-tones") {
+                continue;
+            }
+            let from = snapshot.node_of(relation.from).unwrap().id.clone();
+            let to = snapshot.node_of(relation.to).unwrap().id.clone();
+            assert!(keys.insert(canonical_endpoints(from, to)));
+        }
+    }
+
+    #[test]
     fn recency_rides_the_scene_rather_than_a_host_side_lookup() {
         let set = set_of(&[("one", chord("Major")), ("two", chord("Minor"))]);
         let mut recency = BTreeMap::new();
@@ -903,12 +1433,14 @@ mod tests {
             vec![(RECENCY_CHANNEL.to_string(), 0.75)],
             "a remote viewer shades from the scene, not from woodshed's store"
         );
-        assert!(snapshot
-            .snapshot
-            .active_item(InstanceId(1))
-            .unwrap()
-            .channels
-            .is_empty());
+        assert!(
+            snapshot
+                .snapshot
+                .active_item(InstanceId(1))
+                .unwrap()
+                .channels
+                .is_empty()
+        );
     }
 
     #[test]
@@ -954,14 +1486,16 @@ mod tests {
     fn an_empty_set_projects_an_empty_scene_not_a_broken_one() {
         let snapshot = stage_scene(&Set::default(), &StageSceneOptions::default());
         assert_eq!(snapshot.snapshot.active_item_count(), 0);
-        assert!(snapshot
-            .snapshot
-            .tables
-            .relations
-            .iter()
-            .flatten()
-            .next()
-            .is_none());
+        assert!(
+            snapshot
+                .snapshot
+                .tables
+                .relations
+                .iter()
+                .flatten()
+                .next()
+                .is_none()
+        );
         assert_eq!(
             snapshot.snapshot.tables.spaces.iter().flatten().count(),
             1,

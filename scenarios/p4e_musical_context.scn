@@ -1,0 +1,35 @@
+# A real context node is inspectable before it becomes a Set occurrence.
+log Circle of fifths: context focus, complete tone comparison, explicit Add
+settle 3
+act stage-context-example
+settle 3
+assert snap set-cards == 1
+click .set-graph-reading Arrangement: Set
+settle 3
+assert snap graph-reading == CircleOfFifths
+assert snap graph-context-nodes >= 12
+assert snap cursor-id == 1
+capture 01_circle_context
+
+click-context-node chord:Minor@pc:9
+settle 3
+assert snap graph-context-focus == chord:Minor@pc:9
+assert snap set-cards == 1
+assert snap cursor-id == 1
+assert text Shared tones: C E
+assert text Selected only: G
+assert text Focused only: A
+capture 02_focus_and_compare
+
+click .t-btn Add to Set
+settle 3
+assert snap set-cards == 2
+capture 03_added_occurrence
+
+click .set-graph-reading Context: on
+settle 3
+assert snap graph-reading == CircleOfFifths
+assert snap graph-context-nodes == 0
+assert snap set-cards == 2
+capture 04_context_hidden
+log Musical context receipt complete

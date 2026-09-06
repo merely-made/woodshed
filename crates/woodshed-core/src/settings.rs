@@ -126,10 +126,62 @@ impl Default for RelatedSettings {
     }
 }
 
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
+pub enum StageGraphReading {
+    #[default]
+    Set,
+    CircleOfFifths,
+}
+
+impl StageGraphReading {
+    pub const ALL: [Self; 2] = [Self::Set, Self::CircleOfFifths];
+
+    pub fn label(self) -> &'static str {
+        match self {
+            Self::Set => "Set",
+            Self::CircleOfFifths => "Circle of fifths",
+        }
+    }
+
+    pub fn next(self) -> Self {
+        match self {
+            Self::Set => Self::CircleOfFifths,
+            Self::CircleOfFifths => Self::Set,
+        }
+    }
+}
+
+/// Preferences for musical context; explored candidates and focus are transient.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(default)]
+pub struct StageContextSettings {
+    pub enabled: bool,
+    pub node_limit: usize,
+}
+
+impl Default for StageContextSettings {
+    fn default() -> Self {
+        Self {
+            enabled: true,
+            node_limit: 24,
+        }
+    }
+}
+
+impl StageContextSettings {
+    pub fn node_limit(&self) -> usize {
+        self.node_limit.clamp(12, 36)
+    }
+}
+
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(default)]
 pub struct StageSettings {
     pub related: RelatedSettings,
+    /// Musical reading chooses both the relevant context and its coordinates.
+    /// The existing geometric arrangement remains the Set reading's layout.
+    pub set_graph_reading: StageGraphReading,
+    pub context: StageContextSettings,
     /// Arrangement for the staged Set surface. The same ten-item catalog is
     /// available to the joined-mere swatch above.
     pub set_arrangement: GraphArrangement,
@@ -154,6 +206,8 @@ impl Default for StageSettings {
     fn default() -> Self {
         Self {
             related: RelatedSettings::default(),
+            set_graph_reading: StageGraphReading::default(),
+            context: StageContextSettings::default(),
             set_arrangement: GraphArrangement::Snake,
             set_graph_width: DEFAULT_SET_GRAPH_WIDTH,
             set_graph_height: DEFAULT_SET_GRAPH_HEIGHT,
@@ -349,6 +403,24 @@ pub struct AppSettings {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn musical_context_preferences_preserve_legacy_settings_and_bound_work() {
+        let mut settings: AppSettings =
+            serde_json::from_str(r#"{"set_arrangement":"Circle","set_graph_width":640}"#).unwrap();
+        assert_eq!(settings.stage.set_graph_reading, StageGraphReading::Set);
+        assert_eq!(settings.stage.set_arrangement, GraphArrangement::Circle);
+        assert_eq!(settings.stage.set_graph_width, 640);
+        settings.stage.set_graph_reading = StageGraphReading::CircleOfFifths;
+        settings.stage.context.node_limit = usize::MAX;
+        assert_eq!(settings.stage.context.node_limit(), 36);
+        settings.stage.context.enabled = false;
+        let restored: AppSettings =
+            serde_json::from_str(&serde_json::to_string(&settings).unwrap()).unwrap();
+        assert_eq!(restored, settings);
+        settings.stage.context.node_limit = 0;
+        assert_eq!(settings.stage.context.node_limit(), 12);
+    }
 
     #[test]
     fn window_geometry_is_optional_and_round_trips() {

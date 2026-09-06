@@ -12,6 +12,7 @@
 pub mod arpeggio;
 pub mod arrangement;
 pub mod audio;
+pub mod harmony;
 pub mod history;
 pub mod mere;
 pub mod midi;
@@ -19,25 +20,26 @@ pub mod sealed_backend;
 pub mod search;
 pub mod settings;
 pub mod song;
+pub mod stage_context;
 pub mod stage_scene;
 pub mod storage;
 
-use arpeggio::{generate_shapes, ArpeggioDirection, ArpeggioRun};
-use woodshedding::chord::{catalog as chord_catalog, ChordFormula};
-use woodshedding::exercise::{catalog as exercise_catalog, Exercise, ExerciseParams};
+use arpeggio::{ArpeggioDirection, ArpeggioRun, generate_shapes};
+use woodshedding::chord::{ChordFormula, catalog as chord_catalog};
+use woodshedding::exercise::{Exercise, ExerciseParams, catalog as exercise_catalog};
 use woodshedding::fretboard::{Fretboard, Position};
 use woodshedding::interval::Interval;
 use woodshedding::pitch::PitchClass;
 use woodshedding::pitch::{Pitch, Spelling};
 use woodshedding::practice::{PracticeItem, PracticeSet};
 use woodshedding::progression::{
-    catalog as progression_catalog, ChordRole, Progression, RoleQuality,
+    ChordRole, Progression, RoleQuality, catalog as progression_catalog,
 };
 use woodshedding::rehearsal::{
     Card, CardId, FretWindow, LoopMode, MarkMode, Material, Recipe, Set, Setting, Timing, Touch,
 };
-use woodshedding::scale::{catalog as scale_catalog, ScaleFormula};
-use woodshedding::tuning::{catalog as tuning_catalog, Tuning, TuningSpec};
+use woodshedding::scale::{ScaleFormula, catalog as scale_catalog};
+use woodshedding::tuning::{Tuning, TuningSpec, catalog as tuning_catalog};
 
 /// The fretboard lens strip (redesign-plan vocabulary).
 #[derive(Clone, Copy, Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize, Default)]
@@ -118,7 +120,7 @@ fn diversify(suggestions: Vec<RelatedSuggestion>, limit: usize) -> Vec<RelatedSu
             None => {
                 seen.insert(kind, families.len());
                 families.push(vec![suggestion]);
-            }
+            },
         }
     }
     let mut out = Vec::with_capacity(limit);
@@ -599,7 +601,7 @@ pub fn step_set(set: &mut Set, dir: i32) -> bool {
         LoopMode::All => {
             set.cursor = next.rem_euclid(n) as usize;
             true
-        }
+        },
         LoopMode::Off => {
             if next < 0 || next >= n {
                 false
@@ -607,7 +609,7 @@ pub fn step_set(set: &mut Set, dir: i32) -> bool {
                 set.cursor = next as usize;
                 true
             }
-        }
+        },
     }
 }
 
@@ -777,7 +779,7 @@ impl StageState {
                     return Vec::new();
                 };
                 woodshed_graph::progression_id(self.progressions()[idx].name)
-            }
+            },
             Lens::Exercises => woodshed_graph::exercise_id(self.exercise().name),
         };
 
@@ -860,13 +862,13 @@ impl StageState {
                     RelatedTarget::Chord(idx) => woodshed_graph::chord_id(self.chords()[idx].name),
                     RelatedTarget::Arpeggio(idx) => {
                         woodshed_graph::arpeggio_id(self.chords()[idx].name)
-                    }
+                    },
                     RelatedTarget::Progression(idx) => {
                         woodshed_graph::progression_id(self.progressions()[idx].name)
-                    }
+                    },
                     RelatedTarget::Exercise(idx) => {
                         woodshed_graph::exercise_id(self.exercises()[idx].name)
-                    }
+                    },
                 };
                 let count = history.related_transition_count(&selected_id, &target_id);
                 if count > 0 {
@@ -908,7 +910,7 @@ impl StageState {
             RelatedTarget::Arpeggio(idx) => woodshed_graph::arpeggio_id(self.chords()[idx].name),
             RelatedTarget::Progression(idx) => {
                 woodshed_graph::progression_id(self.progressions()[idx].name)
-            }
+            },
             RelatedTarget::Exercise(idx) => woodshed_graph::exercise_id(self.exercises()[idx].name),
         }
     }
@@ -1014,23 +1016,23 @@ impl StageState {
             RelatedTarget::Scale(idx) => {
                 self.set_lens(Lens::Scales);
                 self.select_scale(idx);
-            }
+            },
             RelatedTarget::Chord(idx) => {
                 self.set_lens(Lens::Chords);
                 self.select_chord(idx);
-            }
+            },
             RelatedTarget::Arpeggio(idx) => {
                 self.set_lens(Lens::Arpeggios);
                 self.select_arpeggio(idx);
-            }
+            },
             RelatedTarget::Progression(idx) => {
                 self.set_lens(Lens::Progressions);
                 self.select_progression(idx);
-            }
+            },
             RelatedTarget::Exercise(idx) => {
                 self.set_lens(Lens::Exercises);
                 self.select_exercise(idx);
-            }
+            },
         }
     }
 
@@ -1092,7 +1094,7 @@ impl StageState {
                 } else {
                     format!("{}{} ({})", self.root_name(), c.symbol, c.name)
                 }
-            }
+            },
             Lens::Arpeggios => {
                 let c = self.arpeggio_chord();
                 if c.symbol.is_empty() {
@@ -1100,7 +1102,7 @@ impl StageState {
                 } else {
                     format!("{}{} arpeggio", self.root_name(), c.symbol)
                 }
-            }
+            },
             Lens::Progressions => match self.progression_idx {
                 Some(i) => format!(
                     "{} in {}",
@@ -1263,7 +1265,7 @@ impl StageState {
                         key: root_pc,
                     }),
                 }
-            }
+            },
             Lens::Exercises => Card {
                 id: CardId::UNASSIGNED,
                 label: self.exercise().name.to_string(),
@@ -1357,7 +1359,7 @@ impl StageState {
                             .collect()
                     })
                     .unwrap_or_default();
-            }
+            },
             Material::Path { positions, root } => {
                 // A drawn path carries its own notes: resolve each position
                 // against the current tuning and name its degree from the root
@@ -1383,7 +1385,7 @@ impl StageState {
                         }
                     })
                     .collect();
-            }
+            },
         };
         // Setting fidelity: a pinned fret window filters the positions to
         // the hand position (capo + per-card tuning still deferred). The board's
@@ -1731,7 +1733,7 @@ impl StageState {
                     })
                     .collect();
                 (markers, active)
-            }
+            },
             Lens::Exercises => {
                 let b = self.exercise_board();
                 // recency 0 is the current step; the trail (recency > 0) is not
@@ -1754,7 +1756,7 @@ impl StageState {
                     })
                     .collect();
                 (markers, active)
-            }
+            },
             Lens::Progressions => {
                 let markers = self
                     .progression_board()
@@ -1773,7 +1775,7 @@ impl StageState {
                     })
                     .unwrap_or_default();
                 (markers, None)
-            }
+            },
             Lens::Scales | Lens::Chords => (Vec::new(), None),
         }
     }
@@ -1876,7 +1878,7 @@ impl StageState {
                     .map(|&(s, f)| board.pitch_at(s, f).frequency() as f32)
                     .collect();
                 (hz, true)
-            }
+            },
         };
         if pitches.is_empty() {
             return (pitches, 0.0, 0.0);
@@ -1917,7 +1919,7 @@ impl StageState {
                 }
                 let (dur, strum) = voicing_shape(hz.len(), false);
                 (hz, dur, strum)
-            }
+            },
             MarkMode::Mute => {
                 // Drop the marked notes' pitch classes from the clean voicing,
                 // so the chord keeps voicing nicely minus the muted note(s).
@@ -1940,7 +1942,7 @@ impl StageState {
                 }
                 let (dur, strum) = voicing_shape(kept.len(), false);
                 (kept, dur, strum)
-            }
+            },
         }
     }
 
@@ -2068,10 +2070,11 @@ mod tests {
         let ps = &catalog[0];
         let set = set_from_practice(ps);
         assert_eq!(set.cards.len(), ps.items.len());
-        assert!(set
-            .cards
-            .iter()
-            .all(|c| matches!(c.from, Some(Recipe::PracticeSet { .. }))));
+        assert!(
+            set.cards
+                .iter()
+                .all(|c| matches!(c.from, Some(Recipe::PracticeSet { .. })))
+        );
         assert!(set.cards.iter().all(|c| c.setting.fret_window.is_some()));
         // Every card resolves on the board.
         let s = StageState::new();
@@ -2555,8 +2558,10 @@ mod tests {
         let related = s.related_material_configured(&history, &settings, 5);
         assert!(related.iter().all(|item| item.title != "Minor 7"));
         assert!(related.iter().all(|item| !item.has_evidence()));
-        assert!(related
-            .iter()
-            .all(|item| !item.reasons().iter().any(|r| r.contains("Previously"))));
+        assert!(
+            related
+                .iter()
+                .all(|item| !item.reasons().iter().any(|r| r.contains("Previously")))
+        );
     }
 }

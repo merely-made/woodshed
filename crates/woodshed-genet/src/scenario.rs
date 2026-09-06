@@ -32,14 +32,14 @@ use std::cell::RefCell;
 use std::path::{Path, PathBuf};
 use std::rc::Rc;
 
-use cambium_genet_winit_host::{read_frame, Frame, HostPointer};
+use cambium_genet_winit_host::{Frame, HostPointer, read_frame};
 use genet_probe::{
     Automatable, AutomatableExt, Driveable, ProbeSnapshot, ProbeSurface, Progress, Scenario,
     Selector,
 };
 use woodshed_core::Lens;
 use woodshed_views::stage::{
-    set_graph_relation_choices, set_graph_snapshot, set_graph_swatch_from_snapshot, UiState,
+    UiState, set_graph_relation_choices, set_graph_snapshot, set_graph_swatch_from_snapshot,
 };
 
 use crate::shared::Shared;
@@ -64,14 +64,14 @@ impl ScenarioLane {
             Err(e) => {
                 eprintln!("[woodshed-genet] scenario '{path}' unreadable: {e}");
                 return None;
-            }
+            },
         };
         let scenario = match Scenario::parse(&text) {
             Ok(scenario) => scenario,
             Err(e) => {
                 eprintln!("[woodshed-genet] scenario '{path}' rejected: {e}");
                 return None;
-            }
+            },
         };
         eprintln!("[woodshed-genet] scenario lane armed: {path}");
         Some(Self {
@@ -242,7 +242,7 @@ fn write_pending_capture() {
             if !write_png(&frame, &path) {
                 eprintln!("[woodshed-genet] capture failed: {}", path.display());
             }
-        }
+        },
         // Not presented yet: put it back and try again next frame.
         None => PENDING.with(|p| *p.borrow_mut() = Some((path, sink))),
     }
@@ -445,6 +445,27 @@ impl Automatable for Probe<'_, '_> {
             .with_field("cursor-number", observed.cursor_number.to_string())
             .with_field("cursor-label", cursor_label.clone())
             .with_field("graph-nodes", ui.set.graph().nodes.len().to_string())
+            .with_field("graph-total-nodes", stage_snapshot.nodes.len().to_string())
+            .with_field(
+                "graph-context-nodes",
+                stage_snapshot
+                    .nodes
+                    .iter()
+                    .filter(|node| !node.foreground)
+                    .count()
+                    .to_string(),
+            )
+            .with_field(
+                "graph-reading",
+                format!("{:?}", ui.app_settings.stage.set_graph_reading),
+            )
+            .with_field(
+                "graph-context-focus",
+                ui.context_focus
+                    .as_ref()
+                    .map(|focus| focus.wire_key())
+                    .unwrap_or_default(),
+            )
             .with_field("graph-edges", observed.edges.to_string())
             .with_field("graph-relations", stage_swatch.relations.len().to_string())
             .with_field(
@@ -757,6 +778,21 @@ impl Automatable for Probe<'_, '_> {
         let mut known = true;
         self.ctx.runner.update(|ui| match label {
             "stage-current" => ui.stage_current(None),
+            "stage-context-example" => {
+                ui.stage.set_root(3); // C in the A-first root picker.
+                ui.root_dd.selected = 3;
+                ui.stage.set_lens(Lens::Chords);
+                if let Some(major) = ui
+                    .stage
+                    .chords()
+                    .iter()
+                    .position(|chord| chord.name == "Major")
+                {
+                    ui.stage.select_chord(major);
+                    ui.stage_current(None);
+                }
+                ui.set_tray_expanded = true;
+            },
             "stage-related-pair" => {
                 ui.stage.set_lens(Lens::Chords);
                 if let Some(major) = ui
@@ -778,7 +814,7 @@ impl Automatable for Probe<'_, '_> {
                     ui.stage_current(None);
                 }
                 ui.set_tray_expanded = true;
-            }
+            },
             "hide-first-stage-relation" => {
                 let snapshot = set_graph_snapshot(ui);
                 if let Some(key) = set_graph_relation_choices(&snapshot, ui)
@@ -787,30 +823,30 @@ impl Automatable for Probe<'_, '_> {
                 {
                     ui.toggle_set_graph_relation(&snapshot, key);
                 }
-            }
+            },
             "hide-all-stage-relations" => {
                 let snapshot = set_graph_snapshot(ui);
                 ui.hide_all_set_graph_relations(&snapshot);
-            }
+            },
             "show-all-stage-relations" => ui.show_all_set_graph_relations(),
             "expand-tray" => ui.set_tray_expanded = true,
             "collapse-tray" => ui.set_tray_expanded = false,
             "duplicate-selected" => {
                 let cursor = ui.set.cursor;
                 ui.set.duplicate(cursor);
-            }
+            },
             "move-selected-down" => {
                 let cursor = ui.set.cursor;
                 ui.set.move_card(cursor, 1);
-            }
+            },
             "move-selected-up" => {
                 let cursor = ui.set.cursor;
                 ui.set.move_card(cursor, -1);
-            }
+            },
             "remove-selected" => {
                 let cursor = ui.set.cursor;
                 ui.set.remove(cursor);
-            }
+            },
             _ => known = false,
         });
         if known {
@@ -858,7 +894,7 @@ impl Driveable for Probe<'_, '_> {
                 self.click(&selector)
                     .then_some(())
                     .ok_or_else(|| "open-stage-arrangement missed the picker".to_string())
-            }
+            },
             Some("choose-stage-arrangement") => {
                 let label = parts
                     .next()
@@ -870,7 +906,28 @@ impl Driveable for Probe<'_, '_> {
                 self.click(&selector)
                     .then_some(())
                     .ok_or_else(|| format!("choose-stage-arrangement missed {label}"))
-            }
+            },
+            Some("click-context-node") => {
+                let target = parts.collect::<Vec<_>>().join(" ");
+                let node_key = {
+                    let ui = self.ctx.runner.state();
+                    let snapshot = set_graph_snapshot(ui);
+                    let swatch =
+                        set_graph_swatch_from_snapshot(&snapshot, ui, ui.set_tray_expanded);
+                    swatch.graph.nodes.iter().find_map(|node| {
+                        let subject = snapshot.node_of(node.id.instance)?;
+                        (!subject.foreground && subject.id.wire_key() == target)
+                            .then(|| node.key.clone())
+                            .flatten()
+                    })
+                }
+                .ok_or_else(|| format!("no context node {target}"))?;
+                let selector =
+                    Selector::class("graph-canvas-swatch-node").with_attr("data-key", node_key);
+                self.click(&selector)
+                    .then_some(())
+                    .ok_or_else(|| format!("click-context-node missed {target}"))
+            },
             Some("click-stage-node") => {
                 let index: usize = parts
                     .next()
@@ -887,7 +944,7 @@ impl Driveable for Probe<'_, '_> {
                 self.click(&selector)
                     .then_some(())
                     .ok_or_else(|| format!("click-stage-node missed index {index}"))
-            }
+            },
             Some("click-stage-relation") => {
                 let index: usize = parts
                     .next()
@@ -904,7 +961,7 @@ impl Driveable for Probe<'_, '_> {
                 self.click(&selector)
                     .then_some(())
                     .ok_or_else(|| format!("click-stage-relation missed index {index}"))
-            }
+            },
             Some("drag-stage-node") => {
                 let index: usize = parts
                     .next()
@@ -936,7 +993,7 @@ impl Driveable for Probe<'_, '_> {
                 self.moved(end.0, end.1);
                 self.release(end.0, end.1);
                 Ok(())
-            }
+            },
             Some("drag-stage-graph-resize") => {
                 let dx: f32 = parts
                     .next()
@@ -960,7 +1017,7 @@ impl Driveable for Probe<'_, '_> {
                 self.moved(end.0, end.1);
                 self.release(end.0, end.1);
                 Ok(())
-            }
+            },
             Some("press-stage-graph-resize") => {
                 if parts.next().is_some() {
                     return Err("press-stage-graph-resize takes no arguments".to_string());
@@ -972,7 +1029,7 @@ impl Driveable for Probe<'_, '_> {
                 self.shared.scenario_drag_origin = Some(hit.point);
                 self.press(hit.point.0, hit.point.1);
                 Ok(())
-            }
+            },
             Some("move-stage-graph-resize") => {
                 let dx: f32 = parts
                     .next()
@@ -991,7 +1048,7 @@ impl Driveable for Probe<'_, '_> {
                     .ok_or("move-stage-graph-resize has no pressed handle")?;
                 self.moved(origin.0 + dx, origin.1 + dy);
                 Ok(())
-            }
+            },
             Some("release-stage-graph-resize") => {
                 let dx: f32 = parts
                     .next()
@@ -1011,7 +1068,7 @@ impl Driveable for Probe<'_, '_> {
                     .ok_or("release-stage-graph-resize has no pressed handle")?;
                 self.release(origin.0 + dx, origin.1 + dy);
                 Ok(())
-            }
+            },
             Some("press-stage-node") => {
                 let index: usize = parts
                     .next()
@@ -1031,7 +1088,7 @@ impl Driveable for Probe<'_, '_> {
                 self.shared.scenario_drag_origin = Some(hit.point);
                 self.press(hit.point.0, hit.point.1);
                 Ok(())
-            }
+            },
             Some("move-stage-node") => {
                 let dx: f32 = parts
                     .next()
@@ -1050,7 +1107,7 @@ impl Driveable for Probe<'_, '_> {
                     .ok_or("move-stage-node has no pressed node")?;
                 self.moved(origin.0 + dx, origin.1 + dy);
                 Ok(())
-            }
+            },
             Some("release-stage-node") => {
                 let dx: f32 = parts
                     .next()
@@ -1070,7 +1127,7 @@ impl Driveable for Probe<'_, '_> {
                     .ok_or("release-stage-node has no pressed node")?;
                 self.release(origin.0 + dx, origin.1 + dy);
                 Ok(())
-            }
+            },
             _ => Err(format!("unknown verb: {line}")),
         }
     }

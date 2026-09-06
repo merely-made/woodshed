@@ -88,7 +88,16 @@ fn push_backend(shared: &mut Shared, ctx: &mut Ctx<'_>) {
                         if !pitches.is_empty() {
                             backend.preview_pitches(&pitches, dur, strum);
                         }
-                    }
+                    },
+                    AudioRequest::PreviewPitches {
+                        pitches,
+                        duration_s,
+                        strum_s,
+                    } => {
+                        if !pitches.is_empty() {
+                            backend.preview_pitches(&pitches, duration_s, strum_s);
+                        }
+                    },
                     AudioRequest::PreviewNote(freq) => backend.preview_note(freq, 0.9),
                     AudioRequest::CalibrationStart => {
                         backend.calibration_start();
@@ -97,25 +106,25 @@ fn push_backend(shared: &mut Shared, ctx: &mut Ctx<'_>) {
                             clicks_fired: 0,
                             total: 6,
                         };
-                    }
+                    },
                     AudioRequest::CalibrationCancel => {
                         backend.calibration_cancel();
                         ui.calib_active = false;
                         ui.calib_status = CalibrationStatus::Idle;
-                    }
+                    },
                     AudioRequest::CalibrationAccept => {
                         if let CalibrationStatus::Success { latency_ms, .. } = ui.calib_status {
                             backend.set_latency_ms(Some(latency_ms));
                         }
                         ui.calib_status = CalibrationStatus::Idle;
-                    }
+                    },
                     AudioRequest::SongRecordToggle => {
                         if ui.song_recording {
                             backend.song_stop_record();
                         } else {
                             backend.song_arm_record(ui.song_edit_cursor);
                         }
-                    }
+                    },
                     AudioRequest::SongClearLoop => backend.song_clear_loop(ui.song_edit_cursor),
                 }
             }

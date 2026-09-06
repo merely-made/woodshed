@@ -18,6 +18,7 @@ pub mod exercise;
 pub mod fretboard;
 pub mod interval;
 pub mod pitch;
+pub mod pitch_class_set;
 pub mod practice;
 pub mod progression;
 pub mod rehearsal;

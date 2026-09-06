@@ -1,6 +1,6 @@
 use cambium::{
-    clickable, el, graph_canvas, map_state, resize_handle, select, text, text_field,
-    GraphCanvasEvent, GraphCanvasSwatch, ResizeBounds,
+    GraphCanvasEvent, GraphCanvasSwatch, ResizeBounds, clickable, el, graph_canvas, map_state,
+    resize_handle, select, text, text_field,
 };
 use woodshed_core::arrangement::GraphArrangement;
 use woodshed_core::settings::{
@@ -11,8 +11,8 @@ use woodshed_core::storage::AppSection;
 use woodshedding::rehearsal::{Hold, LoopMode, Recipe, SetGraphEdgeKind, Touch};
 
 use super::{
-    set_graph_relation_choices, set_graph_snapshot, set_graph_swatch_from_snapshot, UiChild,
-    UiState,
+    UiChild, UiState, context, set_graph_relation_choices, set_graph_snapshot,
+    set_graph_swatch_from_snapshot,
 };
 
 /// Label for one relation family's visibility toggle. The family is named, so
@@ -241,6 +241,20 @@ pub(super) fn view(ui: &UiState) -> UiChild {
         select(&ui.set_arrangement_dd, &arrangement_names),
         |ui: &mut UiState| &mut ui.set_arrangement_dd,
     );
+    let reading_label = ui.app_settings.stage.set_graph_reading.label();
+    let context_label = if ui.app_settings.stage.context.enabled {
+        format!(
+            "Context: on · {} shown / {} limit",
+            snapshot
+                .nodes
+                .iter()
+                .filter(|node| !node.foreground)
+                .count(),
+            ui.app_settings.stage.context.node_limit()
+        )
+    } else {
+        "Context: off".to_string()
+    };
     let visible_relations = relation_choices
         .iter()
         .filter(|relation| relation.visible)
@@ -342,7 +356,23 @@ pub(super) fn view(ui: &UiState) -> UiChild {
                 .attr("class", "set-graph-relation"),
             ) as UiChild
         })
-        .unwrap_or_else(|| Box::new(el("div", ())) as UiChild);
+        .unwrap_or_else(|| {
+            let message = ui.set_graph_relation.and_then(|reference| {
+                let relation = snapshot.scene_relation_detail(reference)?;
+                let from = snapshot
+                    .nodes
+                    .iter()
+                    .find(|node| node.id == relation.from)?;
+                let to = snapshot.nodes.iter().find(|node| node.id == relation.to)?;
+                Some(format!(
+                    "{} · {} · {}",
+                    from.label, relation.label, to.label
+                ))
+            });
+            Box::new(
+                el("div", text(message.unwrap_or_default())).attr("class", "set-graph-relation"),
+            ) as UiChild
+        });
     let content: UiChild = if ui.set_tray_expanded {
         let graph_card = graph_node_card(ui, &snapshot, &swatch);
         let resize = resize_handle(
@@ -365,7 +395,7 @@ pub(super) fn view(ui: &UiState) -> UiChild {
                 "style",
                 format!("width:{}px;height:{}px;", graph_size.0, graph_size.1),
             );
-        let graph_stack = el("div", (graph, card_root))
+        let graph_stack = el("div", (graph, context::labels(ui, &swatch), card_root))
             .attr("class", "set-graph-canvas-stack")
             .attr(
                 "style",
@@ -384,12 +414,39 @@ pub(super) fn view(ui: &UiState) -> UiChild {
                             "div",
                             (
                                 el("div", text("Set graph")).attr("class", "set-graph-heading"),
-                                el("div", text("Layout")).attr("class", "set-graph-layout-label"),
-                                arrangement_picker,
+                                clickable(
+                                    el("div", text(format!("Arrangement: {reading_label}")))
+                                        .attr("class", "t-btn set-graph-reading")
+                                        .attr("data-action", "stage-graph-reading"),
+                                    |ui: &mut UiState, _| {
+                                        let reading =
+                                            ui.app_settings.stage.set_graph_reading.next();
+                                        ui.set_graph_reading(reading);
+                                    },
+                                ),
+                                clickable(
+                                    el("div", text(context_label.clone()))
+                                        .attr("class", "t-btn set-graph-reading")
+                                        .attr("data-action", "stage-context-toggle"),
+                                    |ui: &mut UiState, _| {
+                                        ui.app_settings.stage.context.enabled =
+                                            !ui.app_settings.stage.context.enabled;
+                                    },
+                                ),
+                                (ui.app_settings.stage.set_graph_reading
+                                    == woodshed_core::settings::StageGraphReading::Set)
+                                    .then(|| {
+                                        el("div", text("Layout"))
+                                            .attr("class", "set-graph-layout-label")
+                                    }),
+                                (ui.app_settings.stage.set_graph_reading
+                                    == woodshed_core::settings::StageGraphReading::Set)
+                                    .then(|| arrangement_picker),
                             ),
                         )
                         .attr("class", "set-graph-toolbar"),
-                        canvas_row,
+                        el("div", (canvas_row, context::panel(ui)))
+                            .attr("class", "set-graph-inspection"),
                         relation_detail,
                         relation_inventory,
                         el(
@@ -412,7 +469,7 @@ pub(super) fn view(ui: &UiState) -> UiChild {
                     ),
                 )
                 .attr("class", "set-graph")
-                .attr("style", format!("width:{}px;", graph_size.0 + 18)),
+                .attr("style", "width:100%;"),
                 body,
             ),
         ))

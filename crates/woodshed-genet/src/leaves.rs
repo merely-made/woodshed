@@ -10,16 +10,21 @@ use std::hash::{Hash, Hasher};
 
 use sprigging::LeafRegistry;
 use woodshed_views::fretboard_leaf::{
-    Dot, FretboardLeaf, MarkerStyle, Orientation, FRETBOARD_LEAF_KEY, REHEARSAL_FRETBOARD_LEAF_KEY,
+    Dot, FRETBOARD_LEAF_KEY, FretboardLeaf, MarkerStyle, Orientation, REHEARSAL_FRETBOARD_LEAF_KEY,
 };
-use woodshed_views::stage::{UiState, NEIGHBORHOOD_LEAF_KEY, SET_GRAPH_LEAF_KEY};
+use woodshed_views::stage::{NEIGHBORHOOD_LEAF_KEY, SET_GRAPH_LEAF_KEY, UiState};
 
 use crate::shared::Shared;
 
 /// The product palette for a Related node kind. Lives host-side so Cambium's
 /// graph component stays palette-neutral; the same mapping drove the old glyph.
 fn related_kind_color(kind: &str) -> sprigging::ColorF {
-    let [r, g, b] = match kind {
+    let quiet = kind.starts_with("context:");
+    let base = kind
+        .strip_prefix("staged:")
+        .or_else(|| kind.strip_prefix("context:"))
+        .unwrap_or(kind);
+    let [r, g, b] = match base {
         "Scale" => [0.30, 0.67, 0.76],
         "Chord" => [0.91, 0.38, 0.25],
         "Arpeggio" => [0.70, 0.46, 0.86],
@@ -27,7 +32,13 @@ fn related_kind_color(kind: &str) -> sprigging::ColorF {
         "Exercise" => [0.40, 0.72, 0.42],
         _ => [0.72, 0.74, 0.78],
     };
-    sprigging::ColorF { r, g, b, a: 1.0 }
+    let scale = if quiet { 0.62 } else { 1.0 };
+    sprigging::ColorF {
+        r: r * scale,
+        g: g * scale,
+        b: b * scale,
+        a: if quiet { 0.58 } else { 1.0 },
+    }
 }
 
 fn hasher() -> std::collections::hash_map::DefaultHasher {

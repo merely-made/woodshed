@@ -1,0 +1,125 @@
+use woodshed_core::audio::AudioRequest;
+use woodshed_core::harmony::KeyedCatalogRef;
+use woodshed_core::settings::StageGraphReading;
+use woodshedding::pitch::PitchClass;
+
+use super::{UiState, set_graph_snapshot, set_graph_swatch_from_snapshot};
+
+fn keyed(formula_id: &str, root: u8) -> KeyedCatalogRef {
+    KeyedCatalogRef {
+        formula_id: formula_id.into(),
+        root: PitchClass::new(root),
+    }
+}
+
+fn c_major() -> KeyedCatalogRef {
+    keyed("chord:Major", 0)
+}
+
+fn a_minor() -> KeyedCatalogRef {
+    keyed("chord:Minor", 9)
+}
+
+#[test]
+fn focusing_a_keyed_material_preserves_root_through_sync() {
+    let mut ui = UiState::new();
+    assert!(ui.focus_context_catalog(c_major()));
+    ui.sync();
+    assert_eq!(ui.stage.root_idx, 3);
+    assert_eq!(ui.root_dd.selected, 3);
+    assert_eq!(ui.stage.catalog_id().as_deref(), Some("chord:Major"));
+}
+
+#[test]
+fn context_audition_queues_immutable_pitches_after_board_changes() {
+    let mut ui = UiState::new();
+    assert!(ui.focus_context_catalog(c_major()));
+    ui.audition_context_focus();
+    let expected = match ui.audio_requests.first().expect("preview request") {
+        AudioRequest::PreviewPitches { pitches, .. } => pitches.clone(),
+        other => panic!("unexpected request: {other:?}"),
+    };
+    ui.stage.set_lens(woodshed_core::Lens::Scales);
+    ui.stage.set_root(9);
+    ui.section = woodshed_core::storage::AppSection::Rehearsal;
+    match &ui.audio_requests[0] {
+        AudioRequest::PreviewPitches { pitches, .. } => assert_eq!(pitches, &expected),
+        other => panic!("unexpected request: {other:?}"),
+    }
+}
+
+#[test]
+fn adding_focused_material_resolves_focus_to_its_new_foreground_occurrence() {
+    let mut ui = UiState::new();
+    ui.stage.set_lens(woodshed_core::Lens::Chords);
+    assert!(ui.focus_context_catalog(a_minor()));
+    ui.add_context_focus_to_set();
+    let snapshot = set_graph_snapshot(&ui);
+    let focused = snapshot
+        .nodes
+        .iter()
+        .find(|node| node.foreground && node.keyed.as_ref() == Some(&a_minor()))
+        .expect("new foreground occurrence");
+    assert!(focused.material.is_some());
+    let swatch = set_graph_swatch_from_snapshot(&snapshot, &ui, true);
+    assert_eq!(
+        swatch.focus.map(|reference| reference.instance),
+        snapshot.instance_of_node(&focused.id)
+    );
+}
+
+#[test]
+fn hiding_context_preserves_staged_normalized_positions() {
+    let mut ui = UiState::new();
+    ui.stage.set_lens(woodshed_core::Lens::Chords);
+    ui.stage_current(None);
+    ui.app_settings.stage.set_graph_reading = StageGraphReading::CircleOfFifths;
+    let shown_snapshot = set_graph_snapshot(&ui);
+    let shown = set_graph_swatch_from_snapshot(&shown_snapshot, &ui, true);
+    let before: Vec<_> = shown
+        .graph
+        .nodes
+        .iter()
+        .filter_map(|node| {
+            shown_snapshot
+                .node_of(node.id.instance)
+                .filter(|item| item.foreground)
+                .map(|item| (item.id.clone(), node.position))
+        })
+        .collect();
+    ui.app_settings.stage.context.enabled = false;
+    let hidden_snapshot = set_graph_snapshot(&ui);
+    let hidden = set_graph_swatch_from_snapshot(&hidden_snapshot, &ui, true);
+    assert!(!before.is_empty());
+    for (id, position) in before {
+        let instance = hidden_snapshot
+            .instance_of_node(&id)
+            .expect("staged node survives");
+        let node = hidden
+            .graph
+            .nodes
+            .iter()
+            .find(|node| node.id.instance == instance)
+            .expect("staged node is rendered");
+        assert_eq!(node.position, position);
+    }
+}
+
+#[test]
+fn circle_context_keeps_glyph_centres_smaller_than_hit_rects() {
+    let mut ui = UiState::new();
+    assert!(ui.focus_context_catalog(c_major()));
+    ui.stage_current(None);
+    ui.set_graph_reading(StageGraphReading::CircleOfFifths);
+    let swatch = set_graph_swatch_from_snapshot(&set_graph_snapshot(&ui), &ui, true);
+    assert_eq!((swatch.width, swatch.height), (520, 520));
+    assert!(swatch.graph.nodes.len() >= 13);
+    assert!(swatch.hit_size > swatch.node_radius * 2.0);
+    assert!(
+        swatch
+            .graph
+            .nodes
+            .iter()
+            .all(|node| { node.position.0.is_finite() && node.position.1.is_finite() })
+    );
+}

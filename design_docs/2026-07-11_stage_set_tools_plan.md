@@ -522,8 +522,15 @@ the same operations remain available through the list projection.
 #### P4e. Ship a small projection catalog
 
 **Current state: partial.** Ten deterministic arrangements are selectable and
-have a two-layout headed receipt. The circle-of-fifths and other contextual
-theory-map acceptance surfaces in this phase are not implemented.
+have a two-layout headed receipt. Circle-of-Fifths context is implemented in the
+September 6 slice below; the other contextual theory maps remain open.
+
+**2026-09-06 contextual arrangement:** the first musical reading is
+tracked in [Musical Projections](2026-09-04_musical_projections_plan.md#context-around-the-set-2026-09-06).
+An arrangement selects relevant background material as well as coordinates.
+Clicking background material focuses and expands it while preserving placement;
+audition and Add to Set remain separate actions. The existing geometric Circle
+layout must remain distinguishable from the musical circle of fifths.
 
 Avoid one universal force layout. Each view should state which relationships
 and coordinate rules make it intelligible:

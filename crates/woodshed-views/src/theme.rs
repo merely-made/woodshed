@@ -6,7 +6,7 @@
 //! seeds as `audio-widgets::theme`'s Slate, so the genet host and the
 //! xilem app agree until the parity cut.
 
-use tinct::{color_from_hex, color_to_hex, derive_palette, Palette, Seeds};
+use tinct::{Palette, Seeds, color_from_hex, color_to_hex, derive_palette};
 
 fn hex(s: &str) -> tinct::Srgb {
     color_from_hex(s).expect("valid seed hex")
@@ -355,9 +355,19 @@ pub fn stage_css(p: &Palette) -> String {
 .set-tray {{ margin-top: 14px; background-color: {surface}; border-radius: 10px; padding: 12px; }}
 .set-graph {{ display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 10px 0; max-width: 100%; }}
 .set-graph-compact {{ width: 300px; }}
-.set-graph-toolbar {{ display: flex; align-items: center; gap: 8px; width: 100%; }}
-.set-graph-heading {{ color: {text_dim}; flex: 1; font-size: 10px; text-transform: uppercase; }}
+.set-graph-toolbar {{ display: flex; flex-wrap: wrap; align-items: center; gap: 8px; width: 100%; }}
+.set-graph-heading {{ color: {text_dim}; flex-shrink: 0; font-size: 10px; text-transform: uppercase; }}
 .set-graph-layout-label {{ color: {text_dim}; font-size: 10px; }}
+.set-graph-reading {{ flex-shrink: 0; font-size: 11px; }}
+.set-graph-inspection {{ width: 100%; display: flex; flex-wrap: wrap; align-items: flex-start; gap: 14px; }}
+.stage-context-panel {{ width: 260px; max-width: 100%; display: flex; flex-direction: column; gap: 7px; padding: 12px; border-radius: 8px; background-color: {surface_2}; }}
+.stage-context-label {{ color: {text_dim}; font-size: 10px; }}
+.stage-context-title {{ color: {text}; font-size: 14px; font-weight: 600; }}
+.stage-context-comparison {{ font-size: 12px; }}
+.stage-context-actions {{ display: flex; gap: 8px; margin-top: 5px; }}
+.stage-context-labels {{ position: absolute; inset: 0; pointer-events: none; }}
+.stage-context-node-label {{ position: absolute; display: block; font-size: 10px; line-height: 14px; white-space: nowrap; pointer-events: none; color: {text_dim}; }}
+.stage-context-node-label.active {{ color: {text}; font-weight: 600; }}
 .set-graph-toolbar .select {{ min-width: 112px; z-index: 2; }}
 .set-graph-canvas-row {{ display: flex; align-items: flex-end; max-width: 100%; }}
 .set-graph-canvas-stack {{ position: relative; max-width: 100%; }}
@@ -590,11 +600,11 @@ fn scale_font_sizes(css: &str, scale: f32) -> String {
                     out.push_str(&((n * scale).round() as i32).to_string());
                     out.push_str("px");
                     rest = &rest[px + 2..];
-                }
+                },
                 // Not a plain "Npx" — leave the declaration as written.
-                Err(_) => {}
+                Err(_) => {},
             },
-            None => {}
+            None => {},
         }
     }
     out.push_str(rest);

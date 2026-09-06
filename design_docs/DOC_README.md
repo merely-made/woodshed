@@ -12,7 +12,9 @@ before any other doc in this directory.
 ## Active Plans
 
 - [2026-09-04_musical_projections_plan.md](2026-09-04_musical_projections_plan.md)
-  — Musical slices S1-S4 remain planned. The September 6 subsystem research
+  — Circle-of-Fifths context is implemented: keyed background,
+  separate focus/audition/Add actions, and stable expansion. Musical slices
+  S1-S4 otherwise remain planned. The September 6 subsystem research
   maps meaning, inference, analysis, generation, and comparison; a live
   enumeration probe records lookahead/texture tradeoffs and the re-entrant
   bass defect. Bounded comparison and co-op proofs remain fixture evidence.

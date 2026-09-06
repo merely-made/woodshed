@@ -10,32 +10,37 @@
 use std::collections::{BTreeMap, BTreeSet, VecDeque};
 
 use cambium::{
-    clickable, custom_leaf, el, map_state, select, text, text_field, AnyView, GenetCtx,
-    GenetElement, GraphCanvasEvent, GraphCanvasNode, GraphCanvasRelation, GraphCanvasSubgraph,
-    GraphCanvasSwatch, GraphViewport, SelectState, TextInput,
+    AnyView, GenetCtx, GenetElement, GraphCanvasEvent, GraphCanvasNode, GraphCanvasRelation,
+    GraphCanvasSubgraph, GraphCanvasSwatch, GraphViewport, SelectState, TextInput, clickable,
+    custom_leaf, el, map_state, select, text, text_field,
 };
-use woodshed_core::arrangement::{arrange_graph, GraphArrangement};
+use woodshed_core::arrangement::{GraphArrangement, arrange_graph};
 use woodshed_core::audio::{AudioRequest, CalibrationStatus, TransportState, TunerState};
-use woodshed_core::history::{catalog_id_for_card, EngagementKind, PracticeHistory};
-use woodshed_core::mere::{woodshed_mere, MereScope, WoodshedMereSnapshot};
-use woodshed_core::search::{search_corpus, SearchHit};
-use woodshed_core::settings::{AppSettings, RelatedGraphScope, SettingsPage};
+use woodshed_core::harmony::KeyedCatalogRef;
+use woodshed_core::history::{EngagementKind, PracticeHistory, catalog_id_for_card};
+use woodshed_core::mere::{MereScope, WoodshedMereSnapshot, woodshed_mere};
+use woodshed_core::search::{SearchHit, search_corpus};
+use woodshed_core::settings::{AppSettings, RelatedGraphScope, SettingsPage, StageGraphReading};
 use woodshed_core::song::SongDoc;
+use woodshed_core::stage_context::{StageNodeId, StageNodeKind};
 use woodshed_core::stage_scene::{
-    stage_scene, StageGraphSnapshot, StageInstanceRef, StageRelationKey, StageRelationRef,
-    StageSceneOptions, SEQUENCE_KIND,
+    SEQUENCE_KIND, StageGraphSnapshot, StageInstanceRef, StageRelationKey, StageRelationRef,
+    StageSceneOptions, stage_scene,
 };
 use woodshed_core::storage::{AppSection, PersistedSession};
-use woodshed_core::{set_from_practice, tunings, Lens, RelatedTarget, StageState, ROOT_NAMES};
+use woodshed_core::{Lens, ROOT_NAMES, RelatedTarget, StageState, set_from_practice, tunings};
 use woodshedding::rehearsal::{Card, CardId, FretWindow, Hold, MarkMode, Set, Touch};
 
-use crate::fretboard_leaf::{BoardGeom, Orientation, FRETBOARD_LEAF_KEY};
+use crate::fretboard_leaf::{BoardGeom, FRETBOARD_LEAF_KEY, Orientation};
 
 use crate::theme::ThemeMode;
 use crate::workspace::{
     WoodshedWorkspace, WorkspaceEffect, WorkspaceEvent, WorkspaceOutcome, WorkspacePanel,
 };
 
+mod context;
+#[cfg(test)]
+mod context_tests;
 mod looper;
 mod rehearsal;
 mod related;
@@ -71,7 +76,7 @@ pub fn related_mere_snapshot(ui: &UiState) -> WoodshedMereSnapshot {
                         },
                     )
                 })
-        }
+        },
     }
 }
 
@@ -304,6 +309,21 @@ pub fn related_swatch(ui: &UiState) -> GraphCanvasSwatch<String, &'static str> {
 /// reorder and removal. The visible number and the serpentine slot are read off
 /// current order and change freely under it.
 pub fn set_graph_snapshot(ui: &UiState) -> StageGraphSnapshot {
+    let context = (ui.app_settings.stage.set_graph_reading == StageGraphReading::CircleOfFifths)
+        .then(|| woodshed_core::stage_context::StageContextOptions {
+            focus: ui.context_focus.clone().map(StageNodeId::Catalog),
+            node_limit: if ui.app_settings.stage.context.enabled {
+                let configured = ui.app_settings.stage.context.node_limit();
+                if ui.context_focus.is_none() && ui.context_disclosed.is_empty() {
+                    configured.min(16)
+                } else {
+                    configured
+                }
+            } else {
+                0
+            },
+            retained: ui.context_disclosed.clone(),
+        });
     stage_scene(
         &ui.set,
         &StageSceneOptions {
@@ -313,6 +333,7 @@ pub fn set_graph_snapshot(ui: &UiState) -> StageGraphSnapshot {
             // derivable relation here also keeps the epoch stable when the
             // user edits which edges are present.
             sequence: true,
+            context,
             ..StageSceneOptions::default()
         },
     )
@@ -401,38 +422,96 @@ fn scene_position(snapshot: &StageGraphSnapshot, x: f32, y: f32) -> (f32, f32) {
     (x.clamp(0.0, 1.0), y.clamp(0.0, 1.0))
 }
 
+fn stage_node_kind(kind: StageNodeKind, foreground: bool) -> &'static str {
+    match (foreground, kind) {
+        (true, StageNodeKind::Card) => "staged:Card",
+        (true, StageNodeKind::Chord) => "staged:Chord",
+        (true, StageNodeKind::Scale) => "staged:Scale",
+        (false, StageNodeKind::Chord) => "context:Chord",
+        (false, StageNodeKind::Scale) => "context:Scale",
+        (false, StageNodeKind::Card) => "context:Card",
+    }
+}
+
+fn context_relation_visible(
+    ui: &UiState,
+    snapshot: &StageGraphSnapshot,
+    reference: StageRelationRef,
+) -> bool {
+    let Some(relation) = snapshot.relation(reference) else {
+        return false;
+    };
+    let Some(from) = snapshot.node_of(relation.from) else {
+        return false;
+    };
+    let Some(to) = snapshot.node_of(relation.to) else {
+        return false;
+    };
+    from.foreground
+        || to.foreground
+        || ui.context_focus.as_ref().is_some_and(|focus| {
+            from.keyed.as_ref() == Some(focus) || to.keyed.as_ref() == Some(focus)
+        })
+        // The major-chord chain supplies quiet landmarks even before focus.
+        || (relation.kind.as_deref() == Some("woodshed:circle-of-fifths")
+            && from.keyed.as_ref().is_some_and(|keyed| keyed.formula_id == "chord:Major")
+            && to.keyed.as_ref().is_some_and(|keyed| keyed.formula_id == "chord:Major"))
+}
+
 pub fn set_graph_swatch_from_snapshot(
     snapshot: &StageGraphSnapshot,
     ui: &UiState,
     expanded: bool,
 ) -> GraphCanvasSwatch<StageInstanceRef, &'static str> {
-    let set_graph = ui.set.graph();
     let nodes = snapshot
         .items()
         .into_iter()
         .filter_map(|(reference, item)| {
-            let card_id = snapshot.card_of_ref(reference)?;
-            let node = set_graph.node(card_id)?;
-            let position = ui
-                .set_graph_positions
-                .get(&card_id)
-                .copied()
-                .unwrap_or_else(|| {
-                    scene_position(
-                        snapshot,
-                        item.transform.translate.x,
-                        item.transform.translate.y,
-                    )
-                });
+            let node = snapshot.node_of(reference.instance)?;
+            let position = match &node.id {
+                StageNodeId::Card(card_id) => ui
+                    .set_graph_positions
+                    .get(card_id)
+                    .copied()
+                    .unwrap_or_else(|| {
+                        scene_position(
+                            snapshot,
+                            item.transform.translate.x,
+                            item.transform.translate.y,
+                        )
+                    }),
+                StageNodeId::Catalog(keyed) => ui
+                    .context_positions
+                    .get(&keyed.wire_key())
+                    .copied()
+                    .unwrap_or_else(|| {
+                        scene_position(
+                            snapshot,
+                            item.transform.translate.x,
+                            item.transform.translate.y,
+                        )
+                    }),
+            };
             Some(GraphCanvasNode {
                 id: reference,
-                kind: node.kind,
+                kind: stage_node_kind(
+                    node.kind,
+                    node.foreground
+                        || matches!(&node.id, StageNodeId::Catalog(keyed) if ui.context_focus.as_ref() == Some(keyed)),
+                ),
                 position,
-                label: format!("{} · {}", node.number, node.label),
-                key: Some(format!(
-                    "stage-{}-instance-{}",
-                    reference.epoch.0, reference.instance.0
-                )),
+                label: match &node.id {
+                    StageNodeId::Card(card) => {
+                        let number = ui.set.cards.iter().position(|item| item.id == *card).unwrap_or(0) + 1;
+                        format!("{number} · {}", node.label)
+                    },
+                    StageNodeId::Catalog(_) if node.kind == StageNodeKind::Scale => format!("{} scale", node.label),
+                    StageNodeId::Catalog(_) => node.label.clone(),
+                },
+                key: Some(match &node.id {
+                    StageNodeId::Card(card) => format!("stage-card-{}", card.0),
+                    StageNodeId::Catalog(keyed) => format!("stage-context-{}", keyed.wire_key()),
+                }),
             })
         })
         .collect::<Vec<_>>();
@@ -468,27 +547,37 @@ pub fn set_graph_swatch_from_snapshot(
                 let last = route.len() - 1;
                 route[last] = to_position;
             }
-            let from_label = snapshot
-                .card_of_ref(from)
-                .and_then(|id| ui.set.cards.iter().find(|card| card.id == id))
-                .map(|card| card.label.as_str())
-                .unwrap_or("card");
-            let to_label = snapshot
-                .card_of_ref(to)
-                .and_then(|id| ui.set.cards.iter().find(|card| card.id == id))
-                .map(|card| card.label.as_str())
-                .unwrap_or("card");
             let kind = relation.kind.as_deref().unwrap_or("relation");
-            let key = snapshot.relation_key(reference)?;
+            let from_label = snapshot
+                .node_of(from.instance)
+                .map(|node| node.label.as_str())
+                .unwrap_or("node");
+            let to_label = snapshot
+                .node_of(to.instance)
+                .map(|node| node.label.as_str())
+                .unwrap_or("node");
+            let (id, visible, emphasized) = if let Some(key) = snapshot.relation_key(reference) {
+                (
+                    reference.key(),
+                    set_graph_relation_visible(ui, &key),
+                    ui.set_graph_relation == Some(reference),
+                )
+            } else {
+                (
+                    reference.key(),
+                    context_relation_visible(ui, snapshot, reference),
+                    false,
+                )
+            };
             Some(GraphCanvasRelation {
-                id: reference.key(),
+                id,
                 from,
                 to,
                 kind: kind.to_string(),
                 label: format!("{from_label} · {kind} · {to_label}"),
                 route,
-                visible: set_graph_relation_visible(ui, &key),
-                emphasized: ui.set_graph_relation == Some(reference),
+                visible,
+                emphasized,
             })
         })
         .collect();
@@ -511,10 +600,35 @@ pub fn set_graph_swatch_from_snapshot(
     .with_node_labels(expanded && !ui.set_graph_drag_active)
     .with_deferred_drag_rebuild(true);
     swatch.viewport = ui.set_graph_viewport;
+    if ui.app_settings.stage.set_graph_reading == StageGraphReading::CircleOfFifths {
+        swatch.hit_size = 20.0;
+        swatch.edge_width = 0.6;
+        // Musical labels stay beside fixed tonic slots, independently of
+        // whichever relations are currently disclosed.
+        swatch.show_labels = false;
+    }
     swatch.selected = ui
         .set
         .cursor_id()
         .and_then(|card| snapshot.instance_ref_of(card));
+    swatch.focus = ui
+        .context_focus
+        .as_ref()
+        .and_then(|focus| {
+            snapshot
+                .instance_of_node(&StageNodeId::Catalog(focus.clone()))
+                .or_else(|| {
+                    let node = snapshot
+                        .nodes
+                        .iter()
+                        .find(|node| node.keyed.as_ref() == Some(focus))?;
+                    snapshot.instance_of_node(&node.id)
+                })
+        })
+        .map(|instance| StageInstanceRef {
+            epoch: snapshot.epoch(),
+            instance,
+        });
     if expanded && ui.set_graph_card_expanded {
         if let Some(selected) = swatch.selected {
             swatch =
@@ -789,6 +903,15 @@ pub struct UiState {
     pub related_expanded: bool,
     /// Activated relation cell in the joined-mere swatch.
     pub related_relation: Option<String>,
+    /// View-local focus in the wider Stage context graph. Focusing a
+    /// background material does not change Set order or cursor selection.
+    pub context_focus: Option<KeyedCatalogRef>,
+    /// Keyed context identities already disclosed during this view session.
+    /// The scene adapter uses these as retained nodes when focus moves.
+    pub context_disclosed: BTreeSet<KeyedCatalogRef>,
+    /// Manual positions for catalog nodes in the wider context graph. Staged
+    /// occurrence positions remain in `set_graph_positions`.
+    pub context_positions: BTreeMap<String, (f32, f32)>,
     /// Whether practice is written anywhere at all.
     ///
     /// False for a session the user chose to run with no persona: there is no
@@ -870,6 +993,9 @@ impl UiState {
             related_hover: None,
             related_expanded: false,
             related_relation: None,
+            context_focus: None,
+            context_disclosed: BTreeSet::new(),
+            context_positions: BTreeMap::new(),
             practice_saved: true,
             persona: None,
             persona_switch_requested: false,
@@ -885,7 +1011,7 @@ impl UiState {
         match outcome {
             WorkspaceOutcome::Activated(panel) => self.show_workspace_panel(panel),
             WorkspaceOutcome::Effect(effect) => self.workspace_effects.push(effect),
-            WorkspaceOutcome::Changed | WorkspaceOutcome::Unchanged => {}
+            WorkspaceOutcome::Changed | WorkspaceOutcome::Unchanged => {},
         }
         outcome
     }
@@ -921,7 +1047,7 @@ impl UiState {
             WorkspacePanel::Related => {
                 self.section = AppSection::Stage;
                 self.related_expanded = true;
-            }
+            },
             WorkspacePanel::Settings => self.section = AppSection::Settings,
         }
     }
@@ -936,6 +1062,22 @@ impl UiState {
     ) {
         match event {
             GraphCanvasEvent::Activate(reference) => {
+                if reference.epoch != snapshot.epoch() {
+                    return;
+                }
+                let Some(node) = snapshot.node_of(reference.instance) else {
+                    return;
+                };
+                if let StageNodeId::Catalog(keyed) = &node.id {
+                    for node in &snapshot.nodes {
+                        if let StageNodeId::Catalog(existing) = &node.id {
+                            self.context_disclosed.insert(existing.clone());
+                        }
+                    }
+                    self.focus_context_catalog(keyed.clone());
+                    self.set_graph_relation = None;
+                    return;
+                }
                 let Some(id) = snapshot.card_of_ref(reference) else {
                     return;
                 };
@@ -949,20 +1091,32 @@ impl UiState {
                 } else {
                     true
                 };
-            }
+            },
             GraphCanvasEvent::Drag(drag) => {
-                // A stale release must still close the host's cheap drag tail.
-                // The position remains epoch-qualified and is ignored below.
                 if matches!(drag.phase, cambium::PointerPhase::Up) {
                     self.set_graph_drag_active = false;
                 }
+                if drag.id.epoch != snapshot.epoch() {
+                    return;
+                }
+                // A stale release must still close the host's cheap drag tail.
+                // The position remains epoch-qualified and is ignored below.
                 if let Some(card) = snapshot.card_of_ref(drag.id) {
                     self.set_graph_positions.insert(card, drag.position);
                     if !matches!(drag.phase, cambium::PointerPhase::Up) {
                         self.set_graph_drag_active = true;
                     }
+                } else if let Some(StageNodeId::Catalog(keyed)) =
+                    snapshot.node_of(drag.id.instance).map(|node| &node.id)
+                {
+                    self.context_positions
+                        .insert(keyed.wire_key(), drag.position);
+                    self.context_disclosed.insert(keyed.clone());
+                    if !matches!(drag.phase, cambium::PointerPhase::Up) {
+                        self.set_graph_drag_active = true;
+                    }
                 }
-            }
+            },
             GraphCanvasEvent::RelationActivate(key) => {
                 let Some(reference) = StageRelationRef::from_key(&key) else {
                     return;
@@ -971,15 +1125,15 @@ impl UiState {
                     self.set_graph_relation =
                         (self.set_graph_relation != Some(reference)).then_some(reference);
                 }
-            }
+            },
             GraphCanvasEvent::Pan { delta } => {
                 self.set_graph_viewport.pan.0 += delta.0;
                 self.set_graph_viewport.pan.1 += delta.1;
-            }
+            },
             GraphCanvasEvent::Zoom { factor } => {
                 self.set_graph_viewport.zoom =
                     (self.set_graph_viewport.zoom * factor).clamp(0.25, 8.0);
-            }
+            },
             GraphCanvasEvent::Expand => self.set_tray_expanded = true,
         }
     }
@@ -1041,43 +1195,43 @@ impl UiState {
                 self.stage.select_scale(i);
                 self.stage_page = StagePage::Catalog;
                 self.section = AppSection::Stage;
-            }
+            },
             SearchHit::Chord(i) => {
                 self.stage.set_lens(Lens::Chords);
                 self.stage.select_chord(i);
                 self.stage_page = StagePage::Catalog;
                 self.section = AppSection::Stage;
-            }
+            },
             SearchHit::Arpeggio(i) => {
                 self.stage.set_lens(Lens::Arpeggios);
                 self.stage.select_arpeggio(i);
                 self.stage_page = StagePage::Catalog;
                 self.section = AppSection::Stage;
-            }
+            },
             SearchHit::Progression(i) => {
                 self.stage.set_lens(Lens::Progressions);
                 self.stage.select_progression(i);
                 self.stage_page = StagePage::Catalog;
                 self.section = AppSection::Stage;
-            }
+            },
             SearchHit::Exercise(i) => {
                 self.stage.set_lens(Lens::Exercises);
                 self.stage.select_exercise(i);
                 self.stage_page = StagePage::Catalog;
                 self.section = AppSection::Stage;
-            }
+            },
             SearchHit::Recipe(i) => {
                 if let Some(ps) = woodshedding::practice::catalog().get(i) {
                     self.set = set_from_practice(ps);
                     self.section = AppSection::Rehearsal;
                 }
-            }
+            },
             SearchHit::Tuning(i) => {
                 self.stage.set_tuning(i);
                 self.app_settings.tuning.tuning_idx = self.stage.tuning_idx;
                 self.tuning_dd = SelectState::new(self.stage.tuning_idx);
                 self.section = AppSection::Stage;
-            }
+            },
         }
         self.search = TextInput::new("");
     }
@@ -1101,6 +1255,28 @@ impl UiState {
         self.app_settings.stage.set_arrangement = arrangement;
         self.set_arrangement_dd.selected = arrangement.index();
         self.set_graph_positions.clear();
+        self.context_positions.clear();
+        self.set_graph_relation = None;
+        self.context_focus = None;
+        self.context_disclosed.clear();
+    }
+
+    /// Change the musical arrangement and release view-local state belonging
+    /// to the previous projection.
+    pub fn set_graph_reading(&mut self, reading: StageGraphReading) {
+        if self.app_settings.stage.set_graph_reading == reading {
+            return;
+        }
+        self.app_settings.stage.set_graph_reading = reading;
+        if reading == StageGraphReading::CircleOfFifths
+            && self.app_settings.stage.set_graph_size() == (520, 260)
+        {
+            self.app_settings.stage.resize_set_graph(520, 520);
+        }
+        self.set_graph_positions.clear();
+        self.context_positions.clear();
+        self.context_disclosed.clear();
+        self.context_focus = None;
         self.set_graph_relation = None;
     }
 
@@ -1329,7 +1505,7 @@ impl UiState {
                     },
                     D::Down => Touch::Walk,
                 }
-            }
+            },
             Touch::Walk => Touch::Block,
         };
     }
@@ -1541,10 +1717,13 @@ impl UiState {
         self.practice_history = session.practice_history.clone();
         self.app_settings = app_settings;
         self.set_graph_positions.clear();
+        self.context_positions.clear();
         self.set_graph_drag_active = false;
         self.set_graph_hidden_relations.clear();
         self.set_graph_relation = None;
         self.related_relation = None;
+        self.context_focus = None;
+        self.context_disclosed.clear();
         // The one bounded migration for sessions written before occurrence
         // identity: Cards gain ids, the legacy single-boolean edge toggle
         // becomes a relation set. Both persist on the next save, and both
@@ -1562,7 +1741,7 @@ impl UiState {
                 Ok(workspace) => {
                     self.workspace = workspace;
                     None
-                }
+                },
                 Err(error) => Some(error),
             }
         });
@@ -2130,7 +2309,7 @@ fn board_viewport_style(orientation: Orientation, w: u32, h: u32, avail_h: f32) 
     match orientation {
         Orientation::Horizontal => {
             format!("height:{h}px; overflow-x:auto; overflow-y:hidden;")
-        }
+        },
         Orientation::Vertical => {
             // The board's share of the window, leaving room for the header, lens
             // strip, deck, and caption. Below the cap the neck uses its own height,
@@ -2141,7 +2320,7 @@ fn board_viewport_style(orientation: Orientation, w: u32, h: u32, avail_h: f32) 
             } else {
                 format!("width:{w}px;")
             }
-        }
+        },
     }
 }
 
@@ -2591,6 +2770,167 @@ mod evidence_tests {
     }
 
     #[test]
+    fn context_focus_is_separate_from_audition_and_set_add() {
+        let mut ui = UiState::new();
+        ui.stage.set_lens(Lens::Chords);
+        let target = woodshed_core::harmony::KeyedCatalogRef::from_material(
+            &woodshedding::rehearsal::Material::Chord {
+                name: "Major".into(),
+                root: woodshedding::pitch::PitchClass::new(0),
+            },
+        )
+        .expect("catalog chord");
+        let before = ui.set.cards.len();
+
+        assert!(ui.focus_context_catalog(target.clone()));
+        assert_eq!(ui.context_focus.as_ref(), Some(&target));
+        assert_eq!(ui.set.cards.len(), before);
+
+        ui.audition_context_focus();
+        assert!(matches!(
+            ui.audio_requests.first(),
+            Some(AudioRequest::PreviewPitches { .. })
+        ));
+        assert_eq!(ui.set.cards.len(), before);
+
+        // A later board change cannot redirect the focused audition.
+        ui.stage.select_chord(
+            ui.stage
+                .chords()
+                .iter()
+                .position(|chord| chord.name == "Minor")
+                .expect("minor chord"),
+        );
+        ui.audition_context_focus();
+        assert_eq!(ui.stage.catalog_id().as_deref(), Some("chord:Major"));
+
+        ui.add_context_focus_to_set();
+        assert_eq!(ui.set.cards.len(), before + 1);
+    }
+
+    #[test]
+    fn stale_context_activation_cannot_change_focus_or_positions() {
+        let mut ui = staged_set();
+        ui.app_settings.stage.set_graph_reading = StageGraphReading::CircleOfFifths;
+        let snapshot = set_graph_snapshot(&ui);
+        let context = snapshot
+            .nodes
+            .iter()
+            .find_map(|node| match &node.id {
+                StageNodeId::Catalog(keyed) => Some(keyed.clone()),
+                StageNodeId::Card(_) => None,
+            })
+            .expect("context node");
+        let mut stale_epoch = snapshot.epoch();
+        stale_epoch.0 = stale_epoch.0.saturating_add(1);
+        let stale = StageInstanceRef {
+            epoch: stale_epoch,
+            instance: snapshot
+                .instance_of_node(&StageNodeId::Catalog(context))
+                .unwrap(),
+        };
+        ui.handle_set_graph_event(&snapshot, GraphCanvasEvent::Activate(stale));
+        assert!(ui.context_focus.is_none());
+        assert!(ui.context_positions.is_empty());
+    }
+
+    #[test]
+    fn changing_reading_releases_context_and_card_positions() {
+        let mut ui = staged_set();
+        ui.set_graph_positions
+            .insert(ui.set.cards[0].id, (0.2, 0.8));
+        ui.context_positions
+            .insert("chord:Major@pc:0".into(), (0.8, 0.2));
+        ui.context_focus = Some(KeyedCatalogRef {
+            formula_id: "chord:Major".into(),
+            root: woodshedding::pitch::PitchClass::new(0),
+        });
+        ui.set_graph_reading(StageGraphReading::CircleOfFifths);
+        assert!(ui.set_graph_positions.is_empty());
+        assert!(ui.context_positions.is_empty());
+        assert!(ui.context_focus.is_none());
+    }
+
+    #[test]
+    fn context_activation_retains_the_disclosed_neighborhood() {
+        let mut ui = staged_set();
+        ui.app_settings.stage.set_graph_reading = StageGraphReading::CircleOfFifths;
+        let first = set_graph_snapshot(&ui);
+        let target = first
+            .nodes
+            .iter()
+            .find_map(|node| match &node.id {
+                StageNodeId::Catalog(keyed) => Some(keyed.clone()),
+                StageNodeId::Card(_) => None,
+            })
+            .expect("context node");
+        let instance = first
+            .instance_of_node(&StageNodeId::Catalog(target.clone()))
+            .unwrap();
+        let first_swatch = set_graph_swatch_from_snapshot(&first, &ui, true);
+        let old_context = first
+            .nodes
+            .iter()
+            .filter_map(|node| match &node.id {
+                StageNodeId::Catalog(keyed) => {
+                    let instance = first.instance_of_node(&node.id)?;
+                    let reference = StageInstanceRef {
+                        epoch: first.epoch(),
+                        instance,
+                    };
+                    let position = first_swatch
+                        .graph
+                        .nodes
+                        .iter()
+                        .find(|item| item.id == reference)?
+                        .position;
+                    Some((keyed.clone(), position))
+                },
+                StageNodeId::Card(_) => None,
+            })
+            .collect::<Vec<_>>();
+        for (keyed, position) in &old_context {
+            ui.context_positions.insert(keyed.wire_key(), *position);
+        }
+        ui.handle_set_graph_event(
+            &first,
+            GraphCanvasEvent::Activate(StageInstanceRef {
+                epoch: first.epoch(),
+                instance,
+            }),
+        );
+        let second = set_graph_snapshot(&ui);
+        assert!(
+            second
+                .nodes
+                .iter()
+                .any(|node| node.id == StageNodeId::Catalog(target.clone()))
+        );
+        assert!(second.nodes.len() > first.nodes.len());
+        let second_swatch = set_graph_swatch_from_snapshot(&second, &ui, true);
+        for (keyed, position) in old_context {
+            let instance = second
+                .instance_of_node(&StageNodeId::Catalog(keyed.clone()))
+                .unwrap();
+            let reference = StageInstanceRef {
+                epoch: second.epoch(),
+                instance,
+            };
+            assert_eq!(
+                second_swatch
+                    .graph
+                    .nodes
+                    .iter()
+                    .find(|item| item.id == reference)
+                    .unwrap()
+                    .position,
+                position
+            );
+        }
+        assert!(!ui.context_disclosed.is_empty());
+    }
+
+    #[test]
     fn workspace_panels_route_to_existing_product_surfaces() {
         let mut ui = UiState::new();
         ui.activate_workspace_panel(WorkspacePanel::Set);
@@ -2675,11 +3015,13 @@ mod evidence_tests {
                 .map(|relation| relation.id.as_str())
                 .collect::<Vec<_>>()
         );
-        assert!(compact
-            .graph
-            .nodes
-            .iter()
-            .all(|node| node.id.epoch == snapshot.epoch()));
+        assert!(
+            compact
+                .graph
+                .nodes
+                .iter()
+                .all(|node| node.id.epoch == snapshot.epoch())
+        );
         assert_ne!(
             (compact.width, compact.height),
             (expanded.width, expanded.height)
@@ -2910,13 +3252,17 @@ mod evidence_tests {
         );
 
         ui.show_all_set_graph_relations();
-        assert!(set_graph_relation_choices(&snapshot, &ui)
-            .iter()
-            .all(|choice| choice.visible));
+        assert!(
+            set_graph_relation_choices(&snapshot, &ui)
+                .iter()
+                .all(|choice| choice.visible)
+        );
         ui.hide_all_set_graph_relations(&snapshot);
-        assert!(set_graph_relation_choices(&snapshot, &ui)
-            .iter()
-            .all(|choice| !choice.visible));
+        assert!(
+            set_graph_relation_choices(&snapshot, &ui)
+                .iter()
+                .all(|choice| !choice.visible)
+        );
     }
 
     #[test]
@@ -3007,11 +3353,13 @@ mod evidence_tests {
                 .iter()
                 .map(|node| node.id.as_str())
                 .collect::<BTreeSet<_>>();
-            assert!(swatch
-                .relations
-                .iter()
-                .all(|relation| ids.contains(relation.from.as_str())
-                    && ids.contains(relation.to.as_str())));
+            assert!(
+                swatch
+                    .relations
+                    .iter()
+                    .all(|relation| ids.contains(relation.from.as_str())
+                        && ids.contains(relation.to.as_str()))
+            );
         }
     }
 
