@@ -133,7 +133,7 @@ who want exactly that workflow (like myself).
 ## Tech Stack
 
 - **Language**: Rust
-- **UI**: `xilem_serval` hosted on Genet, with Chisel retained vector leaves
+- **UI**: Cambium (formerly `xilem_serval`) hosted on Genet, with Chisel retained vector leaves
   for waveform and meter geometry
 - **Audio engine**: [Firewheel](https://github.com/BillyDM/Firewheel)
   (BillyDM's modular audio graph engine, "wgpu but for audio"). Native

@@ -15,7 +15,7 @@ before any other doc in this directory.
   scaffold, workspace skeleton, and feature-target ladder from
   click-track engine through P2P session hand-off.
 - [2026-07-08_genet_host_refactor_plan.md](2026-07-08_genet_host_refactor_plan.md)
-  — **LANDED.** UI rebuilt fresh on `xilem_serval` (the one-screen loop-recorder
+  — **LANDED.** UI rebuilt fresh on Cambium (then `xilem_serval`) (the one-screen loop-recorder
   design, not a Masonry port) with `chisel` leaf waveforms/meters and the
   `hocket_engine` spine wired in. The Masonry app + the `mark-ik/xilem` fork
   are deleted family-wide (hocket + woodshed). Deferred follow-ups listed in
@@ -60,7 +60,7 @@ before any other doc in this directory.
   everyone's turns in order. Grounds the concept in what the model records
   (authorship exists only in the signed hand-off envelope; `HistoryNode` and
   `Layer` carry no author, so the missing piece is a turn mark written at
-  accept time from the verified envelope), names the owning layers (scenograph
+  accept time from the verified envelope), names the owning layers (sceno
   timeline scene, platen/forme arrangement, sprigging regions; hocket supplies
   the musical reading), and draws the doctrine line: provenance reading yes,
   editing from the timeline is the arrange-view canary.
