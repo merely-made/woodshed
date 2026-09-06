@@ -12,10 +12,12 @@ environment. The theory model supports arbitrary string counts and tunings.
   <sub>Stage: inspect a playable chord across the neck, then stage related practice material.</sub>
 </p>
 
-## Status (2026-08-12)
+## Status (2026-08-31)
 
-Desktop alpha, functional on Windows. Not a packaged public release yet;
-source builds are the supported way to try it.
+Windows desktop alpha. Source builds are the supported way to try it. A tag
+workflow can produce a checksummed portable Windows ZIP, but code signing,
+installer work, third-party notices, and a recorded green release run remain
+before a broad public release.
 
 - Migrated onto the shared Cambium desktop host
   (`cambium-genet-winit-host` in the genet repo) on 2026-08-09. Woodshed was
@@ -23,21 +25,25 @@ source builds are the supported way to try it.
   from 1728 to 211 lines of host code, and both semantic scenario receipts
   pass unchanged.
 - Practice sessions are sealed at rest under a persona-derived key with
-  carry across devices (2026-08-08); application settings split into their
-  own file with one-time migration (2026-08-07).
+  carry across devices (2026-08-08). Startup choice and live persona switching
+  are landed; creating a persona inside Woodshed remains open. Application
+  settings have their own file and one-time migration (2026-08-07).
 - Window frame moved onto the host seam 2026-08-10; window-chrome controls
   are named for screen readers.
-- Seven crates: `woodshedding` (pure theory model), `audio-primitives`
-  (pure-std DSP, also consumed by sibling repos), `woodshed-audio` (cpal,
-  pitch detection, MIDI, looping), `woodshed-core` (portable state and host
-  seams), `woodshed-views` (Cambium product views and CSS themes),
-  `woodshed-genet` (the desktop binary), `woodshed-graph` (theory catalog
-  as a content graph).
+- Nine workspace crates: `woodshedding` (pure theory), `audio-primitives`
+  (shared pure-std DSP), `woodshed-audio` (audio, pitch, MIDI, looping),
+  `woodshed-core` (portable state and host seams), `woodshed-graph` (theory
+  catalog as a content graph), `woodshed-views` (Cambium product views),
+  `woodshed-genet` (Windows desktop application), `woodshed-web` (unshipped browser
+  host), and `woodshed-instrument` (hardware-verified smart-instrument control).
+  The instrument crate is not yet connected to the product views.
 
-Current plans live in [design_docs/](design_docs/DOC_README.md). Next:
-Stage's graph projection of the practice Set on scenograph (gate opened
-2026-08-10), then adaptive-screen polish, Mac and Linux receipts, and a
-public build path.
+Current plans and completed records are indexed in
+[design_docs/](design_docs/DOC_README.md). The release baseline is a clean
+locked checkout, green core and Windows-host CI, and a checksummed tagged ZIP.
+That baseline is not the 1.0 product proof. The 1.0 claim requires one
+persisted practice flow that connects musical material, a playable instrument
+route, honest practice history, and an intelligible next step.
 
 ## Use
 
@@ -46,9 +52,11 @@ cargo run -p woodshed-genet     # the desktop app
 cargo test --workspace
 ```
 
-The committed manifest resolves the genet family from git. Local sibling
-development needs a gitignored `.cargo/config.toml` patch table that
-includes `cambium-genet-winit-host` and `meristem`.
+The committed manifest and lockfile resolve the Genet family from the same
+revision Mere uses, without local sibling checkouts. A gitignored
+`.cargo/config.toml` may redirect those sources to sibling paths for local
+development, but it is optional development plumbing rather than part of the
+release graph.
 `scripts/package-windows.ps1` produces a checksummed portable Windows ZIP.
 
 ## License

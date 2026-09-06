@@ -1,11 +1,11 @@
 # Smart-instrument control: Woodshed drives a HyVibe guitar
 
 **Date:** 2026-08-27
-**Status:** in progress. **W2 written; one hardware condition outstanding.**
-**W1 landed** — `crates/woodshed-instrument` builds
-and tests clean inside the workspace. Getting there required repairing three
-stale genet overrides that had been failing the whole workspace; see Findings.
-The protocol side is done and hardware-verified; see
+**Status:** in progress. **W1 and W2 landed and are hardware-verified; W3 is
+open.** `crates/woodshed-instrument` builds and tests inside the workspace, but
+it is not integrated into `woodshed-views`, so Woodshed has no product-facing
+instrument surface yet. Getting W1 to resolve required repairing three stale
+Genet overrides; see Findings. The protocol side is hardware-verified; see
 `ringdown/design_docs/2026-08-27_ringdown_founding.md`.
 
 ---
@@ -120,11 +120,11 @@ Done-conditions:
   the instrument. — **met 2026-08-27.** `MetronomeLink` has three states and
   `Session::sync_metronome` acts on whichever holds. Default is `Detached`,
   so connecting never changes an instrument's settings by itself.
-- Changing tempo or time signature in Woodshed reaches the instrument within
-  one bar. — **written, not yet proven on hardware.** The write path is a
-  single RPC, and a `GetStatus` round trip measured well under a second, so
-  latency is not in doubt; what is unproven is the round trip itself. The
-  example `metronome_link` is the proof and needs a woken guitar.
+- Changing tempo or the supported meter numerator in Woodshed reaches the
+  instrument within one bar. — **met 2026-08-27 on hardware.** `Drive` sent 96 bpm, a separate
+  read reported 96 bpm, and a second identical sync correctly wrote nothing.
+  Woodshed deliberately leaves denominator control alone until the
+  instrument's partial write support has an honest UI; see Findings.
 - The UI shows plainly whether the instrument is following Woodshed or not. —
   **met 2026-08-27.** `MetronomeLink::describe` returns a phrase naming both
   sides ("Instrument follows Woodshed"), and a test asserts every variant does
@@ -172,7 +172,11 @@ Candidates, in rough order of value:
   (hex doubles the payload, ~200 bytes of file per call), so this is a
   background transfer, not an interactive one.
 
-Done-conditions, now that W1 and W2 have landed:
+W3 remains open. The device/protocol pieces below are useful prerequisites,
+but none is wired into Woodshed's views and therefore none supplies the desktop
+surface named by this phase.
+
+Done-conditions and prerequisite status:
 
 - **Loop retrieval works and is checksum-verified.** — **met 2026-08-27,
   against hardware.** `/Loops/loop0031.wav` was pulled off the instrument in
@@ -329,11 +333,13 @@ forms. What it failed to say, and what would have prevented this, is: **do not
 send a method any argument at all until its argument shape is known, including
 the empty one.** For a setter, absence is a value.
 
-### The original assessment, retained
+### Historical pre-probe assessment (superseded, retained)
 
 
-The plan called for an assessment before a first call, and this is it. The
-conclusion is **do not call it yet**, on evidence rather than nerves.
+The plan called for an assessment before a first call. This was that assessment;
+the later destructive probe above supersedes its factual state while preserving
+the reasoning failure that followed. Its conclusion at the time was **do not
+call it yet**.
 
 What is known: the name is in the firmware's keyword dictionary, so the string
 exists. Nothing else. Its parameters are unmapped, its units are unknown, and
@@ -542,12 +548,17 @@ alongside the dependency that motivated them.
 ## Progress
 
 - **2026-08-27** — Plan written.
-- **2026-08-27 — W2 written.** `session` module: `MetronomeLink`
+- **2026-08-27 — W2 hardware-verified.** `Detached` changed nothing, `Follow`
+  adopted the instrument tempo, and `Drive` sent 96 bpm, read it back, and
+  avoided an identical second write. This closes W2; it does not integrate the
+  instrument into Woodshed's views.
+- **2026-08-27 — W2 initially written.** `session` module: `MetronomeLink`
   (Detached/Follow/Drive), `SyncOutcome`, and `Session` holding the instrument
   across actions with an explicit `release`. Thirteen tests, clippy clean. The
   hardware proof (`examples/metronome_link`) is written and builds; it reads
   the instrument's tempo, drives a different one, reads it back, and restores
-  what it found. Not yet run — the guitar was asleep.
+  what it found. This entry records the pre-hardware state and is superseded by
+  the verified receipt above.
 - **2026-08-27 — W1 LANDED.** Verified inside the workspace: builds clean,
   five tests pass, no clippy findings in this crate. Required removing three
   stale genet overrides first (Findings).

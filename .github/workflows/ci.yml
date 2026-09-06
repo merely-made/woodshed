@@ -9,18 +9,39 @@ permissions:
   contents: read
 
 jobs:
-  core:
-    name: Core tests
+  lockfile:
+    name: Clean-checkout lockfile
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Resolve without repository Cargo overrides
+        working-directory: ${{ runner.temp }}
+        run: >-
+          cargo metadata
+          --manifest-path "$GITHUB_WORKSPACE/Cargo.toml"
+          --locked
+          --format-version 1
+          > /dev/null
+
+  core:
+    name: Core tests
+    needs: lockfile
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
       - uses: dtolnay/rust-toolchain@stable
       - run: cargo test -p woodshed-core --locked
 
   windows-host:
     name: Windows host check
+    needs: lockfile
     runs-on: windows-latest
+    env:
+      CARGO_NET_GIT_FETCH_WITH_CLI: "true"
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: dtolnay/rust-toolchain@stable
+      - name: Enable long Git dependency paths
+        run: git config --global core.longpaths true
       - run: cargo check -p woodshed-genet --locked

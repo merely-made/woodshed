@@ -8,8 +8,6 @@ before any other doc in this directory.
 - [PROJECT_DESCRIPTION.md](PROJECT_DESCRIPTION.md) — Product goals,
   major features, scope. Maintainer-owned.
 - [DOC_POLICY.md](DOC_POLICY.md) — Documentation governance.
-- [xilem_fork_patches.md](xilem_fork_patches.md) — Ledger of meaningful local
-  edits in the shared `../xilem` checkout (runtime theming, etc.).
 
 ## Active Plans
 
@@ -24,144 +22,89 @@ before any other doc in this directory.
   bounded range source is the shipping playback default; Genet/GStreamer is the
   retained conformance path, and Turnstone is the planned second host. It is not
   part of the Woodshed product graph.
-- [2026-08-27_smart_instrument_plan.md](2026-08-27_smart_instrument_plan.md)
-  — **Plan; nothing implemented.** Woodshed drives a HyVibe smart guitar over
-  Bluetooth through [ringdown](https://crates.io/crates/ringdown), whose
-  protocol is hardware-verified (see
-  `../../ringdown/design_docs/2026-08-27_ringdown_founding.md`). The instrument
-  exposes a metronome, tuner, looper and recorder — the same vocabulary
-  Woodshed already owns, on the other side of a wire. W1 is the seam and one
-  honest round trip; W2 joins the two metronomes; W3 is the surface a desktop
-  earns over the phone app (banks as files, the guitar's own measured body
-  resonances, speaker biquads). Two constraints are designed around rather than
-  discovered: `ReadConfig` wedges the firmware and must never be called, and
-  the equalizer and aux settings are write-only.
-- [2026-08-12_persona_picker_plan.md](2026-08-12_persona_picker_plan.md)
-  — **P1 landed; P2/P3 open.** `mere-persona-picker` (the cambium view-model
-  over `identity::roster`; the census's wire-now item) is wired in. P1: a
-  vault holding several personas with none chosen puts up a gate screen
-  before the practice store opens, and the choice seals the session to that
-  persona. Still open: the live switch from settings (sealed store swaps
-  without restart) and the create flow. Sealing stays not a gate; the silent
-  convention path survives for sole-persona and no-vault machines.
-- [2026-08-06_settings_persistence_split_plan.md](2026-08-06_settings_persistence_split_plan.md)
-  — **LANDED.** Application preferences leave the practice artifact. `AppSettings`
-  no longer flattens into `PersistedSession`; it persists through a separate
-  `SettingsStorage` lane (`genet-settings.json` beside `genet-state.json`), and
-  `decode_session` still returns legacy flattened settings so an old session file
-  migrates once on the next save. `WOODSHED_SETTINGS` overrides the settings path
-  for isolated runs. Woodshed's slice of Mere's cross-product
-  [configuration ownership umbrella](../../mere/design_docs/mere_docs/implementation_strategy/2026-08-06_configuration_ownership_settings_projection_plan.md)
-  (its C5), whose four-axis taxonomy the `WoodshedSettingsProvider` describes
-  settings under.
-- [2026-07-18_accessibility_semantic_surface.md](2026-07-18_accessibility_semantic_surface.md)
-  — **One semantic surface, three readers.** The ARIA-attributed cambium DOM
-  serves a screen reader (AccessKit), a driver/test (genet-probe), and an agent
-  alike, so accessibility is the same investment as automatability. Records the
-  stack's a11y groundwork, the gaps (host bridge unwired in cambium-winit,
-  hand-rolled controls lack roles), the single-node leaf finding that keeps the
-  fretboard markers in the DOM (and locks scroll/fit), the first build (marker
-  aria-labels + named neck + leaf `accessibility()`), and the Tier 0-3 plan.
-- [2026-07-15_material_and_touch_model.md](2026-07-15_material_and_touch_model.md)
-  — **The unifying model.** Content is arranged notes and relationships; the five
-  lenses are treatments, not content types. Two axes: Material (with an
-  abstraction level, so progressions assemble from key-free generics) and Touch
-  (content-aware path, rhythm, and selection). Playback as the expression of
-  touch is the keystone; the board becomes a material editor (click to toggle
-  membership). Reframes the Stage/Set model; phased path from stepping-playback
-  through generics and authoring.
-- [2026-07-15_fretboard_marker_detail_plan.md](2026-07-15_fretboard_marker_detail_plan.md)
-  — **Interactive fretboard markers.** Hover a marker for an ephemeral detail
-  card, click to pin (multi-pin, to compare). The card shows note name, scale
-  degree, interval, octave, string/fret, and plays the note. Interaction lives in
-  the view-layer per-marker overlay, not the leaf; hover peek uses CSS `:hover`
-  today (genet has no hover events yet) and moves to real hover events when they
-  land. Design-doc-first; not built yet.
-- [2026-07-14_instruments_and_fretboard_rendering_plan.md](2026-07-14_instruments_and_fretboard_rendering_plan.md)
-  — **Instrument variety and configurable fretboard rendering.** The theory model
-  is already tuning-general, so this is additive catalog work (bowed family and
-  world instruments) plus a view redesign: note *regions* instead of dots,
-  realistic vs schematic spacing (automatic, ratio-only), full-neck vs windowed
-  extent, markers, and scale-degree fill, all exposed in Settings. Phases A/B
-  (pure `woodshedding`) verify independently of the blocked host build; courses,
-  microtonal frets, and physical scale length are flagged out of scope.
-- [2026-07-11_audio_material_analysis_plan.md](2026-07-11_audio_material_analysis_plan.md)
-  — **The audio-to-material research lane.** Treats recordings as immutable
-  evidence and model output as versioned observations; defines a model-neutral
-  benchmark for transcription, catalog resolution, optional separation, and
-  local agents before any ML runtime enters the product.
 - [2026-07-11_stage_set_tools_plan.md](2026-07-11_stage_set_tools_plan.md)
-  — **The product architecture.** Catalogs stage material into one Set;
-  Rehearsal and Looper consume it; Fretboard, Metronome, and Tuner are shared
-  tools; Settings is the canonical configuration home. Stage projects that Set
-  as numbered Card-occurrence nodes with `Next` order, typed theory/history
-  layers, configurable relationship views, and node-to-Card semantic zoom.
-  Retires Practice as a top-level section and replaces Song/DAW framing with
-  Set-derived looping. **Scene-contract gate lifted 2026-07-24:** the
-  scenograph family froze and published at 0.0.3, so Stage's projection work
-  can proceed. Its multi-reason relation requirement needs no upstream change
-  (a pair related four ways is four routed relations), picking and per-item
-  emphasis channels arrive for free, and the fixed-layout arrangements
-  (circle of fifths, interval map) start as `Placement::Coordinate` in a
-  Woodshed-owned `Space` rather than waiting on an upstream arrangement.
+  — **In progress; product authority.** P1-P3 remain partial. P4a/P4b landed;
+  the scene canvas and single-Card expansion have receipts, while the full P4e
+  catalog and P4f practice/sound join remain open. P5-P8 remain open. A repaired
+  release baseline does not close the 1.0 practice proof.
+- [2026-08-27_smart_instrument_plan.md](2026-08-27_smart_instrument_plan.md)
+  — **W1 and W2 landed and hardware-verified; W3 open.** The
+  `woodshed-instrument` connection and metronome authority model work in both
+  directions. Retrieval and resonance reads exist in the crate, but the crate
+  is not integrated into `woodshed-views`, so there is no product surface yet.
+- [2026-08-12_persona_picker_plan.md](2026-08-12_persona_picker_plan.md)
+  — **P1/P2 landed; P3 open.** Startup selection and a live Settings switch
+  swap the sealed practice store without restart. Creating a persona inside
+  Woodshed remains open.
 - [2026-07-04_genet_host_cross_platform_plan.md](2026-07-04_genet_host_cross_platform_plan.md)
-  — **The delivery architecture.** The move to the Genet desktop host is
-  complete: one DOM-shaped `xilem_serval` view tree rendered by Genet. The
-  remaining plan covers browser shell, Web Audio, deploy/PWA, and mobile
-  downstream.
-- [2026-06-15_redesign_plan.md](2026-06-15_redesign_plan.md) — UI redesign from
-  the Redesign Explorations board: GPUI-quiet chrome (hairline borders, calmer
-  density, steppers→dropdowns), Slate + Ember palettes as built-ins, segmented-
-  pill nav (left rail held for mobile), fretboard-layout setting, Rehearsal
-  filmstrip + transport deck, Practice recipe tiles. Decisions locked
-  2026-06-15; cheap layer first. **Product/navigation framing superseded
-  2026-07-11** by the Stage/Set/Tools plan; retain as visual reference.
-- [2026-06-14_web_profile_plan.md](2026-06-14_web_profile_plan.md) —
-  **Superseded 2026-07-04** by the genet-host plan above; kept for the web
-  profile constraints and the Tier-0 seams (AudioBackend, Storage, timers,
-  `Instant`), which carry forward. The Path A/B/C analysis is historical.
-- [2026-05-22_rehearsal_redesign_plan.md](2026-05-22_rehearsal_redesign_plan.md)
-  — Prototype → designed UI. Card vocabulary (tagged-union `Card`), a rehearsal
-  queue/projections spine, bulldoze-then-build the lens nav. Branch
-  `rehearsal-redesign`; leads with R1 material portability. **Superseded
-  2026-07-11** as product authority; its shipped Set/Card work carries forward.
-- [2026-04-30_initial_plan.md](2026-04-30_initial_plan.md) — Initial
-  scaffold and roadmap from theory crate through Iced UI to first
-  desktop release.
-- [2026-05-15_midi_design.md](2026-05-15_midi_design.md) — MIDI in/out
-  design and clock-sync model.
-- [2026-05-15_polyphonic_pitch_spike.md](2026-05-15_polyphonic_pitch_spike.md)
-  — **Superseded 2026-07-11.** Background on guitar polyphony; its embedded
-  Basic Pitch recommendation is replaced by the model-neutral analysis plan.
-- [2026-05-16_song_mode_integration.md](2026-05-16_song_mode_integration.md)
-  — **Superseded 2026-07-11.** Historical Song engine and save-format work;
-  Song becomes a Set-derived Looper rather than a parallel product mode.
-- [2026-05-19_song_timeline_layers_plan.md](2026-05-19_song_timeline_layers_plan.md)
-  — **Superseded 2026-07-11.** Historical layered-timeline proposal. Woodshed's
-  Looper stops short of song arrangement and DAW-shaped editing.
+  — **Desktop migration landed; delivery work remains.** The shared view tree
+  has a Windows host and an unshipped browser host. Cross-desktop receipts,
+  browser audio/storage/accessibility, packaging, and deployment remain open.
+- [2026-07-18_accessibility_semantic_surface.md](2026-07-18_accessibility_semantic_surface.md)
+  — **In progress.** AccessKit, genet-probe, and agents consume one semantic
+  Cambium surface. Initial names and marker semantics landed; the wider Tier
+  0-3 audit remains open.
+- [2026-07-11_audio_material_analysis_plan.md](2026-07-11_audio_material_analysis_plan.md)
+  — **Active research.** The model-neutral benchmark and scorer landed; no
+  transcription or reasoning model is selected for the product.
+- [2026-07-14_instruments_and_fretboard_rendering_plan.md](2026-07-14_instruments_and_fretboard_rendering_plan.md)
+  — **Open.** Tuning-general catalog expansion and configurable note-region,
+  spacing, extent, marker, and fill rendering.
+- [2026-07-15_fretboard_marker_detail_plan.md](2026-07-15_fretboard_marker_detail_plan.md)
+  — **Open.** Hover detail, multi-pin comparison, and audition for fretboard
+  markers; not yet built.
 - [2026-05-20_theme_system_design.md](2026-05-20_theme_system_design.md)
-  — Seed-derived palette formula (OKLCH + contrast) + theme management model
-  (built-in vs user themes, edit/rename/remove). Proposal, pending sign-off.
+  — **Open proposal awaiting sign-off.** Seed-derived palettes and theme
+  management semantics.
+
+## Current Supporting Design
+
+- [2026-07-15_material_and_touch_model.md](2026-07-15_material_and_touch_model.md)
+  — Material and Touch reframe for the Stage/Set model; design direction, not a
+  standalone implementation plan.
+- [2026-05-15_midi_design.md](2026-05-15_midi_design.md) — Current MIDI
+  transport and clock-sync reference for the landed audio implementation.
+- [2026-06-15_redesign_plan.md](2026-06-15_redesign_plan.md) — Current visual
+  reference; its product/navigation framing is superseded by Stage/Set/Tools.
+- [2026-05-21_arpeggio_lens_plan.md](2026-05-21_arpeggio_lens_plan.md) — Partial
+  arpeggio catalog/stepping record. The old lens framing is subordinate to the
+  Stage plan.
+
+## Completed Implementation Records
+
+- [2026-07-08_personae_sealed_session.md](2026-07-08_personae_sealed_session.md)
+  — Persona-derived sealing and device carry, completed 2026-08-08.
+- [2026-08-06_settings_persistence_split_plan.md](2026-08-06_settings_persistence_split_plan.md)
+  — Separate application-settings persistence and one-time legacy migration.
+- [2026-08-09_cambium_desktop_host_migration.md](2026-08-09_cambium_desktop_host_migration.md)
+  — Woodshed migrated onto Genet's shared Cambium desktop host.
+
+## Historical and Superseded Documents
+
+These files remain at their established paths for receipt and link stability.
+They are not current product authority.
+
+- [2026-04-30_initial_plan.md](2026-04-30_initial_plan.md) — Initial Iced-era
+  scaffold and roadmap.
+- [2026-05-15_polyphonic_pitch_spike.md](2026-05-15_polyphonic_pitch_spike.md)
+  — Superseded by the model-neutral audio-material analysis plan.
+- [2026-05-16_song_mode_integration.md](2026-05-16_song_mode_integration.md) and
+  [2026-05-19_song_timeline_layers_plan.md](2026-05-19_song_timeline_layers_plan.md)
+  — Historical Song/DAW framing, superseded by Set-derived Looper work.
+- [2026-05-16_xilem_migration_plan.md](2026-05-16_xilem_migration_plan.md) and
+  [xilem_fork_patches.md](xilem_fork_patches.md) — Retired Xilem migration and
+  fork ledger; the live host is Genet/Cambium.
+- [2026-05-18_xilem_popup_view_proposal.md](2026-05-18_xilem_popup_view_proposal.md)
+  — Retained upstream proposal; not active Woodshed work.
 - [2026-05-21_fretboard_canvas_lenses_plan.md](2026-05-21_fretboard_canvas_lenses_plan.md)
-  — Reorient from toolbox to instrument: one persistent fretboard surface +
-  Scale/Chord/Progression/Exercise *lenses* over a shared musical context
-  (Navigator principle). Phases 1–2 shipped; catalog/product framing is
-  superseded by the Stage/Set/Tools plan.
-- [2026-05-21_arpeggio_lens_plan.md](2026-05-21_arpeggio_lens_plan.md)
-  — Arpeggios as a 5th fretboard lens: chord-catalog tones rendered as
-  CAGED-style position/shape cards + an up/down (ascending→descending)
-  visual step-through transport (Exercise-style). Lifts the `OneOf9`
-  tab cap by boxing the dispatch. Phased A1–A4.
+  — Historical lens-based product frame; shipped portions feed Stage.
 - [2026-05-21_composable_instrument_surface_plan.md](2026-05-21_composable_instrument_surface_plan.md)
-  — Phase 3 → 1.0: the left pane becomes a composable stack of *aware*
-  instrument modules (fretboard / tuner / metronome) coordinating via
-  shared state + a reconcile arbiter + a shared clock; folds the old
-  tabs into one configurable surface; plus custom-authoring for 1.0.
-  Form B chosen. **Superseded 2026-07-11:** the reusable tool principle carries
-  forward without folding the product into one configurable surface.
-- [2026-05-16_xilem_migration_plan.md](2026-05-16_xilem_migration_plan.md)
-  — **Superseded 2026-07-04.** Historical Iced-to-Xilem migration record; the
-  live host and delivery path are governed by the Genet-host plan.
+  — Superseded product composition; reusable tools carry forward without one
+  configurable stack.
+- [2026-05-22_rehearsal_redesign_plan.md](2026-05-22_rehearsal_redesign_plan.md)
+  — Historical prototype-to-Card transition, superseded by Stage/Set/Tools.
+- [2026-06-14_web_profile_plan.md](2026-06-14_web_profile_plan.md) — Superseded
+  by the Genet host plan; retained for the original Tier-0 seam analysis.
 
 ## Archive
 
@@ -196,6 +139,11 @@ section whenever a durable working insight emerges from a session.
   + math — no I/O, no UI, no audio. It may model the portable operations
   required for woodshedding, but app-specific rehearsal UI, persistence,
   and audio engines live in consuming crates.
+- **The committed lock is the release graph**: the gitignored
+  `.cargo/config.toml` is optional sibling-checkout plumbing and must not be
+  required to resolve `Cargo.lock`. Generate and verify the lock from outside
+  the repository config path; CI's clean-checkout metadata preflight is the
+  gate that catches a lock accidentally written under local path patches.
 - **Stage is a verb and Set is the spine**: catalogs supply material; Stage
   adds configured Cards to one ordered Set; Rehearsal and Looper consume it.
   Do not create parallel practice, song, or tool-owned material documents.

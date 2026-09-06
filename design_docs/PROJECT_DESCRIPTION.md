@@ -79,7 +79,7 @@ Mobile follows the web host and is not a current delivery target.
 ## Tech stack
 
 - **Language**: Rust.
-- **Product views**: `xilem-serval`, a DOM-shaped Xilem backend.
+- **Product views**: Cambium (formerly `xilem-serval`), a DOM-shaped Xilem backend.
 - **Layout and paint**: Genet layout, PaintList, and netrender over wgpu.
 - **Desktop host**: winit 0.30.
 - **Audio I/O**: cpal 0.18, with in-house sequencing and DSP helpers.

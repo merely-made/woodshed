@@ -12,9 +12,13 @@ permissions:
 jobs:
   package:
     runs-on: windows-latest
+    env:
+      CARGO_NET_GIT_FETCH_WITH_CLI: "true"
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: dtolnay/rust-toolchain@stable
+      - name: Enable long Git dependency paths
+        run: git config --global core.longpaths true
       - name: Build release binary
         run: cargo build --release -p woodshed-genet --locked
       - name: Package portable ZIP

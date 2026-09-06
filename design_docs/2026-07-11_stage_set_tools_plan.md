@@ -16,6 +16,11 @@ scenarios passed. Their source-hashed receipt and four GPU frames are under
 `mere/ports/graphshell/docs/receipts/`. The musical-projections plan's review
 addendum identifies the next product questions and corrections before S1-S4.
 
+**Status (reviewed 2026-08-31): in progress.** P1-P3 are partial. P4a and
+P4b landed; P4c and P4d have bounded headed receipts; P4e is partial and P4f
+is open. P5-P8 remain open. The clean-lock and CI repair is a release-baseline
+gate, not completion of this product plan.
+
 > **2026-08-10 — the gate is open.** The scenograph scene contract this plan
 > gates on ("what remains is the freeze, not the proof") froze 2026-07-24 at
 > 0.0.3: emphasis channels and a default pick added, intents stay
@@ -67,6 +72,25 @@ accessible operation rather than a second workflow.
 
 The Looper is deliberately smaller than a DAW. It does not introduce tracks,
 arrangement sections, editing lanes, effects chains, or a song-authoring mode.
+
+## Release baseline and 1.0 product proof
+
+The release baseline is reached when a clean checkout resolves the committed
+lock without local sibling patches, core and Windows-host CI pass, and a tag
+produces a checksummed Windows ZIP. Repairing that baseline makes the alpha
+credible; it does not close any product phase below.
+
+Woodshed earns a 1.0 practice claim only when one persisted flow demonstrates
+all four parts together:
+
+1. choose or stage musical material;
+2. turn it into a playable route on the selected instrument;
+3. record honest practice history from the run;
+4. present an intelligible next step grounded in theory or that history.
+
+Done means the player can close and reopen the application and recover the Set,
+route, history, and explanation. A graph screenshot, a hardware-only adapter,
+or a package artifact proves only its own layer.
 
 ## Boundary decisions
 
@@ -289,6 +313,10 @@ practice without changing the Set.
 
 ### P1. Separate the product views without changing behavior
 
+**Current state: partial, still open.** Product modules exist, but
+`woodshed-views/src/stage.rs` remains the large shared state and coordination
+owner. The decomposition done-condition is not met.
+
 Split the monolithic `woodshed-views/src/stage.rs` into an application shell,
 Stage, Rehearsal, Looper, Tools, Settings, and shared controls. Keep coordination
 in `woodshed-core`; keep desktop realization in `woodshed-genet`.
@@ -298,6 +326,10 @@ multi-thousand-line screen file, existing session loading still works, and the
 desktop host contains no product composition.
 
 ### P2. Establish navigation and canonical settings
+
+**Current state: partial, still open.** Nested routes and the `AppSettings`
+envelope landed. Several sections still expose placeholders rather than real
+owned settings, so the one-owner done-condition remains open.
 
 Replace `Tab` with a nested route model:
 
@@ -320,6 +352,10 @@ and missing host devices do not corrupt portable settings.
 
 ### P3. Make Stage an explicit workflow
 
+**Current state: partial, still open.** Catalog staging, the Set tray, shared
+Card editing, and collapse landed. Reusable user Set save/load and the final
+tray composition remain open.
+
 Build Stage around a catalog rail, a material workspace, and a persistent Set
 tray. The catalog rail contains Scales, Chords, Arpeggios, Progressions,
 Exercises, and Set Templates. Search filters or jumps into these catalogs.
@@ -334,6 +370,12 @@ visible before leaving Stage, and neither Rehearsal nor Looper needs its own
 material editor.
 
 ### P4. Make the Stage graph the relationship and composition surface
+
+**Current state: in progress.** P4a/P4b are landed. P4c/P4d have receipts for
+one shared snapshot, relation routing, selection, resizing, and one expanded
+Card. P4e has selectable deterministic layouts but not the full theory-map
+catalog. P4f remains open, as do keyed-instance relations, the fretboard
+`Space`, and retirement of the hand-rolled Related placement.
 
 P4 grows the landed Related swatch and the in-progress Set graph into one
 reconfigurable projection over the current Set, catalog material, musical
@@ -415,6 +457,10 @@ and first-class pitch-class identities rather than being faked over formulas.
 
 #### P4c. Compose one Stage projection snapshot
 
+**Current state: landed for the current Set/Related snapshot, with follow-ons
+still owned by P4e/P4f.** Suggested-frontier and keyed-context behavior remain
+open and must not be inferred from the scene-canvas receipt.
+
 Expose a portable `StageGraphSnapshot` from Woodshed core or a narrow adapter,
 Woodshed's source adapter into `sceno`'s scene contract (see the scenograph
 boundary decision above). Its inputs are the Set occurrence graph, the focused
@@ -445,6 +491,10 @@ suggested frontier is visibly distinct from staged Card occurrences.
 
 #### P4d. Make nodes expand into Cards without changing identity
 
+**Current state: landed for one selected Card.** The headed receipt covers
+resize, expansion, edit routing, and collapse. Broader multi-node semantic zoom
+remains open.
+
 Give each staged occurrence three representations of the same Card:
 
 - **Glyph:** number or Roman numeral, suitable for dense maps.
@@ -470,6 +520,10 @@ without losing identity, selection, edits, keyboard focus, or graph position;
 the same operations remain available through the list projection.
 
 #### P4e. Ship a small projection catalog
+
+**Current state: partial.** Ten deterministic arrangements are selectable and
+have a two-layout headed receipt. The circle-of-fifths and other contextual
+theory-map acceptance surfaces in this phase are not implemented.
 
 Avoid one universal force layout. Each view should state which relationships
 and coordinate rules make it intelligible:
@@ -508,6 +562,9 @@ interaction receipts rather than static screenshots.
 
 #### P4f. Join graph understanding to sound and practice
 
+**Current state: open.** Current relation selection and history projection do
+not yet satisfy the audible, playable, persisted progression flow below.
+
 Selecting a node updates Stage and the Fretboard. Selecting an edge exposes its
 reasons and offers an audition appropriate to the relation: shared tones,
 before/after chords, or animated voice movement. Staging a frontier node uses
@@ -533,6 +590,9 @@ settings after restart.
 
 ### P5. Unify the clock and visual articulation
 
+**Current state: open.** Existing metronome and transport pieces do not yet
+form the stable shared clock/event-position contract in this phase.
+
 Create one core clock snapshot with beat, subdivision, Set cursor, Card-local
 progress, and active sequence step. Map scale, arpeggio, chord, and exercise
 sequences to stable display-position IDs so the Fretboard can highlight the
@@ -544,6 +604,10 @@ remain manually advanceable.
 
 ### P6. Finish Rehearsal as the guided Set runner
 
+**Current state: partial, still open.** A guided runner exists, but the mixed
+Set, articulation, edit recovery, and keyboard acceptance conditions have not
+all been re-receipted as one flow.
+
 Rehearsal streams the current Set with previous/current/next context, a large
 instrument view, transport, Card progress, and loop controls. It supports Set
 looping and focused Card looping. Per-Card timing and touch remain editable via
@@ -554,6 +618,10 @@ selected mode, articulate sequences in sync, recover predictably after edits,
 and remain fully operable by keyboard.
 
 ### P7. Rebuild Song as Looper over Set
+
+**Current state: open.** `SongDoc` and the current song-shaped audio lowering
+still exist; `LoopPlan`/stable-segment capture and companion persistence have
+not landed.
 
 Add `LoopPlan` lowering and readiness validation. Migrate the current song
 engine to a loop engine that plays Set-derived segments and preserves captures
@@ -570,6 +638,9 @@ survives Set reordering where Card identity is retained, exported WAV duration
 and tempo match the LoopPlan, and the UI contains no Song or DAW language.
 
 ### P8. Adaptive polish and release acceptance
+
+**Current state: open.** Windows alpha behavior exists. Three-width product
+acceptance, touch/reduced-motion coverage, and Mac/Linux receipts remain open.
 
 Give each section explicit wide, medium, and narrow compositions. Wide layouts
 may expose the Set tray and tool panels simultaneously. Narrow layouts use one

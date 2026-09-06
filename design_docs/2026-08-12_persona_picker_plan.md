@@ -1,7 +1,7 @@
 # Persona Picker Plan
 
 **Date:** 2026-08-12
-**Status:** open. **P1 landed 2026-08-12**; P2 and P3 open. Spun out of
+**Status:** in progress. **P1 and P2 landed 2026-08-12; P3 remains open.** Spun out of
 mere's leverage census (step 3 named `mere-persona-picker` the wire-now item
 and woodshed the first consumer: it already consumes personae and cambium,
 and it ships next).
@@ -154,12 +154,12 @@ vault work. The same gate screen comes up, now carrying a `PickPurpose`.
 
 Two decisions, both about what a *second* gate means that the first did not:
 
-1. **Escape means the opposite thing.** At startup, declining opens the
-   store on the convention's persona — that is what starts the application.
-   During a switch, a store is already open and sealed to somebody, so
-   settling on the convention would quietly move the user off the persona
-   they are practising as. `PickPurpose::Switch` dismissal therefore takes
-   the gate down and touches nothing. The screen says which gate it is.
+1. **Escape means the opposite thing.** At startup, declining leaves storage
+   absent and the session explicitly unsaved. During a switch, a store may
+   already be open and sealed to somebody, so settling on the convention would
+   quietly move the user off the persona they are practising as.
+   `PickPurpose::Switch` dismissal therefore takes the gate down and touches
+   nothing. The screen says which gate it is.
 2. **The switch resets `UiState` before restoring.** This is the hazard P1
    could not have had. `session::restore` returns early on a store with no
    session, and this host saves every dispatch — so switching into a persona
@@ -172,7 +172,8 @@ A vault that will not open raises the gate anyway, carrying the error as its
 notice: the row is a deliberate act and cannot answer with silence, the same
 reasoning P1 used for the create row.
 
-**Receipts**: `cargo test --workspace` in woodshed, **437 passed, 0 failed**.
+**Landing receipt (2026-08-12):** `cargo test --workspace` in woodshed,
+**437 passed, 0 failed**.
 Four are P2's. `switching_into_an_unused_persona_does_not_carry_the_last_one_in`
 asserts the hazard in both directions — restoring an empty store over live
 state keeps the outgoing song, and reset-then-restore does not — so the test
@@ -180,21 +181,17 @@ fails if the reset is ever removed.
 
 ## Findings
 
-- **`persona-picker` pulls a second genet source on a clean checkout.** mere
-  tracks `genet.git` by `branch = "main"`; woodshed pins
-  `rev = "398e4af60"` (its manifest states the reason: the host receipt is
-  immutable). Cargo keys a git source by URL *and* reference, so on a
-  machine without the local `[patch]` table the picker's `cambium` and
-  woodshed's `cambium` are two packages, which is the two-meristem failure
-  the `.cargo/config.toml` notes already describe. On a dev machine the
-  patch table is keyed by URL alone and unifies them: `cargo metadata`
-  resolves exactly one `cambium`, one `meristem`, one `personae`. The
-  clean-checkout case is **reasoned, not verified**: the check without the
-  patch table timed out fetching genet, which is Servo-sized. Woodshed's
-  committed `Cargo.lock` records zero git sources, so it is already a
-  machine-local artifact and encodes nothing either way. Moving woodshed's
-  genet deps to `branch = "main"` would settle it and match every sibling
-  repo, but the pin is deliberate and the call is Mark's.
+- **The clean-checkout graph must align with Mere's Genet pin. Fixed
+  2026-08-31.** The earlier finding correctly identified that Cargo treats a
+  branch and a revision as different sources, but its named references became
+  stale. Current Mere `main` pins Genet at `da8762f`; Woodshed still followed
+  Genet `main`, so `mere-persona-picker` and Woodshed produced two Cambium and
+  host-type families outside the local patch table. Every committed Genet
+  dependency and crates.io patch now uses Mere's exact revision. `Cargo.lock`
+  is generated from outside the repository config path and records the remote
+  Git sources; CI has a config-free `cargo metadata --locked` preflight. The
+  gitignored path patches remain available for sibling development but are not
+  release authority.
 - **The picker could not ask for focus. Fixed 2026-08-13.**
   `cambium::request_focus` takes an `ElementView`, and the four command
   surfaces returned `impl View<..., Element = GenetElement>` without
@@ -226,8 +223,9 @@ fails if the reset is ever removed.
   the legacy relation-set migration) all hang off `apply_persisted`. Carried
   over unchanged from `boot_state` rather than fixed inside this slice.
 
-## Receipts
+## Historical landing receipts
 
+These counts are from the 2026-08-13 landing work, not a current CI claim.
 `cargo test --workspace` in woodshed: **444 passed, 0 failed** (with P2's).
 
 Twenty of those are the gate's, in `woodshed-genet/src/persona.rs`. Nine
@@ -250,4 +248,3 @@ In personae: `roster::open_profile` (the named-persona open, factored so
 both open paths unlock once) and `Unlock::passphrase` (so an application
 does not need a `zeroize` dependency to name a passphrase vault).
 **79 passed, 0 failed.**
-
