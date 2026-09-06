@@ -1,5 +1,21 @@
 # Stage, Set, Tools, Rehearsal, and Looper Plan
 
+### Executable projection export proof (2026-09-04)
+
+`crates/woodshed-core/examples/stage_projection_export.rs` constructs a real
+three-card Set from the chord catalog, including two distinct occurrences of
+C Major, and discloses typed fields plus the Stage source mapping. This is a
+reproducible specimen, not an export of a user's saved practice library. The
+Graphshell compiler and coordinated spatial/list authoring proof are owned and
+tracked in `mere/design_docs/mere_docs/implementation_strategy/2026-08-15_projection_grammar_adoption_plan.md`.
+The exporter and relevant Stage/arrangement source modules passed 18 focused
+tests in an isolated source-path harness; this does not replace whole-product
+or release validation. No Woodshed product dependency was added to Graphshell.
+The consuming Graphshell wasm build and browser authoring/fresh-page reopen
+scenarios passed. Their source-hashed receipt and four GPU frames are under
+`mere/ports/graphshell/docs/receipts/`. The musical-projections plan's review
+addendum identifies the next product questions and corrections before S1-S4.
+
 > **2026-08-10 — the gate is open.** The scenograph scene contract this plan
 > gates on ("what remains is the freeze, not the proof") froze 2026-07-24 at
 > 0.0.3: emphasis channels and a default pick added, intents stay

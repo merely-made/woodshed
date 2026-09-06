@@ -13,6 +13,11 @@ before any other doc in this directory.
 
 ## Active Plans
 
+- [2026-09-04_musical_projections_plan.md](2026-09-04_musical_projections_plan.md)
+  — Musical slices S1-S4 remain planned. The bounded comparison export and
+  two-peer co-op proof passed; review corrections and Mere receipt pointers
+  distinguish that fixture evidence from a shipped product mode.
+
 - [2026-09-01_listening_annotation_port_plan.md](2026-09-01_listening_annotation_port_plan.md)
   **Active; Phase 0 complete.** Redshank is a separate audio-listening and timed
   text/voice-annotation port incubated in this repository. Symphonia plus a

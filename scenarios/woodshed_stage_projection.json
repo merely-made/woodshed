@@ -1,0 +1,156 @@
+{
+  "source": {
+    "authority": "woodshed",
+    "domain": "music.practice",
+    "resource": "stage-set:catalog-fixture"
+  },
+  "revision": "stage-fixture-v1",
+  "fields": {
+    "catalog_id": "text",
+    "label": "text",
+    "material_kind": "text",
+    "occurrence_id": "text",
+    "order": "number",
+    "root_pitch_class": "number",
+    "tempo_bpm": "number",
+    "x": "number",
+    "y": "number"
+  },
+  "occurrences": [
+    {
+      "occurrence_id": "card:1",
+      "source": {
+        "adapter": "woodshed.stage",
+        "id": "chord:Major"
+      },
+      "values": {
+        "catalog_id": {
+          "kind": "text",
+          "value": "chord:Major"
+        },
+        "label": {
+          "kind": "text",
+          "value": "C Major"
+        },
+        "material_kind": {
+          "kind": "text",
+          "value": "Chord"
+        },
+        "occurrence_id": {
+          "kind": "text",
+          "value": "card:1"
+        },
+        "order": {
+          "kind": "number",
+          "value": 1.0
+        },
+        "root_pitch_class": {
+          "kind": "number",
+          "value": 0.0
+        },
+        "tempo_bpm": {
+          "kind": "number",
+          "value": 96.0
+        },
+        "x": {
+          "kind": "number",
+          "value": -184.8000030517578
+        },
+        "y": {
+          "kind": "number",
+          "value": -184.8000030517578
+        }
+      }
+    },
+    {
+      "occurrence_id": "card:2",
+      "source": {
+        "adapter": "woodshed.stage",
+        "id": "chord:Major"
+      },
+      "values": {
+        "catalog_id": {
+          "kind": "text",
+          "value": "chord:Major"
+        },
+        "label": {
+          "kind": "text",
+          "value": "C Major"
+        },
+        "material_kind": {
+          "kind": "text",
+          "value": "Chord"
+        },
+        "occurrence_id": {
+          "kind": "text",
+          "value": "card:2"
+        },
+        "order": {
+          "kind": "number",
+          "value": 2.0
+        },
+        "root_pitch_class": {
+          "kind": "number",
+          "value": 0.0
+        },
+        "tempo_bpm": {
+          "kind": "number",
+          "value": 104.0
+        },
+        "x": {
+          "kind": "number",
+          "value": 184.79998779296875
+        },
+        "y": {
+          "kind": "number",
+          "value": -184.8000030517578
+        }
+      }
+    },
+    {
+      "occurrence_id": "card:3",
+      "source": {
+        "adapter": "woodshed.stage",
+        "id": "chord:Dominant 7"
+      },
+      "values": {
+        "catalog_id": {
+          "kind": "text",
+          "value": "chord:Dominant 7"
+        },
+        "label": {
+          "kind": "text",
+          "value": "G7"
+        },
+        "material_kind": {
+          "kind": "text",
+          "value": "Chord"
+        },
+        "occurrence_id": {
+          "kind": "text",
+          "value": "card:3"
+        },
+        "order": {
+          "kind": "number",
+          "value": 3.0
+        },
+        "root_pitch_class": {
+          "kind": "number",
+          "value": 7.0
+        },
+        "tempo_bpm": {
+          "kind": "number",
+          "value": 112.0
+        },
+        "x": {
+          "kind": "number",
+          "value": 184.79998779296875
+        },
+        "y": {
+          "kind": "number",
+          "value": 184.79998779296875
+        }
+      }
+    }
+  ]
+}

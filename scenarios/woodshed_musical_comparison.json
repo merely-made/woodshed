@@ -1,0 +1,94 @@
+{
+  "source": {
+    "authority": "woodshed",
+    "domain": "music.practice",
+    "resource": "set:musical-comparison"
+  },
+  "revision": "musical-comparison-fixture-v1",
+  "method": {
+    "id": "keyed-pitch-set-singleton",
+    "version": 1
+  },
+  "left": {
+    "occurrence_id": "card:1",
+    "source": {
+      "adapter": "woodshed.stage",
+      "id": "chord:Major"
+    },
+    "label": "C Major",
+    "root_pitch_class": 0,
+    "pitch_set": [
+      {
+        "pitch_class": 0,
+        "label": "C"
+      },
+      {
+        "pitch_class": 4,
+        "label": "E"
+      },
+      {
+        "pitch_class": 7,
+        "label": "G"
+      }
+    ]
+  },
+  "right": {
+    "occurrence_id": "card:2",
+    "source": {
+      "adapter": "woodshed.stage",
+      "id": "chord:Minor"
+    },
+    "label": "A Minor",
+    "root_pitch_class": 9,
+    "pitch_set": [
+      {
+        "pitch_class": 9,
+        "label": "A"
+      },
+      {
+        "pitch_class": 0,
+        "label": "C"
+      },
+      {
+        "pitch_class": 4,
+        "label": "E"
+      }
+    ]
+  },
+  "result": {
+    "version": 1,
+    "status": "applicable",
+    "shared": [
+      {
+        "pitch_class": 0,
+        "label": "C"
+      },
+      {
+        "pitch_class": 4,
+        "label": "E"
+      }
+    ],
+    "left_only": [
+      {
+        "pitch_class": 7,
+        "label": "G"
+      }
+    ],
+    "right_only": [
+      {
+        "pitch_class": 9,
+        "label": "A"
+      }
+    ],
+    "singleton_motion": {
+      "from": {
+        "pitch_class": 7,
+        "label": "G"
+      },
+      "to": {
+        "pitch_class": 9,
+        "label": "A"
+      }
+    }
+  }
+}
