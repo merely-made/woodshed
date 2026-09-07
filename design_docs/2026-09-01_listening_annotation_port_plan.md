@@ -1,13 +1,15 @@
 # Redshank: listening and annotation port plan
 
-**Status (2026-09-04): ACTIVE.** The product direction and **Redshank** name are
+**Status (2026-09-07): ACTIVE.** The product direction and **Redshank** name are
 endorsed. Phase 0 is complete: Symphonia plus a bounded range source is the
 shipping default, and Genet/GStreamer is the retained browser-conformance
 fallback. Phase 1 is complete: its general Genet boundary, deterministic player
 core, and unified source vocabulary are landed. Phase 2 is complete with the
 unpublished model and generation store. Phase 3 is complete with shared podcast
 feed facts and GUID-stable Turnstone projection. Phase 4 is active with the
-reusable Cambium controls and Mere-hosted sovereign shell landed.
+reusable Cambium controls, Mere-hosted sovereign shell, and local listening
+workflow landed. Genet controller admission is also landed; subscriptions,
+HTTP/cache playback, and headed acceptance remain open.
 
 ## Ruling
 
@@ -534,15 +536,38 @@ working implementation replaces its unavailable-playback placeholder:
   under concurrent modification. Phase 6 identity/mismatch behavior remains
   unimplemented, and no annotation remapping claim follows from this digest.
 
-The current worker has its own runtime commands and snapshots and does **not**
-yet implement Genet's `PlaybackController` source/sink contracts. That is an
-explicit integration gap: the local runtime is an experimental adapter, not a
-second admitted generic player API. Admission requires mapping its decoder and
-sink to the existing controller and running the shared conformance cases.
+The worker retains product commands, load tokens, representation receipts, and
+snapshots while delegating playback transitions to Genet's
+`PlaybackController`. Its real Symphonia decoder and sole Firewheel output are
+private source and sink adapters. Redshank therefore has one product facade and
+one admitted generic player contract.
+
+#### Controller admission ruling, 2026-09-07
+
+`PlaybackRuntime` remains Redshank's product-facing facade because it owns load
+tokens, representation receipts, and worker isolation. Its worker must delegate
+playback state transitions to Genet's existing `PlaybackController`; the local
+decoder and sole Firewheel/CPAL output become private source and sink adapters.
+The persisted clock continues to come from the sink snapshot after queued audio
+is subtracted. Redshank does not introduce another generic player contract.
+
+The source mapping is one vocabulary at the adapter boundary: Redshank `Local`
+maps to Genet `Local`, `Enclosure` maps to `Http`, and `HostBlob` maps to
+`HostBlob`. This slice admits local playback. HTTP and host-blob loads must
+degrade explicitly through that same path until the cache and host-blob work is
+implemented. Load identity remains product state, so the desktop token gate must
+reject stale snapshots before they can change progress, note targets, or UI.
+
+This slice is done when the controller drives local play, pause, seek, ready,
+end-of-stream, and error transitions; sink snapshots remain authoritative;
+typed capability errors survive the adapter; all three source variants use the
+shared mapping; stale-token, resume, and representation tests pass; and the
+workspace remains green. HTTP/cache playback, headed acceptance, voice capture,
+representation drift, and Turnstone embedding remain outside the slice.
 
 Phase 4 remains open for subscriptions, HTTP/progressive cache playback and its
-error cases, controller conformance, and the headed playback/restart/text-note
-scenario. Voice input, ducking, rate/volume controls, media-fragment export,
+error cases, and the headed playback/restart/text-note scenario. Voice input,
+ducking, rate/volume controls, media-fragment export,
 representation drift, and Turnstone as a second host also remain open in their
 respective phases. No physical listening or microphone receipt is implied by
 the source changes.
@@ -571,6 +596,26 @@ Validation on the final September 6 working tree:
   `Code/testing/woodshed/redshank-phase4-20260906/`. These are software and
   windowless host receipts. Output-device playback, acoustic timing, headed
   layout, and the full headed restart scenario remain unverified.
+
+Controller-admission validation on September 7:
+
+- The real Symphonia decoder and Firewheel sink now sit behind Genet's
+  `PlaybackSource` and `PlaybackSink`; the old parallel worker authority is
+  removed. `Ready`, `Error`, and end-of-stream signals and all transport
+  commands pass through `PlaybackController`.
+- A deterministic device-free worker test covers load, ready, pause, seek and
+  its buffering projection, play, and end-of-stream. Adapter tests cover all
+  source variants, typed seek/backend failures, and the sink clock. A failed
+  new load after an existing item clears the prior source, duration,
+  representation receipt, and clock before publishing its new-token error.
+- The isolated workspace passes **28 default tests**: desktop 6, model 5,
+  playback 6, storage 5, and surfaces 6. The two existing codec-fixture tests
+  remain explicitly gated. Strict workspace Clippy, formatting, and
+  `git diff --check` pass. The resolved dependency graph carries one Genet git
+  revision, `9e8f9dc2f3ddc0af1658580bb51964462a03923f`.
+- This is a software admission receipt. Output-device playback, acoustic
+  timing, headed layout, HTTP/cache playback, and the full headed restart
+  scenario remain unverified.
 
 ### Phase 5: voice capture and open annotation target
 
@@ -761,3 +806,9 @@ rejected for the reasons recorded in the 2026-09-01 planning pass.
   their lower engine contracts. `redshank-desktop` now restores queued progress
   and mounts the compact surface. Live audio, headed acceptance, and the
   remaining full surfaces are still open.
+- **2026-09-07:** Landed the bounded Phase 4 controller-admission slice.
+  `PlaybackRuntime` remains the product facade while the real decoder, sole
+  Firewheel/CPAL output, transport transitions, terminal errors, and sink clock
+  are admitted through Genet's existing controller. Device-free conformance,
+  stale-token and failed-load metadata regressions pass. HTTP/cache, voice,
+  headed acceptance, and Turnstone work remain outside the slice.

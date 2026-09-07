@@ -289,16 +289,6 @@ impl RedshankModel {
     }
 }
 
-pub trait PlaybackHost {
-    type Error;
-
-    fn load(&mut self, source: &MediaSource) -> Result<(), Self::Error>;
-    fn play(&mut self) -> Result<(), Self::Error>;
-    fn pause(&mut self) -> Result<(), Self::Error>;
-    fn seek(&mut self, position_ms: u64) -> Result<(), Self::Error>;
-    fn snapshot_position_ms(&mut self) -> Result<u64, Self::Error>;
-}
-
 pub trait AudioCaptureHost {
     type Error;
 

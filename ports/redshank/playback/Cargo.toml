@@ -12,3 +12,4 @@ blake3.workspace = true
 firewheel.workspace = true
 redshank-model.workspace = true
 symphonia.workspace = true
+servo-media-player.workspace = true
