@@ -1,0 +1,39 @@
+# Exact octave-free assignment appears in both musical comparisons.
+log Pitch motion: one-to-one semitones with explicit tone-count boundary
+settle 3
+act stage-context-example
+settle 3
+click .set-graph-reading Arrangement: Set
+settle 3
+click-context-node chord:Minor@pc:9
+settle 3
+assert snap set-cards == 1
+assert snap cursor-id == 1
+assert text Pitch motion: 2 semitones total
+assert text G → A: 2 semitones
+assert text Shared tones: C E
+capture 01_relative_motion
+
+click-context-node scale:Major@pc:0
+settle 3
+assert snap set-cards == 1
+assert text Pitch motion: different tone counts
+capture 02_unequal_tones
+
+click .set-graph-reading Arrangement: Circle of fifths
+settle 3
+click-context-node chord:Minor@pc:4
+settle 3
+assert snap graph-reading == Tonnetz
+assert snap set-cards == 1
+assert snap cursor-id == 1
+assert text Pitch motion: 1 semitone total
+assert text C → B: 1 semitone
+assert text Shared tones: E G
+assert text Octave-free; voicing and fingering may differ.
+capture 03_leading_tone_motion
+click .t-btn Add to Set
+settle 3
+assert snap set-cards == 2
+capture 04_added
+log Pitch motion receipt complete

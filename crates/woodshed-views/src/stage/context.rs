@@ -264,6 +264,65 @@ fn comparison(ui: &UiState, focused: &KeyedCatalogRef) -> Option<UiChild> {
             .collect::<Vec<_>>()
             .join(" ")
     };
+    let mut motion_lines = Vec::new();
+    match woodshed_core::harmony::compare_pitch_motion(&selected, focused) {
+        Some(motion) => {
+            let unit = if motion.total_semitones == 1 {
+                "semitone"
+            } else {
+                "semitones"
+            };
+            motion_lines.push(Box::new(
+                el(
+                    "div",
+                    text(format!(
+                        "Pitch motion: {} {} total",
+                        motion.total_semitones, unit
+                    )),
+                )
+                .attr("class", "stage-context-compare-line"),
+            ) as UiChild);
+            for movement in motion.moves {
+                let from =
+                    Pitch::from_midi(60 + i32::from(movement.from.value()), Spelling::Sharps);
+                let to = Pitch::from_midi(60 + i32::from(movement.to.value()), Spelling::Sharps);
+                let unit = if movement.semitones == 1 {
+                    "semitone"
+                } else {
+                    "semitones"
+                };
+                motion_lines.push(Box::new(
+                    el(
+                        "div",
+                        text(format!(
+                            "{}{} → {}{}: {} {}",
+                            from.name,
+                            from.accidental,
+                            to.name,
+                            to.accidental,
+                            movement.semitones,
+                            unit
+                        )),
+                    )
+                    .attr("class", "stage-context-compare-line"),
+                ) as UiChild);
+            }
+            motion_lines.push(Box::new(
+                el(
+                    "div",
+                    text("Octave-free; voicing and fingering may differ."),
+                )
+                .attr("class", "stage-context-compare-line"),
+            ) as UiChild);
+        },
+        None if comparison.left_only.len() != comparison.right_only.len() => {
+            motion_lines.push(Box::new(
+                el("div", text("Pitch motion: different tone counts"))
+                    .attr("class", "stage-context-compare-line"),
+            ) as UiChild);
+        },
+        None => {},
+    }
     Some(Box::new(
         el(
             "div",
@@ -280,6 +339,7 @@ fn comparison(ui: &UiState, focused: &KeyedCatalogRef) -> Option<UiChild> {
                 transformation.map(|label| {
                     el("div", text(label)).attr("class", "stage-context-compare-line")
                 }),
+                el("div", motion_lines),
                 el(
                     "div",
                     text(format!("Shared tones: {}", tones(&comparison.shared))),

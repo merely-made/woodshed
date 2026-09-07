@@ -11,7 +11,7 @@ use woodshedding::pitch::{Pitch, PitchClass, Spelling};
 use woodshedding::rehearsal::Material;
 use woodshedding::scale::catalog as scale_catalog;
 
-pub use woodshedding::pitch_class_set::PitchSetComparison;
+pub use woodshedding::pitch_class_set::{PitchClassMotion, PitchClassMove, PitchSetComparison};
 
 /// A catalog chord or scale formula at one tonic.
 ///
@@ -137,6 +137,17 @@ pub fn compare_pitch_sets(
     ))
 }
 
+/// Minimum octave-free pitch-class assignment for two keyed materials.
+///
+/// This does not assign registered voices or fingers; it is applicable only
+/// when the concrete pitch-class sets have equal, nonzero cardinality.
+pub fn compare_pitch_motion(
+    left: &KeyedCatalogRef,
+    right: &KeyedCatalogRef,
+) -> Option<PitchClassMotion> {
+    woodshedding::pitch_class_set::minimum_motion(&left.pitch_classes()?, &right.pitch_classes()?)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -191,5 +202,17 @@ mod tests {
         assert!(malformed.to_material().is_none());
         assert!(malformed.label().is_none());
         assert!(malformed.pitch_classes().is_none());
+    }
+
+    #[test]
+    fn keyed_motion_uses_the_concrete_pitch_sets() {
+        let c_major = KeyedCatalogRef::from_material(&chord("Major", 0)).unwrap();
+        let e_minor = KeyedCatalogRef::from_material(&chord("Minor", 4)).unwrap();
+        let motion = compare_pitch_motion(&c_major, &e_minor).unwrap();
+        assert_eq!(motion.total_semitones, 1);
+        assert_eq!(
+            motion.held,
+            BTreeSet::from([PitchClass::new(4), PitchClass::new(7)])
+        );
     }
 }

@@ -245,6 +245,22 @@ impl StageGraphSnapshot {
         })
     }
 
+    /// Exact octave-free pitch motion between two current scene instances.
+    /// This query is independent of relation visibility and layout. Stale
+    /// references, unresolved material, and differing tone counts are unavailable.
+    pub fn pitch_motion(
+        &self,
+        from: StageInstanceRef,
+        to: StageInstanceRef,
+    ) -> Option<crate::harmony::PitchClassMotion> {
+        if from.epoch != self.epoch() || to.epoch != self.epoch() {
+            return None;
+        }
+        let left = self.node_of(from.instance)?.keyed.as_ref()?;
+        let right = self.node_of(to.instance)?.keyed.as_ref()?;
+        crate::harmony::compare_pitch_motion(left, right)
+    }
+
     pub fn relation_ref(&self, relation: RelationId) -> Option<StageRelationRef> {
         self.snapshot.active_relation(relation)?;
         Some(StageRelationRef {
@@ -1124,6 +1140,46 @@ mod tests {
             .map(|item| item.source)
             .collect::<std::collections::HashSet<_>>()
             .len()
+    }
+
+    #[test]
+    fn pitch_motion_is_available_without_edges_and_rejects_stale_instances() {
+        let set = set_of(&[
+            ("C", chord("Major")),
+            (
+                "Em",
+                Material::Chord {
+                    name: "Minor".into(),
+                    root: woodshedding::pitch::PitchClass::new(4),
+                },
+            ),
+            ("Cmaj7", chord("Major 7")),
+        ]);
+        let snapshot = stage_scene(
+            &set,
+            &StageSceneOptions {
+                sequence: false,
+                relation_kinds: Some(Vec::new()),
+                ..Default::default()
+            },
+        );
+        assert!(snapshot.relations().is_empty());
+        let from = snapshot.instance_ref_of(set.cards[0].id).unwrap();
+        let to = snapshot.instance_ref_of(set.cards[1].id).unwrap();
+        let motion = snapshot.pitch_motion(from, to).unwrap();
+        assert_eq!(motion.total_semitones, 1);
+        assert_eq!(motion.moves[0].from.value(), 0);
+        assert_eq!(motion.moves[0].to.value(), 11);
+        assert!(
+            snapshot
+                .pitch_motion(from, snapshot.instance_ref_of(set.cards[2].id).unwrap())
+                .is_none()
+        );
+        let stale = StageInstanceRef {
+            epoch: SceneEpoch(snapshot.epoch().0.wrapping_add(1)),
+            ..from
+        };
+        assert!(snapshot.pitch_motion(stale, to).is_none());
     }
 
     #[test]

@@ -1,7 +1,8 @@
 # Musical Projections Plan
 
-**Status (2026-09-06): Circle-of-Fifths context and triadic Tonnetz landed. S1-S4
-remain planned except where explicitly recorded below.** Bounded comparison exports and
+**Status (2026-09-07): Circle-of-Fifths context, triadic Tonnetz, and minimum
+pitch-motion comparison landed. S1 is partial; S2-S4 remain planned except
+where explicitly recorded below.** Bounded comparison exports and
 browser consumer proofs exist, as recorded below. The musical subsystem review
 and isolated enumeration probe below are research, not implementation of these
 slices. Luna/Terra are the requested implementation agents; each musical slice
@@ -181,6 +182,47 @@ confirm closed triangle cells, vertex pitches, compact chord labels, and focused
 emphasis. `receipt.json` in its parent records the source commit and hashes.
 Physical audio output was not checked. Enharmonic spelling remains sharp-based;
 viewport framing and repeated-occurrence label density can be refined further.
+
+### Minimum pitch motion (2026-09-07, landed)
+
+The next slice makes comparison expose an exact one-to-one pitch-class
+assignment. It holds shared tones and minimizes the sum of circular semitone
+distances among the remaining tones, with deterministic tie-breaking. This is
+an octave-free comparison, independent of the catalog's mean-nearest metric.
+Nonempty equal-cardinality inputs have a score; different tone counts and
+unresolved material have no scalar score in this slice. Existing exact shared
+and exclusive tones remain visible, so omitted scoring does not hide differences.
+
+The pure operation lives in `woodshedding::pitch_class_set`; keyed catalog
+resolution stays in `woodshed-core::harmony`. The scene exposes pairwise motion
+through current instance references, independent of visible/thresholded edges.
+The context comparison shows total movement and each changed tone. Focus,
+audition, and Add retain their existing semantics.
+
+Done when known major/minor transformations report their exact movement,
+assignment tests cover a case where greedy pairing fails, every target is used
+once, reversal preserves total cost, and unequal/empty inputs are explicit;
+a desktop scenario displays C-to-B and G-to-A movement while preserving Set
+membership. A distance-based arrangement, unequal-voice policy, registered
+voicings, and instrument-specific effort remain subsequent slices. In particular,
+the older S2 focus-centered radial proposal must be reconciled with the user's
+newer stable-position browsing decision before that layout is implemented.
+
+**Validation:** all 349 library/example tests passed across woodshedding, core,
+graph, and views. The independent exhaustive oracle checks all 48,400 pairs
+of three-tone sets against all six assignments, including common-tone holding;
+a separate fixture checks lexicographic ties. Scene tests prove motion works
+without visible relations and rejects stale instance references. The desktop
+build and `scenarios/p4e_pitch_motion.scn` passed. Presented captures under
+`Code/testing/woodshed/pitch-motion-20260907/run01/` verify G-to-A two-semitone
+motion, C-to-B one-semitone motion, unequal tone counts, and explicit Add.
+The parent `receipt.json` records source/binary/artifact hashes. Existing
+unused-import/dead-code warnings remain; physical audio was not tested.
+
+The earlier S1 proposal below is historical scope, not a claim that thresholded
+movement edges or its entire keyed relation family now exists. The scalar
+score is total one-to-one motion, so its thresholds cannot inherit the older
+mean-nearest metric's 1.5 value.
 
 ### S1. Keyed occurrence relations
 
