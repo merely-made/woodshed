@@ -239,7 +239,8 @@ pub fn stage_css(p: &Palette) -> String {
    (its absolute label/card layers then clip and scroll with the leaf), and the
    overflow axis + size come from an inline style so orientation picks which way
    the neck scrolls. A neck that already fits shows no scrollbar. */
-.board-viewport {{ position: relative; }}
+.board-viewport {{ position: relative; min-width: 0; }}
+.rehearsal-board-viewport {{ max-width: 100%; }}
 /* Adjustable neck range: From/To steppers + a Full (auto-track) toggle. */
 .neck-control {{ display: flex; align-items: center; margin-top: 10px; }}
 .neck-label {{ color: {text_dim}; font-size: 13px; margin-right: 8px; }}
@@ -410,7 +411,8 @@ pub fn stage_css(p: &Palette) -> String {
 .set-editor-label {{ color: {text_dim}; font-size: 11px; margin-right: 8px; }}
 .viewport-narrow .set-card {{ width: 44%; }}
 .viewport-narrow .settings-shell {{ display: block; }}
-.viewport-narrow .settings-nav {{ width: 100%; display: flex; flex-wrap: wrap; margin-bottom: 12px; }}
+.viewport-narrow .settings-nav {{ width: 100%; display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 12px; }}
+.viewport-narrow .settings-page-nav .side-item {{ flex: 1 1 150px; box-sizing: border-box; }}
 /* Suggestions pane: one structured row each. A row (or its graph node) lights
    the other via `.hovered`. */
 .related-row {{ display: flex; align-items: center; border-top-width: 1px; border-top-color: {surface_2}; padding: 6px 4px; border-radius: 6px; }}
@@ -457,9 +459,9 @@ pub fn stage_css(p: &Palette) -> String {
 .settings-heading {{ color: {text_header}; font-size: 15px; margin-bottom: 8px; }}
 .settings-line {{ color: {text_dim}; margin-bottom: 6px; }}
 .midi-events {{ font-size: 11px; color: {text_disabled}; }}
-.filmstrip {{ display: flex; overflow: scroll; margin-bottom: 14px; padding: 6px 2px; }}
+.filmstrip {{ display: flex; overflow-x: auto; overflow-y: hidden; margin-bottom: 14px; padding: 6px 2px; }}
 .film-card {{ background-color: {surface}; border-radius: 10px; padding: 10px 14px;
-             margin-right: 10px; width: 190px;
+             margin-right: 10px; width: 190px; flex: 0 0 190px;
              box-shadow: 0 2px 8px rgba(0, 0, 0, 0.45);
              border: 1px solid {surface_2}; }}
 .film-played {{ opacity: 0.45; }}

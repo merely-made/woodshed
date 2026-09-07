@@ -595,9 +595,8 @@ page-scroll owner; their `tab_content` branch now shares `.workspace-screen`.
 The host already updates logical width and height on resize. Shared engine
 clipping is not exonerated by this audit.
 
-Remaining audit work: Rehearsal's fixed fretboard needs its own narrow viewport,
-Settings' two-column navigation needs responsive treatment, and the filmstrip
-should declare only its intended horizontal overflow. Shell construction in
+The responsive follow-through below addresses the Rehearsal viewport, Settings
+navigation, and filmstrip overflow. Remaining audit work: shell construction in
 `stage.rs` and shell geometry in `theme.rs` should be extracted together when
 those contracts are stabilized; moving files alone does not repair sizing.
 
@@ -622,3 +621,39 @@ scroll routing is the host-test receipt; the native scenario records the initial
 viewport and does not claim a native wheel injection. Artifact hashes and the
 source commit are recorded in the parent `receipt.json`. Existing compiler
 warnings remain. This bounded correction is not a whole-stack clipping pass.
+
+
+### Responsive component follow-through (2026-09-07, landed)
+
+The bounded refactor retains the page-scroll owners above. Rehearsal now wraps
+its fixed-size board and labels in an orientation-aware viewport; the caption
+stays outside that viewport. Settings' existing narrow stacking rule now applies
+to the real page navigation, with wrapping items. Filmstrip cards retain their
+width and declare horizontal overflow only. Luna implemented the components;
+parent integration checked their ownership and added real-host regressions.
+
+All five host layout/input tests and 51 view tests pass. At 420x700, Settings
+opens through the workspace tab, navigation wraps within 388 pixels, and clicking
+Instrument selects that page. At 420x900, Rehearsal keeps its 966-pixel board
+inside a 364-pixel viewport; horizontal scrolling moves its origin by 240 pixels,
+and clicking a visible note afterward marks exactly one position. These are
+retained production-host measurements, not stylesheet assertions. The desktop
+build passes with the existing unused-import/dead-code warnings.
+
+The native scenario exposed a separate automation boundary: `genet-probe`
+resolves selectors with an independent layout pass, while the host paints and
+hits against retained layout. Settings selectors missed in the native receipt,
+although the retained-host selector test passes. A bounded `pointer-click x y`
+scenario verb allows a measured presented-frame point through the real host
+pointer lifecycle. Sharing retained target geometry with the probe remains
+follow-up work; the local helper does not fix that shared contract.
+
+`scenarios/responsive_components.scn` passes at 700 logical pixels wide. The
+presented Settings, selected Instrument page, and Rehearsal captures were visually
+checked in `Code/testing/woodshed/responsive-components-20260907/run04/`.
+The measured Settings click succeeds through native host routing; page selection
+and Rehearsal entry use selectors. Earlier failed selector runs remain beside
+the final receipt. Native captures show the initial viewport; the host tests
+prove scrolling and note hits after scrolling. The parent `receipt.json` records
+source and artifact hashes. Broader shell extraction and shared probe geometry
+remain open; this is a bounded responsive pass.

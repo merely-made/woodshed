@@ -170,7 +170,7 @@ fn page_nav(ui: &UiState) -> UiChild {
             )) as UiChild
         })
         .collect();
-    Box::new(el("nav", items).attr("class", "side settings-nav"))
+    Box::new(el("nav", items).attr("class", "side settings-nav settings-page-nav"))
 }
 
 /// The persona line: who is practising, and what protects the session.

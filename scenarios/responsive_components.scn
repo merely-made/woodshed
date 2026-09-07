@@ -1,0 +1,19 @@
+# Run at 700 logical pixels wide. Scroll routing has retained-host tests.
+settle 3
+act stage-context-example
+settle 3
+capture 00_stage
+# Settings center measured from 00_stage. Probe selector layout currently
+# disagrees with the native text layout here; this still uses host pointer routing.
+pointer-click 215 52
+settle 3
+assert snap section == Settings
+capture 01_settings
+click .side-item Instrument
+settle 3
+capture 02_instrument_settings
+click .pill Rehearsal
+settle 3
+assert snap section == Rehearsal
+capture 03_rehearsal
+log Responsive component capture complete

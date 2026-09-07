@@ -1,4 +1,4 @@
-use cambium::{clickable, custom_leaf, el, on_hover, text, HoverEvent, HoverPhase};
+use cambium::{HoverEvent, HoverPhase, clickable, custom_leaf, el, on_hover, text};
 use woodshed_core::step_set;
 use woodshedding::rehearsal::{LoopMode, MarkMode, Recipe};
 
@@ -121,7 +121,7 @@ pub(super) fn screen(ui: &UiState) -> UiChild {
                 woodshedding::rehearsal::Touch::Block => "block".to_string(),
                 woodshedding::rehearsal::Touch::Arpeggiate { direction, .. } => {
                     format!("arpeggiate {}", direction.label())
-                }
+                },
                 woodshedding::rehearsal::Touch::Walk => "walk".to_string(),
             };
             Box::new(clickable(
@@ -207,7 +207,7 @@ pub(super) fn screen(ui: &UiState) -> UiChild {
                         if ui.hover_peek == Some((si, fret)) {
                             ui.hover_peek = None;
                         }
-                    }
+                    },
                 },
             )) as UiChild
         })
@@ -265,18 +265,26 @@ pub(super) fn screen(ui: &UiState) -> UiChild {
                 (
                     el(
                         "div",
-                        (
-                            custom_leaf::<UiState, ()>(REHEARSAL_FRETBOARD_LEAF_KEY, w, h),
-                            el("div", labels).attr("class", "label-layer"),
-                            el("div", peek).attr("class", "card-layer"),
-                        ),
+                        el(
+                            "div",
+                            (
+                                custom_leaf::<UiState, ()>(REHEARSAL_FRETBOARD_LEAF_KEY, w, h),
+                                el("div", labels).attr("class", "label-layer"),
+                                el("div", peek).attr("class", "card-layer"),
+                            ),
+                        )
+                        .attr("class", "fretboard-stack")
+                        .attr(
+                            "aria-label",
+                            format!("{} fretboard, {} notes", card.label, dot_list.len()),
+                        )
+                        .attr("style", format!("width:{w}px; height:{h}px")),
                     )
-                    .attr("class", "fretboard-stack")
+                    .attr("class", "board-viewport rehearsal-board-viewport")
                     .attr(
-                        "aria-label",
-                        format!("{} fretboard, {} notes", card.label, dot_list.len()),
-                    )
-                    .attr("style", format!("width:{w}px; height:{h}px")),
+                        "style",
+                        super::board_viewport_style(geom.orientation, w, h, ui.viewport_h),
+                    ),
                     el(
                         "div",
                         (

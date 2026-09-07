@@ -131,3 +131,71 @@ fn settings_uses_the_shared_page_scroll_owner() {
         "settings bottom unreachable: {after:?}"
     );
 }
+
+#[test]
+fn narrow_settings_navigation_stacks_and_selects_a_page() {
+    let mut h = harness(420.0, 700.0);
+    assert!(h.click_on(&Selector::class("workspace-panel").containing("Settings")));
+    assert_eq!(
+        h.state().section,
+        woodshed_core::storage::AppSection::Settings
+    );
+    let nav = rect(&h, "settings-page-nav");
+    let page = rect(&h, "settings-page");
+    eprintln!("narrow settings: nav={nav:?} page={page:?}");
+    assert!(nav.0 >= 0.0 && nav.0 + nav.2 <= 420.0);
+    assert!(page.1 >= nav.1 + nav.3, "page overlaps navigation");
+    assert!(page.0 >= 0.0 && page.0 + page.2 <= 420.0);
+    assert!(h.click_on(&Selector::class("side-item").containing("Instrument")));
+    assert_eq!(
+        h.state().app_settings.page,
+        woodshed_core::settings::SettingsPage::Instrument
+    );
+}
+
+#[test]
+fn rehearsal_board_scroll_preserves_extent_and_note_hits() {
+    let mut h = harness(420.0, 900.0);
+    h.update(|ui| ui.section = woodshed_core::storage::AppSection::Rehearsal);
+    let viewport = rect(&h, "rehearsal-board-viewport");
+    let before = rect(&h, "fretboard-stack");
+    assert!(viewport.0 >= 0.0 && viewport.0 + viewport.2 <= 420.0);
+    assert!(
+        before.2 > viewport.2,
+        "fixture must have an oversized board"
+    );
+    assert!(
+        viewport.1 + 25.0 < 900.0,
+        "fixture viewport must be visible"
+    );
+    h.move_to(viewport.0 + 20.0, viewport.1 + 20.0);
+    h.wheel(240.0, 0.0);
+    let after = rect(&h, "fretboard-stack");
+    eprintln!("rehearsal board scroll: viewport={viewport:?} inner={before:?} -> {after:?}");
+    assert!(after.0 < before.0);
+    assert!((after.2 - before.2).abs() < 1.0);
+    let nodes = {
+        let dom = h.runner().dom();
+        let dom = dom.borrow();
+        genet_probe::matching(&dom, &Selector::class("fret-label"))
+    };
+    let point = nodes
+        .into_iter()
+        .filter_map(|id| h.painted_rect(id))
+        .find_map(|r| {
+            let center = (r.0 + r.2 / 2.0, r.1 + r.3 / 2.0);
+            (center.0 > viewport.0 + 8.0
+                && center.0 < viewport.0 + viewport.2 - 8.0
+                && center.1 > viewport.1 + 8.0
+                && center.1 < viewport.1 + viewport.3 - 8.0)
+                .then_some(center)
+        })
+        .expect("visible note after scrolling");
+    assert!(h.state().set.cards[0].setting.marked.is_empty());
+    h.click_at(point.0, point.1);
+    assert_eq!(
+        h.state().set.cards[0].setting.marked.len(),
+        1,
+        "scrolled note hit must mark exactly one position"
+    );
+}

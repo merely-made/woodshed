@@ -886,6 +886,35 @@ impl Driveable for Probe<'_, '_> {
     fn app_step(&mut self, line: &str) -> Result<(), String> {
         let mut parts = line.split_whitespace();
         match parts.next() {
+            Some("pointer-click") => {
+                // For receipts measured from a presented frame when the probe's
+                // independently computed selector layout disagrees with the host.
+                let x: f32 = parts
+                    .next()
+                    .ok_or("pointer-click wants x y")?
+                    .parse()
+                    .map_err(|_| "invalid pointer x")?;
+                let y: f32 = parts
+                    .next()
+                    .ok_or("pointer-click wants x y")?
+                    .parse()
+                    .map_err(|_| "invalid pointer y")?;
+                let (w, h) = self.ctx.logical_size;
+                if parts.next().is_some()
+                    || !x.is_finite()
+                    || !y.is_finite()
+                    || x < 0.0
+                    || y < 0.0
+                    || x >= w
+                    || y >= h
+                {
+                    return Err("pointer-click requires an in-window logical point".into());
+                }
+                self.moved(x, y);
+                self.press(x, y);
+                self.release(x, y);
+                Ok(())
+            },
             Some("open-stage-arrangement") => {
                 if parts.next().is_some() {
                     return Err("open-stage-arrangement takes no arguments".to_string());
