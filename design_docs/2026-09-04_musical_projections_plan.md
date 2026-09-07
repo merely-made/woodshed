@@ -38,10 +38,11 @@ and what the code has for each today:
   and its tests assert that. `stage_scene` derives occurrence relations from
   the new `woodshedding` API and emits them as its own relation kinds.
 - **Arrangement stays product policy** until a second product proves the
-  same semantics (the rule `arrangement.rs` already states). A voice-leading
-  arrangement is added to `GraphArrangement`, not contributed to `scenomise`
-  in this plan. Its input grows from `(count, edges, focus)` to carry per-edge
-  motion cost; that is the one change to the arrangement seam.
+  same semantics (the rule `arrangement.rs` already states). Musical readings
+  stay alongside the existing `StageGraphReading` policy. The proposed pitch-motion
+  reading receives a stable anchor and complete candidate costs independently
+  of visible edges; S2 records its layout contract. It is not contributed to
+  `scenomise` in this plan.
 - **The view explains, the scene carries.** Kept and moved tones ride the
   relation record and reach the UI through `StageRelationDetail`, the same
   path P4b built. No product vocabulary enters the `sceno` scene.
@@ -266,28 +267,60 @@ relations still appear alongside, unchanged; `woodshed-graph` tests pass
 against the moved distance function; and the Set tray's relation inventory
 shows the new kinds with their tone names.
 
-### S2. The voice-leading arrangement
+### S2. Nearby candidates and a pitch-motion reading (scoped 2026-09-07)
 
-`GraphArrangement::VoiceLeading`, placed by motion cost rather than order:
+This replaces the older focus-centered radial proposal. Browsing focus must not
+re-layout existing material. Work in two reviewable slices:
 
-- Input: the pairwise `moves-to` costs from S1 (absent pairs are far).
-- Placement: focused card at the origin; every other keyed card at a distance
-  proportional to its motion cost from the focus, angle from a stable
-  deterministic rule (Set order is fine). Unkeyed cards (Riff, Path) sit on
-  an outer ring in Set order. Deterministic, no solver, same contract as the
-  other ten.
-- The relation filter defaults to `keeps-tones` and `moves-to` visible and the
-  rest hidden when this arrangement is chosen, so the edges on screen are the
-  ones the placement is about. The default is a preference, applied once on
-  switch, not a lock.
-- Edge label in the graph canvas: kept tones as a short run ("C E"), moved
-  tones as "G→A". The detail panel keeps the full sentence.
+1. **Nearby candidates in the current reading.** Each reading supplies its
+   candidate universe and reasons. Present a bounded, refreshable ranking beside
+   the map, with exact held/moved tones and unavailable scores stated explicitly.
+   Fifth distance, P/L/R depth, and summed pitch motion remain distinct columns;
+   do not blend them into an unexplained relevance number. The first pitch-motion
+   ranking can use the existing 24 major/minor triads, with the current nonempty
+   equal-cardinality metric. Seventh chords and scales remain browseable in their
+   applicable readings without inventing cross-cardinality distances.
+2. **An explicitly selected Pitch motion reading.** Capture a layout anchor when
+   entering the reading. Radius describes distance from that anchor, and stable
+   catalog identity determines angular slots; zero-cost occurrences retain
+   distinct targets. Focus changes comparisons and candidate ranking, while the
+   anchor and existing coordinates remain fixed. An explicit recenter action may
+   change the anchor. Label that distance is from the anchor, not every node pair.
+   Unscored material occupies a labeled separate area, not an invented outer cost.
 
-Done when: selecting a different focus re-places the graph with that card at
-the origin and nearer cards are lower-cost by the S1 number; the arrangement
-persists as a setting like the other ten; a headed scenario under
-`scenarios/` drives focus change and asserts distances through the snapshot;
-and the receipt lands under `testing/woodshed/scenarios/`.
+`StageGraphSnapshot::pitch_motion` already supplies values independently of
+visible relations. Keep the complete candidate cost data independent of edge
+thresholds; scalar totals cannot inherit the catalog metric's 1.5 threshold.
+A product-owned reading model should collect candidate query, coordinates, and
+relation explanations now dispatched separately in `stage_scene.rs`, `tonnetz.rs`,
+and the view/host projection. It need not become a plugin framework.
+
+**Ambient context boundary:** available catalog material, currently displayed
+material, inspected focus, and authored Card occurrences are different states.
+Shared/exclusive comparison emphasizes this wider material; it does not define
+membership. Every suggestion carries a reason and its reading. Focus never
+adds a Card or auditions it. Hear and Add remain explicit.
+
+**Saturated browsing:** automatic retention fills the budget before fresh
+candidates. Where offered by the reading, **Explore from here** already clears
+disclosure at maximum breadth; Circle uses this coarse refresh, while Tonnetz
+reports completion once all 24 triads are shown.
+Separate discovery history/remembered coordinates from current membership, and
+show nearby candidates even when the map is full. Refine the existing refresh
+into an explicit Show nearby action that fills free slots or offers to replace
+quiet, unpinned background at capacity;
+protect authored, focused, and pinned material, preserve coordinates when material
+returns, and expose breadth limits. Do not silently evict Cards to admit suggestions.
+Multi-card comparison needs an explicit selection model; current Set cursor plus
+context focus is only a pair. Scope that as a later extension, not an implicit
+reinterpretation of every Card in the Set.
+
+Done conditions: a full-budget exploration still offers an unseen neighbor;
+repeated focus keeps coordinates and Set membership unchanged; unavailable
+scores are distinct from zero; changing edge visibility cannot change ranking
+or coordinates; the chosen anchor is visible; and a real pointer scenario can
+inspect, hear, explicitly show, then add a candidate through existing boundaries.
+The ranking slice can land before the new arrangement or any fingering work.
 
 ### S3. Practice evidence in the projection
 
@@ -310,32 +343,69 @@ well-practiced one does not; a recorded transition appears as an evidence
 edge with its traversal count in the detail; and the filters persist with the
 other Stage settings.
 
-### S4. Which fingers move
+### S4. Resolve a selected shape, then compare neck movement (scoped 2026-09-07)
 
-Prerequisite first, because nothing resolves a Card to a voicing today:
+The prerequisite is one `woodshed-core` resolver consumed by `dots_for_card`,
+`card_voicing`, and the effective-sound path. Today the board uses the live
+instrument and all chord positions, while audition applies formula pitches near
+MIDI 48. Neither reads `voicing_idx`. `ChordVoicing` has muted/played string
+positions, pitches and intervals; it has no finger identities or barre contacts.
 
-- `woodshed-core` resolves a Chord Card to a `ChordVoicing` through
-  `Fretboard::find_chord_voicings` under the Card's tuning, capo, and fret
-  window, selecting by `voicing_idx` and falling back to the first. This is
-  the read side of a field that has only ever been written. `card_voicing`
-  audition switches to the resolved voicing's pitches so the ear and the
-  board agree; scales and paths are unchanged.
+**First implementation slice: selected chord shapes.** Preserve
+`Setting.voicing_idx == None` as its documented all-tone-map state. Add explicit
+previous/next/clear shape controls; `Some(index)` opts into resolved-shape behavior.
+An invalid index or impossible setup returns a typed unavailable reason and no
+selected-shape sound, rather than silently substituting shape zero. The resolver
+returns the exact setup, physical and relative positions, concert pitches, and
+selection identity. An enumeration index alone must not be presented as a durable
+shape identity: record/validate the string-position fingerprint and enumeration
+profile before claiming the same saved shape across algorithm changes.
 
-Then the diff:
+Resolution rules to implement and test together:
 
-- `woodshedding`: `voicing_movement(a, b) -> per-string move` where each
-  string reports held, moved by N frets, added, or dropped. Fret span and
-  lowest-fret change ride the summary.
-- `stage_scene`: a `woodshed:hand-moves` relation between Chord occurrences
-  that both resolve, weight inverse to total fret distance, the per-string
-  detail on the record.
-- Detail panel shows the per-string movement; the graph edge shows the total.
+- A recognized explicit instrument resolves its named tuning with `find_for`,
+  or a declared instrument-default policy when the tuning is absent. Unknown
+  explicit values are unresolved. For legacy empty instrument fields, accept a
+  unique named tuning or the matching supplied live tuning; empty instrument plus
+  no tuning may inherit the live setup. Do not use first-match tuning lookup for
+  ambiguous names. New authoring should store canonical instrument identity.
+- Capo preserves the relative shape under the existing Setting contract. A C
+  shape at capo 2 sounds D. Enumerate the untransposed setup and shape root, then
+  add capo to physical frets and concert pitches; equivalently transpose BOTH
+  tuning and requested root. Transposing only tuning would change the shape.
+- Keep relative shape frets and physical display frets distinct. Pinned
+  `FretWindow { start, span }` means inclusive physical `[start, start+span]`;
+  absent windows inherit the live physical window. Convert to relative bounds
+  before solving, reject below-capo/impossible windows, and honor instrument range.
+- Start with the finder's root-bass policy. Fix root-bass validation to use lowest
+  sounding MIDI pitch for re-entrant tunings, or return an explicit unsupported
+  result there; string-list order is not bass order. Inversions require a recorded
+  bass constraint in a subsequent slice.
+- Apply existing Solo/Mute semantics through the same resolved setup. Sound masks
+  do not automatically mean a finger contact was released. Scope comparisons as
+  chosen-shape movement; do not silently change legacy mark-mode semantics.
 
-Done when: two staged voicings of the same chord differ by hand movement
-and not by tones, and the projection says so (a `keeps-tones` of everything,
-a `hand-moves` with a non-zero total); changing a Card's voicing index
-changes the audition and the `hand-moves` number; and a Card with no
-resolvable voicing produces no `hand-moves` and no error.
+Done when two selected shapes of one chord draw exactly their resolved physical
+contacts and audition exactly their resolved concert pitches; tuning, capo,
+window, invalid index and re-entrant bass fixtures pass; unselected Cards retain
+the all-tone map; and actual shape-selection controls operate in Rehearsal.
+Context catalog previews remain a separate formula-preview contract.
+
+**Second slice: neck movement.** Compare two resolved shapes only under the same
+instrument/tuning/capo setup. Report per-string held, moved, added and dropped
+positions, total matched fret travel, span, and position shift separately. Added
+or dropped strings do not receive an arbitrary fret-distance penalty. A same-chord
+pair can have zero pitch-class cost and nonzero neck movement. Call this neck or
+shape movement; the earlier `hand-moves` label overclaimed what the data can know.
+
+**Later: fingering and phrase suggestions.** Finger/contact/barre identities,
+held contacts, stretch, timing and user preferences must precede an ergonomic
+score. Keep hard constraints separate from configurable cost components. Set
+Card order and Looper `SongDoc` bars are currently separate authorities;
+`Recipe::Song` is a source stamp, not a live event binding. Define the event-to-Card
+realization contract before optimizing across bars. Then bounded candidate-layer
+search can disclose candidate caps and modeled costs. It is optimal only within
+that candidate set and model, not a universal claim about comfort.
 
 ## Review before implementation (2026-09-04)
 
@@ -546,13 +616,15 @@ the canonical Mere receipt records its identity, clock and transport limits.
 
 ### Musical slice sequence
 
-S1 before S2 (S2 consumes S1's costs). S3 is independent and can run in
-either gap. S4 last; its prerequisite touches audition and is the only slice
-that changes something a player already hears. Each slice is one subagent
-task with its done-conditions as the acceptance list, reviewed here before
-the next opens. Items that need Mark's call as they arise: the module name in
-S1, the cost ceiling if a fixture argues against 1.5, and whether S4's
-audition change ships or stays behind a setting.
+The exact pitch-motion prerequisite is landed. Next, S2's nearby-candidate
+ranking and S4's selected-shape resolver can proceed independently, with view
+edits coordinated by component ownership. S2's anchored reading follows its
+ranking contract; S4's neck comparison follows a verified resolver. Shape
+selection is explicit opt-in through `voicing_idx`; legacy all-tone Cards keep
+their existing behavior. S3 remains independent. General fingerings and
+bar/line lookahead follow the contact and event-realization contracts, rather
+than being implied by geometric neck cost. Each bounded slice uses its stated
+done conditions before the dependent slice opens.
 
 ## Stop rules
 
