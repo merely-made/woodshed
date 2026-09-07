@@ -25,6 +25,8 @@
 mod audio;
 mod drive;
 mod leaves;
+#[cfg(test)]
+mod layout_tests;
 mod midi;
 mod persona;
 mod scenario;

@@ -1,0 +1,16 @@
+# Presented wide Stage keeps board space when the Set becomes tall.
+settle 3
+act stage-context-example
+settle 3
+capture 01_expanded_set
+click .set-graph-reading Arrangement: Set
+settle 3
+click .set-graph-reading Arrangement: Circle of fifths
+settle 3
+assert snap graph-reading == Tonnetz
+assert snap set-cards == 1
+capture 02_tall_tonnetz
+act collapse-tray
+settle 3
+capture 03_collapsed_set
+log Stage sizing capture complete

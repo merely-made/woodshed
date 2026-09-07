@@ -42,7 +42,8 @@ before any other doc in this directory.
   swap the sealed practice store without restart. Creating a persona inside
   Woodshed remains open.
 - [2026-07-04_genet_host_cross_platform_plan.md](2026-07-04_genet_host_cross_platform_plan.md)
-  — **Desktop migration landed; delivery work remains.** The shared view tree
+  — **Desktop migration landed; delivery work remains.** The September 7 audit
+  addresses page-scroll ownership and expanded-Set sizing. The shared view tree
   has a Windows host and an unshipped browser host. Cross-desktop receipts,
   browser audio/storage/accessibility, packaging, and deployment remain open.
 - [2026-07-18_accessibility_semantic_surface.md](2026-07-18_accessibility_semantic_surface.md)

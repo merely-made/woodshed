@@ -575,3 +575,50 @@ workspace and the smoke already models it.
   recorded as the alternative. Prior receipts: cpal 0.18 bump (`aaa7cde`),
   genet browser render receipt (genet `2422044ad1a`), netrender wasm
   backend split (`6520d74ed`) + web-time (`83e4be37a`).
+
+
+## App clipping audit (2026-09-07, first correction landed; follow-ups open)
+
+The expanded Set exposed an app-side sizing conflict: the wide Stage body was
+allowed to shrink to zero while the Set tray below it retained a large intrinsic
+height. Only the body columns owned scrolling. Flowing narrow/medium Stage and
+templates lacked an explicit page scroll owner. The graph's fixed native canvas
+and absolute labels also lived in a shrinkable flex item, so narrow widths could
+disagree about the canvas extent.
+
+The bounded correction gives every Stage path vertical scrolling, keeps a
+text-relative usable body floor with independent column scrolling, and lets the
+Set increase page overflow. The fixed graph and overlays retain one extent;
+a surrounding horizontal viewport handles narrow widths. These are product
+layout responsibilities. Rehearsal, Looper, Tools, and Settings also lacked a
+page-scroll owner; their `tab_content` branch now shares `.workspace-screen`.
+The host already updates logical width and height on resize. Shared engine
+clipping is not exonerated by this audit.
+
+Remaining audit work: Rehearsal's fixed fretboard needs its own narrow viewport,
+Settings' two-column navigation needs responsive treatment, and the filmstrip
+should declare only its intended horizontal overflow. Shell construction in
+`stage.rs` and shell geometry in `theme.rs` should be extracted together when
+those contracts are stabilized; moving files alone does not repair sizing.
+
+Done when measured host layouts preserve a usable board above the expanded Set,
+scrolling reaches content below the window, and narrow graph scrolling keeps
+paint and targets aligned. Presented desktop captures supplement host tests.
+
+
+Validation: three real-host layout/scroll regressions pass. At 1500x664, the
+wide board retains 224 logical pixels of height and the Set begins below it;
+wheel scrolling reaches the Set bottom at y=648. At 420x664, the graph retains
+its 520-pixel width and horizontal wheel scrolling moves its x origin from
+28 to -146. At 1100x300, the Settings page scrolls to its bottom at y=284.
+These tests use the shipping windowless host layout and wheel routing, not
+CSS-string assertions. The first test run also exercised the 1100-pixel medium
+layout; the final wide test explicitly asserts the 1180-pixel breakpoint.
+
+All 51 view tests, the desktop build, and `scenarios/stage_clipping.scn` passed. Presented captures
+in `Code/testing/woodshed/stage-clipping-20260907/run01/` show the fretboard
+and Related pane above the expanded Set, and the collapsed-tray state. Actual
+scroll routing is the host-test receipt; the native scenario records the initial
+viewport and does not claim a native wheel injection. Artifact hashes and the
+source commit are recorded in the parent `receipt.json`. Existing compiler
+warnings remain. This bounded correction is not a whole-stack clipping pass.

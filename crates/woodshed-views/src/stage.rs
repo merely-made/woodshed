@@ -2641,22 +2641,22 @@ pub(super) fn board(ui: &UiState) -> UiChild {
 
 fn stage_screen(ui: &UiState) -> UiChild {
     if ui.stage_page == StagePage::Templates {
-        return Box::new(el(
-            "div",
-            (
-                header(ui),
-                lens_strip(ui),
-                templates::screen(ui),
-                set_tray::view(ui),
-            ),
-        ));
+        return Box::new(
+            el(
+                "div",
+                (
+                    header(ui),
+                    lens_strip(ui),
+                    templates::screen(ui),
+                    set_tray::view(ui),
+                ),
+            )
+            .attr("class", "stage-screen stage-screen-flow"),
+        );
     }
-    // The wide three-column arm is viewport-bounded: the screen is a column
-    // filling the window, the body row takes the remaining height, and each
-    // column (catalog / board / related) scrolls independently inside it — so a
-    // long scale list or a wide neck scrolls in place instead of stretching the
-    // page or shoving the Related panel off the window edge. The stacked
-    // Medium/Narrow layouts keep their flowing page scroll.
+    // Every Stage path owns vertical scrolling. The wide body retains a usable
+    // minimum height with independent column scrolling; expanding the Set adds
+    // scrollable page content rather than consuming the board's last pixels.
     let wide3 = matches!(
         (ui.board_layout(), ui.viewport),
         (BoardLayout::TwoPane, ViewportClass::Wide)
@@ -2690,18 +2690,21 @@ fn stage_screen(ui: &UiState) -> UiChild {
     Box::new(if wide3 {
         screen.attr("class", "stage-screen")
     } else {
-        screen
+        screen.attr("class", "stage-screen stage-screen-flow")
     })
 }
 
 fn tab_content(ui: &UiState) -> UiChild {
-    match ui.section {
-        AppSection::Stage => stage_screen(ui),
+    let content = match ui.section {
+        AppSection::Stage => return stage_screen(ui),
         AppSection::Rehearsal => rehearsal::screen(ui),
         AppSection::Looper => looper::screen(ui),
         AppSection::Tools => tools::screen(ui),
         AppSection::Settings => settings::screen(ui),
-    }
+    };
+    // Flowing screens share a bounded page viewport. Their local components
+    // own only their internal layout, not window-height or page-scroll policy.
+    Box::new(el("div", content).attr("class", "workspace-screen"))
 }
 
 /// The corpus search field + its results dropdown — a small always-on

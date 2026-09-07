@@ -217,13 +217,14 @@ pub fn stage_css(p: &Palette) -> String {
         font-size: 13px; }}
 .lens-active {{ background-color: {surface_2}; color: {tertiary}; font-weight: 600; }}
 .body {{ display: flex; }}
-/* Wide 3-column Stage: the screen is a viewport-filling column, the body row
-   takes the remaining height, and each column scrolls independently — a long
-   catalog or a wide neck scrolls in place instead of stretching the page or
-   pushing the Related panel off the window (nested flex needs min-height: 0
-   at every level for the bound to reach the scrollers). */
-.stage-screen {{ display: flex; flex-direction: column; flex: 1 1 auto; min-height: 0; }}
-.stage-body {{ flex: 1 1 auto; min-height: 0; }}
+/* Stage owns page overflow, including the Set tray. Its wide body keeps a
+   text-relative usable floor and each column scrolls independently. The tray
+   cannot shrink the board to zero when it grows beyond the viewport. */
+.stage-screen {{ display: flex; flex-direction: column; flex: 1 1 0; min-height: 0; min-width: 0; overflow-y: auto; }}
+.stage-screen > * {{ flex-shrink: 0; }}
+.workspace-screen {{ flex: 1 1 0; min-height: 0; min-width: 0; overflow: auto; }}
+.stage-screen-flow {{ display: block; }}
+.stage-body {{ flex: 1 0 16em; min-height: 16em; }}
 .stage-body .side {{ flex: 0 0 220px; min-height: 0; overflow-y: auto; }}
 .stage-body .board {{ flex: 1 1 auto; min-width: 0; min-height: 0; overflow-y: auto; }}
 .stage-body .related-panel {{ min-height: 0; overflow-y: auto; }}
@@ -352,7 +353,7 @@ pub fn stage_css(p: &Palette) -> String {
 .settings-nav {{ flex: 0 0 220px; }}
 .settings-page {{ flex: 1; min-height: 300px; }}
 .settings-options {{ margin-top: 10px; }}
-.set-tray {{ margin-top: 14px; background-color: {surface}; border-radius: 10px; padding: 12px; }}
+.set-tray {{ flex: 0 0 auto; margin-top: 14px; background-color: {surface}; border-radius: 10px; padding: 12px; }}
 .set-graph {{ display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 10px 0; max-width: 100%; }}
 .set-graph-compact {{ width: 300px; }}
 .set-graph-toolbar {{ display: flex; flex-wrap: wrap; align-items: center; gap: 8px; width: 100%; }}
@@ -369,8 +370,8 @@ pub fn stage_css(p: &Palette) -> String {
 .stage-context-node-label {{ position: absolute; display: block; font-size: 10px; line-height: 14px; white-space: nowrap; pointer-events: none; color: {text_dim}; }}
 .stage-context-node-label.active {{ color: {text}; font-weight: 600; }}
 .set-graph-toolbar .select {{ min-width: 112px; z-index: 2; }}
-.set-graph-canvas-row {{ display: flex; align-items: flex-end; max-width: 100%; }}
-.set-graph-canvas-stack {{ position: relative; max-width: 100%; }}
+.set-graph-canvas-row {{ display: flex; align-items: flex-end; min-width: 0; max-width: 100%; overflow-x: auto; }}
+.set-graph-canvas-stack {{ position: relative; flex: 0 0 auto; overflow: hidden; }}
 .set-graph-resize-grip {{ position: relative; flex: 0 0 18px; width: 18px; height: 18px; }}
 .resize-handle {{ background-color: {tertiary}; border-radius: 3px 0 6px 0; cursor: nwse-resize; opacity: 0.86; z-index: 6; }}
 .resize-handle:focus {{ outline-width: 1px; outline-color: {text}; }}
