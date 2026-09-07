@@ -12,7 +12,7 @@ before any other doc in this directory.
 ## Active Plans
 
 - [2026-09-04_musical_projections_plan.md](2026-09-04_musical_projections_plan.md)
-  — Circle-of-Fifths context is implemented: keyed background,
+  — Circle-of-Fifths context and the 24-triad Tonnetz are implemented: keyed background,
   separate focus/audition/Add actions, and stable expansion. Musical slices
   S1-S4 otherwise remain planned. The September 6 subsystem research
   maps meaning, inference, analysis, generation, and comparison; a live

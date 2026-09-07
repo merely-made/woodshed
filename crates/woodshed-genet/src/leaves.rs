@@ -6,15 +6,81 @@
 //! boxes layout gives them; what belongs to woodshed is which leaf, from which
 //! model, in which palette.
 
+use std::collections::BTreeMap;
 use std::hash::{Hash, Hasher};
 
-use sprigging::LeafRegistry;
+use sprigging::{Leaf, LeafRegistry, PaintCx, Size, SizeHint};
 use woodshed_views::fretboard_leaf::{
     Dot, FRETBOARD_LEAF_KEY, FretboardLeaf, MarkerStyle, Orientation, REHEARSAL_FRETBOARD_LEAF_KEY,
 };
 use woodshed_views::stage::{NEIGHBORHOOD_LEAF_KEY, SET_GRAPH_LEAF_KEY, UiState};
 
 use crate::shared::Shared;
+
+struct TonnetzSegment {
+    a: (f32, f32),
+    b: (f32, f32),
+    active: bool,
+}
+
+struct TonnetzGraphLeaf {
+    graph: sprigging::GraphCanvas,
+    segments: Vec<TonnetzSegment>,
+    viewport: cambium::GraphViewport,
+    inset: f32,
+}
+
+impl Leaf for TonnetzGraphLeaf {
+    fn accessibility(&mut self, node: &mut accesskit::Node) {
+        self.graph.accessibility(node);
+    }
+
+    fn measure(&mut self, known: SizeHint, available: SizeHint) -> Size {
+        self.graph.measure(known, available)
+    }
+
+    fn paint(&mut self, cx: &mut PaintCx<'_>) {
+        let size = cx.size();
+        cx.push_clip_rect(0.0, 0.0, size.width, size.height);
+        let color = sprigging::ColorF {
+            r: 0.47,
+            g: 0.53,
+            b: 0.70,
+            a: 0.28,
+        };
+        let active_color = sprigging::ColorF {
+            r: 0.93,
+            g: 0.70,
+            b: 0.28,
+            a: 0.72,
+        };
+        for segment in &self.segments {
+            let a = self.viewport.project(segment.a, size, self.inset);
+            let b = self.viewport.project(segment.b, size, self.inset);
+            cx.stroke_path(
+                sprigging::Path::polyline(&[a, b]),
+                sprigging::round_stroke(
+                    if segment.active { active_color } else { color },
+                    if segment.active { 2.0 } else { 1.0 },
+                ),
+            );
+        }
+        cx.pop_clip();
+        self.graph.paint(cx);
+    }
+
+    fn event(&mut self, event: &sprigging::LeafEvent) -> Option<sprigging::LeafAction> {
+        self.graph.event(event)
+    }
+
+    fn paint_dirty(&self) -> bool {
+        self.graph.paint_dirty()
+    }
+
+    fn layout_dirty(&self) -> bool {
+        self.graph.layout_dirty()
+    }
+}
 
 /// The product palette for a Related node kind. Lives host-side so Cambium's
 /// graph component stays palette-neutral; the same mapping drove the old glyph.
@@ -104,6 +170,56 @@ fn sync_related_swatch(shared: &mut Shared, ui: &UiState, leaves: &mut LeafRegis
     leaves.insert(NEIGHBORHOOD_LEAF_KEY, Box::new(leaf));
 }
 
+fn tonnetz_segments(ui: &UiState) -> Vec<TonnetzSegment> {
+    if ui.app_settings.stage.set_graph_reading
+        != woodshed_core::settings::StageGraphReading::Tonnetz
+    {
+        return Vec::new();
+    }
+    let snapshot = woodshed_views::stage::set_graph_snapshot(ui);
+    let bounds = snapshot.snapshot.tables.bounds;
+    let normalize = |(x, y): (f32, f32)| {
+        (
+            ((x - bounds.origin.x) / bounds.size.w.max(1.0)).clamp(0.0, 1.0),
+            ((y - bounds.origin.y) / bounds.size.h.max(1.0)).clamp(0.0, 1.0),
+        )
+    };
+    let selected = ui
+        .set
+        .cursor_id()
+        .and_then(|id| ui.set.cards.iter().find(|card| card.id == id))
+        .and_then(|card| woodshed_core::harmony::KeyedCatalogRef::from_material(&card.material));
+    let materials = snapshot
+        .nodes
+        .iter()
+        .filter_map(|node| node.keyed.clone())
+        .collect::<std::collections::BTreeSet<_>>();
+    let mut edges = BTreeMap::<((i32, i32), (i32, i32)), TonnetzSegment>::new();
+    for keyed in materials {
+        let Some(vertices) = woodshed_core::tonnetz::triangle(&keyed) else {
+            continue;
+        };
+        let points = vertices.map(|(x, y, _)| normalize((x, y)));
+        let active = ui.context_focus.as_ref() == Some(&keyed) || selected.as_ref() == Some(&keyed);
+        let lattice = vertices.map(|(x, y, _)| (x.round() as i32, y.round() as i32));
+        for (from, to) in [(0usize, 1usize), (1, 2), (2, 0)] {
+            let mut key = (lattice[from], lattice[to]);
+            if key.1 < key.0 {
+                key = (key.1, key.0);
+            }
+            edges
+                .entry(key)
+                .and_modify(|segment| segment.active |= active)
+                .or_insert(TonnetzSegment {
+                    a: points[from],
+                    b: points[to],
+                    active,
+                });
+        }
+    }
+    edges.into_values().collect()
+}
+
 /// Paint the Set graph projection into the same leaf registry as the Related
 /// swatch. Its identity and edge filtering are owned by Woodshed; Cambium
 /// supplies the shared canvas and native hit targets.
@@ -137,12 +253,27 @@ fn sync_set_graph_swatch(shared: &mut Shared, ui: &UiState, leaves: &mut LeafReg
     }
     swatch.selected.hash(&mut h);
     swatch.hovered.hash(&mut h);
+    let segments = tonnetz_segments(ui);
+    segments.len().hash(&mut h);
+    for segment in &segments {
+        segment.a.0.to_bits().hash(&mut h);
+        segment.a.1.to_bits().hash(&mut h);
+        segment.b.0.to_bits().hash(&mut h);
+        segment.b.1.to_bits().hash(&mut h);
+        segment.active.hash(&mut h);
+    }
     let sig = h.finish();
     if sig == shared.set_graph_sig {
         return;
     }
     shared.set_graph_sig = sig;
-    let leaf = swatch.paint_leaf(|kind: &&str| related_kind_color(kind));
+    let graph = swatch.paint_leaf(|kind: &&str| related_kind_color(kind));
+    let leaf = TonnetzGraphLeaf {
+        graph,
+        segments,
+        viewport: swatch.viewport,
+        inset: swatch.node_radius + swatch.edge_width,
+    };
     leaves.insert(SET_GRAPH_LEAF_KEY, Box::new(leaf));
 }
 

@@ -1,0 +1,39 @@
+# Musical reading changes candidate selection and geometry, preserving Set truth.
+log Tonnetz: triangle lattice, leading-tone neighbor, explicit Add
+settle 3
+act stage-context-example
+settle 3
+click .set-graph-reading Arrangement: Set
+settle 3
+click .set-graph-reading Arrangement: Circle of fifths
+settle 3
+assert snap graph-reading == Tonnetz
+assert snap graph-context-nodes >= 12
+assert snap set-cards == 1
+assert snap cursor-id == 1
+capture 01_tonnetz
+
+click-context-node chord:Minor@pc:4
+settle 3
+assert snap graph-context-focus == chord:Minor@pc:4
+assert snap graph-total-nodes == 24
+assert snap set-cards == 1
+assert snap cursor-id == 1
+assert text Shared tones: E G
+assert text Leading-tone exchange (L)
+assert text All 24 major/minor triads shown.
+assert text Selected only: C
+assert text Focused only: B
+capture 02_e_minor_focus
+
+click .t-btn Add to Set
+settle 3
+assert snap set-cards == 2
+capture 03_added
+click .set-graph-reading Context: on
+settle 3
+assert snap graph-reading == Tonnetz
+assert snap graph-context-nodes == 0
+assert snap set-cards == 2
+capture 04_context_hidden
+log Tonnetz receipt complete

@@ -44,9 +44,8 @@ pub struct StageContextNode {
     pub keyed: KeyedCatalogRef,
     pub label: String,
     pub kind: StageNodeKind,
-    /// Fifth distance from the focused tonic. It is an honest musical bearing,
-    /// unlike an ordinal grid slot.
-    pub fifth_distance: u8,
+    /// Distance in the selected reading: fifth steps or P/L/R transformations.
+    pub relation_distance: u8,
 }
 
 /// A relation the keyed context can state without borrowing formula-graph
@@ -89,6 +88,8 @@ pub struct StageContextRelation {
 /// Request for the Circle-of-Fifths context around a keyed focus.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct StageContextOptions {
+    /// The musical reading owns candidate selection, placement, and relations.
+    pub reading: crate::settings::StageGraphReading,
     /// The view-local focus. A `Card` is resolved to its keyed material by the
     /// scene adapter; catalog focus can be used directly after a background
     /// click. `None` means the adapter chooses the Set cursor.
@@ -103,6 +104,7 @@ pub struct StageContextOptions {
 impl Default for StageContextOptions {
     fn default() -> Self {
         Self {
+            reading: crate::settings::StageGraphReading::CircleOfFifths,
             focus: None,
             node_limit: 24,
             retained: BTreeSet::new(),
@@ -207,7 +209,7 @@ pub fn circle_of_fifths_context(
                 label: keyed.label()?,
                 keyed,
                 kind,
-                fifth_distance,
+                relation_distance: fifth_distance,
             })
         })
         .collect::<Vec<_>>();

@@ -109,26 +109,37 @@ pub(super) fn labels(
     ui: &UiState,
     swatch: &cambium::GraphCanvasSwatch<super::StageInstanceRef, &'static str>,
 ) -> UiChild {
-    if ui.app_settings.stage.set_graph_reading
-        != woodshed_core::settings::StageGraphReading::CircleOfFifths
-        || ui.set_graph_drag_active
+    if !matches!(
+        ui.app_settings.stage.set_graph_reading,
+        woodshed_core::settings::StageGraphReading::CircleOfFifths
+            | woodshed_core::settings::StageGraphReading::Tonnetz
+    ) || ui.set_graph_drag_active
     {
         return Box::new(el("div", ()));
     }
-    let labels: Vec<UiChild> = swatch
+    let mut labels: Vec<UiChild> = swatch
         .graph
         .nodes
         .iter()
         .zip(swatch.projected_positions())
         .filter(|(node, _)| swatch.projected_node_footprint(&node.id).is_none())
         .map(|(node, (_, (x, y)))| {
+            let tonnetz = ui.app_settings.stage.set_graph_reading
+                == woodshed_core::settings::StageGraphReading::Tonnetz;
             let label = node
                 .label
                 .replace("Major", "maj")
                 .replace("Minor", "min")
                 .replace("Dominant", "dom");
+            let label = if tonnetz {
+                label.replace(" maj", "").replace(" min", "m")
+            } else {
+                label
+            };
             let width = label.chars().count() as f32 * 5.8 + 4.0;
-            let left = if x > swatch.width as f32 * 0.65 {
+            let left = if tonnetz {
+                x - width / 2.0
+            } else if x > swatch.width as f32 * 0.65 {
                 x - width - 10.0
             } else {
                 x + 10.0
@@ -151,13 +162,77 @@ pub(super) fn labels(
                         format!(
                             "left:{}px;top:{}px;width:{width}px;",
                             left.max(0.0),
-                            (y - 6.0).max(0.0)
+                            (if tonnetz { y + 5.0 } else { y - 6.0 }).max(0.0)
                         ),
                     ),
             ) as UiChild
         })
         .collect();
+    labels.extend(tonnetz_pitch_labels(ui, swatch));
     Box::new(el("div", labels).attr("class", "stage-context-labels"))
+}
+
+/// Pointer-transparent pitch labels over the natively painted Tonnetz. The core
+/// supplies the musical triangle and fixed lattice position; this layer only
+/// projects those world coordinates into the current swatch viewport.
+fn tonnetz_pitch_labels(
+    ui: &UiState,
+    swatch: &cambium::GraphCanvasSwatch<super::StageInstanceRef, &'static str>,
+) -> Vec<UiChild> {
+    if ui.app_settings.stage.set_graph_reading
+        != woodshed_core::settings::StageGraphReading::Tonnetz
+    {
+        return Vec::new();
+    }
+    let snapshot = super::set_graph_snapshot(ui);
+    let materials = snapshot
+        .nodes
+        .iter()
+        .filter_map(|node| node.keyed.clone())
+        .collect::<std::collections::BTreeSet<_>>();
+    let inset = swatch.node_radius + swatch.edge_width;
+    let project = |point: (f32, f32)| {
+        let normalized = super::scene_position(&snapshot, point.0, point.1);
+        swatch.viewport.project(
+            normalized,
+            sprigging::Size {
+                width: swatch.width as f32,
+                height: swatch.height as f32,
+            },
+            inset,
+        )
+    };
+    let mut cells = Vec::new();
+    let mut labels = std::collections::BTreeMap::<(i32, i32), String>::new();
+    for keyed in materials {
+        let Some(vertices) = woodshed_core::tonnetz::triangle(&keyed) else {
+            continue;
+        };
+        for (x, y, pitch) in vertices {
+            labels
+                .entry((x.round() as i32, y.round() as i32))
+                .or_insert_with(|| {
+                    let p = Pitch::from_midi(60 + i32::from(pitch.value()), Spelling::Sharps);
+                    format!("{}{}", p.name, p.accidental)
+                });
+        }
+    }
+    for ((x, y), label) in labels {
+        let (px, py) = project((x as f32, y as f32));
+        cells.push(Box::new(
+            el("span", text(label))
+                .attr("class", "stage-context-node-label")
+                .attr(
+                    "style",
+                    format!(
+                        "left:{:.1}px;top:{:.1}px;width:22px;height:13px;",
+                        px - 5.0,
+                        py - 6.0
+                    ),
+                ),
+        ) as UiChild);
+    }
+    cells
 }
 
 fn comparison(ui: &UiState, focused: &KeyedCatalogRef) -> Option<UiChild> {
@@ -167,6 +242,19 @@ fn comparison(ui: &UiState, focused: &KeyedCatalogRef) -> Option<UiChild> {
         .get(ui.set.cursor.min(ui.set.cards.len().saturating_sub(1)))?;
     let selected = KeyedCatalogRef::from_material(&card.material)?;
     let comparison = compare_pitch_sets(&selected, focused)?;
+    let transformation = (ui.app_settings.stage.set_graph_reading
+        == woodshed_core::settings::StageGraphReading::Tonnetz)
+        .then(|| {
+            woodshed_core::tonnetz::neighbors(&selected)
+                .into_iter()
+                .find(|(neighbor, _)| neighbor == focused)
+                .map(|(_, kind)| match kind {
+                    "woodshed:tonnetz-parallel" => "Parallel (P)",
+                    "woodshed:tonnetz-relative" => "Relative (R)",
+                    _ => "Leading-tone exchange (L)",
+                })
+        })
+        .flatten();
     let tones = |set: &std::collections::BTreeSet<woodshedding::pitch::PitchClass>| {
         set.iter()
             .map(|tone| {
@@ -189,6 +277,9 @@ fn comparison(ui: &UiState, focused: &KeyedCatalogRef) -> Option<UiChild> {
                     )),
                 )
                 .attr("class", "stage-context-compare-heading"),
+                transformation.map(|label| {
+                    el("div", text(label)).attr("class", "stage-context-compare-line")
+                }),
                 el(
                     "div",
                     text(format!("Shared tones: {}", tones(&comparison.shared))),
@@ -242,6 +333,20 @@ fn more_button(ui: &UiState) -> UiChild {
     if !ui.app_settings.stage.context.enabled {
         return Box::new(el("div", ()));
     }
+    if ui.app_settings.stage.set_graph_reading
+        == woodshed_core::settings::StageGraphReading::Tonnetz
+    {
+        let shown = super::set_graph_snapshot(ui)
+            .nodes
+            .iter()
+            .filter_map(|node| node.keyed.as_ref())
+            .filter(|keyed| woodshed_core::tonnetz::position(keyed).is_some())
+            .collect::<std::collections::BTreeSet<_>>()
+            .len();
+        if shown >= 24 {
+            return Box::new(el("div", text("All 24 major/minor triads shown.")));
+        }
+    }
     let initial = ui.context_focus.is_none() && ui.context_disclosed.is_empty();
     if !initial && ui.app_settings.stage.context.node_limit() >= 36 {
         return Box::new(el(
@@ -264,15 +369,28 @@ fn more_button(ui: &UiState) -> UiChild {
 }
 
 pub(super) fn panel(ui: &UiState) -> UiChild {
-    if ui.app_settings.stage.set_graph_reading
-        != woodshed_core::settings::StageGraphReading::CircleOfFifths
-    {
+    let reading = ui.app_settings.stage.set_graph_reading;
+    if !matches!(
+        reading,
+        woodshed_core::settings::StageGraphReading::CircleOfFifths
+            | woodshed_core::settings::StageGraphReading::Tonnetz
+    ) {
         return Box::new(el("div", ()));
     }
+    let (title, guidance) = match reading {
+        woodshed_core::settings::StageGraphReading::Tonnetz => (
+            "Tonnetz",
+            "Triangles show major and minor triads. Shared edges mark P, L, and R transformations; the lattice wraps at its boundaries.",
+        ),
+        _ => (
+            "Circle of fifths",
+            "Major chords mark the circle. Relative minor chords sit inside it; scales appear alongside their key.",
+        ),
+    };
     let Some(material) = ui.context_focus.as_ref() else {
         return Box::new(el("div", (
-            el("div", text("Circle of fifths")).attr("class", "stage-context-title"),
-            el("div", text("Major chords mark the circle. Relative minor chords sit inside it; scales appear alongside their key.")),
+            el("div", text(title)).attr("class", "stage-context-title"),
+            el("div", text(guidance)),
             el("div", text("Select a quiet node to reveal its connections and compare it with the selected Set card.")),
             more_button(ui),
         )).attr("class", "stage-context-panel"));

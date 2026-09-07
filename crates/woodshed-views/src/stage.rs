@@ -309,8 +309,9 @@ pub fn related_swatch(ui: &UiState) -> GraphCanvasSwatch<String, &'static str> {
 /// reorder and removal. The visible number and the serpentine slot are read off
 /// current order and change freely under it.
 pub fn set_graph_snapshot(ui: &UiState) -> StageGraphSnapshot {
-    let context = (ui.app_settings.stage.set_graph_reading == StageGraphReading::CircleOfFifths)
-        .then(|| woodshed_core::stage_context::StageContextOptions {
+    let context = (ui.app_settings.stage.set_graph_reading != StageGraphReading::Set).then(|| {
+        woodshed_core::stage_context::StageContextOptions {
+            reading: ui.app_settings.stage.set_graph_reading,
             focus: ui.context_focus.clone().map(StageNodeId::Catalog),
             node_limit: if ui.app_settings.stage.context.enabled {
                 let configured = ui.app_settings.stage.context.node_limit();
@@ -323,7 +324,8 @@ pub fn set_graph_snapshot(ui: &UiState) -> StageGraphSnapshot {
                 0
             },
             retained: ui.context_disclosed.clone(),
-        });
+        }
+    });
     stage_scene(
         &ui.set,
         &StageSceneOptions {
@@ -447,6 +449,17 @@ fn context_relation_visible(
     let Some(to) = snapshot.node_of(relation.to) else {
         return false;
     };
+    if ui.app_settings.stage.set_graph_reading == StageGraphReading::Tonnetz {
+        return relation
+            .kind
+            .as_deref()
+            .is_some_and(|kind| kind.starts_with("woodshed:tonnetz-"))
+            && (from.foreground
+                || to.foreground
+                || ui.context_focus.as_ref().is_some_and(|focus| {
+                    from.keyed.as_ref() == Some(focus) || to.keyed.as_ref() == Some(focus)
+                }));
+    }
     from.foreground
         || to.foreground
         || ui.context_focus.as_ref().is_some_and(|focus| {
@@ -600,7 +613,7 @@ pub fn set_graph_swatch_from_snapshot(
     .with_node_labels(expanded && !ui.set_graph_drag_active)
     .with_deferred_drag_rebuild(true);
     swatch.viewport = ui.set_graph_viewport;
-    if ui.app_settings.stage.set_graph_reading == StageGraphReading::CircleOfFifths {
+    if ui.app_settings.stage.set_graph_reading != StageGraphReading::Set {
         swatch.hit_size = 20.0;
         swatch.edge_width = 0.6;
         // Musical labels stay beside fixed tonic slots, independently of
@@ -1093,6 +1106,12 @@ impl UiState {
                 };
             },
             GraphCanvasEvent::Drag(drag) => {
+                if self.app_settings.stage.set_graph_reading == StageGraphReading::Tonnetz {
+                    // Moving one chord would detach it from its three pitches.
+                    // The whole lattice remains navigable through pan/zoom.
+                    self.set_graph_drag_active = false;
+                    return;
+                }
                 if matches!(drag.phase, cambium::PointerPhase::Up) {
                     self.set_graph_drag_active = false;
                 }
@@ -1268,7 +1287,7 @@ impl UiState {
             return;
         }
         self.app_settings.stage.set_graph_reading = reading;
-        if reading == StageGraphReading::CircleOfFifths
+        if reading != StageGraphReading::Set
             && self.app_settings.stage.set_graph_size() == (520, 260)
         {
             self.app_settings.stage.resize_set_graph(520, 520);
@@ -1278,6 +1297,7 @@ impl UiState {
         self.context_disclosed.clear();
         self.context_focus = None;
         self.set_graph_relation = None;
+        self.set_graph_viewport = Default::default();
     }
 
     pub fn theme(&self) -> ThemeMode {

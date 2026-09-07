@@ -23,6 +23,7 @@ pub mod song;
 pub mod stage_context;
 pub mod stage_scene;
 pub mod storage;
+pub mod tonnetz;
 
 use arpeggio::{ArpeggioDirection, ArpeggioRun, generate_shapes};
 use woodshedding::chord::{ChordFormula, catalog as chord_catalog};

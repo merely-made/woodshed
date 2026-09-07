@@ -21,6 +21,52 @@ fn a_minor() -> KeyedCatalogRef {
 }
 
 #[test]
+fn tonnetz_focus_expands_without_moving_or_authoring_material() {
+    use cambium::GraphCanvasEvent;
+    use woodshed_core::stage_context::StageNodeId;
+    let mut ui = UiState::new();
+    assert!(ui.focus_context_catalog(c_major()));
+    ui.stage_current(None);
+    ui.set_graph_reading(StageGraphReading::Tonnetz);
+    let before = set_graph_snapshot(&ui);
+    let swatch = set_graph_swatch_from_snapshot(&before, &ui, true);
+    let target = keyed("chord:Minor", 4);
+    let instance = before
+        .instance_of_node(&StageNodeId::Catalog(target.clone()))
+        .unwrap();
+    ui.handle_set_graph_event(
+        &before,
+        GraphCanvasEvent::Activate(super::StageInstanceRef {
+            epoch: before.epoch(),
+            instance,
+        }),
+    );
+    ui.sync();
+    assert_eq!(ui.set.cards.len(), 1);
+    assert_eq!(ui.context_focus.as_ref(), Some(&target));
+    assert!(ui.audio_requests.is_empty());
+    let after = set_graph_snapshot(&ui);
+    let after_swatch = set_graph_swatch_from_snapshot(&after, &ui, true);
+    assert!(after.nodes.len() > before.nodes.len());
+    for node in &swatch.graph.nodes {
+        let id = &before.node_of(node.id.instance).unwrap().id;
+        let new_instance = after
+            .instance_of_node(id)
+            .expect("disclosed material retained");
+        assert_eq!(
+            after_swatch
+                .graph
+                .nodes
+                .iter()
+                .find(|node| node.id.instance == new_instance)
+                .unwrap()
+                .position,
+            node.position
+        );
+    }
+}
+
+#[test]
 fn focusing_a_keyed_material_preserves_root_through_sync() {
     let mut ui = UiState::new();
     assert!(ui.focus_context_catalog(c_major()));

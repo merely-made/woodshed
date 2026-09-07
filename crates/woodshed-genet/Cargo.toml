@@ -29,6 +29,8 @@ cambium = { workspace = true }
 # Woodshed is now the first consumer of that boundary rather than its donor.
 cambium-genet-winit-host = { workspace = true }
 sprigging = { workspace = true }
+# Preserve the wrapped graph leaf's accessibility publication.
+accesskit = "0.24"
 layout-dom-api = { workspace = true }
 genet-scripted-dom = { workspace = true }
 # The shared automatability substrate: selector resolution + the scenario

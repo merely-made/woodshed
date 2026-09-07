@@ -1,6 +1,6 @@
 # Musical Projections Plan
 
-**Status (2026-09-06): first Circle-of-Fifths context slice landed; S1-S4
+**Status (2026-09-06): Circle-of-Fifths context and triadic Tonnetz landed. S1-S4
 remain planned except where explicitly recorded below.** Bounded comparison exports and
 browser consumer proofs exist, as recorded below. The musical subsystem review
 and isolated enumeration probe below are research, not implementation of these
@@ -137,6 +137,50 @@ material at reduced breadth, the complete major-key fifth chain through staged
 C, and duplicate-free shared-tone routes. Physical audio output was not checked
 in this graph receipt. Denser label/edge treatment, key-aware enharmonic spelling,
 other musical arrangements, and multi-card comparison remain follow-up work.
+
+### Tonnetz (2026-09-06)
+
+Second musical reading: major/minor triads occupy triangles whose vertices name
+their pitch classes. P/L/R transformations retain two tones, with separate slugs
+and explanations for Parallel, Relative, and Leading-tone exchange. The same
+keyed identities and Set occurrences pass through the shared context request;
+the reading selects its candidate query, coordinates, and highlighted edges.
+
+The bounded patch contains each of the 24 triads once. Lattice vertices repeat
+pitch classes at boundaries; transformation links crossing those boundaries are
+explicitly explained as wraps. The pitch generators are fifths and major thirds,
+with C major placed inside the patch so its three direct transformations share
+literal visible edges. The implementation derives the pitch arithmetic rather
+than importing a third-party visualization. Musical reference:
+[P/L/R and Tonnetz explanation](https://tonnetz.liamrosenfeld.com/explain-music).
+
+Done conditions: all 24 triangle pitch sets match catalog material; each P/L/R
+operation is reversible and preserves two tones; breadth and prior disclosure
+do not block discovery; focus preserves Set membership and existing positions;
+the actual desktop displays triangles, notes, and inspectable chord targets;
+comparison, Hear, Add, and context hiding work through the existing actions.
+The fixed lattice supports pan/zoom; dragging an individual chord cannot detach
+it from its pitches. Unsupported focus currently opens the C-major neighborhood;
+scales and extended chords retain their fallback placement without triad cells.
+Register-sensitive voice leading, ergonomic cost, seventh
+chord extensions, and harmonic syntax remain separate work.
+
+The native Sprigging leaf paints lattice strokes with the same viewport projection
+as the graph; retained labels name pitch vertices and compact chord centers.
+CSS-rotated line boxes failed the rendered gate and were replaced. Pitch labels
+share the graph's retained label layer after a separate overlay failed to paint.
+
+**Validation (2026-09-06):** 341 core, graph, views, woodshedding, and example
+tests passed. Final view changes passed all 51 view tests; the strengthened
+Tonnetz suite passed eight focused core tests, including all 24 triads' reversible
+P/L/R operations and shared-tone counts. The desktop build passed with the
+existing unused-import/dead-code warnings. `scenarios/p4e_tonnetz.scn` passed
+actual pointer targets, C-major/E-minor comparison, explicit Add, and context
+hiding. Presented captures in `Code/testing/woodshed/tonnetz-20260906/run03/`
+confirm closed triangle cells, vertex pitches, compact chord labels, and focused
+emphasis. `receipt.json` in its parent records the source commit and hashes.
+Physical audio output was not checked. Enharmonic spelling remains sharp-based;
+viewport framing and repeated-occurrence label density can be refined further.
 
 ### S1. Keyed occurrence relations
 

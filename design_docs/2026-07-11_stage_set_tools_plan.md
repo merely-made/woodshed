@@ -522,10 +522,11 @@ the same operations remain available through the list projection.
 #### P4e. Ship a small projection catalog
 
 **Current state: partial.** Ten deterministic arrangements are selectable and
-have a two-layout headed receipt. Circle-of-Fifths context is implemented in the
-September 6 slice below; the other contextual theory maps remain open.
+have a two-layout headed receipt. Circle-of-Fifths context and the triadic
+Tonnetz have September 6 implementation and rendered receipts; the other
+contextual theory maps remain open.
 
-**2026-09-06 contextual arrangement:** the first musical reading is
+**2026-09-06 contextual arrangements:** Circle of fifths and Tonnetz are
 tracked in [Musical Projections](2026-09-04_musical_projections_plan.md#context-around-the-set-2026-09-06).
 An arrangement selects relevant background material as well as coordinates.
 Clicking background material focuses and expands it while preserving placement;
