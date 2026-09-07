@@ -7,15 +7,16 @@ workspace, and every package is unpublished while public naming remains gated.
 Current packages:
 
 - `redshank-model`: durable library, queue, progress, settings, representation
-  receipts, text notes, audio notes, and host adapter traits;
+  receipts, text notes, audio notes, and the capture-host trait;
 - `redshank-storage`: a local JSON store using immutable numbered generations;
 - `redshank-surfaces`: reusable Cambium Player and Capture surfaces, plus the
   full Library, Queue, Notes, and Settings composition. The compact
   composition depends only on its presentation snapshot and command queue, so a
   host can mount it without the Library;
-- `redshank-playback`: an experimental local MP3/AAC decoder worker using
-  Symphonia and one host-owned Firewheel/CPAL output. HTTP and host blobs report
-  unsupported-source errors. Genet controller conformance is still pending;
+- `redshank-playback`: a local MP3/AAC decoder worker using Symphonia and one
+  host-owned Firewheel/CPAL output, admitted through Genet's player controller.
+  HTTP and host blobs report unsupported-source errors through the same source
+  vocabulary;
 - `redshank-desktop`: the sovereign executable over Mere's Cambium/Genet winit
   host. It restores selection and per-item progress, opens local files, and
   saves text notes with frozen item/time/representation targets. Disk writes

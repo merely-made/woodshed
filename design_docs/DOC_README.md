@@ -24,9 +24,10 @@ before any other doc in this directory.
   **Active; Phases 0-3 complete, Phase 4 in progress.** Redshank is a separate audio-listening and timed
   text/voice-annotation port incubated in this repository. The September 6
   local-file slice adds a Symphonia/Firewheel worker, full listening surfaces,
-  and saved text-note editing. Controller conformance, HTTP/cache playback,
-  headed acceptance, and Turnstone as second host remain open. It is separate
-  from the Woodshed product graph.
+  and saved text-note editing. The September 7 controller-admission slice puts
+  the real decoder, sole output, transport state, and sink clock behind Genet's
+  controller. HTTP/cache playback, headed acceptance, and Turnstone as second
+  host remain open. It is separate from the Woodshed product graph.
 - [2026-07-11_stage_set_tools_plan.md](2026-07-11_stage_set_tools_plan.md)
   — **In progress; product authority.** P1-P3 remain partial. P4a/P4b landed;
   the scene canvas and single-Card expansion have receipts, while the full P4e
