@@ -15,12 +15,13 @@ use redshank_model::{MediaSource, RepresentationReceipt};
 
 mod backend;
 mod controller_adapter;
+mod http_range;
 mod output;
 mod worker;
 
 pub(crate) use backend::Backend;
 #[cfg(test)]
-use backend::{consume_frames, drained, open_local, presented_ms};
+use backend::{consume_frames, drained, open_http, open_local, presented_ms};
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub enum PlaybackState {
@@ -179,7 +180,7 @@ mod tests {
     }
 
     #[test]
-    fn unsupported_load_publishes_its_token_and_controller_error() {
+    fn failed_remote_load_publishes_its_token_and_controller_error() {
         let runtime = PlaybackRuntime::start();
         runtime
             .command(PlaybackCommand::Load {
@@ -197,7 +198,7 @@ mod tests {
             .command(PlaybackCommand::Load {
                 token: 9,
                 source: MediaSource::Enclosure {
-                    url: "https://example.test/episode.mp3".into(),
+                    url: "redshank-test://missing/episode.mp3".into(),
                 },
                 resume_ms: 0,
             })
@@ -207,7 +208,9 @@ mod tests {
                 && matches!(snapshot.state, PlaybackState::Unavailable(_))
         });
         assert!(
-            matches!(snapshot.state, PlaybackState::Unavailable(ref error) if error.contains("HTTP playback"))
+            matches!(snapshot.state, PlaybackState::Unavailable(ref error) if error.contains("could not reach HTTP audio source")),
+            "unexpected remote failure: {:?}",
+            snapshot.state
         );
         assert_eq!(snapshot.position_ms, 0);
         assert_eq!(snapshot.duration_ms, None);
@@ -313,5 +316,45 @@ mod tests {
                 .and_then(|receipt| receipt.complete_digest)
                 .is_some()
         );
+    }
+
+    #[test]
+    #[ignore = "requires REDSHANK_HTTP_FIXTURE_URL served with byte ranges"]
+    fn supplied_http_fixture_decodes_progressively() {
+        let url = std::env::var("REDSHANK_HTTP_FIXTURE_URL")
+            .expect("set REDSHANK_HTTP_FIXTURE_URL to a range-served MP3 fixture");
+        let (mut decoder, receipt) = open_http(&url).unwrap();
+        assert_eq!(receipt.requested_url.as_deref(), Some(url.as_str()));
+        assert!(receipt.byte_length.is_some());
+        loop {
+            let packet = decoder.format.next_packet().unwrap();
+            if packet.track_id() != decoder.track_id {
+                continue;
+            }
+            let decoded = decoder.decoder.decode(&packet).unwrap();
+            assert!(decoded.frames() > 0);
+            break;
+        }
+    }
+
+    #[test]
+    #[ignore = "requires REDSHANK_HTTP_FIXTURE_URL and a default output device"]
+    fn supplied_http_fixture_reaches_controller_ready() {
+        let url = std::env::var("REDSHANK_HTTP_FIXTURE_URL")
+            .expect("set REDSHANK_HTTP_FIXTURE_URL to a range-served MP3 fixture");
+        let runtime = PlaybackRuntime::start();
+        runtime
+            .command(PlaybackCommand::Load {
+                token: 51,
+                source: MediaSource::Enclosure { url },
+                resume_ms: 400,
+            })
+            .unwrap();
+        let snapshot = wait_for(&runtime, |snapshot| {
+            snapshot.load_token == Some(51) && snapshot.state != PlaybackState::Loading
+        });
+        assert_eq!(snapshot.state, PlaybackState::Paused, "{snapshot:?}");
+        assert!((300..=500).contains(&snapshot.position_ms));
+        assert!(snapshot.representation.is_some());
     }
 }

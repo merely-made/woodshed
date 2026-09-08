@@ -1,7 +1,7 @@
 use std::{
     fs::File,
     io::{Read, Seek, SeekFrom},
-    path::{Path, PathBuf},
+    path::Path,
     sync::{Arc, Mutex},
     time::Duration,
 };
@@ -17,13 +17,16 @@ use symphonia::core::{
     codecs::DecoderOptions,
     errors::Error as SymphoniaError,
     formats::{FormatOptions, SeekMode, SeekTo},
-    io::MediaSourceStream,
+    io::{MediaSource, MediaSourceStream},
     meta::MetadataOptions,
     probe::Hint,
     units::Time,
 };
 
-use crate::output::AudioRuntime;
+use crate::{
+    http_range::{DEFAULT_CACHE_BYTES, HttpRangeSource},
+    output::AudioRuntime,
+};
 
 pub(super) struct Sink {
     pub(super) state: Arc<Mutex<StreamWriterState>>,
@@ -108,10 +111,6 @@ pub(super) struct Decoder {
 }
 
 pub(super) fn open_local(path: &Path) -> Result<(Decoder, RepresentationReceipt)> {
-    let mut hint = Hint::new();
-    if let Some(extension) = path.extension().and_then(|extension| extension.to_str()) {
-        hint.with_extension(extension);
-    }
     let mut file =
         File::open(path).with_context(|| format!("could not open {}", path.display()))?;
     let length = file.metadata().ok().map(|metadata| metadata.len());
@@ -128,7 +127,33 @@ pub(super) fn open_local(path: &Path) -> Result<(Decoder, RepresentationReceipt)
     }
     file.seek(SeekFrom::Start(0))
         .context("could not rewind local audio")?;
-    let stream = MediaSourceStream::new(Box::new(file), Default::default());
+    let decoder = open_decoder(Box::new(file), path.to_str().unwrap_or_default())?;
+    Ok((
+        decoder,
+        RepresentationReceipt {
+            byte_length: length,
+            complete_digest: Some(format!("blake3:{}", digest.finalize().to_hex())),
+            ..RepresentationReceipt::default()
+        },
+    ))
+}
+
+pub(super) fn open_http(url: &str) -> Result<(Decoder, RepresentationReceipt)> {
+    let (source, receipt) = HttpRangeSource::open(url, DEFAULT_CACHE_BYTES)?;
+    let decoder = open_decoder(Box::new(source), url)?;
+    Ok((decoder, receipt))
+}
+
+fn open_decoder(source: Box<dyn MediaSource>, hint_source: &str) -> Result<Decoder> {
+    let mut hint = Hint::new();
+    let path = hint_source.split(['?', '#']).next().unwrap_or(hint_source);
+    if let Some(extension) = Path::new(path)
+        .extension()
+        .and_then(|extension| extension.to_str())
+    {
+        hint.with_extension(extension);
+    }
+    let stream = MediaSourceStream::new(source, Default::default());
     let probed = symphonia::default::get_probe()
         .format(
             &hint,
@@ -157,25 +182,18 @@ pub(super) fn open_local(path: &Path) -> Result<(Decoder, RepresentationReceipt)
         .codec_params
         .channels
         .map(|layout| layout.count() as u32);
-    Ok((
-        Decoder {
-            decoder: symphonia::default::get_codecs()
-                .make(&track.codec_params, &DecoderOptions::default())
-                .context("could not create audio decoder")?,
-            track_id: track.id,
-            format: probed.format,
-            sample_buffer: None,
-            rate,
-            channels,
-            time_base,
-            duration_ms,
-        },
-        RepresentationReceipt {
-            byte_length: length,
-            complete_digest: Some(format!("blake3:{}", digest.finalize().to_hex())),
-            ..RepresentationReceipt::default()
-        },
-    ))
+    Ok(Decoder {
+        decoder: symphonia::default::get_codecs()
+            .make(&track.codec_params, &DecoderOptions::default())
+            .context("could not create audio decoder")?,
+        track_id: track.id,
+        format: probed.format,
+        sample_buffer: None,
+        rate,
+        channels,
+        time_base,
+        duration_ms,
+    })
 }
 
 #[derive(Default)]
@@ -236,23 +254,31 @@ impl Backend {
                 },
             });
         }
-        let path = match source {
-            servo_media_player::controller::MediaSource::Local { path } => PathBuf::from(path),
+        self.retire_sink()?;
+        let (decoder, representation, source_label) = match source {
+            servo_media_player::controller::MediaSource::Local { path } => {
+                let path = Path::new(path);
+                let (decoder, representation) =
+                    open_local(path).map_err(|error| error.to_string())?;
+                (decoder, representation, path.display().to_string())
+            },
             servo_media_player::controller::MediaSource::Http { url } => {
-                return Err(format!(
-                    "HTTP playback is not enabled in this bounded desktop runtime: {url}"
-                ));
+                let (decoder, representation) =
+                    open_http(url).map_err(|error| error.to_string())?;
+                let source_label = representation
+                    .final_url
+                    .clone()
+                    .unwrap_or_else(|| url.clone());
+                (decoder, representation, source_label)
             },
             servo_media_player::controller::MediaSource::HostBlob { id } => {
                 return Err(format!("host blob playback needs the embedding host: {id}"));
             },
         };
-        self.retire_sink()?;
-        let (decoder, representation) = open_local(&path).map_err(|error| error.to_string())?;
         let duration = decoder.duration_ms.map(Duration::from_millis);
         self.decoder = Some(decoder);
         self.representation = Some(representation);
-        self.source = Some(path.display().to_string());
+        self.source = Some(source_label);
         self.pending.clear();
         self.eof = false;
         self.base_ms = 0;

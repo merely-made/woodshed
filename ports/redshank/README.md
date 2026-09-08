@@ -13,10 +13,11 @@ Current packages:
   full Library, Queue, Notes, and Settings composition. The compact
   composition depends only on its presentation snapshot and command queue, so a
   host can mount it without the Library;
-- `redshank-playback`: a local MP3/AAC decoder worker using Symphonia and one
+- `redshank-playback`: an MP3/AAC decoder worker using Symphonia and one
   host-owned Firewheel/CPAL output, admitted through Genet's player controller.
-  HTTP and host blobs report unsupported-source errors through the same source
-  vocabulary;
+  Local files and Rustls-backed HTTP(S) byte-range sources use the same command
+  vocabulary. HTTP ranges occupy at most 256 KiB in memory; host blobs still
+  require an embedding host;
 - `redshank-desktop`: the sovereign executable over Mere's Cambium/Genet winit
   host. It restores selection and per-item progress, opens local files, and
   saves text notes with frozen item/time/representation targets. Disk writes
@@ -33,8 +34,9 @@ does not retarget an open draft. Closing saves a nonempty draft and progress;
 a save failure leaves the window and draft open. `REDSHANK_DATA_DIR` overrides
 the local storage directory for isolated runs.
 
-Open a local recording using **Open local file**, `Ctrl+O`, or a file path as
-the executable's first argument. Outside the editor, Space toggles playback,
+Open a local recording using **Open local file**, `Ctrl+O`, or pass a file path
+or direct HTTP(S) audio URL as the executable's first argument. Remote servers
+must support byte ranges. Outside the editor, Space toggles playback,
 Left/Right skip by the configured interval, and N begins a text note.
 `Ctrl+Enter` saves the editor. Text capture supports Pause and Continue.
 
@@ -46,10 +48,12 @@ default output device, waits for durable storage acknowledgments, and prints a
 single `redshank-headed-receipt ... PASS` line before exiting. This driver does
 not run when the variable is unset.
 
-This is a local listening slice of Phase 4. Subscription, HTTP fetching/cache,
-voice capture, rate/volume controls, representation-drift warnings/remapping,
-and Turnstone embedding remain open. A local digest is computed before decode
-from the opened file; it does not make a concurrently modified file immutable.
+This Phase 4 slice supports local and bounded progressive HTTP(S) listening.
+Subscription, durable offline caching, voice capture, rate/volume controls,
+representation-drift warnings/remapping, and Turnstone embedding remain open.
+A local digest is computed before decode from the opened file; it does not make
+a concurrently modified file immutable. Remote receipts retain validators but
+do not claim a complete digest until every byte is durably cached.
 See the [canonical plan](../../design_docs/2026-09-01_listening_annotation_port_plan.md)
 for current validation receipts and the remaining done-conditions.
 

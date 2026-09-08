@@ -28,6 +28,11 @@ pub enum LibraryItem {
         title: String,
         source: MediaSource,
     },
+    DirectAudio {
+        id: ItemId,
+        title: String,
+        source: MediaSource,
+    },
     FeedEpisode {
         id: ItemId,
         feed_url: String,
@@ -40,19 +45,25 @@ pub enum LibraryItem {
 impl LibraryItem {
     pub fn id(&self) -> &ItemId {
         match self {
-            Self::LocalAudio { id, .. } | Self::FeedEpisode { id, .. } => id,
+            Self::LocalAudio { id, .. }
+            | Self::DirectAudio { id, .. }
+            | Self::FeedEpisode { id, .. } => id,
         }
     }
 
     pub fn source(&self) -> &MediaSource {
         match self {
-            Self::LocalAudio { source, .. } | Self::FeedEpisode { source, .. } => source,
+            Self::LocalAudio { source, .. }
+            | Self::DirectAudio { source, .. }
+            | Self::FeedEpisode { source, .. } => source,
         }
     }
 
     pub fn title(&self) -> &str {
         match self {
-            Self::LocalAudio { title, .. } | Self::FeedEpisode { title, .. } => title,
+            Self::LocalAudio { title, .. }
+            | Self::DirectAudio { title, .. }
+            | Self::FeedEpisode { title, .. } => title,
         }
     }
 }

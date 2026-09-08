@@ -213,6 +213,34 @@ impl Desktop {
         self.select(id)
     }
 
+    fn open_url(&mut self, url: String) -> Result<(), String> {
+        if !url.starts_with("http://") && !url.starts_with("https://") {
+            return Err("Remote audio URLs must use HTTP or HTTPS".into());
+        }
+        let id = ItemId(format!("remote:{url}"));
+        if !self.session.model.library.contains_key(&id) {
+            let title = url
+                .split(['?', '#'])
+                .next()
+                .and_then(|value| value.rsplit('/').find(|part| !part.is_empty()))
+                .unwrap_or("Remote audio")
+                .to_owned();
+            self.session
+                .model
+                .add_item(LibraryItem::DirectAudio {
+                    id: id.clone(),
+                    title,
+                    source: MediaSource::Enclosure { url },
+                })
+                .map_err(|e| format!("Could not add URL: {e:?}"))?;
+        }
+        self.session
+            .model
+            .enqueue(&id)
+            .map_err(|e| format!("Could not queue URL: {e:?}"))?;
+        self.select(id)
+    }
+
     fn begin_note(&mut self, state: &mut RedshankSurfaceState) -> Result<(), String> {
         if state.text_capture.is_some() {
             return Err("Save or cancel the current note first".into());
@@ -687,8 +715,8 @@ fn main() {
     };
     let mut state = RedshankSurfaceState::default();
     state.notice = notice;
-    // An optional local path is useful for file associations and reproducible receipts.
-    let initial = std::env::args_os().nth(1).map(PathBuf::from);
+    // An optional local path or direct URL supports associations and reproducible receipts.
+    let initial = std::env::args_os().nth(1);
     let restored = desktop
         .session
         .model
@@ -696,8 +724,13 @@ fn main() {
         .clone()
         .filter(|id| desktop.session.model.library.contains_key(id))
         .or_else(|| desktop.session.model.queue.first().cloned());
-    let result = if let Some(path) = initial {
-        desktop.open(path)
+    let result = if let Some(source) = initial {
+        match source.to_str() {
+            Some(url) if url.starts_with("http://") || url.starts_with("https://") => {
+                desktop.open_url(url.to_owned())
+            },
+            _ => desktop.open(PathBuf::from(source)),
+        }
     } else if let Some(id) = restored {
         desktop.select(id)
     } else {

@@ -180,6 +180,7 @@ mod tests {
     fn populated_model() -> RedshankModel {
         let mut model = RedshankModel::default();
         let local = ItemId("local".into());
+        let direct = ItemId("direct".into());
         let episode = ItemId("episode".into());
         model
             .add_item(LibraryItem::LocalAudio {
@@ -187,6 +188,15 @@ mod tests {
                 title: "Field recording".into(),
                 source: MediaSource::Local {
                     path: "field.flac".into(),
+                },
+            })
+            .unwrap();
+        model
+            .add_item(LibraryItem::DirectAudio {
+                id: direct,
+                title: "Direct recording".into(),
+                source: MediaSource::Enclosure {
+                    url: "https://cdn.example.test/direct.mp3".into(),
                 },
             })
             .unwrap();

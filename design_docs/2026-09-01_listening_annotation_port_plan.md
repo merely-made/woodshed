@@ -8,9 +8,10 @@ core, and unified source vocabulary are landed. Phase 2 is complete with the
 unpublished model and generation store. Phase 3 is complete with shared podcast
 feed facts and GUID-stable Turnstone projection. Phase 4 is active with the
 reusable Cambium controls, Mere-hosted sovereign shell, and local listening
-workflow landed. Genet controller admission is also landed; subscriptions,
-HTTP/cache playback, and their degraded states remain open. A headed local
-playback, text-note, persistence, restart, and resume receipt now passes.
+workflow landed. Genet controller admission and bounded progressive HTTP
+playback are also landed. Subscriptions and a durable offline episode cache
+remain open. Headed local and HTTP playback, text-note, persistence, restart,
+and resume receipts now pass.
 
 ## Ruling
 
@@ -563,11 +564,12 @@ This slice is done when the controller drives local play, pause, seek, ready,
 end-of-stream, and error transitions; sink snapshots remain authoritative;
 typed capability errors survive the adapter; all three source variants use the
 shared mapping; stale-token, resume, and representation tests pass; and the
-workspace remains green. HTTP/cache playback, voice capture,
-representation drift, and Turnstone embedding remain outside the slice.
+workspace remains green. At controller admission, HTTP/cache playback, voice
+capture, representation drift, and Turnstone embedding remained outside the
+slice.
 
-Phase 4 remains open for subscriptions, HTTP/progressive cache playback and its
-error cases. Voice input, ducking, rate/volume controls, media-fragment export,
+Phase 4 remains open for subscriptions and a durable offline episode cache.
+Voice input, ducking, rate/volume controls, media-fragment export,
 representation drift, and Turnstone as a second host also remain open in their
 respective phases. No physical listening or microphone receipt is implied by
 the source changes.
@@ -646,8 +648,42 @@ This closes the Phase 4 headed playback/restart/text-note scenario and proves
 that the local output runtime opened successfully. The driver does not
 synthesize keyboard or pointer input, and this is not an acoustic measurement
 or a screen-reader interaction receipt. The existing headless host tests remain
-the evidence for keyboard routing and control semantics. HTTP/cache and offline
-or exhausted-cache behavior remain open.
+the evidence for keyboard routing and control semantics. At this point,
+HTTP/cache and offline or exhausted-cache behavior remained open.
+
+#### Progressive HTTP playback receipt, 2026-09-08
+
+The private Symphonia source adapter now admits direct HTTP and HTTPS enclosure
+URLs through Ureq with Rustls and WebPKI roots. It requires byte-range support,
+requests identity encoding, validates every `Content-Range`, and uses `ETag` or
+`Last-Modified` as `If-Range` when available. Redirect target, media type,
+length, validators, and retrieval time enter the representation receipt. A
+complete digest remains absent until a future durable full-object cache owns
+all bytes.
+
+The progressive cache is memory-only and bounded to 256 KiB in the desktop
+runtime. Deterministic local-server tests used a 3,000,000-byte object and a
+128 KiB test budget. The probe plus three nonadjacent reads issued four
+requests, fetched 196,609 bytes (6.6%), and never exceeded the budget. Separate
+tests reject malformed or mismatched ranges, a server that returns `200` to a
+range probe, a changed representation that returns `200` after `If-Range`, and
+a budget below one 64 KiB range chunk.
+
+The standalone host accepts an HTTP(S) URL as its first argument and persists
+it as a direct-audio library item. A fresh two-process headed receipt against
+the localhost range server passed through the real Genet controller and
+Firewheel/CPAL output: seed saved a note at 199 ms, and verify restored the URL,
+note, and progress before resuming at 473 ms. The final durable generation held
+494 ms progress and the remote representation receipt. Both processes exited
+zero and projected 33 then 35 accessibility nodes.
+
+One immediate verify attempt timed out in `WaitLoaded`; a later retry and the
+fresh pair with a one-second process handoff passed. Rapid output-device
+teardown/reopen stress therefore remains unclaimed. The live receipt used HTTP;
+the Rustls dependency and code path establish HTTPS capability, but this pass
+did not perform a public-certificate handshake. Offline replay, full-object
+digesting, automatic download, cache-budget UI, and eviction policy remain for
+the durable cache slice.
 
 ### Phase 5: voice capture and open annotation target
 
@@ -850,3 +886,9 @@ rejected for the reasons recorded in the 2026-09-01 planning pass.
   selected item and annotation, and resumed at 465 ms. This closes the headed
   playback/restart/text-note condition. Subscriptions and HTTP/progressive
   cache behavior still keep Phase 4 open.
+- **2026-09-08:** Promoted the bounded range source into the shipping playback
+  adapter with Rustls HTTPS support, validator-aware representation receipts,
+  strict range validation, and bounded-memory degradation tests. Direct URL
+  items now survive restart. A fresh headed HTTP seed/verify pair passed at
+  199/473 ms with a one-second process handoff. Subscriptions and durable
+  offline caching remain open.
