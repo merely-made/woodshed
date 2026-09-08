@@ -17,9 +17,11 @@ pub mod harmony;
 pub mod history;
 pub mod mere;
 pub mod midi;
+pub mod pitch_motion_reading;
 pub mod sealed_backend;
 pub mod search;
 pub mod settings;
+pub mod shape_movement;
 pub mod song;
 pub mod stage_candidates;
 pub mod stage_context;
@@ -397,10 +399,10 @@ pub struct StageState {
     pub exercise_step_idx: usize,
     /// True while auto-advancing.
     pub exercise_playing: bool,
-    /// One-entry transient cache for selected-shape rendering, audition, and
+    /// Two-entry transient cache for selected-shape comparison, audition, and
     /// controls in the same frame. It is derived from the card + live setup and
     /// never participates in persistence.
-    card_shape_cache: RefCell<Option<card_shapes::CardShapeCache>>,
+    card_shape_cache: RefCell<Vec<card_shapes::CardShapeCache>>,
 }
 
 /// How many trailing steps the exercise board keeps visible behind the
@@ -742,7 +744,7 @@ impl StageState {
             exercise_starting_fret: 1,
             exercise_step_idx: 0,
             exercise_playing: false,
-            card_shape_cache: RefCell::new(None),
+            card_shape_cache: RefCell::new(Vec::new()),
         }
     }
 

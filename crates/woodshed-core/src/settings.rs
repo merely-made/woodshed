@@ -132,16 +132,23 @@ pub enum StageGraphReading {
     Set,
     CircleOfFifths,
     Tonnetz,
+    PitchMotion,
 }
 
 impl StageGraphReading {
-    pub const ALL: [Self; 3] = [Self::Set, Self::CircleOfFifths, Self::Tonnetz];
+    pub const ALL: [Self; 4] = [
+        Self::Set,
+        Self::CircleOfFifths,
+        Self::Tonnetz,
+        Self::PitchMotion,
+    ];
 
     pub fn label(self) -> &'static str {
         match self {
             Self::Set => "Set",
             Self::CircleOfFifths => "Circle of fifths",
             Self::Tonnetz => "Tonnetz",
+            Self::PitchMotion => "Pitch motion",
         }
     }
 
@@ -149,7 +156,8 @@ impl StageGraphReading {
         match self {
             Self::Set => Self::CircleOfFifths,
             Self::CircleOfFifths => Self::Tonnetz,
-            Self::Tonnetz => Self::Set,
+            Self::Tonnetz => Self::PitchMotion,
+            Self::PitchMotion => Self::Set,
         }
     }
 }

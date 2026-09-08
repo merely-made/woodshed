@@ -78,6 +78,17 @@ pub struct CardShapeGeometry {
     pub capo: u8,
 }
 
+/// The exact effective setup used to resolve a selected shape. The concert
+/// open-string MIDI values protect comparison from treating two differently
+/// pitched tunings with the same display name as interchangeable.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct ResolvedShapeSetup {
+    pub instrument: Instrument,
+    pub tuning_name: String,
+    pub capo: u8,
+    pub concert_open_midi: Vec<i32>,
+}
+
 /// A selected shape after resolving card setup. `voicing.strings` keeps frets
 /// relative to the capo; dots and `physical_positions` use nut-relative frets.
 #[derive(Clone, Debug)]
@@ -91,6 +102,7 @@ pub struct ResolvedCardShape {
     pub limited_inventory: bool,
     pub tuning_name: String,
     pub instrument: Instrument,
+    pub setup: ResolvedShapeSetup,
     pub geometry: CardShapeGeometry,
     pub voicing: ChordVoicing,
 }
@@ -133,6 +145,7 @@ struct CardShapeCandidates {
     geometry: CardShapeGeometry,
     tuning_name: String,
     instrument: Instrument,
+    setup: ResolvedShapeSetup,
     voicings: Vec<ChordVoicing>,
     limited_inventory: bool,
     profile: &'static str,
@@ -162,13 +175,21 @@ impl StageState {
         card: &Card,
     ) -> Result<CardShapeCandidates, CardShapeUnavailable> {
         let key = self.card_shape_cache_key(card);
-        if let Some(cache) = self.card_shape_cache.borrow().as_ref() {
-            if cache.key == key {
-                return cache.candidates.clone();
+        {
+            let mut cache = self.card_shape_cache.borrow_mut();
+            if let Some(index) = cache.iter().position(|entry| entry.key == key) {
+                let entry = cache.remove(index);
+                let candidates = entry.candidates.clone();
+                cache.push(entry);
+                return candidates;
             }
         }
         let candidates = self.compute_card_shape_candidates(card);
-        *self.card_shape_cache.borrow_mut() = Some(CardShapeCache {
+        let mut cache = self.card_shape_cache.borrow_mut();
+        if cache.len() >= 2 {
+            cache.remove(0);
+        }
+        cache.push(CardShapeCache {
             key,
             candidates: candidates.clone(),
         });
@@ -253,6 +274,16 @@ impl StageState {
         let shape_root = Pitch::from_midi(48 + root.value() as i32, Spelling::Sharps);
         let concert_root = Pitch::from_midi(shape_root.midi() + capo as i32, Spelling::Sharps);
         let concert_tuning = tuning.transposed(capo as i32, Spelling::Sharps);
+        let setup = ResolvedShapeSetup {
+            instrument: tuning.instrument,
+            tuning_name: tuning.name.clone(),
+            capo,
+            concert_open_midi: concert_tuning
+                .strings
+                .iter()
+                .map(|pitch| pitch.midi())
+                .collect(),
+        };
         let span = relative_end - relative_start;
         let mut limited_inventory = span > MAX_COMPLETE_SHAPE_SPAN;
         let windows: Vec<(u8, u8)> = if limited_inventory {
@@ -313,6 +344,7 @@ impl StageState {
             geometry,
             tuning_name: tuning.name,
             instrument: tuning.instrument,
+            setup,
             voicings,
             limited_inventory,
             profile,
@@ -361,6 +393,7 @@ impl StageState {
             limited_inventory: candidates.limited_inventory,
             tuning_name: candidates.tuning_name,
             instrument: candidates.instrument,
+            setup: candidates.setup,
             geometry: candidates.geometry,
             voicing,
         })
@@ -768,5 +801,42 @@ mod tests {
             CardShapeStatus::Available(_)
         ));
         assert!(card.setting.voicing_idx.expect("selected") < count);
+    }
+
+    #[test]
+    fn two_card_cache_retains_recent_comparison_setups_and_evicts_oldest() {
+        let state = StageState::new();
+        let mut first = c_major_card();
+        first.setting.fret_window = Some(FretWindow { start: 0, span: 4 });
+        let mut second = c_major_card();
+        second.setting.fret_window = Some(FretWindow { start: 1, span: 4 });
+        let mut third = c_major_card();
+        third.setting.fret_window = Some(FretWindow { start: 2, span: 4 });
+
+        let first_key = state.card_shape_cache_key(&first);
+        let second_key = state.card_shape_cache_key(&second);
+        let third_key = state.card_shape_cache_key(&third);
+        let _ = state.card_shape_candidates(&first);
+        let _ = state.card_shape_candidates(&second);
+        assert_eq!(state.card_shape_cache.borrow().len(), 2);
+
+        let _ = state.card_shape_candidates(&first);
+        assert_eq!(
+            state
+                .card_shape_cache
+                .borrow()
+                .last()
+                .map(|entry| &entry.key),
+            Some(&first_key)
+        );
+        let _ = state.card_shape_candidates(&third);
+        let keys = state
+            .card_shape_cache
+            .borrow()
+            .iter()
+            .map(|entry| entry.key.clone())
+            .collect::<Vec<_>>();
+        assert_eq!(keys, vec![first_key, third_key]);
+        assert!(!keys.contains(&second_key));
     }
 }

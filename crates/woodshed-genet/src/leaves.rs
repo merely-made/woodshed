@@ -17,20 +17,20 @@ use woodshed_views::stage::{NEIGHBORHOOD_LEAF_KEY, SET_GRAPH_LEAF_KEY, UiState};
 
 use crate::shared::Shared;
 
-struct TonnetzSegment {
+struct StageGuideSegment {
     a: (f32, f32),
     b: (f32, f32),
     active: bool,
 }
 
-struct TonnetzGraphLeaf {
+struct StageGuidesLeaf {
     graph: sprigging::GraphCanvas,
-    segments: Vec<TonnetzSegment>,
+    segments: Vec<StageGuideSegment>,
     viewport: cambium::GraphViewport,
     inset: f32,
 }
 
-impl Leaf for TonnetzGraphLeaf {
+impl Leaf for StageGuidesLeaf {
     fn accessibility(&mut self, node: &mut accesskit::Node) {
         self.graph.accessibility(node);
     }
@@ -170,7 +170,41 @@ fn sync_related_swatch(shared: &mut Shared, ui: &UiState, leaves: &mut LeafRegis
     leaves.insert(NEIGHBORHOOD_LEAF_KEY, Box::new(leaf));
 }
 
-fn tonnetz_segments(ui: &UiState) -> Vec<TonnetzSegment> {
+fn tonnetz_segments(ui: &UiState) -> Vec<StageGuideSegment> {
+    if ui.app_settings.stage.set_graph_reading
+        == woodshed_core::settings::StageGraphReading::PitchMotion
+    {
+        let Some(anchor) = ui.pitch_motion_anchor.as_ref() else {
+            return Vec::new();
+        };
+        let snapshot = woodshed_views::stage::set_graph_snapshot(ui);
+        let bounds = snapshot.snapshot.tables.bounds;
+        let normalize = |x: f32, y: f32| {
+            (
+                (x - bounds.origin.x) / bounds.size.w,
+                (y - bounds.origin.y) / bounds.size.h,
+            )
+        };
+        let center = woodshed_core::pitch_motion_reading::CENTER;
+        let mut segments = Vec::new();
+        for (_, radius) in woodshed_core::pitch_motion_reading::guides(anchor) {
+            for index in 0..96 {
+                let a = index as f32 / 96.0 * std::f32::consts::TAU;
+                let b = (index + 1) as f32 / 96.0 * std::f32::consts::TAU;
+                segments.push(StageGuideSegment {
+                    a: normalize(center.0 + radius * a.cos(), center.1 + radius * a.sin()),
+                    b: normalize(center.0 + radius * b.cos(), center.1 + radius * b.sin()),
+                    active: false,
+                });
+            }
+        }
+        segments.push(StageGuideSegment {
+            a: normalize(540.0, -750.0),
+            b: normalize(540.0, 750.0),
+            active: false,
+        });
+        return segments;
+    }
     if ui.app_settings.stage.set_graph_reading
         != woodshed_core::settings::StageGraphReading::Tonnetz
     {
@@ -194,7 +228,7 @@ fn tonnetz_segments(ui: &UiState) -> Vec<TonnetzSegment> {
         .iter()
         .filter_map(|node| node.keyed.clone())
         .collect::<std::collections::BTreeSet<_>>();
-    let mut edges = BTreeMap::<((i32, i32), (i32, i32)), TonnetzSegment>::new();
+    let mut edges = BTreeMap::<((i32, i32), (i32, i32)), StageGuideSegment>::new();
     for keyed in materials {
         let Some(vertices) = woodshed_core::tonnetz::triangle(&keyed) else {
             continue;
@@ -210,7 +244,7 @@ fn tonnetz_segments(ui: &UiState) -> Vec<TonnetzSegment> {
             edges
                 .entry(key)
                 .and_modify(|segment| segment.active |= active)
-                .or_insert(TonnetzSegment {
+                .or_insert(StageGuideSegment {
                     a: points[from],
                     b: points[to],
                     active,
@@ -268,7 +302,7 @@ fn sync_set_graph_swatch(shared: &mut Shared, ui: &UiState, leaves: &mut LeafReg
     }
     shared.set_graph_sig = sig;
     let graph = swatch.paint_leaf(|kind: &&str| related_kind_color(kind));
-    let leaf = TonnetzGraphLeaf {
+    let leaf = StageGuidesLeaf {
         graph,
         segments,
         viewport: swatch.viewport,

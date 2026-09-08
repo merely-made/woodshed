@@ -42,6 +42,7 @@ mod context;
 #[cfg(test)]
 mod context_tests;
 mod looper;
+mod pitch_motion;
 mod rehearsal;
 mod related;
 mod set_tray;
@@ -337,6 +338,7 @@ pub fn set_graph_snapshot(ui: &UiState) -> StageGraphSnapshot {
             // user edits which edges are present.
             sequence: true,
             context,
+            pitch_motion_anchor: ui.pitch_motion_anchor.clone(),
             ..StageSceneOptions::default()
         },
     )
@@ -922,6 +924,8 @@ pub struct UiState {
     /// View-local focus in the wider Stage context graph. Focusing a
     /// background material does not change Set order or cursor selection.
     pub context_focus: Option<KeyedCatalogRef>,
+    /// Captured on entering Pitch motion; browsing never retargets the layout.
+    pub pitch_motion_anchor: Option<KeyedCatalogRef>,
     /// Keyed context identities already disclosed during this view session.
     /// The scene adapter uses these as retained nodes when focus moves.
     pub context_disclosed: BTreeSet<KeyedCatalogRef>,
@@ -1011,6 +1015,7 @@ impl UiState {
             related_expanded: false,
             related_relation: None,
             context_focus: None,
+            pitch_motion_anchor: None,
             context_disclosed: BTreeSet::new(),
             context_positions: BTreeMap::new(),
             practice_saved: true,
@@ -1110,7 +1115,10 @@ impl UiState {
                 };
             },
             GraphCanvasEvent::Drag(drag) => {
-                if self.app_settings.stage.set_graph_reading == StageGraphReading::Tonnetz {
+                if matches!(
+                    self.app_settings.stage.set_graph_reading,
+                    StageGraphReading::Tonnetz | StageGraphReading::PitchMotion
+                ) {
                     // Moving one chord would detach it from its three pitches.
                     // The whole lattice remains navigable through pan/zoom.
                     self.set_graph_drag_active = false;
@@ -1290,6 +1298,9 @@ impl UiState {
         if self.app_settings.stage.set_graph_reading == reading {
             return;
         }
+        self.pitch_motion_anchor = (reading == StageGraphReading::PitchMotion)
+            .then(|| self.pitch_motion_anchor_choice())
+            .flatten();
         self.app_settings.stage.set_graph_reading = reading;
         if reading != StageGraphReading::Set
             && self.app_settings.stage.set_graph_size() == (520, 260)
@@ -1765,6 +1776,10 @@ impl UiState {
         self.context_focus = None;
         self.context_disclosed.clear();
         self.card_shape_notice = None;
+        self.pitch_motion_anchor = (self.app_settings.stage.set_graph_reading
+            == StageGraphReading::PitchMotion)
+            .then(|| self.pitch_motion_anchor_choice())
+            .flatten();
         // The one bounded migration for sessions written before occurrence
         // identity: Cards gain ids, the legacy single-boolean edge toggle
         // becomes a relation set. Both persist on the next save, and both

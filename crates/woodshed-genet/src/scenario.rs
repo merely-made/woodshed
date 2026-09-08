@@ -794,6 +794,26 @@ impl Automatable for Probe<'_, '_> {
         let mut known = true;
         self.ctx.runner.update(|ui| match label {
             "stage-current" => ui.stage_current(None),
+            "shape-comparison-example" => {
+                ui.stage.set_root(3);
+                ui.root_dd.selected = 3;
+                ui.stage.set_lens(Lens::Chords);
+                if let Some(index) = ui
+                    .stage
+                    .chords()
+                    .iter()
+                    .position(|chord| chord.name == "Major")
+                {
+                    ui.stage.select_chord(index);
+                }
+                ui.stage_current(None);
+                ui.step_card_shape(1);
+                let index = ui.set.cursor;
+                ui.set.duplicate(index);
+                ui.set.cursor = index + 1;
+                ui.step_card_shape(1);
+                ui.select_app_section(woodshed_core::storage::AppSection::Rehearsal);
+            },
             "stage-context-example" => {
                 ui.stage.set_root(3); // C in the A-first root picker.
                 ui.root_dd.selected = 3;

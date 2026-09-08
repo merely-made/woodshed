@@ -295,3 +295,34 @@ fn selected_card_geometry_overrides_the_live_guitar() {
     });
     assert_eq!(h.state().set.cards[0].setting.fret_window.unwrap().start, 7);
 }
+
+#[test]
+fn neck_comparison_tracks_previous_card_and_shape_controls() {
+    let mut h = harness(700.0, 900.0);
+    h.update(|ui| {
+        ui.select_app_section(woodshed_core::storage::AppSection::Rehearsal);
+        ui.step_card_shape(1);
+        ui.set.duplicate(0);
+        ui.set.cursor = 1;
+    });
+    let movement = h
+        .state()
+        .stage
+        .compare_cards(&h.state().set.cards[0], &h.state().set.cards[1])
+        .unwrap();
+    assert_eq!(movement.total_matched_fret_travel, 0);
+    assert!(h.click_on(&Selector::class("card-shape-next")));
+    let changed = h
+        .state()
+        .stage
+        .compare_cards(&h.state().set.cards[0], &h.state().set.cards[1])
+        .unwrap();
+    assert_ne!(movement.per_string, changed.per_string);
+    assert!(h.click_on(&Selector::class("card-shape-clear")));
+    assert!(matches!(
+        h.state()
+            .stage
+            .compare_cards(&h.state().set.cards[0], &h.state().set.cards[1]),
+        Err(woodshed_core::shape_movement::ShapeMovementUnavailable::RightUnselected)
+    ));
+}

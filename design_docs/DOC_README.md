@@ -15,9 +15,9 @@ before any other doc in this directory.
   — Circle-of-Fifths context and the 24-triad Tonnetz are implemented: keyed background,
   separate focus/audition/Add actions, and stable expansion.
   The September 7-8 slices add exact pitch-motion comparison, nearby-candidate
-  browsing, and explicit selected-shape resolution. S1, S2 and S4 remain partial;
-  S3, an anchored pitch-motion reading, neck movement, and general fingering
-  costs remain open. The September 6 subsystem research
+  browsing, explicit selected-shape resolution, an anchored pitch-motion
+  reading, and per-string neck movement. S1 and S4 remain partial; S3,
+  multi-card comparison and general fingering costs remain open. The September 6 subsystem research
   maps meaning, inference, analysis, generation, and comparison; a live
   enumeration probe records lookahead/texture tradeoffs and the re-entrant
   bass defect, corrected by the selected-shape slice. Bounded comparison and

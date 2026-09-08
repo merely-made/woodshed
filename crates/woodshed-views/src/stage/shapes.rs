@@ -99,8 +99,101 @@ pub(super) fn controls(ui: &UiState) -> UiChild {
                     |ui: &mut UiState, _| ui.clear_selected_card_shape(),
                 ),
                 notice.map(|message| el("div", text(message)).attr("class", "card-shape-notice")),
+                movement_details(ui),
             ),
         )
         .attr("class", "card-shape-controls"),
     )
+}
+
+fn movement_details(ui: &UiState) -> UiChild {
+    use woodshed_core::shape_movement::{
+        ShapeContact, ShapeMovementUnavailable as Unavailable, ShapeStringMovement,
+    };
+    let Some(index) = ui.selected_card_index() else {
+        return Box::new(el("div", ()));
+    };
+    let Some(previous) = index
+        .checked_sub(1)
+        .and_then(|index| ui.set.cards.get(index))
+    else {
+        return Box::new(
+            el(
+                "div",
+                text("Neck movement: select a later Card to compare with its predecessor."),
+            )
+            .attr("class", "shape-movement"),
+        );
+    };
+    let selected = &ui.set.cards[index];
+    let heading = format!("Neck movement · {} → {}", previous.label, selected.label);
+    let detail = match ui.stage.compare_cards(previous, selected) {
+        Err(reason) => {
+            let message = match reason {
+                Unavailable::LeftNotChord => "The previous Card is not a chord.".into(),
+                Unavailable::RightNotChord => "The selected Card is not a chord.".into(),
+                Unavailable::LeftUnselected => "Choose a shape on the previous Card.".into(),
+                Unavailable::RightUnselected => "Choose a shape on the selected Card.".into(),
+                Unavailable::LeftUnavailable(reason) => {
+                    format!("Previous shape unavailable: {reason}")
+                },
+                Unavailable::RightUnavailable(reason) => {
+                    format!("Selected shape unavailable: {reason}")
+                },
+                Unavailable::SetupMismatch { .. } => {
+                    "Use the same instrument, tuning and capo on both Cards.".into()
+                },
+            };
+            Box::new(el("div", text(message)).attr("class", "shape-movement-unavailable"))
+                as UiChild
+        },
+        Ok(movement) => {
+            let contact = |contact: &ShapeContact| match contact {
+                ShapeContact::Open { .. } => "open".to_string(),
+                ShapeContact::Fretted { fret, .. } => format!("fret {fret}"),
+            };
+            let rows = movement
+                .per_string
+                .iter()
+                .map(|change| {
+                    let value = match change {
+                        ShapeStringMovement::Held { contact: point } => {
+                            format!("held {}", contact(point))
+                        },
+                        ShapeStringMovement::Moved {
+                            from_fret,
+                            to_fret,
+                            fret_travel,
+                            ..
+                        } => format!("fret {from_fret} → {to_fret} · {fret_travel} frets"),
+                        ShapeStringMovement::Added { contact: point } => {
+                            format!("added {}", contact(point))
+                        },
+                        ShapeStringMovement::Dropped { contact: point } => {
+                            format!("dropped {}", contact(point))
+                        },
+                    };
+                    el(
+                        "div",
+                        text(format!("String {}: {value}", change.string_index() + 1)),
+                    )
+                })
+                .collect::<Vec<_>>();
+            let span = |value: Option<u8>| {
+                value
+                    .map(|value| value.to_string())
+                    .unwrap_or_else(|| "no fretted contacts".into())
+            };
+            let shift = movement
+                .position_shift
+                .map(|value| format!("{value:+} frets"))
+                .unwrap_or_else(|| "unavailable".into());
+            Box::new(el("div", (
+                el("div", text(format!("Matched fret travel: {} · Fretted span: {} → {} · Lowest fretted position shift: {shift}", movement.total_matched_fret_travel, span(movement.left_fretted_span), span(movement.right_fretted_span)))).attr("class", "shape-movement-summary"),
+                el("div", rows).attr("class", "shape-movement-strings"),
+                el("div", text("String numbers follow tuning order. Open, added and dropped strings carry no travel penalty. Solo and Mute do not change these contacts; fingerings are not assigned.")),
+            ))) as UiChild
+        },
+    };
+    Box::new(el("div", (el("div", text(heading)), detail)).attr("class", "shape-movement"))
 }

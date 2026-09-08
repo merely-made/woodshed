@@ -84,6 +84,8 @@ pub struct StageSceneOptions {
     /// Optional quiet keyed catalog context. It is derived from the Set and
     /// focus only; it cannot change authored cards or their sequence.
     pub context: Option<StageContextOptions>,
+    /// Captured keyed subject used as the stable radial anchor for Pitch motion.
+    pub pitch_motion_anchor: Option<KeyedCatalogRef>,
 }
 
 impl Default for StageSceneOptions {
@@ -96,6 +98,7 @@ impl Default for StageSceneOptions {
             sequence: true,
             arrangement: GraphArrangement::Snake,
             context: None,
+            pitch_motion_anchor: None,
         }
     }
 }
@@ -549,10 +552,25 @@ pub fn stage_scene(set: &Set, options: &StageSceneOptions) -> StageGraphSnapshot
             .unwrap_or_default();
 
         let keyed = KeyedCatalogRef::from_material(&card.material);
-        let position = if options.context.is_some() {
+        let position = if options
+            .context
+            .as_ref()
+            .is_some_and(|context| context.reading == StageGraphReading::PitchMotion)
+        {
+            let (x, y) = crate::pitch_motion_reading::subject_position(
+                keyed.as_ref(),
+                options.pitch_motion_anchor.as_ref(),
+                Some(card.id.0),
+            );
+            Some(Vec2::new(x, y))
+        } else if options.context.is_some() {
             keyed.as_ref().and_then(|keyed| {
                 let occurrence = occurrence_offsets.entry(keyed.clone()).or_default();
-                let base = context_position(options.context.as_ref()?.reading, keyed)?;
+                let base = context_position(
+                    options.context.as_ref()?.reading,
+                    keyed,
+                    options.pitch_motion_anchor.as_ref(),
+                )?;
                 let offset = *occurrence as f32 * 18.0;
                 *occurrence += 1;
                 Some(Vec2::new(base.x + offset, base.y + offset))
@@ -676,6 +694,12 @@ pub fn stage_scene(set: &Set, options: &StageSceneOptions) -> StageGraphSnapshot
                         .and_then(|card| KeyedCatalogRef::from_material(&card.material))
                         .map(|keyed| (StageNodeId::Card(card), keyed))
                 })
+            })
+            .or_else(|| {
+                options
+                    .pitch_motion_anchor
+                    .clone()
+                    .map(|keyed| (StageNodeId::Catalog(keyed.clone()), keyed))
             });
         if let Some((focus_id, focus_keyed)) = focused {
             let omitted = nodes
@@ -684,6 +708,7 @@ pub fn stage_scene(set: &Set, options: &StageSceneOptions) -> StageGraphSnapshot
                 .collect::<BTreeSet<_>>();
             let query = match context_options.reading {
                 StageGraphReading::Tonnetz => crate::tonnetz::context,
+                StageGraphReading::PitchMotion => crate::pitch_motion_reading::context,
                 _ => circle_of_fifths_context,
             };
             let context = query(
@@ -694,7 +719,11 @@ pub fn stage_scene(set: &Set, options: &StageSceneOptions) -> StageGraphSnapshot
             );
             let mut context_instances = BTreeMap::new();
             for node in &context.nodes {
-                let Some(point) = context_position(context_options.reading, &node.keyed) else {
+                let Some(point) = context_position(
+                    context_options.reading,
+                    &node.keyed,
+                    options.pitch_motion_anchor.as_ref(),
+                ) else {
                     continue;
                 };
                 let source =
@@ -981,10 +1010,18 @@ fn item_centre(scene: &Scene, instance: InstanceId) -> Vec2 {
 
 /// Fixed Circle-of-Fifths slots. Relative major/minor share a tonic position:
 /// A minor aligns with C major, and their distinct formula ids remain visible.
-fn context_position(reading: StageGraphReading, keyed: &KeyedCatalogRef) -> Option<Vec2> {
+fn context_position(
+    reading: StageGraphReading,
+    keyed: &KeyedCatalogRef,
+    pitch_motion_anchor: Option<&KeyedCatalogRef>,
+) -> Option<Vec2> {
     match reading {
         StageGraphReading::Tonnetz => crate::tonnetz::position(keyed).map(|(x, y)| Vec2::new(x, y)),
         StageGraphReading::CircleOfFifths => Some(circle_context_position(keyed)),
+        StageGraphReading::PitchMotion => {
+            let anchor = pitch_motion_anchor?;
+            crate::pitch_motion_reading::position(keyed, anchor).map(|(x, y)| Vec2::new(x, y))
+        },
         StageGraphReading::Set => None,
     }
 }

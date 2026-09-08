@@ -184,6 +184,7 @@ pub(super) fn labels(
         ui.app_settings.stage.set_graph_reading,
         woodshed_core::settings::StageGraphReading::CircleOfFifths
             | woodshed_core::settings::StageGraphReading::Tonnetz
+            | woodshed_core::settings::StageGraphReading::PitchMotion
     ) || ui.set_graph_drag_active
     {
         return Box::new(el("div", ()));
@@ -240,6 +241,7 @@ pub(super) fn labels(
         })
         .collect();
     labels.extend(tonnetz_pitch_labels(ui, swatch));
+    labels.extend(super::pitch_motion::guide_labels(ui, swatch));
     Box::new(el("div", labels).attr("class", "stage-context-labels"))
 }
 
@@ -492,6 +494,9 @@ fn nearby_candidates(ui: &UiState, focused: &KeyedCatalogRef) -> UiChild {
                 woodshed_core::stage_candidates::StageCandidateReason::Unavailable => {
                     "Reading metric: unavailable".to_string()
                 },
+                woodshed_core::stage_candidates::StageCandidateReason::PitchMotion { .. } => {
+                    "Ranked from browsing focus".to_string()
+                },
             };
             let motion = candidate
                 .pitch_motion
@@ -670,10 +675,15 @@ pub(super) fn panel(ui: &UiState) -> UiChild {
         reading,
         woodshed_core::settings::StageGraphReading::CircleOfFifths
             | woodshed_core::settings::StageGraphReading::Tonnetz
+            | woodshed_core::settings::StageGraphReading::PitchMotion
     ) {
         return Box::new(el("div", ()));
     }
     let (title, guidance) = match reading {
+        woodshed_core::settings::StageGraphReading::PitchMotion => (
+            "Pitch motion",
+            "Browse exact pitch-class movement. The anchor stays fixed until you recenter.",
+        ),
         woodshed_core::settings::StageGraphReading::Tonnetz => (
             "Tonnetz",
             "Triangles show major and minor triads. Shared edges mark P, L, and R transformations; the lattice wraps at its boundaries.",
@@ -685,6 +695,7 @@ pub(super) fn panel(ui: &UiState) -> UiChild {
     };
     let Some(material) = ui.context_focus.as_ref() else {
         return Box::new(el("div", (
+            super::pitch_motion::controls(ui),
             el("div", text(title)).attr("class", "stage-context-title"),
             el("div", text(guidance)),
             el("div", text("Select a quiet node to reveal its connections and compare it with the selected Set card.")),
@@ -698,6 +709,7 @@ pub(super) fn panel(ui: &UiState) -> UiChild {
             "div",
             (
                 el("div", text("Focused context")).attr("class", "stage-context-label"),
+                super::pitch_motion::controls(ui),
                 el("div", text(context_title(material))).attr("class", "stage-context-title"),
                 comparison(ui, material),
                 el(

@@ -253,3 +253,95 @@ fn saturated_nearby_refresh_admits_an_unseen_ranked_triad() {
     );
     assert!(common.iter().all(|(before, after)| before == after));
 }
+
+#[test]
+fn pitch_motion_focus_preserves_anchor_and_projected_positions_until_recenter() {
+    let mut ui = UiState::new();
+    assert!(ui.focus_context_catalog(c_major()));
+    ui.stage_current(None);
+    ui.set_graph_reading(StageGraphReading::PitchMotion);
+    assert_eq!(ui.pitch_motion_anchor, Some(c_major()));
+    let before = set_graph_snapshot(&ui);
+    let positions = set_graph_swatch_from_snapshot(&before, &ui, true)
+        .graph
+        .nodes
+        .into_iter()
+        .map(|node| (node.key, node.position))
+        .collect::<std::collections::BTreeMap<_, _>>();
+    let cards = serde_json::to_string(&ui.set.cards).unwrap();
+    ui.context_disclosed
+        .extend(before.nodes.iter().filter_map(|node| node.keyed.clone()));
+    assert!(ui.focus_context_catalog(a_minor()));
+    ui.show_nearby_context();
+    assert_eq!(ui.pitch_motion_anchor, Some(c_major()));
+    assert_eq!(serde_json::to_string(&ui.set.cards).unwrap(), cards);
+    assert!(ui.audio_requests.is_empty());
+    let after = set_graph_snapshot(&ui);
+    let projected = set_graph_swatch_from_snapshot(&after, &ui, true);
+    let common = projected
+        .graph
+        .nodes
+        .iter()
+        .filter_map(|node| positions.get(&node.key).map(|old| (*old, node.position)))
+        .collect::<Vec<_>>();
+    assert!(!common.is_empty());
+    assert!(common.iter().all(|(old, new)| old == new));
+    ui.recenter_pitch_motion();
+    assert_eq!(ui.pitch_motion_anchor, Some(a_minor()));
+    let recentered = set_graph_snapshot(&ui);
+    let new_positions = set_graph_swatch_from_snapshot(&recentered, &ui, true);
+    assert!(new_positions.graph.nodes.iter().any(|node| {
+        positions
+            .get(&node.key)
+            .is_some_and(|old| *old != node.position)
+    }));
+    assert_eq!(serde_json::to_string(&ui.set.cards).unwrap(), cards);
+    assert!(ui.audio_requests.is_empty());
+}
+
+#[test]
+fn pitch_motion_occurrences_keep_distinct_positions_across_reorder() {
+    let mut ui = UiState::new();
+    assert!(ui.focus_context_catalog(c_major()));
+    ui.stage_current(None);
+    ui.set.duplicate(0);
+    ui.set_graph_reading(StageGraphReading::PitchMotion);
+    let before = set_graph_snapshot(&ui);
+    let positions = set_graph_swatch_from_snapshot(&before, &ui, true)
+        .graph
+        .nodes
+        .into_iter()
+        .map(|node| (node.key, node.position))
+        .collect::<std::collections::BTreeMap<_, _>>();
+    let first = positions
+        .get(&Some(format!("stage-card-{}", ui.set.cards[0].id.0)))
+        .unwrap();
+    let second = positions
+        .get(&Some(format!("stage-card-{}", ui.set.cards[1].id.0)))
+        .unwrap();
+    assert_ne!(first, second);
+    assert!(
+        (first.0 - second.0).hypot(first.1 - second.1) > 0.04,
+        "repeated zero-cost Cards need separated pointer targets at the default graph size"
+    );
+    ui.set.cards.swap(0, 1);
+    let after = set_graph_snapshot(&ui);
+    for node in set_graph_swatch_from_snapshot(&after, &ui, true)
+        .graph
+        .nodes
+    {
+        if let Some(old) = positions.get(&node.key) {
+            assert_eq!(*old, node.position);
+        }
+    }
+}
+
+#[test]
+fn empty_set_pitch_motion_browses_from_captured_live_material() {
+    let mut ui = UiState::new();
+    ui.stage.set_lens(woodshed_core::Lens::Chords);
+    ui.set_graph_reading(StageGraphReading::PitchMotion);
+    assert!(ui.pitch_motion_anchor.is_some());
+    assert!(!set_graph_snapshot(&ui).nodes.is_empty());
+    assert!(ui.set.cards.is_empty());
+}

@@ -15,6 +15,7 @@ use crate::settings::StageGraphReading;
 pub enum StageCandidateReason {
     CircleOfFifths { distance: u8 },
     Tonnetz { depth: u8 },
+    PitchMotion { total_semitones: u16 },
     Unavailable,
 }
 
@@ -60,6 +61,12 @@ pub fn ranked_candidates(
                 StageGraphReading::Tonnetz => tonnetz_depth
                     .map(|depth| StageCandidateReason::Tonnetz { depth })
                     .unwrap_or(StageCandidateReason::Unavailable),
+                StageGraphReading::PitchMotion => pitch_motion
+                    .as_ref()
+                    .map(|motion| StageCandidateReason::PitchMotion {
+                        total_semitones: motion.total_semitones,
+                    })
+                    .unwrap_or(StageCandidateReason::Unavailable),
                 _ => StageCandidateReason::CircleOfFifths {
                     distance: fifth_distance.unwrap_or_default(),
                 },
@@ -76,6 +83,10 @@ pub fn ranked_candidates(
     candidates.sort_by(|a, b| {
         let primary = match reading {
             StageGraphReading::Tonnetz => metric_cmp(a.tonnetz_depth, b.tonnetz_depth),
+            StageGraphReading::PitchMotion => metric_cmp(
+                a.pitch_motion.as_ref().map(|motion| motion.total_semitones),
+                b.pitch_motion.as_ref().map(|motion| motion.total_semitones),
+            ),
             _ => metric_cmp(a.fifth_distance, b.fifth_distance),
         };
         primary

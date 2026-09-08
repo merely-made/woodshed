@@ -1,7 +1,8 @@
 # Musical Projections Plan
 
 **Status (2026-09-08): Circle-of-Fifths context, triadic Tonnetz, minimum
-pitch-motion comparison, nearby candidates, and selected chord shapes implemented.
+pitch-motion comparison, nearby candidates, anchored Pitch motion, selected chord
+shapes and neck movement implemented.
 S1, S2 and S4 are partial; S3 remains planned except
 where explicitly recorded below.** Bounded comparison exports and
 browser consumer proofs exist, as recorded below. The musical subsystem review
@@ -13,8 +14,17 @@ still needs its reviewed done-conditions before opening.
 Circle/Tonnetz readings and explicit selected chord shapes were developed as
 separate ownership lanes. The integration gate covers full-budget discovery,
 stable positions, explicit authoring/audition, matching Card-specific neck paint
-and labels, and selected-shape sound. The anchored reading, neck-movement score,
-finger contacts, and phrase search remain subsequent work.
+and labels, and selected-shape sound. The next bounded reading and movement
+slices are recorded below; finger contacts and phrase search remain open.
+
+**Second implementation slice (2026-09-08):** anchored Pitch motion and selected-shape neck
+comparison are implemented. The anchor is captured on reading entry and
+session restore, with explicit recentering; focus only changes inspection and
+candidate ranking. Individual node dragging is disabled where radius carries
+musical meaning. Neck comparison pairs the previous Set occurrence with the
+selected occurrence, requires matching resolved setup, and reports open and
+fretted changes separately. Finger assignment, comfort scores, phrase search,
+and shared probe-geometry refactoring remain open.
 
 Child of [2026-07-11_stage_set_tools_plan.md](2026-07-11_stage_set_tools_plan.md):
 this is P4e item 6 (voice leading placed by motion cost) and the reasons half
@@ -344,8 +354,23 @@ manual placement overrides, and as much other displayed material as fits.
 It respects the configured breadth. Inspection, Hear, and Add remain separate.
 Fixed musical coordinates preserve bearings when material leaves and returns.
 The full-budget regression uses 36 displayed context items, proves unseen triad
-admission, and compares surviving node positions. The new anchored reading,
-multi-card selection, and broader reading-policy consolidation remain open.
+admission, and compares surviving node positions.
+
+The September 8 reading adds a captured anchor, labeled semitone rings and a
+separate Unscored area. Core `pitch_motion_reading` owns identity slots, fixed
+world bounds and exact radial distances. The inner ring is zero, allowing
+distinct targets for equal pitch sets. Authored occurrence angles include CardId
+so repeated material stays separated through reorder; catalog angles include
+the whole formula/root identity. Focus changes comparison and ranking without
+changing the anchor. Explicit recenter resets the viewport; per-node dragging
+is disabled because radius carries musical meaning. Empty Sets can browse from
+captured live material. The anchor is transient and recaptured on session restore.
+Multi-card selection and broader reading-policy consolidation remain open.
+
+The ring scale uses the maximum available exact distance across the entire
+supported catalog for that anchor, cached with a four-anchor cap. This replaced
+an overly loose theoretical radius after the native capture crowded the useful
+material into the center. Visibility, discovery and focus never rescale it.
 
 ### S3. Practice evidence in the projection
 
@@ -417,7 +442,7 @@ the all-tone map; and actual shape-selection controls operate in Rehearsal.
 Context catalog previews remain a separate formula-preview contract.
 
 **Implementation (2026-09-07-08):**
-`woodshed-core::card_shapes` owns setup resolution, a one-entry derived cache,
+`woodshed-core::card_shapes` owns setup resolution, a bounded derived cache,
 shape selection and persisted fret-pattern/profile validation. `None` keeps the
 legacy tone map. Previous/Next/All tones appear in the shared Card editor, with
 typed unavailable reasons and resolved setup details. Rehearsal's native leaf
@@ -439,6 +464,16 @@ positions, total matched fret travel, span, and position shift separately. Added
 or dropped strings do not receive an arbitrary fret-distance penalty. A same-chord
 pair can have zero pitch-class cost and nonzero neck movement. Call this neck or
 shape movement; the earlier `hand-moves` label overclaimed what the data can know.
+
+Implemented September 8 in `shape_movement`: the shared Card editor compares
+the previous Set occurrence to the selected occurrence. Exact setup equality
+includes concert open-string MIDI pitches as well as instrument, tuning and
+capo. Only fretted-to-fretted changes contribute matched fret travel; open,
+muted, added and dropped states remain explicit. Fretted span excludes open
+strings; position shift is the signed change in the lowest fretted position,
+unavailable when either side lacks one. Solo/Mute does not alter these contacts.
+Unselected, invalid and mismatched setups have separate messages. A two-entry
+LRU shape cache avoids alternating enumeration for every comparison render.
 
 **Later: fingering and phrase suggestions.** Finger/contact/barre identities,
 held contacts, stretch, timing and user preferences must precede an ergonomic
@@ -659,8 +694,8 @@ the canonical Mere receipt records its identity, clock and transport limits.
 ### Musical slice sequence
 
 The exact pitch-motion prerequisite, S2's nearby-candidate browsing and S4's
-selected-shape resolver are implemented. S2's anchored reading follows its
-ranking contract; S4's neck comparison follows the resolver. Shape
+selected-shape resolver are implemented, with the anchored reading and neck
+comparison added on September 8. Shape
 selection is explicit opt-in through `voicing_idx`; legacy all-tone Cards keep
 their existing behavior. S3 remains independent. General fingerings and
 bar/line lookahead follow the contact and event-realization contracts, rather
@@ -703,6 +738,32 @@ retained host. Failed attempts are retained as `shapes01` and `shapes02`.
 This does not close the shared probe-geometry refactor or establish acceptance
 on other DPI/window combinations. `receipt.json` records the final source,
 binary, log and capture hashes.
+
+### September 8 second-slice receipt
+
+386 tests pass: core 121, export examples 10, graph 14, views 56, theory 177,
+and eight production-host layout/input regressions. Added checks cover exact
+contact-change arithmetic, setup mismatch, cache eviction, same-chord pitch
+equality with nonzero fret travel, focus-stable projected positions, explicit
+recenter, separated repeated zero-cost occurrences through reorder, and empty
+Set browsing. The previous scroll regressions remain passing.
+
+Commands use the same config-free `C:/t` working directory, locked/offline
+manifest and isolated target as the first-slice receipt. Final logs are
+`testing/woodshed/anchored-neck-20260908/tests-final.log`, `host-tests.log`, and
+`build-final.log`. Native `anchor03` and `neck02` scenarios passed and PNGs were
+visually inspected. Captures are 2200x1504 at DPI 2, requested 1100x900 with
+display-clamped height 752; the anchor capture uses UI zoom 0.65, neck zoom 1.
+Measured points are converted from pixels by DPI times UI zoom. Earlier missed
+selector/point attempts remain in `anchor01`, `anchor02` and `neck01`; this
+receipt does not close shared probe/retained geometry alignment.
+
+`receipt.json` in that directory identifies source, binary and artifact hashes.
+Finger/contact assignment, ergonomic scoring, bar lookahead, general multi-Card
+comparison, and persisted anchor choice remain open. The capture fixture seeds
+the two selected shapes; real shape controls are covered separately by the host
+input regression. Neither source equality nor this visual receipt proves
+physical comfort or acoustic playback.
 
 ## Stop rules
 

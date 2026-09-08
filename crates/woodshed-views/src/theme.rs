@@ -417,6 +417,11 @@ pub fn stage_css(p: &Palette) -> String {
 .set-editor-label {{ color: {text_dim}; font-size: 11px; margin-right: 8px; }}
 .card-shape-controls {{ display: flex; flex-wrap: wrap; align-items: center; gap: 6px; flex: 1 0 100%; margin-top: 8px; }}
 .card-shape-notice {{ color: {text_dim}; flex: 1 0 100%; }}
+.shape-movement {{ flex: 1 0 100%; min-width: 0; padding-top: 8px; color: {text_dim}; }}
+.shape-movement-summary {{ margin: 6px 0; }}
+.shape-movement-strings {{ display: flex; flex-wrap: wrap; gap: 6px 16px; margin-bottom: 6px; }}
+.pitch-motion-controls {{ margin-bottom: 10px; }}
+.pitch-motion-anchor {{ font-weight: 600; margin-bottom: 6px; }}
 .viewport-narrow .set-card {{ width: 44%; }}
 .viewport-narrow .settings-shell {{ display: block; }}
 .viewport-narrow .settings-nav {{ width: 100%; display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 12px; }}

@@ -1,0 +1,25 @@
+settle 3
+ui-zoom 0.65
+settle 3
+act stage-context-example
+settle 3
+click .set-graph-reading Arrangement: Set
+settle 3
+click .set-graph-reading Arrangement: Circle of fifths
+settle 3
+click .set-graph-reading Arrangement: Tonnetz
+settle 3
+assert text Pitch motion from C Major
+assert text Unscored
+capture 01_anchor
+click-context-node chord:Minor@pc:9
+settle 3
+assert text Pitch motion from C Major
+assert snap set-cards == 1
+capture 02_focus
+# Measured painted point in layout coordinates: pixel / (DPI 2 * UI zoom 0.65).
+pointer-click 706 677
+settle 3
+assert text Pitch motion from A Minor
+assert snap set-cards == 1
+capture 03_recentered
