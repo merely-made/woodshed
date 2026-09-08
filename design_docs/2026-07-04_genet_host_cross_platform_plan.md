@@ -657,3 +657,23 @@ the final receipt. Native captures show the initial viewport; the host tests
 prove scrolling and note hits after scrolling. The parent `receipt.json` records
 source and artifact hashes. Broader shell extraction and shared probe geometry
 remain open; this is a bounded responsive pass.
+
+### Retained selector geometry (2026-09-08, in progress)
+
+The next correction gives `genet-probe` an opt-in, authoritative host selector
+target. Unsupported hosts retain the existing surface resolver; a participating
+host's miss must remain a miss, including before layout exists. Woodshed consumes
+`AppCtx::painted_rect`, already published in Mere `e02a08f1`, instead of asking
+the probe to lay its DOM out again. The compatible Genet change is isolated
+from concurrent engine work and based on Woodshed's existing pinned revision.
+
+Done when shared protocol tests distinguish unsupported/hit/miss, shape and
+recenter scenarios pass using semantic selectors, and native zoomed and ordinary
+windows use the same retained coordinate space as production pointer delivery.
+Measured-point helpers remain available for diagnostics, with no claim that
+this closes every clipping, occlusion, or offscreen scrolling case.
+
+Dependency integration: Genet `09515e03d22` and Mere `691f9a0b` are published
+on isolated `woodshed-retained-probe` branches. Woodshed's lockfile contains
+one source revision for each repository; its 37 changed package entries only
+move those pins. Compilation and native acceptance remain pending.

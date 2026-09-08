@@ -17,8 +17,7 @@ settle 3
 assert text Pitch motion from C Major
 assert snap set-cards == 1
 capture 02_focus
-# Measured painted point in layout coordinates: pixel / (DPI 2 * UI zoom 0.65).
-pointer-click 706 677
+click .pitch-motion-recenter
 settle 3
 assert text Pitch motion from A Minor
 assert snap set-cards == 1
