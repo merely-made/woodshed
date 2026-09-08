@@ -33,6 +33,20 @@ jobs:
       - uses: dtolnay/rust-toolchain@stable
       - run: cargo test -p woodshed-core --locked
 
+  linux-host:
+    name: Linux host build
+    needs: lockfile
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Install Linux audio build prerequisites
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes libasound2-dev pkg-config
+      - name: Build native Linux host
+        run: cargo build -p woodshed-genet --locked
+
   windows-host:
     name: Windows host check
     needs: lockfile
