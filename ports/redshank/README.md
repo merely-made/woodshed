@@ -38,6 +38,14 @@ the executable's first argument. Outside the editor, Space toggles playback,
 Left/Right skip by the configured interval, and N begins a text note.
 `Ctrl+Enter` saves the editor. Text capture supports Pause and Continue.
 
+For an isolated headed local restart receipt, set `REDSHANK_DATA_DIR` to an
+empty directory. Launch once with a local file argument and
+`REDSHANK_HEADED_RECEIPT=seed`, then launch without the file argument using
+`REDSHANK_HEADED_RECEIPT=verify`. Each process opens the ordinary desktop and
+default output device, waits for durable storage acknowledgments, and prints a
+single `redshank-headed-receipt ... PASS` line before exiting. This driver does
+not run when the variable is unset.
+
 This is a local listening slice of Phase 4. Subscription, HTTP fetching/cache,
 voice capture, rate/volume controls, representation-drift warnings/remapping,
 and Turnstone embedding remain open. A local digest is computed before decode

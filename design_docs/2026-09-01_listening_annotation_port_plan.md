@@ -9,7 +9,8 @@ unpublished model and generation store. Phase 3 is complete with shared podcast
 feed facts and GUID-stable Turnstone projection. Phase 4 is active with the
 reusable Cambium controls, Mere-hosted sovereign shell, and local listening
 workflow landed. Genet controller admission is also landed; subscriptions,
-HTTP/cache playback, and headed acceptance remain open.
+HTTP/cache playback, and their degraded states remain open. A headed local
+playback, text-note, persistence, restart, and resume receipt now passes.
 
 ## Ruling
 
@@ -467,7 +468,7 @@ Receipt:
 
 ### Phase 4: sovereign and embeddable surfaces
 
-**In progress (2026-09-06).** The local listening implementation now adds a
+**In progress (2026-09-07).** The local listening implementation now adds a
 Symphonia/Firewheel worker and full Library, Queue, Notes, and Settings
 composition around the existing compact Player/Capture surfaces. This is a
 bounded local-file slice; the Phase 4 done-conditions below still apply.
@@ -562,12 +563,11 @@ This slice is done when the controller drives local play, pause, seek, ready,
 end-of-stream, and error transitions; sink snapshots remain authoritative;
 typed capability errors survive the adapter; all three source variants use the
 shared mapping; stale-token, resume, and representation tests pass; and the
-workspace remains green. HTTP/cache playback, headed acceptance, voice capture,
+workspace remains green. HTTP/cache playback, voice capture,
 representation drift, and Turnstone embedding remain outside the slice.
 
 Phase 4 remains open for subscriptions, HTTP/progressive cache playback and its
-error cases, and the headed playback/restart/text-note scenario. Voice input,
-ducking, rate/volume controls, media-fragment export,
+error cases. Voice input, ducking, rate/volume controls, media-fragment export,
 representation drift, and Turnstone as a second host also remain open in their
 respective phases. No physical listening or microphone receipt is implied by
 the source changes.
@@ -594,8 +594,8 @@ Validation on the final September 6 working tree:
   `C:/t/redshank-phase4-mere/debug/redshank-desktop.exe`.
 - Fixture provenance, SHA-256 values, and test logs are in
   `Code/testing/woodshed/redshank-phase4-20260906/`. These are software and
-  windowless host receipts. Output-device playback, acoustic timing, headed
-  layout, and the full headed restart scenario remain unverified.
+  windowless host receipts. At that point, output-device playback, acoustic
+  timing, headed layout, and the full headed restart scenario were unverified.
 
 Controller-admission validation on September 7:
 
@@ -613,9 +613,41 @@ Controller-admission validation on September 7:
   remain explicitly gated. Strict workspace Clippy, formatting, and
   `git diff --check` pass. The resolved dependency graph carries one Genet git
   revision, `9e8f9dc2f3ddc0af1658580bb51964462a03923f`.
-- This is a software admission receipt. Output-device playback, acoustic
-  timing, headed layout, HTTP/cache playback, and the full headed restart
-  scenario remain unverified.
+- This is a software admission receipt. At this point in the sequence,
+  output-device playback, acoustic timing, headed layout, HTTP/cache playback,
+  and the full headed restart scenario remained unverified.
+
+#### Headed local restart receipt, 2026-09-07
+
+`redshank-desktop` now has an opt-in, self-driven acceptance mode behind
+`REDSHANK_HEADED_RECEIPT=seed|verify`. It drives the ordinary desktop methods
+from the host frame hook while retaining the real winit/Genet window, Cambium
+projection, Symphonia decoder, Genet controller, Firewheel graph, CPAL default
+output, and generation store. Normal launches do not construct the receipt
+driver.
+
+Two separate visible processes ran against an initially empty
+`C:/t/redshank-headed-20260907` data directory and the two-second stereo MP3
+fixture from `Code/testing/woodshed/redshank-phase4-20260906/`:
+
+- `seed` loaded and played the file, froze a note target at 280 ms, saved the
+  text `Redshank headed restart receipt`, saved final progress, waited for the
+  storage acknowledgment, and exited zero with
+  `redshank-headed-receipt seed PASS position_ms=280`;
+- `verify`, launched without a file argument, restored the selected item, the
+  exact annotation and its representation receipt, and nonzero progress from
+  disk. It resumed through the real output path and exited zero with
+  `redshank-headed-receipt verify PASS position_ms=465`;
+- the final generation contains one queued and selected local item, progress at
+  465 ms, and the text annotation anchored at 280 ms. Both runs reported an
+  installed accessibility adapter and projected 33 then 35 nodes.
+
+This closes the Phase 4 headed playback/restart/text-note scenario and proves
+that the local output runtime opened successfully. The driver does not
+synthesize keyboard or pointer input, and this is not an acoustic measurement
+or a screen-reader interaction receipt. The existing headless host tests remain
+the evidence for keyboard routing and control semantics. HTTP/cache and offline
+or exhausted-cache behavior remain open.
 
 ### Phase 5: voice capture and open annotation target
 
@@ -811,4 +843,10 @@ rejected for the reasons recorded in the 2026-09-01 planning pass.
   Firewheel/CPAL output, transport transitions, terminal errors, and sink clock
   are admitted through Genet's existing controller. Device-free conformance,
   stale-token and failed-load metadata regressions pass. HTTP/cache, voice,
-  headed acceptance, and Turnstone work remain outside the slice.
+  headed acceptance, and Turnstone work remain outside that slice.
+- **2026-09-07:** Added and passed the opt-in headed local restart receipt.
+  Separate seed and verify processes used the real winit/Genet window and
+  Firewheel/CPAL output, persisted a text note anchored at 280 ms, restored the
+  selected item and annotation, and resumed at 465 ms. This closes the headed
+  playback/restart/text-note condition. Subscriptions and HTTP/progressive
+  cache behavior still keep Phase 4 open.

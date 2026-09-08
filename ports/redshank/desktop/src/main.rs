@@ -1,11 +1,13 @@
 #![forbid(unsafe_code)]
 
+mod headed_receipt;
 mod session;
 
 use cambium_genet_winit_host::{
     AppCtx, CloseDisposition, FocusedTextSlot, HostHooks, HostOptions, Init, Key, KeyPress,
     NamedKey, Runner, WindowFrame, run,
 };
+use headed_receipt::HeadedReceipt;
 use layout_dom_api::LayoutDom;
 use redshank_model::{
     AnnotationId, CaptureAnchor, CapturePlaybackBehavior, ItemId, LibraryItem, MediaSource,
@@ -160,6 +162,7 @@ struct Desktop {
     dialog_pending: bool,
     closing: bool,
     saved_draft: Option<SavedDraft>,
+    receipt: Option<HeadedReceipt>,
     last_progress: Instant,
     last_projection: Instant,
 }
@@ -606,7 +609,24 @@ fn hooks(
                     ctx.runner.update(|state| *state = next);
                 }
             }
-            if desktop.closing && desktop.persistence.durable == desktop.persistence.revision {
+            if let Some(mut receipt) = desktop.receipt.take() {
+                let mut next = ctx.runner.state().clone();
+                if let Err(error) = receipt.drive(&mut desktop, &mut next) {
+                    receipt.fail(error);
+                    *ctx.close = true;
+                }
+                if &next != ctx.runner.state() {
+                    ctx.runner.update(|state| *state = next);
+                }
+                desktop.receipt = Some(receipt);
+            }
+            if desktop.closing
+                && desktop.persistence.durable == desktop.persistence.revision
+                && desktop
+                    .receipt
+                    .as_ref()
+                    .is_none_or(|receipt| !receipt.active())
+            {
                 *ctx.close = true;
             }
             // Worker changes need polling until playback and persistence settle.
@@ -614,6 +634,7 @@ fn hooks(
             desktop.closing
                 || desktop.dialog_pending
                 || desktop.persistence.in_flight.is_some()
+                || desktop.receipt.as_ref().is_some_and(HeadedReceipt::active)
                 || !desktop.session.matches(&snap) && desktop.session.selected.is_some()
                 || matches!(snap.state, PlaybackState::Loading | PlaybackState::Playing)
         }),
@@ -644,6 +665,7 @@ fn hooks(
 }
 
 fn main() {
+    let receipt = HeadedReceipt::from_environment().expect("configure headed receipt");
     let store = JsonDirectoryStore::new(data_directory());
     let (model, notice) = match store.load() {
         Ok(model) => (model.unwrap_or_default(), None),
@@ -659,6 +681,7 @@ fn main() {
         dialog_pending: false,
         closing: false,
         saved_draft: None,
+        receipt,
         last_progress: Instant::now(),
         last_projection: Instant::now(),
     };
@@ -687,6 +710,7 @@ fn main() {
         .session
         .project(&mut state, &desktop.runtime.snapshot());
     let wake_runtime = desktop.runtime.clone();
+    let desktop = Rc::new(RefCell::new(desktop));
     run(
         HostOptions {
             title: "Redshank".into(),
@@ -703,9 +727,12 @@ fn main() {
                 sheet: COMPACT_SHEET.into(),
             }
         },
-        hooks(Rc::new(RefCell::new(desktop))),
+        hooks(Rc::clone(&desktop)),
     )
     .expect("run Redshank");
+    if let Some(receipt) = desktop.borrow().receipt.as_ref() {
+        println!("{}", receipt.result().expect("complete headed receipt"));
+    }
 }
 
 #[cfg(test)]
@@ -794,6 +821,7 @@ mod tests {
             dialog_pending: false,
             closing: false,
             saved_draft: None,
+            receipt: None,
             last_progress: Instant::now(),
             last_projection: Instant::now(),
         }
