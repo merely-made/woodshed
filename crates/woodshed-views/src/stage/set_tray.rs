@@ -119,6 +119,7 @@ pub(super) fn card_editor(ui: &UiState) -> UiChild {
                     el("div", text("Free position")).attr("class", "t-btn"),
                     |ui: &mut UiState, _| ui.clear_card_window(),
                 ),
+                super::shapes::controls(ui),
             ),
         )
         .attr("class", "set-editor"),

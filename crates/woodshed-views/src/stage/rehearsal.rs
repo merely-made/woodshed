@@ -3,7 +3,7 @@ use woodshed_core::step_set;
 use woodshedding::rehearsal::{LoopMode, MarkMode, Recipe};
 
 use super::{UiChild, UiState};
-use crate::fretboard_leaf::{BoardGeom, Orientation, REHEARSAL_FRETBOARD_LEAF_KEY};
+use crate::fretboard_leaf::REHEARSAL_FRETBOARD_LEAF_KEY;
 
 fn recipe_line(recipe: &Recipe) -> String {
     match recipe {
@@ -153,13 +153,8 @@ pub(super) fn screen(ui: &UiState) -> UiChild {
     // Selection axis of touch, made interactive.
     let card = &ui.set.cards[cursor];
     let dot_list = ui.stage.dots_for_card(card);
-    let string_count = ui.stage.string_count();
-    let geom = BoardGeom {
-        string_count,
-        fret_start: ui.stage.fret_start,
-        fret_count: ui.stage.fret_count,
-        orientation: Orientation::from_name(&ui.app_settings.fretboard.orientation),
-    };
+    let geom = ui.rehearsal_board_geometry();
+    let string_count = geom.string_count;
     let (w, h) = geom.size_u32();
     let (mw, mh) = geom.marker_size();
     let labels: Vec<UiChild> = dot_list

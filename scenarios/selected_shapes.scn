@@ -1,0 +1,33 @@
+# Explicit shape selection through the shared editor and Rehearsal board.
+# Receipt geometry: requested 1100x900, actual 1100x752 logical, DPI 2, zoom 1.
+# Shape buttons use measured painted positions because the probe's independent
+# selector layout misses these controls. Production-host selector/input tests
+# cover the resize-independent behavior in layout_tests.rs.
+settle 3
+act stage-context-example
+settle 3
+click .pill Rehearsal
+settle 3
+assert snap section == Rehearsal
+assert snap shape-index == none
+capture 01_all_tones
+pointer-click 304 320
+settle 3
+assert snap shape-index == 0
+assert snap shape-dots <= 6
+assert text bounded selection
+capture 02_first_shape
+pointer-click 608 320
+settle 3
+assert snap shape-index == 1
+capture 03_second_shape
+pointer-click 77 320
+settle 3
+assert snap shape-index == 0
+pointer-click 220 127
+settle 3
+pointer-click 704 320
+settle 3
+assert snap shape-index == none
+assert snap shape-dots >= 12
+capture 04_restored_map

@@ -14,13 +14,14 @@ before any other doc in this directory.
 - [2026-09-04_musical_projections_plan.md](2026-09-04_musical_projections_plan.md)
   — Circle-of-Fifths context and the 24-triad Tonnetz are implemented: keyed background,
   separate focus/audition/Add actions, and stable expansion.
-  The September 7 slice adds exact pitch-motion comparison; S1 remains partial
-  and S2-S4 remain planned. September 7 scopes nearby-candidate browsing,
-  an anchored pitch-motion reading, selected-shape resolution, and subsequent
-  neck movement before general fingering costs. The September 6 subsystem research
+  The September 7-8 slices add exact pitch-motion comparison, nearby-candidate
+  browsing, and explicit selected-shape resolution. S1, S2 and S4 remain partial;
+  S3, an anchored pitch-motion reading, neck movement, and general fingering
+  costs remain open. The September 6 subsystem research
   maps meaning, inference, analysis, generation, and comparison; a live
   enumeration probe records lookahead/texture tradeoffs and the re-entrant
-  bass defect. Bounded comparison and co-op proofs remain fixture evidence.
+  bass defect, corrected by the selected-shape slice. Bounded comparison and
+  co-op proofs remain fixture evidence.
 
 - [2026-09-01_listening_annotation_port_plan.md](2026-09-01_listening_annotation_port_plan.md)
   **Active; Phases 0-3 complete, Phase 4 in progress.** Redshank is a separate audio-listening and timed

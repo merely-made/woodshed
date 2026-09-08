@@ -46,6 +46,7 @@ mod rehearsal;
 mod related;
 mod set_tray;
 mod settings;
+mod shapes;
 mod templates;
 mod tools;
 
@@ -815,6 +816,8 @@ pub struct UiState {
     pub workspace_effects: Vec<WorkspaceEffect>,
     /// Rehearsal dwell transport running (transient).
     pub rehearsal_running: bool,
+    /// Last explicit shape-selection failure, scoped to its Card occurrence.
+    pub card_shape_notice: Option<(CardId, String)>,
     pub song: SongDoc,
     pub song_playing: bool,
     /// Host-polled live bar cursor during playback (timeline follow).
@@ -966,6 +969,7 @@ impl UiState {
             workspace: WoodshedWorkspace::new(),
             workspace_effects: Vec::new(),
             rehearsal_running: false,
+            card_shape_notice: None,
             song: SongDoc::default(),
             song_playing: false,
             song_bar_live: 0,
@@ -1557,18 +1561,34 @@ impl UiState {
         let Some(cursor) = self.selected_card_index() else {
             return;
         };
-        let max_fret = self.stage.fret_count;
+        let max_fret = if self.set.cards[cursor].setting.voicing_idx.is_some() {
+            match self.stage.card_fret_limit(&self.set.cards[cursor]) {
+                Ok(limit) => limit,
+                Err(reason) => {
+                    self.card_shape_notice = Some((self.set.cards[cursor].id, reason.to_string()));
+                    return;
+                },
+            }
+        } else {
+            self.stage.fret_count
+        };
         let card = &mut self.set.cards[cursor];
         let window = card
             .setting
             .fret_window
             .unwrap_or(FretWindow { start: 0, span: 4 });
         let max_start = max_fret.saturating_sub(window.span);
+        let min_start = if card.setting.voicing_idx.is_some() {
+            card.setting.capo.unwrap_or(0).min(max_start)
+        } else {
+            0
+        };
         let start = if delta < 0 {
             window.start.saturating_sub(delta.unsigned_abs())
         } else {
-            window.start.saturating_add(delta as u8).min(max_start)
-        };
+            window.start.saturating_add(delta as u8)
+        }
+        .clamp(min_start, max_start);
         card.setting.fret_window = Some(FretWindow {
             start,
             span: window.span,
@@ -1744,6 +1764,7 @@ impl UiState {
         self.related_relation = None;
         self.context_focus = None;
         self.context_disclosed.clear();
+        self.card_shape_notice = None;
         // The one bounded migration for sessions written before occurrence
         // identity: Cards gain ids, the legacy single-boolean edge toggle
         // becomes a relation set. Both persist on the next save, and both

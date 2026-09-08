@@ -169,6 +169,16 @@ pub struct Setting {
     /// Selected voicing for chord material; `None` = all chord tones.
     #[serde(default)]
     pub voicing_idx: Option<usize>,
+    /// Stable fingerprint of the selected shape's string/fret pattern. Older
+    /// cards have no fingerprint and keep their ordinal-only selection until a
+    /// player explicitly changes it.
+    #[serde(default)]
+    pub voicing_fingerprint: Option<String>,
+    /// Enumeration policy that produced [`Self::voicing_fingerprint`]. This
+    /// prevents a future search-policy change from silently treating an old
+    /// ordinal as the same saved shape.
+    #[serde(default)]
+    pub voicing_profile: Option<String>,
     /// Pinned neck window (e.g. a practice item's hand position); `None`
     /// = use the live fret window.
     #[serde(default)]
@@ -423,7 +433,7 @@ impl Set {
             Some(index) => {
                 self.cursor = index;
                 true
-            }
+            },
             None => false,
         }
     }

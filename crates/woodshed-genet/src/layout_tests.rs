@@ -199,3 +199,99 @@ fn rehearsal_board_scroll_preserves_extent_and_note_hits() {
         "scrolled note hit must mark exactly one position"
     );
 }
+
+#[test]
+fn rehearsal_shape_controls_change_notes_and_clear_to_the_map() {
+    let mut h = harness(700.0, 900.0);
+    h.update(|ui| ui.select_app_section(woodshed_core::storage::AppSection::Rehearsal));
+    let all_tones = h.state().stage.dots_for_card(&h.state().set.cards[0]);
+    assert!(h.click_on(&Selector::class("card-shape-next")));
+    let first = h.state().stage.dots_for_card(&h.state().set.cards[0]);
+    assert!(h.state().set.cards[0].setting.voicing_idx.is_some());
+    assert!(!first.is_empty() && first.len() < all_tones.len());
+    let first_positions = first
+        .iter()
+        .map(|dot| (dot.string_index, dot.fret))
+        .collect::<Vec<_>>();
+    let sound = h.state().preview_voicing().0;
+    let expected = first.iter().map(|dot| dot.frequency).collect::<Vec<_>>();
+    assert_eq!(
+        sound, expected,
+        "audition must use the painted shape's concert pitches"
+    );
+    assert!(h.click_on(&Selector::class("card-shape-next")));
+    let second = h.state().stage.dots_for_card(&h.state().set.cards[0]);
+    assert_ne!(
+        first_positions,
+        second
+            .iter()
+            .map(|dot| (dot.string_index, dot.fret))
+            .collect::<Vec<_>>()
+    );
+    assert!(h.click_on(&Selector::class("card-shape-prev")));
+    assert_eq!(
+        h.state()
+            .stage
+            .dots_for_card(&h.state().set.cards[0])
+            .iter()
+            .map(|dot| (dot.string_index, dot.fret))
+            .collect::<Vec<_>>(),
+        first_positions
+    );
+    assert!(h.click_on(&Selector::class("card-shape-clear")));
+    assert!(h.state().set.cards[0].setting.voicing_idx.is_none());
+    assert_eq!(
+        h.state().stage.dots_for_card(&h.state().set.cards[0]).len(),
+        all_tones.len()
+    );
+}
+
+#[test]
+fn selected_card_geometry_overrides_the_live_guitar() {
+    let mut h = harness(700.0, 900.0);
+    h.update(|ui| {
+        ui.select_app_section(woodshed_core::storage::AppSection::Rehearsal);
+        ui.stage.fret_count = 7;
+        ui.stage.set_root(3); // C has a root-bass high-G ukulele shape in frets 0..4.
+        let material = ui.stage.card_from_lens().unwrap().material;
+        ui.shift_card_window(0);
+        let card = &mut ui.set.cards[0];
+        card.material = material;
+        card.setting.instrument = "Ukulele".into();
+        card.setting.tuning = None;
+        ui.stage.select_next_card_shape(card).unwrap();
+    });
+    assert_eq!(h.state().stage.string_count(), 6);
+    let geom = h.state().rehearsal_board_geometry();
+    assert_eq!(
+        (geom.string_count, geom.fret_start, geom.fret_count),
+        (4, 0, 4)
+    );
+    let board = rect(&h, "fretboard-stack");
+    let expected = geom.size_u32();
+    assert_eq!((board.2, board.3), (expected.0 as f32, expected.1 as f32));
+    assert!(
+        h.state()
+            .stage
+            .dots_for_card(&h.state().set.cards[0])
+            .iter()
+            .all(|dot| dot.string_index < 4)
+    );
+    h.update(|ui| {
+        for _ in 0..20 {
+            ui.shift_card_window(1);
+        }
+    });
+    assert_eq!(
+        h.state().set.cards[0].setting.fret_window.unwrap().start,
+        11,
+        "the selected ukulele window must reach its 15th fret despite the live guitar ending at 7"
+    );
+    h.update(|ui| {
+        ui.set.cards[0].setting.capo = Some(7);
+        for _ in 0..20 {
+            ui.shift_card_window(-1);
+        }
+    });
+    assert_eq!(h.state().set.cards[0].setting.fret_window.unwrap().start, 7);
+}

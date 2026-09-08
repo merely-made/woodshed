@@ -367,6 +367,12 @@ pub fn stage_css(p: &Palette) -> String {
 .stage-context-title {{ color: {text}; font-size: 14px; font-weight: 600; }}
 .stage-context-comparison {{ font-size: 12px; }}
 .stage-context-actions {{ display: flex; gap: 8px; margin-top: 5px; }}
+.stage-context-candidates {{ margin-top: 8px; }}
+.stage-context-candidate-list {{ max-height: 180px; overflow-y: auto; margin: 6px 0; }}
+.stage-context-candidate {{ padding: 7px 5px; border-top: 1px solid {surface}; border-radius: 4px; }}
+.stage-context-candidate:hover {{ background-color: {surface}; }}
+.stage-context-candidate-label {{ color: {text}; font-size: 12px; }}
+.stage-context-candidate-meta {{ color: {text_dim}; font-size: 11px; margin-top: 3px; }}
 .stage-context-labels {{ position: absolute; inset: 0; pointer-events: none; }}
 .stage-context-node-label {{ position: absolute; display: block; font-size: 10px; line-height: 14px; white-space: nowrap; pointer-events: none; color: {text_dim}; }}
 .stage-context-node-label.active {{ color: {text}; font-weight: 600; }}
@@ -409,6 +415,8 @@ pub fn stage_css(p: &Palette) -> String {
 .set-card-source {{ margin-top: 3px; }}
 .set-editor {{ display: flex; align-items: center; flex-wrap: wrap; border-top-width: 1px; border-top-color: {surface_2}; padding-top: 8px; }}
 .set-editor-label {{ color: {text_dim}; font-size: 11px; margin-right: 8px; }}
+.card-shape-controls {{ display: flex; flex-wrap: wrap; align-items: center; gap: 6px; flex: 1 0 100%; margin-top: 8px; }}
+.card-shape-notice {{ color: {text_dim}; flex: 1 0 100%; }}
 .viewport-narrow .set-card {{ width: 44%; }}
 .viewport-narrow .settings-shell {{ display: block; }}
 .viewport-narrow .settings-nav {{ width: 100%; display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 12px; }}

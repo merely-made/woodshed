@@ -682,6 +682,22 @@ impl Automatable for Probe<'_, '_> {
             // "none" forever.
             .with_field("graph-focus", self.graph_focus_key())
             .with_field("section", ui.section.label().to_string())
+            .with_field(
+                "shape-index",
+                ui.set
+                    .cards
+                    .get(ui.set.cursor)
+                    .and_then(|card| card.setting.voicing_idx)
+                    .map_or_else(|| "none".to_string(), |index| index.to_string()),
+            )
+            .with_field(
+                "shape-dots",
+                ui.set
+                    .cards
+                    .get(ui.set.cursor)
+                    .map_or(0, |card| ui.stage.dots_for_card(card).len())
+                    .to_string(),
+            )
             .with_field("lens", format!("{:?}", ui.stage.lens))
             .with_field("material", ui.stage.material_name());
         // The Related frontier, observed as the app computes it: the top
@@ -886,6 +902,18 @@ impl Driveable for Probe<'_, '_> {
     fn app_step(&mut self, line: &str) -> Result<(), String> {
         let mut parts = line.split_whitespace();
         match parts.next() {
+            Some("ui-zoom") => {
+                let zoom: f32 = parts
+                    .next()
+                    .ok_or("ui-zoom wants a scale")?
+                    .parse()
+                    .map_err(|_| "invalid UI zoom")?;
+                if parts.next().is_some() || !zoom.is_finite() || !(0.5..=2.0).contains(&zoom) {
+                    return Err("ui-zoom requires a scale from 0.5 to 2".into());
+                }
+                *self.ctx.set_ui_zoom = Some(zoom);
+                Ok(())
+            },
             Some("pointer-click") => {
                 // For receipts measured from a presented frame when the probe's
                 // independently computed selector layout disagrees with the host.

@@ -12,6 +12,7 @@
 pub mod arpeggio;
 pub mod arrangement;
 pub mod audio;
+pub mod card_shapes;
 pub mod harmony;
 pub mod history;
 pub mod mere;
@@ -20,15 +21,21 @@ pub mod sealed_backend;
 pub mod search;
 pub mod settings;
 pub mod song;
+pub mod stage_candidates;
 pub mod stage_context;
 pub mod stage_scene;
 pub mod storage;
 pub mod tonnetz;
 
+pub use card_shapes::{
+    CARD_SHAPE_PROFILE, CardShapeGeometry, CardShapeStatus, CardShapeUnavailable, ResolvedCardShape,
+};
+
 use arpeggio::{ArpeggioDirection, ArpeggioRun, generate_shapes};
+use std::cell::RefCell;
 use woodshedding::chord::{ChordFormula, catalog as chord_catalog};
 use woodshedding::exercise::{Exercise, ExerciseParams, catalog as exercise_catalog};
-use woodshedding::fretboard::{Fretboard, Position};
+use woodshedding::fretboard::{ChordVoicing, Fretboard, Position, StringPlay};
 use woodshedding::interval::Interval;
 use woodshedding::pitch::PitchClass;
 use woodshedding::pitch::{Pitch, Spelling};
@@ -40,7 +47,7 @@ use woodshedding::rehearsal::{
     Card, CardId, FretWindow, LoopMode, MarkMode, Material, Recipe, Set, Setting, Timing, Touch,
 };
 use woodshedding::scale::{ScaleFormula, catalog as scale_catalog};
-use woodshedding::tuning::{Tuning, TuningSpec, catalog as tuning_catalog};
+use woodshedding::tuning::{Instrument, Tuning, TuningSpec, catalog as tuning_catalog};
 
 /// The fretboard lens strip (redesign-plan vocabulary).
 #[derive(Clone, Copy, Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize, Default)]
@@ -390,6 +397,10 @@ pub struct StageState {
     pub exercise_step_idx: usize,
     /// True while auto-advancing.
     pub exercise_playing: bool,
+    /// One-entry transient cache for selected-shape rendering, audition, and
+    /// controls in the same frame. It is derived from the card + live setup and
+    /// never participates in persistence.
+    card_shape_cache: RefCell<Option<card_shapes::CardShapeCache>>,
 }
 
 /// How many trailing steps the exercise board keeps visible behind the
@@ -731,6 +742,7 @@ impl StageState {
             exercise_starting_fret: 1,
             exercise_step_idx: 0,
             exercise_playing: false,
+            card_shape_cache: RefCell::new(None),
         }
     }
 
@@ -1200,7 +1212,7 @@ impl StageState {
     pub fn card_from_lens(&self) -> Option<Card> {
         let root_pc = PitchClass::new(9 + self.root_idx as u8); // A = pc 9
         let setting = Setting {
-            instrument: String::new(),
+            instrument: self.tuning().instrument.to_string(),
             tuning: Some(self.tuning().name.clone()),
             ..Setting::default()
         };
@@ -1305,7 +1317,7 @@ impl StageState {
                 root: PitchClass::new(9 + self.root_idx as u8), // A = pc 9
             },
             setting: Setting {
-                instrument: String::new(),
+                instrument: self.tuning().instrument.to_string(),
                 tuning: Some(self.tuning().name.clone()),
                 ..Setting::default()
             },
@@ -1317,10 +1329,10 @@ impl StageState {
         })
     }
 
-    /// Resolve a card's material to fretboard dots against the current
-    /// tuning. (Setting fidelity — capo, pinned windows, per-card tuning —
-    /// arrives with the card editor; tracked in the plan.)
     pub fn dots_for_card(&self, card: &Card) -> Vec<FretDot> {
+        if matches!(card.material, Material::Chord { .. }) && card.setting.voicing_idx.is_some() {
+            return self.selected_card_shape_dots(card).unwrap_or_default();
+        }
         let board = Fretboard::new(self.tuning(), self.fret_count);
         let root_of = |pc: &PitchClass| Pitch::from_midi(48 + pc.value() as i32, Spelling::Sharps);
         let positions = match &card.material {
@@ -1857,15 +1869,27 @@ impl StageState {
                     .unwrap_or_default(),
                 true,
             ),
-            Material::Chord { name, root } => (
-                chord_catalog()
-                    .iter()
-                    .find(|c| c.name == name.as_str())
-                    .and_then(|c| c.apply_to(root_of(root)).ok())
-                    .map(to_hz)
-                    .unwrap_or_default(),
-                false,
-            ),
+            Material::Chord { name, root } => {
+                if card.setting.voicing_idx.is_some() {
+                    let pitches = match self.selected_card_shape(card) {
+                        CardShapeStatus::Available(shape) => to_hz(shape.concert_pitches()),
+                        CardShapeStatus::Unavailable(_)
+                        | CardShapeStatus::NotChord
+                        | CardShapeStatus::Unselected => Vec::new(),
+                    };
+                    (pitches, false)
+                } else {
+                    (
+                        chord_catalog()
+                            .iter()
+                            .find(|c| c.name == name.as_str())
+                            .and_then(|c| c.apply_to(root_of(root)).ok())
+                            .map(to_hz)
+                            .unwrap_or_default(),
+                        false,
+                    )
+                }
+            },
             Material::Riff { .. } => (Vec::new(), false),
             Material::Path { positions, .. } => {
                 // A drawn path is inherently sequential: sound it as an
@@ -2240,6 +2264,14 @@ mod tests {
         s.set_lens(Lens::Exercises);
         let riff = s.card_from_lens().unwrap();
         assert!(s.card_voicing(&riff).0.is_empty());
+    }
+
+    #[test]
+    fn cards_staged_from_a_lens_store_the_active_instrument_identity() {
+        let mut s = StageState::new();
+        s.set_lens(Lens::Chords);
+        let card = s.card_from_lens().expect("chord lens stages a card");
+        assert_eq!(card.setting.instrument, s.tuning().instrument.to_string());
     }
 
     #[test]

@@ -88,6 +88,77 @@ impl UiState {
             .max(shown + 8)
             .min(36);
     }
+
+    /// Disclose the next reading-owned candidates without changing Set
+    /// membership or auditioning anything. Existing positions remain the
+    /// scene's responsibility; these keys only widen the read model.
+    pub fn show_nearby_context(&mut self) {
+        let Some(focus) = self.context_focus.clone().or_else(|| {
+            self.set
+                .cursor_id()
+                .and_then(|id| self.set.cards.iter().find(|card| card.id == id))
+                .and_then(|card| KeyedCatalogRef::from_material(&card.material))
+        }) else {
+            return;
+        };
+        let authored = self
+            .set
+            .cards
+            .iter()
+            .filter_map(|card| KeyedCatalogRef::from_material(&card.material))
+            .collect::<std::collections::BTreeSet<_>>();
+        let candidates = woodshed_core::stage_candidates::ranked_candidates(
+            self.app_settings.stage.set_graph_reading,
+            &focus,
+            &authored,
+        );
+        let displayed = super::set_graph_snapshot(self)
+            .nodes
+            .iter()
+            .filter(|node| !node.foreground)
+            .filter_map(|node| node.keyed.clone())
+            .collect::<std::collections::BTreeSet<_>>();
+        let limit = self.app_settings.stage.context.node_limit();
+        let free = limit.saturating_sub(displayed.len());
+        let incoming: Vec<_> = candidates
+            .into_iter()
+            .filter(|candidate| !displayed.contains(&candidate.keyed))
+            .take(if free == 0 { 6 } else { free.min(6) })
+            .map(|candidate| candidate.keyed)
+            .collect();
+        if incoming.is_empty() {
+            return;
+        }
+        let mut retained = std::collections::BTreeSet::new();
+        if let Some(focus) = self
+            .context_focus
+            .as_ref()
+            .filter(|focus| !authored.contains(*focus))
+        {
+            retained.insert(focus.clone());
+        }
+        // Retain manually placed context if a reading supplies it. Fixed musical
+        // readings normally have no such overrides.
+        retained.extend(
+            displayed
+                .iter()
+                .filter(|key| self.context_positions.contains_key(&key.wire_key()))
+                .cloned(),
+        );
+        for candidate in incoming {
+            if retained.len() == limit {
+                break;
+            }
+            retained.insert(candidate);
+        }
+        for existing in displayed {
+            if retained.len() == limit {
+                break;
+            }
+            retained.insert(existing);
+        }
+        self.context_disclosed = retained;
+    }
 }
 
 fn context_title(material: &KeyedCatalogRef) -> String {
@@ -361,6 +432,168 @@ fn comparison(ui: &UiState, focused: &KeyedCatalogRef) -> Option<UiChild> {
     ) as UiChild)
 }
 
+fn pitch_class_names(set: &std::collections::BTreeSet<woodshedding::pitch::PitchClass>) -> String {
+    if set.is_empty() {
+        return "none".to_string();
+    }
+    set.iter()
+        .map(|tone| {
+            let pitch = Pitch::from_midi(60 + i32::from(tone.value()), Spelling::Sharps);
+            format!("{}{}", pitch.name, pitch.accidental)
+        })
+        .collect::<Vec<_>>()
+        .join(" ")
+}
+
+fn nearby_candidates(ui: &UiState, focused: &KeyedCatalogRef) -> UiChild {
+    let authored = ui
+        .set
+        .cards
+        .iter()
+        .filter_map(|card| KeyedCatalogRef::from_material(&card.material))
+        .collect::<std::collections::BTreeSet<_>>();
+    let mut candidates = woodshed_core::stage_candidates::ranked_candidates(
+        ui.app_settings.stage.set_graph_reading,
+        focused,
+        &authored,
+    );
+    let displayed = super::set_graph_snapshot(ui)
+        .nodes
+        .iter()
+        .filter(|node| !node.foreground)
+        .filter_map(|node| node.keyed.clone())
+        .collect::<std::collections::BTreeSet<_>>();
+    let unseen = candidates
+        .iter()
+        .filter(|candidate| !displayed.contains(&candidate.keyed))
+        .count();
+    let at_capacity = displayed.len() >= ui.app_settings.stage.context.node_limit();
+    candidates.sort_by_key(|candidate| displayed.contains(&candidate.keyed));
+    let rows = candidates
+        .into_iter()
+        .take(6)
+        .map(|candidate| {
+            let label = candidate
+                .keyed
+                .label()
+                .unwrap_or_else(|| candidate.keyed.wire_key());
+            let label = if displayed.contains(&candidate.keyed) {
+                format!("Shown · {label}")
+            } else {
+                label
+            };
+            let reason = match candidate.reason {
+                woodshed_core::stage_candidates::StageCandidateReason::CircleOfFifths {
+                    distance,
+                } => format!("Fifth distance: {distance}"),
+                woodshed_core::stage_candidates::StageCandidateReason::Tonnetz { depth } => {
+                    format!("P/L/R depth: {depth}")
+                },
+                woodshed_core::stage_candidates::StageCandidateReason::Unavailable => {
+                    "Reading metric: unavailable".to_string()
+                },
+            };
+            let motion = candidate
+                .pitch_motion
+                .as_ref()
+                .map(|motion| format!("Pitch motion: {} semitones", motion.total_semitones))
+                .unwrap_or_else(|| "Pitch motion: unavailable".to_string());
+            let tone_detail = woodshed_core::harmony::compare_pitch_sets(focused, &candidate.keyed)
+                .map(|comparison| {
+                    if let Some(motion) = &candidate.pitch_motion {
+                        format!(
+                            "Held: {} · Moves: {}",
+                            pitch_class_names(&comparison.shared),
+                            if motion.moves.is_empty() {
+                                "none".to_string()
+                            } else {
+                                motion
+                                    .moves
+                                    .iter()
+                                    .map(|movement| {
+                                        format!(
+                                            "{} → {}",
+                                            pitch_class_names(&std::collections::BTreeSet::from([
+                                                movement.from
+                                            ])),
+                                            pitch_class_names(&std::collections::BTreeSet::from([
+                                                movement.to
+                                            ]))
+                                        )
+                                    })
+                                    .collect::<Vec<_>>()
+                                    .join(", ")
+                            },
+                        )
+                    } else {
+                        format!(
+                            "Held: {} · Removed: {} · Added: {}",
+                            pitch_class_names(&comparison.shared),
+                            pitch_class_names(&comparison.left_only),
+                            pitch_class_names(&comparison.right_only),
+                        )
+                    }
+                })
+                .unwrap_or_else(|| "Tone comparison: unavailable".to_string());
+            let target = candidate.keyed.clone();
+            Box::new(clickable(
+                el(
+                    "div",
+                    (
+                        el("div", text(label)).attr("class", "stage-context-candidate-label"),
+                        el("div", text(format!("{reason} · {motion}")))
+                            .attr("class", "stage-context-candidate-meta"),
+                        el("div", text(tone_detail)).attr("class", "stage-context-candidate-meta"),
+                    ),
+                )
+                .attr("class", "stage-context-candidate"),
+                move |ui: &mut UiState, _| {
+                    let displayed = super::set_graph_snapshot(ui)
+                        .nodes
+                        .into_iter()
+                        .filter(|node| !node.foreground)
+                        .filter_map(|node| node.keyed);
+                    ui.context_disclosed.extend(displayed);
+                    ui.focus_context_catalog(target.clone());
+                },
+            )) as UiChild
+        })
+        .collect::<Vec<_>>();
+    Box::new(
+        el(
+            "div",
+            (
+                el("div", text("Nearby candidates")).attr("class", "stage-context-compare-heading"),
+                el(
+                    "div",
+                    text(format!(
+                        "From {} · unshown first",
+                        focused.label().unwrap_or_else(|| focused.wire_key())
+                    )),
+                )
+                .attr("class", "stage-context-label"),
+                el("div", rows).attr("class", "stage-context-candidate-list"),
+                (unseen == 0).then(|| el("div", text("All candidate triads are shown."))),
+                (unseen > 0).then(|| {
+                    clickable(
+                        el(
+                            "div",
+                            text(if at_capacity {
+                                "Replace quiet context"
+                            } else {
+                                "Show nearby"
+                            }),
+                        )
+                        .attr("class", "t-btn stage-context-nearby-show"),
+                        |ui: &mut UiState, _| ui.show_nearby_context(),
+                    )
+                }),
+            ),
+        )
+        .attr("class", "stage-context-candidates"),
+    )
+}
+
 fn select_keyed_material(stage: &mut woodshed_core::StageState, keyed: &KeyedCatalogRef) -> bool {
     let Some(material) = keyed.to_material() else {
         return false;
@@ -409,6 +642,9 @@ fn more_button(ui: &UiState) -> UiChild {
     }
     let initial = ui.context_focus.is_none() && ui.context_disclosed.is_empty();
     if !initial && ui.app_settings.stage.context.node_limit() >= 36 {
+        if ui.context_focus.is_some() {
+            return Box::new(el("div", text("Context limit reached.")));
+        }
         return Box::new(el(
             "div",
             (
@@ -452,6 +688,8 @@ pub(super) fn panel(ui: &UiState) -> UiChild {
             el("div", text(title)).attr("class", "stage-context-title"),
             el("div", text(guidance)),
             el("div", text("Select a quiet node to reveal its connections and compare it with the selected Set card.")),
+            ui.current_card().and_then(|card| KeyedCatalogRef::from_material(&card.material))
+                .map(|focus| nearby_candidates(ui, &focus)),
             more_button(ui),
         )).attr("class", "stage-context-panel"));
     };
@@ -480,6 +718,7 @@ pub(super) fn panel(ui: &UiState) -> UiChild {
                     ),
                 )
                 .attr("class", "stage-context-actions"),
+                nearby_candidates(ui, material),
                 more_button(ui),
             ),
         )

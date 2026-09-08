@@ -86,6 +86,15 @@ pub struct ChordVoicing {
     pub strings: Vec<StringPlay>,
 }
 
+/// Result of a bounded voicing search. `complete` is false when the caller's
+/// work or result budget was reached, so an interactive picker never presents
+/// an incomplete prefix as its full candidate set.
+#[derive(Clone, Debug)]
+pub struct BoundedVoicingSearch {
+    pub voicings: Vec<ChordVoicing>,
+    pub complete: bool,
+}
+
 impl ChordVoicing {
     /// Distance between the lowest and highest fretted strings (open
     /// strings excluded). Returns 0 if no strings are fretted.
@@ -228,6 +237,29 @@ impl Fretboard {
         )
     }
 
+    /// Like [`Self::find_chord_voicings`], but explicitly bounds enumeration
+    /// work and returned candidates for interactive consumers. A non-complete
+    /// result is not a valid complete picker inventory.
+    pub fn find_chord_voicings_bounded(
+        &self,
+        chord: &ChordFormula,
+        root: Pitch,
+        lowest_fret: u8,
+        max_fret_span: u8,
+        max_combinations: usize,
+        max_results: usize,
+    ) -> Result<BoundedVoicingSearch, TranspositionError> {
+        self.find_chord_voicings_for_bass_bounded(
+            chord,
+            root,
+            lowest_fret,
+            max_fret_span,
+            BassConstraint::Root,
+            max_combinations,
+            max_results,
+        )
+    }
+
     /// Enumerate chord voicings with a specific bass requirement.
     ///
     /// - [`BassConstraint::Root`] — root in bass (default voicings)
@@ -251,6 +283,30 @@ impl Fretboard {
         max_fret_span: u8,
         bass: BassConstraint,
     ) -> Result<Vec<ChordVoicing>, TranspositionError> {
+        Ok(self
+            .find_chord_voicings_for_bass_bounded(
+                chord,
+                root,
+                lowest_fret,
+                max_fret_span,
+                bass,
+                usize::MAX,
+                usize::MAX,
+            )?
+            .voicings)
+    }
+
+    /// Bounded form of [`Self::find_chord_voicings_for_bass`].
+    pub fn find_chord_voicings_for_bass_bounded(
+        &self,
+        chord: &ChordFormula,
+        root: Pitch,
+        lowest_fret: u8,
+        max_fret_span: u8,
+        bass: BassConstraint,
+        max_combinations: usize,
+        max_results: usize,
+    ) -> Result<BoundedVoicingSearch, TranspositionError> {
         let chord_pitches = chord.apply_to(root)?;
         let required_pcs: Vec<u8> = {
             let mut s: Vec<u8> = chord_pitches.iter().map(|p| p.pitch_class()).collect();
@@ -300,14 +356,14 @@ impl Fretboard {
                                 respell_at_midi(canonical.name, canonical.accidental, target_midi),
                                 Some(chord.intervals[idx]),
                             )
-                        }
+                        },
                         None => {
                             // Slash bass non-chord-tone. Spell with sharps by default.
                             (
                                 Pitch::from_midi(target_midi, crate::pitch::Spelling::Sharps),
                                 None,
                             )
-                        }
+                        },
                     };
                     opts.push(StringPlay::Played {
                         fret,
@@ -320,10 +376,20 @@ impl Fretboard {
             .collect();
 
         let counts: Vec<usize> = per_string.iter().map(|v| v.len()).collect();
-        let total: usize = counts.iter().product();
+        let total = counts
+            .iter()
+            .try_fold(1usize, |product, count| product.checked_mul(*count));
+        let work = total.unwrap_or(usize::MAX).min(max_combinations);
+        let mut complete = total == Some(work);
+        if max_results == 0 {
+            return Ok(BoundedVoicingSearch {
+                voicings: Vec::new(),
+                complete: false,
+            });
+        }
         let root_pc = root.pitch_class();
         let mut result = Vec::new();
-        for i in 0..total {
+        for i in 0..work {
             let mut idx = i;
             let combo: Vec<StringPlay> = per_string
                 .iter()
@@ -338,9 +404,16 @@ impl Fretboard {
                 self.validate_voicing(combo, &required_pcs, root_pc, max_fret_span, bass)
             {
                 result.push(v);
+                if result.len() >= max_results {
+                    complete = false;
+                    break;
+                }
             }
         }
-        Ok(result)
+        Ok(BoundedVoicingSearch {
+            voicings: result,
+            complete,
+        })
     }
 
     fn validate_voicing(
@@ -355,10 +428,17 @@ impl Fretboard {
         if played_count < 3 {
             return None;
         }
-        let lowest_played = combo.iter().find_map(|s| match s {
-            StringPlay::Played { pitch, .. } => Some(pitch.pitch_class()),
-            _ => None,
-        })?;
+        // Written string order is not necessarily low-to-high (high-G ukulele
+        // and five-string banjo are re-entrant). Bass means the lowest sounding
+        // MIDI pitch, never simply the first written string.
+        let lowest_played = combo
+            .iter()
+            .filter_map(|s| match s {
+                StringPlay::Played { pitch, .. } => Some(*pitch),
+                _ => None,
+            })
+            .min_by_key(|pitch| pitch.midi())?
+            .pitch_class();
         let bass_ok = match bass {
             BassConstraint::Root => lowest_played == root_pc,
             BassConstraint::AnyChordTone => required_pcs.contains(&lowest_played),
@@ -557,6 +637,31 @@ mod tests {
     }
 
     #[test]
+    fn root_bass_uses_sounding_order_for_reentrant_tunings() {
+        let board = Fretboard::new(
+            Tuning::find_for("Standard (high-G)", Instrument::Ukulele).unwrap(),
+            15,
+        );
+        let c_major = find_chord("Major");
+        let root = nat(NoteName::C, 4);
+        let voicings = board.find_chord_voicings(c_major, root, 0, 4).unwrap();
+        assert!(
+            !voicings.is_empty(),
+            "a C-major root-bass shape fits high-G uke"
+        );
+        for voicing in voicings {
+            let actual_bass = voicing
+                .strings
+                .iter()
+                .filter_map(|play| play.pitch())
+                .min_by_key(|pitch| pitch.midi())
+                .expect("played strings")
+                .pitch_class();
+            assert_eq!(actual_bass, root.pitch_class(), "{voicing:?}");
+        }
+    }
+
+    #[test]
     fn voicings_contain_all_chord_tones() {
         let board = standard_guitar();
         let e_major = find_chord("Major");
@@ -641,6 +746,27 @@ mod tests {
             voicings.len() < 200,
             "too many voicings: {}",
             voicings.len()
+        );
+    }
+
+    #[test]
+    fn bounded_search_marks_a_result_limited_prefix_incomplete() {
+        let board = standard_guitar();
+        let major = find_chord("Major");
+        let search = board
+            .find_chord_voicings_bounded(major, nat(NoteName::E, 2), 0, 4, 50_000, 1)
+            .unwrap();
+        assert_eq!(search.voicings.len(), 1);
+        assert!(
+            board
+                .find_chord_voicings_bounded(major, nat(NoteName::E, 2), 0, 4, 50_000, 0)
+                .unwrap()
+                .voicings
+                .is_empty()
+        );
+        assert!(
+            !search.complete,
+            "a caller-visible result cap must never claim a complete inventory"
         );
     }
 
@@ -790,7 +916,7 @@ mod tests {
             } => {
                 assert_eq!(pitch.pitch_class(), 6);
                 assert_eq!(*interval_from_root, None);
-            }
+            },
             _ => unreachable!(),
         }
     }

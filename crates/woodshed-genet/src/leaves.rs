@@ -388,6 +388,7 @@ fn sync_rehearsal_fretboard(shared: &mut Shared, ui: &UiState, leaves: &mut Leaf
     let cursor = ui.set.cursor.min(ui.set.cards.len() - 1);
     let card = &ui.set.cards[cursor];
     let st = &ui.stage;
+    let geom = ui.rehearsal_board_geometry();
     let marker_style = ui.app_settings.fretboard.marker_style.clone();
     let orientation = Orientation::from_name(&ui.app_settings.fretboard.orientation);
     let distinguish_root = ui.app_settings.accessibility.distinguish_root;
@@ -406,9 +407,9 @@ fn sync_rehearsal_fretboard(shared: &mut Shared, ui: &UiState, leaves: &mut Leaf
         .collect();
     let mut h = hasher();
     cursor.hash(&mut h);
-    st.string_count().hash(&mut h);
-    st.fret_start.hash(&mut h);
-    st.fret_count.hash(&mut h);
+    geom.string_count.hash(&mut h);
+    geom.fret_start.hash(&mut h);
+    geom.fret_count.hash(&mut h);
     marker_style.hash(&mut h);
     matches!(orientation, Orientation::Vertical).hash(&mut h);
     distinguish_root.hash(&mut h);
@@ -427,9 +428,9 @@ fn sync_rehearsal_fretboard(shared: &mut Shared, ui: &UiState, leaves: &mut Leaf
     leaves.insert(
         REHEARSAL_FRETBOARD_LEAF_KEY,
         Box::new(FretboardLeaf::new(
-            st.string_count(),
-            st.fret_start,
-            st.fret_count,
+            geom.string_count,
+            geom.fret_start,
+            geom.fret_count,
             orientation,
             distinguish_root,
             dots,

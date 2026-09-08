@@ -169,3 +169,87 @@ fn circle_context_keeps_glyph_centres_smaller_than_hit_rects() {
             .all(|node| { node.position.0.is_finite() && node.position.1.is_finite() })
     );
 }
+
+#[test]
+fn nearby_refresh_keeps_focus_without_authoring_or_auditioning() {
+    let mut ui = UiState::new();
+    ui.stage.set_lens(woodshed_core::Lens::Chords);
+    assert!(ui.focus_context_catalog(c_major()));
+    ui.stage_current(None);
+    ui.app_settings.stage.set_graph_reading = StageGraphReading::CircleOfFifths;
+    let before_cards = serde_json::to_value(&ui.set.cards).unwrap();
+    let before_focus = ui.context_focus.clone();
+    ui.show_nearby_context();
+    assert_eq!(serde_json::to_value(&ui.set.cards).unwrap(), before_cards);
+    assert_eq!(ui.context_focus, before_focus);
+    assert!(ui.audio_requests.is_empty());
+    assert!(!ui.context_disclosed.is_empty());
+}
+
+#[test]
+fn saturated_nearby_refresh_admits_an_unseen_ranked_triad() {
+    let mut ui = UiState::new();
+    ui.stage.set_lens(woodshed_core::Lens::Chords);
+    assert!(ui.focus_context_catalog(c_major()));
+    ui.stage_current(None);
+    ui.set_graph_reading(StageGraphReading::CircleOfFifths);
+    ui.app_settings.stage.context.node_limit = 36;
+    ui.context_focus = Some(c_major());
+    ui.context_disclosed = ["scale:Major", "scale:Minor", "chord:Major 7"]
+        .into_iter()
+        .flat_map(|formula| (0..12).map(move |root| keyed(formula, root)))
+        .collect();
+    let before = set_graph_snapshot(&ui);
+    assert_eq!(
+        before.nodes.iter().filter(|node| !node.foreground).count(),
+        36
+    );
+    let before_positions = set_graph_swatch_from_snapshot(&before, &ui, true)
+        .graph
+        .nodes
+        .into_iter()
+        .map(|node| (node.key, node.position))
+        .collect::<std::collections::BTreeMap<_, _>>();
+    let displayed = before
+        .nodes
+        .iter()
+        .filter_map(|node| node.keyed.clone())
+        .collect::<std::collections::BTreeSet<_>>();
+    let authored = ui.set.cards.len();
+    let ranked = woodshed_core::stage_candidates::ranked_candidates(
+        StageGraphReading::CircleOfFifths,
+        &c_major(),
+        &std::collections::BTreeSet::new(),
+    );
+    let unseen = ranked
+        .iter()
+        .find(|candidate| !displayed.contains(&candidate.keyed))
+        .expect("bounded context leaves a ranked frontier")
+        .keyed
+        .clone();
+    ui.show_nearby_context();
+    let after = set_graph_snapshot(&ui);
+    let after_swatch = set_graph_swatch_from_snapshot(&after, &ui, true);
+    assert!(
+        after
+            .nodes
+            .iter()
+            .any(|node| node.keyed.as_ref() == Some(&unseen))
+    );
+    assert_eq!(ui.set.cards.len(), authored);
+    let common = after_swatch
+        .graph
+        .nodes
+        .iter()
+        .filter_map(|node| {
+            before_positions
+                .get(&node.key)
+                .map(|position| (*position, node.position))
+        })
+        .collect::<Vec<_>>();
+    assert!(
+        !common.is_empty(),
+        "refresh discarded every existing placement"
+    );
+    assert!(common.iter().all(|(before, after)| before == after));
+}

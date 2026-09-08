@@ -1,12 +1,20 @@
 # Musical Projections Plan
 
-**Status (2026-09-07): Circle-of-Fifths context, triadic Tonnetz, and minimum
-pitch-motion comparison landed. S1 is partial; S2-S4 remain planned except
+**Status (2026-09-08): Circle-of-Fifths context, triadic Tonnetz, minimum
+pitch-motion comparison, nearby candidates, and selected chord shapes implemented.
+S1, S2 and S4 are partial; S3 remains planned except
 where explicitly recorded below.** Bounded comparison exports and
 browser consumer proofs exist, as recorded below. The musical subsystem review
 and isolated enumeration probe below are research, not implementation of these
 slices. Luna/Terra are the requested implementation agents; each musical slice
 still needs its reviewed done-conditions before opening.
+
+**Implementation (2026-09-07-08):** nearby candidates within the existing
+Circle/Tonnetz readings and explicit selected chord shapes were developed as
+separate ownership lanes. The integration gate covers full-budget discovery,
+stable positions, explicit authoring/audition, matching Card-specific neck paint
+and labels, and selected-shape sound. The anchored reading, neck-movement score,
+finger contacts, and phrase search remain subsequent work.
 
 Child of [2026-07-11_stage_set_tools_plan.md](2026-07-11_stage_set_tools_plan.md):
 this is P4e item 6 (voice leading placed by motion cost) and the reasons half
@@ -322,6 +330,23 @@ or coordinates; the chosen anchor is visible; and a real pointer scenario can
 inspect, hear, explicitly show, then add a candidate through existing boundaries.
 The ranking slice can land before the new arrangement or any fingering work.
 
+**Implementation (2026-09-07-08):**
+`woodshed-core::stage_candidates` ranks the 24 major/minor triads by the current
+reading, with pitch motion as a separately labeled secondary measure. Circle
+uses the same relative-major/minor sectors as the map; Tonnetz uses P/L/R depth.
+Candidate rows show exact held tones and assignment pairs, or explicit
+removed/added sets when cardinalities differ. Unknown motion is not zero.
+
+The bounded list puts unshown candidates first and labels already displayed
+ones. **Show nearby** fills remaining room; **Replace quiet context** admits up
+to six unseen candidates at capacity while retaining focus, authored Cards,
+manual placement overrides, and as much other displayed material as fits.
+It respects the configured breadth. Inspection, Hear, and Add remain separate.
+Fixed musical coordinates preserve bearings when material leaves and returns.
+The full-budget regression uses 36 displayed context items, proves unseen triad
+admission, and compares surviving node positions. The new anchored reading,
+multi-card selection, and broader reading-policy consolidation remain open.
+
 ### S3. Practice evidence in the projection
 
 Wire what exists:
@@ -346,9 +371,9 @@ other Stage settings.
 ### S4. Resolve a selected shape, then compare neck movement (scoped 2026-09-07)
 
 The prerequisite is one `woodshed-core` resolver consumed by `dots_for_card`,
-`card_voicing`, and the effective-sound path. Today the board uses the live
-instrument and all chord positions, while audition applies formula pitches near
-MIDI 48. Neither reads `voicing_idx`. `ChordVoicing` has muted/played string
+`card_voicing`, and the effective-sound path. Before this slice the board used the live
+instrument and all chord positions, while audition applied formula pitches near
+MIDI 48. Neither read `voicing_idx`. `ChordVoicing` has muted/played string
 positions, pitches and intervals; it has no finger identities or barre contacts.
 
 **First implementation slice: selected chord shapes.** Preserve
@@ -390,6 +415,23 @@ contacts and audition exactly their resolved concert pitches; tuning, capo,
 window, invalid index and re-entrant bass fixtures pass; unselected Cards retain
 the all-tone map; and actual shape-selection controls operate in Rehearsal.
 Context catalog previews remain a separate formula-preview contract.
+
+**Implementation (2026-09-07-08):**
+`woodshed-core::card_shapes` owns setup resolution, a one-entry derived cache,
+shape selection and persisted fret-pattern/profile validation. `None` keeps the
+legacy tone map. Previous/Next/All tones appear in the shared Card editor, with
+typed unavailable reasons and resolved setup details. Rehearsal's native leaf
+and retained labels share `UiState::rehearsal_board_geometry`.
+
+Wide windows use deterministic four-fret samples with a 128-shape inventory
+cap; each finder call evaluates at most 50,000 combinations. The UI labels a
+limited inventory, including truncated searches in narrower windows. These are
+browsing examples, not optimal ergonomic suggestions or an exhaustive list of
+all full-neck shapes. The chosen profile and fret pattern guard saved ordinals.
+Pinned windows override the live viewport; capo shifts both tuning and shape
+root. Position stepping uses the Card's instrument extent and capo. The finder
+now checks the actual lowest MIDI pitch for root-bass validity
+on re-entrant instruments. Existing Solo/Mute interpretation remains intact.
 
 **Second slice: neck movement.** Compare two resolved shapes only under the same
 instrument/tuning/capo setup. Report per-string held, moved, added and dropped
@@ -616,15 +658,51 @@ the canonical Mere receipt records its identity, clock and transport limits.
 
 ### Musical slice sequence
 
-The exact pitch-motion prerequisite is landed. Next, S2's nearby-candidate
-ranking and S4's selected-shape resolver can proceed independently, with view
-edits coordinated by component ownership. S2's anchored reading follows its
-ranking contract; S4's neck comparison follows a verified resolver. Shape
+The exact pitch-motion prerequisite, S2's nearby-candidate browsing and S4's
+selected-shape resolver are implemented. S2's anchored reading follows its
+ranking contract; S4's neck comparison follows the resolver. Shape
 selection is explicit opt-in through `voicing_idx`; legacy all-tone Cards keep
 their existing behavior. S3 remains independent. General fingerings and
 bar/line lookahead follow the contact and event-realization contracts, rather
 than being implied by geometric neck cost. Each bounded slice uses its stated
 done conditions before the dependent slice opens.
+
+### September 8 integration checks
+
+The first S2/S4 slices pass 373 automated tests: core 112, comparison/export
+examples 10, graph 14, views 53, theory 177, and seven production-host layout/input
+regressions. The host checks include explicit shape cycling and clearing,
+matching board/audition frequencies, a ukulele Card over a live guitar setup,
+instrument-specific window limits, capo stepping, and existing scroll behavior.
+The saturated 36-node context fixture admits unseen triads while preserving
+surviving positions and Set contents.
+
+Commands run from `C:/t` against Woodshed's manifest, with `--locked --offline
+-j1 --target-dir C:/t/woodshed-context-target`: `cargo test` for core, graph,
+views and woodshedding with `--lib --examples`; `cargo test -p woodshed-genet
+layout_tests -- --nocapture`; and `cargo build -p woodshed-genet`. One initial
+online invocation populated the missing pinned ringdown cache; Cargo.lock was
+unchanged. The ignored local Cargo patch configuration was bypassed by working
+outside the repository, rather than edited.
+
+Logs and native capture receipts live under
+`testing/woodshed/nearby-shapes-20260907/` in the surrounding workspace. Pitch
+agreement is automated evidence; acoustic output and instrument comfort are
+not physically verified. Unselected Cards intentionally retain the legacy
+all-tone/formula behavior, including its live-setup limitations. General
+per-Card setup unification remains open.
+
+Native scenarios passed and their PNGs were inspected: `shapes03/scenario.done`
+records Next/Next/Previous/Hear/All tones, and `nearby01/scenario.done` records
+disclosure, candidate focus, Hear and explicit Add (one Card becomes two).
+The captures are 2200x1504 pixels at DPI 2 after the display clamps the requested
+1100x900 logical window. Nearby uses UI zoom 0.65 to fit the expanded Stage.
+The shape scenario uses measured painted positions: initial selector-based
+runs missed controls because genet-probe computes a different layout from the
+retained host. Failed attempts are retained as `shapes01` and `shapes02`.
+This does not close the shared probe-geometry refactor or establish acceptance
+on other DPI/window combinations. `receipt.json` records the final source,
+binary, log and capture hashes.
 
 ## Stop rules
 

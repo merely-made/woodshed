@@ -58,6 +58,15 @@ impl Instrument {
         Self::Other,
     ];
 
+    /// Resolve the canonical persisted display identity used by rehearsal
+    /// cards. Empty or unknown strings deliberately stay unresolved rather
+    /// than being guessed as a different instrument.
+    pub fn from_identity(value: &str) -> Option<Self> {
+        Self::ALL
+            .into_iter()
+            .find(|instrument| instrument.to_string() == value)
+    }
+
     /// The instrument's standard playable extent, in semitone positions above
     /// the open string — the "full neck" a board shows by default. A player
     /// overrides it with a window (a range setting); this only picks the default.
@@ -196,6 +205,16 @@ impl Tuning {
         catalog()
             .iter()
             .find(|s| s.name == name && s.instrument == instrument)
+            .map(Tuning::from_spec)
+    }
+
+    /// The catalog's declared default for an instrument. Prefer its Standard
+    /// entry; a catalog family without one falls back to its first entry.
+    pub fn default_for(instrument: Instrument) -> Option<Tuning> {
+        catalog()
+            .iter()
+            .find(|spec| spec.instrument == instrument && spec.category == TuningCategory::Standard)
+            .or_else(|| catalog().iter().find(|spec| spec.instrument == instrument))
             .map(Tuning::from_spec)
     }
 
@@ -1708,9 +1727,11 @@ mod tests {
     #[test]
     fn catalog_is_nonempty_and_includes_standard_guitar() {
         assert!(!catalog().is_empty());
-        assert!(catalog()
-            .iter()
-            .any(|s| s.name == "Standard" && s.instrument == Instrument::Guitar));
+        assert!(
+            catalog()
+                .iter()
+                .any(|s| s.name == "Standard" && s.instrument == Instrument::Guitar)
+        );
     }
 
     #[test]
