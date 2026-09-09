@@ -82,6 +82,23 @@ impl EpisodeCache {
         Ok(used)
     }
 
+    /// Remove one published cache object. Stored paths are admitted only when
+    /// they name a direct `.audio` child of this cache root.
+    pub fn remove_cached_path(&self, path: &Path) -> Result<bool, CacheError> {
+        if path.parent() != Some(self.root.as_path())
+            || path.extension().and_then(|value| value.to_str()) != Some("audio")
+        {
+            return Err(CacheError::Invalid(
+                "refusing to remove a file outside the Redshank cache".into(),
+            ));
+        }
+        match fs::remove_file(path) {
+            Ok(()) => Ok(true),
+            Err(error) if error.kind() == io::ErrorKind::NotFound => Ok(false),
+            Err(error) => Err(error.into()),
+        }
+    }
+
     pub fn cache_url(&self, url: &str) -> Result<MediaSource, CacheError> {
         if !url.starts_with("http://") && !url.starts_with("https://") {
             return Err(CacheError::Invalid(
@@ -345,6 +362,27 @@ mod tests {
             .unwrap_err();
         assert!(matches!(truncated, CacheError::Invalid(_)));
         assert_eq!(fs::read_dir(directory.path()).unwrap().count(), 0);
+    }
+
+    #[test]
+    fn removal_is_idempotent_and_confined_to_the_cache_root() {
+        let directory = tempfile::tempdir().unwrap();
+        let cache = EpisodeCache::new(directory.path(), 10);
+        let path = directory.path().join("object.audio");
+        fs::write(&path, b"abc").unwrap();
+        assert!(cache.remove_cached_path(&path).unwrap());
+        assert!(!cache.remove_cached_path(&path).unwrap());
+
+        let outside = directory.path().join("..").join("outside.audio");
+        assert!(matches!(
+            cache.remove_cached_path(&outside),
+            Err(CacheError::Invalid(_))
+        ));
+        let wrong_extension = directory.path().join("object.json");
+        assert!(matches!(
+            cache.remove_cached_path(&wrong_extension),
+            Err(CacheError::Invalid(_))
+        ));
     }
 
     #[test]
