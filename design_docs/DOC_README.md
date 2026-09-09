@@ -11,6 +11,11 @@ before any other doc in this directory.
 
 ## Active Plans
 
+- [2026-09-09_audio_ports_rehome_plan.md](2026-09-09_audio_ports_rehome_plan.md)
+  — **In progress.** History-preserving Hocket and Ringdown migration into
+  nested `ports/` workspaces, local dependency rewiring, independent release
+  boundaries, and Woodshed's MPL-2.0 license conversion.
+
 - [2026-09-04_musical_projections_plan.md](2026-09-04_musical_projections_plan.md)
   — Circle-of-Fifths context and the 24-triad Tonnetz are implemented: keyed background,
   separate focus/audition/Add actions, and stable expansion.
