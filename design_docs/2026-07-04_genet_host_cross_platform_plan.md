@@ -658,22 +658,45 @@ prove scrolling and note hits after scrolling. The parent `receipt.json` records
 source and artifact hashes. Broader shell extraction and shared probe geometry
 remain open; this is a bounded responsive pass.
 
-### Retained selector geometry (2026-09-08, in progress)
+### Retained selector geometry (2026-09-08, implemented; Windows verified)
 
-The next correction gives `genet-probe` an opt-in, authoritative host selector
+The correction gives `genet-probe` an opt-in, authoritative host selector
 target. Unsupported hosts retain the existing surface resolver; a participating
 host's miss must remain a miss, including before layout exists. Woodshed consumes
 `AppCtx::painted_rect`, already published in Mere `e02a08f1`, instead of asking
 the probe to lay its DOM out again. The compatible Genet change is isolated
 from concurrent engine work and based on Woodshed's existing pinned revision.
 
-Done when shared protocol tests distinguish unsupported/hit/miss, shape and
-recenter scenarios pass using semantic selectors, and native zoomed and ordinary
-windows use the same retained coordinate space as production pointer delivery.
+The done-conditions passed: shared protocol tests distinguish unsupported/hit/miss,
+shape and recenter scenarios pass using semantic selectors, and native zoomed
+and ordinary windows use the retained production pointer coordinate space.
 Measured-point helpers remain available for diagnostics, with no claim that
 this closes every clipping, occlusion, or offscreen scrolling case.
 
 Dependency integration: Genet `09515e03d22` and Mere `691f9a0b` are published
 on isolated `woodshed-retained-probe` branches. Woodshed's lockfile contains
 one source revision for each repository; its 37 changed package entries only
-move those pins. Compilation and native acceptance remain pending.
+move those pins. Woodshed implementation `26a0573` is published separately on
+`woodshed-retained-selectors`, with PR #1 as the M4 release-lane handoff.
+
+The desktop build and 406 focused tests pass: 8 host, 20 probe, 121 core,
+10 examples, 14 graph, 56 view and 177 theory tests. Native `selected_shapes`,
+`neck_comparison` and `anchored_pitch_motion` pass at requested 1100x900;
+the latter uses UI zoom 0.65. `responsive_components` passes at 700x900.
+Their actual captures are 2200x1504 and 1400x1504 respectively, at device
+scale 2. Named Next/Previous shape, Hear, All tones, Recenter and Settings
+controls replace measured click positions. Presented captures were inspected.
+
+The unchanged `stage_clipping` scenario also passes at requested 1500x900
+(actual capture 2464x1504). At requested width 1100, it still fails to leave
+Set: the responsive layout stacks the panels and places the arrangement
+control below the visible viewport. Its failure is retained beside the wide
+pass. That is a viewport/scroll prerequisite for the M4 release lane to
+address, not evidence of a Mac-only input failure. This slice does not add
+automatic scroll-to-selector behavior or change `stage_clipping.scn`.
+
+Source, binary, scenario and artifact hashes are recorded in
+`Code/testing/woodshed/retained-selectors-20260908/receipt.json`. Native input
+audio underrun/overrun messages occurred during these runs; they are not an
+audio quality receipt. Cross-platform release, ancestor clipping/occlusion,
+and the broader shell extraction remain open.
