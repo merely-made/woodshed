@@ -9,6 +9,7 @@ publish = false
 [dependencies]
 cambium-genet-winit-host.workspace = true
 layout-dom-api.workspace = true
+redshank-cache.workspace = true
 redshank-model.workspace = true
 redshank-playback.workspace = true
 redshank-storage.workspace = true

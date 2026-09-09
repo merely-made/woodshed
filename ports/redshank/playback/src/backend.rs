@@ -370,6 +370,29 @@ impl Backend {
         )
     }
 
+    pub(super) fn admit_cached_representation(
+        &mut self,
+        expected: &RepresentationReceipt,
+    ) -> Result<(), String> {
+        let actual = self
+            .representation
+            .as_ref()
+            .ok_or("cached audio produced no representation receipt")?;
+        if actual.complete_digest != expected.complete_digest
+            || actual.byte_length != expected.byte_length
+        {
+            return Err(format!(
+                "cached audio failed integrity validation: expected {:?} at {:?} bytes, found {:?} at {:?} bytes",
+                expected.complete_digest,
+                expected.byte_length,
+                actual.complete_digest,
+                actual.byte_length
+            ));
+        }
+        self.representation = Some(expected.clone());
+        Ok(())
+    }
+
     pub(super) fn clear(&mut self) -> Result<(), String> {
         self.requested_playing = false;
         self.eof = false;

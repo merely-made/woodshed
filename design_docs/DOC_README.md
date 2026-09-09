@@ -29,8 +29,10 @@ before any other doc in this directory.
   controller. A two-process headed receipt now proves local output playback,
   text-note persistence, restart, and resume. The September 8 slice adds
   Rustls-backed, validator-aware progressive HTTP playback and a headed remote
-  restart receipt. Subscriptions, durable offline caching, and Turnstone as
-  second host remain open. It is separate from the Woodshed product graph.
+  restart receipt. The September 9 slice adds a budgeted content-addressed cache
+  and proves restart/playback with its HTTP server stopped. Subscriptions,
+  automatic cache policy/removal, and Turnstone as second host remain open. It
+  is separate from the Woodshed product graph.
 - [2026-07-11_stage_set_tools_plan.md](2026-07-11_stage_set_tools_plan.md)
   — **In progress; product authority.** P1-P3 remain partial. P4a/P4b landed;
   the scene canvas and single-Card expansion have receipts, while the full P4e

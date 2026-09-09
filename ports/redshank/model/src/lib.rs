@@ -15,9 +15,41 @@ pub struct AnnotationId(pub String);
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 #[serde(tag = "kind", rename_all = "snake_case")]
 pub enum MediaSource {
-    Local { path: String },
-    Enclosure { url: String },
-    HostBlob { id: String },
+    Local {
+        path: String,
+    },
+    Enclosure {
+        url: String,
+    },
+    Cached {
+        path: String,
+        origin_url: String,
+        representation: Box<RepresentationReceipt>,
+    },
+    HostBlob {
+        id: String,
+    },
+}
+
+impl MediaSource {
+    pub fn enclosure_url(&self) -> Option<&str> {
+        match self {
+            Self::Enclosure { url } => Some(url),
+            Self::Cached { origin_url, .. } => Some(origin_url),
+            Self::Local { .. } | Self::HostBlob { .. } => None,
+        }
+    }
+
+    pub fn is_cached(&self) -> bool {
+        matches!(self, Self::Cached { .. })
+    }
+
+    pub fn cached_representation(&self) -> Option<&RepresentationReceipt> {
+        match self {
+            Self::Cached { representation, .. } => Some(representation.as_ref()),
+            Self::Local { .. } | Self::Enclosure { .. } | Self::HostBlob { .. } => None,
+        }
+    }
 }
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
@@ -56,6 +88,20 @@ impl LibraryItem {
             Self::LocalAudio { source, .. }
             | Self::DirectAudio { source, .. }
             | Self::FeedEpisode { source, .. } => source,
+        }
+    }
+
+    pub fn replace_source(&mut self, source: MediaSource) {
+        match self {
+            Self::LocalAudio {
+                source: current, ..
+            }
+            | Self::DirectAudio {
+                source: current, ..
+            }
+            | Self::FeedEpisode {
+                source: current, ..
+            } => *current = source,
         }
     }
 
@@ -124,6 +170,12 @@ pub struct ListenerSettings {
     pub capture_playback: CapturePlaybackBehavior,
     pub skip_forward_ms: u64,
     pub skip_backward_ms: u64,
+    #[serde(default = "default_cache_budget_bytes")]
+    pub cache_budget_bytes: u64,
+}
+
+pub const fn default_cache_budget_bytes() -> u64 {
+    2 * 1024 * 1024 * 1024
 }
 
 impl Default for ListenerSettings {
@@ -132,6 +184,7 @@ impl Default for ListenerSettings {
             capture_playback: CapturePlaybackBehavior::Pause,
             skip_forward_ms: 30_000,
             skip_backward_ms: 15_000,
+            cache_budget_bytes: default_cache_budget_bytes(),
         }
     }
 }

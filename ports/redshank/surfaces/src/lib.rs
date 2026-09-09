@@ -72,6 +72,7 @@ pub enum CompactCommand {
     },
     BeginEditNote(AnnotationId),
     OpenLocalFile,
+    CacheItem(ItemId),
     UpdateSettings(ListenerSettings),
 }
 
@@ -317,7 +318,33 @@ pub fn surface(state: &RedshankSurfaceState) -> FullView {
             )
             .attr("aria-label", format!("Add {} to queue", enqueue_title)),
         ) as FullView;
-        [select, enqueue]
+        let mut controls = vec![select, enqueue];
+        if item.source().enclosure_url().is_some() && !item.source().is_cached() {
+            let cache_id = item.id().clone();
+            let cache_title = item.title().to_owned();
+            controls.push(Box::new(
+                button(
+                    "Download for offline listening",
+                    move |state: &mut RedshankSurfaceState, _| {
+                        state.request(CompactCommand::CacheItem(cache_id.clone()));
+                    },
+                )
+                .attr(
+                    "aria-label",
+                    format!("Download {} for offline listening", cache_title),
+                ),
+            ));
+        } else if item.source().is_cached() {
+            controls.push(Box::new(
+                el("span", text("Available offline"))
+                    .attr("role", "status")
+                    .attr(
+                        "aria-label",
+                        format!("{} is available offline", item.title()),
+                    ),
+            ));
+        }
+        controls
     });
     let queue = state.queue.iter().enumerate().flat_map(|(index, id)| {
         let id = id.clone();
@@ -510,8 +537,10 @@ pub fn surface(state: &RedshankSurfaceState) -> FullView {
                     "section",
                     (
                         text(format!(
-                            "Playback settings: back {} ms, forward {} ms",
-                            state.settings.skip_backward_ms, state.settings.skip_forward_ms
+                            "Playback settings: back {} ms, forward {} ms, offline cache {} MiB",
+                            state.settings.skip_backward_ms,
+                            state.settings.skip_forward_ms,
+                            state.settings.cache_budget_bytes / (1024 * 1024)
                         )),
                         full_control(
                             "Increase forward skip",
@@ -523,6 +552,7 @@ pub fn surface(state: &RedshankSurfaceState) -> FullView {
                                     .skip_forward_ms
                                     .saturating_add(5_000),
                                 capture_playback: state.settings.capture_playback,
+                                cache_budget_bytes: state.settings.cache_budget_bytes,
                             }),
                         ),
                         full_control(
@@ -535,6 +565,29 @@ pub fn surface(state: &RedshankSurfaceState) -> FullView {
                                     .skip_forward_ms
                                     .saturating_sub(5_000),
                                 capture_playback: state.settings.capture_playback,
+                                cache_budget_bytes: state.settings.cache_budget_bytes,
+                            }),
+                        ),
+                        full_control(
+                            "Increase offline cache budget",
+                            "",
+                            CompactCommand::UpdateSettings(ListenerSettings {
+                                cache_budget_bytes: state
+                                    .settings
+                                    .cache_budget_bytes
+                                    .saturating_add(256 * 1024 * 1024),
+                                ..state.settings.clone()
+                            }),
+                        ),
+                        full_control(
+                            "Decrease offline cache budget",
+                            "",
+                            CompactCommand::UpdateSettings(ListenerSettings {
+                                cache_budget_bytes: state
+                                    .settings
+                                    .cache_budget_bytes
+                                    .saturating_sub(256 * 1024 * 1024),
+                                ..state.settings.clone()
                             }),
                         ),
                         full_control(
@@ -726,6 +779,45 @@ mod tests {
                 CompactCommand::Pause,
                 CompactCommand::MoveQueue { from: 0, to: 1 },
             ]
+        );
+    }
+
+    #[test]
+    fn remote_library_item_exposes_an_offline_download_command() {
+        let mut state = anchored_state();
+        state.library.push(LibraryItem::DirectAudio {
+            id: ItemId("remote".into()),
+            title: "Remote episode".into(),
+            source: redshank_model::MediaSource::Enclosure {
+                url: "https://example.test/episode.mp3".into(),
+            },
+        });
+        let mut runner = full_runner(state);
+        let download = node_with_label(
+            &runner.dom().borrow(),
+            runner.root(),
+            "Download Remote episode for offline listening",
+        );
+        runner.dispatch_click(download, PointerClick::at((1.0, 1.0)));
+        let mut commands = Vec::new();
+        runner.update(|state| commands.extend(state.drain_commands()));
+        assert_eq!(
+            commands,
+            [CompactCommand::CacheItem(ItemId("remote".into()))]
+        );
+        runner.update(|state| {
+            state.library[1].replace_source(redshank_model::MediaSource::Cached {
+                path: "cache/episode.audio".into(),
+                origin_url: "https://example.test/episode.mp3".into(),
+                representation: Box::default(),
+            });
+        });
+        assert!(
+            runner
+                .dom()
+                .borrow()
+                .outer_html(runner.root())
+                .contains("Remote episode is available offline")
         );
     }
 

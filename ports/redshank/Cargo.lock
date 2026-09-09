@@ -4497,11 +4497,23 @@ dependencies = [
 ]
 
 [[package]]
+name = "redshank-cache"
+version = "0.0.0"
+dependencies = [
+ "blake3",
+ "http",
+ "redshank-model",
+ "tempfile",
+ "ureq",
+]
+
+[[package]]
 name = "redshank-desktop"
 version = "0.0.0"
 dependencies = [
  "cambium-genet-winit-host",
  "layout-dom-api",
+ "redshank-cache",
  "redshank-model",
  "redshank-playback",
  "redshank-storage",

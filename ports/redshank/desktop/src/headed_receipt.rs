@@ -2,7 +2,7 @@ use std::time::{Duration, Instant};
 
 use redshank_model::NoteBody;
 use redshank_playback::{PlaybackCommand, PlaybackState};
-use redshank_surfaces::RedshankSurfaceState;
+use redshank_surfaces::{CompactCommand, RedshankSurfaceState};
 
 use super::Desktop;
 
@@ -13,11 +13,14 @@ const TIMEOUT: Duration = Duration::from_secs(15);
 enum Mode {
     Seed,
     Verify,
+    CacheSeed,
+    CacheVerify,
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 enum Stage {
     WaitLoaded,
+    WaitCached,
     WaitPlaying,
     WaitSaved,
     Closing,
@@ -41,9 +44,11 @@ impl HeadedReceipt {
         let mode = match value.to_string_lossy().as_ref() {
             "seed" => Mode::Seed,
             "verify" => Mode::Verify,
+            "cache-seed" => Mode::CacheSeed,
+            "cache-verify" => Mode::CacheVerify,
             other => {
                 return Err(format!(
-                    "REDSHANK_HEADED_RECEIPT must be seed or verify, got {other}"
+                    "REDSHANK_HEADED_RECEIPT must be seed, verify, cache-seed, or cache-verify; got {other}"
                 ));
             },
         };
@@ -79,6 +84,35 @@ impl HeadedReceipt {
         }
 
         match (self.mode, self.stage) {
+            (Mode::CacheSeed, Stage::WaitLoaded) if snapshot.state == PlaybackState::Paused => {
+                let selected = desktop
+                    .session
+                    .selected
+                    .clone()
+                    .ok_or("cache receipt has no selected recording")?;
+                desktop.command(state, CompactCommand::CacheItem(selected))?;
+                self.stage = Stage::WaitCached;
+            },
+            (Mode::CacheSeed, Stage::WaitCached) if desktop.cache_pending.is_none() => {
+                let selected = desktop
+                    .session
+                    .selected
+                    .as_ref()
+                    .ok_or("cached selection was lost")?;
+                let cached = desktop
+                    .session
+                    .model
+                    .library
+                    .get(selected)
+                    .is_some_and(|item| item.source().is_cached());
+                if !cached {
+                    return Err(state.notice.clone().unwrap_or_else(|| {
+                        "episode download did not publish a cache entry".into()
+                    }));
+                }
+                desktop.send(PlaybackCommand::Play)?;
+                self.stage = Stage::WaitPlaying;
+            },
             (Mode::Seed, Stage::WaitLoaded) if snapshot.state == PlaybackState::Paused => {
                 desktop.send(PlaybackCommand::Play)?;
                 self.stage = Stage::WaitPlaying;
@@ -98,13 +132,30 @@ impl HeadedReceipt {
                 desktop.save_note(state, anchor, NOTE.into())?;
                 self.stage = Stage::WaitSaved;
             },
-            (Mode::Seed, Stage::WaitSaved)
+            (Mode::CacheSeed, Stage::WaitPlaying)
+                if snapshot.state == PlaybackState::Playing && snapshot.position_ms >= 300 =>
+            {
+                desktop.begin_note(state)?;
+                let anchor = state
+                    .text_capture
+                    .as_ref()
+                    .ok_or("headed receipt did not open the text editor")?
+                    .anchor
+                    .clone();
+                self.observed_offset_ms = anchor.offset_ms;
+                state.set_text_draft(NOTE);
+                desktop.save_note(state, anchor, NOTE.into())?;
+                self.stage = Stage::WaitSaved;
+            },
+            (Mode::Seed | Mode::CacheSeed, Stage::WaitSaved)
                 if state.text_capture.is_none() && has_receipt_note(desktop) =>
             {
                 desktop.close(state)?;
                 self.stage = Stage::Closing;
             },
-            (Mode::Verify, Stage::WaitLoaded) if snapshot.state == PlaybackState::Paused => {
+            (Mode::Verify | Mode::CacheVerify, Stage::WaitLoaded)
+                if snapshot.state == PlaybackState::Paused =>
+            {
                 if !has_receipt_note(desktop) {
                     return Err("saved headed receipt note was not restored".into());
                 }
@@ -113,6 +164,26 @@ impl HeadedReceipt {
                     .selected
                     .as_ref()
                     .ok_or("saved selection was not restored")?;
+                if self.mode == Mode::CacheVerify {
+                    let source = desktop
+                        .session
+                        .model
+                        .library
+                        .get(selected)
+                        .ok_or("cached library item was not restored")?
+                        .source();
+                    if !source.is_cached() {
+                        return Err("restored recording is not using the offline cache".into());
+                    }
+                    if snapshot
+                        .representation
+                        .as_ref()
+                        .and_then(|receipt| receipt.complete_digest.as_ref())
+                        .is_none()
+                    {
+                        return Err("offline playback did not validate a complete digest".into());
+                    }
+                }
                 self.expected_resume_ms = desktop
                     .session
                     .model
@@ -124,7 +195,7 @@ impl HeadedReceipt {
                 desktop.send(PlaybackCommand::Play)?;
                 self.stage = Stage::WaitPlaying;
             },
-            (Mode::Verify, Stage::WaitPlaying)
+            (Mode::Verify | Mode::CacheVerify, Stage::WaitPlaying)
                 if snapshot.state == PlaybackState::Playing
                     && snapshot.position_ms.saturating_add(100) >= self.expected_resume_ms =>
             {
@@ -166,6 +237,8 @@ impl HeadedReceipt {
         match self.mode {
             Mode::Seed => "seed",
             Mode::Verify => "verify",
+            Mode::CacheSeed => "cache-seed",
+            Mode::CacheVerify => "cache-verify",
         }
     }
 }

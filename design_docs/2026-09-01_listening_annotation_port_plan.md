@@ -1,6 +1,6 @@
 # Redshank: listening and annotation port plan
 
-**Status (2026-09-07): ACTIVE.** The product direction and **Redshank** name are
+**Status (2026-09-09): ACTIVE.** The product direction and **Redshank** name are
 endorsed. Phase 0 is complete: Symphonia plus a bounded range source is the
 shipping default, and Genet/GStreamer is the retained browser-conformance
 fallback. Phase 1 is complete: its general Genet boundary, deterministic player
@@ -9,9 +9,11 @@ unpublished model and generation store. Phase 3 is complete with shared podcast
 feed facts and GUID-stable Turnstone projection. Phase 4 is active with the
 reusable Cambium controls, Mere-hosted sovereign shell, and local listening
 workflow landed. Genet controller admission and bounded progressive HTTP
-playback are also landed. Subscriptions and a durable offline episode cache
-remain open. Headed local and HTTP playback, text-note, persistence, restart,
-and resume receipts now pass.
+playback are also landed. A manual, budgeted durable episode cache now publishes
+complete content-addressed objects and reopens them offline. Subscriptions,
+automatic download, and cache removal/eviction remain open. Headed local, HTTP,
+and server-offline playback, text-note, persistence, restart, and resume receipts
+now pass.
 
 ## Ruling
 
@@ -685,6 +687,43 @@ did not perform a public-certificate handshake. Offline replay, full-object
 digesting, automatic download, cache-budget UI, and eviction policy remain for
 the durable cache slice.
 
+#### Durable offline cache receipt, 2026-09-09
+
+The unpublished `redshank-cache` package owns complete enclosure downloads and
+their disk budget. It streams identity-encoded HTTP(S) bodies into a uniquely
+named pending file, hashes every byte with BLAKE3, flushes the file, and only
+then publishes a content-addressed `.audio` object by same-directory rename.
+Declared-length mismatch, interrupted reads, and budget exhaustion publish no
+object. Repeated identical content reuses the existing object without charging
+the budget twice.
+
+The full Cambium surface now exposes **Download for offline listening** for
+remote items. The host performs the download away from the UI and audio threads,
+persists a typed cached source containing the origin URL and complete
+representation receipt, and reloads the current selection through the same
+Genet controller. Playback rehashes the cached file and rejects a byte length or
+digest mismatch before exposing the saved receipt. The cache budget is a saved
+setting, defaults to 2 GiB, and can be adjusted in 256 MiB steps. Exhaustion is
+reported as a useful status; this slice deliberately does not evict recordings
+without a user decision.
+
+Three cache tests cover content-addressed reuse, cleanup after truncated or
+over-budget bodies, and a real localhost HTTP download retaining origin headers
+and offline bytes. The complete default workspace now passes 38 tests. A fresh
+headed `cache-seed` run downloaded the 15,501-byte stereo MP3, switched to its
+complete BLAKE3 receipt, saved a note at 300 ms, and exited zero. The HTTP server
+was then stopped. A separate `cache-verify` process restored the cached source,
+validated the same digest, resumed through the real Firewheel/CPAL output at
+306 ms, projected 37 then 38 accessibility nodes, and exited zero. The final
+durable generation retained 316 ms progress and the note's complete representation
+receipt.
+
+This closes manual episode caching and server-offline restart/playback. Automatic
+subscription downloads, explicit cache removal, eviction ordering, partial-file
+resume, and Turnstone hosting remain open. Content-addressed files are validated
+on each load, but the existing hash-then-rewind concurrent-modification caveat
+still belongs to Phase 6.
+
 ### Phase 5: voice capture and open annotation target
 
 Add host-provided microphone capture and Knot's generic media
@@ -892,3 +931,9 @@ rejected for the reasons recorded in the 2026-09-01 planning pass.
   items now survive restart. A fresh headed HTTP seed/verify pair passed at
   199/473 ms with a one-second process handoff. Subscriptions and durable
   offline caching remain open.
+- **2026-09-09:** Added the separate content-addressed episode cache, adjustable
+  saved budget, full-surface download action, cached-source integrity admission,
+  and an offline headed restart receipt. Seed cached and annotated the fixture
+  at 300 ms; verify ran after the server stopped and resumed at 306 ms. Manual
+  durable caching is landed. Subscriptions, automatic downloads, removal, and
+  eviction remain open.

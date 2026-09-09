@@ -219,6 +219,27 @@ mod tests {
     }
 
     #[test]
+    fn cached_source_receipt_requires_the_published_bytes() {
+        let mut backend = Backend::default();
+        backend
+            .load(&servo_media_player::controller::MediaSource::Local {
+                path: "redshank-test://cached-integrity".into(),
+            })
+            .unwrap();
+        backend
+            .admit_cached_representation(&RepresentationReceipt::default())
+            .unwrap();
+        let mismatch = backend
+            .admit_cached_representation(&RepresentationReceipt {
+                byte_length: Some(1),
+                complete_digest: Some("blake3:different".into()),
+                ..Default::default()
+            })
+            .unwrap_err();
+        assert!(mismatch.contains("failed integrity validation"));
+    }
+
+    #[test]
     fn sink_clock_helpers_preserve_frame_boundaries() {
         let mut pcm = vec![0.0; 10];
         consume_frames(&mut pcm, 3, 2);

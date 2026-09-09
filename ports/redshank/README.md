@@ -6,6 +6,9 @@ workspace, and every package is unpublished while public naming remains gated.
 
 Current packages:
 
+- `redshank-cache`: complete HTTP(S) enclosure downloads, content-addressed
+  publication, complete representation receipts, and strict disk-budget
+  admission;
 - `redshank-model`: durable library, queue, progress, settings, representation
   receipts, text notes, audio notes, and the capture-host trait;
 - `redshank-storage`: a local JSON store using immutable numbered generations;
@@ -48,9 +51,21 @@ default output device, waits for durable storage acknowledgments, and prints a
 single `redshank-headed-receipt ... PASS` line before exiting. This driver does
 not run when the variable is unset.
 
-This Phase 4 slice supports local and bounded progressive HTTP(S) listening.
-Subscription, durable offline caching, voice capture, rate/volume controls,
-representation-drift warnings/remapping, and Turnstone embedding remain open.
+For the offline headed receipt, use `cache-seed` for the first launch with an
+HTTP(S) URL. Stop the server, then launch without an argument using
+`cache-verify`. The second process requires the persisted content-addressed
+object and its complete digest; it cannot fall back to the origin.
+
+Remote library items expose **Download for offline listening**. Downloads run
+off the UI and audio threads, publish only after the complete object is flushed
+and hashed, and then switch playback to the validated local object. The saved
+cache budget defaults to 2 GiB and can be adjusted in Settings. Identical bytes
+share one object; exhaustion is reported without automatic eviction.
+
+This Phase 4 slice supports local, bounded progressive HTTP(S), and manually
+cached offline listening. Subscription, automatic download, cache removal and
+eviction, voice capture, rate/volume controls, representation-drift
+warnings/remapping, and Turnstone embedding remain open.
 A local digest is computed before decode from the opened file; it does not make
 a concurrently modified file immutable. Remote receipts retain validators but
 do not claim a complete digest until every byte is durably cached.

@@ -9,6 +9,7 @@ use cambium_genet_winit_host::{
 };
 use headed_receipt::HeadedReceipt;
 use layout_dom_api::LayoutDom;
+use redshank_cache::EpisodeCache;
 use redshank_model::{
     AnnotationId, CaptureAnchor, CapturePlaybackBehavior, ItemId, LibraryItem, MediaSource,
     NoteBody, RedshankModel,
@@ -61,6 +62,10 @@ enum IoReply {
         result: Result<(), String>,
     },
     Opened(Option<PathBuf>),
+    Cached {
+        id: ItemId,
+        result: Result<MediaSource, String>,
+    },
 }
 
 struct SaveRequest {
@@ -160,6 +165,8 @@ struct Desktop {
     runtime: PlaybackRuntime,
     persistence: Persistence,
     dialog_pending: bool,
+    cache_pending: Option<ItemId>,
+    data_root: PathBuf,
     closing: bool,
     saved_draft: Option<SavedDraft>,
     receipt: Option<HeadedReceipt>,
@@ -361,6 +368,48 @@ impl Desktop {
                     self.dialog_pending = true;
                 }
             },
+            CompactCommand::CacheItem(id) => {
+                if self.cache_pending.is_some() {
+                    return Err("Another episode download is still running".into());
+                }
+                let url = self
+                    .session
+                    .model
+                    .library
+                    .get(&id)
+                    .ok_or("That library item no longer exists")?
+                    .source()
+                    .enclosure_url()
+                    .ok_or("Only remote audio can be downloaded")?
+                    .to_owned();
+                if self
+                    .session
+                    .model
+                    .library
+                    .get(&id)
+                    .is_some_and(|item| item.source().is_cached())
+                {
+                    return Err("That recording is already available offline".into());
+                }
+                let cache = EpisodeCache::new(
+                    self.data_root.join("cache"),
+                    self.session.model.settings.cache_budget_bytes,
+                );
+                let sender = self.persistence.reply_sender.clone();
+                let request_id = id.clone();
+                thread::Builder::new()
+                    .name("redshank-cache".into())
+                    .spawn(move || {
+                        let result = cache.cache_url(&url).map_err(|error| error.to_string());
+                        let _ = sender.send(IoReply::Cached {
+                            id: request_id,
+                            result,
+                        });
+                    })
+                    .map_err(|error| format!("Could not start episode download: {error}"))?;
+                self.cache_pending = Some(id);
+                state.notice = Some("Downloading episode for offline listening…".into());
+            },
             CompactCommand::BeginTextNote | CompactCommand::AddTextNote => {
                 self.begin_note(state)?
             },
@@ -468,6 +517,38 @@ impl Desktop {
                         && let Err(error) = self.open(path)
                     {
                         state.notice = Some(error);
+                    }
+                },
+                IoReply::Cached { id, result } => {
+                    self.cache_pending = None;
+                    match result {
+                        Err(error) => state.notice = Some(error),
+                        Ok(source) => {
+                            let origin = source.enclosure_url().map(str::to_owned);
+                            let Some(item) = self.session.model.library.get_mut(&id) else {
+                                state.notice = Some(
+                                    "The download finished after its library item was removed"
+                                        .into(),
+                                );
+                                continue;
+                            };
+                            if item.source().enclosure_url() != origin.as_deref() {
+                                state.notice = Some(
+                                    "The recording source changed while its download was running"
+                                        .into(),
+                                );
+                                continue;
+                            }
+                            item.replace_source(source);
+                            self.persistence.changed();
+                            if self.session.selected.as_ref() == Some(&id)
+                                && let Err(error) = self.select(id)
+                            {
+                                state.notice = Some(error);
+                                continue;
+                            }
+                            state.notice = Some("Episode is available offline".into());
+                        },
                     }
                 },
                 IoReply::Saved { revision, result } => {
@@ -661,6 +742,7 @@ fn hooks(
             let snap = desktop.runtime.snapshot();
             desktop.closing
                 || desktop.dialog_pending
+                || desktop.cache_pending.is_some()
                 || desktop.persistence.in_flight.is_some()
                 || desktop.receipt.as_ref().is_some_and(HeadedReceipt::active)
                 || !desktop.session.matches(&snap) && desktop.session.selected.is_some()
@@ -694,7 +776,8 @@ fn hooks(
 
 fn main() {
     let receipt = HeadedReceipt::from_environment().expect("configure headed receipt");
-    let store = JsonDirectoryStore::new(data_directory());
+    let data_root = data_directory();
+    let store = JsonDirectoryStore::new(&data_root);
     let (model, notice) = match store.load() {
         Ok(model) => (model.unwrap_or_default(), None),
         Err(error) => (
@@ -707,6 +790,8 @@ fn main() {
         runtime: PlaybackRuntime::start(),
         persistence: Persistence::start(store),
         dialog_pending: false,
+        cache_pending: None,
+        data_root,
         closing: false,
         saved_draft: None,
         receipt,
@@ -852,6 +937,8 @@ mod tests {
             runtime: PlaybackRuntime::start(),
             persistence: Persistence::start(JsonDirectoryStore::new(directory)),
             dialog_pending: false,
+            cache_pending: None,
+            data_root: directory.to_owned(),
             closing: false,
             saved_draft: None,
             receipt: None,

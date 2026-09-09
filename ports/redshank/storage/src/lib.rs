@@ -193,7 +193,7 @@ mod tests {
             .unwrap();
         model
             .add_item(LibraryItem::DirectAudio {
-                id: direct,
+                id: direct.clone(),
                 title: "Direct recording".into(),
                 source: MediaSource::Enclosure {
                     url: "https://cdn.example.test/direct.mp3".into(),
@@ -233,6 +233,15 @@ mod tests {
             complete_digest: Some("blake3:abc".into()),
             ..RepresentationReceipt::default()
         };
+        model
+            .library
+            .get_mut(&direct)
+            .unwrap()
+            .replace_source(MediaSource::Cached {
+                path: "cache/abc.audio".into(),
+                origin_url: "https://cdn.example.test/direct.mp3".into(),
+                representation: Box::new(receipt.clone()),
+            });
         for (id, body) in [
             (
                 "text-note",
