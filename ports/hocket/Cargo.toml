@@ -1,0 +1,177 @@
+[workspace]
+resolver = "3"
+members = [
+    "crates/hocket-engine",
+    "crates/hocket-model",
+    "crates/hocket-headless",
+    # The genet-host UI (2026-07-08 refactor). At the parity cut the Masonry
+    # `hocket` bin + `hocket-widgets` were deleted; this is the only UI now.
+    "crates/hocket-genet",
+]
+
+[workspace.package]
+edition = "2024"
+license = "MPL-2.0"
+authors = ["Mark <sgt.mark3@gmail.com>"]
+repository = "https://github.com/merely-made/hocket"
+rust-version = "1.96"
+
+[workspace.dependencies]
+# Internal crates. The `hocket` (app) and `hocket-headless` (audio
+# test harness) binaries are workspace members but not dependency
+# targets, so they don't appear here.
+hocket-engine = { path = "crates/hocket-engine", version = "0.1.0" }
+hocket-model = { path = "crates/hocket-model", version = "0.1.0" }
+
+# Shared pure-DSP primitives — the `audio-primitives` extraction (click
+# synth, streaming onset/tempo, latency estimation). Lives in the
+# woodshed repo (seeded from its mature DSP); consumed cross-repo by
+# path-dep. hocket-engine's click loop calls the shared click synth;
+# the onset/tempo + latency cores are here for FT3c (calibration) and
+# bar-alignment work. Pure std, no engine/UI coupling.
+audio-primitives = { git = "https://github.com/merely-made/woodshed.git", branch = "main", version = "0.1.0" }
+
+# Portable durable-byte seam shared with Woodshed and Isometry. Hocket keeps
+# its own model and MediaRef identity; muniment owns backend mechanics.
+muniment = { git = "https://github.com/merely-made/mere.git", rev = "d82afa17e2cca86da843f07a2d718d2e69eb9f10", version = "0.1.0", default-features = false }
+armillary = { git = "https://github.com/merely-made/mere.git", rev = "d82afa17e2cca86da843f07a2d718d2e69eb9f10", version = "0.1.0" }
+# Identity root for signed, recipient-bound hand-off envelopes. This is a
+# host-agnostic protocol dependency, not project/session state.
+personae = { git = "https://github.com/merely-made/mere.git", rev = "d82afa17e2cca86da843f07a2d718d2e69eb9f10", version = "0.2.0" }
+# Pure-Rust WavPack codec (repos/wavicle). Stores .hock media as lossless,
+# importable, wasm-capable .wv instead of WAV. `encode` is on because Hocket
+# both writes and reads media; MediaRef identity stays Hocket's BLAKE3 over the
+# decoded f32 samples, unchanged by the codec swap.
+wavicle = { git = "https://github.com/merely-made/wavicle.git", branch = "main", version = "0.1.0", features = ["encode"] }
+
+# Firewheel: modular audio graph engine, the spine of hocket-engine
+# (FT3b-prime). cpal feature enables the default native backend; the
+# symphonium feature gives sample-loading helpers we'll want at FT8.
+firewheel = { version = "0.10", features = [
+    "cpal",
+    "symphonium",
+    "peak_meter_node",
+    "stream_nodes",
+] }
+
+# Woodshed-audio is no longer a Hocket dependency as of FT3b-prime —
+# the SequencerEngine wrap retired in favor of the Firewheel graph.
+# Hocket is now the *pressure vessel* for the reusable audio layer;
+# the relationship to Woodshed is via future shared crates
+# (audio-primitives, audio-widgets, audio-devices), not direct
+# coupling. See memory/project_hocket_audio_pressure_vessel.md.
+
+winit = "0.30"
+
+# **The Cambium family moved from genet to mere on 2026-09-03** (the platform
+# boundary pass). `cambium`, `sprigging`, `cambium-genet-winit-host`,
+# `workbench` and `tinct` are mere workspace members under `crates/cambium/`
+# now, and `genet-host-api`'s application half is mere's `mere-surface-api`;
+# genet keeps the raw engine seams below. Both sources are pinned by exact
+# revision, and the genet revision is the one mere itself pins, so the graph
+# carries one `LayoutDom` and one Cambium.
+#
+# UI — Genet host. `cambium-genet-winit-host` owns the retained
+# Livery/Buckram layout, paint, input, and accessibility assembly; Hocket
+# supplies its state, views, leaves, workers, and update policy through hooks.
+# Git deps on the owned repos. Build hocket-genet from the hocket cwd so this
+# workspace's root Cargo patches apply.
+# From genet's git, NOT crates.io. The published pair depends on the
+# crates.io `paint_list_api`, while we (and the rest of the genet stack)
+# git-dep netrender's — two `paint_list_api` crates in one graph, so a
+# `sprigging::PaintCmd` is not a `paint_list_api::PaintCmd` and `leaves.rs`
+# fails to compile. `[patch.crates-io]` does NOT resolve this; taking them
+# from the same source everything else uses does. Found 2026-07-24 on a
+# clean checkout (the Linux box), which is the only place it shows: a dev
+# machine's gitignored patch file redirects these to local checkouts that
+# git-dep netrender, unifying the graph by accident.
+cambium = { git = "https://github.com/merely-made/mere.git", rev = "d82afa17e2cca86da843f07a2d718d2e69eb9f10", version = "0.3.3" }
+sprigging = { git = "https://github.com/merely-made/mere.git", rev = "d82afa17e2cca86da843f07a2d718d2e69eb9f10", version = "0.2.1" }
+layout-dom-api = { git = "https://github.com/merely-made/genet.git", rev = "115d348deddc344d949754e63beaece47cf49f34", version = "=0.1.0" }
+genet-scripted-dom = { git = "https://github.com/merely-made/genet.git", rev = "115d348deddc344d949754e63beaece47cf49f34", version = "=0.1.0" }
+cambium-genet-winit-host = { git = "https://github.com/merely-made/mere.git", rev = "d82afa17e2cca86da843f07a2d718d2e69eb9f10", version = "0.1.0" }
+genet-clipboard = { git = "https://github.com/merely-made/genet.git", rev = "115d348deddc344d949754e63beaece47cf49f34" }
+genet-probe = { git = "https://github.com/merely-made/genet.git", rev = "115d348deddc344d949754e63beaece47cf49f34" }
+mere-surface-api = { git = "https://github.com/merely-made/mere.git", rev = "d82afa17e2cca86da843f07a2d718d2e69eb9f10", version = "0.1.0" }
+workbench = { git = "https://github.com/merely-made/mere.git", rev = "d82afa17e2cca86da843f07a2d718d2e69eb9f10", version = "0.1.0" }
+image = { version = "0.25", default-features = false, features = ["png"] }
+# Match Genet's immutable Netrender source identity. A branch reference here
+# creates a second `ExternalTexturePlacement` beside the host's renderer API.
+netrender = { git = "https://github.com/merely-made/netrender.git", rev = "6f1a4fe70a58a57ba6b248acfa662f0ec4e44a25" }
+paint_list_api = { git = "https://github.com/merely-made/netrender.git", rev = "6f1a4fe70a58a57ba6b248acfa662f0ec4e44a25" }
+paint_list_render = { git = "https://github.com/merely-made/netrender.git", rev = "6f1a4fe70a58a57ba6b248acfa662f0ec4e44a25" }
+# Host-side surface/compose types only; backend features come from
+# netrender's per-target split. Single wgpu 29 tree now the Masonry app
+# (wgpu 28) is retired.
+wgpu = { version = "30", default-features = false, features = ["std"] }
+# Pure OKLCH seed-to-palette theming (shared; woodshed's too). A Cambium
+# component, in mere since the 2026-09-03 boundary pass; the standalone mirror
+# repo retired with the 2026-07-23 consolidation.
+tinct = { git = "https://github.com/merely-made/mere.git", rev = "d82afa17e2cca86da843f07a2d718d2e69eb9f10", version = "0.1.2" }
+
+# Auto-update (2026-07-24 auto-update plan). Luggage is the family's update
+# pipeline (the cargo-packager-updater fork living in mere; ruled 2026-07-24):
+# signed manifests over pluggable feeds, packed with upstream's cargo-packager
+# CLI, Rust everywhere. Velopack stays wired as the A/B alternative
+# (HOCKET_UPDATE_TRANSPORT=velopack) until one of the two retires.
+luggage = { git = "https://github.com/merely-made/mere.git", rev = "d82afa17e2cca86da843f07a2d718d2e69eb9f10" }
+velopack = "1.2.0"
+
+# Audio I/O + DSP
+cpal = "0.15"
+hound = "3.5"
+
+# Realtime-safe primitives
+rtrb = "0.3"
+basedrop = "0.1"
+
+# Persistence
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+# CBOR (RFC 8949) for the durable project manifest and the hand-off envelope.
+# Self-describing and cross-language, and the serialization Moothold uses, so
+# saved bytes and handed-off bytes are the same format. Replaced postcard at
+# the FT8 serialization migration (2026-07-14).
+ciborium = "0.2"
+
+# Identifiers
+uuid = { version = "1.10", features = ["v4", "serde"] }
+
+# Content hashing for media (engine-side only — model just stores bytes)
+blake3 = "1.5"
+
+# Async runtime (UI side; never on the audio thread)
+tokio = { version = "1.50", features = ["rt", "rt-multi-thread", "time", "sync"] }
+
+# Mirror of genet's [patch.crates-io] entries this workspace's genet graph
+# needs (patches are per-workspace-root, not inherited through git deps —
+# woodshed carries the same mirror). Keep in sync with genet's fork pins.
+[patch.crates-io]
+layout-dom-api = { git = "https://github.com/merely-made/genet.git", rev = "115d348deddc344d949754e63beaece47cf49f34", version = "=0.1.0" }
+genet-scripted-dom = { git = "https://github.com/merely-made/genet.git", rev = "115d348deddc344d949754e63beaece47cf49f34", version = "=0.1.0" }
+# Deliberately NO netrender patches here: `[patch.crates-io]` does not
+# redirect a published crate's own registry dependency (tried 2026-07-24 —
+# the crates.io `paint_list_api` stayed in the graph). Taking cambium and
+# sprigging from genet's git instead is what unifies the source.
+# NO stylo/stylo_atoms patch (removed 2026-07-12, mirroring genet): the fork
+# is now the RENAMED `genet-stylo` family, and a `[patch]` cannot rename its
+# target. Genet's crates git-dep genet-stylo by package rename instead, so no
+# crates.io `stylo` remains in the graph to patch. Keeping the old patch
+# reintroduced the pre-rename fork beside genet-stylo, and
+# `links = "servo_style_crate"` (one Stylo per graph) made that a hard error.
+#
+# The Stylo compatibility cone retired from Genet. Livery/Buckram use the
+# renamed `genet-taffy` fork and Genet's Parley fork directly, so a clean
+# consumer must mirror those source identities at its own workspace root.
+taffy = { package = "genet-taffy", git = "https://github.com/merely-made/genet.git", rev = "115d348deddc344d949754e63beaece47cf49f34", version = "=0.14.0" }
+parley = { git = "https://github.com/merely-made/genet.git", rev = "115d348deddc344d949754e63beaece47cf49f34" }
+# Genet's in-process ipc-channel fork is also a root-level Cargo patch.
+ipc-channel = { git = "https://github.com/merely-made/genet.git", rev = "115d348deddc344d949754e63beaece47cf49f34" }
+
+# Vello on wgpu 30. Upstream vello 0.10 still requires wgpu 29, so netrender
+# (and through it this app's render path) takes vello from the owned fork:
+# the v0.10.0 tag plus exactly the API changes in linebender/vello#1754.
+# `[patch]` applies only from the top-level manifest and is NOT inherited
+# from genet or netrender, so every app workspace restates it. Retires by
+# deletion when upstream ships a wgpu-30 vello.
+vello = { git = "https://github.com/mark-ik/vello.git", branch = "mark-ik/wgpu-30" }

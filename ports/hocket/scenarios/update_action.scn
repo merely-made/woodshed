@@ -1,0 +1,28 @@
+# Headed receipt of the update chip's ACTION (2026-07-24 auto-update plan, H3).
+#
+# The chip is the button when there is something to carry on with. Point the
+# app at a feed offering a newer version, confirm the chip says so and offers
+# the download, then click it and confirm the app actually starts fetching —
+# a click that changes nothing would look identical in a still capture.
+#
+#   HOCKET_UPDATE_FEED=<feed> HOCKET_UPDATE_PUBKEY=<key> \
+#   HOCKET_SCENARIO=scenarios/update_action.scn HOCKET_CAPTURE_DIR=<dir> \
+#     <installed hocket>
+#
+# Must run the INSTALLED build; a dev binary reports itself un-updatable and
+# the chip stays a plain label.
+settle 40
+assert text Version
+assert text download
+capture 01_update_actionable
+click .update-action download
+# Frames, not seconds: a 34MB fetch plus BLAKE3 and signature verification
+# needs far more than the ~0.4s that `settle 25` buys at 60fps.
+settle 400
+# Proof the click did work rather than merely being clickable: only a
+# completed, verified download reaches "ready, restart to finish". The bytes
+# are held in memory by the transport, so nothing is left staged on disk
+# when this process exits.
+assert text restart
+capture 02_after_click
+log update chip action captured
