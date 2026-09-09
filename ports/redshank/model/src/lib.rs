@@ -12,6 +12,44 @@ pub struct ItemId(pub String);
 #[serde(transparent)]
 pub struct AnnotationId(pub String);
 
+#[derive(Clone, Debug, Default, Deserialize, Eq, PartialEq, Serialize)]
+pub struct FeedResource {
+    pub url: String,
+    pub media_type: Option<String>,
+}
+
+#[derive(Clone, Debug, Default, Deserialize, Eq, PartialEq, Serialize)]
+pub struct FeedTranscript {
+    pub url: String,
+    pub media_type: Option<String>,
+    pub language: Option<String>,
+    pub relation: Option<String>,
+}
+
+#[derive(Clone, Debug, Default, Deserialize, Eq, PartialEq, Serialize)]
+pub struct FeedEpisodeFacts {
+    pub published: Option<String>,
+    pub summary: Option<String>,
+    pub duration: Option<String>,
+    pub artwork: Option<String>,
+    pub enclosure_media_type: Option<String>,
+    pub enclosure_byte_length: Option<u64>,
+    pub chapters: Vec<FeedResource>,
+    pub transcripts: Vec<FeedTranscript>,
+}
+
+#[derive(Clone, Debug, Default, Deserialize, Eq, PartialEq, Serialize)]
+pub struct FeedSubscription {
+    pub feed_url: String,
+    pub title: String,
+    pub subtitle: Option<String>,
+    pub link: Option<String>,
+    pub language: Option<String>,
+    pub artwork: Option<String>,
+    pub last_refreshed_ms: Option<u64>,
+    pub diagnostics: Vec<String>,
+}
+
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 #[serde(tag = "kind", rename_all = "snake_case")]
 pub enum MediaSource {
@@ -71,6 +109,8 @@ pub enum LibraryItem {
         guid: String,
         title: String,
         source: MediaSource,
+        #[serde(default)]
+        facts: Box<FeedEpisodeFacts>,
     },
 }
 
@@ -200,6 +240,8 @@ pub struct Progress {
 pub struct RedshankModel {
     pub schema_version: u32,
     pub library: BTreeMap<ItemId, LibraryItem>,
+    #[serde(default)]
+    pub subscriptions: BTreeMap<String, FeedSubscription>,
     pub queue: Vec<ItemId>,
     #[serde(default)]
     pub selected_item: Option<ItemId>,
@@ -213,6 +255,7 @@ impl Default for RedshankModel {
         Self {
             schema_version: 1,
             library: BTreeMap::new(),
+            subscriptions: BTreeMap::new(),
             queue: Vec::new(),
             selected_item: None,
             progress: BTreeMap::new(),
@@ -239,6 +282,30 @@ impl RedshankModel {
         }
         self.library.insert(id, item);
         Ok(())
+    }
+
+    pub fn upsert_subscription(&mut self, subscription: FeedSubscription) {
+        self.subscriptions
+            .insert(subscription.feed_url.clone(), subscription);
+    }
+
+    /// Merge refreshed feed metadata while retaining a completed local download
+    /// when it still represents the same enclosure URL.
+    pub fn upsert_feed_item(&mut self, mut item: LibraryItem) -> Result<bool, ModelError> {
+        let LibraryItem::FeedEpisode { id, source, .. } = &item else {
+            return Err(ModelError::MissingItem(item.id().clone()));
+        };
+        let id = id.clone();
+        let incoming_url = source.enclosure_url().map(str::to_owned);
+        let inserted = !self.library.contains_key(&id);
+        if let Some(existing) = self.library.get(&id)
+            && existing.source().is_cached()
+            && existing.source().enclosure_url() == incoming_url.as_deref()
+        {
+            item.replace_source(existing.source().clone());
+        }
+        self.library.insert(id, item);
+        Ok(inserted)
     }
 
     pub fn enqueue(&mut self, id: &ItemId) -> Result<(), ModelError> {
@@ -373,6 +440,49 @@ mod tests {
                 path: format!("{id}.mp3"),
             },
         }
+    }
+
+    fn feed_item(id: &str, url: &str) -> LibraryItem {
+        LibraryItem::FeedEpisode {
+            id: ItemId(id.into()),
+            feed_url: "https://example.test/feed.xml".into(),
+            guid: id.into(),
+            title: format!("Episode {id}"),
+            source: MediaSource::Enclosure { url: url.into() },
+            facts: Box::default(),
+        }
+    }
+
+    #[test]
+    fn feed_refresh_preserves_matching_cached_representation() {
+        let mut model = RedshankModel::default();
+        let id = ItemId("episode".into());
+        let url = "https://example.test/episode.mp3";
+        let mut original = feed_item(&id.0, url);
+        original.replace_source(MediaSource::Cached {
+            path: "cache/episode.audio".into(),
+            origin_url: url.into(),
+            representation: Box::new(RepresentationReceipt {
+                complete_digest: Some("blake3:complete".into()),
+                ..Default::default()
+            }),
+        });
+        assert!(model.upsert_feed_item(original).unwrap());
+        let mut refreshed = feed_item(&id.0, url);
+        if let LibraryItem::FeedEpisode { title, .. } = &mut refreshed {
+            *title = "Updated title".into();
+        }
+        assert!(!model.upsert_feed_item(refreshed).unwrap());
+        let current = &model.library[&id];
+        assert_eq!(current.title(), "Updated title");
+        assert!(current.source().is_cached());
+        assert_eq!(
+            current
+                .source()
+                .cached_representation()
+                .and_then(|receipt| receipt.complete_digest.as_deref()),
+            Some("blake3:complete")
+        );
     }
 
     #[test]

@@ -8,7 +8,9 @@
 //! storage, network, or audio-device authority.
 
 use cambium::{AnyView, GenetCtx, GenetElement, TextInput, button, el, lens, text, textarea};
-use redshank_model::{AnnotationId, CaptureAnchor, ItemId, LibraryItem, ListenerSettings};
+use redshank_model::{
+    AnnotationId, CaptureAnchor, FeedSubscription, ItemId, LibraryItem, ListenerSettings,
+};
 
 pub const COMPACT_SHEET: &str = include_str!("compact.css");
 
@@ -73,6 +75,8 @@ pub enum CompactCommand {
     BeginEditNote(AnnotationId),
     OpenLocalFile,
     CacheItem(ItemId),
+    Subscribe(String),
+    RefreshSubscription(String),
     UpdateSettings(ListenerSettings),
 }
 
@@ -97,11 +101,13 @@ pub struct TextCapture {
 pub struct RedshankSurfaceState {
     pub compact: CompactPlayerState,
     pub library: Vec<LibraryItem>,
+    pub subscriptions: Vec<FeedSubscription>,
     pub queue: Vec<ItemId>,
     pub notes: Vec<(AnnotationId, u64, String)>,
     pub settings: ListenerSettings,
     pub text_capture: Option<TextCapture>,
     pub text_editor: TextInput,
+    pub feed_url_editor: TextInput,
     pub notice: Option<String>,
     pub editing_note: Option<AnnotationId>,
     commands: Vec<CompactCommand>,
@@ -298,6 +304,29 @@ fn full_control(label: &'static str, shortcut: &'static str, command: CompactCom
 /// The complete reusable listener surface. It projects host-provided state and
 /// emits commands; files, audio, clocks, and persistence remain host-owned.
 pub fn surface(state: &RedshankSurfaceState) -> FullView {
+    let subscriptions = state.subscriptions.iter().flat_map(|subscription| {
+        let feed_url = subscription.feed_url.clone();
+        let title = subscription.title.clone();
+        let summary = Box::new(text(format!("Subscribed: {title}"))) as FullView;
+        let refresh = Box::new(
+            button(
+                "Refresh feed",
+                move |state: &mut RedshankSurfaceState, _| {
+                    state.request(CompactCommand::RefreshSubscription(feed_url.clone()));
+                },
+            )
+            .attr("aria-label", format!("Refresh {title}")),
+        ) as FullView;
+        [summary, refresh]
+    });
+    let subscribe = Box::new(
+        button("Subscribe", |state: &mut RedshankSurfaceState, _| {
+            state.request(CompactCommand::Subscribe(
+                state.feed_url_editor.text().trim().to_owned(),
+            ));
+        })
+        .attr("aria-label", "Subscribe to podcast feed"),
+    ) as FullView;
     let library = state.library.iter().flat_map(|item| {
         let id = item.id().clone();
         let title = item.title().to_owned();
@@ -490,6 +519,23 @@ pub fn surface(state: &RedshankSurfaceState) -> FullView {
                 el("section", library.collect::<Vec<_>>())
                     .attr("role", "region")
                     .attr("aria-label", "Library"),
+                el(
+                    "section",
+                    (
+                        subscriptions.collect::<Vec<_>>(),
+                        el(
+                            "div",
+                            Box::new(lens(
+                                |input: &mut TextInput| textarea(input),
+                                |state: &mut RedshankSurfaceState| &mut state.feed_url_editor,
+                            )),
+                        )
+                        .attr("class", "redshank-feed-url"),
+                        subscribe,
+                    ),
+                )
+                .attr("role", "region")
+                .attr("aria-label", "Podcast subscriptions"),
                 el(
                     "section",
                     (
@@ -818,6 +864,35 @@ mod tests {
                 .borrow()
                 .outer_html(runner.root())
                 .contains("Remote episode is available offline")
+        );
+    }
+
+    #[test]
+    fn subscription_controls_emit_entered_and_retained_feed_urls() {
+        let mut state = anchored_state();
+        state.feed_url_editor = TextInput::new("https://example.test/feed.xml");
+        state.subscriptions.push(FeedSubscription {
+            feed_url: "https://example.test/old.xml".into(),
+            title: "Old Marsh".into(),
+            ..Default::default()
+        });
+        let mut runner = full_runner(state);
+        let subscribe = node_with_label(
+            &runner.dom().borrow(),
+            runner.root(),
+            "Subscribe to podcast feed",
+        );
+        runner.dispatch_click(subscribe, PointerClick::at((1.0, 1.0)));
+        let refresh = node_with_label(&runner.dom().borrow(), runner.root(), "Refresh Old Marsh");
+        runner.dispatch_click(refresh, PointerClick::at((1.0, 1.0)));
+        let mut commands = Vec::new();
+        runner.update(|state| commands.extend(state.drain_commands()));
+        assert_eq!(
+            commands,
+            [
+                CompactCommand::Subscribe("https://example.test/feed.xml".into()),
+                CompactCommand::RefreshSubscription("https://example.test/old.xml".into()),
+            ]
         );
     }
 
