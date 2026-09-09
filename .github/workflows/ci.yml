@@ -24,6 +24,15 @@ jobs:
           --format-version 1
           > /dev/null
 
+  macos-host:
+    name: macOS host build
+    needs: lockfile
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: dtolnay/rust-toolchain@stable
+      - run: cargo build -p woodshed-genet --locked
+
   core:
     name: Core tests
     needs: lockfile
