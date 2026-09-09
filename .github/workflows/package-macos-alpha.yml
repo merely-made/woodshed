@@ -1,0 +1,77 @@
+name: Package macOS alpha
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    name: Package macOS alpha
+    runs-on: macos-latest
+    env:
+      CARGO_NET_GIT_FETCH_WITH_CLI: "true"
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - name: Build release binary
+        run: cargo build --release -p woodshed-genet --locked
+
+      - name: Package unsigned alpha
+        run: scripts/package-macos.sh 0.1.0-alpha.0.manual
+
+      - name: Verify checksum and extracted app
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          archive="$(find dist -maxdepth 1 -type f -name '*.zip' -print -quit)"
+          [[ -n "$archive" ]]
+          checksum="${archive}.sha256"
+          [[ -f "$checksum" ]]
+
+          (
+            cd "$(dirname "$archive")"
+            shasum -a 256 -c "$(basename "$checksum")"
+          )
+
+          verify_dir="$(mktemp -d "${TMPDIR:-/tmp}/woodshed-macos-verify.XXXXXX")"
+          trap 'rm -rf "$verify_dir"' EXIT
+          ditto -x -k "$archive" "$verify_dir"
+
+          app="$(find "$verify_dir" -type d -name 'Woodshed.app' -print -quit)"
+          [[ -n "$app" ]]
+          binary="$app/Contents/MacOS/Woodshed"
+          plist="$app/Contents/Info.plist"
+          [[ -x "$binary" ]]
+          [[ -f "$plist" ]]
+
+          plutil -lint "$plist"
+
+          file_output="$(file "$binary")"
+          echo "$file_output"
+          [[ "$file_output" == *Mach-O* ]]
+
+          host_arch="$(uname -m)"
+          binary_arches="$(lipo -archs "$binary")"
+          echo "host architecture: $host_arch"
+          echo "binary architectures: $binary_arches"
+          [[ " $binary_arches " == *" $host_arch "* ]]
+
+          otool -L "$binary"
+
+          release_readme="$(dirname "$app")/RELEASE-README.txt"
+          [[ -f "$release_readme" ]]
+          cat "$release_readme"
+
+      - name: Upload manual alpha package
+        uses: actions/upload-artifact@v4
+        with:
+          name: woodshed-macos-alpha
+          if-no-files-found: error
+          path: |
+            dist/*.zip
+            dist/*.sha256
