@@ -1,9 +1,10 @@
 # Audio ports rehome plan
 
-**Status (2026-09-09): READY TO LAND.** Hocket and Ringdown now live in
-Woodshed's `ports/` alongside Redshank while remaining separately named,
-versioned, tested, and released embeddable products. Woodshed and Redshank now
-use MPL-2.0. Publication and old-repository relocation notices remain.
+**Status (2026-09-09): LANDED.** Hocket and Ringdown live in Woodshed's
+`ports/` alongside Redshank while remaining separately named, versioned,
+tested, and released embeddable products. Woodshed and Redshank use MPL-2.0.
+The former repositories are archived with relocation notices. The inherited
+formatting and Hocket Clippy cleanup recorded below remains separate work.
 
 ## Ruling
 
@@ -101,3 +102,8 @@ Done when:
   Woodshed, Hocket, and Ringdown. The rehome changed two Rust files; their
   behavior is covered by the green suites. Repository policy reserves the
   broad formatting sweep for a separate commit and blame-ignore entry.
+- **2026-09-09:** Woodshed `main` published the history imports, dependency
+  rewiring, MPL-2.0 conversion, and compatibility repair through `36b066d`.
+  The former Hocket repository points to its new home at `b163858`; the former
+  Ringdown repository does the same at `30af57d`. Both source repositories are
+  archived read-only after those notices became reachable.
