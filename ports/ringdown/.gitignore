@@ -1,0 +1,4 @@
+/target
+Cargo.lock merge=binary
+**/*.rs.bk
+.DS_Store

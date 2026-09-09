@@ -1,0 +1,24 @@
+[workspace]
+resolver = "3"
+members = [
+    "crates/ringdown",
+    "crates/ringdown-client",
+    "crates/ringdown-ble",
+    "apps/probe",
+]
+
+[workspace.package]
+edition = "2024"
+license = "MPL-2.0"
+authors = ["Mark <sgt.mark3@gmail.com>"]
+repository = "https://github.com/merely-made/ringdown"
+
+# Floor for the published protocol core. Not yet measured against a real build
+# — set it from `cargo msrv` (or a pinned-toolchain CI job) once the crate has
+# code, and hold it in CI thereafter. Until then this is a placeholder, not a
+# promise: see the retinue workspace for how the family states and enforces one.
+rust-version = "1.88"
+
+[workspace.dependencies]
+ringdown = { path = "crates/ringdown", version = "0.1.0" }
+ringdown-client = { path = "crates/ringdown-client" }

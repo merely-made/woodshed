@@ -1,0 +1,26 @@
+[package]
+name = "ringdown-client"
+version = "0.0.1"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+description = "Transport-agnostic driver for ringdown: drives a HyVibe guitar over any Link."
+publish = false
+
+[lib]
+path = "src/lib.rs"
+
+[dependencies]
+ringdown = { workspace = true }
+serde_json = { version = "1", features = ["preserve_order"] }
+thiserror = "2"
+# Only for the request/ack deadlines. A non-tokio platform will need this
+# abstracted; see the crate docs on why the Link trait takes a Duration rather
+# than an Instant.
+tokio = { version = "1", features = ["time"] }
+
+[dev-dependencies]
+# The scripted-link tests drive the async driver on a current-thread runtime.
+tokio = { version = "1", features = ["macros", "rt"] }
