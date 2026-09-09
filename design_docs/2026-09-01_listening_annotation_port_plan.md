@@ -10,8 +10,9 @@ feed facts and GUID-stable Turnstone projection. Phase 4 is active with the
 reusable Cambium controls, Mere-hosted sovereign shell, and local listening
 workflow landed. Genet controller admission and bounded progressive HTTP
 playback are also landed. A manual, budgeted durable episode cache now publishes
-complete content-addressed objects and reopens them offline. Subscriptions,
-automatic download, and cache removal/eviction remain open. Headed local, HTTP,
+complete content-addressed objects and reopens them offline. Manual RSS/Atom
+subscription and refresh are landed. Scheduled refresh, automatic download,
+and cache removal/eviction remain open. Headed local, HTTP,
 and server-offline playback, text-note, persistence, restart, and resume receipts
 now pass.
 
@@ -570,7 +571,7 @@ workspace remains green. At controller admission, HTTP/cache playback, voice
 capture, representation drift, and Turnstone embedding remained outside the
 slice.
 
-Phase 4 remains open for subscriptions and a durable offline episode cache.
+Phase 4 remains open for scheduled refresh and automatic download policy.
 Voice input, ducking, rate/volume controls, media-fragment export,
 representation drift, and Turnstone as a second host also remain open in their
 respective phases. No physical listening or microphone receipt is implied by
@@ -723,6 +724,29 @@ subscription downloads, explicit cache removal, eviction ordering, partial-file
 resume, and Turnstone hosting remain open. Content-addressed files are validated
 on each load, but the existing hash-then-rewind concurrent-modification caveat
 still belongs to Phase 6.
+
+#### Manual subscription receipt, 2026-09-09
+
+The unpublished `redshank-feed` package adapts Errand's existing RSS/Atom facts
+without fetching. It resolves feed, enclosure, artwork, chapter, and transcript
+URLs against the final response URL; uses feed URL plus GUID for stable item
+identity; and falls back to the resolved enclosure URL when a publisher omits a
+GUID. Redshank durably retains subscription metadata and podcast episode facts.
+A refresh updates the existing item while preserving a completed cached source
+when its enclosure URL is unchanged.
+
+The standalone desktop supplies the simpler host policy: HTTP(S) only, a 4 MiB
+feed-body limit, and a worker outside the UI and audio threads. The full surface
+accepts a feed URL and exposes a manual refresh action. Imported episodes enter
+the Library without changing selection or queue order. Automatic scheduling and
+download selection remain product policy for a later slice; Turnstone can call
+the adapter with its own fetch result and network policy.
+
+The isolated workspace passes 43 default tests with four device/fixture tests
+ignored by their existing explicit gates. Strict workspace Clippy, formatting,
+and `git diff --check` pass. Feed tests cover RSS podcast extensions, relative
+URLs, Atom fallback identity, and a real localhost fetch; model and surface
+tests cover cached-source preservation and both subscription commands.
 
 ### Phase 5: voice capture and open annotation target
 
@@ -937,3 +961,7 @@ rejected for the reasons recorded in the 2026-09-01 planning pass.
   at 300 ms; verify ran after the server stopped and resumed at 306 ms. Manual
   durable caching is landed. Subscriptions, automatic downloads, removal, and
   eviction remain open.
+- **2026-09-09:** Added the host-neutral Errand-to-Redshank feed adapter, durable
+  subscription and podcast facts, GUID-stable refresh merge, standalone bounded
+  HTTP(S) fetch worker, and full-surface subscribe/refresh controls. Manual
+  subscription is landed; scheduling and automatic downloads remain open.

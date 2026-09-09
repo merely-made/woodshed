@@ -9,6 +9,9 @@ Current packages:
 - `redshank-cache`: complete HTTP(S) enclosure downloads, content-addressed
   publication, complete representation receipts, and strict disk-budget
   admission;
+- `redshank-feed`: host-neutral projection from Errand's RSS/Atom parser into
+  durable subscriptions and GUID-stable episodes, including podcast artwork,
+  duration, chapter, and transcript facts;
 - `redshank-model`: durable library, queue, progress, settings, representation
   receipts, text notes, audio notes, and the capture-host trait;
 - `redshank-storage`: a local JSON store using immutable numbered generations;
@@ -43,6 +46,13 @@ must support byte ranges. Outside the editor, Space toggles playback,
 Left/Right skip by the configured interval, and N begins a text note.
 `Ctrl+Enter` saves the editor. Text capture supports Pause and Continue.
 
+Paste an HTTP(S) RSS or Atom URL into **Podcast subscriptions** and choose
+**Subscribe**. The standalone host fetches feeds off the UI thread with a 4 MiB
+limit. Manual refresh updates episode metadata in place, adds newly published
+episodes to the Library, and preserves a completed offline object when its
+enclosure URL is unchanged. An embedding host can use `redshank-feed` with its
+own fetch and network policy.
+
 For an isolated headed local restart receipt, set `REDSHANK_DATA_DIR` to an
 empty directory. Launch once with a local file argument and
 `REDSHANK_HEADED_RECEIPT=seed`, then launch without the file argument using
@@ -62,9 +72,9 @@ and hashed, and then switch playback to the validated local object. The saved
 cache budget defaults to 2 GiB and can be adjusted in Settings. Identical bytes
 share one object; exhaustion is reported without automatic eviction.
 
-This Phase 4 slice supports local, bounded progressive HTTP(S), and manually
-cached offline listening. Subscription, automatic download, cache removal and
-eviction, voice capture, rate/volume controls, representation-drift
+This Phase 4 slice supports local, bounded progressive HTTP(S), manual feed
+subscriptions, and manually cached offline listening. Automatic refresh and
+download, cache removal and eviction, voice capture, rate/volume controls, representation-drift
 warnings/remapping, and Turnstone embedding remain open.
 A local digest is computed before decode from the opened file; it does not make
 a concurrently modified file immutable. Remote receipts retain validators but

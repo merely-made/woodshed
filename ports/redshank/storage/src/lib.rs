@@ -209,6 +209,7 @@ mod tests {
                 source: MediaSource::Enclosure {
                     url: "https://cdn.example.test/7.mp3".into(),
                 },
+                facts: Default::default(),
             })
             .unwrap();
         model.enqueue(&episode).unwrap();

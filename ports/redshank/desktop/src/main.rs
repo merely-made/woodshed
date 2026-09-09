@@ -10,6 +10,7 @@ use cambium_genet_winit_host::{
 use headed_receipt::HeadedReceipt;
 use layout_dom_api::LayoutDom;
 use redshank_cache::EpisodeCache;
+use redshank_feed::FeedImport;
 use redshank_model::{
     AnnotationId, CaptureAnchor, CapturePlaybackBehavior, ItemId, LibraryItem, MediaSource,
     NoteBody, RedshankModel,
@@ -22,12 +23,14 @@ use redshank_surfaces::{
 use session::Session;
 use std::{
     cell::RefCell,
+    io::Read,
     path::PathBuf,
     rc::Rc,
     sync::mpsc,
     thread,
     time::{Duration, Instant, SystemTime, UNIX_EPOCH},
 };
+use ureq::ResponseExt;
 
 type Logic = fn(&RedshankSurfaceState) -> redshank_surfaces::FullView;
 type AppRunner = Runner<RedshankSurfaceState, Logic, redshank_surfaces::FullView>;
@@ -56,6 +59,33 @@ fn now_ms() -> u64 {
         .as_millis() as u64
 }
 
+const MAX_FEED_BYTES: u64 = 4 * 1024 * 1024;
+
+fn fetch_and_import_feed(requested_url: &str) -> Result<FeedImport, String> {
+    let mut response = ureq::get(requested_url)
+        .header(
+            "Accept",
+            "application/rss+xml, application/atom+xml, application/xml, text/xml",
+        )
+        .call()
+        .map_err(|error| format!("Could not fetch podcast feed: {error}"))?;
+    let final_url = response.get_uri().to_string();
+    let mut bytes = Vec::new();
+    response
+        .body_mut()
+        .as_reader()
+        .take(MAX_FEED_BYTES + 1)
+        .read_to_end(&mut bytes)
+        .map_err(|error| format!("Could not read podcast feed: {error}"))?;
+    if bytes.len() as u64 > MAX_FEED_BYTES {
+        return Err("Podcast feed is larger than the 4 MiB standalone limit".into());
+    }
+    let body =
+        String::from_utf8(bytes).map_err(|_| "Podcast feed is not valid UTF-8 XML".to_owned())?;
+    redshank_feed::import(&body, &final_url, now_ms())
+        .map_err(|error| format!("Could not import podcast feed: {error}"))
+}
+
 enum IoReply {
     Saved {
         revision: u64,
@@ -65,6 +95,10 @@ enum IoReply {
     Cached {
         id: ItemId,
         result: Result<MediaSource, String>,
+    },
+    FeedFetched {
+        requested_url: String,
+        result: Result<FeedImport, String>,
     },
 }
 
@@ -166,6 +200,7 @@ struct Desktop {
     persistence: Persistence,
     dialog_pending: bool,
     cache_pending: Option<ItemId>,
+    feed_pending: Option<String>,
     data_root: PathBuf,
     closing: bool,
     saved_draft: Option<SavedDraft>,
@@ -175,6 +210,34 @@ struct Desktop {
 }
 
 impl Desktop {
+    fn fetch_feed(
+        &mut self,
+        state: &mut RedshankSurfaceState,
+        requested_url: String,
+    ) -> Result<(), String> {
+        if self.feed_pending.is_some() {
+            return Err("Another podcast feed is still refreshing".into());
+        }
+        if !requested_url.starts_with("http://") && !requested_url.starts_with("https://") {
+            return Err("Podcast subscriptions require an HTTP or HTTPS feed URL".into());
+        }
+        let sender = self.persistence.reply_sender.clone();
+        let worker_url = requested_url.clone();
+        thread::Builder::new()
+            .name("redshank-feed".into())
+            .spawn(move || {
+                let result = fetch_and_import_feed(&worker_url);
+                let _ = sender.send(IoReply::FeedFetched {
+                    requested_url: worker_url,
+                    result,
+                });
+            })
+            .map_err(|error| format!("Could not start feed refresh: {error}"))?;
+        self.feed_pending = Some(requested_url);
+        state.notice = Some("Refreshing podcast feed…".into());
+        Ok(())
+    }
+
     fn send(&self, command: PlaybackCommand) -> Result<(), String> {
         self.runtime
             .command(command)
@@ -410,6 +473,13 @@ impl Desktop {
                 self.cache_pending = Some(id);
                 state.notice = Some("Downloading episode for offline listening…".into());
             },
+            CompactCommand::Subscribe(url) => {
+                if url.trim().is_empty() {
+                    return Err("Enter a podcast feed URL first".into());
+                }
+                self.fetch_feed(state, url)?;
+            },
+            CompactCommand::RefreshSubscription(url) => self.fetch_feed(state, url)?,
             CompactCommand::BeginTextNote | CompactCommand::AddTextNote => {
                 self.begin_note(state)?
             },
@@ -551,6 +621,38 @@ impl Desktop {
                         },
                     }
                 },
+                IoReply::FeedFetched {
+                    requested_url,
+                    result,
+                } => {
+                    if self.feed_pending.as_deref() == Some(requested_url.as_str()) {
+                        self.feed_pending = None;
+                    }
+                    match result {
+                        Err(error) => state.notice = Some(error),
+                        Ok(imported) => {
+                            let title = imported.subscription.title.clone();
+                            let mut added = 0_usize;
+                            self.session
+                                .model
+                                .upsert_subscription(imported.subscription);
+                            for episode in imported.episodes {
+                                match self.session.model.upsert_feed_item(episode) {
+                                    Ok(true) => added += 1,
+                                    Ok(false) => {},
+                                    Err(error) => {
+                                        state.notice =
+                                            Some(format!("Could not merge feed: {error:?}"));
+                                        continue;
+                                    },
+                                }
+                            }
+                            self.persistence.changed();
+                            state.feed_url_editor = Default::default();
+                            state.notice = Some(format!("Refreshed {title}; {added} new episodes"));
+                        },
+                    }
+                },
                 IoReply::Saved { revision, result } => {
                     self.persistence.acknowledge(revision, &result);
                     match result {
@@ -628,13 +730,31 @@ impl Desktop {
     }
 }
 
-fn focused_text(runner: &AppRunner) -> Option<FocusedTextSlot<RedshankSurfaceState>> {
+fn focused_text_class(runner: &AppRunner) -> Option<String> {
     let node = runner.focus()?;
     let dom = runner.dom();
     let dom = dom.borrow();
     let name = dom.element_name(node)?;
     if name.local.as_ref() != "textarea" {
         return None;
+    }
+    let parent = dom.parent(node)?;
+    dom.attribute(
+        parent,
+        &layout_dom_api::Namespace::from(""),
+        &layout_dom_api::LocalName::from("class"),
+    )
+    .map(str::to_owned)
+}
+
+fn focused_text(runner: &AppRunner) -> Option<FocusedTextSlot<RedshankSurfaceState>> {
+    let node = runner.focus()?;
+    if focused_text_class(runner).as_deref() == Some("redshank-feed-url") {
+        return Some(FocusedTextSlot {
+            node,
+            get: Box::new(|state| &state.feed_url_editor),
+            get_mut: Box::new(|state| &mut state.feed_url_editor),
+        });
     }
     Some(FocusedTextSlot {
         node,
@@ -644,23 +764,26 @@ fn focused_text(runner: &AppRunner) -> Option<FocusedTextSlot<RedshankSurfaceSta
 }
 
 fn key_intercept(runner: &mut AppRunner, key: &KeyPress) -> bool {
+    let note_editor_focused = focused_text_class(runner).as_deref() == Some("redshank-text-editor");
     let state = runner.state();
     let command = if key.modifiers.is_command_chord() {
         match &key.key {
             Key::Character(c) if c.eq_ignore_ascii_case("o") => Some(CompactCommand::OpenLocalFile),
-            Key::Named(NamedKey::Enter) => state.text_capture.as_ref().map(|capture| {
-                if let Some(id) = &state.editing_note {
-                    CompactCommand::EditNote {
-                        id: id.clone(),
-                        plain_text: state.text_editor.text().into(),
+            Key::Named(NamedKey::Enter) if note_editor_focused => {
+                state.text_capture.as_ref().map(|capture| {
+                    if let Some(id) = &state.editing_note {
+                        CompactCommand::EditNote {
+                            id: id.clone(),
+                            plain_text: state.text_editor.text().into(),
+                        }
+                    } else {
+                        CompactCommand::SaveTextNote {
+                            anchor: capture.anchor.clone(),
+                            plain_text: state.text_editor.text().into(),
+                        }
                     }
-                } else {
-                    CompactCommand::SaveTextNote {
-                        anchor: capture.anchor.clone(),
-                        plain_text: state.text_editor.text().into(),
-                    }
-                }
-            }),
+                })
+            },
             _ => None,
         }
     } else if focused_text(runner).is_some() || key.modifiers.alt {
@@ -743,6 +866,7 @@ fn hooks(
             desktop.closing
                 || desktop.dialog_pending
                 || desktop.cache_pending.is_some()
+                || desktop.feed_pending.is_some()
                 || desktop.persistence.in_flight.is_some()
                 || desktop.receipt.as_ref().is_some_and(HeadedReceipt::active)
                 || !desktop.session.matches(&snap) && desktop.session.selected.is_some()
@@ -791,6 +915,7 @@ fn main() {
         persistence: Persistence::start(store),
         dialog_pending: false,
         cache_pending: None,
+        feed_pending: None,
         data_root,
         closing: false,
         saved_draft: None,
@@ -856,6 +981,34 @@ fn main() {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use std::{io::Write as _, net::TcpListener};
+
+    #[test]
+    fn standalone_feed_fetch_retains_final_parser_facts() {
+        let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+        let address = listener.local_addr().unwrap();
+        let server = thread::spawn(move || {
+            let (mut stream, _) = listener.accept().unwrap();
+            let mut request = [0_u8; 2048];
+            let _ = stream.read(&mut request).unwrap();
+            let body = r#"<rss version="2.0"><channel><title>Local Feed</title><item><guid>one</guid><title>One</title><enclosure url="episode.mp3" type="audio/mpeg" length="3"/></item></channel></rss>"#;
+            write!(
+                stream,
+                "HTTP/1.1 200 OK\r\nContent-Length: {}\r\nContent-Type: application/rss+xml\r\nConnection: close\r\n\r\n{body}",
+                body.len()
+            )
+            .unwrap();
+        });
+        let url = format!("http://{address}/feed.xml");
+        let imported = fetch_and_import_feed(&url).unwrap();
+        server.join().unwrap();
+        assert_eq!(imported.subscription.title, "Local Feed");
+        assert_eq!(imported.episodes.len(), 1);
+        assert_eq!(
+            imported.episodes[0].source().enclosure_url(),
+            Some(format!("http://{address}/episode.mp3").as_str())
+        );
+    }
 
     #[test]
     fn host_routes_typing_to_editor_and_command_enter_to_note_save() {
@@ -881,13 +1034,13 @@ mod tests {
         );
         host.layout_at(860.0, 680.0);
         for _ in 0..40 {
-            if focused_text(host.runner()).is_some() {
+            if focused_text_class(host.runner()).as_deref() == Some("redshank-text-editor") {
                 break;
             }
             host.tab(true);
         }
         assert!(
-            focused_text(host.runner()).is_some(),
+            focused_text_class(host.runner()).as_deref() == Some("redshank-text-editor"),
             "keyboard must reach the note editor"
         );
         host.key_char("n");
@@ -938,6 +1091,7 @@ mod tests {
             persistence: Persistence::start(JsonDirectoryStore::new(directory)),
             dialog_pending: false,
             cache_pending: None,
+            feed_pending: None,
             data_root: directory.to_owned(),
             closing: false,
             saved_draft: None,
