@@ -71,10 +71,15 @@ off the UI and audio threads, publish only after the complete object is flushed
 and hashed, and then switch playback to the validated local object. The saved
 cache budget defaults to 2 GiB and can be adjusted in Settings. Identical bytes
 share one object; exhaustion is reported without automatic eviction.
+Cached items also expose **Remove offline download**. Redshank first persists
+the item's return to its enclosure URL, then removes the object on a cache
+worker if no other library item refers to that content-addressed path. Failed
+model saves retain the object. The model exposes a deterministic least-recently
+used candidate order for a later configurable reclamation policy.
 
 This Phase 4 slice supports local, bounded progressive HTTP(S), manual feed
 subscriptions, and manually cached offline listening. Automatic refresh and
-download, cache removal and eviction, voice capture, rate/volume controls, representation-drift
+download, automatic eviction, voice capture, rate/volume controls, representation-drift
 warnings/remapping, and Turnstone embedding remain open.
 A local digest is computed before decode from the opened file; it does not make
 a concurrently modified file immutable. Remote receipts retain validators but

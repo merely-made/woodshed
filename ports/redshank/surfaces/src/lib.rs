@@ -75,6 +75,7 @@ pub enum CompactCommand {
     BeginEditNote(AnnotationId),
     OpenLocalFile,
     CacheItem(ItemId),
+    RemoveCachedItem(ItemId),
     Subscribe(String),
     RefreshSubscription(String),
     UpdateSettings(ListenerSettings),
@@ -364,6 +365,8 @@ pub fn surface(state: &RedshankSurfaceState) -> FullView {
                 ),
             ));
         } else if item.source().is_cached() {
+            let remove_id = item.id().clone();
+            let remove_title = item.title().to_owned();
             controls.push(Box::new(
                 el("span", text("Available offline"))
                     .attr("role", "status")
@@ -371,6 +374,18 @@ pub fn surface(state: &RedshankSurfaceState) -> FullView {
                         "aria-label",
                         format!("{} is available offline", item.title()),
                     ),
+            ));
+            controls.push(Box::new(
+                button(
+                    "Remove offline download",
+                    move |state: &mut RedshankSurfaceState, _| {
+                        state.request(CompactCommand::RemoveCachedItem(remove_id.clone()));
+                    },
+                )
+                .attr(
+                    "aria-label",
+                    format!("Remove offline download for {remove_title}"),
+                ),
             ));
         }
         controls
@@ -864,6 +879,18 @@ mod tests {
                 .borrow()
                 .outer_html(runner.root())
                 .contains("Remote episode is available offline")
+        );
+        let remove = node_with_label(
+            &runner.dom().borrow(),
+            runner.root(),
+            "Remove offline download for Remote episode",
+        );
+        runner.dispatch_click(remove, PointerClick::at((1.0, 1.0)));
+        let mut commands = Vec::new();
+        runner.update(|state| commands.extend(state.drain_commands()));
+        assert_eq!(
+            commands,
+            [CompactCommand::RemoveCachedItem(ItemId("remote".into()))]
         );
     }
 

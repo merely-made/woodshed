@@ -12,7 +12,8 @@ workflow landed. Genet controller admission and bounded progressive HTTP
 playback are also landed. A manual, budgeted durable episode cache now publishes
 complete content-addressed objects and reopens them offline. Manual RSS/Atom
 subscription and refresh are landed. Scheduled refresh, automatic download,
-and cache removal/eviction remain open. Headed local, HTTP,
+and automatic cache reclamation remain open. Explicit cache removal and stable
+eviction ordering are landed. Headed local, HTTP,
 and server-offline playback, text-note, persistence, restart, and resume receipts
 now pass.
 
@@ -748,6 +749,23 @@ and `git diff --check` pass. Feed tests cover RSS podcast extensions, relative
 URLs, Atom fallback identity, and a real localhost fetch; model and surface
 tests cover cached-source preservation and both subscription commands.
 
+#### Cache lifecycle receipt, 2026-09-09
+
+Cached library items now expose an explicit removal action. The host first
+changes the durable item source back to its enclosure URL and waits for that
+model revision to save successfully. Only then does a cache worker unlink the
+published object. A failed model save leaves the object intact, missing objects
+are idempotent, and path admission confines deletion to direct `.audio` children
+of Redshank's cache root. Shared content-addressed objects remain until the last
+model reference is removed.
+
+The model also derives a deterministic reclamation order without filesystem
+authority: unique objects sort by least-recent progress time and path, while a
+shared object's newest referring-item use protects it. Automatic reclamation is
+still withheld until its user-configurable policy and download admission flow
+are ruled. The isolated workspace passes 46 default tests with four existing
+device/fixture gates; strict workspace Clippy, formatting, and diff checks pass.
+
 ### Phase 5: voice capture and open annotation target
 
 Add host-provided microphone capture and Knot's generic media
@@ -965,3 +983,7 @@ rejected for the reasons recorded in the 2026-09-01 planning pass.
   subscription and podcast facts, GUID-stable refresh merge, standalone bounded
   HTTP(S) fetch worker, and full-surface subscribe/refresh controls. Manual
   subscription is landed; scheduling and automatic downloads remain open.
+- **2026-09-09:** Added explicit offline-download removal with durable-model-first
+  ordering, shared-object retention, cache-root path confinement, and a stable
+  least-recently-used candidate order. Automatic reclamation remains open until
+  its policy is configurable.

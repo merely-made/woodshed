@@ -50,6 +50,14 @@ pub struct FeedSubscription {
     pub diagnostics: Vec<String>,
 }
 
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct CacheCandidate {
+    pub path: String,
+    pub item_ids: Vec<ItemId>,
+    pub byte_length: Option<u64>,
+    pub last_used_ms: u64,
+}
+
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 #[serde(tag = "kind", rename_all = "snake_case")]
 pub enum MediaSource {
@@ -308,6 +316,42 @@ impl RedshankModel {
         Ok(inserted)
     }
 
+    /// Unique cached objects from least to most recently used. Shared objects
+    /// take the newest use of any referring item, then paths break ties.
+    pub fn cache_eviction_order(&self) -> Vec<CacheCandidate> {
+        let mut candidates = BTreeMap::<String, CacheCandidate>::new();
+        for (id, item) in &self.library {
+            let MediaSource::Cached {
+                path,
+                representation,
+                ..
+            } = item.source()
+            else {
+                continue;
+            };
+            let used = self
+                .progress
+                .get(id)
+                .map(|progress| progress.updated_at_ms)
+                .or(representation.retrieved_at_ms)
+                .unwrap_or(0);
+            let candidate = candidates.entry(path.clone()).or_insert(CacheCandidate {
+                path: path.clone(),
+                item_ids: Vec::new(),
+                byte_length: representation.byte_length,
+                last_used_ms: used,
+            });
+            candidate.item_ids.push(id.clone());
+            candidate.last_used_ms = candidate.last_used_ms.max(used);
+            candidate.byte_length = candidate.byte_length.or(representation.byte_length);
+        }
+        let mut candidates: Vec<_> = candidates.into_values().collect();
+        candidates.sort_by(|left, right| {
+            (left.last_used_ms, &left.path).cmp(&(right.last_used_ms, &right.path))
+        });
+        candidates
+    }
+
     pub fn enqueue(&mut self, id: &ItemId) -> Result<(), ModelError> {
         self.require_item(id)?;
         if !self.queue.contains(id) {
@@ -483,6 +527,53 @@ mod tests {
                 .and_then(|receipt| receipt.complete_digest.as_deref()),
             Some("blake3:complete")
         );
+    }
+
+    #[test]
+    fn cache_eviction_order_deduplicates_objects_and_uses_newest_reference() {
+        let mut model = RedshankModel::default();
+        for (id, path, updated) in [
+            ("old", "cache/a.audio", 10),
+            ("shared-a", "cache/shared.audio", 20),
+            ("shared-b", "cache/shared.audio", 40),
+            ("new", "cache/z.audio", 30),
+        ] {
+            let mut item = feed_item(id, &format!("https://example.test/{id}.mp3"));
+            item.replace_source(MediaSource::Cached {
+                path: path.into(),
+                origin_url: format!("https://example.test/{id}.mp3"),
+                representation: Box::new(RepresentationReceipt {
+                    byte_length: Some(100),
+                    retrieved_at_ms: Some(1),
+                    ..Default::default()
+                }),
+            });
+            let item_id = item.id().clone();
+            model.add_item(item).unwrap();
+            model
+                .set_progress(
+                    &item_id,
+                    Progress {
+                        position_ms: 1,
+                        completed: false,
+                        updated_at_ms: updated,
+                    },
+                )
+                .unwrap();
+        }
+        let candidates = model.cache_eviction_order();
+        assert_eq!(
+            candidates
+                .iter()
+                .map(|candidate| (candidate.path.as_str(), candidate.last_used_ms))
+                .collect::<Vec<_>>(),
+            [
+                ("cache/a.audio", 10),
+                ("cache/z.audio", 30),
+                ("cache/shared.audio", 40),
+            ]
+        );
+        assert_eq!(candidates[2].item_ids.len(), 2);
     }
 
     #[test]

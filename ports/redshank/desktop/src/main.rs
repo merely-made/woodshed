@@ -100,6 +100,10 @@ enum IoReply {
         requested_url: String,
         result: Result<FeedImport, String>,
     },
+    CacheRemoved {
+        id: ItemId,
+        result: Result<bool, String>,
+    },
 }
 
 struct SaveRequest {
@@ -194,12 +198,20 @@ struct SavedDraft {
     text: String,
 }
 
+struct PendingCacheRemoval {
+    revision: u64,
+    id: ItemId,
+    path: PathBuf,
+}
+
 struct Desktop {
     session: Session,
     runtime: PlaybackRuntime,
     persistence: Persistence,
     dialog_pending: bool,
     cache_pending: Option<ItemId>,
+    cache_removals: Vec<PendingCacheRemoval>,
+    cache_removals_in_flight: usize,
     feed_pending: Option<String>,
     data_root: PathBuf,
     closing: bool,
@@ -210,6 +222,45 @@ struct Desktop {
 }
 
 impl Desktop {
+    fn schedule_durable_cache_removals(&mut self, revision: u64, state: &mut RedshankSurfaceState) {
+        let mut waiting = Vec::new();
+        for removal in self.cache_removals.drain(..) {
+            if removal.revision > revision {
+                waiting.push(removal);
+                continue;
+            }
+            let still_shared = self.session.model.library.values().any(|item| {
+                matches!(item.source(), MediaSource::Cached { path, .. } if std::path::Path::new(path) == removal.path.as_path())
+            });
+            if still_shared {
+                state.notice =
+                    Some("Offline download removed; shared cache object retained".into());
+                continue;
+            }
+            let cache = EpisodeCache::new(
+                self.data_root.join("cache"),
+                self.session.model.settings.cache_budget_bytes,
+            );
+            let sender = self.persistence.reply_sender.clone();
+            let id = removal.id;
+            let path = removal.path;
+            match thread::Builder::new()
+                .name("redshank-cache-remove".into())
+                .spawn(move || {
+                    let result = cache
+                        .remove_cached_path(&path)
+                        .map_err(|error| error.to_string());
+                    let _ = sender.send(IoReply::CacheRemoved { id, result });
+                }) {
+                Ok(_) => self.cache_removals_in_flight += 1,
+                Err(error) => {
+                    state.notice = Some(format!("Could not start cache removal: {error}"));
+                },
+            }
+        }
+        self.cache_removals = waiting;
+    }
+
     fn fetch_feed(
         &mut self,
         state: &mut RedshankSurfaceState,
@@ -473,6 +524,33 @@ impl Desktop {
                 self.cache_pending = Some(id);
                 state.notice = Some("Downloading episode for offline listening…".into());
             },
+            CompactCommand::RemoveCachedItem(id) => {
+                if self.cache_pending.as_ref() == Some(&id)
+                    || self.cache_removals.iter().any(|removal| removal.id == id)
+                {
+                    return Err("That episode already has a cache operation running".into());
+                }
+                let item = self
+                    .session
+                    .model
+                    .library
+                    .get_mut(&id)
+                    .ok_or("That library item no longer exists")?;
+                let MediaSource::Cached {
+                    path, origin_url, ..
+                } = item.source().clone()
+                else {
+                    return Err("That recording is not available offline".into());
+                };
+                item.replace_source(MediaSource::Enclosure { url: origin_url });
+                self.persistence.changed();
+                self.cache_removals.push(PendingCacheRemoval {
+                    revision: self.persistence.revision,
+                    id,
+                    path: PathBuf::from(path),
+                });
+                state.notice = Some("Saving cache removal…".into());
+            },
             CompactCommand::Subscribe(url) => {
                 if url.trim().is_empty() {
                     return Err("Enter a podcast feed URL first".into());
@@ -653,6 +731,14 @@ impl Desktop {
                         },
                     }
                 },
+                IoReply::CacheRemoved { id, result } => {
+                    self.cache_removals_in_flight = self.cache_removals_in_flight.saturating_sub(1);
+                    state.notice = Some(match result {
+                        Ok(true) => format!("Removed offline download for {}", id.0),
+                        Ok(false) => format!("Offline download for {} was already absent", id.0),
+                        Err(error) => error,
+                    });
+                },
                 IoReply::Saved { revision, result } => {
                     self.persistence.acknowledge(revision, &result);
                     match result {
@@ -661,6 +747,7 @@ impl Desktop {
                             self.closing = false;
                         },
                         Ok(()) => {
+                            self.schedule_durable_cache_removals(revision, state);
                             if self
                                 .saved_draft
                                 .as_ref()
@@ -854,6 +941,8 @@ fn hooks(
             }
             if desktop.closing
                 && desktop.persistence.durable == desktop.persistence.revision
+                && desktop.cache_removals.is_empty()
+                && desktop.cache_removals_in_flight == 0
                 && desktop
                     .receipt
                     .as_ref()
@@ -866,6 +955,8 @@ fn hooks(
             desktop.closing
                 || desktop.dialog_pending
                 || desktop.cache_pending.is_some()
+                || !desktop.cache_removals.is_empty()
+                || desktop.cache_removals_in_flight > 0
                 || desktop.feed_pending.is_some()
                 || desktop.persistence.in_flight.is_some()
                 || desktop.receipt.as_ref().is_some_and(HeadedReceipt::active)
@@ -915,6 +1006,8 @@ fn main() {
         persistence: Persistence::start(store),
         dialog_pending: false,
         cache_pending: None,
+        cache_removals: Vec::new(),
+        cache_removals_in_flight: 0,
         feed_pending: None,
         data_root,
         closing: false,
@@ -981,7 +1074,7 @@ fn main() {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::{io::Write as _, net::TcpListener};
+    use std::{fs, io::Write as _, net::TcpListener};
 
     #[test]
     fn standalone_feed_fetch_retains_final_parser_facts() {
@@ -1008,6 +1101,69 @@ mod tests {
             imported.episodes[0].source().enclosure_url(),
             Some(format!("http://{address}/episode.mp3").as_str())
         );
+    }
+
+    #[test]
+    fn cache_object_is_removed_only_after_its_model_revision_is_durable() {
+        let directory = tempfile::tempdir().unwrap();
+        let cache_root = directory.path().join("cache");
+        fs::create_dir_all(&cache_root).unwrap();
+        let cached_path = cache_root.join("complete.audio");
+        fs::write(&cached_path, b"complete").unwrap();
+        let id = ItemId("cached".into());
+        let mut desktop = desktop(directory.path());
+        desktop
+            .session
+            .model
+            .add_item(LibraryItem::DirectAudio {
+                id: id.clone(),
+                title: "Cached".into(),
+                source: MediaSource::Cached {
+                    path: cached_path.to_string_lossy().into_owned(),
+                    origin_url: "https://example.test/cached.mp3".into(),
+                    representation: Box::default(),
+                },
+            })
+            .unwrap();
+        let mut state = RedshankSurfaceState::default();
+        desktop
+            .command(&mut state, CompactCommand::RemoveCachedItem(id.clone()))
+            .unwrap();
+        assert!(cached_path.exists());
+        assert!(matches!(
+            desktop.session.model.library[&id].source(),
+            MediaSource::Enclosure { .. }
+        ));
+
+        desktop
+            .persistence
+            .reply_sender
+            .send(IoReply::Saved {
+                revision: desktop.persistence.revision,
+                result: Err("disk full".into()),
+            })
+            .unwrap();
+        desktop.poll(&mut state);
+        assert!(cached_path.exists());
+        assert_eq!(desktop.cache_removals.len(), 1);
+
+        desktop
+            .persistence
+            .reply_sender
+            .send(IoReply::Saved {
+                revision: desktop.persistence.revision,
+                result: Ok(()),
+            })
+            .unwrap();
+        for _ in 0..100 {
+            desktop.poll(&mut state);
+            if desktop.cache_removals_in_flight == 0 {
+                break;
+            }
+            thread::sleep(Duration::from_millis(10));
+        }
+        assert!(!cached_path.exists());
+        assert_eq!(desktop.cache_removals_in_flight, 0);
     }
 
     #[test]
@@ -1091,6 +1247,8 @@ mod tests {
             persistence: Persistence::start(JsonDirectoryStore::new(directory)),
             dialog_pending: false,
             cache_pending: None,
+            cache_removals: Vec::new(),
+            cache_removals_in_flight: 0,
             feed_pending: None,
             data_root: directory.to_owned(),
             closing: false,
