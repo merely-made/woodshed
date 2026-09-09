@@ -592,7 +592,10 @@ mod tests {
             protection: "DPAPI-wrapped root".into(),
         };
         assert!(family.summary().contains("work"));
-        assert!(family.summary().contains("DPAPI"));
+        assert!(
+            !family.summary().contains("DPAPI"),
+            "the compact summary names the persona, not backend detail"
+        );
 
         let apart = IdentityHome::Apart {
             family_profile: "work".into(),

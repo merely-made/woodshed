@@ -80,11 +80,11 @@ crates/woodshed-instrument/     connection, device state, concept mapping
 crates/woodshed-views/          the practice-facing surface (later phase)
 ```
 
-**Dependency form.** Git dependencies on `merely-made/ringdown`, in the same
-form as `genet-host-api` and the cambium crates. It began as a path dependency
-while ringdown had no remote and was converted on 2026-08-27 once it was
-pushed. Both halves come from the repo rather than one from crates.io, because
-`ringdown-ble` is `publish = false` and the two must stay in step.
+**Dependency form.** Since the 2026-09-09 audio-ports rehome, both Ringdown
+halves are relative path dependencies on `ports/ringdown`. Ringdown remains an
+independent nested workspace; the local paths keep its published core and
+unpublished BLE shell on the same revision. This supersedes the 2026-08-27 Git
+dependency while preserving the consumer boundary.
 
 ## Phases
 
@@ -382,10 +382,10 @@ only by luck.
   without quitting. That makes releasing a first-class action rather than a
   side effect of shutdown — and `Connection::with` as written is
   scope-shaped, so W2 needs a longer-lived form beside it.
-- ~~**WD3 — Whether to push ringdown.**~~ **Settled 2026-08-27:** pushed to
-  `merely-made/ringdown` and published as `ringdown` 0.1.0 (MPL-2.0). Woodshed
-  now takes it as a git dependency, so this workspace is buildable by anyone
-  with the genet checkout.
+- ~~**WD3 — Whether to push ringdown.**~~ **Settled 2026-08-27, superseded
+  2026-09-09:** pushed to `merely-made/ringdown` and published as `ringdown`
+  0.1.0 (MPL-2.0), then rehomed with full history at `ports/ringdown`.
+  Woodshed now consumes that nested workspace by relative paths.
 
 ## The vendor app overwrites the instrument on connect
 

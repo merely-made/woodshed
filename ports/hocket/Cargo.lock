@@ -578,7 +578,6 @@ dependencies = [
 [[package]]
 name = "audio-primitives"
 version = "0.1.0"
-source = "git+https://github.com/merely-made/woodshed.git?branch=main#9fbb87ca05f97e51c173d6d8115623623994b42b"
 
 [[package]]
 name = "autocfg"

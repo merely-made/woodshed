@@ -49,21 +49,23 @@ affiliated with or endorsed by HyVibe.
 
 ---
 
-## The decision: a new repo, on the retinue template
+## The founding decision: a new repo, on the retinue template
 
-This is a **new repository under `repos/`**, not a subtree of woodshed. The
-reasoning:
+Ringdown began as a **new repository under `repos/`**, separate from Woodshed.
+On 2026-09-09 that placement was superseded: its full history moved to
+`woodshed/ports/ringdown` as an independent nested workspace and release. The
+product boundaries behind the founding decision still hold:
 
 - **The protocol crate is publish-tier and reusable.** A JSON-RPC-over-BLE
   client for a specific instrument is a library other things can consume; it
   should not be buried inside a practice-toolkit application. This mirrors the
   family's existing posture where `signalman-desktop` roots its own workspace
   outside the protocol repo rather than fusing app and protocol.
-- **Woodshed is the first consumer, not the owner.** Woodshed already has the
+- **Woodshed is the first consumer, not the product owner.** Woodshed already has the
   metronome, MIDI clock, looper, live-input recording, tuner, and latency
   calibration that this instrument exposes over the wire. It consumes ringdown
-  as a git dependency for the UI (the same way woodshed consumes
-  `genet-host-api` from genet). The two are siblings, not parent and child.
+  through a deliberate relative-path dependency. Repository placement does not
+  merge the Ringdown product or protocol authority into the Woodshed app.
 - **The firmware option wants a home of its own.** If the project ever reaches
   alternative firmware (Phase 4, explicitly gated below), that is `no_std`
   embedded work that belongs beside the protocol core, not inside a desktop
@@ -97,8 +99,9 @@ apps/
                      Plain descriptive name, settled in Phase 0. publish = false.
 ```
 
-Woodshed stays where it is and gains a dependency on `ringdown` + `ringdown-ble`
-plus a view surface — no ringdown code lives in the woodshed tree.
+Woodshed consumes `ringdown` + `ringdown-ble` through
+`crates/woodshed-instrument`; Ringdown code lives only in its `ports/ringdown`
+nested workspace rather than in Woodshed application crates.
 
 ---
 
@@ -2390,9 +2393,10 @@ is the truth, whatever the APK said.
 ## Decisions (Mark's — pending)
 
 - **D1 — License. DECIDED 2026-08-27: `MPL-2.0`**, matching the retinue family
-  rather than woodshed's `MIT OR Apache-2.0`. `LICENSE` is byte-identical to
-  retinue's copy. Two consequences worth recording, because they were not the
-  reason for the choice but they fall out of it well:
+  rather than Woodshed's license at that date. Woodshed adopted MPL-2.0 on
+  2026-09-09. `LICENSE` is byte-identical to retinue's copy. Two consequences
+  worth recording, because they were not the reason for the choice but they
+  fall out of it well:
   - **File-level copyleft is the right shape for a protocol crate.**
     Improvements to ringdown's own files stay open, while the crate can still
     be linked into differently-licensed applications — including a proprietary

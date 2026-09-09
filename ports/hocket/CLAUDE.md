@@ -1,4 +1,4 @@
-# Hocket Repository Guide
+# Hocket Port Guide
 
 ## Product
 
@@ -28,8 +28,9 @@ crates/
 Run the desktop application with `cargo run -p hocket-genet`. The retired
 Masonry application and `hocket-widgets` crate are not part of this workspace.
 
-The sibling `../woodshed/crates/audio-primitives` path dependency provides
-shared pure DSP helpers. Do not couple Hocket to a Woodshed application crate.
+The root `../../crates/audio-primitives` path dependency provides shared pure
+DSP helpers. Hocket remains its own nested workspace and release. Do not couple
+it to a Woodshed application crate or another port.
 
 ## Boundaries
 

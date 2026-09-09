@@ -922,9 +922,11 @@ installers, Android via cargo-apk.
 
 ### Session 2026-05-18 — scaffold
 
-- Per Mark's preference (confirmed 2026-05-18), Hocket lives in
-  its own repo `repos/hocket/` rather than as a crate inside the
-  Woodshed workspace.
+- Per Mark's preference at founding (confirmed 2026-05-18), Hocket lived in
+  its own repo `repos/hocket/` rather than as a crate inside the Woodshed
+  workspace. **Superseded 2026-09-09:** it now lives at `ports/hocket` as an
+  independent nested workspace and release, still outside Woodshed's root
+  Cargo workspace.
 - Crate name on crates.io: `hocket` is squatted by a dead 2016
   redirect (last release v0.1.1, "Moved to libhocket-sys"). Workspace
   uses `hocket-*` namespaced crates; the bare name is cosmetic since

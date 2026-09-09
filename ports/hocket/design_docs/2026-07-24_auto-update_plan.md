@@ -9,9 +9,9 @@ This plan builds it so the parts that must behave identically on every host
 (policy, status, decisions) are platform-neutral and testable, and only the
 mechanism (install, download, swap, restart) is per-platform.
 
-The cross-family research and the Velopack-vs-composed decision live in
-[mere's auto-update brief](../../mere/design_docs/2026-07-22_auto-update_brief.md),
-whose findings this plan implements.
+The cross-family research and the Velopack-vs-composed decision live in Mere's
+`mere/design_docs/2026-07-22_auto-update_brief.md`, whose findings this plan
+implements.
 
 ## Requirements (from the brief, restated as acceptance)
 

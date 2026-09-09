@@ -43,7 +43,9 @@ Android app. This repo carries no vendor code, no decompiled sources, and no
 vendor firmware — only the recovered facts and interfaces, reimplemented
 independently. Architecture follows the retinue template — a sans-io protocol
 core, a thin Bluetooth I/O shell, and receipt-driven validation.
-[Woodshed](https://github.com/merely-made/woodshed) is the first consumer.
+[Woodshed](https://github.com/merely-made/woodshed) is the first consumer and
+repository host. Ringdown remains a separately versioned and released nested
+workspace under `ports/ringdown`.
 
 Ringdown is not affiliated with or endorsed by HyVibe; "HyVibe" is their
 trademark, used here only to say what this interoperates with.
