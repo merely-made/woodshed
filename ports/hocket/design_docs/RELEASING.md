@@ -6,6 +6,12 @@ builds the installer, [`luggage`](https://github.com/merely-made/mere/tree/main/
 
 Verified on Windows 2026-07-24 (see the auto-update plan's H4 receipts).
 
+Since the 2026-09-09 source rehome, releases live in the Woodshed repository
+under product-qualified tags such as `hocket-v0.2.0`. Do not use an unqualified
+`v0.2.0` tag. Hocket's signed update manifest must have a stable product-only
+URL; the `github:merely-made/woodshed` shorthand follows the repository's one
+global latest release and can therefore resolve to another product.
+
 ## Once per machine
 
 ```sh
@@ -87,14 +93,16 @@ inferred from the format docs. Observed behaviour on 2026-07-24: the packer
 already produces and signs it.)
 
 For a directory feed the default `file://` URL is right. For a published
-feed pass `--url` with the URL the artifact will actually live at (for a
-GitHub release, `https://github.com/<owner>/<repo>/releases/download/v<ver>/<file>`),
-and upload `luggage.json` as a release asset so `github:owner/repo` finds it.
+feed pass `--url` with the URL the artifact will actually live at. A Hocket
+GitHub release uses
+`https://github.com/merely-made/woodshed/releases/download/hocket-v<ver>/<file>`.
+Publish the signed `luggage.json` at a stable Hocket-only URL for clients; do
+not point them at the repository-wide latest-release shorthand.
 
 ## Running the update
 
 ```sh
-export HOCKET_UPDATE_FEED=<dir | https://… | github:owner/repo>
+export HOCKET_UPDATE_FEED=<dir | stable Hocket-only https:// URL>
 export HOCKET_UPDATE_PUBKEY=$(cat hocket.key.pub)
 hocket-genet --update-now                 # or just launch the app
 ```

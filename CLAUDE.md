@@ -54,6 +54,10 @@ crates/
   woodshed-genet/    The desktop application binary, composed on
                      cambium-genet-winit-host.
   woodshed-graph/    Theory catalog projected into the chartulary graph.
+ports/
+  hocket/            Independently released loop recorder workspace.
+  redshank/          Independently released listening and annotation workspace.
+  ringdown/          Independently released instrument-control workspace.
 ```
 
 Keep `woodshedding` and `audio-primitives` pure: no `cpal`, no UI, no file
@@ -62,6 +66,11 @@ I/O. Audio-coupled code belongs in `woodshed-audio`, product composition in
 re-add direct deps on genet-layout, genet-winit-host, netrender, or the
 paint-list crates; the shared host owns that assembly and they arrive
 transitively.
+
+Each directory under `ports/` is a nested Cargo workspace, not a member of the
+root workspace. Keep its lockfile, versions, product host, release tags, and
+validation commands independent. Shared libraries belong in root `crates/`;
+repository proximity does not authorize direct port-to-port dependencies.
 
 ## General Guidelines
 

@@ -6,6 +6,9 @@ asynchronously rather than jamming across a network. It is a phrase sampler,
 not a DAW: a session is a small set of mono tracks, recording appends a
 layer, and layers mute independently.
 
+Hocket is hosted under Woodshed's `ports/hocket` directory but remains a
+separately versioned, tested, and released nested workspace.
+
 ## Status (2026-08-12)
 
 Pre-alpha. The desktop app works for local solo looping; the pass-the-mic

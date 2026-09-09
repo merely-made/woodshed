@@ -1,10 +1,9 @@
 # Audio ports rehome plan
 
-**Status (2026-09-09): IN PROGRESS.** The maintainer has ruled that Hocket and
-Ringdown move into Woodshed's `ports/` alongside Redshank, while remaining
-separately named, versioned, licensed, tested, embeddable products. The same
-ruling changes Woodshed's repository license from MIT OR Apache-2.0 to
-MPL-2.0.
+**Status (2026-09-09): READY TO LAND.** Hocket and Ringdown now live in
+Woodshed's `ports/` alongside Redshank while remaining separately named,
+versioned, tested, and released embeddable products. Woodshed and Redshank now
+use MPL-2.0. Publication and old-repository relocation notices remain.
 
 ## Ruling
 
@@ -20,6 +19,11 @@ and validation commands. Woodshed's root workspace does not list their packages
 as members. This prevents every application backend and host from entering one
 dependency graph while still allowing deliberate relative-path dependencies at
 stable shared or consumer boundaries.
+
+Repository tags are product-qualified: `woodshed-v*`, `hocket-v*`,
+`redshank-v*`, and `ringdown-v*`. A GitHub repository has only one global
+"latest release", so Hocket's updater must use a stable Hocket-only signed
+manifest URL rather than the `github:owner/repo` latest-release shorthand.
 
 The move reverses Hocket's May 2026 and Ringdown's August 2026 separate-repo
 rulings. Those decisions described the right product boundaries at the time;
@@ -47,7 +51,8 @@ Done when:
 - package repository metadata points to each port's Woodshed subtree;
 - stale prose saying either product must live in a separate repository is
   corrected while preserving the historical reason for the earlier ruling;
-- Woodshed root package metadata and license files state MPL-2.0;
+- Woodshed root package metadata, Redshank's nested manifests, and license
+  files state MPL-2.0;
 - root documentation explains that ports have independent release trains and
   nested workspaces.
 
@@ -74,10 +79,25 @@ Done when:
   These are real cross-repository development edges, not speculative affinity.
 - **2026-09-09:** Hocket and Ringdown are MPL-2.0. Keeping a `LICENSE` inside
   each imported port preserves their standalone package boundary while the
-  Woodshed root adopts the same license.
+  Woodshed root and the root-licensed Redshank port adopt the same license.
 
 ## Progress
 
 - **2026-09-09:** Plan opened after the maintainer approved the rehome and the
-  Woodshed MPL-2.0 conversion. Source-remote checkpoint pushes completed;
-  history import, rewiring, validation, and relocation notices remain.
+  Woodshed MPL-2.0 conversion. Source-remote checkpoint pushes completed.
+- **2026-09-09:** Full Hocket and Ringdown `main` histories were merged without
+  squashing at `ports/hocket` and `ports/ringdown`. Nested workspaces are
+  explicitly excluded from the root workspace; Hocket's shared-DSP edge and
+  Woodshed's Ringdown consumer edge now use relative paths. Validation,
+  publication, and old-repository relocation notices remain.
+- **2026-09-09:** The first root build against Ringdown's imported tip exposed
+  API drift hidden by Woodshed's older Git lock. `woodshed-instrument` now uses
+  Ringdown's transport constructor and fallible optional-field metronome
+  builder. Its 16 tests and strict Clippy pass.
+- **2026-09-09:** Locked workspace tests pass for Woodshed, Hocket, Ringdown,
+  and Redshank. Ringdown's strict workspace Clippy passes. Hocket's strict
+  workspace Clippy reports nine inherited `collapsible_if`/`derivable_impls`
+  findings, and the family rustfmt policy reports inherited source drift in
+  Woodshed, Hocket, and Ringdown. The rehome changed two Rust files; their
+  behavior is covered by the green suites. Repository policy reserves the
+  broad formatting sweep for a separate commit and blame-ignore entry.

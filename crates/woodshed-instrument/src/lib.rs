@@ -309,7 +309,7 @@ impl Connection {
     /// and using it directly means owning the release.
     pub async fn open(scan: Duration) -> Result<Connection, InstrumentError> {
         let found = ringdown_ble::discover(scan).await?;
-        let guitar = Guitar::connect(&found[0]).await?;
+        let guitar = ringdown_ble::connect(&found[0]).await?;
         Ok(Connection { guitar })
     }
 
@@ -329,11 +329,12 @@ impl Connection {
 /// absent `Option` as JSON null. A comment cannot fail; this can.
 fn metronome_params(m: Metronome) -> serde_json::Value {
     rpc::params::metronome(
-        i64::from(m.bpm),
+        Some(i64::from(m.bpm)),
         Some(i64::from(m.beats_per_bar)),
         None,
         None,
     )
+    .expect("omitting the denominator is always valid")
 }
 
 #[cfg(test)]
@@ -371,8 +372,9 @@ mod tests {
     /// the dependency graph.
     #[test]
     fn params_reach_the_wire_in_declaration_order() {
-        let text = serde_json::to_string(&rpc::params::metronome(93, Some(6), Some(8), None))
-            .expect("params serialize");
+        let params =
+            rpc::params::metronome(Some(93), Some(6), Some(4), None).expect("accepted denominator");
+        let text = serde_json::to_string(&params).expect("params serialize");
         let pos = |k: &str| {
             text.find(k)
                 .unwrap_or_else(|| panic!("{k} missing in {text}"))
