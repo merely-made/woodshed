@@ -12,12 +12,90 @@ pub struct ItemId(pub String);
 #[serde(transparent)]
 pub struct AnnotationId(pub String);
 
+#[derive(Clone, Debug, Default, Deserialize, Eq, PartialEq, Serialize)]
+pub struct FeedResource {
+    pub url: String,
+    pub media_type: Option<String>,
+}
+
+#[derive(Clone, Debug, Default, Deserialize, Eq, PartialEq, Serialize)]
+pub struct FeedTranscript {
+    pub url: String,
+    pub media_type: Option<String>,
+    pub language: Option<String>,
+    pub relation: Option<String>,
+}
+
+#[derive(Clone, Debug, Default, Deserialize, Eq, PartialEq, Serialize)]
+pub struct FeedEpisodeFacts {
+    pub published: Option<String>,
+    pub summary: Option<String>,
+    pub duration: Option<String>,
+    pub artwork: Option<String>,
+    pub enclosure_media_type: Option<String>,
+    pub enclosure_byte_length: Option<u64>,
+    pub chapters: Vec<FeedResource>,
+    pub transcripts: Vec<FeedTranscript>,
+}
+
+#[derive(Clone, Debug, Default, Deserialize, Eq, PartialEq, Serialize)]
+pub struct FeedSubscription {
+    pub feed_url: String,
+    pub title: String,
+    pub subtitle: Option<String>,
+    pub link: Option<String>,
+    pub language: Option<String>,
+    pub artwork: Option<String>,
+    pub last_refreshed_ms: Option<u64>,
+    pub diagnostics: Vec<String>,
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct CacheCandidate {
+    pub path: String,
+    pub item_ids: Vec<ItemId>,
+    pub byte_length: Option<u64>,
+    pub last_used_ms: u64,
+}
+
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 #[serde(tag = "kind", rename_all = "snake_case")]
 pub enum MediaSource {
-    Local { path: String },
-    Enclosure { url: String },
-    HostBlob { id: String },
+    Local {
+        path: String,
+    },
+    Enclosure {
+        url: String,
+    },
+    Cached {
+        path: String,
+        origin_url: String,
+        representation: Box<RepresentationReceipt>,
+    },
+    HostBlob {
+        id: String,
+    },
+}
+
+impl MediaSource {
+    pub fn enclosure_url(&self) -> Option<&str> {
+        match self {
+            Self::Enclosure { url } => Some(url),
+            Self::Cached { origin_url, .. } => Some(origin_url),
+            Self::Local { .. } | Self::HostBlob { .. } => None,
+        }
+    }
+
+    pub fn is_cached(&self) -> bool {
+        matches!(self, Self::Cached { .. })
+    }
+
+    pub fn cached_representation(&self) -> Option<&RepresentationReceipt> {
+        match self {
+            Self::Cached { representation, .. } => Some(representation.as_ref()),
+            Self::Local { .. } | Self::Enclosure { .. } | Self::HostBlob { .. } => None,
+        }
+    }
 }
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
@@ -28,31 +106,58 @@ pub enum LibraryItem {
         title: String,
         source: MediaSource,
     },
+    DirectAudio {
+        id: ItemId,
+        title: String,
+        source: MediaSource,
+    },
     FeedEpisode {
         id: ItemId,
         feed_url: String,
         guid: String,
         title: String,
         source: MediaSource,
+        #[serde(default)]
+        facts: Box<FeedEpisodeFacts>,
     },
 }
 
 impl LibraryItem {
     pub fn id(&self) -> &ItemId {
         match self {
-            Self::LocalAudio { id, .. } | Self::FeedEpisode { id, .. } => id,
+            Self::LocalAudio { id, .. }
+            | Self::DirectAudio { id, .. }
+            | Self::FeedEpisode { id, .. } => id,
         }
     }
 
     pub fn source(&self) -> &MediaSource {
         match self {
-            Self::LocalAudio { source, .. } | Self::FeedEpisode { source, .. } => source,
+            Self::LocalAudio { source, .. }
+            | Self::DirectAudio { source, .. }
+            | Self::FeedEpisode { source, .. } => source,
+        }
+    }
+
+    pub fn replace_source(&mut self, source: MediaSource) {
+        match self {
+            Self::LocalAudio {
+                source: current, ..
+            }
+            | Self::DirectAudio {
+                source: current, ..
+            }
+            | Self::FeedEpisode {
+                source: current, ..
+            } => *current = source,
         }
     }
 
     pub fn title(&self) -> &str {
         match self {
-            Self::LocalAudio { title, .. } | Self::FeedEpisode { title, .. } => title,
+            Self::LocalAudio { title, .. }
+            | Self::DirectAudio { title, .. }
+            | Self::FeedEpisode { title, .. } => title,
         }
     }
 }
@@ -113,6 +218,12 @@ pub struct ListenerSettings {
     pub capture_playback: CapturePlaybackBehavior,
     pub skip_forward_ms: u64,
     pub skip_backward_ms: u64,
+    #[serde(default = "default_cache_budget_bytes")]
+    pub cache_budget_bytes: u64,
+}
+
+pub const fn default_cache_budget_bytes() -> u64 {
+    2 * 1024 * 1024 * 1024
 }
 
 impl Default for ListenerSettings {
@@ -121,6 +232,7 @@ impl Default for ListenerSettings {
             capture_playback: CapturePlaybackBehavior::Pause,
             skip_forward_ms: 30_000,
             skip_backward_ms: 15_000,
+            cache_budget_bytes: default_cache_budget_bytes(),
         }
     }
 }
@@ -136,6 +248,8 @@ pub struct Progress {
 pub struct RedshankModel {
     pub schema_version: u32,
     pub library: BTreeMap<ItemId, LibraryItem>,
+    #[serde(default)]
+    pub subscriptions: BTreeMap<String, FeedSubscription>,
     pub queue: Vec<ItemId>,
     #[serde(default)]
     pub selected_item: Option<ItemId>,
@@ -149,6 +263,7 @@ impl Default for RedshankModel {
         Self {
             schema_version: 1,
             library: BTreeMap::new(),
+            subscriptions: BTreeMap::new(),
             queue: Vec::new(),
             selected_item: None,
             progress: BTreeMap::new(),
@@ -175,6 +290,66 @@ impl RedshankModel {
         }
         self.library.insert(id, item);
         Ok(())
+    }
+
+    pub fn upsert_subscription(&mut self, subscription: FeedSubscription) {
+        self.subscriptions
+            .insert(subscription.feed_url.clone(), subscription);
+    }
+
+    /// Merge refreshed feed metadata while retaining a completed local download
+    /// when it still represents the same enclosure URL.
+    pub fn upsert_feed_item(&mut self, mut item: LibraryItem) -> Result<bool, ModelError> {
+        let LibraryItem::FeedEpisode { id, source, .. } = &item else {
+            return Err(ModelError::MissingItem(item.id().clone()));
+        };
+        let id = id.clone();
+        let incoming_url = source.enclosure_url().map(str::to_owned);
+        let inserted = !self.library.contains_key(&id);
+        if let Some(existing) = self.library.get(&id)
+            && existing.source().is_cached()
+            && existing.source().enclosure_url() == incoming_url.as_deref()
+        {
+            item.replace_source(existing.source().clone());
+        }
+        self.library.insert(id, item);
+        Ok(inserted)
+    }
+
+    /// Unique cached objects from least to most recently used. Shared objects
+    /// take the newest use of any referring item, then paths break ties.
+    pub fn cache_eviction_order(&self) -> Vec<CacheCandidate> {
+        let mut candidates = BTreeMap::<String, CacheCandidate>::new();
+        for (id, item) in &self.library {
+            let MediaSource::Cached {
+                path,
+                representation,
+                ..
+            } = item.source()
+            else {
+                continue;
+            };
+            let used = self
+                .progress
+                .get(id)
+                .map(|progress| progress.updated_at_ms)
+                .or(representation.retrieved_at_ms)
+                .unwrap_or(0);
+            let candidate = candidates.entry(path.clone()).or_insert(CacheCandidate {
+                path: path.clone(),
+                item_ids: Vec::new(),
+                byte_length: representation.byte_length,
+                last_used_ms: used,
+            });
+            candidate.item_ids.push(id.clone());
+            candidate.last_used_ms = candidate.last_used_ms.max(used);
+            candidate.byte_length = candidate.byte_length.or(representation.byte_length);
+        }
+        let mut candidates: Vec<_> = candidates.into_values().collect();
+        candidates.sort_by(|left, right| {
+            (left.last_used_ms, &left.path).cmp(&(right.last_used_ms, &right.path))
+        });
+        candidates
     }
 
     pub fn enqueue(&mut self, id: &ItemId) -> Result<(), ModelError> {
@@ -309,6 +484,96 @@ mod tests {
                 path: format!("{id}.mp3"),
             },
         }
+    }
+
+    fn feed_item(id: &str, url: &str) -> LibraryItem {
+        LibraryItem::FeedEpisode {
+            id: ItemId(id.into()),
+            feed_url: "https://example.test/feed.xml".into(),
+            guid: id.into(),
+            title: format!("Episode {id}"),
+            source: MediaSource::Enclosure { url: url.into() },
+            facts: Box::default(),
+        }
+    }
+
+    #[test]
+    fn feed_refresh_preserves_matching_cached_representation() {
+        let mut model = RedshankModel::default();
+        let id = ItemId("episode".into());
+        let url = "https://example.test/episode.mp3";
+        let mut original = feed_item(&id.0, url);
+        original.replace_source(MediaSource::Cached {
+            path: "cache/episode.audio".into(),
+            origin_url: url.into(),
+            representation: Box::new(RepresentationReceipt {
+                complete_digest: Some("blake3:complete".into()),
+                ..Default::default()
+            }),
+        });
+        assert!(model.upsert_feed_item(original).unwrap());
+        let mut refreshed = feed_item(&id.0, url);
+        if let LibraryItem::FeedEpisode { title, .. } = &mut refreshed {
+            *title = "Updated title".into();
+        }
+        assert!(!model.upsert_feed_item(refreshed).unwrap());
+        let current = &model.library[&id];
+        assert_eq!(current.title(), "Updated title");
+        assert!(current.source().is_cached());
+        assert_eq!(
+            current
+                .source()
+                .cached_representation()
+                .and_then(|receipt| receipt.complete_digest.as_deref()),
+            Some("blake3:complete")
+        );
+    }
+
+    #[test]
+    fn cache_eviction_order_deduplicates_objects_and_uses_newest_reference() {
+        let mut model = RedshankModel::default();
+        for (id, path, updated) in [
+            ("old", "cache/a.audio", 10),
+            ("shared-a", "cache/shared.audio", 20),
+            ("shared-b", "cache/shared.audio", 40),
+            ("new", "cache/z.audio", 30),
+        ] {
+            let mut item = feed_item(id, &format!("https://example.test/{id}.mp3"));
+            item.replace_source(MediaSource::Cached {
+                path: path.into(),
+                origin_url: format!("https://example.test/{id}.mp3"),
+                representation: Box::new(RepresentationReceipt {
+                    byte_length: Some(100),
+                    retrieved_at_ms: Some(1),
+                    ..Default::default()
+                }),
+            });
+            let item_id = item.id().clone();
+            model.add_item(item).unwrap();
+            model
+                .set_progress(
+                    &item_id,
+                    Progress {
+                        position_ms: 1,
+                        completed: false,
+                        updated_at_ms: updated,
+                    },
+                )
+                .unwrap();
+        }
+        let candidates = model.cache_eviction_order();
+        assert_eq!(
+            candidates
+                .iter()
+                .map(|candidate| (candidate.path.as_str(), candidate.last_used_ms))
+                .collect::<Vec<_>>(),
+            [
+                ("cache/a.audio", 10),
+                ("cache/z.audio", 30),
+                ("cache/shared.audio", 40),
+            ]
+        );
+        assert_eq!(candidates[2].item_ids.len(), 2);
     }
 
     #[test]

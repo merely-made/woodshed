@@ -103,6 +103,7 @@ impl Session {
     /// Update the projection without replacing its editor, focus, or notices.
     pub fn project(&self, state: &mut RedshankSurfaceState, snapshot: &PlaybackSnapshot) {
         state.library = self.model.library.values().cloned().collect();
+        state.subscriptions = self.model.subscriptions.values().cloned().collect();
         state.queue = self.model.queue.clone();
         state.settings = self.model.settings.clone();
         state.compact.skip_backward_ms = self.model.settings.skip_backward_ms;

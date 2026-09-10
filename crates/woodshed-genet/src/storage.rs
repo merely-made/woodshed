@@ -20,22 +20,6 @@ use woodshed_core::sealed_backend::SealedBackend;
 use woodshed_core::storage::SessionStore;
 use woodshed_views::persona::PracticeSeal;
 
-/// Open the practice store, sealed to the chosen persona when the family
-/// vault opens and plain files when it does not.
-///
-/// **Sealing is not a gate.** Woodshed practiced without an identity before
-/// sealing existed, and a machine with no vault backend — no DPAPI, no
-/// `PERSONAE_PASSPHRASE` — still has to be able to open a tuner. So a vault
-/// that will not open is said out loud and stepped over, never raised.
-///
-/// The key derives from the persona chosen in the shared personae vault
-/// ([`roster::open_shared`]), which is what makes a session sealed on one
-/// machine readable on another carrying the same persona, and what makes
-/// switching personas switch practice sessions.
-pub fn open_store() -> SessionStore<HostBackend> {
-    open_store_as(None).0
-}
-
 /// The practice store, sealed to `profile` when one was named.
 ///
 /// `None` runs the family convention ([`roster::open_shared`]), which is the

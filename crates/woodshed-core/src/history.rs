@@ -29,7 +29,7 @@
 //!   `dated: false`. A reader must never read that as 1970.
 
 use chartulary::stemma::{EntryPrivacy, Stemma, TransitionKind};
-use serde::de::{Deserialize as _, Deserializer};
+use serde::de::Deserializer;
 use serde::ser::Serializer;
 use serde::{Deserialize, Serialize};
 use woodshedding::rehearsal::{Card, Material, Touch};

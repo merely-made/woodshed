@@ -33,8 +33,7 @@ if (Test-Path -LiteralPath $stage) {
 New-Item -ItemType Directory -Force -Path $stage | Out-Null
 Copy-Item -LiteralPath $binary -Destination (Join-Path $stage "Woodshed.exe")
 Copy-Item -LiteralPath (Join-Path $root "README.md") -Destination $stage
-Copy-Item -LiteralPath (Join-Path $root "LICENSE-MIT") -Destination $stage
-Copy-Item -LiteralPath (Join-Path $root "LICENSE-APACHE") -Destination $stage
+Copy-Item -LiteralPath (Join-Path $root "LICENSE") -Destination $stage
 Copy-Item -LiteralPath (Join-Path $root "Cargo.lock") -Destination $stage
 
 @"
@@ -47,8 +46,8 @@ only used when you turn the tuner or latency calibration on.
 This is a portable ZIP, not an installer. Windows SmartScreen may warn because
 the binary is not code-signed yet.
 
-The source, project licenses, and Cargo.lock dependency inventory are included
-in the repository: https://github.com/merely-made/woodshed
+The root LICENSE (MPL-2.0) and Cargo.lock dependency inventory are included in
+the repository: https://github.com/merely-made/woodshed
 "@ | Set-Content -LiteralPath (Join-Path $stage "RELEASE-README.txt") -NoNewline
 
 Compress-Archive -Path $stage -DestinationPath $archive -Force

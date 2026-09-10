@@ -180,6 +180,7 @@ mod tests {
     fn populated_model() -> RedshankModel {
         let mut model = RedshankModel::default();
         let local = ItemId("local".into());
+        let direct = ItemId("direct".into());
         let episode = ItemId("episode".into());
         model
             .add_item(LibraryItem::LocalAudio {
@@ -187,6 +188,15 @@ mod tests {
                 title: "Field recording".into(),
                 source: MediaSource::Local {
                     path: "field.flac".into(),
+                },
+            })
+            .unwrap();
+        model
+            .add_item(LibraryItem::DirectAudio {
+                id: direct.clone(),
+                title: "Direct recording".into(),
+                source: MediaSource::Enclosure {
+                    url: "https://cdn.example.test/direct.mp3".into(),
                 },
             })
             .unwrap();
@@ -199,6 +209,7 @@ mod tests {
                 source: MediaSource::Enclosure {
                     url: "https://cdn.example.test/7.mp3".into(),
                 },
+                facts: Default::default(),
             })
             .unwrap();
         model.enqueue(&episode).unwrap();
@@ -223,6 +234,15 @@ mod tests {
             complete_digest: Some("blake3:abc".into()),
             ..RepresentationReceipt::default()
         };
+        model
+            .library
+            .get_mut(&direct)
+            .unwrap()
+            .replace_source(MediaSource::Cached {
+                path: "cache/abc.audio".into(),
+                origin_url: "https://cdn.example.test/direct.mp3".into(),
+                representation: Box::new(receipt.clone()),
+            });
         for (id, body) in [
             (
                 "text-note",

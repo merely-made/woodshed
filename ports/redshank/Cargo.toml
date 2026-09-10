@@ -1,11 +1,11 @@
 [workspace]
 resolver = "3"
-members = ["desktop", "model", "storage", "surfaces", "playback"]
+members = ["cache", "desktop", "feed", "model", "storage", "surfaces", "playback"]
 exclude = ["spikes/playback"]
 
 [workspace.package]
 edition = "2024"
-license = "MIT OR Apache-2.0"
+license = "MPL-2.0"
 rust-version = "1.97"
 
 [workspace.dependencies]
@@ -15,6 +15,8 @@ genet-scripted-dom = { git = "https://github.com/merely-made/genet.git", rev = "
 layout-dom-api = { git = "https://github.com/merely-made/genet.git", rev = "9e8f9dc2f3ddc0af1658580bb51964462a03923f" }
 servo-media-player = { git = "https://github.com/merely-made/genet.git", rev = "9e8f9dc2f3ddc0af1658580bb51964462a03923f" }
 redshank-model = { path = "model" }
+redshank-cache = { path = "cache" }
+redshank-feed = { path = "feed" }
 redshank-storage = { path = "storage" }
 redshank-surfaces = { path = "surfaces" }
 redshank-playback = { path = "playback" }
@@ -24,8 +26,12 @@ tempfile = "3"
 anyhow = "1"
 blake3 = "1"
 firewheel = { version = "0.10", default-features = false, features = ["std", "cpal", "stream_nodes", "tracing"] }
+http = "1"
 symphonia = { version = "0.5.5", default-features = false, features = ["aac", "isomp4", "mp3"] }
+ureq = { version = "3.4", default-features = false, features = ["rustls"] }
 rfd = "0.17"
+errand = { git = "https://github.com/merely-made/mere.git", rev = "54a51396d9d24a5435bcafecb878da9deecaf6c5", version = "0.3.4" }
+url = "2.5"
 
 # Mere's desktop host reaches Genet Livery, whose Parley fork carries the text
 # APIs it consumes. Root patches do not cross a git dependency boundary, so a

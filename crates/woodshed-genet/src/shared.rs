@@ -234,7 +234,7 @@ pub struct Shared {
     /// The MIDI seam: midir on desktop, Web MIDI on the web host.
     pub midi: MidiHost,
     /// Named slots over a host backend: files on desktop, OPFS on the web host.
-    /// Which backend is decided at startup by [`open_store`] — sealed to the
+    /// Which backend is decided at startup by [`open_store_as`] — sealed to the
     /// chosen persona when the family vault opens, plain files otherwise.
     ///
     /// `None` only while the persona gate is up. Opening the store is what
