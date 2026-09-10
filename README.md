@@ -30,13 +30,17 @@ before a broad public release.
   settings have their own file and one-time migration (2026-08-07).
 - Window frame moved onto the host seam 2026-08-10; window-chrome controls
   are named for screen readers.
-- Nine workspace crates: `woodshedding` (pure theory), `audio-primitives`
+- Nine root workspace crates: `woodshedding` (pure theory), `audio-primitives`
   (shared pure-std DSP), `woodshed-audio` (audio, pitch, MIDI, looping),
   `woodshed-core` (portable state and host seams), `woodshed-graph` (theory
   catalog as a content graph), `woodshed-views` (Cambium product views),
   `woodshed-genet` (Windows desktop application), `woodshed-web` (unshipped browser
   host), and `woodshed-instrument` (hardware-verified smart-instrument control).
   The instrument crate is not yet connected to the product views.
+- `ports/` holds the independently released Hocket, Redshank, and Ringdown
+  products. Each is an embeddable nested Cargo workspace with its own lockfile,
+  package versions, release tags, and validation commands. Shared audio code
+  stays in the root `crates/` directory.
 
 Current plans and completed records are indexed in
 [design_docs/](design_docs/DOC_README.md). The release baseline is a clean
@@ -61,8 +65,7 @@ release graph.
 
 ## License
 
-MIT OR Apache-2.0. Contributions are dual licensed as above unless
-explicitly stated otherwise.
+MPL-2.0. See [LICENSE](LICENSE).
 
 ---
 

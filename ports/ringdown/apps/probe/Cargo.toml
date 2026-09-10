@@ -1,0 +1,20 @@
+[package]
+name = "ringdown-probe"
+version = "0.0.1"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+description = "Phase 1 control run: connect to a HyVibe guitar and confirm the recovered protocol against hardware."
+publish = false
+
+[[bin]]
+name = "ringdown-probe"
+path = "src/main.rs"
+
+[dependencies]
+ringdown = { workspace = true }
+ringdown-ble = { path = "../../crates/ringdown-ble" }
+serde_json = { version = "1", features = ["preserve_order"] }
+tokio = { version = "1", features = ["macros", "rt-multi-thread", "time"] }

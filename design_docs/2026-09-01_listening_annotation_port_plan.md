@@ -1,6 +1,6 @@
 # Redshank: listening and annotation port plan
 
-**Status (2026-09-07): ACTIVE.** The product direction and **Redshank** name are
+**Status (2026-09-09): ACTIVE.** The product direction and **Redshank** name are
 endorsed. Phase 0 is complete: Symphonia plus a bounded range source is the
 shipping default, and Genet/GStreamer is the retained browser-conformance
 fallback. Phase 1 is complete: its general Genet boundary, deterministic player
@@ -8,8 +8,16 @@ core, and unified source vocabulary are landed. Phase 2 is complete with the
 unpublished model and generation store. Phase 3 is complete with shared podcast
 feed facts and GUID-stable Turnstone projection. Phase 4 is active with the
 reusable Cambium controls, Mere-hosted sovereign shell, and local listening
-workflow landed. Genet controller admission is also landed; subscriptions,
-HTTP/cache playback, and headed acceptance remain open.
+workflow landed. The full shell is now listen-first, with a persistent compact
+Player/Capture dock and explicit Listen, Library, Notes, and Settings tabs.
+Genet controller admission and bounded progressive HTTP
+playback are also landed. A manual, budgeted durable episode cache now publishes
+complete content-addressed objects and reopens them offline. Manual RSS/Atom
+subscription and refresh are landed. Scheduled refresh, automatic download,
+and automatic cache reclamation remain open. Explicit cache removal and stable
+eviction ordering are landed. Headed local, HTTP,
+and server-offline playback, text-note, persistence, restart, and resume receipts
+now pass.
 
 ## Ruling
 
@@ -467,7 +475,7 @@ Receipt:
 
 ### Phase 4: sovereign and embeddable surfaces
 
-**In progress (2026-09-06).** The local listening implementation now adds a
+**In progress (2026-09-07).** The local listening implementation now adds a
 Symphonia/Firewheel worker and full Library, Queue, Notes, and Settings
 composition around the existing compact Player/Capture surfaces. This is a
 bounded local-file slice; the Phase 4 done-conditions below still apply.
@@ -562,12 +570,12 @@ This slice is done when the controller drives local play, pause, seek, ready,
 end-of-stream, and error transitions; sink snapshots remain authoritative;
 typed capability errors survive the adapter; all three source variants use the
 shared mapping; stale-token, resume, and representation tests pass; and the
-workspace remains green. HTTP/cache playback, headed acceptance, voice capture,
-representation drift, and Turnstone embedding remain outside the slice.
+workspace remains green. At controller admission, HTTP/cache playback, voice
+capture, representation drift, and Turnstone embedding remained outside the
+slice.
 
-Phase 4 remains open for subscriptions, HTTP/progressive cache playback and its
-error cases, and the headed playback/restart/text-note scenario. Voice input,
-ducking, rate/volume controls, media-fragment export,
+Phase 4 remains open for scheduled refresh and automatic download policy.
+Voice input, ducking, rate/volume controls, media-fragment export,
 representation drift, and Turnstone as a second host also remain open in their
 respective phases. No physical listening or microphone receipt is implied by
 the source changes.
@@ -594,8 +602,8 @@ Validation on the final September 6 working tree:
   `C:/t/redshank-phase4-mere/debug/redshank-desktop.exe`.
 - Fixture provenance, SHA-256 values, and test logs are in
   `Code/testing/woodshed/redshank-phase4-20260906/`. These are software and
-  windowless host receipts. Output-device playback, acoustic timing, headed
-  layout, and the full headed restart scenario remain unverified.
+  windowless host receipts. At that point, output-device playback, acoustic
+  timing, headed layout, and the full headed restart scenario were unverified.
 
 Controller-admission validation on September 7:
 
@@ -613,9 +621,170 @@ Controller-admission validation on September 7:
   remain explicitly gated. Strict workspace Clippy, formatting, and
   `git diff --check` pass. The resolved dependency graph carries one Genet git
   revision, `9e8f9dc2f3ddc0af1658580bb51964462a03923f`.
-- This is a software admission receipt. Output-device playback, acoustic
-  timing, headed layout, HTTP/cache playback, and the full headed restart
-  scenario remain unverified.
+- This is a software admission receipt. At this point in the sequence,
+  output-device playback, acoustic timing, headed layout, HTTP/cache playback,
+  and the full headed restart scenario remained unverified.
+
+#### Headed local restart receipt, 2026-09-07
+
+`redshank-desktop` now has an opt-in, self-driven acceptance mode behind
+`REDSHANK_HEADED_RECEIPT=seed|verify`. It drives the ordinary desktop methods
+from the host frame hook while retaining the real winit/Genet window, Cambium
+projection, Symphonia decoder, Genet controller, Firewheel graph, CPAL default
+output, and generation store. Normal launches do not construct the receipt
+driver.
+
+Two separate visible processes ran against an initially empty
+`C:/t/redshank-headed-20260907` data directory and the two-second stereo MP3
+fixture from `Code/testing/woodshed/redshank-phase4-20260906/`:
+
+- `seed` loaded and played the file, froze a note target at 280 ms, saved the
+  text `Redshank headed restart receipt`, saved final progress, waited for the
+  storage acknowledgment, and exited zero with
+  `redshank-headed-receipt seed PASS position_ms=280`;
+- `verify`, launched without a file argument, restored the selected item, the
+  exact annotation and its representation receipt, and nonzero progress from
+  disk. It resumed through the real output path and exited zero with
+  `redshank-headed-receipt verify PASS position_ms=465`;
+- the final generation contains one queued and selected local item, progress at
+  465 ms, and the text annotation anchored at 280 ms. Both runs reported an
+  installed accessibility adapter and projected 33 then 35 nodes.
+
+This closes the Phase 4 headed playback/restart/text-note scenario and proves
+that the local output runtime opened successfully. The driver does not
+synthesize keyboard or pointer input, and this is not an acoustic measurement
+or a screen-reader interaction receipt. The existing headless host tests remain
+the evidence for keyboard routing and control semantics. At this point,
+HTTP/cache and offline or exhausted-cache behavior remained open.
+
+#### Progressive HTTP playback receipt, 2026-09-08
+
+The private Symphonia source adapter now admits direct HTTP and HTTPS enclosure
+URLs through Ureq with Rustls and WebPKI roots. It requires byte-range support,
+requests identity encoding, validates every `Content-Range`, and uses `ETag` or
+`Last-Modified` as `If-Range` when available. Redirect target, media type,
+length, validators, and retrieval time enter the representation receipt. A
+complete digest remains absent until a future durable full-object cache owns
+all bytes.
+
+The progressive cache is memory-only and bounded to 256 KiB in the desktop
+runtime. Deterministic local-server tests used a 3,000,000-byte object and a
+128 KiB test budget. The probe plus three nonadjacent reads issued four
+requests, fetched 196,609 bytes (6.6%), and never exceeded the budget. Separate
+tests reject malformed or mismatched ranges, a server that returns `200` to a
+range probe, a changed representation that returns `200` after `If-Range`, and
+a budget below one 64 KiB range chunk.
+
+The standalone host accepts an HTTP(S) URL as its first argument and persists
+it as a direct-audio library item. A fresh two-process headed receipt against
+the localhost range server passed through the real Genet controller and
+Firewheel/CPAL output: seed saved a note at 199 ms, and verify restored the URL,
+note, and progress before resuming at 473 ms. The final durable generation held
+494 ms progress and the remote representation receipt. Both processes exited
+zero and projected 33 then 35 accessibility nodes.
+
+One immediate verify attempt timed out in `WaitLoaded`; a later retry and the
+fresh pair with a one-second process handoff passed. Rapid output-device
+teardown/reopen stress therefore remains unclaimed. The live receipt used HTTP;
+the Rustls dependency and code path establish HTTPS capability, but this pass
+did not perform a public-certificate handshake. Offline replay, full-object
+digesting, automatic download, cache-budget UI, and eviction policy remain for
+the durable cache slice.
+
+#### Durable offline cache receipt, 2026-09-09
+
+The unpublished `redshank-cache` package owns complete enclosure downloads and
+their disk budget. It streams identity-encoded HTTP(S) bodies into a uniquely
+named pending file, hashes every byte with BLAKE3, flushes the file, and only
+then publishes a content-addressed `.audio` object by same-directory rename.
+Declared-length mismatch, interrupted reads, and budget exhaustion publish no
+object. Repeated identical content reuses the existing object without charging
+the budget twice.
+
+The full Cambium surface now exposes **Download for offline listening** for
+remote items. The host performs the download away from the UI and audio threads,
+persists a typed cached source containing the origin URL and complete
+representation receipt, and reloads the current selection through the same
+Genet controller. Playback rehashes the cached file and rejects a byte length or
+digest mismatch before exposing the saved receipt. The cache budget is a saved
+setting, defaults to 2 GiB, and can be adjusted in 256 MiB steps. Exhaustion is
+reported as a useful status; this slice deliberately does not evict recordings
+without a user decision.
+
+Three cache tests cover content-addressed reuse, cleanup after truncated or
+over-budget bodies, and a real localhost HTTP download retaining origin headers
+and offline bytes. The complete default workspace now passes 38 tests. A fresh
+headed `cache-seed` run downloaded the 15,501-byte stereo MP3, switched to its
+complete BLAKE3 receipt, saved a note at 300 ms, and exited zero. The HTTP server
+was then stopped. A separate `cache-verify` process restored the cached source,
+validated the same digest, resumed through the real Firewheel/CPAL output at
+306 ms, projected 37 then 38 accessibility nodes, and exited zero. The final
+durable generation retained 316 ms progress and the note's complete representation
+receipt.
+
+This closes manual episode caching and server-offline restart/playback. Automatic
+subscription downloads, explicit cache removal, eviction ordering, partial-file
+resume, and Turnstone hosting remain open. Content-addressed files are validated
+on each load, but the existing hash-then-rewind concurrent-modification caveat
+still belongs to Phase 6.
+
+#### Manual subscription receipt, 2026-09-09
+
+The unpublished `redshank-feed` package adapts Errand's existing RSS/Atom facts
+without fetching. It resolves feed, enclosure, artwork, chapter, and transcript
+URLs against the final response URL; uses feed URL plus GUID for stable item
+identity; and falls back to the resolved enclosure URL when a publisher omits a
+GUID. Redshank durably retains subscription metadata and podcast episode facts.
+A refresh updates the existing item while preserving a completed cached source
+when its enclosure URL is unchanged.
+
+The standalone desktop supplies the simpler host policy: HTTP(S) only, a 4 MiB
+feed-body limit, and a worker outside the UI and audio threads. The full surface
+accepts a feed URL and exposes a manual refresh action. Imported episodes enter
+the Library without changing selection or queue order. Automatic scheduling and
+download selection remain product policy for a later slice; Turnstone can call
+the adapter with its own fetch result and network policy.
+
+The isolated workspace passes 43 default tests with four device/fixture tests
+ignored by their existing explicit gates. Strict workspace Clippy, formatting,
+and `git diff --check` pass. Feed tests cover RSS podcast extensions, relative
+URLs, Atom fallback identity, and a real localhost fetch; model and surface
+tests cover cached-source preservation and both subscription commands.
+
+#### Cache lifecycle receipt, 2026-09-09
+
+Cached library items now expose an explicit removal action. The host first
+changes the durable item source back to its enclosure URL and waits for that
+model revision to save successfully. Only then does a cache worker unlink the
+published object. A failed model save leaves the object intact, missing objects
+are idempotent, and path admission confines deletion to direct `.audio` children
+of Redshank's cache root. Shared content-addressed objects remain until the last
+model reference is removed.
+
+The model also derives a deterministic reclamation order without filesystem
+authority: unique objects sort by least-recent progress time and path, while a
+shared object's newest referring-item use protects it. Automatic reclamation is
+still withheld until its user-configurable policy and download admission flow
+are ruled. The isolated workspace passes 46 default tests with four existing
+device/fixture gates; strict workspace Clippy, formatting, and diff checks pass.
+
+#### Listen-first surface composition, 2026-09-09
+
+The full Cambium shell now opens on Listen with Queue and the current episode's
+timestamped Notes side by side. A persistent bottom dock mounts the existing
+compact Player/Capture composition, keeping text and voice-note actions beside
+transport while preserving that composition as the independently embeddable
+surface. Library owns subscriptions, local import, queue insertion, and offline
+download lifecycle. Notes and Settings remain explicit tabs rather than panels
+competing with the listening path.
+
+The tabs use native buttons with tablist, tab, tabpanel, selected, controlled,
+and hidden semantics. Switching tabs changes presentation state directly and
+emits no product command. The layout collapses to one column at narrow widths.
+Headless Cambium coverage proves Listen is the default, tabs update their
+selected state, and existing player, queue, library, subscription, notes,
+settings, keyboard, and offline commands remain present. The isolated workspace
+passes 47 default tests with four existing device/fixture gates.
 
 ### Phase 5: voice capture and open annotation target
 
@@ -811,4 +980,33 @@ rejected for the reasons recorded in the 2026-09-01 planning pass.
   Firewheel/CPAL output, transport transitions, terminal errors, and sink clock
   are admitted through Genet's existing controller. Device-free conformance,
   stale-token and failed-load metadata regressions pass. HTTP/cache, voice,
-  headed acceptance, and Turnstone work remain outside the slice.
+  headed acceptance, and Turnstone work remain outside that slice.
+- **2026-09-07:** Added and passed the opt-in headed local restart receipt.
+  Separate seed and verify processes used the real winit/Genet window and
+  Firewheel/CPAL output, persisted a text note anchored at 280 ms, restored the
+  selected item and annotation, and resumed at 465 ms. This closes the headed
+  playback/restart/text-note condition. Subscriptions and HTTP/progressive
+  cache behavior still keep Phase 4 open.
+- **2026-09-08:** Promoted the bounded range source into the shipping playback
+  adapter with Rustls HTTPS support, validator-aware representation receipts,
+  strict range validation, and bounded-memory degradation tests. Direct URL
+  items now survive restart. A fresh headed HTTP seed/verify pair passed at
+  199/473 ms with a one-second process handoff. Subscriptions and durable
+  offline caching remain open.
+- **2026-09-09:** Added the separate content-addressed episode cache, adjustable
+  saved budget, full-surface download action, cached-source integrity admission,
+  and an offline headed restart receipt. Seed cached and annotated the fixture
+  at 300 ms; verify ran after the server stopped and resumed at 306 ms. Manual
+  durable caching is landed. Subscriptions, automatic downloads, removal, and
+  eviction remain open.
+- **2026-09-09:** Added the host-neutral Errand-to-Redshank feed adapter, durable
+  subscription and podcast facts, GUID-stable refresh merge, standalone bounded
+  HTTP(S) fetch worker, and full-surface subscribe/refresh controls. Manual
+  subscription is landed; scheduling and automatic downloads remain open.
+- **2026-09-09:** Added explicit offline-download removal with durable-model-first
+  ordering, shared-object retention, cache-root path confinement, and a stable
+  least-recently-used candidate order. Automatic reclamation remains open until
+  its policy is configurable.
+- **2026-09-09:** Reworked the full Cambium composition around a default Listen
+  tab, side-by-side Queue and Notes, dedicated Library/Notes/Settings tabs, and
+  the unchanged compact Player/Capture surface as a persistent bottom dock.

@@ -1,0 +1,86 @@
+name: Package Linux alpha
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    env:
+      PACKAGE_VERSION: 0.1.0-alpha.0.manual
+    steps:
+      - uses: actions/checkout@v7
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Install native Linux build prerequisites
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes libasound2-dev libfontconfig1-dev pkg-config
+      - name: Build release binary
+        run: cargo build --release -p woodshed-genet --locked
+      - name: Package portable archive
+        run: >-
+          scripts/package-linux.sh
+          --version "$PACKAGE_VERSION"
+          --revision "$GITHUB_SHA"
+      - name: Verify archive checksum and manifest
+        shell: bash
+        run: |
+          set -euo pipefail
+          package_name="Woodshed-$PACKAGE_VERSION-linux-x86_64"
+          archive="dist/$package_name.tar.gz"
+          sidecar="$archive.sha256"
+          test -f "$archive"
+          test -f "$sidecar"
+          (
+            cd dist
+            sha256sum --check "$(basename "$sidecar")"
+          )
+
+          expected_manifest="$(cat <<EOF
+          $package_name/
+          $package_name/Cargo.lock
+          $package_name/LICENSE
+          $package_name/PACKAGE-RECEIPT.txt
+          $package_name/README.md
+          $package_name/RELEASE-README.txt
+          $package_name/RUNTIME-LIBRARIES.txt
+          $package_name/Woodshed
+          EOF
+          )"
+          actual_manifest="$(tar -tzf "$archive" | LC_ALL=C sort)"
+          printf '%s\n' "$actual_manifest"
+          test "$actual_manifest" = "$expected_manifest"
+      - name: Verify packaged receipt evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          package_name="Woodshed-$PACKAGE_VERSION-linux-x86_64"
+          archive="dist/$package_name.tar.gz"
+          extract_root="$(mktemp -d "$RUNNER_TEMP/woodshed-linux-package.XXXXXX")"
+          trap 'rm -rf -- "$extract_root"' EXIT
+          tar -xzf "$archive" -C "$extract_root"
+
+          package_dir="$extract_root/$package_name"
+          receipt="$package_dir/PACKAGE-RECEIPT.txt"
+          runtime="$package_dir/RUNTIME-LIBRARIES.txt"
+          sed -n '1,160p' "$receipt"
+          sed -n '1,240p' "$runtime"
+
+          test "$(awk -F ': ' '$1 == "source_revision" { print $2 }' "$receipt")" = "$GITHUB_SHA"
+          test "$(awk -F ': ' '$1 == "target" { print $2 }' "$receipt")" = "x86_64-unknown-linux-gnu"
+          test "$(awk -F ': ' '$1 == "archive_format" { print $2 }' "$receipt")" = "portable tar.gz; not an installer"
+          test "$(awk -F ': ' '$1 == "project_license" { print $2 }' "$receipt")" = "MPL-2.0"
+          test "$(awk -F ': ' '$1 == "binary_sha256" { print $2 }' "$receipt")" = "$(sha256sum "$package_dir/Woodshed" | awk '{print $1}')"
+          test "$(awk -F ': ' '$1 == "cargo_lock_sha256" { print $2 }' "$receipt")" = "$(sha256sum "$package_dir/Cargo.lock" | awk '{print $1}')"
+          grep --fixed-strings 'not a portable runtime guarantee' "$runtime"
+      - name: Upload manual package
+        uses: actions/upload-artifact@v4
+        with:
+          name: woodshed-linux-x86_64-alpha
+          if-no-files-found: error
+          path: |
+            dist/*.tar.gz
+            dist/*.sha256

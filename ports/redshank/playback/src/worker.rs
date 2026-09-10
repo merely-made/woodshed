@@ -173,6 +173,13 @@ pub(super) fn run(receiver: mpsc::Receiver<PlaybackCommand>, snapshot: Arc<Mutex
                         );
                         continue;
                     }
+                    if let Some(expected) = source.cached_representation()
+                        && let Err(error) =
+                            backend.borrow_mut().admit_cached_representation(expected)
+                    {
+                        fail(&mut controller, &backend, &snapshot, token, error);
+                        continue;
+                    }
                     if resume_ms > 0
                         && !command(
                             &mut controller,

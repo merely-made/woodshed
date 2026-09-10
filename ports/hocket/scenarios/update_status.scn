@@ -1,0 +1,21 @@
+# Headed receipt of the update status chip (2026-07-24 auto-update plan, H3).
+#
+# The `--update-now` path proves the mechanism in a terminal; this proves the
+# app SHOWS it. Point the app at a feed offering a newer version and the top
+# bar should say so. The default `notify` policy means nothing is downloaded,
+# so this scenario cannot install anything.
+#
+#   HOCKET_UPDATE_FEED=<feed dir> HOCKET_UPDATE_PUBKEY=<key> \
+#   HOCKET_SCENARIO=scenarios/update_status.scn HOCKET_CAPTURE_DIR=<dir> \
+#     <installed hocket>
+#
+# Must run the INSTALLED build: a dev binary honestly reports itself
+# un-updatable, and the chip would say that instead.
+settle 40
+# "Version <x> available" — NOT a bare `available`, which also matches
+# "Updates unavailable" and would pass on exactly the wrong state.
+assert text Version
+assert text 0.3.0
+capture 01_update_available
+settle 5
+log update status chip captured

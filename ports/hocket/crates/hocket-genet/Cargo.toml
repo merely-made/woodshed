@@ -1,0 +1,76 @@
+[package]
+name = "hocket-genet"
+version = "0.2.0"
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+description = "Hocket's genet desktop host: winit window + netrender present over the genet view layer. Genet-host refactor S0+."
+
+# Packaging (2026-07-24 auto-update plan). `cargo packager` builds the
+# installers luggage then updates from: NSIS on Windows, .app on macOS,
+# AppImage on Linux. Pure Rust toolchain, no .NET.
+[package.metadata.packager]
+product-name = "Hocket"
+identifier = "com.merely.hocket"
+description = "A loop recorder that passes the mic."
+authors = ["Mark <sgt.mark3@gmail.com>"]
+publisher = "Merely"
+# Required by AppImage (it refuses to pack without a square icon) and used
+# for the macOS bundle and the Windows installer. The mark is the brand's
+# open loop closed by its period; generated at 512 square from the theme's
+# ground and amber.
+icons = ["icons/icon.png"]
+# Formats are chosen per host at pack time (`--formats nsis`, `app`,
+# `appimage`); listing them here would build all of them everywhere.
+#
+# `cargo packager` PACKAGES binaries, it does not build them: `--release`
+# only tells it where to look. Worse, `cargo build` does NOT rebuild when
+# only the version in Cargo.toml changed (it needs a source change), so a
+# bump-then-pack yields an installer LABELLED with the new version whose
+# binary still reports the old one through `env!("CARGO_PKG_VERSION")` — a
+# silent mismatch, caught in the 2026-07-24 H4 run. The clean forces the
+# rebuild; it costs one crate's compile, not the dependency tree's.
+before-packaging-command = "cargo clean -p hocket-genet --release && cargo build --release -p hocket-genet"
+
+# macOS code signing (2026-07-24). This is OS *install trust* — Gatekeeper
+# not warning at install — and is a different job from the minisign
+# signatures luggage checks, which prove the update bytes and manifest are
+# ours. Both are wanted.
+#
+# The identity must match `security find-identity -v -p codesigning` on the
+# signing Mac exactly. Notarization credentials cannot live here (they are
+# secrets); cargo-packager reads them from APPLE_KEYCHAIN_PROFILE, or
+# APPLE_ID + APPLE_PASSWORD + APPLE_TEAM_ID.
+[package.metadata.packager.macos]
+signing-identity = "Developer ID Application: Mark Boykim (HWVZ5S7ACJ)"
+
+[dependencies]
+hocket-model = { workspace = true }
+hocket-engine = { workspace = true }
+audio-primitives = { workspace = true }
+cambium = { workspace = true }
+sprigging = { workspace = true }
+luggage = { workspace = true }
+velopack = { workspace = true }
+cambium-genet-winit-host = { workspace = true }
+genet-clipboard = { workspace = true }
+genet-probe = { workspace = true }
+mere-surface-api = { workspace = true }
+workbench = { workspace = true }
+image = { workspace = true }
+netrender = { workspace = true }
+paint_list_api = { workspace = true }
+wgpu = { workspace = true }
+muniment = { workspace = true, features = ["zip"] }
+armillary = { workspace = true }
+personae = { workspace = true }
+# Opaque round-trip of the sealed identity record when re-sealing it under the
+# post-rename record name (see identity.rs).
+serde_json = { workspace = true }
+serde = { workspace = true }
+pollster = "0.4"
+rfd = "0.17.2"
+
+[dev-dependencies]
+tempfile = "3"

@@ -23,6 +23,7 @@ pub(super) fn map_source(source: &RedshankSource) -> MediaSource {
     match source {
         RedshankSource::Local { path } => MediaSource::Local { path: path.clone() },
         RedshankSource::Enclosure { url } => MediaSource::Http { url: url.clone() },
+        RedshankSource::Cached { path, .. } => MediaSource::Local { path: path.clone() },
         RedshankSource::HostBlob { id } => MediaSource::HostBlob { id: id.clone() },
     }
 }
@@ -133,6 +134,16 @@ mod tests {
             }),
             MediaSource::Http {
                 url: "https://example.test/a.mp3".into()
+            },
+        );
+        assert_eq!(
+            map_source(&RedshankSource::Cached {
+                path: "cache/audio".into(),
+                origin_url: "https://example.test/a.mp3".into(),
+                representation: Box::default(),
+            }),
+            MediaSource::Local {
+                path: "cache/audio".into()
             },
         );
         assert_eq!(

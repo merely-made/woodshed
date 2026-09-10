@@ -1,0 +1,17 @@
+[package]
+name = "hocket-model"
+version = "0.1.0"
+description = "Nondestructive session data model for Hocket: Tracks-of-Phrases, history graph."
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+publish = false
+
+[dependencies]
+# Intentionally minimal — this crate must remain framework-agnostic.
+# No cpal, no xilem, no masonry, no winit.
+serde = { workspace = true }
+ciborium = { workspace = true }
+uuid = { workspace = true }

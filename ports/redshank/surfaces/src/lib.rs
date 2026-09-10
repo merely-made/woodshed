@@ -8,7 +8,9 @@
 //! storage, network, or audio-device authority.
 
 use cambium::{AnyView, GenetCtx, GenetElement, TextInput, button, el, lens, text, textarea};
-use redshank_model::{AnnotationId, CaptureAnchor, ItemId, LibraryItem, ListenerSettings};
+use redshank_model::{
+    AnnotationId, CaptureAnchor, FeedSubscription, ItemId, LibraryItem, ListenerSettings,
+};
 
 pub const COMPACT_SHEET: &str = include_str!("compact.css");
 
@@ -72,6 +74,10 @@ pub enum CompactCommand {
     },
     BeginEditNote(AnnotationId),
     OpenLocalFile,
+    CacheItem(ItemId),
+    RemoveCachedItem(ItemId),
+    Subscribe(String),
+    RefreshSubscription(String),
     UpdateSettings(ListenerSettings),
 }
 
@@ -92,15 +98,27 @@ pub struct TextCapture {
     pub draft: String,
 }
 
+#[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
+pub enum SurfaceTab {
+    #[default]
+    Listen,
+    Library,
+    Notes,
+    Settings,
+}
+
 #[derive(Clone, Debug, Eq, PartialEq, Default)]
 pub struct RedshankSurfaceState {
+    pub active_tab: SurfaceTab,
     pub compact: CompactPlayerState,
     pub library: Vec<LibraryItem>,
+    pub subscriptions: Vec<FeedSubscription>,
     pub queue: Vec<ItemId>,
     pub notes: Vec<(AnnotationId, u64, String)>,
     pub settings: ListenerSettings,
     pub text_capture: Option<TextCapture>,
     pub text_editor: TextInput,
+    pub feed_url_editor: TextInput,
     pub notice: Option<String>,
     pub editing_note: Option<AnnotationId>,
     commands: Vec<CompactCommand>,
@@ -294,9 +312,54 @@ fn full_control(label: &'static str, shortcut: &'static str, command: CompactCom
     )
 }
 
+fn tab_control(label: &'static str, tab: SurfaceTab, selected: bool) -> FullView {
+    Box::new(
+        button(label, move |state: &mut RedshankSurfaceState, _| {
+            state.active_tab = tab;
+        })
+        .attr("class", "redshank-tab")
+        .attr("role", "tab")
+        .attr("aria-label", label)
+        .attr("aria-selected", if selected { "true" } else { "false" })
+        .attr(
+            "aria-controls",
+            match tab {
+                SurfaceTab::Listen => "redshank-listen-panel",
+                SurfaceTab::Library => "redshank-library-panel",
+                SurfaceTab::Notes => "redshank-notes-panel",
+                SurfaceTab::Settings => "redshank-settings-panel",
+            },
+        ),
+    )
+}
+
 /// The complete reusable listener surface. It projects host-provided state and
 /// emits commands; files, audio, clocks, and persistence remain host-owned.
 pub fn surface(state: &RedshankSurfaceState) -> FullView {
+    let active = state.active_tab;
+    let subscriptions = state.subscriptions.iter().flat_map(|subscription| {
+        let feed_url = subscription.feed_url.clone();
+        let title = subscription.title.clone();
+        let summary = Box::new(text(format!("Subscribed: {title}"))) as FullView;
+        let refresh = Box::new(
+            button(
+                "Refresh feed",
+                move |state: &mut RedshankSurfaceState, _| {
+                    state.request(CompactCommand::RefreshSubscription(feed_url.clone()));
+                },
+            )
+            .attr("aria-label", format!("Refresh {title}")),
+        ) as FullView;
+        [summary, refresh]
+    });
+    let subscribe = Box::new(
+        button("Subscribe", |state: &mut RedshankSurfaceState, _| {
+            state.request(CompactCommand::Subscribe(
+                state.feed_url_editor.text().trim().to_owned(),
+            ));
+        })
+        .attr("aria-label", "Subscribe to podcast feed"),
+    ) as FullView;
     let library = state.library.iter().flat_map(|item| {
         let id = item.id().clone();
         let title = item.title().to_owned();
@@ -317,7 +380,47 @@ pub fn surface(state: &RedshankSurfaceState) -> FullView {
             )
             .attr("aria-label", format!("Add {} to queue", enqueue_title)),
         ) as FullView;
-        [select, enqueue]
+        let mut controls = vec![select, enqueue];
+        if item.source().enclosure_url().is_some() && !item.source().is_cached() {
+            let cache_id = item.id().clone();
+            let cache_title = item.title().to_owned();
+            controls.push(Box::new(
+                button(
+                    "Download for offline listening",
+                    move |state: &mut RedshankSurfaceState, _| {
+                        state.request(CompactCommand::CacheItem(cache_id.clone()));
+                    },
+                )
+                .attr(
+                    "aria-label",
+                    format!("Download {} for offline listening", cache_title),
+                ),
+            ));
+        } else if item.source().is_cached() {
+            let remove_id = item.id().clone();
+            let remove_title = item.title().to_owned();
+            controls.push(Box::new(
+                el("span", text("Available offline"))
+                    .attr("role", "status")
+                    .attr(
+                        "aria-label",
+                        format!("{} is available offline", item.title()),
+                    ),
+            ));
+            controls.push(Box::new(
+                button(
+                    "Remove offline download",
+                    move |state: &mut RedshankSurfaceState, _| {
+                        state.request(CompactCommand::RemoveCachedItem(remove_id.clone()));
+                    },
+                )
+                .attr(
+                    "aria-label",
+                    format!("Remove offline download for {remove_title}"),
+                ),
+            ));
+        }
+        controls
     });
     let queue = state.queue.iter().enumerate().flat_map(|(index, id)| {
         let id = id.clone();
@@ -446,6 +549,41 @@ pub fn surface(state: &RedshankSurfaceState) -> FullView {
         el(
             "main",
             (
+                el(
+                    "header",
+                    (
+                        el("h1", text("Redshank")).attr("class", "redshank-brand"),
+                        el(
+                            "nav",
+                            (
+                                tab_control(
+                                    "Listen",
+                                    SurfaceTab::Listen,
+                                    active == SurfaceTab::Listen,
+                                ),
+                                tab_control(
+                                    "Library",
+                                    SurfaceTab::Library,
+                                    active == SurfaceTab::Library,
+                                ),
+                                tab_control(
+                                    "Notes",
+                                    SurfaceTab::Notes,
+                                    active == SurfaceTab::Notes,
+                                ),
+                                tab_control(
+                                    "Settings",
+                                    SurfaceTab::Settings,
+                                    active == SurfaceTab::Settings,
+                                ),
+                            ),
+                        )
+                        .attr("class", "redshank-tabs")
+                        .attr("role", "tablist")
+                        .attr("aria-label", "Redshank sections"),
+                    ),
+                )
+                .attr("class", "redshank-header"),
                 state.notice.as_ref().map(|notice| {
                     el("p", text(notice.clone()))
                         .attr("role", "status")
@@ -458,15 +596,13 @@ pub fn surface(state: &RedshankSurfaceState) -> FullView {
                         |state: &mut RedshankSurfaceState| &mut state.compact,
                     )),
                 )
+                .attr("class", "redshank-dock")
                 .attr("role", "region")
                 .attr("aria-label", "Player"),
-                el("section", library.collect::<Vec<_>>())
-                    .attr("role", "region")
-                    .attr("aria-label", "Library"),
                 el(
                     "section",
                     (
-                        queue.collect::<Vec<_>>(),
+                        library.collect::<Vec<_>>(),
                         full_control(
                             "Open local file",
                             "Control+O",
@@ -474,8 +610,57 @@ pub fn surface(state: &RedshankSurfaceState) -> FullView {
                         ),
                     ),
                 )
+                .attr("id", "redshank-library-panel")
+                .attr("class", "redshank-panel redshank-library")
+                .attr("role", "tabpanel")
+                .attr("aria-label", "Library")
+                .attr(
+                    "aria-hidden",
+                    if active == SurfaceTab::Library {
+                        "false"
+                    } else {
+                        "true"
+                    },
+                ),
+                el(
+                    "section",
+                    (
+                        subscriptions.collect::<Vec<_>>(),
+                        el(
+                            "div",
+                            Box::new(lens(
+                                |input: &mut TextInput| textarea(input),
+                                |state: &mut RedshankSurfaceState| &mut state.feed_url_editor,
+                            )),
+                        )
+                        .attr("class", "redshank-feed-url"),
+                        subscribe,
+                    ),
+                )
+                .attr("class", "redshank-panel redshank-subscriptions")
                 .attr("role", "region")
-                .attr("aria-label", "Queue"),
+                .attr("aria-label", "Podcast subscriptions")
+                .attr(
+                    "aria-hidden",
+                    if active == SurfaceTab::Library {
+                        "false"
+                    } else {
+                        "true"
+                    },
+                ),
+                el("section", (queue.collect::<Vec<_>>(),))
+                    .attr("id", "redshank-listen-panel")
+                    .attr("class", "redshank-panel redshank-queue")
+                    .attr("role", "tabpanel")
+                    .attr("aria-label", "Up next")
+                    .attr(
+                        "aria-hidden",
+                        if active == SurfaceTab::Listen {
+                            "false"
+                        } else {
+                            "true"
+                        },
+                    ),
                 el(
                     "section",
                     (
@@ -504,14 +689,33 @@ pub fn surface(state: &RedshankSurfaceState) -> FullView {
                         cancel_text,
                     ),
                 )
-                .attr("role", "region")
-                .attr("aria-label", "Notes"),
+                .attr("id", "redshank-notes-panel")
+                .attr("class", "redshank-panel redshank-notes")
+                .attr(
+                    "role",
+                    if active == SurfaceTab::Notes {
+                        "tabpanel"
+                    } else {
+                        "region"
+                    },
+                )
+                .attr("aria-label", "Notes")
+                .attr(
+                    "aria-hidden",
+                    if matches!(active, SurfaceTab::Listen | SurfaceTab::Notes) {
+                        "false"
+                    } else {
+                        "true"
+                    },
+                ),
                 el(
                     "section",
                     (
                         text(format!(
-                            "Playback settings: back {} ms, forward {} ms",
-                            state.settings.skip_backward_ms, state.settings.skip_forward_ms
+                            "Playback settings: back {} ms, forward {} ms, offline cache {} MiB",
+                            state.settings.skip_backward_ms,
+                            state.settings.skip_forward_ms,
+                            state.settings.cache_budget_bytes / (1024 * 1024)
                         )),
                         full_control(
                             "Increase forward skip",
@@ -523,6 +727,7 @@ pub fn surface(state: &RedshankSurfaceState) -> FullView {
                                     .skip_forward_ms
                                     .saturating_add(5_000),
                                 capture_playback: state.settings.capture_playback,
+                                cache_budget_bytes: state.settings.cache_budget_bytes,
                             }),
                         ),
                         full_control(
@@ -535,6 +740,29 @@ pub fn surface(state: &RedshankSurfaceState) -> FullView {
                                     .skip_forward_ms
                                     .saturating_sub(5_000),
                                 capture_playback: state.settings.capture_playback,
+                                cache_budget_bytes: state.settings.cache_budget_bytes,
+                            }),
+                        ),
+                        full_control(
+                            "Increase offline cache budget",
+                            "",
+                            CompactCommand::UpdateSettings(ListenerSettings {
+                                cache_budget_bytes: state
+                                    .settings
+                                    .cache_budget_bytes
+                                    .saturating_add(256 * 1024 * 1024),
+                                ..state.settings.clone()
+                            }),
+                        ),
+                        full_control(
+                            "Decrease offline cache budget",
+                            "",
+                            CompactCommand::UpdateSettings(ListenerSettings {
+                                cache_budget_bytes: state
+                                    .settings
+                                    .cache_budget_bytes
+                                    .saturating_sub(256 * 1024 * 1024),
+                                ..state.settings.clone()
                             }),
                         ),
                         full_control(
@@ -555,11 +783,29 @@ pub fn surface(state: &RedshankSurfaceState) -> FullView {
                         ),
                     ),
                 )
-                .attr("role", "region")
-                .attr("aria-label", "Settings"),
+                .attr("id", "redshank-settings-panel")
+                .attr("class", "redshank-panel redshank-settings")
+                .attr("role", "tabpanel")
+                .attr("aria-label", "Settings")
+                .attr(
+                    "aria-hidden",
+                    if active == SurfaceTab::Settings {
+                        "false"
+                    } else {
+                        "true"
+                    },
+                ),
             ),
         )
-        .attr("class", "redshank-surface"),
+        .attr(
+            "class",
+            match active {
+                SurfaceTab::Listen => "redshank-surface redshank-listen-view",
+                SurfaceTab::Library => "redshank-surface redshank-library-view",
+                SurfaceTab::Notes => "redshank-surface redshank-notes-view",
+                SurfaceTab::Settings => "redshank-surface redshank-settings-view",
+            },
+        ),
     )
 }
 
@@ -614,6 +860,22 @@ mod tests {
             pending.extend(dom.dom_children(node));
         }
         panic!("missing control {label}");
+    }
+
+    fn node_with_control(dom: &ScriptedDom, root: NodeId, control: &str) -> NodeId {
+        let attribute = LocalName::from("aria-controls");
+        let empty = Namespace::from("");
+        let mut pending = vec![root];
+        while let Some(node) = pending.pop() {
+            if dom
+                .attribute(node, &empty, &attribute)
+                .is_some_and(|value| value == control)
+            {
+                return node;
+            }
+            pending.extend(dom.dom_children(node));
+        }
+        panic!("missing tab for {control}");
     }
 
     #[test]
@@ -725,6 +987,109 @@ mod tests {
             [
                 CompactCommand::Pause,
                 CompactCommand::MoveQueue { from: 0, to: 1 },
+            ]
+        );
+    }
+
+    #[test]
+    fn full_surface_defaults_to_listen_and_tabs_switch_without_product_commands() {
+        let mut runner = full_runner(anchored_state());
+        let markup = runner.dom().borrow().outer_html(runner.root());
+        assert!(markup.contains("role=\"tablist\""));
+        assert!(markup.contains("aria-label=\"Listen\" aria-selected=\"true\""));
+        assert!(markup.contains("id=\"redshank-listen-panel\""));
+        let library = node_with_control(
+            &runner.dom().borrow(),
+            runner.root(),
+            "redshank-library-panel",
+        );
+        runner.dispatch_click(library, PointerClick::at((1.0, 1.0)));
+        let mut commands = Vec::new();
+        runner.update(|state| {
+            assert_eq!(state.active_tab, SurfaceTab::Library);
+            commands.extend(state.drain_commands());
+        });
+        assert!(commands.is_empty());
+        let markup = runner.dom().borrow().outer_html(runner.root());
+        assert!(markup.contains("aria-label=\"Library\" aria-selected=\"true\""));
+    }
+
+    #[test]
+    fn remote_library_item_exposes_an_offline_download_command() {
+        let mut state = anchored_state();
+        state.library.push(LibraryItem::DirectAudio {
+            id: ItemId("remote".into()),
+            title: "Remote episode".into(),
+            source: redshank_model::MediaSource::Enclosure {
+                url: "https://example.test/episode.mp3".into(),
+            },
+        });
+        let mut runner = full_runner(state);
+        let download = node_with_label(
+            &runner.dom().borrow(),
+            runner.root(),
+            "Download Remote episode for offline listening",
+        );
+        runner.dispatch_click(download, PointerClick::at((1.0, 1.0)));
+        let mut commands = Vec::new();
+        runner.update(|state| commands.extend(state.drain_commands()));
+        assert_eq!(
+            commands,
+            [CompactCommand::CacheItem(ItemId("remote".into()))]
+        );
+        runner.update(|state| {
+            state.library[1].replace_source(redshank_model::MediaSource::Cached {
+                path: "cache/episode.audio".into(),
+                origin_url: "https://example.test/episode.mp3".into(),
+                representation: Box::default(),
+            });
+        });
+        assert!(
+            runner
+                .dom()
+                .borrow()
+                .outer_html(runner.root())
+                .contains("Remote episode is available offline")
+        );
+        let remove = node_with_label(
+            &runner.dom().borrow(),
+            runner.root(),
+            "Remove offline download for Remote episode",
+        );
+        runner.dispatch_click(remove, PointerClick::at((1.0, 1.0)));
+        let mut commands = Vec::new();
+        runner.update(|state| commands.extend(state.drain_commands()));
+        assert_eq!(
+            commands,
+            [CompactCommand::RemoveCachedItem(ItemId("remote".into()))]
+        );
+    }
+
+    #[test]
+    fn subscription_controls_emit_entered_and_retained_feed_urls() {
+        let mut state = anchored_state();
+        state.feed_url_editor = TextInput::new("https://example.test/feed.xml");
+        state.subscriptions.push(FeedSubscription {
+            feed_url: "https://example.test/old.xml".into(),
+            title: "Old Marsh".into(),
+            ..Default::default()
+        });
+        let mut runner = full_runner(state);
+        let subscribe = node_with_label(
+            &runner.dom().borrow(),
+            runner.root(),
+            "Subscribe to podcast feed",
+        );
+        runner.dispatch_click(subscribe, PointerClick::at((1.0, 1.0)));
+        let refresh = node_with_label(&runner.dom().borrow(), runner.root(), "Refresh Old Marsh");
+        runner.dispatch_click(refresh, PointerClick::at((1.0, 1.0)));
+        let mut commands = Vec::new();
+        runner.update(|state| commands.extend(state.drain_commands()));
+        assert_eq!(
+            commands,
+            [
+                CompactCommand::Subscribe("https://example.test/feed.xml".into()),
+                CompactCommand::RefreshSubscription("https://example.test/old.xml".into()),
             ]
         );
     }

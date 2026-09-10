@@ -1,73 +1,120 @@
-.redshank-compact {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px;
-  background-color: #17201f;
-  color: #edf2ef;
-  font-family: sans-serif;
-}
-
-.redshank-player,
-.redshank-capture,
-.redshank-controls {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.redshank-title {
-  font-weight: 600;
-}
-
-.redshank-status,
-.redshank-time {
-  color: #b5c4bd;
-}
-
-.redshank-control {
-  padding: 6px 10px;
-  border-radius: 5px;
-  background-color: #293a36;
-  color: #edf2ef;
-}
-
 .redshank-surface {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  max-height: 100vh;
-  overflow: auto;
-  padding: 16px;
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: minmax(220px, 0.72fr) minmax(340px, 1.28fr);
+  grid-template-rows: auto auto 1fr auto;
+  grid-template-areas:
+    "header header"
+    "notice notice"
+    "queue notes"
+    "dock dock";
+  gap: 0 24px;
+  padding: 0 22px;
   background: #101716;
   color: #edf2ef;
   font-family: sans-serif;
 }
 
-.redshank-surface > section,
-.redshank-surface > main > section {
+.redshank-header {
+  grid-area: header;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 18px 0 12px;
+  border-bottom: 1px solid #30423d;
+}
+
+.redshank-brand {
+  margin: 0;
+  font-family: serif;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.redshank-tabs {
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
-  gap: 8px;
-  padding: 10px;
-  border: 1px solid #30423d;
-  border-radius: 6px;
+  gap: 4px;
 }
 
-.redshank-surface [aria-label="Library"],
-.redshank-surface [aria-label="Queue"],
-.redshank-surface [aria-label="Notes"] {
-  align-items: stretch;
+.redshank-tab,
+.redshank-control,
+.redshank-surface button {
+  padding: 7px 10px;
+  border: 0;
+  border-radius: 5px;
+  background: #293a36;
+  color: #edf2ef;
+}
+
+.redshank-tab[aria-selected="true"] {
+  background: #d3e8dc;
+  color: #15221d;
+}
+
+.redshank-panel {
+  align-self: start;
+  padding: 18px 0 112px;
+}
+
+.redshank-panel[aria-hidden="true"] {
+  display: none;
+}
+
+.redshank-library,
+.redshank-subscriptions,
+.redshank-queue,
+.redshank-notes,
+.redshank-settings {
   flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
 }
 
-.redshank-text-editor {
-  width: 100%;
-  min-height: 92px;
+.redshank-library { grid-area: queue; }
+.redshank-subscriptions { grid-area: notes; }
+.redshank-queue { grid-area: queue; display: flex; }
+.redshank-notes { grid-area: notes; display: flex; }
+.redshank-notes-view .redshank-notes { grid-area: queue / queue / notes / notes; }
+.redshank-settings { grid-area: queue / queue / notes / notes; display: flex; }
+
+.redshank-dock {
+  grid-area: dock;
+  position: sticky;
+  bottom: 0;
+  display: grid;
+  grid-template-columns: 1fr;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 0 16px;
+  background: #17201f;
+  border-top: 1px solid #30423d;
 }
 
-.redshank-text-editor textarea {
+.redshank-compact {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 0 12px;
+  background: #17201f;
+  color: #edf2ef;
+}
+
+.redshank-player,
+.redshank-capture,
+.redshank-controls { display: flex; align-items: center; gap: 8px; }
+.redshank-player { flex-wrap: wrap; }
+.redshank-title { font-weight: 600; }
+.redshank-status,
+.redshank-time { color: #b5c4bd; }
+
+.redshank-text-editor,
+.redshank-feed-url { width: 100%; min-height: 92px; }
+
+.redshank-text-editor textarea,
+.redshank-feed-url textarea {
   width: 100%;
   min-height: 80px;
   padding: 8px;
@@ -76,19 +123,27 @@
   border: 1px solid #49645c;
 }
 
+.redshank-tab:focus,
 .redshank-control:focus,
-.redshank-text-editor textarea:focus {
-  outline: 2px solid #d3e8dc;
-  outline-offset: 2px;
-}
-
-.redshank-control[aria-disabled="true"] {
-  opacity: .55;
-  cursor: not-allowed;
-}
+.redshank-surface button:focus,
+.redshank-text-editor textarea:focus,
+.redshank-feed-url textarea:focus { outline: 2px solid #d3e8dc; outline-offset: 2px; }
+.redshank-control[aria-disabled="true"] { opacity: .55; cursor: not-allowed; }
 
 .redshank-notice {
-  margin: 0;
+  grid-area: notice;
+  margin: 8px 0 0;
   padding: 8px;
   background: #493c24;
+}
+
+@media (max-width: 720px) {
+  .redshank-surface {
+    grid-template-columns: 1fr;
+    grid-template-areas: "header" "notice" "queue" "notes" "dock";
+  }
+  .redshank-header,
+  .redshank-compact { align-items: stretch; flex-direction: column; }
+  .redshank-dock { grid-template-columns: 1fr; }
+  .redshank-panel { padding-bottom: 18px; }
 }

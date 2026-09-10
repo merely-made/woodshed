@@ -1,0 +1,15 @@
+# Headed receipt of the pass-the-mic circle with the hand-off controls.
+#
+# Self-drives with no clicks: clicking Hand off / Receive / Paste recipient would
+# open a file dialog or write the OS clipboard, so this scenario only settles,
+# asserts the new collaboration controls are present in the circle, and captures
+# the composed frame. Run with:
+#   HOCKET_SCENARIO=scenarios/handoff_circle.scn HOCKET_CAPTURE_DIR=<dir> \
+#     cargo run -p hocket-genet
+settle 15
+assert text Copy token
+assert text Paste recipient
+assert text Receive
+capture 01_circle
+settle 5
+log circle with collaboration controls captured

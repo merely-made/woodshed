@@ -1,0 +1,29 @@
+[package]
+name = "hocket-engine"
+version = "0.1.0"
+description = "Audio engine for Hocket: transport, click track, loop scheduling, capture."
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+publish = false
+
+[dependencies]
+hocket-model = { workspace = true }
+# Shared pure-DSP primitives (click synth now; onset/tempo + latency
+# cores available for FT3c calibration + bar-alignment work).
+audio-primitives = { workspace = true }
+firewheel = { workspace = true }
+blake3 = { workspace = true }
+muniment = { workspace = true }
+wavicle = { workspace = true }
+# WAV is retained for the offline mix export, not for stored media (now .wv).
+hound = { workspace = true }
+personae = { workspace = true }
+serde = { workspace = true }
+ciborium = { workspace = true }
+
+[dev-dependencies]
+pollster = "0.4"
+tempfile = "3"

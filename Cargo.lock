@@ -5009,7 +5009,6 @@ dependencies = [
 [[package]]
 name = "ringdown"
 version = "0.1.0"
-source = "git+https://github.com/merely-made/ringdown.git?branch=main#06ede44e43fd0301060774fcfb1be2f18e52f7c8"
 dependencies = [
  "serde",
  "serde_json",
@@ -5018,15 +5017,25 @@ dependencies = [
 [[package]]
 name = "ringdown-ble"
 version = "0.0.1"
-source = "git+https://github.com/merely-made/ringdown.git?branch=main#06ede44e43fd0301060774fcfb1be2f18e52f7c8"
 dependencies = [
  "btleplug",
  "futures",
  "ringdown",
+ "ringdown-client",
  "serde_json",
  "thiserror 2.0.20",
  "tokio",
  "uuid",
+]
+
+[[package]]
+name = "ringdown-client"
+version = "0.0.1"
+dependencies = [
+ "ringdown",
+ "serde_json",
+ "thiserror 2.0.20",
+ "tokio",
 ]
 
 [[package]]

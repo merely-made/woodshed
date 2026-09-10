@@ -1,0 +1,18 @@
+/target
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# sem (Ataraxy-Labs) semantic-diff index cache — local, never committed.
+.sem/
+
+# Machine-local cargo config: source-specific genet/tinct/netrender [patch]
+# entries with absolute dev paths + a Windows PDB linker flag. Never committed
+# (committed manifests carry git deps only; local paths live here per machine).
+.cargo/
+
+# A live Hocket screen can contain a session fingerprint. Keep it local.
+assets/screenshots/circle.png

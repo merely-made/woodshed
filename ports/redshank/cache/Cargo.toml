@@ -1,0 +1,16 @@
+[package]
+name = "redshank-cache"
+version = "0.0.0"
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+publish = false
+
+[dependencies]
+blake3.workspace = true
+http.workspace = true
+redshank-model.workspace = true
+ureq.workspace = true
+
+[dev-dependencies]
+tempfile.workspace = true

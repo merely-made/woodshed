@@ -11,6 +11,13 @@ before any other doc in this directory.
 
 ## Active Plans
 
+- [2026-09-09_audio_ports_rehome_plan.md](2026-09-09_audio_ports_rehome_plan.md)
+  — **Landed.** Hocket and Ringdown are history-preserving nested `ports/`
+  workspaces with local dependency seams, independent release boundaries, and
+  MPL-2.0 repository licensing. Their former repositories are archived with
+  relocation notices; inherited family-format and Hocket-Clippy drift is
+  recorded as separate work.
+
 - [2026-09-04_musical_projections_plan.md](2026-09-04_musical_projections_plan.md)
   — Circle-of-Fifths context and the 24-triad Tonnetz are implemented: keyed background,
   separate focus/audition/Add actions, and stable expansion.
@@ -29,8 +36,13 @@ before any other doc in this directory.
   local-file slice adds a Symphonia/Firewheel worker, full listening surfaces,
   and saved text-note editing. The September 7 controller-admission slice puts
   the real decoder, sole output, transport state, and sink clock behind Genet's
-  controller. HTTP/cache playback, headed acceptance, and Turnstone as second
-  host remain open. It is separate from the Woodshed product graph.
+  controller. A two-process headed receipt now proves local output playback,
+  text-note persistence, restart, and resume. The September 8 slice adds
+  Rustls-backed, validator-aware progressive HTTP playback and a headed remote
+  restart receipt. The September 9 slice adds a budgeted content-addressed cache
+  and proves restart/playback with its HTTP server stopped. Subscriptions,
+  automatic cache policy/removal, and Turnstone as second host remain open. It
+  is separate from the Woodshed product graph.
 - [2026-07-11_stage_set_tools_plan.md](2026-07-11_stage_set_tools_plan.md)
   — **In progress; product authority.** P1-P3 remain partial. P4a/P4b landed;
   the scene canvas and single-Card expansion have receipts, while the full P4e

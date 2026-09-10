@@ -15,10 +15,15 @@ members = [
     # design_docs/2026-08-27_smart_instrument_plan.md
     "crates/woodshed-instrument",
 ]
+exclude = [
+    "ports/hocket",
+    "ports/redshank",
+    "ports/ringdown",
+]
 
 [workspace.package]
 edition = "2021"
-license = "MIT OR Apache-2.0"
+license = "MPL-2.0"
 authors = ["Mark <sgt.mark3@gmail.com>"]
 repository = "https://github.com/merely-made/woodshed"
 rust-version = "1.96"
