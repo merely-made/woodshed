@@ -42,8 +42,7 @@ jobs:
           expected_manifest="$(cat <<EOF
           $package_name/
           $package_name/Cargo.lock
-          $package_name/LICENSE-APACHE
-          $package_name/LICENSE-MIT
+          $package_name/LICENSE
           $package_name/PACKAGE-RECEIPT.txt
           $package_name/README.md
           $package_name/RELEASE-README.txt
@@ -73,6 +72,7 @@ jobs:
           test "$(awk -F ': ' '$1 == "source_revision" { print $2 }' "$receipt")" = "$GITHUB_SHA"
           test "$(awk -F ': ' '$1 == "target" { print $2 }' "$receipt")" = "x86_64-unknown-linux-gnu"
           test "$(awk -F ': ' '$1 == "archive_format" { print $2 }' "$receipt")" = "portable tar.gz; not an installer"
+          test "$(awk -F ': ' '$1 == "project_license" { print $2 }' "$receipt")" = "MPL-2.0"
           test "$(awk -F ': ' '$1 == "binary_sha256" { print $2 }' "$receipt")" = "$(sha256sum "$package_dir/Woodshed" | awk '{print $1}')"
           test "$(awk -F ': ' '$1 == "cargo_lock_sha256" { print $2 }' "$receipt")" = "$(sha256sum "$package_dir/Cargo.lock" | awk '{print $1}')"
           grep --fixed-strings 'not a portable runtime guarantee' "$runtime"
