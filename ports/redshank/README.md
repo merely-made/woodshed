@@ -16,7 +16,9 @@ Current packages:
   receipts, text notes, audio notes, and the capture-host trait;
 - `redshank-storage`: a local JSON store using immutable numbered generations;
 - `redshank-surfaces`: reusable Cambium Player and Capture surfaces, plus the
-  full Library, Queue, Notes, and Settings composition. The compact
+  full listen-first composition. Listen opens by default with Queue and Notes;
+  Library owns subscriptions, imports, and offline actions; Notes and Settings
+  remain dedicated tabs. The compact
   composition depends only on its presentation snapshot and command queue, so a
   host can mount it without the Library;
 - `redshank-playback`: an MP3/AAC decoder worker using Symphonia and one
@@ -45,6 +47,9 @@ or direct HTTP(S) audio URL as the executable's first argument. Remote servers
 must support byte ranges. Outside the editor, Space toggles playback,
 Left/Right skip by the configured interval, and N begins a text note.
 `Ctrl+Enter` saves the editor. Text capture supports Pause and Continue.
+The full application keeps the Player/Capture composition visible as its
+bottom listening dock across Listen, Library, Notes, and Settings. This is the
+same compact surface an embedding host can mount independently.
 
 Paste an HTTP(S) RSS or Atom URL into **Podcast subscriptions** and choose
 **Subscribe**. The standalone host fetches feeds off the UI thread with a 4 MiB
