@@ -115,7 +115,7 @@ cat > "$app/Contents/Info.plist" <<EOF
 </plist>
 EOF
 
-for file in README.md LICENSE-MIT LICENSE-APACHE Cargo.lock; do
+for file in README.md LICENSE Cargo.lock; do
     [[ -f $root/$file ]] || die "required release file is missing: $root/$file"
     install -m 644 "$root/$file" "$stage/$file"
 done
@@ -135,9 +135,9 @@ Personae OS auto-unlock is not available on macOS in this lane. If no
 passphrase-backed identity is supplied, Woodshed may use its unsealed fallback.
 Do not use this build for sensitive practice data.
 
-The source revision is recorded above. Cargo.lock and the project licenses are
-included with this artifact; the repository source is not. This is a controlled
-alpha package, not a Gatekeeper-trusted public release.
+The source revision is recorded above. Cargo.lock and the root MPL-2.0 LICENSE
+are included with this artifact; the repository source is not. This is a
+controlled alpha package, not a Gatekeeper-trusted public release.
 EOF
 
 /usr/bin/plutil -lint "$app/Contents/Info.plist" >/dev/null || die "generated Info.plist is invalid"
