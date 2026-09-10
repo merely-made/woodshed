@@ -8,7 +8,9 @@ core, and unified source vocabulary are landed. Phase 2 is complete with the
 unpublished model and generation store. Phase 3 is complete with shared podcast
 feed facts and GUID-stable Turnstone projection. Phase 4 is active with the
 reusable Cambium controls, Mere-hosted sovereign shell, and local listening
-workflow landed. Genet controller admission and bounded progressive HTTP
+workflow landed. The full shell is now listen-first, with a persistent compact
+Player/Capture dock and explicit Listen, Library, Notes, and Settings tabs.
+Genet controller admission and bounded progressive HTTP
 playback are also landed. A manual, budgeted durable episode cache now publishes
 complete content-addressed objects and reopens them offline. Manual RSS/Atom
 subscription and refresh are landed. Scheduled refresh, automatic download,
@@ -766,6 +768,24 @@ still withheld until its user-configurable policy and download admission flow
 are ruled. The isolated workspace passes 46 default tests with four existing
 device/fixture gates; strict workspace Clippy, formatting, and diff checks pass.
 
+#### Listen-first surface composition, 2026-09-09
+
+The full Cambium shell now opens on Listen with Queue and the current episode's
+timestamped Notes side by side. A persistent bottom dock mounts the existing
+compact Player/Capture composition, keeping text and voice-note actions beside
+transport while preserving that composition as the independently embeddable
+surface. Library owns subscriptions, local import, queue insertion, and offline
+download lifecycle. Notes and Settings remain explicit tabs rather than panels
+competing with the listening path.
+
+The tabs use native buttons with tablist, tab, tabpanel, selected, controlled,
+and hidden semantics. Switching tabs changes presentation state directly and
+emits no product command. The layout collapses to one column at narrow widths.
+Headless Cambium coverage proves Listen is the default, tabs update their
+selected state, and existing player, queue, library, subscription, notes,
+settings, keyboard, and offline commands remain present. The isolated workspace
+passes 47 default tests with four existing device/fixture gates.
+
 ### Phase 5: voice capture and open annotation target
 
 Add host-provided microphone capture and Knot's generic media
@@ -987,3 +1007,6 @@ rejected for the reasons recorded in the 2026-09-01 planning pass.
   ordering, shared-object retention, cache-root path confinement, and a stable
   least-recently-used candidate order. Automatic reclamation remains open until
   its policy is configurable.
+- **2026-09-09:** Reworked the full Cambium composition around a default Listen
+  tab, side-by-side Queue and Notes, dedicated Library/Notes/Settings tabs, and
+  the unchanged compact Player/Capture surface as a persistent bottom dock.
