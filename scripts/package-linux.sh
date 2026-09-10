@@ -115,8 +115,7 @@ binary="$target_dir/release/woodshed-genet"
 
 [[ -x "$binary" ]] || die "release binary is missing or not executable: $binary"
 [[ -f "$root/README.md" ]] || die 'README.md is missing'
-[[ -f "$root/LICENSE-MIT" ]] || die 'LICENSE-MIT is missing'
-[[ -f "$root/LICENSE-APACHE" ]] || die 'LICENSE-APACHE is missing'
+[[ -f "$root/LICENSE" ]] || die 'LICENSE is missing'
 [[ -f "$root/Cargo.lock" ]] || die 'Cargo.lock is missing'
 
 mkdir -p -- "$output_dir"
@@ -137,8 +136,7 @@ mkdir -- "$stage"
 
 install -m 755 -- "$binary" "$stage/Woodshed"
 install -m 644 -- "$root/README.md" "$stage/README.md"
-install -m 644 -- "$root/LICENSE-MIT" "$stage/LICENSE-MIT"
-install -m 644 -- "$root/LICENSE-APACHE" "$stage/LICENSE-APACHE"
+install -m 644 -- "$root/LICENSE" "$stage/LICENSE"
 install -m 644 -- "$root/Cargo.lock" "$stage/Cargo.lock"
 
 binary_sha256="$(sha256sum -- "$stage/Woodshed" | awk '{print $1}')"
@@ -176,8 +174,9 @@ From the directory containing this archive and its .sha256 sidecar:
   ./Woodshed
 
 The source revision, binary digest, and Cargo.lock digest are recorded in
-PACKAGE-RECEIPT.txt. The source is not included; the project licenses and
-committed Cargo.lock dependency inventory are included here.
+PACKAGE-RECEIPT.txt. The source is not included; the root LICENSE contains the
+project's MPL-2.0 terms, and the committed Cargo.lock is the dependency
+inventory.
 EOF
 
 {
@@ -186,6 +185,7 @@ EOF
     printf 'source_revision: %s\n' "$revision"
     printf 'target: x86_64-unknown-linux-gnu\n'
     printf 'archive_format: portable tar.gz; not an installer\n'
+    printf 'project_license: MPL-2.0\n'
     printf 'binary_sha256: %s\n' "$binary_sha256"
     printf 'cargo_lock_sha256: %s\n' "$lock_sha256"
 } >"$stage/PACKAGE-RECEIPT.txt"
