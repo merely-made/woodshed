@@ -372,6 +372,33 @@ impl Probe<'_, '_> {
 }
 
 impl Automatable for Probe<'_, '_> {
+    fn selector_target(&self, selector: &Selector) -> genet_probe::SelectorTarget {
+        let candidates = {
+            let dom = self.ctx.runner.dom();
+            let dom = dom.borrow();
+            genet_probe::matching(&dom, selector)
+        };
+        let (width, height) = self.ctx.logical_size;
+        for node in candidates {
+            let Some((x, y, w, h)) = self.ctx.painted_rect(node) else {
+                continue;
+            };
+            if ![x, y, w, h].iter().all(|value| value.is_finite()) || w <= 0.0 || h <= 0.0 {
+                continue;
+            }
+            let point = (x + w / 2.0, y + h / 2.0);
+            if point.0 >= 0.0 && point.1 >= 0.0 && point.0 < width && point.1 < height {
+                return genet_probe::SelectorTarget::Hit(genet_probe::Hit {
+                    surface: "woodshed",
+                    point,
+                });
+            }
+        }
+        // Participating hosts own both hits and misses. Never re-layout after
+        // a missing, hidden or offscreen retained target.
+        genet_probe::SelectorTarget::Miss
+    }
+
     fn with_surfaces<R>(&self, f: impl FnOnce(&[ProbeSurface<'_>]) -> R) -> R {
         let dom = self.ctx.runner.dom();
         let dom_ref = dom.borrow();

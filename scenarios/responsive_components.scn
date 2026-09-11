@@ -3,9 +3,7 @@ settle 3
 act stage-context-example
 settle 3
 capture 00_stage
-# Settings center measured from 00_stage. Probe selector layout currently
-# disagrees with the native text layout here; this still uses host pointer routing.
-pointer-click 215 52
+click .workspace-panel Settings
 settle 3
 assert snap section == Settings
 capture 01_settings

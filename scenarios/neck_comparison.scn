@@ -6,8 +6,7 @@ assert text Neck movement
 assert text Matched fret travel
 assert text Fretted span
 capture 01_comparison
-# Measured painted point at 1100x752 logical, DPI 2, UI zoom 1.
-pointer-click 704 320
+click .card-shape-clear
 settle 3
 assert text Choose a shape on the selected Card.
 capture 02_unselected
