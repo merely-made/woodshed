@@ -1034,3 +1034,13 @@ rejected for the reasons recorded in the 2026-09-01 planning pass.
   compact queue/note rows, honest idle actions, and a gated voice capability.
   The corrective code is headless-verified; corrected headed acceptance remains
   open.
+- **2026-09-13:** A cloud-backed local-file trial exposed a playback-worker
+  panic that disconnected every later command. The worker now restarts its
+  controller/backend after an internal panic while retaining the command
+  channel, and a deterministic injected-failure test proves a later load is
+  admitted. The exact reported MP3-to-M4A source sequence also passed an opt-in
+  local replacement check after both files were resident. Library items now
+  render as compact rows with explicit durable removal; removing the selected
+  item also clears its queue position, player selection, notes, progress, and
+  open draft state. Headed retry of an unavailable cloud placeholder remains an
+  acceptance check rather than a claim from this software-only receipt.

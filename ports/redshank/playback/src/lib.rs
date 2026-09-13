@@ -69,6 +69,8 @@ pub enum PlaybackCommand {
     Stop,
     Seek(u64),
     Shutdown,
+    #[cfg(test)]
+    CrashWorker,
 }
 
 type Wake = Arc<dyn Fn() + Send + Sync>;
@@ -126,17 +128,17 @@ impl PlaybackRuntime {
         self.inner
             .snapshot
             .lock()
-            .map(|cell| cell.value.clone())
-            .unwrap_or_else(|_| PlaybackSnapshot {
-                state: PlaybackState::Unavailable("playback snapshot lock poisoned".into()),
-                ..PlaybackSnapshot::default()
-            })
+            .unwrap_or_else(|poisoned| poisoned.into_inner())
+            .value
+            .clone()
     }
 
     pub fn set_wake(&self, wake: Wake) {
-        if let Ok(mut snapshot) = self.inner.snapshot.lock() {
-            snapshot.wake = Some(wake);
-        }
+        self.inner
+            .snapshot
+            .lock()
+            .unwrap_or_else(|poisoned| poisoned.into_inner())
+            .wake = Some(wake);
     }
 }
 
@@ -282,6 +284,64 @@ mod tests {
             wait_for(&runtime, |snapshot| snapshot.state == PlaybackState::Ended).state,
             PlaybackState::Ended
         );
+    }
+
+    #[test]
+    fn worker_recovers_after_an_internal_failure() {
+        let runtime = PlaybackRuntime::start();
+        runtime.command(PlaybackCommand::CrashWorker).unwrap();
+        let recovered = wait_for(
+            &runtime,
+            |snapshot| matches!(snapshot.state, PlaybackState::Unavailable(ref message) if message.contains("recovered")),
+        );
+        assert!(matches!(recovered.state, PlaybackState::Unavailable(_)));
+
+        runtime
+            .command(PlaybackCommand::Load {
+                token: 12,
+                source: MediaSource::Local {
+                    path: "redshank-test://post-recovery".into(),
+                },
+                resume_ms: 0,
+            })
+            .unwrap();
+        assert_eq!(
+            wait_for(&runtime, |snapshot| {
+                snapshot.load_token == Some(12) && snapshot.state == PlaybackState::Paused
+            })
+            .state,
+            PlaybackState::Paused
+        );
+    }
+
+    #[test]
+    #[ignore = "requires REDSHANK_LOCAL_SEQUENCE or REDSHANK_PHASE4_FIXTURES and a default output device"]
+    fn supplied_local_sources_can_be_replaced() {
+        let runtime = PlaybackRuntime::start();
+        let paths = std::env::var_os("REDSHANK_LOCAL_SEQUENCE")
+            .map(|paths| std::env::split_paths(&paths).collect::<Vec<_>>())
+            .unwrap_or_else(|| vec![fixture("stereo.mp3"), fixture("stereo.m4a")]);
+        assert_eq!(paths.len(), 2, "supply exactly two local audio paths");
+        for (token, path) in [(60, &paths[0]), (61, &paths[1])] {
+            runtime
+                .command(PlaybackCommand::Load {
+                    token,
+                    source: MediaSource::Local {
+                        path: path.display().to_string(),
+                    },
+                    resume_ms: 0,
+                })
+                .unwrap();
+            let snapshot = wait_for(&runtime, |snapshot| {
+                snapshot.load_token == Some(token) && snapshot.state != PlaybackState::Loading
+            });
+            assert_eq!(
+                snapshot.state,
+                PlaybackState::Paused,
+                "{}: {snapshot:?}",
+                path.display()
+            );
+        }
     }
 
     #[test]

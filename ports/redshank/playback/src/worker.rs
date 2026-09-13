@@ -1,5 +1,6 @@
 use std::{
     cell::RefCell,
+    panic::{AssertUnwindSafe, catch_unwind},
     rc::Rc,
     sync::{Arc, Mutex, mpsc},
     thread,
@@ -22,7 +23,10 @@ fn publish(
     duration_ms: Option<u64>,
     source: Option<String>,
 ) {
-    let wake = snapshot.lock().ok().and_then(|mut cell| {
+    let wake = {
+        let mut cell = snapshot
+            .lock()
+            .unwrap_or_else(|poisoned| poisoned.into_inner());
         let next = PlaybackSnapshot {
             load_token: token,
             representation,
@@ -32,21 +36,22 @@ fn publish(
             source,
         };
         if cell.value == next {
-            return None;
-        }
-        let position_only = cell.value.load_token == next.load_token
-            && cell.value.representation == next.representation
-            && cell.value.state == next.state
-            && cell.value.duration_ms == next.duration_ms
-            && cell.value.source == next.source;
-        cell.value = next;
-        if !position_only || cell.last_wake.elapsed() >= Duration::from_millis(100) {
-            cell.last_wake = std::time::Instant::now();
-            cell.wake.clone()
-        } else {
             None
+        } else {
+            let position_only = cell.value.load_token == next.load_token
+                && cell.value.representation == next.representation
+                && cell.value.state == next.state
+                && cell.value.duration_ms == next.duration_ms
+                && cell.value.source == next.source;
+            cell.value = next;
+            if !position_only || cell.last_wake.elapsed() >= Duration::from_millis(100) {
+                cell.last_wake = std::time::Instant::now();
+                cell.wake.clone()
+            } else {
+                None
+            }
         }
-    });
+    };
     if let Some(wake) = wake {
         wake();
     }
@@ -140,7 +145,7 @@ fn command(
     }
 }
 
-pub(super) fn run(receiver: mpsc::Receiver<PlaybackCommand>, snapshot: Arc<Mutex<SnapshotCell>>) {
+fn run_session(receiver: &mpsc::Receiver<PlaybackCommand>, snapshot: Arc<Mutex<SnapshotCell>>) {
     let backend = Rc::new(RefCell::new(Backend::default()));
     let mut controller = controller_adapter::controller(backend.clone());
     let mut token = None;
@@ -148,6 +153,8 @@ pub(super) fn run(receiver: mpsc::Receiver<PlaybackCommand>, snapshot: Arc<Mutex
         while let Ok(message) = receiver.try_recv() {
             match message {
                 PlaybackCommand::Shutdown => return,
+                #[cfg(test)]
+                PlaybackCommand::CrashWorker => panic!("injected playback worker failure"),
                 PlaybackCommand::Load {
                     token: next,
                     source,
@@ -302,5 +309,34 @@ pub(super) fn run(receiver: mpsc::Receiver<PlaybackCommand>, snapshot: Arc<Mutex
             ),
         }
         thread::sleep(Duration::from_millis(5));
+    }
+}
+
+pub(super) fn run(receiver: mpsc::Receiver<PlaybackCommand>, snapshot: Arc<Mutex<SnapshotCell>>) {
+    loop {
+        if catch_unwind(AssertUnwindSafe(|| {
+            run_session(&receiver, Arc::clone(&snapshot));
+        }))
+        .is_ok()
+        {
+            return;
+        }
+        let token = snapshot
+            .lock()
+            .unwrap_or_else(|poisoned| poisoned.into_inner())
+            .value
+            .load_token;
+        publish(
+            &snapshot,
+            token,
+            None,
+            PlaybackState::Unavailable(
+                "Playback recovered from an internal audio failure; select a recording to retry"
+                    .into(),
+            ),
+            0,
+            None,
+            None,
+        );
     }
 }
