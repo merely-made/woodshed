@@ -25,7 +25,7 @@ use symphonia::core::{
 
 use crate::{
     http_range::{DEFAULT_CACHE_BYTES, HttpRangeSource},
-    output::AudioRuntime,
+    output::{AudioRuntime, BUFFER_LOW_WATER_SECONDS},
 };
 
 pub(super) struct Sink {
@@ -485,7 +485,8 @@ impl Backend {
             };
             consume_frames(&mut self.pending, accepted, channels);
         }
-        if self.pending.is_empty() && !self.eof && self.queued_seconds()? < 0.15 {
+        if self.pending.is_empty() && !self.eof && self.queued_seconds()? < BUFFER_LOW_WATER_SECONDS
+        {
             self.decode_next_packet()?;
         }
         Ok(

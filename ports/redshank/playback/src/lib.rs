@@ -322,7 +322,7 @@ mod tests {
             .map(|paths| std::env::split_paths(&paths).collect::<Vec<_>>())
             .unwrap_or_else(|| vec![fixture("stereo.mp3"), fixture("stereo.m4a")]);
         assert_eq!(paths.len(), 2, "supply exactly two local audio paths");
-        for (token, path) in [(60, &paths[0]), (61, &paths[1])] {
+        for (token, path) in [(60, &paths[0]), (61, &paths[1]), (62, &paths[0])] {
             runtime
                 .command(PlaybackCommand::Load {
                     token,
@@ -341,6 +341,28 @@ mod tests {
                 "{}: {snapshot:?}",
                 path.display()
             );
+            runtime.command(PlaybackCommand::Play).unwrap();
+            let started = Instant::now();
+            let playing = wait_for(&runtime, |snapshot| {
+                snapshot.load_token == Some(token) && snapshot.position_ms >= 300
+            });
+            assert_eq!(
+                playing.state,
+                PlaybackState::Playing,
+                "{}: {playing:?}",
+                path.display()
+            );
+            assert!(
+                started.elapsed() >= Duration::from_millis(200),
+                "{} advanced 300 ms in {:?}",
+                path.display(),
+                started.elapsed()
+            );
+            runtime.command(PlaybackCommand::Pause).unwrap();
+            let paused = wait_for(&runtime, |snapshot| {
+                snapshot.load_token == Some(token) && snapshot.state == PlaybackState::Paused
+            });
+            assert_eq!(paused.state, PlaybackState::Paused);
         }
     }
 
