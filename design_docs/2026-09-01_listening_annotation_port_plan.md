@@ -786,6 +786,25 @@ selected state, and existing player, queue, library, subscription, notes,
 settings, keyboard, and offline commands remain present. The isolated workspace
 passes 47 default tests with four existing device/fixture gates.
 
+#### Headed layout correction, 2026-09-13
+
+A screenshot of the real Windows Cambium/Genet host exposed that named CSS Grid
+areas were not producing the intended composition: the Player/Capture dock
+preceded the work area, Queue and Notes auto-placed as tall sequential rows, and
+each queue action expanded to the panel width. This was useful headed evidence,
+but not acceptance of the resulting layout.
+
+The surface now uses an explicit flex work-area wrapper and places the dock last
+in DOM order. Listen gives Queue a compact column and Notes the larger column;
+each queue entry is one row with grouped Up, Down, and Remove actions. Boundary
+move actions leave the focus order. Idle Notes shows an empty state instead of
+simultaneous Begin and Cancel controls, while the dedicated Notes tab retains a
+single add action. Voice capture is an explicit host capability and stays
+disabled until supplied. Ten surface tests cover the new structure and command
+gates. The isolated workspace passes 48 default tests with four existing
+device/fixture gates, and strict workspace Clippy passes. A corrected headed
+screenshot remains required before visual acceptance.
+
 ### Phase 5: voice capture and open annotation target
 
 Add host-provided microphone capture and Knot's generic media
@@ -1010,3 +1029,8 @@ rejected for the reasons recorded in the 2026-09-01 planning pass.
 - **2026-09-09:** Reworked the full Cambium composition around a default Listen
   tab, side-by-side Queue and Notes, dedicated Library/Notes/Settings tabs, and
   the unchanged compact Player/Capture surface as a persistent bottom dock.
+- **2026-09-13:** Used a real Windows-host screenshot to reject the named-grid
+  composition, then replaced it with an explicit flex workspace, DOM-last dock,
+  compact queue/note rows, honest idle actions, and a gated voice capability.
+  The corrective code is headless-verified; corrected headed acceptance remains
+  open.

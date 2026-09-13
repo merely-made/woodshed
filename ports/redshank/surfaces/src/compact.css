@@ -1,14 +1,7 @@
 .redshank-surface {
   min-height: 100vh;
-  display: grid;
-  grid-template-columns: minmax(220px, 0.72fr) minmax(340px, 1.28fr);
-  grid-template-rows: auto auto 1fr auto;
-  grid-template-areas:
-    "header header"
-    "notice notice"
-    "queue notes"
-    "dock dock";
-  gap: 0 24px;
+  display: flex;
+  flex-direction: column;
   padding: 0 22px;
   background: #101716;
   color: #edf2ef;
@@ -16,7 +9,6 @@
 }
 
 .redshank-header {
-  grid-area: header;
   display: flex;
   align-items: baseline;
   justify-content: space-between;
@@ -32,10 +24,11 @@
   font-weight: 600;
 }
 
-.redshank-tabs {
+.redshank-tabs,
+.redshank-item-actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 4px;
+  gap: 6px;
 }
 
 .redshank-tab,
@@ -53,9 +46,18 @@
   color: #15221d;
 }
 
+.redshank-workspace {
+  display: flex;
+  flex: 1 1 auto;
+  align-items: flex-start;
+  gap: 24px;
+  min-height: 0;
+}
+
 .redshank-panel {
-  align-self: start;
-  padding: 18px 0 112px;
+  flex: 1 1 0;
+  min-width: 0;
+  padding: 18px 0 24px;
 }
 
 .redshank-panel[aria-hidden="true"] {
@@ -67,26 +69,54 @@
 .redshank-queue,
 .redshank-notes,
 .redshank-settings {
+  display: flex;
   flex-direction: column;
   align-items: stretch;
-  gap: 8px;
+  gap: 10px;
 }
 
-.redshank-library { grid-area: queue; }
-.redshank-subscriptions { grid-area: notes; }
-.redshank-queue { grid-area: queue; display: flex; }
-.redshank-notes { grid-area: notes; display: flex; }
-.redshank-notes-view .redshank-notes { grid-area: queue / queue / notes / notes; }
-.redshank-settings { grid-area: queue / queue / notes / notes; display: flex; }
+.redshank-listen-view .redshank-queue { flex: 0 1 38%; }
+.redshank-listen-view .redshank-notes { flex: 1 1 62%; }
+.redshank-notes-view .redshank-notes,
+.redshank-settings-view .redshank-settings { flex-basis: 100%; }
+
+.redshank-panel h2 {
+  margin: 0 0 4px;
+  font-family: serif;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.redshank-queue-item,
+.redshank-note-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  border: 1px solid #30423d;
+  border-radius: 6px;
+  background: #17201f;
+}
+
+.redshank-queue-select,
+.redshank-note-edit {
+  flex: 1 1 auto;
+  min-width: 0;
+  text-align: left;
+}
+
+.redshank-empty-state {
+  margin: 0;
+  padding: 16px;
+  border: 1px dashed #49645c;
+  border-radius: 6px;
+  color: #b5c4bd;
+}
 
 .redshank-dock {
-  grid-area: dock;
   position: sticky;
   bottom: 0;
-  display: grid;
-  grid-template-columns: 1fr;
-  align-items: center;
-  gap: 14px;
+  flex: 0 0 auto;
   padding: 12px 0 16px;
   background: #17201f;
   border-top: 1px solid #30423d;
@@ -104,7 +134,12 @@
 
 .redshank-player,
 .redshank-capture,
-.redshank-controls { display: flex; align-items: center; gap: 8px; }
+.redshank-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .redshank-player { flex-wrap: wrap; }
 .redshank-title { font-weight: 600; }
 .redshank-status,
@@ -112,6 +147,9 @@
 
 .redshank-text-editor,
 .redshank-feed-url { width: 100%; min-height: 92px; }
+
+.redshank-text-editor:empty,
+.redshank-feed-url:empty { display: none; }
 
 .redshank-text-editor textarea,
 .redshank-feed-url textarea {
@@ -127,23 +165,33 @@
 .redshank-control:focus,
 .redshank-surface button:focus,
 .redshank-text-editor textarea:focus,
-.redshank-feed-url textarea:focus { outline: 2px solid #d3e8dc; outline-offset: 2px; }
-.redshank-control[aria-disabled="true"] { opacity: .55; cursor: not-allowed; }
+.redshank-feed-url textarea:focus {
+  outline: 2px solid #d3e8dc;
+  outline-offset: 2px;
+}
+
+.redshank-control[aria-disabled="true"],
+.redshank-surface button[aria-disabled="true"] {
+  opacity: .45;
+  cursor: not-allowed;
+}
 
 .redshank-notice {
-  grid-area: notice;
   margin: 8px 0 0;
   padding: 8px;
   background: #493c24;
 }
 
 @media (max-width: 720px) {
-  .redshank-surface {
-    grid-template-columns: 1fr;
-    grid-template-areas: "header" "notice" "queue" "notes" "dock";
-  }
+  .redshank-workspace,
   .redshank-header,
-  .redshank-compact { align-items: stretch; flex-direction: column; }
-  .redshank-dock { grid-template-columns: 1fr; }
-  .redshank-panel { padding-bottom: 18px; }
+  .redshank-compact,
+  .redshank-queue-item,
+  .redshank-note-item {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .redshank-workspace { gap: 0; }
+  .redshank-panel { flex-basis: auto; width: 100%; }
 }
