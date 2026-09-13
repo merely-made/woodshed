@@ -1044,3 +1044,12 @@ rejected for the reasons recorded in the 2026-09-01 planning pass.
   item also clears its queue position, player selection, notes, progress, and
   open draft state. Headed retry of an unavailable cloud placeholder remains an
   acceptance check rather than a claim from this software-only receipt.
+- **2026-09-13:** A subsequent listening trial exposed dropped source time in
+  the Firewheel writer policy: Redshank filled toward 150 ms while automatic
+  overflow correction discarded the queue back toward 80 ms. The shipping
+  writer now disables frame-dropping and frame-insertion corrections, retains
+  a one-second bounded capacity, and fills toward 400 ms. An opt-in Windows
+  output-device test now plays the exact resident MP3, then the reported M4A,
+  then the MP3 again; all three selections reached 300 ms in no less than 200
+  ms of wall time. Human confirmation that the rebuilt app sounds clean remains
+  the acoustic acceptance check.

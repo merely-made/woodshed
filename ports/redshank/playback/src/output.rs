@@ -16,6 +16,22 @@ use firewheel::{
 
 use crate::backend::Sink;
 
+pub(super) const BUFFER_LOW_WATER_SECONDS: f64 = 0.40;
+
+fn stream_buffer_config() -> ResamplingChannelConfig {
+    ResamplingChannelConfig {
+        latency_seconds: 0.15,
+        capacity_seconds: 1.0,
+        // Decoding is a non-realtime producer. Dropping buffered source frames
+        // to chase a target occupancy makes playback audibly run ahead.
+        overflow_autocorrect_percent_threshold: None,
+        // Keep the source clock equal to decoded frames. Ordinary underruns may
+        // be silent, but must not insert unaccounted frames into that clock.
+        underflow_autocorrect_percent_threshold: None,
+        ..Default::default()
+    }
+}
+
 pub(super) struct AudioRuntime {
     context: FirewheelContext,
     output_channels: u32,
@@ -82,11 +98,7 @@ impl AudioRuntime {
                     .stream_info()
                     .context("Firewheel output stream unavailable")?
                     .sample_rate,
-                ResamplingChannelConfig {
-                    latency_seconds: 0.08,
-                    capacity_seconds: 0.20,
-                    ..Default::default()
-                },
+                stream_buffer_config(),
             )
             .map_err(|_| anyhow!("could not start decoded audio stream"))?;
         self.context.queue_event_for(writer, event.into());
@@ -120,5 +132,20 @@ impl AudioRuntime {
         self.context
             .update()
             .map_err(|error| anyhow!("audio runtime update failed: {error:?}"))
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn decoded_stream_buffer_never_discards_or_inserts_source_time() {
+        let config = stream_buffer_config();
+        assert_eq!(config.overflow_autocorrect_percent_threshold, None);
+        assert_eq!(config.underflow_autocorrect_percent_threshold, None);
+        assert!(config.capacity_seconds >= config.latency_seconds * 2.0);
+        assert!(BUFFER_LOW_WATER_SECONDS > config.latency_seconds);
+        assert!(BUFFER_LOW_WATER_SECONDS < config.capacity_seconds);
     }
 }
