@@ -87,6 +87,7 @@
   font-weight: 600;
 }
 
+.redshank-library-item,
 .redshank-queue-item,
 .redshank-note-item {
   display: flex;
@@ -98,6 +99,7 @@
   background: #17201f;
 }
 
+.redshank-library-select,
 .redshank-queue-select,
 .redshank-note-edit {
   flex: 1 1 auto;
@@ -186,6 +188,7 @@
   .redshank-workspace,
   .redshank-header,
   .redshank-compact,
+  .redshank-library-item,
   .redshank-queue-item,
   .redshank-note-item {
     align-items: stretch;

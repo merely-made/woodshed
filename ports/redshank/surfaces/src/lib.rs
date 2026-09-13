@@ -63,6 +63,7 @@ pub enum CompactCommand {
     SelectItem(ItemId),
     Enqueue(ItemId),
     Dequeue(ItemId),
+    RemoveLibraryItem(ItemId),
     MoveQueue {
         from: usize,
         to: usize,
@@ -367,14 +368,16 @@ pub fn surface(state: &RedshankSurfaceState) -> FullView {
         })
         .attr("aria-label", "Subscribe to podcast feed"),
     ) as FullView;
-    let library = state.library.iter().flat_map(|item| {
+    let library = state.library.iter().map(|item| {
         let id = item.id().clone();
         let title = item.title().to_owned();
+        let select_title = title.clone();
         let select = Box::new(
             button(title, move |state: &mut RedshankSurfaceState, _| {
                 state.request(CompactCommand::SelectItem(id.clone()));
             })
-            .attr("aria-label", "Select library item"),
+            .attr("class", "redshank-library-select")
+            .attr("aria-label", format!("Select {select_title}")),
         ) as FullView;
         let enqueue_id = item.id().clone();
         let enqueue_title = item.title().to_owned();
@@ -387,11 +390,11 @@ pub fn surface(state: &RedshankSurfaceState) -> FullView {
             )
             .attr("aria-label", format!("Add {} to queue", enqueue_title)),
         ) as FullView;
-        let mut controls = vec![select, enqueue];
+        let mut actions = vec![enqueue];
         if item.source().enclosure_url().is_some() && !item.source().is_cached() {
             let cache_id = item.id().clone();
             let cache_title = item.title().to_owned();
-            controls.push(Box::new(
+            actions.push(Box::new(
                 button(
                     "Download for offline listening",
                     move |state: &mut RedshankSurfaceState, _| {
@@ -406,7 +409,7 @@ pub fn surface(state: &RedshankSurfaceState) -> FullView {
         } else if item.source().is_cached() {
             let remove_id = item.id().clone();
             let remove_title = item.title().to_owned();
-            controls.push(Box::new(
+            actions.push(Box::new(
                 el("span", text("Available offline"))
                     .attr("role", "status")
                     .attr(
@@ -414,7 +417,7 @@ pub fn surface(state: &RedshankSurfaceState) -> FullView {
                         format!("{} is available offline", item.title()),
                     ),
             ));
-            controls.push(Box::new(
+            actions.push(Box::new(
                 button(
                     "Remove offline download",
                     move |state: &mut RedshankSurfaceState, _| {
@@ -427,7 +430,30 @@ pub fn surface(state: &RedshankSurfaceState) -> FullView {
                 ),
             ));
         }
-        controls
+        let remove_id = item.id().clone();
+        let remove_title = item.title().to_owned();
+        actions.push(Box::new(
+            button(
+                "Remove from library",
+                move |state: &mut RedshankSurfaceState, _| {
+                    state.request(CompactCommand::RemoveLibraryItem(remove_id.clone()));
+                },
+            )
+            .attr(
+                "aria-label",
+                format!("Remove {remove_title} from library, including its notes"),
+            ),
+        ));
+        Box::new(
+            el(
+                "article",
+                (
+                    select,
+                    el("div", actions).attr("class", "redshank-item-actions"),
+                ),
+            )
+            .attr("class", "redshank-library-item"),
+        ) as FullView
     });
     let queue = state.queue.iter().enumerate().map(|(index, id)| {
         let id = id.clone();
@@ -1161,6 +1187,32 @@ mod tests {
         assert_eq!(
             commands,
             [CompactCommand::RemoveCachedItem(ItemId("remote".into()))]
+        );
+    }
+
+    #[test]
+    fn library_item_exposes_an_explicit_removal_command() {
+        let mut runner = full_runner(anchored_state());
+        let remove = node_with_label(
+            &runner.dom().borrow(),
+            runner.root(),
+            "Remove Wetland from library, including its notes",
+        );
+        runner.dispatch_click(remove, PointerClick::at((1.0, 1.0)));
+        let mut commands = Vec::new();
+        runner.update(|state| commands.extend(state.drain_commands()));
+        assert_eq!(
+            commands,
+            [CompactCommand::RemoveLibraryItem(ItemId(
+                "episode-42".into()
+            ))]
+        );
+        assert!(
+            runner
+                .dom()
+                .borrow()
+                .outer_html(runner.root())
+                .contains("class=\"redshank-library-item\"")
         );
     }
 

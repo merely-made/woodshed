@@ -615,6 +615,40 @@ impl Desktop {
                     .map_err(|e| format!("Could not remove queued item: {e:?}"))?;
                 self.persistence.changed();
             },
+            CompactCommand::RemoveLibraryItem(id) => {
+                let was_selected = self.session.selected.as_ref() == Some(&id);
+                let item = self
+                    .session
+                    .model
+                    .remove_item(&id)
+                    .map_err(|e| format!("Could not remove library item: {e:?}"))?;
+                if was_selected {
+                    self.session.selected = None;
+                    let _ = self.send(PlaybackCommand::Stop);
+                }
+                if state
+                    .text_capture
+                    .as_ref()
+                    .is_some_and(|capture| capture.anchor.item_id == id)
+                {
+                    state.text_capture = None;
+                    state.editing_note = None;
+                    state.set_text_draft("");
+                }
+                let cached_path = match item.source() {
+                    MediaSource::Cached { path, .. } => Some(PathBuf::from(path)),
+                    _ => None,
+                };
+                self.persistence.changed();
+                if let Some(path) = cached_path {
+                    self.cache_removals.push(PendingCacheRemoval {
+                        revision: self.persistence.revision,
+                        id,
+                        path,
+                    });
+                }
+                state.notice = Some("Removed from library".into());
+            },
             CompactCommand::MoveQueue { from, to } => {
                 self.session
                     .model
@@ -1164,6 +1198,40 @@ mod tests {
         }
         assert!(!cached_path.exists());
         assert_eq!(desktop.cache_removals_in_flight, 0);
+    }
+
+    #[test]
+    fn removing_selected_library_item_clears_player_queue_and_editor() {
+        let directory = tempfile::tempdir().unwrap();
+        let mut desktop = desktop(directory.path());
+        let id = ItemId("a".into());
+        desktop.session.selected = Some(id.clone());
+        desktop.session.model.selected_item = Some(id.clone());
+        desktop.session.model.enqueue(&id).unwrap();
+        let mut state = RedshankSurfaceState::default();
+        state.text_capture = Some(TextCapture {
+            anchor: CaptureAnchor {
+                item_id: id.clone(),
+                offset_ms: 321,
+                representation: Default::default(),
+            },
+            draft: "draft".into(),
+        });
+        state.editing_note = Some(AnnotationId("draft".into()));
+        state.set_text_draft("draft");
+
+        desktop
+            .command(&mut state, CompactCommand::RemoveLibraryItem(id.clone()))
+            .unwrap();
+
+        assert!(!desktop.session.model.library.contains_key(&id));
+        assert!(desktop.session.model.queue.is_empty());
+        assert_eq!(desktop.session.selected, None);
+        assert_eq!(desktop.session.model.selected_item, None);
+        assert!(state.text_capture.is_none());
+        assert!(state.editing_note.is_none());
+        assert_eq!(state.text_editor.text(), "");
+        assert_eq!(state.notice.as_deref(), Some("Removed from library"));
     }
 
     #[test]
