@@ -50,6 +50,9 @@ Left/Right skip by the configured interval, and N begins a text note.
 The full application keeps the Player/Capture composition visible as its
 bottom listening dock across Listen, Library, Notes, and Settings. This is the
 same compact surface an embedding host can mount independently.
+Hosts explicitly advertise voice-capture availability; until one does, the
+voice-note action remains visible but disabled rather than emitting an
+unsupported command.
 
 Paste an HTTP(S) RSS or Atom URL into **Podcast subscriptions** and choose
 **Subscribe**. The standalone host fetches feeds off the UI thread with a 4 MiB

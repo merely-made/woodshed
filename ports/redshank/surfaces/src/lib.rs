@@ -87,6 +87,7 @@ pub struct CompactPlayerState {
     pub now_playing: Option<NowPlaying>,
     pub skip_backward_ms: u64,
     pub skip_forward_ms: u64,
+    pub voice_capture_available: bool,
     pub voice_capture_active: bool,
     commands: Vec<CompactCommand>,
 }
@@ -151,6 +152,7 @@ impl Default for CompactPlayerState {
             now_playing: None,
             skip_backward_ms: 15_000,
             skip_forward_ms: 30_000,
+            voice_capture_available: false,
             voice_capture_active: false,
             commands: Vec::new(),
         }
@@ -195,7 +197,7 @@ fn control(
 ) -> CompactView {
     Box::new(
         button(label, move |state: &mut CompactPlayerState, _| {
-            if enabled(state) {
+            if available && enabled(state) {
                 state.request(command.clone());
             }
         })
@@ -283,7 +285,12 @@ pub fn capture_surface(state: &CompactPlayerState) -> CompactView {
                     CompactCommand::AddTextNote,
                     enabled(state),
                 ),
-                control(voice_label, "R", voice_command, enabled(state)),
+                control(
+                    voice_label,
+                    "R",
+                    voice_command,
+                    enabled(state) && state.voice_capture_available,
+                ),
             ),
         )
         .attr("class", "redshank-capture")
@@ -422,7 +429,7 @@ pub fn surface(state: &RedshankSurfaceState) -> FullView {
         }
         controls
     });
-    let queue = state.queue.iter().enumerate().flat_map(|(index, id)| {
+    let queue = state.queue.iter().enumerate().map(|(index, id)| {
         let id = id.clone();
         let title = state
             .library
@@ -434,65 +441,76 @@ pub fn surface(state: &RedshankSurfaceState) -> FullView {
         let select_id = id.clone();
         let select = Box::new(
             button(
-                format!("Queue {}: {}", index + 1, title),
+                format!("{}. {}", index + 1, title),
                 move |state: &mut RedshankSurfaceState, _| {
                     state.request(CompactCommand::SelectItem(select_id.clone()));
                 },
             )
+            .attr("class", "redshank-queue-select")
             .attr("aria-label", format!("Select queued item {}", title)),
         ) as FullView;
+        let can_move_up = index > 0;
         let up = Box::new(
-            button(
-                "Move queue item up",
-                move |state: &mut RedshankSurfaceState, _| {
-                    if index > 0 {
-                        state.request(CompactCommand::MoveQueue {
-                            from: index,
-                            to: index - 1,
-                        });
-                    }
-                },
-            )
-            .attr("aria-label", format!("Move {} up", title)),
+            button("Up", move |state: &mut RedshankSurfaceState, _| {
+                if index > 0 {
+                    state.request(CompactCommand::MoveQueue {
+                        from: index,
+                        to: index - 1,
+                    });
+                }
+            })
+            .attr("aria-label", format!("Move {} up", title))
+            .attr("aria-disabled", if can_move_up { "false" } else { "true" })
+            .attr("tabindex", if can_move_up { "0" } else { "-1" }),
         ) as FullView;
         let down_title = title.clone();
+        let can_move_down = index + 1 < state.queue.len();
         let down = Box::new(
-            button(
-                "Move queue item down",
-                move |state: &mut RedshankSurfaceState, _| {
-                    if index + 1 < state.queue.len() {
-                        state.request(CompactCommand::MoveQueue {
-                            from: index,
-                            to: index + 1,
-                        });
-                    }
-                },
+            button("Down", move |state: &mut RedshankSurfaceState, _| {
+                if index + 1 < state.queue.len() {
+                    state.request(CompactCommand::MoveQueue {
+                        from: index,
+                        to: index + 1,
+                    });
+                }
+            })
+            .attr("aria-label", format!("Move {} down", down_title))
+            .attr(
+                "aria-disabled",
+                if can_move_down { "false" } else { "true" },
             )
-            .attr("aria-label", format!("Move {} down", down_title)),
+            .attr("tabindex", if can_move_down { "0" } else { "-1" }),
         ) as FullView;
         let remove_id = id.clone();
         let remove_title = title.clone();
         let remove = Box::new(
-            button(
-                "Remove from queue",
-                move |state: &mut RedshankSurfaceState, _| {
-                    state.request(CompactCommand::Dequeue(remove_id.clone()));
-                },
-            )
+            button("Remove", move |state: &mut RedshankSurfaceState, _| {
+                state.request(CompactCommand::Dequeue(remove_id.clone()));
+            })
             .attr("aria-label", format!("Remove {} from queue", remove_title)),
         ) as FullView;
-        [select, up, down, remove]
+        Box::new(
+            el(
+                "article",
+                (
+                    select,
+                    el("div", (up, down, remove)).attr("class", "redshank-item-actions"),
+                ),
+            )
+            .attr("class", "redshank-queue-item"),
+        ) as FullView
     });
-    let notes = state.notes.iter().flat_map(|(id, offset, body)| {
+    let notes = state.notes.iter().map(|(id, offset, body)| {
         let id = id.clone();
         let edit_id = id.clone();
         let edit = Box::new(
             button(
-                format!("Edit note at {} ms: {}", offset, body),
+                format!("{}  {}", format_time(*offset), body),
                 move |state: &mut RedshankSurfaceState, _| {
                     state.request(CompactCommand::BeginEditNote(edit_id.clone()));
                 },
             )
+            .attr("class", "redshank-note-edit")
             .attr("aria-label", "Edit note"),
         ) as FullView;
         let delete = Box::new(
@@ -501,7 +519,16 @@ pub fn surface(state: &RedshankSurfaceState) -> FullView {
             })
             .attr("aria-label", "Delete note"),
         ) as FullView;
-        [edit, delete]
+        Box::new(
+            el(
+                "article",
+                (
+                    edit,
+                    el("div", (delete,)).attr("class", "redshank-item-actions"),
+                ),
+            )
+            .attr("class", "redshank-note-item"),
+        ) as FullView
     });
     let save = state.text_capture.as_ref().map(|capture| {
         let anchor = capture.anchor.clone();
@@ -532,19 +559,34 @@ pub fn surface(state: &RedshankSurfaceState) -> FullView {
         )) as FullView
     });
     let editor = editor.into_iter();
-    let begin_text = Box::new(
-        button("Begin text note", |state: &mut RedshankSurfaceState, _| {
-            state.request(CompactCommand::BeginTextNote);
-        })
-        .attr("aria-label", "Begin text note")
-        .attr("aria-keyshortcuts", "N"),
-    ) as FullView;
-    let cancel_text = Box::new(
-        button("Cancel text note", |state: &mut RedshankSurfaceState, _| {
-            state.request(CompactCommand::CancelTextNote)
-        })
-        .attr("aria-label", "Cancel text note"),
-    ) as FullView;
+    let begin_text = (state.text_capture.is_none() && active == SurfaceTab::Notes).then(|| {
+        Box::new(
+            button("Add text note", |state: &mut RedshankSurfaceState, _| {
+                state.request(CompactCommand::BeginTextNote);
+            })
+            .attr("aria-label", "Begin text note")
+            .attr("aria-keyshortcuts", "N"),
+        ) as FullView
+    });
+    let cancel_text = state.text_capture.as_ref().map(|_| {
+        Box::new(
+            button("Cancel", |state: &mut RedshankSurfaceState, _| {
+                state.request(CompactCommand::CancelTextNote)
+            })
+            .attr("aria-label", "Cancel text note"),
+        ) as FullView
+    });
+    let empty_queue = state
+        .queue
+        .is_empty()
+        .then(|| el("p", text("Your queue is empty.")).attr("class", "redshank-empty-state"));
+    let empty_notes = (state.notes.is_empty() && state.text_capture.is_none()).then(|| {
+        el(
+            "p",
+            text("No notes for this episode yet. Add one from the player."),
+        )
+        .attr("class", "redshank-empty-state")
+    });
     Box::new(
         el(
             "main",
@@ -590,6 +632,224 @@ pub fn surface(state: &RedshankSurfaceState) -> FullView {
                         .attr("class", "redshank-notice")
                 }),
                 el(
+                    "div",
+                    (
+                        el(
+                            "section",
+                            (
+                                el("h2", text("Library")),
+                                library.collect::<Vec<_>>(),
+                                full_control(
+                                    "Open local file",
+                                    "Control+O",
+                                    CompactCommand::OpenLocalFile,
+                                ),
+                            ),
+                        )
+                        .attr("id", "redshank-library-panel")
+                        .attr("class", "redshank-panel redshank-library")
+                        .attr("role", "tabpanel")
+                        .attr("aria-label", "Library")
+                        .attr(
+                            "aria-hidden",
+                            if active == SurfaceTab::Library {
+                                "false"
+                            } else {
+                                "true"
+                            },
+                        ),
+                        el(
+                            "section",
+                            (
+                                el("h2", text("Podcast subscriptions")),
+                                subscriptions.collect::<Vec<_>>(),
+                                el(
+                                    "div",
+                                    Box::new(lens(
+                                        |input: &mut TextInput| textarea(input),
+                                        |state: &mut RedshankSurfaceState| {
+                                            &mut state.feed_url_editor
+                                        },
+                                    )),
+                                )
+                                .attr("class", "redshank-feed-url"),
+                                subscribe,
+                            ),
+                        )
+                        .attr("class", "redshank-panel redshank-subscriptions")
+                        .attr("role", "region")
+                        .attr("aria-label", "Podcast subscriptions")
+                        .attr(
+                            "aria-hidden",
+                            if active == SurfaceTab::Library {
+                                "false"
+                            } else {
+                                "true"
+                            },
+                        ),
+                        el(
+                            "section",
+                            (
+                                el("h2", text("Up next")),
+                                empty_queue,
+                                queue.collect::<Vec<_>>(),
+                            ),
+                        )
+                        .attr("id", "redshank-listen-panel")
+                        .attr("class", "redshank-panel redshank-queue")
+                        .attr("role", "tabpanel")
+                        .attr("aria-label", "Up next")
+                        .attr(
+                            "aria-hidden",
+                            if active == SurfaceTab::Listen {
+                                "false"
+                            } else {
+                                "true"
+                            },
+                        ),
+                        el(
+                            "section",
+                            (
+                                el("h2", text("Notes")),
+                                empty_notes,
+                                notes.collect::<Vec<_>>(),
+                                state.text_capture.as_ref().map(|capture| {
+                                    let title = state
+                                        .library
+                                        .iter()
+                                        .find(|item| item.id() == &capture.anchor.item_id)
+                                        .map(LibraryItem::title)
+                                        .unwrap_or(&capture.anchor.item_id.0);
+                                    el(
+                                        "p",
+                                        text(format!(
+                                            "Note for {title} at {}",
+                                            format_time(capture.anchor.offset_ms)
+                                        )),
+                                    )
+                                    .attr("aria-label", "Captured note target")
+                                }),
+                                el("div", editor.collect::<Vec<_>>())
+                                    .attr("id", "redshank-text-editor")
+                                    .attr("class", "redshank-text-editor"),
+                                save.collect::<Vec<_>>(),
+                                begin_text,
+                                cancel_text,
+                            ),
+                        )
+                        .attr("id", "redshank-notes-panel")
+                        .attr("class", "redshank-panel redshank-notes")
+                        .attr(
+                            "role",
+                            if active == SurfaceTab::Notes {
+                                "tabpanel"
+                            } else {
+                                "region"
+                            },
+                        )
+                        .attr("aria-label", "Notes")
+                        .attr(
+                            "aria-hidden",
+                            if matches!(active, SurfaceTab::Listen | SurfaceTab::Notes) {
+                                "false"
+                            } else {
+                                "true"
+                            },
+                        ),
+                        el(
+                            "section",
+                            (
+                                el("h2", text("Settings")),
+                                text(format!(
+                                    "Playback settings: back {} ms, forward {} ms, offline cache {} MiB",
+                                    state.settings.skip_backward_ms,
+                                    state.settings.skip_forward_ms,
+                                    state.settings.cache_budget_bytes / (1024 * 1024)
+                                )),
+                                full_control(
+                                    "Increase forward skip",
+                                    "",
+                                    CompactCommand::UpdateSettings(ListenerSettings {
+                                        skip_backward_ms: state.settings.skip_backward_ms,
+                                        skip_forward_ms: state
+                                            .settings
+                                            .skip_forward_ms
+                                            .saturating_add(5_000),
+                                        capture_playback: state.settings.capture_playback,
+                                        cache_budget_bytes: state.settings.cache_budget_bytes,
+                                    }),
+                                ),
+                                full_control(
+                                    "Decrease forward skip",
+                                    "",
+                                    CompactCommand::UpdateSettings(ListenerSettings {
+                                        skip_backward_ms: state.settings.skip_backward_ms,
+                                        skip_forward_ms: state
+                                            .settings
+                                            .skip_forward_ms
+                                            .saturating_sub(5_000),
+                                        capture_playback: state.settings.capture_playback,
+                                        cache_budget_bytes: state.settings.cache_budget_bytes,
+                                    }),
+                                ),
+                                full_control(
+                                    "Increase offline cache budget",
+                                    "",
+                                    CompactCommand::UpdateSettings(ListenerSettings {
+                                        cache_budget_bytes: state
+                                            .settings
+                                            .cache_budget_bytes
+                                            .saturating_add(256 * 1024 * 1024),
+                                        ..state.settings.clone()
+                                    }),
+                                ),
+                                full_control(
+                                    "Decrease offline cache budget",
+                                    "",
+                                    CompactCommand::UpdateSettings(ListenerSettings {
+                                        cache_budget_bytes: state
+                                            .settings
+                                            .cache_budget_bytes
+                                            .saturating_sub(256 * 1024 * 1024),
+                                        ..state.settings.clone()
+                                    }),
+                                ),
+                                full_control(
+                                    "Pause during capture",
+                                    "",
+                                    CompactCommand::UpdateSettings(ListenerSettings {
+                                        capture_playback:
+                                            redshank_model::CapturePlaybackBehavior::Pause,
+                                        ..state.settings.clone()
+                                    }),
+                                ),
+                                full_control(
+                                    "Continue during capture",
+                                    "",
+                                    CompactCommand::UpdateSettings(ListenerSettings {
+                                        capture_playback:
+                                            redshank_model::CapturePlaybackBehavior::Continue,
+                                        ..state.settings.clone()
+                                    }),
+                                ),
+                            ),
+                        )
+                        .attr("id", "redshank-settings-panel")
+                        .attr("class", "redshank-panel redshank-settings")
+                        .attr("role", "tabpanel")
+                        .attr("aria-label", "Settings")
+                        .attr(
+                            "aria-hidden",
+                            if active == SurfaceTab::Settings {
+                                "false"
+                            } else {
+                                "true"
+                            },
+                        ),
+                    ),
+                )
+                .attr("class", "redshank-workspace"),
+                el(
                     "section",
                     Box::new(lens(
                         |compact: &mut CompactPlayerState| compact_surface(compact),
@@ -599,202 +859,6 @@ pub fn surface(state: &RedshankSurfaceState) -> FullView {
                 .attr("class", "redshank-dock")
                 .attr("role", "region")
                 .attr("aria-label", "Player"),
-                el(
-                    "section",
-                    (
-                        library.collect::<Vec<_>>(),
-                        full_control(
-                            "Open local file",
-                            "Control+O",
-                            CompactCommand::OpenLocalFile,
-                        ),
-                    ),
-                )
-                .attr("id", "redshank-library-panel")
-                .attr("class", "redshank-panel redshank-library")
-                .attr("role", "tabpanel")
-                .attr("aria-label", "Library")
-                .attr(
-                    "aria-hidden",
-                    if active == SurfaceTab::Library {
-                        "false"
-                    } else {
-                        "true"
-                    },
-                ),
-                el(
-                    "section",
-                    (
-                        subscriptions.collect::<Vec<_>>(),
-                        el(
-                            "div",
-                            Box::new(lens(
-                                |input: &mut TextInput| textarea(input),
-                                |state: &mut RedshankSurfaceState| &mut state.feed_url_editor,
-                            )),
-                        )
-                        .attr("class", "redshank-feed-url"),
-                        subscribe,
-                    ),
-                )
-                .attr("class", "redshank-panel redshank-subscriptions")
-                .attr("role", "region")
-                .attr("aria-label", "Podcast subscriptions")
-                .attr(
-                    "aria-hidden",
-                    if active == SurfaceTab::Library {
-                        "false"
-                    } else {
-                        "true"
-                    },
-                ),
-                el("section", (queue.collect::<Vec<_>>(),))
-                    .attr("id", "redshank-listen-panel")
-                    .attr("class", "redshank-panel redshank-queue")
-                    .attr("role", "tabpanel")
-                    .attr("aria-label", "Up next")
-                    .attr(
-                        "aria-hidden",
-                        if active == SurfaceTab::Listen {
-                            "false"
-                        } else {
-                            "true"
-                        },
-                    ),
-                el(
-                    "section",
-                    (
-                        notes.collect::<Vec<_>>(),
-                        state.text_capture.as_ref().map(|capture| {
-                            let title = state
-                                .library
-                                .iter()
-                                .find(|item| item.id() == &capture.anchor.item_id)
-                                .map(LibraryItem::title)
-                                .unwrap_or(&capture.anchor.item_id.0);
-                            el(
-                                "p",
-                                text(format!(
-                                    "Note for {title} at {}",
-                                    format_time(capture.anchor.offset_ms)
-                                )),
-                            )
-                            .attr("aria-label", "Captured note target")
-                        }),
-                        el("div", editor.collect::<Vec<_>>())
-                            .attr("id", "redshank-text-editor")
-                            .attr("class", "redshank-text-editor"),
-                        save.collect::<Vec<_>>(),
-                        begin_text,
-                        cancel_text,
-                    ),
-                )
-                .attr("id", "redshank-notes-panel")
-                .attr("class", "redshank-panel redshank-notes")
-                .attr(
-                    "role",
-                    if active == SurfaceTab::Notes {
-                        "tabpanel"
-                    } else {
-                        "region"
-                    },
-                )
-                .attr("aria-label", "Notes")
-                .attr(
-                    "aria-hidden",
-                    if matches!(active, SurfaceTab::Listen | SurfaceTab::Notes) {
-                        "false"
-                    } else {
-                        "true"
-                    },
-                ),
-                el(
-                    "section",
-                    (
-                        text(format!(
-                            "Playback settings: back {} ms, forward {} ms, offline cache {} MiB",
-                            state.settings.skip_backward_ms,
-                            state.settings.skip_forward_ms,
-                            state.settings.cache_budget_bytes / (1024 * 1024)
-                        )),
-                        full_control(
-                            "Increase forward skip",
-                            "",
-                            CompactCommand::UpdateSettings(ListenerSettings {
-                                skip_backward_ms: state.settings.skip_backward_ms,
-                                skip_forward_ms: state
-                                    .settings
-                                    .skip_forward_ms
-                                    .saturating_add(5_000),
-                                capture_playback: state.settings.capture_playback,
-                                cache_budget_bytes: state.settings.cache_budget_bytes,
-                            }),
-                        ),
-                        full_control(
-                            "Decrease forward skip",
-                            "",
-                            CompactCommand::UpdateSettings(ListenerSettings {
-                                skip_backward_ms: state.settings.skip_backward_ms,
-                                skip_forward_ms: state
-                                    .settings
-                                    .skip_forward_ms
-                                    .saturating_sub(5_000),
-                                capture_playback: state.settings.capture_playback,
-                                cache_budget_bytes: state.settings.cache_budget_bytes,
-                            }),
-                        ),
-                        full_control(
-                            "Increase offline cache budget",
-                            "",
-                            CompactCommand::UpdateSettings(ListenerSettings {
-                                cache_budget_bytes: state
-                                    .settings
-                                    .cache_budget_bytes
-                                    .saturating_add(256 * 1024 * 1024),
-                                ..state.settings.clone()
-                            }),
-                        ),
-                        full_control(
-                            "Decrease offline cache budget",
-                            "",
-                            CompactCommand::UpdateSettings(ListenerSettings {
-                                cache_budget_bytes: state
-                                    .settings
-                                    .cache_budget_bytes
-                                    .saturating_sub(256 * 1024 * 1024),
-                                ..state.settings.clone()
-                            }),
-                        ),
-                        full_control(
-                            "Pause during capture",
-                            "",
-                            CompactCommand::UpdateSettings(ListenerSettings {
-                                capture_playback: redshank_model::CapturePlaybackBehavior::Pause,
-                                ..state.settings.clone()
-                            }),
-                        ),
-                        full_control(
-                            "Continue during capture",
-                            "",
-                            CompactCommand::UpdateSettings(ListenerSettings {
-                                capture_playback: redshank_model::CapturePlaybackBehavior::Continue,
-                                ..state.settings.clone()
-                            }),
-                        ),
-                    ),
-                )
-                .attr("id", "redshank-settings-panel")
-                .attr("class", "redshank-panel redshank-settings")
-                .attr("role", "tabpanel")
-                .attr("aria-label", "Settings")
-                .attr(
-                    "aria-hidden",
-                    if active == SurfaceTab::Settings {
-                        "false"
-                    } else {
-                        "true"
-                    },
-                ),
             ),
         )
         .attr(
@@ -886,6 +950,9 @@ mod tests {
         assert!(markup.contains("aria-label=\"Capture\""));
         assert!(markup.contains("aria-label=\"Pause\" aria-keyshortcuts=\"Space\""));
         assert!(markup.contains("aria-label=\"Add text note\" aria-keyshortcuts=\"N\""));
+        assert!(markup.contains(
+            "aria-label=\"Start voice note\" aria-keyshortcuts=\"R\" aria-disabled=\"true\""
+        ));
         assert!(markup.contains("Wetland"));
         assert!(markup.contains("1:02 / 1:02:03"));
     }
@@ -912,6 +979,11 @@ mod tests {
         let note = node_with_label(&capture.dom().borrow(), capture.root(), "Add text note");
         capture.dispatch_click(note, PointerClick::at((1.0, 1.0)));
         let mut commands = Vec::new();
+        capture.update(|state| commands.extend(state.drain_commands()));
+        assert_eq!(commands, [CompactCommand::AddTextNote]);
+
+        let voice = node_with_label(&capture.dom().borrow(), capture.root(), "Start voice note");
+        capture.dispatch_click(voice, PointerClick::at((1.0, 1.0)));
         capture.update(|state| commands.extend(state.drain_commands()));
         assert_eq!(commands, [CompactCommand::AddTextNote]);
     }
@@ -1012,6 +1084,33 @@ mod tests {
         assert!(commands.is_empty());
         let markup = runner.dom().borrow().outer_html(runner.root());
         assert!(markup.contains("aria-label=\"Library\" aria-selected=\"true\""));
+    }
+
+    #[test]
+    fn listen_surface_uses_compact_rows_and_hides_idle_editor_actions() {
+        let mut state = RedshankSurfaceState {
+            compact: playing_state(),
+            ..Default::default()
+        };
+        state.library.push(LibraryItem::LocalAudio {
+            id: ItemId("episode-42".into()),
+            title: "Wetland".into(),
+            source: redshank_model::MediaSource::Local {
+                path: "wetland.mp3".into(),
+            },
+        });
+        state.queue.push(ItemId("episode-42".into()));
+        let runner = full_runner(state);
+        let markup = runner.dom().borrow().outer_html(runner.root());
+        assert!(markup.contains("class=\"redshank-workspace\""));
+        assert!(markup.contains("class=\"redshank-queue-item\""));
+        assert!(markup.contains(">Up next<"));
+        assert!(markup.contains("No notes for this episode yet"));
+        assert!(!markup.contains("aria-label=\"Begin text note\""));
+        assert!(!markup.contains("aria-label=\"Cancel text note\""));
+        assert!(
+            markup.find("class=\"redshank-workspace\"") < markup.find("class=\"redshank-dock\"")
+        );
     }
 
     #[test]
