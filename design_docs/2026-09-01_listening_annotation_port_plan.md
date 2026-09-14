@@ -1214,7 +1214,11 @@ rejected for the reasons recorded in the 2026-09-01 planning pass.
   and sink under the same Firewheel/CPAL output authority, and restores prior
   episode playback after completion or an explicit stop. Snapshot projection
   keeps the note preview separate from episode identity, receipt, and progress.
-  The isolated workspace passes 61 default tests with five device or fixture
+  The first headed audition exposed that the reduced Symphonia feature set had
+  omitted both the WAV demuxer and PCM decoder used by Redshank's own capture
+  format. Both are now explicit dependencies, with a regression that writes
+  the exact mono 16-bit PCM WAV shape and decodes real frames from it.
+  The isolated workspace passes 62 default tests with five device or fixture
   gates skipped, formatting, and strict Clippy. Physical recorded-body sound
   remains a headed acceptance gate. Duck, reaction offset, W3C export, and
   Turnstone's capture adapter remain open, so Phase 5 is not closed.

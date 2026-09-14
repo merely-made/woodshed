@@ -14,3 +14,7 @@ redshank-model.workspace = true
 symphonia.workspace = true
 ureq.workspace = true
 servo-media-player.workspace = true
+
+[dev-dependencies]
+hound.workspace = true
+tempfile.workspace = true

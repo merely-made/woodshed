@@ -168,19 +168,10 @@ fn fail_preview(
     token: Option<u64>,
     error: impl std::fmt::Display,
 ) {
-    let Some(mut session) = preview.take() else {
+    let Some(session) = preview.take() else {
         return;
     };
     let mut message = error.to_string();
-    if let Err(signal) =
-        session
-            .controller
-            .signal(servo_media_player::controller::PlaybackSignal::Error(
-                message.clone(),
-            ))
-    {
-        message.push_str(&format!("; preview error signal failed: {signal:?}"));
-    }
     if let Err(cleanup) = session.backend.borrow_mut().clear() {
         message.push_str(&format!("; preview cleanup failed: {cleanup}"));
     }
