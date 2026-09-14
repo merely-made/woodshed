@@ -51,9 +51,10 @@ Left/Right skip by the configured interval, and N begins a text note.
 Hold the voice-note control while speaking and release it to save, or press R
 once to start and again to finish. The standalone host uses the system default
 microphone. A denied or lost device leaves playback and the rest of the
-application usable. Opening a voice note returns episode playback to its frozen
-capture anchor; playback of the recorded note body is a later single-output
-integration slice.
+application usable. A voice-note row separates its source timestamp from its
+Play/Stop action. Audition pauses a playing episode, uses the same host-owned
+Firewheel output, and restores episode playback when the note finishes or is
+stopped. Opening the timestamp returns episode playback to its frozen anchor.
 The full application keeps the Player/Capture composition visible as its
 bottom listening dock across Listen, Library, Notes, and Settings. This is the
 same compact surface an embedding host can mount independently.
@@ -94,9 +95,9 @@ model saves retain the object. The model exposes a deterministic least-recently
 used candidate order for a later configurable reclamation policy.
 
 The landed slices support local, bounded progressive HTTP(S), manual feed
-subscriptions, manually cached offline listening, text notes, and local voice
-capture. Automatic refresh and download, automatic eviction, voice-note body
-audition, duck/reaction-offset capture settings, W3C annotation export,
+subscriptions, manually cached offline listening, text notes, local voice
+capture, and voice-note audition. Automatic refresh and download, automatic
+eviction, duck/reaction-offset capture settings, W3C annotation export,
 rate/volume controls, representation-drift warnings/remapping, and Turnstone
 embedding remain open.
 A local digest is computed before decode from the opened file; it does not make

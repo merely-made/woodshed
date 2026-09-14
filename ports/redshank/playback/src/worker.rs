@@ -7,11 +7,12 @@ use std::{
     time::Duration,
 };
 
-use redshank_model::RepresentationReceipt;
+use redshank_model::{MediaSource, RepresentationReceipt};
 
 use crate::backend::PumpState;
 use crate::{
-    Backend, PlaybackCommand, PlaybackSnapshot, PlaybackState, SnapshotCell, controller_adapter,
+    Backend, PlaybackCommand, PlaybackSnapshot, PlaybackState, PreviewSnapshot, PreviewState,
+    SnapshotCell, controller_adapter,
 };
 
 fn publish(
@@ -34,6 +35,7 @@ fn publish(
             position_ms,
             duration_ms,
             source,
+            preview: cell.value.preview.clone(),
         };
         if cell.value == next {
             None
@@ -54,6 +56,286 @@ fn publish(
     };
     if let Some(wake) = wake {
         wake();
+    }
+}
+
+fn publish_preview(snapshot: &Arc<Mutex<SnapshotCell>>, preview: Option<PreviewSnapshot>) {
+    let wake = {
+        let mut cell = snapshot
+            .lock()
+            .unwrap_or_else(|poisoned| poisoned.into_inner());
+        let mut next = cell.value.clone();
+        next.preview = preview;
+        if cell.value == next {
+            None
+        } else {
+            let position_only = cell.value.load_token == next.load_token
+                && cell.value.representation == next.representation
+                && cell.value.state == next.state
+                && cell.value.position_ms == next.position_ms
+                && cell.value.duration_ms == next.duration_ms
+                && cell.value.source == next.source
+                && match (&cell.value.preview, &next.preview) {
+                    (Some(previous), Some(current)) => {
+                        previous.id == current.id
+                            && previous.state == current.state
+                            && previous.duration_ms == current.duration_ms
+                    },
+                    _ => false,
+                };
+            cell.value = next;
+            if !position_only || cell.last_wake.elapsed() >= Duration::from_millis(100) {
+                cell.last_wake = std::time::Instant::now();
+                cell.wake.clone()
+            } else {
+                None
+            }
+        }
+    };
+    if let Some(wake) = wake {
+        wake();
+    }
+}
+
+struct PreviewSession {
+    id: String,
+    controller: controller_adapter::Controller,
+    backend: controller_adapter::BackendRef,
+    resume_main: bool,
+}
+
+fn preview_snapshot(
+    preview: &mut PreviewSession,
+    state: PreviewState,
+) -> Result<PreviewSnapshot, String> {
+    let view = preview
+        .controller
+        .snapshot()
+        .map_err(|error| format!("{error:?}"))?;
+    Ok(PreviewSnapshot {
+        id: preview.id.clone(),
+        state,
+        position_ms: view.position.as_millis() as u64,
+        duration_ms: view.duration.map(|duration| duration.as_millis() as u64),
+    })
+}
+
+fn stop_preview(
+    preview: &mut Option<PreviewSession>,
+    controller: &mut controller_adapter::Controller,
+    backend: &controller_adapter::BackendRef,
+    snapshot: &Arc<Mutex<SnapshotCell>>,
+    token: Option<u64>,
+    resume_main: bool,
+) {
+    let Some(session) = preview.take() else {
+        publish_preview(snapshot, None);
+        return;
+    };
+    let id = session.id;
+    if let Err(error) = session.backend.borrow_mut().clear() {
+        publish_preview(
+            snapshot,
+            Some(PreviewSnapshot {
+                id,
+                state: PreviewState::Unavailable(format!(
+                    "Could not stop voice-note playback: {error}"
+                )),
+                position_ms: 0,
+                duration_ms: None,
+            }),
+        );
+    } else {
+        publish_preview(snapshot, None);
+    }
+    if resume_main && session.resume_main {
+        let _ = command(
+            controller,
+            backend,
+            snapshot,
+            token,
+            servo_media_player::controller::PlaybackCommand::Play,
+            "resume after preview",
+        );
+    }
+}
+
+fn fail_preview(
+    preview: &mut Option<PreviewSession>,
+    controller: &mut controller_adapter::Controller,
+    backend: &controller_adapter::BackendRef,
+    snapshot: &Arc<Mutex<SnapshotCell>>,
+    token: Option<u64>,
+    error: impl std::fmt::Display,
+) {
+    let Some(mut session) = preview.take() else {
+        return;
+    };
+    let mut message = error.to_string();
+    if let Err(signal) =
+        session
+            .controller
+            .signal(servo_media_player::controller::PlaybackSignal::Error(
+                message.clone(),
+            ))
+    {
+        message.push_str(&format!("; preview error signal failed: {signal:?}"));
+    }
+    if let Err(cleanup) = session.backend.borrow_mut().clear() {
+        message.push_str(&format!("; preview cleanup failed: {cleanup}"));
+    }
+    publish_preview(
+        snapshot,
+        Some(PreviewSnapshot {
+            id: session.id,
+            state: PreviewState::Unavailable(message),
+            position_ms: 0,
+            duration_ms: None,
+        }),
+    );
+    if session.resume_main {
+        let _ = command(
+            controller,
+            backend,
+            snapshot,
+            token,
+            servo_media_player::controller::PlaybackCommand::Play,
+            "resume after preview failure",
+        );
+    }
+}
+
+fn start_preview(
+    preview: &mut Option<PreviewSession>,
+    controller: &mut controller_adapter::Controller,
+    backend: &controller_adapter::BackendRef,
+    snapshot: &Arc<Mutex<SnapshotCell>>,
+    token: Option<u64>,
+    id: String,
+    source: MediaSource,
+) {
+    let resume_main = preview.as_ref().map_or_else(
+        || controller.state() == servo_media_player::PlaybackState::Playing,
+        |active| active.resume_main,
+    );
+    stop_preview(preview, controller, backend, snapshot, token, false);
+    if controller.state() == servo_media_player::PlaybackState::Playing
+        && !command(
+            controller,
+            backend,
+            snapshot,
+            token,
+            servo_media_player::controller::PlaybackCommand::Pause,
+            "pause for preview",
+        )
+    {
+        return;
+    }
+
+    let audio = backend.borrow().audio_handle();
+    let preview_backend = Rc::new(RefCell::new(Backend::with_audio(audio)));
+    let preview_controller = controller_adapter::controller(preview_backend.clone());
+    *preview = Some(PreviewSession {
+        id: id.clone(),
+        controller: preview_controller,
+        backend: preview_backend,
+        resume_main,
+    });
+    publish_preview(
+        snapshot,
+        Some(PreviewSnapshot {
+            id,
+            state: PreviewState::Loading,
+            position_ms: 0,
+            duration_ms: None,
+        }),
+    );
+
+    let load = preview
+        .as_mut()
+        .expect("preview session was initialized")
+        .controller
+        .command(servo_media_player::controller::PlaybackCommand::Load(
+            controller_adapter::map_source(&source),
+        ));
+    if let Err(error) = load {
+        fail_preview(
+            preview,
+            controller,
+            backend,
+            snapshot,
+            token,
+            format!("Could not load voice note: {error:?}"),
+        );
+        return;
+    }
+    let cached_admission = source.cached_representation().map(|expected| {
+        let session = preview.as_mut().expect("preview session was initialized");
+        session
+            .backend
+            .borrow_mut()
+            .admit_cached_representation(expected)
+    });
+    if let Some(Err(error)) = cached_admission {
+        fail_preview(preview, controller, backend, snapshot, token, error);
+        return;
+    }
+    let loading = preview_snapshot(
+        preview.as_mut().expect("preview session was initialized"),
+        PreviewState::Loading,
+    );
+    match loading {
+        Ok(loading) => publish_preview(snapshot, Some(loading)),
+        Err(error) => fail_preview(preview, controller, backend, snapshot, token, error),
+    }
+}
+
+fn complete_preview(
+    preview: &mut Option<PreviewSession>,
+    controller: &mut controller_adapter::Controller,
+    backend: &controller_adapter::BackendRef,
+    snapshot: &Arc<Mutex<SnapshotCell>>,
+    token: Option<u64>,
+) {
+    let Some(mut session) = preview.take() else {
+        return;
+    };
+    let result = session
+        .controller
+        .signal(servo_media_player::controller::PlaybackSignal::EndOfStream)
+        .map_err(|error| format!("Could not finish voice-note playback: {error:?}"))
+        .and_then(|()| preview_snapshot(&mut session, PreviewState::Ended));
+    let cleanup = session.backend.borrow_mut().clear();
+    match (result, cleanup) {
+        (Ok(ended), Ok(())) => publish_preview(snapshot, Some(ended)),
+        (Err(error), Ok(())) | (Ok(_), Err(error)) => publish_preview(
+            snapshot,
+            Some(PreviewSnapshot {
+                id: session.id.clone(),
+                state: PreviewState::Unavailable(error),
+                position_ms: 0,
+                duration_ms: None,
+            }),
+        ),
+        (Err(error), Err(cleanup)) => publish_preview(
+            snapshot,
+            Some(PreviewSnapshot {
+                id: session.id.clone(),
+                state: PreviewState::Unavailable(format!("{error}; additionally {cleanup}")),
+                position_ms: 0,
+                duration_ms: None,
+            }),
+        ),
+    }
+    if session.resume_main {
+        let _ = command(
+            controller,
+            backend,
+            snapshot,
+            token,
+            servo_media_player::controller::PlaybackCommand::Play,
+            "resume after preview",
+        );
     }
 }
 
@@ -149,6 +431,7 @@ fn run_session(receiver: &mpsc::Receiver<PlaybackCommand>, snapshot: Arc<Mutex<S
     let backend = Rc::new(RefCell::new(Backend::default()));
     let mut controller = controller_adapter::controller(backend.clone());
     let mut token = None;
+    let mut preview = None;
     loop {
         while let Ok(message) = receiver.try_recv() {
             match message {
@@ -160,6 +443,14 @@ fn run_session(receiver: &mpsc::Receiver<PlaybackCommand>, snapshot: Arc<Mutex<S
                     source,
                     resume_ms,
                 } => {
+                    stop_preview(
+                        &mut preview,
+                        &mut controller,
+                        &backend,
+                        &snapshot,
+                        token,
+                        false,
+                    );
                     token = Some(next);
                     publish(
                         &snapshot,
@@ -204,6 +495,14 @@ fn run_session(receiver: &mpsc::Receiver<PlaybackCommand>, snapshot: Arc<Mutex<S
                     // Pump owns the first decode and creates the sink before Ready.
                 },
                 PlaybackCommand::Play => {
+                    stop_preview(
+                        &mut preview,
+                        &mut controller,
+                        &backend,
+                        &snapshot,
+                        token,
+                        false,
+                    );
                     if !command(
                         &mut controller,
                         &backend,
@@ -216,6 +515,14 @@ fn run_session(receiver: &mpsc::Receiver<PlaybackCommand>, snapshot: Arc<Mutex<S
                     }
                 },
                 PlaybackCommand::Pause => {
+                    stop_preview(
+                        &mut preview,
+                        &mut controller,
+                        &backend,
+                        &snapshot,
+                        token,
+                        false,
+                    );
                     if !command(
                         &mut controller,
                         &backend,
@@ -228,6 +535,14 @@ fn run_session(receiver: &mpsc::Receiver<PlaybackCommand>, snapshot: Arc<Mutex<S
                     }
                 },
                 PlaybackCommand::Stop => {
+                    stop_preview(
+                        &mut preview,
+                        &mut controller,
+                        &backend,
+                        &snapshot,
+                        token,
+                        false,
+                    );
                     if !command(
                         &mut controller,
                         &backend,
@@ -240,6 +555,14 @@ fn run_session(receiver: &mpsc::Receiver<PlaybackCommand>, snapshot: Arc<Mutex<S
                     }
                 },
                 PlaybackCommand::Seek(position) => {
+                    stop_preview(
+                        &mut preview,
+                        &mut controller,
+                        &backend,
+                        &snapshot,
+                        token,
+                        false,
+                    );
                     if !command(
                         &mut controller,
                         &backend,
@@ -253,6 +576,25 @@ fn run_session(receiver: &mpsc::Receiver<PlaybackCommand>, snapshot: Arc<Mutex<S
                         continue;
                     }
                 },
+                PlaybackCommand::StartPreview { id, source } => {
+                    start_preview(
+                        &mut preview,
+                        &mut controller,
+                        &backend,
+                        &snapshot,
+                        token,
+                        id,
+                        source,
+                    );
+                },
+                PlaybackCommand::StopPreview => stop_preview(
+                    &mut preview,
+                    &mut controller,
+                    &backend,
+                    &snapshot,
+                    token,
+                    true,
+                ),
             }
             if let Err(error) = project(&mut controller, &backend, &snapshot, token) {
                 fail(&mut controller, &backend, &snapshot, token, error);
@@ -308,6 +650,86 @@ fn run_session(receiver: &mpsc::Receiver<PlaybackCommand>, snapshot: Arc<Mutex<S
                 format!("backend playback failed: {error}"),
             ),
         }
+        let preview_pump = preview
+            .as_ref()
+            .map(|session| session.backend.borrow_mut().pump());
+        if let Some(preview_pump) = preview_pump {
+            match preview_pump {
+                Ok(PumpState::Ready) => {
+                    let ready = preview
+                        .as_mut()
+                        .expect("preview pump requires a session")
+                        .controller
+                        .signal(servo_media_player::controller::PlaybackSignal::Ready)
+                        .and_then(|()| {
+                            preview
+                                .as_mut()
+                                .expect("preview pump requires a session")
+                                .controller
+                                .command(servo_media_player::controller::PlaybackCommand::Play)
+                        });
+                    if let Err(error) = ready {
+                        fail_preview(
+                            &mut preview,
+                            &mut controller,
+                            &backend,
+                            &snapshot,
+                            token,
+                            format!("Could not start voice-note playback: {error:?}"),
+                        );
+                    } else {
+                        let playing = preview_snapshot(
+                            preview.as_mut().expect("preview pump requires a session"),
+                            PreviewState::Playing,
+                        );
+                        match playing {
+                            Ok(playing) => publish_preview(&snapshot, Some(playing)),
+                            Err(error) => fail_preview(
+                                &mut preview,
+                                &mut controller,
+                                &backend,
+                                &snapshot,
+                                token,
+                                error,
+                            ),
+                        }
+                    }
+                },
+                Ok(PumpState::EndOfStream) => {
+                    complete_preview(&mut preview, &mut controller, &backend, &snapshot, token)
+                },
+                Ok(PumpState::Idle)
+                    if preview.as_ref().is_some_and(|session| {
+                        session.controller.state() == servo_media_player::PlaybackState::Playing
+                    }) =>
+                {
+                    let playing = preview_snapshot(
+                        preview.as_mut().expect("preview pump requires a session"),
+                        PreviewState::Playing,
+                    );
+                    match playing {
+                        Ok(playing) => publish_preview(&snapshot, Some(playing)),
+                        Err(error) => fail_preview(
+                            &mut preview,
+                            &mut controller,
+                            &backend,
+                            &snapshot,
+                            token,
+                            error,
+                        ),
+                    }
+                },
+                Ok(PumpState::Idle) => {},
+                Err(error) => fail_preview(
+                    &mut preview,
+                    &mut controller,
+                    &backend,
+                    &snapshot,
+                    token,
+                    format!("Voice-note playback failed: {error}"),
+                ),
+            }
+        }
         thread::sleep(Duration::from_millis(5));
     }
 }
@@ -326,6 +748,7 @@ pub(super) fn run(receiver: mpsc::Receiver<PlaybackCommand>, snapshot: Arc<Mutex
             .unwrap_or_else(|poisoned| poisoned.into_inner())
             .value
             .load_token;
+        publish_preview(&snapshot, None);
         publish(
             &snapshot,
             token,
