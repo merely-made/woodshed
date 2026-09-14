@@ -170,8 +170,8 @@ fn sync_directory(_path: &Path) -> Result<(), StoreError> {
 #[cfg(test)]
 mod tests {
     use redshank_model::{
-        Annotation, AnnotationId, ItemId, LibraryItem, MediaSource, NoteBody, Progress,
-        RepresentationReceipt, TimedTarget,
+        Annotation, AnnotationId, CaptureAnchor, ItemId, LibraryItem, ListeningSession,
+        MediaSource, NoteBody, NotePrivacy, Progress, RepresentationReceipt, TimedTarget,
     };
     use tempfile::tempdir;
 
@@ -265,13 +265,40 @@ mod tests {
                     target: TimedTarget {
                         item_id: episode.clone(),
                         offset_ms: 90_500,
+                        end_offset_ms: None,
+                        pressed_offset_ms: Some(92_000),
                         representation: receipt.clone(),
                     },
                     body,
                     created_at_ms: 600,
+                    privacy: NotePrivacy::Private,
                 })
                 .unwrap();
         }
+        model.settings.note_privacy = NotePrivacy::Shareable;
+        model
+            .add_span_annotation(
+                AnnotationId("span-note".into()),
+                CaptureAnchor {
+                    item_id: episode.clone(),
+                    offset_ms: 100_000,
+                    end_offset_ms: None,
+                    pressed_offset_ms: None,
+                    representation: receipt,
+                },
+                140_000,
+                "the whole passage".into(),
+                700,
+            )
+            .unwrap();
+        model.record_listening_session(ListeningSession {
+            item_id: episode,
+            start_ms: 0,
+            stop_ms: 91_000,
+            started_at_ms: 400,
+            ended_at_ms: 500,
+            completed: false,
+        });
         model
     }
 

@@ -1,0 +1,28 @@
+# Fixture: remote-buffering. The driver starts the range server for this one.
+settle 30
+act tab:library
+settle 15
+assert snap feed-count >= 1
+capture library-roster
+act feed:http://127.0.0.1:8765/feed.xml
+settle 15
+capture library-episodes
+
+act select:ep-1
+act play
+# Buffering is the one in-flight condition the lane can see, so `wait` is real
+# here rather than a guessed frame count.
+settle 5
+capture buffering
+wait 300
+settle 15
+capture buffered
+
+act tab:mere
+settle 15
+capture mere-feed-chain
+act tab:library
+act feed:
+settle 10
+capture library-roster-again
+log library_feed complete

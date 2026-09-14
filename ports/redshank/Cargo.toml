@@ -1,6 +1,6 @@
 [workspace]
 resolver = "3"
-members = ["cache", "desktop", "feed", "model", "storage", "surfaces", "playback"]
+members = ["cache", "desktop", "feed", "model", "storage", "surfaces", "playback", "web"]
 exclude = ["spikes/playback"]
 
 [workspace.package]
@@ -11,7 +11,9 @@ rust-version = "1.97"
 [workspace.dependencies]
 cambium = { git = "https://github.com/merely-made/mere.git", rev = "54a51396d9d24a5435bcafecb878da9deecaf6c5" }
 cambium-genet-winit-host = { git = "https://github.com/merely-made/mere.git", rev = "54a51396d9d24a5435bcafecb878da9deecaf6c5" }
+tinct = { git = "https://github.com/merely-made/mere.git", rev = "54a51396d9d24a5435bcafecb878da9deecaf6c5" }
 genet-scripted-dom = { git = "https://github.com/merely-made/genet.git", rev = "9e8f9dc2f3ddc0af1658580bb51964462a03923f" }
+genet-probe = { git = "https://github.com/merely-made/genet.git", rev = "9e8f9dc2f3ddc0af1658580bb51964462a03923f" }
 layout-dom-api = { git = "https://github.com/merely-made/genet.git", rev = "9e8f9dc2f3ddc0af1658580bb51964462a03923f" }
 servo-media-player = { git = "https://github.com/merely-made/genet.git", rev = "9e8f9dc2f3ddc0af1658580bb51964462a03923f" }
 redshank-model = { path = "model" }
@@ -22,6 +24,7 @@ redshank-surfaces = { path = "surfaces" }
 redshank-playback = { path = "playback" }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
+image = { version = "0.25", default-features = false, features = ["png"] }
 tempfile = "3"
 anyhow = "1"
 blake3 = "1"

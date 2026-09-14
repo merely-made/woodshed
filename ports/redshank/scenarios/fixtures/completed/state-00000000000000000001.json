@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "library": {
+    "local-done": {
+      "kind": "local_audio",
+      "id": "local-done",
+      "title": "Finished phase-4 fixture",
+      "source": {
+        "kind": "local",
+        "path": "C:\\Users\\mark_\\Code\\testing\\woodshed\\redshank-phase4-20260906\\stereo.m4a"
+      }
+    }
+  },
+  "subscriptions": {},
+  "queue": [
+    "local-done"
+  ],
+  "selected_item": "local-done",
+  "progress": {
+    "local-done": {
+      "position_ms": 32000,
+      "completed": true,
+      "updated_at_ms": 1757000000000
+    }
+  },
+  "annotations": {},
+  "listening_sessions": [
+    {
+      "item_id": "local-done",
+      "start_ms": 0,
+      "stop_ms": 32000,
+      "started_at_ms": 1756900000000,
+      "ended_at_ms": 1756900032000,
+      "completed": true
+    }
+  ],
+  "settings": {
+    "capture_playback": "pause",
+    "skip_forward_ms": 30000,
+    "skip_backward_ms": 15000
+  }
+}

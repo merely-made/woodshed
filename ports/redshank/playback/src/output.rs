@@ -8,9 +8,14 @@ use firewheel::{
     FirewheelConfig, FirewheelContext,
     channel_config::{ChannelCount, NonZeroChannelCount},
     cpal::CpalConfig,
-    nodes::stream::{
-        ResamplingChannelConfig,
-        writer::{StreamWriterConfig, StreamWriterNode, StreamWriterState},
+    diff::{Diff, PathBuilder},
+    node::NodeID,
+    nodes::{
+        stream::{
+            ResamplingChannelConfig,
+            writer::{StreamWriterConfig, StreamWriterNode, StreamWriterState},
+        },
+        volume::{VolumeNode, VolumeNodeConfig},
     },
 };
 
@@ -35,6 +40,9 @@ fn stream_buffer_config() -> ResamplingChannelConfig {
 pub(super) struct AudioRuntime {
     context: FirewheelContext,
     output_channels: u32,
+    /// One host-owned gain every decoded stream passes through.
+    volume: NodeID,
+    volume_params: VolumeNode,
 }
 
 impl AudioRuntime {
@@ -50,10 +58,34 @@ impl AudioRuntime {
             .stream_info()
             .context("Firewheel did not report output stream information")?
             .num_stream_out_channels;
+        let channels = NonZeroChannelCount::new(output_channels)
+            .context("the audio output reported no channels")?;
+        let volume_params = VolumeNode::from_percent(100.0);
+        let volume = context.add_node(volume_params, Some(VolumeNodeConfig { channels }));
+        let edges: Vec<_> = (0..output_channels)
+            .map(|channel| (channel, channel))
+            .collect();
+        context
+            .connect(volume, context.graph_out_node_id(), &edges, false)
+            .map_err(|error| anyhow!("could not connect the output gain: {error:?}"))?;
         Ok(Self {
             context,
             output_channels,
+            volume,
+            volume_params,
         })
+    }
+
+    /// Output volume in percent, applied as a smoothed Firewheel gain.
+    pub(super) fn set_volume(&mut self, percent: u8) {
+        let next = VolumeNode::from_percent(f32::from(percent));
+        if next == self.volume_params {
+            return;
+        }
+        let previous = self.volume_params;
+        self.volume_params = next;
+        let mut queue = self.context.event_queue(self.volume);
+        next.diff(&previous, PathBuilder::default(), &mut queue);
     }
 
     pub(super) fn sink(&mut self, source_rate: u32, source_channels: u32) -> Result<Sink> {
@@ -84,7 +116,7 @@ impl AudioRuntime {
                 .collect()
         };
         self.context
-            .connect(writer, self.context.graph_out_node_id(), &edges, false)
+            .connect(writer, self.volume, &edges, false)
             .map_err(|error| anyhow!("could not connect audio graph: {error:?}"))?;
         let mut state = self
             .context

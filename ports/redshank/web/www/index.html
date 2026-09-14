@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Redshank</title>
+    <style>
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        background: #0c1210;
+        overflow: hidden;
+      }
+      /* The host reads this box and sizes the backing store to physical
+         pixels itself, so CSS size is the only size stated here. */
+      #redshank {
+        display: block;
+        width: 100vw;
+        height: 100vh;
+        touch-action: none;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="redshank"></canvas>
+    <script type="module">
+      import init, { start } from "./pkg/redshank_web.js";
+      await init();
+      await start("redshank");
+    </script>
+  </body>
+</html>

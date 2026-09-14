@@ -1,0 +1,11 @@
+# Fixture: completed. Replay is the primary action; the dock does not grow.
+settle 30
+assert snap transport ~ COMPLETED
+capture completed
+act replay
+settle 20
+capture completed-replayed
+act pause
+settle 10
+capture completed-paused
+log completed complete

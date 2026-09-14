@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "library": {
+    "gone": {
+      "kind": "direct_audio",
+      "id": "gone",
+      "title": "An episode the network cannot reach",
+      "source": {
+        "kind": "enclosure",
+        "url": "http://127.0.0.1:9/missing.m4a"
+      }
+    }
+  },
+  "subscriptions": {},
+  "queue": [
+    "gone"
+  ],
+  "selected_item": "gone",
+  "progress": {},
+  "annotations": {},
+  "listening_sessions": [],
+  "settings": {
+    "capture_playback": "pause",
+    "skip_forward_ms": 30000,
+    "skip_backward_ms": 15000
+  }
+}

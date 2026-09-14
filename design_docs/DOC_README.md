@@ -11,6 +11,13 @@ before any other doc in this directory.
 
 ## Active Plans
 
+- [2026-09-13_redshank_gui_implementation_plan.md](2026-09-13_redshank_gui_implementation_plan.md)
+  — **Active.** Implements the endorsed Redshank design canvas: fixed-height
+  dock in two families, three-width responsive rule, two tinct-derived seeds,
+  Listen/Library/Notes/Mere/Settings, feed-node projections (chain, orrery,
+  trail), model extension for the design's settings and span notes, a
+  self-drive scenario/capture lane, and a browser host. Lanes and done-conditions per lane.
+
 - [2026-09-09_audio_ports_rehome_plan.md](2026-09-09_audio_ports_rehome_plan.md)
   — **Landed.** Hocket and Ringdown are history-preserving nested `ports/`
   workspaces with local dependency seams, independent release boundaries, and
