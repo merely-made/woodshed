@@ -1,0 +1,30 @@
+# Fixture: longnames. 120-character titles, at 100 %, 200 % and 400 % zoom.
+# Livery has no text-overflow:ellipsis, so truncation is overflow:hidden plus
+# white-space:nowrap; these captures are what that actually looks like.
+settle 30
+capture longnames
+act tab:library
+settle 10
+capture longnames-library
+act tab:notes
+settle 10
+capture longnames-notes
+act tab:listen
+settle 10
+
+ui-zoom 2
+settle 20
+capture longnames-zoom-200
+act tab:library
+settle 10
+capture longnames-library-zoom-200
+
+ui-zoom 4
+settle 20
+capture longnames-library-zoom-400
+act tab:listen
+settle 10
+capture longnames-zoom-400
+ui-zoom 1
+settle 15
+log longnames complete

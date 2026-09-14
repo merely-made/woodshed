@@ -49,6 +49,14 @@ impl LocalVoiceCapture {
             .is_some()
     }
 
+    /// The default input device's name, for the Capture settings readout.
+    pub(super) fn label() -> Option<String> {
+        cpal::default_host()
+            .default_input_device()
+            .and_then(|device| device.description().ok())
+            .map(|description| description.name().to_owned())
+    }
+
     pub(super) fn active_error(&self) -> Option<String> {
         self.active.as_ref().and_then(|active| {
             active

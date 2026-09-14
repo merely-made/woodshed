@@ -1,0 +1,21 @@
+# Fixture: empty. Every tab's empty state, at whatever width the driver chose.
+settle 30
+assert snap item-count == 0
+capture empty-listen
+act tab:library
+settle 10
+capture empty-library
+act tab:notes
+settle 10
+capture empty-notes
+act tab:mere
+settle 10
+capture empty-mere
+act tab:settings
+settle 10
+capture empty-settings
+act tab:listen
+act layout:rail
+settle 15
+capture empty-rail
+log empty complete

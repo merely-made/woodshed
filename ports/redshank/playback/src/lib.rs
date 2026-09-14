@@ -59,6 +59,11 @@ pub struct PlaybackSnapshot {
     pub position_ms: u64,
     pub duration_ms: Option<u64>,
     pub source: Option<String>,
+    /// The rate the backend is actually running at, not the requested one.
+    pub rate_percent: u16,
+    pub volume_percent: u8,
+    /// Percent of the source seekable without waiting on the network.
+    pub buffered_percent: u8,
     /// A short secondary source using the same host-owned output authority.
     pub preview: Option<PreviewSnapshot>,
 }
@@ -72,6 +77,9 @@ impl Default for PlaybackSnapshot {
             position_ms: 0,
             duration_ms: None,
             source: None,
+            rate_percent: 100,
+            volume_percent: 100,
+            buffered_percent: 0,
             preview: None,
         }
     }
@@ -88,6 +96,11 @@ pub enum PlaybackCommand {
     Pause,
     Stop,
     Seek(u64),
+    /// Requested playback rate in percent. The snapshot reports the effective
+    /// rate, which stays 100 while the decoder cannot retime without pitch.
+    SetRate(u16),
+    /// Output volume in percent, applied as a Firewheel gain.
+    SetVolume(u8),
     StartPreview {
         id: String,
         source: MediaSource,
@@ -339,6 +352,34 @@ mod tests {
             wait_for(&runtime, |snapshot| snapshot.state == PlaybackState::Ended).state,
             PlaybackState::Ended
         );
+    }
+
+    #[test]
+    fn levels_report_the_effective_rate_and_the_honest_buffered_extent() {
+        let runtime = PlaybackRuntime::start();
+        runtime
+            .command(PlaybackCommand::Load {
+                token: 21,
+                source: MediaSource::Local {
+                    path: "redshank-test://levels".into(),
+                },
+                resume_ms: 0,
+            })
+            .unwrap();
+        let loaded = wait_for(&runtime, |snapshot| {
+            snapshot.load_token == Some(21) && snapshot.state == PlaybackState::Paused
+        });
+        assert_eq!(loaded.buffered_percent, 100);
+        runtime.command(PlaybackCommand::SetVolume(40)).unwrap();
+        assert_eq!(
+            wait_for(&runtime, |snapshot| snapshot.volume_percent == 40).volume_percent,
+            40
+        );
+        // A requested rate is recorded by the host; the backend cannot retime
+        // without pitch, so the snapshot keeps reporting real time.
+        runtime.command(PlaybackCommand::SetRate(150)).unwrap();
+        let rated = wait_for(&runtime, |snapshot| snapshot.volume_percent == 40);
+        assert_eq!(rated.rate_percent, 100);
     }
 
     #[test]

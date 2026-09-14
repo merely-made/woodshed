@@ -1,0 +1,707 @@
+/* Redshank component rules. Tokens only — every colour is a --t-* role.
+ * Livery has no `outline` and no `text-overflow`, so active rings are inset
+ * box-shadows and truncation is overflow + nowrap. Radius is 2px everywhere.
+ * See design_docs/2026-09-13_redshank_gui_implementation_plan.md. */
+
+/* --- shell ------------------------------------------------------------- */
+
+.rs-app {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  background: var(--t-bg);
+  color: var(--t-text);
+  font-family: var(--font-ui);
+  font-size: var(--text-ui-13);
+}
+
+.rs-rail-layout {
+  flex-direction: row;
+}
+
+.rs-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-14);
+  padding: var(--space-12) var(--space-20);
+  border-bottom: 1px solid var(--t-surface-2);
+  flex: none;
+}
+
+.rs-mark {
+  width: 16px;
+  height: 16px;
+  flex: none;
+  border-radius: var(--radius);
+  background: var(--t-primary);
+}
+
+.rs-wordmark {
+  font-size: var(--text-ui-14);
+  font-weight: 600;
+}
+
+/* --- segment (tabs, scene, filters) ------------------------------------ */
+
+.rs-segment {
+  display: inline-flex;
+  margin-left: auto;
+  border: 1px solid var(--t-surface-2);
+  border-radius: var(--radius);
+  background: var(--t-surface);
+  overflow: hidden;
+}
+
+.rs-tab {
+  padding: var(--space-6) var(--space-14);
+  font-family: var(--font-ui);
+  font-size: var(--text-ui-13);
+  color: var(--t-text);
+  background: var(--t-surface);
+  border: 0;
+  border-left: 1px solid var(--t-surface-2);
+  border-radius: 0;
+}
+
+.rs-segment-on {
+  background: var(--t-text);
+  color: var(--t-bg);
+}
+
+.rs-notice {
+  padding: var(--space-6) var(--space-20);
+  font-size: var(--text-ui-12);
+  color: var(--t-text-dim);
+  border-bottom: 1px solid var(--t-surface-2);
+  flex: none;
+}
+
+.rs-work {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.rs-panel {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  padding: var(--space-16) var(--space-20);
+  overflow: hidden;
+}
+
+.rs-column {
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* --- rows, faces, labels ----------------------------------------------- */
+
+.rs-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-10);
+  padding: var(--space-10) var(--space-12);
+  background: var(--t-surface);
+  border: 1px solid var(--t-surface-2);
+  border-radius: var(--radius);
+  min-width: 0;
+}
+
+.rs-row-active {
+  box-shadow: inset 0 0 0 2px var(--t-text);
+}
+
+.rs-face {
+  width: 36px;
+  height: 36px;
+  flex: none;
+  display: grid;
+  place-items: center;
+  background: var(--t-surface-2);
+  border-radius: var(--radius);
+  font-family: var(--font-mono);
+  font-size: var(--text-microlabel);
+  color: var(--t-text-dim);
+}
+
+.rs-micro {
+  font-family: var(--font-mono);
+  font-size: var(--text-microlabel);
+  letter-spacing: var(--track-microlabel);
+  color: var(--t-text-dim);
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.rs-badge {
+  font-family: var(--font-mono);
+  font-size: var(--text-microlabel);
+  letter-spacing: var(--track-badge);
+  color: var(--t-text-dim);
+  flex: none;
+}
+
+.rs-title {
+  font-size: var(--text-ui-14);
+  font-weight: 600;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.rs-time {
+  font-family: var(--font-mono);
+  font-size: var(--text-ui-13);
+  flex: none;
+}
+
+.rs-time-dim {
+  color: var(--t-text-dim);
+}
+
+.rs-ember {
+  color: var(--t-tertiary);
+  font-family: var(--font-mono);
+}
+
+/* --- dock -------------------------------------------------------------- */
+
+.rs-dock {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-10);
+  padding: var(--space-12) var(--space-20) var(--space-14);
+  background: var(--t-surface);
+  border-top: 1px solid var(--t-surface-2);
+  flex: none;
+}
+
+/* Every transport state swaps these rows' contents in place; the heights are
+ * fixed so the dock is the same height in all seven. */
+.rs-dock-identity {
+  height: 40px;
+  display: flex;
+  align-items: center;
+  gap: var(--space-12);
+  min-width: 0;
+  flex: none;
+}
+
+.rs-dock-identity .rs-face {
+  width: 36px;
+  height: 36px;
+}
+
+.rs-identity-text {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.rs-seek-row {
+  height: 16px;
+  flex: none;
+}
+
+.rs-transport-row {
+  height: 44px;
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+  flex: none;
+}
+
+/* The elastic gap between transport and capture at wide and narrow widths;
+ * the phone grid hides it. */
+.rs-spacer {
+  flex: 1;
+  min-width: 0;
+}
+
+/* --- seek track --------------------------------------------------------- */
+
+.rs-seek {
+  position: relative;
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.rs-seek-base {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--t-surface-2);
+}
+
+.rs-seek-buffered {
+  position: absolute;
+  left: 0;
+  height: 4px;
+  background: var(--t-surface-hover);
+}
+
+.rs-seek-played {
+  position: absolute;
+  left: 0;
+  height: 4px;
+  background: var(--t-secondary);
+}
+
+.rs-seek-span {
+  position: absolute;
+  top: 3px;
+  height: 10px;
+  background: color-mix(in oklch, var(--t-secondary) 55%, transparent);
+}
+
+.rs-seek-tick {
+  position: absolute;
+  top: 0;
+  width: 2px;
+  height: 16px;
+  background: var(--t-text);
+}
+
+.rs-seek-head {
+  position: absolute;
+  top: 1px;
+  width: 4px;
+  height: 14px;
+  background: var(--t-tertiary);
+  transform: translateX(-50%);
+}
+
+/* --- controls ----------------------------------------------------------- */
+
+/* Centred by padding, not by flex: Livery does not centre a button's inline
+ * content with align-items, and a 42px line-height swallows the kbd chip. */
+.rs-btn {
+  box-sizing: border-box;
+  height: 44px;
+  line-height: 20px;
+  min-width: 44px;
+  padding: 11px var(--space-14);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-8);
+  background: var(--t-surface);
+  color: var(--t-text);
+  border: 1px solid var(--t-surface-2);
+  border-radius: var(--radius);
+  font-family: var(--font-ui);
+  font-size: var(--text-ui-13);
+}
+
+.rs-btn-mono {
+  font-family: var(--font-mono);
+  font-size: var(--text-ui-12);
+  padding: 11px var(--space-8);
+}
+
+.rs-btn-primary {
+  background: var(--t-text);
+  color: var(--t-bg);
+  border-color: var(--t-text);
+  width: 56px;
+  font-size: var(--text-ui-16);
+}
+
+.rs-btn-wide,
+.rs-btn-primary.rs-btn-wide {
+  width: auto;
+  padding: 0 var(--space-16);
+  font-size: var(--text-ui-13);
+  font-weight: 600;
+}
+
+.rs-btn-capture {
+  border-color: var(--t-text);
+}
+
+.rs-btn-quiet {
+  border-color: transparent;
+  background: transparent;
+  color: var(--t-text-dim);
+  font-family: var(--font-mono);
+  font-size: var(--text-ui-12);
+  height: 32px;
+  min-width: 0;
+  padding: 6px var(--space-8);
+}
+
+.rs-btn-off {
+  color: var(--t-text-disabled);
+  border-color: var(--t-surface-2);
+  background: var(--t-surface);
+}
+
+.rs-kbd {
+  line-height: 14px;
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: var(--text-caption);
+  border: 1px solid var(--t-surface-2);
+  border-radius: var(--radius);
+  padding: 1px var(--space-4);
+  color: var(--t-text-dim);
+}
+
+.rs-capture {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+}
+
+.rs-cap-glyph {
+  display: none;
+  font-size: 15px;
+}
+
+.rs-cap-label {
+  display: inline;
+}
+
+.rs-cap-word {
+  display: none;
+}
+
+/* --- recording ---------------------------------------------------------- */
+
+@keyframes rs-pulse {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.45;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.rs-recording {
+  height: 100%;
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--space-10);
+  padding: 0 var(--space-12);
+  border: 1px solid var(--t-danger);
+  border-radius: var(--radius);
+}
+
+.rs-rec-dot {
+  width: 10px;
+  height: 10px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--t-danger);
+  animation: rs-pulse 1.2s infinite;
+}
+
+.rs-rec-word {
+  font-family: var(--font-mono);
+  font-size: var(--text-microlabel);
+  letter-spacing: var(--track-microlabel);
+  color: var(--t-text);
+}
+
+.rs-rec-elapsed {
+  font-family: var(--font-mono);
+  font-size: var(--text-ui-16);
+}
+
+.rs-rec-anchor {
+  font-size: var(--text-label);
+  color: var(--t-text-dim);
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+/* --- phone bar ---------------------------------------------------------- */
+
+.rs-phone-bar {
+  display: none;
+  background: var(--t-surface);
+  border-top: 1px solid var(--t-surface-2);
+  flex: none;
+}
+
+.rs-phone-tab {
+  flex: 1;
+  padding: var(--space-10) 0 var(--space-8);
+  text-align: center;
+  font-size: var(--text-label);
+  font-family: var(--font-ui);
+  color: var(--t-text-dim);
+  background: var(--t-surface);
+  border: 0;
+  border-top: 2px solid var(--t-surface);
+  border-radius: 0;
+}
+
+.rs-phone-tab.rs-segment-on {
+  color: var(--t-text);
+  background: var(--t-surface);
+  border-top: 2px solid var(--t-text);
+}
+
+/* The shell's lens slots hold exactly one dock / rail element between them. */
+.rs-dock-slot,
+.rs-rail-slot {
+  display: contents;
+}
+
+/* --- rail (family B) ----------------------------------------------------- */
+
+.rs-rail {
+  width: 176px;
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-12);
+  padding: var(--space-14);
+  background: var(--t-surface);
+  border-right: 1px solid var(--t-surface-2);
+}
+
+.rs-rail-head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+}
+
+.rs-rail-face {
+  width: 100%;
+  height: 148px;
+  display: grid;
+  place-items: center;
+  background: var(--t-surface-2);
+  border-radius: var(--radius);
+  font-family: var(--font-mono);
+  font-size: var(--text-microlabel);
+  color: var(--t-text-dim);
+}
+
+.rs-rail-title {
+  font-size: var(--text-ui-13);
+  font-weight: 600;
+  overflow: hidden;
+}
+
+.rs-rail-seek-row {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  gap: var(--space-8);
+}
+
+.rs-rail-seek {
+  position: relative;
+  width: 6px;
+  height: 100%;
+  background: var(--t-surface-2);
+}
+
+.rs-rail-seek .rs-seek-buffered,
+.rs-rail-seek .rs-seek-played,
+.rs-rail-seek .rs-seek-span {
+  left: 0;
+  right: 0;
+  top: 0;
+  width: auto;
+  height: auto;
+}
+
+.rs-rail-seek .rs-seek-tick {
+  left: -3px;
+  width: 12px;
+  height: 2px;
+}
+
+.rs-rail-seek .rs-seek-head {
+  left: -4px;
+  top: auto;
+  width: 14px;
+  height: 4px;
+  transform: translateY(-50%);
+}
+
+.rs-rail-scale {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  font-family: var(--font-mono);
+  font-size: var(--text-microlabel);
+  color: var(--t-text-dim);
+}
+
+.rs-rail-pair {
+  display: flex;
+  gap: var(--space-6);
+}
+
+.rs-rail-pair .rs-btn {
+  flex: 1;
+  height: 36px;
+  min-width: 0;
+}
+
+.rs-rail .rs-btn {
+  height: 36px;
+  width: 100%;
+}
+
+.rs-rail .rs-btn-primary {
+  height: 44px;
+  width: 100%;
+}
+
+.rs-rail-recording {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-8);
+  border: 1px solid var(--t-danger);
+  border-radius: var(--radius);
+}
+
+.rs-rail-tabs {
+  display: flex;
+  gap: var(--space-4);
+  padding: var(--space-10) var(--space-16) var(--space-6);
+  border-bottom: 1px solid var(--t-surface-2);
+  flex: none;
+}
+
+/* --- narrow (600..899) ---------------------------------------------------- */
+
+@media (max-width: 899px) {
+  .rs-header {
+    padding: var(--space-10) var(--space-16);
+  }
+
+  .rs-panel {
+    padding: var(--space-12) var(--space-16);
+  }
+
+  .rs-dock {
+    padding: var(--space-12) var(--space-16) var(--space-14);
+  }
+}
+
+/* --- phone (< 600) -------------------------------------------------------- */
+
+@media (max-width: 599px) {
+  .rs-header .rs-segment {
+    display: none;
+  }
+
+  .rs-phone-bar {
+    display: flex;
+  }
+
+  .rs-dock {
+    gap: var(--space-12);
+    padding: var(--space-12) var(--space-16) var(--space-10);
+  }
+
+  .rs-dock-identity {
+    height: 40px;
+  }
+
+  .rs-dock-identity .rs-face {
+    width: 40px;
+    height: 40px;
+  }
+
+  .rs-seek-row {
+    height: 20px;
+  }
+
+  .rs-seek-tick {
+    top: 2px;
+  }
+
+  .rs-seek-head {
+    top: 0;
+    width: 6px;
+    height: 20px;
+  }
+
+  /* Same DOM as the wide dock; the grid re-flows it and the capture buttons
+   * swap their word for a stacked glyph. */
+  .rs-transport-row {
+    height: 48px;
+    display: grid;
+    grid-template-columns: 48px 64px 48px 1fr 56px 56px;
+    gap: var(--space-8);
+    align-items: center;
+  }
+
+  .rs-spacer,
+  .rs-vol {
+    display: none;
+  }
+
+  .rs-transport-row .rs-btn {
+    height: 48px;
+    min-width: 0;
+    width: auto;
+    padding: 0;
+  }
+
+  .rs-btn-capture {
+    flex-direction: column;
+    gap: 0;
+    font-size: var(--text-label);
+    line-height: 1.1;
+    text-align: center;
+    padding: 8px 0;
+  }
+
+  .rs-capture {
+    display: contents;
+  }
+
+  .rs-cap-label {
+    display: none;
+  }
+
+  .rs-cap-glyph {
+    display: block;
+  }
+
+  .rs-cap-word {
+    display: block;
+    font-size: var(--text-label);
+  }
+
+  .rs-kbd {
+    display: none;
+  }
+
+  .rs-recording {
+    grid-column: 1 / 5;
+    height: 48px;
+  }
+
+  .rs-rail {
+    display: none;
+  }
+}

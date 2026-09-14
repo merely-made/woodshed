@@ -1222,3 +1222,9 @@ rejected for the reasons recorded in the 2026-09-01 planning pass.
   gates skipped, formatting, and strict Clippy. Physical recorded-body sound
   remains a headed acceptance gate. Duck, reaction offset, W3C export, and
   Turnstone's capture adapter remain open, so Phase 5 is not closed.
+- **2026-09-14:** Implemented the endorsed design canvas across the sovereign
+  desktop and a new browser host; see
+  [2026-09-13_redshank_gui_implementation_plan.md](2026-09-13_redshank_gui_implementation_plan.md)
+  for lanes, receipts, and what remains open. The GUI design done-conditions
+  above are met for both dock families at the four artboard widths, with
+  fixed dock height proven by headless layout and by captured frames.

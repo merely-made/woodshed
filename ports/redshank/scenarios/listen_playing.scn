@@ -1,0 +1,72 @@
+# Fixture: local-playing. The tour every artboard width is captured through.
+# Widths come from the driver (REDSHANK_WIDTH/HEIGHT), never from here.
+settle 30
+assert snap item-count >= 1
+capture listen
+
+act play
+settle 20
+capture listen-playing
+act pause
+settle 10
+capture listen-paused
+
+act tab:library
+settle 10
+assert snap tab == Library
+capture library
+
+act tab:notes
+settle 10
+assert snap tab == Notes
+capture notes
+act notes:all
+settle 5
+capture notes-all
+act notes:this
+settle 5
+
+act tab:mere
+settle 10
+assert snap tab == Mere
+capture mere-chain
+act scene:orrery
+settle 10
+assert snap scene == orrery
+capture mere-orrery
+act scene:trail
+settle 10
+capture mere-trail
+act scene:chain
+settle 5
+
+act tab:settings
+settle 10
+assert snap tab == Settings
+capture settings
+
+# Family B: the same facts on the left rail.
+act tab:listen
+act layout:rail
+settle 15
+assert snap layout == rail
+capture rail
+act layout:dock
+settle 10
+
+# The brand shell is a scope class, not a second markup.
+act seed:brand
+settle 10
+assert snap seed == brand
+capture brand
+act mode:light
+settle 10
+assert snap mode == light
+capture brand-light
+act mode:hc-dark
+settle 10
+capture brand-hc-dark
+act seed:wetland
+act mode:dark
+settle 10
+log listen_playing complete

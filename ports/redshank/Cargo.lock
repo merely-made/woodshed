@@ -947,6 +947,22 @@ dependencies = [
 ]
 
 [[package]]
+name = "cambium-genet-web-host"
+version = "0.1.0"
+source = "git+https://github.com/merely-made/mere.git?rev=54a51396d9d24a5435bcafecb878da9deecaf6c5#54a51396d9d24a5435bcafecb878da9deecaf6c5"
+dependencies = [
+ "cambium",
+ "cambium-rootstock",
+ "genet-render-host",
+ "genet-scripted-dom",
+ "js-sys",
+ "netrender",
+ "wasm-bindgen",
+ "web-sys",
+ "wgpu",
+]
+
+[[package]]
 name = "cambium-genet-winit-host"
 version = "0.1.0"
 source = "git+https://github.com/merely-made/mere.git?rev=54a51396d9d24a5435bcafecb878da9deecaf6c5#54a51396d9d24a5435bcafecb878da9deecaf6c5"
@@ -1109,6 +1125,16 @@ checksum = "4ca0197aee26d1ae37445ee532fefce43251d24cc7c166799f4d46817f1d3973"
 dependencies = [
  "crossbeam-utils",
  "portable-atomic",
+]
+
+[[package]]
+name = "console_error_panic_hook"
+version = "0.1.7"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a06aeb73f470f66dcdbf7223caeebb85984942f22f1adb2a088cf9668146bbbc"
+dependencies = [
+ "cfg-if",
+ "wasm-bindgen",
 ]
 
 [[package]]
@@ -4665,7 +4691,9 @@ dependencies = [
  "blake3",
  "cambium-genet-winit-host",
  "cpal",
+ "genet-probe",
  "hound",
+ "image",
  "layout-dom-api",
  "redshank-cache",
  "redshank-feed",
@@ -4693,6 +4721,7 @@ name = "redshank-model"
 version = "0.0.0"
 dependencies = [
  "serde",
+ "serde_json",
 ]
 
 [[package]]
@@ -4724,9 +4753,26 @@ name = "redshank-surfaces"
 version = "0.0.0"
 dependencies = [
  "cambium",
+ "cambium-genet-winit-host",
  "genet-scripted-dom",
  "layout-dom-api",
  "redshank-model",
+ "tinct",
+]
+
+[[package]]
+name = "redshank-web"
+version = "0.0.0"
+dependencies = [
+ "cambium",
+ "cambium-genet-web-host",
+ "cambium-rootstock",
+ "console_error_panic_hook",
+ "redshank-model",
+ "redshank-surfaces",
+ "wasm-bindgen",
+ "wasm-bindgen-futures",
+ "web-sys",
 ]
 
 [[package]]
@@ -5869,6 +5915,14 @@ checksum = "7e689342a48d2ea927c87ea50cabf8594854bf940e9310208848d680d668ed85"
 dependencies = [
  "num-conv",
  "time-core",
+]
+
+[[package]]
+name = "tinct"
+version = "0.1.2"
+source = "git+https://github.com/merely-made/mere.git?rev=54a51396d9d24a5435bcafecb878da9deecaf6c5#54a51396d9d24a5435bcafecb878da9deecaf6c5"
+dependencies = [
+ "serde",
 ]
 
 [[package]]

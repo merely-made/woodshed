@@ -1,6 +1,7 @@
 #![forbid(unsafe_code)]
 
 mod headed_receipt;
+mod scenario;
 mod session;
 mod voice;
 
@@ -19,9 +20,10 @@ use redshank_model::{
 use redshank_playback::{PlaybackCommand, PlaybackRuntime, PlaybackState, PreviewState};
 use redshank_storage::{JsonDirectoryStore, ModelStore};
 use redshank_surfaces::{
-    COMPACT_SHEET, CompactCommand, RedshankSurfaceState, TextCapture, TransportState, surface,
+    CompactCommand, Layout, Recording, RedshankSurfaceState, TextCapture, TransportState, sheet,
+    surface,
 };
-use session::Session;
+use session::{HostFacts, Session};
 use std::{
     cell::RefCell,
     io::Read,
@@ -107,6 +109,10 @@ enum IoReply {
         result: Result<bool, String>,
     },
     VoiceRemoved(Result<bool, String>),
+    Exported {
+        path: PathBuf,
+        result: Result<(), String>,
+    },
 }
 
 struct SaveRequest {
@@ -210,6 +216,7 @@ struct PendingCacheRemoval {
 struct VoiceSession {
     anchor: CaptureAnchor,
     resume_playback: bool,
+    started: Instant,
 }
 
 struct PendingVoiceRemoval {
@@ -218,6 +225,9 @@ struct PendingVoiceRemoval {
 }
 
 struct Desktop {
+    /// The last logical size the layout rule ran at; it runs again only on resize,
+    /// so a SetLayout choice survives until the window changes shape.
+    last_size: Option<(f32, f32)>,
     session: Session,
     runtime: PlaybackRuntime,
     persistence: Persistence,
@@ -231,6 +241,10 @@ struct Desktop {
     voice_removals: Vec<PendingVoiceRemoval>,
     voice_removals_in_flight: usize,
     feed_pending: Option<String>,
+    /// A span being auditioned; playback pauses once it passes the stop.
+    span_stop_ms: Option<u64>,
+    microphone_label: Option<String>,
+    export_pending: bool,
     data_root: PathBuf,
     closing: bool,
     saved_draft: Option<SavedDraft>,
@@ -345,8 +359,30 @@ impl Desktop {
             })
             .map_err(|error| format!("Could not start feed refresh: {error}"))?;
         self.feed_pending = Some(requested_url);
-        state.notice = Some("Refreshing podcast feed…".into());
+        state.notice = Some("Refreshing podcast feedâ€¦".into());
         Ok(())
+    }
+
+    /// Facts the projection cannot derive from the model or the snapshot.
+    fn host_facts(&self) -> HostFacts {
+        HostFacts {
+            now_ms: now_ms(),
+            recording: self.voice_session.as_ref().map(|voice| Recording {
+                elapsed_ms: voice.started.elapsed().as_millis() as u64,
+                anchor_ms: voice.anchor.offset_ms,
+                paused_for_capture: voice.resume_playback,
+            }),
+            microphone_label: self.microphone_label.clone(),
+        }
+    }
+
+    fn project(
+        &self,
+        state: &mut RedshankSurfaceState,
+        snapshot: &redshank_playback::PlaybackSnapshot,
+    ) {
+        let facts = self.host_facts();
+        self.session.project(state, snapshot, &facts);
     }
 
     fn send(&self, command: PlaybackCommand) -> Result<(), String> {
@@ -439,6 +475,7 @@ impl Desktop {
         state.text_capture = Some(TextCapture {
             anchor,
             draft: String::new(),
+            end_offset_ms: None,
         });
         state.set_text_draft("");
         Ok(())
@@ -486,7 +523,7 @@ impl Desktop {
             anchor,
             text,
         });
-        state.notice = Some("Saving note…".into());
+        state.notice = Some("Saving noteâ€¦".into());
         Ok(())
     }
 
@@ -508,7 +545,7 @@ impl Desktop {
             CapturePlaybackBehavior::Pause => {
                 let was_playing = snapshot.state == PlaybackState::Playing;
                 self.send(PlaybackCommand::Pause)?;
-                was_playing
+                was_playing && self.session.model.settings.resume_after_capture
             },
             CapturePlaybackBehavior::Continue => false,
             CapturePlaybackBehavior::Duck => {
@@ -526,9 +563,10 @@ impl Desktop {
         self.voice_session = Some(VoiceSession {
             anchor,
             resume_playback,
+            started: Instant::now(),
         });
         state.compact.voice_capture_active = true;
-        state.notice = Some("Recording voice note… release to save".into());
+        state.notice = Some("Recording voice noteâ€¦ release to save".into());
         Ok(())
     }
 
@@ -544,18 +582,20 @@ impl Desktop {
                 NoteBody::Audio { blob_id, .. } => blob_id.clone(),
                 NoteBody::Text { .. } => return Err("Microphone returned a text note".into()),
             };
+            let privacy = self.session.model.settings.note_privacy;
             if let Err(error) = self.session.model.add_annotation(Annotation {
                 id,
                 target: capture.anchor,
                 body,
                 created_at_ms: now_ms(),
+                privacy,
             }) {
                 let _ = LocalVoiceCapture::remove_blob(&self.data_root, &blob_id);
                 return Err(format!("Could not add voice note: {error:?}"));
             }
             self.persistence.changed();
             self.voice_save_revision = Some(self.persistence.revision);
-            state.notice = Some("Saving voice note…".into());
+            state.notice = Some("Saving voice noteâ€¦".into());
             Ok(())
         });
         if capture.resume_playback
@@ -569,6 +609,93 @@ impl Desktop {
             });
         }
         result
+    }
+
+    /// Discard a recording without saving it, restoring playback if it paused.
+    fn cancel_voice_note(&mut self, state: &mut RedshankSurfaceState) -> Result<(), String> {
+        let capture = self
+            .voice_session
+            .take()
+            .ok_or("No voice note is recording")?;
+        state.compact.voice_capture_active = false;
+        let cancelled = self.voice_capture.cancel_capture();
+        if capture.resume_playback {
+            self.send(PlaybackCommand::Play)?;
+        }
+        cancelled?;
+        state.notice = Some("Voice note discarded".into());
+        Ok(())
+    }
+
+    fn save_span_note(
+        &mut self,
+        state: &mut RedshankSurfaceState,
+        anchor: CaptureAnchor,
+        end_offset_ms: u64,
+        text: String,
+    ) -> Result<(), String> {
+        if text.trim().is_empty() {
+            return Err("Write a note before saving".into());
+        }
+        let id = self.next_annotation_id();
+        self.session
+            .model
+            .add_span_annotation(
+                id.clone(),
+                anchor.clone(),
+                end_offset_ms,
+                text.clone(),
+                now_ms(),
+            )
+            .map_err(|error| format!("Could not add span note: {error:?}"))?;
+        self.persistence.changed();
+        self.saved_draft = Some(SavedDraft {
+            revision: self.persistence.revision,
+            id,
+            anchor,
+            text,
+        });
+        state.text_capture = None;
+        state.editing_note = None;
+        state.set_text_draft("");
+        state.notice = Some("Saving span note…".into());
+        Ok(())
+    }
+
+    /// Write the selected item's annotations as W3C JSON, off the UI thread.
+    fn export_annotations(&mut self, state: &mut RedshankSurfaceState) -> Result<(), String> {
+        if self.export_pending {
+            return Err("An annotation export is still running".into());
+        }
+        let id = self
+            .session
+            .selected
+            .clone()
+            .ok_or("Select a recording before exporting its notes")?;
+        let json = self.session.model.export_annotations_json(&id);
+        let path = self
+            .data_root
+            .join("exports")
+            .join(format!("{}.json", export_stem(&id)));
+        let sender = self.persistence.reply_sender.clone();
+        let worker_path = path.clone();
+        thread::Builder::new()
+            .name("redshank-export".into())
+            .spawn(move || {
+                let result = std::fs::create_dir_all(
+                    worker_path.parent().unwrap_or(std::path::Path::new(".")),
+                )
+                .and_then(|()| std::fs::write(&worker_path, json))
+                .map_err(|error| format!("Could not write annotation export: {error}"));
+                let _ = sender.send(IoReply::Exported {
+                    path: worker_path,
+                    result,
+                });
+            })
+            .map_err(|error| format!("Could not start annotation export: {error}"))?;
+        self.export_pending = true;
+        state.notice = Some("Exporting annotations…".into());
+        Ok(())
     }
 
     fn open_note_target(&mut self, note: &Annotation) -> Result<(), String> {
@@ -664,7 +791,7 @@ impl Desktop {
                     })
                     .map_err(|error| format!("Could not start episode download: {error}"))?;
                 self.cache_pending = Some(id);
-                state.notice = Some("Downloading episode for offline listening…".into());
+                state.notice = Some("Downloading episode for offline listeningâ€¦".into());
             },
             CompactCommand::RemoveCachedItem(id) => {
                 if self.cache_pending.as_ref() == Some(&id)
@@ -691,7 +818,7 @@ impl Desktop {
                     id,
                     path: PathBuf::from(path),
                 });
-                state.notice = Some("Saving cache removal…".into());
+                state.notice = Some("Saving cache removalâ€¦".into());
             },
             CompactCommand::Subscribe(url) => {
                 if url.trim().is_empty() {
@@ -724,6 +851,7 @@ impl Desktop {
                 state.text_capture = Some(TextCapture {
                     anchor: note.target.clone(),
                     draft: plain_text.clone(),
+                    end_offset_ms: note.target.end_offset_ms,
                 });
                 state.set_text_draft(plain_text.clone());
                 state.editing_note = Some(id);
@@ -762,7 +890,7 @@ impl Desktop {
                         path: path.to_string_lossy().into_owned(),
                     },
                 })?;
-                state.notice = Some("Playing voice note…".into());
+                state.notice = Some("Playing voice noteâ€¦".into());
             },
             CompactCommand::StopVoiceNote(id) => {
                 if self
@@ -914,11 +1042,96 @@ impl Desktop {
                 }
             },
             CompactCommand::UpdateSettings(settings) => {
+                let rate = settings.playback_rate_percent;
+                let volume = settings.volume_percent;
                 self.session.model.settings = settings;
                 self.persistence.changed();
+                self.send(PlaybackCommand::SetRate(rate))?;
+                self.send(PlaybackCommand::SetVolume(volume))?;
             },
             CompactCommand::BeginVoiceNote => self.begin_voice_note(state)?,
             CompactCommand::FinishVoiceNote => self.finish_voice_note(state)?,
+            CompactCommand::CancelVoiceNote => self.cancel_voice_note(state)?,
+            CompactCommand::Replay => {
+                let snap = self.runtime.snapshot();
+                self.session.capture(&snap)?;
+                let id = self.session.selected.clone().expect("matched selection");
+                self.send(PlaybackCommand::Seek(0))?;
+                self.send(PlaybackCommand::Play)?;
+                // A replayed item is no longer completed.
+                let _ = self.session.model.set_progress(
+                    &id,
+                    redshank_model::Progress {
+                        position_ms: 0,
+                        completed: false,
+                        updated_at_ms: now_ms(),
+                    },
+                );
+                self.span_stop_ms = None;
+                self.persistence.changed();
+            },
+            CompactCommand::Seek(position) => {
+                self.session.capture(&self.runtime.snapshot())?;
+                self.span_stop_ms = None;
+                self.send(PlaybackCommand::Seek(position))?;
+            },
+            CompactCommand::SetRate(percent) => {
+                self.session.model.settings.playback_rate_percent = percent;
+                self.persistence.changed();
+                self.send(PlaybackCommand::SetRate(percent))?;
+            },
+            CompactCommand::SetVolume(percent) => {
+                self.session.model.settings.volume_percent = percent;
+                self.persistence.changed();
+                self.send(PlaybackCommand::SetVolume(percent))?;
+            },
+            CompactCommand::SaveSpanNote {
+                anchor,
+                end_offset_ms,
+                plain_text,
+            } => self.save_span_note(state, anchor, end_offset_ms, plain_text)?,
+            CompactCommand::OpenNote(id) => {
+                let note = self
+                    .session
+                    .model
+                    .annotations
+                    .get(&id)
+                    .ok_or("That note no longer exists")?
+                    .clone();
+                self.open_note_target(&note)?;
+                self.span_stop_ms = None;
+                self.send(PlaybackCommand::Play)?;
+            },
+            CompactCommand::PlaySpan(id) => {
+                let note = self
+                    .session
+                    .model
+                    .annotations
+                    .get(&id)
+                    .ok_or("That note no longer exists")?
+                    .clone();
+                let stop = note
+                    .target
+                    .end_offset_ms
+                    .ok_or("That note covers a moment, not a span")?;
+                self.open_note_target(&note)?;
+                self.send(PlaybackCommand::Play)?;
+                self.span_stop_ms = Some(stop);
+            },
+            CompactCommand::RetryItem(id) => self.select(id)?,
+            CompactCommand::PinItem(id) => {
+                // The model has no pin concept yet; say so rather than pretend.
+                state.notice = Some(format!(
+                    "Pinning is not in the model yet: {} stays unpinned",
+                    id.0
+                ));
+            },
+            CompactCommand::SelectFeed(url) => state.selected_feed = url,
+            CompactCommand::SelectTab(tab) => state.active_tab = tab,
+            CompactCommand::SelectScene(scene) => state.scene = scene,
+            CompactCommand::SetLayout(layout) => state.layout = layout,
+            CompactCommand::SetNotesFilter(filter) => state.notes_filter = filter,
+            CompactCommand::ExportAnnotations => self.export_annotations(state)?,
         }
         Ok(())
     }
@@ -930,7 +1143,7 @@ impl Desktop {
                 state.notice = Some(error);
             }
         }
-        self.session.project(state, &self.runtime.snapshot());
+        self.project(state, &self.runtime.snapshot());
         if let Err(error) = self.persistence.flush(&self.session.model) {
             state.notice = Some(error);
         }
@@ -1019,6 +1232,13 @@ impl Desktop {
                         Err(error) => error,
                     });
                 },
+                IoReply::Exported { path, result } => {
+                    self.export_pending = false;
+                    state.notice = Some(match result {
+                        Ok(()) => format!("Exported annotations to {}", path.display()),
+                        Err(error) => error,
+                    });
+                },
                 IoReply::VoiceRemoved(result) => {
                     self.voice_removals_in_flight = self.voice_removals_in_flight.saturating_sub(1);
                     if let Err(error) = result {
@@ -1081,6 +1301,15 @@ impl Desktop {
             state.notice = Some(error);
         }
         let snapshot = self.runtime.snapshot();
+        if let Some(stop) = self.span_stop_ms
+            && snapshot.state == PlaybackState::Playing
+            && snapshot.position_ms >= stop
+        {
+            self.span_stop_ms = None;
+            if let Err(error) = self.send(PlaybackCommand::Pause) {
+                state.notice = Some(error);
+            }
+        }
         if snapshot.state != PlaybackState::Playing
             || self.last_progress.elapsed() >= Duration::from_secs(5)
         {
@@ -1089,7 +1318,7 @@ impl Desktop {
                 self.persistence.changed();
             }
         }
-        self.session.project(state, &snapshot);
+        self.project(state, &snapshot);
         if let Err(error) = self.persistence.flush(&self.session.model) {
             state.notice = Some(error);
             self.persistence.failed = true;
@@ -1114,6 +1343,7 @@ impl Desktop {
         if self
             .session
             .record_progress(&self.runtime.snapshot(), now_ms())
+            | self.session.close_listening(now_ms(), false)
         {
             self.persistence.changed();
         }
@@ -1124,7 +1354,29 @@ impl Desktop {
     }
 }
 
-fn focused_text_class(runner: &AppRunner) -> Option<String> {
+/// A filesystem-safe stem for an item id.
+fn export_stem(id: &ItemId) -> String {
+    let stem: String =
+        id.0.chars()
+            .map(|character| {
+                if character.is_ascii_alphanumeric() || character == '-' {
+                    character
+                } else {
+                    '-'
+                }
+            })
+            .collect();
+    let stem = stem.trim_matches('-').to_owned();
+    if stem.is_empty() {
+        "annotations".into()
+    } else {
+        stem
+    }
+}
+
+/// An attribute of the focused textarea's wrapper. The surfaces mark the note
+/// editor with an id and the subscribe field with a class.
+fn focused_text_attribute(runner: &AppRunner, attribute: &str) -> Option<String> {
     let node = runner.focus()?;
     let dom = runner.dom();
     let dom = dom.borrow();
@@ -1136,14 +1388,22 @@ fn focused_text_class(runner: &AppRunner) -> Option<String> {
     dom.attribute(
         parent,
         &layout_dom_api::Namespace::from(""),
-        &layout_dom_api::LocalName::from("class"),
+        &layout_dom_api::LocalName::from(attribute),
     )
     .map(str::to_owned)
 }
 
+fn note_editor_focused(runner: &AppRunner) -> bool {
+    focused_text_attribute(runner, "id").as_deref() == Some("redshank-text-editor")
+}
+
+fn feed_field_focused(runner: &AppRunner) -> bool {
+    focused_text_attribute(runner, "class").is_some_and(|class| class.contains("redshank-feed-url"))
+}
+
 fn focused_text(runner: &AppRunner) -> Option<FocusedTextSlot<RedshankSurfaceState>> {
     let node = runner.focus()?;
-    if focused_text_class(runner).as_deref() == Some("redshank-feed-url") {
+    if feed_field_focused(runner) {
         return Some(FocusedTextSlot {
             node,
             get: Box::new(|state| &state.feed_url_editor),
@@ -1158,11 +1418,14 @@ fn focused_text(runner: &AppRunner) -> Option<FocusedTextSlot<RedshankSurfaceSta
 }
 
 fn key_intercept(runner: &mut AppRunner, key: &KeyPress) -> bool {
-    let note_editor_focused = focused_text_class(runner).as_deref() == Some("redshank-text-editor");
+    let note_editor_focused = note_editor_focused(runner);
     let state = runner.state();
     let command = if key.modifiers.is_command_chord() {
         match &key.key {
             Key::Character(c) if c.eq_ignore_ascii_case("o") => Some(CompactCommand::OpenLocalFile),
+            Key::Character(c) if c.eq_ignore_ascii_case("e") => {
+                Some(CompactCommand::ExportAnnotations)
+            },
             Key::Named(NamedKey::Enter) if note_editor_focused => {
                 state.text_capture.as_ref().map(|capture| {
                     if let Some(id) = &state.editing_note {
@@ -1221,15 +1484,34 @@ fn key_intercept(runner: &mut AppRunner, key: &KeyPress) -> bool {
     }
 }
 
+/// Family B takes the tablet-landscape band; every other size takes the dock.
+fn layout_for((width, height): (f32, f32)) -> Layout {
+    if (700.0..900.0).contains(&width) && width > height * 1.15 {
+        Layout::Rail
+    } else {
+        Layout::Dock
+    }
+}
+
 fn hooks(
     desktop: Rc<RefCell<Desktop>>,
+    lane: Rc<RefCell<Option<scenario::ScenarioLane>>>,
 ) -> HostHooks<RedshankSurfaceState, Logic, redshank_surfaces::FullView> {
     let frame = Rc::clone(&desktop);
     let dispatch = Rc::clone(&desktop);
     let wake = Rc::clone(&desktop);
+    let scenario_frame = Rc::clone(&lane);
+    let scenario_busy = Rc::clone(&lane);
     HostHooks {
         frame: Box::new(move |ctx: &mut Context<'_>| {
             let mut desktop = frame.borrow_mut();
+            if desktop.last_size != Some(ctx.logical_size) {
+                desktop.last_size = Some(ctx.logical_size);
+                let layout = layout_for(ctx.logical_size);
+                if ctx.runner.state().layout != layout {
+                    ctx.runner.update(|state| state.layout = layout);
+                }
+            }
             if desktop.last_projection.elapsed() >= Duration::from_millis(100) || desktop.closing {
                 desktop.last_projection = Instant::now();
                 let mut next = ctx.runner.state().clone();
@@ -1276,6 +1558,10 @@ fn hooks(
                 || desktop.feed_pending.is_some()
                 || desktop.persistence.in_flight.is_some()
                 || desktop.receipt.as_ref().is_some_and(HeadedReceipt::active)
+                || scenario_busy
+                    .borrow()
+                    .as_ref()
+                    .is_some_and(scenario::ScenarioLane::active)
                 || !desktop.session.matches(&snap) && desktop.session.selected.is_some()
                 || matches!(snap.state, PlaybackState::Loading | PlaybackState::Playing)
         }),
@@ -1283,7 +1569,11 @@ fn hooks(
             ctx.runner
                 .update(|state| dispatch.borrow_mut().dispatch(state));
         }),
-        after_frame: Box::new(|_| {}),
+        after_frame: Box::new(move |ctx: &mut Context<'_>| {
+            if let Some(lane) = scenario_frame.borrow_mut().as_mut() {
+                lane.drive(ctx);
+            }
+        }),
         after_wake: Box::new(move |ctx| {
             let mut desktop = wake.borrow_mut();
             let mut next = ctx.runner.state().clone();
@@ -1330,11 +1620,15 @@ fn main() {
         voice_removals: Vec::new(),
         voice_removals_in_flight: 0,
         feed_pending: None,
+        span_stop_ms: None,
+        microphone_label: LocalVoiceCapture::label(),
+        export_pending: false,
         data_root,
         closing: false,
         saved_draft: None,
         receipt,
         last_progress: Instant::now(),
+        last_size: None,
         last_projection: Instant::now(),
     };
     let mut state = RedshankSurfaceState::default();
@@ -1364,16 +1658,27 @@ fn main() {
     if let Err(error) = result {
         state.notice = Some(error);
     }
-    desktop
-        .session
-        .project(&mut state, &desktop.runtime.snapshot());
+    for command in [
+        PlaybackCommand::SetRate(desktop.session.model.settings.playback_rate_percent),
+        PlaybackCommand::SetVolume(desktop.session.model.settings.volume_percent),
+    ] {
+        if let Err(error) = desktop.send(command) {
+            state.notice = Some(error);
+        }
+    }
+    let snapshot = desktop.runtime.snapshot();
+    desktop.project(&mut state, &snapshot);
     let wake_runtime = desktop.runtime.clone();
     let desktop = Rc::new(RefCell::new(desktop));
+    // The self-drive lane, armed only by REDSHANK_SCENARIO.
+    let lane = Rc::new(RefCell::new(scenario::ScenarioLane::from_env()));
     run(
         HostOptions {
             title: "Redshank".into(),
             initial_logical_size: (860.0, 680.0),
             window_frame: WindowFrame::Host,
+            // Reproducible receipts: the driver chooses the artboard width.
+            size_env: Some(("REDSHANK_WIDTH".into(), "REDSHANK_HEIGHT".into())),
             ..HostOptions::default()
         },
         move |_, _, wake| {
@@ -1382,10 +1687,10 @@ fn main() {
             Init {
                 state,
                 logic: surface as Logic,
-                sheet: COMPACT_SHEET.into(),
+                sheet: sheet(),
             }
         },
-        hooks(Rc::clone(&desktop)),
+        hooks(Rc::clone(&desktop), Rc::clone(&lane)),
     )
     .expect("run Redshank");
     if let Some(receipt) = desktop.borrow().receipt.as_ref() {
@@ -1507,6 +1812,8 @@ mod tests {
                 target: CaptureAnchor {
                     item_id: ItemId("a".into()),
                     offset_ms: 321,
+                    end_offset_ms: None,
+                    pressed_offset_ms: None,
                     representation: Default::default(),
                 },
                 body: NoteBody::Audio {
@@ -1515,6 +1822,7 @@ mod tests {
                     duration_ms: 500,
                 },
                 created_at_ms: 1,
+                privacy: Default::default(),
             })
             .unwrap();
         let mut state = RedshankSurfaceState::default();
@@ -1554,9 +1862,12 @@ mod tests {
             anchor: CaptureAnchor {
                 item_id: id.clone(),
                 offset_ms: 321,
+                end_offset_ms: None,
+                pressed_offset_ms: None,
                 representation: Default::default(),
             },
             draft: "draft".into(),
+            end_offset_ms: None,
         });
         state.editing_note = Some(AnnotationId("draft".into()));
         state.set_text_draft("draft");
@@ -1582,30 +1893,33 @@ mod tests {
         let anchor = CaptureAnchor {
             item_id: ItemId("a".into()),
             offset_ms: 321,
+            end_offset_ms: None,
+            pressed_offset_ms: None,
             representation: Default::default(),
         };
         let mut state = RedshankSurfaceState::default();
         state.text_capture = Some(TextCapture {
             anchor: anchor.clone(),
             draft: String::new(),
+            end_offset_ms: None,
         });
         let mut host = cambium_genet_winit_host::Harness::with_hooks(
             Init {
                 state,
                 logic: surface as Logic,
-                sheet: COMPACT_SHEET.into(),
+                sheet: sheet(),
             },
-            hooks(Rc::clone(&desktop)),
+            hooks(Rc::clone(&desktop), Rc::new(RefCell::new(None))),
         );
         host.layout_at(860.0, 680.0);
         for _ in 0..40 {
-            if focused_text_class(host.runner()).as_deref() == Some("redshank-text-editor") {
+            if note_editor_focused(host.runner()) {
                 break;
             }
             host.tab(true);
         }
         assert!(
-            focused_text_class(host.runner()).as_deref() == Some("redshank-text-editor"),
+            note_editor_focused(host.runner()),
             "keyboard must reach the note editor"
         );
         host.key_char("n");
@@ -1664,11 +1978,15 @@ mod tests {
             voice_removals: Vec::new(),
             voice_removals_in_flight: 0,
             feed_pending: None,
+            span_stop_ms: None,
+            microphone_label: None,
+            export_pending: false,
             data_root: directory.to_owned(),
             closing: false,
             saved_draft: None,
             receipt: None,
             last_progress: Instant::now(),
+            last_size: None,
             last_projection: Instant::now(),
         }
     }
@@ -1681,11 +1999,14 @@ mod tests {
         let anchor = CaptureAnchor {
             item_id: ItemId("a".into()),
             offset_ms: 123,
+            end_offset_ms: None,
+            pressed_offset_ms: None,
             representation: Default::default(),
         };
         state.text_capture = Some(TextCapture {
             anchor: anchor.clone(),
             draft: String::new(),
+            end_offset_ms: None,
         });
         state.set_text_draft("first version");
         desktop

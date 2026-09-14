@@ -1,0 +1,19 @@
+# Fixture: cluster. Ten notes inside one second plus one span.
+settle 30
+act tab:notes
+settle 15
+assert snap tab == Notes
+assert snap note-count >= 11
+capture notes-cluster
+act notes:all
+settle 10
+capture notes-cluster-all
+act notes:this
+settle 10
+act seek:1200
+settle 15
+capture notes-cluster-inside-span
+act tab:listen
+settle 10
+capture listen-cluster-ticks
+log notes_cluster complete

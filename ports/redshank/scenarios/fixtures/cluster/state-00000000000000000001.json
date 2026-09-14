@@ -1,0 +1,309 @@
+{
+  "schema_version": 1,
+  "library": {
+    "local-cluster": {
+      "kind": "local_audio",
+      "id": "local-cluster",
+      "title": "Ten notes in a second",
+      "source": {
+        "kind": "local",
+        "path": "C:\\Users\\mark_\\Code\\testing\\woodshed\\redshank-phase4-20260906\\stereo.m4a"
+      }
+    }
+  },
+  "subscriptions": {},
+  "queue": [
+    "local-cluster"
+  ],
+  "selected_item": "local-cluster",
+  "progress": {
+    "local-cluster": {
+      "position_ms": 2400,
+      "completed": false,
+      "updated_at_ms": 1757000000000
+    }
+  },
+  "annotations": {
+    "cluster-00": {
+      "id": "cluster-00",
+      "target": {
+        "item_id": "local-cluster",
+        "offset_ms": 250,
+        "end_offset_ms": null,
+        "pressed_offset_ms": null,
+        "representation": {
+          "requested_url": null,
+          "final_url": null,
+          "media_type": null,
+          "byte_length": null,
+          "etag": null,
+          "last_modified": null,
+          "retrieved_at_ms": null,
+          "complete_digest": null
+        }
+      },
+      "body": {
+        "kind": "text",
+        "plain_text": "Clustered thought 1"
+      },
+      "created_at_ms": 1757000000000,
+      "privacy": "private"
+    },
+    "cluster-01": {
+      "id": "cluster-01",
+      "target": {
+        "item_id": "local-cluster",
+        "offset_ms": 251,
+        "end_offset_ms": null,
+        "pressed_offset_ms": null,
+        "representation": {
+          "requested_url": null,
+          "final_url": null,
+          "media_type": null,
+          "byte_length": null,
+          "etag": null,
+          "last_modified": null,
+          "retrieved_at_ms": null,
+          "complete_digest": null
+        }
+      },
+      "body": {
+        "kind": "text",
+        "plain_text": "Clustered thought 2"
+      },
+      "created_at_ms": 1757000000000,
+      "privacy": "private"
+    },
+    "cluster-02": {
+      "id": "cluster-02",
+      "target": {
+        "item_id": "local-cluster",
+        "offset_ms": 252,
+        "end_offset_ms": null,
+        "pressed_offset_ms": null,
+        "representation": {
+          "requested_url": null,
+          "final_url": null,
+          "media_type": null,
+          "byte_length": null,
+          "etag": null,
+          "last_modified": null,
+          "retrieved_at_ms": null,
+          "complete_digest": null
+        }
+      },
+      "body": {
+        "kind": "text",
+        "plain_text": "Clustered thought 3"
+      },
+      "created_at_ms": 1757000000000,
+      "privacy": "private"
+    },
+    "cluster-03": {
+      "id": "cluster-03",
+      "target": {
+        "item_id": "local-cluster",
+        "offset_ms": 253,
+        "end_offset_ms": null,
+        "pressed_offset_ms": null,
+        "representation": {
+          "requested_url": null,
+          "final_url": null,
+          "media_type": null,
+          "byte_length": null,
+          "etag": null,
+          "last_modified": null,
+          "retrieved_at_ms": null,
+          "complete_digest": null
+        }
+      },
+      "body": {
+        "kind": "text",
+        "plain_text": "Clustered thought 4"
+      },
+      "created_at_ms": 1757000000000,
+      "privacy": "private"
+    },
+    "cluster-04": {
+      "id": "cluster-04",
+      "target": {
+        "item_id": "local-cluster",
+        "offset_ms": 254,
+        "end_offset_ms": null,
+        "pressed_offset_ms": null,
+        "representation": {
+          "requested_url": null,
+          "final_url": null,
+          "media_type": null,
+          "byte_length": null,
+          "etag": null,
+          "last_modified": null,
+          "retrieved_at_ms": null,
+          "complete_digest": null
+        }
+      },
+      "body": {
+        "kind": "text",
+        "plain_text": "Clustered thought 5"
+      },
+      "created_at_ms": 1757000000000,
+      "privacy": "private"
+    },
+    "cluster-05": {
+      "id": "cluster-05",
+      "target": {
+        "item_id": "local-cluster",
+        "offset_ms": 255,
+        "end_offset_ms": null,
+        "pressed_offset_ms": null,
+        "representation": {
+          "requested_url": null,
+          "final_url": null,
+          "media_type": null,
+          "byte_length": null,
+          "etag": null,
+          "last_modified": null,
+          "retrieved_at_ms": null,
+          "complete_digest": null
+        }
+      },
+      "body": {
+        "kind": "text",
+        "plain_text": "Clustered thought 6"
+      },
+      "created_at_ms": 1757000000000,
+      "privacy": "private"
+    },
+    "cluster-06": {
+      "id": "cluster-06",
+      "target": {
+        "item_id": "local-cluster",
+        "offset_ms": 256,
+        "end_offset_ms": null,
+        "pressed_offset_ms": null,
+        "representation": {
+          "requested_url": null,
+          "final_url": null,
+          "media_type": null,
+          "byte_length": null,
+          "etag": null,
+          "last_modified": null,
+          "retrieved_at_ms": null,
+          "complete_digest": null
+        }
+      },
+      "body": {
+        "kind": "text",
+        "plain_text": "Clustered thought 7"
+      },
+      "created_at_ms": 1757000000000,
+      "privacy": "private"
+    },
+    "cluster-07": {
+      "id": "cluster-07",
+      "target": {
+        "item_id": "local-cluster",
+        "offset_ms": 257,
+        "end_offset_ms": null,
+        "pressed_offset_ms": null,
+        "representation": {
+          "requested_url": null,
+          "final_url": null,
+          "media_type": null,
+          "byte_length": null,
+          "etag": null,
+          "last_modified": null,
+          "retrieved_at_ms": null,
+          "complete_digest": null
+        }
+      },
+      "body": {
+        "kind": "text",
+        "plain_text": "Clustered thought 8"
+      },
+      "created_at_ms": 1757000000000,
+      "privacy": "private"
+    },
+    "cluster-08": {
+      "id": "cluster-08",
+      "target": {
+        "item_id": "local-cluster",
+        "offset_ms": 258,
+        "end_offset_ms": null,
+        "pressed_offset_ms": null,
+        "representation": {
+          "requested_url": null,
+          "final_url": null,
+          "media_type": null,
+          "byte_length": null,
+          "etag": null,
+          "last_modified": null,
+          "retrieved_at_ms": null,
+          "complete_digest": null
+        }
+      },
+      "body": {
+        "kind": "text",
+        "plain_text": "Clustered thought 9"
+      },
+      "created_at_ms": 1757000000000,
+      "privacy": "private"
+    },
+    "cluster-09": {
+      "id": "cluster-09",
+      "target": {
+        "item_id": "local-cluster",
+        "offset_ms": 259,
+        "end_offset_ms": null,
+        "pressed_offset_ms": null,
+        "representation": {
+          "requested_url": null,
+          "final_url": null,
+          "media_type": null,
+          "byte_length": null,
+          "etag": null,
+          "last_modified": null,
+          "retrieved_at_ms": null,
+          "complete_digest": null
+        }
+      },
+      "body": {
+        "kind": "text",
+        "plain_text": "Clustered thought 10"
+      },
+      "created_at_ms": 1757000000000,
+      "privacy": "private"
+    },
+    "span-1": {
+      "id": "span-1",
+      "target": {
+        "item_id": "local-cluster",
+        "offset_ms": 900,
+        "end_offset_ms": 1800,
+        "pressed_offset_ms": null,
+        "representation": {
+          "requested_url": null,
+          "final_url": null,
+          "media_type": null,
+          "byte_length": null,
+          "etag": null,
+          "last_modified": null,
+          "retrieved_at_ms": null,
+          "complete_digest": null
+        }
+      },
+      "body": {
+        "kind": "text",
+        "plain_text": "A stretch worth replaying whole."
+      },
+      "created_at_ms": 1757000000000,
+      "privacy": "private"
+    }
+  },
+  "listening_sessions": [],
+  "settings": {
+    "capture_playback": "pause",
+    "skip_forward_ms": 30000,
+    "skip_backward_ms": 15000
+  }
+}

@@ -15,6 +15,25 @@ use crate::{
     SnapshotCell, controller_adapter,
 };
 
+/// The output levels the worker reports, alongside the transport facts.
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(super) struct Levels {
+    /// Effective, not requested: 100 while the decoder cannot retime honestly.
+    pub(super) rate_percent: u16,
+    pub(super) volume_percent: u8,
+    pub(super) buffered_percent: u8,
+}
+
+impl Default for Levels {
+    fn default() -> Self {
+        Self {
+            rate_percent: 100,
+            volume_percent: 100,
+            buffered_percent: 0,
+        }
+    }
+}
+
 fn publish(
     snapshot: &Arc<Mutex<SnapshotCell>>,
     token: Option<u64>,
@@ -35,6 +54,9 @@ fn publish(
             position_ms,
             duration_ms,
             source,
+            rate_percent: cell.value.rate_percent,
+            volume_percent: cell.value.volume_percent,
+            buffered_percent: cell.value.buffered_percent,
             preview: cell.value.preview.clone(),
         };
         if cell.value == next {
@@ -57,6 +79,49 @@ fn publish(
     if let Some(wake) = wake {
         wake();
     }
+}
+
+/// Levels move independently of transport facts, so they publish on their own.
+fn publish_levels(snapshot: &Arc<Mutex<SnapshotCell>>, levels: Levels) {
+    let wake = {
+        let mut cell = snapshot
+            .lock()
+            .unwrap_or_else(|poisoned| poisoned.into_inner());
+        if (
+            cell.value.rate_percent,
+            cell.value.volume_percent,
+            cell.value.buffered_percent,
+        ) == (
+            levels.rate_percent,
+            levels.volume_percent,
+            levels.buffered_percent,
+        ) {
+            None
+        } else {
+            cell.value.rate_percent = levels.rate_percent;
+            cell.value.volume_percent = levels.volume_percent;
+            cell.value.buffered_percent = levels.buffered_percent;
+            cell.last_wake = std::time::Instant::now();
+            cell.wake.clone()
+        }
+    };
+    if let Some(wake) = wake {
+        wake();
+    }
+}
+
+fn publish_buffered(snapshot: &Arc<Mutex<SnapshotCell>>, buffered_percent: u8) {
+    let levels = {
+        let cell = snapshot
+            .lock()
+            .unwrap_or_else(|poisoned| poisoned.into_inner());
+        Levels {
+            rate_percent: cell.value.rate_percent,
+            volume_percent: cell.value.volume_percent,
+            buffered_percent,
+        }
+    };
+    publish_levels(snapshot, levels);
 }
 
 fn publish_preview(snapshot: &Arc<Mutex<SnapshotCell>>, preview: Option<PreviewSnapshot>) {
@@ -365,6 +430,7 @@ fn project(
         view.duration.map(|duration| duration.as_millis() as u64),
         source,
     );
+    publish_buffered(snapshot, backend.borrow().buffered_percent());
     Ok(())
 }
 
@@ -423,6 +489,7 @@ fn run_session(receiver: &mpsc::Receiver<PlaybackCommand>, snapshot: Arc<Mutex<S
     let mut controller = controller_adapter::controller(backend.clone());
     let mut token = None;
     let mut preview = None;
+    let mut levels = Levels::default();
     loop {
         while let Ok(message) = receiver.try_recv() {
             match message {
@@ -566,6 +633,18 @@ fn run_session(receiver: &mpsc::Receiver<PlaybackCommand>, snapshot: Arc<Mutex<S
                     ) {
                         continue;
                     }
+                },
+                PlaybackCommand::SetRate(_percent) => {
+                    // Neither Symphonia nor the output resampler can retime
+                    // without shifting pitch, so the effective rate stays 100
+                    // and the snapshot shows that rather than a silent fake.
+                    levels.rate_percent = 100;
+                    publish_levels(&snapshot, levels);
+                },
+                PlaybackCommand::SetVolume(percent) => {
+                    levels.volume_percent = percent;
+                    backend.borrow_mut().set_volume(percent);
+                    publish_levels(&snapshot, levels);
                 },
                 PlaybackCommand::StartPreview { id, source } => {
                     start_preview(

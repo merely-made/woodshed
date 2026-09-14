@@ -9,7 +9,9 @@ publish = false
 [dependencies]
 cambium.workspace = true
 redshank-model.workspace = true
+tinct.workspace = true
 
 [dev-dependencies]
+cambium-genet-winit-host.workspace = true
 genet-scripted-dom.workspace = true
 layout-dom-api.workspace = true

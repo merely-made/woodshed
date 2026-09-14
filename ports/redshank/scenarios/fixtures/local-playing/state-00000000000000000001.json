@@ -1,0 +1,120 @@
+{
+  "schema_version": 1,
+  "library": {
+    "local-stereo": {
+      "kind": "local_audio",
+      "id": "local-stereo",
+      "title": "Stereo phase-4 fixture",
+      "source": {
+        "kind": "local",
+        "path": "C:\\Users\\mark_\\Code\\testing\\woodshed\\redshank-phase4-20260906\\stereo.m4a"
+      }
+    }
+  },
+  "subscriptions": {},
+  "queue": [
+    "local-stereo"
+  ],
+  "selected_item": "local-stereo",
+  "progress": {
+    "local-stereo": {
+      "position_ms": 1240,
+      "completed": false,
+      "updated_at_ms": 1757000000000
+    }
+  },
+  "annotations": {
+    "note-a": {
+      "id": "note-a",
+      "target": {
+        "item_id": "local-stereo",
+        "offset_ms": 460,
+        "end_offset_ms": null,
+        "pressed_offset_ms": null,
+        "representation": {
+          "requested_url": null,
+          "final_url": null,
+          "media_type": null,
+          "byte_length": null,
+          "etag": null,
+          "last_modified": null,
+          "retrieved_at_ms": null,
+          "complete_digest": null
+        }
+      },
+      "body": {
+        "kind": "text",
+        "plain_text": "The first thing worth keeping."
+      },
+      "created_at_ms": 1757000000000,
+      "privacy": "private"
+    },
+    "note-b": {
+      "id": "note-b",
+      "target": {
+        "item_id": "local-stereo",
+        "offset_ms": 1020,
+        "end_offset_ms": null,
+        "pressed_offset_ms": null,
+        "representation": {
+          "requested_url": null,
+          "final_url": null,
+          "media_type": null,
+          "byte_length": null,
+          "etag": null,
+          "last_modified": null,
+          "retrieved_at_ms": null,
+          "complete_digest": null
+        }
+      },
+      "body": {
+        "kind": "text",
+        "plain_text": "And the second, a little later."
+      },
+      "created_at_ms": 1757000000000,
+      "privacy": "private"
+    },
+    "note-c": {
+      "id": "note-c",
+      "target": {
+        "item_id": "local-stereo",
+        "offset_ms": 1160,
+        "end_offset_ms": null,
+        "pressed_offset_ms": null,
+        "representation": {
+          "requested_url": null,
+          "final_url": null,
+          "media_type": null,
+          "byte_length": null,
+          "etag": null,
+          "last_modified": null,
+          "retrieved_at_ms": null,
+          "complete_digest": null
+        }
+      },
+      "body": {
+        "kind": "audio",
+        "blob_id": "voice:fixture000000000000000000000000000000000000000000000000000000000",
+        "media_type": "audio/wav",
+        "duration_ms": 1500
+      },
+      "created_at_ms": 1757000000000,
+      "privacy": "private"
+    }
+  },
+  "listening_sessions": [
+    {
+      "item_id": "local-stereo",
+      "start_ms": 0,
+      "stop_ms": 1240,
+      "started_at_ms": 1757000000000,
+      "ended_at_ms": 1757000001240,
+      "completed": false
+    }
+  ],
+  "settings": {
+    "capture_playback": "pause",
+    "skip_forward_ms": 30000,
+    "skip_backward_ms": 15000
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "library": {},
+  "subscriptions": {},
+  "queue": [],
+  "selected_item": null,
+  "progress": {},
+  "annotations": {},
+  "listening_sessions": [],
+  "settings": {
+    "capture_playback": "pause",
+    "skip_forward_ms": 30000,
+    "skip_backward_ms": 15000
+  }
+}

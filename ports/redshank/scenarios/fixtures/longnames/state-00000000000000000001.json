@@ -1,0 +1,92 @@
+{
+  "schema_version": 1,
+  "library": {
+    "long-local": {
+      "kind": "local_audio",
+      "id": "long-local",
+      "title": "A Very Long Episode Title That Has To Truncate Somewhere Because The Dock Row Will Not Grow For It Ever, And Neither Wil",
+      "source": {
+        "kind": "local",
+        "path": "C:\\Users\\mark_\\Code\\testing\\woodshed\\redshank-phase4-20260906\\stereo.m4a"
+      }
+    },
+    "long-ep": {
+      "kind": "feed_episode",
+      "id": "long-ep",
+      "feed_url": "http://127.0.0.1:8765/long.xml",
+      "guid": "long",
+      "title": "g Episode Title That Has To Truncate Somewhere Because The Dock Row Will Not Grow For It Ever, And Neither Will The Rost",
+      "source": {
+        "kind": "enclosure",
+        "url": "http://127.0.0.1:8765/stereo.m4a"
+      },
+      "facts": {
+        "published": "Wed, 10 Sep 2026 09:00:00 GMT",
+        "summary": null,
+        "duration": "0:32",
+        "artwork": null,
+        "enclosure_media_type": "audio/mp4",
+        "enclosure_byte_length": 33236,
+        "chapters": [],
+        "transcripts": []
+      }
+    }
+  },
+  "subscriptions": {
+    "http://127.0.0.1:8765/long.xml": {
+      "feed_url": "http://127.0.0.1:8765/long.xml",
+      "title": "Title That Has To Truncate Somewhere Because The Dock Row Will Not Grow For It Ever, And Neither Will The Roster Row Bes",
+      "subtitle": "y Long Episode Title That Has To Truncate Somewhere Because The Dock Row Will Not Grow For It Ever, And Neither Will The",
+      "link": null,
+      "language": "en",
+      "artwork": null,
+      "last_refreshed_ms": 1757000000000,
+      "diagnostics": []
+    }
+  },
+  "queue": [
+    "long-local",
+    "long-ep"
+  ],
+  "selected_item": "long-local",
+  "progress": {
+    "long-local": {
+      "position_ms": 4000,
+      "completed": false,
+      "updated_at_ms": 1757000000000
+    }
+  },
+  "annotations": {
+    "long-note": {
+      "id": "long-note",
+      "target": {
+        "item_id": "long-local",
+        "offset_ms": 2000,
+        "end_offset_ms": null,
+        "pressed_offset_ms": null,
+        "representation": {
+          "requested_url": null,
+          "final_url": null,
+          "media_type": null,
+          "byte_length": null,
+          "etag": null,
+          "last_modified": null,
+          "retrieved_at_ms": null,
+          "complete_digest": null
+        }
+      },
+      "body": {
+        "kind": "text",
+        "plain_text": "A Very Long Episode Title That Has To Truncate Somewhere Because The Dock Row Will Not Grow For It Ever, And Neither Wil"
+      },
+      "created_at_ms": 1757000000000,
+      "privacy": "private"
+    }
+  },
+  "listening_sessions": [],
+  "settings": {
+    "capture_playback": "pause",
+    "skip_forward_ms": 30000,
+    "skip_backward_ms": 15000
+  }
+}

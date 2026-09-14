@@ -210,6 +210,10 @@ pub(super) struct Backend {
     requested_playing: bool,
     source_positioned: bool,
     decoded_first_frame: bool,
+    /// Requested output volume in percent, applied as soon as a runtime exists.
+    volume_percent: u8,
+    /// How much of the source can be seeked without waiting on the network.
+    buffered_percent: u8,
     #[cfg(test)]
     test_source: bool,
     #[cfg(test)]
@@ -236,6 +240,8 @@ impl Backend {
             requested_playing: false,
             source_positioned: false,
             decoded_first_frame: false,
+            volume_percent: 100,
+            buffered_percent: 0,
             #[cfg(test)]
             test_source: false,
             #[cfg(test)]
@@ -275,6 +281,7 @@ impl Backend {
             self.requested_playing = false;
             self.source_positioned = true;
             self.decoded_first_frame = false;
+            self.buffered_percent = 100;
             self.test_source = true;
             self.test_ready_sent = false;
             return Ok(servo_media_player::controller::MediaInfo {
@@ -305,6 +312,13 @@ impl Backend {
             servo_media_player::controller::MediaSource::HostBlob { id } => {
                 return Err(format!("host blob playback needs the embedding host: {id}"));
             },
+        };
+        // A local or published cache object is wholly seekable; the HTTP range
+        // source keeps only a sliding window, so it can claim no buffered head.
+        self.buffered_percent = match source {
+            servo_media_player::controller::MediaSource::Local { .. } => 100,
+            servo_media_player::controller::MediaSource::Http { .. }
+            | servo_media_player::controller::MediaSource::HostBlob { .. } => 0,
         };
         let duration = decoder.duration_ms.map(Duration::from_millis);
         self.decoder = Some(decoder);
@@ -401,6 +415,18 @@ impl Backend {
         )
     }
 
+    pub(super) fn buffered_percent(&self) -> u8 {
+        self.buffered_percent
+    }
+
+    /// Record the requested output volume and apply it if the output exists.
+    pub(super) fn set_volume(&mut self, percent: u8) {
+        self.volume_percent = percent;
+        if let Some(audio) = self.audio.borrow_mut().as_mut() {
+            audio.set_volume(percent);
+        }
+    }
+
     pub(super) fn admit_cached_representation(
         &mut self,
         expected: &RepresentationReceipt,
@@ -434,6 +460,7 @@ impl Backend {
         self.base_ms = 0;
         self.source_positioned = false;
         self.decoded_first_frame = false;
+        self.buffered_percent = 0;
         #[cfg(test)]
         {
             self.test_source = false;
@@ -489,8 +516,9 @@ impl Backend {
             .ok_or("first decoded frame did not report a channel layout")?;
         if self.sink.is_none() {
             if self.audio.borrow().is_none() {
-                *self.audio.borrow_mut() =
-                    Some(AudioRuntime::new().map_err(|error| error.to_string())?);
+                let mut runtime = AudioRuntime::new().map_err(|error| error.to_string())?;
+                runtime.set_volume(self.volume_percent);
+                *self.audio.borrow_mut() = Some(runtime);
             }
             self.sink = Some(
                 self.audio

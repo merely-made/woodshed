@@ -1,0 +1,15 @@
+# Fixture: local-playing. Recording is process state, not model state, so it is
+# reached rather than seeded. On a machine with no input device the desktop
+# reports voice capture unavailable and the assertion below fails honestly.
+settle 30
+assert snap voice-available == true
+act voice-begin
+settle 20
+assert snap recording == true
+assert event recording true
+capture recording
+act voice-cancel
+settle 15
+assert snap recording == false
+capture recording-cancelled
+log recording complete

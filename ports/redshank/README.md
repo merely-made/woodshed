@@ -15,12 +15,18 @@ Current packages:
 - `redshank-model`: durable library, queue, progress, settings, representation
   receipts, text notes, audio notes, and the capture-host trait;
 - `redshank-storage`: a local JSON store using immutable numbered generations;
-- `redshank-surfaces`: reusable Cambium Player and Capture surfaces, plus the
-  full listen-first composition. Listen opens by default with Queue and Notes;
-  Library owns subscriptions, imports, and offline actions; Notes and Settings
-  remain dedicated tabs. The compact
-  composition depends only on its presentation snapshot and command queue, so a
-  host can mount it without the Library;
+- `redshank-surfaces`: the Cambium surfaces from the endorsed 2026-09-13 design
+  canvas: one fixed-height Player/Capture dock (family A) or left transport
+  rail (family B), a header with Listen, Library, Notes, Mere, and Settings,
+  the feed-node projections (chain, orrery, trail) for the Mere tab, and a
+  tinct-derived stylesheet with wetland and brand-shell seeds in dark, light,
+  and high-contrast modes. Wide, narrow, and phone widths are plain media
+  queries in the sheet. The compact composition depends only on its
+  presentation snapshot and command queue, so a host can mount it without the
+  Library. See `../../design_docs/2026-09-13_redshank_gui_implementation_plan.md`;
+- `redshank-web`: the same surfaces mounted on a browser canvas over
+  `cambium-genet-web-host`, with an in-memory fixture and no audio; see
+  `web/README.md`;
 - `redshank-playback`: an MP3/AAC decoder worker using Symphonia and one
   host-owned Firewheel/CPAL output, admitted through Genet's player controller.
   Local files and Rustls-backed HTTP(S) byte-range sources use the same command
@@ -105,6 +111,13 @@ a concurrently modified file immutable. Remote receipts retain validators but
 do not claim a complete digest until every byte is durably cached.
 See the [canonical plan](../../design_docs/2026-09-01_listening_annotation_port_plan.md)
 for current validation receipts and the remaining done-conditions.
+
+For a deterministic headed receipt of any surface state, the desktop drives
+itself from a scenario file: set `REDSHANK_SCENARIO`, `REDSHANK_CAPTURE_DIR`,
+`REDSHANK_WIDTH`, and `REDSHANK_HEIGHT`, or run
+`Code/testing/woodshed/redshank-run-scenario.ps1 -Scenario <name> -Fixture <name>
+[-Matrix]`. Captures are in-process readbacks of the presented frame. Scenarios,
+fixtures, and the `act` vocabulary are documented in `scenarios/README.md`.
 
 Run the isolated model and storage gates from outside the repository's parent
 Cargo configuration:

@@ -1,0 +1,94 @@
+{
+  "schema_version": 1,
+  "library": {
+    "ep-1": {
+      "kind": "feed_episode",
+      "id": "ep-1",
+      "feed_url": "http://127.0.0.1:8765/feed.xml",
+      "guid": "one",
+      "title": "Range One",
+      "source": {
+        "kind": "enclosure",
+        "url": "http://127.0.0.1:8765/stereo.m4a"
+      },
+      "facts": {
+        "published": "Wed, 10 Sep 2026 09:00:00 GMT",
+        "summary": null,
+        "duration": "0:32",
+        "artwork": null,
+        "enclosure_media_type": "audio/mp4",
+        "enclosure_byte_length": 33236,
+        "chapters": [],
+        "transcripts": []
+      }
+    },
+    "ep-2": {
+      "kind": "feed_episode",
+      "id": "ep-2",
+      "feed_url": "http://127.0.0.1:8765/feed.xml",
+      "guid": "two",
+      "title": "Range Two",
+      "source": {
+        "kind": "enclosure",
+        "url": "http://127.0.0.1:8765/stereo.m4a"
+      },
+      "facts": {
+        "published": "Wed, 03 Sep 2026 09:00:00 GMT",
+        "summary": null,
+        "duration": "0:32",
+        "artwork": null,
+        "enclosure_media_type": "audio/mp4",
+        "enclosure_byte_length": 33236,
+        "chapters": [],
+        "transcripts": []
+      }
+    },
+    "ep-3": {
+      "kind": "feed_episode",
+      "id": "ep-3",
+      "feed_url": "http://127.0.0.1:8765/feed.xml",
+      "guid": "three",
+      "title": "Range Three",
+      "source": {
+        "kind": "enclosure",
+        "url": "http://127.0.0.1:8765/stereo.m4a"
+      },
+      "facts": {
+        "published": "Wed, 27 Aug 2026 09:00:00 GMT",
+        "summary": null,
+        "duration": "0:32",
+        "artwork": null,
+        "enclosure_media_type": "audio/mp4",
+        "enclosure_byte_length": 33236,
+        "chapters": [],
+        "transcripts": []
+      }
+    }
+  },
+  "subscriptions": {
+    "http://127.0.0.1:8765/feed.xml": {
+      "feed_url": "http://127.0.0.1:8765/feed.xml",
+      "title": "Range Server Feed",
+      "subtitle": "Three episodes served with byte ranges",
+      "link": null,
+      "language": "en",
+      "artwork": null,
+      "last_refreshed_ms": 1757000000000,
+      "diagnostics": []
+    }
+  },
+  "queue": [
+    "ep-1",
+    "ep-2",
+    "ep-3"
+  ],
+  "selected_item": "ep-1",
+  "progress": {},
+  "annotations": {},
+  "listening_sessions": [],
+  "settings": {
+    "capture_playback": "pause",
+    "skip_forward_ms": 30000,
+    "skip_backward_ms": 15000
+  }
+}

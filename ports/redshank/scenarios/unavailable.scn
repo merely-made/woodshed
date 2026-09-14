@@ -1,0 +1,10 @@
+# Fixture: unavailable. The item-scoped message and its retry, not a global toast.
+settle 30
+act select:gone
+act play
+settle 60
+capture unavailable
+act tab:library
+settle 10
+capture library-unavailable
+log unavailable complete
