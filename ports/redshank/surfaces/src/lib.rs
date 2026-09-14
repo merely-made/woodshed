@@ -7,7 +7,10 @@
 //! annotation adapters. The compact surface deliberately has no library,
 //! storage, network, or audio-device authority.
 
-use cambium::{AnyView, GenetCtx, GenetElement, TextInput, button, el, lens, text, textarea};
+use cambium::{
+    AnyView, GenetCtx, GenetElement, PointerButton, PointerPhase, TextInput, button, el, lens,
+    on_pointer, text, textarea,
+};
 use redshank_model::{
     AnnotationId, CaptureAnchor, FeedSubscription, ItemId, LibraryItem, ListenerSettings,
 };
@@ -54,6 +57,7 @@ pub enum CompactCommand {
     AddTextNote,
     BeginVoiceNote,
     FinishVoiceNote,
+    OpenVoiceNote(AnnotationId),
     BeginTextNote,
     CancelTextNote,
     SaveTextNote {
@@ -100,6 +104,19 @@ pub struct TextCapture {
     pub draft: String,
 }
 
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub enum NoteSummaryBody {
+    Text(String),
+    Voice { duration_ms: u64 },
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct NoteSummary {
+    pub id: AnnotationId,
+    pub offset_ms: u64,
+    pub body: NoteSummaryBody,
+}
+
 #[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
 pub enum SurfaceTab {
     #[default]
@@ -116,7 +133,7 @@ pub struct RedshankSurfaceState {
     pub library: Vec<LibraryItem>,
     pub subscriptions: Vec<FeedSubscription>,
     pub queue: Vec<ItemId>,
-    pub notes: Vec<(AnnotationId, u64, String)>,
+    pub notes: Vec<NoteSummary>,
     pub settings: ListenerSettings,
     pub text_capture: Option<TextCapture>,
     pub text_editor: TextInput,
@@ -271,11 +288,54 @@ pub fn player_surface(state: &CompactPlayerState) -> CompactView {
 }
 
 pub fn capture_surface(state: &CompactPlayerState) -> CompactView {
-    let (voice_label, voice_command) = if state.voice_capture_active {
-        ("Finish voice note", CompactCommand::FinishVoiceNote)
+    let voice_label = if state.voice_capture_active {
+        "Release to save voice note"
     } else {
-        ("Start voice note", CompactCommand::BeginVoiceNote)
+        "Hold to record voice note"
     };
+    let voice_available = enabled(state) && state.voice_capture_available;
+    let voice = on_pointer(
+        el("button", text(voice_label))
+            .attr(
+                "class",
+                if state.voice_capture_active {
+                    "redshank-control redshank-recording"
+                } else {
+                    "redshank-control"
+                },
+            )
+            .attr("aria-label", voice_label)
+            .attr("aria-keyshortcuts", "R")
+            .attr(
+                "aria-pressed",
+                if state.voice_capture_active {
+                    "true"
+                } else {
+                    "false"
+                },
+            )
+            .attr(
+                "aria-disabled",
+                if voice_available { "false" } else { "true" },
+            )
+            .attr("tabindex", if voice_available { "0" } else { "-1" }),
+        move |state: &mut CompactPlayerState, event| {
+            if event.button != PointerButton::Primary || !voice_available {
+                return;
+            }
+            match event.phase {
+                PointerPhase::Down if !state.voice_capture_active => {
+                    state.request(CompactCommand::BeginVoiceNote);
+                    event.prop.prevent_default();
+                },
+                PointerPhase::Up if state.voice_capture_active => {
+                    state.request(CompactCommand::FinishVoiceNote);
+                    event.prop.prevent_default();
+                },
+                _ => {},
+            }
+        },
+    );
     Box::new(
         el(
             "section",
@@ -286,12 +346,7 @@ pub fn capture_surface(state: &CompactPlayerState) -> CompactView {
                     CompactCommand::AddTextNote,
                     enabled(state),
                 ),
-                control(
-                    voice_label,
-                    "R",
-                    voice_command,
-                    enabled(state) && state.voice_capture_available,
-                ),
+                voice,
             ),
         )
         .attr("class", "redshank-capture")
@@ -526,18 +581,31 @@ pub fn surface(state: &RedshankSurfaceState) -> FullView {
             .attr("class", "redshank-queue-item"),
         ) as FullView
     });
-    let notes = state.notes.iter().map(|(id, offset, body)| {
-        let id = id.clone();
-        let edit_id = id.clone();
-        let edit = Box::new(
-            button(
-                format!("{}  {}", format_time(*offset), body),
-                move |state: &mut RedshankSurfaceState, _| {
-                    state.request(CompactCommand::BeginEditNote(edit_id.clone()));
-                },
-            )
+    let notes = state.notes.iter().map(|note| {
+        let id = note.id.clone();
+        let open_id = id.clone();
+        let (label, open_command, open_label) = match &note.body {
+            NoteSummaryBody::Text(body) => (
+                format!("{}  {}", format_time(note.offset_ms), body),
+                CompactCommand::BeginEditNote(open_id),
+                "Edit text note",
+            ),
+            NoteSummaryBody::Voice { duration_ms } => (
+                format!(
+                    "{}  Voice note · {}",
+                    format_time(note.offset_ms),
+                    format_time(*duration_ms)
+                ),
+                CompactCommand::OpenVoiceNote(open_id),
+                "Go to voice note",
+            ),
+        };
+        let open = Box::new(
+            button(label, move |state: &mut RedshankSurfaceState, _| {
+                state.request(open_command.clone());
+            })
             .attr("class", "redshank-note-edit")
-            .attr("aria-label", "Edit note"),
+            .attr("aria-label", open_label),
         ) as FullView;
         let delete = Box::new(
             button("Delete note", move |state: &mut RedshankSurfaceState, _| {
@@ -549,7 +617,7 @@ pub fn surface(state: &RedshankSurfaceState) -> FullView {
             el(
                 "article",
                 (
-                    edit,
+                    open,
                     el("div", (delete,)).attr("class", "redshank-item-actions"),
                 ),
             )
@@ -976,9 +1044,10 @@ mod tests {
         assert!(markup.contains("aria-label=\"Capture\""));
         assert!(markup.contains("aria-label=\"Pause\" aria-keyshortcuts=\"Space\""));
         assert!(markup.contains("aria-label=\"Add text note\" aria-keyshortcuts=\"N\""));
-        assert!(markup.contains(
-            "aria-label=\"Start voice note\" aria-keyshortcuts=\"R\" aria-disabled=\"true\""
-        ));
+        assert!(markup.contains("aria-label=\"Hold to record voice note\""));
+        assert!(markup.contains("aria-keyshortcuts=\"R\""));
+        assert!(markup.contains("aria-disabled=\"true\""));
+        assert!(markup.contains("aria-pressed=\"false\""));
         assert!(markup.contains("Wetland"));
         assert!(markup.contains("1:02 / 1:02:03"));
     }
@@ -1008,10 +1077,49 @@ mod tests {
         capture.update(|state| commands.extend(state.drain_commands()));
         assert_eq!(commands, [CompactCommand::AddTextNote]);
 
-        let voice = node_with_label(&capture.dom().borrow(), capture.root(), "Start voice note");
+        let voice = node_with_label(
+            &capture.dom().borrow(),
+            capture.root(),
+            "Hold to record voice note",
+        );
         capture.dispatch_click(voice, PointerClick::at((1.0, 1.0)));
         capture.update(|state| commands.extend(state.drain_commands()));
         assert_eq!(commands, [CompactCommand::AddTextNote]);
+    }
+
+    #[test]
+    fn voice_capture_uses_pointer_press_and_release() {
+        let mut capture = runner(capture_surface);
+        capture.update(|state| state.voice_capture_available = true);
+        let voice = node_with_label(
+            &capture.dom().borrow(),
+            capture.root(),
+            "Hold to record voice note",
+        );
+        capture.dispatch_pointer_down(
+            voice,
+            cambium::PointerEvent::new(PointerPhase::Down, (1.0, 1.0), (10.0, 10.0)),
+        );
+        let mut commands = Vec::new();
+        capture.update(|state| {
+            commands.extend(state.drain_commands());
+            state.voice_capture_active = true;
+        });
+        assert_eq!(commands, [CompactCommand::BeginVoiceNote]);
+
+        capture.dispatch_pointer_up(cambium::PointerEvent::new(
+            PointerPhase::Up,
+            (1.0, 1.0),
+            (10.0, 10.0),
+        ));
+        capture.update(|state| commands.extend(state.drain_commands()));
+        assert_eq!(
+            commands,
+            [
+                CompactCommand::BeginVoiceNote,
+                CompactCommand::FinishVoiceNote
+            ]
+        );
     }
 
     #[test]
@@ -1137,6 +1245,29 @@ mod tests {
         assert!(
             markup.find("class=\"redshank-workspace\"") < markup.find("class=\"redshank-dock\"")
         );
+    }
+
+    #[test]
+    fn voice_note_row_reports_duration_and_opens_its_anchor() {
+        let mut state = RedshankSurfaceState {
+            compact: playing_state(),
+            active_tab: SurfaceTab::Notes,
+            ..Default::default()
+        };
+        let id = AnnotationId("voice-one".into());
+        state.notes.push(NoteSummary {
+            id: id.clone(),
+            offset_ms: 62_000,
+            body: NoteSummaryBody::Voice { duration_ms: 3_500 },
+        });
+        let mut runner = full_runner(state);
+        let markup = runner.dom().borrow().outer_html(runner.root());
+        assert!(markup.contains("1:02  Voice note · 0:03"));
+        let open = node_with_label(&runner.dom().borrow(), runner.root(), "Go to voice note");
+        runner.dispatch_click(open, PointerClick::at((1.0, 1.0)));
+        let mut commands = Vec::new();
+        runner.update(|state| commands.extend(state.drain_commands()));
+        assert_eq!(commands, [CompactCommand::OpenVoiceNote(id)]);
     }
 
     #[test]
