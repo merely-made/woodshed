@@ -1067,7 +1067,7 @@ rejected for the reasons recorded in the 2026-09-01 planning pass.
   successful Pause capture resumes prior playback, note rows retain duration,
   reopening text or voice notes seeks to the frozen anchor, and durable
   deletion removes an unshared voice blob only after the corresponding model
-  generation lands. The isolated workspace passes 54 default tests with five
+  generation lands. The isolated workspace passes 58 default tests with five
   device or fixture gates skipped, formatting, and strict Clippy. Physical
   microphone capture remains a headed acceptance gate. Duck, reaction offset,
   recorded-body audition, W3C export, and Turnstone's capture adapter remain
