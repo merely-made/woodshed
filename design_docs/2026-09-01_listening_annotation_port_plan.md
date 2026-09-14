@@ -1,6 +1,6 @@
 # Redshank: listening and annotation port plan
 
-**Status (2026-09-09): ACTIVE.** The product direction and **Redshank** name are
+**Status (2026-09-13): ACTIVE.** The product direction and **Redshank** name are
 endorsed. Phase 0 is complete: Symphonia plus a bounded range source is the
 shipping default, and Genet/GStreamer is the retained browser-conformance
 fallback. Phase 1 is complete: its general Genet boundary, deterministic player
@@ -18,6 +18,9 @@ and automatic cache reclamation remain open. Explicit cache removal and stable
 eviction ordering are landed. Headed local, HTTP,
 and server-offline playback, text-note, persistence, restart, and resume receipts
 now pass.
+Phase 5 is active with bounded standalone microphone capture, durable voice
+bodies, and source-anchor reopening. Recorded-body audition, Duck and reaction
+offset behavior, and open annotation export remain open.
 
 ## Ruling
 
@@ -856,6 +859,143 @@ After this phase, decide whether the port remains co-located or moves to its own
 repository. Extraction requires an independent audience or release identity, a
 stable one-way dependency boundary, a proven second host, and a build that does
 not rely on Woodshed's workspace configuration.
+
+## GUI evidence brief, 2026-09-13
+
+This is research input, not a settled visual design. It separates the ordinary
+listener from the annotation workbench and keeps the compact Player/Capture
+surface independently mountable.
+
+### Current headed evidence
+
+The maintainer's Windows trials establish several useful facts about the live
+surface:
+
+- the dark wetland palette, tab strip, Listen/Library/Notes/Settings split, and
+  persistent bottom dock read coherently as one application;
+- large full-width text buttons make the prototype operable but give selection,
+  transport, queue movement, destructive actions, and capture nearly equal
+  visual weight;
+- the player lacks a seek track, so elapsed time, resume position, note anchors,
+  and successful seeking have no spatial representation;
+- Queue and Notes use the available width well, but rows do not yet identify the
+  active item, listened fraction, source availability, or note type at a glance;
+- global notice banners are legible but visually detach a failure from the item
+  or control that caused it;
+- the persistent dock is the right structural decision, but wrapping words into
+  large buttons makes it taller and less stable than a listening control strip;
+- the current colors have strong nominal contrast: foreground/background
+  combinations measure 16.04:1 for page text, 9.18:1 for secondary text,
+  10.58:1 for controls, 12.79:1 for the selected tab, and 7.28:1 for the
+  recording state. Disabled opacity still needs headed contrast measurement.
+
+The screenshots also exposed real state requirements rather than cosmetic
+ones: a cloud placeholder must be distinguishable from a resident file;
+Buffering, Playing, Paused, Completed, Unavailable, and Recoverable Error need
+different presentations; and a saved note must show both the source anchor and
+its own body or duration.
+
+### Reference screenshots
+
+These links remain external so proprietary or project-owned imagery is not
+vendored into Woodshed.
+
+| Reference | Screenshot | Evidence to borrow | Boundary |
+| --- | --- | --- | --- |
+| KDE Kasts | [desktop queue/player](https://cdn.kde.org/screenshots/kasts/kasts-desktop.png), [project page](https://apps.kde.org/kasts/) | A stable, compact transport header can carry title, seek track, elapsed/remaining time, speed, volume, and queue context without turning each control into a card. | Kasts is a full podcatcher; Redshank should not import its whole navigation or Qt shell. |
+| GNOME Podcasts | [episode list](https://static.gnome.org/catalog/app-screenshot/org.gnome.Podcasts/image-1_orig.png), [chapters](https://static.gnome.org/catalog/app-screenshot/org.gnome.Podcasts/image-4_orig.png), [project page](https://apps.gnome.org/Podcasts/) | Artwork, show/episode hierarchy, restrained metadata, and generous row rhythm make a small library scannable. | Its simplicity omits annotation and dense desktop review. |
+| PodNotes | [embedded player](https://podnotes.obsidian.guide/resources/player.png), [timestamp links](https://podnotes.obsidian.guide/resources/timestamps.png), [documentation](https://podnotes.obsidian.guide/) | A timestamp is useful when it becomes durable, readable note content rather than remaining only a marker in a player. Playback and note authoring can compose without becoming one widget. | Obsidian owns the editor and document chrome; Redshank owns a smaller host-neutral surface. |
+| Snipd | [transcript/snip view](https://www.snipd.app/_next/image?q=75&url=%2Fimages%2Fblog%2Fsnipd-transcript-screen-daniel-ek--green-bg.jpg&w=1920), [capture workflow](https://www.snipd.com/blog/how-to-take-notes-from-podcasts-during-workouts) | Capture is one prominent action during listening; review, edit, delete, and export happen afterward. Headphone and lock-screen controls show why the command must not depend on navigation. | Snipd captures a source segment and adds generated text. Redshank's voice note is a listener-authored body anchored to the source. |
+| AntennaPod design work | [2025 player wireframe](https://forum.antennapod.org/uploads/default/original/2X/6/6901f954c5065c0a554b4e21a363c827ac7b4ba8.png), [design discussion](https://forum.antennapod.org/t/player-screen-ux-ui-work/6177) | Keep transport visible across player subviews, make gestures supplementary, show current speed, preserve empty destinations for muscle memory, and consider a configurable action rail. | Mobile thumb reach and swipe navigation are inputs to the compact surface, not reasons to make the desktop shell mobile-shaped. |
+| WaveSurfer markers | [marker example](https://hotwire.club/assets/images/gen/blog/20240702_Stimulus_Wavesurfer_Markers_1.medium.webp), [Regions example](https://wavesurfer.xyz/examples/?regions.js) | Point and span annotations can be read directly against time. | A full waveform editor is excessive for the default player; small ticks on the seek track are enough until a focused note/clip editor exists. |
+
+Historical Airr screenshots are also useful for the press/hold/release quote
+gesture and retrospective range adjustment, but Airr's object is a clip of the
+podcast rather than a spoken reaction. Treat it as gesture evidence only, not a
+content-model precedent.
+
+### Necessary information and controls
+
+The next GUI should make these facts visible without opening Settings:
+
+1. **Now playing:** show/collection, episode or file title, source availability,
+   play state, elapsed and total time, and whether resume came from saved
+   progress.
+2. **Time:** one seek track with a clear thumb, buffered/available extent when
+   known, and note markers. Point notes may share a timestamp, so markers must
+   stack or expose a count rather than overlap invisibly.
+3. **Transport:** one primary Play/Pause action, configurable Back/Forward
+   intervals, and direct but lower-weight access to speed and volume. Ended
+   items must visibly offer Replay rather than a disabled Play.
+4. **Capture:** separate Text note and Voice note actions beside transport.
+   Recording needs an always-visible state, elapsed recording time, frozen
+   source anchor, Finish, and Cancel. Color may reinforce recording but cannot
+   be its only signal. The press-and-hold gesture and R shortcut need a visible
+   click/toggle equivalent.
+5. **Notes:** each row needs type, source anchor, body preview or recorded
+   duration, and a primary Open-at-source action. Edit, audition, export, and
+   Delete are secondary actions and appear only when supported. Source clips
+   and listener voice notes must have different names and icons.
+6. **Queue:** identify the active row and its listened fraction. Reordering is
+   important but should use a handle or compact Up/Down actions; Remove should
+   not visually compete with selecting the item.
+7. **Library:** one row per item with title, show/source, duration/progress,
+   local/cloud/offline state, and one primary Play or Add action. Subscribe,
+   import, download, remove download, and remove from library belong in
+   secondary actions or focused detail, not separate full-width rows.
+8. **Feedback:** attach recoverable errors and retry actions to the relevant
+   episode, feed, or device where possible. Saving, buffering, downloading, and
+   recording changes also need a programmatic status announcement without
+   stealing focus.
+9. **Responsive structure:** desktop keeps Queue and Notes side by side;
+   compact widths show one selected work view while retaining transport and
+   capture. The dock should keep a stable height during ordinary state changes.
+10. **Accessibility:** preserve native tab and button semantics, visible focus,
+    text alternatives for icon controls, keyboard access, reduced-motion
+    behavior, and target spacing. WCAG 2.2 sets a 24 by 24 CSS-pixel minimum or
+    equivalent spacing; the high-frequency Play and capture targets should aim
+    for the more forgiving 44 by 44 size.
+
+### Working hierarchy for the design pass
+
+The evidence favors a source-time-centered interface:
+
+- a quiet application header for identity and the four stable destinations;
+- a flexible work area whose Listen view is Queue plus Notes;
+- one stable player dock organized as identity, seek track, transport, then
+  capture, rather than as a run of equal text buttons;
+- a compact mode made from that same dock, not a separately designed mini
+  player;
+- optional episode art as orientation, never as the dominant use of desktop
+  space;
+- a focused note editor only after capture, keeping the in-listening action to
+  one decision.
+
+A default waveform, transcript, discovery feed, social layer, automatic AI
+summary, and dense metadata inspector are not necessities. They can arrive as
+separate projections if real content or a second host calls for them.
+
+### GUI design done-conditions
+
+Before implementation, prepare two responsive wireframe families using the
+same command/state vocabulary: one with the player dock along the bottom and
+one with a narrow left transport rail. Exercise both at wide desktop, narrow
+desktop, and compact embedded widths with these fixtures:
+
+- local file playing with two text notes and one voice note;
+- remote episode buffering, then playable;
+- unavailable cloud placeholder with an item-scoped recovery action;
+- completed item ready to replay;
+- active voice recording at a frozen anchor;
+- ten overlapping point notes and one span annotation;
+- no selected item, an empty queue, and no notes;
+- long show and episode names at 200% and 400% zoom.
+
+Reject a family if the seek track, Play/Pause, active recording state, or note
+capture moves when switching Listen/Library/Notes/Settings; if an ordinary
+state change alters dock height; if an essential action exists only as a
+gesture; or if the compact surface requires product commands absent from the
+standalone surface contract.
 
 ## Validation matrix
 

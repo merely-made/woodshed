@@ -31,7 +31,7 @@ before any other doc in this directory.
   co-op proofs remain fixture evidence.
 
 - [2026-09-01_listening_annotation_port_plan.md](2026-09-01_listening_annotation_port_plan.md)
-  **Active; Phases 0-3 complete, Phase 4 in progress.** Redshank is a separate audio-listening and timed
+  **Active; Phases 0-3 complete, Phases 4-5 in progress.** Redshank is a separate audio-listening and timed
   text/voice-annotation port incubated in this repository. The September 6
   local-file slice adds a Symphonia/Firewheel worker, full listening surfaces,
   and saved text-note editing. The September 7 controller-admission slice puts
@@ -41,8 +41,11 @@ before any other doc in this directory.
   Rustls-backed, validator-aware progressive HTTP playback and a headed remote
   restart receipt. The September 9 slice adds a budgeted content-addressed cache
   and proves restart/playback with its HTTP server stopped. Subscriptions,
-  automatic cache policy/removal, and Turnstone as second host remain open. It
-  is separate from the Woodshed product graph.
+  automatic cache policy/removal, recorded-body audition, open annotation
+  export, and Turnstone as second host remain open. A September 13 GUI evidence
+  brief records current headed findings, reference screenshots, required
+  states, and responsive wireframe done-conditions. It is separate from the
+  Woodshed product graph.
 - [2026-07-11_stage_set_tools_plan.md](2026-07-11_stage_set_tools_plan.md)
   — **In progress; product authority.** P1-P3 remain partial. P4a/P4b landed;
   the scene canvas and single-Card expansion have receipts, while the full P4e
