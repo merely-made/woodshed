@@ -2,6 +2,7 @@
 
 mod headed_receipt;
 mod session;
+mod voice;
 
 use cambium_genet_winit_host::{
     AppCtx, CloseDisposition, FocusedTextSlot, HostHooks, HostOptions, Init, Key, KeyPress,
@@ -12,8 +13,8 @@ use layout_dom_api::LayoutDom;
 use redshank_cache::EpisodeCache;
 use redshank_feed::FeedImport;
 use redshank_model::{
-    AnnotationId, CaptureAnchor, CapturePlaybackBehavior, ItemId, LibraryItem, MediaSource,
-    NoteBody, RedshankModel,
+    Annotation, AnnotationId, AudioCaptureHost, CaptureAnchor, CapturePlaybackBehavior, ItemId,
+    LibraryItem, MediaSource, NoteBody, RedshankModel,
 };
 use redshank_playback::{PlaybackCommand, PlaybackRuntime, PlaybackState};
 use redshank_storage::{JsonDirectoryStore, ModelStore};
@@ -31,6 +32,7 @@ use std::{
     time::{Duration, Instant, SystemTime, UNIX_EPOCH},
 };
 use ureq::ResponseExt;
+use voice::LocalVoiceCapture;
 
 type Logic = fn(&RedshankSurfaceState) -> redshank_surfaces::FullView;
 type AppRunner = Runner<RedshankSurfaceState, Logic, redshank_surfaces::FullView>;
@@ -104,6 +106,7 @@ enum IoReply {
         id: ItemId,
         result: Result<bool, String>,
     },
+    VoiceRemoved(Result<bool, String>),
 }
 
 struct SaveRequest {
@@ -204,6 +207,16 @@ struct PendingCacheRemoval {
     path: PathBuf,
 }
 
+struct VoiceSession {
+    anchor: CaptureAnchor,
+    resume_playback: bool,
+}
+
+struct PendingVoiceRemoval {
+    revision: u64,
+    blob_id: String,
+}
+
 struct Desktop {
     session: Session,
     runtime: PlaybackRuntime,
@@ -212,6 +225,11 @@ struct Desktop {
     cache_pending: Option<ItemId>,
     cache_removals: Vec<PendingCacheRemoval>,
     cache_removals_in_flight: usize,
+    voice_capture: LocalVoiceCapture,
+    voice_session: Option<VoiceSession>,
+    voice_save_revision: Option<u64>,
+    voice_removals: Vec<PendingVoiceRemoval>,
+    voice_removals_in_flight: usize,
     feed_pending: Option<String>,
     data_root: PathBuf,
     closing: bool,
@@ -259,6 +277,48 @@ impl Desktop {
             }
         }
         self.cache_removals = waiting;
+    }
+
+    fn schedule_durable_voice_removals(&mut self, revision: u64, state: &mut RedshankSurfaceState) {
+        let mut waiting = Vec::new();
+        for removal in self.voice_removals.drain(..) {
+            if removal.revision > revision {
+                waiting.push(removal);
+                continue;
+            }
+            let still_shared = self.session.model.annotations.values().any(|note| {
+                matches!(&note.body, NoteBody::Audio { blob_id, .. } if blob_id == &removal.blob_id)
+            });
+            if still_shared {
+                continue;
+            }
+            let sender = self.persistence.reply_sender.clone();
+            let data_root = self.data_root.clone();
+            let blob_id = removal.blob_id;
+            match thread::Builder::new()
+                .name("redshank-voice-remove".into())
+                .spawn(move || {
+                    let result = LocalVoiceCapture::remove_blob(&data_root, &blob_id);
+                    let _ = sender.send(IoReply::VoiceRemoved(result));
+                }) {
+                Ok(_) => self.voice_removals_in_flight += 1,
+                Err(error) => {
+                    state.notice = Some(format!("Could not start voice-note removal: {error}"));
+                },
+            }
+        }
+        self.voice_removals = waiting;
+    }
+
+    fn next_annotation_id(&self) -> AnnotationId {
+        let mut suffix = self.session.model.annotations.len();
+        loop {
+            let id = AnnotationId(format!("note:{}:{suffix}", now_ms()));
+            if !self.session.model.annotations.contains_key(&id) {
+                return id;
+            }
+            suffix += 1;
+        }
     }
 
     fn fetch_feed(
@@ -400,16 +460,10 @@ impl Desktop {
         {
             return Err("The note's capture target changed; its draft was retained".into());
         }
-        let id = state.editing_note.clone().unwrap_or_else(|| {
-            let mut suffix = self.session.model.annotations.len();
-            loop {
-                let id = AnnotationId(format!("note:{}:{suffix}", now_ms()));
-                if !self.session.model.annotations.contains_key(&id) {
-                    break id;
-                }
-                suffix += 1;
-            }
-        });
+        let id = state
+            .editing_note
+            .clone()
+            .unwrap_or_else(|| self.next_annotation_id());
         if let Some(existing) = self.session.model.annotations.get(&id) {
             if existing.target != anchor {
                 return Err("The edited note does not match this capture target".into());
@@ -434,6 +488,89 @@ impl Desktop {
         });
         state.notice = Some("Saving note…".into());
         Ok(())
+    }
+
+    fn begin_voice_note(&mut self, state: &mut RedshankSurfaceState) -> Result<(), String> {
+        if state.text_capture.is_some() {
+            return Err("Save or cancel the current text note first".into());
+        }
+        if self.voice_session.is_some() {
+            return Err("A voice note is already recording".into());
+        }
+        let snapshot = self.runtime.snapshot();
+        let anchor = self.session.capture(&snapshot)?;
+        let resume_playback = match self.session.model.settings.capture_playback {
+            CapturePlaybackBehavior::Pause => {
+                let was_playing = snapshot.state == PlaybackState::Playing;
+                self.send(PlaybackCommand::Pause)?;
+                was_playing
+            },
+            CapturePlaybackBehavior::Continue => false,
+            CapturePlaybackBehavior::Duck => {
+                return Err(
+                    "Ducking is not available yet; choose Pause or Continue in Settings".into(),
+                );
+            },
+        };
+        if let Err(error) = self.voice_capture.begin_capture() {
+            if resume_playback {
+                let _ = self.send(PlaybackCommand::Play);
+            }
+            return Err(error);
+        }
+        self.voice_session = Some(VoiceSession {
+            anchor,
+            resume_playback,
+        });
+        state.compact.voice_capture_active = true;
+        state.notice = Some("Recording voice note… release to save".into());
+        Ok(())
+    }
+
+    fn finish_voice_note(&mut self, state: &mut RedshankSurfaceState) -> Result<(), String> {
+        let capture = self
+            .voice_session
+            .take()
+            .ok_or("No voice note is recording")?;
+        state.compact.voice_capture_active = false;
+        let result = self.voice_capture.finish_capture().and_then(|body| {
+            let id = self.next_annotation_id();
+            let blob_id = match &body {
+                NoteBody::Audio { blob_id, .. } => blob_id.clone(),
+                NoteBody::Text { .. } => return Err("Microphone returned a text note".into()),
+            };
+            if let Err(error) = self.session.model.add_annotation(Annotation {
+                id,
+                target: capture.anchor,
+                body,
+                created_at_ms: now_ms(),
+            }) {
+                let _ = LocalVoiceCapture::remove_blob(&self.data_root, &blob_id);
+                return Err(format!("Could not add voice note: {error:?}"));
+            }
+            self.persistence.changed();
+            self.voice_save_revision = Some(self.persistence.revision);
+            state.notice = Some("Saving voice note…".into());
+            Ok(())
+        });
+        if capture.resume_playback
+            && let Err(error) = self.send(PlaybackCommand::Play)
+        {
+            return Err(match result {
+                Ok(()) => error,
+                Err(capture_error) => {
+                    format!("{capture_error}; playback could not resume: {error}")
+                },
+            });
+        }
+        result
+    }
+
+    fn open_note_target(&mut self, note: &Annotation) -> Result<(), String> {
+        if self.session.selected.as_ref() != Some(&note.target.item_id) {
+            self.select(note.target.item_id.clone())?;
+        }
+        self.send(PlaybackCommand::Seek(note.target.offset_ms))
     }
 
     fn command(
@@ -573,7 +710,9 @@ impl Desktop {
                     .model
                     .annotations
                     .get(&id)
-                    .ok_or("That note no longer exists")?;
+                    .ok_or("That note no longer exists")?
+                    .clone();
+                self.open_note_target(&note)?;
                 let NoteBody::Text { plain_text } = &note.body else {
                     return Err("Only text notes can be edited here".into());
                 };
@@ -583,6 +722,20 @@ impl Desktop {
                 });
                 state.set_text_draft(plain_text.clone());
                 state.editing_note = Some(id);
+            },
+            CompactCommand::OpenVoiceNote(id) => {
+                let note = self
+                    .session
+                    .model
+                    .annotations
+                    .get(&id)
+                    .ok_or("That voice note no longer exists")?
+                    .clone();
+                if !matches!(note.body, NoteBody::Audio { .. }) {
+                    return Err("That is not a voice note".into());
+                }
+                self.open_note_target(&note)?;
+                state.notice = Some("Moved playback to the voice note's anchor".into());
             },
             CompactCommand::EditNote { id, plain_text } => {
                 if state.editing_note.as_ref() != Some(&id) {
@@ -617,6 +770,16 @@ impl Desktop {
             },
             CompactCommand::RemoveLibraryItem(id) => {
                 let was_selected = self.session.selected.as_ref() == Some(&id);
+                let removed_voice_blobs: Vec<_> = self
+                    .session
+                    .model
+                    .annotations_for_item(&id)
+                    .into_iter()
+                    .filter_map(|note| match &note.body {
+                        NoteBody::Audio { blob_id, .. } => Some(blob_id.clone()),
+                        NoteBody::Text { .. } => None,
+                    })
+                    .collect();
                 let item = self
                     .session
                     .model
@@ -640,6 +803,15 @@ impl Desktop {
                     _ => None,
                 };
                 self.persistence.changed();
+                self.voice_removals
+                    .extend(
+                        removed_voice_blobs
+                            .into_iter()
+                            .map(|blob_id| PendingVoiceRemoval {
+                                revision: self.persistence.revision,
+                                blob_id,
+                            }),
+                    );
                 if let Some(path) = cached_path {
                     self.cache_removals.push(PendingCacheRemoval {
                         revision: self.persistence.revision,
@@ -660,19 +832,33 @@ impl Desktop {
                 if state.editing_note.as_ref() == Some(&id) {
                     return Err("Close the note editor before deleting this note".into());
                 }
+                let voice_blob =
+                    self.session
+                        .model
+                        .annotations
+                        .get(&id)
+                        .and_then(|note| match &note.body {
+                            NoteBody::Audio { blob_id, .. } => Some(blob_id.clone()),
+                            NoteBody::Text { .. } => None,
+                        });
                 self.session
                     .model
                     .delete_annotation(&id)
                     .map_err(|e| format!("Could not delete note: {e:?}"))?;
                 self.persistence.changed();
+                if let Some(blob_id) = voice_blob {
+                    self.voice_removals.push(PendingVoiceRemoval {
+                        revision: self.persistence.revision,
+                        blob_id,
+                    });
+                }
             },
             CompactCommand::UpdateSettings(settings) => {
                 self.session.model.settings = settings;
                 self.persistence.changed();
             },
-            CompactCommand::BeginVoiceNote | CompactCommand::FinishVoiceNote => {
-                return Err("Voice capture is planned for the next Redshank phase".into());
-            },
+            CompactCommand::BeginVoiceNote => self.begin_voice_note(state)?,
+            CompactCommand::FinishVoiceNote => self.finish_voice_note(state)?,
         }
         Ok(())
     }
@@ -773,6 +959,12 @@ impl Desktop {
                         Err(error) => error,
                     });
                 },
+                IoReply::VoiceRemoved(result) => {
+                    self.voice_removals_in_flight = self.voice_removals_in_flight.saturating_sub(1);
+                    if let Err(error) = result {
+                        state.notice = Some(error);
+                    }
+                },
                 IoReply::Saved { revision, result } => {
                     self.persistence.acknowledge(revision, &result);
                     match result {
@@ -782,6 +974,14 @@ impl Desktop {
                         },
                         Ok(()) => {
                             self.schedule_durable_cache_removals(revision, state);
+                            self.schedule_durable_voice_removals(revision, state);
+                            if self
+                                .voice_save_revision
+                                .is_some_and(|voice_revision| voice_revision <= revision)
+                            {
+                                self.voice_save_revision = None;
+                                state.notice = Some("Voice note saved".into());
+                            }
                             if self
                                 .saved_draft
                                 .as_ref()
@@ -811,6 +1011,15 @@ impl Desktop {
                 },
             }
         }
+        if let Some(error) = self.voice_capture.active_error() {
+            let _ = self.voice_capture.cancel_capture();
+            let capture = self.voice_session.take();
+            state.compact.voice_capture_active = false;
+            if capture.is_some_and(|capture| capture.resume_playback) {
+                let _ = self.send(PlaybackCommand::Play);
+            }
+            state.notice = Some(error);
+        }
         let snapshot = self.runtime.snapshot();
         if snapshot.state != PlaybackState::Playing
             || self.last_progress.elapsed() >= Duration::from_secs(5)
@@ -830,6 +1039,10 @@ impl Desktop {
 
     fn close(&mut self, state: &mut RedshankSurfaceState) -> Result<(), String> {
         self.send(PlaybackCommand::Pause)?;
+        if self.voice_session.take().is_some() {
+            self.voice_capture.cancel_capture()?;
+            state.compact.voice_capture_active = false;
+        }
         if let Some(capture) = &state.text_capture {
             let text = state.text_editor.text().to_owned();
             if !text.trim().is_empty() {
@@ -929,7 +1142,11 @@ fn key_intercept(runner: &mut AppRunner, key: &KeyPress) -> bool {
             },
             Key::Character(c) if c.eq_ignore_ascii_case("n") => Some(CompactCommand::BeginTextNote),
             Key::Character(c) if c.eq_ignore_ascii_case("r") => {
-                Some(CompactCommand::BeginVoiceNote)
+                Some(if state.compact.voice_capture_active {
+                    CompactCommand::FinishVoiceNote
+                } else {
+                    CompactCommand::BeginVoiceNote
+                })
             },
             _ => None,
         }
@@ -977,6 +1194,8 @@ fn hooks(
                 && desktop.persistence.durable == desktop.persistence.revision
                 && desktop.cache_removals.is_empty()
                 && desktop.cache_removals_in_flight == 0
+                && desktop.voice_removals.is_empty()
+                && desktop.voice_removals_in_flight == 0
                 && desktop
                     .receipt
                     .as_ref()
@@ -991,6 +1210,9 @@ fn hooks(
                 || desktop.cache_pending.is_some()
                 || !desktop.cache_removals.is_empty()
                 || desktop.cache_removals_in_flight > 0
+                || desktop.voice_session.is_some()
+                || !desktop.voice_removals.is_empty()
+                || desktop.voice_removals_in_flight > 0
                 || desktop.feed_pending.is_some()
                 || desktop.persistence.in_flight.is_some()
                 || desktop.receipt.as_ref().is_some_and(HeadedReceipt::active)
@@ -1042,6 +1264,11 @@ fn main() {
         cache_pending: None,
         cache_removals: Vec::new(),
         cache_removals_in_flight: 0,
+        voice_capture: LocalVoiceCapture::new(&data_root),
+        voice_session: None,
+        voice_save_revision: None,
+        voice_removals: Vec::new(),
+        voice_removals_in_flight: 0,
         feed_pending: None,
         data_root,
         closing: false,
@@ -1052,6 +1279,7 @@ fn main() {
     };
     let mut state = RedshankSurfaceState::default();
     state.notice = notice;
+    state.compact.voice_capture_available = LocalVoiceCapture::is_available();
     // An optional local path or direct URL supports associations and reproducible receipts.
     let initial = std::env::args_os().nth(1);
     let restored = desktop
@@ -1201,6 +1429,59 @@ mod tests {
     }
 
     #[test]
+    fn voice_blob_is_removed_only_after_note_deletion_is_durable() {
+        let directory = tempfile::tempdir().unwrap();
+        let digest = "a".repeat(64);
+        let blob_id = format!("voice:{digest}");
+        let voice_root = directory.path().join("voice");
+        fs::create_dir_all(&voice_root).unwrap();
+        let blob_path = voice_root.join(format!("{digest}.wav"));
+        fs::write(&blob_path, b"voice").unwrap();
+        let mut desktop = desktop(directory.path());
+        let id = AnnotationId("voice-note".into());
+        desktop
+            .session
+            .model
+            .add_annotation(Annotation {
+                id: id.clone(),
+                target: CaptureAnchor {
+                    item_id: ItemId("a".into()),
+                    offset_ms: 321,
+                    representation: Default::default(),
+                },
+                body: NoteBody::Audio {
+                    blob_id,
+                    media_type: "audio/wav".into(),
+                    duration_ms: 500,
+                },
+                created_at_ms: 1,
+            })
+            .unwrap();
+        let mut state = RedshankSurfaceState::default();
+        desktop
+            .command(&mut state, CompactCommand::DeleteNote(id))
+            .unwrap();
+        assert!(blob_path.exists());
+
+        desktop
+            .persistence
+            .reply_sender
+            .send(IoReply::Saved {
+                revision: desktop.persistence.revision,
+                result: Ok(()),
+            })
+            .unwrap();
+        for _ in 0..100 {
+            desktop.poll(&mut state);
+            if desktop.voice_removals_in_flight == 0 && desktop.voice_removals.is_empty() {
+                break;
+            }
+            thread::sleep(Duration::from_millis(10));
+        }
+        assert!(!blob_path.exists());
+    }
+
+    #[test]
     fn removing_selected_library_item_clears_player_queue_and_editor() {
         let directory = tempfile::tempdir().unwrap();
         let mut desktop = desktop(directory.path());
@@ -1317,6 +1598,11 @@ mod tests {
             cache_pending: None,
             cache_removals: Vec::new(),
             cache_removals_in_flight: 0,
+            voice_capture: LocalVoiceCapture::new(directory),
+            voice_session: None,
+            voice_save_revision: None,
+            voice_removals: Vec::new(),
+            voice_removals_in_flight: 0,
             feed_pending: None,
             data_root: directory.to_owned(),
             closing: false,

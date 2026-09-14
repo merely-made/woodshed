@@ -7,7 +7,10 @@ rust-version.workspace = true
 publish = false
 
 [dependencies]
+blake3.workspace = true
 cambium-genet-winit-host.workspace = true
+cpal.workspace = true
+hound.workspace = true
 layout-dom-api.workspace = true
 redshank-cache.workspace = true
 redshank-feed.workspace = true
@@ -16,7 +19,5 @@ redshank-playback.workspace = true
 redshank-storage.workspace = true
 redshank-surfaces.workspace = true
 rfd.workspace = true
-ureq.workspace = true
-
-[dev-dependencies]
 tempfile.workspace = true
+ureq.workspace = true

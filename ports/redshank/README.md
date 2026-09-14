@@ -28,8 +28,9 @@ Current packages:
   require an embedding host;
 - `redshank-desktop`: the sovereign executable over Mere's Cambium/Genet winit
   host. It restores selection and per-item progress, opens local files, and
-  saves text notes with frozen item/time/representation targets. Disk writes
-  and the file picker run outside the UI thread.
+  saves text and microphone notes with frozen item/time/representation targets.
+  Voice bodies are mono PCM WAV blobs in content-addressed local storage. Disk
+  writes and the file picker run outside the UI thread.
 
 The storage package writes and flushes a pending generation before publishing
 it with a same-directory rename. Loading walks completed generations newest to
@@ -47,12 +48,19 @@ or direct HTTP(S) audio URL as the executable's first argument. Remote servers
 must support byte ranges. Outside the editor, Space toggles playback,
 Left/Right skip by the configured interval, and N begins a text note.
 `Ctrl+Enter` saves the editor. Text capture supports Pause and Continue.
+Hold the voice-note control while speaking and release it to save, or press R
+once to start and again to finish. The standalone host uses the system default
+microphone. A denied or lost device leaves playback and the rest of the
+application usable. Opening a voice note returns episode playback to its frozen
+capture anchor; playback of the recorded note body is a later single-output
+integration slice.
 The full application keeps the Player/Capture composition visible as its
 bottom listening dock across Listen, Library, Notes, and Settings. This is the
 same compact surface an embedding host can mount independently.
-Hosts explicitly advertise voice-capture availability; until one does, the
-voice-note action remains visible but disabled rather than emitting an
-unsupported command.
+Hosts explicitly advertise voice-capture availability. The standalone host
+does so when its default microphone has a supported input configuration; an
+embedding host can keep the action visible but disabled rather than emitting
+an unsupported command.
 
 Paste an HTTP(S) RSS or Atom URL into **Podcast subscriptions** and choose
 **Subscribe**. The standalone host fetches feeds off the UI thread with a 4 MiB
@@ -85,10 +93,12 @@ worker if no other library item refers to that content-addressed path. Failed
 model saves retain the object. The model exposes a deterministic least-recently
 used candidate order for a later configurable reclamation policy.
 
-This Phase 4 slice supports local, bounded progressive HTTP(S), manual feed
-subscriptions, and manually cached offline listening. Automatic refresh and
-download, automatic eviction, voice capture, rate/volume controls, representation-drift
-warnings/remapping, and Turnstone embedding remain open.
+The landed slices support local, bounded progressive HTTP(S), manual feed
+subscriptions, manually cached offline listening, text notes, and local voice
+capture. Automatic refresh and download, automatic eviction, voice-note body
+audition, duck/reaction-offset capture settings, W3C annotation export,
+rate/volume controls, representation-drift warnings/remapping, and Turnstone
+embedding remain open.
 A local digest is computed before decode from the opened file; it does not make
 a concurrently modified file immutable. Remote receipts retain validators but
 do not claim a complete digest until every byte is durably cached.

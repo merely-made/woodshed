@@ -46,6 +46,11 @@
   color: #15221d;
 }
 
+.redshank-recording {
+  background: #8d3434;
+  color: #fff4f1;
+}
+
 .redshank-workspace {
   display: flex;
   flex: 1 1 auto;

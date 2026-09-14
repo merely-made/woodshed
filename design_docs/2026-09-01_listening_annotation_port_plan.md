@@ -1059,3 +1059,16 @@ rejected for the reasons recorded in the 2026-09-01 planning pass.
   selection attempted an exact end-of-stream seek and made playback
   unavailable. Completed selections now restart at zero; incomplete selections
   retain their saved resume position.
+- **2026-09-13:** Began Phase 5 with the standalone microphone adapter and the
+  existing host-neutral capture contract. Pointer press freezes the item,
+  source receipt, and player offset before Pause or Continue behavior; release
+  writes a mono PCM WAV to content-addressed local storage and persists its
+  audio body and target. Lost or denied input restores a usable player,
+  successful Pause capture resumes prior playback, note rows retain duration,
+  reopening text or voice notes seeks to the frozen anchor, and durable
+  deletion removes an unshared voice blob only after the corresponding model
+  generation lands. The isolated workspace passes 54 default tests with five
+  device or fixture gates skipped, formatting, and strict Clippy. Physical
+  microphone capture remains a headed acceptance gate. Duck, reaction offset,
+  recorded-body audition, W3C export, and Turnstone's capture adapter remain
+  open, so Phase 5 is not closed.

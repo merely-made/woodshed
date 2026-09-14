@@ -2,7 +2,9 @@
 //! when their load token matches; queue order is independent of that selection.
 use redshank_model::{CaptureAnchor, ItemId, NoteBody, Progress, RedshankModel};
 use redshank_playback::{PlaybackCommand, PlaybackSnapshot, PlaybackState};
-use redshank_surfaces::{NowPlaying, RedshankSurfaceState, TransportState};
+use redshank_surfaces::{
+    NoteSummary, NoteSummaryBody, NowPlaying, RedshankSurfaceState, TransportState,
+};
 
 pub struct Session {
     pub model: RedshankModel,
@@ -141,11 +143,17 @@ impl Session {
                 self.model
                     .annotations_for_item(item.id())
                     .into_iter()
-                    .filter_map(|note| match &note.body {
-                        NoteBody::Text { plain_text } => {
-                            Some((note.id.clone(), note.target.offset_ms, plain_text.clone()))
+                    .map(|note| NoteSummary {
+                        id: note.id.clone(),
+                        offset_ms: note.target.offset_ms,
+                        body: match &note.body {
+                            NoteBody::Text { plain_text } => {
+                                NoteSummaryBody::Text(plain_text.clone())
+                            },
+                            NoteBody::Audio { duration_ms, .. } => NoteSummaryBody::Voice {
+                                duration_ms: *duration_ms,
+                            },
                         },
-                        _ => None,
                     })
                     .collect()
             })
@@ -255,5 +263,37 @@ mod tests {
         session.project(&mut state, &snapshot(session.token));
         assert_eq!(state.text_capture.unwrap().anchor, anchor);
         assert_eq!(state.text_editor.text(), "keep");
+    }
+
+    #[test]
+    fn projection_retains_voice_note_duration() {
+        let mut session = session();
+        let id = ItemId("a".into());
+        session
+            .select(id.clone(), &PlaybackSnapshot::default(), 1)
+            .unwrap();
+        session
+            .model
+            .add_annotation(redshank_model::Annotation {
+                id: redshank_model::AnnotationId("voice".into()),
+                target: CaptureAnchor {
+                    item_id: id,
+                    offset_ms: 456,
+                    representation: Default::default(),
+                },
+                body: NoteBody::Audio {
+                    blob_id: "voice:abc".into(),
+                    media_type: "audio/wav".into(),
+                    duration_ms: 1_500,
+                },
+                created_at_ms: 2,
+            })
+            .unwrap();
+        let mut state = RedshankSurfaceState::default();
+        session.project(&mut state, &snapshot(session.token));
+        assert_eq!(
+            state.notes[0].body,
+            NoteSummaryBody::Voice { duration_ms: 1_500 }
+        );
     }
 }
