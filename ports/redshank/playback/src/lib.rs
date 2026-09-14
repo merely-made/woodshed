@@ -267,6 +267,36 @@ mod tests {
     }
 
     #[test]
+    fn captured_pcm_wav_is_decodable() {
+        let directory = tempfile::tempdir().unwrap();
+        let path = directory.path().join("voice-note.wav");
+        let mut writer = hound::WavWriter::create(
+            &path,
+            hound::WavSpec {
+                channels: 1,
+                sample_rate: 48_000,
+                bits_per_sample: 16,
+                sample_format: hound::SampleFormat::Int,
+            },
+        )
+        .unwrap();
+        for sample in 0..4_800 {
+            writer
+                .write_sample(if sample % 2 == 0 { i16::MAX } else { i16::MIN })
+                .unwrap();
+        }
+        writer.finalize().unwrap();
+
+        let (mut decoder, receipt) = open_local(&path).unwrap();
+        let packet = decoder.format.next_packet().unwrap();
+        let decoded = decoder.decoder.decode(&packet).unwrap();
+        assert!(decoded.frames() > 0);
+        assert_eq!(decoded.spec().channels.count(), 1);
+        assert_eq!(decoded.spec().rate, 48_000);
+        assert_eq!(receipt.byte_length, Some(9_644));
+    }
+
+    #[test]
     fn sink_clock_helpers_preserve_frame_boundaries() {
         let mut pcm = vec![0.0; 10];
         consume_frames(&mut pcm, 3, 2);
