@@ -58,6 +58,8 @@ pub enum CompactCommand {
     BeginVoiceNote,
     FinishVoiceNote,
     OpenVoiceNote(AnnotationId),
+    PlayVoiceNote(AnnotationId),
+    StopVoiceNote(AnnotationId),
     BeginTextNote,
     CancelTextNote,
     SaveTextNote {
@@ -107,7 +109,22 @@ pub struct TextCapture {
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub enum NoteSummaryBody {
     Text(String),
-    Voice { duration_ms: u64 },
+    Voice {
+        duration_ms: u64,
+        preview: VoiceNotePreview,
+    },
+}
+
+#[derive(Clone, Debug, Default, Eq, PartialEq)]
+pub enum VoiceNotePreview {
+    #[default]
+    Idle,
+    Loading,
+    Playing {
+        position_ms: u64,
+    },
+    Ended,
+    Unavailable(String),
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
@@ -583,42 +600,109 @@ pub fn surface(state: &RedshankSurfaceState) -> FullView {
     });
     let notes = state.notes.iter().map(|note| {
         let id = note.id.clone();
-        let open_id = id.clone();
-        let (label, open_command, open_label) = match &note.body {
-            NoteSummaryBody::Text(body) => (
-                format!("{}  {}", format_time(note.offset_ms), body),
-                CompactCommand::BeginEditNote(open_id),
-                "Edit text note",
-            ),
-            NoteSummaryBody::Voice { duration_ms } => (
-                format!(
-                    "{}  Voice note · {}",
-                    format_time(note.offset_ms),
-                    format_time(*duration_ms)
-                ),
-                CompactCommand::OpenVoiceNote(open_id),
-                "Go to voice note",
-            ),
-        };
-        let open = Box::new(
-            button(label, move |state: &mut RedshankSurfaceState, _| {
-                state.request(open_command.clone());
-            })
-            .attr("class", "redshank-note-edit")
-            .attr("aria-label", open_label),
-        ) as FullView;
         let delete = Box::new(
             button("Delete note", move |state: &mut RedshankSurfaceState, _| {
                 state.request(CompactCommand::DeleteNote(id.clone()));
             })
             .attr("aria-label", "Delete note"),
         ) as FullView;
+        let content = match &note.body {
+            NoteSummaryBody::Text(body) => {
+                let open_id = note.id.clone();
+                Box::new(
+                    button(
+                        format!("{}  {}", format_time(note.offset_ms), body),
+                        move |state: &mut RedshankSurfaceState, _| {
+                            state.request(CompactCommand::BeginEditNote(open_id.clone()));
+                        },
+                    )
+                    .attr("class", "redshank-note-edit")
+                    .attr("aria-label", "Edit text note"),
+                ) as FullView
+            },
+            NoteSummaryBody::Voice {
+                duration_ms,
+                preview,
+            } => {
+                let open_id = note.id.clone();
+                let source_time = format_time(note.offset_ms);
+                let source = Box::new(
+                    button(
+                        source_time.clone(),
+                        move |state: &mut RedshankSurfaceState, _| {
+                            state.request(CompactCommand::OpenVoiceNote(open_id.clone()));
+                        },
+                    )
+                    .attr("class", "redshank-note-source")
+                    .attr(
+                        "aria-label",
+                        format!("Go to voice note source at {source_time}"),
+                    ),
+                ) as FullView;
+                let status = match preview {
+                    VoiceNotePreview::Idle => format!("Voice note · {}", format_time(*duration_ms)),
+                    VoiceNotePreview::Loading => {
+                        format!("Voice note · {} · Loading", format_time(*duration_ms))
+                    },
+                    VoiceNotePreview::Playing { position_ms } => format!(
+                        "Voice note · {} / {}",
+                        format_time(*position_ms),
+                        format_time(*duration_ms)
+                    ),
+                    VoiceNotePreview::Ended => {
+                        format!("Voice note · {} · Finished", format_time(*duration_ms))
+                    },
+                    VoiceNotePreview::Unavailable(error) => {
+                        format!("Voice note · {} · {error}", format_time(*duration_ms))
+                    },
+                };
+                Box::new(
+                    el(
+                        "div",
+                        (
+                            source,
+                            el("span", text(status)).attr("class", "redshank-note-body"),
+                        ),
+                    )
+                    .attr("class", "redshank-note-content"),
+                ) as FullView
+            },
+        };
+        let preview = match &note.body {
+            NoteSummaryBody::Text(_) => None,
+            NoteSummaryBody::Voice { preview, .. } => {
+                let preview_id = note.id.clone();
+                let (label, command) = match preview {
+                    VoiceNotePreview::Idle => ("Play", CompactCommand::PlayVoiceNote(preview_id)),
+                    VoiceNotePreview::Loading => {
+                        ("Stop", CompactCommand::StopVoiceNote(preview_id))
+                    },
+                    VoiceNotePreview::Playing { .. } => {
+                        ("Stop", CompactCommand::StopVoiceNote(preview_id))
+                    },
+                    VoiceNotePreview::Ended => {
+                        ("Replay", CompactCommand::PlayVoiceNote(preview_id))
+                    },
+                    VoiceNotePreview::Unavailable(_) => {
+                        ("Retry", CompactCommand::PlayVoiceNote(preview_id))
+                    },
+                };
+                Some(Box::new(
+                    button(label, move |state: &mut RedshankSurfaceState, _| {
+                        state.request(command.clone());
+                    })
+                    .attr("aria-label", format!("{label} voice note"))
+                    .attr("aria-disabled", "false")
+                    .attr("tabindex", "0"),
+                ) as FullView)
+            },
+        };
         Box::new(
             el(
                 "article",
                 (
-                    open,
-                    el("div", (delete,)).attr("class", "redshank-item-actions"),
+                    content,
+                    el("div", (preview, delete)).attr("class", "redshank-item-actions"),
                 ),
             )
             .attr("class", "redshank-note-item"),
@@ -1258,16 +1342,57 @@ mod tests {
         state.notes.push(NoteSummary {
             id: id.clone(),
             offset_ms: 62_000,
-            body: NoteSummaryBody::Voice { duration_ms: 3_500 },
+            body: NoteSummaryBody::Voice {
+                duration_ms: 3_500,
+                preview: VoiceNotePreview::Idle,
+            },
         });
         let mut runner = full_runner(state);
         let markup = runner.dom().borrow().outer_html(runner.root());
-        assert!(markup.contains("1:02  Voice note · 0:03"));
-        let open = node_with_label(&runner.dom().borrow(), runner.root(), "Go to voice note");
+        assert!(markup.contains("Voice note · 0:03"));
+        let open = node_with_label(
+            &runner.dom().borrow(),
+            runner.root(),
+            "Go to voice note source at 1:02",
+        );
         runner.dispatch_click(open, PointerClick::at((1.0, 1.0)));
+        let play = node_with_label(&runner.dom().borrow(), runner.root(), "Play voice note");
+        runner.dispatch_click(play, PointerClick::at((1.0, 1.0)));
         let mut commands = Vec::new();
         runner.update(|state| commands.extend(state.drain_commands()));
-        assert_eq!(commands, [CompactCommand::OpenVoiceNote(id)]);
+        assert_eq!(
+            commands,
+            [
+                CompactCommand::OpenVoiceNote(id.clone()),
+                CompactCommand::PlayVoiceNote(id),
+            ]
+        );
+    }
+
+    #[test]
+    fn playing_voice_note_row_reports_progress_and_can_stop() {
+        let mut state = RedshankSurfaceState {
+            compact: playing_state(),
+            active_tab: SurfaceTab::Notes,
+            ..Default::default()
+        };
+        let id = AnnotationId("voice-one".into());
+        state.notes.push(NoteSummary {
+            id: id.clone(),
+            offset_ms: 62_000,
+            body: NoteSummaryBody::Voice {
+                duration_ms: 6_000,
+                preview: VoiceNotePreview::Playing { position_ms: 2_000 },
+            },
+        });
+        let mut runner = full_runner(state);
+        let markup = runner.dom().borrow().outer_html(runner.root());
+        assert!(markup.contains("Voice note · 0:02 / 0:06"));
+        let stop = node_with_label(&runner.dom().borrow(), runner.root(), "Stop voice note");
+        runner.dispatch_click(stop, PointerClick::at((1.0, 1.0)));
+        let mut commands = Vec::new();
+        runner.update(|state| commands.extend(state.drain_commands()));
+        assert_eq!(commands, [CompactCommand::StopVoiceNote(id)]);
     }
 
     #[test]

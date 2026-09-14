@@ -1,7 +1,9 @@
 use std::{
+    cell::RefCell,
     fs::File,
     io::{Read, Seek, SeekFrom},
     path::Path,
+    rc::Rc,
     sync::{Arc, Mutex},
     time::Duration,
 };
@@ -196,9 +198,8 @@ fn open_decoder(source: Box<dyn MediaSource>, hint_source: &str) -> Result<Decod
     })
 }
 
-#[derive(Default)]
 pub(super) struct Backend {
-    audio: Option<AudioRuntime>,
+    audio: Rc<RefCell<Option<AudioRuntime>>>,
     decoder: Option<Decoder>,
     sink: Option<Sink>,
     pending: Vec<f32>,
@@ -215,12 +216,42 @@ pub(super) struct Backend {
     test_ready_sent: bool,
 }
 
+impl Default for Backend {
+    fn default() -> Self {
+        Self::with_audio(Rc::new(RefCell::new(None)))
+    }
+}
+
 impl Backend {
+    pub(super) fn with_audio(audio: Rc<RefCell<Option<AudioRuntime>>>) -> Self {
+        Self {
+            audio,
+            decoder: None,
+            sink: None,
+            pending: Vec::new(),
+            eof: false,
+            source: None,
+            representation: None,
+            base_ms: 0,
+            requested_playing: false,
+            source_positioned: false,
+            decoded_first_frame: false,
+            #[cfg(test)]
+            test_source: false,
+            #[cfg(test)]
+            test_ready_sent: false,
+        }
+    }
+
+    pub(super) fn audio_handle(&self) -> Rc<RefCell<Option<AudioRuntime>>> {
+        Rc::clone(&self.audio)
+    }
+
     fn retire_sink(&mut self) -> Result<(), String> {
         let Some(sink) = self.sink.take() else {
             return Ok(());
         };
-        if let Some(audio) = self.audio.as_mut() {
+        if let Some(audio) = self.audio.borrow_mut().as_mut() {
             audio.remove_sink(sink).map_err(|error| error.to_string())
         } else {
             sink.stop().map_err(|error| error.to_string())
@@ -408,9 +439,7 @@ impl Backend {
             self.test_source = false;
             self.test_ready_sent = false;
         }
-        let retired = self.retire_sink();
-        self.audio = None;
-        retired
+        self.retire_sink()
     }
 
     fn queued_seconds(&self) -> Result<f64, String> {
@@ -441,7 +470,7 @@ impl Backend {
                 PumpState::Idle
             });
         }
-        if let Some(audio) = self.audio.as_mut() {
+        if let Some(audio) = self.audio.borrow_mut().as_mut() {
             audio.tick().map_err(|error| error.to_string())?;
         }
         if self.decoder.is_none() {
@@ -459,11 +488,13 @@ impl Backend {
             .and_then(|decoder| decoder.channels.map(|channels| (decoder.rate, channels)))
             .ok_or("first decoded frame did not report a channel layout")?;
         if self.sink.is_none() {
-            if self.audio.is_none() {
-                self.audio = Some(AudioRuntime::new().map_err(|error| error.to_string())?);
+            if self.audio.borrow().is_none() {
+                *self.audio.borrow_mut() =
+                    Some(AudioRuntime::new().map_err(|error| error.to_string())?);
             }
             self.sink = Some(
                 self.audio
+                    .borrow_mut()
                     .as_mut()
                     .expect("audio runtime was initialized")
                     .sink(rate, channels)

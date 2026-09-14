@@ -1,9 +1,10 @@
 //! Product session authority. Playback snapshots only belong to a selection
 //! when their load token matches; queue order is independent of that selection.
 use redshank_model::{CaptureAnchor, ItemId, NoteBody, Progress, RedshankModel};
-use redshank_playback::{PlaybackCommand, PlaybackSnapshot, PlaybackState};
+use redshank_playback::{PlaybackCommand, PlaybackSnapshot, PlaybackState, PreviewState};
 use redshank_surfaces::{
     NoteSummary, NoteSummaryBody, NowPlaying, RedshankSurfaceState, TransportState,
+    VoiceNotePreview,
 };
 
 pub struct Session {
@@ -150,8 +151,26 @@ impl Session {
                             NoteBody::Text { plain_text } => {
                                 NoteSummaryBody::Text(plain_text.clone())
                             },
-                            NoteBody::Audio { duration_ms, .. } => NoteSummaryBody::Voice {
-                                duration_ms: *duration_ms,
+                            NoteBody::Audio { duration_ms, .. } => {
+                                let preview = snapshot
+                                    .preview
+                                    .as_ref()
+                                    .filter(|preview| preview.id == note.id.0)
+                                    .map(|preview| match &preview.state {
+                                        PreviewState::Loading => VoiceNotePreview::Loading,
+                                        PreviewState::Playing => VoiceNotePreview::Playing {
+                                            position_ms: preview.position_ms,
+                                        },
+                                        PreviewState::Ended => VoiceNotePreview::Ended,
+                                        PreviewState::Unavailable(error) => {
+                                            VoiceNotePreview::Unavailable(error.clone())
+                                        },
+                                    })
+                                    .unwrap_or_default();
+                                NoteSummaryBody::Voice {
+                                    duration_ms: *duration_ms,
+                                    preview,
+                                }
                             },
                         },
                     })
@@ -293,7 +312,61 @@ mod tests {
         session.project(&mut state, &snapshot(session.token));
         assert_eq!(
             state.notes[0].body,
-            NoteSummaryBody::Voice { duration_ms: 1_500 }
+            NoteSummaryBody::Voice {
+                duration_ms: 1_500,
+                preview: VoiceNotePreview::Idle,
+            }
         );
+    }
+
+    #[test]
+    fn projection_attaches_preview_state_only_to_the_matching_voice_note() {
+        let mut session = session();
+        let item_id = ItemId("a".into());
+        session
+            .select(item_id.clone(), &PlaybackSnapshot::default(), 1)
+            .unwrap();
+        for note_id in ["voice-a", "voice-b"] {
+            session
+                .model
+                .add_annotation(redshank_model::Annotation {
+                    id: redshank_model::AnnotationId(note_id.into()),
+                    target: CaptureAnchor {
+                        item_id: item_id.clone(),
+                        offset_ms: 456,
+                        representation: Default::default(),
+                    },
+                    body: NoteBody::Audio {
+                        blob_id: format!("voice:{note_id}"),
+                        media_type: "audio/wav".into(),
+                        duration_ms: 1_500,
+                    },
+                    created_at_ms: 2,
+                })
+                .unwrap();
+        }
+        let mut snapshot = snapshot(session.token);
+        snapshot.preview = Some(redshank_playback::PreviewSnapshot {
+            id: "voice-b".into(),
+            state: PreviewState::Playing,
+            position_ms: 700,
+            duration_ms: Some(1_500),
+        });
+        let mut state = RedshankSurfaceState::default();
+        session.project(&mut state, &snapshot);
+        assert!(matches!(
+            state.notes[0].body,
+            NoteSummaryBody::Voice {
+                preview: VoiceNotePreview::Idle,
+                ..
+            }
+        ));
+        assert!(matches!(
+            state.notes[1].body,
+            NoteSummaryBody::Voice {
+                preview: VoiceNotePreview::Playing { position_ms: 700 },
+                ..
+            }
+        ));
     }
 }

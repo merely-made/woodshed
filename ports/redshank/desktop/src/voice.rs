@@ -60,12 +60,16 @@ impl LocalVoiceCapture {
     }
 
     pub(super) fn remove_blob(data_root: &Path, blob_id: &str) -> Result<bool, String> {
-        let path = blob_path(data_root, blob_id)?;
+        let path = Self::blob_path(data_root, blob_id)?;
         match fs::remove_file(path) {
             Ok(()) => Ok(true),
             Err(error) if error.kind() == std::io::ErrorKind::NotFound => Ok(false),
             Err(error) => Err(format!("Could not remove voice note audio: {error}")),
         }
+    }
+
+    pub(super) fn blob_path(data_root: &Path, blob_id: &str) -> Result<PathBuf, String> {
+        blob_path(data_root, blob_id)
     }
 }
 

@@ -34,6 +34,23 @@ pub enum PlaybackState {
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
+pub enum PreviewState {
+    Loading,
+    Playing,
+    Ended,
+    Unavailable(String),
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct PreviewSnapshot {
+    /// Host-supplied transient identity, such as an annotation ID.
+    pub id: String,
+    pub state: PreviewState,
+    pub position_ms: u64,
+    pub duration_ms: Option<u64>,
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub struct PlaybackSnapshot {
     /// Host-supplied identity. Hosts reject snapshots for a stale selection.
     pub load_token: Option<u64>,
@@ -42,6 +59,8 @@ pub struct PlaybackSnapshot {
     pub position_ms: u64,
     pub duration_ms: Option<u64>,
     pub source: Option<String>,
+    /// A short secondary source using the same host-owned output authority.
+    pub preview: Option<PreviewSnapshot>,
 }
 
 impl Default for PlaybackSnapshot {
@@ -53,6 +72,7 @@ impl Default for PlaybackSnapshot {
             position_ms: 0,
             duration_ms: None,
             source: None,
+            preview: None,
         }
     }
 }
@@ -68,6 +88,11 @@ pub enum PlaybackCommand {
     Pause,
     Stop,
     Seek(u64),
+    StartPreview {
+        id: String,
+        source: MediaSource,
+    },
+    StopPreview,
     Shutdown,
     #[cfg(test)]
     CrashWorker,
@@ -284,6 +309,43 @@ mod tests {
             wait_for(&runtime, |snapshot| snapshot.state == PlaybackState::Ended).state,
             PlaybackState::Ended
         );
+    }
+
+    #[test]
+    fn voice_preview_preserves_the_loaded_episode_snapshot() {
+        let runtime = PlaybackRuntime::start();
+        runtime
+            .command(PlaybackCommand::Load {
+                token: 17,
+                source: MediaSource::Local {
+                    path: "redshank-test://episode".into(),
+                },
+                resume_ms: 250,
+            })
+            .unwrap();
+        let episode = wait_for(&runtime, |snapshot| {
+            snapshot.load_token == Some(17) && snapshot.state == PlaybackState::Paused
+        });
+        runtime
+            .command(PlaybackCommand::StartPreview {
+                id: "voice-note".into(),
+                source: MediaSource::Local {
+                    path: "redshank-test://voice-note".into(),
+                },
+            })
+            .unwrap();
+        let previewed = wait_for(&runtime, |snapshot| {
+            snapshot
+                .preview
+                .as_ref()
+                .is_some_and(|preview| preview.state == PreviewState::Ended)
+        });
+        assert_eq!(previewed.load_token, episode.load_token);
+        assert_eq!(previewed.representation, episode.representation);
+        assert_eq!(previewed.source, episode.source);
+        assert_eq!(previewed.position_ms, episode.position_ms);
+        assert_eq!(previewed.state, PlaybackState::Paused);
+        assert_eq!(previewed.preview.unwrap().id, "voice-note");
     }
 
     #[test]

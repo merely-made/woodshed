@@ -19,8 +19,9 @@ eviction ordering are landed. Headed local, HTTP,
 and server-offline playback, text-note, persistence, restart, and resume receipts
 now pass.
 Phase 5 is active with bounded standalone microphone capture, durable voice
-bodies, and source-anchor reopening. Recorded-body audition, Duck and reaction
-offset behavior, and open annotation export remain open.
+bodies, source-anchor reopening, and recorded-body audition through the shared
+output authority. Duck and reaction-offset behavior and open annotation export
+remain open.
 
 ## Ruling
 
@@ -1207,8 +1208,13 @@ rejected for the reasons recorded in the 2026-09-01 planning pass.
   successful Pause capture resumes prior playback, note rows retain duration,
   reopening text or voice notes seeks to the frozen anchor, and durable
   deletion removes an unshared voice blob only after the corresponding model
-  generation lands. The isolated workspace passes 58 default tests with five
-  device or fixture gates skipped, formatting, and strict Clippy. Physical
-  microphone capture remains a headed acceptance gate. Duck, reaction offset,
-  recorded-body audition, W3C export, and Turnstone's capture adapter remain
-  open, so Phase 5 is not closed.
+  generation lands. The maintainer then confirmed two six-second microphone
+  bodies were saved against a real local item. Recorded bodies now expose a
+  separate Play/Stop action: audition pauses the episode, uses a second decoder
+  and sink under the same Firewheel/CPAL output authority, and restores prior
+  episode playback after completion or an explicit stop. Snapshot projection
+  keeps the note preview separate from episode identity, receipt, and progress.
+  The isolated workspace passes 61 default tests with five device or fixture
+  gates skipped, formatting, and strict Clippy. Physical recorded-body sound
+  remains a headed acceptance gate. Duck, reaction offset, W3C export, and
+  Turnstone's capture adapter remain open, so Phase 5 is not closed.

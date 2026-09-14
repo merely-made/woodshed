@@ -112,6 +112,24 @@
   text-align: left;
 }
 
+.redshank-note-content {
+  display: flex;
+  flex: 1 1 auto;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.redshank-note-source {
+  flex: 0 0 auto;
+  font-variant-numeric: tabular-nums;
+}
+
+.redshank-note-body {
+  min-width: 0;
+  color: #d4ddd8;
+}
+
 .redshank-empty-state {
   margin: 0;
   padding: 16px;
@@ -199,6 +217,8 @@
     align-items: stretch;
     flex-direction: column;
   }
+
+  .redshank-note-content { align-items: stretch; }
 
   .redshank-workspace { gap: 0; }
   .redshank-panel { flex-basis: auto; width: 100%; }

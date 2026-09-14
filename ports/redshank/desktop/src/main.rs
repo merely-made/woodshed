@@ -16,7 +16,7 @@ use redshank_model::{
     Annotation, AnnotationId, AudioCaptureHost, CaptureAnchor, CapturePlaybackBehavior, ItemId,
     LibraryItem, MediaSource, NoteBody, RedshankModel,
 };
-use redshank_playback::{PlaybackCommand, PlaybackRuntime, PlaybackState};
+use redshank_playback::{PlaybackCommand, PlaybackRuntime, PlaybackState, PreviewState};
 use redshank_storage::{JsonDirectoryStore, ModelStore};
 use redshank_surfaces::{
     COMPACT_SHEET, CompactCommand, RedshankSurfaceState, TextCapture, TransportState, surface,
@@ -498,6 +498,11 @@ impl Desktop {
             return Err("A voice note is already recording".into());
         }
         let snapshot = self.runtime.snapshot();
+        if snapshot.preview.as_ref().is_some_and(|preview| {
+            matches!(preview.state, PreviewState::Loading | PreviewState::Playing)
+        }) {
+            return Err("Stop the playing voice note before recording another".into());
+        }
         let anchor = self.session.capture(&snapshot)?;
         let resume_playback = match self.session.model.settings.capture_playback {
             CapturePlaybackBehavior::Pause => {
@@ -737,6 +742,39 @@ impl Desktop {
                 self.open_note_target(&note)?;
                 state.notice = Some("Moved playback to the voice note's anchor".into());
             },
+            CompactCommand::PlayVoiceNote(id) => {
+                let note = self
+                    .session
+                    .model
+                    .annotations
+                    .get(&id)
+                    .ok_or("That voice note no longer exists")?;
+                let NoteBody::Audio { blob_id, .. } = &note.body else {
+                    return Err("That is not a voice note".into());
+                };
+                let path = LocalVoiceCapture::blob_path(&self.data_root, blob_id)?;
+                if !path.is_file() {
+                    return Err("The recorded voice-note audio is missing".into());
+                }
+                self.send(PlaybackCommand::StartPreview {
+                    id: id.0,
+                    source: MediaSource::Local {
+                        path: path.to_string_lossy().into_owned(),
+                    },
+                })?;
+                state.notice = Some("Playing voice note…".into());
+            },
+            CompactCommand::StopVoiceNote(id) => {
+                if self
+                    .runtime
+                    .snapshot()
+                    .preview
+                    .as_ref()
+                    .is_some_and(|preview| preview.id == id.0)
+                {
+                    self.send(PlaybackCommand::StopPreview)?;
+                }
+            },
             CompactCommand::EditNote { id, plain_text } => {
                 if state.editing_note.as_ref() != Some(&id) {
                     return Err("Open that note for editing first".into());
@@ -770,16 +808,31 @@ impl Desktop {
             },
             CompactCommand::RemoveLibraryItem(id) => {
                 let was_selected = self.session.selected.as_ref() == Some(&id);
-                let removed_voice_blobs: Vec<_> = self
+                let removed_voice_notes: Vec<_> = self
                     .session
                     .model
                     .annotations_for_item(&id)
                     .into_iter()
                     .filter_map(|note| match &note.body {
-                        NoteBody::Audio { blob_id, .. } => Some(blob_id.clone()),
+                        NoteBody::Audio { blob_id, .. } => {
+                            Some((note.id.0.clone(), blob_id.clone()))
+                        },
                         NoteBody::Text { .. } => None,
                     })
                     .collect();
+                if self
+                    .runtime
+                    .snapshot()
+                    .preview
+                    .as_ref()
+                    .is_some_and(|preview| {
+                        removed_voice_notes
+                            .iter()
+                            .any(|(note_id, _)| note_id == &preview.id)
+                    })
+                {
+                    self.send(PlaybackCommand::StopPreview)?;
+                }
                 let item = self
                     .session
                     .model
@@ -804,14 +857,12 @@ impl Desktop {
                 };
                 self.persistence.changed();
                 self.voice_removals
-                    .extend(
-                        removed_voice_blobs
-                            .into_iter()
-                            .map(|blob_id| PendingVoiceRemoval {
-                                revision: self.persistence.revision,
-                                blob_id,
-                            }),
-                    );
+                    .extend(removed_voice_notes.into_iter().map(|(_, blob_id)| {
+                        PendingVoiceRemoval {
+                            revision: self.persistence.revision,
+                            blob_id,
+                        }
+                    }));
                 if let Some(path) = cached_path {
                     self.cache_removals.push(PendingCacheRemoval {
                         revision: self.persistence.revision,
@@ -841,6 +892,15 @@ impl Desktop {
                             NoteBody::Audio { blob_id, .. } => Some(blob_id.clone()),
                             NoteBody::Text { .. } => None,
                         });
+                if self
+                    .runtime
+                    .snapshot()
+                    .preview
+                    .as_ref()
+                    .is_some_and(|preview| preview.id == id.0)
+                {
+                    self.send(PlaybackCommand::StopPreview)?;
+                }
                 self.session
                     .model
                     .delete_annotation(&id)
