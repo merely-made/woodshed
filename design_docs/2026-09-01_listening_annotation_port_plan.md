@@ -1053,3 +1053,9 @@ rejected for the reasons recorded in the 2026-09-01 planning pass.
   then the MP3 again; all three selections reached 300 ms in no less than 200
   ms of wall time. Human confirmation that the rebuilt app sounds clean remains
   the acoustic acceptance check.
+- **2026-09-13:** The acoustic retry confirmed clean M4A playback and seeking,
+  then exposed completed-item resume policy with the two-second MP3 fixture.
+  Its durable progress correctly said `completed: true` at 2,040 ms, but
+  selection attempted an exact end-of-stream seek and made playback
+  unavailable. Completed selections now restart at zero; incomplete selections
+  retain their saved resume position.

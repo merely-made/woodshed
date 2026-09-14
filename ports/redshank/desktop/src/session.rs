@@ -73,7 +73,12 @@ impl Session {
             .ok_or("Playback identity exhausted")?;
         self.selected = Some(id.clone());
         self.model.selected_item = Some(id.clone());
-        let resume = self.model.progress.get(&id).map_or(0, |p| p.position_ms);
+        let resume = self
+            .model
+            .progress
+            .get(&id)
+            .filter(|progress| !progress.completed)
+            .map_or(0, |progress| progress.position_ms);
         Ok(vec![PlaybackCommand::Load {
             token: self.token,
             source,
@@ -204,6 +209,26 @@ mod tests {
         session.project(&mut state, &old);
         assert_eq!(state.compact.transport, TransportState::Buffering);
         assert_eq!(state.compact.now_playing.unwrap().position_ms, 0);
+    }
+
+    #[test]
+    fn selecting_a_completed_item_restarts_instead_of_seeking_to_end() {
+        let mut session = session();
+        let id = ItemId("a".into());
+        session.model.progress.insert(
+            id.clone(),
+            Progress {
+                position_ms: 2_040,
+                completed: true,
+                updated_at_ms: 1,
+            },
+        );
+
+        let commands = session.select(id, &PlaybackSnapshot::default(), 2).unwrap();
+        let [PlaybackCommand::Load { resume_ms, .. }] = commands.as_slice() else {
+            panic!("selection should issue exactly one load");
+        };
+        assert_eq!(*resume_ms, 0);
     }
 
     #[test]
