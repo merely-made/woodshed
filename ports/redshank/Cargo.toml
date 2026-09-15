@@ -9,13 +9,13 @@ license = "MPL-2.0"
 rust-version = "1.97"
 
 [workspace.dependencies]
-cambium = { git = "https://github.com/merely-made/mere.git", rev = "1009f02de21d70712b75934933ce8c82503b6f85" }
-cambium-genet-winit-host = { git = "https://github.com/merely-made/mere.git", rev = "1009f02de21d70712b75934933ce8c82503b6f85" }
-tinct = { git = "https://github.com/merely-made/mere.git", rev = "1009f02de21d70712b75934933ce8c82503b6f85" }
+cambium = { git = "https://github.com/merely-made/mere.git", rev = "1a3dda4e55f93f725a94c990472ff0726c30d01c" }
+cambium-genet-winit-host = { git = "https://github.com/merely-made/mere.git", rev = "1a3dda4e55f93f725a94c990472ff0726c30d01c" }
+tinct = { git = "https://github.com/merely-made/mere.git", rev = "1a3dda4e55f93f725a94c990472ff0726c30d01c" }
 # The surface-descriptor half of a host's product-admission vocabulary. Same
 # Mere revision as cambium: the descriptor crosses the seam between Redshank
 # and an embedding host, so one revision or the types do not match themselves.
-mere-surface-api = { git = "https://github.com/merely-made/mere.git", rev = "1009f02de21d70712b75934933ce8c82503b6f85" }
+mere-surface-api = { git = "https://github.com/merely-made/mere.git", rev = "1a3dda4e55f93f725a94c990472ff0726c30d01c" }
 genet-scripted-dom = { git = "https://github.com/merely-made/genet.git", rev = "7baa554c66f966295ee945d908738b635afe136a" }
 # Named genet-probe until genet 7baa554c (2026-09-14); same crate, new name.
 taproot = { git = "https://github.com/merely-made/genet.git", rev = "7baa554c66f966295ee945d908738b635afe136a" }
@@ -44,7 +44,7 @@ http = "1"
 symphonia = { version = "0.5.5", default-features = false, features = ["aac", "isomp4", "mp3", "pcm", "wav"] }
 ureq = { version = "3.4", default-features = false, features = ["rustls"] }
 rfd = "0.17"
-errand = { git = "https://github.com/merely-made/mere.git", rev = "1009f02de21d70712b75934933ce8c82503b6f85", version = "0.3.4" }
+errand = { git = "https://github.com/merely-made/mere.git", rev = "1a3dda4e55f93f725a94c990472ff0726c30d01c", version = "0.3.4" }
 url = "2.5"
 
 # Mere's desktop host reaches Genet Livery, whose Parley fork carries the text
