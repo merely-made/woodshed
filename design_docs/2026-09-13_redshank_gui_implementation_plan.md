@@ -402,3 +402,25 @@ run against the same contract.
   `audio-primitives` path dependency makes cargo-fmt walk the whole Woodshed
   root workspace. Lane T (Turnstone as second host, with redshank-playback as
   Turnstone's one audio authority) is in progress.
+- **2026-09-15, Lane T:** Turnstone hosts the compact dock as its third
+  contributed surface. `redshank-surfaces` gained `surface_api`
+  (`compact_descriptor`, `compact_stylesheet`, `compact_session`, and the
+  `CompactDock` handle that pumps projection and commands, because
+  `RunnerSurfaceSession` carries neither state nor a per-frame hook); Turnstone
+  gained `redshank_host` (one Firewheel/CPAL runtime owned by the app, a model
+  persisted under the session directory), `redshank_episode_surface` (the
+  provider, ~60 lines), handler routing in `open_address` for enclosures and
+  subscribed entries, and graph projection of item, progress and note with a
+  two-App restart test; 525 Turnstone tests pass, 7 new, and the conformance
+  test re-runs the dock's own assertions through Turnstone's registry. Phase 7
+  conditions: routing, no copied implementation, restart, device authority,
+  and same-contract tests are met; the network authority is not, because
+  redshank-playback streams ranges itself over ureq/rustls rather than through
+  `mere-fetch` (a host-blob source through Turnstone's download lane is the
+  described alternative). Cargo does find packages inside the nested
+  `ports/redshank` workspace of woodshed.git. Blocked from resolving on a clean
+  checkout by two pins outside this pass: knot-editor still on Mere
+  `3675a352` (two `SurfaceDescriptor` types), and the woodshed rev not yet on
+  GitHub. Also still open: microphone in Turnstone, a headed Turnstone receipt,
+  and Turnstone's pre-existing strict-Clippy failures (140, none in this
+  slice).

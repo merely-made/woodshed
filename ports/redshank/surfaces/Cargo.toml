@@ -8,10 +8,13 @@ publish = false
 
 [dependencies]
 cambium.workspace = true
+# The retained-surface seam a second host admits this crate through: the
+# descriptor vocabulary and the NodeId the erased session speaks in.
+genet-scripted-dom.workspace = true
+mere-surface-api.workspace = true
 redshank-model.workspace = true
 tinct.workspace = true
 
 [dev-dependencies]
 cambium-genet-winit-host.workspace = true
-genet-scripted-dom.workspace = true
 layout-dom-api.workspace = true
