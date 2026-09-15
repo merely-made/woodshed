@@ -418,9 +418,10 @@ run against the same contract.
   redshank-playback streams ranges itself over ureq/rustls rather than through
   `mere-fetch` (a host-blob source through Turnstone's download lane is the
   described alternative). Cargo does find packages inside the nested
-  `ports/redshank` workspace of woodshed.git. Blocked from resolving on a clean
-  checkout by two pins outside this pass: knot-editor still on Mere
-  `3675a352` (two `SurfaceDescriptor` types), and the woodshed rev not yet on
-  GitHub. Also still open: microphone in Turnstone, a headed Turnstone receipt,
-  and Turnstone's pre-existing strict-Clippy failures (140, none in this
-  slice).
+  `ports/redshank` workspace of woodshed.git. Both pins that blocked a clean
+  checkout moved the same day: knot-editor `cac6e82` aligns to Mere
+  `1009f02d` (its six `Init` literals gain the seam's fields), woodshed
+  `c31158b` is on GitHub, and Turnstone `07ba180` pins all three; a worktree
+  with no local cargo config built from GitHub alone and passed 525 tests.
+  Still open: microphone in Turnstone, a headed Turnstone receipt, and
+  Turnstone's pre-existing strict-Clippy failures (140, none in this slice).
