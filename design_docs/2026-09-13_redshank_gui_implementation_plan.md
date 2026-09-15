@@ -277,6 +277,75 @@ rail `rs-rail`, phone bar `rs-phone-bar`, controls `rs-stepper`, `rs-toggle`,
 `-listened`, `-progress`, `-now`, `-next`, gnode `rs-gnode`, context card
 `rs-card`.
 
+## Pass 2 lanes (2026-09-14)
+
+Mark ruled on 2026-09-14 that all four follow-on lanes run. Lane F and Lane T
+cross repository boundaries; each irrevocable step (a push, a pin bump) is
+signed off separately.
+
+### Lane F — Plex fonts through a Mere seam, and the pin bump
+
+Files: `repos/mere/crates/cambium/cambium-rootstock` (an `Init.fonts`
+field forwarded into the Livery text system, and an `Init.images` seam if the
+image-source API has the same shape), then in a worktree of woodshed:
+`ports/redshank/Cargo.toml`, `Cargo.lock`, every crate manifest that names a
+Mere or Genet rev, `desktop/src/scenario.rs` (genet-probe became `taproot` in
+the Genet gap), `surfaces/src/theme.rs` and `surfaces/assets/fonts/` (Plex
+Sans and Mono under OFL, exposed as `FONTS`), and the desktop and web hosts'
+`Init` construction. Verified first against the local Mere checkout through a
+temporary `[patch]`, then pushed and pinned after sign-off.
+
+Done when Redshank builds against Mere HEAD with no local patch, the headed
+receipts render in Plex, and the scenario lane still passes its matrix.
+
+### Lane K — pitch-preserving rate
+
+Files: `crates/audio-primitives/src/stretch.rs` (a WSOLA time-stretch kernel,
+pure std, with tests for ratio, continuity, and reset), `ports/redshank/
+playback/src/backend.rs` and `output.rs` (the stage between decode and the
+sink, source-time position mapping through the stretch, `SetRate` applied
+live), `ports/redshank/Cargo.toml` (the root-crate path dependency, as Hocket
+does).
+
+Done when 0.8×, 1.0×, 1.2× and 1.5× play the fixture at the right wall-clock
+duration within 2%, the reported position stays in source time, and the
+snapshot reports the effective rate the listener chose.
+
+### Lane D — in-repo design completions
+
+Files: `surfaces/src/lib.rs` (new state: `listen_pane`, `expanded_clusters`,
+`open_menu`), `tabs/*`, `scene/*` where menus apply, `redshank.css` /
+`TABS_CSS` for the new rules, `model/src/lib.rs` (`pinned`,
+`resume_completed_from`, a representation summary), `desktop/src/session.rs`
+and `main.rs` (projection and dispatch), `web/src/lib.rs` (apply the new
+commands).
+
+- Overflow menus on queue, note, feed, and episode rows through Cambium's
+  `detail_popover`, one open menu at a time.
+- Cluster collapse on the Notes timeline; the phone Listen segment (Up next |
+  Notes) as real state.
+- "Resume completed items from" as a setting the selection policy honours.
+- The representation card from a projected digest and retrieval date.
+- Pin as a model concept the Mere overview shows.
+- An artwork probe: whether Livery paints `background-image: url()` through
+  the Cambium host; if not, the gap is recorded for a rootstock image seam.
+
+Done when each control emits a real command, the headless tests cover them,
+and the scenario captures show them.
+
+### Lane T — Turnstone as second host (Phase 7)
+
+Runs after Lane F lands, because Turnstone is on Mere HEAD. Files in
+`repos/turnstone`: a contributed surface beside `knot_document_surface.rs`
+that mounts `redshank_surfaces::compact_surface` under an episode page, a
+handler for podcast enclosures, and the graph projection of one item,
+progress, and note. Redshank is consumed as a git dependency on woodshed.git.
+
+Done when the port plan's Phase 7 conditions hold: enclosure opened through
+handler routing, the compact dock appears without a copied implementation,
+one item, progress, and note reopen after restart, and the conformance tests
+run against the same contract.
+
 ## Progress
 
 - **2026-09-13:** Plan written after reading the canvas, the port plan's GUI

@@ -2,13 +2,14 @@
 //! when their load token matches; queue order is independent of that selection.
 use redshank_model::{
     CaptureAnchor, FeedEpisodeFacts, ItemId, LibraryItem, ListeningSession, MediaSource, NoteBody,
-    NotePrivacy, Progress, RedshankModel, ThemeMode, ThemeSeed,
+    NotePrivacy, Progress, RedshankModel, RepresentationReceipt, ResumeCompleted, ThemeMode,
+    ThemeSeed,
 };
 use redshank_playback::{PlaybackCommand, PlaybackSnapshot, PlaybackState, PreviewState};
 use redshank_surfaces::{
     Face, FeedRow, ItemRow, ListeningSessionRow, Mode, NoteSummary, NoteSummaryBody, NotesFilter,
-    NowPlaying, Recording, RedshankSurfaceState, Seed, SourceKind, TransportState,
-    VoiceNotePreview,
+    NowPlaying, Recording, RedshankSurfaceState, RepresentationSummary, Seed, SourceKind,
+    TransportState, VoiceNotePreview, short_digest,
 };
 
 /// Host facts the projection cannot derive from the model or the snapshot.
@@ -162,12 +163,15 @@ impl Session {
             .ok_or("Playback identity exhausted")?;
         self.selected = Some(id.clone());
         self.model.selected_item = Some(id.clone());
-        let resume = self
-            .model
-            .progress
-            .get(&id)
-            .filter(|progress| !progress.completed)
-            .map_or(0, |progress| progress.position_ms);
+        // A completed item reopens at zero, or where the listener stopped,
+        // as `resume_completed_from` says.
+        let progress = self.model.progress.get(&id);
+        let resume = match self.model.settings.resume_completed_from {
+            ResumeCompleted::Saved => progress.map_or(0, |progress| progress.position_ms),
+            ResumeCompleted::Start => progress
+                .filter(|progress| !progress.completed)
+                .map_or(0, |progress| progress.position_ms),
+        };
         self.resumed_from_ms = (resume > 0).then_some(resume);
         Ok(vec![PlaybackCommand::Load {
             token: self.token,
@@ -368,6 +372,38 @@ impl Session {
                 (PlaybackState::Unavailable(message), true) => Some(message.clone()),
                 _ => None,
             },
+            pinned: self.model.is_pinned(&id),
+            representation: item
+                .source()
+                .cached_representation()
+                .map(|receipt| self.representation_summary(&id, receipt)),
+        }
+    }
+
+    /// What the Notes card may say about one item's bytes: when they were
+    /// fetched, their short digest, and whether the notes still target them.
+    fn representation_summary(
+        &self,
+        id: &ItemId,
+        receipt: &RepresentationReceipt,
+    ) -> RepresentationSummary {
+        let item_digest = receipt.complete_digest.as_deref();
+        let mut compared = false;
+        let mut matches = true;
+        for note in self.model.annotations_for_item(id) {
+            let Some(note_digest) = note.target.representation.complete_digest.as_deref() else {
+                continue;
+            };
+            let Some(item_digest) = item_digest else {
+                break;
+            };
+            compared = true;
+            matches &= note_digest == item_digest;
+        }
+        RepresentationSummary {
+            retrieved_at_ms: receipt.retrieved_at_ms,
+            short_digest: item_digest.and_then(short_digest),
+            matches: compared.then_some(matches),
         }
     }
 
@@ -957,5 +993,132 @@ mod tests {
         assert_eq!(day_label(today - DAY_MS, today), "YESTERDAY");
         assert_eq!(day_label(1_757_000_000_000, today), "4 SEP");
         assert_eq!(wall_clock(3_600_000 + 1_920_000), "01:32");
+    }
+
+    /// `resume_completed_from` is the only thing that moves the resume offset
+    /// of a completed item; `Start` keeps the pass-1 behaviour.
+    #[test]
+    fn resume_completed_from_saved_reopens_where_the_listener_stopped() {
+        let mut session = session();
+        let id = ItemId("a".into());
+        session
+            .model
+            .set_progress(
+                &id,
+                Progress {
+                    position_ms: 2_040,
+                    completed: true,
+                    updated_at_ms: 1,
+                },
+            )
+            .unwrap();
+        session.model.settings.resume_completed_from = ResumeCompleted::Saved;
+        let commands = session
+            .select(id.clone(), &PlaybackSnapshot::default(), 2)
+            .unwrap();
+        let [PlaybackCommand::Load { resume_ms, .. }] = commands.as_slice() else {
+            panic!("selection should issue exactly one load");
+        };
+        assert_eq!(*resume_ms, 2_040);
+        session.model.settings.resume_completed_from = ResumeCompleted::Start;
+        let commands = session.select(id, &PlaybackSnapshot::default(), 3).unwrap();
+        let [PlaybackCommand::Load { resume_ms, .. }] = commands.as_slice() else {
+            panic!("selection should issue exactly one load");
+        };
+        assert_eq!(*resume_ms, 0);
+    }
+
+    /// A completed item reopened at zero stays Completed until playback moves,
+    /// which `Saved` must not undo for an item it reopens at zero.
+    #[test]
+    fn a_completed_item_reopened_at_zero_stays_completed() {
+        let mut session = session();
+        let id = ItemId("a".into());
+        session.model.settings.resume_completed_from = ResumeCompleted::Saved;
+        session
+            .model
+            .set_progress(
+                &id,
+                Progress {
+                    position_ms: 0,
+                    completed: true,
+                    updated_at_ms: 1,
+                },
+            )
+            .unwrap();
+        session
+            .select(id.clone(), &PlaybackSnapshot::default(), 2)
+            .unwrap();
+        let paused = PlaybackSnapshot {
+            load_token: Some(session.token),
+            position_ms: 0,
+            state: PlaybackState::Paused,
+            ..Default::default()
+        };
+        session.record_progress(&paused, 3);
+        assert!(session.model.progress[&id].completed);
+        let mut state = RedshankSurfaceState::default();
+        session.project(&mut state, &paused, &HostFacts::default());
+        assert_eq!(state.compact.transport, TransportState::Completed);
+    }
+
+    /// The representation card's facts, and the pin, come off the model.
+    #[test]
+    fn item_rows_carry_the_cached_receipt_and_the_pin() {
+        let mut session = session();
+        let id = ItemId("a".into());
+        let receipt = RepresentationReceipt {
+            retrieved_at_ms: Some(1_757_635_200_000),
+            complete_digest: Some("blake3:c41f9ab2deadbeef".into()),
+            ..Default::default()
+        };
+        session
+            .model
+            .library
+            .get_mut(&id)
+            .unwrap()
+            .replace_source(MediaSource::Cached {
+                path: "cache/a.audio".into(),
+                origin_url: "https://example.test/a.mp3".into(),
+                representation: Box::new(receipt.clone()),
+            });
+        let mut matching = anchor("a", 100);
+        matching.representation = receipt.clone();
+        session
+            .model
+            .add_text_annotation(AnnotationId("n1".into()), matching, "note".into(), 1)
+            .unwrap();
+        session.model.toggle_pin(&id).unwrap();
+
+        let mut state = RedshankSurfaceState::default();
+        session.project(
+            &mut state,
+            &PlaybackSnapshot::default(),
+            &HostFacts::default(),
+        );
+        let row = state.items.iter().find(|row| row.id == id).unwrap();
+        assert!(row.pinned);
+        let summary = row.representation.clone().unwrap();
+        assert_eq!(summary.retrieved_at_ms, Some(1_757_635_200_000));
+        assert_eq!(summary.short_digest.as_deref(), Some("c41f9ab2"));
+        assert_eq!(summary.matches, Some(true));
+
+        // A note frozen against a different object reads as drift.
+        let mut drifted = anchor("a", 200);
+        drifted.representation = RepresentationReceipt {
+            complete_digest: Some("blake3:0000000000000000".into()),
+            ..Default::default()
+        };
+        session
+            .model
+            .add_text_annotation(AnnotationId("n2".into()), drifted, "note".into(), 2)
+            .unwrap();
+        session.project(
+            &mut state,
+            &PlaybackSnapshot::default(),
+            &HostFacts::default(),
+        );
+        let row = state.items.iter().find(|row| row.id == id).unwrap();
+        assert_eq!(row.representation.clone().unwrap().matches, Some(false));
     }
 }

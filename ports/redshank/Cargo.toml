@@ -16,6 +16,10 @@ genet-scripted-dom = { git = "https://github.com/merely-made/genet.git", rev = "
 genet-probe = { git = "https://github.com/merely-made/genet.git", rev = "9e8f9dc2f3ddc0af1658580bb51964462a03923f" }
 layout-dom-api = { git = "https://github.com/merely-made/genet.git", rev = "9e8f9dc2f3ddc0af1658580bb51964462a03923f" }
 servo-media-player = { git = "https://github.com/merely-made/genet.git", rev = "9e8f9dc2f3ddc0af1658580bb51964462a03923f" }
+# Shared pure-std DSP primitives from the woodshed root, consumed through
+# the explicit shared-crate boundary as Hocket does: the WSOLA stretcher
+# behind the playback-rate dock lives there, not in a port-local copy.
+audio-primitives = { path = "../../crates/audio-primitives", version = "0.1.0" }
 redshank-model = { path = "model" }
 redshank-cache = { path = "cache" }
 redshank-feed = { path = "feed" }

@@ -40,8 +40,11 @@ impl PlaybackSource for SourceAdapter {
         self.0.borrow_mut().seek(position)
     }
 
-    fn set_rate(&mut self, _rate: f64) -> Result<(), String> {
-        Err("playback-rate changes are not enabled in this bounded desktop runtime".into())
+    fn set_rate(&mut self, rate: f64) -> Result<(), String> {
+        // The controller has already checked the rate against the range the
+        // backend advertised; the stage clamps again and reports what it took.
+        self.0.borrow_mut().set_rate((rate * 100.0).round() as u16);
+        Ok(())
     }
 }
 

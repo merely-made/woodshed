@@ -12,11 +12,34 @@ pub mod settings;
 /// `--space-*`, and `--text-*` tokens, no hex, no `outline`, and no
 /// `text-overflow`.
 pub const TABS_CSS: &str = r#"
+/* Track lists are plain `auto | <length> | <percent> | <fr>` words: Livery's
+   grid parser splits on whitespace and knows no minmax() or repeat(), and a
+   track list it cannot parse leaves the grid with one implicit column. */
+
 /* --- shared row furniture ------------------------------------------- */
 .rs-section-head { display: flex; justify-content: space-between; align-items: baseline; }
 .rs-empty { border: 1px dashed var(--t-surface-2); color: var(--t-text-dim);
   background: transparent; padding: var(--space-10); font-size: var(--text-ui-13); }
 .rs-row-actions { display: flex; gap: var(--space-4); align-items: center; flex: none; }
+/* Overflow menu: the trigger always shows, the strip only for the open row. */
+.rs-row-menu { position: relative; display: flex; align-items: center; flex: none; }
+.rs-row-tail { display: flex; align-items: center; gap: var(--space-6); flex: none; }
+.rs-row-more { width: 24px; height: 24px; background: transparent; border: none;
+  border-radius: 2px; padding: 0; flex: none; display: grid; place-items: center; }
+.rs-more-dots { display: grid; gap: 3px; justify-items: center; }
+.rs-more-dot { display: block; width: 3px; height: 3px; border-radius: 50%;
+  background: var(--t-text-dim); }
+.rs-row-more[aria-expanded="true"] { box-shadow: inset 0 0 0 1px var(--t-text); }
+.rs-row-more[aria-expanded="true"] .rs-more-dot { background: var(--t-text); }
+/* The panel hangs off the trigger rather than sharing the row: an inline
+   strip pushed the title and its listened bar out of the row entirely. */
+.rs-row-menu .rs-row-actions { position: absolute; top: 28px; right: 0; z-index: 5;
+  white-space: nowrap; background: var(--t-surface-2); border: 1px solid var(--t-text);
+  border-radius: 2px; padding: var(--space-4) var(--space-6); }
+.rs-row-menu .rs-row-action { color: var(--t-text); }
+/* Pinned: a small filled square before the title, never colour alone. */
+.rs-pin-mark { display: block; width: 8px; height: 8px; background: var(--t-text);
+  flex: none; margin-right: var(--space-4); }
 .rs-row-action { background: transparent; border: 1px solid transparent;
   color: var(--t-text-dim); font-size: var(--text-ui-12); padding: 2px 6px; border-radius: 2px; }
 .rs-row-action:hover { color: var(--t-text); box-shadow: inset 0 0 0 1px var(--t-surface-2); }
@@ -24,7 +47,7 @@ pub const TABS_CSS: &str = r#"
 .rs-bar-done { background: var(--t-text-dim); }
 
 /* --- notes rows (Listen and Notes share them) ------------------------ */
-.rs-note-row { display: grid; grid-template-columns: auto minmax(0, 1fr) auto;
+.rs-note-row { display: grid; grid-template-columns: auto 1fr auto;
   align-items: center; gap: var(--space-10); }
 .rs-note-anchor { display: flex; flex-direction: column; align-items: center; width: 44px; }
 .rs-note-time { font-family: var(--font-mono); font-size: var(--text-ui-13); }
@@ -42,7 +65,7 @@ pub const TABS_CSS: &str = r#"
   padding: 4px 10px; font-size: var(--text-ui-12); }
 
 /* --- listen ----------------------------------------------------------- */
-.rs-listen { display: grid; grid-template-columns: minmax(0, 38fr) minmax(0, 62fr);
+.rs-listen { display: grid; grid-template-columns: 38fr 62fr;
   gap: var(--space-20); min-height: 0; }
 .rs-listen-queue, .rs-listen-notes { display: flex; flex-direction: column;
   gap: var(--space-6); min-width: 0; }
@@ -54,16 +77,26 @@ pub const TABS_CSS: &str = r#"
   overflow: hidden; white-space: nowrap; }
 .rs-listen-bar { height: 3px; background: var(--t-surface-2); margin-top: 6px; }
 .rs-listen-editor { display: flex; flex-direction: column; gap: var(--space-6); }
+/* The phone Listen segment: hidden where both sections fit side by side. It
+   is a grid item, so it says where it sits: the shared .rs-segment carries
+   margin-left:auto for the header, and a stretched grid row makes the strip
+   as tall as the panel. */
+.rs-listen-pane { display: none; align-self: start; justify-self: start; }
+.rs-listen-pane .rs-segment { margin-left: 0; align-self: flex-start; }
 .rs-listen-editor-field textarea { width: 100%; min-height: 72px; background: var(--t-bg);
   color: var(--t-text); border: 1px solid var(--t-surface-2); font-family: var(--font-ui); }
 .rs-listen-save { background: var(--t-text); color: var(--t-bg); border: none;
   border-radius: 2px; padding: 5px 12px; font-size: var(--text-ui-12); }
 @media (max-width: 900px) {
-  .rs-listen { grid-template-columns: minmax(0, 1fr); }
+  /* One column, rows sized by their content: without align-content the
+     segment's row takes a share of the whole panel height. */
+  .rs-listen { grid-template-columns: 1fr; align-content: start; }
+  .rs-listen-pane { display: flex; }
+  .rs-listen .rs-pane-off { display: none; }
 }
 
 /* --- library ---------------------------------------------------------- */
-.rs-library { display: grid; grid-template-columns: minmax(0, 40fr) minmax(0, 60fr);
+.rs-library { display: grid; grid-template-columns: 40fr 60fr;
   gap: var(--space-20); min-height: 0; }
 .rs-library-feeds, .rs-library-episodes { display: flex; flex-direction: column;
   gap: var(--space-6); min-width: 0; }
@@ -91,7 +124,7 @@ pub const TABS_CSS: &str = r#"
 .rs-library-head { display: flex; align-items: center; gap: var(--space-6); }
 .rs-library-scene { display: none; }
 @media (max-width: 600px) {
-  .rs-library { grid-template-columns: minmax(0, 1fr); }
+  .rs-library { grid-template-columns: 1fr; }
   .rs-library-scene { display: block; }
 }
 
@@ -110,19 +143,30 @@ pub const TABS_CSS: &str = r#"
   font-size: var(--text-ui-12); color: var(--t-text-dim); }
 .rs-notes-end { position: absolute; top: 44px; font-family: var(--font-mono);
   font-size: var(--text-ui-12); color: var(--t-text-dim); }
-.rs-notes-grid { display: grid; grid-template-columns: minmax(0, 55fr) minmax(0, 45fr);
+.rs-notes-grid { display: grid; grid-template-columns: 55fr 45fr;
   gap: var(--space-20); min-height: 0; }
 .rs-notes-list, .rs-notes-side { display: flex; flex-direction: column; gap: var(--space-6);
   min-width: 0; }
 .rs-notes-more { font-size: var(--text-ui-12); color: var(--t-text-dim); }
+.rs-notes-cluster { display: flex; flex-direction: column; gap: var(--space-6); }
+.rs-notes-cluster-head { display: flex; align-items: baseline; gap: var(--space-6); }
+.rs-notes-collapse { margin-left: 0; background: transparent; border: none;
+  color: var(--t-text-dim); font-size: var(--text-ui-12); padding: 2px 4px;
+  border-bottom: 1px solid var(--t-surface-2); }
+.rs-notes-representation-body { font-size: var(--text-ui-12); line-height: 1.5; }
+.rs-notes-add { align-self: flex-start; background: transparent; color: var(--t-text);
+  border: none; box-shadow: inset 0 0 0 1px var(--t-text); border-radius: 2px;
+  padding: 8px 12px; font-size: var(--text-ui-13); }
+.rs-notes-chip .rs-badge { background: var(--t-text); color: var(--t-bg); border-radius: 2px;
+  padding: 0 4px; }
 .rs-notes-span-head { display: flex; justify-content: space-between; align-items: baseline; }
 .rs-notes-span-body { font-size: var(--text-ui-13); line-height: 1.45; }
 @media (max-width: 900px) {
-  .rs-notes-grid { grid-template-columns: minmax(0, 1fr); }
+  .rs-notes-grid { grid-template-columns: 1fr; }
 }
 
 /* --- settings --------------------------------------------------------- */
-.rs-settings { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+.rs-settings { display: grid; grid-template-columns: 1fr 1fr;
   gap: var(--space-20); align-content: start; }
 .rs-settings-group { display: flex; flex-direction: column; gap: var(--space-6);
   min-width: 0; }
@@ -138,7 +182,8 @@ pub const TABS_CSS: &str = r#"
 .rs-stepper { display: inline-flex; align-items: center; gap: var(--space-4); flex: none; }
 .rs-readout { display: inline-flex; align-items: baseline; flex: none; }
 .rs-stepper-step { width: 24px; height: 24px; background: transparent; border: none;
-  color: var(--t-text); box-shadow: inset 0 0 0 1px var(--t-surface-2); border-radius: 2px; }
+  color: var(--t-text); box-shadow: inset 0 0 0 1px var(--t-surface-2); border-radius: 2px;
+  display: grid; place-items: center; }
 .rs-stepper-value { display: inline-block; font-family: var(--font-mono); font-size: var(--text-ui-12);
   min-width: 56px; text-align: center; }
 .rs-segment-option { background: var(--t-surface); color: var(--t-text-dim); border: none;
@@ -149,7 +194,7 @@ pub const TABS_CSS: &str = r#"
 .rs-readout-unit { font-family: var(--font-mono); font-size: var(--text-ui-12);
   color: var(--t-text-dim); margin-left: var(--space-4); }
 @media (max-width: 900px) {
-  .rs-settings { grid-template-columns: minmax(0, 1fr); }
+  .rs-settings { grid-template-columns: 1fr; }
 }
 /* Phone: action strips wrap under the title instead of squeezing it. */
 @media (max-width: 599px) {
@@ -231,6 +276,24 @@ pub mod tests_support {
             node_with_label(&dom, runner.root(), label)
         };
         runner.dispatch_click(node, PointerClick::at((1.0, 1.0)));
+    }
+
+    /// Click a control and apply the presentation command a host would, so a
+    /// view test can reach a state that needs one round trip.
+    pub fn act(runner: &mut Runner, label: &str) -> Vec<CompactCommand> {
+        click(runner, label);
+        let drained = commands(runner);
+        runner.update(|state| {
+            for command in &drained {
+                state.apply_presentation(command);
+            }
+        });
+        drained
+    }
+
+    /// Open one row's overflow menu the way a pointer would.
+    pub fn open_menu(runner: &mut Runner, subject: &str) {
+        act(runner, &format!("More actions for {subject}"));
     }
 
     pub fn commands(runner: &mut Runner) -> Vec<CompactCommand> {

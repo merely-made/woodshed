@@ -34,7 +34,8 @@ use redshank_model::{
 use redshank_surfaces::{
     CompactCommand, CompactPlayerState, Face, FeedRow, FullView, ItemRow, ListeningSessionRow,
     Mode, NoteMarker, NoteSummary, NoteSummaryBody, NowPlaying, Recording, RedshankSurfaceState,
-    Seed, SourceKind, TextCapture, TransportState, VoiceNotePreview, sheet, surface,
+    RepresentationSummary, Seed, SourceKind, TextCapture, TransportState, VoiceNotePreview, sheet,
+    surface,
 };
 use wasm_bindgen::prelude::*;
 
@@ -74,6 +75,12 @@ fn episode(index: usize, title: &str, position_ms: u64, completed: bool) -> Item
         cached_bytes: (index <= 2).then_some(41_943_040),
         note_count: if index == 1 { 3 } else { 0 },
         unavailable: (index == 5).then(|| "Enclosure returned 404".to_owned()),
+        pinned: index == 1,
+        representation: (index <= 2).then(|| RepresentationSummary {
+            retrieved_at_ms: Some(1_757_635_200_000),
+            short_digest: Some("c41f9ab2".to_owned()),
+            matches: Some(true),
+        }),
     }
 }
 
@@ -116,6 +123,8 @@ fn fixture(seed: Seed, mode: Mode) -> RedshankSurfaceState {
         cached_bytes: None,
         note_count: 3,
         unavailable: None,
+        pinned: false,
+        representation: None,
     };
 
     let episodes = [
@@ -283,6 +292,9 @@ fn apply(state: &mut RedshankSurfaceState, command: CompactCommand) {
         C::SelectFeed(url) => state.selected_feed = url,
         C::SetLayout(layout) => state.layout = layout,
         C::SetNotesFilter(filter) => state.notes_filter = filter,
+        C::ToggleMenu(_) | C::ToggleCluster(_) | C::SelectListenPane(_) => {
+            state.apply_presentation(&command);
+        },
         C::UpdateSettings(settings) => {
             state.seed = match settings.seed {
                 ThemeSeed::Wetland => Seed::Wetland,
@@ -444,7 +456,12 @@ fn apply(state: &mut RedshankSurfaceState, command: CompactCommand) {
         C::RemoveCachedItem(_) => refuse(state, "Remove offline download (no cache)"),
         C::RemoveLibraryItem(_) => refuse(state, "RemoveLibraryItem (no durable store)"),
         C::RetryItem(_) => refuse(state, "RetryItem (no network fetcher)"),
-        C::PinItem(_) => refuse(state, "PinItem (no durable store)"),
+        // A pin is a row fact, so the page can hold it; nothing outlives the tab.
+        C::PinItem(id) => {
+            if let Some(row) = state.items.iter_mut().find(|row| row.id == id) {
+                row.pinned = !row.pinned;
+            }
+        },
         C::Subscribe(_) => refuse(state, "Subscribe (no feed fetcher)"),
         C::RefreshSubscription(_) => refuse(state, "RefreshSubscription (no feed fetcher)"),
         C::ExportAnnotations => refuse(state, "ExportAnnotations (no file writer)"),
@@ -503,6 +520,7 @@ fn select_item(state: &mut RedshankSurfaceState, id: &ItemId) {
         },
         markers,
     });
+    state.seed_expanded_clusters();
 }
 
 fn save_note(
@@ -600,6 +618,7 @@ pub async fn start(canvas_id: Option<String>) -> Result<(), JsValue> {
 
     let (seed, mode) = seed_and_mode_from_query();
     let mut state = fixture(seed, mode);
+    state.seed_expanded_clusters();
     state.notice =
         Some("Browser host: in-memory fixture, no audio, files, network, or store.".to_owned());
 
@@ -633,6 +652,9 @@ pub async fn start(canvas_id: Option<String>) -> Result<(), JsValue> {
                 ctx.runner.update(|state| {
                     let commands: Vec<_> = state.drain_commands().collect();
                     for command in commands {
+                        if !matches!(command, CompactCommand::ToggleMenu(_)) {
+                            state.open_menu = None;
+                        }
                         apply(state, command);
                     }
                 });

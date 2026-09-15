@@ -8,6 +8,7 @@ publish = false
 
 [dependencies]
 anyhow.workspace = true
+audio-primitives.workspace = true
 blake3.workspace = true
 firewheel.workspace = true
 redshank-model.workspace = true

@@ -256,6 +256,34 @@ pub enum NotesFilter {
     AllNotes,
 }
 
+/// Which section the phone-width Listen panel shows.
+#[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
+pub enum ListenPane {
+    #[default]
+    Queue,
+    Notes,
+}
+
+/// The one row whose overflow menu is open. One at a time, by construction.
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub enum MenuTarget {
+    Queue(ItemId),
+    Note(AnnotationId),
+    Feed(String),
+    Episode(ItemId),
+}
+
+/// What the Notes representation card can honestly say about an item's bytes.
+#[derive(Clone, Debug, Default, Eq, PartialEq)]
+pub struct RepresentationSummary {
+    pub retrieved_at_ms: Option<u64>,
+    /// The first eight hex characters of the complete digest.
+    pub short_digest: Option<String>,
+    /// Whether the notes' frozen digests still equal the item's; `None` when
+    /// one side never recorded one.
+    pub matches: Option<bool>,
+}
+
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub enum CompactCommand {
     Play,
@@ -320,6 +348,12 @@ pub enum CompactCommand {
     SelectScene(Scene),
     SetLayout(Layout),
     SetNotesFilter(NotesFilter),
+    /// Open one row's overflow menu, or close the open one with `None`.
+    ToggleMenu(Option<MenuTarget>),
+    /// Open or shut one note cluster, keyed by its first offset bucket.
+    ToggleCluster(u64),
+    /// Which Listen section the phone shows.
+    SelectListenPane(ListenPane),
     /// Serialize the current item's annotations as W3C Web Annotation JSON.
     ExportAnnotations,
     UpdateSettings(ListenerSettings),
@@ -460,6 +494,10 @@ pub struct ItemRow {
     pub note_count: usize,
     /// The host could not load it and offers a retry.
     pub unavailable: Option<String>,
+    /// The listener kept this one to hand.
+    pub pinned: bool,
+    /// The cached object's receipt, when the item has one.
+    pub representation: Option<RepresentationSummary>,
 }
 
 impl ItemRow {
@@ -554,6 +592,13 @@ pub struct RedshankSurfaceState {
     pub feed_url_editor: TextInput,
     pub notice: Option<String>,
     pub editing_note: Option<AnnotationId>,
+    /// The one row whose overflow menu is open.
+    pub open_menu: Option<MenuTarget>,
+    /// Note clusters the listener has open, by first-offset bucket. Hosts seed
+    /// the playhead's cluster on selection; after that this list is the truth.
+    pub expanded_clusters: Vec<u64>,
+    /// Which Listen section the phone shows; both show at wide width.
+    pub listen_pane: ListenPane,
     commands: Vec<CompactCommand>,
 }
 
@@ -603,6 +648,61 @@ impl RedshankSurfaceState {
         self.feeds.first()
     }
 
+    /// Notes on the item the dock holds, oldest first.
+    fn selected_notes(&self) -> Vec<&NoteSummary> {
+        let Some(id) = self.compact.now_playing.as_ref().map(|now| &now.item_id) else {
+            return Vec::new();
+        };
+        self.notes
+            .iter()
+            .filter(|note| &note.item_id == id)
+            .collect()
+    }
+
+    /// The cluster holding the playhead: the one hosts open on selection.
+    pub fn playhead_cluster(&self) -> Option<u64> {
+        let position = self.compact.now_playing.as_ref()?.position_ms;
+        let groups = note_clusters(&self.selected_notes());
+        groups
+            .iter()
+            .rev()
+            .find(|group| group[0].offset_ms <= position)
+            .or_else(|| groups.first())
+            .map(|group| cluster_key(group))
+    }
+
+    /// Seed the default: the playhead's cluster open, every other one shut.
+    pub fn seed_expanded_clusters(&mut self) {
+        self.expanded_clusters = self.playhead_cluster().into_iter().collect();
+    }
+
+    pub fn cluster_expanded(&self, key: u64) -> bool {
+        self.expanded_clusters.contains(&key)
+    }
+
+    pub fn menu_is_open(&self, target: &MenuTarget) -> bool {
+        self.open_menu.as_ref() == Some(target)
+    }
+
+    /// Apply the presentation-only commands both hosts share. Returns whether
+    /// the command was one of them, so a host can fall through to its own.
+    pub fn apply_presentation(&mut self, command: &CompactCommand) -> bool {
+        match command {
+            CompactCommand::ToggleMenu(target) => self.open_menu = target.clone(),
+            CompactCommand::ToggleCluster(key) => {
+                match self.expanded_clusters.iter().position(|open| open == key) {
+                    Some(at) => {
+                        self.expanded_clusters.remove(at);
+                    },
+                    None => self.expanded_clusters.push(*key),
+                }
+            },
+            CompactCommand::SelectListenPane(pane) => self.listen_pane = *pane,
+            _ => return false,
+        }
+        true
+    }
+
     /// Scope class for the root element.
     pub fn scope_class(&self) -> &'static str {
         match (self.seed, self.mode) {
@@ -621,6 +721,35 @@ impl RedshankSurfaceState {
 // ---------------------------------------------------------------------------
 // Shared helpers
 // ---------------------------------------------------------------------------
+
+/// Notes within this many milliseconds of a cluster's first note join it.
+pub const CLUSTER_MS: u64 = 10_000;
+
+/// One cluster's key: the offset its first note sits at.
+pub fn cluster_key(group: &[&NoteSummary]) -> u64 {
+    group.first().map_or(0, |note| note.offset_ms)
+}
+
+/// Point notes in ascending order, grouped into clusters. Span notes carry
+/// their own card, so they stay out.
+pub fn note_clusters<'a>(notes: &[&'a NoteSummary]) -> Vec<Vec<&'a NoteSummary>> {
+    let mut points: Vec<&NoteSummary> = notes
+        .iter()
+        .copied()
+        .filter(|note| note.end_offset_ms.is_none())
+        .collect();
+    points.sort_by_key(|note| note.offset_ms);
+    let mut out: Vec<Vec<&NoteSummary>> = Vec::new();
+    for note in points {
+        match out.last_mut() {
+            Some(group) if note.offset_ms.saturating_sub(group[0].offset_ms) <= CLUSTER_MS => {
+                group.push(note)
+            },
+            _ => out.push(vec![note]),
+        }
+    }
+    out
+}
 
 /// `m:ss` or `h:mm:ss`.
 pub fn format_time(milliseconds: u64) -> String {
@@ -653,6 +782,28 @@ pub fn format_bytes(bytes: u64) -> String {
     } else {
         format!("{} MiB", bytes / MIB)
     }
+}
+
+/// `Sep 12` from epoch milliseconds, for the representation card. Howard
+/// Hinnant's civil-from-days, the only date arithmetic these surfaces do.
+pub fn format_date(at_ms: u64) -> String {
+    const MONTHS: [&str; 12] = [
+        "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+    ];
+    let z = (at_ms / 86_400_000) as i64 + 719_468;
+    let doe = z.rem_euclid(146_097);
+    let yoe = (doe - doe / 1_460 + doe / 36_524 - doe / 146_096) / 365;
+    let doy = doe - (365 * yoe + yoe / 4 - yoe / 100);
+    let mp = (5 * doy + 2) / 153;
+    let day = doy - (153 * mp + 2) / 5 + 1;
+    let month = if mp < 10 { mp + 3 } else { mp - 9 } as usize;
+    format!("{} {day}", MONTHS[(month - 1).min(11)])
+}
+
+/// The first eight hex characters of a `blake3:...` digest.
+pub fn short_digest(digest: &str) -> Option<String> {
+    let hex = digest.rsplit(':').next()?;
+    (hex.len() >= 8).then(|| hex[..8].to_owned())
 }
 
 /// Position as a percentage of duration, for track geometry.

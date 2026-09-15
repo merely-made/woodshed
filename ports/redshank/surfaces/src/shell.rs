@@ -421,4 +421,81 @@ mod tests {
         }
         let _ = (Seed::Wetland, Mode::Dark);
     }
+
+    // --- artwork probe -----------------------------------------------------
+
+    /// Does a `.rs-face` with `background-image: url(<a real PNG>)` paint any
+    /// differently from one without?
+    ///
+    /// **It does not, and it cannot as the stack stands.** Livery parses
+    /// `url(...)` into `BackgroundImage::Url` and `paint.rs::image_key_for`
+    /// resolves it one of two ways: a `data:` URL is decoded inline, and
+    /// anything else is looked up in the caller-supplied
+    /// `ImageSources = HashMap<String, Vec<u8>>`. Cambium's only paint call —
+    /// `cambium-rootstock/src/owned_layout.rs::emit_paint_list_with_leaves` —
+    /// passes `&HashMap::new()`, a hardcoded empty map with no `Init` field or
+    /// setter behind it. So a file or http URL finds no bytes, `image_key_for`
+    /// returns `None`, and `emit_background_image_in` returns having emitted
+    /// nothing. Silently: no error, no fallback paint.
+    ///
+    /// This test can only show the half a windowless harness can see — that
+    /// the declaration changes no geometry. `Harness` exposes `painted_rect`
+    /// and no paint list; `read_frame` needs a wgpu `Surface`, which a
+    /// windowless harness has not got, so there is no headless pixel readback
+    /// to compare. The finding above is read off the source, and the seam it
+    /// asks for is an `Init.images` field forwarded into that call.
+    #[test]
+    fn artwork_background_image_changes_no_geometry_and_paints_nothing() {
+        const ARTWORK: &str = "C:/Users/mark_/Code/testing/woodshed/c1.png";
+        assert!(
+            std::path::Path::new(ARTWORK).is_file(),
+            "the probe wants a real PNG at {ARTWORK}"
+        );
+        let face = |artwork: bool| -> (f32, f32, f32, f32) {
+            let mut state = state_with(TransportState::Playing);
+            if artwork {
+                state.compact.now_playing.as_mut().unwrap().face =
+                    Face::Artwork(ARTWORK.to_owned());
+            }
+            let sheet = if artwork {
+                format!(
+                    "{}
+.rs-dock-identity .rs-face {{ background-image: url({ARTWORK}); }}
+",
+                    theme::sheet()
+                )
+            } else {
+                theme::sheet()
+            };
+            let logic: FullLogic = crate::surface;
+            let mut harness = Harness::new(sheet, state, logic);
+            harness.layout_at(960.0, 640.0);
+            let node = harness.with_dom(|dom| face_node(dom, dom.document()));
+            harness.painted_rect(node).expect("the face paints")
+        };
+        let plain = face(false);
+        let with_artwork = face(true);
+        println!("face without artwork: {plain:?}");
+        println!("face with background-image: {with_artwork:?}");
+        assert_eq!(
+            plain, with_artwork,
+            "a background image must not move anything"
+        );
+    }
+
+    fn face_node(dom: &ScriptedDom, root: NodeId) -> NodeId {
+        let class = LocalName::from("class");
+        let empty = Namespace::from("");
+        let mut pending = vec![root];
+        while let Some(node) = pending.pop() {
+            if dom
+                .attribute(node, &empty, &class)
+                .is_some_and(|value| value.split_whitespace().any(|name| name == "rs-face"))
+            {
+                return node;
+            }
+            pending.extend(dom.dom_children(node));
+        }
+        panic!("missing face");
+    }
 }
