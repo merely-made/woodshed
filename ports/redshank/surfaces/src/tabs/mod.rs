@@ -183,7 +183,7 @@ pub const TABS_CSS: &str = r#"
 .rs-readout { display: inline-flex; align-items: baseline; flex: none; }
 .rs-stepper-step { width: 24px; height: 24px; background: transparent; border: none;
   color: var(--t-text); box-shadow: inset 0 0 0 1px var(--t-surface-2); border-radius: 2px;
-  display: grid; place-items: center; }
+  padding: 0; line-height: 24px; text-align: center; }
 .rs-stepper-value { display: inline-block; font-family: var(--font-mono); font-size: var(--text-ui-12);
   min-width: 56px; text-align: center; }
 .rs-segment-option { background: var(--t-surface); color: var(--t-text-dim); border: none;

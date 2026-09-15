@@ -379,3 +379,26 @@ run against the same contract.
   outside Cambium; the Turnstone tile (1j) waits on Phase 7; cluster collapse,
   "resume completed from", and the representation digest card need the state
   fields Lane S2 listed; `recording.scn` needs a microphone to pass.
+- **2026-09-14, pass 2:** Lanes F, K and D landed and merged (woodshed
+  `3bf0e10`, `0c28fc3`, `882dc75`). The Cambium host font and image seam
+  (`Init.fonts`, `Init.images`, `HostState::set_resources`, registration on
+  every text-system construction) is on Mere main at `1009f02d`, swept into a
+  concurrent session's receipt commit and followed by its Ahem-based test in
+  `e5b6eac3`; Redshank pins that rev and Genet `7baa554c`, where `genet-probe`
+  became `taproot`, and bundles IBM Plex Sans and Mono (OFL) as
+  `theme::FONTS`, so receipts now shape in Plex (dotted-zero Plex Mono against
+  the earlier slashed-zero fallback). Rate is real: a WSOLA kernel in
+  `audio-primitives` with output-to-source position mapping, within 0.84% by
+  frame count and 0.7% by device wall clock at 0.8x, 1.0x, 1.2x and 1.5x; the
+  seam sound at 1.5x on speech is not yet human-confirmed. The completions
+  landed as named state (menus, clusters, listen pane, resume-from, pin,
+  representation card) and the scenario lane gained labels for them
+  (`menu:`, `cluster:`, `pane:`, `pin:`, `resume:`), so
+  `design_completions.scn` drives them by name. Two engine facts recorded from
+  frames: Livery's grid track parser has no `minmax()` or `repeat()`, and
+  `background-image: url()` paints nothing through the Cambium host because
+  rootstock passed an empty image ledger, which `Init.images` now fills.
+  Procedural: never `cargo fmt --all` on the port, because the
+  `audio-primitives` path dependency makes cargo-fmt walk the whole Woodshed
+  root workspace. Lane T (Turnstone as second host, with redshank-playback as
+  Turnstone's one audio authority) is in progress.

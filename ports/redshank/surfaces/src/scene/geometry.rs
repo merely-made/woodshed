@@ -112,7 +112,16 @@ pub fn short_label(item: &ItemRow) -> String {
     {
         return head.to_owned();
     }
-    item.published.clone().unwrap_or_else(|| item.title.clone())
+    // A long title under a 20px node runs into its neighbours; keep it short.
+    let label = item.published.clone().unwrap_or_else(|| item.title.clone());
+    const MAX: usize = 10;
+    if label.chars().count() > MAX {
+        let mut short: String = label.chars().take(MAX - 1).collect();
+        short.push('…');
+        short
+    } else {
+        label
+    }
 }
 
 /// The badge word beside an episode: `NOW` outranks the source kind.
