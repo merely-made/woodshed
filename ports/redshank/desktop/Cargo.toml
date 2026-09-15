@@ -10,9 +10,9 @@ publish = false
 blake3.workspace = true
 cambium-genet-winit-host.workspace = true
 cpal.workspace = true
-# The shared automatability substrate: the self-drive lane is genet-probe's
+# The shared automatability substrate: the self-drive lane is taproot's
 # scenario loop, not a private copy. Captures encode a PNG from the readback.
-genet-probe.workspace = true
+taproot.workspace = true
 hound.workspace = true
 image.workspace = true
 layout-dom-api.workspace = true

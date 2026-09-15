@@ -157,6 +157,41 @@ fn roles(palette: &Palette) -> String {
     .join(" ")
 }
 
+/// The faces `--font-ui` and `--font-mono` name, bundled rather than assumed:
+/// neither Plex family is installed on a stock Windows, macOS, or Linux box.
+/// Each entry pins its bytes to a CSS family name, so the three weights of one
+/// family arrive as one family with three weights. A host hands this straight
+/// to the Cambium `Init.fonts` seam.
+///
+/// IBM Plex is under the SIL Open Font License 1.1; `assets/fonts/OFL.txt`
+/// travels with the faces.
+pub const FONTS: &[(&str, &[u8])] = &[
+    (
+        "IBM Plex Sans",
+        include_bytes!("../assets/fonts/IBMPlexSans-Regular.ttf"),
+    ),
+    (
+        "IBM Plex Sans",
+        include_bytes!("../assets/fonts/IBMPlexSans-Medium.ttf"),
+    ),
+    (
+        "IBM Plex Sans",
+        include_bytes!("../assets/fonts/IBMPlexSans-SemiBold.ttf"),
+    ),
+    (
+        "IBM Plex Mono",
+        include_bytes!("../assets/fonts/IBMPlexMono-Regular.ttf"),
+    ),
+    (
+        "IBM Plex Mono",
+        include_bytes!("../assets/fonts/IBMPlexMono-Medium.ttf"),
+    ),
+    (
+        "IBM Plex Mono",
+        include_bytes!("../assets/fonts/IBMPlexMono-SemiBold.ttf"),
+    ),
+];
+
 /// The design-system tokens the sheet spends: families, type scale, tracking,
 /// and the spacing step. Emitted on the root and on the app element, because
 /// the scope class rides the app element itself.
