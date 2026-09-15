@@ -26,15 +26,16 @@
 #![forbid(unsafe_code)]
 
 use cambium_genet_web_host::mount;
-use cambium_rootstock::{AppCtx, HostHooks, HostOptions, Init};
+use cambium_rootstock::{AppCtx, HostFont, HostHooks, HostOptions, Init};
 use redshank_model::{
     AnnotationId, ItemId, ListenerSettings, RepresentationReceipt, ThemeMode, ThemeSeed,
     TimedTarget,
 };
 use redshank_surfaces::{
-    CompactCommand, CompactPlayerState, Face, FeedRow, FullView, ItemRow, ListeningSessionRow,
-    Mode, NoteMarker, NoteSummary, NoteSummaryBody, NowPlaying, Recording, RedshankSurfaceState,
-    Seed, SourceKind, TextCapture, TransportState, VoiceNotePreview, sheet, surface,
+    CompactCommand, CompactPlayerState, FONTS, Face, FeedRow, FullView, ItemRow,
+    ListeningSessionRow, Mode, NoteMarker, NoteSummary, NoteSummaryBody, NowPlaying, Recording,
+    RedshankSurfaceState, Seed, SourceKind, TextCapture, TransportState, VoiceNotePreview, sheet,
+    surface,
 };
 use wasm_bindgen::prelude::*;
 
@@ -618,6 +619,15 @@ pub async fn start(canvas_id: Option<String>) -> Result<(), JsValue> {
             state,
             logic: surface as Logic,
             sheet: sheet(),
+            // The sheet names both Plex families; the browser has neither.
+            fonts: FONTS
+                .iter()
+                .map(|(family, bytes)| HostFont {
+                    family: Some((*family).to_owned()),
+                    bytes: bytes.to_vec(),
+                })
+                .collect(),
+            images: Vec::new(),
         },
         HostHooks {
             frame: Box::new(|ctx: &mut Context<'_>| {

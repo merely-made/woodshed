@@ -2,13 +2,13 @@
 //!
 //! The same shape Woodshed's `woodshed-genet/src/scenario.rs` proved. The
 //! generic half — parsing, the verb loop, selector resolution, assertions —
-//! is [`genet_probe`]; what lives here is only what is Redshank's: its one
+//! is [`taproot`]; what lives here is only what is Redshank's: its one
 //! surface, its named-command vocabulary, the typed [`Observed`] sample it
 //! emits events from, and how a presented frame becomes a PNG.
 //!
 //! Three env vars turn it on:
 //!
-//! - `REDSHANK_SCENARIO` — path to a `.scn` file (grammar in `genet_probe`).
+//! - `REDSHANK_SCENARIO` — path to a `.scn` file (grammar in `taproot`).
 //! - `REDSHANK_CAPTURE_DIR` — where `capture <name>` writes `<name>.png` and,
 //!   at the end, `scenario.done` whose first line is `RESULT ok` or
 //!   `RESULT fail`, followed by the run log.
@@ -29,12 +29,12 @@ use std::path::{Path, PathBuf};
 use std::rc::Rc;
 
 use cambium_genet_winit_host::{AppCtx, Frame, HostPointer, Key, KeyPress, NamedKey, read_frame};
-use genet_probe::{Automatable, Driveable, ProbeSnapshot, ProbeSurface, Progress, Scenario};
 use redshank_model::{ItemId, ThemeMode, ThemeSeed};
 use redshank_surfaces::{
     CompactCommand, FullView, Layout, Mode, NotesFilter, RedshankSurfaceState, Scene, Seed,
     SurfaceTab, TransportState,
 };
+use taproot::{Automatable, Driveable, ProbeSnapshot, ProbeSurface, Progress, Scenario};
 
 /// Self-contained aliases: the lane does not borrow `main`'s, so a rename over
 /// there cannot silently change what this file is driving.
@@ -132,7 +132,7 @@ impl ScenarioLane {
     }
 
     /// Write the `scenario.done` sentinel the driver script waits on.
-    fn write_outcome(&mut self, outcome: genet_probe::Outcome) {
+    fn write_outcome(&mut self, outcome: taproot::Outcome) {
         if self.finished {
             return;
         }
