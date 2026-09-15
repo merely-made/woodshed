@@ -1228,3 +1228,8 @@ rejected for the reasons recorded in the 2026-09-01 planning pass.
   for lanes, receipts, and what remains open. The GUI design done-conditions
   above are met for both dock families at the four artboard widths, with
   fixed dock height proven by headless layout and by captured frames.
+- **2026-09-14:** Pass 2 of the GUI implementation: bundled Plex through a new
+  Cambium host font seam, pitch-preserving playback rate, and the remaining
+  canvas controls as real state; Phase 7 (Turnstone as second host) is in
+  progress with redshank-playback as Turnstone's audio authority. See the GUI
+  plan's progress log.

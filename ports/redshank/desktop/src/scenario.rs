@@ -29,10 +29,10 @@ use std::path::{Path, PathBuf};
 use std::rc::Rc;
 
 use cambium_genet_winit_host::{AppCtx, Frame, HostPointer, Key, KeyPress, NamedKey, read_frame};
-use redshank_model::{ItemId, ThemeMode, ThemeSeed};
+use redshank_model::{AnnotationId, ItemId, ResumeCompleted, ThemeMode, ThemeSeed};
 use redshank_surfaces::{
-    CompactCommand, FullView, Layout, Mode, NotesFilter, RedshankSurfaceState, Scene, Seed,
-    SurfaceTab, TransportState,
+    CompactCommand, FullView, Layout, ListenPane, MenuTarget, Mode, NotesFilter,
+    RedshankSurfaceState, Scene, Seed, SurfaceTab, TransportState,
 };
 use taproot::{Automatable, Driveable, ProbeSnapshot, ProbeSurface, Progress, Scenario};
 
@@ -282,6 +282,8 @@ pub enum Named {
     SkipForward,
     Seed(ThemeSeed),
     Mode(ThemeMode),
+    /// Where a completed item reopens from; a setting, so it reads the current ones.
+    Resume(ResumeCompleted),
 }
 
 /// Parse one scenario command label. `None` is an unknown label, which the
@@ -363,6 +365,44 @@ pub fn parse_named(label: &str) -> Option<Named> {
         let choice = (!rest.is_empty()).then(|| rest.to_owned());
         return Some(Named::Command(CompactCommand::SelectFeed(choice)));
     }
+    // Pass-2 presentation state: menus, clusters, the phone pane, pins, resume.
+    if let Some(rest) = label.strip_prefix("menu:") {
+        let target = match rest.split_once(':') {
+            None if rest == "none" => None,
+            Some(("queue", id)) => Some(MenuTarget::Queue(ItemId(id.to_owned()))),
+            Some(("note", id)) => Some(MenuTarget::Note(AnnotationId(id.to_owned()))),
+            Some(("feed", url)) => Some(MenuTarget::Feed(url.to_owned())),
+            Some(("episode", id)) => Some(MenuTarget::Episode(ItemId(id.to_owned()))),
+            _ => return None,
+        };
+        return Some(Named::Command(CompactCommand::ToggleMenu(target)));
+    }
+    if let Some(rest) = label.strip_prefix("cluster:") {
+        return rest
+            .parse::<u64>()
+            .ok()
+            .map(|key| Named::Command(CompactCommand::ToggleCluster(key)));
+    }
+    if let Some(rest) = label.strip_prefix("pane:") {
+        let pane = match rest {
+            "queue" => ListenPane::Queue,
+            "notes" => ListenPane::Notes,
+            _ => return None,
+        };
+        return Some(Named::Command(CompactCommand::SelectListenPane(pane)));
+    }
+    if let Some(rest) = label.strip_prefix("pin:") {
+        return Some(Named::Command(CompactCommand::PinItem(ItemId(
+            rest.to_owned(),
+        ))));
+    }
+    if let Some(rest) = label.strip_prefix("resume:") {
+        return match rest {
+            "start" => Some(Named::Resume(ResumeCompleted::Start)),
+            "saved" => Some(Named::Resume(ResumeCompleted::Saved)),
+            _ => None,
+        };
+    }
     let command = match label {
         "play" => CompactCommand::Play,
         "pause" => CompactCommand::Pause,
@@ -405,6 +445,11 @@ pub fn apply(state: &mut RedshankSurfaceState, named: Named) {
                 ThemeSeed::Wetland => Seed::Wetland,
                 ThemeSeed::BrandShell => Seed::BrandShell,
             };
+            let settings = state.settings.clone();
+            state.request(CompactCommand::UpdateSettings(settings));
+        },
+        Named::Resume(resume) => {
+            state.settings.resume_completed_from = resume;
             let settings = state.settings.clone();
             state.request(CompactCommand::UpdateSettings(settings));
         },
