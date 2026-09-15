@@ -21,7 +21,10 @@ mod worker;
 
 pub(crate) use backend::Backend;
 #[cfg(test)]
-use backend::{consume_frames, drained, open_http, open_local, presented_ms};
+use backend::{
+    Decoded, RateStage, consume_frames, decode_packet, drained, open_http, open_local,
+    presented_frames,
+};
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub enum PlaybackState {
@@ -59,7 +62,8 @@ pub struct PlaybackSnapshot {
     pub position_ms: u64,
     pub duration_ms: Option<u64>,
     pub source: Option<String>,
-    /// The rate the backend is actually running at, not the requested one.
+    /// The rate the retiming stage is actually running at. It equals the
+    /// requested rate once clamped to what the stretcher supports.
     pub rate_percent: u16,
     pub volume_percent: u8,
     /// Percent of the source seekable without waiting on the network.
@@ -96,8 +100,8 @@ pub enum PlaybackCommand {
     Pause,
     Stop,
     Seek(u64),
-    /// Requested playback rate in percent. The snapshot reports the effective
-    /// rate, which stays 100 while the decoder cannot retime without pitch.
+    /// Requested playback rate in percent, retimed without moving pitch.
+    /// Clamped to 50-200; the snapshot reports the rate actually in effect.
     SetRate(u16),
     /// Output volume in percent, applied as a Firewheel gain.
     SetVolume(u8),
@@ -314,9 +318,114 @@ mod tests {
         let mut pcm = vec![0.0; 10];
         consume_frames(&mut pcm, 3, 2);
         assert_eq!(pcm.len(), 4);
-        assert_eq!(presented_ms(48_000, 48_000, 0.08), 920);
-        assert!(!drained(true, &[0.0, 0.0], 0.0));
-        assert!(drained(true, &[], 0.005));
+        assert_eq!(presented_frames(48_000, 48_000, 0.08), 44_160);
+        assert_eq!(presented_frames(100, 48_000, 1.0), 0);
+        assert!(!drained(true, 4, 0.0));
+        assert!(!drained(false, 0, 0.0));
+        assert!(drained(true, 0, 0.005));
+    }
+
+    /// A pure tone pair written as PCM, decodable by the same Symphonia path
+    /// a real enclosure takes. Returns the source frame count.
+    fn synthetic_source(path: &PathBuf, seconds: u32) -> u64 {
+        let rate = 48_000_u32;
+        let mut writer = hound::WavWriter::create(
+            path,
+            hound::WavSpec {
+                channels: 2,
+                sample_rate: rate,
+                bits_per_sample: 16,
+                sample_format: hound::SampleFormat::Int,
+            },
+        )
+        .unwrap();
+        let frames = rate * seconds;
+        for frame in 0..frames {
+            let phase = 2.0 * std::f32::consts::PI * frame as f32 / rate as f32;
+            let scale = f32::from(i16::MAX) * 0.5;
+            writer
+                .write_sample(((phase * 440.0).sin() * scale) as i16)
+                .unwrap();
+            writer
+                .write_sample(((phase * 660.0).sin() * scale) as i16)
+                .unwrap();
+        }
+        writer.finalize().unwrap();
+        u64::from(frames)
+    }
+
+    #[test]
+    fn retiming_delivers_the_inverse_of_the_rate_in_source_time() {
+        let directory = tempfile::tempdir().unwrap();
+        let path = directory.path().join("rate.wav");
+        let source_frames = synthetic_source(&path, 2);
+        for percent in [80_u16, 120] {
+            let (mut decoder, _) = open_local(&path).unwrap();
+            let mut stage = RateStage::new(48_000, 2, percent);
+            let mut output = Vec::new();
+            loop {
+                match decode_packet(&mut decoder).unwrap() {
+                    Decoded::Frames(samples) => stage.push(&samples, &mut output),
+                    Decoded::Skipped => {},
+                    Decoded::EndOfFile => break,
+                }
+            }
+            stage.flush(&mut output);
+
+            // The sink is handed 100/percent of the source frames.
+            let output_frames = (output.len() / 2) as u64;
+            let expected = source_frames as f64 * 100.0 / f64::from(percent);
+            assert!(
+                (output_frames as f64 - expected).abs() / expected < 0.02,
+                "{percent}%: {output_frames} output frames against {expected}"
+            );
+
+            // Reported position stays in source time end to end.
+            assert_eq!(stage.source_frames_at(0), 0);
+            assert_eq!(stage.source_frames_at(output_frames), source_frames);
+            let middle = stage.source_frames_at(output_frames / 2) as f64;
+            assert!(
+                (middle - source_frames as f64 / 2.0).abs() / (source_frames as f64) < 0.02,
+                "{percent}%: midpoint mapped to source frame {middle}"
+            );
+
+            // Output still queued is source time not yet heard, at the rate.
+            let queued = 0.5_f64;
+            let presented = presented_frames(output_frames, 48_000, queued);
+            let behind = (source_frames - stage.source_frames_at(presented)) as f64;
+            let expected_behind = queued * 48_000.0 * f64::from(percent) / 100.0;
+            assert!(
+                (behind - expected_behind).abs() / expected_behind < 0.05,
+                "{percent}%: {behind} source frames behind, expected {expected_behind}"
+            );
+        }
+    }
+
+    #[test]
+    fn unity_rate_leaves_the_decoded_bytes_alone() {
+        let directory = tempfile::tempdir().unwrap();
+        let path = directory.path().join("unity.wav");
+        let source_frames = synthetic_source(&path, 1);
+        let (mut decoder, _) = open_local(&path).unwrap();
+        let mut stage = RateStage::new(48_000, 2, 100);
+        let mut decoded = Vec::new();
+        let mut output = Vec::new();
+        loop {
+            match decode_packet(&mut decoder).unwrap() {
+                Decoded::Frames(samples) => {
+                    decoded.extend_from_slice(&samples);
+                    stage.push(&samples, &mut output);
+                },
+                Decoded::Skipped => {},
+                Decoded::EndOfFile => break,
+            }
+        }
+        stage.flush(&mut output);
+        assert_eq!(output, decoded);
+        assert_eq!(
+            stage.source_frames_at((output.len() / 2) as u64),
+            source_frames
+        );
     }
 
     #[test]
@@ -375,11 +484,19 @@ mod tests {
             wait_for(&runtime, |snapshot| snapshot.volume_percent == 40).volume_percent,
             40
         );
-        // A requested rate is recorded by the host; the backend cannot retime
-        // without pitch, so the snapshot keeps reporting real time.
+        // The retiming stage applies the rate, so the snapshot reports the
+        // chosen rate rather than a silent 100.
         runtime.command(PlaybackCommand::SetRate(150)).unwrap();
-        let rated = wait_for(&runtime, |snapshot| snapshot.volume_percent == 40);
-        assert_eq!(rated.rate_percent, 100);
+        assert_eq!(
+            wait_for(&runtime, |snapshot| snapshot.rate_percent == 150).rate_percent,
+            150
+        );
+        // Outside the range the stage can hold honestly, the request clamps.
+        runtime.command(PlaybackCommand::SetRate(400)).unwrap();
+        assert_eq!(
+            wait_for(&runtime, |snapshot| snapshot.rate_percent != 150).rate_percent,
+            200
+        );
     }
 
     #[test]
@@ -496,6 +613,138 @@ mod tests {
                 snapshot.load_token == Some(token) && snapshot.state == PlaybackState::Paused
             });
             assert_eq!(paused.state, PlaybackState::Paused);
+        }
+    }
+
+    #[test]
+    #[ignore = "requires REDSHANK_PHASE4_FIXTURES and a default output device"]
+    fn supplied_fixture_plays_each_dock_rate_at_its_wall_clock() {
+        // The timed span of source, measured between two reported source
+        // positions so the output queue's one-off start-up latency drops out.
+        const FROM_MS: u64 = 200;
+        const TO_MS: u64 = 1_800;
+        for (token, percent) in [(70, 80_u16), (71, 100), (72, 120), (73, 150)] {
+            let runtime = PlaybackRuntime::start();
+            runtime.command(PlaybackCommand::SetRate(percent)).unwrap();
+            runtime
+                .command(PlaybackCommand::Load {
+                    token,
+                    source: MediaSource::Local {
+                        path: fixture("stereo.mp3").display().to_string(),
+                    },
+                    resume_ms: 0,
+                })
+                .unwrap();
+            let loaded = wait_for(&runtime, |snapshot| {
+                snapshot.load_token == Some(token) && snapshot.state != PlaybackState::Loading
+            });
+            assert_eq!(loaded.state, PlaybackState::Paused, "{loaded:?}");
+            assert_eq!(loaded.rate_percent, percent);
+            assert_eq!(loaded.duration_ms.map(|ms| ms / 100), Some(20));
+
+            runtime.command(PlaybackCommand::Play).unwrap();
+            let deadline = Instant::now() + Duration::from_secs(8);
+            let until = |target: u64| loop {
+                let snapshot = runtime.snapshot();
+                if snapshot.position_ms >= target || Instant::now() >= deadline {
+                    return (snapshot, Instant::now());
+                }
+                thread::sleep(Duration::from_millis(1));
+            };
+            let (opened, from) = until(FROM_MS);
+            let (reached, to) = until(TO_MS);
+            runtime.command(PlaybackCommand::Pause).unwrap();
+            assert_eq!(reached.state, PlaybackState::Playing, "{reached:?}");
+            assert!(reached.position_ms >= TO_MS, "{reached:?}");
+            assert_eq!(reached.rate_percent, percent);
+            // Source span divided by the rate is the wall clock it takes.
+            let span = (reached.position_ms - opened.position_ms) as f64;
+            let expected = span * 100.0 / f64::from(percent);
+            let measured = (to - from).as_secs_f64() * 1000.0;
+            println!(
+                "{percent}%: {measured:.0} ms of wall clock for {span:.0} ms of source (expected {expected:.0} ms)"
+            );
+            // The floor here is the snapshot publication period, not the
+            // retiming: supplied_fixtures_keep_their_pitch_at_every_dock_rate
+            // checks the same ratio frame-exactly without a device.
+            assert!(
+                (measured - expected).abs() < expected * 0.03,
+                "{percent}%: {measured:.0} ms against {expected:.0} ms"
+            );
+        }
+    }
+
+    /// Fundamental of one channel from hysteresis zero crossings, which a
+    /// lossy decoder's noise floor cannot fake.
+    fn fundamental(samples: &[f32], channels: usize, channel: usize) -> f32 {
+        let peak = samples
+            .iter()
+            .skip(channel)
+            .step_by(channels)
+            .fold(0.0_f32, |peak, sample| peak.max(sample.abs()));
+        let threshold = peak * 0.25;
+        let mut armed = false;
+        let mut first = None;
+        let mut last = 0;
+        let mut cycles = 0_u32;
+        for frame in 0..samples.len() / channels {
+            let sample = samples[frame * channels + channel];
+            if sample < -threshold {
+                armed = true;
+            } else if armed && sample > threshold {
+                armed = false;
+                if first.is_none() {
+                    first = Some(frame);
+                } else {
+                    cycles += 1;
+                }
+                last = frame;
+            }
+        }
+        let first = first.expect("no cycles in the measured channel");
+        f32::from(cycles as u16) * 48_000.0 / (last - first) as f32
+    }
+
+    #[test]
+    #[ignore = "requires REDSHANK_PHASE4_FIXTURES with generated stereo fixtures"]
+    fn supplied_fixtures_keep_their_pitch_at_every_dock_rate() {
+        for name in ["stereo.mp3", "stereo.m4a"] {
+            for percent in [80_u16, 100, 120, 150] {
+                let (mut decoder, _) = open_local(&fixture(name)).unwrap();
+                let mut stage = RateStage::new(48_000, 2, percent);
+                let mut output = Vec::new();
+                let mut source_frames = 0_u64;
+                loop {
+                    match decode_packet(&mut decoder).unwrap() {
+                        Decoded::Frames(samples) => {
+                            source_frames += (samples.len() / 2) as u64;
+                            stage.push(&samples, &mut output);
+                        },
+                        Decoded::Skipped => {},
+                        Decoded::EndOfFile => break,
+                    }
+                }
+                stage.flush(&mut output);
+                let frames = (output.len() / 2) as f64;
+                let expected = source_frames as f64 * 100.0 / f64::from(percent);
+                assert!(
+                    (frames - expected).abs() / expected < 0.02,
+                    "{name} at {percent}%: {frames} frames against {expected}"
+                );
+                // Skip the codec's leading silence and the flush tail.
+                let measured = &output[4_800 * 2..output.len() - 4_800 * 2];
+                let left = fundamental(measured, 2, 0);
+                let right = fundamental(measured, 2, 1);
+                println!("{name} at {percent}%: {frames} frames, {left:.1} Hz / {right:.1} Hz");
+                assert!(
+                    (left - 440.0).abs() / 440.0 < 0.01,
+                    "{name} {percent}%: {left} Hz"
+                );
+                assert!(
+                    (right - 660.0).abs() / 660.0 < 0.01,
+                    "{name} {percent}%: {right} Hz"
+                );
+            }
         }
     }
 

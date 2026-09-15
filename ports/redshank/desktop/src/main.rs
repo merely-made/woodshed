@@ -251,6 +251,8 @@ struct Desktop {
     receipt: Option<HeadedReceipt>,
     last_progress: Instant,
     last_projection: Instant,
+    /// The item the last projection was for; a change reseeds the open cluster.
+    projected_item: Option<ItemId>,
 }
 
 impl Desktop {
@@ -377,12 +379,18 @@ impl Desktop {
     }
 
     fn project(
-        &self,
+        &mut self,
         state: &mut RedshankSurfaceState,
         snapshot: &redshank_playback::PlaybackSnapshot,
     ) {
         let facts = self.host_facts();
         self.session.project(state, snapshot, &facts);
+        // The notes the listener is inside open first; every other cluster is
+        // shut. Seeded once per selection so a later collapse sticks.
+        if self.projected_item != self.session.selected {
+            self.projected_item = self.session.selected.clone();
+            state.seed_expanded_clusters();
+        }
     }
 
     fn send(&self, command: PlaybackCommand) -> Result<(), String> {
@@ -1120,17 +1128,34 @@ impl Desktop {
             },
             CompactCommand::RetryItem(id) => self.select(id)?,
             CompactCommand::PinItem(id) => {
-                // The model has no pin concept yet; say so rather than pretend.
-                state.notice = Some(format!(
-                    "Pinning is not in the model yet: {} stays unpinned",
-                    id.0
-                ));
+                let title = self
+                    .session
+                    .model
+                    .library
+                    .get(&id)
+                    .map_or_else(|| id.0.clone(), |item| item.title().to_owned());
+                let pinned = self
+                    .session
+                    .model
+                    .toggle_pin(&id)
+                    .map_err(|e| format!("Could not pin item: {e:?}"))?;
+                self.persistence.changed();
+                state.notice = Some(if pinned {
+                    format!("Pinned {title}")
+                } else {
+                    format!("Unpinned {title}")
+                });
             },
             CompactCommand::SelectFeed(url) => state.selected_feed = url,
             CompactCommand::SelectTab(tab) => state.active_tab = tab,
             CompactCommand::SelectScene(scene) => state.scene = scene,
             CompactCommand::SetLayout(layout) => state.layout = layout,
             CompactCommand::SetNotesFilter(filter) => state.notes_filter = filter,
+            CompactCommand::ToggleMenu(_)
+            | CompactCommand::ToggleCluster(_)
+            | CompactCommand::SelectListenPane(_) => {
+                state.apply_presentation(&command);
+            },
             CompactCommand::ExportAnnotations => self.export_annotations(state)?,
         }
         Ok(())
@@ -1139,11 +1164,17 @@ impl Desktop {
     fn dispatch(&mut self, state: &mut RedshankSurfaceState) {
         let commands: Vec<_> = state.drain_commands().collect();
         for command in commands {
+            // Any other action shuts an open overflow menu, which is what an
+            // outside click would do if the panel were a positioned overlay.
+            if !matches!(command, CompactCommand::ToggleMenu(_)) {
+                state.open_menu = None;
+            }
             if let Err(error) = self.command(state, command) {
                 state.notice = Some(error);
             }
         }
-        self.project(state, &self.runtime.snapshot());
+        let snapshot = self.runtime.snapshot();
+        self.project(state, &snapshot);
         if let Err(error) = self.persistence.flush(&self.session.model) {
             state.notice = Some(error);
         }
@@ -1630,6 +1661,7 @@ fn main() {
         last_progress: Instant::now(),
         last_size: None,
         last_projection: Instant::now(),
+        projected_item: None,
     };
     let mut state = RedshankSurfaceState::default();
     state.notice = notice;
@@ -1988,6 +2020,7 @@ mod tests {
             last_progress: Instant::now(),
             last_size: None,
             last_projection: Instant::now(),
+            projected_item: None,
         }
     }
 

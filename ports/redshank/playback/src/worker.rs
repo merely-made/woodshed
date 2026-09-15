@@ -18,7 +18,7 @@ use crate::{
 /// The output levels the worker reports, alongside the transport facts.
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub(super) struct Levels {
-    /// Effective, not requested: 100 while the decoder cannot retime honestly.
+    /// Effective, not requested: what the retiming stage actually applied.
     pub(super) rate_percent: u16,
     pub(super) volume_percent: u8,
     pub(super) buffered_percent: u8,
@@ -634,11 +634,11 @@ fn run_session(receiver: &mpsc::Receiver<PlaybackCommand>, snapshot: Arc<Mutex<S
                         continue;
                     }
                 },
-                PlaybackCommand::SetRate(_percent) => {
-                    // Neither Symphonia nor the output resampler can retime
-                    // without shifting pitch, so the effective rate stays 100
-                    // and the snapshot shows that rather than a silent fake.
-                    levels.rate_percent = 100;
+                PlaybackCommand::SetRate(percent) => {
+                    // The WSOLA stage retimes without moving pitch, so the
+                    // requested rate applies live; the snapshot reports what
+                    // the stage took, which is the request once clamped.
+                    levels.rate_percent = backend.borrow_mut().set_rate(percent);
                     publish_levels(&snapshot, levels);
                 },
                 PlaybackCommand::SetVolume(percent) => {

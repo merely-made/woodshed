@@ -56,7 +56,16 @@ pub fn connections_card(state: &RedshankSurfaceState) -> Option<FullView> {
 
     let mut lines: Vec<FullView> = vec![
         Box::new(el("div", text("CONNECTIONS")).attr("class", "rs-micro")),
-        Box::new(el("div", text(item.title.clone())).attr("class", "rs-card-title")),
+        Box::new(
+            el(
+                "div",
+                (
+                    crate::tabs::rows::pin_mark(item.pinned),
+                    text(item.title.clone()),
+                ),
+            )
+            .attr("class", "rs-card-title"),
+        ),
         Box::new(
             el(
                 "div",
@@ -86,7 +95,10 @@ pub fn connections_card(state: &RedshankSurfaceState) -> Option<FullView> {
 
     let actions: Vec<FullView> = vec![
         action("Open", CompactCommand::SelectItem(item.id.clone())),
-        action("Pin", CompactCommand::PinItem(item.id.clone())),
+        action(
+            if item.pinned { "Unpin" } else { "Pin" },
+            CompactCommand::PinItem(item.id.clone()),
+        ),
         action("Add to queue", CompactCommand::Enqueue(item.id.clone())),
     ];
 

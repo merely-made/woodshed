@@ -95,9 +95,12 @@ fn line(left: f32, width: f32, top: f32, dashed: bool) -> FullView {
     ))
 }
 
-fn label_at(x: f32, y: f32, words: String) -> FullView {
+/// A chain label. A pinned episode carries the small filled square first, so
+/// the Mere overview marks what the listener kept without re-ordering the
+/// chronology the chain exists to show.
+fn label_at(x: f32, y: f32, pinned: bool, words: String) -> FullView {
     Box::new(
-        el("span", text(words))
+        el("span", (crate::tabs::rows::pin_mark(pinned), text(words)))
             .attr("class", "rs-chain-label")
             .attr("style", format!("left:{x}px;top:{y}px;")),
     )
@@ -144,7 +147,7 @@ fn row(state: &RedshankSurfaceState, feed: Option<&FeedRow>, url: Option<&str>) 
         if now == Some(&item.id) {
             words.push_str(" · now");
         }
-        parts.push(label_at(x, NODE_Y + 16.0, words));
+        parts.push(label_at(x, NODE_Y + 16.0, item.pinned, words));
 
         let notes = geometry::notes_for(state, &item.id);
         if notes.is_empty() {
@@ -179,7 +182,7 @@ fn row(state: &RedshankSurfaceState, feed: Option<&FeedRow>, url: Option<&str>) 
                 .attr("class", "rs-chain-node rs-node rs-node-next")
                 .attr("style", format!("left:{x}px;top:{NODE_Y}px;")),
         ));
-        parts.push(label_at(x, NODE_Y + 16.0, "next refresh".to_owned()));
+        parts.push(label_at(x, NODE_Y + 16.0, false, "next refresh".to_owned()));
     }
 
     Box::new(
@@ -207,7 +210,16 @@ fn episode_card(state: &RedshankSurfaceState, item: &ItemRow) -> FullView {
     let id = item.id.clone();
     let word = geometry::action_word(item, now);
     let body: Vec<FullView> = vec![
-        Box::new(el("div", text(item.title.clone())).attr("class", "rs-chain-title")),
+        Box::new(
+            el(
+                "div",
+                (
+                    crate::tabs::rows::pin_mark(item.pinned),
+                    text(item.title.clone()),
+                ),
+            )
+            .attr("class", "rs-chain-title"),
+        ),
         Box::new(el("div", text(geometry::meta_line(item, now))).attr("class", "rs-chain-meta")),
     ];
     let action: FullView = Box::new(
@@ -415,5 +427,23 @@ mod tests {
                 .outer_html(all.root())
                 .contains("1 feeds · 214 episodes · 3 notes")
         );
+    }
+
+    /// A pin is a model fact the overview marks and the card can undo.
+    #[test]
+    fn a_pinned_episode_is_marked_and_the_card_offers_unpin() {
+        let mut state = fixture();
+        state.selected_feed = None;
+        for row in &mut state.items {
+            if row.id == item_id("e213") {
+                row.pinned = true;
+            }
+        }
+        let runner = runner(state);
+        let markup = runner.dom().borrow().outer_html(runner.root());
+        // One mark on the chain label, one on the connections card's title.
+        assert_eq!(markup.matches("rs-pin-mark").count(), 2);
+        assert!(markup.contains("Unpin"));
+        assert!(!markup.contains("aria-label=\"Pin\""));
     }
 }

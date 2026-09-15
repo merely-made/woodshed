@@ -524,6 +524,10 @@ dependencies = [
 ]
 
 [[package]]
+name = "audio-primitives"
+version = "0.1.0"
+
+[[package]]
 name = "autocfg"
 version = "1.5.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -4729,6 +4733,7 @@ name = "redshank-playback"
 version = "0.0.0"
 dependencies = [
  "anyhow",
+ "audio-primitives",
  "blake3",
  "firewheel",
  "hound",

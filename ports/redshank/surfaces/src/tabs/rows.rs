@@ -5,10 +5,20 @@
 //! tab-local classes the tab sheets style.
 
 use crate::{
-    CompactCommand, Face, FullView, NoteKind, NoteSummary, NoteSummaryBody, RedshankSurfaceState,
-    VoiceNotePreview, format_time,
+    CompactCommand, Face, FullView, MenuTarget, NoteKind, NoteSummary, NoteSummaryBody,
+    RedshankSurfaceState, VoiceNotePreview, format_time,
 };
-use cambium::{button, el, text};
+use cambium::{button, button_with, el, text};
+
+/// The canvas draws the trigger as a vertical ellipsis. U+22EE is not in the
+/// fallback faces this host has (the first receipt printed tofu), so the three
+/// dots are drawn as boxes instead.
+fn more_dots() -> FullView {
+    let dots: Vec<FullView> = (0..3)
+        .map(|_| Box::new(el("span", text("")).attr("class", "rs-more-dot")) as FullView)
+        .collect();
+    Box::new(el("span", dots).attr("class", "rs-more-dots"))
+}
 
 /// Tracked mono microlabel.
 pub fn micro(value: impl Into<String>) -> FullView {
@@ -193,15 +203,48 @@ pub fn note_anchor(note: &NoteSummary) -> FullView {
     )
 }
 
-/// Open at, Edit (text only), Delete.
-pub fn note_actions(note: &NoteSummary) -> FullView {
+/// The overflow trigger and, when this row owns the open menu, its actions.
+///
+/// One menu at a time falls out of the state holding a single target: opening
+/// one replaces the other. Cambium's `overlay_surface` wants a measured
+/// trigger rect, panel size, and bounds, none of which a view in flow knows,
+/// so the panel is an inline strip rather than a positioned popover.
+pub fn overflow(
+    state: &RedshankSurfaceState,
+    target: MenuTarget,
+    subject: &str,
+    actions: Vec<FullView>,
+) -> FullView {
+    let open = state.menu_is_open(&target);
+    let next = (!open).then_some(target);
+    let trigger = Box::new(
+        button_with(more_dots(), move |state: &mut RedshankSurfaceState, _| {
+            state.request(CompactCommand::ToggleMenu(next.clone()));
+        })
+        .attr("class", "rs-row-more")
+        .attr("aria-label", format!("More actions for {subject}"))
+        .attr("aria-haspopup", "menu")
+        .attr("aria-expanded", if open { "true" } else { "false" }),
+    ) as FullView;
+    let menu = open.then(|| {
+        el("span", actions)
+            .attr("class", "rs-row-actions")
+            .attr("role", "menu")
+            .attr("aria-label", format!("Actions for {subject}"))
+    });
+    Box::new(el("span", (trigger, menu)).attr("class", "rs-row-menu"))
+}
+
+/// Open at stays outside the menu; Edit (text only) and Delete go in it.
+pub fn note_actions(state: &RedshankSurfaceState, note: &NoteSummary) -> FullView {
     let at = format_time(note.offset_ms);
-    let mut actions = vec![action(
+    let open_at = action(
         format!("Open at {at}"),
         format!("Open note at {at}"),
         "rs-note-open",
         CompactCommand::OpenNote(note.id.clone()),
-    )];
+    );
+    let mut actions = Vec::new();
     if note.kind() == NoteKind::Text {
         actions.push(action(
             "Edit",
@@ -216,16 +259,37 @@ pub fn note_actions(note: &NoteSummary) -> FullView {
         "rs-row-action",
         CompactCommand::DeleteNote(note.id.clone()),
     ));
-    Box::new(el("span", actions).attr("class", "rs-row-actions"))
+    let menu = overflow(
+        state,
+        MenuTarget::Note(note.id.clone()),
+        &format!("note at {at}"),
+        actions,
+    );
+    Box::new(el("span", (open_at, menu)).attr("class", "rs-row-tail"))
 }
 
 /// One note row, as the Listen and Notes tabs both show it.
-pub fn note_row(note: &NoteSummary) -> FullView {
+pub fn note_row(state: &RedshankSurfaceState, note: &NoteSummary) -> FullView {
     Box::new(
         el(
             "div",
-            (note_anchor(note), note_body(note), note_actions(note)),
+            (
+                note_anchor(note),
+                note_body(note),
+                note_actions(state, note),
+            ),
         )
         .attr("class", "rs-row rs-note-row"),
     )
+}
+
+/// The small filled square a pinned item carries before its title.
+pub fn pin_mark(pinned: bool) -> Option<FullView> {
+    pinned.then(|| {
+        Box::new(
+            el("span", text(""))
+                .attr("class", "rs-pin-mark")
+                .attr("aria-label", "Pinned"),
+        ) as FullView
+    })
 }

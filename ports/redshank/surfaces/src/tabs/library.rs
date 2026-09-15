@@ -3,8 +3,8 @@
 
 use super::rows;
 use crate::{
-    CompactCommand, FeedRow, FullView, ItemRow, RedshankSurfaceState, Scene, SourceKind,
-    TransportState, format_bytes, format_time, scene,
+    CompactCommand, FeedRow, FullView, ItemRow, MenuTarget, RedshankSurfaceState, Scene,
+    SourceKind, TransportState, format_bytes, format_time, scene,
 };
 use cambium::{TextInput, button, el, lens, text, textarea};
 
@@ -64,7 +64,12 @@ fn feed_row(state: &RedshankSurfaceState, feed: &FeedRow) -> FullView {
             (
                 el("span", (rows::face(&feed.face, ""), unplayed)).attr("class", "rs-library-face"),
                 el("div", (select, detail)).attr("class", "rs-library-cell"),
-                el("span", refresh).attr("class", "rs-row-actions"),
+                rows::overflow(
+                    state,
+                    MenuTarget::Feed(feed.feed_url.clone()),
+                    &title,
+                    vec![refresh],
+                ),
             ),
         )
         .attr(
@@ -286,6 +291,12 @@ fn episode_row(state: &RedshankSurfaceState, item: &ItemRow) -> FullView {
         "rs-row-action",
         CompactCommand::RemoveLibraryItem(item.id.clone()),
     ));
+    secondary.push(rows::action(
+        if item.pinned { "Unpin" } else { "Pin" },
+        format!("{} {title}", if item.pinned { "Unpin" } else { "Pin" }),
+        "rs-row-action",
+        CompactCommand::PinItem(item.id.clone()),
+    ));
     let unavailable = item.unavailable.as_ref().map(|message| {
         el("div", text(message.clone()))
             .attr("class", "rs-library-detail")
@@ -298,7 +309,8 @@ fn episode_row(state: &RedshankSurfaceState, item: &ItemRow) -> FullView {
                 el(
                     "div",
                     (
-                        el("div", text(title)).attr("class", "rs-library-title"),
+                        el("div", (rows::pin_mark(item.pinned), text(title.clone())))
+                            .attr("class", "rs-library-title"),
                         el("div", text(facts)).attr("class", "rs-library-detail"),
                         unavailable,
                     ),
@@ -307,7 +319,12 @@ fn episode_row(state: &RedshankSurfaceState, item: &ItemRow) -> FullView {
                 rows::micro(badge_word),
                 rows::bar(item.listened(), item.completed, "rs-library-progress"),
                 primary(state, item),
-                el("span", secondary).attr("class", "rs-row-actions"),
+                rows::overflow(
+                    state,
+                    MenuTarget::Episode(item.id.clone()),
+                    &title,
+                    secondary,
+                ),
             ),
         )
         .attr(
@@ -446,7 +463,7 @@ pub fn panel(state: &RedshankSurfaceState) -> FullView {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::tabs::tests_support::{click, commands, markup, playing, runner};
+    use crate::tabs::tests_support::{act, click, commands, markup, open_menu, playing, runner};
     use crate::{Face, ItemRow};
     use redshank_model::ItemId;
 
@@ -479,6 +496,8 @@ mod tests {
             cached_bytes: None,
             note_count: 0,
             unavailable: None,
+            pinned: false,
+            representation: None,
         }
     }
 
@@ -573,6 +592,7 @@ mod tests {
     #[test]
     fn episodes_download_then_remove_and_leave_the_library() {
         let mut runner = runner(library(), panel);
+        open_menu(&mut runner, EPISODE);
         click(
             &mut runner,
             "Download 214 · The backlog for offline listening",
@@ -653,5 +673,42 @@ mod tests {
             commands(&mut runner),
             [CompactCommand::SelectScene(Scene::Orrery)]
         );
+    }
+
+    /// The title the episode-row tests open a menu for.
+    const EPISODE: &str = "214 · The backlog";
+
+    fn markup_of(runner: &crate::tabs::tests_support::Runner) -> String {
+        runner.dom().borrow().outer_html(runner.root())
+    }
+
+    #[test]
+    fn a_feed_row_hides_refresh_behind_its_menu() {
+        let mut runner = runner(library(), panel);
+        let label = "aria-label=\"Refresh The Allusionist\"";
+        assert!(!markup_of(&runner).contains(label));
+        let opened = act(&mut runner, "More actions for The Allusionist");
+        assert_eq!(
+            opened,
+            [CompactCommand::ToggleMenu(Some(crate::MenuTarget::Feed(
+                "https://example.test/feed.xml".into()
+            )))]
+        );
+        assert!(markup_of(&runner).contains(label));
+    }
+
+    #[test]
+    fn an_episode_menu_pins_and_unpins() {
+        let mut runner = runner(library(), panel);
+        open_menu(&mut runner, EPISODE);
+        click(&mut runner, &format!("Pin {EPISODE}"));
+        assert_eq!(
+            commands(&mut runner),
+            [CompactCommand::PinItem(ItemId("e-214".into()))]
+        );
+        runner.update(|state| state.items[0].pinned = true);
+        let markup = markup_of(&runner);
+        assert!(markup.contains("rs-pin-mark"));
+        assert!(markup.contains(&format!("Unpin {EPISODE}")));
     }
 }

@@ -1,0 +1,45 @@
+# Fixture: local-playing. The pass-2 states, photographed.
+#
+# Overflow menus, cluster collapse, and the phone Listen segment are pure
+# presentation, and `act` has no label for them yet (the vocabulary lives in
+# desktop/src/scenario.rs, which this lane does not own). So the controls are
+# reached by `pointer-click` at coordinates read off a 960x640 receipt. When
+# the scenario lane adds `menu:`, `cluster:` and `pane:` labels these become
+# named acts and the coordinates go away.
+settle 30
+act tab:listen
+settle 10
+capture listen-menus-shut
+
+# The queue row's overflow trigger, right of the LOCAL badge.
+pointer-click 338 117
+settle 10
+capture listen-menu-open
+pointer-click 338 117
+settle 5
+
+# A note row's trigger: one menu at a time, so this one takes it.
+pointer-click 916 114
+settle 10
+capture note-menu-open
+pointer-click 916 114
+settle 5
+
+act tab:notes
+settle 15
+capture notes-cluster-open
+# The cluster header's collapse link.
+pointer-click 265 211
+settle 10
+capture notes-cluster-collapsed
+pointer-click 262 211
+settle 10
+
+act tab:mere
+settle 15
+capture mere-unpinned
+# The connections card's Pin, which is a real model toggle now.
+pointer-click 90 309
+settle 10
+capture mere-pinned
+log design_completions complete

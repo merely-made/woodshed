@@ -1,6 +1,6 @@
 #![forbid(unsafe_code)]
 
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, BTreeSet};
 
 use serde::{Deserialize, Serialize};
 
@@ -240,6 +240,16 @@ pub enum RefreshSchedule {
     Daily,
 }
 
+/// Where a completed item reopens: from the beginning, or from where the
+/// listener stopped.
+#[derive(Clone, Copy, Debug, Default, Deserialize, Eq, PartialEq, Serialize)]
+#[serde(rename_all = "snake_case")]
+pub enum ResumeCompleted {
+    #[default]
+    Start,
+    Saved,
+}
+
 /// Which palette seed the surfaces derive their roles from.
 #[derive(Clone, Copy, Debug, Default, Deserialize, Eq, PartialEq, Serialize)]
 #[serde(rename_all = "snake_case")]
@@ -280,6 +290,9 @@ pub struct ListenerSettings {
     pub note_privacy: NotePrivacy,
     #[serde(default)]
     pub refresh_schedule: RefreshSchedule,
+    /// Where a completed item reopens when it is selected again.
+    #[serde(default)]
+    pub resume_completed_from: ResumeCompleted,
     #[serde(default)]
     pub auto_download: bool,
     #[serde(default)]
@@ -319,6 +332,7 @@ impl Default for ListenerSettings {
             resume_after_capture: default_resume_after_capture(),
             note_privacy: NotePrivacy::default(),
             refresh_schedule: RefreshSchedule::default(),
+            resume_completed_from: ResumeCompleted::default(),
             auto_download: false,
             auto_reclaim: false,
             seed: ThemeSeed::default(),
@@ -363,6 +377,9 @@ pub struct RedshankModel {
     pub annotations: BTreeMap<AnnotationId, Annotation>,
     #[serde(default)]
     pub listening_sessions: Vec<ListeningSession>,
+    /// Items the listener kept to hand; the Mere projections mark them.
+    #[serde(default)]
+    pub pinned: BTreeSet<ItemId>,
     pub settings: ListenerSettings,
 }
 
@@ -377,6 +394,7 @@ impl Default for RedshankModel {
             progress: BTreeMap::new(),
             annotations: BTreeMap::new(),
             listening_sessions: Vec::new(),
+            pinned: BTreeSet::new(),
             settings: ListenerSettings::default(),
         }
     }
@@ -496,9 +514,24 @@ impl RedshankModel {
             self.selected_item = None;
         }
         self.progress.remove(id);
+        self.pinned.remove(id);
         self.annotations
             .retain(|_, note| note.target.item_id != *id);
         Ok(item)
+    }
+
+    pub fn is_pinned(&self, id: &ItemId) -> bool {
+        self.pinned.contains(id)
+    }
+
+    /// Pin or unpin one item; returns its new pinned state.
+    pub fn toggle_pin(&mut self, id: &ItemId) -> Result<bool, ModelError> {
+        self.require_item(id)?;
+        if self.pinned.remove(id) {
+            return Ok(false);
+        }
+        self.pinned.insert(id.clone());
+        Ok(true)
     }
 
     pub fn set_progress(&mut self, id: &ItemId, progress: Progress) -> Result<(), ModelError> {
@@ -1115,5 +1148,33 @@ mod tests {
                 plain_text: "edited".into()
             }
         );
+    }
+
+    #[test]
+    fn pinning_toggles_survives_a_round_trip_and_ends_with_the_item() {
+        let mut model = RedshankModel::default();
+        let id = ItemId("a".into());
+        model.add_item(local_item("a")).unwrap();
+        assert!(model.toggle_pin(&id).unwrap());
+        assert!(model.is_pinned(&id));
+        let stored = serde_json::to_string(&model).unwrap();
+        let loaded: RedshankModel = serde_json::from_str(&stored).unwrap();
+        assert!(loaded.is_pinned(&id));
+        assert!(!model.toggle_pin(&id).unwrap());
+        assert!(model.toggle_pin(&id).unwrap());
+        model.remove_item(&id).unwrap();
+        assert!(model.pinned.is_empty());
+        assert!(model.toggle_pin(&id).is_err());
+    }
+
+    /// A store written before this pass has neither key; both default.
+    #[test]
+    fn a_store_without_pins_or_resume_policy_still_loads() {
+        let stored = r#"{"schema_version":1,"library":{},"queue":[],"progress":{},
+            "annotations":{},"settings":{"capture_playback":"pause",
+            "skip_forward_ms":30000,"skip_backward_ms":15000}}"#;
+        let model: RedshankModel = serde_json::from_str(stored).unwrap();
+        assert!(model.pinned.is_empty());
+        assert_eq!(model.settings.resume_completed_from, ResumeCompleted::Start);
     }
 }

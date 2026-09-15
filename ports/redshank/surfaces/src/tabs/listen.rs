@@ -1,8 +1,9 @@
 //! The listen tab body: Up next beside Notes. Lane S2 owns this file.
 
-use super::rows;
+use super::{controls, rows};
 use crate::{
-    CompactCommand, FullView, ItemRow, NoteSummary, RedshankSurfaceState, format_span, format_time,
+    CompactCommand, FullView, ItemRow, ListenPane, MenuTarget, NoteSummary, RedshankSurfaceState,
+    format_span, format_time,
 };
 use cambium::{TextInput, button, el, lens, text, textarea};
 use redshank_model::ItemId;
@@ -99,11 +100,13 @@ fn queue_row(state: &RedshankSurfaceState, index: usize, id: &ItemId) -> FullVie
         )
     };
 
+    let pinned = item.is_some_and(|item| item.pinned);
     Box::new(
         el(
             "div",
             (
                 rows::face(face, "rs-listen-face"),
+                rows::pin_mark(pinned),
                 el(
                     "div",
                     (
@@ -113,7 +116,12 @@ fn queue_row(state: &RedshankSurfaceState, index: usize, id: &ItemId) -> FullVie
                 )
                 .attr("class", "rs-listen-cell"),
                 rows::micro(source.badge()),
-                el("span", (up, down, remove, offline)).attr("class", "rs-row-actions"),
+                rows::overflow(
+                    state,
+                    MenuTarget::Queue(id.clone()),
+                    &title,
+                    vec![up, down, remove, offline],
+                ),
             ),
         )
         .attr(
@@ -215,6 +223,34 @@ fn notes_for_item(state: &RedshankSurfaceState) -> Vec<&NoteSummary> {
     }
 }
 
+/// `Up next · 3 | Notes · 3`. The sheet shows it only under 900px, where
+/// one section is on screen at a time; both render at every width.
+fn pane_segment(state: &RedshankSurfaceState, queued: usize, notes: usize) -> FullView {
+    let options = [
+        (format!("Up next · {queued}"), ListenPane::Queue),
+        (format!("Notes · {notes}"), ListenPane::Notes),
+    ]
+    .into_iter()
+    .map(|(label, pane)| {
+        (
+            label,
+            state.listen_pane == pane,
+            vec![CompactCommand::SelectListenPane(pane)],
+        )
+    })
+    .collect();
+    Box::new(el("div", controls::segment("Listen pane", options)).attr("class", "rs-listen-pane"))
+}
+
+/// The class a section carries when the phone segment has the other one.
+fn pane_class(state: &RedshankSurfaceState, pane: ListenPane, base: &str) -> String {
+    if state.listen_pane == pane {
+        base.to_owned()
+    } else {
+        format!("{base} rs-pane-off")
+    }
+}
+
 pub fn panel(state: &RedshankSurfaceState) -> FullView {
     let queue: Vec<FullView> = state
         .queue
@@ -241,7 +277,10 @@ pub fn panel(state: &RedshankSurfaceState) -> FullView {
             queue_body,
         ),
     )
-    .attr("class", "rs-listen-queue")
+    .attr(
+        "class",
+        pane_class(state, ListenPane::Queue, "rs-listen-queue"),
+    )
     .attr("aria-label", "Up next");
 
     let notes = notes_for_item(state);
@@ -253,7 +292,10 @@ pub fn panel(state: &RedshankSurfaceState) -> FullView {
     let note_rows: Vec<FullView> = if owned.is_empty() {
         vec![rows::empty_row("No notes for this episode yet.")]
     } else {
-        owned.iter().map(rows::note_row).collect()
+        owned
+            .iter()
+            .map(|note| rows::note_row(state, note))
+            .collect()
     };
     let notes_section = el(
         "section",
@@ -263,17 +305,21 @@ pub fn panel(state: &RedshankSurfaceState) -> FullView {
             editor(state),
         ),
     )
-    .attr("class", "rs-listen-notes")
+    .attr(
+        "class",
+        pane_class(state, ListenPane::Notes, "rs-listen-notes"),
+    )
     .attr("aria-label", "Notes");
 
-    Box::new(el("section", (up_next, notes_section)).attr("class", "rs-panel rs-listen"))
+    let segment = pane_segment(state, state.queue.len(), owned.len());
+    Box::new(el("section", (segment, up_next, notes_section)).attr("class", "rs-panel rs-listen"))
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
     use crate::tabs::tests_support::playing;
-    use crate::tabs::tests_support::{click, commands, markup, runner};
+    use crate::tabs::tests_support::{act, click, commands, markup, open_menu, runner};
     use crate::{Face, NoteSummaryBody, SourceKind, TextCapture, VoiceNotePreview};
     use redshank_model::{AnnotationId, CaptureAnchor};
 
@@ -292,6 +338,8 @@ mod tests {
             cached_bytes: None,
             note_count: 0,
             unavailable: None,
+            pinned: false,
+            representation: None,
         }
     }
 
@@ -330,6 +378,7 @@ mod tests {
     #[test]
     fn queue_rows_select_and_reorder() {
         let mut runner = runner(queued(), panel);
+        open_menu(&mut runner, "Wetland");
         click(&mut runner, "Move Wetland up");
         assert!(commands(&mut runner).is_empty());
         click(&mut runner, "Move Wetland down");
@@ -346,6 +395,7 @@ mod tests {
     #[test]
     fn queue_row_offers_download_then_removal() {
         let mut runner = runner(queued(), panel);
+        open_menu(&mut runner, "Wetland");
         click(&mut runner, "Download Wetland for offline listening");
         assert_eq!(
             commands(&mut runner),
@@ -399,6 +449,7 @@ mod tests {
     #[test]
     fn note_rows_open_edit_delete_and_play() {
         let mut runner = runner(with_notes(), panel);
+        open_menu(&mut runner, "note at 0:46");
         click(&mut runner, "Open note at 0:46");
         click(&mut runner, "Edit note at 0:46");
         click(&mut runner, "Delete note at 0:46");
@@ -480,5 +531,55 @@ mod tests {
             &commands(&mut runner)[0],
             CompactCommand::SaveSpanNote { end_offset_ms, .. } if *end_offset_ms == 90_000
         ));
+    }
+
+    /// One menu at a time, and a second trigger takes it from the first.
+    #[test]
+    fn the_overflow_menu_opens_one_row_at_a_time() {
+        let mut runner = runner(queued(), panel);
+        assert!(!markup_of(&runner).contains("Move Wetland up"));
+        let opened = act(&mut runner, "More actions for Wetland");
+        assert_eq!(
+            opened,
+            [CompactCommand::ToggleMenu(Some(crate::MenuTarget::Queue(
+                ItemId("episode-42".into())
+            )))]
+        );
+        let markup = markup_of(&runner);
+        assert!(markup.contains("Move Wetland up"));
+        assert!(markup.contains("aria-haspopup=\"menu\""));
+        assert!(markup.contains("aria-expanded=\"true\""));
+        act(&mut runner, "More actions for Episode 214");
+        let markup = markup_of(&runner);
+        assert!(!markup.contains("Move Wetland up"));
+        assert!(markup.contains("Move Episode 214 up"));
+        assert_eq!(markup.matches("role=\"menu\"").count(), 1);
+        let shut = act(&mut runner, "More actions for Episode 214");
+        assert_eq!(shut, [CompactCommand::ToggleMenu(None)]);
+        assert!(!markup_of(&runner).contains("role=\"menu\""));
+    }
+
+    #[test]
+    fn the_phone_segment_counts_both_sections_and_marks_one_off() {
+        let mut runner = runner(with_notes(), panel);
+        let markup = markup_of(&runner);
+        assert!(markup.contains("Listen pane: Up next · 2"));
+        assert!(markup.contains("Listen pane: Notes · 2"));
+        assert!(markup.contains("rs-listen-notes rs-pane-off"));
+        let chosen = act(&mut runner, "Listen pane: Notes · 2");
+        assert_eq!(
+            chosen,
+            [CompactCommand::SelectListenPane(crate::ListenPane::Notes)]
+        );
+        let markup = markup_of(&runner);
+        assert!(markup.contains("rs-listen-queue rs-pane-off"));
+        assert!(!markup.contains("rs-listen-notes rs-pane-off"));
+    }
+
+    #[test]
+    fn a_pinned_queue_row_carries_the_mark() {
+        let mut state = queued();
+        state.items[0].pinned = true;
+        assert!(markup(state, panel).contains("rs-pin-mark"));
     }
 }

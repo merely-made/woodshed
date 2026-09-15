@@ -210,7 +210,11 @@ pub const SCENE_CSS: &str = r#"
 .rs-chain-line-next { background: transparent; border-top: 1px dashed var(--t-text-dim); }
 .rs-chain-drop { position: absolute; width: 1px; background: var(--t-surface-2); z-index: 0; }
 .rs-chain-label { position: absolute; transform: translate(-50%, 0); font-family: var(--font-mono);
-  font-size: var(--text-label); color: var(--t-text-dim); white-space: nowrap; }
+  font-size: var(--text-label); color: var(--t-text-dim); white-space: nowrap;
+  display: flex; align-items: center; }
+.rs-scene .rs-pin-mark { display: block; width: 6px; height: 6px; background: var(--t-text);
+  flex: none; margin-right: var(--space-4); }
+.rs-chain-title, .rs-card-title { display: flex; align-items: center; }
 .rs-chain-feed { position: absolute; left: 0; top: 8px; }
 .rs-chain-feed-title { position: absolute; left: 0; top: 56px; font-size: var(--text-label);
   color: var(--t-text); white-space: nowrap; overflow: hidden; width: 80px; }
@@ -332,6 +336,8 @@ pub(super) mod test_fixture {
             cached_bytes: None,
             note_count: notes,
             unavailable: None,
+            pinned: false,
+            representation: None,
         }
     }
 

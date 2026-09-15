@@ -3,12 +3,11 @@
 
 use super::{controls, rows};
 use crate::{
-    CompactCommand, FullView, NoteSummary, NotesFilter, RedshankSurfaceState, format_time, percent,
+    CompactCommand, FullView, NoteSummary, NotesFilter, RedshankSurfaceState,
+    RepresentationSummary, cluster_key, format_date, format_time, note_clusters, percent,
 };
-use cambium::{el, text};
+use cambium::{button, el, text};
 
-/// Notes within this many milliseconds of a cluster's first note join it.
-const CLUSTER_MS: u64 = 10_000;
 /// Rows a cluster shows before the "more in this cluster" line.
 const CLUSTER_ROWS: usize = 4;
 
@@ -21,26 +20,6 @@ fn visible(state: &RedshankSurfaceState) -> Vec<&NoteSummary> {
             .collect(),
         _ => state.notes.iter().collect(),
     }
-}
-
-/// Point notes in ascending order, grouped into clusters.
-fn clusters<'a>(notes: &[&'a NoteSummary]) -> Vec<Vec<&'a NoteSummary>> {
-    let mut points: Vec<&NoteSummary> = notes
-        .iter()
-        .copied()
-        .filter(|note| note.end_offset_ms.is_none())
-        .collect();
-    points.sort_by_key(|note| note.offset_ms);
-    let mut out: Vec<Vec<&NoteSummary>> = Vec::new();
-    for note in points {
-        match out.last_mut() {
-            Some(group) if note.offset_ms.saturating_sub(group[0].offset_ms) <= CLUSTER_MS => {
-                group.push(note)
-            },
-            _ => out.push(vec![note]),
-        }
-    }
-    out
 }
 
 fn header(state: &RedshankSurfaceState) -> FullView {
@@ -128,7 +107,7 @@ fn strip(state: &RedshankSurfaceState, notes: &[&NoteSummary]) -> FullView {
     let mut parts: Vec<FullView> = vec![Box::new(
         el("span", text("")).attr("class", "rs-notes-track"),
     )];
-    for group in clusters(notes) {
+    for group in note_clusters(notes) {
         let left = percent(group[0].offset_ms, Some(duration));
         for note in &group {
             parts.push(Box::new(
@@ -185,26 +164,44 @@ fn strip(state: &RedshankSurfaceState, notes: &[&NoteSummary]) -> FullView {
     )
 }
 
-fn cluster_block(group: &[&NoteSummary]) -> FullView {
+/// One cluster. A shut cluster keeps its header and count chip and drops its
+/// rows; the header's collapse/expand link is the only control that opens it.
+fn cluster_block(state: &RedshankSurfaceState, group: &[&NoteSummary]) -> FullView {
+    let key = cluster_key(group);
+    let expanded = state.cluster_expanded(key) || group.len() == 1;
+    let last = group.last().map(|note| note.offset_ms).unwrap_or_default();
+    let at = format_time(group[0].offset_ms);
     let head = (group.len() > 1).then(|| {
-        let last = group.last().map(|note| note.offset_ms).unwrap_or_default();
+        let word = if expanded { "collapse" } else { "expand" };
+        let link = button(word, move |state: &mut RedshankSurfaceState, _| {
+            state.request(CompactCommand::ToggleCluster(key));
+        })
+        .attr("class", "rs-notes-collapse")
+        .attr("aria-label", format!("{word} cluster at {at}"))
+        .attr("aria-expanded", if expanded { "true" } else { "false" });
         el(
             "div",
-            rows::micro(format!(
-                "CLUSTER · {}–{} · {} NOTES",
-                format_time(group[0].offset_ms),
-                format_time(last),
-                group.len()
-            )),
+            (
+                rows::micro(format!(
+                    "CLUSTER · {at}–{} · {} NOTES",
+                    format_time(last),
+                    group.len()
+                )),
+                Box::new(link) as FullView,
+            ),
         )
         .attr("class", "rs-notes-cluster-head")
     });
-    let shown: Vec<FullView> = group
-        .iter()
-        .take(CLUSTER_ROWS)
-        .map(|note| rows::note_row(note))
-        .collect();
-    let more = (group.len() > CLUSTER_ROWS).then(|| {
+    let shown: Vec<FullView> = if expanded {
+        group
+            .iter()
+            .take(CLUSTER_ROWS)
+            .map(|note| rows::note_row(state, note))
+            .collect()
+    } else {
+        Vec::new()
+    };
+    let more = (expanded && group.len() > CLUSTER_ROWS).then(|| {
         el(
             "p",
             text(format!(
@@ -269,40 +266,66 @@ fn span_card(note: &NoteSummary) -> FullView {
     )
 }
 
-/// The representation card. `ItemRow` carries no receipt, so this states what
-/// the surface can honestly say and no digest.
+/// The sentence the representation card prints: what was heard, when, whether
+/// the bytes still match. Each branch says only what the receipt supports.
+pub fn representation_line(summary: &RepresentationSummary) -> String {
+    let heard = match summary.retrieved_at_ms {
+        Some(at) => format!("the copy heard on {}", format_date(at)),
+        None => "the copy you heard".to_owned(),
+    };
+    match (&summary.short_digest, summary.matches) {
+        (Some(digest), Some(true)) => {
+            format!(
+                "Notes target {heard} ({digest}). The cached object matches; anchors are exact."
+            )
+        },
+        (Some(digest), Some(false)) => {
+            format!(
+                "Notes target {heard} ({digest}). The cached object has changed; anchors drifted."
+            )
+        },
+        (Some(digest), None) => {
+            format!("Notes target {heard} ({digest}). No note kept a digest, so drift is unproven.")
+        },
+        (None, _) => format!("Notes target {heard}. No digest was kept, so a change would pass."),
+    }
+}
+
+/// The REPRESENTATION card, from the selected item's projected receipt.
 fn representation(state: &RedshankSurfaceState, notes: &[&NoteSummary]) -> Option<FullView> {
     let item = state.selected_item()?;
-    (!notes.is_empty()).then(|| {
-        Box::new(
-            el(
-                "div",
-                (
-                    rows::micro("REPRESENTATION"),
-                    el(
-                        "p",
-                        text(format!(
-                            "{} notes target the copy of {} you heard. The digest is held with each \
-                             note's anchor and is not projected into this surface.",
-                            notes.len(),
-                            item.title
-                        )),
-                    )
-                    .attr("class", "rs-notes-representation-body"),
-                ),
-            )
-            .attr("class", "rs-card rs-notes-representation"),
-        ) as FullView
-    })
+    if notes.is_empty() {
+        return None;
+    }
+    let body = match &item.representation {
+        Some(summary) => representation_line(summary),
+        None => format!(
+            "Notes target the copy of {} you heard. It is not cached, so no receipt was kept.",
+            item.title
+        ),
+    };
+    Some(Box::new(
+        el(
+            "div",
+            (
+                rows::micro("REPRESENTATION"),
+                el("p", text(body)).attr("class", "rs-notes-representation-body"),
+            ),
+        )
+        .attr("class", "rs-card rs-notes-representation"),
+    ))
 }
 
 pub fn panel(state: &RedshankSurfaceState) -> FullView {
     let notes = visible(state);
-    let groups = clusters(&notes);
+    let groups = note_clusters(&notes);
     let list: Vec<FullView> = if groups.is_empty() {
         vec![rows::empty_row("No notes for this episode yet.")]
     } else {
-        groups.iter().map(|group| cluster_block(group)).collect()
+        groups
+            .iter()
+            .map(|group| cluster_block(state, group))
+            .collect()
     };
     let spans: Vec<FullView> = notes
         .iter()
@@ -342,7 +365,7 @@ pub fn panel(state: &RedshankSurfaceState) -> FullView {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::tabs::tests_support::{click, commands, markup, playing, runner};
+    use crate::tabs::tests_support::{act, click, commands, markup, playing, runner};
     use crate::{Face, ItemRow, NoteSummaryBody, SourceKind};
     use redshank_model::{AnnotationId, ItemId};
 
@@ -376,6 +399,12 @@ mod tests {
             cached_bytes: Some(4096),
             note_count: 11,
             unavailable: None,
+            pinned: false,
+            representation: Some(crate::RepresentationSummary {
+                retrieved_at_ms: Some(1_757_635_200_000),
+                short_digest: Some("c41f9ab2".into()),
+                matches: Some(true),
+            }),
         });
         for index in 0..10u64 {
             state.notes.push(note(
@@ -400,7 +429,9 @@ mod tests {
 
     #[test]
     fn the_cluster_chip_counts_its_notes_and_the_list_truncates() {
-        let markup = markup(notes_state(), panel);
+        let mut state = notes_state();
+        state.seed_expanded_clusters();
+        let markup = markup(state, panel);
         assert!(markup.contains("CLUSTER · 4:10–4:19 · 10 NOTES"));
         assert!(markup.contains("rs-notes-chip"));
         assert!(markup.contains(">10<"));
@@ -456,10 +487,72 @@ mod tests {
     }
 
     #[test]
-    fn the_representation_card_states_what_the_surface_knows() {
+    fn the_representation_card_reads_the_projected_receipt() {
         let markup = markup(notes_state(), panel);
         assert!(markup.contains("REPRESENTATION"));
-        assert!(markup.contains("11 notes target the copy of The Evolution of Teeth"));
+        assert!(markup.contains("Notes target the copy heard on Sep 12 (c41f9ab2)."));
+        assert!(markup.contains("The cached object matches; anchors are exact."));
+    }
+
+    /// Each honest variant, straight off the summary.
+    #[test]
+    fn the_representation_card_says_only_what_the_receipt_supports() {
+        let drift = representation_line(&RepresentationSummary {
+            retrieved_at_ms: Some(1_757_635_200_000),
+            short_digest: Some("c41f9ab2".into()),
+            matches: Some(false),
+        });
+        assert!(drift.contains("has changed"));
+        let no_digest = representation_line(&RepresentationSummary {
+            retrieved_at_ms: Some(1_757_635_200_000),
+            short_digest: None,
+            matches: None,
+        });
+        assert!(no_digest.contains("No digest was kept"));
+        let undated = representation_line(&RepresentationSummary {
+            retrieved_at_ms: None,
+            short_digest: Some("c41f9ab2".into()),
+            matches: None,
+        });
+        assert!(undated.contains("the copy you heard"));
+        let mut state = notes_state();
+        state.items[0].representation = None;
+        assert!(markup(state, panel).contains("It is not cached, so no receipt was kept."));
+    }
+
+    /// Clusters are shut until the playhead's is seeded, and the header's own
+    /// link is what opens and shuts one.
+    #[test]
+    fn cluster_collapse_keeps_the_header_and_drops_the_rows() {
+        let mut runner = runner(notes_state(), panel);
+        let markup = runner.dom().borrow().outer_html(runner.root());
+        assert!(markup.contains("CLUSTER"));
+        assert!(!markup.contains("note point-0"));
+        assert!(markup.contains("expand cluster at 4:10"));
+        let opened = act(&mut runner, "expand cluster at 4:10");
+        assert_eq!(opened, [CompactCommand::ToggleCluster(250_000)]);
+        let markup = runner.dom().borrow().outer_html(runner.root());
+        assert!(markup.contains("note point-0"));
+        assert!(markup.contains("collapse cluster at 4:10"));
+        act(&mut runner, "collapse cluster at 4:10");
+        assert!(
+            !runner
+                .dom()
+                .borrow()
+                .outer_html(runner.root())
+                .contains("note point-0")
+        );
+    }
+
+    /// The default: the cluster the playhead sits in, and no other.
+    #[test]
+    fn the_playhead_cluster_is_the_one_seeded_open() {
+        let mut state = notes_state();
+        state.notes.push(note("far-one", 900_000, None));
+        state.compact.now_playing.as_mut().unwrap().position_ms = 900_000;
+        state.seed_expanded_clusters();
+        assert_eq!(state.expanded_clusters, vec![900_000]);
+        assert!(!state.cluster_expanded(250_000));
     }
 
     #[test]

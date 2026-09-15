@@ -5,7 +5,8 @@ use super::{controls, rows};
 use crate::{CompactCommand, FullView, RedshankSurfaceState, format_bytes};
 use cambium::el;
 use redshank_model::{
-    CapturePlaybackBehavior, ListenerSettings, NotePrivacy, RefreshSchedule, ThemeMode, ThemeSeed,
+    CapturePlaybackBehavior, ListenerSettings, NotePrivacy, RefreshSchedule, ResumeCompleted,
+    ThemeMode, ThemeSeed,
 };
 
 /// One settings write.
@@ -89,6 +90,22 @@ fn playback(state: &RedshankSurfaceState) -> FullView {
             )
         })
         .collect();
+    let resume_options = [
+        ("start", ResumeCompleted::Start),
+        ("saved", ResumeCompleted::Saved),
+    ]
+    .iter()
+    .map(|(label, choice)| {
+        (
+            (*label).to_owned(),
+            settings.resume_completed_from == *choice,
+            writes(ListenerSettings {
+                resume_completed_from: *choice,
+                ..settings.clone()
+            }),
+        )
+    })
+    .collect();
     section(
         "PLAYBACK",
         vec![
@@ -98,6 +115,11 @@ fn playback(state: &RedshankSurfaceState) -> FullView {
                 "Rate",
                 Some("pitch-preserving"),
                 controls::segment("Rate", rate_options),
+            ),
+            controls::row(
+                "Resume completed items from",
+                None,
+                controls::segment("Resume completed items from", resume_options),
             ),
         ],
     )
