@@ -6,8 +6,8 @@ mod session;
 mod voice;
 
 use cambium_genet_winit_host::{
-    AppCtx, CloseDisposition, FocusedTextSlot, HostHooks, HostOptions, Init, Key, KeyPress,
-    NamedKey, Runner, WindowFrame, run,
+    AppCtx, CloseDisposition, FocusedTextSlot, HostFont, HostHooks, HostOptions, Init, Key,
+    KeyPress, NamedKey, Runner, WindowFrame, run,
 };
 use headed_receipt::HeadedReceipt;
 use layout_dom_api::LayoutDom;
@@ -20,8 +20,8 @@ use redshank_model::{
 use redshank_playback::{PlaybackCommand, PlaybackRuntime, PlaybackState, PreviewState};
 use redshank_storage::{JsonDirectoryStore, ModelStore};
 use redshank_surfaces::{
-    CompactCommand, Layout, Recording, RedshankSurfaceState, TextCapture, TransportState, sheet,
-    surface,
+    CompactCommand, FONTS, Layout, Recording, RedshankSurfaceState, TextCapture, TransportState,
+    sheet, surface,
 };
 use session::{HostFacts, Session};
 use std::{
@@ -1626,6 +1626,17 @@ fn hooks(
     }
 }
 
+/// The bundled Plex faces in the host's vocabulary. The sheet names both
+/// families, so neither can be left to whatever the machine happens to have.
+fn plex_fonts() -> Vec<HostFont> {
+    FONTS
+        .iter()
+        .map(|(family, bytes)| HostFont {
+            family: Some((*family).to_owned()),
+            bytes: bytes.to_vec(),
+        })
+        .collect()
+}
 fn main() {
     let receipt = HeadedReceipt::from_environment().expect("configure headed receipt");
     let data_root = data_directory();
@@ -1720,6 +1731,8 @@ fn main() {
                 state,
                 logic: surface as Logic,
                 sheet: sheet(),
+                fonts: plex_fonts(),
+                images: Vec::new(),
             }
         },
         hooks(Rc::clone(&desktop), Rc::clone(&lane)),
@@ -1940,6 +1953,9 @@ mod tests {
                 state,
                 logic: surface as Logic,
                 sheet: sheet(),
+                // Headless focus routing; no face has to be registered for it.
+                fonts: Vec::new(),
+                images: Vec::new(),
             },
             hooks(Rc::clone(&desktop), Rc::new(RefCell::new(None))),
         );
