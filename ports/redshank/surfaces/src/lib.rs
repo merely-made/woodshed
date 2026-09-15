@@ -14,12 +14,14 @@
 //! - [`dock`]: the family A bottom dock (identity, seek track, transport, capture);
 //! - [`rail`]: the family B left transport rail, same facts and commands;
 //! - [`tabs`]: Listen, Library, Notes, Settings bodies;
-//! - [`scene`]: the feed-node projections (chain, orrery, trail) for the Mere tab.
+//! - [`scene`]: the feed-node projections (chain, orrery, trail) for the Mere tab;
+//! - [`surface_api`]: the descriptor and erased session a second host admits.
 
 pub mod dock;
 pub mod rail;
 pub mod scene;
 pub mod shell;
+pub mod surface_api;
 pub mod tabs;
 pub mod theme;
 
@@ -28,6 +30,7 @@ use redshank_model::{
     AnnotationId, CaptureAnchor, FeedSubscription, ItemId, LibraryItem, ListenerSettings,
 };
 
+pub use surface_api::{CompactDock, compact_descriptor, compact_session};
 pub use theme::{FONTS, sheet};
 
 pub type CompactView = Box<dyn AnyView<CompactPlayerState, (), GenetCtx, GenetElement>>;

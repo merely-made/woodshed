@@ -4753,6 +4753,7 @@ dependencies = [
  "cambium-genet-winit-host",
  "genet-scripted-dom",
  "layout-dom-api",
+ "mere-surface-api",
  "redshank-model",
  "tinct",
 ]

@@ -12,6 +12,10 @@ rust-version = "1.97"
 cambium = { git = "https://github.com/merely-made/mere.git", rev = "1009f02de21d70712b75934933ce8c82503b6f85" }
 cambium-genet-winit-host = { git = "https://github.com/merely-made/mere.git", rev = "1009f02de21d70712b75934933ce8c82503b6f85" }
 tinct = { git = "https://github.com/merely-made/mere.git", rev = "1009f02de21d70712b75934933ce8c82503b6f85" }
+# The surface-descriptor half of a host's product-admission vocabulary. Same
+# Mere revision as cambium: the descriptor crosses the seam between Redshank
+# and an embedding host, so one revision or the types do not match themselves.
+mere-surface-api = { git = "https://github.com/merely-made/mere.git", rev = "1009f02de21d70712b75934933ce8c82503b6f85" }
 genet-scripted-dom = { git = "https://github.com/merely-made/genet.git", rev = "7baa554c66f966295ee945d908738b635afe136a" }
 # Named genet-probe until genet 7baa554c (2026-09-14); same crate, new name.
 taproot = { git = "https://github.com/merely-made/genet.git", rev = "7baa554c66f966295ee945d908738b635afe136a" }
