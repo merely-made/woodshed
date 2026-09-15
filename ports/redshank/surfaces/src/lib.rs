@@ -28,7 +28,7 @@ use redshank_model::{
     AnnotationId, CaptureAnchor, FeedSubscription, ItemId, LibraryItem, ListenerSettings,
 };
 
-pub use theme::sheet;
+pub use theme::{FONTS, sheet};
 
 pub type CompactView = Box<dyn AnyView<CompactPlayerState, (), GenetCtx, GenetElement>>;
 pub type FullView = Box<dyn AnyView<RedshankSurfaceState, (), GenetCtx, GenetElement>>;
