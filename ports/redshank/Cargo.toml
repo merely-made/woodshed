@@ -9,13 +9,13 @@ license = "MPL-2.0"
 rust-version = "1.97"
 
 [workspace.dependencies]
-cambium = { git = "https://github.com/merely-made/mere.git", rev = "876320fddd4cecddab8080d5decf2b5d8568d47e" }
-cambium-genet-winit-host = { git = "https://github.com/merely-made/mere.git", rev = "876320fddd4cecddab8080d5decf2b5d8568d47e" }
-tinct = { git = "https://github.com/merely-made/mere.git", rev = "876320fddd4cecddab8080d5decf2b5d8568d47e" }
+cambium = { git = "https://github.com/merely-made/mere.git", rev = "ee0d7155fbcb68bb463a0458e9901fcfedcae74e" }
+cambium-genet-winit-host = { git = "https://github.com/merely-made/mere.git", rev = "ee0d7155fbcb68bb463a0458e9901fcfedcae74e" }
+tinct = { git = "https://github.com/merely-made/mere.git", rev = "ee0d7155fbcb68bb463a0458e9901fcfedcae74e" }
 # The surface-descriptor half of a host's product-admission vocabulary. Same
 # Mere revision as cambium: the descriptor crosses the seam between Redshank
 # and an embedding host, so one revision or the types do not match themselves.
-mere-surface-api = { git = "https://github.com/merely-made/mere.git", rev = "876320fddd4cecddab8080d5decf2b5d8568d47e" }
+mere-surface-api = { git = "https://github.com/merely-made/mere.git", rev = "ee0d7155fbcb68bb463a0458e9901fcfedcae74e" }
 genet-scripted-dom = { git = "https://github.com/merely-made/genet.git", rev = "5ae30cad0ea421085a52dc9f86ead53028f0592d" }
 # Named genet-probe until genet 7baa554c (2026-09-14); same crate, new name.
 taproot = { git = "https://github.com/merely-made/genet.git", rev = "5ae30cad0ea421085a52dc9f86ead53028f0592d" }
@@ -44,7 +44,7 @@ http = "1"
 symphonia = { version = "0.5.5", default-features = false, features = ["aac", "isomp4", "mp3", "pcm", "wav"] }
 ureq = { version = "3.4", default-features = false, features = ["rustls"] }
 rfd = "0.17"
-errand = { git = "https://github.com/merely-made/mere.git", rev = "876320fddd4cecddab8080d5decf2b5d8568d47e", version = "0.3.4" }
+errand = { git = "https://github.com/merely-made/mere.git", rev = "ee0d7155fbcb68bb463a0458e9901fcfedcae74e", version = "0.3.4" }
 url = "2.5"
 
 # Root patches do not cross a git dependency boundary, so a standalone Redshank
