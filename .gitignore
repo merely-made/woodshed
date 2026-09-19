@@ -1,4 +1,6 @@
 /target
+# Nested workspaces (ports/redshank) build into their own target dir.
+/ports/*/target
 /dist
 /.cargo/config.toml
 .idea/
