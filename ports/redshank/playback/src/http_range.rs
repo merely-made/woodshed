@@ -20,6 +20,10 @@ pub(super) struct HttpStats {
 }
 
 pub(super) struct HttpRangeSource {
+    /// One agent for the life of the source, so ranges reuse its connection.
+    /// `ureq::get` builds a throwaway agent: a connection, and over HTTPS a
+    /// handshake, for every chunk.
+    agent: ureq::Agent,
     url: String,
     len: u64,
     position: u64,
@@ -38,7 +42,9 @@ impl HttpRangeSource {
                 "HTTP cache budget is {cache_budget} bytes; range playback requires at least {CHUNK_BYTES} bytes"
             );
         }
-        let mut response = ureq::get(url)
+        let agent = ureq::Agent::new_with_defaults();
+        let mut response = agent
+            .get(url)
             .header("Accept-Encoding", "identity")
             .header("Range", "bytes=0-0")
             .call()
@@ -84,6 +90,7 @@ impl HttpRangeSource {
         };
         Ok((
             Self {
+                agent,
                 url: final_url,
                 len,
                 position: 0,
@@ -114,7 +121,9 @@ impl HttpRangeSource {
         }
         let end = (start + CHUNK_BYTES - 1).min(self.len.saturating_sub(1));
         let range = format!("bytes={start}-{end}");
-        let mut request = ureq::get(&self.url)
+        let mut request = self
+            .agent
+            .get(&self.url)
             .header("Accept-Encoding", "identity")
             .header("Range", &range);
         if let Some(validator) = &self.validator {
@@ -290,7 +299,7 @@ mod tests {
         net::{SocketAddr, TcpListener, TcpStream},
         sync::{
             Arc,
-            atomic::{AtomicBool, Ordering},
+            atomic::{AtomicBool, AtomicUsize, Ordering},
         },
         thread,
         time::Duration,
@@ -299,12 +308,15 @@ mod tests {
     #[derive(Clone, Copy)]
     enum ServerMode {
         Ranges,
+        /// Ranges on a connection the server leaves open between requests.
+        KeepAlive,
         IgnoreRanges,
         ChangeAfterProbe,
     }
 
     struct TestServer {
         address: SocketAddr,
+        connections: Arc<AtomicUsize>,
         stop: Arc<AtomicBool>,
         thread: Option<thread::JoinHandle<()>>,
     }
@@ -316,6 +328,9 @@ mod tests {
             let address = listener.local_addr().unwrap();
             let stop = Arc::new(AtomicBool::new(false));
             let thread_stop = Arc::clone(&stop);
+            let connections = Arc::new(AtomicUsize::new(0));
+            let data = Arc::new(data);
+            let accepted = Arc::clone(&connections);
             let thread = thread::spawn(move || {
                 while !thread_stop.load(Ordering::Relaxed) {
                     match listener.accept() {
@@ -323,8 +338,16 @@ mod tests {
                             if thread_stop.load(Ordering::Relaxed) {
                                 break;
                             }
+                            accepted.fetch_add(1, Ordering::Relaxed);
                             stream.set_nonblocking(false).unwrap();
-                            serve(stream, &data, mode);
+                            if matches!(mode, ServerMode::KeepAlive) {
+                                // Its own thread, so a client that opens a second
+                                // connection is counted rather than left waiting.
+                                let data = Arc::clone(&data);
+                                thread::spawn(move || serve(stream, &data, mode));
+                            } else {
+                                serve(stream, &data, mode);
+                            }
                         },
                         Err(error) if error.kind() == io::ErrorKind::WouldBlock => {
                             thread::sleep(Duration::from_millis(2));
@@ -335,6 +358,7 @@ mod tests {
             });
             Self {
                 address,
+                connections,
                 stop,
                 thread: Some(thread),
             }
@@ -356,6 +380,11 @@ mod tests {
     }
 
     fn serve(mut stream: TcpStream, data: &[u8], mode: ServerMode) {
+        if matches!(mode, ServerMode::KeepAlive) {
+            // The loop ends when the client hangs up.
+            while serve_kept(&mut stream, data) {}
+            return;
+        }
         let mut request = vec![0_u8; 4096];
         let count = stream.read(&mut request).unwrap();
         let request = String::from_utf8_lossy(&request[..count]);
@@ -405,6 +434,41 @@ mod tests {
         }
     }
 
+    /// Answer one ranged request and leave the connection open. False at EOF.
+    fn serve_kept(stream: &mut TcpStream, data: &[u8]) -> bool {
+        let mut request = vec![0_u8; 4096];
+        let count = match stream.read(&mut request) {
+            Ok(0) | Err(_) => return false,
+            Ok(count) => count,
+        };
+        let request = String::from_utf8_lossy(&request[..count]);
+        let Some((start, end)) = request
+            .lines()
+            .filter_map(|line| line.split_once(':'))
+            .find_map(|(name, value)| name.eq_ignore_ascii_case("range").then_some(value.trim()))
+            .and_then(|value| value.strip_prefix("bytes="))
+            .and_then(|value| value.split_once('-'))
+            .map(|(start, end)| {
+                (
+                    start.parse::<usize>().unwrap(),
+                    end.parse::<usize>().unwrap(),
+                )
+            })
+        else {
+            return false;
+        };
+        let end = end.min(data.len() - 1);
+        let body = &data[start..=end];
+        write!(
+            stream,
+            "HTTP/1.1 206 Partial Content\r\nContent-Length: {}\r\nContent-Range: bytes {start}-{end}/{}\r\nContent-Type: audio/mpeg\r\nETag: \"fixture-v1\"\r\n\r\n",
+            body.len(),
+            data.len()
+        )
+        .is_ok()
+            && stream.write_all(body).is_ok()
+    }
+
     #[test]
     fn parses_valid_content_range() {
         assert_eq!(
@@ -450,6 +514,25 @@ mod tests {
         assert!(source.stats().fetched_bytes * 10 < data.len() as u64);
         assert!(source.stats().peak_cache_bytes <= 128 * 1024);
         assert_eq!(source.stats().ranges.len(), 4);
+    }
+
+    #[test]
+    fn range_source_reuses_one_connection_across_ranges() {
+        let data: Vec<_> = (0..3_000_000).map(|index| (index % 251) as u8).collect();
+        let server = TestServer::start(data.clone(), ServerMode::KeepAlive);
+        let (mut source, _) = HttpRangeSource::open(&server.url(), 128 * 1024).unwrap();
+        let mut output = [0_u8; 32];
+        for offset in [70_000_u64, 1_000_000, 2_500_000] {
+            source.seek(SeekFrom::Start(offset)).unwrap();
+            source.read_exact(&mut output).unwrap();
+            assert_eq!(
+                &output,
+                &data[offset as usize..offset as usize + output.len()]
+            );
+        }
+        assert_eq!(source.stats().requests, 4);
+        // The probe and three ranges: four requests, one connection.
+        assert_eq!(server.connections.load(Ordering::Relaxed), 1);
     }
 
     #[test]
