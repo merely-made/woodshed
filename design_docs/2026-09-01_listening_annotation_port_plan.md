@@ -44,9 +44,23 @@ exact moments. Podcast support is a profile over the general listener.
 
 The ownership split is strict:
 
-- Genet owns the general media-player contract and decoder/backend work.
+- Genet owns the general media-player contract. Decoder and backend work
+  belongs to Mere's net-media organ, with this port's Symphonia and Firewheel
+  backend as its first increment in practice (ruled 2026-09-20, correcting the
+  earlier "Genet owns decoder/backend work"; see
+  `mere/design_docs/mere_docs/implementation_strategy/2026-05-26_net_media_plan.md`).
 - The port owns the durable listening workflow: library, queue, progress,
   settings, timed notes, and its reusable product surfaces.
+- Persona-held state (notes and their sharing, a synced library, voice bodies,
+  offline episodes) goes through the device resident as a client, the way
+  Knot's persona-vault mode does; local-only listening stays embedded in the
+  host (ruled 2026-09-20; resident plan invariant 9). Nothing is built on this
+  yet.
+- The standalone host fetches through netfetcher, the stack's fetch engine, not
+  a simpler client of its own (ruled 2026-09-20 with the measured cost in hand,
+  superseding "simpler adapters" for HTTP below), through a ranged contract
+  defined in Mere. The research behind it is lane R3 of
+  `mere/design_docs/2026-08-12_family_composition_thesis_brief.md`.
 - The standalone host owns one audio runtime and device connection.
 - Turnstone is the planned second host and supplies browsing, graph, fetching,
   storage, and audio services when it embeds the port.
