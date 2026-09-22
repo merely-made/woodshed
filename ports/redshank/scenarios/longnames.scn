@@ -27,4 +27,13 @@ settle 10
 capture longnames-zoom-400
 ui-zoom 1
 settle 15
+# The second item is served by the range server: prove the ranged path plays,
+# not only that it draws. (The first item's saved progress is past its end,
+# which is a fixture fact this scenario does not exercise.)
+act select:long-ep
+settle 30
+act play
+settle 5
+assert snap transport ~ PLAYING
+act pause
 log longnames complete

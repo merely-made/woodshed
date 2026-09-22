@@ -4,8 +4,14 @@ settle 30
 assert snap item-count >= 1
 capture listen
 
+# The dock must actually be playing: a run that never reached the device or
+# the source is not a receipt of anything. From the start, because the fixture
+# is two seconds long and a saved position near its end completes at once.
+act seek:0
 act play
-settle 20
+settle 5
+assert snap transport ~ PLAYING
+settle 15
 capture listen-playing
 act pause
 settle 10
