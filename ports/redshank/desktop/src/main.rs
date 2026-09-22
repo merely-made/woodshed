@@ -9,6 +9,7 @@ use cambium_genet_winit_host::{
     AppCtx, CloseDisposition, FocusedTextSlot, HostFont, HostHooks, HostOptions, Init, Key,
     KeyPress, NamedKey, Runner, WindowFrame, run,
 };
+use fetch::Fetch;
 use headed_receipt::HeadedReceipt;
 use layout_dom_api::LayoutDom;
 use redshank_cache::EpisodeCache;
@@ -17,7 +18,7 @@ use redshank_model::{
     Annotation, AnnotationId, AudioCaptureHost, CaptureAnchor, CapturePlaybackBehavior, ItemId,
     LibraryItem, MediaSource, NoteBody, RedshankModel,
 };
-use redshank_playback::{PlaybackCommand, PlaybackRuntime, PlaybackState, PreviewState};
+use redshank_playback::{PlaybackCommand, PlaybackRuntime, PlaybackState, PreviewState, own_fetch};
 use redshank_storage::{JsonDirectoryStore, ModelStore};
 use redshank_surfaces::{
     CompactCommand, FONTS, Layout, Recording, RedshankSurfaceState, TextCapture, TransportState,
@@ -26,14 +27,12 @@ use redshank_surfaces::{
 use session::{HostFacts, Session};
 use std::{
     cell::RefCell,
-    io::Read,
     path::PathBuf,
     rc::Rc,
-    sync::mpsc,
+    sync::{Arc, mpsc},
     thread,
     time::{Duration, Instant, SystemTime, UNIX_EPOCH},
 };
-use ureq::ResponseExt;
 use voice::LocalVoiceCapture;
 
 type Logic = fn(&RedshankSurfaceState) -> redshank_surfaces::FullView;
@@ -65,28 +64,22 @@ fn now_ms() -> u64 {
 
 const MAX_FEED_BYTES: u64 = 4 * 1024 * 1024;
 
-fn fetch_and_import_feed(requested_url: &str) -> Result<FeedImport, String> {
-    let mut response = ureq::get(requested_url)
-        .header(
-            "Accept",
-            "application/rss+xml, application/atom+xml, application/xml, text/xml",
+fn fetch_and_import_feed(fetch: &dyn Fetch, requested_url: &str) -> Result<FeedImport, String> {
+    let body = fetch
+        .read_all(
+            requested_url,
+            Some("application/rss+xml, application/atom+xml, application/xml, text/xml"),
+            MAX_FEED_BYTES,
         )
-        .call()
-        .map_err(|error| format!("Could not fetch podcast feed: {error}"))?;
-    let final_url = response.get_uri().to_string();
-    let mut bytes = Vec::new();
-    response
-        .body_mut()
-        .as_reader()
-        .take(MAX_FEED_BYTES + 1)
-        .read_to_end(&mut bytes)
-        .map_err(|error| format!("Could not read podcast feed: {error}"))?;
-    if bytes.len() as u64 > MAX_FEED_BYTES {
-        return Err("Podcast feed is larger than the 4 MiB standalone limit".into());
-    }
-    let body =
-        String::from_utf8(bytes).map_err(|_| "Podcast feed is not valid UTF-8 XML".to_owned())?;
-    redshank_feed::import(&body, &final_url, now_ms())
+        .map_err(|error| match error {
+            fetch::FetchError::TooLarge { .. } => {
+                "Podcast feed is larger than the 4 MiB standalone limit".to_owned()
+            },
+            other => format!("Could not fetch podcast feed: {other}"),
+        })?;
+    let text = String::from_utf8(body.bytes)
+        .map_err(|_| "Podcast feed is not valid UTF-8 XML".to_owned())?;
+    redshank_feed::import(&text, &body.facts.final_url, now_ms())
         .map_err(|error| format!("Could not import podcast feed: {error}"))
 }
 
@@ -225,6 +218,8 @@ struct PendingVoiceRemoval {
 }
 
 struct Desktop {
+    /// The one fetch handle: streaming, downloads and feeds share its policy.
+    fetch: Arc<dyn Fetch>,
     /// The last logical size the layout rule ran at; it runs again only on resize,
     /// so a SetLayout choice survives until the window changes shape.
     last_size: Option<(f32, f32)>,
@@ -274,6 +269,7 @@ impl Desktop {
             let cache = EpisodeCache::new(
                 self.data_root.join("cache"),
                 self.session.model.settings.cache_budget_bytes,
+                self.fetch.clone(),
             );
             let sender = self.persistence.reply_sender.clone();
             let id = removal.id;
@@ -350,10 +346,11 @@ impl Desktop {
         }
         let sender = self.persistence.reply_sender.clone();
         let worker_url = requested_url.clone();
+        let fetch = self.fetch.clone();
         thread::Builder::new()
             .name("redshank-feed".into())
             .spawn(move || {
-                let result = fetch_and_import_feed(&worker_url);
+                let result = fetch_and_import_feed(fetch.as_ref(), &worker_url);
                 let _ = sender.send(IoReply::FeedFetched {
                     requested_url: worker_url,
                     result,
@@ -785,6 +782,7 @@ impl Desktop {
                 let cache = EpisodeCache::new(
                     self.data_root.join("cache"),
                     self.session.model.settings.cache_budget_bytes,
+                    self.fetch.clone(),
                 );
                 let sender = self.persistence.reply_sender.clone();
                 let request_id = id.clone();
@@ -1648,9 +1646,11 @@ fn main() {
             Some(format!("Could not restore listener state: {error:?}")),
         ),
     };
+    let fetch = own_fetch();
     let mut desktop = Desktop {
+        fetch: fetch.clone(),
         session: Session::new(model),
-        runtime: PlaybackRuntime::start(),
+        runtime: PlaybackRuntime::start_with(fetch),
         persistence: Persistence::start(store),
         dialog_pending: false,
         cache_pending: None,
@@ -1746,7 +1746,11 @@ fn main() {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::{fs, io::Write as _, net::TcpListener};
+    use std::{
+        fs,
+        io::{Read as _, Write as _},
+        net::TcpListener,
+    };
 
     #[test]
     fn standalone_feed_fetch_retains_final_parser_facts() {
@@ -1765,7 +1769,7 @@ mod tests {
             .unwrap();
         });
         let url = format!("http://{address}/feed.xml");
-        let imported = fetch_and_import_feed(&url).unwrap();
+        let imported = fetch_and_import_feed(own_fetch().as_ref(), &url).unwrap();
         server.join().unwrap();
         assert_eq!(imported.subscription.title, "Local Feed");
         assert_eq!(imported.episodes.len(), 1);
@@ -2012,9 +2016,11 @@ mod tests {
                 },
             })
             .unwrap();
+        let fetch = own_fetch();
         Desktop {
+            fetch: fetch.clone(),
             session: Session::new(model),
-            runtime: PlaybackRuntime::start(),
+            runtime: PlaybackRuntime::start_with(fetch),
             persistence: Persistence::start(JsonDirectoryStore::new(directory)),
             dialog_pending: false,
             cache_pending: None,

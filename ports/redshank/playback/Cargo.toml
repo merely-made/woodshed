@@ -13,7 +13,7 @@ blake3.workspace = true
 firewheel.workspace = true
 redshank-model.workspace = true
 symphonia.workspace = true
-ureq.workspace = true
+fetch.workspace = true
 servo-media-player.workspace = true
 
 [dev-dependencies]

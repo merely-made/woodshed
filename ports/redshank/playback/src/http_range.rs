@@ -1,12 +1,13 @@
 use std::{
     collections::{BTreeMap, VecDeque},
     io::{self, Read, Seek, SeekFrom},
+    sync::Arc,
 };
 
-use anyhow::{Context, Result, anyhow, bail};
+use anyhow::{Result, bail};
+use fetch::{Fetch, FetchError, Range};
 use redshank_model::RepresentationReceipt;
 use symphonia::core::io::MediaSource;
-use ureq::ResponseExt;
 
 pub(super) const DEFAULT_CACHE_BYTES: usize = 256 * 1024;
 const CHUNK_BYTES: u64 = 64 * 1024;
@@ -19,11 +20,11 @@ pub(super) struct HttpStats {
     pub(super) ranges: Vec<(u64, u64)>,
 }
 
+/// Progressive playback over HTTP byte ranges, read through the host's fetch
+/// handle: the host's cookies, cache policy and wire, one connection reused
+/// across chunks, and a sliding window of decoded-from bytes under a budget.
 pub(super) struct HttpRangeSource {
-    /// One agent for the life of the source, so ranges reuse its connection.
-    /// `ureq::get` builds a throwaway agent: a connection, and over HTTPS a
-    /// handshake, for every chunk.
-    agent: ureq::Agent,
+    fetch: Arc<dyn Fetch>,
     url: String,
     len: u64,
     position: u64,
@@ -36,62 +37,57 @@ pub(super) struct HttpRangeSource {
 }
 
 impl HttpRangeSource {
-    pub(super) fn open(url: &str, cache_budget: usize) -> Result<(Self, RepresentationReceipt)> {
+    pub(super) fn open(
+        fetch: Arc<dyn Fetch>,
+        url: &str,
+        cache_budget: usize,
+    ) -> Result<(Self, RepresentationReceipt)> {
         if cache_budget < CHUNK_BYTES as usize {
             bail!(
                 "HTTP cache budget is {cache_budget} bytes; range playback requires at least {CHUNK_BYTES} bytes"
             );
         }
-        let agent = ureq::Agent::new_with_defaults();
-        let mut response = agent
-            .get(url)
-            .header("Accept-Encoding", "identity")
-            .header("Range", "bytes=0-0")
-            .call()
-            .with_context(|| format!("could not reach HTTP audio source {url}"))?;
-        if response.status().as_u16() != 206 {
+        let probe = match fetch.read_range(
+            url,
+            Range {
+                start: 0,
+                end: Some(0),
+            },
+            None,
+        ) {
+            Ok(reply) => reply,
+            Err(FetchError::RangeIgnored) => {
+                bail!("HTTP audio source does not support byte ranges: expected 206, received 200")
+            },
+            Err(FetchError::Status(status)) => bail!(
+                "HTTP audio source does not support byte ranges: expected 206, received {status}"
+            ),
+            Err(error) => bail!("could not reach HTTP audio source {url}: {error}"),
+        };
+        if probe.start != 0 || probe.bytes.len() != 1 {
             bail!(
-                "HTTP audio source does not support byte ranges: expected 206, received {}",
-                response.status()
+                "initial HTTP range returned {} bytes at offset {}, expected one byte at 0",
+                probe.bytes.len(),
+                probe.start
             );
         }
-        let (start, end, len) = parse_content_range(header(&response, "Content-Range")?)?;
-        if (start, end) != (0, 0) {
-            bail!("initial HTTP range returned bytes {start}-{end}, expected 0-0");
-        }
-        let first = response
-            .body_mut()
-            .with_config()
-            .limit(2)
-            .read_to_vec()
-            .context("could not read initial HTTP range")?;
-        if first.len() != 1 {
-            bail!(
-                "initial HTTP range returned {} bytes, expected 1",
-                first.len()
-            );
-        }
-
-        let final_url = response.get_uri().to_string();
-        let media_type = optional_header(&response, "Content-Type")
-            .map(|value| value.split(';').next().unwrap_or(value).trim().to_owned());
-        let etag = optional_header(&response, "ETag").map(str::to_owned);
-        let last_modified = optional_header(&response, "Last-Modified").map(str::to_owned);
-        let validator = etag.clone().or_else(|| last_modified.clone());
+        let len = probe.total;
+        let facts = probe.facts;
+        let validator = facts.etag.clone().or_else(|| facts.last_modified.clone());
         let receipt = RepresentationReceipt {
             requested_url: Some(url.to_owned()),
-            final_url: Some(final_url.clone()),
-            media_type,
+            final_url: Some(facts.final_url.clone()),
+            media_type: facts.content_type,
             byte_length: Some(len),
-            etag,
-            last_modified,
+            etag: facts.etag,
+            last_modified: facts.last_modified,
             retrieved_at_ms: Some(now_ms()),
             complete_digest: None,
         };
         Ok((
             Self {
-                agent,
-                url: final_url,
+                fetch,
+                url: facts.final_url,
                 len,
                 position: 0,
                 cache: BTreeMap::new(),
@@ -120,31 +116,6 @@ impl HttpRangeSource {
             return Ok(());
         }
         let end = (start + CHUNK_BYTES - 1).min(self.len.saturating_sub(1));
-        let range = format!("bytes={start}-{end}");
-        let mut request = self
-            .agent
-            .get(&self.url)
-            .header("Accept-Encoding", "identity")
-            .header("Range", &range);
-        if let Some(validator) = &self.validator {
-            request = request.header("If-Range", validator);
-        }
-        let mut response = request.call().map_err(http_error)?;
-        if response.status().as_u16() != 206 {
-            return Err(io::Error::other(format!(
-                "HTTP range {range} was not honored; received {} (the representation may have changed)",
-                response.status()
-            )));
-        }
-        let actual =
-            parse_content_range(header(&response, "Content-Range").map_err(io::Error::other)?)
-                .map_err(io::Error::other)?;
-        if actual != (start, end, self.len) {
-            return Err(io::Error::other(format!(
-                "HTTP range {range} returned bytes {}-{}/{}",
-                actual.0, actual.1, actual.2
-            )));
-        }
         let expected = (end - start + 1) as usize;
         if expected > self.cache_budget {
             return Err(io::Error::other(format!(
@@ -152,16 +123,41 @@ impl HttpRangeSource {
                 self.cache_budget
             )));
         }
-        let bytes = response
-            .body_mut()
-            .with_config()
-            .limit(expected.saturating_add(1) as u64)
-            .read_to_vec()
-            .map_err(http_error)?;
+        let reply = self
+            .fetch
+            .read_range(
+                &self.url,
+                Range {
+                    start,
+                    end: Some(end),
+                },
+                self.validator.as_deref(),
+            )
+            .map_err(|error| match error {
+                FetchError::Changed | FetchError::RangeIgnored => io::Error::other(format!(
+                    "HTTP range bytes={start}-{end} was not honored; the representation may have changed ({error})"
+                )),
+                FetchError::BadRange(why) => {
+                    io::Error::other(format!("HTTP range bytes={start}-{end}: {why}"))
+                },
+                other => io::Error::other(other.to_string()),
+            })?;
+        if reply.start != start || reply.total != self.len {
+            return Err(io::Error::other(format!(
+                "HTTP range bytes={start}-{end} returned bytes {}-{}/{}",
+                reply.start,
+                reply.start + reply.bytes.len() as u64 - 1,
+                reply.total
+            )));
+        }
+        let bytes = reply.bytes;
         if bytes.len() != expected {
             return Err(io::Error::new(
                 io::ErrorKind::UnexpectedEof,
-                format!("HTTP range {range} returned {} bytes", bytes.len()),
+                format!(
+                    "HTTP range bytes={start}-{end} returned {} bytes",
+                    bytes.len()
+                ),
             ));
         }
 
@@ -246,40 +242,6 @@ impl MediaSource for HttpRangeSource {
     }
 }
 
-fn header<'a>(response: &'a ureq::http::Response<ureq::Body>, name: &str) -> Result<&'a str> {
-    optional_header(response, name).ok_or_else(|| anyhow!("HTTP response omitted {name}"))
-}
-
-fn optional_header<'a>(
-    response: &'a ureq::http::Response<ureq::Body>,
-    name: &str,
-) -> Option<&'a str> {
-    response.headers().get(name)?.to_str().ok()
-}
-
-fn parse_content_range(value: &str) -> Result<(u64, u64, u64)> {
-    let value = value
-        .strip_prefix("bytes ")
-        .context("invalid Content-Range unit")?;
-    let (range, length) = value
-        .split_once('/')
-        .context("invalid Content-Range length")?;
-    let (start, end) = range
-        .split_once('-')
-        .context("invalid Content-Range bounds")?;
-    let parsed = (
-        start.parse().context("invalid Content-Range start")?,
-        end.parse().context("invalid Content-Range end")?,
-        length
-            .parse()
-            .context("invalid Content-Range object length")?,
-    );
-    if parsed.0 > parsed.1 || parsed.1 >= parsed.2 {
-        bail!("invalid Content-Range ordering");
-    }
-    Ok(parsed)
-}
-
 fn now_ms() -> u64 {
     std::time::SystemTime::now()
         .duration_since(std::time::UNIX_EPOCH)
@@ -287,13 +249,10 @@ fn now_ms() -> u64 {
         .as_millis() as u64
 }
 
-fn http_error(error: impl std::fmt::Display) -> io::Error {
-    io::Error::other(error.to_string())
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
+    use fetch::{NetFetch, Stores};
     use std::{
         io::Write,
         net::{SocketAddr, TcpListener, TcpStream},
@@ -304,6 +263,10 @@ mod tests {
         thread,
         time::Duration,
     };
+
+    fn test_fetch() -> Arc<dyn Fetch> {
+        Arc::new(NetFetch::new(&Stores::in_memory()).unwrap())
+    }
 
     #[derive(Clone, Copy)]
     enum ServerMode {
@@ -470,25 +433,11 @@ mod tests {
     }
 
     #[test]
-    fn parses_valid_content_range() {
-        assert_eq!(
-            parse_content_range("bytes 64-127/256").unwrap(),
-            (64, 127, 256)
-        );
-    }
-
-    #[test]
-    fn rejects_invalid_content_range() {
-        assert!(parse_content_range("bytes 12-9/20").is_err());
-        assert!(parse_content_range("items 0-1/2").is_err());
-        assert!(parse_content_range("bytes 0-2/2").is_err());
-    }
-
-    #[test]
     fn range_source_seeks_within_its_budget_and_records_representation() {
         let data: Vec<_> = (0..3_000_000).map(|index| (index % 251) as u8).collect();
         let server = TestServer::start(data.clone(), ServerMode::Ranges);
-        let (mut source, receipt) = HttpRangeSource::open(&server.url(), 128 * 1024).unwrap();
+        let (mut source, receipt) =
+            HttpRangeSource::open(test_fetch(), &server.url(), 128 * 1024).unwrap();
 
         assert_eq!(
             receipt.requested_url.as_deref(),
@@ -520,7 +469,8 @@ mod tests {
     fn range_source_reuses_one_connection_across_ranges() {
         let data: Vec<_> = (0..3_000_000).map(|index| (index % 251) as u8).collect();
         let server = TestServer::start(data.clone(), ServerMode::KeepAlive);
-        let (mut source, _) = HttpRangeSource::open(&server.url(), 128 * 1024).unwrap();
+        let (mut source, _) =
+            HttpRangeSource::open(test_fetch(), &server.url(), 128 * 1024).unwrap();
         let mut output = [0_u8; 32];
         for offset in [70_000_u64, 1_000_000, 2_500_000] {
             source.seek(SeekFrom::Start(offset)).unwrap();
@@ -539,14 +489,15 @@ mod tests {
     fn range_source_reports_server_and_representation_failures() {
         let data = vec![7_u8; 128 * 1024];
         let server = TestServer::start(data.clone(), ServerMode::IgnoreRanges);
-        let error = HttpRangeSource::open(&server.url(), DEFAULT_CACHE_BYTES)
+        let error = HttpRangeSource::open(test_fetch(), &server.url(), DEFAULT_CACHE_BYTES)
             .err()
             .unwrap()
             .to_string();
         assert!(error.contains("does not support byte ranges"));
 
         let changed = TestServer::start(data, ServerMode::ChangeAfterProbe);
-        let (mut source, _) = HttpRangeSource::open(&changed.url(), DEFAULT_CACHE_BYTES).unwrap();
+        let (mut source, _) =
+            HttpRangeSource::open(test_fetch(), &changed.url(), DEFAULT_CACHE_BYTES).unwrap();
         let mut output = [0_u8; 8];
         let error = source.read_exact(&mut output).unwrap_err().to_string();
         assert!(error.contains("representation may have changed"));
@@ -554,7 +505,7 @@ mod tests {
 
     #[test]
     fn range_source_rejects_an_exhausted_budget_before_fetching() {
-        let error = HttpRangeSource::open("http://127.0.0.1:1/episode.mp3", 1024)
+        let error = HttpRangeSource::open(test_fetch(), "http://127.0.0.1:1/episode.mp3", 1024)
             .err()
             .unwrap()
             .to_string();

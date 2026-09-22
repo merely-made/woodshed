@@ -7,6 +7,7 @@ use std::{
     time::Duration,
 };
 
+use fetch::Fetch;
 use redshank_model::{MediaSource, RepresentationReceipt};
 
 use crate::backend::PumpState;
@@ -289,7 +290,8 @@ fn start_preview(
     }
 
     let audio = backend.borrow().audio_handle();
-    let preview_backend = Rc::new(RefCell::new(Backend::with_audio(audio)));
+    let fetch = backend.borrow().fetch_handle();
+    let preview_backend = Rc::new(RefCell::new(Backend::with_audio(audio, fetch)));
     let preview_controller = controller_adapter::controller(preview_backend.clone());
     *preview = Some(PreviewSession {
         id: id.clone(),
@@ -484,8 +486,12 @@ fn command(
     }
 }
 
-fn run_session(receiver: &mpsc::Receiver<PlaybackCommand>, snapshot: Arc<Mutex<SnapshotCell>>) {
-    let backend = Rc::new(RefCell::new(Backend::default()));
+fn run_session(
+    receiver: &mpsc::Receiver<PlaybackCommand>,
+    snapshot: Arc<Mutex<SnapshotCell>>,
+    fetch: Arc<dyn Fetch>,
+) {
+    let backend = Rc::new(RefCell::new(Backend::new(fetch)));
     let mut controller = controller_adapter::controller(backend.clone());
     let mut token = None;
     let mut preview = None;
@@ -804,10 +810,14 @@ fn run_session(receiver: &mpsc::Receiver<PlaybackCommand>, snapshot: Arc<Mutex<S
     }
 }
 
-pub(super) fn run(receiver: mpsc::Receiver<PlaybackCommand>, snapshot: Arc<Mutex<SnapshotCell>>) {
+pub(super) fn run(
+    receiver: mpsc::Receiver<PlaybackCommand>,
+    snapshot: Arc<Mutex<SnapshotCell>>,
+    fetch: Arc<dyn Fetch>,
+) {
     loop {
         if catch_unwind(AssertUnwindSafe(|| {
-            run_session(&receiver, Arc::clone(&snapshot));
+            run_session(&receiver, Arc::clone(&snapshot), fetch.clone());
         }))
         .is_ok()
         {

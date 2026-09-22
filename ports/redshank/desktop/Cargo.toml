@@ -24,4 +24,4 @@ redshank-storage.workspace = true
 redshank-surfaces.workspace = true
 rfd.workspace = true
 tempfile.workspace = true
-ureq.workspace = true
+fetch.workspace = true

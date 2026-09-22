@@ -4,21 +4,24 @@ use std::{
     error::Error,
     fmt,
     fs::{self, File, OpenOptions},
-    io::{self, Read, Write},
+    io::{self, Write},
     path::{Path, PathBuf},
-    sync::atomic::{AtomicU64, Ordering},
+    sync::{
+        Arc,
+        atomic::{AtomicU64, Ordering},
+    },
     time::{SystemTime, UNIX_EPOCH},
 };
 
+use fetch::{Fetch, FetchError};
 use redshank_model::{MediaSource, RepresentationReceipt};
-use ureq::ResponseExt;
 
 static PENDING_SEQUENCE: AtomicU64 = AtomicU64::new(0);
 
 #[derive(Debug)]
 pub enum CacheError {
     Io(io::Error),
-    Http(ureq::Error),
+    Fetch(FetchError),
     Invalid(String),
     Budget { needed: u64, available: u64 },
 }
@@ -27,7 +30,7 @@ impl fmt::Display for CacheError {
     fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             Self::Io(error) => write!(formatter, "cache storage failed: {error}"),
-            Self::Http(error) => write!(formatter, "episode download failed: {error}"),
+            Self::Fetch(error) => write!(formatter, "episode download failed: {error}"),
             Self::Invalid(message) => formatter.write_str(message),
             Self::Budget { needed, available } => write!(
                 formatter,
@@ -45,23 +48,35 @@ impl From<io::Error> for CacheError {
     }
 }
 
-impl From<ureq::Error> for CacheError {
-    fn from(error: ureq::Error) -> Self {
-        Self::Http(error)
+impl From<FetchError> for CacheError {
+    fn from(error: FetchError) -> Self {
+        Self::Fetch(error)
     }
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone)]
 pub struct EpisodeCache {
     root: PathBuf,
     budget_bytes: u64,
+    fetch: Arc<dyn Fetch>,
+}
+
+impl fmt::Debug for EpisodeCache {
+    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+        formatter
+            .debug_struct("EpisodeCache")
+            .field("root", &self.root)
+            .field("budget_bytes", &self.budget_bytes)
+            .finish_non_exhaustive()
+    }
 }
 
 impl EpisodeCache {
-    pub fn new(root: impl Into<PathBuf>, budget_bytes: u64) -> Self {
+    pub fn new(root: impl Into<PathBuf>, budget_bytes: u64, fetch: Arc<dyn Fetch>) -> Self {
         Self {
             root: root.into(),
             budget_bytes,
+            fetch,
         }
     }
 
@@ -107,70 +122,69 @@ impl EpisodeCache {
         }
         let used = self.used_bytes()?;
         let available = self.budget_bytes.saturating_sub(used);
-        let mut response = ureq::get(url)
-            .header("Accept-Encoding", "identity")
-            .call()?;
-        let final_url = response.get_uri().to_string();
-        let declared_length = optional_header(&response, "Content-Length")
-            .and_then(|value| value.parse::<u64>().ok());
-        if let Some(needed) = declared_length
-            && needed > self.budget_bytes
-        {
-            return Err(CacheError::Budget {
-                needed,
-                available: self.budget_bytes,
-            });
-        }
-        let media_type = optional_header(&response, "Content-Type")
-            .map(|value| value.split(';').next().unwrap_or(value).trim().to_owned());
-        let etag = optional_header(&response, "ETag").map(str::to_owned);
-        let last_modified = optional_header(&response, "Last-Modified").map(str::to_owned);
-        let reader = response.body_mut().as_reader();
-        self.publish(
-            url,
+        let budget = self.budget_bytes;
+        self.publish(url, available, |sink| {
+            // The handle refuses on the declared length before any byte lands.
+            let facts =
+                self.fetch
+                    .read_into(url, sink, Some(budget))
+                    .map_err(|error| match error {
+                        FetchError::TooLarge { limit } => CacheError::Invalid(format!(
+                            "episode is larger than the {limit}-byte offline cache budget"
+                        )),
+                        other => CacheError::Fetch(other),
+                    })?;
+            Ok(Meta {
+                final_url: facts.final_url,
+                media_type: facts.content_type,
+                etag: facts.etag,
+                last_modified: facts.last_modified,
+                declared_length: facts.content_length,
+            })
+        })
+    }
+
+    /// Stream one representation into a pending file and publish it by digest.
+    /// `body` writes the bytes and returns what the origin said about them.
+    fn publish(
+        &self,
+        requested_url: &str,
+        available: u64,
+        body: impl FnOnce(&mut dyn Write) -> Result<Meta, CacheError>,
+    ) -> Result<MediaSource, CacheError> {
+        fs::create_dir_all(&self.root)?;
+        let pending_path = self.pending_path();
+        let pending = PendingFile::create(pending_path)?;
+        let mut sink = Publishing {
+            pending,
+            digest: blake3::Hasher::new(),
+            length: 0,
+            budget: self.budget_bytes,
+            over_budget: false,
+        };
+        let meta = match body(&mut sink) {
+            Ok(meta) => meta,
+            Err(_) if sink.over_budget => {
+                return Err(CacheError::Budget {
+                    needed: sink.length,
+                    available: self.budget_bytes,
+                });
+            },
+            Err(error) => return Err(error),
+        };
+        let Meta {
             final_url,
             media_type,
             etag,
             last_modified,
             declared_length,
-            available,
-            reader,
-        )
-    }
-
-    #[allow(clippy::too_many_arguments)]
-    fn publish(
-        &self,
-        requested_url: &str,
-        final_url: String,
-        media_type: Option<String>,
-        etag: Option<String>,
-        last_modified: Option<String>,
-        declared_length: Option<u64>,
-        available: u64,
-        mut reader: impl Read,
-    ) -> Result<MediaSource, CacheError> {
-        fs::create_dir_all(&self.root)?;
-        let pending_path = self.pending_path();
-        let mut pending = PendingFile::create(pending_path)?;
-        let mut digest = blake3::Hasher::new();
-        let mut length = 0_u64;
-        let mut buffer = [0_u8; 64 * 1024];
-        loop {
-            let count = reader.read(&mut buffer)?;
-            if count == 0 {
-                break;
-            }
-            length = length.saturating_add(count as u64);
-            if length > self.budget_bytes {
-                return Err(CacheError::Budget {
-                    needed: length,
-                    available: self.budget_bytes,
-                });
-            }
-            digest.update(&buffer[..count]);
-            pending.file.write_all(&buffer[..count])?;
-        }
+        } = meta;
+        let Publishing {
+            mut pending,
+            digest,
+            length,
+            ..
+        } = sink;
         if let Some(expected) = declared_length
             && expected != length
         {
@@ -256,8 +270,42 @@ impl Drop for PendingFile {
     }
 }
 
-fn optional_header<'a>(response: &'a http::Response<ureq::Body>, name: &str) -> Option<&'a str> {
-    response.headers().get(name)?.to_str().ok()
+/// What the origin said about a representation, learned while its body streamed.
+struct Meta {
+    final_url: String,
+    media_type: Option<String>,
+    etag: Option<String>,
+    last_modified: Option<String>,
+    declared_length: Option<u64>,
+}
+
+/// The pending file as a sink: hashes and counts every byte, and refuses the
+/// first byte past the budget so a runaway body never fills the disk.
+struct Publishing {
+    pending: PendingFile,
+    digest: blake3::Hasher,
+    length: u64,
+    budget: u64,
+    over_budget: bool,
+}
+
+impl Write for Publishing {
+    fn write(&mut self, bytes: &[u8]) -> io::Result<usize> {
+        let length = self.length.saturating_add(bytes.len() as u64);
+        if length > self.budget {
+            self.over_budget = true;
+            self.length = length;
+            return Err(io::Error::other("offline cache budget exceeded"));
+        }
+        self.digest.update(bytes);
+        self.pending.file.write_all(bytes)?;
+        self.length = length;
+        Ok(bytes.len())
+    }
+
+    fn flush(&mut self) -> io::Result<()> {
+        self.pending.file.flush()
+    }
 }
 
 fn now_ms() -> u64 {
@@ -269,41 +317,56 @@ fn now_ms() -> u64 {
 
 #[cfg(test)]
 mod tests {
-    use std::{
-        io::{Cursor, Read as _},
-        net::TcpListener,
-        thread,
-    };
+    use std::{io::Read as _, net::TcpListener, thread};
+
+    use fetch::{NetFetch, Stores};
 
     use super::*;
+
+    fn test_fetch() -> Arc<dyn Fetch> {
+        Arc::new(NetFetch::new(&Stores::in_memory()).unwrap())
+    }
+
+    fn meta(
+        final_url: &str,
+        media_type: Option<&str>,
+        etag: Option<&str>,
+        declared: Option<u64>,
+    ) -> Meta {
+        Meta {
+            final_url: final_url.into(),
+            media_type: media_type.map(str::to_owned),
+            etag: etag.map(str::to_owned),
+            last_modified: None,
+            declared_length: declared,
+        }
+    }
 
     #[test]
     fn complete_object_is_content_addressed_and_reusable() {
         let directory = tempfile::tempdir().unwrap();
-        let cache = EpisodeCache::new(directory.path(), 6);
+        let cache = EpisodeCache::new(directory.path(), 6, test_fetch());
         let first = cache
-            .publish(
-                "https://example.test/episode.mp3",
-                "https://cdn.example.test/episode.mp3".into(),
-                Some("audio/mpeg".into()),
-                Some("\"fixed\"".into()),
-                None,
-                Some(6),
-                6,
-                Cursor::new(b"abcdef"),
-            )
+            .publish("https://example.test/episode.mp3", 6, |sink| {
+                sink.write_all(b"abcdef")?;
+                Ok(meta(
+                    "https://cdn.example.test/episode.mp3",
+                    Some("audio/mpeg"),
+                    Some("\"fixed\""),
+                    Some(6),
+                ))
+            })
             .unwrap();
         let second = cache
-            .publish(
-                "https://example.test/episode.mp3",
-                "https://cdn.example.test/episode.mp3".into(),
-                Some("audio/mpeg".into()),
-                Some("\"fixed\"".into()),
-                None,
-                Some(6),
-                0,
-                Cursor::new(b"abcdef"),
-            )
+            .publish("https://example.test/episode.mp3", 0, |sink| {
+                sink.write_all(b"abcdef")?;
+                Ok(meta(
+                    "https://cdn.example.test/episode.mp3",
+                    Some("audio/mpeg"),
+                    Some("\"fixed\""),
+                    Some(6),
+                ))
+            })
             .unwrap();
         let (first_path, first_digest) = match first {
             MediaSource::Cached {
@@ -334,31 +397,19 @@ mod tests {
     #[test]
     fn exhausted_and_truncated_downloads_publish_nothing() {
         let directory = tempfile::tempdir().unwrap();
-        let cache = EpisodeCache::new(directory.path(), 4);
+        let cache = EpisodeCache::new(directory.path(), 4, test_fetch());
         let exhausted = cache
-            .publish(
-                "https://example.test/a.mp3",
-                "https://example.test/a.mp3".into(),
-                None,
-                None,
-                None,
-                None,
-                4,
-                Cursor::new(b"12345"),
-            )
+            .publish("https://example.test/a.mp3", 4, |sink| {
+                sink.write_all(b"12345")?;
+                Ok(meta("https://example.test/a.mp3", None, None, None))
+            })
             .unwrap_err();
         assert!(matches!(exhausted, CacheError::Budget { .. }));
         let truncated = cache
-            .publish(
-                "https://example.test/a.mp3",
-                "https://example.test/a.mp3".into(),
-                None,
-                None,
-                None,
-                Some(5),
-                10,
-                Cursor::new(b"1234"),
-            )
+            .publish("https://example.test/a.mp3", 10, |sink| {
+                sink.write_all(b"1234")?;
+                Ok(meta("https://example.test/a.mp3", None, None, Some(5)))
+            })
             .unwrap_err();
         assert!(matches!(truncated, CacheError::Invalid(_)));
         assert_eq!(fs::read_dir(directory.path()).unwrap().count(), 0);
@@ -367,7 +418,7 @@ mod tests {
     #[test]
     fn removal_is_idempotent_and_confined_to_the_cache_root() {
         let directory = tempfile::tempdir().unwrap();
-        let cache = EpisodeCache::new(directory.path(), 10);
+        let cache = EpisodeCache::new(directory.path(), 10, test_fetch());
         let path = directory.path().join("object.audio");
         fs::write(&path, b"abc").unwrap();
         assert!(cache.remove_cached_path(&path).unwrap());
@@ -400,7 +451,7 @@ mod tests {
                 .unwrap();
         });
         let directory = tempfile::tempdir().unwrap();
-        let cache = EpisodeCache::new(directory.path(), 1024);
+        let cache = EpisodeCache::new(directory.path(), 1024, test_fetch());
         let url = format!("http://{address}/episode.mp3");
         let source = cache.cache_url(&url).unwrap();
         server.join().unwrap();
