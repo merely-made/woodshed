@@ -37,6 +37,9 @@ fn stream_buffer_config() -> ResamplingChannelConfig {
     }
 }
 
+/// Firewheel's default `num_graph_outputs`: the ports the graph's output node has.
+const GRAPH_OUTPUT_CHANNELS: u32 = 2;
+
 pub(super) struct AudioRuntime {
     context: FirewheelContext,
     output_channels: u32,
@@ -54,10 +57,15 @@ impl AudioRuntime {
         context
             .start_stream(CpalConfig::default())
             .map_err(|error| anyhow!("could not start the default audio output: {error:?}"))?;
+        // The graph's output is stereo (Firewheel's default), and it maps onto the
+        // first channels of whatever stream the device opened. A six-channel
+        // device therefore still offers the graph two ports; connecting one edge
+        // per device channel overflowed them (InPortOutOfRange, 2026-09-22).
         let output_channels = context
             .stream_info()
             .context("Firewheel did not report output stream information")?
-            .num_stream_out_channels;
+            .num_stream_out_channels
+            .min(GRAPH_OUTPUT_CHANNELS);
         let channels = NonZeroChannelCount::new(output_channels)
             .context("the audio output reported no channels")?;
         let volume_params = VolumeNode::from_percent(100.0);
