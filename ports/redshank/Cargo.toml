@@ -40,9 +40,11 @@ blake3 = "1"
 cpal = "0.17.3"
 firewheel = { version = "0.10", default-features = false, features = ["std", "cpal", "stream_nodes", "tracing"] }
 hound = "3.5"
-http = "1"
 symphonia = { version = "0.5.5", default-features = false, features = ["aac", "isomp4", "mp3", "pcm", "wav"] }
-ureq = { version = "3.4", default-features = false, features = ["rustls"] }
+# The host's fetch handle: one HTTP policy (cookies, cache, HSTS, transport)
+# for streaming, downloads and feeds. Same Mere revision as cambium. Defaults
+# off: a listener takes the handle over netfetcher and none of the page actor.
+fetch = { package = "mere-fetch", git = "https://github.com/merely-made/mere.git", rev = "0e031fa51c8eaa93a3ed0d5cc8cea16ebc84cd4c", default-features = false }
 rfd = "0.17"
 errand = { git = "https://github.com/merely-made/mere.git", rev = "0e031fa51c8eaa93a3ed0d5cc8cea16ebc84cd4c", version = "0.3.4" }
 url = "2.5"

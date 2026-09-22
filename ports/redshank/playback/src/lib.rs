@@ -11,6 +11,7 @@ use std::{
 };
 
 use anyhow::{Result, anyhow};
+use fetch::Fetch;
 use redshank_model::{MediaSource, RepresentationReceipt};
 
 mod backend;
@@ -138,8 +139,20 @@ pub struct PlaybackRuntime {
     inner: Arc<RuntimeInner>,
 }
 
+/// A fetch handle of the runtime's own, over in-memory stores: what a host
+/// without a session of its own gets. A host with one passes its own handle to
+/// [`PlaybackRuntime::start_with`] so playback shares its cookies, cache and wire.
+pub fn own_fetch() -> Arc<dyn Fetch> {
+    Arc::new(fetch::NetFetch::new(&fetch::Stores::in_memory()).expect("build the fetch runtime"))
+}
+
 impl PlaybackRuntime {
     pub fn start() -> Self {
+        Self::start_with(own_fetch())
+    }
+
+    /// Start with the host's fetch handle.
+    pub fn start_with(fetch: Arc<dyn Fetch>) -> Self {
         let (sender, receiver) = mpsc::channel();
         let snapshot = Arc::new(Mutex::new(SnapshotCell {
             value: PlaybackSnapshot::default(),
@@ -149,7 +162,7 @@ impl PlaybackRuntime {
         let worker_snapshot = Arc::clone(&snapshot);
         thread::Builder::new()
             .name("redshank-playback".into())
-            .spawn(move || worker::run(receiver, worker_snapshot))
+            .spawn(move || worker::run(receiver, worker_snapshot, fetch))
             .expect("spawn Redshank playback worker");
         Self {
             inner: Arc::new(RuntimeInner {
@@ -264,7 +277,7 @@ mod tests {
 
     #[test]
     fn cached_source_receipt_requires_the_published_bytes() {
-        let mut backend = Backend::default();
+        let mut backend = Backend::new(own_fetch());
         backend
             .load(&servo_media_player::controller::MediaSource::Local {
                 path: "redshank-test://cached-integrity".into(),
@@ -808,7 +821,7 @@ mod tests {
     fn supplied_http_fixture_decodes_progressively() {
         let url = std::env::var("REDSHANK_HTTP_FIXTURE_URL")
             .expect("set REDSHANK_HTTP_FIXTURE_URL to a range-served MP3 fixture");
-        let (mut decoder, receipt) = open_http(&url).unwrap();
+        let (mut decoder, receipt) = open_http(own_fetch(), &url).unwrap();
         assert_eq!(receipt.requested_url.as_deref(), Some(url.as_str()));
         assert!(receipt.byte_length.is_some());
         loop {

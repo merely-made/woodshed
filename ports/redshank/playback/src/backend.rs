@@ -11,6 +11,7 @@ use std::{
 
 use anyhow::{Context, Result, anyhow};
 use audio_primitives::Stretcher;
+use fetch::Fetch;
 use firewheel::{
     node::NodeID,
     nodes::stream::writer::{PushStatus, StreamWriterState},
@@ -240,8 +241,11 @@ pub(super) fn open_local(path: &Path) -> Result<(Decoder, RepresentationReceipt)
     ))
 }
 
-pub(super) fn open_http(url: &str) -> Result<(Decoder, RepresentationReceipt)> {
-    let (source, receipt) = HttpRangeSource::open(url, DEFAULT_CACHE_BYTES)?;
+pub(super) fn open_http(
+    fetch: Arc<dyn Fetch>,
+    url: &str,
+) -> Result<(Decoder, RepresentationReceipt)> {
+    let (source, receipt) = HttpRangeSource::open(fetch, url, DEFAULT_CACHE_BYTES)?;
     let decoder = open_decoder(Box::new(source), url)?;
     Ok((decoder, receipt))
 }
@@ -300,6 +304,8 @@ fn open_decoder(source: Box<dyn MediaSource>, hint_source: &str) -> Result<Decod
 
 pub(super) struct Backend {
     audio: Rc<RefCell<Option<AudioRuntime>>>,
+    /// The host's fetch handle: every remote read goes through its policy.
+    fetch: Arc<dyn Fetch>,
     decoder: Option<Decoder>,
     sink: Option<Sink>,
     /// Decoded source frames waiting to be retimed.
@@ -329,16 +335,18 @@ pub(super) struct Backend {
     test_ready_sent: bool,
 }
 
-impl Default for Backend {
-    fn default() -> Self {
-        Self::with_audio(Rc::new(RefCell::new(None)))
-    }
-}
-
 impl Backend {
-    pub(super) fn with_audio(audio: Rc<RefCell<Option<AudioRuntime>>>) -> Self {
+    pub(super) fn new(fetch: Arc<dyn Fetch>) -> Self {
+        Self::with_audio(Rc::new(RefCell::new(None)), fetch)
+    }
+
+    pub(super) fn with_audio(
+        audio: Rc<RefCell<Option<AudioRuntime>>>,
+        fetch: Arc<dyn Fetch>,
+    ) -> Self {
         Self {
             audio,
+            fetch,
             decoder: None,
             sink: None,
             pending: Vec::new(),
@@ -360,6 +368,10 @@ impl Backend {
             #[cfg(test)]
             test_ready_sent: false,
         }
+    }
+
+    pub(super) fn fetch_handle(&self) -> Arc<dyn Fetch> {
+        self.fetch.clone()
     }
 
     pub(super) fn audio_handle(&self) -> Rc<RefCell<Option<AudioRuntime>>> {
@@ -415,7 +427,7 @@ impl Backend {
             },
             servo_media_player::controller::MediaSource::Http { url } => {
                 let (decoder, representation) =
-                    open_http(url).map_err(|error| error.to_string())?;
+                    open_http(self.fetch.clone(), url).map_err(|error| error.to_string())?;
                 let source_label = representation
                     .final_url
                     .clone()
