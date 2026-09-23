@@ -4,18 +4,18 @@ settle 30
 assert snap item-count >= 1
 capture listen
 
-# The dock must actually be playing: a run that never reached the device or
-# the source is not a receipt of anything. From the start, because the fixture
-# is two seconds long and a saved position near its end completes at once.
+# The dock must actually play: a run that never reached the device or the
+# source is not a receipt of anything. From the start, because the fixture is
+# two seconds long and a saved position near its end completes at once.
 act seek:0
 act play
-# Fifteen frames, not five: a seek on a range-served item costs a request
-# before play applies, and the dock reads PAUSED until it does. Five frames
-# passed or failed with the machine's frame rate (2026-09-23). Fifteen still
-# ends far inside the two-second fixture.
-settle 15
-assert snap transport ~ PLAYING
-settle 5
+# Asserted on the transport event stream, not a snapshot: frame rate varies
+# with machine load, so a snapshot some frames later read PAUSED while a
+# remote seek was still in flight or COMPLETED once the two seconds had gone
+# (both on 2026-09-23). The stream records the PLAYING transition either way,
+# and nothing earlier in this scenario plays.
+settle 30
+assert event transport PLAYING
 capture listen-playing
 act pause
 settle 10
