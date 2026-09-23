@@ -57,5 +57,10 @@ url = "2.5"
 # `parley` and a row here would match no package and fail resolution. Mere
 # dropped its own rows at 767664df for the same reason; genet-livery reaches the
 # fork by path inside the git checkout.
-# No [patch.crates-io] rows: the ipc-channel restatement died with genet's
-# servo-malloc-size-of (gone at genet 532f1fad), and Mere dropped its own row.
+[patch.crates-io]
+# servo-media-player depends on ipc-channel 0.22; this keeps it on genet's
+# vendored in-process fork (support/patches/ipc-channel) rather than the
+# crates.io release. Mere dropped its own row at 250fd238 because nothing in
+# Mere's graph uses ipc-channel any more; this graph still does, through
+# servo-media-player, so the row is live here.
+ipc-channel = { git = "https://github.com/merely-made/genet.git", rev = "532f1fadc53486d60ac4f02835732e8dabd9f62b" }
