@@ -9,18 +9,18 @@ license = "MPL-2.0"
 rust-version = "1.97"
 
 [workspace.dependencies]
-cambium = { git = "https://github.com/merely-made/mere.git", rev = "0e031fa51c8eaa93a3ed0d5cc8cea16ebc84cd4c" }
-cambium-genet-winit-host = { git = "https://github.com/merely-made/mere.git", rev = "0e031fa51c8eaa93a3ed0d5cc8cea16ebc84cd4c" }
-tinct = { git = "https://github.com/merely-made/mere.git", rev = "0e031fa51c8eaa93a3ed0d5cc8cea16ebc84cd4c" }
+cambium = { git = "https://github.com/merely-made/mere.git", rev = "250fd238a9595dde04eea3582e1b3cc5ec6e1715" }
+cambium-genet-winit-host = { git = "https://github.com/merely-made/mere.git", rev = "250fd238a9595dde04eea3582e1b3cc5ec6e1715" }
+tinct = { git = "https://github.com/merely-made/mere.git", rev = "250fd238a9595dde04eea3582e1b3cc5ec6e1715" }
 # The surface-descriptor half of a host's product-admission vocabulary. Same
 # Mere revision as cambium: the descriptor crosses the seam between Redshank
 # and an embedding host, so one revision or the types do not match themselves.
-mere-surface-api = { git = "https://github.com/merely-made/mere.git", rev = "0e031fa51c8eaa93a3ed0d5cc8cea16ebc84cd4c" }
-genet-scripted-dom = { git = "https://github.com/merely-made/genet.git", rev = "9976945058b921437ea59cd95b112bd1da910013" }
+mere-surface-api = { git = "https://github.com/merely-made/mere.git", rev = "250fd238a9595dde04eea3582e1b3cc5ec6e1715" }
+genet-scripted-dom = { git = "https://github.com/merely-made/genet.git", rev = "532f1fadc53486d60ac4f02835732e8dabd9f62b" }
 # Named genet-probe until genet 7baa554c (2026-09-14); same crate, new name.
-taproot = { git = "https://github.com/merely-made/genet.git", rev = "9976945058b921437ea59cd95b112bd1da910013" }
-layout-dom-api = { git = "https://github.com/merely-made/genet.git", rev = "9976945058b921437ea59cd95b112bd1da910013" }
-servo-media-player = { git = "https://github.com/merely-made/genet.git", rev = "9976945058b921437ea59cd95b112bd1da910013" }
+taproot = { git = "https://github.com/merely-made/genet.git", rev = "532f1fadc53486d60ac4f02835732e8dabd9f62b" }
+layout-dom-api = { git = "https://github.com/merely-made/genet.git", rev = "532f1fadc53486d60ac4f02835732e8dabd9f62b" }
+servo-media-player = { git = "https://github.com/merely-made/genet.git", rev = "532f1fadc53486d60ac4f02835732e8dabd9f62b" }
 # Shared pure-std DSP primitives from the woodshed root, consumed through
 # the explicit shared-crate boundary as Hocket does: the WSOLA stretcher
 # behind the playback-rate dock lives there, not in a port-local copy.
@@ -44,9 +44,9 @@ symphonia = { version = "0.5.5", default-features = false, features = ["aac", "i
 # The host's fetch handle: one HTTP policy (cookies, cache, HSTS, transport)
 # for streaming, downloads and feeds. Same Mere revision as cambium. Defaults
 # off: a listener takes the handle over netfetcher and none of the page actor.
-fetch = { package = "mere-fetch", git = "https://github.com/merely-made/mere.git", rev = "0e031fa51c8eaa93a3ed0d5cc8cea16ebc84cd4c", default-features = false }
+fetch = { package = "mere-fetch", git = "https://github.com/merely-made/mere.git", rev = "250fd238a9595dde04eea3582e1b3cc5ec6e1715", default-features = false }
 rfd = "0.17"
-errand = { git = "https://github.com/merely-made/mere.git", rev = "0e031fa51c8eaa93a3ed0d5cc8cea16ebc84cd4c", version = "0.3.4" }
+errand = { git = "https://github.com/merely-made/mere.git", rev = "250fd238a9595dde04eea3582e1b3cc5ec6e1715", version = "0.3.4" }
 url = "2.5"
 
 # Root patches do not cross a git dependency boundary, so a standalone Redshank
@@ -57,5 +57,5 @@ url = "2.5"
 # `parley` and a row here would match no package and fail resolution. Mere
 # dropped its own rows at 767664df for the same reason; genet-livery reaches the
 # fork by path inside the git checkout.
-[patch.crates-io]
-ipc-channel = { git = "https://github.com/merely-made/genet.git", rev = "9976945058b921437ea59cd95b112bd1da910013" }
+# No [patch.crates-io] rows: the ipc-channel restatement died with genet's
+# servo-malloc-size-of (gone at genet 532f1fad), and Mere dropped its own row.
