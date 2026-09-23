@@ -781,8 +781,10 @@ mod tests {
                 samples.copy_interleaved_ref(decoded);
                 distinct |= samples
                     .samples()
-                    .chunks_exact(2)
-                    .any(|frame| (frame[0] - frame[1]).abs() > 0.01);
+                    .as_chunks::<2>()
+                    .0
+                    .iter()
+                    .any(|[left, right]| (left - right).abs() > 0.01);
                 if distinct {
                     break;
                 }
