@@ -9,9 +9,13 @@ capture listen
 # is two seconds long and a saved position near its end completes at once.
 act seek:0
 act play
-settle 5
-assert snap transport ~ PLAYING
+# Fifteen frames, not five: a seek on a range-served item costs a request
+# before play applies, and the dock reads PAUSED until it does. Five frames
+# passed or failed with the machine's frame rate (2026-09-23). Fifteen still
+# ends far inside the two-second fixture.
 settle 15
+assert snap transport ~ PLAYING
+settle 5
 capture listen-playing
 act pause
 settle 10
