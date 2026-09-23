@@ -33,7 +33,8 @@ settle 15
 act select:long-ep
 settle 30
 act play
-settle 5
-assert snap transport ~ PLAYING
+# The transition, not a snapshot; see listen_playing.scn.
+settle 30
+assert event transport PLAYING
 act pause
 log longnames complete
