@@ -425,3 +425,9 @@ run against the same contract.
   with no local cargo config built from GitHub alone and passed 525 tests.
   Still open: microphone in Turnstone, a headed Turnstone receipt, and
   Turnstone's pre-existing strict-Clippy failures (140, none in this slice).
+- **2026-09-22, Lane T closed:** the network-authority condition met when
+  woodshed `bf5923d` put the port's streaming, downloads and feeds on Mere's
+  `fetch::Fetch` handle and Turnstone `77b7ece` handed the tile the shell's
+  handle. All five Phase 7 conditions hold; the port plan's progress log
+  carries the record. Microphone and a headed receipt stay open on the
+  Turnstone side.
