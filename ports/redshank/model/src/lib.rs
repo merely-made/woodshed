@@ -12,6 +12,14 @@ pub struct ItemId(pub String);
 #[serde(transparent)]
 pub struct AnnotationId(pub String);
 
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
+pub struct SavedTranscript {
+    pub resource: FeedTranscript,
+    pub final_url: String,
+    pub retrieved_at_ms: u64,
+    pub source: String,
+}
+
 #[derive(Clone, Debug, Default, Deserialize, Eq, PartialEq, Serialize)]
 pub struct FeedResource {
     pub url: String,
@@ -366,6 +374,9 @@ pub const MAX_LISTENING_SESSIONS: usize = 500;
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 pub struct RedshankModel {
+    /// Explicitly saved transcript sources; retained offline in the model store.
+    #[serde(default)]
+    pub transcripts: BTreeMap<ItemId, SavedTranscript>,
     pub schema_version: u32,
     pub library: BTreeMap<ItemId, LibraryItem>,
     #[serde(default)]
@@ -386,6 +397,7 @@ pub struct RedshankModel {
 impl Default for RedshankModel {
     fn default() -> Self {
         Self {
+            transcripts: BTreeMap::new(),
             schema_version: 1,
             library: BTreeMap::new(),
             subscriptions: BTreeMap::new(),
@@ -515,6 +527,7 @@ impl RedshankModel {
         }
         self.progress.remove(id);
         self.pinned.remove(id);
+        self.transcripts.remove(id);
         self.annotations
             .retain(|_, note| note.target.item_id != *id);
         Ok(item)

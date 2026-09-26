@@ -251,6 +251,101 @@ fn pane_class(state: &RedshankSurfaceState, pane: ListenPane, base: &str) -> Str
     }
 }
 
+fn transcript(state: &RedshankSurfaceState) -> Option<FullView> {
+    let now = state.compact.now_playing.as_ref()?;
+    let mut children: Vec<FullView> = vec![Box::new(el("h3", text("Transcript")))];
+    if let Some((id, saved, parsed)) = &state.transcript {
+        if id == &now.item_id {
+            children.push(Box::new(el(
+                "p",
+                text(format!(
+                    "Transcript snapshot · {}",
+                    saved
+                        .resource
+                        .language
+                        .as_deref()
+                        .unwrap_or("language unspecified")
+                )),
+            )));
+            if parsed.skipped_blocks != 0 {
+                children.push(Box::new(el(
+                    "p",
+                    text(format!(
+                        "{} unsupported or malformed blocks omitted",
+                        parsed.skipped_blocks
+                    )),
+                )));
+            }
+            for cue in &parsed.cues {
+                let position = cue.start_ms;
+                let active = cue.active_at(now.position_ms);
+                children.push(Box::new(
+                    button(
+                        format!("{} {}", format_time(position), cue.text),
+                        move |state: &mut RedshankSurfaceState, _| {
+                            state.request(CompactCommand::Seek(position));
+                        },
+                    )
+                    .attr(
+                        "class",
+                        if active {
+                            "rs-row rs-row-active"
+                        } else {
+                            "rs-row"
+                        },
+                    )
+                    .attr("aria-current", if active { "true" } else { "false" })
+                    .attr(
+                        "aria-label",
+                        format!("Seek transcript to {}: {}", format_time(position), cue.text),
+                    ),
+                ));
+            }
+            return Some(Box::new(
+                el("section", children).attr("aria-label", "Transcript"),
+            ));
+        }
+    }
+    let item = state
+        .library
+        .iter()
+        .find(|item| item.id() == &now.item_id)?;
+    let redshank_model::LibraryItem::FeedEpisode { facts, .. } = item else {
+        return None;
+    };
+    for resource in facts.transcripts.iter().filter(|resource| {
+        resource.media_type.as_deref().is_some_and(|value| {
+            value
+                .split(';')
+                .next()
+                .unwrap_or("")
+                .trim()
+                .eq_ignore_ascii_case("text/vtt")
+        })
+    }) {
+        let resource = resource.clone();
+        let item_id = now.item_id.clone();
+        let label = format!(
+            "Save transcript offline ({})",
+            resource
+                .language
+                .as_deref()
+                .unwrap_or("language unspecified")
+        );
+        children.push(Box::new(
+            button(label.clone(), move |state: &mut RedshankSurfaceState, _| {
+                state.request(CompactCommand::SaveTranscript {
+                    item_id: item_id.clone(),
+                    resource: resource.clone(),
+                });
+            })
+            .attr("aria-label", label),
+        ));
+    }
+    (children.len() > 1)
+        .then(|| Box::new(el("section", children).attr("aria-label", "Transcript")) as FullView)
+}
+
 pub fn panel(state: &RedshankSurfaceState) -> FullView {
     let queue: Vec<FullView> = state
         .queue
@@ -303,6 +398,7 @@ pub fn panel(state: &RedshankSurfaceState) -> FullView {
             rows::section_head(&format!("NOTES · {title}"), rows::note_mix(&owned)),
             note_rows,
             editor(state),
+            transcript(state),
         ),
     )
     .attr(
@@ -356,6 +452,30 @@ mod tests {
         });
         state.queue = vec![ItemId("episode-42".into()), ItemId("second".into())];
         state
+    }
+
+    #[test]
+    fn transcript_tracks_position_and_requests_seek_without_inserting_markup() {
+        let mut state = queued();
+        let now = state.compact.now_playing.as_mut().unwrap();
+        now.position_ms = 1500;
+        let source = "WEBVTT\n\n00:01.000 --> 00:03.000\n<b>Bird</b> &lt;script&gt;";
+        state.transcript = Some((
+            now.item_id.clone(),
+            redshank_model::SavedTranscript {
+                resource: Default::default(),
+                final_url: "https://example.test/words.vtt".into(),
+                retrieved_at_ms: 0,
+                source: source.into(),
+            },
+            timed_text::parse(source).unwrap(),
+        ));
+        let mut runner = runner(state, panel);
+        let html = markup_of(&runner);
+        assert!(html.contains("aria-current=\"true\""));
+        assert!(!html.contains("<script>"));
+        click(&mut runner, "Seek transcript to 0:01: Bird <script>");
+        assert_eq!(commands(&mut runner), [CompactCommand::Seek(1000)]);
     }
 
     #[test]

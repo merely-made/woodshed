@@ -9,6 +9,7 @@ license = "MPL-2.0"
 rust-version = "1.97"
 
 [workspace.dependencies]
+timed-text = { path = "../../crates/timed-text", version = "0.1.0" }
 cambium = { git = "https://github.com/merely-made/mere.git", rev = "149b8053a9acf71bbb3733bbdb156579ab9c4af6" }
 cambium-genet-winit-host = { git = "https://github.com/merely-made/mere.git", rev = "149b8053a9acf71bbb3733bbdb156579ab9c4af6" }
 tinct = { git = "https://github.com/merely-made/mere.git", rev = "149b8053a9acf71bbb3733bbdb156579ab9c4af6" }

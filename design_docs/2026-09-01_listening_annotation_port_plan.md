@@ -1253,3 +1253,33 @@ rejected for the reasons recorded in the 2026-09-01 planning pass.
   canvas controls as real state; Phase 7 (Turnstone as second host) is in
   progress with redshank-playback as Turnstone's audio authority. See the GUI
   plan's progress log.
+- **2026-09-22, Phase 7 met.** Turnstone is the second host. Lane T of the GUI
+  plan (2026-09-15) mounted the compact dock through
+  `redshank_surfaces::surface_api` as Turnstone's third contributed surface,
+  routed podcast enclosures and subscribed feed entries to it, and projected
+  one item, its progress, and its timed notes into the session graph, with a
+  two-`App` restart test; a conformance test re-runs the dock's own assertions
+  through Turnstone's provider registry. The last condition, Turnstone's
+  network authority, closed on 2026-09-22: woodshed `bf5923d` moved the port's
+  streaming, downloads, and feeds onto Mere's `fetch::Fetch` handle (lane R of
+  Mere's ranged fetch plan) and Turnstone `77b7ece` hands the tile the shell's
+  handle, so episode requests carry the session's cookies and use its transport
+  seam, and `ureq` is out of the port. Turnstone takes Redshank as four git
+  dependencies on woodshed.git, resolved from the nested workspace with none of
+  Woodshed's workspace configuration. Still open on the Turnstone side, and
+  recorded in `turnstone/design_docs/2026-09-14_redshank_episode_surface_plan.md`:
+  no microphone adapter, and no headed receipt.
+- **2026-09-26.** Ruled by Mark: the port moves to its own repository. The
+  extraction conditions above hold (a proven second host, a one-way dependency
+  boundary, a build Turnstone already takes from GitHub without Woodshed's
+  configuration), and Redshank's shape matches knot-editor's. Order of work:
+  close Phase 5 (Duck through the existing output gain; validate the export
+  against the W3C profile), then Phase 6, then Turnstone's open gates, then
+  extraction. The same day the machine-local `.cargo/config.toml` in this
+  checkout lost every `[patch]` table: they pointed at a deleted
+  genet-workbench worktree and at a local mere checkout 42 commits behind the
+  pin, so the port now builds `--locked` from the committed pins alone.
+
+## 2026-09-26 timed transcript slice
+
+The bounded WebVTT parser, explicit offline transcript saving, and cue/seek projection are tracked in [the timed transcripts plan](2026-09-26_timed_transcripts_plan.md). Full text-track rendering and headed real-episode acceptance remain open.

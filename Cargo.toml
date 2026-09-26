@@ -4,6 +4,7 @@ members = [
     "crates/woodshedding",
     "crates/woodshed-audio",
     "crates/audio-primitives",
+    "crates/timed-text",
     "crates/woodshed-core",
     "crates/woodshed-views",
     "crates/woodshed-genet",

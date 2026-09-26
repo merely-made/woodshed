@@ -5324,6 +5324,10 @@ dependencies = [
 ]
 
 [[package]]
+name = "timed-text"
+version = "0.1.0"
+
+[[package]]
 name = "tinct"
 version = "0.1.2"
 source = "git+https://github.com/merely-made/mere.git?rev=149b8053a9acf71bbb3733bbdb156579ab9c4af6#149b8053a9acf71bbb3733bbdb156579ab9c4af6"

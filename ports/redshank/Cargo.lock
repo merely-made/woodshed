@@ -5004,6 +5004,8 @@ dependencies = [
  "rfd",
  "taproot",
  "tempfile",
+ "timed-text",
+ "url",
 ]
 
 [[package]]
@@ -5059,6 +5061,7 @@ dependencies = [
  "layout-dom-api",
  "mere-surface-api",
  "redshank-model",
+ "timed-text",
  "tinct",
 ]
 
@@ -6072,6 +6075,10 @@ dependencies = [
  "num-conv",
  "time-core",
 ]
+
+[[package]]
+name = "timed-text"
+version = "0.1.0"
 
 [[package]]
 name = "tinct"

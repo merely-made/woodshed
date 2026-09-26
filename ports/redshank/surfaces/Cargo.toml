@@ -7,6 +7,7 @@ rust-version.workspace = true
 publish = false
 
 [dependencies]
+timed-text.workspace = true
 cambium.workspace = true
 # The retained-surface seam a second host admits this crate through: the
 # descriptor vocabulary and the NodeId the erased session speaks in.

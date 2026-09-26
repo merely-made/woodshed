@@ -1,0 +1,8 @@
+[package]
+name = "timed-text"
+version = "0.1.0"
+edition = "2024"
+license = "MPL-2.0"
+rust-version = "1.97"
+description = "Bounded WebVTT transcript cues without network or rendering authority"
+
