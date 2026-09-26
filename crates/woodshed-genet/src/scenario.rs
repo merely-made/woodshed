@@ -4,7 +4,7 @@
 //! desktop grab: synthetic input that loses the foreground race whenever the
 //! machine is in use, and captures that can silently photograph the wrong
 //! window. This lane replaces both. The generic half (parsing, the verb loop,
-//! selector resolution, assertions) is [`genet_probe`]; what lives here is only
+//! selector resolution, assertions) is [`taproot`]; what lives here is only
 //! what is woodshed's: which surfaces it has, what it can be asked to observe,
 //! its named commands, and how a frame becomes a PNG.
 //!
@@ -15,7 +15,7 @@
 //!
 //! Two env vars turn it on:
 //!
-//! - `WOODSHED_SCENARIO` — path to a `.scn` file (grammar in `genet_probe`).
+//! - `WOODSHED_SCENARIO` — path to a `.scn` file (grammar in `taproot`).
 //! - `WOODSHED_CAPTURE_DIR` — where `capture <name>` writes `<name>.png` and,
 //!   at the end, `scenario.done` whose first line is `RESULT ok` or
 //!   `RESULT fail`.
@@ -33,7 +33,7 @@ use std::path::{Path, PathBuf};
 use std::rc::Rc;
 
 use cambium_genet_winit_host::{Frame, HostPointer, read_frame};
-use genet_probe::{
+use taproot::{
     Automatable, AutomatableExt, Driveable, ProbeSnapshot, ProbeSurface, Progress, Scenario,
     Selector,
 };
@@ -88,7 +88,7 @@ impl ScenarioLane {
     }
 
     /// Write the `scenario.done` sentinel the harness waits on.
-    fn write_outcome(&mut self, outcome: genet_probe::Outcome, capture_dir: Option<&Path>) {
+    fn write_outcome(&mut self, outcome: taproot::Outcome, capture_dir: Option<&Path>) {
         if self.finished {
             return;
         }
@@ -372,11 +372,11 @@ impl Probe<'_, '_> {
 }
 
 impl Automatable for Probe<'_, '_> {
-    fn selector_target(&self, selector: &Selector) -> genet_probe::SelectorTarget {
+    fn selector_target(&self, selector: &Selector) -> taproot::SelectorTarget {
         let candidates = {
             let dom = self.ctx.runner.dom();
             let dom = dom.borrow();
-            genet_probe::matching(&dom, selector)
+            taproot::matching(&dom, selector)
         };
         let (width, height) = self.ctx.logical_size;
         for node in candidates {
@@ -388,7 +388,7 @@ impl Automatable for Probe<'_, '_> {
             }
             let point = (x + w / 2.0, y + h / 2.0);
             if point.0 >= 0.0 && point.1 >= 0.0 && point.0 < width && point.1 < height {
-                return genet_probe::SelectorTarget::Hit(genet_probe::Hit {
+                return taproot::SelectorTarget::Hit(taproot::Hit {
                     surface: "woodshed",
                     point,
                 });
@@ -396,7 +396,7 @@ impl Automatable for Probe<'_, '_> {
         }
         // Participating hosts own both hits and misses. Never re-layout after
         // a missing, hidden or offscreen retained target.
-        genet_probe::SelectorTarget::Miss
+        taproot::SelectorTarget::Miss
     }
 
     fn with_surfaces<R>(&self, f: impl FnOnce(&[ProbeSurface<'_>]) -> R) -> R {

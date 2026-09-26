@@ -82,6 +82,8 @@ pub async fn start(canvas_id: Option<String>) -> Result<(), JsValue> {
             state: (),
             logic: demo_root as fn(&()) -> Child,
             sheet: DEMO_SHEET.to_string(),
+            fonts: Vec::new(),
+            images: Vec::new(),
         },
         HostHooks {
             frame: Box::new(|_ctx| false),

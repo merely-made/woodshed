@@ -5,7 +5,7 @@
 //! on exact text metrics or screen coordinates.
 
 use cambium_genet_winit_host::Harness;
-use genet_probe::Selector;
+use taproot::Selector;
 use woodshed_core::settings::StageGraphReading;
 use woodshed_views::stage::{UiChild, UiState, stage_root};
 
@@ -30,7 +30,7 @@ fn rect(
     let id = {
         let node = harness.runner().dom();
         let dom = node.borrow();
-        genet_probe::matching(&dom, &Selector::class(class))
+        taproot::matching(&dom, &Selector::class(class))
             .into_iter()
             .next()
             .unwrap_or_else(|| panic!("missing .{class}"))
@@ -177,7 +177,7 @@ fn rehearsal_board_scroll_preserves_extent_and_note_hits() {
     let nodes = {
         let dom = h.runner().dom();
         let dom = dom.borrow();
-        genet_probe::matching(&dom, &Selector::class("fret-label"))
+        taproot::matching(&dom, &Selector::class("fret-label"))
     };
     let point = nodes
         .into_iter()
