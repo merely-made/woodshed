@@ -403,6 +403,11 @@ fn apply(state: &mut RedshankSurfaceState, command: CompactCommand) {
             }
             state.editing_note = Some(id);
         },
+        C::SetNotePrivacy { id, privacy } => {
+            if let Some(note) = state.notes.iter_mut().find(|note| note.id == id) {
+                note.private = privacy == redshank_model::NotePrivacy::Private;
+            }
+        },
         C::DeleteNote(id) => {
             state.notes.retain(|note| note.id != id);
             if let Some(playing) = state.compact.now_playing.as_mut() {

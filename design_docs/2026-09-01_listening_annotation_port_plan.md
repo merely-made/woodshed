@@ -18,11 +18,12 @@ and automatic cache reclamation remain open. Explicit cache removal and stable
 eviction ordering are landed. Headed local, HTTP,
 and server-offline playback, text-note, persistence, restart, and resume receipts
 now pass.
-Phase 5 is active with bounded standalone microphone capture, durable voice
-bodies, source-anchor reopening, recorded-body audition through the shared
-output authority, reaction offset, and W3C annotation export. Duck and
-validation of the export against the chosen W3C profile remain open, and
-closing Phase 5 is the next step. Phase 6 is not started. Phase 7 is met as of
+Phase 5 is closed as of 2026-09-26: standalone microphone capture, durable
+voice bodies, source-anchor reopening, recorded-body audition through the
+shared output authority, reaction offset, Duck through the one output gain,
+and a W3C export that passes the Web Annotation test suite's MUST assertions
+in the port's own tests. Knot's generic media `FragmentSelector` is Knot's,
+not this port's, and stays open there. Phase 6 is not started. Phase 7 is met as of
 2026-09-22: Turnstone hosts the compact dock as a contributed surface, routes
 enclosures to it, projects one item, its progress and its notes into its
 graph, and streams through its own fetch handle; see the progress log. Mark
@@ -1279,6 +1280,37 @@ rejected for the reasons recorded in the 2026-09-01 planning pass.
   checkout lost every `[patch]` table: they pointed at a deleted
   genet-workbench worktree and at a local mere checkout 42 commits behind the
   pin, so the port now builds `--locked` from the committed pins alone.
+- **2026-09-26, Phase 5 closed.** Duck is real: `redshank-playback` gained
+  `Duck(percent)` and `Unduck`, applied as a scale on the one host-owned
+  Firewheel gain (`volume × duck`), re-applied when the audio runtime
+  restarts, and reported in the snapshot as `duck_percent` beside the
+  listener's untouched `volume_percent`. The level is a setting,
+  `duck_volume_percent` (default 10, a Capture stepper in 5% steps, ruled by
+  Mark). The desktop ducks on text or voice capture begin and lifts the duck
+  from the state after each command batch and poll, once no text capture and
+  no voice session is open, so every way a capture ends (save, cancel, item
+  removal, a durable save landing, close) lifts it through one place; a
+  setting change while ducked re-applies at the new level. The export is
+  validated by the instrument itself: W3C's `web-annotation-tests` definitions
+  and its 54 MUST assertions (commit `adedd9a5`, 2019-03-05, dual W3C Test
+  Suite / BSD licence) are vendored under
+  `model/tests/fixtures/w3c-web-annotation/` and run through the `jsonschema`
+  crate (draft-04, formats on) in `model/tests/w3c_conformance.rs`, with the
+  spec's own example as the positive control and a malformed `created` as the
+  negative. The suite caught three things the hand assertions had not: `id`
+  was a bare string (now `mere://redshank/note/<id>`, the name Turnstone's
+  graph node already carries), `created` was a millisecond integer (now RFC
+  3339 UTC, by pure civil-from-days arithmetic), and a local item's `source`
+  was a bare path (now a `file:` URL, or `mere://redshank/item/<id>` when the
+  path is relative or the host has no file system). `audience` carried privacy
+  as a bare string, which is not what the model's `audience` means, and is
+  gone. Ruled by Mark the same day: private notes are withheld from the
+  export, and a note is made shareable per note through its row menu
+  (`SetNotePrivacy`), which the "New notes are" setting only defaults. Redshank
+  workspace: 175 tests (7 device-gated ignores), strict Clippy clean, the web
+  host checks on wasm32. Turnstone's host ignores `capture_playback` entirely,
+  Pause included; that is recorded as a Turnstone gate, worked last per Mark's
+  order.
 
 ## 2026-09-26 timed transcript slice
 

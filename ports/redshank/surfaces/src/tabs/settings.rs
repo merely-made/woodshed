@@ -134,6 +134,13 @@ fn capture(state: &RedshankSurfaceState) -> FullView {
             ..settings.clone()
         })
     };
+    let duck = settings.duck_volume_percent;
+    let duck_command = |next: u8| {
+        write(ListenerSettings {
+            duck_volume_percent: next,
+            ..settings.clone()
+        })
+    };
     let behavior_options = [
         ("pause", CapturePlaybackBehavior::Pause),
         ("duck", CapturePlaybackBehavior::Duck),
@@ -185,6 +192,17 @@ fn capture(state: &RedshankSurfaceState) -> FullView {
                 "While recording",
                 None,
                 controls::segment("While recording", behavior_options),
+            ),
+            controls::row(
+                "Duck to",
+                Some("percent of volume while recording"),
+                controls::stepper(
+                    "Duck to",
+                    i64::from(duck),
+                    "%",
+                    duck_command(duck.saturating_sub(5)),
+                    duck_command(duck.saturating_add(5).min(100)),
+                ),
             ),
             controls::row(
                 "Resume playback after capture",
@@ -455,6 +473,30 @@ mod tests {
         assert!(matches!(
             &commands(&mut runner)[0],
             CompactCommand::UpdateSettings(settings) if settings.reaction_offset_ms == 1_000
+        ));
+    }
+
+    #[test]
+    fn duck_level_steps_by_five_percent_and_stops_at_the_ends() {
+        let mut floor = settings_state();
+        floor.settings.duck_volume_percent = 0;
+        let mut at_floor = runner(floor, panel);
+        let mut runner = runner(settings_state(), panel);
+        click(&mut runner, "Increase Duck to");
+        click(&mut runner, "Decrease Duck to");
+        click(&mut at_floor, "Decrease Duck to");
+        let stepped = commands(&mut runner);
+        assert!(matches!(
+            &stepped[0],
+            CompactCommand::UpdateSettings(settings) if settings.duck_volume_percent == 15
+        ));
+        assert!(matches!(
+            &stepped[1],
+            CompactCommand::UpdateSettings(settings) if settings.duck_volume_percent == 5
+        ));
+        assert!(matches!(
+            &commands(&mut at_floor)[0],
+            CompactCommand::UpdateSettings(settings) if settings.duck_volume_percent == 0
         ));
     }
 

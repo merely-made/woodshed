@@ -265,6 +265,8 @@ struct Desktop {
     cache_removals_in_flight: usize,
     voice_capture: LocalVoiceCapture,
     voice_session: Option<VoiceSession>,
+    /// A capture is holding the output ducked; lifted once no capture is open.
+    ducked: bool,
     voice_save_revision: Option<u64>,
     voice_removals: Vec<PendingVoiceRemoval>,
     voice_removals_in_flight: usize,
@@ -430,6 +432,28 @@ impl Desktop {
             .map_err(|error| error.to_string())
     }
 
+    /// Lower the output to the settings' duck level for a capture.
+    fn duck(&mut self) -> Result<(), String> {
+        self.send(PlaybackCommand::Duck(
+            self.session.model.settings.duck_volume_percent,
+        ))?;
+        self.ducked = true;
+        Ok(())
+    }
+
+    /// Lift the duck once no capture is open. Captures end in many places
+    /// (save, cancel, item removal, a durable save landing, close), so the
+    /// lift is decided from the state after each batch rather than at each.
+    fn settle_duck(&mut self, state: &RedshankSurfaceState) {
+        if self.ducked
+            && state.text_capture.is_none()
+            && self.voice_session.is_none()
+            && self.send(PlaybackCommand::Unduck).is_ok()
+        {
+            self.ducked = false;
+        }
+    }
+
     fn select(&mut self, id: ItemId) -> Result<(), String> {
         for command in self
             .session
@@ -505,10 +529,7 @@ impl Desktop {
         match self.session.model.settings.capture_playback {
             CapturePlaybackBehavior::Pause => self.send(PlaybackCommand::Pause)?,
             CapturePlaybackBehavior::Continue => {},
-            CapturePlaybackBehavior::Duck => return Err(
-                "Ducking is not available in this local playback slice; choose Pause or Continue"
-                    .into(),
-            ),
+            CapturePlaybackBehavior::Duck => self.duck()?,
         }
         state.editing_note = None;
         state.text_capture = Some(TextCapture {
@@ -588,9 +609,8 @@ impl Desktop {
             },
             CapturePlaybackBehavior::Continue => false,
             CapturePlaybackBehavior::Duck => {
-                return Err(
-                    "Ducking is not available yet; choose Pause or Continue in Settings".into(),
-                );
+                self.duck()?;
+                false
             },
         };
         if let Err(error) = self.voice_capture.begin_capture() {
@@ -1030,10 +1050,10 @@ impl Desktop {
                 {
                     self.send(PlaybackCommand::StopPreview)?;
                 }
-                if let Some(pending) = &mut self.transcript_pending {
-                    if pending.id == id {
-                        pending.removed = true;
-                    }
+                if let Some(pending) = &mut self.transcript_pending
+                    && pending.id == id
+                {
+                    pending.removed = true;
                 }
                 let item = self
                     .session
@@ -1122,6 +1142,17 @@ impl Desktop {
                 self.persistence.changed();
                 self.send(PlaybackCommand::SetRate(rate))?;
                 self.send(PlaybackCommand::SetVolume(volume))?;
+                if self.ducked {
+                    // A capture is holding the duck; a new level applies to it now.
+                    self.duck()?;
+                }
+            },
+            CompactCommand::SetNotePrivacy { id, privacy } => {
+                self.session
+                    .model
+                    .set_annotation_privacy(&id, privacy)
+                    .map_err(|error| format!("Could not change the note's privacy: {error:?}"))?;
+                self.persistence.changed();
             },
             CompactCommand::BeginVoiceNote => self.begin_voice_note(state)?,
             CompactCommand::FinishVoiceNote => self.finish_voice_note(state)?,
@@ -1239,6 +1270,7 @@ impl Desktop {
                 state.notice = Some(error);
             }
         }
+        self.settle_duck(state);
         let snapshot = self.runtime.snapshot();
         self.project(state, &snapshot);
         if let Err(error) = self.persistence.flush(&self.session.model) {
@@ -1431,6 +1463,7 @@ impl Desktop {
                 self.persistence.changed();
             }
         }
+        self.settle_duck(state);
         self.project(state, &snapshot);
         if let Err(error) = self.persistence.flush(&self.session.model) {
             state.notice = Some(error);
@@ -1744,6 +1777,7 @@ fn main() {
         cache_removals_in_flight: 0,
         voice_capture: LocalVoiceCapture::new(&data_root),
         voice_session: None,
+        ducked: false,
         voice_save_revision: None,
         voice_removals: Vec::new(),
         voice_removals_in_flight: 0,
@@ -2266,6 +2300,7 @@ mod tests {
             cache_removals_in_flight: 0,
             voice_capture: LocalVoiceCapture::new(directory),
             voice_session: None,
+            ducked: false,
             voice_save_revision: None,
             voice_removals: Vec::new(),
             voice_removals_in_flight: 0,
@@ -2283,6 +2318,59 @@ mod tests {
             last_projection: Instant::now(),
             projected_item: None,
         }
+    }
+
+    fn wait_for_duck(desktop: &Desktop, expected: Option<u8>) {
+        let deadline = Instant::now() + Duration::from_secs(5);
+        while desktop.runtime.snapshot().duck_percent != expected {
+            assert!(Instant::now() < deadline, "duck never reached {expected:?}");
+            std::thread::sleep(Duration::from_millis(10));
+        }
+    }
+
+    #[test]
+    fn a_capture_ducks_the_output_and_the_lift_follows_the_last_open_capture() {
+        let directory = tempfile::tempdir().unwrap();
+        let mut desktop = desktop(directory.path());
+        desktop.session.model.settings.capture_playback = CapturePlaybackBehavior::Duck;
+        desktop.session.model.settings.duck_volume_percent = 10;
+        let mut state = RedshankSurfaceState::default();
+        state.text_capture = Some(TextCapture {
+            anchor: CaptureAnchor {
+                item_id: ItemId("a".into()),
+                offset_ms: 321,
+                end_offset_ms: None,
+                pressed_offset_ms: None,
+                representation: Default::default(),
+            },
+            draft: String::new(),
+            end_offset_ms: None,
+        });
+        desktop.duck().unwrap();
+        wait_for_duck(&desktop, Some(10));
+
+        // The level follows the setting while the capture is still open.
+        let mut settings = desktop.session.model.settings.clone();
+        settings.duck_volume_percent = 30;
+        desktop
+            .command(&mut state, CompactCommand::UpdateSettings(settings))
+            .unwrap();
+        wait_for_duck(&desktop, Some(30));
+
+        // Still held while the text capture is open, however often we settle.
+        desktop.settle_duck(&state);
+        assert!(desktop.ducked);
+
+        // Lifted once nothing is capturing.
+        state.text_capture = None;
+        desktop.settle_duck(&state);
+        assert!(!desktop.ducked);
+        wait_for_duck(&desktop, None);
+        // The listener's own volume never moved.
+        assert_eq!(
+            desktop.runtime.snapshot().volume_percent,
+            desktop.session.model.settings.volume_percent
+        );
     }
 
     #[test]

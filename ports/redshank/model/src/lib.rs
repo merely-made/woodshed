@@ -294,6 +294,9 @@ pub struct ListenerSettings {
     pub reaction_offset_ms: u64,
     #[serde(default = "default_resume_after_capture")]
     pub resume_after_capture: bool,
+    /// While a capture ducks playback, the volume is scaled to this percent.
+    #[serde(default = "default_duck_volume_percent")]
+    pub duck_volume_percent: u8,
     #[serde(default)]
     pub note_privacy: NotePrivacy,
     #[serde(default)]
@@ -327,6 +330,10 @@ pub const fn default_resume_after_capture() -> bool {
     true
 }
 
+pub const fn default_duck_volume_percent() -> u8 {
+    10
+}
+
 impl Default for ListenerSettings {
     fn default() -> Self {
         Self {
@@ -338,6 +345,7 @@ impl Default for ListenerSettings {
             volume_percent: default_volume_percent(),
             reaction_offset_ms: 0,
             resume_after_capture: default_resume_after_capture(),
+            duck_volume_percent: default_duck_volume_percent(),
             note_privacy: NotePrivacy::default(),
             refresh_schedule: RefreshSchedule::default(),
             resume_completed_from: ResumeCompleted::default(),
@@ -612,7 +620,10 @@ impl RedshankModel {
         }
     }
 
-    /// The source URL or path an exported annotation targets.
+    /// The IRI an exported annotation targets. The model's source is always
+    /// an IRI (a `SpecificResource`'s `source` must be one); a local path
+    /// becomes a `file:` URL, and anything with no URL of its own is named
+    /// by its library identity under the port's own scheme.
     fn annotation_source(&self, note: &Annotation) -> String {
         if let Some(url) = note.target.representation.final_url.as_deref().or(note
             .target
@@ -622,12 +633,11 @@ impl RedshankModel {
         {
             return url.to_owned();
         }
-        match self
-            .library
-            .get(&note.target.item_id)
-            .map(LibraryItem::source)
-        {
-            Some(MediaSource::Local { path }) => path.clone(),
+        let item = &note.target.item_id;
+        match self.library.get(item).map(LibraryItem::source) {
+            Some(MediaSource::Local { path }) => {
+                local_file_iri(path).unwrap_or_else(|| item_iri(item))
+            },
             Some(MediaSource::Enclosure { url }) => url.clone(),
             Some(MediaSource::Cached {
                 origin_url,
@@ -638,15 +648,18 @@ impl RedshankModel {
                 .clone()
                 .unwrap_or_else(|| origin_url.clone()),
             Some(MediaSource::HostBlob { id }) => format!("blob:{id}"),
-            None => note.target.item_id.0.clone(),
+            None => item_iri(item),
         }
     }
 
-    /// One item's annotations as a W3C Web Annotation page. Pure: no I/O.
+    /// One item's shareable annotations as a W3C Web Annotation page. Pure:
+    /// no I/O. Private notes are the listener's alone and stay out; a note
+    /// is made shareable per note before it leaves.
     pub fn export_annotations(&self, item: &ItemId) -> serde_json::Value {
         let items: Vec<_> = self
             .annotations_for_item(item)
             .into_iter()
+            .filter(|note| note.privacy == NotePrivacy::Shareable)
             .map(|note| self.export_annotation(note))
             .collect();
         serde_json::json!({
@@ -683,13 +696,9 @@ impl RedshankModel {
         serde_json::json!({
             "@context": "http://www.w3.org/ns/anno.jsonld",
             "type": "Annotation",
-            "id": note.id.0,
-            "created": note.created_at_ms,
+            "id": note_iri(&note.id),
+            "created": rfc3339_utc(note.created_at_ms),
             "motivation": "commenting",
-            "audience": match note.privacy {
-                NotePrivacy::Private => "private",
-                NotePrivacy::Shareable => "shareable",
-            },
             "body": body,
             "target": {
                 "source": self.annotation_source(note),
@@ -700,6 +709,18 @@ impl RedshankModel {
                 },
             },
         })
+    }
+
+    /// Keep a note to the listener, or let the export carry it.
+    pub fn set_annotation_privacy(
+        &mut self,
+        id: &AnnotationId,
+        privacy: NotePrivacy,
+    ) -> Result<(), ModelError> {
+        self.annotations
+            .get_mut(id)
+            .map(|annotation| annotation.privacy = privacy)
+            .ok_or_else(|| ModelError::MissingAnnotation(id.clone()))
     }
 
     pub fn update_text_annotation(
@@ -744,6 +765,56 @@ impl RedshankModel {
 }
 
 /// A media-fragment temporal value, `t=start` or `t=start,end`, in seconds.
+/// A note's IRI on export: the same name Turnstone gives its graph node.
+pub fn note_iri(id: &AnnotationId) -> String {
+    format!("mere://redshank/note/{}", id.0)
+}
+
+/// A library item's IRI, for a source that has no URL of its own.
+pub fn item_iri(id: &ItemId) -> String {
+    format!("mere://redshank/item/{}", id.0)
+}
+
+/// An absolute local path as a `file:` URL. A relative path has no URL, and
+/// a host with no file system (the browser) has none for any path.
+fn local_file_iri(path: &str) -> Option<String> {
+    #[cfg(any(unix, windows))]
+    {
+        url::Url::from_file_path(path).ok().map(String::from)
+    }
+    #[cfg(not(any(unix, windows)))]
+    {
+        let _ = path;
+        None
+    }
+}
+
+/// Milliseconds since the Unix epoch as an RFC 3339 UTC date-time, which is
+/// the `xsd:dateTime` the Web Annotation model wants for `created`. Pure
+/// proleptic-Gregorian arithmetic (Howard Hinnant's civil-from-days), so the
+/// model stays free of a calendar dependency.
+pub fn rfc3339_utc(ms: u64) -> String {
+    let seconds = ms / 1_000;
+    let millis = ms % 1_000;
+    let days = (seconds / 86_400) as i64;
+    let of_day = seconds % 86_400;
+    let z = days + 719_468;
+    let era = z.div_euclid(146_097);
+    let doe = z.rem_euclid(146_097);
+    let yoe = (doe - doe / 1_460 + doe / 36_524 - doe / 146_096) / 365;
+    let doy = doe - (365 * yoe + yoe / 4 - yoe / 100);
+    let mp = (5 * doy + 2) / 153;
+    let day = doy - (153 * mp + 2) / 5 + 1;
+    let month = if mp < 10 { mp + 3 } else { mp - 9 };
+    let year = yoe + era * 400 + i64::from(month <= 2);
+    format!(
+        "{year:04}-{month:02}-{day:02}T{:02}:{:02}:{:02}.{millis:03}Z",
+        of_day / 3_600,
+        of_day % 3_600 / 60,
+        of_day % 60
+    )
+}
+
 fn fragment_value(start_ms: u64, end_ms: Option<u64>) -> String {
     let seconds = |milliseconds: u64| format!("{:.3}", milliseconds as f64 / 1000.0);
     match end_ms {
@@ -1086,18 +1157,87 @@ mod tests {
                 2,
             )
             .unwrap();
+        // New notes take the settings' privacy, Private by default, and a
+        // private note is the listener's alone: it is not exported.
+        assert!(
+            model.export_annotations(&id)["items"]
+                .as_array()
+                .unwrap()
+                .is_empty()
+        );
+        for note in ["n1", "n2"] {
+            model
+                .set_annotation_privacy(&AnnotationId(note.into()), NotePrivacy::Shareable)
+                .unwrap();
+        }
         let export = model.export_annotations(&id);
         assert_eq!(export["@context"], "http://www.w3.org/ns/anno.jsonld");
         assert_eq!(export["type"], "AnnotationPage");
         let items = export["items"].as_array().unwrap();
         assert_eq!(items.len(), 2);
         assert_eq!(items[0]["type"], "Annotation");
+        assert_eq!(items[0]["id"], "mere://redshank/note/n1");
+        assert_eq!(items[0]["created"], "1970-01-01T00:00:00.001Z");
+        assert!(items[0].get("audience").is_none());
         assert_eq!(items[0]["body"]["type"], "TextualBody");
         assert_eq!(items[0]["body"]["value"], "point");
         assert_eq!(items[0]["target"]["source"], "https://example.test/a.mp3");
         assert_eq!(items[0]["target"]["selector"]["type"], "FragmentSelector");
         assert_eq!(items[0]["target"]["selector"]["value"], "t=12.500");
         assert_eq!(items[1]["target"]["selector"]["value"], "t=30.000,45.250");
+    }
+
+    #[test]
+    fn created_is_an_rfc3339_utc_date_time() {
+        // Values cross-checked against Python's datetime.fromtimestamp(utc).
+        assert_eq!(rfc3339_utc(0), "1970-01-01T00:00:00.000Z");
+        assert_eq!(rfc3339_utc(951_782_400_000), "2000-02-29T00:00:00.000Z");
+        assert_eq!(rfc3339_utc(1_758_900_000_000), "2025-09-26T15:20:00.000Z");
+        assert_eq!(rfc3339_utc(1_735_689_599_999), "2024-12-31T23:59:59.999Z");
+        assert_eq!(rfc3339_utc(4_102_444_800_000), "2100-01-01T00:00:00.000Z");
+    }
+
+    #[test]
+    fn a_local_path_exports_as_a_file_url_and_a_relative_one_as_the_item_iri() {
+        let mut model = RedshankModel::default();
+        model.settings.note_privacy = NotePrivacy::Shareable;
+        let absolute = if cfg!(windows) {
+            r"C:\audio\talk one.mp3"
+        } else {
+            "/audio/talk one.mp3"
+        };
+        model
+            .add_item(LibraryItem::LocalAudio {
+                id: ItemId("abs".into()),
+                title: "Absolute".into(),
+                source: MediaSource::Local {
+                    path: absolute.into(),
+                },
+            })
+            .unwrap();
+        model.add_item(local_item("rel")).unwrap();
+        for item in ["abs", "rel"] {
+            let anchor = CaptureAnchor {
+                item_id: ItemId(item.into()),
+                offset_ms: 1,
+                end_offset_ms: None,
+                pressed_offset_ms: None,
+                representation: RepresentationReceipt::default(),
+            };
+            model
+                .add_text_annotation(AnnotationId(item.into()), anchor, item.into(), 1)
+                .unwrap();
+        }
+        let source = |item: &str| {
+            model.export_annotations(&ItemId(item.into()))["items"][0]["target"]["source"].clone()
+        };
+        let expected_absolute = if cfg!(windows) {
+            "file:///C:/audio/talk%20one.mp3"
+        } else {
+            "file:///audio/talk%20one.mp3"
+        };
+        assert_eq!(source("abs"), expected_absolute);
+        assert_eq!(source("rel"), "mere://redshank/item/rel");
     }
 
     #[test]
@@ -1121,7 +1261,7 @@ mod tests {
                     duration_ms: 1_500,
                 },
                 created_at_ms: 3,
-                privacy: NotePrivacy::Private,
+                privacy: NotePrivacy::Shareable,
             })
             .unwrap();
         let export = model.export_annotations(&id);
@@ -1129,7 +1269,10 @@ mod tests {
         assert_eq!(body["id"], "voice:abc");
         assert_eq!(body["format"], "audio/wav");
         assert_eq!(body["duration"], "PT1.500S");
-        assert_eq!(export["items"][0]["target"]["source"], "a.mp3");
+        assert_eq!(
+            export["items"][0]["target"]["source"],
+            "mere://redshank/item/a"
+        );
     }
 
     #[test]
