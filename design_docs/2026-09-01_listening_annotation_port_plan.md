@@ -1,6 +1,6 @@
 # Redshank: listening and annotation port plan
 
-**Status (2026-09-13): ACTIVE.** The product direction and **Redshank** name are
+**Status (2026-09-26): ACTIVE.** The product direction and **Redshank** name are
 endorsed. Phase 0 is complete: Symphonia plus a bounded range source is the
 shipping default, and Genet/GStreamer is the retained browser-conformance
 fallback. Phase 1 is complete: its general Genet boundary, deterministic player
@@ -19,9 +19,15 @@ eviction ordering are landed. Headed local, HTTP,
 and server-offline playback, text-note, persistence, restart, and resume receipts
 now pass.
 Phase 5 is active with bounded standalone microphone capture, durable voice
-bodies, source-anchor reopening, and recorded-body audition through the shared
-output authority. Duck and reaction-offset behavior and open annotation export
-remain open.
+bodies, source-anchor reopening, recorded-body audition through the shared
+output authority, reaction offset, and W3C annotation export. Duck and
+validation of the export against the chosen W3C profile remain open, and
+closing Phase 5 is the next step. Phase 6 is not started. Phase 7 is met as of
+2026-09-22: Turnstone hosts the compact dock as a contributed surface, routes
+enclosures to it, projects one item, its progress and its notes into its
+graph, and streams through its own fetch handle; see the progress log. Mark
+ruled on 2026-09-26 that the port moves to its own repository, after Phases 5
+and 6 close and Turnstone's remaining gates are worked.
 
 ## Ruling
 
