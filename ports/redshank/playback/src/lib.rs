@@ -66,7 +66,11 @@ pub struct PlaybackSnapshot {
     /// The rate the retiming stage is actually running at. It equals the
     /// requested rate once clamped to what the stretcher supports.
     pub rate_percent: u16,
+    /// The listener's volume. While ducked, the gain in effect is this
+    /// scaled by `duck_percent`; the listener's number does not move.
     pub volume_percent: u8,
+    /// The duck in effect for a capture, as a percent of the volume.
+    pub duck_percent: Option<u8>,
     /// Percent of the source seekable without waiting on the network.
     pub buffered_percent: u8,
     /// A short secondary source using the same host-owned output authority.
@@ -84,6 +88,7 @@ impl Default for PlaybackSnapshot {
             source: None,
             rate_percent: 100,
             volume_percent: 100,
+            duck_percent: None,
             buffered_percent: 0,
             preview: None,
         }
@@ -106,6 +111,11 @@ pub enum PlaybackCommand {
     SetRate(u16),
     /// Output volume in percent, applied as a Firewheel gain.
     SetVolume(u8),
+    /// Scale the volume to this percent of itself for the length of a
+    /// capture. The same gain, lowered; the listener's volume is untouched.
+    Duck(u8),
+    /// Restore the volume after a capture.
+    Unduck,
     StartPreview {
         id: String,
         source: MediaSource,
@@ -495,6 +505,16 @@ mod tests {
         runtime.command(PlaybackCommand::SetVolume(40)).unwrap();
         assert_eq!(
             wait_for(&runtime, |snapshot| snapshot.volume_percent == 40).volume_percent,
+            40
+        );
+        // A duck scales the gain for a capture and leaves the listener's
+        // volume where it was; unducking clears it.
+        runtime.command(PlaybackCommand::Duck(10)).unwrap();
+        let ducked = wait_for(&runtime, |snapshot| snapshot.duck_percent == Some(10));
+        assert_eq!(ducked.volume_percent, 40);
+        runtime.command(PlaybackCommand::Unduck).unwrap();
+        assert_eq!(
+            wait_for(&runtime, |snapshot| snapshot.duck_percent.is_none()).volume_percent,
             40
         );
         // The retiming stage applies the rate, so the snapshot reports the

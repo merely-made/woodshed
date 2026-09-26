@@ -28,6 +28,7 @@ pub mod theme;
 use cambium::{AnyView, GenetCtx, GenetElement, TextInput};
 use redshank_model::{
     AnnotationId, CaptureAnchor, FeedSubscription, ItemId, LibraryItem, ListenerSettings,
+    NotePrivacy,
 };
 
 pub use surface_api::{CompactDock, compact_descriptor, compact_session};
@@ -335,6 +336,11 @@ pub enum CompactCommand {
         to: usize,
     },
     DeleteNote(AnnotationId),
+    /// Keep a note to the listener, or let the export carry it.
+    SetNotePrivacy {
+        id: AnnotationId,
+        privacy: NotePrivacy,
+    },
     EditNote {
         id: AnnotationId,
         plain_text: String,

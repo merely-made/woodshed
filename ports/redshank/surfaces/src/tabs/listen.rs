@@ -254,57 +254,57 @@ fn pane_class(state: &RedshankSurfaceState, pane: ListenPane, base: &str) -> Str
 fn transcript(state: &RedshankSurfaceState) -> Option<FullView> {
     let now = state.compact.now_playing.as_ref()?;
     let mut children: Vec<FullView> = vec![Box::new(el("h3", text("Transcript")))];
-    if let Some((id, saved, parsed)) = &state.transcript {
-        if id == &now.item_id {
+    if let Some((id, saved, parsed)) = &state.transcript
+        && id == &now.item_id
+    {
+        children.push(Box::new(el(
+            "p",
+            text(format!(
+                "Transcript snapshot · {}",
+                saved
+                    .resource
+                    .language
+                    .as_deref()
+                    .unwrap_or("language unspecified")
+            )),
+        )));
+        if parsed.skipped_blocks != 0 {
             children.push(Box::new(el(
                 "p",
                 text(format!(
-                    "Transcript snapshot · {}",
-                    saved
-                        .resource
-                        .language
-                        .as_deref()
-                        .unwrap_or("language unspecified")
+                    "{} unsupported or malformed blocks omitted",
+                    parsed.skipped_blocks
                 )),
             )));
-            if parsed.skipped_blocks != 0 {
-                children.push(Box::new(el(
-                    "p",
-                    text(format!(
-                        "{} unsupported or malformed blocks omitted",
-                        parsed.skipped_blocks
-                    )),
-                )));
-            }
-            for cue in &parsed.cues {
-                let position = cue.start_ms;
-                let active = cue.active_at(now.position_ms);
-                children.push(Box::new(
-                    button(
-                        format!("{} {}", format_time(position), cue.text),
-                        move |state: &mut RedshankSurfaceState, _| {
-                            state.request(CompactCommand::Seek(position));
-                        },
-                    )
-                    .attr(
-                        "class",
-                        if active {
-                            "rs-row rs-row-active"
-                        } else {
-                            "rs-row"
-                        },
-                    )
-                    .attr("aria-current", if active { "true" } else { "false" })
-                    .attr(
-                        "aria-label",
-                        format!("Seek transcript to {}: {}", format_time(position), cue.text),
-                    ),
-                ));
-            }
-            return Some(Box::new(
-                el("section", children).attr("aria-label", "Transcript"),
+        }
+        for cue in &parsed.cues {
+            let position = cue.start_ms;
+            let active = cue.active_at(now.position_ms);
+            children.push(Box::new(
+                button(
+                    format!("{} {}", format_time(position), cue.text),
+                    move |state: &mut RedshankSurfaceState, _| {
+                        state.request(CompactCommand::Seek(position));
+                    },
+                )
+                .attr(
+                    "class",
+                    if active {
+                        "rs-row rs-row-active"
+                    } else {
+                        "rs-row"
+                    },
+                )
+                .attr("aria-current", if active { "true" } else { "false" })
+                .attr(
+                    "aria-label",
+                    format!("Seek transcript to {}: {}", format_time(position), cue.text),
+                ),
             ));
         }
+        return Some(Box::new(
+            el("section", children).attr("aria-label", "Transcript"),
+        ));
     }
     let item = state
         .library
@@ -677,6 +677,32 @@ mod tests {
         let shut = act(&mut runner, "More actions for Episode 214");
         assert_eq!(shut, [CompactCommand::ToggleMenu(None)]);
         assert!(!markup_of(&runner).contains("role=\"menu\""));
+    }
+
+    /// A private note's menu offers to make it shareable, and the reverse.
+    #[test]
+    fn the_note_menu_flips_privacy_per_note() {
+        let mut runner = runner(with_notes(), panel);
+        act(&mut runner, "More actions for note at 0:46");
+        assert!(markup_of(&runner).contains("Make shareable: note at 0:46"));
+        assert_eq!(
+            act(&mut runner, "Make shareable: note at 0:46"),
+            [CompactCommand::SetNotePrivacy {
+                id: AnnotationId("text-one".into()),
+                privacy: redshank_model::NotePrivacy::Shareable,
+            }]
+        );
+        let mut shareable = with_notes();
+        shareable.notes[0].private = false;
+        let mut reversed = crate::tabs::tests_support::runner(shareable, panel);
+        act(&mut reversed, "More actions for note at 0:46");
+        assert_eq!(
+            act(&mut reversed, "Make private: note at 0:46"),
+            [CompactCommand::SetNotePrivacy {
+                id: AnnotationId("text-one".into()),
+                privacy: redshank_model::NotePrivacy::Private,
+            }]
+        );
     }
 
     #[test]

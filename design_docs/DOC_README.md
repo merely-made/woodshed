@@ -43,7 +43,7 @@ before any other doc in this directory.
   headed real-episode acceptance and full text-track rendering remain open.
 
 - [2026-09-01_listening_annotation_port_plan.md](2026-09-01_listening_annotation_port_plan.md)
-  **Active; Phases 0-3 complete, Phase 7 met 2026-09-22, Phases 4-5 in progress, Phase 6 open; extraction to its own repository ruled 2026-09-26.** Redshank is a separate audio-listening and timed
+  **Active; Phases 0-3 complete, Phase 5 closed 2026-09-26, Phase 7 met 2026-09-22, Phase 4 in progress, Phase 6 open; extraction to its own repository ruled 2026-09-26.** Redshank is a separate audio-listening and timed
   text/voice-annotation port incubated in this repository. The September 6
   local-file slice adds a Symphonia/Firewheel worker, full listening surfaces,
   and saved text-note editing. The September 7 controller-admission slice puts
@@ -54,8 +54,9 @@ before any other doc in this directory.
   restart receipt. The September 9 slice adds a budgeted content-addressed cache
   and proves restart/playback with its HTTP server stopped. Turnstone hosts the
   compact dock and streams through its own fetch handle since September 22.
-  Duck, validation of the W3C export, representation drift (Phase 6), and
-  Turnstone's microphone and headed receipt remain open. A September 13 GUI evidence
+  Duck and a W3C export proved against the Web Annotation test suite closed
+  Phase 5 on September 26. Representation drift (Phase 6) and Turnstone's
+  microphone, headed receipt and capture-behaviour settings remain open. A September 13 GUI evidence
   brief records current headed findings, reference screenshots, required
   states, and responsive wireframe done-conditions. It is separate from the
   Woodshed product graph.

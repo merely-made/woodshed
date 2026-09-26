@@ -325,6 +325,8 @@ pub(super) struct Backend {
     decoded_first_frame: bool,
     /// Requested output volume in percent, applied as soon as a runtime exists.
     volume_percent: u8,
+    /// A capture's duck, as a percent of the volume; `None` between captures.
+    duck_percent: Option<u8>,
     /// Playback rate in percent, clamped; survives loads like the volume does.
     rate_percent: u16,
     /// How much of the source can be seeked without waiting on the network.
@@ -361,6 +363,7 @@ impl Backend {
             source_positioned: false,
             decoded_first_frame: false,
             volume_percent: 100,
+            duck_percent: None,
             rate_percent: UNITY_RATE_PERCENT,
             buffered_percent: 0,
             #[cfg(test)]
@@ -551,8 +554,30 @@ impl Backend {
     /// Record the requested output volume and apply it if the output exists.
     pub(super) fn set_volume(&mut self, percent: u8) {
         self.volume_percent = percent;
+        self.apply_gain();
+    }
+
+    /// Duck to a percent of the volume, or restore it with `None`.
+    pub(super) fn set_duck(&mut self, percent: Option<u8>) {
+        self.duck_percent = percent;
+        self.apply_gain();
+    }
+
+    /// The gain in effect: the volume, scaled by the duck while one is held.
+    pub(super) fn effective_volume(&self) -> u8 {
+        match self.duck_percent {
+            Some(duck) => {
+                let scaled = u32::from(self.volume_percent) * u32::from(duck);
+                u8::try_from(scaled.div_ceil(100)).unwrap_or(u8::MAX)
+            },
+            None => self.volume_percent,
+        }
+    }
+
+    fn apply_gain(&mut self) {
+        let gain = self.effective_volume();
         if let Some(audio) = self.audio.borrow_mut().as_mut() {
-            audio.set_volume(percent);
+            audio.set_volume(gain);
         }
     }
 
@@ -667,7 +692,7 @@ impl Backend {
         if self.sink.is_none() {
             if self.audio.borrow().is_none() {
                 let mut runtime = AudioRuntime::new().map_err(|error| error.to_string())?;
-                runtime.set_volume(self.volume_percent);
+                runtime.set_volume(self.effective_volume());
                 *self.audio.borrow_mut() = Some(runtime);
             }
             self.sink = Some(

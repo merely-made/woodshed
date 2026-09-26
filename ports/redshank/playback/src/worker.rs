@@ -22,6 +22,7 @@ pub(super) struct Levels {
     /// Effective, not requested: what the retiming stage actually applied.
     pub(super) rate_percent: u16,
     pub(super) volume_percent: u8,
+    pub(super) duck_percent: Option<u8>,
     pub(super) buffered_percent: u8,
 }
 
@@ -30,6 +31,7 @@ impl Default for Levels {
         Self {
             rate_percent: 100,
             volume_percent: 100,
+            duck_percent: None,
             buffered_percent: 0,
         }
     }
@@ -57,6 +59,7 @@ fn publish(
             source,
             rate_percent: cell.value.rate_percent,
             volume_percent: cell.value.volume_percent,
+            duck_percent: cell.value.duck_percent,
             buffered_percent: cell.value.buffered_percent,
             preview: cell.value.preview.clone(),
         };
@@ -91,16 +94,19 @@ fn publish_levels(snapshot: &Arc<Mutex<SnapshotCell>>, levels: Levels) {
         if (
             cell.value.rate_percent,
             cell.value.volume_percent,
+            cell.value.duck_percent,
             cell.value.buffered_percent,
         ) == (
             levels.rate_percent,
             levels.volume_percent,
+            levels.duck_percent,
             levels.buffered_percent,
         ) {
             None
         } else {
             cell.value.rate_percent = levels.rate_percent;
             cell.value.volume_percent = levels.volume_percent;
+            cell.value.duck_percent = levels.duck_percent;
             cell.value.buffered_percent = levels.buffered_percent;
             cell.last_wake = std::time::Instant::now();
             cell.wake.clone()
@@ -119,6 +125,7 @@ fn publish_buffered(snapshot: &Arc<Mutex<SnapshotCell>>, buffered_percent: u8) {
         Levels {
             rate_percent: cell.value.rate_percent,
             volume_percent: cell.value.volume_percent,
+            duck_percent: cell.value.duck_percent,
             buffered_percent,
         }
     };
@@ -650,6 +657,16 @@ fn run_session(
                 PlaybackCommand::SetVolume(percent) => {
                     levels.volume_percent = percent;
                     backend.borrow_mut().set_volume(percent);
+                    publish_levels(&snapshot, levels);
+                },
+                PlaybackCommand::Duck(percent) => {
+                    levels.duck_percent = Some(percent);
+                    backend.borrow_mut().set_duck(Some(percent));
+                    publish_levels(&snapshot, levels);
+                },
+                PlaybackCommand::Unduck => {
+                    levels.duck_percent = None;
+                    backend.borrow_mut().set_duck(None);
                     publish_levels(&snapshot, levels);
                 },
                 PlaybackCommand::StartPreview { id, source } => {

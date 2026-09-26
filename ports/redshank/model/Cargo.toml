@@ -9,3 +9,7 @@ publish = false
 [dependencies]
 serde.workspace = true
 serde_json.workspace = true
+url = "2"
+
+[dev-dependencies]
+jsonschema = { version = "0.58", default-features = false }

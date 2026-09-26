@@ -9,6 +9,7 @@ use crate::{
     RedshankSurfaceState, VoiceNotePreview, format_time,
 };
 use cambium::{button, button_with, el, text};
+use redshank_model::NotePrivacy;
 
 /// The canvas draws the trigger as a vertical ellipsis. U+22EE is not in the
 /// fallback faces this host has (the first receipt printed tofu), so the three
@@ -253,6 +254,21 @@ pub fn note_actions(state: &RedshankSurfaceState, note: &NoteSummary) -> FullVie
             CompactCommand::BeginEditNote(note.id.clone()),
         ));
     }
+    // Private notes stay out of the export; the row is where that flips.
+    let (privacy_label, privacy) = if note.private {
+        ("Make shareable", NotePrivacy::Shareable)
+    } else {
+        ("Make private", NotePrivacy::Private)
+    };
+    actions.push(action(
+        privacy_label,
+        format!("{privacy_label}: note at {at}"),
+        "rs-row-action",
+        CompactCommand::SetNotePrivacy {
+            id: note.id.clone(),
+            privacy,
+        },
+    ));
     actions.push(action(
         "Delete",
         format!("Delete note at {at}"),
