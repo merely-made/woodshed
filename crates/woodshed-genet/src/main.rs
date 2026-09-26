@@ -169,6 +169,8 @@ fn boot_state(
         state: ui,
         logic: Box::new(move |ui: &UiState| desktop_root(ui, &commands)) as Logic,
         sheet,
+        fonts: Vec::new(),
+        images: Vec::new(),
     }
 }
 

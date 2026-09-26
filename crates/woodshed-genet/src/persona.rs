@@ -214,7 +214,7 @@ pub fn seed(shared: &mut Shared, ui: &mut woodshed_views::stage::UiState) {
 mod tests {
     use super::*;
     use cambium_genet_winit_host::Harness;
-    use genet_probe::Selector;
+    use taproot::Selector;
     use winit::keyboard::NamedKey;
     use woodshed_views::stage::{UiChild, UiState};
 
@@ -333,6 +333,8 @@ mod tests {
                 state: ui,
                 logic,
                 sheet: woodshed_views::theme::slate_stage_css(),
+                fonts: Vec::new(),
+                images: Vec::new(),
             },
             hooks,
         );
@@ -350,7 +352,7 @@ mod tests {
 
     #[test]
     fn the_gate_is_reachable_by_a_driver() {
-        // The standing requirement for any new surface: genet-probe must be
+        // The standing requirement for any new surface: taproot must be
         // able to find it through identity the DOM carries.
         let harness = gated_harness(two_persona_roster());
         assert!(
