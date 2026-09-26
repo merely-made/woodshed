@@ -210,6 +210,23 @@ impl Session {
         snapshot: &PlaybackSnapshot,
         host: &HostFacts,
     ) {
+        let saved = self
+            .selected
+            .as_ref()
+            .and_then(|id| self.model.transcripts.get(id).map(|saved| (id, saved)));
+        match saved {
+            Some((id, saved))
+                if state
+                    .transcript
+                    .as_ref()
+                    .is_some_and(|(old_id, old, _)| old_id == id && old == saved) => {},
+            Some((id, saved)) => {
+                state.transcript = timed_text::parse(&saved.source)
+                    .ok()
+                    .map(|parsed| (id.clone(), saved.clone(), parsed))
+            },
+            None => state.transcript = None,
+        }
         state.library = self.model.library.values().cloned().collect();
         state.subscriptions = self.model.subscriptions.values().cloned().collect();
         state.queue = self.model.queue.clone();

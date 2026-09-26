@@ -177,6 +177,31 @@ mod tests {
 
     use super::*;
 
+    #[test]
+    fn explicitly_saved_transcript_survives_restart_and_item_removal() {
+        let directory = tempdir().unwrap();
+        let store = JsonDirectoryStore::new(directory.path());
+        let mut model = populated_model();
+        let id = ItemId("episode".into());
+        let saved = redshank_model::SavedTranscript {
+            resource: redshank_model::FeedTranscript {
+                url: "https://example.test/transcript.vtt".into(),
+                media_type: Some("text/vtt".into()),
+                language: Some("en".into()),
+                relation: None,
+            },
+            final_url: "https://cdn.example.test/transcript.vtt".into(),
+            retrieved_at_ms: 42,
+            source: "WEBVTT\n\n00:01.000 --> 00:02.000\nPreserved source".into(),
+        };
+        model.transcripts.insert(id.clone(), saved.clone());
+        store.save(&model).unwrap();
+        let mut reopened = store.load().unwrap().unwrap();
+        assert_eq!(reopened.transcripts[&id], saved);
+        reopened.remove_item(&id).unwrap();
+        assert!(!reopened.transcripts.contains_key(&id));
+    }
+
     fn populated_model() -> RedshankModel {
         let mut model = RedshankModel::default();
         let local = ItemId("local".into());

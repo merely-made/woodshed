@@ -37,6 +37,11 @@ before any other doc in this directory.
   bass defect, corrected by the selected-shape slice. Bounded comparison and
   co-op proofs remain fixture evidence.
 
+- [Timed transcripts](2026-09-26_timed_transcripts_plan.md): bounded WebVTT parsing,
+  explicit fetch/save and offline reopening, active cue display and seek are
+  implemented and tested. Stale download and oversized-response checks pass;
+  headed real-episode acceptance and full text-track rendering remain open.
+
 - [2026-09-01_listening_annotation_port_plan.md](2026-09-01_listening_annotation_port_plan.md)
   **Active; Phases 0-3 complete, Phase 7 met 2026-09-22, Phases 4-5 in progress, Phase 6 open; extraction to its own repository ruled 2026-09-26.** Redshank is a separate audio-listening and timed
   text/voice-annotation port incubated in this repository. The September 6

@@ -451,6 +451,7 @@ fn apply(state: &mut RedshankSurfaceState, command: CompactCommand) {
         C::OpenVoiceNote(_) | C::PlayVoiceNote(_) | C::StopVoiceNote(_) => {
             refuse(state, "voice note audition (no audio output)")
         },
+        C::SaveTranscript { .. } => refuse(state, "Save transcript (no fetcher or durable store)"),
         C::OpenLocalFile => refuse(state, "OpenLocalFile (no file picker)"),
         C::CacheItem(_) => refuse(state, "Download for offline listening (no cache)"),
         C::RemoveCachedItem(_) => refuse(state, "Remove offline download (no cache)"),

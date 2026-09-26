@@ -7,6 +7,8 @@ rust-version.workspace = true
 publish = false
 
 [dependencies]
+url.workspace = true
+timed-text.workspace = true
 blake3.workspace = true
 cambium-genet-winit-host.workspace = true
 cpal.workspace = true

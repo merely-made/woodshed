@@ -289,6 +289,10 @@ pub struct RepresentationSummary {
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub enum CompactCommand {
+    SaveTranscript {
+        item_id: ItemId,
+        resource: redshank_model::FeedTranscript,
+    },
     Play,
     Pause,
     /// Restart a completed item from zero.
@@ -568,6 +572,11 @@ pub enum Mode {
 
 #[derive(Clone, Debug, Eq, PartialEq, Default)]
 pub struct RedshankSurfaceState {
+    pub transcript: Option<(
+        ItemId,
+        redshank_model::SavedTranscript,
+        timed_text::Transcript,
+    )>,
     pub active_tab: SurfaceTab,
     pub layout: Layout,
     pub scene: Scene,

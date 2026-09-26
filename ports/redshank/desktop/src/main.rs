@@ -83,7 +83,35 @@ fn fetch_and_import_feed(fetch: &dyn Fetch, requested_url: &str) -> Result<FeedI
         .map_err(|error| format!("Could not import podcast feed: {error}"))
 }
 
+fn fetch_transcript(
+    fetch: &dyn Fetch,
+    resource: redshank_model::FeedTranscript,
+) -> Result<redshank_model::SavedTranscript, String> {
+    let url = url::Url::parse(&resource.url).map_err(|e| e.to_string())?;
+    if !matches!(url.scheme(), "http" | "https") {
+        return Err("Transcript requires HTTP or HTTPS".into());
+    }
+    let body = fetch
+        .read_all(&resource.url, Some("text/vtt"), MAX_FEED_BYTES)
+        .map_err(|e| format!("Could not fetch transcript: {e}"))?;
+    let source = String::from_utf8(body.bytes).map_err(|_| "Transcript is not UTF-8")?;
+    let parsed = timed_text::parse(&source)?;
+    if parsed.cues.is_empty() {
+        return Err("Transcript contains no supported timed cues".into());
+    }
+    Ok(redshank_model::SavedTranscript {
+        resource,
+        final_url: body.facts.final_url,
+        retrieved_at_ms: now_ms(),
+        source,
+    })
+}
+
 enum IoReply {
+    TranscriptFetched {
+        id: ItemId,
+        result: Result<redshank_model::SavedTranscript, String>,
+    },
     Saved {
         revision: u64,
         result: Result<(), String>,
@@ -217,6 +245,11 @@ struct PendingVoiceRemoval {
     blob_id: String,
 }
 
+struct PendingTranscript {
+    id: ItemId,
+    removed: bool,
+}
+
 struct Desktop {
     /// The one fetch handle: streaming, downloads and feeds share its policy.
     fetch: Arc<dyn Fetch>,
@@ -236,6 +269,7 @@ struct Desktop {
     voice_removals: Vec<PendingVoiceRemoval>,
     voice_removals_in_flight: usize,
     feed_pending: Option<String>,
+    transcript_pending: Option<PendingTranscript>,
     /// A span being auditioned; playback pauses once it passes the stop.
     span_stop_ms: Option<u64>,
     microphone_label: Option<String>,
@@ -716,6 +750,35 @@ impl Desktop {
         command: CompactCommand,
     ) -> Result<(), String> {
         match command {
+            CompactCommand::SaveTranscript { item_id, resource } => {
+                if self.transcript_pending.is_some() {
+                    return Err("A transcript is still downloading".into());
+                }
+                let valid = self.session.model.library.get(&item_id).is_some_and(|item| {
+                    matches!(item, LibraryItem::FeedEpisode { facts, .. } if facts.transcripts.contains(&resource))
+                });
+                if !valid {
+                    return Err("Transcript is not advertised by this episode".into());
+                }
+                let pending_id = item_id.clone();
+                let fetch = self.fetch.clone();
+                let sender = self.persistence.reply_sender.clone();
+                thread::Builder::new()
+                    .name("redshank-transcript".into())
+                    .spawn(move || {
+                        let result = fetch_transcript(fetch.as_ref(), resource);
+                        let _ = sender.send(IoReply::TranscriptFetched {
+                            id: item_id,
+                            result,
+                        });
+                    })
+                    .map_err(|error| error.to_string())?;
+                self.transcript_pending = Some(PendingTranscript {
+                    id: pending_id,
+                    removed: false,
+                });
+                state.notice = Some("Saving transcript for offline reading…".into());
+            },
             CompactCommand::Play
             | CompactCommand::Pause
             | CompactCommand::SkipBackward(_)
@@ -966,6 +1029,11 @@ impl Desktop {
                     })
                 {
                     self.send(PlaybackCommand::StopPreview)?;
+                }
+                if let Some(pending) = &mut self.transcript_pending {
+                    if pending.id == id {
+                        pending.removed = true;
+                    }
                 }
                 let item = self
                     .session
@@ -1219,6 +1287,22 @@ impl Desktop {
                             }
                             state.notice = Some("Episode is available offline".into());
                         },
+                    }
+                },
+                IoReply::TranscriptFetched { id, result } => {
+                    let accept = self
+                        .transcript_pending
+                        .take()
+                        .is_some_and(|pending| pending.id == id && !pending.removed);
+                    match result {
+                        Ok(saved) if accept && self.session.model.library.get(&id).is_some_and(|item| matches!(item, LibraryItem::FeedEpisode { facts, .. } if facts.transcripts.contains(&saved.resource))) => {
+                            self.session.model.transcripts.insert(id, saved);
+                            self.persistence.changed();
+                            state.notice = Some("Transcript downloaded; saving locally".into());
+                        },
+                        Ok(_) => {},
+                        Err(error) if accept => state.notice = Some(error),
+                        Err(_) => {},
                     }
                 },
                 IoReply::FeedFetched {
@@ -1562,6 +1646,7 @@ fn hooks(
                 desktop.receipt = Some(receipt);
             }
             if desktop.closing
+                && desktop.transcript_pending.is_none()
                 && desktop.persistence.durable == desktop.persistence.revision
                 && desktop.cache_removals.is_empty()
                 && desktop.cache_removals_in_flight == 0
@@ -1585,6 +1670,7 @@ fn hooks(
                 || !desktop.voice_removals.is_empty()
                 || desktop.voice_removals_in_flight > 0
                 || desktop.feed_pending.is_some()
+                || desktop.transcript_pending.is_some()
                 || desktop.persistence.in_flight.is_some()
                 || desktop.receipt.as_ref().is_some_and(HeadedReceipt::active)
                 || scenario_busy
@@ -1662,6 +1748,7 @@ fn main() {
         voice_removals: Vec::new(),
         voice_removals_in_flight: 0,
         feed_pending: None,
+        transcript_pending: None,
         span_stop_ms: None,
         microphone_label: LocalVoiceCapture::label(),
         export_pending: false,
@@ -1751,6 +1838,157 @@ mod tests {
         io::{Read as _, Write as _},
         net::TcpListener,
     };
+
+    fn transcript_fixture() -> (LibraryItem, redshank_model::SavedTranscript) {
+        let resource = redshank_model::FeedTranscript {
+            url: "https://example.test/words.vtt".into(),
+            media_type: Some("text/vtt".into()),
+            ..Default::default()
+        };
+        let item = LibraryItem::FeedEpisode {
+            id: ItemId("a".into()),
+            feed_url: "https://example.test/feed".into(),
+            guid: "a".into(),
+            title: "A".into(),
+            source: MediaSource::Enclosure {
+                url: "https://example.test/audio.mp3".into(),
+            },
+            facts: Box::new(redshank_model::FeedEpisodeFacts {
+                transcripts: vec![resource.clone()],
+                ..Default::default()
+            }),
+        };
+        let saved = redshank_model::SavedTranscript {
+            final_url: resource.url.clone(),
+            resource,
+            retrieved_at_ms: 0,
+            source: "WEBVTT\n\n00:01.000 --> 00:02.000\nA".into(),
+        };
+        (item, saved)
+    }
+
+    #[test]
+    fn transcript_response_belongs_to_requested_item_after_selection_changes() {
+        let directory = tempfile::tempdir().unwrap();
+        let mut desktop = desktop(directory.path());
+        let (item, saved) = transcript_fixture();
+        let id = item.id().clone();
+        desktop.session.model.library.insert(id.clone(), item);
+        desktop.transcript_pending = Some(PendingTranscript {
+            id: id.clone(),
+            removed: false,
+        });
+        desktop.session.selected = None;
+        let mut state = RedshankSurfaceState::default();
+        desktop
+            .persistence
+            .reply_sender
+            .send(IoReply::TranscriptFetched {
+                id: id.clone(),
+                result: Ok(saved),
+            })
+            .unwrap();
+        desktop.poll(&mut state);
+        assert!(desktop.session.model.transcripts.contains_key(&id));
+        assert!(state.transcript.is_none());
+    }
+
+    #[test]
+    fn transcript_response_cannot_restore_deleted_then_readded_item() {
+        let directory = tempfile::tempdir().unwrap();
+        let mut desktop = desktop(directory.path());
+        let (item, saved) = transcript_fixture();
+        let id = item.id().clone();
+        desktop
+            .session
+            .model
+            .library
+            .insert(id.clone(), item.clone());
+        desktop.transcript_pending = Some(PendingTranscript {
+            id: id.clone(),
+            removed: false,
+        });
+        let mut state = RedshankSurfaceState::default();
+        desktop
+            .command(&mut state, CompactCommand::RemoveLibraryItem(id.clone()))
+            .unwrap();
+        desktop.session.model.add_item(item).unwrap();
+        desktop
+            .persistence
+            .reply_sender
+            .send(IoReply::TranscriptFetched {
+                id: id.clone(),
+                result: Ok(saved),
+            })
+            .unwrap();
+        desktop.poll(&mut state);
+        assert!(!desktop.session.model.transcripts.contains_key(&id));
+        assert!(desktop.transcript_pending.is_none());
+    }
+
+    #[test]
+    fn transcript_fetch_rejects_oversized_response() {
+        let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+        let address = listener.local_addr().unwrap();
+        let server = thread::spawn(move || {
+            let (mut stream, _) = listener.accept().unwrap();
+            let mut request = [0_u8; 2048];
+            let _ = stream.read(&mut request).unwrap();
+            write!(
+                stream,
+                "HTTP/1.1 200 OK\r\nContent-Length: {}\r\nConnection: close\r\n\r\n",
+                MAX_FEED_BYTES + 1
+            )
+            .unwrap();
+            // Deliver the declared body: a truncated response exercises transport
+            // failure, not the Fetch response-size gate.
+            let _ = stream.write_all(&vec![b'x'; MAX_FEED_BYTES as usize + 1]);
+        });
+        let resource = redshank_model::FeedTranscript {
+            url: format!("http://{address}/large.vtt"),
+            ..Default::default()
+        };
+        let error = fetch_transcript(own_fetch().as_ref(), resource).unwrap_err();
+        assert!(
+            error.contains("body exceeds the 4194304-byte limit"),
+            "{error}"
+        );
+        server.join().unwrap();
+    }
+
+    #[test]
+    fn transcript_fetch_survives_offline_store_reopen() {
+        let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+        let address = listener.local_addr().unwrap();
+        let server = thread::spawn(move || {
+            let (mut stream, _) = listener.accept().unwrap();
+            let mut request = [0_u8; 2048];
+            let _ = stream.read(&mut request).unwrap();
+            let body = "WEBVTT\n\n00:01.000 --> 00:03.000\nA saved sentence";
+            write!(stream, "HTTP/1.1 200 OK\r\nContent-Type: text/vtt\r\nContent-Length: {}\r\nConnection: close\r\n\r\n{body}", body.len()).unwrap();
+        });
+        let resource = redshank_model::FeedTranscript {
+            url: format!("http://{address}/transcript.vtt"),
+            media_type: Some("text/vtt".into()),
+            language: Some("en".into()),
+            relation: None,
+        };
+        let saved = fetch_transcript(own_fetch().as_ref(), resource).unwrap();
+        server.join().unwrap(); // There is no live origin during reopen.
+        let directory = tempfile::tempdir().unwrap();
+        let store = JsonDirectoryStore::new(directory.path());
+        let id = ItemId("episode".into());
+        let mut model = RedshankModel::default();
+        model.transcripts.insert(id.clone(), saved);
+        store.save(&model).unwrap();
+        let reopened = store.load().unwrap().unwrap();
+        let transcript = &reopened.transcripts[&id];
+        assert_eq!(transcript.resource.language.as_deref(), Some("en"));
+        let parsed = timed_text::parse(&transcript.source).unwrap();
+        assert_eq!(parsed.cues[0].text, "A saved sentence");
+        assert!(parsed.cues[0].active_at(1000));
+        assert!(!parsed.cues[0].active_at(3000));
+    }
 
     #[test]
     fn standalone_feed_fetch_retains_final_parser_facts() {
@@ -2032,6 +2270,7 @@ mod tests {
             voice_removals: Vec::new(),
             voice_removals_in_flight: 0,
             feed_pending: None,
+            transcript_pending: None,
             span_stop_ms: None,
             microphone_label: None,
             export_pending: false,
