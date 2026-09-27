@@ -58,6 +58,8 @@ pub struct PreviewSnapshot {
 pub struct PlaybackSnapshot {
     /// Host-supplied identity. Hosts reject snapshots for a stale selection.
     pub load_token: Option<u64>,
+    /// The last successful note seek, identified by the host's request ID.
+    pub completed_note_seek: Option<u64>,
     pub representation: Option<RepresentationReceipt>,
     pub state: PlaybackState,
     pub position_ms: u64,
@@ -81,6 +83,7 @@ impl Default for PlaybackSnapshot {
     fn default() -> Self {
         Self {
             load_token: None,
+            completed_note_seek: None,
             representation: None,
             state: PlaybackState::Empty,
             position_ms: 0,
@@ -106,6 +109,13 @@ pub enum PlaybackCommand {
     Pause,
     Stop,
     Seek(u64),
+    /// Seek a note only if its source is still loaded; acknowledge this request
+    /// ID once the resulting position has been published.
+    SeekNote {
+        token: u64,
+        request_id: u64,
+        position_ms: u64,
+    },
     /// Requested playback rate in percent, retimed without moving pitch.
     /// Clamped to 50-200; the snapshot reports the rate actually in effect.
     SetRate(u16),
@@ -211,6 +221,8 @@ impl PlaybackRuntime {
 mod tests {
     use super::*;
     use std::{
+        fs::{self, OpenOptions},
+        io::{Read, Seek, SeekFrom, Write},
         path::PathBuf,
         thread,
         time::{Duration, Instant},
@@ -295,7 +307,21 @@ mod tests {
             .unwrap();
         backend
             .admit_cached_representation(&RepresentationReceipt::default())
+            .unwrap_err();
+
+        let directory = tempfile::tempdir().unwrap();
+        let path = directory.path().join("cached.wav");
+        synthetic_source(&path, 1);
+        let bytes = fs::read(&path).unwrap();
+        backend
+            .load(&servo_media_player::controller::MediaSource::Local {
+                path: path.display().to_string(),
+            })
             .unwrap();
+        let missing = backend
+            .admit_cached_representation(&RepresentationReceipt::default())
+            .unwrap_err();
+        assert!(missing.contains("failed integrity validation"));
         let mismatch = backend
             .admit_cached_representation(&RepresentationReceipt {
                 byte_length: Some(1),
@@ -304,6 +330,100 @@ mod tests {
             })
             .unwrap_err();
         assert!(mismatch.contains("failed integrity validation"));
+
+        let expected = RepresentationReceipt {
+            requested_url: Some("https://example.invalid/episode.wav".into()),
+            byte_length: Some(bytes.len() as u64),
+            complete_digest: Some(format!("blake3:{}", blake3::hash(&bytes).to_hex())),
+            ..Default::default()
+        };
+        backend.admit_cached_representation(&expected).unwrap();
+        assert_eq!(backend.facts().0, Some(expected));
+    }
+
+    #[test]
+    fn local_snapshot_survives_in_place_writes_and_truncation() {
+        let directory = tempfile::tempdir().unwrap();
+        let path = directory.path().join("source.bin");
+        let original = vec![0x5a; 192_000];
+        fs::write(&path, &original).unwrap();
+        // Keep a writer open before snapshotting: changing only the reader's
+        // handle or pathname does not protect against this writer.
+        let mut writer = OpenOptions::new().write(true).open(&path).unwrap();
+        let (mut snapshot, receipt) = backend::snapshot_local(&path).unwrap();
+        writer.write_all(&vec![0xa5; original.len()]).unwrap();
+        let mut actual = Vec::new();
+        snapshot.read_to_end(&mut actual).unwrap();
+        assert_eq!(actual, original);
+
+        writer.set_len(0).unwrap();
+        snapshot.seek(SeekFrom::Start(0)).unwrap();
+        actual.clear();
+        snapshot.read_to_end(&mut actual).unwrap();
+        assert_eq!(actual, original);
+        assert_eq!(receipt.byte_length, Some(actual.len() as u64));
+        assert_eq!(
+            receipt.complete_digest,
+            Some(format!("blake3:{}", blake3::hash(&actual).to_hex()))
+        );
+    }
+
+    #[test]
+    fn local_snapshot_survives_pathname_replacement() {
+        let directory = tempfile::tempdir().unwrap();
+        let path = directory.path().join("source.bin");
+        let original = vec![0x5a; 192_000];
+        fs::write(&path, &original).unwrap();
+        let (mut snapshot, receipt) = backend::snapshot_local(&path).unwrap();
+        fs::rename(&path, directory.path().join("retired.bin")).unwrap();
+        fs::write(&path, b"replacement").unwrap();
+
+        let mut actual = Vec::new();
+        snapshot.read_to_end(&mut actual).unwrap();
+        assert_eq!(actual, original);
+        assert_eq!(receipt.byte_length, Some(actual.len() as u64));
+        assert_eq!(
+            receipt.complete_digest,
+            Some(format!("blake3:{}", blake3::hash(&actual).to_hex()))
+        );
+    }
+
+    #[test]
+    fn local_decoder_plays_the_receipted_audio_after_source_mutation() {
+        fn decode_all(decoder: &mut backend::Decoder) -> Vec<f32> {
+            let mut audio = Vec::new();
+            loop {
+                match decode_packet(decoder).unwrap() {
+                    Decoded::Frames(samples) => audio.extend_from_slice(&samples),
+                    Decoded::Skipped => {},
+                    Decoded::EndOfFile => return audio,
+                }
+            }
+        }
+
+        for replace_path in [false, true] {
+            let directory = tempfile::tempdir().unwrap();
+            let path = directory.path().join("episode.wav");
+            let frames = synthetic_source(&path, 2);
+            let original = fs::read(&path).unwrap();
+            let (mut baseline, _) = open_local(&path).unwrap();
+            let expected_audio = decode_all(&mut baseline);
+            assert_eq!(expected_audio.len() as u64, frames * 2);
+
+            let (mut decoder, receipt) = open_local(&path).unwrap();
+            if replace_path {
+                fs::rename(&path, directory.path().join("retired.wav")).unwrap();
+            }
+            // A much shorter invalid source tests future reads beyond any
+            // bytes the decoder buffered while opening the WAV header.
+            fs::write(&path, b"not the receipted audio").unwrap();
+            assert_eq!(decode_all(&mut decoder), expected_audio);
+            assert_eq!(receipt.byte_length, Some(original.len() as u64));
+            assert_eq!(
+                receipt.complete_digest,
+                Some(format!("blake3:{}", blake3::hash(&original).to_hex()))
+            );
+        }
     }
 
     #[test]
@@ -484,6 +604,93 @@ mod tests {
             wait_for(&runtime, |snapshot| snapshot.state == PlaybackState::Ended).state,
             PlaybackState::Ended
         );
+    }
+
+    #[test]
+    fn worker_note_seek_acknowledges_only_the_matching_request() {
+        let runtime = PlaybackRuntime::start();
+        runtime
+            .command(PlaybackCommand::Load {
+                token: 18,
+                source: MediaSource::Local {
+                    path: "redshank-test://note-seek".into(),
+                },
+                resume_ms: 125,
+            })
+            .unwrap();
+        let loaded = wait_for(&runtime, |snapshot| {
+            snapshot.load_token == Some(18) && snapshot.state == PlaybackState::Paused
+        });
+        assert_eq!(loaded.state, PlaybackState::Paused);
+        assert_eq!(loaded.position_ms, 125);
+        // Resuming and ordinary transport seeks do not acknowledge note seeks.
+        assert_eq!(loaded.completed_note_seek, None);
+        runtime.command(PlaybackCommand::Seek(175)).unwrap();
+        let ordinary = wait_for(&runtime, |snapshot| snapshot.position_ms == 175);
+        assert_eq!(ordinary.position_ms, 175);
+        assert_eq!(ordinary.completed_note_seek, None);
+
+        runtime
+            .command(PlaybackCommand::SeekNote {
+                token: 18,
+                request_id: 41,
+                position_ms: 250,
+            })
+            .unwrap();
+        let seeked = wait_for(&runtime, |snapshot| {
+            snapshot.completed_note_seek == Some(41)
+        });
+        assert_eq!(seeked.completed_note_seek, Some(41));
+        assert_eq!(seeked.load_token, Some(18));
+        assert_eq!(seeked.position_ms, 250);
+
+        for (request_id, position_ms) in [(42, 300), (43, 350)] {
+            runtime
+                .command(PlaybackCommand::SeekNote {
+                    token: 18,
+                    request_id,
+                    position_ms,
+                })
+                .unwrap();
+        }
+        let latest = wait_for(&runtime, |snapshot| {
+            snapshot.completed_note_seek == Some(43)
+        });
+        assert_eq!(latest.completed_note_seek, Some(43));
+        assert_eq!(latest.position_ms, 350);
+
+        runtime
+            .command(PlaybackCommand::SeekNote {
+                token: 17,
+                request_id: 44,
+                position_ms: 400,
+            })
+            .unwrap();
+        // This later command provides a barrier after the stale request.
+        runtime.command(PlaybackCommand::SetVolume(37)).unwrap();
+        let stale = wait_for(&runtime, |snapshot| snapshot.volume_percent == 37);
+        assert_eq!(stale.volume_percent, 37);
+        assert_eq!(stale.load_token, Some(18));
+        assert_eq!(stale.completed_note_seek, Some(43));
+        assert_eq!(stale.position_ms, 350);
+
+        let directory = tempfile::tempdir().unwrap();
+        runtime
+            .command(PlaybackCommand::Load {
+                token: 19,
+                source: MediaSource::Local {
+                    path: directory.path().join("missing.wav").display().to_string(),
+                },
+                resume_ms: 500,
+            })
+            .unwrap();
+        let failed = wait_for(&runtime, |snapshot| {
+            snapshot.load_token == Some(19)
+                && matches!(snapshot.state, PlaybackState::Unavailable(_))
+        });
+        assert!(matches!(failed.state, PlaybackState::Unavailable(_)));
+        assert_eq!(failed.load_token, Some(19));
+        assert_eq!(failed.completed_note_seek, Some(43));
     }
 
     #[test]

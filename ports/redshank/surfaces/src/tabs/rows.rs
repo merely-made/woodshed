@@ -245,6 +245,26 @@ pub fn note_actions(state: &RedshankSurfaceState, note: &NoteSummary) -> FullVie
         "rs-note-open",
         CompactCommand::OpenNote(note.id.clone()),
     );
+    let identity = state.note_identity(&note.id);
+    let warning = (identity != redshank_model::RepresentationIdentity::Same).then(|| {
+        let message = match identity {
+            redshank_model::RepresentationIdentity::Different => "This copy differs.",
+            _ => "Couldn't verify this copy.",
+        };
+        el(
+            "span",
+            (
+                el("span", text(message)).attr("role", "status"),
+                action(
+                    "Open at approximate time",
+                    format!("Open note at approximate time {at}"),
+                    "rs-note-open",
+                    CompactCommand::OpenNoteApproximately(note.id.clone()),
+                ),
+            ),
+        )
+        .attr("class", "rs-note-identity")
+    });
     let mut actions = Vec::new();
     if note.kind() == NoteKind::Text {
         actions.push(action(
@@ -281,7 +301,7 @@ pub fn note_actions(state: &RedshankSurfaceState, note: &NoteSummary) -> FullVie
         &format!("note at {at}"),
         actions,
     );
-    Box::new(el("span", (open_at, menu)).attr("class", "rs-row-tail"))
+    Box::new(el("span", (open_at, warning, menu)).attr("class", "rs-row-tail"))
 }
 
 /// One note row, as the Listen and Notes tabs both show it.

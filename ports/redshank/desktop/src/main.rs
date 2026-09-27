@@ -250,6 +250,14 @@ struct PendingTranscript {
     removed: bool,
 }
 
+struct PendingNoteOpen {
+    token: u64,
+    id: redshank_model::AnnotationId,
+    approximate: bool,
+    play: bool,
+    span: bool,
+}
+
 struct Desktop {
     /// The one fetch handle: streaming, downloads and feeds share its policy.
     fetch: Arc<dyn Fetch>,
@@ -274,6 +282,10 @@ struct Desktop {
     transcript_pending: Option<PendingTranscript>,
     /// A span being auditioned; playback pauses once it passes the stop.
     span_stop_ms: Option<u64>,
+    pending_note_open: Option<PendingNoteOpen>,
+    /// Progress and span stopping wait for this exact seek request.
+    pending_note_seek: Option<u64>,
+    next_note_seek: u64,
     microphone_label: Option<String>,
     export_pending: bool,
     data_root: PathBuf,
@@ -455,6 +467,9 @@ impl Desktop {
     }
 
     fn select(&mut self, id: ItemId) -> Result<(), String> {
+        self.pending_note_open = None;
+        self.span_stop_ms = None;
+        self.pending_note_seek = None;
         for command in self
             .session
             .select(id, &self.runtime.snapshot(), now_ms())?
@@ -757,11 +772,93 @@ impl Desktop {
         Ok(())
     }
 
-    fn open_note_target(&mut self, note: &Annotation) -> Result<(), String> {
+    fn open_note_target(
+        &mut self,
+        note: &Annotation,
+        approximate: bool,
+        play: bool,
+        span: bool,
+    ) -> Result<(), String> {
+        self.pending_note_open = None;
+        self.span_stop_ms = None;
         if self.session.selected.as_ref() != Some(&note.target.item_id) {
-            self.select(note.target.item_id.clone())?;
+            self.pending_note_seek = None;
+            // Load at zero, paused. Neither saved progress nor the old note
+            // timestamp may be applied before we have this load's receipt.
+            for mut command in self.session.select(
+                note.target.item_id.clone(),
+                &self.runtime.snapshot(),
+                now_ms(),
+            )? {
+                if let PlaybackCommand::Load { resume_ms, .. } = &mut command {
+                    *resume_ms = 0;
+                }
+                self.send(command)?;
+            }
+            self.session.resumed_from_ms = None;
+            self.session.hold_progress = true;
+            self.persistence.changed();
         }
-        self.send(PlaybackCommand::Seek(note.target.offset_ms))
+        let request = PendingNoteOpen {
+            token: self.session.token,
+            id: note.id.clone(),
+            approximate,
+            play,
+            span,
+        };
+        let snapshot = self.runtime.snapshot();
+        if !self.session.matches(&snapshot) || snapshot.state == PlaybackState::Loading {
+            self.pending_note_open = Some(request);
+            Ok(())
+        } else {
+            self.finish_note_open(request, &snapshot)
+        }
+    }
+
+    fn finish_note_open(
+        &mut self,
+        request: PendingNoteOpen,
+        snapshot: &redshank_playback::PlaybackSnapshot,
+    ) -> Result<(), String> {
+        if request.token != self.session.token {
+            return Err("The recording selection changed before the note opened".into());
+        }
+        let note = self
+            .session
+            .model
+            .annotations
+            .get(&request.id)
+            .ok_or("That note no longer exists")?;
+        let seek = self
+            .session
+            .note_seek(&note.target, snapshot, request.approximate)?;
+        let stop = if request.span {
+            Some(
+                note.target
+                    .end_offset_ms
+                    .ok_or("That note covers a moment, not a span")?,
+            )
+        } else {
+            None
+        };
+        let PlaybackCommand::Seek(position_ms) = seek else {
+            unreachable!("note_seek returns a seek")
+        };
+        self.next_note_seek = self
+            .next_note_seek
+            .checked_add(1)
+            .ok_or("Note seek identity exhausted")?;
+        self.send(PlaybackCommand::SeekNote {
+            token: request.token,
+            request_id: self.next_note_seek,
+            position_ms,
+        })?;
+        self.pending_note_seek = Some(self.next_note_seek);
+        if request.play {
+            self.send(PlaybackCommand::Play)?;
+        }
+        self.span_stop_ms = stop;
+        Ok(())
     }
 
     fn command(
@@ -769,6 +866,29 @@ impl Desktop {
         state: &mut RedshankSurfaceState,
         command: CompactCommand,
     ) -> Result<(), String> {
+        if matches!(
+            &command,
+            CompactCommand::Play
+                | CompactCommand::Pause
+                | CompactCommand::Replay
+                | CompactCommand::Seek(_)
+                | CompactCommand::SkipBackward(_)
+                | CompactCommand::SkipForward(_)
+        ) {
+            self.pending_note_open = None;
+            self.pending_note_seek = None;
+        }
+        if matches!(
+            &command,
+            CompactCommand::BeginVoiceNote
+                | CompactCommand::BeginTextNote
+                | CompactCommand::AddTextNote
+                | CompactCommand::PlayVoiceNote(_)
+                | CompactCommand::BeginEditNote(_)
+                | CompactCommand::DeleteNote(_)
+        ) {
+            self.pending_note_open = None;
+        }
         match command {
             CompactCommand::SaveTranscript { item_id, resource } => {
                 if self.transcript_pending.is_some() {
@@ -805,6 +925,7 @@ impl Desktop {
             | CompactCommand::SkipForward(_) => {
                 let snap = self.runtime.snapshot();
                 self.session.capture(&snap)?;
+                self.session.hold_progress = false;
                 let command = match command {
                     CompactCommand::Play => {
                         if snap.state == PlaybackState::Ended {
@@ -933,7 +1054,6 @@ impl Desktop {
                     .get(&id)
                     .ok_or("That note no longer exists")?
                     .clone();
-                self.open_note_target(&note)?;
                 let NoteBody::Text { plain_text } = &note.body else {
                     return Err("Only text notes can be edited here".into());
                 };
@@ -956,8 +1076,7 @@ impl Desktop {
                 if !matches!(note.body, NoteBody::Audio { .. }) {
                     return Err("That is not a voice note".into());
                 }
-                self.open_note_target(&note)?;
-                state.notice = Some("Moved playback to the voice note's anchor".into());
+                self.open_note_target(&note, false, false, false)?;
             },
             CompactCommand::PlayVoiceNote(id) => {
                 let note = self
@@ -1160,6 +1279,7 @@ impl Desktop {
             CompactCommand::Replay => {
                 let snap = self.runtime.snapshot();
                 self.session.capture(&snap)?;
+                self.session.hold_progress = false;
                 let id = self.session.selected.clone().expect("matched selection");
                 self.send(PlaybackCommand::Seek(0))?;
                 self.send(PlaybackCommand::Play)?;
@@ -1177,6 +1297,7 @@ impl Desktop {
             },
             CompactCommand::Seek(position) => {
                 self.session.capture(&self.runtime.snapshot())?;
+                self.session.hold_progress = false;
                 self.span_stop_ms = None;
                 self.send(PlaybackCommand::Seek(position))?;
             },
@@ -1203,9 +1324,19 @@ impl Desktop {
                     .get(&id)
                     .ok_or("That note no longer exists")?
                     .clone();
-                self.open_note_target(&note)?;
-                self.span_stop_ms = None;
-                self.send(PlaybackCommand::Play)?;
+                self.open_note_target(&note, false, true, false)?;
+            },
+            CompactCommand::OpenNoteApproximately(id) => {
+                let note = self
+                    .session
+                    .model
+                    .annotations
+                    .get(&id)
+                    .ok_or("That note no longer exists")?
+                    .clone();
+                self.open_note_target(&note, true, true, false)?;
+                state.notice =
+                    Some("Opening at the original timestamp; this position is approximate.".into());
             },
             CompactCommand::PlaySpan(id) => {
                 let note = self
@@ -1215,13 +1346,7 @@ impl Desktop {
                     .get(&id)
                     .ok_or("That note no longer exists")?
                     .clone();
-                let stop = note
-                    .target
-                    .end_offset_ms
-                    .ok_or("That note covers a moment, not a span")?;
-                self.open_note_target(&note)?;
-                self.send(PlaybackCommand::Play)?;
-                self.span_stop_ms = Some(stop);
+                self.open_note_target(&note, false, true, true)?;
             },
             CompactCommand::RetryItem(id) => self.select(id)?,
             CompactCommand::PinItem(id) => {
@@ -1446,7 +1571,25 @@ impl Desktop {
             state.notice = Some(error);
         }
         let snapshot = self.runtime.snapshot();
+        if self
+            .pending_note_seek
+            .is_some_and(|request_id| snapshot.completed_note_seek == Some(request_id))
+            && self.session.matches(&snapshot)
+        {
+            self.pending_note_seek = None;
+            self.session.hold_progress = false;
+        }
+        if self.pending_note_open.as_ref().is_some_and(|request| {
+            request.token != self.session.token
+                || (self.session.matches(&snapshot) && snapshot.state != PlaybackState::Loading)
+        }) {
+            let request = self.pending_note_open.take().expect("pending note open");
+            if let Err(error) = self.finish_note_open(request, &snapshot) {
+                state.notice = Some(error);
+            }
+        }
         if let Some(stop) = self.span_stop_ms
+            && self.pending_note_seek.is_none()
             && snapshot.state == PlaybackState::Playing
             && snapshot.position_ms >= stop
         {
@@ -1473,6 +1616,8 @@ impl Desktop {
     }
 
     fn close(&mut self, state: &mut RedshankSurfaceState) -> Result<(), String> {
+        self.pending_note_open = None;
+        self.span_stop_ms = None;
         self.send(PlaybackCommand::Pause)?;
         if self.voice_session.take().is_some() {
             self.voice_capture.cancel_capture()?;
@@ -1784,6 +1929,9 @@ fn main() {
         feed_pending: None,
         transcript_pending: None,
         span_stop_ms: None,
+        pending_note_open: None,
+        pending_note_seek: None,
+        next_note_seek: 0,
         microphone_label: LocalVoiceCapture::label(),
         export_pending: false,
         data_root,
@@ -2307,6 +2455,9 @@ mod tests {
             feed_pending: None,
             transcript_pending: None,
             span_stop_ms: None,
+            pending_note_open: None,
+            pending_note_seek: None,
+            next_note_seek: 0,
             microphone_label: None,
             export_pending: false,
             data_root: directory.to_owned(),
@@ -2478,5 +2629,164 @@ mod tests {
         persistence.acknowledge(revision, &result);
         assert_eq!(persistence.durable, 1);
         assert_eq!(persistence.revision, 2);
+    }
+
+    fn pending_note_request(token: u64) -> PendingNoteOpen {
+        PendingNoteOpen {
+            token,
+            id: AnnotationId("pending-note".into()),
+            approximate: false,
+            play: false,
+            span: false,
+        }
+    }
+
+    #[test]
+    fn changing_tabs_or_volume_keeps_the_pending_note_open() {
+        let directory = tempfile::tempdir().unwrap();
+        let mut desktop = desktop(directory.path());
+        let mut state = RedshankSurfaceState::default();
+        desktop.pending_note_open = Some(pending_note_request(7));
+
+        for command in [
+            CompactCommand::SelectTab(redshank_surfaces::SurfaceTab::Notes),
+            CompactCommand::SetVolume(35),
+        ] {
+            desktop.command(&mut state, command).unwrap();
+            let pending = desktop.pending_note_open.as_ref().unwrap();
+            assert_eq!(pending.token, 7);
+            assert_eq!(pending.id, AnnotationId("pending-note".into()));
+            assert!(!pending.approximate);
+            assert!(!pending.play);
+            assert!(!pending.span);
+        }
+        assert_eq!(state.active_tab, redshank_surfaces::SurfaceTab::Notes);
+        assert_eq!(desktop.session.model.settings.volume_percent, 35);
+    }
+
+    #[test]
+    fn a_new_note_action_cancels_a_pending_open_even_when_it_fails() {
+        let directory = tempfile::tempdir().unwrap();
+        let mut desktop = desktop(directory.path());
+        let mut state = RedshankSurfaceState::default();
+        for command in [
+            CompactCommand::BeginTextNote,
+            CompactCommand::PlayVoiceNote(AnnotationId("missing-voice-note".into())),
+        ] {
+            desktop.pending_note_open = Some(pending_note_request(7));
+            assert!(desktop.command(&mut state, command).is_err());
+            assert!(desktop.pending_note_open.is_none());
+            assert!(state.text_capture.is_none());
+        }
+    }
+
+    #[test]
+    fn closing_cancels_a_pending_note_open() {
+        let directory = tempfile::tempdir().unwrap();
+        let mut desktop = desktop(directory.path());
+        let mut state = RedshankSurfaceState::default();
+        desktop.pending_note_open = Some(pending_note_request(7));
+        desktop.span_stop_ms = Some(12_000);
+        desktop.close(&mut state).unwrap();
+        assert!(desktop.pending_note_open.is_none());
+        assert!(desktop.span_stop_ms.is_none());
+        assert!(desktop.closing);
+    }
+
+    #[test]
+    fn failed_transport_commands_do_not_release_the_note_progress_hold() {
+        let directory = tempfile::tempdir().unwrap();
+        let mut desktop = desktop(directory.path());
+        let mut state = RedshankSurfaceState::default();
+        assert_eq!(desktop.runtime.snapshot().state, PlaybackState::Empty);
+
+        for command in [CompactCommand::Play, CompactCommand::Pause] {
+            desktop.pending_note_open = Some(pending_note_request(7));
+            desktop.session.hold_progress = true;
+            assert!(desktop.command(&mut state, command).is_err());
+            assert!(desktop.session.hold_progress);
+            assert!(desktop.pending_note_open.is_none());
+            assert!(desktop.session.model.progress.is_empty());
+        }
+    }
+
+    #[test]
+    fn a_refused_replacement_note_keeps_the_accepted_seeks_progress_ack() {
+        let directory = tempfile::tempdir().unwrap();
+        let mut desktop = desktop(directory.path());
+        desktop.session.selected = Some(ItemId("a".into()));
+        desktop.session.token = 7;
+        desktop.session.hold_progress = true;
+        desktop.pending_note_seek = Some(41);
+        let id = AnnotationId("unproven-note".into());
+        let target = CaptureAnchor {
+            item_id: ItemId("a".into()),
+            offset_ms: 4_000,
+            end_offset_ms: None,
+            pressed_offset_ms: None,
+            representation: Default::default(),
+        };
+        desktop
+            .session
+            .model
+            .add_text_annotation(id.clone(), target, "note".into(), 1)
+            .unwrap();
+        let note = desktop.session.model.annotations[&id].clone();
+        // The earlier accepted approximate seek is still in flight. A new
+        // exact open waits for a ready snapshot and then refuses its evidence.
+        desktop.open_note_target(&note, false, true, false).unwrap();
+        assert_eq!(desktop.pending_note_seek, Some(41));
+        let ready = redshank_playback::PlaybackSnapshot {
+            load_token: Some(7),
+            state: PlaybackState::Paused,
+            ..Default::default()
+        };
+        let request = desktop.pending_note_open.take().unwrap();
+        assert!(desktop.finish_note_open(request, &ready).is_err());
+        assert_eq!(desktop.pending_note_seek, Some(41));
+        assert!(desktop.session.hold_progress);
+    }
+
+    #[test]
+    fn editing_an_old_text_note_preserves_its_target_without_loading_audio() {
+        let directory = tempfile::tempdir().unwrap();
+        let mut desktop = desktop(directory.path());
+        let mut state = RedshankSurfaceState::default();
+        let id = AnnotationId("old-note".into());
+        let target = CaptureAnchor {
+            item_id: ItemId("a".into()),
+            offset_ms: 42_000,
+            end_offset_ms: Some(45_000),
+            pressed_offset_ms: Some(42_500),
+            representation: redshank_model::RepresentationReceipt {
+                complete_digest: Some("blake3:old-copy".into()),
+                ..Default::default()
+            },
+        };
+        desktop
+            .session
+            .model
+            .add_text_annotation(id.clone(), target.clone(), "original wording".into(), 1)
+            .unwrap();
+        let before = desktop.runtime.snapshot();
+        let token = desktop.session.token;
+        desktop.pending_note_open = Some(pending_note_request(7));
+
+        desktop
+            .command(&mut state, CompactCommand::BeginEditNote(id.clone()))
+            .unwrap();
+
+        assert_eq!(state.editing_note.as_ref(), Some(&id));
+        assert_eq!(state.text_capture.as_ref().unwrap().anchor, target);
+        assert_eq!(
+            state.text_capture.as_ref().unwrap().end_offset_ms,
+            Some(45_000)
+        );
+        assert_eq!(state.text_editor.text(), "original wording");
+        assert_eq!(desktop.session.model.annotations[&id].target, target);
+        assert_eq!(desktop.runtime.snapshot(), before);
+        assert_eq!(desktop.session.token, token);
+        assert!(desktop.session.selected.is_none());
+        assert!(desktop.pending_note_open.is_none());
     }
 }

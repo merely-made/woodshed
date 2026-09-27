@@ -2,8 +2,8 @@
 //! when their load token matches; queue order is independent of that selection.
 use redshank_model::{
     CaptureAnchor, FeedEpisodeFacts, ItemId, LibraryItem, ListeningSession, MediaSource, NoteBody,
-    NotePrivacy, Progress, RedshankModel, RepresentationReceipt, ResumeCompleted, ThemeMode,
-    ThemeSeed,
+    NotePrivacy, Progress, RedshankModel, RepresentationIdentity, RepresentationReceipt,
+    ResumeCompleted, ThemeMode, ThemeSeed,
 };
 use redshank_playback::{PlaybackCommand, PlaybackSnapshot, PlaybackState, PreviewState};
 use redshank_surfaces::{
@@ -37,6 +37,9 @@ pub struct Session {
     /// Saved progress the last selection resumed from, for the dock's mark.
     pub resumed_from_ms: Option<u64>,
     pub open_listening: Option<OpenListening>,
+    /// A note is checking a newly loaded copy at zero. Keep saved progress
+    /// until its seek is acknowledged or the user explicitly uses transport.
+    pub hold_progress: bool,
 }
 
 impl Session {
@@ -47,6 +50,7 @@ impl Session {
             token: 0,
             resumed_from_ms: None,
             open_listening: None,
+            hold_progress: false,
         }
     }
 
@@ -93,7 +97,8 @@ impl Session {
     }
 
     pub fn record_progress(&mut self, snapshot: &PlaybackSnapshot, now: u64) -> bool {
-        if !self.matches(snapshot)
+        if self.hold_progress
+            || !self.matches(snapshot)
             || !matches!(
                 snapshot.state,
                 PlaybackState::Playing | PlaybackState::Paused | PlaybackState::Ended
@@ -157,6 +162,7 @@ impl Session {
             .clone();
         self.record_progress(snapshot, now);
         self.close_listening(now, false);
+        self.hold_progress = false;
         self.token = self
             .token
             .checked_add(1)
@@ -201,6 +207,55 @@ impl Session {
                 .clone()
                 .ok_or("The loaded recording has no representation receipt")?,
         })
+    }
+
+    pub fn note_identity(
+        &self,
+        target: &CaptureAnchor,
+        snapshot: &PlaybackSnapshot,
+    ) -> RepresentationIdentity {
+        if self.selected.as_ref() != Some(&target.item_id)
+            || !self.matches(snapshot)
+            || !matches!(
+                snapshot.state,
+                PlaybackState::Playing | PlaybackState::Paused | PlaybackState::Ended
+            )
+        {
+            return RepresentationIdentity::Unproven;
+        }
+        snapshot
+            .representation
+            .as_ref()
+            .map_or(RepresentationIdentity::Unproven, |receipt| {
+                target.representation.compare(receipt)
+            })
+    }
+
+    /// Called only against the loaded selection, including for explicit
+    /// approximate opens. A stale load must never receive a note's seek.
+    pub fn note_seek(
+        &self,
+        target: &CaptureAnchor,
+        snapshot: &PlaybackSnapshot,
+        approximate: bool,
+    ) -> Result<PlaybackCommand, String> {
+        if self.selected.as_ref() != Some(&target.item_id)
+            || !self.matches(snapshot)
+            || !matches!(
+                snapshot.state,
+                PlaybackState::Playing | PlaybackState::Paused | PlaybackState::Ended
+            )
+        {
+            return Err("Wait until the note's recording has loaded".into());
+        }
+        if !approximate {
+            match self.note_identity(target, snapshot) {
+                RepresentationIdentity::Same => {},
+                RepresentationIdentity::Different => return Err("This copy differs. Use Open at approximate time to use the original timestamp.".into()),
+                RepresentationIdentity::Unproven => return Err("Couldn't verify this copy. Use Open at approximate time to use the original timestamp.".into()),
+            }
+        }
+        Ok(PlaybackCommand::Seek(target.offset_ms))
     }
 
     /// Update the projection without replacing its editor, focus, or notices.
@@ -282,6 +337,16 @@ impl Session {
             .collect();
         state.feeds = self.feed_rows();
         state.notes = self.note_rows(state.notes_filter, snapshot);
+        state.note_identities = state
+            .notes
+            .iter()
+            .filter_map(|row| {
+                self.model
+                    .annotations
+                    .get(&row.id)
+                    .map(|note| (row.id.clone(), self.note_identity(&note.target, snapshot)))
+            })
+            .collect();
         state.sessions = self.session_rows(host.now_ms);
 
         let markers = state
@@ -390,9 +455,9 @@ impl Session {
                 _ => None,
             },
             pinned: self.model.is_pinned(&id),
-            representation: item
-                .source()
-                .cached_representation()
+            representation: selected
+                .then_some(snapshot.representation.as_ref())
+                .flatten()
                 .map(|receipt| self.representation_summary(&id, receipt)),
         }
     }
@@ -406,21 +471,26 @@ impl Session {
     ) -> RepresentationSummary {
         let item_digest = receipt.complete_digest.as_deref();
         let mut compared = false;
+        let mut unproven = false;
         let mut matches = true;
         for note in self.model.annotations_for_item(id) {
-            let Some(note_digest) = note.target.representation.complete_digest.as_deref() else {
-                continue;
-            };
-            let Some(item_digest) = item_digest else {
-                break;
-            };
             compared = true;
-            matches &= note_digest == item_digest;
+            match note.target.representation.compare(receipt) {
+                RepresentationIdentity::Same => {},
+                RepresentationIdentity::Different => matches = false,
+                RepresentationIdentity::Unproven => unproven = true,
+            }
         }
         RepresentationSummary {
             retrieved_at_ms: receipt.retrieved_at_ms,
             short_digest: item_digest.and_then(short_digest),
-            matches: compared.then_some(matches),
+            matches: if compared && !matches {
+                Some(false)
+            } else if compared && !unproven {
+                Some(true)
+            } else {
+                None
+            },
         }
     }
 
@@ -687,6 +757,244 @@ mod tests {
             }),
             ..Default::default()
         }
+    }
+
+    #[test]
+    fn note_seeking_requires_identity_unless_approximate_is_explicit() {
+        use RepresentationIdentity::{Different, Same, Unproven};
+
+        let mut session = session();
+        session
+            .select(ItemId("a".into()), &PlaybackSnapshot::default(), 1)
+            .unwrap();
+        let snap = snapshot(session.token);
+        for (label, digest, expected) in [
+            ("same digest", Some("blake3:a"), Same),
+            ("different digest", Some("blake3:b"), Different),
+            ("legacy note without evidence", None, Unproven),
+        ] {
+            let mut target = anchor("a", 42_000);
+            target.representation.complete_digest = digest.map(str::to_owned);
+            let original = target.clone();
+            assert_eq!(session.note_identity(&target, &snap), expected, "{label}");
+            let exact = session.note_seek(&target, &snap, false);
+            if expected == Same {
+                assert!(
+                    matches!(exact, Ok(PlaybackCommand::Seek(42_000))),
+                    "{label}"
+                );
+            } else {
+                assert!(exact.is_err(), "{label}");
+            }
+            assert!(
+                matches!(
+                    session.note_seek(&target, &snap, true),
+                    Ok(PlaybackCommand::Seek(42_000))
+                ),
+                "{label}"
+            );
+            assert_eq!(
+                target, original,
+                "seeking must not rewrite the original target"
+            );
+        }
+    }
+
+    #[test]
+    fn streaming_notes_need_a_strong_validator_for_exact_seeking() {
+        let mut session = session();
+        session
+            .select(ItemId("a".into()), &PlaybackSnapshot::default(), 1)
+            .unwrap();
+        for (tag, expected) in [
+            (Some("\"episode-v1\""), RepresentationIdentity::Same),
+            (Some("W/\"episode-v1\""), RepresentationIdentity::Unproven),
+            (None, RepresentationIdentity::Unproven),
+        ] {
+            let mut target = anchor("a", 9_000);
+            target.representation = RepresentationReceipt {
+                final_url: Some("https://example.test/a.mp3".into()),
+                etag: tag.map(str::to_owned),
+                ..Default::default()
+            };
+            let mut snap = snapshot(session.token);
+            snap.representation = Some(target.representation.clone());
+            assert_eq!(session.note_identity(&target, &snap), expected);
+            assert_eq!(
+                session.note_seek(&target, &snap, false).is_ok(),
+                expected == RepresentationIdentity::Same
+            );
+            assert!(matches!(
+                session.note_seek(&target, &snap, true),
+                Ok(PlaybackCommand::Seek(9_000))
+            ));
+        }
+    }
+
+    #[test]
+    fn approximate_note_seeking_still_requires_a_ready_current_load() {
+        let mut session = session();
+        session
+            .select(ItemId("a".into()), &PlaybackSnapshot::default(), 1)
+            .unwrap();
+        let mut target = anchor("a", 3_000);
+        target.representation = snapshot(session.token).representation.unwrap();
+
+        for playback_state in [
+            PlaybackState::Playing,
+            PlaybackState::Paused,
+            PlaybackState::Ended,
+        ] {
+            let mut snap = snapshot(session.token);
+            snap.state = playback_state;
+            // Missing representation evidence permits only the explicit approximation.
+            snap.representation = None;
+            assert_eq!(
+                session.note_identity(&target, &snap),
+                RepresentationIdentity::Unproven
+            );
+            assert!(session.note_seek(&target, &snap, false).is_err());
+            assert!(matches!(
+                session.note_seek(&target, &snap, true),
+                Ok(PlaybackCommand::Seek(3_000))
+            ));
+        }
+
+        for playback_state in [
+            PlaybackState::Empty,
+            PlaybackState::Loading,
+            PlaybackState::Unavailable("load failed".into()),
+        ] {
+            let mut snap = snapshot(session.token);
+            snap.state = playback_state;
+            assert_eq!(
+                session.note_identity(&target, &snap),
+                RepresentationIdentity::Unproven
+            );
+            for approximate in [false, true] {
+                assert!(session.note_seek(&target, &snap, approximate).is_err());
+            }
+        }
+
+        for token in [None, Some(session.token + 1)] {
+            let mut snap = snapshot(session.token);
+            snap.load_token = token;
+            assert_eq!(
+                session.note_identity(&target, &snap),
+                RepresentationIdentity::Unproven
+            );
+            for approximate in [false, true] {
+                assert!(session.note_seek(&target, &snap, approximate).is_err());
+            }
+        }
+
+        let snap = snapshot(session.token);
+        let mut other_item = target.clone();
+        other_item.item_id = ItemId("b".into());
+        assert_eq!(
+            session.note_identity(&other_item, &snap),
+            RepresentationIdentity::Unproven
+        );
+        for approximate in [false, true] {
+            assert!(session.note_seek(&other_item, &snap, approximate).is_err());
+        }
+
+        session.select(ItemId("b".into()), &snap, 2).unwrap();
+        for approximate in [false, true] {
+            assert!(session.note_seek(&target, &snap, approximate).is_err());
+            assert!(session.note_seek(&other_item, &snap, approximate).is_err());
+        }
+    }
+
+    #[test]
+    fn projection_keeps_each_notes_identity_and_frozen_target_separate() {
+        use RepresentationIdentity::{Different, Same, Unproven};
+
+        let mut session = session();
+        session
+            .select(ItemId("a".into()), &PlaybackSnapshot::default(), 1)
+            .unwrap();
+        let cases = [
+            ("same", "a", Some("blake3:a"), Same),
+            ("different", "a", Some("blake3:b"), Different),
+            ("unknown", "a", None, Unproven),
+            ("other-item", "b", Some("blake3:a"), Unproven),
+        ];
+        for (name, item, digest, _) in cases {
+            let mut target = anchor(item, 12_000);
+            target.end_offset_ms = Some(14_000);
+            target.pressed_offset_ms = Some(12_500);
+            target.representation.complete_digest = digest.map(str::to_owned);
+            session
+                .model
+                .add_text_annotation(AnnotationId(name.into()), target, "note".into(), 1)
+                .unwrap();
+        }
+        let original_annotations = session.model.annotations.clone();
+        let mut state = RedshankSurfaceState::default();
+        state.notes_filter = NotesFilter::AllNotes;
+        let snap = snapshot(session.token);
+        session.project(&mut state, &snap, &HostFacts::default());
+        assert_eq!(state.notes.len(), cases.len());
+        assert_eq!(state.note_identities.len(), cases.len());
+        for (name, _, _, expected) in cases {
+            let id = AnnotationId(name.into());
+            assert_eq!(state.note_identities.get(&id), Some(&expected), "{name}");
+            let target = &session.model.annotations[&id].target;
+            let _ = session.note_seek(target, &snap, false);
+            let _ = session.note_seek(target, &snap, true);
+        }
+        assert_eq!(session.model.annotations, original_annotations);
+
+        let mut loading = snap;
+        loading.state = PlaybackState::Loading;
+        session.project(&mut state, &loading, &HostFacts::default());
+        assert_eq!(state.note_identities.len(), cases.len());
+        assert!(
+            state
+                .note_identities
+                .values()
+                .all(|identity| *identity == Unproven)
+        );
+        assert_eq!(session.model.annotations, original_annotations);
+    }
+
+    #[test]
+    fn refused_note_probe_preserves_saved_progress_when_selecting_away() {
+        let mut session = session();
+        let item = ItemId("a".into());
+        let saved = Progress {
+            position_ms: 81_000,
+            completed: false,
+            updated_at_ms: 1,
+        };
+        session.model.set_progress(&item, saved.clone()).unwrap();
+        session
+            .select(item.clone(), &PlaybackSnapshot::default(), 2)
+            .unwrap();
+        session.hold_progress = true;
+        let mut probe = snapshot(session.token);
+        probe.state = PlaybackState::Paused;
+        probe.position_ms = 0;
+        let target = anchor("a", 12_000);
+        assert!(session.note_seek(&target, &probe, false).is_err());
+        assert!(!session.record_progress(&probe, 3));
+        assert_eq!(session.model.progress[&item], saved);
+        assert!(session.open_listening.is_none());
+        assert!(session.model.listening_sessions.is_empty());
+
+        session.select(ItemId("b".into()), &probe, 4).unwrap();
+        assert_eq!(session.model.progress[&item], saved);
+        assert!(!session.hold_progress);
+        assert!(session.model.listening_sessions.is_empty());
+
+        let next = snapshot(session.token);
+        assert!(session.record_progress(&next, 5));
+        assert_eq!(
+            session.model.progress[&ItemId("b".into())].position_ms,
+            next.position_ms
+        );
+        assert_eq!(session.model.progress[&item], saved);
     }
 
     #[test]
@@ -1113,6 +1421,23 @@ mod tests {
             &PlaybackSnapshot::default(),
             &HostFacts::default(),
         );
+        assert!(
+            state
+                .items
+                .iter()
+                .find(|row| row.id == id)
+                .unwrap()
+                .representation
+                .is_none()
+        );
+        session
+            .select(id.clone(), &PlaybackSnapshot::default(), 3)
+            .unwrap();
+        let loaded = PlaybackSnapshot {
+            representation: Some(receipt),
+            ..snapshot(session.token)
+        };
+        session.project(&mut state, &loaded, &HostFacts::default());
         let row = state.items.iter().find(|row| row.id == id).unwrap();
         assert!(row.pinned);
         let summary = row.representation.clone().unwrap();
@@ -1130,11 +1455,7 @@ mod tests {
             .model
             .add_text_annotation(AnnotationId("n2".into()), drifted, "note".into(), 2)
             .unwrap();
-        session.project(
-            &mut state,
-            &PlaybackSnapshot::default(),
-            &HostFacts::default(),
-        );
+        session.project(&mut state, &loaded, &HostFacts::default());
         let row = state.items.iter().find(|row| row.id == id).unwrap();
         assert_eq!(row.representation.clone().unwrap().matches, Some(false));
     }

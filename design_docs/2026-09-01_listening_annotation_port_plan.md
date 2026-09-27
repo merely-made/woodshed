@@ -23,7 +23,8 @@ voice bodies, source-anchor reopening, recorded-body audition through the
 shared output authority, reaction offset, Duck through the one output gain,
 and a W3C export that passes the Web Annotation test suite's MUST assertions
 in the port's own tests. Knot's generic media `FragmentSelector` is Knot's,
-not this port's, and stays open there. Phase 6 is not started. Phase 7 is met as of
+not this port's, and stays open there. Phase 6 identity/seek guards are implemented;
+alignment and second-host adoption remain open. Phase 7 is met as of
 2026-09-22: Turnstone hosts the compact dock as a contributed surface, routes
 enclosures to it, projects one item, its progress and its notes into its
 graph, and streams through its own fetch handle; see the progress log. Mark
@@ -566,8 +567,9 @@ working implementation replaces its unavailable-playback placeholder:
   during an outstanding close/save keeps the newer draft open.
 - A worker-generated BLAKE3 digest replaces capture-time file metadata reads.
   Hashing then rewinding an ordinary file is not an immutable-byte snapshot
-  under concurrent modification. Phase 6 identity/mismatch behavior remains
-  unimplemented, and no annotation remapping claim follows from this digest.
+  under concurrent modification. The September 26 Phase 6 slice below replaces
+  this with a private playback snapshot and guards note seeking. Annotation
+  remapping remains unimplemented.
 
 The worker retains product commands, load tokens, representation receipts, and
 snapshots while delegating playback transitions to Genet's
@@ -750,8 +752,8 @@ receipt.
 This closes manual episode caching and server-offline restart/playback. Automatic
 subscription downloads, explicit cache removal, eviction ordering, partial-file
 resume, and Turnstone hosting remain open. Content-addressed files are validated
-on each load, but the existing hash-then-rewind concurrent-modification caveat
-still belongs to Phase 6.
+on each load. The September 26 Phase 6 slice below closes the hash-then-rewind
+playback race with a private snapshot; this earlier receipt did not cover it.
 
 #### Manual subscription receipt, 2026-09-09
 
@@ -861,6 +863,65 @@ Done when:
 - alignment fixtures cover inserted gaps, shifted content, and low-confidence
   refusal;
 - remapping, if implemented, creates a derived target and retains the original.
+
+#### Identity and guarded-seeking slice, 2026-09-26
+
+**Status: implemented and automated-tested. Phase 6 remains open.**
+
+The approved identity rule has three results: same bytes, different bytes, and
+unproven. Complete digest evidence takes precedence. Otherwise equal syntactically
+strong ETags at the same final URL prove identity; unequal known lengths disprove
+it. Weak or changed ETags, absent validators, and Last-Modified plus equal length
+remain unproven. A changed ETag alone does not prove changed bytes (RFC 9110 §8.8.1).
+
+Redshank desktop compares each note with the current ready load's receipt before
+opening its anchor or playing a span. Cross-item opens load paused at zero, retain
+the saved resume position, and wait for the matching load token. Different and
+unproven notes display distinct row warnings and an explicit **Open at approximate
+time** action. Every note keeps its original target. Text editing opens its editor
+without seeking. Exact request IDs acknowledge note seeks before progress or span
+stopping resumes; stale load tokens are refused by the playback worker. New
+transport/capture intent and closing cancel pending opens. The browser preview
+refuses verified opens because it has no real loaded audio receipt; its approximate
+action changes only the preview clock.
+
+Local and cached playback copy source bytes into a private temporary file while
+hashing those same bytes, then decode that snapshot. Copy memory is bounded to
+64 KiB; temporary disk use is one encoded recording per live local decoder
+(including a voice preview), automatically deleted when its handle closes. Failure
+to create or fill the snapshot fails the load. Cached admission requires a complete
+digest and matching length. Played bytes equal hashed bytes even if the source is
+subsequently overwritten, truncated, or replaced. This does not claim an atomic
+historical revision of a source modified during copying; cached copies must still
+match their previously published digest.
+
+Automated gate: `cargo test --manifest-path ports/redshank/Cargo.toml --locked
+-p redshank-model -p redshank-playback -p redshank-surfaces -p redshank-desktop
+-p redshank-web --target-dir C:/t/cargo-targets/woodshed --quiet` plus the final
+desktop regression rerun passed 182 tests (46 desktop, 16 model, 3 identity,
+3 W3C, 22 playback, 92 surfaces); seven existing
+physical/fixture playback tests remain ignored. Regression coverage includes
+strong/weak/malformed validators, digest precedence, stale selections, explicit
+approximation, frozen targets, saved progress, cancellation, exact seek acknowledgments,
+and both snapshot-byte and decoded-audio stability after source mutation.
+Strict Clippy (`--all-targets --no-deps -- -D warnings`), formatting of changed
+Rust files, and `git diff --check` pass. These gates ran in the shared checkout
+with unrelated transcript scenario work preserved; they are not a clean-checkout
+or headed receipt.
+
+**Remaining gates:** Turnstone's independent `src/redshank_host.rs` handler must
+adopt the same guard and explicit approximate command. This slice does not change
+its dependency pins or the separate Mere/Genet retained-layout repair. Headed
+acceptance of warnings and real-episode validation remain open.
+
+The subsequent alignment slice is separately bounded: versioned per-note audio
+fingerprints captured before speed changes; configurable capture context starting
+near 20 seconds; explicit searches against downloaded current copies; derived
+positions tied to their digest, with the original retained. Missing fingerprints,
+weak/ambiguous matches, repeated material, deleted anchors, and insertions between
+the matched material and anchor must refuse. Fingerprint capture, alignment
+fixtures, confidence calibration, and remapping are not implemented by this slice.
+No donor code or alignment contract was imported.
 
 ### Phase 7: Turnstone as second host
 

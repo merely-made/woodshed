@@ -2,7 +2,7 @@ use std::{
     cell::RefCell,
     collections::VecDeque,
     fs::File,
-    io::{Read, Seek, SeekFrom},
+    io::{Read, Seek, SeekFrom, Write},
     path::Path,
     rc::Rc,
     sync::{Arc, Mutex},
@@ -214,27 +214,42 @@ pub(super) struct Decoder {
 }
 
 pub(super) fn open_local(path: &Path) -> Result<(Decoder, RepresentationReceipt)> {
+    let (file, receipt) = snapshot_local(path)?;
+    let decoder = open_decoder(Box::new(file), path.to_str().unwrap_or_default())?;
+    Ok((decoder, receipt))
+}
+
+/// Hash exactly the bytes copied to a private, automatically deleted file.
+/// The decoder owns this snapshot, so later writes to the original (including
+/// in-place writes through an already open handle) cannot change playback.
+/// Memory is bounded by the copy buffer; disk use lasts only for this load.
+pub(super) fn snapshot_local(path: &Path) -> Result<(File, RepresentationReceipt)> {
     let mut file =
         File::open(path).with_context(|| format!("could not open {}", path.display()))?;
-    let length = file.metadata().ok().map(|metadata| metadata.len());
+    let mut snapshot = tempfile::tempfile().context("could not create private audio snapshot")?;
+    let mut length = 0_u64;
     let mut digest = blake3::Hasher::new();
     let mut buffer = [0_u8; 64 * 1024];
     loop {
         let count = file
             .read(&mut buffer)
-            .context("could not hash local audio")?;
+            .context("could not read local audio snapshot")?;
         if count == 0 {
             break;
         }
+        snapshot
+            .write_all(&buffer[..count])
+            .context("could not write audio snapshot")?;
         digest.update(&buffer[..count]);
+        length += count as u64;
     }
-    file.seek(SeekFrom::Start(0))
-        .context("could not rewind local audio")?;
-    let decoder = open_decoder(Box::new(file), path.to_str().unwrap_or_default())?;
+    snapshot
+        .seek(SeekFrom::Start(0))
+        .context("could not rewind audio snapshot")?;
     Ok((
-        decoder,
+        snapshot,
         RepresentationReceipt {
-            byte_length: length,
+            byte_length: Some(length),
             complete_digest: Some(format!("blake3:{}", digest.finalize().to_hex())),
             ..RepresentationReceipt::default()
         },
@@ -609,7 +624,8 @@ impl Backend {
             .representation
             .as_ref()
             .ok_or("cached audio produced no representation receipt")?;
-        if actual.complete_digest != expected.complete_digest
+        if actual.complete_digest.is_none()
+            || actual.complete_digest != expected.complete_digest
             || actual.byte_length != expected.byte_length
         {
             return Err(format!(

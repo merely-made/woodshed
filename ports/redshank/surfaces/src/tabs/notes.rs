@@ -214,7 +214,7 @@ fn cluster_block(state: &RedshankSurfaceState, group: &[&NoteSummary]) -> FullVi
     Box::new(el("section", (head, shown, more)).attr("class", "rs-notes-cluster"))
 }
 
-fn span_card(note: &NoteSummary) -> FullView {
+fn span_card(state: &RedshankSurfaceState, note: &NoteSummary) -> FullView {
     let end = note.end_offset_ms.unwrap_or(note.offset_ms);
     let length = end.saturating_sub(note.offset_ms);
     let privacy = if note.private { "PRIVATE" } else { "SHAREABLE" };
@@ -260,6 +260,7 @@ fn span_card(note: &NoteSummary) -> FullView {
                 .attr("class", "rs-notes-span-head"),
                 rows::note_body(note),
                 el("div", (play, edit, delete)).attr("class", "rs-row-actions"),
+                rows::note_actions(state, note),
             ),
         )
         .attr("class", "rs-card rs-notes-span"),
@@ -273,22 +274,20 @@ pub fn representation_line(summary: &RepresentationSummary) -> String {
         Some(at) => format!("the copy heard on {}", format_date(at)),
         None => "the copy you heard".to_owned(),
     };
-    match (&summary.short_digest, summary.matches) {
-        (Some(digest), Some(true)) => {
-            format!(
-                "Notes target {heard} ({digest}). The cached object matches; anchors are exact."
-            )
+    let digest = summary
+        .short_digest
+        .as_ref()
+        .map_or(String::new(), |value| format!(" ({value})"));
+    let evidence = match summary.matches {
+        Some(true) => "All notes match this copy.",
+        Some(false) => {
+            "This copy differs from at least one note's copy; its timestamp may have moved."
         },
-        (Some(digest), Some(false)) => {
-            format!(
-                "Notes target {heard} ({digest}). The cached object has changed; anchors drifted."
-            )
+        None => {
+            "Couldn't verify every note against this copy. Original timestamps may be approximate."
         },
-        (Some(digest), None) => {
-            format!("Notes target {heard} ({digest}). No note kept a digest, so drift is unproven.")
-        },
-        (None, _) => format!("Notes target {heard}. No digest was kept, so a change would pass."),
-    }
+    };
+    format!("Current copy: {heard}{digest}. {evidence}")
 }
 
 /// The REPRESENTATION card, from the selected item's projected receipt.
@@ -300,7 +299,7 @@ fn representation(state: &RedshankSurfaceState, notes: &[&NoteSummary]) -> Optio
     let body = match &item.representation {
         Some(summary) => representation_line(summary),
         None => format!(
-            "Notes target the copy of {} you heard. It is not cached, so no receipt was kept.",
+            "No loaded receipt is available for {}. Note positions are unverified.",
             item.title
         ),
     };
@@ -330,7 +329,7 @@ pub fn panel(state: &RedshankSurfaceState) -> FullView {
     let spans: Vec<FullView> = notes
         .iter()
         .filter(|note| note.end_offset_ms.is_some())
-        .map(|note| span_card(note))
+        .map(|note| span_card(state, note))
         .collect();
     let end = state
         .selected_item()
@@ -471,6 +470,40 @@ mod tests {
     }
 
     #[test]
+    fn unproven_and_different_notes_show_an_explicit_approximate_action() {
+        use redshank_model::RepresentationIdentity;
+        let id = AnnotationId("span-one".into());
+        for (identity, message) in [
+            (
+                RepresentationIdentity::Unproven,
+                "Couldn't verify this copy.",
+            ),
+            (RepresentationIdentity::Different, "This copy differs."),
+        ] {
+            let mut state = notes_state();
+            state.note_identities.insert(id.clone(), identity);
+            let mut runner = runner(state, panel);
+            assert!(
+                runner
+                    .dom()
+                    .borrow()
+                    .outer_html(runner.root())
+                    .contains(message)
+            );
+            click(&mut runner, "Open note at approximate time 18:00");
+            assert_eq!(
+                commands(&mut runner),
+                [CompactCommand::OpenNoteApproximately(id.clone())]
+            );
+        }
+        let mut state = notes_state();
+        state
+            .note_identities
+            .insert(id, RepresentationIdentity::Same);
+        assert!(!markup(state, panel).contains("Open note at approximate time 18:00"));
+    }
+
+    #[test]
     fn the_filter_segment_and_export_emit_commands() {
         let mut runner = runner(notes_state(), panel);
         click(&mut runner, "Notes filter: all notes");
@@ -490,8 +523,8 @@ mod tests {
     fn the_representation_card_reads_the_projected_receipt() {
         let markup = markup(notes_state(), panel);
         assert!(markup.contains("REPRESENTATION"));
-        assert!(markup.contains("Notes target the copy heard on Sep 12 (c41f9ab2)."));
-        assert!(markup.contains("The cached object matches; anchors are exact."));
+        assert!(markup.contains("Current copy: the copy heard on Sep 12 (c41f9ab2)."));
+        assert!(markup.contains("All notes match this copy."));
     }
 
     /// Each honest variant, straight off the summary.
@@ -502,13 +535,13 @@ mod tests {
             short_digest: Some("c41f9ab2".into()),
             matches: Some(false),
         });
-        assert!(drift.contains("has changed"));
+        assert!(drift.contains("differs"));
         let no_digest = representation_line(&RepresentationSummary {
             retrieved_at_ms: Some(1_757_635_200_000),
             short_digest: None,
             matches: None,
         });
-        assert!(no_digest.contains("No digest was kept"));
+        assert!(no_digest.contains("Couldn't verify"));
         let undated = representation_line(&RepresentationSummary {
             retrieved_at_ms: None,
             short_digest: Some("c41f9ab2".into()),
@@ -517,7 +550,7 @@ mod tests {
         assert!(undated.contains("the copy you heard"));
         let mut state = notes_state();
         state.items[0].representation = None;
-        assert!(markup(state, panel).contains("It is not cached, so no receipt was kept."));
+        assert!(markup(state, panel).contains("Note positions are unverified."));
     }
 
     /// Clusters are shut until the playhead's is seeded, and the header's own
