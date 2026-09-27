@@ -52,6 +52,7 @@ fn publish(
             .unwrap_or_else(|poisoned| poisoned.into_inner());
         let next = PlaybackSnapshot {
             load_token: token,
+            completed_note_seek: cell.value.completed_note_seek,
             representation,
             state,
             position_ms,
@@ -505,6 +506,16 @@ fn run_session(
     let mut levels = Levels::default();
     loop {
         while let Ok(message) = receiver.try_recv() {
+            let note_seek_request = match &message {
+                PlaybackCommand::SeekNote {
+                    token: expected,
+                    request_id,
+                    ..
+                } if token == Some(*expected) => Some(*request_id),
+                // A stale note must not affect the newly selected transport.
+                PlaybackCommand::SeekNote { .. } => continue,
+                _ => None,
+            };
             match message {
                 PlaybackCommand::Shutdown => return,
                 #[cfg(test)]
@@ -625,7 +636,11 @@ fn run_session(
                         continue;
                     }
                 },
-                PlaybackCommand::Seek(position) => {
+                PlaybackCommand::Seek(position)
+                | PlaybackCommand::SeekNote {
+                    position_ms: position,
+                    ..
+                } => {
                     stop_preview(
                         &mut preview,
                         &mut controller,
@@ -691,6 +706,17 @@ fn run_session(
             }
             if let Err(error) = project(&mut controller, &backend, &snapshot, token) {
                 fail(&mut controller, &backend, &snapshot, token, error);
+            } else if let Some(request_id) = note_seek_request {
+                // Position is already published; acknowledge only successful
+                // seeks, so hosts never mistake a pre-seek clock for its result.
+                let wake = {
+                    let mut cell = snapshot.lock().unwrap_or_else(|p| p.into_inner());
+                    cell.value.completed_note_seek = Some(request_id);
+                    cell.wake.clone()
+                };
+                if let Some(wake) = wake {
+                    wake();
+                }
             }
         }
         // Drop the mutable adapter borrow before controller signals call back

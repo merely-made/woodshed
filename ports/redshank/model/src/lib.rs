@@ -182,6 +182,55 @@ pub struct RepresentationReceipt {
     pub complete_digest: Option<String>,
 }
 
+/// Evidence about bytes, not about whether two recordings sound alike.
+#[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
+pub enum RepresentationIdentity {
+    Same,
+    Different,
+    #[default]
+    Unproven,
+}
+
+impl RepresentationReceipt {
+    /// Full digests take precedence over server validators. Strong ETags are
+    /// scoped to the final resource URL; different tags need not mean different
+    /// bytes (RFC 9110, 8.8.1). Dates and equal lengths cannot establish identity.
+    pub fn compare(&self, other: &Self) -> RepresentationIdentity {
+        use RepresentationIdentity::{Different, Same, Unproven};
+        if let (Some(a), Some(b)) = (&self.complete_digest, &other.complete_digest)
+            && !a.is_empty()
+            && !b.is_empty()
+        {
+            return if a == b { Same } else { Different };
+        }
+        if let (Some(a), Some(b)) = (self.byte_length, other.byte_length)
+            && a != b
+        {
+            return Different;
+        }
+        if let (Some(a), Some(b)) = (&self.final_url, &other.final_url)
+            && !a.is_empty()
+            && a == b
+            && let (Some(a), Some(b)) = (&self.etag, &other.etag)
+            && strong_etag(a)
+            && a == b
+        {
+            return Same;
+        }
+        Unproven
+    }
+}
+
+fn strong_etag(tag: &str) -> bool {
+    let bytes = tag.as_bytes();
+    bytes.len() >= 2
+        && bytes[0] == b'"'
+        && bytes[bytes.len() - 1] == b'"'
+        && bytes[1..bytes.len() - 1]
+            .iter()
+            .all(|b| *b == 0x21 || (0x23..=0x7e).contains(b) || *b >= 0x80)
+}
+
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 pub struct TimedTarget {
     pub item_id: ItemId,

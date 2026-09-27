@@ -283,8 +283,8 @@ pub struct RepresentationSummary {
     pub retrieved_at_ms: Option<u64>,
     /// The first eight hex characters of the complete digest.
     pub short_digest: Option<String>,
-    /// Whether the notes' frozen digests still equal the item's; `None` when
-    /// one side never recorded one.
+    /// Whether every note proves the same representation. `Some(false)` means
+    /// at least one differs; `None` means no notes or incomplete evidence.
     pub matches: Option<bool>,
 }
 
@@ -325,6 +325,8 @@ pub enum CompactCommand {
     },
     /// Seek to a note's anchor and play (Open at source).
     OpenNote(AnnotationId),
+    /// Explicitly use the original timestamp without claiming byte identity.
+    OpenNoteApproximately(AnnotationId),
     /// Play a span annotation from its start to its end.
     PlaySpan(AnnotationId),
     SelectItem(ItemId),
@@ -600,6 +602,9 @@ pub struct RedshankSurfaceState {
     pub queue: Vec<ItemId>,
     /// Notes for the selected item (or all items under `NotesFilter::AllNotes`).
     pub notes: Vec<NoteSummary>,
+    /// Evidence against the currently loaded copy. Missing entries are unproven.
+    pub note_identities:
+        std::collections::BTreeMap<AnnotationId, redshank_model::RepresentationIdentity>,
     pub sessions: Vec<ListeningSessionRow>,
     pub settings: ListenerSettings,
     /// Bytes the offline cache holds now, for the Storage readout.
@@ -621,6 +626,10 @@ pub struct RedshankSurfaceState {
 }
 
 impl RedshankSurfaceState {
+    pub fn note_identity(&self, id: &AnnotationId) -> redshank_model::RepresentationIdentity {
+        self.note_identities.get(id).copied().unwrap_or_default()
+    }
+
     pub fn drain_commands(&mut self) -> impl Iterator<Item = CompactCommand> + '_ {
         let mut commands: Vec<_> = self.compact.drain_commands().collect();
         commands.append(&mut self.commands);

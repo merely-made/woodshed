@@ -441,7 +441,13 @@ fn apply(state: &mut RedshankSurfaceState, command: CompactCommand) {
 
         // Selecting an item is a projection the browser can do from rows.
         C::SelectItem(id) => select_item(state, &id),
-        C::OpenNote(id) | C::PlaySpan(id) => {
+        C::OpenNote(_) | C::PlaySpan(_) => {
+            refuse(
+                state,
+                "Verify note position (this preview has no loaded audio receipt)",
+            );
+        },
+        C::OpenNoteApproximately(id) => {
             if let Some(offset) = state
                 .notes
                 .iter()
