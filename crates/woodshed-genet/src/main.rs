@@ -24,9 +24,9 @@
 
 mod audio;
 mod drive;
-mod leaves;
 #[cfg(test)]
 mod layout_tests;
+mod leaves;
 mod midi;
 mod persona;
 mod scenario;
@@ -41,12 +41,12 @@ use std::rc::Rc;
 
 use cambium::{clickable, el, text as text_node};
 use cambium_genet_winit_host::{
-    run, HostHooks, HostOptions, Init, Key, KeyPress, NamedKey, Runner, WindowCommands,
+    HostHooks, HostOptions, Init, Key, KeyPress, NamedKey, Runner, WindowCommands, run,
 };
 use woodshed_core::audio::AudioBackend as _;
 use woodshed_core::midi::MidiBackend as _;
 use woodshed_core::settings::WindowSettings;
-use woodshed_views::stage::{stage_root, UiChild, UiState, ViewportClass};
+use woodshed_views::stage::{UiChild, UiState, ViewportClass, stage_root};
 
 use crate::audio::CpalBackend;
 use crate::shared::Shared;
@@ -270,6 +270,7 @@ fn persist_window_geometry(
 }
 
 fn hooks(shared: &Rc<RefCell<Shared>>) -> HostHooks<UiState, Logic, UiChild> {
+    let mut lane = scenario::from_env(shared.clone());
     let frame_shared = shared.clone();
     let dispatch_shared = shared.clone();
     let after_frame_shared = shared.clone();
@@ -313,7 +314,10 @@ fn hooks(shared: &Rc<RefCell<Shared>>) -> HostHooks<UiState, Logic, UiChild> {
         after_frame: Box::new(move |ctx: &mut Ctx<'_>| {
             let mut shared = after_frame_shared.borrow_mut();
             shared.drag_frame_metrics.finish(ctx.frame_profile);
-            scenario::drive(&mut shared, ctx);
+            drop(shared);
+            if let Some(lane) = &mut lane {
+                scenario::drive(lane, ctx);
+            }
         }),
         after_wake: Box::new(|_ctx| {}),
         close_request: Box::new(move |ctx, _request| {

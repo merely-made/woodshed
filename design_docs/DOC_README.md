@@ -82,8 +82,9 @@ before any other doc in this directory.
   addresses page-scroll ownership, expanded-Set sizing, and responsive
   Rehearsal/Settings components. The September 8 selector integration uses
   retained host geometry, with 406 focused tests and five native passes;
-  the wide Stage scenario still needs its controls scrolled into view at
-  narrower widths. The shared view tree
+  the September 27 Mesquite migration passes 223 product tests and both native
+  Stage/nearby-candidate scenarios. Narrow-window controls now scroll into
+  view; broader Stage layout acceptance remains open. The shared view tree
   has a Windows host and an unshipped browser host. Cross-desktop receipts,
   browser audio/storage/accessibility, packaging, and deployment remain open.
 - [2026-07-18_accessibility_semantic_surface.md](2026-07-18_accessibility_semantic_surface.md)

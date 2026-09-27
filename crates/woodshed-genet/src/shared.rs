@@ -11,7 +11,6 @@
 //! lives inside the host's runner, reachable only through a hook's context.
 
 use std::cell::RefCell;
-use std::path::PathBuf;
 use std::rc::Rc;
 
 use personae::roster::Roster;
@@ -20,8 +19,8 @@ use woodshed_views::theme::ThemeMode;
 
 use crate::audio::CpalBackend;
 use crate::midi::MidiHost;
-use crate::scenario::{Observed, ScenarioLane};
-use crate::storage::{open_store_as, HostBackend};
+use crate::scenario::Observed;
+use crate::storage::{HostBackend, open_store_as};
 
 /// Presented-frame timings gathered only while a Set-graph drag is active.
 /// The scenario receipt reads these, but the counters are also useful when a
@@ -272,10 +271,6 @@ pub struct Shared {
     pub fretboard_sig: u64,
     pub rehearsal_fretboard_sig: u64,
 
-    /// The self-drive lane (`WOODSHED_SCENARIO`); `None` for an ordinary run.
-    pub scenario: Option<ScenarioLane>,
-    /// Where a scenario's captures and sentinel go (`WOODSHED_CAPTURE_DIR`).
-    pub capture_dir: Option<PathBuf>,
     /// Semantic transitions since the driver last drained them.
     pub events: Vec<String>,
     /// The last sampled observation, for diffing into `events`.
@@ -318,8 +313,6 @@ impl Shared {
             set_graph_sig: 0,
             fretboard_sig: 0,
             rehearsal_fretboard_sig: 0,
-            scenario: ScenarioLane::from_env(),
-            capture_dir: ScenarioLane::capture_dir_from_env(),
             events: Vec::new(),
             observed: Observed::default(),
             view_only_dispatches: 0,
