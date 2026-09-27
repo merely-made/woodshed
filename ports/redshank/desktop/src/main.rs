@@ -304,6 +304,27 @@ struct Desktop {
 }
 
 impl Desktop {
+    /// Product work that a scenario's `wait` must not outrun. Listening itself
+    /// remains interactive and is not a reason to wait forever.
+    fn scenario_busy(&self) -> bool {
+        let snapshot = self.runtime.snapshot();
+        self.dialog_pending
+            || self.cache_pending.is_some()
+            || !self.cache_removals.is_empty()
+            || self.cache_removals_in_flight > 0
+            || !self.voice_removals.is_empty()
+            || self.voice_removals_in_flight > 0
+            || self.feed_pending.is_some()
+            || self.transcript_pending.is_some()
+            || self.alignment_pending.is_some()
+            || self.export_pending
+            || self.pending_note_open.is_some()
+            || self.pending_note_seek.is_some()
+            || self.persistence.in_flight.is_some()
+            || (!self.session.matches(&snapshot) && self.session.selected.is_some())
+            || snapshot.state == PlaybackState::Loading
+    }
+
     fn schedule_durable_cache_removals(&mut self, revision: u64, state: &mut RedshankSurfaceState) {
         let mut waiting = Vec::new();
         for removal in self.cache_removals.drain(..) {
@@ -1916,8 +1937,13 @@ fn hooks(
     let wake = Rc::clone(&desktop);
     let scenario_frame = Rc::clone(&lane);
     let scenario_busy = Rc::clone(&lane);
+    let scenario_desktop = Rc::clone(&desktop);
     HostHooks {
         frame: Box::new(move |ctx: &mut Context<'_>| {
+            let scenario_running = scenario_busy
+                .borrow()
+                .as_ref()
+                .is_some_and(|lane| !lane.finished());
             let mut desktop = frame.borrow_mut();
             if desktop.last_size != Some(ctx.logical_size) {
                 desktop.last_size = Some(ctx.logical_size);
@@ -1926,7 +1952,13 @@ fn hooks(
                     ctx.runner.update(|state| state.layout = layout);
                 }
             }
-            if desktop.last_projection.elapsed() >= Duration::from_millis(100) || desktop.closing {
+            // Named scenario commands enter the ordinary queue after a frame.
+            // Dispatch them before the next presented frame, including the
+            // tick that finishes the script, rather than behind the idle throttle.
+            if desktop.last_projection.elapsed() >= Duration::from_millis(100)
+                || desktop.closing
+                || scenario_running
+            {
                 desktop.last_projection = Instant::now();
                 let mut next = ctx.runner.state().clone();
                 desktop.dispatch(&mut next);
@@ -1974,10 +2006,7 @@ fn hooks(
                 || desktop.transcript_pending.is_some()
                 || desktop.persistence.in_flight.is_some()
                 || desktop.receipt.as_ref().is_some_and(HeadedReceipt::active)
-                || scenario_busy
-                    .borrow()
-                    .as_ref()
-                    .is_some_and(scenario::ScenarioLane::active)
+                || scenario_running
                 || !desktop.session.matches(&snap) && desktop.session.selected.is_some()
                 || matches!(snap.state, PlaybackState::Loading | PlaybackState::Playing)
         }),
@@ -1987,7 +2016,7 @@ fn hooks(
         }),
         after_frame: Box::new(move |ctx: &mut Context<'_>| {
             if let Some(lane) = scenario_frame.borrow_mut().as_mut() {
-                lane.drive(ctx);
+                scenario::drive(lane, ctx, scenario_desktop.borrow().scenario_busy());
             }
         }),
         after_wake: Box::new(move |ctx| {
@@ -2107,7 +2136,7 @@ fn main() {
     let wake_runtime = desktop.runtime.clone();
     let desktop = Rc::new(RefCell::new(desktop));
     // The self-drive lane, armed only by REDSHANK_SCENARIO.
-    let lane = Rc::new(RefCell::new(scenario::ScenarioLane::from_env()));
+    let lane = Rc::new(RefCell::new(scenario::from_env()));
     run(
         HostOptions {
             title: "Redshank".into(),
@@ -2597,6 +2626,35 @@ mod tests {
             last_projection: Instant::now(),
             projected_item: None,
         }
+    }
+
+    #[test]
+    fn scenario_wait_covers_asynchronous_product_work() {
+        let directory = tempfile::tempdir().unwrap();
+        let mut desktop = desktop(directory.path());
+        assert!(!desktop.scenario_busy());
+        desktop.transcript_pending = Some(PendingTranscript {
+            id: ItemId("a".into()),
+            removed: false,
+        });
+        assert!(desktop.scenario_busy());
+        desktop.transcript_pending = None;
+        desktop.alignment_pending = Some(AnnotationId("note".into()));
+        assert!(desktop.scenario_busy());
+        desktop.alignment_pending = None;
+        desktop.export_pending = true;
+        assert!(desktop.scenario_busy());
+        desktop.export_pending = false;
+        desktop.dialog_pending = true;
+        assert!(desktop.scenario_busy());
+        desktop.dialog_pending = false;
+        desktop.pending_note_seek = Some(1);
+        assert!(desktop.scenario_busy());
+        desktop.pending_note_seek = None;
+        desktop.persistence.in_flight = Some(1);
+        assert!(desktop.scenario_busy());
+        desktop.persistence.in_flight = None;
+        assert!(!desktop.scenario_busy());
     }
 
     fn wait_for_duck(desktop: &Desktop, expected: Option<u8>) {

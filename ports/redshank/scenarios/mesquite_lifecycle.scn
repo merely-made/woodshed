@@ -1,0 +1,18 @@
+# Fixture: empty. Named acts, visible-tab selector clicks, and final captures.
+# The tab is already visible: this does not prove clipped-target scrolling.
+settle 2
+assert snap item-count == 0
+capture lifecycle-listen
+act tab:library
+settle 1
+assert snap tab == Library
+click role:tab Notes
+settle 1
+assert snap tab == Notes
+assert event tab Notes
+capture lifecycle-selector-notes
+act tab:settings
+settle 1
+assert snap tab == Settings
+capture lifecycle-final
+log mesquite lifecycle complete

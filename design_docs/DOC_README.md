@@ -59,7 +59,9 @@ before any other doc in this directory.
   seeking, private playback snapshots, configurable per-note fingerprints, and
   downloaded-copy derived positions. Real-recording validation and a coordinated
   dependency update for Turnstone guard adoption remain open alongside its
-  microphone and capture-behaviour settings. A September 13 GUI evidence
+  microphone and capture-behaviour settings. The September 27 Mesquite migration
+  centralizes the scenario lifecycle while keeping Redshank commands and async
+  waits product-owned. A September 13 GUI evidence
   brief records current headed findings, reference screenshots, required
   states, and responsive wireframe done-conditions. It is separate from the
   Woodshed product graph.

@@ -1,11 +1,21 @@
 # Redshank scenarios
 
-Self-drive receipts for the GUI. Each `.scn` is the genet-probe grammar
-(`repos/genet/components/genet-probe/scenario.rs`), driven in-process by
-`desktop/src/scenario.rs`. Captures are readbacks of the presented frame, so
-nothing depends on the foreground window or on synthetic OS input.
+Self-drive receipts for the GUI. Each `.scn` uses Taproot grammar
+(`repos/genet/components/taproot/scenario.rs`). Mesquite owns frame driving,
+deferred selector clicks, captures and completion; `desktop/src/scenario.rs`
+keeps Redshank commands, observations and asynchronous quiescence. Captures are
+readbacks of the presented frame and do not depend on the foreground window.
 
-Run one:
+The migration acceptance runner uses explicit isolated listener data, retains
+receipts, and owns only its launched processes:
+
+```powershell
+../scripts/mesquite-receipt.ps1
+```
+
+The older external artboard runner remains available for existing workflows;
+inspect its process and cleanup behavior before using it in a shared workspace.
+Its historical invocation is:
 
 ```
 C:\Users\mark_\Code\testing\woodshed\redshank-run-scenario.ps1 `

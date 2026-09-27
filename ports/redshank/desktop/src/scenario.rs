@@ -4,7 +4,8 @@
 //! generic half — parsing, the verb loop, selector resolution, assertions —
 //! is [`taproot`]; what lives here is only what is Redshank's: its one
 //! surface, its named-command vocabulary, the typed [`Observed`] sample it
-//! emits events from, and how a presented frame becomes a PNG.
+//! emits events from, and its asynchronous work policy. Mesquite owns frame
+//! scheduling, captures, deferred selector clicks and completion.
 //!
 //! Three env vars turn it on:
 //!
@@ -24,136 +25,63 @@
 //! pointed at `REDSHANK_WIDTH` / `REDSHANK_HEIGHT`, so one `.scn` is captured
 //! at every artboard width by the driver script.
 
-use std::cell::RefCell;
-use std::path::{Path, PathBuf};
-use std::rc::Rc;
-
-use cambium_genet_winit_host::{AppCtx, Frame, HostPointer, Key, KeyPress, NamedKey, read_frame};
+use cambium_genet_winit_host::{AppCtx, HostPointer, Key, KeyPress, NamedKey};
 use redshank_model::{AnnotationId, ItemId, ResumeCompleted, ThemeMode, ThemeSeed};
 use redshank_surfaces::{
     CompactCommand, FullView, Layout, ListenPane, MenuTarget, Mode, NotesFilter,
     RedshankSurfaceState, Scene, Seed, SurfaceTab, TransportState,
 };
-use taproot::{Automatable, Driveable, ProbeSnapshot, ProbeSurface, Progress, Scenario};
+use taproot::ProbeSnapshot;
 
-/// Self-contained aliases: the lane does not borrow `main`'s, so a rename over
-/// there cannot silently change what this file is driving.
+/// The lane borrows the same rendered product and shipping command path.
 type Logic = fn(&RedshankSurfaceState) -> FullView;
 type Ctx<'a> = AppCtx<'a, RedshankSurfaceState, Logic, FullView>;
 
-// ---------------------------------------------------------------------------
-// The lane
-// ---------------------------------------------------------------------------
+/// Mesquite owns frame scheduling, captures, deferred clicks and completion.
+pub type ScenarioLane = mesquite::Lane<Product>;
 
-/// A running scenario plus everything the run needs that the host does not own:
-/// where receipts go, the event stream, and the last observed sample.
-pub struct ScenarioLane {
-    /// Moved out for the duration of a tick so the driver can borrow the rest.
-    scenario: Option<Scenario>,
-    capture_dir: Option<PathBuf>,
-    /// Set once the sentinel has been written, so it is written exactly once.
-    finished: bool,
+/// Redshank owns only its observation, commands and asynchronous work policy.
+pub struct Product {
+    sheet: String,
     events: Vec<String>,
     observed: Observed,
+    host_busy: bool,
 }
 
-impl ScenarioLane {
-    /// Build the lane from the environment, or `None` for an ordinary run.
-    pub fn from_env() -> Option<Self> {
-        let path = std::env::var("REDSHANK_SCENARIO").ok()?;
-        let text = match std::fs::read_to_string(&path) {
-            Ok(text) => text,
-            Err(e) => {
-                eprintln!("[redshank-scenario] '{path}' unreadable: {e}");
-                return None;
+pub fn from_env() -> Option<ScenarioLane> {
+    let config = mesquite::LaneConfig::from_env("REDSHANK")?;
+    Some(
+        mesquite::Lane::from_config(
+            config,
+            Product {
+                sheet: redshank_surfaces::sheet(),
+                events: Vec::new(),
+                observed: Observed::default(),
+                host_busy: false,
             },
-        };
-        let scenario = match Scenario::parse(&text) {
-            Ok(scenario) => scenario,
-            Err(e) => {
-                eprintln!("[redshank-scenario] '{path}' rejected: {e}");
-                return None;
-            },
-        };
-        let capture_dir = std::env::var("REDSHANK_CAPTURE_DIR").ok().map(|dir| {
-            let dir = PathBuf::from(dir);
-            let _ = std::fs::create_dir_all(&dir);
-            dir
-        });
-        eprintln!("[redshank-scenario] armed: {path}");
-        Some(Self {
-            scenario: Some(scenario),
-            capture_dir,
-            finished: false,
-            events: Vec::new(),
-            observed: Observed::default(),
-        })
-    }
+            cambium_genet_winit_host::read_file,
+        )
+        .expect("load Redshank scenario"),
+    )
+}
 
-    /// Pump the scenario one step, after a presented frame. Called from the
-    /// host's `after_frame` hook, so every assertion reads a state that was
-    /// actually rendered.
-    pub fn drive(&mut self, ctx: &mut Ctx<'_>) {
-        write_pending_capture();
-        self.note_events(ctx.runner.state());
-        let Some(mut scenario) = self.scenario.take() else {
-            return;
-        };
-        let progress = {
-            let mut probe = Probe { ctx, lane: self };
-            scenario.tick(&mut probe)
-        };
-        // Hold the sentinel until every armed capture has actually been
-        // written, or the receipt would claim a screenshot that does not exist.
-        if progress == Progress::Done && PENDING.with(|p| p.borrow().is_none()) {
-            self.write_outcome(scenario.finish());
-            *ctx.close = true;
-        }
-        self.scenario = Some(scenario);
-        // A scenario run must keep frames coming: every step is pumped by one,
-        // and an idle app would stall the run rather than finish it.
-        if let Some(window) = ctx.window {
-            window.request_redraw();
-        }
-    }
+pub fn drive(lane: &mut ScenarioLane, ctx: &mut Ctx<'_>, host_busy: bool) {
+    let product = lane.product_mut();
+    product.host_busy = host_busy;
+    product.note_events(ctx.runner.state());
+    lane.after_frame(ctx);
+}
 
-    /// Whether a scenario is still running, for the host's keep-polling answer.
-    pub fn active(&self) -> bool {
-        !self.finished
-    }
-
-    /// Sample the observed state and emit an event for anything that moved.
-    /// Events are the app's own transitions, not the driver's intentions, so a
-    /// scenario asserting one is asserting that the app really did it.
+impl Product {
     fn note_events(&mut self, state: &RedshankSurfaceState) {
         let now = Observed::read(state);
         let before = std::mem::replace(&mut self.observed, now.clone());
         self.events.extend(before.diff(&now));
     }
+}
 
-    /// Write the `scenario.done` sentinel the driver script waits on.
-    fn write_outcome(&mut self, outcome: taproot::Outcome) {
-        if self.finished {
-            return;
-        }
-        self.finished = true;
-        let result = if outcome.ok {
-            "RESULT ok"
-        } else {
-            "RESULT fail"
-        };
-        let body = std::iter::once(result.to_string())
-            .chain(outcome.log.iter().cloned())
-            .collect::<Vec<_>>()
-            .join("\n");
-        eprintln!("[redshank-scenario] {result}");
-        for line in &outcome.log {
-            eprintln!("[redshank-scenario]   {line}");
-        }
-        if let Some(dir) = &self.capture_dir {
-            let _ = std::fs::write(dir.join("scenario.done"), body);
-        }
-    }
+fn product_busy(state: &RedshankSurfaceState, host_busy: bool, capture_pending: bool) -> bool {
+    host_busy || capture_pending || matches!(state.compact.transport, TransportState::Buffering)
 }
 
 // ---------------------------------------------------------------------------
@@ -468,90 +396,23 @@ pub fn apply(state: &mut RedshankSurfaceState, named: Named) {
 }
 
 // ---------------------------------------------------------------------------
-// Capture
+// The Mesquite product adapter
 // ---------------------------------------------------------------------------
 
-/// A capture armed for the next presented frame: its path and the readback slot.
-type PendingCapture = (PathBuf, Rc<RefCell<Option<Frame>>>);
+impl mesquite::Product for Product {
+    type State = RedshankSurfaceState;
+    type Logic = Logic;
+    type View = FullView;
+    const KIND: &'static str = "redshank";
+    const SURFACE: &'static str = "redshank";
+    const LOG_PREFIX: &'static str = "redshank-scenario";
 
-thread_local! {
-    /// The capture armed for the next presented frame: where it goes and the
-    /// readback the host will drop into it. A thread-local because the capture
-    /// closure outlives the tick that armed it, and the application is
-    /// single-threaded on the event loop.
-    static PENDING: RefCell<Option<PendingCapture>> =
-        const { RefCell::new(None) };
-}
-
-/// Encode whatever readback the last armed capture produced.
-fn write_pending_capture() {
-    let taken = PENDING.with(|p| p.borrow_mut().take());
-    let Some((path, sink)) = taken else { return };
-    let frame = sink.borrow_mut().take();
-    match frame {
-        Some(frame) => {
-            if !write_png(&frame, &path) {
-                eprintln!("[redshank-scenario] capture failed: {}", path.display());
-            }
-        },
-        // Not presented yet: put it back and try again next frame.
-        None => PENDING.with(|p| *p.borrow_mut() = Some((path, sink))),
-    }
-}
-
-/// Write a read-back frame as a PNG. The same pixels the frame presented, so
-/// the receipt is the frame.
-fn write_png(frame: &Frame, path: &Path) -> bool {
-    if let Some(parent) = path.parent() {
-        let _ = std::fs::create_dir_all(parent);
-    }
-    let Ok(file) = std::fs::File::create(path) else {
-        return false;
-    };
-    use image::ImageEncoder;
-    image::codecs::png::PngEncoder::new(file)
-        .write_image(
-            &frame.rgba,
-            frame.width,
-            frame.height,
-            image::ExtendedColorType::Rgba8,
-        )
-        .is_ok()
-}
-
-// ---------------------------------------------------------------------------
-// The probe
-// ---------------------------------------------------------------------------
-
-/// The `Automatable` view of Redshank, borrowed for one tick.
-///
-/// The host owns the runner, so the application cannot hold a long-lived `&mut`
-/// to it; the probe borrows the hook's context for exactly as long as the
-/// driver needs and queues pointer delivery back through the host, which runs
-/// it through the same hit test, capture, and dispatch a real mouse takes.
-struct Probe<'a, 'c> {
-    ctx: &'a mut Ctx<'c>,
-    lane: &'a mut ScenarioLane,
-}
-
-impl Automatable for Probe<'_, '_> {
-    fn with_surfaces<R>(&self, f: impl FnOnce(&[ProbeSurface<'_>]) -> R) -> R {
-        let dom = self.ctx.runner.dom();
-        let dom_ref = dom.borrow();
-        let (w, h) = self.ctx.logical_size;
-        let sheet = redshank_surfaces::sheet();
-        f(&[ProbeSurface {
-            name: "redshank",
-            dom: &dom_ref,
-            // One runner covers the window, and the probe resolves in the same
-            // logical coordinates the layout and the cursor use.
-            rect: [0.0, 0.0, w, h],
-            sheet: &sheet,
-        }])
+    fn sheet(&self) -> &str {
+        &self.sheet
     }
 
-    fn snapshot(&self) -> ProbeSnapshot {
-        let state = self.ctx.runner.state();
+    fn snapshot(&self, ctx: &Ctx<'_>, _: usize, _: f32) -> ProbeSnapshot {
+        let state = ctx.runner.state();
         let observed = Observed::read(state);
         let now = state.compact.now_playing.as_ref();
         let mut snap = ProbeSnapshot::default()
@@ -599,55 +460,34 @@ impl Automatable for Probe<'_, '_> {
         snap
     }
 
-    fn drain_events(&mut self) -> Vec<String> {
-        std::mem::take(&mut self.lane.events)
+    fn drain_events(&mut self, _: &mut Ctx<'_>) -> Vec<String> {
+        std::mem::take(&mut self.events)
     }
 
-    fn act(&mut self, label: &str) -> bool {
+    fn act(&mut self, ctx: &mut Ctx<'_>, label: &str) -> bool {
         let Some(named) = parse_named(label) else {
             return false;
         };
-        self.ctx.runner.update(|state| apply(state, named));
-        self.lane.note_events(self.ctx.runner.state());
+        ctx.runner.update(|state| apply(state, named));
+        self.note_events(ctx.runner.state());
         true
     }
 
-    fn press(&mut self, x: f32, y: f32) {
-        // Routed by the host: the same hit test, capture, and dispatch a real
-        // pointer takes. Delivered once this hook returns, and observed by the
-        // next frame's tick — which is where the scenario asserts anyway.
-        self.ctx.pointer.push(HostPointer::Press(x, y));
-    }
-
-    fn moved(&mut self, x: f32, y: f32) {
-        self.ctx.pointer.push(HostPointer::Moved(x, y));
-    }
-
-    fn release(&mut self, x: f32, y: f32) {
-        self.ctx.pointer.push(HostPointer::Release(x, y));
-    }
-
-    fn busy(&mut self) -> Option<bool> {
-        // The one in-flight condition this lane can see from surface state: a
-        // remote item whose bytes have not arrived. Fetch, cache, and
-        // persistence live on `Desktop`, which the lane deliberately does not
-        // hold — so `wait` is honest about buffering and nothing else.
-        Some(matches!(
-            self.ctx.runner.state().compact.transport,
-            TransportState::Buffering
+    fn busy(&self, ctx: &Ctx<'_>, capture_pending: bool) -> Option<bool> {
+        Some(product_busy(
+            ctx.runner.state(),
+            self.host_busy,
+            capture_pending,
         ))
     }
-}
 
-fn notes_filter_name(filter: NotesFilter) -> &'static str {
-    match filter {
-        NotesFilter::ThisEpisode => "this-episode",
-        NotesFilter::AllNotes => "all-notes",
-    }
-}
-
-impl Driveable for Probe<'_, '_> {
-    fn app_step(&mut self, line: &str) -> Result<(), String> {
+    fn app_step_with_clicks(
+        &mut self,
+        ctx: &mut Ctx<'_>,
+        _: mesquite::Checkpoints<'_>,
+        _: &mut mesquite::Clicks,
+        line: &str,
+    ) -> Result<(), String> {
         let mut parts = line.split_whitespace();
         match parts.next() {
             Some("ui-zoom") => {
@@ -659,7 +499,7 @@ impl Driveable for Probe<'_, '_> {
                 if parts.next().is_some() || !zoom.is_finite() || !(0.5..=4.0).contains(&zoom) {
                     return Err("ui-zoom requires a scale from 0.5 to 4".into());
                 }
-                *self.ctx.set_ui_zoom = Some(zoom);
+                *ctx.set_ui_zoom = Some(zoom);
                 Ok(())
             },
             Some("pointer-click") => {
@@ -676,13 +516,15 @@ impl Driveable for Probe<'_, '_> {
                     .ok_or("pointer-click wants x y")?
                     .parse()
                     .map_err(|_| "invalid pointer y")?;
-                let (w, h) = self.ctx.logical_size;
+                let (w, h) = ctx.logical_size;
                 if parts.next().is_some() || !(0.0..w).contains(&x) || !(0.0..h).contains(&y) {
                     return Err("pointer-click requires an in-window logical point".into());
                 }
-                self.moved(x, y);
-                self.press(x, y);
-                self.release(x, y);
+                ctx.pointer.extend([
+                    HostPointer::Moved(x, y),
+                    HostPointer::Press(x, y),
+                    HostPointer::Release(x, y),
+                ]);
                 Ok(())
             },
             // The shipping keyboard path, not a lane-local imitation: the same
@@ -696,36 +538,19 @@ impl Driveable for Probe<'_, '_> {
                     return Err("key takes one key name".into());
                 }
                 let key = parse_key(name).ok_or_else(|| format!("unknown key '{name}'"))?;
-                crate::key_intercept(self.ctx.runner, &KeyPress::new(key));
-                self.lane.note_events(self.ctx.runner.state());
+                crate::key_intercept(ctx.runner, &KeyPress::new(key));
+                self.note_events(ctx.runner.state());
                 Ok(())
             },
             _ => Err(format!("unknown verb: {line}")),
         }
     }
+}
 
-    fn capture(&mut self, name: &str) -> bool {
-        let Some(path) = self
-            .lane
-            .capture_dir
-            .as_ref()
-            .map(|dir| dir.join(format!("{name}.png")))
-        else {
-            // No capture dir: the run is an assertion-only receipt. Say so
-            // rather than claiming a screenshot that does not exist.
-            eprintln!("[redshank-scenario] capture '{name}' skipped: no REDSHANK_CAPTURE_DIR");
-            return true;
-        };
-        let sink = Rc::new(RefCell::new(None::<Frame>));
-        let out = sink.clone();
-        *self.ctx.capture = Some(Box::new(move |surface, view, w, h| {
-            *out.borrow_mut() = read_frame(surface, view, w, h);
-        }));
-        PENDING.with(|p| *p.borrow_mut() = Some((path, sink)));
-        if let Some(window) = self.ctx.window {
-            window.request_redraw();
-        }
-        true
+fn notes_filter_name(filter: NotesFilter) -> &'static str {
+    match filter {
+        NotesFilter::ThisEpisode => "this-episode",
+        NotesFilter::AllNotes => "all-notes",
     }
 }
 
@@ -881,5 +706,35 @@ mod tests {
         ));
         assert!(matches!(parse_key("n"), Some(Key::Character(_))));
         assert!(parse_key("hyperspace").is_none());
+    }
+
+    #[test]
+    fn quiescence_waits_for_host_work_and_readback_but_not_playing() {
+        let mut state = RedshankSurfaceState::default();
+        state.compact.transport = TransportState::Playing;
+        assert!(!product_busy(&state, false, false));
+        assert!(product_busy(&state, true, false));
+        assert!(product_busy(&state, false, true));
+        state.compact.transport = TransportState::Buffering;
+        assert!(product_busy(&state, false, false));
+        state.compact.transport = TransportState::Paused;
+        assert!(!product_busy(&state, false, false));
+    }
+
+    #[test]
+    fn product_observation_retains_each_transition_once() {
+        let mut product = Product {
+            sheet: redshank_surfaces::sheet(),
+            events: Vec::new(),
+            observed: Observed::default(),
+            host_busy: false,
+        };
+        let mut state = RedshankSurfaceState::default();
+        product.note_events(&state);
+        product.events.clear();
+        state.active_tab = SurfaceTab::Notes;
+        product.note_events(&state);
+        product.note_events(&state);
+        assert_eq!(product.events, vec!["tab Notes"]);
     }
 }
