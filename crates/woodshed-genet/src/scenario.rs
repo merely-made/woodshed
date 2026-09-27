@@ -6,7 +6,7 @@
 //! window. This lane replaces both. The generic half (parsing, the verb loop,
 //! selector resolution, assertions) is [`taproot`]; what lives here is only
 //! what is woodshed's: which surfaces it has, what it can be asked to observe,
-//! its named commands, and how a frame becomes a PNG.
+//! its named commands, and its acceptance diagnostics. Mesquite owns captures and completion.
 //!
 //! Since the host extraction it no longer owns *routing*. A delivered point is
 //! queued as a [`HostPointer`] and the host runs it through the same hit test,
@@ -29,14 +29,10 @@
 //! session.
 
 use std::cell::RefCell;
-use std::path::{Path, PathBuf};
 use std::rc::Rc;
 
-use cambium_genet_winit_host::{Frame, HostPointer, read_frame};
-use taproot::{
-    Automatable, AutomatableExt, Driveable, ProbeSnapshot, ProbeSurface, Progress, Scenario,
-    Selector,
-};
+use cambium_genet_winit_host::HostPointer;
+use taproot::{Automatable, AutomatableExt, ProbeSnapshot, ProbeSurface, Selector};
 use woodshed_core::Lens;
 use woodshed_views::stage::{
     UiState, set_graph_relation_choices, set_graph_snapshot, set_graph_swatch_from_snapshot,
@@ -45,71 +41,88 @@ use woodshed_views::stage::{
 use crate::shared::Shared;
 use crate::sync::Ctx;
 
-/// A running scenario. Where its receipts go lives on [`Shared`], not here: the
-/// scenario is moved out of the lane for the duration of a tick (so the driver
-/// can hold everything else), which would otherwise make the capture directory
-/// unreachable from inside a `capture` step.
-pub struct ScenarioLane {
-    scenario: Option<Scenario>,
-    /// Set once the outcome has been written, so the sentinel is written once.
-    finished: bool,
+/// Product commands and observations; Mesquite owns the frame pump and captures.
+pub struct Product {
+    shared: Rc<RefCell<Shared>>,
+    sheet: String,
 }
 
-impl ScenarioLane {
-    /// Build the lane from the environment, or `None` for an ordinary run.
-    pub fn from_env() -> Option<Self> {
-        let path = std::env::var("WOODSHED_SCENARIO").ok()?;
-        let text = match std::fs::read_to_string(&path) {
-            Ok(text) => text,
-            Err(e) => {
-                eprintln!("[woodshed-genet] scenario '{path}' unreadable: {e}");
-                return None;
-            },
-        };
-        let scenario = match Scenario::parse(&text) {
-            Ok(scenario) => scenario,
-            Err(e) => {
-                eprintln!("[woodshed-genet] scenario '{path}' rejected: {e}");
-                return None;
-            },
-        };
-        eprintln!("[woodshed-genet] scenario lane armed: {path}");
-        Some(Self {
-            scenario: Some(scenario),
-            finished: false,
-        })
-    }
+pub fn from_env(shared: Rc<RefCell<Shared>>) -> Option<mesquite::Lane<Product>> {
+    let config = mesquite::LaneConfig::from_env("WOODSHED")?;
+    let sheet = shared.borrow().accessible_sheet();
+    Some(
+        mesquite::Lane::from_config(
+            config,
+            Product { shared, sheet },
+            cambium_genet_winit_host::read_file,
+        )
+        .expect("load Woodshed scenario"),
+    )
+}
 
-    /// Where captures and the sentinel go, created if needed.
-    pub fn capture_dir_from_env() -> Option<PathBuf> {
-        let dir = PathBuf::from(std::env::var("WOODSHED_CAPTURE_DIR").ok()?);
-        let _ = std::fs::create_dir_all(&dir);
-        Some(dir)
+impl mesquite::Product for Product {
+    type State = UiState;
+    type Logic = crate::sync::Logic;
+    type View = woodshed_views::stage::UiChild;
+    const KIND: &'static str = "woodshed";
+    const SURFACE: &'static str = "woodshed";
+    const LOG_PREFIX: &'static str = "woodshed-genet";
+    fn sheet(&self) -> &str {
+        &self.sheet
     }
-
-    /// Write the `scenario.done` sentinel the harness waits on.
-    fn write_outcome(&mut self, outcome: taproot::Outcome, capture_dir: Option<&Path>) {
-        if self.finished {
-            return;
+    fn snapshot(&self, ctx: &Ctx<'_>, _: usize, _: f32) -> ProbeSnapshot {
+        Snapshot {
+            ctx,
+            shared: &self.shared.borrow(),
         }
-        self.finished = true;
-        let result = if outcome.ok {
-            "RESULT ok"
+        .snapshot()
+    }
+    fn drain_events(&mut self, _: &mut Ctx<'_>) -> Vec<String> {
+        std::mem::take(&mut self.shared.borrow_mut().events)
+    }
+    fn busy(&self, _: &Ctx<'_>, capture_pending: bool) -> Option<bool> {
+        Some(capture_pending)
+    }
+    fn act(&mut self, ctx: &mut Ctx<'_>, label: &str) -> bool {
+        Probe {
+            ctx,
+            shared: &mut self.shared.borrow_mut(),
+            clicks: &mut mesquite::Clicks::default(),
+        }
+        .act(label)
+    }
+    fn app_step_with_clicks(
+        &mut self,
+        ctx: &mut Ctx<'_>,
+        _: mesquite::Checkpoints<'_>,
+        clicks: &mut mesquite::Clicks,
+        line: &str,
+    ) -> Result<(), String> {
+        Probe {
+            ctx,
+            shared: &mut self.shared.borrow_mut(),
+            clicks,
+        }
+        .app_step(line)
+    }
+    fn receipt_lines(&self) -> Vec<String> {
+        let shared = self.shared.borrow();
+        if shared.drag_frame_metrics.samples > 0 {
+            vec![shared.drag_frame_metrics.summary()]
         } else {
-            "RESULT fail"
-        };
-        let body = std::iter::once(result.to_string())
-            .chain(outcome.log.iter().cloned())
-            .collect::<Vec<_>>()
-            .join("\n");
-        eprintln!("[woodshed-genet] scenario {result}");
-        for line in &outcome.log {
-            eprintln!("[woodshed-genet]   {line}");
-        }
-        if let Some(dir) = capture_dir {
-            let _ = std::fs::write(dir.join("scenario.done"), body);
+            vec![]
         }
     }
+}
+
+pub fn drive(lane: &mut mesquite::Lane<Product>, ctx: &mut Ctx<'_>) {
+    {
+        let product = lane.product_mut();
+        let mut shared = product.shared.borrow_mut();
+        note_events(&mut shared, ctx.runner.state());
+        product.sheet = shared.accessible_sheet();
+    }
+    lane.after_frame(ctx);
 }
 
 /// The state a scenario asserts against, sampled each time it may have changed.
@@ -184,90 +197,6 @@ pub fn note_events(shared: &mut Shared, ui: &UiState) {
     }
 }
 
-thread_local! {
-    /// The capture armed for the next presented frame: where it goes and the
-    /// readback the host will drop into it. A thread-local because the capture
-    /// closure outlives the tick that armed it, and the whole application runs
-    /// on one thread.
-    static PENDING: RefCell<Option<(PathBuf, Rc<RefCell<Option<Frame>>>)>> =
-        const { RefCell::new(None) };
-}
-
-/// Pump the scenario one step, after a presented frame. Called from the host's
-/// `after_frame` hook, so every assertion reads a state that was actually
-/// rendered.
-pub fn drive(shared: &mut Shared, ctx: &mut Ctx<'_>) {
-    if shared.scenario.is_none() {
-        return;
-    }
-    write_pending_capture();
-    note_events(shared, ctx.runner.state());
-    let Some(mut scenario) = shared.scenario.as_mut().and_then(|l| l.scenario.take()) else {
-        return;
-    };
-    let progress = {
-        let mut probe = Probe { ctx, shared };
-        scenario.tick(&mut probe)
-    };
-    // Hold the sentinel until every armed capture has actually been written, or
-    // the receipt would claim a screenshot that does not exist.
-    if progress == Progress::Done && PENDING.with(|p| p.borrow().is_none()) {
-        let mut outcome = scenario.finish();
-        if shared.drag_frame_metrics.samples > 0 {
-            outcome.log.push(shared.drag_frame_metrics.summary());
-        }
-        let capture_dir = shared.capture_dir.clone();
-        if let Some(lane) = shared.scenario.as_mut() {
-            lane.write_outcome(outcome, capture_dir.as_deref());
-        }
-        *ctx.close = true;
-    }
-    if let Some(lane) = shared.scenario.as_mut() {
-        lane.scenario = Some(scenario);
-    }
-    // A scenario run must keep frames coming: every step is pumped by one, and
-    // an idle app would stall the run rather than finish it.
-    if let Some(window) = ctx.window {
-        window.request_redraw();
-    }
-}
-
-/// Encode whatever readback the last armed capture produced.
-fn write_pending_capture() {
-    let taken = PENDING.with(|p| p.borrow_mut().take());
-    let Some((path, sink)) = taken else { return };
-    let frame = sink.borrow_mut().take();
-    match frame {
-        Some(frame) => {
-            if !write_png(&frame, &path) {
-                eprintln!("[woodshed-genet] capture failed: {}", path.display());
-            }
-        },
-        // Not presented yet: put it back and try again next frame.
-        None => PENDING.with(|p| *p.borrow_mut() = Some((path, sink))),
-    }
-}
-
-/// Write a read-back frame as a PNG. The same pixels the frame presented, so the
-/// receipt is the frame.
-fn write_png(frame: &Frame, path: &Path) -> bool {
-    if let Some(parent) = path.parent() {
-        let _ = std::fs::create_dir_all(parent);
-    }
-    let Ok(file) = std::fs::File::create(path) else {
-        return false;
-    };
-    use image::ImageEncoder;
-    image::codecs::png::PngEncoder::new(file)
-        .write_image(
-            &frame.rgba,
-            frame.width,
-            frame.height,
-            image::ExtendedColorType::Rgba8,
-        )
-        .is_ok()
-}
-
 /// The `Automatable` view of woodshed, borrowed for the duration of one tick.
 ///
 /// The host owns the runner, so the application cannot hold a long-lived `&mut`
@@ -276,9 +205,15 @@ fn write_png(frame: &Frame, path: &Path) -> bool {
 struct Probe<'a, 'c> {
     ctx: &'a mut Ctx<'c>,
     shared: &'a mut Shared,
+    clicks: &'a mut mesquite::Clicks,
 }
 
-impl Probe<'_, '_> {
+struct Snapshot<'a, 'c> {
+    ctx: &'a Ctx<'c>,
+    shared: &'a Shared,
+}
+
+impl Snapshot<'_, '_> {
     /// The `data-key` of the Set-graph node the canvas is currently painting
     /// as focused, or `"none"`. The canvas owns that emphasis, so the DOM is
     /// the authority for it.
@@ -350,69 +285,8 @@ impl Probe<'_, '_> {
         .unwrap_or("unclassed")
         .to_string()
     }
-
-    fn stage_node_key(&self, index: usize) -> Option<String> {
-        let ui = self.ctx.runner.state();
-        let snapshot = set_graph_snapshot(ui);
-        set_graph_swatch_from_snapshot(&snapshot, ui, ui.set_tray_expanded)
-            .graph
-            .nodes
-            .get(index)
-            .and_then(|node| node.key.clone())
-    }
-
-    fn stage_relation_id(&self, index: usize) -> Option<String> {
-        let ui = self.ctx.runner.state();
-        let snapshot = set_graph_snapshot(ui);
-        set_graph_swatch_from_snapshot(&snapshot, ui, ui.set_tray_expanded)
-            .relations
-            .get(index)
-            .map(|relation| relation.id.clone())
-    }
 }
-
-impl Automatable for Probe<'_, '_> {
-    fn selector_target(&self, selector: &Selector) -> taproot::SelectorTarget {
-        let candidates = {
-            let dom = self.ctx.runner.dom();
-            let dom = dom.borrow();
-            taproot::matching(&dom, selector)
-        };
-        let (width, height) = self.ctx.logical_size;
-        for node in candidates {
-            let Some((x, y, w, h)) = self.ctx.painted_rect(node) else {
-                continue;
-            };
-            if ![x, y, w, h].iter().all(|value| value.is_finite()) || w <= 0.0 || h <= 0.0 {
-                continue;
-            }
-            let point = (x + w / 2.0, y + h / 2.0);
-            if point.0 >= 0.0 && point.1 >= 0.0 && point.0 < width && point.1 < height {
-                return taproot::SelectorTarget::Hit(taproot::Hit {
-                    surface: "woodshed",
-                    point,
-                });
-            }
-        }
-        // Participating hosts own both hits and misses. Never re-layout after
-        // a missing, hidden or offscreen retained target.
-        taproot::SelectorTarget::Miss
-    }
-
-    fn with_surfaces<R>(&self, f: impl FnOnce(&[ProbeSurface<'_>]) -> R) -> R {
-        let dom = self.ctx.runner.dom();
-        let dom_ref = dom.borrow();
-        let (w, h) = self.ctx.logical_size;
-        f(&[ProbeSurface {
-            name: "woodshed",
-            dom: &dom_ref,
-            // One runner covers the window, and the probe resolves in the same
-            // logical coordinates the layout and the cursor use.
-            rect: [0.0, 0.0, w, h],
-            sheet: &self.shared.accessible_sheet(),
-        }])
-    }
-
+impl Snapshot<'_, '_> {
     fn snapshot(&self) -> ProbeSnapshot {
         let ui = self.ctx.runner.state();
         let observed = Observed::read(ui);
@@ -805,6 +679,84 @@ impl Automatable for Probe<'_, '_> {
         }
         snap
     }
+}
+
+impl Probe<'_, '_> {
+    fn stage_node_key(&self, index: usize) -> Option<String> {
+        let ui = self.ctx.runner.state();
+        let snapshot = set_graph_snapshot(ui);
+        set_graph_swatch_from_snapshot(&snapshot, ui, ui.set_tray_expanded)
+            .graph
+            .nodes
+            .get(index)
+            .and_then(|node| node.key.clone())
+    }
+
+    fn stage_relation_id(&self, index: usize) -> Option<String> {
+        let ui = self.ctx.runner.state();
+        let snapshot = set_graph_snapshot(ui);
+        set_graph_swatch_from_snapshot(&snapshot, ui, ui.set_tray_expanded)
+            .relations
+            .get(index)
+            .map(|relation| relation.id.clone())
+    }
+}
+
+impl Automatable for Probe<'_, '_> {
+    fn click_target(&mut self, selector: &Selector) -> Option<bool> {
+        Some(self.clicks.click(self.ctx, selector, |_, _, r| {
+            (r[0] + r[2] * 0.5, r[1] + r[3] * 0.5)
+        }))
+    }
+
+    fn selector_target(&self, selector: &Selector) -> taproot::SelectorTarget {
+        let candidates = {
+            let dom = self.ctx.runner.dom();
+            let dom = dom.borrow();
+            taproot::matching(&dom, selector)
+        };
+        let (width, height) = self.ctx.logical_size;
+        for node in candidates {
+            let Some((x, y, w, h)) = self.ctx.painted_rect(node) else {
+                continue;
+            };
+            if ![x, y, w, h].iter().all(|value| value.is_finite()) || w <= 0.0 || h <= 0.0 {
+                continue;
+            }
+            let point = (x + w / 2.0, y + h / 2.0);
+            if point.0 >= 0.0 && point.1 >= 0.0 && point.0 < width && point.1 < height {
+                return taproot::SelectorTarget::Hit(taproot::Hit {
+                    surface: "woodshed",
+                    point,
+                });
+            }
+        }
+        // Participating hosts own both hits and misses. Never re-layout after
+        // a missing, hidden or offscreen retained target.
+        taproot::SelectorTarget::Miss
+    }
+
+    fn with_surfaces<R>(&self, f: impl FnOnce(&[ProbeSurface<'_>]) -> R) -> R {
+        let dom = self.ctx.runner.dom();
+        let dom_ref = dom.borrow();
+        let (w, h) = self.ctx.logical_size;
+        f(&[ProbeSurface {
+            name: "woodshed",
+            dom: &dom_ref,
+            // One runner covers the window, and the probe resolves in the same
+            // logical coordinates the layout and the cursor use.
+            rect: [0.0, 0.0, w, h],
+            sheet: &self.shared.accessible_sheet(),
+        }])
+    }
+
+    fn snapshot(&self) -> ProbeSnapshot {
+        Snapshot {
+            ctx: self.ctx,
+            shared: self.shared,
+        }
+        .snapshot()
+    }
 
     fn drain_events(&mut self) -> Vec<String> {
         std::mem::take(&mut self.shared.events)
@@ -942,7 +894,7 @@ impl Automatable for Probe<'_, '_> {
     }
 }
 
-impl Driveable for Probe<'_, '_> {
+impl Probe<'_, '_> {
     /// Stage-canvas receipt verbs resolve epoch-qualified identities from the
     /// live snapshot, then use the ordinary host pointer lifecycle. This keeps
     /// them distinct from the Related graph, which shares the same CSS classes.
@@ -1234,29 +1186,5 @@ impl Driveable for Probe<'_, '_> {
             },
             _ => Err(format!("unknown verb: {line}")),
         }
-    }
-
-    fn capture(&mut self, name: &str) -> bool {
-        let Some(path) = self
-            .shared
-            .capture_dir
-            .as_ref()
-            .map(|dir| dir.join(format!("{name}.png")))
-        else {
-            // No capture dir: the run is an assertion-only receipt. Say so
-            // rather than claiming a screenshot that does not exist.
-            eprintln!("[woodshed-genet] capture '{name}' skipped: no WOODSHED_CAPTURE_DIR");
-            return true;
-        };
-        let sink = Rc::new(RefCell::new(None::<Frame>));
-        let out = sink.clone();
-        *self.ctx.capture = Some(Box::new(move |surface, view, w, h| {
-            *out.borrow_mut() = read_frame(surface, view, w, h);
-        }));
-        PENDING.with(|p| *p.borrow_mut() = Some((path, sink)));
-        if let Some(window) = self.ctx.window {
-            window.request_redraw();
-        }
-        true
     }
 }

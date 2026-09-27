@@ -10,7 +10,7 @@ description = "Woodshed's desktop application over the shared Cambium desktop ho
 [dependencies]
 # The desktop realization of muniment's Backend. woodshed-core names the slots;
 # this crate only decides which file each one lives in.
-muniment = { git = "https://github.com/merely-made/mere.git", rev = "149b8053a9acf71bbb3733bbdb156579ab9c4af6" }
+muniment = { git = "https://github.com/merely-made/mere.git", rev = "8106c7c2063001fbf60ea511758fb1c72ed8a243" }
 # The family-shared identity vault: which persona this machine practices as,
 # and the key its practice session is sealed under. Desktop-only, which is why
 # it is declared here rather than in the portable core. Declared in the
@@ -36,13 +36,10 @@ genet-scripted-dom = { workspace = true }
 # The shared automatability substrate: selector resolution + the scenario
 # driver, so woodshed's self-drive lane is the genet one, not a private copy.
 taproot = { workspace = true }
-# Still needed by the scenario lane's capture: the host hands back a readback,
-# and the winit types the window-chrome requests speak.
-wgpu = { workspace = true }
+mesquite = { workspace = true }
+# Window types used by the native chrome hooks. Mesquite owns GPU readback.
 winit = { workspace = true }
 directories = "5"
-# Scenario captures encode a PNG from a texture readback.
-image = { version = "0.25", default-features = false, features = ["png"] }
 serde_json = { workspace = true }
 # The shared persona picker's event type. The list itself is drawn in
 # woodshed-views; this crate only reads what the user answered.

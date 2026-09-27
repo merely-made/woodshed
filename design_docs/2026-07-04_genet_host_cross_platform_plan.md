@@ -703,3 +703,35 @@ Source, binary, scenario and artifact hashes are recorded in
 audio underrun/overrun messages occurred during these runs; they are not an
 audio quality receipt. Cross-platform release, ancestor clipping/occlusion,
 and the broader shell extraction remain open.
+
+
+## Shared scenario lifecycle (2026-09-27, native receipts passed)
+
+The desktop adapter now implements `mesquite::Product`. Mesquite owns the frame
+pump, captures, failure accounting and completion; Woodshed retains its typed
+snapshot, semantic commands, graph gesture verbs and drag performance summary.
+Commands such as `click-context-node` use the lane's own held-click queue, so
+the script waits for scrolling and pointer delivery just as an ordinary
+`click` does. The adapter refreshes its stylesheet from the live accessibility
+preferences each frame.
+
+The manifest pins Mere `8106c7c2063001fbf60ea511758fb1c72ed8a243` and Genet
+`34626a6c82ee19f78609b8ebad8d513d3cc9c4cd`. Passed: 223 tests across core
+(121 plus one backdrop integration), native host (31), graph (14) and views
+(56), following the 50 focused shared-runner tests.
+
+The unchanged `stage_clipping.scn` now passes at requested width 1100 and
+height 900 with isolated practice storage and persona vault. Its arrangement
+controls scroll into view and change the graph reading to Tonnetz. The three
+composed captures were inspected: the graph itself can remain below the
+viewport, so this closes selector delivery rather than Stage layout acceptance.
+`nearby_candidates.scn` also passes, including the custom `click-context-node`
+verb, candidate disclosure and adding a second card; its final capture was
+inspected. Each run records three nonblank, distinct 2200x1504 captures (the
+desktop clamps the requested window height).
+
+Evidence and the isolated native runner are under
+`Code/testing/woodshed/mesquite/{stage_clipping,nearby_candidates}` and
+`Code/testing/cambium/mesquite-migration/receipt.md`. Redshank transcript WIP
+remains with its owner. Cross-platform, manual assistive-technology and audio
+quality acceptance remain separate gates.
