@@ -1,0 +1,23 @@
+{
+  "mode": "alignment-guard",
+  "passed": false,
+  "exit_code": 101,
+  "started_utc": "2026-09-27T11:07:37.2971527Z",
+  "finished_utc": "2026-09-27T11:07:44.4077470Z",
+  "binary": "C:\\t\\cargo-targets\\woodshed\\debug\\redshank-desktop.exe",
+  "binary_sha256": "CCA5A15E83E2281301E28ABA4A3B839DECDAD018EDA44B4DCC4165162C369D3C",
+  "fixture_sha256": "1DEBE4B15097B928D5EDE7D6A2C88A435DCE5356D6262909692BACC977A06BE6",
+  "evidence": "Automated native winit/Genet window with ordinary Desktop commands, projection, decoder and output runtime. No pointer/keyboard or human-observed visual/acoustic acceptance. Synthetic changing tones only; no real-podcast, codec transformation, or confidence calibration claim.",
+  "cases": [
+    "actual pre-rate fingerprint capture at 2x with reaction offset",
+    "digest-bound cached search finds inserted 30-second preroll",
+    "derived position acknowledged seek",
+    "captured original target preserved"
+  ],
+  "retained_inputs": [
+    "changing-tones-12s.wav",
+    "data/",
+    "preroll-30s-plus-tones.wav"
+  ],
+  "alignment_fixture_sha256": "C5738C0CEB7858296A6E56BC0D7D4E1CCB6A59B322659B43C8CF3144C44B10C4"
+}

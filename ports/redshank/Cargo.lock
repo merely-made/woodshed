@@ -5219,6 +5219,7 @@ dependencies = [
  "audio-primitives",
  "blake3",
  "firewheel",
+ "fixed-resample",
  "hound",
  "mere-fetch",
  "redshank-model",

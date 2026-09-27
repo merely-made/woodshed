@@ -611,6 +611,7 @@ mod tests {
         let mut state = queued();
         state.text_capture = Some(TextCapture {
             anchor: CaptureAnchor {
+                fingerprint: None,
                 item_id: ItemId("episode-42".into()),
                 offset_ms: 62_000,
                 end_offset_ms,

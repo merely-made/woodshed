@@ -1,0 +1,1 @@
+Redshank identity-guard generated PCM fixture and isolated model data; preserve logs as acceptance evidence.

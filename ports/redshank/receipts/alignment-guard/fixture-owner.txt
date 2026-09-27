@@ -1,0 +1,1 @@
+Redshank alignment-guard generated changing-tone PCM fixtures and isolated model data; preserve logs as acceptance evidence.

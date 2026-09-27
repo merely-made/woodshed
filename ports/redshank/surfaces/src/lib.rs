@@ -327,6 +327,10 @@ pub enum CompactCommand {
     OpenNote(AnnotationId),
     /// Explicitly use the original timestamp without claiming byte identity.
     OpenNoteApproximately(AnnotationId),
+    /// Search a downloaded copy for the note's captured audio context.
+    RealignNote(AnnotationId),
+    /// Open a separately stored estimate, after checking its destination digest.
+    OpenAlignedNote(AnnotationId),
     /// Play a span annotation from its start to its end.
     PlaySpan(AnnotationId),
     SelectItem(ItemId),
@@ -473,6 +477,18 @@ pub struct NoteSummary {
     pub private: bool,
 }
 
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub enum NoteAlignment {
+    Unavailable(String),
+    Download,
+    Ready,
+    Running,
+    Aligned {
+        position_ms: u64,
+        score_per_mille: u16,
+    },
+}
+
 impl NoteSummary {
     pub fn kind(&self) -> NoteKind {
         match self.body {
@@ -605,6 +621,7 @@ pub struct RedshankSurfaceState {
     /// Evidence against the currently loaded copy. Missing entries are unproven.
     pub note_identities:
         std::collections::BTreeMap<AnnotationId, redshank_model::RepresentationIdentity>,
+    pub note_alignments: std::collections::BTreeMap<AnnotationId, NoteAlignment>,
     pub sessions: Vec<ListeningSessionRow>,
     pub settings: ListenerSettings,
     /// Bytes the offline cache holds now, for the Storage readout.

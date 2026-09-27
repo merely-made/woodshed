@@ -115,6 +115,7 @@ fn anchor(item: &str, offset_ms: u64, end_offset_ms: Option<u64>) -> CaptureAnch
         offset_ms,
         end_offset_ms,
         pressed_offset_ms: None,
+        fingerprint: None,
         representation: RepresentationReceipt::default(),
     }
 }

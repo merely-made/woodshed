@@ -88,6 +88,7 @@ fn episode(index: usize, title: &str, position_ms: u64, completed: bool) -> Item
 /// receipt is claimed: nothing was fetched, so none is honest.
 fn anchor(item: &ItemId, offset_ms: u64) -> TimedTarget {
     TimedTarget {
+        fingerprint: None,
         item_id: item.clone(),
         offset_ms,
         end_offset_ms: None,
@@ -445,6 +446,12 @@ fn apply(state: &mut RedshankSurfaceState, command: CompactCommand) {
             refuse(
                 state,
                 "Verify note position (this preview has no loaded audio receipt)",
+            );
+        },
+        C::RealignNote(_) | C::OpenAlignedNote(_) => {
+            refuse(
+                state,
+                "Audio alignment (this preview has no downloaded audio)",
             );
         },
         C::OpenNoteApproximately(id) => {

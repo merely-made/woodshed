@@ -504,6 +504,76 @@ mod tests {
     }
 
     #[test]
+    fn alignment_actions_preserve_note_and_item_identity() {
+        use crate::NoteAlignment;
+        let id = AnnotationId("alignment-note".into());
+        for (alignment, visible_label, accessible_label, expected) in [
+            (
+                NoteAlignment::Ready,
+                ">Realign<",
+                "Realign note at 0:18",
+                CompactCommand::RealignNote(id.clone()),
+            ),
+            (
+                NoteAlignment::Download,
+                "Download to realign",
+                "Download to realign this note",
+                CompactCommand::CacheItem(ItemId("episode-42".into())),
+            ),
+            (
+                NoteAlignment::Aligned {
+                    position_ms: 48_000,
+                    score_per_mille: 975,
+                },
+                "Open aligned estimate 0:48 (score 97.5%)",
+                "Open aligned estimate for note at 0:18",
+                CompactCommand::OpenAlignedNote(id.clone()),
+            ),
+        ] {
+            let mut state = notes_state();
+            state.notes = vec![note("alignment-note", 18_000, None)];
+            state.note_alignments.insert(id.clone(), alignment);
+            let mut runner = runner(state, panel);
+            let html = runner.dom().borrow().outer_html(runner.root());
+            assert!(html.contains(visible_label), "{html}");
+            click(&mut runner, accessible_label);
+            assert_eq!(commands(&mut runner), [expected]);
+        }
+    }
+
+    #[test]
+    fn running_and_missing_fingerprint_explain_the_state_without_a_realign_action() {
+        use crate::NoteAlignment;
+        for (alignment, message) in [
+            (NoteAlignment::Running, "Searching downloaded audio..."),
+            (
+                NoteAlignment::Unavailable("This note has no captured audio fingerprint".into()),
+                "This note has no captured audio fingerprint",
+            ),
+        ] {
+            let mut state = notes_state();
+            state.notes = vec![note("alignment-note", 18_000, None)];
+            state
+                .note_alignments
+                .insert(AnnotationId("alignment-note".into()), alignment);
+            let mut runner = runner(state, panel);
+            let html = runner.dom().borrow().outer_html(runner.root());
+            assert!(html.contains(message), "{html}");
+            assert!(!html.contains("Realign note at 0:18"));
+            assert!(!html.contains("Download to realign this note"));
+            assert!(!html.contains("Open aligned estimate"));
+            // An unavailable alignment keeps the explicit approximate escape.
+            click(&mut runner, "Open note at approximate time 0:18");
+            assert_eq!(
+                commands(&mut runner),
+                [CompactCommand::OpenNoteApproximately(AnnotationId(
+                    "alignment-note".into()
+                ))]
+            );
+        }
+    }
+
+    #[test]
     fn the_filter_segment_and_export_emit_commands() {
         let mut runner = runner(notes_state(), panel);
         click(&mut runner, "Notes filter: all notes");

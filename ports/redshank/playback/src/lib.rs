@@ -14,7 +14,9 @@ use anyhow::{Result, anyhow};
 use fetch::Fetch;
 use redshank_model::{MediaSource, RepresentationReceipt};
 
+mod alignment;
 mod backend;
+pub use alignment::{FingerprintContext, realign_local};
 mod controller_adapter;
 mod http_range;
 mod output;
@@ -61,6 +63,8 @@ pub struct PlaybackSnapshot {
     /// The last successful note seek, identified by the host's request ID.
     pub completed_note_seek: Option<u64>,
     pub representation: Option<RepresentationReceipt>,
+    /// Bounded, original-speed context ending at the presented source clock.
+    pub fingerprint_context: Option<Arc<FingerprintContext>>,
     pub state: PlaybackState,
     pub position_ms: u64,
     pub duration_ms: Option<u64>,
@@ -85,6 +89,7 @@ impl Default for PlaybackSnapshot {
             load_token: None,
             completed_note_seek: None,
             representation: None,
+            fingerprint_context: None,
             state: PlaybackState::Empty,
             position_ms: 0,
             duration_ms: None,

@@ -246,6 +246,42 @@ pub fn note_actions(state: &RedshankSurfaceState, note: &NoteSummary) -> FullVie
         CompactCommand::OpenNote(note.id.clone()),
     );
     let identity = state.note_identity(&note.id);
+    let alignment = state.note_alignments.get(&note.id).map(|alignment| {
+        use crate::NoteAlignment;
+        match alignment {
+            NoteAlignment::Unavailable(reason) => {
+                Box::new(el("span", text(reason.clone()))) as FullView
+            },
+            NoteAlignment::Download => action(
+                "Download to realign",
+                "Download to realign this note",
+                "rs-note-open",
+                CompactCommand::CacheItem(note.item_id.clone()),
+            ),
+            NoteAlignment::Ready => action(
+                "Realign",
+                format!("Realign note at {at}"),
+                "rs-note-open",
+                CompactCommand::RealignNote(note.id.clone()),
+            ),
+            NoteAlignment::Running => {
+                Box::new(el("span", text("Searching downloaded audio...")).attr("role", "status"))
+            },
+            NoteAlignment::Aligned {
+                position_ms,
+                score_per_mille,
+            } => action(
+                format!(
+                    "Open aligned estimate {} (score {:.1}%)",
+                    format_time(*position_ms),
+                    f32::from(*score_per_mille) / 10.0
+                ),
+                format!("Open aligned estimate for note at {at}"),
+                "rs-note-open",
+                CompactCommand::OpenAlignedNote(note.id.clone()),
+            ),
+        }
+    });
     let warning = (identity != redshank_model::RepresentationIdentity::Same).then(|| {
         let message = match identity {
             redshank_model::RepresentationIdentity::Different => "This copy differs.",
@@ -301,7 +337,7 @@ pub fn note_actions(state: &RedshankSurfaceState, note: &NoteSummary) -> FullVie
         &format!("note at {at}"),
         actions,
     );
-    Box::new(el("span", (open_at, warning, menu)).attr("class", "rs-row-tail"))
+    Box::new(el("span", (open_at, warning, alignment, menu)).attr("class", "rs-row-tail"))
 }
 
 /// One note row, as the Listen and Notes tabs both show it.

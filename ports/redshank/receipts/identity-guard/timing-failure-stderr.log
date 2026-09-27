@@ -1,0 +1,5 @@
+[cambium-winit] accessibility Installed, 125 nodes projected
+
+thread 'main' (48976) panicked at desktop\src\main.rs:2134:41:
+complete headed receipt: "same-copy note sought to unexpected position 2368"
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace

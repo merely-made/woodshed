@@ -108,6 +108,10 @@ fn fetch_transcript(
 }
 
 enum IoReply {
+    Aligned {
+        id: AnnotationId,
+        result: Result<Box<redshank_model::DerivedPosition>, String>,
+    },
     TranscriptFetched {
         id: ItemId,
         result: Result<redshank_model::SavedTranscript, String>,
@@ -286,6 +290,7 @@ struct Desktop {
     /// Progress and span stopping wait for this exact seek request.
     pending_note_seek: Option<u64>,
     next_note_seek: u64,
+    alignment_pending: Option<AnnotationId>,
     microphone_label: Option<String>,
     export_pending: bool,
     data_root: PathBuf,
@@ -430,6 +435,11 @@ impl Desktop {
     ) {
         let facts = self.host_facts();
         self.session.project(state, snapshot, &facts);
+        if let Some(id) = &self.alignment_pending {
+            state
+                .note_alignments
+                .insert(id.clone(), redshank_surfaces::NoteAlignment::Running);
+        }
         // The notes the listener is inside open first; every other cluster is
         // shut. Seeded once per selection so a later collapse sticks.
         if self.projected_item != self.session.selected {
@@ -890,6 +900,79 @@ impl Desktop {
             self.pending_note_open = None;
         }
         match command {
+            CompactCommand::RealignNote(id) => {
+                if self.alignment_pending.is_some() {
+                    return Err("An audio search is already running".into());
+                }
+                self.session
+                    .model
+                    .settings
+                    .validate_alignment_settings()
+                    .map_err(|e| format!("Invalid alignment settings: {e:?}"))?;
+                let target = self
+                    .session
+                    .model
+                    .annotations
+                    .get(&id)
+                    .ok_or("That note no longer exists")?
+                    .target
+                    .clone();
+                if target.fingerprint.is_none() {
+                    return Err("This note has no captured audio fingerprint".into());
+                }
+                let (path, receipt) = match self
+                    .session
+                    .model
+                    .library
+                    .get(&target.item_id)
+                    .map(|item| item.source())
+                {
+                    Some(MediaSource::Cached {
+                        path,
+                        representation,
+                        ..
+                    }) => (PathBuf::from(path), representation.as_ref().clone()),
+                    _ => return Err("Download this episode to realign its notes".into()),
+                };
+                let settings = self.session.model.settings.clone();
+                let sender = self.persistence.reply_sender.clone();
+                let worker_id = id.clone();
+                thread::Builder::new()
+                    .name("redshank-alignment".into())
+                    .spawn(move || {
+                        let result =
+                            redshank_playback::realign_local(&path, &receipt, &target, &settings)
+                                .map(Box::new);
+                        let _ = sender.send(IoReply::Aligned {
+                            id: worker_id,
+                            result,
+                        });
+                    })
+                    .map_err(|e| e.to_string())?;
+                self.alignment_pending = Some(id);
+                state.notice =
+                    Some("Searching downloaded audio for an estimated position...".into());
+            },
+            CompactCommand::OpenAlignedNote(id) => {
+                self.pending_note_open = None;
+                let snapshot = self.runtime.snapshot();
+                let target = self.session.aligned_target(&id, &snapshot)?;
+                self.next_note_seek = self
+                    .next_note_seek
+                    .checked_add(1)
+                    .ok_or("Note seek identity exhausted")?;
+                self.send(PlaybackCommand::SeekNote {
+                    token: self.session.token,
+                    request_id: self.next_note_seek,
+                    position_ms: target.offset_ms,
+                })?;
+                self.pending_note_seek = Some(self.next_note_seek);
+                self.span_stop_ms = None;
+                self.send(PlaybackCommand::Play)?;
+                state.notice = Some(
+                    "Opened an aligned estimate. The original note target is unchanged.".into(),
+                );
+            },
             CompactCommand::SaveTranscript { item_id, resource } => {
                 if self.transcript_pending.is_some() {
                     return Err("A transcript is still downloading".into());
@@ -1255,6 +1338,9 @@ impl Desktop {
                 }
             },
             CompactCommand::UpdateSettings(settings) => {
+                settings
+                    .validate_alignment_settings()
+                    .map_err(|e| format!("Invalid alignment settings: {e:?}"))?;
                 let rate = settings.playback_rate_percent;
                 let volume = settings.volume_percent;
                 self.session.model.settings = settings;
@@ -1406,6 +1492,43 @@ impl Desktop {
     fn poll(&mut self, state: &mut RedshankSurfaceState) {
         while let Ok(reply) = self.persistence.replies.try_recv() {
             match reply {
+                IoReply::Aligned { id, result } => {
+                    if self.alignment_pending.as_ref() != Some(&id) {
+                        continue;
+                    }
+                    self.alignment_pending = None;
+                    let result = result.and_then(|derived| {
+                        let receipt = self
+                            .session
+                            .model
+                            .library
+                            .get(&derived.original_target.item_id)
+                            .and_then(|item| item.source().cached_representation())
+                            .ok_or("The downloaded copy was removed while aligning")?;
+                        if receipt.compare(&derived.destination)
+                            != redshank_model::RepresentationIdentity::Same
+                        {
+                            return Err("The downloaded copy changed while aligning".into());
+                        }
+                        self.session
+                            .model
+                            .store_derived_position(&id, *derived)
+                            .map_err(|e| format!("Alignment result was not saved: {e:?}"))
+                    });
+                    match result {
+                        Ok(()) => {
+                            self.persistence.changed();
+                            state.notice = Some(
+                                "Aligned estimate saved; the original target is unchanged.".into(),
+                            );
+                        },
+                        Err(error) => {
+                            state.notice = Some(format!(
+                                "Could not realign: {error}. Open at approximate time is still available."
+                            ))
+                        },
+                    }
+                },
                 IoReply::Opened(path) => {
                     self.dialog_pending = false;
                     if let Some(path) = path
@@ -1932,6 +2055,7 @@ fn main() {
         pending_note_open: None,
         pending_note_seek: None,
         next_note_seek: 0,
+        alignment_pending: None,
         microphone_label: LocalVoiceCapture::label(),
         export_pending: false,
         data_root,
@@ -2279,6 +2403,7 @@ mod tests {
             .add_annotation(Annotation {
                 id: id.clone(),
                 target: CaptureAnchor {
+                    fingerprint: None,
                     item_id: ItemId("a".into()),
                     offset_ms: 321,
                     end_offset_ms: None,
@@ -2329,6 +2454,7 @@ mod tests {
         let mut state = RedshankSurfaceState::default();
         state.text_capture = Some(TextCapture {
             anchor: CaptureAnchor {
+                fingerprint: None,
                 item_id: id.clone(),
                 offset_ms: 321,
                 end_offset_ms: None,
@@ -2360,6 +2486,7 @@ mod tests {
         let directory = tempfile::tempdir().unwrap();
         let desktop = Rc::new(RefCell::new(desktop(directory.path())));
         let anchor = CaptureAnchor {
+            fingerprint: None,
             item_id: ItemId("a".into()),
             offset_ms: 321,
             end_offset_ms: None,
@@ -2458,6 +2585,7 @@ mod tests {
             pending_note_open: None,
             pending_note_seek: None,
             next_note_seek: 0,
+            alignment_pending: None,
             microphone_label: None,
             export_pending: false,
             data_root: directory.to_owned(),
@@ -2488,6 +2616,7 @@ mod tests {
         let mut state = RedshankSurfaceState::default();
         state.text_capture = Some(TextCapture {
             anchor: CaptureAnchor {
+                fingerprint: None,
                 item_id: ItemId("a".into()),
                 offset_ms: 321,
                 end_offset_ms: None,
@@ -2530,6 +2659,7 @@ mod tests {
         let mut desktop = desktop(directory.path());
         let mut state = RedshankSurfaceState::default();
         let anchor = CaptureAnchor {
+            fingerprint: None,
             item_id: ItemId("a".into()),
             offset_ms: 123,
             end_offset_ms: None,
@@ -2720,6 +2850,7 @@ mod tests {
         desktop.pending_note_seek = Some(41);
         let id = AnnotationId("unproven-note".into());
         let target = CaptureAnchor {
+            fingerprint: None,
             item_id: ItemId("a".into()),
             offset_ms: 4_000,
             end_offset_ms: None,
@@ -2754,6 +2885,7 @@ mod tests {
         let mut state = RedshankSurfaceState::default();
         let id = AnnotationId("old-note".into());
         let target = CaptureAnchor {
+            fingerprint: None,
             item_id: ItemId("a".into()),
             offset_ms: 42_000,
             end_offset_ms: Some(45_000),

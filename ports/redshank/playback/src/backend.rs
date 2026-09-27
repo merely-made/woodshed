@@ -141,7 +141,29 @@ pub(super) struct Sink {
     pub(super) node: NodeID,
     pub(super) accepted_frames: u64,
     pub(super) rate: u32,
+    pub(super) resampler_headroom: usize,
     pub(super) channels: usize,
+}
+
+/// fixed-resample 0.9.2 budgets channel vacancy at the nominal rate ratio,
+/// but its High-quality rubato FFT stage can carry almost one FFT grain into
+/// the next 1024-frame input block. Reserve that grain before admitting more
+/// source frames; otherwise a variable output packet can overflow the ring.
+/// Pinned construction: FftFixedIn(input_rate, output_rate, 1024, 2, channels).
+pub(super) fn resampler_headroom(input_rate: u32, output_rate: u32) -> usize {
+    if input_rate == output_rate {
+        return 0;
+    }
+    let (mut a, mut b) = (input_rate, output_rate);
+    while b != 0 {
+        (a, b) = (b, a % b);
+    }
+    let minimum_grain = (input_rate / a) as usize;
+    512_usize.div_ceil(minimum_grain) * minimum_grain
+}
+
+pub(super) fn writable_frames(available: usize, headroom: usize, requested: usize) -> usize {
+    available.saturating_sub(headroom).min(requested)
 }
 
 /// Output frames the listener has actually heard: everything the sink took,
@@ -163,13 +185,21 @@ pub(super) fn drained(flushed: bool, held: usize, queued_seconds: f64) -> bool {
 
 impl Sink {
     fn push(&mut self, samples: &[f32]) -> Result<usize> {
-        let status = self
+        let mut writer = self
             .state
             .lock()
-            .map_err(|_| anyhow!("audio writer lock poisoned"))?
-            .push_interleaved(samples);
+            .map_err(|_| anyhow!("audio writer lock poisoned"))?;
+        let frames = writable_frames(
+            writer.available_frames(),
+            self.resampler_headroom,
+            samples.len() / self.channels,
+        );
+        if frames == 0 {
+            return Ok(0);
+        }
+        let status = writer.push_interleaved(&samples[..frames * self.channels]);
         let accepted = match status {
-            PushStatus::Ok | PushStatus::UnderflowCorrected { .. } => samples.len() / self.channels,
+            PushStatus::Ok | PushStatus::UnderflowCorrected { .. } => frames,
             PushStatus::OutputNotReady => 0,
             PushStatus::OverflowOccurred { num_frames_pushed } => num_frames_pushed,
         };
@@ -207,8 +237,8 @@ pub(super) struct Decoder {
     pub(crate) decoder: Box<dyn symphonia::core::codecs::Decoder>,
     pub(crate) track_id: u32,
     sample_buffer: Option<SampleBuffer<f32>>,
-    rate: u32,
-    channels: Option<u32>,
+    pub(super) rate: u32,
+    pub(super) channels: Option<u32>,
     time_base: symphonia::core::units::TimeBase,
     duration_ms: Option<u64>,
 }
@@ -346,6 +376,8 @@ pub(super) struct Backend {
     rate_percent: u16,
     /// How much of the source can be seeked without waiting on the network.
     buffered_percent: u8,
+    fingerprint: Option<audio_primitives::alignment::FingerprintBuilder>,
+    fingerprint_failed: bool,
     #[cfg(test)]
     test_source: bool,
     #[cfg(test)]
@@ -381,6 +413,8 @@ impl Backend {
             duck_percent: None,
             rate_percent: UNITY_RATE_PERCENT,
             buffered_percent: 0,
+            fingerprint: None,
+            fingerprint_failed: false,
             #[cfg(test)]
             test_source: false,
             #[cfg(test)]
@@ -608,6 +642,8 @@ impl Backend {
 
     /// Drop every retimed frame and restart the stage's clocks at zero.
     fn discard_retiming(&mut self) {
+        self.fingerprint = None;
+        self.fingerprint_failed = false;
         self.pending.clear();
         self.stretched.clear();
         self.eof_flushed = false;
@@ -779,13 +815,54 @@ impl Backend {
         let decoder = self.decoder.as_mut().ok_or("no local decoder is loaded")?;
         match decode_packet(decoder)? {
             Decoded::Frames(samples) => {
+                if !self.fingerprint_failed {
+                    if self.fingerprint.is_none() {
+                        self.fingerprint = audio_primitives::alignment::FingerprintBuilder::new(
+                            decoder.rate,
+                            decoder.channels.unwrap_or(1) as usize,
+                            audio_primitives::alignment::FingerprintConfig {
+                                window_ms: 60_000,
+                                history_ms: 65_000,
+                                ..Default::default()
+                            },
+                        )
+                        .ok();
+                    }
+                    if self
+                        .fingerprint
+                        .as_mut()
+                        .is_none_or(|builder| builder.push(&samples).is_err())
+                    {
+                        self.fingerprint_failed = true;
+                        self.fingerprint = None;
+                    }
+                }
                 self.decoded_first_frame = true;
                 self.pending.extend_from_slice(&samples);
             },
-            Decoded::Skipped => {},
+            // Skipped audio cannot support an uninterrupted anchor interval.
+            Decoded::Skipped => {
+                self.fingerprint = None;
+                self.fingerprint_failed = true;
+            },
             Decoded::EndOfFile => self.eof = true,
         }
         Ok(())
+    }
+
+    pub(super) fn fingerprint_context(&self) -> Option<Arc<crate::FingerprintContext>> {
+        let relative = (self.position().ok()?.as_millis() as u64).checked_sub(self.base_ms)?;
+        let fingerprint = self
+            .fingerprint
+            .as_ref()?
+            .fingerprint_at(relative, 60_000)
+            .ok()?;
+        let start_ms =
+            self.base_ms + relative.checked_sub(u64::from(fingerprint.anchor_offset_ms))?;
+        Some(Arc::new(crate::FingerprintContext {
+            start_ms,
+            fingerprint: crate::alignment::stored(fingerprint),
+        }))
     }
 }
 

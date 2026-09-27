@@ -40,12 +40,16 @@ impl Default for Levels {
 fn publish(
     snapshot: &Arc<Mutex<SnapshotCell>>,
     token: Option<u64>,
-    representation: Option<RepresentationReceipt>,
+    evidence: (
+        Option<RepresentationReceipt>,
+        Option<Arc<crate::FingerprintContext>>,
+    ),
     state: PlaybackState,
     position_ms: u64,
     duration_ms: Option<u64>,
     source: Option<String>,
 ) {
+    let (representation, fingerprint_context) = evidence;
     let wake = {
         let mut cell = snapshot
             .lock()
@@ -54,6 +58,7 @@ fn publish(
             load_token: token,
             completed_note_seek: cell.value.completed_note_seek,
             representation,
+            fingerprint_context,
             state,
             position_ms,
             duration_ms,
@@ -434,7 +439,7 @@ fn project(
     publish(
         snapshot,
         token,
-        representation,
+        (representation, backend.borrow().fingerprint_context()),
         state,
         view.position.as_millis() as u64,
         view.duration.map(|duration| duration.as_millis() as u64),
@@ -463,7 +468,7 @@ fn fail(
     publish(
         snapshot,
         token,
-        None,
+        (None, None),
         PlaybackState::Unavailable(message),
         0,
         None,
@@ -537,7 +542,7 @@ fn run_session(
                     publish(
                         &snapshot,
                         token,
-                        None,
+                        (None, None),
                         PlaybackState::Loading,
                         0,
                         None,
@@ -875,7 +880,7 @@ pub(super) fn run(
         publish(
             &snapshot,
             token,
-            None,
+            (None, None),
             PlaybackState::Unavailable(
                 "Playback recovered from an internal audio failure; select a recording to retry"
                     .into(),

@@ -1,6 +1,6 @@
 # Redshank: listening and annotation port plan
 
-**Status (2026-09-26): ACTIVE.** The product direction and **Redshank** name are
+**Status (2026-09-27): ACTIVE.** The product direction and **Redshank** name are
 endorsed. Phase 0 is complete: Symphonia plus a bounded range source is the
 shipping default, and Genet/GStreamer is the retained browser-conformance
 fallback. Phase 1 is complete: its general Genet boundary, deterministic player
@@ -24,7 +24,8 @@ shared output authority, reaction offset, Duck through the one output gain,
 and a W3C export that passes the Web Annotation test suite's MUST assertions
 in the port's own tests. Knot's generic media `FragmentSelector` is Knot's,
 not this port's, and stays open there. Phase 6 identity/seek guards are implemented;
-alignment and second-host adoption remain open. Phase 7 is met as of
+synthetic alignment is implemented; real-recording validation and second-host
+adoption remain open. Phase 7 is met as of
 2026-09-22: Turnstone hosts the compact dock as a contributed surface, routes
 enclosures to it, projects one item, its progress and its notes into its
 graph, and streams through its own fetch handle; see the progress log. Mark
@@ -909,19 +910,115 @@ Rust files, and `git diff --check` pass. These gates ran in the shared checkout
 with unrelated transcript scenario work preserved; they are not a clean-checkout
 or headed receipt.
 
-**Remaining gates:** Turnstone's independent `src/redshank_host.rs` handler must
+**Remaining at this slice:** Turnstone's independent `src/redshank_host.rs` handler must
 adopt the same guard and explicit approximate command. This slice does not change
 its dependency pins or the separate Mere/Genet retained-layout repair. Headed
 acceptance of warnings and real-episode validation remain open.
 
-The subsequent alignment slice is separately bounded: versioned per-note audio
+The subsequent alignment slice (implemented below on September 27) was bounded: versioned per-note audio
 fingerprints captured before speed changes; configurable capture context starting
 near 20 seconds; explicit searches against downloaded current copies; derived
 positions tied to their digest, with the original retained. Missing fingerprints,
 weak/ambiguous matches, repeated material, deleted anchors, and insertions between
 the matched material and anchor must refuse. Fingerprint capture, alignment
-fixtures, confidence calibration, and remapping are not implemented by this slice.
+fixtures, confidence calibration, and remapping were not implemented by the
+September 26 identity slice.
 No donor code or alignment contract was imported.
+
+#### Fingerprint and derived-position slice, 2026-09-27
+
+**Status: implemented with synthetic automated coverage. Phase 6 remains open.**
+
+New desktop notes can retain a versioned spectral fingerprint from decoded audio
+before speed or gain effects. Capture uses the presented source position and
+reaction offset, excluding decoder lookahead. Settings expose the context window
+(default 20 seconds, 5–60 seconds, or zero to disable), minimum similarity score
+(default 94%, adjustable 80–99%), and full-search duration budget (default six
+hours, adjustable 1–24 hours). The decoder retains bounded feature history;
+seeks and discontinuities reset it. Insufficient or low-information decoder
+context supplies no usable fingerprint; the matcher also refuses unusable
+captured slices. Existing notes and settings still deserialize.
+
+For a different or unproven copy, **Realign** explicitly searches a downloaded
+current copy. Streams offer **Download to realign**; notes without a fingerprint
+retain the approximate-time option. The search decodes a private hashed snapshot
+and checks its complete digest against the download receipt. It scans the entire
+recording within the configured budget, with bounded feature/candidate memory;
+an over-budget recording refuses rather than accepting a partial search. A
+second concurrent alignment job is refused.
+
+The pure DSP matcher lives in `crates/audio-primitives/src/alignment.rs`. Synthetic
+fixtures cover a 30-second inserted gap, longer pre-roll, gain/noise and sample
+rate variation, and refusal of unrelated, repeated, deleted, silent, or
+discontinuous anchor material. Playback adapter tests cover actual WAV decoding,
+cache mutation, reaction-offset slicing, and the full-search budget. No donor
+code or fixture ships; the implementation uses a per-anchor point result rather
+than importing the donor's episode-wide range contract.
+
+Successful alignment stores a separate derived point with its frozen original
+target, destination digest, algorithm version, reference duration, winning score,
+and runner-up score. Original notes are never rewritten. Results are revalidated
+against current model policy and source evidence before storing or opening;
+changed/deleted notes, stale downloads, malformed persisted evidence, and
+inadequate score separation refuse. **Open aligned estimate** requires the loaded
+copy's complete digest and uses the existing request-specific seek acknowledgment.
+It opens a point, without inventing a remapped span end.
+
+Automated gates: 212 selected Redshank tests pass (52 desktop, 16 model,
+9 alignment-model, 3 identity, 3 W3C, 26 playback, 6 storage, 97 surfaces), plus
+52 `audio-primitives` tests. Seven existing device/fixture playback tests remain
+ignored. The selected desktop/model/playback/storage/surfaces/web packages pass
+Clippy with `--all-targets --no-deps -- -D warnings`. Audio-primitives passes the
+same gate with `-A clippy::too_many_arguments` for the existing eight-argument
+click renderer; the new alignment code needs no suppression. These checks use
+`C:/t/cargo-targets/woodshed` in the shared checkout with transcript WIP preserved.
+
+Native fixture work also exposed two buffer-accounting issues in the pinned
+`fixed-resample 0.9.2` path: ring capacity uses the input rate despite storing
+output frames, and vacancy accounting omits pending FFT-grain output. Redshank
+compensates capacity to retain the intended output duration and reserves one
+FFT grain before submitting source frames, keeping the rest in its existing
+backlog. Same-rate playback reserves nothing. The regression uses the actual
+resampling channel with uneven mono/stereo batches across multiple rate pairs;
+the dependency version is unchanged.
+
+Automated native winit/Genet receipts pass on September 27 using binary SHA-256
+`2FA725040AE8105A64F2560D6E8B90D76FC266C87E0697EE35FCFBEBE62D2884`:
+
+- `ports/redshank/receipts/identity-guard/summary.json`: same-copy seek,
+  different/unproven open and span refusal without moving the paused clock,
+  explicit approximate seek, and preserved originals.
+- `ports/redshank/receipts/alignment-guard/summary.json`: actual fingerprint
+  capture at 2x with 500 ms reaction offset on 48 kHz PCM; a 30-second pre-roll
+  produces the expected 35,506 ms estimate; digest-bound derived opening is
+  acknowledged and the original remains unchanged.
+- `ports/redshank/receipts/alignment-guard-8khz/summary.json`: the exact 8 kHz
+  input that exposed the resampler failure now completes capture/search/open;
+  the estimate is the expected 35,526 ms.
+
+The PowerShell runners live in `ports/redshank/scripts/`. Logs preserve the
+original resampler failure and two corrected harness timing assumptions. The
+final seek check permits 100 ms early clock tolerance and elapsed playback time
+on the late side; the alignment estimate itself must remain within 150 ms of the
+known fixture shift. Receipt inputs and isolated model data are marker-owned,
+ignored generated evidence retained beneath these receipt directories. The
+stable Woodshed Cargo target is reused; no isolated Cargo home or worktree was
+created. These are ordinary desktop commands, projections, decoder, and output
+runtime in a native window, not pointer/keyboard or human visual/acoustic checks.
+
+The score measures spectral similarity; it is not a calibrated probability.
+Positions have 100 ms granularity. Real speech, lossy podcast encodings, and real
+dynamic-ad edits remain unvalidated, as does human visual/acoustic acceptance.
+The spectral matcher cannot prove continuity below its frame resolution.
+
+Turnstone adoption is blocked at a concrete dependency seam: Turnstone currently
+pins Woodshed `95d1085`, Mere `250fd238`, and Genet `532f1fad`; current Redshank
+pins Mere `149b8053` and Genet `1b62fd0b218`. Its host directly exchanges Mere
+`SurfaceDescriptor`, `DomHandle`, `RetainedSurfaceSession`, and fetch trait types.
+Updating Redshank alone would introduce distinct Rust crate identities at those
+interfaces. This is a source-level assessment, not a compiler receipt. A
+coordinated Mere/Genet/Knot/Redshank pin migration is required before sharing the
+guard and alignment policy in the second host; this slice leaves those pins alone.
 
 ### Phase 7: Turnstone as second host
 

@@ -178,6 +178,72 @@ fn capture(state: &RedshankSurfaceState) -> FullView {
         "CAPTURE",
         vec![
             controls::row(
+                "Audio fingerprint window",
+                Some("seconds before each new note; 0 disables capture"),
+                controls::stepper(
+                    "Audio fingerprint window",
+                    (settings.alignment_window_ms / 1000) as i64,
+                    "s",
+                    write(ListenerSettings {
+                        alignment_window_ms: settings.alignment_window_ms.saturating_sub(5_000),
+                        ..settings.clone()
+                    }),
+                    write(ListenerSettings {
+                        alignment_window_ms: settings
+                            .alignment_window_ms
+                            .saturating_add(5_000)
+                            .min(60_000),
+                        ..settings.clone()
+                    }),
+                ),
+            ),
+            controls::row(
+                "Minimum alignment score",
+                Some("similarity threshold, not a probability"),
+                controls::stepper(
+                    "Minimum alignment score",
+                    i64::from(settings.alignment_min_confidence_per_mille / 10),
+                    "%",
+                    write(ListenerSettings {
+                        alignment_min_confidence_per_mille: settings
+                            .alignment_min_confidence_per_mille
+                            .saturating_sub(10)
+                            .max(800),
+                        ..settings.clone()
+                    }),
+                    write(ListenerSettings {
+                        alignment_min_confidence_per_mille: settings
+                            .alignment_min_confidence_per_mille
+                            .saturating_add(10)
+                            .min(990),
+                        ..settings.clone()
+                    }),
+                ),
+            ),
+            controls::row(
+                "Alignment search limit",
+                Some("maximum downloaded recording duration to search"),
+                controls::stepper(
+                    "Alignment search limit",
+                    (settings.alignment_max_search_ms / 3_600_000) as i64,
+                    "h",
+                    write(ListenerSettings {
+                        alignment_max_search_ms: settings
+                            .alignment_max_search_ms
+                            .saturating_sub(3_600_000)
+                            .max(3_600_000),
+                        ..settings.clone()
+                    }),
+                    write(ListenerSettings {
+                        alignment_max_search_ms: settings
+                            .alignment_max_search_ms
+                            .saturating_add(3_600_000)
+                            .min(86_400_000),
+                        ..settings.clone()
+                    }),
+                ),
+            ),
+            controls::row(
                 "Reaction offset",
                 Some("anchor earlier than the press"),
                 controls::stepper(
@@ -474,6 +540,90 @@ mod tests {
             &commands(&mut runner)[0],
             CompactCommand::UpdateSettings(settings) if settings.reaction_offset_ms == 1_000
         ));
+    }
+
+    fn changed_alignment_settings(settings: ListenerSettings, label: &str) -> ListenerSettings {
+        let mut state = settings_state();
+        state.settings = settings;
+        let mut runner = runner(state, panel);
+        click(&mut runner, label);
+        let mut emitted = commands(&mut runner);
+        assert_eq!(emitted.len(), 1);
+        match emitted.remove(0) {
+            CompactCommand::UpdateSettings(settings) => settings,
+            other => panic!("expected persistent settings, got {other:?}"),
+        }
+    }
+
+    #[test]
+    fn fingerprint_window_persists_disable_and_bounded_capture_choices() {
+        let html = markup(settings_state(), panel);
+        assert!(html.contains("0 disables capture"));
+        for (before, label, after) in [
+            (20_000, "Increase Audio fingerprint window", 25_000),
+            (20_000, "Decrease Audio fingerprint window", 15_000),
+            (5_000, "Decrease Audio fingerprint window", 0),
+            (0, "Decrease Audio fingerprint window", 0),
+            (0, "Increase Audio fingerprint window", 5_000),
+            (60_000, "Increase Audio fingerprint window", 60_000),
+        ] {
+            let initial = ListenerSettings {
+                alignment_window_ms: before,
+                reaction_offset_ms: 3_000,
+                ..Default::default()
+            };
+            let expected = ListenerSettings {
+                alignment_window_ms: after,
+                ..initial.clone()
+            };
+            assert_eq!(changed_alignment_settings(initial, label), expected);
+        }
+    }
+
+    #[test]
+    fn alignment_score_persists_similarity_threshold_between_800_and_990() {
+        assert!(
+            markup(settings_state(), panel).contains("similarity threshold, not a probability")
+        );
+        for (before, label, after) in [
+            (940, "Increase Minimum alignment score", 950),
+            (940, "Decrease Minimum alignment score", 930),
+            (800, "Decrease Minimum alignment score", 800),
+            (990, "Increase Minimum alignment score", 990),
+        ] {
+            let initial = ListenerSettings {
+                alignment_min_confidence_per_mille: before,
+                reaction_offset_ms: 3_000,
+                ..Default::default()
+            };
+            let expected = ListenerSettings {
+                alignment_min_confidence_per_mille: after,
+                ..initial.clone()
+            };
+            assert_eq!(changed_alignment_settings(initial, label), expected);
+        }
+    }
+
+    #[test]
+    fn alignment_search_limit_persists_hour_steps_and_caps_at_one_day() {
+        const HOUR: u64 = 3_600_000;
+        for (before, label, after) in [
+            (6 * HOUR, "Increase Alignment search limit", 7 * HOUR),
+            (6 * HOUR, "Decrease Alignment search limit", 5 * HOUR),
+            (HOUR, "Decrease Alignment search limit", HOUR),
+            (24 * HOUR, "Increase Alignment search limit", 24 * HOUR),
+        ] {
+            let initial = ListenerSettings {
+                alignment_max_search_ms: before,
+                reaction_offset_ms: 3_000,
+                ..Default::default()
+            };
+            let expected = ListenerSettings {
+                alignment_max_search_ms: after,
+                ..initial.clone()
+            };
+            assert_eq!(changed_alignment_settings(initial, label), expected);
+        }
     }
 
     #[test]

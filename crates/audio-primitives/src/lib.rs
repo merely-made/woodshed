@@ -29,7 +29,10 @@
 //! - [`stretch`] — [`stretch::Stretcher`], WSOLA time-stretching: retime a
 //!   stream without moving its pitch. Redshank's playback-rate dock runs
 //!   decoded frames through it on the way to the output.
+//! - [`alignment`] — bounded spectral fingerprints and conservative searches
+//!   for estimated note positions across edited audio copies.
 
+pub mod alignment;
 pub mod buffer;
 pub mod calibration;
 pub mod click;

@@ -288,6 +288,7 @@ mod tests {
                 .add_annotation(Annotation {
                     id: AnnotationId(id.into()),
                     target: TimedTarget {
+                        fingerprint: None,
                         item_id: episode.clone(),
                         offset_ms: 90_500,
                         end_offset_ms: None,
@@ -305,6 +306,7 @@ mod tests {
             .add_span_annotation(
                 AnnotationId("span-note".into()),
                 CaptureAnchor {
+                    fingerprint: None,
                     item_id: episode.clone(),
                     offset_ms: 100_000,
                     end_offset_ms: None,

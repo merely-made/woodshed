@@ -198,6 +198,10 @@ impl Session {
         let pressed = snapshot.position_ms;
         let offset = pressed.saturating_sub(self.model.settings.reaction_offset_ms);
         Ok(CaptureAnchor {
+            fingerprint: snapshot
+                .fingerprint_context
+                .as_ref()
+                .and_then(|context| context.at(offset, self.model.settings.alignment_window_ms)),
             item_id: self.selected.clone().expect("matched selection"),
             offset_ms: offset,
             end_offset_ms: None,
@@ -229,6 +233,54 @@ impl Session {
             .map_or(RepresentationIdentity::Unproven, |receipt| {
                 target.representation.compare(receipt)
             })
+    }
+
+    /// An alignment is a separate point estimate for one known destination.
+    /// Never infer a span end or alter the annotation's original target.
+    pub fn aligned_target(
+        &self,
+        id: &redshank_model::AnnotationId,
+        snapshot: &PlaybackSnapshot,
+    ) -> Result<CaptureAnchor, String> {
+        let note = self
+            .model
+            .annotations
+            .get(id)
+            .ok_or("That note no longer exists")?;
+        let derived = self
+            .model
+            .derived_positions
+            .get(id)
+            .ok_or("Realign this note first")?;
+        self.model
+            .validate_derived_position(id, derived)
+            .map_err(|e| format!("Saved alignment evidence is invalid: {e:?}"))?;
+        if snapshot
+            .representation
+            .as_ref()
+            .and_then(|receipt| receipt.complete_digest.as_ref())
+            != derived.destination.complete_digest.as_ref()
+        {
+            return Err(
+                "The loaded copy has not verified the alignment's destination digest".into(),
+            );
+        }
+        if derived.original_target != note.target
+            || derived.confidence_per_mille < self.model.settings.alignment_min_confidence_per_mille
+            || derived.destination.complete_digest.is_none()
+        {
+            return Err(
+                "The saved alignment does not meet this note's current requirements".into(),
+            );
+        }
+        let mut target = note.target.clone();
+        target.offset_ms = derived.offset_ms;
+        target.end_offset_ms = None;
+        target.pressed_offset_ms = None;
+        target.fingerprint = None;
+        target.representation = derived.destination.clone();
+        self.note_seek(&target, snapshot, false)?;
+        Ok(target)
     }
 
     /// Called only against the loaded selection, including for explicit
@@ -345,6 +397,48 @@ impl Session {
                     .annotations
                     .get(&row.id)
                     .map(|note| (row.id.clone(), self.note_identity(&note.target, snapshot)))
+            })
+            .collect();
+        state.note_alignments = state
+            .notes
+            .iter()
+            .filter_map(|row| {
+                use redshank_surfaces::NoteAlignment;
+                let note = self.model.annotations.get(&row.id)?;
+                if self.note_identity(&note.target, snapshot) == RepresentationIdentity::Same {
+                    return None;
+                }
+                let alignment = if self.aligned_target(&row.id, snapshot).is_ok() {
+                    let derived = &self.model.derived_positions[&row.id];
+                    NoteAlignment::Aligned {
+                        position_ms: derived.offset_ms,
+                        score_per_mille: derived.confidence_per_mille,
+                    }
+                } else if note.target.fingerprint.is_none() {
+                    NoteAlignment::Unavailable(
+                        "No audio fingerprint was captured for this note.".into(),
+                    )
+                } else if self
+                    .model
+                    .library
+                    .get(&row.item_id)
+                    .is_some_and(|item| item.source().is_cached())
+                {
+                    NoteAlignment::Ready
+                } else if self
+                    .model
+                    .library
+                    .get(&row.item_id)
+                    .and_then(|item| item.source().enclosure_url())
+                    .is_some()
+                {
+                    NoteAlignment::Download
+                } else {
+                    NoteAlignment::Unavailable(
+                        "Realignment requires a downloaded episode copy.".into(),
+                    )
+                };
+                Some((row.id.clone(), alignment))
             })
             .collect();
         state.sessions = self.session_rows(host.now_ms);
@@ -738,6 +832,7 @@ mod tests {
 
     fn anchor(item: &str, offset_ms: u64) -> CaptureAnchor {
         CaptureAnchor {
+            fingerprint: None,
             item_id: ItemId(item.into()),
             offset_ms,
             end_offset_ms: None,
@@ -1458,5 +1553,229 @@ mod tests {
         session.project(&mut state, &loaded, &HostFacts::default());
         let row = state.items.iter().find(|row| row.id == id).unwrap();
         assert_eq!(row.representation.clone().unwrap().matches, Some(false));
+    }
+
+    fn capture_context() -> std::sync::Arc<redshank_playback::FingerprintContext> {
+        std::sync::Arc::new(redshank_playback::FingerprintContext {
+            start_ms: 100_000,
+            fingerprint: redshank_model::AudioFingerprint {
+                version: 1,
+                frame_ms: 100,
+                anchor_offset_ms: 25_000,
+                frames: (0..250).map(|index| [index as u8; 16]).collect(),
+            },
+        })
+    }
+
+    #[test]
+    fn capture_fingerprint_uses_source_anchor_after_reaction_and_excludes_decode_future() {
+        let mut session = session();
+        session
+            .select(ItemId("a".into()), &PlaybackSnapshot::default(), 1)
+            .unwrap();
+        session.model.settings.reaction_offset_ms = 2_345;
+        session.model.settings.alignment_window_ms = 5_000;
+        let context = capture_context();
+        let before = context.clone();
+        let snap = PlaybackSnapshot {
+            position_ms: 122_390,
+            fingerprint_context: Some(context),
+            ..snapshot(session.token)
+        };
+        let captured = session.capture(&snap).unwrap();
+        assert_eq!(captured.offset_ms, 120_045);
+        assert_eq!(captured.pressed_offset_ms, Some(122_390));
+        let fingerprint = captured.fingerprint.unwrap();
+        assert_eq!(fingerprint.anchor_offset_ms, 5_045);
+        assert_eq!(fingerprint.frames, before.fingerprint.frames[150..200]);
+        assert_eq!(fingerprint.reference_duration_ms(), 5_000);
+        assert!(fingerprint.validate().is_ok());
+        assert_eq!(snap.fingerprint_context.as_ref().unwrap(), &before);
+    }
+
+    #[test]
+    fn capture_fingerprint_is_optional_when_disabled_missing_or_insufficient() {
+        let mut session = session();
+        session
+            .select(ItemId("a".into()), &PlaybackSnapshot::default(), 1)
+            .unwrap();
+        let context = capture_context();
+        for (label, position_ms, window_ms, context) in [
+            ("disabled", 120_000, 0, Some(context.clone())),
+            (
+                "less than three seconds",
+                102_999,
+                20_000,
+                Some(context.clone()),
+            ),
+            (
+                "before retained context",
+                99_999,
+                20_000,
+                Some(context.clone()),
+            ),
+            (
+                "past decoded context",
+                125_100,
+                20_000,
+                Some(context.clone()),
+            ),
+            ("legacy or unavailable context", 120_000, 20_000, None),
+        ] {
+            session.model.settings.alignment_window_ms = window_ms;
+            let snap = PlaybackSnapshot {
+                position_ms,
+                fingerprint_context: context,
+                ..snapshot(session.token)
+            };
+            let captured = session.capture(&snap).unwrap();
+            assert!(captured.fingerprint.is_none(), "{label}");
+            assert_eq!(captured.offset_ms, position_ms, "{label}");
+        }
+    }
+
+    fn aligned_session() -> (Session, AnnotationId, PlaybackSnapshot) {
+        let mut session = session();
+        session
+            .select(ItemId("a".into()), &PlaybackSnapshot::default(), 1)
+            .unwrap();
+        let id = AnnotationId("aligned".into());
+        let original = CaptureAnchor {
+            item_id: ItemId("a".into()),
+            offset_ms: 60_000,
+            end_offset_ms: Some(70_000),
+            pressed_offset_ms: Some(63_000),
+            representation: RepresentationReceipt::default(),
+            fingerprint: Some(redshank_model::AudioFingerprint {
+                version: 1,
+                frame_ms: 100,
+                anchor_offset_ms: 20_000,
+                frames: vec![[17; 16]; 200],
+            }),
+        };
+        session
+            .model
+            .add_text_annotation(id.clone(), original.clone(), "original".into(), 1)
+            .unwrap();
+        let destination = RepresentationReceipt {
+            final_url: Some("https://example.test/destination.mp3".into()),
+            etag: Some("\"destination\"".into()),
+            complete_digest: Some(format!("blake3:{}", "b".repeat(64))),
+            ..Default::default()
+        };
+        session
+            .model
+            .store_derived_position(
+                &id,
+                redshank_model::DerivedPosition {
+                    original_target: original,
+                    destination: destination.clone(),
+                    offset_ms: 90_000,
+                    algorithm_version: 1,
+                    confidence_per_mille: 980,
+                    runner_up_per_mille: 700,
+                    reference_duration_ms: 20_000,
+                },
+            )
+            .unwrap();
+        let snapshot = PlaybackSnapshot {
+            representation: Some(destination),
+            ..snapshot(session.token)
+        };
+        (session, id, snapshot)
+    }
+
+    #[test]
+    fn aligned_open_returns_a_separate_point_without_rewriting_original_span() {
+        let (session, id, snap) = aligned_session();
+        let before = session.model.annotations[&id].clone();
+        let derived = session.model.derived_positions[&id].clone();
+        let target = session.aligned_target(&id, &snap).unwrap();
+        assert_eq!(target.offset_ms, 90_000);
+        assert_eq!(target.item_id, before.target.item_id);
+        assert_eq!(target.representation, derived.destination);
+        assert!(target.end_offset_ms.is_none());
+        assert!(target.pressed_offset_ms.is_none());
+        assert!(target.fingerprint.is_none());
+        assert_eq!(session.model.annotations[&id], before);
+        assert_eq!(session.model.derived_positions[&id], derived);
+    }
+
+    #[test]
+    fn aligned_open_requires_a_ready_current_selection_and_destination_digest() {
+        let (mut session, id, snap) = aligned_session();
+        for state in [
+            PlaybackState::Empty,
+            PlaybackState::Loading,
+            PlaybackState::Unavailable("failed".into()),
+        ] {
+            let unavailable = PlaybackSnapshot {
+                state,
+                ..snap.clone()
+            };
+            assert!(session.aligned_target(&id, &unavailable).is_err());
+        }
+        let old = PlaybackSnapshot {
+            load_token: Some(session.token + 1),
+            ..snap.clone()
+        };
+        assert!(session.aligned_target(&id, &old).is_err());
+        for digest in [None, Some(format!("blake3:{}", "c".repeat(64)))] {
+            let mut changed = snap.clone();
+            changed.representation.as_mut().unwrap().complete_digest = digest;
+            // Identical URL and strong ETag cannot substitute for the actual
+            // destination digest when opening a downloaded-copy alignment.
+            assert!(session.aligned_target(&id, &changed).is_err());
+        }
+        session.selected = Some(ItemId("b".into()));
+        assert!(session.aligned_target(&id, &snap).is_err());
+        session.selected = None;
+        assert!(session.aligned_target(&id, &snap).is_err());
+    }
+
+    #[test]
+    fn aligned_open_rechecks_current_threshold_and_original_target() {
+        let (mut session, id, snap) = aligned_session();
+        session.model.settings.alignment_min_confidence_per_mille = 990;
+        assert!(session.aligned_target(&id, &snap).is_err());
+        session.model.settings.alignment_min_confidence_per_mille = 940;
+        session
+            .model
+            .annotations
+            .get_mut(&id)
+            .unwrap()
+            .target
+            .offset_ms += 1;
+        assert!(session.aligned_target(&id, &snap).is_err());
+        session.model.delete_annotation(&id).unwrap();
+        assert!(session.aligned_target(&id, &snap).is_err());
+    }
+
+    #[test]
+    fn aligned_open_revalidates_saved_evidence() {
+        let (mut session, id, snap) = aligned_session();
+        let valid = session.model.derived_positions[&id].clone();
+        let mut invalids = Vec::new();
+        let mut changed = valid.clone();
+        changed.algorithm_version = 2;
+        invalids.push(changed);
+        let mut changed = valid.clone();
+        changed.confidence_per_mille = 1_001;
+        invalids.push(changed);
+        let mut changed = valid.clone();
+        changed.runner_up_per_mille = 979;
+        invalids.push(changed);
+        let mut changed = valid.clone();
+        changed.reference_duration_ms = 19_999;
+        invalids.push(changed);
+        let mut changed = valid.clone();
+        changed.offset_ms = session.model.settings.alignment_max_search_ms + 1;
+        invalids.push(changed);
+        for invalid in invalids {
+            // Simulate a restored map: its values have not passed through the
+            // producer's store_derived_position validation this session.
+            session.model.derived_positions.insert(id.clone(), invalid);
+            assert!(session.aligned_target(&id, &snap).is_err());
+        }
     }
 }

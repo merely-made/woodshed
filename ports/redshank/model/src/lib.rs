@@ -231,6 +231,52 @@ fn strong_etag(tag: &str) -> bool {
             .all(|b| *b == 0x21 || (0x23..=0x7e).contains(b) || *b >= 0x80)
 }
 
+/// Portable evidence for the version-one audio aligner. This data-only mirror
+/// keeps the durable model independent of the DSP implementation.
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
+pub struct AudioFingerprint {
+    pub version: u16,
+    pub frame_ms: u16,
+    /// Anchor relative to the first stored frame, including its subframe tail.
+    pub anchor_offset_ms: u32,
+    pub frames: Vec<[u8; 16]>,
+}
+
+impl AudioFingerprint {
+    pub fn reference_duration_ms(&self) -> u64 {
+        self.frames.len() as u64 * u64::from(self.frame_ms)
+    }
+
+    pub fn validate(&self) -> Result<(), ModelError> {
+        if self.version != 1 || self.frame_ms != 100 || !(30..=600).contains(&self.frames.len()) {
+            return Err(ModelError::InvalidAlignment(
+                "Unsupported or incomplete audio fingerprint",
+            ));
+        }
+        let covered = self.reference_duration_ms();
+        let anchor = u64::from(self.anchor_offset_ms);
+        if !(covered..covered + 100).contains(&anchor) {
+            return Err(ModelError::InvalidAlignment(
+                "Audio fingerprint does not reach the anchor",
+            ));
+        }
+        Ok(())
+    }
+}
+
+/// An estimated point on complete destination bytes, with the exact original
+/// target that authorized its computation. Similarity is not a probability.
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
+pub struct DerivedPosition {
+    pub original_target: TimedTarget,
+    pub destination: RepresentationReceipt,
+    pub offset_ms: u64,
+    pub algorithm_version: u32,
+    pub confidence_per_mille: u16,
+    pub runner_up_per_mille: u16,
+    pub reference_duration_ms: u64,
+}
+
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 pub struct TimedTarget {
     pub item_id: ItemId,
@@ -242,6 +288,10 @@ pub struct TimedTarget {
     #[serde(default)]
     pub pressed_offset_ms: Option<u64>,
     pub representation: RepresentationReceipt,
+    /// Source-time audio evidence frozen with the original target. Old notes
+    /// remain readable and retain their original timestamps without it.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub fingerprint: Option<AudioFingerprint>,
 }
 
 /// A host-frozen target used while capturing a text or voice note.
@@ -361,6 +411,26 @@ pub struct ListenerSettings {
     pub seed: ThemeSeed,
     #[serde(default)]
     pub mode: ThemeMode,
+    /// Audio preceding a note retained as a fingerprint; zero disables capture.
+    #[serde(default = "default_alignment_window_ms")]
+    pub alignment_window_ms: u64,
+    #[serde(default = "default_alignment_min_confidence_per_mille")]
+    pub alignment_min_confidence_per_mille: u16,
+    /// Maximum decoded source duration searched by an explicit realignment.
+    #[serde(default = "default_alignment_max_search_ms")]
+    pub alignment_max_search_ms: u64,
+}
+
+pub const fn default_alignment_window_ms() -> u64 {
+    20_000
+}
+
+pub const fn default_alignment_min_confidence_per_mille() -> u16 {
+    940
+}
+
+pub const fn default_alignment_max_search_ms() -> u64 {
+    6 * 60 * 60 * 1_000
 }
 
 pub const fn default_cache_budget_bytes() -> u64 {
@@ -402,7 +472,31 @@ impl Default for ListenerSettings {
             auto_reclaim: false,
             seed: ThemeSeed::default(),
             mode: ThemeMode::default(),
+            alignment_window_ms: default_alignment_window_ms(),
+            alignment_min_confidence_per_mille: default_alignment_min_confidence_per_mille(),
+            alignment_max_search_ms: default_alignment_max_search_ms(),
         }
+    }
+}
+
+impl ListenerSettings {
+    pub fn validate_alignment_settings(&self) -> Result<(), ModelError> {
+        if self.alignment_window_ms != 0 && !(5_000..=60_000).contains(&self.alignment_window_ms) {
+            return Err(ModelError::InvalidAlignment(
+                "Fingerprint window must be disabled or 5 to 60 seconds",
+            ));
+        }
+        if !(800..=990).contains(&self.alignment_min_confidence_per_mille) {
+            return Err(ModelError::InvalidAlignment(
+                "Minimum similarity must be 800 to 990 per mille",
+            ));
+        }
+        if !(60_000..=86_400_000).contains(&self.alignment_max_search_ms) {
+            return Err(ModelError::InvalidAlignment(
+                "Alignment search must be 1 minute to 24 hours",
+            ));
+        }
+        Ok(())
     }
 }
 
@@ -443,6 +537,10 @@ pub struct RedshankModel {
     pub selected_item: Option<ItemId>,
     pub progress: BTreeMap<ItemId, Progress>,
     pub annotations: BTreeMap<AnnotationId, Annotation>,
+    /// Estimated point positions on a different complete recording. These
+    /// never replace the original target or assert a remapped span end.
+    #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
+    pub derived_positions: BTreeMap<AnnotationId, DerivedPosition>,
     #[serde(default)]
     pub listening_sessions: Vec<ListeningSession>,
     /// Items the listener kept to hand; the Mere projections mark them.
@@ -462,6 +560,7 @@ impl Default for RedshankModel {
             selected_item: None,
             progress: BTreeMap::new(),
             annotations: BTreeMap::new(),
+            derived_positions: BTreeMap::new(),
             listening_sessions: Vec::new(),
             pinned: BTreeSet::new(),
             settings: ListenerSettings::default(),
@@ -476,6 +575,8 @@ pub enum ModelError {
     DuplicateAnnotation(AnnotationId),
     MissingAnnotation(AnnotationId),
     InvalidQueuePosition(usize),
+    StaleAlignment(AnnotationId),
+    InvalidAlignment(&'static str),
 }
 
 impl RedshankModel {
@@ -587,6 +688,8 @@ impl RedshankModel {
         self.transcripts.remove(id);
         self.annotations
             .retain(|_, note| note.target.item_id != *id);
+        self.derived_positions
+            .retain(|id, _| self.annotations.contains_key(id));
         Ok(item)
     }
 
@@ -788,6 +891,79 @@ impl RedshankModel {
         Ok(())
     }
 
+    /// Admit a completed alignment only while its frozen source target still
+    /// exists unchanged. The host separately verifies that the destination is
+    /// still its downloaded current copy when the asynchronous reply arrives.
+    pub fn store_derived_position(
+        &mut self,
+        id: &AnnotationId,
+        position: DerivedPosition,
+    ) -> Result<(), ModelError> {
+        self.validate_derived_position(id, &position)?;
+        self.derived_positions.insert(id.clone(), position);
+        Ok(())
+    }
+
+    /// Recheck durable evidence before using a saved position. Deserialization
+    /// does not pass through the producer's admission method, and the listener
+    /// may have raised the similarity threshold since the result was saved.
+    pub fn validate_derived_position(
+        &self,
+        id: &AnnotationId,
+        position: &DerivedPosition,
+    ) -> Result<(), ModelError> {
+        let note = self
+            .annotations
+            .get(id)
+            .ok_or_else(|| ModelError::MissingAnnotation(id.clone()))?;
+        if note.target != position.original_target {
+            return Err(ModelError::StaleAlignment(id.clone()));
+        }
+        self.settings.validate_alignment_settings()?;
+        let fingerprint = note
+            .target
+            .fingerprint
+            .as_ref()
+            .ok_or(ModelError::InvalidAlignment(
+                "The original note has no audio fingerprint",
+            ))?;
+        fingerprint.validate()?;
+        let digest = position
+            .destination
+            .complete_digest
+            .as_deref()
+            .and_then(|digest| digest.strip_prefix("blake3:"));
+        if !digest.is_some_and(|hex| hex.len() == 64 && hex.bytes().all(|b| b.is_ascii_hexdigit()))
+        {
+            return Err(ModelError::InvalidAlignment(
+                "A complete destination BLAKE3 digest is required",
+            ));
+        }
+        if position.algorithm_version != 1
+            || position.reference_duration_ms != fingerprint.reference_duration_ms()
+            || u64::from(fingerprint.anchor_offset_ms) > note.target.offset_ms
+            || position.offset_ms < u64::from(fingerprint.anchor_offset_ms)
+            || position.offset_ms > self.settings.alignment_max_search_ms
+        {
+            return Err(ModelError::InvalidAlignment(
+                "Invalid alignment version, position, or reference interval",
+            ));
+        }
+        if position.confidence_per_mille > 1_000
+            || position.runner_up_per_mille > 1_000
+            || position.confidence_per_mille < self.settings.alignment_min_confidence_per_mille
+            || position
+                .confidence_per_mille
+                .saturating_sub(position.runner_up_per_mille)
+                < 40
+        {
+            return Err(ModelError::InvalidAlignment(
+                "Alignment similarity is insufficient or ambiguous",
+            ));
+        }
+        Ok(())
+    }
+
     pub fn annotations_for_item(&self, id: &ItemId) -> Vec<&Annotation> {
         let mut notes: Vec<_> = self
             .annotations
@@ -801,8 +977,9 @@ impl RedshankModel {
     pub fn delete_annotation(&mut self, id: &AnnotationId) -> Result<(), ModelError> {
         self.annotations
             .remove(id)
-            .map(|_| ())
-            .ok_or_else(|| ModelError::MissingAnnotation(id.clone()))
+            .ok_or_else(|| ModelError::MissingAnnotation(id.clone()))?;
+        self.derived_positions.remove(id);
+        Ok(())
     }
 
     fn require_item(&self, id: &ItemId) -> Result<(), ModelError> {
@@ -1021,6 +1198,7 @@ mod tests {
                 offset_ms: 12_000,
                 end_offset_ms: None,
                 pressed_offset_ms: None,
+                fingerprint: None,
                 representation: RepresentationReceipt::default(),
             },
             body: NoteBody::Text {
@@ -1139,6 +1317,7 @@ mod tests {
                     offset_ms: 1_000,
                     end_offset_ms: None,
                     pressed_offset_ms: Some(1_400),
+                    fingerprint: None,
                     representation: RepresentationReceipt::default(),
                 },
                 4_500,
@@ -1189,6 +1368,7 @@ mod tests {
             offset_ms: 12_500,
             end_offset_ms: None,
             pressed_offset_ms: None,
+            fingerprint: None,
             representation: RepresentationReceipt::default(),
         };
         model
@@ -1271,6 +1451,7 @@ mod tests {
                 offset_ms: 1,
                 end_offset_ms: None,
                 pressed_offset_ms: None,
+                fingerprint: None,
                 representation: RepresentationReceipt::default(),
             };
             model
@@ -1302,6 +1483,7 @@ mod tests {
                     offset_ms: 500,
                     end_offset_ms: None,
                     pressed_offset_ms: None,
+                    fingerprint: None,
                     representation: RepresentationReceipt::default(),
                 },
                 body: NoteBody::Audio {
@@ -1334,6 +1516,7 @@ mod tests {
             offset_ms: 12_345,
             end_offset_ms: None,
             pressed_offset_ms: None,
+            fingerprint: None,
             representation: RepresentationReceipt {
                 complete_digest: Some("blake3:fixed".into()),
                 ..RepresentationReceipt::default()
