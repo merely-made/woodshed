@@ -1,0 +1,16 @@
+# Fixture: runner-generated synthetic transcript; 960x640. The local VTT response
+# is delayed two seconds. This wait must include product IO, not merely playback buffering.
+wait 300
+assert snap item-id == mesquite-transcript
+act pane:notes
+settle 2
+assert text Save transcript offline
+capture transcript-before-fetch
+# Shipping custom pointer path, using the existing transcript receipt's point.
+pointer-click 520 221
+wait 300
+assert text Transcript snapshot
+assert text Mesquite fixture first sentence.
+assert text Mesquite fixture second sentence.
+capture transcript-after-quiescence
+log mesquite delayed transcript complete

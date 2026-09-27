@@ -833,6 +833,51 @@ gates. The isolated workspace passes 48 default tests with four existing
 device/fixture gates, and strict workspace Clippy passes. A corrected headed
 screenshot remains required before visual acceptance.
 
+#### Shared scenario lifecycle, 2026-09-27
+
+Redshank adopts the published Mesquite lifecycle at Mere
+`8106c7c2063001fbf60ea511758fb1c72ed8a243`, with all port Mere references aligned
+and Genet references at `34626a6c82ee19f78609b8ebad8d513d3cc9c4cd`.
+Mesquite owns scenario frame driving, deferred selector clicks, native frame
+readbacks, capture completion and the `scenario.done` receipt. The Redshank
+product adapter retains named commands, raw pointer/key actions, typed snapshots,
+semantic events and pending-work policy. Playback and asynchronous transcript,
+feed, cache and persistence work remain desktop-owned.
+
+Scenario runs dispatch product commands before the next presented frame so a
+final action cannot be overtaken by completion. Explicit waits observe pending
+product work without treating continuous playback as perpetually busy. Native
+file dialogs retain their existing product behavior. The new
+`ports/redshank/scripts/mesquite-receipt.ps1` uses isolated listener data and only
+owns the processes it launches; it preserves earlier receipts.
+
+Gates: all 221 Redshank workspace tests pass, with seven existing device/fixture
+tests ignored; strict workspace Clippy (`--all-targets --no-deps -- -D warnings`)
+and the native desktop build pass. Two isolated native scenarios pass on binary
+SHA-256 `F3FEA4B69B4BD773C09B97CF8E267A06B760E1C50C71B1495697D19A76A4196F`.
+The lifecycle case produces three distinct nonblank captures and verifies named
+commands, visible-tab selector routing, and final capture completion. The
+synthetic transcript case waits 179 frames through a two-second HTTP delay,
+asserts both cue sentences, produces two distinct nonblank captures, and checks
+exact VTT/fetch-receipt persistence in generation 4 after exit. Final settings
+and transcript captures were visually inspected. Clipped-target scrolling is
+covered by the shared lane's existing tests, not newly established by these
+Redshank cases.
+
+The runner seeds the committed empty model, generates local PCM/VTT, and serves
+only VTT on its owned loopback server. Both cases exit successfully; the owned
+server is stopped. About 2.26 MB of marker-owned model/fixture/capture evidence
+is retained at `Code/testing/woodshed/redshank-mesquite/`. The standard
+`C:/t/cargo-targets/woodshed` target is reused without an isolated Cargo home or
+worktree. Gates ran in the shared checkout with transcript WIP present; the new
+scenarios do not depend on those pending fields or fixtures.
+
+Integration evidence is recorded in
+`Code/testing/cambium/mesquite-migration/coordination-redshank.md`. Existing
+uncommitted transcript fields and fixtures remain separate from this migration.
+This work does not promote Genet's separate accessible-name implementation or
+claim physical screen-reader acceptance.
+
 ### Phase 5: voice capture and open annotation target
 
 Add host-provided microphone capture and Knot's generic media
@@ -1011,9 +1056,11 @@ Positions have 100 ms granularity. Real speech, lossy podcast encodings, and rea
 dynamic-ad edits remain unvalidated, as does human visual/acoustic acceptance.
 The spectral matcher cannot prove continuity below its frame resolution.
 
-Turnstone adoption is blocked at a concrete dependency seam: Turnstone currently
-pins Woodshed `95d1085`, Mere `250fd238`, and Genet `532f1fad`; current Redshank
-pins Mere `149b8053` and Genet `1b62fd0b218`. Its host directly exchanges Mere
+At the alignment assessment, Turnstone pinned Woodshed `95d1085`, Mere
+`250fd238`, and Genet `532f1fad`, while Redshank pinned Mere `149b8053` and
+Genet `1b62fd0b218`. The later Mesquite migration above advances Redshank to
+Mere `8106c7c2` and Genet `34626a6c`; Turnstone adoption still requires coordinated
+pins across its contributed surfaces. Its host directly exchanges Mere
 `SurfaceDescriptor`, `DomHandle`, `RetainedSurfaceSession`, and fetch trait types.
 Updating Redshank alone would introduce distinct Rust crate identities at those
 interfaces. This is a source-level assessment, not a compiler receipt. A
