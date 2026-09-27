@@ -19,14 +19,20 @@ use firewheel::{
     },
 };
 
-use crate::backend::Sink;
+use crate::backend::{Sink, resampler_headroom};
 
 pub(super) const BUFFER_LOW_WATER_SECONDS: f64 = 0.40;
 
-fn stream_buffer_config() -> ResamplingChannelConfig {
+fn stream_buffer_config(input_rate: u32, output_rate: u32) -> ResamplingChannelConfig {
+    // fixed-resample 0.9.2 sizes its OUTPUT ring using the INPUT sample rate.
+    // Compensate so the usual capacity remains one second of actual output.
+    // Very low or unusual rates also need room for two input blocks plus FFT
+    // headroom, otherwise the bounded writer could never admit its first block.
+    let minimum_source_frames = 2 * 1024 + resampler_headroom(input_rate, output_rate);
+    let seconds = 1.0_f64.max(minimum_source_frames as f64 / f64::from(input_rate));
     ResamplingChannelConfig {
         latency_seconds: 0.15,
-        capacity_seconds: 1.0,
+        capacity_seconds: seconds * f64::from(output_rate) / f64::from(input_rate),
         // Decoding is a non-realtime producer. Dropping buffered source frames
         // to chase a target occupancy makes playback audibly run ahead.
         overflow_autocorrect_percent_threshold: None,
@@ -131,14 +137,16 @@ impl AudioRuntime {
             .node_state::<StreamWriterState>(writer)
             .context("Firewheel stream writer missing")?
             .clone();
+        let output_rate = self
+            .context
+            .stream_info()
+            .context("Firewheel output stream unavailable")?
+            .sample_rate;
         let event = state
             .start_stream(
                 source_rate,
-                self.context
-                    .stream_info()
-                    .context("Firewheel output stream unavailable")?
-                    .sample_rate,
-                stream_buffer_config(),
+                output_rate,
+                stream_buffer_config(source_rate.get(), output_rate.get()),
             )
             .map_err(|_| anyhow!("could not start decoded audio stream"))?;
         self.context.queue_event_for(writer, event.into());
@@ -147,6 +155,7 @@ impl AudioRuntime {
             node: writer,
             accepted_frames: 0,
             rate: source_rate.get(),
+            resampler_headroom: resampler_headroom(source_rate.get(), output_rate.get()),
             channels: source_channels as usize,
         })
     }
@@ -181,11 +190,74 @@ mod tests {
 
     #[test]
     fn decoded_stream_buffer_never_discards_or_inserts_source_time() {
-        let config = stream_buffer_config();
+        let config = stream_buffer_config(48_000, 48_000);
         assert_eq!(config.overflow_autocorrect_percent_threshold, None);
         assert_eq!(config.underflow_autocorrect_percent_threshold, None);
         assert!(config.capacity_seconds >= config.latency_seconds * 2.0);
         assert!(BUFFER_LOW_WATER_SECONDS > config.latency_seconds);
         assert!(BUFFER_LOW_WATER_SECONDS < config.capacity_seconds);
+    }
+
+    #[test]
+    fn resampled_backlog_fits_real_channel_packets_without_losing_input() {
+        use crate::backend::writable_frames;
+        use fixed_resample::{PushStatus, resampling_channel};
+        use std::num::NonZeroUsize;
+
+        for (input_rate, output_rate) in [
+            (8_000, 44_100),
+            (8_000, 48_000),
+            (11_025, 44_100),
+            (11_025, 48_000),
+            (22_050, 48_000),
+            (48_000, 44_100),
+            (48_000, 8_000),
+            (48_000, 48_000),
+            (1_000, 48_000),
+        ] {
+            for channels in [1, 2] {
+                let config = stream_buffer_config(input_rate, output_rate);
+                let (mut producer, mut consumer) = resampling_channel::<f32, 2>(
+                    NonZeroUsize::new(channels).unwrap(),
+                    input_rate,
+                    output_rate,
+                    config,
+                );
+                consumer.set_output_stream_ready(true);
+                let headroom = resampler_headroom(input_rate, output_rate);
+                let samples = vec![0.25; input_rate as usize * 3 * channels];
+                let mut accepted = 0;
+                let mut heard_nonzero = false;
+                for iteration in 0..10_000 {
+                    // Keep a deliberately oversized decoded backlog, including
+                    // partial FFT blocks, while output drains in uneven chunks.
+                    let offered = [2_713, 4_097, 701, 10_000][iteration % 4]
+                        .min(samples.len() / channels - accepted);
+                    let frames = writable_frames(producer.available_frames(), headroom, offered);
+                    if frames > 0 {
+                        let status = producer.push_interleaved(
+                            &samples[accepted * channels..(accepted + frames) * channels],
+                        );
+                        assert!(
+                            matches!(status, PushStatus::Ok),
+                            "{input_rate}->{output_rate}, {channels} channels: {status:?}"
+                        );
+                        accepted += frames;
+                    }
+                    let mut output = vec![0.0; [127, 509, 211][iteration % 3] * channels];
+                    consumer.read_interleaved(&mut output);
+                    heard_nonzero |= output.iter().any(|sample| sample.abs() > 0.1);
+                    if accepted == samples.len() / channels {
+                        break;
+                    }
+                }
+                assert_eq!(
+                    accepted,
+                    samples.len() / channels,
+                    "writer stalled at {input_rate}->{output_rate}, {channels} channels"
+                );
+                assert!(heard_nonzero, "no output at {input_rate}->{output_rate}");
+            }
+        }
     }
 }

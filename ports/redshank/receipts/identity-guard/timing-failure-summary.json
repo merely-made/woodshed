@@ -1,0 +1,22 @@
+{
+  "mode": "identity-guard",
+  "passed": false,
+  "exit_code": 101,
+  "started_utc": "2026-09-27T10:59:08.3683327Z",
+  "finished_utc": "2026-09-27T10:59:14.8543822Z",
+  "binary": "C:\\t\\cargo-targets\\woodshed\\debug\\redshank-desktop.exe",
+  "binary_sha256": "15887D689D089944446811AE7A11E5A269145F53FBAA88F8D3C5508AAB9834F4",
+  "fixture_sha256": "90EE494BD12323FB5B9C88046EE34E51D9DDC5E4EB8A9471FF937ED84436570B",
+  "evidence": "Automated native winit/Genet window with ordinary Desktop commands, projection, decoder and output runtime. No pointer/keyboard or human-observed visual/acoustic acceptance.",
+  "cases": [
+    "same-copy acknowledged seek",
+    "different/unproven open and span refusal before seeking",
+    "paused position unchanged after refusals",
+    "explicit approximate acknowledged seek",
+    "original note targets preserved"
+  ],
+  "retained_inputs": [
+    "silence-10s.wav",
+    "data/"
+  ]
+}

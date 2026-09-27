@@ -1,0 +1,1 @@
+Redshank alignment-guard 8 kHz regression reuses preserved native-failure inputs under ../alignment-guard/data/8khz-failure/; isolated model data is owned by this receipt runner.

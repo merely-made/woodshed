@@ -1,0 +1,4 @@
+identity-guard same-copy seek acknowledged at 1568 ms
+identity-guard different/unproven open and span refused; paused position stayed 1578 ms
+identity-guard approximate seek acknowledged; all original note targets preserved
+redshank-headed-receipt identity-guard PASS position_ms=3308

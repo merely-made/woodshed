@@ -1,0 +1,4 @@
+alignment-guard captured source-time fingerprint at 2x: pressed_ms=6026 anchor_ms=5526 frames=50
+alignment-guard digest-bound search estimated_ms=35526 expected_ms=35526 score_per_mille=1000 runner_up_per_mille=301
+alignment-guard aligned seek acknowledged at 35563 ms; captured original preserved
+redshank-headed-receipt alignment-guard PASS position_ms=35563

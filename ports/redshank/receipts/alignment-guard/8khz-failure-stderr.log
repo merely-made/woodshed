@@ -1,0 +1,10 @@
+
+thread 'redshank-playback' (52212) panicked at C:\Users\mark_\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\fixed-resample-0.9.2\src\channel.rs:464:21:
+assertion `left == right` failed
+  left: 5733
+ right: 6174
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+[cambium-winit] accessibility Installed, 57 nodes projected
+
+thread 'main' (51080) panicked at desktop\src\main.rs:2135:41:
+complete headed receipt: "playback became unavailable: Playback recovered from an internal audio failure; select a recording to retry"
