@@ -46,9 +46,11 @@ pub struct Product {
     events: Vec<String>,
     observed: Observed,
     host_busy: bool,
+    diagnostics: crate::diagnostics::Diagnostics,
+    diagnostic_cursor: Option<apparatus::Cursor>,
 }
 
-pub fn from_env() -> Option<ScenarioLane> {
+pub fn from_env(diagnostics: crate::diagnostics::Diagnostics) -> Option<ScenarioLane> {
     let config = mesquite::LaneConfig::from_env("REDSHANK")?;
     Some(
         mesquite::Lane::from_config(
@@ -58,6 +60,8 @@ pub fn from_env() -> Option<ScenarioLane> {
                 events: Vec::new(),
                 observed: Observed::default(),
                 host_busy: false,
+                diagnostic_cursor: None,
+                diagnostics,
             },
             cambium_genet_winit_host::read_file,
         )
@@ -405,6 +409,20 @@ pub fn apply(state: &mut RedshankSurfaceState, named: Named) {
 // ---------------------------------------------------------------------------
 
 impl mesquite::Product for Product {
+    fn diagnostic_attachment(
+        &mut self,
+        _ctx: &mut mesquite::Ctx<'_, Self>,
+    ) -> Result<Option<mesquite::DiagnosticBatch>, String> {
+        if !self.diagnostics.enabled() {
+            return Ok(None);
+        }
+        if self.diagnostic_cursor.is_none() {
+            self.diagnostic_cursor = Some(self.diagnostics.cursor()?);
+        }
+        self.diagnostics
+            .attachment(self.diagnostic_cursor.as_mut().expect("cursor initialized"))
+            .map(Some)
+    }
     type State = RedshankSurfaceState;
     type Logic = Logic;
     type View = FullView;
@@ -752,6 +770,16 @@ mod tests {
             events: Vec::new(),
             observed: Observed::default(),
             host_busy: false,
+            diagnostics: crate::diagnostics::Diagnostics::new(
+                false,
+                "scenario-test".into(),
+                apparatus::RetentionLimits {
+                    max_records: 0,
+                    max_bytes: 0,
+                    max_age: std::time::Duration::ZERO,
+                },
+            ),
+            diagnostic_cursor: None,
         };
         let mut state = RedshankSurfaceState::default();
         product.note_events(&state);

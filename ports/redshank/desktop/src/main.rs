@@ -1,5 +1,8 @@
 #![forbid(unsafe_code)]
 
+mod diagnostics;
+#[cfg(test)]
+mod diagnostics_worker_tests;
 mod headed_receipt;
 mod scenario;
 mod session;
@@ -127,6 +130,7 @@ enum IoReply {
     Saved {
         revision: u64,
         result: Result<(), String>,
+        execution: Option<apparatus::RecordRef>,
     },
     Opened(Option<PathBuf>),
     Cached {
@@ -151,6 +155,7 @@ enum IoReply {
 struct SaveRequest {
     revision: u64,
     model: RedshankModel,
+    request: Option<apparatus::RecordRef>,
 }
 
 /// Serial persistence is kept off the UI and audio threads. At most one save
@@ -163,24 +168,56 @@ struct Persistence {
     durable: u64,
     in_flight: Option<u64>,
     failed: bool,
+    diagnostics: diagnostics::Diagnostics,
 }
 
 impl Persistence {
     fn start(store: JsonDirectoryStore) -> Self {
+        Self::start_with_diagnostics(store, diagnostics::Diagnostics::from_env())
+    }
+
+    fn start_with_diagnostics(
+        store: JsonDirectoryStore,
+        diagnostics: diagnostics::Diagnostics,
+    ) -> Self {
         let (requests, receiver) = mpsc::channel::<SaveRequest>();
         let (reply_sender, replies) = mpsc::channel();
         let worker_reply = reply_sender.clone();
+        let worker_diagnostics = diagnostics.clone();
         thread::Builder::new()
             .name("redshank-storage".into())
             .spawn(move || {
                 while let Ok(request) = receiver.recv() {
-                    let result = store
-                        .save(&request.model)
-                        .map_err(|error| format!("Could not save listener state: {error:?}"));
+                    let started = worker_diagnostics.record(
+                        diagnostics::SaveObservation::new(
+                            diagnostics::Phase::ExecutionStarted,
+                            request.revision,
+                        ),
+                        request.request,
+                    );
+                    let saved = store.save(&request.model);
+                    let kind = match &saved {
+                        Ok(()) => diagnostics::ResultKind::Success,
+                        Err(redshank_storage::StoreError::Io(_)) => {
+                            diagnostics::ResultKind::IoFailure
+                        },
+                        Err(redshank_storage::StoreError::Encode(_)) => {
+                            diagnostics::ResultKind::EncodeFailure
+                        },
+                    };
+                    let mut observation = diagnostics::SaveObservation::new(
+                        diagnostics::Phase::ExecutionFinished,
+                        request.revision,
+                    );
+                    observation.result = Some(kind);
+                    let execution = worker_diagnostics.record(observation, started);
+                    let result =
+                        saved.map_err(|error| format!("Could not save listener state: {error:?}"));
                     if worker_reply
                         .send(IoReply::Saved {
                             revision: request.revision,
                             result,
+                            execution,
                         })
                         .is_err()
                     {
@@ -197,31 +234,65 @@ impl Persistence {
             durable: 0,
             in_flight: None,
             failed: false,
+            diagnostics,
         }
     }
 
     fn changed(&mut self) {
         self.revision += 1;
         self.failed = false;
+        let mut observation = diagnostics::SaveObservation::new(
+            diagnostics::Phase::DirtyRevisionObserved,
+            self.revision,
+        );
+        observation.dirty_revision = Some(self.revision);
+        observation.durable_revision = Some(self.durable);
+        observation.in_flight_revision = self.in_flight;
+        self.diagnostics.record(observation, None);
     }
 
     fn flush(&mut self, model: &RedshankModel) -> Result<(), String> {
         if self.revision == self.durable || self.in_flight.is_some() || self.failed {
             return Ok(());
         }
-        self.requests
+        let mut observation =
+            diagnostics::SaveObservation::new(diagnostics::Phase::DispatchRequested, self.revision);
+        observation.dirty_revision = Some(self.revision);
+        observation.durable_revision = Some(self.durable);
+        let request = self.diagnostics.record(observation, None);
+        let result = self
+            .requests
             .send(SaveRequest {
                 revision: self.revision,
                 model: model.clone(),
+                request: request.clone(),
             })
-            .map_err(|_| {
-                "The storage worker stopped; listener changes remain unsaved".to_owned()
-            })?;
+            .map_err(|_| "The storage worker stopped; listener changes remain unsaved".to_owned());
+        let phase = if result.is_ok() {
+            diagnostics::Phase::DispatchAccepted
+        } else {
+            diagnostics::Phase::DispatchRejected
+        };
+        self.diagnostics.record(
+            diagnostics::SaveObservation::new(phase, self.revision),
+            request,
+        );
+        result?;
         self.in_flight = Some(self.revision);
         Ok(())
     }
 
+    #[cfg(test)]
     fn acknowledge(&mut self, revision: u64, result: &Result<(), String>) {
+        self.acknowledge_with_cause(revision, result, None);
+    }
+
+    fn acknowledge_with_cause(
+        &mut self,
+        revision: u64,
+        result: &Result<(), String>,
+        execution: Option<apparatus::RecordRef>,
+    ) {
         self.in_flight = None;
         match result {
             Ok(()) => {
@@ -230,6 +301,16 @@ impl Persistence {
             },
             Err(_) => self.failed = true,
         }
+        let mut observation =
+            diagnostics::SaveObservation::new(diagnostics::Phase::SaveReplyHandled, revision);
+        observation.result = Some(if result.is_ok() {
+            diagnostics::ResultKind::Success
+        } else {
+            diagnostics::ResultKind::Failure
+        });
+        observation.dirty_revision = Some(self.revision);
+        observation.durable_revision = Some(self.durable);
+        self.diagnostics.record(observation, execution);
     }
 }
 
@@ -1678,8 +1759,13 @@ impl Desktop {
                         state.notice = Some(error);
                     }
                 },
-                IoReply::Saved { revision, result } => {
-                    self.persistence.acknowledge(revision, &result);
+                IoReply::Saved {
+                    revision,
+                    result,
+                    execution,
+                } => {
+                    self.persistence
+                        .acknowledge_with_cause(revision, &result, execution);
                     match result {
                         Err(error) => {
                             state.notice = Some(error);
@@ -2156,7 +2242,8 @@ fn main() {
     let wake_runtime = desktop.runtime.clone();
     let desktop = Rc::new(RefCell::new(desktop));
     // The self-drive lane, armed only by REDSHANK_SCENARIO.
-    let lane = Rc::new(RefCell::new(scenario::from_env()));
+    let diagnostics = desktop.borrow().persistence.diagnostics.clone();
+    let lane = Rc::new(RefCell::new(scenario::from_env(diagnostics)));
     run(
         HostOptions {
             title: "Redshank".into(),
@@ -2454,6 +2541,7 @@ mod tests {
             .send(IoReply::Saved {
                 revision: desktop.persistence.revision,
                 result: Err("disk full".into()),
+                execution: None,
             })
             .unwrap();
         desktop.poll(&mut state);
@@ -2466,6 +2554,7 @@ mod tests {
             .send(IoReply::Saved {
                 revision: desktop.persistence.revision,
                 result: Ok(()),
+                execution: None,
             })
             .unwrap();
         for _ in 0..100 {
@@ -2524,6 +2613,7 @@ mod tests {
             .send(IoReply::Saved {
                 revision: desktop.persistence.revision,
                 result: Ok(()),
+                execution: None,
             })
             .unwrap();
         for _ in 0..100 {
@@ -2866,6 +2956,7 @@ mod tests {
             .send(IoReply::Saved {
                 revision: 1,
                 result: Err("disk full".into()),
+                execution: None,
             })
             .unwrap();
         desktop.poll(&mut state);
@@ -2880,6 +2971,7 @@ mod tests {
             .send(IoReply::Saved {
                 revision: 1,
                 result: Ok(()),
+                execution: None,
             })
             .unwrap();
         desktop.poll(&mut state);
@@ -2909,7 +3001,9 @@ mod tests {
         assert_eq!(persistence.revision, 1);
         persistence.failed = false;
         persistence.flush(&RedshankModel::default()).unwrap();
-        let IoReply::Saved { revision, result } = persistence
+        let IoReply::Saved {
+            revision, result, ..
+        } = persistence
             .replies
             .recv_timeout(Duration::from_secs(5))
             .unwrap()
@@ -2933,7 +3027,9 @@ mod tests {
         persistence.changed();
         persistence.flush(&RedshankModel::default()).unwrap();
         persistence.changed();
-        let IoReply::Saved { revision, result } = persistence
+        let IoReply::Saved {
+            revision, result, ..
+        } = persistence
             .replies
             .recv_timeout(Duration::from_secs(5))
             .unwrap()

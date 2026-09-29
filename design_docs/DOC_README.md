@@ -125,6 +125,11 @@ before any other doc in this directory.
 
 ## Completed Implementation Records
 
+- [2026-09-29_redshank_persistence_diagnostics_receipt.md](2026-09-29_redshank_persistence_diagnostics_receipt.md)
+  — **Automated/native qualified; isolated diff awaiting integration.** Bounded,
+  redacted Apparatus observations follow real save dispatch, execution and
+  reply handling; 63 desktop tests and native loss/default/failure controls.
+  Exact pixel correlation and human AT remain open.
 - [2026-07-08_personae_sealed_session.md](2026-07-08_personae_sealed_session.md)
   — Persona-derived sealing and device carry, completed 2026-08-08.
 - [2026-08-06_settings_persistence_split_plan.md](2026-08-06_settings_persistence_split_plan.md)
