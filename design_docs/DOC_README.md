@@ -60,9 +60,11 @@ before any other doc in this directory.
   Duck and a W3C export proved against the Web Annotation test suite closed
   Phase 5 on September 26. Phase 6 adds three-way identity, guarded desktop note
   seeking, private playback snapshots, configurable per-note fingerprints, and
-  downloaded-copy derived positions. Real-recording validation and a coordinated
-  dependency update for Turnstone guard adoption remain open alongside its
-  microphone and capture-behaviour settings. The September 27 Mesquite migration
+  downloaded-copy derived positions. Turnstone adopted the coordinated graph
+  and guarded note opens on September 29, with nine host regressions passing
+  in its 612-test workspace gate. Real-recording validation, native embedded
+  warning/audio acceptance, Turnstone's realignment worker, and its microphone
+  and capture-behaviour settings remain open. The September 27 Mesquite migration
   centralizes the scenario lifecycle while keeping Redshank commands and async
   waits product-owned. A September 13 GUI evidence
   brief records current headed findings, reference screenshots, required

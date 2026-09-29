@@ -119,3 +119,11 @@ saving, exact five-second seeking, and offline reopening after the origin stops
 assertions are in `Code/testing/woodshed/redshank-podcast-adoption/transcript/`.
 This is synthetic native evidence; real publisher WebVTT, long-list scrolling
 and keyboard behavior, and physical assistive-technology acceptance remain open.
+
+After the optional persistence-observation pilot (`a57085b`, integration receipt
+`b7f8c61`), the same native transcript case was rerun against the new save worker.
+Delayed fetch/save, exact 5,000 ms seeking, and offline restart with zero-to-five
+second cue changes all pass. The origin was stopped before reopening. Receipt:
+`Code/testing/woodshed/redshank-persistence-transcript/transcript/summary.json`;
+binary SHA-256:
+`DFB8DBB840AC6413FDABAAC43D14444CEF6EA1C3B05FE580A5FAE4D46DA5E580`.

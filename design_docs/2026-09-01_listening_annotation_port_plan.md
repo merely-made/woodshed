@@ -914,7 +914,7 @@ cover all compact layouts; native short-tile reachability remains open.
 Turnstone adoption uses the coordinated Mere/Knot/Woodshed source graph;
 its independent host owns token/identity checks and request acknowledgments.
 
-Automated validation: all 230 Redshank workspace tests pass, with seven existing
+Validation of Woodshed `752c920`: all 230 Redshank workspace tests pass, with seven existing
 device/fixture tests ignored; strict workspace Clippy and the native build pass.
 Native validation on the final dependency graph also passes delayed transcript
 fetch/save, exact five-second cue seeking, offline restart with origin stopped
@@ -928,6 +928,13 @@ Real publisher WebVTT, long-transcript scrolling/keyboard behavior and physical
 assistive-technology acceptance remain open. Gates run in the shared checkout with the prior
 transcript snapshot/fixture WIP preserved. New scenarios rely on existing DOM
 and position observations, not those pending transcript snapshot fields.
+
+The subsequent optional persistence-observation pilot (`a57085b`, integration
+receipt `b7f8c61`) is qualified in the [persistence receipt](2026-09-29_redshank_persistence_diagnostics_receipt.md).
+The transcript native case was rerun on its save worker: delayed fetch/save,
+exact 5,000 ms cue seeking, and offline restart with zero-to-five second cue
+changes all pass. Receipt: `Code/testing/woodshed/redshank-persistence-transcript/`;
+binary SHA-256 `DFB8DBB840AC6413FDABAAC43D14444CEF6EA1C3B05FE580A5FAE4D46DA5E580`.
 
 ### Phase 5: voice capture and open annotation target
 
@@ -1117,6 +1124,39 @@ Updating Redshank alone would introduce distinct Rust crate identities at those
 interfaces. This is a source-level assessment, not a compiler receipt. A
 coordinated Mere/Genet/Knot/Redshank pin migration is required before sharing the
 guard and alignment policy in the second host; this slice leaves those pins alone.
+
+#### Turnstone guarded opens, 2026-09-29
+
+Turnstone published `d6b62adbd2929e46bde5611bf11f01a34eeeaceb` with the
+coordinated Mere `ca2351b3`, Genet `19c20687`, Knot `c92ad044`, Woodshed
+`752c920` and Netrender `9607d16` graph. Its independent host now requires a
+ready matching load and representation proof before an exact note seek.
+Unproven or different copies refuse and expose an explicit approximate-time
+action through the shared compact surface. Request-specific acknowledgments
+hold saved progress and span stopping until the matching seek succeeds;
+replacement or ordinary transport intent cancels pending note requests.
+Failed runtime delivery preserves the progress hold.
+
+Plain note opens keep the original target and receipt. Only the explicit
+aligned-note action selects a validated derived point tied to the loaded
+download digest; span endpoints are never implicitly remapped. Capture can
+freeze the ready worker's fingerprint alongside its receipt.
+
+All nine host regressions pass in the final locked offline workspace/all-target
+run: 612 passed, nine existing tests ignored. The default native build and
+fresh/restored Gloss–Inspector scenarios also pass. Native binary SHA-256:
+`D486EA8B7E66CEBC6DAA94A691E4CADB6DC516DA999AC762BCB0D0D4E6BD47B6`.
+The source owner records the sealed graph and native evidence in Turnstone's
+`design_docs/2026-09-29_shared_diagnostics_gloss_inspector_receipt.md`; external
+receipts are in `Code/testing/turnstone/gloss-inspector/`.
+
+These gates establish guarded-host code and pane migration. Native embedded
+note-warning/audio acceptance, human assistive-technology testing, microphone
+capture and its playback settings, and Turnstone's realignment worker remain
+open. Standalone real-recording alignment and long/publisher transcript
+acceptance also remain open. The older slice assessments above describe their
+original checkpoints; this adoption closes their coordinated dependency and
+host-guard follow-up.
 
 ### Phase 7: Turnstone as second host
 
