@@ -9,6 +9,7 @@ license = "MPL-2.0"
 rust-version = "1.97"
 
 [workspace.dependencies]
+apparatus = { package = "mere-apparatus", git = "https://github.com/merely-made/mere.git", rev = "ca2351b3fa21de1ca40a8553eed20fc503faf15c", default-features = false, features = ["serde"] }
 mesquite = { git = "https://github.com/merely-made/mere.git", rev = "ca2351b3fa21de1ca40a8553eed20fc503faf15c" }
 timed-text = { path = "../../crates/timed-text", version = "0.1.0" }
 cambium = { git = "https://github.com/merely-made/mere.git", rev = "ca2351b3fa21de1ca40a8553eed20fc503faf15c" }

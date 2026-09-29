@@ -1,0 +1,14 @@
+# Empty model fixture. These settings use shipping persistence, without media.
+settle 2
+assert snap item-count == 0
+act mode:light
+settle 2
+wait 100
+act mode:dark
+settle 2
+wait 100
+act mode:light
+settle 2
+wait 100
+capture persistence-settings
+log apparatus persistence fixture complete

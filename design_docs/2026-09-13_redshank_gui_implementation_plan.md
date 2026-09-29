@@ -431,3 +431,13 @@ run against the same contract.
   handle. All five Phase 7 conditions hold; the port plan's progress log
   carries the record. Microphone and a headed receipt stay open on the
   Turnstone side.
+- **2026-09-29, persistence diagnostics pilot:** a bounded, opt-in
+  `mere-apparatus` observation copy now follows real save dispatch, storage
+  execution and desktop reply handling. Retry requests keep distinct references
+  under the same save revision; coalesced dirty revisions have no invented
+  action causes. The restored desktop gate passes 63/63 and the native
+  settings-only scenario passes with explicit retention loss. The default
+  receipt shape remains unchanged. The [qualification receipt](2026-09-29_redshank_persistence_diagnostics_receipt.md)
+  records the failed early-durability control, native attachment failure
+  control, commands, pins and hashes. This isolated diff awaits integration;
+  exact frame correlation, human AT and stale/cancel playback remain open.
