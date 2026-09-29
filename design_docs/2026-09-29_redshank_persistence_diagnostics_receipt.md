@@ -3,8 +3,10 @@
 The first real-worker Apparatus consumer is qualified at Redshank's existing
 serial persistence owner. Dispatch, worker execution and desktop save-reply
 handling remain separate observations. This receipt covers the isolated diff
-from Woodshed `752c920e713fa511d6e5d73385c57522d7a03233`, awaiting integration.
-The primary checkout's concurrent transcript work was not changed.
+from Woodshed `752c920e713fa511d6e5d73385c57522d7a03233`, integrated and pushed
+as `a57085bff90c20111407a1f3d5550e9d8bb91a85`. The primary checkout's concurrent
+transcript changes were preserved through a scoped stash; Weave resolved the
+reapplication, and the added/removed lines were verified unchanged.
 
 The contract follows Mere's current diagnostics design at
 `mere/design_docs/mere_docs/implementation_strategy/2026-06-08_system_diagnostics_and_accessibility_plan.md`.
@@ -121,5 +123,5 @@ replies and cancellation remain open. Storage cancellation and stale storage
 rejection are not supplied by the current persistence owner. The observation
 copy bounds its own retention; it does not claim to bound existing producer
 queues or the model. The shared Woodshed target is retained for normal reuse;
-no isolated Cargo home was created. The collision worktree remains owned by
-the diagnostics integration until the root agent commits and integrates it.
+no isolated Cargo home was created. The clean collision worktree and its merged
+branch were removed after publication; the evidence remains under `Code/testing`.
