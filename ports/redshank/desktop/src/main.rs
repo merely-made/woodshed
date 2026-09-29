@@ -62,18 +62,26 @@ fn now_ms() -> u64 {
         .as_millis() as u64
 }
 
-const MAX_FEED_BYTES: u64 = 4 * 1024 * 1024;
+const MAX_TRANSCRIPT_BYTES: u64 = 4 * 1024 * 1024;
 
-fn fetch_and_import_feed(fetch: &dyn Fetch, requested_url: &str) -> Result<FeedImport, String> {
+fn fetch_and_import_feed(
+    fetch: &dyn Fetch,
+    requested_url: &str,
+    settings: &redshank_model::ListenerSettings,
+) -> Result<FeedImport, String> {
+    let max_bytes = settings.effective_feed_max_bytes();
     let body = fetch
         .read_all(
             requested_url,
             Some("application/rss+xml, application/atom+xml, application/xml, text/xml"),
-            MAX_FEED_BYTES,
+            max_bytes,
         )
         .map_err(|error| match error {
             fetch::FetchError::TooLarge { .. } => {
-                "Podcast feed is larger than the 4 MiB standalone limit".to_owned()
+                format!(
+                    "Podcast feed exceeds the {} MiB feed size limit; adjust it in Settings",
+                    max_bytes / (1024 * 1024)
+                )
             },
             other => format!("Could not fetch podcast feed: {other}"),
         })?;
@@ -92,7 +100,7 @@ fn fetch_transcript(
         return Err("Transcript requires HTTP or HTTPS".into());
     }
     let body = fetch
-        .read_all(&resource.url, Some("text/vtt"), MAX_FEED_BYTES)
+        .read_all(&resource.url, Some("text/vtt"), MAX_TRANSCRIPT_BYTES)
         .map_err(|e| format!("Could not fetch transcript: {e}"))?;
     let source = String::from_utf8(body.bytes).map_err(|_| "Transcript is not UTF-8")?;
     let parsed = timed_text::parse(&source)?;
@@ -283,6 +291,8 @@ struct Desktop {
     voice_removals: Vec<PendingVoiceRemoval>,
     voice_removals_in_flight: usize,
     feed_pending: Option<String>,
+    /// Actual refresh failures, separate from successful parser diagnostics.
+    feed_failures: std::collections::BTreeMap<String, String>,
     transcript_pending: Option<PendingTranscript>,
     /// A span being auditioned; playback pauses once it passes the stop.
     span_stop_ms: Option<u64>,
@@ -421,10 +431,11 @@ impl Desktop {
         let sender = self.persistence.reply_sender.clone();
         let worker_url = requested_url.clone();
         let fetch = self.fetch.clone();
+        let settings = self.session.model.settings.clone();
         thread::Builder::new()
             .name("redshank-feed".into())
             .spawn(move || {
-                let result = fetch_and_import_feed(fetch.as_ref(), &worker_url);
+                let result = fetch_and_import_feed(fetch.as_ref(), &worker_url, &settings);
                 let _ = sender.send(IoReply::FeedFetched {
                     requested_url: worker_url,
                     result,
@@ -456,6 +467,9 @@ impl Desktop {
     ) {
         let facts = self.host_facts();
         self.session.project(state, snapshot, &facts);
+        for feed in &mut state.feeds {
+            feed.failure = self.feed_failures.get(&feed.feed_url).cloned();
+        }
         if let Some(id) = &self.alignment_pending {
             state
                 .note_alignments
@@ -1614,8 +1628,13 @@ impl Desktop {
                         self.feed_pending = None;
                     }
                     match result {
-                        Err(error) => state.notice = Some(error),
+                        Err(error) => {
+                            self.feed_failures.insert(requested_url, error.clone());
+                            state.notice = Some(error);
+                        },
                         Ok(imported) => {
+                            self.feed_failures.remove(&requested_url);
+                            self.feed_failures.remove(&imported.subscription.feed_url);
                             let title = imported.subscription.title.clone();
                             let mut added = 0_usize;
                             self.session
@@ -2079,6 +2098,7 @@ fn main() {
         voice_removals: Vec::new(),
         voice_removals_in_flight: 0,
         feed_pending: None,
+        feed_failures: Default::default(),
         transcript_pending: None,
         span_stop_ms: None,
         pending_note_open: None,
@@ -2272,12 +2292,12 @@ mod tests {
             write!(
                 stream,
                 "HTTP/1.1 200 OK\r\nContent-Length: {}\r\nConnection: close\r\n\r\n",
-                MAX_FEED_BYTES + 1
+                MAX_TRANSCRIPT_BYTES + 1
             )
             .unwrap();
             // Deliver the declared body: a truncated response exercises transport
             // failure, not the Fetch response-size gate.
-            let _ = stream.write_all(&vec![b'x'; MAX_FEED_BYTES as usize + 1]);
+            let _ = stream.write_all(&vec![b'x'; MAX_TRANSCRIPT_BYTES as usize + 1]);
         });
         let resource = redshank_model::FeedTranscript {
             url: format!("http://{address}/large.vtt"),
@@ -2342,7 +2362,8 @@ mod tests {
             .unwrap();
         });
         let url = format!("http://{address}/feed.xml");
-        let imported = fetch_and_import_feed(own_fetch().as_ref(), &url).unwrap();
+        let imported =
+            fetch_and_import_feed(own_fetch().as_ref(), &url, &Default::default()).unwrap();
         server.join().unwrap();
         assert_eq!(imported.subscription.title, "Local Feed");
         assert_eq!(imported.episodes.len(), 1);
@@ -2350,6 +2371,49 @@ mod tests {
             imported.episodes[0].source().enclosure_url(),
             Some(format!("http://{address}/episode.mp3").as_str())
         );
+    }
+
+    #[test]
+    fn feed_fetch_accepts_large_rss_and_enforces_the_configured_stream_limit() {
+        // No Content-Length: the bound must apply while reading, not just to a header.
+        // A valid large XML comment stands in for a feed's accumulated back catalogue.
+        let body = format!(
+            "<rss version=\"2.0\"><channel><title>Large Feed</title><!--{}--><item><guid>one</guid><title>One</title><enclosure url=\"episode.mp3\" type=\"audio/mpeg\" length=\"3\"/></item></channel></rss>",
+            "x".repeat(5 * 1024 * 1024)
+        );
+        for limit_mib in [8, 4] {
+            let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+            let address = listener.local_addr().unwrap();
+            let body = body.clone();
+            let server = thread::spawn(move || {
+                let (mut stream, _) = listener.accept().unwrap();
+                let mut request = [0_u8; 2048];
+                let _ = stream.read(&mut request).unwrap();
+                stream.write_all(b"HTTP/1.1 200 OK\r\nContent-Type: application/rss+xml\r\nConnection: close\r\n\r\n").unwrap();
+                // The bounded client may close the connection before the body ends.
+                let _ = stream.write_all(body.as_bytes());
+            });
+            let settings = redshank_model::ListenerSettings {
+                feed_max_bytes: limit_mib * 1024 * 1024,
+                ..Default::default()
+            };
+            let result = fetch_and_import_feed(
+                own_fetch().as_ref(),
+                &format!("http://{address}/feed.xml"),
+                &settings,
+            );
+            server.join().unwrap();
+            if limit_mib == 8 {
+                let imported = result.unwrap();
+                assert_eq!(imported.subscription.title, "Large Feed");
+                assert_eq!(imported.episodes.len(), 1);
+            } else {
+                assert_eq!(
+                    result.unwrap_err(),
+                    "Podcast feed exceeds the 4 MiB feed size limit; adjust it in Settings"
+                );
+            }
+        }
     }
 
     #[test]
@@ -2609,6 +2673,7 @@ mod tests {
             voice_removals: Vec::new(),
             voice_removals_in_flight: 0,
             feed_pending: None,
+            feed_failures: Default::default(),
             transcript_pending: None,
             span_stop_ms: None,
             pending_note_open: None,
@@ -2626,6 +2691,67 @@ mod tests {
             last_projection: Instant::now(),
             projected_item: None,
         }
+    }
+
+    #[test]
+    fn feed_failures_are_separate_from_import_diagnostics_and_clear_on_success() {
+        let directory = tempfile::tempdir().unwrap();
+        let mut desktop = desktop(directory.path());
+        let canonical = "https://example.test/canonical.xml";
+        let requested = "https://example.test/feed";
+        let imported = redshank_feed::import(
+            r#"<rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel><title>Feed</title><item><guid>one</guid><title>One</title><content:encoded>extra</content:encoded><enclosure url="episode.mp3" type="audio/mpeg"/></item></channel></rss>"#,
+            canonical,
+            10,
+        ).unwrap();
+        assert!(!imported.subscription.diagnostics.is_empty());
+        desktop
+            .session
+            .model
+            .upsert_subscription(imported.subscription.clone());
+        let mut state = RedshankSurfaceState::default();
+        desktop.project(&mut state, &Default::default());
+        assert_eq!(state.feed(canonical).unwrap().failure, None);
+        desktop.feed_pending = Some(canonical.into());
+        desktop
+            .persistence
+            .reply_sender
+            .send(IoReply::FeedFetched {
+                requested_url: canonical.into(),
+                result: Err("refresh timed out".into()),
+            })
+            .unwrap();
+        desktop.poll(&mut state);
+        assert_eq!(
+            state.feed(canonical).unwrap().failure.as_deref(),
+            Some("refresh timed out")
+        );
+        assert!(desktop.feed_pending.is_none());
+        desktop
+            .feed_failures
+            .insert(requested.into(), "earlier alias failure".into());
+        desktop
+            .feed_failures
+            .insert("https://other.test/feed".into(), "unrelated failure".into());
+        desktop.feed_pending = Some(requested.into());
+        desktop
+            .persistence
+            .reply_sender
+            .send(IoReply::FeedFetched {
+                requested_url: requested.into(),
+                result: Ok(imported),
+            })
+            .unwrap();
+        desktop.poll(&mut state);
+        assert_eq!(state.feed(canonical).unwrap().failure, None);
+        assert!(!desktop.feed_failures.contains_key(requested));
+        assert!(!desktop.feed_failures.contains_key(canonical));
+        assert_eq!(desktop.feed_failures.len(), 1);
+        assert!(
+            !desktop.session.model.subscriptions[canonical]
+                .diagnostics
+                .is_empty()
+        );
     }
 
     #[test]

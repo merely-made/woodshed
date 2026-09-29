@@ -184,6 +184,21 @@
   flex: none;
 }
 
+/* A refused note open adds a row without hiding the normal transport. */
+.rs-note-identity {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-10);
+  flex: none;
+}
+
+.rs-note-identity .rs-btn {
+  min-height: 44px;
+  height: auto;
+  white-space: normal;
+}
+
 /* Every transport state swaps these rows' contents in place; the heights are
  * fixed so the dock is the same height in all seven. */
 .rs-dock-identity {

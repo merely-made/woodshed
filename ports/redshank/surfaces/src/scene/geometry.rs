@@ -58,18 +58,51 @@ pub fn node_class(state: NodeState, extra: &str) -> String {
     format!("rs-node{}{extra}", state.modifier())
 }
 
-/// One feed's episodes, newest first: `published` descending where present,
-/// title descending otherwise. Reverse for the oldest-to-newest wide chain.
+/// A publication instant without changing the publisher's original display text.
+fn publication_instant(value: Option<&str>) -> Option<i128> {
+    use time::{
+        Date, OffsetDateTime,
+        format_description::well_known::{Rfc2822, Rfc3339},
+    };
+    let value = value?.trim();
+    OffsetDateTime::parse(value, &Rfc2822)
+        .or_else(|_| OffsetDateTime::parse(value, &Rfc3339))
+        .map(|date| date.unix_timestamp_nanos())
+        .ok()
+        .or_else(|| {
+            Date::parse(
+                value,
+                time::macros::format_description!("[year]-[month]-[day]"),
+            )
+            .ok()
+            .map(|date| date.midnight().assume_utc().unix_timestamp_nanos())
+        })
+}
+
+/// One feed's episodes, newest first. Undated or invalid dates follow dated
+/// episodes; title and ID break ties without depending on model iteration order.
 pub fn episodes<'a>(state: &'a RedshankSurfaceState, feed_url: Option<&str>) -> Vec<&'a ItemRow> {
+    ordered_episodes(state, feed_url, false)
+}
+
+fn ordered_episodes<'a>(
+    state: &'a RedshankSurfaceState,
+    feed_url: Option<&str>,
+    oldest_first: bool,
+) -> Vec<&'a ItemRow> {
     let mut rows: Vec<&ItemRow> = state
         .items
         .iter()
         .filter(|item| item.feed_url.as_deref() == feed_url)
         .collect();
-    rows.sort_by(|a, b| {
-        let left = (a.published.as_deref().unwrap_or(""), a.title.as_str());
-        let right = (b.published.as_deref().unwrap_or(""), b.title.as_str());
-        right.cmp(&left)
+    rows.sort_by_cached_key(|row| {
+        let instant = publication_instant(row.published.as_deref());
+        (
+            instant.is_none(),
+            instant.map(|value| if oldest_first { value } else { -value }),
+            row.title.clone(),
+            row.id.clone(),
+        )
     });
     rows
 }
@@ -79,9 +112,7 @@ pub fn episodes_oldest_first<'a>(
     state: &'a RedshankSurfaceState,
     feed_url: Option<&str>,
 ) -> Vec<&'a ItemRow> {
-    let mut rows = episodes(state, feed_url);
-    rows.reverse();
-    rows
+    ordered_episodes(state, feed_url, true)
 }
 
 /// The notes hanging off one episode, in offset order.
@@ -213,5 +244,31 @@ pub fn note_body(note: &NoteSummary) -> String {
         crate::NoteSummaryBody::Voice { duration_ms, .. } => {
             format!("voice · {}", format_time(*duration_ms))
         },
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::publication_instant;
+
+    #[test]
+    fn publication_dates_compare_utc_instants_across_feed_formats() {
+        let utc = publication_instant(Some("2026-09-27T00:00:00Z")).unwrap();
+        for same in [
+            "Sun, 27 Sep 2026 00:00:00 -0000",
+            "Sat, 26 Sep 2026 20:00:00 -0400",
+            "2026-09-27T02:00:00+02:00",
+            "2026-09-27",
+        ] {
+            assert_eq!(publication_instant(Some(same)), Some(utc), "{same}");
+        }
+        assert!(publication_instant(Some("Wed, 23 Sep 2026 07:00:00 -0000")).unwrap() < utc);
+        assert!(
+            publication_instant(Some("Wed, 31 Dec 2025 23:59:59 +0000")).unwrap()
+                < publication_instant(Some("2026-01-01")).unwrap()
+        );
+        for invalid in [None, Some(""), Some("not a date"), Some("2026-02-30")] {
+            assert_eq!(publication_instant(invalid), None);
+        }
     }
 }

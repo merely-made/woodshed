@@ -40,7 +40,10 @@ before any other doc in this directory.
 - [Timed transcripts](2026-09-26_timed_transcripts_plan.md): bounded WebVTT parsing,
   explicit fetch/save and offline reopening, active cue display and seek are
   implemented and tested. Stale download and oversized-response checks pass;
-  headed real-episode acceptance and full text-track rendering remain open.
+  native fixture fetch/save, exact cue seeking and offline restart pass. Five
+  subscribed public feeds advertise no timed transcripts; Decoder links written
+  website transcripts. Headed real-episode acceptance and full text-track
+  rendering remain open.
 
 - [2026-09-01_listening_annotation_port_plan.md](2026-09-01_listening_annotation_port_plan.md)
   **Active; Phases 0-3 complete, Phase 5 closed 2026-09-26, Phase 7 met 2026-09-22, Phase 4 in progress, Phase 6 identity/seek and synthetic alignment implemented; extraction to its own repository ruled 2026-09-26.** Redshank is a separate audio-listening and timed

@@ -27,7 +27,7 @@ $scenarioPath = Join-Path $portRoot ('scenarios/' + $scenarioName + '.scn')
 $fixturePath = Join-Path $portRoot ('scenarios/fixtures/' + $fixtureName)
 $expectedCaptures = if ($Case -eq 'lifecycle') {
     @('lifecycle-listen.png', 'lifecycle-selector-notes.png', 'lifecycle-final.png')
-} else { @('transcript-before-fetch.png', 'transcript-after-quiescence.png') }
+} else { @('transcript-before-fetch.png', 'transcript-after-quiescence.png', 'transcript-cue-seek.png') }
 $httpProcesses = [Collections.Generic.List[Diagnostics.Process]]::new()
 $appProcess = $null
 $savedEnvironment = @{}
@@ -53,6 +53,7 @@ $binaryHash = (Get-FileHash -LiteralPath $receiptBinary -Algorithm SHA256).Hash
 $failure = $null
 $exitCode = $null
 $persistedTranscriptGeneration = $null
+$offlineVerified = $false
 try {
     if ($Case -eq 'transcript') {
         foreach ($port in @(8766)) {
@@ -138,13 +139,32 @@ try {
             throw 'Latest published model does not contain the expected saved synthetic transcript and fetch receipt.'
         }
         $persistedTranscriptGeneration = $latest.FullName
+        # Reopen the published model after stopping our transcript origin.
+        foreach ($process in $httpProcesses) { if (-not $process.HasExited) { $process.Kill(); if (-not $process.WaitForExit(10000)) { throw 'Owned transcript origin did not stop.' } } }
+        $offlineDeadline = [DateTime]::UtcNow.AddSeconds(3)
+        while (Test-ReceiptPort 8766) {
+            if ([DateTime]::UtcNow -ge $offlineDeadline) { throw 'Transcript origin is still reachable before offline restart.' }
+            Start-Sleep -Milliseconds 50
+        }
+        $offlineRoot = Join-Path $outputRoot 'offline'
+        New-Item -ItemType Directory -Path $offlineRoot | Out-Null
+        $env:REDSHANK_CAPTURE_DIR = $offlineRoot
+        $env:REDSHANK_SCENARIO = Join-Path $portRoot 'scenarios/mesquite_transcript_offline.scn'
+        $appProcess = Start-Process -FilePath $receiptBinary -WindowStyle Hidden -PassThru -RedirectStandardOutput (Join-Path $offlineRoot 'stdout.log') -RedirectStandardError (Join-Path $offlineRoot 'stderr.log')
+        if (-not $appProcess.WaitForExit($TimeoutSeconds * 1000)) { throw 'Owned offline restart exceeded its receipt deadline.' }
+        $appProcess.Refresh()
+        if ($appProcess.ExitCode -ne 0 -or -not (Test-Path -LiteralPath (Join-Path $offlineRoot 'scenario.done')) -or
+            (Get-Content -LiteralPath (Join-Path $offlineRoot 'scenario.done') -TotalCount 1) -ne 'RESULT ok') {
+            throw 'Offline restart did not record RESULT ok.'
+        }
+        $offlineVerified = $true
     }
     if ((Get-FileHash -LiteralPath $receiptBinary -Algorithm SHA256).Hash -ne $binaryHash) { throw 'Executable changed during this receipt.' }
 } catch {
     $failure = $_.Exception.Message
 } finally {
-    if ($null -ne $appProcess -and -not $appProcess.HasExited) { $appProcess.Kill(); $appProcess.WaitForExit() }
-    foreach ($process in $httpProcesses) { if (-not $process.HasExited) { $process.Kill(); $process.WaitForExit() } }
+    if ($null -ne $appProcess -and -not $appProcess.HasExited) { $appProcess.Kill(); if (-not $appProcess.WaitForExit(10000)) { $failure = 'Owned app did not exit after its stop request.' } }
+    foreach ($process in $httpProcesses) { if (-not $process.HasExited) { $process.Kill(); if (-not $process.WaitForExit(10000)) { $failure = 'Owned fixture process did not exit after its stop request.' } } }
     foreach ($entry in $savedEnvironment.GetEnumerator()) {
         if ($null -eq $entry.Value) { Remove-Item -LiteralPath ('Env:' + $entry.Key) -ErrorAction SilentlyContinue }
         else { [Environment]::SetEnvironmentVariable($entry.Key, $entry.Value, 'Process') }
@@ -156,8 +176,8 @@ try {
     binary = $receiptBinary; binary_sha256 = $binaryHash
     scenario = $scenarioPath; scenario_sha256 = (Get-FileHash -LiteralPath $scenarioPath -Algorithm SHA256).Hash
     fixture_source = $fixturePath; isolated_data = $dataRoot; expected_captures = $expectedCaptures
-    persisted_transcript_generation = $persistedTranscriptGeneration
-    evidence = 'Native presented-frame readback captures, scenario assertions and visible-tab selector/custom pointer routing. This does not exercise clipped-target scrolling. Transcript case generates local PCM and VTT from the committed empty model; only the VTT uses an owned loopback server with a delayed response.'
+    persisted_transcript_generation = $persistedTranscriptGeneration; offline_restart_verified = $offlineVerified
+    evidence = 'Native presented-frame readback captures, scenario assertions and semantic role/name button and tab routing. This does not exercise clipped-target scrolling. Transcript case generates local PCM and VTT from the committed empty model; only the VTT uses an owned loopback server with a delayed response; restart verifies saved cue seeking after that origin stops.'
 } | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath (Join-Path $outputRoot 'summary.json')
 if ($failure) { throw "$Case receipt failed: $failure Evidence preserved at $outputRoot" }
 Get-Content -LiteralPath (Join-Path $outputRoot 'scenario.done')

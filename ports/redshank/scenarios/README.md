@@ -28,6 +28,13 @@ Widths live in the driver, never in a scenario: `-Width`/`-Height`, or
 
 ## Verbs beyond the generic grammar
 
+`act subscribe:<URL>` uses the shipping feed worker and generation store.
+`../scripts/subscribe-podcasts.ps1` adds the five public podcast feeds to the
+actual listener directory and records native and durable-model checks. It
+preserves existing data; use `-DataDirectory` to select another listener store.
+The feed size limit is configurable in Settings (8 MiB default, 1-32 MiB);
+transcript reads retain their separate 4 MiB bound.
+
 | Verb | What it does |
 |---|---|
 | `act <label>` | One named command — see the table below |

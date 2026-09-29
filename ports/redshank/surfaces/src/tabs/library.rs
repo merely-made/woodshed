@@ -370,12 +370,7 @@ fn episode_section(state: &RedshankSurfaceState) -> FullView {
                 )
                 .attr("class", "rs-library-head"),
             ) as FullView;
-            let url = feed.feed_url.clone();
-            let items = state
-                .items
-                .iter()
-                .filter(|item| item.feed_url.as_deref() == Some(url.as_str()))
-                .collect();
+            let items = scene::geometry::episodes(state, Some(&feed.feed_url));
             (head, items)
         },
         None => {
@@ -524,6 +519,59 @@ mod tests {
         assert!(markup.contains("rs-badge"));
         assert!(markup.contains(">3<"));
         assert!(markup.contains("Local audio"));
+    }
+
+    #[test]
+    fn library_and_scenes_share_chronological_episode_order() {
+        let mut state = library();
+        state.items = [
+            (
+                "old",
+                "Older Wednesday",
+                Some("Wed, 23 Sep 2026 07:00:00 -0000"),
+            ),
+            ("missing-b", "Undated", None),
+            (
+                "new",
+                "Latest Sunday",
+                Some("Sun, 27 Sep 2026 13:00:00 -0000"),
+            ),
+            ("invalid", "Invalid date", Some("garbage")),
+            ("year", "Previous year", Some("2025-12-31")),
+            ("missing-a", "Undated", None),
+        ]
+        .into_iter()
+        .map(|(id, title, published)| ItemRow {
+            published: published.map(str::to_owned),
+            ..episode(id, title)
+        })
+        .collect();
+        let url = Some("https://example.test/feed.xml");
+        let ids = |rows: Vec<&ItemRow>| {
+            rows.into_iter()
+                .map(|row| row.id.0.clone())
+                .collect::<Vec<_>>()
+        };
+        assert_eq!(
+            ids(scene::geometry::episodes(&state, url)),
+            ["new", "old", "year", "invalid", "missing-a", "missing-b"]
+        );
+        assert_eq!(
+            ids(scene::geometry::episodes_oldest_first(&state, url)),
+            ["year", "old", "new", "invalid", "missing-a", "missing-b"]
+        );
+        let output = markup(state, episode_section);
+        let positions: Vec<_> = [
+            "Latest Sunday",
+            "Older Wednesday",
+            "Previous year",
+            "Invalid date",
+            "Undated",
+        ]
+        .iter()
+        .map(|title| output.find(title).unwrap())
+        .collect();
+        assert!(positions.windows(2).all(|pair| pair[0] < pair[1]));
     }
 
     #[test]

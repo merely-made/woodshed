@@ -85,3 +85,37 @@ Additional regression tests cover oversized responses, response ownership
 after selection changes, and deletion followed by re-addition. Large-document
 pagination remains an explicit product acceptance gate; the input byte bound
 does not imply an efficient view for every accepted document.
+
+## Public podcast survey, 2026-09-29
+
+The public RSS feeds for Bad Faith, TrueAnon, House of Bob, Decoder with
+Nilay Patel, and Regulation Podcast were retrieved and inspected. None of the
+2,256 served entries advertises `podcast:transcript`. This is a feed-availability
+finding, not proof that a publisher has no transcripts elsewhere. Decoder has
+94 public HTML transcript links in its episode descriptions; these are untimed
+website pages and cannot be imported as timed WebVTT. No transcription or
+conversion was attempted.
+
+Official feed locations: `https://badfaith.libsyn.com/rss`,
+`https://www.patreon.com/public-rss/2963533?show=875184`,
+`https://feeds.megaphone.fm/houseofbob`,
+`https://feeds.megaphone.fm/recodedecode`, and
+`https://feeds.megaphone.fm/fface`. Retrieval hashes, byte counts and advertised
+resource counts are retained in
+`Code/testing/woodshed/redshank-podcasts/rss-research.json`. Raw RSS stays outside
+the repository because public media URLs can contain expiring signatures.
+
+Decoder's RSS is 5,203,522 bytes. Redshank's separate feed read bound now
+defaults to 8 MiB and is configurable from 1 to 32 MiB in Settings; network
+reads clamp edited persisted values to that range. Transcript reads remain
+bounded to 4 MiB. The native subscription runner uses the shipping worker and
+merges into the listener store, preserving existing generations and entries.
+
+The final native receipt saved all five subscriptions and 2,255 audio episodes
+in the normal listener store, with no advertised transcript resources. A local
+two-cue WAV/WebVTT fixture separately verifies delayed fetch, explicit durable
+saving, exact five-second seeking, and offline reopening after the origin stops
+(with cue changes from zero to five seconds). Presented-frame captures and
+assertions are in `Code/testing/woodshed/redshank-podcast-adoption/transcript/`.
+This is synthetic native evidence; real publisher WebVTT, long-list scrolling
+and keyboard behavior, and physical assistive-technology acceptance remain open.

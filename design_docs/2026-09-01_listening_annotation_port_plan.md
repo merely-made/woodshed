@@ -878,6 +878,57 @@ uncommitted transcript fields and fixtures remain separate from this migration.
 This work does not promote Genet's separate accessible-name implementation or
 claim physical screen-reader acceptance.
 
+#### Shared update and public feeds, 2026-09-29
+
+All Redshank Mere references now use published
+`ca2351b3fa21de1ca40a8553eed20fc503faf15c`; Genet uses
+`19c206873ab08ae227217892d9e74d0df18b349a` and Netrender resolves to
+`9607d16f1907f6c2085648ae96abcaa30d7c3d41`. This adopts semantic role/name
+selectors and the shared host fixes. The optional Apparatus receipt API is
+available but worker observation hooks remain a separate consumer slice.
+
+The shipping feed worker subscribed the normal listener store to Bad Faith,
+TrueAnon, House of Bob, Decoder and Regulation Podcast. The first native receipt
+persisted five subscriptions and 2,255 enclosure-bearing episodes in generation
+5. None advertises a timed transcript. Decoder links public untimed HTML
+transcripts; the survey is recorded in the timed-transcript plan. Its 5.2 MB RSS
+exposed the old feed bound: Settings now offers a separate 1-32 MiB feed limit,
+with an 8 MiB default. Successful import diagnostics remain stored but no longer
+appear as refresh failures. Actual failures retain Retry, and success clears
+them. Library and scene views sort publication instants across RSS, Atom and
+ISO date-only fixtures, preserving original display strings.
+
+A native cue click exposed packet-boundary seeking: a five-second WAV cue
+landed at 4.992 seconds. The decoder now discards source PCM before the requested
+track timestamp, before fingerprinting, retiming or playback. Integer conversions
+round fractional requests forward to the next source tick. A real WAV regression
+checks every retained sample and the paused clock in 30 seek cases across
+8/44.1/48 kHz mono and stereo; no audio hardware is required for that test.
+The original failed native receipt remains at
+`Code/testing/woodshed/redshank-semantic-update/transcript/`.
+
+The compact host surface now accepts a refused-note warning with an explicit
+approximate-time action, preserving ordinary transport controls. Its hosted
+wrapper scrolls and the warning wraps in short tiles. DOM/action regressions
+cover all compact layouts; native short-tile reachability remains open.
+Turnstone adoption uses the coordinated Mere/Knot/Woodshed source graph;
+its independent host owns token/identity checks and request acknowledgments.
+
+Automated validation: all 230 Redshank workspace tests pass, with seven existing
+device/fixture tests ignored; strict workspace Clippy and the native build pass.
+Native validation on the final dependency graph also passes delayed transcript
+fetch/save, exact five-second cue seeking, offline restart with origin stopped
+and cue changes from zero to five seconds, and lifecycle tab/transport routing.
+The final subscription refresh records generation 10, preserves all five prior
+generations, and confirms successful refresh status and newest-first dates in
+the native capture. The binary SHA-256 is
+`9CCE4B5CB1562D0C4CA021601864FFEAAB430E29C89C54F461C89D88D46C0BB6`;
+receipts are in `Code/testing/woodshed/redshank-podcast-adoption/`.
+Real publisher WebVTT, long-transcript scrolling/keyboard behavior and physical
+assistive-technology acceptance remain open. Gates run in the shared checkout with the prior
+transcript snapshot/fixture WIP preserved. New scenarios rely on existing DOM
+and position observations, not those pending transcript snapshot fields.
+
 ### Phase 5: voice capture and open annotation target
 
 Add host-provided microphone capture and Knot's generic media

@@ -286,6 +286,11 @@ pub fn parse_named(label: &str) -> Option<Named> {
             rest.to_owned(),
         ))));
     }
+    if let Some(rest) = label.strip_prefix("subscribe:") {
+        let url = rest.trim();
+        return (!url.is_empty())
+            .then(|| Named::Command(CompactCommand::Subscribe(url.to_owned())));
+    }
     if let Some(rest) = label.strip_prefix("feed:") {
         let rest = rest.trim();
         // A bare `feed:` clears the selection, which is how the roster (rather
@@ -635,6 +640,25 @@ mod tests {
         assert_eq!(parse_named("tab:nowhere"), None);
         assert_eq!(parse_named("seek:soon"), None);
         assert_eq!(parse_named("select:"), None);
+        assert_eq!(parse_named("subscribe: "), None);
+    }
+
+    #[test]
+    fn subscribing_uses_the_shipping_command_and_preserves_the_url() {
+        let url = "https://example.test/rss?format=xml&show=a:b";
+        let mut state = RedshankSurfaceState::default();
+        apply(
+            &mut state,
+            parse_named(&format!("subscribe: {url} ")).unwrap(),
+        );
+        assert_eq!(
+            state.drain_commands().collect::<Vec<_>>(),
+            [CompactCommand::Subscribe(url.to_owned())]
+        );
+        assert!(
+            state.feeds.is_empty(),
+            "the worker owns subscription import"
+        );
     }
 
     #[test]

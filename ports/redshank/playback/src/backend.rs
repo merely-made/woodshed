@@ -241,6 +241,9 @@ pub(super) struct Decoder {
     pub(super) channels: Option<u32>,
     time_base: symphonia::core::units::TimeBase,
     duration_ms: Option<u64>,
+    /// Accurate demux seeks land at a preceding packet. Decode that preroll,
+    /// but admit only source frames at or after this track timestamp.
+    discard_before_ts: Option<u64>,
 }
 
 pub(super) fn open_local(path: &Path) -> Result<(Decoder, RepresentationReceipt)> {
@@ -344,6 +347,7 @@ fn open_decoder(source: Box<dyn MediaSource>, hint_source: &str) -> Result<Decod
         channels,
         time_base,
         duration_ms,
+        discard_before_ts: None,
     })
 }
 
@@ -531,6 +535,14 @@ impl Backend {
             return Ok(());
         }
         let decoder = self.decoder.as_mut().ok_or("no local decoder is loaded")?;
+        // A demuxer's required_ts may floor a millisecond cue to the sample
+        // just before it (e.g. 5123 ms at 44.1 kHz). Admit the first track tick
+        // at or after the request, using integer arithmetic at that boundary.
+        let requested_ts = u64::try_from(
+            (position.as_nanos() * u128::from(decoder.time_base.denom))
+                .div_ceil(u128::from(decoder.time_base.numer) * 1_000_000_000),
+        )
+        .map_err(|_| "seek position exceeds the track timestamp range")?;
         let seeked = decoder
             .format
             .seek(
@@ -542,8 +554,12 @@ impl Backend {
             )
             .map_err(|error| format!("seek unavailable: {error}"))?;
         decoder.decoder.reset();
-        let actual = decoder.time_base.calc_time(seeked.actual_ts);
-        self.base_ms = actual.seconds * 1000 + (actual.frac * 1000.0) as u64;
+        let required_ts = seeked.required_ts.max(requested_ts);
+        decoder.discard_before_ts = Some(required_ts);
+        // Use track time, not the earlier demux packet boundary. Integer
+        // conversion also avoids rounding an exact millisecond down in f64.
+        self.base_ms = (u128::from(required_ts) * u128::from(decoder.time_base.numer) * 1000
+            / u128::from(decoder.time_base.denom)) as u64;
         // Both clocks re-anchor at the seek point: the sink is new, so the
         // stretcher restarts rather than carrying the old stream's frames.
         self.discard_retiming();
@@ -875,37 +891,65 @@ pub(super) enum Decoded {
 
 /// Decode one packet into interleaved source frames.
 pub(super) fn decode_packet(decoder: &mut Decoder) -> Result<Decoded, String> {
-    match decoder.format.next_packet() {
-        Ok(packet) if packet.track_id() == decoder.track_id => {
-            match decoder.decoder.decode(&packet) {
-                Ok(decoded) => {
-                    let spec = *decoded.spec();
-                    let channels = spec.channels.count() as u32;
-                    if let Some(expected) = decoder.channels
-                        && expected != channels
-                    {
-                        return Err(format!(
-                            "decoded channel count changed from {expected} to {channels}"
+    loop {
+        match decoder.format.next_packet() {
+            Ok(packet) if packet.track_id() == decoder.track_id => {
+                match decoder.decoder.decode(&packet) {
+                    Ok(decoded) => {
+                        let spec = *decoded.spec();
+                        if spec.rate != decoder.rate {
+                            return Err(format!(
+                                "decoded sample rate changed from {} to {}",
+                                decoder.rate, spec.rate
+                            ));
+                        }
+                        let channels = spec.channels.count() as u32;
+                        if let Some(expected) = decoder.channels
+                            && expected != channels
+                        {
+                            return Err(format!(
+                                "decoded channel count changed from {expected} to {channels}"
+                            ));
+                        }
+                        decoder.channels = Some(channels);
+                        let buffer = decoder.sample_buffer.get_or_insert_with(|| {
+                            SampleBuffer::new(decoded.capacity() as u64, spec)
+                        });
+                        buffer.copy_interleaved_ref(decoded);
+                        let samples = buffer.samples();
+                        let frames = samples.len() / channels as usize;
+                        let discard = decoder.discard_before_ts.map_or(0, |required| {
+                            // Packet timestamps use the track time base, which need
+                            // not be 1/sample_rate. Round up so no earlier frame is
+                            // emitted, and trim whole interleaved channel frames.
+                            (u128::from(required.saturating_sub(packet.ts()))
+                                * u128::from(decoder.time_base.numer)
+                                * u128::from(spec.rate))
+                            .div_ceil(u128::from(decoder.time_base.denom))
+                            .min(frames as u128) as usize
+                        });
+                        if discard == frames && decoder.discard_before_ts.is_some() {
+                            // Intentional seek preroll is not a decode gap. Keep
+                            // decoding without disabling the new fingerprint run.
+                            continue;
+                        }
+                        decoder.discard_before_ts = None;
+                        return Ok(Decoded::Frames(
+                            samples[discard * channels as usize..].to_vec(),
                         ));
-                    }
-                    decoder.channels = Some(channels);
-                    let buffer = decoder
-                        .sample_buffer
-                        .get_or_insert_with(|| SampleBuffer::new(decoded.capacity() as u64, spec));
-                    buffer.copy_interleaved_ref(decoded);
-                    Ok(Decoded::Frames(buffer.samples().to_vec()))
-                },
-                Err(SymphoniaError::DecodeError(_)) => Ok(Decoded::Skipped),
-                Err(error) => Err(format!("decode failed: {error}")),
-            }
-        },
-        Ok(_) => Ok(Decoded::Skipped),
-        Err(SymphoniaError::IoError(error))
-            if error.kind() == std::io::ErrorKind::UnexpectedEof =>
-        {
-            Ok(Decoded::EndOfFile)
-        },
-        Err(error) => Err(format!("read failed: {error}")),
+                    },
+                    Err(SymphoniaError::DecodeError(_)) => return Ok(Decoded::Skipped),
+                    Err(error) => return Err(format!("decode failed: {error}")),
+                }
+            },
+            Ok(_) => return Ok(Decoded::Skipped),
+            Err(SymphoniaError::IoError(error))
+                if error.kind() == std::io::ErrorKind::UnexpectedEof =>
+            {
+                return Ok(Decoded::EndOfFile);
+            },
+            Err(error) => return Err(format!("read failed: {error}")),
+        }
     }
 }
 
@@ -914,4 +958,86 @@ pub(super) enum PumpState {
     Idle,
     Ready,
     EndOfStream,
+}
+
+#[cfg(test)]
+mod seek_tests {
+    use super::*;
+
+    fn pcm_sample(frame: u32, channel: u16) -> i16 {
+        (frame % 8192) as i16 + channel as i16 * 9000 - 16384
+    }
+
+    #[test]
+    fn accurate_wav_seek_discards_packet_prefix_before_pcm_and_source_clock() {
+        for rate in [8_000, 44_100, 48_000] {
+            for channels in [1, 2] {
+                let directory = tempfile::tempdir().unwrap();
+                let path = directory.path().join("packet-boundary.wav");
+                let mut writer = hound::WavWriter::create(
+                    &path,
+                    hound::WavSpec {
+                        channels,
+                        sample_rate: rate,
+                        bits_per_sample: 16,
+                        sample_format: hound::SampleFormat::Int,
+                    },
+                )
+                .unwrap();
+                for frame in 0..rate * 6 {
+                    for channel in 0..channels {
+                        writer.write_sample(pcm_sample(frame, channel)).unwrap();
+                    }
+                }
+                writer.finalize().unwrap();
+                let mut backend = Backend::new(crate::own_fetch());
+                backend
+                    .load(&servo_media_player::controller::MediaSource::Local {
+                        path: path.display().to_string(),
+                    })
+                    .unwrap();
+                // First seek is the load/resume path; later seeks exercise a
+                // paused cue click and reset the previous decode/fingerprint run.
+                // Fractional-second cues must not retain the sample preceding
+                // the cue or report the preceding millisecond at 44.1 kHz.
+                for milliseconds in [5_000, 1_123, 5_123, 1_020, 5_000] {
+                    let position = Duration::from_millis(milliseconds);
+                    backend.seek(position).unwrap();
+                    backend.reset(position).unwrap();
+                    backend.set_playing(false).unwrap();
+                    assert_eq!(backend.position().unwrap(), position);
+                    assert!(backend.pending.is_empty());
+                    assert!(backend.fingerprint.is_none());
+                    backend.decode_next_packet().unwrap();
+                    assert!(!backend.pending.is_empty());
+                    assert!(backend.fingerprint.is_some());
+                    assert!(!backend.fingerprint_failed);
+                    assert_eq!(backend.position().unwrap(), position);
+                    let mut samples = backend.pending.clone();
+                    loop {
+                        match decode_packet(backend.decoder.as_mut().unwrap()).unwrap() {
+                            Decoded::Frames(packet) => samples.extend(packet),
+                            Decoded::EndOfFile => break,
+                            Decoded::Skipped => panic!("valid WAV packet was skipped"),
+                        }
+                    }
+                    let first_frame = (milliseconds * u64::from(rate)).div_ceil(1000) as u32;
+                    assert_eq!(
+                        samples.len(),
+                        ((6 * rate - first_frame) * u32::from(channels)) as usize,
+                        "seek must retain exactly the requested suffix at {rate} Hz"
+                    );
+                    for (index, sample) in samples.iter().enumerate() {
+                        let frame = first_frame + (index / channels as usize) as u32;
+                        let channel = (index % channels as usize) as u16;
+                        assert_eq!(
+                            *sample,
+                            f32::from(pcm_sample(frame, channel)) / 32768.0,
+                            "wrong PCM after seek: {rate} Hz, {channels} channels, frame {frame}"
+                        );
+                    }
+                }
+            }
+        }
+    }
 }

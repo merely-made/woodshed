@@ -1,0 +1,15 @@
+# Reuse the saved local fixture with its transcript server stopped.
+wait 300
+act pane:notes
+settle 2
+assert text Transcript snapshot
+assert text Mesquite fixture first sentence.
+assert text Mesquite fixture second sentence.
+click role:button Seek transcript to 0:00: Mesquite fixture first sentence.
+wait 300
+assert snap position-ms == 0
+click role:button Seek transcript to 0:05: Mesquite fixture second sentence.
+wait 300
+assert snap position-ms == 5000
+capture transcript-offline-reopened
+log mesquite transcript offline reopen complete

@@ -6,11 +6,15 @@ act pane:notes
 settle 2
 assert text Save transcript offline
 capture transcript-before-fetch
-# Shipping custom pointer path, using the existing transcript receipt's point.
-pointer-click 520 221
+# The semantic selector resolves the shipping button through the host projection.
+click role:button Save transcript offline (language unspecified)
 wait 300
 assert text Transcript snapshot
 assert text Mesquite fixture first sentence.
 assert text Mesquite fixture second sentence.
 capture transcript-after-quiescence
+click role:button Seek transcript to 0:05: Mesquite fixture second sentence.
+wait 300
+assert snap position-ms == 5000
+capture transcript-cue-seek
 log mesquite delayed transcript complete
