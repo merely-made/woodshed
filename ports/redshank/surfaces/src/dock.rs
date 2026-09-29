@@ -67,6 +67,28 @@ pub(crate) fn label(body: impl Into<String>) -> CompactView {
     Box::new(text(body.into()))
 }
 
+pub(crate) fn note_warning(state: &CompactPlayerState) -> Option<CompactView> {
+    let warning = state.note_warning.as_ref()?;
+    Some(Box::new(
+        el(
+            "div",
+            vec![
+                Box::new(el("span", text(warning.message.clone())).attr("role", "status"))
+                    as CompactView,
+                control(
+                    vec![label("Open at approximate time")],
+                    "rs-btn",
+                    "Open at approximate time".into(),
+                    None,
+                    true,
+                    CompactCommand::OpenNoteApproximately(warning.id.clone()),
+                ),
+            ],
+        )
+        .attr("class", "rs-note-identity"),
+    ))
+}
+
 pub(crate) fn span(class: &str, body: impl Into<String>) -> CompactView {
     Box::new(el("span", text(body.into())).attr("class", class))
 }
@@ -471,18 +493,14 @@ fn transport_row(state: &CompactPlayerState, with_capture: bool) -> CompactView 
 /// The player alone: identity, seek, transport. Hosts that supply their own
 /// capture affordance mount this.
 pub fn player_surface(state: &CompactPlayerState) -> CompactView {
+    let mut children = vec![identity_row(state)];
+    children.extend(note_warning(state));
+    children.extend([seek_row(state), transport_row(state, false)]);
     Box::new(
-        el(
-            "section",
-            vec![
-                identity_row(state),
-                seek_row(state),
-                transport_row(state, false),
-            ],
-        )
-        .attr("class", "rs-player")
-        .attr("role", "region")
-        .attr("aria-label", "Player"),
+        el("section", children)
+            .attr("class", "rs-player")
+            .attr("role", "region")
+            .attr("aria-label", "Player"),
     )
 }
 
@@ -501,18 +519,14 @@ pub fn capture_surface(state: &CompactPlayerState) -> CompactView {
 
 /// The whole dock: one fixed height, contents swapped in place.
 pub fn compact_surface(state: &CompactPlayerState) -> CompactView {
+    let mut children = vec![identity_row(state)];
+    children.extend(note_warning(state));
+    children.extend([seek_row(state), transport_row(state, true)]);
     Box::new(
-        el(
-            "div",
-            vec![
-                identity_row(state),
-                seek_row(state),
-                transport_row(state, true),
-            ],
-        )
-        .attr("class", "rs-dock")
-        .attr("role", "region")
-        .attr("aria-label", "Player"),
+        el("div", children)
+            .attr("class", "rs-dock")
+            .attr("role", "region")
+            .attr("aria-label", "Player"),
     )
 }
 
@@ -568,6 +582,37 @@ mod tests {
             pending.extend(dom.dom_children(node));
         }
         panic!("missing control {label}");
+    }
+
+    #[test]
+    fn every_compact_layout_requires_an_explicit_approximate_note_action() {
+        for logic in [
+            compact_surface as Logic,
+            player_surface as Logic,
+            crate::rail::rail_surface as Logic,
+        ] {
+            let mut runner = runner(logic);
+            let id = redshank_model::AnnotationId("unverified-note".into());
+            runner.update(|state| {
+                state.note_warning = Some(crate::NoteOpenWarning {
+                    id: id.clone(),
+                    message: "Couldn't verify this copy.".into(),
+                });
+            });
+            let markup = runner.dom().borrow().outer_html(runner.root());
+            assert!(markup.contains("Couldn't verify this copy."));
+            let mut commands = Vec::new();
+            runner.update(|state| commands.extend(state.drain_commands()));
+            assert!(commands.is_empty(), "rendering a warning must not seek");
+            let action = node_with_label(
+                &runner.dom().borrow(),
+                runner.root(),
+                "Open at approximate time",
+            );
+            runner.dispatch_click(action, PointerClick::at((1.0, 1.0)));
+            runner.update(|state| commands.extend(state.drain_commands()));
+            assert_eq!(commands, [CompactCommand::OpenNoteApproximately(id)]);
+        }
     }
 
     #[test]

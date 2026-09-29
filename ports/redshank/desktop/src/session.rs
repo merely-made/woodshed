@@ -631,7 +631,9 @@ impl Session {
                     unplayed_count: unplayed,
                     offline_bytes,
                     last_refreshed_ms: feed.last_refreshed_ms,
-                    failure: feed.diagnostics.last().cloned(),
+                    // Parser diagnostics describe a successful import. Actual
+                    // refresh failures are transient host facts, projected by Desktop.
+                    failure: None,
                 }
             })
             .collect()
@@ -1251,7 +1253,7 @@ mod tests {
             subtitle: Some("weekly".into()),
             artwork: Some("https://example.test/art.png".into()),
             last_refreshed_ms: Some(1_000),
-            diagnostics: vec!["feed timed out".into()],
+            diagnostics: vec!["HTML was stripped from 1 episode summaries".into()],
             ..Default::default()
         });
         let episode = ItemId("episode".into());
@@ -1310,7 +1312,13 @@ mod tests {
         assert_eq!(feed.episode_count, 1);
         assert_eq!(feed.unplayed_count, 1);
         assert_eq!(feed.offline_bytes, 4_096);
-        assert_eq!(feed.failure.as_deref(), Some("feed timed out"));
+        assert_eq!(feed.failure, None);
+        assert_eq!(
+            session.model.subscriptions["https://example.test/feed.xml"]
+                .diagnostics
+                .len(),
+            1
+        );
         assert_eq!(state.cache_used_bytes, 4_096);
     }
 

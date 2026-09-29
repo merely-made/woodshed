@@ -383,6 +383,12 @@ pub enum CompactCommand {
 // ---------------------------------------------------------------------------
 
 #[derive(Clone, Debug, Eq, PartialEq)]
+pub struct NoteOpenWarning {
+    pub id: AnnotationId,
+    pub message: String,
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub struct CompactPlayerState {
     pub transport: TransportState,
     pub now_playing: Option<NowPlaying>,
@@ -394,6 +400,8 @@ pub struct CompactPlayerState {
     pub voice_capture_available: bool,
     pub voice_capture_active: bool,
     pub recording: Option<Recording>,
+    /// A refused note open remains visible until an explicit listener action.
+    pub note_warning: Option<NoteOpenWarning>,
     commands: Vec<CompactCommand>,
 }
 
@@ -409,6 +417,7 @@ impl Default for CompactPlayerState {
             voice_capture_available: false,
             voice_capture_active: false,
             recording: None,
+            note_warning: None,
             commands: Vec::new(),
         }
     }

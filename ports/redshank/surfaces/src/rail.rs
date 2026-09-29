@@ -4,8 +4,8 @@
 //! vertical seek track that takes the flexible middle, transport, capture.
 
 use crate::dock::{
-    control, face_with, identity_title, label, microlabel, primary, span, text_note_button,
-    voice_note_button,
+    control, face_with, identity_title, label, microlabel, note_warning, primary, span,
+    text_note_button, voice_note_button,
 };
 use crate::{CompactCommand, CompactPlayerState, CompactView, format_time, percent};
 use cambium::{el, text};
@@ -182,6 +182,7 @@ pub fn rail_surface(state: &CompactPlayerState) -> CompactView {
         Box::new(el("div", identity).attr("class", "rs-identity-text")),
     ];
     children.extend(recording_card(state));
+    children.extend(note_warning(state));
     children.push(seek(state));
     children.push(primary(state));
     children.push(Box::new(el("div", pair).attr("class", "rs-rail-pair")));

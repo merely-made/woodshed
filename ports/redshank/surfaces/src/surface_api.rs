@@ -43,7 +43,7 @@ pub const COMPACT_SURFACE_ID: &str = "redshank.compact";
 pub const EPISODE_SOURCE_KIND: &str = "redshank.episode.v1";
 
 /// The wrapper the hosted dock's root carries, so a host can size it.
-pub const HOSTED_DOCK_CSS: &str = ".rs-hosted-dock { justify-content: flex-start; padding: 0; }\n\
+pub const HOSTED_DOCK_CSS: &str = ".rs-hosted-dock { justify-content: flex-start; padding: 0; overflow: auto; }\n\
      .rs-hosted-dock .rs-dock { border-top: none; }\n";
 
 /// Stable data-only descriptor for the compact listening dock.

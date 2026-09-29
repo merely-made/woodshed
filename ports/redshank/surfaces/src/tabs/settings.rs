@@ -387,6 +387,23 @@ fn swatches() -> FullView {
 
 fn appearance(state: &RedshankSurfaceState) -> FullView {
     let settings = &state.settings;
+    const MIB: u64 = 1024 * 1024;
+    let feed_limit = |up: bool| {
+        let current = settings.effective_feed_max_bytes();
+        let next = if up {
+            current.saturating_add(MIB)
+        } else {
+            current.saturating_sub(MIB)
+        }
+        .clamp(
+            redshank_model::MIN_FEED_MAX_BYTES,
+            redshank_model::MAX_FEED_MAX_BYTES,
+        );
+        write(ListenerSettings {
+            feed_max_bytes: next,
+            ..settings.clone()
+        })
+    };
     let refresh_options = [
         ("manual", RefreshSchedule::Manual),
         ("hourly", RefreshSchedule::Hourly),
@@ -445,6 +462,17 @@ fn appearance(state: &RedshankSurfaceState) -> FullView {
                 "Refresh subscriptions",
                 None,
                 controls::segment("Refresh subscriptions", refresh_options),
+            ),
+            controls::row(
+                "Feed size limit",
+                Some("Maximum download per feed · 1–32 MiB"),
+                controls::stepper(
+                    "Feed size limit",
+                    (settings.effective_feed_max_bytes() / MIB) as i64,
+                    "MiB",
+                    feed_limit(false),
+                    feed_limit(true),
+                ),
             ),
             controls::row(
                 "Seeds",
@@ -530,6 +558,26 @@ mod tests {
             CompactCommand::UpdateSettings(settings)
                 if settings.cache_budget_bytes == 2304 * 1024 * 1024
         ));
+    }
+
+    #[test]
+    fn feed_limit_steps_by_one_mib_and_stays_bounded() {
+        for (initial, label, expected) in [
+            (8, "Increase Feed size limit", 9),
+            (8, "Decrease Feed size limit", 7),
+            (1, "Decrease Feed size limit", 1),
+            (32, "Increase Feed size limit", 32),
+        ] {
+            let mut state = settings_state();
+            state.settings.feed_max_bytes = initial * 1024 * 1024;
+            let mut runner = runner(state, panel);
+            click(&mut runner, label);
+            assert!(matches!(
+                &commands(&mut runner)[0],
+                CompactCommand::UpdateSettings(settings)
+                    if settings.feed_max_bytes == expected * 1024 * 1024
+            ));
+        }
     }
 
     #[test]

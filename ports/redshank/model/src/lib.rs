@@ -383,6 +383,9 @@ pub struct ListenerSettings {
     pub skip_backward_ms: u64,
     #[serde(default = "default_cache_budget_bytes")]
     pub cache_budget_bytes: u64,
+    /// Maximum response bytes read when subscribing to or refreshing a feed.
+    #[serde(default = "default_feed_max_bytes")]
+    pub feed_max_bytes: u64,
     /// Requested playback rate in percent; the backend reports the effective one.
     #[serde(default = "default_playback_rate_percent")]
     pub playback_rate_percent: u16,
@@ -437,6 +440,13 @@ pub const fn default_cache_budget_bytes() -> u64 {
     2 * 1024 * 1024 * 1024
 }
 
+pub const MIN_FEED_MAX_BYTES: u64 = 1024 * 1024;
+pub const MAX_FEED_MAX_BYTES: u64 = 32 * 1024 * 1024;
+
+pub const fn default_feed_max_bytes() -> u64 {
+    8 * 1024 * 1024
+}
+
 pub const fn default_playback_rate_percent() -> u16 {
     100
 }
@@ -460,6 +470,7 @@ impl Default for ListenerSettings {
             skip_forward_ms: 30_000,
             skip_backward_ms: 15_000,
             cache_budget_bytes: default_cache_budget_bytes(),
+            feed_max_bytes: default_feed_max_bytes(),
             playback_rate_percent: default_playback_rate_percent(),
             volume_percent: default_volume_percent(),
             reaction_offset_ms: 0,
@@ -480,6 +491,12 @@ impl Default for ListenerSettings {
 }
 
 impl ListenerSettings {
+    /// Keep the network read bounded even for manually edited persisted settings.
+    pub fn effective_feed_max_bytes(&self) -> u64 {
+        self.feed_max_bytes
+            .clamp(MIN_FEED_MAX_BYTES, MAX_FEED_MAX_BYTES)
+    }
+
     pub fn validate_alignment_settings(&self) -> Result<(), ModelError> {
         if self.alignment_window_ms != 0 && !(5_000..=60_000).contains(&self.alignment_window_ms) {
             return Err(ModelError::InvalidAlignment(
@@ -1302,6 +1319,28 @@ mod tests {
         assert_eq!(note.target.pressed_offset_ms, None);
         assert_eq!(note.privacy, NotePrivacy::Private);
         assert_eq!(model.settings, ListenerSettings::default());
+    }
+
+    #[test]
+    fn feed_read_limit_is_persisted_and_clamped_at_the_network_boundary() {
+        for (stored, effective) in [
+            (0, MIN_FEED_MAX_BYTES),
+            (5 * 1024 * 1024, 5 * 1024 * 1024),
+            (u64::MAX, MAX_FEED_MAX_BYTES),
+        ] {
+            let settings = ListenerSettings {
+                feed_max_bytes: stored,
+                ..Default::default()
+            };
+            let restored: ListenerSettings =
+                serde_json::from_str(&serde_json::to_string(&settings).unwrap()).unwrap();
+            assert_eq!(restored.feed_max_bytes, stored);
+            assert_eq!(restored.effective_feed_max_bytes(), effective);
+        }
+        assert_eq!(
+            ListenerSettings::default().effective_feed_max_bytes(),
+            8 * 1024 * 1024
+        );
     }
 
     #[test]

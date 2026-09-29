@@ -15,6 +15,7 @@ genet-scripted-dom.workspace = true
 mere-surface-api.workspace = true
 redshank-model.workspace = true
 tinct.workspace = true
+time = { version = "=0.3.55", features = ["parsing", "macros"] }
 
 [dev-dependencies]
 cambium-genet-winit-host.workspace = true
