@@ -499,3 +499,182 @@ fn reopened_scale_editor_has_no_empty_chord_discovery_panels() {
     let dom = dom.borrow();
     assert!(taproot::matching(&dom, &Selector::class("stage-context-panel")).is_empty());
 }
+
+#[test]
+fn discovered_scale_uses_its_saved_ukulele_board_and_physical_solo_contact() {
+    use woodshed_core::{audio::AudioRequest, storage::AppSection};
+    use woodshedding::rehearsal::{FretWindow, Hold, MarkMode};
+    let mut h = harness(700.0, 1_500.0);
+    h.update(|ui| {
+        ui.set.cards.clear();
+        ui.stage.set_root(3);
+        ui.root_dd.selected = 3;
+        let chord = ui
+            .stage
+            .chords()
+            .iter()
+            .position(|chord| chord.name == "Major 7")
+            .unwrap();
+        ui.stage.select_chord(chord);
+        ui.stage_current(None);
+        let card = &mut ui.set.cards[0];
+        card.setting.instrument = "Ukulele".into();
+        card.setting.tuning = Some("Standard (high-G)".into());
+        card.setting.capo = Some(2);
+        card.setting.fret_window = Some(FretWindow { start: 2, span: 4 });
+        card.timing.bpm = None;
+        card.timing.hold = Hold::Bars(1);
+        ui.transport.bpm = 80.0;
+        ui.select_app_section(AppSection::Rehearsal);
+    });
+    assert!(h.click_on(&Selector::class("card-shape-next")));
+    let source = h.state().set.cards[0].id;
+    let source_before = serde_json::to_value(&h.state().set.cards[0]).unwrap();
+    assert!(h.click_on(&Selector::class("t-btn").containing("Explore compatible scales")));
+    assert!(h.click_on(&Selector::class("scale-choice").containing("C Major")));
+    assert!(h.click_on(&Selector::class("t-btn").containing("Hear scale")));
+    let heard = match h.state().audio_requests.last().unwrap() {
+        AudioRequest::PreviewPitches {
+            pitches,
+            duration_s,
+            strum_s,
+        } => (pitches.clone(), *duration_s, *strum_s),
+        request => panic!("unexpected scale audition: {request:?}"),
+    };
+    assert!(h.click_on(&Selector::class("t-btn").containing("Stage scale")));
+    let scale_id = h.state().set.cards[1].id;
+    assert_ne!(source, scale_id);
+    assert_eq!(
+        serde_json::to_value(&h.state().set.cards[0]).unwrap(),
+        source_before
+    );
+    h.update(|ui| {
+        ui.set.select_id(scale_id);
+    });
+    assert_eq!(
+        h.state().stage.string_count(),
+        6,
+        "live Guitar must not reinterpret the Ukulele Card"
+    );
+    let geom = h.state().rehearsal_board_geometry();
+    assert_eq!(
+        (geom.string_count, geom.fret_start, geom.fret_count),
+        (4, 2, 6)
+    );
+    let board = rect(&h, "fretboard-stack");
+    let board_size = geom.size_u32();
+    assert_eq!(
+        (board.2, board.3),
+        (board_size.0 as f32, board_size.1 as f32)
+    );
+    assert_eq!(h.state().preview_voicing(), heard);
+    let dwell =
+        woodshed_core::card_dwell(&h.state().set.cards[1], h.state().transport.bpm).unwrap();
+    assert!(
+        (dwell.as_secs_f32() - 3.0).abs() < 0.001,
+        "one bar inherits the 80 BPM runner tempo"
+    );
+    assert!(
+        (heard.1 - dwell.as_secs_f32()).abs() < 0.001,
+        "sequential sound finishes within the runner's inherited-tempo bar"
+    );
+    let resolved = h
+        .state()
+        .stage
+        .scale_card_realization(&h.state().set.cards[1])
+        .unwrap();
+    let dot = resolved
+        .dots
+        .iter()
+        .find(|dot| dot.string_index == 1 && dot.fret == 2)
+        .unwrap();
+    let d4_hz = 440.0 * 2.0_f32.powf((62.0 - 69.0) / 12.0);
+    assert!((dot.frequency - d4_hz).abs() < 0.001);
+    let label = woodshed_core::marker_a11y_label(dot, 4);
+    assert!(h.click_on(&Selector::class("fret-label").with_attr("aria-label", label)));
+    assert_eq!(
+        h.state().set.cards[1].setting.marked,
+        vec![(1, 2)],
+        "the painted physical note edits its actual contact"
+    );
+    assert!(h.click_on(&Selector::class("seg").containing("Solo")));
+    assert_eq!(h.state().set.cards[1].setting.mark_mode, MarkMode::Solo);
+    let solo = h.state().preview_voicing();
+    assert_eq!(solo.0.len(), 1);
+    assert!(
+        (solo.0[0] - d4_hz).abs() < 0.001,
+        "Solo resolves D4 from the saved Ukulele contact"
+    );
+    h.update(|ui| {
+        ui.audio_requests.clear();
+        ui.now_ms = Some(1_000);
+    });
+    assert!(h.click_on(&Selector::class("t-btn").containing("Run")));
+    assert!(
+        matches!(h.state().audio_requests.last(), Some(AudioRequest::PreviewPitches { pitches, .. })
+        if pitches.len() == 1 && (pitches[0] - d4_hz).abs() < 0.001)
+    );
+    h.update(|ui| ui.now_ms = Some(2_000));
+    assert!(h.click_on(&Selector::class("t-btn").containing("Pause")));
+    assert_eq!(
+        h.state().practice_history.total_practiced_ms("scale:Major"),
+        1_000
+    );
+}
+
+#[test]
+fn invalid_saved_scale_setup_shows_the_reason_and_cannot_sound_the_live_guitar() {
+    use woodshed_core::storage::AppSection;
+    use woodshedding::{pitch::PitchClass, rehearsal::Material};
+    let mut h = harness(700.0, 1_100.0);
+    h.update(|ui| {
+        ui.set.cards[0].material = Material::Scale {
+            name: "Major".into(),
+            root: PitchClass::new(0),
+        };
+        ui.set.cards[0].setting.instrument = "Ukulele".into();
+        ui.set.cards[0].setting.tuning = Some("missing-test-tuning".into());
+        ui.select_app_section(AppSection::Rehearsal);
+        ui.audio_requests.clear();
+    });
+    assert_eq!(h.state().stage.string_count(), 6);
+    assert!(
+        !h.state().stage.voicing_preview().0.is_empty(),
+        "live Guitar has sound, making the fallback regression observable"
+    );
+    let unavailable = {
+        let dom = h.runner().dom();
+        let dom = dom.borrow();
+        taproot::matching(
+            &dom,
+            &Selector::class("scale-setup-unavailable").containing("missing-test-tuning"),
+        )
+    };
+    assert!(
+        !unavailable.is_empty(),
+        "the unavailable persisted setup needs a visible reason"
+    );
+    let labels = {
+        let dom = h.runner().dom();
+        let dom = dom.borrow();
+        taproot::matching(&dom, &Selector::class("fret-label"))
+    };
+    assert!(
+        labels.is_empty(),
+        "an invalid scale cannot present clickable live-Guitar contacts"
+    );
+    assert_eq!(h.state().rehearsal_board_geometry().string_count, 0);
+    assert!(h.state().preview_voicing().0.is_empty());
+    assert!(h.click_on(&Selector::class("t-btn").containing("♪ Hear")));
+    assert!(
+        h.state().preview_voicing().0.is_empty(),
+        "the host's audition seam remains silent"
+    );
+    assert!(
+        h.state()
+            .audio_requests
+            .iter()
+            .all(|request| !matches!(request,
+        woodshed_core::audio::AudioRequest::PreviewPitches { pitches, .. } if !pitches.is_empty()))
+    );
+}

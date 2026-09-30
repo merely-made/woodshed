@@ -20,6 +20,7 @@ pub mod history;
 pub mod mere;
 pub mod midi;
 pub mod pitch_motion_reading;
+pub mod scale_realization;
 pub mod sealed_backend;
 pub mod search;
 pub mod settings;
@@ -1334,6 +1335,12 @@ impl StageState {
     }
 
     pub fn dots_for_card(&self, card: &Card) -> Vec<FretDot> {
+        if matches!(card.material, Material::Scale { .. }) {
+            return self
+                .scale_card_realization(card)
+                .map(|scale| scale.dots)
+                .unwrap_or_default();
+        }
         if matches!(card.material, Material::Chord { .. }) && card.setting.voicing_idx.is_some() {
             return self.selected_card_shape_dots(card).unwrap_or_default();
         }
@@ -1859,6 +1866,9 @@ impl StageState {
     /// secs, strum offset ms)` — the Rehearsal-tab counterpart to
     /// [`Self::voicing_preview`]. Riff cards don't voice (empty).
     pub fn card_voicing(&self, card: &Card) -> (Vec<f32>, f32, f32) {
+        if matches!(card.material, Material::Scale { .. }) {
+            return self.scale_card_preview(card, false);
+        }
         fn to_hz(ps: Vec<Pitch>) -> Vec<f32> {
             ps.iter().map(|p| p.frequency() as f32).collect()
         }
@@ -1940,6 +1950,9 @@ impl StageState {
     }
 
     pub fn card_sounding_pitches(&self, card: &Card) -> (Vec<f32>, f32, f32) {
+        if matches!(card.material, Material::Scale { .. }) {
+            return self.scale_card_preview(card, true);
+        }
         connected_catalog::arpeggiate_preview(card, self.card_sounding_pitches_unarticulated(card))
     }
 

@@ -32,11 +32,43 @@ impl UiState {
         self.hover_peek = None;
     }
 
+    /// The scale setup and written/concert key are distinct from a fingering.
+    pub fn rehearsal_scale_status(&self) -> Option<Result<String, String>> {
+        let card = self.current_card()?;
+        if !matches!(card.material, Material::Scale { .. }) {
+            return None;
+        }
+        Some(self.stage.scale_card_realization(card).map(|scale| {
+            let written = woodshed_core::harmony::KeyedCatalogRef::from_material(&card.material)
+                .expect("resolved scale formula");
+            let mut concert = written.clone();
+            concert.root = scale.concert_root;
+            format!("{} / {} · capo {} · written {} · concert {} · {} strings · physical frets {}–{}",
+                scale.setup.instrument, scale.setup.tuning_name, scale.setup.capo,
+                written.label().expect("resolved scale"), concert.label().expect("resolved scale"),
+                scale.geometry.string_count, scale.geometry.physical_fret_start, scale.geometry.physical_fret_end)
+        }).map_err(|reason| format!("Scale unavailable: {reason}")))
+    }
+
     /// Native neck paint and retained note labels must use the same Card setup.
     pub fn rehearsal_board_geometry(&self) -> BoardGeom {
-        let resolved = self
-            .current_card()
-            .and_then(|card| self.stage.card_shape_geometry(card));
+        let resolved = self.current_card().and_then(|card| {
+            if matches!(card.material, Material::Scale { .. }) {
+                Some(
+                    self.stage
+                        .scale_card_realization(card)
+                        .map(|scale| scale.geometry)
+                        .unwrap_or(woodshed_core::card_shapes::CardShapeGeometry {
+                            string_count: 0,
+                            physical_fret_start: 0,
+                            physical_fret_end: 0,
+                            capo: 0,
+                        }),
+                )
+            } else {
+                self.stage.card_shape_geometry(card)
+            }
+        });
         BoardGeom {
             string_count: resolved
                 .as_ref()
@@ -196,4 +228,77 @@ fn movement_details(ui: &UiState) -> UiChild {
         },
     };
     Box::new(el("div", (el("div", text(heading)), detail)).attr("class", "shape-movement"))
+}
+
+#[cfg(test)]
+mod scale_tests {
+    use super::*;
+    use woodshed_core::harmony::KeyedCatalogRef;
+    use woodshedding::pitch::PitchClass;
+    use woodshedding::rehearsal::FretWindow;
+
+    fn scale_ui() -> UiState {
+        let mut ui = UiState::new();
+        let mut card = KeyedCatalogRef {
+            formula_id: "scale:Major".into(),
+            root: PitchClass::new(0),
+        }
+        .to_card()
+        .unwrap();
+        card.setting.instrument = "Ukulele".into();
+        card.setting.tuning = Some("Standard (high-G)".into());
+        card.setting.capo = Some(2);
+        card.setting.fret_window = Some(FretWindow { start: 2, span: 4 });
+        ui.set.push(card);
+        ui
+    }
+
+    #[test]
+    fn scale_geometry_uses_stored_four_string_setup_and_physical_capo_window() {
+        let ui = scale_ui();
+        assert_eq!(ui.stage.string_count(), 6);
+        let geom = ui.rehearsal_board_geometry();
+        assert_eq!(geom.string_count, 4);
+        assert_eq!(geom.fret_start, 2);
+        assert_eq!(geom.fret_count, 6);
+        let card = &ui.set.cards[0];
+        let dots = ui.stage.dots_for_card(card);
+        assert!(!dots.is_empty());
+        assert!(
+            dots.iter()
+                .all(|dot| dot.string_index < 4 && geom.in_window(dot.fret))
+        );
+        let status = ui.rehearsal_scale_status().unwrap().unwrap();
+        assert!(status.contains("Ukulele / Standard (high-G)"));
+        assert!(status.contains("written C Major"));
+        assert!(status.contains("concert D Major"));
+        assert!(status.contains("physical frets 2–6"));
+        assert!(
+            ui.stage
+                .card_sounding_pitches_at_tempo(card, 90.0)
+                .0
+                .iter()
+                .all(|pitch| *pitch > 250.0)
+        );
+    }
+
+    #[test]
+    fn invalid_scale_setup_has_no_live_guitar_geometry_notes_or_working_status() {
+        let mut ui = scale_ui();
+        ui.set.cards[0].setting.tuning = Some("Missing saved tuning".into());
+        assert!(
+            ui.rehearsal_scale_status()
+                .unwrap()
+                .unwrap_err()
+                .contains("Missing saved tuning")
+        );
+        assert_eq!(ui.rehearsal_board_geometry().string_count, 0);
+        assert!(ui.stage.dots_for_card(&ui.set.cards[0]).is_empty());
+        assert!(
+            ui.stage
+                .card_sounding_pitches_at_tempo(&ui.set.cards[0], 90.0)
+                .0
+                .is_empty()
+        );
+    }
 }
