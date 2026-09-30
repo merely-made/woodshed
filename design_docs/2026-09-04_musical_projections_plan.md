@@ -32,6 +32,16 @@ of P4f (an edge explains itself in musical terms), plus the evidence layer the
 Stage plan names but never wires. It does not reopen P4a-P4d and changes no
 Set truth.
 
+**Direction update (2026-09-30): planned.** Cross-catalog exploration and
+deliberate Set drilling are complementary product priorities. The parent
+[connected exploration and deliberate practice section](2026-07-11_stage_set_tools_plan.md#connected-exploration-and-deliberate-practice)
+owns the shared subject/context model, ambient Mere interactions, realization
+boundary, evidence semantics, and connected acceptance slices. This plan owns
+the detailed musical comparison, reading, and search contracts supporting them.
+The existing triad neighborhood is a bounded starting point; broad catalog
+connections are an explicit target. This update changes direction and acceptance
+scope, not the implementation status or historical receipts below.
+
 ## Why
 
 The Stage projection has ten arrangements and typed relations, and still does
