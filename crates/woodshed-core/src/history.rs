@@ -431,6 +431,9 @@ impl<'de> Deserialize<'de> for PracticeHistory {
 pub fn catalog_id_for_card(card: &Card) -> Option<String> {
     Some(match &card.material {
         Material::Scale { name, .. } => woodshed_graph::scale_id(name),
+        Material::ScalePattern { name, pattern, .. } => {
+            woodshed_graph::scale_pattern_exercise_id(name, *pattern)
+        },
         Material::Chord { name, .. } if matches!(card.touch, Touch::Arpeggiate { .. }) => {
             woodshed_graph::arpeggio_id(name)
         },

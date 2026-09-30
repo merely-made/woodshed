@@ -40,6 +40,7 @@ pub enum ScaleRealizationUnavailable {
     Setup(CardShapeUnavailable),
     InvalidFormula(String),
     NoNotes,
+    Pattern(woodshedding::scale_pattern::ScalePatternError),
 }
 
 impl std::fmt::Display for ScaleRealizationUnavailable {
@@ -50,6 +51,7 @@ impl std::fmt::Display for ScaleRealizationUnavailable {
             Self::Setup(reason) => write!(f, "scale setup unavailable: {reason}"),
             Self::InvalidFormula(reason) => write!(f, "scale formula unavailable: {reason}"),
             Self::NoNotes => f.write_str("no scale notes are available in this fret window"),
+            Self::Pattern(reason) => reason.fmt(f),
         }
     }
 }
@@ -60,8 +62,14 @@ impl StageState {
         &self,
         card: &Card,
     ) -> Result<ResolvedScaleCard, ScaleRealizationUnavailable> {
-        let Material::Scale { name, root } = &card.material else {
-            return Err(ScaleRealizationUnavailable::NotScale);
+        let (name, root, pattern) = match &card.material {
+            Material::Scale { name, root } => (name, root, None),
+            Material::ScalePattern {
+                name,
+                root,
+                pattern,
+            } => (name, root, Some(*pattern)),
+            _ => return Err(ScaleRealizationUnavailable::NotScale),
         };
         let formula = woodshedding::scale::catalog()
             .iter()
@@ -133,6 +141,30 @@ impl StageState {
             .collect::<Vec<_>>();
         notes.sort_by_key(|note| (note.pitch.midi(), note.physical_fret, note.string_index));
         notes.dedup_by_key(|note| note.pitch.midi());
+        if let Some(pattern) = pattern {
+            let pairs = woodshedding::scale_pattern::available_pairs(
+                pattern,
+                root_pitch.midi(),
+                &formula
+                    .intervals
+                    .iter()
+                    .map(|interval| interval.semitones())
+                    .collect::<Vec<_>>(),
+                &notes
+                    .iter()
+                    .map(|note| note.pitch.midi())
+                    .collect::<Vec<_>>(),
+            )
+            .map_err(ScaleRealizationUnavailable::Pattern)?;
+            let available = notes
+                .iter()
+                .map(|note| (note.pitch.midi(), note.clone()))
+                .collect::<std::collections::BTreeMap<_, _>>();
+            notes = pairs
+                .into_iter()
+                .flat_map(|(first, second)| [available[&first].clone(), available[&second].clone()])
+                .collect();
+        }
         let dots = positions.into_iter().map(FretDot::from_position).collect();
         Ok(ResolvedScaleCard {
             setup,
@@ -166,6 +198,11 @@ impl StageState {
                 .collect::<Vec<_>>();
             match card.setting.mark_mode {
                 MarkMode::Off => {},
+                MarkMode::Solo if matches!(card.material, Material::ScalePattern { .. }) => {
+                    // Filter the visits by resolved pitch, preserving recipe
+                    // order/repetition rather than replacing it with board dots.
+                    pitches.retain(|pitch| contacts.contains(pitch));
+                },
                 MarkMode::Solo => pitches = contacts,
                 MarkMode::Mute => {
                     let muted = contacts
@@ -176,8 +213,10 @@ impl StageState {
                 },
             }
         }
-        pitches.sort_by(f32::total_cmp);
-        pitches.dedup();
+        if !matches!(card.material, Material::ScalePattern { .. }) {
+            pitches.sort_by(f32::total_cmp);
+            pitches.dedup();
+        }
         if pitches.is_empty() {
             return (pitches, 0.0, 0.0);
         }

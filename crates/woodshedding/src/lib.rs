@@ -23,4 +23,5 @@ pub mod practice;
 pub mod progression;
 pub mod rehearsal;
 pub mod scale;
+pub mod scale_pattern;
 pub mod tuning;

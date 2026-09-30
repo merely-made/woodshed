@@ -20,6 +20,7 @@ pub mod history;
 pub mod mere;
 pub mod midi;
 pub mod pitch_motion_reading;
+pub mod scale_pattern_discovery;
 pub mod scale_realization;
 pub mod sealed_backend;
 pub mod search;
@@ -1335,7 +1336,10 @@ impl StageState {
     }
 
     pub fn dots_for_card(&self, card: &Card) -> Vec<FretDot> {
-        if matches!(card.material, Material::Scale { .. }) {
+        if matches!(
+            card.material,
+            Material::Scale { .. } | Material::ScalePattern { .. }
+        ) {
             return self
                 .scale_card_realization(card)
                 .map(|scale| scale.dots)
@@ -1347,10 +1351,12 @@ impl StageState {
         let board = Fretboard::new(self.tuning(), self.fret_count);
         let root_of = |pc: &PitchClass| Pitch::from_midi(48 + pc.value() as i32, Spelling::Sharps);
         let positions = match &card.material {
-            Material::Scale { name, root } => scale_catalog()
-                .iter()
-                .find(|s| s.name == name.as_str())
-                .and_then(|s| board.positions_for_scale(s, root_of(root)).ok()),
+            Material::Scale { name, root } | Material::ScalePattern { name, root, .. } => {
+                scale_catalog()
+                    .iter()
+                    .find(|s| s.name == name.as_str())
+                    .and_then(|s| board.positions_for_scale(s, root_of(root)).ok())
+            },
             Material::Chord { name, root } => chord_catalog()
                 .iter()
                 .find(|c| c.name == name.as_str())
@@ -1866,7 +1872,10 @@ impl StageState {
     /// secs, strum offset ms)` — the Rehearsal-tab counterpart to
     /// [`Self::voicing_preview`]. Riff cards don't voice (empty).
     pub fn card_voicing(&self, card: &Card) -> (Vec<f32>, f32, f32) {
-        if matches!(card.material, Material::Scale { .. }) {
+        if matches!(
+            card.material,
+            Material::Scale { .. } | Material::ScalePattern { .. }
+        ) {
             return self.scale_card_preview(card, false);
         }
         fn to_hz(ps: Vec<Pitch>) -> Vec<f32> {
@@ -1874,7 +1883,7 @@ impl StageState {
         }
         let root_of = |pc: &PitchClass| Pitch::from_midi(48 + pc.value() as i32, Spelling::Sharps);
         let (pitches, scale_like) = match &card.material {
-            Material::Scale { name, root } => (
+            Material::Scale { name, root } | Material::ScalePattern { name, root, .. } => (
                 scale_catalog()
                     .iter()
                     .find(|s| s.name == name.as_str())
@@ -1950,7 +1959,10 @@ impl StageState {
     }
 
     pub fn card_sounding_pitches(&self, card: &Card) -> (Vec<f32>, f32, f32) {
-        if matches!(card.material, Material::Scale { .. }) {
+        if matches!(
+            card.material,
+            Material::Scale { .. } | Material::ScalePattern { .. }
+        ) {
             return self.scale_card_preview(card, true);
         }
         connected_catalog::arpeggiate_preview(card, self.card_sounding_pitches_unarticulated(card))

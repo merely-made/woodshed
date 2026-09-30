@@ -364,6 +364,45 @@ The first slice is not accepted solely because each lane reports success.
   native run logged stream underrun/overrun, so a capture pass is not an
   acoustic-quality receipt.
 
+- **2026-09-30, executable scale degree-pair slice:** introduces two bounded
+  structured recipes, Thirds and Fourths, over seven-note scale formulas. The
+  pure degree grammar pairs 1–3/2–4 or 1–4/2–5 across octave boundaries. It uses
+  absolute scale degrees: missing pitches in a physical window omit incomplete
+  pairs rather than compressing the scale and changing the intervals. This is
+  a first musical syntax construct, not a general-purpose parser.
+
+  Explicit `ScalePattern` material stores the scale formula, written root, and
+  recipe choice separately from the display label and provenance stamp. The
+  previous Scale wire representation stays unchanged. Display and audition use
+  the shared saved setup resolver. Sequential preview preserves pair order,
+  downward transitions between pairs, and repeated notes; existing sustained
+  one-shot audio and pause limitations still apply. Earlier app versions cannot
+  be assumed to understand the new material variant.
+
+  The source scale offers two explained contextual choices with separate
+  inspection, Hear, and Stage actions. Inspection and audition retain the Set;
+  staging creates a new occurrence after revalidating its source and available
+  realization. Seven-note support and incomplete-pair behavior are disclosed.
+  The catalog background also names keyed pattern realizations and typed
+  degree-pattern relationships around the scale under the existing context
+  budget. The authored Set, derived catalog context, and practice observations
+  retain their separate identities.
+
+  Integrated validation passes 480 tests (158 core, one core integration,
+  46 desktop, 14 graph, 77 views, 180 theory, four doc examples) plus ten core
+  example tests. Production click gates cover both recipes at 1100 and 420 px,
+  independently calculated concert-pitch pairs, immutable inspection/audition,
+  distinct repeated occurrences, invalid and removed sources, and separate
+  measured pattern histories. Fresh-process tests compare full ordered audio
+  tuples and saved recipe discriminants. Native seed/reopen scenarios pass
+  with four presented captures, all inspected, including the ambient relation
+  view, staged recipe, pause, and restored instruction/observations. Pattern
+  satellites occupy a separate row above the source after visual review;
+  overall dense catalog layout and human musical usefulness remain review
+  work. Receipts live under `testing/woodshed/patterns-20260930/`.
+  Native audio logs still report stream underrun/overrun; no acoustic quality
+  acceptance or device-performance claim follows from these captures.
+
 **First-slice qualification:** functional discovery, staging, sequential-onset
 preview, runner observation boundaries, and filesystem reopening are implemented
 and automatically tested. The synth sustains prior tones through the cascade;

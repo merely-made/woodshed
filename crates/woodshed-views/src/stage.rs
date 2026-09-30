@@ -49,6 +49,7 @@ mod looper;
 mod pitch_motion;
 mod rehearsal;
 mod related;
+mod scale_patterns;
 mod set_tray;
 mod settings;
 mod shapes;
@@ -441,6 +442,8 @@ fn stage_node_kind(kind: StageNodeKind, foreground: bool) -> &'static str {
         (false, StageNodeKind::Card) => "context:Card",
         (true, StageNodeKind::Arpeggio) => "staged:Arpeggio",
         (false, StageNodeKind::Arpeggio) => "context:Arpeggio",
+        (true, StageNodeKind::ScalePattern) => "staged:ScalePattern",
+        (false, StageNodeKind::ScalePattern) => "context:ScalePattern",
     }
 }
 
@@ -935,6 +938,10 @@ pub struct UiState {
     pub scale_subject: Option<KeyedCatalogRef>,
     pub scale_notice: Option<String>,
     pub scale_limit: usize,
+    pub pattern_source: Option<CardId>,
+    pub scale_pattern: Option<woodshedding::rehearsal::ScalePattern>,
+    pub pattern_subject: Option<KeyedCatalogRef>,
+    pub pattern_notice: Option<String>,
     /// Captured on entering Pitch motion; browsing never retargets the layout.
     pub pitch_motion_anchor: Option<KeyedCatalogRef>,
     /// Keyed context identities already disclosed during this view session.
@@ -1034,6 +1041,10 @@ impl UiState {
             scale_subject: None,
             scale_notice: None,
             scale_limit: 4,
+            pattern_source: None,
+            scale_pattern: None,
+            pattern_subject: None,
+            pattern_notice: None,
             pitch_motion_anchor: None,
             context_disclosed: BTreeSet::new(),
             context_positions: BTreeMap::new(),
@@ -1871,6 +1882,10 @@ impl UiState {
         self.scale_subject = None;
         self.scale_notice = None;
         self.scale_limit = 4;
+        self.pattern_source = None;
+        self.scale_pattern = None;
+        self.pattern_subject = None;
+        self.pattern_notice = None;
         self.context_disclosed.clear();
         self.card_shape_notice = None;
         self.pitch_motion_anchor = (self.app_settings.stage.set_graph_reading

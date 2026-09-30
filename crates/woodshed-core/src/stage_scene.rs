@@ -310,6 +310,7 @@ impl StageGraphSnapshot {
             || key.kind.starts_with("woodshed:tonnetz-")
             || key.kind == "woodshed:circle-of-fifths"
             || key.kind == "woodshed:chord-arpeggio"
+            || key.kind == "woodshed:scale-degree-pattern"
         {
             let detail = self.scene_relation_detail(reference)?;
             return Some(StageRelationDetail {
@@ -405,6 +406,7 @@ impl StageGraphSnapshot {
             },
             "woodshed:keyed-diatonic" => "diatonic in".into(),
             "woodshed:chord-arpeggio" => "Same rooted tones, played sequentially".into(),
+            "woodshed:scale-degree-pattern" => "Same scale, played as diatonic degree pairs".into(),
             "woodshed:circle-of-fifths" => "roots a fifth apart".into(),
             "woodshed:tonnetz-parallel" => "Parallel: keep root and fifth; change the third".into(),
             "woodshed:tonnetz-relative" => {
@@ -707,9 +709,36 @@ pub fn stage_scene(set: &Set, options: &StageSceneOptions) -> StageGraphSnapshot
                 &omitted,
                 &context_options.retained,
             );
+            crate::stage_context::disclose_scale_patterns(
+                &mut context,
+                &focus_keyed,
+                context_options.node_limit,
+                &omitted,
+                &context_options.retained,
+            );
             // Disclosed sequential forms survive focus changes just like other
             // retained catalog subjects; their chord-relative positions are stable.
             for retained in &context_options.retained {
+                if let Some(pattern) = retained
+                    .to_material()
+                    .filter(|material| matches!(material, Material::ScalePattern { .. }))
+                {
+                    if let Material::ScalePattern { name, root, .. } = pattern {
+                        let scale = KeyedCatalogRef {
+                            formula_id: woodshed_graph::scale_id(&name),
+                            root,
+                        };
+                        if scale != focus_keyed {
+                            crate::stage_context::disclose_scale_patterns(
+                                &mut context,
+                                &scale,
+                                context_options.node_limit,
+                                &omitted,
+                                &context_options.retained,
+                            );
+                        }
+                    }
+                }
                 if let Some(name) = retained.formula_id.strip_prefix("arpeggio:") {
                     let chord = KeyedCatalogRef {
                         formula_id: woodshed_graph::chord_id(name),
@@ -801,6 +830,7 @@ pub fn stage_scene(set: &Set, options: &StageSceneOptions) -> StageGraphSnapshot
                 kind.starts_with("woodshed:keyed-")
                     || *kind == "woodshed:circle-of-fifths"
                     || *kind == "woodshed:chord-arpeggio"
+                    || *kind == "woodshed:scale-degree-pattern"
             }) {
                 if let (Some(from), Some(to)) = (
                     nodes.get(route.from.0 as usize),
@@ -858,6 +888,48 @@ pub fn stage_scene(set: &Set, options: &StageSceneOptions) -> StageGraphSnapshot
                             points: vec![
                                 item_centre(&scene, InstanceId(chord as u32)),
                                 item_centre(&scene, InstanceId(arp as u32)),
+                            ],
+                            kind: Some(kind.into()),
+                            weight: Some(1.0),
+                        });
+                    }
+                }
+                let degree_pair = if left.root == right.root {
+                    let underlying = |subject: &KeyedCatalogRef| match subject.to_material() {
+                        Some(Material::ScalePattern { name, .. }) => Some(name),
+                        _ => None,
+                    };
+                    match (
+                        left.formula_id.strip_prefix("scale:"),
+                        underlying(left),
+                        right.formula_id.strip_prefix("scale:"),
+                        underlying(right),
+                    ) {
+                        (Some(scale), _, _, Some(pattern_scale)) if scale == pattern_scale => {
+                            Some((left_index, right_index))
+                        },
+                        (_, Some(pattern_scale), Some(scale), _) if scale == pattern_scale => {
+                            Some((right_index, left_index))
+                        },
+                        _ => None,
+                    }
+                } else {
+                    None
+                };
+                if let Some((scale, pattern)) = degree_pair {
+                    let kind = "woodshed:scale-degree-pattern";
+                    if seen.insert((
+                        nodes[scale].id.clone(),
+                        nodes[pattern].id.clone(),
+                        kind.into(),
+                    )) {
+                        relations.push(RoutedRelation {
+                            from: InstanceId(scale as u32),
+                            to: InstanceId(pattern as u32),
+                            space: Scene::WORLD,
+                            points: vec![
+                                item_centre(&scene, InstanceId(scale as u32)),
+                                item_centre(&scene, InstanceId(pattern as u32)),
                             ],
                             kind: Some(kind.into()),
                             weight: Some(1.0),
@@ -1027,7 +1099,9 @@ pub fn stage_scene(set: &Set, options: &StageSceneOptions) -> StageGraphSnapshot
 }
 
 fn keyed_kind(keyed: &KeyedCatalogRef) -> StageNodeKind {
-    if keyed.formula_id.starts_with("arpeggio:") {
+    if keyed.formula_id.starts_with("scale-pattern:") {
+        StageNodeKind::ScalePattern
+    } else if keyed.formula_id.starts_with("arpeggio:") {
         StageNodeKind::Arpeggio
     } else if keyed.formula_id.starts_with("scale:") {
         StageNodeKind::Scale
@@ -1062,6 +1136,23 @@ fn context_position(
     keyed: &KeyedCatalogRef,
     pitch_motion_anchor: Option<&KeyedCatalogRef>,
 ) -> Option<Vec2> {
+    if let Some(Material::ScalePattern {
+        name,
+        root,
+        pattern,
+    }) = keyed.to_material()
+    {
+        let scale = KeyedCatalogRef {
+            formula_id: woodshed_graph::scale_id(&name),
+            root,
+        };
+        let offset = match pattern {
+            woodshedding::rehearsal::ScalePattern::Thirds => 180.0,
+            woodshedding::rehearsal::ScalePattern::Fourths => -180.0,
+        };
+        return context_position(reading, &scale, pitch_motion_anchor)
+            .map(|point| Vec2::new(point.x + offset, point.y - 240.0));
+    }
     // A sequential realization occupies its chord's musical slot, with a
     // representation offset so the two identities remain individually selectable.
     if let Some(name) = keyed.formula_id.strip_prefix("arpeggio:") {
@@ -1207,6 +1298,76 @@ mod tests {
             touch: Touch::default(),
             timing: Timing::default(),
             from: None,
+        }
+    }
+
+    #[test]
+    fn ambient_patterns_have_separate_stable_slots_and_occurrence_relations() {
+        let base = KeyedCatalogRef {
+            formula_id: "scale:Major".into(),
+            root: PitchClass::new(0),
+        };
+        let mut set = Set::default();
+        set.push(card("C Major", base.to_material().unwrap()));
+        let source = set.cards[0].id;
+        let options = StageSceneOptions {
+            context: Some(StageContextOptions {
+                reading: StageGraphReading::CircleOfFifths,
+                node_limit: 24,
+                focus: Some(StageNodeId::Card(source)),
+                ..Default::default()
+            }),
+            ..Default::default()
+        };
+        let snapshot = stage_scene(&set, &options);
+        let base_position =
+            context_position(StageGraphReading::CircleOfFifths, &base, None).unwrap();
+        let patterns = snapshot
+            .nodes
+            .iter()
+            .enumerate()
+            .filter(|(_, node)| node.kind == StageNodeKind::ScalePattern)
+            .collect::<Vec<_>>();
+        assert_eq!(patterns.len(), 2);
+        for (index, node) in patterns {
+            let item = snapshot.snapshot.tables.items[index].as_ref().unwrap();
+            let position = Vec2::new(item.transform.translate.x, item.transform.translate.y);
+            assert!((position.x - base_position.x).abs() >= 140.0);
+            assert!(
+                position.y <= base_position.y - 140.0,
+                "recipe labels need their own row above the source"
+            );
+            assert!(
+                snapshot
+                    .relations()
+                    .iter()
+                    .any(|(_, route)| route.from == InstanceId(0)
+                        && route.to == InstanceId(index as u32)
+                        && route.kind.as_deref() == Some("woodshed:scale-degree-pattern"))
+            );
+            let pattern = node.keyed.as_ref().unwrap().to_card().unwrap();
+            set.push(pattern);
+        }
+        let staged = stage_scene(&set, &options);
+        assert_eq!(
+            staged
+                .nodes
+                .iter()
+                .filter(|node| node.kind == StageNodeKind::ScalePattern && node.foreground)
+                .count(),
+            2
+        );
+        for id in [set.cards[1].id, set.cards[2].id] {
+            let source_instance = staged.instance_of(source).unwrap();
+            let target_instance = staged.instance_of(id).unwrap();
+            assert!(
+                staged
+                    .relations()
+                    .iter()
+                    .any(|(_, route)| route.from == source_instance
+                        && route.to == target_instance
+                        && route.kind.as_deref() == Some("woodshed:scale-degree-pattern"))
+            );
         }
     }
 

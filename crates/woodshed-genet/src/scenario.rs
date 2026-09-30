@@ -342,9 +342,76 @@ impl Snapshot<'_, '_> {
             .unwrap_or_default();
         let mut snap = ProbeSnapshot::default()
             .with_field(
+                "pattern-sequential",
+                (ui.set.cards.get(ui.set.cursor).is_some_and(|card| {
+                    matches!(
+                        card.material,
+                        woodshedding::rehearsal::Material::ScalePattern { .. }
+                    )
+                }) && ui.preview_voicing().2 > 0.0)
+                    .to_string(),
+            )
+            .with_field(
                 "rehearsal-strings",
                 ui.rehearsal_board_geometry().string_count.to_string(),
             )
+            .with_field(
+                "context-patterns",
+                stage_snapshot
+                    .nodes
+                    .iter()
+                    .filter(|node| {
+                        node.kind == woodshed_core::stage_context::StageNodeKind::ScalePattern
+                            && !node.foreground
+                    })
+                    .count()
+                    .to_string(),
+            )
+            .with_field(
+                "pattern-cards",
+                ui.set
+                    .cards
+                    .iter()
+                    .filter(|card| {
+                        matches!(
+                            card.material,
+                            woodshedding::rehearsal::Material::ScalePattern { .. }
+                        )
+                    })
+                    .count()
+                    .to_string(),
+            )
+            .with_field(
+                "pattern-descends",
+                ui.set
+                    .cards
+                    .get(ui.set.cursor)
+                    .is_some_and(|card| {
+                        matches!(
+                            card.material,
+                            woodshedding::rehearsal::Material::ScalePattern { .. }
+                        ) && ui
+                            .preview_voicing()
+                            .0
+                            .windows(2)
+                            .any(|notes| notes[1] < notes[0])
+                    })
+                    .to_string(),
+            )
+            .with_field("pattern-repeats", {
+                let pitches = ui.preview_voicing().0;
+                let unique = pitches
+                    .iter()
+                    .map(|pitch| pitch.to_bits())
+                    .collect::<std::collections::BTreeSet<_>>();
+                (ui.set.cards.get(ui.set.cursor).is_some_and(|card| {
+                    matches!(
+                        card.material,
+                        woodshedding::rehearsal::Material::ScalePattern { .. }
+                    )
+                }) && unique.len() < pitches.len())
+                .to_string()
+            })
             .with_field("set-cards", observed.cards.to_string())
             .with_field("rehearsal-running", ui.rehearsal_running.to_string())
             .with_field("history-events", ui.practice_history.len().to_string())
