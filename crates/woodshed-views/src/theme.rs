@@ -387,6 +387,11 @@ pub fn stage_css(p: &Palette) -> String {
 .resize-handle:focus {{ outline-width: 1px; outline-color: {text}; }}
 .set-graph-card-root {{ position: absolute; left: 0; top: 0; pointer-events: none; z-index: 4; }}
 .set-graph-selected-card {{ position: relative; width: 300px; max-width: 100%; padding: 10px; border-radius: 9px; background-color: {surface_2}; }}
+.instance-binding {{ display: flex; flex-wrap: wrap; align-items: center; gap: 6px; padding: 4px 12px; }}
+.exploration-instance-name, .working-instance-name {{ color: {text}; font-size: 12px; }}
+.staging-target-label {{ color: {text_dim}; font-size: 11px; }}
+.staging-target-choices, .overview-instance-actions {{ display: flex; flex-wrap: wrap; gap: 6px; }}
+.staging-target-active {{ background-color: {tertiary}; color: {on_primary}; }}
 .session-overview {{ display: flex; flex-direction: column; gap: 12px; min-width: 0; padding: 12px; }}
 .overview-title {{ font-size: 20px; color: {text}; }}
 .overview-subtitle, .overview-detail, .overview-notice {{ font-size: 12px; color: {text_dim}; }}
@@ -482,6 +487,9 @@ pub fn stage_css(p: &Palette) -> String {
 .placeholder {{ color: {text_dim}; padding: 24px; }}
 .caption {{ margin-top: 12px; color: {text_disabled}; font-size: 12px; }}
 .transport {{ display: flex; margin-bottom: 10px; }}
+.rehearsal-transport {{ flex-wrap: wrap; }}
+.rehearsal-transport .working-instance-name,
+.rehearsal-transport .background-rehearsal-status {{ flex-basis: 100%; margin-bottom: 6px; }}
 .t-btn {{ background-color: {surface_2}; color: {text}; padding: 4px 12px;
          margin-right: 6px; border-radius: 6px; }}
 .t-narrow {{ padding: 4px 9px; }}

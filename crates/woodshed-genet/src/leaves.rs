@@ -468,7 +468,7 @@ fn sync_rehearsal_fretboard(shared: &mut Shared, ui: &UiState, leaves: &mut Leaf
     }
     let cursor = ui.set.cursor.min(ui.set.cards.len() - 1);
     let card = &ui.set.cards[cursor];
-    let st = &ui.stage;
+    let st = ui.current_card_stage();
     let geom = ui.rehearsal_board_geometry();
     let marker_style = ui.app_settings.fretboard.marker_style.clone();
     let orientation = Orientation::from_name(&ui.app_settings.fretboard.orientation);

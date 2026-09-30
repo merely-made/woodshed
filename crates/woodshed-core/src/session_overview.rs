@@ -21,6 +21,8 @@ use woodshedding::rehearsal::Set;
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
 pub enum SessionArtifactId {
     WorkingSet,
+    WorkingSetInstance(crate::working_sets::WorkingSetId),
+    Exploration(crate::catalog_explorations::CatalogExplorationId),
     SavedSet(SavedSetId),
     Song,
     History,
@@ -57,6 +59,12 @@ impl OverviewNodeId {
     pub fn wire_key(&self) -> String {
         match self {
             Self::Artifact(SessionArtifactId::WorkingSet) => "artifact:working-set".into(),
+            Self::Artifact(SessionArtifactId::WorkingSetInstance(id)) => {
+                format!("artifact:working-set:{}", id.0)
+            },
+            Self::Artifact(SessionArtifactId::Exploration(id)) => {
+                format!("artifact:catalog-exploration:{}", id.0)
+            },
             Self::Artifact(SessionArtifactId::SavedSet(id)) => {
                 format!("artifact:saved-set:{}", id.0)
             },
@@ -161,6 +169,17 @@ pub struct OverviewSnapshot {
     pub relations: Vec<OverviewRelation>,
 }
 
+fn set_uses_catalog(set: &Set) -> bool {
+    set.cards.iter().any(|card| match &card.material {
+        woodshedding::rehearsal::Material::Riff { name } => woodshedding::exercise::catalog()
+            .iter()
+            .any(|exercise| exercise.name == name),
+        material => crate::harmony::KeyedCatalogRef::from_material(material)
+            .and_then(|reference| reference.to_material())
+            .is_some(),
+    })
+}
+
 pub fn session_overview(input: &SessionOverviewInput<'_>) -> OverviewSnapshot {
     use OverviewNodeId::{Artifact, Catalog, Process, View};
     use SessionArtifactId::{History, SavedSet, Song, WorkingSet};
@@ -172,19 +191,7 @@ pub fn session_overview(input: &SessionOverviewInput<'_>) -> OverviewSnapshot {
         OverviewNode { id: Artifact(History), label: "Practice history".into(), detail: format!("{} recorded engagements. Observations retain their own event-time provenance.", input.history.len()) },
         OverviewNode { id: catalog.clone(), label: "Catalog".into(), detail: "Reference to Woodshed's theory and exercise catalogs. Catalog contents remain owned by their catalog authority.".into() },
     ]);
-    if input
-        .working_set
-        .cards
-        .iter()
-        .any(|card| match &card.material {
-            woodshedding::rehearsal::Material::Riff { name } => woodshedding::exercise::catalog()
-                .iter()
-                .any(|exercise| exercise.name == name),
-            material => crate::harmony::KeyedCatalogRef::from_material(material)
-                .and_then(|reference| reference.to_material())
-                .is_some(),
-        })
-    {
+    if set_uses_catalog(input.working_set) {
         result.relations.push(OverviewRelation {
             from: Artifact(WorkingSet),
             to: catalog.clone(),
@@ -268,6 +275,137 @@ pub fn session_overview(input: &SessionOverviewInput<'_>) -> OverviewSnapshot {
             result.relations.push(OverviewRelation {
                 from: id,
                 to: Artifact(artifact),
+                kind: OverviewRelationKind::ActsOn,
+            });
+        }
+    }
+    result
+}
+
+pub struct ConfiguredSessionOverviewInput<'a> {
+    pub session: SessionOverviewInput<'a>,
+    pub working_sets: &'a crate::working_sets::WorkingSets,
+    pub explorations: &'a crate::catalog_explorations::CatalogExplorations,
+    pub active_exploration: &'a crate::catalog_explorations::CatalogExplorationState,
+    /// The actual runner owner, even when it is parked in the bank.
+    pub runner_owner: Option<crate::working_sets::WorkingSetId>,
+}
+
+/// Overview of multiple real owners. No legacy active-Set alias is emitted.
+pub fn configured_session_overview(input: &ConfiguredSessionOverviewInput<'_>) -> OverviewSnapshot {
+    use OverviewNodeId::{Artifact, Catalog, Process, View};
+    use SessionArtifactId::{Exploration, WorkingSet, WorkingSetInstance};
+    let mut result = session_overview(&input.session);
+    result.nodes.retain(|node| node.id != Artifact(WorkingSet));
+    // Legacy snapshots have no instance-qualified source. Do not assign them
+    // whichever Set happens to be visible now.
+    result
+        .relations
+        .retain(|edge| edge.kind != OverviewRelationKind::HistoricalSnapshotOf);
+    for edge in &mut result.relations {
+        if edge.from == Artifact(WorkingSet) {
+            edge.from = Artifact(WorkingSetInstance(input.working_sets.active_id));
+        }
+        if edge.to == Artifact(WorkingSet) {
+            edge.to = Artifact(WorkingSetInstance(input.working_sets.active_id));
+        }
+    }
+    for summary in input.working_sets.summaries(input.session.working_set) {
+        if input
+            .working_sets
+            .get(summary.id, input.session.working_set)
+            .is_some_and(set_uses_catalog)
+        {
+            let edge = OverviewRelation {
+                from: Artifact(WorkingSetInstance(summary.id)),
+                to: Catalog("woodshed-catalog".into()),
+                kind: OverviewRelationKind::UsesCatalog,
+            };
+            if !result.relations.contains(&edge) {
+                result.relations.push(edge);
+            }
+        }
+        result.nodes.push(OverviewNode {
+            id: Artifact(WorkingSetInstance(summary.id)),
+            label: summary.name,
+            detail: format!(
+                "{} ordered Cards. {}",
+                summary.card_count,
+                if summary.active {
+                    "Currently open for editing."
+                } else {
+                    "Working Set available to open; its edits are retained."
+                }
+            ),
+        });
+    }
+    for saved in &input.session.retained_sets.entries {
+        if let Some(owner) = saved.source_working_set_id {
+            if input
+                .working_sets
+                .get(owner, input.session.working_set)
+                .is_some()
+            {
+                result.relations.push(OverviewRelation {
+                    from: Artifact(SessionArtifactId::SavedSet(saved.id)),
+                    to: Artifact(WorkingSetInstance(owner)),
+                    kind: OverviewRelationKind::HistoricalSnapshotOf,
+                });
+            }
+        }
+    }
+    for summary in input.explorations.summaries() {
+        let Some(state) = input.explorations.get(summary.id, input.active_exploration) else {
+            continue;
+        };
+        let id = Artifact(Exploration(summary.id));
+        result.nodes.push(OverviewNode {
+            id: id.clone(),
+            label: summary.name,
+            detail: format!(
+                "Configured {} exploration. Selection, tuning, fretboard and catalog presentation are retained independently.",
+                state.lens.label()
+            ),
+        });
+        result.relations.push(OverviewRelation {
+            from: id,
+            to: Catalog("woodshed-catalog".into()),
+            kind: OverviewRelationKind::UsesCatalog,
+        });
+    }
+    // Catalog-bearing views present the current configured exploration, not
+    // an invented duplicate catalog inventory.
+    for view in input.session.views {
+        if matches!(
+            view.domain,
+            SessionViewDomain::Stage | SessionViewDomain::Catalog
+        ) {
+            result.relations.retain(|edge| {
+                !(edge.from == View(view.id.clone())
+                    && edge.kind == OverviewRelationKind::Presents
+                    && matches!(edge.to, Catalog(_)))
+            });
+            result.relations.push(OverviewRelation {
+                from: View(view.id.clone()),
+                to: Artifact(Exploration(input.explorations.active_id)),
+                kind: OverviewRelationKind::Presents,
+            });
+        }
+    }
+    result.relations.retain(|edge| {
+        !(edge.from == Process(OverviewProcess::Rehearsal)
+            && edge.kind == OverviewRelationKind::ActsOn)
+    });
+    if input.session.activity.rehearsal {
+        if let Some(owner) = input.runner_owner.filter(|owner| {
+            input
+                .working_sets
+                .get(*owner, input.session.working_set)
+                .is_some()
+        }) {
+            result.relations.push(OverviewRelation {
+                from: Process(OverviewProcess::Rehearsal),
+                to: Artifact(WorkingSetInstance(owner)),
                 kind: OverviewRelationKind::ActsOn,
             });
         }
@@ -368,6 +506,181 @@ pub fn overview_scene(overview: &OverviewSnapshot) -> SceneSnapshot {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn parked_catalog_set_keeps_its_relation_while_manual_unknown_set_is_focused() {
+        use crate::{
+            catalog_explorations::{CatalogExplorationState, CatalogExplorations},
+            working_sets::WorkingSets,
+        };
+        fn project(bank: &WorkingSets, current: &Set) -> OverviewSnapshot {
+            let retained = RetainedSets::default();
+            let song = SongDoc::default();
+            let history = PracticeHistory::default();
+            let explorations = CatalogExplorations::default();
+            let state = CatalogExplorationState::default();
+            configured_session_overview(&ConfiguredSessionOverviewInput {
+                session: SessionOverviewInput {
+                    working_set: current,
+                    retained_sets: &retained,
+                    song: &song,
+                    history: &history,
+                    views: &[],
+                    activity: SessionActivity::default(),
+                },
+                working_sets: bank,
+                explorations: &explorations,
+                active_exploration: &state,
+                runner_owner: None,
+            })
+        }
+        let mut current = Set::default();
+        current.push(crate::StageState::new().card_from_lens().unwrap());
+        let mut bank = WorkingSets::default();
+        let known = bank.active_id;
+        let mut manual = Set::default();
+        let mut card = crate::StageState::new().card_from_lens().unwrap();
+        card.material = woodshedding::rehearsal::Material::Chord {
+            name: "Unknown hand-written formula".into(),
+            root: woodshedding::pitch::PitchClass::new(0),
+        };
+        manual.push(card);
+        let unknown = bank.create(&mut current, "Manual", manual);
+        let edge = OverviewRelation {
+            from: OverviewNodeId::Artifact(SessionArtifactId::WorkingSetInstance(known)),
+            to: OverviewNodeId::Catalog("woodshed-catalog".into()),
+            kind: OverviewRelationKind::UsesCatalog,
+        };
+        let parked = project(&bank, &current);
+        assert_eq!(
+            parked
+                .relations
+                .iter()
+                .filter(|relation| **relation == edge)
+                .count(),
+            1
+        );
+        assert!(!parked.relations.iter().any(|relation| relation.from
+            == OverviewNodeId::Artifact(SessionArtifactId::WorkingSetInstance(unknown))
+            && relation.kind == OverviewRelationKind::UsesCatalog));
+        assert!(bank.activate(known, &mut current));
+        let focused = project(&bank, &current);
+        assert_eq!(
+            focused
+                .relations
+                .iter()
+                .filter(|relation| **relation == edge)
+                .count(),
+            1
+        );
+        assert!(!focused.relations.iter().any(|relation| relation.from
+            == OverviewNodeId::Artifact(SessionArtifactId::WorkingSetInstance(unknown))
+            && relation.kind == OverviewRelationKind::UsesCatalog));
+    }
+
+    #[test]
+    fn configured_overview_uses_real_banks_and_background_runner_owner() {
+        use crate::{
+            catalog_explorations::{CatalogExplorationState, CatalogExplorations},
+            working_sets::WorkingSets,
+        };
+        let mut set = Set::default();
+        let mut sets = WorkingSets::default();
+        let background = sets.active_id;
+        let visible = sets.create(&mut set, "Visible", Set::default());
+        let mut retained = RetainedSets::default();
+        let legacy_saved = retained.save_snapshot(&set, "Legacy copy");
+        let owned_saved = retained.save_snapshot_from(&set, "Owned copy", background);
+        let mut exploration_state = CatalogExplorationState::default();
+        let mut explorations = CatalogExplorations::default();
+        explorations.create(
+            &mut exploration_state,
+            "Alternative",
+            CatalogExplorationState::default(),
+        );
+        let song = SongDoc::default();
+        let history = PracticeHistory::default();
+        let views = [SessionView {
+            id: "stage".into(),
+            label: "Stage".into(),
+            domain: SessionViewDomain::Stage,
+        }];
+        let input = ConfiguredSessionOverviewInput {
+            session: SessionOverviewInput {
+                working_set: &set,
+                retained_sets: &retained,
+                song: &song,
+                history: &history,
+                views: &views,
+                activity: SessionActivity {
+                    rehearsal: true,
+                    ..Default::default()
+                },
+            },
+            working_sets: &sets,
+            explorations: &explorations,
+            active_exploration: &exploration_state,
+            runner_owner: Some(background),
+        };
+        let graph = configured_session_overview(&input);
+        assert!(
+            !graph
+                .nodes
+                .iter()
+                .any(|node| node.id == OverviewNodeId::Artifact(SessionArtifactId::WorkingSet))
+        );
+        assert_eq!(
+            graph
+                .nodes
+                .iter()
+                .filter(|node| matches!(
+                    node.id,
+                    OverviewNodeId::Artifact(SessionArtifactId::WorkingSetInstance(_))
+                ))
+                .count(),
+            2
+        );
+        assert_eq!(
+            graph
+                .nodes
+                .iter()
+                .filter(|node| matches!(
+                    node.id,
+                    OverviewNodeId::Artifact(SessionArtifactId::Exploration(_))
+                ))
+                .count(),
+            2
+        );
+        let runner = graph
+            .relations
+            .iter()
+            .find(|edge| {
+                edge.from == OverviewNodeId::Process(OverviewProcess::Rehearsal)
+                    && edge.kind == OverviewRelationKind::ActsOn
+            })
+            .unwrap();
+        assert_eq!(
+            runner.to,
+            OverviewNodeId::Artifact(SessionArtifactId::WorkingSetInstance(background))
+        );
+        assert_ne!(background, visible);
+        assert!(!graph.relations.iter().any(|edge| edge.from
+            == OverviewNodeId::Artifact(SessionArtifactId::SavedSet(legacy_saved))
+            && edge.kind == OverviewRelationKind::HistoricalSnapshotOf));
+        assert!(graph.relations.iter().any(|edge| edge.from
+            == OverviewNodeId::Artifact(SessionArtifactId::SavedSet(owned_saved))
+            && edge.to
+                == OverviewNodeId::Artifact(SessionArtifactId::WorkingSetInstance(background))
+            && edge.kind == OverviewRelationKind::HistoricalSnapshotOf));
+        assert_eq!(overview_scene(&graph).tables.items.len(), graph.nodes.len());
+        let unknown = configured_session_overview(&ConfiguredSessionOverviewInput {
+            runner_owner: Some(crate::working_sets::WorkingSetId(999)),
+            ..input
+        });
+        assert!(!unknown.relations.iter().any(|edge| edge.from
+            == OverviewNodeId::Process(OverviewProcess::Rehearsal)
+            && edge.kind == OverviewRelationKind::ActsOn));
+    }
+
     #[test]
     fn views_present_their_real_domain_subjects() {
         let set = Set::default();

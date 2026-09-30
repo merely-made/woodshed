@@ -59,7 +59,7 @@ impl UiState {
                 EngagementKind::Previewed,
                 self.stage.catalog_id(),
                 None,
-                ObservationProvenance::capture(&card).ok(),
+                ObservationProvenance::capture_in_set(&card, self.working_sets.active_id).ok(),
             );
         }
         self.request(AudioRequest::PreviewPitches {
@@ -83,7 +83,7 @@ impl UiState {
                     EngagementKind::Staged,
                     self.stage.catalog_id(),
                     None,
-                    ObservationProvenance::capture(card).ok(),
+                    ObservationProvenance::capture_in_set(card, self.working_sets.active_id).ok(),
                 );
             }
         }
@@ -105,7 +105,10 @@ impl UiState {
                 pattern,
             });
         }
-        match self.stage.scale_pattern_discovery(card, pattern) {
+        match self
+            .current_card_stage()
+            .scale_pattern_discovery(card, pattern)
+        {
             Ok(discovery) => {
                 if let Some(subject) = KeyedCatalogRef::from_material(&discovery.preview.material) {
                     self.context_disclosed.insert(subject);
@@ -129,10 +132,13 @@ impl UiState {
             self.pattern_notice = Some("The source scale Card is no longer in the Set.".into());
             return;
         };
-        match self.stage.scale_pattern_discovery(card, pattern) {
+        match self
+            .current_card_stage()
+            .scale_pattern_discovery(card, pattern)
+        {
             Ok(discovery) => {
                 let (pitches, duration_s, strum_s) = self
-                    .stage
+                    .current_card_stage()
                     .card_sounding_pitches_at_tempo(&discovery.preview, self.transport.bpm);
                 if pitches.is_empty() {
                     self.pattern_notice = Some(
@@ -147,7 +153,11 @@ impl UiState {
                         EngagementKind::Previewed,
                         catalog_id_for_card(card),
                         None,
-                        ObservationProvenance::capture(&discovery.preview).ok(),
+                        ObservationProvenance::capture_in_set(
+                            &discovery.preview,
+                            self.working_sets.active_id,
+                        )
+                        .ok(),
                     );
                 }
                 self.request(AudioRequest::PreviewPitches {
@@ -172,10 +182,12 @@ impl UiState {
             .iter()
             .find(|card| card.id == source)
             .and_then(catalog_id_for_card);
-        match self
-            .stage
-            .stage_scale_pattern(&mut self.set, source, pattern)
-        {
+        let stage = if self.is_current_set_rehearsing() {
+            self.rehearsal_stage.as_ref().unwrap_or(&self.stage)
+        } else {
+            &self.stage
+        };
+        match stage.stage_scale_pattern(&mut self.set, source, pattern) {
             Ok(id) => {
                 if let Some(card) = self.set.cards.iter().find(|card| card.id == id) {
                     if let Some(catalog) = catalog_id_for_card(card) {
@@ -185,7 +197,11 @@ impl UiState {
                             EngagementKind::Staged,
                             from,
                             None,
-                            ObservationProvenance::capture(card).ok(),
+                            ObservationProvenance::capture_in_set(
+                                card,
+                                self.working_sets.active_id,
+                            )
+                            .ok(),
                         );
                     }
                 }
@@ -217,9 +233,14 @@ pub(super) fn context_detail(ui: &UiState, subject: &KeyedCatalogRef) -> Option<
     } else {
         "Current Stage instrument and tuning"
     };
+    let stage = if bound {
+        ui.current_card_stage()
+    } else {
+        &ui.stage
+    };
     let description = source
         .as_ref()
-        .map(|card| ui.stage.scale_pattern_discovery(card, pattern));
+        .map(|card| stage.scale_pattern_discovery(card, pattern));
     let explanation = match description {
         Some(Ok(discovery)) => discovery.explanation,
         Some(Err(reason)) => reason.to_string(),
@@ -279,9 +300,10 @@ pub(super) fn panel(ui: &UiState) -> UiChild {
     let inspected = ui
         .pattern_source
         .and_then(|id| ui.set.cards.iter().find(|card| card.id == id));
-    let discovery = inspected
-        .zip(ui.scale_pattern)
-        .map(|(card, pattern)| ui.stage.scale_pattern_discovery(card, pattern));
+    let discovery = inspected.zip(ui.scale_pattern).map(|(card, pattern)| {
+        ui.current_card_stage()
+            .scale_pattern_discovery(card, pattern)
+    });
     let unavailable = if ui.pattern_notice.is_some() {
         None
     } else if ui.pattern_source.is_some() && inspected.is_none() {

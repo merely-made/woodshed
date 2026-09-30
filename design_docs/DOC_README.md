@@ -223,10 +223,16 @@ section whenever a durable working insight emerges from a session.
   catalogs and deliberate Set rehearsal both help assemble material and act on
   it. Develop connected slices that carry discoveries into playable material
   and return qualified rehearsal observations to exploration. The ambient Mere
-  makes relationships perceptible; explicit actions author the one Set.
+  makes relationships perceptible; explicit actions author the selected working Set.
 - **Stage is a verb and Set is the spine**: catalogs supply material; Stage
-  adds configured Cards to one ordered Set; Rehearsal and Looper consume it.
-  Do not create parallel practice, song, or tool-owned material documents.
+  adds configured Cards to the selected ordered Set. Each working instance owns
+  its material; shared views project that owner, and rehearsal remains bound to
+  the instance that started it when another instance is inspected. Do not create
+  parallel practice, song, or tool-owned material documents for the same Set.
+- **Navigation preserves owner identity**: switching working Sets or configured
+  catalog explorations restores that instance's content and context. It does
+  not clone occurrences or transfer live rehearsal. Creation, duplication,
+  saved-copy opening, and runner transfer are explicit product actions.
 - **The Stage graph projects the Set**: each staged Card occurrence is a stable
   node, Set order derives `Next`, and theory, history, and learned suggestions
   are separately identifiable edge layers. Filtering changes the projection;

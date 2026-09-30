@@ -123,6 +123,7 @@ fn session_overview_inspects_retains_and_opens_real_work_without_navigation_side
         let snapshot =
             serde_json::to_value(h.state().retained_sets.get(saved_id).unwrap()).unwrap();
         let old_id = h.state().set.cards[0].id;
+        let old_owner = h.state().working_sets.active_id;
         h.update(|ui| {
             ui.set.cards[0].timing.bpm = Some(137.0);
             assert!(ui.inspect_chord_arpeggio(old_id));
@@ -134,7 +135,8 @@ fn session_overview_inspects_retains_and_opens_real_work_without_navigation_side
             h.state().workspace.active_panel(),
             Some(WorkspacePanel::Set)
         );
-        assert!(!h.state().rehearsal_running);
+        assert!(h.state().rehearsal_running);
+        assert_eq!(h.state().rehearsal_owner, Some(old_owner));
         assert!(h.state().arpeggio_source.is_none());
         h.update(|ui| {
             ui.audio_requests.clear();
@@ -148,17 +150,274 @@ fn session_overview_inspects_retains_and_opens_real_work_without_navigation_side
             snapshot
         );
         assert_eq!(
-            serde_json::to_value(&h.state().retained_sets.entries[1].set).unwrap(),
+            serde_json::to_value(
+                h.state()
+                    .working_sets
+                    .get(old_owner, &h.state().set)
+                    .unwrap()
+            )
+            .unwrap(),
             edited
         );
+        assert_eq!(h.state().retained_sets.entries.len(), 1);
         assert_eq!(h.state().set.cards[0].timing.bpm, None);
         let opened_id = h.state().set.cards[0].id;
+        let opened_owner = h.state().working_sets.active_id;
         h.update(|ui| {
             assert!(ui.open_retained_set(saved_id));
         });
-        assert_ne!(h.state().set.cards[0].id, opened_id);
+        assert_ne!(
+            (h.state().working_sets.active_id, h.state().set.cards[0].id),
+            (opened_owner, opened_id)
+        );
         assert_ne!(h.state().set.cards[0].id, old_id);
     }
+}
+
+#[test]
+fn independent_instances_keep_background_rehearsal_and_explicit_staging_bound_to_their_owners() {
+    use woodshed_core::session_overview::{
+        OverviewNodeId, OverviewProcess, OverviewRelationKind, SessionArtifactId,
+    };
+    use woodshedding::rehearsal::{FretWindow, Hold};
+    for width in [1_100.0, 420.0] {
+        let mut h = harness(width, 664.0);
+        h.update(|ui| {
+            ui.stage.set_lens(woodshed_core::Lens::Scales);
+            let major = ui
+                .stage
+                .scales()
+                .iter()
+                .position(|scale| scale.name == "Major")
+                .unwrap();
+            ui.stage.select_scale(major);
+            ui.stage.set_root(0);
+            ui.set.cards.clear();
+            ui.stage_current(None);
+            ui.stage.set_root(7);
+            ui.stage_current(None);
+            for card in &mut ui.set.cards {
+                card.setting.instrument = "Ukulele".into();
+                card.setting.tuning = Some("Standard (high-G)".into());
+                card.setting.capo = Some(2);
+                card.setting.fret_window = Some(FretWindow { start: 2, span: 12 });
+                card.timing.bpm = Some(83.0);
+                card.timing.hold = Hold::Bars(2);
+            }
+            ui.set.cursor = 0;
+            ui.now_ms = Some(1_000);
+        });
+        let owner_a = h.state().working_sets.active_id;
+        let card_a = h.state().set.cards[0].clone();
+        assert!(h.click_on(&Selector::class("workspace-panel").containing("Set")));
+        let sound_a = h.state().preview_voicing();
+        assert!(h.click_on(&Selector::class("t-btn").containing("Run")));
+        assert_eq!(h.state().rehearsal_owner, Some(owner_a));
+        assert!(h.click_on(&Selector::class("workspace-panel").containing("Mere")));
+        assert!(h.click_on(&Selector::class("overview-duplicate-set")));
+        let owner_b = h.state().working_sets.active_id;
+        assert_ne!(owner_a, owner_b);
+        assert_ne!(h.state().set.cards[0].id, card_a.id);
+        h.update(|ui| {
+            ui.set.cursor = 1;
+            ui.set.cards[1].setting.capo = Some(4);
+            ui.set.cards[1].setting.fret_window = Some(FretWindow { start: 4, span: 8 });
+            ui.set.cards[1].timing.bpm = Some(117.0);
+        });
+        let b = serde_json::to_value(&h.state().set).unwrap();
+        let sound_b = h.state().preview_voicing();
+        assert_ne!(sound_a.0, sound_b.0);
+        assert_eq!(h.state().rehearsal_sounding_pitches().unwrap(), sound_a);
+        assert!(h.click_on(&Selector::class("workspace-panel").containing("Mere")));
+        assert!(h.click_on(&Selector::class("overview-new-set")));
+        let owner_c = h.state().working_sets.active_id;
+        assert!(h.state().set.cards.is_empty());
+        assert_eq!(h.state().rehearsal_owner, Some(owner_a));
+        assert!(h.click_on(&Selector::class("workspace-panel").containing("Mere")));
+        let exploration_a = h.state().catalog_explorations.active_id;
+        let config_a = serde_json::to_value(h.state().capture_exploration()).unwrap();
+        assert!(h.click_on(&Selector::class("overview-new-exploration")));
+        let exploration_b = h.state().catalog_explorations.active_id;
+        assert_ne!(exploration_a, exploration_b);
+        for class in ["stage-screen", "instance-binding", "stage-body", "board"] {
+            if class == "stage-body" && class_count(&h, class) == 0 {
+                continue; // FullCanvas and narrow Stage place the board directly.
+            }
+            let bounds = rect(&h, class);
+            assert!(
+                [bounds.0, bounds.1, bounds.2, bounds.3]
+                    .iter()
+                    .all(|value| value.is_finite()),
+                "new exploration has non-finite .{class} geometry: {bounds:?}"
+            );
+            assert!(
+                bounds.2 > 0.0 && bounds.3 > 0.0 && bounds.2 < 10_000.0 && bounds.3 < 10_000.0,
+                "new exploration has invalid .{class} geometry: {bounds:?}"
+            );
+            eprintln!("new exploration {width}: .{class}={bounds:?}");
+        }
+        h.update(|ui| {
+            ui.stage.set_lens(woodshed_core::Lens::Chords);
+            ui.stage.set_root(9);
+            ui.stage.set_tuning(1);
+            ui.root_dd.selected = 9;
+            ui.tuning_dd.selected = 1;
+            ui.app_settings.fretboard.neck_start = 5;
+            ui.app_settings.fretboard.neck_end = Some(17);
+            ui.search = cambium::TextInput::new("Minor");
+        });
+        let config_b = serde_json::to_value(h.state().capture_exploration()).unwrap();
+        assert_eq!(h.state().rehearsal_sounding_pitches().unwrap(), sound_a);
+        assert!(h.click_on(&Selector::class("staging-target").containing("Working Set 1 copy")));
+        assert_eq!(h.state().working_sets.active_id, owner_b);
+        assert_eq!(h.state().catalog_explorations.active_id, exploration_b);
+        assert!(h.click_on(&Selector::class("staging-target").containing("Working Set 3")));
+        assert_eq!(h.state().working_sets.active_id, owner_c);
+        assert_eq!(h.state().catalog_explorations.active_id, exploration_b);
+        assert!(h.click_on(&Selector::class("t-btn").containing("Stage")));
+        assert_eq!(h.state().set.cards.len(), 1);
+        assert!(
+            matches!(&h.state().set.cards[0].material,woodshedding::rehearsal::Material::Chord{root,..} if root.value()==6)
+        );
+        assert_eq!(
+            serde_json::to_value(h.state().working_sets.get(owner_b, &h.state().set).unwrap())
+                .unwrap(),
+            b
+        );
+        assert!(h.click_on(&Selector::class("workspace-panel").containing("Mere")));
+        let overview = woodshed_views::stage::overview_snapshot(h.state());
+        assert!(overview.relations.iter().any(|relation| relation.from
+            == OverviewNodeId::Process(OverviewProcess::Rehearsal)
+            && relation.to
+                == OverviewNodeId::Artifact(SessionArtifactId::WorkingSetInstance(owner_a))
+            && relation.kind == OverviewRelationKind::ActsOn));
+        assert!(!overview.relations.iter().any(|relation| relation.from
+            == OverviewNodeId::Process(OverviewProcess::Rehearsal)
+            && relation.to
+                == OverviewNodeId::Artifact(SessionArtifactId::WorkingSetInstance(owner_c))));
+        h.update(|ui| {
+            ui.now_ms = Some(2_500);
+            assert!(ui.advance_rehearsal_cursor());
+        });
+        assert_eq!(
+            h.state()
+                .working_sets
+                .get(owner_a, &h.state().set)
+                .unwrap()
+                .cursor,
+            1
+        );
+        assert_eq!(h.state().set.cursor, 0);
+        let completed = h
+            .state()
+            .practice_history
+            .recent(30)
+            .into_iter()
+            .find(|event| event.practiced_ms == Some(1_500))
+            .unwrap();
+        let provenance = completed.provenance.unwrap();
+        assert_eq!(provenance.working_set_id, Some(owner_a));
+        assert_eq!(provenance.occurrence_id, card_a.id);
+        assert_eq!(
+            provenance.card_snapshot,
+            serde_json::to_value(&card_a).unwrap()
+        );
+        assert_eq!(
+            provenance.presented_midi,
+            Some(
+                sound_a
+                    .0
+                    .iter()
+                    .map(|hz| (69.0 + 12.0 * (*hz / 440.0).log2()).round() as i32)
+                    .collect()
+            ),
+            "the background observation must retain the pitches from A's saved setup"
+        );
+        assert!(
+            h.click_on(&Selector::class("overview-node-title").containing("Catalog exploration 1"))
+        );
+        assert!(h.click_on(&Selector::class("overview-open")));
+        assert_eq!(
+            serde_json::to_value(h.state().capture_exploration()).unwrap(),
+            config_a
+        );
+        assert!(h.state().rehearsal_running);
+        assert!(h.click_on(&Selector::class("workspace-panel").containing("Mere")));
+        assert!(
+            h.click_on(&Selector::class("overview-node-title").containing("Catalog exploration 2"))
+        );
+        assert!(h.click_on(&Selector::class("overview-open")));
+        assert_eq!(
+            serde_json::to_value(h.state().capture_exploration()).unwrap(),
+            config_b
+        );
+        assert!(h.click_on(&Selector::class("workspace-panel").containing("Mere")));
+        assert!(
+            h.click_on(&Selector::class("overview-node-title").containing("Working Set 1 copy"))
+        );
+        assert!(h.click_on(&Selector::class("overview-open")));
+        assert_eq!(h.state().working_sets.active_id, owner_b);
+        assert_eq!(h.state().preview_voicing(), sound_b);
+        h.update(|ui| ui.now_ms = Some(3_000));
+        assert!(h.click_on(&Selector::class("t-btn").containing("Run")));
+        assert_eq!(h.state().rehearsal_owner, Some(owner_b));
+        h.update(|ui| ui.now_ms = Some(4_000));
+        assert!(h.click_on(&Selector::class("t-btn").containing("Pause")));
+        assert!(h.state().rehearsal_owner.is_none());
+        assert!(h.state().practice_history.recent(30).iter().any(|event| {
+            event.practiced_ms == Some(1_000)
+                && event
+                    .provenance
+                    .as_ref()
+                    .is_some_and(|provenance| provenance.working_set_id == Some(owner_b))
+        }));
+    }
+}
+
+#[test]
+fn background_runner_inherits_the_starting_exploration_setup() {
+    let mut h = harness(1_100.0, 664.0);
+    h.update(|ui| {
+        ui.stage.set_lens(woodshed_core::Lens::Scales);
+        let major = ui
+            .stage
+            .scales()
+            .iter()
+            .position(|scale| scale.name == "Major")
+            .unwrap();
+        ui.stage.select_scale(major);
+        ui.stage.set_root(5);
+        ui.root_dd.selected = 5;
+        ui.set.cards.clear();
+        ui.stage_current(None);
+        ui.set.cards[0].setting.tuning = None;
+        ui.set.cards[0].setting.instrument.clear();
+        ui.set.cards[0].setting.fret_window =
+            Some(woodshedding::rehearsal::FretWindow { start: 0, span: 2 });
+        ui.select_app_section(woodshed_core::storage::AppSection::Rehearsal);
+        ui.now_ms = Some(1_000);
+    });
+    assert!(h.state().set.cards[0].setting.tuning.is_none());
+    let inherited = h.state().preview_voicing();
+    assert!(h.click_on(&Selector::class("t-btn").containing("Run")));
+    assert!(h.click_on(&Selector::class("workspace-panel").containing("Mere")));
+    assert!(h.click_on(&Selector::class("overview-new-exploration")));
+    h.update(|ui| {
+        ui.stage.set_tuning(1);
+        ui.tuning_dd.selected = 1;
+    });
+    assert_ne!(
+        h.state()
+            .stage
+            .card_sounding_pitches_at_tempo(&h.state().set.cards[0], h.state().transport.bpm)
+            .0,
+        inherited.0
+    );
+    assert_eq!(h.state().rehearsal_sounding_pitches().unwrap(), inherited);
+    assert!(h.click_on(&Selector::class("workspace-panel").containing("Mere")));
+    assert!(h.click_on(&Selector::class("overview-node-title").containing("Rehearsal running")));
+    assert!(h.click_on(&Selector::class("overview-pause-rehearsal")));
+    assert!(!h.state().rehearsal_running);
 }
 
 #[test]

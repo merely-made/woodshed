@@ -72,6 +72,9 @@ impl EngagementKind {
 pub struct ObservationProvenance {
     /// Assigned Set identity; UNASSIGNED qualifies a catalog-only preview.
     pub occurrence_id: CardId,
+    /// Owning working Set when observed. Missing on legacy observations.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub working_set_id: Option<crate::working_sets::WorkingSetId>,
     /// Exact serialized Card, including material, setup, touch, timing and recipe.
     /// This is an instruction snapshot, not proof of the player's performance.
     /// Unspecified inherited settings remain unspecified unless the caller also
@@ -86,9 +89,19 @@ pub struct ObservationProvenance {
 }
 
 impl ObservationProvenance {
+    pub fn capture_in_set(
+        card: &Card,
+        owner: crate::working_sets::WorkingSetId,
+    ) -> Result<Self, serde_json::Error> {
+        let mut provenance = Self::capture(card)?;
+        provenance.working_set_id = Some(owner);
+        Ok(provenance)
+    }
+
     pub fn capture(card: &Card) -> Result<Self, serde_json::Error> {
         Ok(Self {
             occurrence_id: card.id,
+            working_set_id: None,
             card_snapshot: serde_json::to_value(card)?,
             run_id: None,
             presented_midi: None,
@@ -295,6 +308,7 @@ impl PracticeHistory {
             {
                 if from_provenance.occurrence_id.is_assigned()
                     && from_provenance.occurrence_id == to_provenance.occurrence_id
+                    && from_provenance.working_set_id == to_provenance.working_set_id
                 {
                     // Opening, pausing and completing one occurrence are
                     // observations of that occurrence, not movement to another.
@@ -632,6 +646,46 @@ mod tests {
         let back: PracticeHistory =
             serde_json::from_str(&serde_json::to_string(&history).unwrap()).unwrap();
         assert_eq!(back.transitions(), history.transitions());
+    }
+
+    #[test]
+    fn equal_local_occurrences_in_different_sets_are_a_real_transition() {
+        use crate::working_sets::WorkingSetId;
+        let mut set = woodshedding::rehearsal::Set::default();
+        set.push(crate::StageState::new().card_from_lens().unwrap());
+        let card = &set.cards[0];
+        let mut history = PracticeHistory::default();
+        for owner in [WorkingSetId(1), WorkingSetId(2)] {
+            history.record_observation(
+                Some(owner.0),
+                "scale:Major",
+                EngagementKind::Completed,
+                None,
+                Some(100),
+                Some(ObservationProvenance::capture_in_set(card, owner).unwrap()),
+            );
+        }
+        assert_eq!(history.transitions().len(), 1);
+        assert_eq!(history.transitions()[0].traversal_count, 1);
+        let mut legacy = serde_json::to_value(
+            ObservationProvenance::capture_in_set(card, WorkingSetId(1)).unwrap(),
+        )
+        .unwrap();
+        legacy.as_object_mut().unwrap().remove("working_set_id");
+        let legacy: ObservationProvenance = serde_json::from_value(legacy).unwrap();
+        assert_eq!(legacy.working_set_id, None);
+        let mut same_owner = PracticeHistory::default();
+        for _ in 0..2 {
+            same_owner.record_observation(
+                None,
+                "scale:Major",
+                EngagementKind::Completed,
+                None,
+                None,
+                Some(legacy.clone()),
+            );
+        }
+        assert!(same_owner.transitions().is_empty());
     }
 
     #[test]

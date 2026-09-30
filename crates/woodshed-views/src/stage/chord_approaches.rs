@@ -54,7 +54,7 @@ impl UiState {
                 })
             });
         match self
-            .stage
+            .current_card_stage()
             .chord_approach_discovery(&self.set, source, target, direction)
         {
             Ok(discovery) => {
@@ -81,13 +81,14 @@ impl UiState {
             return;
         };
         match self
-            .stage
+            .current_card_stage()
             .chord_approach_discovery(&self.set, source, target, direction)
         {
             Ok(discovery) => {
                 let card = discovery.preview;
                 self.queue_approach_preview(
                     &card,
+                    true,
                     self.set
                         .cards
                         .iter()
@@ -100,10 +101,14 @@ impl UiState {
         }
     }
 
-    fn queue_approach_preview(&mut self, card: &Card, from: Option<String>) {
-        let (pitches, duration_s, strum_s) = self
-            .stage
-            .card_sounding_pitches_at_tempo(card, self.transport.bpm);
+    fn queue_approach_preview(&mut self, card: &Card, bound: bool, from: Option<String>) {
+        let stage = if bound {
+            self.current_card_stage()
+        } else {
+            &self.stage
+        };
+        let (pitches, duration_s, strum_s) =
+            stage.card_sounding_pitches_at_tempo(card, self.transport.bpm);
         if pitches.is_empty() {
             return;
         }
@@ -114,7 +119,7 @@ impl UiState {
                 EngagementKind::Previewed,
                 from,
                 None,
-                ObservationProvenance::capture(card).ok(),
+                ObservationProvenance::capture_in_set(card, self.working_sets.active_id).ok(),
             );
         }
         self.request(AudioRequest::PreviewPitches {
@@ -139,10 +144,12 @@ impl UiState {
             .iter()
             .find(|card| card.id == target)
             .and_then(catalog_id_for_card);
-        match self
-            .stage
-            .stage_chord_approach(&mut self.set, source, target, direction)
-        {
+        let stage = if self.is_current_set_rehearsing() {
+            self.rehearsal_stage.as_ref().unwrap_or(&self.stage)
+        } else {
+            &self.stage
+        };
+        match stage.stage_chord_approach(&mut self.set, source, target, direction) {
             Ok(id) => {
                 self.record_staged_approach(id, from);
                 self.approach_notice = None;
@@ -164,7 +171,7 @@ impl UiState {
                     EngagementKind::Staged,
                     from,
                     None,
-                    ObservationProvenance::capture(card).ok(),
+                    ObservationProvenance::capture_in_set(card, self.working_sets.active_id).ok(),
                 );
             }
         }
@@ -192,7 +199,7 @@ impl UiState {
     pub(super) fn hear_context_chord_approach(&mut self, subject: &KeyedCatalogRef) {
         self.refresh_event_time();
         if let Some(preview) = self.context_approach_preview(subject) {
-            self.queue_approach_preview(&preview, self.stage.catalog_id());
+            self.queue_approach_preview(&preview, false, self.stage.catalog_id());
         }
     }
 
@@ -219,7 +226,7 @@ pub(super) fn context_detail(ui: &UiState, subject: &KeyedCatalogRef) -> Option<
     let explanation = if ui.is_inspected_chord_approach(subject) {
         match (ui.approach_source, ui.approach_target) {
             (Some(source), Some(target)) => match ui
-                .stage
+                .current_card_stage()
                 .chord_approach_discovery(&ui.set, source, target, direction)
             {
                 Ok(discovery) => discovery.explanation,
@@ -286,7 +293,7 @@ pub(super) fn panel(ui: &UiState) -> UiChild {
         ui.approach_direction,
     ) {
         (Some(source), Some(target), Some(direction)) => Some(
-            ui.stage
+            ui.current_card_stage()
                 .chord_approach_discovery(&ui.set, source, target, direction),
         ),
         _ => None,

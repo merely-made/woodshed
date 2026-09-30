@@ -37,7 +37,7 @@ impl UiState {
             return false;
         };
         self.arpeggio_source = Some(source);
-        match self.stage.chord_arpeggio_discovery(card) {
+        match self.current_card_stage().chord_arpeggio_discovery(card) {
             Ok(discovery) => {
                 self.context_disclosed.insert(discovery.subject);
                 self.discovery_notice = None;
@@ -59,10 +59,10 @@ impl UiState {
             self.discovery_notice = Some("The source Card is no longer in the Set.".into());
             return;
         };
-        match self.stage.chord_arpeggio_discovery(card) {
+        match self.current_card_stage().chord_arpeggio_discovery(card) {
             Ok(discovery) => {
                 let (pitches, duration_s, strum_s) = self
-                    .stage
+                    .current_card_stage()
                     .card_sounding_pitches_at_tempo(&discovery.preview, self.transport.bpm);
                 if pitches.is_empty() {
                     self.discovery_notice = Some("This realization has no sounding notes. Choose an available shape or change the note selection.".into());
@@ -74,7 +74,11 @@ impl UiState {
                     EngagementKind::Previewed,
                     catalog_id_for_card(card),
                     None,
-                    ObservationProvenance::capture(&discovery.preview).ok(),
+                    ObservationProvenance::capture_in_set(
+                        &discovery.preview,
+                        self.working_sets.active_id,
+                    )
+                    .ok(),
                 );
                 self.request(AudioRequest::PreviewPitches {
                     pitches,
@@ -96,7 +100,12 @@ impl UiState {
             .iter()
             .find(|card| card.id == source)
             .and_then(catalog_id_for_card);
-        match self.stage.stage_chord_arpeggio(&mut self.set, source) {
+        let stage = if self.is_current_set_rehearsing() {
+            self.rehearsal_stage.as_ref().unwrap_or(&self.stage)
+        } else {
+            &self.stage
+        };
+        match stage.stage_chord_arpeggio(&mut self.set, source) {
             Ok(id) => {
                 if let Some(card) = self.set.cards.iter().find(|card| card.id == id) {
                     self.practice_history.record_observation(
@@ -105,7 +114,8 @@ impl UiState {
                         EngagementKind::Staged,
                         from,
                         None,
-                        ObservationProvenance::capture(card).ok(),
+                        ObservationProvenance::capture_in_set(card, self.working_sets.active_id)
+                            .ok(),
                     );
                 }
                 self.discovery_notice = None;
@@ -122,7 +132,12 @@ impl UiState {
 pub(super) fn panel(ui: &UiState) -> UiChild {
     if ui.arpeggio_source.is_none()
         && ui.discovery_notice.is_none()
-        && !ui.current_card().is_some_and(|card| matches!(card.material, woodshedding::rehearsal::Material::Chord { .. }))
+        && !ui.current_card().is_some_and(|card| {
+            matches!(
+                card.material,
+                woodshedding::rehearsal::Material::Chord { .. }
+            )
+        })
     {
         return Box::new(el("div", ()));
     }
@@ -135,7 +150,7 @@ pub(super) fn panel(ui: &UiState) -> UiChild {
                 woodshedding::rehearsal::Material::Chord { .. }
             )
         })
-        .and_then(|card| ui.stage.chord_arpeggio_discovery(card).err())
+        .and_then(|card| ui.current_card_stage().chord_arpeggio_discovery(card).err())
         .map(|reason| {
             el(
                 "div",
@@ -144,7 +159,7 @@ pub(super) fn panel(ui: &UiState) -> UiChild {
             .attr("role", "status")
         });
     let candidate = ui.current_card().and_then(|card| {
-        ui.stage
+        ui.current_card_stage()
             .chord_arpeggio_discovery(card)
             .ok()
             .map(|discovery| (card.id, discovery))
@@ -162,7 +177,7 @@ pub(super) fn panel(ui: &UiState) -> UiChild {
     let inspected = ui
         .arpeggio_source
         .and_then(|id| ui.set.cards.iter().find(|card| card.id == id))
-        .and_then(|card| ui.stage.chord_arpeggio_discovery(card).ok());
+        .and_then(|card| ui.current_card_stage().chord_arpeggio_discovery(card).ok());
     let detail: Option<UiChild> = inspected.map(|discovery| Box::new(el("div", (
         el("div", text(discovery.label)).attr("class", "stage-context-title"),
         el("div", text(discovery.explanation)),

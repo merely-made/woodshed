@@ -531,7 +531,7 @@ pub(super) fn view(ui: &UiState) -> UiChild {
                         ),
                         clickable(
                             el("div", text("Clear")).attr("class", "t-btn"),
-                            |ui: &mut UiState, _| ui.set = Default::default(),
+                            |ui: &mut UiState, _| ui.clear_working_set(),
                         ),
                         clickable(
                             el("div", text("Rehearse")).attr("class", "t-btn t-hear"),

@@ -367,6 +367,32 @@ impl Snapshot<'_, '_> {
                     .to_string(),
             )
             .with_field("retained-sets", ui.retained_sets.entries.len().to_string())
+            .with_field(
+                "working-sets",
+                (ui.working_sets.inactive.len() + 1).to_string(),
+            )
+            .with_field("working-set-id", ui.working_sets.active_id.0.to_string())
+            .with_field(
+                "explorations",
+                (ui.catalog_explorations.inactive.len() + 1).to_string(),
+            )
+            .with_field(
+                "exploration-id",
+                ui.catalog_explorations.active_id.0.to_string(),
+            )
+            .with_field("catalog-root", ui.stage.root_idx.to_string())
+            .with_field("catalog-lens", format!("{:?}", ui.stage.lens))
+            .with_field("catalog-tuning", ui.stage.tuning().name.clone())
+            .with_field("catalog-search", ui.search.text())
+            .with_field(
+                "runner-set-id",
+                ui.rehearsal_owner.map_or(0, |id| id.0).to_string(),
+            )
+            .with_field("runner-cursor", ui.rehearsal_set().cursor.to_string())
+            .with_field(
+                "runner-foreground",
+                ui.is_current_set_rehearsing().to_string(),
+            )
             .with_field("overview-nodes", overview.nodes.len().to_string())
             .with_field(
                 "overview-views",
@@ -1056,6 +1082,7 @@ impl Automatable for Probe<'_, '_> {
             },
             "chord-approach-example" | "mere-example" => {
                 use woodshedding::rehearsal::{FretWindow, Hold, Set, Timing};
+                ui.stop_rehearsal();
                 ui.set = Set::default();
                 ui.practice_history = Default::default();
                 ui.stage.set_lens(Lens::Chords);
@@ -1093,6 +1120,8 @@ impl Automatable for Probe<'_, '_> {
                 ui.set_graph_reading(woodshed_core::settings::StageGraphReading::CircleOfFifths);
                 if label == "mere-example" {
                     ui.retained_sets = Default::default();
+                    ui.working_sets = Default::default();
+                    ui.catalog_explorations = Default::default();
                     for card in &mut ui.set.cards {
                         card.timing.hold = Hold::Manual;
                     }
