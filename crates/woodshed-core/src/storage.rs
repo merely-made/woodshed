@@ -137,6 +137,8 @@ pub struct PersistedSession {
     pub exercise_starting_fret: u8,
     /// The rehearsal set (cards + cursor + loop mode).
     pub set: woodshedding::rehearsal::Set,
+    /// Explicit retained instruction snapshots, distinct from the working Set.
+    pub retained_sets: crate::retained_sets::RetainedSets,
     /// The song lane: bars + song-level flags.
     pub song: crate::song::SongDoc,
     /// Typed catalog engagement used by Related ranking and future history
@@ -172,6 +174,7 @@ impl PersistedSession {
     ) -> Self {
         Self {
             set: set.clone(),
+            retained_sets: crate::retained_sets::RetainedSets::default(),
             song: song.clone(),
             practice_history: practice_history.clone(),
             workspace_json: None,
@@ -382,6 +385,37 @@ mod tests {
         let mut on: AppSettings = serde_json::from_str(&json).unwrap();
         on.stage.adopt_legacy_relation_visibility();
         assert!(!on.stage.shows_relation(SetGraphEdgeKind::Next));
+    }
+
+    #[test]
+    fn retained_sets_default_for_legacy_and_round_trip_separately_from_working_set() {
+        let legacy = decode_session("{}").unwrap();
+        assert!(legacy.session.retained_sets.entries.is_empty());
+        let mut session = PersistedSession::default();
+        session
+            .set
+            .push(StageState::new().card_from_lens().unwrap());
+        let saved_id = session
+            .retained_sets
+            .save_snapshot(&session.set, "My study");
+        session.set.cards[0].label = "Current edited instruction".into();
+        let saved_before =
+            serde_json::to_value(session.retained_sets.get(saved_id).unwrap()).unwrap();
+        let mut loaded = decode_session(&serde_json::to_string(&session).unwrap())
+            .unwrap()
+            .session;
+        assert_eq!(loaded.set.cards[0].label, "Current edited instruction");
+        assert_eq!(
+            serde_json::to_value(loaded.retained_sets.get(saved_id).unwrap()).unwrap(),
+            saved_before
+        );
+        let old_id = loaded.set.cards[0].id;
+        assert!(loaded.retained_sets.restore_into(saved_id, &mut loaded.set));
+        assert_ne!(loaded.set.cards[0].id, old_id);
+        assert_eq!(
+            serde_json::to_value(loaded.retained_sets.get(saved_id).unwrap()).unwrap(),
+            saved_before
+        );
     }
 
     #[test]

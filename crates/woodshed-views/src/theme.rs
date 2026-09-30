@@ -366,7 +366,10 @@ pub fn stage_css(p: &Palette) -> String {
 .stage-context-label {{ color: {text_dim}; font-size: 10px; }}
 .stage-context-title {{ color: {text}; font-size: 14px; font-weight: 600; }}
 .stage-context-comparison {{ font-size: 12px; }}
-.stage-context-actions {{ display: flex; gap: 8px; margin-top: 5px; }}
+.stage-context-actions {{ display: flex; flex-wrap: wrap; gap: 8px; margin-top: 5px; }}
+.stage-context-actions .t-btn {{ min-width: 120px; flex-shrink: 0; white-space: nowrap; }}
+.card-details .stage-context-panel {{ width: 100%; max-width: 760px; box-sizing: border-box; }}
+.card-details {{ width: 100%; min-width: 0; }}
 .stage-context-candidates {{ margin-top: 8px; }}
 .stage-context-candidate-list {{ max-height: 180px; overflow-y: auto; margin: 6px 0; }}
 .stage-context-candidate {{ padding: 7px 5px; border-top: 1px solid {surface}; border-radius: 4px; }}
@@ -384,8 +387,21 @@ pub fn stage_css(p: &Palette) -> String {
 .resize-handle:focus {{ outline-width: 1px; outline-color: {text}; }}
 .set-graph-card-root {{ position: absolute; left: 0; top: 0; pointer-events: none; z-index: 4; }}
 .set-graph-selected-card {{ position: relative; width: 300px; max-width: 100%; padding: 10px; border-radius: 9px; background-color: {surface_2}; }}
+.session-overview {{ display: flex; flex-direction: column; gap: 12px; min-width: 0; padding: 12px; }}
+.overview-title {{ font-size: 20px; color: {text}; }}
+.overview-subtitle, .overview-detail, .overview-notice {{ font-size: 12px; color: {text_dim}; }}
+.overview-save-row {{ display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }}
+.overview-body {{ display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-start; }}
+.overview-roster {{ display: flex; flex-direction: column; gap: 6px; flex: 1 1 240px; min-width: 0; }}
+.overview-node {{ padding: 8px 12px; background: {surface}; border-radius: 5px; }}
+.overview-node-selected {{ background: {surface_2}; }}
+.overview-node-title, .overview-inspector-title {{ color: {text}; font-size: 13px; }}
+.overview-node-kind, .overview-relation {{ color: {text_dim}; font-size: 11px; }}
+.overview-inspector {{ display: flex; flex-direction: column; gap: 10px; flex: 1 1 280px; min-width: 0; padding: 12px; background: {surface}; }}
+.overview-relations {{ display: flex; flex-direction: column; gap: 4px; }}
+.overview-open, .overview-save {{ min-height: 30px; padding: 8px 12px; }}
 .set-graph-selected-card .set-editor {{ gap: 6px; border-top-width: 0; }}
-.set-graph-selected-card .set-editor-label {{ width: 100%; padding-right: 100px; }}
+.set-graph-selected-card .set-editor-label {{ width: 100%; }}
 .set-graph-selected-card .card-rename {{ width: 100%; }}
 .set-graph-node-card-layer {{ position: absolute; pointer-events: none; z-index: 4; }}
 .set-graph-node-card {{ position: absolute; left: 0; top: 0; width: 100%; height: 100%; pointer-events: auto; box-sizing: border-box; overflow: hidden; padding: 10px; background-color: {surface_2}; border-width: 1px; border-color: {tertiary}; border-radius: 9px; z-index: 4; }}
@@ -417,9 +433,13 @@ pub fn stage_css(p: &Palette) -> String {
 .set-card-title {{ color: {text}; font-size: 13px; margin-top: 3px; }}
 .set-card-meta {{ color: {tertiary}; font-size: 10px; margin-top: 4px; }}
 .set-card-source {{ margin-top: 3px; }}
-.set-editor {{ display: flex; align-items: center; flex-wrap: wrap; border-top-width: 1px; border-top-color: {surface_2}; padding-top: 8px; }}
+.set-editor {{ display: flex; flex-direction: column; align-items: stretch; gap: 8px; min-width: 0; border-top-width: 1px; border-top-color: {surface_2}; padding-top: 8px; }}
 .set-editor-label {{ color: {text_dim}; font-size: 11px; margin-right: 8px; }}
-.card-shape-controls {{ display: flex; flex-wrap: wrap; align-items: center; gap: 6px; flex: 1 0 100%; margin-top: 8px; }}
+.card-shape-controls {{ display: flex; flex-direction: column; gap: 6px; min-width: 0; }}
+.card-control-row, .card-shape-control-row {{ display: flex; flex-wrap: wrap; align-items: center; gap: 6px; min-width: 0; }}
+.card-control-row .t-btn, .card-shape-control-row .t-btn {{ min-height: 28px; padding: 6px 10px; }}
+.card-explanation-section {{ display: flex; flex-direction: column; gap: 8px; min-width: 0; }}
+.card-explanation-section .t-btn {{ min-height: 28px; padding: 6px 10px; }}
 .card-shape-notice {{ color: {text_dim}; flex: 1 0 100%; }}
 .shape-movement {{ flex: 1 0 100%; min-width: 0; padding-top: 8px; color: {text_dim}; }}
 .shape-movement-summary {{ margin: 6px 0; }}
