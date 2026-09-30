@@ -292,6 +292,14 @@ pub fn disclose_chord_approaches(
     if focus.to_material().is_none() {
         return;
     }
+    let formula = woodshedding::chord::catalog()
+        .iter()
+        .find(|formula| formula.name == name)
+        .expect("validated target");
+    let root = woodshedding::pitch::Pitch::from_midi(
+        60 + i32::from(focus.root.value()),
+        woodshedding::pitch::Spelling::Sharps,
+    );
     for direction in woodshedding::rehearsal::ApproachDirection::ALL {
         let subject = KeyedCatalogRef {
             formula_id: woodshed_graph::chord_approach_id(name, direction),
@@ -301,7 +309,16 @@ pub fn disclose_chord_approaches(
             continue;
         }
         let to = StageNodeId::Catalog(subject.clone());
-        if !graph.nodes.iter().any(|node| node.keyed == subject) {
+        let label = format!(
+            "{}{}{} · {}",
+            root.name,
+            root.accidental,
+            formula.symbol,
+            direction.slug()
+        );
+        if let Some(node) = graph.nodes.iter_mut().find(|node| node.keyed == subject) {
+            node.label = label;
+        } else {
             if node_limit == 0 {
                 graph.truncated = true;
                 continue;
@@ -326,7 +343,7 @@ pub fn disclose_chord_approaches(
             }
             graph.nodes.push(StageContextNode {
                 id: to.clone(),
-                label: subject.label().expect("validated target"),
+                label,
                 keyed: subject,
                 kind: StageNodeKind::ChordApproach,
                 relation_distance: 0,
@@ -569,12 +586,52 @@ mod tests {
         };
         let mut graph = circle_of_fifths_context(
             &focus,
-            6,
+            5,
             &BTreeSet::from([focus.clone()]),
             &BTreeSet::new(),
         );
-        disclose_chord_approaches(&mut graph, &focus, 6, &BTreeSet::new(), &BTreeSet::new());
+        let retained_above = KeyedCatalogRef {
+            formula_id: "chord-approach:above:Major 7".into(),
+            root: focus.root,
+        };
+        graph.nodes.push(StageContextNode {
+            id: StageNodeId::Catalog(retained_above.clone()),
+            label: retained_above.label().unwrap(),
+            keyed: retained_above.clone(),
+            kind: StageNodeKind::ChordApproach,
+            relation_distance: 0,
+        });
+        disclose_chord_approaches(
+            &mut graph,
+            &focus,
+            6,
+            &BTreeSet::new(),
+            &BTreeSet::from([retained_above.clone()]),
+        );
+        assert_eq!(
+            graph
+                .nodes
+                .iter()
+                .find(|node| node.keyed == retained_above)
+                .unwrap()
+                .label,
+            "Cmaj7 · above"
+        );
+        assert_eq!(
+            retained_above.label().unwrap(),
+            "C Major 7 approach from above"
+        );
         assert_eq!(graph.nodes.len(), 6);
+        let approach_labels = graph
+            .nodes
+            .iter()
+            .filter(|node| node.kind == StageNodeKind::ChordApproach)
+            .map(|node| node.label.as_str())
+            .collect::<BTreeSet<_>>();
+        assert_eq!(
+            approach_labels,
+            BTreeSet::from(["Cmaj7 · below", "Cmaj7 · above"])
+        );
         assert_eq!(
             graph
                 .nodes

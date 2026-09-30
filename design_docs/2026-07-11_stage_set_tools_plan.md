@@ -441,12 +441,19 @@ The first slice is not accepted solely because each lane reports success.
   and note-hit regression also passes after hiding the empty approach panel when
   no adjacent pair is available.
 
-  The native seed/reopen scenarios are saved as `scenarios/chord_approaches.scn`
-  and `scenarios/chord_approaches_reopen.scn`. The desktop tool reported a locked
-  Mac at this checkpoint, so headed captures, ambient label readability and
-  acoustic acceptance remain pending. Automated click/persistence checks do not
-  close those native observations. Logs and the checkpoint receipt are under
-  `testing/woodshed/approaches-20260930/`.
+  After unlock, the native seed and fresh-process reopen scenarios pass with
+  four presented captures, all inspected. They exercise immutable audition,
+  explicit append, the saved Ukulele/high-G/capo-2 realization with four strings,
+  descending sequential pairs, Run/Pause and restored observations. Capture
+  review found overlapping approach labels in the ambient graph; the follow-up
+  uses compact chord-symbol/direction labels and staggered satellite spacing while
+  preserving full recipe names in the inspector and authored Card. Overall
+  dense-catalog layout remains review work. The scenario sources are
+  `scenarios/chord_approaches.scn` and `scenarios/chord_approaches_reopen.scn`;
+  logs, capture hashes and the exact-revision receipt are under
+  `testing/woodshed/approaches-20260930/`. Audio stream underrun/overrun is still
+  logged; these captures do not establish acoustic quality or human musical
+  usefulness. Existing one-shot sustain and pause limitations remain.
 
 **First-slice qualification:** functional discovery, staging, sequential-onset
 preview, runner observation boundaries, and filesystem reopening are implemented
