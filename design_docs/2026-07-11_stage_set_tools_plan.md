@@ -299,6 +299,13 @@ The first slice is not accepted solely because each lane reports success.
   staging; desktop build passes. The native follow-up produced zero frames
   after the Mac locked again, so presented-frame confirmation remains pending.
 
+- **2026-09-30:** after unlock, the revised P4d layout scenario passes four
+  presented captures at UI zoom 0.65. Expanded and resized captures show the
+  selected editor beside the canvas, with activation, resize, and collapse
+  passing. The preceding default-zoom fixture missed graph controls below the
+  viewport; this receipt qualifies the recorded zoom, not all viewport/zoom
+  combinations. Listening and keyboard acceptance remain open.
+
 **First-slice qualification:** functional discovery, staging, sequential-onset
 preview, runner observation boundaries, and filesystem reopening are implemented
 and automatically tested. The synth sustains prior tones through the cascade;

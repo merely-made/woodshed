@@ -79,7 +79,8 @@ before any other doc in this directory.
   shared realization, ambient Mere actions, and integrated acceptance slices.
   The first chord/arpeggio connection passes automated discovery, host controls,
   and filesystem reopening checks. Native seed/reopen passes with six inspected
-  captures; Stage layout, keyboard, listening, and full articulation acceptance remain open.
+  captures. The editor layout correction also has a four-capture native receipt
+  at recorded zoom; broader layout, keyboard, listening, and full articulation acceptance remain open.
 - [2026-08-27_smart_instrument_plan.md](2026-08-27_smart_instrument_plan.md)
   — **W1 and W2 landed and hardware-verified; W3 open.** The
   `woodshed-instrument` connection and metronome authority model work in both

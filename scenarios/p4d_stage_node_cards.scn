@@ -3,6 +3,8 @@
 
 log P4d: resizable Stage canvas and selected Card expansion
 settle 3
+ui-zoom 0.65
+settle 3
 
 act stage-related-pair
 settle 3
