@@ -177,3 +177,26 @@ and `native/negative-controls.json`. The actual `redshank-web` locked/offline
 (`web-wasm-check.log`); no standalone lock or dependency drift is introduced.
 Browser compilation remains distinct from browser runtime, and queue
 presentation is distinct from compositor or physical-display visibility.
+
+## Combined Commands/font source graph, September 30
+
+The containing graph now pins Mere `bd5912fbbb8f468defc3bbeee7eac5a4f7d2b2f3`
+and Genet `69a2383b2ad777b884a72f31f8f8fb7ece275c0b` in both native and web
+manifests. The port lock substitutes 40 source identities, with no package,
+version or dependency-edge changes. All 45 tracked Redshank Rust source blobs
+match the published `2479dc9` cohort; this continuation changes pins only.
+
+The final locked/offline desktop gate passes 68 tests; production strict
+Clippy, the executable build and actual web Wasm compilation pass. Paired and
+default native runs each produce three visually reviewed nonblank 1720x1360
+light/dark/light captures. Actual dirty/durable readings settle at 3/4/5, bounded
+admission cuts remain 19/25/31 and count-two retention reports 28 evictions.
+All three corrupted receipt controls are rejected. The new executable SHA256 is
+`0A2B772C9659D3C5C2AC0A42FE198B2708251DB3BBA55A88A3FF2490E56C4172`.
+Evidence is under `Code/testing/redshank/capture-pairing/combined`; earlier
+captures and receipts retain their source identities and remain untouched.
+
+The clean collision worktree isolates the transcript work in the primary
+checkout. Integration stages only the two manifests, port lock and the receipt/index
+update. Product causality, browser-runtime acceptance, human AT and
+physical-display acknowledgement retain the limitations above.
