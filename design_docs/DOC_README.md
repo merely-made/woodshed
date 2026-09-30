@@ -74,7 +74,9 @@ before any other doc in this directory.
   — **In progress; product authority.** P1-P3 remain partial. P4a/P4b landed;
   the scene canvas and single-Card expansion have receipts, while the full P4e
   catalog and P4f practice/sound join remain open. P5-P8 remain open. A repaired
-  release baseline does not close the 1.0 practice proof.
+  release baseline does not close the 1.0 practice proof. The September 30
+  connected exploration/drilling direction specifies cross-catalog context,
+  shared realization, ambient Mere actions, and integrated acceptance slices.
 - [2026-08-27_smart_instrument_plan.md](2026-08-27_smart_instrument_plan.md)
   — **W1 and W2 landed and hardware-verified; W3 open.** The
   `woodshed-instrument` connection and metronome authority model work in both
@@ -204,6 +206,11 @@ section whenever a durable working insight emerges from a session.
   required to resolve `Cargo.lock`. Generate and verify the lock from outside
   the repository config path; CI's clean-checkout metadata preflight is the
   gate that catches a lock accidentally written under local path patches.
+- **Exploration and drilling are complementary**: lateral relationships across
+  catalogs and deliberate Set rehearsal both help assemble material and act on
+  it. Develop connected slices that carry discoveries into playable material
+  and return qualified rehearsal observations to exploration. The ambient Mere
+  makes relationships perceptible; explicit actions author the one Set.
 - **Stage is a verb and Set is the spine**: catalogs supply material; Stage
   adds configured Cards to one ordered Set; Rehearsal and Looper consume it.
   Do not create parallel practice, song, or tool-owned material documents.
