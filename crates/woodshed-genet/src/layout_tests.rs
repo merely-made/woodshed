@@ -346,7 +346,10 @@ fn connected_discovery_controls_stage_the_selected_shape_and_run_it() {
         assert!(!h.state().audio_requests.is_empty());
         assert!(h.click_on(&Selector::class("t-btn").containing("Stage arpeggio")));
         assert_eq!(h.state().set.cards.len(), 2);
-        assert_eq!(serde_json::to_value(&h.state().set.cards[1].setting).unwrap(), setting);
+        assert_eq!(
+            serde_json::to_value(&h.state().set.cards[1].setting).unwrap(),
+            setting
+        );
         assert_ne!(h.state().set.cards[1].id, source);
         h.update(|ui| {
             ui.set.cursor = 1;
@@ -357,6 +360,27 @@ fn connected_discovery_controls_stage_the_selected_shape_and_run_it() {
         h.update(|ui| ui.now_ms = Some(3_000));
         assert!(h.click_on(&Selector::class("t-btn").containing("Pause")));
         assert!(!h.state().rehearsal_running);
-        assert_eq!(h.state().practice_history.total_practiced_ms("arpeggio:Major"), 1_000);
+        assert_eq!(
+            h.state()
+                .practice_history
+                .total_practiced_ms("arpeggio:Major"),
+            1_000
+        );
     }
+}
+
+#[test]
+fn expanded_graph_editor_keeps_discovery_outside_the_canvas() {
+    let mut h = harness(1_500.0, 1_500.0);
+    h.update(|ui| ui.set_graph_card_expanded = true);
+    let graph = rect(&h, "set-graph-canvas-stack");
+    let editor = rect(&h, "set-graph-selected-card");
+    assert!(
+        editor.0 >= graph.0 + graph.2 || editor.1 >= graph.1 + graph.3,
+        "editor overlaps graph: {editor:?} {graph:?}"
+    );
+    assert!(h.click_on(&Selector::class("t-btn").containing("Discover")));
+    assert!(h.state().arpeggio_source.is_some());
+    assert!(h.click_on(&Selector::class("t-btn").containing("Stage arpeggio")));
+    assert_eq!(h.state().set.cards.len(), 2);
 }

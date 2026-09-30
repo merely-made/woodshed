@@ -650,20 +650,11 @@ pub fn set_graph_swatch_from_snapshot(
             epoch: snapshot.epoch(),
             instance,
         });
-    if expanded && ui.set_graph_card_expanded {
-        if let Some(selected) = swatch.selected {
-            swatch =
-                swatch.with_node_footprint(selected, SET_GRAPH_CARD_WIDTH, SET_GRAPH_CARD_HEIGHT);
-        }
-    }
     // Focus and hover emphasis are the canvas component's own state (it reads
     // native focus from its node buttons, so the ring is never painted where
     // the keyboard is not). This view supplies only the Set's truth.
     swatch
 }
-
-const SET_GRAPH_CARD_WIDTH: f32 = 300.0;
-const SET_GRAPH_CARD_HEIGHT: f32 = 200.0;
 
 pub fn set_graph_swatch(ui: &UiState) -> GraphCanvasSwatch<StageInstanceRef, &'static str> {
     let snapshot = set_graph_snapshot(ui);
@@ -3315,7 +3306,7 @@ mod evidence_tests {
     }
 
     #[test]
-    fn selected_node_activation_expands_and_collapses_the_same_card_region() {
+    fn selected_node_activation_expands_and_collapses_the_same_card_editor() {
         let mut ui = staged_set();
         let snapshot = set_graph_snapshot(&ui);
         let card = ui.set.cursor_id().expect("selected card");
@@ -3325,12 +3316,8 @@ mod evidence_tests {
         ui.handle_set_graph_event(&snapshot, GraphCanvasEvent::Activate(instance));
         assert!(ui.set_graph_card_expanded);
         let swatch = set_graph_swatch_from_snapshot(&snapshot, &ui, true);
-        let region = swatch
-            .projected_node_footprint(&instance)
-            .expect("selected card region");
-        assert!(region.left >= 0.0 && region.top >= 0.0);
-        assert!(region.left + region.width <= swatch.width as f32);
-        assert!(region.top + region.height <= swatch.height as f32);
+        assert_eq!(swatch.selected, Some(instance));
+        assert!(swatch.projected_node_footprint(&instance).is_none());
 
         ui.handle_set_graph_event(&snapshot, GraphCanvasEvent::Activate(instance));
         assert!(!ui.set_graph_card_expanded);
@@ -3453,35 +3440,8 @@ mod evidence_tests {
             "Cambium fans every relation cell onto its own visible route"
         );
         let selected = swatch.selected.expect("selected occurrence");
-        let region = swatch
-            .projected_node_footprint(&selected)
-            .expect("selected Card footprint");
-        let right = region.left + region.width;
-        let bottom = region.top + region.height;
-        let incident = routes
-            .iter()
-            .filter_map(|(relation, route)| {
-                if relation.from == selected {
-                    route.first().copied()
-                } else if relation.to == selected {
-                    route.last().copied()
-                } else {
-                    None
-                }
-            })
-            .collect::<Vec<_>>();
-        assert!(
-            !incident.is_empty(),
-            "the selected occurrence has relations"
-        );
-        assert!(incident.iter().all(|point| {
-            let on_vertical =
-                (point.0 - region.left).abs() < 0.01 || (point.0 - right).abs() < 0.01;
-            let on_horizontal =
-                (point.1 - region.top).abs() < 0.01 || (point.1 - bottom).abs() < 0.01;
-            (on_vertical && point.1 >= region.top && point.1 <= bottom)
-                || (on_horizontal && point.0 >= region.left && point.0 <= right)
-        }));
+        assert!(swatch.projected_node_footprint(&selected).is_none(),
+            "the editor beside the graph must not reserve an in-canvas footprint");
     }
 
     #[test]

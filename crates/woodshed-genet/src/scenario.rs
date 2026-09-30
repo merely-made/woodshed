@@ -266,7 +266,7 @@ impl Snapshot<'_, '_> {
         use layout_dom_api::LayoutDom;
         let dom = self.ctx.runner.dom();
         let dom = dom.borrow();
-        dom.all_with_class(dom.document(), "set-graph-node-card")
+        dom.all_with_class(dom.document(), "set-graph-selected-card")
             .len()
     }
 
