@@ -48,9 +48,13 @@ pub struct Product {
     host_busy: bool,
     diagnostics: crate::diagnostics::Diagnostics,
     diagnostic_cursor: Option<apparatus::Cursor>,
+    capture: Option<crate::diagnostics::CaptureContext>,
 }
 
-pub fn from_env(diagnostics: crate::diagnostics::Diagnostics) -> Option<ScenarioLane> {
+pub(crate) fn from_env(
+    diagnostics: crate::diagnostics::Diagnostics,
+    desktop: std::rc::Rc<std::cell::RefCell<crate::Desktop>>,
+) -> Option<ScenarioLane> {
     let config = mesquite::LaneConfig::from_env("REDSHANK")?;
     Some(
         mesquite::Lane::from_config(
@@ -62,6 +66,13 @@ pub fn from_env(diagnostics: crate::diagnostics::Diagnostics) -> Option<Scenario
                 host_busy: false,
                 diagnostic_cursor: None,
                 diagnostics,
+                capture: crate::diagnostics::CaptureContext::new(
+                    std::env::var("REDSHANK_CAPTURE_CORRELATION")
+                        .ok()
+                        .as_deref()
+                        == Some("1"),
+                    desktop,
+                ),
             },
             cambium_genet_winit_host::read_file,
         )
@@ -173,21 +184,21 @@ fn tab_name(tab: SurfaceTab) -> &'static str {
     tab.label()
 }
 
-fn layout_name(layout: Layout) -> &'static str {
+pub(super) fn layout_name(layout: Layout) -> &'static str {
     match layout {
         Layout::Dock => "dock",
         Layout::Rail => "rail",
     }
 }
 
-fn seed_name(seed: Seed) -> &'static str {
+pub(super) fn seed_name(seed: Seed) -> &'static str {
     match seed {
         Seed::Wetland => "wetland",
         Seed::BrandShell => "brand",
     }
 }
 
-fn mode_name(mode: Mode) -> &'static str {
+pub(super) fn mode_name(mode: Mode) -> &'static str {
     match mode {
         Mode::Dark => "dark",
         Mode::Light => "light",
@@ -409,6 +420,11 @@ pub fn apply(state: &mut RedshankSurfaceState, named: Named) {
 // ---------------------------------------------------------------------------
 
 impl mesquite::Product for Product {
+    fn capture_observer(&self) -> Option<mesquite::CaptureObserver<Self>> {
+        self.capture
+            .as_ref()
+            .map(crate::diagnostics::CaptureContext::observer)
+    }
     fn diagnostic_attachment(
         &mut self,
         _ctx: &mut mesquite::Ctx<'_, Self>,
@@ -570,7 +586,7 @@ impl mesquite::Product for Product {
     }
 }
 
-fn notes_filter_name(filter: NotesFilter) -> &'static str {
+pub(super) fn notes_filter_name(filter: NotesFilter) -> &'static str {
     match filter {
         NotesFilter::ThisEpisode => "this-episode",
         NotesFilter::AllNotes => "all-notes",
@@ -780,6 +796,7 @@ mod tests {
                 },
             ),
             diagnostic_cursor: None,
+            capture: None,
         };
         let mut state = RedshankSurfaceState::default();
         product.note_events(&state);
