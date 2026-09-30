@@ -73,6 +73,178 @@ accessible operation rather than a second workflow.
 The Looper is deliberately smaller than a DAW. It does not introduce tracks,
 arrangement sections, editing lanes, effects chains, or a song-authoring mode.
 
+## Connected exploration and deliberate practice
+
+**Status (2026-09-30): planned; maintainer-endorsed direction.** This section
+specifies connected implementation slices across P3-P6 and the musical
+projections plan. It does not mark their open done-conditions complete or claim
+new runtime evidence.
+
+### Product intent and first complete flow
+
+Deliberate drilling and lateral exploration across the elements of composition
+are equally important. Both help assemble the Set and act on it. Exploration
+can produce material worth practicing; rehearsal can expose a transition,
+sound, or question that leads to another voicing, exercise, or variation. The
+Set stays available for revision throughout both activities.
+
+The ambient background in Woodshed's Mere makes relationships among its many
+catalogs perceptible during that work. The motivating analogy is a linguistic
+composition tool combining a dictionary, prosodic units and stress, grammar,
+rhyme, and meaning: the creative capability emerges from traversing and
+combining relationships and constraints. In Woodshed, musical catalogs,
+context, instrument realization, touch, and timing provide those dimensions.
+This analogy is design intent, not a claim of market uniqueness or a mandate
+to add a linguistic subsystem.
+
+The first complete flow is: stage Cmaj7 and Am7 on a selected instrument;
+inspect their shared C/E/G and B-to-A difference; discover and audition the
+Cmaj7 arpeggio; configure its articulation and timing; explicitly insert it
+into the Set; rehearse and loop the passage; close and reopen; then explore
+another realization or exercise with the Set and observations retained.
+
+Acceptance must include a human review of whether the relationships help make
+a musical choice and whether the resulting material is useful to drill.
+Automated arithmetic, scenario completion, and captures establish their own
+bounded evidence, not that creative or musical judgment.
+
+### Shared subjects and musical context
+
+Keep four identities distinct:
+
+| Subject | Meaning and ownership |
+| --- | --- |
+| Catalog entry | A named formula, exercise, or recipe; catalog-owned identity. |
+| Configured material | An entry with root/key and applicable settings; derived in musical context. |
+| Playable realization | Sounding pitches, positions where known, articulation, and timing resolved from configured material. |
+| Set occurrence | One authored Card with stable `CardId`; repeated material remains distinct. |
+
+Extend keyed subject resolution beyond the current chord/scale boundary.
+Progressions and exercises retain their recipe structure and preview the Cards
+they will produce. Arpeggios retain their relationship to a chord formula and
+their sequential articulation. Do not force every catalog kind into a new
+`Material` variant or flatten every recipe into an unordered pitch collection.
+Preserve source provenance when a recipe materializes into the Set.
+
+Context includes explicit key/mode where supplied, the selected occurrence or
+passage, effective instrument/tuning/capo, and applicable timing and touch.
+Root alone does not establish key or harmonic function. Unknown catalog names,
+unsupported relations, and unavailable realizations remain explicit.
+
+### Relationship queries and realization
+
+Add a portable query boundary in `woodshed-core` accepting the focus or passage,
+musical context, requested relation families, optional constraints, and a
+bounded discovery budget. Return stable candidate identities, all applicable
+reasons, authority, relevant measurements with units, realization readiness,
+and explicit actions. Disclose truncation and unsupported constraints. This is
+a proposed contract, not a compile-ready API.
+
+Initial relation coverage spans membership/containment, chord-arpeggio
+realization, extensions/alterations/transpositions/modes, progression
+membership and contextual roles, sounding-pitch and neck movement, exercise
+patterns and targets, and personal exploration/rehearsal evidence. Derive
+exercise links from actual recipe structure or authored targets; do not infer
+an exercise's teaching purpose from its title.
+
+Keep exact tone membership separate from contextual harmonic interpretations.
+Allow competing readings with their assumptions. Preserve multiple reasons
+between a pair. Ranking follows the selected question (share tones, explore
+another catalog, reduce neck movement, revisit material); it does not erase
+other relations or present one universal musical quality score.
+
+Constraints eventually compose: retain specified tones, stay in a fret window,
+preserve a selected shape, fit a duration, or satisfy a contextual role. Hard
+constraints and preferences remain distinct. A bounded search states its limits
+and returns an explanation when no compatible candidate exists.
+
+Generalize the selected-shape resolver into a shared playable event realization
+consumed by audition, fretboard, Rehearsal, and eventual Looper lowering. Events
+carry sounding pitches, stable display-position identities where known,
+articulation, and temporal position. Per-Card setup and explicit inheritance
+must resolve consistently. Formula previews remain clearly identified where a
+playable instrument realization is unavailable. Neck motion is not finger
+assignment or physical comfort.
+
+### Ambient Mere and explicit actions
+
+Authored Set occurrences remain prominent; derived catalog context forms the
+ambient background. Focus may be a Card, catalog subject, relation, or passage.
+Inspect reveals details; Hear auditions the specified realization; Compare
+explains differences; Stage previews and inserts material; Replace previews an
+occurrence edit; Expand traverses a neighborhood; Pin retains a discovery.
+Stage/Replace require an explicit action and preserve the appropriate occurrence
+identity. Exploration never silently edits the Set.
+
+Retain surviving positions and pinned discoveries as focus changes. Disclosure
+uses relation filters and a visible density budget; a list offers equivalent
+inspection, audition, and authoring with keyboard navigation. Respect the
+selected reading's spatial meaning: pins do not permit arbitrary dragging when
+coordinates encode musical distance. Persist authored material and explicitly
+saved exploration choices; derive catalog relationships rather than storing a
+second truth graph.
+
+### Rehearsal observations and return to exploration
+
+Separate inspection, audition, and staging from rehearsal observations.
+Correct `EngagementKind::is_practice` without rewriting historical staging into
+completed practice. New observations retain run identity, Set occurrence,
+catalog source, and event-time realization/context provenance sufficient to
+explain what was presented; current settings must not reinterpret old events.
+Legacy records lacking provenance stay qualified.
+
+Record active elapsed time, presented events, loop/transition activity, and
+completion according to explicit runner semantics. Starting playback does not
+prove successful performance. Optional player annotations can describe a
+practice intention, difficulty, or interesting result; audio assessment is a
+separate evidence source if implemented later. Exploration ranking and practice
+ranking use the relevant event classes while preserving both histories.
+
+### Ownership and implementation slices
+
+Pure musical operations stay in `woodshedding`; formula identities and catalog
+relations stay in `woodshed-graph`; contextual queries, realization orchestration,
+observations, and Set commands belong in `woodshed-core`; interaction belongs
+in `woodshed-views`; device execution belongs in audio/host layers. Scenograph
+projects Woodshed facts and routes typed actions to their owners. Move product
+coordination out of the view owner as each touched slice requires, following P1.
+
+The following slices develop exploration and drilling together. Each is open:
+
+| Slice | Done-condition |
+| --- | --- |
+| Chord → arpeggio → Set → rehearsal | A contextual relation leads to audition and explicit insertion; display/audio agree; the mixed Set can run and save/reopen with source and occurrence identity intact. |
+| Chord ↔ scale ↔ progression | Keyed containment and contextual explanations expose cross-catalog choices; recipe previews match staged Cards; the resulting mixed Set is rehearsable. |
+| Transition → alternative → focused drill | Two occurrences can be compared, a realization explicitly chosen, and that transition looped; pitches, setup, highlights, timing, and retained identity agree. |
+| Exercise discovery and construction | Links have actual structural or authored evidence; generated material is previewable and editable; the staged exercise preserves its declared target and can be drilled. |
+| History-informed exploration | Interest and runner activity remain distinct; repeated material and edited realizations have event-time provenance; suggestions disclose evidence and survive reopen. |
+| Passage constraints and lookahead | Multiple events accept locked choices and explicit constraints; alternatives preserve constraints, expose component costs and search limits, and can be staged and rehearsed. |
+
+The first integrated gate includes duplicate material, custom tuning/capo,
+missing catalog entries, unavailable shapes, pause/resume, edits during a run,
+keyboard graph/list parity, and fresh-process reopening. Record deterministic
+checks, native scenarios/captures, acoustic checks, and human review separately.
+Later passage search does not block the first cross-catalog flow. P7 remains
+responsible for Looper lowering and capture persistence.
+
+### Verified findings and progress
+
+- **2026-09-30:** inspected source at `5452419`. `woodshed-graph/src/lib.rs`
+  exposes five catalog kinds and typed relations; `woodshed-core/src/mere.rs`
+  joins catalog structure and history. `stage_context.rs` exposes Card/chord/scale
+  node kinds; `harmony.rs` resolves keyed chord/scale references;
+  `stage_candidates.rs::ranked_candidates` enumerates the 24 major/minor triads.
+  These existing boundaries explain why broad cross-catalog discovery requires
+  contextual adapters as well as additional relations.
+- **2026-09-30:** `history.rs::EngagementKind::is_practice` excludes only
+  `Previewed`, despite its comment distinguishing staging from practice.
+  `Engagement` carries source and elapsed-time fields but no event-time
+  occurrence/realization provenance. `card_shapes.rs` supplies selected chord
+  shapes; `rehearsal.rs` supplies stable Card identity and recipe provenance.
+- **2026-09-30:** maintainer endorsed the connected implementation direction
+  and authorized documenting it. Implementation and runtime validation remain
+  open; this update supplies acceptance targets and does not close P3-P7.
+
 ## Release baseline and 1.0 product proof
 
 The release baseline is reached when a clean checkout resolves the committed
