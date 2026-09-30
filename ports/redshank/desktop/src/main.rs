@@ -2243,7 +2243,10 @@ fn main() {
     let desktop = Rc::new(RefCell::new(desktop));
     // The self-drive lane, armed only by REDSHANK_SCENARIO.
     let diagnostics = desktop.borrow().persistence.diagnostics.clone();
-    let lane = Rc::new(RefCell::new(scenario::from_env(diagnostics)));
+    let lane = Rc::new(RefCell::new(scenario::from_env(
+        diagnostics,
+        desktop.clone(),
+    )));
     run(
         HostOptions {
             title: "Redshank".into(),
@@ -2733,6 +2736,92 @@ mod tests {
                 plain_text: "note".into()
             }
         );
+    }
+
+    #[test]
+    fn capture_projection_seals_redacted_ui_and_actual_persistence() {
+        let directory = tempfile::tempdir().unwrap();
+        let desktop = Rc::new(RefCell::new(desktop(directory.path())));
+        {
+            let mut owner = desktop.borrow_mut();
+            owner.persistence.revision = 8;
+            owner.persistence.durable = 3;
+            owner.persistence.in_flight = Some(7);
+            owner.persistence.failed = true;
+        }
+        let capture = diagnostics::CaptureContext::new(true, desktop.clone()).unwrap();
+        let mut state = RedshankSurfaceState::default();
+        let secret = "private-file-feed-title-token";
+        state.selected_feed = Some(secret.into());
+        state.notice = Some(secret.into());
+        state.compact.transport = redshank_surfaces::TransportState::Unavailable(secret.into());
+        state.set_text_draft(secret);
+        state.compact.now_playing = Some(redshank_surfaces::NowPlaying {
+            item_id: ItemId(secret.into()),
+            title: secret.into(),
+            feed_title: Some(secret.into()),
+            face: redshank_surfaces::Face::Artwork(secret.into()),
+            source: redshank_surfaces::SourceKind::Local,
+            position_ms: 42,
+            duration_ms: None,
+            resumed_from_ms: None,
+            buffered_percent: 100,
+            markers: Vec::new(),
+        });
+        let projection = capture.seal(&state).unwrap();
+        let encoded = serde_json::to_string(&projection.product).unwrap();
+        assert!(!encoded.contains(secret));
+        assert!(encoded.len() < 4096);
+        assert_eq!(projection.fields["transport"], "UNAVAILABLE");
+        assert_eq!(
+            projection.product["persistence_at_seal"]["dirty_revision"],
+            8
+        );
+        assert_eq!(
+            projection.product["persistence_at_seal"]["durable_revision"],
+            3
+        );
+        assert_eq!(
+            projection.product["persistence_at_seal"]["in_flight_revision"],
+            7
+        );
+        assert_eq!(projection.product["persistence_at_seal"]["failed"], true);
+        assert!(projection.product["diagnostic_admission_cut"].is_null());
+        assert!(projection.product["semantic_revision"].is_null());
+        assert!(projection.product["operation_cause"].is_null());
+        state.active_tab = redshank_surfaces::SurfaceTab::Notes;
+        desktop.borrow_mut().persistence.durable = 8;
+        assert_eq!(projection.product["rendered_ui"]["tab"], "Listen");
+        assert_eq!(
+            projection.product["persistence_at_seal"]["durable_revision"],
+            3
+        );
+        let later = capture.seal(&state).unwrap();
+        assert_eq!(later.product["rendered_ui"]["tab"], "Notes");
+        assert_eq!(later.product["persistence_at_seal"]["durable_revision"], 8);
+    }
+
+    #[test]
+    fn capture_projection_is_opt_in_and_uses_a_fixed_fresh_run() {
+        let directory = tempfile::tempdir().unwrap();
+        let desktop = Rc::new(RefCell::new(desktop(directory.path())));
+        assert!(diagnostics::CaptureContext::new(false, desktop.clone()).is_none());
+        let first = diagnostics::CaptureContext::new(true, desktop.clone()).unwrap();
+        let second = diagnostics::CaptureContext::new(true, desktop).unwrap();
+        assert_eq!(first.observer().run, first.observer().run);
+        assert_ne!(first.observer().run, second.observer().run);
+        assert!(first.observer().run.len() <= 128);
+    }
+
+    #[test]
+    fn capture_projection_fails_on_an_owner_borrow_conflict() {
+        let directory = tempfile::tempdir().unwrap();
+        let desktop = Rc::new(RefCell::new(desktop(directory.path())));
+        let capture = diagnostics::CaptureContext::new(true, desktop.clone()).unwrap();
+        let guard = desktop.borrow_mut();
+        assert!(capture.seal(&RedshankSurfaceState::default()).is_err());
+        drop(guard);
+        assert!(capture.seal(&RedshankSurfaceState::default()).is_ok());
     }
 
     fn desktop(directory: &std::path::Path) -> Desktop {

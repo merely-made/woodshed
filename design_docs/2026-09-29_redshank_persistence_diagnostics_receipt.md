@@ -125,3 +125,55 @@ copy bounds its own retention; it does not claim to bound existing producer
 queues or the model. The shared Woodshed target is retained for normal reuse;
 no isolated Cargo home was created. The clean collision worktree and its merged
 branch were removed after publication; the evidence remains under `Code/testing`.
+
+## September 30 presentation-paired continuation
+
+This continuation pins Mere `7eca52e0eff63e48976b939f3e6e4eba67052520` and
+Genet `7bf0e448a5c395cb5e205b73bcb277c73472e8c6` in Redshank's native and
+web manifests. Its workspace lock changes 40 source identities, preserving all
+package names, versions and dependency edges. Historical top-level Woodshed
+and Hocket pins retain their existing qualification. Concurrent transcript
+work remains separate.
+
+`REDSHANK_CAPTURE_CORRELATION=1` opts into the Mesquite presentation seal.
+The adapter borrows the actual UI runner and persistence owner at that boundary.
+It records fixed enum tags and scalar UI counts, actual dirty/durable/in-flight
+revision facts, and bounded diagnostic admission/loss context. It excludes
+titles, URLs, transcript text, notices and other raw product strings. The
+admission cut neither drains a reader nor manufactures a frame cause or durable
+acknowledgement. `operation_cause` and whole-application `semantic_revision`
+remain null. Capture run/request and presentation tokens independently carried
+with asynchronous pixels must exactly match the immutable seal.
+
+The containing desktop gate passes 68 tests, including five new capture
+controls and the existing actual persistence-worker cases. A deliberately
+introduced raw-status sampling defect fails the redaction control (exit 101);
+byte-exact restoration passes the focused control. Strict all-targets desktop
+Clippy and the locked/offline executable build pass on Rust 1.98.1, two jobs,
+zero dev/test debug, using the shared `C:/t/cargo-targets/woodshed`.
+
+Evidence and the paired/default native wrapper are under
+`Code/testing/redshank/capture-pairing`. Native qualification requires three
+ordered light/dark/light captures, actual persistence settlement, explicit
+bounded loss, independent seal/pixel token agreement, PNG dimensions and digest
+receipts. Wrong-dimension, stale-state and invented-cause receipt controls must
+fail. The paired and default native runs now pass, each with three visually
+reviewed nonblank 1720x1360 PNGs at scale 2. Paired requests 1/2/3 carry host 1
+and presentation sequences 22/25/28. Actual dirty and durable revisions agree
+at 3/4/5, with no in-flight or failed persistence; diagnostic admission cuts are
+19/25/31. Count-two retention reports 28 evictions and explicit gaps. Light,
+dark and light have frame digests `b2ecca2cd8366335`, `2589dcf284e1d6a5` and
+`b2ecca2cd8366335`. Default captures contain no optional pairing metadata.
+All three corrupted receipt controls are rejected. The first verifier run
+incorrectly treated the hexadecimal digest as a numeric field; its failure
+is preserved. Correcting the verifier rechecks the immutable paired evidence
+and runs only the missing default case; application source is unchanged.
+
+The qualified executable SHA256 is
+`F4300B899542EC3AEB5BD8D60AEADB45ADFA2012F5DDCC8D468601CFA18B31F4`.
+Native source/manifest/lock hashes and receipts accompany `native/summary.json`
+and `native/negative-controls.json`. The actual `redshank-web` locked/offline
+`wasm32-unknown-unknown` check passes using the same port workspace lock
+(`web-wasm-check.log`); no standalone lock or dependency drift is introduced.
+Browser compilation remains distinct from browser runtime, and queue
+presentation is distinct from compositor or physical-display visibility.
