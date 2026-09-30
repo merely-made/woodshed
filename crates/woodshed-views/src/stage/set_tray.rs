@@ -120,6 +120,7 @@ pub(super) fn card_editor(ui: &UiState) -> UiChild {
                     |ui: &mut UiState, _| ui.clear_card_window(),
                 ),
                 super::shapes::controls(ui),
+                super::connected::panel(ui),
             ),
         )
         .attr("class", "set-editor"),

@@ -326,3 +326,37 @@ fn neck_comparison_tracks_previous_card_and_shape_controls() {
         Err(woodshed_core::shape_movement::ShapeMovementUnavailable::RightUnselected)
     ));
 }
+
+#[test]
+fn connected_discovery_controls_stage_the_selected_shape_and_run_it() {
+    for width in [1_100.0, 420.0] {
+        let mut h = harness(width, 900.0);
+        h.update(|ui| {
+            ui.select_app_section(woodshed_core::storage::AppSection::Rehearsal);
+            ui.now_ms = Some(1_000);
+        });
+        assert!(h.click_on(&Selector::class("card-shape-next")));
+        let source = h.state().set.cards[0].id;
+        let setting = serde_json::to_value(&h.state().set.cards[0].setting).unwrap();
+        assert!(h.click_on(&Selector::class("t-btn").containing("Discover ")));
+        assert_eq!(h.state().set.cards.len(), 1);
+        assert_eq!(h.state().arpeggio_source, Some(source));
+        assert!(h.click_on(&Selector::class("t-btn").containing("Hear arpeggio")));
+        assert_eq!(h.state().set.cards.len(), 1);
+        assert!(!h.state().audio_requests.is_empty());
+        assert!(h.click_on(&Selector::class("t-btn").containing("Stage arpeggio")));
+        assert_eq!(h.state().set.cards.len(), 2);
+        assert_eq!(serde_json::to_value(&h.state().set.cards[1].setting).unwrap(), setting);
+        assert_ne!(h.state().set.cards[1].id, source);
+        h.update(|ui| {
+            ui.set.cursor = 1;
+            ui.now_ms = Some(2_000);
+        });
+        assert!(h.click_on(&Selector::class("t-btn").containing("Run")));
+        assert!(h.state().rehearsal_running);
+        h.update(|ui| ui.now_ms = Some(3_000));
+        assert!(h.click_on(&Selector::class("t-btn").containing("Pause")));
+        assert!(!h.state().rehearsal_running);
+        assert_eq!(h.state().practice_history.total_practiced_ms("arpeggio:Major"), 1_000);
+    }
+}

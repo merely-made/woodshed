@@ -13,6 +13,7 @@ pub mod arpeggio;
 pub mod arrangement;
 pub mod audio;
 pub mod card_shapes;
+pub mod connected_catalog;
 pub mod harmony;
 pub mod history;
 pub mod mere;
@@ -892,9 +893,9 @@ impl StageState {
                     // is exactly the erasure P4b removes: a pair that is both
                     // diatonic and practiced-after is both, and says so.
                     let explanation = if count == 1 {
-                        "Previously staged from here".to_string()
+                        "Previously practiced from here".to_string()
                     } else {
-                        format!("Staged from here {count} times")
+                        format!("Practiced from here {count} times")
                     };
                     suggestion.relations.insert(
                         0,
@@ -1922,7 +1923,26 @@ impl StageState {
     /// voicing; Solo plays only the marked positions' pitches; Mute plays the
     /// voicing minus the marked notes' pitch classes. Same shape tuple as
     /// [`Self::card_voicing`]. This is what the "hear it" paths resolve to.
+    /// Resolve inherited rehearsal tempo before articulation and dwell are
+    /// calculated, so a Card without a BPM uses the same clock as its runner.
+    pub fn card_sounding_pitches_at_tempo(
+        &self,
+        card: &Card,
+        fallback_bpm: f32,
+    ) -> (Vec<f32>, f32, f32) {
+        if card.timing.bpm.is_some() {
+            return self.card_sounding_pitches(card);
+        }
+        let mut effective = card.clone();
+        effective.timing.bpm = Some(fallback_bpm);
+        self.card_sounding_pitches(&effective)
+    }
+
     pub fn card_sounding_pitches(&self, card: &Card) -> (Vec<f32>, f32, f32) {
+        connected_catalog::arpeggiate_preview(card, self.card_sounding_pitches_unarticulated(card))
+    }
+
+    fn card_sounding_pitches_unarticulated(&self, card: &Card) -> (Vec<f32>, f32, f32) {
         let marked = &card.setting.marked;
         if marked.is_empty() || card.setting.mark_mode == MarkMode::Off {
             return self.card_voicing(card);
@@ -2528,7 +2548,7 @@ mod tests {
     }
 
     #[test]
-    fn related_history_promotes_a_prior_stage_path() {
+    fn related_history_promotes_a_prior_practice_path() {
         let mut s = StageState::new();
         s.set_lens(Lens::Scales);
         let dorian = s
@@ -2541,13 +2561,13 @@ mod tests {
         history.record(
             Some(1_000),
             woodshed_graph::chord_id("Minor 7"),
-            history::EngagementKind::Staged,
+            history::EngagementKind::Rehearsed,
             Some(woodshed_graph::scale_id("Dorian")),
             None,
         );
         let ranked = s.related_material_with_history(&history, 5);
         assert_eq!(ranked[0].title, "Minor 7");
-        assert_eq!(ranked[0].reason(), "Previously staged from here");
+        assert_eq!(ranked[0].reason(), "Previously practiced from here");
         assert!(ranked[0].has_evidence());
         // The theory relation that was there first survives the promotion: the
         // old boundary replaced it, which is the erasure P4b removes.

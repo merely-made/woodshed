@@ -18,6 +18,7 @@ muniment = { git = "https://github.com/merely-made/mere.git", rev = "8106c7c2063
 personae = { workspace = true }
 async-trait = "0.1"
 woodshed-core = { workspace = true }
+woodshedding = { workspace = true }
 woodshed-audio = { workspace = true }
 woodshed-views = { path = "../woodshed-views" }
 cambium = { workspace = true }

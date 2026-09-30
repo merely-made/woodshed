@@ -11,6 +11,15 @@ use woodshed_views::stage::UiState;
 
 use crate::shared::Shared;
 
+/// The host supplies event timestamps even while the view is idle between
+/// frames. Portable UI tests retain their deterministic supplied timestamps.
+pub fn wall_time_ms() -> Option<u64> {
+    std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .ok()
+        .map(|since| since.as_millis() as u64)
+}
+
 /// Whether a graph drag still needs the full time-driven state pass.
 ///
 /// Pointer dispatch has already rebuilt the retained tree for the moved node.
@@ -37,15 +46,16 @@ pub fn frame(shared: &mut Shared, ui: &mut UiState) -> bool {
     let midi_in_connected = shared.midi.connected_input().is_some();
     let midi_clock_bpm = shared.midi.clock_bpm();
     let midi_events = shared.midi.recent_events();
-    // Wall clock for the practice history. The core and the view layer read no
-    // clock of their own, so the host dates every engagement: refreshed once per
-    // frame, which leaves a click's event at most one frame stale — irrelevant
-    // at the granularity practice history means, and the alternative (a clock
-    // inside a portable crate) is what a browser host could not honour.
-    ui.now_ms = std::time::SystemTime::now()
-        .duration_since(std::time::UNIX_EPOCH)
-        .ok()
-        .map(|since| since.as_millis() as u64);
+    // Refresh frame observations from the host clock. Interaction handlers
+    // independently sample the injected event clock, since an idle view may
+    // have no intervening frames for a long pause.
+    ui.now_ms = wall_time_ms();
+
+    refresh_rehearsal_clock(
+        &mut shared.last_rehearsal_step,
+        &mut shared.last_rehearsal_instruction,
+        ui,
+    );
 
     let Some(backend) = shared.backend.as_mut() else {
         return false;
@@ -110,6 +120,27 @@ pub fn clock_out(ui: &UiState) -> (bool, bool, f32) {
     (ui.midi.clock_out, ui.transport.playing, ui.transport.bpm)
 }
 
+/// An occurrence edit, cursor change, tempo change or resume starts a fresh
+/// dwell. The old instruction's elapsed time must not advance its replacement.
+fn refresh_rehearsal_clock(
+    last: &mut Option<std::time::Instant>,
+    instruction: &mut Option<String>,
+    ui: &UiState,
+) {
+    let current = if ui.rehearsal_running {
+        ui.set.cards.get(ui.set.cursor).map(|card| {
+            serde_json::to_string(&(card, ui.transport.bpm.to_bits(), ui.card_started_ms))
+                .expect("Card and clock state are serializable")
+        })
+    } else {
+        None
+    };
+    if current != *instruction {
+        *last = None;
+        *instruction = current;
+    }
+}
+
 /// The rehearsal set's dwell transport: hold each card for its own dwell, then
 /// advance and voice what you land on.
 fn rehearsal_dwell(
@@ -136,7 +167,9 @@ fn rehearsal_dwell(
                 // Landed on a new card — voice its material ("hear it as you
                 // land").
                 let c = ui.set.cursor.min(ui.set.cards.len() - 1);
-                let (pitches, d, strum) = ui.stage.card_sounding_pitches(&ui.set.cards[c]);
+                let (pitches, d, strum) = ui
+                    .stage
+                    .card_sounding_pitches_at_tempo(&ui.set.cards[c], ui.transport.bpm);
                 if !pitches.is_empty() {
                     backend.preview_pitches(&pitches, d, strum);
                 }
@@ -145,9 +178,9 @@ fn rehearsal_dwell(
                 ui.rehearsal_running = false;
             }
             *last = Some(now);
-        }
+        },
         None => *last = Some(now),
-        _ => {}
+        _ => {},
     }
     true
 }
@@ -190,9 +223,46 @@ fn transport_steps(
                 }
             }
             *last = Some(now);
-        }
+        },
         None => *last = Some(now),
-        _ => {}
+        _ => {},
     }
     true
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn dwell_restarts_after_instruction_edits_cursor_changes_and_pause() {
+        let mut ui = UiState::new();
+        ui.stage.set_lens(woodshed_core::Lens::Chords);
+        ui.stage_current(None);
+        ui.stage_current(None);
+        ui.rehearsal_running = true;
+        let mut last = None;
+        let mut instruction = None;
+        refresh_rehearsal_clock(&mut last, &mut instruction, &ui);
+        let started = std::time::Instant::now();
+        last = Some(started);
+        refresh_rehearsal_clock(&mut last, &mut instruction, &ui);
+        assert_eq!(last, Some(started));
+        ui.set.cards[0].timing.bpm = Some(72.0);
+        refresh_rehearsal_clock(&mut last, &mut instruction, &ui);
+        assert!(last.is_none());
+        last = Some(started);
+        ui.set.cursor = 1;
+        refresh_rehearsal_clock(&mut last, &mut instruction, &ui);
+        assert!(last.is_none());
+        last = Some(started);
+        ui.transport.bpm = 96.0;
+        refresh_rehearsal_clock(&mut last, &mut instruction, &ui);
+        assert!(last.is_none());
+        last = Some(started);
+        ui.rehearsal_running = false;
+        refresh_rehearsal_clock(&mut last, &mut instruction, &ui);
+        assert!(last.is_none());
+        assert!(instruction.is_none());
+    }
 }

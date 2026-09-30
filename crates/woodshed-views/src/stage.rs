@@ -17,7 +17,9 @@ use cambium::{
 use woodshed_core::arrangement::{GraphArrangement, arrange_graph};
 use woodshed_core::audio::{AudioRequest, CalibrationStatus, TransportState, TunerState};
 use woodshed_core::harmony::KeyedCatalogRef;
-use woodshed_core::history::{EngagementKind, PracticeHistory, catalog_id_for_card};
+use woodshed_core::history::{
+    EngagementKind, ObservationProvenance, PracticeHistory, catalog_id_for_card,
+};
 use woodshed_core::mere::{MereScope, WoodshedMereSnapshot, woodshed_mere};
 use woodshed_core::search::{SearchHit, search_corpus};
 use woodshed_core::settings::{AppSettings, RelatedGraphScope, SettingsPage, StageGraphReading};
@@ -38,6 +40,7 @@ use crate::workspace::{
     WoodshedWorkspace, WorkspaceEffect, WorkspaceEvent, WorkspaceOutcome, WorkspacePanel,
 };
 
+mod connected;
 mod context;
 #[cfg(test)]
 mod context_tests;
@@ -435,6 +438,8 @@ fn stage_node_kind(kind: StageNodeKind, foreground: bool) -> &'static str {
         (false, StageNodeKind::Chord) => "context:Chord",
         (false, StageNodeKind::Scale) => "context:Scale",
         (false, StageNodeKind::Card) => "context:Card",
+        (true, StageNodeKind::Arpeggio) => "staged:Arpeggio",
+        (false, StageNodeKind::Arpeggio) => "context:Arpeggio",
     }
 }
 
@@ -882,10 +887,15 @@ pub struct UiState {
     /// is dated from here. `None` on a host that supplies no clock, which dates
     /// its events as unknown rather than as 1970.
     pub now_ms: Option<u64>,
+    /// Host clock sampled at the interaction boundary; deterministic tests
+    /// leave this absent and supply `now_ms` directly.
+    pub event_clock: Option<fn() -> Option<u64>>,
     /// When the rehearsal's active card became active. The span between this and
     /// the completion is the measured practice the evidence layer rests on, so
     /// it is a real elapsed measurement, not a per-card guess.
     pub card_started_ms: Option<u64>,
+    /// Authored instruction captured when its observed runner span opened.
+    pub rehearsal_observed_card: Option<Card>,
     // Set-graph hover and focus emphasis are owned by `cambium::graph_canvas`.
     // They were transient paint state this struct held only to route back into
     // the view on the next rebuild; the component keeps them now.
@@ -924,6 +934,10 @@ pub struct UiState {
     /// View-local focus in the wider Stage context graph. Focusing a
     /// background material does not change Set order or cursor selection.
     pub context_focus: Option<KeyedCatalogRef>,
+    /// Inspected cross-catalog discovery, anchored to an authored occurrence.
+    pub arpeggio_source: Option<CardId>,
+    /// A qualified failure from the latest discovery action.
+    pub discovery_notice: Option<String>,
     /// Captured on entering Pitch motion; browsing never retargets the layout.
     pub pitch_motion_anchor: Option<KeyedCatalogRef>,
     /// Keyed context identities already disclosed during this view session.
@@ -1002,7 +1016,9 @@ impl UiState {
             song_record_replace: false,
             set_tray_expanded: true,
             now_ms: None,
+            event_clock: None,
             card_started_ms: None,
+            rehearsal_observed_card: None,
             set_graph_card_expanded: false,
             set_graph_positions: BTreeMap::new(),
             set_graph_viewport: GraphViewport::default(),
@@ -1015,6 +1031,8 @@ impl UiState {
             related_expanded: false,
             related_relation: None,
             context_focus: None,
+            arpeggio_source: None,
+            discovery_notice: None,
             pitch_motion_anchor: None,
             context_disclosed: BTreeSet::new(),
             context_positions: BTreeMap::new(),
@@ -1271,6 +1289,7 @@ impl UiState {
     /// every dispatch (the `select` widget mutates only its own
     /// `SelectState`).
     pub fn sync(&mut self) {
+        self.sync_rehearsal_observation();
         self.stage.set_tuning(self.tuning_dd.selected);
         self.app_settings.tuning.tuning_idx = self.stage.tuning_idx;
         self.stage.set_root(self.root_dd.selected);
@@ -1644,12 +1663,21 @@ impl UiState {
     pub fn preview_voicing(&self) -> (Vec<f32>, f32, f32) {
         if self.section == AppSection::Rehearsal && !self.set.cards.is_empty() {
             let cursor = self.set.cursor.min(self.set.cards.len() - 1);
-            return self.stage.card_sounding_pitches(&self.set.cards[cursor]);
+            return self
+                .stage
+                .card_sounding_pitches_at_tempo(&self.set.cards[cursor], self.transport.bpm);
         }
         self.stage.voicing_preview()
     }
 
+    pub fn refresh_event_time(&mut self) {
+        if let Some(clock) = self.event_clock {
+            self.now_ms = clock();
+        }
+    }
+
     pub fn request_preview(&mut self) {
+        self.refresh_event_time();
         let subject_id = if self.section == AppSection::Rehearsal && !self.set.cards.is_empty() {
             let cursor = self.set.cursor.min(self.set.cards.len() - 1);
             catalog_id_for_card(&self.set.cards[cursor])
@@ -1675,6 +1703,7 @@ impl UiState {
     }
 
     pub fn stage_current(&mut self, from_id: Option<String>) {
+        self.refresh_event_time();
         let subject_id = self.stage.catalog_id();
         if let Some(card) = self.stage.card_from_lens() {
             self.set.push(card);
@@ -1700,41 +1729,99 @@ impl UiState {
     }
 
     pub fn record_rehearsal_cursor(&mut self) {
-        if self.set.cards.is_empty() {
+        self.refresh_event_time();
+        let Some(card) = self.current_card().cloned() else {
             return;
-        }
-        // The card is now the one being played, so this is where its practice
-        // span opens; `complete_rehearsal_cursor` closes it.
+        };
         self.card_started_ms = self.now_ms;
-        let cursor = self.set.cursor.min(self.set.cards.len() - 1);
-        if let Some(id) = catalog_id_for_card(&self.set.cards[cursor]) {
-            self.practice_history
-                .record(self.now_ms, id, EngagementKind::Rehearsed, None, None);
+        self.rehearsal_observed_card = Some(card.clone());
+        if let Some(id) = catalog_id_for_card(&card) {
+            self.practice_history.record_observation(
+                self.now_ms,
+                id,
+                EngagementKind::Rehearsed,
+                None,
+                None,
+                ObservationProvenance::capture(&card).ok(),
+            );
         }
     }
 
-    pub fn complete_rehearsal_cursor(&mut self) {
-        if self.set.cards.is_empty() {
+    fn finish_rehearsal_observation(&mut self, kind: EngagementKind) {
+        self.refresh_event_time();
+        let Some(card) = self.rehearsal_observed_card.take() else {
             return;
-        }
-        // Close the span opened when this card became active. Both ends must be
-        // dated for the measurement to mean anything, and a clock that went
-        // backwards (a system time change mid-session) yields no measurement
-        // rather than a wrapped one.
+        };
         let practiced_ms = match (self.now_ms, self.card_started_ms) {
             (Some(now), Some(started)) => now.checked_sub(started),
             _ => None,
         };
-        self.card_started_ms = self.now_ms;
-        let cursor = self.set.cursor.min(self.set.cards.len() - 1);
-        if let Some(id) = catalog_id_for_card(&self.set.cards[cursor]) {
-            self.practice_history.record(
+        self.card_started_ms = None;
+        if let Some(id) = catalog_id_for_card(&card) {
+            self.practice_history.record_observation(
                 self.now_ms,
                 id,
-                EngagementKind::Completed,
+                kind,
                 None,
                 practiced_ms,
+                ObservationProvenance::capture(&card).ok(),
             );
+        }
+    }
+
+    pub fn complete_rehearsal_cursor(&mut self) {
+        self.finish_rehearsal_observation(EngagementKind::Completed);
+    }
+
+    /// Pause closes only the active span. Resuming opens a fresh span, keeping
+    /// paused wall time out of observed runner duration.
+    pub fn toggle_rehearsal(&mut self) {
+        if self.rehearsal_running {
+            self.finish_rehearsal_observation(EngagementKind::Rehearsed);
+            self.rehearsal_observed_card = None;
+            self.card_started_ms = None;
+            self.rehearsal_running = false;
+        } else if !self.set.cards.is_empty() {
+            self.record_rehearsal_cursor();
+            self.rehearsal_running = true;
+            if let Some(card) = self.current_card() {
+                let (pitches, duration_s, strum_s) = self
+                    .stage
+                    .card_sounding_pitches_at_tempo(card, self.transport.bpm);
+                if !pitches.is_empty() {
+                    self.request(AudioRequest::PreviewPitches {
+                        pitches,
+                        duration_s,
+                        strum_s,
+                    });
+                }
+            }
+        }
+    }
+
+    /// Selection, removal and instruction edits close the old event-time
+    /// snapshot before the replacement instruction begins. No edit is credited
+    /// retroactively to the instruction it replaced.
+    fn sync_rehearsal_observation(&mut self) {
+        if !self.rehearsal_running {
+            return;
+        }
+        let changed = self
+            .rehearsal_observed_card
+            .as_ref()
+            .and_then(|card| serde_json::to_value(card).ok())
+            != self
+                .current_card()
+                .and_then(|card| serde_json::to_value(card).ok());
+        if changed {
+            self.finish_rehearsal_observation(EngagementKind::Rehearsed);
+            self.rehearsal_observed_card = None;
+            self.card_started_ms = None;
+            if self.set.cards.is_empty() {
+                self.rehearsal_running = false;
+            } else {
+                self.record_rehearsal_cursor();
+            }
         }
     }
 
@@ -1764,6 +1851,9 @@ impl UiState {
     ) -> Option<crate::workspace::WorkspaceSnapshotError> {
         session.restore(&mut self.stage, &app_settings);
         self.set = session.set.clone();
+        self.rehearsal_running = false;
+        self.rehearsal_observed_card = None;
+        self.card_started_ms = None;
         self.song = session.song.clone();
         self.practice_history = session.practice_history.clone();
         self.app_settings = app_settings;
@@ -1774,6 +1864,8 @@ impl UiState {
         self.set_graph_relation = None;
         self.related_relation = None;
         self.context_focus = None;
+        self.arpeggio_source = None;
+        self.discovery_notice = None;
         self.context_disclosed.clear();
         self.card_shape_notice = None;
         self.pitch_motion_anchor = (self.app_settings.stage.set_graph_reading
@@ -3469,24 +3561,23 @@ mod evidence_tests {
     }
 
     #[test]
-    fn completing_one_card_opens_the_next_cards_span() {
-        // The rehearsal advance completes a card and makes the next one active
-        // in the same beat, so the second span must start at the completion,
-        // not at whenever the run began.
+    fn completion_consumes_the_observed_span() {
+        // The host explicitly starts the next card after completion. A second
+        // completion without a new start cannot manufacture another span.
         let mut ui = staged_set();
         ui.now_ms = Some(1_000);
         ui.record_rehearsal_cursor();
         ui.now_ms = Some(5_000);
         ui.complete_rehearsal_cursor();
-        assert_eq!(ui.card_started_ms, Some(5_000));
+        assert_eq!(ui.card_started_ms, None);
         ui.now_ms = Some(6_500);
         ui.complete_rehearsal_cursor();
 
         let subject = catalog_id_for_card(&ui.set.cards[0]).expect("catalog subject");
         assert_eq!(
             ui.practice_history.total_practiced_ms(&subject),
-            4_000 + 1_500,
-            "each span measures its own card, and they do not overlap"
+            4_000,
+            "completion consumes the span; another completion cannot invent practice"
         );
     }
 }

@@ -35,6 +35,7 @@ pub enum StageNodeKind {
     Card,
     Chord,
     Scale,
+    Arpeggio,
 }
 
 /// One quiet catalog realization in the Circle-of-Fifths reading.
@@ -55,6 +56,7 @@ pub enum StageContextRelationKind {
     SharedTones,
     Diatonic,
     Fifth,
+    Arpeggiation,
 }
 
 impl StageContextRelationKind {
@@ -63,6 +65,7 @@ impl StageContextRelationKind {
             Self::SharedTones => "woodshed:keyed-shared-tones",
             Self::Diatonic => "woodshed:keyed-diatonic",
             Self::Fifth => "woodshed:circle-of-fifths",
+            Self::Arpeggiation => "woodshed:chord-arpeggio",
         }
     }
 
@@ -71,6 +74,7 @@ impl StageContextRelationKind {
             Self::SharedTones => "shares tones",
             Self::Diatonic => "diatonic in",
             Self::Fifth => "a fifth apart",
+            Self::Arpeggiation => "same tones, sequential touch",
         }
     }
 }
@@ -120,6 +124,68 @@ pub struct StageContextGraph {
     pub relations: Vec<StageContextRelation>,
     /// More eligible material existed than the requested context budget.
     pub truncated: bool,
+}
+
+/// Add the focused chord's sequential catalog form to a reading's bounded
+/// context. The reading still owns geometry; an arpeggio occupies its chord's
+/// musical coordinate with a representation offset, not a new tonal location.
+/// This retains existing context order and replaces only the last fresh node
+/// when the budget is full. It never edits authored material.
+pub fn disclose_chord_arpeggio(
+    graph: &mut StageContextGraph,
+    focus: &KeyedCatalogRef,
+    node_limit: usize,
+    omit: &BTreeSet<KeyedCatalogRef>,
+    retained: &BTreeSet<KeyedCatalogRef>,
+) {
+    let Some(name) = focus.formula_id.strip_prefix("chord:") else {
+        return;
+    };
+    if focus.to_material().is_none() {
+        return;
+    }
+    let arpeggio = KeyedCatalogRef {
+        formula_id: woodshed_graph::arpeggio_id(name),
+        root: focus.root,
+    };
+    if omit.contains(&arpeggio) {
+        return;
+    }
+    let to = StageNodeId::Catalog(arpeggio.clone());
+    if !graph.nodes.iter().any(|node| node.keyed == arpeggio) {
+        if node_limit == 0 {
+            graph.truncated = true;
+            return;
+        }
+        if graph.nodes.len() >= node_limit {
+            let Some(index) = graph
+                .nodes
+                .iter()
+                .rposition(|node| node.keyed != *focus && !retained.contains(&node.keyed))
+            else {
+                graph.truncated = true;
+                return;
+            };
+            let removed = graph.nodes.remove(index).id;
+            graph
+                .relations
+                .retain(|relation| relation.from != removed && relation.to != removed);
+            graph.truncated = true;
+        }
+        graph.nodes.push(StageContextNode {
+            id: to.clone(),
+            label: arpeggio.label().expect("validated chord"),
+            keyed: arpeggio,
+            kind: StageNodeKind::Arpeggio,
+            relation_distance: 0,
+        });
+    }
+    graph.relations.push(StageContextRelation {
+        from: StageNodeId::Catalog(focus.clone()),
+        to,
+        kind: StageContextRelationKind::Arpeggiation,
+        shared_tones: focus.pitch_classes().map_or(0, |pitches| pitches.len()),
+    });
 }
 
 /// Build a bounded, deterministic circle-of-fifths neighborhood.
@@ -222,7 +288,9 @@ pub fn circle_of_fifths_context(
 }
 
 fn kind_for(keyed: &KeyedCatalogRef) -> StageNodeKind {
-    if keyed.formula_id.starts_with("scale:") {
+    if keyed.formula_id.starts_with("arpeggio:") {
+        StageNodeKind::Arpeggio
+    } else if keyed.formula_id.starts_with("scale:") {
         StageNodeKind::Scale
     } else {
         StageNodeKind::Chord
@@ -410,5 +478,52 @@ mod tests {
         let context = circle_of_fifths_context(&focus, 12, &BTreeSet::new(), &retained);
         assert_eq!(context.nodes.len(), 12);
         assert_eq!(context.nodes[0].keyed, focus);
+    }
+
+    #[test]
+    fn arpeggio_disclosure_is_rooted_bounded_and_explains_the_relation() {
+        let focus = KeyedCatalogRef {
+            formula_id: "chord:Major 7".into(),
+            root: PitchClass::new(2),
+        };
+        let omit = BTreeSet::from([focus.clone()]);
+        let mut graph = circle_of_fifths_context(&focus, 4, &omit, &BTreeSet::new());
+        disclose_chord_arpeggio(&mut graph, &focus, 4, &omit, &BTreeSet::new());
+        assert_eq!(graph.nodes.len(), 4);
+        assert!(
+            graph
+                .nodes
+                .iter()
+                .any(|node| node.kind == StageNodeKind::Arpeggio
+                    && node.keyed.wire_key() == "arpeggio:Major 7@pc:2")
+        );
+        assert!(graph.relations.iter().any(|relation| relation.kind
+            == StageContextRelationKind::Arpeggiation
+            && relation.shared_tones == 4));
+        assert!(graph.relations.iter().all(|relation| relation.from
+            == StageNodeId::Catalog(focus.clone())
+            || graph.nodes.iter().any(|node| node.id == relation.from)));
+    }
+
+    #[test]
+    fn arpeggio_disclosure_preserves_pins_and_rejects_stale_formulas() {
+        let focus = major(0);
+        let mut graph = circle_of_fifths_context(
+            &focus,
+            1,
+            &BTreeSet::from([focus.clone()]),
+            &BTreeSet::new(),
+        );
+        let pinned = graph.nodes.iter().map(|node| node.keyed.clone()).collect();
+        let original = graph.clone();
+        disclose_chord_arpeggio(&mut graph, &focus, 1, &BTreeSet::new(), &pinned);
+        assert_eq!(graph.nodes, original.nodes);
+        let invalid = KeyedCatalogRef {
+            formula_id: "chord:Missing".into(),
+            root: PitchClass::new(0),
+        };
+        let original = graph.clone();
+        disclose_chord_arpeggio(&mut graph, &invalid, 2, &BTreeSet::new(), &BTreeSet::new());
+        assert_eq!(graph, original);
     }
 }
