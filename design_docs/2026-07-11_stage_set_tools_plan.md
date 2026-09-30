@@ -420,14 +420,15 @@ not independently rehearsable products or a runtime catalog-pack facility.
    catalog change. Rhythm, articulation, and melodic sequences offer useful
    combinations beyond adding scale names. Microtonal catalogs require a pitch
    model beyond the current twelve-tone assumptions.
-3. Build the lexical composition lane with separate pronunciation and semantic
-   records. [CMUdict](https://github.com/cmusphinx/cmudict) supplies English
-   pronunciations and stress markers for rhyme/prosody exploration;
-   [Open English WordNet](https://en-word.net/) supplies meanings, synonyms,
-   and semantic relations under CC BY 4.0. Preserve their attribution and
-   pronunciation alternatives. Neither dataset alone supplies grammar rules,
-   contextual prosody, or a mora model. Validate these layers explicitly and
-   connect their typed relations to the same deliberate composition workflow.
+The linguistic composition direction belongs primarily to **Knot Editor**, per
+Markik's 2026-09-30 clarification, and was handed off to
+[the Knot task](codex://threads/01a0eb5b-546e-7fb2-a492-a873e8b12343).
+It concerns pronunciation, stress, rhyme, grammar, meanings, and mora-like word
+division. CMUdict and Open English WordNet remain possible resources for that
+separate planning effort; neither is selected or integrated here. Woodshed's
+catalog expansion remains musical material, playable recipes, and their typed
+relationships. The shared principle is deliberate work combined with lateral
+exploration; it does not make Woodshed the owner of Knot's lexical records.
 
 Woodshed earns a 1.0 practice claim only when one persisted flow demonstrates
 all four parts together:
