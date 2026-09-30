@@ -41,6 +41,7 @@ use crate::workspace::{
 };
 
 mod connected;
+mod connected_scales;
 mod context;
 #[cfg(test)]
 mod context_tests;
@@ -929,6 +930,11 @@ pub struct UiState {
     pub arpeggio_source: Option<CardId>,
     /// A qualified failure from the latest discovery action.
     pub discovery_notice: Option<String>,
+    /// Formula-containment exploration anchored to an authored chord occurrence.
+    pub scale_source: Option<CardId>,
+    pub scale_subject: Option<KeyedCatalogRef>,
+    pub scale_notice: Option<String>,
+    pub scale_limit: usize,
     /// Captured on entering Pitch motion; browsing never retargets the layout.
     pub pitch_motion_anchor: Option<KeyedCatalogRef>,
     /// Keyed context identities already disclosed during this view session.
@@ -1024,6 +1030,10 @@ impl UiState {
             context_focus: None,
             arpeggio_source: None,
             discovery_notice: None,
+            scale_source: None,
+            scale_subject: None,
+            scale_notice: None,
+            scale_limit: 4,
             pitch_motion_anchor: None,
             context_disclosed: BTreeSet::new(),
             context_positions: BTreeMap::new(),
@@ -1857,6 +1867,10 @@ impl UiState {
         self.context_focus = None;
         self.arpeggio_source = None;
         self.discovery_notice = None;
+        self.scale_source = None;
+        self.scale_subject = None;
+        self.scale_notice = None;
+        self.scale_limit = 4;
         self.context_disclosed.clear();
         self.card_shape_notice = None;
         self.pitch_motion_anchor = (self.app_settings.stage.set_graph_reading
@@ -3440,8 +3454,10 @@ mod evidence_tests {
             "Cambium fans every relation cell onto its own visible route"
         );
         let selected = swatch.selected.expect("selected occurrence");
-        assert!(swatch.projected_node_footprint(&selected).is_none(),
-            "the editor beside the graph must not reserve an in-canvas footprint");
+        assert!(
+            swatch.projected_node_footprint(&selected).is_none(),
+            "the editor beside the graph must not reserve an in-canvas footprint"
+        );
     }
 
     #[test]

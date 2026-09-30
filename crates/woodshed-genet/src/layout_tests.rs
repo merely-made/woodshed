@@ -384,3 +384,118 @@ fn expanded_graph_editor_keeps_discovery_outside_the_canvas() {
     assert!(h.click_on(&Selector::class("t-btn").containing("Stage arpeggio")));
     assert_eq!(h.state().set.cards.len(), 2);
 }
+
+#[test]
+fn compatible_scale_controls_choose_audition_stage_and_drill_without_changing_the_chord() {
+    use woodshed_core::{audio::AudioRequest, storage::AppSection};
+    use woodshedding::rehearsal::{Hold, Material, Touch};
+    for width in [1_100.0, 420.0] {
+        let mut h = harness(width, 900.0);
+        h.update(|ui| {
+            ui.set.cards.clear();
+            ui.stage.set_root(3); // C in the A-first picker.
+            ui.root_dd.selected = 3;
+            let major_seven = ui
+                .stage
+                .chords()
+                .iter()
+                .position(|chord| chord.name == "Major 7")
+                .unwrap();
+            ui.stage.select_chord(major_seven);
+            ui.stage_current(None);
+            ui.set.cards[0].timing.bpm = Some(90.0);
+            ui.set.cards[0].timing.hold = Hold::Bars(1);
+            ui.select_app_section(AppSection::Rehearsal);
+            ui.now_ms = Some(1_000);
+        });
+        assert!(h.click_on(&Selector::class("card-shape-next")));
+        let source = h.state().set.cards[0].id;
+        let source_before = serde_json::to_value(&h.state().set.cards[0]).unwrap();
+        assert!(h.click_on(&Selector::class("t-btn").containing("Explore compatible scales")));
+        assert_eq!(h.state().set.cards.len(), 1);
+        assert!(h.click_on(&Selector::class("scale-choice").containing("C Major")));
+        assert!(h.click_on(&Selector::class("t-btn").containing("Hear scale")));
+        assert_eq!(
+            h.state().set.cards.len(),
+            1,
+            "hearing a relationship cannot author the Set"
+        );
+        let heard = match h.state().audio_requests.last().unwrap() {
+            AudioRequest::PreviewPitches {
+                pitches,
+                duration_s,
+                strum_s,
+            } => {
+                assert!(!pitches.is_empty());
+                assert!(
+                    *strum_s > 0.0,
+                    "scale audition visits its notes in sequence"
+                );
+                (pitches.clone(), *duration_s, *strum_s)
+            },
+            request => panic!("unexpected scale audition request: {request:?}"),
+        };
+        assert!(h.click_on(&Selector::class("t-btn").containing("Stage scale")));
+        assert_eq!(h.state().set.cards.len(), 2);
+        assert_eq!(
+            serde_json::to_value(&h.state().set.cards[0]).unwrap(),
+            source_before,
+            "discovery and explicit staging preserve the source chord and its chosen shape"
+        );
+        let added = h.state().set.cards[1].id;
+        let scale = &h.state().set.cards[1];
+        assert_ne!(added, source);
+        assert!(matches!(&scale.material, Material::Scale { name, .. } if name == "Major"));
+        assert!(matches!(scale.touch, Touch::Walk));
+        assert!(scale.setting.voicing_idx.is_none());
+        assert!(scale.setting.voicing_fingerprint.is_none());
+        assert!(scale.setting.voicing_profile.is_none());
+        assert_eq!(
+            serde_json::to_value(&scale.timing).unwrap(),
+            source_before["timing"]
+        );
+        assert_eq!(
+            h.state().practice_history.total_practiced_ms("scale:Major"),
+            0
+        );
+        h.update(|ui| {
+            ui.set.select_id(added);
+            ui.now_ms = Some(2_000);
+        });
+        assert_eq!(
+            h.state().preview_voicing(),
+            heard,
+            "rehearsal consumes the material auditioned during discovery"
+        );
+        assert!(h.click_on(&Selector::class("t-btn").containing("Run")));
+        assert!(h.state().rehearsal_running);
+        h.update(|ui| ui.now_ms = Some(3_000));
+        assert!(h.click_on(&Selector::class("t-btn").containing("Pause")));
+        assert!(!h.state().rehearsal_running);
+        assert_eq!(
+            h.state().practice_history.total_practiced_ms("scale:Major"),
+            1_000
+        );
+        assert_eq!(
+            h.state()
+                .practice_history
+                .total_practiced_ms("chord:Major 7"),
+            0
+        );
+    }
+}
+
+#[test]
+fn reopened_scale_editor_has_no_empty_chord_discovery_panels() {
+    let mut h = harness(1_100.0, 900.0);
+    h.update(|ui| {
+        ui.section = woodshed_core::storage::AppSection::Rehearsal;
+        ui.set.cards[0].material = woodshedding::rehearsal::Material::Scale {
+            name: "Major".into(),
+            root: woodshedding::pitch::PitchClass::new(0),
+        };
+    });
+    let dom = h.runner().dom();
+    let dom = dom.borrow();
+    assert!(taproot::matching(&dom, &Selector::class("stage-context-panel")).is_empty());
+}

@@ -306,6 +306,31 @@ The first slice is not accepted solely because each lane reports success.
   viewport; this receipt qualifies the recorded zoom, not all viewport/zoom
   combinations. Listening and keyboard acceptance remain open.
 
+- **2026-09-30:** the next bounded slice adds rooted chord-to-scale formula
+  containment in `connected_scales.rs`, explicit Explore/Hear/Stage actions,
+  and progressive disclosure from four to 32 choices. Ranking prefers the same
+  root, named Major/Minor scales, then fewer added tones and stable name/root
+  ordering; this is a disclosure preference, not a suitability score. Actions
+  revalidate the source occurrence and chosen keyed scale. A new Walk Card
+  preserves authored setup, timing, and recipe while clearing chord shape and
+  note marks. Chord-scale containment does not transpose from a capoed shape.
+  This implements the chord-to-scale portion of the second slice; progression
+  recipes, scale fingering, and general instrument realization remain open.
+  General scale display still uses live tuning; formula audition uses written
+  pitch classes and the existing short cascade, not synchronized event timing.
+  Persisted per-Card setup is not evidence those realization gaps are closed.
+- **2026-09-30:** scale integration passes 278 tests (core 144, integration 1,
+  examples 10, graph 14, views 69, desktop 40), including wide/narrow production
+  click dispatch, repeated occurrence identity, stale source/candidate rejection,
+  and fresh-process chord/arpeggio/scale restoration with separate observations.
+  Desktop build passes. Receipts live under `testing/woodshed/scales-20260930/`.
+  Final native seed/reopen scenarios pass with three presented captures, all
+  inspected: the scale stages, runs/pauses, and restores in a separate process.
+  The earlier Stage layout scenario also passes at recorded zoom with four
+  captures. Native formula audition dispatch is not acoustic correctness or
+  successful player performance; keyboard and listening review remain open.
+  Hidden discovery panels now omit their empty styled boxes.
+
 **First-slice qualification:** functional discovery, staging, sequential-onset
 preview, runner observation boundaries, and filesystem reopening are implemented
 and automatically tested. The synth sustains prior tones through the cascade;

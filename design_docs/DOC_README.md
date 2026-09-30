@@ -80,7 +80,11 @@ before any other doc in this directory.
   The first chord/arpeggio connection passes automated discovery, host controls,
   and filesystem reopening checks. Native seed/reopen passes with six inspected
   captures. The editor layout correction also has a four-capture native receipt
-  at recorded zoom; broader layout, keyboard, listening, and full articulation acceptance remain open.
+  at recorded zoom. The bounded chord-to-scale slice adds formula containment,
+  explicit audition/staging, progressive disclosure, and mixed-Set reopening,
+  with 278 automated checks and three inspected native seed/reopen captures;
+  instrument realization, progression recipes, keyboard, listening, and full
+  articulation acceptance remain open.
 - [2026-08-27_smart_instrument_plan.md](2026-08-27_smart_instrument_plan.md)
   — **W1 and W2 landed and hardware-verified; W3 open.** The
   `woodshed-instrument` connection and metronome authority model work in both
