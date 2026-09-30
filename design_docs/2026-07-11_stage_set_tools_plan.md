@@ -63,7 +63,8 @@ is a typed `Next` edge. Selecting a node opens the same Card editor used by the
 tray. Harmonic and historical edges may be layered onto this snapshot, but they
 do not become a parallel material document or overwrite Set order.
 
-This graph is the Stage workspace, not merely a diagram beside it. Staging
+This graph is the Set's domain workspace, within the wider session Mere rather
+than the application's complete dataspace. Staging
 material adds a Card occurrence to the Set and therefore a node to the graph.
 The same occurrence may appear as a numbered glyph, a compact summary, or its
 full editable Card. Expansion state belongs to the projection; Card edits land
@@ -72,6 +73,74 @@ accessible operation rather than a second workflow.
 
 The Looper is deliberately smaller than a DAW. It does not introduce tracks,
 arrangement sections, editing lanes, effects chains, or a song-authoring mode.
+
+## Session Mere and focused working projections
+
+**2026-09-30 maintainer direction:** the catalog/history swatch and the larger
+Set graph expose narrower relationships while leaving the session's organizing
+graph implicit. The Mere must account for retained artifacts, working views,
+and real active processes, with navigable relations between them. A Set graph
+and a fretboard are focused working projections inside that context. A useful
+overview must first answer what is retained, what is open, and what is running.
+
+This slice establishes that hierarchy using Woodshed's actual local state:
+the working Set, an explicit retained Set snapshot library, the Looper form,
+catalog exploration, practice history, and the existing shared-workbench views.
+It does not fabricate multiple running sessions or import a foreign authority.
+The catalog is reachable as a collection; the overview does not materialize its
+entire contents beside every working artifact.
+
+Artifact, view and process identities remain separate. Saving a Set snapshot
+creates a fresh retained artifact without changing the working Set. Opening a
+copy retains the previous working Set before replacing its content and assigns
+fresh working Card occurrence IDs. The saved artifact remains unchanged.
+An active rehearsal or Looper is disclosed from runtime facts; navigation does
+not start or stop it, and restart does not automatically resume playback.
+Derived snapshot lineage, view presentation and process consumption are typed
+relations, with their meaning distinct from harmonic catalog relationships.
+
+The shared `workbench` supplies tab/tree mechanics and Cambium's graph canvas
+supplies the navigation projection. Graphshell's port informs the separation
+of source bindings, occurrence identity, retained navigation and product-owned
+actions; it is not imported as a second owner of Woodshed data. Canonical family
+boundaries remain in `mere/design_docs/TERMINOLOGY.md` and
+`mere/design_docs/2026-08-12_family_composition_thesis_brief.md`.
+
+The permanent miniature catalog graph is removed from the ordinary Stage
+suggestion panel. Suggestions remain available as explained actions, and their
+catalog relationship view remains a deliberate focused projection. The session
+Mere provides the broader graph and an accessible roster over the same subjects.
+
+The selected Card inspector separates its compact parameter controls from
+shape controls, descriptions and discovery actions. Descriptions have their own
+vertical blocks; action rows have bounded usable buttons. Expanding an editor
+does not put a paragraph into the same wrapping row as tempo and fret buttons.
+
+Validation must distinguish portable model checks, production click/layout
+checks, fresh-process persistence, and inspected presented captures. Native
+Mere navigation, retained snapshot save/open, live activity, narrow Card layout,
+and reopening are separate acceptance points; catalog graph density and audio
+quality retain their previous qualifications.
+
+The integrated gate passes 528 checks: core 173, persistence integration 1,
+desktop 56, graph 14, views 89, theory 181, documentation 4, and examples 10.
+Production desktop checks cover 1100px and 420px layouts, pure overview
+inspection/navigation, immutable snapshots, fresh working Card identities,
+stale discovery cleanup, and an independent fresh-process persistence receipt.
+Legacy four-panel workspace restoration preserves its saved presentation until
+Mere is explicitly opened.
+
+Native scenarios `session_mere.scn`, `session_mere_reopen.scn`, and
+`session_mere_narrow.scn` make save/open, live rehearsal navigation, pause,
+reopening, and 420px presentation repeatable. Run seed, then reopen, then
+narrow: the reopen scenario deliberately verifies that the final Mere selection
+from the seed survives restart. The narrow scenario ends in the Set view.
+Wide Card descriptions use a bounded 760px explanation area; narrow canvas
+labels abbreviate without changing full roster/inspector labels or identity.
+The exact committed-revision capture receipt is kept outside the repository in
+`/Users/markik/Code/testing/woodshed/mere-20260930/receipt.json`.
+This slice does not establish acoustic quality, release packaging, or foreign
+projection mounting; those retain their separate acceptance conditions.
 
 ## Connected exploration and deliberate practice
 

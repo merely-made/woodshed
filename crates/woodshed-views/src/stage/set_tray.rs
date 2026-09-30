@@ -84,46 +84,58 @@ pub(super) fn card_editor(ui: &UiState) -> UiChild {
                     }),
                 )
                 .attr("class", "card-rename"),
-                clickable(
-                    el("div", text(format!("Touch: {}", touch_label(&card.touch))))
-                        .attr("class", "t-btn"),
-                    |ui: &mut UiState, _| ui.cycle_card_touch(),
-                ),
-                clickable(
-                    el(
-                        "div",
-                        text(format!("Hold: {}", hold_label(&card.timing.hold))),
-                    )
-                    .attr("class", "t-btn"),
-                    |ui: &mut UiState, _| ui.cycle_card_hold(),
-                ),
-                clickable(
-                    el("div", text("-")).attr("class", "t-btn t-narrow"),
-                    |ui: &mut UiState, _| ui.nudge_card_bpm(-5.0),
-                ),
-                el("div", text(bpm)).attr("class", "t-readout"),
-                clickable(
-                    el("div", text("+")).attr("class", "t-btn t-narrow"),
-                    |ui: &mut UiState, _| ui.nudge_card_bpm(5.0),
-                ),
-                clickable(
-                    el("div", text("<")).attr("class", "t-btn t-narrow"),
-                    |ui: &mut UiState, _| ui.shift_card_window(-1),
-                ),
-                el("div", text(window)).attr("class", "t-readout"),
-                clickable(
-                    el("div", text(">")).attr("class", "t-btn t-narrow"),
-                    |ui: &mut UiState, _| ui.shift_card_window(1),
-                ),
-                clickable(
-                    el("div", text("Free position")).attr("class", "t-btn"),
-                    |ui: &mut UiState, _| ui.clear_card_window(),
-                ),
+                el(
+                    "div",
+                    (
+                        clickable(
+                            el("div", text(format!("Touch: {}", touch_label(&card.touch))))
+                                .attr("class", "t-btn"),
+                            |ui: &mut UiState, _| ui.cycle_card_touch(),
+                        ),
+                        clickable(
+                            el(
+                                "div",
+                                text(format!("Hold: {}", hold_label(&card.timing.hold))),
+                            )
+                            .attr("class", "t-btn"),
+                            |ui: &mut UiState, _| ui.cycle_card_hold(),
+                        ),
+                        clickable(
+                            el("div", text("-")).attr("class", "t-btn t-narrow"),
+                            |ui: &mut UiState, _| ui.nudge_card_bpm(-5.0),
+                        ),
+                        el("div", text(bpm)).attr("class", "t-readout"),
+                        clickable(
+                            el("div", text("+")).attr("class", "t-btn t-narrow"),
+                            |ui: &mut UiState, _| ui.nudge_card_bpm(5.0),
+                        ),
+                        clickable(
+                            el("div", text("<")).attr("class", "t-btn t-narrow"),
+                            |ui: &mut UiState, _| ui.shift_card_window(-1),
+                        ),
+                        el("div", text(window)).attr("class", "t-readout"),
+                        clickable(
+                            el("div", text(">")).attr("class", "t-btn t-narrow"),
+                            |ui: &mut UiState, _| ui.shift_card_window(1),
+                        ),
+                        clickable(
+                            el("div", text("Free position")).attr("class", "t-btn"),
+                            |ui: &mut UiState, _| ui.clear_card_window(),
+                        ),
+                    ),
+                )
+                .attr("class", "card-control-row"),
                 super::shapes::controls(ui),
-                super::connected::panel(ui),
-                super::connected_scales::panel(ui),
-                super::scale_patterns::panel(ui),
-                super::chord_approaches::panel(ui),
+                el(
+                    "div",
+                    (
+                        super::connected::panel(ui),
+                        super::connected_scales::panel(ui),
+                        super::scale_patterns::panel(ui),
+                        super::chord_approaches::panel(ui),
+                    ),
+                )
+                .attr("class", "card-explanation-section"),
             ),
         )
         .attr("class", "set-editor"),

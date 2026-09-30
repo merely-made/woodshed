@@ -151,19 +151,26 @@ pub(super) fn controls(ui: &UiState) -> UiChild {
         el(
             "div",
             (
-                clickable(
-                    el("div", text("Previous shape")).attr("class", "t-btn card-shape-prev"),
-                    |ui: &mut UiState, _| ui.step_card_shape(-1),
-                ),
-                el("div", text(status)).attr("class", "t-readout card-shape-status"),
-                clickable(
-                    el("div", text("Next shape")).attr("class", "t-btn card-shape-next"),
-                    |ui: &mut UiState, _| ui.step_card_shape(1),
-                ),
-                clickable(
-                    el("div", text("All tones")).attr("class", "t-btn card-shape-clear"),
-                    |ui: &mut UiState, _| ui.clear_selected_card_shape(),
-                ),
+                el(
+                    "div",
+                    (
+                        clickable(
+                            el("div", text("Previous shape"))
+                                .attr("class", "t-btn card-shape-prev"),
+                            |ui: &mut UiState, _| ui.step_card_shape(-1),
+                        ),
+                        el("div", text(status)).attr("class", "t-readout card-shape-status"),
+                        clickable(
+                            el("div", text("Next shape")).attr("class", "t-btn card-shape-next"),
+                            |ui: &mut UiState, _| ui.step_card_shape(1),
+                        ),
+                        clickable(
+                            el("div", text("All tones")).attr("class", "t-btn card-shape-clear"),
+                            |ui: &mut UiState, _| ui.clear_selected_card_shape(),
+                        ),
+                    ),
+                )
+                .attr("class", "card-shape-control-row"),
                 notice.map(|message| el("div", text(message)).attr("class", "card-shape-notice")),
                 movement_details(ui),
             ),

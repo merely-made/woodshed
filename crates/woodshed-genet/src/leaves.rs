@@ -114,11 +114,58 @@ fn hasher() -> std::collections::hash_map::DefaultHasher {
 /// Refresh every leaf from the current state. Called from the frame hook,
 /// before the host lays out and paints.
 pub fn sync_all(shared: &mut Shared, ui: &UiState, leaves: &mut LeafRegistry<u64>) {
+    sync_overview(shared, ui, leaves);
     sync_related_swatch(shared, ui, leaves);
     sync_set_graph_swatch(shared, ui, leaves);
     sync_fretboard(shared, ui, leaves);
     sync_fretboard_active(ui, leaves);
     sync_rehearsal_fretboard(shared, ui, leaves);
+}
+
+/// The session Mere uses the same graph geometry for paint and native hit targets.
+fn sync_overview(shared: &mut Shared, ui: &UiState, leaves: &mut LeafRegistry<u64>) {
+    let swatch = woodshed_views::stage::overview_swatch(ui);
+    let mut h = hasher();
+    swatch.width.hash(&mut h);
+    swatch.height.hash(&mut h);
+    swatch.viewport.pan.0.to_bits().hash(&mut h);
+    swatch.viewport.pan.1.to_bits().hash(&mut h);
+    swatch.viewport.zoom.to_bits().hash(&mut h);
+    for node in &swatch.graph.nodes {
+        node.id.hash(&mut h);
+        node.position.0.to_bits().hash(&mut h);
+        node.position.1.to_bits().hash(&mut h);
+        node.kind.hash(&mut h);
+    }
+    for relation in &swatch.relations {
+        relation.id.hash(&mut h);
+        relation.visible.hash(&mut h);
+        relation.emphasized.hash(&mut h);
+        for point in &relation.route {
+            point.0.to_bits().hash(&mut h);
+            point.1.to_bits().hash(&mut h);
+        }
+    }
+    swatch.selected.hash(&mut h);
+    swatch.hovered.hash(&mut h);
+    let sig = h.finish();
+    if sig == shared.overview_sig {
+        return;
+    }
+    shared.overview_sig = sig;
+    let leaf = swatch.paint_leaf(|kind: &&str| {
+        let (r, g, b) = match *kind {
+            "artifact" => (0.93, 0.70, 0.28),
+            "view" => (0.47, 0.63, 0.82),
+            "process" => (0.85, 0.40, 0.32),
+            _ => (0.30, 0.67, 0.70),
+        };
+        sprigging::ColorF { r, g, b, a: 1.0 }
+    });
+    leaves.insert(
+        woodshed_views::stage::OVERVIEW_GRAPH_LEAF_KEY,
+        Box::new(leaf),
+    );
 }
 
 /// Refresh only the Set graph leaf during a view-local node drag.

@@ -11,6 +11,7 @@ use woodshed_views::stage::{UiChild, UiState, stage_root};
 
 fn harness(width: f32, height: f32) -> Harness<UiState, crate::sync::Logic, UiChild> {
     let mut ui = UiState::new();
+    ui.activate_workspace_panel(woodshed_views::workspace::WorkspacePanel::Practice);
     ui.stage.set_lens(woodshed_core::Lens::Chords);
     ui.stage_current(None);
     ui.set_viewport_width(width);
@@ -38,6 +39,167 @@ fn rect(
     harness
         .painted_rect(id)
         .unwrap_or_else(|| panic!("unpainted .{class}"))
+}
+
+fn class_count(h: &Harness<UiState, crate::sync::Logic, UiChild>, class: &str) -> usize {
+    let node = h.runner().dom();
+    let dom = node.borrow();
+    taproot::matching(&dom, &Selector::class(class)).len()
+}
+
+#[test]
+fn session_overview_inspects_retains_and_opens_real_work_without_navigation_side_effects() {
+    use woodshed_core::session_overview::{OverviewNodeId, OverviewProcess};
+    use woodshed_views::workspace::WorkspacePanel;
+    for width in [1_100.0, 420.0] {
+        let mut h = harness(width, 664.0);
+        h.update(|ui| {
+            ui.now_ms = Some(1_000);
+            ui.toggle_rehearsal();
+            ui.song_playing = true;
+            ui.tuner.enabled = true;
+        });
+        let originals = serde_json::to_value(&h.state().set).unwrap();
+        let history_len = h.state().practice_history.len();
+        assert!(h.click_on(&Selector::class("workspace-panel").containing("Mere")));
+        let snapshot = woodshed_views::stage::overview_snapshot(h.state());
+        assert!(
+            snapshot
+                .nodes
+                .iter()
+                .any(|node| node.id == OverviewNodeId::Process(OverviewProcess::Rehearsal))
+        );
+        assert!(
+            snapshot
+                .nodes
+                .iter()
+                .any(|node| node.id == OverviewNodeId::Process(OverviewProcess::Looper))
+        );
+        assert!(
+            snapshot
+                .nodes
+                .iter()
+                .any(|node| node.id == OverviewNodeId::Process(OverviewProcess::Tuner))
+        );
+        assert!(h.click_on(&Selector::class("overview-node-title").containing("Working Set")));
+        assert_eq!(
+            h.state().workspace.active_panel(),
+            Some(WorkspacePanel::Overview)
+        );
+        assert_eq!(serde_json::to_value(&h.state().set).unwrap(), originals);
+        assert_eq!(h.state().practice_history.len(), history_len);
+        assert!(h.state().rehearsal_running && h.state().song_playing && h.state().tuner.enabled);
+        assert!(h.click_on(&Selector::class("overview-open")));
+        assert_eq!(
+            h.state().workspace.active_panel(),
+            Some(WorkspacePanel::Set)
+        );
+        assert!(h.state().rehearsal_running);
+        for (label, section) in [
+            ("Looper playing", woodshed_core::storage::AppSection::Looper),
+            ("Tuner listening", woodshed_core::storage::AppSection::Tools),
+        ] {
+            assert!(h.click_on(&Selector::class("workspace-panel").containing("Mere")));
+            assert!(h.click_on(&Selector::class("overview-node-title").containing(label)));
+            assert!(h.click_on(&Selector::class("overview-open")));
+            assert_eq!(h.state().section, section);
+            assert!(
+                h.state().rehearsal_running && h.state().song_playing && h.state().tuner.enabled
+            );
+        }
+        assert!(h.click_on(&Selector::class("workspace-panel").containing("Mere")));
+        assert!(
+            h.click_on(&Selector::class("overview-node-title").containing("Rehearsal running"))
+        );
+        assert!(h.click_on(&Selector::class("overview-open")));
+        assert_eq!(
+            h.state().workspace.active_panel(),
+            Some(WorkspacePanel::Set)
+        );
+        assert!(h.state().rehearsal_running);
+        assert!(h.click_on(&Selector::class("workspace-panel").containing("Mere")));
+        assert!(h.click_on(&Selector::class("overview-save")));
+        let saved_id = h.state().retained_sets.entries[0].id;
+        let snapshot =
+            serde_json::to_value(h.state().retained_sets.get(saved_id).unwrap()).unwrap();
+        let old_id = h.state().set.cards[0].id;
+        h.update(|ui| {
+            ui.set.cards[0].timing.bpm = Some(137.0);
+            assert!(ui.inspect_chord_arpeggio(old_id));
+            ui.now_ms = Some(2_500);
+        });
+        let edited = serde_json::to_value(&h.state().set).unwrap();
+        assert!(h.click_on(&Selector::class("overview-open").containing("Open copy")));
+        assert_eq!(
+            h.state().workspace.active_panel(),
+            Some(WorkspacePanel::Set)
+        );
+        assert!(!h.state().rehearsal_running);
+        assert!(h.state().arpeggio_source.is_none());
+        h.update(|ui| {
+            ui.audio_requests.clear();
+            ui.hear_chord_arpeggio();
+            assert!(ui.audio_requests.is_empty());
+            assert!(ui.stage_chord_arpeggio().is_none());
+        });
+        assert_ne!(h.state().set.cards[0].id, old_id);
+        assert_eq!(
+            serde_json::to_value(h.state().retained_sets.get(saved_id).unwrap()).unwrap(),
+            snapshot
+        );
+        assert_eq!(
+            serde_json::to_value(&h.state().retained_sets.entries[1].set).unwrap(),
+            edited
+        );
+        assert_eq!(h.state().set.cards[0].timing.bpm, None);
+        let opened_id = h.state().set.cards[0].id;
+        h.update(|ui| {
+            assert!(ui.open_retained_set(saved_id));
+        });
+        assert_ne!(h.state().set.cards[0].id, opened_id);
+        assert_ne!(h.state().set.cards[0].id, old_id);
+    }
+}
+
+#[test]
+fn card_parameters_and_explanations_do_not_overlap_and_related_rows_still_stage() {
+    use layout_dom_api::LayoutDom;
+    for width in [1_100.0, 420.0] {
+        let mut h = harness(width, 664.0);
+        h.update(|ui| ui.activate_workspace_panel(woodshed_views::workspace::WorkspacePanel::Set));
+        let controls = rect(&h, "card-control-row");
+        let explanations = rect(&h, "card-explanation-section");
+        assert!(
+            explanations.1 >= controls.1 + controls.3,
+            "parameters overlap explanations at {width}: {controls:?} {explanations:?}"
+        );
+        let button_ids = {
+            let node = h.runner().dom();
+            let dom = node.borrow();
+            let row = taproot::matching(&dom, &Selector::class("card-control-row"))[0];
+            dom.dom_children(row).collect::<Vec<_>>()
+        };
+        for id in button_ids {
+            if let Some(action) = h.painted_rect(id) {
+                assert!(
+                    action.0 >= controls.0 - 1.0
+                        && action.0 + action.2 <= controls.0 + controls.2 + 1.0,
+                    "Card control escapes its paragraph: {action:?} inside {controls:?}"
+                );
+            }
+        }
+        assert!(class_count(&h, "related-graph-col") == 0);
+        assert!(h.click_on(&Selector::class("workspace-panel").containing("Practice")));
+        assert!(class_count(&h, "related-graph-col") == 0);
+        assert!(class_count(&h, "related-stage") > 0);
+        let count = h.state().set.cards.len();
+        assert!(h.click_on(&Selector::class("related-stage")));
+        assert_eq!(h.state().set.cards.len(), count + 1);
+        assert!(h.click_on(&Selector::class("workspace-panel").containing("Set")));
+        assert!(class_count(&h, "related-graph-col") == 0);
+        assert!(h.click_on(&Selector::class("workspace-panel").containing("Related")));
+        assert_eq!(class_count(&h, "related-graph-col"), 1);
+    }
 }
 
 #[test]
@@ -157,6 +319,11 @@ fn narrow_settings_navigation_stacks_and_selects_a_page() {
 fn rehearsal_board_scroll_preserves_extent_and_note_hits() {
     let mut h = harness(420.0, 900.0);
     h.update(|ui| ui.section = woodshed_core::storage::AppSection::Rehearsal);
+    // Card paragraphs can grow above the board. Bring the whole board into
+    // the native viewport before choosing a physical note hit below.
+    let initial = rect(&h, "rehearsal-board-viewport");
+    h.move_to(30.0, 130.0);
+    h.wheel(0.0, (initial.1 - 350.0).max(0.0));
     let viewport = rect(&h, "rehearsal-board-viewport");
     let before = rect(&h, "fretboard-stack");
     assert!(viewport.0 >= 0.0 && viewport.0 + viewport.2 <= 420.0);

@@ -47,6 +47,8 @@ mod context;
 #[cfg(test)]
 mod context_tests;
 mod looper;
+mod overview;
+pub use overview::{OVERVIEW_GRAPH_LEAF_KEY, overview_snapshot, overview_swatch};
 mod pitch_motion;
 mod rehearsal;
 mod related;
@@ -811,6 +813,12 @@ impl Default for MidiUiState {
 pub struct UiState {
     pub stage: StageState,
     pub set: Set,
+    pub retained_sets: woodshed_core::retained_sets::RetainedSets,
+    pub retained_set_name: TextInput,
+    pub overview_focus: Option<woodshed_core::session_overview::OverviewNodeId>,
+    pub overview_notice: Option<String>,
+    pub overview_viewport: GraphViewport,
+    pub overview_positions: BTreeMap<woodshed_core::session_overview::OverviewNodeId, (f32, f32)>,
     pub practice_history: PracticeHistory,
     pub app_settings: AppSettings,
     /// Woodshed's bounded workspace over the existing product surfaces. The shared component
@@ -839,6 +847,8 @@ pub struct UiState {
     pub tool_page: ToolPage,
     /// Host-observed width band. This is transient rather than a user setting.
     pub viewport: ViewportClass,
+    /// Host window width for surfaces that use the available workspace extent.
+    pub viewport_width: f32,
     /// Host-observed window height in logical px, transient. Bounds a vertical
     /// fretboard so a tall neck scrolls inside its viewport instead of running off
     /// the page; 0 until the host reports it (treated as "unbounded").
@@ -994,6 +1004,12 @@ impl UiState {
             .with_label("Set arrangement");
         Self {
             set: Set::default(),
+            retained_sets: Default::default(),
+            retained_set_name: TextInput::new(""),
+            overview_focus: None,
+            overview_notice: None,
+            overview_viewport: GraphViewport::default(),
+            overview_positions: BTreeMap::new(),
             practice_history: PracticeHistory::default(),
             app_settings,
             workspace: WoodshedWorkspace::new(),
@@ -1009,6 +1025,7 @@ impl UiState {
             stage_page: StagePage::default(),
             tool_page: ToolPage::default(),
             viewport: ViewportClass::default(),
+            viewport_width: 0.0,
             viewport_h: 0.0,
             transport: TransportState::default(),
             tuner: TunerState::default(),
@@ -1082,6 +1099,7 @@ impl UiState {
     }
 
     pub fn activate_workspace_panel(&mut self, panel: WorkspacePanel) {
+        self.workspace.ensure_panel(panel);
         let _ = self.apply_workspace_event(WorkspaceEvent::activate(panel));
         // The represented section may have changed through an unrepresented legacy pill (Tools
         // or Looper) while this panel stayed active. Selecting an already-active tab still has
@@ -1107,6 +1125,7 @@ impl UiState {
 
     fn show_workspace_panel(&mut self, panel: WorkspacePanel) {
         match panel {
+            WorkspacePanel::Overview => self.section = AppSection::Stage,
             WorkspacePanel::Practice => self.section = AppSection::Stage,
             WorkspacePanel::Set => self.section = AppSection::Rehearsal,
             WorkspacePanel::Related => {
@@ -1661,7 +1680,11 @@ impl UiState {
     /// view rebuild is required.
     pub fn set_viewport_width(&mut self, width: f32) -> bool {
         let next = ViewportClass::for_width(width);
-        if self.viewport == next {
+        let resized = (self.viewport_width - width).abs() >= 16.0;
+        if resized {
+            self.viewport_width = width;
+        }
+        if self.viewport == next && !resized {
             false
         } else {
             self.viewport = next;
@@ -1859,6 +1882,7 @@ impl UiState {
             &self.song,
             &self.practice_history,
         );
+        session.retained_sets = self.retained_sets.clone();
         session.workspace_json = Some(
             self.workspace
                 .to_snapshot_json()
@@ -1876,6 +1900,12 @@ impl UiState {
     ) -> Option<crate::workspace::WorkspaceSnapshotError> {
         session.restore(&mut self.stage, &app_settings);
         self.set = session.set.clone();
+        self.retained_sets = session.retained_sets.clone();
+        self.overview_focus = None;
+        self.overview_notice = None;
+        self.overview_viewport = GraphViewport::default();
+        self.overview_positions.clear();
+        self.card_rename_for = None;
         self.rehearsal_running = false;
         self.rehearsal_observed_card = None;
         self.card_started_ms = None;
@@ -2862,7 +2892,11 @@ fn stage_screen(ui: &UiState) -> UiChild {
 
 fn tab_content(ui: &UiState) -> UiChild {
     let content = match ui.section {
-        AppSection::Stage => return stage_screen(ui),
+        AppSection::Stage => match ui.workspace.active_panel() {
+            Some(WorkspacePanel::Overview) => overview::screen(ui),
+            Some(WorkspacePanel::Related) => related::panel(ui),
+            _ => return stage_screen(ui),
+        },
         AppSection::Rehearsal => rehearsal::screen(ui),
         AppSection::Looper => looper::screen(ui),
         AppSection::Tools => tools::screen(ui),
@@ -2926,7 +2960,14 @@ pub fn stage_root(ui: &UiState) -> UiChild {
     }
     let mut nav: Vec<UiChild> = AppSection::ALL
         .iter()
-        .map(|&section| pill(section, section == ui.section))
+        .map(|&section| {
+            pill(
+                section,
+                section == ui.section
+                    && !(ui.workspace.active_panel() == Some(WorkspacePanel::Overview)
+                        && ui.section == AppSection::Stage),
+            )
+        })
         .collect();
     nav.push(Box::new(el("div", ()).attr("class", "nav-spacer")));
     nav.extend(crate::persona::unsaved_notice(ui));

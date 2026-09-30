@@ -269,6 +269,7 @@ pub struct Shared {
     /// only when the model behind it actually moved.
     pub neighborhood_sig: u64,
     pub set_graph_sig: u64,
+    pub overview_sig: u64,
     pub fretboard_sig: u64,
     pub rehearsal_fretboard_sig: u64,
 
@@ -313,6 +314,7 @@ impl Shared {
             last_song: woodshed_core::song::SongDoc::default(),
             neighborhood_sig: 0,
             set_graph_sig: 0,
+            overview_sig: 0,
             fretboard_sig: 0,
             rehearsal_fretboard_sig: 0,
             events: Vec::new(),

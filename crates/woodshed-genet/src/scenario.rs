@@ -290,6 +290,7 @@ impl Snapshot<'_, '_> {
     fn snapshot(&self) -> ProbeSnapshot {
         let ui = self.ctx.runner.state();
         let observed = Observed::read(ui);
+        let overview = woodshed_views::stage::overview_snapshot(ui);
         let stage_snapshot = set_graph_snapshot(ui);
         let stage_swatch =
             set_graph_swatch_from_snapshot(&stage_snapshot, ui, ui.set_tray_expanded);
@@ -363,6 +364,63 @@ impl Snapshot<'_, '_> {
                         )
                     })
                     .count()
+                    .to_string(),
+            )
+            .with_field("retained-sets", ui.retained_sets.entries.len().to_string())
+            .with_field("overview-nodes", overview.nodes.len().to_string())
+            .with_field(
+                "overview-views",
+                overview
+                    .nodes
+                    .iter()
+                    .filter(|node| {
+                        matches!(
+                            node.id,
+                            woodshed_core::session_overview::OverviewNodeId::View(_)
+                        )
+                    })
+                    .count()
+                    .to_string(),
+            )
+            .with_field(
+                "overview-processes",
+                overview
+                    .nodes
+                    .iter()
+                    .filter(|node| {
+                        matches!(
+                            node.id,
+                            woodshed_core::session_overview::OverviewNodeId::Process(_)
+                        )
+                    })
+                    .count()
+                    .to_string(),
+            )
+            .with_field(
+                "overview-active",
+                (ui.workspace.active_panel()
+                    == Some(woodshed_views::workspace::WorkspacePanel::Overview)
+                    && ui.section == woodshed_core::storage::AppSection::Stage)
+                    .to_string(),
+            )
+            .with_field(
+                "working-saved-shared-ids",
+                ui.retained_sets
+                    .entries
+                    .first()
+                    .map_or(0, |saved| {
+                        ui.set
+                            .cards
+                            .iter()
+                            .filter(|card| {
+                                saved
+                                    .set
+                                    .cards
+                                    .iter()
+                                    .any(|original| original.id == card.id)
+                            })
+                            .count()
+                    })
                     .to_string(),
             )
             .with_field(
@@ -996,7 +1054,7 @@ impl Automatable for Probe<'_, '_> {
                 ui.set_graph_card_expanded = true;
                 ui.set_graph_reading(woodshed_core::settings::StageGraphReading::CircleOfFifths);
             },
-            "chord-approach-example" => {
+            "chord-approach-example" | "mere-example" => {
                 use woodshedding::rehearsal::{FretWindow, Hold, Set, Timing};
                 ui.set = Set::default();
                 ui.practice_history = Default::default();
@@ -1033,6 +1091,12 @@ impl Automatable for Probe<'_, '_> {
                 ui.set.cursor = 0;
                 ui.set_graph_card_expanded = true;
                 ui.set_graph_reading(woodshed_core::settings::StageGraphReading::CircleOfFifths);
+                if label == "mere-example" {
+                    ui.retained_sets = Default::default();
+                    for card in &mut ui.set.cards {
+                        card.timing.hold = Hold::Manual;
+                    }
+                }
             },
             "shape-comparison-example" => {
                 ui.stage.set_root(3);

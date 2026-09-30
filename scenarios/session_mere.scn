@@ -1,0 +1,58 @@
+# Session Mere, explicit retention and focused Card working projection.
+settle 3
+ui-zoom 0.65
+act mere-example
+settle 3
+click .pill Rehearsal
+settle 3
+click .chord-approach-choice Inspect from above
+settle 3
+click .t-btn Hear approach
+click .t-btn Append approach exercise
+settle 3
+assert snap set-cards == 3
+click .t-btn Next
+click .t-btn Next
+settle 3
+assert snap rehearsal-strings == 4
+assert snap approach-sequential == true
+capture 01_card_sections
+click .workspace-panel Mere
+settle 3
+assert snap overview-active == true
+assert snap overview-views >= 4
+assert snap overview-processes == 0
+click .overview-save Retain Set
+settle 3
+assert snap retained-sets == 1
+assert snap set-cards == 3
+capture 02_mere_retained
+click .overview-open Open copy
+settle 3
+assert snap retained-sets == 2
+assert snap set-cards == 3
+assert snap working-saved-shared-ids == 0
+assert snap rehearsal-running == false
+assert snap approach-sequential == true
+click .t-btn Run
+settle 5
+assert snap rehearsal-running == true
+click .workspace-panel Mere
+settle 3
+assert snap overview-active == true
+assert snap rehearsal-running == true
+assert snap overview-processes == 1
+capture 03_mere_live_activity
+click .overview-node-title Rehearsal running
+settle 3
+click .overview-open Open view
+settle 3
+assert snap rehearsal-running == true
+click .t-btn Pause
+settle 3
+assert snap rehearsal-running == false
+click .workspace-panel Mere
+settle 3
+assert snap overview-processes == 0
+capture 04_mere_paused
+log Session Mere seed complete

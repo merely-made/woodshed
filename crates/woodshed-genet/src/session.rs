@@ -117,6 +117,61 @@ mod tests {
         assert!(restored.related_expanded);
         assert_eq!(restored.to_persisted().workspace_json, saved_workspace);
     }
+
+    #[test]
+    fn legacy_four_panel_workspace_and_session_restore_without_a_retained_library() {
+        // Freeze the pre-overview workspace wire contract rather than deriving
+        // this fixture from today's list of product panels.
+        let tabs = [
+            (
+                "practice",
+                0x574f_5052u64,
+                "Practice",
+                "woodshed.practice",
+                "stage",
+            ),
+            ("set", 0x574f_5345, "Set", "woodshed.set", "rehearsal"),
+            (
+                "related",
+                0x574f_5245,
+                "Related",
+                "woodshed.related",
+                "stage",
+            ),
+            (
+                "settings",
+                0x574f_5347,
+                "Settings",
+                "woodshed.settings",
+                "settings",
+            ),
+        ]
+        .map(|(panel, id, title, kind, content_id)| {
+            serde_json::json!({
+                "panel": panel, "id": id, "title": title,
+                "kind": kind, "content_id": content_id,
+            })
+        });
+        let workspace = serde_json::json!({
+            "tree": {"stack": {"tabs": tabs, "active": 1}},
+            "active_panel": "set",
+        });
+        let mut legacy =
+            serde_json::to_value(woodshed_core::storage::PersistedSession::default()).unwrap();
+        legacy.as_object_mut().unwrap().remove("retained_sets");
+        legacy["workspace_json"] = serde_json::Value::String(workspace.to_string());
+        legacy["section"] = serde_json::json!("Rehearsal");
+        let backend: HostBackend = Box::new(muniment::MemoryBackend::default());
+        let storage = SessionStore::new(backend);
+        storage.save(&legacy.to_string());
+        let mut ui = UiState::new();
+        restore(&storage, &mut ui);
+        assert_eq!(ui.workspace.active_panel(), Some(WorkspacePanel::Set));
+        assert_eq!(ui.section, woodshed_core::storage::AppSection::Rehearsal);
+        assert!(!ui.rehearsal_running);
+        assert!(!ui.song_playing);
+        assert!(ui.to_persisted().retained_sets.entries.is_empty());
+    }
     /// The production filesystem backend and restore path, exercised in two
     /// processes so an in-memory roundtrip cannot satisfy reopening by accident.
     #[test]
@@ -768,5 +823,144 @@ mod tests {
             );
         }
         println!("chord-approach-session PASS {mode}");
+    }
+    #[test]
+    fn retained_library_and_overview_reopen_ordered_music_in_a_fresh_process() {
+        let dir = tempfile::tempdir().unwrap();
+        for mode in ["seed", "verify"] {
+            let output = std::process::Command::new(std::env::current_exe().unwrap())
+                .args([
+                    "--exact",
+                    "session::tests::retained_library_receipt_worker",
+                    "--nocapture",
+                ])
+                .env("WOODSHED_LIBRARY_WORKER", mode)
+                .env(
+                    "WOODSHED_LIBRARY_EXPECTED",
+                    dir.path().join("expected-library.json"),
+                )
+                .env("WOODSHED_STATE", dir.path().join("practice.json"))
+                .env("WOODSHED_SETTINGS", dir.path().join("settings.json"))
+                .output()
+                .unwrap();
+            assert!(
+                output.status.success(),
+                "{mode}: {}\n{}",
+                String::from_utf8_lossy(&output.stdout),
+                String::from_utf8_lossy(&output.stderr)
+            );
+            assert!(String::from_utf8_lossy(&output.stdout).contains("retained-library PASS"));
+        }
+    }
+
+    #[test]
+    fn retained_library_receipt_worker() {
+        use woodshed_core::{
+            Lens,
+            session_overview::{OverviewNodeId, SessionArtifactId},
+        };
+        use woodshedding::rehearsal::{FretWindow, Hold, ScalePattern};
+        let Ok(mode) = std::env::var("WOODSHED_LIBRARY_WORKER") else {
+            return;
+        };
+        let expected_path = std::env::var("WOODSHED_LIBRARY_EXPECTED").unwrap();
+        let backend: HostBackend = Box::<crate::storage::FsBackend>::default();
+        let storage = SessionStore::new(backend);
+        if mode == "seed" {
+            let mut ui = UiState::new();
+            ui.stage.set_lens(Lens::Scales);
+            let major = ui
+                .stage
+                .scales()
+                .iter()
+                .position(|scale| scale.name == "Major")
+                .unwrap();
+            ui.stage.select_scale(major);
+            ui.stage.set_root(0);
+            ui.stage_current(None);
+            let source = &mut ui.set.cards[0];
+            source.setting.instrument = "Ukulele".into();
+            source.setting.tuning = Some("Standard (high-G)".into());
+            source.setting.capo = Some(2);
+            source.setting.fret_window = Some(FretWindow { start: 2, span: 12 });
+            source.timing.bpm = Some(83.0);
+            source.timing.hold = Hold::Bars(2);
+            let source_id = source.id;
+            assert!(ui.inspect_scale_pattern(source_id, ScalePattern::Thirds));
+            let exercise_id = ui.stage_scale_pattern().unwrap();
+            ui.set.select_id(exercise_id);
+            ui.activate_workspace_panel(WorkspacePanel::Set);
+            let sound = ui.preview_voicing();
+            assert!(sound.0.windows(2).any(|pair| pair[1] < pair[0]));
+            let saved_id = ui.save_working_set().unwrap();
+            let saved = serde_json::to_value(ui.retained_sets.get(saved_id).unwrap()).unwrap();
+            ui.set.cards[0].label = "Edited working scale".into();
+            ui.set.cards[0].timing.bpm = Some(137.0);
+            ui.now_ms = Some(1_000);
+            ui.toggle_rehearsal();
+            ui.activate_workspace_panel(WorkspacePanel::Overview);
+            let expected = serde_json::json!({ "saved": saved, "saved_id": saved_id, "sound": sound, "working": ui.set });
+            std::fs::write(&expected_path, serde_json::to_vec(&expected).unwrap()).unwrap();
+            storage.save(&serde_json::to_string(&ui.to_persisted()).unwrap());
+            storage.save_settings(&serde_json::to_string(&ui.app_settings).unwrap());
+        } else {
+            assert_eq!(mode, "verify");
+            let expected: serde_json::Value =
+                serde_json::from_slice(&std::fs::read(expected_path).unwrap()).unwrap();
+            let mut ui = UiState::new();
+            restore(&storage, &mut ui);
+            assert_eq!(ui.workspace.active_panel(), Some(WorkspacePanel::Overview));
+            assert_eq!(serde_json::to_value(&ui.set).unwrap(), expected["working"]);
+            assert!(!ui.rehearsal_running && !ui.song_playing && !ui.tuner.enabled);
+            assert!(
+                woodshed_views::stage::overview_snapshot(&ui)
+                    .nodes
+                    .iter()
+                    .all(|node| !matches!(node.id, OverviewNodeId::Process(_)))
+            );
+            let saved_id = serde_json::from_value(expected["saved_id"].clone()).unwrap();
+            assert_eq!(ui.retained_sets.entries.len(), 1);
+            assert_eq!(
+                serde_json::to_value(ui.retained_sets.get(saved_id).unwrap()).unwrap(),
+                expected["saved"]
+            );
+            let old_ids = ui.set.cards.iter().map(|card| card.id).collect::<Vec<_>>();
+            ui.inspect_overview_node(OverviewNodeId::Artifact(SessionArtifactId::SavedSet(
+                saved_id,
+            )));
+            assert_eq!(serde_json::to_value(&ui.set).unwrap(), expected["working"]);
+            ui.open_overview_node(OverviewNodeId::Artifact(SessionArtifactId::SavedSet(
+                saved_id,
+            )));
+            assert_eq!(ui.workspace.active_panel(), Some(WorkspacePanel::Set));
+            assert!(!ui.rehearsal_running);
+            assert!(ui.set.cards.iter().all(|card| !old_ids.contains(&card.id)));
+            assert_eq!(ui.retained_sets.entries.len(), 2);
+            assert_eq!(
+                serde_json::to_value(ui.retained_sets.get(saved_id).unwrap()).unwrap(),
+                expected["saved"]
+            );
+            assert_eq!(
+                serde_json::to_value(&ui.retained_sets.entries[1].set).unwrap(),
+                expected["working"]
+            );
+            assert_eq!(ui.set.cards[0].timing.bpm, Some(83.0));
+            assert_eq!(ui.set.cursor, 1);
+            assert_eq!(ui.rehearsal_board_geometry().string_count, 4);
+            let sound: (Vec<f32>, f32, f32) =
+                serde_json::from_value(expected["sound"].clone()).unwrap();
+            assert_eq!(
+                ui.preview_voicing(),
+                sound,
+                "restored copy replays exact ordered repeated music through saved Ukulele/capo setup"
+            );
+            assert!(ui.pattern_source.is_none());
+            assert_eq!(
+                ui.practice_history
+                    .total_practiced_ms("exercise:scale-thirds/v1:Major"),
+                0
+            );
+        }
+        println!("retained-library PASS {mode}");
     }
 }

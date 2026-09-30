@@ -149,7 +149,7 @@ pub(super) fn screen(ui: &UiState) -> UiChild {
         .collect();
     // The same Card editor appears in Stage's Set tray and Rehearsal. Actions
     // mutate the one persisted Set through UiState helpers.
-    let editor = super::set_tray::card_editor(ui);
+    let editor = el("div", super::set_tray::card_editor(ui)).attr("class", "card-details");
     let scale_status: Option<UiChild> = ui.rehearsal_scale_status().map(|status| match status {
         Ok(message) => {
             Box::new(el("div", text(message)).attr("class", "t-readout scale-setup-status"))
