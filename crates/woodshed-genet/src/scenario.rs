@@ -874,6 +874,7 @@ impl Automatable for Probe<'_, '_> {
                         card.setting.fret_window =
                             Some(woodshedding::rehearsal::FretWindow { start: 2, span: 4 });
                     }
+                    ui.step_card_shape(1);
                 }
                 ui.set_graph_card_expanded = true;
                 ui.set_graph_reading(woodshed_core::settings::StageGraphReading::CircleOfFifths);

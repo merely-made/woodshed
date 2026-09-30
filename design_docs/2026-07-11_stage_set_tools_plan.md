@@ -351,8 +351,18 @@ The first slice is not accepted solely because each lane reports success.
   visible reason, no fret markers, and empty effective audio.
   Integrated validation passes 460 tests (151 core, one core integration,
   42 desktop, 14 graph, 71 views, 177 theory, and four theory doc examples);
-  the desktop build passes. Native seed/reopen scenarios are prepared in
-  `scenarios/scale_realization*.scn`; capture acceptance is pending Mac unlock.
+  the desktop build passes. Native seed/reopen scenarios in
+  `scenarios/scale_realization*.scn` exercise saved Ukulele geometry, written C
+  Major/concert D Major, explicit staging, Run/Pause, and restored observations.
+  The native fixture re-resolves the source shape after changing instrument;
+  it does not treat a retained Guitar shape as a valid Ukulele shape.
+  Final seed/reopen runs return `RESULT ok` with four presented-frame PNGs,
+  all inspected. The saved setup, scale occurrence, and observations restore
+  in the fresh native process. Receipts are recorded under
+  `testing/woodshed/scales-20260930/realization-final-{seed,reopen}/`.
+  Audio-device quality and keyboard acceptance remain separate; the initial
+  native run logged stream underrun/overrun, so a capture pass is not an
+  acoustic-quality receipt.
 
 **First-slice qualification:** functional discovery, staging, sequential-onset
 preview, runner observation boundaries, and filesystem reopening are implemented
