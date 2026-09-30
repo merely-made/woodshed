@@ -1219,11 +1219,11 @@ fn context_position(
             root,
         };
         let offset = match direction {
-            woodshedding::rehearsal::ApproachDirection::Below => -180.0,
-            woodshedding::rehearsal::ApproachDirection::Above => 180.0,
+            woodshedding::rehearsal::ApproachDirection::Below => Vec2::new(-320.0, -300.0),
+            woodshedding::rehearsal::ApproachDirection::Above => Vec2::new(320.0, -420.0),
         };
         return context_position(reading, &target, pitch_motion_anchor)
-            .map(|point| Vec2::new(point.x + offset, point.y - 240.0));
+            .map(|point| Vec2::new(point.x + offset.x, point.y + offset.y));
     }
     if let Some(Material::ScalePattern {
         name,
@@ -1407,8 +1407,16 @@ mod tests {
         assert_eq!(recipes.len(), 2);
         for (index, node) in recipes {
             let item = snapshot.snapshot.tables.items[index].as_ref().unwrap();
-            assert!((item.transform.translate.x - origin.x).abs() >= 180.0);
-            assert_eq!(item.transform.translate.y - origin.y, -240.0);
+            assert!((item.transform.translate.x - origin.x).abs() >= 320.0);
+            let direction = match node.material.as_ref().unwrap() {
+                Material::ChordApproach { direction, .. } => direction,
+                _ => unreachable!(),
+            };
+            let expected_y = match direction {
+                woodshedding::rehearsal::ApproachDirection::Below => -300.0,
+                woodshedding::rehearsal::ApproachDirection::Above => -420.0,
+            };
+            assert_eq!(item.transform.translate.y - origin.y, expected_y);
             assert!(
                 snapshot
                     .relations()
