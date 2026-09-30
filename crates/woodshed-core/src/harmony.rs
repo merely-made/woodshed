@@ -20,7 +20,9 @@ pub use woodshedding::pitch_class_set::{PitchClassMotion, PitchClassMove, PitchS
 /// `formula_id` is the existing stable catalog id (`chord:Major`,
 /// `scale:Dorian`); [`Self::wire_key`] adds the tonic without turning a
 /// keyed realization into a new catalog formula.
-#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[derive(
+    Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash, serde::Serialize, serde::Deserialize,
+)]
 pub struct KeyedCatalogRef {
     pub formula_id: String,
     pub root: PitchClass,

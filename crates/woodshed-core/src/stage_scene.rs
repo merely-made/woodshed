@@ -63,6 +63,8 @@ pub struct StageSceneOptions {
     /// Footprint stamped on each card item. The contract deleted `measure`,
     /// so the host's measured extent belongs here.
     pub card_size: Size2,
+    /// The owning working Set qualifies otherwise equal local Card identities.
+    pub owner_scope: Option<crate::working_sets::WorkingSetId>,
     /// Gap between card centres along the lane.
     pub spacing: f32,
     /// Per-occurrence practice recency in `0..=1`, emitted on
@@ -88,6 +90,7 @@ pub struct StageSceneOptions {
 impl Default for StageSceneOptions {
     fn default() -> Self {
         Self {
+            owner_scope: None,
             card_size: Size2::new(160.0, 96.0),
             spacing: 220.0,
             recency: BTreeMap::new(),
@@ -1157,7 +1160,10 @@ pub fn stage_scene(set: &Set, options: &StageSceneOptions) -> StageGraphSnapshot
         collidable: false,
     });
     scene.bounds = floor_bounds;
-    let epoch = dense_epoch(&scene, &cards);
+    let mut epoch = dense_epoch(&scene, &cards);
+    if let Some(owner) = options.owner_scope {
+        epoch.0 = epoch.0.wrapping_mul(0x100_0000_01b3) ^ owner.0;
+    }
     let snapshot = SceneSnapshot::from_dense(epoch, Revision(0), scene)
         .unwrap_or_else(|error| panic!("Woodshed produced an invalid Stage scene: {error:?}"));
 
@@ -1377,6 +1383,31 @@ mod tests {
     use super::*;
     use woodshedding::pitch::PitchClass;
     use woodshedding::rehearsal::{Card, LoopMode, Setting, Timing, Touch};
+
+    #[test]
+    fn equal_local_sets_have_distinct_owner_qualified_scene_epochs() {
+        let mut set = Set::default();
+        set.push(crate::StageState::new().card_from_lens().unwrap());
+        let first = stage_scene(
+            &set,
+            &StageSceneOptions {
+                owner_scope: Some(crate::working_sets::WorkingSetId(1)),
+                ..Default::default()
+            },
+        );
+        let second = stage_scene(
+            &set,
+            &StageSceneOptions {
+                owner_scope: Some(crate::working_sets::WorkingSetId(2)),
+                ..Default::default()
+            },
+        );
+        assert_eq!(
+            first.nodes.iter().map(|node| &node.id).collect::<Vec<_>>(),
+            second.nodes.iter().map(|node| &node.id).collect::<Vec<_>>()
+        );
+        assert_ne!(first.snapshot.epoch, second.snapshot.epoch);
+    }
 
     #[test]
     fn chromatic_approach_satellites_are_distinct_and_staged_targets_keep_typed_relations() {

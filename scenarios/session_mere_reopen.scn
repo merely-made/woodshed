@@ -3,11 +3,13 @@ assert snap overview-active == true
 assert snap overview-views >= 4
 assert snap overview-processes == 0
 assert snap rehearsal-running == false
-assert snap retained-sets == 2
+assert snap retained-sets == 1
+assert snap working-sets == 2
+assert snap working-set-id == 2
 assert snap set-cards == 3
 assert snap working-saved-shared-ids == 0
 capture 01_mere_reopened
-click .overview-node-title Working Set
+click .overview-node-title Retained Set 1 copy
 settle 3
 click .overview-open Open view
 settle 3

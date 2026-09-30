@@ -13,6 +13,7 @@ pub mod arpeggio;
 pub mod arrangement;
 pub mod audio;
 pub mod card_shapes;
+pub mod catalog_explorations;
 pub mod chord_approach;
 pub mod connected_catalog;
 pub mod connected_scales;
@@ -35,6 +36,7 @@ pub mod stage_context;
 pub mod stage_scene;
 pub mod storage;
 pub mod tonnetz;
+pub mod working_sets;
 
 pub use card_shapes::{
     CARD_SHAPE_PROFILE, CardShapeGeometry, CardShapeStatus, CardShapeUnavailable, ResolvedCardShape,

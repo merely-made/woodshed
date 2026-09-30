@@ -19,8 +19,15 @@ pub(super) fn screen(ui: &UiState) -> UiChild {
         return Box::new(
             el(
                 "div",
-                el("div", text("The set is empty. Stage material to begin."))
-                    .attr("class", "placeholder"),
+                el(
+                    "div",
+                    (
+                        el("div", text(ui.working_sets.active_name.clone()))
+                            .attr("class", "working-instance-name"),
+                        el("div", text("The set is empty. Stage material to begin.")),
+                    ),
+                )
+                .attr("class", "placeholder"),
             )
             .attr("class", "board"),
         );
@@ -34,10 +41,23 @@ pub(super) fn screen(ui: &UiState) -> UiChild {
         el(
             "div",
             (
+                el("div", text(ui.working_sets.active_name.clone()))
+                    .attr("class", "working-instance-name"),
+                (ui.rehearsal_running && !ui.is_current_set_rehearsing()).then(|| {
+                    el(
+                        "div",
+                        text("Another Set is rehearsing. Run transfers rehearsal to this Set."),
+                    )
+                    .attr("class", "t-readout background-rehearsal-status")
+                }),
                 clickable(
                     el(
                         "div",
-                        text(if ui.rehearsal_running { "Pause" } else { "Run" }),
+                        text(if ui.is_current_set_rehearsing() {
+                            "Pause"
+                        } else {
+                            "Run"
+                        }),
                     )
                     .attr("class", "t-btn"),
                     |ui: &mut UiState, _| {
@@ -47,13 +67,13 @@ pub(super) fn screen(ui: &UiState) -> UiChild {
                 clickable(
                     el("div", text("Prev")).attr("class", "t-btn"),
                     |ui: &mut UiState, _| {
-                        if ui.rehearsal_running {
+                        if ui.is_current_set_rehearsing() {
                             ui.finish_rehearsal_observation(
                                 woodshed_core::history::EngagementKind::Rehearsed,
                             );
                         }
                         step_set(&mut ui.set, -1);
-                        if ui.rehearsal_running {
+                        if ui.is_current_set_rehearsing() {
                             ui.record_rehearsal_cursor();
                         }
                     },
@@ -61,15 +81,15 @@ pub(super) fn screen(ui: &UiState) -> UiChild {
                 clickable(
                     el("div", text("Next")).attr("class", "t-btn"),
                     |ui: &mut UiState, _| {
-                        if ui.rehearsal_running {
+                        if ui.is_current_set_rehearsing() {
                             ui.complete_rehearsal_cursor();
                         }
                         let advanced = step_set(&mut ui.set, 1);
-                        if ui.rehearsal_running {
+                        if ui.is_current_set_rehearsing() {
                             if advanced {
                                 ui.record_rehearsal_cursor();
                             } else {
-                                ui.rehearsal_running = false;
+                                ui.stop_rehearsal();
                             }
                         }
                     },
@@ -101,7 +121,7 @@ pub(super) fn screen(ui: &UiState) -> UiChild {
                 .attr("class", "t-readout"),
             ),
         )
-        .attr("class", "transport"),
+        .attr("class", "transport rehearsal-transport"),
     );
     // The measured filmstrip (redesign P5): every card with its tag,
     // provenance, and touch; played cards dim behind the cursor
@@ -209,7 +229,7 @@ pub(super) fn screen(ui: &UiState) -> UiChild {
     // silences them), and the board dims whatever the mode excludes. This is the
     // Selection axis of touch, made interactive.
     let card = &ui.set.cards[cursor];
-    let dot_list = ui.stage.dots_for_card(card);
+    let dot_list = ui.current_card_stage().dots_for_card(card);
     let geom = ui.rehearsal_board_geometry();
     let string_count = geom.string_count;
     let (w, h) = geom.size_u32();

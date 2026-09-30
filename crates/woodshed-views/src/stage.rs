@@ -46,6 +46,7 @@ mod connected_scales;
 mod context;
 #[cfg(test)]
 mod context_tests;
+mod instances;
 mod looper;
 mod overview;
 pub use overview::{OVERVIEW_GRAPH_LEAF_KEY, overview_snapshot, overview_swatch};
@@ -339,6 +340,7 @@ pub fn set_graph_snapshot(ui: &UiState) -> StageGraphSnapshot {
     stage_scene(
         &ui.set,
         &StageSceneOptions {
+            owner_scope: Some(ui.working_sets.active_id),
             arrangement: ui.app_settings.stage.set_arrangement,
             // Availability belongs to the scene; family and per-relation
             // visibility are view state applied below. Keeping every
@@ -813,6 +815,13 @@ impl Default for MidiUiState {
 pub struct UiState {
     pub stage: StageState,
     pub set: Set,
+    pub working_sets: woodshed_core::working_sets::WorkingSets,
+    pub catalog_explorations: woodshed_core::catalog_explorations::CatalogExplorations,
+    pub rehearsal_owner: Option<woodshed_core::working_sets::WorkingSetId>,
+    pub rehearsal_stage: Option<StageState>,
+    pub rehearsal_observed_midi: Option<Vec<i32>>,
+    pub set_presentations:
+        BTreeMap<woodshed_core::working_sets::WorkingSetId, instances::SetPresentation>,
     pub retained_sets: woodshed_core::retained_sets::RetainedSets,
     pub retained_set_name: TextInput,
     pub overview_focus: Option<woodshed_core::session_overview::OverviewNodeId>,
@@ -873,6 +882,7 @@ pub struct UiState {
     /// answerable. Transient.
     pub card_rename: TextInput,
     pub card_rename_for: Option<usize>,
+    pub card_rename_owner: Option<(woodshed_core::working_sets::WorkingSetId, CardId)>,
     /// MIDI panel state (Settings tab).
     pub midi: MidiUiState,
     /// Latency-calibration state (Settings tab). `calib_active` drives host
@@ -1004,6 +1014,12 @@ impl UiState {
             .with_label("Set arrangement");
         Self {
             set: Set::default(),
+            working_sets: Default::default(),
+            catalog_explorations: Default::default(),
+            rehearsal_owner: None,
+            rehearsal_stage: None,
+            rehearsal_observed_midi: None,
+            set_presentations: BTreeMap::new(),
             retained_sets: Default::default(),
             retained_set_name: TextInput::new(""),
             overview_focus: None,
@@ -1036,6 +1052,7 @@ impl UiState {
             search: TextInput::new(""),
             card_rename: TextInput::new(""),
             card_rename_for: None,
+            card_rename_owner: None,
             midi: MidiUiState::new(),
             calib_status: CalibrationStatus::Idle,
             calib_active: false,
@@ -1144,6 +1161,9 @@ impl UiState {
         snapshot: &StageGraphSnapshot,
         event: GraphCanvasEvent<StageInstanceRef>,
     ) {
+        if snapshot.epoch() != set_graph_snapshot(self).epoch() {
+            return;
+        }
         match event {
             GraphCanvasEvent::Activate(reference) => {
                 if reference.epoch != snapshot.epoch() {
@@ -1315,7 +1335,7 @@ impl UiState {
             },
             SearchHit::Recipe(i) => {
                 if let Some(ps) = woodshedding::practice::catalog().get(i) {
-                    self.set = set_from_practice(ps);
+                    self.create_working_set_from(ps.name.clone(), set_from_practice(ps));
                     self.section = AppSection::Rehearsal;
                 }
             },
@@ -1474,6 +1494,16 @@ impl UiState {
             .get(self.set.cursor.min(self.set.cards.len().saturating_sub(1)))
     }
 
+    /// A foreground Card owned by the running Set inherits the same captured
+    /// setup as its runner. Other editors and catalog auditions use live Stage.
+    pub fn current_card_stage(&self) -> &StageState {
+        if self.is_current_set_rehearsing() {
+            self.rehearsal_stage.as_ref().unwrap_or(&self.stage)
+        } else {
+            &self.stage
+        }
+    }
+
     /// Whether a board position is marked on the card under the cursor.
     pub fn card_marked(&self, string_index: usize, fret: u8) -> bool {
         self.current_card()
@@ -1567,10 +1597,12 @@ impl UiState {
             self.card_rename_for = None;
             return;
         };
-        if self.card_rename_for != Some(cursor) {
+        let owner = (self.working_sets.active_id, self.set.cards[cursor].id);
+        if self.card_rename_for != Some(cursor) || self.card_rename_owner != Some(owner) {
             // Selection moved: adopt this card's label.
             self.card_rename = TextInput::new(self.set.cards[cursor].label.clone());
             self.card_rename_for = Some(cursor);
+            self.card_rename_owner = Some(owner);
         } else if self.card_rename.text() != self.set.cards[cursor].label {
             // Typed: the buffer is the rename.
             self.set.cards[cursor].label = self.card_rename.text().to_string();
@@ -1636,7 +1668,10 @@ impl UiState {
             return;
         };
         let max_fret = if self.set.cards[cursor].setting.voicing_idx.is_some() {
-            match self.stage.card_fret_limit(&self.set.cards[cursor]) {
+            match self
+                .current_card_stage()
+                .card_fret_limit(&self.set.cards[cursor])
+            {
                 Ok(limit) => limit,
                 Err(reason) => {
                     self.card_shape_notice = Some((self.set.cards[cursor].id, reason.to_string()));
@@ -1644,7 +1679,7 @@ impl UiState {
                 },
             }
         } else {
-            self.stage.fret_count
+            self.current_card_stage().fret_count
         };
         let card = &mut self.set.cards[cursor];
         let window = card
@@ -1712,7 +1747,7 @@ impl UiState {
         if self.section == AppSection::Rehearsal && !self.set.cards.is_empty() {
             let cursor = self.set.cursor.min(self.set.cards.len() - 1);
             return self
-                .stage
+                .current_card_stage()
                 .card_sounding_pitches_at_tempo(&self.set.cards[cursor], self.transport.bpm);
         }
         self.stage.voicing_preview()
@@ -1726,19 +1761,26 @@ impl UiState {
 
     pub fn request_preview(&mut self) {
         self.refresh_event_time();
-        let subject_id = if self.section == AppSection::Rehearsal && !self.set.cards.is_empty() {
-            let cursor = self.set.cursor.min(self.set.cards.len() - 1);
-            catalog_id_for_card(&self.set.cards[cursor])
+        let card = if self.section == AppSection::Rehearsal {
+            self.current_card().cloned()
         } else {
-            self.stage.catalog_id()
+            self.stage.card_from_lens()
         };
+        let subject_id = card
+            .as_ref()
+            .and_then(catalog_id_for_card)
+            .or_else(|| self.stage.catalog_id());
         if let Some(subject_id) = subject_id {
-            self.practice_history.record(
+            let provenance = card.as_ref().and_then(|card| {
+                ObservationProvenance::capture_in_set(card, self.working_sets.active_id).ok()
+            });
+            self.practice_history.record_observation(
                 self.now_ms,
                 subject_id,
                 EngagementKind::Previewed,
                 None,
                 None,
+                provenance,
             );
         }
         self.request(AudioRequest::PreviewVoicing);
@@ -1756,12 +1798,16 @@ impl UiState {
         if let Some(card) = self.stage.card_from_lens() {
             self.set.push(card);
             if let Some(subject_id) = subject_id {
-                self.practice_history.record(
+                let provenance = self.set.cards.last().and_then(|card| {
+                    ObservationProvenance::capture_in_set(card, self.working_sets.active_id).ok()
+                });
+                self.practice_history.record_observation(
                     self.now_ms,
                     subject_id,
                     EngagementKind::Staged,
                     from_id,
                     None,
+                    provenance,
                 );
             }
         }
@@ -1778,11 +1824,23 @@ impl UiState {
 
     pub fn record_rehearsal_cursor(&mut self) {
         self.refresh_event_time();
-        let Some(card) = self.current_card().cloned() else {
+        if self.rehearsal_owner.is_none() {
+            self.rehearsal_owner = Some(self.working_sets.active_id);
+        }
+        if self.rehearsal_stage.is_none() {
+            self.capture_runner_stage();
+        }
+        let Some(card) = self.rehearsal_card().cloned() else {
             return;
         };
         self.card_started_ms = self.now_ms;
         self.rehearsal_observed_card = Some(card.clone());
+        self.rehearsal_observed_midi = self.rehearsal_sounding_pitches().map(|(pitches, _, _)| {
+            pitches
+                .into_iter()
+                .map(|hz| (69.0 + 12.0 * (hz / 440.0).log2()).round() as i32)
+                .collect()
+        });
         if let Some(id) = catalog_id_for_card(&card) {
             self.practice_history.record_observation(
                 self.now_ms,
@@ -1790,7 +1848,17 @@ impl UiState {
                 EngagementKind::Rehearsed,
                 None,
                 None,
-                ObservationProvenance::capture(&card).ok(),
+                {
+                    let mut provenance = ObservationProvenance::capture_in_set(
+                        &card,
+                        self.rehearsal_owner.unwrap_or(self.working_sets.active_id),
+                    )
+                    .ok();
+                    if let Some(value) = &mut provenance {
+                        value.presented_midi = self.rehearsal_observed_midi.clone();
+                    }
+                    provenance
+                },
             );
         }
     }
@@ -1806,14 +1874,18 @@ impl UiState {
         };
         self.card_started_ms = None;
         if let Some(id) = catalog_id_for_card(&card) {
-            self.practice_history.record_observation(
-                self.now_ms,
-                id,
-                kind,
-                None,
-                practiced_ms,
-                ObservationProvenance::capture(&card).ok(),
-            );
+            self.practice_history
+                .record_observation(self.now_ms, id, kind, None, practiced_ms, {
+                    let mut provenance = ObservationProvenance::capture_in_set(
+                        &card,
+                        self.rehearsal_owner.unwrap_or(self.working_sets.active_id),
+                    )
+                    .ok();
+                    if let Some(value) = &mut provenance {
+                        value.presented_midi = self.rehearsal_observed_midi.clone();
+                    }
+                    provenance
+                });
         }
     }
 
@@ -1824,18 +1896,15 @@ impl UiState {
     /// Pause closes only the active span. Resuming opens a fresh span, keeping
     /// paused wall time out of observed runner duration.
     pub fn toggle_rehearsal(&mut self) {
-        if self.rehearsal_running {
-            self.finish_rehearsal_observation(EngagementKind::Rehearsed);
-            self.rehearsal_observed_card = None;
-            self.card_started_ms = None;
-            self.rehearsal_running = false;
+        if self.is_current_set_rehearsing() {
+            self.stop_rehearsal();
         } else if !self.set.cards.is_empty() {
-            self.record_rehearsal_cursor();
+            self.stop_rehearsal();
+            self.rehearsal_owner = Some(self.working_sets.active_id);
+            self.capture_runner_stage();
             self.rehearsal_running = true;
-            if let Some(card) = self.current_card() {
-                let (pitches, duration_s, strum_s) = self
-                    .stage
-                    .card_sounding_pitches_at_tempo(card, self.transport.bpm);
+            self.record_rehearsal_cursor();
+            if let Some((pitches, duration_s, strum_s)) = self.rehearsal_sounding_pitches() {
                 if !pitches.is_empty() {
                     self.request(AudioRequest::PreviewPitches {
                         pitches,
@@ -1859,14 +1928,14 @@ impl UiState {
             .as_ref()
             .and_then(|card| serde_json::to_value(card).ok())
             != self
-                .current_card()
+                .rehearsal_card()
                 .and_then(|card| serde_json::to_value(card).ok());
         if changed {
             self.finish_rehearsal_observation(EngagementKind::Rehearsed);
             self.rehearsal_observed_card = None;
             self.card_started_ms = None;
-            if self.set.cards.is_empty() {
-                self.rehearsal_running = false;
+            if self.rehearsal_set().cards.is_empty() {
+                self.stop_rehearsal();
             } else {
                 self.record_rehearsal_cursor();
             }
@@ -1883,6 +1952,9 @@ impl UiState {
             &self.practice_history,
         );
         session.retained_sets = self.retained_sets.clone();
+        session.working_sets = self.working_sets.clone();
+        session.catalog_explorations = self.catalog_explorations.clone();
+        session.active_exploration = Some(self.capture_exploration());
         session.workspace_json = Some(
             self.workspace
                 .to_snapshot_json()
@@ -1901,6 +1973,12 @@ impl UiState {
         session.restore(&mut self.stage, &app_settings);
         self.set = session.set.clone();
         self.retained_sets = session.retained_sets.clone();
+        self.working_sets = session.working_sets.clone();
+        self.catalog_explorations = session.catalog_explorations.clone();
+        self.rehearsal_owner = None;
+        self.rehearsal_stage = None;
+        self.rehearsal_observed_midi = None;
+        self.set_presentations.clear();
         self.overview_focus = None;
         self.overview_notice = None;
         self.overview_viewport = GraphViewport::default();
@@ -1912,13 +1990,20 @@ impl UiState {
         self.song = session.song.clone();
         self.practice_history = session.practice_history.clone();
         self.app_settings = app_settings;
+        if let Some(config) = &session.active_exploration {
+            config.apply(&mut self.stage, &mut self.app_settings);
+            self.search = TextInput::new(config.search_query.clone());
+        }
         self.set_graph_positions.clear();
         self.context_positions.clear();
         self.set_graph_drag_active = false;
         self.set_graph_hidden_relations.clear();
         self.set_graph_relation = None;
         self.related_relation = None;
-        self.context_focus = None;
+        self.context_focus = session
+            .active_exploration
+            .as_ref()
+            .and_then(|config| config.context_focus.clone());
         self.arpeggio_source = None;
         self.discovery_notice = None;
         self.scale_source = None;
@@ -2877,6 +2962,7 @@ fn stage_screen(ui: &UiState) -> UiChild {
         "div",
         (
             header(ui),
+            instances::staging_targets(ui),
             transport(ui),
             lens_strip(ui),
             body,

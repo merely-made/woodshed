@@ -1,13 +1,15 @@
 //! Session Mere: inspect real assets, workspace views and host activity before acting.
-use super::{EngagementKind, UiChild, UiState, WorkspacePanel};
+use super::{UiChild, UiState, WorkspacePanel};
 use cambium::{
     GraphCanvasEvent, GraphCanvasNode, GraphCanvasRelation, GraphCanvasSubgraph, GraphCanvasSwatch,
     clickable, el, graph_canvas, map_state, text, text_field,
 };
+use std::collections::BTreeMap;
 use woodshed_core::retained_sets::SavedSetId;
 use woodshed_core::session_overview::{
-    OverviewNodeId, OverviewProcess, OverviewSnapshot, SessionActivity, SessionArtifactId,
-    SessionOverviewInput, SessionView, SessionViewDomain, overview_scene, session_overview,
+    ConfiguredSessionOverviewInput, OverviewNodeId, OverviewProcess, OverviewSnapshot,
+    SessionActivity, SessionArtifactId, SessionOverviewInput, SessionView, SessionViewDomain,
+    configured_session_overview, overview_scene,
 };
 use woodshed_core::storage::AppSection;
 
@@ -29,16 +31,23 @@ pub fn overview_snapshot(ui: &UiState) -> OverviewSnapshot {
             },
         })
         .collect();
-    session_overview(&SessionOverviewInput {
-        working_set: &ui.set,
-        retained_sets: &ui.retained_sets,
-        song: &ui.song,
-        history: &ui.practice_history,
-        views: &views,
-        activity: SessionActivity {
-            rehearsal: ui.rehearsal_running,
-            looper: ui.song_playing,
-            tuner: ui.tuner.enabled,
+    let active_exploration = ui.capture_exploration();
+    configured_session_overview(&ConfiguredSessionOverviewInput {
+        working_sets: &ui.working_sets,
+        explorations: &ui.catalog_explorations,
+        active_exploration: &active_exploration,
+        runner_owner: ui.rehearsal_owner,
+        session: SessionOverviewInput {
+            working_set: &ui.set,
+            retained_sets: &ui.retained_sets,
+            song: &ui.song,
+            history: &ui.practice_history,
+            views: &views,
+            activity: SessionActivity {
+                rehearsal: ui.rehearsal_running,
+                looper: ui.song_playing,
+                tuner: ui.tuner.enabled,
+            },
         },
     })
 }
@@ -46,19 +55,77 @@ pub fn overview_snapshot(ui: &UiState) -> OverviewSnapshot {
 /// Canvas labels stay readable in the small projection; identity and inspector
 /// copy retain the full name. Count characters rather than slicing UTF-8 bytes.
 fn canvas_label(label: &str, narrow: bool) -> String {
-    if narrow && label.chars().count() > 10 {
-        let mut short: String = label.chars().take(9).collect();
+    let compact = if narrow {
+        label
+            .strip_prefix("Working Set ")
+            .map(|name| format!("Set {name}"))
+            .or_else(|| {
+                label
+                    .strip_prefix("Catalog exploration ")
+                    .map(|name| format!("Explore {name}"))
+            })
+            .unwrap_or_else(|| label.to_string())
+    } else {
+        label.to_string()
+    };
+    if narrow && compact.chars().count() > 10 {
+        let mut short: String = compact.chars().take(9).collect();
         short.push('…');
         short
     } else {
-        label.to_string()
+        compact
     }
+}
+
+/// Narrow Mere uses a two-column roster graph instead of compressing the
+/// desktop's artifact/view/activity bands into crowded horizontal lanes.
+fn narrow_positions(
+    snapshot: &OverviewSnapshot,
+    width: u32,
+) -> (BTreeMap<OverviewNodeId, (f32, f32)>, u32) {
+    let group = |id: &OverviewNodeId| match id {
+        OverviewNodeId::Artifact(_) => 0,
+        OverviewNodeId::View(_) => 1,
+        OverviewNodeId::Process(_) => 2,
+        OverviewNodeId::Catalog(_) => 3,
+    };
+    let mut ordered: Vec<_> = snapshot.nodes.iter().collect();
+    ordered.sort_by_key(|node| group(&node.id));
+    let rows = ordered.len().div_ceil(2).max(1);
+    let height = (rows as u32 * 52 + 36).max(320);
+    let inset = 7.0;
+    let left = (20.0 - inset) / (width as f32 - inset * 2.0);
+    let mut positions = BTreeMap::new();
+    for (index, node) in ordered.into_iter().enumerate() {
+        let y = (index / 2) as f32 * 52.0 + 44.0;
+        positions.insert(
+            node.id.clone(),
+            (
+                if index % 2 == 0 { left } else { 1.0 - left },
+                (y - inset) / (height as f32 - inset * 2.0),
+            ),
+        );
+    }
+    (positions, height)
 }
 
 pub fn overview_swatch(ui: &UiState) -> GraphCanvasSwatch<OverviewNodeId, &'static str> {
     let snapshot = overview_snapshot(ui);
     let scene = overview_scene(&snapshot);
     let bounds = scene.tables.bounds;
+    let narrow = ui.viewport == super::ViewportClass::Narrow;
+    let width = if ui.viewport_width > 0.0 {
+        (ui.viewport_width - 48.0).clamp(280.0, 1000.0) as u32
+    } else if narrow {
+        340
+    } else {
+        720
+    };
+    let (narrow_layout, height) = if narrow {
+        narrow_positions(&snapshot, width)
+    } else {
+        (BTreeMap::new(), 320)
+    };
     let nodes = snapshot
         .nodes
         .iter()
@@ -71,24 +138,29 @@ pub fn overview_swatch(ui: &UiState) -> GraphCanvasSwatch<OverviewNodeId, &'stat
                 OverviewNodeId::Process(_) => "process",
                 OverviewNodeId::Catalog(_) => "catalog",
             },
-            position: ui.overview_positions.get(&node.id).copied().unwrap_or((
-                (scene.tables.items[index]
-                    .as_ref()
-                    .unwrap()
-                    .transform
-                    .translate
-                    .x
-                    - bounds.origin.x)
-                    / bounds.size.w,
-                (scene.tables.items[index]
-                    .as_ref()
-                    .unwrap()
-                    .transform
-                    .translate
-                    .y
-                    - bounds.origin.y)
-                    / bounds.size.h,
-            )),
+            position: ui
+                .overview_positions
+                .get(&node.id)
+                .copied()
+                .or_else(|| narrow_layout.get(&node.id).copied())
+                .unwrap_or((
+                    (scene.tables.items[index]
+                        .as_ref()
+                        .unwrap()
+                        .transform
+                        .translate
+                        .x
+                        - bounds.origin.x)
+                        / bounds.size.w,
+                    (scene.tables.items[index]
+                        .as_ref()
+                        .unwrap()
+                        .transform
+                        .translate
+                        .y
+                        - bounds.origin.y)
+                        / bounds.size.h,
+                )),
             label: canvas_label(&node.label, ui.viewport == super::ViewportClass::Narrow),
             key: Some(node.id.wire_key()),
         })
@@ -108,13 +180,6 @@ pub fn overview_swatch(ui: &UiState) -> GraphCanvasSwatch<OverviewNodeId, &'stat
             emphasized: false,
         })
         .collect();
-    let width = if ui.viewport_width > 0.0 {
-        (ui.viewport_width - 48.0).clamp(280.0, 1000.0) as u32
-    } else if ui.viewport == super::ViewportClass::Narrow {
-        340
-    } else {
-        720
-    };
     let mut swatch = GraphCanvasSwatch::new(
         OVERVIEW_GRAPH_LEAF_KEY,
         GraphCanvasSubgraph {
@@ -123,10 +188,11 @@ pub fn overview_swatch(ui: &UiState) -> GraphCanvasSwatch<OverviewNodeId, &'stat
         },
     )
     .with_relations(relations)
-    .with_size(width, 320)
+    .with_size(width, height)
     .with_label("Woodshed Mere graph")
     .with_expand(false)
     .with_node_labels(true);
+    swatch.cull_labels = narrow;
     swatch.selected = ui.overview_focus.clone();
     swatch.viewport = ui.overview_viewport;
     swatch
@@ -145,7 +211,9 @@ impl UiState {
         } else {
             name
         };
-        let id = self.retained_sets.save_snapshot(&self.set, name);
+        let id =
+            self.retained_sets
+                .save_snapshot_from(&self.set, name, self.working_sets.active_id);
         self.overview_focus = Some(OverviewNodeId::Artifact(SessionArtifactId::SavedSet(id)));
         self.overview_notice =
             Some("Set retained. Later edits to the working Set leave this snapshot intact.".into());
@@ -153,57 +221,22 @@ impl UiState {
     }
 
     pub fn open_retained_set(&mut self, id: SavedSetId) -> bool {
-        if self.retained_sets.get(id).is_none() {
+        let Some(saved) = self.retained_sets.get(id) else {
             self.overview_notice = Some("This retained Set is no longer available.".into());
             return false;
-        }
-        self.sync_card_rename();
-        if !self.set.cards.is_empty() {
-            self.retained_sets.save_snapshot(
-                &self.set,
-                format!(
-                    "Working Set before opening {}",
-                    self.retained_sets.entries.len() + 1
-                ),
-            );
-        }
-        self.finish_rehearsal_observation(EngagementKind::Rehearsed);
-        self.rehearsal_running = false;
-        if !self.retained_sets.restore_into(id, &mut self.set) {
+        };
+        let name = format!("{} copy", saved.name);
+        let mut copy = saved.set.clone();
+        if !self.retained_sets.restore_into(id, &mut copy) {
             return false;
         }
-        self.card_rename_for = None;
-        self.set_graph_positions.clear();
-        self.context_positions.clear();
-        self.set_graph_drag_active = false;
-        self.set_graph_card_expanded = false;
-        self.set_graph_relation = None;
-        self.context_focus = None;
-        self.related_relation = None;
-        self.context_disclosed.clear();
-        self.card_shape_notice = None;
-        self.arpeggio_source = None;
-        self.discovery_notice = None;
-        self.scale_source = None;
-        self.scale_subject = None;
-        self.scale_notice = None;
-        self.scale_limit = 4;
-        self.pattern_source = None;
-        self.scale_pattern = None;
-        self.pattern_subject = None;
-        self.pattern_notice = None;
-        self.approach_source = None;
-        self.approach_target = None;
-        self.approach_direction = None;
-        self.approach_subject = None;
-        self.approach_notice = None;
-        self.pitch_motion_anchor = None;
-        self.overview_focus = Some(OverviewNodeId::Artifact(SessionArtifactId::WorkingSet));
+        self.create_working_set();
+        self.set = copy;
+        self.working_sets.active_name = name;
         self.overview_notice = Some(
-            "Opened a working copy with fresh Cards. Your previous working Set was retained."
+            "Opened an independent working copy. Your previous Set remains available in Mere."
                 .into(),
         );
-        self.activate_workspace_panel(WorkspacePanel::Set);
         true
     }
 
@@ -227,16 +260,28 @@ impl UiState {
             return;
         }
         match id {
+            OverviewNodeId::Artifact(SessionArtifactId::WorkingSetInstance(id)) => {
+                self.activate_working_set(id);
+            },
+            OverviewNodeId::Artifact(SessionArtifactId::Exploration(id)) => {
+                self.activate_exploration(id);
+            },
             OverviewNodeId::Artifact(SessionArtifactId::SavedSet(saved)) => {
                 self.open_retained_set(saved);
             },
-            OverviewNodeId::Artifact(SessionArtifactId::WorkingSet)
-            | OverviewNodeId::Process(OverviewProcess::Rehearsal) => {
+            OverviewNodeId::Artifact(SessionArtifactId::WorkingSet) => {
                 self.activate_workspace_panel(WorkspacePanel::Set)
             },
             OverviewNodeId::Artifact(SessionArtifactId::Song)
             | OverviewNodeId::Process(OverviewProcess::Looper) => {
                 self.select_app_section(AppSection::Looper)
+            },
+            OverviewNodeId::Process(OverviewProcess::Rehearsal) => {
+                if let Some(owner) = self.rehearsal_owner {
+                    self.activate_working_set(owner);
+                } else {
+                    self.activate_workspace_panel(WorkspacePanel::Set);
+                }
             },
             OverviewNodeId::Process(OverviewProcess::Tuner) => {
                 self.select_app_section(AppSection::Tools)
@@ -399,11 +444,12 @@ pub(super) fn screen(ui: &UiState) -> UiChild {
                         || {
                             el(
                                 "div",
-                                text("Opening keeps your current Set as a retained snapshot."),
+                                text("Opening creates another working Set and keeps your current Set available."),
                             )
                             .attr("class", "overview-detail")
                         },
                     ),
+                    matches!(id,OverviewNodeId::Process(OverviewProcess::Rehearsal)).then(||clickable(el("div",text("Pause rehearsal")).attr("class","t-btn overview-pause-rehearsal"),|ui:&mut UiState,_|ui.stop_rehearsal())),
                     clickable(
                         el("div", text(label)).attr("class", "t-btn overview-open"),
                         move |ui: &mut UiState, _| ui.open_overview_node(id.clone()),
@@ -431,6 +477,39 @@ pub(super) fn screen(ui: &UiState) -> UiChild {
                     text("Retained material, working views and live activity."),
                 )
                 .attr("class", "overview-subtitle"),
+                el(
+                    "div",
+                    (
+                        clickable(
+                            el("div", text("New Set")).attr("class", "t-btn overview-new-set"),
+                            |ui: &mut UiState, _| {
+                                ui.create_working_set();
+                            },
+                        ),
+                        clickable(
+                            el("div", text("Duplicate Set"))
+                                .attr("class", "t-btn overview-duplicate-set"),
+                            |ui: &mut UiState, _| {
+                                ui.duplicate_working_set();
+                            },
+                        ),
+                        clickable(
+                            el("div", text("New exploration"))
+                                .attr("class", "t-btn overview-new-exploration"),
+                            |ui: &mut UiState, _| {
+                                ui.create_exploration();
+                            },
+                        ),
+                        clickable(
+                            el("div", text("Duplicate exploration"))
+                                .attr("class", "t-btn overview-duplicate-exploration"),
+                            |ui: &mut UiState, _| {
+                                ui.duplicate_exploration();
+                            },
+                        ),
+                    ),
+                )
+                .attr("class", "overview-instance-actions"),
                 el(
                     "div",
                     (
@@ -511,16 +590,18 @@ mod tests {
         ui.pattern_source = Some(old);
         ui.approach_source = Some(old);
         ui.card_rename_for = None;
-        ui.rehearsal_running = true;
+        let owner = ui.working_sets.active_id;
+        ui.toggle_rehearsal();
         assert!(ui.open_retained_set(id));
         assert_ne!(ui.set.cards[0].id, old);
         assert_ne!(ui.set.cards[0].id, CardId::UNASSIGNED);
-        assert_eq!(ui.retained_sets.entries.len(), 2);
+        assert_eq!(ui.retained_sets.entries.len(), 1);
         assert_eq!(
-            ui.retained_sets.entries[1].set.cards[0].label,
+            ui.working_sets.get(owner, &ui.set).unwrap().cards[0].label,
             "Keep this edit"
         );
-        assert!(!ui.rehearsal_running);
+        assert!(ui.rehearsal_running);
+        assert_eq!(ui.rehearsal_owner, Some(owner));
         assert_eq!(ui.arpeggio_source, None);
         assert_eq!(ui.scale_source, None);
         assert_eq!(ui.pattern_source, None);
@@ -531,7 +612,7 @@ mod tests {
             serde_json::to_value(&ui.set).unwrap(),
             serde_json::to_value(&before).unwrap()
         );
-        assert_eq!(ui.retained_sets.entries.len(), 2);
+        assert_eq!(ui.retained_sets.entries.len(), 1);
     }
 
     #[test]
@@ -600,5 +681,34 @@ mod tests {
                 .label,
             node.label
         );
+    }
+    #[test]
+    fn narrow_instance_graph_has_separate_rows_and_distinct_compact_names() {
+        let mut ui = with_card();
+        ui.duplicate_working_set();
+        ui.create_exploration();
+        ui.set_viewport_width(420.0);
+        let full = overview_snapshot(&ui);
+        let swatch = overview_swatch(&ui);
+        assert!(swatch.height > 320);
+        assert_eq!(canvas_label("Working Set 1", true), "Set 1");
+        assert_eq!(canvas_label("Working Set 1 copy", true), "Set 1 copy");
+        assert_ne!(
+            canvas_label("Catalog exploration 1", true),
+            canvas_label("Catalog exploration 2", true)
+        );
+        let projected = swatch.projected_positions();
+        for (index, (_, a)) in projected.iter().enumerate() {
+            for (_, b) in &projected[index + 1..] {
+                assert!((a.0 - b.0).abs() > 200.0 || (a.1 - b.1).abs() >= 50.0);
+            }
+        }
+        assert!(
+            full.nodes
+                .iter()
+                .any(|node| node.label == "Working Set 1 copy")
+        );
+        ui.set_viewport_width(1100.0);
+        assert_eq!(overview_swatch(&ui).height, 320);
     }
 }

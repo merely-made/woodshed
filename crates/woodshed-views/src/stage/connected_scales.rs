@@ -22,7 +22,10 @@ impl UiState {
             self.scale_notice = Some("The source Card is no longer in the Set.".into());
             return false;
         };
-        match self.stage.chord_scale_discoveries(card, SCALE_CHOICES) {
+        match self
+            .current_card_stage()
+            .chord_scale_discoveries(card, SCALE_CHOICES)
+        {
             Ok(_) => {
                 self.scale_notice = None;
                 true
@@ -46,7 +49,10 @@ impl UiState {
             self.scale_notice = Some("The source Card is no longer in the Set.".into());
             return false;
         };
-        match self.stage.chord_scale_discovery(card, &subject) {
+        match self
+            .current_card_stage()
+            .chord_scale_discovery(card, &subject)
+        {
             Ok(_) => {
                 self.context_disclosed.insert(subject);
                 self.scale_notice = None;
@@ -68,10 +74,13 @@ impl UiState {
             self.scale_notice = Some("The source Card is no longer in the Set.".into());
             return;
         };
-        match self.stage.chord_scale_discovery(card, subject) {
+        match self
+            .current_card_stage()
+            .chord_scale_discovery(card, subject)
+        {
             Ok(discovery) => {
                 let (pitches, duration_s, strum_s) = self
-                    .stage
+                    .current_card_stage()
                     .card_sounding_pitches_at_tempo(&discovery.preview, self.transport.bpm);
                 if pitches.is_empty() {
                     self.scale_notice = Some("This scale formula has no sounding notes.".into());
@@ -83,7 +92,11 @@ impl UiState {
                     EngagementKind::Previewed,
                     catalog_id_for_card(card),
                     None,
-                    ObservationProvenance::capture(&discovery.preview).ok(),
+                    ObservationProvenance::capture_in_set(
+                        &discovery.preview,
+                        self.working_sets.active_id,
+                    )
+                    .ok(),
                 );
                 self.request(AudioRequest::PreviewPitches {
                     pitches,
@@ -107,7 +120,12 @@ impl UiState {
             .iter()
             .find(|card| card.id == source)
             .and_then(catalog_id_for_card);
-        match self.stage.stage_chord_scale(&mut self.set, source, subject) {
+        let stage = if self.is_current_set_rehearsing() {
+            self.rehearsal_stage.as_ref().unwrap_or(&self.stage)
+        } else {
+            &self.stage
+        };
+        match stage.stage_chord_scale(&mut self.set, source, subject) {
             Ok(id) => {
                 if let Some(card) = self.set.cards.iter().find(|card| card.id == id) {
                     if let Some(catalog) = catalog_id_for_card(card) {
@@ -117,7 +135,11 @@ impl UiState {
                             EngagementKind::Staged,
                             from,
                             None,
-                            ObservationProvenance::capture(card).ok(),
+                            ObservationProvenance::capture_in_set(
+                                card,
+                                self.working_sets.active_id,
+                            )
+                            .ok(),
                         );
                     }
                 }
@@ -135,7 +157,9 @@ impl UiState {
 pub(super) fn panel(ui: &UiState) -> UiChild {
     if ui.scale_source.is_none()
         && ui.scale_notice.is_none()
-        && !ui.current_card().is_some_and(|card| matches!(card.material, Material::Chord { .. }))
+        && !ui
+            .current_card()
+            .is_some_and(|card| matches!(card.material, Material::Chord { .. }))
     {
         return Box::new(el("div", ()));
     }
@@ -161,17 +185,25 @@ pub(super) fn panel(ui: &UiState) -> UiChild {
     } else if ui.scale_source.is_some() && source.is_none() {
         Some("The source Card is no longer in the Set.".to_string())
     } else if let Some((card, subject)) = source.zip(ui.scale_subject.as_ref()) {
-        ui.stage
+        ui.current_card_stage()
             .chord_scale_discovery(card, subject)
             .err()
             .map(|reason| reason.to_string())
     } else {
         source
-            .and_then(|card| ui.stage.chord_scale_discoveries(card, limit).err())
+            .and_then(|card| {
+                ui.current_card_stage()
+                    .chord_scale_discoveries(card, limit)
+                    .err()
+            })
             .map(|reason| reason.to_string())
     };
     let choices: Vec<UiChild> = source
-        .and_then(|card| ui.stage.chord_scale_discoveries(card, limit).ok())
+        .and_then(|card| {
+            ui.current_card_stage()
+                .chord_scale_discoveries(card, limit)
+                .ok()
+        })
         .unwrap_or_default()
         .into_iter()
         .map(|discovery| {
@@ -187,7 +219,11 @@ pub(super) fn panel(ui: &UiState) -> UiChild {
         .collect();
     let detail: Option<UiChild> = source
         .zip(ui.scale_subject.as_ref())
-        .and_then(|(card, subject)| ui.stage.chord_scale_discovery(card, subject).ok())
+        .and_then(|(card, subject)| {
+            ui.current_card_stage()
+                .chord_scale_discovery(card, subject)
+                .ok()
+        })
         .map(|discovery| {
             Box::new(el(
                 "div",

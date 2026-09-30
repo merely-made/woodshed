@@ -85,15 +85,15 @@ overview must first answer what is retained, what is open, and what is running.
 
 This slice establishes that hierarchy using Woodshed's actual local state:
 the working Set, an explicit retained Set snapshot library, the Looper form,
-catalog exploration, practice history, and the existing shared-workbench views.
+configured catalog explorations, practice history, and the existing shared-workbench views.
 It does not fabricate multiple running sessions or import a foreign authority.
 The catalog is reachable as a collection; the overview does not materialize its
 entire contents beside every working artifact.
 
 Artifact, view and process identities remain separate. Saving a Set snapshot
 creates a fresh retained artifact without changing the working Set. Opening a
-copy retains the previous working Set before replacing its content and assigns
-fresh working Card occurrence IDs. The saved artifact remains unchanged.
+copy creates an independent working Set with fresh Card occurrence IDs; the
+previous working Set stays available in Mere. The saved artifact remains unchanged.
 An active rehearsal or Looper is disclosed from runtime facts; navigation does
 not start or stop it, and restart does not automatically resume playback.
 Derived snapshot lineage, view presentation and process consumption are typed
@@ -122,7 +122,7 @@ Mere navigation, retained snapshot save/open, live activity, narrow Card layout,
 and reopening are separate acceptance points; catalog graph density and audio
 quality retain their previous qualifications.
 
-The integrated gate passes 528 checks: core 173, persistence integration 1,
+The first session Mere checkpoint (`61d2ab3`) passed 528 checks: core 173, persistence integration 1,
 desktop 56, graph 14, views 89, theory 181, documentation 4, and examples 10.
 Production desktop checks cover 1100px and 420px layouts, pure overview
 inspection/navigation, immutable snapshots, fresh working Card identities,
@@ -141,6 +141,97 @@ The exact committed-revision capture receipt is kept outside the repository in
 `/Users/markik/Code/testing/woodshed/mere-20260930/receipt.json`.
 This slice does not establish acoustic quality, release packaging, or foreign
 projection mounting; those retain their separate acceptance conditions.
+
+### Independent working instances
+
+**Status (2026-09-30): implemented; validation checkpoint based on `61d2ab3`.**
+The maintainer approved several independently configured working Sets and
+catalog explorations, related through Mere. Each Set retains its ordered Card
+instructions, cursor and occurrence identities. The current product description
+still describes the earlier single-Set frame; this authorized slice extends
+that frame to one ordered Set per working instance. The maintainer-owned
+`PROJECT_DESCRIPTION.md` is unchanged.
+
+Phase 1 establishes stable working-instance identity and explicit creation,
+duplication and switching. The active Set content remains in the existing
+editor state; inactive owners are parked in a portable bank, without a second
+mutable copy of the active content. Switching restores original occurrences;
+duplication and opening a retained snapshot create new occurrences.
+
+Phase 2 retains independent catalog selections, search and musical setup.
+Exploration-specific tuning, fretboard and graph configuration travel with the
+exploration, while appearance, device selection and transport preferences remain
+application-owned. The existing workspace panes project the selected owner;
+the overview must not pretend that each owner is a separate Workbench tile.
+Transient melodic catalog previews stop on an explicit context switch; they
+are not claimed as concurrently running explorer sessions.
+
+Phase 3 binds the single rehearsal runner to the Set that starts it. Inspecting
+or editing another Set must not replace the runner's Card, setup, clock, or
+observation provenance. Starting rehearsal from another Set explicitly transfers
+that one runner; restart restores owners without resuming activity.
+
+Done-conditions: two divergent Sets and two divergent explorations survive
+switching and fresh-process reopening; staging edits only the selected Set;
+background rehearsal advances its original owner; Mere's view and process
+relations expose those different bindings; invalid identities leave content
+untouched; legacy single-Set sessions migrate without content loss. Validate
+portable banks, production wide/narrow clicks, host runner clocks and
+persistence separately from reviewed native captures.
+
+**Findings (2026-09-30):** the former host dwell loop read `ui.set` directly,
+so changing the editor owner would also have changed the runner. The host now
+resolves `rehearsal_set` and its captured setup, with owner identity in the
+instruction clock signature (`crates/woodshed-genet/src/drive.rs`). Card IDs
+are local to a Set, so history provenance and occurrence suppression must also
+qualify the owner (`crates/woodshed-core/src/history.rs`). Set-scene epochs
+include owner scope, preventing identical local occurrences in different Sets
+from accepting one another's retained scene events.
+
+Saved snapshots remain immutable artifact copies. New snapshots record their
+source working owner; legacy snapshots with unknown source do not gain an
+invented owner relation. Opening now adds a working instance and leaves the
+snapshot library unchanged; it does not create an extra snapshot every time.
+
+
+**Validation (2026-09-30):** 550 automated checks pass: core 181,
+core integration 1, desktop 62, graph 14, views 97, musical theory 181,
+doc examples 4 and executable examples 10. Production desktop tests cover
+wide and narrow instance controls, staging isolation, background owner advance,
+explicit runner transfer, captured inherited setup, observation provenance,
+fresh-process restoration and populated legacy migration. A focused host dwell
+test verifies the clock, automatic cursor advance and emitted pitches while
+another owner and tuning are visible. Appearance and transport preferences
+remain shared; there is still one rehearsal runner and one selected projection
+per workspace pane.
+
+Native `working_instances.scn` and `working_instances_reopen.scn` pass at
+1100x800/default zoom with reviewed captures of two divergent Sets, two catalog
+explorations, the background process binding and fresh-process restoration.
+The narrow replay exercises the instance graph and explicit staging targets.
+Review also found and corrected a rename buffer keyed only by cursor: removing
+a Card could rename the next Card, and identical local Card IDs in different
+Sets could reuse the wrong buffer. Rename authority now includes Set and Card.
+The rehearsal owner and background notice have separate rows above controls.
+Narrow Mere uses a two-column graph with row spacing and distinct compact
+instance names; the roster and inspector retain full names. Returning to the
+running owner resolves its board, Hear action, shape controls and occurrence-bound
+related discoveries through the same captured setup as automatic rehearsal.
+Practice catalog audition continues to use its visible explorer. Recipe tiles
+and search hits open a new named working Set; Clear preserves the selected
+owner's Card identity allocator and stops only its own runner.
+Logs, failed probes and capture hashes are retained under
+`/Users/markik/Code/testing/woodshed/instances-20260930/receipt.json`.
+
+**Rendering follow-up:** a 1500x1200 native Practice capture at 0.75 zoom is
+entirely black despite finite layout bounds. The archived previous revision
+`61d2ab3` reproduces the same failure in both Two pane and Full canvas, while
+its 1100x800/default-zoom Practice capture renders. This evidence establishes a
+pre-existing size/zoom rendering boundary, not its root cause; fractional render
+scale and enlarged logical viewport still need isolation. Preserve those failed
+captures separately from accepted default-zoom results. Audio stream underrun/
+overrun messages also remain observed during native runs; automatic instruction
+and pitch checks do not establish acoustic quality or release readiness.
 
 ## Connected exploration and deliberate practice
 

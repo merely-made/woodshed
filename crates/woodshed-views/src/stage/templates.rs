@@ -8,7 +8,7 @@ pub(super) fn screen(ui: &UiState) -> UiChild {
         .into_iter()
         .enumerate()
         .map(|(i, ps)| {
-            let meta = format!("{} cards · tap to fill the set", ps.items.len());
+            let meta = format!("{} cards · open as a new Set", ps.items.len());
             let name = ps.name.clone();
             let desc = ps.description.clone();
             let _ = i;
@@ -23,7 +23,7 @@ pub(super) fn screen(ui: &UiState) -> UiChild {
                 )
                 .attr("class", "recipe-tile"),
                 move |ui: &mut UiState, _| {
-                    ui.set = set_from_practice(&ps);
+                    ui.create_working_set_from(ps.name.clone(), set_from_practice(&ps));
                 },
             )) as UiChild
         })

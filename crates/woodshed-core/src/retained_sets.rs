@@ -14,6 +14,8 @@ pub struct SavedSet {
     pub id: SavedSetId,
     pub name: String,
     pub set: Set,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub source_working_set_id: Option<crate::working_sets::WorkingSetId>,
 }
 
 #[derive(Clone, Debug, Default, Serialize, Deserialize)]
@@ -47,7 +49,22 @@ impl RetainedSets {
                 name
             },
             set: set.clone(),
+            source_working_set_id: None,
         });
+        id
+    }
+
+    pub fn save_snapshot_from(
+        &mut self,
+        set: &Set,
+        name: impl Into<String>,
+        owner: crate::working_sets::WorkingSetId,
+    ) -> SavedSetId {
+        let id = self.save_snapshot(set, name);
+        self.entries
+            .last_mut()
+            .expect("new snapshot")
+            .source_working_set_id = Some(owner);
         id
     }
 

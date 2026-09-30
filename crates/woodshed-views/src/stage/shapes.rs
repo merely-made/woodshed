@@ -12,11 +12,17 @@ impl UiState {
         let Some(cursor) = self.selected_card_index() else {
             return;
         };
+        let captured = self.is_current_set_rehearsing();
+        let stage = if captured {
+            self.rehearsal_stage.as_ref().unwrap_or(&self.stage)
+        } else {
+            &self.stage
+        };
         let card = &mut self.set.cards[cursor];
         let result = if direction < 0 {
-            self.stage.select_previous_card_shape(card)
+            stage.select_previous_card_shape(card)
         } else {
-            self.stage.select_next_card_shape(card)
+            stage.select_next_card_shape(card)
         };
         self.card_shape_notice = result.err().map(|reason| (card.id, reason.to_string()));
         self.hover_peek = None;
@@ -41,7 +47,7 @@ impl UiState {
         ) {
             return None;
         }
-        Some(self.stage.scale_card_realization(card).map(|scale| {
+        Some(self.current_card_stage().scale_card_realization(card).map(|scale| {
             let written = woodshed_core::harmony::KeyedCatalogRef::from_material(&card.material)
                 .expect("resolved scale formula");
             let mut concert = written.clone();
@@ -58,7 +64,7 @@ impl UiState {
         if !matches!(card.material, Material::ChordApproach { .. }) {
             return None;
         }
-        Some(self.stage.chord_approach_realization(card).map(|approach| {
+        Some(self.current_card_stage().chord_approach_realization(card).map(|approach| {
             let written = woodshed_core::harmony::KeyedCatalogRef::from_material(&card.material).expect("resolved approach");
             let mut concert = written.clone();
             concert.root = approach.concert_root;
@@ -77,7 +83,7 @@ impl UiState {
                 Material::Scale { .. } | Material::ScalePattern { .. }
             ) {
                 Some(
-                    self.stage
+                    self.current_card_stage()
                         .scale_card_realization(card)
                         .map(|scale| scale.geometry)
                         .unwrap_or(woodshed_core::card_shapes::CardShapeGeometry {
@@ -89,7 +95,7 @@ impl UiState {
                 )
             } else if matches!(card.material, Material::ChordApproach { .. }) {
                 Some(
-                    self.stage
+                    self.current_card_stage()
                         .chord_approach_realization(card)
                         .map(|approach| approach.geometry)
                         .unwrap_or(woodshed_core::card_shapes::CardShapeGeometry {
@@ -100,19 +106,23 @@ impl UiState {
                         }),
                 )
             } else {
-                self.stage.card_shape_geometry(card)
+                self.current_card_stage().card_shape_geometry(card)
             }
         });
         BoardGeom {
             string_count: resolved
                 .as_ref()
-                .map_or(self.stage.string_count(), |g| g.string_count),
+                .map_or(self.current_card_stage().string_count(), |g| g.string_count),
             fret_start: resolved
                 .as_ref()
-                .map_or(self.stage.fret_start, |g| g.physical_fret_start),
+                .map_or(self.current_card_stage().fret_start, |g| {
+                    g.physical_fret_start
+                }),
             fret_count: resolved
                 .as_ref()
-                .map_or(self.stage.fret_count, |g| g.physical_fret_end),
+                .map_or(self.current_card_stage().fret_count, |g| {
+                    g.physical_fret_end
+                }),
             orientation: Orientation::from_name(&self.app_settings.fretboard.orientation),
         }
     }
@@ -125,7 +135,7 @@ pub(super) fn controls(ui: &UiState) -> UiChild {
     if !matches!(card.material, Material::Chord { .. }) {
         return Box::new(el("div", ()));
     }
-    let status = match ui.stage.card_shape_status(card) {
+    let status = match ui.current_card_stage().card_shape_status(card) {
         CardShapeStatus::NotChord | CardShapeStatus::Unselected => "All chord tones".to_string(),
         CardShapeStatus::Available(shape) => format!(
             "Shape {} of {}{} · {} / {} · capo {}",
@@ -200,7 +210,7 @@ fn movement_details(ui: &UiState) -> UiChild {
     };
     let selected = &ui.set.cards[index];
     let heading = format!("Neck movement · {} → {}", previous.label, selected.label);
-    let detail = match ui.stage.compare_cards(previous, selected) {
+    let detail = match ui.current_card_stage().compare_cards(previous, selected) {
         Err(reason) => {
             let message = match reason {
                 Unavailable::LeftNotChord => "The previous Card is not a chord.".into(),
@@ -275,6 +285,103 @@ fn movement_details(ui: &UiState) -> UiChild {
 mod scale_tests {
     use super::*;
     use woodshed_core::harmony::KeyedCatalogRef;
+
+    #[test]
+    fn returning_to_running_inherited_card_keeps_board_hear_and_related_pattern_on_captured_setup()
+    {
+        use woodshed_core::{
+            Lens,
+            audio::AudioRequest,
+            session_overview::{OverviewNodeId, OverviewProcess},
+        };
+        use woodshedding::rehearsal::ScalePattern;
+        let mut ui = UiState::new();
+        ui.stage.set_lens(Lens::Scales);
+        let major = ui
+            .stage
+            .scales()
+            .iter()
+            .position(|scale| scale.name == "Major")
+            .unwrap();
+        ui.stage.select_scale(major);
+        ui.stage.set_root(5); // D, indexed from A.
+        ui.root_dd.selected = 5;
+        ui.stage.apply_neck(0, Some(2));
+        ui.app_settings.fretboard.neck_start = 0;
+        ui.app_settings.fretboard.neck_end = Some(2);
+        ui.stage_current(None);
+        ui.set.cards[0].setting.instrument.clear();
+        ui.set.cards[0].setting.tuning = None;
+        ui.set.cards[0].setting.fret_window = None;
+        let source = ui.set.cards[0].id;
+        let owner = ui.working_sets.active_id;
+        ui.activate_workspace_panel(super::super::WorkspacePanel::Set);
+        ui.now_ms = Some(1_000);
+        ui.toggle_rehearsal();
+        let sound = ui.rehearsal_sounding_pitches().unwrap();
+        let setup_status = ui.rehearsal_scale_status().unwrap().unwrap();
+        let contacts = |stage: &woodshed_core::StageState, card: &woodshedding::rehearsal::Card| {
+            stage
+                .dots_for_card(card)
+                .into_iter()
+                .map(|dot| (dot.string_index, dot.fret, dot.label))
+                .collect::<Vec<_>>()
+        };
+        let dots = contacts(ui.current_card_stage(), &ui.set.cards[0]);
+        let pattern = ui
+            .current_card_stage()
+            .scale_pattern_discovery(&ui.set.cards[0], ScalePattern::Thirds)
+            .unwrap();
+        let pattern_sound = ui
+            .current_card_stage()
+            .card_sounding_pitches_at_tempo(&pattern.preview, ui.transport.bpm);
+        ui.create_working_set();
+        ui.create_exploration();
+        let drop_d = woodshed_core::tunings()
+            .iter()
+            .position(|tuning| tuning.name == "Drop D")
+            .unwrap();
+        ui.stage.set_tuning(drop_d);
+        ui.tuning_dd.selected = drop_d;
+        ui.stage.apply_neck(8, Some(12));
+        ui.app_settings.fretboard.neck_start = 8;
+        ui.app_settings.fretboard.neck_end = Some(12);
+        ui.open_overview_node(OverviewNodeId::Process(OverviewProcess::Rehearsal));
+        assert_eq!(ui.working_sets.active_id, owner);
+        assert!(ui.is_current_set_rehearsing());
+        assert_ne!(contacts(&ui.stage, &ui.set.cards[0]), dots);
+        assert_eq!(contacts(ui.current_card_stage(), &ui.set.cards[0]), dots);
+        let geometry = ui.rehearsal_board_geometry();
+        assert_eq!(
+            (
+                geometry.string_count,
+                geometry.fret_start,
+                geometry.fret_count
+            ),
+            (6, 0, 2)
+        );
+        assert_eq!(ui.rehearsal_scale_status().unwrap().unwrap(), setup_status);
+        assert_eq!(ui.preview_voicing(), sound);
+        ui.audio_requests.clear();
+        assert!(ui.inspect_scale_pattern(source, ScalePattern::Thirds));
+        ui.hear_scale_pattern();
+        assert!(
+            matches!(ui.audio_requests.last(), Some(AudioRequest::PreviewPitches { pitches, duration_s, strum_s }) if (pitches.clone(), *duration_s, *strum_s) == pattern_sound)
+        );
+        let appended = ui.stage_scale_pattern().unwrap();
+        let staged = ui.set.card(appended).unwrap();
+        assert_eq!(
+            ui.current_card_stage()
+                .card_sounding_pitches_at_tempo(staged, ui.transport.bpm),
+            pattern_sound
+        );
+        ui.activate_workspace_panel(super::super::WorkspacePanel::Practice);
+        assert_eq!(
+            ui.preview_voicing(),
+            ui.stage.voicing_preview(),
+            "Practice catalog audition retains its visible exploration setup"
+        );
+    }
     use woodshedding::pitch::PitchClass;
     use woodshedding::rehearsal::FretWindow;
 

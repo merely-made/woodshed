@@ -139,6 +139,10 @@ pub struct PersistedSession {
     pub set: woodshedding::rehearsal::Set,
     /// Explicit retained instruction snapshots, distinct from the working Set.
     pub retained_sets: crate::retained_sets::RetainedSets,
+    pub working_sets: crate::working_sets::WorkingSets,
+    pub catalog_explorations: crate::catalog_explorations::CatalogExplorations,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub active_exploration: Option<crate::catalog_explorations::CatalogExplorationState>,
     /// The song lane: bars + song-level flags.
     pub song: crate::song::SongDoc,
     /// Typed catalog engagement used by Related ranking and future history
@@ -175,6 +179,9 @@ impl PersistedSession {
         Self {
             set: set.clone(),
             retained_sets: crate::retained_sets::RetainedSets::default(),
+            working_sets: crate::working_sets::WorkingSets::default(),
+            catalog_explorations: crate::catalog_explorations::CatalogExplorations::default(),
+            active_exploration: None,
             song: song.clone(),
             practice_history: practice_history.clone(),
             workspace_json: None,
@@ -385,6 +392,51 @@ mod tests {
         let mut on: AppSettings = serde_json::from_str(&json).unwrap();
         on.stage.adopt_legacy_relation_visibility();
         assert!(!on.stage.shows_relation(SetGraphEdgeKind::Next));
+    }
+
+    #[test]
+    fn multiple_owner_banks_preserve_legacy_active_content_and_round_trip() {
+        let mut session = decode_session("{}").unwrap().session;
+        assert_eq!(
+            session.working_sets.active_id,
+            crate::working_sets::WorkingSetId(1)
+        );
+        assert!(session.working_sets.inactive.is_empty());
+        assert!(session.active_exploration.is_none());
+        session
+            .set
+            .push(StageState::new().card_from_lens().unwrap());
+        let original_id = session.set.cards[0].id;
+        let original_owner = session.working_sets.active_id;
+        let second = session.working_sets.create(
+            &mut session.set,
+            "Other",
+            woodshedding::rehearsal::Set::default(),
+        );
+        let mut context = crate::catalog_explorations::CatalogExplorationState::default();
+        context.search_query = "minor".into();
+        session.catalog_explorations.create(
+            &mut context,
+            "Other exploration",
+            crate::catalog_explorations::CatalogExplorationState::default(),
+        );
+        session.active_exploration = Some(context);
+        let mut reopened = decode_session(&serde_json::to_string(&session).unwrap())
+            .unwrap()
+            .session;
+        assert_eq!(reopened.working_sets.active_id, second);
+        assert!(
+            reopened
+                .working_sets
+                .activate(original_owner, &mut reopened.set)
+        );
+        assert_eq!(reopened.set.cards[0].id, original_id);
+        assert_eq!(
+            reopened.catalog_explorations.inactive[0].state.search_query,
+            "minor"
+        );
+        let wire = serde_json::to_value(&reopened.working_sets).unwrap();
+        assert!(wire.get("set").is_none());
     }
 
     #[test]

@@ -29,7 +29,9 @@ assert snap set-cards == 3
 capture 02_mere_retained
 click .overview-open Open copy
 settle 3
-assert snap retained-sets == 2
+assert snap retained-sets == 1
+assert snap working-sets == 2
+assert snap working-set-id == 2
 assert snap set-cards == 3
 assert snap working-saved-shared-ids == 0
 assert snap rehearsal-running == false
