@@ -150,6 +150,31 @@ pub(super) fn screen(ui: &UiState) -> UiChild {
     // The same Card editor appears in Stage's Set tray and Rehearsal. Actions
     // mutate the one persisted Set through UiState helpers.
     let editor = super::set_tray::card_editor(ui);
+    let scale_status: Option<UiChild> = ui.rehearsal_scale_status().map(|status| match status {
+        Ok(message) => {
+            Box::new(el("div", text(message)).attr("class", "t-readout scale-setup-status"))
+                as UiChild
+        },
+        Err(message) => Box::new(
+            el("div", text(message))
+                .attr("class", "scale-setup-unavailable")
+                .attr("role", "status"),
+        ) as UiChild,
+    });
+    if ui
+        .rehearsal_scale_status()
+        .is_some_and(|status| status.is_err())
+    {
+        return Box::new(el(
+            "div",
+            (
+                deck,
+                el("div", films).attr("class", "filmstrip"),
+                editor,
+                scale_status,
+            ),
+        ));
+    }
 
     // Current card's material on the big board — the same Sprigging paint leaf
     // the Stage board uses. Over it, one clickable label per note: click *marks*
@@ -261,6 +286,7 @@ pub(super) fn screen(ui: &UiState) -> UiChild {
             deck,
             el("div", films).attr("class", "filmstrip"),
             editor,
+            scale_status,
             el(
                 "div",
                 (

@@ -252,7 +252,7 @@ mod tests {
         use woodshed_core::{Lens, harmony::KeyedCatalogRef, storage::AppSection};
         use woodshedding::{
             pitch::PitchClass,
-            rehearsal::{Hold, Material, Touch},
+            rehearsal::{FretWindow, Hold, MarkMode, Material, Touch},
         };
         let Ok(mode) = std::env::var("WOODSHED_SCALE_SESSION_WORKER") else {
             return;
@@ -272,7 +272,10 @@ mod tests {
                 .unwrap();
             ui.stage.select_chord(index);
             ui.stage_current(None);
+            ui.set.cards[0].setting.instrument = "Ukulele".into();
+            ui.set.cards[0].setting.tuning = Some("Standard (high-G)".into());
             ui.set.cards[0].setting.capo = Some(2);
+            ui.set.cards[0].setting.fret_window = Some(FretWindow { start: 2, span: 4 });
             ui.step_card_shape(1);
             assert!(ui.set.cards[0].setting.voicing_fingerprint.is_some());
             ui.set.cards[0].timing.bpm = Some(90.0);
@@ -293,6 +296,9 @@ mod tests {
             let scale = ui.stage_chord_scale().unwrap();
             assert_ne!(source, scale);
             assert_ne!(arpeggio, scale);
+            let scale_card = ui.set.card_mut(scale).unwrap();
+            scale_card.setting.marked = vec![(1, 2)];
+            scale_card.setting.mark_mode = MarkMode::Solo;
             ui.set.select_id(arpeggio);
             ui.select_app_section(AppSection::Rehearsal);
             ui.now_ms = Some(1_000);
@@ -329,6 +335,7 @@ mod tests {
                 "reopen cannot resume or invent practice"
             );
             assert_eq!(ui.section, AppSection::Rehearsal);
+            assert_eq!(ui.stage.string_count(), 6, "the live setup remains Guitar");
             let source = &ui.set.cards[0];
             let arpeggio = &ui.set.cards[1];
             let scale = &ui.set.cards[2];
@@ -345,8 +352,29 @@ mod tests {
             assert!(scale.setting.voicing_idx.is_none());
             assert!(scale.setting.voicing_fingerprint.is_none());
             assert!(scale.setting.voicing_profile.is_none());
+            assert_eq!(scale.setting.marked, vec![(1, 2)]);
+            assert_eq!(scale.setting.mark_mode, MarkMode::Solo);
+            let realized = ui.stage.scale_card_realization(scale).unwrap();
+            assert_eq!(realized.geometry.string_count, 4);
+            assert_eq!(realized.geometry.physical_fret_start, 2);
+            assert_eq!(realized.geometry.physical_fret_end, 6);
+            let dot = realized
+                .dots
+                .iter()
+                .find(|dot| dot.string_index == 1 && dot.fret == 2)
+                .unwrap();
+            let d4_hz = 440.0 * 2.0_f32.powf((62.0 - 69.0) / 12.0);
+            assert!(
+                (dot.frequency - d4_hz).abs() < 0.001,
+                "saved physical contact is D4 on the Ukulele, not B2 on the live Guitar"
+            );
+            let sounding = ui.preview_voicing();
+            assert_eq!(sounding.0.len(), 1);
+            assert!((sounding.0[0] - d4_hz).abs() < 0.001);
+            assert_eq!(ui.rehearsal_board_geometry().string_count, 4);
             for card in &ui.set.cards {
                 assert_eq!(card.setting.instrument, source.setting.instrument);
+                assert_eq!(card.setting.instrument, "Ukulele");
                 assert_eq!(card.setting.tuning, source.setting.tuning);
                 assert_eq!(card.setting.capo, Some(2));
                 assert_eq!(card.timing.bpm, Some(90.0));

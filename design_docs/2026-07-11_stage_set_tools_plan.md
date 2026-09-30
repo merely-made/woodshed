@@ -331,6 +331,29 @@ The first slice is not accepted solely because each lane reports success.
   successful player performance; keyboard and listening review remain open.
   Hidden discovery panels now omit their empty styled boxes.
 
+- **2026-09-30, shared scale realization:** scale Cards now resolve their saved
+  instrument, catalog tuning, capo, and physical fret window once for the
+  displayed contacts and audition pitches. The written root is transposed by
+  capo for concert sound. An ascending traversal selects one deterministic
+  contact per distinct MIDI pitch; it does not prescribe a playable fingering.
+  Solo resolves exact marked contacts; Mute retains the existing pitch-class
+  semantics. Manual Walk uses quarter-note spacing, and timed Walk fits one
+  traversal inside the authored dwell, including inherited runner BPM. Missing
+  setup/formula and empty windows show an unavailable status and yield no live
+  instrument fallback. This supersedes the general scale display/audio gaps
+  recorded above. Synchronized note highlights, voice cancellation on pause,
+  arbitrary persisted custom tunings, and fingering construction remain open.
+  Production interaction and separate-process restoration checks establish a
+  four-string high-G Ukulele Card, capo 2, physical frets 2–6 against a live
+  six-string Guitar. A clicked string-index-1/fret-2 contact solos independently
+  calculated D4 (approximately 293.665 Hz). Discovery and staged audition agree;
+  an inherited 80 BPM bar occupies three seconds. Invalid stored tuning has a
+  visible reason, no fret markers, and empty effective audio.
+  Integrated validation passes 460 tests (151 core, one core integration,
+  42 desktop, 14 graph, 71 views, 177 theory, and four theory doc examples);
+  the desktop build passes. Native seed/reopen scenarios are prepared in
+  `scenarios/scale_realization*.scn`; capture acceptance is pending Mac unlock.
+
 **First-slice qualification:** functional discovery, staging, sequential-onset
 preview, runner observation boundaries, and filesystem reopening are implemented
 and automatically tested. The synth sustains prior tones through the cascade;
@@ -349,6 +372,52 @@ The release baseline is reached when a clean checkout resolves the committed
 lock without local sibling patches, core and Windows-host CI pass, and a tag
 produces a checksummed Windows ZIP. Repairing that baseline makes the alpha
 credible; it does not close any product phase below.
+
+**2026-09-30 publishing assessment:** use a downloadable desktop alpha as the
+initial candidate while audience choice remains open. The pushed scale slice
+at `5f29760` has green [CI across all five jobs](https://github.com/merely-made/woodshed/actions/runs/36754594105):
+clean lockfile, core tests, macOS/Linux builds, and Windows host check. Historical
+manual [macOS packaging](https://github.com/merely-made/woodshed/actions/runs/34295644328)
+and [Linux packaging](https://github.com/merely-made/woodshed/actions/runs/34296576133)
+runs succeeded at older revisions; they do not validate a new candidate.
+No Windows packaging run or [public release](https://github.com/merely-made/woodshed/releases)
+is currently recorded. The macOS package is unsigned and architecture-specific.
+
+The next release checkpoint is a named revision, clean locked build, platform
+archive and checksum, extracted-app launch, isolated save/reopen, and a concise
+known-limits document including audio, supported platforms, data storage and
+upgrade behavior. Re-run packaging for that revision before claiming a current
+candidate. Keep the artifact receipt with source/binary hashes and observations.
+Publication requires an explicit release instruction; assessing or preparing an
+alpha does not create a tag. Browser publication is a separate host-validation
+slice because `woodshed-web` is still unshipped. The crate family is currently
+git-first; a registry/library release needs its own dependency and publish check.
+
+**Catalog expansion order:** source inventory currently includes 40 scale
+formulas, 39 chord formulas, 12 progression recipes, seven exercise generators,
+101 tunings across 15 instrument families, and 11 generated practice templates.
+Arpeggios derive from chord formulas. Counts describe the built-in catalogs,
+not independently rehearsable products or a runtime catalog-pack facility.
+
+1. Add executable composition/practice recipes: diatonic thirds/fourths,
+   chord-tone approaches, minor-key progressions, and transition drills. Each
+   preview must lower to the same Cards as staging and have a useful playback
+   and instrument realization. Current Riff audition is unavailable, so extend
+   its realization before advertising new Riff generators as audible drills.
+2. Introduce validated catalog packs with stable IDs, aliases, source/license
+   provenance, explicit parameters, and migration from current name-based
+   identities. Then expand community-curated material without recompiling every
+   catalog change. Rhythm, articulation, and melodic sequences offer useful
+   combinations beyond adding scale names. Microtonal catalogs require a pitch
+   model beyond the current twelve-tone assumptions.
+3. Build the lexical composition lane with separate pronunciation and semantic
+   records. [CMUdict](https://github.com/cmusphinx/cmudict) supplies English
+   pronunciations and stress markers for rhyme/prosody exploration;
+   [Open English WordNet](https://en-word.net/) supplies meanings, synonyms,
+   and semantic relations under CC BY 4.0. Preserve their attribution and
+   pronunciation alternatives. Neither dataset alone supplies grammar rules,
+   contextual prosody, or a mora model. Validate these layers explicitly and
+   connect their typed relations to the same deliberate composition workflow.
 
 Woodshed earns a 1.0 practice claim only when one persisted flow demonstrates
 all four parts together:

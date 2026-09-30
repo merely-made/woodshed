@@ -3,9 +3,9 @@
 //! These queries describe catalog formulas. A selected chord shape and capo
 //! are retained as instrument context, but do not reinterpret the material's
 //! root or establish which scale fingering is suitable for a player.
-//! Audition is the existing formula cascade, not a resolved instrument
-//! fingering or synchronized per-event timing. Copied setup and timing are
-//! authored context; this query does not generalize the scale audio resolver.
+//! Audition resolves the preview Card through the shared scale realization.
+//! Its saved setup determines concert pitches and physical contacts; the
+//! ascending traversal is not a fingering solver or synchronized note events.
 
 use woodshedding::pitch::PitchClass;
 use woodshedding::rehearsal::{Card, CardId, MarkMode, Material, Set, Touch};
@@ -138,7 +138,7 @@ impl StageState {
         preview.setting.marked.clear();
         preview.setting.mark_mode = MarkMode::Off;
         let explanation = format!(
-            "{label} contains all {} tones of {} and adds {} pitch classes. Formula audition uses the written key, independently of the chord's fingering or capo. Scale fingering remains unspecified. Setup and timing are retained; chord shape and marked notes are cleared.",
+            "{label} contains all {} tones of {} and adds {} pitch classes. Scale audition resolves the saved instrument, tuning, capo, and fret window. The ascending traversal does not prescribe a fingering. Setup and timing are retained; chord shape and marked notes are cleared.",
             chord_tones.len(),
             chord.label().expect("validated catalog chord"),
             scale_tones.len() - chord_tones.len(),
@@ -267,7 +267,7 @@ mod tests {
         assert_eq!(discovery.preview.setting.mark_mode, MarkMode::Off);
         assert_eq!(preview["timing"], before["timing"]);
         assert_eq!(preview["from"], before["from"]);
-        assert!(discovery.explanation.contains("Formula audition"));
+        assert!(discovery.explanation.contains("Scale audition"));
     }
 
     #[test]

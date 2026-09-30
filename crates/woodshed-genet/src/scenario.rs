@@ -341,6 +341,10 @@ impl Snapshot<'_, '_> {
             .map(|card| card.label.clone())
             .unwrap_or_default();
         let mut snap = ProbeSnapshot::default()
+            .with_field(
+                "rehearsal-strings",
+                ui.rehearsal_board_geometry().string_count.to_string(),
+            )
             .with_field("set-cards", observed.cards.to_string())
             .with_field("rehearsal-running", ui.rehearsal_running.to_string())
             .with_field("history-events", ui.practice_history.len().to_string())
@@ -369,8 +373,17 @@ impl Snapshot<'_, '_> {
             )
             .with_field(
                 "scale-cards",
-                ui.set.cards.iter().filter(|card| matches!(card.material,
-                    woodshedding::rehearsal::Material::Scale { .. })).count().to_string(),
+                ui.set
+                    .cards
+                    .iter()
+                    .filter(|card| {
+                        matches!(
+                            card.material,
+                            woodshedding::rehearsal::Material::Scale { .. }
+                        )
+                    })
+                    .count()
+                    .to_string(),
             )
             .with_field(
                 "context-arpeggios",
@@ -828,7 +841,7 @@ impl Automatable for Probe<'_, '_> {
         let mut known = true;
         self.ctx.runner.update(|ui| match label {
             "stage-current" => ui.stage_current(None),
-            "connected-practice-example" => {
+            "connected-practice-example" | "connected-scale-setup-example" => {
                 use woodshedding::rehearsal::{Hold, Set, Timing};
                 ui.set = Set::default();
                 ui.practice_history = Default::default();
@@ -852,6 +865,15 @@ impl Automatable for Probe<'_, '_> {
                         bpm: Some(120.0),
                         hold: Hold::Seconds(2.0),
                     };
+                }
+                if label == "connected-scale-setup-example" {
+                    for card in &mut ui.set.cards {
+                        card.setting.instrument = "Ukulele".into();
+                        card.setting.tuning = Some("Standard (high-G)".into());
+                        card.setting.capo = Some(2);
+                        card.setting.fret_window =
+                            Some(woodshedding::rehearsal::FretWindow { start: 2, span: 4 });
+                    }
                 }
                 ui.set_graph_card_expanded = true;
                 ui.set_graph_reading(woodshed_core::settings::StageGraphReading::CircleOfFifths);

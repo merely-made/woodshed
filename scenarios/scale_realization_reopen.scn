@@ -1,0 +1,9 @@
+settle 3
+assert snap set-cards == 3
+assert snap scale-cards == 1
+assert snap rehearsal-running == false
+assert snap history-observed >= 3
+assert snap rehearsal-strings == 4
+assert text concert D Major
+capture 01_scale_setup_reopened
+log Connected chord-to-scale reopen complete
