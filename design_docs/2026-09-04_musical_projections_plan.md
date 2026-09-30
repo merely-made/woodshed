@@ -43,7 +43,9 @@ connections are an explicit target. This update changes direction and acceptance
 scope; the parent records the bounded chord/arpeggio implementation and its
 automated and native seed/reopen checks, with Stage layout, keyboard, listening,
 and full articulation acceptance still open. The
-historical receipts below retain their original scope.
+historical receipts below retain their original scope. The next bounded
+chord-to-scale slice supplies exact formula containment and explicit Set
+authoring; its parent plan records disclosure ranking and realization limits.
 
 ## Why
 

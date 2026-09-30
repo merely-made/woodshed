@@ -120,6 +120,13 @@ impl UiState {
 }
 
 pub(super) fn panel(ui: &UiState) -> UiChild {
+    if ui.arpeggio_source.is_none()
+        && ui.discovery_notice.is_none()
+        && !ui.current_card().is_some_and(|card| matches!(card.material, woodshedding::rehearsal::Material::Chord { .. }))
+    {
+        return Box::new(el("div", ()));
+    }
+
     let unavailable = ui
         .current_card()
         .filter(|card| {

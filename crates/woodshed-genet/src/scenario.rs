@@ -368,6 +368,11 @@ impl Snapshot<'_, '_> {
                     .to_string(),
             )
             .with_field(
+                "scale-cards",
+                ui.set.cards.iter().filter(|card| matches!(card.material,
+                    woodshedding::rehearsal::Material::Scale { .. })).count().to_string(),
+            )
+            .with_field(
                 "context-arpeggios",
                 stage_snapshot
                     .nodes

@@ -222,4 +222,164 @@ mod tests {
         }
         println!("connected-session PASS {mode}");
     }
+    #[test]
+    fn mixed_catalog_session_reopens_in_a_fresh_process() {
+        let dir = tempfile::tempdir().unwrap();
+        for mode in ["seed", "verify"] {
+            let output = std::process::Command::new(std::env::current_exe().unwrap())
+                .args([
+                    "--exact",
+                    "session::tests::mixed_catalog_session_receipt_worker",
+                    "--nocapture",
+                ])
+                .env("WOODSHED_SCALE_SESSION_WORKER", mode)
+                .env("WOODSHED_STATE", dir.path().join("practice.json"))
+                .env("WOODSHED_SETTINGS", dir.path().join("settings.json"))
+                .output()
+                .unwrap();
+            assert!(
+                output.status.success(),
+                "{mode}: {}\n{}",
+                String::from_utf8_lossy(&output.stdout),
+                String::from_utf8_lossy(&output.stderr)
+            );
+            assert!(String::from_utf8_lossy(&output.stdout).contains("mixed-catalog-session PASS"));
+        }
+    }
+
+    #[test]
+    fn mixed_catalog_session_receipt_worker() {
+        use woodshed_core::{Lens, harmony::KeyedCatalogRef, storage::AppSection};
+        use woodshedding::{
+            pitch::PitchClass,
+            rehearsal::{Hold, Material, Touch},
+        };
+        let Ok(mode) = std::env::var("WOODSHED_SCALE_SESSION_WORKER") else {
+            return;
+        };
+        let backend: HostBackend = Box::<crate::storage::FsBackend>::default();
+        let storage = SessionStore::new(backend);
+        if mode == "seed" {
+            let mut ui = UiState::new();
+            ui.stage.set_lens(Lens::Chords);
+            ui.stage.set_root(3);
+            ui.root_dd.selected = 3;
+            let index = ui
+                .stage
+                .chords()
+                .iter()
+                .position(|chord| chord.name == "Major 7")
+                .unwrap();
+            ui.stage.select_chord(index);
+            ui.stage_current(None);
+            ui.set.cards[0].setting.capo = Some(2);
+            ui.step_card_shape(1);
+            assert!(ui.set.cards[0].setting.voicing_fingerprint.is_some());
+            ui.set.cards[0].timing.bpm = Some(90.0);
+            ui.set.cards[0].timing.hold = Hold::Bars(1);
+            let source = ui.set.cards[0].id;
+            assert!(ui.inspect_chord_arpeggio(source));
+            let arpeggio = ui.stage_chord_arpeggio().unwrap();
+            assert!(ui.explore_chord_scales(source));
+            assert!(ui.inspect_chord_scale(
+                source,
+                KeyedCatalogRef {
+                    formula_id: "scale:Major".into(),
+                    root: PitchClass::new(0),
+                }
+            ));
+            ui.hear_chord_scale();
+            assert_eq!(ui.set.cards.len(), 2, "audition cannot author material");
+            let scale = ui.stage_chord_scale().unwrap();
+            assert_ne!(source, scale);
+            assert_ne!(arpeggio, scale);
+            ui.set.select_id(arpeggio);
+            ui.select_app_section(AppSection::Rehearsal);
+            ui.now_ms = Some(1_000);
+            ui.toggle_rehearsal();
+            ui.now_ms = Some(2_000);
+            ui.toggle_rehearsal();
+            ui.set.select_id(scale);
+            ui.now_ms = Some(10_000);
+            ui.toggle_rehearsal();
+            ui.now_ms = Some(11_500);
+            ui.toggle_rehearsal();
+            storage.save(&serde_json::to_string(&ui.to_persisted()).unwrap());
+            storage.save_settings(&serde_json::to_string(&ui.app_settings).unwrap());
+            assert!(storage.load().is_some());
+        } else {
+            assert_eq!(mode, "verify");
+            let mut ui = UiState::new();
+            restore(&storage, &mut ui);
+            assert_eq!(ui.set.cards.len(), 3);
+            let ids = ui
+                .set
+                .cards
+                .iter()
+                .map(|card| card.id)
+                .collect::<std::collections::BTreeSet<_>>();
+            assert_eq!(
+                ids.len(),
+                3,
+                "each saved occurrence retains a distinct identity"
+            );
+            assert!(ids.iter().all(|id| id.is_assigned()));
+            assert!(
+                !ui.rehearsal_running,
+                "reopen cannot resume or invent practice"
+            );
+            assert_eq!(ui.section, AppSection::Rehearsal);
+            let source = &ui.set.cards[0];
+            let arpeggio = &ui.set.cards[1];
+            let scale = &ui.set.cards[2];
+            assert!(source.setting.voicing_fingerprint.is_some());
+            assert_eq!(
+                arpeggio.setting.voicing_fingerprint,
+                source.setting.voicing_fingerprint
+            );
+            assert!(matches!(arpeggio.touch, Touch::Arpeggiate { .. }));
+            assert!(
+                matches!(&scale.material, Material::Scale { name, root } if name == "Major" && *root == PitchClass::new(0))
+            );
+            assert!(matches!(scale.touch, Touch::Walk));
+            assert!(scale.setting.voicing_idx.is_none());
+            assert!(scale.setting.voicing_fingerprint.is_none());
+            assert!(scale.setting.voicing_profile.is_none());
+            for card in &ui.set.cards {
+                assert_eq!(card.setting.instrument, source.setting.instrument);
+                assert_eq!(card.setting.tuning, source.setting.tuning);
+                assert_eq!(card.setting.capo, Some(2));
+                assert_eq!(card.timing.bpm, Some(90.0));
+                assert!(matches!(card.timing.hold, Hold::Bars(1)));
+                assert!(
+                    !ui.stage
+                        .card_sounding_pitches_at_tempo(card, ui.transport.bpm)
+                        .0
+                        .is_empty()
+                );
+            }
+            assert_eq!(
+                ui.practice_history.total_practiced_ms("arpeggio:Major 7"),
+                1_000
+            );
+            assert_eq!(ui.practice_history.total_practiced_ms("scale:Major"), 1_500);
+            assert_eq!(ui.practice_history.total_practiced_ms("chord:Major 7"), 0);
+            let observations = ui.practice_history.recent(20);
+            let scale_observation = observations
+                .iter()
+                .find(|event| {
+                    event.subject_id == "scale:Major" && event.practiced_ms == Some(1_500)
+                })
+                .unwrap();
+            assert_eq!(
+                scale_observation.provenance.as_ref().unwrap().occurrence_id,
+                scale.id
+            );
+            assert_eq!(
+                scale_observation.provenance.as_ref().unwrap().card_snapshot,
+                serde_json::to_value(scale).unwrap()
+            );
+        }
+        println!("mixed-catalog-session PASS {mode}");
+    }
 }

@@ -121,6 +121,7 @@ pub(super) fn card_editor(ui: &UiState) -> UiChild {
                 ),
                 super::shapes::controls(ui),
                 super::connected::panel(ui),
+                super::connected_scales::panel(ui),
             ),
         )
         .attr("class", "set-editor"),

@@ -14,6 +14,7 @@ pub mod arrangement;
 pub mod audio;
 pub mod card_shapes;
 pub mod connected_catalog;
+pub mod connected_scales;
 pub mod harmony;
 pub mod history;
 pub mod mere;
