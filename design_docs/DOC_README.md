@@ -136,6 +136,8 @@ before any other doc in this directory.
   Presentation-paired read-only UI/persistence capture adds five source controls
   (68 desktop tests), strict Clippy, paired/default native captures and actual
   web Wasm compilation. Native pairing controls are recorded separately.
+  The combined Mere `bd5912fb` / Genet `69a2383` graph repeats those gates with
+  all 45 Redshank source blobs unchanged and a source-identity-only lock update.
   Compositor/physical visibility and human AT remain open.
 - [2026-07-08_personae_sealed_session.md](2026-07-08_personae_sealed_session.md)
   — Persona-derived sealing and device carry, completed 2026-08-08.
