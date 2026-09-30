@@ -1,0 +1,16 @@
+# Separate process restores the seeded production session and settings files.
+settle 3
+assert snap set-cards == 3
+assert snap arpeggio-cards == 1
+assert snap arpeggio-shape == 0
+assert snap history-observed >= 3
+assert snap rehearsal-running == false
+capture 01_reopened
+click .t-btn Run
+settle 30
+assert snap rehearsal-running == true
+click .t-btn Pause
+settle 3
+assert snap rehearsal-running == false
+capture 02_resumed
+log Connected exploration and rehearsal reopen complete

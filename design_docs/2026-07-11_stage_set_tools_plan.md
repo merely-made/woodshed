@@ -75,7 +75,7 @@ arrangement sections, editing lanes, effects chains, or a song-authoring mode.
 
 ## Connected exploration and deliberate practice
 
-**Status (2026-09-30): planned; maintainer-endorsed direction.** This section
+**Status (2026-09-30): in progress; first connected slice in parallel lanes.** This section
 specifies connected implementation slices across P3-P6 and the musical
 projections plan. It does not mark their open done-conditions complete or claim
 new runtime evidence.
@@ -227,6 +227,21 @@ checks, native scenarios/captures, acoustic checks, and human review separately.
 Later passage search does not block the first cross-catalog flow. P7 remains
 responsible for Looper lowering and capture persistence.
 
+### Parallel ownership and integration gate
+
+- Catalog lane: contextual chord-to-arpeggio discovery, nonmutating previews,
+  selected-setup preservation, and bounded ambient context.
+- History lane: interest/practice classification and backward-compatible
+  event-time provenance with qualified legacy observations.
+- UI lane: occurrence-bound inspection, audition, explicit insertion, and
+  rehearsal interaction using shared core contracts.
+- Integration owner: shared module wiring, persistence/reopen checks, desktop
+  scenario/capture validation, review of lane boundaries, and receipt updates.
+
+Each lane owns separate files and supplies focused tests. Shared interfaces are
+agreed before caller wiring; one integrated test gate follows lane completion.
+The first slice is not accepted solely because each lane reports success.
+
 ### Verified findings and progress
 
 - **2026-09-30:** inspected source at `5452419`. `woodshed-graph/src/lib.rs`
@@ -244,6 +259,48 @@ responsible for Looper lowering and capture persistence.
 - **2026-09-30:** maintainer endorsed the connected implementation direction
   and authorized documenting it. Implementation and runtime validation remain
   open; this update supplies acceptance targets and does not close P3-P7.
+- **2026-09-30:** catalog, history, and UI lanes implemented a bounded first
+  connection in `connected_catalog.rs`, `harmony.rs`, `stage_context.rs`,
+  `stage_scene.rs`, `history.rs`, and `woodshed-views/src/stage/connected.rs`.
+  Discovery resolves a selected chord occurrence to its sequential form;
+  audition/insertion re-resolve the source at action time. Selected setup,
+  recipe provenance, marks, timing, and new occurrence identity are preserved.
+  The ambient context and foreground scene retain the typed relationship.
+- **2026-09-30:** integration review corrected capoed inversion, inherited
+  runner tempo, stale idle timestamps, unavailable repeated-occurrence binding,
+  and false same-occurrence practice transitions. The host supplies an event
+  clock; pause/edit observations retain authored instruction snapshots and
+  consume active spans. Duration is observed runner time, not player success.
+- **2026-09-30:** integrated automated gates pass: core 138, graph 14, views 65,
+  export examples 10, and desktop tests 35 including a production-host wide/
+  narrow click flow and two-process filesystem save/restore. The latter uses
+  synthetic unsealed state; it does not prove persona switching or power-loss
+  safety. Full commands, logs, and limitations are recorded in the testing
+  workspace `testing/woodshed/connected-20260930/receipt.json`.
+- **2026-09-30:** the initial locked-Mac attempt produced no captures. After
+  unlock, `connected_practice.scn` passed with four presented captures; a fresh
+  process running `connected_practice_reopen.scn` passed with two more. All six
+  captures were inspected. The native run demonstrates discovery, audition
+  dispatch, staging, runner advancement/pause, and restoration of three Cards,
+  arpeggio shape, selected occurrence, and history through isolated filesystem
+  state. It does not demonstrate acoustic correctness or persona switching.
+  Receipts and captures live under `connected-20260930/unlocked/`.
+  The ambient Stage capture at scenario zoom shows selected-card editor/graph
+  overlap and clipped controls; Rehearsal controls are usable in inspected
+  captures. Stage layout correction, acoustic/human review, keyboard graph/list
+  acceptance, and full per-event highlights remain open.
+
+**First-slice qualification:** functional discovery, staging, sequential-onset
+preview, runner observation boundaries, and filesystem reopening are implemented
+and automatically tested. The synth sustains prior tones through the cascade;
+pausing stops runner advancement but does not cancel an already queued one-shot
+preview. Full synchronized note events/highlights and audio pause semantics
+remain under P5/P6. Provenance currently snapshots the authored Card; optional
+run identity, effective inherited realization, and presented MIDI observations
+remain unset unless a caller supplies them. Broad catalog queries, durable
+exploration pins, exercise construction, and passage search remain later slices.
+The complete first-flow acceptance and the wider P3-P7 done-conditions remain
+open.
 
 ## Release baseline and 1.0 product proof
 

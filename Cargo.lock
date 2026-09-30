@@ -6686,6 +6686,7 @@ dependencies = [
  "woodshed-audio",
  "woodshed-core",
  "woodshed-views",
+ "woodshedding",
 ]
 
 [[package]]

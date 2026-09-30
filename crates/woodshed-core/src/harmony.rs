@@ -8,7 +8,7 @@ use std::collections::BTreeSet;
 
 use woodshedding::chord::catalog as chord_catalog;
 use woodshedding::pitch::{Pitch, PitchClass, Spelling};
-use woodshedding::rehearsal::Material;
+use woodshedding::rehearsal::{ArpeggioDirection, Card, CardId, Material, Touch};
 use woodshedding::scale::catalog as scale_catalog;
 
 pub use woodshedding::pitch_class_set::{PitchClassMotion, PitchClassMove, PitchSetComparison};
@@ -25,6 +25,37 @@ pub struct KeyedCatalogRef {
 }
 
 impl KeyedCatalogRef {
+    /// Preserve the sequential catalog identity carried by chord + touch.
+    pub fn from_card(card: &Card) -> Option<Self> {
+        let mut keyed = Self::from_material(&card.material)?;
+        if matches!(card.material, Material::Chord { .. })
+            && matches!(card.touch, Touch::Arpeggiate { .. })
+        {
+            keyed.formula_id = keyed.formula_id.replacen("chord:", "arpeggio:", 1);
+        }
+        Some(keyed)
+    }
+
+    /// Catalog preview with the correct articulation; occurrence assigned by Set.
+    pub fn to_card(&self) -> Option<Card> {
+        Some(Card {
+            id: CardId::UNASSIGNED,
+            label: self.label()?,
+            material: self.to_material()?,
+            setting: Default::default(),
+            touch: if self.formula_id.starts_with("arpeggio:") {
+                Touch::Arpeggiate {
+                    direction: ArpeggioDirection::UpDown,
+                    inversion: 0,
+                }
+            } else {
+                Touch::Block
+            },
+            timing: Default::default(),
+            from: None,
+        })
+    }
+
     /// Name a keyed chord or scale material, rejecting paths, riffs, and
     /// materials whose formula no longer exists in the catalog.
     pub fn from_material(material: &Material) -> Option<Self> {
@@ -54,7 +85,7 @@ impl KeyedCatalogRef {
     pub fn to_material(&self) -> Option<Material> {
         let (kind, name) = self.formula_id.split_once(':')?;
         match kind {
-            "chord" if chord_catalog().iter().any(|formula| formula.name == name) => {
+            "chord" | "arpeggio" if chord_catalog().iter().any(|formula| formula.name == name) => {
                 Some(Material::Chord {
                     name: name.to_string(),
                     root: self.root,
@@ -83,7 +114,12 @@ impl KeyedCatalogRef {
             Material::Riff { .. } | Material::Path { .. } => return None,
         };
         let root = Pitch::from_midi(60 + i32::from(self.root.value()), Spelling::Sharps);
-        Some(format!("{}{} {}", root.name, root.accidental, name))
+        let suffix = if self.formula_id.starts_with("arpeggio:") {
+            " arpeggio"
+        } else {
+            ""
+        };
+        Some(format!("{}{} {}{suffix}", root.name, root.accidental, name))
     }
 
     /// Unique sounding pitch classes for this keyed formula.
@@ -214,5 +250,22 @@ mod tests {
             motion.held,
             BTreeSet::from([PitchClass::new(4), PitchClass::new(7)])
         );
+    }
+
+    #[test]
+    fn arpeggio_identity_retains_root_tones_and_touch_without_new_material() {
+        let reference = KeyedCatalogRef {
+            formula_id: "arpeggio:Major 7".into(),
+            root: PitchClass::new(2),
+        };
+        let card = reference.to_card().unwrap();
+        assert!(matches!(card.material, Material::Chord { .. }));
+        assert!(matches!(card.touch, Touch::Arpeggiate { .. }));
+        assert_eq!(KeyedCatalogRef::from_card(&card), Some(reference.clone()));
+        let chord = KeyedCatalogRef::from_material(&card.material).unwrap();
+        assert_ne!(chord, reference);
+        assert_eq!(chord.pitch_classes(), reference.pitch_classes());
+        assert_eq!(reference.wire_key(), "arpeggio:Major 7@pc:2");
+        assert!(reference.label().unwrap().ends_with(" arpeggio"));
     }
 }

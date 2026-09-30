@@ -342,6 +342,56 @@ impl Snapshot<'_, '_> {
             .unwrap_or_default();
         let mut snap = ProbeSnapshot::default()
             .with_field("set-cards", observed.cards.to_string())
+            .with_field("rehearsal-running", ui.rehearsal_running.to_string())
+            .with_field("history-events", ui.practice_history.len().to_string())
+            .with_field(
+                "history-observed",
+                ui.practice_history
+                    .recent(1000)
+                    .iter()
+                    .filter(|event| event.provenance.is_some())
+                    .count()
+                    .to_string(),
+            )
+            .with_field(
+                "arpeggio-cards",
+                ui.set
+                    .cards
+                    .iter()
+                    .filter(|card| {
+                        matches!(
+                            card.touch,
+                            woodshedding::rehearsal::Touch::Arpeggiate { .. }
+                        )
+                    })
+                    .count()
+                    .to_string(),
+            )
+            .with_field(
+                "context-arpeggios",
+                stage_snapshot
+                    .nodes
+                    .iter()
+                    .filter(|node| {
+                        node.kind == woodshed_core::stage_context::StageNodeKind::Arpeggio
+                    })
+                    .count()
+                    .to_string(),
+            )
+            .with_field(
+                "arpeggio-shape",
+                ui.set
+                    .cards
+                    .iter()
+                    .find(|card| {
+                        matches!(
+                            card.touch,
+                            woodshedding::rehearsal::Touch::Arpeggiate { .. }
+                        )
+                    })
+                    .and_then(|card| card.setting.voicing_idx)
+                    .map_or_else(|| "none".into(), |index| index.to_string()),
+            )
             .with_field("cursor-id", observed.cursor_id.to_string())
             .with_field("cursor-number", observed.cursor_number.to_string())
             .with_field("cursor-label", cursor_label.clone())
@@ -773,6 +823,34 @@ impl Automatable for Probe<'_, '_> {
         let mut known = true;
         self.ctx.runner.update(|ui| match label {
             "stage-current" => ui.stage_current(None),
+            "connected-practice-example" => {
+                use woodshedding::rehearsal::{Hold, Set, Timing};
+                ui.set = Set::default();
+                ui.practice_history = Default::default();
+                ui.stage.set_lens(Lens::Chords);
+                for (root, name) in [(3, "Major 7"), (0, "Minor 7")] {
+                    ui.stage.set_root(root);
+                    ui.root_dd.selected = root;
+                    let index = ui
+                        .stage
+                        .chords()
+                        .iter()
+                        .position(|formula| formula.name == name)
+                        .expect("fixture chord exists");
+                    ui.stage.select_chord(index);
+                    ui.stage_current(None);
+                }
+                ui.set.cursor = 0;
+                ui.step_card_shape(1);
+                for card in &mut ui.set.cards {
+                    card.timing = Timing {
+                        bpm: Some(120.0),
+                        hold: Hold::Seconds(2.0),
+                    };
+                }
+                ui.set_graph_card_expanded = true;
+                ui.set_graph_reading(woodshed_core::settings::StageGraphReading::CircleOfFifths);
+            },
             "shape-comparison-example" => {
                 ui.stage.set_root(3);
                 ui.root_dd.selected = 3;

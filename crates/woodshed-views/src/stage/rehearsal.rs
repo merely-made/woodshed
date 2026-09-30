@@ -41,15 +41,17 @@ pub(super) fn screen(ui: &UiState) -> UiChild {
                     )
                     .attr("class", "t-btn"),
                     |ui: &mut UiState, _| {
-                        if !ui.rehearsal_running {
-                            ui.record_rehearsal_cursor();
-                        }
-                        ui.rehearsal_running = !ui.rehearsal_running;
+                        ui.toggle_rehearsal();
                     },
                 ),
                 clickable(
                     el("div", text("Prev")).attr("class", "t-btn"),
                     |ui: &mut UiState, _| {
+                        if ui.rehearsal_running {
+                            ui.finish_rehearsal_observation(
+                                woodshed_core::history::EngagementKind::Rehearsed,
+                            );
+                        }
                         step_set(&mut ui.set, -1);
                         if ui.rehearsal_running {
                             ui.record_rehearsal_cursor();
@@ -62,9 +64,13 @@ pub(super) fn screen(ui: &UiState) -> UiChild {
                         if ui.rehearsal_running {
                             ui.complete_rehearsal_cursor();
                         }
-                        step_set(&mut ui.set, 1);
+                        let advanced = step_set(&mut ui.set, 1);
                         if ui.rehearsal_running {
-                            ui.record_rehearsal_cursor();
+                            if advanced {
+                                ui.record_rehearsal_cursor();
+                            } else {
+                                ui.rehearsal_running = false;
+                            }
                         }
                     },
                 ),

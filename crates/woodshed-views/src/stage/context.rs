@@ -19,6 +19,17 @@ impl UiState {
     /// board so the surrounding graph can be recomputed, but this never adds a
     /// card to the Set.
     pub fn focus_context_catalog(&mut self, material: KeyedCatalogRef) -> bool {
+        if material.formula_id.starts_with("arpeggio:") {
+            let source = self.current_card().and_then(|card| {
+                KeyedCatalogRef::from_material(&card.material).and_then(|mut keyed| {
+                    keyed.formula_id = keyed.formula_id.replacen("chord:", "arpeggio:", 1);
+                    (keyed == material).then_some(card.id)
+                })
+            });
+            if let Some(source) = source {
+                self.inspect_chord_arpeggio(source);
+            }
+        }
         if !select_keyed_material(&mut self.stage, &material) {
             return false;
         }
@@ -34,11 +45,23 @@ impl UiState {
     /// separate from both focus and Add to Set.
     pub fn audition_context_focus(&mut self) {
         if let Some(material) = self.context_focus.clone() {
+            if self.is_inspected_arpeggio(&material) {
+                self.hear_chord_arpeggio();
+                return;
+            }
             if !select_keyed_material(&mut self.stage, &material) {
                 return;
             }
             self.root_dd.selected = self.stage.root_idx;
-            let (pitches, duration_s, strum_s) = self.stage.voicing_preview();
+            let (pitches, duration_s, strum_s) = if material.formula_id.starts_with("arpeggio:") {
+                let Some(card) = self.stage.card_from_lens() else {
+                    return;
+                };
+                self.stage
+                    .card_sounding_pitches_at_tempo(&card, self.transport.bpm)
+            } else {
+                self.stage.voicing_preview()
+            };
             if !pitches.is_empty() {
                 self.request(AudioRequest::PreviewPitches {
                     pitches,
@@ -55,6 +78,10 @@ impl UiState {
         let Some(material) = self.context_focus.clone() else {
             return;
         };
+        if self.is_inspected_arpeggio(&material) {
+            self.stage_chord_arpeggio();
+            return;
+        }
         let from_id = self.stage.catalog_id();
         if self.focus_context_catalog(material) {
             self.stage_current(from_id);
@@ -604,6 +631,14 @@ fn select_keyed_material(stage: &mut woodshed_core::StageState, keyed: &KeyedCat
         return false;
     };
     stage.set_root((keyed.root.value() as usize + 3) % 12);
+    if let Some(name) = keyed.formula_id.strip_prefix("arpeggio:") {
+        let Some(index) = stage.chords().iter().position(|item| item.name == name) else {
+            return false;
+        };
+        stage.set_lens(Lens::Arpeggios);
+        stage.select_arpeggio(index);
+        return true;
+    }
     match material {
         Material::Chord { name, .. } => {
             let Some(index) = stage.chords().iter().position(|item| item.name == name) else {
