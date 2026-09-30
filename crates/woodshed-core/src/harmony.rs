@@ -8,7 +8,7 @@ use std::collections::BTreeSet;
 
 use woodshedding::chord::catalog as chord_catalog;
 use woodshedding::pitch::{Pitch, PitchClass, Spelling};
-use woodshedding::rehearsal::{ArpeggioDirection, Card, CardId, Material, Touch};
+use woodshedding::rehearsal::{ArpeggioDirection, Card, CardId, Material, ScalePattern, Touch};
 use woodshedding::scale::catalog as scale_catalog;
 
 pub use woodshedding::pitch_class_set::{PitchClassMotion, PitchClassMove, PitchSetComparison};
@@ -48,6 +48,8 @@ impl KeyedCatalogRef {
                     direction: ArpeggioDirection::UpDown,
                     inversion: 0,
                 }
+            } else if self.formula_id.starts_with("scale-pattern:") {
+                Touch::Walk
             } else {
                 Touch::Block
             },
@@ -76,6 +78,14 @@ impl KeyedCatalogRef {
                     root: *root,
                 })
             },
+            Material::ScalePattern {
+                name,
+                root,
+                pattern,
+            } if scale_catalog().iter().any(|formula| formula.name == name) => Some(Self {
+                formula_id: woodshed_graph::scale_pattern_id(name, *pattern),
+                root: *root,
+            }),
             _ => None,
         }
     }
@@ -84,6 +94,18 @@ impl KeyedCatalogRef {
     /// formula identifiers rather than silently substituting another formula.
     pub fn to_material(&self) -> Option<Material> {
         let (kind, name) = self.formula_id.split_once(':')?;
+        if kind == "scale-pattern" {
+            let (slug, name) = name.split_once(':')?;
+            let pattern = ScalePattern::from_slug(slug)?;
+            return scale_catalog()
+                .iter()
+                .any(|formula| formula.name == name)
+                .then(|| Material::ScalePattern {
+                    name: name.into(),
+                    root: self.root,
+                    pattern,
+                });
+        }
         match kind {
             "chord" | "arpeggio" if chord_catalog().iter().any(|formula| formula.name == name) => {
                 Some(Material::Chord {
@@ -111,6 +133,9 @@ impl KeyedCatalogRef {
         let material = self.to_material()?;
         let name = match material {
             Material::Chord { name, .. } | Material::Scale { name, .. } => name,
+            Material::ScalePattern { name, pattern, .. } => {
+                format!("{name} in {}", pattern.label().to_lowercase())
+            },
             Material::Riff { .. } | Material::Path { .. } => return None,
         };
         let root = Pitch::from_midi(60 + i32::from(self.root.value()), Spelling::Sharps);
@@ -140,7 +165,7 @@ pub fn keyed_pitch_classes(material: &Material) -> Option<BTreeSet<PitchClass>> 
                 .find(|formula| formula.name == name)?;
             formula.apply_to(root_pitch(*root)).ok()?
         },
-        Material::Scale { name, root } => {
+        Material::Scale { name, root } | Material::ScalePattern { name, root, .. } => {
             let formula = scale_catalog()
                 .iter()
                 .find(|formula| formula.name == name)?;

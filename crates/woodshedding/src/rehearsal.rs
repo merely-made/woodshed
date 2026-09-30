@@ -48,11 +48,64 @@ impl ArpeggioDirection {
 
 /// The atomic, practiceable "what" of a card. Progressions / exercises /
 /// songs are *recipes* that fill a set with these, not variants here.
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize)]
+pub enum ScalePattern {
+    Thirds,
+    Fourths,
+}
+
+impl ScalePattern {
+    pub const ALL: [Self; 2] = [Self::Thirds, Self::Fourths];
+
+    pub const fn label(self) -> &'static str {
+        match self {
+            Self::Thirds => "Thirds",
+            Self::Fourths => "Fourths",
+        }
+    }
+
+    pub const fn stable_id(self) -> &'static str {
+        match self {
+            Self::Thirds => "scale-thirds/v1",
+            Self::Fourths => "scale-fourths/v1",
+        }
+    }
+
+    pub const fn slug(self) -> &'static str {
+        match self {
+            Self::Thirds => "thirds",
+            Self::Fourths => "fourths",
+        }
+    }
+
+    pub fn from_slug(slug: &str) -> Option<Self> {
+        match slug {
+            "thirds" => Some(Self::Thirds),
+            "fourths" => Some(Self::Fourths),
+            _ => None,
+        }
+    }
+
+    pub const fn degree_distance(self) -> usize {
+        match self {
+            Self::Thirds => 2,
+            Self::Fourths => 3,
+        }
+    }
+}
+
+/// Authored material; a scale pattern is an explicit recipe applied to the
+/// named scale, rather than a name-only riff with no playable content.
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub enum Material {
     Scale {
         name: String,
         root: PitchClass,
+    },
+    ScalePattern {
+        name: String,
+        root: PitchClass,
+        pattern: ScalePattern,
     },
     Chord {
         name: String,
@@ -79,6 +132,7 @@ impl Material {
     pub fn tag(&self) -> &'static str {
         match self {
             Self::Scale { .. } => "Scale",
+            Self::ScalePattern { .. } => "Scale pattern",
             Self::Chord { .. } => "Chord",
             Self::Riff { .. } => "Riff",
             Self::Path { .. } => "Path",

@@ -35,7 +35,10 @@ impl UiState {
     /// The scale setup and written/concert key are distinct from a fingering.
     pub fn rehearsal_scale_status(&self) -> Option<Result<String, String>> {
         let card = self.current_card()?;
-        if !matches!(card.material, Material::Scale { .. }) {
+        if !matches!(
+            card.material,
+            Material::Scale { .. } | Material::ScalePattern { .. }
+        ) {
             return None;
         }
         Some(self.stage.scale_card_realization(card).map(|scale| {
@@ -53,7 +56,10 @@ impl UiState {
     /// Native neck paint and retained note labels must use the same Card setup.
     pub fn rehearsal_board_geometry(&self) -> BoardGeom {
         let resolved = self.current_card().and_then(|card| {
-            if matches!(card.material, Material::Scale { .. }) {
+            if matches!(
+                card.material,
+                Material::Scale { .. } | Material::ScalePattern { .. }
+            ) {
                 Some(
                     self.stage
                         .scale_card_realization(card)

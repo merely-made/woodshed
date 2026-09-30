@@ -487,6 +487,7 @@ fn compatible_scale_controls_choose_audition_stage_and_drill_without_changing_th
 
 #[test]
 fn reopened_scale_editor_has_no_empty_chord_discovery_panels() {
+    use layout_dom_api::LayoutDom;
     let mut h = harness(1_100.0, 900.0);
     h.update(|ui| {
         ui.section = woodshed_core::storage::AppSection::Rehearsal;
@@ -497,7 +498,41 @@ fn reopened_scale_editor_has_no_empty_chord_discovery_panels() {
     });
     let dom = h.runner().dom();
     let dom = dom.borrow();
-    assert!(taproot::matching(&dom, &Selector::class("stage-context-panel")).is_empty());
+    assert!(
+        taproot::matching(
+            &dom,
+            &Selector::class("t-btn").containing("Explore compatible scales")
+        )
+        .is_empty(),
+        "an ordinary scale must not render chord-to-scale discovery"
+    );
+    assert!(
+        taproot::matching(&dom, &Selector::class("t-btn").containing("Discover ")).is_empty(),
+        "an ordinary scale must not render chord-to-arpeggio discovery"
+    );
+    assert_eq!(
+        taproot::matching(&dom, &Selector::class("stage-context-panel")).len(),
+        1,
+        "only the populated scale-pattern panel should remain; no empty styled chord panels"
+    );
+    assert_eq!(
+        taproot::matching(&dom, &Selector::class("scale-patterns")).len(),
+        1
+    );
+    assert_eq!(
+        taproot::matching(&dom, &Selector::class("scale-pattern-choice")).len(),
+        2,
+        "thirds and fourths are useful scale actions rather than an empty panel"
+    );
+    let panel = taproot::matching(&dom, &Selector::class("scale-patterns"))[0];
+    assert!(
+        dom.dom_children(panel).any(|child| {
+            dom.dom_children(child)
+                .filter_map(|node| dom.text(node))
+                .any(|text| text.contains("seven-note formulas are supported"))
+        }),
+        "the populated scale recipe panel explains its scope"
+    );
 }
 
 #[test]
@@ -677,4 +712,198 @@ fn invalid_saved_scale_setup_shows_the_reason_and_cannot_sound_the_live_guitar()
             .all(|request| !matches!(request,
         woodshed_core::audio::AudioRequest::PreviewPitches { pitches, .. } if !pitches.is_empty()))
     );
+}
+
+#[test]
+fn scale_pattern_controls_preserve_order_source_and_occurrences_in_wide_and_narrow_views() {
+    use woodshed_core::{audio::AudioRequest, history::catalog_id_for_card, storage::AppSection};
+    use woodshedding::{
+        pitch::PitchClass,
+        rehearsal::{FretWindow, Hold, Material, ScalePattern, Touch},
+    };
+    for width in [1_100.0, 420.0] {
+        for (pattern, button, expected_prefix) in [
+            (
+                ScalePattern::Thirds,
+                "Inspect diatonic thirds",
+                vec![62, 66, 64, 67, 66, 69],
+            ),
+            (
+                ScalePattern::Fourths,
+                "Inspect diatonic fourths",
+                vec![62, 67, 64, 69, 66, 71],
+            ),
+        ] {
+            let mut h = harness(width, 1_500.0);
+            h.update(|ui| {
+                let card = &mut ui.set.cards[0];
+                card.label = "C Major on Ukulele".into();
+                card.material = Material::Scale {
+                    name: "Major".into(),
+                    root: PitchClass::new(0),
+                };
+                card.setting.instrument = "Ukulele".into();
+                card.setting.tuning = Some("Standard (high-G)".into());
+                card.setting.capo = Some(2);
+                card.setting.fret_window = Some(FretWindow { start: 2, span: 12 });
+                card.touch = Touch::Walk;
+                card.timing.bpm = Some(90.0);
+                card.timing.hold = Hold::Bars(1);
+                ui.select_app_section(AppSection::Rehearsal);
+                ui.audio_requests.clear();
+            });
+            let source = h.state().set.cards[0].id;
+            let before = serde_json::to_value(&h.state().set.cards[0]).unwrap();
+            assert!(h.click_on(&Selector::class("t-btn").containing(button)));
+            assert_eq!(h.state().set.cards.len(), 1);
+            assert!(h.click_on(&Selector::class("t-btn").containing("Hear pattern")));
+            assert_eq!(
+                h.state().set.cards.len(),
+                1,
+                "pattern audition cannot author the source"
+            );
+            let heard = match h.state().audio_requests.last().unwrap() {
+                AudioRequest::PreviewPitches {
+                    pitches,
+                    duration_s,
+                    strum_s,
+                } => (pitches.clone(), *duration_s, *strum_s),
+                request => panic!("unexpected pattern audition: {request:?}"),
+            };
+            let midi = heard
+                .0
+                .iter()
+                .map(|hz| (69.0 + 12.0 * (*hz / 440.0).log2()).round() as i32)
+                .collect::<Vec<_>>();
+            assert_eq!(
+                &midi[..6],
+                expected_prefix.as_slice(),
+                "degree-pair contour must survive actual audio requests"
+            );
+            assert!(
+                midi.windows(2).any(|pair| pair[1] < pair[0]),
+                "ascending pairs require a nonmonotonic return between pairs"
+            );
+            assert!(
+                midi.iter()
+                    .copied()
+                    .collect::<std::collections::BTreeSet<_>>()
+                    .len()
+                    < midi.len(),
+                "shared degrees are visited repeatedly"
+            );
+            assert!(h.click_on(&Selector::class("t-btn").containing("Stage pattern")));
+            assert!(h.click_on(&Selector::class("t-btn").containing("Stage pattern")));
+            assert_eq!(h.state().set.cards.len(), 3);
+            let first = h.state().set.cards[1].id;
+            let second = h.state().set.cards[2].id;
+            assert_ne!(source, first);
+            assert_ne!(first, second);
+            assert_eq!(
+                serde_json::to_value(&h.state().set.cards[0]).unwrap(),
+                before
+            );
+            assert!(
+                matches!(&h.state().set.cards[1].material, Material::ScalePattern { name, root, pattern: saved } if name == "Major" && *root == PitchClass::new(0) && *saved == pattern)
+            );
+            h.update(|ui| {
+                ui.set.select_id(first);
+                ui.now_ms = Some(1_000);
+            });
+            assert_eq!(h.state().stage.string_count(), 6);
+            assert_eq!(h.state().rehearsal_board_geometry().string_count, 4);
+            assert_eq!(
+                h.state().preview_voicing(),
+                heard,
+                "rehearsal must preserve ordered repeated pattern visits"
+            );
+            let subject = catalog_id_for_card(&h.state().set.cards[1]).unwrap();
+            assert_ne!(
+                subject, "scale:Major",
+                "the exercise cannot masquerade as ordinary scale history"
+            );
+            assert_eq!(h.state().practice_history.total_practiced_ms(&subject), 0);
+            assert!(h.click_on(&Selector::class("t-btn").containing("Run")));
+            assert!(
+                matches!(h.state().audio_requests.last(), Some(AudioRequest::PreviewPitches { pitches, .. }) if *pitches == heard.0)
+            );
+            h.update(|ui| ui.now_ms = Some(2_500));
+            assert!(h.click_on(&Selector::class("t-btn").containing("Pause")));
+            assert_eq!(
+                h.state().practice_history.total_practiced_ms(&subject),
+                1_500
+            );
+            assert_eq!(
+                h.state().practice_history.total_practiced_ms("scale:Major"),
+                0
+            );
+        }
+    }
+}
+
+#[test]
+fn inspected_pattern_revalidates_removed_and_invalid_sources_before_authoring() {
+    use woodshed_core::storage::AppSection;
+    use woodshedding::{
+        pitch::PitchClass,
+        rehearsal::{FretWindow, Material, Touch},
+    };
+    for remove_source in [false, true] {
+        let mut h = harness(700.0, 1_500.0);
+        h.update(|ui| {
+            let card = &mut ui.set.cards[0];
+            card.material = Material::Scale {
+                name: "Major".into(),
+                root: PitchClass::new(0),
+            };
+            card.setting.instrument = "Ukulele".into();
+            card.setting.tuning = Some("Standard (high-G)".into());
+            card.setting.capo = Some(2);
+            card.setting.fret_window = Some(FretWindow { start: 2, span: 12 });
+            card.touch = Touch::Walk;
+            ui.set.duplicate(0);
+            ui.set.cursor = 0;
+            ui.select_app_section(AppSection::Rehearsal);
+        });
+        let inspected = h.state().set.cards[0].id;
+        assert!(h.click_on(&Selector::class("t-btn").containing("Inspect diatonic thirds")));
+        assert!(h.click_on(&Selector::class("t-btn").containing("Hear pattern")));
+        assert!(!h.state().audio_requests.is_empty());
+        h.update(|ui| {
+            ui.audio_requests.clear();
+            if remove_source {
+                ui.set.remove(0);
+            } else {
+                ui.set.cards[0].setting.tuning = Some("missing-test-tuning".into());
+            }
+            // The retained action resolves the original occurrence again,
+            // rather than substituting the duplicate now under the cursor.
+            ui.hear_scale_pattern();
+            assert!(ui.stage_scale_pattern().is_none());
+        });
+        assert_eq!(h.state().pattern_source, Some(inspected));
+        assert_eq!(h.state().set.cards.len(), if remove_source { 1 } else { 2 });
+        assert!(h.state().audio_requests.is_empty());
+        assert!(
+            !h.click_on(&Selector::class("t-btn").containing("Stage pattern")),
+            "unavailable retained recipe must not offer an authoring action"
+        );
+        let reason = if remove_source {
+            "no longer"
+        } else {
+            "missing-test-tuning"
+        };
+        let unavailable = {
+            let dom = h.runner().dom();
+            let dom = dom.borrow();
+            taproot::matching(
+                &dom,
+                &Selector::class("scale-pattern-unavailable").containing(reason),
+            )
+        };
+        assert!(
+            !unavailable.is_empty(),
+            "the production inspector explains why the retained source cannot be used"
+        );
+    }
 }
