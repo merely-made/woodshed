@@ -430,6 +430,25 @@ catalog expansion remains musical material, playable recipes, and their typed
 relationships. The shared principle is deliberate work combined with lateral
 exploration; it does not make Woodshed the owner of Knot's lexical records.
 
+**Musical syntax and ambient catalog context:** Markik clarified that Woodshed
+should explore a comparable musical language syntax. Pitches, intervals, chord
+and scale formulas, rhythm, articulation, and progression rules can form typed
+vocabulary and compositional constraints. A phrase or recipe should be
+inspectable, explainable, auditionable, and lower to explicit Set Cards where
+its realization is supported. The concrete syntax and rule representation are
+still design work; this is a product direction, not an implemented parser.
+
+The ambient background is a central interaction surface for making large
+catalogs useful. Around the current Card, phrase, or catalog subject, it should
+expose relevant containment, compatible material, substitutions, tensions, and
+possible transitions with reasons and bounded disclosure. Focus and authored
+choices determine context; exploration can lead to explicit inspection,
+audition, and staging. Ambient relationships and focused drills carry equal
+product priority: they help assemble the Set and act on it. The next recipe
+slice should therefore include contextual catalog relationships and explanations
+alongside executable practice, rather than treating catalog expansion as an
+inventory-only task.
+
 Woodshed earns a 1.0 practice claim only when one persisted flow demonstrates
 all four parts together:
 
