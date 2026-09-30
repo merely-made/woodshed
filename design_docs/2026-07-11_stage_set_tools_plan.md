@@ -403,6 +403,51 @@ The first slice is not accepted solely because each lane reports success.
   Native audio logs still report stream underrun/overrun; no acoustic quality
   acceptance or device-performance claim follows from these captures.
 
+- **2026-09-30, chord-tone approach slice:** adds Below and Above chromatic
+  approach recipes for an explicit adjacent pair of ordinary chord Cards. The
+  next Card supplies target tones; the preceding Card supplies passage context,
+  without inferring a key or a voice-leading route from its voices. Each pair
+  visits a same-string semitone neighbor, then the target. Both occurrence IDs
+  remain pinned and every action checks that the target still follows the source.
+  Removal, reordering, an intervening duplicate, or a stale selected target shape
+  produces an explanation instead of choosing another target.
+
+  `ChordApproach` material stores the target formula, written root and direction.
+  A standalone exercise retains the target's saved instrument, tuning, capo,
+  physical window, timing and selected shape, clears marks, and uses Walk. With
+  no selected shape, it chooses a deterministic contact for each target MIDI
+  pitch that has an available partner. Incomplete physical pairs are omitted;
+  unknown setup, formula, stale shape or no complete pairs fail closed. Ordered
+  audition retains downward approaches and repeated visits. The previous Chord
+  wire representation stays unchanged; older apps may not understand this variant.
+
+  Inspect and Hear preserve the passage. **Append approach exercise** creates a
+  separate occurrence at the end of the Set, preserving the passage order and
+  cursor. Automatic interleaving and whole-progression construction remain later
+  work. The ambient catalog exposes both choices around the target chord, with a
+  typed target-approach relation and the existing context budget. Approach pitch
+  classes include transient chromatic neighbors, so harmonic comparisons do not
+  falsely present this recipe as only the target chord's tones. A free catalog
+  recipe uses the current Stage setup and explains that basis explicitly.
+
+  Integrated validation passes 501 tests (166 core, one core integration,
+  51 desktop, 14 graph, 84 views, 181 theory, four doc examples) plus ten core
+  example tests. Wide and narrow production click gates independently calculate
+  the physical MIDI pairs, verify immutable exploration and append-only authoring,
+  retain selected target shapes, preserve repeated visits for unselected targets,
+  and measure exercise history separately from the original chords. Fresh-process
+  tests restore the original pair plus both directions and compare the complete
+  ordered audio tuple at native precision. The existing narrow fretboard scroll
+  and note-hit regression also passes after hiding the empty approach panel when
+  no adjacent pair is available.
+
+  The native seed/reopen scenarios are saved as `scenarios/chord_approaches.scn`
+  and `scenarios/chord_approaches_reopen.scn`. The desktop tool reported a locked
+  Mac at this checkpoint, so headed captures, ambient label readability and
+  acoustic acceptance remain pending. Automated click/persistence checks do not
+  close those native observations. Logs and the checkpoint receipt are under
+  `testing/woodshed/approaches-20260930/`.
+
 **First-slice qualification:** functional discovery, staging, sequential-onset
 preview, runner observation boundaries, and filesystem reopening are implemented
 and automatically tested. The synth sustains prior tones through the cascade;

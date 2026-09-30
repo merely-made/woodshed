@@ -8,7 +8,9 @@ use std::collections::BTreeSet;
 
 use woodshedding::chord::catalog as chord_catalog;
 use woodshedding::pitch::{Pitch, PitchClass, Spelling};
-use woodshedding::rehearsal::{ArpeggioDirection, Card, CardId, Material, ScalePattern, Touch};
+use woodshedding::rehearsal::{
+    ApproachDirection, ArpeggioDirection, Card, CardId, Material, ScalePattern, Touch,
+};
 use woodshedding::scale::catalog as scale_catalog;
 
 pub use woodshedding::pitch_class_set::{PitchClassMotion, PitchClassMove, PitchSetComparison};
@@ -48,7 +50,9 @@ impl KeyedCatalogRef {
                     direction: ArpeggioDirection::UpDown,
                     inversion: 0,
                 }
-            } else if self.formula_id.starts_with("scale-pattern:") {
+            } else if self.formula_id.starts_with("scale-pattern:")
+                || self.formula_id.starts_with("chord-approach:")
+            {
                 Touch::Walk
             } else {
                 Touch::Block
@@ -62,6 +66,14 @@ impl KeyedCatalogRef {
     /// materials whose formula no longer exists in the catalog.
     pub fn from_material(material: &Material) -> Option<Self> {
         match material {
+            Material::ChordApproach {
+                name,
+                root,
+                direction,
+            } if chord_catalog().iter().any(|formula| formula.name == name) => Some(Self {
+                formula_id: woodshed_graph::chord_approach_id(name, *direction),
+                root: *root,
+            }),
             Material::Chord { name, root }
                 if chord_catalog().iter().any(|formula| formula.name == name) =>
             {
@@ -94,6 +106,18 @@ impl KeyedCatalogRef {
     /// formula identifiers rather than silently substituting another formula.
     pub fn to_material(&self) -> Option<Material> {
         let (kind, name) = self.formula_id.split_once(':')?;
+        if kind == "chord-approach" {
+            let (slug, name) = name.split_once(':')?;
+            let direction = ApproachDirection::from_slug(slug)?;
+            return chord_catalog()
+                .iter()
+                .any(|formula| formula.name == name)
+                .then(|| Material::ChordApproach {
+                    name: name.into(),
+                    root: self.root,
+                    direction,
+                });
+        }
         if kind == "scale-pattern" {
             let (slug, name) = name.split_once(':')?;
             let pattern = ScalePattern::from_slug(slug)?;
@@ -136,6 +160,9 @@ impl KeyedCatalogRef {
             Material::ScalePattern { name, pattern, .. } => {
                 format!("{name} in {}", pattern.label().to_lowercase())
             },
+            Material::ChordApproach {
+                name, direction, ..
+            } => format!("{name} approach from {}", direction.slug()),
             Material::Riff { .. } | Material::Path { .. } => return None,
         };
         let root = Pitch::from_midi(60 + i32::from(self.root.value()), Spelling::Sharps);
@@ -158,8 +185,24 @@ impl KeyedCatalogRef {
 /// The formula is deliberately resolved by name each time. A stale saved name
 /// yields `None`, never the first catalog formula.
 pub fn keyed_pitch_classes(material: &Material) -> Option<BTreeSet<PitchClass>> {
+    if let Material::ChordApproach {
+        name,
+        root,
+        direction,
+    } = material
+    {
+        let target = keyed_pitch_classes(&Material::Chord {
+            name: name.clone(),
+            root: *root,
+        })?;
+        let mut recipe = target.clone();
+        recipe.extend(target.iter().map(|pc| {
+            PitchClass::new((i16::from(pc.value()) + direction.fret_delta()).rem_euclid(12) as u8)
+        }));
+        return Some(recipe);
+    }
     let pitches = match material {
-        Material::Chord { name, root } => {
+        Material::Chord { name, root } | Material::ChordApproach { name, root, .. } => {
             let formula = chord_catalog()
                 .iter()
                 .find(|formula| formula.name == name)?;

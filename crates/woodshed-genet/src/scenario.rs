@@ -352,6 +352,56 @@ impl Snapshot<'_, '_> {
                     .to_string(),
             )
             .with_field(
+                "approach-cards",
+                ui.set
+                    .cards
+                    .iter()
+                    .filter(|card| {
+                        matches!(
+                            card.material,
+                            woodshedding::rehearsal::Material::ChordApproach { .. }
+                        )
+                    })
+                    .count()
+                    .to_string(),
+            )
+            .with_field(
+                "approach-sequential",
+                (ui.set.cards.get(ui.set.cursor).is_some_and(|card| {
+                    matches!(
+                        card.material,
+                        woodshedding::rehearsal::Material::ChordApproach { .. }
+                    )
+                }) && ui.preview_voicing().2 > 0.0)
+                    .to_string(),
+            )
+            .with_field(
+                "approach-descends",
+                (ui.set.cards.get(ui.set.cursor).is_some_and(|card| {
+                    matches!(
+                        card.material,
+                        woodshedding::rehearsal::Material::ChordApproach { .. }
+                    )
+                }) && ui
+                    .preview_voicing()
+                    .0
+                    .windows(2)
+                    .any(|notes| notes[1] < notes[0]))
+                .to_string(),
+            )
+            .with_field(
+                "context-approaches",
+                stage_snapshot
+                    .nodes
+                    .iter()
+                    .filter(|node| {
+                        node.kind == woodshed_core::stage_context::StageNodeKind::ChordApproach
+                            && !node.foreground
+                    })
+                    .count()
+                    .to_string(),
+            )
+            .with_field(
                 "rehearsal-strings",
                 ui.rehearsal_board_geometry().string_count.to_string(),
             )
@@ -943,6 +993,44 @@ impl Automatable for Probe<'_, '_> {
                     }
                     ui.step_card_shape(1);
                 }
+                ui.set_graph_card_expanded = true;
+                ui.set_graph_reading(woodshed_core::settings::StageGraphReading::CircleOfFifths);
+            },
+            "chord-approach-example" => {
+                use woodshedding::rehearsal::{FretWindow, Hold, Set, Timing};
+                ui.set = Set::default();
+                ui.practice_history = Default::default();
+                ui.stage.set_lens(Lens::Chords);
+                for (root, name) in [(0, "Minor 7"), (3, "Major 7")] {
+                    ui.stage.set_root(root);
+                    ui.root_dd.selected = root;
+                    let index = ui
+                        .stage
+                        .chords()
+                        .iter()
+                        .position(|formula| formula.name == name)
+                        .expect("fixture chord exists");
+                    ui.stage.select_chord(index);
+                    ui.stage_current(None);
+                }
+                ui.set.cards[0].setting.fret_window = Some(FretWindow { start: 2, span: 6 });
+                ui.set.cursor = 0;
+                ui.step_card_shape(1);
+                let target = &mut ui.set.cards[1];
+                target.setting.instrument = "Ukulele".into();
+                target.setting.tuning = Some("Standard (high-G)".into());
+                target.setting.capo = Some(2);
+                target.setting.fret_window = Some(FretWindow { start: 2, span: 12 });
+                ui.set.cursor = 1;
+                ui.step_card_shape(1);
+                for card in &mut ui.set.cards {
+                    card.timing = Timing {
+                        bpm: None,
+                        hold: Hold::Bars(1),
+                    };
+                }
+                ui.transport.bpm = 80.0;
+                ui.set.cursor = 0;
                 ui.set_graph_card_expanded = true;
                 ui.set_graph_reading(woodshed_core::settings::StageGraphReading::CircleOfFifths);
             },

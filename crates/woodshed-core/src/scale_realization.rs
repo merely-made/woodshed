@@ -217,34 +217,39 @@ impl StageState {
             pitches.sort_by(f32::total_cmp);
             pitches.dedup();
         }
-        if pitches.is_empty() {
-            return (pitches, 0.0, 0.0);
-        }
-        if !matches!(card.touch, Touch::Walk) {
-            let (duration, offset) = crate::voicing_shape(pitches.len(), false);
-            return (pitches, duration, offset);
-        }
-        let bpm = card
-            .timing
-            .bpm
-            .filter(|bpm| bpm.is_finite() && *bpm > 0.0)
-            .unwrap_or(120.0)
-            .max(30.0);
-        let dwell = match card.timing.hold {
-            Hold::Manual => None,
-            Hold::Bars(n) => Some(4.0 * 60.0 / bpm * f32::from(n.max(1))),
-            Hold::Reps(n) => Some(4.0 * 60.0 / bpm * f32::from(n.max(1))),
-            Hold::Seconds(seconds) => Some(if seconds.is_finite() {
-                seconds.max(0.5)
-            } else {
-                0.5
-            }),
-        };
-        let step_secs = dwell.map_or(60.0 / bpm, |duration| duration / pitches.len() as f32);
-        let duration =
-            dwell.unwrap_or_else(|| (pitches.len().saturating_sub(1) as f32 * step_secs) + 0.4);
-        (pitches, duration, step_secs * 1000.0)
+        ordered_card_preview(card, pitches)
     }
+}
+
+/// Articulate an already ordered visit sequence without sorting or deduplication.
+pub(crate) fn ordered_card_preview(card: &Card, pitches: Vec<f32>) -> (Vec<f32>, f32, f32) {
+    if pitches.is_empty() {
+        return (pitches, 0.0, 0.0);
+    }
+    if !matches!(card.touch, Touch::Walk) {
+        let (duration, offset) = crate::voicing_shape(pitches.len(), false);
+        return (pitches, duration, offset);
+    }
+    let bpm = card
+        .timing
+        .bpm
+        .filter(|bpm| bpm.is_finite() && *bpm > 0.0)
+        .unwrap_or(120.0)
+        .max(30.0);
+    let dwell = match card.timing.hold {
+        Hold::Manual => None,
+        Hold::Bars(n) => Some(4.0 * 60.0 / bpm * f32::from(n.max(1))),
+        Hold::Reps(n) => Some(4.0 * 60.0 / bpm * f32::from(n.max(1))),
+        Hold::Seconds(seconds) => Some(if seconds.is_finite() {
+            seconds.max(0.5)
+        } else {
+            0.5
+        }),
+    };
+    let step_secs = dwell.map_or(60.0 / bpm, |duration| duration / pitches.len() as f32);
+    let duration =
+        dwell.unwrap_or_else(|| (pitches.len().saturating_sub(1) as f32 * step_secs) + 0.4);
+    (pitches, duration, step_secs * 1000.0)
 }
 
 #[cfg(test)]

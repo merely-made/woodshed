@@ -53,6 +53,22 @@ impl UiState {
         }).map_err(|reason| format!("Scale unavailable: {reason}")))
     }
 
+    pub fn rehearsal_approach_status(&self) -> Option<Result<String, String>> {
+        let card = self.current_card()?;
+        if !matches!(card.material, Material::ChordApproach { .. }) {
+            return None;
+        }
+        Some(self.stage.chord_approach_realization(card).map(|approach| {
+            let written = woodshed_core::harmony::KeyedCatalogRef::from_material(&card.material).expect("resolved approach");
+            let mut concert = written.clone();
+            concert.root = approach.concert_root;
+            format!("{} / {} · capo {} · written {} · concert {} · {} strings · physical frets {}–{}",
+                approach.setup.instrument, approach.setup.tuning_name, approach.setup.capo,
+                written.label().expect("resolved approach"), concert.label().expect("resolved approach"),
+                approach.geometry.string_count, approach.geometry.physical_fret_start, approach.geometry.physical_fret_end)
+        }).map_err(|reason| format!("Approach unavailable: {reason}")))
+    }
+
     /// Native neck paint and retained note labels must use the same Card setup.
     pub fn rehearsal_board_geometry(&self) -> BoardGeom {
         let resolved = self.current_card().and_then(|card| {
@@ -64,6 +80,18 @@ impl UiState {
                     self.stage
                         .scale_card_realization(card)
                         .map(|scale| scale.geometry)
+                        .unwrap_or(woodshed_core::card_shapes::CardShapeGeometry {
+                            string_count: 0,
+                            physical_fret_start: 0,
+                            physical_fret_end: 0,
+                            capo: 0,
+                        }),
+                )
+            } else if matches!(card.material, Material::ChordApproach { .. }) {
+                Some(
+                    self.stage
+                        .chord_approach_realization(card)
+                        .map(|approach| approach.geometry)
                         .unwrap_or(woodshed_core::card_shapes::CardShapeGeometry {
                             string_count: 0,
                             physical_fret_start: 0,

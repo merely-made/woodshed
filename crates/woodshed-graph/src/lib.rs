@@ -337,6 +337,20 @@ pub fn scale_pattern_exercise_id(
 ) -> String {
     exercise_id(&format!("{}:{name}", pattern.stable_id()))
 }
+
+pub fn chord_approach_id(
+    name: &str,
+    direction: woodshedding::rehearsal::ApproachDirection,
+) -> String {
+    format!("chord-approach:{}:{name}", direction.slug())
+}
+
+pub fn chord_approach_exercise_id(
+    name: &str,
+    direction: woodshedding::rehearsal::ApproachDirection,
+) -> String {
+    exercise_id(&format!("{}:{name}", direction.stable_id()))
+}
 /// The node id for a chord.
 pub fn chord_id(name: &str) -> String {
     format!("chord:{name}")

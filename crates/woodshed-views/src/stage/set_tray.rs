@@ -123,6 +123,7 @@ pub(super) fn card_editor(ui: &UiState) -> UiChild {
                 super::connected::panel(ui),
                 super::connected_scales::panel(ui),
                 super::scale_patterns::panel(ui),
+                super::chord_approaches::panel(ui),
             ),
         )
         .attr("class", "set-editor"),
