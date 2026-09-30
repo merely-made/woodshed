@@ -383,6 +383,10 @@ pub fn stage_css(p: &Palette) -> String {
 .resize-handle {{ background-color: {tertiary}; border-radius: 3px 0 6px 0; cursor: nwse-resize; opacity: 0.86; z-index: 6; }}
 .resize-handle:focus {{ outline-width: 1px; outline-color: {text}; }}
 .set-graph-card-root {{ position: absolute; left: 0; top: 0; pointer-events: none; z-index: 4; }}
+.set-graph-selected-card {{ position: relative; width: 300px; max-width: 100%; padding: 10px; border-radius: 9px; background-color: {surface_2}; }}
+.set-graph-selected-card .set-editor {{ gap: 6px; border-top-width: 0; }}
+.set-graph-selected-card .set-editor-label {{ width: 100%; padding-right: 100px; }}
+.set-graph-selected-card .card-rename {{ width: 100%; }}
 .set-graph-node-card-layer {{ position: absolute; pointer-events: none; z-index: 4; }}
 .set-graph-node-card {{ position: absolute; left: 0; top: 0; width: 100%; height: 100%; pointer-events: auto; box-sizing: border-box; overflow: hidden; padding: 10px; background-color: {surface_2}; border-width: 1px; border-color: {tertiary}; border-radius: 9px; z-index: 4; }}
 .set-graph-node-card .set-editor {{ align-content: flex-start; border-top-width: 0; gap: 6px; padding-top: 0; }}

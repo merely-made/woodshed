@@ -290,6 +290,15 @@ The first slice is not accepted solely because each lane reports success.
   captures. Stage layout correction, acoustic/human review, keyboard graph/list
   acceptance, and full per-event highlights remain open.
 
+- **2026-09-30:** follow-up layout correction moves the expanded selected Card
+  into the graph inspection layout beside the canvas, wrapping below it when
+  space is limited. Its natural height accommodates shape and discovery controls;
+  selection and collapse retain the same occurrence. This supersedes P4d's
+  in-node editor footprint without changing historical capture claims. Views
+  65 and desktop 36 tests pass, including non-overlap and clickable discovery/
+  staging; desktop build passes. The native follow-up produced zero frames
+  after the Mac locked again, so presented-frame confirmation remains pending.
+
 **First-slice qualification:** functional discovery, staging, sequential-onset
 preview, runner observation boundaries, and filesystem reopening are implemented
 and automatically tested. The synth sustains prior tones through the cascade;
