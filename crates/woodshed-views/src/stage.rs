@@ -40,6 +40,7 @@ use crate::workspace::{
     WoodshedWorkspace, WorkspaceEffect, WorkspaceEvent, WorkspaceOutcome, WorkspacePanel,
 };
 
+mod chord_approaches;
 mod connected;
 mod connected_scales;
 mod context;
@@ -444,6 +445,8 @@ fn stage_node_kind(kind: StageNodeKind, foreground: bool) -> &'static str {
         (false, StageNodeKind::Arpeggio) => "context:Arpeggio",
         (true, StageNodeKind::ScalePattern) => "staged:ScalePattern",
         (false, StageNodeKind::ScalePattern) => "context:ScalePattern",
+        (true, StageNodeKind::ChordApproach) => "staged:ChordApproach",
+        (false, StageNodeKind::ChordApproach) => "context:ChordApproach",
     }
 }
 
@@ -942,6 +945,11 @@ pub struct UiState {
     pub scale_pattern: Option<woodshedding::rehearsal::ScalePattern>,
     pub pattern_subject: Option<KeyedCatalogRef>,
     pub pattern_notice: Option<String>,
+    pub approach_source: Option<CardId>,
+    pub approach_target: Option<CardId>,
+    pub approach_direction: Option<woodshedding::rehearsal::ApproachDirection>,
+    pub approach_subject: Option<KeyedCatalogRef>,
+    pub approach_notice: Option<String>,
     /// Captured on entering Pitch motion; browsing never retargets the layout.
     pub pitch_motion_anchor: Option<KeyedCatalogRef>,
     /// Keyed context identities already disclosed during this view session.
@@ -1045,6 +1053,11 @@ impl UiState {
             scale_pattern: None,
             pattern_subject: None,
             pattern_notice: None,
+            approach_source: None,
+            approach_target: None,
+            approach_direction: None,
+            approach_subject: None,
+            approach_notice: None,
             pitch_motion_anchor: None,
             context_disclosed: BTreeSet::new(),
             context_positions: BTreeMap::new(),
@@ -1886,6 +1899,11 @@ impl UiState {
         self.scale_pattern = None;
         self.pattern_subject = None;
         self.pattern_notice = None;
+        self.approach_source = None;
+        self.approach_target = None;
+        self.approach_direction = None;
+        self.approach_subject = None;
+        self.approach_notice = None;
         self.context_disclosed.clear();
         self.card_shape_notice = None;
         self.pitch_motion_anchor = (self.app_settings.stage.set_graph_reading

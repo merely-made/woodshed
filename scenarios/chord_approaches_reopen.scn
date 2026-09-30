@@ -1,0 +1,11 @@
+settle 3
+assert snap set-cards == 3
+assert snap approach-cards == 1
+assert snap rehearsal-strings == 4
+assert snap approach-descends == true
+assert snap approach-sequential == true
+assert snap rehearsal-running == false
+assert snap history-observed >= 4
+assert text concert D
+capture 01_approach_reopened
+log Chord approach reopen complete

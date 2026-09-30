@@ -434,6 +434,9 @@ pub fn catalog_id_for_card(card: &Card) -> Option<String> {
         Material::ScalePattern { name, pattern, .. } => {
             woodshed_graph::scale_pattern_exercise_id(name, *pattern)
         },
+        Material::ChordApproach {
+            name, direction, ..
+        } => woodshed_graph::chord_approach_exercise_id(name, *direction),
         Material::Chord { name, .. } if matches!(card.touch, Touch::Arpeggiate { .. }) => {
             woodshed_graph::arpeggio_id(name)
         },

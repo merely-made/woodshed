@@ -13,6 +13,7 @@ pub mod arpeggio;
 pub mod arrangement;
 pub mod audio;
 pub mod card_shapes;
+pub mod chord_approach;
 pub mod connected_catalog;
 pub mod connected_scales;
 pub mod harmony;
@@ -1336,6 +1337,12 @@ impl StageState {
     }
 
     pub fn dots_for_card(&self, card: &Card) -> Vec<FretDot> {
+        if matches!(card.material, Material::ChordApproach { .. }) {
+            return self
+                .chord_approach_realization(card)
+                .map(|approach| approach.dots)
+                .unwrap_or_default();
+        }
         if matches!(
             card.material,
             Material::Scale { .. } | Material::ScalePattern { .. }
@@ -1357,10 +1364,12 @@ impl StageState {
                     .find(|s| s.name == name.as_str())
                     .and_then(|s| board.positions_for_scale(s, root_of(root)).ok())
             },
-            Material::Chord { name, root } => chord_catalog()
-                .iter()
-                .find(|c| c.name == name.as_str())
-                .and_then(|c| board.positions_for_chord(c, root_of(root)).ok()),
+            Material::Chord { name, root } | Material::ChordApproach { name, root, .. } => {
+                chord_catalog()
+                    .iter()
+                    .find(|c| c.name == name.as_str())
+                    .and_then(|c| board.positions_for_chord(c, root_of(root)).ok())
+            },
             Material::Riff { name } => {
                 // A riff card references an exercise; show its full
                 // position set (the step-through runs on the Exercise lens).
@@ -1872,6 +1881,9 @@ impl StageState {
     /// secs, strum offset ms)` — the Rehearsal-tab counterpart to
     /// [`Self::voicing_preview`]. Riff cards don't voice (empty).
     pub fn card_voicing(&self, card: &Card) -> (Vec<f32>, f32, f32) {
+        if matches!(card.material, Material::ChordApproach { .. }) {
+            return self.chord_approach_preview(card, false);
+        }
         if matches!(
             card.material,
             Material::Scale { .. } | Material::ScalePattern { .. }
@@ -1892,7 +1904,7 @@ impl StageState {
                     .unwrap_or_default(),
                 true,
             ),
-            Material::Chord { name, root } => {
+            Material::Chord { name, root } | Material::ChordApproach { name, root, .. } => {
                 if card.setting.voicing_idx.is_some() {
                     let pitches = match self.selected_card_shape(card) {
                         CardShapeStatus::Available(shape) => to_hz(shape.concert_pitches()),
@@ -1959,6 +1971,9 @@ impl StageState {
     }
 
     pub fn card_sounding_pitches(&self, card: &Card) -> (Vec<f32>, f32, f32) {
+        if matches!(card.material, Material::ChordApproach { .. }) {
+            return self.chord_approach_preview(card, true);
+        }
         if matches!(
             card.material,
             Material::Scale { .. } | Material::ScalePattern { .. }

@@ -139,6 +139,14 @@ pub fn fixture_dataset() -> ProjectionDataset {
             let occurrence_id = occurrence_id(card_id);
             let (catalog_id, root_pitch_class) = match &card.material {
                 Material::Chord { name, root } => (format!("chord:{name}"), root.value()),
+                Material::ChordApproach {
+                    name,
+                    root,
+                    direction,
+                } => (
+                    woodshed_graph::chord_approach_id(name, *direction),
+                    root.value(),
+                ),
                 Material::Scale { name, root } => (format!("scale:{name}"), root.value()),
                 Material::ScalePattern {
                     name,

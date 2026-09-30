@@ -94,8 +94,57 @@ impl ScalePattern {
     }
 }
 
-/// Authored material; a scale pattern is an explicit recipe applied to the
-/// named scale, rather than a name-only riff with no playable content.
+/// The physical chromatic direction from which a target tone is approached.
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize)]
+pub enum ApproachDirection {
+    Below,
+    Above,
+}
+
+impl ApproachDirection {
+    pub const ALL: [Self; 2] = [Self::Below, Self::Above];
+    pub const fn label(self) -> &'static str {
+        match self {
+            Self::Below => "Below",
+            Self::Above => "Above",
+        }
+    }
+    pub const fn slug(self) -> &'static str {
+        match self {
+            Self::Below => "below",
+            Self::Above => "above",
+        }
+    }
+    pub const fn stable_id(self) -> &'static str {
+        match self {
+            Self::Below => "chord-approach-below/v1",
+            Self::Above => "chord-approach-above/v1",
+        }
+    }
+    pub const fn fret_delta(self) -> i16 {
+        match self {
+            Self::Below => -1,
+            Self::Above => 1,
+        }
+    }
+    /// One physical semitone partner, bounded by the playable nut-relative window.
+    pub fn partner_fret(self, target: u8, start: u8, end: u8) -> Option<u8> {
+        if target < start || target > end {
+            return None;
+        }
+        let fret = i16::from(target) + self.fret_delta();
+        (fret >= i16::from(start) && fret <= i16::from(end)).then_some(fret as u8)
+    }
+    pub fn from_slug(slug: &str) -> Option<Self> {
+        match slug {
+            "below" => Some(Self::Below),
+            "above" => Some(Self::Above),
+            _ => None,
+        }
+    }
+}
+
+/// An explicit recipe keeps the target formula separate from transient notes.
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub enum Material {
     Scale {
@@ -110,6 +159,11 @@ pub enum Material {
     Chord {
         name: String,
         root: PitchClass,
+    },
+    ChordApproach {
+        name: String,
+        root: PitchClass,
+        direction: ApproachDirection,
     },
     /// A fixed playable sequence; a user/catalog exercise's steps live
     /// here, referenced by name.
@@ -134,6 +188,7 @@ impl Material {
             Self::Scale { .. } => "Scale",
             Self::ScalePattern { .. } => "Scale pattern",
             Self::Chord { .. } => "Chord",
+            Self::ChordApproach { .. } => "Chord approach",
             Self::Riff { .. } => "Riff",
             Self::Path { .. } => "Path",
         }
@@ -575,6 +630,34 @@ impl Set {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn chromatic_approach_partners_are_bounded_and_legacy_chord_wire_is_unchanged() {
+        assert_eq!(ApproachDirection::Below.partner_fret(2, 2, 8), None);
+        assert_eq!(ApproachDirection::Above.partner_fret(8, 2, 8), None);
+        assert_eq!(ApproachDirection::Below.partner_fret(5, 2, 8), Some(4));
+        assert_eq!(ApproachDirection::Above.partner_fret(5, 2, 8), Some(6));
+        assert_eq!(ApproachDirection::Below.partner_fret(9, 2, 8), None);
+        assert_eq!(ApproachDirection::Above.partner_fret(1, 2, 8), None);
+        assert_eq!(ApproachDirection::Below.partner_fret(255, 0, 254), None);
+        let legacy = r#"{"Chord":{"name":"Major","root":0}}"#;
+        let chord: Material = serde_json::from_str(legacy).unwrap();
+        assert_eq!(serde_json::to_string(&chord).unwrap(), legacy);
+        let recipe = Material::ChordApproach {
+            name: "Major".into(),
+            root: PitchClass::new(0),
+            direction: ApproachDirection::Above,
+        };
+        let reopened: Material =
+            serde_json::from_str(&serde_json::to_string(&recipe).unwrap()).unwrap();
+        assert!(matches!(
+            reopened,
+            Material::ChordApproach {
+                direction: ApproachDirection::Above,
+                ..
+            }
+        ));
+    }
 
     fn card(label: &str) -> Card {
         Card {

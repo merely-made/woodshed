@@ -161,6 +161,32 @@ pub(super) fn screen(ui: &UiState) -> UiChild {
                 .attr("role", "status"),
         ) as UiChild,
     });
+    let approach_status: Option<UiChild> =
+        ui.rehearsal_approach_status().map(|status| match status {
+            Ok(message) => {
+                Box::new(el("div", text(message)).attr("class", "t-readout chord-approach-status"))
+                    as UiChild
+            },
+            Err(message) => Box::new(
+                el("div", text(message))
+                    .attr("class", "chord-approach-unavailable")
+                    .attr("role", "status"),
+            ) as UiChild,
+        });
+    if ui
+        .rehearsal_approach_status()
+        .is_some_and(|status| status.is_err())
+    {
+        return Box::new(el(
+            "div",
+            (
+                deck,
+                el("div", films).attr("class", "filmstrip"),
+                editor,
+                approach_status,
+            ),
+        ));
+    }
     if ui
         .rehearsal_scale_status()
         .is_some_and(|status| status.is_err())
@@ -287,6 +313,7 @@ pub(super) fn screen(ui: &UiState) -> UiChild {
             el("div", films).attr("class", "filmstrip"),
             editor,
             scale_status,
+            approach_status,
             el(
                 "div",
                 (

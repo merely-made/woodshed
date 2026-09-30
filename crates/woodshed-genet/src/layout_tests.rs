@@ -907,3 +907,266 @@ fn inspected_pattern_revalidates_removed_and_invalid_sources_before_authoring() 
         );
     }
 }
+
+fn approach_harness(width: f32) -> Harness<UiState, crate::sync::Logic, UiChild> {
+    use woodshed_core::storage::AppSection;
+    use woodshedding::{
+        pitch::PitchClass,
+        rehearsal::{CardId, FretWindow, Hold, Material, Touch},
+    };
+    let mut h = harness(width, 1_500.0);
+    h.update(|ui| {
+        let source = &mut ui.set.cards[0];
+        source.label = "Am7 source".into();
+        source.material = Material::Chord {
+            name: "Minor 7".into(),
+            root: PitchClass::new(9),
+        };
+        source.setting.instrument = "Ukulele".into();
+        source.setting.tuning = Some("Standard (high-G)".into());
+        source.setting.capo = Some(2);
+        source.setting.fret_window = Some(FretWindow { start: 2, span: 12 });
+        source.touch = Touch::Block;
+        source.timing.bpm = Some(90.0);
+        source.timing.hold = Hold::Bars(1);
+        let mut target = source.clone();
+        target.id = CardId::UNASSIGNED;
+        target.label = "Cmaj7 target".into();
+        target.material = Material::Chord {
+            name: "Major 7".into(),
+            root: PitchClass::new(0),
+        };
+        ui.set.push(target);
+        ui.set.cursor = 1;
+        ui.select_app_section(AppSection::Rehearsal);
+        ui.audio_requests.clear();
+    });
+    assert!(h.click_on(&Selector::class("card-shape-next")));
+    h.update(|ui| ui.set.cursor = 0);
+    h
+}
+
+#[test]
+fn adjacent_chord_approach_controls_preserve_physical_pairs_shapes_and_originals() {
+    use woodshed_core::{CardShapeStatus, audio::AudioRequest, history::catalog_id_for_card};
+    use woodshedding::rehearsal::{ApproachDirection, Material};
+    for width in [1_100.0, 420.0] {
+        for (direction, button, shift) in [
+            (ApproachDirection::Below, "Inspect from below", -1_i32),
+            (ApproachDirection::Above, "Inspect from above", 1_i32),
+        ] {
+            let mut h = approach_harness(width);
+            let originals = serde_json::to_value(&h.state().set.cards).unwrap();
+            let CardShapeStatus::Available(shape) =
+                h.state().stage.card_shape_status(&h.state().set.cards[1])
+            else {
+                panic!("target selected shape must resolve");
+            };
+            // Independent expected pitches from the known high-G open strings
+            // and the selected shape's physical contacts, including capo-bound
+            // omissions. The approach realizer is not used to build this oracle.
+            let opens = [67_i32, 60, 64, 69];
+            let mut targets = shape
+                .physical_positions()
+                .into_iter()
+                .map(|(string, fret)| (opens[string] + i32::from(fret), fret, string))
+                .collect::<Vec<_>>();
+            targets.sort();
+            let expected = targets
+                .iter()
+                .filter_map(|&(target_midi, fret, _)| {
+                    let partner = i32::from(fret) + shift;
+                    (partner >= 2 && partner <= 14).then_some([target_midi + shift, target_midi])
+                })
+                .flatten()
+                .collect::<Vec<_>>();
+            assert!(!expected.is_empty());
+            assert!(h.click_on(&Selector::class("chord-approach-choice").containing(button)));
+            assert_eq!(h.state().set.cards.len(), 2);
+            assert!(h.click_on(&Selector::class("t-btn").containing("Hear approach")));
+            let heard = match h.state().audio_requests.last().unwrap() {
+                AudioRequest::PreviewPitches {
+                    pitches,
+                    duration_s,
+                    strum_s,
+                } => (pitches.clone(), *duration_s, *strum_s),
+                request => panic!("unexpected approach audio request: {request:?}"),
+            };
+            let midi = heard
+                .0
+                .iter()
+                .map(|hz| (69.0 + 12.0 * (*hz / 440.0).log2()).round() as i32)
+                .collect::<Vec<_>>();
+            assert_eq!(
+                midi, expected,
+                "the audible recipe must preserve each same-string chromatic approach and target in order"
+            );
+            if direction == ApproachDirection::Above {
+                assert!(
+                    midi.windows(2).any(|pair| pair[1] < pair[0]),
+                    "above approaches must descend into their target"
+                );
+            }
+            assert_eq!(h.state().set.cards.len(), 2);
+            assert!(h.click_on(&Selector::class("t-btn").containing("Append approach exercise")));
+            assert!(h.click_on(&Selector::class("t-btn").containing("Append approach exercise")));
+            assert_eq!(h.state().set.cards.len(), 4);
+            assert_eq!(
+                serde_json::to_value(&h.state().set.cards[..2]).unwrap(),
+                originals
+            );
+            assert_eq!(
+                h.state().set.cursor,
+                0,
+                "explicit append must not retarget the inspected original pair"
+            );
+            let first = h.state().set.cards[2].id;
+            assert_ne!(first, h.state().set.cards[3].id);
+            assert!(
+                matches!(&h.state().set.cards[2].material, Material::ChordApproach { name, root, direction: saved } if name == "Major 7" && root.value() == 0 && *saved == direction)
+            );
+            assert_eq!(
+                h.state().set.cards[2].setting.voicing_fingerprint,
+                h.state().set.cards[1].setting.voicing_fingerprint,
+                "recipe retains the target's exact selected shape"
+            );
+            h.update(|ui| {
+                ui.set.select_id(first);
+                ui.now_ms = Some(1_000);
+            });
+            assert_eq!(h.state().stage.string_count(), 6);
+            assert_eq!(h.state().rehearsal_board_geometry().string_count, 4);
+            assert_eq!(h.state().preview_voicing(), heard);
+            let subject = catalog_id_for_card(&h.state().set.cards[2]).unwrap();
+            assert_ne!(subject, "chord:Major 7");
+            assert!(h.click_on(&Selector::class("t-btn").containing("Run")));
+            assert!(
+                matches!(h.state().audio_requests.last(), Some(AudioRequest::PreviewPitches { pitches, .. }) if *pitches == heard.0)
+            );
+            h.update(|ui| ui.now_ms = Some(2_500));
+            assert!(h.click_on(&Selector::class("t-btn").containing("Pause")));
+            assert_eq!(
+                h.state().practice_history.total_practiced_ms(&subject),
+                1_500
+            );
+            assert_eq!(
+                h.state()
+                    .practice_history
+                    .total_practiced_ms("chord:Major 7"),
+                0
+            );
+            assert_eq!(
+                h.state()
+                    .practice_history
+                    .total_practiced_ms("chord:Minor 7"),
+                0
+            );
+        }
+    }
+}
+
+#[test]
+fn inspected_chord_approach_rejects_stale_pairs_and_saved_shape_failures() {
+    use woodshedding::rehearsal::ApproachDirection;
+    for change in [
+        "remove-source",
+        "remove-target",
+        "reorder",
+        "insert-between",
+        "invalid-shape",
+    ] {
+        let mut h = approach_harness(700.0);
+        let source = h.state().set.cards[0].id;
+        let target = h.state().set.cards[1].id;
+        assert!(
+            h.click_on(&Selector::class("chord-approach-choice").containing("Inspect from above"))
+        );
+        assert!(h.click_on(&Selector::class("t-btn").containing("Hear approach")));
+        assert!(!h.state().audio_requests.is_empty());
+        let mut count_after_change = 0;
+        h.update(|ui| {
+            ui.audio_requests.clear();
+            match change {
+                "remove-source" => {
+                    ui.set.remove(0);
+                },
+                "remove-target" => {
+                    ui.set.remove(1);
+                },
+                "reorder" => ui.set.cards.swap(0, 1),
+                "insert-between" => {
+                    ui.set.duplicate(0);
+                },
+                "invalid-shape" => {
+                    ui.set.cards[1].setting.voicing_fingerprint = Some("stale-test-shape".into())
+                },
+                _ => unreachable!(),
+            }
+            count_after_change = ui.set.cards.len();
+            // Retained commands must resolve the originally inspected IDs and
+            // shape again, never the new adjacent Card or a formula fallback.
+            ui.hear_chord_approach();
+            assert!(ui.stage_chord_approach().is_none(), "{change}");
+        });
+        assert_eq!(h.state().set.cards.len(), count_after_change);
+        assert!(
+            h.state().audio_requests.is_empty(),
+            "{change} cannot sound an obsolete recipe"
+        );
+        assert!(!h.click_on(&Selector::class("t-btn").containing("Append approach exercise")));
+        let unavailable = {
+            let dom = h.runner().dom();
+            let dom = dom.borrow();
+            taproot::matching(&dom, &Selector::class("chord-approach-unavailable"))
+        };
+        assert!(
+            !unavailable.is_empty(),
+            "{change} needs a visible unavailable reason"
+        );
+        // Selecting the same recipe again with the stale explicit pair also
+        // fails, even when an ordinary duplicate is now adjacent.
+        h.update(|ui| {
+            assert!(!ui.inspect_chord_approach(source, target, ApproachDirection::Above))
+        });
+    }
+}
+
+#[test]
+fn unselected_target_approach_keeps_repeated_pitch_visits_in_production_audio() {
+    use woodshed_core::audio::AudioRequest;
+    let mut h = approach_harness(700.0);
+    h.update(|ui| ui.set.cursor = 1);
+    assert!(h.click_on(&Selector::class("card-shape-clear")));
+    h.update(|ui| ui.set.cursor = 0);
+    assert!(h.click_on(&Selector::class("chord-approach-choice").containing("Inspect from above")));
+    assert!(h.click_on(&Selector::class("t-btn").containing("Hear approach")));
+    let heard = match h.state().audio_requests.last().unwrap() {
+        AudioRequest::PreviewPitches {
+            pitches,
+            duration_s,
+            strum_s,
+        } => (pitches.clone(), *duration_s, *strum_s),
+        request => panic!("unexpected approach audio request: {request:?}"),
+    };
+    let midi = heard
+        .0
+        .iter()
+        .map(|hz| (69.0 + 12.0 * (*hz / 440.0).log2()).round() as i32)
+        .collect::<Vec<_>>();
+    assert!(midi.chunks_exact(2).all(|pair| pair[0] == pair[1] + 1));
+    assert!(
+        midi.iter()
+            .copied()
+            .collect::<std::collections::BTreeSet<_>>()
+            .len()
+            < midi.len(),
+        "the semitone above a major seventh repeats an octave root used by a later pair"
+    );
+    assert!(h.click_on(&Selector::class("t-btn").containing("Append approach exercise")));
+    h.update(|ui| ui.set.cursor = 2);
+    assert_eq!(
+        h.state().preview_voicing(),
+        heard,
+        "staging cannot sort or deduplicate the repeated recipe visits"
+    );
+}
