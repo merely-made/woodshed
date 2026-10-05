@@ -1,0 +1,46 @@
+# Exact comparison supports exploration, explicit source navigation and practice.
+settle 90
+act tone-relationships-example
+settle 5
+click .overview-relationship Relationship recipe
+click .relationship-bind Use selected Card relationships
+settle 5
+assert snap recipe-valid == true
+assert text 3 selected occurrences · 2 consecutive comparisons
+assert snap set-cards == 3
+click .relationship-explain Explain Pitch-class differences
+settle 5
+assert text Shared: C, E, G.
+assert text Only in Cmaj7: B.
+assert text Only in Am7: A.
+click .relationship-explanation woodshed.keyed_pitch_set_comparison.v1
+capture 01_seventh_chord_differences
+click .relationship-spacing Increase recipe spacing
+settle 5
+assert snap recipe-spacing == 24
+assert snap set-cards == 3
+click .relationship-explain Explain Pitch-class containment
+settle 5
+assert text C Major scale contains every pitch class of Am7.
+assert text D, F, B
+assert snap recipe-occurrence == set:1:card:3
+click .relationship-explanation woodshed.keyed_pitch_set_comparison.v1
+capture 02_scale_contains_chord
+click .graph-canvas-swatch-node @data-key=set:1:card:3
+settle 5
+assert snap recipe-occurrence == set:1:card:3
+capture 03_exact_graph_occurrence
+click .relationship-explain Explain Pitch-class containment
+click .relationship-source Open selected source Card
+settle 5
+assert snap cursor-id == 3
+assert snap rehearsal-running == false
+click .pill Rehearsal
+settle 5
+click .t-btn Run
+settle 30
+assert snap rehearsal-running == true
+click .t-btn Pause
+settle 5
+assert snap rehearsal-running == false
+capture 04_return_to_practice

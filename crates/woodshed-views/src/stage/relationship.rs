@@ -44,7 +44,7 @@ impl RelationshipReading {
         }
         let reading: Self = serde_json::from_str(json)
             .map_err(|e| format!("Retained reading cannot be decoded: {e}"))?;
-        if reading.version > 2 {
+        if reading.version > 3 {
             return Err("Retained reading uses an unsupported version.".into());
         }
         if let Some(source) = &reading.source {
@@ -139,7 +139,7 @@ impl UiState {
         }
         let set = owner_set(self, owner)?;
         if self.relationship_cards.len() < 2 || self.relationship_cards.len() > 64 {
-            return Err("Choose between two and 64 Cards; the first two selected occurrences supply the comparison.".into());
+            return Err("Choose between two and 64 Cards; consecutive selected occurrences supply the comparisons.".into());
         }
         let cards: Vec<_> = set
             .cards
@@ -152,11 +152,10 @@ impl UiState {
         }
         let pair = (cards[0], cards[1]);
         let revision = revision(owner, set);
-        let facts = comparison_disclosure::disclose_comparison(owner, &revision, set, &cards, pair)
+        let value = comparison_disclosure::passage_projection_json(owner, &revision, set, &cards)
             .map_err(|e| format!("Comparison unavailable: {e:?}"))?;
         let dataset: RelationshipDataset =
-            serde_json::from_value(comparison_disclosure::comparison_projection_json(&facts))
-                .map_err(|e| e.to_string())?;
+            serde_json::from_value(value).map_err(|e| e.to_string())?;
         let binding = ProjectionInputBinding {
             source: dataset.dataset.source.clone(),
             expects_generation: Some(dataset.dataset.revision.clone()),
@@ -201,7 +200,7 @@ impl UiState {
             .selected_relationship
             .filter(|id| dataset.relationships.iter().any(|r| &r.id == id));
         self.install_relationship(RelationshipReading {
-            version: 2,
+            version: 3,
             snapshot,
             dataset,
             source: Some(ReadingSource {
@@ -291,7 +290,15 @@ impl UiState {
             source.pair,
         )
         .map_err(|e| format!("Source refused: {e:?}"))?;
-        let current: RelationshipDataset = serde_json::from_value(if reading.version >= 2 {
+        let current: RelationshipDataset = serde_json::from_value(if reading.version >= 3 {
+            comparison_disclosure::passage_projection_json(
+                source.owner,
+                &source.revision,
+                set,
+                &source.cards,
+            )
+            .map_err(|e| format!("Source refused: {e:?}"))?
+        } else if reading.version >= 2 {
             comparison_disclosure::comparison_projection_json(&facts)
         } else {
             comparison_disclosure::projection_json(&facts)
@@ -411,7 +418,7 @@ pub(super) fn screen(ui: &UiState) -> UiChild {
         Box::new(el(
             "p",
             text(
-                "Choose occurrences from the current Set. The first two selected Cards in authored order supply exact shared tones, differences, equality or directed containment. A retained reading keeps its captured evidence until you explicitly rebind.",
+                "Choose occurrences from the current Set. Consecutive selected Cards in authored order supply exact shared tones, differences, equality or directed containment. Sparse choices compare the selected sequence, not every intervening Card. A retained reading keeps its captured evidence until you explicitly rebind.",
             ),
         )),
     ];
@@ -465,6 +472,16 @@ pub(super) fn screen(ui: &UiState) -> UiChild {
     match ui.relationship_reading() {
         Ok(Some(reading)) => {
             let compiled = reading.compile().expect("decoded reading validated");
+            if reading.version >= 3 {
+                let count = reading.dataset.dataset.occurrences.len();
+                children.push(Box::new(el(
+                    "p",
+                    text(format!(
+                        "{count} selected occurrences · {} consecutive comparisons",
+                        count.saturating_sub(1)
+                    )),
+                )));
+            }
             children.push(Box::new(el(
                 "h4",
                 text(reading.snapshot.recipe.definition.label.clone()),
@@ -669,8 +686,43 @@ mod tests {
         restored.open_relationship_recipe();
         restored.bind_relationship_recipe(true).unwrap();
         let rebound = restored.relationship_reading().unwrap().unwrap();
-        assert_eq!(rebound.version, 2);
-        assert_eq!(rebound.dataset.relationships.len(), 2);
+        assert_eq!(rebound.version, 3);
+        assert_eq!(rebound.dataset.relationships.len(), 4);
+    }
+
+    #[test]
+    fn version_two_pair_evidence_stays_unchanged_until_passage_rebind() {
+        let mut ui = fixture();
+        let mut reading = ui.relationship_reading().unwrap().unwrap();
+        let source = reading.source.as_ref().unwrap();
+        let facts = comparison_disclosure::disclose_comparison(
+            source.owner,
+            &source.revision,
+            &ui.set,
+            &source.cards,
+            source.pair,
+        )
+        .unwrap();
+        reading.version = 2;
+        reading.dataset =
+            serde_json::from_value(comparison_disclosure::comparison_projection_json(&facts))
+                .unwrap();
+        reading.snapshot.selected_occurrence = Some("set:1:card:2".into());
+        ui.install_relationship(reading).unwrap();
+        let captured = ui.relationship_reading_json.clone();
+        ui.open_relationship_recipe();
+        assert_eq!(ui.relationship_reading_json, captured);
+        ui.open_relationship_source().unwrap();
+        assert_eq!(ui.set.cursor_id(), Some(CardId(2)));
+        ui.open_relationship_recipe();
+        ui.bind_relationship_recipe(true).unwrap();
+        let reading = ui.relationship_reading().unwrap().unwrap();
+        assert_eq!(reading.version, 3);
+        assert_eq!(reading.compile().unwrap().relationships.len(), 4);
+        assert_eq!(
+            reading.snapshot.selected_occurrence.as_deref(),
+            Some("set:1:card:2")
+        );
     }
 
     #[test]
@@ -683,7 +735,7 @@ mod tests {
         ui.open_relationship_recipe();
         ui.bind_relationship_recipe(true).unwrap();
         let reading = ui.relationship_reading().unwrap().unwrap();
-        assert_eq!(reading.compile().unwrap().relationships.len(), 1);
+        assert_eq!(reading.compile().unwrap().relationships.len(), 2);
         assert_eq!(
             reading.dataset.relationships[0].kind,
             comparison_disclosure::TONE_DIFFERENCES
@@ -714,8 +766,8 @@ mod tests {
         assert_eq!(reading.snapshot.selected_occurrence, Some(occurrence));
         assert_eq!(reading.snapshot.selected_relationship, Some(relation));
         let compiled = reading.compile().unwrap();
-        assert_eq!(compiled.relationships.len(), 2);
-        assert_eq!(compiled.projection.scene.relations.len(), 2);
+        assert_eq!(compiled.relationships.len(), 4);
+        assert_eq!(compiled.projection.scene.relations.len(), 4);
         assert_eq!(
             compiled
                 .relationships
@@ -939,7 +991,7 @@ mod authority_tests {
         for change in 0..3 {
             let mut reading = valid.clone();
             match change {
-                0 => reading.version = 3,
+                0 => reading.version = 4,
                 1 => reading.source.as_mut().unwrap().cards.push(CardId(1)),
                 _ => reading.source.as_mut().unwrap().owner = WorkingSetId(0),
             };
