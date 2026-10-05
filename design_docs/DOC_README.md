@@ -73,8 +73,10 @@ before any other doc in this directory.
 - [2026-07-11_stage_set_tools_plan.md](2026-07-11_stage_set_tools_plan.md)
   — October 5 adds owner-qualified relational disclosure, a shared-compiler
   compatibility instrument, and fresh-process retention through the desktop
-  session path. The visible shared-recipe host integration is implemented; native
-  acceptance is in progress, with owner-qualified source actions and explicit rebinding.
+  session path. The visible shared-recipe host integration is qualified with 558 automated
+  checks, baseline/420px native capture review and fresh-process reopening; source
+  actions validate the exact owner and explicit rebind retains the authored recipe.
+  The shared two-axis scroll reveal fix is contributed back to Cambium in Mere.
   — **In progress; product authority.** P1-P3 remain partial. P4a/P4b landed;
   the scene canvas and single-Card expansion have receipts, while the full P4e
   catalog and P4f practice/sound join remain open. P5-P8 remain open. A repaired

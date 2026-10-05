@@ -32,7 +32,7 @@ gate, not completion of this product plan.
 ## Cross-domain relational recipe contribution (2026-10-05)
 
 **Status (2026-10-05): domain disclosure and retained reopening qualified;
-visible shared-recipe host integration implemented, native acceptance in progress.** The Knot coordination lane owns the shared
+visible shared-recipe host integration qualified at baseline and 420px, with fresh-process reopening.** The Knot coordination lane owns the shared
 `scenomise::projection` compiler/editor seam and Knot adoption; Woodshed owns
 its musical disclosure and adapter. Reuse `scenograph` authored definitions.
 The shared implementation belongs in Mere's existing projection grammar plan,
@@ -59,7 +59,7 @@ tempo a replacement for authored order. Unsupported roles must explain refusal.
 The existing `stage_projection_export` schema stays compatible; relationship
 and semantic-role extensions use the coordinated shared wrapper.
 
-**Findings (2026-10-05):** clean Woodshed main was `e778cb6`; its Mere dependency
+**Earlier compatibility-only checkpoint (2026-10-05; superseded by the visible host integration below):** clean Woodshed main was `e778cb6`; its Mere dependency
 is `8106c7c`. Current shared main `bd119a69d` still has the node/grid/scatter
 compiler in Graphshell and no relationship-bearing dataset. The shared owner
 provided the extracted API at `c79bb8c203b52817991e0d7ba1c4ce3c3a2aac34`,
@@ -146,7 +146,8 @@ Automated checkpoint: core 189, core integration 1, desktop 63, graph 14,
 views 106, theory 181 and four doctests pass (558 total); the standalone
 compatibility instrument passes five tests. Locked desktop build, host-target
 web check and metadata resolve pass without local source overrides. Views
-Clippy reports four existing warnings and none in the new adapter. The actual graph-node regression
+Clippy reports four existing warnings and none in the new adapter. The actual
+graph-node regression
 exposed a 420px failure: a last-node scroll request advanced the vertical
 workspace but left its horizontal ancestor offset at zero. The graph viewport
 now retains definite authored dimensions and nonshrinking height. Diagnostic
@@ -154,14 +155,34 @@ wheel input established that the scrollport could reveal the node; the shared
 owner traced the failure to Cambium Rootstock's vertical-only `scroll_into_view`.
 The generic two-axis ancestor reveal fix is published in Mere `5011e2f9`, with
 independent failing-before nested-scroll tests. Woodshed consumes that shared
-fix and tests real last/middle graph-node clicks at 1100 and 420px. Final automated gates pass; committed native qualification is pending; no selector bypass replaces the graph.
+fix and tests real last/middle graph-node clicks at 1100 and 420px. Final
+automated gates and committed native qualification pass; no selector bypass
+replaces the graph.
 
 `relationship_recipe.scn` drives binding, spacing edit, explained selection,
 exact source navigation, stale-source refusal and explicit owner rebind.
 `relationship_recipe_reopen.scn` verifies retained edits/selection/evidence and
-exact source navigation in a separate process. Native captures, narrow replay,
-final committed revision and publication are recorded after their acceptance.
-Artifacts belong under `testing/woodshed/relationship-host-20261005/`.
+exact source navigation in a separate process. Final native acceptance uses
+implementation commit `c55461cc97bb29e9e78ecb2bb310bb4bda5accdf`:
+1280×900 baseline passes eight captures, 420×900 narrow replay passes eight,
+and separate-process reopen passes two. All 18 captures were visually reviewed.
+They show actual last/middle graph selections, readable relationship evidence,
+visible stale-source refusal, explicit rebind preserving spacing, and the Mere
+retained artifact's captured-from owner link. Reopen restores the recipe edits,
+selection and evidence and navigates to the exact source Card without starting
+transport. The first final narrow attempt produced zero captures because the
+window was not presented; that failed attempt remains in the receipt, and the
+unchanged binary and scenario assertions passed the foregrounded retry.
+
+The tested binary SHA-256 is
+`13124430aab205c970dde41dce82d85abc480631c6f9afcb8389bec70bcbf91f`.
+Native fixture launchers use isolated unsealed desktop `FsBackend` profiles;
+this does not qualify personal-wallet encryption, high zoom, browser execution,
+other platforms, acoustic quality, signing/notarization or release delivery.
+Implementation and this acceptance record are published together on Woodshed
+main. Full revision, binary/scenario hashes, logs and failed/final attempts live
+under `testing/woodshed/relationship-host-20261005/receipt.json`, with final
+captures in `committed/{seed,reopen}/` and `committed-narrow-retry/seed/`.
 
 ## Product model
 
