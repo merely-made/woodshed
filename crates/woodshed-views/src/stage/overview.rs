@@ -32,7 +32,7 @@ pub fn overview_snapshot(ui: &UiState) -> OverviewSnapshot {
         })
         .collect();
     let active_exploration = ui.capture_exploration();
-    configured_session_overview(&ConfiguredSessionOverviewInput {
+    let mut snapshot = configured_session_overview(&ConfiguredSessionOverviewInput {
         working_sets: &ui.working_sets,
         explorations: &ui.catalog_explorations,
         active_exploration: &active_exploration,
@@ -49,7 +49,37 @@ pub fn overview_snapshot(ui: &UiState) -> OverviewSnapshot {
                 tuner: ui.tuner.enabled,
             },
         },
-    })
+    });
+    if ui.relationship_reading_json.is_some() {
+        use woodshed_core::session_overview::{
+            OverviewNode, OverviewRelation, OverviewRelationKind,
+        };
+        let id = OverviewNodeId::Artifact(SessionArtifactId::RelationshipReading);
+        let reading = ui.relationship_reading();
+        let (label,detail) = match &reading {
+            Ok(Some(reading)) => (reading.snapshot.recipe.definition.label.clone(), format!("Captured relationship reading: {} occurrences, {} explained relationships. Evidence is retained until explicit rebind.", reading.dataset.dataset.occurrences.len(),reading.dataset.relationships.len())),
+            _ => ("Unavailable relationship reading".into(), "The retained reading cannot be validated. Its payload is preserved; existing Sets remain available.".into()),
+        };
+        snapshot.nodes.push(OverviewNode {
+            id: id.clone(),
+            label,
+            detail,
+        });
+        if let Ok(Some(reading)) = reading {
+            if let Some(source) = reading.source {
+                let owner =
+                    OverviewNodeId::Artifact(SessionArtifactId::WorkingSetInstance(source.owner));
+                if snapshot.nodes.iter().any(|node| node.id == owner) {
+                    snapshot.relations.push(OverviewRelation {
+                        from: id,
+                        to: owner,
+                        kind: OverviewRelationKind::CapturedReadingOf,
+                    });
+                }
+            }
+        }
+    }
+    snapshot
 }
 
 /// Canvas labels stay readable in the small projection; identity and inspector
@@ -260,6 +290,9 @@ impl UiState {
             return;
         }
         match id {
+            OverviewNodeId::Artifact(SessionArtifactId::RelationshipReading) => {
+                self.open_relationship_recipe()
+            },
             OverviewNodeId::Artifact(SessionArtifactId::WorkingSetInstance(id)) => {
                 self.activate_working_set(id);
             },
@@ -472,6 +505,11 @@ pub(super) fn screen(ui: &UiState) -> UiChild {
             "div",
             (
                 el("div", text("Woodshed Mere")).attr("class", "overview-title"),
+                clickable(
+                    el("div", text("Relationship recipe"))
+                        .attr("class", "t-btn overview-relationship"),
+                    |ui: &mut UiState, _| ui.open_relationship_recipe(),
+                ),
                 el(
                     "div",
                     text("Retained material, working views and live activity."),

@@ -73,7 +73,8 @@ before any other doc in this directory.
 - [2026-07-11_stage_set_tools_plan.md](2026-07-11_stage_set_tools_plan.md)
   — October 5 adds owner-qualified relational disclosure, a shared-compiler
   compatibility instrument, and fresh-process retention through the desktop
-  session path; visible Woodshed recipe editing remains a follow-on.
+  session path. The visible shared-recipe host integration is implemented; native
+  acceptance is in progress, with owner-qualified source actions and explicit rebinding.
   — **In progress; product authority.** P1-P3 remain partial. P4a/P4b landed;
   the scene canvas and single-Card expansion have receipts, while the full P4e
   catalog and P4f practice/sound join remain open. P5-P8 remain open. A repaired
@@ -232,6 +233,11 @@ section whenever a durable working insight emerges from a session.
   its material; shared views project that owner, and rehearsal remains bound to
   the instance that started it when another instance is inspected. Do not create
   parallel practice, song, or tool-owned material documents for the same Set.
+- **Retained readings preserve captured evidence**: rendering or selecting a
+  relationship reading does not recompute it or edit a Set. Explicit rebind
+  captures new facts; exact source actions validate owner, Card and full ordered
+  instructions. Invalid optional readings survive session capture without
+  preventing access to valid Sets.
 - **Navigation preserves owner identity**: switching working Sets or configured
   catalog explorations restores that instance's content and context. It does
   not clone occurrences or transfer live rehearsal. Creation, duplication,

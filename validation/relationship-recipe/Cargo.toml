@@ -4,17 +4,17 @@ version = "0.1.0"
 edition = "2021"
 publish = false
 
-# A bounded wire-adoption instrument, independent of the app's host repin.
+# A bounded compatibility instrument using the production shared revision.
 [workspace]
 
 [dependencies]
 woodshed-core = { path = "../../crates/woodshed-core" }
 woodshedding = { path = "../../crates/woodshedding" }
 woodshed-views = { path = "../../crates/woodshed-views" }
-muniment = { git = "https://github.com/merely-made/mere.git", rev = "8106c7c2063001fbf60ea511758fb1c72ed8a243" }
-personae = { git = "https://github.com/merely-made/mere.git", rev = "8106c7c2063001fbf60ea511758fb1c72ed8a243" }
+muniment = { git = "https://github.com/merely-made/mere.git", rev = "5011e2f90e988775410fe4b4213e9895fe64538e" }
+personae = { git = "https://github.com/merely-made/mere.git", rev = "5011e2f90e988775410fe4b4213e9895fe64538e" }
 async-trait = "0.1"
 directories = "5"
-scenograph = { git = "https://github.com/merely-made/mere.git", rev = "c79bb8c203b52817991e0d7ba1c4ce3c3a2aac34" }
-scenomise = { git = "https://github.com/merely-made/mere.git", rev = "c79bb8c203b52817991e0d7ba1c4ce3c3a2aac34" }
+scenograph = { git = "https://github.com/merely-made/mere.git", rev = "5011e2f90e988775410fe4b4213e9895fe64538e" }
+scenomise = { git = "https://github.com/merely-made/mere.git", rev = "5011e2f90e988775410fe4b4213e9895fe64538e" }
 serde_json = "1"

@@ -1596,3 +1596,80 @@ fn unselected_target_approach_keeps_repeated_pitch_visits_in_production_audio() 
         "staging cannot sort or deduplicate the repeated recipe visits"
     );
 }
+
+#[test]
+fn relationship_recipe_controls_compile_explain_and_return_to_exact_source_at_two_widths() {
+    use woodshed_core::harmony::KeyedCatalogRef;
+    use woodshedding::pitch::PitchClass;
+    for width in [1100.0, 420.0] {
+        let mut h = harness(width, 900.0);
+        h.update(|ui| {
+            ui.set = Default::default();
+            for (label, formula) in [("First", "Major"), ("Again", "Major"), ("Third", "Minor")] {
+                let mut card = KeyedCatalogRef {
+                    formula_id: format!("chord:{formula}"),
+                    root: PitchClass::new(0),
+                }
+                .to_card()
+                .unwrap();
+                card.label = label.into();
+                ui.set.push(card);
+            }
+            ui.activate_workspace_panel(woodshed_views::workspace::WorkspacePanel::Overview);
+        });
+        assert!(h.click_on(&Selector::class("overview-relationship")));
+        assert!(h.click_on(&Selector::class("relationship-bind")));
+        let source = serde_json::to_value(&h.state().set).unwrap();
+        assert!(h.click_on(&Selector::class("relationship-spacing")));
+        assert_eq!(
+            h.state()
+                .relationship_reading()
+                .unwrap()
+                .unwrap()
+                .snapshot
+                .recipe
+                .definition
+                .arrangement
+                .spacing,
+            24
+        );
+        assert!(h.click_on(
+            &Selector::class("graph-canvas-swatch-node").with_attr("data-key", "set:1:card:3")
+        ));
+        assert_eq!(
+            h.state()
+                .relationship_reading()
+                .unwrap()
+                .unwrap()
+                .snapshot
+                .selected_occurrence
+                .as_deref(),
+            Some("set:1:card:3"),
+            "last graph node at width {width}"
+        );
+        assert!(h.click_on(
+            &Selector::class("graph-canvas-swatch-node").with_attr("data-key", "set:1:card:2")
+        ));
+        assert_eq!(
+            h.state()
+                .relationship_reading()
+                .unwrap()
+                .unwrap()
+                .snapshot
+                .selected_occurrence
+                .as_deref(),
+            Some("set:1:card:2"),
+            "compiled graph node at width {width}"
+        );
+        assert!(h.click_on(&Selector::class("relationship-explain")));
+        assert_eq!(class_count(&h, "relationship-explanation"), 1);
+        assert!(h.click_on(&Selector::class("relationship-occurrence").containing("Again")));
+        assert_eq!(serde_json::to_value(&h.state().set).unwrap(), source);
+        assert!(h.click_on(&Selector::class("relationship-source")));
+        assert_eq!(
+            h.state().set.cursor_id(),
+            Some(woodshedding::rehearsal::CardId(2))
+        );
+        assert!(!h.state().rehearsal_running);
+    }
+}

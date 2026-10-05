@@ -21,6 +21,7 @@ use woodshedding::rehearsal::Set;
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
 pub enum SessionArtifactId {
     WorkingSet,
+    RelationshipReading,
     WorkingSetInstance(crate::working_sets::WorkingSetId),
     Exploration(crate::catalog_explorations::CatalogExplorationId),
     SavedSet(SavedSetId),
@@ -59,6 +60,9 @@ impl OverviewNodeId {
     pub fn wire_key(&self) -> String {
         match self {
             Self::Artifact(SessionArtifactId::WorkingSet) => "artifact:working-set".into(),
+            Self::Artifact(SessionArtifactId::RelationshipReading) => {
+                "artifact:relationship-reading".into()
+            },
             Self::Artifact(SessionArtifactId::WorkingSetInstance(id)) => {
                 format!("artifact:working-set:{}", id.0)
             },
@@ -129,6 +133,7 @@ pub struct OverviewNode {
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
 pub enum OverviewRelationKind {
     HistoricalSnapshotOf,
+    CapturedReadingOf,
     Presents,
     ActsOn,
     Records,
@@ -139,6 +144,7 @@ impl OverviewRelationKind {
     pub fn label(self) -> &'static str {
         match self {
             Self::HistoricalSnapshotOf => "saved from working Set",
+            Self::CapturedReadingOf => "captured from working Set",
             Self::Presents => "presents",
             Self::ActsOn => "acts on",
             Self::Records => "records catalog engagement",
@@ -148,6 +154,7 @@ impl OverviewRelationKind {
     pub fn stable_id(self) -> &'static str {
         match self {
             Self::HistoricalSnapshotOf => "woodshed:historical-set-snapshot",
+            Self::CapturedReadingOf => "woodshed:captured-reading",
             Self::Presents => "woodshed:presents",
             Self::ActsOn => "woodshed:acts-on",
             Self::Records => "woodshed:records-engagement",
