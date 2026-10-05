@@ -12,11 +12,12 @@ use woodshed_views::stage::{UiChild, UiState};
 
 use crate::sync::Logic;
 
-/// Woodshed's two editable fields.
+/// Woodshed's editable fields.
 #[derive(Clone, Copy, PartialEq, Eq)]
 enum Field {
     Search,
     CardRename,
+    RelationshipLabel,
 }
 
 /// Which field the focused node is, if it is one.
@@ -32,6 +33,7 @@ pub fn focused_text(runner: &Runner<UiState, Logic, UiChild>) -> Option<FocusedT
         match dom.attribute(parent, &Namespace::from(""), &LocalName::from("class"))? {
             "search-wrap" => Field::Search,
             "card-rename" => Field::CardRename,
+            "relationship-label" => Field::RelationshipLabel,
             _ => return None,
         }
     };
@@ -40,6 +42,11 @@ pub fn focused_text(runner: &Runner<UiState, Logic, UiChild>) -> Option<FocusedT
             node,
             get: Box::new(|ui: &UiState| &ui.search),
             get_mut: Box::new(|ui: &mut UiState| &mut ui.search),
+        },
+        Field::RelationshipLabel => FocusedTextSlot {
+            node,
+            get: Box::new(|ui: &UiState| &ui.relationship_label),
+            get_mut: Box::new(|ui: &mut UiState| &mut ui.relationship_label),
         },
         Field::CardRename => FocusedTextSlot {
             node,

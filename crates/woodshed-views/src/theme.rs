@@ -393,6 +393,15 @@ pub fn stage_css(p: &Palette) -> String {
 .staging-target-choices, .overview-instance-actions {{ display: flex; flex-wrap: wrap; gap: 6px; }}
 .staging-target-active {{ background-color: {tertiary}; color: {on_primary}; }}
 .session-overview {{ display: flex; flex-direction: column; gap: 12px; min-width: 0; padding: 12px; }}
+.relationship-screen {{ display: flex; flex-direction: column; gap: 10px; padding: 16px; max-width: 1100px; }}
+.relationship-screen p {{ margin: 0; color: {text_dim}; font-size: 13px; line-height: 1.4; }}
+.relationship-screen h3, .relationship-screen h4 {{ margin: 0; }}
+.relationship-screen .t-btn {{ align-self: flex-start; min-height: 34px; padding: 8px 12px; white-space: normal; }}
+.relationship-choices {{ display: flex; flex-wrap: wrap; gap: 8px; }}
+.relationship-graph {{ flex: 0 0 220px; min-height: 220px; height: 220px; overflow: auto; max-width: 100%; }}
+.relationship-label {{ width: 100%; max-width: 640px; }}
+.relationship-label input {{ width: 100%; min-height: 34px; padding: 8px 10px; background: {surface_2}; color: {text}; border-radius: 4px; }}
+.relationship-explanation, .relationship-refusal {{ padding: 12px; background: {surface_2}; }}
 .overview-title {{ font-size: 20px; color: {text}; }}
 .overview-subtitle, .overview-detail, .overview-notice {{ font-size: 12px; color: {text_dim}; }}
 .overview-save-row {{ display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }}

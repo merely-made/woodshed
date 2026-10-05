@@ -16,7 +16,7 @@ scenarios passed. Their source-hashed receipt and four GPU frames are under
 `mere/ports/graphshell/docs/receipts/`. The musical-projections plan's review
 addendum identifies the next product questions and corrections before S1-S4.
 
-**Status (reviewed 2026-08-31): in progress.** P1-P3 are partial. P4a and
+**Status (reviewed 2026-10-05): in progress.** P1-P3 are partial. P4a and
 P4b landed; P4c and P4d have bounded headed receipts; P4e is partial and P4f
 is open. P5-P8 remain open. The clean-lock and CI repair is a release-baseline
 gate, not completion of this product plan.
@@ -31,9 +31,8 @@ gate, not completion of this product plan.
 
 ## Cross-domain relational recipe contribution (2026-10-05)
 
-**Status: domain disclosure and session retention implemented; standalone
-shared compilation and reopening qualified; visible Woodshed editing remains
-a follow-on.** The Knot coordination lane owns the shared
+**Status (2026-10-05): domain disclosure and retained reopening qualified;
+visible shared-recipe host integration implemented, native acceptance in progress.** The Knot coordination lane owns the shared
 `scenomise::projection` compiler/editor seam and Knot adoption; Woodshed owns
 its musical disclosure and adapter. Reuse `scenograph` authored definitions.
 The shared implementation belongs in Mere's existing projection grammar plan,
@@ -102,6 +101,67 @@ Whole-core strict Clippy remains blocked by pre-existing theory/core lints,
 and whole-workspace formatting has pre-existing differences. The new files
 are formatted and `git diff --check` passes. Runtime data and hash receipts live
 outside the repository under `testing/woodshed/relationships-20261005/`.
+
+
+### Visible Woodshed host integration (2026-10-05)
+
+The review checkpoint refreshed clean main `c92e7c9` against origin/main and
+verified the prior receipt's source hashes. The historical inspection above
+predates shared publication: Mere main now contains the compiler/editor seam
+at `c79bb8c2`, with qualification documentation at `b2f67356d`; Knot main
+`5516606` contains the actual Mora-to-musical recipe rebind proof.
+
+The production workspace now uniformly pins Mere `5011e2f9` and its matching
+Genet `bd3e8861`; the browser host's wasm-bindgen pin follows Mere at 0.2.129.
+No local source override, duplicated compiler or custom solver is introduced.
+`woodshed-views/src/stage/relationship.rs` composes the shared draft and compiler
+in an explicit Mere reading view. The retained reading is an artifact in the
+session overview, historically related to its source working Set. Its detailed
+graph is a projection of that artifact, not the session overview itself.
+
+Choose actual Cards, bind their authored order and explained shared pitch-class
+relationship, edit label/spacing, inspect occurrences, and explicitly rebind the
+same authored recipe to another selected Set. Only compiled relationships are
+shown. Shared scene positions feed the existing Cambium graph canvas; increasing
+spacing preserves layout units rather than fitting the change away. The graph
+can scroll horizontally at narrow widths, and the full occurrence roster remains
+available. A source action is separate from reading selection and validates the
+exact owner, occurrence and full ordered Card instructions. Cursor navigation
+is excluded from content freshness. Tuning, fingering, timing, label, removal or
+reorder invalidate a copied source action; another owner's runner stays bound.
+Pending selection is scoped to its working owner, including identical numeric
+Card IDs in different Sets.
+
+The optional retained payload is bounded before decoding (2 MiB), versioned,
+and checked by the shared compiler. Owner envelopes require unique nonzero
+Card identities and an explicit selected pair. Older proof disclosures without
+owner anchors remain inspectable and require explicit rebind for source actions.
+Malformed, oversized or unsupported-version readings remain in session capture;
+opening them cannot discard valid Sets or silently erase the payload. Recovery
+or export of an invalid reading is a later UI slice. Session update wording does
+not claim an acknowledged durable write: the existing backend reports write
+failures through logging, and fresh-process acceptance supplies fixture evidence.
+
+Automated checkpoint: core 189, core integration 1, desktop 63, graph 14,
+views 106, theory 181 and four doctests pass (558 total); the standalone
+compatibility instrument passes five tests. Locked desktop build, host-target
+web check and metadata resolve pass without local source overrides. Views
+Clippy reports four existing warnings and none in the new adapter. The actual graph-node regression
+exposed a 420px failure: a last-node scroll request advanced the vertical
+workspace but left its horizontal ancestor offset at zero. The graph viewport
+now retains definite authored dimensions and nonshrinking height. Diagnostic
+wheel input established that the scrollport could reveal the node; the shared
+owner traced the failure to Cambium Rootstock's vertical-only `scroll_into_view`.
+The generic two-axis ancestor reveal fix is published in Mere `5011e2f9`, with
+independent failing-before nested-scroll tests. Woodshed consumes that shared
+fix and tests real last/middle graph-node clicks at 1100 and 420px. Final automated gates pass; committed native qualification is pending; no selector bypass replaces the graph.
+
+`relationship_recipe.scn` drives binding, spacing edit, explained selection,
+exact source navigation, stale-source refusal and explicit owner rebind.
+`relationship_recipe_reopen.scn` verifies retained edits/selection/evidence and
+exact source navigation in a separate process. Native captures, narrow replay,
+final committed revision and publication are recorded after their acceptance.
+Artifacts belong under `testing/woodshed/relationship-host-20261005/`.
 
 ## Product model
 

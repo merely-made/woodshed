@@ -115,6 +115,18 @@ fn hasher() -> std::collections::hash_map::DefaultHasher {
 /// before the host lays out and paints.
 pub fn sync_all(shared: &mut Shared, ui: &UiState, leaves: &mut LeafRegistry<u64>) {
     sync_overview(shared, ui, leaves);
+    let mut h = hasher();
+    ui.relationship_open.hash(&mut h);
+    ui.relationship_reading_json.hash(&mut h);
+    ui.viewport_width.to_bits().hash(&mut h);
+    let sig = h.finish();
+    if ui.relationship_open && sig != shared.relationship_sig {
+        shared.relationship_sig = sig;
+        if let Some(swatch) = woodshed_views::stage::relationship_swatch(ui) {
+            let leaf = swatch.paint_leaf(|_: &&str| sprigging::ColorF {r:0.93,g:0.70,b:0.28,a:1.0});
+            leaves.insert(woodshed_views::stage::RELATIONSHIP_GRAPH_LEAF_KEY, Box::new(leaf));
+        }
+    }
     sync_related_swatch(shared, ui, leaves);
     sync_set_graph_swatch(shared, ui, leaves);
     sync_fretboard(shared, ui, leaves);

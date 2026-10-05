@@ -341,7 +341,14 @@ impl Snapshot<'_, '_> {
             .and_then(|id| ui.set.card(id))
             .map(|card| card.label.clone())
             .unwrap_or_default();
+        let reading = ui.relationship_reading().ok().flatten();
         let mut snap = ProbeSnapshot::default()
+            .with_field("recipe-valid", reading.is_some().to_string())
+            .with_field("recipe-label", reading.as_ref().map(|r|r.snapshot.recipe.definition.label.as_str()).unwrap_or(""))
+            .with_field("recipe-spacing", reading.as_ref().map(|r|r.snapshot.recipe.definition.arrangement.spacing).unwrap_or(0).to_string())
+            .with_field("recipe-occurrence", reading.as_ref().and_then(|r|r.snapshot.selected_occurrence.as_deref()).unwrap_or(""))
+            .with_field("recipe-relationship", reading.as_ref().and_then(|r|r.snapshot.selected_relationship.as_deref()).unwrap_or(""))
+            .with_field("recipe-owner", reading.as_ref().and_then(|r|r.source.as_ref()).map(|s|s.owner.0).unwrap_or(0).to_string())
             .with_field(
                 "pattern-sequential",
                 (ui.set.cards.get(ui.set.cursor).is_some_and(|card| {
@@ -1041,6 +1048,20 @@ impl Automatable for Probe<'_, '_> {
         }
         let mut known = true;
         self.ctx.runner.update(|ui| match label {
+            "relationship-example" => {
+                use woodshed_core::harmony::KeyedCatalogRef;
+                use woodshedding::pitch::PitchClass;
+                ui.stop_rehearsal();
+                ui.set = Default::default();
+                ui.working_sets = Default::default();
+                ui.relationship_reading_json = None;
+                for (label, formula, root) in [("C Major", "Major", 0),("C Major again", "Major",0),("A Minor","Minor",9)] {
+                    let mut card = KeyedCatalogRef {formula_id:format!("chord:{formula}"),root:PitchClass::new(root)}.to_card().unwrap();
+                    card.label=label.into();
+                    ui.set.push(card);
+                }
+                ui.activate_workspace_panel(woodshed_views::workspace::WorkspacePanel::Overview);
+            },
             "stage-current" => ui.stage_current(None),
             "connected-practice-example" | "connected-scale-setup-example" => {
                 use woodshedding::rehearsal::{Hold, Set, Timing};

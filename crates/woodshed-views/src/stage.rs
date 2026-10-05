@@ -49,6 +49,8 @@ mod context_tests;
 mod instances;
 mod looper;
 mod overview;
+pub mod relationship;
+pub use relationship::{relationship_swatch, RELATIONSHIP_GRAPH_LEAF_KEY};
 pub use overview::{OVERVIEW_GRAPH_LEAF_KEY, overview_snapshot, overview_swatch};
 mod pitch_motion;
 mod rehearsal;
@@ -824,6 +826,11 @@ pub struct UiState {
         BTreeMap<woodshed_core::working_sets::WorkingSetId, instances::SetPresentation>,
     pub retained_sets: woodshed_core::retained_sets::RetainedSets,
     pub relationship_reading_json: Option<String>,
+    pub relationship_open: bool,
+    pub relationship_cards: Vec<CardId>,
+    pub relationship_choice_owner: Option<woodshed_core::working_sets::WorkingSetId>,
+    pub relationship_label: TextInput,
+    pub relationship_notice: Option<String>,
     pub retained_set_name: TextInput,
     pub overview_focus: Option<woodshed_core::session_overview::OverviewNodeId>,
     pub overview_notice: Option<String>,
@@ -1023,6 +1030,11 @@ impl UiState {
             set_presentations: BTreeMap::new(),
             retained_sets: Default::default(),
             relationship_reading_json: None,
+            relationship_open: false,
+            relationship_cards: Vec::new(),
+            relationship_choice_owner: None,
+            relationship_label: TextInput::new(String::new()),
+            relationship_notice: None,
             retained_set_name: TextInput::new(""),
             overview_focus: None,
             overview_notice: None,
@@ -1143,6 +1155,7 @@ impl UiState {
     }
 
     fn show_workspace_panel(&mut self, panel: WorkspacePanel) {
+        self.relationship_open = false;
         match panel {
             WorkspacePanel::Overview => self.section = AppSection::Stage,
             WorkspacePanel::Practice => self.section = AppSection::Stage,
@@ -2983,6 +2996,7 @@ fn stage_screen(ui: &UiState) -> UiChild {
 fn tab_content(ui: &UiState) -> UiChild {
     let content = match ui.section {
         AppSection::Stage => match ui.workspace.active_panel() {
+            Some(WorkspacePanel::Overview) if ui.relationship_open => relationship::screen(ui),
             Some(WorkspacePanel::Overview) => overview::screen(ui),
             Some(WorkspacePanel::Related) => related::panel(ui),
             _ => return stage_screen(ui),
