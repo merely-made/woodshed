@@ -186,7 +186,7 @@ captures in `committed/{seed,reopen}/` and `committed-narrow-retry/seed/`.
 
 ### Exact tone relationship expansion (2026-10-05)
 
-**Status (2026-10-05): implemented; native acceptance in progress.** This bounded continuation adds exact pitch-class
+**Status (2026-10-05): landed; baseline/narrow native and fresh-process reopening qualified.** This bounded continuation adds exact pitch-class
 set differences, equality and directed containment to the retained reading.
 A chord/chord comparison answers what is shared and what each side contributes;
 a chord/scale comparison can disclose exact inclusion across catalogs. These
@@ -208,12 +208,35 @@ flows do not establish human musical usefulness. Catalog import/expansion,
 all-pairs passage comparison, registered voice leading and reusable atmosphere
 editing remain separate slices.
 
-Automated gate: core 193, integration 1, desktop 63, graph 14, views 108,
-theory 181 and four doctests pass (564 total). Locked desktop build passes.
+Automated gate: core 193, integration 1, desktop 64, graph 14, views 108,
+theory 181 and four doctests pass (565 total). Locked desktop build passes.
 The original five-test compatibility instrument remains a separate gate for
 the legacy overlap-only disclosure. Native source and restoration scenarios
 are `tone_relationships.scn` and `tone_relationships_reopen.scn`; acceptance
 artifacts belong under `testing/woodshed/tones-20261005/`.
+
+Committed implementation `a969153965b64bc63a26bf08010f118878454c95` passes the
+native baseline (1280×900, four captures), separate-process reopen (two), and
+420×900 flow (four). All ten captures were visually reviewed. Difference and
+containment explanations remain readable; the scale graph occurrence is
+selected, and the source action opens Card 3 for Run/Pause practice. Reopen
+restores spacing 24, containment evidence and the exact selected source.
+The final desktop regression additionally exercises both widths with actual
+controls and checks that inspection preserves Set truth. Legacy compilation
+passes five compatibility tests; Views Clippy passes with four existing warnings.
+
+The native binary SHA-256 is
+`ec9d2c906934593f98c98b6aa2301f068fb397d1470520755f5635fda00b8ea7`.
+The initial baseline succeeded; a later duplicate launch hit existing capture
+paths and is preserved in its log. An unnecessary foreground retry was stopped
+before feature assertions. These harness attempts do not replace the successful
+captures. External scenario copies only extend the initial settle interval to
+permit foregrounding; their assertions remain unchanged. The receipt records
+source/scenario/binary identities and exact frames. Retention uses isolated,
+unsealed desktop `FsBackend` profiles. Personal-wallet encryption, acoustic
+quality, high zoom, browser execution, other platforms and release delivery
+remain unqualified. The implementation, added host regression and acceptance
+record are published together on Woodshed main.
 
 ## Product model
 

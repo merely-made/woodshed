@@ -1673,3 +1673,62 @@ fn relationship_recipe_controls_compile_explain_and_return_to_exact_source_at_tw
         assert!(!h.state().rehearsal_running);
     }
 }
+
+#[test]
+fn exact_tone_relationship_controls_rebind_and_open_the_containing_scale_at_two_widths() {
+    use woodshed_core::harmony::KeyedCatalogRef;
+    use woodshedding::pitch::PitchClass;
+    for width in [1100.0, 420.0] {
+        let mut h = harness(width, 900.0);
+        h.update(|ui| {
+            ui.set = Default::default();
+            for (name, formula, root) in [
+                ("Cmaj7", "chord:Major 7", 0),
+                ("Am7", "chord:Minor 7", 9),
+                ("C Major scale", "scale:Major", 0),
+            ] {
+                let mut card = KeyedCatalogRef {
+                    formula_id: formula.into(),
+                    root: PitchClass::new(root),
+                }
+                .to_card()
+                .unwrap();
+                card.label = name.into();
+                ui.set.push(card);
+            }
+            ui.activate_workspace_panel(woodshed_views::workspace::WorkspacePanel::Overview);
+        });
+        let before = serde_json::to_value(&h.state().set).unwrap();
+        assert!(h.click_on(&Selector::class("overview-relationship")));
+        assert!(h.click_on(&Selector::class("relationship-bind")));
+        assert!(h.click_on(
+            &Selector::class("relationship-explain").containing("Pitch-class differences")
+        ));
+        let reading = h.state().relationship_reading().unwrap().unwrap();
+        let relation = reading
+            .dataset
+            .relationships
+            .iter()
+            .find(|r| Some(&r.id) == reading.snapshot.selected_relationship.as_ref())
+            .unwrap();
+        assert!(relation.explanation.contains("Only in Cmaj7: B."));
+        assert!(relation.explanation.contains("Only in Am7: A."));
+        assert!(h.click_on(&Selector::class("relationship-material").containing("Selected 1")));
+        assert!(h.click_on(&Selector::class("relationship-bind")));
+        assert!(h.click_on(
+            &Selector::class("relationship-explain").containing("Pitch-class containment")
+        ));
+        let reading = h.state().relationship_reading().unwrap().unwrap();
+        assert_eq!(
+            reading.snapshot.selected_occurrence.as_deref(),
+            Some("set:1:card:3")
+        );
+        assert_eq!(serde_json::to_value(&h.state().set).unwrap(), before);
+        assert!(h.click_on(&Selector::class("relationship-source")));
+        assert_eq!(
+            h.state().set.cursor_id(),
+            Some(woodshedding::rehearsal::CardId(3))
+        );
+        assert!(!h.state().rehearsal_running);
+    }
+}
