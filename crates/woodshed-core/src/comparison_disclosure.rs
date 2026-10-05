@@ -14,6 +14,10 @@ use crate::harmony::{KeyedCatalogRef, compare_pitch_sets};
 use crate::working_sets::WorkingSetId;
 
 pub const SHARED_PITCH_CLASSES: &str = "music.shared_pitch_classes";
+pub const TONE_DIFFERENCES: &str = "music.pitch_class_differences";
+pub const PITCH_CONTAINMENT: &str = "music.pitch_class_containment";
+pub const PITCH_EQUALITY: &str = "music.same_pitch_classes";
+pub const FULL_COMPARISON_METHOD: &str = "woodshed.keyed_pitch_set_comparison.v1";
 pub const COMPARISON_METHOD: &str = "woodshed.keyed_pitch_set_intersection.v1";
 pub const DISCLOSURE_ADAPTER: &str = "woodshed.selected-material";
 
@@ -127,6 +131,87 @@ pub fn projection_json(material: &SelectedMaterial) -> serde_json::Value {
     })
 }
 
+/// Richer owner-disclosed relationships over the same exact selected pair.
+/// Containment points from the container to the contained occurrence. Equality
+/// is distinct from material identity: a chord and its arpeggio can share tones.
+pub fn comparison_projection_json(material: &SelectedMaterial) -> serde_json::Value {
+    use serde_json::json;
+    let mut value = projection_json(material);
+    let left = material
+        .occurrences
+        .iter()
+        .find(|o| o.occurrence_id == material.relationship.from)
+        .expect("disclosed endpoint");
+    let right = material
+        .occurrences
+        .iter()
+        .find(|o| o.occurrence_id == material.relationship.to)
+        .expect("disclosed endpoint");
+    let comparison =
+        compare_pitch_sets(&left.material, &right.material).expect("validated catalog material");
+    let names = |tones: &BTreeSet<woodshedding::pitch::PitchClass>| {
+        let labels = tones
+            .iter()
+            .map(|pc| {
+                let p = Pitch::from_midi(60 + i32::from(pc.value()), Spelling::Sharps);
+                format!("{}{}", p.name, p.accidental)
+            })
+            .collect::<Vec<_>>();
+        if labels.is_empty() {
+            "none".into()
+        } else {
+            labels.join(", ")
+        }
+    };
+    let mut provenance = value["relationships"][0]["provenance"].clone();
+    provenance["method"] = json!(FULL_COMPARISON_METHOD);
+    let relation = |kind: &str, label: &str, from: &str, to: &str, explanation: String| {
+        json!({
+            "id": format!("set:{}:{}:{}:{}", material.owner.0, kind, left.card.0, right.card.0),
+            "from_occurrence": from, "to_occurrence": to, "kind": kind,
+            "label": label,
+            "explanation": format!("{explanation} Exact catalog pitch classes; register, fingering, voice leading, key and harmonic function are not inferred."),
+            "provenance": provenance,
+        })
+    };
+    let mut relationships = if comparison.shared.is_empty() {
+        Vec::new()
+    } else {
+        vec![value["relationships"][0].clone()]
+    };
+    if comparison.left_only.is_empty() && comparison.right_only.is_empty() {
+        relationships.push(relation(PITCH_EQUALITY, "Same pitch classes", &left.occurrence_id, &right.occurrence_id,
+            format!("{} and {} have the same pitch classes: {}. Their occurrences and articulation remain distinct.", left.label, right.label, names(&comparison.shared))));
+    } else {
+        relationships.push(relation(TONE_DIFFERENCES, "Pitch-class differences", &left.occurrence_id, &right.occurrence_id,
+            format!("Shared: {}. Only in {}: {}. Only in {}: {}. These are set differences, not paired voice movements.", names(&comparison.shared), left.label, names(&comparison.left_only), right.label, names(&comparison.right_only))));
+        let container = if comparison.left_only.is_empty() {
+            Some((right, left, &comparison.right_only))
+        } else if comparison.right_only.is_empty() {
+            Some((left, right, &comparison.left_only))
+        } else {
+            None
+        };
+        if let Some((outer, inner, extras)) = container {
+            relationships.push(relation(
+                PITCH_CONTAINMENT,
+                "Pitch-class containment",
+                &outer.occurrence_id,
+                &inner.occurrence_id,
+                format!(
+                    "{} contains every pitch class of {}. Additional tones in {}: {}.",
+                    outer.label,
+                    inner.label,
+                    outer.label,
+                    names(extras)
+                ),
+            ));
+        }
+    }
+    value["relationships"] = json!(relationships);
+    value
+}
+
 /// Disclose selected catalog-backed material and one exact tone relationship.
 /// The caller selects the owner and pair; unavailable facts are refused rather
 /// than replaced by a similarly typed field or an inferred harmonic reading.
@@ -136,6 +221,29 @@ pub fn disclose(
     set: &Set,
     selected: &[CardId],
     pair: (CardId, CardId),
+) -> Result<SelectedMaterial, DisclosureError> {
+    disclose_pair(owner, revision, set, selected, pair, true)
+}
+
+/// Complete exact comparison, including pairs with no shared pitch classes.
+/// The legacy overlap-only disclosure remains unchanged for captured readings.
+pub fn disclose_comparison(
+    owner: WorkingSetId,
+    revision: &str,
+    set: &Set,
+    selected: &[CardId],
+    pair: (CardId, CardId),
+) -> Result<SelectedMaterial, DisclosureError> {
+    disclose_pair(owner, revision, set, selected, pair, false)
+}
+
+fn disclose_pair(
+    owner: WorkingSetId,
+    revision: &str,
+    set: &Set,
+    selected: &[CardId],
+    pair: (CardId, CardId),
+    require_overlap: bool,
 ) -> Result<SelectedMaterial, DisclosureError> {
     if owner.0 == 0 {
         return Err(DisclosureError::InvalidOwner);
@@ -193,7 +301,7 @@ pub fn disclose(
         .unwrap();
     let comparison = compare_pitch_sets(&left.material, &right.material)
         .ok_or(DisclosureError::UnsupportedMaterial(pair.0))?;
-    if comparison.shared.is_empty() {
+    if require_overlap && comparison.shared.is_empty() {
         return Err(DisclosureError::NoSharedPitchClasses);
     }
     let labels = comparison
@@ -258,6 +366,105 @@ mod tests {
     fn read(set: &Set, owner: WorkingSetId) -> Result<SelectedMaterial, DisclosureError> {
         let ids = set.cards.iter().map(|card| card.id).collect::<Vec<_>>();
         disclose(owner, "fixture-v1", set, &ids, (ids[0], ids[2]))
+    }
+
+    #[test]
+    fn seventh_chord_comparison_discloses_shared_and_unique_tones_without_voice_assignment() {
+        let mut set = fixture();
+        set.cards[0].material = Material::Chord {
+            name: "Major 7".into(),
+            root: PitchClass::new(0),
+        };
+        set.cards[2].material = Material::Chord {
+            name: "Minor 7".into(),
+            root: PitchClass::new(9),
+        };
+        let ids = [set.cards[0].id, set.cards[2].id];
+        let facts =
+            disclose_comparison(WorkingSetId(1), "v1", &set, &ids, (ids[0], ids[1])).unwrap();
+        let value = comparison_projection_json(&facts);
+        assert_eq!(facts.relationship.shared_pitch_classes, [0, 4, 7]);
+        let difference = &value["relationships"][1];
+        assert_eq!(difference["kind"], TONE_DIFFERENCES);
+        let explanation = difference["explanation"].as_str().unwrap();
+        assert!(explanation.contains("Shared: C, E, G."));
+        assert!(explanation.contains("Only in C Major: B."));
+        assert!(explanation.contains("Only in A Minor: A."));
+        assert_eq!(value["relationships"].as_array().unwrap().len(), 2);
+    }
+
+    #[test]
+    fn scale_contains_chord_with_directed_endpoints_and_exact_extra_tones() {
+        let mut set = fixture();
+        set.cards[2].material = Material::Scale {
+            name: "Major".into(),
+            root: PitchClass::new(0),
+        };
+        set.cards[2].label = "C Major scale".into();
+        let ids = [set.cards[0].id, set.cards[2].id];
+        let facts =
+            disclose_comparison(WorkingSetId(1), "v1", &set, &ids, (ids[0], ids[1])).unwrap();
+        let value = comparison_projection_json(&facts);
+        let contained = &value["relationships"][2];
+        assert_eq!(contained["kind"], PITCH_CONTAINMENT);
+        assert_eq!(
+            contained["from_occurrence"],
+            occurrence_id(WorkingSetId(1), ids[1])
+        );
+        assert_eq!(
+            contained["to_occurrence"],
+            occurrence_id(WorkingSetId(1), ids[0])
+        );
+        assert!(
+            contained["explanation"]
+                .as_str()
+                .unwrap()
+                .contains("D, F, A, B")
+        );
+    }
+
+    #[test]
+    fn disjoint_comparison_has_differences_but_no_false_overlap_or_containment() {
+        let mut set = fixture();
+        set.cards[2].material = Material::Chord {
+            name: "Major".into(),
+            root: PitchClass::new(1),
+        };
+        let ids = [set.cards[0].id, set.cards[2].id];
+        let facts =
+            disclose_comparison(WorkingSetId(1), "v1", &set, &ids, (ids[0], ids[1])).unwrap();
+        let value = comparison_projection_json(&facts);
+        assert_eq!(value["relationships"].as_array().unwrap().len(), 1);
+        assert_eq!(value["relationships"][0]["kind"], TONE_DIFFERENCES);
+        assert!(
+            value["relationships"][0]["explanation"]
+                .as_str()
+                .unwrap()
+                .contains("Shared: none.")
+        );
+        assert_eq!(
+            disclose(WorkingSetId(1), "v1", &set, &ids, (ids[0], ids[1])),
+            Err(DisclosureError::NoSharedPitchClasses)
+        );
+    }
+
+    #[test]
+    fn chord_and_arpeggio_equality_keeps_articulation_identity() {
+        let mut set = fixture();
+        set.cards[1].touch = woodshedding::rehearsal::Touch::Arpeggiate {
+            direction: woodshedding::rehearsal::ArpeggioDirection::Up,
+            inversion: 0,
+        };
+        let ids = [set.cards[0].id, set.cards[1].id];
+        let facts =
+            disclose_comparison(WorkingSetId(1), "v1", &set, &ids, (ids[0], ids[1])).unwrap();
+        let value = comparison_projection_json(&facts);
+        assert_ne!(
+            facts.occurrences[0].material.wire_key(),
+            facts.occurrences[1].material.wire_key()
+        );
+        assert_eq!(value["relationships"][1]["kind"], PITCH_EQUALITY);
+        assert_eq!(value["relationships"].as_array().unwrap().len(), 2);
     }
 
     #[test]

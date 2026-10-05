@@ -1048,6 +1048,20 @@ impl Automatable for Probe<'_, '_> {
         }
         let mut known = true;
         self.ctx.runner.update(|ui| match label {
+            "tone-relationships-example" => {
+                use woodshed_core::harmony::KeyedCatalogRef;
+                use woodshedding::pitch::PitchClass;
+                ui.stop_rehearsal();
+                ui.set = Default::default();
+                ui.working_sets = Default::default();
+                ui.relationship_reading_json = None;
+                for (label, formula, root) in [("Cmaj7", "chord:Major 7", 0), ("Am7", "chord:Minor 7", 9), ("C Major scale", "scale:Major", 0)] {
+                    let mut card = KeyedCatalogRef { formula_id: formula.into(), root: PitchClass::new(root) }.to_card().unwrap();
+                    card.label = label.into();
+                    ui.set.push(card);
+                }
+                ui.activate_workspace_panel(woodshed_views::workspace::WorkspacePanel::Overview);
+            },
             "relationship-example" => {
                 use woodshed_core::harmony::KeyedCatalogRef;
                 use woodshedding::pitch::PitchClass;

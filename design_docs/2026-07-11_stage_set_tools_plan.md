@@ -184,6 +184,37 @@ main. Full revision, binary/scenario hashes, logs and failed/final attempts live
 under `testing/woodshed/relationship-host-20261005/receipt.json`, with final
 captures in `committed/{seed,reopen}/` and `committed-narrow-retry/seed/`.
 
+### Exact tone relationship expansion (2026-10-05)
+
+**Status (2026-10-05): implemented; native acceptance in progress.** This bounded continuation adds exact pitch-class
+set differences, equality and directed containment to the retained reading.
+A chord/chord comparison answers what is shared and what each side contributes;
+a chord/scale comparison can disclose exact inclusion across catalogs. These
+are catalog facts, not registered voice leading, harmonic function, key inference,
+playable fingering or a recommendation score.
+
+Done-conditions: Cmaj7/Am7 discloses shared C/E/G and unique B/A without assigning
+voices; a major scale contains its chord's tones with container-to-member
+endpoints; disjoint pairs disclose differences without false overlap; equal
+chord/arpeggio tones preserve distinct material and occurrence identities.
+Version-1 retained readings keep their original evidence and source action.
+Only explicit rebind creates a version-2 richer disclosure. The shared recipe,
+compiler and layout remain unchanged; Woodshed owns the new musical facts.
+
+Qualification includes source authority and freshness, shared compilation,
+restoration, wide/narrow native inspection, and explicit return from the reading
+to the source Card for Run/Pause practice. Implemented arithmetic and source
+flows do not establish human musical usefulness. Catalog import/expansion,
+all-pairs passage comparison, registered voice leading and reusable atmosphere
+editing remain separate slices.
+
+Automated gate: core 193, integration 1, desktop 63, graph 14, views 108,
+theory 181 and four doctests pass (564 total). Locked desktop build passes.
+The original five-test compatibility instrument remains a separate gate for
+the legacy overlap-only disclosure. Native source and restoration scenarios
+are `tone_relationships.scn` and `tone_relationships_reopen.scn`; acceptance
+artifacts belong under `testing/woodshed/tones-20261005/`.
+
 ## Product model
 
 Woodshed is a practice app. Its organizing action is staging material for a

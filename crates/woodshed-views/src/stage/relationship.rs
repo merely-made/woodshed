@@ -44,7 +44,7 @@ impl RelationshipReading {
         }
         let reading: Self = serde_json::from_str(json)
             .map_err(|e| format!("Retained reading cannot be decoded: {e}"))?;
-        if reading.version > 1 {
+        if reading.version > 2 {
             return Err("Retained reading uses an unsupported version.".into());
         }
         if let Some(source) = &reading.source {
@@ -152,10 +152,10 @@ impl UiState {
         }
         let pair = (cards[0], cards[1]);
         let revision = revision(owner, set);
-        let facts = comparison_disclosure::disclose(owner, &revision, set, &cards, pair)
+        let facts = comparison_disclosure::disclose_comparison(owner, &revision, set, &cards, pair)
             .map_err(|e| format!("Comparison unavailable: {e:?}"))?;
         let dataset: RelationshipDataset =
-            serde_json::from_value(comparison_disclosure::projection_json(&facts))
+            serde_json::from_value(comparison_disclosure::comparison_projection_json(&facts))
                 .map_err(|e| e.to_string())?;
         let binding = ProjectionInputBinding {
             source: dataset.dataset.source.clone(),
@@ -201,7 +201,7 @@ impl UiState {
             .selected_relationship
             .filter(|id| dataset.relationships.iter().any(|r| &r.id == id));
         self.install_relationship(RelationshipReading {
-            version: 1,
+            version: 2,
             snapshot,
             dataset,
             source: Some(ReadingSource {
@@ -278,7 +278,12 @@ impl UiState {
         }
         let card = matches[0].id;
         // Validate the retained disclosure itself against current owner-owned facts.
-        let facts = comparison_disclosure::disclose(
+        let disclose = if reading.version >= 2 {
+            comparison_disclosure::disclose_comparison
+        } else {
+            comparison_disclosure::disclose
+        };
+        let facts = disclose(
             source.owner,
             &source.revision,
             set,
@@ -286,9 +291,12 @@ impl UiState {
             source.pair,
         )
         .map_err(|e| format!("Source refused: {e:?}"))?;
-        let current: RelationshipDataset =
-            serde_json::from_value(comparison_disclosure::projection_json(&facts))
-                .map_err(|e| e.to_string())?;
+        let current: RelationshipDataset = serde_json::from_value(if reading.version >= 2 {
+            comparison_disclosure::comparison_projection_json(&facts)
+        } else {
+            comparison_disclosure::projection_json(&facts)
+        })
+        .map_err(|e| e.to_string())?;
         if serde_json::to_value(current).map_err(|e| e.to_string())?
             != serde_json::to_value(&reading.dataset).map_err(|e| e.to_string())?
         {
@@ -403,7 +411,7 @@ pub(super) fn screen(ui: &UiState) -> UiChild {
         Box::new(el(
             "p",
             text(
-                "Choose occurrences from the current Set. The first two selected Cards in authored order supply an exact shared pitch-class relationship. A retained reading keeps its captured evidence until you explicitly rebind.",
+                "Choose occurrences from the current Set. The first two selected Cards in authored order supply exact shared tones, differences, equality or directed containment. A retained reading keeps its captured evidence until you explicitly rebind.",
             ),
         )),
     ];
@@ -622,6 +630,71 @@ mod tests {
         ui
     }
     #[test]
+    fn legacy_reading_preserves_evidence_until_explicit_richer_rebind() {
+        let mut ui = fixture();
+        let mut reading = ui.relationship_reading().unwrap().unwrap();
+        let source = reading.source.as_ref().unwrap();
+        let facts = comparison_disclosure::disclose(
+            source.owner,
+            &source.revision,
+            &ui.set,
+            &source.cards,
+            source.pair,
+        )
+        .unwrap();
+        reading.version = 1;
+        reading.dataset =
+            serde_json::from_value(comparison_disclosure::projection_json(&facts)).unwrap();
+        reading.snapshot.selected_occurrence = Some(comparison_disclosure::occurrence_id(
+            source.owner,
+            source.cards[0],
+        ));
+        ui.install_relationship(reading).unwrap();
+        let retained = ui.relationship_reading_json.clone();
+        let mut restored = UiState::new();
+        restored.apply_persisted(&ui.to_persisted(), Default::default());
+        restored.open_relationship_recipe();
+        assert_eq!(restored.relationship_reading_json, retained);
+        assert_eq!(
+            restored
+                .relationship_reading()
+                .unwrap()
+                .unwrap()
+                .dataset
+                .relationships
+                .len(),
+            1
+        );
+        restored.open_relationship_source().unwrap();
+        restored.open_relationship_recipe();
+        restored.bind_relationship_recipe(true).unwrap();
+        let rebound = restored.relationship_reading().unwrap().unwrap();
+        assert_eq!(rebound.version, 2);
+        assert_eq!(rebound.dataset.relationships.len(), 2);
+    }
+
+    #[test]
+    fn disjoint_reading_compiles_and_returns_to_exact_source() {
+        let mut ui = fixture();
+        ui.set.cards[1].material = woodshedding::rehearsal::Material::Chord {
+            name: "Major".into(),
+            root: woodshedding::pitch::PitchClass::new(1),
+        };
+        ui.open_relationship_recipe();
+        ui.bind_relationship_recipe(true).unwrap();
+        let reading = ui.relationship_reading().unwrap().unwrap();
+        assert_eq!(reading.compile().unwrap().relationships.len(), 1);
+        assert_eq!(
+            reading.dataset.relationships[0].kind,
+            comparison_disclosure::TONE_DIFFERENCES
+        );
+        let id = reading.dataset.dataset.occurrences[1].occurrence_id.clone();
+        ui.select_relationship(Some(id), None).unwrap();
+        ui.open_relationship_source().unwrap();
+        assert_eq!(ui.set.cursor_id(), Some(ui.set.cards[1].id));
+    }
+
+    #[test]
     fn shared_edits_selection_and_explanation_survive_session_restore() {
         let mut ui = fixture();
         let before = serde_json::to_value(&ui.set).unwrap();
@@ -641,10 +714,16 @@ mod tests {
         assert_eq!(reading.snapshot.selected_occurrence, Some(occurrence));
         assert_eq!(reading.snapshot.selected_relationship, Some(relation));
         let compiled = reading.compile().unwrap();
-        assert_eq!(compiled.relationships.len(), 1);
-        assert_eq!(compiled.projection.scene.relations.len(), 1);
+        assert_eq!(compiled.relationships.len(), 2);
+        assert_eq!(compiled.projection.scene.relations.len(), 2);
         assert_eq!(
-            compiled.relationships[0].disclosure.explanation,
+            compiled
+                .relationships
+                .iter()
+                .find(|r| r.disclosure.id == reading.dataset.relationships[0].id)
+                .unwrap()
+                .disclosure
+                .explanation,
             reading.dataset.relationships[0].explanation
         );
         assert!(!restored.rehearsal_running);
@@ -860,7 +939,7 @@ mod authority_tests {
         for change in 0..3 {
             let mut reading = valid.clone();
             match change {
-                0 => reading.version = 2,
+                0 => reading.version = 3,
                 1 => reading.source.as_mut().unwrap().cards.push(CardId(1)),
                 _ => reading.source.as_mut().unwrap().owner = WorkingSetId(0),
             };
