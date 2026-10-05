@@ -326,15 +326,19 @@ impl UiState {
 pub fn relationship_swatch(ui: &UiState) -> Option<GraphCanvasSwatch<String, &'static str>> {
     let reading = ui.relationship_reading().ok()??;
     let compiled = reading.compile().ok()?;
-    Some(swatch_from(&reading, &compiled))
+    Some(swatch_from(&reading, &compiled, ui.viewport_width))
 }
 fn swatch_from(
     reading: &RelationshipReading,
     compiled: &CompiledRelationshipProjection,
+    viewport_width: f32,
 ) -> GraphCanvasSwatch<String, &'static str> {
     let scene = &compiled.projection.scene;
     let bounds = scene.bounds;
     let width = (bounds.size.w + 64.0).max(280.0) as u32;
+    // The scene owns arrangement coordinates; the overview fits that scene
+    // into its pane. Use the same fitted box for paint and native targets.
+    let canvas_width = width.min((viewport_width.min(1100.0) - 64.0).max(280.0) as u32);
     let height = 220;
     let normalize = |x: f32, y: f32| {
         (
@@ -392,7 +396,7 @@ fn swatch_from(
         },
     )
     .with_relations(relations)
-    .with_size(width, height)
+    .with_size(canvas_width, height)
     .with_node_labels(true)
     .with_expand(false)
     .with_label("Selected material relationship graph");
@@ -545,7 +549,7 @@ pub(super) fn screen(ui: &UiState) -> UiChild {
                 }
             }
             {
-                let swatch = swatch_from(&reading, &compiled);
+                let swatch = swatch_from(&reading, &compiled, ui.viewport_width);
                 children.push(Box::new(
                     el(
                         "div",

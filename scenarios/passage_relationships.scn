@@ -26,6 +26,9 @@ assert text D, F, B
 assert snap recipe-occurrence == set:1:card:3
 click .relationship-explanation woodshed.keyed_pitch_set_comparison.v1
 capture 02_scale_contains_chord
+click .graph-canvas-swatch-node @data-key=set:1:card:1
+settle 5
+assert snap recipe-occurrence == set:1:card:1
 click .graph-canvas-swatch-node @data-key=set:1:card:3
 settle 5
 assert snap recipe-occurrence == set:1:card:3

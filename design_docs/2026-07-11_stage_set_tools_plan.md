@@ -284,6 +284,36 @@ browser/other-platform behavior and release packaging are not qualified here.
 The logs, scenario/capture hashes and publication record are retained in
 `/Users/markik/Code/testing/woodshed/passage-20261005/receipt.json`.
 
+### Relationship overview framing and rendering replay (2026-10-05)
+
+**Status: implemented; committed-source native acceptance pending.** The
+relationship overview fits the compiled scene to its pane width through the
+same GraphCanvasSwatch geometry used for custom paint and native targets.
+Compiled authored coordinates, recipe spacing, occurrence identity and musical
+facts remain unchanged. This is an overview projection; it does not add saved
+camera editing or physics. The host regression now requires the selected last
+node's entire hit target to remain visible at both widths. The passage scenario
+selects Card 1 before Card 3, so its assertion proves a selection transition
+rather than merely confirming an already selected occurrence.
+
+`large_fractional_zoom.scn` replays the historical 1500x1200/0.75-zoom Practice
+failure and returns to Mere. An isolated preliminary replay on candidate
+`047791f` rendered both surfaces; the old black capture is historical evidence,
+not a reproduced current failure. macOS constrains the actual window to its
+work area. Record requested and actual capture dimensions separately. Evidence
+belongs under `/Users/markik/Code/testing/woodshed/framing-20261005/`.
+
+**Stack review:** inspected refreshed Mere `origin/main` at `289c9a98d` rather
+than its stale local checkout. Graphshell's one-tree controls use shared typed
+canvas commands for pan/zoom/fit, physics Play/Pause and Restore arrangement.
+Its physics catalog separates arrangement generators, layout laws and overlays;
+the dynamics grammar specifies portable terms and targets, with realization
+gated by term class. These are the reference for subsequent Woodshed Mere
+embedding: host-owned musical disclosure and actions feed reusable scene,
+camera and dynamics capabilities. Keep sessions/resources/processes in the Mere
+overview, with Set and fretboard readings as projections of those owners.
+No physics adoption or dynamics-plan completion is claimed by this framing fix.
+
 ## Product model
 
 Woodshed is a practice app. Its organizing action is staging material for a
