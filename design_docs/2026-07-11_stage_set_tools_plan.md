@@ -286,7 +286,7 @@ The logs, scenario/capture hashes and publication record are retained in
 
 ### Relationship overview framing and rendering replay (2026-10-05)
 
-**Status: implemented; committed-source native acceptance pending.** The
+**Status: landed; committed-source native acceptance qualified.** The
 relationship overview fits the compiled scene to its pane width through the
 same GraphCanvasSwatch geometry used for custom paint and native targets.
 Compiled authored coordinates, recipe spacing, occurrence identity and musical
@@ -313,6 +313,30 @@ embedding: host-owned musical disclosure and actions feed reusable scene,
 camera and dynamics capabilities. Keep sessions/resources/processes in the Mere
 overview, with Set and fretboard readings as projections of those owners.
 No physics adoption or dynamics-plan completion is claimed by this framing fix.
+
+Qualification on candidate `6a4fdd5f9bd518a05064f194afbb89b516dd84bc` uses
+binary SHA-256 `7e87fc0fae460f16af44ae75b247c8a3362fdd9d95c81a54c79622040b4516c0`.
+The relevant gate passes 567 checks; the final viewport-cap edit also passes the
+focused visibility regression and locked desktop build. Views Clippy completes
+with four existing warnings. Native default-zoom passage runs pass at 1280x900
+(1931 frames/four captures) and 420x900 (1934 frames/four captures). The narrow
+capture shows all three nodes, the selected scale ring and full label. Exact
+source return and Run/Pause pass. Fresh-process reopening passes in 1828 frames
+with two reviewed captures. This supersedes the preceding narrow-node clipping
+limit for this three-Card flow; dense 64-occurrence label readability is not
+qualified.
+
+The committed large fractional-zoom replay passes in 1828 frames/two captures.
+Requested size is 1500x1200; macOS constrains the actual window to 1500x1140,
+producing 3000x2280 Retina PNGs, matching the historical black capture dimensions.
+Practice and Mere both render at 0.75 zoom. The historical failure is not
+reproduced on the current build; its original cause remains unproven. This is
+bounded current rendering evidence, not general size/zoom or acoustic acceptance.
+All twelve accepted captures were reviewed. The initial passing reopen was
+accidentally relaunched by a later CUA observation and refused duplicate
+paintlist files; that diagnostic log is retained. A fresh isolated final reopen
+run passed. No test processes remain running. Receipt and capture hashes:
+`/Users/markik/Code/testing/woodshed/framing-20261005/receipt.json`.
 
 ## Product model
 

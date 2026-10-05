@@ -82,8 +82,12 @@ before any other doc in this directory.
   ten reviewed baseline/narrow/reopen captures and return to Run/Pause practice.
   The selected-passage slice adds bounded consecutive comparisons while preserving
   authored order and older captured evidence. It passes 567 checks, five compatibility
-  tests and ten reviewed baseline/narrow/reopen captures. Narrow graph selection
-  and exact source return pass; visible framing of the last node remains open.
+  tests and ten reviewed baseline/narrow/reopen captures. The framing follow-up
+  fits the relationship overview to its pane; twelve reviewed committed-source
+  captures cover baseline/narrow, fresh reopening and a large 0.75-zoom replay.
+  The narrow last node and label are visible. The historical black Practice
+  surface does not reproduce in the current replay; its original cause is unproven.
+  The Graphshell/physics review guides subsequent scene/camera/dynamics reuse.
   — **In progress; product authority.** P1-P3 remain partial. P4a/P4b landed;
   the scene canvas and single-Card expansion have receipts, while the full P4e
   catalog and P4f practice/sound join remain open. P5-P8 remain open. A repaired
