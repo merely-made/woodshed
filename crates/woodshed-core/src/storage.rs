@@ -153,6 +153,12 @@ pub struct PersistedSession {
     /// session slot without learning the shared Workbench schema.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub workspace_json: Option<String>,
+    /// Shared relational recipe snapshot plus its bounded disclosed evidence.
+    /// An embedding validates this payload through the shared compiler when
+    /// mounting it. Persistence retains the opaque bytes beside the owner's
+    /// Sets and does not acquire any foreign source.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub relationship_reading_json: Option<String>,
 }
 
 impl Default for PersistedSession {
@@ -185,6 +191,7 @@ impl PersistedSession {
             song: song.clone(),
             practice_history: practice_history.clone(),
             workspace_json: None,
+            relationship_reading_json: None,
             section,
             lens: stage.lens,
             root_idx: stage.root_idx,

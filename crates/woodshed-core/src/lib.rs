@@ -15,6 +15,7 @@ pub mod audio;
 pub mod card_shapes;
 pub mod catalog_explorations;
 pub mod chord_approach;
+pub mod comparison_disclosure;
 pub mod connected_catalog;
 pub mod connected_scales;
 pub mod harmony;

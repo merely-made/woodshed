@@ -823,6 +823,7 @@ pub struct UiState {
     pub set_presentations:
         BTreeMap<woodshed_core::working_sets::WorkingSetId, instances::SetPresentation>,
     pub retained_sets: woodshed_core::retained_sets::RetainedSets,
+    pub relationship_reading_json: Option<String>,
     pub retained_set_name: TextInput,
     pub overview_focus: Option<woodshed_core::session_overview::OverviewNodeId>,
     pub overview_notice: Option<String>,
@@ -1021,6 +1022,7 @@ impl UiState {
             rehearsal_observed_midi: None,
             set_presentations: BTreeMap::new(),
             retained_sets: Default::default(),
+            relationship_reading_json: None,
             retained_set_name: TextInput::new(""),
             overview_focus: None,
             overview_notice: None,
@@ -1953,6 +1955,7 @@ impl UiState {
         );
         session.retained_sets = self.retained_sets.clone();
         session.working_sets = self.working_sets.clone();
+        session.relationship_reading_json = self.relationship_reading_json.clone();
         session.catalog_explorations = self.catalog_explorations.clone();
         session.active_exploration = Some(self.capture_exploration());
         session.workspace_json = Some(
@@ -1974,6 +1977,7 @@ impl UiState {
         self.set = session.set.clone();
         self.retained_sets = session.retained_sets.clone();
         self.working_sets = session.working_sets.clone();
+        self.relationship_reading_json = session.relationship_reading_json.clone();
         self.catalog_explorations = session.catalog_explorations.clone();
         self.rehearsal_owner = None;
         self.rehearsal_stage = None;

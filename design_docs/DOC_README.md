@@ -71,6 +71,9 @@ before any other doc in this directory.
   states, and responsive wireframe done-conditions. It is separate from the
   Woodshed product graph.
 - [2026-07-11_stage_set_tools_plan.md](2026-07-11_stage_set_tools_plan.md)
+  — October 5 adds owner-qualified relational disclosure, a shared-compiler
+  compatibility instrument, and fresh-process retention through the desktop
+  session path; visible Woodshed recipe editing remains a follow-on.
   — **In progress; product authority.** P1-P3 remain partial. P4a/P4b landed;
   the scene canvas and single-Card expansion have receipts, while the full P4e
   catalog and P4f practice/sound join remain open. P5-P8 remain open. A repaired
