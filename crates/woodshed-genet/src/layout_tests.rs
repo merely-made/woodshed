@@ -1647,6 +1647,21 @@ fn relationship_recipe_controls_compile_explain_and_return_to_exact_source_at_tw
             Some("set:1:card:3"),
             "last graph node at width {width}"
         );
+        let node = {
+            let dom = h.runner().dom();
+            let dom = dom.borrow();
+            taproot::matching(
+                &dom,
+                &Selector::class("graph-canvas-swatch-node").with_attr("data-key", "set:1:card:3"),
+            )[0]
+        };
+        let swatch = woodshed_views::stage::relationship_swatch(h.state()).unwrap();
+        assert!(swatch.width as f32 <= width - 64.0);
+        let painted = h.painted_rect(node).unwrap();
+        let visible = h
+            .visible_rect(node)
+            .expect("selected graph node must remain visible");
+        assert_eq!(painted, visible, "selected node clipped at width {width}");
         assert!(h.click_on(
             &Selector::class("graph-canvas-swatch-node").with_attr("data-key", "set:1:card:2")
         ));
