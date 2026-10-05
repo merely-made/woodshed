@@ -29,6 +29,80 @@ gate, not completion of this product plan.
 > woodshed adoption as its L1 release gate, is mere's
 > `design_docs/mere_docs/research/2026-08-10_scenograph_expansion_brief.md`.
 
+## Cross-domain relational recipe contribution (2026-10-05)
+
+**Status: domain disclosure and session retention implemented; standalone
+shared compilation and reopening qualified; visible Woodshed editing remains
+a follow-on.** The Knot coordination lane owns the shared
+`scenomise::projection` compiler/editor seam and Knot adoption; Woodshed owns
+its musical disclosure and adapter. Reuse `scenograph` authored definitions.
+The shared implementation belongs in Mere's existing projection grammar plan,
+not another Woodshed scene model. Existing physics and dynamics lanes retain
+their owners and do not gate this bounded static recipe.
+
+The first recipe uses authored order, occurrence labels and one explained
+relationship, with duplicate occurrences of one material source. Woodshed's
+`comparison_disclosure::disclose` resolves selected Cards through the existing
+keyed catalog and exact pitch-set comparison. Identities include the working
+Set owner; keyed sources retain tonic and articulation. Selection order does
+not replace authored Set order. The `music.shared_pitch_classes` relationship
+records selected occurrence endpoints, exact pitch classes, method/version and
+an explanation; it asserts no fingering, register or harmonic function.
+Unknown material, missing revision, invalid identity, absent endpoints and a
+pair with no shared tones are explicit refusals. Reading does not edit Cards
+or start playback.
+
+The full cross-domain milestone is done when the shared adapter compiles this disclosure, renders the explained
+relationship, retains an edited recipe and selection through Woodshed's session
+storage, and rebinds the same recipe to compatible Knot disclosures. Required
+semantic roles must be matched explicitly; numeric type alone does not make
+tempo a replacement for authored order. Unsupported roles must explain refusal.
+The existing `stage_projection_export` schema stays compatible; relationship
+and semantic-role extensions use the coordinated shared wrapper.
+
+**Findings (2026-10-05):** clean Woodshed main was `e778cb6`; its Mere dependency
+is `8106c7c`. Current shared main `bd119a69d` still has the node/grid/scatter
+compiler in Graphshell and no relationship-bearing dataset. The shared owner
+provided the extracted API at `c79bb8c203b52817991e0d7ba1c4ce3c3a2aac34`,
+published on Mere's `codex/relationship-recipes` branch. The standalone
+`validation/relationship-recipe` instrument pins `scenograph` and `scenomise`
+to that revision. Its two-process receipt uses Woodshed's actual `UiState`,
+`PersistedSession`, `SessionStore` and desktop `FsBackend`, with explicit
+isolated state/settings paths. The fixture is unsealed and accesses no personal
+vault. The retained payload contains the typed shared snapshot and bounded
+dataset; production session capture/restore preserves those opaque bytes.
+The application does not compile or edit the payload in its visible host yet.
+This wire boundary deliberately keeps the production host on its existing
+dependency revision; it is not a full host adoption or repin claim.
+
+Validation commands from the Woodshed root:
+
+```sh
+cargo test --locked --manifest-path validation/relationship-recipe/Cargo.toml --target-dir target
+cargo run --locked --manifest-path validation/relationship-recipe/Cargo.toml --target-dir target -- seed /isolated/new-session.json
+cargo run --locked --manifest-path validation/relationship-recipe/Cargo.toml --target-dir target -- reopen /isolated/new-session.json
+```
+
+Seed refuses an existing session file. Reopen runs in a separate process and
+checks label/spacing edits, both selection identities, exact relationship
+explanation, source Set preservation and inactive transport. The checked fixture
+`scenarios/woodshed_relationships.json` is verified against its real owner-owned
+generator (`relationship_disclosure_export`). Common compiler tests also check
+duplicate sources/distinct occurrences, compatible rebinding between working
+owners, missing semantic roles, absent relationship endpoints and stale provenance.
+Knot owns the actual lexical-to-musical rebind proof. Native Woodshed recipe
+controls, user-wallet qualification and current-host scene rendering are not
+qualified by this instrument. Older binaries can ignore and drop the optional
+reading payload if they resave the session.
+
+Core 189, views 97, desktop session 16 and five shared-adoption checks pass;
+existing exporter tests (10) and the Stage environment integration check pass.
+Strict Clippy passes for the standalone instrument with `--no-deps`.
+Whole-core strict Clippy remains blocked by pre-existing theory/core lints,
+and whole-workspace formatting has pre-existing differences. The new files
+are formatted and `git diff --check` passes. Runtime data and hash receipts live
+outside the repository under `testing/woodshed/relationships-20261005/`.
+
 ## Product model
 
 Woodshed is a practice app. Its organizing action is staging material for a
