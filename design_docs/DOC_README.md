@@ -80,8 +80,10 @@ before any other doc in this directory.
   The exact-tone slice adds differences/equality/directed containment and
   preserves older captured readings until explicit rebind. It passes 565 checks,
   ten reviewed baseline/narrow/reopen captures and return to Run/Pause practice.
-  The selected-passage slice is in progress: bounded consecutive comparisons
-  preserve authored order and older captured evidence.
+  The selected-passage slice adds bounded consecutive comparisons while preserving
+  authored order and older captured evidence. It passes 567 checks, five compatibility
+  tests and ten reviewed baseline/narrow/reopen captures. Narrow graph selection
+  and exact source return pass; visible framing of the last node remains open.
   — **In progress; product authority.** P1-P3 remain partial. P4a/P4b landed;
   the scene canvas and single-Card expansion have receipts, while the full P4e
   catalog and P4f practice/sound join remain open. P5-P8 remain open. A repaired

@@ -240,7 +240,7 @@ record are published together on Woodshed main.
 
 ### Selected passage relationship reading (2026-10-05)
 
-**Status (2026-10-05): implemented; native acceptance in progress.** Compare each consecutive pair in the
+**Status (2026-10-05): landed; native flow and reopening qualified with a narrow graph visibility limit.** Compare each consecutive pair in the
 selected authored sequence, with at most 64 occurrences and 63 pair comparisons.
 Sparse selections retain original authored positions and explicitly describe a
 selected sequence rather than adjacency across the complete Set. Endpoint labels
@@ -259,7 +259,30 @@ Use `passage_relationships*.scn`; evidence belongs under
 catalog expansion and atmosphere editing remain separate slices.
 
 Automated gate passes 567 checks: core 194, integration 1, desktop 64, graph 14,
-views 109, theory 181 and four doctests. The locked desktop build passes.
+views 109, theory 181 and four doctests. The locked desktop build and five
+standalone relationship compatibility tests pass. Views Clippy completes with
+four existing warnings.
+
+Native acceptance uses committed candidate `047791fa6819f6523cd78ace2aeac5401d2ef162`
+and binary SHA-256
+`3aa35b2b7f2d943def667174c1219b52137a5d7c0ef52f15223e04d211031105`.
+At default zoom, baseline 1280x900 passes in 4123 frames/four captures;
+fresh-process reopening passes in 4028 frames/two captures; the independent
+420x900 replay passes in 4126 frames/four captures. All ten captures were
+visually reviewed. The same retained reading exposes both chord differences
+and chord/scale containment without rebinding between pairs. Exact source
+return selects Card 3; Run/Pause and reopening preserve the intended inactive
+runner, selected occurrence and spacing. External scenario copies extend only
+the initial settle from 90 to 4000 frames to allow native foregrounding.
+
+**Presentation limit:** the narrow graph capture clips its selected third node
+horizontally. The graph click assertion and subsequent exact source return pass,
+and the explanation text wraps legibly; this does not establish visible selected
+node framing at 420px. Horizontal graph reveal remains open. Test profiles use
+unsealed fixture sessions, not personal vaults. Acoustic quality, high zoom,
+browser/other-platform behavior and release packaging are not qualified here.
+The logs, scenario/capture hashes and publication record are retained in
+`/Users/markik/Code/testing/woodshed/passage-20261005/receipt.json`.
 
 ## Product model
 
