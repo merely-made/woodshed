@@ -55,6 +55,7 @@ pub enum DisclosureError {
     InvalidOwner,
     MissingRevision,
     EmptySelection,
+    SelectionTooLarge,
     DuplicateSelection(CardId),
     UnknownCard(CardId),
     InvalidCardIdentity(CardId),
@@ -212,6 +213,64 @@ pub fn comparison_projection_json(material: &SelectedMaterial) -> serde_json::Va
     value
 }
 
+/// Compare adjacent selected occurrences in authored order, bounded by the host.
+/// A sparse selection is a selected-material sequence, not a claim of adjacency
+/// in the complete Set. Repeated materials keep their distinct occurrence IDs.
+pub fn passage_projection_json(
+    owner: WorkingSetId,
+    revision: &str,
+    set: &Set,
+    selected: &[CardId],
+) -> Result<serde_json::Value, DisclosureError> {
+    if selected.len() > 64 {
+        return Err(DisclosureError::SelectionTooLarge);
+    }
+    let ordered = set
+        .cards
+        .iter()
+        .filter(|c| selected.contains(&c.id))
+        .map(|c| c.id)
+        .collect::<Vec<_>>();
+    let pair = ordered
+        .first()
+        .zip(ordered.get(1))
+        .map(|(a, b)| (*a, *b))
+        .ok_or(DisclosureError::EmptySelection)?;
+    // Validate all selected identities/material before disclosing any pair.
+    let facts = disclose_comparison(owner, revision, set, selected, pair)?;
+    let mut value = comparison_projection_json(&facts);
+    let mut relationships = Vec::new();
+    for pair in ordered.windows(2) {
+        let facts = disclose_comparison(owner, revision, set, selected, (pair[0], pair[1]))?;
+        let pair_value = comparison_projection_json(&facts);
+        for mut relation in pair_value["relationships"]
+            .as_array()
+            .expect("owner schema")
+            .iter()
+            .cloned()
+        {
+            let label = |field: &str| {
+                facts
+                    .occurrences
+                    .iter()
+                    .find(|o| o.occurrence_id == relation[field].as_str().unwrap())
+                    .unwrap()
+                    .label
+                    .clone()
+            };
+            relation["label"] = serde_json::json!(format!(
+                "{} · {} / {}",
+                relation["label"].as_str().unwrap(),
+                label("from_occurrence"),
+                label("to_occurrence")
+            ));
+            relationships.push(relation);
+        }
+    }
+    value["relationships"] = serde_json::json!(relationships);
+    Ok(value)
+}
+
 /// Disclose selected catalog-backed material and one exact tone relationship.
 /// The caller selects the owner and pair; unavailable facts are refused rather
 /// than replaced by a similarly typed field or an inferred harmonic reading.
@@ -366,6 +425,40 @@ mod tests {
     fn read(set: &Set, owner: WorkingSetId) -> Result<SelectedMaterial, DisclosureError> {
         let ids = set.cards.iter().map(|card| card.id).collect::<Vec<_>>();
         disclose(owner, "fixture-v1", set, &ids, (ids[0], ids[2]))
+    }
+
+    #[test]
+    fn passage_compares_selected_authored_neighbors_and_preserves_repeated_occurrences() {
+        let set = fixture();
+        let ids = set.cards.iter().map(|c| c.id).collect::<Vec<_>>();
+        let value = passage_projection_json(WorkingSetId(1), "v1", &set, &[ids[2], ids[0], ids[1]])
+            .unwrap();
+        let relations = value["relationships"].as_array().unwrap();
+        assert_eq!(relations.len(), 4);
+        assert!(relations.iter().any(
+            |r| r["from_occurrence"] == "set:1:card:1" && r["to_occurrence"] == "set:1:card:2"
+        ));
+        assert!(relations.iter().any(
+            |r| r["from_occurrence"] == "set:1:card:2" && r["to_occurrence"] == "set:1:card:3"
+        ));
+        assert!(!relations.iter().any(
+            |r| r["from_occurrence"] == "set:1:card:1" && r["to_occurrence"] == "set:1:card:3"
+        ));
+        let sparse =
+            passage_projection_json(WorkingSetId(1), "v1", &set, &[ids[2], ids[0]]).unwrap();
+        assert_eq!(
+            sparse["dataset"]["occurrences"][1]["values"]["order"]["value"],
+            3
+        );
+        assert_eq!(
+            sparse["relationships"][0]["from_occurrence"],
+            "set:1:card:1"
+        );
+        assert_eq!(sparse["relationships"][0]["to_occurrence"], "set:1:card:3");
+        assert_eq!(
+            passage_projection_json(WorkingSetId(1), "v1", &set, &vec![ids[0]; 65]),
+            Err(DisclosureError::SelectionTooLarge)
+        );
     }
 
     #[test]

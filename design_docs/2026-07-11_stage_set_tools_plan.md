@@ -238,6 +238,29 @@ quality, high zoom, browser execution, other platforms and release delivery
 remain unqualified. The implementation, added host regression and acceptance
 record are published together on Woodshed main.
 
+### Selected passage relationship reading (2026-10-05)
+
+**Status (2026-10-05): implemented; native acceptance in progress.** Compare each consecutive pair in the
+selected authored sequence, with at most 64 occurrences and 63 pair comparisons.
+Sparse selections retain original authored positions and explicitly describe a
+selected sequence rather than adjacency across the complete Set. Endpoint labels
+identify each explanation; duplicate materials keep distinct occurrence identities.
+This is a linear passage reading, not an all-pairs search or a harmonic analysis.
+
+Done-conditions: three selected Cards disclose both consecutive comparisons;
+reversed UI selection cannot reverse authored order; sparse selections retain
+positions and compare only their chosen sequence; over-budget selections refuse;
+version-1/2 captured facts and source actions stay unchanged until explicit rebind;
+version-3 source actions revalidate the complete passage disclosure. The recipe,
+shared compiler and solver remain unchanged. Qualification includes wide/narrow
+native inspection, exact source return for practice, and fresh-process retention.
+Use `passage_relationships*.scn`; evidence belongs under
+`testing/woodshed/passage-20261005/`. Human musical usefulness, all-pairs queries,
+catalog expansion and atmosphere editing remain separate slices.
+
+Automated gate passes 567 checks: core 194, integration 1, desktop 64, graph 14,
+views 109, theory 181 and four doctests. The locked desktop build passes.
+
 ## Product model
 
 Woodshed is a practice app. Its organizing action is staging material for a
