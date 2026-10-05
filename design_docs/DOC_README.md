@@ -77,6 +77,8 @@ before any other doc in this directory.
   checks, baseline/420px native capture review and fresh-process reopening; source
   actions validate the exact owner and explicit rebind retains the authored recipe.
   The shared two-axis scroll reveal fix is contributed back to Cambium in Mere.
+  The next exact-tone slice adds differences/equality/directed containment and
+  preserves older captured readings until explicit rebind; native acceptance is in progress.
   — **In progress; product authority.** P1-P3 remain partial. P4a/P4b landed;
   the scene canvas and single-Card expansion have receipts, while the full P4e
   catalog and P4f practice/sound join remain open. P5-P8 remain open. A repaired
