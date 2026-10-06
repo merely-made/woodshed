@@ -1,0 +1,14 @@
+# Replay the recorded large Practice surface failure with the current host.
+# Launch at 1500x1200; macOS may constrain the actual window to its work area.
+settle 90
+ui-zoom 0.75
+act mere-example
+settle 5
+click .workspace-panel Practice
+settle 5
+assert snap set-cards == 2
+capture 01_practice
+click .workspace-panel Mere
+settle 5
+assert snap overview-active == true
+capture 02_mere

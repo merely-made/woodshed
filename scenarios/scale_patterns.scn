@@ -1,0 +1,52 @@
+# Explicit degree-pair composition and contextual catalog relationships.
+settle 3
+ui-zoom 0.65
+act connected-scale-setup-example
+settle 3
+click .pill Rehearsal
+settle 3
+click .t-btn Explore compatible scales
+settle 3
+click .scale-choice C Major
+settle 3
+click .t-btn Stage scale
+settle 3
+assert snap set-cards == 3
+click .t-btn Next
+click .t-btn Next
+settle 3
+click .t-btn Close scales
+settle 3
+click .scale-pattern-choice Inspect diatonic thirds
+settle 3
+click .t-btn Hear pattern
+settle 3
+assert snap set-cards == 3
+click .pill Stage
+settle 3
+assert snap context-patterns >= 2
+capture 01_pattern_ambient
+click .pill Rehearsal
+settle 3
+click .t-btn Stage pattern
+settle 3
+assert snap set-cards == 4
+assert snap pattern-cards == 1
+click .t-btn Next
+settle 3
+assert snap rehearsal-strings == 4
+assert snap pattern-descends == true
+assert snap pattern-repeats == true
+assert snap pattern-sequential == true
+assert text concert D Major
+capture 02_pattern_staged
+click .t-btn Run
+settle 10
+assert snap rehearsal-running == true
+click .t-btn Pause
+settle 3
+assert snap rehearsal-running == false
+assert snap pattern-sequential == true
+assert snap history-observed >= 5
+capture 03_pattern_paused
+log Scale degree-pair and ambient seed complete

@@ -32,7 +32,7 @@ use chartulary::stemma::{EntryPrivacy, Stemma, TransitionKind};
 use serde::de::Deserializer;
 use serde::ser::Serializer;
 use serde::{Deserialize, Serialize};
-use woodshedding::rehearsal::{Card, Material, Touch};
+use woodshedding::rehearsal::{Card, CardId, Material, Touch};
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
 pub enum EngagementKind {
@@ -62,7 +62,50 @@ impl EngagementKind {
     /// completed rehearsal time is evidence of practice. Ranking leans on the
     /// distinction, so it lives on the kind rather than in each query's filter.
     pub fn is_practice(self) -> bool {
-        !matches!(self, Self::Previewed)
+        !matches!(self, Self::Previewed | Self::Staged)
+    }
+}
+
+/// Event-time instruction provenance. Missing provenance on older observations
+/// stays missing: it must never be reconstructed from today's edited Set.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+pub struct ObservationProvenance {
+    /// Assigned Set identity; UNASSIGNED qualifies a catalog-only preview.
+    pub occurrence_id: CardId,
+    /// Owning working Set when observed. Missing on legacy observations.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub working_set_id: Option<crate::working_sets::WorkingSetId>,
+    /// Exact serialized Card, including material, setup, touch, timing and recipe.
+    /// This is an instruction snapshot, not proof of the player's performance.
+    /// Unspecified inherited settings remain unspecified unless the caller also
+    /// supplies their resolved event-time context.
+    pub card_snapshot: serde_json::Value,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub run_id: Option<String>,
+    /// Actual MIDI pitches presented by the runner, if observed. `None` means
+    /// unknown; an empty vector means an observed silent event.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub presented_midi: Option<Vec<i32>>,
+}
+
+impl ObservationProvenance {
+    pub fn capture_in_set(
+        card: &Card,
+        owner: crate::working_sets::WorkingSetId,
+    ) -> Result<Self, serde_json::Error> {
+        let mut provenance = Self::capture(card)?;
+        provenance.working_set_id = Some(owner);
+        Ok(provenance)
+    }
+
+    pub fn capture(card: &Card) -> Result<Self, serde_json::Error> {
+        Ok(Self {
+            occurrence_id: card.id,
+            working_set_id: None,
+            card_snapshot: serde_json::to_value(card)?,
+            run_id: None,
+            presented_midi: None,
+        })
     }
 }
 
@@ -91,6 +134,8 @@ pub struct Engagement {
     /// Whether the visit's `created_at_ms` is an observation or a placeholder.
     #[serde(default)]
     pub dated: bool,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub provenance: Option<ObservationProvenance>,
 }
 
 /// The practice lineage: catalog ids as entry keys, no entry payload (the
@@ -109,7 +154,7 @@ const PRACTITIONER: &str = "practitioner";
 pub struct PracticeEvent {
     pub subject_id: String,
     pub kind: EngagementKind,
-    /// The subject engaged immediately before this one, along the practice path.
+    /// The explicitly stated source of this choice, independently of the walked path.
     #[serde(default)]
     pub from_id: Option<String>,
     /// Unix epoch milliseconds; `None` when the engagement is undated.
@@ -117,6 +162,8 @@ pub struct PracticeEvent {
     pub at_ms: Option<u64>,
     #[serde(default)]
     pub practiced_ms: Option<u64>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub provenance: Option<ObservationProvenance>,
 }
 
 /// One aggregated movement in the practice path. Catalog and history share
@@ -151,6 +198,20 @@ impl PracticeHistory {
         from_id: Option<String>,
         practiced_ms: Option<u64>,
     ) {
+        self.record_observation(at_ms, subject_id, kind, from_id, practiced_ms, None);
+    }
+
+    /// Record an observation with explicitly captured event-time provenance.
+    /// This records runner activity, never an assessment of successful playing.
+    pub fn record_observation(
+        &mut self,
+        at_ms: Option<u64>,
+        subject_id: impl Into<String>,
+        kind: EngagementKind,
+        from_id: Option<String>,
+        practiced_ms: Option<u64>,
+        provenance: Option<ObservationProvenance>,
+    ) {
         let stamp = at_ms.unwrap_or_default();
         let owner = self.lineage.ensure_owner(PRACTITIONER.to_string(), None);
         let entry = self.lineage.resolve_or_create_entry(
@@ -170,6 +231,7 @@ impl PracticeHistory {
                 from_id,
                 practiced_ms,
                 dated: at_ms.is_some(),
+                provenance,
             },
             TransitionKind::Unknown,
             stamp,
@@ -188,24 +250,14 @@ impl PracticeHistory {
             .count()
     }
 
-    /// How many times practice actually *moved* from one subject to the next,
-    /// with the most recent such move — the lineage's own aggregate rather than
-    /// the player's stated reason. The recency a decayed strength model wants.
+    /// Adjacent practice observations from one subject to another. Exploration
+    /// interrupts adjacency; it is never silently skipped to invent a transition.
+    /// Raw exploration and rehearsal visits are retained together in the lineage.
     pub fn traversals(&self, from_id: &str, subject_id: &str) -> (u64, Option<u64>) {
-        let (Some(from), Some(to)) = (
-            self.lineage.entry_id_by_key(&from_id.to_string()),
-            self.lineage.entry_id_by_key(&subject_id.to_string()),
-        ) else {
-            return (0, None);
-        };
-        self.lineage
-            .aggregated_entry_edges()
+        self.transitions()
             .into_iter()
-            .find(|edge| edge.from_entry == from && edge.to_entry == to)
-            .map(|edge| {
-                let at = (edge.latest_transition_at_ms > 0).then_some(edge.latest_transition_at_ms);
-                (edge.traversal_count, at)
-            })
+            .find(|edge| edge.from_id == from_id && edge.to_id == subject_id)
+            .map(|edge| (edge.traversal_count, edge.latest_at_ms))
             .unwrap_or((0, None))
     }
 
@@ -232,35 +284,59 @@ impl PracticeHistory {
                 from_id: visit.context.from_id.clone(),
                 at_ms: visit.context.dated.then_some(visit.created_at_ms),
                 practiced_ms: visit.context.practiced_ms,
+                provenance: visit.context.provenance.clone(),
             });
         }
         out
     }
 
-    /// Aggregated directed movements through practice history. Stemma remains
-    /// the authority; this is the product-shaped projection a mere consumes.
+    /// Aggregate adjacent practice observations for the Mere's PracticedAfter
+    /// layer. Both endpoints must be practice observations. Staging and previews
+    /// remain in the raw lineage and engagement queries, but cannot produce a
+    /// "practiced next" claim. Lifecycle observations of the same assigned
+    /// occurrence do not form a transition. Legacy visits without occurrence
+    /// provenance retain their qualified catalog-level adjacency.
     pub fn transitions(&self) -> Vec<PracticeTransition> {
-        self.lineage
-            .aggregated_entry_edges()
-            .into_iter()
-            .filter_map(|edge| {
-                let from = self.lineage.entry(edge.from_entry)?;
-                let to = self.lineage.entry(edge.to_entry)?;
-                Some(PracticeTransition {
-                    from_id: from.key.clone(),
-                    to_id: to.key.clone(),
-                    traversal_count: edge.traversal_count,
-                    latest_at_ms: (edge.latest_transition_at_ms > 0)
-                        .then_some(edge.latest_transition_at_ms),
-                })
-            })
-            .collect()
+        let events = self.recent(self.len());
+        let mut edges = std::collections::BTreeMap::<(String, String), PracticeTransition>::new();
+        for pair in events.windows(2) {
+            let (to, from) = (&pair[0], &pair[1]);
+            if !from.kind.is_practice() || !to.kind.is_practice() {
+                continue;
+            }
+            if let (Some(from_provenance), Some(to_provenance)) = (&from.provenance, &to.provenance)
+            {
+                if from_provenance.occurrence_id.is_assigned()
+                    && from_provenance.occurrence_id == to_provenance.occurrence_id
+                    && from_provenance.working_set_id == to_provenance.working_set_id
+                {
+                    // Opening, pausing and completing one occurrence are
+                    // observations of that occurrence, not movement to another.
+                    // Loop evidence needs an explicit runner observation rather
+                    // than inferring it from these lifecycle events.
+                    continue;
+                }
+            }
+            let key = (from.subject_id.clone(), to.subject_id.clone());
+            let edge = edges.entry(key).or_insert_with(|| PracticeTransition {
+                from_id: from.subject_id.clone(),
+                to_id: to.subject_id.clone(),
+                traversal_count: 0,
+                latest_at_ms: None,
+            });
+            edge.traversal_count += 1;
+            if let Some(at) = to.at_ms {
+                edge.latest_at_ms = Some(edge.latest_at_ms.map_or(at, |previous| previous.max(at)));
+            }
+        }
+        edges.into_values().collect()
     }
 
     /// Total measured practice on `subject_id`, milliseconds. An hour of
     /// rehearsal outweighs fifty previews rather than tying with them on count.
     pub fn total_practiced_ms(&self, subject_id: &str) -> u64 {
         self.visits_of(subject_id)
+            .filter(|context| context.kind.is_practice())
             .filter_map(|context| context.practiced_ms)
             .sum()
     }
@@ -348,16 +424,17 @@ impl<'de> Deserialize<'de> for PracticeHistory {
                 // `from_id` recorded in every flow that produced one.
                 let mut history = Self::default();
                 for event in flat.events {
-                    history.record(
+                    history.record_observation(
                         event.at_ms,
                         event.subject_id,
                         event.kind,
                         event.from_id,
                         event.practiced_ms,
+                        event.provenance,
                     );
                 }
                 history
-            }
+            },
         })
     }
 }
@@ -368,9 +445,15 @@ impl<'de> Deserialize<'de> for PracticeHistory {
 pub fn catalog_id_for_card(card: &Card) -> Option<String> {
     Some(match &card.material {
         Material::Scale { name, .. } => woodshed_graph::scale_id(name),
+        Material::ScalePattern { name, pattern, .. } => {
+            woodshed_graph::scale_pattern_exercise_id(name, *pattern)
+        },
+        Material::ChordApproach {
+            name, direction, ..
+        } => woodshed_graph::chord_approach_exercise_id(name, *direction),
         Material::Chord { name, .. } if matches!(card.touch, Touch::Arpeggiate { .. }) => {
             woodshed_graph::arpeggio_id(name)
-        }
+        },
         Material::Chord { name, .. } => woodshed_graph::chord_id(name),
         Material::Riff { name } => woodshed_graph::exercise_id(name),
         Material::Path { .. } => return None,
@@ -382,7 +465,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn related_transitions_ignore_preview_only_events() {
+    fn related_transitions_ignore_exploration_events() {
         let mut history = PracticeHistory::default();
         history.record(
             Some(1_000),
@@ -419,7 +502,246 @@ mod tests {
         );
         assert_eq!(
             history.related_transition_count("scale:Dorian", "chord:Minor"),
+            0,
+            "staging is still interest rather than practice"
+        );
+        history.record(
+            Some(5_000),
+            "chord:Minor",
+            EngagementKind::Rehearsed,
+            Some("scale:Dorian".into()),
+            None,
+        );
+        assert_eq!(
+            history.related_transition_count("scale:Dorian", "chord:Minor"),
             1
+        );
+    }
+
+    #[test]
+    fn staging_only_and_mixed_paths_do_not_claim_practiced_transitions() {
+        let mut history = PracticeHistory::default();
+        history.record(
+            Some(1),
+            "chord:Major 7",
+            EngagementKind::Staged,
+            None,
+            Some(999),
+        );
+        history.record(
+            Some(2),
+            "arpeggio:Major 7",
+            EngagementKind::Staged,
+            Some("chord:Major 7".into()),
+            None,
+        );
+        assert!(history.transitions().is_empty());
+        assert_eq!(history.total_practiced_ms("chord:Major 7"), 0);
+        assert_eq!(history.engagement_count("chord:Major 7"), 1);
+        history.record(
+            Some(3),
+            "chord:Major 7",
+            EngagementKind::Rehearsed,
+            None,
+            None,
+        );
+        history.record(
+            Some(4),
+            "scale:Major",
+            EngagementKind::Previewed,
+            None,
+            None,
+        );
+        history.record(
+            Some(5),
+            "arpeggio:Major 7",
+            EngagementKind::Rehearsed,
+            None,
+            None,
+        );
+        assert!(
+            history.transitions().is_empty(),
+            "an intervening exploration is not a practice move"
+        );
+        history.record(
+            Some(0),
+            "chord:Major 7",
+            EngagementKind::Completed,
+            None,
+            Some(500),
+        );
+        assert_eq!(
+            history.traversals("arpeggio:Major 7", "chord:Major 7"),
+            (1, Some(0)),
+            "a genuine epoch timestamp stays dated"
+        );
+        let back: PracticeHistory =
+            serde_json::from_str(&serde_json::to_string(&history).unwrap()).unwrap();
+        assert_eq!(back.recent(back.len()), history.recent(history.len()));
+        assert_eq!(back.transitions(), history.transitions());
+    }
+
+    #[test]
+    fn occurrence_lifecycle_is_not_a_move_but_repeated_material_occurrences_are() {
+        use woodshedding::rehearsal::{Setting, Timing};
+        let mut card = Card {
+            id: CardId(1),
+            label: "Cmaj7".into(),
+            material: Material::Chord {
+                name: "Major 7".into(),
+                root: woodshedding::pitch::PitchClass::new(0),
+            },
+            setting: Setting::default(),
+            touch: Touch::Block,
+            timing: Timing::default(),
+            from: None,
+        };
+        let mut history = PracticeHistory::default();
+        let first = ObservationProvenance::capture(&card).unwrap();
+        history.record_observation(
+            Some(1),
+            "chord:Major 7",
+            EngagementKind::Rehearsed,
+            None,
+            None,
+            Some(first.clone()),
+        );
+        history.record_observation(
+            Some(2),
+            "chord:Major 7",
+            EngagementKind::Completed,
+            None,
+            Some(1_000),
+            Some(first),
+        );
+        assert!(
+            history.transitions().is_empty(),
+            "completion is not a move to another occurrence"
+        );
+        card.id = CardId(2);
+        let second = ObservationProvenance::capture(&card).unwrap();
+        history.record_observation(
+            Some(3),
+            "chord:Major 7",
+            EngagementKind::Rehearsed,
+            None,
+            None,
+            Some(second.clone()),
+        );
+        history.record_observation(
+            Some(4),
+            "chord:Major 7",
+            EngagementKind::Completed,
+            None,
+            Some(1_000),
+            Some(second),
+        );
+        assert_eq!(
+            history.traversals("chord:Major 7", "chord:Major 7"),
+            (1, Some(3)),
+            "a second occurrence of the same formula is a distinct next instruction"
+        );
+        assert_eq!(history.len(), 4, "all raw lifecycle observations remain");
+        assert_eq!(history.total_practiced_ms("chord:Major 7"), 2_000);
+        let back: PracticeHistory =
+            serde_json::from_str(&serde_json::to_string(&history).unwrap()).unwrap();
+        assert_eq!(back.transitions(), history.transitions());
+    }
+
+    #[test]
+    fn equal_local_occurrences_in_different_sets_are_a_real_transition() {
+        use crate::working_sets::WorkingSetId;
+        let mut set = woodshedding::rehearsal::Set::default();
+        set.push(crate::StageState::new().card_from_lens().unwrap());
+        let card = &set.cards[0];
+        let mut history = PracticeHistory::default();
+        for owner in [WorkingSetId(1), WorkingSetId(2)] {
+            history.record_observation(
+                Some(owner.0),
+                "scale:Major",
+                EngagementKind::Completed,
+                None,
+                Some(100),
+                Some(ObservationProvenance::capture_in_set(card, owner).unwrap()),
+            );
+        }
+        assert_eq!(history.transitions().len(), 1);
+        assert_eq!(history.transitions()[0].traversal_count, 1);
+        let mut legacy = serde_json::to_value(
+            ObservationProvenance::capture_in_set(card, WorkingSetId(1)).unwrap(),
+        )
+        .unwrap();
+        legacy.as_object_mut().unwrap().remove("working_set_id");
+        let legacy: ObservationProvenance = serde_json::from_value(legacy).unwrap();
+        assert_eq!(legacy.working_set_id, None);
+        let mut same_owner = PracticeHistory::default();
+        for _ in 0..2 {
+            same_owner.record_observation(
+                None,
+                "scale:Major",
+                EngagementKind::Completed,
+                None,
+                None,
+                Some(legacy.clone()),
+            );
+        }
+        assert!(same_owner.transitions().is_empty());
+    }
+
+    #[test]
+    fn event_time_occurrences_and_instruction_snapshots_survive_edits_and_reopen() {
+        use woodshedding::rehearsal::{ArpeggioDirection, Setting, Timing};
+        let mut card = Card {
+            id: CardId(1),
+            label: "Cmaj7".into(),
+            material: Material::Chord {
+                name: "Major 7".into(),
+                root: woodshedding::pitch::PitchClass::new(0),
+            },
+            setting: Setting::default(),
+            touch: Touch::Block,
+            timing: Timing::default(),
+            from: None,
+        };
+        let mut history = PracticeHistory::default();
+        let mut first = ObservationProvenance::capture(&card).unwrap();
+        first.run_id = Some("run-a".into());
+        first.presented_midi = Some(vec![60, 64, 67, 71]);
+        history.record_observation(
+            Some(1),
+            "chord:Major 7",
+            EngagementKind::Rehearsed,
+            None,
+            None,
+            Some(first.clone()),
+        );
+        card.id = CardId(2);
+        card.touch = Touch::Arpeggiate {
+            direction: ArpeggioDirection::Down,
+            inversion: 0,
+        };
+        let second = ObservationProvenance::capture(&card).unwrap();
+        history.record_observation(
+            Some(2),
+            "arpeggio:Major 7",
+            EngagementKind::Completed,
+            None,
+            Some(400),
+            Some(second.clone()),
+        );
+        card.label = "edited after observation".into();
+        let back: PracticeHistory =
+            serde_json::from_str(&serde_json::to_string(&history).unwrap()).unwrap();
+        let recent = back.recent(2);
+        assert_eq!(recent[0].provenance.as_ref(), Some(&second));
+        assert_eq!(recent[1].provenance.as_ref(), Some(&first));
+        assert_eq!(
+            recent[1].provenance.as_ref().unwrap().card_snapshot["label"],
+            "Cmaj7"
+        );
+        assert_eq!(
+            recent[1].provenance.as_ref().unwrap().presented_midi,
+            Some(vec![60, 64, 67, 71])
         );
     }
 
@@ -532,7 +854,7 @@ mod tests {
         history.record(
             Some(2),
             "chord:Minor 7",
-            EngagementKind::Staged,
+            EngagementKind::Rehearsed,
             Some("scale:Dorian".into()),
             None,
         );
@@ -602,10 +924,21 @@ mod tests {
         let history: PracticeHistory = serde_json::from_str(flat).unwrap();
 
         assert_eq!(history.len(), 2, "both engagements replayed");
+        assert!(
+            history
+                .recent(2)
+                .iter()
+                .all(|event| event.provenance.is_none()),
+            "legacy observations do not invent current occurrence provenance"
+        );
+        assert!(
+            history.transitions().is_empty(),
+            "staging cannot become practice through migration"
+        );
         assert_eq!(
             history.related_transition_count("scale:Major", "chord:Minor 7"),
-            1,
-            "the traversal the flat log recorded survives the migration"
+            0,
+            "historical staging remains interest after migration"
         );
         // The undated one stays unknown rather than becoming 1970.
         assert_eq!(history.last_seen_ms("scale:Major"), None);

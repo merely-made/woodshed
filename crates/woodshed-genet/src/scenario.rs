@@ -266,7 +266,7 @@ impl Snapshot<'_, '_> {
         use layout_dom_api::LayoutDom;
         let dom = self.ctx.runner.dom();
         let dom = dom.borrow();
-        dom.all_with_class(dom.document(), "set-graph-node-card")
+        dom.all_with_class(dom.document(), "set-graph-selected-card")
             .len()
     }
 
@@ -290,6 +290,7 @@ impl Snapshot<'_, '_> {
     fn snapshot(&self) -> ProbeSnapshot {
         let ui = self.ctx.runner.state();
         let observed = Observed::read(ui);
+        let overview = woodshed_views::stage::overview_snapshot(ui);
         let stage_snapshot = set_graph_snapshot(ui);
         let stage_swatch =
             set_graph_swatch_from_snapshot(&stage_snapshot, ui, ui.set_tray_expanded);
@@ -340,8 +341,283 @@ impl Snapshot<'_, '_> {
             .and_then(|id| ui.set.card(id))
             .map(|card| card.label.clone())
             .unwrap_or_default();
+        let reading = ui.relationship_reading().ok().flatten();
         let mut snap = ProbeSnapshot::default()
+            .with_field("recipe-valid", reading.is_some().to_string())
+            .with_field("recipe-label", reading.as_ref().map(|r|r.snapshot.recipe.definition.label.as_str()).unwrap_or(""))
+            .with_field("recipe-spacing", reading.as_ref().map(|r|r.snapshot.recipe.definition.arrangement.spacing).unwrap_or(0).to_string())
+            .with_field("recipe-occurrence", reading.as_ref().and_then(|r|r.snapshot.selected_occurrence.as_deref()).unwrap_or(""))
+            .with_field("recipe-relationship", reading.as_ref().and_then(|r|r.snapshot.selected_relationship.as_deref()).unwrap_or(""))
+            .with_field("recipe-owner", reading.as_ref().and_then(|r|r.source.as_ref()).map(|s|s.owner.0).unwrap_or(0).to_string())
+            .with_field(
+                "pattern-sequential",
+                (ui.set.cards.get(ui.set.cursor).is_some_and(|card| {
+                    matches!(
+                        card.material,
+                        woodshedding::rehearsal::Material::ScalePattern { .. }
+                    )
+                }) && ui.preview_voicing().2 > 0.0)
+                    .to_string(),
+            )
+            .with_field(
+                "approach-cards",
+                ui.set
+                    .cards
+                    .iter()
+                    .filter(|card| {
+                        matches!(
+                            card.material,
+                            woodshedding::rehearsal::Material::ChordApproach { .. }
+                        )
+                    })
+                    .count()
+                    .to_string(),
+            )
+            .with_field("retained-sets", ui.retained_sets.entries.len().to_string())
+            .with_field(
+                "working-sets",
+                (ui.working_sets.inactive.len() + 1).to_string(),
+            )
+            .with_field("working-set-id", ui.working_sets.active_id.0.to_string())
+            .with_field(
+                "explorations",
+                (ui.catalog_explorations.inactive.len() + 1).to_string(),
+            )
+            .with_field(
+                "exploration-id",
+                ui.catalog_explorations.active_id.0.to_string(),
+            )
+            .with_field("catalog-root", ui.stage.root_idx.to_string())
+            .with_field("catalog-lens", format!("{:?}", ui.stage.lens))
+            .with_field("catalog-tuning", ui.stage.tuning().name.clone())
+            .with_field("catalog-search", ui.search.text())
+            .with_field(
+                "runner-set-id",
+                ui.rehearsal_owner.map_or(0, |id| id.0).to_string(),
+            )
+            .with_field("runner-cursor", ui.rehearsal_set().cursor.to_string())
+            .with_field(
+                "runner-foreground",
+                ui.is_current_set_rehearsing().to_string(),
+            )
+            .with_field("overview-nodes", overview.nodes.len().to_string())
+            .with_field(
+                "overview-views",
+                overview
+                    .nodes
+                    .iter()
+                    .filter(|node| {
+                        matches!(
+                            node.id,
+                            woodshed_core::session_overview::OverviewNodeId::View(_)
+                        )
+                    })
+                    .count()
+                    .to_string(),
+            )
+            .with_field(
+                "overview-processes",
+                overview
+                    .nodes
+                    .iter()
+                    .filter(|node| {
+                        matches!(
+                            node.id,
+                            woodshed_core::session_overview::OverviewNodeId::Process(_)
+                        )
+                    })
+                    .count()
+                    .to_string(),
+            )
+            .with_field(
+                "overview-active",
+                (ui.workspace.active_panel()
+                    == Some(woodshed_views::workspace::WorkspacePanel::Overview)
+                    && ui.section == woodshed_core::storage::AppSection::Stage)
+                    .to_string(),
+            )
+            .with_field(
+                "working-saved-shared-ids",
+                ui.retained_sets
+                    .entries
+                    .first()
+                    .map_or(0, |saved| {
+                        ui.set
+                            .cards
+                            .iter()
+                            .filter(|card| {
+                                saved
+                                    .set
+                                    .cards
+                                    .iter()
+                                    .any(|original| original.id == card.id)
+                            })
+                            .count()
+                    })
+                    .to_string(),
+            )
+            .with_field(
+                "approach-sequential",
+                (ui.set.cards.get(ui.set.cursor).is_some_and(|card| {
+                    matches!(
+                        card.material,
+                        woodshedding::rehearsal::Material::ChordApproach { .. }
+                    )
+                }) && ui.preview_voicing().2 > 0.0)
+                    .to_string(),
+            )
+            .with_field(
+                "approach-descends",
+                (ui.set.cards.get(ui.set.cursor).is_some_and(|card| {
+                    matches!(
+                        card.material,
+                        woodshedding::rehearsal::Material::ChordApproach { .. }
+                    )
+                }) && ui
+                    .preview_voicing()
+                    .0
+                    .windows(2)
+                    .any(|notes| notes[1] < notes[0]))
+                .to_string(),
+            )
+            .with_field(
+                "context-approaches",
+                stage_snapshot
+                    .nodes
+                    .iter()
+                    .filter(|node| {
+                        node.kind == woodshed_core::stage_context::StageNodeKind::ChordApproach
+                            && !node.foreground
+                    })
+                    .count()
+                    .to_string(),
+            )
+            .with_field(
+                "rehearsal-strings",
+                ui.rehearsal_board_geometry().string_count.to_string(),
+            )
+            .with_field(
+                "context-patterns",
+                stage_snapshot
+                    .nodes
+                    .iter()
+                    .filter(|node| {
+                        node.kind == woodshed_core::stage_context::StageNodeKind::ScalePattern
+                            && !node.foreground
+                    })
+                    .count()
+                    .to_string(),
+            )
+            .with_field(
+                "pattern-cards",
+                ui.set
+                    .cards
+                    .iter()
+                    .filter(|card| {
+                        matches!(
+                            card.material,
+                            woodshedding::rehearsal::Material::ScalePattern { .. }
+                        )
+                    })
+                    .count()
+                    .to_string(),
+            )
+            .with_field(
+                "pattern-descends",
+                ui.set
+                    .cards
+                    .get(ui.set.cursor)
+                    .is_some_and(|card| {
+                        matches!(
+                            card.material,
+                            woodshedding::rehearsal::Material::ScalePattern { .. }
+                        ) && ui
+                            .preview_voicing()
+                            .0
+                            .windows(2)
+                            .any(|notes| notes[1] < notes[0])
+                    })
+                    .to_string(),
+            )
+            .with_field("pattern-repeats", {
+                let pitches = ui.preview_voicing().0;
+                let unique = pitches
+                    .iter()
+                    .map(|pitch| pitch.to_bits())
+                    .collect::<std::collections::BTreeSet<_>>();
+                (ui.set.cards.get(ui.set.cursor).is_some_and(|card| {
+                    matches!(
+                        card.material,
+                        woodshedding::rehearsal::Material::ScalePattern { .. }
+                    )
+                }) && unique.len() < pitches.len())
+                .to_string()
+            })
             .with_field("set-cards", observed.cards.to_string())
+            .with_field("rehearsal-running", ui.rehearsal_running.to_string())
+            .with_field("history-events", ui.practice_history.len().to_string())
+            .with_field(
+                "history-observed",
+                ui.practice_history
+                    .recent(1000)
+                    .iter()
+                    .filter(|event| event.provenance.is_some())
+                    .count()
+                    .to_string(),
+            )
+            .with_field(
+                "arpeggio-cards",
+                ui.set
+                    .cards
+                    .iter()
+                    .filter(|card| {
+                        matches!(
+                            card.touch,
+                            woodshedding::rehearsal::Touch::Arpeggiate { .. }
+                        )
+                    })
+                    .count()
+                    .to_string(),
+            )
+            .with_field(
+                "scale-cards",
+                ui.set
+                    .cards
+                    .iter()
+                    .filter(|card| {
+                        matches!(
+                            card.material,
+                            woodshedding::rehearsal::Material::Scale { .. }
+                        )
+                    })
+                    .count()
+                    .to_string(),
+            )
+            .with_field(
+                "context-arpeggios",
+                stage_snapshot
+                    .nodes
+                    .iter()
+                    .filter(|node| {
+                        node.kind == woodshed_core::stage_context::StageNodeKind::Arpeggio
+                    })
+                    .count()
+                    .to_string(),
+            )
+            .with_field(
+                "arpeggio-shape",
+                ui.set
+                    .cards
+                    .iter()
+                    .find(|card| {
+                        matches!(
+                            card.touch,
+                            woodshedding::rehearsal::Touch::Arpeggiate { .. }
+                        )
+                    })
+                    .and_then(|card| card.setting.voicing_idx)
+                    .map_or_else(|| "none".into(), |index| index.to_string()),
+            )
             .with_field("cursor-id", observed.cursor_id.to_string())
             .with_field("cursor-number", observed.cursor_number.to_string())
             .with_field("cursor-label", cursor_label.clone())
@@ -772,7 +1048,120 @@ impl Automatable for Probe<'_, '_> {
         }
         let mut known = true;
         self.ctx.runner.update(|ui| match label {
+            "tone-relationships-example" => {
+                use woodshed_core::harmony::KeyedCatalogRef;
+                use woodshedding::pitch::PitchClass;
+                ui.stop_rehearsal();
+                ui.set = Default::default();
+                ui.working_sets = Default::default();
+                ui.relationship_reading_json = None;
+                for (label, formula, root) in [("Cmaj7", "chord:Major 7", 0), ("Am7", "chord:Minor 7", 9), ("C Major scale", "scale:Major", 0)] {
+                    let mut card = KeyedCatalogRef { formula_id: formula.into(), root: PitchClass::new(root) }.to_card().unwrap();
+                    card.label = label.into();
+                    ui.set.push(card);
+                }
+                ui.activate_workspace_panel(woodshed_views::workspace::WorkspacePanel::Overview);
+            },
+            "relationship-example" => {
+                use woodshed_core::harmony::KeyedCatalogRef;
+                use woodshedding::pitch::PitchClass;
+                ui.stop_rehearsal();
+                ui.set = Default::default();
+                ui.working_sets = Default::default();
+                ui.relationship_reading_json = None;
+                for (label, formula, root) in [("C Major", "Major", 0),("C Major again", "Major",0),("A Minor","Minor",9)] {
+                    let mut card = KeyedCatalogRef {formula_id:format!("chord:{formula}"),root:PitchClass::new(root)}.to_card().unwrap();
+                    card.label=label.into();
+                    ui.set.push(card);
+                }
+                ui.activate_workspace_panel(woodshed_views::workspace::WorkspacePanel::Overview);
+            },
             "stage-current" => ui.stage_current(None),
+            "connected-practice-example" | "connected-scale-setup-example" => {
+                use woodshedding::rehearsal::{Hold, Set, Timing};
+                ui.set = Set::default();
+                ui.practice_history = Default::default();
+                ui.stage.set_lens(Lens::Chords);
+                for (root, name) in [(3, "Major 7"), (0, "Minor 7")] {
+                    ui.stage.set_root(root);
+                    ui.root_dd.selected = root;
+                    let index = ui
+                        .stage
+                        .chords()
+                        .iter()
+                        .position(|formula| formula.name == name)
+                        .expect("fixture chord exists");
+                    ui.stage.select_chord(index);
+                    ui.stage_current(None);
+                }
+                ui.set.cursor = 0;
+                ui.step_card_shape(1);
+                for card in &mut ui.set.cards {
+                    card.timing = Timing {
+                        bpm: Some(120.0),
+                        hold: Hold::Seconds(2.0),
+                    };
+                }
+                if label == "connected-scale-setup-example" {
+                    for card in &mut ui.set.cards {
+                        card.setting.instrument = "Ukulele".into();
+                        card.setting.tuning = Some("Standard (high-G)".into());
+                        card.setting.capo = Some(2);
+                        card.setting.fret_window =
+                            Some(woodshedding::rehearsal::FretWindow { start: 2, span: 4 });
+                    }
+                    ui.step_card_shape(1);
+                }
+                ui.set_graph_card_expanded = true;
+                ui.set_graph_reading(woodshed_core::settings::StageGraphReading::CircleOfFifths);
+            },
+            "chord-approach-example" | "mere-example" => {
+                use woodshedding::rehearsal::{FretWindow, Hold, Set, Timing};
+                ui.stop_rehearsal();
+                ui.set = Set::default();
+                ui.practice_history = Default::default();
+                ui.stage.set_lens(Lens::Chords);
+                for (root, name) in [(0, "Minor 7"), (3, "Major 7")] {
+                    ui.stage.set_root(root);
+                    ui.root_dd.selected = root;
+                    let index = ui
+                        .stage
+                        .chords()
+                        .iter()
+                        .position(|formula| formula.name == name)
+                        .expect("fixture chord exists");
+                    ui.stage.select_chord(index);
+                    ui.stage_current(None);
+                }
+                ui.set.cards[0].setting.fret_window = Some(FretWindow { start: 2, span: 6 });
+                ui.set.cursor = 0;
+                ui.step_card_shape(1);
+                let target = &mut ui.set.cards[1];
+                target.setting.instrument = "Ukulele".into();
+                target.setting.tuning = Some("Standard (high-G)".into());
+                target.setting.capo = Some(2);
+                target.setting.fret_window = Some(FretWindow { start: 2, span: 12 });
+                ui.set.cursor = 1;
+                ui.step_card_shape(1);
+                for card in &mut ui.set.cards {
+                    card.timing = Timing {
+                        bpm: None,
+                        hold: Hold::Bars(1),
+                    };
+                }
+                ui.transport.bpm = 80.0;
+                ui.set.cursor = 0;
+                ui.set_graph_card_expanded = true;
+                ui.set_graph_reading(woodshed_core::settings::StageGraphReading::CircleOfFifths);
+                if label == "mere-example" {
+                    ui.retained_sets = Default::default();
+                    ui.working_sets = Default::default();
+                    ui.catalog_explorations = Default::default();
+                    for card in &mut ui.set.cards {
+                        card.timing.hold = Hold::Manual;
+                    }
+                }
+            },
             "shape-comparison-example" => {
                 ui.stage.set_root(3);
                 ui.root_dd.selected = 3;

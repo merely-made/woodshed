@@ -136,6 +136,7 @@ fn boot_state(
     let mut shared = shared.borrow_mut();
     let backend = CpalBackend::new();
     let mut ui = UiState::new();
+    ui.event_clock = Some(drive::wall_time_ms);
     let (size_w, size_h) = window.inner_size();
     let scale = window.scale_factor() as f32;
     ui.set_viewport_width(size_w as f32 / scale);

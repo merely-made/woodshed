@@ -261,6 +261,7 @@ pub struct Shared {
     pub last_arp_step: Option<std::time::Instant>,
     /// Last rehearsal dwell-advance instant.
     pub last_rehearsal_step: Option<std::time::Instant>,
+    pub last_rehearsal_instruction: Option<String>,
     /// The song last pushed through the backend seam (push on change).
     pub last_song: woodshed_core::song::SongDoc,
 
@@ -268,6 +269,8 @@ pub struct Shared {
     /// only when the model behind it actually moved.
     pub neighborhood_sig: u64,
     pub set_graph_sig: u64,
+    pub overview_sig: u64,
+    pub relationship_sig: u64,
     pub fretboard_sig: u64,
     pub rehearsal_fretboard_sig: u64,
 
@@ -308,9 +311,12 @@ impl Shared {
             text_scale: "Normal".into(),
             last_arp_step: None,
             last_rehearsal_step: None,
+            last_rehearsal_instruction: None,
             last_song: woodshed_core::song::SongDoc::default(),
             neighborhood_sig: 0,
             set_graph_sig: 0,
+            overview_sig: 0,
+            relationship_sig: 0,
             fretboard_sig: 0,
             rehearsal_fretboard_sig: 0,
             events: Vec::new(),

@@ -33,11 +33,8 @@ use sceno::{
     SourceRef, Transform2, Vec2,
 };
 use scenotime::{RelationId, Revision, SceneEpoch, SceneSnapshot};
-use woodshed_graph::{
-    MaterialRelation, RelationAuthority, RelationKind, chord_id, exercise_id, relations_between,
-    scale_id,
-};
-use woodshedding::rehearsal::{CardId, Material, Set};
+use woodshed_graph::{MaterialRelation, RelationAuthority, RelationKind, relations_between};
+use woodshedding::rehearsal::{Card, CardId, Material, Set};
 
 use crate::arrangement::{GraphArrangement, arrange_graph};
 use crate::harmony::KeyedCatalogRef;
@@ -66,6 +63,8 @@ pub struct StageSceneOptions {
     /// Footprint stamped on each card item. The contract deleted `measure`,
     /// so the host's measured extent belongs here.
     pub card_size: Size2,
+    /// The owning working Set qualifies otherwise equal local Card identities.
+    pub owner_scope: Option<crate::working_sets::WorkingSetId>,
     /// Gap between card centres along the lane.
     pub spacing: f32,
     /// Per-occurrence practice recency in `0..=1`, emitted on
@@ -91,6 +90,7 @@ pub struct StageSceneOptions {
 impl Default for StageSceneOptions {
     fn default() -> Self {
         Self {
+            owner_scope: None,
             card_size: Size2::new(160.0, 96.0),
             spacing: 220.0,
             recency: BTreeMap::new(),
@@ -312,6 +312,9 @@ impl StageGraphSnapshot {
         if key.kind.starts_with("woodshed:keyed-")
             || key.kind.starts_with("woodshed:tonnetz-")
             || key.kind == "woodshed:circle-of-fifths"
+            || key.kind == "woodshed:chord-arpeggio"
+            || key.kind == "woodshed:scale-degree-pattern"
+            || key.kind == "woodshed:chord-tone-approach"
         {
             let detail = self.scene_relation_detail(reference)?;
             return Some(StageRelationDetail {
@@ -406,6 +409,12 @@ impl StageGraphSnapshot {
                 format!("shares tones: {names}")
             },
             "woodshed:keyed-diatonic" => "diatonic in".into(),
+            "woodshed:chord-arpeggio" => "Same rooted tones, played sequentially".into(),
+            "woodshed:scale-degree-pattern" => "Same scale, played as diatonic degree pairs".into(),
+            "woodshed:chord-tone-approach" => {
+                "Approaches this chord's tones chromatically; transient approach notes are included"
+                    .into()
+            },
             "woodshed:circle-of-fifths" => "roots a fifth apart".into(),
             "woodshed:tonnetz-parallel" => "Parallel: keep root and fifth; change the third".into(),
             "woodshed:tonnetz-relative" => {
@@ -444,38 +453,23 @@ impl StageGraphSnapshot {
     /// highest. Returns empty for a pair with no catalog identity on either
     /// side (a hand-drawn Path relates to nothing yet).
     pub fn reasons(&self, from: CardId, to: CardId, set: &Set) -> Vec<MaterialRelation> {
-        let material = |id: CardId| set.cards.iter().find(|c| c.id == id).map(|c| &c.material);
-        match (
-            material(from).and_then(catalog_id),
-            material(to).and_then(catalog_id),
-        ) {
+        let subject = |id: CardId| {
+            set.cards
+                .iter()
+                .find(|card| card.id == id)
+                .and_then(crate::history::catalog_id_for_card)
+        };
+        match (subject(from), subject(to)) {
             (Some(a), Some(b)) => relations_between(&a, &b),
             _ => Vec::new(),
         }
     }
 }
 
-/// The catalog identity a material points at, or `None` when it carries its
-/// own content.
-///
-/// A hand-drawn [`Material::Path`] names no catalog formula, so it has no
-/// catalog relations. That is a real property of the material rather than a
-/// gap: the arranged notes *are* the content.
-fn catalog_id(material: &Material) -> Option<String> {
-    match material {
-        Material::Scale { name, .. } => Some(scale_id(name)),
-        Material::Chord { name, .. } => Some(chord_id(name)),
-        Material::Riff { name } => Some(exercise_id(name)),
-        Material::Path { .. } => None,
-    }
-}
-
-/// The interned source id for a staged card.
-///
-/// Catalog materials share a source across occurrences, which is the point.
-/// A Path carries its own content, so its source is its occurrence.
-fn source_id(material: &Material, card: CardId) -> String {
-    catalog_id(material).unwrap_or_else(|| format!("path:{}", card.0))
+/// Catalog identity includes articulation where it names a sequential form;
+/// authored paths keep their occurrence identity as the source.
+fn source_id(card: &Card) -> String {
+    crate::history::catalog_id_for_card(card).unwrap_or_else(|| format!("path:{}", card.id.0))
 }
 
 /// A stable wire slug per relation family.
@@ -543,15 +537,14 @@ pub fn stage_scene(set: &Set, options: &StageSceneOptions) -> StageGraphSnapshot
         let Some(card) = set.cards.iter().find(|c| c.id == node.id) else {
             continue;
         };
-        let source =
-            scene.intern_source(SourceRef::new(ADAPTER, source_id(&card.material, card.id)));
+        let source = scene.intern_source(SourceRef::new(ADAPTER, source_id(card)));
         let channels = options
             .recency
             .get(&card.id)
             .map(|heat| vec![(RECENCY_CHANNEL.to_string(), *heat)])
             .unwrap_or_default();
 
-        let keyed = KeyedCatalogRef::from_material(&card.material);
+        let keyed = KeyedCatalogRef::from_card(card);
         let position = if options
             .context
             .as_ref()
@@ -642,14 +635,14 @@ pub fn stage_scene(set: &Set, options: &StageSceneOptions) -> StageGraphSnapshot
         let Some(from_material) = set.cards.iter().find(|c| c.id == *from_card) else {
             continue;
         };
-        let Some(from_id) = catalog_id(&from_material.material) else {
+        let Some(from_id) = crate::history::catalog_id_for_card(from_material) else {
             continue;
         };
         for to_card in cards.iter().skip(i + 1) {
             let Some(to_material) = set.cards.iter().find(|c| c.id == *to_card) else {
                 continue;
             };
-            let Some(to_id) = catalog_id(&to_material.material) else {
+            let Some(to_id) = crate::history::catalog_id_for_card(to_material) else {
                 continue;
             };
             let (Some(from), Some(to)) = (instance(*from_card), instance(*to_card)) else {
@@ -684,14 +677,14 @@ pub fn stage_scene(set: &Set, options: &StageSceneOptions) -> StageGraphSnapshot
             .and_then(|focus| match focus {
                 StageNodeId::Card(card) => set
                     .card(*card)
-                    .and_then(|card| KeyedCatalogRef::from_material(&card.material))
+                    .and_then(KeyedCatalogRef::from_card)
                     .map(|keyed| (StageNodeId::Card(*card), keyed)),
                 StageNodeId::Catalog(keyed) => Some((focus.clone(), keyed.clone())),
             })
             .or_else(|| {
                 set.cursor_id().and_then(|card| {
                     set.card(card)
-                        .and_then(|card| KeyedCatalogRef::from_material(&card.material))
+                        .and_then(KeyedCatalogRef::from_card)
                         .map(|keyed| (StageNodeId::Card(card), keyed))
                 })
             })
@@ -711,12 +704,87 @@ pub fn stage_scene(set: &Set, options: &StageSceneOptions) -> StageGraphSnapshot
                 StageGraphReading::PitchMotion => crate::pitch_motion_reading::context,
                 _ => circle_of_fifths_context,
             };
-            let context = query(
+            let mut context = query(
                 &focus_keyed,
                 context_options.node_limit,
                 &omitted,
                 &context_options.retained,
             );
+            crate::stage_context::disclose_chord_arpeggio(
+                &mut context,
+                &focus_keyed,
+                context_options.node_limit,
+                &omitted,
+                &context_options.retained,
+            );
+            crate::stage_context::disclose_scale_patterns(
+                &mut context,
+                &focus_keyed,
+                context_options.node_limit,
+                &omitted,
+                &context_options.retained,
+            );
+            crate::stage_context::disclose_chord_approaches(
+                &mut context,
+                &focus_keyed,
+                context_options.node_limit,
+                &omitted,
+                &context_options.retained,
+            );
+            // Disclosed sequential forms survive focus changes just like other
+            // retained catalog subjects; their chord-relative positions are stable.
+            for retained in &context_options.retained {
+                if let Some(Material::ChordApproach { name, root, .. }) = retained.to_material() {
+                    let target = KeyedCatalogRef {
+                        formula_id: woodshed_graph::chord_id(&name),
+                        root,
+                    };
+                    if target != focus_keyed {
+                        crate::stage_context::disclose_chord_approaches(
+                            &mut context,
+                            &target,
+                            context_options.node_limit,
+                            &omitted,
+                            &context_options.retained,
+                        );
+                    }
+                }
+                if let Some(pattern) = retained
+                    .to_material()
+                    .filter(|material| matches!(material, Material::ScalePattern { .. }))
+                {
+                    if let Material::ScalePattern { name, root, .. } = pattern {
+                        let scale = KeyedCatalogRef {
+                            formula_id: woodshed_graph::scale_id(&name),
+                            root,
+                        };
+                        if scale != focus_keyed {
+                            crate::stage_context::disclose_scale_patterns(
+                                &mut context,
+                                &scale,
+                                context_options.node_limit,
+                                &omitted,
+                                &context_options.retained,
+                            );
+                        }
+                    }
+                }
+                if let Some(name) = retained.formula_id.strip_prefix("arpeggio:") {
+                    let chord = KeyedCatalogRef {
+                        formula_id: woodshed_graph::chord_id(name),
+                        root: retained.root,
+                    };
+                    if chord != focus_keyed {
+                        crate::stage_context::disclose_chord_arpeggio(
+                            &mut context,
+                            &chord,
+                            context_options.node_limit,
+                            &omitted,
+                            &context_options.retained,
+                        );
+                    }
+                }
+            }
             let mut context_instances = BTreeMap::new();
             for node in &context.nodes {
                 let Some(point) = context_position(
@@ -789,7 +857,11 @@ pub fn stage_scene(set: &Set, options: &StageSceneOptions) -> StageGraphSnapshot
         let mut seen = BTreeSet::new();
         for route in &relations {
             if let Some(kind) = route.kind.as_deref().filter(|kind| {
-                kind.starts_with("woodshed:keyed-") || *kind == "woodshed:circle-of-fifths"
+                kind.starts_with("woodshed:keyed-")
+                    || *kind == "woodshed:circle-of-fifths"
+                    || *kind == "woodshed:chord-arpeggio"
+                    || *kind == "woodshed:scale-degree-pattern"
+                    || *kind == "woodshed:chord-tone-approach"
             }) {
                 if let (Some(from), Some(to)) = (
                     nodes.get(route.from.0 as usize),
@@ -819,6 +891,124 @@ pub fn stage_scene(set: &Set, options: &StageSceneOptions) -> StageGraphSnapshot
                 else {
                     continue;
                 };
+                let sequential_pair = if left.root == right.root {
+                    match (
+                        left.formula_id.strip_prefix("chord:"),
+                        left.formula_id.strip_prefix("arpeggio:"),
+                        right.formula_id.strip_prefix("chord:"),
+                        right.formula_id.strip_prefix("arpeggio:"),
+                    ) {
+                        (Some(chord), _, _, Some(arp)) if chord == arp => {
+                            Some((left_index, right_index))
+                        },
+                        (_, Some(arp), Some(chord), _) if chord == arp => {
+                            Some((right_index, left_index))
+                        },
+                        _ => None,
+                    }
+                } else {
+                    None
+                };
+                if let Some((chord, arp)) = sequential_pair {
+                    let kind = "woodshed:chord-arpeggio";
+                    if seen.insert((nodes[chord].id.clone(), nodes[arp].id.clone(), kind.into())) {
+                        relations.push(RoutedRelation {
+                            from: InstanceId(chord as u32),
+                            to: InstanceId(arp as u32),
+                            space: Scene::WORLD,
+                            points: vec![
+                                item_centre(&scene, InstanceId(chord as u32)),
+                                item_centre(&scene, InstanceId(arp as u32)),
+                            ],
+                            kind: Some(kind.into()),
+                            weight: Some(1.0),
+                        });
+                    }
+                }
+                let degree_pair = if left.root == right.root {
+                    let underlying = |subject: &KeyedCatalogRef| match subject.to_material() {
+                        Some(Material::ScalePattern { name, .. }) => Some(name),
+                        _ => None,
+                    };
+                    match (
+                        left.formula_id.strip_prefix("scale:"),
+                        underlying(left),
+                        right.formula_id.strip_prefix("scale:"),
+                        underlying(right),
+                    ) {
+                        (Some(scale), _, _, Some(pattern_scale)) if scale == pattern_scale => {
+                            Some((left_index, right_index))
+                        },
+                        (_, Some(pattern_scale), Some(scale), _) if scale == pattern_scale => {
+                            Some((right_index, left_index))
+                        },
+                        _ => None,
+                    }
+                } else {
+                    None
+                };
+                if let Some((scale, pattern)) = degree_pair {
+                    let kind = "woodshed:scale-degree-pattern";
+                    if seen.insert((
+                        nodes[scale].id.clone(),
+                        nodes[pattern].id.clone(),
+                        kind.into(),
+                    )) {
+                        relations.push(RoutedRelation {
+                            from: InstanceId(scale as u32),
+                            to: InstanceId(pattern as u32),
+                            space: Scene::WORLD,
+                            points: vec![
+                                item_centre(&scene, InstanceId(scale as u32)),
+                                item_centre(&scene, InstanceId(pattern as u32)),
+                            ],
+                            kind: Some(kind.into()),
+                            weight: Some(1.0),
+                        });
+                    }
+                }
+                let approach_pair = if left.root == right.root {
+                    let underlying = |subject: &KeyedCatalogRef| match subject.to_material() {
+                        Some(Material::ChordApproach { name, .. }) => Some(name),
+                        _ => None,
+                    };
+                    match (
+                        left.formula_id.strip_prefix("chord:"),
+                        underlying(left),
+                        right.formula_id.strip_prefix("chord:"),
+                        underlying(right),
+                    ) {
+                        (Some(chord), _, _, Some(target)) if chord == target => {
+                            Some((left_index, right_index))
+                        },
+                        (_, Some(target), Some(chord), _) if chord == target => {
+                            Some((right_index, left_index))
+                        },
+                        _ => None,
+                    }
+                } else {
+                    None
+                };
+                if let Some((target, approach)) = approach_pair {
+                    let kind = "woodshed:chord-tone-approach";
+                    if seen.insert((
+                        nodes[target].id.clone(),
+                        nodes[approach].id.clone(),
+                        kind.into(),
+                    )) {
+                        relations.push(RoutedRelation {
+                            from: InstanceId(target as u32),
+                            to: InstanceId(approach as u32),
+                            space: Scene::WORLD,
+                            points: vec![
+                                item_centre(&scene, InstanceId(target as u32)),
+                                item_centre(&scene, InstanceId(approach as u32)),
+                            ],
+                            kind: Some(kind.into()),
+                            weight: Some(1.0),
+                        });
+                    }
+                }
                 let shared = left_set.intersection(&right_set).count();
                 let from = nodes[left_index].id.clone();
                 let to = nodes[right_index].id.clone();
@@ -970,7 +1160,10 @@ pub fn stage_scene(set: &Set, options: &StageSceneOptions) -> StageGraphSnapshot
         collidable: false,
     });
     scene.bounds = floor_bounds;
-    let epoch = dense_epoch(&scene, &cards);
+    let mut epoch = dense_epoch(&scene, &cards);
+    if let Some(owner) = options.owner_scope {
+        epoch.0 = epoch.0.wrapping_mul(0x100_0000_01b3) ^ owner.0;
+    }
     let snapshot = SceneSnapshot::from_dense(epoch, Revision(0), scene)
         .unwrap_or_else(|error| panic!("Woodshed produced an invalid Stage scene: {error:?}"));
 
@@ -982,7 +1175,13 @@ pub fn stage_scene(set: &Set, options: &StageSceneOptions) -> StageGraphSnapshot
 }
 
 fn keyed_kind(keyed: &KeyedCatalogRef) -> StageNodeKind {
-    if keyed.formula_id.starts_with("scale:") {
+    if keyed.formula_id.starts_with("chord-approach:") {
+        StageNodeKind::ChordApproach
+    } else if keyed.formula_id.starts_with("scale-pattern:") {
+        StageNodeKind::ScalePattern
+    } else if keyed.formula_id.starts_with("arpeggio:") {
+        StageNodeKind::Arpeggio
+    } else if keyed.formula_id.starts_with("scale:") {
         StageNodeKind::Scale
     } else {
         StageNodeKind::Chord
@@ -1015,6 +1214,50 @@ fn context_position(
     keyed: &KeyedCatalogRef,
     pitch_motion_anchor: Option<&KeyedCatalogRef>,
 ) -> Option<Vec2> {
+    if let Some(Material::ChordApproach {
+        name,
+        root,
+        direction,
+    }) = keyed.to_material()
+    {
+        let target = KeyedCatalogRef {
+            formula_id: woodshed_graph::chord_id(&name),
+            root,
+        };
+        let offset = match direction {
+            woodshedding::rehearsal::ApproachDirection::Below => Vec2::new(-320.0, -300.0),
+            woodshedding::rehearsal::ApproachDirection::Above => Vec2::new(320.0, -420.0),
+        };
+        return context_position(reading, &target, pitch_motion_anchor)
+            .map(|point| Vec2::new(point.x + offset.x, point.y + offset.y));
+    }
+    if let Some(Material::ScalePattern {
+        name,
+        root,
+        pattern,
+    }) = keyed.to_material()
+    {
+        let scale = KeyedCatalogRef {
+            formula_id: woodshed_graph::scale_id(&name),
+            root,
+        };
+        let offset = match pattern {
+            woodshedding::rehearsal::ScalePattern::Thirds => 180.0,
+            woodshedding::rehearsal::ScalePattern::Fourths => -180.0,
+        };
+        return context_position(reading, &scale, pitch_motion_anchor)
+            .map(|point| Vec2::new(point.x + offset, point.y - 240.0));
+    }
+    // A sequential realization occupies its chord's musical slot, with a
+    // representation offset so the two identities remain individually selectable.
+    if let Some(name) = keyed.formula_id.strip_prefix("arpeggio:") {
+        let chord = KeyedCatalogRef {
+            formula_id: woodshed_graph::chord_id(name),
+            root: keyed.root,
+        };
+        return context_position(reading, &chord, pitch_motion_anchor)
+            .map(|point| Vec2::new(point.x + 36.0, point.y + 36.0));
+    }
     match reading {
         StageGraphReading::Tonnetz => crate::tonnetz::position(keyed).map(|(x, y)| Vec2::new(x, y)),
         StageGraphReading::CircleOfFifths => Some(circle_context_position(keyed)),
@@ -1141,6 +1384,89 @@ mod tests {
     use woodshedding::pitch::PitchClass;
     use woodshedding::rehearsal::{Card, LoopMode, Setting, Timing, Touch};
 
+    #[test]
+    fn equal_local_sets_have_distinct_owner_qualified_scene_epochs() {
+        let mut set = Set::default();
+        set.push(crate::StageState::new().card_from_lens().unwrap());
+        let first = stage_scene(
+            &set,
+            &StageSceneOptions {
+                owner_scope: Some(crate::working_sets::WorkingSetId(1)),
+                ..Default::default()
+            },
+        );
+        let second = stage_scene(
+            &set,
+            &StageSceneOptions {
+                owner_scope: Some(crate::working_sets::WorkingSetId(2)),
+                ..Default::default()
+            },
+        );
+        assert_eq!(
+            first.nodes.iter().map(|node| &node.id).collect::<Vec<_>>(),
+            second.nodes.iter().map(|node| &node.id).collect::<Vec<_>>()
+        );
+        assert_ne!(first.snapshot.epoch, second.snapshot.epoch);
+    }
+
+    #[test]
+    fn chromatic_approach_satellites_are_distinct_and_staged_targets_keep_typed_relations() {
+        let base = KeyedCatalogRef {
+            formula_id: "chord:Major 7".into(),
+            root: PitchClass::new(0),
+        };
+        let mut set = Set::default();
+        set.push(base.to_card().unwrap());
+        let target = set.cards[0].id;
+        let options = StageSceneOptions {
+            context: Some(StageContextOptions {
+                reading: StageGraphReading::CircleOfFifths,
+                node_limit: 24,
+                focus: Some(StageNodeId::Card(target)),
+                ..Default::default()
+            }),
+            ..Default::default()
+        };
+        let snapshot = stage_scene(&set, &options);
+        let origin = context_position(StageGraphReading::CircleOfFifths, &base, None).unwrap();
+        let recipes = snapshot
+            .nodes
+            .iter()
+            .enumerate()
+            .filter(|(_, node)| node.kind == StageNodeKind::ChordApproach)
+            .collect::<Vec<_>>();
+        assert_eq!(recipes.len(), 2);
+        for (index, node) in recipes {
+            let item = snapshot.snapshot.tables.items[index].as_ref().unwrap();
+            assert!((item.transform.translate.x - origin.x).abs() >= 320.0);
+            let direction = match node.material.as_ref().unwrap() {
+                Material::ChordApproach { direction, .. } => direction,
+                _ => unreachable!(),
+            };
+            let expected_y = match direction {
+                woodshedding::rehearsal::ApproachDirection::Below => -300.0,
+                woodshedding::rehearsal::ApproachDirection::Above => -420.0,
+            };
+            assert_eq!(item.transform.translate.y - origin.y, expected_y);
+            assert!(
+                snapshot
+                    .relations()
+                    .iter()
+                    .any(|(_, route)| route.from == InstanceId(0)
+                        && route.to == InstanceId(index as u32)
+                        && route.kind.as_deref() == Some("woodshed:chord-tone-approach"))
+            );
+            set.push(node.keyed.as_ref().unwrap().to_card().unwrap());
+        }
+        let staged = stage_scene(&set, &options);
+        for recipe in &set.cards[1..] {
+            assert!(staged.relations().iter().any(|(_, route)| route.from
+                == staged.instance_of(target).unwrap()
+                && route.to == staged.instance_of(recipe.id).unwrap()
+                && route.kind.as_deref() == Some("woodshed:chord-tone-approach")));
+        }
+    }
+
     fn card(label: &str, material: Material) -> Card {
         Card {
             id: CardId::UNASSIGNED,
@@ -1150,6 +1476,76 @@ mod tests {
             touch: Touch::default(),
             timing: Timing::default(),
             from: None,
+        }
+    }
+
+    #[test]
+    fn ambient_patterns_have_separate_stable_slots_and_occurrence_relations() {
+        let base = KeyedCatalogRef {
+            formula_id: "scale:Major".into(),
+            root: PitchClass::new(0),
+        };
+        let mut set = Set::default();
+        set.push(card("C Major", base.to_material().unwrap()));
+        let source = set.cards[0].id;
+        let options = StageSceneOptions {
+            context: Some(StageContextOptions {
+                reading: StageGraphReading::CircleOfFifths,
+                node_limit: 24,
+                focus: Some(StageNodeId::Card(source)),
+                ..Default::default()
+            }),
+            ..Default::default()
+        };
+        let snapshot = stage_scene(&set, &options);
+        let base_position =
+            context_position(StageGraphReading::CircleOfFifths, &base, None).unwrap();
+        let patterns = snapshot
+            .nodes
+            .iter()
+            .enumerate()
+            .filter(|(_, node)| node.kind == StageNodeKind::ScalePattern)
+            .collect::<Vec<_>>();
+        assert_eq!(patterns.len(), 2);
+        for (index, node) in patterns {
+            let item = snapshot.snapshot.tables.items[index].as_ref().unwrap();
+            let position = Vec2::new(item.transform.translate.x, item.transform.translate.y);
+            assert!((position.x - base_position.x).abs() >= 140.0);
+            assert!(
+                position.y <= base_position.y - 140.0,
+                "recipe labels need their own row above the source"
+            );
+            assert!(
+                snapshot
+                    .relations()
+                    .iter()
+                    .any(|(_, route)| route.from == InstanceId(0)
+                        && route.to == InstanceId(index as u32)
+                        && route.kind.as_deref() == Some("woodshed:scale-degree-pattern"))
+            );
+            let pattern = node.keyed.as_ref().unwrap().to_card().unwrap();
+            set.push(pattern);
+        }
+        let staged = stage_scene(&set, &options);
+        assert_eq!(
+            staged
+                .nodes
+                .iter()
+                .filter(|node| node.kind == StageNodeKind::ScalePattern && node.foreground)
+                .count(),
+            2
+        );
+        for id in [set.cards[1].id, set.cards[2].id] {
+            let source_instance = staged.instance_of(source).unwrap();
+            let target_instance = staged.instance_of(id).unwrap();
+            assert!(
+                staged
+                    .relations()
+                    .iter()
+                    .any(|(_, route)| route.from == source_instance
+                        && route.to == target_instance
+                        && route.kind.as_deref() == Some("woodshed:scale-degree-pattern"))
+            );
         }
     }
 
@@ -1540,7 +1936,23 @@ mod tests {
                 ..StageSceneOptions::default()
             },
         );
-        assert_eq!(snapshot.nodes.len(), 24);
+        assert_eq!(
+            snapshot
+                .nodes
+                .iter()
+                .filter(|node| node.kind == StageNodeKind::Chord)
+                .count(),
+            24
+        );
+        let arpeggio = snapshot
+            .nodes
+            .iter()
+            .find(|node| node.kind == StageNodeKind::Arpeggio)
+            .expect("the chord also discloses its sequential realization");
+        assert_eq!(
+            arpeggio.keyed.as_ref().unwrap().formula_id,
+            "arpeggio:Major"
+        );
         assert_eq!(snapshot.cards.len(), 1);
         let transformations: Vec<_> = snapshot
             .relations()
@@ -1723,5 +2135,54 @@ mod tests {
                 "card at {x} fell outside the framed bounds"
             );
         }
+    }
+    #[test]
+    fn staged_sequential_forms_keep_distinct_sources_and_occurrence_relations() {
+        let mut set = set_of(&[("Cmaj7", chord("Major 7"))]);
+        let source = set.cards[0].id;
+        let state = crate::StageState::new();
+        let first = state.stage_chord_arpeggio(&mut set, source).unwrap();
+        let second = state.stage_chord_arpeggio(&mut set, source).unwrap();
+        let snapshot = stage_scene(
+            &set,
+            &StageSceneOptions {
+                context: Some(StageContextOptions::default()),
+                ..Default::default()
+            },
+        );
+        let chord_instance = snapshot.instance_of(source).unwrap();
+        for occurrence in [first, second] {
+            let arp_instance = snapshot.instance_of(occurrence).unwrap();
+            assert!(
+                snapshot
+                    .relations()
+                    .iter()
+                    .any(|(_, route)| route.from == chord_instance
+                        && route.to == arp_instance
+                        && route.kind.as_deref() == Some("woodshed:chord-arpeggio"))
+            );
+            assert!(
+                snapshot
+                    .reasons(source, occurrence, &set)
+                    .iter()
+                    .any(|reason| reason.kind == RelationKind::RealizedBy)
+            );
+            assert_eq!(
+                snapshot
+                    .node_of(arp_instance)
+                    .unwrap()
+                    .keyed
+                    .as_ref()
+                    .unwrap()
+                    .formula_id,
+                "arpeggio:Major 7"
+            );
+        }
+        let foreground = stage_scene(&set, &StageSceneOptions::default());
+        assert_eq!(
+            item_source_count(&foreground),
+            2,
+            "chord and arpeggio have distinct catalog sources, repeated arpeggios share one source"
+        );
     }
 }

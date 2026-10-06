@@ -1,0 +1,85 @@
+# Independently edited Sets and explorers with a runner bound to its owner.
+settle 3
+act mere-example
+settle 3
+click .pill Rehearsal
+settle 3
+click .t-btn Run
+settle 3
+assert snap runner-set-id == 1
+assert snap rehearsal-running == true
+click .workspace-panel Mere
+settle 3
+click .overview-duplicate-set Duplicate Set
+settle 3
+assert snap working-sets == 2
+assert snap working-set-id == 2
+assert snap runner-set-id == 1
+assert snap runner-foreground == false
+click .t-btn Remove
+settle 3
+assert snap set-cards == 1
+assert snap rehearsal-strings == 4
+assert snap runner-cursor == 0
+capture 01_other_set_running_owner
+click .workspace-panel Mere
+settle 3
+click .overview-node-title Rehearsal running
+settle 3
+assert snap overview-processes == 1
+capture 02_runner_binding
+click .overview-open Open view
+settle 3
+assert snap working-set-id == 1
+assert snap set-cards == 2
+assert snap runner-foreground == true
+click .t-btn Pause
+settle 3
+assert snap rehearsal-running == false
+click .workspace-panel Mere
+settle 3
+click .overview-new-exploration New exploration
+settle 3
+assert snap explorations == 2
+assert snap exploration-id == 2
+assert snap catalog-root == 0
+assert snap catalog-lens == Scales
+click .workspace-panel Mere
+settle 3
+click .overview-node-title Working Set 1 copy
+settle 3
+click .overview-open Open view
+settle 3
+assert snap working-set-id == 2
+click .workspace-panel Practice
+settle 3
+act stage-current
+settle 3
+assert snap set-cards == 2
+assert snap scale-cards == 1
+capture 03_second_exploration
+click .workspace-panel Mere
+settle 3
+click .overview-node-title Catalog exploration 1
+settle 3
+click .overview-open Open view
+settle 3
+assert snap exploration-id == 1
+assert snap catalog-root == 3
+assert snap catalog-lens == Chords
+assert snap working-set-id == 2
+assert snap set-cards == 2
+capture 04_first_exploration_restored
+click .workspace-panel Mere
+settle 3
+click .overview-node-title Catalog exploration 2
+settle 3
+click .overview-open Open view
+settle 3
+assert snap exploration-id == 2
+assert snap catalog-root == 0
+click .workspace-panel Mere
+settle 3
+assert snap overview-processes == 0
+capture 05_instances_overview
+log Working instances seed complete

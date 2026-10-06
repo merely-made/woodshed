@@ -19,8 +19,15 @@ pub(super) fn screen(ui: &UiState) -> UiChild {
         return Box::new(
             el(
                 "div",
-                el("div", text("The set is empty. Stage material to begin."))
-                    .attr("class", "placeholder"),
+                el(
+                    "div",
+                    (
+                        el("div", text(ui.working_sets.active_name.clone()))
+                            .attr("class", "working-instance-name"),
+                        el("div", text("The set is empty. Stage material to begin.")),
+                    ),
+                )
+                .attr("class", "placeholder"),
             )
             .attr("class", "board"),
         );
@@ -34,24 +41,39 @@ pub(super) fn screen(ui: &UiState) -> UiChild {
         el(
             "div",
             (
+                el("div", text(ui.working_sets.active_name.clone()))
+                    .attr("class", "working-instance-name"),
+                (ui.rehearsal_running && !ui.is_current_set_rehearsing()).then(|| {
+                    el(
+                        "div",
+                        text("Another Set is rehearsing. Run transfers rehearsal to this Set."),
+                    )
+                    .attr("class", "t-readout background-rehearsal-status")
+                }),
                 clickable(
                     el(
                         "div",
-                        text(if ui.rehearsal_running { "Pause" } else { "Run" }),
+                        text(if ui.is_current_set_rehearsing() {
+                            "Pause"
+                        } else {
+                            "Run"
+                        }),
                     )
                     .attr("class", "t-btn"),
                     |ui: &mut UiState, _| {
-                        if !ui.rehearsal_running {
-                            ui.record_rehearsal_cursor();
-                        }
-                        ui.rehearsal_running = !ui.rehearsal_running;
+                        ui.toggle_rehearsal();
                     },
                 ),
                 clickable(
                     el("div", text("Prev")).attr("class", "t-btn"),
                     |ui: &mut UiState, _| {
+                        if ui.is_current_set_rehearsing() {
+                            ui.finish_rehearsal_observation(
+                                woodshed_core::history::EngagementKind::Rehearsed,
+                            );
+                        }
                         step_set(&mut ui.set, -1);
-                        if ui.rehearsal_running {
+                        if ui.is_current_set_rehearsing() {
                             ui.record_rehearsal_cursor();
                         }
                     },
@@ -59,12 +81,16 @@ pub(super) fn screen(ui: &UiState) -> UiChild {
                 clickable(
                     el("div", text("Next")).attr("class", "t-btn"),
                     |ui: &mut UiState, _| {
-                        if ui.rehearsal_running {
+                        if ui.is_current_set_rehearsing() {
                             ui.complete_rehearsal_cursor();
                         }
-                        step_set(&mut ui.set, 1);
-                        if ui.rehearsal_running {
-                            ui.record_rehearsal_cursor();
+                        let advanced = step_set(&mut ui.set, 1);
+                        if ui.is_current_set_rehearsing() {
+                            if advanced {
+                                ui.record_rehearsal_cursor();
+                            } else {
+                                ui.stop_rehearsal();
+                            }
                         }
                     },
                 ),
@@ -95,7 +121,7 @@ pub(super) fn screen(ui: &UiState) -> UiChild {
                 .attr("class", "t-readout"),
             ),
         )
-        .attr("class", "transport"),
+        .attr("class", "transport rehearsal-transport"),
     );
     // The measured filmstrip (redesign P5): every card with its tag,
     // provenance, and touch; played cards dim behind the cursor
@@ -143,7 +169,58 @@ pub(super) fn screen(ui: &UiState) -> UiChild {
         .collect();
     // The same Card editor appears in Stage's Set tray and Rehearsal. Actions
     // mutate the one persisted Set through UiState helpers.
-    let editor = super::set_tray::card_editor(ui);
+    let editor = el("div", super::set_tray::card_editor(ui)).attr("class", "card-details");
+    let scale_status: Option<UiChild> = ui.rehearsal_scale_status().map(|status| match status {
+        Ok(message) => {
+            Box::new(el("div", text(message)).attr("class", "t-readout scale-setup-status"))
+                as UiChild
+        },
+        Err(message) => Box::new(
+            el("div", text(message))
+                .attr("class", "scale-setup-unavailable")
+                .attr("role", "status"),
+        ) as UiChild,
+    });
+    let approach_status: Option<UiChild> =
+        ui.rehearsal_approach_status().map(|status| match status {
+            Ok(message) => {
+                Box::new(el("div", text(message)).attr("class", "t-readout chord-approach-status"))
+                    as UiChild
+            },
+            Err(message) => Box::new(
+                el("div", text(message))
+                    .attr("class", "chord-approach-unavailable")
+                    .attr("role", "status"),
+            ) as UiChild,
+        });
+    if ui
+        .rehearsal_approach_status()
+        .is_some_and(|status| status.is_err())
+    {
+        return Box::new(el(
+            "div",
+            (
+                deck,
+                el("div", films).attr("class", "filmstrip"),
+                editor,
+                approach_status,
+            ),
+        ));
+    }
+    if ui
+        .rehearsal_scale_status()
+        .is_some_and(|status| status.is_err())
+    {
+        return Box::new(el(
+            "div",
+            (
+                deck,
+                el("div", films).attr("class", "filmstrip"),
+                editor,
+                scale_status,
+            ),
+        ));
+    }
 
     // Current card's material on the big board — the same Sprigging paint leaf
     // the Stage board uses. Over it, one clickable label per note: click *marks*
@@ -152,7 +229,7 @@ pub(super) fn screen(ui: &UiState) -> UiChild {
     // silences them), and the board dims whatever the mode excludes. This is the
     // Selection axis of touch, made interactive.
     let card = &ui.set.cards[cursor];
-    let dot_list = ui.stage.dots_for_card(card);
+    let dot_list = ui.current_card_stage().dots_for_card(card);
     let geom = ui.rehearsal_board_geometry();
     let string_count = geom.string_count;
     let (w, h) = geom.size_u32();
@@ -255,6 +332,8 @@ pub(super) fn screen(ui: &UiState) -> UiChild {
             deck,
             el("div", films).attr("class", "filmstrip"),
             editor,
+            scale_status,
+            approach_status,
             el(
                 "div",
                 (

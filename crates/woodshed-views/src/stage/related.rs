@@ -1,10 +1,10 @@
 use cambium::{
-    clickable, el, graph_canvas_swatch_with_drag_and_relations, on_hover, text, HoverEvent,
-    HoverPhase,
+    HoverEvent, HoverPhase, clickable, el, graph_canvas_swatch_with_drag_and_relations, on_hover,
+    text,
 };
 use woodshed_core::RelatedSuggestion;
 
-use super::{related_swatch, UiChild, UiState, RELATED_LIMIT};
+use super::{RELATED_LIMIT, UiChild, UiState, related_swatch};
 
 /// The relation kinds beyond the one the row already shows, so multiplicity is
 /// visible rather than silently ranked away. Empty when there is only one.
@@ -108,7 +108,7 @@ pub(super) fn panel(ui: &UiState) -> UiChild {
                         if ui.related_hover == Some(target) {
                             ui.related_hover = None;
                         }
-                    }
+                    },
                 },
             )) as UiChild
         })
@@ -129,7 +129,10 @@ pub(super) fn panel(ui: &UiState) -> UiChild {
     // The interactive graph swatch: click a node to navigate, hover to link it to
     // its row, Expand to grow the canvas. Node click/hover route through the same
     // dispatch the pane uses, so the two stay in sync.
-    let graph: UiChild = if ui.app_settings.stage.related.show_neighborhood {
+    let graph: UiChild = if ui.workspace.active_panel()
+        == Some(crate::workspace::WorkspacePanel::Related)
+        && ui.app_settings.stage.related.show_neighborhood
+    {
         let swatch = related_swatch(ui);
         Box::new(
             el(

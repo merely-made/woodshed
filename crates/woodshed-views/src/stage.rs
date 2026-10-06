@@ -17,7 +17,9 @@ use cambium::{
 use woodshed_core::arrangement::{GraphArrangement, arrange_graph};
 use woodshed_core::audio::{AudioRequest, CalibrationStatus, TransportState, TunerState};
 use woodshed_core::harmony::KeyedCatalogRef;
-use woodshed_core::history::{EngagementKind, PracticeHistory, catalog_id_for_card};
+use woodshed_core::history::{
+    EngagementKind, ObservationProvenance, PracticeHistory, catalog_id_for_card,
+};
 use woodshed_core::mere::{MereScope, WoodshedMereSnapshot, woodshed_mere};
 use woodshed_core::search::{SearchHit, search_corpus};
 use woodshed_core::settings::{AppSettings, RelatedGraphScope, SettingsPage, StageGraphReading};
@@ -38,13 +40,22 @@ use crate::workspace::{
     WoodshedWorkspace, WorkspaceEffect, WorkspaceEvent, WorkspaceOutcome, WorkspacePanel,
 };
 
+mod chord_approaches;
+mod connected;
+mod connected_scales;
 mod context;
 #[cfg(test)]
 mod context_tests;
+mod instances;
 mod looper;
+mod overview;
+pub mod relationship;
+pub use relationship::{relationship_swatch, RELATIONSHIP_GRAPH_LEAF_KEY};
+pub use overview::{OVERVIEW_GRAPH_LEAF_KEY, overview_snapshot, overview_swatch};
 mod pitch_motion;
 mod rehearsal;
 mod related;
+mod scale_patterns;
 mod set_tray;
 mod settings;
 mod shapes;
@@ -331,6 +342,7 @@ pub fn set_graph_snapshot(ui: &UiState) -> StageGraphSnapshot {
     stage_scene(
         &ui.set,
         &StageSceneOptions {
+            owner_scope: Some(ui.working_sets.active_id),
             arrangement: ui.app_settings.stage.set_arrangement,
             // Availability belongs to the scene; family and per-relation
             // visibility are view state applied below. Keeping every
@@ -435,6 +447,12 @@ fn stage_node_kind(kind: StageNodeKind, foreground: bool) -> &'static str {
         (false, StageNodeKind::Chord) => "context:Chord",
         (false, StageNodeKind::Scale) => "context:Scale",
         (false, StageNodeKind::Card) => "context:Card",
+        (true, StageNodeKind::Arpeggio) => "staged:Arpeggio",
+        (false, StageNodeKind::Arpeggio) => "context:Arpeggio",
+        (true, StageNodeKind::ScalePattern) => "staged:ScalePattern",
+        (false, StageNodeKind::ScalePattern) => "context:ScalePattern",
+        (true, StageNodeKind::ChordApproach) => "staged:ChordApproach",
+        (false, StageNodeKind::ChordApproach) => "context:ChordApproach",
     }
 }
 
@@ -645,20 +663,11 @@ pub fn set_graph_swatch_from_snapshot(
             epoch: snapshot.epoch(),
             instance,
         });
-    if expanded && ui.set_graph_card_expanded {
-        if let Some(selected) = swatch.selected {
-            swatch =
-                swatch.with_node_footprint(selected, SET_GRAPH_CARD_WIDTH, SET_GRAPH_CARD_HEIGHT);
-        }
-    }
     // Focus and hover emphasis are the canvas component's own state (it reads
     // native focus from its node buttons, so the ring is never painted where
     // the keyboard is not). This view supplies only the Set's truth.
     swatch
 }
-
-const SET_GRAPH_CARD_WIDTH: f32 = 300.0;
-const SET_GRAPH_CARD_HEIGHT: f32 = 200.0;
 
 pub fn set_graph_swatch(ui: &UiState) -> GraphCanvasSwatch<StageInstanceRef, &'static str> {
     let snapshot = set_graph_snapshot(ui);
@@ -808,6 +817,25 @@ impl Default for MidiUiState {
 pub struct UiState {
     pub stage: StageState,
     pub set: Set,
+    pub working_sets: woodshed_core::working_sets::WorkingSets,
+    pub catalog_explorations: woodshed_core::catalog_explorations::CatalogExplorations,
+    pub rehearsal_owner: Option<woodshed_core::working_sets::WorkingSetId>,
+    pub rehearsal_stage: Option<StageState>,
+    pub rehearsal_observed_midi: Option<Vec<i32>>,
+    pub set_presentations:
+        BTreeMap<woodshed_core::working_sets::WorkingSetId, instances::SetPresentation>,
+    pub retained_sets: woodshed_core::retained_sets::RetainedSets,
+    pub relationship_reading_json: Option<String>,
+    pub relationship_open: bool,
+    pub relationship_cards: Vec<CardId>,
+    pub relationship_choice_owner: Option<woodshed_core::working_sets::WorkingSetId>,
+    pub relationship_label: TextInput,
+    pub relationship_notice: Option<String>,
+    pub retained_set_name: TextInput,
+    pub overview_focus: Option<woodshed_core::session_overview::OverviewNodeId>,
+    pub overview_notice: Option<String>,
+    pub overview_viewport: GraphViewport,
+    pub overview_positions: BTreeMap<woodshed_core::session_overview::OverviewNodeId, (f32, f32)>,
     pub practice_history: PracticeHistory,
     pub app_settings: AppSettings,
     /// Woodshed's bounded workspace over the existing product surfaces. The shared component
@@ -836,6 +864,8 @@ pub struct UiState {
     pub tool_page: ToolPage,
     /// Host-observed width band. This is transient rather than a user setting.
     pub viewport: ViewportClass,
+    /// Host window width for surfaces that use the available workspace extent.
+    pub viewport_width: f32,
     /// Host-observed window height in logical px, transient. Bounds a vertical
     /// fretboard so a tall neck scrolls inside its viewport instead of running off
     /// the page; 0 until the host reports it (treated as "unbounded").
@@ -860,6 +890,7 @@ pub struct UiState {
     /// answerable. Transient.
     pub card_rename: TextInput,
     pub card_rename_for: Option<usize>,
+    pub card_rename_owner: Option<(woodshed_core::working_sets::WorkingSetId, CardId)>,
     /// MIDI panel state (Settings tab).
     pub midi: MidiUiState,
     /// Latency-calibration state (Settings tab). `calib_active` drives host
@@ -882,10 +913,15 @@ pub struct UiState {
     /// is dated from here. `None` on a host that supplies no clock, which dates
     /// its events as unknown rather than as 1970.
     pub now_ms: Option<u64>,
+    /// Host clock sampled at the interaction boundary; deterministic tests
+    /// leave this absent and supply `now_ms` directly.
+    pub event_clock: Option<fn() -> Option<u64>>,
     /// When the rehearsal's active card became active. The span between this and
     /// the completion is the measured practice the evidence layer rests on, so
     /// it is a real elapsed measurement, not a per-card guess.
     pub card_started_ms: Option<u64>,
+    /// Authored instruction captured when its observed runner span opened.
+    pub rehearsal_observed_card: Option<Card>,
     // Set-graph hover and focus emphasis are owned by `cambium::graph_canvas`.
     // They were transient paint state this struct held only to route back into
     // the view on the next rebuild; the component keeps them now.
@@ -924,6 +960,24 @@ pub struct UiState {
     /// View-local focus in the wider Stage context graph. Focusing a
     /// background material does not change Set order or cursor selection.
     pub context_focus: Option<KeyedCatalogRef>,
+    /// Inspected cross-catalog discovery, anchored to an authored occurrence.
+    pub arpeggio_source: Option<CardId>,
+    /// A qualified failure from the latest discovery action.
+    pub discovery_notice: Option<String>,
+    /// Formula-containment exploration anchored to an authored chord occurrence.
+    pub scale_source: Option<CardId>,
+    pub scale_subject: Option<KeyedCatalogRef>,
+    pub scale_notice: Option<String>,
+    pub scale_limit: usize,
+    pub pattern_source: Option<CardId>,
+    pub scale_pattern: Option<woodshedding::rehearsal::ScalePattern>,
+    pub pattern_subject: Option<KeyedCatalogRef>,
+    pub pattern_notice: Option<String>,
+    pub approach_source: Option<CardId>,
+    pub approach_target: Option<CardId>,
+    pub approach_direction: Option<woodshedding::rehearsal::ApproachDirection>,
+    pub approach_subject: Option<KeyedCatalogRef>,
+    pub approach_notice: Option<String>,
     /// Captured on entering Pitch motion; browsing never retargets the layout.
     pub pitch_motion_anchor: Option<KeyedCatalogRef>,
     /// Keyed context identities already disclosed during this view session.
@@ -968,6 +1022,24 @@ impl UiState {
             .with_label("Set arrangement");
         Self {
             set: Set::default(),
+            working_sets: Default::default(),
+            catalog_explorations: Default::default(),
+            rehearsal_owner: None,
+            rehearsal_stage: None,
+            rehearsal_observed_midi: None,
+            set_presentations: BTreeMap::new(),
+            retained_sets: Default::default(),
+            relationship_reading_json: None,
+            relationship_open: false,
+            relationship_cards: Vec::new(),
+            relationship_choice_owner: None,
+            relationship_label: TextInput::new(String::new()),
+            relationship_notice: None,
+            retained_set_name: TextInput::new(""),
+            overview_focus: None,
+            overview_notice: None,
+            overview_viewport: GraphViewport::default(),
+            overview_positions: BTreeMap::new(),
             practice_history: PracticeHistory::default(),
             app_settings,
             workspace: WoodshedWorkspace::new(),
@@ -983,6 +1055,7 @@ impl UiState {
             stage_page: StagePage::default(),
             tool_page: ToolPage::default(),
             viewport: ViewportClass::default(),
+            viewport_width: 0.0,
             viewport_h: 0.0,
             transport: TransportState::default(),
             tuner: TunerState::default(),
@@ -993,6 +1066,7 @@ impl UiState {
             search: TextInput::new(""),
             card_rename: TextInput::new(""),
             card_rename_for: None,
+            card_rename_owner: None,
             midi: MidiUiState::new(),
             calib_status: CalibrationStatus::Idle,
             calib_active: false,
@@ -1002,7 +1076,9 @@ impl UiState {
             song_record_replace: false,
             set_tray_expanded: true,
             now_ms: None,
+            event_clock: None,
             card_started_ms: None,
+            rehearsal_observed_card: None,
             set_graph_card_expanded: false,
             set_graph_positions: BTreeMap::new(),
             set_graph_viewport: GraphViewport::default(),
@@ -1015,6 +1091,21 @@ impl UiState {
             related_expanded: false,
             related_relation: None,
             context_focus: None,
+            arpeggio_source: None,
+            discovery_notice: None,
+            scale_source: None,
+            scale_subject: None,
+            scale_notice: None,
+            scale_limit: 4,
+            pattern_source: None,
+            scale_pattern: None,
+            pattern_subject: None,
+            pattern_notice: None,
+            approach_source: None,
+            approach_target: None,
+            approach_direction: None,
+            approach_subject: None,
+            approach_notice: None,
             pitch_motion_anchor: None,
             context_disclosed: BTreeSet::new(),
             context_positions: BTreeMap::new(),
@@ -1039,6 +1130,7 @@ impl UiState {
     }
 
     pub fn activate_workspace_panel(&mut self, panel: WorkspacePanel) {
+        self.workspace.ensure_panel(panel);
         let _ = self.apply_workspace_event(WorkspaceEvent::activate(panel));
         // The represented section may have changed through an unrepresented legacy pill (Tools
         // or Looper) while this panel stayed active. Selecting an already-active tab still has
@@ -1063,7 +1155,9 @@ impl UiState {
     }
 
     fn show_workspace_panel(&mut self, panel: WorkspacePanel) {
+        self.relationship_open = false;
         match panel {
+            WorkspacePanel::Overview => self.section = AppSection::Stage,
             WorkspacePanel::Practice => self.section = AppSection::Stage,
             WorkspacePanel::Set => self.section = AppSection::Rehearsal,
             WorkspacePanel::Related => {
@@ -1082,6 +1176,9 @@ impl UiState {
         snapshot: &StageGraphSnapshot,
         event: GraphCanvasEvent<StageInstanceRef>,
     ) {
+        if snapshot.epoch() != set_graph_snapshot(self).epoch() {
+            return;
+        }
         match event {
             GraphCanvasEvent::Activate(reference) => {
                 if reference.epoch != snapshot.epoch() {
@@ -1253,7 +1350,7 @@ impl UiState {
             },
             SearchHit::Recipe(i) => {
                 if let Some(ps) = woodshedding::practice::catalog().get(i) {
-                    self.set = set_from_practice(ps);
+                    self.create_working_set_from(ps.name.clone(), set_from_practice(ps));
                     self.section = AppSection::Rehearsal;
                 }
             },
@@ -1271,6 +1368,7 @@ impl UiState {
     /// every dispatch (the `select` widget mutates only its own
     /// `SelectState`).
     pub fn sync(&mut self) {
+        self.sync_rehearsal_observation();
         self.stage.set_tuning(self.tuning_dd.selected);
         self.app_settings.tuning.tuning_idx = self.stage.tuning_idx;
         self.stage.set_root(self.root_dd.selected);
@@ -1411,6 +1509,16 @@ impl UiState {
             .get(self.set.cursor.min(self.set.cards.len().saturating_sub(1)))
     }
 
+    /// A foreground Card owned by the running Set inherits the same captured
+    /// setup as its runner. Other editors and catalog auditions use live Stage.
+    pub fn current_card_stage(&self) -> &StageState {
+        if self.is_current_set_rehearsing() {
+            self.rehearsal_stage.as_ref().unwrap_or(&self.stage)
+        } else {
+            &self.stage
+        }
+    }
+
     /// Whether a board position is marked on the card under the cursor.
     pub fn card_marked(&self, string_index: usize, fret: u8) -> bool {
         self.current_card()
@@ -1504,10 +1612,12 @@ impl UiState {
             self.card_rename_for = None;
             return;
         };
-        if self.card_rename_for != Some(cursor) {
+        let owner = (self.working_sets.active_id, self.set.cards[cursor].id);
+        if self.card_rename_for != Some(cursor) || self.card_rename_owner != Some(owner) {
             // Selection moved: adopt this card's label.
             self.card_rename = TextInput::new(self.set.cards[cursor].label.clone());
             self.card_rename_for = Some(cursor);
+            self.card_rename_owner = Some(owner);
         } else if self.card_rename.text() != self.set.cards[cursor].label {
             // Typed: the buffer is the rename.
             self.set.cards[cursor].label = self.card_rename.text().to_string();
@@ -1573,7 +1683,10 @@ impl UiState {
             return;
         };
         let max_fret = if self.set.cards[cursor].setting.voicing_idx.is_some() {
-            match self.stage.card_fret_limit(&self.set.cards[cursor]) {
+            match self
+                .current_card_stage()
+                .card_fret_limit(&self.set.cards[cursor])
+            {
                 Ok(limit) => limit,
                 Err(reason) => {
                     self.card_shape_notice = Some((self.set.cards[cursor].id, reason.to_string()));
@@ -1581,7 +1694,7 @@ impl UiState {
                 },
             }
         } else {
-            self.stage.fret_count
+            self.current_card_stage().fret_count
         };
         let card = &mut self.set.cards[cursor];
         let window = card
@@ -1617,7 +1730,11 @@ impl UiState {
     /// view rebuild is required.
     pub fn set_viewport_width(&mut self, width: f32) -> bool {
         let next = ViewportClass::for_width(width);
-        if self.viewport == next {
+        let resized = (self.viewport_width - width).abs() >= 16.0;
+        if resized {
+            self.viewport_width = width;
+        }
+        if self.viewport == next && !resized {
             false
         } else {
             self.viewport = next;
@@ -1644,25 +1761,41 @@ impl UiState {
     pub fn preview_voicing(&self) -> (Vec<f32>, f32, f32) {
         if self.section == AppSection::Rehearsal && !self.set.cards.is_empty() {
             let cursor = self.set.cursor.min(self.set.cards.len() - 1);
-            return self.stage.card_sounding_pitches(&self.set.cards[cursor]);
+            return self
+                .current_card_stage()
+                .card_sounding_pitches_at_tempo(&self.set.cards[cursor], self.transport.bpm);
         }
         self.stage.voicing_preview()
     }
 
+    pub fn refresh_event_time(&mut self) {
+        if let Some(clock) = self.event_clock {
+            self.now_ms = clock();
+        }
+    }
+
     pub fn request_preview(&mut self) {
-        let subject_id = if self.section == AppSection::Rehearsal && !self.set.cards.is_empty() {
-            let cursor = self.set.cursor.min(self.set.cards.len() - 1);
-            catalog_id_for_card(&self.set.cards[cursor])
+        self.refresh_event_time();
+        let card = if self.section == AppSection::Rehearsal {
+            self.current_card().cloned()
         } else {
-            self.stage.catalog_id()
+            self.stage.card_from_lens()
         };
+        let subject_id = card
+            .as_ref()
+            .and_then(catalog_id_for_card)
+            .or_else(|| self.stage.catalog_id());
         if let Some(subject_id) = subject_id {
-            self.practice_history.record(
+            let provenance = card.as_ref().and_then(|card| {
+                ObservationProvenance::capture_in_set(card, self.working_sets.active_id).ok()
+            });
+            self.practice_history.record_observation(
                 self.now_ms,
                 subject_id,
                 EngagementKind::Previewed,
                 None,
                 None,
+                provenance,
             );
         }
         self.request(AudioRequest::PreviewVoicing);
@@ -1675,16 +1808,21 @@ impl UiState {
     }
 
     pub fn stage_current(&mut self, from_id: Option<String>) {
+        self.refresh_event_time();
         let subject_id = self.stage.catalog_id();
         if let Some(card) = self.stage.card_from_lens() {
             self.set.push(card);
             if let Some(subject_id) = subject_id {
-                self.practice_history.record(
+                let provenance = self.set.cards.last().and_then(|card| {
+                    ObservationProvenance::capture_in_set(card, self.working_sets.active_id).ok()
+                });
+                self.practice_history.record_observation(
                     self.now_ms,
                     subject_id,
                     EngagementKind::Staged,
                     from_id,
                     None,
+                    provenance,
                 );
             }
         }
@@ -1700,41 +1838,122 @@ impl UiState {
     }
 
     pub fn record_rehearsal_cursor(&mut self) {
-        if self.set.cards.is_empty() {
-            return;
+        self.refresh_event_time();
+        if self.rehearsal_owner.is_none() {
+            self.rehearsal_owner = Some(self.working_sets.active_id);
         }
-        // The card is now the one being played, so this is where its practice
-        // span opens; `complete_rehearsal_cursor` closes it.
+        if self.rehearsal_stage.is_none() {
+            self.capture_runner_stage();
+        }
+        let Some(card) = self.rehearsal_card().cloned() else {
+            return;
+        };
         self.card_started_ms = self.now_ms;
-        let cursor = self.set.cursor.min(self.set.cards.len() - 1);
-        if let Some(id) = catalog_id_for_card(&self.set.cards[cursor]) {
-            self.practice_history
-                .record(self.now_ms, id, EngagementKind::Rehearsed, None, None);
+        self.rehearsal_observed_card = Some(card.clone());
+        self.rehearsal_observed_midi = self.rehearsal_sounding_pitches().map(|(pitches, _, _)| {
+            pitches
+                .into_iter()
+                .map(|hz| (69.0 + 12.0 * (hz / 440.0).log2()).round() as i32)
+                .collect()
+        });
+        if let Some(id) = catalog_id_for_card(&card) {
+            self.practice_history.record_observation(
+                self.now_ms,
+                id,
+                EngagementKind::Rehearsed,
+                None,
+                None,
+                {
+                    let mut provenance = ObservationProvenance::capture_in_set(
+                        &card,
+                        self.rehearsal_owner.unwrap_or(self.working_sets.active_id),
+                    )
+                    .ok();
+                    if let Some(value) = &mut provenance {
+                        value.presented_midi = self.rehearsal_observed_midi.clone();
+                    }
+                    provenance
+                },
+            );
         }
     }
 
-    pub fn complete_rehearsal_cursor(&mut self) {
-        if self.set.cards.is_empty() {
+    fn finish_rehearsal_observation(&mut self, kind: EngagementKind) {
+        self.refresh_event_time();
+        let Some(card) = self.rehearsal_observed_card.take() else {
             return;
-        }
-        // Close the span opened when this card became active. Both ends must be
-        // dated for the measurement to mean anything, and a clock that went
-        // backwards (a system time change mid-session) yields no measurement
-        // rather than a wrapped one.
+        };
         let practiced_ms = match (self.now_ms, self.card_started_ms) {
             (Some(now), Some(started)) => now.checked_sub(started),
             _ => None,
         };
-        self.card_started_ms = self.now_ms;
-        let cursor = self.set.cursor.min(self.set.cards.len() - 1);
-        if let Some(id) = catalog_id_for_card(&self.set.cards[cursor]) {
-            self.practice_history.record(
-                self.now_ms,
-                id,
-                EngagementKind::Completed,
-                None,
-                practiced_ms,
-            );
+        self.card_started_ms = None;
+        if let Some(id) = catalog_id_for_card(&card) {
+            self.practice_history
+                .record_observation(self.now_ms, id, kind, None, practiced_ms, {
+                    let mut provenance = ObservationProvenance::capture_in_set(
+                        &card,
+                        self.rehearsal_owner.unwrap_or(self.working_sets.active_id),
+                    )
+                    .ok();
+                    if let Some(value) = &mut provenance {
+                        value.presented_midi = self.rehearsal_observed_midi.clone();
+                    }
+                    provenance
+                });
+        }
+    }
+
+    pub fn complete_rehearsal_cursor(&mut self) {
+        self.finish_rehearsal_observation(EngagementKind::Completed);
+    }
+
+    /// Pause closes only the active span. Resuming opens a fresh span, keeping
+    /// paused wall time out of observed runner duration.
+    pub fn toggle_rehearsal(&mut self) {
+        if self.is_current_set_rehearsing() {
+            self.stop_rehearsal();
+        } else if !self.set.cards.is_empty() {
+            self.stop_rehearsal();
+            self.rehearsal_owner = Some(self.working_sets.active_id);
+            self.capture_runner_stage();
+            self.rehearsal_running = true;
+            self.record_rehearsal_cursor();
+            if let Some((pitches, duration_s, strum_s)) = self.rehearsal_sounding_pitches() {
+                if !pitches.is_empty() {
+                    self.request(AudioRequest::PreviewPitches {
+                        pitches,
+                        duration_s,
+                        strum_s,
+                    });
+                }
+            }
+        }
+    }
+
+    /// Selection, removal and instruction edits close the old event-time
+    /// snapshot before the replacement instruction begins. No edit is credited
+    /// retroactively to the instruction it replaced.
+    fn sync_rehearsal_observation(&mut self) {
+        if !self.rehearsal_running {
+            return;
+        }
+        let changed = self
+            .rehearsal_observed_card
+            .as_ref()
+            .and_then(|card| serde_json::to_value(card).ok())
+            != self
+                .rehearsal_card()
+                .and_then(|card| serde_json::to_value(card).ok());
+        if changed {
+            self.finish_rehearsal_observation(EngagementKind::Rehearsed);
+            self.rehearsal_observed_card = None;
+            self.card_started_ms = None;
+            if self.rehearsal_set().cards.is_empty() {
+                self.stop_rehearsal();
+            } else {
+                self.record_rehearsal_cursor();
+            }
         }
     }
 
@@ -1747,6 +1966,11 @@ impl UiState {
             &self.song,
             &self.practice_history,
         );
+        session.retained_sets = self.retained_sets.clone();
+        session.working_sets = self.working_sets.clone();
+        session.relationship_reading_json = self.relationship_reading_json.clone();
+        session.catalog_explorations = self.catalog_explorations.clone();
+        session.active_exploration = Some(self.capture_exploration());
         session.workspace_json = Some(
             self.workspace
                 .to_snapshot_json()
@@ -1764,16 +1988,54 @@ impl UiState {
     ) -> Option<crate::workspace::WorkspaceSnapshotError> {
         session.restore(&mut self.stage, &app_settings);
         self.set = session.set.clone();
+        self.retained_sets = session.retained_sets.clone();
+        self.working_sets = session.working_sets.clone();
+        self.relationship_reading_json = session.relationship_reading_json.clone();
+        self.catalog_explorations = session.catalog_explorations.clone();
+        self.rehearsal_owner = None;
+        self.rehearsal_stage = None;
+        self.rehearsal_observed_midi = None;
+        self.set_presentations.clear();
+        self.overview_focus = None;
+        self.overview_notice = None;
+        self.overview_viewport = GraphViewport::default();
+        self.overview_positions.clear();
+        self.card_rename_for = None;
+        self.rehearsal_running = false;
+        self.rehearsal_observed_card = None;
+        self.card_started_ms = None;
         self.song = session.song.clone();
         self.practice_history = session.practice_history.clone();
         self.app_settings = app_settings;
+        if let Some(config) = &session.active_exploration {
+            config.apply(&mut self.stage, &mut self.app_settings);
+            self.search = TextInput::new(config.search_query.clone());
+        }
         self.set_graph_positions.clear();
         self.context_positions.clear();
         self.set_graph_drag_active = false;
         self.set_graph_hidden_relations.clear();
         self.set_graph_relation = None;
         self.related_relation = None;
-        self.context_focus = None;
+        self.context_focus = session
+            .active_exploration
+            .as_ref()
+            .and_then(|config| config.context_focus.clone());
+        self.arpeggio_source = None;
+        self.discovery_notice = None;
+        self.scale_source = None;
+        self.scale_subject = None;
+        self.scale_notice = None;
+        self.scale_limit = 4;
+        self.pattern_source = None;
+        self.scale_pattern = None;
+        self.pattern_subject = None;
+        self.pattern_notice = None;
+        self.approach_source = None;
+        self.approach_target = None;
+        self.approach_direction = None;
+        self.approach_subject = None;
+        self.approach_notice = None;
         self.context_disclosed.clear();
         self.card_shape_notice = None;
         self.pitch_motion_anchor = (self.app_settings.stage.set_graph_reading
@@ -2717,6 +2979,7 @@ fn stage_screen(ui: &UiState) -> UiChild {
         "div",
         (
             header(ui),
+            instances::staging_targets(ui),
             transport(ui),
             lens_strip(ui),
             body,
@@ -2732,7 +2995,12 @@ fn stage_screen(ui: &UiState) -> UiChild {
 
 fn tab_content(ui: &UiState) -> UiChild {
     let content = match ui.section {
-        AppSection::Stage => return stage_screen(ui),
+        AppSection::Stage => match ui.workspace.active_panel() {
+            Some(WorkspacePanel::Overview) if ui.relationship_open => relationship::screen(ui),
+            Some(WorkspacePanel::Overview) => overview::screen(ui),
+            Some(WorkspacePanel::Related) => related::panel(ui),
+            _ => return stage_screen(ui),
+        },
         AppSection::Rehearsal => rehearsal::screen(ui),
         AppSection::Looper => looper::screen(ui),
         AppSection::Tools => tools::screen(ui),
@@ -2796,7 +3064,14 @@ pub fn stage_root(ui: &UiState) -> UiChild {
     }
     let mut nav: Vec<UiChild> = AppSection::ALL
         .iter()
-        .map(|&section| pill(section, section == ui.section))
+        .map(|&section| {
+            pill(
+                section,
+                section == ui.section
+                    && !(ui.workspace.active_panel() == Some(WorkspacePanel::Overview)
+                        && ui.section == AppSection::Stage),
+            )
+        })
         .collect();
     nav.push(Box::new(el("div", ()).attr("class", "nav-spacer")));
     nav.extend(crate::persona::unsaved_notice(ui));
@@ -3223,7 +3498,7 @@ mod evidence_tests {
     }
 
     #[test]
-    fn selected_node_activation_expands_and_collapses_the_same_card_region() {
+    fn selected_node_activation_expands_and_collapses_the_same_card_editor() {
         let mut ui = staged_set();
         let snapshot = set_graph_snapshot(&ui);
         let card = ui.set.cursor_id().expect("selected card");
@@ -3233,12 +3508,8 @@ mod evidence_tests {
         ui.handle_set_graph_event(&snapshot, GraphCanvasEvent::Activate(instance));
         assert!(ui.set_graph_card_expanded);
         let swatch = set_graph_swatch_from_snapshot(&snapshot, &ui, true);
-        let region = swatch
-            .projected_node_footprint(&instance)
-            .expect("selected card region");
-        assert!(region.left >= 0.0 && region.top >= 0.0);
-        assert!(region.left + region.width <= swatch.width as f32);
-        assert!(region.top + region.height <= swatch.height as f32);
+        assert_eq!(swatch.selected, Some(instance));
+        assert!(swatch.projected_node_footprint(&instance).is_none());
 
         ui.handle_set_graph_event(&snapshot, GraphCanvasEvent::Activate(instance));
         assert!(!ui.set_graph_card_expanded);
@@ -3361,35 +3632,10 @@ mod evidence_tests {
             "Cambium fans every relation cell onto its own visible route"
         );
         let selected = swatch.selected.expect("selected occurrence");
-        let region = swatch
-            .projected_node_footprint(&selected)
-            .expect("selected Card footprint");
-        let right = region.left + region.width;
-        let bottom = region.top + region.height;
-        let incident = routes
-            .iter()
-            .filter_map(|(relation, route)| {
-                if relation.from == selected {
-                    route.first().copied()
-                } else if relation.to == selected {
-                    route.last().copied()
-                } else {
-                    None
-                }
-            })
-            .collect::<Vec<_>>();
         assert!(
-            !incident.is_empty(),
-            "the selected occurrence has relations"
+            swatch.projected_node_footprint(&selected).is_none(),
+            "the editor beside the graph must not reserve an in-canvas footprint"
         );
-        assert!(incident.iter().all(|point| {
-            let on_vertical =
-                (point.0 - region.left).abs() < 0.01 || (point.0 - right).abs() < 0.01;
-            let on_horizontal =
-                (point.1 - region.top).abs() < 0.01 || (point.1 - bottom).abs() < 0.01;
-            (on_vertical && point.1 >= region.top && point.1 <= bottom)
-                || (on_horizontal && point.0 >= region.left && point.0 <= right)
-        }));
     }
 
     #[test]
@@ -3469,24 +3715,23 @@ mod evidence_tests {
     }
 
     #[test]
-    fn completing_one_card_opens_the_next_cards_span() {
-        // The rehearsal advance completes a card and makes the next one active
-        // in the same beat, so the second span must start at the completion,
-        // not at whenever the run began.
+    fn completion_consumes_the_observed_span() {
+        // The host explicitly starts the next card after completion. A second
+        // completion without a new start cannot manufacture another span.
         let mut ui = staged_set();
         ui.now_ms = Some(1_000);
         ui.record_rehearsal_cursor();
         ui.now_ms = Some(5_000);
         ui.complete_rehearsal_cursor();
-        assert_eq!(ui.card_started_ms, Some(5_000));
+        assert_eq!(ui.card_started_ms, None);
         ui.now_ms = Some(6_500);
         ui.complete_rehearsal_cursor();
 
         let subject = catalog_id_for_card(&ui.set.cards[0]).expect("catalog subject");
         assert_eq!(
             ui.practice_history.total_practiced_ms(&subject),
-            4_000 + 1_500,
-            "each span measures its own card, and they do not overlap"
+            4_000,
+            "completion consumes the span; another completion cannot invent practice"
         );
     }
 }
