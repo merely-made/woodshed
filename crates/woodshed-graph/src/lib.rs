@@ -155,7 +155,7 @@ impl RelationKind {
         match self {
             Self::ContainsMaterial | Self::AppearsIn | Self::UsedTogether => {
                 RelationAuthority::Catalog
-            }
+            },
             Self::PracticedBefore | Self::PracticedAfter => RelationAuthority::Evidence,
             _ => RelationAuthority::Computed,
         }
@@ -323,6 +323,33 @@ impl RelatedNeighbor {
 /// The node id for a scale.
 pub fn scale_id(name: &str) -> String {
     format!("scale:{name}")
+}
+
+/// Stable formula identity for a structured scale-degree pattern.
+pub fn scale_pattern_id(name: &str, pattern: woodshedding::rehearsal::ScalePattern) -> String {
+    format!("scale-pattern:{}:{name}", pattern.slug())
+}
+
+/// The exercise subject used by observations of a structured scale pattern.
+pub fn scale_pattern_exercise_id(
+    name: &str,
+    pattern: woodshedding::rehearsal::ScalePattern,
+) -> String {
+    exercise_id(&format!("{}:{name}", pattern.stable_id()))
+}
+
+pub fn chord_approach_id(
+    name: &str,
+    direction: woodshedding::rehearsal::ApproachDirection,
+) -> String {
+    format!("chord-approach:{}:{name}", direction.slug())
+}
+
+pub fn chord_approach_exercise_id(
+    name: &str,
+    direction: woodshedding::rehearsal::ApproachDirection,
+) -> String {
+    exercise_id(&format!("{}:{name}", direction.stable_id()))
 }
 /// The node id for a chord.
 pub fn chord_id(name: &str) -> String {
@@ -1130,10 +1157,12 @@ mod tests {
 
         // ...versus derived from the formulas.
         let computed = relations_between(&chord_id("Major"), &chord_id("Major 7"));
-        assert!(computed
-            .iter()
-            .filter(|r| r.kind != RelationKind::UsedTogether)
-            .all(|r| r.authority == RelationAuthority::Computed));
+        assert!(
+            computed
+                .iter()
+                .filter(|r| r.kind != RelationKind::UsedTogether)
+                .all(|r| r.authority == RelationAuthority::Computed)
+        );
     }
 
     #[test]

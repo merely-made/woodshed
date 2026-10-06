@@ -8,6 +8,9 @@ repository.workspace = true
 description = "Woodshed's Cambium view layer: view fns + CSS sheets for the Genet host (desktop and web). Genet-host plan S0+."
 
 [dependencies]
+scenograph.workspace = true
+scenomise.workspace = true
+blake3.workspace = true
 woodshed-core = { workspace = true }
 mere-surface-api = { workspace = true }
 workbench = { workspace = true }

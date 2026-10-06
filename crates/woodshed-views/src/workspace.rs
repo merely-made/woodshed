@@ -17,6 +17,7 @@ use workbench::{
 #[derive(Clone, Copy, Debug, Deserialize, Eq, PartialEq, Serialize)]
 #[serde(rename_all = "snake_case")]
 pub enum WorkspacePanel {
+    Overview,
     Practice,
     Set,
     Related,
@@ -24,10 +25,17 @@ pub enum WorkspacePanel {
 }
 
 impl WorkspacePanel {
-    pub const ALL: [Self; 4] = [Self::Practice, Self::Set, Self::Related, Self::Settings];
+    pub const ALL: [Self; 5] = [
+        Self::Overview,
+        Self::Practice,
+        Self::Set,
+        Self::Related,
+        Self::Settings,
+    ];
 
     pub const fn tile_id(self) -> TileId {
         match self {
+            Self::Overview => TileId(0x574f_4d45),
             Self::Practice => TileId(0x574f_5052),
             Self::Set => TileId(0x574f_5345),
             Self::Related => TileId(0x574f_5245),
@@ -37,6 +45,7 @@ impl WorkspacePanel {
 
     pub const fn label(self) -> &'static str {
         match self {
+            Self::Overview => "Mere",
             Self::Practice => "Practice",
             Self::Set => "Set",
             Self::Related => "Related",
@@ -46,6 +55,7 @@ impl WorkspacePanel {
 
     fn lane(self) -> (&'static str, &'static str) {
         match self {
+            Self::Overview => ("woodshed.overview", "overview"),
             Self::Practice => ("woodshed.practice", "stage"),
             Self::Set => ("woodshed.set", "rehearsal"),
             Self::Related => ("woodshed.related", "stage"),
@@ -195,7 +205,7 @@ impl Default for WoodshedWorkspace {
 }
 
 impl WoodshedWorkspace {
-    /// Start with one tab stack for the four existing product surfaces.
+    /// Start with the existing surfaces and a session Mere, keeping Practice selected.
     pub fn new() -> Self {
         Self {
             workbench: Workbench::new(TileTree::stack(
@@ -203,7 +213,7 @@ impl WoodshedWorkspace {
                     .into_iter()
                     .map(WorkspacePanel::tile)
                     .collect(),
-                0,
+                1,
             )),
             active_panel: Some(WorkspacePanel::Practice),
         }
@@ -233,7 +243,7 @@ impl WoodshedWorkspace {
 
     /// Serialize Woodshed's allowed workspace presentation state for the non-browser host.
     ///
-    /// This DTO intentionally records only the four known open lanes, their stable ids, split
+    /// This DTO intentionally records only the known open lanes, their stable ids, split
     /// ratios, and active indices. It does not make the shared component responsible for
     /// Woodshed's session format or accept arbitrary host content on restore.
     pub fn to_snapshot_json(&self) -> Result<String, WorkspaceSnapshotError> {
@@ -268,6 +278,33 @@ impl WoodshedWorkspace {
         })
     }
 
+    /// Add an explicitly requested surface without migrating an older saved layout.
+    /// Existing split fractions, tab order and local selections remain intact.
+    pub fn ensure_panel(&mut self, panel: WorkspacePanel) {
+        if self.tree().find(panel.tile_id()).is_some() {
+            return;
+        }
+        fn append(tree: &mut TileTree, tile: &Tile) -> bool {
+            match tree {
+                TileTree::Stack(stack) => {
+                    stack.tabs.push(tile.clone());
+                    true
+                },
+                TileTree::Split { children, .. } => children
+                    .iter_mut()
+                    .any(|child| append(&mut child.tree, tile)),
+            }
+        }
+        let mut tree = self.tree().clone();
+        if !append(&mut tree, &panel.tile()) {
+            tree = TileTree::Stack(TabStack {
+                tabs: vec![panel.tile()],
+                active: 0,
+            });
+        }
+        self.workbench = Workbench::new(tree);
+    }
+
     /// Apply a typed gesture, retaining actual tile custody until Woodshed accepts a tear-out.
     pub fn apply(&mut self, event: WorkspaceEvent) -> WorkspaceOutcome {
         let WorkspaceEvent::Tile(event) = event;
@@ -280,7 +317,7 @@ impl WoodshedWorkspace {
         let activated_panel = match event {
             TileEvent::Activated(tile) => {
                 self.tree().find(tile).and_then(WorkspacePanel::from_tile)
-            }
+            },
             _ => None,
         };
         match self.workbench.apply(&event) {
@@ -290,7 +327,7 @@ impl WoodshedWorkspace {
                         .or_else(|| self.tree().find(tile).and_then(WorkspacePanel::from_tile));
                     self.active_panel = panel;
                     panel.map_or(WorkspaceOutcome::Changed, WorkspaceOutcome::Activated)
-                }
+                },
                 TileEvent::Closed(tile) => {
                     if self
                         .active_panel
@@ -299,17 +336,17 @@ impl WoodshedWorkspace {
                         self.active_panel = first_active_panel(self.tree());
                     }
                     WorkspaceOutcome::Changed
-                }
+                },
                 TileEvent::Dragged { .. } | TileEvent::DividerMoved { .. } => {
                     WorkspaceOutcome::Changed
-                }
+                },
             },
             WorkbenchOutcome::Unchanged => {
                 activated_panel.map_or(WorkspaceOutcome::Unchanged, |panel| {
                     self.active_panel = Some(panel);
                     WorkspaceOutcome::Activated(panel)
                 })
-            }
+            },
             WorkbenchOutcome::Effect(WorkbenchEffect::TearOut { tile }) => self
                 .tree()
                 .find(tile)
@@ -413,7 +450,7 @@ impl WorkspaceTreeDto {
                         "split fractions must sum to one".to_string(),
                     ));
                 }
-            }
+            },
             TileTree::Stack(stack) => {
                 if stack.tabs.is_empty() && !is_root {
                     return Err(WorkspaceSnapshotError::Invalid(
@@ -448,7 +485,7 @@ impl WorkspaceTreeDto {
                         )));
                     }
                 }
-            }
+            },
         }
         Ok(())
     }
@@ -491,7 +528,7 @@ impl WorkspaceTreeDto {
                     },
                     branches,
                 ))
-            }
+            },
             Self::Stack { tabs, active } => {
                 if tabs.is_empty() && !is_root {
                     return Err(WorkspaceSnapshotError::Invalid(
@@ -536,7 +573,7 @@ impl WorkspaceTreeDto {
                     tabs: restored,
                     active,
                 }))
-            }
+            },
         }
     }
 }
@@ -601,6 +638,7 @@ mod tests {
                 .map(|tile| tile.id)
                 .collect::<Vec<_>>(),
             vec![
+                WorkspacePanel::Overview.tile_id(),
                 WorkspacePanel::Practice.tile_id(),
                 WorkspacePanel::Set.tile_id(),
                 WorkspacePanel::Related.tile_id(),
@@ -675,10 +713,11 @@ mod tests {
         split_workspace(&mut workspace);
         workspace.apply(WorkspaceEvent::activate(WorkspacePanel::Settings));
         let json = workspace.to_snapshot_json().unwrap();
-        assert!(json
-            .as_bytes()
-            .windows(b"woodshed.settings".len())
-            .any(|window| { window == b"woodshed.settings" }));
+        assert!(
+            json.as_bytes()
+                .windows(b"woodshed.settings".len())
+                .any(|window| { window == b"woodshed.settings" })
+        );
         assert!(json.contains("\"axis\":\"row\""));
         assert!(json.contains("\"fraction\":0.5"));
 
@@ -726,5 +765,40 @@ mod tests {
             WoodshedWorkspace::from_snapshot_json(&malformed),
             Err(WorkspaceSnapshotError::Decode(_))
         ));
+    }
+    #[test]
+    fn legacy_four_panel_snapshot_restores_exactly_then_adds_mere_on_request() {
+        let legacy = WorkspaceSnapshot {
+            tree: TileTree::stack(
+                vec![
+                    WorkspacePanel::Practice.tile(),
+                    WorkspacePanel::Set.tile(),
+                    WorkspacePanel::Related.tile(),
+                    WorkspacePanel::Settings.tile(),
+                ],
+                1,
+            ),
+            active_panel: Some(WorkspacePanel::Set),
+        };
+        let original = WoodshedWorkspace::restore(legacy.clone());
+        let mut restored =
+            WoodshedWorkspace::from_snapshot_json(&original.to_snapshot_json().unwrap()).unwrap();
+        assert_eq!(restored.snapshot(), legacy);
+        assert!(
+            restored
+                .tree()
+                .find(WorkspacePanel::Overview.tile_id())
+                .is_none()
+        );
+        restored.ensure_panel(WorkspacePanel::Overview);
+        assert_eq!(restored.active_panel(), Some(WorkspacePanel::Set));
+        assert_eq!(restored.tree().tiles().len(), 5);
+        assert_eq!(
+            restored.apply(WorkspaceEvent::activate(WorkspacePanel::Overview)),
+            WorkspaceOutcome::Activated(WorkspacePanel::Overview)
+        );
+        let once = restored.snapshot();
+        restored.ensure_panel(WorkspacePanel::Overview);
+        assert_eq!(once, restored.snapshot());
     }
 }

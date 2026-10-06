@@ -1,7 +1,9 @@
-# P4d receipt: the expanded Card occupies the selected node's projected
-# region, and the surrounding graph canvas is directly resizable.
+# Current regression: the selected Card expands beside the resizable graph.
+# The September 30 editor layout supersedes the original in-node expansion.
 
-log P4d: resizable Stage canvas and Card-in-node expansion
+log P4d: resizable Stage canvas and selected Card expansion
+settle 3
+ui-zoom 0.65
 settle 3
 
 act stage-related-pair
@@ -14,15 +16,14 @@ assert snap graph-node-cards == 0
 assert snap graph-card-anchored-relations == 0
 capture 01_compact_nodes
 
-# Activation keeps the occurrence identity and replaces that node's point with
-# the existing editable Card rather than opening a detached editor below it.
+# Activation keeps occurrence identity and opens the editor beside the graph.
 click-stage-node 0
 settle 3
 assert snap cursor-number == 1
 assert snap card-expanded == true
 assert snap graph-node-cards == 1
-assert snap graph-card-incident-relations == 4
-assert snap graph-card-anchored-relations == 4
+assert snap graph-card-incident-relations == 0
+assert snap graph-card-anchored-relations == 0
 capture 02_card_in_node_region
 
 # The bottom-right handle uses the host's captured pointer path. Frame-spaced
@@ -42,7 +43,7 @@ settle 3
 assert snap graph-width == 660
 assert snap graph-height == 360
 assert snap graph-node-cards == 1
-assert snap graph-card-anchored-relations == 4
+assert snap graph-card-anchored-relations == 0
 capture 03_resized_with_card
 
 click .graph-card-collapse

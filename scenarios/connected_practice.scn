@@ -1,0 +1,47 @@
+# First connected catalog flow through shipping click dispatch, isolated profile.
+settle 3
+ui-zoom 0.65
+settle 3
+act connected-practice-example
+settle 3
+assert snap set-cards == 2
+assert snap shape-index == 0
+assert snap context-arpeggios >= 1
+capture 01_ambient
+click .pill Rehearsal
+settle 3
+click .t-btn Discover C Major 7 arpeggio
+settle 3
+assert text same selected shape
+assert snap set-cards == 2
+click .t-btn Hear arpeggio
+settle 3
+assert snap set-cards == 2
+click .t-btn Stage arpeggio
+settle 3
+assert snap set-cards == 3
+assert snap arpeggio-cards == 1
+assert snap arpeggio-shape == 0
+capture 02_staged
+click .pill Rehearsal
+settle 3
+click .t-btn Loop: off
+settle 3
+click .t-btn Run
+settle 30
+assert snap rehearsal-running == true
+click .t-btn Pause
+settle 3
+assert snap rehearsal-running == false
+assert snap history-observed >= 3
+capture 03_paused
+settle 30
+assert snap rehearsal-running == false
+click .t-btn Run
+settle 150
+assert snap rehearsal-running == true
+click .t-btn Pause
+settle 3
+assert snap rehearsal-running == false
+capture 04_rehearsed
+log Connected exploration and rehearsal seed complete

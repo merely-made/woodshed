@@ -1,6 +1,6 @@
 use cambium::{
-    GraphCanvasEvent, GraphCanvasSwatch, ResizeBounds, clickable, el, graph_canvas, map_state,
-    resize_handle, select, text, text_field,
+    GraphCanvasEvent, ResizeBounds, clickable, el, graph_canvas, map_state, resize_handle, select,
+    text, text_field,
 };
 use woodshed_core::arrangement::GraphArrangement;
 use woodshed_core::settings::{
@@ -84,86 +84,80 @@ pub(super) fn card_editor(ui: &UiState) -> UiChild {
                     }),
                 )
                 .attr("class", "card-rename"),
-                clickable(
-                    el("div", text(format!("Touch: {}", touch_label(&card.touch))))
-                        .attr("class", "t-btn"),
-                    |ui: &mut UiState, _| ui.cycle_card_touch(),
-                ),
-                clickable(
-                    el(
-                        "div",
-                        text(format!("Hold: {}", hold_label(&card.timing.hold))),
-                    )
-                    .attr("class", "t-btn"),
-                    |ui: &mut UiState, _| ui.cycle_card_hold(),
-                ),
-                clickable(
-                    el("div", text("-")).attr("class", "t-btn t-narrow"),
-                    |ui: &mut UiState, _| ui.nudge_card_bpm(-5.0),
-                ),
-                el("div", text(bpm)).attr("class", "t-readout"),
-                clickable(
-                    el("div", text("+")).attr("class", "t-btn t-narrow"),
-                    |ui: &mut UiState, _| ui.nudge_card_bpm(5.0),
-                ),
-                clickable(
-                    el("div", text("<")).attr("class", "t-btn t-narrow"),
-                    |ui: &mut UiState, _| ui.shift_card_window(-1),
-                ),
-                el("div", text(window)).attr("class", "t-readout"),
-                clickable(
-                    el("div", text(">")).attr("class", "t-btn t-narrow"),
-                    |ui: &mut UiState, _| ui.shift_card_window(1),
-                ),
-                clickable(
-                    el("div", text("Free position")).attr("class", "t-btn"),
-                    |ui: &mut UiState, _| ui.clear_card_window(),
-                ),
+                el(
+                    "div",
+                    (
+                        clickable(
+                            el("div", text(format!("Touch: {}", touch_label(&card.touch))))
+                                .attr("class", "t-btn"),
+                            |ui: &mut UiState, _| ui.cycle_card_touch(),
+                        ),
+                        clickable(
+                            el(
+                                "div",
+                                text(format!("Hold: {}", hold_label(&card.timing.hold))),
+                            )
+                            .attr("class", "t-btn"),
+                            |ui: &mut UiState, _| ui.cycle_card_hold(),
+                        ),
+                        clickable(
+                            el("div", text("-")).attr("class", "t-btn t-narrow"),
+                            |ui: &mut UiState, _| ui.nudge_card_bpm(-5.0),
+                        ),
+                        el("div", text(bpm)).attr("class", "t-readout"),
+                        clickable(
+                            el("div", text("+")).attr("class", "t-btn t-narrow"),
+                            |ui: &mut UiState, _| ui.nudge_card_bpm(5.0),
+                        ),
+                        clickable(
+                            el("div", text("<")).attr("class", "t-btn t-narrow"),
+                            |ui: &mut UiState, _| ui.shift_card_window(-1),
+                        ),
+                        el("div", text(window)).attr("class", "t-readout"),
+                        clickable(
+                            el("div", text(">")).attr("class", "t-btn t-narrow"),
+                            |ui: &mut UiState, _| ui.shift_card_window(1),
+                        ),
+                        clickable(
+                            el("div", text("Free position")).attr("class", "t-btn"),
+                            |ui: &mut UiState, _| ui.clear_card_window(),
+                        ),
+                    ),
+                )
+                .attr("class", "card-control-row"),
                 super::shapes::controls(ui),
+                el(
+                    "div",
+                    (
+                        super::connected::panel(ui),
+                        super::connected_scales::panel(ui),
+                        super::scale_patterns::panel(ui),
+                        super::chord_approaches::panel(ui),
+                    ),
+                )
+                .attr("class", "card-explanation-section"),
             ),
         )
         .attr("class", "set-editor"),
     )
 }
 
-fn graph_node_card(
-    ui: &UiState,
-    snapshot: &woodshed_core::stage_scene::StageGraphSnapshot,
-    swatch: &GraphCanvasSwatch<StageInstanceRef, &'static str>,
-) -> UiChild {
-    if !ui.set_graph_card_expanded {
+fn graph_node_card(ui: &UiState) -> UiChild {
+    if !ui.set_graph_card_expanded || ui.set.cards.is_empty() {
         return Box::new(el("div", ()));
     }
-    let Some(reference) = ui
-        .set
-        .cursor_id()
-        .and_then(|card| snapshot.instance_ref_of(card))
-    else {
-        return Box::new(el("div", ()));
-    };
-    let Some(region) = swatch.projected_node_footprint(&reference) else {
-        return Box::new(el("div", ()));
-    };
-    let style = format!(
-        "left:{:.1}px;top:{:.1}px;width:{:.1}px;height:{:.1}px;",
-        region.left, region.top, region.width, region.height
-    );
-    let card = el(
-        "div",
-        (
-            clickable(
-                el("div", text("Collapse card")).attr("class", "t-btn graph-card-collapse"),
-                |ui: &mut UiState, _| ui.set_graph_card_expanded = false,
-            ),
-            card_editor(ui),
-        ),
-    )
-    .attr("class", "set-graph-node-card")
-    .attr("data-card-instance", reference.instance.0.to_string());
     Box::new(
-        el("div", card)
-            .attr("class", "set-graph-node-card-layer")
-            .attr("style", style),
+        el(
+            "div",
+            (
+                clickable(
+                    el("div", text("Collapse card")).attr("class", "t-btn graph-card-collapse"),
+                    |ui: &mut UiState, _| ui.set_graph_card_expanded = false,
+                ),
+                card_editor(ui),
+            ),
+        )
+        .attr("class", "set-graph-selected-card"),
     )
 }
 
@@ -375,7 +369,7 @@ pub(super) fn view(ui: &UiState) -> UiChild {
             ) as UiChild
         });
     let content: UiChild = if ui.set_tray_expanded {
-        let graph_card = graph_node_card(ui, &snapshot, &swatch);
+        let graph_card = graph_node_card(ui);
         let resize = resize_handle(
             graph_size,
             ResizeBounds::new(
@@ -390,13 +384,7 @@ pub(super) fn view(ui: &UiState) -> UiChild {
                 ui.app_settings.stage.resize_set_graph(width, height);
             },
         );
-        let card_root = el("div", graph_card)
-            .attr("class", "set-graph-card-root")
-            .attr(
-                "style",
-                format!("width:{}px;height:{}px;", graph_size.0, graph_size.1),
-            );
-        let graph_stack = el("div", (graph, context::labels(ui, &swatch), card_root))
+        let graph_stack = el("div", (graph, context::labels(ui, &swatch)))
             .attr("class", "set-graph-canvas-stack")
             .attr(
                 "style",
@@ -446,7 +434,7 @@ pub(super) fn view(ui: &UiState) -> UiChild {
                             ),
                         )
                         .attr("class", "set-graph-toolbar"),
-                        el("div", (canvas_row, context::panel(ui)))
+                        el("div", (canvas_row, graph_card, context::panel(ui)))
                             .attr("class", "set-graph-inspection"),
                         relation_detail,
                         relation_inventory,
@@ -543,7 +531,7 @@ pub(super) fn view(ui: &UiState) -> UiChild {
                         ),
                         clickable(
                             el("div", text("Clear")).attr("class", "t-btn"),
-                            |ui: &mut UiState, _| ui.set = Default::default(),
+                            |ui: &mut UiState, _| ui.clear_working_set(),
                         ),
                         clickable(
                             el("div", text("Rehearse")).attr("class", "t-btn t-hear"),
