@@ -15,3 +15,25 @@ click .overview-fit Fit scene
 settle 3
 capture 02_restored_scene
 log Mere presentation reopen complete
+
+# Placement rules use the shared board while motion remains reduced.
+click .overview-role-anchored Return to anchor
+settle 3
+capture 03_anchor_before_move
+click .overview-move-right Move selected right
+settle 3
+capture 04_anchor_returned
+click .overview-role-seeded Free placement
+click .overview-move-right Move selected right
+settle 3
+capture 05_free_placement
+click .overview-role-pinned Pin in place
+click .overview-move-right Move selected right
+settle 3
+assert snap overview-pinned == 1
+assert snap overview-reduced-motion == true
+capture 06_pin_refused_move
+click .overview-role-pinned Pin in place
+settle 3
+capture 07_placement_inspector
+log Shared placement roles complete
