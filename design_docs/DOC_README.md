@@ -93,7 +93,8 @@ before any other doc in this directory.
   surface does not reproduce in the current replay; its original cause is unproven.
   The October 7 atmosphere follow-up adds retained seeded Orbits/Cells beneath
   the session graph, shared motion/reduced-motion policy and folded movement
-  controls; 585 automated checks pass, with native qualification pending.
+  controls; 585 automated checks pass, with 14 reviewed wide/narrow native
+  captures, exact reduced-motion pixel comparisons and fresh-process reopening.
   The October 7 slice repins the coherent current Mere/Genet stack and embeds
   Pictograph's shared PhysicsBoard in the session Mere, with camera controls,
   retained emphasis/placement rules and opt-in motion. The 579-check gate and
