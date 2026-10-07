@@ -2293,8 +2293,8 @@ separate work.
 
 ### Shared ambient atmosphere beneath the session Mere (2026-10-07)
 
-**Status: implemented; 585 automated checks pass; native capture/reopen qualification pending.**
-The current Mere main review through `ea9e6da74` finds no changes to the
+**Status: landed; automated and committed-runtime native capture/reopen qualification complete.**
+The current Mere main review through `973a7fc17` finds no changes to the
 native Cambium/canvas API since the primary `d041cc69b` pin. This slice uses
 Pictograph's existing `AmbientSim` seam without a dependency repin. Orbits uses
 64 seeded N-body particles; Cells uses a 32 by 24 seeded Game of Life grid.
@@ -2327,3 +2327,38 @@ legacy and retained presentation, offscreen motion gating, unchanged owner
 facts, viewport clipping/resizing, layer order, and graph-camera independence.
 Evidence is recorded under
 `/Users/markik/Code/testing/woodshed/atmosphere-20261007/`.
+
+The October 7 projection-grammar handoff (`973a7fc17`) remains compatible
+with this scope: portable anatomy gap proofs and field receipts wait for a
+forcing consumer, and arbitrary dynamics grammar remains a separate owner
+lane. The atmosphere adapter exercises an existing shared ambient API; it
+adds no field-evidence claims or shared projection vocabulary. Reference:
+`mere/design_docs/mere_docs/research/2026-10-07_projection_grammar_handoff.md`.
+
+Native qualification uses runtime `019fdf3858bb461db79a292ddcb238c707e1e08a`,
+whose implementation is unchanged through the scenario-only `aec3d4e` follow-up.
+The wider gate passes 585 checks; 22 overview checks and the leaf-composition
+check pass again after the visual refinement. The desktop builds successfully.
+The selected atmosphere now has a visible indicator as well as its accessible
+pressed state. The canonical reopen scenario allows twelve settling frames
+after revealing the canvas.
+
+Accepted runs at 1280 by 900 and 420 by 900 each produce four seed captures and
+three fresh-process reopen captures: 14 PNGs reviewed. Wide seed/reopen use
+1912/1870 frames; the repeated narrow fixture uses 1913/1899. Pixel comparisons
+of the graph area are identical when motion is enabled under reduced motion,
+and change once motion is allowed, at both widths. Both persisted fixture
+sessions finish with Cells, seed 3, motion disabled and reduced motion enabled.
+Owner graph inspection/background actions preserve the two staged Cards.
+The 420-pixel controls wrap, and normal scrolling reveals the complete canvas;
+compact graph labels retain the existing culling policy and full roster names.
+
+The receipt, hashes, scenarios, logs and accepted capture manifest live in
+`/Users/markik/Code/testing/woodshed/atmosphere-20261007/final/receipt.json`.
+The first batched preview of a narrow reopen image appeared empty. Sequential
+inspection of the saved PNG, independent pixel inspection, and a direct native
+restore/scroll inspection all show an intact Cells graph. A repeated narrow
+fixture is preserved; this observation does not demonstrate a runtime rendering
+failure. Qualification uses isolated unsealed fixtures and covers the native
+runtime and presentation session path. Release packaging/signing and a personal
+encrypted-vault workflow remain separate gates.
