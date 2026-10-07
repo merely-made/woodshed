@@ -1,0 +1,272 @@
+{
+  "before_packages": 773,
+  "after_packages": 773,
+  "removed": [
+    {
+      "name": "errand",
+      "version": "0.3.4",
+      "source": "git+https://github.com/merely-made/mere.git",
+      "dependencies": [
+        "finger-protocol",
+        "gemini-protocol",
+        "gopher-protocol",
+        "guppy-protocol",
+        "misfin",
+        "nex-protocol",
+        "quick-xml 0.39.4",
+        "rustls",
+        "scroll-protocol",
+        "spartan-protocol",
+        "tokio",
+        "tokio-rustls",
+        "tracing",
+        "url"
+      ]
+    },
+    {
+      "name": "gopher-protocol",
+      "version": "0.1.1",
+      "source": "registry+https://github.com/rust-lang/crates.io-index",
+      "checksum": "113ad3045632e4931f7fc15331be9f1e0e29b91a7bdc88465dcc7801c23fc989",
+      "dependencies": [
+        "tokio",
+        "url"
+      ]
+    },
+    {
+      "name": "js-sys",
+      "version": "0.3.104",
+      "source": "registry+https://github.com/rust-lang/crates.io-index",
+      "checksum": "0e0c1080212aad755ea003d18543e8768dd432c48819efd73a7bf1e39b7a5a3a",
+      "dependencies": [
+        "cfg-if",
+        "futures-util",
+        "wasm-bindgen"
+      ]
+    },
+    {
+      "name": "wasm-bindgen",
+      "version": "0.2.127",
+      "source": "registry+https://github.com/rust-lang/crates.io-index",
+      "checksum": "1b70935747edd64d89de3efa29d73789b806c15798f8e7dca4d8ac356b50ce70",
+      "dependencies": [
+        "cfg-if",
+        "once_cell",
+        "rustversion",
+        "wasm-bindgen-macro",
+        "wasm-bindgen-shared"
+      ]
+    },
+    {
+      "name": "wasm-bindgen-futures",
+      "version": "0.4.77",
+      "source": "registry+https://github.com/rust-lang/crates.io-index",
+      "checksum": "6b7777d5cc23d0e91404e53ce2d5e8ec7acae3026b16233dba62cd3246457950",
+      "dependencies": [
+        "js-sys",
+        "wasm-bindgen"
+      ]
+    },
+    {
+      "name": "wasm-bindgen-macro",
+      "version": "0.2.127",
+      "source": "registry+https://github.com/rust-lang/crates.io-index",
+      "checksum": "77775f8f3f7217702089053b94958f8f54061a3f663417df76e19cbdcca29bc1",
+      "dependencies": [
+        "quote",
+        "wasm-bindgen-macro-support"
+      ]
+    },
+    {
+      "name": "wasm-bindgen-macro-support",
+      "version": "0.2.127",
+      "source": "registry+https://github.com/rust-lang/crates.io-index",
+      "checksum": "e11d33f857dc2fb11b8bc75aee111aa9cbeb12cd9f25efd3d4c2a3dd4e235284",
+      "dependencies": [
+        "bumpalo",
+        "proc-macro2",
+        "quote",
+        "syn 2.0.119",
+        "wasm-bindgen-shared"
+      ]
+    },
+    {
+      "name": "wasm-bindgen-shared",
+      "version": "0.2.127",
+      "source": "registry+https://github.com/rust-lang/crates.io-index",
+      "checksum": "7ef64dbcc55df09c7e5a46182d181c2cfa3e925f3da937ea764728b4bbb9dcbf",
+      "dependencies": [
+        "unicode-ident"
+      ]
+    },
+    {
+      "name": "web-sys",
+      "version": "0.3.104",
+      "source": "registry+https://github.com/rust-lang/crates.io-index",
+      "checksum": "c435338968042f4f59a557f690a253676d47ce13ceb55d70100e7facf6620a30",
+      "dependencies": [
+        "js-sys",
+        "wasm-bindgen"
+      ]
+    }
+  ],
+  "added": [
+    {
+      "name": "errand",
+      "version": "0.4.0",
+      "source": "git+https://github.com/merely-made/mere.git",
+      "dependencies": [
+        "finger-protocol",
+        "gemini-protocol",
+        "gopher-protocol",
+        "guppy-protocol",
+        "misfin",
+        "nex-protocol",
+        "quick-xml 0.39.4",
+        "rustls",
+        "scroll-protocol",
+        "spartan-protocol",
+        "tokio",
+        "tokio-rustls",
+        "tracing",
+        "url"
+      ]
+    },
+    {
+      "name": "gopher-protocol",
+      "version": "0.2.0",
+      "source": "registry+https://github.com/rust-lang/crates.io-index",
+      "checksum": "b5d3f2e10ca1a90d7e0d2bec7421aa1121596ac2eddfae1cae9a440f58b1a378",
+      "dependencies": [
+        "tokio",
+        "url"
+      ]
+    },
+    {
+      "name": "js-sys",
+      "version": "0.3.106",
+      "source": "registry+https://github.com/rust-lang/crates.io-index",
+      "checksum": "7883d941dae510fb2d978fc3fe018c71c9e2892fd38854de3e8b92c2e5ad9cc5",
+      "dependencies": [
+        "cfg-if",
+        "futures-util",
+        "wasm-bindgen"
+      ]
+    },
+    {
+      "name": "wasm-bindgen",
+      "version": "0.2.129",
+      "source": "registry+https://github.com/rust-lang/crates.io-index",
+      "checksum": "9bb54f33acc68fd454578d9820b0bde1a1a3d17aa17bb7b6595806d02886d409",
+      "dependencies": [
+        "cfg-if",
+        "once_cell",
+        "rustversion",
+        "wasm-bindgen-macro",
+        "wasm-bindgen-shared"
+      ]
+    },
+    {
+      "name": "wasm-bindgen-futures",
+      "version": "0.4.79",
+      "source": "registry+https://github.com/rust-lang/crates.io-index",
+      "checksum": "3cbab34de2d982e9b48e18d216d04c4a6f641066ff19ffb699980f591ee3610e",
+      "dependencies": [
+        "js-sys",
+        "tokio",
+        "wasm-bindgen"
+      ]
+    },
+    {
+      "name": "wasm-bindgen-macro",
+      "version": "0.2.129",
+      "source": "registry+https://github.com/rust-lang/crates.io-index",
+      "checksum": "2e29d0c35b16e224a7eeb5cd2d25e3e1968fbd65604117b44d3b789d00ee8535",
+      "dependencies": [
+        "quote",
+        "wasm-bindgen-macro-support"
+      ]
+    },
+    {
+      "name": "wasm-bindgen-macro-support",
+      "version": "0.2.129",
+      "source": "registry+https://github.com/rust-lang/crates.io-index",
+      "checksum": "6f501a8bc3719dba86ef8ae4728879c08001bea749eb1333ac5b91e040e2a6b7",
+      "dependencies": [
+        "bumpalo",
+        "proc-macro2",
+        "quote",
+        "syn 3.0.4",
+        "wasm-bindgen-shared"
+      ]
+    },
+    {
+      "name": "wasm-bindgen-shared",
+      "version": "0.2.129",
+      "source": "registry+https://github.com/rust-lang/crates.io-index",
+      "checksum": "23f0c9c52aa7cd7d77769a4cfe2a9adb1b331f489a41d912ce14513d5ab995c6",
+      "dependencies": [
+        "unicode-ident"
+      ]
+    },
+    {
+      "name": "web-sys",
+      "version": "0.3.106",
+      "source": "registry+https://github.com/rust-lang/crates.io-index",
+      "checksum": "88261b9deccee56594c11a3460c462c41f58d148598fe70ad77070126a68aba4",
+      "dependencies": [
+        "js-sys",
+        "wasm-bindgen"
+      ]
+    }
+  ],
+  "changed": [
+    {
+      "before": {
+        "name": "genet-livery",
+        "version": "0.0.4",
+        "source": "git+https://github.com/merely-made/genet.git",
+        "dependencies": [
+          "buckram",
+          "cssparser",
+          "data-url",
+          "euclid",
+          "fontsan",
+          "genet-document-resources",
+          "genet-parley",
+          "genet-taffy",
+          "image",
+          "layout-dom-api",
+          "livery",
+          "paint_list_api",
+          "serde",
+          "stacker"
+        ]
+      },
+      "after": {
+        "name": "genet-livery",
+        "version": "0.0.4",
+        "source": "git+https://github.com/merely-made/genet.git",
+        "dependencies": [
+          "buckram",
+          "cssparser",
+          "data-url",
+          "euclid",
+          "fontsan",
+          "genet-document-resources",
+          "genet-parley",
+          "genet-taffy",
+          "icu_properties",
+          "icu_segmenter",
+          "image",
+          "layout-dom-api",
+          "livery",
+          "paint_list_api",
+          "serde",
+          "stacker"
+        ]
+      }
+    }
+  ],
+  "normalization": "Only Mere/Genet Git source revision queries/fragments normalized for content comparison. Dependency source IDs retained in dependency strings."
+}

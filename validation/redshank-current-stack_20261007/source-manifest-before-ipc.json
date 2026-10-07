@@ -1,0 +1,749 @@
+{
+  "head": "fd25d4c481ceaad2608220614214fcc5dd1cf1b1",
+  "mere": "57b4893db6909d5ed9c4ccae30216f0d8164201a",
+  "genet": "965b64e206a47d1c8808472de9aa461233638768",
+  "scope": "All tracked port/path-library Rust, Cargo, CSS, bundled fonts and test fixtures; explicit toolchain, parent Cargo files and receipt helpers. Transitive sources are immutable metadata identities.",
+  "archive_sha256": "3b9f63c7f139600cbf9ef563eaed34722f8d8073b76114174cd28ff9049e8889",
+  "inputs": [
+    {
+      "path": "Cargo.lock",
+      "size": 203250,
+      "sha256": "e257c046696001b7deeb32c5f803175b79be88c22f77016dc98eb095b6f96106"
+    },
+    {
+      "path": "Cargo.toml",
+      "size": 12842,
+      "sha256": "c403198bb23749c17e6ac48199dba451effbc52e4aa881a28bf377964c0c9f8b"
+    },
+    {
+      "path": "crates/audio-primitives/Cargo.toml",
+      "size": 785,
+      "sha256": "62dff333e5a253c3d5ebee79dacdbc1c36e7bdd5c8f337e9744e6043e816e833"
+    },
+    {
+      "path": "crates/audio-primitives/src/alignment.rs",
+      "size": 26122,
+      "sha256": "8dd8080c969980861563946acdc1e526e5bfedf7ae9e983e876e7bcbb121b793"
+    },
+    {
+      "path": "crates/audio-primitives/src/buffer.rs",
+      "size": 2123,
+      "sha256": "ae65536a330c055ca10b2f0689c3249313a979a4d3a5a5e04312bda9d4d16933"
+    },
+    {
+      "path": "crates/audio-primitives/src/calibration.rs",
+      "size": 7500,
+      "sha256": "936e5065f5bc1ddddccf999eecf40f3994c7723b7e537f9a5ae92f0f7ca11d6c"
+    },
+    {
+      "path": "crates/audio-primitives/src/click.rs",
+      "size": 7359,
+      "sha256": "29b79200c7bebd48c259d518a3b622628a496a23bb65d3e7519c8773b6f82d46"
+    },
+    {
+      "path": "crates/audio-primitives/src/lib.rs",
+      "size": 2603,
+      "sha256": "802d672649510abec2b07110d62677e6f227e08bc8e58cce1ddbe3413af92513"
+    },
+    {
+      "path": "crates/audio-primitives/src/meter.rs",
+      "size": 5229,
+      "sha256": "2517333956f360abf536513bf2d7601c230dbc08c7f87593b537f770c34678b3"
+    },
+    {
+      "path": "crates/audio-primitives/src/onset.rs",
+      "size": 21310,
+      "sha256": "f6e6d96024b4fcb991dff30defee89b53c3862f7d8b0d9d7157cc150097693ab"
+    },
+    {
+      "path": "crates/audio-primitives/src/stretch.rs",
+      "size": 20249,
+      "sha256": "a74d5ddf4b712ee55f7c5f9db1f4da46047953965318b317f720dfd731053e5d"
+    },
+    {
+      "path": "crates/audio-primitives/src/waveform.rs",
+      "size": 3318,
+      "sha256": "d9c7a927d446da9cfc4611db649098bb689f40729ecd52750b70541a2c4ae09b"
+    },
+    {
+      "path": "crates/timed-text/Cargo.toml",
+      "size": 202,
+      "sha256": "8a6d0aa13bcfe35ecd202132a71ea9cd9a1d1bfeff6a6592c2bba971cdcac809"
+    },
+    {
+      "path": "crates/timed-text/src/lib.rs",
+      "size": 6304,
+      "sha256": "fcc4debbf5061a217fab4f072186dbf13cb9df323519c4cfbae179fc04b26b08"
+    },
+    {
+      "path": "ports/redshank/Cargo.lock",
+      "size": 199605,
+      "sha256": "d004302017f10446b017ec15667f545d7b8c3fb02f8566d05ea8907f38ce2469"
+    },
+    {
+      "path": "ports/redshank/Cargo.toml",
+      "size": 4355,
+      "sha256": "15a609244f9c3f0ef05ed4f157165701dc5d36bcc6af9ba8100532b5369920b3"
+    },
+    {
+      "path": "ports/redshank/cache/Cargo.toml",
+      "size": 304,
+      "sha256": "4be0c68ccffc17adc7300418a71993ea1e8c5cc40387e7d269f489c19e8d8038"
+    },
+    {
+      "path": "ports/redshank/cache/src/lib.rs",
+      "size": 15990,
+      "sha256": "939ea731be734c75f1ebbfb2467800a6202c798601c2f62a3453d395ca56ec17"
+    },
+    {
+      "path": "ports/redshank/desktop/Cargo.toml",
+      "size": 864,
+      "sha256": "092d3167f8c5049d0148035767cc31164f5b91061e8eff62753f29aca5e67e36"
+    },
+    {
+      "path": "ports/redshank/desktop/src/diagnostics.rs",
+      "size": 15841,
+      "sha256": "bd41a8f6444165c1346544d559e5a9ed3f2407355625c2e8ac10642f550b5831"
+    },
+    {
+      "path": "ports/redshank/desktop/src/diagnostics_worker_tests.rs",
+      "size": 7586,
+      "sha256": "19effa489419c2448a2b627a6f737e162773abf80e14ecbdf0b7534ce8fbdd0f"
+    },
+    {
+      "path": "ports/redshank/desktop/src/headed_receipt.rs",
+      "size": 30032,
+      "sha256": "d2fa78c8653f6607f78643cd8ac58b5b0f2b2da8e43425e390e56a1a456a4e72"
+    },
+    {
+      "path": "ports/redshank/desktop/src/main.rs",
+      "size": 134090,
+      "sha256": "e77685d17e7d6c3565682517ce360789e5e782facde66c74a79d4eb9364e705e"
+    },
+    {
+      "path": "ports/redshank/desktop/src/scenario.rs",
+      "size": 31800,
+      "sha256": "088498a41f4effaba5e06e7f0fb03bd964a761a1e2362ec507e66d5cd46b5146"
+    },
+    {
+      "path": "ports/redshank/desktop/src/session.rs",
+      "size": 70476,
+      "sha256": "4c46c25f07d0ba36f2285f5659c9b1d42c170cfb290846e2e097634cb9688d50"
+    },
+    {
+      "path": "ports/redshank/desktop/src/voice.rs",
+      "size": 10669,
+      "sha256": "16df5af86718a683420afe91d8d0012928c3f76b9277d5ccd68913825595e8ac"
+    },
+    {
+      "path": "ports/redshank/feed/Cargo.toml",
+      "size": 277,
+      "sha256": "165c834a85c54bf9055ef623fd7d034e8ea8257a81fe6358ea075c471733ed4e"
+    },
+    {
+      "path": "ports/redshank/feed/src/lib.rs",
+      "size": 6164,
+      "sha256": "e33b7289c25c8ce5a0803f77dd8755eb7e275f3e45b3502706c8f0a6ad57e303"
+    },
+    {
+      "path": "ports/redshank/model/Cargo.toml",
+      "size": 320,
+      "sha256": "2a1d024f661cbf14f1ac41ddabcd17dd0f007152de37be2d08bc2bc6f11d5486"
+    },
+    {
+      "path": "ports/redshank/model/src/lib.rs",
+      "size": 57604,
+      "sha256": "6bc7737cef79c268bf20dd593ce2cb32f71be3f76dae3b305118bf13dfa3ad6f"
+    },
+    {
+      "path": "ports/redshank/model/tests/alignment.rs",
+      "size": 10145,
+      "sha256": "1b5f960080c0361338e88f2af12c4157d0f28fa677017cfc5683ab0acd003470"
+    },
+    {
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/LICENSE.md",
+      "size": 148,
+      "sha256": "f2c400b1eca0e4705521cadc6da2b6ba03928ee7e7dc1e048e9d22d8f3133fec"
+    },
+    {
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/README.md",
+      "size": 1139,
+      "sha256": "2c38a95ccd3d3d5bf0822093636ef272b63df3d9f4f414881af5de07b67fc2e4"
+    },
+    {
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/annotations/3.1-annotationContextValidated.json",
+      "size": 940,
+      "sha256": "44a77f2d7544958d3e8f7150e3da05d02d608d402ebe6d7a071213106da3b979"
+    },
+    {
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/annotations/3.1-annotationIdValidated.json",
+      "size": 655,
+      "sha256": "b5661791e22c3f82cb8cb940bad30cc8eb99bb87f0fe782ba84aa6387e3e1878"
+    },
+    {
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/annotations/3.1-annotationTypeValidated.json",
+      "size": 567,
+      "sha256": "1181c4ad9ae70d6d7543473d0e0352970fd34e7cd4f4118fb50f6fef7a301a10"
+    },
+    {
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/annotations/3.1-targetKeyFound.json",
+      "size": 501,
+      "sha256": "b35bf6c5ecd1e4782f8abf7ad4b6ec2eccb53f584cb80cbed79af1057910a3ad"
+    },
+    {
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/annotations/3.2-bodyObjectsRecognized.json",
+      "size": 1240,
+      "sha256": "f9d143f84007dc040c41c63dce20f4c5076473eb93b1dd92192e21f60bbaac15"
+    },
+    {
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/annotations/3.2-targetObjectsRecognized.json",
+      "size": 1162,
+      "sha256": "44b4aceff5ce684273377affe819f4095d397daf07ccc0952c2b941c3125f887"
+    },
+    {
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/annotations/3.2.5-bodyValueValidated.json",
+      "size": 723,
+      "sha256": "c07ced876e2408cdace82c9de504fb4a2a834086121c34f1c599e5a978ba466c"
+    },
+    {
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/annotations/3.2.5-notBodyBodyValue.json",
+      "size": 671,
+      "sha256": "b6bca99dd1126abefe03b11e0807daa6808cdd051b6fdf53b3f0a11e370340b4"
+    },
+    {
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/annotations/3.3.1-annotationCreatedValidated.json",
+      "size": 811,
+      "sha256": "630aa541f17fd9645f619a7f4597599df310ed2868c5855736e1db26c1264a53"
+    },
+    {
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/annotations/3.3.1-annotationGeneratedValidated.json",
+      "size": 825,
+      "sha256": "5feedb4a1a1233d44230865901036c54dee9ed8acbd43c5f7595b6ec871f9f99"
+    },
+    {
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/annotations/3.3.1-annotationModifiedValidated.json",
+      "size": 818,
+      "sha256": "a110cd2204dd68877859e84ce4605ef4903d564ae462ace15a8871b0b19bf65b"
+    },
+    {
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/annotations/3.3.6-annotationRightsValidated.json",
+      "size": 769,
+      "sha256": "6344cdd17d62fcb65d1da33f95eba1cbbd784c27f6c5fef8231667594f285ba0"
+    },
+    {
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/annotations/3.3.7-annotationCanonicalValidated.json",
+      "size": 807,
+      "sha256": "14d9e2b8774d208b7b75acd2b11bfc4d0da4f8d0347d25e8007575c935dfd968"
+    },
+    {
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/annotations/3.3.7-annotationViaValidated.json",
+      "size": 721,
+      "sha256": "db0b3118a485d27e78cb973ce6c1d12b9d041252702ef746f9460ca8bf0d12b2"
+    },
+    {
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/annotations/annotationMusts.test",
+      "size": 4183,
+      "sha256": "3530ee366f421706656b2d70b48aacdb8a4257193fed877f6cfd74c881dcdc90"
+    },
+    {
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/annotations/bodiesTargets/3.2.1-bodyTextDirectionValidated.json",
+      "size": 1964,
+      "sha256": "408e5d6e9658cdc438b68a22533adad754fb0e90faad58800efb3a6809eb01af"
+    },
+    {
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/annotations/bodiesTargets/3.2.1-targTextDirectionValidated.json",
+      "size": 1982,
+      "sha256": "14afba2579b6e0d538e9cedbf045acbff1c5ab85f85c661b1654aa8196da74b7"
+    },
+    {
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/annotations/bodiesTargets/3.2.4-bodyChoiceSetNoValue.json",
+      "size": 995,
+      "sha256": "77ca12268be616436b7e5f9381f4a83b87032ffe059d569d6b924d3668b4d956"
+    },
+    {
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/annotations/bodiesTargets/3.2.4-targChoiceSetNoValue.json",
+      "size": 1003,
+      "sha256": "584300f867a317a4f455b8afb8b248edc590a63d1a523a672a8cb4f214b7c21b"
+    },
+    {
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/annotations/bodiesTargets/3.2.4-targNoTypeTextualBody.json",
+      "size": 1642,
+      "sha256": "3c92940a465f21c8002830bc7fc67198b83448325edfc615b1fccd37a0637199"
+    },
+    {
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/annotations/bodiesTargets/3.2.7-bodyEWRNoItems.json",
+      "size": 1442,
+      "sha256": "08a1a8d1c57c8257d9e881c729e355f8ea19b9f9e6cf194dd331a84317b7ff40"
+    },
+    {
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/annotations/bodiesTargets/3.2.7-bodyEmbeddedTextualNoItems.json",
+      "size": 1241,
+      "sha256": "bc917e06cacc991e06dfb19a342e31f7162a8a03762800df35ed537241a4dc30"
+    },
+    {
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/annotations/bodiesTargets/3.2.7-bodySpecificResourceNoItems.json",
+      "size": 1256,
+      "sha256": "556acb634532b0175457a94b4a2c751d637f2fc1317e08a5d1ba0cc3bfd9089b"
+    },
+    {
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/annotations/bodiesTargets/3.2.7-targEWRNoItems.json",
+      "size": 1477,
+      "sha256": "2e2162b9131531a059fbb25536cdc1420d1f0b73d7bb202f321b02777902a64c"
+    },
+    {
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/annotations/bodiesTargets/3.2.7-targSpecificResourceNoItems.json",
+      "size": 1272,
+      "sha256": "75579b8efe002c65b93b816bbe3fb77dd71001d44f3c1925797c21fb7bbccfc4"
+    },
+    {
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/annotations/bodiesTargets/3.3.1-bodyCreatedValidated.json",
+      "size": 1860,
+      "sha256": "8ab70a79404df74c25f4e4fc7f2bcacb60e0c38ebe4c68d864c371be3111c0ff"
+    },
+    {
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/annotations/bodiesTargets/3.3.1-bodyModifiedValidated.json",
+      "size": 1902,
+      "sha256": "f9b8294f4f5500c5323a89f3060602d1e214a94e7cc88e1bd5a9e6c55e5c3d95"
+    },
+    {
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/annotations/bodiesTargets/3.3.1-targCreatedValidated.json",
+      "size": 1878,
+      "sha256": "aed5e16bddc8851398cddefb37d740c51a5918e496da3b5dc57ba995c127bc7e"
+    },
+    {
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/annotations/bodiesTargets/3.3.1-targModifiedValidated.json",
+      "size": 1920,
+      "sha256": "e6b1fef4dd1414f0e85bc41dfcdc0cdaba9ffe73f8c5bdd22ec692ec32533469"
+    },
+    {
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/annotations/bodiesTargets/3.3.5-bodyChoiceSetNoPurpose.json",
+      "size": 1034,
+      "sha256": "7448eb1c8821276931ee03c1763c7c89c4eb37ea2d2e2516c21ca4065a28db8f"
+    },
+    {
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/annotations/bodiesTargets/3.3.5-bodyEWRNoPurpose.json",
+      "size": 1512,
+      "sha256": "018f6fab1c47a34a43603098504a93aae9fc1d911c835966fc3ddf618bf604f0"
+    },
+    {
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/annotations/bodiesTargets/3.3.5-targChoiceSetNoPurpose.json",
+      "size": 1042,
+      "sha256": "43e9940de5a0aa8abb7d0a56ef859181a3849eb5c1322d3bf612461a4bedde57"
+    },
+    {
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/annotations/bodiesTargets/3.3.5-targEWRNoPurpose.json",
+      "size": 1499,
+      "sha256": "a70006da7b51218705ca21b13dcc3b036054fc2bb541b686d262d994d56e1a6d"
+    },
+    {
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/annotations/bodiesTargets/3.3.6-bodyRightsValidated.json",
+      "size": 1790,
+      "sha256": "cf105ee0343a446410a0f86c822d642ee32ee9dbc453b3fe6e607eed0e38a68d"
+    },
+    {
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/annotations/bodiesTargets/3.3.6-targRightsValidated.json",
+      "size": 1806,
+      "sha256": "0b9354ac54db571f499217997588392b2aaf11c95fe523ef31caaa0020a1057a"
+    },
+    {
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/annotations/bodiesTargets/3.3.7-bodyCanonicalValidated.json",
+      "size": 1908,
+      "sha256": "8109813588677b866a7f4b6544b96c8f43c95fe2e18ecefffb84bd636b444f2f"
+    },
+    {
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/annotations/bodiesTargets/3.3.7-bodyViaValidated.json",
+      "size": 1759,
+      "sha256": "16cfa57f4f2e63b041eeae155592da1d9f096f646d7063a46dfab0a92a4304ab"
+    },
+    {
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/annotations/bodiesTargets/3.3.7-targCanonicalValidated.json",
+      "size": 1926,
+      "sha256": "2df44750ab9332f8a2121d338703e0232978693d7f3a6df4e13644583142d533"
+    },
+    {
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/annotations/bodiesTargets/3.3.7-targViaValidated.json",
+      "size": 1775,
+      "sha256": "94d97cf5c03cb76bfeee763854fd16acab141b7a1ba7a03ddcd07ee2fa02f30f"
+    },
+    {
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/annotations/bodiesTargets/4-bodyChoiceSetNoSource.json",
+      "size": 982,
+      "sha256": "47cd2e91229a56454c92685fc9eebbc21258e0492d396862d3cddc995bcddf5c"
+    },
+    {
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/annotations/bodiesTargets/4-bodyEmbeddedTextualNoSource.json",
+      "size": 1235,
+      "sha256": "0fc1834b72b4ccace3fdc793b7697ef0254ba528b6565a6eab9fd2902931c309"
+    },
+    {
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/annotations/bodiesTargets/4-bodySpecificResourceNoValue.json",
+      "size": 1244,
+      "sha256": "827b4ed54b5d13e5aecc715c8b0dcf827a537ef67a571ce2ee11ebb980b02024"
+    },
+    {
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/annotations/bodiesTargets/4-targChoiceSetNoSource.json",
+      "size": 990,
+      "sha256": "e3b7e727a53b722c206ed09d169ef8cce3709d0705b3ba34570a1408e12d70ef"
+    },
+    {
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/annotations/bodiesTargets/4-targSpecificResourceNoValue.json",
+      "size": 1249,
+      "sha256": "ef086e4eb0634eff3df0b04949438e1b66a772bce7f9ccfe28e2f7805e5e04d6"
+    },
+    {
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/annotations/specificResource/4.2-TextDataPositionSelectorValid.json",
+      "size": 3661,
+      "sha256": "a006a2b1a538d3a1e15d8e58d33eaf3f30b1da41b88bd85147c66a64359ed3ce"
+    },
+    {
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/annotations/specificResource/4.2-fragmentCssXPathSelectorValid.json",
+      "size": 3744,
+      "sha256": "e6049a63d47b4bc623bcc455fd296d8a8f224d05044bc01d37da5ccf92604377"
+    },
+    {
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/annotations/specificResource/4.2-selectorValidIfPresent.json",
+      "size": 2333,
+      "sha256": "75ff1718852acd9725ea2d67051a1eaf53047e1f9ab1f7b3adcf5285e1e21a81"
+    },
+    {
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/annotations/specificResource/4.2.4-textQuoteSelectorValid.json",
+      "size": 3294,
+      "sha256": "4be4f462c41e4b4948566d4ab3f02720fd8104c9ecb8584b0856101e765b0499"
+    },
+    {
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/annotations/specificResource/4.2.7-svgSelectorValid.json",
+      "size": 3271,
+      "sha256": "64324eca43bb6f4b48862e61fa88ff95e0bd9753aca8bbf986c4fdd1100d7ef1"
+    },
+    {
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/annotations/specificResource/4.2.8-rangeSelectorValid.json",
+      "size": 3342,
+      "sha256": "700914b8b079d3d0a2ed78b9ca52e8a4c81cc066b86711929969df1dc17a1229"
+    },
+    {
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/annotations/specificResource/4.3-stateValidIfPresent.json",
+      "size": 1949,
+      "sha256": "d81f4fde168142376eb5764adb0c53389db3a30bb54f050c49ad0f1fa1aac88d"
+    },
+    {
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/annotations/specificResource/4.3.1-timeStateValid.json",
+      "size": 3457,
+      "sha256": "03cfc7f147296b646f4995e86a85b7b5198fa7d77055812fd034702e194a5da7"
+    },
+    {
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/annotations/specificResource/4.3.2-httpRequestStateValid.json",
+      "size": 3211,
+      "sha256": "412e5dae614dad872c93832f420be02a109f804f3e36d28eb9e36a089da1f590"
+    },
+    {
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/annotations/specificResource/4.3.3-refinedByValidated.json",
+      "size": 2037,
+      "sha256": "bd14ba87866fc98c668eddf5ed09129700bd657f01ce83336d2f94e7e3619549"
+    },
+    {
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/annotations/specificResource/4.4-styleClassValidIfPresent.json",
+      "size": 3120,
+      "sha256": "0240d28d7d7572af7ee5090ea243fd6890bd47765449c8014182e47bd6da7316"
+    },
+    {
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/definitions/annotations.json",
+      "size": 7511,
+      "sha256": "c3b6acfd3295e11ddeb6d63673e83aa0333875985a65aed34692e7cb335ba57c"
+    },
+    {
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/definitions/bodyTarget.json",
+      "size": 36858,
+      "sha256": "044c314d2d398cfe31fae147748d063a5e1a1378587e31301c8239351de97934"
+    },
+    {
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/definitions/choiceSet.json",
+      "size": 3891,
+      "sha256": "6236bcd623e63961be252aee49fe8deed49fa7500ad000c257bb947b5f7e2b29"
+    },
+    {
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/definitions/collections.json",
+      "size": 15067,
+      "sha256": "7a9f904d3c572a8edbd7cfbfbb808095bca386009459b586134dc10763c37124"
+    },
+    {
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/definitions/id.json",
+      "size": 963,
+      "sha256": "835fc6856667626796838943375c0539beee25fb58c5c4ba325cea49ff1baa0a"
+    },
+    {
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/definitions/otherProperties.json",
+      "size": 47739,
+      "sha256": "9c425f49b49a7487d21b50cf37589e256ca44100338ee47edba4b603d8ffe967"
+    },
+    {
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/definitions/specificResource.json",
+      "size": 37781,
+      "sha256": "5de16c17dec86f0af13c1888a2e3a183a412cfe4cf30476c38e615c82321e929"
+    },
+    {
+      "path": "ports/redshank/model/tests/representation_identity.rs",
+      "size": 7496,
+      "sha256": "ef755df64a4dcf4b6218cb34aac65b2a0479210d5681f63eab568687c347d091"
+    },
+    {
+      "path": "ports/redshank/model/tests/w3c_conformance.rs",
+      "size": 9431,
+      "sha256": "91cf66f048f6453fd85fe08022872f138cf2fd383c0264bdf5d35661d1697293"
+    },
+    {
+      "path": "ports/redshank/playback/Cargo.toml",
+      "size": 511,
+      "sha256": "2979852201359b600ea51f9623fdd60a7e3f62a66fa33642f5a7976dfe8b7631"
+    },
+    {
+      "path": "ports/redshank/playback/src/alignment.rs",
+      "size": 12365,
+      "sha256": "bd2b9399913119f4dd9ee5e0fba4044698d9e0673de83fba5696642e37bce7d4"
+    },
+    {
+      "path": "ports/redshank/playback/src/backend.rs",
+      "size": 40966,
+      "sha256": "529ab1e0c104d34d30b50f5840b0f3128b6ae25f7dd82fffc7c8ef0c1c5009c7"
+    },
+    {
+      "path": "ports/redshank/playback/src/controller_adapter.rs",
+      "size": 6226,
+      "sha256": "643b30bf2d7f18eb3dd0e11b8c336bf8e3840d4cc7c60e621f30f62b4b05941e"
+    },
+    {
+      "path": "ports/redshank/playback/src/http_range.rs",
+      "size": 19486,
+      "sha256": "0f3022eb66d89900a6b1652cd895ba2402b8ac0acafda169c47b58cca2536ccb"
+    },
+    {
+      "path": "ports/redshank/playback/src/lib.rs",
+      "size": 42506,
+      "sha256": "fe4b1d3aa05731ae337d4ffc340c648fdcbe444500a799c4c27d1cf8848eb481"
+    },
+    {
+      "path": "ports/redshank/playback/src/output.rs",
+      "size": 10956,
+      "sha256": "5a6daacc164399ee3b08a58b7ea3e4867b4b83cc16689669b7112a4ba90f6aec"
+    },
+    {
+      "path": "ports/redshank/playback/src/worker.rs",
+      "size": 32056,
+      "sha256": "28765bca9f38b98bb6b55b44116bc07aa11389604f7239f7fe1b79f8ab8cf718"
+    },
+    {
+      "path": "ports/redshank/spikes/playback/Cargo.lock",
+      "size": 116228,
+      "sha256": "9ef8c872ff75b37c0f51ff5184597bfb81350a5188d8ca66700aa521c6dcb7bf"
+    },
+    {
+      "path": "ports/redshank/spikes/playback/Cargo.toml",
+      "size": 535,
+      "sha256": "a7a98e79390ec3eaa72c670dc16108156156694761ea00222c05593e73b7426f"
+    },
+    {
+      "path": "ports/redshank/spikes/playback/common/Cargo.toml",
+      "size": 242,
+      "sha256": "ef66d60534b546cb0486daf6dd3988409ba782748581bd75562e005d4f1176cf"
+    },
+    {
+      "path": "ports/redshank/spikes/playback/common/src/lib.rs",
+      "size": 8010,
+      "sha256": "1d8c98711bb68ca36bd9fa6216b395090705aa0d918846a63371eec6d28a68c4"
+    },
+    {
+      "path": "ports/redshank/spikes/playback/gstreamer-path/Cargo.toml",
+      "size": 436,
+      "sha256": "bc9a5a02d66fa8692d95045a86678bfcac92353bdf3bf58a3ac8d5c5326baa8d"
+    },
+    {
+      "path": "ports/redshank/spikes/playback/gstreamer-path/src/main.rs",
+      "size": 8567,
+      "sha256": "2caa3350e384a436537ddaa60d6cd2886451a67cb7ee0a2a5462e2307173f1e8"
+    },
+    {
+      "path": "ports/redshank/spikes/playback/symphonia-path/Cargo.toml",
+      "size": 308,
+      "sha256": "3cf06d17c6cc197c40c2860c105acdc4418539e5f621e6b19835720d1f7ca640"
+    },
+    {
+      "path": "ports/redshank/spikes/playback/symphonia-path/src/http_range.rs",
+      "size": 6037,
+      "sha256": "2683c5e882ac1f33541d076e688a9029e9100bfbee8cf0e8065b0fdeee5c1345"
+    },
+    {
+      "path": "ports/redshank/spikes/playback/symphonia-path/src/main.rs",
+      "size": 7667,
+      "sha256": "2009a7f13787449d96397eff5eca8d934ce3dee3feb1f8621a1f5905ab56c9a6"
+    },
+    {
+      "path": "ports/redshank/storage/Cargo.toml",
+      "size": 286,
+      "sha256": "0b6df19baafe53aeab628af98c56956260e512d7cae9a3bb0710be38ea8ec94c"
+    },
+    {
+      "path": "ports/redshank/storage/src/lib.rs",
+      "size": 14187,
+      "sha256": "e4f68c1d108697a3a540ea0891cc5636ca90cd41647bd4fa8185cfbec39c9130"
+    },
+    {
+      "path": "ports/redshank/surfaces/Cargo.toml",
+      "size": 668,
+      "sha256": "b9666bbdf526d206f2256170eebaf3902819bc9e420eca08f937654162de1c5a"
+    },
+    {
+      "path": "ports/redshank/surfaces/assets/fonts/IBMPlexMono-Medium.ttf",
+      "size": 156996,
+      "sha256": "0bede3debdea8488bbb927f8f0650d915073209734a67fe8cd5a3320b572511c"
+    },
+    {
+      "path": "ports/redshank/surfaces/assets/fonts/IBMPlexMono-Regular.ttf",
+      "size": 155940,
+      "sha256": "fe11304a5fe956d5744e9b6a246cc83d90425245e75a62230044966ca96a7f50"
+    },
+    {
+      "path": "ports/redshank/surfaces/assets/fonts/IBMPlexMono-SemiBold.ttf",
+      "size": 157552,
+      "sha256": "c9417148ce13f8fa7d2d5c9180bbc141f72aa0d814ffeb280f6904dc2b1bbd7a"
+    },
+    {
+      "path": "ports/redshank/surfaces/assets/fonts/IBMPlexSans-Medium.ttf",
+      "size": 202460,
+      "sha256": "331c8639d7598b2cde62a911a71db195e30cb655cd6bdf2e324a7e984955f907"
+    },
+    {
+      "path": "ports/redshank/surfaces/assets/fonts/IBMPlexSans-Regular.ttf",
+      "size": 200500,
+      "sha256": "975dcda37d80f038dcd143c22e33ca2d97a0cc5a929aace1c749153b0fe1afa5"
+    },
+    {
+      "path": "ports/redshank/surfaces/assets/fonts/IBMPlexSans-SemiBold.ttf",
+      "size": 202632,
+      "sha256": "a20caf8286023a6a7a85e40b1d2a4ae9fc3e3b1f9eda8f4c542dd4986af67bb1"
+    },
+    {
+      "path": "ports/redshank/surfaces/src/dock.rs",
+      "size": 29627,
+      "sha256": "57423ccd3b81e5e3428e026f3c656ae6ce4135adf72ad0788832547397a50b7c"
+    },
+    {
+      "path": "ports/redshank/surfaces/src/lib.rs",
+      "size": 28052,
+      "sha256": "2e62fc5c112e073081ee490da63c0a9c5449b3a94d53fa04832528bf15cc02c6"
+    },
+    {
+      "path": "ports/redshank/surfaces/src/rail.rs",
+      "size": 10771,
+      "sha256": "538f03268225621bc2c84913b7cc0ed1fa76b807f9eabe81072188e472412e30"
+    },
+    {
+      "path": "ports/redshank/surfaces/src/redshank.css",
+      "size": 14041,
+      "sha256": "5f478ef0b1aa88a3e34ba4128756157ff3884dc094284bfdf4dba2c8f286a7a2"
+    },
+    {
+      "path": "ports/redshank/surfaces/src/scene/card.rs",
+      "size": 5294,
+      "sha256": "85663cb427df0aee35d52378aaf4f8a9b599cf15b7f6de9a8d7cdbcd68afee41"
+    },
+    {
+      "path": "ports/redshank/surfaces/src/scene/chain.rs",
+      "size": 16501,
+      "sha256": "a1221ad4378df20578e33de0e54a2171137e6768c1d36d7781d7f47d24f85860"
+    },
+    {
+      "path": "ports/redshank/surfaces/src/scene/geometry.rs",
+      "size": 9169,
+      "sha256": "ef49098013ae696d00618522430e6bff9eb5eff3e4f89ccbd4eb67c63883e545"
+    },
+    {
+      "path": "ports/redshank/surfaces/src/scene/mod.rs",
+      "size": 23282,
+      "sha256": "c22d35c4ba6b0b128f2dcb389e4e09ebbe89a49a0b900da8651579ec2c61e016"
+    },
+    {
+      "path": "ports/redshank/surfaces/src/scene/orrery.rs",
+      "size": 10445,
+      "sha256": "97cb16034b8cf492cf7734b03f25b399677fc24e8f7c655756376374a05fb8d2"
+    },
+    {
+      "path": "ports/redshank/surfaces/src/scene/trail.rs",
+      "size": 7391,
+      "sha256": "abe914d13b53c0b63c75f1c125866f09f7025c345c3a08601a5e7d03881fc73f"
+    },
+    {
+      "path": "ports/redshank/surfaces/src/shell.rs",
+      "size": 19381,
+      "sha256": "c6a1eb8f1f79ab2fbefec27fa16acbb5a1ef31000f2bd41918d1009d4f70603a"
+    },
+    {
+      "path": "ports/redshank/surfaces/src/surface_api.rs",
+      "size": 14024,
+      "sha256": "cdb2d1a60eae64eee2e1f7d925f297a400fa118bdf8afd519634ee7b1faed0cc"
+    },
+    {
+      "path": "ports/redshank/surfaces/src/tabs/controls.rs",
+      "size": 4490,
+      "sha256": "138c1bd75beb1e9094e24eb537f0362b63c0449b2d4ded708421bc32f562a871"
+    },
+    {
+      "path": "ports/redshank/surfaces/src/tabs/library.rs",
+      "size": 25846,
+      "sha256": "41addaf912bdc1d8bb22415fe0a603b12f2009d2ae59ccacad5904fbc0cc735b"
+    },
+    {
+      "path": "ports/redshank/surfaces/src/tabs/listen.rs",
+      "size": 26568,
+      "sha256": "54838a533c48464ea690c6e855c75cde44cfb75f2ce821c89345f5be343b164a"
+    },
+    {
+      "path": "ports/redshank/surfaces/src/tabs/mod.rs",
+      "size": 16297,
+      "sha256": "5b2c236fb0295313ffdcea058becf3aaf9d4a03bef335f3446865d39fff76016"
+    },
+    {
+      "path": "ports/redshank/surfaces/src/tabs/notes.rs",
+      "size": 24855,
+      "sha256": "96bdc39c7dbff6814c31297ecdfa0f76380c90af281e061216adf8bd5f5b380d"
+    },
+    {
+      "path": "ports/redshank/surfaces/src/tabs/rows.rs",
+      "size": 13151,
+      "sha256": "0d2febb4fcba526cec1167e16b654a2cb03627616325e13c4d8cbe4bbd9c0f4e"
+    },
+    {
+      "path": "ports/redshank/surfaces/src/tabs/settings.rs",
+      "size": 27260,
+      "sha256": "e228f30d99f224f36fa66026e1c787cb16534b2e5f4ba71b39e9b525e9f6e002"
+    },
+    {
+      "path": "ports/redshank/surfaces/src/theme.rs",
+      "size": 13217,
+      "sha256": "6d22314774be77e3db09e1287f3426140688623d781aef05f83ac66a4d27980b"
+    },
+    {
+      "path": "ports/redshank/web/Cargo.toml",
+      "size": 1288,
+      "sha256": "92888b927df69784390e29e4c67b78f0925998618d3d91a328e92c86a0a7a90d"
+    },
+    {
+      "path": "ports/redshank/web/src/lib.rs",
+      "size": 27268,
+      "sha256": "f5e7535379bae1895a6b3acecc14cf3169824dfd6096b7749efa2c2ae38709f8"
+    },
+    {
+      "path": "rust-toolchain.toml",
+      "size": 69,
+      "sha256": "cfce427355a1d5e82a7bf4ac4e02ec7837d057b0f24b6a4195c02bf2ccc7f81b"
+    },
+    {
+      "path": "validation/redshank-current-stack_20261007/cargo-gate.ps1",
+      "size": 3481,
+      "sha256": "5de972f828541d2ce094571012e624684f5623ace5118b5832b8520318a4b2fb"
+    },
+    {
+      "path": "validation/redshank-current-stack_20261007/source-evidence.py",
+      "size": 6368,
+      "sha256": "f7551f74b58b11601f8fc8138170251d2656e04d3a70a5846120716212ce6178"
+    }
+  ]
+}

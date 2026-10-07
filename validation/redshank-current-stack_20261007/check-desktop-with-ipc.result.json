@@ -1,0 +1,31 @@
+{
+  "exit_code": 0,
+  "priority": "BelowNormal",
+  "gate": "check-desktop",
+  "command": [
+    "cargo",
+    "+1.97.1",
+    "check",
+    "--locked",
+    "--manifest-path",
+    "C:\\Users\\mark_\\Code\\worktrees\\woodshed-browser-input-compat\\ports\\redshank\\Cargo.toml",
+    "-p",
+    "redshank-desktop",
+    "-p",
+    "redshank-playback",
+    "-p",
+    "redshank-surfaces",
+    "--all-targets",
+    "-j",
+    "1"
+  ],
+  "cwd": "C:/t",
+  "libclang_path": "C:/Program Files/LLVM/bin",
+  "started_utc": "2026-10-07T07:45:50.4207965Z",
+  "finished_utc": "2026-10-07T07:46:01.2229036Z",
+  "jobs": 1,
+  "pid": 6272,
+  "dev_debug": 0,
+  "target": "C:/t/cargo-targets/woodshed",
+  "test_debug": 0
+}

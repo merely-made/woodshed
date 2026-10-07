@@ -1,0 +1,6 @@
+    Updating git repository `https://github.com/merely-made/genet.git`
+    Updating git repository `https://github.com/merely-made/mere.git`
+error: failed to select a version for the requirement `errand = "^0.3.4"`
+candidate versions found which didn't match: 0.4.0
+location searched: Git repository https://github.com/merely-made/mere.git?rev=57b4893db6909d5ed9c4ccae30216f0d8164201a
+required by package `redshank-feed v0.0.0 (C:\Users\mark_\Code\worktrees\woodshed-browser-input-compat\ports\redshank\feed)`

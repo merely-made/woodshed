@@ -1,0 +1,14 @@
+    Updating git repository `https://github.com/merely-made/genet.git`
+    Updating git repository `https://github.com/merely-made/mere.git`
+    Updating crates.io index
+error: failed to select a version for `wasm-bindgen`.
+    ... required by package `cambium-genet-web-host v0.1.0 (https://github.com/merely-made/mere.git?rev=57b4893db6909d5ed9c4ccae30216f0d8164201a#57b4893d)`
+    ... which satisfies git dependency `cambium-genet-web-host` of package `redshank-web v0.0.0 (C:\Users\mark_\Code\worktrees\woodshed-browser-input-compat\ports\redshank\web)`
+versions that meet the requirements `=0.2.129` are: 0.2.129
+
+all possible versions conflict with previously selected packages
+
+  previously selected package `wasm-bindgen v0.2.127`
+    ... which satisfies dependency `wasm-bindgen = "=0.2.127"` (locked to 0.2.127) of package `redshank-web v0.0.0 (C:\Users\mark_\Code\worktrees\woodshed-browser-input-compat\ports\redshank\web)`
+
+failed to select a version for `wasm-bindgen` which could resolve this conflict

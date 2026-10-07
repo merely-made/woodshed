@@ -1,0 +1,54 @@
+    Updating git repository `https://github.com/merely-made/genet.git`
+    Updating crates.io index
+    Updating git repository `https://github.com/merely-made/mere.git`
+    Blocking waiting for file lock on package cache
+     Locking 48 packages to latest Rust 1.97 compatible versions
+      Adding buckram v0.0.3 (https://github.com/merely-made/genet.git?rev=965b64e206a47d1c8808472de9aa461233638768#965b64e2)
+      Adding cadency v0.0.1 (https://github.com/merely-made/genet.git?rev=965b64e206a47d1c8808472de9aa461233638768#965b64e2)
+      Adding cambium v0.3.3 (https://github.com/merely-made/mere.git?rev=57b4893db6909d5ed9c4ccae30216f0d8164201a#57b4893d)
+      Adding cambium-genet-web-host v0.1.0 (https://github.com/merely-made/mere.git?rev=57b4893db6909d5ed9c4ccae30216f0d8164201a#57b4893d)
+      Adding cambium-genet-winit-host v0.1.0 (https://github.com/merely-made/mere.git?rev=57b4893db6909d5ed9c4ccae30216f0d8164201a#57b4893d)
+      Adding cambium-rootstock v0.1.0 (https://github.com/merely-made/mere.git?rev=57b4893db6909d5ed9c4ccae30216f0d8164201a#57b4893d)
+      Adding cambium-winit v0.3.0 (https://github.com/merely-made/mere.git?rev=57b4893db6909d5ed9c4ccae30216f0d8164201a#57b4893d)
+      Adding cambium-winit-a11y v0.3.0 (https://github.com/merely-made/mere.git?rev=57b4893db6909d5ed9c4ccae30216f0d8164201a#57b4893d)
+      Adding document-session-api v0.1.0 (https://github.com/merely-made/genet.git?rev=965b64e206a47d1c8808472de9aa461233638768#965b64e2)
+      Adding engine-observables-api v0.2.0 (https://github.com/merely-made/genet.git?rev=965b64e206a47d1c8808472de9aa461233638768#965b64e2)
+      Adding errand v0.4.0 (https://github.com/merely-made/mere.git?rev=57b4893db6909d5ed9c4ccae30216f0d8164201a#57b4893d)
+      Adding genet-document-resources v0.2.1 (https://github.com/merely-made/genet.git?rev=965b64e206a47d1c8808472de9aa461233638768#965b64e2)
+      Adding genet-fontique v0.10.0 (https://github.com/merely-made/genet.git?rev=965b64e206a47d1c8808472de9aa461233638768#965b64e2)
+      Adding genet-host-api v0.2.0 (https://github.com/merely-made/genet.git?rev=965b64e206a47d1c8808472de9aa461233638768#965b64e2)
+      Adding genet-livery v0.0.4 (https://github.com/merely-made/genet.git?rev=965b64e206a47d1c8808472de9aa461233638768#965b64e2)
+      Adding genet-paint-types v0.2.0 (https://github.com/merely-made/genet.git?rev=965b64e206a47d1c8808472de9aa461233638768#965b64e2)
+      Adding genet-parley v0.10.0 (https://github.com/merely-made/genet.git?rev=965b64e206a47d1c8808472de9aa461233638768#965b64e2)
+      Adding genet-render v0.2.0 (https://github.com/merely-made/genet.git?rev=965b64e206a47d1c8808472de9aa461233638768#965b64e2)
+      Adding genet-render-host v0.2.0 (https://github.com/merely-made/genet.git?rev=965b64e206a47d1c8808472de9aa461233638768#965b64e2)
+      Adding genet-scripted-dom v0.1.2 (https://github.com/merely-made/genet.git?rev=965b64e206a47d1c8808472de9aa461233638768#965b64e2)
+      Adding genet-static-dom v0.1.1 (https://github.com/merely-made/genet.git?rev=965b64e206a47d1c8808472de9aa461233638768#965b64e2)
+      Adding genet-text v0.1.0 (https://github.com/merely-made/genet.git?rev=965b64e206a47d1c8808472de9aa461233638768#965b64e2)
+      Adding genet-winit-host v0.2.0 (https://github.com/merely-made/genet.git?rev=965b64e206a47d1c8808472de9aa461233638768#965b64e2)
+    Updating gopher-protocol v0.1.1 -> v0.2.0
+      Adding ipc-channel v0.22.0 (https://github.com/merely-made/genet.git?rev=965b64e206a47d1c8808472de9aa461233638768#965b64e2)
+    Updating js-sys v0.3.104 -> v0.3.106
+      Adding layout-dom-api v0.1.1 (https://github.com/merely-made/genet.git?rev=965b64e206a47d1c8808472de9aa461233638768#965b64e2)
+      Adding livery v0.0.5 (https://github.com/merely-made/genet.git?rev=965b64e206a47d1c8808472de9aa461233638768#965b64e2)
+      Adding mere-apparatus v0.0.1 (https://github.com/merely-made/mere.git?rev=57b4893db6909d5ed9c4ccae30216f0d8164201a#57b4893d)
+      Adding mere-fetch v0.0.1 (https://github.com/merely-made/mere.git?rev=57b4893db6909d5ed9c4ccae30216f0d8164201a#57b4893d)
+      Adding mere-surface-api v0.1.0 (https://github.com/merely-made/mere.git?rev=57b4893db6909d5ed9c4ccae30216f0d8164201a#57b4893d)
+      Adding meristem v0.2.0 (https://github.com/merely-made/mere.git?rev=57b4893db6909d5ed9c4ccae30216f0d8164201a#57b4893d)
+      Adding mesquite v0.1.0 (https://github.com/merely-made/mere.git?rev=57b4893db6909d5ed9c4ccae30216f0d8164201a#57b4893d)
+      Adding netfetcher v0.1.1 (https://github.com/merely-made/genet.git?rev=965b64e206a47d1c8808472de9aa461233638768#965b64e2)
+      Adding sceno v0.0.4 (https://github.com/merely-made/mere.git?rev=57b4893db6909d5ed9c4ccae30216f0d8164201a#57b4893d)
+      Adding servo-media-player v0.2.0 (https://github.com/merely-made/genet.git?rev=965b64e206a47d1c8808472de9aa461233638768#965b64e2)
+      Adding servo-media-streams v0.2.0 (https://github.com/merely-made/genet.git?rev=965b64e206a47d1c8808472de9aa461233638768#965b64e2)
+      Adding servo-media-traits v0.2.0 (https://github.com/merely-made/genet.git?rev=965b64e206a47d1c8808472de9aa461233638768#965b64e2)
+      Adding sprigging v0.2.1 (https://github.com/merely-made/mere.git?rev=57b4893db6909d5ed9c4ccae30216f0d8164201a#57b4893d)
+      Adding taproot v0.1.0 (https://github.com/merely-made/genet.git?rev=965b64e206a47d1c8808472de9aa461233638768#965b64e2)
+      Adding tinct v0.1.2 (https://github.com/merely-made/mere.git?rev=57b4893db6909d5ed9c4ccae30216f0d8164201a#57b4893d)
+    Updating wasm-bindgen v0.2.127 -> v0.2.129
+    Updating wasm-bindgen-futures v0.4.77 -> v0.4.79
+    Updating wasm-bindgen-macro v0.2.127 -> v0.2.129
+    Updating wasm-bindgen-macro-support v0.2.127 -> v0.2.129
+    Updating wasm-bindgen-shared v0.2.127 -> v0.2.129
+    Updating web-sys v0.3.104 -> v0.3.106
+      Adding workbench v0.1.0 (https://github.com/merely-made/mere.git?rev=57b4893db6909d5ed9c4ccae30216f0d8164201a#57b4893d)
+    Blocking waiting for file lock on package cache
