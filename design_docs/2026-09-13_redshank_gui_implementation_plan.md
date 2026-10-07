@@ -441,3 +441,23 @@ run against the same contract.
   records the failed early-durability control, native attachment failure
   control, commands, pins and hashes. This isolated diff awaits integration;
   exact frame correlation, human AT and stale/cancel playback remain open.
+
+- **2026-10-06, bounded browser-input compatibility adoption, in progress.**
+  Starting from the Turnstone-qualified Woodshed source
+  `9e982b88bf57e41ef4fa846c66ffdd4f05beb91d`, the nested Redshank workspace's
+  eight Mere aliases and the browser host's three aliases move together from
+  `3d1cdacc90aa6a0736154d841223a3ae29e23aa5` to
+  `db4ee31258b23c86572c429388c5d10bd4de9dc3`. That Mere revision retains the
+  qualified baseline manifests, Genet `69a2383b`, and Knot `855cb75d`, and adds
+  only shared Weld mouse/character dispatch and ordered Graft host events.
+  Woodshed's other workspace and Hocket pins retain their existing sources.
+  `cargo metadata --locked --format-version 1 --manifest-path
+  ports/redshank/Cargo.toml` fetched the real immutable Git source and passed:
+  all 16 app-facing Mere packages use `db4ee312`; all 24 Genet packages use
+  `69a2383b`. The lock differs only in those 16 Mere source entries.
+  Done-condition: Git-sourced consumer metadata retains one app-facing Mere
+  type family and the existing Genet family; Turnstone's exact committed
+  consumer passes native two-page input/find/zoom, permission and teardown
+  scenarios before the temporary Weld host bridge is removed. The current
+  primary checkout's transcript work is a separate lane and is not part of
+  this compatibility source. No broad family upgrade is implied.
