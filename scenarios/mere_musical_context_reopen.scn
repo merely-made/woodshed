@@ -14,6 +14,8 @@ settle 12
 capture 01_reopened_context
 click .overview-node-title C Major
 settle 12
+click .overview-inspector
+settle 12
 capture 02_reopened_inspector
 assert snap set-cards == 3
 log Musical context reopen complete
