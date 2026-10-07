@@ -461,3 +461,15 @@ run against the same contract.
   scenarios before the temporary Weld host bridge is removed. The current
   primary checkout's transcript work is a separate lane and is not part of
   this compatibility source. No broad family upgrade is implied.
+
+- **2026-10-06, focused browser font backend compatibility.** From `b613fc55`,
+  the nested Redshank workspace's five Genet entries move together to
+  `679d8314aab4ec9f57a903c79dde244c3c565c1e`; its eight Mere entries and the web
+  host's three entries move to `edf175f9c0a8645318ac8925adf0af6956f61425`.
+  Runtime source is unchanged. The deterministic nested lock changes 24 Genet
+  and 16 Mere source records and replaces fontsan 0.7's `fontsan-woff2` provider
+  with `wuff-capi,wuff`, preserving every existing registry version/checksum.
+  Genet's three native codec tests pass; actual locked Git-sourced Turnstone
+  resolver/build/native qualification is pending before main integration.
+  Other Woodshed/Hocket pins retain their independent families, so this does
+  not claim a whole-Woodshed-workspace codec or build qualification.
