@@ -8,7 +8,9 @@ use std::collections::BTreeSet;
 
 use woodshedding::chord::catalog as chord_catalog;
 use woodshedding::pitch::{Pitch, PitchClass, Spelling};
-use woodshedding::rehearsal::Material;
+use woodshedding::rehearsal::{
+    ApproachDirection, ArpeggioDirection, Card, CardId, Material, ScalePattern, Touch,
+};
 use woodshedding::scale::catalog as scale_catalog;
 
 pub use woodshedding::pitch_class_set::{PitchClassMotion, PitchClassMove, PitchSetComparison};
@@ -18,17 +20,62 @@ pub use woodshedding::pitch_class_set::{PitchClassMotion, PitchClassMove, PitchS
 /// `formula_id` is the existing stable catalog id (`chord:Major`,
 /// `scale:Dorian`); [`Self::wire_key`] adds the tonic without turning a
 /// keyed realization into a new catalog formula.
-#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[derive(
+    Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash, serde::Serialize, serde::Deserialize,
+)]
 pub struct KeyedCatalogRef {
     pub formula_id: String,
     pub root: PitchClass,
 }
 
 impl KeyedCatalogRef {
+    /// Preserve the sequential catalog identity carried by chord + touch.
+    pub fn from_card(card: &Card) -> Option<Self> {
+        let mut keyed = Self::from_material(&card.material)?;
+        if matches!(card.material, Material::Chord { .. })
+            && matches!(card.touch, Touch::Arpeggiate { .. })
+        {
+            keyed.formula_id = keyed.formula_id.replacen("chord:", "arpeggio:", 1);
+        }
+        Some(keyed)
+    }
+
+    /// Catalog preview with the correct articulation; occurrence assigned by Set.
+    pub fn to_card(&self) -> Option<Card> {
+        Some(Card {
+            id: CardId::UNASSIGNED,
+            label: self.label()?,
+            material: self.to_material()?,
+            setting: Default::default(),
+            touch: if self.formula_id.starts_with("arpeggio:") {
+                Touch::Arpeggiate {
+                    direction: ArpeggioDirection::UpDown,
+                    inversion: 0,
+                }
+            } else if self.formula_id.starts_with("scale-pattern:")
+                || self.formula_id.starts_with("chord-approach:")
+            {
+                Touch::Walk
+            } else {
+                Touch::Block
+            },
+            timing: Default::default(),
+            from: None,
+        })
+    }
+
     /// Name a keyed chord or scale material, rejecting paths, riffs, and
     /// materials whose formula no longer exists in the catalog.
     pub fn from_material(material: &Material) -> Option<Self> {
         match material {
+            Material::ChordApproach {
+                name,
+                root,
+                direction,
+            } if chord_catalog().iter().any(|formula| formula.name == name) => Some(Self {
+                formula_id: woodshed_graph::chord_approach_id(name, *direction),
+                root: *root,
+            }),
             Material::Chord { name, root }
                 if chord_catalog().iter().any(|formula| formula.name == name) =>
             {
@@ -45,6 +92,14 @@ impl KeyedCatalogRef {
                     root: *root,
                 })
             },
+            Material::ScalePattern {
+                name,
+                root,
+                pattern,
+            } if scale_catalog().iter().any(|formula| formula.name == name) => Some(Self {
+                formula_id: woodshed_graph::scale_pattern_id(name, *pattern),
+                root: *root,
+            }),
             _ => None,
         }
     }
@@ -53,8 +108,32 @@ impl KeyedCatalogRef {
     /// formula identifiers rather than silently substituting another formula.
     pub fn to_material(&self) -> Option<Material> {
         let (kind, name) = self.formula_id.split_once(':')?;
+        if kind == "chord-approach" {
+            let (slug, name) = name.split_once(':')?;
+            let direction = ApproachDirection::from_slug(slug)?;
+            return chord_catalog()
+                .iter()
+                .any(|formula| formula.name == name)
+                .then(|| Material::ChordApproach {
+                    name: name.into(),
+                    root: self.root,
+                    direction,
+                });
+        }
+        if kind == "scale-pattern" {
+            let (slug, name) = name.split_once(':')?;
+            let pattern = ScalePattern::from_slug(slug)?;
+            return scale_catalog()
+                .iter()
+                .any(|formula| formula.name == name)
+                .then(|| Material::ScalePattern {
+                    name: name.into(),
+                    root: self.root,
+                    pattern,
+                });
+        }
         match kind {
-            "chord" if chord_catalog().iter().any(|formula| formula.name == name) => {
+            "chord" | "arpeggio" if chord_catalog().iter().any(|formula| formula.name == name) => {
                 Some(Material::Chord {
                     name: name.to_string(),
                     root: self.root,
@@ -80,10 +159,21 @@ impl KeyedCatalogRef {
         let material = self.to_material()?;
         let name = match material {
             Material::Chord { name, .. } | Material::Scale { name, .. } => name,
+            Material::ScalePattern { name, pattern, .. } => {
+                format!("{name} in {}", pattern.label().to_lowercase())
+            },
+            Material::ChordApproach {
+                name, direction, ..
+            } => format!("{name} approach from {}", direction.slug()),
             Material::Riff { .. } | Material::Path { .. } => return None,
         };
         let root = Pitch::from_midi(60 + i32::from(self.root.value()), Spelling::Sharps);
-        Some(format!("{}{} {}", root.name, root.accidental, name))
+        let suffix = if self.formula_id.starts_with("arpeggio:") {
+            " arpeggio"
+        } else {
+            ""
+        };
+        Some(format!("{}{} {}{suffix}", root.name, root.accidental, name))
     }
 
     /// Unique sounding pitch classes for this keyed formula.
@@ -97,14 +187,30 @@ impl KeyedCatalogRef {
 /// The formula is deliberately resolved by name each time. A stale saved name
 /// yields `None`, never the first catalog formula.
 pub fn keyed_pitch_classes(material: &Material) -> Option<BTreeSet<PitchClass>> {
+    if let Material::ChordApproach {
+        name,
+        root,
+        direction,
+    } = material
+    {
+        let target = keyed_pitch_classes(&Material::Chord {
+            name: name.clone(),
+            root: *root,
+        })?;
+        let mut recipe = target.clone();
+        recipe.extend(target.iter().map(|pc| {
+            PitchClass::new((i16::from(pc.value()) + direction.fret_delta()).rem_euclid(12) as u8)
+        }));
+        return Some(recipe);
+    }
     let pitches = match material {
-        Material::Chord { name, root } => {
+        Material::Chord { name, root } | Material::ChordApproach { name, root, .. } => {
             let formula = chord_catalog()
                 .iter()
                 .find(|formula| formula.name == name)?;
             formula.apply_to(root_pitch(*root)).ok()?
         },
-        Material::Scale { name, root } => {
+        Material::Scale { name, root } | Material::ScalePattern { name, root, .. } => {
             let formula = scale_catalog()
                 .iter()
                 .find(|formula| formula.name == name)?;
@@ -214,5 +320,22 @@ mod tests {
             motion.held,
             BTreeSet::from([PitchClass::new(4), PitchClass::new(7)])
         );
+    }
+
+    #[test]
+    fn arpeggio_identity_retains_root_tones_and_touch_without_new_material() {
+        let reference = KeyedCatalogRef {
+            formula_id: "arpeggio:Major 7".into(),
+            root: PitchClass::new(2),
+        };
+        let card = reference.to_card().unwrap();
+        assert!(matches!(card.material, Material::Chord { .. }));
+        assert!(matches!(card.touch, Touch::Arpeggiate { .. }));
+        assert_eq!(KeyedCatalogRef::from_card(&card), Some(reference.clone()));
+        let chord = KeyedCatalogRef::from_material(&card.material).unwrap();
+        assert_ne!(chord, reference);
+        assert_eq!(chord.pitch_classes(), reference.pitch_classes());
+        assert_eq!(reference.wire_key(), "arpeggio:Major 7@pc:2");
+        assert!(reference.label().unwrap().ends_with(" arpeggio"));
     }
 }

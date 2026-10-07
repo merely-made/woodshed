@@ -136,6 +136,7 @@ fn boot_state(
     let mut shared = shared.borrow_mut();
     let backend = CpalBackend::new();
     let mut ui = UiState::new();
+    ui.event_clock = Some(drive::wall_time_ms);
     let (size_w, size_h) = window.inner_size();
     let scale = window.scale_factor() as f32;
     ui.set_viewport_width(size_w as f32 / scale);
@@ -291,7 +292,7 @@ fn hooks(shared: &Rc<RefCell<Shared>>) -> HostHooks<UiState, Logic, UiChild> {
                 !drag_active || drive::requires_live_frame(&shared, ctx.runner.state());
             if drive_rebuilt {
                 ctx.runner
-                    .update(|ui| animating = drive::frame(&mut shared, ui));
+                    .update(|ui| animating = drive::frame(&mut shared, ui) | ui.tick_overview_dynamics());
             }
             shared
                 .drag_frame_metrics

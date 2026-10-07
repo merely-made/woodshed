@@ -1,0 +1,16 @@
+# Narrow presentation against the persisted session from session_mere.scn.
+settle 3
+ui-zoom 0.85
+click .workspace-panel Mere
+settle 3
+assert snap overview-active == true
+assert snap retained-sets == 1
+assert snap working-sets == 2
+assert snap overview-processes == 0
+capture 01_mere_narrow
+click .workspace-panel Set
+settle 3
+assert snap approach-sequential == true
+assert snap rehearsal-strings == 4
+capture 02_card_narrow
+log Session Mere narrow presentation complete

@@ -1,0 +1,20 @@
+settle 90
+assert snap working-sets == 2
+assert snap recipe-valid == true
+assert snap recipe-owner == 2
+assert snap recipe-spacing == 24
+assert snap recipe-occurrence == set:2:card:4
+assert snap rehearsal-running == false
+click .workspace-panel Mere
+settle 5
+click .overview-relationship Relationship recipe
+settle 5
+assert text woodshed.keyed_pitch_set_intersection.v1
+click .relationship-explanation woodshed.keyed_pitch_set_intersection.v1
+settle 5
+capture 01_reading_reopened
+click .relationship-source Open selected source Card
+settle 5
+assert snap working-set-id == 2
+assert snap cursor-id == 4
+capture 02_exact_source_reopened

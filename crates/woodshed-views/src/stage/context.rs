@@ -19,6 +19,48 @@ impl UiState {
     /// board so the surrounding graph can be recomputed, but this never adds a
     /// card to the Set.
     pub fn focus_context_catalog(&mut self, material: KeyedCatalogRef) -> bool {
+        if material.formula_id.starts_with("arpeggio:") {
+            let source = self.current_card().and_then(|card| {
+                KeyedCatalogRef::from_material(&card.material).and_then(|mut keyed| {
+                    keyed.formula_id = keyed.formula_id.replacen("chord:", "arpeggio:", 1);
+                    (keyed == material).then_some(card.id)
+                })
+            });
+            if let Some(source) = source {
+                self.inspect_chord_arpeggio(source);
+            }
+        }
+        if let Some(Material::ChordApproach {
+            name,
+            root,
+            direction,
+        }) = material.to_material()
+        {
+            let pair = self.current_chord_approach_pair().filter(|(_, target)| {
+                self.set.cards.iter().find(|card| card.id == *target).is_some_and(|card|
+                    matches!(&card.material, Material::Chord { name: target_name, root: target_root } if *target_name == name && *target_root == root))
+            });
+            if let Some((source, target)) = pair {
+                self.inspect_chord_approach(source, target, direction);
+            }
+        }
+        if let Some(Material::ScalePattern {
+            name,
+            root,
+            pattern,
+        }) = material.to_material()
+        {
+            let source = self.current_card().and_then(|card| match &card.material {
+                Material::Scale {
+                    name: source_name,
+                    root: source_root,
+                } if *source_name == name && *source_root == root => Some(card.id),
+                _ => None,
+            });
+            if let Some(source) = source {
+                self.inspect_scale_pattern(source, pattern);
+            }
+        }
         if !select_keyed_material(&mut self.stage, &material) {
             return false;
         }
@@ -34,11 +76,39 @@ impl UiState {
     /// separate from both focus and Add to Set.
     pub fn audition_context_focus(&mut self) {
         if let Some(material) = self.context_focus.clone() {
+            if self.is_inspected_chord_approach(&material) {
+                self.hear_chord_approach();
+                return;
+            }
+            if self.is_inspected_scale_pattern(&material) {
+                self.hear_scale_pattern();
+                return;
+            }
+            if self.is_inspected_arpeggio(&material) {
+                self.hear_chord_arpeggio();
+                return;
+            }
             if !select_keyed_material(&mut self.stage, &material) {
                 return;
             }
             self.root_dd.selected = self.stage.root_idx;
-            let (pitches, duration_s, strum_s) = self.stage.voicing_preview();
+            if material.formula_id.starts_with("chord-approach:") {
+                self.hear_context_chord_approach(&material);
+                return;
+            }
+            if material.formula_id.starts_with("scale-pattern:") {
+                self.hear_context_scale_pattern(&material);
+                return;
+            }
+            let (pitches, duration_s, strum_s) = if material.formula_id.starts_with("arpeggio:") {
+                let Some(card) = self.stage.card_from_lens() else {
+                    return;
+                };
+                self.stage
+                    .card_sounding_pitches_at_tempo(&card, self.transport.bpm)
+            } else {
+                self.stage.voicing_preview()
+            };
             if !pitches.is_empty() {
                 self.request(AudioRequest::PreviewPitches {
                     pitches,
@@ -55,9 +125,31 @@ impl UiState {
         let Some(material) = self.context_focus.clone() else {
             return;
         };
+        if self.is_inspected_chord_approach(&material) {
+            self.stage_chord_approach();
+            return;
+        }
+        if self.is_inspected_scale_pattern(&material) {
+            self.stage_scale_pattern();
+            return;
+        }
+        if self.is_inspected_arpeggio(&material) {
+            self.stage_chord_arpeggio();
+            return;
+        }
         let from_id = self.stage.catalog_id();
-        if self.focus_context_catalog(material) {
-            self.stage_current(from_id);
+        if self.focus_context_catalog(material.clone()) {
+            if self.is_inspected_chord_approach(&material) {
+                self.stage_chord_approach();
+            } else if material.formula_id.starts_with("chord-approach:") {
+                self.stage_context_chord_approach(&material);
+            } else if self.is_inspected_scale_pattern(&material) {
+                self.stage_scale_pattern();
+            } else if material.formula_id.starts_with("scale-pattern:") {
+                self.stage_context_scale_pattern(&material);
+            } else {
+                self.stage_current(from_id);
+            }
         }
     }
 
@@ -604,8 +696,16 @@ fn select_keyed_material(stage: &mut woodshed_core::StageState, keyed: &KeyedCat
         return false;
     };
     stage.set_root((keyed.root.value() as usize + 3) % 12);
+    if let Some(name) = keyed.formula_id.strip_prefix("arpeggio:") {
+        let Some(index) = stage.chords().iter().position(|item| item.name == name) else {
+            return false;
+        };
+        stage.set_lens(Lens::Arpeggios);
+        stage.select_arpeggio(index);
+        return true;
+    }
     match material {
-        Material::Chord { name, .. } => {
+        Material::Chord { name, .. } | Material::ChordApproach { name, .. } => {
             let Some(index) = stage.chords().iter().position(|item| item.name == name) else {
                 return false;
             };
@@ -613,7 +713,7 @@ fn select_keyed_material(stage: &mut woodshed_core::StageState, keyed: &KeyedCat
             stage.select_chord(index);
             true
         },
-        Material::Scale { name, .. } => {
+        Material::Scale { name, .. } | Material::ScalePattern { name, .. } => {
             let Some(index) = stage.scales().iter().position(|item| item.name == name) else {
                 return false;
             };
@@ -712,6 +812,8 @@ pub(super) fn panel(ui: &UiState) -> UiChild {
                 super::pitch_motion::controls(ui),
                 el("div", text(context_title(material))).attr("class", "stage-context-title"),
                 comparison(ui, material),
+                super::scale_patterns::context_detail(ui, material),
+                super::chord_approaches::context_detail(ui, material),
                 el(
                     "div",
                     (

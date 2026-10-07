@@ -1,0 +1,79 @@
+# Actual host controls over an isolated three-occurrence Set.
+settle 90
+act relationship-example
+settle 5
+click .overview-relationship Relationship recipe
+settle 5
+click .relationship-bind Use selected Card relationships
+settle 5
+assert snap recipe-valid == true
+assert snap recipe-spacing == 16
+assert snap set-cards == 3
+capture 01_bound_recipe
+click .relationship-spacing Increase recipe spacing
+settle 5
+assert snap recipe-spacing == 24
+capture 02_edited_recipe
+click .graph-canvas-swatch-node @data-key=set:1:card:3
+settle 5
+assert snap recipe-occurrence == set:1:card:3
+capture 02a_last_graph_occurrence
+click .graph-canvas-swatch-node @data-key=set:1:card:2
+settle 5
+assert snap recipe-occurrence == set:1:card:2
+capture 02b_compiled_graph_selection
+click .relationship-explain Explain Shared pitch classes
+settle 5
+assert text woodshed.keyed_pitch_set_intersection.v1
+assert snap recipe-occurrence == set:1:card:1
+click .relationship-explanation woodshed.keyed_pitch_set_intersection.v1
+settle 5
+capture 03_explained_relationship
+click .relationship-occurrence Inspect C Major again
+settle 5
+assert snap recipe-occurrence == set:1:card:2
+click .relationship-source Open selected source Card
+settle 5
+assert snap working-set-id == 1
+assert snap cursor-id == 2
+assert snap rehearsal-running == false
+click .t-btn Remove
+settle 5
+assert snap set-cards == 2
+click .workspace-panel Mere
+settle 5
+click .overview-relationship Relationship recipe
+settle 5
+click .relationship-source Open selected source Card
+settle 5
+assert text Source instructions changed
+click .relationship-notice Source instructions changed
+settle 5
+capture 04_stale_source_refusal
+click .relationship-back Back to Mere
+settle 5
+click .workspace-panel Mere
+settle 5
+click .overview-duplicate-set Duplicate Set
+settle 5
+assert snap working-set-id == 2
+click .workspace-panel Mere
+settle 5
+click .overview-relationship Relationship recipe
+settle 5
+click .relationship-bind Rebind recipe to selected Cards
+settle 5
+assert snap recipe-owner == 2
+assert snap recipe-spacing == 24
+click .relationship-explain Explain Shared pitch classes
+settle 5
+assert snap recipe-occurrence == set:2:card:4
+click .relationship-explanation woodshed.keyed_pitch_set_intersection.v1
+capture 05_rebound_recipe
+click .relationship-back Back to Mere
+settle 5
+click .overview-node-title Selected material relationships
+settle 5
+assert text captured from working Set
+click .overview-relation captured from working Set
+capture 06_mere_retained_reading

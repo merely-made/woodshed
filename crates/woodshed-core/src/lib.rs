@@ -13,13 +13,22 @@ pub mod arpeggio;
 pub mod arrangement;
 pub mod audio;
 pub mod card_shapes;
+pub mod catalog_explorations;
+pub mod chord_approach;
+pub mod comparison_disclosure;
+pub mod connected_catalog;
+pub mod connected_scales;
 pub mod harmony;
 pub mod history;
 pub mod mere;
 pub mod midi;
 pub mod pitch_motion_reading;
+pub mod retained_sets;
+pub mod scale_pattern_discovery;
+pub mod scale_realization;
 pub mod sealed_backend;
 pub mod search;
+pub mod session_overview;
 pub mod settings;
 pub mod shape_movement;
 pub mod song;
@@ -28,6 +37,7 @@ pub mod stage_context;
 pub mod stage_scene;
 pub mod storage;
 pub mod tonnetz;
+pub mod working_sets;
 
 pub use card_shapes::{
     CARD_SHAPE_PROFILE, CardShapeGeometry, CardShapeStatus, CardShapeUnavailable, ResolvedCardShape,
@@ -892,9 +902,9 @@ impl StageState {
                     // is exactly the erasure P4b removes: a pair that is both
                     // diatonic and practiced-after is both, and says so.
                     let explanation = if count == 1 {
-                        "Previously staged from here".to_string()
+                        "Previously practiced from here".to_string()
                     } else {
-                        format!("Staged from here {count} times")
+                        format!("Practiced from here {count} times")
                     };
                     suggestion.relations.insert(
                         0,
@@ -1332,20 +1342,39 @@ impl StageState {
     }
 
     pub fn dots_for_card(&self, card: &Card) -> Vec<FretDot> {
+        if matches!(card.material, Material::ChordApproach { .. }) {
+            return self
+                .chord_approach_realization(card)
+                .map(|approach| approach.dots)
+                .unwrap_or_default();
+        }
+        if matches!(
+            card.material,
+            Material::Scale { .. } | Material::ScalePattern { .. }
+        ) {
+            return self
+                .scale_card_realization(card)
+                .map(|scale| scale.dots)
+                .unwrap_or_default();
+        }
         if matches!(card.material, Material::Chord { .. }) && card.setting.voicing_idx.is_some() {
             return self.selected_card_shape_dots(card).unwrap_or_default();
         }
         let board = Fretboard::new(self.tuning(), self.fret_count);
         let root_of = |pc: &PitchClass| Pitch::from_midi(48 + pc.value() as i32, Spelling::Sharps);
         let positions = match &card.material {
-            Material::Scale { name, root } => scale_catalog()
-                .iter()
-                .find(|s| s.name == name.as_str())
-                .and_then(|s| board.positions_for_scale(s, root_of(root)).ok()),
-            Material::Chord { name, root } => chord_catalog()
-                .iter()
-                .find(|c| c.name == name.as_str())
-                .and_then(|c| board.positions_for_chord(c, root_of(root)).ok()),
+            Material::Scale { name, root } | Material::ScalePattern { name, root, .. } => {
+                scale_catalog()
+                    .iter()
+                    .find(|s| s.name == name.as_str())
+                    .and_then(|s| board.positions_for_scale(s, root_of(root)).ok())
+            },
+            Material::Chord { name, root } | Material::ChordApproach { name, root, .. } => {
+                chord_catalog()
+                    .iter()
+                    .find(|c| c.name == name.as_str())
+                    .and_then(|c| board.positions_for_chord(c, root_of(root)).ok())
+            },
             Material::Riff { name } => {
                 // A riff card references an exercise; show its full
                 // position set (the step-through runs on the Exercise lens).
@@ -1857,12 +1886,21 @@ impl StageState {
     /// secs, strum offset ms)` — the Rehearsal-tab counterpart to
     /// [`Self::voicing_preview`]. Riff cards don't voice (empty).
     pub fn card_voicing(&self, card: &Card) -> (Vec<f32>, f32, f32) {
+        if matches!(card.material, Material::ChordApproach { .. }) {
+            return self.chord_approach_preview(card, false);
+        }
+        if matches!(
+            card.material,
+            Material::Scale { .. } | Material::ScalePattern { .. }
+        ) {
+            return self.scale_card_preview(card, false);
+        }
         fn to_hz(ps: Vec<Pitch>) -> Vec<f32> {
             ps.iter().map(|p| p.frequency() as f32).collect()
         }
         let root_of = |pc: &PitchClass| Pitch::from_midi(48 + pc.value() as i32, Spelling::Sharps);
         let (pitches, scale_like) = match &card.material {
-            Material::Scale { name, root } => (
+            Material::Scale { name, root } | Material::ScalePattern { name, root, .. } => (
                 scale_catalog()
                     .iter()
                     .find(|s| s.name == name.as_str())
@@ -1871,7 +1909,7 @@ impl StageState {
                     .unwrap_or_default(),
                 true,
             ),
-            Material::Chord { name, root } => {
+            Material::Chord { name, root } | Material::ChordApproach { name, root, .. } => {
                 if card.setting.voicing_idx.is_some() {
                     let pitches = match self.selected_card_shape(card) {
                         CardShapeStatus::Available(shape) => to_hz(shape.concert_pitches()),
@@ -1922,7 +1960,35 @@ impl StageState {
     /// voicing; Solo plays only the marked positions' pitches; Mute plays the
     /// voicing minus the marked notes' pitch classes. Same shape tuple as
     /// [`Self::card_voicing`]. This is what the "hear it" paths resolve to.
+    /// Resolve inherited rehearsal tempo before articulation and dwell are
+    /// calculated, so a Card without a BPM uses the same clock as its runner.
+    pub fn card_sounding_pitches_at_tempo(
+        &self,
+        card: &Card,
+        fallback_bpm: f32,
+    ) -> (Vec<f32>, f32, f32) {
+        if card.timing.bpm.is_some() {
+            return self.card_sounding_pitches(card);
+        }
+        let mut effective = card.clone();
+        effective.timing.bpm = Some(fallback_bpm);
+        self.card_sounding_pitches(&effective)
+    }
+
     pub fn card_sounding_pitches(&self, card: &Card) -> (Vec<f32>, f32, f32) {
+        if matches!(card.material, Material::ChordApproach { .. }) {
+            return self.chord_approach_preview(card, true);
+        }
+        if matches!(
+            card.material,
+            Material::Scale { .. } | Material::ScalePattern { .. }
+        ) {
+            return self.scale_card_preview(card, true);
+        }
+        connected_catalog::arpeggiate_preview(card, self.card_sounding_pitches_unarticulated(card))
+    }
+
+    fn card_sounding_pitches_unarticulated(&self, card: &Card) -> (Vec<f32>, f32, f32) {
         let marked = &card.setting.marked;
         if marked.is_empty() || card.setting.mark_mode == MarkMode::Off {
             return self.card_voicing(card);
@@ -2528,7 +2594,7 @@ mod tests {
     }
 
     #[test]
-    fn related_history_promotes_a_prior_stage_path() {
+    fn related_history_promotes_a_prior_practice_path() {
         let mut s = StageState::new();
         s.set_lens(Lens::Scales);
         let dorian = s
@@ -2541,13 +2607,13 @@ mod tests {
         history.record(
             Some(1_000),
             woodshed_graph::chord_id("Minor 7"),
-            history::EngagementKind::Staged,
+            history::EngagementKind::Rehearsed,
             Some(woodshed_graph::scale_id("Dorian")),
             None,
         );
         let ranked = s.related_material_with_history(&history, 5);
         assert_eq!(ranked[0].title, "Minor 7");
-        assert_eq!(ranked[0].reason(), "Previously staged from here");
+        assert_eq!(ranked[0].reason(), "Previously practiced from here");
         assert!(ranked[0].has_evidence());
         // The theory relation that was there first survives the promotion: the
         // old boundary replaced it, which is the erasure P4b removes.

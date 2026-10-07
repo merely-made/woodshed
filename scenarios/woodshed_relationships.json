@@ -1,0 +1,116 @@
+{
+  "dataset": {
+    "fields": {
+      "label": "text",
+      "occurrence_id": "text",
+      "order": "number"
+    },
+    "occurrences": [
+      {
+        "occurrence_id": "set:1:card:1",
+        "source": {
+          "adapter": "woodshed.selected-material",
+          "id": "chord:Major@pc:0"
+        },
+        "values": {
+          "label": {
+            "kind": "text",
+            "value": "C Major"
+          },
+          "occurrence_id": {
+            "kind": "text",
+            "value": "set:1:card:1"
+          },
+          "order": {
+            "kind": "number",
+            "value": 1
+          }
+        }
+      },
+      {
+        "occurrence_id": "set:1:card:2",
+        "source": {
+          "adapter": "woodshed.selected-material",
+          "id": "chord:Major@pc:0"
+        },
+        "values": {
+          "label": {
+            "kind": "text",
+            "value": "C Major again"
+          },
+          "occurrence_id": {
+            "kind": "text",
+            "value": "set:1:card:2"
+          },
+          "order": {
+            "kind": "number",
+            "value": 2
+          }
+        }
+      },
+      {
+        "occurrence_id": "set:1:card:3",
+        "source": {
+          "adapter": "woodshed.selected-material",
+          "id": "chord:Minor@pc:9"
+        },
+        "values": {
+          "label": {
+            "kind": "text",
+            "value": "A Minor"
+          },
+          "occurrence_id": {
+            "kind": "text",
+            "value": "set:1:card:3"
+          },
+          "order": {
+            "kind": "number",
+            "value": 3
+          }
+        }
+      }
+    ],
+    "revision": "woodshed-relationship-fixture-v1",
+    "source": {
+      "authority": "woodshed",
+      "domain": "music.practice",
+      "resource": "working-set:1"
+    }
+  },
+  "facets": [
+    "authored_order",
+    "occurrence_labels",
+    "explained_relationships"
+  ],
+  "relationships": [
+    {
+      "explanation": "C Major and A Minor share C, E by exact pitch-class intersection; register, fingering, and harmonic function are not inferred.",
+      "from_occurrence": "set:1:card:1",
+      "id": "set:1:shared-pitch-classes:1:3",
+      "kind": "music.shared_pitch_classes",
+      "label": "Shared pitch classes",
+      "provenance": {
+        "evidence": [
+          {
+            "adapter": "woodshed.selected-material",
+            "id": "chord:Major@pc:0"
+          },
+          {
+            "adapter": "woodshed.selected-material",
+            "id": "chord:Minor@pc:9"
+          }
+        ],
+        "method": "woodshed.keyed_pitch_set_intersection.v1",
+        "method_version": 1,
+        "provider": "woodshed",
+        "source": {
+          "authority": "woodshed",
+          "domain": "music.practice",
+          "resource": "working-set:1"
+        },
+        "source_revision": "woodshed-relationship-fixture-v1"
+      },
+      "to_occurrence": "set:1:card:3"
+    }
+  ]
+}

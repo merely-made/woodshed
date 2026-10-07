@@ -71,12 +71,41 @@ before any other doc in this directory.
   states, and responsive wireframe done-conditions. It is separate from the
   Woodshed product graph.
 - [2026-07-11_stage_set_tools_plan.md](2026-07-11_stage_set_tools_plan.md)
+  — October 5 adds owner-qualified relational disclosure, a shared-compiler
+  compatibility instrument, and fresh-process retention through the desktop
+  session path. The visible shared-recipe host integration is qualified with 558 automated
+  checks, baseline/420px native capture review and fresh-process reopening; source
+  actions validate the exact owner and explicit rebind retains the authored recipe.
+  The shared two-axis scroll reveal fix is contributed back to Cambium in Mere.
+  The exact-tone slice adds differences/equality/directed containment and
+  preserves older captured readings until explicit rebind. It passes 565 checks,
+  ten reviewed baseline/narrow/reopen captures and return to Run/Pause practice.
+  The selected-passage slice adds bounded consecutive comparisons while preserving
+  authored order and older captured evidence. It passes 567 checks, five compatibility
+  tests and ten reviewed baseline/narrow/reopen captures. The framing follow-up
+  fits the relationship overview to its pane; twelve reviewed committed-source
+  captures cover baseline/narrow, fresh reopening and a large 0.75-zoom replay.
+  The narrow last node and label are visible. The historical black Practice
+  surface does not reproduce in the current replay; its original cause is unproven.
+  The October 7 slice repins the coherent current Mere/Genet stack and embeds
+  Pictograph's shared PhysicsBoard in the session Mere, with camera controls,
+  retained emphasis/placement rules and opt-in motion. The 579-check gate and
+  desktop build pass; native acceptance awaits Mac unlock;
+  arbitrary dynamics grammar editing and a native Graphshell editor remain open.
   — **In progress; product authority.** P1-P3 remain partial. P4a/P4b landed;
   the scene canvas and single-Card expansion have receipts, while the full P4e
   catalog and P4f practice/sound join remain open. P5-P8 remain open. A repaired
   release baseline does not close the 1.0 practice proof. The September 30
   connected exploration/drilling direction specifies cross-catalog context,
   shared realization, ambient Mere actions, and integrated acceptance slices.
+  The first chord/arpeggio connection passes automated discovery, host controls,
+  and filesystem reopening checks. Native seed/reopen passes with six inspected
+  captures. The editor layout correction also has a four-capture native receipt
+  at recorded zoom. The bounded chord-to-scale slice adds formula containment,
+  explicit audition/staging, progressive disclosure, and mixed-Set reopening,
+  with 278 automated checks and three inspected native seed/reopen captures;
+  instrument realization, progression recipes, keyboard, listening, and full
+  articulation acceptance remain open.
 - [2026-08-27_smart_instrument_plan.md](2026-08-27_smart_instrument_plan.md)
   — **W1 and W2 landed and hardware-verified; W3 open.** The
   `woodshed-instrument` connection and metronome authority model work in both
@@ -215,10 +244,21 @@ section whenever a durable working insight emerges from a session.
   catalogs and deliberate Set rehearsal both help assemble material and act on
   it. Develop connected slices that carry discoveries into playable material
   and return qualified rehearsal observations to exploration. The ambient Mere
-  makes relationships perceptible; explicit actions author the one Set.
+  makes relationships perceptible; explicit actions author the selected working Set.
 - **Stage is a verb and Set is the spine**: catalogs supply material; Stage
-  adds configured Cards to one ordered Set; Rehearsal and Looper consume it.
-  Do not create parallel practice, song, or tool-owned material documents.
+  adds configured Cards to the selected ordered Set. Each working instance owns
+  its material; shared views project that owner, and rehearsal remains bound to
+  the instance that started it when another instance is inspected. Do not create
+  parallel practice, song, or tool-owned material documents for the same Set.
+- **Retained readings preserve captured evidence**: rendering or selecting a
+  relationship reading does not recompute it or edit a Set. Explicit rebind
+  captures new facts; exact source actions validate owner, Card and full ordered
+  instructions. Invalid optional readings survive session capture without
+  preventing access to valid Sets.
+- **Navigation preserves owner identity**: switching working Sets or configured
+  catalog explorations restores that instance's content and context. It does
+  not clone occurrences or transfer live rehearsal. Creation, duplication,
+  saved-copy opening, and runner transfer are explicit product actions.
 - **The Stage graph projects the Set**: each staged Card occurrence is a stable
   node, Set order derives `Next`, and theory, history, and learned suggestions
   are separately identifiable edge layers. Filtering changes the projection;

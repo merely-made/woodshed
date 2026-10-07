@@ -1,0 +1,16 @@
+# Existing instance bank at a narrow native window.
+settle 3
+click .workspace-panel Mere
+settle 3
+assert snap working-sets == 2
+assert snap explorations == 2
+assert snap overview-processes == 0
+capture 01_instances_narrow
+click .overview-node-title Catalog exploration 2
+settle 3
+click .overview-open Open view
+settle 3
+assert snap exploration-id == 2
+assert snap catalog-lens == Scales
+capture 02_staging_targets_narrow
+log Working instances narrow presentation complete
