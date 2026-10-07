@@ -403,6 +403,7 @@ pub fn stage_css(p: &Palette) -> String {
 .relationship-label input {{ width: 100%; min-height: 34px; padding: 8px 10px; background: {surface_2}; color: {text}; border-radius: 4px; }}
 .relationship-explanation, .relationship-refusal {{ padding: 12px; background: {surface_2}; }}
 .session-overview .t-btn {{ min-height: 34px; padding: 8px 12px; white-space: normal; }}
+.session-overview .overview-atmosphere-selected {{ color: {tertiary}; border: 1px solid {tertiary}; }}
 .overview-title {{ font-size: 20px; color: {text}; }}
 .overview-subtitle, .overview-detail, .overview-notice {{ font-size: 12px; color: {text_dim}; }}
 .overview-save-row {{ display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }}

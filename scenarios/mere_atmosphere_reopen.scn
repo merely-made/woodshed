@@ -9,6 +9,8 @@ assert snap overview-reduced-motion == true
 assert snap overview-movement-controls == false
 assert snap set-cards == 2
 click .overview-fit Fit scene
+click .overview-graph
+settle 3
 capture 01_cells_reopened
 # The ambient layer does not steal the owner graph's controls.
 click .overview-node-title Working Set 1
@@ -21,6 +23,8 @@ settle 3
 assert snap overview-atmosphere == none
 assert snap overview-atmosphere-seed == 3
 click .overview-fit Fit scene
+click .overview-graph
+settle 3
 capture 02_ambient_off
 click .overview-atmosphere-orbits Orbits
 settle 3
@@ -29,6 +33,8 @@ assert snap overview-atmosphere-seed == 3
 assert snap overview-background == 1
 assert snap set-cards == 2
 click .overview-fit Fit scene
+click .overview-graph
+settle 3
 capture 03_orbits_reconstructed
 click .overview-atmosphere-cells Cells
 settle 3
