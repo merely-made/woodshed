@@ -825,6 +825,17 @@ pub(super) fn panel(ui: &UiState) -> UiChild {
                             el("div", text("Add to Set")).attr("class", "t-btn"),
                             |ui: &mut UiState, _| ui.add_context_focus_to_set(),
                         ),
+                        (material.formula_id.starts_with("chord:")
+                            || material.formula_id.starts_with("scale:"))
+                        .then(|| {
+                            clickable(
+                                el("button", text("Keep nearby"))
+                                    .attr("class", "t-btn stage-context-keep"),
+                                |ui: &mut UiState, _| {
+                                    ui.keep_context_focus_nearby();
+                                },
+                            )
+                        }),
                         clickable(
                             el("div", text("Clear focus")).attr("class", "t-btn"),
                             |ui: &mut UiState, _| ui.clear_context_focus(),

@@ -141,6 +141,8 @@ pub struct PersistedSession {
     pub retained_sets: crate::retained_sets::RetainedSets,
     pub working_sets: crate::working_sets::WorkingSets,
     pub catalog_explorations: crate::catalog_explorations::CatalogExplorations,
+    /// Authored nearby catalog material, separate from view presentation.
+    pub musical_context: crate::musical_context::MusicalContext,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub active_exploration: Option<crate::catalog_explorations::CatalogExplorationState>,
     /// The song lane: bars + song-level flags.
@@ -191,6 +193,7 @@ impl PersistedSession {
             retained_sets: crate::retained_sets::RetainedSets::default(),
             working_sets: crate::working_sets::WorkingSets::default(),
             catalog_explorations: crate::catalog_explorations::CatalogExplorations::default(),
+            musical_context: crate::musical_context::MusicalContext::default(),
             active_exploration: None,
             song: song.clone(),
             practice_history: practice_history.clone(),
@@ -277,6 +280,25 @@ pub(crate) const WOODSHED_SEAL_CONTEXT: &[u8] = b"woodshed.practice-session.seal
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn legacy_session_defaults_authored_musical_context_and_roundtrips_it() {
+        let mut value = serde_json::to_value(PersistedSession::default()).unwrap();
+        value.as_object_mut().unwrap().remove("musical_context");
+        let mut session: PersistedSession = serde_json::from_value(value).unwrap();
+        assert!(session.musical_context.items().is_empty());
+        let subject = crate::harmony::KeyedCatalogRef {
+            formula_id: "scale:Major".into(),
+            root: woodshedding::pitch::PitchClass::new(2),
+        };
+        let id = session
+            .musical_context
+            .keep(crate::working_sets::WorkingSetId(1), subject.clone())
+            .unwrap();
+        let reopened: PersistedSession =
+            serde_json::from_str(&serde_json::to_string(&session).unwrap()).unwrap();
+        assert_eq!(reopened.musical_context.get(id).unwrap().subject, subject);
+    }
 
     #[test]
     fn session_round_trips_through_json() {

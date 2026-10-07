@@ -431,6 +431,9 @@ impl Snapshot<'_, '_> {
                     .count()
                     .to_string(),
             )
+            .with_field("overview-context-items", ui.musical_context.items().len().to_string())
+            .with_field("overview-context-containment", overview.relations.iter().filter(|relation| relation.kind == woodshed_core::session_overview::OverviewRelationKind::ContainsTones).count().to_string())
+            .with_field("overview-context-links", overview.relations.iter().filter(|relation| relation.kind == woodshed_core::session_overview::OverviewRelationKind::ContextFor).count().to_string())
             .with_field("overview-nodes", overview.nodes.len().to_string())
             .with_field(
                 "overview-views",
@@ -1192,6 +1195,16 @@ impl Automatable for Probe<'_, '_> {
                         card.timing.hold = Hold::Manual;
                     }
                 }
+            },
+            "mere-context-chord-focus" => {
+                ui.focus_context_catalog(woodshed_core::harmony::KeyedCatalogRef {
+                    formula_id: "chord:Major 7".into(), root: woodshedding::pitch::PitchClass::new(0),
+                });
+            },
+            "mere-context-scale-focus" => {
+                ui.focus_context_catalog(woodshed_core::harmony::KeyedCatalogRef {
+                    formula_id: "scale:Major".into(), root: woodshedding::pitch::PitchClass::new(0),
+                });
             },
             "shape-comparison-example" => {
                 ui.stage.set_root(3);

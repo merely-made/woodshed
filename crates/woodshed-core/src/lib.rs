@@ -22,6 +22,7 @@ pub mod harmony;
 pub mod history;
 pub mod mere;
 pub mod midi;
+pub mod musical_context;
 pub mod pitch_motion_reading;
 pub mod retained_sets;
 pub mod scale_pattern_discovery;

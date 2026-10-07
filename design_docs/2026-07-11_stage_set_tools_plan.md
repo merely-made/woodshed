@@ -2362,3 +2362,54 @@ fixture is preserved; this observation does not demonstrate a runtime rendering
 failure. Qualification uses isolated unsealed fixtures and covers the native
 runtime and presentation session path. Release packaging/signing and a personal
 encrypted-vault workflow remain separate gates.
+
+
+### October 7 follow-up: authored musical context in the session Mere
+
+**Status: implemented; final automated and native qualification pending.**
+
+Keep nearby retains up to twelve keyed chords or scales as Woodshed session
+assets. Each occurrence has its own stable identity, exact formula and tonic,
+and the working Set it was explicitly kept alongside. Repeated Keep of the
+same material for the same owner focuses the existing reference and preserves
+its authored foreground/background choice. Different roots or Set owners stay
+separate. New references start in the background; the existing presentation
+controls govern emphasis, placement, camera and motion.
+
+The overview now includes these references in its single session graph. Uses
+catalog material links resolve their authority; Kept nearby for links describe
+an authored association with the originating Set, without asserting derivation
+or harmonic membership. Pairwise links report equal pitch classes, directed
+containment, or shared pitch classes. The inspector lists exact sounding tones
+and common-tone explanations. These facts do not infer harmonic function or
+recommendation. Catalog formulas, kept occurrences and authored Card occurrences
+remain distinct identities.
+
+Keep is available for the selected Card and catalog focus in Mere, and for
+focused chord/scale context in the Stage context inspector. Open in Stage,
+Hear, Add to the named current Set, and Remove from nearby are explicit owner
+actions. Open and Hear preserve Set instructions; Add creates a new occurrence
+in the current working Set, preserving the originating owner. Remove deletes
+the kept reference and its scene presentation without deleting catalog material
+or Cards. The current slice deliberately excludes arpeggios, scale patterns and
+chord approaches until their playable source provenance is retained explicitly.
+
+The additive core session collection is separate from presentation JSON. Legacy
+sessions default to an empty shelf. Imported structure is normalized to twelve
+unique nonzero occurrence IDs and unique owner/material pairs, retaining the
+first occurrences and preserving stale formulas. Allocation advances past all
+imported IDs, including clipped entries. Unavailable references remain visible
+and removable; Open/Hear/Add refuse them rather than substituting a current
+catalog selection. Presentation restoration follows collection restoration, so
+focus, roles and positions can resolve their retained asset identities.
+
+The stack review refreshed Mere through `b10378404`: snapshot undo History has
+landed for the Scenograph editor, and the dynamics grammar owner lanes continue.
+The existing native graph and keyed-material APIs satisfy this shelf. Woodshed
+keeps its coherent Mere `d041cc69b` / Genet `d851a9db` family; no repin or shared
+contract change is required. Reusable authored scene recipes, a portable scene
+editor, and musical syntax/phrase composition remain subsequent work.
+
+Acceptance scenarios are `mere_musical_context.scn` and
+`mere_musical_context_reopen.scn`. Qualification artifacts will be recorded in
+`/Users/markik/Code/testing/woodshed/musical-context-20261007/`.
