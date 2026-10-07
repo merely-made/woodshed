@@ -17,6 +17,58 @@ use woodshed_views::stage::{NEIGHBORHOOD_LEAF_KEY, SET_GRAPH_LEAF_KEY, UiState};
 
 use crate::shared::Shared;
 
+/// A frozen shared ambient frame beneath the interactive session graph.
+/// Only the graph publishes accessibility or accepts events. Both shared
+/// simulations currently emit rectangles, resized here to the actual leaf box
+/// without coupling their coordinates to the graph camera.
+struct OverviewAmbientLeaf {
+    graph: sprigging::GraphCanvas,
+    ambient: Vec<sprigging::PaintCmd>,
+    source_size: Size,
+}
+
+impl Leaf for OverviewAmbientLeaf {
+    fn accessibility(&mut self, node: &mut accesskit::Node) {
+        self.graph.accessibility(node);
+    }
+
+    fn measure(&mut self, known: SizeHint, available: SizeHint) -> Size {
+        self.graph.measure(known, available)
+    }
+
+    fn paint(&mut self, cx: &mut PaintCx<'_>) {
+        let size = cx.size();
+        let sx = size.width / self.source_size.width.max(1.0);
+        let sy = size.height / self.source_size.height.max(1.0);
+        cx.push_clip_rect(0.0, 0.0, size.width, size.height);
+        for command in &self.ambient {
+            let mut command = command.clone();
+            if let sprigging::PaintCmd::DrawRect(rect) = &mut command {
+                let bounds = &mut rect.placement.bounds;
+                bounds.min.x *= sx;
+                bounds.max.x *= sx;
+                bounds.min.y *= sy;
+                bounds.max.y *= sy;
+            }
+            cx.emit(command);
+        }
+        cx.pop_clip();
+        self.graph.paint(cx);
+    }
+
+    fn event(&mut self, event: &sprigging::LeafEvent) -> Option<sprigging::LeafAction> {
+        self.graph.event(event)
+    }
+
+    fn paint_dirty(&self) -> bool {
+        self.graph.paint_dirty()
+    }
+
+    fn layout_dirty(&self) -> bool {
+        self.graph.layout_dirty()
+    }
+}
+
 struct StageGuideSegment {
     a: (f32, f32),
     b: (f32, f32),
@@ -160,6 +212,8 @@ fn sync_overview(shared: &mut Shared, ui: &UiState, leaves: &mut LeafRegistry<u6
     }
     swatch.selected.hash(&mut h);
     swatch.hovered.hash(&mut h);
+    ui.overview_atmosphere.hash(&mut h);
+    ui.overview_ambient.revision().hash(&mut h);
     let sig = h.finish();
     if sig == shared.overview_sig {
         return;
@@ -175,9 +229,20 @@ fn sync_overview(shared: &mut Shared, ui: &UiState, leaves: &mut LeafRegistry<u6
         };
         sprigging::ColorF { r, g, b, a: 1.0 }
     });
+    let source_size = Size {
+        width: swatch.width as f32,
+        height: swatch.height as f32,
+    };
+    let ambient = ui
+        .overview_ambient
+        .paint(source_size.width, source_size.height);
     leaves.insert(
         woodshed_views::stage::OVERVIEW_GRAPH_LEAF_KEY,
-        Box::new(leaf),
+        Box::new(OverviewAmbientLeaf {
+            graph: leaf,
+            ambient,
+            source_size,
+        }),
     );
 }
 
@@ -531,4 +596,97 @@ fn sync_rehearsal_fretboard(shared: &mut Shared, ui: &UiState, leaves: &mut Leaf
             MarkerStyle::from_name(&marker_style),
         )),
     );
+}
+
+#[cfg(test)]
+mod atmosphere_tests {
+    use super::*;
+
+    fn commands(leaf: &mut dyn Leaf, size: Size) -> Vec<sprigging::PaintCmd> {
+        let mut commands = Vec::new();
+        leaf.paint(&mut PaintCx::new(&mut commands, size));
+        commands
+    }
+
+    #[test]
+    fn atmosphere_is_clipped_resized_and_beneath_graph_independently_of_camera() {
+        let source_size = Size {
+            width: 100.0,
+            height: 100.0,
+        };
+        let actual_size = Size {
+            width: 200.0,
+            height: 50.0,
+        };
+        let mut ambient = Vec::new();
+        PaintCx::new(&mut ambient, source_size).fill_rect(
+            10.0,
+            20.0,
+            4.0,
+            6.0,
+            sprigging::ColorF {
+                r: 0.1,
+                g: 0.2,
+                b: 0.3,
+                a: 0.5,
+            },
+        );
+        let graph = sprigging::GraphCanvas::new(
+            vec![sprigging::GraphGlyphNode {
+                x: 0.5,
+                y: 0.5,
+                color: sprigging::ColorF {
+                    r: 1.0,
+                    g: 1.0,
+                    b: 1.0,
+                    a: 1.0,
+                },
+            }],
+            Vec::new(),
+            source_size,
+        );
+        let mut leaf = OverviewAmbientLeaf {
+            graph,
+            ambient,
+            source_size,
+        };
+        let painted = commands(&mut leaf, actual_size);
+        assert!(matches!(
+            painted.first(),
+            Some(sprigging::PaintCmd::PushClip(_))
+        ));
+        match &painted[1] {
+            sprigging::PaintCmd::DrawRect(rect) => {
+                assert_eq!(
+                    (rect.placement.bounds.min.x, rect.placement.bounds.min.y),
+                    (20.0, 10.0)
+                );
+                assert_eq!(
+                    (rect.placement.bounds.max.x, rect.placement.bounds.max.y),
+                    (28.0, 13.0)
+                );
+            },
+            other => panic!("shared atmosphere rectangle expected, got {other:?}"),
+        }
+        assert!(matches!(painted[2], sprigging::PaintCmd::PopClip));
+        assert!(matches!(painted[3], sprigging::PaintCmd::PushClip(_)));
+        assert!(
+            painted[4..]
+                .iter()
+                .any(|cmd| matches!(cmd, sprigging::PaintCmd::DrawPath(_)))
+        );
+        leaf.graph.set_viewport(sprigging::GraphViewport {
+            pan: (0.1, 0.2),
+            zoom: 1.25,
+        });
+        let panned = commands(&mut leaf, actual_size);
+        assert_eq!(
+            format!("{:?}", &painted[..3]),
+            format!("{:?}", &panned[..3])
+        );
+        assert_ne!(
+            format!("{:?}", &painted[3..]),
+            format!("{:?}", &panned[3..])
+        );
+    }
 }

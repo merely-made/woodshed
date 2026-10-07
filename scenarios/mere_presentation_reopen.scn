@@ -17,6 +17,8 @@ capture 02_restored_scene
 log Mere presentation reopen complete
 
 # Placement rules use the shared board while motion remains reduced.
+click .overview-movement-toggle Show movement controls
+assert snap overview-movement-controls == true
 click .overview-role-anchored Return to anchor
 settle 3
 capture 03_anchor_before_move

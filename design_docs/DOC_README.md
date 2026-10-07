@@ -91,6 +91,9 @@ before any other doc in this directory.
   captures cover baseline/narrow, fresh reopening and a large 0.75-zoom replay.
   The narrow last node and label are visible. The historical black Practice
   surface does not reproduce in the current replay; its original cause is unproven.
+  The October 7 atmosphere follow-up adds retained seeded Orbits/Cells beneath
+  the session graph, shared motion/reduced-motion policy and folded movement
+  controls; 585 automated checks pass, with native qualification pending.
   The October 7 slice repins the coherent current Mere/Genet stack and embeds
   Pictograph's shared PhysicsBoard in the session Mere, with camera controls,
   retained emphasis/placement rules and opt-in motion. The 579-check gate and

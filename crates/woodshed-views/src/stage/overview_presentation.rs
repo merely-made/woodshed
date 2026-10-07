@@ -1,5 +1,5 @@
 //! Retained Mere presentation, separate from owner facts and musical instructions.
-use super::UiState;
+use super::{UiState, overview_atmosphere::OverviewAtmosphere};
 use cambium::GraphViewport;
 use serde::{Deserialize, Serialize};
 use std::collections::{BTreeMap, BTreeSet};
@@ -20,6 +20,7 @@ pub struct OverviewPresentation {
     pub zoom: f32,
     pub motion: bool,
     pub reduced_motion: bool,
+    pub atmosphere: OverviewAtmosphere,
     pub positions: Vec<(OverviewNodeId, (f32, f32))>,
     pub focus: Option<OverviewNodeId>,
     pub roles: Vec<(OverviewNodeId, String)>,
@@ -34,6 +35,7 @@ impl Default for OverviewPresentation {
             zoom: 1.0,
             motion: false,
             reduced_motion: true,
+            atmosphere: OverviewAtmosphere::default(),
             positions: Vec::new(),
             focus: None,
             roles: Vec::new(),
@@ -72,6 +74,7 @@ impl OverviewPresentation {
             zoom: ui.overview_viewport.zoom,
             motion: ui.overview_motion,
             reduced_motion: ui.overview_reduced_motion,
+            atmosphere: ui.overview_atmosphere,
             positions: positions.into_iter().take(MAX_ENTRIES).collect(),
             focus: ui.overview_focus.clone(),
             roles: ui
@@ -150,6 +153,8 @@ impl OverviewPresentation {
         };
         ui.overview_motion = value.motion;
         ui.overview_reduced_motion = value.reduced_motion;
+        ui.overview_atmosphere = value.atmosphere;
+        ui.overview_ambient.reconcile(value.atmosphere);
         ui.overview_focus = value.focus;
         ui.overview_positions = value.positions.into_iter().collect();
         ui.overview_background = value.background.into_iter().collect();
@@ -164,6 +169,36 @@ mod tests {
         session_overview::{OverviewProcess, SessionArtifactId},
         settings::AppSettings,
     };
+
+    #[test]
+    fn atmosphere_recipe_roundtrip_restarts_seed_and_keeps_owner_facts() {
+        use super::super::overview_atmosphere::AtmosphereKind;
+        let mut ui = UiState::new();
+        ui.overview_atmosphere = OverviewAtmosphere {
+            kind: AtmosphereKind::Cells,
+            seed: 93,
+        };
+        ui.overview_ambient.reconcile(ui.overview_atmosphere);
+        let seeded = format!("{:?}", ui.overview_ambient.paint(640.0, 320.0));
+        for _ in 0..120 {
+            ui.overview_ambient.tick(true);
+        }
+        let owner = serde_json::to_value(&ui.set).unwrap();
+        let session = ui.to_persisted();
+        let mut reopened = UiState::new();
+        reopened.overview_movement_controls = true;
+        reopened.apply_persisted(&session, AppSettings::default());
+        assert_eq!(reopened.overview_atmosphere, ui.overview_atmosphere);
+        assert_eq!(
+            format!("{:?}", reopened.overview_ambient.paint(640.0, 320.0)),
+            seeded
+        );
+        assert!(!reopened.overview_movement_controls);
+        assert_eq!(serde_json::to_value(&reopened.set).unwrap(), owner);
+        let old = OverviewPresentation::from_json(Some(r#"{"version":1,"zoom":2.0}"#)).unwrap();
+        assert_eq!(old.atmosphere, OverviewAtmosphere::default());
+        assert_eq!(old.zoom, 2.0);
+    }
 
     #[test]
     fn session_roundtrip_preserves_camera_typed_identity_and_roles() {

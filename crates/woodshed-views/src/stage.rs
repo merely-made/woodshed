@@ -49,6 +49,7 @@ mod context_tests;
 mod instances;
 mod looper;
 mod overview;
+pub mod overview_atmosphere;
 pub mod overview_dynamics;
 mod overview_presentation;
 pub use overview_presentation::OverviewPresentation;
@@ -842,6 +843,9 @@ pub struct UiState {
     pub overview_roles: BTreeMap<woodshed_core::session_overview::OverviewNodeId, String>,
     pub overview_background: BTreeSet<woodshed_core::session_overview::OverviewNodeId>,
     pub overview_dynamics: overview_dynamics::OverviewDynamics,
+    pub overview_atmosphere: overview_atmosphere::OverviewAtmosphere,
+    pub overview_ambient: overview_atmosphere::OverviewAmbient,
+    pub overview_movement_controls: bool,
     pub overview_motion: bool,
     pub overview_reduced_motion: bool,
     pub overview_unrecognized_presentation_json: Option<String>,
@@ -1052,6 +1056,9 @@ impl UiState {
             overview_roles: BTreeMap::new(),
             overview_background: BTreeSet::new(),
             overview_dynamics: overview_dynamics::OverviewDynamics::default(),
+            overview_atmosphere: overview_atmosphere::OverviewAtmosphere::default(),
+            overview_ambient: overview_atmosphere::OverviewAmbient::default(),
+            overview_movement_controls: false,
             overview_motion: false,
             overview_reduced_motion: true,
             overview_unrecognized_presentation_json: None,
@@ -2021,6 +2028,8 @@ impl UiState {
             .filter(|json| OverviewPresentation::is_unknown_version(json))
             .map(str::to_owned);
         self.overview_dynamics = overview_dynamics::OverviewDynamics::default();
+        self.overview_ambient = overview_atmosphere::OverviewAmbient::default();
+        self.overview_movement_controls = false;
         OverviewPresentation::from_json(session.overview_presentation_json.as_deref())
             .unwrap_or_default()
             .apply(self);
