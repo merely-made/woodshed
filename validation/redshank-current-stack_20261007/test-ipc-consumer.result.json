@@ -1,0 +1,30 @@
+{
+  "exit_code": 0,
+  "priority": "BelowNormal",
+  "gate": "test-ipc",
+  "command": [
+    "cargo",
+    "+1.97.1",
+    "test",
+    "--locked",
+    "--manifest-path",
+    "C:\\Users\\mark_\\Code\\worktrees\\woodshed-browser-input-compat\\ports\\redshank\\Cargo.toml",
+    "-p",
+    "redshank-playback",
+    "--test",
+    "ipc_consumer",
+    "-j",
+    "1",
+    "--",
+    "--test-threads=1"
+  ],
+  "cwd": "C:/t",
+  "libclang_path": "C:/Program Files/LLVM/bin",
+  "started_utc": "2026-10-07T07:46:03.1968436Z",
+  "finished_utc": "2026-10-07T07:48:09.9324346Z",
+  "jobs": 1,
+  "pid": 27012,
+  "dev_debug": 0,
+  "target": "C:/t/cargo-targets/woodshed",
+  "test_debug": 0
+}

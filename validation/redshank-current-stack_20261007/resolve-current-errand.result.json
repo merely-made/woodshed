@@ -1,0 +1,23 @@
+{
+  "priority": "BelowNormal",
+  "cwd": "C:/t",
+  "exit_code": 101,
+  "libclang_path": "C:/Program Files/LLVM/bin",
+  "finished_utc": "2026-10-07T07:25:45.6977667Z",
+  "dev_debug": 0,
+  "started_utc": "2026-10-07T07:25:42.4493472Z",
+  "pid": 42656,
+  "command": [
+    "cargo",
+    "+1.97.1",
+    "metadata",
+    "--manifest-path",
+    "C:\\Users\\mark_\\Code\\worktrees\\woodshed-browser-input-compat\\ports\\redshank\\Cargo.toml",
+    "--format-version",
+    "1"
+  ],
+  "gate": "resolve",
+  "test_debug": 0,
+  "target": "C:/t/cargo-targets/woodshed",
+  "jobs": 1
+}

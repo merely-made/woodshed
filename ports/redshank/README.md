@@ -123,9 +123,9 @@ Run the isolated model and storage gates from outside the repository's parent
 Cargo configuration:
 
 ```powershell
-$env:CARGO_TARGET_DIR = 'C:\t\redshank-pin-20260914'
-cargo test --manifest-path C:\Users\mark_\Code\repos\woodshed\ports\redshank\Cargo.toml --workspace -j 4
-cargo clippy --manifest-path C:\Users\mark_\Code\repos\woodshed\ports\redshank\Cargo.toml --workspace --all-targets -j 4 -- -D warnings
+$env:CARGO_TARGET_DIR = 'C:\t\cargo-targets\woodshed'
+cargo test --locked --manifest-path C:\Users\mark_\Code\repos\woodshed\ports\redshank\Cargo.toml --workspace -j 1
+cargo clippy --locked --manifest-path C:\Users\mark_\Code\repos\woodshed\ports\redshank\Cargo.toml --workspace --all-targets -j 1 -- -D warnings
 cargo fmt --manifest-path C:\Users\mark_\Code\repos\woodshed\ports\redshank\Cargo.toml -p redshank-surfaces -p redshank-desktop -p redshank-model -p redshank-playback -p redshank-web -p redshank-feed -p redshank-cache -p redshank-storage
 ```
 

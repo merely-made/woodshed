@@ -442,7 +442,7 @@ run against the same contract.
   control, commands, pins and hashes. This isolated diff awaits integration;
   exact frame correlation, human AT and stale/cancel playback remain open.
 
-- **2026-10-06, bounded browser-input compatibility adoption, in progress.**
+- **2026-10-06, historical bounded browser-input compatibility adoption.**
   Starting from the Turnstone-qualified Woodshed source
   `9e982b88bf57e41ef4fa846c66ffdd4f05beb91d`, the nested Redshank workspace's
   eight Mere aliases and the browser host's three aliases move together from
@@ -461,6 +461,7 @@ run against the same contract.
   scenarios before the temporary Weld host bridge is removed. The current
   primary checkout's transcript work is a separate lane and is not part of
   this compatibility source. No broad family upgrade is implied.
+  Production adoption is superseded by the qualified current-stack pass below.
 
 - **2026-10-06, focused browser font backend compatibility.** From `b613fc55`,
   the nested Redshank workspace's five Genet entries move together to
@@ -473,3 +474,46 @@ run against the same contract.
   resolver/build/native qualification is pending before main integration.
   Other Woodshed/Hocket pins retain their independent families, so this does
   not claim a whole-Woodshed-workspace codec or build qualification.
+
+- **2026-10-07, coordinated current-stack adoption, qualified; publication pending.** The nested
+  Redshank workspace's eight Mere aliases and web host's three aliases move
+  together to published Mere `57b4893db6909d5ed9c4ccae30216f0d8164201a`;
+  its five Genet dependencies/IPC patch move together to published Genet
+  `965b64e206a47d1c8808472de9aa461233638768`. The Woodshed root and Hocket
+  retain their independently qualified pins. Product Rust sources are unchanged.
+  The owned `woodshed-browser-input-compat` worktree starts from `fd25d4c`,
+  which integrates published Woodshed `5b863e3`; primary transcript work stays
+  with its existing owner. Done when real locked Git metadata proves one
+  selected Mere/Genet family, desktop/playback/surface checks and focused tests
+  pass, the browser host checks on wasm32, and the vendored default in-process
+  IPC tests pass. Receipts live in
+  `validation/redshank-current-stack_20261007/`, preserving raw bytes and exact
+  tested source inputs. Publication follows the coordinated Knot publication;
+  root owns Turnstone adoption and its combined native gates.
+  The first real resolver runs exposed obsolete constraints: Errand's current
+  feed parser is 0.4.0 rather than 0.3.4, and the shared web host pins
+  wasm-bindgen 0.2.129 rather than 0.2.127. Those two rows now match their
+  qualified supplier manifests. Both failed resolver logs are retained;
+  successful Windows and wasm32 locked metadata each select 16 Mere and 24
+  Genet packages from the exact new revisions, with one wgpu 30.0.1 and the
+  default in-process IPC fork. Windows selects fontsan's Wuff/libz-sys backend;
+  wasm32 selects no font sanitizer. The raw 148-input archive preserves the
+  exact compiled inputs for this qualification. Native/browser presentation,
+  bindgen output and whole-Woodshed qualification are separate gates.
+  Windows desktop/playback/surface all-target checks pass, including the added
+  test target. The focused tests pass: desktop 68, feed 2, playback 27 with
+  seven existing fixture/device-dependent tests ignored, and surfaces 101.
+  Three consumer IPC tests pass through Servo Media Player's public reexport,
+  proving typed text/bytes and order, sender transfer, and queue drain followed
+  by last-sender disconnection on the selected in-process backend. Cargo refuses
+  dependency-owned IPC unit tests from this workspace because their dev
+  dependencies belong to their source workspace; that diagnostic is retained
+  separately and is not a passing gate. The final wasm32 web check passes.
+  This is 201 passed tests and seven ignored, with native Cargo exit 0 for each
+  qualified command. The final 149-input source archive includes the IPC test;
+  the original 148-input archive preserves the earlier check/test inputs.
+  The lock keeps 773 package records: eight registry version transitions are
+  the required Gopher/wasm-bindgen family changes, Errand moves to 0.4.0, and
+  Genet Livery adds two existing ICU dependency edges. Other normalized package
+  records are identical. Receipt `qualification.json` and `artifact-manifest.json`
+  distinguish successful commands from the retained failed diagnostics.

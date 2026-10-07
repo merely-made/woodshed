@@ -17,6 +17,10 @@ before any other doc in this directory.
   Listen/Library/Notes/Mere/Settings, feed-node projections (chain, orrery,
   trail), model extension for the design's settings and span notes, a
   self-drive scenario/capture lane, and a browser host. Lanes and done-conditions per lane.
+  October 7 current-stack Redshank-only pin adoption passes Windows checks,
+  201 tests (seven ignored), locked source-family checks and wasm32 compilation;
+  coordinated publication is pending. Native and bindgen/browser gates stay open;
+  Woodshed root/Hocket pins and concurrent transcript work remain independently owned.
 
 - [2026-09-09_audio_ports_rehome_plan.md](2026-09-09_audio_ports_rehome_plan.md)
   — **Landed.** Hocket and Ringdown are history-preserving nested `ports/`

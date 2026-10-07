@@ -1,0 +1,35 @@
+{
+  "head": "fd25d4c481ceaad2608220614214fcc5dd1cf1b1",
+  "primary_head": "cefc903dcd7f506803acfe2ee52cad7693787188",
+  "primary_status": [
+    " M ports/redshank/desktop/src/scenario.rs",
+    " M ports/redshank/scenarios/README.md",
+    " M ports/redshank/scenarios/fixtures/README.md",
+    " M ports/redshank/scenarios/fixtures/make_fixtures.py",
+    " M ports/redshank/spikes/playback/scripts/range_server.py",
+    "?? ports/redshank/scenarios/fixtures/local-transcript/",
+    "?? ports/redshank/scenarios/fixtures/podnews-transcript/",
+    "?? ports/redshank/scenarios/transcript_live.scn",
+    "?? ports/redshank/scenarios/transcript_offline_seed.scn",
+    "?? ports/redshank/scenarios/transcript_offline_verify.scn",
+    "?? ports/redshank/scenarios/transcript_timing.scn"
+  ],
+  "protected": [
+    {
+      "sha256": "c403198bb23749c17e6ac48199dba451effbc52e4aa881a28bf377964c0c9f8b",
+      "path": "Cargo.toml"
+    },
+    {
+      "sha256": "e257c046696001b7deeb32c5f803175b79be88c22f77016dc98eb095b6f96106",
+      "path": "Cargo.lock"
+    },
+    {
+      "sha256": "10816848b4373f186291bd72c9a2a38c96ffb1fe2c13da316ba7c6a616834d79",
+      "path": "ports/hocket/Cargo.toml"
+    },
+    {
+      "sha256": "9ac11d358cf5aff1a38e6951afcbd97899bb9cd7814553286e23ef2623700032",
+      "path": "ports/hocket/Cargo.lock"
+    }
+  ]
+}

@@ -1,0 +1,49 @@
+{
+  "qualified_utc": "2026-10-07T07:52:37.0241438Z",
+  "baseline_head": "fd25d4c481ceaad2608220614214fcc5dd1cf1b1",
+  "mere": "57b4893db6909d5ed9c4ccae30216f0d8164201a",
+  "genet": "965b64e206a47d1c8808472de9aa461233638768",
+  "successful_commands": [
+    "resolve-current-web",
+    "metadata-windows",
+    "metadata-web",
+    "check-desktop",
+    "test-port",
+    "check-desktop-with-ipc",
+    "test-ipc-consumer",
+    "check-web"
+  ],
+  "diagnostic_commands": [
+    "resolve",
+    "resolve-current-errand",
+    "test-ipc"
+  ],
+  "test_counts": {
+    "feed": 2,
+    "surfaces": 101,
+    "desktop": 68,
+    "ipc_consumer": 3,
+    "playback": 27,
+    "ignored_playback": 7,
+    "passed": 201
+  },
+  "source_archives": {
+    "before_ipc_count": 148,
+    "final_count": 149,
+    "before_ipc": "source-inputs-before-ipc.zip",
+    "final": "source-inputs.zip"
+  },
+  "selected_family": "selected-source-family.json",
+  "lock_comparison": "lock-comparison.json",
+  "root_hocket_inputs_unchanged": true,
+  "runtime_rust_changes": [
+    "ports/redshank/playback/tests/ipc_consumer.rs"
+  ],
+  "scope": "In-process IPC consumer contract; desktop typed/focused tests; wasm32 compile. No cross-process, native presentation/audio, bindgen or whole-Woodshed qualification.",
+  "retained": {
+    "worktree": "C:/Users/mark_/Code/worktrees/woodshed-browser-input-compat",
+    "reason": "Qualified current source awaiting coordinated Knot publication and root review; stable target reusable.",
+    "target": "C:/t/cargo-targets/woodshed"
+  },
+  "publication": "Pending root review and Knot publication"
+}

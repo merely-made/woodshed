@@ -52,14 +52,14 @@ Three further honesties, because a half-truth in a demo is worse than a gap:
 
 ## Building it
 
-Never run cargo from inside the repository — its `.cargo/config.toml`
-source overrides break resolution. Build from `C:/t` by manifest path:
+Build from `C:/t` by manifest path so optional local repository Cargo
+configuration does not replace the qualified immutable Git sources:
 
 ```bash
 cd /c/t
-export CARGO_TARGET_DIR=C:/t/redshank-ui-20260913
+export CARGO_TARGET_DIR=C:/t/cargo-targets/woodshed
 cargo build --manifest-path C:/Users/mark_/Code/repos/woodshed/ports/redshank/web/Cargo.toml \
-    --target wasm32-unknown-unknown --release -j 4
+    --locked --target wasm32-unknown-unknown --release -j 1
 ```
 
 Then bindgen into the page's `pkg/`:
@@ -67,14 +67,13 @@ Then bindgen into the page's `pkg/`:
 ```bash
 wasm-bindgen --target web --no-typescript \
     --out-dir C:/Users/mark_/Code/repos/woodshed/ports/redshank/web/www/pkg \
-    C:/t/redshank-ui-20260913/wasm32-unknown-unknown/release/redshank_web.wasm
+    C:/t/cargo-targets/woodshed/wasm32-unknown-unknown/release/redshank_web.wasm
 ```
 
-The crate pins `wasm-bindgen = "=0.2.127"`, which is the pin
-`cambium-genet-web-host` carries. The CLI on this machine is 0.2.126 and
-accepted the module (the schema is unchanged across that patch); if a future
-pair does diverge the CLI refuses it with a schema-version error, and the fix
-is `cargo install -f wasm-bindgen-cli --version 0.2.127`.
+The crate pins `wasm-bindgen = "=0.2.129"`, matching the current
+`cambium-genet-web-host`. Use `wasm-bindgen-cli` 0.2.129 when producing the
+page glue. A typed wasm32 check qualifies compilation; it does not qualify
+bindgen output or a headed browser render.
 
 Serve the page over HTTP — a module script will not load from `file:`, and
 WebGPU wants a secure context, which `localhost` is:
@@ -93,7 +92,10 @@ This crate is a member of the port workspace (`ports/redshank/Cargo.toml`), so
 it shares the workspace lockfile and builds with
 `--target wasm32-unknown-unknown` from the workspace manifest. `cambium`,
 `cambium-rootstock`, and `cambium-genet-web-host` are named at the workspace's
-Mere pin (`54a51396d9d24a5435bcafecb878da9deecaf6c5`).
+Mere pin (`57b4893db6909d5ed9c4ccae30216f0d8164201a`), aligned with Genet
+`965b64e206a47d1c8808472de9aa461233638768`. The nested workspace retains the
+same Genet revision for its in-process IPC patch. Woodshed root and Hocket
+keep their independently qualified dependency families.
 
 ## Receipt
 
