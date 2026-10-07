@@ -2199,7 +2199,7 @@ receipts are recorded before those platforms are advertised.
 
 ### Native Mere presentation and shared board adoption (2026-10-07)
 
-**Status: implemented; native acceptance pending.** Refreshed Woodshed main to
+**Status: implemented; automated gate passed; native acceptance blocked by locked Mac.** Refreshed Woodshed main to
 `06c2b13`, Mere main to `d041cc69b`, and Genet main to `965b64e20`. The primary
 workspace now pins Mere `d041cc69b588b6f1dadd22308c2bc4059496cabd` together with
 its coherent Genet dependency `d851a9db0cd1ff7837768250f21e9dff63455940`;
@@ -2249,3 +2249,20 @@ Acceptance scenarios are `mere_presentation.scn` and
 `/Users/markik/Code/testing/woodshed/mere-20261007/`, using isolated unsealed
 fixture sessions. Native wide/narrow capture review and fresh-process reopening
 must be recorded before this slice is described as qualified.
+
+Implementation candidate `364741ec2387064d60f5ecb3783ed05a59d9d597` passes the
+final relevant gate: 579 checks (194 core, one backdrop integration, 64 desktop,
+14 graph, 121 views, 181 theory, four doctests). Seventeen focused Mere tests
+pass, including an integration regression for actual static displacement and
+pin refusal. The adapter explicitly materializes a paused drop without stepping
+neighboring physics: the shared board's kinematic position otherwise remains
+unfolded until a tick. Locked desktop build passes; views Clippy completes with
+four existing warnings. Changed-document links and diff whitespace pass.
+
+Native acceptance was attempted after committing the candidate, but the
+computer-use tool reported a locked Mac and could not unlock it. No native
+launch, captures or fresh-process presentation reopen are qualified. Wide
+1280x900 and narrow 420x900 isolated launchers and scenarios are prepared;
+`receipt.json` records this blocked state and the binary hash. This is a
+published implementation and automated checkpoint, not a completed native
+acceptance or release receipt.
