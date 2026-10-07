@@ -1,0 +1,33 @@
+# Keyed formula containment with explicit audition and authoring.
+settle 3
+ui-zoom 0.65
+act connected-practice-example
+settle 3
+click .pill Rehearsal
+settle 3
+click .t-btn Explore compatible scales
+settle 3
+assert snap set-cards == 2
+click .scale-choice C Major
+settle 3
+assert text Formula
+click .t-btn Hear scale
+settle 3
+assert snap set-cards == 2
+click .t-btn Stage scale
+settle 3
+assert snap set-cards == 3
+assert snap scale-cards == 1
+capture 01_scale_staged
+click .t-btn Next
+click .t-btn Next
+settle 3
+click .t-btn Run
+settle 30
+assert snap rehearsal-running == true
+click .t-btn Pause
+settle 3
+assert snap rehearsal-running == false
+assert snap history-observed >= 3
+capture 02_scale_paused
+log Connected chord-to-scale seed complete

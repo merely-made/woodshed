@@ -199,7 +199,7 @@ impl StageState {
     /// Resolve a card's persisted setup without considering material or
     /// enumerating shapes. Empty instrument identity deliberately keeps the
     /// legacy live-or-unique-tuning behavior; explicit identity always wins.
-    fn resolve_card_tuning(&self, card: &Card) -> Result<Tuning, CardShapeUnavailable> {
+    pub(crate) fn resolve_card_tuning(&self, card: &Card) -> Result<Tuning, CardShapeUnavailable> {
         let live = self.tuning();
         let explicit_instrument = if card.setting.instrument.is_empty() {
             None

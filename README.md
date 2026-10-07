@@ -12,12 +12,15 @@ environment. The theory model supports arbitrary string counts and tunings.
   <sub>Stage: inspect a playable chord across the neck, then stage related practice material.</sub>
 </p>
 
-## Status (2026-08-31)
+## Status (2026-09-30)
 
-Windows desktop alpha. Source builds are the supported way to try it. A tag
-workflow can produce a checksummed portable Windows ZIP, but code signing,
-installer work, third-party notices, and a recorded green release run remain
-before a broad public release.
+Desktop alpha with macOS, Linux, and Windows host CI. Source builds are the
+supported way to try it. Manual workflows have produced checksummed macOS app
+and Linux portable archives; the Windows tag workflow can publish a portable
+ZIP. No public GitHub release is currently recorded. A downloadable candidate
+needs packaging and extracted-app validation at its exact revision. Signing,
+notarization where applicable, third-party notices, and installer work remain
+part of broader release preparation.
 
 - Migrated onto the shared Cambium desktop host
   (`cambium-genet-winit-host` in the genet repo) on 2026-08-09. Woodshed was
@@ -34,7 +37,7 @@ before a broad public release.
   (shared pure-std DSP), `woodshed-audio` (audio, pitch, MIDI, looping),
   `woodshed-core` (portable state and host seams), `woodshed-graph` (theory
   catalog as a content graph), `woodshed-views` (Cambium product views),
-  `woodshed-genet` (Windows desktop application), `woodshed-web` (unshipped browser
+  `woodshed-genet` (desktop application), `woodshed-web` (unshipped browser
   host), and `woodshed-instrument` (hardware-verified smart-instrument control).
   The instrument crate is not yet connected to the product views.
 - `ports/` holds the independently released Hocket, Redshank, and Ringdown
@@ -61,7 +64,12 @@ revision Mere uses, without local sibling checkouts. A gitignored
 `.cargo/config.toml` may redirect those sources to sibling paths for local
 development, but it is optional development plumbing rather than part of the
 release graph.
-`scripts/package-windows.ps1` produces a checksummed portable Windows ZIP.
+`scripts/package-windows.ps1`, `scripts/package-macos.sh`, and
+`scripts/package-linux.sh` produce checksummed platform archives. The macOS
+archive contains an unsigned, architecture-specific app; Linux packaging is
+portable archive packaging, with host library requirements. See the
+[release baseline and candidate assessment](design_docs/2026-07-11_stage_set_tools_plan.md#release-baseline-and-10-product-proof)
+for the remaining validation and catalog roadmap.
 
 ## License
 

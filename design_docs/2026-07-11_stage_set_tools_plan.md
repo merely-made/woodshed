@@ -16,7 +16,7 @@ scenarios passed. Their source-hashed receipt and four GPU frames are under
 `mere/ports/graphshell/docs/receipts/`. The musical-projections plan's review
 addendum identifies the next product questions and corrections before S1-S4.
 
-**Status (reviewed 2026-08-31): in progress.** P1-P3 are partial. P4a and
+**Status (reviewed 2026-10-05): in progress.** P1-P3 are partial. P4a and
 P4b landed; P4c and P4d have bounded headed receipts; P4e is partial and P4f
 is open. P5-P8 remain open. The clean-lock and CI repair is a release-baseline
 gate, not completion of this product plan.
@@ -28,6 +28,315 @@ gate, not completion of this product plan.
 > re-resolved against it. Adoption can begin; the expansion map, with
 > woodshed adoption as its L1 release gate, is mere's
 > `design_docs/mere_docs/research/2026-08-10_scenograph_expansion_brief.md`.
+
+## Cross-domain relational recipe contribution (2026-10-05)
+
+**Status (2026-10-05): domain disclosure and retained reopening qualified;
+visible shared-recipe host integration qualified at baseline and 420px, with fresh-process reopening.** The Knot coordination lane owns the shared
+`scenomise::projection` compiler/editor seam and Knot adoption; Woodshed owns
+its musical disclosure and adapter. Reuse `scenograph` authored definitions.
+The shared implementation belongs in Mere's existing projection grammar plan,
+not another Woodshed scene model. Existing physics and dynamics lanes retain
+their owners and do not gate this bounded static recipe.
+
+The first recipe uses authored order, occurrence labels and one explained
+relationship, with duplicate occurrences of one material source. Woodshed's
+`comparison_disclosure::disclose` resolves selected Cards through the existing
+keyed catalog and exact pitch-set comparison. Identities include the working
+Set owner; keyed sources retain tonic and articulation. Selection order does
+not replace authored Set order. The `music.shared_pitch_classes` relationship
+records selected occurrence endpoints, exact pitch classes, method/version and
+an explanation; it asserts no fingering, register or harmonic function.
+Unknown material, missing revision, invalid identity, absent endpoints and a
+pair with no shared tones are explicit refusals. Reading does not edit Cards
+or start playback.
+
+The full cross-domain milestone is done when the shared adapter compiles this disclosure, renders the explained
+relationship, retains an edited recipe and selection through Woodshed's session
+storage, and rebinds the same recipe to compatible Knot disclosures. Required
+semantic roles must be matched explicitly; numeric type alone does not make
+tempo a replacement for authored order. Unsupported roles must explain refusal.
+The existing `stage_projection_export` schema stays compatible; relationship
+and semantic-role extensions use the coordinated shared wrapper.
+
+**Earlier compatibility-only checkpoint (2026-10-05; superseded by the visible host integration below):** clean Woodshed main was `e778cb6`; its Mere dependency
+is `8106c7c`. Current shared main `bd119a69d` still has the node/grid/scatter
+compiler in Graphshell and no relationship-bearing dataset. The shared owner
+provided the extracted API at `c79bb8c203b52817991e0d7ba1c4ce3c3a2aac34`,
+published on Mere's `codex/relationship-recipes` branch. The standalone
+`validation/relationship-recipe` instrument pins `scenograph` and `scenomise`
+to that revision. Its two-process receipt uses Woodshed's actual `UiState`,
+`PersistedSession`, `SessionStore` and desktop `FsBackend`, with explicit
+isolated state/settings paths. The fixture is unsealed and accesses no personal
+vault. The retained payload contains the typed shared snapshot and bounded
+dataset; production session capture/restore preserves those opaque bytes.
+The application does not compile or edit the payload in its visible host yet.
+This wire boundary deliberately keeps the production host on its existing
+dependency revision; it is not a full host adoption or repin claim.
+
+Validation commands from the Woodshed root:
+
+```sh
+cargo test --locked --manifest-path validation/relationship-recipe/Cargo.toml --target-dir target
+cargo run --locked --manifest-path validation/relationship-recipe/Cargo.toml --target-dir target -- seed /isolated/new-session.json
+cargo run --locked --manifest-path validation/relationship-recipe/Cargo.toml --target-dir target -- reopen /isolated/new-session.json
+```
+
+Seed refuses an existing session file. Reopen runs in a separate process and
+checks label/spacing edits, both selection identities, exact relationship
+explanation, source Set preservation and inactive transport. The checked fixture
+`scenarios/woodshed_relationships.json` is verified against its real owner-owned
+generator (`relationship_disclosure_export`). Common compiler tests also check
+duplicate sources/distinct occurrences, compatible rebinding between working
+owners, missing semantic roles, absent relationship endpoints and stale provenance.
+Knot owns the actual lexical-to-musical rebind proof. Native Woodshed recipe
+controls, user-wallet qualification and current-host scene rendering are not
+qualified by this instrument. Older binaries can ignore and drop the optional
+reading payload if they resave the session.
+
+Core 189, views 97, desktop session 16 and five shared-adoption checks pass;
+existing exporter tests (10) and the Stage environment integration check pass.
+Strict Clippy passes for the standalone instrument with `--no-deps`.
+Whole-core strict Clippy remains blocked by pre-existing theory/core lints,
+and whole-workspace formatting has pre-existing differences. The new files
+are formatted and `git diff --check` passes. Runtime data and hash receipts live
+outside the repository under `testing/woodshed/relationships-20261005/`.
+
+
+### Visible Woodshed host integration (2026-10-05)
+
+The review checkpoint refreshed clean main `c92e7c9` against origin/main and
+verified the prior receipt's source hashes. The historical inspection above
+predates shared publication: Mere main now contains the compiler/editor seam
+at `c79bb8c2`, with qualification documentation at `b2f67356d`; Knot main
+`5516606` contains the actual Mora-to-musical recipe rebind proof.
+
+The production workspace now uniformly pins Mere `5011e2f9` and its matching
+Genet `bd3e8861`; the browser host's wasm-bindgen pin follows Mere at 0.2.129.
+No local source override, duplicated compiler or custom solver is introduced.
+`woodshed-views/src/stage/relationship.rs` composes the shared draft and compiler
+in an explicit Mere reading view. The retained reading is an artifact in the
+session overview, historically related to its source working Set. Its detailed
+graph is a projection of that artifact, not the session overview itself.
+
+Choose actual Cards, bind their authored order and explained shared pitch-class
+relationship, edit label/spacing, inspect occurrences, and explicitly rebind the
+same authored recipe to another selected Set. Only compiled relationships are
+shown. Shared scene positions feed the existing Cambium graph canvas; increasing
+spacing preserves layout units rather than fitting the change away. The graph
+can scroll horizontally at narrow widths, and the full occurrence roster remains
+available. A source action is separate from reading selection and validates the
+exact owner, occurrence and full ordered Card instructions. Cursor navigation
+is excluded from content freshness. Tuning, fingering, timing, label, removal or
+reorder invalidate a copied source action; another owner's runner stays bound.
+Pending selection is scoped to its working owner, including identical numeric
+Card IDs in different Sets.
+
+The optional retained payload is bounded before decoding (2 MiB), versioned,
+and checked by the shared compiler. Owner envelopes require unique nonzero
+Card identities and an explicit selected pair. Older proof disclosures without
+owner anchors remain inspectable and require explicit rebind for source actions.
+Malformed, oversized or unsupported-version readings remain in session capture;
+opening them cannot discard valid Sets or silently erase the payload. Recovery
+or export of an invalid reading is a later UI slice. Session update wording does
+not claim an acknowledged durable write: the existing backend reports write
+failures through logging, and fresh-process acceptance supplies fixture evidence.
+
+Automated checkpoint: core 189, core integration 1, desktop 63, graph 14,
+views 106, theory 181 and four doctests pass (558 total); the standalone
+compatibility instrument passes five tests. Locked desktop build, host-target
+web check and metadata resolve pass without local source overrides. Views
+Clippy reports four existing warnings and none in the new adapter. The actual
+graph-node regression
+exposed a 420px failure: a last-node scroll request advanced the vertical
+workspace but left its horizontal ancestor offset at zero. The graph viewport
+now retains definite authored dimensions and nonshrinking height. Diagnostic
+wheel input established that the scrollport could reveal the node; the shared
+owner traced the failure to Cambium Rootstock's vertical-only `scroll_into_view`.
+The generic two-axis ancestor reveal fix is published in Mere `5011e2f9`, with
+independent failing-before nested-scroll tests. Woodshed consumes that shared
+fix and tests real last/middle graph-node clicks at 1100 and 420px. Final
+automated gates and committed native qualification pass; no selector bypass
+replaces the graph.
+
+`relationship_recipe.scn` drives binding, spacing edit, explained selection,
+exact source navigation, stale-source refusal and explicit owner rebind.
+`relationship_recipe_reopen.scn` verifies retained edits/selection/evidence and
+exact source navigation in a separate process. Final native acceptance uses
+implementation commit `c55461cc97bb29e9e78ecb2bb310bb4bda5accdf`:
+1280×900 baseline passes eight captures, 420×900 narrow replay passes eight,
+and separate-process reopen passes two. All 18 captures were visually reviewed.
+They show actual last/middle graph selections, readable relationship evidence,
+visible stale-source refusal, explicit rebind preserving spacing, and the Mere
+retained artifact's captured-from owner link. Reopen restores the recipe edits,
+selection and evidence and navigates to the exact source Card without starting
+transport. The first final narrow attempt produced zero captures because the
+window was not presented; that failed attempt remains in the receipt, and the
+unchanged binary and scenario assertions passed the foregrounded retry.
+
+The tested binary SHA-256 is
+`13124430aab205c970dde41dce82d85abc480631c6f9afcb8389bec70bcbf91f`.
+Native fixture launchers use isolated unsealed desktop `FsBackend` profiles;
+this does not qualify personal-wallet encryption, high zoom, browser execution,
+other platforms, acoustic quality, signing/notarization or release delivery.
+Implementation and this acceptance record are published together on Woodshed
+main. Full revision, binary/scenario hashes, logs and failed/final attempts live
+under `testing/woodshed/relationship-host-20261005/receipt.json`, with final
+captures in `committed/{seed,reopen}/` and `committed-narrow-retry/seed/`.
+
+### Exact tone relationship expansion (2026-10-05)
+
+**Status (2026-10-05): landed; baseline/narrow native and fresh-process reopening qualified.** This bounded continuation adds exact pitch-class
+set differences, equality and directed containment to the retained reading.
+A chord/chord comparison answers what is shared and what each side contributes;
+a chord/scale comparison can disclose exact inclusion across catalogs. These
+are catalog facts, not registered voice leading, harmonic function, key inference,
+playable fingering or a recommendation score.
+
+Done-conditions: Cmaj7/Am7 discloses shared C/E/G and unique B/A without assigning
+voices; a major scale contains its chord's tones with container-to-member
+endpoints; disjoint pairs disclose differences without false overlap; equal
+chord/arpeggio tones preserve distinct material and occurrence identities.
+Version-1 retained readings keep their original evidence and source action.
+Only explicit rebind creates a version-2 richer disclosure. The shared recipe,
+compiler and layout remain unchanged; Woodshed owns the new musical facts.
+
+Qualification includes source authority and freshness, shared compilation,
+restoration, wide/narrow native inspection, and explicit return from the reading
+to the source Card for Run/Pause practice. Implemented arithmetic and source
+flows do not establish human musical usefulness. Catalog import/expansion,
+all-pairs passage comparison, registered voice leading and reusable atmosphere
+editing remain separate slices.
+
+Automated gate: core 193, integration 1, desktop 64, graph 14, views 108,
+theory 181 and four doctests pass (565 total). Locked desktop build passes.
+The original five-test compatibility instrument remains a separate gate for
+the legacy overlap-only disclosure. Native source and restoration scenarios
+are `tone_relationships.scn` and `tone_relationships_reopen.scn`; acceptance
+artifacts belong under `testing/woodshed/tones-20261005/`.
+
+Committed implementation `a969153965b64bc63a26bf08010f118878454c95` passes the
+native baseline (1280×900, four captures), separate-process reopen (two), and
+420×900 flow (four). All ten captures were visually reviewed. Difference and
+containment explanations remain readable; the scale graph occurrence is
+selected, and the source action opens Card 3 for Run/Pause practice. Reopen
+restores spacing 24, containment evidence and the exact selected source.
+The final desktop regression additionally exercises both widths with actual
+controls and checks that inspection preserves Set truth. Legacy compilation
+passes five compatibility tests; Views Clippy passes with four existing warnings.
+
+The native binary SHA-256 is
+`ec9d2c906934593f98c98b6aa2301f068fb397d1470520755f5635fda00b8ea7`.
+The initial baseline succeeded; a later duplicate launch hit existing capture
+paths and is preserved in its log. An unnecessary foreground retry was stopped
+before feature assertions. These harness attempts do not replace the successful
+captures. External scenario copies only extend the initial settle interval to
+permit foregrounding; their assertions remain unchanged. The receipt records
+source/scenario/binary identities and exact frames. Retention uses isolated,
+unsealed desktop `FsBackend` profiles. Personal-wallet encryption, acoustic
+quality, high zoom, browser execution, other platforms and release delivery
+remain unqualified. The implementation, added host regression and acceptance
+record are published together on Woodshed main.
+
+### Selected passage relationship reading (2026-10-05)
+
+**Status (2026-10-05): landed; native flow and reopening qualified with a narrow graph visibility limit.** Compare each consecutive pair in the
+selected authored sequence, with at most 64 occurrences and 63 pair comparisons.
+Sparse selections retain original authored positions and explicitly describe a
+selected sequence rather than adjacency across the complete Set. Endpoint labels
+identify each explanation; duplicate materials keep distinct occurrence identities.
+This is a linear passage reading, not an all-pairs search or a harmonic analysis.
+
+Done-conditions: three selected Cards disclose both consecutive comparisons;
+reversed UI selection cannot reverse authored order; sparse selections retain
+positions and compare only their chosen sequence; over-budget selections refuse;
+version-1/2 captured facts and source actions stay unchanged until explicit rebind;
+version-3 source actions revalidate the complete passage disclosure. The recipe,
+shared compiler and solver remain unchanged. Qualification includes wide/narrow
+native inspection, exact source return for practice, and fresh-process retention.
+Use `passage_relationships*.scn`; evidence belongs under
+`testing/woodshed/passage-20261005/`. Human musical usefulness, all-pairs queries,
+catalog expansion and atmosphere editing remain separate slices.
+
+Automated gate passes 567 checks: core 194, integration 1, desktop 64, graph 14,
+views 109, theory 181 and four doctests. The locked desktop build and five
+standalone relationship compatibility tests pass. Views Clippy completes with
+four existing warnings.
+
+Native acceptance uses committed candidate `047791fa6819f6523cd78ace2aeac5401d2ef162`
+and binary SHA-256
+`3aa35b2b7f2d943def667174c1219b52137a5d7c0ef52f15223e04d211031105`.
+At default zoom, baseline 1280x900 passes in 4123 frames/four captures;
+fresh-process reopening passes in 4028 frames/two captures; the independent
+420x900 replay passes in 4126 frames/four captures. All ten captures were
+visually reviewed. The same retained reading exposes both chord differences
+and chord/scale containment without rebinding between pairs. Exact source
+return selects Card 3; Run/Pause and reopening preserve the intended inactive
+runner, selected occurrence and spacing. External scenario copies extend only
+the initial settle from 90 to 4000 frames to allow native foregrounding.
+
+**Presentation limit:** the narrow graph capture clips its selected third node
+horizontally. The graph click assertion and subsequent exact source return pass,
+and the explanation text wraps legibly; this does not establish visible selected
+node framing at 420px. Horizontal graph reveal remains open. Test profiles use
+unsealed fixture sessions, not personal vaults. Acoustic quality, high zoom,
+browser/other-platform behavior and release packaging are not qualified here.
+The logs, scenario/capture hashes and publication record are retained in
+`/Users/markik/Code/testing/woodshed/passage-20261005/receipt.json`.
+
+### Relationship overview framing and rendering replay (2026-10-05)
+
+**Status: landed; committed-source native acceptance qualified.** The
+relationship overview fits the compiled scene to its pane width through the
+same GraphCanvasSwatch geometry used for custom paint and native targets.
+Compiled authored coordinates, recipe spacing, occurrence identity and musical
+facts remain unchanged. This is an overview projection; it does not add saved
+camera editing or physics. The host regression now requires the selected last
+node's entire hit target to remain visible at both widths. The passage scenario
+selects Card 1 before Card 3, so its assertion proves a selection transition
+rather than merely confirming an already selected occurrence.
+
+`large_fractional_zoom.scn` replays the historical 1500x1200/0.75-zoom Practice
+failure and returns to Mere. An isolated preliminary replay on candidate
+`047791f` rendered both surfaces; the old black capture is historical evidence,
+not a reproduced current failure. macOS constrains the actual window to its
+work area. Record requested and actual capture dimensions separately. Evidence
+belongs under `/Users/markik/Code/testing/woodshed/framing-20261005/`.
+
+**Stack review:** inspected refreshed Mere `origin/main` at `289c9a98d` rather
+than its stale local checkout. Graphshell's one-tree controls use shared typed
+canvas commands for pan/zoom/fit, physics Play/Pause and Restore arrangement.
+Its physics catalog separates arrangement generators, layout laws and overlays;
+the dynamics grammar specifies portable terms and targets, with realization
+gated by term class. These are the reference for subsequent Woodshed Mere
+embedding: host-owned musical disclosure and actions feed reusable scene,
+camera and dynamics capabilities. Keep sessions/resources/processes in the Mere
+overview, with Set and fretboard readings as projections of those owners.
+No physics adoption or dynamics-plan completion is claimed by this framing fix.
+
+Qualification on candidate `6a4fdd5f9bd518a05064f194afbb89b516dd84bc` uses
+binary SHA-256 `7e87fc0fae460f16af44ae75b247c8a3362fdd9d95c81a54c79622040b4516c0`.
+The relevant gate passes 567 checks; the final viewport-cap edit also passes the
+focused visibility regression and locked desktop build. Views Clippy completes
+with four existing warnings. Native default-zoom passage runs pass at 1280x900
+(1931 frames/four captures) and 420x900 (1934 frames/four captures). The narrow
+capture shows all three nodes, the selected scale ring and full label. Exact
+source return and Run/Pause pass. Fresh-process reopening passes in 1828 frames
+with two reviewed captures. This supersedes the preceding narrow-node clipping
+limit for this three-Card flow; dense 64-occurrence label readability is not
+qualified.
+
+The committed large fractional-zoom replay passes in 1828 frames/two captures.
+Requested size is 1500x1200; macOS constrains the actual window to 1500x1140,
+producing 3000x2280 Retina PNGs, matching the historical black capture dimensions.
+Practice and Mere both render at 0.75 zoom. The historical failure is not
+reproduced on the current build; its original cause remains unproven. This is
+bounded current rendering evidence, not general size/zoom or acoustic acceptance.
+All twelve accepted captures were reviewed. The initial passing reopen was
+accidentally relaunched by a later CUA observation and refused duplicate
+paintlist files; that diagnostic log is retained. A fresh isolated final reopen
+run passed. No test processes remain running. Receipt and capture hashes:
+`/Users/markik/Code/testing/woodshed/framing-20261005/receipt.json`.
 
 ## Product model
 
@@ -63,7 +372,8 @@ is a typed `Next` edge. Selecting a node opens the same Card editor used by the
 tray. Harmonic and historical edges may be layered onto this snapshot, but they
 do not become a parallel material document or overwrite Set order.
 
-This graph is the Stage workspace, not merely a diagram beside it. Staging
+This graph is the Set's domain workspace, within the wider session Mere rather
+than the application's complete dataspace. Staging
 material adds a Card occurrence to the Set and therefore a node to the graph.
 The same occurrence may appear as a numbered glyph, a compact summary, or its
 full editable Card. Expansion state belongs to the projection; Card edits land
@@ -73,9 +383,168 @@ accessible operation rather than a second workflow.
 The Looper is deliberately smaller than a DAW. It does not introduce tracks,
 arrangement sections, editing lanes, effects chains, or a song-authoring mode.
 
+## Session Mere and focused working projections
+
+**2026-09-30 maintainer direction:** the catalog/history swatch and the larger
+Set graph expose narrower relationships while leaving the session's organizing
+graph implicit. The Mere must account for retained artifacts, working views,
+and real active processes, with navigable relations between them. A Set graph
+and a fretboard are focused working projections inside that context. A useful
+overview must first answer what is retained, what is open, and what is running.
+
+This slice establishes that hierarchy using Woodshed's actual local state:
+the working Set, an explicit retained Set snapshot library, the Looper form,
+configured catalog explorations, practice history, and the existing shared-workbench views.
+It does not fabricate multiple running sessions or import a foreign authority.
+The catalog is reachable as a collection; the overview does not materialize its
+entire contents beside every working artifact.
+
+Artifact, view and process identities remain separate. Saving a Set snapshot
+creates a fresh retained artifact without changing the working Set. Opening a
+copy creates an independent working Set with fresh Card occurrence IDs; the
+previous working Set stays available in Mere. The saved artifact remains unchanged.
+An active rehearsal or Looper is disclosed from runtime facts; navigation does
+not start or stop it, and restart does not automatically resume playback.
+Derived snapshot lineage, view presentation and process consumption are typed
+relations, with their meaning distinct from harmonic catalog relationships.
+
+The shared `workbench` supplies tab/tree mechanics and Cambium's graph canvas
+supplies the navigation projection. Graphshell's port informs the separation
+of source bindings, occurrence identity, retained navigation and product-owned
+actions; it is not imported as a second owner of Woodshed data. Canonical family
+boundaries remain in `mere/design_docs/TERMINOLOGY.md` and
+`mere/design_docs/2026-08-12_family_composition_thesis_brief.md`.
+
+The permanent miniature catalog graph is removed from the ordinary Stage
+suggestion panel. Suggestions remain available as explained actions, and their
+catalog relationship view remains a deliberate focused projection. The session
+Mere provides the broader graph and an accessible roster over the same subjects.
+
+The selected Card inspector separates its compact parameter controls from
+shape controls, descriptions and discovery actions. Descriptions have their own
+vertical blocks; action rows have bounded usable buttons. Expanding an editor
+does not put a paragraph into the same wrapping row as tempo and fret buttons.
+
+Validation must distinguish portable model checks, production click/layout
+checks, fresh-process persistence, and inspected presented captures. Native
+Mere navigation, retained snapshot save/open, live activity, narrow Card layout,
+and reopening are separate acceptance points; catalog graph density and audio
+quality retain their previous qualifications.
+
+The first session Mere checkpoint (`61d2ab3`) passed 528 checks: core 173, persistence integration 1,
+desktop 56, graph 14, views 89, theory 181, documentation 4, and examples 10.
+Production desktop checks cover 1100px and 420px layouts, pure overview
+inspection/navigation, immutable snapshots, fresh working Card identities,
+stale discovery cleanup, and an independent fresh-process persistence receipt.
+Legacy four-panel workspace restoration preserves its saved presentation until
+Mere is explicitly opened.
+
+Native scenarios `session_mere.scn`, `session_mere_reopen.scn`, and
+`session_mere_narrow.scn` make save/open, live rehearsal navigation, pause,
+reopening, and 420px presentation repeatable. Run seed, then reopen, then
+narrow: the reopen scenario deliberately verifies that the final Mere selection
+from the seed survives restart. The narrow scenario ends in the Set view.
+Wide Card descriptions use a bounded 760px explanation area; narrow canvas
+labels abbreviate without changing full roster/inspector labels or identity.
+The exact committed-revision capture receipt is kept outside the repository in
+`/Users/markik/Code/testing/woodshed/mere-20260930/receipt.json`.
+This slice does not establish acoustic quality, release packaging, or foreign
+projection mounting; those retain their separate acceptance conditions.
+
+### Independent working instances
+
+**Status (2026-09-30): implemented; validation checkpoint based on `61d2ab3`.**
+The maintainer approved several independently configured working Sets and
+catalog explorations, related through Mere. Each Set retains its ordered Card
+instructions, cursor and occurrence identities. The current product description
+still describes the earlier single-Set frame; this authorized slice extends
+that frame to one ordered Set per working instance. The maintainer-owned
+`PROJECT_DESCRIPTION.md` is unchanged.
+
+Phase 1 establishes stable working-instance identity and explicit creation,
+duplication and switching. The active Set content remains in the existing
+editor state; inactive owners are parked in a portable bank, without a second
+mutable copy of the active content. Switching restores original occurrences;
+duplication and opening a retained snapshot create new occurrences.
+
+Phase 2 retains independent catalog selections, search and musical setup.
+Exploration-specific tuning, fretboard and graph configuration travel with the
+exploration, while appearance, device selection and transport preferences remain
+application-owned. The existing workspace panes project the selected owner;
+the overview must not pretend that each owner is a separate Workbench tile.
+Transient melodic catalog previews stop on an explicit context switch; they
+are not claimed as concurrently running explorer sessions.
+
+Phase 3 binds the single rehearsal runner to the Set that starts it. Inspecting
+or editing another Set must not replace the runner's Card, setup, clock, or
+observation provenance. Starting rehearsal from another Set explicitly transfers
+that one runner; restart restores owners without resuming activity.
+
+Done-conditions: two divergent Sets and two divergent explorations survive
+switching and fresh-process reopening; staging edits only the selected Set;
+background rehearsal advances its original owner; Mere's view and process
+relations expose those different bindings; invalid identities leave content
+untouched; legacy single-Set sessions migrate without content loss. Validate
+portable banks, production wide/narrow clicks, host runner clocks and
+persistence separately from reviewed native captures.
+
+**Findings (2026-09-30):** the former host dwell loop read `ui.set` directly,
+so changing the editor owner would also have changed the runner. The host now
+resolves `rehearsal_set` and its captured setup, with owner identity in the
+instruction clock signature (`crates/woodshed-genet/src/drive.rs`). Card IDs
+are local to a Set, so history provenance and occurrence suppression must also
+qualify the owner (`crates/woodshed-core/src/history.rs`). Set-scene epochs
+include owner scope, preventing identical local occurrences in different Sets
+from accepting one another's retained scene events.
+
+Saved snapshots remain immutable artifact copies. New snapshots record their
+source working owner; legacy snapshots with unknown source do not gain an
+invented owner relation. Opening now adds a working instance and leaves the
+snapshot library unchanged; it does not create an extra snapshot every time.
+
+
+**Validation (2026-09-30):** 550 automated checks pass: core 181,
+core integration 1, desktop 62, graph 14, views 97, musical theory 181,
+doc examples 4 and executable examples 10. Production desktop tests cover
+wide and narrow instance controls, staging isolation, background owner advance,
+explicit runner transfer, captured inherited setup, observation provenance,
+fresh-process restoration and populated legacy migration. A focused host dwell
+test verifies the clock, automatic cursor advance and emitted pitches while
+another owner and tuning are visible. Appearance and transport preferences
+remain shared; there is still one rehearsal runner and one selected projection
+per workspace pane.
+
+Native `working_instances.scn` and `working_instances_reopen.scn` pass at
+1100x800/default zoom with reviewed captures of two divergent Sets, two catalog
+explorations, the background process binding and fresh-process restoration.
+The narrow replay exercises the instance graph and explicit staging targets.
+Review also found and corrected a rename buffer keyed only by cursor: removing
+a Card could rename the next Card, and identical local Card IDs in different
+Sets could reuse the wrong buffer. Rename authority now includes Set and Card.
+The rehearsal owner and background notice have separate rows above controls.
+Narrow Mere uses a two-column graph with row spacing and distinct compact
+instance names; the roster and inspector retain full names. Returning to the
+running owner resolves its board, Hear action, shape controls and occurrence-bound
+related discoveries through the same captured setup as automatic rehearsal.
+Practice catalog audition continues to use its visible explorer. Recipe tiles
+and search hits open a new named working Set; Clear preserves the selected
+owner's Card identity allocator and stops only its own runner.
+Logs, failed probes and capture hashes are retained under
+`/Users/markik/Code/testing/woodshed/instances-20260930/receipt.json`.
+
+**Rendering follow-up:** a 1500x1200 native Practice capture at 0.75 zoom is
+entirely black despite finite layout bounds. The archived previous revision
+`61d2ab3` reproduces the same failure in both Two pane and Full canvas, while
+its 1100x800/default-zoom Practice capture renders. This evidence establishes a
+pre-existing size/zoom rendering boundary, not its root cause; fractional render
+scale and enlarged logical viewport still need isolation. Preserve those failed
+captures separately from accepted default-zoom results. Audio stream underrun/
+overrun messages also remain observed during native runs; automatic instruction
+and pitch checks do not establish acoustic quality or release readiness.
+
 ## Connected exploration and deliberate practice
 
-**Status (2026-09-30): planned; maintainer-endorsed direction.** This section
+**Status (2026-09-30): in progress; first connected slice in parallel lanes.** This section
 specifies connected implementation slices across P3-P6 and the musical
 projections plan. It does not mark their open done-conditions complete or claim
 new runtime evidence.
@@ -227,6 +696,21 @@ checks, native scenarios/captures, acoustic checks, and human review separately.
 Later passage search does not block the first cross-catalog flow. P7 remains
 responsible for Looper lowering and capture persistence.
 
+### Parallel ownership and integration gate
+
+- Catalog lane: contextual chord-to-arpeggio discovery, nonmutating previews,
+  selected-setup preservation, and bounded ambient context.
+- History lane: interest/practice classification and backward-compatible
+  event-time provenance with qualified legacy observations.
+- UI lane: occurrence-bound inspection, audition, explicit insertion, and
+  rehearsal interaction using shared core contracts.
+- Integration owner: shared module wiring, persistence/reopen checks, desktop
+  scenario/capture validation, review of lane boundaries, and receipt updates.
+
+Each lane owns separate files and supplies focused tests. Shared interfaces are
+agreed before caller wiring; one integrated test gate follows lane completion.
+The first slice is not accepted solely because each lane reports success.
+
 ### Verified findings and progress
 
 - **2026-09-30:** inspected source at `5452419`. `woodshed-graph/src/lib.rs`
@@ -244,6 +728,213 @@ responsible for Looper lowering and capture persistence.
 - **2026-09-30:** maintainer endorsed the connected implementation direction
   and authorized documenting it. Implementation and runtime validation remain
   open; this update supplies acceptance targets and does not close P3-P7.
+- **2026-09-30:** catalog, history, and UI lanes implemented a bounded first
+  connection in `connected_catalog.rs`, `harmony.rs`, `stage_context.rs`,
+  `stage_scene.rs`, `history.rs`, and `woodshed-views/src/stage/connected.rs`.
+  Discovery resolves a selected chord occurrence to its sequential form;
+  audition/insertion re-resolve the source at action time. Selected setup,
+  recipe provenance, marks, timing, and new occurrence identity are preserved.
+  The ambient context and foreground scene retain the typed relationship.
+- **2026-09-30:** integration review corrected capoed inversion, inherited
+  runner tempo, stale idle timestamps, unavailable repeated-occurrence binding,
+  and false same-occurrence practice transitions. The host supplies an event
+  clock; pause/edit observations retain authored instruction snapshots and
+  consume active spans. Duration is observed runner time, not player success.
+- **2026-09-30:** integrated automated gates pass: core 138, graph 14, views 65,
+  export examples 10, and desktop tests 35 including a production-host wide/
+  narrow click flow and two-process filesystem save/restore. The latter uses
+  synthetic unsealed state; it does not prove persona switching or power-loss
+  safety. Full commands, logs, and limitations are recorded in the testing
+  workspace `testing/woodshed/connected-20260930/receipt.json`.
+- **2026-09-30:** the initial locked-Mac attempt produced no captures. After
+  unlock, `connected_practice.scn` passed with four presented captures; a fresh
+  process running `connected_practice_reopen.scn` passed with two more. All six
+  captures were inspected. The native run demonstrates discovery, audition
+  dispatch, staging, runner advancement/pause, and restoration of three Cards,
+  arpeggio shape, selected occurrence, and history through isolated filesystem
+  state. It does not demonstrate acoustic correctness or persona switching.
+  Receipts and captures live under `connected-20260930/unlocked/`.
+  The ambient Stage capture at scenario zoom shows selected-card editor/graph
+  overlap and clipped controls; Rehearsal controls are usable in inspected
+  captures. Stage layout correction, acoustic/human review, keyboard graph/list
+  acceptance, and full per-event highlights remain open.
+
+- **2026-09-30:** follow-up layout correction moves the expanded selected Card
+  into the graph inspection layout beside the canvas, wrapping below it when
+  space is limited. Its natural height accommodates shape and discovery controls;
+  selection and collapse retain the same occurrence. This supersedes P4d's
+  in-node editor footprint without changing historical capture claims. Views
+  65 and desktop 36 tests pass, including non-overlap and clickable discovery/
+  staging; desktop build passes. The native follow-up produced zero frames
+  after the Mac locked again, so presented-frame confirmation remains pending.
+
+- **2026-09-30:** after unlock, the revised P4d layout scenario passes four
+  presented captures at UI zoom 0.65. Expanded and resized captures show the
+  selected editor beside the canvas, with activation, resize, and collapse
+  passing. The preceding default-zoom fixture missed graph controls below the
+  viewport; this receipt qualifies the recorded zoom, not all viewport/zoom
+  combinations. Listening and keyboard acceptance remain open.
+
+- **2026-09-30:** the next bounded slice adds rooted chord-to-scale formula
+  containment in `connected_scales.rs`, explicit Explore/Hear/Stage actions,
+  and progressive disclosure from four to 32 choices. Ranking prefers the same
+  root, named Major/Minor scales, then fewer added tones and stable name/root
+  ordering; this is a disclosure preference, not a suitability score. Actions
+  revalidate the source occurrence and chosen keyed scale. A new Walk Card
+  preserves authored setup, timing, and recipe while clearing chord shape and
+  note marks. Chord-scale containment does not transpose from a capoed shape.
+  This implements the chord-to-scale portion of the second slice; progression
+  recipes, scale fingering, and general instrument realization remain open.
+  General scale display still uses live tuning; formula audition uses written
+  pitch classes and the existing short cascade, not synchronized event timing.
+  Persisted per-Card setup is not evidence those realization gaps are closed.
+- **2026-09-30:** scale integration passes 278 tests (core 144, integration 1,
+  examples 10, graph 14, views 69, desktop 40), including wide/narrow production
+  click dispatch, repeated occurrence identity, stale source/candidate rejection,
+  and fresh-process chord/arpeggio/scale restoration with separate observations.
+  Desktop build passes. Receipts live under `testing/woodshed/scales-20260930/`.
+  Final native seed/reopen scenarios pass with three presented captures, all
+  inspected: the scale stages, runs/pauses, and restores in a separate process.
+  The earlier Stage layout scenario also passes at recorded zoom with four
+  captures. Native formula audition dispatch is not acoustic correctness or
+  successful player performance; keyboard and listening review remain open.
+  Hidden discovery panels now omit their empty styled boxes.
+
+- **2026-09-30, shared scale realization:** scale Cards now resolve their saved
+  instrument, catalog tuning, capo, and physical fret window once for the
+  displayed contacts and audition pitches. The written root is transposed by
+  capo for concert sound. An ascending traversal selects one deterministic
+  contact per distinct MIDI pitch; it does not prescribe a playable fingering.
+  Solo resolves exact marked contacts; Mute retains the existing pitch-class
+  semantics. Manual Walk uses quarter-note spacing, and timed Walk fits one
+  traversal inside the authored dwell, including inherited runner BPM. Missing
+  setup/formula and empty windows show an unavailable status and yield no live
+  instrument fallback. This supersedes the general scale display/audio gaps
+  recorded above. Synchronized note highlights, voice cancellation on pause,
+  arbitrary persisted custom tunings, and fingering construction remain open.
+  Production interaction and separate-process restoration checks establish a
+  four-string high-G Ukulele Card, capo 2, physical frets 2–6 against a live
+  six-string Guitar. A clicked string-index-1/fret-2 contact solos independently
+  calculated D4 (approximately 293.665 Hz). Discovery and staged audition agree;
+  an inherited 80 BPM bar occupies three seconds. Invalid stored tuning has a
+  visible reason, no fret markers, and empty effective audio.
+  Integrated validation passes 460 tests (151 core, one core integration,
+  42 desktop, 14 graph, 71 views, 177 theory, and four theory doc examples);
+  the desktop build passes. Native seed/reopen scenarios in
+  `scenarios/scale_realization*.scn` exercise saved Ukulele geometry, written C
+  Major/concert D Major, explicit staging, Run/Pause, and restored observations.
+  The native fixture re-resolves the source shape after changing instrument;
+  it does not treat a retained Guitar shape as a valid Ukulele shape.
+  Final seed/reopen runs return `RESULT ok` with four presented-frame PNGs,
+  all inspected. The saved setup, scale occurrence, and observations restore
+  in the fresh native process. Receipts are recorded under
+  `testing/woodshed/scales-20260930/realization-final-{seed,reopen}/`.
+  Audio-device quality and keyboard acceptance remain separate; the initial
+  native run logged stream underrun/overrun, so a capture pass is not an
+  acoustic-quality receipt.
+
+- **2026-09-30, executable scale degree-pair slice:** introduces two bounded
+  structured recipes, Thirds and Fourths, over seven-note scale formulas. The
+  pure degree grammar pairs 1–3/2–4 or 1–4/2–5 across octave boundaries. It uses
+  absolute scale degrees: missing pitches in a physical window omit incomplete
+  pairs rather than compressing the scale and changing the intervals. This is
+  a first musical syntax construct, not a general-purpose parser.
+
+  Explicit `ScalePattern` material stores the scale formula, written root, and
+  recipe choice separately from the display label and provenance stamp. The
+  previous Scale wire representation stays unchanged. Display and audition use
+  the shared saved setup resolver. Sequential preview preserves pair order,
+  downward transitions between pairs, and repeated notes; existing sustained
+  one-shot audio and pause limitations still apply. Earlier app versions cannot
+  be assumed to understand the new material variant.
+
+  The source scale offers two explained contextual choices with separate
+  inspection, Hear, and Stage actions. Inspection and audition retain the Set;
+  staging creates a new occurrence after revalidating its source and available
+  realization. Seven-note support and incomplete-pair behavior are disclosed.
+  The catalog background also names keyed pattern realizations and typed
+  degree-pattern relationships around the scale under the existing context
+  budget. The authored Set, derived catalog context, and practice observations
+  retain their separate identities.
+
+  Integrated validation passes 480 tests (158 core, one core integration,
+  46 desktop, 14 graph, 77 views, 180 theory, four doc examples) plus ten core
+  example tests. Production click gates cover both recipes at 1100 and 420 px,
+  independently calculated concert-pitch pairs, immutable inspection/audition,
+  distinct repeated occurrences, invalid and removed sources, and separate
+  measured pattern histories. Fresh-process tests compare full ordered audio
+  tuples and saved recipe discriminants. Native seed/reopen scenarios pass
+  with four presented captures, all inspected, including the ambient relation
+  view, staged recipe, pause, and restored instruction/observations. Pattern
+  satellites occupy a separate row above the source after visual review;
+  overall dense catalog layout and human musical usefulness remain review
+  work. Receipts live under `testing/woodshed/patterns-20260930/`.
+  Native audio logs still report stream underrun/overrun; no acoustic quality
+  acceptance or device-performance claim follows from these captures.
+
+- **2026-09-30, chord-tone approach slice:** adds Below and Above chromatic
+  approach recipes for an explicit adjacent pair of ordinary chord Cards. The
+  next Card supplies target tones; the preceding Card supplies passage context,
+  without inferring a key or a voice-leading route from its voices. Each pair
+  visits a same-string semitone neighbor, then the target. Both occurrence IDs
+  remain pinned and every action checks that the target still follows the source.
+  Removal, reordering, an intervening duplicate, or a stale selected target shape
+  produces an explanation instead of choosing another target.
+
+  `ChordApproach` material stores the target formula, written root and direction.
+  A standalone exercise retains the target's saved instrument, tuning, capo,
+  physical window, timing and selected shape, clears marks, and uses Walk. With
+  no selected shape, it chooses a deterministic contact for each target MIDI
+  pitch that has an available partner. Incomplete physical pairs are omitted;
+  unknown setup, formula, stale shape or no complete pairs fail closed. Ordered
+  audition retains downward approaches and repeated visits. The previous Chord
+  wire representation stays unchanged; older apps may not understand this variant.
+
+  Inspect and Hear preserve the passage. **Append approach exercise** creates a
+  separate occurrence at the end of the Set, preserving the passage order and
+  cursor. Automatic interleaving and whole-progression construction remain later
+  work. The ambient catalog exposes both choices around the target chord, with a
+  typed target-approach relation and the existing context budget. Approach pitch
+  classes include transient chromatic neighbors, so harmonic comparisons do not
+  falsely present this recipe as only the target chord's tones. A free catalog
+  recipe uses the current Stage setup and explains that basis explicitly.
+
+  Integrated validation passes 501 tests (166 core, one core integration,
+  51 desktop, 14 graph, 84 views, 181 theory, four doc examples) plus ten core
+  example tests. Wide and narrow production click gates independently calculate
+  the physical MIDI pairs, verify immutable exploration and append-only authoring,
+  retain selected target shapes, preserve repeated visits for unselected targets,
+  and measure exercise history separately from the original chords. Fresh-process
+  tests restore the original pair plus both directions and compare the complete
+  ordered audio tuple at native precision. The existing narrow fretboard scroll
+  and note-hit regression also passes after hiding the empty approach panel when
+  no adjacent pair is available.
+
+  After unlock, the native seed and fresh-process reopen scenarios pass with
+  four presented captures, all inspected. They exercise immutable audition,
+  explicit append, the saved Ukulele/high-G/capo-2 realization with four strings,
+  descending sequential pairs, Run/Pause and restored observations. Capture
+  review found overlapping approach labels in the ambient graph; the follow-up
+  uses compact chord-symbol/direction labels and staggered satellite spacing while
+  preserving full recipe names in the inspector and authored Card. Overall
+  dense-catalog layout remains review work. The scenario sources are
+  `scenarios/chord_approaches.scn` and `scenarios/chord_approaches_reopen.scn`;
+  logs, capture hashes and the exact-revision receipt are under
+  `testing/woodshed/approaches-20260930/`. Audio stream underrun/overrun is still
+  logged; these captures do not establish acoustic quality or human musical
+  usefulness. Existing one-shot sustain and pause limitations remain.
+
+**First-slice qualification:** functional discovery, staging, sequential-onset
+preview, runner observation boundaries, and filesystem reopening are implemented
+and automatically tested. The synth sustains prior tones through the cascade;
+pausing stops runner advancement but does not cancel an already queued one-shot
+preview. Full synchronized note events/highlights and audio pause semantics
+remain under P5/P6. Provenance currently snapshots the authored Card; optional
+run identity, effective inherited realization, and presented MIDI observations
+remain unset unless a caller supplies them. Broad catalog queries, durable
+exploration pins, exercise construction, and passage search remain later slices.
+The complete first-flow acceptance and the wider P3-P7 done-conditions remain
+open.
 
 ## Release baseline and 1.0 product proof
 
@@ -251,6 +942,72 @@ The release baseline is reached when a clean checkout resolves the committed
 lock without local sibling patches, core and Windows-host CI pass, and a tag
 produces a checksummed Windows ZIP. Repairing that baseline makes the alpha
 credible; it does not close any product phase below.
+
+**2026-09-30 publishing assessment:** use a downloadable desktop alpha as the
+initial candidate while audience choice remains open. The pushed scale slice
+at `5f29760` has green [CI across all five jobs](https://github.com/merely-made/woodshed/actions/runs/36754594105):
+clean lockfile, core tests, macOS/Linux builds, and Windows host check. Historical
+manual [macOS packaging](https://github.com/merely-made/woodshed/actions/runs/34295644328)
+and [Linux packaging](https://github.com/merely-made/woodshed/actions/runs/34296576133)
+runs succeeded at older revisions; they do not validate a new candidate.
+No Windows packaging run or [public release](https://github.com/merely-made/woodshed/releases)
+is currently recorded. The macOS package is unsigned and architecture-specific.
+
+The next release checkpoint is a named revision, clean locked build, platform
+archive and checksum, extracted-app launch, isolated save/reopen, and a concise
+known-limits document including audio, supported platforms, data storage and
+upgrade behavior. Re-run packaging for that revision before claiming a current
+candidate. Keep the artifact receipt with source/binary hashes and observations.
+Publication requires an explicit release instruction; assessing or preparing an
+alpha does not create a tag. Browser publication is a separate host-validation
+slice because `woodshed-web` is still unshipped. The crate family is currently
+git-first; a registry/library release needs its own dependency and publish check.
+
+**Catalog expansion order:** source inventory currently includes 40 scale
+formulas, 39 chord formulas, 12 progression recipes, seven exercise generators,
+101 tunings across 15 instrument families, and 11 generated practice templates.
+Arpeggios derive from chord formulas. Counts describe the built-in catalogs,
+not independently rehearsable products or a runtime catalog-pack facility.
+
+1. Add executable composition/practice recipes: diatonic thirds/fourths,
+   chord-tone approaches, minor-key progressions, and transition drills. Each
+   preview must lower to the same Cards as staging and have a useful playback
+   and instrument realization. Current Riff audition is unavailable, so extend
+   its realization before advertising new Riff generators as audible drills.
+2. Introduce validated catalog packs with stable IDs, aliases, source/license
+   provenance, explicit parameters, and migration from current name-based
+   identities. Then expand community-curated material without recompiling every
+   catalog change. Rhythm, articulation, and melodic sequences offer useful
+   combinations beyond adding scale names. Microtonal catalogs require a pitch
+   model beyond the current twelve-tone assumptions.
+The linguistic composition direction belongs primarily to **Knot Editor**, per
+Markik's 2026-09-30 clarification, and was handed off to
+[the Knot task](codex://threads/01a0eb5b-546e-7fb2-a492-a873e8b12343).
+It concerns pronunciation, stress, rhyme, grammar, meanings, and mora-like word
+division. CMUdict and Open English WordNet remain possible resources for that
+separate planning effort; neither is selected or integrated here. Woodshed's
+catalog expansion remains musical material, playable recipes, and their typed
+relationships. The shared principle is deliberate work combined with lateral
+exploration; it does not make Woodshed the owner of Knot's lexical records.
+
+**Musical syntax and ambient catalog context:** Markik clarified that Woodshed
+should explore a comparable musical language syntax. Pitches, intervals, chord
+and scale formulas, rhythm, articulation, and progression rules can form typed
+vocabulary and compositional constraints. A phrase or recipe should be
+inspectable, explainable, auditionable, and lower to explicit Set Cards where
+its realization is supported. The concrete syntax and rule representation are
+still design work; this is a product direction, not an implemented parser.
+
+The ambient background is a central interaction surface for making large
+catalogs useful. Around the current Card, phrase, or catalog subject, it should
+expose relevant containment, compatible material, substitutions, tensions, and
+possible transitions with reasons and bounded disclosure. Focus and authored
+choices determine context; exploration can lead to explicit inspection,
+audition, and staging. Ambient relationships and focused drills carry equal
+product priority: they help assemble the Set and act on it. The next recipe
+slice should therefore include contextual catalog relationships and explanations
+alongside executable practice, rather than treating catalog expansion as an
+inventory-only task.
 
 Woodshed earns a 1.0 practice claim only when one persisted flow demonstrates
 all four parts together:
@@ -1438,3 +2195,74 @@ receipts are recorded before those platforms are advertised.
   520x260 to 660x360 resize, and the compact graph after collapse. This closes
   the prior current-checkout paint and hit-test regression; it is not a claim
   about a separate retained-fragment compositor contract.
+
+
+### Native Mere presentation and shared board adoption (2026-10-07)
+
+**Status: implemented; automated gate passed; native acceptance blocked by locked Mac.** Refreshed Woodshed main to
+`06c2b13`, Mere main to `d041cc69b`, and Genet main to `965b64e20`. The primary
+workspace now pins Mere `d041cc69b588b6f1dadd22308c2bc4059496cabd` together with
+its coherent Genet dependency `d851a9db0cd1ff7837768250f21e9dff63455940`;
+independently adopting newer Genet would create duplicate source identities.
+Nested audio ports and the historical relationship-recipe proof keep their
+independent pins. The current shared compiler takes explicit host card sizes;
+Woodshed retains its existing 164 by 68 relationship footprint.
+
+The session Mere embeds Pictograph's graph-free `PhysicsBoard` underneath
+Cambium's native graph canvas. Woodshed discloses stable owner-qualified item
+identities and analytic arrangement slots; the board supplies fixed-world
+positions, CPU spring motion and permitted pointer/keyboard movement. Paint and
+native targets consume the same positions. Reconciliation compares base slots,
+roles and effective motion; simulated positions never feed back into base slots
+on each frame. The host ticks only the visible Mere scene. Camera fit, pan,
+zoom and arrangement restoration stay presentation actions.
+
+The inspector separates foreground/background emphasis from shared arrangement
+roles: free placement retains a drop, anchors return after release, and pins
+refuse movement. Native buttons expose movement to keyboard activation as well
+as pointer dragging. Motion starts disabled and reduced motion enabled;
+reduced motion overrides the saved motion preference. Changing any of these
+choices does not edit a Set, acquire catalog material or start a process.
+Source opening still validates the current session snapshot before dispatch.
+Circle, Tonnetz and captured relationship reading paths remain available.
+
+A versioned host presentation payload retains camera, current item positions,
+selection, foreground/background emphasis, arrangement roles and motion
+preferences beside Woodshed's session. Structured IDs use tuple arrays rather
+than JSON object keys. Payloads and entry counts are bounded; invalid data
+resets presentation only, while unknown future versions remain opaque and
+survive saving. Runtime positions become retained placements on save; dynamics
+restarts from those placements rather than persisting solver internals.
+
+The current stack review confirms G1, G7 and G9 landed in the dynamics grammar
+plan, while G2 is still unmerged. Graphshell's canvas command and reader modules
+remain web-gated. This adoption uses their portable lower board seam; it does
+not claim a native Graphshell editor, arbitrary dynamics grammar editing,
+shared scene import/export or layered rendering strata. Background currently
+means explicit quiet presentation emphasis. These remain subsequent slices,
+with shared extraction coordinated in Mere when a second native consumer needs
+it. Shared references: `mere/design_docs/mere_docs/implementation_strategy/2026-10-02_dynamics_grammar_plan.md`
+and `mere/ports/graphshell/src/canvas_controls.rs`.
+
+Acceptance scenarios are `mere_presentation.scn` and
+`mere_presentation_reopen.scn`. Evidence belongs under
+`/Users/markik/Code/testing/woodshed/mere-20261007/`, using isolated unsealed
+fixture sessions. Native wide/narrow capture review and fresh-process reopening
+must be recorded before this slice is described as qualified.
+
+Implementation candidate `364741ec2387064d60f5ecb3783ed05a59d9d597` passes the
+final relevant gate: 579 checks (194 core, one backdrop integration, 64 desktop,
+14 graph, 121 views, 181 theory, four doctests). Seventeen focused Mere tests
+pass, including an integration regression for actual static displacement and
+pin refusal. The adapter explicitly materializes a paused drop without stepping
+neighboring physics: the shared board's kinematic position otherwise remains
+unfolded until a tick. Locked desktop build passes; views Clippy completes with
+four existing warnings. Changed-document links and diff whitespace pass.
+
+Native acceptance was attempted after committing the candidate, but the
+computer-use tool reported a locked Mac and could not unlock it. No native
+launch, captures or fresh-process presentation reopen are qualified. Wide
+1280x900 and narrow 420x900 isolated launchers and scenarios are prepared;
+`receipt.json` records this blocked state and the binary hash. This is a
+published implementation and automated checkpoint, not a completed native
+acceptance or release receipt.

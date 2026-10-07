@@ -1,0 +1,12 @@
+settle 3
+assert snap set-cards == 4
+assert snap pattern-cards == 1
+assert snap rehearsal-strings == 4
+assert snap pattern-descends == true
+assert snap pattern-repeats == true
+assert snap pattern-sequential == true
+assert snap rehearsal-running == false
+assert snap history-observed >= 5
+assert text concert D Major
+capture 01_pattern_reopened
+log Scale degree-pair reopen complete

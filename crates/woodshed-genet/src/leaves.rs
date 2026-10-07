@@ -114,11 +114,71 @@ fn hasher() -> std::collections::hash_map::DefaultHasher {
 /// Refresh every leaf from the current state. Called from the frame hook,
 /// before the host lays out and paints.
 pub fn sync_all(shared: &mut Shared, ui: &UiState, leaves: &mut LeafRegistry<u64>) {
+    sync_overview(shared, ui, leaves);
+    let mut h = hasher();
+    ui.relationship_open.hash(&mut h);
+    ui.relationship_reading_json.hash(&mut h);
+    ui.viewport_width.to_bits().hash(&mut h);
+    let sig = h.finish();
+    if ui.relationship_open && sig != shared.relationship_sig {
+        shared.relationship_sig = sig;
+        if let Some(swatch) = woodshed_views::stage::relationship_swatch(ui) {
+            let leaf = swatch.paint_leaf(|_: &&str| sprigging::ColorF {r:0.93,g:0.70,b:0.28,a:1.0});
+            leaves.insert(woodshed_views::stage::RELATIONSHIP_GRAPH_LEAF_KEY, Box::new(leaf));
+        }
+    }
     sync_related_swatch(shared, ui, leaves);
     sync_set_graph_swatch(shared, ui, leaves);
     sync_fretboard(shared, ui, leaves);
     sync_fretboard_active(ui, leaves);
     sync_rehearsal_fretboard(shared, ui, leaves);
+}
+
+/// The session Mere uses the same graph geometry for paint and native hit targets.
+fn sync_overview(shared: &mut Shared, ui: &UiState, leaves: &mut LeafRegistry<u64>) {
+    let swatch = woodshed_views::stage::overview_swatch(ui);
+    let mut h = hasher();
+    swatch.width.hash(&mut h);
+    swatch.height.hash(&mut h);
+    swatch.viewport.pan.0.to_bits().hash(&mut h);
+    swatch.viewport.pan.1.to_bits().hash(&mut h);
+    swatch.viewport.zoom.to_bits().hash(&mut h);
+    for node in &swatch.graph.nodes {
+        node.id.hash(&mut h);
+        node.position.0.to_bits().hash(&mut h);
+        node.position.1.to_bits().hash(&mut h);
+        node.kind.hash(&mut h);
+    }
+    for relation in &swatch.relations {
+        relation.id.hash(&mut h);
+        relation.visible.hash(&mut h);
+        relation.emphasized.hash(&mut h);
+        for point in &relation.route {
+            point.0.to_bits().hash(&mut h);
+            point.1.to_bits().hash(&mut h);
+        }
+    }
+    swatch.selected.hash(&mut h);
+    swatch.hovered.hash(&mut h);
+    let sig = h.finish();
+    if sig == shared.overview_sig {
+        return;
+    }
+    shared.overview_sig = sig;
+    let leaf = swatch.paint_leaf(|kind: &&str| {
+        let (r, g, b) = match *kind {
+            "background" => (0.35, 0.39, 0.43),
+            "artifact" => (0.93, 0.70, 0.28),
+            "view" => (0.47, 0.63, 0.82),
+            "process" => (0.85, 0.40, 0.32),
+            _ => (0.30, 0.67, 0.70),
+        };
+        sprigging::ColorF { r, g, b, a: 1.0 }
+    });
+    leaves.insert(
+        woodshed_views::stage::OVERVIEW_GRAPH_LEAF_KEY,
+        Box::new(leaf),
+    );
 }
 
 /// Refresh only the Set graph leaf during a view-local node drag.
@@ -421,7 +481,7 @@ fn sync_rehearsal_fretboard(shared: &mut Shared, ui: &UiState, leaves: &mut Leaf
     }
     let cursor = ui.set.cursor.min(ui.set.cards.len() - 1);
     let card = &ui.set.cards[cursor];
-    let st = &ui.stage;
+    let st = ui.current_card_stage();
     let geom = ui.rehearsal_board_geometry();
     let marker_style = ui.app_settings.fretboard.marker_style.clone();
     let orientation = Orientation::from_name(&ui.app_settings.fretboard.orientation);

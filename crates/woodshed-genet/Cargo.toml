@@ -10,7 +10,7 @@ description = "Woodshed's desktop application over the shared Cambium desktop ho
 [dependencies]
 # The desktop realization of muniment's Backend. woodshed-core names the slots;
 # this crate only decides which file each one lives in.
-muniment = { git = "https://github.com/merely-made/mere.git", rev = "8106c7c2063001fbf60ea511758fb1c72ed8a243" }
+muniment = { git = "https://github.com/merely-made/mere.git", rev = "d041cc69b588b6f1dadd22308c2bc4059496cabd" }
 # The family-shared identity vault: which persona this machine practices as,
 # and the key its practice session is sealed under. Desktop-only, which is why
 # it is declared here rather than in the portable core. Declared in the
@@ -18,6 +18,7 @@ muniment = { git = "https://github.com/merely-made/mere.git", rev = "8106c7c2063
 personae = { workspace = true }
 async-trait = "0.1"
 woodshed-core = { workspace = true }
+woodshedding = { workspace = true }
 woodshed-audio = { workspace = true }
 woodshed-views = { path = "../woodshed-views" }
 cambium = { workspace = true }

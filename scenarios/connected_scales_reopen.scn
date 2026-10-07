@@ -1,0 +1,7 @@
+settle 3
+assert snap set-cards == 3
+assert snap scale-cards == 1
+assert snap rehearsal-running == false
+assert snap history-observed >= 3
+capture 01_scale_reopened
+log Connected chord-to-scale reopen complete

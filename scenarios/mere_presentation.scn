@@ -1,0 +1,39 @@
+# Shared board arrangement and host-owned scene presentation.
+settle 3
+act mere-example
+click .workspace-panel Mere
+settle 3
+assert snap overview-active == true
+assert snap overview-reduced-motion == true
+assert snap overview-motion == false
+click .overview-node-title Working Set 1
+settle 3
+click .overview-role-toggle Move to background
+settle 3
+assert snap overview-background == 1
+click .overview-zoom-in Zoom in
+assert snap overview-zoom == 1.25
+click .overview-pan-right Pan right
+click .overview-move-right Move selected right
+settle 3
+assert snap set-cards == 2
+click .overview-role-pinned Pin in place
+assert snap overview-pinned == 1
+click .overview-move-right Move selected right
+capture 01_retained_presentation
+click .overview-motion-toggle Enable scene motion
+settle 5
+assert snap overview-motion == true
+assert snap overview-reduced-motion == true
+capture 02_reduced_motion
+click .overview-reduced-motion-toggle Allow scene motion
+settle 30
+assert snap overview-motion == true
+assert snap overview-reduced-motion == false
+capture 03_spring_scene
+click .overview-motion-toggle Pause scene motion
+click .overview-reduced-motion-toggle Reduce scene motion
+settle 3
+assert snap overview-motion == false
+assert snap overview-reduced-motion == true
+log Mere presentation retained

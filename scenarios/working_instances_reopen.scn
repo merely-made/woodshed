@@ -1,0 +1,31 @@
+settle 3
+assert snap overview-active == true
+assert snap working-sets == 2
+assert snap working-set-id == 2
+assert snap explorations == 2
+assert snap exploration-id == 2
+assert snap catalog-root == 0
+assert snap catalog-lens == Scales
+assert snap set-cards == 2
+assert snap scale-cards == 1
+assert snap rehearsal-running == false
+assert snap runner-set-id == 0
+capture 01_instances_reopened
+click .overview-node-title Working Set 1
+settle 3
+click .overview-open Open view
+settle 3
+assert snap working-set-id == 1
+assert snap set-cards == 2
+assert snap scale-cards == 0
+click .workspace-panel Mere
+settle 3
+click .overview-node-title Catalog exploration 1
+settle 3
+click .overview-open Open view
+settle 3
+assert snap exploration-id == 1
+assert snap catalog-root == 3
+assert snap catalog-lens == Chords
+capture 02_original_instances_reopened
+log Working instances reopen complete

@@ -35,6 +35,9 @@ pub enum StageNodeKind {
     Card,
     Chord,
     Scale,
+    Arpeggio,
+    ScalePattern,
+    ChordApproach,
 }
 
 /// One quiet catalog realization in the Circle-of-Fifths reading.
@@ -55,6 +58,9 @@ pub enum StageContextRelationKind {
     SharedTones,
     Diatonic,
     Fifth,
+    Arpeggiation,
+    DegreePattern,
+    TargetApproach,
 }
 
 impl StageContextRelationKind {
@@ -63,6 +69,9 @@ impl StageContextRelationKind {
             Self::SharedTones => "woodshed:keyed-shared-tones",
             Self::Diatonic => "woodshed:keyed-diatonic",
             Self::Fifth => "woodshed:circle-of-fifths",
+            Self::Arpeggiation => "woodshed:chord-arpeggio",
+            Self::DegreePattern => "woodshed:scale-degree-pattern",
+            Self::TargetApproach => "woodshed:chord-tone-approach",
         }
     }
 
@@ -71,6 +80,9 @@ impl StageContextRelationKind {
             Self::SharedTones => "shares tones",
             Self::Diatonic => "diatonic in",
             Self::Fifth => "a fifth apart",
+            Self::Arpeggiation => "same tones, sequential touch",
+            Self::DegreePattern => "same scale, degree pairs",
+            Self::TargetApproach => "approaches this chord's tones",
         }
     }
 }
@@ -120,6 +132,233 @@ pub struct StageContextGraph {
     pub relations: Vec<StageContextRelation>,
     /// More eligible material existed than the requested context budget.
     pub truncated: bool,
+}
+
+/// Add the focused chord's sequential catalog form to a reading's bounded
+/// context. The reading still owns geometry; an arpeggio occupies its chord's
+/// musical coordinate with a representation offset, not a new tonal location.
+/// This retains existing context order and replaces only the last fresh node
+/// when the budget is full. It never edits authored material.
+pub fn disclose_chord_arpeggio(
+    graph: &mut StageContextGraph,
+    focus: &KeyedCatalogRef,
+    node_limit: usize,
+    omit: &BTreeSet<KeyedCatalogRef>,
+    retained: &BTreeSet<KeyedCatalogRef>,
+) {
+    let Some(name) = focus.formula_id.strip_prefix("chord:") else {
+        return;
+    };
+    if focus.to_material().is_none() {
+        return;
+    }
+    let arpeggio = KeyedCatalogRef {
+        formula_id: woodshed_graph::arpeggio_id(name),
+        root: focus.root,
+    };
+    if omit.contains(&arpeggio) {
+        return;
+    }
+    let to = StageNodeId::Catalog(arpeggio.clone());
+    if !graph.nodes.iter().any(|node| node.keyed == arpeggio) {
+        if node_limit == 0 {
+            graph.truncated = true;
+            return;
+        }
+        if graph.nodes.len() >= node_limit {
+            let Some(index) = graph
+                .nodes
+                .iter()
+                .rposition(|node| node.keyed != *focus && !retained.contains(&node.keyed))
+            else {
+                graph.truncated = true;
+                return;
+            };
+            let removed = graph.nodes.remove(index).id;
+            graph
+                .relations
+                .retain(|relation| relation.from != removed && relation.to != removed);
+            graph.truncated = true;
+        }
+        graph.nodes.push(StageContextNode {
+            id: to.clone(),
+            label: arpeggio.label().expect("validated chord"),
+            keyed: arpeggio,
+            kind: StageNodeKind::Arpeggio,
+            relation_distance: 0,
+        });
+    }
+    graph.relations.push(StageContextRelation {
+        from: StageNodeId::Catalog(focus.clone()),
+        to,
+        kind: StageContextRelationKind::Arpeggiation,
+        shared_tones: focus.pitch_classes().map_or(0, |pitches| pitches.len()),
+    });
+}
+
+/// Disclose the two named degree recipes around an ordinary seven-degree
+/// scale, within the same budget as other quiet catalog context. This states
+/// recipe structure only; playable pair readiness is checked by discovery.
+pub fn disclose_scale_patterns(
+    graph: &mut StageContextGraph,
+    focus: &KeyedCatalogRef,
+    node_limit: usize,
+    omit: &BTreeSet<KeyedCatalogRef>,
+    retained: &BTreeSet<KeyedCatalogRef>,
+) {
+    let Some(name) = focus.formula_id.strip_prefix("scale:") else {
+        return;
+    };
+    let Some(formula) = woodshedding::scale::catalog()
+        .iter()
+        .find(|formula| formula.name == name)
+    else {
+        return;
+    };
+    let degrees = formula
+        .intervals
+        .iter()
+        .map(|interval| interval.semitones())
+        .collect::<Vec<_>>();
+    if degrees.len() != 7
+        || degrees.first() != Some(&0)
+        || degrees.iter().any(|degree| !(0..12).contains(degree))
+        || !degrees.windows(2).all(|pair| pair[0] < pair[1])
+    {
+        return;
+    }
+    for pattern in woodshedding::rehearsal::ScalePattern::ALL {
+        let subject = KeyedCatalogRef {
+            formula_id: woodshed_graph::scale_pattern_id(name, pattern),
+            root: focus.root,
+        };
+        if omit.contains(&subject) {
+            continue;
+        }
+        let to = StageNodeId::Catalog(subject.clone());
+        if !graph.nodes.iter().any(|node| node.keyed == subject) {
+            if node_limit == 0 {
+                graph.truncated = true;
+                continue;
+            }
+            if graph.nodes.len() >= node_limit {
+                let removable = graph.nodes.iter().rposition(|node| {
+                    node.keyed != *focus
+                        && node.kind != StageNodeKind::ScalePattern
+                        && !retained.contains(&node.keyed)
+                });
+                let Some(index) = removable else {
+                    graph.truncated = true;
+                    continue;
+                };
+                let removed = graph.nodes.remove(index).id;
+                graph
+                    .relations
+                    .retain(|relation| relation.from != removed && relation.to != removed);
+                graph.truncated = true;
+            }
+            graph.nodes.push(StageContextNode {
+                id: to.clone(),
+                label: subject.label().expect("validated scale"),
+                keyed: subject,
+                kind: StageNodeKind::ScalePattern,
+                relation_distance: 0,
+            });
+        }
+        let relation = StageContextRelation {
+            from: StageNodeId::Catalog(focus.clone()),
+            to,
+            kind: StageContextRelationKind::DegreePattern,
+            shared_tones: 7,
+        };
+        if !graph.relations.contains(&relation) {
+            graph.relations.push(relation);
+        }
+    }
+}
+
+/// Target-anchored chromatic recipe formulas; playable pair readiness is a
+/// separate query against an explicit passage and saved instrument setup.
+pub fn disclose_chord_approaches(
+    graph: &mut StageContextGraph,
+    focus: &KeyedCatalogRef,
+    node_limit: usize,
+    omit: &BTreeSet<KeyedCatalogRef>,
+    retained: &BTreeSet<KeyedCatalogRef>,
+) {
+    let Some(name) = focus.formula_id.strip_prefix("chord:") else {
+        return;
+    };
+    if focus.to_material().is_none() {
+        return;
+    }
+    let formula = woodshedding::chord::catalog()
+        .iter()
+        .find(|formula| formula.name == name)
+        .expect("validated target");
+    let root = woodshedding::pitch::Pitch::from_midi(
+        60 + i32::from(focus.root.value()),
+        woodshedding::pitch::Spelling::Sharps,
+    );
+    for direction in woodshedding::rehearsal::ApproachDirection::ALL {
+        let subject = KeyedCatalogRef {
+            formula_id: woodshed_graph::chord_approach_id(name, direction),
+            root: focus.root,
+        };
+        if omit.contains(&subject) {
+            continue;
+        }
+        let to = StageNodeId::Catalog(subject.clone());
+        let label = format!(
+            "{}{}{} · {}",
+            root.name,
+            root.accidental,
+            formula.symbol,
+            direction.slug()
+        );
+        if let Some(node) = graph.nodes.iter_mut().find(|node| node.keyed == subject) {
+            node.label = label;
+        } else {
+            if node_limit == 0 {
+                graph.truncated = true;
+                continue;
+            }
+            if graph.nodes.len() >= node_limit {
+                let Some(index) = graph.nodes.iter().rposition(|node| {
+                    node.keyed != *focus
+                        && !matches!(
+                            node.kind,
+                            StageNodeKind::ChordApproach | StageNodeKind::Arpeggio
+                        )
+                        && !retained.contains(&node.keyed)
+                }) else {
+                    graph.truncated = true;
+                    continue;
+                };
+                let removed = graph.nodes.remove(index).id;
+                graph
+                    .relations
+                    .retain(|relation| relation.from != removed && relation.to != removed);
+                graph.truncated = true;
+            }
+            graph.nodes.push(StageContextNode {
+                id: to.clone(),
+                label,
+                keyed: subject,
+                kind: StageNodeKind::ChordApproach,
+                relation_distance: 0,
+            });
+        }
+        let relation = StageContextRelation {
+            from: StageNodeId::Catalog(focus.clone()),
+            to,
+            kind: StageContextRelationKind::TargetApproach,
+            shared_tones: 0,
+        };
+        if !graph.relations.contains(&relation) {
+            graph.relations.push(relation);
+        }
+    }
 }
 
 /// Build a bounded, deterministic circle-of-fifths neighborhood.
@@ -222,7 +461,13 @@ pub fn circle_of_fifths_context(
 }
 
 fn kind_for(keyed: &KeyedCatalogRef) -> StageNodeKind {
-    if keyed.formula_id.starts_with("scale:") {
+    if keyed.formula_id.starts_with("chord-approach:") {
+        StageNodeKind::ChordApproach
+    } else if keyed.formula_id.starts_with("scale-pattern:") {
+        StageNodeKind::ScalePattern
+    } else if keyed.formula_id.starts_with("arpeggio:") {
+        StageNodeKind::Arpeggio
+    } else if keyed.formula_id.starts_with("scale:") {
         StageNodeKind::Scale
     } else {
         StageNodeKind::Chord
@@ -333,6 +578,95 @@ fn context_relations(
 mod tests {
     use super::*;
 
+    #[test]
+    fn chromatic_approaches_disclose_bounded_target_relations_and_respect_pins() {
+        let focus = KeyedCatalogRef {
+            formula_id: "chord:Major 7".into(),
+            root: PitchClass::new(0),
+        };
+        let mut graph = circle_of_fifths_context(
+            &focus,
+            5,
+            &BTreeSet::from([focus.clone()]),
+            &BTreeSet::new(),
+        );
+        let retained_above = KeyedCatalogRef {
+            formula_id: "chord-approach:above:Major 7".into(),
+            root: focus.root,
+        };
+        graph.nodes.push(StageContextNode {
+            id: StageNodeId::Catalog(retained_above.clone()),
+            label: retained_above.label().unwrap(),
+            keyed: retained_above.clone(),
+            kind: StageNodeKind::ChordApproach,
+            relation_distance: 0,
+        });
+        disclose_chord_approaches(
+            &mut graph,
+            &focus,
+            6,
+            &BTreeSet::new(),
+            &BTreeSet::from([retained_above.clone()]),
+        );
+        assert_eq!(
+            graph
+                .nodes
+                .iter()
+                .find(|node| node.keyed == retained_above)
+                .unwrap()
+                .label,
+            "Cmaj7 · above"
+        );
+        assert_eq!(
+            retained_above.label().unwrap(),
+            "C Major 7 approach from above"
+        );
+        assert_eq!(graph.nodes.len(), 6);
+        let approach_labels = graph
+            .nodes
+            .iter()
+            .filter(|node| node.kind == StageNodeKind::ChordApproach)
+            .map(|node| node.label.as_str())
+            .collect::<BTreeSet<_>>();
+        assert_eq!(
+            approach_labels,
+            BTreeSet::from(["Cmaj7 · below", "Cmaj7 · above"])
+        );
+        assert_eq!(
+            graph
+                .nodes
+                .iter()
+                .filter(|node| node.kind == StageNodeKind::ChordApproach)
+                .count(),
+            2
+        );
+        assert_eq!(
+            graph
+                .relations
+                .iter()
+                .filter(|relation| relation.kind == StageContextRelationKind::TargetApproach)
+                .count(),
+            2
+        );
+        let pinned = graph
+            .nodes
+            .iter()
+            .map(|node| node.keyed.clone())
+            .collect::<BTreeSet<_>>();
+        let original = graph.nodes.clone();
+        disclose_chord_approaches(
+            &mut graph,
+            &KeyedCatalogRef {
+                formula_id: "chord:Minor".into(),
+                root: PitchClass::new(2),
+            },
+            6,
+            &BTreeSet::new(),
+            &pinned,
+        );
+        assert_eq!(graph.nodes, original);
+    }
+
     fn major(root: u8) -> KeyedCatalogRef {
         KeyedCatalogRef {
             formula_id: "chord:Major".into(),
@@ -410,5 +744,107 @@ mod tests {
         let context = circle_of_fifths_context(&focus, 12, &BTreeSet::new(), &retained);
         assert_eq!(context.nodes.len(), 12);
         assert_eq!(context.nodes[0].keyed, focus);
+    }
+
+    #[test]
+    fn arpeggio_disclosure_is_rooted_bounded_and_explains_the_relation() {
+        let focus = KeyedCatalogRef {
+            formula_id: "chord:Major 7".into(),
+            root: PitchClass::new(2),
+        };
+        let omit = BTreeSet::from([focus.clone()]);
+        let mut graph = circle_of_fifths_context(&focus, 4, &omit, &BTreeSet::new());
+        disclose_chord_arpeggio(&mut graph, &focus, 4, &omit, &BTreeSet::new());
+        assert_eq!(graph.nodes.len(), 4);
+        assert!(
+            graph
+                .nodes
+                .iter()
+                .any(|node| node.kind == StageNodeKind::Arpeggio
+                    && node.keyed.wire_key() == "arpeggio:Major 7@pc:2")
+        );
+        assert!(graph.relations.iter().any(|relation| relation.kind
+            == StageContextRelationKind::Arpeggiation
+            && relation.shared_tones == 4));
+        assert!(graph.relations.iter().all(|relation| relation.from
+            == StageNodeId::Catalog(focus.clone())
+            || graph.nodes.iter().any(|node| node.id == relation.from)));
+    }
+
+    #[test]
+    fn arpeggio_disclosure_preserves_pins_and_rejects_stale_formulas() {
+        let focus = major(0);
+        let mut graph = circle_of_fifths_context(
+            &focus,
+            1,
+            &BTreeSet::from([focus.clone()]),
+            &BTreeSet::new(),
+        );
+        let pinned = graph.nodes.iter().map(|node| node.keyed.clone()).collect();
+        let original = graph.clone();
+        disclose_chord_arpeggio(&mut graph, &focus, 1, &BTreeSet::new(), &pinned);
+        assert_eq!(graph.nodes, original.nodes);
+        let invalid = KeyedCatalogRef {
+            formula_id: "chord:Missing".into(),
+            root: PitchClass::new(0),
+        };
+        let original = graph.clone();
+        disclose_chord_arpeggio(&mut graph, &invalid, 2, &BTreeSet::new(), &BTreeSet::new());
+        assert_eq!(graph, original);
+    }
+
+    #[test]
+    fn degree_patterns_disclose_two_bounded_typed_subjects_without_editing_scale() {
+        let focus = KeyedCatalogRef {
+            formula_id: "scale:Major".into(),
+            root: PitchClass::new(2),
+        };
+        let mut graph = circle_of_fifths_context(
+            &focus,
+            4,
+            &BTreeSet::from([focus.clone()]),
+            &BTreeSet::new(),
+        );
+        disclose_scale_patterns(
+            &mut graph,
+            &focus,
+            4,
+            &BTreeSet::from([focus.clone()]),
+            &BTreeSet::new(),
+        );
+        assert_eq!(graph.nodes.len(), 4);
+        for slug in ["thirds", "fourths"] {
+            assert!(
+                graph
+                    .nodes
+                    .iter()
+                    .any(|node| node.kind == StageNodeKind::ScalePattern
+                        && node.keyed.wire_key() == format!("scale-pattern:{slug}:Major@pc:2"))
+            );
+        }
+        assert_eq!(
+            graph
+                .relations
+                .iter()
+                .filter(|relation| relation.kind == StageContextRelationKind::DegreePattern)
+                .count(),
+            2
+        );
+        assert!(graph.truncated);
+        let mut empty = StageContextGraph::default();
+        disclose_scale_patterns(&mut empty, &focus, 0, &BTreeSet::new(), &BTreeSet::new());
+        assert!(empty.nodes.is_empty() && empty.truncated);
+        let unsupported = KeyedCatalogRef {
+            formula_id: "scale:Major Pentatonic".into(),
+            root: PitchClass::new(0),
+        };
+        disclose_scale_patterns(
+            &mut empty,
+            &unsupported,
+            2,
+            &BTreeSet::new(),
+            &BTreeSet::new(),
+        );
+        assert!(empty.nodes.is_empty());
     }
 }
