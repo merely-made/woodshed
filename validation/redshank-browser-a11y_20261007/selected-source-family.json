@@ -1,0 +1,127 @@
+{
+  "windows": {
+    "selected_packages": 566,
+    "families": {
+      "mere": {
+        "source": "git+https://github.com/merely-made/mere.git?rev=f1d169c755e082b5119c2485762fd28f4226d8fb#f1d169c755e082b5119c2485762fd28f4226d8fb",
+        "packages": [
+          "cambium",
+          "cambium-genet-web-host",
+          "cambium-genet-winit-host",
+          "cambium-rootstock",
+          "cambium-winit",
+          "cambium-winit-a11y",
+          "errand",
+          "mere-apparatus",
+          "mere-fetch",
+          "mere-surface-api",
+          "meristem",
+          "mesquite",
+          "sceno",
+          "sprigging",
+          "tinct",
+          "workbench"
+        ]
+      },
+      "genet": {
+        "source": "git+https://github.com/merely-made/genet.git?rev=965b64e206a47d1c8808472de9aa461233638768#965b64e206a47d1c8808472de9aa461233638768",
+        "packages": [
+          "buckram",
+          "cadency",
+          "document-session-api",
+          "engine-observables-api",
+          "genet-document-resources",
+          "genet-fontique",
+          "genet-host-api",
+          "genet-livery",
+          "genet-paint-types",
+          "genet-parley",
+          "genet-render",
+          "genet-render-host",
+          "genet-scripted-dom",
+          "genet-static-dom",
+          "genet-text",
+          "genet-winit-host",
+          "ipc-channel",
+          "layout-dom-api",
+          "livery",
+          "netfetcher",
+          "servo-media-player",
+          "servo-media-streams",
+          "servo-media-traits",
+          "taproot"
+        ]
+      }
+    },
+    "ipc_features": [
+      "default",
+      "force-inprocess"
+    ],
+    "fontsan_features": [
+      "libz-sys",
+      "wuff"
+    ],
+    "wgpu": "30.0.1"
+  },
+  "web": {
+    "selected_packages": 536,
+    "families": {
+      "mere": {
+        "source": "git+https://github.com/merely-made/mere.git?rev=f1d169c755e082b5119c2485762fd28f4226d8fb#f1d169c755e082b5119c2485762fd28f4226d8fb",
+        "packages": [
+          "cambium",
+          "cambium-genet-web-host",
+          "cambium-genet-winit-host",
+          "cambium-rootstock",
+          "cambium-winit",
+          "cambium-winit-a11y",
+          "errand",
+          "mere-apparatus",
+          "mere-fetch",
+          "mere-surface-api",
+          "meristem",
+          "mesquite",
+          "sceno",
+          "sprigging",
+          "tinct",
+          "workbench"
+        ]
+      },
+      "genet": {
+        "source": "git+https://github.com/merely-made/genet.git?rev=965b64e206a47d1c8808472de9aa461233638768#965b64e206a47d1c8808472de9aa461233638768",
+        "packages": [
+          "buckram",
+          "cadency",
+          "document-session-api",
+          "engine-observables-api",
+          "genet-document-resources",
+          "genet-fontique",
+          "genet-host-api",
+          "genet-livery",
+          "genet-paint-types",
+          "genet-parley",
+          "genet-render",
+          "genet-render-host",
+          "genet-scripted-dom",
+          "genet-static-dom",
+          "genet-text",
+          "genet-winit-host",
+          "ipc-channel",
+          "layout-dom-api",
+          "livery",
+          "netfetcher",
+          "servo-media-player",
+          "servo-media-streams",
+          "servo-media-traits",
+          "taproot"
+        ]
+      }
+    },
+    "ipc_features": [
+      "default",
+      "force-inprocess"
+    ],
+    "fontsan_features": [],
+    "wgpu": "30.0.1"
+  }
+}

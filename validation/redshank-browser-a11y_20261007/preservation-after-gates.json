@@ -1,0 +1,27 @@
+{
+  "primary_head": "cefc903dcd7f506803acfe2ee52cad7693787188",
+  "primary_files": {
+    "Cargo.lock": "9a6a12675800bbea2c2389d42a7568122386e7ea551e247cc95dde6603b58345",
+    "Cargo.toml": "e887f1ee0316b73e5a6313635de8215bce346eab2daa95b13b7fcef9230c1998",
+    "ports/redshank/Cargo.lock": "c0dfa92dd135edacb234a855510af93084311d866313e8ed3b2ed78ae175c83b",
+    "ports/redshank/Cargo.toml": "8097902d41c1ef027f652a37693e32963d00fb49590c7eccd5316301fb3f518d",
+    "ports/redshank/desktop/src/scenario.rs": "a83ceeb4cad97a2a8b6cca964ef877ba1fe11ca5cc692b93fc58135220607e4e",
+    "ports/redshank/scenarios/README.md": "b531a77e4dd518e19a70e78bcffb9ddaa87f2752bc16a70ad0e49c0e8e1f2ea2",
+    "ports/redshank/scenarios/fixtures/README.md": "35c4d29fe4a6101533db34293ff62a22362f4dccc02499db5d29c6ed1299f7e0",
+    "ports/redshank/scenarios/fixtures/local-transcript/state-00000000000000000001.json": "d39d98a01e94cd4642974d5970cc3b6dec99f283ac82742946a816163da022aa",
+    "ports/redshank/scenarios/fixtures/make_fixtures.py": "1c3e084ec8f63bb387786f4300016829ea9a0ebd69c4c120243dbf0fa4deae8d",
+    "ports/redshank/scenarios/fixtures/podnews-transcript/state-00000000000000000001.json": "d1ff0deb65e297f1152ab00610c18885e3f97059de390906b710cf4eea1a374b",
+    "ports/redshank/scenarios/transcript_live.scn": "6aab540b13ae76ef223736958d9f6431d20a05dce565ca27bc6c1905a353fee2",
+    "ports/redshank/scenarios/transcript_offline_seed.scn": "2b7338c7c2edb74494f94343d81fa2a99947bbdd189399086d18193799ce1515",
+    "ports/redshank/scenarios/transcript_offline_verify.scn": "3ceb0b7b34f9139f34e3d2f04b627f274cd43604d3e7223036bfe5c54fda14b8",
+    "ports/redshank/scenarios/transcript_timing.scn": "df2ffebc7e4da7d8d28ee0457cb46f3aa6fc5be37df0bb2ad7f9961edad61eaa",
+    "ports/redshank/spikes/playback/scripts/range_server.py": "aebd1aeadf6d921cf7c7cc17347cafe2499556da1b1300c691431e06c7d8a82e",
+    "ports/redshank/web/Cargo.toml": "e09705d9bddbcab5b151769978ba3a3f7cd03e769a3e4b54f125dba065ca2bcf"
+  },
+  "primary_byte_guard_equal": true,
+  "unchanged_worktree_inputs": {
+    "Cargo.toml": "c403198bb23749c17e6ac48199dba451effbc52e4aa881a28bf377964c0c9f8b",
+    "Cargo.lock": "e257c046696001b7deeb32c5f803175b79be88c22f77016dc98eb095b6f96106",
+    "ports/redshank/spikes/playback/Cargo.lock": "9ef8c872ff75b37c0f51ff5184597bfb81350a5188d8ca66700aa521c6dcb7bf"
+  }
+}

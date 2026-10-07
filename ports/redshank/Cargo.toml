@@ -9,16 +9,16 @@ license = "MPL-2.0"
 rust-version = "1.97"
 
 [workspace.dependencies]
-apparatus = { package = "mere-apparatus", git = "https://github.com/merely-made/mere.git", rev = "57b4893db6909d5ed9c4ccae30216f0d8164201a", default-features = false, features = ["serde"] }
-mesquite = { git = "https://github.com/merely-made/mere.git", rev = "57b4893db6909d5ed9c4ccae30216f0d8164201a" }
+apparatus = { package = "mere-apparatus", git = "https://github.com/merely-made/mere.git", rev = "f1d169c755e082b5119c2485762fd28f4226d8fb", default-features = false, features = ["serde"] }
+mesquite = { git = "https://github.com/merely-made/mere.git", rev = "f1d169c755e082b5119c2485762fd28f4226d8fb" }
 timed-text = { path = "../../crates/timed-text", version = "0.1.0" }
-cambium = { git = "https://github.com/merely-made/mere.git", rev = "57b4893db6909d5ed9c4ccae30216f0d8164201a" }
-cambium-genet-winit-host = { git = "https://github.com/merely-made/mere.git", rev = "57b4893db6909d5ed9c4ccae30216f0d8164201a" }
-tinct = { git = "https://github.com/merely-made/mere.git", rev = "57b4893db6909d5ed9c4ccae30216f0d8164201a" }
+cambium = { git = "https://github.com/merely-made/mere.git", rev = "f1d169c755e082b5119c2485762fd28f4226d8fb" }
+cambium-genet-winit-host = { git = "https://github.com/merely-made/mere.git", rev = "f1d169c755e082b5119c2485762fd28f4226d8fb" }
+tinct = { git = "https://github.com/merely-made/mere.git", rev = "f1d169c755e082b5119c2485762fd28f4226d8fb" }
 # The surface-descriptor half of a host's product-admission vocabulary. Same
 # Mere revision as cambium: the descriptor crosses the seam between Redshank
 # and an embedding host, so one revision or the types do not match themselves.
-mere-surface-api = { git = "https://github.com/merely-made/mere.git", rev = "57b4893db6909d5ed9c4ccae30216f0d8164201a" }
+mere-surface-api = { git = "https://github.com/merely-made/mere.git", rev = "f1d169c755e082b5119c2485762fd28f4226d8fb" }
 genet-scripted-dom = { git = "https://github.com/merely-made/genet.git", rev = "965b64e206a47d1c8808472de9aa461233638768" }
 # Named genet-probe until genet 7baa554c (2026-09-14); same crate, new name.
 taproot = { git = "https://github.com/merely-made/genet.git", rev = "965b64e206a47d1c8808472de9aa461233638768" }
@@ -46,9 +46,9 @@ symphonia = { version = "0.5.5", default-features = false, features = ["aac", "i
 # The host's fetch handle: one HTTP policy (cookies, cache, HSTS, transport)
 # for streaming, downloads and feeds. Same Mere revision as cambium. Defaults
 # off: a listener takes the handle over netfetcher and none of the page actor.
-fetch = { package = "mere-fetch", git = "https://github.com/merely-made/mere.git", rev = "57b4893db6909d5ed9c4ccae30216f0d8164201a", default-features = false }
+fetch = { package = "mere-fetch", git = "https://github.com/merely-made/mere.git", rev = "f1d169c755e082b5119c2485762fd28f4226d8fb", default-features = false }
 rfd = "0.17"
-errand = { git = "https://github.com/merely-made/mere.git", rev = "57b4893db6909d5ed9c4ccae30216f0d8164201a", version = "0.4.0" }
+errand = { git = "https://github.com/merely-made/mere.git", rev = "f1d169c755e082b5119c2485762fd28f4226d8fb", version = "0.4.0" }
 url = "2.5"
 
 # Root patches do not cross a git dependency boundary, so a standalone Redshank

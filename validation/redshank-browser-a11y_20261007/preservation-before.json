@@ -1,0 +1,9 @@
+{
+  "head": "019fdf3858bb461db79a292ddcb238c707e1e08a",
+  "unchanged_inputs": {
+    "Cargo.toml": "c403198bb23749c17e6ac48199dba451effbc52e4aa881a28bf377964c0c9f8b",
+    "Cargo.lock": "e257c046696001b7deeb32c5f803175b79be88c22f77016dc98eb095b6f96106",
+    "ports/redshank/spikes/playback/Cargo.lock": "9ef8c872ff75b37c0f51ff5184597bfb81350a5188d8ca66700aa521c6dcb7bf"
+  },
+  "spike_lock_scope": "Excluded playback spike has no Mere/Genet edges; preserve its lock without resolution."
+}
