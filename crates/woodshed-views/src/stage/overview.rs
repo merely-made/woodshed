@@ -563,7 +563,17 @@ pub(super) fn screen(ui: &UiState) -> UiChild {
     .map(|(label, class, kind)| {
         Box::new(clickable(
             el("button", text(label))
-                .attr("class", format!("t-btn {class}"))
+                .attr(
+                    "class",
+                    format!(
+                        "t-btn {class}{}",
+                        if ui.overview_atmosphere.kind == kind {
+                            " overview-atmosphere-selected"
+                        } else {
+                            ""
+                        }
+                    ),
+                )
                 .attr(
                     "aria-pressed",
                     if ui.overview_atmosphere.kind == kind {
@@ -906,8 +916,10 @@ pub(super) fn screen(ui: &UiState) -> UiChild {
                             "div",
                             text(if ui.overview_reduced_motion {
                                 "Reduced motion: arrangement and atmosphere stay still."
-                            } else {
+                            } else if ui.overview_motion {
                                 "Scene motion animates arrangement and atmosphere."
+                            } else {
+                                "Scene motion is paused."
                             }),
                         )
                         .attr("class", "overview-detail"),

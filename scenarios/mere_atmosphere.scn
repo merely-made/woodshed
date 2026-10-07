@@ -16,12 +16,16 @@ assert snap overview-atmosphere-seed == 3
 assert snap overview-atmosphere-revision >= 1
 assert snap set-cards == 2
 click .overview-fit Fit scene
+click .overview-graph
+settle 3
 capture 01_static_orbits
 click .overview-motion-toggle Enable scene motion
 settle 5
 assert snap overview-motion == true
 assert snap overview-reduced-motion == true
 assert snap overview-atmosphere == orbits
+click .overview-graph
+settle 3
 capture 02_reduced_orbits
 click .overview-reduced-motion-toggle Allow scene motion
 settle 30
@@ -29,6 +33,8 @@ assert snap overview-motion == true
 assert snap overview-reduced-motion == false
 assert snap overview-atmosphere-revision >= 2
 assert snap set-cards == 2
+click .overview-graph
+settle 3
 capture 03_moving_orbits
 click .overview-motion-toggle Pause scene motion
 click .overview-reduced-motion-toggle Reduce scene motion
@@ -40,5 +46,7 @@ assert snap overview-motion == false
 assert snap overview-reduced-motion == true
 assert snap set-cards == 2
 click .overview-fit Fit scene
+click .overview-graph
+settle 3
 capture 04_retained_cells
 log Ambient presentation retained
