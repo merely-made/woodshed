@@ -406,6 +406,7 @@ pub fn stage_css(p: &Palette) -> String {
 .session-overview .overview-atmosphere-selected {{ color: {tertiary}; border: 1px solid {tertiary}; }}
 .overview-title {{ font-size: 20px; color: {text}; }}
 .overview-subtitle, .overview-detail, .overview-notice {{ font-size: 12px; color: {text_dim}; }}
+.overview-context-shelf {{ display: flex; flex-direction: column; gap: 8px; padding: 12px; border: 1px solid {surface_2}; border-radius: 8px; }}
 .overview-save-row {{ display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }}
 .overview-body {{ display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-start; }}
 .overview-roster {{ display: flex; flex-direction: column; gap: 6px; flex: 1 1 240px; min-width: 0; }}

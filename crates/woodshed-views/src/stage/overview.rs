@@ -13,6 +13,41 @@ use woodshed_core::session_overview::{
 };
 use woodshed_core::storage::AppSection;
 
+fn shared_tones_detail(ui: &UiState, from: &OverviewNodeId, to: &OverviewNodeId) -> String {
+    let (
+        OverviewNodeId::Artifact(SessionArtifactId::ContextItem(a)),
+        OverviewNodeId::Artifact(SessionArtifactId::ContextItem(b)),
+    ) = (from, to)
+    else {
+        return String::new();
+    };
+    let Some(a) = ui
+        .musical_context
+        .get(*a)
+        .and_then(|item| item.subject.pitch_classes())
+    else {
+        return String::new();
+    };
+    let Some(b) = ui
+        .musical_context
+        .get(*b)
+        .and_then(|item| item.subject.pitch_classes())
+    else {
+        return String::new();
+    };
+    let tones: Vec<_> = a
+        .intersection(&b)
+        .map(|pc| {
+            let pitch = woodshedding::pitch::Pitch::from_midi(
+                60 + i32::from(pc.value()),
+                woodshedding::pitch::Spelling::Sharps,
+            );
+            format!("{}{}", pitch.name, pitch.accidental)
+        })
+        .collect();
+    format!(" · common tones: {}", tones.join(", "))
+}
+
 pub const OVERVIEW_GRAPH_LEAF_KEY: u64 = 0x5753_4d45;
 
 pub fn overview_snapshot(ui: &UiState) -> OverviewSnapshot {
@@ -79,6 +114,7 @@ pub fn overview_snapshot(ui: &UiState) -> OverviewSnapshot {
             }
         }
     }
+    woodshed_core::session_overview::append_musical_context(&mut snapshot, &ui.musical_context);
     snapshot
 }
 
@@ -414,6 +450,9 @@ impl UiState {
             return;
         }
         match id {
+            OverviewNodeId::Artifact(SessionArtifactId::ContextItem(id)) => {
+                self.open_musical_context(id);
+            },
             OverviewNodeId::Artifact(SessionArtifactId::RelationshipReading) => {
                 self.open_relationship_recipe()
             },
@@ -653,6 +692,7 @@ pub(super) fn screen(ui: &UiState) -> UiChild {
         })
         .collect();
         let label = match id {
+            OverviewNodeId::Artifact(SessionArtifactId::ContextItem(_)) => "Open in Stage",
             OverviewNodeId::Artifact(SessionArtifactId::SavedSet(_)) => "Open copy",
             OverviewNodeId::Catalog(_) => "Explore catalog",
             OverviewNodeId::Artifact(SessionArtifactId::History) => {
@@ -660,6 +700,36 @@ pub(super) fn screen(ui: &UiState) -> UiChild {
             },
             _ => "Open view",
         };
+        let context_actions: Vec<UiChild> =
+            if let OverviewNodeId::Artifact(SessionArtifactId::ContextItem(context_id)) = id {
+                vec![
+                    Box::new(clickable(
+                        el("button", text("Hear")).attr("class", "t-btn overview-context-hear"),
+                        move |ui: &mut UiState, _| {
+                            ui.hear_musical_context(context_id);
+                        },
+                    )) as UiChild,
+                    Box::new(clickable(
+                        el(
+                            "button",
+                            text(format!("Add to {}", ui.working_sets.active_name)),
+                        )
+                        .attr("class", "t-btn overview-context-add"),
+                        move |ui: &mut UiState, _| {
+                            ui.add_musical_context_to_set(context_id);
+                        },
+                    )) as UiChild,
+                    Box::new(clickable(
+                        el("button", text("Remove from nearby"))
+                            .attr("class", "t-btn overview-context-remove"),
+                        move |ui: &mut UiState, _| {
+                            ui.remove_musical_context(context_id);
+                        },
+                    )) as UiChild,
+                ]
+            } else {
+                Vec::new()
+            };
         let relations: Vec<UiChild> = snapshot
             .relations
             .iter()
@@ -680,7 +750,11 @@ pub(super) fn screen(ui: &UiState) -> UiChild {
                 Box::new(
                     el(
                         "div",
-                        text(format!("{from} → {} → {to}", relation.kind.label())),
+                        text(format!(
+                            "{from} → {} → {to}{}",
+                            relation.kind.label(),
+                            shared_tones_detail(ui, &relation.from, &relation.to)
+                        )),
                     )
                     .attr("class", "overview-relation"),
                 ) as UiChild
@@ -732,6 +806,7 @@ pub(super) fn screen(ui: &UiState) -> UiChild {
                     })).attr("class", "overview-placement-rule"),
                     el("div", role_controls).attr("class", "overview-instance-actions"),
                     el("div", text("Presentation emphasis changes the scene; Sets and running sessions keep their own state.")).attr("class", "overview-detail"),
+                    el("div", context_actions).attr("class", "overview-instance-actions"),
                     el("div", relations).attr("class", "overview-relations"),
                     el("div", history_rows).attr("class", "overview-history"),
                     matches!(id, OverviewNodeId::Artifact(SessionArtifactId::SavedSet(_))).then(
@@ -927,6 +1002,23 @@ pub(super) fn screen(ui: &UiState) -> UiChild {
                 )
                 .attr("class", "overview-instance-actions"),
                 el("div", graph).attr("class", "overview-graph"),
+                el("div", (
+                    el("div", text(format!("Keep nearby · {} / 12", ui.musical_context.items().len()))).attr("class", "overview-node-title"),
+                    el("div", text("Keep a keyed chord or scale as session context. Pitch links describe sounding tones; adding a Card is a separate action.")).attr("class", "overview-detail"),
+                    el("div", (
+                        ui.current_card().and_then(woodshed_core::harmony::KeyedCatalogRef::from_card)
+                            .filter(|subject| subject.formula_id.starts_with("chord:") || subject.formula_id.starts_with("scale:"))
+                            .and_then(|subject| subject.label()).map(|label| clickable(
+                                el("button", text(format!("Keep selected Card: {label}"))).attr("class", "t-btn overview-context-keep-card"),
+                                |ui: &mut UiState, _| { ui.keep_current_card_nearby(); },
+                            )),
+                        ui.context_focus.as_ref().filter(|subject| subject.formula_id.starts_with("chord:") || subject.formula_id.starts_with("scale:"))
+                            .and_then(|subject| subject.label()).map(|label| clickable(
+                                el("button", text(format!("Keep catalog focus: {label}"))).attr("class", "t-btn overview-context-keep-focus"),
+                                |ui: &mut UiState, _| { ui.keep_context_focus_nearby(); },
+                            )),
+                    )).attr("class", "overview-instance-actions"),
+                )).attr("class", "overview-context-shelf"),
                 el(
                     "div",
                     (

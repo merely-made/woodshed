@@ -1,0 +1,19 @@
+# Fresh-process restoration retains material identity and presentation.
+settle 3
+assert snap overview-active == true
+assert snap overview-context-items == 2
+assert snap overview-context-links == 2
+assert snap overview-context-containment == 1
+assert snap overview-background == 2
+assert snap overview-pinned == 1
+assert snap overview-atmosphere == cells
+assert snap set-cards == 3
+click .overview-fit Fit scene
+click .overview-graph
+settle 12
+capture 01_reopened_context
+click .overview-node-title C Major
+settle 12
+capture 02_reopened_inspector
+assert snap set-cards == 3
+log Musical context reopen complete

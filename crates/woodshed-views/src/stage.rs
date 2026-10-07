@@ -48,6 +48,7 @@ mod context;
 mod context_tests;
 mod instances;
 mod looper;
+mod musical_context;
 mod overview;
 pub mod overview_atmosphere;
 pub mod overview_dynamics;
@@ -823,6 +824,7 @@ pub struct UiState {
     pub set: Set,
     pub working_sets: woodshed_core::working_sets::WorkingSets,
     pub catalog_explorations: woodshed_core::catalog_explorations::CatalogExplorations,
+    pub musical_context: woodshed_core::musical_context::MusicalContext,
     pub rehearsal_owner: Option<woodshed_core::working_sets::WorkingSetId>,
     pub rehearsal_stage: Option<StageState>,
     pub rehearsal_observed_midi: Option<Vec<i32>>,
@@ -1037,6 +1039,7 @@ impl UiState {
             set: Set::default(),
             working_sets: Default::default(),
             catalog_explorations: Default::default(),
+            musical_context: Default::default(),
             rehearsal_owner: None,
             rehearsal_stage: None,
             rehearsal_observed_midi: None,
@@ -1990,6 +1993,7 @@ impl UiState {
         );
         session.retained_sets = self.retained_sets.clone();
         session.working_sets = self.working_sets.clone();
+        session.musical_context = self.musical_context.normalized();
         session.relationship_reading_json = self.relationship_reading_json.clone();
         session.overview_presentation_json = self
             .overview_unrecognized_presentation_json
@@ -2016,6 +2020,7 @@ impl UiState {
         self.set = session.set.clone();
         self.retained_sets = session.retained_sets.clone();
         self.working_sets = session.working_sets.clone();
+        self.musical_context = session.musical_context.normalized();
         self.relationship_reading_json = session.relationship_reading_json.clone();
         self.catalog_explorations = session.catalog_explorations.clone();
         self.rehearsal_owner = None;

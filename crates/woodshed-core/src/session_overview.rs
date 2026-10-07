@@ -22,6 +22,7 @@ use woodshedding::rehearsal::Set;
 pub enum SessionArtifactId {
     WorkingSet,
     RelationshipReading,
+    ContextItem(crate::musical_context::ContextItemId),
     WorkingSetInstance(crate::working_sets::WorkingSetId),
     Exploration(crate::catalog_explorations::CatalogExplorationId),
     SavedSet(SavedSetId),
@@ -60,6 +61,9 @@ impl OverviewNodeId {
     pub fn wire_key(&self) -> String {
         match self {
             Self::Artifact(SessionArtifactId::WorkingSet) => "artifact:working-set".into(),
+            Self::Artifact(SessionArtifactId::ContextItem(id)) => {
+                format!("artifact:musical-context:{}", id.0)
+            },
             Self::Artifact(SessionArtifactId::RelationshipReading) => {
                 "artifact:relationship-reading".into()
             },
@@ -138,6 +142,10 @@ pub enum OverviewRelationKind {
     ActsOn,
     Records,
     UsesCatalog,
+    ContextFor,
+    EqualTones,
+    ContainsTones,
+    SharesTones,
 }
 
 impl OverviewRelationKind {
@@ -149,6 +157,10 @@ impl OverviewRelationKind {
             Self::ActsOn => "acts on",
             Self::Records => "records catalog engagement",
             Self::UsesCatalog => "uses catalog material",
+            Self::ContextFor => "kept nearby for",
+            Self::EqualTones => "same pitch classes",
+            Self::ContainsTones => "contains all pitch classes of",
+            Self::SharesTones => "shares pitch classes with",
         }
     }
     pub fn stable_id(self) -> &'static str {
@@ -159,6 +171,10 @@ impl OverviewRelationKind {
             Self::ActsOn => "woodshed:acts-on",
             Self::Records => "woodshed:records-engagement",
             Self::UsesCatalog => "woodshed:uses-catalog",
+            Self::ContextFor => "woodshed:context-for",
+            Self::EqualTones => "woodshed:equal-pitch-classes",
+            Self::ContainsTones => "woodshed:contains-pitch-classes",
+            Self::SharesTones => "woodshed:shares-pitch-classes",
         }
     }
 }
@@ -174,6 +190,114 @@ pub struct OverviewRelation {
 pub struct OverviewSnapshot {
     pub nodes: Vec<OverviewNode>,
     pub relations: Vec<OverviewRelation>,
+}
+
+/// Append explicit authored context and exact pitch-class membership facts.
+/// Relations describe sounding sets, never harmonic function or recommendation.
+/// Imported over-capacity payloads remain retained, but disclosure is bounded.
+pub fn append_musical_context(
+    snapshot: &mut OverviewSnapshot,
+    context: &crate::musical_context::MusicalContext,
+) {
+    use crate::musical_context::MAX_CONTEXT_ITEMS;
+    use OverviewNodeId::{Artifact, Catalog};
+    use OverviewRelationKind::{ContainsTones, ContextFor, EqualTones, SharesTones, UsesCatalog};
+    use woodshedding::pitch::{Pitch, Spelling};
+    let catalog = Catalog("woodshed-catalog".into());
+    let mut valid = Vec::new();
+    for item in context.items().iter().take(MAX_CONTEXT_ITEMS) {
+        // Duplicate imported IDs must not mint ambiguous actionable targets.
+        if context.get(item.id).is_none() {
+            continue;
+        }
+        let id = Artifact(SessionArtifactId::ContextItem(item.id));
+        if snapshot.nodes.iter().any(|node| node.id == id) {
+            continue;
+        }
+        let label = item
+            .subject
+            .label()
+            .filter(|_| item.available())
+            .unwrap_or_else(|| format!("Unavailable {}", item.subject.wire_key()));
+        let pitches = item
+            .available()
+            .then(|| item.subject.pitch_classes())
+            .flatten();
+        let tone_names = pitches.as_ref().map(|tones| {
+            tones
+                .iter()
+                .map(|pc| {
+                    let pitch = Pitch::from_midi(60 + i32::from(pc.value()), Spelling::Sharps);
+                    format!("{}{}", pitch.name, pitch.accidental)
+                })
+                .collect::<Vec<_>>()
+                .join(", ")
+        });
+        let owner = Artifact(SessionArtifactId::WorkingSetInstance(item.owner));
+        let owner_description = snapshot
+            .nodes
+            .iter()
+            .find(|node| node.id == owner)
+            .map(|node| node.label.clone())
+            .unwrap_or_else(|| {
+                format!(
+                    "working Set {} (association target unavailable)",
+                    item.owner.0
+                )
+            });
+        let detail = match tone_names {
+            Some(tones) => format!(
+                "Kept nearby for {}. Pitch classes: {}. This association does not add a Card or imply harmonic function.",
+                owner_description, tones
+            ),
+            None => format!(
+                "Kept nearby for {}. Catalog material is unavailable; retained identity is preserved. Open, Hear and Add are unavailable.",
+                owner_description
+            ),
+        };
+        snapshot.nodes.push(OverviewNode {
+            id: id.clone(),
+            label,
+            detail,
+        });
+        if pitches.is_some() && snapshot.nodes.iter().any(|node| node.id == catalog) {
+            snapshot.relations.push(OverviewRelation {
+                from: id.clone(),
+                to: catalog.clone(),
+                kind: UsesCatalog,
+            });
+        }
+        if snapshot.nodes.iter().any(|node| node.id == owner) {
+            snapshot.relations.push(OverviewRelation {
+                from: id.clone(),
+                to: owner,
+                kind: ContextFor,
+            });
+        }
+        if let Some(tones) = pitches {
+            valid.push((id, tones));
+        }
+    }
+    for (index, (left, left_tones)) in valid.iter().enumerate() {
+        for (right, right_tones) in valid.iter().skip(index + 1) {
+            let (from, to, kind) = if left_tones == right_tones {
+                (left, right, EqualTones)
+            } else if left_tones.is_superset(right_tones) {
+                (left, right, ContainsTones)
+            } else if right_tones.is_superset(left_tones) {
+                (right, left, ContainsTones)
+            } else if !left_tones.is_disjoint(right_tones) {
+                (left, right, SharesTones)
+            } else {
+                continue;
+            };
+            snapshot.relations.push(OverviewRelation {
+                from: from.clone(),
+                to: to.clone(),
+                kind,
+            });
+        }
+    }
 }
 
 fn set_uses_catalog(set: &Set) -> bool {
@@ -513,6 +637,121 @@ pub fn overview_scene(overview: &OverviewSnapshot) -> SceneSnapshot {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn kept_context_projects_exact_pitch_relations_and_only_existing_owners() {
+        use crate::{
+            harmony::KeyedCatalogRef, musical_context::MusicalContext, working_sets::WorkingSetId,
+        };
+        use woodshedding::pitch::PitchClass;
+        let mut context = MusicalContext::default();
+        let mut keep = |owner, formula: &str, root| {
+            context
+                .keep(
+                    WorkingSetId(owner),
+                    KeyedCatalogRef {
+                        formula_id: formula.into(),
+                        root: PitchClass::new(root),
+                    },
+                )
+                .unwrap()
+        };
+        let major = keep(1, "chord:Major", 0);
+        let duplicate_tones = keep(2, "chord:Major", 0);
+        let scale = keep(1, "scale:Major", 0);
+        let minor = keep(1, "chord:Minor", 9);
+        let disjoint = keep(1, "chord:Major", 1);
+        let owner =
+            OverviewNodeId::Artifact(SessionArtifactId::WorkingSetInstance(WorkingSetId(1)));
+        let mut snapshot = OverviewSnapshot {
+            nodes: vec![
+                OverviewNode {
+                    id: owner.clone(),
+                    label: "Set".into(),
+                    detail: String::new(),
+                },
+                OverviewNode {
+                    id: OverviewNodeId::Catalog("woodshed-catalog".into()),
+                    label: "Catalog".into(),
+                    detail: String::new(),
+                },
+            ],
+            relations: vec![],
+        };
+        let retained = serde_json::to_value(&context).unwrap();
+        append_musical_context(&mut snapshot, &context);
+        let node = |id| OverviewNodeId::Artifact(SessionArtifactId::ContextItem(id));
+        let has = |from, to, kind| {
+            snapshot
+                .relations
+                .contains(&OverviewRelation { from, to, kind })
+        };
+        assert!(has(
+            node(major),
+            node(duplicate_tones),
+            OverviewRelationKind::EqualTones
+        ));
+        assert!(has(
+            node(scale),
+            node(major),
+            OverviewRelationKind::ContainsTones
+        ));
+        assert!(has(
+            node(major),
+            node(minor),
+            OverviewRelationKind::SharesTones
+        ));
+        assert!(
+            !snapshot
+                .relations
+                .iter()
+                .any(|edge| edge.from == node(major) && edge.to == node(disjoint))
+        );
+        assert!(has(node(major), owner, OverviewRelationKind::ContextFor));
+        assert!(
+            !snapshot
+                .relations
+                .iter()
+                .any(|edge| edge.from == node(duplicate_tones)
+                    && edge.kind == OverviewRelationKind::ContextFor)
+        );
+        assert!(
+            snapshot
+                .nodes
+                .iter()
+                .find(|entry| entry.id == node(major))
+                .unwrap()
+                .detail
+                .contains("C, E, G")
+        );
+        assert_eq!(serde_json::to_value(&context).unwrap(), retained);
+        assert_eq!(
+            overview_scene(&snapshot).tables.items.len(),
+            snapshot.nodes.len()
+        );
+        let before = snapshot.clone();
+        append_musical_context(&mut snapshot, &context);
+        assert_eq!(snapshot, before);
+    }
+
+    #[test]
+    fn unavailable_context_retains_identity_without_claiming_pitch_facts() {
+        use crate::musical_context::{ContextItemId, MusicalContext};
+        let context: MusicalContext = serde_json::from_value(serde_json::json!({"entries":[{"id":7,"owner":1,"subject":{"formula_id":"chord:Deleted", "root":0}}]})).unwrap();
+        let mut snapshot = OverviewSnapshot::default();
+        append_musical_context(&mut snapshot, &context);
+        assert_eq!(
+            snapshot.nodes[0].id,
+            OverviewNodeId::Artifact(SessionArtifactId::ContextItem(ContextItemId(7)))
+        );
+        assert!(
+            snapshot.nodes[0]
+                .detail
+                .contains("association target unavailable")
+        );
+        assert!(snapshot.nodes[0].label.contains("@pc:0"));
+        assert!(snapshot.relations.is_empty());
+    }
+
     #[test]
     fn parked_catalog_set_keeps_its_relation_while_manual_unknown_set_is_focused() {
         use crate::{

@@ -94,6 +94,9 @@ before any other doc in this directory.
   captures cover baseline/narrow, fresh reopening and a large 0.75-zoom replay.
   The narrow last node and label are visible. The historical black Practice
   surface does not reproduce in the current replay; its original cause is unproven.
+  The October 7 musical-context follow-up adds a bounded retained chord/scale
+  shelf inside the session Mere, exact tone relations, originating Set
+  associations and explicit Open/Hear/Add/Remove actions; qualification pending.
   The October 7 atmosphere follow-up adds retained seeded Orbits/Cells beneath
   the session graph, shared motion/reduced-motion policy and folded movement
   controls; 585 automated checks pass, with 14 reviewed wide/narrow native

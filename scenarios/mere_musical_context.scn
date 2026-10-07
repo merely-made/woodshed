@@ -1,0 +1,53 @@
+# Retained context is session material; owner mutations remain explicit.
+settle 3
+act mere-example
+click .workspace-panel Mere
+click .overview-context-keep-card
+settle 3
+assert snap overview-context-items == 1
+assert snap overview-context-links == 1
+assert snap set-cards == 2
+act mere-context-scale-focus
+click .overview-context-keep-focus
+settle 3
+assert snap overview-context-items == 2
+assert snap overview-context-containment == 1
+assert snap overview-context-links == 2
+assert snap overview-background == 2
+assert snap set-cards == 2
+click .overview-fit Fit scene
+click .overview-graph
+settle 12
+capture 01_kept_context
+click .overview-node-title C Major
+settle 3
+capture 02_context_inspector
+click .overview-context-hear Hear
+settle 3
+assert snap set-cards == 2
+click .overview-role-pinned Pin in place
+click .overview-open Open in Stage
+settle 3
+assert snap overview-active == false
+assert snap set-cards == 2
+capture 03_open_in_stage
+click .workspace-panel Mere
+click .overview-context-add
+settle 3
+assert snap set-cards == 3
+assert snap overview-context-items == 2
+click .overview-node-title A Minor 7
+click .overview-context-remove Remove from nearby
+settle 3
+assert snap overview-context-items == 1
+assert snap set-cards == 3
+act mere-context-chord-focus
+click .overview-context-keep-focus
+settle 3
+assert snap overview-context-items == 2
+click .overview-atmosphere-cells Cells
+click .overview-fit Fit scene
+click .overview-graph
+settle 12
+capture 04_authored_scene
+log Musical context retained
