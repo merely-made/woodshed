@@ -159,6 +159,10 @@ pub struct PersistedSession {
     /// Sets and does not acquire any foreign source.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub relationship_reading_json: Option<String>,
+    /// View-owned Mere camera, arrangement and presentation roles. This payload
+    /// cannot mutate the retained musical material.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub overview_presentation_json: Option<String>,
 }
 
 impl Default for PersistedSession {
@@ -192,6 +196,7 @@ impl PersistedSession {
             practice_history: practice_history.clone(),
             workspace_json: None,
             relationship_reading_json: None,
+            overview_presentation_json: None,
             section,
             lens: stage.lens,
             root_idx: stage.root_idx,

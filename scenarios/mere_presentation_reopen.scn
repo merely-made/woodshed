@@ -1,0 +1,17 @@
+settle 3
+assert snap overview-active == true
+assert snap overview-background == 1
+assert snap overview-pinned == 1
+assert snap overview-zoom == 1.25
+assert snap overview-motion == false
+assert snap overview-reduced-motion == true
+assert snap set-cards == 2
+capture 01_presentation_reopened
+click .overview-restore Restore arrangement
+settle 3
+assert snap overview-zoom == 1.00
+assert snap overview-background == 1
+click .overview-fit Fit scene
+settle 3
+capture 02_restored_scene
+log Mere presentation reopen complete

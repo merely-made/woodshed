@@ -2195,3 +2195,57 @@ receipts are recorded before those platforms are advertised.
   520x260 to 660x360 resize, and the compact graph after collapse. This closes
   the prior current-checkout paint and hit-test regression; it is not a claim
   about a separate retained-fragment compositor contract.
+
+
+### Native Mere presentation and shared board adoption (2026-10-07)
+
+**Status: implemented; native acceptance pending.** Refreshed Woodshed main to
+`06c2b13`, Mere main to `d041cc69b`, and Genet main to `965b64e20`. The primary
+workspace now pins Mere `d041cc69b588b6f1dadd22308c2bc4059496cabd` together with
+its coherent Genet dependency `d851a9db0cd1ff7837768250f21e9dff63455940`;
+independently adopting newer Genet would create duplicate source identities.
+Nested audio ports and the historical relationship-recipe proof keep their
+independent pins. The current shared compiler takes explicit host card sizes;
+Woodshed retains its existing 164 by 68 relationship footprint.
+
+The session Mere embeds Pictograph's graph-free `PhysicsBoard` underneath
+Cambium's native graph canvas. Woodshed discloses stable owner-qualified item
+identities and analytic arrangement slots; the board supplies fixed-world
+positions, CPU spring motion and permitted pointer/keyboard movement. Paint and
+native targets consume the same positions. Reconciliation compares base slots,
+roles and effective motion; simulated positions never feed back into base slots
+on each frame. The host ticks only the visible Mere scene. Camera fit, pan,
+zoom and arrangement restoration stay presentation actions.
+
+The inspector separates foreground/background emphasis from shared arrangement
+roles: free placement retains a drop, anchors return after release, and pins
+refuse movement. Native buttons expose movement to keyboard activation as well
+as pointer dragging. Motion starts disabled and reduced motion enabled;
+reduced motion overrides the saved motion preference. Changing any of these
+choices does not edit a Set, acquire catalog material or start a process.
+Source opening still validates the current session snapshot before dispatch.
+Circle, Tonnetz and captured relationship reading paths remain available.
+
+A versioned host presentation payload retains camera, current item positions,
+selection, foreground/background emphasis, arrangement roles and motion
+preferences beside Woodshed's session. Structured IDs use tuple arrays rather
+than JSON object keys. Payloads and entry counts are bounded; invalid data
+resets presentation only, while unknown future versions remain opaque and
+survive saving. Runtime positions become retained placements on save; dynamics
+restarts from those placements rather than persisting solver internals.
+
+The current stack review confirms G1, G7 and G9 landed in the dynamics grammar
+plan, while G2 is still unmerged. Graphshell's canvas command and reader modules
+remain web-gated. This adoption uses their portable lower board seam; it does
+not claim a native Graphshell editor, arbitrary dynamics grammar editing,
+shared scene import/export or layered rendering strata. Background currently
+means explicit quiet presentation emphasis. These remain subsequent slices,
+with shared extraction coordinated in Mere when a second native consumer needs
+it. Shared references: `mere/design_docs/mere_docs/implementation_strategy/2026-10-02_dynamics_grammar_plan.md`
+and `mere/ports/graphshell/src/canvas_controls.rs`.
+
+Acceptance scenarios are `mere_presentation.scn` and
+`mere_presentation_reopen.scn`. Evidence belongs under
+`/Users/markik/Code/testing/woodshed/mere-20261007/`, using isolated unsealed
+fixture sessions. Native wide/narrow capture review and fresh-process reopening
+must be recorded before this slice is described as qualified.

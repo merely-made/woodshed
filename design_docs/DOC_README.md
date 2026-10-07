@@ -87,7 +87,10 @@ before any other doc in this directory.
   captures cover baseline/narrow, fresh reopening and a large 0.75-zoom replay.
   The narrow last node and label are visible. The historical black Practice
   surface does not reproduce in the current replay; its original cause is unproven.
-  The Graphshell/physics review guides subsequent scene/camera/dynamics reuse.
+  The October 7 slice repins the coherent current Mere/Genet stack and embeds
+  Pictograph's shared PhysicsBoard in the session Mere, with camera controls,
+  retained emphasis/placement rules and opt-in motion. Native acceptance is pending;
+  arbitrary dynamics grammar editing and a native Graphshell editor remain open.
   — **In progress; product authority.** P1-P3 remain partial. P4a/P4b landed;
   the scene canvas and single-Card expansion have receipts, while the full P4e
   catalog and P4f practice/sound join remain open. P5-P8 remain open. A repaired

@@ -167,6 +167,7 @@ fn sync_overview(shared: &mut Shared, ui: &UiState, leaves: &mut LeafRegistry<u6
     shared.overview_sig = sig;
     let leaf = swatch.paint_leaf(|kind: &&str| {
         let (r, g, b) = match *kind {
+            "background" => (0.35, 0.39, 0.43),
             "artifact" => (0.93, 0.70, 0.28),
             "view" => (0.47, 0.63, 0.82),
             "process" => (0.85, 0.40, 0.32),

@@ -9,7 +9,7 @@ use scenograph::relationship::{
 };
 use scenograph::{ProjectionInputBinding, PublicSourceRevision, RevisionEvidence};
 use scenomise::projection::{
-    CompiledRelationshipProjection, RelationshipDataset, compile_relationship_snapshot,
+    CompiledRelationshipProjection, ItemSizes, ProjectionCompiler, RelationshipDataset,
 };
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
@@ -65,8 +65,13 @@ impl RelationshipReading {
         Ok(reading)
     }
     pub fn compile(&self) -> Result<CompiledRelationshipProjection, String> {
-        compile_relationship_snapshot(&self.snapshot, &self.dataset)
-            .map_err(|e| format!("Reading refused: {e:?}"))
+        // This host retains the established card footprint when reopening readings.
+        // Scenomise now requires its consumer to supply representation sizes.
+        ProjectionCompiler::new(ItemSizes {
+            card: sceno::Size2::new(164.0, 68.0),
+        })
+        .compile_relationship_snapshot(&self.snapshot, &self.dataset)
+        .map_err(|e| format!("Reading refused: {e:?}"))
     }
 }
 // Cursor navigation is presentation. Every ordered Card instruction is content.

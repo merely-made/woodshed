@@ -400,6 +400,24 @@ impl Snapshot<'_, '_> {
                 "runner-foreground",
                 ui.is_current_set_rehearsing().to_string(),
             )
+            .with_field("overview-zoom", format!("{:.2}", ui.overview_viewport.zoom))
+            .with_field(
+                "overview-background",
+                ui.overview_background.len().to_string(),
+            )
+            .with_field("overview-motion", ui.overview_motion.to_string())
+            .with_field(
+                "overview-reduced-motion",
+                ui.overview_reduced_motion.to_string(),
+            )
+            .with_field(
+                "overview-pinned",
+                ui.overview_roles
+                    .values()
+                    .filter(|role| role.as_str() == "pinned")
+                    .count()
+                    .to_string(),
+            )
             .with_field("overview-nodes", overview.nodes.len().to_string())
             .with_field(
                 "overview-views",
