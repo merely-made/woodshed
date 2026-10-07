@@ -475,7 +475,7 @@ run against the same contract.
   Other Woodshed/Hocket pins retain their independent families, so this does
   not claim a whole-Woodshed-workspace codec or build qualification.
 
-- **2026-10-07, coordinated current-stack adoption, qualified; publication pending.** The nested
+- **2026-10-07, coordinated current-stack adoption, qualified and published as `82271df`.** The nested
   Redshank workspace's eight Mere aliases and web host's three aliases move
   together to published Mere `57b4893db6909d5ed9c4ccae30216f0d8164201a`;
   its five Genet dependencies/IPC patch move together to published Genet
@@ -517,3 +517,28 @@ run against the same contract.
   Genet Livery adds two existing ICU dependency edges. Other normalized package
   records are identical. Receipt `qualification.json` and `artifact-manifest.json`
   distinguish successful commands from the retained failed diagnostics.
+
+- **2026-10-07, coordinated browser-accessibility supplier identity adoption.**
+  From published Woodshed `019fdf3858bb461db79a292ddcb238c707e1e08a`, the
+  nested Redshank workspace's eight Mere aliases and web host's three aliases
+  move together to `f1d169c755e082b5119c2485762fd28f4226d8fb`, after qualified
+  Knot `14cd06e126c10df7f5506126b98af2f07ec87eb5` publication. Genet
+  `965b64e206a47d1c8808472de9aa461233638768`, product Rust and the independent
+  Woodshed/Hocket pins remain unchanged. The lock changes exactly 16 Mere
+  source identities; all 773 normalized package records, registry versions,
+  checksums and dependency edges stay identical. The excluded playback spike
+  has no Mere edges, and its lock stays byte-identical.
+  The actual-collision `woodshed-browser-a11y` worktree keeps the primary
+  transcript lane's 16 guarded source/manifest/lock files byte-identical before
+  integration. [Raw receipts](../validation/redshank-browser-a11y_20261007/README.md)
+  bind 149 archived source inputs to BelowNormal, one-job Rust 1.97.1 commands.
+  Windows and wasm32 locked metadata each select one Mere f1 family, one
+  Genet965 family, wgpu 30.0.1 and the existing in-process IPC backend.
+  Desktop/playback/surface all-target checks pass; the same consumer scope
+  passes 201 tests with seven existing playback ignores. The separate IPC
+  consumer rerun passes all three tests, and the wasm32 web check passes.
+  This closes the nested consumer's coordinated pin adoption gate. Redshank
+  does not select Mere's changed foreign-browser adapter, so these results
+  establish source-family compatibility without qualifying browser subtree
+  joining or actions. Native presentation/audio, browser bindgen/runtime,
+  human accessibility and whole-Woodshed acceptance remain separate gates.

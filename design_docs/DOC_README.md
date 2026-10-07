@@ -19,7 +19,10 @@ before any other doc in this directory.
   self-drive scenario/capture lane, and a browser host. Lanes and done-conditions per lane.
   October 7 current-stack Redshank-only pin adoption passes Windows checks,
   201 tests (seven ignored), locked source-family checks and wasm32 compilation;
-  coordinated publication is pending. Native and bindgen/browser gates stay open;
+  the earlier family published as `82271df`. The subsequent Mere f1 / Genet965
+  adoption repeats those gates successfully after Knot `14cd06e`;
+  [exact receipts](../validation/redshank-browser-a11y_20261007/README.md) preserve
+  the scoped source/lock proof. Native, accessibility and bindgen/browser gates stay open;
   Woodshed root/Hocket pins and concurrent transcript work remain independently owned.
 
 - [2026-09-09_audio_ports_rehome_plan.md](2026-09-09_audio_ports_rehome_plan.md)

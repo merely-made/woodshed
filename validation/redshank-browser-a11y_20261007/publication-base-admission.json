@@ -1,0 +1,14 @@
+{
+  "observed_utc": "2026-10-07T19:48:44.061524+00:00",
+  "tested_baseline": "019fdf3858bb461db79a292ddcb238c707e1e08a",
+  "publication_parent": "3629d22c0ee1a41d74ecbbf3c6657931ea7698e5",
+  "published_changes_since_test_baseline": [
+    "design_docs/2026-07-11_stage_set_tools_plan.md",
+    "design_docs/DOC_README.md",
+    "scenarios/mere_atmosphere_reopen.scn"
+  ],
+  "changed_frozen_source_inputs": [],
+  "source_input_count": 149,
+  "source_sha256": "d05624aa8fd130c30e173aedefdd003479b2966216170f9f0086949d1238bc2b",
+  "scope": "Only already-published root atmosphere scenario/docs advances admitted; all selected compiled inputs byte-identical, so no repeated build required."
+}

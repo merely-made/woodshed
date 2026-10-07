@@ -1,0 +1,5 @@
+   Compiling mere-fetch v0.0.1 (https://github.com/merely-made/mere.git?rev=f1d169c755e082b5119c2485762fd28f4226d8fb#f1d169c7)
+   Compiling redshank-model v0.0.0 (C:\Users\mark_\Code\worktrees\woodshed-browser-a11y\ports\redshank\model)
+   Compiling redshank-playback v0.0.0 (C:\Users\mark_\Code\worktrees\woodshed-browser-a11y\ports\redshank\playback)
+    Finished `test` profile [unoptimized] target(s) in 10.77s
+     Running tests\ipc_consumer.rs (cargo-targets/woodshed\debug\deps\ipc_consumer-7af129231321ea9c.exe)

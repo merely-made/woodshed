@@ -1,0 +1,18 @@
+    Updating git repository `https://github.com/merely-made/mere.git`
+     Locking 16 packages to latest Rust 1.97 compatible versions
+      Adding cambium v0.3.3 (https://github.com/merely-made/mere.git?rev=f1d169c755e082b5119c2485762fd28f4226d8fb#f1d169c7)
+      Adding cambium-genet-web-host v0.1.0 (https://github.com/merely-made/mere.git?rev=f1d169c755e082b5119c2485762fd28f4226d8fb#f1d169c7)
+      Adding cambium-genet-winit-host v0.1.0 (https://github.com/merely-made/mere.git?rev=f1d169c755e082b5119c2485762fd28f4226d8fb#f1d169c7)
+      Adding cambium-rootstock v0.1.0 (https://github.com/merely-made/mere.git?rev=f1d169c755e082b5119c2485762fd28f4226d8fb#f1d169c7)
+      Adding cambium-winit v0.3.0 (https://github.com/merely-made/mere.git?rev=f1d169c755e082b5119c2485762fd28f4226d8fb#f1d169c7)
+      Adding cambium-winit-a11y v0.3.0 (https://github.com/merely-made/mere.git?rev=f1d169c755e082b5119c2485762fd28f4226d8fb#f1d169c7)
+      Adding errand v0.4.0 (https://github.com/merely-made/mere.git?rev=f1d169c755e082b5119c2485762fd28f4226d8fb#f1d169c7)
+      Adding mere-apparatus v0.0.1 (https://github.com/merely-made/mere.git?rev=f1d169c755e082b5119c2485762fd28f4226d8fb#f1d169c7)
+      Adding mere-fetch v0.0.1 (https://github.com/merely-made/mere.git?rev=f1d169c755e082b5119c2485762fd28f4226d8fb#f1d169c7)
+      Adding mere-surface-api v0.1.0 (https://github.com/merely-made/mere.git?rev=f1d169c755e082b5119c2485762fd28f4226d8fb#f1d169c7)
+      Adding meristem v0.2.0 (https://github.com/merely-made/mere.git?rev=f1d169c755e082b5119c2485762fd28f4226d8fb#f1d169c7)
+      Adding mesquite v0.1.0 (https://github.com/merely-made/mere.git?rev=f1d169c755e082b5119c2485762fd28f4226d8fb#f1d169c7)
+      Adding sceno v0.0.4 (https://github.com/merely-made/mere.git?rev=f1d169c755e082b5119c2485762fd28f4226d8fb#f1d169c7)
+      Adding sprigging v0.2.1 (https://github.com/merely-made/mere.git?rev=f1d169c755e082b5119c2485762fd28f4226d8fb#f1d169c7)
+      Adding tinct v0.1.2 (https://github.com/merely-made/mere.git?rev=f1d169c755e082b5119c2485762fd28f4226d8fb#f1d169c7)
+      Adding workbench v0.1.0 (https://github.com/merely-made/mere.git?rev=f1d169c755e082b5119c2485762fd28f4226d8fb#f1d169c7)

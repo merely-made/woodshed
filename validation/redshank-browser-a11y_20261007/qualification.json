@@ -1,0 +1,48 @@
+{
+  "qualified_utc": "2026-10-07T19:45:20.929195+00:00",
+  "baseline_head": "019fdf3858bb461db79a292ddcb238c707e1e08a",
+  "coordinated_knot_prerequisite": "14cd06e126c10df7f5506126b98af2f07ec87eb5",
+  "mere": "f1d169c755e082b5119c2485762fd28f4226d8fb",
+  "genet": "965b64e206a47d1c8808472de9aa461233638768",
+  "successful_commands": [
+    "check-desktop",
+    "check-web",
+    "metadata-web",
+    "metadata-windows",
+    "resolve",
+    "test-ipc",
+    "test-port"
+  ],
+  "test_counts": {
+    "desktop": 68,
+    "feed": 2,
+    "playback": 27,
+    "ipc_consumer": 3,
+    "surfaces": 101,
+    "passed": 201,
+    "failed": 0,
+    "ignored_playback": 7,
+    "separate_ipc_rerun_passed": 3
+  },
+  "source_archive": {
+    "input_count": 149,
+    "sha256": "d05624aa8fd130c30e173aedefdd003479b2966216170f9f0086949d1238bc2b"
+  },
+  "lock_delta": "Exactly16 Mere source identities57b4893\u2192f1d169c.773 package records; no normalized package changes, registry version/checksum/edge or Genet change. Excluded playback spike lock unchanged.",
+  "owned_source_paths": [
+    "ports/redshank/Cargo.toml",
+    "ports/redshank/Cargo.lock",
+    "ports/redshank/web/Cargo.toml"
+  ],
+  "runtime_rust_changes": [],
+  "root_woodshed_inputs_unchanged_vs_published019": true,
+  "primary_transcript_guard_equal_before_integration": true,
+  "scope": "Nested Redshank Windows typed compile/tests and wasm32 compile only. No native presentation/audio, browser bindgen/runtime, foreign surface accessibility/AT or whole Woodshed acceptance.",
+  "retained": {
+    "worktree": "C:/Users/mark_/Code/worktrees/woodshed-browser-a11y",
+    "owner": "root browser a11y",
+    "reason": "Awaiting scoped publication and preserving primary transcript WIP; remove after clean integration.",
+    "target": "C:/t/cargo-targets/woodshed",
+    "target_owner_observation": "No compiler/test executable under target or compiler invocation for this worktree observed before own Cargo launch. Other unrelated owners left untouched."
+  }
+}
