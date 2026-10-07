@@ -2366,7 +2366,7 @@ encrypted-vault workflow remain separate gates.
 
 ### October 7 follow-up: authored musical context in the session Mere
 
-**Status: implemented; final automated and native qualification pending.**
+**Status: landed; automated and committed-runtime native capture/reopen qualification complete.**
 
 Keep nearby retains up to twelve keyed chords or scales as Woodshed session
 assets. Each occurrence has its own stable identity, exact formula and tonic,
@@ -2411,5 +2411,34 @@ contract change is required. Reusable authored scene recipes, a portable scene
 editor, and musical syntax/phrase composition remain subsequent work.
 
 Acceptance scenarios are `mere_musical_context.scn` and
-`mere_musical_context_reopen.scn`. Qualification artifacts will be recorded in
-`/Users/markik/Code/testing/woodshed/musical-context-20261007/`.
+`mere_musical_context_reopen.scn`. Qualification artifacts are recorded in
+`/Users/markik/Code/testing/woodshed/musical-context-20261007/receipt.json`.
+
+The gate passes 597 checks: core 201, core integration 1, desktop 65,
+graph 14, views 131, theory 181 and theory doctests 4. The wider gate preceded
+final core-only legacy/import regressions, which pass in the final core rerun;
+views also pass after state normalization. The desktop builds successfully.
+A separate source review finds no actionable owner-boundary regression.
+
+Native qualification uses committed runtime `0c74407` at 1280 by 900 and
+420 by 900, with four seed and two fresh-process reopen captures each:
+twelve PNGs reviewed. Wide seed/reopen run 1912/1848 frames; narrow run
+1915/1864. Keep and Hear preserve the initial two Cards. Open in Stage selects
+C Major while preserving those Cards; explicit Add produces the third Card,
+and removing a retained reference preserves all three. The final sessions keep
+C Major and C Major 7, two originating Set associations, two background items,
+one pinned reference, and Cells atmosphere. Reopening validates those identities,
+containment and owner links, roles, and unchanged Card count.
+
+The shelf description and buttons wrap without overlap at 420 pixels. Existing
+compact graph labels use their culling policy; full material names remain in
+the roster and inspector. The first narrow seed inspector capture revealed its
+selected roster row rather than the inspector below it. Scenario-only commit
+`37be94e` explicitly reveals the inspector before capture; the narrow fresh
+reopen then shows the complete explanations and wrapped owner controls. This
+requires no runtime change. The receipt distinguishes runtime and scenario
+revision and preserves the exact scenario/log/capture hashes.
+
+Qualification uses isolated unsealed fixture sessions. Personal encrypted-vault
+operations, release packaging/signing, and browser-host qualification remain
+separate gates.

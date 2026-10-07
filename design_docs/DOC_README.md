@@ -96,7 +96,9 @@ before any other doc in this directory.
   surface does not reproduce in the current replay; its original cause is unproven.
   The October 7 musical-context follow-up adds a bounded retained chord/scale
   shelf inside the session Mere, exact tone relations, originating Set
-  associations and explicit Open/Hear/Add/Remove actions; qualification pending.
+  associations and explicit Open/Hear/Add/Remove actions. The 597-check gate
+  and desktop build pass; twelve reviewed wide/narrow native captures and fresh
+  process reopening qualify retained material, roles, and owner actions.
   The October 7 atmosphere follow-up adds retained seeded Orbits/Cells beneath
   the session graph, shared motion/reduced-motion policy and folded movement
   controls; 585 automated checks pass, with 14 reviewed wide/narrow native
