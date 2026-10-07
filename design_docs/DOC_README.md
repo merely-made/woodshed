@@ -94,7 +94,8 @@ before any other doc in this directory.
   The October 7 slice repins the coherent current Mere/Genet stack and embeds
   Pictograph's shared PhysicsBoard in the session Mere, with camera controls,
   retained emphasis/placement rules and opt-in motion. The 579-check gate and
-  desktop build pass; native acceptance awaits Mac unlock;
+  desktop build pass; twenty reviewed wide/narrow native captures and
+  fresh-process reopening qualify the fixture flow;
   arbitrary dynamics grammar editing and a native Graphshell editor remain open.
   — **In progress; product authority.** P1-P3 remain partial. P4a/P4b landed;
   the scene canvas and single-Card expansion have receipts, while the full P4e

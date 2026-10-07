@@ -2199,7 +2199,7 @@ receipts are recorded before those platforms are advertised.
 
 ### Native Mere presentation and shared board adoption (2026-10-07)
 
-**Status: implemented; automated gate passed; native acceptance blocked by locked Mac.** Refreshed Woodshed main to
+**Status: landed; automated and committed-runtime native acceptance qualified.** Refreshed Woodshed main to
 `06c2b13`, Mere main to `d041cc69b`, and Genet main to `965b64e20`. The primary
 workspace now pins Mere `d041cc69b588b6f1dadd22308c2bc4059496cabd` together with
 its coherent Genet dependency `d851a9db0cd1ff7837768250f21e9dff63455940`;
@@ -2259,10 +2259,33 @@ neighboring physics: the shared board's kinematic position otherwise remains
 unfolded until a tick. Locked desktop build passes; views Clippy completes with
 four existing warnings. Changed-document links and diff whitespace pass.
 
-Native acceptance was attempted after committing the candidate, but the
-computer-use tool reported a locked Mac and could not unlock it. No native
-launch, captures or fresh-process presentation reopen are qualified. Wide
-1280x900 and narrow 420x900 isolated launchers and scenarios are prepared;
-`receipt.json` records this blocked state and the binary hash. This is a
-published implementation and automated checkpoint, not a completed native
-acceptance or release receipt.
+The initial native launch was blocked by the locked Mac. After unlock, the
+same committed implementation passes the isolated native matrix: 1280x900 seed
+(1895 frames, three captures), 420x900 seed (1898 frames, three captures), wide
+fresh-process reopen (1864 frames, seven captures), and narrow fresh-process
+reopen (1870 frames, seven captures). All twenty final captures are reviewed.
+The expanded reopen scenario is committed as `d50892c`; runtime manifests,
+lockfile and crates remain unchanged from implementation `364741e` through that
+acceptance revision. The source binary hash remains
+`e806d89c4e8b83bf90141c5514391d4c9e29526d5f110695e83f807593e14649`.
+
+Native scripted controls exercise camera changes, free placement, anchoring,
+pinning, motion opt-in and reduced-motion override. Fresh processes retain the
+camera, selected working-Set occurrence, background emphasis, pin and motion
+preferences. The wide graph region is pixel-identical before/after anchored
+return, changes after free placement, and stays identical after pinned movement;
+the narrow graph also changes for free placement and stays identical for a pin.
+Restore/Fit recovers full overview geometry from a deliberately cropped camera.
+At 420px the page scrolls vertically, labels are abbreviated/culled, and full
+names and placement explanations remain readable in the roster and inspector.
+
+An automation observation inadvertently relaunched completed narrow test apps
+and disturbed their profiles. Those attempts remain under `narrow-initial` and
+`narrow-rerun`; the final `narrow` seed/reopen pair uses an isolated clean profile
+and has one passing scenario per phase. Final evidence and image/scenario hashes
+are in `/Users/markik/Code/testing/woodshed/mere-20261007/receipt.json`.
+No product code fix was needed during native acceptance. This qualifies the
+scripted native fixture flow at default UI zoom; personal encrypted vaults,
+browser/other-platform behavior, high zoom, screen-reader walks and the physical
+OS pointer-drag matrix are not established. Release packaging and delivery are
+separate work.
