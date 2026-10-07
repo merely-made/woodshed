@@ -21,6 +21,8 @@ settle 12
 capture 01_kept_context
 click .overview-node-title C Major
 settle 3
+click .overview-inspector
+settle 12
 capture 02_context_inspector
 click .overview-context-hear Hear
 settle 3
