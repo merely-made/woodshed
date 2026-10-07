@@ -49,9 +49,12 @@ mod context_tests;
 mod instances;
 mod looper;
 mod overview;
+pub mod overview_dynamics;
+mod overview_presentation;
+pub use overview_presentation::OverviewPresentation;
 pub mod relationship;
-pub use relationship::{relationship_swatch, RELATIONSHIP_GRAPH_LEAF_KEY};
 pub use overview::{OVERVIEW_GRAPH_LEAF_KEY, overview_snapshot, overview_swatch};
+pub use relationship::{RELATIONSHIP_GRAPH_LEAF_KEY, relationship_swatch};
 mod pitch_motion;
 mod rehearsal;
 mod related;
@@ -836,6 +839,12 @@ pub struct UiState {
     pub overview_notice: Option<String>,
     pub overview_viewport: GraphViewport,
     pub overview_positions: BTreeMap<woodshed_core::session_overview::OverviewNodeId, (f32, f32)>,
+    pub overview_roles: BTreeMap<woodshed_core::session_overview::OverviewNodeId, String>,
+    pub overview_background: BTreeSet<woodshed_core::session_overview::OverviewNodeId>,
+    pub overview_dynamics: overview_dynamics::OverviewDynamics,
+    pub overview_motion: bool,
+    pub overview_reduced_motion: bool,
+    pub overview_unrecognized_presentation_json: Option<String>,
     pub practice_history: PracticeHistory,
     pub app_settings: AppSettings,
     /// Woodshed's bounded workspace over the existing product surfaces. The shared component
@@ -1040,6 +1049,12 @@ impl UiState {
             overview_notice: None,
             overview_viewport: GraphViewport::default(),
             overview_positions: BTreeMap::new(),
+            overview_roles: BTreeMap::new(),
+            overview_background: BTreeSet::new(),
+            overview_dynamics: overview_dynamics::OverviewDynamics::default(),
+            overview_motion: false,
+            overview_reduced_motion: true,
+            overview_unrecognized_presentation_json: None,
             practice_history: PracticeHistory::default(),
             app_settings,
             workspace: WoodshedWorkspace::new(),
@@ -1969,6 +1984,10 @@ impl UiState {
         session.retained_sets = self.retained_sets.clone();
         session.working_sets = self.working_sets.clone();
         session.relationship_reading_json = self.relationship_reading_json.clone();
+        session.overview_presentation_json = self
+            .overview_unrecognized_presentation_json
+            .clone()
+            .or_else(|| OverviewPresentation::capture(self).to_json());
         session.catalog_explorations = self.catalog_explorations.clone();
         session.active_exploration = Some(self.capture_exploration());
         session.workspace_json = Some(
@@ -1996,10 +2015,16 @@ impl UiState {
         self.rehearsal_stage = None;
         self.rehearsal_observed_midi = None;
         self.set_presentations.clear();
-        self.overview_focus = None;
+        self.overview_unrecognized_presentation_json = session
+            .overview_presentation_json
+            .as_deref()
+            .filter(|json| OverviewPresentation::is_unknown_version(json))
+            .map(str::to_owned);
+        self.overview_dynamics = overview_dynamics::OverviewDynamics::default();
+        OverviewPresentation::from_json(session.overview_presentation_json.as_deref())
+            .unwrap_or_default()
+            .apply(self);
         self.overview_notice = None;
-        self.overview_viewport = GraphViewport::default();
-        self.overview_positions.clear();
         self.card_rename_for = None;
         self.rehearsal_running = false;
         self.rehearsal_observed_card = None;

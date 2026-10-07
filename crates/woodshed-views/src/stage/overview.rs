@@ -139,7 +139,7 @@ fn narrow_positions(
     (positions, height)
 }
 
-pub fn overview_swatch(ui: &UiState) -> GraphCanvasSwatch<OverviewNodeId, &'static str> {
+fn overview_arrangement_swatch(ui: &UiState) -> GraphCanvasSwatch<OverviewNodeId, &'static str> {
     let snapshot = overview_snapshot(ui);
     let scene = overview_scene(&snapshot);
     let bounds = scene.tables.bounds;
@@ -162,11 +162,15 @@ pub fn overview_swatch(ui: &UiState) -> GraphCanvasSwatch<OverviewNodeId, &'stat
         .enumerate()
         .map(|(index, node)| GraphCanvasNode {
             id: node.id.clone(),
-            kind: match node.id {
-                OverviewNodeId::Artifact(_) => "artifact",
-                OverviewNodeId::View(_) => "view",
-                OverviewNodeId::Process(_) => "process",
-                OverviewNodeId::Catalog(_) => "catalog",
+            kind: if ui.overview_background.contains(&node.id) {
+                "background"
+            } else {
+                match node.id {
+                    OverviewNodeId::Artifact(_) => "artifact",
+                    OverviewNodeId::View(_) => "view",
+                    OverviewNodeId::Process(_) => "process",
+                    OverviewNodeId::Catalog(_) => "catalog",
+                }
             },
             position: ui
                 .overview_positions
@@ -228,7 +232,107 @@ pub fn overview_swatch(ui: &UiState) -> GraphCanvasSwatch<OverviewNodeId, &'stat
     swatch
 }
 
+pub fn overview_swatch(ui: &UiState) -> GraphCanvasSwatch<OverviewNodeId, &'static str> {
+    let mut swatch = overview_arrangement_swatch(ui);
+    let positions = ui.overview_dynamics.positions();
+    for node in &mut swatch.graph.nodes {
+        if let Some(position) = positions.get(&node.id) {
+            node.position = *position;
+        }
+    }
+    swatch
+}
+
 impl UiState {
+    pub fn reconcile_overview_dynamics(&mut self) {
+        let swatch = overview_arrangement_swatch(self);
+        let items: Vec<_> = swatch
+            .graph
+            .nodes
+            .into_iter()
+            .map(|node| (node.id, node.position, node.kind.to_string()))
+            .collect();
+        self.overview_dynamics.reconcile(
+            &items,
+            self.overview_motion,
+            self.overview_reduced_motion,
+            pictograph::canvas::PhysicsLaw::Springs.id(),
+            &self
+                .overview_roles
+                .iter()
+                .map(|(id, role)| (id.wire_key(), role.clone()))
+                .collect(),
+        );
+    }
+
+    pub fn tick_overview_dynamics(&mut self) -> bool {
+        // Keep background views and running rehearsal clocks independent.
+        if self.workspace.active_panel() != Some(WorkspacePanel::Overview) {
+            return false;
+        }
+        self.reconcile_overview_dynamics();
+        self.overview_dynamics.tick()
+    }
+
+    pub fn move_overview_selection(&mut self, delta: (f32, f32)) {
+        let Some(id) = self.overview_focus.clone() else {
+            return;
+        };
+        self.reconcile_overview_dynamics();
+        if self.overview_dynamics.begin_key_move(&id) {
+            let zoom = self.overview_viewport.zoom.max(0.25);
+            self.overview_dynamics
+                .key_move_by((delta.0 / zoom, delta.1 / zoom));
+            self.overview_dynamics.end_key_move(true);
+            if let Some(position) = self.overview_dynamics.positions().get(&id) {
+                self.overview_positions.insert(id, *position);
+            }
+        }
+    }
+    /// Fit the current arrangement without changing its retained positions.
+    pub fn fit_overview(&mut self) {
+        let graph = overview_swatch(self);
+        if graph.graph.nodes.is_empty() {
+            self.overview_viewport = cambium::GraphViewport::default();
+            return;
+        }
+        let mut min = (f32::INFINITY, f32::INFINITY);
+        let mut max = (f32::NEG_INFINITY, f32::NEG_INFINITY);
+        for node in graph.graph.nodes {
+            min.0 = min.0.min(node.position.0);
+            min.1 = min.1.min(node.position.1);
+            max.0 = max.0.max(node.position.0);
+            max.1 = max.1.max(node.position.1);
+        }
+        let zoom = (0.82 / (max.0 - min.0).max(max.1 - min.1).max(0.1)).clamp(0.25, 8.0);
+        self.overview_viewport.zoom = zoom;
+        self.overview_viewport.pan = (
+            (0.5 - (min.0 + max.0) * 0.5) * zoom,
+            (0.5 - (min.1 + max.1) * 0.5) * zoom,
+        );
+    }
+
+    pub fn restore_overview_arrangement(&mut self) {
+        self.overview_positions.clear();
+        self.overview_dynamics = Default::default();
+        self.overview_viewport = cambium::GraphViewport::default();
+    }
+
+    pub fn set_overview_background(&mut self, id: OverviewNodeId, background: bool) {
+        if !overview_snapshot(self)
+            .nodes
+            .iter()
+            .any(|node| node.id == id)
+        {
+            return;
+        }
+        if background {
+            self.overview_background.insert(id);
+        } else {
+            self.overview_background.remove(&id);
+        }
+    }
+
     pub fn save_working_set(&mut self) -> Option<SavedSetId> {
         if self.set.cards.is_empty() {
             self.overview_notice = Some("Stage material before retaining a Set.".into());
@@ -350,7 +454,22 @@ pub(super) fn screen(ui: &UiState) -> UiChild {
                     .iter()
                     .any(|node| node.id == drag.id)
                 {
-                    ui.overview_positions.insert(drag.id, drag.position);
+                    ui.reconcile_overview_dynamics();
+                    match drag.phase {
+                        cambium::PointerPhase::Down => {
+                            ui.overview_dynamics.drag_start(&drag.id);
+                        },
+                        cambium::PointerPhase::Move => {
+                            ui.overview_dynamics.drag_move(drag.position);
+                        },
+                        cambium::PointerPhase::Up => {
+                            ui.overview_dynamics.drag_move(drag.position);
+                            ui.overview_dynamics.drag_end();
+                            if let Some(position) = ui.overview_dynamics.positions().get(&drag.id) {
+                                ui.overview_positions.insert(drag.id, *position);
+                            }
+                        },
+                    }
                 }
             },
             GraphCanvasEvent::Pan { delta } => {
@@ -363,6 +482,45 @@ pub(super) fn screen(ui: &UiState) -> UiChild {
             _ => {},
         },
     );
+    let controls: Vec<UiChild> = [
+        ("Fit scene", "overview-fit", 0),
+        ("Restore arrangement", "overview-restore", 1),
+        ("Zoom in", "overview-zoom-in", 2),
+        ("Zoom out", "overview-zoom-out", 3),
+        ("Pan left", "overview-pan-left", 4),
+        ("Pan right", "overview-pan-right", 5),
+        ("Pan up", "overview-pan-up", 6),
+        ("Pan down", "overview-pan-down", 7),
+        ("Move selected left", "overview-move-left", 8),
+        ("Move selected right", "overview-move-right", 9),
+        ("Move selected up", "overview-move-up", 10),
+        ("Move selected down", "overview-move-down", 11),
+    ]
+    .into_iter()
+    .map(|(label, class, command)| {
+        Box::new(clickable(
+            el("button", text(label)).attr("class", format!("t-btn {class}")),
+            move |ui: &mut UiState, _| match command {
+                0 => ui.fit_overview(),
+                1 => ui.restore_overview_arrangement(),
+                2 => {
+                    ui.overview_viewport.zoom = (ui.overview_viewport.zoom * 1.25).clamp(0.25, 8.0)
+                },
+                3 => {
+                    ui.overview_viewport.zoom = (ui.overview_viewport.zoom / 1.25).clamp(0.25, 8.0)
+                },
+                4 => ui.overview_viewport.pan.0 += 0.1,
+                5 => ui.overview_viewport.pan.0 -= 0.1,
+                6 => ui.overview_viewport.pan.1 += 0.1,
+                7 => ui.overview_viewport.pan.1 -= 0.1,
+                8 => ui.move_overview_selection((-0.03, 0.0)),
+                9 => ui.move_overview_selection((0.03, 0.0)),
+                10 => ui.move_overview_selection((0.0, -0.03)),
+                _ => ui.move_overview_selection((0.0, 0.03)),
+            },
+        )) as UiChild
+    })
+    .collect();
     let roster: Vec<UiChild> = snapshot
         .nodes
         .iter()
@@ -403,6 +561,32 @@ pub(super) fn screen(ui: &UiState) -> UiChild {
         .and_then(|id| snapshot.nodes.iter().find(|node| &node.id == id))
     {
         let id = node.id.clone();
+        let role_id = id.clone();
+        let background = ui.overview_background.contains(&id);
+        let role = ui
+            .overview_roles
+            .get(&id)
+            .map(String::as_str)
+            .unwrap_or("seeded");
+        let role_controls: Vec<UiChild> = [
+            ("Free placement", "seeded"),
+            ("Return to anchor", "anchored"),
+            ("Pin in place", "pinned"),
+        ]
+        .into_iter()
+        .map(|(label, role)| {
+            let id = id.clone();
+            Box::new(clickable(
+                el("button", text(label)).attr("class", format!("t-btn overview-role-{role}")),
+                move |ui: &mut UiState, _| {
+                    if overview_snapshot(ui).nodes.iter().any(|node| node.id == id) {
+                        ui.overview_roles.insert(id.clone(), role.into());
+                        ui.reconcile_overview_dynamics();
+                    }
+                },
+            )) as UiChild
+        })
+        .collect();
         let label = match id {
             OverviewNodeId::Artifact(SessionArtifactId::SavedSet(_)) => "Open copy",
             OverviewNodeId::Catalog(_) => "Explore catalog",
@@ -471,6 +655,18 @@ pub(super) fn screen(ui: &UiState) -> UiChild {
                 (
                     el("div", text(node.label.clone())).attr("class", "overview-inspector-title"),
                     el("div", text(if matches!(node.id,OverviewNodeId::View(_)) { "Workspace presentation of the shared session. Opening this view leaves live activity running.".into() } else { node.detail.clone() })).attr("class", "overview-detail"),
+                    el("div", text(if background { "Background context" } else { "Foreground material" })).attr("class", "overview-presentation-role"),
+                    clickable(
+                        el("button", text(if background { "Bring to foreground" } else { "Move to background" })).attr("class", "t-btn overview-role-toggle"),
+                        move |ui: &mut UiState, _| ui.set_overview_background(role_id.clone(), !background),
+                    ),
+                    el("div", text(match role {
+                        "pinned" => "Pinned: movement is unavailable until you choose another placement rule.",
+                        "anchored" => "Anchored: moving returns to the arrangement after release.",
+                        _ => "Free placement: moving retains the dropped position.",
+                    })).attr("class", "overview-placement-rule"),
+                    el("div", role_controls).attr("class", "overview-instance-actions"),
+                    el("div", text("Presentation emphasis changes the scene; Sets and running sessions keep their own state.")).attr("class", "overview-detail"),
                     el("div", relations).attr("class", "overview-relations"),
                     el("div", history_rows).attr("class", "overview-history"),
                     matches!(id, OverviewNodeId::Artifact(SessionArtifactId::SavedSet(_))).then(
@@ -566,6 +762,12 @@ pub(super) fn screen(ui: &UiState) -> UiChild {
                 ui.overview_notice
                     .as_ref()
                     .map(|notice| el("div", text(notice.clone())).attr("class", "overview-notice")),
+                el("div", controls).attr("class", "overview-instance-actions overview-camera-controls"),
+                el("div", (
+                    clickable(el("button", text(if ui.overview_motion { "Pause scene motion" } else { "Enable scene motion" })).attr("class", "t-btn overview-motion-toggle"), |ui: &mut UiState, _| { ui.overview_motion = !ui.overview_motion; ui.reconcile_overview_dynamics(); }),
+                    clickable(el("button", text(if ui.overview_reduced_motion { "Allow scene motion" } else { "Reduce scene motion" })).attr("class", "t-btn overview-reduced-motion-toggle"), |ui: &mut UiState, _| { ui.overview_reduced_motion = !ui.overview_reduced_motion; ui.reconcile_overview_dynamics(); }),
+                    el("div", text(if ui.overview_reduced_motion { "Reduced motion: static arrangement. Moving a selected item retains its placement." } else { "Spring arrangement: motion is opt-in. Moving an item changes presentation only." })).attr("class", "overview-detail"),
+                )).attr("class", "overview-instance-actions"),
                 el("div", graph).attr("class", "overview-graph"),
                 el(
                     "div",
@@ -748,5 +950,64 @@ mod tests {
         );
         ui.set_viewport_width(1100.0);
         assert_eq!(overview_swatch(&ui).height, 320);
+    }
+}
+
+#[cfg(test)]
+mod presentation_tests {
+    use super::*;
+
+    #[test]
+    fn camera_and_emphasis_leave_session_authority_intact() {
+        let mut ui = UiState::new();
+        ui.stage_current(None);
+        ui.rehearsal_running = true;
+        let before = serde_json::to_value(&ui.set).unwrap();
+        let id = overview_snapshot(&ui).nodes[0].id.clone();
+        ui.overview_positions.insert(id.clone(), (0.3, 0.4));
+        ui.set_overview_background(id.clone(), true);
+        ui.fit_overview();
+        assert!(ui.overview_viewport.zoom.is_finite());
+        assert!(ui.overview_positions.contains_key(&id));
+        assert_eq!(
+            overview_swatch(&ui)
+                .graph
+                .nodes
+                .iter()
+                .find(|node| node.id == id)
+                .unwrap()
+                .kind,
+            "background"
+        );
+        ui.restore_overview_arrangement();
+        assert!(ui.overview_positions.is_empty());
+        assert!(ui.overview_background.contains(&id));
+        assert!(ui.rehearsal_running);
+        assert_eq!(serde_json::to_value(&ui.set).unwrap(), before);
+    }
+
+    #[test]
+    fn shared_pin_refuses_host_move_and_restore_keeps_rule() {
+        let mut ui = UiState::new();
+        let id = overview_snapshot(&ui).nodes[0].id.clone();
+        ui.overview_focus = Some(id.clone());
+        ui.reconcile_overview_dynamics();
+        let before = ui.overview_dynamics.positions()[&id];
+        ui.move_overview_selection((0.03, 0.0));
+        let moved = ui.overview_positions[&id];
+        assert!((moved.0 - before.0 - 0.03).abs() < 1e-5, "before {before:?}, moved {moved:?}, zoom {}", ui.overview_viewport.zoom);
+        ui.overview_roles.insert(id.clone(), "pinned".into());
+        ui.move_overview_selection((0.03, 0.0));
+        assert_eq!(ui.overview_positions[&id], moved);
+        ui.restore_overview_arrangement();
+        assert_eq!(ui.overview_roles[&id], "pinned");
+        assert!(ui.overview_positions.is_empty());
+    }
+
+    #[test]
+    fn absent_source_cannot_acquire_presentation_role() {
+        let mut ui = UiState::new();
+        ui.set_overview_background(OverviewNodeId::View("missing-owner".into()), true);
+        assert!(ui.overview_background.is_empty());
     }
 }
