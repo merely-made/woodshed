@@ -291,8 +291,11 @@ fn hooks(shared: &Rc<RefCell<Shared>>) -> HostHooks<UiState, Logic, UiChild> {
             let drive_rebuilt =
                 !drag_active || drive::requires_live_frame(&shared, ctx.runner.state());
             if drive_rebuilt {
-                ctx.runner
-                    .update(|ui| animating = drive::frame(&mut shared, ui) | ui.tick_overview_dynamics());
+                ctx.runner.update(|ui| {
+                    animating = drive::frame(&mut shared, ui)
+                        | ui.tick_overview_dynamics()
+                        | ui.tick_overview_atmosphere();
+                });
             }
             shared
                 .drag_frame_metrics

@@ -2289,3 +2289,41 @@ scripted native fixture flow at default UI zoom; personal encrypted vaults,
 browser/other-platform behavior, high zoom, screen-reader walks and the physical
 OS pointer-drag matrix are not established. Release packaging and delivery are
 separate work.
+
+
+### Shared ambient atmosphere beneath the session Mere (2026-10-07)
+
+**Status: implemented; 585 automated checks pass; native capture/reopen qualification pending.**
+The current Mere main review through `ea9e6da74` finds no changes to the
+native Cambium/canvas API since the primary `d041cc69b` pin. This slice uses
+Pictograph's existing `AmbientSim` seam without a dependency repin. Orbits uses
+64 seeded N-body particles; Cells uses a 32 by 24 seeded Game of Life grid.
+Both are optional, clipped to the graph viewport, and painted beneath its
+nodes and relationships. Their coordinates stay fixed to the viewport while
+the graph camera pans and zooms. The foreground graph alone owns interaction
+and accessibility targets.
+
+The atmosphere selector offers Off, Orbits and Cells, plus New pattern.
+Woodshed retains the selected kind and pattern seed as additive version 1
+presentation fields. Reopening reconstructs the deterministic initial pattern;
+it does not persist simulation internals. Legacy sessions default to Off,
+and unknown future presentation payloads retain the existing opaque-preservation
+behavior. Motion remains disabled by default, reduced motion freezes both
+arrangement and atmosphere, and hidden Mere views do not advance simulations.
+The pattern uses the same scene motion controls as the shared arrangement.
+
+Pan and item movement controls now sit behind Show movement controls; Fit,
+Restore and Zoom remain visible. The disclosure starts closed after reopening.
+Atmosphere is contextual paint: it does not infer musical relationships,
+modify Sets, start practice, or replace explicit foreground/background item
+roles. Arbitrary authored strata, interactive backdrop composition, portable
+scene recipes, and dynamics grammar editing remain open shared-stack work.
+
+Acceptance scenarios are `mere_atmosphere.scn` and
+`mere_atmosphere_reopen.scn`; the existing presentation scenarios expand the
+folded movement controls before acting. Automated coverage includes exact
+static paint/revision preservation, deterministic seeded reconstruction,
+legacy and retained presentation, offscreen motion gating, unchanged owner
+facts, viewport clipping/resizing, layer order, and graph-camera independence.
+Evidence is recorded under
+`/Users/markik/Code/testing/woodshed/atmosphere-20261007/`.

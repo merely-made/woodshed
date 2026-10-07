@@ -405,6 +405,19 @@ impl Snapshot<'_, '_> {
                 "overview-background",
                 ui.overview_background.len().to_string(),
             )
+            .with_field("overview-atmosphere", ui.overview_atmosphere.kind.as_str())
+            .with_field(
+                "overview-atmosphere-seed",
+                ui.overview_atmosphere.seed.to_string(),
+            )
+            .with_field(
+                "overview-atmosphere-revision",
+                ui.overview_ambient.revision().to_string(),
+            )
+            .with_field(
+                "overview-movement-controls",
+                ui.overview_movement_controls.to_string(),
+            )
             .with_field("overview-motion", ui.overview_motion.to_string())
             .with_field(
                 "overview-reduced-motion",

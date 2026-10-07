@@ -13,6 +13,8 @@ settle 3
 assert snap overview-background == 1
 click .overview-zoom-in Zoom in
 assert snap overview-zoom == 1.25
+click .overview-movement-toggle Show movement controls
+assert snap overview-movement-controls == true
 click .overview-pan-right Pan right
 click .overview-move-right Move selected right
 settle 3

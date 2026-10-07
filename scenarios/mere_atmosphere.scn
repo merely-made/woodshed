@@ -1,0 +1,44 @@
+# Shared ambient paint is opt-in, bounded, and independent of graph ownership.
+settle 3
+act mere-example
+click .workspace-panel Mere
+settle 3
+assert snap overview-active == true
+assert snap overview-atmosphere == none
+assert snap overview-movement-controls == false
+assert snap overview-reduced-motion == true
+assert snap overview-motion == false
+click .overview-atmosphere-orbits Orbits
+click .overview-atmosphere-seed New pattern
+settle 3
+assert snap overview-atmosphere == orbits
+assert snap overview-atmosphere-seed == 3
+assert snap overview-atmosphere-revision >= 1
+assert snap set-cards == 2
+click .overview-fit Fit scene
+capture 01_static_orbits
+click .overview-motion-toggle Enable scene motion
+settle 5
+assert snap overview-motion == true
+assert snap overview-reduced-motion == true
+assert snap overview-atmosphere == orbits
+capture 02_reduced_orbits
+click .overview-reduced-motion-toggle Allow scene motion
+settle 30
+assert snap overview-motion == true
+assert snap overview-reduced-motion == false
+assert snap overview-atmosphere-revision >= 2
+assert snap set-cards == 2
+capture 03_moving_orbits
+click .overview-motion-toggle Pause scene motion
+click .overview-reduced-motion-toggle Reduce scene motion
+click .overview-atmosphere-cells Cells
+settle 3
+assert snap overview-atmosphere == cells
+assert snap overview-atmosphere-seed == 3
+assert snap overview-motion == false
+assert snap overview-reduced-motion == true
+assert snap set-cards == 2
+click .overview-fit Fit scene
+capture 04_retained_cells
+log Ambient presentation retained

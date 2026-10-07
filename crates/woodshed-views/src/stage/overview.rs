@@ -274,6 +274,26 @@ impl UiState {
         self.overview_dynamics.tick()
     }
 
+    pub fn tick_overview_atmosphere(&mut self) -> bool {
+        if self.workspace.active_panel() != Some(WorkspacePanel::Overview) {
+            return false;
+        }
+        let changed = self.overview_ambient.reconcile(self.overview_atmosphere);
+        self.overview_ambient
+            .tick(self.overview_motion && !self.overview_reduced_motion)
+            | changed
+    }
+
+    pub fn set_overview_atmosphere(&mut self, kind: super::overview_atmosphere::AtmosphereKind) {
+        self.overview_atmosphere.kind = kind;
+        self.overview_ambient.reconcile(self.overview_atmosphere);
+    }
+
+    pub fn new_overview_atmosphere_pattern(&mut self) {
+        self.overview_atmosphere.seed = self.overview_atmosphere.seed.wrapping_add(2);
+        self.overview_ambient.reconcile(self.overview_atmosphere);
+    }
+
     pub fn move_overview_selection(&mut self, delta: (f32, f32)) {
         let Some(id) = self.overview_focus.clone() else {
             return;
@@ -482,7 +502,7 @@ pub(super) fn screen(ui: &UiState) -> UiChild {
             _ => {},
         },
     );
-    let controls: Vec<UiChild> = [
+    let mut controls: Vec<UiChild> = [
         ("Fit scene", "overview-fit", 0),
         ("Restore arrangement", "overview-restore", 1),
         ("Zoom in", "overview-zoom-in", 2),
@@ -518,6 +538,41 @@ pub(super) fn screen(ui: &UiState) -> UiChild {
                 10 => ui.move_overview_selection((0.0, -0.03)),
                 _ => ui.move_overview_selection((0.0, 0.03)),
             },
+        )) as UiChild
+    })
+    .collect();
+    let movement_controls = controls.split_off(4);
+    let atmosphere_controls: Vec<UiChild> = [
+        (
+            "Off",
+            "overview-atmosphere-none",
+            super::overview_atmosphere::AtmosphereKind::None,
+        ),
+        (
+            "Orbits",
+            "overview-atmosphere-orbits",
+            super::overview_atmosphere::AtmosphereKind::Orbits,
+        ),
+        (
+            "Cells",
+            "overview-atmosphere-cells",
+            super::overview_atmosphere::AtmosphereKind::Cells,
+        ),
+    ]
+    .into_iter()
+    .map(|(label, class, kind)| {
+        Box::new(clickable(
+            el("button", text(label))
+                .attr("class", format!("t-btn {class}"))
+                .attr(
+                    "aria-pressed",
+                    if ui.overview_atmosphere.kind == kind {
+                        "true"
+                    } else {
+                        "false"
+                    },
+                ),
+            move |ui: &mut UiState, _| ui.set_overview_atmosphere(kind),
         )) as UiChild
     })
     .collect();
@@ -762,12 +817,103 @@ pub(super) fn screen(ui: &UiState) -> UiChild {
                 ui.overview_notice
                     .as_ref()
                     .map(|notice| el("div", text(notice.clone())).attr("class", "overview-notice")),
-                el("div", controls).attr("class", "overview-instance-actions overview-camera-controls"),
-                el("div", (
-                    clickable(el("button", text(if ui.overview_motion { "Pause scene motion" } else { "Enable scene motion" })).attr("class", "t-btn overview-motion-toggle"), |ui: &mut UiState, _| { ui.overview_motion = !ui.overview_motion; ui.reconcile_overview_dynamics(); }),
-                    clickable(el("button", text(if ui.overview_reduced_motion { "Allow scene motion" } else { "Reduce scene motion" })).attr("class", "t-btn overview-reduced-motion-toggle"), |ui: &mut UiState, _| { ui.overview_reduced_motion = !ui.overview_reduced_motion; ui.reconcile_overview_dynamics(); }),
-                    el("div", text(if ui.overview_reduced_motion { "Reduced motion: static arrangement. Moving a selected item retains its placement." } else { "Spring arrangement: motion is opt-in. Moving an item changes presentation only." })).attr("class", "overview-detail"),
-                )).attr("class", "overview-instance-actions"),
+                el("div", controls).attr(
+                    "class",
+                    "overview-instance-actions overview-camera-controls",
+                ),
+                clickable(
+                    el(
+                        "button",
+                        text(if ui.overview_movement_controls {
+                            "Hide movement controls"
+                        } else {
+                            "Show movement controls"
+                        }),
+                    )
+                    .attr("class", "t-btn overview-movement-toggle")
+                    .attr(
+                        "aria-expanded",
+                        if ui.overview_movement_controls {
+                            "true"
+                        } else {
+                            "false"
+                        },
+                    ),
+                    |ui: &mut UiState, _| {
+                        ui.overview_movement_controls = !ui.overview_movement_controls;
+                    },
+                ),
+                ui.overview_movement_controls.then(|| {
+                    el("div", movement_controls).attr(
+                        "class",
+                        "overview-instance-actions overview-movement-controls",
+                    )
+                }),
+                el(
+                    "div",
+                    (
+                        el("span", text("Atmosphere")).attr("class", "overview-detail"),
+                        el("div", atmosphere_controls).attr("class", "overview-instance-actions"),
+                        (ui.overview_atmosphere.kind
+                            != super::overview_atmosphere::AtmosphereKind::None)
+                            .then(|| {
+                                clickable(
+                                    el("button", text("New pattern"))
+                                        .attr("class", "t-btn overview-atmosphere-seed"),
+                                    |ui: &mut UiState, _| ui.new_overview_atmosphere_pattern(),
+                                )
+                            }),
+                    ),
+                )
+                .attr(
+                    "class",
+                    "overview-instance-actions overview-atmosphere-controls",
+                ),
+                el(
+                    "div",
+                    (
+                        clickable(
+                            el(
+                                "button",
+                                text(if ui.overview_motion {
+                                    "Pause scene motion"
+                                } else {
+                                    "Enable scene motion"
+                                }),
+                            )
+                            .attr("class", "t-btn overview-motion-toggle"),
+                            |ui: &mut UiState, _| {
+                                ui.overview_motion = !ui.overview_motion;
+                                ui.reconcile_overview_dynamics();
+                            },
+                        ),
+                        clickable(
+                            el(
+                                "button",
+                                text(if ui.overview_reduced_motion {
+                                    "Allow scene motion"
+                                } else {
+                                    "Reduce scene motion"
+                                }),
+                            )
+                            .attr("class", "t-btn overview-reduced-motion-toggle"),
+                            |ui: &mut UiState, _| {
+                                ui.overview_reduced_motion = !ui.overview_reduced_motion;
+                                ui.reconcile_overview_dynamics();
+                            },
+                        ),
+                        el(
+                            "div",
+                            text(if ui.overview_reduced_motion {
+                                "Reduced motion: arrangement and atmosphere stay still."
+                            } else {
+                                "Scene motion animates arrangement and atmosphere."
+                            }),
+                        )
+                        .attr("class", "overview-detail"),
+                    ),
+                )
+                .attr("class", "overview-instance-actions"),
                 el("div", graph).attr("class", "overview-graph"),
                 el(
                     "div",
@@ -853,6 +999,32 @@ mod tests {
             serde_json::to_value(&before).unwrap()
         );
         assert_eq!(ui.retained_sets.entries.len(), 1);
+    }
+
+    #[test]
+    fn atmosphere_ticks_only_visible_unreduced_scene_and_preserves_owner_facts() {
+        let mut ui = with_card();
+        let owner = serde_json::to_value(&ui.set).unwrap();
+        ui.set_overview_atmosphere(super::super::overview_atmosphere::AtmosphereKind::Orbits);
+        let initial = ui.overview_ambient.revision();
+        ui.overview_motion = true;
+        ui.overview_reduced_motion = false;
+        ui.activate_workspace_panel(WorkspacePanel::Practice);
+        assert!(!ui.tick_overview_atmosphere());
+        assert_eq!(ui.overview_ambient.revision(), initial);
+        ui.activate_workspace_panel(WorkspacePanel::Overview);
+        ui.overview_reduced_motion = true;
+        assert!(!ui.tick_overview_atmosphere());
+        assert_eq!(ui.overview_ambient.revision(), initial);
+        ui.overview_reduced_motion = false;
+        assert!(ui.tick_overview_atmosphere());
+        assert!(ui.overview_ambient.revision() > initial);
+        ui.overview_motion = false;
+        assert!(!ui.tick_overview_atmosphere());
+        ui.new_overview_atmosphere_pattern();
+        assert_eq!(ui.overview_atmosphere.seed, 3);
+        assert_eq!(serde_json::to_value(&ui.set).unwrap(), owner);
+        assert!(!ui.rehearsal_running && !ui.song_playing && !ui.tuner.enabled);
     }
 
     #[test]
@@ -995,7 +1167,11 @@ mod presentation_tests {
         let before = ui.overview_dynamics.positions()[&id];
         ui.move_overview_selection((0.03, 0.0));
         let moved = ui.overview_positions[&id];
-        assert!((moved.0 - before.0 - 0.03).abs() < 1e-5, "before {before:?}, moved {moved:?}, zoom {}", ui.overview_viewport.zoom);
+        assert!(
+            (moved.0 - before.0 - 0.03).abs() < 1e-5,
+            "before {before:?}, moved {moved:?}, zoom {}",
+            ui.overview_viewport.zoom
+        );
         ui.overview_roles.insert(id.clone(), "pinned".into());
         ui.move_overview_selection((0.03, 0.0));
         assert_eq!(ui.overview_positions[&id], moved);
