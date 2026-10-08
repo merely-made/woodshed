@@ -107,8 +107,10 @@ before any other doc in this directory.
   pass, with four reviewed captures and zero buffer errors in the qualified runs.
   The bounded preview-worker follow-up moves Hear/step synthesis off the UI
   caller, bounds pending work to the latest request, and cancels obsolete PCM
-  across transport changes and shutdown. The 138-test audio gate passes;
-  committed native seed/reopen and hardware qualification are pending.
+  across transport changes, rehearsal Pause and shutdown. All 577 checks pass;
+  six reviewed captures qualify committed native seed/reopen. Committed scale
+  enqueue takes 0.014–0.061 ms; a monitor-only startup event is preserved beside
+  the zero-event repeat and song regression. The receipt records the boundaries.
   The October 7 captured-scale-pattern follow-up extends copied instructions
   to degree pairs in thirds/fourths, with base-scale exploration and unchanged
   owner boundaries. The 613-check gate and committed desktop build pass; eight

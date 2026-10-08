@@ -1,0 +1,128 @@
+{
+  "date": "2026-10-08",
+  "baseline_revision": "0f104028523b22cd2f13ee0ff73f3cc889b3d873",
+  "implementation_revision": "c97be580c177cc866e71de96b1225b8eb86ceb40",
+  "native_revision": "c97be580c177cc866e71de96b1225b8eb86ceb40",
+  "automated_checks": {
+    "audio": 138,
+    "core_unit": 211,
+    "core_integration": 1,
+    "views": 148,
+    "desktop": 79,
+    "total": 577
+  },
+  "device": {
+    "name": "iMac Speakers",
+    "rate": 48000,
+    "channels": 2,
+    "frames": 512,
+    "muted_hardware_diagnostics": true
+  },
+  "native_binary_sha256": "d576da85d21a6b04ff10f2e9dfa2502a069e611dcfa0fdfd8a54f9d00ac766a0",
+  "binaries": {
+    "audio_ddx-baseline": "268efb6801426223252baad6bca06da0b0db2fe909a5e5fcbb4b3557ebfaec3f",
+    "audio_ddx-committed": "6e974d73dda96f1c752871e4d03f26f1460f2065e078561cb687e89a5092e514"
+  },
+  "hardware": {
+    "baseline-scale": {
+      "device_events": 0,
+      "max_callback_gap_us": 10716,
+      "log_sha256": "a532a31c2a573db6527fb06815fd4a5bb33ce9c0271c755a27d085ce209d9d38",
+      "caller_work_ms": [
+        608.217,
+        478.97,
+        631.302
+      ],
+      "completed_work_ms": [],
+      "buffer_error_log_lines": 0
+    },
+    "committed-scale": {
+      "device_events": 1,
+      "max_callback_gap_us": 13693,
+      "log_sha256": "cc20b6515ce484bc431c11f89b9be216c89cb29f485e46d5f99ceec1d360af56",
+      "caller_work_ms": [
+        0.017,
+        0.017,
+        0.019
+      ],
+      "completed_work_ms": [
+        534.926,
+        590.39,
+        945.795
+      ],
+      "buffer_error_log_lines": 1,
+      "observation": "One monitor-only startup event at 0.196 s, before Woodshed engines were created; no preview-phase events. Retained and followed by a zero-event repeat."
+    },
+    "committed-scale-repeat": {
+      "device_events": 0,
+      "max_callback_gap_us": 12537,
+      "log_sha256": "ca7823468381fa46ed1e744588bd890e3fd31e54faf38cf95d95e37acdf7c31d",
+      "caller_work_ms": [
+        0.014,
+        0.042,
+        0.061
+      ],
+      "completed_work_ms": [
+        1759.834,
+        1910.83,
+        1498.464
+      ],
+      "buffer_error_log_lines": 0
+    },
+    "committed-song": {
+      "device_events": 0,
+      "max_callback_gap_us": 10734,
+      "log_sha256": "3e94e6e7e96e0acc14cae6377ddb8958042b63e4d52b8c73a1c377618500369a",
+      "caller_work_ms": [
+        39.976,
+        0.007,
+        61.59
+      ],
+      "completed_work_ms": [],
+      "buffer_error_log_lines": 0
+    }
+  },
+  "native": {
+    "seed": {
+      "result": "ok",
+      "presented_frames": 162,
+      "redraws": 163,
+      "unpresented_redraws": 1,
+      "blank_captures": 0,
+      "buffer_errors": 0,
+      "log_sha256": "aeec100d9dbdd4946161ca88f5c892d8cfa3cd188fa2c79083ef4a1f492dd92b",
+      "scenario_sha256": "8a546ee70691d357cd16cf1f8ac3acad111ad34387a314a7c0a21af6f5f211e2",
+      "reviewed_pngs": {
+        "01_captured_recipe.png": "2ec04fafe34b92a1927f012b7d2b6971ad6ddda2becd91d6013145ca60211068",
+        "02_recipe_scene.png": "6b48b506e331818b8fadf98100685e26599d10ec9fbe321be2e708f42e963cfa",
+        "03_latest_hear.png": "7eb1a4b853f4e716ce0575382e7b02443a5f1f0490ce1d59cb1144b7e25d0ce9"
+      },
+      "process_exited": true
+    },
+    "reopen": {
+      "result": "ok",
+      "presented_frames": 165,
+      "redraws": 166,
+      "unpresented_redraws": 1,
+      "blank_captures": 0,
+      "buffer_errors": 0,
+      "log_sha256": "c5b454350a779db7da7127a1193c2f45ff7477ae00205db036bf073cba71a0a1",
+      "scenario_sha256": "3f8ddce318582fce3123d11c00acc66654465f09004d355029589dcc60c5fb88",
+      "reviewed_pngs": {
+        "01_recipe_reopened.png": "153a079ffd4eee64c8cd7f73e0adadea3efaaaa8f8d8e175b9399833e43ba34e",
+        "02_reopened_scene.png": "87a6cbcc751fb5aec8cdf63f06de510b752920e66bf2b920d917276e83a0a987",
+        "03_paused_rehearsal.png": "4ec70a26bc757d384049782d528cbe82257ee08281c363a8cbe8c2dc069da3e0"
+      },
+      "process_exited": true
+    }
+  },
+  "local_artifact_root": "/Users/markik/Code/testing/woodshed/preview-worker-20261008",
+  "native_ui_observation": "Initial getApp state queries returned AXError.cannotComplete for both short-lived self-drive launches. Each app completed successfully and exited; no state retry or relaunch was performed. Reviewed GPU captures and presentation/result receipts establish the native replay.",
+  "visual_review": "Six captures reviewed. Hear/Add/Pause controls are readable; Fit scene captures contain the retained recipe and connected nodes. Inspector captures show a scrolled portion of the graph. This audio slice claims no new responsive-layout qualification.",
+  "boundaries": [
+    "Song chord preparation remains synchronous on caller.",
+    "Existing callback mutexes and recording allocations remain.",
+    "Persistence uses an isolated unsealed fixture.",
+    "No acoustic listening, other-device, release signing or publication qualification."
+  ]
+}

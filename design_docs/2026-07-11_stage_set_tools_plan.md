@@ -2749,7 +2749,7 @@ evidence remains in the local artifact directory noted above.
 
 ### October 8 follow-up: bounded preview synthesis worker
 
-**Status: implemented; audio/core/views/desktop gates pass; native qualification pending.**
+**Status: implemented and qualified; gates, committed hardware control and native seed/reopen pass.**
 
 This Woodshed-owned slice starts at clean main
 `0f104028523b22cd2f13ee0ff73f3cc889b3d873`. It preserves the current Mere/Genet
@@ -2794,3 +2794,31 @@ work. Evidence lives in
 Song-cache preparation remains synchronous on the caller. Callback mutexes,
 recording allocation, broad startup/layout performance, acoustic quality and
 release packaging remain separate acceptance boundaries.
+
+
+Committed-source qualification (`c97be58`): 577 checks pass (138 audio, 212 core,
+148 views and 79 desktop), and both committed builds pass. The long-scale
+baseline takes 478.970–631.302 ms on the caller; six committed enqueue trials
+return in 0.014–0.061 ms. Completion is separately awaited and takes
+534.926–1910.830 ms in those runs. This confirms UI responsiveness without
+claiming faster synthesis. One monitor-only startup event at 0.196 s precedes
+Woodshed engine creation in the first committed control, with no subsequent
+preview events. Its repeat has zero events and a 12.537 ms maximum callback
+gap. The committed cold/warm/edited song control also has zero events and a
+10.734 ms maximum gap. The startup observation remains retained.
+
+The committed native seed/fresh-process reopen complete with 162/165
+presentations, six reviewed nonblank PNGs and zero buffer-error logs. Repeated
+Hear publishes one voice; Rewind clears voices/work. The saved 92 BPM Thirds
+recipe retains deleted-source provenance, pin/background state and Orbits.
+Reopen Hear/Add preserves copied instructions, and rehearsal Run/Pause ends
+with zero preview work/voices; the final Set has four Cards. Inspector captures
+show the scrolled graph portion, while Fit scene shows the connected nodes.
+No new responsive-layout acceptance is claimed. Both processes exit. Initial
+UI-state queries return AXError.cannotComplete for these short-lived launches;
+no query retry or accidental relaunch is performed. In-process results,
+presentation receipts and reviewed GPU-readback PNGs establish acceptance.
+The portable receipt and concise logs are committed in
+`validation/preview-worker_20261008/`; full local evidence remains in the
+artifact directory noted above. This qualifies native dispatch and unsealed
+fixture reopening, preserving the acoustic/vault/release boundaries.

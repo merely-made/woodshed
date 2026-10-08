@@ -1,0 +1,9 @@
+DDX mode=scale device=DeviceDescription { name: "iMac Speakers", manufacturer: None, driver: None, device_type: Unknown, interface_type: Unknown, direction: Output, address: None, extended: [] } config=SupportedStreamConfig { channels: 2, sample_rate: 48000, buffer_size: Range { min: 15, max: 4096 }, sample_format: F32 }
+DDX negotiated_frames=Ok(512)
+DDX 4.198s trial=0 begin
+DDX 4.807s trial=0 work_ms=608.217
+DDX 6.808s trial=1 begin
+DDX 7.287s trial=1 work_ms=478.970
+DDX 9.292s trial=2 begin
+DDX 9.923s trial=2 work_ms=631.302
+DDX complete callbacks=1100 device_events=0 max_callback_gap_us=10716
