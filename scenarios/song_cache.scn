@@ -25,8 +25,9 @@ settle 3
 click .t-btn Rewind
 click .t-btn Root: C
 settle 3
-click .t-btn +
+click .t-narrow +
 settle 3
+assert snap song-bars == 4
 assert snap song-first-root == 1
 assert snap song-first-bpm == 245
 click .t-btn Play
