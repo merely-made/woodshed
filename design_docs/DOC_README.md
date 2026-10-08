@@ -96,8 +96,10 @@ before any other doc in this directory.
   surface does not reproduce in the current replay; its original cause is unproven.
   The October 7 captured-scale-pattern follow-up extends copied instructions
   to degree pairs in thirds/fourths, with base-scale exploration and unchanged
-  owner boundaries. The 613-check gate and desktop build pass; native save/reopen
-  qualification is pending.
+  owner boundaries. The 613-check gate and committed desktop build pass; eight
+  reviewed wide/narrow native captures qualify source deletion and fresh-process
+  saved-pattern replay/addition. Audio backend buffer errors remain recorded
+  separately from state and dispatch acceptance.
   The October 7 captured-arpeggio follow-up extends the shelf with copied
   playable instructions, historical source provenance and direct saved-recipe
   Hear/Add actions. The 607-check gate and committed desktop build pass; eight
