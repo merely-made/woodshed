@@ -1,0 +1,20 @@
+[woodshed] practice sealed to persona "tabard-acceptance" (passphrase-encrypted vault at /var/folders/nt/xlxwlg695b399ck_h55sfwtc0000gn/T/woodshed-visual-wide-6yr66zj8/identity/personae/vault/vault.json)
+[cambium-winit] window-frame backend=macos policy=App decorated=true transparent=false
+[genet-render-host] surface acquire skipped: Occluded
+[cambium-winit] accessibility Installed, 279 nodes projected
+[cambium-host] initial reveal macos app_active=false app_hidden=false policy=NSApplicationActivationPolicy(0) launched=true window_visible=true key=false can_key=true active_space=true occlusion=NSWindowOcclusionState(8192) frame=CGRect { origin: CGPoint { x: 690.0, y: 320.0 }, size: CGSize { width: 1180.0, height: 800.0 } }
+[genet-render-host] surface acquire skipped: Occluded
+[cambium-host] unpresented redraw macos app_active=false app_hidden=false policy=NSApplicationActivationPolicy(0) launched=true window_visible=true key=false can_key=true active_space=true occlusion=NSWindowOcclusionState(8192) frame=CGRect { origin: CGPoint { x: 690.0, y: 320.0 }, size: CGSize { width: 1180.0, height: 800.0 } }
+[cambium-host] unpresented redraw visible=Some(true) focused=false minimized=Some(false)
+[genet-render-host] surface acquire skipped: Occluded
+[cambium-host] unpresented redraw macos app_active=false app_hidden=false policy=NSApplicationActivationPolicy(0) launched=true window_visible=true key=false can_key=true active_space=true occlusion=NSWindowOcclusionState(8192) frame=CGRect { origin: CGPoint { x: 690.0, y: 320.0 }, size: CGSize { width: 1180.0, height: 800.0 } }
+[cambium-host] unpresented redraw visible=Some(true) focused=false minimized=Some(false)
+woodshed-genet: Shared Tabard appearance authoring in Woodshed
+woodshed-genet: captured appearance_settings
+woodshed-genet: captured appearance_workshop
+woodshed-genet: captured appearance_applied
+woodshed-genet: captured appearance_narrow_reader
+woodshed-genet: captured appearance_narrow_graph
+woodshed-genet: captured appearance_resized_applied
+woodshed-genet: Shared Tabard appearance acceptance complete
+woodshed-genet: RESULT ok (52 frames, 6 captures)

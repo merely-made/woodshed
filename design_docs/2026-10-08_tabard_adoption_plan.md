@@ -1,10 +1,11 @@
 # Shared Tabard authoring and native title bars
 
-**Status — 2026-10-08: implementation and retained-host qualification complete;
-native visual acceptance blocked.** Woodshed is the first application consumer
-of the shared Tabard workshop. The actual native scenario reaches the redraw
-loop but cannot present a frame on this macOS compositor. Its failure receipt
-is preserved separately from passing retained-host and durable-library checks.
+**Status — 2026-10-08: implementation, retained-host qualification and macOS
+native visual acceptance complete.** Woodshed is the first application consumer
+of the shared Tabard workshop. Four LaunchServices runs produce 14 nonblank
+captures, including same-window resizing and fresh-process saved-theme reopen.
+The earlier background-child launch failure is retained as historical evidence;
+normal application launching presents successfully without a host bypass.
 
 ## Scope and ownership
 
@@ -114,20 +115,29 @@ Tests of persistent settings do not substitute for these visual receipts.
   After that correction, all 79 native tests passed, including five new
   device-free input-route regressions. Native build, scoped Clippy and the
   locked wasm web check pass; remaining Clippy statements are inherited.
-- Phase 4 remains open. The rebuilt Woodshed native fixture exits with
+- The earlier background-child attempt exited with
   `RESULT fail`: 147 redraws, zero presentations, zero captures, and the
   independent 10-second presentation stall deadline. Unlike the earlier
   microphone wait, this run reaches the scenario lane and writes its receipt.
   The native process exits zero, so the receipt must also be checked. The
-  fresh-process reopen fixture was not run because the first scenario never
-  advanced or saved its theme. No visual, window-resize or native accessibility
-  success is claimed. Evidence and commands are in
+  fresh-process reopen fixture was not run in that attempt because the first
+  scenario never advanced or saved its theme. Evidence and commands are in
   [the adoption receipts](../validation/tabard-adoption_20261008/README.md).
+- Phase 4 now passes on macOS 15.8.1, Intel, at device scale 2. The same production
+  binary built from `2fa89ca61d75a9a03bf5e301eb658e696d74e44f` runs through a
+  temporary application bundle and LaunchServices. Wide and narrow seed/reopen
+  lanes all report `RESULT ok`: 132 presentations, 14 captures, zero blanks.
+  Visual review confirms the shared title-bar actions, selection, Save/Apply/Back,
+  reader glyphs, syntax spans and graph selection survive actual resizing.
+  [Native visual receipts](../validation/tabard-adoption_20261008/visual/README.md)
+  preserve all images, complete receipts, logs and binary/scenario hashes.
 
 ## Deferred work
 
 Other consumers, including Turnstone, the Knot editor and Cleromancy, are
 candidates for subsequent adoption. This change qualifies one application.
-Platform-specific visual/native-accessibility acceptance requires a working
-interactive compositor on each platform; no Windows or Linux headed result
-is implied by macOS compilation or retained-host tests.
+Windows/Linux headed acceptance, native OS decorations and live screen-reader
+acceptance remain separate platform work. The captures cover the application's
+rendered client area, not the operating system's traffic lights. Existing gold
+selected navigation labels on pale Woodshed Settings surfaces remain a
+nonblocking legibility follow-up; no formal contrast audit is claimed.
