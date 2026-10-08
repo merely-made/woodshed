@@ -342,7 +342,26 @@ impl Snapshot<'_, '_> {
             .map(|card| card.label.clone())
             .unwrap_or_default();
         let reading = ui.relationship_reading().ok().flatten();
+        let appearance = ui.appearance.resolve(&ui.app_settings.appearance);
         let mut snap = ProbeSnapshot::default()
+            .with_field("appearance-theme", appearance.theme.id)
+            .with_field("appearance-mode", appearance.mode.as_key())
+            .with_field(
+                "appearance-authoring",
+                ui.appearance_authoring_available.to_string(),
+            )
+            .with_field(
+                "appearance-workshop",
+                ui.appearance.workshop_open.to_string(),
+            )
+            .with_field(
+                "appearance-dirty",
+                ui.appearance.workshop.has_changes().to_string(),
+            )
+            .with_field(
+                "appearance-name",
+                ui.appearance.workshop.draft_theme().name.clone(),
+            )
             .with_field("recipe-valid", reading.is_some().to_string())
             .with_field("recipe-label", reading.as_ref().map(|r|r.snapshot.recipe.definition.label.as_str()).unwrap_or(""))
             .with_field("recipe-spacing", reading.as_ref().map(|r|r.snapshot.recipe.definition.arrangement.spacing).unwrap_or(0).to_string())

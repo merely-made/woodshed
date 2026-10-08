@@ -1,0 +1,12 @@
+   Compiling woodshed-genet v0.1.0 (/Users/markik/Code/repos/woodshed/crates/woodshed-genet)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 8.25s
+     Running unittests src/main.rs (/Users/markik/Code/targets/woodshed-tabard/debug/deps/woodshed_genet-13420a01bc444bc3)
+
+running 5 tests
+test audio::tests::ordinary_synchronization_and_polls_do_not_open_microphone ... ok
+test audio::tests::recording_retry_restores_pending_tuner_enable_on_same_session ... ok
+test audio::tests::explicit_calibration_and_recording_requests_retry_without_losing_output_error ... ok
+test audio::tests::failed_tuner_enable_is_visible_and_only_explicit_reenable_retries ... ok
+test audio::tests::each_input_feature_can_open_the_one_shared_session ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 74 filtered out; finished in 0.00s

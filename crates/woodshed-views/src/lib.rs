@@ -9,6 +9,7 @@
 //! (scale sidebar clicks select), styled by [`theme`]'s Slate sheet. The S0
 //! static [`demo`] module is kept for host smoke tests until S2.
 
+pub mod appearance;
 pub mod demo;
 pub mod fretboard_leaf;
 pub mod persona;

@@ -1,0 +1,8 @@
+{
+  "process_exit": null,
+  "timeout": true,
+  "captures": 0,
+  "scenario": "scenarios/tabard_appearance.scn",
+  "mere_revision": "7d2a5f3cfe97174058368073d2bae809fffbf902",
+  "consumer_state": "appearance adoption working tree before deferred microphone initialization"
+}

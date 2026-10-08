@@ -251,6 +251,7 @@ pub struct Shared {
 
     /// Theme the current sheet was generated from; a change re-skins.
     pub theme: ThemeMode,
+    pub appearance_sheet: Option<String>,
     /// The accessibility skin the current sheet was generated with; a change
     /// re-skins alongside the theme.
     pub reduce_motion: bool,
@@ -307,6 +308,7 @@ impl Shared {
             seal,
             pending_roster,
             theme: ThemeMode::default(),
+            appearance_sheet: None,
             reduce_motion: false,
             text_scale: "Normal".into(),
             last_arp_step: None,
@@ -332,6 +334,9 @@ impl Shared {
     /// (reduced motion, text scale). Regenerated on a theme or preference
     /// change; the host relayouts under whatever this returns.
     pub fn accessible_sheet(&self) -> String {
+        if let Some(sheet) = &self.appearance_sheet {
+            return sheet.clone();
+        }
         woodshed_views::theme::apply_accessibility(
             self.theme.css(),
             self.reduce_motion,
@@ -339,23 +344,12 @@ impl Shared {
         )
     }
 
-    /// Adopt the skin settings a frame observed. Returns the new sheet when one
-    /// of them changed, for the caller to hand the host.
-    pub fn reskin_if_changed(
-        &mut self,
-        theme: ThemeMode,
-        reduce_motion: bool,
-        text_scale: String,
-    ) -> Option<String> {
-        if theme == self.theme
-            && reduce_motion == self.reduce_motion
-            && text_scale == self.text_scale
-        {
+    /// Compare the resolved sheet, including authored definitions and editor state.
+    pub fn reskin_sheet(&mut self, sheet: String) -> Option<String> {
+        if self.appearance_sheet.as_ref() == Some(&sheet) {
             return None;
         }
-        self.theme = theme;
-        self.reduce_motion = reduce_motion;
-        self.text_scale = text_scale;
-        Some(self.accessible_sheet())
+        self.appearance_sheet = Some(sheet.clone());
+        Some(sheet)
     }
 }

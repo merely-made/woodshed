@@ -19,9 +19,10 @@
 //! | `after_frame` | pump the scenario one step ([`scenario`]) |
 //! | `after_wake` | no worker channel to drain yet |
 //! | `close_request` | exit: Woodshed has no background operation to retain |
-//! | `focused_text` | which of the two text fields has the caret ([`text`]) |
+//! | `focused_text` | the focused product or shared workshop text field ([`text`]) |
 //! | `key_intercept` | Escape closes an open dropdown |
 
+mod appearance;
 mod audio;
 mod drive;
 #[cfg(test)]
@@ -39,9 +40,10 @@ mod text;
 use std::cell::RefCell;
 use std::rc::Rc;
 
-use cambium::{clickable, el, text as text_node};
+use cambium::{el, text as text_node, title_bar};
 use cambium_genet_winit_host::{
-    HostHooks, HostOptions, Init, Key, KeyPress, NamedKey, Runner, WindowCommands, run,
+    CaptionLabels, HostHooks, HostOptions, Init, Key, KeyPress, NamedKey, Runner, WindowCommands,
+    WindowFrame, platform_caption_controls, run,
 };
 use woodshed_core::audio::AudioBackend as _;
 use woodshed_core::midi::MidiBackend as _;
@@ -52,72 +54,17 @@ use crate::audio::CpalBackend;
 use crate::shared::Shared;
 use crate::sync::{Ctx, Logic};
 
-/// One caption button. The glyph is what the eye reads; `aria-label` is what
-/// the ear gets — without it a screen reader announces these as "dash",
-/// "white square", and "multiplication sign".
-///
-/// The handler captures the window-verb handle rather than setting a flag on
-/// `UiState`: window control is a desktop concern, and the shared state is
-/// also the browser host's.
-fn caption(
-    glyph: &'static str,
-    name: &'static str,
-    class: &'static str,
-    commands: &WindowCommands,
-    verb: fn(&WindowCommands),
-) -> UiChild {
-    let commands = commands.clone();
-    Box::new(clickable(
-        el("div", text_node(glyph))
-            .attr("class", class)
-            .attr("role", "button")
-            .attr("aria-label", name),
-        move |_ui: &mut UiState, _| verb(&commands),
-    ))
-}
-
-/// Desktop-only frame. The shared Woodshed root deliberately contains product
-/// UI only, so a browser host does not inherit window controls it cannot use.
-///
-/// The bar itself carries `--app-region: drag` in the sheet, so moving the
-/// window, double-click-to-maximize, and the right-click system menu are the
-/// host's and need no handler here.
+/// The shared title bar owns native insets, drag regions and caption actions.
 fn desktop_chrome(commands: &WindowCommands) -> UiChild {
-    Box::new(
-        el(
-            "div",
-            (
-                el("div", text_node("Woodshed")).attr("class", "chrome-title"),
-                // Spacer. Hidden from the accessibility tree: it is a
-                // grabbable gap, not a control, and would otherwise be a
-                // focus stop that announces "group" and does nothing.
-                el("div", ())
-                    .attr("class", "chrome-drag")
-                    .attr("aria-hidden", "true"),
-                caption(
-                    "–",
-                    "Minimize",
-                    "chrome-btn",
-                    commands,
-                    WindowCommands::minimize,
-                ),
-                caption(
-                    "□",
-                    "Maximize",
-                    "chrome-btn",
-                    commands,
-                    WindowCommands::toggle_maximize,
-                ),
-                caption(
-                    "×",
-                    "Close",
-                    "chrome-btn chrome-close",
-                    commands,
-                    WindowCommands::close,
-                ),
-            ),
-        )
-        .attr("class", "chrome"),
+    title_bar(
+        Box::new(
+            el("span", text_node("W"))
+                .attr("class", "woodshed-mark")
+                .attr("aria-hidden", "true"),
+        ),
+        Box::new(el("span", text_node("Woodshed")).attr("class", "chrome-title")),
+        Box::new(String::new()),
+        platform_caption_controls(commands, &CaptionLabels::default()),
     )
 }
 
@@ -156,10 +103,12 @@ fn boot_state(
     // persona while the store was sealed to one. One assignment, both paths,
     // and they cannot drift apart again.
     ui.seal = shared.seal.clone();
+    appearance::load_library(&mut ui);
     shared.theme = ui.theme();
     shared.reduce_motion = ui.app_settings.accessibility.reduce_motion;
     shared.text_scale = ui.app_settings.accessibility.text_scale.clone();
-    let sheet = shared.accessible_sheet();
+    let sheet = appearance::stylesheet(&ui);
+    shared.appearance_sheet = Some(sheet.clone());
     // Populate the MIDI port pickers with what's plugged in now.
     ui.midi.input_ports = shared.midi.input_ports();
     ui.midi.output_ports = shared.midi.output_ports();
@@ -276,6 +225,7 @@ fn hooks(shared: &Rc<RefCell<Shared>>) -> HostHooks<UiState, Logic, UiChild> {
     let dispatch_shared = shared.clone();
     let after_frame_shared = shared.clone();
     let close_shared = shared.clone();
+    let mut previews = appearance::PreviewBindings::default();
     HostHooks {
         frame: Box::new(move |ctx: &mut Ctx<'_>| {
             let mut shared = frame_shared.borrow_mut();
@@ -308,6 +258,7 @@ fn hooks(shared: &Rc<RefCell<Shared>>) -> HostHooks<UiState, Logic, UiChild> {
             } else {
                 leaves::sync_all(&mut shared, ctx.runner.state(), ctx.leaves);
             }
+            previews.sync(ctx);
             shared.drag_frame_metrics.note_leaves(phase.elapsed());
             animating
         }),
@@ -328,7 +279,7 @@ fn hooks(shared: &Rc<RefCell<Shared>>) -> HostHooks<UiState, Logic, UiChild> {
             if let Some(geometry) = ctx.geometry {
                 persist_window_geometry(&mut close_shared.borrow_mut(), ctx, geometry);
             }
-            cambium_genet_winit_host::CloseDisposition::Exit
+            appearance::close_request(ctx)
         }),
         focused_text: Box::new(text::focused_text),
         key_intercept: Box::new(escape_policy),
@@ -343,7 +294,8 @@ fn main() {
         title: "Woodshed".into(),
         // CSD: the app draws its own chrome (title row, window buttons, drag
         // surface); the host supplies the edge-resize grab margins and cursors.
-        decorations: false,
+        window_frame: WindowFrame::App,
+        maximize_control_label: CaptionLabels::default().maximize,
         initial_logical_size: (1_100.0, 664.0),
         initial_geometry,
         // A scenario run asks for a deterministic window: a receipt captured at
@@ -371,5 +323,91 @@ mod tests {
             maximized: true,
         };
         assert_eq!(to_host_geometry(to_window_settings(host)), host);
+    }
+    fn appearance_harness() -> cambium_genet_winit_host::Harness<UiState, Logic, UiChild> {
+        let mut ui = UiState::new();
+        ui.appearance_authoring_available = true;
+        ui.appearance
+            .begin_edit(&ui.app_settings.appearance)
+            .unwrap();
+        cambium_genet_winit_host::Harness::with_command_init(
+            move |commands| {
+                let commands = commands.clone();
+                let sheet = appearance::stylesheet(&ui);
+                Init {
+                    state: ui,
+                    logic: Box::new(move |ui: &UiState| desktop_root(ui, &commands)) as Logic,
+                    sheet,
+                    fonts: vec![],
+                    images: vec![],
+                }
+            },
+            HostHooks {
+                focused_text: Box::new(text::focused_text),
+                after_dispatch: Box::new(appearance::after_dispatch),
+                close_request: Box::new(|ctx, _| appearance::close_request(ctx)),
+                ..cambium_genet_winit_host::inert_hooks()
+            },
+            HostOptions {
+                window_frame: WindowFrame::App,
+                ..Default::default()
+            },
+        )
+    }
+
+    #[test]
+    fn native_workshop_routes_name_and_stylesheet_text_through_owned_model() {
+        use taproot::Selector;
+        let mut h = appearance_harness();
+        h.layout_at(1180.0, 2000.0);
+        assert!(
+            h.click_on(&Selector::role("button").with_attr("data-action", "toggle-stylesheet"))
+        );
+        let name = Selector::role("textbox").with_attr("data-field", "name");
+        assert!(h.click_on(&name));
+        let before = h.state().appearance.workshop.draft_theme().name.clone();
+        h.key_injected(" integration");
+        assert_ne!(h.state().appearance.workshop.draft_theme().name, before);
+        assert!(
+            h.state()
+                .appearance
+                .workshop
+                .draft_theme()
+                .name
+                .contains("integration")
+        );
+        let sheet = Selector::role("textbox").with_attr("data-field", "mode-sheet");
+        // The stylesheet inspector owns the textarea; focus routing must also
+        // work for textarea nodes, rather than only Woodshed's input fields.
+        assert!(h.click_on(&sheet));
+        assert!(text::focused_text(h.runner()).is_some());
+        h.key_injected("body { color: #abcdef; }");
+        assert!(
+            h.state()
+                .appearance
+                .workshop
+                .text_field("mode-sheet")
+                .unwrap()
+                .text()
+                .contains("#abcdef")
+        );
+    }
+
+    #[test]
+    fn shared_title_bar_fills_viewport_and_keeps_editor_below_it() {
+        use taproot::Selector;
+        let mut h = appearance_harness();
+        for (width, height) in [(1180.0, 800.0), (640.0, 800.0)] {
+            h.layout_at(width, height);
+            let bar =
+                h.with_dom(|dom| taproot::matching(dom, &Selector::class("cambium-title-bar"))[0]);
+            let (x, y, w, _) = h.painted_rect(bar).unwrap();
+            assert!(x.abs() < 1.0 && y.abs() < 1.0);
+            assert!((w - width).abs() < 1.0, "titlebar {w} viewport {width}");
+            let editor =
+                h.with_dom(|dom| taproot::matching(dom, &Selector::class("woodshed-workshop"))[0]);
+            let (_, top, _, _) = h.painted_rect(editor).unwrap();
+            assert!(top >= 36.0);
+        }
     }
 }

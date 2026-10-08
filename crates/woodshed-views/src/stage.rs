@@ -853,6 +853,10 @@ pub struct UiState {
     pub overview_unrecognized_presentation_json: Option<String>,
     pub practice_history: PracticeHistory,
     pub app_settings: AppSettings,
+    pub appearance: crate::appearance::AppearanceState,
+    pub appearance_notice: Option<String>,
+    pub appearance_authoring_available: bool,
+    pub appearance_close_app: bool,
     /// Woodshed's bounded workspace over the existing product surfaces. The shared component
     /// owns its tab/split mechanics; Woodshed maps the selected panel back to these views.
     pub workspace: WoodshedWorkspace,
@@ -1067,6 +1071,10 @@ impl UiState {
             overview_unrecognized_presentation_json: None,
             practice_history: PracticeHistory::default(),
             app_settings,
+            appearance: Default::default(),
+            appearance_notice: None,
+            appearance_authoring_available: false,
+            appearance_close_app: false,
             workspace: WoodshedWorkspace::new(),
             workspace_effects: Vec::new(),
             rehearsal_running: false,
@@ -1444,6 +1452,7 @@ impl UiState {
 
     pub fn set_theme(&mut self, theme: ThemeMode) {
         self.app_settings.appearance.theme = theme.label().to_string();
+        self.app_settings.appearance.theme_choice = None;
     }
 
     pub fn board_layout(&self) -> BoardLayout {
@@ -3100,6 +3109,9 @@ pub fn stage_root(ui: &UiState) -> UiChild {
     // named yet. See `crate::persona`.
     if let Some(pick) = &ui.persona {
         return crate::persona::persona_gate(pick);
+    }
+    if ui.appearance.workshop_open {
+        return crate::appearance::workshop_screen(ui);
     }
     let mut nav: Vec<UiChild> = AppSection::ALL
         .iter()

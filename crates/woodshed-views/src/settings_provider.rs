@@ -131,6 +131,7 @@ impl SettingsProvider for WoodshedSettingsProvider {
                 });
             }
             self.settings.appearance.theme = theme;
+            self.settings.appearance.theme_choice = None;
             return Ok(());
         }
 
@@ -139,11 +140,11 @@ impl SettingsProvider for WoodshedSettingsProvider {
                 ("accessibility.reduce_motion", SettingValue::Boolean(value)) => {
                     self.settings.accessibility.reduce_motion = value;
                     return Ok(());
-                }
+                },
                 ("accessibility.distinguish_root", SettingValue::Boolean(value)) => {
                     self.settings.accessibility.distinguish_root = value;
                     return Ok(());
-                }
+                },
                 ("accessibility.text_scale", SettingValue::Text(value))
                     if text_scale_options()
                         .iter()
@@ -151,13 +152,13 @@ impl SettingsProvider for WoodshedSettingsProvider {
                 {
                     self.settings.accessibility.text_scale = value;
                     return Ok(());
-                }
+                },
                 (_, value) => {
                     return Err(SettingsError::InvalidValue {
                         setting_id: setting_id.into(),
                         message: format!("unsupported value {value:?}"),
                     });
-                }
+                },
             }
         }
 
@@ -195,7 +196,12 @@ mod tests {
 
     #[test]
     fn applies_typed_writes_to_product_settings() {
-        let mut provider = WoodshedSettingsProvider::new(AppSettings::default());
+        let mut settings = AppSettings::default();
+        settings.appearance.theme_choice = Some(tabard::theme::choice::ThemeChoice::new(
+            "theme:authored",
+            Some(tabard::theme::registry::Mode::HcDark),
+        ));
+        let mut provider = WoodshedSettingsProvider::new(settings);
         let reference = SettingsRef(APPEARANCE_REFERENCE.into());
         provider
             .apply(
@@ -205,6 +211,7 @@ mod tests {
             )
             .unwrap();
         assert_eq!(provider.settings().appearance.theme, "Ember");
+        assert!(provider.settings().appearance.theme_choice.is_none());
         assert!(matches!(
             provider.apply(&reference, "appearance.theme", SettingValue::Boolean(true)),
             Err(SettingsError::InvalidValue { .. })

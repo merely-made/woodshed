@@ -1,0 +1,241 @@
+warning: clamp-like pattern without using clamp function
+  --> crates/woodshed-core/src/arpeggio.rs:68:20
+   |
+68 |     let want_pcs = formula.intervals.len().min(3).max(1);
+   |                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: replace with clamp: `formula.intervals.len().clamp(1, 3)`
+   |
+   = note: clamp will panic if max < min
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.97.0/index.html#manual_clamp
+   = note: `#[warn(clippy::manual_clamp)]` on by default
+
+warning: unnecessary closure used to substitute value for `Option::None`
+   --> crates/woodshed-core/src/card_shapes.rs:267:23
+    |
+267 |           let formula = chord_catalog()
+    |  _______________________^
+268 | |             .iter()
+269 | |             .find(|formula| formula.name == name.as_str())
+270 | |             .ok_or_else(|| CardShapeUnavailable::NoShapes)?;
+    | |__________________________________________________________^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.97.0/index.html#unnecessary_lazy_evaluations
+    = note: `#[warn(clippy::unnecessary_lazy_evaluations)]` on by default
+help: use `ok_or` instead
+    |
+270 -             .ok_or_else(|| CardShapeUnavailable::NoShapes)?;
+270 +             .ok_or(CardShapeUnavailable::NoShapes)?;
+    |
+
+warning: casting to the same type is unnecessary (`u8` -> `u8`)
+   --> crates/woodshed-core/src/harmony.rs:224:42
+    |
+224 |             .map(|pitch| PitchClass::new(pitch.pitch_class() as u8))
+    |                                          ^^^^^^^^^^^^^^^^^^^^^^^^^ help: try: `pitch.pitch_class()`
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.97.0/index.html#unnecessary_cast
+    = note: `#[warn(clippy::unnecessary_cast)]` on by default
+
+warning: used `unwrap_or_default()` on `Some` value
+  --> crates/woodshed-core/src/stage_candidates.rs:71:31
+   |
+71 |                     distance: fifth_distance.unwrap_or_default(),
+   |                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+help: remove the `Some` and `unwrap_or_default()`
+  --> crates/woodshed-core/src/stage_candidates.rs:57:34
+   |
+57 |             let fifth_distance = Some(circular_distance(focus_sector, fifth_sector(&keyed)));
+   |                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.97.0/index.html#unnecessary_literal_unwrap
+   = note: `#[warn(clippy::unnecessary_literal_unwrap)]` on by default
+
+warning: this `if let` can be collapsed into the outer `if let`
+   --> crates/woodshed-core/src/stage_scene.rs:756:21
+    |
+756 | /                     if let Material::ScalePattern { name, root, .. } = pattern {
+757 | |                         let scale = KeyedCatalogRef {
+758 | |                             formula_id: woodshed_graph::scale_id(&name),
+759 | |                             root,
+...   |
+770 | |                     }
+    | |_____________________^
+    |
+help: the outer pattern can be modified to include the inner pattern
+   --> crates/woodshed-core/src/stage_scene.rs:752:29
+    |
+752 |                 if let Some(pattern) = retained
+    |                             ^^^^^^^ replace this binding
+...
+756 |                     if let Material::ScalePattern { name, root, .. } = pattern {
+    |                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ with this pattern
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.97.0/index.html#collapsible_match
+    = note: `#[warn(clippy::collapsible_match)]` on by default
+
+warning: `woodshed-core` (lib) generated 5 warnings (run `cargo clippy --fix --lib -p woodshed-core -- --no-deps` to apply 2 suggestions)
+warning: methods with the following characteristics: (`to_*` and `self` type is `Copy`) usually take `self` by value
+   --> crates/woodshed-views/src/fretboard_leaf.rs:259:14
+    |
+259 |     fn to_xy(&self, along: f32, cross: f32) -> (f32, f32) {
+    |              ^^^^^
+    |
+    = help: consider choosing a less ambiguous name
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.97.0/index.html#wrong_self_convention
+    = note: `#[warn(clippy::wrong_self_convention)]` on by default
+
+warning: unnecessary closure used with `bool::then`
+   --> crates/woodshed-views/src/stage/set_tray.rs:431:33
+    |
+431 | / ...                   (ui.app_settings.stage.set_graph_reading
+432 | | ...                       == woodshed_core::settings::StageGraphReading::Set)
+433 | | ...                       .then(|| arrangement_picker),
+    | |______________________________________________________^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.97.0/index.html#unnecessary_lazy_evaluations
+    = note: `#[warn(clippy::unnecessary_lazy_evaluations)]` on by default
+help: use `then_some` instead
+    |
+433 -                                     .then(|| arrangement_picker),
+433 +                                     .then_some(arrangement_picker),
+    |
+
+warning: you seem to be trying to use `match` for destructuring a single pattern. Consider using `if let`
+   --> crates/woodshed-views/src/theme.rs:683:9
+    |
+683 | /         match rest.find("px") {
+684 | |             Some(px) => match rest[..px].trim().parse::<f32>() {
+685 | |                 Ok(n) => {
+686 | |                     out.push_str(&((n * scale).round() as i32).to_string());
+...   |
+693 | |             None => {},
+694 | |         }
+    | |_________^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.97.0/index.html#single_match
+    = note: `#[warn(clippy::single_match)]` on by default
+help: try
+    |
+683 ~         if let Some(px) = rest.find("px") { match rest[..px].trim().parse::<f32>() {
+684 +             Ok(n) => {
+685 +                 out.push_str(&((n * scale).round() as i32).to_string());
+686 +                 out.push_str("px");
+687 +                 rest = &rest[px + 2..];
+688 +             },
+689 ~             // Not a plain "Npx" — leave the declaration as written.
+690 +             Err(_) => {},
+691 +         } }
+    |
+
+warning: you seem to be trying to use `match` for destructuring a single pattern. Consider using `if let`
+   --> crates/woodshed-views/src/theme.rs:684:25
+    |
+684 |               Some(px) => match rest[..px].trim().parse::<f32>() {
+    |  _________________________^
+685 | |                 Ok(n) => {
+686 | |                     out.push_str(&((n * scale).round() as i32).to_string());
+687 | |                     out.push_str("px");
+...   |
+691 | |                 Err(_) => {},
+692 | |             },
+    | |_____________^
+    |
+    = note: you might want to preserve the comments from inside the `match`
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.97.0/index.html#single_match
+help: try
+    |
+684 ~             Some(px) => if let Ok(n) = rest[..px].trim().parse::<f32>() {
+685 +                 out.push_str(&((n * scale).round() as i32).to_string());
+686 +                 out.push_str("px");
+687 +                 rest = &rest[px + 2..];
+688 ~             },
+    |
+
+warning: `woodshed-views` (lib) generated 4 warnings (run `cargo clippy --fix --lib -p woodshed-views -- --no-deps` to apply 2 suggestions)
+    Checking woodshed-genet v0.1.0 (/Users/markik/Code/repos/woodshed/crates/woodshed-genet)
+warning: manual checked division
+   --> crates/woodshed-genet/src/shared.rs:168:12
+    |
+168 |         if self.samples == 0 {
+    |            ^^^^^^^^^^^^^^^^^ check performed here
+...
+171 |             self.total_us / self.samples
+    |             ---------------------------- division performed here
+    |
+    = help: consider using `checked_div`
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.97.0/index.html#manual_checked_ops
+    = note: `#[warn(clippy::manual_checked_ops)]` on by default
+
+warning: manual checked division
+   --> crates/woodshed-genet/src/shared.rs:176:12
+    |
+176 |         if self.host_samples == 0 {
+    |            ^^^^^^^^^^^^^^^^^^^^^^ check performed here
+...
+179 |             self.host_total_us / self.host_samples
+    |             -------------------------------------- division performed here
+    |
+    = help: consider using `checked_div`
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.97.0/index.html#manual_checked_ops
+
+warning: manual `RangeInclusive::contains` implementation
+    --> crates/woodshed-genet/src/layout_tests.rs:1405:21
+     |
+1405 |                     (partner >= 2 && partner <= 14).then_some([target_midi + shift, target_midi])
+     |                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: use: `(2..=14).contains(&partner)`
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.97.0/index.html#manual_range_contains
+     = note: `#[warn(clippy::manual_range_contains)]` on by default
+
+warning: used `assert_eq!` with a literal bool
+   --> crates/woodshed-genet/src/persona.rs:342:9
+    |
+342 | /         assert_eq!(
+343 | |             roster.description.is_empty(),
+344 | |             false,
+345 | |             "the vault says what protects it"
+346 | |         );
+    | |_________^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.97.0/index.html#bool_assert_comparison
+    = note: `#[warn(clippy::bool_assert_comparison)]` on by default
+help: replace it with `assert!(..)`
+    |
+342 ~         assert!(
+343 ~             !roster.description.is_empty(),
+    |
+
+warning: `woodshed-genet` (bin "woodshed-genet") generated 2 warnings
+warning: `Box::new(_)` of default value
+  --> crates/woodshed-genet/src/session.rs:80:36
+   |
+80 |         let backend: HostBackend = Box::new(muniment::MemoryBackend::default());
+   |                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: try: `Box::default()`
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.97.0/index.html#box_default
+   = note: `#[warn(clippy::box_default)]` on by default
+
+warning: `Box::new(_)` of default value
+   --> crates/woodshed-genet/src/session.rs:101:36
+    |
+101 |         let backend: HostBackend = Box::new(muniment::MemoryBackend::default());
+    |                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: try: `Box::default()`
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.97.0/index.html#box_default
+
+warning: `Box::new(_)` of default value
+   --> crates/woodshed-genet/src/session.rs:164:36
+    |
+164 |         let backend: HostBackend = Box::new(muniment::MemoryBackend::default());
+    |                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: try: `Box::default()`
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.97.0/index.html#box_default
+
+warning: `Box::new(_)` of default value
+   --> crates/woodshed-genet/src/session.rs:206:36
+    |
+206 |         let backend: HostBackend = Box::new(muniment::MemoryBackend::default());
+    |                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: try: `Box::default()`
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.97.0/index.html#box_default
+
+warning: `woodshed-genet` (bin "woodshed-genet" test) generated 8 warnings (2 duplicates) (run `cargo clippy --fix --bin "woodshed-genet" -p woodshed-genet --tests -- --no-deps` to apply 6 suggestions)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 3.62s

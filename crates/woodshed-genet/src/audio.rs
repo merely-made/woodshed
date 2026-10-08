@@ -28,21 +28,68 @@ fn click_pattern(bpm: f32) -> SequencerPattern {
     }
 }
 
+/// One input stream owns all three analyzers. The test-only stream variant
+/// lets route tests exercise initialization without opening a device.
+enum InputStream {
+    Native {
+        _engine: InputEngine,
+    },
+    #[cfg(test)]
+    Test,
+}
+
+struct InputSession {
+    _stream: InputStream,
+    tuner: TunerHandle,
+    onset: OnsetHandle,
+    capture: LooperCaptureHandle,
+}
+
+impl InputSession {
+    fn open() -> Result<Self, String> {
+        Self::open_with(|builder| {
+            builder
+                .build()
+                .map(|engine| InputStream::Native { _engine: engine })
+                .map_err(|e| format!("audio input: {e}"))
+        })
+    }
+
+    fn open_with(
+        open_stream: impl FnOnce(InputEngineBuilder) -> Result<InputStream, String>,
+    ) -> Result<Self, String> {
+        let onset_analyzer = OnsetAnalyzer::new();
+        let onset = onset_analyzer.handle();
+        let (builder, capture) = InputEngineBuilder::new()
+            .with_analyzer(onset_analyzer)
+            .with_looper_capture();
+        let (builder, tuner) = builder.with_pitch();
+        tuner.set_enabled(false);
+        Ok(Self {
+            _stream: open_stream(builder)?,
+            tuner,
+            onset,
+            capture,
+        })
+    }
+}
+
+#[cfg(test)]
+type InputFactory = Box<dyn FnMut() -> Result<InputSession, String>>;
+
 pub struct CpalBackend {
     /// Output engine kept alive for its cpal stream; controlled through
     /// the handle.
     _sequencer: Option<SequencerEngine>,
     handle: Option<woodshed_audio::EngineHandle>,
-    /// Input engine kept alive for its cpal stream; the tuner, onset,
-    /// and looper-capture handles read/drive its analyzers.
-    _input: Option<InputEngine>,
-    tuner: Option<TunerHandle>,
-    /// Onset detector handle — drives latency calibration + (later)
-    /// timing feedback.
-    onset: Option<OnsetHandle>,
-    /// Looper-capture handle — wired to the song engine so song-mode
-    /// recording drains input from it; enabled while recording is armed.
-    capture: Option<LooperCaptureHandle>,
+    /// Opened only when an input feature is requested; retained across
+    /// disabling features so all analyzers keep sharing one cpal stream.
+    input: Option<InputSession>,
+    /// Desired tuner state, including a failed enable request. Repeated
+    /// synchronization must not reopen the microphone after a failure.
+    tuner_requested: bool,
+    #[cfg(test)]
+    input_factory: Option<InputFactory>,
     /// The latency-calibration session driver.
     calib: CalibrationSession,
     /// Accepted input→output round-trip latency compensation (ms).
@@ -51,6 +98,8 @@ pub struct CpalBackend {
     /// the handle.
     _song: Option<SongEngine>,
     song: Option<SongEngineHandle>,
+    /// Startup output errors survive an input retry.
+    initial_error: Option<String>,
     error: Option<String>,
 }
 
@@ -85,60 +134,26 @@ fn to_song(doc: &SongDoc) -> Song {
 }
 
 impl CpalBackend {
-    /// Construct eagerly (streams open once at startup, like
-    /// woodshed-xilem). Missing devices degrade: the field stays `None`
-    /// and [`error`](AudioBackend::error) reports it.
+    /// Open output streams at startup. The shared microphone stream opens
+    /// on the first tuner, calibration, or recording request. Missing devices
+    /// degrade and [`error`](AudioBackend::error) reports the failure.
     pub fn new() -> Self {
         let mut error: Option<String> = None;
         let (sequencer, handle) = match SequencerEngine::new(click_pattern(120.0)) {
             Ok(engine) => {
                 let handle = engine.handle();
                 (Some(engine), Some(handle))
-            }
+            },
             Err(e) => {
                 error = Some(format!("audio output: {e}"));
                 (None, None)
-            }
-        };
-        // One input engine, three analyzers: onset (calibration + timing),
-        // looper-capture (song-mode record), and pitch (tuner). Each
-        // carries its own enable flag, so the DSP only runs when its
-        // feature is on.
-        let (input, tuner, onset, capture) = {
-            let onset_analyzer = OnsetAnalyzer::new();
-            let onset_handle = onset_analyzer.handle();
-            let (builder, capture_handle) = InputEngineBuilder::new()
-                .with_analyzer(onset_analyzer)
-                .with_looper_capture();
-            let (builder, tuner) = builder.with_pitch();
-            tuner.set_enabled(false);
-            match builder.build() {
-                Ok(engine) => (
-                    Some(engine),
-                    Some(tuner),
-                    Some(onset_handle),
-                    Some(capture_handle),
-                ),
-                Err(e) => {
-                    let msg = format!("audio input: {e}");
-                    error = Some(match error {
-                        Some(prev) => format!("{prev}; {msg}"),
-                        None => msg,
-                    });
-                    (None, None, None, None)
-                }
-            }
+            },
         };
         let (song_engine, song) = match SongEngine::new(Song::new()) {
             Ok(engine) => {
                 let handle = engine.handle();
-                // Wire the looper-capture ring so song-mode recording
-                // (slice 15) can drain live input.
-                if let Some(cap) = capture.as_ref() {
-                    handle.set_capture(cap);
-                }
                 (Some(engine), Some(handle))
-            }
+            },
             Err(e) => {
                 let msg = format!("song engine: {e}");
                 error = Some(match error {
@@ -146,20 +161,56 @@ impl CpalBackend {
                     None => msg,
                 });
                 (None, None)
-            }
+            },
         };
         Self {
             _sequencer: sequencer,
             handle,
-            _input: input,
-            tuner,
-            onset,
-            capture,
+            input: None,
+            tuner_requested: false,
+            #[cfg(test)]
+            input_factory: None,
             calib: CalibrationSession::new(),
             latency_ms: None,
             _song: song_engine,
             song,
+            initial_error: error.clone(),
             error,
+        }
+    }
+
+    /// Explicit input requests can retry an earlier failure. A successful
+    /// session is reused for every feature for the backend's lifetime.
+    fn ensure_input(&mut self) -> bool {
+        if self.input.is_some() {
+            return true;
+        }
+        #[cfg(test)]
+        let result = match self.input_factory.as_mut() {
+            Some(factory) => factory(),
+            None => InputSession::open(),
+        };
+        #[cfg(not(test))]
+        let result = InputSession::open();
+        match result {
+            Ok(input) => {
+                input.tuner.set_enabled(self.tuner_requested);
+                // The song output was created at startup; connect its capture
+                // ring before any StartRecording request can reach it.
+                if let Some(song) = self.song.as_ref() {
+                    song.set_capture(&input.capture);
+                }
+                self.input = Some(input);
+                self.error = self.initial_error.clone();
+                true
+            },
+            Err(error) => {
+                self.error = Some(match self.initial_error.as_ref() {
+                    Some(initial) => format!("{initial}; {error}"),
+                    None => error,
+                });
+                false
+            },
         }
     }
 
@@ -167,7 +218,7 @@ impl CpalBackend {
     /// restore the app's click pattern (the session leaves the engine on
     /// the calibration metronome), stopped.
     fn end_calibration(&self) {
-        if let Some(o) = self.onset.as_ref() {
+        if let Some(o) = self.input.as_ref().map(|input| &input.onset) {
             o.set_enabled(false);
         }
         if let Some(h) = self.handle.as_ref() {
@@ -193,15 +244,20 @@ impl AudioBackend for CpalBackend {
     }
 
     fn set_tuner_enabled(&mut self, enabled: bool) {
-        if let Some(tuner) = self.tuner.as_ref() {
-            if tuner.is_enabled() != enabled {
-                tuner.set_enabled(enabled);
+        let enabling = enabled && !self.tuner_requested;
+        self.tuner_requested = enabled;
+        if enabling && !self.ensure_input() {
+            return;
+        }
+        if let Some(input) = self.input.as_ref() {
+            if input.tuner.is_enabled() != enabled {
+                input.tuner.set_enabled(enabled);
             }
         }
     }
 
     fn tuner_reading(&self) -> Option<TunerReading> {
-        let tuner = self.tuner.as_ref()?;
+        let tuner = &self.input.as_ref()?.tuner;
         if !tuner.is_enabled() {
             return None;
         }
@@ -276,14 +332,23 @@ impl AudioBackend for CpalBackend {
     }
 
     fn calibration_start(&mut self) {
-        let (Some(h), Some(o)) = (self.handle.clone(), self.onset.clone()) else {
+        if !self.ensure_input() {
+            return;
+        }
+        let (Some(h), Some(o)) = (
+            self.handle.clone(),
+            self.input.as_ref().map(|input| input.onset.clone()),
+        ) else {
             return;
         };
         self.calib.start(&h, &o);
     }
 
     fn calibration_poll(&mut self) -> CalibrationStatus {
-        let (Some(h), Some(o)) = (self.handle.clone(), self.onset.clone()) else {
+        let (Some(h), Some(o)) = (
+            self.handle.clone(),
+            self.input.as_ref().map(|input| input.onset.clone()),
+        ) else {
             return CalibrationStatus::Unavailable;
         };
         match self.calib.poll(&h, &o) {
@@ -305,7 +370,7 @@ impl AudioBackend for CpalBackend {
                     matched: matched_pairs,
                     total: total_clicks,
                 }
-            }
+            },
             CalibrationOutcome::InsufficientPairs {
                 matched_pairs,
                 total_clicks,
@@ -315,7 +380,7 @@ impl AudioBackend for CpalBackend {
                     matched: matched_pairs,
                     total: total_clicks,
                 }
-            }
+            },
             CalibrationOutcome::EngineUnavailable => CalibrationStatus::Unavailable,
         }
     }
@@ -336,8 +401,11 @@ impl AudioBackend for CpalBackend {
     }
 
     fn song_arm_record(&mut self, bar_idx: usize) {
+        if !self.ensure_input() {
+            return;
+        }
         // Prime the capture ring so it's filling before the boundary hits.
-        if let Some(cap) = self.capture.as_ref() {
+        if let Some(cap) = self.input.as_ref().map(|input| &input.capture) {
             cap.set_enabled(true);
         }
         if let Some(song) = self.song.as_ref() {
@@ -349,7 +417,7 @@ impl AudioBackend for CpalBackend {
         if let Some(song) = self.song.as_ref() {
             song.queue(PendingChange::StopRecording);
         }
-        if let Some(cap) = self.capture.as_ref() {
+        if let Some(cap) = self.input.as_ref().map(|input| &input.capture) {
             cap.set_enabled(false);
         }
     }
@@ -384,5 +452,182 @@ impl AudioBackend for CpalBackend {
 
     fn error(&self) -> Option<&str> {
         self.error.as_deref()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::cell::Cell;
+    use std::rc::Rc;
+    use std::sync::Arc;
+
+    /// Only the device open is replaced: the production analyzer builder and
+    /// AudioBackend request routes still run. No output devices are needed.
+    fn backend(factory: InputFactory) -> CpalBackend {
+        CpalBackend {
+            _sequencer: None,
+            handle: None,
+            input: None,
+            tuner_requested: false,
+            input_factory: Some(factory),
+            calib: CalibrationSession::new(),
+            latency_ms: None,
+            _song: None,
+            song: None,
+            initial_error: None,
+            error: None,
+        }
+    }
+
+    fn successful_input() -> Result<InputSession, String> {
+        InputSession::open_with(|_| Ok(InputStream::Test))
+    }
+
+    #[test]
+    fn ordinary_synchronization_and_polls_do_not_open_microphone() {
+        let mut audio = backend(Box::new(|| panic!("unexpected microphone open")));
+        for _ in 0..10 {
+            // These are the backend operations ordinary UI dispatch and frame
+            // polling perform, including an appearance edit with tuner off.
+            audio.set_metronome(TransportState::default());
+            audio.set_tuner_enabled(false);
+            audio.set_song(&SongDoc::default());
+            audio.set_song_transport(false);
+            audio.song_set_record_replace(false);
+            audio.preview_note(440.0, 0.1);
+            audio.preview_pitches(&[440.0], 0.1, 0.0);
+            assert!(audio.tuner_reading().is_none());
+            assert_eq!(audio.calibration_poll(), CalibrationStatus::Unavailable);
+            audio.calibration_cancel();
+            audio.song_stop_record();
+        }
+        assert!(audio.input.is_none());
+        assert!(audio.error().is_none());
+    }
+
+    #[test]
+    fn each_input_feature_can_open_the_one_shared_session() {
+        for first in 0..3 {
+            let attempts = Rc::new(Cell::new(0));
+            let counter = Rc::clone(&attempts);
+            let mut audio = backend(Box::new(move || {
+                counter.set(counter.get() + 1);
+                successful_input()
+            }));
+            match first {
+                0 => audio.set_tuner_enabled(true),
+                1 => audio.calibration_start(),
+                _ => audio.song_arm_record(0),
+            }
+            assert_eq!(attempts.get(), 1);
+            let input = audio.input.as_ref().unwrap();
+            let tuner = input.tuner.clone();
+            let capture = input.capture.clone();
+            let ring = capture.ring_arc();
+            audio.set_tuner_enabled(true);
+            audio.calibration_start();
+            audio.song_arm_record(0);
+            assert_eq!(attempts.get(), 1);
+            assert!(tuner.is_enabled());
+            assert!(capture.is_enabled());
+            assert!(Arc::ptr_eq(
+                &ring,
+                &audio.input.as_ref().unwrap().capture.ring_arc()
+            ));
+            audio.set_tuner_enabled(false);
+            assert!(!tuner.is_enabled());
+            assert!(capture.is_enabled());
+            audio.song_stop_record();
+            assert!(!capture.is_enabled());
+            audio.set_tuner_enabled(true);
+            assert_eq!(attempts.get(), 1);
+            assert!(tuner.is_enabled());
+        }
+    }
+
+    #[test]
+    fn failed_tuner_enable_is_visible_and_only_explicit_reenable_retries() {
+        let attempts = Rc::new(Cell::new(0));
+        let counter = Rc::clone(&attempts);
+        let mut audio = backend(Box::new(move || {
+            counter.set(counter.get() + 1);
+            if counter.get() == 1 {
+                Err("audio input: no microphone".into())
+            } else {
+                successful_input()
+            }
+        }));
+        audio.set_tuner_enabled(true);
+        assert_eq!(audio.error(), Some("audio input: no microphone"));
+        assert!(audio.tuner_reading().is_none());
+        for _ in 0..10 {
+            audio.set_tuner_enabled(true);
+            audio.set_metronome(TransportState::default());
+        }
+        assert_eq!(attempts.get(), 1);
+        audio.set_tuner_enabled(false);
+        assert_eq!(attempts.get(), 1);
+        audio.set_tuner_enabled(true);
+        assert_eq!(attempts.get(), 2);
+        assert!(audio.input.as_ref().unwrap().tuner.is_enabled());
+        assert!(audio.error().is_none());
+    }
+
+    #[test]
+    fn explicit_calibration_and_recording_requests_retry_without_losing_output_error() {
+        let attempts = Rc::new(Cell::new(0));
+        let counter = Rc::clone(&attempts);
+        let mut audio = backend(Box::new(move || {
+            counter.set(counter.get() + 1);
+            if counter.get() <= 2 {
+                Err("audio input: unavailable".into())
+            } else {
+                successful_input()
+            }
+        }));
+        audio.initial_error = Some("audio output: unavailable; song engine: unavailable".into());
+        audio.error = audio.initial_error.clone();
+        audio.calibration_start();
+        assert_eq!(attempts.get(), 1);
+        assert_eq!(audio.calibration_poll(), CalibrationStatus::Unavailable);
+        audio.song_arm_record(0);
+        assert_eq!(attempts.get(), 2);
+        assert!(audio.input.is_none());
+        assert!(!audio.song_recording());
+        assert_eq!(
+            audio.error(),
+            Some("audio output: unavailable; song engine: unavailable; audio input: unavailable")
+        );
+        audio.song_arm_record(0);
+        assert_eq!(attempts.get(), 3);
+        assert!(audio.input.as_ref().unwrap().capture.is_enabled());
+        assert_eq!(
+            audio.error(),
+            Some("audio output: unavailable; song engine: unavailable")
+        );
+    }
+
+    #[test]
+    fn recording_retry_restores_pending_tuner_enable_on_same_session() {
+        let attempts = Rc::new(Cell::new(0));
+        let counter = Rc::clone(&attempts);
+        let mut audio = backend(Box::new(move || {
+            counter.set(counter.get() + 1);
+            if counter.get() == 1 {
+                Err("audio input: unavailable".into())
+            } else {
+                successful_input()
+            }
+        }));
+        audio.set_tuner_enabled(true);
+        assert!(audio.input.is_none());
+        audio.song_arm_record(0);
+        let input = audio.input.as_ref().unwrap();
+        assert!(input.tuner.is_enabled());
+        assert!(input.capture.is_enabled());
+        audio.set_tuner_enabled(true);
+        assert_eq!(attempts.get(), 2);
+        assert!(audio.error().is_none());
     }
 }
