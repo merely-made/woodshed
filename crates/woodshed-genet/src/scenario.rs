@@ -1128,7 +1128,7 @@ impl Automatable for Probe<'_, '_> {
                 ui.song_playing = false;
                 ui.song_bar_live = 0;
                 ui.song_edit_cursor = 0;
-                ui.activate_workspace_panel(woodshed_views::workspace::WorkspacePanel::Practice);
+                ui.select_app_section(woodshed_core::storage::AppSection::Looper);
             },
             "tone-relationships-example" => {
                 use woodshed_core::harmony::KeyedCatalogRef;
