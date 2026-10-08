@@ -1,0 +1,11 @@
+{
+  "process_exit": 0,
+  "timeout": false,
+  "elapsed_seconds": 17.223,
+  "captures": 0,
+  "scenario": "scenarios/tabard_appearance.scn",
+  "mere_revision": "7d2a5f3cfe97174058368073d2bae809fffbf902",
+  "binary_sha256": "ad5a72cafe4f80ab951d7bb75ca18df2dc66ba35d87af5cb37b4288f21da7fc9",
+  "consumer_state": "appearance adoption working tree with deferred microphone initialization",
+  "receipt": "native.done"
+}

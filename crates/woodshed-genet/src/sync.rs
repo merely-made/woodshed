@@ -35,6 +35,7 @@ pub fn after_dispatch(shared: &mut Shared, ctx: &mut Ctx<'_>) {
     // First, so that everything below sees the session the chosen persona
     // unsealed rather than the empty one that stood in for it.
     crate::persona::after_dispatch(shared, ctx);
+    crate::appearance::after_dispatch(ctx);
     // Graph motion changes only transient projection state. Pointer Down and
     // Move leave this set; Up clears it before this hook and therefore runs the
     // ordinary tail once. Skipping here avoids three retained-root rebuilds,
@@ -56,9 +57,7 @@ pub fn after_dispatch(shared: &mut Shared, ctx: &mut Ctx<'_>) {
 /// Sync dropdown state into the core, push the audio state through the backend
 /// seam, capture the skin settings, and persist.
 fn push_backend(shared: &mut Shared, ctx: &mut Ctx<'_>) {
-    let mut theme = shared.theme;
-    let mut reduce_motion = shared.reduce_motion;
-    let mut text_scale = shared.text_scale.clone();
+    let mut sheet = None;
     let mut persisted: Option<String> = None;
     let mut persisted_settings: Option<String> = None;
 
@@ -132,15 +131,14 @@ fn push_backend(shared: &mut Shared, ctx: &mut Ctx<'_>) {
             backend.song_set_record_replace(ui.song_record_replace);
             ui.song_recording = backend.song_recording();
             ui.song_loop_bars = backend.song_loop_bars();
+            ui.audio_error = backend.error().map(str::to_owned);
         }
-        theme = ui.theme();
-        reduce_motion = ui.app_settings.accessibility.reduce_motion;
-        text_scale = ui.app_settings.accessibility.text_scale.clone();
+        sheet = Some(crate::appearance::stylesheet(ui));
         persisted = serde_json::to_string(&ui.to_persisted()).ok();
         persisted_settings = serde_json::to_string(&ui.app_settings).ok();
     });
 
-    if let Some(sheet) = shared.reskin_if_changed(theme, reduce_motion, text_scale) {
+    if let Some(sheet) = sheet.and_then(|sheet| shared.reskin_sheet(sheet)) {
         // The host takes it from here: a new sheet forces a full relayout.
         *ctx.set_sheet = Some(sheet);
     }

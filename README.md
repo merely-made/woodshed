@@ -23,7 +23,7 @@ notarization where applicable, third-party notices, and installer work remain
 part of broader release preparation.
 
 - Migrated onto the shared Cambium desktop host
-  (`cambium-genet-winit-host` in the genet repo) on 2026-08-09. Woodshed was
+  (`cambium-genet-winit-host` in Mere) on 2026-08-09. Woodshed was
   the donor of that host and is its first consumer; the app binary shrank
   from 1728 to 211 lines of host code, and both semantic scenario receipts
   pass unchanged.
@@ -51,6 +51,25 @@ locked checkout, green core and Windows-host CI, and a checksummed tagged ZIP.
 That baseline is not the 1.0 product proof. The 1.0 claim requires one
 persisted practice flow that connects musical material, a playable instrument
 route, honest practice history, and an intelligible next step.
+
+## Appearance authoring
+
+Open **Settings → Appearance** to select Woodshed's named themes, saved authored
+copies, and presentation mode. **Edit appearance…** opens the shared Tabard
+workshop. Editing a builtin makes a user copy; save the definition, choose
+**Apply to Woodshed**, then **Back to Woodshed**. Unsaved work receives the same
+Save/Discard/Keep editing guard on Back and native window close.
+
+The authored library defaults to `themes.json` in Woodshed's application
+configuration directory. `WOODSHED_THEME_LIBRARY` selects a separate library;
+when `WOODSHED_STATE` is set, its sibling `.themes.json` isolates scenario
+runs. Application settings retain the selected theme ID and mode. Existing
+named-theme settings remain readable. A missing theme shows a fallback notice,
+and an unreadable library disables editing without replacing the file.
+
+Woodshed uses the shared Cambium title bar and native caption controls. The
+[adoption plan](design_docs/2026-10-08_tabard_adoption_plan.md) records ownership
+and validation, including the remaining fresh-window native presentation gate.
 
 ## Use
 

@@ -1,13 +1,8 @@
 use cambium::{clickable, el, map_state, select, text};
-use mere_surface_api::settings::{
-    SettingControl, SettingValue, SettingsProjection, SettingsProvider,
-};
 use woodshed_core::audio::{AudioRequest, CalibrationStatus};
 use woodshedding::rehearsal::SetGraphEdgeKind;
-use workbench::SettingsRef;
 
 use super::{BoardLayout, SettingsPage, UiChild, UiState};
-use crate::settings_provider::{APPEARANCE_REFERENCE, WoodshedSettingsProvider};
 
 /// MIDI device panel (audio-depth slice 13): port pickers, clock-slave /
 /// clock-master toggles, and a live status + event readout. The host
@@ -235,63 +230,7 @@ fn general_page(ui: &UiState) -> UiChild {
 }
 
 fn appearance_page(ui: &UiState) -> UiChild {
-    let provider = WoodshedSettingsProvider::new(ui.app_settings.clone());
-    let reference = SettingsRef(APPEARANCE_REFERENCE.into());
-    let specs = SettingsProjection::resolve(&provider, &reference)
-        .map(|projection| projection.specs)
-        .unwrap_or_default();
-    let themes = specs
-        .iter()
-        .find(|spec| spec.id == "appearance.theme")
-        .and_then(|spec| match &spec.control {
-            SettingControl::Choice { options } => Some((spec, options.clone())),
-            _ => None,
-        })
-        .map(|(spec, options)| {
-            options
-                .into_iter()
-                .map(|option| {
-                    let active = matches!(
-                        &spec.value,
-                        SettingValue::Text(value) if value == &option.value
-                    );
-                    let class = if active {
-                        "side-item side-active"
-                    } else {
-                        "side-item"
-                    };
-                    let value = option.value.clone();
-                    Box::new(clickable(
-                        el("div", text(option.label)).attr("class", class),
-                        move |ui: &mut UiState, _| {
-                            let mut provider =
-                                WoodshedSettingsProvider::new(ui.app_settings.clone());
-                            if provider
-                                .apply(
-                                    &SettingsRef(APPEARANCE_REFERENCE.into()),
-                                    "appearance.theme",
-                                    SettingValue::Text(value.clone()),
-                                )
-                                .is_ok()
-                            {
-                                ui.app_settings = provider.into_settings();
-                            }
-                        },
-                    )) as UiChild
-                })
-                .collect::<Vec<_>>()
-        })
-        .unwrap_or_default();
-    Box::new(
-        el(
-            "div",
-            (
-                el("div", text("Appearance")).attr("class", "settings-heading"),
-                el("div", themes).attr("class", "settings-options"),
-            ),
-        )
-        .attr("class", "board settings-page"),
-    )
+    crate::appearance::appearance_page(ui)
 }
 
 fn instrument_page(ui: &UiState) -> UiChild {

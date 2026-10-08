@@ -1,0 +1,20 @@
+Whole workspace: 10 members, 780 resolved packages
+Native normal/build closure: 536 packages
+merely-made/mere.git: git+https://github.com/merely-made/mere.git?rev=7d2a5f3cfe97174058368073d2bae809fffbf902#7d2a5f3cfe97174058368073d2bae809fffbf902
+merely-made/genet.git: git+https://github.com/merely-made/genet.git?rev=965b64e206a47d1c8808472de9aa461233638768#965b64e206a47d1c8808472de9aa461233638768
+merely-made/netrender.git: git+https://github.com/merely-made/netrender.git?rev=9607d16f1907f6c2085648ae96abcaa30d7c3d41#9607d16f1907f6c2085648ae96abcaa30d7c3d41
+cambium: singleton 0.3.3
+cambium-rootstock: singleton 0.1.0
+cambium-genet-winit-host: singleton 0.1.0
+genet-scripted-dom: singleton 0.1.2
+layout-dom-api: singleton 0.1.1
+netrender: singleton 0.1.2
+paint_list_api: singleton 0.1.2
+paint_list_render: singleton 0.1.2
+sprigging: singleton 0.2.1
+tinct: singleton 0.1.2
+tabard: singleton 0.0.1
+tabard-workshop: singleton 0.0.1
+No external local-path dependencies in native production closure.
+illume: singleton 0.0.2
+highlight: absent from native production closure

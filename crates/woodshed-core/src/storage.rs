@@ -333,6 +333,7 @@ mod tests {
             page: crate::settings::SettingsPage::Tuning,
             appearance: crate::settings::AppearanceSettings {
                 theme: "Ember".into(),
+                theme_choice: None,
             },
             tuning: crate::settings::TuningSettings { tuning_idx: 3 },
             stage: crate::settings::StageSettings {

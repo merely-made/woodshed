@@ -30,10 +30,10 @@ repository = "https://github.com/merely-made/woodshed"
 rust-version = "1.96"
 
 [workspace.dependencies]
-pictograph = { git = "https://github.com/merely-made/mere.git", rev = "d041cc69b588b6f1dadd22308c2bc4059496cabd", default-features = false, features = ["canvas"] }
-sceno = { git = "https://github.com/merely-made/mere.git", rev = "d041cc69b588b6f1dadd22308c2bc4059496cabd" }
-scenograph = { git = "https://github.com/merely-made/mere.git", rev = "d041cc69b588b6f1dadd22308c2bc4059496cabd" }
-scenomise = { git = "https://github.com/merely-made/mere.git", rev = "d041cc69b588b6f1dadd22308c2bc4059496cabd" }
+pictograph = { git = "https://github.com/merely-made/mere.git", rev = "7d2a5f3cfe97174058368073d2bae809fffbf902", default-features = false, features = ["canvas"] }
+sceno = { git = "https://github.com/merely-made/mere.git", rev = "7d2a5f3cfe97174058368073d2bae809fffbf902" }
+scenograph = { git = "https://github.com/merely-made/mere.git", rev = "7d2a5f3cfe97174058368073d2bae809fffbf902" }
+scenomise = { git = "https://github.com/merely-made/mere.git", rev = "7d2a5f3cfe97174058368073d2bae809fffbf902" }
 blake3 = "1"
 # Internal crates
 woodshedding = { path = "crates/woodshedding", version = "0.1.0" }
@@ -41,8 +41,8 @@ woodshedding = { path = "crates/woodshedding", version = "0.1.0" }
 woodshed-core = { path = "crates/woodshed-core", version = "0.1.0" }
 woodshed-audio = { path = "crates/woodshed-audio", version = "0.1.0" }
 woodshed-graph = { path = "crates/woodshed-graph", version = "0.1.0" }
-mere-surface-api = { git = "https://github.com/merely-made/mere.git", rev = "d041cc69b588b6f1dadd22308c2bc4059496cabd" }
-workbench = { git = "https://github.com/merely-made/mere.git", rev = "d041cc69b588b6f1dadd22308c2bc4059496cabd" }
+mere-surface-api = { git = "https://github.com/merely-made/mere.git", rev = "7d2a5f3cfe97174058368073d2bae809fffbf902" }
+workbench = { git = "https://github.com/merely-made/mere.git", rev = "7d2a5f3cfe97174058368073d2bae809fffbf902" }
 # Shared pure-DSP primitives (click synth, onset/tempo, latency) — the
 # `audio-primitives` extraction. Pure std; consumed by woodshed-audio
 # here and cross-repo by strophe-engine via path-dep.
@@ -78,9 +78,9 @@ winit = "0.30"
 #      `sprigging::PaintCmd` is not a `paint_list_api::PaintCmd`.
 #      `[patch.crates-io]` does not redirect a published crate's own registry
 #      dependency; taking all three from the source everything else uses does.
-cambium = { git = "https://github.com/merely-made/mere.git", rev = "d041cc69b588b6f1dadd22308c2bc4059496cabd" }
-cambium-rootstock = { git = "https://github.com/merely-made/mere.git", rev = "d041cc69b588b6f1dadd22308c2bc4059496cabd" }
-cambium-genet-web-host = { git = "https://github.com/merely-made/mere.git", rev = "d041cc69b588b6f1dadd22308c2bc4059496cabd" }
+cambium = { git = "https://github.com/merely-made/mere.git", rev = "7d2a5f3cfe97174058368073d2bae809fffbf902" }
+cambium-rootstock = { git = "https://github.com/merely-made/mere.git", rev = "7d2a5f3cfe97174058368073d2bae809fffbf902" }
+cambium-genet-web-host = { git = "https://github.com/merely-made/mere.git", rev = "7d2a5f3cfe97174058368073d2bae809fffbf902" }
 woodshed-web = { path = "crates/woodshed-web" }
 # The single-root Cambium desktop host (genet G1, 2026-08-09). Woodshed was its
 # donor and is now its first consumer: the whole ApplicationHandler / SurfaceHost
@@ -88,16 +88,16 @@ woodshed-web = { path = "crates/woodshed-web" }
 # woodshed-genet's main.rs is this package. Never publishable (it rides
 # genet-layout and genet-winit-host).
 #
-# The toolkit/host crates come from Mere at `d041cc69`; raw Genet engine
-# crates use `d851a9db`, the Genet that Mere revision pins. Cargo keys a git
+# The toolkit/host crates come from Mere at `7d2a5f3c`; raw Genet engine
+# crates use `965b64e2`, the Genet that Mere revision pins. Cargo keys a git
 # source by URL and reference, so the split is intentional and keeps one source
 # identity for each family.
-cambium-genet-winit-host = { git = "https://github.com/merely-made/mere.git", rev = "d041cc69b588b6f1dadd22308c2bc4059496cabd" }
-sprigging = { git = "https://github.com/merely-made/mere.git", rev = "d041cc69b588b6f1dadd22308c2bc4059496cabd" }
-layout-dom-api = { git = "https://github.com/merely-made/genet.git", rev = "d851a9db0cd1ff7837768250f21e9dff63455940", version = "=0.1.1" }
-genet-scripted-dom = { git = "https://github.com/merely-made/genet.git", rev = "d851a9db0cd1ff7837768250f21e9dff63455940", version = "=0.1.2" }
-mesquite = { git = "https://github.com/merely-made/mere.git", rev = "d041cc69b588b6f1dadd22308c2bc4059496cabd" }
-taproot = { git = "https://github.com/merely-made/genet.git", rev = "d851a9db0cd1ff7837768250f21e9dff63455940" }
+cambium-genet-winit-host = { git = "https://github.com/merely-made/mere.git", rev = "7d2a5f3cfe97174058368073d2bae809fffbf902" }
+sprigging = { git = "https://github.com/merely-made/mere.git", rev = "7d2a5f3cfe97174058368073d2bae809fffbf902" }
+layout-dom-api = { git = "https://github.com/merely-made/genet.git", rev = "965b64e206a47d1c8808472de9aa461233638768", version = "=0.1.1" }
+genet-scripted-dom = { git = "https://github.com/merely-made/genet.git", rev = "965b64e206a47d1c8808472de9aa461233638768", version = "=0.1.2" }
+mesquite = { git = "https://github.com/merely-made/mere.git", rev = "7d2a5f3cfe97174058368073d2bae809fffbf902" }
+taproot = { git = "https://github.com/merely-made/genet.git", rev = "965b64e206a47d1c8808472de9aa461233638768" }
 # genet-layout, genet-winit-host, netrender, paint_list_api, paint_list_render,
 # cambium-winit and cambium-winit-a11y are deliberately NOT declared here any
 # more. They were the pieces woodshed needed to assemble a native host itself;
@@ -107,14 +107,15 @@ taproot = { git = "https://github.com/merely-made/genet.git", rev = "d851a9db0cd
 #
 # wgpu stays: the scenario lane still touches a `wgpu::TextureView` in the
 # capture the host hands it. Backend features come from netrender's own
-# per-target manifest split, transitively. The genet stack is wgpu 29.
+# per-target manifest split, transitively. The genet stack is wgpu 30.
 wgpu = { version = "30", default-features = false, features = ["std"] }
 
-# Theming: pure OKLCH seed-to-palette derivation. A genet component
-# (`components/tinct`); the standalone mirror repo retires with the
-# 2026-07-23 consolidation. genet.git is already a source here, so this
-# costs no extra checkout.
-tinct = { git = "https://github.com/merely-made/mere.git", rev = "d041cc69b588b6f1dadd22308c2bc4059496cabd" }
+# Theming: pure OKLCH seed-to-palette derivation from the same Mere source
+# as the toolkit and shared appearance authoring.
+tinct = { git = "https://github.com/merely-made/mere.git", rev = "7d2a5f3cfe97174058368073d2bae809fffbf902" }
+# Shared theme authority and its reusable appearance-authoring surface.
+tabard = { git = "https://github.com/merely-made/mere.git", rev = "7d2a5f3cfe97174058368073d2bae809fffbf902" }
+tabard-workshop = { git = "https://github.com/merely-made/mere.git", rev = "7d2a5f3cfe97174058368073d2bae809fffbf902" }
 
 # Audio
 cpal = "0.18"
@@ -139,8 +140,8 @@ serde_json = "1.0"
 # mere's git by branch, matching the `muniment`/`personae` deps woodshed-genet
 # already carried; the picker is declared here rather than per-crate because
 # woodshed-views draws it and woodshed-genet acts on it.
-personae = { git = "https://github.com/merely-made/mere.git", rev = "d041cc69b588b6f1dadd22308c2bc4059496cabd" }
-persona-picker = { package = "mere-persona-picker", git = "https://github.com/merely-made/mere.git", rev = "d041cc69b588b6f1dadd22308c2bc4059496cabd" }
+personae = { git = "https://github.com/merely-made/mere.git", rev = "7d2a5f3cfe97174058368073d2bae809fffbf902" }
+persona-picker = { package = "mere-persona-picker", git = "https://github.com/merely-made/mere.git", rev = "7d2a5f3cfe97174058368073d2bae809fffbf902" }
 
 # Future:
 #   fundsp          — DSP for fancier sounds (deferred — raw sin is enough for click)
@@ -155,13 +156,13 @@ persona-picker = { package = "mere-persona-picker", git = "https://github.com/me
 # Mirror of genet's [patch.crates-io] entries this workspace's genet
 # graph needs — patches are per-workspace-root and do NOT inherit through
 # a git dep (the mere root carries the same mirror). No local paths here:
-# the DOM seams, Taffy and ipc-channel are reached through the same Git
+# the DOM seams and Taffy are reached through the same Git
 # revision as the Genet family above. Parley needs no row: genet's fork is
 # `genet-parley` now, which genet-livery reaches inside genet.
 [patch.crates-io]
-layout-dom-api = { git = "https://github.com/merely-made/genet.git", rev = "d851a9db0cd1ff7837768250f21e9dff63455940", version = "=0.1.1" }
-genet-scripted-dom = { git = "https://github.com/merely-made/genet.git", rev = "d851a9db0cd1ff7837768250f21e9dff63455940", version = "=0.1.2" }
-taffy = { package = "genet-taffy", git = "https://github.com/merely-made/genet.git", rev = "d851a9db0cd1ff7837768250f21e9dff63455940", version = "=0.14.0" }
+layout-dom-api = { git = "https://github.com/merely-made/genet.git", rev = "965b64e206a47d1c8808472de9aa461233638768", version = "=0.1.1" }
+genet-scripted-dom = { git = "https://github.com/merely-made/genet.git", rev = "965b64e206a47d1c8808472de9aa461233638768", version = "=0.1.2" }
+taffy = { package = "genet-taffy", git = "https://github.com/merely-made/genet.git", rev = "965b64e206a47d1c8808472de9aa461233638768", version = "=0.14.0" }
 # NO stylo/stylo_atoms patch (2026-07-12, mirroring genet's ring-3 rename):
 # the fork is now the RENAMED `genet-stylo` family, and a `[patch]` cannot
 # rename its target. Genet's crates git-dep genet-stylo by package rename, so
@@ -176,17 +177,13 @@ taffy = { package = "genet-taffy", git = "https://github.com/merely-made/genet.g
 # Taffy is different: Buckram/Livery consume the renamed `genet-taffy` package,
 # so the patch above names that package explicitly while retaining the
 # dependency alias Cargo expects.
-# ipc-channel: genet's in-process fork (force-inprocess default; drops
-# the windows 0.61 pin that broke gpu-allocator/wgpu-hal unification).
-ipc-channel = { git = "https://github.com/merely-made/genet.git", rev = "d851a9db0cd1ff7837768250f21e9dff63455940" }
-
 # Vello on wgpu 30. Upstream vello 0.10 still requires wgpu 29, so netrender
 # (and through it this app's render path) takes vello from the owned fork:
 # the v0.10.0 tag plus exactly the API changes in linebender/vello#1754.
 # `[patch]` applies only from the top-level manifest and is NOT inherited
 # from genet or netrender, so every app workspace restates it. Retires by
 # deletion when upstream ships a wgpu-30 vello.
-vello = { git = "https://github.com/mark-ik/vello.git", branch = "mark-ik/wgpu-30" }
+vello = { git = "https://github.com/mark-ik/vello.git", tag = "vello-0.10.0" }
 
 # The app remains an ordinary debuggable dev build, but the retained UI and
 # renderer beneath it are runtime infrastructure. At opt-level 0 a headed

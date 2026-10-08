@@ -1,0 +1,26 @@
+# Isolated native acceptance. Use scratch WOODSHED_STATE, WOODSHED_SETTINGS,
+# WOODSHED_THEME_LIBRARY, XDG_DATA_HOME and PERSONAE_PASSPHRASE.
+log Shared Tabard appearance authoring in Woodshed
+settle 3
+assert snap appearance-authoring == true
+click .pill Settings
+click .side-item Appearance
+click role:button @data-appearance-theme=woodshed:ember
+assert snap appearance-theme == woodshed:ember
+click role:button @data-appearance-mode=hc_light
+assert snap appearance-mode == hc_light
+capture appearance_settings
+click role:button @data-action=edit-appearance
+assert snap appearance-workshop == true
+click role:textbox @data-field=name
+input-text WoodshedAcceptance
+click role:button @data-action=save
+assert snap appearance-dirty == false
+capture appearance_workshop
+click role:button @data-action=apply-to-woodshed
+click role:button @data-action=back-to-woodshed
+assert snap appearance-workshop == false
+assert snap appearance-mode == hc_light
+assert text WoodshedAcceptance
+capture appearance_applied
+log Shared Tabard appearance acceptance complete

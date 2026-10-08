@@ -100,14 +100,14 @@ pub fn after_dispatch(shared: &mut Shared, ctx: &mut Ctx<'_>) {
             PickPurpose::Startup => {
                 decline(ctx);
                 return;
-            }
+            },
             // Escape on a switch changes nothing: the store that is open stays
             // open, and re-settling on the convention here would quietly move
             // the user off the persona they are already practising as.
             PickPurpose::Switch => {
                 ctx.runner.update(|ui| ui.persona = None);
                 return;
-            }
+            },
         },
         // The view answers this one itself and keeps the gate open (P3 wires
         // the create flow), so it never reaches here.
@@ -135,7 +135,7 @@ fn raise_switch(ctx: &mut Ctx<'_>) {
                 "The identity vault would not open ({error}). Practice continues \
                  as the current persona."
             ))
-        }
+        },
     };
     // Taken rather than moved: the runner's callback is `FnMut`, and the pick
     // is not `Copy`.
@@ -191,7 +191,7 @@ fn settle(
             // persona's practice — and the next frame's save would write it
             // into this persona's store. Host-fed fields (the MIDI port lists,
             // latency) refill on the next dispatch.
-            *ui = woodshed_views::stage::UiState::new();
+            reset_for_persona(ui);
         }
         crate::session::restore(&storage, ui);
         ui.persona = None;
@@ -203,6 +203,23 @@ fn settle(
     // who is practising.
     shared.seal = Some(seal);
     shared.storage = Some(storage);
+}
+
+/// Replace persona-owned practice and application settings while retaining the
+/// process-wide authored library and its current editor model. Reloading that
+/// library here would introduce profile/environment I/O during a session reset.
+fn reset_for_persona(ui: &mut woodshed_views::stage::UiState) {
+    let appearance = std::mem::take(&mut ui.appearance);
+    let authoring_available = ui.appearance_authoring_available;
+    let library_notice = if authoring_available {
+        None
+    } else {
+        ui.appearance_notice.take()
+    };
+    *ui = woodshed_views::stage::UiState::new();
+    ui.appearance = appearance;
+    ui.appearance_authoring_available = authoring_available;
+    ui.appearance_notice = library_notice;
 }
 
 /// Seed the gate onto a fresh [`UiState`], if one is pending.
@@ -217,6 +234,83 @@ mod tests {
     use taproot::Selector;
     use winit::keyboard::NamedKey;
     use woodshed_views::stage::{UiChild, UiState};
+
+    #[test]
+    fn switching_persona_retains_the_global_authored_library_but_restores_incoming_selection() {
+        use woodshed_core::{settings::AppSettings, storage::SessionStore};
+        use woodshed_views::{appearance::AppearanceState, theme::ThemeMode};
+
+        let dir = tempfile::tempdir().unwrap();
+        let path = dir.path().join("themes.json");
+        let mut appearance = AppearanceState::load(&path).unwrap();
+        let mut incoming = AppSettings::default();
+        incoming.appearance.theme = "Ember".into();
+        appearance.begin_edit(&incoming.appearance).unwrap();
+        appearance.workshop.save();
+        appearance.apply_workshop(&mut incoming.appearance).unwrap();
+        let authored_id = appearance.workshop.draft_theme().id.clone();
+        appearance.workshop_open = false;
+        let reader = appearance.workshop.reader_preview();
+        assert!(path.exists(), "the authored definition was really saved");
+
+        let mut ui = UiState::new();
+        ui.appearance = appearance;
+        ui.appearance_authoring_available = true;
+        ui.appearance_notice = Some("Outgoing application selection applied.".into());
+        ui.appearance_close_app = true;
+        ui.set_theme(ThemeMode::Parchment);
+        ui.app_settings.accessibility.reduce_motion = true;
+
+        reset_for_persona(&mut ui);
+        assert_eq!(
+            ui.app_settings,
+            AppSettings::default(),
+            "outgoing persona settings must not survive"
+        );
+        assert!(!ui.appearance_close_app);
+        assert!(ui.appearance_notice.is_none());
+        assert!(ui.appearance_authoring_available);
+        assert_eq!(ui.appearance.workshop.library_path(), Some(path.as_path()));
+        assert!(
+            std::rc::Rc::ptr_eq(&reader, &ui.appearance.workshop.reader_preview()),
+            "retain the actual shared editor rather than reloading it"
+        );
+
+        // Use the real settings-only session decoder against a memory store;
+        // this never reads the process environment or a user's profile/vault.
+        let backend: crate::storage::HostBackend = Box::<muniment::MemoryBackend>::default();
+        let storage = SessionStore::new(backend);
+        storage.save_settings(&serde_json::to_string(&incoming).unwrap());
+        crate::session::restore(&storage, &mut ui);
+        assert_eq!(ui.app_settings.appearance, incoming.appearance);
+        let resolved = ui.appearance.resolve(&ui.app_settings.appearance);
+        assert_eq!(resolved.theme.id, authored_id);
+        assert!(resolved.fallback_reason.is_none());
+        assert!(ui.appearance_authoring_available);
+    }
+
+    #[test]
+    fn switching_persona_retains_the_global_library_load_error() {
+        let mut ui = UiState::new();
+        ui.appearance_authoring_available = false;
+        ui.appearance_notice = Some("Could not open theme library: corrupt library.".into());
+        ui.set_theme(woodshed_views::theme::ThemeMode::Ember);
+        let reader = ui.appearance.workshop.reader_preview();
+        reset_for_persona(&mut ui);
+        assert_eq!(
+            ui.app_settings,
+            woodshed_core::settings::AppSettings::default()
+        );
+        assert!(!ui.appearance_authoring_available);
+        assert_eq!(
+            ui.appearance_notice.as_deref(),
+            Some("Could not open theme library: corrupt library.")
+        );
+        assert!(std::rc::Rc::ptr_eq(
+            &reader,
+            &ui.appearance.workshop.reader_preview()
+        ));
+    }
 
     /// `PERSONAE_PROFILE` is process-wide, so every test that reads the vault
     /// serializes behind one lock: `chosen_profile` consults it, which makes an

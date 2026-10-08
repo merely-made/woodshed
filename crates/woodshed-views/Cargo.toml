@@ -20,6 +20,8 @@ woodshedding = { workspace = true }
 cambium = { workspace = true }
 sprigging = { workspace = true }
 tinct = { workspace = true }
+tabard = { workspace = true }
+tabard-workshop = { workspace = true }
 # The persona gate. `mere-persona-picker` owns how a roster reads as a list
 # (which persona is in use, how many keys the others hold); `personae` is
 # needed to name the `Roster` the gate holds. Both are desktop-shaped — the
@@ -32,3 +34,7 @@ personae = { workspace = true }
 accesskit = "0.24"
 serde = { workspace = true }
 serde_json = { workspace = true }
+
+[dev-dependencies]
+cambium-genet-winit-host.workspace = true
+taproot.workspace = true

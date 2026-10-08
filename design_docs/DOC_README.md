@@ -11,6 +11,8 @@ before any other doc in this directory.
 
 ## Active Plans
 
+- [2026-10-08_tabard_adoption_plan.md](2026-10-08_tabard_adoption_plan.md) — Shared appearance authoring and native title-bar adoption in Woodshed; preserves named themes and persona settings while qualifying the shared workshop and native presentation boundary.
+
 - [2026-09-13_redshank_gui_implementation_plan.md](2026-09-13_redshank_gui_implementation_plan.md)
   — **Active.** Implements the endorsed Redshank design canvas: fixed-height
   dock in two families, three-width responsive rule, two tinct-derived seeds,

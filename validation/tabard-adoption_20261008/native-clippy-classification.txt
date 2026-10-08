@@ -1,0 +1,18 @@
+Native Clippy passed after lazy input change.
+16 diagnostics at baseline statements; no new warning or error, none in audio.rs.
+crates/woodshed-core/src/card_shapes.rs | 267 | unnecessary closure used to substitute value for `Option::None`
+crates/woodshed-core/src/harmony.rs | 224 | casting to the same type is unnecessary (`u8` -> `u8`)
+crates/woodshed-core/src/stage_candidates.rs | 71 | used `unwrap_or_default()` on `Some` value
+crates/woodshed-core/src/stage_scene.rs | 756 | this `if let` can be collapsed into the outer `if let`
+crates/woodshed-views/src/fretboard_leaf.rs | 259 | methods with the following characteristics: (`to_*` and `self` type is `Copy`) usually take `self` by value
+crates/woodshed-views/src/stage/set_tray.rs | 431 | unnecessary closure used with `bool::then`
+crates/woodshed-views/src/theme.rs | 683 | you seem to be trying to use `match` for destructuring a single pattern. Consider using `if let`
+crates/woodshed-views/src/theme.rs | 684 | you seem to be trying to use `match` for destructuring a single pattern. Consider using `if let`
+crates/woodshed-genet/src/shared.rs | 168 | manual checked division
+crates/woodshed-genet/src/shared.rs | 176 | manual checked division
+crates/woodshed-genet/src/layout_tests.rs | 1405 | manual `RangeInclusive::contains` implementation
+crates/woodshed-genet/src/persona.rs | 342 | used `assert_eq!` with a literal bool
+crates/woodshed-genet/src/session.rs | 80 | `Box::new(_)` of default value
+crates/woodshed-genet/src/session.rs | 101 | `Box::new(_)` of default value
+crates/woodshed-genet/src/session.rs | 164 | `Box::new(_)` of default value
+crates/woodshed-genet/src/session.rs | 206 | `Box::new(_)` of default value

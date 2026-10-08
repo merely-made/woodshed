@@ -6,7 +6,11 @@ questions: (1) a **formula** for mapping a few seed colors → the full UI
 palette, and (2) the **management** model (built-in vs user themes; edit /
 rename / remove semantics).
 
-Status: **proposal — needs Mark's sign-off before building.**
+Status: **historical design; initial implementation shipped in May 2026.**
+The current Woodshed adoption uses Tinct and Tabard rather than the historical
+`audio_widgets` module and settings model described below. See the
+[2026-10-08 shared workshop adoption](2026-10-08_tabard_adoption_plan.md) for
+current ownership, persistence and validation.
 
 ## Prior art
 

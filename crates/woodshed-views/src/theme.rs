@@ -51,6 +51,32 @@ impl ThemeMode {
         Self::ALL.iter().copied().find(|m| m.label() == name)
     }
 
+    /// Stable identity for the shared Tabard appearance choice.
+    pub fn theme_id(self) -> &'static str {
+        match self {
+            Self::Slate => "woodshed:slate",
+            Self::Ember => "woodshed:ember",
+            Self::Light => "woodshed:light",
+            Self::Dusk => "woodshed:dusk",
+            Self::Meadow => "woodshed:meadow",
+            Self::Parchment => "woodshed:parchment",
+        }
+    }
+
+    pub fn from_theme_id(id: &str) -> Option<Self> {
+        Self::ALL
+            .into_iter()
+            .find(|theme| theme.theme_id() == id.trim().to_ascii_lowercase())
+    }
+
+    /// Preserve the authored Woodshed seeds in Tabard's portable definition.
+    /// Editing this built-in goes through the workshop's user-copy boundary.
+    pub fn definition(self) -> tabard::Theme {
+        let mut theme = tabard::Theme::new(self.theme_id(), self.label(), self.seeds());
+        theme.source = tabard::theme::registry::ThemeSource::BuiltIn;
+        theme
+    }
+
     pub fn seeds(self) -> Seeds {
         match self {
             // Slate — faithful cool-dark: blue / teal / amber.

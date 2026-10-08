@@ -1,0 +1,11 @@
+# Reuse the preceding scenario's scratch settings and theme library.
+log Reopen saved Woodshed appearance
+settle 3
+assert snap appearance-authoring == true
+assert snap appearance-workshop == false
+assert snap appearance-mode == hc_light
+click .pill Settings
+click .side-item Appearance
+assert text WoodshedAcceptance
+capture appearance_reopened
+log Saved appearance reopen complete

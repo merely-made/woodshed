@@ -56,12 +56,17 @@ impl SettingsPage {
 #[serde(default)]
 pub struct AppearanceSettings {
     pub theme: String,
+    /// Shared Tabard identity and explicit presentation mode. Older sessions
+    /// contain only `theme`; hosts migrate that named Woodshed seed set lazily.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub theme_choice: Option<tabard::theme::choice::ThemeChoice>,
 }
 
 impl Default for AppearanceSettings {
     fn default() -> Self {
         Self {
             theme: "Slate".into(),
+            theme_choice: None,
         }
     }
 }
@@ -414,6 +419,34 @@ pub struct AppSettings {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn appearance_keeps_legacy_names_and_round_trips_shared_choices() {
+        for name in ["Slate", "Ember", "Light", "Dusk", "Meadow", "Parchment"] {
+            let settings: AppSettings =
+                serde_json::from_value(serde_json::json!({"theme": name})).unwrap();
+            assert_eq!(settings.appearance.theme, name);
+            assert!(settings.appearance.theme_choice.is_none());
+            assert!(
+                serde_json::to_value(&settings)
+                    .unwrap()
+                    .get("theme_choice")
+                    .is_none()
+            );
+        }
+        let mut settings = AppSettings::default();
+        settings.appearance.theme_choice = Some(tabard::theme::choice::ThemeChoice::new(
+            "theme:my-slate",
+            Some(tabard::theme::registry::Mode::HcLight),
+        ));
+        let json = serde_json::to_value(&settings).unwrap();
+        assert_eq!(json["theme"], "Slate");
+        assert_eq!(json["theme_choice"]["theme_mode"], "hc_light");
+        assert_eq!(
+            serde_json::from_value::<AppSettings>(json).unwrap(),
+            settings
+        );
+    }
 
     #[test]
     fn musical_context_preferences_preserve_legacy_settings_and_bound_work() {

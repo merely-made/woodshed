@@ -23,6 +23,32 @@ enum Field {
 /// Which field the focused node is, if it is one.
 pub fn focused_text(runner: &Runner<UiState, Logic, UiChild>) -> Option<FocusedTextSlot<UiState>> {
     let node = runner.focus()?;
+    if runner.state().appearance.workshop_open {
+        let dom = runner.dom();
+        let dom = dom.borrow();
+        if let Some(field) =
+            dom.attribute(node, &Namespace::from(""), &LocalName::from("data-field"))
+        {
+            let field = field.to_string();
+            runner.state().appearance.workshop.text_field(&field)?;
+            let field_mut = field.clone();
+            return Some(FocusedTextSlot {
+                node,
+                get: Box::new(move |ui| {
+                    ui.appearance
+                        .workshop
+                        .text_field(&field)
+                        .expect("mounted workshop field")
+                }),
+                get_mut: Box::new(move |ui| {
+                    ui.appearance
+                        .workshop
+                        .text_field_mut(&field_mut)
+                        .expect("mounted workshop field")
+                }),
+            });
+        }
+    }
     let field = {
         let dom = runner.dom();
         let dom = dom.borrow();
