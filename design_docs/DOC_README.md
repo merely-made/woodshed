@@ -96,7 +96,9 @@ before any other doc in this directory.
   surface does not reproduce in the current replay; its original cause is unproven.
   The October 7 captured-arpeggio follow-up extends the shelf with copied
   playable instructions, historical source provenance and direct saved-recipe
-  Hear/Add actions. The 607-check gate passes; native qualification pending.
+  Hear/Add actions. The 607-check gate and committed desktop build pass; eight
+  reviewed wide/narrow native captures qualify source deletion and fresh-process
+  recipe replay/addition with retained scene roles and atmosphere.
   The October 7 musical-context follow-up adds a bounded retained chord/scale
   shelf inside the session Mere, exact tone relations, originating Set
   associations and explicit Open/Hear/Add/Remove actions. The 597-check gate
