@@ -2532,7 +2532,7 @@ release packaging/signing and browser execution remain separate gates.
 
 ### October 7 follow-up: captured scale-pattern recipes in the Mere
 
-**Status: implemented; automated qualification complete, native qualification pending.**
+**Status: landed; automated and wide/narrow native save/reopen qualification complete.**
 
 The copied playable-instruction shelf extends from chord arpeggios to authored
 scale patterns in thirds and fourths. Capture resolves inherited setup, fret
@@ -2583,3 +2583,29 @@ contacts, inherited Drop-D/window/tempo with capo, serialized reopening, source
 removal, active-owner Add identities, legacy arpeggio compatibility and refused
 stale payloads that remain removable. Final source review found no actionable
 owner-boundary regression. Native qualification follows the committed runtime.
+
+
+Native qualification uses committed runtime `e39073cd141c1eae597b6c321f78aa908b91b37d` at 1280 by 900
+and 420 by 900. Four runs pass: wide and narrow seed each 1888 frames; each
+fresh-process reopen 1864 frames. Eight exported PNGs were visually reviewed,
+including full compact inspector descriptions and wrapped owner controls. The
+fixture captures C Major in thirds with Guitar / Standard, capo 0, frets 2–8,
+Walk touch, no marked notes and 92 BPM. The automated matrix additionally covers
+fourths and marked/inherited setup variations; the native fixture is thirds.
+
+Each seed removes source Card 3 and changes live Stage/tempo before saved Hear
+and Add. Hear preserves the two remaining Cards; Add creates a third from the
+retained instructions. Explore scale formula preserves the Set. Each fresh
+process restores that Set, source Card 3 absent, saved tempo, pinned background
+role and Orbits atmosphere. Hear again preserves the Set; Add creates a fourth
+occurrence. Final persisted Card IDs are 1, 2, 4 and 5; the retained instruction
+ID is unassigned and the historical originating Set link remains.
+
+The receipt at
+`/Users/markik/Code/testing/woodshed/scale-pattern-recipe-20261007/receipt.json`
+records source/binary/scenario/log/capture/session hashes and backend observations.
+All four runs logged audio and song-engine buffer underrun/overrun errors. The
+scenario assertions verify state and preview dispatch, not acoustic quality;
+the backend observation remains a separate unresolved audio qualification item.
+The scenarios use isolated unsealed fixtures. Personal encrypted-vault flows,
+release packaging/signing and browser execution remain separate gates.
