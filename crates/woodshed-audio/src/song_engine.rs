@@ -274,17 +274,15 @@ impl SongEngineHandle {
 
     /// Play a single pitched note immediately, regardless of song
     /// transport state — a chord-render voice at one frequency. Used to
-    /// sonify the arpeggio / exercise step-through. Cheap (sub-ms render
-    /// + a voice push); the voice self-removes when its envelope ends.
+    /// sonify the arpeggio / exercise step-through. PCM renders on the
+    /// caller before a brief voice publication; the audio callback continues
+    /// during synthesis. The voice self-removes when its envelope ends.
     pub fn play_note_now(&self, freq_hz: f32, duration_secs: f32) {
         if freq_hz <= 0.0 {
             return;
         }
-        let mut s = self.inner.lock().unwrap();
-        let sr = s.sample_rate_hz as u32;
         let params = ChordRender::block(vec![freq_hz], duration_secs.max(0.05));
-        let buf = render_chord(&params, sr);
-        push_oneshot(&mut s, buf, "step-note");
+        self.render_preview(params, "step-note", render_chord);
     }
 
     /// Play a set of pitches as one strummed one-shot voice, regardless
@@ -299,16 +297,28 @@ impl SongEngineHandle {
         if pitches.is_empty() {
             return;
         }
-        let mut s = self.inner.lock().unwrap();
-        let sr = s.sample_rate_hz as u32;
         let params = ChordRender {
             pitches_hz: pitches,
             duration_seconds: duration_secs.max(0.1),
             strum_offset_ms: strum_ms.max(0.0),
             ..ChordRender::default()
         };
-        let buf = render_chord(&params, sr);
-        push_oneshot(&mut s, buf, "preview-chord");
+        self.render_preview(params, "preview-chord", render_chord);
+    }
+
+    /// Synthesis can take hundreds of milliseconds for a long ordered preview.
+    /// Only reading the fixed stream rate and publishing a ready voice share the
+    /// mixer mutex; the audio callback continues while PCM is rendered.
+    fn render_preview(
+        &self,
+        params: ChordRender,
+        id: &str,
+        render: impl FnOnce(&ChordRender, u32) -> SampleBuffer,
+    ) {
+        let sample_rate = self.inner.lock().unwrap().sample_rate_hz as u32;
+        let buf = render(&params, sample_rate);
+        let mut s = self.inner.lock().unwrap();
+        push_oneshot(&mut s, buf, id);
     }
 }
 
@@ -774,6 +784,53 @@ mod tests {
         let mut buf = vec![0.0_f32; total_samples + 1000];
         process_song_buffer(&mut state, &mut buf);
         assert!(!state.song.playing, "one-shot should stop at end");
+    }
+
+    #[test]
+    fn preview_synthesis_does_not_block_the_callback_and_queues_at_current_clock() {
+        use std::sync::mpsc;
+        let internals = Arc::new(Mutex::new(SongEngineInternals::new(
+            Song::new(),
+            48_000.0,
+            1,
+        )));
+        let handle = SongEngineHandle {
+            inner: Arc::clone(&internals),
+        };
+        let (started_tx, started_rx) = mpsc::channel();
+        let (resume_tx, resume_rx) = mpsc::channel();
+        let worker = std::thread::spawn(move || {
+            handle.render_preview(
+                ChordRender::block(vec![261.63], 0.1),
+                "test-preview",
+                |params, rate| {
+                    started_tx.send(()).unwrap();
+                    resume_rx.recv().unwrap();
+                    render_chord(params, rate)
+                },
+            );
+        });
+        started_rx.recv().unwrap();
+        // The renderer is deliberately still running. The mixer must acquire
+        // state and advance audio immediately, without timing-based assertions.
+        let progressed = match internals.try_lock() {
+            Ok(mut state) => {
+                let mut out = [0.0; 512];
+                process_song_buffer(&mut state, &mut out);
+                assert_eq!(state.oneshot_clock, 512);
+                assert!(state.oneshot_voices.is_empty());
+                true
+            },
+            Err(_) => false,
+        };
+        resume_tx.send(()).unwrap();
+        worker.join().unwrap();
+        assert!(progressed, "synthesis held the callback's mutex");
+        let mut state = internals.lock().unwrap();
+        assert_eq!(state.oneshot_voices[0].start_sample, 512);
+        let mut out = [0.0; 512];
+        process_song_buffer(&mut state, &mut out);
+        assert!(out.iter().any(|sample| sample.abs() > 0.0));
     }
 
     #[test]
