@@ -1,0 +1,234 @@
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+   Compiling woodshed-audio v0.1.0 (/Users/markik/Code/repos/woodshed/crates/woodshed-audio)
+   Compiling woodshed-genet v0.1.0 (/Users/markik/Code/repos/woodshed/crates/woodshed-genet)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1m 15s
+     Running unittests src/lib.rs (/Users/markik/Code/targets/woodshed-tabard/debug/deps/woodshed_audio-17a0c4f548748ffe)
+
+running 127 tests
+test calibration::tests::session_with_total_clicks_clamps_minimum ... ok
+test calibration::tests::session_starts_idle ... ok
+test chord_audio::tests::empty_pitches_yields_empty_buffer ... ok
+test engine::tests::process_buffer_silent_when_stopped ... ok
+test engine::tests::process_buffer_voices_decay_to_silence ... ok
+test input::tests::fundamental_bias_does_not_demote_when_consensus_is_already_lowest ... ok
+test input::tests::fundamental_bias_promotes_lower_entry_when_consensus_is_3rd_harmonic ... ok
+test chord_audio::tests::render_produces_correct_buffer_length ... ok
+test input::tests::fundamental_bias_does_not_promote_when_no_sub_multiple_present ... ok
+test input::tests::pitch_analyzer_disabled_does_not_publish_a_detection ... ok
+test input::tests::pitch_analyzer_set_enabled_round_trips ... ok
+test input::tests::pitch_analyzer_handle_starts_with_empty_snapshot ... ok
+test input::tests::quiet_playing_passes_threshold ... ok
+test chord_audio::tests::release_tail_decays_toward_zero ... ok
+test input::tests::rms_of_constant_one_is_one ... ok
+test input::tests::rms_of_silence_is_zero ... ok
+test input::tests::rms_of_pure_sine_is_one_over_sqrt_two ... ok
+test chord_audio::tests::block_chord_has_simultaneous_onset ... ok
+test input::tests::same_pitch_is_not_a_harmonic ... ok
+test input::tests::second_harmonic_is_recognized ... ok
+test input::tests::silence_threshold_gates_very_quiet_signal ... ok
+test input::tests::smoothing_returns_consensus_when_majority_agrees ... ok
+test chord_audio::tests::strum_starts_first_note_at_zero ... ok
+test input::tests::smoothing_returns_none_when_history_too_short ... ok
+test engine::tests::bpm_increase_speeds_up_without_glitch ... ok
+test input::tests::smoothing_returns_none_when_no_majority ... ok
+test input::tests::smoothing_uses_most_recent_matching_detection ... ok
+test input::tests::sub_octave_is_recognized ... ok
+test input::tests::third_harmonic_is_recognized ... ok
+test input::tests::unrelated_pitches_are_not_harmonics ... ok
+test looper::tests::arm_record_off_at_bar_boundary ... ok
+test looper::tests::arm_record_takes_effect_at_bar_boundary ... ok
+test looper::tests::fresh_record_after_clear_starts_silent ... ok
+test looper::tests::new_looper_is_quiet_and_empty ... ok
+test looper::tests::overdub_sums_into_existing_buffer ... ok
+test looper::tests::playback_gain_scales_output ... ok
+test looper::tests::playback_loops_at_bar_boundary ... ok
+test looper::tests::playback_returns_recorded_audio ... ok
+test looper::tests::recording_captures_input_at_cursor ... ok
+test chord_audio::tests::output_stays_within_unit_range ... ok
+test looper::tests::soft_clip_compresses_large_signals_below_unity ... ok
+test engine::tests::process_buffer_advances_step_at_predicted_time ... ok
+test looper::tests::soft_clip_passes_small_signals_unchanged ... ok
+test midi::tests::clock_sync_120_bpm_from_simulated_ticks ... ok
+test midi::tests::clock_sync_60_bpm_from_simulated_ticks ... ok
+test midi::tests::clock_sync_returns_none_without_ticks ... ok
+test midi::tests::clock_sync_reset_clears_state ... ok
+test midi::tests::parse_control_change ... ok
+test midi::tests::parse_explicit_note_off ... ok
+test midi::tests::parse_note_on_velocity_zero_is_note_off ... ok
+test midi::tests::parse_note_on_with_velocity ... ok
+test midi::tests::parse_realtime_messages ... ok
+test midi::tests::parse_unknown_returns_none ... ok
+test engine::tests::bpm_change_does_not_pause_playback ... ok
+test engine::tests::process_buffer_subdivision_scales_step_count ... ok
+test engine::tests::process_buffer_step_count_scales_with_bpm ... ok
+test onset::tests::analyzer_disabled_by_default_emits_nothing ... ok
+test onset::tests::threshold_round_trips_through_handle ... ok
+test samples::tests::bank_build_sound_attaches_when_present ... ok
+test chord_audio::tests::more_pitches_does_not_clip_louder_than_one_pitch ... ok
+test samples::tests::bank_build_sound_leaves_empty_when_absent ... ok
+test samples::tests::bank_insert_and_get_round_trip ... ok
+test engine::tests::process_buffer_produces_audio_when_playing ... ok
+test samples::tests::rehydrate_pattern_attaches_buffers_for_known_ids ... ok
+test samples::tests::rehydrate_pattern_skips_click_tracks ... ok
+test sequencer::tests::metronome_dense_fires_every_step ... ok
+test sequencer::tests::metronome_downbeat_is_accented ... ok
+test sequencer::tests::metronome_only_beats_fire ... ok
+test sequencer::tests::step_duration_120_bpm_quarter_is_500ms ... ok
+test sequencer::tests::step_duration_60_bpm_eighth_is_500ms ... ok
+test sequencer::tests::steps_per_bar_4_4_quarter_is_4 ... ok
+test sequencer::tests::steps_per_bar_3_4_thirty_second_is_24 ... ok
+test sequencer::tests::steps_per_bar_4_4_sixteenth_is_16 ... ok
+test sequencer::tests::steps_per_bar_6_8_eighth_triplet_is_18 ... ok
+test sequencer::tests::pattern_round_trips_through_serde_json ... ok
+test sequencer::tests::subdivision_constants_are_correct ... ok
+test sequencer::tests::time_signature_defaults_to_4_4 ... ok
+test song::tests::add_bar_appends_and_inherits_settings ... ok
+test samples::tests::load_wav_downmixes_stereo_to_mono ... ok
+test song::tests::attach_and_detach_audio_buffer ... ok
+test song::tests::bar_length_multiplies_duration ... ok
+test samples::tests::load_wav_round_trip ... ok
+test song::tests::copy_paste_round_trips ... ok
+test song::tests::insert_bar_shifts_cursor_right_when_needed ... ok
+test song::tests::bar_length_serde_default_for_legacy ... ok
+test song::tests::loop_wraps_at_end ... ok
+test song::tests::move_bar_repositions_without_changing_count ... ok
+test song::tests::multi_measure_bar_advances_after_full_block ... ok
+test song::tests::new_song_has_one_default_bar ... ok
+test song::tests::one_shot_stops_at_end ... ok
+test song::tests::pending_changes_apply_at_bar_boundary ... ok
+test song::tests::pending_clear_drops_unapplied ... ok
+test song::tests::remove_bar_adjusts_cursor ... ok
+test song::tests::remove_last_remaining_bar_errors ... ok
+test song::tests::song_serializes_to_json ... ok
+test song_engine::tests::play_chord_now_ignores_empty_and_silent_pitches ... ok
+test song_engine::tests::set_song_replaces_arrangement_cleanly ... ok
+test song_engine::tests::silent_output_when_not_playing ... ok
+test song_engine::tests::with_song_lets_caller_edit_under_lock ... ok
+test sound::tests::accent_uses_different_frequency ... ok
+test offline::tests::render_pattern_returns_correct_buffer_length ... ok
+test sound::tests::click_envelope_decays ... ok
+test sound::tests::click_amplitude_is_bounded ... ok
+test offline::tests::render_pattern_produces_audio_not_silence ... ok
+test sound::tests::click_render_returns_none_past_duration ... ok
+test song_engine::tests::preview_synthesis_does_not_block_the_callback_and_queues_at_current_clock ... ok
+test sound::tests::click_render_starts_nonzero ... ok
+test sound::tests::gain_scales_and_clamps ... ok
+test sound::tests::normalize_brings_peak_to_target ... ok
+test sound::tests::normalize_silent_is_noop ... ok
+test sound::tests::reverse_flips_order ... ok
+test sound::tests::sample_accent_boosts_gain ... ok
+test sound::tests::sample_pitch_up_consumes_buffer_faster ... ok
+test sound::tests::sample_returns_none_past_end ... ok
+test sound::tests::sample_round_trip_via_serde_preserves_id_and_drops_buffer ... ok
+test sound::tests::sample_with_buffer_renders_value_at_start ... ok
+test sound::tests::sample_without_buffer_renders_none ... ok
+test offline::tests::export_wav_writes_readable_file ... ok
+test song_engine::tests::cursor_advances_with_processed_frames ... ok
+test offline::tests::render_pattern_clicks_are_localized_to_beats ... ok
+test song_engine::tests::play_chord_now_sounds_while_stopped ... ok
+test song_engine::tests::click_fires_on_first_frame_when_playing ... ok
+test song_engine::tests::chord_bar_produces_extra_audio ... ok
+test song_engine::tests::one_shot_song_stops_at_end ... ok
+test song_engine::tests::loop_wraps_to_first_bar ... ok
+test input::tests::pitch_analyzer_enabled_detects_a4_from_sine ... ok
+test midi::tests::list_ports_does_not_panic ... ok
+
+test result: ok. 127 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.68s
+
+     Running unittests src/main.rs (/Users/markik/Code/targets/woodshed-tabard/debug/deps/woodshed_genet-13420a01bc444bc3)
+
+running 79 tests
+test appearance::tests::explicit_and_scenario_library_paths_preserve_private_profile_isolation ... ok
+test audio::tests::each_input_feature_can_open_the_one_shared_session ... ok
+test audio::tests::explicit_calibration_and_recording_requests_retry_without_losing_output_error ... ok
+test audio::tests::failed_tuner_enable_is_visible_and_only_explicit_reenable_retries ... ok
+test audio::tests::ordinary_synchronization_and_polls_do_not_open_microphone ... ok
+test audio::tests::recording_retry_restores_pending_tuner_enable_on_same_session ... ok
+test drive::tests::background_dwell_keeps_its_owner_clock_cursor_and_inherited_sound ... ok
+test drive::tests::dwell_restarts_after_instruction_edits_cursor_changes_and_pause ... ok
+test appearance::tests::corrupt_library_disables_authoring_and_preserves_the_requested_appearance_and_file ... ok
+test appearance::tests::native_save_confirmation_persists_the_definition_then_closes_the_application ... ok
+test appearance::tests::export_destination_cancellation_and_collision_leave_library_unsaved ... ok
+test layout_tests::invalid_saved_scale_setup_shows_the_reason_and_cannot_sound_the_live_guitar ... ok
+test layout_tests::narrow_settings_navigation_stacks_and_selects_a_page ... ok
+test appearance::tests::cancelled_native_close_then_embedded_discard_does_not_exit_the_application ... ok
+test layout_tests::discovered_scale_uses_its_saved_ukulele_board_and_physical_solo_contact ... ok
+test layout_tests::rehearsal_board_scroll_preserves_extent_and_note_hits ... ok
+test layout_tests::rehearsal_shape_controls_change_notes_and_clear_to_the_map ... ok
+test layout_tests::inspected_pattern_revalidates_removed_and_invalid_sources_before_authoring ... ok
+test layout_tests::reopened_scale_editor_has_no_empty_chord_discovery_panels ... ok
+test layout_tests::narrow_stage_preserves_graph_width_and_horizontal_scroll ... ok
+test layout_tests::compatible_scale_controls_choose_audition_stage_and_drill_without_changing_the_chord ... ok
+test layout_tests::selected_card_geometry_overrides_the_live_guitar ... ok
+test leaves::atmosphere_tests::atmosphere_is_clipped_resized_and_beneath_graph_independently_of_camera ... ok
+test layout_tests::background_runner_inherits_the_starting_exploration_setup ... ok
+test layout_tests::settings_uses_the_shared_page_scroll_owner ... ok
+test layout_tests::neck_comparison_tracks_previous_card_and_shape_controls ... ok
+test persona::tests::a_forced_persona_is_not_asked_about ... ok
+test persona::tests::a_remembered_choice_is_not_asked_again ... ok
+test layout_tests::expanded_graph_editor_keeps_discovery_outside_the_canvas ... ok
+test persona::tests::a_sole_persona_is_not_a_question ... ok
+test layout_tests::exact_tone_relationship_controls_rebind_and_open_the_containing_scale_at_two_widths ... ok
+test layout_tests::wide_stage_keeps_board_and_expanded_tray_reachable ... ok
+test persona::tests::declining_is_not_a_dead_end_the_settings_switch_starts_saving ... ok
+test persona::tests::a_vault_that_will_not_open_is_stepped_over_rather_than_asked_about ... ok
+test persona::tests::switching_into_an_unused_persona_does_not_carry_the_last_one_in ... ok
+test persona::tests::switching_persona_retains_the_global_authored_library_but_restores_incoming_selection ... ok
+test persona::tests::switching_persona_retains_the_global_library_load_error ... ok
+test persona::tests::an_empty_vault_is_not_a_question_either ... ok
+test layout_tests::card_parameters_and_explanations_do_not_overlap_and_related_rows_still_stage ... ok
+test layout_tests::connected_discovery_controls_stage_the_selected_shape_and_run_it ... ok
+test persona::tests::asking_for_a_new_persona_keeps_the_gate_up_and_says_why ... ok
+test layout_tests::relationship_recipe_controls_compile_explain_and_return_to_exact_source_at_two_widths ... ok
+test persona::tests::choosing_a_persona_opens_the_store_on_it_without_a_round_trip ... ok
+test layout_tests::scale_pattern_controls_preserve_order_source_and_occurrences_in_wide_and_narrow_views ... ok
+test persona::tests::two_personas_sharing_a_name_are_still_told_apart ... ok
+test session::tests::chord_approach_session_receipt_worker ... ok
+test persona::tests::clicking_a_persona_records_the_choice_the_host_acts_on ... ok
+test session::tests::connected_session_receipt_worker ... ok
+test session::tests::chord_approach_session_replays_saved_target_shapes_in_a_fresh_process ... ok
+test session::tests::host_session_restores_the_workspace_policy ... ok
+test session::tests::independent_instances_receipt_worker ... ok
+test session::tests::connected_session_reopens_in_a_fresh_process ... ok
+test session::tests::legacy_four_panel_workspace_and_session_restore_without_a_retained_library ... ok
+test session::tests::legacy_single_owner_session_adopts_instances_without_changing_authored_work ... ok
+test session::tests::mixed_catalog_session_receipt_worker ... ok
+test session::tests::independent_working_sets_and_explorations_reopen_in_a_fresh_process ... ok
+test session::tests::mixed_catalog_session_reopens_in_a_fresh_process ... ok
+test session::tests::retained_library_receipt_worker ... ok
+test session::tests::scale_pattern_session_receipt_worker ... ok
+test session::tests::retained_library_and_overview_reopen_ordered_music_in_a_fresh_process ... ok
+test session::tests::settings_apply_without_a_practice_session ... ok
+test layout_tests::unselected_target_approach_keeps_repeated_pitch_visits_in_production_audio ... ok
+test persona::tests::declining_at_startup_would_have_minted_a_third_identity ... ok
+test tests::window_geometry_conversion_preserves_every_axis ... ok
+test session::tests::scale_pattern_session_replays_ordered_visits_in_a_fresh_process ... ok
+test tests::shared_title_bar_fills_viewport_and_keeps_editor_below_it ... ok
+test tests::native_workshop_routes_name_and_stylesheet_text_through_owned_model ... ok
+test persona::tests::escape_dismisses_the_gate_so_practice_is_never_blocked ... ok
+test layout_tests::adjacent_chord_approach_controls_preserve_physical_pairs_shapes_and_originals has been running for over 60 seconds
+test layout_tests::independent_instances_keep_background_rehearsal_and_explicit_staging_bound_to_their_owners has been running for over 60 seconds
+test layout_tests::inspected_chord_approach_rejects_stale_pairs_and_saved_shape_failures has been running for over 60 seconds
+test persona::tests::the_gate_asks_about_the_personas_the_vault_actually_holds ... ok
+test persona::tests::the_gate_is_reachable_by_a_driver ... ok
+test persona::tests::the_gate_stands_in_front_of_the_product_rather_than_over_it ... ok
+test persona::tests::the_gate_takes_the_keyboard_without_a_tab ... ok
+test persona::tests::the_settings_row_asks_even_when_the_convention_would_not ... ok
+test persona::tests::two_personas_and_no_choice_is_the_one_case_worth_asking_about ... ok
+test persona::tests::the_unsaved_notice_is_on_screen_for_a_declined_session ... ok
+test layout_tests::session_overview_inspects_retains_and_opens_real_work_without_navigation_side_effects has been running for over 60 seconds
+test layout_tests::inspected_chord_approach_rejects_stale_pairs_and_saved_shape_failures ... ok
+test layout_tests::session_overview_inspects_retains_and_opens_real_work_without_navigation_side_effects ... ok
+test layout_tests::adjacent_chord_approach_controls_preserve_physical_pairs_shapes_and_originals ... ok
+test layout_tests::independent_instances_keep_background_rehearsal_and_explicit_staging_bound_to_their_owners ... ok
+
+test result: ok. 79 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 132.35s
+
+   Doc-tests woodshed_audio
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
