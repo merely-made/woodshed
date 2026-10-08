@@ -2745,3 +2745,52 @@ performance or acoustic/device-wide quality. Earlier preflight failures and
 the corrected `+` selector mistake remain retained. The receipt and concise
 logs are committed in `validation/song-cache_20261008/`; full PNG/sample
 evidence remains in the local artifact directory noted above.
+
+
+### October 8 follow-up: bounded preview synthesis worker
+
+**Status: implemented; audio/core/views/desktop gates pass; native qualification pending.**
+
+This Woodshed-owned slice starts at clean main
+`0f104028523b22cd2f13ee0ff73f3cc889b3d873`. It preserves the current Mere/Genet
+pins and the already-prepared song chord cache. It addresses the remaining
+caller stall in stopped-song previews, rather than changing song preparation.
+
+Each SongEngine now owns one named preview thread, with one in-flight render
+and one replaceable pending request. Hear and exercise notes enqueue work and
+return without synthesizing PCM. New requests invalidate unfinished older
+requests; the renderer checks cancellation every 1024 samples and final
+publication rechecks the request revision under the mixer lock. The ready
+voice starts at the current one-shot clock. The queue cannot accumulate a
+backlog of old scale runs. A full Hear also replaces sounding preview
+envelopes; step notes preserve already sounding envelopes for sequential
+exercise playback. Under overload, unfinished step requests use the same
+latest-request policy. The existing sixteen-voice bound remains.
+
+Stop, Rewind, explicit cancellation, queued transport/seek changes, song
+replacement and song playback invalidate pending/in-flight previews and clear
+sounding one-shots. Song playback rejects preview submissions, preventing a
+hidden preview from sounding after Stop. Metronome start/stop transitions also
+cancel previews; ordinary stopped-state synchronization does not. Engine
+shutdown closes and joins the worker, even if an external handle survives.
+The worker holds a weak mixer reference, avoiding a lifecycle cycle.
+
+Rehearsal Pause and the exercise/arpeggio/scale Stop controls send an explicit
+cancellation request, independent of idempotent transport polling.
+
+Five new deterministic audio regressions cover bounded bursts and stale
+publication, transport cancellation, overlapping step envelopes versus Hear,
+shutdown with a surviving handle, and cancellable renderer PCM identity. The
+existing callback-progress test now also proves caller return while synthesis
+is deliberately blocked. The 138-test audio gate passes. Read-only native
+observations expose worker activity and sounding voice count; the desktop
+scenario busy flag includes queued synthesis. `preview_worker.scn` and its
+fresh-process companion exercise repeated Hear, Rewind cancellation and
+saved recipe replay. Muted hardware diagnostics separately measure request
+return and completed synthesis, so a fast enqueue cannot conceal unfinished
+work. Evidence lives in
+`/Users/markik/Code/testing/woodshed/preview-worker-20261008/`.
+
+Song-cache preparation remains synchronous on the caller. Callback mutexes,
+recording allocation, broad startup/layout performance, acoustic quality and
+release packaging remain separate acceptance boundaries.

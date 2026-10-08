@@ -167,6 +167,20 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 start.elapsed().as_secs_f64(),
                 t.elapsed().as_secs_f64() * 1000.0
             );
+            if let Some(h) = &handle {
+                while h.preview_busy() {
+                    assert!(
+                        t.elapsed() < Duration::from_secs(10),
+                        "preview did not finish"
+                    );
+                    std::thread::sleep(Duration::from_millis(1));
+                }
+                eprintln!(
+                    "DDX {:.3}s trial={trial} complete_ms={:.3}",
+                    start.elapsed().as_secs_f64(),
+                    t.elapsed().as_secs_f64() * 1000.0
+                );
+            }
             std::thread::sleep(Duration::from_secs(2));
         }
     }

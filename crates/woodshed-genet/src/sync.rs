@@ -82,6 +82,7 @@ fn push_backend(shared: &mut Shared, ctx: &mut Ctx<'_>) {
             for request in std::mem::take(&mut ui.audio_requests) {
                 match request {
                     AudioRequest::SongRewind => backend.song_rewind(),
+                    AudioRequest::CancelPreview => backend.cancel_preview(),
                     AudioRequest::PreviewVoicing => {
                         let (pitches, dur, strum) = ui.preview_voicing();
                         if !pitches.is_empty() {

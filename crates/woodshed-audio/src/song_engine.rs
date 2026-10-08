@@ -26,12 +26,16 @@
 //! keeps each mixer focused.
 
 use std::collections::VecDeque;
-use std::sync::{Arc, Mutex};
+use std::sync::{
+    Arc, Condvar, Mutex, Weak,
+    atomic::{AtomicU64, Ordering},
+};
+use std::thread::JoinHandle;
 
 use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
 use cpal::{Stream, StreamConfig};
 
-use crate::chord_audio::{ChordRender, render_chord};
+use crate::chord_audio::{ChordRender, render_chord, render_chord_cancellable};
 use crate::engine::{AudioError, Voice};
 use crate::input::LooperCaptureHandle;
 use crate::song::{Bar, PendingChange, Song};
@@ -210,13 +214,145 @@ impl SongEngineInternals {
 // Public handle
 // =================================================================
 
+// One renderer, one in-flight request, one replaceable pending request. The
+// worker holds only a Weak mixer reference, so cloned handles cannot form a cycle.
+struct PreviewRequest {
+    params: ChordRender,
+    id: &'static str,
+    rate: u32,
+    revision: u64,
+}
+#[derive(Default)]
+struct PreviewQueue {
+    pending: Option<PreviewRequest>,
+    running: bool,
+    closed: bool,
+}
+#[derive(Default)]
+struct PreviewMailbox {
+    queue: Mutex<PreviewQueue>,
+    changed: Condvar,
+    revision: AtomicU64,
+}
+struct PreviewWorker {
+    mailbox: Arc<PreviewMailbox>,
+    thread: Mutex<Option<JoinHandle<()>>>,
+}
+impl PreviewWorker {
+    fn new(
+        mixer: Weak<Mutex<SongEngineInternals>>,
+        mut render: impl FnMut(&ChordRender, u32, &dyn Fn() -> bool) -> Option<SampleBuffer>
+        + Send
+        + 'static,
+    ) -> Self {
+        let mailbox = Arc::new(PreviewMailbox::default());
+        let worker = mailbox.clone();
+        let thread = std::thread::Builder::new()
+            .name("woodshed-preview".into())
+            .spawn(move || {
+                loop {
+                    let request = {
+                        let mut q = worker.queue.lock().unwrap();
+                        while q.pending.is_none() && !q.closed {
+                            q = worker.changed.wait(q).unwrap();
+                        }
+                        if q.closed {
+                            break;
+                        }
+                        q.running = true;
+                        q.pending.take().unwrap()
+                    };
+                    let cancelled = || worker.revision.load(Ordering::Acquire) != request.revision;
+                    if let Some(buffer) = render(&request.params, request.rate, &cancelled) {
+                        if let Some(mixer) = mixer.upgrade() {
+                            let mut s = mixer.lock().unwrap();
+                            if !cancelled() && !s.song.playing {
+                                push_oneshot(&mut s, buffer, request.id);
+                            }
+                        }
+                    }
+                    let mut q = worker.queue.lock().unwrap();
+                    q.running = false;
+                    worker.changed.notify_all();
+                }
+            })
+            .expect("start preview worker");
+        Self {
+            mailbox,
+            thread: Mutex::new(Some(thread)),
+        }
+    }
+
+    // Call with the mixer locked. Publication validates under the same lock;
+    // an invalidated render cannot race a stop or a newer request into output.
+    fn cancel(&self) {
+        self.mailbox.revision.fetch_add(1, Ordering::AcqRel);
+        self.mailbox.queue.lock().unwrap().pending = None;
+    }
+
+    fn shutdown(&self) {
+        {
+            let mut q = self.mailbox.queue.lock().unwrap();
+            q.closed = true;
+            q.pending = None;
+            self.mailbox.revision.fetch_add(1, Ordering::AcqRel);
+            self.mailbox.changed.notify_all();
+        }
+        if let Some(thread) = self.thread.lock().unwrap().take() {
+            thread.join().expect("preview worker panicked");
+        }
+    }
+}
+impl Drop for PreviewWorker {
+    fn drop(&mut self) {
+        self.shutdown();
+    }
+}
+
 /// Thread-safe handle to control / inspect the running [`SongEngine`].
 #[derive(Clone)]
 pub struct SongEngineHandle {
     inner: Arc<Mutex<SongEngineInternals>>,
+    preview: Arc<PreviewWorker>,
 }
 
 impl SongEngineHandle {
+    fn new(inner: Arc<Mutex<SongEngineInternals>>) -> Self {
+        Self::with_preview_renderer(inner, render_chord_cancellable)
+    }
+
+    fn with_preview_renderer(
+        inner: Arc<Mutex<SongEngineInternals>>,
+        render: impl FnMut(&ChordRender, u32, &dyn Fn() -> bool) -> Option<SampleBuffer>
+        + Send
+        + 'static,
+    ) -> Self {
+        let preview = Arc::new(PreviewWorker::new(Arc::downgrade(&inner), render));
+        Self { inner, preview }
+    }
+
+    /// Whether preview synthesis is queued or in progress (not voice playback).
+    pub fn preview_busy(&self) -> bool {
+        let q = self.preview.mailbox.queue.lock().unwrap();
+        q.running || q.pending.is_some()
+    }
+
+    /// Number of sounding preview envelopes, for read-only diagnostics.
+    pub fn preview_voice_count(&self) -> usize {
+        self.inner.lock().unwrap().oneshot_voices.len()
+    }
+
+    /// Cancel queued/in-flight synthesis and stop sounding preview envelopes.
+    pub fn cancel_preview(&self) {
+        let mut s = self.inner.lock().unwrap();
+        self.cancel_preview_locked(&mut s);
+    }
+
+    fn cancel_preview_locked(&self, s: &mut SongEngineInternals) {
+        self.preview.cancel();
+        s.oneshot_voices.clear();
+    }
+
     /// Replace the active song. Resets transport, clears cached
     /// audio. Call when switching arrangements or after editing a
     /// bar's chord.
@@ -227,6 +363,7 @@ impl SongEngineHandle {
     fn replace_song(&self, song: Song, render: impl FnMut(&ChordRender, u32) -> SampleBuffer) {
         let (rate, revision) = {
             let mut s = self.inner.lock().unwrap();
+            self.cancel_preview_locked(&mut s);
             s.replacement_revision = s.replacement_revision.wrapping_add(1);
             (s.sample_rate_hz as u32, s.replacement_revision)
         };
@@ -235,6 +372,7 @@ impl SongEngineHandle {
         if s.replacement_revision != revision {
             return;
         }
+        self.cancel_preview_locked(&mut s);
         s.song = song;
         s.song.cursor = Default::default();
         s.song.playing = false;
@@ -291,7 +429,11 @@ impl SongEngineHandle {
         F: FnOnce(&mut Song) -> R,
     {
         let mut s = self.inner.lock().unwrap();
+        let playing = s.song.playing;
         let result = f(&mut s.song);
+        if playing != s.song.playing {
+            self.cancel_preview_locked(&mut s);
+        }
         s.resync_chord_cache();
         drop(s);
         self.prepare_chords(render_chord);
@@ -338,8 +480,10 @@ impl SongEngineHandle {
     /// lead (only when the click is enabled — a muted click skips the
     /// count-in rather than stalling silently).
     pub fn play(&self) {
+        self.cancel_preview();
         self.prepare_chords(render_chord);
         let mut s = self.inner.lock().unwrap();
+        self.cancel_preview_locked(&mut s);
         s.song.playing = true;
         s.voice_clock = 0;
         s.voices.clear();
@@ -369,6 +513,7 @@ impl SongEngineHandle {
     /// Stop playback. Cursor stays where it is.
     pub fn stop(&self) {
         let mut s = self.inner.lock().unwrap();
+        self.cancel_preview_locked(&mut s);
         s.song.playing = false;
         s.voices.clear();
         s.count_in_remaining = 0;
@@ -377,6 +522,7 @@ impl SongEngineHandle {
     /// Rewind to bar 0, sample 0.
     pub fn rewind(&self) {
         let mut s = self.inner.lock().unwrap();
+        self.cancel_preview_locked(&mut s);
         s.song.cursor = Default::default();
         s.last_click_beat = -1;
         s.last_chord_bar = -1;
@@ -386,7 +532,14 @@ impl SongEngineHandle {
 
     /// Queue a pending change to apply at the next bar boundary.
     pub fn queue(&self, change: PendingChange) {
-        self.inner.lock().unwrap().song.queue(change);
+        let mut s = self.inner.lock().unwrap();
+        if matches!(
+            change,
+            PendingChange::SetPlaying(_) | PendingChange::SeekTo { .. }
+        ) {
+            self.cancel_preview_locked(&mut s);
+        }
+        s.song.queue(change);
     }
 
     /// Wire the input capture ring. Must be called before song-mode
@@ -399,21 +552,19 @@ impl SongEngineHandle {
         self.inner.lock().unwrap().output_gain = gain.clamp(0.0, 1.0);
     }
 
-    /// Play a single pitched note immediately, regardless of song
-    /// transport state — a chord-render voice at one frequency. Used to
-    /// sonify the arpeggio / exercise step-through. PCM renders on the
-    /// caller before a brief voice publication; the audio callback continues
-    /// during synthesis. The voice self-removes when its envelope ends.
+    /// Queue a single note while the song is stopped. Synthesis runs on the
+    /// preview worker; the UI returns immediately. Already sounding step notes
+    /// keep their envelopes, while unfinished older requests are superseded.
     pub fn play_note_now(&self, freq_hz: f32, duration_secs: f32) {
         if freq_hz <= 0.0 {
             return;
         }
         let params = ChordRender::block(vec![freq_hz], duration_secs.max(0.05));
-        self.render_preview(params, "step-note", render_chord);
+        self.queue_preview(params, "step-note", false);
     }
 
-    /// Play a set of pitches as one strummed one-shot voice, regardless
-    /// of transport — the "hear this chord / scale" preview. `strum_ms`
+    /// Queue a strummed one-shot while the song is stopped. A new Hear
+    /// replaces queued/in-flight previews and sounding preview envelopes. `strum_ms`
     /// staggers note onsets: 0 = block chord, ~18 = a gentle strum,
     /// larger = an arpeggiated cascade (a scale run). Zero-or-negative
     /// pitches are dropped; an all-empty set is a no-op. Mixed on the
@@ -430,22 +581,46 @@ impl SongEngineHandle {
             strum_offset_ms: strum_ms.max(0.0),
             ..ChordRender::default()
         };
-        self.render_preview(params, "preview-chord", render_chord);
+        self.queue_preview(params, "preview-chord", true);
     }
 
-    /// Synthesis can take hundreds of milliseconds for a long ordered preview.
-    /// Only reading the fixed stream rate and publishing a ready voice share the
-    /// mixer mutex; the audio callback continues while PCM is rendered.
-    fn render_preview(
-        &self,
-        params: ChordRender,
-        id: &str,
-        render: impl FnOnce(&ChordRender, u32) -> SampleBuffer,
-    ) {
-        let sample_rate = self.inner.lock().unwrap().sample_rate_hz as u32;
-        let buf = render(&params, sample_rate);
+    fn queue_preview(&self, params: ChordRender, id: &'static str, replace: bool) {
         let mut s = self.inner.lock().unwrap();
-        push_oneshot(&mut s, buf, id);
+        let mut q = self.preview.mailbox.queue.lock().unwrap();
+        if q.closed || s.song.playing {
+            return;
+        }
+        let revision = self
+            .preview
+            .mailbox
+            .revision
+            .fetch_add(1, Ordering::AcqRel)
+            .wrapping_add(1);
+        if replace {
+            s.oneshot_voices.clear();
+        }
+        q.pending = Some(PreviewRequest {
+            params,
+            id,
+            rate: s.sample_rate_hz as u32,
+            revision,
+        });
+        self.preview.mailbox.changed.notify_one();
+    }
+
+    #[cfg(test)]
+    fn wait_preview(&self) {
+        let mut q = self.preview.mailbox.queue.lock().unwrap();
+        while q.running || q.pending.is_some() {
+            let (next, timeout) = self
+                .preview
+                .mailbox
+                .changed
+                .wait_timeout(q, std::time::Duration::from_secs(5))
+                .unwrap();
+            q = next;
+            assert!(!timeout.timed_out(), "preview worker did not finish");
+        }
     }
 }
 
@@ -496,13 +671,20 @@ impl SongEngine {
         stream.play().map_err(AudioError::StreamPlay)?;
 
         Ok(Self {
-            handle: SongEngineHandle { inner: internals },
+            handle: SongEngineHandle::new(internals),
             _stream: stream,
         })
     }
 
     pub fn handle(&self) -> SongEngineHandle {
         self.handle.clone()
+    }
+}
+
+impl Drop for SongEngine {
+    fn drop(&mut self) {
+        self.handle.cancel_preview();
+        self.handle.preview.shutdown();
     }
 }
 
@@ -802,9 +984,7 @@ mod tests {
         state.chord_cache[0] = None;
         state.song.playing = true;
         let internals = Arc::new(Mutex::new(state));
-        let handle = SongEngineHandle {
-            inner: internals.clone(),
-        };
+        let handle = SongEngineHandle::new(internals.clone());
         let background = handle.clone();
         let (started_tx, started_rx) = mpsc::channel();
         let (resume_tx, resume_rx) = mpsc::channel();
@@ -853,9 +1033,7 @@ mod tests {
     fn slow_song_replacement_cannot_overwrite_a_newer_request() {
         use std::sync::mpsc;
         let internals = Arc::new(Mutex::new(make_state(Song::new())));
-        let handle = SongEngineHandle {
-            inner: internals.clone(),
-        };
+        let handle = SongEngineHandle::new(internals.clone());
         let background = handle.clone();
         let (started_tx, started_rx) = mpsc::channel();
         let (resume_tx, resume_rx) = mpsc::channel();
@@ -887,9 +1065,7 @@ mod tests {
     #[test]
     fn read_and_cosmetic_edits_reuse_pcm_but_pitch_tempo_and_meter_edits_refresh_it() {
         let internals = Arc::new(Mutex::new(make_state(chord_song())));
-        let handle = SongEngineHandle {
-            inner: internals.clone(),
-        };
+        let handle = SongEngineHandle::new(internals.clone());
         let before = internals.lock().unwrap().chord_cache[0]
             .as_ref()
             .unwrap()
@@ -954,9 +1130,7 @@ mod tests {
         song.bars[0].time_signature.numerator = 2;
         song.bars[0].length = 2;
         let internals = Arc::new(Mutex::new(SongEngineInternals::new(song, 1_000.0, 1)));
-        let handle = SongEngineHandle {
-            inner: internals.clone(),
-        };
+        let handle = SongEngineHandle::new(internals.clone());
         handle.play();
         let mut state = internals.lock().unwrap();
         assert_eq!(state.count_in_remaining, 200);
@@ -1055,9 +1229,7 @@ mod tests {
             48_000.0,
             1,
         )));
-        let handle = SongEngineHandle {
-            inner: Arc::clone(&internals),
-        };
+        let handle = SongEngineHandle::new(Arc::clone(&internals));
 
         let mut new_song = Song::new();
         new_song.add_bar();
@@ -1079,9 +1251,7 @@ mod tests {
             48_000.0,
             1,
         )));
-        let handle = SongEngineHandle {
-            inner: Arc::clone(&internals),
-        };
+        let handle = SongEngineHandle::new(Arc::clone(&internals));
         handle.with_song(|s| {
             s.add_bar();
             s.bar_mut(1).unwrap().bpm = 90.0;
@@ -1115,22 +1285,16 @@ mod tests {
             48_000.0,
             1,
         )));
-        let handle = SongEngineHandle {
-            inner: Arc::clone(&internals),
-        };
         let (started_tx, started_rx) = mpsc::channel();
         let (resume_tx, resume_rx) = mpsc::channel();
-        let worker = std::thread::spawn(move || {
-            handle.render_preview(
-                ChordRender::block(vec![261.63], 0.1),
-                "test-preview",
-                |params, rate| {
-                    started_tx.send(()).unwrap();
-                    resume_rx.recv().unwrap();
-                    render_chord(params, rate)
-                },
-            );
-        });
+        let handle =
+            SongEngineHandle::with_preview_renderer(internals.clone(), move |params, rate, _| {
+                started_tx.send(()).unwrap();
+                resume_rx.recv().unwrap();
+                Some(render_chord(params, rate))
+            });
+        // Returns even though the worker cannot finish until we release it.
+        handle.play_note_now(261.63, 0.1);
         started_rx.recv().unwrap();
         // The renderer is deliberately still running. The mixer must acquire
         // state and advance audio immediately, without timing-based assertions.
@@ -1145,7 +1309,7 @@ mod tests {
             Err(_) => false,
         };
         resume_tx.send(()).unwrap();
-        worker.join().unwrap();
+        handle.wait_preview();
         assert!(progressed, "synthesis held the callback's mutex");
         let mut state = internals.lock().unwrap();
         assert_eq!(state.oneshot_voices[0].start_sample, 512);
@@ -1155,17 +1319,162 @@ mod tests {
     }
 
     #[test]
+    fn preview_burst_keeps_only_latest_pending_and_rejects_stale_completion() {
+        use std::sync::mpsc;
+        let internals = Arc::new(Mutex::new(make_state(Song::new())));
+        let (started_tx, started_rx) = mpsc::channel();
+        let (resume_tx, resume_rx) = mpsc::channel();
+        let seen = Arc::new(Mutex::new(Vec::new()));
+        let calls = seen.clone();
+        let mut first = true;
+        let handle =
+            SongEngineHandle::with_preview_renderer(internals.clone(), move |p, rate, _| {
+                calls.lock().unwrap().push(p.pitches_hz[0]);
+                if first {
+                    first = false;
+                    started_tx.send(()).unwrap();
+                    resume_rx.recv().unwrap();
+                }
+                // Deliberately ignore cancellation: publication must still reject it.
+                Some(render_chord(p, rate))
+            });
+        handle.play_note_now(220.0, 0.1);
+        started_rx
+            .recv_timeout(std::time::Duration::from_secs(5))
+            .unwrap();
+        for freq in [330.0, 440.0, 550.0] {
+            handle.play_chord_now(&[freq], 0.1, 0.0);
+        }
+        let pending = handle
+            .preview
+            .mailbox
+            .queue
+            .lock()
+            .unwrap()
+            .pending
+            .as_ref()
+            .unwrap()
+            .params
+            .pitches_hz
+            .clone();
+        resume_tx.send(()).unwrap();
+        handle.wait_preview();
+        assert_eq!(pending, [550.0]);
+        assert_eq!(*seen.lock().unwrap(), [220.0, 550.0]);
+        let mut state = internals.lock().unwrap();
+        assert_eq!(state.oneshot_voices.len(), 1);
+        let expected = render_chord(&ChordRender::block(vec![550.0], 0.1), 48_000);
+        let mut output = [0.0; 512];
+        process_song_buffer(&mut state, &mut output);
+        for (idx, sample) in output.iter().enumerate() {
+            assert_eq!(*sample, expected.data[idx] * state.output_gain);
+        }
+    }
+
+    #[test]
+    fn transport_actions_cancel_running_and_pending_preview() {
+        use std::sync::mpsc;
+        for action in 0..7 {
+            let internals = Arc::new(Mutex::new(make_state(Song::new())));
+            let (started_tx, started_rx) = mpsc::channel();
+            let (resume_tx, resume_rx) = mpsc::channel();
+            let handle =
+                SongEngineHandle::with_preview_renderer(internals.clone(), move |p, rate, _| {
+                    started_tx.send(()).unwrap();
+                    resume_rx.recv().unwrap();
+                    Some(render_chord(p, rate))
+                });
+            handle.play_note_now(220.0, 0.1);
+            started_rx
+                .recv_timeout(std::time::Duration::from_secs(5))
+                .unwrap();
+            handle.play_note_now(330.0, 0.1);
+            match action {
+                0 => handle.stop(),
+                1 => handle.rewind(),
+                2 => handle.play(),
+                3 => handle.set_song(Song::new()),
+                4 => handle.queue(PendingChange::SetPlaying(true)),
+                5 => handle.queue(PendingChange::SeekTo { bar_idx: 0 }),
+                _ => handle.cancel_preview(),
+            }
+            let cleared = handle
+                .preview
+                .mailbox
+                .queue
+                .lock()
+                .unwrap()
+                .pending
+                .is_none();
+            resume_tx.send(()).unwrap();
+            handle.wait_preview();
+            assert!(cleared, "action {action} retained a pending preview");
+            assert!(
+                internals.lock().unwrap().oneshot_voices.is_empty(),
+                "action {action} published stale PCM"
+            );
+        }
+    }
+
+    #[test]
+    fn step_notes_keep_envelopes_but_hear_replaces_and_playing_rejects_requests() {
+        let internals = Arc::new(Mutex::new(make_state(Song::new())));
+        let handle = SongEngineHandle::new(internals.clone());
+        handle.play_note_now(220.0, 0.1);
+        handle.wait_preview();
+        handle.play_note_now(330.0, 0.1);
+        handle.wait_preview();
+        assert_eq!(internals.lock().unwrap().oneshot_voices.len(), 2);
+        handle.play_chord_now(&[440.0], 0.1, 0.0);
+        handle.wait_preview();
+        assert_eq!(internals.lock().unwrap().oneshot_voices.len(), 1);
+        handle.play();
+        handle.play_note_now(550.0, 0.1);
+        handle.play_chord_now(&[660.0], 0.1, 0.0);
+        assert!(!handle.preview_busy());
+        handle.stop();
+        assert!(internals.lock().unwrap().oneshot_voices.is_empty());
+    }
+
+    #[test]
+    fn shutdown_cancels_worker_and_retained_handle_cannot_restart_it() {
+        use std::sync::mpsc;
+        let internals = Arc::new(Mutex::new(make_state(Song::new())));
+        let (started_tx, started_rx) = mpsc::channel();
+        let (aborted_tx, aborted_rx) = mpsc::channel();
+        let handle =
+            SongEngineHandle::with_preview_renderer(internals.clone(), move |_, _, cancelled| {
+                started_tx.send(()).unwrap();
+                while !cancelled() {
+                    std::thread::yield_now();
+                }
+                aborted_tx.send(()).unwrap();
+                None
+            });
+        handle.play_note_now(220.0, 0.1);
+        started_rx
+            .recv_timeout(std::time::Duration::from_secs(5))
+            .unwrap();
+        handle.preview.shutdown();
+        aborted_rx
+            .recv_timeout(std::time::Duration::from_secs(5))
+            .unwrap();
+        handle.play_note_now(330.0, 0.1);
+        assert!(!handle.preview_busy());
+        assert!(internals.lock().unwrap().oneshot_voices.is_empty());
+    }
+
+    #[test]
     fn play_chord_now_sounds_while_stopped() {
         let internals = Arc::new(Mutex::new(SongEngineInternals::new(
             Song::new(),
             48_000.0,
             1,
         )));
-        let handle = SongEngineHandle {
-            inner: Arc::clone(&internals),
-        };
+        let handle = SongEngineHandle::new(Arc::clone(&internals));
         // A C-major triad preview.
         handle.play_chord_now(&[261.63, 329.63, 392.00], 0.5, 18.0);
+        handle.wait_preview();
         assert!(
             !internals.lock().unwrap().oneshot_voices.is_empty(),
             "preview should queue a one-shot voice"
@@ -1185,9 +1494,7 @@ mod tests {
             48_000.0,
             1,
         )));
-        let handle = SongEngineHandle {
-            inner: Arc::clone(&internals),
-        };
+        let handle = SongEngineHandle::new(Arc::clone(&internals));
         handle.play_chord_now(&[], 0.5, 0.0);
         handle.play_chord_now(&[0.0, -20.0], 0.5, 0.0);
         assert!(

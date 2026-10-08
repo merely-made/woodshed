@@ -134,6 +134,18 @@ fn to_song(doc: &SongDoc) -> Song {
 }
 
 impl CpalBackend {
+    pub fn preview_busy(&self) -> bool {
+        self.song
+            .as_ref()
+            .is_some_and(SongEngineHandle::preview_busy)
+    }
+
+    pub fn preview_voice_count(&self) -> usize {
+        self.song
+            .as_ref()
+            .map_or(0, SongEngineHandle::preview_voice_count)
+    }
+
     /// Open output streams at startup. The shared microphone stream opens
     /// on the first tuner, calibration, or recording request. Missing devices
     /// degrade and [`error`](AudioBackend::error) reports the failure.
@@ -235,6 +247,9 @@ impl AudioBackend for CpalBackend {
         };
         handle.set_bpm(transport.bpm);
         if transport.playing != handle.is_playing() {
+            if let Some(song) = self.song.as_ref() {
+                song.cancel_preview();
+            }
             if transport.playing {
                 handle.play();
             } else {
@@ -317,6 +332,12 @@ impl AudioBackend for CpalBackend {
     fn song_bar(&self) -> Option<usize> {
         // Read-only accessor (no chord-cache resync) — polled every frame.
         self.song.as_ref().map(|song| song.cursor_bar())
+    }
+
+    fn cancel_preview(&mut self) {
+        if let Some(song) = self.song.as_ref() {
+            song.cancel_preview();
+        }
     }
 
     fn preview_pitches(&mut self, pitches_hz: &[f32], duration_secs: f32, strum_ms: f32) {
