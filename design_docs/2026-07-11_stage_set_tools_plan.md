@@ -2446,7 +2446,7 @@ separate gates.
 
 ### October 7 follow-up: captured arpeggio recipes in the Mere
 
-**Status: implemented; automated qualification complete, native qualification pending.**
+**Status: landed; automated and wide/narrow native save/reopen qualification complete.**
 
 The retained context shelf now distinguishes a catalog chord/scale reference
 from a copied playable arpeggio instruction. Keep arpeggio recipe captures an
@@ -2503,3 +2503,28 @@ fixture now clears both instrument and tuning to express actual inheritance:
 an explicit Guitar with absent tuning selects Guitar's default, while both
 absent identities inherit Stage. The focused test and wider gate pass with the
 background owner's captured sound preserved across foreground changes.
+
+
+Native qualification uses committed runtime `e0c24ff2b847d8ac25da478a84bc9816ea4ade85`
+at 1280 by 900 and 420 by 900. Four runs pass: wide and narrow seed each
+1888 frames, and each fresh-process reopen 1864 frames. Eight PNGs were
+visually reviewed, including the complete compact inspector and saved Orbits
+scene. Saved instructions show Guitar / Standard, capo 0, frets 2–8, Down,
+inversion 1, shape 1, no marked notes and 80 BPM. The recipe remains background
+and pinned after reopening. The compact graph abbreviates labels under its
+existing culling policy; the roster and inspector retain full names.
+
+Each seed removes historical source Card 3 and changes the live Stage/tempo
+before Hear and Add. Hear preserves the two remaining Cards; Add creates a
+third Card from the saved recipe. Formula exploration preserves that Set. Each
+fresh process restores those three Cards with source Card 3 absent, replays
+the saved recipe, and explicitly adds a fourth occurrence. Persisted sessions
+retain one copied instruction with unassigned ID, its originating Set link,
+80 BPM and selected shape fingerprint.
+
+The exact binary, scenario, log, capture and final-session hashes are recorded
+in `/Users/markik/Code/testing/woodshed/arpeggio-recipe-20261007/receipt.json`.
+External launch scenarios add a startup settle only; canonical assertions are
+unchanged. Qualification uses isolated unsealed sessions and verifies preview
+dispatch rather than acoustic quality. Personal encrypted-vault workflows,
+release packaging/signing and browser execution remain separate gates.
