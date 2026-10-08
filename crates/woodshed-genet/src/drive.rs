@@ -272,6 +272,9 @@ mod tests {
         ui.stage_current(None);
         for card in &mut ui.set.cards {
             card.timing.hold = Hold::Seconds(0.5);
+            // Both absent identities inherit the runner's Stage setup. An
+            // explicit Guitar with no tuning selects that instrument's default.
+            card.setting.instrument.clear();
             card.setting.tuning = None;
             card.setting.mark_mode = MarkMode::Solo;
             card.setting.marked = vec![(0, 0)];

@@ -214,13 +214,15 @@ pub fn append_musical_context(
         if snapshot.nodes.iter().any(|node| node.id == id) {
             continue;
         }
-        let label = item
+        let mut label = item
             .subject
             .label()
             .filter(|_| item.available())
             .unwrap_or_else(|| format!("Unavailable {}", item.subject.wire_key()));
-        let pitches = item
-            .available()
+        if item.captured_recipe.is_some() {
+            label = format!("Recipe · {label}");
+        }
+        let pitches = (item.captured_recipe.is_none() && item.available())
             .then(|| item.subject.pitch_classes())
             .flatten();
         let tone_names = pitches.as_ref().map(|tones| {
@@ -245,7 +247,7 @@ pub fn append_musical_context(
                     item.owner.0
                 )
             });
-        let detail = match tone_names {
+        let mut detail = match tone_names {
             Some(tones) => format!(
                 "Kept nearby for {}. Pitch classes: {}. This association does not add a Card or imply harmonic function.",
                 owner_description, tones
@@ -255,12 +257,15 @@ pub fn append_musical_context(
                 owner_description
             ),
         };
+        if let Some(recipe) = &item.captured_recipe {
+            detail = format!("Kept nearby for {}. {}", owner_description, recipe.detail());
+        }
         snapshot.nodes.push(OverviewNode {
             id: id.clone(),
             label,
             detail,
         });
-        if pitches.is_some() && snapshot.nodes.iter().any(|node| node.id == catalog) {
+        if item.available() && snapshot.nodes.iter().any(|node| node.id == catalog) {
             snapshot.relations.push(OverviewRelation {
                 from: id.clone(),
                 to: catalog.clone(),
@@ -637,6 +642,65 @@ pub fn overview_scene(overview: &OverviewSnapshot) -> SceneSnapshot {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn recipe_overview_discloses_copied_setup_without_formula_pitch_edges() {
+        use crate::{
+            captured_arpeggio::CapturedArpeggio, harmony::KeyedCatalogRef,
+            musical_context::MusicalContext, working_sets::WorkingSetId,
+        };
+        use woodshedding::{pitch::PitchClass, rehearsal::CardId};
+        let subject = KeyedCatalogRef {
+            formula_id: "arpeggio:Major".into(),
+            root: PitchClass::new(0),
+        };
+        let mut card = subject.to_card().unwrap();
+        card.id = CardId(8);
+        let recipe = CapturedArpeggio::capture(&card, &crate::StageState::new(), 94.0).unwrap();
+        let mut context = MusicalContext::default();
+        let id = context.keep_recipe(WorkingSetId(1), recipe).unwrap();
+        context
+            .keep(
+                WorkingSetId(1),
+                KeyedCatalogRef {
+                    formula_id: "chord:Major".into(),
+                    root: PitchClass::new(0),
+                },
+            )
+            .unwrap();
+        let mut snapshot = OverviewSnapshot {
+            nodes: vec![OverviewNode {
+                id: OverviewNodeId::Catalog("woodshed-catalog".into()),
+                label: "Catalog".into(),
+                detail: String::new(),
+            }],
+            relations: vec![],
+        };
+        append_musical_context(&mut snapshot, &context);
+        let node = OverviewNodeId::Artifact(SessionArtifactId::ContextItem(id));
+        let item = snapshot.nodes.iter().find(|item| item.id == node).unwrap();
+        assert!(item.label.starts_with("Recipe · "));
+        assert!(item.detail.contains("Copied from Card 8"));
+        assert!(item.detail.contains("94 BPM"));
+        assert!(
+            snapshot
+                .relations
+                .iter()
+                .any(|edge| edge.from == node && edge.kind == OverviewRelationKind::UsesCatalog)
+        );
+        assert!(
+            !snapshot
+                .relations
+                .iter()
+                .any(|edge| (edge.from == node || edge.to == node)
+                    && matches!(
+                        edge.kind,
+                        OverviewRelationKind::EqualTones
+                            | OverviewRelationKind::ContainsTones
+                            | OverviewRelationKind::SharesTones
+                    ))
+        );
+    }
+
     #[test]
     fn kept_context_projects_exact_pitch_relations_and_only_existing_owners() {
         use crate::{

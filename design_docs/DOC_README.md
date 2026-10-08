@@ -94,6 +94,9 @@ before any other doc in this directory.
   captures cover baseline/narrow, fresh reopening and a large 0.75-zoom replay.
   The narrow last node and label are visible. The historical black Practice
   surface does not reproduce in the current replay; its original cause is unproven.
+  The October 7 captured-arpeggio follow-up extends the shelf with copied
+  playable instructions, historical source provenance and direct saved-recipe
+  Hear/Add actions. The 607-check gate passes; native qualification pending.
   The October 7 musical-context follow-up adds a bounded retained chord/scale
   shelf inside the session Mere, exact tone relations, originating Set
   associations and explicit Open/Hear/Add/Remove actions. The 597-check gate

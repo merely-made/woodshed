@@ -2442,3 +2442,64 @@ revision and preserves the exact scenario/log/capture hashes.
 Qualification uses isolated unsealed fixture sessions. Personal encrypted-vault
 operations, release packaging/signing, and browser-host qualification remain
 separate gates.
+
+
+### October 7 follow-up: captured arpeggio recipes in the Mere
+
+**Status: implemented; automated qualification complete, native qualification pending.**
+
+The retained context shelf now distinguishes a catalog chord/scale reference
+from a copied playable arpeggio instruction. Keep arpeggio recipe captures an
+already authored chord Card with Arpeggiate touch. Its source working Set and
+Card identity are historical provenance; the retained instruction has an
+unassigned Card ID, and each explicit Add receives a new occurrence ID.
+Different directions, inversions, shapes, marks or timing remain different
+kept recipes. Keeping an exact instruction again preserves its authored scene
+emphasis. The twelve-item collection bound includes recipes and references.
+
+Capture resolves inherited instrument/tuning, neck window and tempo at the
+moment of keeping. It preserves material, direction, inversion, selected shape
+fingerprint/profile, capo, marks, hold and recipe stamp. Hear and Add validate
+and resolve that saved instruction directly, without consulting the current
+catalog focus or transient arpeggio discovery source. Original Card edits or
+removal do not rewrite the captured copy. Invalid catalog, setup or shape
+state refuses playback and addition while keeping the payload removable.
+
+Explore chord formula is explicitly a separate navigation action. It selects
+the formula in Stage without claiming to project or edit the saved playable
+recipe. The Mere inspector shows the saved instruction and its historical
+source. Recipe items participate in catalog-authority and originating-Set
+relations, but are excluded from formula pitch-class comparison edges. A
+capo-shifted shape or marked subset must not be presented as the ordinary
+formula's complete sounding set. Scale patterns, chord approaches and keeping
+unstaged discovery previews remain later consumers of this captured-instruction
+contract.
+
+The current Mere remote review through `356a832cf` confirms dynamics grammar
+G3 (combinators and currencies) has landed, including weighted composition,
+groups and schedules in Seiche/Pictograph. G2 channel/Meaning work remains
+unmerged and G4 persistence proceeds alongside it. This domain slice uses
+existing Card playback and host-owned session assets; it does not adopt the
+portable DynamicsSpec or projection editor. Woodshed's coherent pinned family
+remains unchanged. Those shared capabilities require their own scene adoption
+and native qualification rather than an incidental dependency update.
+
+Scenarios are `mere_arpeggio_recipe.scn` and
+`mere_arpeggio_recipe_reopen.scn`; evidence belongs under
+`/Users/markik/Code/testing/woodshed/arpeggio-recipe-20261007/`.
+
+
+The wider gate passes 607 checks (core 207, integration 1, desktop 65, graph 14,
+views 135, theory 181 and doctests 4). Capture tests cover inherited setup/tempo,
+exact selected shape and fingerprint replay, marks, stale/malformed refusal,
+instruction deduplication and save/reopen. View tests prove historical source
+removal, unchanged live Stage and transient discovery selection during Hear/Add,
+new active-owner Card identities and failure without fallback.
+
+Formula chord marks previously read live-board tuning/window even when a Card
+specified its own setup. The chord-only dot resolver now honors that saved setup,
+which is necessary for immutable copied-recipe replay. The background-rehearsal
+fixture now clears both instrument and tuning to express actual inheritance:
+an explicit Guitar with absent tuning selects Guitar's default, while both
+absent identities inherit Stage. The focused test and wider gate pass with the
+background owner's captured sound preserved across foreground changes.
