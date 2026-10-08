@@ -2648,7 +2648,8 @@ still takes 354–360 ms on the caller. This fixes callback starvation without
 a buffer-size increase or a claim that synthesis is asynchronous. Evidence is
 in `/Users/markik/Code/testing/woodshed/audio-ddx-20261008/`.
 
-Remaining source-observed hardening: song-mode chord-cache misses still synthesize
+At the preview checkpoint, remaining source-observed hardening included
+song-mode chord-cache misses that still synthesize
 in `process_song_buffer`, and the engines still share mutable state through
 mutexes. This diagnosis does not establish a completely allocation-free or
 lock-free callback architecture, nor acoustically qualify every device. Those
@@ -2666,3 +2667,54 @@ dispatch and unsealed fixture persistence, not acoustic listening, vault
 storage, all song-mode cache paths or other output devices. The receipt records
 exact revisions, binary/capture/log hashes and the hardware differential matrix:
 `/Users/markik/Code/testing/woodshed/audio-ddx-20261008/receipt.json`.
+
+### October 8 follow-up: prepared song chords outside the callback
+
+**Status: implemented; committed native qualification pending.**
+
+The next audio slice starts at clean main `9e4b37238d5febfcfe73b4bc9e291ec93b2ee1cd`,
+including Tabard adoption and the owner's lazy input-startup fix. No shared
+contract or dependency repin is needed for this Woodshed-owned mixer change.
+
+The muted `audio_ddx song` control plays four eight-pitch bars at 240 BPM,
+replays their warm cache, then changes pitches and tempo to 300 BPM. On the
+default iMac Speakers output (48 kHz stereo, 512 frames), the first baseline
+produces four cold-play overload notifications, zero warm-play notifications
+and two edited-play notifications; the maximum callback gap is 21.64 ms.
+The callback previously ran `ensure_chord_cached` at each uncached measure.
+These controls establish that this path is a second reproducible audio fault,
+distinct from the already-qualified stopped-song preview fix.
+
+Song construction and replacement now prepare chord PCM before stream startup
+or outside the mixer mutex, respectively. Replacement publishes the document
+and its ready cache together; a request revision prevents a slow older
+replacement from overwriting a newer request. `with_song` preserves slots whose audible inputs
+match, invalidates changed slots and prepares their replacements outside the
+mutex. A key includes ordered pitch bits (or the root fallback), rendered
+per-measure duration and output sample rate; cosmetic names, recorded loops
+and block length do not invalidate PCM. A completed render publishes only if
+the current bar still matches, so concurrent replacement cannot accept stale
+audio. Read-only handle calls no longer invalidate the entire cache.
+
+The callback only looks up and validates ready PCM; it does not synthesize a
+miss. An in-flight low-level live edit can leave a slot unavailable at a
+measure boundary. That strike is skipped, and ready audio starts at the next
+measure, preserving transport rather than stalling, substituting stale audio
+or starting a late strike. The desktop document replacement route publishes
+ready PCM atomically. Preparation remains synchronous on the caller; a bounded
+worker for UI responsiveness is the following slice. Other callback locks and
+allocations, including recording-buffer handling, remain separate hardening.
+
+Six new deterministic regressions cover callback progress and missing-buffer
+behavior, stale render/replacement rejection, exact edited PCM and cache reuse, root/rate
+identity, and preserved count-in/multi-measure trigger times. The native
+`song_cache.scn` and `song_cache_reopen.scn` scenarios exercise actual Play,
+Stop, Rewind, root/tempo edits and fresh-process replay of the saved arrangement.
+Evidence is retained under
+`/Users/markik/Code/testing/woodshed/song-cache-20261008/`.
+
+Two controlled before/after hardware runs reproduce 13 baseline notifications
+in total (cold 4+4, edited 2+3, warm 0+0), then zero in both fixed runs. Maximum
+callback gaps are 21.64/23.39 ms before and 10.72/10.71 ms after. Preparation
+moves to the caller (48–81 ms for this four-bar fixture); warm replay is
+0.005–0.009 ms. The 133 audio tests and 79 current desktop tests pass (212 total).

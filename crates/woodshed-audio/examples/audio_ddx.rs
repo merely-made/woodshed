@@ -1,7 +1,7 @@
 //! Muted hardware diagnostic: compare idle streams, ordinary chord previews,
 //! long scale previews and synthesis without the song engine mutex.
 //! Run `cargo run -p woodshed-audio --example audio_ddx --locked -- <mode>`.
-//! Modes: raw, idle, chord, scale, render. Output is silent in every mode.
+//! Modes: raw, idle, chord, scale, render, song. Output is silent in every mode.
 use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
 use std::sync::{
     Arc,
@@ -9,12 +9,12 @@ use std::sync::{
 };
 use std::time::{Duration, Instant};
 use woodshed_audio::{
-    ChordRender, SequencerEngine, SequencerPattern, Song, SongEngine, Subdivision, TimeSignature,
-    render_chord,
+    ChordRef, ChordRender, SequencerEngine, SequencerPattern, Song, SongEngine, Subdivision,
+    TimeSignature, render_chord,
 };
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mode = std::env::args().nth(1).unwrap_or_else(|| "raw".into());
-    assert!(["raw", "idle", "chord", "scale", "render"].contains(&mode.as_str()));
+    assert!(["raw", "idle", "chord", "scale", "render", "song"].contains(&mode.as_str()));
     let start = Instant::now();
     let device = cpal::default_host()
         .default_output_device()
@@ -84,36 +84,91 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     } else {
         (31.0 * 60.0 / 92.0 + 0.4, 60_000.0 / 92.0)
     };
-    for trial in 0..3 {
-        eprintln!(
-            "DDX {:.3}s trial={trial} begin",
-            start.elapsed().as_secs_f64()
-        );
-        let t = Instant::now();
-        match mode.as_str() {
-            "chord" | "scale" => handle
-                .as_ref()
-                .unwrap()
-                .play_chord_now(&pitches, duration, offset),
-            "render" => {
-                let _buffer = render_chord(
-                    &ChordRender {
-                        pitches_hz: pitches.clone(),
-                        duration_seconds: duration,
-                        strum_offset_ms: offset,
-                        ..Default::default()
-                    },
-                    config.sample_rate,
-                );
-            },
-            _ => {},
+    if mode == "song" {
+        let h = handle.as_ref().unwrap();
+        let mut arrangement = Song::new();
+        arrangement.click_enabled = false;
+        for i in 0..4 {
+            if i > 0 {
+                arrangement.add_bar();
+            }
+            arrangement.bars[i].bpm = 240.0;
+            arrangement.bars[i].chord_ref = Some(ChordRef {
+                formula_name: "diagnostic".into(),
+                root_freq_hz: 110.0,
+                pitches_hz: (0..8)
+                    .map(|n| 110.0 * 2.0_f32.powf((n + i) as f32 / 12.0))
+                    .collect(),
+                label: format!("diagnostic {i}"),
+            });
         }
-        eprintln!(
-            "DDX {:.3}s trial={trial} work_ms={:.3}",
-            start.elapsed().as_secs_f64(),
-            t.elapsed().as_secs_f64() * 1000.0
-        );
-        std::thread::sleep(Duration::from_secs(2));
+        for trial in 0..3 {
+            let phase = ["cold", "warm", "edited"][trial];
+            eprintln!(
+                "DDX {:.3}s phase={phase} begin",
+                start.elapsed().as_secs_f64()
+            );
+            let t = Instant::now();
+            if trial == 0 {
+                h.set_song(arrangement.clone());
+            }
+            if trial == 2 {
+                h.with_song(|s| {
+                    for bar in &mut s.bars {
+                        bar.bpm = 300.0;
+                        for pitch in &mut bar.chord_ref.as_mut().unwrap().pitches_hz {
+                            *pitch *= 1.059463;
+                        }
+                    }
+                });
+            }
+            h.rewind();
+            h.play();
+            eprintln!(
+                "DDX {:.3}s phase={phase} work_ms={:.3}",
+                start.elapsed().as_secs_f64(),
+                t.elapsed().as_secs_f64() * 1000.0
+            );
+            std::thread::sleep(Duration::from_secs(5));
+            h.stop();
+            eprintln!(
+                "DDX {:.3}s phase={phase} cumulative_events={}",
+                start.elapsed().as_secs_f64(),
+                errors.load(Ordering::Relaxed)
+            );
+        }
+    } else {
+        for trial in 0..3 {
+            eprintln!(
+                "DDX {:.3}s trial={trial} begin",
+                start.elapsed().as_secs_f64()
+            );
+            let t = Instant::now();
+            match mode.as_str() {
+                "chord" | "scale" => handle
+                    .as_ref()
+                    .unwrap()
+                    .play_chord_now(&pitches, duration, offset),
+                "render" => {
+                    let _buffer = render_chord(
+                        &ChordRender {
+                            pitches_hz: pitches.clone(),
+                            duration_seconds: duration,
+                            strum_offset_ms: offset,
+                            ..Default::default()
+                        },
+                        config.sample_rate,
+                    );
+                },
+                _ => {},
+            }
+            eprintln!(
+                "DDX {:.3}s trial={trial} work_ms={:.3}",
+                start.elapsed().as_secs_f64(),
+                t.elapsed().as_secs_f64() * 1000.0
+            );
+            std::thread::sleep(Duration::from_secs(2));
+        }
     }
     eprintln!(
         "DDX complete callbacks={} device_events={} max_callback_gap_us={}",
