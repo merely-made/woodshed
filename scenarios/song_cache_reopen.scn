@@ -1,0 +1,19 @@
+# Saved edited arrangement is prepared anew in a fresh process.
+settle 3
+ui-zoom 0.8
+click .pill Looper
+settle 3
+assert snap song-bars == 4
+assert snap song-first-root == 1
+assert snap song-first-bpm == 245
+assert snap song-playing == false
+click .t-btn Rewind
+click .t-btn Play
+settle 150
+assert snap song-playing == true
+assert snap song-live-bar >= 1
+capture 01_reopened_play
+click .t-btn Stop
+settle 3
+assert snap song-playing == false
+log Song cache fresh process replay complete

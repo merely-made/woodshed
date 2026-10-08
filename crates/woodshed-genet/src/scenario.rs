@@ -450,6 +450,11 @@ impl Snapshot<'_, '_> {
                     .count()
                     .to_string(),
             )
+            .with_field("song-bars", ui.song.bars.len().to_string())
+            .with_field("song-playing", ui.song_playing.to_string())
+            .with_field("song-live-bar", ui.song_bar_live.to_string())
+            .with_field("song-first-bpm", ui.song.bars.first().map_or(0.0, |bar| bar.bpm).to_string())
+            .with_field("song-first-root", ui.song.bars.first().map_or(0, |bar| bar.root_pc).to_string())
             .with_field("overview-context-recipes", ui.musical_context.items().iter().filter(|item| item.captured_recipe.is_some()).count().to_string())
             .with_field("overview-recipe-source-present", ui.musical_context.items().iter().filter_map(|item| item.captured_recipe.as_ref()).any(|recipe| ui.set.cards.iter().any(|card| card.id == recipe.source_card)).to_string())
             .with_field("overview-recipe-bpm", ui.musical_context.items().iter().find_map(|item| item.captured_recipe.as_ref()).and_then(|recipe| recipe.card().ok()).and_then(|card| card.timing.bpm).map_or("none".into(), |bpm| bpm.to_string()))
@@ -1106,6 +1111,25 @@ impl Automatable for Probe<'_, '_> {
         }
         let mut known = true;
         self.ctx.runner.update(|ui| match label {
+            "song-cache-example" => {
+                ui.stop_rehearsal();
+                ui.song = woodshed_core::song::SongDoc {
+                    name: "Chord cache qualification".into(),
+                    click: false,
+                    bars: [0, 5, 7, 0].into_iter().enumerate().map(|(i, root)| {
+                        let mut bar = woodshed_core::song::SongBar {
+                            root_pc: root, bpm: 240.0, label: format!("Bar {}", i + 1),
+                            ..Default::default()
+                        };
+                        bar.revoice(); bar
+                    }).collect(),
+                    ..Default::default()
+                };
+                ui.song_playing = false;
+                ui.song_bar_live = 0;
+                ui.song_edit_cursor = 0;
+                ui.activate_workspace_panel(woodshed_views::workspace::WorkspacePanel::Practice);
+            },
             "tone-relationships-example" => {
                 use woodshed_core::harmony::KeyedCatalogRef;
                 use woodshedding::pitch::PitchClass;

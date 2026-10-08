@@ -31,18 +31,98 @@ use std::sync::{Arc, Mutex};
 use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
 use cpal::{Stream, StreamConfig};
 
-use crate::chord_audio::{render_chord, ChordRender};
+use crate::chord_audio::{ChordRender, render_chord};
 use crate::engine::{AudioError, Voice};
 use crate::input::LooperCaptureHandle;
-use crate::song::{PendingChange, Song};
+use crate::song::{Bar, PendingChange, Song};
 use crate::sound::{SampleBuffer, Sound};
 
 // =================================================================
 // Shared state
 // =================================================================
 
+/// Identity of the inputs actually used by the fixed strum renderer. Labels,
+/// bar length and recorded loops do not change this per-measure PCM.
+#[derive(Clone, Debug, PartialEq, Eq)]
+struct ChordKey {
+    pitches: Vec<u32>,
+    duration: u32,
+    sample_rate: u32,
+}
+
+impl ChordKey {
+    fn for_bar(bar: &Bar, sample_rate: u32) -> Option<Self> {
+        let chord = bar.chord_ref.as_ref()?;
+        let pitches = if chord.pitches_hz.is_empty() {
+            vec![chord.root_freq_hz.to_bits()]
+        } else {
+            chord.pitches_hz.iter().map(|p| p.to_bits()).collect()
+        };
+        Some(Self {
+            pitches,
+            duration: chord_duration(bar).to_bits(),
+            sample_rate,
+        })
+    }
+
+    /// Callback validation performs no key allocation, even during an edit.
+    fn matches(&self, bar: &Bar, sample_rate: u32) -> bool {
+        let Some(chord) = &bar.chord_ref else {
+            return false;
+        };
+        self.sample_rate == sample_rate
+            && self.duration == chord_duration(bar).to_bits()
+            && if chord.pitches_hz.is_empty() {
+                self.pitches.as_slice() == [chord.root_freq_hz.to_bits()]
+            } else {
+                self.pitches
+                    .iter()
+                    .copied()
+                    .eq(chord.pitches_hz.iter().map(|p| p.to_bits()))
+            }
+    }
+
+    fn params(&self) -> ChordRender {
+        ChordRender::strum(
+            self.pitches.iter().map(|p| f32::from_bits(*p)).collect(),
+            f32::from_bits(self.duration),
+        )
+    }
+}
+
+fn chord_duration(bar: &Bar) -> f32 {
+    ((bar.time_signature.numerator.max(1) as f32) * (60.0 / bar.bpm.max(1.0)))
+        .max(0.5)
+        .clamp(0.3, 2.0)
+}
+
+#[derive(Clone)]
+struct PreparedChord {
+    key: ChordKey,
+    buffer: SampleBuffer,
+}
+
+/// Runs before a stream exists or outside its mixer mutex.
+fn prepare_song_chords(
+    song: &Song,
+    sample_rate: u32,
+    mut render: impl FnMut(&ChordRender, u32) -> SampleBuffer,
+) -> Vec<Option<PreparedChord>> {
+    song.bars
+        .iter()
+        .map(|bar| {
+            ChordKey::for_bar(bar, sample_rate).map(|key| {
+                let buffer = render(&key.params(), sample_rate);
+                PreparedChord { key, buffer }
+            })
+        })
+        .collect()
+}
+
 struct SongEngineInternals {
     song: Song,
+    /// Latest replacement request; slow older preparations cannot overwrite it.
+    replacement_revision: u64,
     sample_rate_hz: f32,
     /// Voices currently sounding (clicks, chord triggers).
     voices: Vec<Voice>,
@@ -61,9 +141,9 @@ struct SongEngineInternals {
     /// block) rather than sounding once and going silent. -1 = fire
     /// on the next measure boundary.
     last_chord_measure: i64,
-    /// Lazily-filled chord buffers keyed by bar index. None = bar
-    /// has no chord or hasn't been rendered yet.
-    chord_cache: Vec<Option<SampleBuffer>>,
+    /// Prepared per-measure buffers, validated against their audible inputs.
+    /// The callback only consumes ready buffers; it never synthesizes a miss.
+    chord_cache: Vec<Option<PreparedChord>>,
     /// Optional input ring drained when `song.recording` is true.
     capture_ring: Option<Arc<Mutex<VecDeque<f32>>>>,
     /// Output channel count for mono → stereo fan-out.
@@ -90,16 +170,17 @@ struct SongEngineInternals {
 
 impl SongEngineInternals {
     fn new(song: Song, sample_rate_hz: f32, channels: u16) -> Self {
-        let bar_count = song.bars.len();
+        let chord_cache = prepare_song_chords(&song, sample_rate_hz as u32, render_chord);
         Self {
             song,
+            replacement_revision: 0,
             sample_rate_hz,
             voices: Vec::new(),
             voice_clock: 0,
             last_click_beat: -1,
             last_chord_bar: -1,
             last_chord_measure: -1,
-            chord_cache: vec![None; bar_count],
+            chord_cache,
             capture_ring: None,
             channels,
             output_gain: 0.8,
@@ -110,23 +191,18 @@ impl SongEngineInternals {
         }
     }
 
-    /// Invalidate the chord cache after any song edit. Called from
-    /// `with_song`, so it runs whenever a bar's chord, tempo, time
-    /// signature, or count changes.
-    ///
-    /// We clear *every* slot rather than just resizing: a chord
-    /// edited in place (Maj → min, say) keeps the same bar index, so
-    /// a resize-only sync would leave the stale rendered buffer in
-    /// place and the old chord would keep playing — the label would
-    /// update but the audio wouldn't. A tempo edit similarly changes
-    /// the rendered duration. Clearing forces a lazy re-render on the
-    /// next bar trigger; chord rendering is sub-millisecond, so the
-    /// "re-render everything on any edit" cost is imperceptible and
-    /// not worth the bookkeeping of per-slot fingerprinting.
+    /// Preserve matching PCM across read-only/cosmetic edits. Changed slots
+    /// become unavailable until prepared off-lock; stale PCM is never played.
     fn resync_chord_cache(&mut self) {
-        let new_len = self.song.bars.len();
-        self.chord_cache.clear();
-        self.chord_cache.resize(new_len, None);
+        self.chord_cache.resize(self.song.bars.len(), None);
+        for (bar, slot) in self.song.bars.iter().zip(&mut self.chord_cache) {
+            if slot
+                .as_ref()
+                .is_some_and(|chord| !chord.key.matches(bar, self.sample_rate_hz as u32))
+            {
+                *slot = None;
+            }
+        }
     }
 }
 
@@ -145,8 +221,20 @@ impl SongEngineHandle {
     /// audio. Call when switching arrangements or after editing a
     /// bar's chord.
     pub fn set_song(&self, song: Song) {
+        self.replace_song(song, render_chord);
+    }
+
+    fn replace_song(&self, song: Song, render: impl FnMut(&ChordRender, u32) -> SampleBuffer) {
+        let (rate, revision) = {
+            let mut s = self.inner.lock().unwrap();
+            s.replacement_revision = s.replacement_revision.wrapping_add(1);
+            (s.sample_rate_hz as u32, s.replacement_revision)
+        };
+        let chord_cache = prepare_song_chords(&song, rate, render);
         let mut s = self.inner.lock().unwrap();
-        let bar_count = song.bars.len();
+        if s.replacement_revision != revision {
+            return;
+        }
         s.song = song;
         s.song.cursor = Default::default();
         s.song.playing = false;
@@ -155,7 +243,7 @@ impl SongEngineHandle {
         s.voices.clear();
         s.last_click_beat = -1;
         s.last_chord_bar = -1;
-        s.chord_cache = vec![None; bar_count];
+        s.chord_cache = chord_cache;
         s.count_in_remaining = 0;
     }
 
@@ -205,13 +293,52 @@ impl SongEngineHandle {
         let mut s = self.inner.lock().unwrap();
         let result = f(&mut s.song);
         s.resync_chord_cache();
+        drop(s);
+        self.prepare_chords(render_chord);
         result
+    }
+
+    /// Snapshot misses briefly, synthesize on the caller without the mixer
+    /// mutex, then publish only if the current bar still has those inputs.
+    /// A concurrent edit/replacement cannot receive an obsolete render.
+    fn prepare_chords(&self, mut render: impl FnMut(&ChordRender, u32) -> SampleBuffer) {
+        let requests: Vec<_> = {
+            let s = self.inner.lock().unwrap();
+            s.song
+                .bars
+                .iter()
+                .enumerate()
+                .filter_map(|(idx, bar)| {
+                    if s.chord_cache
+                        .get(idx)
+                        .and_then(Option::as_ref)
+                        .is_some_and(|cached| cached.key.matches(bar, s.sample_rate_hz as u32))
+                    {
+                        None
+                    } else {
+                        ChordKey::for_bar(bar, s.sample_rate_hz as u32).map(|key| (idx, key))
+                    }
+                })
+                .collect()
+        };
+        for (idx, key) in requests {
+            let buffer = render(&key.params(), key.sample_rate);
+            let mut s = self.inner.lock().unwrap();
+            if s.song
+                .bars
+                .get(idx)
+                .is_some_and(|bar| key.matches(bar, s.sample_rate_hz as u32))
+            {
+                s.chord_cache[idx] = Some(PreparedChord { key, buffer });
+            }
+        }
     }
 
     /// Begin playback from the cursor, after a one-bar count-in click
     /// lead (only when the click is enabled — a muted click skips the
     /// count-in rather than stalling silently).
     pub fn play(&self) {
+        self.prepare_chords(render_chord);
         let mut s = self.inner.lock().unwrap();
         s.song.playing = true;
         s.voice_clock = 0;
@@ -400,7 +527,7 @@ fn process_song_buffer(s: &mut SongEngineInternals, output: &mut [f32]) {
                     Some(value) => {
                         sample_value += value;
                         true
-                    }
+                    },
                     None => false,
                 }
             });
@@ -458,7 +585,7 @@ fn process_song_buffer(s: &mut SongEngineInternals, output: &mut [f32]) {
                     Some(value) => {
                         sample_value += value;
                         true
-                    }
+                    },
                     None => false,
                 }
             });
@@ -513,19 +640,18 @@ fn process_song_buffer(s: &mut SongEngineInternals, output: &mut [f32]) {
         let new_block = (bar_idx as i64) != s.last_chord_bar;
         let new_measure = measure_idx != s.last_chord_measure;
         if (new_block || new_measure) && (sample_in_bar % measure_samples) < samples_per_beat {
-            if let Some(chord_ref) = &bar.chord_ref {
-                let measure_secs = (num_beats as f32) * secs_per_beat;
-                let buf = ensure_chord_cached(
-                    chord_ref,
-                    measure_secs.max(0.5),
-                    sample_rate as u32,
-                    &mut s.chord_cache,
-                    bar_idx,
-                );
-                if let Some(buf) = buf {
-                    let chord_sound = Sound::sample_with_buffer(format!("song-bar-{bar_idx}"), buf);
-                    s.voices.push(Voice::new(chord_sound, false, s.voice_clock));
-                }
+            // During an in-flight live edit, a missing/new buffer skips this
+            // strike rather than blocking or playing stale PCM. Publication
+            // never creates a late strike; the next measure uses ready audio.
+            if let Some(cached) = s
+                .chord_cache
+                .get(bar_idx)
+                .and_then(Option::as_ref)
+                .filter(|cached| cached.key.matches(bar, sample_rate as u32))
+            {
+                let chord_sound =
+                    Sound::sample_with_buffer(format!("song-bar-{bar_idx}"), cached.buffer.clone());
+                s.voices.push(Voice::new(chord_sound, false, s.voice_clock));
             }
             s.last_chord_bar = bar_idx as i64;
             s.last_chord_measure = measure_idx;
@@ -539,7 +665,7 @@ fn process_song_buffer(s: &mut SongEngineInternals, output: &mut [f32]) {
                 Some(value) => {
                     sample_value += value;
                     true
-                }
+                },
                 None => false,
             }
         });
@@ -627,36 +753,231 @@ fn push_oneshot(s: &mut SongEngineInternals, buf: SampleBuffer, id: &str) {
     }
 }
 
-/// Render this bar's chord into the cache if not already, then return
-/// a clone of the cached buffer (`SampleBuffer` clones are cheap —
-/// the PCM data is `Arc`-shared).
-fn ensure_chord_cached(
-    chord_ref: &crate::song::ChordRef,
-    duration_secs: f32,
-    sample_rate_hz: u32,
-    cache: &mut [Option<SampleBuffer>],
-    bar_idx: usize,
-) -> Option<SampleBuffer> {
-    let slot = cache.get_mut(bar_idx)?;
-    if slot.is_none() {
-        let pitches = if chord_ref.pitches_hz.is_empty() {
-            vec![chord_ref.root_freq_hz]
-        } else {
-            chord_ref.pitches_hz.clone()
-        };
-        let params = ChordRender::strum(pitches, duration_secs.clamp(0.3, 2.0));
-        let rendered = render_chord(&params, sample_rate_hz);
-        *slot = Some(rendered);
-    }
-    slot.clone()
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
 
     fn make_state(song: Song) -> SongEngineInternals {
         SongEngineInternals::new(song, 48_000.0, 1)
+    }
+
+    fn chord_song() -> Song {
+        let mut song = Song::new();
+        song.click_enabled = false;
+        song.bars[0].bpm = 300.0;
+        song.bars[0].chord_ref = Some(crate::song::ChordRef {
+            formula_name: "Major".into(),
+            root_freq_hz: 261.63,
+            pitches_hz: vec![261.63, 329.63, 392.0],
+            label: "C".into(),
+        });
+        song
+    }
+
+    #[test]
+    fn callback_miss_is_silent_and_does_not_synthesize_or_strike_late() {
+        let mut state = make_state(chord_song());
+        state.chord_cache[0] = None;
+        state.song.playing = true;
+        let mut out = [1.0; 512];
+        process_song_buffer(&mut state, &mut out);
+        assert!(out.iter().all(|s| *s == 0.0));
+        assert_eq!(state.song.cursor.sample_in_bar, 512);
+        assert!(state.chord_cache[0].is_none());
+        // Ready PCM arriving after the boundary must wait for the next measure.
+        state.chord_cache = prepare_song_chords(&state.song, 48_000, render_chord);
+        process_song_buffer(&mut state, &mut out);
+        assert!(out.iter().all(|s| *s == 0.0));
+        assert!(state.voices.is_empty());
+        let to_boundary = 38_400 - state.song.cursor.sample_in_bar;
+        process_song_buffer(&mut state, &mut vec![0.0; to_boundary as usize + 512]);
+        assert!(!state.voices.is_empty());
+        assert_eq!(state.voices[0].start_sample, 38_400);
+    }
+
+    #[test]
+    fn chord_preparation_keeps_callback_running_and_rejects_obsolete_pcm() {
+        use std::sync::mpsc;
+        let mut state = make_state(chord_song());
+        state.chord_cache[0] = None;
+        state.song.playing = true;
+        let internals = Arc::new(Mutex::new(state));
+        let handle = SongEngineHandle {
+            inner: internals.clone(),
+        };
+        let background = handle.clone();
+        let (started_tx, started_rx) = mpsc::channel();
+        let (resume_tx, resume_rx) = mpsc::channel();
+        let worker = std::thread::spawn(move || {
+            background.prepare_chords(|params, rate| {
+                started_tx.send(()).unwrap();
+                resume_rx.recv().unwrap();
+                render_chord(params, rate)
+            });
+        });
+        started_rx.recv().unwrap();
+        let progressed = match internals.try_lock() {
+            Ok(mut state) => {
+                process_song_buffer(&mut state, &mut [0.0; 512]);
+                assert_eq!(state.song.cursor.sample_in_bar, 512);
+                true
+            },
+            Err(_) => false,
+        };
+        if !progressed {
+            resume_tx.send(()).unwrap();
+            worker.join().unwrap();
+            panic!("chord synthesis held the callback mutex");
+        }
+        // Replacement publishes a different ready chord while the old render
+        // is still paused. Completing that render must not overwrite it.
+        let mut replacement = chord_song();
+        replacement.bars[0].chord_ref.as_mut().unwrap().pitches_hz = vec![220.0, 261.63, 329.63];
+        handle.set_song(replacement);
+        let current = internals.lock().unwrap().chord_cache[0]
+            .as_ref()
+            .unwrap()
+            .buffer
+            .clone();
+        resume_tx.send(()).unwrap();
+        worker.join().unwrap();
+        assert!(progressed, "chord synthesis held the callback mutex");
+        let state = internals.lock().unwrap();
+        assert!(Arc::ptr_eq(
+            &current.data,
+            &state.chord_cache[0].as_ref().unwrap().buffer.data
+        ));
+    }
+
+    #[test]
+    fn slow_song_replacement_cannot_overwrite_a_newer_request() {
+        use std::sync::mpsc;
+        let internals = Arc::new(Mutex::new(make_state(Song::new())));
+        let handle = SongEngineHandle {
+            inner: internals.clone(),
+        };
+        let background = handle.clone();
+        let (started_tx, started_rx) = mpsc::channel();
+        let (resume_tx, resume_rx) = mpsc::channel();
+        let worker = std::thread::spawn(move || {
+            background.replace_song(chord_song(), |params, rate| {
+                started_tx.send(()).unwrap();
+                resume_rx.recv().unwrap();
+                render_chord(params, rate)
+            })
+        });
+        started_rx.recv().unwrap();
+        let mut latest = chord_song();
+        latest.name = "Latest request".into();
+        latest.bars[0].chord_ref.as_mut().unwrap().pitches_hz = vec![220.0];
+        handle.set_song(latest);
+        resume_tx.send(()).unwrap();
+        worker.join().unwrap();
+        let state = internals.lock().unwrap();
+        assert_eq!(state.song.name, "Latest request");
+        assert!(
+            state.chord_cache[0]
+                .as_ref()
+                .unwrap()
+                .key
+                .matches(&state.song.bars[0], 48_000)
+        );
+    }
+
+    #[test]
+    fn read_and_cosmetic_edits_reuse_pcm_but_pitch_tempo_and_meter_edits_refresh_it() {
+        let internals = Arc::new(Mutex::new(make_state(chord_song())));
+        let handle = SongEngineHandle {
+            inner: internals.clone(),
+        };
+        let before = internals.lock().unwrap().chord_cache[0]
+            .as_ref()
+            .unwrap()
+            .buffer
+            .clone();
+        handle.with_song(|song| {
+            song.bars[0].label = "Verse".into();
+            song.bars[0].length = 4;
+            song.bars[0].chord_ref.as_mut().unwrap().label = "CMaj".into();
+        });
+        handle.with_song(|song| song.playing);
+        let unchanged = internals.lock().unwrap().chord_cache[0]
+            .as_ref()
+            .unwrap()
+            .buffer
+            .clone();
+        assert!(Arc::ptr_eq(&before.data, &unchanged.data));
+        handle.with_song(|song| song.bars[0].bpm = 400.0);
+        let tempo = internals.lock().unwrap().chord_cache[0]
+            .as_ref()
+            .unwrap()
+            .buffer
+            .clone();
+        assert_eq!(tempo.len(), 28_800);
+        assert!(!Arc::ptr_eq(&before.data, &tempo.data));
+        handle.with_song(|song| song.bars[0].time_signature.numerator = 3);
+        let meter = internals.lock().unwrap().chord_cache[0]
+            .as_ref()
+            .unwrap()
+            .buffer
+            .clone();
+        assert_eq!(meter.len(), 24_000); // existing 0.5 second minimum
+        handle.with_song(|song| song.bars[0].chord_ref.as_mut().unwrap().pitches_hz[1] = 311.13);
+        let state = internals.lock().unwrap();
+        let cached = state.chord_cache[0].as_ref().unwrap();
+        let expected = render_chord(
+            &ChordRender::strum(vec![261.63, 311.13, 392.0], 0.5),
+            48_000,
+        );
+        assert_eq!(cached.buffer.data, expected.data);
+        assert!(!Arc::ptr_eq(&meter.data, &cached.buffer.data));
+    }
+
+    #[test]
+    fn fallback_pitch_and_sample_rate_are_part_of_cache_identity() {
+        let mut song = chord_song();
+        song.bars[0].chord_ref.as_mut().unwrap().pitches_hz.clear();
+        let key = ChordKey::for_bar(&song.bars[0], 48_000).unwrap();
+        assert!(key.matches(&song.bars[0], 48_000));
+        assert!(!key.matches(&song.bars[0], 44_100));
+        song.bars[0].chord_ref.as_mut().unwrap().root_freq_hz = 220.0;
+        assert!(!key.matches(&song.bars[0], 48_000));
+        song.bars[0].chord_ref = None;
+        assert!(!key.matches(&song.bars[0], 48_000));
+    }
+
+    #[test]
+    fn preparation_preserves_count_in_and_multi_measure_chord_boundaries() {
+        let mut song = chord_song();
+        song.click_enabled = true;
+        song.bars[0].bpm = 600.0;
+        song.bars[0].time_signature.numerator = 2;
+        song.bars[0].length = 2;
+        let internals = Arc::new(Mutex::new(SongEngineInternals::new(song, 1_000.0, 1)));
+        let handle = SongEngineHandle {
+            inner: internals.clone(),
+        };
+        handle.play();
+        let mut state = internals.lock().unwrap();
+        assert_eq!(state.count_in_remaining, 200);
+        process_song_buffer(&mut state, &mut [0.0; 200]);
+        assert_eq!(state.song.cursor.sample_in_bar, 0);
+        assert_eq!(state.count_in_remaining, 0);
+        process_song_buffer(&mut state, &mut [0.0; 1]);
+        assert!(
+            state
+                .voices
+                .iter()
+                .any(|v| v.start_sample == 200 && matches!(v.sound, Sound::Sample { .. }))
+        );
+        process_song_buffer(&mut state, &mut [0.0; 200]);
+        assert!(
+            state
+                .voices
+                .iter()
+                .any(|v| v.start_sample == 400 && matches!(v.sound, Sound::Sample { .. }))
+        );
+        assert_eq!(state.last_chord_measure, 1);
     }
 
     #[test]
