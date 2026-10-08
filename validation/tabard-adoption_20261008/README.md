@@ -32,6 +32,14 @@ The final classification checks every remaining native diagnostic against the
 baseline statements. Scoped formatting and `git diff --check` pass; existing
 unformatted scenario fixture code outside the added snapshot fields was kept.
 
+Before pushing, remote main had advanced with audio-preview commits `846c386`
+and `e573072`. They were merged cleanly in `49eef4e`. The combined source passed
+`cargo test -p woodshed-audio -p woodshed-genet --locked --offline`: **127 audio
+tests and 79 native tests passed**, zero failed or ignored. The locked cache
+was used after waiting for another build's package-cache lock. The
+[integration log](push-integration-tests.log) records this final source check;
+the native visual boundary below remains open.
+
 Retained-host tests cover typed workshop fields, Save/Apply/Back, failure and
 close guards, repeated embedding, persona restoration, corrupt libraries and
 export cancellation. Title-bar composition is checked at wide and narrow
