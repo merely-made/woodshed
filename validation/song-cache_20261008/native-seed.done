@@ -1,0 +1,10 @@
+RESULT ok
+captured 01_cold_play
+captured 02_warm_play
+captured 03_edited_play
+Song cache cold warm edited replay complete
+capture 01_cold_play 2560x1800 digest=411b4f05453544e1 file=/Users/markik/Code/testing/woodshed/song-cache-20261008/native-qualified/seed/01_cold_play.png
+capture 02_warm_play 2560x1800 digest=7fa0c118494e8f5a file=/Users/markik/Code/testing/woodshed/song-cache-20261008/native-qualified/seed/02_warm_play.png
+capture 03_edited_play 2560x1800 digest=c42f6e044a66affc file=/Users/markik/Code/testing/woodshed/song-cache-20261008/native-qualified/seed/03_edited_play.png
+frames: 3 captured, 0 blank, 3 distinct digests
+presentation: 514 frames, 515 redraws, 1 unpresented redraws
