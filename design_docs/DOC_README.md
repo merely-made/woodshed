@@ -103,7 +103,8 @@ before any other doc in this directory.
   four captures are reviewed, with zero buffer errors on the qualified route.
   The song-cache follow-up removes cold chord synthesis from the callback,
   preserves matching PCM across reads/edits and rejects stale render results;
-  cold/warm/edited hardware and committed native qualification are tracked below.
+  212 checks, cold/warm/edited hardware trials and a committed native seed/reopen
+  pass, with four reviewed captures and zero buffer errors in the qualified runs.
   The October 7 captured-scale-pattern follow-up extends copied instructions
   to degree pairs in thirds/fourths, with base-scale exploration and unchanged
   owner boundaries. The 613-check gate and committed desktop build pass; eight

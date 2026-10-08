@@ -1,0 +1,6 @@
+RESULT ok
+captured 01_reopened_play
+Song cache fresh process replay complete
+capture 01_reopened_play 2560x1800 digest=c15a285a16856555 file=/Users/markik/Code/testing/woodshed/song-cache-20261008/native-qualified/reopen/01_reopened_play.png
+frames: 1 captured, 0 blank, 1 distinct digests
+presentation: 178 frames, 179 redraws, 1 unpresented redraws

@@ -2670,7 +2670,7 @@ exact revisions, binary/capture/log hashes and the hardware differential matrix:
 
 ### October 8 follow-up: prepared song chords outside the callback
 
-**Status: implemented; committed native qualification pending.**
+**Status: implemented and qualified; audio/desktop gates and native seed/reopen pass.**
 
 The next audio slice starts at clean main `9e4b37238d5febfcfe73b4bc9e291ec93b2ee1cd`,
 including Tabard adoption and the owner's lazy input-startup fix. No shared
@@ -2730,3 +2730,18 @@ Current `genet-render`, `genet-livery`, `genet-taffy` and `buckram` now receive
 the existing opt-level-2 runtime policy while Woodshed/audio stay debuggable.
 No shared source or dependency pin changes are included. Native acceptance
 must be rerun with this build; the samples and failed launch logs are retained.
+
+Final committed-source qualification (`0812c67`, audio implementation `f8e4037`):
+the desktop gate passes again under the current runtime profile (79 tests),
+and the 133 audio tests remain green, for 212 checks. The final muted hardware
+replay has zero overloads in cold/warm/edited phases, a 10.741 ms maximum
+callback gap, and preparation times of 63.065/0.006/46.928 ms on the caller.
+The native seed and fresh-process reopen report `RESULT ok`, 514/178 successful
+presentations and four reviewed nonblank captures, with zero buffer-error logs
+in either process. Four bars persist; the first retains C-sharp Major and
+245 BPM, then replays through the actual desktop backend. Both apps exit.
+The fixture selects Looper at startup; it does not claim broader startup
+performance or acoustic/device-wide quality. Earlier preflight failures and
+the corrected `+` selector mistake remain retained. The receipt and concise
+logs are committed in `validation/song-cache_20261008/`; full PNG/sample
+evidence remains in the local artifact directory noted above.
