@@ -105,6 +105,10 @@ before any other doc in this directory.
   preserves matching PCM across reads/edits and rejects stale render results;
   212 checks, cold/warm/edited hardware trials and a committed native seed/reopen
   pass, with four reviewed captures and zero buffer errors in the qualified runs.
+  The bounded preview-worker follow-up moves Hear/step synthesis off the UI
+  caller, bounds pending work to the latest request, and cancels obsolete PCM
+  across transport changes and shutdown. The 138-test audio gate passes;
+  committed native seed/reopen and hardware qualification are pending.
   The October 7 captured-scale-pattern follow-up extends copied instructions
   to degree pairs in thirds/fourths, with base-scale exploration and unchanged
   owner boundaries. The 613-check gate and committed desktop build pass; eight

@@ -81,7 +81,10 @@ impl mesquite::Product for Product {
         std::mem::take(&mut self.shared.borrow_mut().events)
     }
     fn busy(&self, _: &Ctx<'_>, capture_pending: bool) -> Option<bool> {
-        Some(capture_pending)
+        Some(
+            capture_pending
+                || self.shared.borrow().backend.as_ref().is_some_and(|backend| backend.preview_busy()),
+        )
     }
     fn act(&mut self, ctx: &mut Ctx<'_>, label: &str) -> bool {
         Probe {
@@ -449,6 +452,14 @@ impl Snapshot<'_, '_> {
                     .filter(|role| role.as_str() == "pinned")
                     .count()
                     .to_string(),
+            )
+            .with_field(
+                "preview-busy",
+                self.shared.backend.as_ref().is_some_and(|backend| backend.preview_busy()).to_string(),
+            )
+            .with_field(
+                "preview-voices",
+                self.shared.backend.as_ref().map_or(0, |backend| backend.preview_voice_count()).to_string(),
             )
             .with_field("song-bars", ui.song.bars.len().to_string())
             .with_field("song-playing", ui.song_playing.to_string())
