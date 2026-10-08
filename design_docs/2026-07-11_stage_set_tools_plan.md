@@ -2718,3 +2718,15 @@ in total (cold 4+4, edited 2+3, warm 0+0), then zero in both fixed runs. Maximum
 callback gaps are 21.64/23.39 ms before and 10.72/10.71 ms after. Preparation
 moves to the caller (48–81 ms for this four-bar fixture); warm replay is
 0.005–0.009 ms. The 133 audio tests and 79 current desktop tests pass (212 total).
+
+Native preflight exposed a separate development-build issue after the current
+Tabard/Genet integration: both the default Stage and direct Looper attempts
+remained near 100% CPU before reaching the playback assertions, and UI access
+failed with `noWindowsAvailable` / `AXError.cannotComplete`. Samples terminate
+in the pinned Genet layout/text path (`TextSystem::intern_font` / `content_key`);
+these attempts logged additional device overloads and are not qualification
+receipts. The original package overrides name legacy `netrender` packages.
+Current `genet-render`, `genet-livery`, `genet-taffy` and `buckram` now receive
+the existing opt-level-2 runtime policy while Woodshed/audio stay debuggable.
+No shared source or dependency pin changes are included. Native acceptance
+must be rerun with this build; the samples and failed launch logs are retained.
