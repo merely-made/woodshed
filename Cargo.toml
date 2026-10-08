@@ -199,6 +199,16 @@ opt-level = 2
 opt-level = 2
 [profile.dev.package.genet-scripted-dom]
 opt-level = 2
+# Current Genet package names own the hot layout/text path. The legacy
+# netrender overrides below cover packages still present elsewhere in the stack.
+[profile.dev.package.genet-render]
+opt-level = 2
+[profile.dev.package.genet-livery]
+opt-level = 2
+[profile.dev.package.genet-taffy]
+opt-level = 2
+[profile.dev.package.buckram]
+opt-level = 2
 [profile.dev.package.netrender]
 opt-level = 2
 [profile.dev.package.netrender_device]
