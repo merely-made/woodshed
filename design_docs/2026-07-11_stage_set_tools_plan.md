@@ -2613,7 +2613,7 @@ release packaging/signing and browser execution remain separate gates.
 
 ### October 8 follow-up: differential diagnosis of preview audio overloads
 
-**Status: reproduced and fixed; automated/native qualification in progress.**
+**Status: reproduced, fixed and qualified on the default macOS output device.**
 
 The October 7 scale-pattern receipts logged matching sequencer and song output
 errors. CPAL 0.18.2 macOS registers each stream for the same device-wide
@@ -2653,3 +2653,16 @@ in `process_song_buffer`, and the engines still share mutable state through
 mutexes. This diagnosis does not establish a completely allocation-free or
 lock-free callback architecture, nor acoustically qualify every device. Those
 paths are distinct from the stopped-song preview reproduction measured here.
+
+Qualification against committed implementation `846c3861d1e4ee233e161d79724c0bcf0ea6a394`:
+127 audio tests and 65 desktop tests pass (192 total); the committed desktop
+build passes. The isolated wide native seed/reopen replay completes in
+1888/1864 frames with four reviewed captures and zero buffer underrun/overrun
+logs in either process. The saved 92 BPM Thirds recipe remains pinned and
+backgrounded after its source Card is deleted, then supports Hear and Add on
+fresh-process reopening; the final Set contains four Cards. This replaces the
+previous preview-buffer-error residual for this route. It qualifies native
+dispatch and unsealed fixture persistence, not acoustic listening, vault
+storage, all song-mode cache paths or other output devices. The receipt records
+exact revisions, binary/capture/log hashes and the hardware differential matrix:
+`/Users/markik/Code/testing/woodshed/audio-ddx-20261008/receipt.json`.
