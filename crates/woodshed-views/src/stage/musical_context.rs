@@ -1,13 +1,13 @@
 //! Explicit owner actions for musical material kept in the session Mere.
 use super::{UiState, WorkspacePanel};
 use woodshed_core::audio::AudioRequest;
-use woodshed_core::captured_arpeggio::CapturedArpeggio;
+use woodshed_core::captured_arpeggio::CapturedRecipe;
 use woodshed_core::harmony::KeyedCatalogRef;
 use woodshed_core::history::{EngagementKind, ObservationProvenance, catalog_id_for_card};
 use woodshed_core::musical_context::{ContextItemId, is_supported_subject};
 use woodshed_core::session_overview::{OverviewNodeId, SessionArtifactId};
 use woodshed_core::working_sets::WorkingSetId;
-use woodshedding::rehearsal::{Card, CardId};
+use woodshedding::rehearsal::{Card, CardId, Material, Touch};
 
 #[cfg(test)]
 mod tests {
@@ -275,6 +275,148 @@ mod tests {
         }
     }
 
+    fn kept_scale_pattern(
+        pattern: woodshedding::rehearsal::ScalePattern,
+    ) -> (UiState, ContextItemId) {
+        let mut ui = UiState::new();
+        let subject = KeyedCatalogRef::from_material(&Material::ScalePattern {
+            name: "Major".into(),
+            root: PitchClass::new(2),
+            pattern,
+        })
+        .unwrap();
+        ui.set.push(subject.to_card().unwrap());
+        ui.set.cards[0].timing.bpm = None;
+        ui.set.cards[0].setting.instrument.clear();
+        ui.set.cards[0].setting.tuning = None;
+        ui.set.cards[0].setting.fret_window = None;
+        ui.transport.bpm = 79.0;
+        let before = serde_json::to_value(&ui.set).unwrap();
+        assert!(ui.keep_current_scale_pattern_nearby());
+        assert_eq!(serde_json::to_value(&ui.set).unwrap(), before);
+        let id = ui.musical_context.items()[0].id;
+        (ui, id)
+    }
+
+    #[test]
+    fn captured_scale_pattern_reopens_after_source_deletion_and_ignores_live_discovery() {
+        use woodshedding::rehearsal::ScalePattern;
+        for pattern in ScalePattern::ALL {
+            let (ui, id) = kept_scale_pattern(pattern);
+            let recipe = ui
+                .musical_context
+                .get(id)
+                .unwrap()
+                .captured_recipe
+                .as_ref()
+                .unwrap();
+            let expected = recipe.preview().unwrap();
+            let saved_card = recipe.card().unwrap();
+            let source_id = recipe.source_card;
+            let source_owner = ui.working_sets.active_id;
+            let session =
+                serde_json::from_str(&serde_json::to_string(&ui.to_persisted()).unwrap()).unwrap();
+            let mut reopened = UiState::new();
+            reopened.apply_persisted(&session, AppSettings::default());
+            reopened.set.cards.clear();
+            reopened.stage.set_root(9);
+            reopened.stage.set_tuning(1);
+            reopened.stage.fret_start = 10;
+            reopened.stage.fret_count = 14;
+            reopened.transport.bpm = 143.0;
+            reopened.pattern_source = Some(CardId(997));
+            reopened.scale_pattern = Some(ScalePattern::Fourths);
+            reopened.pattern_subject = Some(major(6));
+            reopened.pattern_notice = Some("Existing inspection".into());
+            let stage = reopened.stage.catalog_id();
+            assert!(reopened.hear_musical_context(id));
+            assert!(
+                matches!(reopened.audio_requests.last(), Some(AudioRequest::PreviewPitches { pitches, duration_s, strum_s }) if (pitches.clone(), *duration_s, *strum_s) == expected)
+            );
+            let observation = &reopened.practice_history.recent(1)[0];
+            assert_eq!(
+                observation.provenance.as_ref().unwrap().working_set_id,
+                Some(source_owner)
+            );
+            assert_eq!(
+                observation.provenance.as_ref().unwrap().occurrence_id,
+                source_id
+            );
+            assert!(reopened.add_musical_context_to_set(id));
+            let mut added = reopened.set.cards.last().unwrap().clone();
+            added.id = saved_card.id;
+            assert_eq!(
+                serde_json::to_value(added).unwrap(),
+                serde_json::to_value(saved_card).unwrap()
+            );
+            assert_eq!(reopened.stage.catalog_id(), stage);
+            assert_eq!(reopened.stage.root_idx, 9);
+            assert_eq!(reopened.stage.fret_start, 10);
+            assert_eq!(reopened.transport.bpm, 143.0);
+            assert_eq!(reopened.pattern_source, Some(CardId(997)));
+            assert_eq!(reopened.scale_pattern, Some(ScalePattern::Fourths));
+            assert_eq!(reopened.pattern_subject, Some(major(6)));
+            assert_eq!(
+                reopened.pattern_notice.as_deref(),
+                Some("Existing inspection")
+            );
+        }
+    }
+
+    #[test]
+    fn captured_scale_pattern_add_uses_active_owner_and_explores_base_scale() {
+        use woodshedding::rehearsal::ScalePattern;
+        let (mut ui, id) = kept_scale_pattern(ScalePattern::Thirds);
+        let source_owner = ui.working_sets.active_id;
+        let original = serde_json::to_value(&ui.set).unwrap();
+        let target = ui.create_working_set();
+        assert!(ui.add_musical_context_to_set(id));
+        assert!(ui.add_musical_context_to_set(id));
+        assert_ne!(ui.set.cards[0].id, ui.set.cards[1].id);
+        assert_eq!(ui.musical_context.get(id).unwrap().owner, source_owner);
+        assert_eq!(
+            serde_json::to_value(ui.working_sets.get(source_owner, &ui.set).unwrap()).unwrap(),
+            original
+        );
+        for observation in ui.practice_history.recent(2) {
+            assert_eq!(observation.kind, EngagementKind::Staged);
+            assert_eq!(
+                observation.provenance.as_ref().unwrap().working_set_id,
+                Some(target)
+            );
+        }
+        let before = serde_json::to_value(&ui.set).unwrap();
+        assert!(ui.open_musical_context(id));
+        assert_eq!(
+            ui.context_focus,
+            Some(KeyedCatalogRef {
+                formula_id: "scale:Major".into(),
+                root: PitchClass::new(2)
+            })
+        );
+        assert_eq!(ui.workspace.active_panel(), Some(WorkspacePanel::Practice));
+        assert_eq!(serde_json::to_value(&ui.set).unwrap(), before);
+    }
+
+    #[test]
+    fn stale_captured_scale_pattern_refuses_actions_and_remains_removable() {
+        use woodshedding::rehearsal::ScalePattern;
+        let (mut ui, id) = kept_scale_pattern(ScalePattern::Fourths);
+        let json = serde_json::to_string(&ui.musical_context)
+            .unwrap()
+            .replace("Major", "Missing Formula");
+        ui.musical_context = serde_json::from_str(&json).unwrap();
+        let before = serde_json::to_value(&ui.set).unwrap();
+        let stage = ui.stage.catalog_id();
+        assert!(!ui.hear_musical_context(id));
+        assert!(!ui.add_musical_context_to_set(id));
+        assert!(!ui.open_musical_context(id));
+        assert!(ui.audio_requests.is_empty());
+        assert_eq!(serde_json::to_value(&ui.set).unwrap(), before);
+        assert_eq!(ui.stage.catalog_id(), stage);
+        assert!(ui.remove_musical_context(id));
+    }
+
     #[test]
     fn copied_selected_shape_freezes_inherited_window_and_keeps_source_unchanged() {
         let (mut ui, previous) = kept_arpeggio();
@@ -320,12 +462,33 @@ fn node_id(id: ContextItemId) -> OverviewNodeId {
 impl UiState {
     /// Capture an authored arpeggio occurrence with its resolved playable setup.
     pub fn keep_current_arpeggio_nearby(&mut self) -> bool {
-        let Some(card) = self.current_card() else {
-            self.overview_notice = Some("Select an authored arpeggio Card to keep nearby.".into());
+        self.keep_current_recipe_nearby(false)
+    }
+
+    /// Capture an authored scale-pattern occurrence without changing discovery state.
+    pub fn keep_current_scale_pattern_nearby(&mut self) -> bool {
+        self.keep_current_recipe_nearby(true)
+    }
+
+    fn keep_current_recipe_nearby(&mut self, scale_pattern: bool) -> bool {
+        let kind = if scale_pattern {
+            "scale pattern"
+        } else {
+            "arpeggio"
+        };
+        let Some(card) = self.current_card().filter(|card| {
+            if scale_pattern {
+                matches!(card.material, Material::ScalePattern { .. })
+            } else {
+                matches!(card.material, Material::Chord { .. })
+                    && matches!(card.touch, Touch::Arpeggiate { .. })
+            }
+        }) else {
+            self.overview_notice = Some(format!("Select an authored {kind} Card to keep nearby."));
             return false;
         };
         let recipe =
-            match CapturedArpeggio::capture(card, self.current_card_stage(), self.transport.bpm) {
+            match CapturedRecipe::capture(card, self.current_card_stage(), self.transport.bpm) {
                 Ok(recipe) => recipe,
                 Err(error) => {
                     self.overview_notice = Some(error);
@@ -349,7 +512,7 @@ impl UiState {
                 }
                 self.overview_focus = Some(node);
                 self.overview_notice = Some(format!(
-                    "Kept this arpeggio recipe nearby for {}.",
+                    "Kept this {kind} recipe nearby for {}.",
                     self.working_sets.active_name
                 ));
                 true
@@ -451,12 +614,20 @@ impl UiState {
 
     pub fn open_musical_context(&mut self, id: ContextItemId) -> bool {
         if self.has_captured_context(id) {
-            if let Err(error) = self.captured_context(id) {
-                self.overview_notice = Some(error);
+            let (card, _, _, _, _) = match self.captured_context(id) {
+                Ok(captured) => captured,
+                Err(error) => {
+                    self.overview_notice = Some(error);
+                    return false;
+                },
+            };
+            let material = match card.material {
+                Material::ScalePattern { name, root, .. } => Material::Scale { name, root },
+                material => material,
+            };
+            let Some(subject) = KeyedCatalogRef::from_material(&material) else {
                 return false;
-            }
-            let mut subject = self.musical_context.get(id).unwrap().subject.clone();
-            subject.formula_id = subject.formula_id.replacen("arpeggio:", "chord:", 1);
+            };
             if !self.focus_context_catalog(subject) {
                 return false;
             }
@@ -519,6 +690,11 @@ impl UiState {
                     return false;
                 },
             };
+            let kind = if matches!(card.material, Material::ScalePattern { .. }) {
+                "scale pattern"
+            } else {
+                "arpeggio"
+            };
             card.id = CardId::UNASSIGNED;
             self.refresh_event_time();
             self.set.push(card);
@@ -536,7 +712,7 @@ impl UiState {
                 }
             }
             self.overview_notice = Some(format!(
-                "Added the captured arpeggio recipe to {}.",
+                "Added the captured {kind} recipe to {}.",
                 self.working_sets.active_name
             ));
             return true;

@@ -650,7 +650,7 @@ mod tests {
         };
         use woodshedding::{pitch::PitchClass, rehearsal::CardId};
         let subject = KeyedCatalogRef {
-            formula_id: "arpeggio:Major".into(),
+            formula_id: "scale-pattern:thirds:Major".into(),
             root: PitchClass::new(0),
         };
         let mut card = subject.to_card().unwrap();

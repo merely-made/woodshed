@@ -1,25 +1,32 @@
-//! Copied arpeggio instructions. Source occurrence is historical metadata;
+//! Copied musical recipe instructions. Source occurrence is historical metadata;
 //! playback and addition resolve only the saved instruction, never a live Card.
 use crate::{CardShapeStatus, StageState, harmony::KeyedCatalogRef};
 use serde::{Deserialize, Serialize};
 use woodshedding::rehearsal::{Card, CardId, FretWindow, Hold, Material, Touch};
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
-pub struct CapturedArpeggio {
+pub struct CapturedRecipe {
     pub source_card: CardId,
     pub instruction: serde_json::Value,
 }
 
-impl CapturedArpeggio {
+/// Compatibility name for the original captured-arpeggio API and wire payload.
+pub type CapturedArpeggio = CapturedRecipe;
+
+fn supported(card: &Card) -> bool {
+    matches!(card.material, Material::ScalePattern { .. })
+        || (matches!(card.material, Material::Chord { .. })
+            && matches!(card.touch, Touch::Arpeggiate { .. }))
+}
+
+impl CapturedRecipe {
     pub fn capture(source: &Card, stage: &StageState, bpm: f32) -> Result<Self, String> {
         if source.id == CardId::UNASSIGNED {
             return Err("Keep a recipe from an authored Card occurrence.".into());
         }
         let mut card = source.clone();
-        if !matches!(card.material, Material::Chord { .. })
-            || !matches!(card.touch, Touch::Arpeggiate { .. })
-        {
-            return Err("Select an authored chord Card with arpeggio touch.".into());
+        if !supported(&card) {
+            return Err("Select an authored chord arpeggio or scale-pattern Card.".into());
         }
         let tuning = stage
             .resolve_card_tuning(&card)
@@ -53,11 +60,19 @@ impl CapturedArpeggio {
         let card: Card = serde_json::from_value(self.instruction.clone())
             .map_err(|_| "Captured recipe instructions are malformed.".to_string())?;
         if card.id != CardId::UNASSIGNED
-            || !matches!(card.material, Material::Chord { .. })
-            || !matches!(card.touch, Touch::Arpeggiate { .. })
+            || !supported(&card)
             || KeyedCatalogRef::from_card(&card).is_none()
         {
-            return Err("Captured recipe is not an available unassigned chord arpeggio.".into());
+            return Err("Captured recipe is not an available unassigned musical recipe.".into());
+        }
+        // Shape inventory identities are chord-only. Scale traversal cannot
+        // honor these selectors, so keep malformed/stale copies unavailable.
+        if matches!(card.material, Material::ScalePattern { .. })
+            && (card.setting.voicing_idx.is_some()
+                || card.setting.voicing_fingerprint.is_some()
+                || card.setting.voicing_profile.is_some())
+        {
+            return Err("Captured scale-pattern shape metadata is unavailable.".into());
         }
         let bpm = card.timing.bpm.ok_or("Captured recipe tempo is missing.")?;
         if !bpm.is_finite() || bpm <= 0.0 {
@@ -103,6 +118,19 @@ impl CapturedArpeggio {
                 _ => return Err("Captured recipe shape is unavailable.".into()),
             }
         }
+        if matches!(card.material, Material::ScalePattern { .. }) {
+            let scale = stage
+                .scale_card_realization(&card)
+                .map_err(|error| error.to_string())?;
+            if card.setting.marked.iter().any(|position| {
+                !scale
+                    .dots
+                    .iter()
+                    .any(|dot| (dot.string_index, dot.fret) == *position)
+            }) {
+                return Err("Captured scale-pattern marked contact is unavailable.".into());
+            }
+        }
         let preview = stage.card_sounding_pitches(&card);
         if preview.0.is_empty()
             || preview
@@ -122,24 +150,31 @@ impl CapturedArpeggio {
     pub fn detail(&self) -> String {
         match self.card() {
             Ok(card) => {
-                let Touch::Arpeggiate {
-                    direction,
-                    inversion,
-                } = card.touch
-                else {
-                    unreachable!()
+                let articulation = match (&card.material, &card.touch) {
+                    (Material::ScalePattern { pattern, .. }, touch) => format!(
+                        "{} scale pattern, ordered contacts, {:?} touch",
+                        pattern.label(),
+                        touch
+                    ),
+                    (
+                        _,
+                        Touch::Arpeggiate {
+                            direction,
+                            inversion,
+                        },
+                    ) => format!("{} arpeggio, inversion {}", direction.label(), inversion),
+                    _ => unreachable!("card validates supported recipe"),
                 };
                 let window = card.setting.fret_window.expect("validated window");
                 format!(
-                    "Copied from Card {}. Saved {} / {}, capo {}, frets {}–{}; {} arpeggio, inversion {}; {} BPM, {:?}. {}. Source edits or removal leave this copy unchanged.",
+                    "Copied from Card {}. Saved {} / {}, capo {}, frets {}–{}; {}; {} BPM, {:?}. {}. Source edits or removal leave this copy unchanged.",
                     self.source_card.0,
                     card.setting.instrument,
                     card.setting.tuning.unwrap_or_default(),
                     card.setting.capo.unwrap_or(0),
                     window.start,
                     window.start.saturating_add(window.span),
-                    direction.label(),
-                    inversion,
+                    articulation,
                     card.timing.bpm.unwrap_or(120.0),
                     card.timing.hold,
                     match card.setting.voicing_idx {
@@ -150,7 +185,12 @@ impl CapturedArpeggio {
                             card.setting.mark_mode.label()
                         ),
                         None => format!(
-                            "Formula preview, {} marked notes ({})",
+                            "{}, {} marked notes ({})",
+                            if matches!(card.material, Material::ScalePattern { .. }) {
+                                "Deterministic scale contacts"
+                            } else {
+                                "Formula preview"
+                            },
                             card.setting.marked.len(),
                             card.setting.mark_mode.label()
                         ),
@@ -296,5 +336,107 @@ mod tests {
         stage.set_tuning(1);
         assert_eq!(stage.card_sounding_pitches(&frozen), before);
         assert_eq!(recipe.preview().unwrap(), before);
+    }
+    fn scale_source(pattern: woodshedding::rehearsal::ScalePattern) -> Card {
+        let mut card = KeyedCatalogRef {
+            formula_id: format!("scale-pattern:{}:Major", pattern.slug()),
+            root: PitchClass::new(0),
+        }
+        .to_card()
+        .unwrap();
+        card.id = CardId(17);
+        card.setting.instrument.clear();
+        card.setting.tuning = None;
+        card.timing.bpm = None;
+        card.timing.hold = Hold::Bars(2);
+        card
+    }
+
+    #[test]
+    fn captured_scale_patterns_replay_exact_order_repetition_and_marked_setup() {
+        use woodshedding::rehearsal::ScalePattern;
+        let mut stage = StageState::new();
+        stage.set_tuning(1);
+        stage.fret_start = 2;
+        stage.fret_count = 10;
+        for pattern in ScalePattern::ALL {
+            let mut card = scale_source(pattern);
+            card.setting.capo = Some(2);
+            let realization = stage.scale_card_realization(&card).unwrap();
+            // Select two pitches that actually occur in the ordered visits.
+            card.setting.marked = realization
+                .notes
+                .iter()
+                .take(2)
+                .map(|note| (note.string_index, note.physical_fret))
+                .collect();
+            for mode in [MarkMode::Off, MarkMode::Solo, MarkMode::Mute] {
+                card.setting.mark_mode = mode;
+                let original = serde_json::to_value(&card).unwrap();
+                let expected = stage.card_sounding_pitches_at_tempo(&card, 83.0);
+                let recipe = CapturedRecipe::capture(&card, &stage, 83.0).unwrap();
+                assert_eq!(recipe.preview().unwrap(), expected);
+                assert_eq!(serde_json::to_value(&card).unwrap(), original);
+                let saved = recipe.card().unwrap();
+                assert_eq!(saved.setting.marked, card.setting.marked);
+                assert_eq!(saved.setting.mark_mode, mode);
+                assert_eq!(saved.timing.bpm, Some(83.0));
+                assert_eq!(saved.setting.fret_window.unwrap().start, 2);
+                assert!(recipe.detail().contains(pattern.label()));
+                assert!(recipe.detail().contains("ordered contacts"));
+                let mut other_stage = StageState::new();
+                other_stage.fret_start = 15;
+                other_stage.fret_count = 20;
+                assert_eq!(other_stage.card_sounding_pitches(&saved), expected);
+                let reopened: CapturedRecipe =
+                    serde_json::from_value(serde_json::to_value(&recipe).unwrap()).unwrap();
+                assert_eq!(reopened.preview().unwrap(), expected);
+                if mode == MarkMode::Off {
+                    assert!(
+                        expected.0.windows(2).any(|pair| pair[1] < pair[0]),
+                        "pattern visits must preserve pairing order rather than sort"
+                    );
+                    assert!(
+                        expected
+                            .0
+                            .iter()
+                            .enumerate()
+                            .any(|(index, pitch)| expected.0[index + 1..].contains(pitch)),
+                        "pattern visits must preserve repeated tones"
+                    );
+                }
+            }
+        }
+    }
+
+    #[test]
+    fn scale_pattern_stale_shapes_marks_catalog_and_empty_solo_refuse() {
+        use woodshedding::rehearsal::ScalePattern;
+        let stage = StageState::new();
+        let card = scale_source(ScalePattern::Thirds);
+        let recipe = CapturedRecipe::capture(&card, &stage, 83.0).unwrap();
+        for (field, value) in [
+            ("voicing_idx", serde_json::json!(0)),
+            ("voicing_fingerprint", serde_json::json!("stale")),
+            ("voicing_profile", serde_json::json!("stale")),
+            ("marked", serde_json::json!([[99, 99]])),
+        ] {
+            let mut broken = recipe.clone();
+            broken.instruction["setting"][field] = value;
+            assert!(broken.preview().is_err(), "{field}");
+        }
+        let mut broken = recipe.clone();
+        broken.instruction["material"]["ScalePattern"]["name"] = serde_json::json!("Missing");
+        assert!(broken.preview().is_err());
+        let mut muted = card.clone();
+        muted.setting.marked = stage
+            .scale_card_realization(&muted)
+            .unwrap()
+            .dots
+            .iter()
+            .map(|dot| (dot.string_index, dot.fret))
+            .collect();
+        muted.setting.mark_mode = MarkMode::Mute;
+        assert!(CapturedRecipe::capture(&muted, &stage, 83.0).is_err());
     }
 }
