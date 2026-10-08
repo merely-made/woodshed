@@ -1,0 +1,17 @@
+RESULT ok
+Shared Tabard appearance authoring in Woodshed
+captured appearance_settings
+captured appearance_workshop
+captured appearance_applied
+captured appearance_narrow_reader
+captured appearance_narrow_graph
+captured appearance_resized_applied
+Shared Tabard appearance acceptance complete
+capture appearance_settings 1280x1600 digest=aef078a205db134b file=/Users/markik/Code/output/tabard-visual-acceptance/woodshed-resize-matrix/narrow-seed/appearance_settings.png
+capture appearance_workshop 1280x1600 digest=14c14f5530f56179 file=/Users/markik/Code/output/tabard-visual-acceptance/woodshed-resize-matrix/narrow-seed/appearance_workshop.png
+capture appearance_applied 1280x1600 digest=c96e0119021694d2 file=/Users/markik/Code/output/tabard-visual-acceptance/woodshed-resize-matrix/narrow-seed/appearance_applied.png
+capture appearance_narrow_reader 1280x1600 digest=e0205be91b5cb66f file=/Users/markik/Code/output/tabard-visual-acceptance/woodshed-resize-matrix/narrow-seed/appearance_narrow_reader.png
+capture appearance_narrow_graph 1280x1600 digest=939dd516154e7903 file=/Users/markik/Code/output/tabard-visual-acceptance/woodshed-resize-matrix/narrow-seed/appearance_narrow_graph.png
+capture appearance_resized_applied 1280x1600 digest=32e33bcc3b102ec2 file=/Users/markik/Code/output/tabard-visual-acceptance/woodshed-resize-matrix/narrow-seed/appearance_resized_applied.png
+frames: 6 captured, 0 blank, 6 distinct digests
+presentation: 52 frames, 54 redraws, 2 unpresented redraws

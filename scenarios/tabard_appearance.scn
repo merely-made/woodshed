@@ -23,4 +23,19 @@ assert snap appearance-workshop == false
 assert snap appearance-mode == hc_light
 assert text WoodshedAcceptance
 capture appearance_applied
+# Resize the same native window and reveal the embedded custom-painted
+# specimens through the host's normal scroll-into-view route.
+click role:button @data-action=edit-appearance
+resize 640 800
+settle 3
+click .reader-canvas
+settle 3
+capture appearance_narrow_reader
+click role:button @data-key=tabard-notes
+settle 3
+capture appearance_narrow_graph
+click role:button @data-action=back-to-woodshed
+assert snap appearance-workshop == false
+assert snap appearance-mode == hc_light
+capture appearance_resized_applied
 log Shared Tabard appearance acceptance complete

@@ -38,14 +38,25 @@ and `e573072`. They were merged cleanly in `49eef4e`. The combined source passed
 tests and 79 native tests passed**, zero failed or ignored. The locked cache
 was used after waiting for another build's package-cache lock. The
 [integration log](push-integration-tests.log) records this final source check;
-the native visual boundary below remains open.
+the historical failed native attempt below is preserved separately from the
+subsequent passing visual acceptance.
 
 Retained-host tests cover typed workshop fields, Save/Apply/Back, failure and
 close guards, repeated embedding, persona restoration, corrupt libraries and
 export cancellation. Title-bar composition is checked at wide and narrow
 logical widths. These tests do not establish native visual acceptance.
 
-## Actual native run: visual acceptance remains open
+## Passing macOS native visual acceptance
+
+The [LaunchServices matrix](visual/README.md) qualifies the integrated production
+binary from `2fa89ca61d75a9a03bf5e301eb658e696d74e44f` on macOS 15.8.1, Intel.
+Wide and narrow seed/reopen runs all pass: **132 actual presentations, 14
+nonblank captures**. The extended fixture resizes the same native window and
+reveals the shared reader and selected graph through normal host scrolling.
+All 14 images were inspected, with an independent second review. The earlier
+background launch failure is superseded for this launch path, not erased.
+
+## Historical background launch: no native presentation
 
 The rebuilt binary ran `scenarios/tabard_appearance.scn` at 1180×800, with
 `CAMBIUM_HOST_FRAME_TRACE=1`, a 45-second independent process deadline, and
@@ -67,7 +78,8 @@ binary SHA-256; it is a runner observation, not a generated Mesquite receipt.
 
 `tabard_appearance_reopen.scn` was not run: the preceding scenario did not
 advance, save or apply an authored theme. There are no native images to inspect.
-Native resize, accessibility and Windows/Linux headed acceptance remain open.
+That attempt does not establish resize acceptance. The later matrix above does;
+live accessibility and Windows/Linux headed acceptance remain open.
 
 Before input deferral, the owned Woodshed process waited in microphone
 initialization and never reached the scenario lane. Its [45-second run](before-input-fix-process.json)
@@ -75,4 +87,5 @@ and [sampled run](before-input-fix-sampled-process.json) are distinct evidence.
 The [process sample](before-input-fix.sample.txt) identifies the main-thread
 path through `CpalBackend::new`, `InputEngineBuilder::build` and CoreAudio.
 After deferral, Woodshed gets past that startup wait; the compositor failure
-above is the remaining native gate.
+above was the next native gate, subsequently qualified through normal macOS
+application launching as recorded in the visual matrix.

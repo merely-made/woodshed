@@ -1,0 +1,7 @@
+RESULT ok
+Reopen saved Woodshed appearance
+captured appearance_reopened
+Saved appearance reopen complete
+capture appearance_reopened 1280x1600 digest=b8401b5b4ebf1f8e file=/Users/markik/Code/output/tabard-visual-acceptance/woodshed-resize-matrix/narrow-reopen/appearance_reopened.png
+frames: 1 captured, 0 blank, 1 distinct digests
+presentation: 14 frames, 17 redraws, 3 unpresented redraws
