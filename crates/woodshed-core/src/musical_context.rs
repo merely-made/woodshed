@@ -1,6 +1,8 @@
 //! Explicitly kept musical context. Keeping material associates it with a Set
 //! owner, without adding a Card or claiming harmonic derivation.
-use crate::{harmony::KeyedCatalogRef, working_sets::WorkingSetId};
+use crate::{
+    captured_arpeggio::CapturedArpeggio, harmony::KeyedCatalogRef, working_sets::WorkingSetId,
+};
 use serde::{Deserialize, Deserializer, Serialize};
 use std::collections::BTreeSet;
 
@@ -14,6 +16,8 @@ pub struct MusicalContextItem {
     pub id: ContextItemId,
     pub owner: WorkingSetId,
     pub subject: KeyedCatalogRef,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub captured_recipe: Option<CapturedArpeggio>,
 }
 
 #[derive(Clone, Debug, Default, Serialize)]
@@ -41,7 +45,17 @@ impl<'de> Deserialize<'de> for MusicalContext {
 
 impl MusicalContextItem {
     pub fn available(&self) -> bool {
-        is_supported_subject(&self.subject)
+        match &self.captured_recipe {
+            Some(recipe) => {
+                recipe
+                    .card()
+                    .ok()
+                    .and_then(|card| KeyedCatalogRef::from_card(&card))
+                    .as_ref()
+                    == Some(&self.subject)
+            },
+            None => is_supported_subject(&self.subject),
+        }
     }
 }
 
@@ -63,7 +77,13 @@ impl MusicalContext {
             .filter(|item| {
                 item.id.0 != 0
                     && identities.insert(item.id)
-                    && subjects.insert((item.owner, item.subject.clone()))
+                    && subjects.insert((
+                        item.owner,
+                        item.subject.clone(),
+                        item.captured_recipe
+                            .as_ref()
+                            .map(|recipe| recipe.instruction.to_string()),
+                    ))
             })
             .take(MAX_CONTEXT_ITEMS)
             .cloned()
@@ -94,11 +114,9 @@ impl MusicalContext {
         if !is_supported_subject(&subject) {
             return Err("Only an available catalog chord or scale can be kept nearby.".into());
         }
-        if let Some(item) = self
-            .entries
-            .iter()
-            .find(|item| item.owner == owner && item.subject == subject)
-        {
+        if let Some(item) = self.entries.iter().find(|item| {
+            item.owner == owner && item.subject == subject && item.captured_recipe.is_none()
+        }) {
             return self
                 .get(item.id)
                 .map(|item| item.id)
@@ -116,7 +134,52 @@ impl MusicalContext {
             .ok_or("Nearby material identity exhausted.")?;
         self.next_id = next_id;
         let id = ContextItemId(next_id);
-        self.entries.push(MusicalContextItem { id, owner, subject });
+        self.entries.push(MusicalContextItem {
+            id,
+            owner,
+            subject,
+            captured_recipe: None,
+        });
+        Ok(id)
+    }
+
+    pub fn keep_recipe(
+        &mut self,
+        owner: WorkingSetId,
+        recipe: CapturedArpeggio,
+    ) -> Result<ContextItemId, String> {
+        let card = recipe.card()?;
+        recipe.preview()?;
+        let subject = KeyedCatalogRef::from_card(&card)
+            .ok_or("Captured recipe catalog identity is unavailable.")?;
+        if let Some(item) = self.entries.iter().find(|item| {
+            item.owner == owner
+                && item.subject == subject
+                && item
+                    .captured_recipe
+                    .as_ref()
+                    .is_some_and(|kept| kept.instruction == recipe.instruction)
+        }) {
+            return Ok(item.id);
+        }
+        if self.entries.len() >= MAX_CONTEXT_ITEMS {
+            return Err(
+                "Nearby material is full (12 items). Remove an item before keeping another.".into(),
+            );
+        }
+        let next_id = self
+            .next_id
+            .max(self.entries.iter().map(|item| item.id.0).max().unwrap_or(0))
+            .checked_add(1)
+            .ok_or("Nearby material identity exhausted.")?;
+        self.next_id = next_id;
+        let id = ContextItemId(next_id);
+        self.entries.push(MusicalContextItem {
+            id,
+            owner,
+            subject,
+            captured_recipe: Some(recipe),
+        });
         Ok(id)
     }
 
@@ -137,6 +200,52 @@ mod tests {
             root: PitchClass::new(root),
         }
     }
+    #[test]
+    fn copied_recipe_identity_uses_saved_instructions_not_source_occurrence() {
+        use woodshedding::rehearsal::{ArpeggioDirection, CardId, Touch};
+        let stage = crate::StageState::new();
+        let mut card = chord(0).to_card().unwrap();
+        card.id = CardId(3);
+        card.touch = Touch::Arpeggiate {
+            direction: ArpeggioDirection::Up,
+            inversion: 0,
+        };
+        let recipe = CapturedArpeggio::capture(&card, &stage, 91.0).unwrap();
+        let mut collection = MusicalContext::default();
+        let first = collection
+            .keep_recipe(WorkingSetId(1), recipe.clone())
+            .unwrap();
+        let mut same = recipe.clone();
+        same.source_card = CardId(9);
+        assert_eq!(
+            collection.keep_recipe(WorkingSetId(1), same).unwrap(),
+            first
+        );
+        card.touch = Touch::Arpeggiate {
+            direction: ArpeggioDirection::Down,
+            inversion: 0,
+        };
+        let down = CapturedArpeggio::capture(&card, &stage, 91.0).unwrap();
+        let second = collection.keep_recipe(WorkingSetId(1), down).unwrap();
+        assert_ne!(first, second);
+        card.timing.bpm = Some(72.0);
+        let slower = CapturedArpeggio::capture(&card, &stage, 91.0).unwrap();
+        assert_ne!(
+            collection.keep_recipe(WorkingSetId(1), slower).unwrap(),
+            second
+        );
+        let restored: MusicalContext =
+            serde_json::from_str(&serde_json::to_string(&collection).unwrap()).unwrap();
+        assert_eq!(restored.items().len(), 3);
+        assert!(restored.items().iter().all(MusicalContextItem::available));
+        let mut payload = serde_json::to_value(&restored).unwrap();
+        payload["entries"][0]["subject"]["root"] = serde_json::json!(1);
+        let mismatched: MusicalContext = serde_json::from_value(payload).unwrap();
+        assert!(!mismatched.get(first).unwrap().available());
+        collection.remove(first);
+        assert!(collection.keep_recipe(WorkingSetId(1), recipe).unwrap().0 > second.0);
+    }
+
     #[test]
     fn imported_structure_is_bounded_unique_and_keeps_allocator_history() {
         let mut entries = Vec::new();
@@ -204,6 +313,7 @@ mod tests {
                 id: ContextItemId(90),
                 owner: WorkingSetId(1),
                 subject: chord(0),
+                captured_recipe: None,
             }],
             next_id: 0,
         };

@@ -1,0 +1,41 @@
+# Capture an authored arpeggio; saved instructions survive removal of its source.
+settle 3
+act mere-arpeggio-example
+click .workspace-panel Mere
+click .overview-context-keep-recipe
+settle 3
+assert snap overview-context-items == 1
+assert snap overview-context-recipes == 1
+assert snap overview-context-links == 1
+assert snap overview-context-containment == 0
+assert snap overview-recipe-bpm == 80
+assert snap overview-recipe-source-present == true
+assert snap set-cards == 3
+click .overview-role-pinned Pin in place
+click .overview-inspector
+settle 12
+capture 01_captured_recipe
+act mere-arpeggio-remove-source
+settle 3
+assert snap overview-recipe-source-present == false
+assert snap set-cards == 2
+click .overview-context-hear Hear
+settle 3
+assert snap set-cards == 2
+assert snap overview-recipe-bpm == 80
+click .overview-context-add
+settle 3
+assert snap set-cards == 3
+assert snap set-last-arpeggio == true
+assert snap overview-recipe-source-present == false
+click .overview-open Explore chord formula
+settle 3
+assert snap overview-active == false
+assert snap set-cards == 3
+click .workspace-panel Mere
+click .overview-atmosphere-orbits Orbits
+click .overview-fit Fit scene
+click .overview-graph
+settle 12
+capture 02_recipe_scene
+log Captured arpeggio retained

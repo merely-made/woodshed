@@ -14,6 +14,7 @@ pub mod arrangement;
 pub mod audio;
 pub mod card_shapes;
 pub mod catalog_explorations;
+pub mod captured_arpeggio;
 pub mod chord_approach;
 pub mod comparison_disclosure;
 pub mod connected_catalog;
@@ -1360,6 +1361,35 @@ impl StageState {
         }
         if matches!(card.material, Material::Chord { .. }) && card.setting.voicing_idx.is_some() {
             return self.selected_card_shape_dots(card).unwrap_or_default();
+        }
+        // Formula chord marks resolve on the Card's saved setup, like selected
+        // shapes. Other material retains its existing domain-specific path.
+        if let Material::Chord { name, root } = &card.material {
+            let Ok(tuning) = self.resolve_card_tuning(card) else {
+                return Vec::new();
+            };
+            let end_limit = tuning.instrument.standard_fret_count();
+            let (start, end) = card.setting.fret_window.map_or(
+                (self.fret_start, self.fret_count.min(end_limit)),
+                |window| (window.start, window.start.saturating_add(window.span).min(end_limit)),
+            );
+            let start = start.max(card.setting.capo.unwrap_or(0));
+            if start > end {
+                return Vec::new();
+            }
+            let board = Fretboard::new(tuning, end);
+            let root = Pitch::from_midi(48 + i32::from(root.value()), Spelling::Sharps);
+            return chord_catalog()
+                .iter()
+                .find(|formula| formula.name == name)
+                .and_then(|formula| board.positions_for_chord(formula, root).ok())
+                .map(|positions| {
+                    positions.into_iter()
+                        .filter(|position| position.fret >= start && position.fret <= end)
+                        .map(FretDot::from_position)
+                        .collect()
+                })
+                .unwrap_or_default();
         }
         let board = Fretboard::new(self.tuning(), self.fret_count);
         let root_of = |pc: &PitchClass| Pitch::from_midi(48 + pc.value() as i32, Spelling::Sharps);
