@@ -2609,3 +2609,60 @@ scenario assertions verify state and preview dispatch, not acoustic quality;
 the backend observation remains a separate unresolved audio qualification item.
 The scenarios use isolated unsealed fixtures. Personal encrypted-vault flows,
 release packaging/signing and browser execution remain separate gates.
+
+
+### October 8 follow-up: differential diagnosis of preview audio overloads
+
+**Status: reproduced, fixed and qualified on the default macOS output device.**
+
+The October 7 scale-pattern receipts logged matching sequencer and song output
+errors. CPAL 0.18.2 macOS registers each stream for the same device-wide
+`kAudioDeviceProcessorOverload` notification. Paired logs therefore do not
+establish two independent engine faults. The desktop startup/device hypothesis
+was tested with a muted raw stream and with both Woodshed output engines idle.
+Both produced zero device overloads. This audit starts from clean main
+`3ef710406546241432b50df8fc27a4b93d915454` (the incoming Redshank repin changes
+only its port manifests/lock; root Woodshed pins and audio source are unchanged).
+
+The confirmed trigger is `SongEngineHandle::play_chord_now` holding the mixer
+mutex during complete PCM synthesis. A 48 kHz, 512-frame output buffer gives
+10.67 ms per callback. The controlled four-note chord rendered in 17–20 ms;
+32 ordered pitches at 92 BPM rendered in 344–375 ms. Both cases produced
+three device overloads across three trials. The monitor callback's maximum gap
+was 21.6 ms for the chord and 373.7 ms for the long scale. The identical long
+synthesis outside the song engine mutex produced zero overloads and a maximum
+10.83 ms monitor gap, despite similar 363–378 ms rendering work. GUI capture,
+input processing and instrument selection are not required for this reproduction.
+
+Note and chord previews now read the fixed sample rate briefly, render outside
+the mixer mutex, then publish the ready voice using the current one-shot clock.
+A deterministic regression holds the renderer at a barrier and proves the
+mixer can acquire state, advance 512 frames and subsequently play the queued
+voice from that advanced clock. Pitch order, synthesis and queue bounds remain
+the existing implementation. `audio_ddx` is a muted hardware diagnostic example
+with raw/idle/chord/scale/render controls and device event/callback-gap reporting.
+
+After the fix, three chord and three long-scale preview trials produce zero
+device overloads; maximum callback gaps remain 10.79/10.77 ms. Long synthesis
+still takes 354–360 ms on the caller. This fixes callback starvation without
+a buffer-size increase or a claim that synthesis is asynchronous. Evidence is
+in `/Users/markik/Code/testing/woodshed/audio-ddx-20261008/`.
+
+Remaining source-observed hardening: song-mode chord-cache misses still synthesize
+in `process_song_buffer`, and the engines still share mutable state through
+mutexes. This diagnosis does not establish a completely allocation-free or
+lock-free callback architecture, nor acoustically qualify every device. Those
+paths are distinct from the stopped-song preview reproduction measured here.
+
+Qualification against committed implementation `846c3861d1e4ee233e161d79724c0bcf0ea6a394`:
+127 audio tests and 65 desktop tests pass (192 total); the committed desktop
+build passes. The isolated wide native seed/reopen replay completes in
+1888/1864 frames with four reviewed captures and zero buffer underrun/overrun
+logs in either process. The saved 92 BPM Thirds recipe remains pinned and
+backgrounded after its source Card is deleted, then supports Hear and Add on
+fresh-process reopening; the final Set contains four Cards. This replaces the
+previous preview-buffer-error residual for this route. It qualifies native
+dispatch and unsealed fixture persistence, not acoustic listening, vault
+storage, all song-mode cache paths or other output devices. The receipt records
+exact revisions, binary/capture/log hashes and the hardware differential matrix:
+`/Users/markik/Code/testing/woodshed/audio-ddx-20261008/receipt.json`.
