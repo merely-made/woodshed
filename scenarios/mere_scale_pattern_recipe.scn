@@ -1,0 +1,41 @@
+# Capture an authored scale pattern; saved instructions survive removal of its source.
+settle 3
+act mere-scale-pattern-example
+click .workspace-panel Mere
+click .overview-context-keep-pattern
+settle 3
+assert snap overview-context-items == 1
+assert snap overview-context-recipes == 1
+assert snap overview-context-links == 1
+assert snap overview-context-containment == 0
+assert snap overview-recipe-bpm == 92
+assert snap overview-recipe-source-present == true
+assert snap set-cards == 3
+click .overview-role-pinned Pin in place
+click .overview-inspector
+settle 12
+capture 01_captured_recipe
+act mere-scale-pattern-remove-source
+settle 3
+assert snap overview-recipe-source-present == false
+assert snap set-cards == 2
+click .overview-context-hear Hear
+settle 3
+assert snap set-cards == 2
+assert snap overview-recipe-bpm == 92
+click .overview-context-add
+settle 3
+assert snap set-cards == 3
+assert snap set-last-scale-pattern == true
+assert snap overview-recipe-source-present == false
+click .overview-open Explore scale formula
+settle 3
+assert snap overview-active == false
+assert snap set-cards == 3
+click .workspace-panel Mere
+click .overview-atmosphere-orbits Orbits
+click .overview-fit Fit scene
+click .overview-graph
+settle 12
+capture 02_recipe_scene
+log Captured scale-pattern retained

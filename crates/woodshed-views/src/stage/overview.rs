@@ -698,7 +698,18 @@ pub(super) fn screen(ui: &UiState) -> UiChild {
                     .get(context_id)
                     .is_some_and(|item| item.captured_recipe.is_some())
                 {
-                    "Explore chord formula"
+                    if ui
+                        .musical_context
+                        .get(context_id)
+                        .unwrap()
+                        .subject
+                        .formula_id
+                        .starts_with("scale-pattern:")
+                    {
+                        "Explore scale formula"
+                    } else {
+                        "Explore chord formula"
+                    }
                 } else {
                     "Open in Stage"
                 }
@@ -1014,7 +1025,7 @@ pub(super) fn screen(ui: &UiState) -> UiChild {
                 el("div", graph).attr("class", "overview-graph"),
                 el("div", (
                     el("div", text(format!("Keep nearby · {} / 12", ui.musical_context.items().len()))).attr("class", "overview-node-title"),
-                    el("div", text("Keep chord/scale context or a captured arpeggio recipe. Tone links compare catalog context; saved recipes retain their own playable instructions.")).attr("class", "overview-detail"),
+                    el("div", text("Keep chord/scale context or a captured arpeggio or scale pattern recipe. Tone links compare catalog context; saved recipes retain their own playable instructions.")).attr("class", "overview-detail"),
                     el("div", (
                         ui.current_card().and_then(woodshed_core::harmony::KeyedCatalogRef::from_card)
                             .filter(|subject| subject.formula_id.starts_with("chord:") || subject.formula_id.starts_with("scale:"))
@@ -1027,6 +1038,12 @@ pub(super) fn screen(ui: &UiState) -> UiChild {
                             .and_then(|subject| subject.label()).map(|label| clickable(
                                 el("button", text(format!("Keep arpeggio recipe: {label}"))).attr("class", "t-btn overview-context-keep-recipe"),
                                 |ui: &mut UiState, _| { ui.keep_current_arpeggio_nearby(); },
+                            )),
+                        ui.current_card().and_then(woodshed_core::harmony::KeyedCatalogRef::from_card)
+                            .filter(|subject| subject.formula_id.starts_with("scale-pattern:"))
+                            .and_then(|subject| subject.label()).map(|label| clickable(
+                                el("button", text(format!("Keep scale pattern recipe: {label}"))).attr("class", "t-btn overview-context-keep-pattern"),
+                                |ui: &mut UiState, _| { ui.keep_current_scale_pattern_nearby(); },
                             )),
                         ui.context_focus.as_ref().filter(|subject| subject.formula_id.starts_with("chord:") || subject.formula_id.starts_with("scale:"))
                             .and_then(|subject| subject.label()).map(|label| clickable(

@@ -1,7 +1,7 @@
 //! Explicitly kept musical context. Keeping material associates it with a Set
 //! owner, without adding a Card or claiming harmonic derivation.
 use crate::{
-    captured_arpeggio::CapturedArpeggio, harmony::KeyedCatalogRef, working_sets::WorkingSetId,
+    captured_arpeggio::CapturedRecipe, harmony::KeyedCatalogRef, working_sets::WorkingSetId,
 };
 use serde::{Deserialize, Deserializer, Serialize};
 use std::collections::BTreeSet;
@@ -17,7 +17,7 @@ pub struct MusicalContextItem {
     pub owner: WorkingSetId,
     pub subject: KeyedCatalogRef,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub captured_recipe: Option<CapturedArpeggio>,
+    pub captured_recipe: Option<CapturedRecipe>,
 }
 
 #[derive(Clone, Debug, Default, Serialize)]
@@ -146,7 +146,7 @@ impl MusicalContext {
     pub fn keep_recipe(
         &mut self,
         owner: WorkingSetId,
-        recipe: CapturedArpeggio,
+        recipe: CapturedRecipe,
     ) -> Result<ContextItemId, String> {
         let card = recipe.card()?;
         recipe.preview()?;
@@ -210,7 +210,7 @@ mod tests {
             direction: ArpeggioDirection::Up,
             inversion: 0,
         };
-        let recipe = CapturedArpeggio::capture(&card, &stage, 91.0).unwrap();
+        let recipe = CapturedRecipe::capture(&card, &stage, 91.0).unwrap();
         let mut collection = MusicalContext::default();
         let first = collection
             .keep_recipe(WorkingSetId(1), recipe.clone())
@@ -225,11 +225,11 @@ mod tests {
             direction: ArpeggioDirection::Down,
             inversion: 0,
         };
-        let down = CapturedArpeggio::capture(&card, &stage, 91.0).unwrap();
+        let down = CapturedRecipe::capture(&card, &stage, 91.0).unwrap();
         let second = collection.keep_recipe(WorkingSetId(1), down).unwrap();
         assert_ne!(first, second);
         card.timing.bpm = Some(72.0);
-        let slower = CapturedArpeggio::capture(&card, &stage, 91.0).unwrap();
+        let slower = CapturedRecipe::capture(&card, &stage, 91.0).unwrap();
         assert_ne!(
             collection.keep_recipe(WorkingSetId(1), slower).unwrap(),
             second
@@ -244,6 +244,41 @@ mod tests {
         assert!(!mismatched.get(first).unwrap().available());
         collection.remove(first);
         assert!(collection.keep_recipe(WorkingSetId(1), recipe).unwrap().0 > second.0);
+    }
+
+    #[test]
+    fn captured_pattern_identity_roundtrips_with_exact_order_and_unavailable_payload() {
+        use woodshedding::{pitch::PitchClass, rehearsal::CardId};
+        let mut card = KeyedCatalogRef {
+            formula_id: "scale-pattern:fourths:Major".into(),
+            root: PitchClass::new(5),
+        }
+        .to_card()
+        .unwrap();
+        card.id = CardId(18);
+        let recipe = CapturedRecipe::capture(&card, &crate::StageState::new(), 87.0).unwrap();
+        let expected = recipe.preview().unwrap();
+        let mut context = MusicalContext::default();
+        let id = context
+            .keep_recipe(WorkingSetId(2), recipe.clone())
+            .unwrap();
+        let mut duplicate = recipe;
+        duplicate.source_card = CardId(20);
+        assert_eq!(context.keep_recipe(WorkingSetId(2), duplicate).unwrap(), id);
+        let mut wire = serde_json::to_value(context).unwrap();
+        let reopened: MusicalContext = serde_json::from_value(wire.clone()).unwrap();
+        let item = reopened.get(id).unwrap();
+        assert!(item.available());
+        assert_eq!(
+            item.captured_recipe.as_ref().unwrap().preview().unwrap(),
+            expected
+        );
+        wire["entries"][0]["captured_recipe"]["instruction"]["setting"]["voicing_fingerprint"] =
+            serde_json::json!("stale");
+        let mut unavailable: MusicalContext = serde_json::from_value(wire).unwrap();
+        assert!(!unavailable.get(id).unwrap().available());
+        assert!(unavailable.get(id).unwrap().captured_recipe.is_some());
+        assert!(unavailable.remove(id));
     }
 
     #[test]

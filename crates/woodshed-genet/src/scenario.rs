@@ -434,6 +434,7 @@ impl Snapshot<'_, '_> {
             .with_field("overview-context-recipes", ui.musical_context.items().iter().filter(|item| item.captured_recipe.is_some()).count().to_string())
             .with_field("overview-recipe-source-present", ui.musical_context.items().iter().filter_map(|item| item.captured_recipe.as_ref()).any(|recipe| ui.set.cards.iter().any(|card| card.id == recipe.source_card)).to_string())
             .with_field("overview-recipe-bpm", ui.musical_context.items().iter().find_map(|item| item.captured_recipe.as_ref()).and_then(|recipe| recipe.card().ok()).and_then(|card| card.timing.bpm).map_or("none".into(), |bpm| bpm.to_string()))
+            .with_field("set-last-scale-pattern", ui.set.cards.last().is_some_and(|card| matches!(card.material, woodshedding::rehearsal::Material::ScalePattern { pattern: woodshedding::rehearsal::ScalePattern::Thirds, .. }) && matches!(card.touch, woodshedding::rehearsal::Touch::Walk)).to_string())
             .with_field("set-last-arpeggio", ui.set.cards.last().is_some_and(|card| matches!(card.touch, woodshedding::rehearsal::Touch::Arpeggiate { direction: woodshedding::rehearsal::ArpeggioDirection::Down, inversion: 1 })).to_string())
             .with_field("overview-context-items", ui.musical_context.items().len().to_string())
             .with_field("overview-context-containment", overview.relations.iter().filter(|relation| relation.kind == woodshed_core::session_overview::OverviewRelationKind::ContainsTones).count().to_string())
@@ -1210,7 +1211,31 @@ impl Automatable for Probe<'_, '_> {
                     ui.set.select_id(id);
                 }
             },
-            "mere-arpeggio-remove-source" => {
+            "mere-scale-pattern-example" => {
+                use woodshed_core::harmony::KeyedCatalogRef;
+                use woodshedding::pitch::PitchClass;
+                use woodshedding::rehearsal::{FretWindow, Hold, ScalePattern};
+                ui.stop_rehearsal();
+                ui.set = Default::default();
+                ui.practice_history = Default::default();
+                ui.retained_sets = Default::default();
+                ui.working_sets = Default::default();
+                ui.catalog_explorations = Default::default();
+                for (name, root) in [("Major", 0), ("Minor", 9)] {
+                    let mut card = KeyedCatalogRef { formula_id: format!("scale:{name}"), root: PitchClass::new(root) }.to_card().expect("fixture scale");
+                    card.setting.fret_window = Some(FretWindow { start: 2, span: 6 });
+                    card.timing.hold = Hold::Manual;
+                    card.timing.bpm = None;
+                    ui.set.push(card);
+                }
+                ui.set.cursor = 0;
+                ui.transport.bpm = 92.0;
+                let source = ui.set.cards[0].id;
+                assert!(ui.inspect_scale_pattern(source, ScalePattern::Thirds));
+                let id = ui.stage_scale_pattern().expect("fixture scale pattern");
+                ui.set.select_id(id);
+            },
+            "mere-arpeggio-remove-source" | "mere-scale-pattern-remove-source" => {
                 let id = ui.musical_context.items().iter().find_map(|item| item.captured_recipe.as_ref()).expect("kept fixture recipe").source_card;
                 let index = ui.set.cards.iter().position(|card| card.id == id).expect("source present");
                 ui.set.remove(index);

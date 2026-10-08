@@ -2528,3 +2528,58 @@ External launch scenarios add a startup settle only; canonical assertions are
 unchanged. Qualification uses isolated unsealed sessions and verifies preview
 dispatch rather than acoustic quality. Personal encrypted-vault workflows,
 release packaging/signing and browser execution remain separate gates.
+
+
+### October 7 follow-up: captured scale-pattern recipes in the Mere
+
+**Status: implemented; automated qualification complete, native qualification pending.**
+
+The copied playable-instruction shelf extends from chord arpeggios to authored
+scale patterns in thirds and fourths. Capture resolves inherited setup, fret
+window and tempo, preserves pattern, touch, marks, hold and recipe stamp, and
+keeps the authored source Card as historical provenance. The instruction's
+Card ID remains unassigned; explicit Add creates a new occurrence in the active
+Set. Exact instruction deduplication and the shared twelve-item bound remain.
+The existing arpeggio wire payload stays compatible through the generalized
+`CapturedRecipe` type and its `CapturedArpeggio` API alias.
+
+Patterns resolve deterministic scale contacts in degree-pair order, not a
+chord-shape inventory. Stale chord-shape selectors on pattern payloads refuse
+owner actions. Saved setup, out-of-window marks and missing formulas are
+validated before Hear or Add, with no live Stage fallback. Original Card
+removal or discovery-source changes leave the retained instructions intact.
+Explore scale formula navigates separately to the base scale. Recipes retain
+catalog and originating-Set relations, without formula-level pitch comparisons
+that would misrepresent their realized note sequence.
+
+Scenarios are `mere_scale_pattern_recipe.scn` and
+`mere_scale_pattern_recipe_reopen.scn`. Revision-specific evidence belongs in
+`/Users/markik/Code/testing/woodshed/scale-pattern-recipe-20261007/`.
+
+
+Fresh stack audit: Mere main `cd3ebf26dff71ed36a296503813bbceda577142e`
+and Genet main `161b1a8984553f4c26f8931ea0490105abccba11`. G3 dynamics
+composition and editor undo/session persistence are landed. C1 adds Canvas
+empty-left-drag panning, right-drag selection and host-owned context requests,
+plus Cambium command sets and Pandect command menus. Woodshed currently uses
+Cambium graph_canvas and graph-free PhysicsBoard rather than Canvas pointer
+routing, so C1 introduces no direct gesture change in this slice. G2 semantic
+channels/Meaning and G4 portable DynamicsSpec remain open; E3/E4 wait for the
+S1 host dataset envelope. No private grouping or dynamics format is added here.
+
+Mere main's manifest still uniformly pins Genet `965b64e206a`, while Genet main
+has newer Streams/Fetch/TextDecoder work. Both latest hashes must not be
+substituted independently as an assumed coherent family. This domain slice
+retains Woodshed's qualified Mere `d041cc69` / Genet `d851a9db` pins. A coordinated
+scene adoption should qualify the complete dependency family, legacy persisted
+presentation, host gestures and native reopening together. The source audit
+is distinct from downstream adoption or native acceptance of those new APIs.
+
+
+The wider gate passes 613 checks: core 210, integration 1, desktop 65,
+graph 14, views 138, theory 181 and doctests 4. The desktop builds successfully.
+New core/view checks cover thirds and fourths, ordered/repeated visits, Solo/Mute
+contacts, inherited Drop-D/window/tempo with capo, serialized reopening, source
+removal, active-owner Add identities, legacy arpeggio compatibility and refused
+stale payloads that remain removable. Final source review found no actionable
+owner-boundary regression. Native qualification follows the committed runtime.
