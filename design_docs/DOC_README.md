@@ -97,7 +97,8 @@ before any other doc in this directory.
   The October 8 audio diagnosis reproduces preview synthesis blocking the
   callback mutex and moves rendering outside that lock. Controlled before/after
   hardware evidence distinguishes device events from duplicated stream logs;
-  native qualification is in progress.
+  192 audio/desktop checks and a committed native seed/fresh-reopen replay pass;
+  four captures are reviewed, with zero buffer errors on the qualified route.
   The October 7 captured-scale-pattern follow-up extends copied instructions
   to degree pairs in thirds/fourths, with base-scale exploration and unchanged
   owner boundaries. The 613-check gate and committed desktop build pass; eight
