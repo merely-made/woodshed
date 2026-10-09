@@ -15,9 +15,9 @@ crate-type = ["cdylib", "rlib"]
 redshank-surfaces = { path = "../surfaces" }
 redshank-model = { path = "../model" }
 # The Mere pin this workspace is on.
-cambium = { git = "https://github.com/merely-made/mere.git", rev = "3ded2cd7c2370713118a2440c962c39262720205" }
-cambium-rootstock = { git = "https://github.com/merely-made/mere.git", rev = "3ded2cd7c2370713118a2440c962c39262720205" }
-cambium-genet-web-host = { git = "https://github.com/merely-made/mere.git", rev = "3ded2cd7c2370713118a2440c962c39262720205" }
+cambium = { git = "https://github.com/merely-made/mere.git", rev = "463c8d402039497978ac9eca0d314aa995366559" }
+cambium-rootstock = { git = "https://github.com/merely-made/mere.git", rev = "463c8d402039497978ac9eca0d314aa995366559" }
+cambium-genet-web-host = { git = "https://github.com/merely-made/mere.git", rev = "463c8d402039497978ac9eca0d314aa995366559" }
 
 # The browser, declared for wasm32 only so a native workspace build resolves
 # none of it and this crate compiles to nothing off wasm.
