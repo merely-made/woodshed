@@ -1914,14 +1914,13 @@ fn export_stem(id: &ItemId) -> String {
     }
 }
 
-/// An attribute of the focused textarea's wrapper. The surfaces mark the note
-/// editor with an id and the subscribe field with a class.
+/// An attribute of the focused text field's wrapper. The surfaces mark the
+/// note editor with an id and the subscribe field with a class.
 fn focused_text_attribute(runner: &AppRunner, attribute: &str) -> Option<String> {
     let node = runner.focus()?;
     let dom = runner.dom();
     let dom = dom.borrow();
-    let name = dom.element_name(node)?;
-    if name.local.as_ref() != "textarea" {
+    if !is_text_field(&*dom, node) {
         return None;
     }
     let parent = dom.parent(node)?;
@@ -1931,6 +1930,29 @@ fn focused_text_attribute(runner: &AppRunner, attribute: &str) -> Option<String>
         &layout_dom_api::LocalName::from(attribute),
     )
     .map(str::to_owned)
+}
+
+/// Cambium's application text fields are focusable divs with
+/// `role="textbox"` and their committed text on `data-cambium-text-value`,
+/// not native textareas (Mere `019e07a0`). The role alone also appears on
+/// host wrappers, so the marker is what names the editing node. A native
+/// textarea still counts, for a surface built against an older Cambium.
+fn is_text_field<D: layout_dom_api::LayoutDom>(dom: &D, node: D::NodeId) -> bool {
+    let namespace = layout_dom_api::Namespace::from("");
+    let cambium_textbox = dom
+        .attribute(node, &namespace, &layout_dom_api::LocalName::from("role"))
+        .is_some_and(|role| role.eq_ignore_ascii_case("textbox"))
+        && dom
+            .attribute(
+                node,
+                &namespace,
+                &layout_dom_api::LocalName::from("data-cambium-text-value"),
+            )
+            .is_some();
+    cambium_textbox
+        || dom
+            .element_name(node)
+            .is_some_and(|name| name.local.as_ref() == "textarea")
 }
 
 fn note_editor_focused(runner: &AppRunner) -> bool {
