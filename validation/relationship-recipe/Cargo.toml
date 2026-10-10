@@ -11,15 +11,15 @@ publish = false
 woodshed-core = { path = "../../crates/woodshed-core" }
 woodshedding = { path = "../../crates/woodshedding" }
 woodshed-views = { path = "../../crates/woodshed-views" }
-muniment = { git = "https://github.com/merely-made/mere.git", rev = "5dca58a95f91fe237febe80126316ddcb8796176" }
+muniment = { git = "https://github.com/merely-made/mere.git", rev = "e95326dc08446a9256d3e340c63e571684afe697" }
 personae = { git = "https://github.com/merely-made/dramatis.git", rev = "c1d620764315b4c750fcffea30b8c898b8bb73bc" }
 async-trait = "0.1"
 # woodshed-genet's storage.rs (included below by path) reaches djinn through Graphshell.
-graphshell = { git = "https://github.com/merely-made/mere.git", rev = "5dca58a95f91fe237febe80126316ddcb8796176" }
-sceno = { git = "https://github.com/merely-made/mere.git", rev = "5dca58a95f91fe237febe80126316ddcb8796176" }
+graphshell = { git = "https://github.com/merely-made/mere.git", rev = "e95326dc08446a9256d3e340c63e571684afe697" }
+sceno = { git = "https://github.com/merely-made/mere.git", rev = "e95326dc08446a9256d3e340c63e571684afe697" }
 directories = "5"
-scenograph = { git = "https://github.com/merely-made/mere.git", rev = "5dca58a95f91fe237febe80126316ddcb8796176" }
-scenomise = { git = "https://github.com/merely-made/mere.git", rev = "5dca58a95f91fe237febe80126316ddcb8796176" }
+scenograph = { git = "https://github.com/merely-made/mere.git", rev = "e95326dc08446a9256d3e340c63e571684afe697" }
+scenomise = { git = "https://github.com/merely-made/mere.git", rev = "e95326dc08446a9256d3e340c63e571684afe697" }
 serde_json = "1"
 
 # Graphshell's custody client rides Mere's p2panda fork; `[patch]` is per
