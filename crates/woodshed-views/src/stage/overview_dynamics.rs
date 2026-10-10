@@ -87,15 +87,15 @@ impl OverviewDynamics {
         self.roles = roles.clone();
         self.law = law;
         self.motion = motion;
-        // A law with default overlays and sources, the whole stage (F162).
-        let stage = PhysicsChoice {
-            law,
-            ..PhysicsChoice::default()
-        }
-        .into_spec();
-        if let Err(error) = self.board.set_stage(&stage) {
-            eprintln!("[woodshed] overview physics stage refused: {error:?}");
-        }
+        self.board
+            .set_stage(
+                &PhysicsChoice {
+                    law,
+                    ..PhysicsChoice::default()
+                }
+                .into_spec(),
+            )
+            .expect("built-in Woodshed physics laws have valid stages");
         self.board.sync(
             items
                 .iter()
@@ -236,15 +236,15 @@ impl OverviewDynamics {
                 }
             }
             self.board = PhysicsBoard::new();
-            // A law with default overlays and sources, the whole stage (F162).
-            let stage = PhysicsChoice {
-                law: self.law,
-                ..PhysicsChoice::default()
-            }
-            .into_spec();
-            if let Err(error) = self.board.set_stage(&stage) {
-                eprintln!("[woodshed] overview physics stage refused: {error:?}");
-            }
+            self.board
+                .set_stage(
+                    &PhysicsChoice {
+                        law: self.law,
+                        ..PhysicsChoice::default()
+                    }
+                    .into_spec(),
+                )
+                .expect("built-in Woodshed physics laws have valid stages");
             self.board.sync(
                 self.items
                     .iter()

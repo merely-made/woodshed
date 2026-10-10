@@ -1,0 +1,12 @@
+DDX mode=song device=DeviceDescription { name: "iMac Speakers", manufacturer: None, driver: None, device_type: Unknown, interface_type: Unknown, direction: Output, address: None, extended: [] } config=SupportedStreamConfig { channels: 2, sample_rate: 48000, buffer_size: Range { min: 15, max: 4096 }, sample_format: F32 }
+DDX negotiated_frames=Ok(512)
+DDX 4.112s phase=cold begin
+DDX 4.178s phase=cold work_ms=66.055
+DDX 9.181s phase=cold cumulative_events=0
+DDX 9.181s phase=warm begin
+DDX 9.181s phase=warm work_ms=0.009
+DDX 14.186s phase=warm cumulative_events=0
+DDX 14.186s phase=edited begin
+DDX 14.252s phase=edited work_ms=65.383
+DDX 19.254s phase=edited cumulative_events=0
+DDX complete callbacks=1796 device_events=0 max_callback_gap_us=10722

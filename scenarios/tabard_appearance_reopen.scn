@@ -1,7 +1,12 @@
 # Reuse the preceding scenario's scratch settings and theme library.
 log Reopen saved Woodshed appearance
 settle 3
+assert snap appearance-device-free == true
 assert snap appearance-authoring == true
+assert snap set-cards == 0
+assert snap working-set-id == 1
+assert snap song-bars == 0
+assert snap song-playing == false
 assert snap appearance-workshop == false
 assert snap appearance-mode == hc_light
 click .pill Settings

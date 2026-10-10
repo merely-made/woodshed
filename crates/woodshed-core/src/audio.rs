@@ -89,6 +89,8 @@ pub struct TunerState {
 pub enum AudioRequest {
     /// Rewind the song transport to its start.
     SongRewind,
+    /// Cancel pending preview work and sounding preview envelopes.
+    CancelPreview,
     /// Voice the current lens or rehearsal card.
     PreviewVoicing,
     /// Audition a resolved selection. Carrying its pitches keeps later focus
@@ -132,8 +134,11 @@ pub trait AudioBackend {
     fn song_rewind(&mut self);
     /// The bar block under the playback cursor (for timeline follow).
     fn song_bar(&self) -> Option<usize>;
+    /// Cancel queued/in-flight previews and their sounding envelopes.
+    fn cancel_preview(&mut self) {}
     /// Voice a set of chord / scale tones on demand — the "hear it"
-    /// preview — independent of transport. `strum_ms` staggers note
+    /// preview. The desktop queues previews while song playback is stopped.
+    /// `strum_ms` staggers note
     /// onsets: 0 = block chord, ~18 = a gentle strum, larger = an
     /// arpeggiated cascade (a scale run). Default no-op so a backend
     /// that can't voice previews stays silent rather than being forced

@@ -11,7 +11,7 @@ before any other doc in this directory.
 
 ## Active Plans
 
-- [2026-10-08_tabard_adoption_plan.md](2026-10-08_tabard_adoption_plan.md) — Shared appearance authoring and native title-bar adoption in Woodshed; preserves named themes and persona settings while qualifying the shared workshop and native presentation boundary.
+- [2026-10-08_tabard_adoption_plan.md](2026-10-08_tabard_adoption_plan.md) — Shared appearance authoring and native title-bar adoption in Woodshed; preserves named themes and persona settings; the October 10 coherent stack and repaired renderer pass 444 CPU tests and four native lanes with 20 reviewed captures.
 
 - [2026-09-13_redshank_gui_implementation_plan.md](2026-09-13_redshank_gui_implementation_plan.md)
   — **Active.** Implements the endorsed Redshank design canvas: fixed-height
@@ -101,6 +101,16 @@ before any other doc in this directory.
   hardware evidence distinguishes device events from duplicated stream logs;
   192 audio/desktop checks and a committed native seed/fresh-reopen replay pass;
   four captures are reviewed, with zero buffer errors on the qualified route.
+  The song-cache follow-up removes cold chord synthesis from the callback,
+  preserves matching PCM across reads/edits and rejects stale render results;
+  212 checks, cold/warm/edited hardware trials and a committed native seed/reopen
+  pass, with four reviewed captures and zero buffer errors in the qualified runs.
+  The bounded preview-worker follow-up moves Hear/step synthesis off the UI
+  caller, bounds pending work to the latest request, and cancels obsolete PCM
+  across transport changes, rehearsal Pause and shutdown. All 577 checks pass;
+  six reviewed captures qualify committed native seed/reopen. Committed scale
+  enqueue takes 0.014–0.061 ms; a monitor-only startup event is preserved beside
+  the zero-event repeat and song regression. The receipt records the boundaries.
   The October 7 captured-scale-pattern follow-up extends copied instructions
   to degree pairs in thirds/fourths, with base-scale exploration and unchanged
   owner boundaries. The 613-check gate and committed desktop build pass; eight

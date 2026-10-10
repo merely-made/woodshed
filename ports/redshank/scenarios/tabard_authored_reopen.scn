@@ -1,0 +1,10 @@
+# Fresh process after tabard_authored_roles.scn, using its isolated profile.
+assert snap appearance-id == user:role-fixture
+assert snap appearance-mode == custom:garden
+assert snap transport == IDLE
+assert snap item-count == 0
+assert snap note-count == 0
+capture authored-custom-reopened
+click role:button Appearance
+settle 1
+capture authored-custom-choice

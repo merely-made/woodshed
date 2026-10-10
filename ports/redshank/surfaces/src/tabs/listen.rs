@@ -630,8 +630,13 @@ mod tests {
 
     #[test]
     fn editor_is_hidden_until_capture_then_saves_the_frozen_anchor() {
-        assert!(!markup(queued(), panel).contains("<textarea"));
+        let hidden = markup(queued(), panel);
+        assert!(!hidden.contains("<textarea") && !hidden.contains(r#"role="textbox""#));
         let mut runner = runner(capture_state(None), panel);
+        assert!(
+            markup_of(&runner).contains(r#"role="textbox""#),
+            "the editor is Cambium's app-owned textbox"
+        );
         assert!(markup_of(&runner).contains("Note for Wetland at 1:02"));
         click(&mut runner, "Save text note");
         let saved = commands(&mut runner);

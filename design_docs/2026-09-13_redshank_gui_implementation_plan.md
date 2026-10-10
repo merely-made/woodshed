@@ -22,6 +22,81 @@ Rulings taken from Mark on 2026-09-13:
   edit the same file; builds, tests, and headed receipts run sequentially in
   the orchestrating session.
 
+## Shared application appearance adoption, 2026-10-09
+
+**Status: implemented and native macOS qualified, 2026-10-10.** The sovereign desktop
+adds a separate application choice over the shared Tabard store and embeds
+its existing workshop through Cambium's retained views and Genet host. The
+portable listener state, command vocabulary, audio runtime and generation
+store remain their existing authorities. An appearance click queues no
+playback settings commands. Listener seed/mode preferences remain the exact
+fallback selected by **Redshank default**, including Wetland's seven endorsed
+dark role values; a new authored copy preserves those values as CSS authority.
+
+The desktop wrapper owns appearance controls and the shared draft; it does
+not put file stores or authoring state into the reusable surface model. The
+hosted compact dock consumes supplied Tabard roles with exact legacy role
+fallbacks and contributes no application theme picker. Authored CSS is last
+in the cascade; omitted roles retain the selected legacy colors. Saved choice
+publication follows a successful shared preference write, and saving the same
+library identity leaves its applied snapshot unchanged until explicit Apply.
+
+The native host routes editor fields through existing focused text slots and
+consumes the optional shared native workshop adapter for preview registration,
+control synchronization, export effects and focused-field discovery over the
+existing RenderCore. Dirty workshop
+close delegates to Tabard before Redshank's ordinary asynchronous listener
+shutdown. Shared export guards protect the application choice, owned data
+directory (including future generations), and local media identities. Neither
+an unreadable choice nor a corrupt library is replaced by an empty store.
+
+The native workspace CPU suite at the current Mere `7019f07d` pin passes 253
+tests with no failures; seven
+existing playback tests remain explicitly ignored for external fixtures or
+audio hardware. Nine new appearance checks cover all four modes, authored and
+custom roles, fresh state reopening, persistence refusal, same-identity applied
+snapshots, dirty editor close, protected future data, controlled native editor
+and feed input, shared scenario fixtures, and the real Save/Apply/Back path at
+420 pixels. Original note input/save and listener assertions remain unchanged;
+the embedded dock's actual computed paint verifies host roles and exact legacy
+fallbacks. The completed fixed-renderer suite is `/tmp/redshank-tabard-header-final-gates.log`.
+
+Native presentation acceptance passed. Current full metadata
+resolves a single Mere `7019f07d36a9da8c1a3edbbcbabad606e9cb3278` and Genet
+`7422e90613f9017e5bb790e3acb48f61776b2eda` identity with the shared native-helper
+feature enabled. The production binary and browser/surface Wasm check both passed at this
+family and fixed renderer; logs are
+`/tmp/redshank-tabard-header-native-build.log` and
+`/tmp/redshank-tabard-header-wasm-gate.log`. The standalone root now explicitly patches
+`netrender-vello`, `vello_encoding` and `vello_shaders` to immutable
+`491c376cf2b01fc11132cf8f86419dec114ae032`; dependency workspace patches are
+not inherited. All three resolved renderer packages use that source. The matching native binary SHA256 is
+`e7128e911484c2db69031d61172fa56e7247644cd50eaede28028bc7a6692dcd`. A scoped
+fast-forward to Woodshed origin `fea7f0f` preserved the three overlapping
+Redshank candidate manifest/lock files; its earlier graph semantics repin is
+included in the current Mere family.
+Native macOS acceptance uses the shared LaunchServices helper with isolated
+listener, choice and theme-library paths. The six accepted processes contain
+191 successful presentations and 22 nonblank captures, all reviewed. Earlier
+wide four-mode authoring/reopening uses the fixed-renderer `11236fd4` family;
+final 420 × 900 authoring/reopening and authored Dark/Garden fresh-process
+receipts use `7019f07d`. The repaired workshop puts Undo/Redo/Save below its
+title, with Back/Apply and all appearance controls visible. Exact authored
+native pixels match the declared body and chrome roles. Saved copy/high-contrast
+dark and authored custom choices reopen exactly; listener storage remains
+empty and the authored library fixture bytes remain unchanged. No new GPU
+reset occurred during these runs.
+
+The [acceptance ledger](../ports/redshank/scenarios/validation/tabard_appearance_acceptance.json)
+records exact source receipt and PNG hashes. Failed ambiguous-selector runs
+and the rejected pre-repair narrow header remain preserved. Initial missing
+glyph/control claims were retracted after decoded pixel-region comparisons
+proved those paints present; no paint-loss repair is claimed. Original listener
+and note-input assertions remain intact. This qualifies the tested macOS
+application appearance lanes. Windows/Linux presentation, live screen reader/IME,
+native export chooser interaction and external audio/playback fixtures remain
+unexercised here.
+
 ## The design, as rules
 
 The canvas states its rules in prose; they are restated here so a lane can be

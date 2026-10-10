@@ -1,0 +1,6 @@
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+   Compiling woodshed-core v0.1.0 (/Users/markik/Code/repos/woodshed/crates/woodshed-core)
+   Compiling woodshed-views v0.1.0 (/Users/markik/Code/repos/woodshed/crates/woodshed-views)
+   Compiling woodshed-genet v0.1.0 (/Users/markik/Code/repos/woodshed/crates/woodshed-genet)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 15.60s

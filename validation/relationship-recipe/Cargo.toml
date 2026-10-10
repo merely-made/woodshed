@@ -11,10 +11,25 @@ publish = false
 woodshed-core = { path = "../../crates/woodshed-core" }
 woodshedding = { path = "../../crates/woodshedding" }
 woodshed-views = { path = "../../crates/woodshed-views" }
-muniment = { git = "https://github.com/merely-made/mere.git", rev = "5011e2f90e988775410fe4b4213e9895fe64538e" }
-personae = { git = "https://github.com/merely-made/mere.git", rev = "5011e2f90e988775410fe4b4213e9895fe64538e" }
+muniment = { git = "https://github.com/merely-made/mere.git", rev = "5dca58a95f91fe237febe80126316ddcb8796176" }
+personae = { git = "https://github.com/merely-made/dramatis.git", rev = "c1d620764315b4c750fcffea30b8c898b8bb73bc" }
 async-trait = "0.1"
+# woodshed-genet's storage.rs (included below by path) reaches djinn through Graphshell.
+graphshell = { git = "https://github.com/merely-made/mere.git", rev = "5dca58a95f91fe237febe80126316ddcb8796176" }
+sceno = { git = "https://github.com/merely-made/mere.git", rev = "5dca58a95f91fe237febe80126316ddcb8796176" }
 directories = "5"
-scenograph = { git = "https://github.com/merely-made/mere.git", rev = "5011e2f90e988775410fe4b4213e9895fe64538e" }
-scenomise = { git = "https://github.com/merely-made/mere.git", rev = "5011e2f90e988775410fe4b4213e9895fe64538e" }
+scenograph = { git = "https://github.com/merely-made/mere.git", rev = "5dca58a95f91fe237febe80126316ddcb8796176" }
+scenomise = { git = "https://github.com/merely-made/mere.git", rev = "5dca58a95f91fe237febe80126316ddcb8796176" }
 serde_json = "1"
+
+# Graphshell's custody client rides Mere's p2panda fork; `[patch]` is per
+# workspace root, so this restates Woodshed's rows.
+[patch.crates-io]
+mere-p2panda-net = { git = "https://github.com/mark-ik/p2panda.git", tag = "mere-p2panda-net-0.7.5" }
+p2panda-auth = { git = "https://github.com/mark-ik/p2panda.git", tag = "mere-p2panda-net-0.7.5" }
+p2panda-core = { git = "https://github.com/mark-ik/p2panda.git", tag = "mere-p2panda-net-0.7.5" }
+p2panda-discovery = { git = "https://github.com/mark-ik/p2panda.git", tag = "mere-p2panda-net-0.7.5" }
+p2panda-encryption = { git = "https://github.com/mark-ik/p2panda.git", tag = "mere-p2panda-net-0.7.5" }
+p2panda-store = { git = "https://github.com/mark-ik/p2panda.git", tag = "mere-p2panda-net-0.7.5" }
+p2panda-stream = { git = "https://github.com/mark-ik/p2panda.git", tag = "mere-p2panda-net-0.7.5" }
+p2panda-sync = { git = "https://github.com/mark-ik/p2panda.git", tag = "mere-p2panda-net-0.7.5" }
