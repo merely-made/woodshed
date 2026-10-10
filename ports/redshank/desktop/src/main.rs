@@ -1,5 +1,10 @@
 #![forbid(unsafe_code)]
 
+mod appearance;
+mod appearance_host;
+#[cfg(test)]
+mod appearance_tests;
+mod appearance_view;
 mod diagnostics;
 #[cfg(test)]
 mod diagnostics_worker_tests;
@@ -25,7 +30,6 @@ use redshank_playback::{PlaybackCommand, PlaybackRuntime, PlaybackState, Preview
 use redshank_storage::{JsonDirectoryStore, ModelStore};
 use redshank_surfaces::{
     CompactCommand, FONTS, Layout, Recording, RedshankSurfaceState, TextCapture, TransportState,
-    sheet, surface,
 };
 use session::{HostFacts, Session};
 use std::{
@@ -38,9 +42,9 @@ use std::{
 };
 use voice::LocalVoiceCapture;
 
-type Logic = fn(&RedshankSurfaceState) -> redshank_surfaces::FullView;
-type AppRunner = Runner<RedshankSurfaceState, Logic, redshank_surfaces::FullView>;
-type Context<'a> = AppCtx<'a, RedshankSurfaceState, Logic, redshank_surfaces::FullView>;
+use appearance::{Child, DesktopState, Logic};
+type AppRunner = Runner<DesktopState, Logic, Child>;
+type Context<'a> = AppCtx<'a, DesktopState, Logic, Child>;
 
 fn data_directory() -> PathBuf {
     if let Some(path) = std::env::var_os("REDSHANK_DATA_DIR") {
@@ -1923,13 +1927,16 @@ fn focused_text_attribute(runner: &AppRunner, attribute: &str) -> Option<String>
     if !is_text_field(&*dom, node) {
         return None;
     }
-    let parent = dom.parent(node)?;
-    dom.attribute(
-        parent,
-        &layout_dom_api::Namespace::from(""),
-        &layout_dom_api::LocalName::from(attribute),
-    )
-    .map(str::to_owned)
+    let namespace = layout_dom_api::Namespace::from("");
+    let name = layout_dom_api::LocalName::from(attribute);
+    let mut current = Some(node);
+    while let Some(node) = current {
+        if let Some(value) = dom.attribute(node, &namespace, &name) {
+            return Some(value.to_owned());
+        }
+        current = dom.parent(node);
+    }
+    None
 }
 
 /// Cambium's application text fields are focusable divs with
@@ -1963,25 +1970,60 @@ fn feed_field_focused(runner: &AppRunner) -> bool {
     focused_text_attribute(runner, "class").is_some_and(|class| class.contains("redshank-feed-url"))
 }
 
-fn focused_text(runner: &AppRunner) -> Option<FocusedTextSlot<RedshankSurfaceState>> {
+fn focused_text(runner: &AppRunner) -> Option<FocusedTextSlot<DesktopState>> {
     let node = runner.focus()?;
+    {
+        let dom = runner.dom();
+        let dom = dom.borrow();
+        if !is_text_field(&*dom, node) {
+            return None;
+        }
+    }
+    if runner.state().appearance.editor_open {
+        let field = tabard_workshop::native_host::focused_field(
+            &runner.dom(),
+            node,
+            &runner.state().appearance.workshop,
+        )?;
+        let key = field.clone();
+        return Some(FocusedTextSlot {
+            node,
+            get: Box::new(move |state| {
+                state
+                    .appearance
+                    .workshop
+                    .text_field(&field)
+                    .expect("focused workshop field")
+            }),
+            get_mut: Box::new(move |state| {
+                state
+                    .appearance
+                    .workshop
+                    .text_field_mut(&key)
+                    .expect("focused workshop field")
+            }),
+        });
+    }
     if feed_field_focused(runner) {
         return Some(FocusedTextSlot {
             node,
-            get: Box::new(|state| &state.feed_url_editor),
-            get_mut: Box::new(|state| &mut state.feed_url_editor),
+            get: Box::new(|state| &state.surface.feed_url_editor),
+            get_mut: Box::new(|state| &mut state.surface.feed_url_editor),
         });
     }
     Some(FocusedTextSlot {
         node,
-        get: Box::new(|state| &state.text_editor),
-        get_mut: Box::new(|state| &mut state.text_editor),
+        get: Box::new(|state| &state.surface.text_editor),
+        get_mut: Box::new(|state| &mut state.surface.text_editor),
     })
 }
 
 fn key_intercept(runner: &mut AppRunner, key: &KeyPress) -> bool {
+    if runner.state().appearance.editor_open {
+        return false;
+    }
     let note_editor_focused = note_editor_focused(runner);
-    let state = runner.state();
+    let state = &runner.state().surface;
     let command = if key.modifiers.is_command_chord() {
         match &key.key {
             Key::Character(c) if c.eq_ignore_ascii_case("o") => Some(CompactCommand::OpenLocalFile),
@@ -2039,7 +2081,7 @@ fn key_intercept(runner: &mut AppRunner, key: &KeyPress) -> bool {
         None
     };
     if let Some(command) = command {
-        runner.update(|state| state.request(command));
+        runner.update(|state| state.surface.request(command));
         true
     } else {
         false
@@ -2058,15 +2100,17 @@ fn layout_for((width, height): (f32, f32)) -> Layout {
 fn hooks(
     desktop: Rc<RefCell<Desktop>>,
     lane: Rc<RefCell<Option<scenario::ScenarioLane>>>,
-) -> HostHooks<RedshankSurfaceState, Logic, redshank_surfaces::FullView> {
+) -> HostHooks<DesktopState, Logic, Child> {
     let frame = Rc::clone(&desktop);
     let dispatch = Rc::clone(&desktop);
     let wake = Rc::clone(&desktop);
     let scenario_frame = Rc::clone(&lane);
     let scenario_busy = Rc::clone(&lane);
     let scenario_desktop = Rc::clone(&desktop);
+    let mut previews = appearance_host::PreviewBindings::default();
     HostHooks {
         frame: Box::new(move |ctx: &mut Context<'_>| {
+            previews.frame(ctx);
             let scenario_running = scenario_busy
                 .borrow()
                 .as_ref()
@@ -2075,8 +2119,8 @@ fn hooks(
             if desktop.last_size != Some(ctx.logical_size) {
                 desktop.last_size = Some(ctx.logical_size);
                 let layout = layout_for(ctx.logical_size);
-                if ctx.runner.state().layout != layout {
-                    ctx.runner.update(|state| state.layout = layout);
+                if ctx.runner.state().surface.layout != layout {
+                    ctx.runner.update(|state| state.surface.layout = layout);
                 }
             }
             // Named scenario commands enter the ordinary queue after a frame.
@@ -2087,21 +2131,21 @@ fn hooks(
                 || scenario_running
             {
                 desktop.last_projection = Instant::now();
-                let mut next = ctx.runner.state().clone();
+                let mut next = ctx.runner.state().surface.clone();
                 desktop.dispatch(&mut next);
                 desktop.poll(&mut next);
-                if &next != ctx.runner.state() {
-                    ctx.runner.update(|state| *state = next);
+                if &next != &ctx.runner.state().surface {
+                    ctx.runner.update(|state| state.surface = next);
                 }
             }
             if let Some(mut receipt) = desktop.receipt.take() {
-                let mut next = ctx.runner.state().clone();
+                let mut next = ctx.runner.state().surface.clone();
                 if let Err(error) = receipt.drive(&mut desktop, &mut next) {
                     receipt.fail(error);
                     *ctx.close = true;
                 }
-                if &next != ctx.runner.state() {
-                    ctx.runner.update(|state| *state = next);
+                if &next != &ctx.runner.state().surface {
+                    ctx.runner.update(|state| state.surface = next);
                 }
                 desktop.receipt = Some(receipt);
             }
@@ -2120,6 +2164,7 @@ fn hooks(
                 *ctx.close = true;
             }
             // Worker changes need polling until playback and persistence settle.
+            appearance_host::refresh_stylesheet(ctx);
             let snap = desktop.runtime.snapshot();
             desktop.closing
                 || desktop.dialog_pending
@@ -2138,8 +2183,39 @@ fn hooks(
                 || matches!(snap.state, PlaybackState::Loading | PlaybackState::Playing)
         }),
         after_dispatch: Box::new(move |ctx: &mut Context<'_>| {
-            ctx.runner
-                .update(|state| dispatch.borrow_mut().dispatch(state));
+            let (data_root, media) = {
+                let desktop = dispatch.borrow();
+                let media = desktop
+                    .session
+                    .model
+                    .library
+                    .values()
+                    .filter_map(|item| match item.source() {
+                        MediaSource::Local { path } | MediaSource::Cached { path, .. } => {
+                            Some(PathBuf::from(path))
+                        },
+                        _ => None,
+                    })
+                    .collect();
+                (desktop.data_root.clone(), media)
+            };
+            ctx.runner.update(|state| {
+                state
+                    .appearance
+                    .workshop
+                    .set_protected_export_directories(vec![data_root]);
+                state.appearance.protect_media(media);
+            });
+            appearance_host::after_dispatch(ctx);
+            ctx.runner.update(|state| {
+                if !state.appearance.editor_open && std::mem::take(&mut state.appearance.close_app)
+                {
+                    if let Err(error) = dispatch.borrow_mut().close(&mut state.surface) {
+                        state.surface.notice = Some(error);
+                    }
+                }
+                dispatch.borrow_mut().dispatch(&mut state.surface);
+            });
         }),
         after_frame: Box::new(move |ctx: &mut Context<'_>| {
             if let Some(lane) = scenario_frame.borrow_mut().as_mut() {
@@ -2148,18 +2224,27 @@ fn hooks(
         }),
         after_wake: Box::new(move |ctx| {
             let mut desktop = wake.borrow_mut();
-            let mut next = ctx.runner.state().clone();
+            let mut next = ctx.runner.state().surface.clone();
             desktop.poll(&mut next);
-            if &next != ctx.runner.state() {
-                ctx.runner.update(|state| *state = next);
+            if &next != &ctx.runner.state().surface {
+                ctx.runner.update(|state| state.surface = next);
             }
         }),
         close_request: Box::new(move |ctx, _| {
             ctx.runner.update(|state| {
-                if let Err(error) = desktop.borrow_mut().close(state) {
-                    state.notice = Some(error);
+                if !appearance_host::prepare_close(state) {
+                    return;
+                }
+                if let Err(error) = desktop.borrow_mut().close(&mut state.surface) {
+                    state.surface.notice = Some(error);
                 }
             });
+            let mut sheet = None;
+            ctx.runner
+                .update(|state| sheet = state.appearance.take_stylesheet_change(&state.surface));
+            if let Some(sheet) = sheet {
+                *ctx.set_sheet = Some(sheet);
+            }
             CloseDisposition::KeepVisible
         }),
         focused_text: Box::new(focused_text),
@@ -2269,6 +2354,15 @@ fn main() {
         diagnostics,
         desktop.clone(),
     )));
+    let mut state = DesktopState {
+        surface: state,
+        appearance: Default::default(),
+    };
+    appearance_host::load(&mut state, &desktop.borrow().data_root);
+    let initial_sheet = state
+        .appearance
+        .take_stylesheet_change(&state.surface)
+        .expect("initial app stylesheet");
     run(
         HostOptions {
             title: "Redshank".into(),
@@ -2283,8 +2377,8 @@ fn main() {
             wake.wake();
             Init {
                 state,
-                logic: surface as Logic,
-                sheet: sheet(),
+                logic: appearance::root as Logic,
+                sheet: initial_sheet,
                 fonts: plex_fonts(),
                 images: Vec::new(),
             }
@@ -2707,11 +2801,19 @@ mod tests {
             draft: String::new(),
             end_offset_ms: None,
         });
+        let mut state = DesktopState {
+            surface: state,
+            appearance: Default::default(),
+        };
+        let app_sheet = state
+            .appearance
+            .take_stylesheet_change(&state.surface)
+            .unwrap();
         let mut host = cambium_genet_winit_host::Harness::with_hooks(
             Init {
                 state,
-                logic: surface as Logic,
-                sheet: sheet(),
+                logic: appearance::root as Logic,
+                sheet: app_sheet,
                 // Headless focus routing; no face has to be registered for it.
                 fonts: Vec::new(),
                 images: Vec::new(),
@@ -2731,7 +2833,7 @@ mod tests {
         );
         host.key_char("n");
         host.key_injected("ote");
-        assert_eq!(host.state().text_editor.text(), "note");
+        assert_eq!(host.state().surface.text_editor.text(), "note");
         host.press_key(&KeyPress {
             key: Key::Named(NamedKey::Enter),
             text: None,
