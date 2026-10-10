@@ -355,3 +355,37 @@ impl Backend for FsBackend {
         Ok(())
     }
 }
+
+#[cfg(test)]
+mod dr_c_receipts {
+    use super::*;
+    #[test]
+    #[ignore = "run mere/scripts/dr_c_receipts.py against the isolated receipt keeper"]
+    fn dr_c_woodshed_identity_stays_pending() {
+        let mode = std::env::var("DR_C_RECEIPT_MODE").expect("receipt mode");
+        assert!(mode == "absent" || mode == "locked");
+        if mode == "locked" {
+            let mut client = graphshell::native::custody_client::BlockingCustodyClient::open(
+                graphshell::native::app_admission::AppId::new(CUSTODY_APP)).unwrap();
+            assert_eq!(client.status().unwrap().lock, graphshell::identity::VaultLockView::Locked);
+            assert!(!client.roster().unwrap().entries.is_empty());
+        }
+        let state = PathBuf::from(std::env::var("WOODSHED_STATE").expect("isolated state file"));
+        std::fs::write(&state, b"already-public practice").unwrap();
+        let (backend, seal) = open_backend(None);
+        assert!(matches!(seal, PracticeSeal::Pending { .. }), "Woodshed must have no sealing-key fallback");
+        let mut reads_and_writes = std::pin::pin!(async {
+            assert_eq!(backend.get("session").await.unwrap().unwrap(), b"already-public practice");
+            backend.put("session", b"must never be written in the clear").await.unwrap();
+            backend.delete("session").await.unwrap();
+            backend.apply(&[WriteOp::Put { key: "session".into(), value: b"another forbidden cleartext write".to_vec() }]).await.unwrap();
+        });
+        use std::future::Future;
+        let mut context = std::task::Context::from_waker(std::task::Waker::noop());
+        assert!(reads_and_writes.as_mut().poll(&mut context).is_ready(),
+            "the local file backend completes without an async runtime");
+        assert_eq!(std::fs::read(&state).unwrap(), b"already-public practice", "pending must leave public bytes unchanged");
+        let (_, chosen) = open_backend(Some(&ProfileId("default".into())));
+        assert!(matches!(chosen, PracticeSeal::Pending { .. }));
+    }
+}
