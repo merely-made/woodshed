@@ -219,11 +219,11 @@ pub fn stage_css(p: &Palette) -> String {
 .workspace-panel-active {{ background-color: {surface_2}; color: {tertiary}; font-weight: 600; }}
 .nav-spacer {{ flex-grow: 1; }}
 .search-wrap {{ width: 240px; margin-right: 8px; box-sizing: border-box; }}
-.search-wrap input {{ display: block; width: 240px; box-sizing: border-box;
+.search-wrap [role=textbox] {{ display: block; width: 240px; box-sizing: border-box;
                      height: 32px; line-height: 30px;
                      background-color: {surface_2}; color: {text}; padding: 0 12px;
                      border-radius: 10px; border: 1px solid {surface_2}; font-size: 13px; }}
-.search-wrap input:focus {{ border: 1px solid {tertiary}; }}
+.search-wrap [role=textbox]:focus {{ border: 1px solid {tertiary}; }}
 /* The field renders its text as element content and carries no browser input
    value semantics, so there is no ::placeholder to style. The hint is a sibling
    overlaid on the empty field, and pointer-events: none keeps a click on it
@@ -334,13 +334,13 @@ pub fn stage_css(p: &Palette) -> String {
 .draw-tool.save {{ color: {tertiary}; }}
 .draw-tool.save:hover {{ background-color: {surface_hover}; color: {text_header}; }}
 /* Rename field for the selected card. The inner input needs its own box (like
-   .search-wrap input): a text field renders its buffer as element content, so
+   .search-wrap [role=textbox]): a text field renders its buffer as element content, so
    without padding/display it has no hit area to click into and never focuses. */
 .card-rename {{ width: 260px; margin-right: 12px; box-sizing: border-box; }}
-.card-rename input {{ display: block; width: 260px; box-sizing: border-box;
+.card-rename [role=textbox] {{ display: block; width: 260px; box-sizing: border-box;
                      background-color: {surface_2}; color: {text}; padding: 6px 12px;
                      border-radius: 8px; border: 1px solid {surface_2}; font-size: 13px; }}
-.card-rename input:focus {{ border: 1px solid {tertiary}; }}
+.card-rename [role=textbox]:focus {{ border: 1px solid {tertiary}; }}
 /* Segmented mode control [Off · Solo · Mute]: a structured toggle, not a loose
    button row. The active segment is lit. */
 .mode-seg {{ display: flex; margin-right: 12px; border-radius: 6px; }}
@@ -426,7 +426,7 @@ pub fn stage_css(p: &Palette) -> String {
 .relationship-choices {{ display: flex; flex-wrap: wrap; gap: 8px; }}
 .relationship-graph {{ flex: 0 0 220px; min-height: 220px; height: 220px; overflow: auto; max-width: 100%; }}
 .relationship-label {{ width: 100%; max-width: 640px; }}
-.relationship-label input {{ width: 100%; min-height: 34px; padding: 8px 10px; background: {surface_2}; color: {text}; border-radius: 4px; }}
+.relationship-label [role=textbox] {{ width: 100%; min-height: 34px; padding: 8px 10px; background: {surface_2}; color: {text}; border-radius: 4px; }}
 .relationship-explanation, .relationship-refusal {{ padding: 12px; background: {surface_2}; }}
 .session-overview .t-btn {{ min-height: 34px; padding: 8px 12px; white-space: normal; }}
 .session-overview .overview-atmosphere-selected {{ color: {tertiary}; border: 1px solid {tertiary}; }}
@@ -583,7 +583,7 @@ pub fn stage_css(p: &Palette) -> String {
 .search-item, .prog-card {{ transition: background-color 0.12s ease, color 0.12s ease; }}
 .pill, .lens {{ transition: background-color 0.14s ease, color 0.14s ease; }}
 .film-card, .recipe-tile, .bar-chip {{ transition: border-color 0.14s ease, background-color 0.14s ease; }}
-.search-wrap input {{ transition: border-color 0.12s ease; }}
+.search-wrap [role=textbox] {{ transition: border-color 0.12s ease; }}
 /* The persona gate (P1): the whole product root, replaced by one question,
    because nothing behind it has been read yet. Centred rather than anchored:
    there is no trigger control to point back at. */
@@ -622,7 +622,7 @@ pub fn stage_css(p: &Palette) -> String {
 /* Narrow drops search to its own row; cap it so it reads as a field, not a
    full-width empty strip (a 2x-DPI desktop is ~640 logical px, always narrow). */
 .viewport-narrow .search-wrap {{ width: 100%; max-width: 340px; margin: 0 0 8px 0; }}
-.viewport-narrow .search-wrap input, .viewport-narrow .search-list {{ width: 100%; }}
+.viewport-narrow .search-wrap [role=textbox], .viewport-narrow .search-list {{ width: 100%; }}
 .viewport-narrow .header-row, .viewport-narrow .transport,
 .viewport-narrow .prog-cards {{ flex-wrap: wrap; }}
 .viewport-narrow .header-gap {{ width: 10px; }}
@@ -666,7 +666,7 @@ pub fn apply_accessibility(mut css: String, reduce_motion: bool, text_scale: f32
         // rules (theme.rs) to none.
         css.push_str(
             "\n.search-item, .prog-card, .pill, .lens, .film-card, .recipe-tile, \
-             .bar-chip, .search-wrap input { transition: none; }\n",
+             .bar-chip, .search-wrap [role=textbox] { transition: none; }\n",
         );
     }
     css
