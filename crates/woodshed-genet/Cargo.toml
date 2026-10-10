@@ -47,6 +47,8 @@ serde_json = { workspace = true }
 # The shared persona picker's event type. The list itself is drawn in
 # woodshed-views; this crate only reads what the user answered.
 persona-picker = { workspace = true }
+dramatis = { workspace = true }
+graphshell = { workspace = true }
 
 [dev-dependencies]
 # The persona-gate tests build a real vault in a scratch directory rather than

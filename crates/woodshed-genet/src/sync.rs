@@ -32,8 +32,8 @@ fn midi_port_at(ports: &[String], selected: usize) -> Option<String> {
 
 /// Everything woodshed does after an input dispatch.
 pub fn after_dispatch(shared: &mut Shared, ctx: &mut Ctx<'_>) {
-    // First, so that everything below sees the session the chosen persona
-    // unsealed rather than the empty one that stood in for it.
+    // First, so that everything below sees the session the chosen persona's
+    // key opened rather than the empty one that stood in for it.
     crate::persona::after_dispatch(shared, ctx);
     crate::appearance::after_dispatch(ctx);
     // Graph motion changes only transient projection state. Pointer Down and

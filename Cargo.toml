@@ -134,12 +134,15 @@ midir = "0.11"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 
-# Identity. The family-shared vault (`personae`) and the shared view over its
-# roster (`mere-persona-picker`) — the same question every Merely application
-# asks at startup, asked once and drawn the same way everywhere. Both from
-# mere's git by branch, matching the `muniment`/`personae` deps woodshed-genet
-# already carried; the picker is declared here rather than per-crate because
-# woodshed-views draws it and woodshed-genet acts on it.
+# Identity. Woodshed opens no vault: it calls djinn over Graphshell's custody
+# route (dramatis DR-C, D5) for the roster, a persona switch and the one
+# sealing key it needs. `personae` lends key types and sealing, `dramatis` the
+# roster's plain types, and `mere-persona-picker` the shared view over the
+# roster: the same question every Merely application asks, drawn the same way
+# everywhere. Declared here because woodshed-views draws the roster and
+# woodshed-genet acts on it.
+dramatis = { git = "https://github.com/merely-made/mere.git", rev = "7d2a5f3cfe97174058368073d2bae809fffbf902" }
+graphshell = { git = "https://github.com/merely-made/mere.git", rev = "7d2a5f3cfe97174058368073d2bae809fffbf902" }
 personae = { git = "https://github.com/merely-made/mere.git", rev = "7d2a5f3cfe97174058368073d2bae809fffbf902" }
 persona-picker = { package = "mere-persona-picker", git = "https://github.com/merely-made/mere.git", rev = "7d2a5f3cfe97174058368073d2bae809fffbf902" }
 
@@ -160,6 +163,17 @@ persona-picker = { package = "mere-persona-picker", git = "https://github.com/me
 # revision as the Genet family above. Parley needs no row: genet's fork is
 # `genet-parley` now, which genet-livery reaches inside genet.
 [patch.crates-io]
+# The p2panda fork Mere's transport rides, reached through Graphshell's custody
+# client (dramatis DR-C). `[patch]` is per workspace root, so this restates
+# Mere's rows: the tagged `mere-p2panda-net =0.7.5` release and its siblings.
+mere-p2panda-net = { git = "https://github.com/mark-ik/p2panda.git", tag = "mere-p2panda-net-0.7.5" }
+p2panda-auth = { git = "https://github.com/mark-ik/p2panda.git", tag = "mere-p2panda-net-0.7.5" }
+p2panda-core = { git = "https://github.com/mark-ik/p2panda.git", tag = "mere-p2panda-net-0.7.5" }
+p2panda-discovery = { git = "https://github.com/mark-ik/p2panda.git", tag = "mere-p2panda-net-0.7.5" }
+p2panda-encryption = { git = "https://github.com/mark-ik/p2panda.git", tag = "mere-p2panda-net-0.7.5" }
+p2panda-store = { git = "https://github.com/mark-ik/p2panda.git", tag = "mere-p2panda-net-0.7.5" }
+p2panda-stream = { git = "https://github.com/mark-ik/p2panda.git", tag = "mere-p2panda-net-0.7.5" }
+p2panda-sync = { git = "https://github.com/mark-ik/p2panda.git", tag = "mere-p2panda-net-0.7.5" }
 layout-dom-api = { git = "https://github.com/merely-made/genet.git", rev = "965b64e206a47d1c8808472de9aa461233638768", version = "=0.1.1" }
 genet-scripted-dom = { git = "https://github.com/merely-made/genet.git", rev = "965b64e206a47d1c8808472de9aa461233638768", version = "=0.1.2" }
 taffy = { package = "genet-taffy", git = "https://github.com/merely-made/genet.git", rev = "965b64e206a47d1c8808472de9aa461233638768", version = "=0.14.0" }

@@ -6,27 +6,36 @@
 //! store, the sealing, and the slot naming above it are all muniment's and this
 //! file is only the platform half: which directory, which filename per slot.
 //! The web host realizes the same trait over OPFS.
+//!
+//! **The sealing key comes from djinn** (dramatis DR-C). Woodshed opens no
+//! vault: it calls djinn over Graphshell's custody route, which releases the
+//! one key Woodshed seals practice with (D11). With djinn absent or Locked the
+//! identity is pending (D12): already-saved practice that was never sealed
+//! still reads, and nothing is written, in the clear or otherwise.
 
 use std::path::PathBuf;
+use std::sync::atomic::{AtomicBool, Ordering};
 
 use async_trait::async_trait;
 use directories::ProjectDirs;
+use graphshell::native::custody::CustodyRefusal;
+use graphshell::native::custody_client::CustodyClientError;
+use graphshell::native::custody_identity::CustodyIdentity;
 use muniment::backend::WriteOp;
 use muniment::{Backend, StoreError};
-use personae::bootstrap::{self, Unlock};
-use personae::roster::{self, OpenedVault};
-use personae::vault::ProfileId;
+use personae::ProfileId;
 use woodshed_core::sealed_backend::SealedBackend;
 use woodshed_core::storage::SessionStore;
 use woodshed_views::persona::PracticeSeal;
 
-/// The practice store, sealed to `profile` when one was named.
+/// The name Woodshed is admitted to djinn's custody route under.
+pub const CUSTODY_APP: &str = "woodshed";
+
+/// The practice store, sealed to the persona djinn speaks as.
 ///
-/// `None` runs the family convention ([`roster::open_shared`]), which is the
-/// startup path on every machine that needs no asking. `Some` is the answer to
-/// the persona gate: the id goes straight into the open rather than through the
-/// remembered file, so a vault directory that refuses the write still practises
-/// as the persona the user picked.
+/// `None` keeps djinn's own choice, which is the startup path on every machine
+/// that needs no asking. `Some` is the answer to the persona gate: djinn
+/// switches to it (and remembers it for the family) before the store opens.
 pub fn open_store_as(profile: Option<&ProfileId>) -> (SessionStore<HostBackend>, PracticeSeal) {
     let (backend, seal) = open_backend(profile);
     (SessionStore::new(backend), seal)
@@ -35,11 +44,27 @@ pub fn open_store_as(profile: Option<&ProfileId>) -> (SessionStore<HostBackend>,
 /// The store woodshed practices over, decided at startup.
 pub type HostBackend = Box<dyn Backend + Send + Sync>;
 
-fn open_vault(profile: Option<&ProfileId>) -> Result<OpenedVault, personae::IdentityError> {
-    let unlock = Unlock::from_env();
+/// Reach djinn as Woodshed, on `profile` when one was chosen. The error is the
+/// pending reason, in words for Settings.
+fn connect(profile: Option<&ProfileId>) -> Result<CustodyIdentity, String> {
+    let identity = CustodyIdentity::connect(CUSTODY_APP).map_err(pending)?;
     match profile {
-        Some(id) => roster::open_profile(&bootstrap::default_vault_dir(), unlock, id),
-        None => roster::open_shared(unlock),
+        Some(id) if identity.profile() != Some(id) => {
+            identity.choose_profile(id.clone()).map_err(pending)?;
+            // The provider answers for the persona it connected as.
+            CustodyIdentity::connect(CUSTODY_APP).map_err(pending)
+        },
+        _ => Ok(identity),
+    }
+}
+
+/// Why the identity is pending, in words for Settings.
+fn pending(error: CustodyClientError) -> String {
+    eprintln!("[woodshed] identity pending ({error}); practice is not saved");
+    match error {
+        CustodyClientError::Refused(CustodyRefusal::Locked) => "the vault is locked".into(),
+        CustodyClientError::Absent(_) => "djinn is not running".into(),
+        other => format!("djinn refused: {other}"),
     }
 }
 
@@ -47,55 +72,153 @@ fn open_vault(profile: Option<&ProfileId>) -> Result<OpenedVault, personae::Iden
 ///
 /// The seal is returned rather than only logged: Settings offers to switch a
 /// persona, and until this it could not name the one in force. Every branch
-/// answers, so "unsealed" always arrives with its reason attached.
+/// answers, so "pending" always arrives with its reason attached.
 fn open_backend(profile: Option<&ProfileId>) -> (HostBackend, PracticeSeal) {
-    let files = FsBackend::new();
-    let opened = match open_vault(profile) {
-        Ok(opened) => opened,
-        Err(error) => {
-            eprintln!("[woodshed] no identity vault ({error}); practice will be stored unsealed");
+    let identity = match connect(profile) {
+        Ok(identity) => identity,
+        Err(reason) => {
             return (
-                Box::new(files),
-                PracticeSeal::Unsealed {
-                    // The category, not the errno. The line above carries the
-                    // full io::Error to the log; a settings page that prints a
-                    // Debug-quoted path and "(os error 183)" is telling the
-                    // user something only a developer can read.
-                    reason: "no identity vault on this machine".into(),
-                },
+                Box::new(PendingBackend::new(FsBackend::new())),
+                PracticeSeal::Pending { reason },
             );
-        }
+        },
     };
-    match SealedBackend::for_provider(files, &opened.vault) {
+    let persona = identity
+        .profile()
+        .map(|profile| profile.0.clone())
+        .unwrap_or_default();
+    match SealedBackend::for_provider(FsBackend::new(), &identity) {
         // Adopting plaintext is the migration: a session written before sealing
         // was switched on is read once as it stands, and the next save seals it.
-        // Nothing to run, and nothing to run in the right order.
         Ok(sealed) => {
-            eprintln!(
-                "[woodshed] practice sealed to persona {:?} ({})",
-                opened.profile.0, opened.description
-            );
+            let protection = identity.protection();
+            eprintln!("[woodshed] practice sealed to persona {persona:?} ({protection})");
             (
-                Box::new(sealed.adopting_plaintext()),
+                Box::new(Custodied {
+                    inner: sealed.adopting_plaintext(),
+                    identity,
+                }),
                 PracticeSeal::Sealed {
-                    persona: opened.profile.0.clone(),
-                    protection: opened.description.clone(),
+                    persona,
+                    protection,
                 },
             )
-        }
+        },
         Err(error) => {
             eprintln!(
-                "[woodshed] could not derive a sealing key from persona {:?}: {error}; \
-                 practice will be stored unsealed",
-                opened.profile.0
+                "[woodshed] djinn released no sealing key for persona {persona:?}: {error}; \
+                 practice is not saved"
             );
             (
-                Box::new(FsBackend::new()),
-                PracticeSeal::Unsealed {
-                    reason: format!("persona {:?} has no sealing key", opened.profile.0),
+                Box::new(PendingBackend::new(FsBackend::new())),
+                PracticeSeal::Pending {
+                    reason: format!("djinn released no sealing key for {persona:?}"),
                 },
             )
+        },
+    }
+}
+
+/// The sealed store, answering only while djinn keeps the vault unlocked: a
+/// lock revokes the released key (D11), so reads and writes stop with it.
+struct Custodied<B> {
+    inner: B,
+    identity: CustodyIdentity,
+}
+
+impl<B> Custodied<B> {
+    fn unlocked(&self) -> Result<(), StoreError> {
+        match self.identity.is_locked() {
+            true => Err(StoreError::Backend(
+                "identity pending: the vault locked".into(),
+            )),
+            false => Ok(()),
         }
+    }
+}
+
+#[async_trait]
+impl<B: Backend + Send + Sync> Backend for Custodied<B> {
+    async fn get(&self, key: &str) -> Result<Option<Vec<u8>>, StoreError> {
+        self.unlocked()?;
+        self.inner.get(key).await
+    }
+
+    async fn put(&self, key: &str, bytes: &[u8]) -> Result<(), StoreError> {
+        self.unlocked()?;
+        self.inner.put(key, bytes).await
+    }
+
+    async fn delete(&self, key: &str) -> Result<(), StoreError> {
+        self.unlocked()?;
+        self.inner.delete(key).await
+    }
+
+    async fn list(&self, prefix: &str) -> Result<Vec<String>, StoreError> {
+        self.unlocked()?;
+        self.inner.list(prefix).await
+    }
+
+    async fn scan(&self, start: &str, end: &str) -> Result<Vec<String>, StoreError> {
+        self.unlocked()?;
+        self.inner.scan(start, end).await
+    }
+
+    async fn apply(&self, ops: &[WriteOp]) -> Result<(), StoreError> {
+        self.unlocked()?;
+        self.inner.apply(ops).await
+    }
+}
+
+/// The store while the identity is pending (D12): reads what is already on
+/// disk (a sealed session simply does not decode), and writes nothing. A
+/// write is dropped, not refused, because the dispatch tail saves every beat
+/// and Settings already says practice is not saved; it is said once here.
+struct PendingBackend<B> {
+    inner: B,
+    said: AtomicBool,
+}
+
+impl<B> PendingBackend<B> {
+    fn new(inner: B) -> Self {
+        Self {
+            inner,
+            said: AtomicBool::new(false),
+        }
+    }
+
+    fn dropped(&self) -> Result<(), StoreError> {
+        if !self.said.swap(true, Ordering::Relaxed) {
+            eprintln!("[woodshed] identity pending: practice is not being saved");
+        }
+        Ok(())
+    }
+}
+
+#[async_trait]
+impl<B: Backend + Send + Sync> Backend for PendingBackend<B> {
+    async fn get(&self, key: &str) -> Result<Option<Vec<u8>>, StoreError> {
+        self.inner.get(key).await
+    }
+
+    async fn put(&self, _key: &str, _bytes: &[u8]) -> Result<(), StoreError> {
+        self.dropped()
+    }
+
+    async fn delete(&self, _key: &str) -> Result<(), StoreError> {
+        self.dropped()
+    }
+
+    async fn list(&self, prefix: &str) -> Result<Vec<String>, StoreError> {
+        self.inner.list(prefix).await
+    }
+
+    async fn scan(&self, start: &str, end: &str) -> Result<Vec<String>, StoreError> {
+        self.inner.scan(start, end).await
+    }
+
+    async fn apply(&self, _ops: &[WriteOp]) -> Result<(), StoreError> {
+        self.dropped()
     }
 }
 

@@ -103,6 +103,10 @@ fn boot_state(
     // persona while the store was sealed to one. One assignment, both paths,
     // and they cannot drift apart again.
     ui.seal = shared.seal.clone();
+    // A pending identity saves nothing (D12), so the notice says so.
+    if matches!(ui.seal, Some(woodshed_views::persona::PracticeSeal::Pending { .. })) {
+        ui.practice_saved = false;
+    }
     appearance::load_library(&mut ui);
     shared.theme = ui.theme();
     shared.reduce_motion = ui.app_settings.accessibility.reduce_motion;

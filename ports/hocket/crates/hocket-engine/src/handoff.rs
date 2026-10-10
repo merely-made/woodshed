@@ -25,7 +25,8 @@
 
 use std::collections::{BTreeMap, BTreeSet};
 
-use personae::{DerivedKeyAttestation, Ed25519PublicKey, Ed25519Signature, IdentityProvider};
+use insigne::DerivedKeyAttestation;
+use personae::{Ed25519PublicKey, Ed25519Signature, IdentityProvider};
 use serde::{Deserialize, Serialize};
 use hocket_model::{MediaRef, ProjectBundle, SessionId};
 
@@ -184,7 +185,7 @@ impl HandoffEnvelope {
         let salt = handoff_salt(bundle.session.id);
         let signer = identity.derive_keypair(&salt)?;
         let sender = identity.attest_derived_key(&salt)?;
-        if sender.derived_public_key()? != signer.public_key() {
+        if sender.derived() != &signer.public_key().to_bytes() {
             return Err(HandoffError::InvalidSenderAttestation);
         }
         let recipient = recipient.to_bytes();
@@ -230,16 +231,13 @@ impl HandoffEnvelope {
             return Err(HandoffError::RecipientMismatch);
         }
         let salt = handoff_salt(self.session_id);
-        if !self.sender.verify(&salt) {
-            return Err(HandoffError::InvalidSenderAttestation);
-        }
-        let sender = self
+        let checked = self
             .sender
-            .derived_public_key()
+            .check(&salt)
+            .map_err(|_| HandoffError::InvalidSenderAttestation)?;
+        let sender = Ed25519PublicKey::from_bytes(checked.derived())
             .map_err(|_| HandoffError::InvalidSender)?;
-        let sender_identity = self
-            .sender
-            .master_public_key()
+        let sender_identity = Ed25519PublicKey::from_bytes(checked.master())
             .map_err(|_| HandoffError::InvalidSender)?;
         let unsigned = UnsignedHandoff {
             format_version: self.format_version,

@@ -20,7 +20,7 @@
 
 use cambium::{el, lens, map_action, text, CommandState};
 use persona_picker::{persona_picker_focused, picker_state, PickerEvent};
-use personae::roster::Roster;
+use dramatis::roster::Roster;
 
 use crate::stage::{UiChild, UiState};
 
@@ -113,12 +113,14 @@ impl PersonaPick {
 /// than one that says nothing.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum PracticeSeal {
-    /// Sealed to a persona. `protection` is personae's own account of what
+    /// Sealed to a persona. `protection` is djinn's own account of what
     /// holds the key at rest, passed through unedited.
     Sealed { persona: String, protection: String },
-    /// Saved, but in the clear: no vault on this machine, or no key from it.
-    /// Carries the reason, because "unsealed" without a why is not actionable.
-    Unsealed { reason: String },
+    /// The identity is pending (dramatis D12): djinn is absent or Locked, so
+    /// there is no sealing key and practice is not saved. Never written in
+    /// the clear. Carries the reason, because "pending" without a why is not
+    /// actionable.
+    Pending { reason: String },
 }
 
 impl PracticeSeal {
@@ -131,8 +133,8 @@ impl PracticeSeal {
             } => {
                 format!("Practising as {persona}. Sealed with {protection}.")
             }
-            Self::Unsealed { reason } => {
-                format!("Not sealed: {reason}. Practice is saved in the clear.")
+            Self::Pending { reason } => {
+                format!("Identity pending: {reason}. Practice is not saved until djinn unlocks.")
             }
         }
     }
@@ -163,8 +165,8 @@ pub fn practise_unsaved(ui: &mut UiState) {
 /// A row rather than a one-off dialog: the choice is in force for as long as
 /// the window is open, so saying it once at startup and then going quiet would
 /// leave the honest fact where nobody can check it. Absent entirely on the
-/// ordinary path, including the unsealed fallback a machine with no vault
-/// takes, which does save.
+/// ordinary sealed path; present for a declined gate and for a pending
+/// identity (djinn absent or Locked), neither of which saves.
 pub fn unsaved_notice(ui: &UiState) -> Option<UiChild> {
     if ui.practice_saved {
         return None;
@@ -255,8 +257,8 @@ pub fn persona_gate(pick: &PersonaPick) -> UiChild {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use personae::roster::RosterEntry;
-    use personae::vault::ProfileId;
+    use dramatis::roster::RosterEntry;
+    use personae::ProfileId;
 
     pub(crate) fn roster(entries: &[(&str, usize, bool)]) -> Roster {
         let entries: Vec<RosterEntry> = entries
@@ -352,7 +354,7 @@ mod tests {
         let mut ui = UiState::new();
         assert!(
             unsaved_notice(&ui).is_none(),
-            "an ordinary session says nothing, including the unsealed fallback"
+            "an ordinary session says nothing"
         );
         practise_unsaved(&mut ui);
         assert!(unsaved_notice(&ui).is_some());

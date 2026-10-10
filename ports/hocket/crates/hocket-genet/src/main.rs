@@ -60,7 +60,7 @@ impl Runtime {
     }
 }
 
-/// A temporary adapter between a host frame and `genet-probe`'s generic
+/// A temporary adapter between a host frame and `taproot`'s generic
 /// scenario grammar. Pointer deliveries and captures go back through the
 /// host, so the receipt uses the same layout and presented frame as a person.
 struct ScenarioDriver<'a, 'b> {
@@ -68,13 +68,13 @@ struct ScenarioDriver<'a, 'b> {
     capture_dir: PathBuf,
 }
 
-impl genet_probe::Automatable for ScenarioDriver<'_, '_> {
-    fn with_surfaces<R>(&self, f: impl FnOnce(&[genet_probe::ProbeSurface<'_>]) -> R) -> R {
+impl taproot::Automatable for ScenarioDriver<'_, '_> {
+    fn with_surfaces<R>(&self, f: impl FnOnce(&[taproot::ProbeSurface<'_>]) -> R) -> R {
         let dom = self.ctx.runner.dom();
         let dom = dom.borrow();
         let (width, height) = self.ctx.logical_size;
         let sheet = theme::sheet();
-        let surfaces = [genet_probe::ProbeSurface {
+        let surfaces = [taproot::ProbeSurface {
             name: "hocket",
             dom: &dom,
             rect: [0.0, 0.0, width, height],
@@ -83,8 +83,8 @@ impl genet_probe::Automatable for ScenarioDriver<'_, '_> {
         f(&surfaces)
     }
 
-    fn snapshot(&self) -> genet_probe::ProbeSnapshot {
-        genet_probe::ProbeSnapshot::default()
+    fn snapshot(&self) -> taproot::ProbeSnapshot {
+        taproot::ProbeSnapshot::default()
             .with_field("status", self.ctx.runner.state().project_status_label())
     }
 
@@ -109,7 +109,7 @@ impl genet_probe::Automatable for ScenarioDriver<'_, '_> {
     }
 }
 
-impl genet_probe::Driveable for ScenarioDriver<'_, '_> {
+impl taproot::Driveable for ScenarioDriver<'_, '_> {
     fn capture(&mut self, name: &str) -> bool {
         let path = self.capture_dir.join(format!("{name}.png"));
         *self.ctx.capture = Some(Box::new(
@@ -149,6 +149,8 @@ fn boot_state(
         state: AppState::new(project_worker, update_worker, update_settings, identity),
         logic: root as Logic,
         sheet: theme::sheet(),
+        fonts: Vec::new(),
+        images: Vec::new(),
     }
 }
 
@@ -197,8 +199,8 @@ fn hooks(runtime: &Rc<RefCell<Runtime>>) -> HostHooks<AppState, Logic, Child> {
                 progress
             };
             match progress {
-                genet_probe::Progress::Running => runtime.scenario = Some(run),
-                genet_probe::Progress::Done => {
+                taproot::Progress::Running => runtime.scenario = Some(run),
+                taproot::Progress::Done => {
                     scenario::write_done(&run.dir, &run.scenario.finish());
                     *ctx.close = true;
                 }

@@ -782,16 +782,17 @@ mod tests {
     }
 
     #[test]
-    fn an_unsealed_session_says_so_and_says_why() {
+    fn a_pending_session_says_so_and_says_why() {
         let mut ui = UiState::new();
-        ui.seal = Some(PracticeSeal::Unsealed {
-            reason: "no identity vault on this machine".into(),
+        ui.seal = Some(PracticeSeal::Pending {
+            reason: "djinn is not running".into(),
         });
         let line = persona_line(&ui);
-        assert!(line.contains("Not sealed"), "{line}");
+        assert!(line.contains("Identity pending"), "{line}");
+        assert!(line.contains("not saved"), "never in the clear: {line}");
         assert!(
-            line.contains("no identity vault"),
-            "a reason, because 'unsealed' alone is not actionable: {line}"
+            line.contains("djinn is not running"),
+            "a reason, because 'pending' alone is not actionable: {line}"
         );
     }
 

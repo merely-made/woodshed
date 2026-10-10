@@ -55,7 +55,7 @@ luggage = { workspace = true }
 velopack = { workspace = true }
 cambium-genet-winit-host = { workspace = true }
 genet-clipboard = { workspace = true }
-genet-probe = { workspace = true }
+taproot = { workspace = true }
 mere-surface-api = { workspace = true }
 workbench = { workspace = true }
 image = { workspace = true }
@@ -65,8 +65,9 @@ wgpu = { workspace = true }
 muniment = { workspace = true, features = ["zip"] }
 armillary = { workspace = true }
 personae = { workspace = true }
-# Opaque round-trip of the sealed identity record when re-sealing it under the
-# post-rename record name (see identity.rs).
+graphshell = { workspace = true }
+insigne = { workspace = true }
+# djinn's forwarding note naming the persona that holds Hocket's key.
 serde_json = { workspace = true }
 serde = { workspace = true }
 pollster = "0.4"
