@@ -30,10 +30,10 @@ repository = "https://github.com/merely-made/woodshed"
 rust-version = "1.96"
 
 [workspace.dependencies]
-pictograph = { git = "https://github.com/merely-made/mere.git", rev = "5dca58a95f91fe237febe80126316ddcb8796176", default-features = false, features = ["canvas"] }
-sceno = { git = "https://github.com/merely-made/mere.git", rev = "5dca58a95f91fe237febe80126316ddcb8796176" }
-scenograph = { git = "https://github.com/merely-made/mere.git", rev = "5dca58a95f91fe237febe80126316ddcb8796176" }
-scenomise = { git = "https://github.com/merely-made/mere.git", rev = "5dca58a95f91fe237febe80126316ddcb8796176" }
+pictograph = { git = "https://github.com/merely-made/mere.git", rev = "e95326dc08446a9256d3e340c63e571684afe697", default-features = false, features = ["canvas"] }
+sceno = { git = "https://github.com/merely-made/mere.git", rev = "e95326dc08446a9256d3e340c63e571684afe697" }
+scenograph = { git = "https://github.com/merely-made/mere.git", rev = "e95326dc08446a9256d3e340c63e571684afe697" }
+scenomise = { git = "https://github.com/merely-made/mere.git", rev = "e95326dc08446a9256d3e340c63e571684afe697" }
 blake3 = "1"
 # Internal crates
 woodshedding = { path = "crates/woodshedding", version = "0.1.0" }
@@ -41,8 +41,8 @@ woodshedding = { path = "crates/woodshedding", version = "0.1.0" }
 woodshed-core = { path = "crates/woodshed-core", version = "0.1.0" }
 woodshed-audio = { path = "crates/woodshed-audio", version = "0.1.0" }
 woodshed-graph = { path = "crates/woodshed-graph", version = "0.1.0" }
-mere-surface-api = { git = "https://github.com/merely-made/mere.git", rev = "5dca58a95f91fe237febe80126316ddcb8796176" }
-workbench = { git = "https://github.com/merely-made/mere.git", rev = "5dca58a95f91fe237febe80126316ddcb8796176" }
+mere-surface-api = { git = "https://github.com/merely-made/mere.git", rev = "e95326dc08446a9256d3e340c63e571684afe697" }
+workbench = { git = "https://github.com/merely-made/mere.git", rev = "e95326dc08446a9256d3e340c63e571684afe697" }
 # Shared pure-DSP primitives (click synth, onset/tempo, latency) — the
 # `audio-primitives` extraction. Pure std; consumed by woodshed-audio
 # here and cross-repo by strophe-engine via path-dep.
@@ -78,9 +78,9 @@ winit = "0.30"
 #      `sprigging::PaintCmd` is not a `paint_list_api::PaintCmd`.
 #      `[patch.crates-io]` does not redirect a published crate's own registry
 #      dependency; taking all three from the source everything else uses does.
-cambium = { git = "https://github.com/merely-made/mere.git", rev = "5dca58a95f91fe237febe80126316ddcb8796176" }
-cambium-rootstock = { git = "https://github.com/merely-made/mere.git", rev = "5dca58a95f91fe237febe80126316ddcb8796176" }
-cambium-genet-web-host = { git = "https://github.com/merely-made/mere.git", rev = "5dca58a95f91fe237febe80126316ddcb8796176" }
+cambium = { git = "https://github.com/merely-made/mere.git", rev = "e95326dc08446a9256d3e340c63e571684afe697" }
+cambium-rootstock = { git = "https://github.com/merely-made/mere.git", rev = "e95326dc08446a9256d3e340c63e571684afe697" }
+cambium-genet-web-host = { git = "https://github.com/merely-made/mere.git", rev = "e95326dc08446a9256d3e340c63e571684afe697" }
 woodshed-web = { path = "crates/woodshed-web" }
 # The single-root Cambium desktop host (genet G1, 2026-08-09). Woodshed was its
 # donor and is now its first consumer: the whole ApplicationHandler / SurfaceHost
@@ -92,11 +92,11 @@ woodshed-web = { path = "crates/woodshed-web" }
 # crates use `7422e906`, the Genet that Mere revision pins. Cargo keys a git
 # source by URL and reference, so the split is intentional and keeps one source
 # identity for each family.
-cambium-genet-winit-host = { git = "https://github.com/merely-made/mere.git", rev = "5dca58a95f91fe237febe80126316ddcb8796176" }
-sprigging = { git = "https://github.com/merely-made/mere.git", rev = "5dca58a95f91fe237febe80126316ddcb8796176" }
+cambium-genet-winit-host = { git = "https://github.com/merely-made/mere.git", rev = "e95326dc08446a9256d3e340c63e571684afe697" }
+sprigging = { git = "https://github.com/merely-made/mere.git", rev = "e95326dc08446a9256d3e340c63e571684afe697" }
 layout-dom-api = { git = "https://github.com/merely-made/genet.git", rev = "7422e90613f9017e5bb790e3acb48f61776b2eda", version = "=0.1.1" }
 genet-scripted-dom = { git = "https://github.com/merely-made/genet.git", rev = "7422e90613f9017e5bb790e3acb48f61776b2eda", version = "=0.1.2" }
-mesquite = { git = "https://github.com/merely-made/mere.git", rev = "5dca58a95f91fe237febe80126316ddcb8796176" }
+mesquite = { git = "https://github.com/merely-made/mere.git", rev = "e95326dc08446a9256d3e340c63e571684afe697" }
 taproot = { git = "https://github.com/merely-made/genet.git", rev = "7422e90613f9017e5bb790e3acb48f61776b2eda" }
 # genet-layout, genet-winit-host, netrender, paint_list_api, paint_list_render,
 # cambium-winit and cambium-winit-a11y are deliberately NOT declared here any
@@ -112,10 +112,10 @@ wgpu = { version = "30", default-features = false, features = ["std"] }
 
 # Theming: pure OKLCH seed-to-palette derivation from the same Mere source
 # as the toolkit and shared appearance authoring.
-tinct = { git = "https://github.com/merely-made/mere.git", rev = "5dca58a95f91fe237febe80126316ddcb8796176" }
+tinct = { git = "https://github.com/merely-made/mere.git", rev = "e95326dc08446a9256d3e340c63e571684afe697" }
 # Shared theme authority and its reusable appearance-authoring surface.
-tabard = { git = "https://github.com/merely-made/mere.git", rev = "5dca58a95f91fe237febe80126316ddcb8796176" }
-tabard-workshop = { git = "https://github.com/merely-made/mere.git", rev = "5dca58a95f91fe237febe80126316ddcb8796176" }
+tabard = { git = "https://github.com/merely-made/mere.git", rev = "e95326dc08446a9256d3e340c63e571684afe697" }
+tabard-workshop = { git = "https://github.com/merely-made/mere.git", rev = "e95326dc08446a9256d3e340c63e571684afe697" }
 
 # Audio
 cpal = "0.18"
@@ -144,9 +144,9 @@ serde_json = "1.0"
 # since DR-D, pinned at the revision mere's workspace names, so one personae
 # reaches every graph.
 dramatis = { git = "https://github.com/merely-made/dramatis.git", rev = "c1d620764315b4c750fcffea30b8c898b8bb73bc" }
-graphshell = { git = "https://github.com/merely-made/mere.git", rev = "5dca58a95f91fe237febe80126316ddcb8796176" }
+graphshell = { git = "https://github.com/merely-made/mere.git", rev = "e95326dc08446a9256d3e340c63e571684afe697" }
 personae = { git = "https://github.com/merely-made/dramatis.git", rev = "c1d620764315b4c750fcffea30b8c898b8bb73bc" }
-persona-picker = { package = "mere-persona-picker", git = "https://github.com/merely-made/mere.git", rev = "5dca58a95f91fe237febe80126316ddcb8796176" }
+persona-picker = { package = "mere-persona-picker", git = "https://github.com/merely-made/mere.git", rev = "e95326dc08446a9256d3e340c63e571684afe697" }
 
 # Future:
 #   fundsp          — DSP for fancier sounds (deferred — raw sin is enough for click)
@@ -196,9 +196,9 @@ taffy = { package = "genet-taffy", git = "https://github.com/merely-made/genet.g
 # The maintained renderer uses checked native shader compilation, initialized
 # workgroup memory, and validated fine command/segment spans. Cargo patches are
 # workspace-root authority: Mere's patch is not inherited by this application.
-netrender-vello = { git = "https://github.com/mark-ik/vello.git", rev = "491c376cf2b01fc11132cf8f86419dec114ae032" }
-vello_encoding = { git = "https://github.com/mark-ik/vello.git", rev = "491c376cf2b01fc11132cf8f86419dec114ae032" }
-vello_shaders = { git = "https://github.com/mark-ik/vello.git", rev = "491c376cf2b01fc11132cf8f86419dec114ae032" }
+netrender-vello = { git = "https://github.com/mark-ik/vello.git", rev = "10f01d6d88e94eac087daf033b24895cf97b8e82" }
+vello_encoding = { git = "https://github.com/mark-ik/vello.git", rev = "10f01d6d88e94eac087daf033b24895cf97b8e82" }
+vello_shaders = { git = "https://github.com/mark-ik/vello.git", rev = "10f01d6d88e94eac087daf033b24895cf97b8e82" }
 # Legacy callers still use the unrenamed Vello package and its wgpu-30
 # compatibility tag; the Genet render path uses netrender-vello above.
 vello = { git = "https://github.com/mark-ik/vello.git", tag = "vello-0.10.0" }
