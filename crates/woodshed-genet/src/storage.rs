@@ -64,7 +64,7 @@ fn open_backend(profile: Option<&ProfileId>) -> (HostBackend, PracticeSeal) {
                     reason: "no identity vault on this machine".into(),
                 },
             );
-        }
+        },
     };
     match SealedBackend::for_provider(files, &opened.vault) {
         // Adopting plaintext is the migration: a session written before sealing
@@ -82,7 +82,7 @@ fn open_backend(profile: Option<&ProfileId>) -> (HostBackend, PracticeSeal) {
                     protection: opened.description.clone(),
                 },
             )
-        }
+        },
         Err(error) => {
             eprintln!(
                 "[woodshed] could not derive a sealing key from persona {:?}: {error}; \
@@ -95,7 +95,7 @@ fn open_backend(profile: Option<&ProfileId>) -> (HostBackend, PracticeSeal) {
                     reason: format!("persona {:?} has no sealing key", opened.profile.0),
                 },
             )
-        }
+        },
     }
 }
 
@@ -146,6 +146,16 @@ impl FsBackend {
             "settings" => self.settings.as_ref(),
             _ => None,
         }
+    }
+
+    /// Exact host-owned destinations; Tabard owns normalization and collision
+    /// protection when its export dialog is embedded in this application.
+    pub fn protected_export_paths(&self) -> Vec<PathBuf> {
+        self.session
+            .iter()
+            .chain(self.settings.iter())
+            .cloned()
+            .collect()
     }
 }
 

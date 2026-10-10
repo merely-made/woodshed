@@ -1,0 +1,32 @@
+[woodshed] practice sealed to persona "tabard-acceptance" (passphrase-encrypted vault at /Users/markik/Code/tabard-app-receipts/2026-10-10/woodshed/fixed-renderer-01/profiles/640/identity/personae/vault/vault.json)
+[cambium-winit] window-frame backend=macos policy=App decorated=true transparent=false
+[genet-render-host] surface acquire skipped: Occluded
+[cambium-winit] accessibility Installed, 279 nodes projected
+[cambium-host] initial reveal macos app_active=true app_hidden=false policy=NSApplicationActivationPolicy(0) launched=true window_visible=true key=true can_key=true active_space=true occlusion=NSWindowOcclusionState(8192) frame=CGRect { origin: CGPoint { x: 960.0, y: 320.0 }, size: CGSize { width: 640.0, height: 800.0 } }
+[genet-render-host] surface acquire skipped: Occluded
+[cambium-host] unpresented redraw macos app_active=true app_hidden=false policy=NSApplicationActivationPolicy(0) launched=true window_visible=true key=true can_key=true active_space=true occlusion=NSWindowOcclusionState(8192) frame=CGRect { origin: CGPoint { x: 960.0, y: 320.0 }, size: CGSize { width: 640.0, height: 800.0 } }
+[cambium-host] unpresented redraw visible=Some(true) focused=true minimized=Some(false)
+[genet-render-host] surface acquire skipped: Occluded
+[cambium-host] unpresented redraw macos app_active=true app_hidden=false policy=NSApplicationActivationPolicy(0) launched=true window_visible=true key=true can_key=true active_space=true occlusion=NSWindowOcclusionState(8192) frame=CGRect { origin: CGPoint { x: 960.0, y: 320.0 }, size: CGSize { width: 640.0, height: 800.0 } }
+[cambium-host] unpresented redraw visible=Some(true) focused=true minimized=Some(false)
+[genet-render-host] surface acquire skipped: Occluded
+[cambium-host] unpresented redraw macos app_active=true app_hidden=false policy=NSApplicationActivationPolicy(0) launched=true window_visible=true key=true can_key=true active_space=true occlusion=NSWindowOcclusionState(8192) frame=CGRect { origin: CGPoint { x: 960.0, y: 320.0 }, size: CGSize { width: 640.0, height: 800.0 } }
+[cambium-host] unpresented redraw visible=Some(true) focused=true minimized=Some(false)
+[genet-render-host] surface acquire skipped: Occluded
+[cambium-host] unpresented redraw macos app_active=true app_hidden=false policy=NSApplicationActivationPolicy(0) launched=true window_visible=true key=true can_key=true active_space=true occlusion=NSWindowOcclusionState(8192) frame=CGRect { origin: CGPoint { x: 960.0, y: 320.0 }, size: CGSize { width: 640.0, height: 800.0 } }
+[cambium-host] unpresented redraw visible=Some(true) focused=true minimized=Some(false)
+[genet-render-host] surface acquire skipped: Occluded
+[cambium-host] unpresented redraw macos app_active=true app_hidden=false policy=NSApplicationActivationPolicy(0) launched=true window_visible=true key=true can_key=true active_space=true occlusion=NSWindowOcclusionState(8192) frame=CGRect { origin: CGPoint { x: 960.0, y: 320.0 }, size: CGSize { width: 640.0, height: 800.0 } }
+[cambium-host] unpresented redraw visible=Some(true) focused=true minimized=Some(false)
+woodshed-genet: Shared Tabard appearance authoring in Woodshed
+woodshed-genet: captured appearance_light
+woodshed-genet: captured appearance_dark
+woodshed-genet: captured appearance_hc_dark
+woodshed-genet: captured appearance_settings
+woodshed-genet: captured appearance_workshop
+woodshed-genet: captured appearance_applied
+woodshed-genet: captured appearance_narrow_reader
+woodshed-genet: captured appearance_narrow_graph
+woodshed-genet: captured appearance_resized_applied
+woodshed-genet: Shared Tabard appearance acceptance complete
+woodshed-genet: RESULT ok (102 frames, 9 captures)

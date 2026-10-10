@@ -347,6 +347,14 @@ impl Snapshot<'_, '_> {
         let reading = ui.relationship_reading().ok().flatten();
         let appearance = ui.appearance.resolve(&ui.app_settings.appearance);
         let mut snap = ProbeSnapshot::default()
+            .with_field(
+                "appearance-device-free",
+                (crate::appearance::device_free_receipt()
+                    && self.shared.backend.is_none()
+                    && ui.midi.input_ports.is_empty()
+                    && ui.midi.output_ports.is_empty())
+                .to_string(),
+            )
             .with_field("appearance-theme", appearance.theme.id)
             .with_field("appearance-mode", appearance.mode.as_key())
             .with_field(

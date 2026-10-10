@@ -167,18 +167,36 @@ pub fn slate_seeds() -> Seeds {
 
 /// The Stage sheet rendered from a derived palette.
 pub fn stage_css(p: &Palette) -> String {
-    let bg = color_to_hex(p.bg);
-    let surface = color_to_hex(p.surface);
-    let surface_2 = color_to_hex(p.surface_2);
-    let surface_hover = color_to_hex(p.surface_hover);
-    let text_header = color_to_hex(p.text_header);
-    let text = color_to_hex(p.text);
-    let text_dim = color_to_hex(p.text_dim);
-    let text_disabled = color_to_hex(p.text_disabled);
-    let on_primary = color_to_hex(p.on_primary);
-    let secondary = color_to_hex(p.secondary);
-    let tertiary = color_to_hex(p.tertiary);
-    let danger = color_to_hex(p.danger);
+    stage_css_with_roles(p, false)
+}
+
+/// The same product mapping with shared role-variable intake. Fallback colors
+/// stay explicit; arbitrary authored CSS is never converted into a palette.
+pub fn stage_css_from_roles(fallback: &Palette) -> String {
+    stage_css_with_roles(fallback, true)
+}
+
+fn stage_css_with_roles(p: &Palette, authored_roles: bool) -> String {
+    let color = |role: &str, value| {
+        let fallback = color_to_hex(value);
+        if authored_roles {
+            format!("var(--tabard-color-{role}, {fallback})")
+        } else {
+            fallback
+        }
+    };
+    let bg = color("bg", p.bg);
+    let surface = color("surface", p.surface);
+    let surface_2 = color("surface-2", p.surface_2);
+    let surface_hover = color("surface-hover", p.surface_hover);
+    let text_header = color("text-header", p.text_header);
+    let text = color("text", p.text);
+    let text_dim = color("text-dim", p.text_dim);
+    let text_disabled = color("text-disabled", p.text_disabled);
+    let on_primary = color("on-primary", p.on_primary);
+    let secondary = color("secondary", p.secondary);
+    let tertiary = color("tertiary", p.tertiary);
+    let danger = color("danger", p.danger);
     let themed = format!(
         r#"
 .root {{ width: 100%; height: 100%; box-sizing: border-box;

@@ -62,6 +62,13 @@ impl<B: Backend> SessionStore<B> {
         self.write(SETTINGS_SLOT, contents);
     }
 
+    /// Preference transactions can require backend acceptance before the host
+    /// activates them. Ordinary practice/settings writes keep their existing
+    /// best-effort policy through `save_settings`.
+    pub fn try_save_settings(&self, contents: &str) -> Result<(), muniment::StoreError> {
+        pollster::block_on(self.backend.put(SETTINGS_SLOT, contents.as_bytes()))
+    }
+
     /// Read one slot, treating every failure as absence.
     ///
     /// A backend error, non-UTF-8 bytes, and a seal that will not open all mean

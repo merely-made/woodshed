@@ -1,0 +1,22 @@
+[
+  {
+    "path": "/Library/Logs/DiagnosticReports/Kernel_2026-10-09-221840_Q-PC.gpuRestart",
+    "mtime_ns": 1791601064075717400
+  },
+  {
+    "path": "/Library/Logs/DiagnosticReports/Kernel_2026-10-09-230800_Q-PC.gpuRestart",
+    "mtime_ns": 1791602523836206745
+  },
+  {
+    "path": "/Library/Logs/DiagnosticReports/Kernel_2026-10-10-001733_Q-PC.gpuRestart",
+    "mtime_ns": 1791609661037744466
+  },
+  {
+    "path": "/Library/Logs/DiagnosticReports/Kernel_2026-10-10-012335_Q-PC.gpuRestart",
+    "mtime_ns": 1791609815583545800
+  },
+  {
+    "path": "/Library/Logs/DiagnosticReports/Kernel_2026-10-10-014641_Q-PC.gpuRestart",
+    "mtime_ns": 1791611201223408773
+  }
+]
