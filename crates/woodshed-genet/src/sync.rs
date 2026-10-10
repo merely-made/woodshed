@@ -63,8 +63,16 @@ fn push_backend(shared: &mut Shared, ctx: &mut Ctx<'_>) {
 
     let backend = shared.backend.as_mut();
     let last_song = &mut shared.last_song;
+    let storage = shared.storage.as_ref();
     ctx.runner.update(|ui| {
         ui.sync();
+        let appearance_attempted = woodshed_views::appearance::commit_selection(ui, |settings| {
+            let store = storage.ok_or("Choose a persona before saving appearance.")?;
+            let json = serde_json::to_string(settings).map_err(|error| error.to_string())?;
+            store
+                .try_save_settings(&json)
+                .map_err(|error| error.to_string())
+        });
         if let Some(backend) = backend {
             // Calibration owns the metronome engine during a run.
             if !ui.calib_active {
@@ -82,6 +90,7 @@ fn push_backend(shared: &mut Shared, ctx: &mut Ctx<'_>) {
             for request in std::mem::take(&mut ui.audio_requests) {
                 match request {
                     AudioRequest::SongRewind => backend.song_rewind(),
+                    AudioRequest::CancelPreview => backend.cancel_preview(),
                     AudioRequest::PreviewVoicing => {
                         let (pitches, dur, strum) = ui.preview_voicing();
                         if !pitches.is_empty() {
@@ -135,7 +144,9 @@ fn push_backend(shared: &mut Shared, ctx: &mut Ctx<'_>) {
         }
         sheet = Some(crate::appearance::stylesheet(ui));
         persisted = serde_json::to_string(&ui.to_persisted()).ok();
-        persisted_settings = serde_json::to_string(&ui.app_settings).ok();
+        if !appearance_attempted {
+            persisted_settings = serde_json::to_string(&ui.app_settings).ok();
+        }
     });
 
     if let Some(sheet) = sheet.and_then(|sheet| shared.reskin_sheet(sheet)) {

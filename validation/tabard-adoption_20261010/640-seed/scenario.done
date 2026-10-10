@@ -1,0 +1,23 @@
+RESULT ok
+Shared Tabard appearance authoring in Woodshed
+captured appearance_light
+captured appearance_dark
+captured appearance_hc_dark
+captured appearance_settings
+captured appearance_workshop
+captured appearance_applied
+captured appearance_narrow_reader
+captured appearance_narrow_graph
+captured appearance_resized_applied
+Shared Tabard appearance acceptance complete
+capture appearance_light 1280x1600 digest=715c77c01589c48b file=/Users/markik/Code/tabard-app-receipts/2026-10-10/woodshed/fixed-renderer-01/640-seed/appearance_light.png
+capture appearance_dark 1280x1600 digest=153600ad488b597f file=/Users/markik/Code/tabard-app-receipts/2026-10-10/woodshed/fixed-renderer-01/640-seed/appearance_dark.png
+capture appearance_hc_dark 1280x1600 digest=000a456ec46e11af file=/Users/markik/Code/tabard-app-receipts/2026-10-10/woodshed/fixed-renderer-01/640-seed/appearance_hc_dark.png
+capture appearance_settings 1280x1600 digest=3ce2ec21f18c15eb file=/Users/markik/Code/tabard-app-receipts/2026-10-10/woodshed/fixed-renderer-01/640-seed/appearance_settings.png
+capture appearance_workshop 1280x1600 digest=7a32643b5d3409cf file=/Users/markik/Code/tabard-app-receipts/2026-10-10/woodshed/fixed-renderer-01/640-seed/appearance_workshop.png
+capture appearance_applied 1280x1600 digest=7c28c51ac940c317 file=/Users/markik/Code/tabard-app-receipts/2026-10-10/woodshed/fixed-renderer-01/640-seed/appearance_applied.png
+capture appearance_narrow_reader 1280x1600 digest=5848c826872d9f53 file=/Users/markik/Code/tabard-app-receipts/2026-10-10/woodshed/fixed-renderer-01/640-seed/appearance_narrow_reader.png
+capture appearance_narrow_graph 1280x1600 digest=1ddb33573d66ed1d file=/Users/markik/Code/tabard-app-receipts/2026-10-10/woodshed/fixed-renderer-01/640-seed/appearance_narrow_graph.png
+capture appearance_resized_applied 1280x1600 digest=70b6d68f81bac8eb file=/Users/markik/Code/tabard-app-receipts/2026-10-10/woodshed/fixed-renderer-01/640-seed/appearance_resized_applied.png
+frames: 9 captured, 0 blank, 9 distinct digests
+presentation: 102 frames, 107 redraws, 5 unpresented redraws

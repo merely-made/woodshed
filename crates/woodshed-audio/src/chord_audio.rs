@@ -94,9 +94,21 @@ impl ChordRender {
 /// Render a chord to a mono [`SampleBuffer`] at the given sample
 /// rate. Returns an empty buffer if `pitches_hz` is empty.
 pub fn render_chord(params: &ChordRender, sample_rate_hz: u32) -> SampleBuffer {
+    render_chord_cancellable(params, sample_rate_hz, &|| false).unwrap()
+}
+
+/// Same PCM as the public renderer; obsolete previews abandon work in chunks.
+pub(crate) fn render_chord_cancellable(
+    params: &ChordRender,
+    sample_rate_hz: u32,
+    cancelled: &dyn Fn() -> bool,
+) -> Option<SampleBuffer> {
+    if cancelled() {
+        return None;
+    }
     let n = params.pitches_hz.len();
     if n == 0 || params.duration_seconds <= 0.0 {
-        return SampleBuffer::empty();
+        return Some(SampleBuffer::empty());
     }
     let sr = sample_rate_hz as f32;
     let total_samples = (params.duration_seconds * sr).round() as usize;
@@ -124,6 +136,9 @@ pub fn render_chord(params: &ChordRender, sample_rate_hz: u32) -> SampleBuffer {
         let release_start_secs = (note_secs - release).max(attack);
 
         for sample_offset in 0..(total_samples - note_start_sample) {
+            if sample_offset % 1024 == 0 && cancelled() {
+                return None;
+            }
             let t = sample_offset as f32 / sr;
             // Linear attack → flat sustain → exponential release.
             let env = if t < attack {
@@ -148,16 +163,38 @@ pub fn render_chord(params: &ChordRender, sample_rate_hz: u32) -> SampleBuffer {
 
     // Soft-clamp anything that escaped the loudness model. Rare but
     // cheap insurance.
-    for s in out.iter_mut() {
+    for (idx, s) in out.iter_mut().enumerate() {
+        if idx % 1024 == 0 && cancelled() {
+            return None;
+        }
         *s = s.clamp(-1.0, 1.0);
     }
 
-    SampleBuffer::new(out, sample_rate_hz)
+    Some(SampleBuffer::new(out, sample_rate_hz))
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn cancellable_renderer_preserves_pcm_and_abandons_work_between_chunks() {
+        use std::cell::Cell;
+        let params = ChordRender::strum(vec![220.0, 330.0, 440.0], 0.1);
+        let plain = render_chord(&params, 48_000);
+        let cancellable = render_chord_cancellable(&params, 48_000, &|| false).unwrap();
+        assert_eq!(plain.data, cancellable.data);
+        let checks = Cell::new(0);
+        assert!(
+            render_chord_cancellable(&params, 48_000, &|| {
+                checks.set(checks.get() + 1);
+                checks.get() == 3
+            })
+            .is_none()
+        );
+        assert_eq!(checks.get(), 3);
+        assert!(render_chord_cancellable(&params, 48_000, &|| true).is_none());
+    }
 
     #[test]
     fn empty_pitches_yields_empty_buffer() {

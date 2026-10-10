@@ -1,0 +1,30 @@
+DDX mode=song device=DeviceDescription { name: "iMac Speakers", manufacturer: None, driver: None, device_type: Unknown, interface_type: Unknown, direction: Output, address: None, extended: [] } config=SupportedStreamConfig { channels: 2, sample_rate: 48000, buffer_size: Range { min: 15, max: 4096 }, sample_format: F32 }
+DDX negotiated_frames=Ok(512)
+DDX 4.131s phase=cold begin
+DDX 4.131s phase=cold work_ms=0.012
+DDX 4.161s device_event=A buffer underrun or overrun occurred.
+audio stream error: A buffer underrun or overrun occurred.
+song engine stream error: A buffer underrun or overrun occurred.
+DDX 5.163s device_event=A buffer underrun or overrun occurred.
+audio stream error: A buffer underrun or overrun occurred.
+song engine stream error: A buffer underrun or overrun occurred.
+DDX 6.177s device_event=A buffer underrun or overrun occurred.
+audio stream error: A buffer underrun or overrun occurred.
+song engine stream error: A buffer underrun or overrun occurred.
+DDX 7.190s device_event=A buffer underrun or overrun occurred.
+audio stream error: A buffer underrun or overrun occurred.
+song engine stream error: A buffer underrun or overrun occurred.
+DDX 9.131s phase=cold cumulative_events=4
+DDX 9.131s phase=warm begin
+DDX 9.131s phase=warm work_ms=0.039
+DDX 14.132s phase=warm cumulative_events=4
+DDX 14.134s phase=edited begin
+DDX 14.134s phase=edited work_ms=0.013
+DDX 14.166s device_event=A buffer underrun or overrun occurred.
+audio stream error: A buffer underrun or overrun occurred.
+song engine stream error: A buffer underrun or overrun occurred.
+DDX 14.976s device_event=A buffer underrun or overrun occurred.
+audio stream error: A buffer underrun or overrun occurred.
+song engine stream error: A buffer underrun or overrun occurred.
+DDX 19.136s phase=edited cumulative_events=6
+DDX complete callbacks=1777 device_events=6 max_callback_gap_us=21638

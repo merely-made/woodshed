@@ -446,21 +446,29 @@ mod tests {
     /// asks for is an `Init.images` field forwarded into that call.
     #[test]
     fn artwork_background_image_changes_no_geometry_and_paints_nothing() {
-        const ARTWORK: &str = "C:/Users/mark_/Code/testing/woodshed/c1.png";
-        assert!(
-            std::path::Path::new(ARTWORK).is_file(),
-            "the probe wants a real PNG at {ARTWORK}"
-        );
+        // A real file URL, independent of the developer's machine or assets.
+        let directory = tempfile::tempdir().unwrap();
+        let file = directory.path().join("artwork.png");
+        const PNG: &[u8] = &[
+            137, 80, 78, 71, 13, 10, 26, 10, 0, 0, 0, 13, 73, 72, 68, 82,
+            0, 0, 0, 1, 0, 0, 0, 1, 8, 6, 0, 0, 0, 31, 21, 196,
+            137, 0, 0, 0, 13, 73, 68, 65, 84, 120, 156, 99, 96, 96, 96, 248,
+            15, 0, 1, 4, 1, 0, 95, 229, 195, 75, 0, 0, 0, 0, 73, 69,
+            78, 68, 174, 66, 96, 130,
+        ];
+        std::fs::write(&file, PNG).unwrap();
+        let artwork_url = url::Url::from_file_path(&file).unwrap();
+        let artwork_path = artwork_url.as_str();
         let face = |artwork: bool| -> (f32, f32, f32, f32) {
             let mut state = state_with(TransportState::Playing);
             if artwork {
                 state.compact.now_playing.as_mut().unwrap().face =
-                    Face::Artwork(ARTWORK.to_owned());
+                    Face::Artwork(artwork_path.to_owned());
             }
             let sheet = if artwork {
                 format!(
                     "{}
-.rs-dock-identity .rs-face {{ background-image: url({ARTWORK}); }}
+.rs-dock-identity .rs-face {{ background-image: url(\"{artwork_path}\"); }}
 ",
                     theme::sheet()
                 )

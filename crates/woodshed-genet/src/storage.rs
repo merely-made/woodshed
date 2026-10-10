@@ -270,6 +270,16 @@ impl FsBackend {
             _ => None,
         }
     }
+
+    /// Exact host-owned destinations; Tabard owns normalization and collision
+    /// protection when its export dialog is embedded in this application.
+    pub fn protected_export_paths(&self) -> Vec<PathBuf> {
+        self.session
+            .iter()
+            .chain(self.settings.iter())
+            .cloned()
+            .collect()
+    }
 }
 
 impl Default for FsBackend {

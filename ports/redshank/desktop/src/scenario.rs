@@ -28,14 +28,14 @@
 use cambium_genet_winit_host::{AppCtx, HostPointer, Key, KeyPress, NamedKey};
 use redshank_model::{AnnotationId, ItemId, ResumeCompleted, ThemeMode, ThemeSeed};
 use redshank_surfaces::{
-    CompactCommand, FullView, Layout, ListenPane, MenuTarget, Mode, NotesFilter,
-    RedshankSurfaceState, Scene, Seed, SurfaceTab, TransportState,
+    CompactCommand, Layout, ListenPane, MenuTarget, Mode, NotesFilter, RedshankSurfaceState, Scene,
+    Seed, SurfaceTab, TransportState,
 };
 use taproot::ProbeSnapshot;
 
 /// The lane borrows the same rendered product and shipping command path.
-type Logic = fn(&RedshankSurfaceState) -> FullView;
-type Ctx<'a> = AppCtx<'a, RedshankSurfaceState, Logic, FullView>;
+type Logic = crate::appearance::Logic;
+type Ctx<'a> = AppCtx<'a, crate::appearance::DesktopState, Logic, crate::appearance::Child>;
 
 /// Mesquite owns frame scheduling, captures, deferred clicks and completion.
 pub type ScenarioLane = mesquite::Lane<Product>;
@@ -83,7 +83,12 @@ pub(crate) fn from_env(
 pub fn drive(lane: &mut ScenarioLane, ctx: &mut Ctx<'_>, host_busy: bool) {
     let product = lane.product_mut();
     product.host_busy = host_busy;
-    product.note_events(ctx.runner.state());
+    product.sheet = ctx
+        .runner
+        .state()
+        .appearance
+        .stylesheet(&ctx.runner.state().surface);
+    product.note_events(&ctx.runner.state().surface);
     lane.after_frame(ctx);
 }
 
@@ -439,9 +444,9 @@ impl mesquite::Product for Product {
             .attachment(self.diagnostic_cursor.as_mut().expect("cursor initialized"))
             .map(Some)
     }
-    type State = RedshankSurfaceState;
+    type State = crate::appearance::DesktopState;
     type Logic = Logic;
-    type View = FullView;
+    type View = crate::appearance::Child;
     const KIND: &'static str = "redshank";
     const SURFACE: &'static str = "redshank";
     const LOG_PREFIX: &'static str = "redshank-scenario";
@@ -451,7 +456,7 @@ impl mesquite::Product for Product {
     }
 
     fn snapshot(&self, ctx: &Ctx<'_>, _: usize, _: f32) -> ProbeSnapshot {
-        let state = ctx.runner.state();
+        let state = &ctx.runner.state().surface;
         let observed = Observed::read(state);
         let now = state.compact.now_playing.as_ref();
         let mut snap = ProbeSnapshot::default()
@@ -481,6 +486,27 @@ impl mesquite::Product for Product {
             )
             .with_field("notice", state.notice.clone().unwrap_or_default())
             .with_field("text-capture", state.text_capture.is_some().to_string());
+        let appearance = &ctx.runner.state().appearance;
+        snap = snap
+            .with_field("appearance-id", appearance.active_id())
+            .with_field(
+                "appearance-mode",
+                appearance
+                    .applied()
+                    .and_then(|choice| choice.resolved.theme_mode.as_ref())
+                    .map(|mode| mode.as_key())
+                    .unwrap_or_else(|| "legacy".into()),
+            )
+            .with_field("appearance-editor", appearance.editor_open.to_string())
+            .with_field(
+                "appearance-dirty",
+                appearance.workshop.has_changes().to_string(),
+            )
+            .with_field("appearance-preview-mode", appearance.workshop.mode_key())
+            .with_field(
+                "appearance-authoring",
+                appearance.authoring_available.to_string(),
+            );
         if let Some(now) = now {
             snap = snap
                 .with_field("item-id", now.item_id.0.clone())
@@ -507,14 +533,14 @@ impl mesquite::Product for Product {
         let Some(named) = parse_named(label) else {
             return false;
         };
-        ctx.runner.update(|state| apply(state, named));
-        self.note_events(ctx.runner.state());
+        ctx.runner.update(|state| apply(&mut state.surface, named));
+        self.note_events(&ctx.runner.state().surface);
         true
     }
 
     fn busy(&self, ctx: &Ctx<'_>, capture_pending: bool) -> Option<bool> {
         Some(product_busy(
-            ctx.runner.state(),
+            &ctx.runner.state().surface,
             self.host_busy,
             capture_pending,
         ))
@@ -578,7 +604,7 @@ impl mesquite::Product for Product {
                 }
                 let key = parse_key(name).ok_or_else(|| format!("unknown key '{name}'"))?;
                 crate::key_intercept(ctx.runner, &KeyPress::new(key));
-                self.note_events(ctx.runner.state());
+                self.note_events(&ctx.runner.state().surface);
                 Ok(())
             },
             _ => Err(format!("unknown verb: {line}")),

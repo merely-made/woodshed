@@ -18,5 +18,7 @@ tinct.workspace = true
 time = { version = "=0.3.55", features = ["parsing", "macros"] }
 
 [dev-dependencies]
+tempfile.workspace = true
+url.workspace = true
 cambium-genet-winit-host.workspace = true
 layout-dom-api.workspace = true

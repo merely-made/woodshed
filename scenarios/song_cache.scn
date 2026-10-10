@@ -1,0 +1,40 @@
+# First play, warm replay and edits through the shipping song backend.
+settle 3
+ui-zoom 0.8
+act song-cache-example
+settle 3
+click .pill Looper
+settle 3
+assert snap song-bars == 4
+assert snap song-first-bpm == 240
+assert snap song-first-root == 0
+click .t-btn Play
+settle 150
+assert snap song-playing == true
+assert snap song-live-bar >= 1
+capture 01_cold_play
+click .t-btn Stop
+settle 3
+click .t-btn Rewind
+click .t-btn Play
+settle 150
+assert snap song-playing == true
+capture 02_warm_play
+click .t-btn Stop
+settle 3
+click .t-btn Rewind
+click .t-btn Root: C
+settle 3
+click .t-narrow +
+settle 3
+assert snap song-bars == 4
+assert snap song-first-root == 1
+assert snap song-first-bpm == 245
+click .t-btn Play
+settle 150
+assert snap song-playing == true
+capture 03_edited_play
+click .t-btn Stop
+settle 3
+assert snap song-playing == false
+log Song cache cold warm edited replay complete

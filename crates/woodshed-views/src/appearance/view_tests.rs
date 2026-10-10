@@ -16,8 +16,21 @@ fn root(ui: &UiState) -> UiChild {
 }
 
 fn mount(ui: UiState) -> Host {
+    mount_with_persistence(ui, true)
+}
+
+fn mount_with_persistence(ui: UiState, accept: bool) -> Host {
     let mut hooks: HostHooks<UiState, fn(&UiState) -> UiChild, UiChild> = HostHooks::inert();
-    hooks.after_dispatch = Box::new(|ctx| {
+    hooks.after_dispatch = Box::new(move |ctx| {
+        ctx.runner.update(|ui| {
+            commit_selection(ui, |_| {
+                if accept {
+                    Ok(())
+                } else {
+                    Err("Settings receipt rejected the write".into())
+                }
+            });
+        });
         *ctx.set_sheet = Some(appearance_stylesheet(ctx.runner.state()));
     });
     let mut host = Harness::with_hooks(
@@ -32,6 +45,104 @@ fn mount(ui: UiState) -> Host {
     );
     host.layout_at(1280.0, 960.0);
     host
+}
+
+#[test]
+fn rejected_preference_write_keeps_the_applied_theme_and_practice_state() {
+    let ui = UiState::new();
+    let settings = ui.app_settings.clone();
+    let practice = serde_json::to_value(ui.to_persisted()).unwrap();
+    let sheet = appearance_stylesheet(&ui);
+    let mut host = mount_with_persistence(ui, false);
+    click(&mut host, theme("woodshed:ember"));
+    assert_eq!(host.state().app_settings, settings);
+    assert_eq!(
+        serde_json::to_value(host.state().to_persisted()).unwrap(),
+        practice
+    );
+    assert_eq!(appearance_stylesheet(host.state()), sheet);
+    assert!(
+        host.state()
+            .appearance_notice
+            .as_ref()
+            .unwrap()
+            .contains("rejected")
+    );
+    host.update(|ui| {
+        assert!(!commit_selection(ui, |_| panic!(
+            "Rejected requests must be drained"
+        )));
+    });
+}
+
+#[test]
+fn saving_an_applied_identity_retains_active_css_until_explicit_apply() {
+    let mut ui = UiState::new();
+    ui.appearance_authoring_available = true;
+    let mut authored = Theme::new(
+        "theme:active-snapshot",
+        "Snapshot",
+        ThemeMode::Slate.seeds(),
+    );
+    let original = ":root { --tabard-color-bg: #112233; }";
+    let revised = ":root { --tabard-color-bg: #445566; }";
+    authored
+        .mode_sheets
+        .insert("dark".into(), vec![original.into()]);
+    ui.appearance
+        .workshop
+        .import_theme_json(&tabard::portable::theme_json(&authored).unwrap());
+    ui.appearance.workshop.save();
+    ui.appearance
+        .select(
+            &mut ui.app_settings.appearance,
+            &authored.id,
+            Some(Mode::Dark),
+        )
+        .unwrap();
+    let initial = appearance_stylesheet(&ui);
+    let choice = ui.app_settings.appearance.clone();
+    let mut host = mount(ui);
+    click(&mut host, action("edit-appearance"));
+    host.update(|ui| {
+        *ui.appearance.workshop.text_field_mut("mode-sheet").unwrap() =
+            cambium::TextInput::new(revised);
+        ui.appearance.workshop.sync_controls();
+    });
+    click(&mut host, action("save"));
+    assert_eq!(host.state().app_settings.appearance, choice);
+    assert!(
+        host.state()
+            .appearance
+            .resolve(&choice)
+            .stylesheet
+            .contains(original)
+    );
+    assert!(
+        !host
+            .state()
+            .appearance
+            .resolve(&choice)
+            .stylesheet
+            .contains(revised)
+    );
+    click(&mut host, action("back-to-woodshed"));
+    assert_eq!(appearance_stylesheet(host.state()), initial);
+    click(&mut host, action("edit-appearance"));
+    assert_eq!(
+        host.state()
+            .appearance
+            .workshop
+            .draft_theme()
+            .mode_sheet(&Mode::Dark)
+            .unwrap(),
+        &[revised.to_string()]
+    );
+    click(&mut host, action("apply-to-woodshed"));
+    click(&mut host, action("back-to-woodshed"));
+    assert_eq!(host.state().app_settings.appearance, choice);
+    assert!(appearance_stylesheet(host.state()).contains(revised));
+    assert!(!appearance_stylesheet(host.state()).contains(original));
 }
 
 fn action(name: &str) -> Selector {
@@ -173,4 +284,50 @@ fn workshop_sheet_replaces_authored_app_css_and_returns_when_editor_closes() {
     );
     click(&mut host, action("back-to-woodshed"));
     assert!(appearance_stylesheet(host.state()).contains(".theme-editor { background: #f00000; }"));
+}
+
+#[test]
+fn authored_shared_roles_recolor_the_product_surface_and_reset_on_builtin_selection() {
+    let mut ui = UiState::new();
+    let mut authored = Theme::new("theme:role-sheet", "Role sheet", ThemeMode::Slate.seeds());
+    authored.mode_sheets.insert(
+        "dark".into(),
+        vec![":root { --tabard-color-surface: #123456; --tabard-color-text: #f1f2f3; }".into()],
+    );
+    ui.appearance
+        .workshop
+        .import_theme_json(&tabard::portable::theme_json(&authored).unwrap());
+    ui.appearance.workshop.save();
+    ui.appearance
+        .select(
+            &mut ui.app_settings.appearance,
+            &authored.id,
+            Some(Mode::Dark),
+        )
+        .unwrap();
+    let mut host = mount(ui);
+    let product = host.with_dom(|dom| taproot::matching(dom, &Selector::class("board"))[0]);
+    let background = host.computed_value(product, "background-color").unwrap();
+    let background = background.to_ascii_lowercase().replace(' ', "");
+    assert!(matches!(
+        background.as_str(),
+        "#123456" | "rgb(18,52,86)" | "rgba(18,52,86,1)"
+    ));
+    assert!(
+        host.state()
+            .appearance
+            .resolve(&host.state().app_settings.appearance)
+            .fallback_reason
+            .unwrap()
+            .contains("Typed instrument and graph paint")
+    );
+    click(&mut host, theme("woodshed:slate"));
+    host.relayout();
+    let product = host.with_dom(|dom| taproot::matching(dom, &Selector::class("board"))[0]);
+    let restored = host.computed_value(product, "background-color").unwrap();
+    assert_ne!(restored.to_ascii_lowercase().replace(' ', ""), background);
+    assert_eq!(
+        appearance_stylesheet(host.state()),
+        appearance_stylesheet(&UiState::new())
+    );
 }

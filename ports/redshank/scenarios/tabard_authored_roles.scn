@@ -1,0 +1,21 @@
+# Copy fixtures/tabard_role_library.json to an isolated REDSHANK_THEME_LIBRARY.
+assert snap transport == IDLE
+assert snap item-count == 0
+assert snap appearance-id == redshank:default
+click role:button Appearance
+settle 1
+click role:button Authored role fixture
+settle 1
+click role:button @data-appearance-mode=dark
+settle 2
+assert snap appearance-id == user:role-fixture
+assert snap appearance-mode == dark
+capture authored-dark
+click role:button @data-appearance-mode=custom:garden
+settle 2
+assert snap appearance-mode == custom:garden
+assert snap appearance-id == user:role-fixture
+assert snap transport == IDLE
+assert snap item-count == 0
+assert snap note-count == 0
+capture authored-custom

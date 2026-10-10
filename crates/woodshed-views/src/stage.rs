@@ -2055,6 +2055,7 @@ impl UiState {
         self.song = session.song.clone();
         self.practice_history = session.practice_history.clone();
         self.app_settings = app_settings;
+        self.appearance.reset_active();
         if let Some(config) = &session.active_exploration {
             config.apply(&mut self.stage, &mut self.app_settings);
             self.search = TextInput::new(config.search_query.clone());
@@ -2495,6 +2496,9 @@ fn exercise_board_view(ui: &UiState) -> UiChild {
                     el("div", text(play_label)).attr("class", "t-btn"),
                     |ui: &mut UiState, _| {
                         ui.stage.exercise_playing = !ui.stage.exercise_playing;
+                        if !ui.stage.exercise_playing {
+                            ui.request(AudioRequest::CancelPreview);
+                        }
                     },
                 ),
                 clickable(
@@ -2597,6 +2601,9 @@ fn arpeggio_board_view(ui: &UiState) -> UiChild {
                     el("div", text(play_label)).attr("class", "t-btn"),
                     |ui: &mut UiState, _| {
                         ui.stage.arpeggio_playing = !ui.stage.arpeggio_playing;
+                        if !ui.stage.arpeggio_playing {
+                            ui.request(AudioRequest::CancelPreview);
+                        }
                     },
                 ),
                 clickable(
@@ -2874,7 +2881,12 @@ pub(super) fn board(ui: &UiState) -> UiChild {
                                 }),
                             )
                             .attr("class", "run-btn"),
-                            |ui: &mut UiState, _| ui.stage.toggle_scale_run(),
+                            |ui: &mut UiState, _| {
+                                ui.stage.toggle_scale_run();
+                                if !ui.stage.scale_run_playing {
+                                    ui.request(AudioRequest::CancelPreview);
+                                }
+                            },
                         ),
                         clickable(
                             el("div", text("Path")).attr(

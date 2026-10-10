@@ -2648,7 +2648,8 @@ still takes 354–360 ms on the caller. This fixes callback starvation without
 a buffer-size increase or a claim that synthesis is asynchronous. Evidence is
 in `/Users/markik/Code/testing/woodshed/audio-ddx-20261008/`.
 
-Remaining source-observed hardening: song-mode chord-cache misses still synthesize
+At the preview checkpoint, remaining source-observed hardening included
+song-mode chord-cache misses that still synthesize
 in `process_song_buffer`, and the engines still share mutable state through
 mutexes. This diagnosis does not establish a completely allocation-free or
 lock-free callback architecture, nor acoustically qualify every device. Those
@@ -2666,3 +2667,158 @@ dispatch and unsealed fixture persistence, not acoustic listening, vault
 storage, all song-mode cache paths or other output devices. The receipt records
 exact revisions, binary/capture/log hashes and the hardware differential matrix:
 `/Users/markik/Code/testing/woodshed/audio-ddx-20261008/receipt.json`.
+
+### October 8 follow-up: prepared song chords outside the callback
+
+**Status: implemented and qualified; audio/desktop gates and native seed/reopen pass.**
+
+The next audio slice starts at clean main `9e4b37238d5febfcfe73b4bc9e291ec93b2ee1cd`,
+including Tabard adoption and the owner's lazy input-startup fix. No shared
+contract or dependency repin is needed for this Woodshed-owned mixer change.
+
+The muted `audio_ddx song` control plays four eight-pitch bars at 240 BPM,
+replays their warm cache, then changes pitches and tempo to 300 BPM. On the
+default iMac Speakers output (48 kHz stereo, 512 frames), the first baseline
+produces four cold-play overload notifications, zero warm-play notifications
+and two edited-play notifications; the maximum callback gap is 21.64 ms.
+The callback previously ran `ensure_chord_cached` at each uncached measure.
+These controls establish that this path is a second reproducible audio fault,
+distinct from the already-qualified stopped-song preview fix.
+
+Song construction and replacement now prepare chord PCM before stream startup
+or outside the mixer mutex, respectively. Replacement publishes the document
+and its ready cache together; a request revision prevents a slow older
+replacement from overwriting a newer request. `with_song` preserves slots whose audible inputs
+match, invalidates changed slots and prepares their replacements outside the
+mutex. A key includes ordered pitch bits (or the root fallback), rendered
+per-measure duration and output sample rate; cosmetic names, recorded loops
+and block length do not invalidate PCM. A completed render publishes only if
+the current bar still matches, so concurrent replacement cannot accept stale
+audio. Read-only handle calls no longer invalidate the entire cache.
+
+The callback only looks up and validates ready PCM; it does not synthesize a
+miss. An in-flight low-level live edit can leave a slot unavailable at a
+measure boundary. That strike is skipped, and ready audio starts at the next
+measure, preserving transport rather than stalling, substituting stale audio
+or starting a late strike. The desktop document replacement route publishes
+ready PCM atomically. Preparation remains synchronous on the caller; a bounded
+worker for UI responsiveness is the following slice. Other callback locks and
+allocations, including recording-buffer handling, remain separate hardening.
+
+Six new deterministic regressions cover callback progress and missing-buffer
+behavior, stale render/replacement rejection, exact edited PCM and cache reuse, root/rate
+identity, and preserved count-in/multi-measure trigger times. The native
+`song_cache.scn` and `song_cache_reopen.scn` scenarios exercise actual Play,
+Stop, Rewind, root/tempo edits and fresh-process replay of the saved arrangement.
+Evidence is retained under
+`/Users/markik/Code/testing/woodshed/song-cache-20261008/`.
+
+Two controlled before/after hardware runs reproduce 13 baseline notifications
+in total (cold 4+4, edited 2+3, warm 0+0), then zero in both fixed runs. Maximum
+callback gaps are 21.64/23.39 ms before and 10.72/10.71 ms after. Preparation
+moves to the caller (48–81 ms for this four-bar fixture); warm replay is
+0.005–0.009 ms. The 133 audio tests and 79 current desktop tests pass (212 total).
+
+Native preflight exposed a separate development-build issue after the current
+Tabard/Genet integration: both the default Stage and direct Looper attempts
+remained near 100% CPU before reaching the playback assertions, and UI access
+failed with `noWindowsAvailable` / `AXError.cannotComplete`. Samples terminate
+in the pinned Genet layout/text path (`TextSystem::intern_font` / `content_key`);
+these attempts logged additional device overloads and are not qualification
+receipts. The original package overrides name legacy `netrender` packages.
+Current `genet-render`, `genet-livery`, `genet-taffy` and `buckram` now receive
+the existing opt-level-2 runtime policy while Woodshed/audio stay debuggable.
+No shared source or dependency pin changes are included. Native acceptance
+must be rerun with this build; the samples and failed launch logs are retained.
+
+Final committed-source qualification (`0812c67`, audio implementation `f8e4037`):
+the desktop gate passes again under the current runtime profile (79 tests),
+and the 133 audio tests remain green, for 212 checks. The final muted hardware
+replay has zero overloads in cold/warm/edited phases, a 10.741 ms maximum
+callback gap, and preparation times of 63.065/0.006/46.928 ms on the caller.
+The native seed and fresh-process reopen report `RESULT ok`, 514/178 successful
+presentations and four reviewed nonblank captures, with zero buffer-error logs
+in either process. Four bars persist; the first retains C-sharp Major and
+245 BPM, then replays through the actual desktop backend. Both apps exit.
+The fixture selects Looper at startup; it does not claim broader startup
+performance or acoustic/device-wide quality. Earlier preflight failures and
+the corrected `+` selector mistake remain retained. The receipt and concise
+logs are committed in `validation/song-cache_20261008/`; full PNG/sample
+evidence remains in the local artifact directory noted above.
+
+
+### October 8 follow-up: bounded preview synthesis worker
+
+**Status: implemented and qualified; gates, committed hardware control and native seed/reopen pass.**
+
+This Woodshed-owned slice starts at clean main
+`0f104028523b22cd2f13ee0ff73f3cc889b3d873`. It preserves the current Mere/Genet
+pins and the already-prepared song chord cache. It addresses the remaining
+caller stall in stopped-song previews, rather than changing song preparation.
+
+Each SongEngine now owns one named preview thread, with one in-flight render
+and one replaceable pending request. Hear and exercise notes enqueue work and
+return without synthesizing PCM. New requests invalidate unfinished older
+requests; the renderer checks cancellation every 1024 samples and final
+publication rechecks the request revision under the mixer lock. The ready
+voice starts at the current one-shot clock. The queue cannot accumulate a
+backlog of old scale runs. A full Hear also replaces sounding preview
+envelopes; step notes preserve already sounding envelopes for sequential
+exercise playback. Under overload, unfinished step requests use the same
+latest-request policy. The existing sixteen-voice bound remains.
+
+Stop, Rewind, explicit cancellation, queued transport/seek changes, song
+replacement and song playback invalidate pending/in-flight previews and clear
+sounding one-shots. Song playback rejects preview submissions, preventing a
+hidden preview from sounding after Stop. Metronome start/stop transitions also
+cancel previews; ordinary stopped-state synchronization does not. Engine
+shutdown closes and joins the worker, even if an external handle survives.
+The worker holds a weak mixer reference, avoiding a lifecycle cycle.
+
+Rehearsal Pause and the exercise/arpeggio/scale Stop controls send an explicit
+cancellation request, independent of idempotent transport polling.
+
+Five new deterministic audio regressions cover bounded bursts and stale
+publication, transport cancellation, overlapping step envelopes versus Hear,
+shutdown with a surviving handle, and cancellable renderer PCM identity. The
+existing callback-progress test now also proves caller return while synthesis
+is deliberately blocked. The 138-test audio gate passes. Read-only native
+observations expose worker activity and sounding voice count; the desktop
+scenario busy flag includes queued synthesis. `preview_worker.scn` and its
+fresh-process companion exercise repeated Hear, Rewind cancellation and
+saved recipe replay. Muted hardware diagnostics separately measure request
+return and completed synthesis, so a fast enqueue cannot conceal unfinished
+work. Evidence lives in
+`/Users/markik/Code/testing/woodshed/preview-worker-20261008/`.
+
+Song-cache preparation remains synchronous on the caller. Callback mutexes,
+recording allocation, broad startup/layout performance, acoustic quality and
+release packaging remain separate acceptance boundaries.
+
+
+Committed-source qualification (`c97be58`): 577 checks pass (138 audio, 212 core,
+148 views and 79 desktop), and both committed builds pass. The long-scale
+baseline takes 478.970–631.302 ms on the caller; six committed enqueue trials
+return in 0.014–0.061 ms. Completion is separately awaited and takes
+534.926–1910.830 ms in those runs. This confirms UI responsiveness without
+claiming faster synthesis. One monitor-only startup event at 0.196 s precedes
+Woodshed engine creation in the first committed control, with no subsequent
+preview events. Its repeat has zero events and a 12.537 ms maximum callback
+gap. The committed cold/warm/edited song control also has zero events and a
+10.734 ms maximum gap. The startup observation remains retained.
+
+The committed native seed/fresh-process reopen complete with 162/165
+presentations, six reviewed nonblank PNGs and zero buffer-error logs. Repeated
+Hear publishes one voice; Rewind clears voices/work. The saved 92 BPM Thirds
+recipe retains deleted-source provenance, pin/background state and Orbits.
+Reopen Hear/Add preserves copied instructions, and rehearsal Run/Pause ends
+with zero preview work/voices; the final Set has four Cards. Inspector captures
+show the scrolled graph portion, while Fit scene shows the connected nodes.
+No new responsive-layout acceptance is claimed. Both processes exit. Initial
+UI-state queries return AXError.cannotComplete for these short-lived launches;
+no query retry or accidental relaunch is performed. In-process results,
+presentation receipts and reviewed GPU-readback PNGs establish acceptance.
+The portable receipt and concise logs are committed in
+`validation/preview-worker_20261008/`; full local evidence remains in the
+artifact directory noted above. This qualifies native dispatch and unsealed
+fixture reopening, preserving the acoustic/vault/release boundaries.

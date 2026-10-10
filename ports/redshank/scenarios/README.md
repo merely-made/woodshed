@@ -65,3 +65,36 @@ transcript reads retain their separate 4 MiB bound.
 `queue-size <n>`, `note-count <n>`, `layout <name>`, `scene <name>`,
 `seed <name>`, `mode <name>`, plus the loop's own `interaction-missed …` and
 `wait-timeout …`.
+
+
+## Shared appearance acceptance
+
+`tabard_authoring.scn` starts from the exact Wetland fallback, opens the shared
+Tabard editor, refuses unsaved Apply, saves a user copy, explicitly applies it,
+and captures all four modes. `tabard_reopen.scn` loads the final saved mode in
+a separate process. These scenarios use an empty listener profile and never
+request playback, recording or a feed. Always isolate all three app paths:
+
+```sh
+python3 /absolute/mere/scripts/run_macos_scenario.py \
+  --binary /absolute/redshank/target/debug/redshank-desktop --prefix REDSHANK \
+  --scenario /absolute/redshank/scenarios/tabard_authoring.scn \
+  --output /tmp/redshank-tabard-authoring \
+  --env REDSHANK_DATA_DIR=/tmp/redshank-tabard-profile/listener \
+  --env REDSHANK_APPEARANCE_STORE=/tmp/redshank-tabard-profile/appearance.json \
+  --env REDSHANK_THEME_LIBRARY=/tmp/redshank-tabard-profile/themes.json
+```
+
+Repeat with `tabard_reopen.scn`, a new receipt directory and the same profile.
+For explicit authored roles, copy `fixtures/tabard_role_library.json` into a
+separate isolated theme library and run `tabard_authored_roles.scn`, followed
+by `tabard_authored_reopen.scn` in a fresh process using that same profile.
+These captures cover exact authored Dark roles and a custom Garden mode.
+For a narrow editor run, use a separate fresh profile with `REDSHANK_WIDTH=420`
+and `REDSHANK_HEIGHT=900`. A successful launcher alone is insufficient: require
+`RESULT ok`, presentations, zero blank captures, reviewed PNGs and unchanged
+listener state. The completed macOS qualification and exact image/receipt hashes
+are recorded in [the acceptance ledger](validation/tabard_appearance_acceptance.json).
+Earlier rejected receipts remain preserved; the final 420-pixel pair uses the
+shared header repair. Mode controls use `data-appearance-mode` identities so
+a Light mode cannot select the separate built-in Light theme.

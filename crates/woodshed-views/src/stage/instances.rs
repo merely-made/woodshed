@@ -191,6 +191,9 @@ impl UiState {
         )
     }
     pub fn stop_rehearsal(&mut self) {
+        if self.rehearsal_running {
+            self.request(AudioRequest::CancelPreview);
+        }
         self.finish_rehearsal_observation(EngagementKind::Rehearsed);
         self.rehearsal_running = false;
         self.rehearsal_owner = None;
@@ -289,6 +292,20 @@ mod tests {
         ui.stage_current(None);
         ui
     }
+    #[test]
+    fn rehearsal_pause_cancels_audio_in_order_and_inactive_sync_does_not() {
+        let mut ui = two_cards();
+        ui.stop_rehearsal();
+        assert!(ui.audio_requests.is_empty());
+        ui.toggle_rehearsal();
+        assert!(ui.rehearsal_running);
+        ui.audio_requests.clear();
+        ui.request(AudioRequest::PreviewNote(440.0));
+        ui.toggle_rehearsal();
+        assert!(!ui.rehearsal_running);
+        assert_eq!(ui.audio_requests, [AudioRequest::PreviewNote(440.0), AudioRequest::CancelPreview]);
+    }
+
     #[test]
     fn background_runner_keeps_owner_cursor_sound_and_event_snapshot_across_focus() {
         let mut ui = two_cards();

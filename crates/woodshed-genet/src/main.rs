@@ -81,14 +81,17 @@ fn boot_state(
     commands: &WindowCommands,
 ) -> Init<UiState, Logic> {
     let mut shared = shared.borrow_mut();
-    let backend = CpalBackend::new();
+    let device_free_receipt = appearance::device_free_receipt();
+    let backend = (!device_free_receipt).then(CpalBackend::new);
     let mut ui = UiState::new();
     ui.event_clock = Some(drive::wall_time_ms);
     let (size_w, size_h) = window.inner_size();
     let scale = window.scale_factor() as f32;
     ui.set_viewport_width(size_w as f32 / scale);
     ui.set_viewport_height(size_h as f32 / scale);
-    ui.audio_error = backend.error().map(String::from);
+    ui.audio_error = backend
+        .as_ref()
+        .and_then(|backend| backend.error().map(String::from));
 
     // Restore the artifact session and the separate application settings, when
     // there is a store to restore from. There is not, on a machine whose vault
@@ -114,9 +117,11 @@ fn boot_state(
     let sheet = appearance::stylesheet(&ui);
     shared.appearance_sheet = Some(sheet.clone());
     // Populate the MIDI port pickers with what's plugged in now.
-    ui.midi.input_ports = shared.midi.input_ports();
-    ui.midi.output_ports = shared.midi.output_ports();
-    shared.backend = Some(backend);
+    if !device_free_receipt {
+        ui.midi.input_ports = shared.midi.input_ports();
+        ui.midi.output_ports = shared.midi.output_ports();
+    }
+    shared.backend = backend;
 
     let commands = commands.clone();
     Init {

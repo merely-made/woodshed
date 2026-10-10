@@ -277,7 +277,7 @@ impl CaptureContext {
                 .run
                 .clone()
                 .unwrap_or_else(|_| "redshank-capture-unavailable".into()),
-            observe: Box::new(move |ctx, _presentation| capture.seal(ctx.runner.state())),
+            observe: Box::new(move |ctx, _presentation| capture.seal(&ctx.runner.state().surface)),
         }
     }
 

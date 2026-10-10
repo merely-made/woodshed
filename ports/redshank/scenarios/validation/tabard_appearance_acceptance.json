@@ -1,0 +1,180 @@
+{
+  "status": "qualified native macOS application adoption",
+  "mere": "7019f07d36a9da8c1a3edbbcbabad606e9cb3278",
+  "genet": "7422e90613f9017e5bb790e3acb48f61776b2eda",
+  "native_renderer": "491c376cf2b01fc11132cf8f86419dec114ae032",
+  "binary_sha256": "e7128e911484c2db69031d61172fa56e7247644cd50eaede28028bc7a6692dcd",
+  "cpu": {
+    "passed": 253,
+    "failed": 0,
+    "baseline_ignored": 7,
+    "log": "/tmp/redshank-tabard-header-final-gates.log"
+  },
+  "wasm": {
+    "packages": [
+      "redshank-web",
+      "redshank-surfaces"
+    ],
+    "target": "wasm32-unknown-unknown",
+    "exit_code": 0,
+    "log": "/tmp/redshank-tabard-header-wasm-gate.log"
+  },
+  "accepted_runs": [
+    {
+      "lane": "fresh-02",
+      "source_directory": "/Users/markik/Code/tabard-app-receipts/2026-10-10/redshank/fresh-02",
+      "dependency_mere": "11236fd4f8da9b7e2ce3712b4f036fbf676b1c8d",
+      "binary_sha256": "c5b4457e0ef719107ce3bb8f66cfd94789feeba5eb3172df4953b0466a7477c8",
+      "scenario_sha256": "fa93da44be570208ec099ab3f909a053998841b73300b31f20c3df897394fe3c",
+      "receipt_sha256": "0e6c40d9d3917e9dd476315498fe3a9b01d00b33c56c1805fd6e3934ecd444c6",
+      "presented_frames": 63,
+      "captures": 7,
+      "blank_captures": 0,
+      "all_images_reviewed": true,
+      "images": {
+        "appearance.png": "8d7746d4ba3c8c0013d64ffafbc1b2c4e5431f61b525296699df9cdf01651a1e",
+        "applied-dark.png": "a0010493f34d5dda7a9002aafdf95550a1f397b48ee53c1f1dc6a14822823981",
+        "applied-hc-dark.png": "e9b104ca27cac2a6676b75cad1fe943ace49419834046308b7f994f559b77058",
+        "applied-hc-light.png": "b94a3496e71ccb4abd1a5bf1d42d2bff73564aea115043f18ffa231494a2118e",
+        "applied-light.png": "a4109491a9c37963fafc32079ddf3773cd929f60f9f98306edf58930d85180e4",
+        "saved-copy.png": "1a0832f0c2e2cfe10d7303f537f005a66bfe474d7a82c705bfef591d635613df",
+        "workshop.png": "4be0123e8e89f977acc30bd78987671017601cc53b974f440d8fe1f4e8fe5e6f"
+      }
+    },
+    {
+      "lane": "reopen-02",
+      "source_directory": "/Users/markik/Code/tabard-app-receipts/2026-10-10/redshank/reopen-02",
+      "dependency_mere": "11236fd4f8da9b7e2ce3712b4f036fbf676b1c8d",
+      "binary_sha256": "c5b4457e0ef719107ce3bb8f66cfd94789feeba5eb3172df4953b0466a7477c8",
+      "scenario_sha256": "ce4c49f7f45a30f7524f1f545c9f20d565091e5fc619497364b82ba8acff517b",
+      "receipt_sha256": "718cb589484c182f25b8542110e1a8af98415d9f28758617150ff49d612ec0ab",
+      "presented_frames": 12,
+      "captures": 2,
+      "blank_captures": 0,
+      "all_images_reviewed": true,
+      "images": {
+        "reopened-choice.png": "6c5afb9f41b8f8fb376082a64a221d99ca70a5bd62ca0f6c0e58d36aa536a8da",
+        "reopened-hc-dark.png": "f82eb7b8f356d182b476fe24cf7f10696e4d8fd34a90332a4853fe63cf65028d"
+      }
+    },
+    {
+      "lane": "header-7019-01",
+      "source_directory": "/Users/markik/Code/tabard-app-receipts/2026-10-10/redshank/header-7019-01",
+      "dependency_mere": "7019f07d36a9da8c1a3edbbcbabad606e9cb3278",
+      "binary_sha256": "e7128e911484c2db69031d61172fa56e7247644cd50eaede28028bc7a6692dcd",
+      "scenario_sha256": "fa93da44be570208ec099ab3f909a053998841b73300b31f20c3df897394fe3c",
+      "receipt_sha256": "5005169f9cd2d39c3b8e39f8a632c9c63cc862e11af6662f920da5e60e1cb66b",
+      "presented_frames": 64,
+      "captures": 7,
+      "blank_captures": 0,
+      "all_images_reviewed": true,
+      "images": {
+        "appearance.png": "2db48fe2c6032b53d98d7725a9d5ba0864fe5b720e8c7377b2e2f482a01e97e4",
+        "applied-dark.png": "a531037404a414c194897d9267e2b7e37692677b8ec1721fd875315eec98779e",
+        "applied-hc-dark.png": "1c378aa5b945cdc056a661a13dd8ad0d7de358be41c3193699a5133c2099a3d0",
+        "applied-hc-light.png": "08d5b8105446211a7f472951faab1caac7ee6cb61a8d0c99f6087856082a942a",
+        "applied-light.png": "9a3eb19de7bcaa131e103c394119906a848f49e95f77065861b0875f7ceb6225",
+        "saved-copy.png": "4ec6b95d76f35b7e9e1c4a6470f884953f9c37075cce5dc3b459421c03536178",
+        "workshop.png": "1b266b7863d489776f5fa0121fb4a37c99dc93ffe90894d3ec16661de5101012"
+      }
+    },
+    {
+      "lane": "header-reopen-7019-01",
+      "source_directory": "/Users/markik/Code/tabard-app-receipts/2026-10-10/redshank/header-reopen-7019-01",
+      "dependency_mere": "7019f07d36a9da8c1a3edbbcbabad606e9cb3278",
+      "binary_sha256": "e7128e911484c2db69031d61172fa56e7247644cd50eaede28028bc7a6692dcd",
+      "scenario_sha256": "ce4c49f7f45a30f7524f1f545c9f20d565091e5fc619497364b82ba8acff517b",
+      "receipt_sha256": "94bdb93448665266edcb1e81fdd40cee14e412ef13a6167cb939efb0a6f71449",
+      "presented_frames": 12,
+      "captures": 2,
+      "blank_captures": 0,
+      "all_images_reviewed": true,
+      "images": {
+        "reopened-choice.png": "a67176cbb14640b4c154359c9dd495d9af0610defaf4b05e6a816e7bdfef7958",
+        "reopened-hc-dark.png": "a2df48d9dda6480dc752fd1de8b402b1d18f664eb7e916264ae10ae0e174828d"
+      }
+    },
+    {
+      "lane": "authored-7019-01",
+      "source_directory": "/Users/markik/Code/tabard-app-receipts/2026-10-10/redshank/authored-7019-01",
+      "dependency_mere": "7019f07d36a9da8c1a3edbbcbabad606e9cb3278",
+      "binary_sha256": "e7128e911484c2db69031d61172fa56e7247644cd50eaede28028bc7a6692dcd",
+      "scenario_sha256": "1a3052661bc5d83d9195296fb1298abade66652f1dad4bb86f77857f024e3f7e",
+      "receipt_sha256": "4f577fb4c796304e0aa26fa31b48bd5b7f0a66cf78820ba48c3649ad074a4c8b",
+      "presented_frames": 28,
+      "captures": 2,
+      "blank_captures": 0,
+      "all_images_reviewed": true,
+      "images": {
+        "authored-custom.png": "0be82c75e1cf89c22b9cde15dc8009feeaa9af6efb6a7e8a095eb2ec94903007",
+        "authored-dark.png": "36bbc1e2dfa9a563e98680eed8350b43c5dbf41a57713f35b068724b7c96efd0"
+      }
+    },
+    {
+      "lane": "authored-reopen-7019-01",
+      "source_directory": "/Users/markik/Code/tabard-app-receipts/2026-10-10/redshank/authored-reopen-7019-01",
+      "dependency_mere": "7019f07d36a9da8c1a3edbbcbabad606e9cb3278",
+      "binary_sha256": "e7128e911484c2db69031d61172fa56e7247644cd50eaede28028bc7a6692dcd",
+      "scenario_sha256": "89f16ca7cfbe3d8af2299360e9acd559ba87685dbab27feeef98459de8d73974",
+      "receipt_sha256": "8847774c4774e5549096cf9d0bafd199c90f8b6b722e36a022317f832af6b3ae",
+      "presented_frames": 12,
+      "captures": 2,
+      "blank_captures": 0,
+      "all_images_reviewed": true,
+      "images": {
+        "authored-custom-choice.png": "4b2807bf38745b9ca6d604eb209e9e20aa12dccfe62bb43b9715eb814065d34d",
+        "authored-custom-reopened.png": "e31894551de30042a07a1985b9732f5ac44989f3e6285a20b03a523f3edf4988"
+      }
+    }
+  ],
+  "presented_frames": 191,
+  "captures": 22,
+  "blank_captures": 0,
+  "profiles": {
+    "header-7019-01": {
+      "choice": {
+        "theme_id": "theme:copy-1",
+        "theme_mode": "hc_dark"
+      },
+      "listener_files": 0
+    },
+    "authored-7019-01": {
+      "choice": {
+        "theme_id": "user:role-fixture",
+        "theme_mode": "custom:garden"
+      },
+      "listener_files": 0
+    }
+  },
+  "authored_fixture_sha256": "0f766f9b65201ba40e0dc01a169c94b5c1647fbcff22813f3483f410b0287443",
+  "authored_pixel_samples": {
+    "device_pixel_body": [
+      1500,
+      1100
+    ],
+    "device_pixel_chrome": [
+      800,
+      100
+    ],
+    "dark": {
+      "body": "#142536",
+      "chrome": "#123456"
+    },
+    "custom:garden": {
+      "body": "#203020",
+      "chrome": "#284428"
+    }
+  },
+  "rejected_receipts": {
+    "fresh-01": "ambiguous Light selector chose built-in theme; diagnostic only",
+    "reopen-01": "assertion failed on saved identity from ambiguous selector; original failure preserved",
+    "narrow-01": "pre-repair shared title/action overlap; not narrow visual acceptance"
+  },
+  "review_correction": "Decoded pixel-region hashes refuted initial missing title/control/copy-label claims; original PNGs unchanged. Only420px shared header overlap required CSS repair.",
+  "unverified_platforms_and_lanes": [
+    "Windows/Linux native presentation",
+    "live screen reader/IME",
+    "native export chooser interaction",
+    "audio hardware and external playback fixtures"
+  ]
+}
