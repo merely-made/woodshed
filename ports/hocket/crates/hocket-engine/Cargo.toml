@@ -21,6 +21,7 @@ wavicle = { workspace = true }
 # WAV is retained for the offline mix export, not for stored media (now .wv).
 hound = { workspace = true }
 personae = { workspace = true }
+insigne = { workspace = true }
 serde = { workspace = true }
 ciborium = { workspace = true }
 

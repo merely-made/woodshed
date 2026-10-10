@@ -14,7 +14,7 @@
 //! without saving, so a scenario never mutates a profile and reruns stay
 //! deterministic.
 //!
-//! The grammar is genet-probe's shared one, driven through the [`Automatable`]
+//! The grammar is taproot's shared one, driven through the [`Automatable`]
 //! and [`Driveable`] impls on the host: `settle`, `click role:name text` /
 //! `click .class text`, `capture <name>`, `assert text <substr>`,
 //! `assert snap <field> <op> <value>`, `log`. Hocket adds no app-specific verbs
@@ -26,7 +26,7 @@ use cambium_genet_winit_host::Surface;
 use image::ImageEncoder;
 use netrender::ExternalTexturePlacement;
 
-pub use genet_probe::{Outcome, Scenario};
+pub use taproot::{Outcome, Scenario};
 
 /// A loaded scenario plus the directory its captures and receipt land in.
 pub struct Run {

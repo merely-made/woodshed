@@ -13,7 +13,7 @@
 use std::cell::RefCell;
 use std::rc::Rc;
 
-use personae::roster::Roster;
+use dramatis::roster::Roster;
 use woodshed_core::storage::SessionStore;
 use woodshed_views::theme::ThemeMode;
 

@@ -574,7 +574,7 @@ impl AppState {
         let Ok(identity) = self.identity.as_mut() else {
             return;
         };
-        match identity.join_family(&personae::bootstrap::default_vault_dir()) {
+        match identity.join_family() {
             Ok(()) => {
                 self.reshare_notice = true;
                 // The addressed reply belonged to the old identity's
