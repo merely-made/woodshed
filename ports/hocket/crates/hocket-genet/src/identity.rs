@@ -395,6 +395,12 @@ mod dr_c_receipts {
     fn dr_c_hocket_identity_stays_pending() {
         let mode = std::env::var("DR_C_RECEIPT_MODE").expect("receipt mode");
         assert!(mode == "absent" || mode == "locked");
+        if mode == "locked" {
+            let mut client = graphshell::native::custody_client::BlockingCustodyClient::open(
+                graphshell::native::app_admission::AppId::new(CUSTODY_APP)).unwrap();
+            assert_eq!(client.status().unwrap().lock, graphshell::identity::VaultLockView::Locked);
+            assert!(!client.roster().unwrap().entries.is_empty(), "public persona roster remains readable");
+        }
         let temp = tempfile::tempdir().unwrap();
         let public = temp.path().join("public-session");
         std::fs::write(&public, b"public session retained").unwrap();
