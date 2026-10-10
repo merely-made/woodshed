@@ -140,10 +140,12 @@ serde_json = "1.0"
 # roster's plain types, and `mere-persona-picker` the shared view over the
 # roster: the same question every Merely application asks, drawn the same way
 # everywhere. Declared here because woodshed-views draws the roster and
-# woodshed-genet acts on it.
-dramatis = { git = "https://github.com/merely-made/mere.git", rev = "7d2a5f3cfe97174058368073d2bae809fffbf902" }
+# woodshed-genet acts on it. personae and dramatis live in merely-made/dramatis
+# since DR-D, pinned at the revision mere's workspace names, so one personae
+# reaches every graph.
+dramatis = { git = "https://github.com/merely-made/dramatis.git", rev = "c1d620764315b4c750fcffea30b8c898b8bb73bc" }
 graphshell = { git = "https://github.com/merely-made/mere.git", rev = "7d2a5f3cfe97174058368073d2bae809fffbf902" }
-personae = { git = "https://github.com/merely-made/mere.git", rev = "7d2a5f3cfe97174058368073d2bae809fffbf902" }
+personae = { git = "https://github.com/merely-made/dramatis.git", rev = "c1d620764315b4c750fcffea30b8c898b8bb73bc" }
 persona-picker = { package = "mere-persona-picker", git = "https://github.com/merely-made/mere.git", rev = "7d2a5f3cfe97174058368073d2bae809fffbf902" }
 
 # Future:

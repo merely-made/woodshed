@@ -37,13 +37,13 @@ muniment = { git = "https://github.com/merely-made/mere.git", rev = "d82afa17e2c
 armillary = { git = "https://github.com/merely-made/mere.git", rev = "d82afa17e2cca86da843f07a2d718d2e69eb9f10", version = "0.1.0" }
 # Identity root for signed, recipient-bound hand-off envelopes. This is a
 # host-agnostic protocol dependency, not project/session state.
-personae = { git = "https://github.com/merely-made/mere.git", rev = "d82afa17e2cca86da843f07a2d718d2e69eb9f10", version = "0.2.0" }
+personae = { git = "https://github.com/merely-made/dramatis.git", rev = "c1d620764315b4c750fcffea30b8c898b8bb73bc", version = "0.2.0" }
 # djinn's custody route: Hocket speaks as the persona djinn holds and opens no
 # vault, record or DPAPI root of its own (dramatis D5, D13).
 graphshell = { git = "https://github.com/merely-made/mere.git", rev = "d82afa17e2cca86da843f07a2d718d2e69eb9f10" }
 # The derived-key attestation a hand-off envelope carries; personae no longer
 # re-exports it (insigne proofs plan).
-insigne = { git = "https://github.com/merely-made/mere.git", rev = "d82afa17e2cca86da843f07a2d718d2e69eb9f10", features = ["verify"] }
+insigne = { git = "https://github.com/merely-made/dramatis.git", rev = "c1d620764315b4c750fcffea30b8c898b8bb73bc", features = ["verify"] }
 # Pure-Rust WavPack codec (repos/wavicle). Stores .hock media as lossless,
 # importable, wasm-capable .wv instead of WAV. `encode` is on because Hocket
 # both writes and reads media; MediaRef identity stays Hocket's BLAKE3 over the

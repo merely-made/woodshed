@@ -22,7 +22,7 @@ serde_json = { workspace = true }
 # Persona-keyed encrypt-at-rest for the private practice session — the woodshed
 # pole of the personae suite adoption (one persona, many devices, sealed state).
 # Sibling repo, like woodshed-graph's chartulary path dep.
-personae = { git = "https://github.com/merely-made/mere.git", rev = "7d2a5f3cfe97174058368073d2bae809fffbf902" }
+personae = { git = "https://github.com/merely-made/dramatis.git", rev = "c1d620764315b4c750fcffea30b8c898b8bb73bc" }
 # The portable persistence seam. woodshed's own Storage/SettingsStorage traits
 # were a two-slot, String-shaped restatement of muniment's SlotStore, with one
 # filesystem realization against muniment's shipped redb/zip/IndexedDB/memory.
