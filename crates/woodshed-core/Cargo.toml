@@ -13,8 +13,8 @@ woodshed-graph = { workspace = true }
 # The portable scene contract. woodshed owns the musical facts and
 # their typed relations; sceno owns placement, footprints, representation, and
 # routing. Sibling repo, like woodshed-graph's chartulary dep.
-sceno = { git = "https://github.com/merely-made/mere.git", rev = "7d2a5f3cfe97174058368073d2bae809fffbf902" }
-scenotime = { git = "https://github.com/merely-made/mere.git", rev = "7d2a5f3cfe97174058368073d2bae809fffbf902" }
+sceno = { git = "https://github.com/merely-made/mere.git", rev = "11236fd4f8da9b7e2ce3712b4f036fbf676b1c8d" }
+scenotime = { git = "https://github.com/merely-made/mere.git", rev = "11236fd4f8da9b7e2ce3712b4f036fbf676b1c8d" }
 # Shared authored appearance definition in portable settings.
 tabard = { workspace = true }
 serde = { workspace = true }
@@ -22,11 +22,11 @@ serde_json = { workspace = true }
 # Persona-keyed encrypt-at-rest for the private practice session — the woodshed
 # pole of the personae suite adoption (one persona, many devices, sealed state).
 # Sibling repo, like woodshed-graph's chartulary path dep.
-personae = { git = "https://github.com/merely-made/mere.git", rev = "7d2a5f3cfe97174058368073d2bae809fffbf902" }
+personae = { git = "https://github.com/merely-made/mere.git", rev = "11236fd4f8da9b7e2ce3712b4f036fbf676b1c8d" }
 # The portable persistence seam. woodshed's own Storage/SettingsStorage traits
 # were a two-slot, String-shaped restatement of muniment's SlotStore, with one
 # filesystem realization against muniment's shipped redb/zip/IndexedDB/memory.
-muniment = { git = "https://github.com/merely-made/mere.git", rev = "7d2a5f3cfe97174058368073d2bae809fffbf902" }
+muniment = { git = "https://github.com/merely-made/mere.git", rev = "11236fd4f8da9b7e2ce3712b4f036fbf676b1c8d" }
 async-trait = "0.1"
 # muniment's Backend is async so a browser can await OPFS; woodshed's save path
 # is the sync event loop, and a filesystem backend returns ready futures, so
@@ -36,7 +36,7 @@ pollster = "0.4"
 # dated, branching engagements over stable catalog ids, with per-subject recency
 # and frequency maintained upstream. Already in the workspace through
 # woodshed-graph's catalog graph; the same sibling-repo git dep.
-chartulary = { git = "https://github.com/merely-made/mere.git", rev = "7d2a5f3cfe97174058368073d2bae809fffbf902" }
+chartulary = { git = "https://github.com/merely-made/mere.git", rev = "11236fd4f8da9b7e2ce3712b4f036fbf676b1c8d" }
 hex = "0.4"
 
 [dev-dependencies]

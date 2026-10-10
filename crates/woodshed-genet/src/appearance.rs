@@ -38,6 +38,13 @@ fn library_path(
         .or_else(|| config.map(|path| path.join("themes.json")))
 }
 
+/// The isolated visual lane keeps the production host, views and stores while
+/// avoiding audio device activation. Ordinary startup always retains hardware.
+pub fn device_free_receipt() -> bool {
+    std::env::var("WOODSHED_APPEARANCE_RECEIPT").as_deref() == Ok("1")
+        && std::env::var_os("WOODSHED_SCENARIO").is_some()
+}
+
 pub fn load_library(ui: &mut UiState) {
     let path = library_path(
         std::env::var_os("WOODSHED_THEME_LIBRARY"),
@@ -56,7 +63,10 @@ pub fn load_library(ui: &mut UiState) {
 fn load_library_at(ui: &mut UiState, path: PathBuf) {
     ui.appearance_authoring_available = false;
     match AppearanceState::load(&path) {
-        Ok(appearance) => {
+        Ok(mut appearance) => {
+            appearance.workshop.set_protected_export_paths(
+                crate::storage::FsBackend::new().protected_export_paths(),
+            );
             ui.appearance = appearance;
             ui.appearance_authoring_available = true;
             ui.appearance_notice = None;
@@ -368,5 +378,57 @@ mod tests {
         assert_eq!(std::fs::read(output).unwrap(), original);
         assert!(!library.exists());
         assert!(host.state().appearance.workshop.has_changes());
+    }
+
+    #[test]
+    fn native_export_rejects_existing_and_missing_application_destinations() {
+        let dir = tempfile::tempdir().unwrap();
+        let library = dir.path().join("themes.json");
+        let preferences = dir.path().join("settings.json");
+        let missing_session = dir.path().join("practice.json");
+        std::fs::write(&preferences, b"owned preference bytes").unwrap();
+        let destination = Rc::new(RefCell::new(Some(preferences.clone())));
+        let mut ui = editing(library.clone());
+        ui.appearance
+            .workshop
+            .set_protected_export_paths(vec![preferences.clone(), missing_session.clone()]);
+        let mut host = mount(ui, destination.clone());
+        for output in [&preferences, &missing_session] {
+            *destination.borrow_mut() = Some(output.clone());
+            host.update(|ui| ui.appearance.workshop.request_export());
+            host.after_dispatch();
+            assert!(
+                host.state()
+                    .appearance
+                    .workshop
+                    .status()
+                    .contains("protected application")
+            );
+            host.update(|ui| ui.appearance.workshop.replace_export());
+            host.after_dispatch();
+            assert!(
+                host.state()
+                    .appearance
+                    .workshop
+                    .status()
+                    .contains("protected application")
+            );
+            assert_eq!(
+                std::fs::read(&preferences).unwrap(),
+                b"owned preference bytes"
+            );
+            assert!(!missing_session.exists());
+            assert!(!library.exists());
+        }
+    }
+
+    #[test]
+    fn current_native_appearance_scenarios_parse_with_the_shared_driver() {
+        for scenario in [
+            include_str!("../../../scenarios/tabard_appearance.scn"),
+            include_str!("../../../scenarios/tabard_appearance_reopen.scn"),
+        ] {
+            taproot::Scenario::parse(scenario).expect("production appearance scenario grammar");
+        }
     }
 }

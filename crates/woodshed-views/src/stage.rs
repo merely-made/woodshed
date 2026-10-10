@@ -2055,6 +2055,7 @@ impl UiState {
         self.song = session.song.clone();
         self.practice_history = session.practice_history.clone();
         self.app_settings = app_settings;
+        self.appearance.reset_active();
         if let Some(config) = &session.active_exploration {
             config.apply(&mut self.stage, &mut self.app_settings);
             self.search = TextInput::new(config.search_query.clone());

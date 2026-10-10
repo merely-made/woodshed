@@ -57,7 +57,7 @@ pub fn appearance_page(ui: &UiState) -> UiChild {
                 button(option.name, move |ui: &mut UiState, _: PointerClick| {
                     ui.appearance_notice = ui
                         .appearance
-                        .select(&mut ui.app_settings.appearance, &id, None)
+                        .request_selection(&ui.app_settings.appearance, &id, None)
                         .err();
                 })
                 .attr("data-appearance-theme", option.id)
@@ -85,8 +85,8 @@ pub fn appearance_page(ui: &UiState) -> UiChild {
                     let choice = ui.appearance.resolve(&ui.app_settings.appearance);
                     ui.appearance_notice = ui
                         .appearance
-                        .select(
-                            &mut ui.app_settings.appearance,
+                        .request_selection(
+                            &ui.app_settings.appearance,
                             &choice.theme.id,
                             Some(mode.clone()),
                         )
@@ -167,10 +167,8 @@ pub fn workshop_screen(ui: &UiState) -> UiChild {
             }
         }).attr("data-action", "back-to-woodshed"),
         button("Apply to Woodshed", |ui: &mut UiState, _: PointerClick| {
-            ui.appearance_notice = match ui.appearance.apply_workshop(&mut ui.app_settings.appearance) {
-                Ok(()) => Some("Saved theme applied to Woodshed.".into()),
-                Err(error) => Some(error),
-            };
+            ui.appearance_notice = ui.appearance
+                .request_workshop_selection(&ui.app_settings.appearance).err();
         }).attr("data-action", "apply-to-woodshed").attr("class", "primary-button"),
         el("p", text("Previewing and editing here leaves your Woodshed appearance selected until you apply.")),
     )).attr("class", "woodshed-workshop-controls"))];
