@@ -413,7 +413,9 @@ mod dr_c_receipts {
         let legacy = temp.path().join(LEGACY_ROOT);
         std::fs::create_dir_all(legacy.parent().unwrap()).unwrap();
         std::fs::write(&legacy, b"opaque legacy root").unwrap();
-        assert!(LocalIdentity::open_at(temp.path().to_path_buf()).is_err());
+        assert!(matches!(LocalIdentity::open_at(temp.path().to_path_buf()),
+            Err(ref error) if error.to_string().contains("pending")),
+            "a legacy identity must not be decoded or used as a fallback while pending");
         assert_eq!(std::fs::read(legacy).unwrap(), b"opaque legacy root");
         assert!(!temp.path().join(MARKER).exists());
         assert!(!consent_path(temp.path()).exists());
