@@ -1638,8 +1638,9 @@ Wider orchestration and audio acceptance follow the
 
 ### Standalone streaming migration (2026-10-11)
 
-**Status: integration in progress; physical-device acceptance remains open.**
-The playback runtime is migrating to the maintained Firewheel 0.14 fork with
+**Status: consumer implemented and CPU-qualified; physical-device acceptance remains open.**
+The playback runtime uses the maintained Firewheel 0.14 fork at exact revision
+`2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc`, with
 separate host-owned CPAL stream lifetime and fallible graph construction.
 The stream bridge owns bounded output-frame capacity and actual resampler
 headroom; Redshank retires the fixed-resample 0.9.2 rate-ratio workaround.
@@ -1660,5 +1661,11 @@ are separate gates. The standalone microphone adapter retains its own CPAL
 0.17 profile rather than inheriting the output backend's CPAL 0.18 profile.
 
 The 37-frame 8k-to-44.1k test reproduced all-zero EOF output despite correct
-frame counters. Fork integration is held until its preallocated packet adapter
-fixes the dependency's delay-trimming copy range and material-output tests pass.
+frame counters. The fork's preallocated packet adapter corrects the dependency's
+delay-trimming copy range; all consumer material-output cases now pass. The
+independent locked Redshank scope passes 261 tests, with seven physical-device
+fixtures ignored. Scoped playback Clippy passes, its normal tree excludes Bevy
+ECS, and Linux dependency inspection retains the existing ALSA prerequisite.
+An independent source review closes fallible node cleanup, stale episode/preview
+generation handling, integer source clock mapping and EOF drain findings. Actual
+output disconnect/retry remains a physical-device gate.

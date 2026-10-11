@@ -42,7 +42,7 @@ tempfile = "3"
 anyhow = "1"
 blake3 = "1"
 cpal = "0.17.3"
-firewheel = { version = "0.10", default-features = false, features = ["std", "cpal", "stream_nodes", "tracing"] }
+firewheel = { git = "https://github.com/mark-ik/firewheel", rev = "2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc", default-features = false, features = ["std", "cpal", "stream_nodes", "tracing"] }
 hound = "3.5"
 symphonia = { version = "0.5.5", default-features = false, features = ["aac", "isomp4", "mp3", "pcm", "wav"] }
 # The host's fetch handle: one HTTP policy (cookies, cache, HSTS, transport)
