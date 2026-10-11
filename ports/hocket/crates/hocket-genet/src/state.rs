@@ -1106,7 +1106,12 @@ impl AppState {
         self.apply_audio_device_selection();
         let (meter, phase, captured) = match &mut self.engine {
             Ok(engine) => {
-                let _ = engine.tick();
+                if let Err(error) = engine.tick() {
+                    self.audio_status = error.to_string();
+                    if matches!(engine.pending_capture_progress(), CapturePhase::Idle) {
+                        self.capturing_track = None;
+                    }
+                }
                 (
                     engine.peak_db(),
                     engine.pending_capture_progress(),
@@ -1152,11 +1157,15 @@ impl AppState {
                 let key = LayerKey::new(track_id, layer_index);
                 let clocked = self.session.master_clock_enabled;
                 if let Ok(engine) = &mut self.engine {
-                    let _ = if clocked {
+                    let result = if clocked {
                         engine.play_layer_at_next_bar(key, samples, 1.0, true)
                     } else {
                         engine.play_layer(key, samples, 1.0, true)
                     };
+                    if let Err(error) = result {
+                        self.audio_status = error.to_string();
+                        return;
+                    }
                 }
                 self.playing.push(key);
             }
@@ -1220,18 +1229,17 @@ impl AppState {
         if self.session.master_clock_enabled {
             let count_in = self.session.count_in_bars;
             if let Ok(engine) = &mut self.engine {
-                if engine
-                    .arm_bar_aligned_capture(self.session.bars_per_phrase, count_in)
-                    .is_ok()
-                {
-                    self.capturing_track = Some(armed);
+                match engine.arm_bar_aligned_capture(self.session.bars_per_phrase, count_in) {
+                    Ok(()) => self.capturing_track = Some(armed),
+                    Err(error) => self.audio_status = error.to_string(),
                 }
             }
         } else if matches!(self.capture_phase, CapturePhase::FreeRecording { .. }) {
             self.stop_capture();
         } else if let Ok(engine) = &mut self.engine {
-            if engine.start_free_capture().is_ok() {
-                self.capturing_track = Some(armed);
+            match engine.start_free_capture() {
+                Ok(()) => self.capturing_track = Some(armed),
+                Err(error) => self.audio_status = error.to_string(),
             }
         }
     }
@@ -1357,7 +1365,12 @@ impl AppState {
         let time_signature = self.session.time_signature;
         let click = self.click;
         if let Ok(engine) = &mut self.engine {
-            let _ = engine.set_tempo(bpm, time_signature.numerator, time_signature.denominator);
+            if let Err(error) =
+                engine.set_tempo(bpm, time_signature.numerator, time_signature.denominator)
+            {
+                self.audio_status = error.to_string();
+                return;
+            }
             engine.set_click_enabled(click);
         }
     }
@@ -1495,8 +1508,12 @@ impl AppState {
         let sample_rate = buf.sample_rate;
         let (gain, key) = (layer.gain, LayerKey::new(track.id, layer_idx as u16));
         if let Ok(engine) = &mut self.engine {
-            let _ =
-                engine.play_layer_at_next_bar_at_sample_rate(key, samples, sample_rate, gain, true);
+            if let Err(error) =
+                engine.play_layer_at_next_bar_at_sample_rate(key, samples, sample_rate, gain, true)
+            {
+                self.audio_status = error.to_string();
+                return;
+            }
         }
         if !self.playing.contains(&key) {
             self.playing.push(key);
