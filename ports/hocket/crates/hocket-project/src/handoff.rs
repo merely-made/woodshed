@@ -25,10 +25,10 @@
 
 use std::collections::{BTreeMap, BTreeSet};
 
+use hocket_model::{MediaRef, ProjectBundle, SessionId};
 use insigne::DerivedKeyAttestation;
 use personae::{Ed25519PublicKey, Ed25519Signature, IdentityProvider};
 use serde::{Deserialize, Serialize};
-use hocket_model::{MediaRef, ProjectBundle, SessionId};
 
 use crate::media::{InMemoryStore, MediaBuffer, MediaStore, hash_buffer};
 
@@ -90,6 +90,7 @@ pub enum HandoffError {
     InvalidSignature,
     SessionMismatch,
     SnapshotMismatch,
+    ConflictingPhrase(hocket_model::PhraseId),
     History(hocket_model::HistoryError),
     MissingMedia(BTreeSet<MediaRef>),
     MediaHashMismatch {
@@ -106,27 +107,30 @@ impl std::fmt::Display for HandoffError {
             Self::Identity(error) => write!(f, "handoff identity failed: {error}"),
             Self::UnsupportedVersion(version) => {
                 write!(f, "unsupported handoff format version {version}")
-            }
+            },
             Self::RecipientMismatch => f.write_str("handoff is addressed to another recipient"),
             Self::InvalidSender => f.write_str("handoff sender key is invalid"),
             Self::InvalidSenderAttestation => {
                 f.write_str("handoff sender key is not authorized by its durable identity")
-            }
+            },
             Self::InvalidSignature => f.write_str("handoff signature does not verify"),
             Self::SessionMismatch => f.write_str("handoff belongs to another session"),
             Self::SnapshotMismatch => {
                 f.write_str("handoff manifest does not match its history head")
-            }
+            },
+            Self::ConflictingPhrase(id) => {
+                write!(f, "handoff phrase {id} conflicts with local data")
+            },
             Self::History(error) => write!(f, "handoff history failed: {error}"),
             Self::MissingMedia(references) => {
                 write!(f, "handoff is missing {} media blob(s)", references.len())
-            }
+            },
             Self::MediaHashMismatch { expected, actual } => {
                 write!(
                     f,
                     "handoff media hash mismatch: expected {expected}, found {actual}"
                 )
-            }
+            },
         }
     }
 }
@@ -296,6 +300,8 @@ impl ReceivedHandoff {
     /// media validation all succeed. This chooses the incoming branch as active
     /// but preserves the prior local branch for later checkout; it does not
     /// synthesize a semantic merge of concurrent edits.
+    /// Both append-only phrase pools are retained, including captured phrases
+    /// on inactive branches. An existing phrase identity cannot change contents.
     pub fn accept_branch(
         self,
         local_bundle: &mut ProjectBundle,
@@ -304,12 +310,44 @@ impl ReceivedHandoff {
         if local_bundle.session.id != self.bundle.session.id {
             return Err(HandoffError::SessionMismatch);
         }
+        // Checkout changes active layers, but intentionally never removes
+        // captured phrases. Compare against the incoming snapshot with the
+        // retained local pool included, rather than requiring it to forget
+        // local captures the sender has not seen.
+        let mut expected_session = self.bundle.session.clone();
+        for (id, phrase) in &local_bundle.session.phrases {
+            if let Some(incoming) = expected_session.phrases.get(id) {
+                if incoming != phrase {
+                    return Err(HandoffError::ConflictingPhrase(*id));
+                }
+            } else {
+                expected_session.phrases.insert(*id, phrase.clone());
+            }
+        }
         let accepted_head = self.bundle.history.head;
         let mut history = local_bundle.history.clone();
         let integrated_nodes = history.integrate(&self.bundle.history)?;
         let mut session = local_bundle.session.clone();
         history.checkout(accepted_head, &mut session)?;
-        if session != self.bundle.session {
+        // Incoming captures on retained, inactive branches are not visited by
+        // checkout. Admit those immutable phrases only when the incoming pool
+        // matches its capture edits. Missing or changed historical phrases must
+        // still fail snapshot validation, even when the local pool has them.
+        for node in self.bundle.history.nodes.values() {
+            if let hocket_model::Edit::AppendLayer { phrase, .. } = &node.edit {
+                if self.bundle.session.phrases.get(&phrase.id) != Some(phrase) {
+                    return Err(HandoffError::SnapshotMismatch);
+                }
+                if let Some(existing) = session.phrases.get(&phrase.id) {
+                    if existing != phrase {
+                        return Err(HandoffError::ConflictingPhrase(phrase.id));
+                    }
+                } else {
+                    session.phrases.insert(phrase.id, phrase.clone());
+                }
+            }
+        }
+        if session != expected_session {
             return Err(HandoffError::SnapshotMismatch);
         }
         let mut media = local_media.clone();
@@ -367,8 +405,8 @@ fn referenced_media(bundle: &ProjectBundle) -> BTreeSet<MediaRef> {
 
 #[cfg(test)]
 mod tests {
-    use personae::{IdentityProvider, InMemoryProvider};
     use hocket_model::{Edit, History, Layer, Phrase, Session};
+    use personae::{IdentityProvider, InMemoryProvider};
 
     use super::*;
 
@@ -504,5 +542,184 @@ mod tests {
         assert_eq!(local_bundle.session, remote_bundle.session);
         assert!(local_bundle.history.nodes.contains_key(&remote_head));
         assert_eq!(local_media.len(), 2);
+    }
+
+    fn append_capture(
+        bundle: &mut ProjectBundle,
+        media: &mut InMemoryStore,
+        track: usize,
+        samples: &[f32],
+    ) {
+        let reference = media.put(samples, 48_000);
+        let phrase = Phrase::new(
+            reference,
+            bundle.session.bars_per_phrase,
+            bundle.session.bpm,
+            2,
+        );
+        let layer = Layer::new(phrase.id);
+        bundle.history.commit(
+            Edit::AppendLayer {
+                track_id: bundle.session.tracks[track].id,
+                phrase,
+                layer,
+            },
+            &mut bundle.session,
+            2,
+        );
+    }
+
+    fn divergent_captures() -> (ProjectBundle, InMemoryStore, ProjectBundle, InMemoryStore) {
+        let mut local_media = InMemoryStore::new();
+        let mut local = bundle_with_media(&mut local_media);
+        let mut incoming = local.clone();
+        let mut incoming_media = local_media.clone();
+        append_capture(&mut local, &mut local_media, 0, &[0.6, -0.2]);
+        append_capture(&mut incoming, &mut incoming_media, 1, &[-0.3, 0.8]);
+        (local, local_media, incoming, incoming_media)
+    }
+
+    fn receive_bundle(bundle: &ProjectBundle, media: &InMemoryStore) -> ReceivedHandoff {
+        let sender = InMemoryProvider::from_seed([1; 32]);
+        let recipient = InMemoryProvider::from_seed([2; 32]);
+        let envelope =
+            HandoffEnvelope::create(bundle, media, recipient.master_public_key(), &sender).unwrap();
+        HandoffEnvelope::from_bytes(&envelope.to_bytes().unwrap())
+            .unwrap()
+            .receive(recipient.master_public_key())
+            .unwrap()
+    }
+
+    #[test]
+    fn accepting_divergent_captures_retains_both_pools_and_local_checkout() {
+        let (mut local, mut local_media, incoming, incoming_media) = divergent_captures();
+        let before = local.clone();
+        let before_media = local_media.clone();
+        let local_head = local.history.head;
+        let report = receive_bundle(&incoming, &incoming_media)
+            .accept_branch(&mut local, &mut local_media)
+            .unwrap();
+
+        assert_eq!(report.accepted_head, incoming.history.head);
+        assert_eq!(report.integrated_nodes, 1);
+        assert_eq!(report.imported_media, 1);
+        assert_eq!(local.history.head, incoming.history.head);
+        assert_eq!(local.session.tracks, incoming.session.tracks);
+        assert_eq!(local.session.phrases.len(), 3);
+        assert_eq!(local_media.len(), 3);
+        for (bundle, media) in [(&before, &before_media), (&incoming, &incoming_media)] {
+            for (id, phrase) in &bundle.session.phrases {
+                assert_eq!(local.session.phrases.get(id), Some(phrase));
+                assert_eq!(local_media.get(&phrase.media), media.get(&phrase.media));
+            }
+            for (id, node) in &bundle.history.nodes {
+                assert_eq!(local.history.nodes.get(id), Some(node));
+            }
+        }
+
+        local
+            .history
+            .checkout(local_head, &mut local.session)
+            .unwrap();
+        assert_eq!(local.history.head, local_head);
+        assert_eq!(local.session.tracks, before.session.tracks);
+        assert_eq!(local.session.phrases.len(), 3);
+        assert_eq!(local_media.len(), 3);
+        assert!(local.history.nodes.contains_key(&incoming.history.head));
+    }
+
+    #[test]
+    fn acceptance_retains_incoming_captures_from_an_inactive_branch() {
+        let (mut local, mut local_media, mut incoming, mut incoming_media) = divergent_captures();
+        let retained_head = incoming.history.head;
+        assert!(incoming.history.undo(&mut incoming.session));
+        append_capture(&mut incoming, &mut incoming_media, 2, &[0.1, -0.7]);
+
+        receive_bundle(&incoming, &incoming_media)
+            .accept_branch(&mut local, &mut local_media)
+            .unwrap();
+        assert_eq!(local.session.tracks, incoming.session.tracks);
+        assert_eq!(local.session.phrases.len(), 4);
+        assert_eq!(local_media.len(), 4);
+        local
+            .history
+            .checkout(retained_head, &mut local.session)
+            .unwrap();
+        assert_eq!(local.session.tracks[1].layers.len(), 1);
+        assert!(local.session.tracks[2].layers.is_empty());
+        for phrase in incoming.session.phrases.values() {
+            assert_eq!(
+                local_media.get(&phrase.media),
+                incoming_media.get(&phrase.media)
+            );
+        }
+    }
+
+    #[test]
+    fn acceptance_rejects_malformed_snapshots_without_mutation() {
+        for case in [
+            "changed tempo",
+            "missing historical phrase",
+            "unrecorded phrase",
+        ] {
+            let (mut local, mut local_media, mut incoming, mut incoming_media) =
+                divergent_captures();
+            match case {
+                "changed tempo" => incoming.session.bpm += 1.0,
+                "missing historical phrase" => {
+                    let common = local.session.tracks[0].layers[0].phrase_id;
+                    incoming.session.phrases.remove(&common);
+                },
+                "unrecorded phrase" => {
+                    let media = incoming_media.put(&[0.9], 48_000);
+                    let phrase = Phrase::new(media, 4, 120.0, 3);
+                    incoming.session.phrases.insert(phrase.id, phrase);
+                },
+                _ => unreachable!(),
+            }
+            let before = local.clone();
+            let before_media = local_media.clone();
+            let result = receive_bundle(&incoming, &incoming_media)
+                .accept_branch(&mut local, &mut local_media);
+            assert!(
+                matches!(result, Err(HandoffError::SnapshotMismatch)),
+                "{case}: {result:?}"
+            );
+            assert_eq!(local, before, "{case}");
+            assert_eq!(local_media.len(), before_media.len(), "{case}");
+            for phrase in before.session.phrases.values() {
+                assert_eq!(
+                    local_media.get(&phrase.media),
+                    before_media.get(&phrase.media),
+                    "{case}"
+                );
+            }
+        }
+    }
+
+    #[test]
+    fn acceptance_rejects_conflicting_phrase_identity_without_mutation() {
+        let (mut local, mut local_media, mut incoming, incoming_media) = divergent_captures();
+        let common = local.session.tracks[0].layers[0].phrase_id;
+        incoming
+            .session
+            .phrases
+            .get_mut(&common)
+            .unwrap()
+            .captured_at_ms += 1;
+        let before = local.clone();
+        let before_media = local_media.clone();
+
+        let result =
+            receive_bundle(&incoming, &incoming_media).accept_branch(&mut local, &mut local_media);
+        assert!(matches!(result, Err(HandoffError::ConflictingPhrase(id)) if id == common));
+        assert_eq!(local, before);
+        assert_eq!(local_media.len(), before_media.len());
+        for phrase in before.session.phrases.values() {
+            assert_eq!(
+                local_media.get(&phrase.media),
+                before_media.get(&phrase.media)
+            );
+        }
     }
 }
