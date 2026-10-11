@@ -1,0 +1,233 @@
+    Blocking waiting for file lock on package cache
+    Updating git repository `https://github.com/mark-ik/firewheel.git`
+    Updating crates.io index
+warning: patch `ipc-channel v0.22.0 (https://github.com/merely-made/genet.git?rev=7422e90613f9017e5bb790e3acb48f61776b2eda#7422e906)` was not used in the crate graph
+warning: patch `p2panda-auth v0.7.1 (https://github.com/mark-ik/p2panda.git?tag=mere-p2panda-net-0.7.5#1bec457e)` was not used in the crate graph
+warning: patch `p2panda-stream v0.7.1 (https://github.com/mark-ik/p2panda.git?tag=mere-p2panda-net-0.7.5#1bec457e)` was not used in the crate graph
+help: Check that the patched package version and available features are compatible
+      with the dependency requirements. If the patch has a different version from
+      what is locked in the Cargo.lock file, run `cargo update` to use the new
+      version. This may also occur with an optional dependency that is not enabled.
+    Blocking waiting for file lock on package cache
+     Locking 37 packages to latest Rust 1.96 compatible versions
+      Adding audio-codec-algorithms v0.8.1
+      Adding audioadapter v5.0.0
+      Adding audioadapter-buffers v5.2.0
+      Adding audioadapter-sample v5.2.0
+    Updating bevy_ecs v0.18.1 -> v0.19.1
+      Adding bevy_ecs_macro_logic v0.19.1
+    Updating bevy_ecs_macros v0.18.1 -> v0.19.1
+    Updating bevy_macro_utils v0.18.1 -> v0.19.1
+    Updating bevy_platform v0.18.1 -> v0.19.1
+    Updating bevy_ptr v0.18.1 -> v0.19.1
+    Updating bevy_reflect v0.18.1 -> v0.19.1
+    Updating bevy_reflect_derive v0.18.1 -> v0.19.1
+    Updating bevy_tasks v0.18.1 -> v0.19.1
+    Updating bevy_utils v0.18.1 -> v0.19.1
+    Updating cpal v0.17.3 -> v0.18.2
+      Adding firewheel v0.14.0 (https://github.com/mark-ik/firewheel.git?rev=2a0a342da32a1d2eba7c73ede7424d93d76e420c#2a0a342d)
+      Adding firewheel-core v0.14.0 (https://github.com/mark-ik/firewheel.git?rev=2a0a342da32a1d2eba7c73ede7424d93d76e420c#2a0a342d)
+      Adding firewheel-cpal v0.14.0 (https://github.com/mark-ik/firewheel.git?rev=2a0a342da32a1d2eba7c73ede7424d93d76e420c#2a0a342d)
+      Adding firewheel-graph v0.14.0 (https://github.com/mark-ik/firewheel.git?rev=2a0a342da32a1d2eba7c73ede7424d93d76e420c#2a0a342d)
+      Adding firewheel-macros v0.14.0 (https://github.com/mark-ik/firewheel.git?rev=2a0a342da32a1d2eba7c73ede7424d93d76e420c#2a0a342d)
+      Adding firewheel-nodes v0.14.0 (https://github.com/mark-ik/firewheel.git?rev=2a0a342da32a1d2eba7c73ede7424d93d76e420c#2a0a342d)
+      Adding firewheel-rtaudio v0.14.0 (https://github.com/mark-ik/firewheel.git?rev=2a0a342da32a1d2eba7c73ede7424d93d76e420c#2a0a342d)
+      Adding firewheel-symphonium v0.14.0 (https://github.com/mark-ik/firewheel.git?rev=2a0a342da32a1d2eba7c73ede7424d93d76e420c#2a0a342d)
+    Updating fixed-resample v0.9.2 -> v0.13.0
+    Updating mach2 v0.5.0 -> v0.6.0
+      Adding regex-lite v0.1.9
+    Updating ringbuf v0.4.8 -> v0.5.3
+    Updating rubato v0.16.2 -> v5.0.1
+    Updating symphonia v0.5.5 -> v0.6.1
+    Updating symphonia-core v0.5.5 -> v0.6.1
+    Updating symphonia-metadata v0.5.5 -> v0.6.1
+    Updating symphonium v0.7.1 -> v0.13.0
+    Updating triple_buffer v8.1.1 -> v9.0.0
+      Adding visibility v0.1.1
+      Adding web-task v1.1.3
+    Updating wgpu-types v27.0.1 -> v29.0.4
+      Adding windowfunctions v0.1.1
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+   Compiling proc-macro2 v1.0.106
+   Compiling unicode-ident v1.0.24
+   Compiling quote v1.0.46
+   Compiling libc v0.2.186
+   Compiling syn v2.0.118
+   Compiling autocfg v1.5.1
+   Compiling num-traits v0.2.19
+   Compiling cfg-if v1.0.4
+   Compiling bitflags v2.13.0
+   Compiling getrandom v0.4.3
+   Compiling typenum v1.20.1
+   Compiling rand_core v0.10.1
+   Compiling hybrid-array v0.4.13
+   Compiling equivalent v1.0.2
+   Compiling objc2 v0.6.4
+   Compiling crypto-common v0.2.2
+   Compiling num-complex v0.4.6
+   Compiling objc2-encode v4.1.0
+   Compiling crossbeam-utils v0.8.22
+   Compiling arrayvec v0.7.8
+   Compiling portable-atomic v1.13.1
+   Compiling hashbrown v0.17.1
+   Compiling serde_core v1.0.228
+   Compiling winnow v1.0.4
+   Compiling toml_parser v1.1.2+spec-1.1.0
+   Compiling indexmap v2.14.0
+   Compiling block-buffer v0.12.1
+   Compiling smallvec v1.15.2
+   Compiling audio-codec-algorithms v0.8.1
+   Compiling portable-atomic-util v0.2.7
+   Compiling audioadapter-sample v5.2.0
+   Compiling num-integer v0.1.46
+   Compiling audioadapter v5.0.0
+   Compiling toml_datetime v1.1.1+spec-1.1.0
+   Compiling toml_edit v0.25.12+spec-1.1.0
+   Compiling audioadapter-buffers v5.2.0
+   Compiling zeroize_derive v1.5.0
+   Compiling serde v1.0.228
+   Compiling winnow v0.7.15
+   Compiling thiserror v2.0.18
+   Compiling toml_datetime v0.7.5+spec-1.1.0
+   Compiling find-msvc-tools v0.1.9
+   Compiling semver v1.0.28
+   Compiling shlex v2.0.1
+   Compiling strength_reduce v0.2.4
+   Compiling transpose v0.2.3
+   Compiling toml_edit v0.23.10+spec-1.0.0
+   Compiling cc v1.2.67
+   Compiling rustc_version v0.4.1
+   Compiling zeroize v1.9.0
+   Compiling ringbuf v0.5.3
+   Compiling bevy_macro_utils v0.19.1
+   Compiling primal-check v0.3.4
+   Compiling dispatch2 v0.3.1
+   Compiling block2 v0.6.2
+   Compiling hashbrown v0.16.1
+   Compiling serde_derive v1.0.228
+   Compiling thiserror-impl v2.0.18
+   Compiling zerocopy v0.8.54
+   Compiling foldhash v0.2.0
+   Compiling spin v0.10.1
+   Compiling once_cell v1.21.4
+   Compiling tracing-core v0.1.36
+   Compiling bevy_platform v0.19.1
+   Compiling objc2-core-foundation v0.3.2
+   Compiling firewheel-macros v0.14.0 (https://github.com/mark-ik/firewheel.git?rev=2a0a342da32a1d2eba7c73ede7424d93d76e420c#2a0a342d)
+   Compiling rustfft v6.4.1
+   Compiling blake3 v1.8.5
+   Compiling curve25519-dalek v5.0.0
+   Compiling digest v0.11.3
+   Compiling objc2-foundation v0.3.2
+   Compiling objc2-core-audio-types v0.3.2
+   Compiling inout v0.2.2
+   Compiling zerocopy-derive v0.8.54
+   Compiling tracing-attributes v0.1.31
+   Compiling thunderdome v0.6.1
+   Compiling cmov v0.5.4
+   Compiling bytemuck v1.25.1
+   Compiling lazy_static v1.5.0
+   Compiling pin-project-lite v0.2.17
+   Compiling log v0.4.33
+   Compiling tracing v0.1.44
+   Compiling symphonia-core v0.6.1
+   Compiling ctutils v0.4.2
+   Compiling firewheel-core v0.14.0 (https://github.com/mark-ik/firewheel.git?rev=2a0a342da32a1d2eba7c73ede7424d93d76e420c#2a0a342d)
+   Compiling objc2-core-audio v0.3.2
+   Compiling realfft v3.5.0
+   Compiling visibility v0.1.1
+   Compiling windowfunctions v0.1.1
+   Compiling cpufeatures v0.3.0
+   Compiling subtle v2.6.1
+   Compiling regex-lite v0.1.9
+   Compiling constant_time_eq v0.4.2
+   Compiling arrayref v0.3.9
+   Compiling signature v3.0.0
+   Compiling zmij v1.0.23
+   Compiling ed25519 v3.0.0
+   Compiling symphonia-metadata v0.6.1
+   Compiling sha2 v0.11.0
+   Compiling rubato v5.0.1
+   Compiling objc2-audio-toolbox v0.3.2
+   Compiling half v2.7.1
+   Compiling universal-hash v0.6.1
+   Compiling cipher v0.5.2
+   Compiling triple_buffer v9.0.0
+   Compiling serde_json v1.0.150
+   Compiling ciborium-io v0.2.2
+   Compiling thiserror v1.0.69
+   Compiling getrandom v0.3.4
+   Compiling cpal v0.18.2
+   Compiling ciborium-ll v0.2.2
+   Compiling chacha20 v0.10.1
+   Compiling coreaudio-rs v0.14.2
+   Compiling poly1305 v0.9.1
+   Compiling fixed-resample v0.13.0
+   Compiling ed25519-dalek v3.0.0
+   Compiling symphonia v0.6.1
+   Compiling aead v0.6.1
+   Compiling uuid v1.23.5
+   Compiling thiserror-impl v1.0.69
+   Compiling mach2 v0.6.0
+   Compiling dasp_sample v0.11.0
+   Compiling itoa v1.0.18
+   Compiling memchr v2.8.3
+   Compiling chacha20poly1305 v0.11.0
+   Compiling symphonium v0.13.0
+   Compiling insigne v0.0.1 (https://github.com/merely-made/dramatis.git?rev=c1d620764315b4c750fcffea30b8c898b8bb73bc#c1d62076)
+   Compiling ciborium v0.2.2
+   Compiling firewheel-graph v0.14.0 (https://github.com/mark-ik/firewheel.git?rev=2a0a342da32a1d2eba7c73ede7424d93d76e420c#2a0a342d)
+   Compiling async-trait v0.1.89
+   Compiling muniment v0.1.2 (https://github.com/merely-made/mere.git?rev=e95326dc08446a9256d3e340c63e571684afe697#e95326dc)
+   Compiling firewheel-cpal v0.14.0 (https://github.com/mark-ik/firewheel.git?rev=2a0a342da32a1d2eba7c73ede7424d93d76e420c#2a0a342d)
+   Compiling hocket-model v0.1.0 (/Users/markik/Code/worktrees/hocket-firewheel-f3-20261011/ports/hocket/crates/hocket-model)
+   Compiling personae v0.2.1 (https://github.com/merely-made/dramatis.git?rev=c1d620764315b4c750fcffea30b8c898b8bb73bc#c1d62076)
+   Compiling firewheel-symphonium v0.14.0 (https://github.com/mark-ik/firewheel.git?rev=2a0a342da32a1d2eba7c73ede7424d93d76e420c#2a0a342d)
+   Compiling firewheel-nodes v0.14.0 (https://github.com/mark-ik/firewheel.git?rev=2a0a342da32a1d2eba7c73ede7424d93d76e420c#2a0a342d)
+   Compiling wavicle v0.1.0 (https://github.com/merely-made/wavicle.git?branch=main#5e1b248e)
+   Compiling hound v3.5.1
+   Compiling audio-primitives v0.1.0 (/Users/markik/Code/worktrees/hocket-firewheel-f3-20261011/crates/audio-primitives)
+   Compiling hocket-project v0.1.0 (/Users/markik/Code/worktrees/hocket-firewheel-f3-20261011/ports/hocket/crates/hocket-project)
+   Compiling firewheel v0.14.0 (https://github.com/mark-ik/firewheel.git?rev=2a0a342da32a1d2eba7c73ede7424d93d76e420c#2a0a342d)
+   Compiling hocket-engine v0.1.0 (/Users/markik/Code/worktrees/hocket-firewheel-f3-20261011/ports/hocket/crates/hocket-engine)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 37.32s
+     Running unittests src/lib.rs (/Users/markik/Code/testing/hocket-firewheel-f3-20261011/target/debug/deps/hocket_engine-b00e8ea2e6f63e71)
+
+running 20 tests
+test capture::tests::rearm_clears_previous_buffer ... ok
+test capture::tests::feed_slice_batches_correctly ... ok
+test capture::tests::arm_then_feed_to_completion ... ok
+test capture::tests::new_capture_is_idle ... ok
+test capture::tests::cancel_returns_to_idle ... ok
+test capture::tests::progress_tracks_proportion ... ok
+test capture::tests::feed_in_idle_is_noop ... ok
+test click::tests::render_click_loop_honors_the_beat_unit ... ok
+test click::tests::render_click_loop_has_expected_length ... ok
+test click::tests::render_click_loop_is_silent_between_clicks ... ok
+test tests::invalid_device_ids_fall_back_to_system_defaults ... ok
+test click::tests::render_click_loop_starts_with_accent ... ok
+test tests::playback_speed_preserves_source_duration_across_device_rates ... ok
+test offline_tests::input_only_reader_captures_without_monitor_and_keeps_silence ... ok
+test offline_tests::reader_finish_drains_and_restart_discards_old_generation ... ok
+test offline_tests::stop_clears_capture_and_queued_replay ... ok
+test offline_tests::sampler_resource_events_restart_existing_voice_and_swap_click_in_place ... FAILED
+test offline_tests::count_in_waits_a_full_bar_then_captures_exact_phrase_length ... ok
+test offline_tests::queued_replay_waits_for_boundary_then_loops ... ok
+test offline_tests::reader_overflow_aborts_capture_and_next_capture_is_clean ... ok
+
+failures:
+
+---- offline_tests::sampler_resource_events_restart_existing_voice_and_swap_click_in_place stdout ----
+
+thread 'offline_tests::sampler_resource_events_restart_existing_voice_and_swap_click_in_place' (23754820) panicked at crates/hocket-engine/src/offline_tests.rs:90:5:
+expected stereo level -0.25, tail [-0.125, -0.125, -0.125, -0.125, -0.125, -0.125, -0.125, -0.125]
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    offline_tests::sampler_resource_events_restart_existing_voice_and_swap_click_in_place
+
+test result: FAILED. 19 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+error: test failed, to rerun pass `-p hocket-engine --lib`

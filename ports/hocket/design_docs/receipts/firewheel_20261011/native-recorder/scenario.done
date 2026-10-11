@@ -1,0 +1,7 @@
+RESULT ok
+captured recorder_initial
+captured recorder_controls
+capture recorder_initial 2360x1400 digest=7b9a12c18cb898d1 file=/Users/markik/Code/testing/hocket-firewheel-f3-20261011/native-recorder/recorder_initial.png
+capture recorder_controls 2360x1400 digest=4d22df7d37a726a0 file=/Users/markik/Code/testing/hocket-firewheel-f3-20261011/native-recorder/recorder_controls.png
+frames: 2 captured, 0 blank, 2 distinct digests
+presentation: 30 frames, 31 redraws, 1 unpresented redraws
