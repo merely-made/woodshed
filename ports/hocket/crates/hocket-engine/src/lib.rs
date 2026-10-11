@@ -492,6 +492,16 @@ impl Engine {
         self.sample_rate
     }
 
+    /// Whether the actual stream provides input to the live capture reader.
+    /// An output-only CPAL fallback is valid for playback, but cannot record.
+    pub fn input_available(&self) -> bool {
+        self.cx
+            .stream_info()
+            .is_some_and(|info| info.num_stream_in_channels > 0)
+            && self.reader_state.is_active()
+            && self.stream.as_ref().is_none_or(CpalStream::input_stream_ok)
+    }
+
     // --- Bar-aligned capture ---
 
     /// Arm a bar-aligned capture. After this call, the engine waits
@@ -509,6 +519,9 @@ impl Engine {
         bars: u8,
         count_in_bars: u8,
     ) -> Result<(), EngineError> {
+        if !self.input_available() {
+            return Err(EngineError::InputUnavailable);
+        }
         if !matches!(self.pending_capture, PendingCapture::Idle) {
             return Err(EngineError::Graph("capture already in progress".into()));
         }
@@ -543,6 +556,9 @@ impl Engine {
     /// mode (variable-length loops). Returns `Err` if a capture is
     /// already in progress.
     pub fn start_free_capture(&mut self) -> Result<(), EngineError> {
+        if !self.input_available() {
+            return Err(EngineError::InputUnavailable);
+        }
         if !matches!(self.pending_capture, PendingCapture::Idle) {
             return Err(EngineError::Graph("capture already in progress".into()));
         }
@@ -1044,6 +1060,7 @@ pub enum EngineError {
     Tick(String),
     /// Live input exceeded its bounded queue. An unfinished capture was aborted.
     InputOverflow(u64),
+    InputUnavailable,
     /// Voice pool is full — no idle voice could be allocated for a
     /// new `play_layer` call. Either `stop_layer` an existing one or
     /// raise `VOICE_POOL_SIZE`.
@@ -1060,6 +1077,7 @@ impl std::fmt::Display for EngineError {
                 f,
                 "input overflow: {frames} source frames rejected; unfinished capture aborted"
             ),
+            Self::InputUnavailable => write!(f, "audio input is unavailable"),
             Self::NoFreeVoices => write!(
                 f,
                 "voice pool exhausted (max {VOICE_POOL_SIZE} simultaneous layers)"
