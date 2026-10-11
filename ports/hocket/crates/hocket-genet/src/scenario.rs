@@ -9,6 +9,10 @@
 //! explicit appearance writes. Mesquite owns input text, retained clicks,
 //! resizing, captures, presentation evidence, completion and bounded waits.
 
+//! `HOCKET_PRESENTATION_TIMEOUT_SECS` optionally allows 10–60 seconds to
+//! bring a background acceptance window forward. The default is ten seconds;
+//! scenario progress still requires presented frames.
+
 use crate::{AppState, Child, Logic};
 use cambium_genet_winit_host::AppCtx;
 type Ctx<'a> = AppCtx<'a, AppState, Logic, Child>;
@@ -27,7 +31,14 @@ pub fn load() -> Option<Run> {
             },
             cambium_genet_winit_host::read_file,
         )
-        .expect("load Hocket scenario"),
+        .expect("load Hocket scenario")
+        .with_presentation_timeout(std::time::Duration::from_secs(
+            std::env::var("HOCKET_PRESENTATION_TIMEOUT_SECS")
+                .ok()
+                .and_then(|value| value.parse::<u64>().ok())
+                .unwrap_or(10)
+                .clamp(10, 60),
+        )),
     )
 }
 
