@@ -479,6 +479,26 @@ impl Snapshot<'_, '_> {
                 "preview-voices",
                 self.shared.backend.as_ref().map_or(0, |backend| backend.preview_voice_count()).to_string(),
             )
+            .with_field(
+                "output-streams",
+                self.shared.backend.as_ref().map_or(0, |backend| backend.output_stream_count()).to_string(),
+            )
+            .with_field(
+                "output-device-frames",
+                self.shared.backend.as_ref().and_then(|backend| backend.output_snapshot()).map_or(0, |snapshot| snapshot.device_frames).to_string(),
+            )
+            .with_field(
+                "output-processing-blocks",
+                self.shared.backend.as_ref().and_then(|backend| backend.output_snapshot()).map_or(0, |snapshot| snapshot.processing_blocks).to_string(),
+            )
+            .with_field(
+                "output-capture-invalid",
+                self.shared.backend.as_ref().and_then(|backend| backend.output_snapshot()).is_some_and(|snapshot| snapshot.capture_invalid).to_string(),
+            )
+            .with_field(
+                "output-click-playing",
+                self.shared.backend.as_ref().and_then(|backend| backend.output_snapshot()).is_some_and(|snapshot| snapshot.click_playing).to_string(),
+            )
             .with_field("song-bars", ui.song.bars.len().to_string())
             .with_field("song-playing", ui.song_playing.to_string())
             .with_field("song-live-bar", ui.song_bar_live.to_string())
@@ -1131,6 +1151,26 @@ impl Automatable for Probe<'_, '_> {
     }
 
     fn act(&mut self, label: &str) -> bool {
+        if label == "sample-output-clock" {
+            let Some(backend) = self.shared.backend.as_ref() else {
+                return false;
+            };
+            let Some(snapshot) = backend.output_snapshot() else {
+                return false;
+            };
+            let observation = format!(
+                "output-clock streams={} frames={} blocks={} click={} playing={} capture-invalid={}",
+                backend.output_stream_count(),
+                snapshot.device_frames,
+                snapshot.processing_blocks,
+                snapshot.click_playing,
+                snapshot.playing,
+                snapshot.capture_invalid,
+            );
+            eprintln!("{observation}");
+            self.shared.events.push(observation);
+            return true;
+        }
         if label == "reset-dispatch-sync-counts" {
             self.shared.view_only_dispatches = 0;
             self.shared.full_dispatch_syncs = 0;
