@@ -10,7 +10,7 @@
 //!     └──────────┘          └────────┘         └─────┘         └────────┘
 //! ```
 //!
-//! `T1 - T0` is the full round-trip the user perceives as "lag" between
+//! The intended measurement is `T1 - T0`, the round-trip perceived as "lag" between
 //! a metronome click and the moment their hit gets registered. Both
 //! the onset-timing-feedback widget and the loop recorder need this
 //! number to display anything honest:
@@ -21,6 +21,11 @@
 //!   the buffer one round-trip late; without compensation the loop
 //!   sounds noticeably behind on playback.
 //!
+//! The live session preserves the existing approximate control-time click
+//! anchor. Command dispatch, output callback scheduling, input callback
+//! timestamping, and physical propagation all contribute to the result;
+//! this is not a committed sample-clock calibration.
+//!
 //! # API shape
 //!
 //! Two layers:
@@ -29,7 +34,7 @@
 //!   expected click instants and detected onset instants, returns the
 //!   median latency. Trivially testable, no audio dependency.
 //! - [`CalibrationSession`] — drives a live calibration run. The UI
-//!   constructs one with the engine handles, calls [`Self::start`]
+//!   passes its click controls, calls [`CalibrationSession::start`]
 //!   when the user clicks "Calibrate," then polls [`Self::poll`]
 //!   each tick. When [`Self::poll`] returns a terminal
 //!   [`CalibrationOutcome`], the UI shows the result and lets the
@@ -43,14 +48,13 @@ use std::time::{Duration, Instant};
 
 use crate::onset::OnsetHandle;
 use crate::sequencer::{SequencerPattern, Subdivision, TimeSignature};
-use crate::EngineHandle;
 
 // Pure pairing / median-latency DSP (and the `MATCH_WINDOW` it keys
 // off) now lives in `audio_primitives::calibration`, shared with
 // Strophe. Re-exported so existing
 // `woodshed_audio::{estimate_latency_from_pairs, MATCH_WINDOW}` paths
 // resolve unchanged. The live session driver below builds on it.
-pub use audio_primitives::calibration::{count_matches, estimate_latency_from_pairs, MATCH_WINDOW};
+pub use audio_primitives::calibration::{MATCH_WINDOW, count_matches, estimate_latency_from_pairs};
 
 /// BPM the calibration metronome runs at. 60 BPM = one click per
 /// second — slow enough to leave plenty of "guard space" between
@@ -65,6 +69,18 @@ pub const CALIBRATION_CLICKS: usize = 6;
 // ============================================================
 // Session driver
 // ============================================================
+
+/// Click controls supplied by the application's one output runtime.
+///
+/// This is a control-thread seam; the session owns neither a stream nor a
+/// concrete engine. Expected instants retain the existing approximate
+/// control-time anchor, not a claim about physical callback/device timing.
+pub trait ClickControl {
+    type Error;
+    fn set_click_pattern(&mut self, pattern: SequencerPattern) -> Result<(), Self::Error>;
+    fn play_click(&mut self) -> Result<(), Self::Error>;
+    fn stop_click(&mut self) -> Result<(), Self::Error>;
+}
 
 /// Phase the calibration session is in.
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
@@ -119,8 +135,7 @@ pub enum CalibrationOutcome {
 /// the user has running.
 pub struct CalibrationSession {
     phase: CalibrationPhase,
-    /// Wall-clock time the run started (i.e., when the first click
-    /// was scheduled to play).
+    /// Control-thread wall-clock time immediately after requesting playback.
     start_at: Option<Instant>,
     /// Pre-computed expected instants for each click in the run.
     expected_clicks: Vec<Instant>,
@@ -171,34 +186,44 @@ impl CalibrationSession {
     /// The caller is responsible for ensuring the onset analyzer is
     /// enabled. The session enables it as a courtesy but the UI
     /// should leave it enabled until the run finishes.
-    pub fn start(&mut self, engine: &EngineHandle, onset: &OnsetHandle) {
-        onset.reset();
-        onset.set_enabled(true);
+    /// Rejected output commands return the control's error and leave no
+    /// running session or expected timing anchor.
+    pub fn start<C: ClickControl>(
+        &mut self,
+        engine: &mut C,
+        onset: &OnsetHandle,
+    ) -> Result<(), C::Error> {
+        self.phase = CalibrationPhase::Idle;
+        self.start_at = None;
+        self.expected_clicks.clear();
 
         let pattern =
             SequencerPattern::metronome(self.bpm, TimeSignature::new(4, 4), Subdivision::QUARTER);
-        engine.set_pattern(pattern);
-        engine.play();
+        engine.set_click_pattern(pattern)?;
+        engine.play_click()?;
+        onset.reset();
+        onset.set_enabled(true);
 
         let now = Instant::now();
         let secs_per_click = 60.0 / self.bpm;
-        // First click is "now-ish" — there's some output latency
-        // before it actually emerges, but that's exactly what we're
-        // trying to measure, so the expected instant is the schedule,
-        // not the actual emergence.
+        // Preserve the existing control-time latency policy. Dispatch and
+        // callback scheduling contribute to this approximation; it is not
+        // a committed output-sample anchor or physical clock measurement.
         self.expected_clicks = (0..self.total_clicks)
             .map(|i| now + Duration::from_secs_f32(secs_per_click * i as f32))
             .collect();
         self.start_at = Some(now);
         self.phase = CalibrationPhase::Running;
+        Ok(())
     }
 
     /// Cancel a running session without producing a result.
-    pub fn cancel(&mut self, engine: &EngineHandle) {
-        engine.stop();
+    pub fn cancel<C: ClickControl>(&mut self, engine: &mut C) -> Result<(), C::Error> {
+        let stopped = engine.stop_click();
         self.phase = CalibrationPhase::Idle;
         self.start_at = None;
         self.expected_clicks.clear();
+        stopped
     }
 
     /// Check progress. Call from a UI tick (~10-50 Hz is plenty —
@@ -210,12 +235,25 @@ impl CalibrationSession {
     /// - [`CalibrationOutcome::Success`] or
     ///   [`CalibrationOutcome::InsufficientPairs`] when the run is
     ///   over. The session transitions to [`CalibrationPhase::Finished`].
-    pub fn poll(&mut self, engine: &EngineHandle, onset: &OnsetHandle) -> CalibrationOutcome {
+    /// - An error if the click cannot stop; this never reports success.
+    pub fn poll<C: ClickControl>(
+        &mut self,
+        engine: &mut C,
+        onset: &OnsetHandle,
+    ) -> Result<CalibrationOutcome, C::Error> {
+        self.poll_at(engine, onset, Instant::now())
+    }
+
+    fn poll_at<C: ClickControl>(
+        &mut self,
+        engine: &mut C,
+        onset: &OnsetHandle,
+        now: Instant,
+    ) -> Result<CalibrationOutcome, C::Error> {
         if self.start_at.is_none() {
-            return CalibrationOutcome::EngineUnavailable;
+            return Ok(CalibrationOutcome::EngineUnavailable);
         }
 
-        let now = Instant::now();
         let clicks_fired = self.expected_clicks.iter().filter(|&&t| t <= now).count();
 
         // Give a settle window equal to the match window after the
@@ -228,31 +266,36 @@ impl CalibrationSession {
         let done = now >= final_click + MATCH_WINDOW;
 
         if !done {
-            return CalibrationOutcome::InProgress {
+            return Ok(CalibrationOutcome::InProgress {
                 clicks_fired,
                 total_clicks: self.total_clicks,
-            };
+            });
         }
 
         // Run is complete — stop the click and tally.
-        engine.stop();
         self.phase = CalibrationPhase::Finished;
+        if let Err(error) = engine.stop_click() {
+            self.start_at = None;
+            return Err(error);
+        }
 
         let snapshot = onset.snapshot();
         let onset_instants: Vec<Instant> = snapshot.recent.iter().map(|o| o.at).collect();
         // Require at least half the clicks to have matched.
         let minimum = self.total_clicks / 2;
-        match estimate_latency_from_pairs(&self.expected_clicks, &onset_instants, minimum) {
-            Some(latency) => CalibrationOutcome::Success {
-                latency,
-                matched_pairs: count_matches(&self.expected_clicks, &onset_instants),
-                total_clicks: self.total_clicks,
+        Ok(
+            match estimate_latency_from_pairs(&self.expected_clicks, &onset_instants, minimum) {
+                Some(latency) => CalibrationOutcome::Success {
+                    latency,
+                    matched_pairs: count_matches(&self.expected_clicks, &onset_instants),
+                    total_clicks: self.total_clicks,
+                },
+                None => CalibrationOutcome::InsufficientPairs {
+                    matched_pairs: count_matches(&self.expected_clicks, &onset_instants),
+                    total_clicks: self.total_clicks,
+                },
             },
-            None => CalibrationOutcome::InsufficientPairs {
-                matched_pairs: count_matches(&self.expected_clicks, &onset_instants),
-                total_clicks: self.total_clicks,
-            },
-        }
+        )
     }
 }
 
@@ -263,6 +306,124 @@ mod tests {
     // Pure pairing/median tests (estimate_latency_from_pairs,
     // count_matches) moved with the code to audio-primitives. What
     // remains here covers the session driver's own state machine.
+
+    #[derive(Default)]
+    struct FakeClick {
+        pattern: Option<SequencerPattern>,
+        plays: usize,
+        stops: usize,
+        fail_pattern: bool,
+        fail_play: bool,
+        fail_stop: bool,
+    }
+
+    impl ClickControl for FakeClick {
+        type Error = &'static str;
+        fn set_click_pattern(&mut self, pattern: SequencerPattern) -> Result<(), Self::Error> {
+            if self.fail_pattern {
+                return Err("pattern rejected");
+            }
+            self.pattern = Some(pattern);
+            Ok(())
+        }
+        fn play_click(&mut self) -> Result<(), Self::Error> {
+            if self.fail_play {
+                return Err("play rejected");
+            }
+            self.plays += 1;
+            Ok(())
+        }
+        fn stop_click(&mut self) -> Result<(), Self::Error> {
+            if self.fail_stop {
+                return Err("stop rejected");
+            }
+            self.stops += 1;
+            Ok(())
+        }
+    }
+
+    #[test]
+    fn fake_click_drives_start_completion_and_retry_without_engine() {
+        let mut click = FakeClick::default();
+        let onset = crate::onset::OnsetAnalyzer::new().handle();
+        let mut session = CalibrationSession::new()
+            .with_total_clicks(2)
+            .with_bpm(120.0);
+        assert!(matches!(
+            session.poll(&mut click, &onset).unwrap(),
+            CalibrationOutcome::EngineUnavailable
+        ));
+        session.start(&mut click, &onset).unwrap();
+        assert_eq!(session.phase(), CalibrationPhase::Running);
+        assert!(onset.is_enabled());
+        assert_eq!(click.plays, 1);
+        let pattern = click.pattern.as_ref().unwrap();
+        assert_eq!(pattern.bpm, 120.0);
+        assert_eq!(pattern.time_signature, TimeSignature::new(4, 4));
+        assert_eq!(pattern.subdivision, Subdivision::QUARTER);
+        let start = session.start_at.unwrap();
+        assert_eq!(
+            session.expected_clicks,
+            [start, start + Duration::from_millis(500)]
+        );
+        assert!(matches!(
+            session.poll_at(&mut click, &onset, start).unwrap(),
+            CalibrationOutcome::InProgress {
+                clicks_fired: 1,
+                total_clicks: 2
+            }
+        ));
+        let finish = *session.expected_clicks.last().unwrap() + MATCH_WINDOW;
+        assert!(matches!(
+            session.poll_at(&mut click, &onset, finish).unwrap(),
+            CalibrationOutcome::InsufficientPairs {
+                matched_pairs: 0,
+                total_clicks: 2
+            }
+        ));
+        assert_eq!(click.stops, 1);
+        assert_eq!(session.phase(), CalibrationPhase::Finished);
+        session.start(&mut click, &onset).unwrap();
+        assert_eq!(click.plays, 2);
+        assert_eq!(session.phase(), CalibrationPhase::Running);
+        session.cancel(&mut click).unwrap();
+        assert_eq!(click.stops, 2);
+        assert_eq!(session.phase(), CalibrationPhase::Idle);
+        assert!(session.expected_clicks.is_empty());
+        assert!(session.start_at.is_none());
+    }
+
+    #[test]
+    fn rejected_click_commands_cannot_start_or_complete_calibration() {
+        let onset = crate::onset::OnsetAnalyzer::new().handle();
+        let mut session = CalibrationSession::new().with_total_clicks(2);
+        let mut click = FakeClick {
+            fail_pattern: true,
+            ..FakeClick::default()
+        };
+        assert_eq!(session.start(&mut click, &onset), Err("pattern rejected"));
+        assert_eq!(session.phase(), CalibrationPhase::Idle);
+        assert!(!onset.is_enabled());
+        assert!(session.start_at.is_none());
+        click.fail_pattern = false;
+        click.fail_play = true;
+        assert_eq!(session.start(&mut click, &onset), Err("play rejected"));
+        assert_eq!(session.phase(), CalibrationPhase::Idle);
+        assert!(!onset.is_enabled());
+        assert!(session.expected_clicks.is_empty());
+        click.fail_play = false;
+        session.start(&mut click, &onset).unwrap();
+        click.fail_stop = true;
+        let finish = *session.expected_clicks.last().unwrap() + MATCH_WINDOW;
+        assert!(matches!(
+            session.poll_at(&mut click, &onset, finish),
+            Err("stop rejected")
+        ));
+        assert_eq!(session.phase(), CalibrationPhase::Finished);
+        assert!(session.start_at.is_none());
+        assert_eq!(session.cancel(&mut click), Err("stop rejected"));
+        assert_eq!(session.phase(), CalibrationPhase::Idle);
+    }
 
     #[test]
     fn session_starts_idle() {
