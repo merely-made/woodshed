@@ -37,7 +37,7 @@
     ]
   },
   "native_device_status": "passed three muted CPAL processes at frozen source; zero status events, one output stream each",
-  "native_gui_status": "pending foreground handoff",
+  "native_gui_status": "qualified bounded macOS replay: five processes, two fresh-process reopen pairs, 791 presented frames, 16 reviewed captures",
   "limits": [
     "Capture requires equal nonzero nominal input/output rates; hardware clocks are not synchronized.",
     "Physical capture quality and sample-accurate acoustic calibration are unqualified.",
@@ -73,5 +73,14 @@
     "Graph processing blocks are not exact CPAL callbacks or callback-gap measurements.",
     "Preview trial phase labels denote request order; all three use the same pitches/duration. Song edited phase changes pitches and tempo.",
     "Concurrent system workload was not controlled."
-  ]
+  ],
+  "native_gui_receipt": "gui/receipt.json",
+  "native_gui": {
+    "processes": 5,
+    "fresh_process_reopen_pairs": 2,
+    "presented_frames": 791,
+    "reviewed_nonblank_full_captures": 16,
+    "unopened_input_checkpoints": 17,
+    "metronome_clock_validation": "passed five monotonic samples with one stream and stopped/playing/stopped/restarted/stopped click states"
+  }
 }

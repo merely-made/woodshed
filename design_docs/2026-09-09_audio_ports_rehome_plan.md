@@ -170,13 +170,14 @@ native capture, or fresh-process reopen acceptance.
 
 ### F4. Consolidate Woodshed product execution
 
-**Single-output runtime status (2026-10-11): IMPLEMENTED.** From refreshed
+**Single-output runtime status (2026-10-11): IMPLEMENTED AND QUALIFIED.** From refreshed
 `48d4e5a`, the root now uses one Firewheel context and CPAL output stream for
 click, preview and backing. At frozen source `4a4aba4`, 144 audio and 29 focused
 desktop checks pass; three muted device processes each prove one output stream,
-frame progress and zero observed CPAL status events. The Woodshed agent has
-prepared GUI seed/reopen and stop/restart fixtures against exact binary hashes;
-their qualification waits for the shared foreground handoff. See the
+frame progress and zero observed CPAL status events. Five GUI seed/reopen and
+stop/restart processes pass with 791 presentations and 16 reviewed full
+captures; 17 checkpoints preserve unopened input and one output stream.
+Physical capture and full P7 remain open. See the
 [P7 implementation record](2026-07-11_stage_set_tools_plan.md#october-11-follow-up-single-output-runtime).
 
 Follow [P7](2026-07-11_stage_set_tools_plan.md#p7-rebuild-song-as-looper-over-set)
@@ -393,3 +394,14 @@ product's existing recording/Turnstone gates.
   hashes and scope are recorded in the [runtime receipt](../validation/output-runtime_20261011/receipt.json).
   The prepared GUI seed/reopen and metronome stop/restart runs still await the
   shared foreground handoff; full P7 and durable PCM remain open.
+- **2026-10-11:** After Knot completes its native work and exits the acceptance
+  apps, the root's five frozen GUI fixtures pass without further product-source
+  edits. Set and retained preview/rehearsal fresh-process reopening, exact saved
+  compatibility backing, bounded Hear/cancellation and click stop/restart are
+  qualified with 791 presentations and 16 reviewed captures. One output stream
+  and unopened input hold at all 17 checkpoints, and five coherent metronome
+  clock samples advance strictly through both stop/restart transitions. The
+  [native receipt](../validation/output-runtime_20261011/gui/receipt.json)
+  preserves source/binary/scenario hashes, logs, presentation counts, capture
+  hashes and native-control limits. The one-output runtime slice is qualified;
+  physical capture, acoustic calibration, durable PCM and full P7 remain open.
