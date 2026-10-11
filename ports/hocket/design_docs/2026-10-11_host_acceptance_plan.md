@@ -1,6 +1,6 @@
 # Hocket host acceptance and manual audio demonstration
 
-**Status (2026-10-11): in progress.** Tightens the existing Mesquite scenario
+**Status (2026-10-11): landed on the isolated host lane.** Tightens the existing Mesquite scenario
 integration after the accepted Tabard appearance lane. This is the Hocket host
 slice of Woodshed's October 11 audio-family consolidation. Firewheel API
 adoption, session model changes, updater selection and portable project-core
@@ -113,3 +113,12 @@ these device-free proofs.
   change removes exactly three unused member edges without repinning the
   renderer or audio family. Native committed-source seed/reopen and recorder
   control qualification is next; actual audio hardware remains unqualified.
+- **2026-10-11:** H3 qualifies source `9dc042f` through five owned finite
+  LaunchServices processes, 178 presented frames and 19 reviewed nonblank
+  original captures. Tabard seed/four-mode/narrow and same-identity flows pass;
+  two fresh processes restore the blue and then brown installed appearance.
+  Retained recorder controls pass add/arm/mute/solo/tempo/clock/Stop assertions.
+  The device-free Record refusal remains honest. The
+  [exact receipt](receipts/host_acceptance_20261011/README.md) retains the
+  pre-fix close reproduction, successful CPU/build logs, source/binary hashes,
+  launcher outcomes, original captures and actual qualification limits.
