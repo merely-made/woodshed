@@ -1,0 +1,58 @@
+{
+  "version": 1,
+  "themes": [
+    {
+      "id": "theme:copy-1",
+      "name": "HocketAcceptance",
+      "source": "User",
+      "seeds": {
+        "primary": {
+          "r": 51,
+          "g": 102,
+          "b": 200,
+          "a": 255
+        },
+        "secondary": {
+          "r": 46,
+          "g": 157,
+          "b": 166,
+          "a": 255
+        },
+        "tertiary": {
+          "r": 224,
+          "g": 168,
+          "b": 70,
+          "a": 255
+        },
+        "neutral": {
+          "r": 16,
+          "g": 20,
+          "b": 34,
+          "a": 255
+        },
+        "text_header": null,
+        "text_body": null,
+        "success": {
+          "r": 79,
+          "g": 179,
+          "b": 110,
+          "a": 255
+        },
+        "danger": {
+          "r": 213,
+          "g": 78,
+          "b": 78,
+          "a": 255
+        },
+        "dark": true
+      },
+      "high_contrast": false,
+      "harmony": "Custom",
+      "mode_sheets": {
+        "dark": [
+          ":root{--tabard-color-bg:#342214;--tabard-color-surface:#49321b;--tabard-color-surface-2:#5e4324;--tabard-color-surface-hover:#7c5731;--tabard-color-text:#fff2ea;--tabard-color-text-dim:#e4ceb6;--tabard-color-text-disabled:#ba9e87;--tabard-color-text-header:#fff2ea;--tabard-color-primary:#e4ceb6;--tabard-color-on-primary:#142238;--tabard-syntax-link:#e4ceb6;--tabard-syntax-emphasis:#fff2ea;--tabard-syntax-keyword:#e4ceb6;--tabard-syntax-string:#fff2ea;--tabard-syntax-number:#e4ceb6;}"
+        ]
+      }
+    }
+  ]
+}

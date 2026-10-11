@@ -1,0 +1,37 @@
+[
+  {
+    "args": [],
+    "exit": 0,
+    "expected_exit": 0,
+    "stdout": "hocket-headless \u2014 manual audio-device demonstration\nUsage: hocket-headless --run\nhocket-headless --help\n\n--run opens the default microphone and speakers for about 12 seconds.\nTurn the speakers down and use headphones to avoid feedback.\nSuccess means capture completed and replay was queued without engine errors.\nAudibility, calibration and musical timing require a person's review.\nMissing hardware or incomplete execution exits unsuccessfully; no CI skip.\n",
+    "stderr": ""
+  },
+  {
+    "args": [
+      "--help"
+    ],
+    "exit": 0,
+    "expected_exit": 0,
+    "stdout": "hocket-headless \u2014 manual audio-device demonstration\nUsage: hocket-headless --run\nhocket-headless --help\n\n--run opens the default microphone and speakers for about 12 seconds.\nTurn the speakers down and use headphones to avoid feedback.\nSuccess means capture completed and replay was queued without engine errors.\nAudibility, calibration and musical timing require a person's review.\nMissing hardware or incomplete execution exits unsuccessfully; no CI skip.\n",
+    "stderr": ""
+  },
+  {
+    "args": [
+      "--ci"
+    ],
+    "exit": 2,
+    "expected_exit": 2,
+    "stdout": "",
+    "stderr": "expected --run or --help\nhocket-headless \u2014 manual audio-device demonstration\nUsage: hocket-headless --run\nhocket-headless --help\n\n--run opens the default microphone and speakers for about 12 seconds.\nTurn the speakers down and use headphones to avoid feedback.\nSuccess means capture completed and replay was queued without engine errors.\nAudibility, calibration and musical timing require a person's review.\nMissing hardware or incomplete execution exits unsuccessfully; no CI skip.\n\n"
+  },
+  {
+    "args": [
+      "--run",
+      "--help"
+    ],
+    "exit": 2,
+    "expected_exit": 2,
+    "stdout": "",
+    "stderr": "expected --run or --help\nhocket-headless \u2014 manual audio-device demonstration\nUsage: hocket-headless --run\nhocket-headless --help\n\n--run opens the default microphone and speakers for about 12 seconds.\nTurn the speakers down and use headphones to avoid feedback.\nSuccess means capture completed and replay was queued without engine errors.\nAudibility, calibration and musical timing require a person's review.\nMissing hardware or incomplete execution exits unsuccessfully; no CI skip.\n\n"
+  }
+]

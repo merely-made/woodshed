@@ -1,0 +1,104 @@
+warning: patch `ipc-channel v0.22.0 (https://github.com/merely-made/genet.git?rev=7422e90613f9017e5bb790e3acb48f61776b2eda#7422e906)` was not used in the crate graph
+warning: patch `p2panda-auth v0.7.1 (https://github.com/mark-ik/p2panda.git?tag=mere-p2panda-net-0.7.5#1bec457e)` was not used in the crate graph
+warning: patch `p2panda-stream v0.7.1 (https://github.com/mark-ik/p2panda.git?tag=mere-p2panda-net-0.7.5#1bec457e)` was not used in the crate graph
+help: Check that the patched package version and available features are compatible
+      with the dependency requirements. If the patch has a different version from
+      what is locked in the Cargo.lock file, run `cargo update` to use the new
+      version. This may also occur with an optional dependency that is not enabled.
+   Compiling hocket-genet v0.2.0 (/Users/markik/Code/worktrees/hocket-host-f1-20261011/ports/hocket/crates/hocket-genet)
+warning: method `path` is never used
+   --> crates/hocket-genet/src/update.rs:184:12
+    |
+153 | impl UpdateSettingsProvider {
+    | --------------------------- method in this implementation
+...
+184 |     pub fn path(&self) -> &Path {
+    |            ^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `hocket-genet` (bin "hocket-genet" test) generated 1 warning
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 8.38s
+     Running unittests src/main.rs (/Users/markik/Code/testing/hocket-host-f1-20261011/target/debug/deps/hocket_genet-1e3834bc9c9b08c3)
+
+running 69 tests
+test appearance::tests::corrupt_library_and_preferences_remain_intact_and_block_writes ... ok
+test appearance::tests::library_and_choice_paths_cannot_share_a_file ... ok
+test appearance::tests::missing_choice_and_library_files_cannot_alias_through_a_parent_symlink ... ok
+test appearance::tests::external_library_change_blocks_unsaved_theme_application ... ok
+test appearance::tests::exports_protect_selection_settings_and_private_data_before_replace ... ok
+test appearance::tests::missing_preferences_keep_warm_default_without_writing_files ... ok
+test appearance::tests::failed_choice_write_does_not_install_candidate_or_change_the_previous_choice ... ok
+test appearance::tests::appearance_stores_cannot_replace_application_files_or_nested_aliases ... ok
+test appearance::tests::all_canonical_modes_use_shared_roles_without_erasing_recording_semantics ... ok
+test identity::dr_c_receipts::dr_c_hocket_identity_stays_pending ... ignored, run mere/scripts/dr_c_receipts.py against the isolated receipt keeper
+test identity::tests::a_pending_identity_names_why ... ok
+test identity::tests::contact_token_round_trips_and_rejects_malformed ... ok
+test identity::tests::every_home_says_which_situation_the_user_is_in ... ok
+test leaves::tests::model_identity_produces_stable_distinct_leaf_keys ... ok
+test leaves::tests::silent_waveform_paints_a_center_line ... ok
+test leaves::tests::unchanged_waveform_signature_produces_zero_repaints ... ok
+test project_io::tests::reading_a_handoff_for_another_recipient_fails_without_panicking ... ok
+test project_io::tests::worker_exports_audible_mix_to_wav ... ok
+test appearance::tests::save_is_separate_from_apply_and_same_id_changes_hold_the_applied_snapshot ... ok
+test project_io::tests::worker_writes_then_reads_a_self_addressed_handoff ... ok
+test project_io::tests::worker_saves_then_opens_a_project ... ok
+test appearance::tests::missing_theme_request_survives_fallback_and_custom_mode_keeps_exact_css ... ok
+test scenario::tests::existing_and_appearance_scenarios_parse_without_a_product_grammar_fork ... ok
+test appearance::tests::hocket_warm_modes_keep_the_product_identity_and_restore_each_mode ... ok
+test scenario::tests::native_close_defers_until_requested_pixels_land_and_records_interruption ... ok
+test state::tests::device_options_reserve_zero_for_the_system_default ... ok
+test state::tests::meter_db_normalization_has_an_explicit_floor ... ok
+test update::cli::tests::a_failed_check_exits_nonzero ... ok
+test update::cli::tests::an_uninstalled_build_exits_nonzero ... ok
+test update::cli::tests::automatic_downloads_and_applies ... ok
+test update::cli::tests::notify_only_reports_without_fetching ... ok
+test update::cli::tests::policy_off_does_not_even_check ... ok
+test update::cli::tests::up_to_date_exits_zero_without_applying ... ok
+test update::luggage_transport::tests::a_cargo_build_is_not_an_installed_build ... ok
+test update::luggage_transport::tests::apply_without_staged_bytes_is_refused ... ok
+test update::luggage_transport::tests::download_without_a_check_is_refused ... ok
+test update::luggage_transport::tests::feed_and_pubkey_on_an_installed_build_is_available ... ok
+test update::luggage_transport::tests::missing_feed_or_pubkey_means_no_transport ... ok
+test update::tests::a_dev_build_reports_why_it_cannot_update ... ok
+test update::tests::device_provider_describes_and_persists_update_settings ... ok
+test update::tests::downloading_policies_download ... ok
+test update::tests::even_automatic_stages_rather_than_restarting_under_the_user ... ok
+test update::tests::notify_only_asks_and_never_downloads ... ok
+test update::tests::off_never_acts_even_on_a_found_update ... ok
+test update::tests::only_states_worth_acting_on_offer_an_action ... ok
+test update::tests::policy_is_four_behaviours_not_a_boolean ... ok
+test update::tests::policy_round_trips_through_its_persisted_form ... ok
+test update::tests::status_summaries_never_claim_motion_that_is_not_happening ... ok
+test update::tests::up_to_date_rests_under_every_policy ... ok
+test update::velopack_transport::tests::a_test_binary_is_not_an_installed_build ... ok
+test update::velopack_transport::tests::an_installed_build_without_a_feed_has_no_transport ... ok
+test update::velopack_transport::tests::current_version_is_the_built_version ... ok
+test update::velopack_transport::tests::installed_with_a_feed_is_available ... ok
+test update::worker::tests::a_failed_check_keeps_its_reason ... ok
+test update::worker::tests::a_failed_download_keeps_its_reason ... ok
+test update::worker::tests::an_uninstalled_build_reports_unsupported_for_any_command ... ok
+test update::worker::tests::an_up_to_date_check_says_so_rather_than_going_quiet ... ok
+test update::worker::tests::automatic_downloads_and_stages_but_does_not_restart ... ok
+test update::worker::tests::notify_only_reports_availability_without_downloading ... ok
+test update::worker::tests::policy_off_reports_disabled_and_never_checks ... ok
+test scenario::tests::readback_failure_is_a_failed_receipt_without_a_completed_capture ... ok
+test scenario::tests::cancelling_dirty_close_keeps_the_scenario_running ... ok
+test appearance_tests::save_confirmation_on_native_close_saves_definition_without_applying_it ... ok
+test scenario::tests::appearance_save_close_finishes_an_interrupted_scenario_before_exit ... ok
+test appearance_tests::cancelled_native_close_then_embedded_discard_does_not_exit_hocket ... ok
+test appearance_tests::shared_workshop_text_dispatch_preserves_recorder_and_applies_only_on_request ... ok
+test appearance_tests::shared_fields_keep_usable_height_and_titlebar_controls_stay_inside_the_viewport ... ok
+test appearance_tests::canonical_mode_changes_preserve_the_visible_record_dot ... ok
+test appearance_tests::saved_same_identity_reopens_for_apply_without_changing_installed_appearance ... ok
+
+test result: ok. 68 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 40.18s
+
+     Running unittests src/main.rs (/Users/markik/Code/testing/hocket-host-f1-20261011/target/debug/deps/hocket_headless-8f0fc63f6c7c064c)
+
+running 2 tests
+test tests::only_explicit_run_opens_the_hardware_demonstration ... ok
+test tests::unavailable_audio_is_an_execution_failure_not_a_successful_skip ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

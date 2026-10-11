@@ -1,0 +1,297 @@
+{
+  "source_commit": "9dc042f03d862ac71cf53d9a144f26e22d16d1a0",
+  "tests": {
+    "desktop_passed": 68,
+    "desktop_ignored": 1,
+    "manual_passed": 2,
+    "device_free_cli_executions": 4
+  },
+  "native_cases": [
+    {
+      "name": "native-seed",
+      "process": {
+        "launch_method": "LaunchServices temporary application bundle",
+        "launcher_exit": 0,
+        "timeout": false,
+        "success": true,
+        "elapsed_seconds": 19.115,
+        "binary_sha256": "b070337242d37e0b8576962353b9a41226ed37edb76b43bad0fd5c6ac2f402c5",
+        "scenario_sha256": "5cbbf5ca9ddb9f8d9a967d85f61ac48f6586edf6a66af296e7670793d32a6fd7",
+        "receipt": "scenario.done",
+        "captures": 9
+      },
+      "presentations": 80,
+      "redraws": 81,
+      "unpresented_redraws": 1,
+      "captures": [
+        {
+          "path": "native-seed/recorder_applied.png",
+          "size": [
+            2360,
+            1400
+          ],
+          "sha256": "560070b801541419341ea46705ac893bdd25e0e326174c3433fb761ee6ac15ed",
+          "visually_reviewed": true
+        },
+        {
+          "path": "native-seed/recorder_dark.png",
+          "size": [
+            2360,
+            1400
+          ],
+          "sha256": "2e62203c16f50483e3f292b0798bffeb5f5291984c703398114a8c8dda01df87",
+          "visually_reviewed": true
+        },
+        {
+          "path": "native-seed/recorder_default.png",
+          "size": [
+            2360,
+            1400
+          ],
+          "sha256": "4b2e6875e86c062ae001efac9db566d8d58da302db19a07c5763a06aa9829fe9",
+          "visually_reviewed": true
+        },
+        {
+          "path": "native-seed/recorder_final.png",
+          "size": [
+            2360,
+            1400
+          ],
+          "sha256": "64ac7bfdd53d76c58b6da7554004c6c3050985ed3aa178175ceee1537400407b",
+          "visually_reviewed": true
+        },
+        {
+          "path": "native-seed/recorder_hc_dark.png",
+          "size": [
+            2360,
+            1400
+          ],
+          "sha256": "ab74d436329373a147cd5f2959e71bd13eced947fdc33ac958ce3bcfddbf3fe8",
+          "visually_reviewed": true
+        },
+        {
+          "path": "native-seed/recorder_hc_light.png",
+          "size": [
+            2360,
+            1400
+          ],
+          "sha256": "ea797f39ebd2245f0a7f3067639780a152d0142de16ebc4bab71709eb3d6f9a7",
+          "visually_reviewed": true
+        },
+        {
+          "path": "native-seed/recorder_light.png",
+          "size": [
+            2360,
+            1400
+          ],
+          "sha256": "8504e9164673c870f162a9bfe9141f8afdf9f21fa262a2cc9a053d48a44d99bc",
+          "visually_reviewed": true
+        },
+        {
+          "path": "native-seed/workshop_narrow.png",
+          "size": [
+            840,
+            2000
+          ],
+          "sha256": "3f7da6929d076df133a6b14c545922745cb458bace527451a8ed0608a13cbfdd",
+          "visually_reviewed": true
+        },
+        {
+          "path": "native-seed/workshop_saved.png",
+          "size": [
+            2360,
+            1400
+          ],
+          "sha256": "e2f0e1dd94de2e9831704afbef3a583423cb8ba5a472a2f40ec682fe6b06d347",
+          "visually_reviewed": true
+        }
+      ]
+    },
+    {
+      "name": "native-reopen",
+      "process": {
+        "launch_method": "LaunchServices temporary application bundle",
+        "launcher_exit": 0,
+        "timeout": false,
+        "success": true,
+        "elapsed_seconds": 5.962,
+        "binary_sha256": "b070337242d37e0b8576962353b9a41226ed37edb76b43bad0fd5c6ac2f402c5",
+        "scenario_sha256": "fb770b3962552ee36249092db0f59efa9c1ca1198c8954267d2c41f92b8529a0",
+        "receipt": "scenario.done",
+        "captures": 2
+      },
+      "presentations": 13,
+      "redraws": 15,
+      "unpresented_redraws": 2,
+      "captures": [
+        {
+          "path": "native-reopen/appearance_reopened.png",
+          "size": [
+            2360,
+            1400
+          ],
+          "sha256": "f9d5f9c63a54e4d743684c5b18f9cd9e2865e723d5b108e13eb2f11f113eee8d",
+          "visually_reviewed": true
+        },
+        {
+          "path": "native-reopen/recorder_reopened.png",
+          "size": [
+            2360,
+            1400
+          ],
+          "sha256": "3eae8dfe160fef8556407b1b53753ba91a4d11c989520e2fd7da69644910bde7",
+          "visually_reviewed": true
+        }
+      ]
+    },
+    {
+      "name": "native-same-id",
+      "process": {
+        "launch_method": "LaunchServices temporary application bundle",
+        "launcher_exit": 0,
+        "timeout": false,
+        "success": true,
+        "elapsed_seconds": 15.35,
+        "binary_sha256": "b070337242d37e0b8576962353b9a41226ed37edb76b43bad0fd5c6ac2f402c5",
+        "scenario_sha256": "01afa701c4be69b21a93caeebbce3d8636a0e90ebe6c3b46314a12aac1ecb9bf",
+        "receipt": "scenario.done",
+        "captures": 4
+      },
+      "presentations": 43,
+      "redraws": 45,
+      "unpresented_redraws": 2,
+      "captures": [
+        {
+          "path": "native-same-id/recorder_after_apply.png",
+          "size": [
+            2360,
+            1400
+          ],
+          "sha256": "7e9f3f00a7cb3534372491de27883288221cba1788a65c4c25dfaad7663b988f",
+          "visually_reviewed": true
+        },
+        {
+          "path": "native-same-id/recorder_after_save.png",
+          "size": [
+            2360,
+            1400
+          ],
+          "sha256": "9b637c9a5c9ae6ec777279ade0b12a1520c7e87a893dcc3f59ac419178538afc",
+          "visually_reviewed": true
+        },
+        {
+          "path": "native-same-id/recorder_before_edit.png",
+          "size": [
+            2360,
+            1400
+          ],
+          "sha256": "549246ce5fd10f6cffa7025bcfcd7c45cefc4f8fc2c26b58cf3e48c0656d60f1",
+          "visually_reviewed": true
+        },
+        {
+          "path": "native-same-id/workshop_same_id_saved.png",
+          "size": [
+            2360,
+            1400
+          ],
+          "sha256": "d7d5883ef5317d1f661435ec75559e13f614724f0a38f0c0c3f6a3ce992e5ece",
+          "visually_reviewed": true
+        }
+      ]
+    },
+    {
+      "name": "native-reopen-brown",
+      "process": {
+        "launch_method": "LaunchServices temporary application bundle",
+        "launcher_exit": 0,
+        "timeout": false,
+        "success": true,
+        "elapsed_seconds": 5.131,
+        "binary_sha256": "b070337242d37e0b8576962353b9a41226ed37edb76b43bad0fd5c6ac2f402c5",
+        "scenario_sha256": "fb770b3962552ee36249092db0f59efa9c1ca1198c8954267d2c41f92b8529a0",
+        "receipt": "scenario.done",
+        "captures": 2
+      },
+      "presentations": 13,
+      "redraws": 14,
+      "unpresented_redraws": 1,
+      "captures": [
+        {
+          "path": "native-reopen-brown/appearance_reopened.png",
+          "size": [
+            2360,
+            1400
+          ],
+          "sha256": "5ed0211ef05fa05ae74630b61216ddd2d92aad163c1fc666d3023eae33afe116",
+          "visually_reviewed": true
+        },
+        {
+          "path": "native-reopen-brown/recorder_reopened.png",
+          "size": [
+            2360,
+            1400
+          ],
+          "sha256": "8ab9d1d419fdfbc4ce81e875b3212a47848f7090729a74a0008caa209dd61f89",
+          "visually_reviewed": true
+        }
+      ]
+    },
+    {
+      "name": "native-recorder",
+      "process": {
+        "launch_method": "LaunchServices temporary application bundle",
+        "launcher_exit": 0,
+        "timeout": false,
+        "success": true,
+        "elapsed_seconds": 9.307,
+        "binary_sha256": "b070337242d37e0b8576962353b9a41226ed37edb76b43bad0fd5c6ac2f402c5",
+        "scenario_sha256": "e2303d87cc2d663100b9aae2eb192db29a7442670572daee3059e5c268911b67",
+        "receipt": "scenario.done",
+        "captures": 2
+      },
+      "presentations": 29,
+      "redraws": 31,
+      "unpresented_redraws": 2,
+      "captures": [
+        {
+          "path": "native-recorder/recorder_controls.png",
+          "size": [
+            2360,
+            1400
+          ],
+          "sha256": "82f1d892b74334c5b9ea6a68f16efd0b17c63dee790496141971c1050292ea03",
+          "visually_reviewed": true
+        },
+        {
+          "path": "native-recorder/recorder_initial.png",
+          "size": [
+            2360,
+            1400
+          ],
+          "sha256": "3de76e28d86d21ccc33ab1b84576fa49aaa783c70a9384b80e2011067d45a8c5",
+          "visually_reviewed": true
+        }
+      ]
+    }
+  ],
+  "total_captures": 19,
+  "total_presentations": 178,
+  "scope": "Device-free recorder input and appearance; audio hardware and custody unqualified",
+  "visual_observations": [
+    "All 19 original captures reviewed; recorder record dot remains visible in each recorder capture.",
+    "420px workshop controls remain usable; same-identity Save keeps blue installed appearance until explicit Apply installs brown.",
+    "Fresh process restores saved appearance twice; recorder control proof displays fifth track, armed second track, mute/solo and tempo122.",
+    "Existing receipt-only audio status line is clipped under the device controls; no layout/style source changed in this slice."
+  ],
+  "tooling_attempts": [
+    {
+      "launcher_executable_permission": "Initial cached script direct execution refused; invoked the same script with its Python interpreter instead. No product process launched by that failed attempt."
+    }
+  ],
+  "locked_metadata": {
+    "outside_repository_config": true,
+    "passed": true,
+    "workspace_members": 4,
+    "package_count": 1103
+  }
+}
