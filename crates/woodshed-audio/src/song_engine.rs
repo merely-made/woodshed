@@ -908,6 +908,9 @@ fn process_song_buffer(s: &mut SongEngineInternals, output: &mut [f32]) {
                 if s.song.one_shot {
                     s.song.playing = false;
                     s.voices.clear();
+                    // The device owns the whole buffer, including frames after
+                    // the final segment. Never leave its previous contents audible.
+                    output[(frame_idx + 1) * chs..].fill(0.0);
                     break;
                 }
                 s.song.cursor.bar_idx = 0;
@@ -1275,6 +1278,35 @@ mod tests {
         let mut buf = vec![0.0_f32; total_samples + 1000];
         process_song_buffer(&mut state, &mut buf);
         assert!(!state.song.playing, "one-shot should stop at end");
+    }
+
+    #[test]
+    fn one_shot_stop_silences_the_remaining_output_frames() {
+        for channels in [1, 2] {
+            let mut song = Song::new();
+            song.one_shot = true;
+            song.click_enabled = false;
+            song.bars[0].audio_buffer = Some(SampleBuffer::new(vec![0.25], 48_000));
+            let mut state = SongEngineInternals::new(song, 48_000.0, channels);
+            state.output_gain = 1.0;
+            state.song.playing = true;
+            state.song.cursor.sample_in_bar = state.song.bars[0].duration_samples(48_000.0) - 1;
+            let mut output = vec![-0.75; usize::from(channels) * 8];
+
+            process_song_buffer(&mut state, &mut output);
+
+            assert!(!state.song.playing);
+            assert!(
+                output[..usize::from(channels)]
+                    .iter()
+                    .all(|sample| *sample == 0.25)
+            );
+            assert!(
+                output[usize::from(channels)..]
+                    .iter()
+                    .all(|sample| *sample == 0.0)
+            );
+        }
     }
 
     #[test]
