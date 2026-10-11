@@ -4,7 +4,7 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 // SPDX-License-Identifier: MPL-2.0
 
-//! Durable Hocket project storage over Muniment's host-supplied byte backend.
+//! Portable Hocket project storage over Muniment's host-supplied byte backend.
 //!
 //! With a [`ZipBackend`](muniment::ZipBackend) the keys here become the entry
 //! names of a plain zip archive, so a saved `.hock` file opens in any unzip
@@ -343,7 +343,7 @@ mod tests {
                 loaded.media.get(&reference).unwrap().samples,
                 vec![0.25, -0.5, 0.75]
             );
-            assert_eq!(backend.get(MANIFEST_KEY).await.unwrap().is_some(), true);
+            assert!(backend.get(MANIFEST_KEY).await.unwrap().is_some());
         });
     }
 

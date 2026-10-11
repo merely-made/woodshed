@@ -2,6 +2,7 @@
 resolver = "3"
 members = [
     "crates/hocket-engine",
+    "crates/hocket-project",
     "crates/hocket-model",
     "crates/hocket-headless",
     # The genet-host UI (2026-07-08 refactor). At the parity cut the Masonry
@@ -21,6 +22,7 @@ rust-version = "1.96"
 # test harness) binaries are workspace members but not dependency
 # targets, so they don't appear here.
 hocket-engine = { path = "crates/hocket-engine", version = "0.1.0" }
+hocket-project = { path = "crates/hocket-project", version = "0.1.0" }
 hocket-model = { path = "crates/hocket-model", version = "0.1.0" }
 
 # Shared pure-DSP primitives — the `audio-primitives` extraction (click

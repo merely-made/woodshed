@@ -11,8 +11,9 @@
 //! buffers live here (or, later, in a filesystem / Moothold-backed
 //! store implementing the same trait).
 //!
-//! For Feature Target 3a, only the in-memory store exists. Disk
-//! backing arrives with Feature Target 8 (local persistence).
+//! The in-memory store is shared by runtime capture, offline export and signed
+//! handoff. Durable projects carry the same decoded media identity through
+//! [`crate::project_store::ProjectStore`] without an audio-device dependency.
 
 use std::collections::BTreeMap;
 

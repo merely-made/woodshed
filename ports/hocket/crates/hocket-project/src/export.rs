@@ -138,7 +138,7 @@ fn frames_for_bars(session: &Session, sample_rate: u32, bars: u8) -> Result<usiz
     if !session.bpm.is_finite() || session.bpm <= 0.0 || numerator == 0 || denominator == 0 {
         return Err(ExportError::InvalidTransport);
     }
-    let frames = crate::click::frames_per_bar(sample_rate, session.bpm, numerator, denominator)
+    let frames = audio_primitives::click::frames_per_bar(sample_rate, session.bpm, numerator, denominator)
         .checked_mul(usize::from(bars))
         .ok_or(ExportError::InvalidTransport)?;
     if frames == 0 {

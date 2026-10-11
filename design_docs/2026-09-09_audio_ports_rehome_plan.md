@@ -222,3 +222,8 @@ products require explicit product decisions, not generic cleanup.
   package Clippy pass, including repeated saves, two corrupt latest states,
   invalid newer files, failed publication, and explicit post-publication cleanup
   error behavior. Desktop/reopen qualification is pending.
+- **2026-10-11:** Portable Hocket project seam extracted into `hocket-project`:
+  media/store/export/handoff/waveform and 30 moved tests. Model, engine, capture
+  and history add 54 passing checks. The normal project tree excludes Firewheel
+  and CPAL; model schema, MediaRef, project and envelope formats are preserved.
+  Combined host validation and native project acceptance follow integration.

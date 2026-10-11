@@ -3963,18 +3963,9 @@ name = "hocket-engine"
 version = "0.1.0"
 dependencies = [
  "audio-primitives",
- "blake3",
- "ciborium",
  "firewheel",
  "hocket-model",
- "hound",
- "insigne",
- "muniment",
- "personae",
- "pollster",
- "serde",
- "tempfile",
- "wavicle",
+ "hocket-project",
 ]
 
 [[package]]
@@ -3989,6 +3980,7 @@ dependencies = [
  "graphshell",
  "hocket-engine",
  "hocket-model",
+ "hocket-project",
  "image",
  "insigne",
  "luggage",
@@ -4027,6 +4019,24 @@ dependencies = [
  "ciborium",
  "serde",
  "uuid",
+]
+
+[[package]]
+name = "hocket-project"
+version = "0.1.0"
+dependencies = [
+ "audio-primitives",
+ "blake3",
+ "ciborium",
+ "hocket-model",
+ "hound",
+ "insigne",
+ "muniment",
+ "personae",
+ "pollster",
+ "serde",
+ "tempfile",
+ "wavicle",
 ]
 
 [[package]]
