@@ -1,0 +1,26 @@
+{
+  "name": "PreviewReopenQualified",
+  "binary": "/Users/markik/Code/worktrees/woodshed-audit-20261011/target/debug/woodshed-genet",
+  "scenario": "/Users/markik/Code/worktrees/woodshed-stack-20261011/scenarios/preview_worker_reopen.scn",
+  "prefix": "WOODSHED",
+  "output": "/Users/markik/Code/testing/woodshed/stack-adoption-20261011/native/PreviewReopenQualified",
+  "env": {
+    "WOODSHED_STATE": "/Users/markik/Code/testing/woodshed/stack-adoption-20261011/profiles/preview/practice.json",
+    "WOODSHED_SETTINGS": "/Users/markik/Code/testing/woodshed/stack-adoption-20261011/profiles/preview/settings.json",
+    "WOODSHED_THEME_LIBRARY": "/Users/markik/Code/testing/woodshed/stack-adoption-20261011/profiles/preview/themes.json",
+    "WOODSHED_WIDTH": "1280",
+    "WOODSHED_HEIGHT": "900",
+    "XDG_DATA_HOME": "/Users/markik/Code/testing/woodshed/stack-adoption-20261011/profiles/preview/data",
+    "XDG_CONFIG_HOME": "/Users/markik/Code/testing/woodshed/stack-adoption-20261011/profiles/preview/config",
+    "XDG_CACHE_HOME": "/Users/markik/Code/testing/woodshed/stack-adoption-20261011/profiles/preview/cache",
+    "GRAPHSHELL_APP_ENDPOINT": "/tmp/ws-stack-20261011.sock",
+    "GRAPHSHELL_DEVICE_ENDPOINT": "/tmp/ws-stack-20261011-device.sock",
+    "MERE_ROOT": "/Users/markik/Code/testing/woodshed/stack-adoption-20261011/profiles/preview/mere",
+    "CAMBIUM_HOST_FRAME_TRACE": "1",
+    "WOODSHED_PRESENTATION_TIMEOUT_SECS": "30"
+  },
+  "app": "/Users/markik/Code/testing/woodshed/stack-adoption-20261011/native/PreviewReopenQualified/PreviewReopenQualified.app",
+  "binary_sha256": "ef8e9c6e0af4fcbde8a0fc5ea38123274358813b8f29e4b23a2f3c25d4b2a4d0",
+  "scenario_sha256": "3f8ddce318582fce3123d11c00acc66654465f09004d355029589dcc60c5fb88",
+  "launch_method": "native control of prepared app bundle"
+}

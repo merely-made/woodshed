@@ -1,0 +1,40 @@
+# Fresh-process recipe restoration preserves saved timing and deleted-source provenance.
+settle 3
+assert snap overview-active == true
+assert snap overview-context-items == 1
+assert snap overview-context-recipes == 1
+assert snap overview-context-links == 1
+assert snap overview-recipe-source-present == false
+assert snap overview-recipe-bpm == 92
+assert snap overview-pinned == 1
+assert snap overview-background == 1
+assert snap overview-atmosphere == orbits
+assert snap set-cards == 3
+click .overview-inspector
+settle 12
+capture 01_recipe_reopened
+click .overview-context-hear Hear
+settle 60
+assert snap preview-busy == false
+assert snap preview-voices == 1
+assert snap set-cards == 3
+click .overview-context-add
+settle 3
+assert snap set-cards == 4
+assert snap set-last-scale-pattern == true
+assert snap overview-recipe-source-present == false
+click .overview-fit Fit scene
+click .overview-graph
+settle 12
+capture 02_reopened_scene
+click .pill Rehearsal
+click .t-btn Run
+settle 30
+assert snap rehearsal-running == true
+click .t-btn Pause
+settle 3
+assert snap rehearsal-running == false
+assert snap preview-busy == false
+assert snap preview-voices == 0
+capture 03_paused_rehearsal
+log Preview worker fresh process replay and Pause complete

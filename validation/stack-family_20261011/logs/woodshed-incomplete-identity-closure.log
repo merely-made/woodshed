@@ -1,0 +1,164 @@
+woodshed: test (Rust 1.97.1; outside repository Cargo config)
+warning: patch `p2panda-auth v0.7.1 (https://github.com/mark-ik/p2panda.git?tag=mere-p2panda-net-0.7.5-upstream-20261011#d8acabc9)` was not used in the crate graph
+warning: patch `p2panda-stream v0.7.1 (https://github.com/mark-ik/p2panda.git?tag=mere-p2panda-net-0.7.5-upstream-20261011#d8acabc9)` was not used in the crate graph
+warning: patch `vello v0.10.0 (https://github.com/mark-ik/vello.git?tag=vello-0.10.0#4354955e)` was not used in the crate graph
+help: Check that the patched package version and available features are compatible
+      with the dependency requirements. If the patch has a different version from
+      what is locked in the Cargo.lock file, run `cargo update` to use the new
+      version. This may also occur with an optional dependency that is not enabled.
+warning: profile package spec `vello` in profile `dev` did not match any packages
+   Compiling simdutf8 v0.1.5
+   Compiling serde_bytes v0.11.19
+   Compiling kurbo v0.13.1
+   Compiling linebender_resource_handle v0.1.1
+   Compiling bytecheck v0.8.3
+   Compiling color v0.3.3
+   Compiling rend v0.5.4
+   Compiling peniko v0.6.1
+   Compiling vello_shaders v0.11.0 (https://github.com/mark-ik/vello.git?rev=5862bba26c8a9f56f6a5fdc8ea6966b360a5d63a#5862bba2)
+   Compiling tinct v0.1.2 (https://github.com/merely-made/mere.git?rev=0e78fcffb140395a5c0d2f64a4dfda2b81751681#0e78fcff)
+   Compiling vello_encoding v0.11.0 (https://github.com/mark-ik/vello.git?rev=5862bba26c8a9f56f6a5fdc8ea6966b360a5d63a#5862bba2)
+   Compiling rkyv v0.8.18
+   Compiling layout-dom-api v0.1.1 (https://github.com/merely-made/genet.git?rev=4bc75583865c2fb862b7acd7fe16dc28eb591042#4bc75583)
+   Compiling netrender-vello v0.11.0 (https://github.com/mark-ik/vello.git?rev=5862bba26c8a9f56f6a5fdc8ea6966b360a5d63a#5862bba2)
+   Compiling sceno v0.0.4 (https://github.com/merely-made/mere.git?rev=0e78fcffb140395a5c0d2f64a4dfda2b81751681#0e78fcff)
+   Compiling paint_list_api v0.1.2 (https://github.com/merely-made/netrender.git?rev=ef5412d760a978584c8c1801e8a765c51aecd403#ef5412d7)
+   Compiling encoding_rs v0.8.42
+   Compiling command-menu v0.1.0 (https://github.com/merely-made/mere.git?rev=0e78fcffb140395a5c0d2f64a4dfda2b81751681#0e78fcff)
+   Compiling pollster v1.0.1
+   Compiling netrender_device v0.1.2 (https://github.com/merely-made/netrender.git?rev=ef5412d760a978584c8c1801e8a765c51aecd403#ef5412d7)
+   Compiling genet-paint-types v0.2.0 (https://github.com/merely-made/genet.git?rev=4bc75583865c2fb862b7acd7fe16dc28eb591042#4bc75583)
+   Compiling genet-static-dom v0.1.1 (https://github.com/merely-made/genet.git?rev=4bc75583865c2fb862b7acd7fe16dc28eb591042#4bc75583)
+   Compiling multiversion_no_op v1.0.0
+   Compiling genet-fontique v0.10.0 (https://github.com/merely-made/genet.git?rev=4bc75583865c2fb862b7acd7fe16dc28eb591042#4bc75583)
+   Compiling engine-observables-api v0.2.0 (https://github.com/merely-made/genet.git?rev=4bc75583865c2fb862b7acd7fe16dc28eb591042#4bc75583)
+   Compiling netrender v0.1.2 (https://github.com/merely-made/netrender.git?rev=ef5412d760a978584c8c1801e8a765c51aecd403#ef5412d7)
+   Compiling regress v0.11.1 (https://github.com/merely-made/genet.git?rev=4bc75583865c2fb862b7acd7fe16dc28eb591042#4bc75583)
+   Compiling genet-parley v0.10.0 (https://github.com/merely-made/genet.git?rev=4bc75583865c2fb862b7acd7fe16dc28eb591042#4bc75583)
+   Compiling genet-scripted-dom v0.1.2 (https://github.com/merely-made/genet.git?rev=4bc75583865c2fb862b7acd7fe16dc28eb591042#4bc75583)
+   Compiling livery v0.0.5 (https://github.com/merely-made/genet.git?rev=4bc75583865c2fb862b7acd7fe16dc28eb591042#4bc75583)
+   Compiling tabard v0.0.1 (https://github.com/merely-made/mere.git?rev=0e78fcffb140395a5c0d2f64a4dfda2b81751681#0e78fcff)
+   Compiling muniment v0.1.2 (https://github.com/merely-made/mere.git?rev=e95326dc08446a9256d3e340c63e571684afe697#e95326dc)
+   Compiling woodshedding v0.1.0 (/Users/markik/Code/worktrees/woodshed-stack-20261011/crates/woodshedding)
+   Compiling genet-host-api v0.2.0 (https://github.com/merely-made/genet.git?rev=4bc75583865c2fb862b7acd7fe16dc28eb591042#4bc75583)
+   Compiling chartulary v0.2.2 (https://github.com/merely-made/mere.git?rev=e95326dc08446a9256d3e340c63e571684afe697#e95326dc)
+   Compiling muniment v0.1.2 (https://github.com/merely-made/mere.git?rev=0e78fcffb140395a5c0d2f64a4dfda2b81751681#0e78fcff)
+   Compiling cadency v0.0.1 (https://github.com/merely-made/genet.git?rev=4bc75583865c2fb862b7acd7fe16dc28eb591042#4bc75583)
+   Compiling genet-taffy v0.14.0 (https://github.com/merely-made/genet.git?rev=4bc75583865c2fb862b7acd7fe16dc28eb591042#4bc75583)
+   Compiling document-session-api v0.1.0 (https://github.com/merely-made/genet.git?rev=4bc75583865c2fb862b7acd7fe16dc28eb591042#4bc75583)
+   Compiling workbench v0.1.0 (https://github.com/merely-made/mere.git?rev=0e78fcffb140395a5c0d2f64a4dfda2b81751681#0e78fcff)
+   Compiling buckram v0.0.3 (https://github.com/merely-made/genet.git?rev=4bc75583865c2fb862b7acd7fe16dc28eb591042#4bc75583)
+   Compiling genet-document-resources v0.2.1 (https://github.com/merely-made/genet.git?rev=4bc75583865c2fb862b7acd7fe16dc28eb591042#4bc75583)
+   Compiling paint_list_render v0.1.2 (https://github.com/merely-made/netrender.git?rev=ef5412d760a978584c8c1801e8a765c51aecd403#ef5412d7)
+   Compiling mere-curation v0.1.0 (https://github.com/merely-made/mere.git?rev=0e78fcffb140395a5c0d2f64a4dfda2b81751681#0e78fcff)
+   Compiling edit-history v0.1.0 (https://github.com/merely-made/mere.git?rev=0e78fcffb140395a5c0d2f64a4dfda2b81751681#0e78fcff)
+   Compiling illume v0.0.2 (https://github.com/merely-made/mere.git?rev=0e78fcffb140395a5c0d2f64a4dfda2b81751681#0e78fcff)
+   Compiling meristem v0.2.0 (https://github.com/merely-made/mere.git?rev=0e78fcffb140395a5c0d2f64a4dfda2b81751681#0e78fcff)
+   Compiling genet-livery v0.0.4 (https://github.com/merely-made/genet.git?rev=4bc75583865c2fb862b7acd7fe16dc28eb591042#4bc75583)
+   Compiling mere-surface-api v0.1.0 (https://github.com/merely-made/mere.git?rev=0e78fcffb140395a5c0d2f64a4dfda2b81751681#0e78fcff)
+   Compiling woodshed-graph v0.1.0 (/Users/markik/Code/worktrees/woodshed-stack-20261011/crates/woodshed-graph)
+   Compiling sprigging v0.2.1 (https://github.com/merely-made/mere.git?rev=0e78fcffb140395a5c0d2f64a4dfda2b81751681#0e78fcff)
+   Compiling insigne v0.0.2 (https://github.com/merely-made/dramatis.git?rev=0234e7eea6f2ddf2330a71b9425da01b06ae0391#0234e7ee)
+   Compiling genet-text v0.1.0 (https://github.com/merely-made/genet.git?rev=4bc75583865c2fb862b7acd7fe16dc28eb591042#4bc75583)
+   Compiling cambium v0.3.3 (https://github.com/merely-made/mere.git?rev=0e78fcffb140395a5c0d2f64a4dfda2b81751681#0e78fcff)
+   Compiling personae v0.2.1 (https://github.com/merely-made/dramatis.git?rev=c1d620764315b4c750fcffea30b8c898b8bb73bc#c1d62076)
+   Compiling personae v0.3.0 (https://github.com/merely-made/dramatis.git?rev=0234e7eea6f2ddf2330a71b9425da01b06ae0391#0234e7ee)
+   Compiling chartulary v0.2.2 (https://github.com/merely-made/mere.git?rev=0e78fcffb140395a5c0d2f64a4dfda2b81751681#0e78fcff)
+   Compiling tokio-websockets v0.13.3
+   Compiling numen v0.2.0 (https://github.com/merely-made/mere.git?rev=0e78fcffb140395a5c0d2f64a4dfda2b81751681#0e78fcff)
+   Compiling iroh-relay v1.3.0
+   Compiling mere-forme v0.1.0 (https://github.com/merely-made/mere.git?rev=0e78fcffb140395a5c0d2f64a4dfda2b81751681#0e78fcff)
+   Compiling p2panda-core v0.7.1 (https://github.com/mark-ik/p2panda.git?tag=mere-p2panda-net-0.7.5-upstream-20261011#d8acabc9)
+   Compiling mere-kernel v0.0.2 (https://github.com/merely-made/mere.git?rev=0e78fcffb140395a5c0d2f64a4dfda2b81751681#0e78fcff)
+   Compiling iroh v1.3.0
+   Compiling woodshed-core v0.1.0 (/Users/markik/Code/worktrees/woodshed-stack-20261011/crates/woodshed-core)
+   Compiling scenotime v0.0.4 (https://github.com/merely-made/mere.git?rev=0e78fcffb140395a5c0d2f64a4dfda2b81751681#0e78fcff)
+   Compiling chirograph v0.0.2 (https://github.com/merely-made/mere.git?rev=0e78fcffb140395a5c0d2f64a4dfda2b81751681#0e78fcff)
+   Compiling scenograph v0.0.4 (https://github.com/merely-made/mere.git?rev=0e78fcffb140395a5c0d2f64a4dfda2b81751681#0e78fcff)
+   Compiling genet-render-host v0.2.0 (https://github.com/merely-made/genet.git?rev=4bc75583865c2fb862b7acd7fe16dc28eb591042#4bc75583)
+   Compiling fleece v0.5.0 (https://github.com/merely-made/genet.git?rev=4bc75583865c2fb862b7acd7fe16dc28eb591042#4bc75583)
+   Compiling scenomise v0.0.4 (https://github.com/merely-made/mere.git?rev=0e78fcffb140395a5c0d2f64a4dfda2b81751681#0e78fcff)
+   Compiling p2panda-store v0.7.1 (https://github.com/mark-ik/p2panda.git?tag=mere-p2panda-net-0.7.5-upstream-20261011#d8acabc9)
+   Compiling cambium-winit v0.3.0 (https://github.com/merely-made/mere.git?rev=0e78fcffb140395a5c0d2f64a4dfda2b81751681#0e78fcff)
+   Compiling genet-render v0.2.0 (https://github.com/merely-made/genet.git?rev=4bc75583865c2fb862b7acd7fe16dc28eb591042#4bc75583)
+   Compiling inker v0.1.1 (https://github.com/merely-made/mere.git?rev=0e78fcffb140395a5c0d2f64a4dfda2b81751681#0e78fcff)
+   Compiling document-canvas v0.1.0 (https://github.com/merely-made/mere.git?rev=0e78fcffb140395a5c0d2f64a4dfda2b81751681#0e78fcff)
+   Compiling cambium-rootstock v0.1.0 (https://github.com/merely-made/mere.git?rev=0e78fcffb140395a5c0d2f64a4dfda2b81751681#0e78fcff)
+   Compiling mere-fleece v0.0.1 (https://github.com/merely-made/mere.git?rev=0e78fcffb140395a5c0d2f64a4dfda2b81751681#0e78fcff)
+   Compiling dramatis v0.0.3 (https://github.com/merely-made/dramatis.git?rev=0234e7eea6f2ddf2330a71b9425da01b06ae0391#0234e7ee)
+   Compiling armillary v0.1.1 (https://github.com/merely-made/mere.git?rev=0e78fcffb140395a5c0d2f64a4dfda2b81751681#0e78fcff)
+   Compiling ringdown v0.1.0 (/Users/markik/Code/worktrees/woodshed-stack-20261011/ports/ringdown/crates/ringdown)
+   Compiling audio-primitives v0.1.0 (/Users/markik/Code/worktrees/woodshed-stack-20261011/crates/audio-primitives)
+   Compiling seiche v0.0.6 (https://github.com/merely-made/mere.git?rev=0e78fcffb140395a5c0d2f64a4dfda2b81751681#0e78fcff)
+   Compiling ringdown-client v0.0.1 (/Users/markik/Code/worktrees/woodshed-stack-20261011/ports/ringdown/crates/ringdown-client)
+   Compiling iroh-gossip v0.101.0
+   Compiling mere-document-lanes v0.1.0 (https://github.com/merely-made/mere.git?rev=0e78fcffb140395a5c0d2f64a4dfda2b81751681#0e78fcff)
+   Compiling iroh-mdns-address-lookup v0.6.0
+   Compiling genet-winit-host v0.2.0 (https://github.com/merely-made/genet.git?rev=4bc75583865c2fb862b7acd7fe16dc28eb591042#4bc75583)
+   Compiling mere-cartography v0.0.2 (https://github.com/merely-made/mere.git?rev=0e78fcffb140395a5c0d2f64a4dfda2b81751681#0e78fcff)
+   Compiling p2panda-discovery v0.7.1 (https://github.com/mark-ik/p2panda.git?tag=mere-p2panda-net-0.7.5-upstream-20261011#d8acabc9)
+   Compiling p2panda-sync v0.7.1 (https://github.com/mark-ik/p2panda.git?tag=mere-p2panda-net-0.7.5-upstream-20261011#d8acabc9)
+   Compiling taproot v0.1.0 (https://github.com/merely-made/genet.git?rev=4bc75583865c2fb862b7acd7fe16dc28eb591042#4bc75583)
+   Compiling esp v0.1.0 (https://github.com/merely-made/mere.git?rev=0e78fcffb140395a5c0d2f64a4dfda2b81751681#0e78fcff)
+   Compiling pictograph v0.2.0 (https://github.com/merely-made/mere.git?rev=0e78fcffb140395a5c0d2f64a4dfda2b81751681#0e78fcff)
+   Compiling p2panda-encryption v0.7.1 (https://github.com/mark-ik/p2panda.git?tag=mere-p2panda-net-0.7.5-upstream-20261011#d8acabc9)
+   Compiling mere-p2panda-net v0.7.5 (https://github.com/mark-ik/p2panda.git?tag=mere-p2panda-net-0.7.5-upstream-20261011#d8acabc9)
+   Compiling cambium-winit-a11y v0.3.0 (https://github.com/merely-made/mere.git?rev=0e78fcffb140395a5c0d2f64a4dfda2b81751681#0e78fcff)
+   Compiling tabard-workshop v0.0.1 (https://github.com/merely-made/mere.git?rev=0e78fcffb140395a5c0d2f64a4dfda2b81751681#0e78fcff)
+   Compiling ringdown-ble v0.0.1 (/Users/markik/Code/worktrees/woodshed-stack-20261011/ports/ringdown/crates/ringdown-ble)
+   Compiling mere-persona-picker v0.0.1 (https://github.com/merely-made/mere.git?rev=0e78fcffb140395a5c0d2f64a4dfda2b81751681#0e78fcff)
+   Compiling iroh-util v0.6.0
+   Compiling notochord v0.1.1 (https://github.com/merely-made/dramatis.git?rev=0234e7eea6f2ddf2330a71b9425da01b06ae0391#0234e7ee)
+   Compiling mere-proofs v0.1.0 (https://github.com/merely-made/mere.git?rev=0e78fcffb140395a5c0d2f64a4dfda2b81751681#0e78fcff)
+   Compiling cambium-genet-winit-host v0.1.0 (https://github.com/merely-made/mere.git?rev=0e78fcffb140395a5c0d2f64a4dfda2b81751681#0e78fcff)
+   Compiling iroh-blobs v0.103.1
+   Compiling stickleback v0.1.1 (https://github.com/merely-made/mere.git?rev=0e78fcffb140395a5c0d2f64a4dfda2b81751681#0e78fcff)
+   Compiling woodshed-audio v0.1.0 (/Users/markik/Code/worktrees/woodshed-stack-20261011/crates/woodshed-audio)
+   Compiling mere-alembic v0.0.1 (https://github.com/merely-made/mere.git?rev=0e78fcffb140395a5c0d2f64a4dfda2b81751681#0e78fcff)
+   Compiling eidetic v0.0.2 (https://github.com/merely-made/mere.git?rev=0e78fcffb140395a5c0d2f64a4dfda2b81751681#0e78fcff)
+   Compiling luggage v0.1.0 (https://github.com/merely-made/mere.git?rev=0e78fcffb140395a5c0d2f64a4dfda2b81751681#0e78fcff)
+   Compiling incipit v0.2.0 (https://github.com/merely-made/mere.git?rev=0e78fcffb140395a5c0d2f64a4dfda2b81751681#0e78fcff)
+   Compiling pandect v0.1.1 (https://github.com/merely-made/mere.git?rev=0e78fcffb140395a5c0d2f64a4dfda2b81751681#0e78fcff)
+   Compiling mere-webrtc-carrier v0.0.1 (https://github.com/merely-made/mere.git?rev=0e78fcffb140395a5c0d2f64a4dfda2b81751681#0e78fcff)
+   Compiling mere-transport v0.0.2 (https://github.com/merely-made/mere.git?rev=0e78fcffb140395a5c0d2f64a4dfda2b81751681#0e78fcff)
+   Compiling woodshed-views v0.1.0 (/Users/markik/Code/worktrees/woodshed-stack-20261011/crates/woodshed-views)
+   Compiling woodshed-instrument v0.1.0 (/Users/markik/Code/worktrees/woodshed-stack-20261011/crates/woodshed-instrument)
+   Compiling graphshell-endpoint v0.0.2 (https://github.com/merely-made/mere.git?rev=0e78fcffb140395a5c0d2f64a4dfda2b81751681#0e78fcff)
+   Compiling graphshell-client v0.0.2 (https://github.com/merely-made/mere.git?rev=0e78fcffb140395a5c0d2f64a4dfda2b81751681#0e78fcff)
+   Compiling mere-apparatus v0.0.1 (https://github.com/merely-made/mere.git?rev=0e78fcffb140395a5c0d2f64a4dfda2b81751681#0e78fcff)
+   Compiling mesquite v0.1.0 (https://github.com/merely-made/mere.git?rev=0e78fcffb140395a5c0d2f64a4dfda2b81751681#0e78fcff)
+   Compiling graphshell v0.0.2 (https://github.com/merely-made/mere.git?rev=0e78fcffb140395a5c0d2f64a4dfda2b81751681#0e78fcff)
+   Compiling timed-text v0.1.0 (/Users/markik/Code/worktrees/woodshed-stack-20261011/crates/timed-text)
+   Compiling woodshed-genet v0.1.0 (/Users/markik/Code/worktrees/woodshed-stack-20261011/crates/woodshed-genet)
+error[E0277]: the trait bound `CustodyIdentity: personae::provider::IdentityProvider` is not satisfied
+   --> crates/woodshed-genet/src/storage.rs:90:57
+    |
+ 90 |     match SealedBackend::for_provider(FsBackend::new(), &identity) {
+    |                                                         ^^^^^^^^^ the trait `personae::provider::IdentityProvider` is not implemented for `CustodyIdentity`
+    |
+note: there are multiple different versions of crate `personae` in the dependency graph
+   --> /Users/markik/.cargo/git/checkouts/dramatis-c1632f2f3bdc2597/c1d6207/crates/personae/src/provider.rs:51:1
+    |
+ 51 | pub trait IdentityProvider: Send + Sync {
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ this is the expected trait
+    |
+   ::: /Users/markik/.cargo/git/checkouts/dramatis-c1632f2f3bdc2597/0234e7e/crates/personae/src/provider.rs:51:1
+    |
+ 51 | pub trait IdentityProvider: Send + Sync {
+    | --------------------------------------- this is the found trait
+    = help: you can use `cargo tree` to explore your dependency tree
+help: the following other types implement trait `personae::provider::IdentityProvider`
+   --> /Users/markik/.cargo/git/checkouts/dramatis-c1632f2f3bdc2597/c1d6207/crates/personae/src/provider.rs:137:1
+    |
+137 | impl IdentityProvider for InMemoryProvider {
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ `personae::provider::InMemoryProvider`
+    |
+   ::: /Users/markik/.cargo/git/checkouts/dramatis-c1632f2f3bdc2597/c1d6207/crates/personae/src/retained.rs:109:1
+    |
+109 | impl IdentityProvider for RetainedKeys {
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ `personae::retained::RetainedKeys`
+    = note: required for the cast from `&CustodyIdentity` to `&dyn personae::provider::IdentityProvider`
+
+For more information about this error, try `rustc --explain E0277`.
+error: could not compile `woodshed-genet` (bin "woodshed-genet" test) due to 1 previous error
+warning: build failed, waiting for other jobs to finish...

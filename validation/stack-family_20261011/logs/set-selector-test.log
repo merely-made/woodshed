@@ -1,0 +1,16 @@
+warning: patch `p2panda-auth v0.7.1 (https://github.com/mark-ik/p2panda.git?tag=mere-p2panda-net-0.7.5-upstream-20261011#d8acabc9)` was not used in the crate graph
+warning: patch `p2panda-stream v0.7.1 (https://github.com/mark-ik/p2panda.git?tag=mere-p2panda-net-0.7.5-upstream-20261011#d8acabc9)` was not used in the crate graph
+help: Check that the patched package version and available features are compatible
+      with the dependency requirements. If the patch has a different version from
+      what is locked in the Cargo.lock file, run `cargo update` to use the new
+      version. This may also occur with an optional dependency that is not enabled.
+   Compiling woodshed-views v0.1.0 (/Users/markik/Code/worktrees/woodshed-stack-20261011/crates/woodshed-views)
+   Compiling woodshed-genet v0.1.0 (/Users/markik/Code/worktrees/woodshed-stack-20261011/crates/woodshed-genet)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 8.25s
+     Running unittests src/main.rs (/Users/markik/Code/worktrees/woodshed-audit-20261011/target/debug/deps/woodshed_genet-28c8a841053ca3a0)
+
+running 1 test
+test sync::tests::looper_controls_show_readiness_route_owned_capture_and_retain_saved_backing ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 91 filtered out; finished in 1.14s
+
