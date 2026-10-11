@@ -1,0 +1,26 @@
+[package]
+name = "hocket-project"
+version = "0.1.0"
+description = "Portable Hocket media, project storage, loop export, and signed handoff."
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+publish = false
+
+[dependencies]
+hocket-model.workspace = true
+audio-primitives.workspace = true
+blake3.workspace = true
+muniment.workspace = true
+wavicle.workspace = true
+hound.workspace = true
+personae.workspace = true
+insigne.workspace = true
+serde.workspace = true
+ciborium.workspace = true
+
+[dev-dependencies]
+pollster = "0.4"
+tempfile = "3"

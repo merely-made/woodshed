@@ -4,7 +4,7 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 // SPDX-License-Identifier: MPL-2.0
 
-//! Signed, transport-neutral Hocket session hand-off.
+//! Portable signed, transport-neutral Hocket session hand-off.
 //!
 //! A hand-off is a complete immutable snapshot: project manifest plus every
 //! referenced media buffer. The envelope addresses that snapshot to a recipient

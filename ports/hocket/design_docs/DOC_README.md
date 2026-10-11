@@ -25,6 +25,10 @@ before any other doc in this directory.
   solo/stop behavior, and removal of collaboration/demo affordances that had
   no backing subsystem. Persistence and sync remain separately scoped.
 - [2026-07-09_muniment-project-store_plan.md](2026-07-09_muniment-project-store_plan.md)
+  - October 11 extracts portable media/store/export/handoff/waveform into
+  `hocket-project`, keeping device execution in `hocket-engine` and preserving
+  model/media identity and existing project formats. All 84 relevant CPU tests
+  pass; combined desktop and native project acceptance follow integration.
   - **LANDED.** Local project persistence over Muniment's generic backend seam,
   with a Genet-host Redb API. The manifest retains Hocket's session/history
   semantics and media keeps its existing `MediaRef` identity.

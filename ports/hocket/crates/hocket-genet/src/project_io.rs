@@ -17,10 +17,10 @@ use std::sync::mpsc::Receiver;
 use armillary::{ActorHandle, Emitter, Wake, spawn};
 use muniment::ZipBackend;
 use std::collections::BTreeSet;
-use hocket_engine::export::{ExportLength, render_mix, write_stereo_wav};
-use hocket_engine::handoff::{HandoffEnvelope, ReceivedHandoff};
-use hocket_engine::media::InMemoryStore;
-use hocket_engine::project_store::{LoadedProject, ProjectStore};
+use hocket_project::export::{ExportLength, render_mix, write_stereo_wav};
+use hocket_project::handoff::{HandoffEnvelope, ReceivedHandoff};
+use hocket_project::media::InMemoryStore;
+use hocket_project::project_store::{LoadedProject, ProjectStore};
 use hocket_model::{NodeId, ProjectBundle, Session, TrackId};
 use personae::Ed25519PublicKey;
 
@@ -181,7 +181,7 @@ mod tests {
     use std::time::Duration;
 
     use super::*;
-    use hocket_engine::media::MediaStore;
+    use hocket_project::media::MediaStore;
     use hocket_model::{Edit, History, Layer, Phrase, Session};
     use personae::{IdentityProvider, InMemoryProvider};
 

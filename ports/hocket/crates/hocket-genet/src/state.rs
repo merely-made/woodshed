@@ -20,8 +20,8 @@ use std::time::Instant;
 
 use armillary::ActorHandle;
 use audio_primitives::{MeterBallistics, PeakMeterSmoother, WaveformPeak};
-use hocket_engine::export::ExportLength;
-use hocket_engine::media::{InMemoryStore, MediaStore};
+use hocket_project::export::ExportLength;
+use hocket_project::media::{InMemoryStore, MediaStore};
 use hocket_engine::{
     AudioDeviceSelection, AudioDevices, CapturePhase, Engine, LayerKey, available_audio_devices,
 };
@@ -30,7 +30,7 @@ use hocket_model::{
 };
 use cambium::SelectState;
 use genet_clipboard::{Clipboard, ClipboardItem, SystemClipboard, TextClipboard};
-use hocket_engine::handoff::{HandoffEnvelope, ReceivedHandoff};
+use hocket_project::handoff::{HandoffEnvelope, ReceivedHandoff};
 use personae::{Ed25519PublicKey, IdentityProvider};
 
 use crate::identity::{LocalIdentity, parse_contact_token};
@@ -368,7 +368,7 @@ impl AppState {
                 ProjectStatus::Error("stop recording before copying audio".to_string());
             return;
         }
-        let mix = match hocket_engine::export::render_mix(
+        let mix = match hocket_project::export::render_mix(
             &self.session,
             &self.store,
             &self.solo,
@@ -380,7 +380,7 @@ impl AppState {
                 return;
             }
         };
-        let bytes = match hocket_engine::export::encode_stereo_wav_bytes(&mix) {
+        let bytes = match hocket_project::export::encode_stereo_wav_bytes(&mix) {
             Ok(bytes) => bytes,
             Err(error) => {
                 self.project_status = ProjectStatus::Error(format!("copy audio: {error}"));
@@ -431,7 +431,7 @@ impl AppState {
                 return;
             }
         };
-        let mix = match hocket_engine::export::decode_wav_bytes(&bytes) {
+        let mix = match hocket_project::export::decode_wav_bytes(&bytes) {
             Ok(mix) => mix,
             Err(error) => {
                 self.project_status = ProjectStatus::Error(format!("paste audio: {error}"));
@@ -1001,7 +1001,7 @@ impl AppState {
         track_index: usize,
         columns: usize,
     ) -> Option<Vec<WaveformPeak>> {
-        hocket_engine::waveform::render_track_peaks(
+        hocket_project::waveform::render_track_peaks(
             &self.session,
             &self.store,
             track_index,
@@ -1016,7 +1016,7 @@ impl AppState {
         layer_index: usize,
         columns: usize,
     ) -> Option<Vec<WaveformPeak>> {
-        hocket_engine::waveform::render_layer_peaks(
+        hocket_project::waveform::render_layer_peaks(
             &self.session,
             &self.store,
             track_index,

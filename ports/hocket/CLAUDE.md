@@ -20,7 +20,8 @@ Read `design_docs/DOC_README.md` before planning or changing subsystem scope.
 ```
 crates/
   hocket-model/     Session and history authority; framework independent
-  hocket-engine/    Firewheel capture, playback, click, and media abstraction
+  hocket-engine/    Firewheel capture, playback, click, and device runtime
+  hocket-project/   Portable media, storage, offline export, and signed handoff
   hocket-headless/  Scripted audio-engine harness
   hocket-genet/    Genet/winit application host and recorder UI
 ```
@@ -38,6 +39,9 @@ it to a Woodshed application crate or another port.
   that must survive undo or synchronization belong in `Edit` and `History`.
 - Keep `hocket-engine` as a runtime projection. It can own real-time graph and
   device concerns, but not authoritative session state.
+- Keep portable media/project/export/handoff operations in `hocket-project`.
+  It must not depend on Firewheel or CPAL; session and MediaRef identity remain
+  in `hocket-model`, and hosts supply storage/identity capabilities.
 - Keep `hocket-genet` thin. Host-local presentation state is acceptable;
   session, media, and collaboration semantics are not.
 - Build local durability before peer synchronization: a peer cannot reliably

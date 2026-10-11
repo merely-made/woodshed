@@ -1,5 +1,8 @@
 # Muniment Project Store Plan
 
+**Status (2026-10-11): original store landed; portable project extraction passes
+its CPU gates; combined host acceptance follows integration.**
+
 ## Goal
 
 Give Hocket one portable persistence path before adding save/open controls,
@@ -38,3 +41,35 @@ second filesystem protocol inside Hocket.
   backend moved from redb to a new Muniment `ZipBackend`, and media now stores as
   WAV, so a `.hock` file is an openable zip. See
   [2026-07-14_open-project-format_plan.md](2026-07-14_open-project-format_plan.md).
+
+## Portable project seam (2026-10-11)
+
+The October 11 family audit found durable project operations coupled to the
+audio driver. `hocket-project` now owns media, project storage, offline loop
+export, signed handoff and waveform projection. `hocket-model` retains the authoritative schema,
+history and sample-rate-aware MediaRef. The host imports those operations
+directly rather than going through an audio engine; no forwarding modules
+remain in the driver.
+
+The extraction preserves the zip/CBOR/WavPack format and envelope bytes. Export
+uses the shared pure-DSP `frames_per_bar` function already used by Hocket's
+click driver, avoiding a reverse dependency on the engine. Existing codec,
+missing/corrupt-media, signed-recipient/branch, export-duration and capture
+pipeline tests move with the implementation.
+
+Done when the project package passes its moved tests and relevant host tests,
+its normal dependency tree contains neither CPAL nor Firewheel, and desktop
+save/open/export paths still compile and pass their current-source gate.
+Native lifecycle/capture work is independently owned by the host lane.
+
+**Findings (2026-10-11):** all five extracted modules depend on the model,
+host-supplied byte/identity seams, codec and pure DSP; none uses the device
+runtime. The sole export dependency on the engine was its thin frame-duration
+wrapper around `audio-primitives`.
+
+**Progress (2026-10-11):** modules and their tests moved, host imports rewired,
+engine-only normal dependencies reduced to model/DSP/Firewheel, and lockfile
+updated without external source/version changes. The 30 project tests and 54
+model/engine/capture/history tests pass. The normal project dependency tree
+contains neither CPAL nor Firewheel. Combined desktop validation follows host
+lane integration; native project save/open/export acceptance remains separate.
