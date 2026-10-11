@@ -1,0 +1,21 @@
+RESULT ok
+captured recorder_default
+captured recorder_light
+captured recorder_dark
+captured recorder_hc_light
+captured recorder_hc_dark
+captured workshop_saved
+captured recorder_applied
+captured workshop_narrow
+captured recorder_final
+capture recorder_default 2360x1400 digest=5ff1bc84bf4d862d file=/Users/markik/Code/testing/hocket-host-f1-20261011/native-seed/recorder_default.png
+capture recorder_light 2360x1400 digest=908dfd63f76285cf file=/Users/markik/Code/testing/hocket-host-f1-20261011/native-seed/recorder_light.png
+capture recorder_dark 2360x1400 digest=348f6f32be11fa43 file=/Users/markik/Code/testing/hocket-host-f1-20261011/native-seed/recorder_dark.png
+capture recorder_hc_light 2360x1400 digest=cf6d9f0f0d159abb file=/Users/markik/Code/testing/hocket-host-f1-20261011/native-seed/recorder_hc_light.png
+capture recorder_hc_dark 2360x1400 digest=0eb8c906fcdd1193 file=/Users/markik/Code/testing/hocket-host-f1-20261011/native-seed/recorder_hc_dark.png
+capture workshop_saved 2360x1400 digest=a2741af45917f9fa file=/Users/markik/Code/testing/hocket-host-f1-20261011/native-seed/workshop_saved.png
+capture recorder_applied 2360x1400 digest=e6ef56cadce2a9d7 file=/Users/markik/Code/testing/hocket-host-f1-20261011/native-seed/recorder_applied.png
+capture workshop_narrow 840x2000 digest=160de9c608d129b8 file=/Users/markik/Code/testing/hocket-host-f1-20261011/native-seed/workshop_narrow.png
+capture recorder_final 2360x1400 digest=27fb79e41d3e4390 file=/Users/markik/Code/testing/hocket-host-f1-20261011/native-seed/recorder_final.png
+frames: 9 captured, 0 blank, 9 distinct digests
+presentation: 80 frames, 81 redraws, 1 unpresented redraws

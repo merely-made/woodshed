@@ -12,9 +12,11 @@ before any other doc in this directory.
 ## Active Plans
 
 - [2026-10-11_host_acceptance_plan.md](2026-10-11_host_acceptance_plan.md) —
-  **In progress.** Tightens existing Mesquite close/readback and project-worker
+  **Landed on isolated lane.** Tightens existing Mesquite close/readback and project-worker
   boundaries, removes unused capture dependencies, and makes the manual audio
-  demo explicit and unsuccessful when execution fails.
+  demo explicit and unsuccessful when execution fails. Seventy CPU checks,
+  five finite native processes, 19 reviewed captures and two appearance
+  reopens pass; actual hardware audio/custody remain separate gates.
 
 - [2026-05-18_initial_plan.md](2026-05-18_initial_plan.md) — Initial
   scaffold, workspace skeleton, and feature-target ladder from
@@ -122,6 +124,10 @@ before any other doc in this directory.
   decoded f32 samples. WAV is retained only for the offline mix export.
 
 ## Appearance acceptance
+
+- [Host acceptance receipt](receipts/host_acceptance_20261011/README.md) —
+  Committed-source Tabard regression, fresh appearance reopening and recorder
+  controls after close/readback hardening; 19 reviewed native captures.
 
 - [Tabard native receipt](receipts/tabard_20261011/README.md) — Shared application appearance, authoring, Save/Apply, four modes and fresh reopen; 102 CPU assertions and 17 native captures accepted.
 
