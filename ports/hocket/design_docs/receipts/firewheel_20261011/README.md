@@ -44,8 +44,8 @@ in `dependency-summary.json`, `engine-tree.log` and the associated logs.
 
 ## Native and persistence evidence
 
-Five owned, finite LaunchServices processes on the Intel Xeon W / Radeon Pro
-Vega 56 macOS host completed with exit zero, no timeout and `RESULT ok`:
+Five owned, finite LaunchServices processes on the Apple M4 (`Mac16,3`, arm64)
+macOS 26.5.1 host completed with exit zero, no timeout and `RESULT ok`:
 
 | Process | Scenario | Captures | Presented frames |
 | --- | --- | ---: | ---: |
