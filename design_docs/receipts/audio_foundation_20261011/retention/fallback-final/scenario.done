@@ -1,0 +1,6 @@
+RESULT ok
+waited 0 frames
+captured recovered-settings
+capture recovered-settings 1720x1360 digest=09fba55e9b8e533a file=/Users/markik/Code/testing/woodshed/audio-foundation-20261011/retention-native/fallback-final/recovered-settings.png
+frames: 1 captured, 0 blank, 1 distinct digests
+presentation: 11 frames, 14 redraws, 3 unpresented redraws
