@@ -119,6 +119,9 @@ tabard-workshop = { git = "https://github.com/merely-made/mere.git", rev = "0e78
 
 # Audio
 cpal = "0.18"
+firewheel = { git = "https://github.com/mark-ik/firewheel.git", rev = "2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc", default-features = false, features = ["std", "cpal"] }
+rtrb = "0.3"
+audioadapter-buffers = "5.2"
 pitch-detector = { version = "0.3", features = ["hinted"] }
 # `pitch-detection` (separate crate from `pitch-detector` above)
 # ships the time-domain detectors — Autocorrelation, McLeod (NSDF),
