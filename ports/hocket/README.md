@@ -45,7 +45,7 @@ settings are session settings, not fixed limits.
 
 ```sh
 cargo run -p hocket-genet      # desktop app
-cargo run -p hocket-headless   # manual audio-device demo
+cargo run -p hocket-headless -- --run # manual microphone/output demo
 ../../scripts/validate-workspace.sh lockfile hocket
 ../../scripts/validate-workspace.sh test hocket
 ```
@@ -55,8 +55,17 @@ Genet checkout is required. Optional local Cargo overrides are development
 plumbing and are excluded from the clean-checkout validation commands above.
 CI runs model, portable project/media, engine, and desktop-host unit tests;
 ignored device/custody receipts and the manual headless demo are separate
-acceptance lanes. Release
-cutting is documented in `design_docs/RELEASING.md`. Hocket's tags use
+acceptance lanes.
+
+The headless demo opens real default audio devices for about twelve seconds.
+Use headphones or turn the speakers down to avoid feedback. It requires
+explicit `--run`; `--help` and an invocation without arguments only describe
+the demonstration. Missing hardware, engine errors or capture that never
+completes produce a nonzero exit. A successful run reports completed capture
+and queued replay, while audibility and musical timing still need a person's
+review. It is a manual demonstration, not an automated hardware acceptance gate.
+
+Release cutting is documented in `design_docs/RELEASING.md`. Hocket's tags use
 `hocket-v*`; its signed updater manifest must stay on a Hocket-only URL because
 the shared repository has one global latest release.
 
