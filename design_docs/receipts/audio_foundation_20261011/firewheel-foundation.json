@@ -1,0 +1,165 @@
+{
+  "date": "2026-10-11",
+  "lane": "F2",
+  "repository": "https://github.com/mark-ik/firewheel",
+  "branch": "owned/stream-foundation",
+  "base_revision": "34b35cad0535bf0a9542ac977b34744805d6cc03",
+  "revision": "2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc",
+  "commits": [
+    "513950f",
+    "2a0a342",
+    "2b03846"
+  ],
+  "pushed": true,
+  "worktree_clean": true,
+  "worktree": "/Users/markik/Code/worktrees/firewheel-foundation-20261011",
+  "contract": "design_docs/2026-10-11_standalone_stream_foundation.md",
+  "supported": {
+    "channels": [
+      1,
+      16
+    ],
+    "sample_rate_hz": [
+      1000,
+      384000
+    ],
+    "rate_ratio": [
+      0.015625,
+      64
+    ],
+    "resampler_chunk_frames": [
+      1,
+      8192
+    ],
+    "fft_reduced_rate_grain_limit_frames": 8192,
+    "output_packet_limit_frames": 65536,
+    "queue_limit_samples": 16777216,
+    "autocorrection": "both thresholds must be None",
+    "capacity_seconds": "output-rate capacity, increased to safe packet bounds when necessary",
+    "occupied_seconds": "queued source duration, including pending resampler input and excluding latency or underrun zeros",
+    "presented_source_frames": "integer-rational source position consumed by graph or reader; physical device latency remains host-owned",
+    "capture": "input-only, no inserted latency padding, explicit overflow counters",
+    "playback_eof": "finish_stream seals producer; retry until true, then wait for stats.drained",
+    "capture_eof": "finish_stream seals at next processor boundary; callbacks flush until finished while host drains",
+    "pause": "callback boundary, preserves queue, no automatic fade",
+    "reset": "stop_stream discards current generation; start and queue a new generation event",
+    "realtime": "no callback mutex; preallocated SPSC endpoints/resampler; callback allocator and deallocator guards passed"
+  },
+  "checks": [
+    {
+      "check": "offline stream graph suite",
+      "passed": 14,
+      "failed": 0,
+      "ignored": 0,
+      "log": "firewheel-foundation-tests.log"
+    },
+    {
+      "check": "short EOF material through reader and writer",
+      "passed_cases": 288,
+      "resampler_qualities": 4,
+      "channels": [
+        1,
+        2
+      ],
+      "source_frames": [
+        37,
+        73,
+        317
+      ],
+      "rate_pairs": [
+        [
+          1000,
+          48000
+        ],
+        [
+          8000,
+          44100
+        ],
+        [
+          8000,
+          48000
+        ],
+        [
+          11025,
+          48000
+        ],
+        [
+          48000,
+          44100
+        ],
+        [
+          48000,
+          8000
+        ]
+      ],
+      "regression": "37-frame 8000->44100 packet contains rendered material and exact counters"
+    },
+    {
+      "check": "concurrent EOF publication",
+      "passed": 1,
+      "generations": 10000,
+      "log": "firewheel-foundation-publication-tests.log"
+    },
+    {
+      "check": "strict nodes Clippy",
+      "result": "pass"
+    },
+    {
+      "check": "strict integration-test Clippy",
+      "result": "pass"
+    },
+    {
+      "check": "rustfmt and git diff whitespace",
+      "result": "pass"
+    },
+    {
+      "check": "no_std/libm build",
+      "result": "pass"
+    },
+    {
+      "check": "serde/scheduled-events build",
+      "result": "pass"
+    },
+    {
+      "check": "all node features build",
+      "result": "pass"
+    },
+    {
+      "check": "CPAL/sampler/peak-meter/scheduling/tracing build",
+      "result": "pass"
+    },
+    {
+      "check": "warning-denied stream node rustdoc",
+      "result": "pass"
+    },
+    {
+      "check": "Bevy ECS in minimal standalone dependency tree",
+      "result": "absent"
+    }
+  ],
+  "review_fixes": [
+    "Acquire finished EOF publication fence before reading final produced/accepted counters, then consumption observations.",
+    "Validate supported rates, ratios, FFT grain/packet and queue limits before constructing PacketResampler.",
+    "Reject extreme or unsupported configurations with no allocation before refusal.",
+    "Own a preallocated PacketResamplerBuffer with correct delay-trim src..src+count range; fixed-resample0.13 interleaved storage left silent short EOF packets."
+  ],
+  "not_qualified": [
+    "hardware capture/playback or audible quality",
+    "sample-accurate microphone boundary selection",
+    "latency calibration or long-run clock drift",
+    "device failure/reopen",
+    "native application captures or process reopen",
+    "Linux/Windows execution of new CI matrix",
+    "remote CI",
+    "consumer migration"
+  ],
+  "consumer_actions": [
+    "Git-pin this revision with stream_nodes enabled.",
+    "Use media_channel_config or explicit autocorrection=None and output-rate capacity.",
+    "Remove legacy input/output capacity multiplier and guessed FFT headroom.",
+    "Retain/retry partial writer pushes using num_frames_pushed.",
+    "Use writer integer presented source position through existing RateStage mapping.",
+    "Finish the writer's partial EOF packet before observing drained.",
+    "Preserve explicit device ownership; direct Redshank CPAL capture is a separate consumer profile."
+  ]
+}
