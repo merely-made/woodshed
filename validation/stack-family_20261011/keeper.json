@@ -1,0 +1,9 @@
+{
+  "pid": 34623,
+  "source": "0e78fcffb140395a5c0d2f64a4dfda2b81751681",
+  "binary_sha256": "f9b38b309eee7a628172b8873f77da706775dae4676aae5aefec281ad79ddf84",
+  "endpoint": "/tmp/ws-stack-20261011.sock",
+  "root": "/Users/markik/Code/testing/woodshed/stack-adoption-20261011/private-keeper",
+  "mode": "unlocked",
+  "scope": "synthetic fixture with production djinn Keeper and app custody route; no personal vault"
+}

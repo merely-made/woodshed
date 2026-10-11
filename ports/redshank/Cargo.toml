@@ -9,23 +9,23 @@ license = "MPL-2.0"
 rust-version = "1.97"
 
 [workspace.dependencies]
-apparatus = { package = "mere-apparatus", git = "https://github.com/merely-made/mere.git", rev = "e95326dc08446a9256d3e340c63e571684afe697", default-features = false, features = ["serde"] }
-mesquite = { git = "https://github.com/merely-made/mere.git", rev = "e95326dc08446a9256d3e340c63e571684afe697" }
-tabard = { git = "https://github.com/merely-made/mere.git", rev = "e95326dc08446a9256d3e340c63e571684afe697" }
-tabard-workshop = { git = "https://github.com/merely-made/mere.git", rev = "e95326dc08446a9256d3e340c63e571684afe697" }
+apparatus = { package = "mere-apparatus", git = "https://github.com/merely-made/mere.git", rev = "0e78fcffb140395a5c0d2f64a4dfda2b81751681", default-features = false, features = ["serde"] }
+mesquite = { git = "https://github.com/merely-made/mere.git", rev = "0e78fcffb140395a5c0d2f64a4dfda2b81751681" }
+tabard = { git = "https://github.com/merely-made/mere.git", rev = "0e78fcffb140395a5c0d2f64a4dfda2b81751681" }
+tabard-workshop = { git = "https://github.com/merely-made/mere.git", rev = "0e78fcffb140395a5c0d2f64a4dfda2b81751681" }
 timed-text = { path = "../../crates/timed-text", version = "0.1.0" }
-cambium = { git = "https://github.com/merely-made/mere.git", rev = "e95326dc08446a9256d3e340c63e571684afe697" }
-cambium-genet-winit-host = { git = "https://github.com/merely-made/mere.git", rev = "e95326dc08446a9256d3e340c63e571684afe697" }
-tinct = { git = "https://github.com/merely-made/mere.git", rev = "e95326dc08446a9256d3e340c63e571684afe697" }
+cambium = { git = "https://github.com/merely-made/mere.git", rev = "0e78fcffb140395a5c0d2f64a4dfda2b81751681" }
+cambium-genet-winit-host = { git = "https://github.com/merely-made/mere.git", rev = "0e78fcffb140395a5c0d2f64a4dfda2b81751681" }
+tinct = { git = "https://github.com/merely-made/mere.git", rev = "0e78fcffb140395a5c0d2f64a4dfda2b81751681" }
 # The surface-descriptor half of a host's product-admission vocabulary. Same
 # Mere revision as cambium: the descriptor crosses the seam between Redshank
 # and an embedding host, so one revision or the types do not match themselves.
-mere-surface-api = { git = "https://github.com/merely-made/mere.git", rev = "e95326dc08446a9256d3e340c63e571684afe697" }
-genet-scripted-dom = { git = "https://github.com/merely-made/genet.git", rev = "7422e90613f9017e5bb790e3acb48f61776b2eda" }
+mere-surface-api = { git = "https://github.com/merely-made/mere.git", rev = "0e78fcffb140395a5c0d2f64a4dfda2b81751681" }
+genet-scripted-dom = { git = "https://github.com/merely-made/genet.git", rev = "4bc75583865c2fb862b7acd7fe16dc28eb591042" }
 # Named genet-probe until genet 7baa554c (2026-09-14); same crate, new name.
-taproot = { git = "https://github.com/merely-made/genet.git", rev = "7422e90613f9017e5bb790e3acb48f61776b2eda" }
-layout-dom-api = { git = "https://github.com/merely-made/genet.git", rev = "7422e90613f9017e5bb790e3acb48f61776b2eda" }
-servo-media-player = { git = "https://github.com/merely-made/genet.git", rev = "7422e90613f9017e5bb790e3acb48f61776b2eda" }
+taproot = { git = "https://github.com/merely-made/genet.git", rev = "4bc75583865c2fb862b7acd7fe16dc28eb591042" }
+layout-dom-api = { git = "https://github.com/merely-made/genet.git", rev = "4bc75583865c2fb862b7acd7fe16dc28eb591042" }
+servo-media-player = { git = "https://github.com/merely-made/genet.git", rev = "4bc75583865c2fb862b7acd7fe16dc28eb591042" }
 # Shared pure-std DSP primitives from the woodshed root, consumed through
 # the explicit shared-crate boundary as Hocket does: the WSOLA stretcher
 # behind the playback-rate dock lives there, not in a port-local copy.
@@ -48,9 +48,9 @@ symphonia = { version = "0.5.5", default-features = false, features = ["aac", "i
 # The host's fetch handle: one HTTP policy (cookies, cache, HSTS, transport)
 # for streaming, downloads and feeds. Same Mere revision as cambium. Defaults
 # off: a listener takes the handle over netfetcher and none of the page actor.
-fetch = { package = "mere-fetch", git = "https://github.com/merely-made/mere.git", rev = "e95326dc08446a9256d3e340c63e571684afe697", default-features = false }
+fetch = { package = "mere-fetch", git = "https://github.com/merely-made/mere.git", rev = "0e78fcffb140395a5c0d2f64a4dfda2b81751681", default-features = false }
 rfd = "0.17"
-errand = { git = "https://github.com/merely-made/mere.git", rev = "e95326dc08446a9256d3e340c63e571684afe697", version = "0.4.0" }
+errand = { git = "https://github.com/merely-made/mere.git", rev = "0e78fcffb140395a5c0d2f64a4dfda2b81751681", version = "0.4.0" }
 url = "2.5"
 
 # Root patches do not cross a git dependency boundary, so a standalone Redshank
@@ -63,13 +63,13 @@ url = "2.5"
 # fork by path inside the git checkout.
 [patch.crates-io]
 # Dependency workspaces do not propagate patches. Keep the renderer and both
-# shader packages on the qualified Metal fine/coarse traversal fix.
-netrender-vello = { git = "https://github.com/mark-ik/vello.git", rev = "10f01d6d88e94eac087daf033b24895cf97b8e82" }
-vello_encoding = { git = "https://github.com/mark-ik/vello.git", rev = "10f01d6d88e94eac087daf033b24895cf97b8e82" }
-vello_shaders = { git = "https://github.com/mark-ik/vello.git", rev = "10f01d6d88e94eac087daf033b24895cf97b8e82" }
+# shader packages on the published Classic 0.11/wgpu-30 provider.
+netrender-vello = { git = "https://github.com/mark-ik/vello.git", rev = "5862bba26c8a9f56f6a5fdc8ea6966b360a5d63a" }
+vello_encoding = { git = "https://github.com/mark-ik/vello.git", rev = "5862bba26c8a9f56f6a5fdc8ea6966b360a5d63a" }
+vello_shaders = { git = "https://github.com/mark-ik/vello.git", rev = "5862bba26c8a9f56f6a5fdc8ea6966b360a5d63a" }
 # servo-media-player depends on ipc-channel 0.22; this keeps it on genet's
 # vendored in-process fork (support/patches/ipc-channel) rather than the
 # crates.io release. Mere dropped its own row at 250fd238 because nothing in
 # Mere's graph uses ipc-channel any more; this graph still does, through
 # servo-media-player, so the row is live here.
-ipc-channel = { git = "https://github.com/merely-made/genet.git", rev = "7422e90613f9017e5bb790e3acb48f61776b2eda" }
+ipc-channel = { git = "https://github.com/merely-made/genet.git", rev = "4bc75583865c2fb862b7acd7fe16dc28eb591042" }

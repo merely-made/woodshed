@@ -19,6 +19,9 @@
 //! - `WOODSHED_CAPTURE_DIR` — where `capture <name>` writes `<name>.png` and,
 //!   at the end, `scenario.done` whose first line is `RESULT ok` or
 //!   `RESULT fail`.
+//! - `WOODSHED_PRESENTATION_TIMEOUT_SECS` — optional acceptance-only startup
+//!   allowance, bounded to 10–60 seconds, for bringing a background window
+//!   forward. The default remains ten seconds; progress still requires frames.
 //!
 //! Captures are in-process readbacks of the same rasterized view the frame
 //! presented, so they need no compositor, no foreground, and no ffmpeg, and
@@ -56,7 +59,14 @@ pub fn from_env(shared: Rc<RefCell<Shared>>) -> Option<mesquite::Lane<Product>> 
             Product { shared, sheet },
             cambium_genet_winit_host::read_file,
         )
-        .expect("load Woodshed scenario"),
+        .expect("load Woodshed scenario")
+        .with_presentation_timeout(std::time::Duration::from_secs(
+            std::env::var("WOODSHED_PRESENTATION_TIMEOUT_SECS")
+                .ok()
+                .and_then(|value| value.parse::<u64>().ok())
+                .unwrap_or(10)
+                .clamp(10, 60),
+        )),
     )
 }
 

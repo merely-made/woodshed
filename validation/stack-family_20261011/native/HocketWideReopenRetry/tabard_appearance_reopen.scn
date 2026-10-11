@@ -1,0 +1,9 @@
+settle 3
+assert snap appearance-device-free == true
+assert snap appearance-authoring == true
+assert snap appearance-mode == dark
+assert snap tracks == 4
+capture recorder_reopened
+click role:button @data-action=toggle-appearance
+assert text HocketAcceptance
+capture appearance_reopened

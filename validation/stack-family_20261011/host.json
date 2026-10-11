@@ -1,0 +1,7 @@
+{
+  "machine": "arm64",
+  "os": "macOS-26.5.1-arm64-arm-64bit",
+  "macOS": "26.5.1",
+  "cpu": "Apple M4",
+  "memory_bytes": 17179869184
+}

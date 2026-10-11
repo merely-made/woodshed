@@ -1,0 +1,25 @@
+{
+  "name": "HocketWideReopenRetry",
+  "binary": "/Users/markik/Code/worktrees/woodshed-audit-20261011/target/debug/hocket-genet",
+  "scenario": "/Users/markik/Code/worktrees/woodshed-stack-20261011/ports/hocket/scenarios/tabard_appearance_reopen.scn",
+  "prefix": "HOCKET",
+  "output": "/Users/markik/Code/testing/woodshed/stack-adoption-20261011/native/HocketWideReopenRetry",
+  "env": {
+    "HOCKET_APPEARANCE_RECEIPT": "1",
+    "HOCKET_THEME_LIBRARY": "/Users/markik/Code/testing/woodshed/stack-adoption-20261011/profiles/hocket-wide/themes.json",
+    "HOCKET_WIDTH": "1180",
+    "HOCKET_HEIGHT": "700",
+    "XDG_DATA_HOME": "/Users/markik/Code/testing/woodshed/stack-adoption-20261011/profiles/hocket-wide/data",
+    "XDG_CONFIG_HOME": "/Users/markik/Code/testing/woodshed/stack-adoption-20261011/profiles/hocket-wide/config",
+    "XDG_CACHE_HOME": "/Users/markik/Code/testing/woodshed/stack-adoption-20261011/profiles/hocket-wide/cache",
+    "GRAPHSHELL_APP_ENDPOINT": "/tmp/ws-stack-20261011.sock",
+    "GRAPHSHELL_DEVICE_ENDPOINT": "/tmp/ws-stack-20261011-device.sock",
+    "MERE_ROOT": "/Users/markik/Code/testing/woodshed/stack-adoption-20261011/profiles/hocket-wide/mere",
+    "HOCKET_SETTINGS": "/Users/markik/Code/testing/woodshed/stack-adoption-20261011/profiles/hocket-wide/settings.json",
+    "HOCKET_APPEARANCE": "/Users/markik/Code/testing/woodshed/stack-adoption-20261011/profiles/hocket-wide/appearance.json"
+  },
+  "app": "/Users/markik/Code/testing/woodshed/stack-adoption-20261011/native/HocketWideReopenRetry/HocketWideReopenRetry.app",
+  "binary_sha256": "c1d005328586152601959caee8b561885cee724caeb7b68e91521aac4575f51d",
+  "scenario_sha256": "fb770b3962552ee36249092db0f59efa9c1ca1198c8954267d2c41f92b8529a0",
+  "launch_method": "native control of prepared app bundle"
+}

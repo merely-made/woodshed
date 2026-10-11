@@ -1,0 +1,802 @@
+{
+  "source_revision": "c528d7576991401e36d0a1246470718adc04ceaf",
+  "published_base": "2732d3ef36571b8c118403812e63a241f6cc984e",
+  "artifact_origin": "/Users/markik/Code/testing/woodshed/stack-adoption-20261011",
+  "native_attempts": [
+    {
+      "name": "AppearanceWideQualified",
+      "status": "RESULT ok",
+      "source_revision": "c528d7576991401e36d0a1246470718adc04ceaf",
+      "binary_sha256": "ef8e9c6e0af4fcbde8a0fc5ea38123274358813b8f29e4b23a2f3c25d4b2a4d0",
+      "scenario_sha256": "4c36ab80c0c15668af8ca90431b6670dc526a02041a4630e98909875c8b64155",
+      "presented_frames": 102,
+      "captures": 9,
+      "blank": 0,
+      "images": [
+        {
+          "file": "native/AppearanceWideQualified/appearance_applied.png",
+          "sha256": "8524cc12dc0bc24fb3df358ef6b3b96e62603703e232024d349f82b49d9ff8dc"
+        },
+        {
+          "file": "native/AppearanceWideQualified/appearance_dark.png",
+          "sha256": "5957889918bef39c614f80f89a013c465e2cd947e572b5e4ba9eae0fe8be8a9c"
+        },
+        {
+          "file": "native/AppearanceWideQualified/appearance_hc_dark.png",
+          "sha256": "e6a8898daa4864943e1c531464284e98741c707a4fee034ebcbd9d6a6265ea87"
+        },
+        {
+          "file": "native/AppearanceWideQualified/appearance_light.png",
+          "sha256": "c3ba4f84baa3cd55a1b86064117a25c585e69c14b3a76e8ab980586fb6f5ba8c"
+        },
+        {
+          "file": "native/AppearanceWideQualified/appearance_narrow_graph.png",
+          "sha256": "88ed06b409e18886ed6652f4612f097718c284ea7995bff441972844b249730e"
+        },
+        {
+          "file": "native/AppearanceWideQualified/appearance_narrow_reader.png",
+          "sha256": "b7fdd8c0b5fa1c723af04ed6cc59160eb0b54c2b49493b07e83b5643119ae789"
+        },
+        {
+          "file": "native/AppearanceWideQualified/appearance_resized_applied.png",
+          "sha256": "fec8e539e59f7b8f65e90883f732126f8e092e276157edc319a003bda0c2e47e"
+        },
+        {
+          "file": "native/AppearanceWideQualified/appearance_settings.png",
+          "sha256": "5ebf69b3c1fbcca896910854f840c7c797c988ecee10158af66e339eb8dfd0bc"
+        },
+        {
+          "file": "native/AppearanceWideQualified/appearance_workshop.png",
+          "sha256": "831973f8f081b765083ee5818e38145291fc01146d7a14da9dacf87ee229e27d"
+        }
+      ],
+      "visual_review": "all captures reviewed",
+      "runtime_log_sha256": "f85bdbada0035d5b70ef532a0bdd7e6d3cc73cdb8ec30070b927b3505194c948"
+    },
+    {
+      "name": "AppearanceWideReopenQualified",
+      "status": "RESULT ok",
+      "source_revision": "c528d7576991401e36d0a1246470718adc04ceaf",
+      "binary_sha256": "ef8e9c6e0af4fcbde8a0fc5ea38123274358813b8f29e4b23a2f3c25d4b2a4d0",
+      "scenario_sha256": "d7a57a150cf46ac3521345548f99f0ee8583226b6d3cb50748a3e248c89629fd",
+      "presented_frames": 20,
+      "captures": 1,
+      "blank": 0,
+      "images": [
+        {
+          "file": "native/AppearanceWideReopenQualified/appearance_reopened.png",
+          "sha256": "1c334e82485da7fa26abeeac9e1d6838fbe1e0cbaf365a7713c19e3978ecc34f"
+        }
+      ],
+      "visual_review": "all captures reviewed",
+      "runtime_log_sha256": "7d2e970f7a57987e5f7c9c927ab50d5a0205af1ff2cdc7947ea828eae6b5fbb6"
+    },
+    {
+      "name": "HocketWide",
+      "status": "RESULT ok",
+      "source_revision": "eff92ae9c914b27aa1d0c76924d0ff4642bd74df",
+      "binary_sha256": "c1d005328586152601959caee8b561885cee724caeb7b68e91521aac4575f51d",
+      "scenario_sha256": "5cbbf5ca9ddb9f8d9a967d85f61ac48f6586edf6a66af296e7670793d32a6fd7",
+      "presented_frames": 79,
+      "captures": 9,
+      "blank": 0,
+      "images": [
+        {
+          "file": "native/HocketWide/recorder_applied.png",
+          "sha256": "d986160a0d87c861b863373a29c9f1fb8305343527753e49a1a71193a58d7146"
+        },
+        {
+          "file": "native/HocketWide/recorder_dark.png",
+          "sha256": "e75dda918996bbf52f15d7faa8479a3ee793e2f7dc2c2ad537ecbedfaf3ba1c6"
+        },
+        {
+          "file": "native/HocketWide/recorder_default.png",
+          "sha256": "b5671b44acf873955573e1a0276f6c210c5578ce77b0cc8e09e25cac5178dfea"
+        },
+        {
+          "file": "native/HocketWide/recorder_final.png",
+          "sha256": "ecfb5966829c6a7ea3ac43d33e512e27d39872ba533f24011a48f45836298b1f"
+        },
+        {
+          "file": "native/HocketWide/recorder_hc_dark.png",
+          "sha256": "1895113b35ef8f9e7c7b30ff0370391474d44e85fa464ac32f95fa6ccd621e32"
+        },
+        {
+          "file": "native/HocketWide/recorder_hc_light.png",
+          "sha256": "8e26fce05fa69d4a584e687285ccc63b35460bfd53f3d2e5054aa029ae8bd895"
+        },
+        {
+          "file": "native/HocketWide/recorder_light.png",
+          "sha256": "d4a3f334697d2f2160fd8fcfa859a5f211e349415701b8cd3f5bc9dfdc844a58"
+        },
+        {
+          "file": "native/HocketWide/workshop_narrow.png",
+          "sha256": "fe1eb3cbcf9ffbd5c927ab41da7de445d03790d0e40622e1c6c277bab1a6b623"
+        },
+        {
+          "file": "native/HocketWide/workshop_saved.png",
+          "sha256": "c8d181381558c37a9ac0345a5618569fe822d16b0f6af4b4f034b6a2750995c6"
+        }
+      ],
+      "visual_review": "all captures reviewed",
+      "runtime_log_sha256": "bea45080cf1b0c1f8d49f7be8c7c3c49a2df17652356b89ca67934da10cd97d2"
+    },
+    {
+      "name": "HocketWideReopen",
+      "status": "RESULT fail",
+      "source_revision": "eff92ae9c914b27aa1d0c76924d0ff4642bd74df",
+      "binary_sha256": "c1d005328586152601959caee8b561885cee724caeb7b68e91521aac4575f51d",
+      "scenario_sha256": "fb770b3962552ee36249092db0f59efa9c1ca1198c8954267d2c41f92b8529a0",
+      "presented_frames": 0,
+      "captures": 0,
+      "blank": 0,
+      "images": [],
+      "visual_review": "Failed receipt: preserved images are not counted as qualified captures; no full visual qualification claimed.",
+      "runtime_log_sha256": "91f84bf1a7417bf4d72334903ea6a7b63ab86099ed9e170736f40873864ce22b"
+    },
+    {
+      "name": "HocketWideReopenRetry",
+      "status": "RESULT fail",
+      "source_revision": "eff92ae9c914b27aa1d0c76924d0ff4642bd74df",
+      "binary_sha256": "c1d005328586152601959caee8b561885cee724caeb7b68e91521aac4575f51d",
+      "scenario_sha256": "fb770b3962552ee36249092db0f59efa9c1ca1198c8954267d2c41f92b8529a0",
+      "presented_frames": 0,
+      "captures": 0,
+      "blank": 0,
+      "images": [],
+      "visual_review": "Failed receipt: preserved images are not counted as qualified captures; no full visual qualification claimed.",
+      "runtime_log_sha256": "1e1750ea756c65d815fc5dad6661dde8febf5f640c915494d35902ed80f962b8"
+    },
+    {
+      "name": "PreviewReopen",
+      "status": "RESULT fail",
+      "source_revision": "df5d3f41f3579994e9fd67c7c306716785e9f316",
+      "binary_sha256": "664af7a93e279af3d97a081c838eb41fe9409161031787a2085130ea0c82b477",
+      "scenario_sha256": "3f8ddce318582fce3123d11c00acc66654465f09004d355029589dcc60c5fb88",
+      "presented_frames": 0,
+      "captures": 0,
+      "blank": 0,
+      "images": [],
+      "visual_review": "Failed receipt: preserved images are not counted as qualified captures; no full visual qualification claimed.",
+      "runtime_log_sha256": "d4a46275c267efb00e546b54db42b538b113622dfd9fd1e5e74238b1461f5fbd"
+    },
+    {
+      "name": "PreviewReopenForeground",
+      "status": "RESULT fail",
+      "source_revision": "df5d3f41f3579994e9fd67c7c306716785e9f316",
+      "binary_sha256": "664af7a93e279af3d97a081c838eb41fe9409161031787a2085130ea0c82b477",
+      "scenario_sha256": "3f8ddce318582fce3123d11c00acc66654465f09004d355029589dcc60c5fb88",
+      "presented_frames": 0,
+      "captures": 0,
+      "blank": 0,
+      "images": [],
+      "visual_review": "Failed receipt: preserved images are not counted as qualified captures; no full visual qualification claimed.",
+      "runtime_log_sha256": "f2034f68954a9aada72f98ec69a4f1e2f0df31c5a4f335cd8d760f5b16c431fa"
+    },
+    {
+      "name": "PreviewReopenQualified",
+      "status": "RESULT ok",
+      "source_revision": "c528d7576991401e36d0a1246470718adc04ceaf",
+      "binary_sha256": "ef8e9c6e0af4fcbde8a0fc5ea38123274358813b8f29e4b23a2f3c25d4b2a4d0",
+      "scenario_sha256": "3f8ddce318582fce3123d11c00acc66654465f09004d355029589dcc60c5fb88",
+      "presented_frames": 167,
+      "captures": 3,
+      "blank": 0,
+      "images": [
+        {
+          "file": "native/PreviewReopenQualified/01_recipe_reopened.png",
+          "sha256": "b79a330e344b4d0fe266d7e764884d7f6a378808fe57b9a207bdf48850fb275e"
+        },
+        {
+          "file": "native/PreviewReopenQualified/02_reopened_scene.png",
+          "sha256": "caeb4ba13b5d6a11813d7d5b371541774c8481865121185ef066c276281d6e2e"
+        },
+        {
+          "file": "native/PreviewReopenQualified/03_paused_rehearsal.png",
+          "sha256": "84c69eb60def43baef4ac52fb19db48628c4520ff03d07cab5aa5c35d8ab638a"
+        }
+      ],
+      "visual_review": "all captures reviewed",
+      "runtime_log_sha256": "8db197a9dac79fd114e94bd2d812e66c9050b9892d721f41a6ae9a667938974d"
+    },
+    {
+      "name": "PreviewSeed",
+      "status": "RESULT fail",
+      "source_revision": "df5d3f41f3579994e9fd67c7c306716785e9f316",
+      "binary_sha256": "664af7a93e279af3d97a081c838eb41fe9409161031787a2085130ea0c82b477",
+      "scenario_sha256": "8a546ee70691d357cd16cf1f8ac3acad111ad34387a314a7c0a21af6f5f211e2",
+      "presented_frames": 0,
+      "captures": 0,
+      "blank": 0,
+      "images": [],
+      "visual_review": "Failed receipt: preserved images are not counted as qualified captures; no full visual qualification claimed.",
+      "runtime_log_sha256": "d8405f23fe394b3e3c00223e6dff8efb80f729aac2bdc5bd40eb1f61326873f5"
+    },
+    {
+      "name": "PreviewSeedForeground",
+      "status": "RESULT ok",
+      "source_revision": "df5d3f41f3579994e9fd67c7c306716785e9f316",
+      "binary_sha256": "664af7a93e279af3d97a081c838eb41fe9409161031787a2085130ea0c82b477",
+      "scenario_sha256": "8a546ee70691d357cd16cf1f8ac3acad111ad34387a314a7c0a21af6f5f211e2",
+      "presented_frames": 163,
+      "captures": 3,
+      "blank": 0,
+      "images": [
+        {
+          "file": "native/PreviewSeedForeground/01_captured_recipe.png",
+          "sha256": "bb6944b5ab01f76ec8b8c5372cb7a73d41106bcf7322d5371f33a76dbd6bacc3"
+        },
+        {
+          "file": "native/PreviewSeedForeground/02_recipe_scene.png",
+          "sha256": "bbe682afa9944b9ff9d78e27e7c23151ce01e556cafdeb01813f5e21be223d46"
+        },
+        {
+          "file": "native/PreviewSeedForeground/03_latest_hear.png",
+          "sha256": "3c92d0177325152dfdaafd9f0e7e099710f50b0a2a19489e75fe6db2abe92726"
+        }
+      ],
+      "visual_review": "all captures reviewed",
+      "runtime_log_sha256": "dc827d2b3605281fece664fef9ad4d57aeda4386be006492500fef37ab016240"
+    },
+    {
+      "name": "RedshankReopen",
+      "status": "RESULT fail",
+      "source_revision": "eff92ae9c914b27aa1d0c76924d0ff4642bd74df",
+      "binary_sha256": "e838bcf87c2e7b8b025306771ddaad705fb38ea29585311d1429bebda75c8d00",
+      "scenario_sha256": "ce4c49f7f45a30f7524f1f545c9f20d565091e5fc619497364b82ba8acff517b",
+      "presented_frames": 0,
+      "captures": 0,
+      "blank": 0,
+      "images": [
+        {
+          "file": "native/RedshankReopen/reopened-choice.png",
+          "sha256": "3cda34e974d8c53cc3e3ce101d752a868b46d10794c353f482956f2efee6420c"
+        },
+        {
+          "file": "native/RedshankReopen/reopened-hc-dark.png",
+          "sha256": "04cb284306f91b7a01d6caad76c95cb358378021c33321866a407628df3dca72"
+        }
+      ],
+      "visual_review": "Failed receipt: preserved images are not counted as qualified captures; no full visual qualification claimed.",
+      "runtime_log_sha256": "838e609336d954e49cfef49e808ab55e630672a9b89cd25ebe6ef484f8f7953d",
+      "unqualified_image_observation": "Two PNG files exist although the completion receipt reports zero captures and zero presentations. Their provenance is not established by that receipt; reopening remains unqualified."
+    },
+    {
+      "name": "RedshankSeed",
+      "status": "RESULT ok",
+      "source_revision": "eff92ae9c914b27aa1d0c76924d0ff4642bd74df",
+      "binary_sha256": "e838bcf87c2e7b8b025306771ddaad705fb38ea29585311d1429bebda75c8d00",
+      "scenario_sha256": "fa93da44be570208ec099ab3f909a053998841b73300b31f20c3df897394fe3c",
+      "presented_frames": 64,
+      "captures": 7,
+      "blank": 0,
+      "images": [
+        {
+          "file": "native/RedshankSeed/appearance.png",
+          "sha256": "1971151ac7276d8edd197b53cfb345ad39b2a88f5a5a6e3de34e2d26671b66ab"
+        },
+        {
+          "file": "native/RedshankSeed/applied-dark.png",
+          "sha256": "6e93afc2d6711327ae502256fd3d0b81e009f0a78a29f6e4d123db24abff4574"
+        },
+        {
+          "file": "native/RedshankSeed/applied-hc-dark.png",
+          "sha256": "7267202c49d146302254b77a8f7a19522d68c50c601d3673b1b7c55b9812db6c"
+        },
+        {
+          "file": "native/RedshankSeed/applied-hc-light.png",
+          "sha256": "d21ab043827726e6d5a9b4e731d087ab7095ab9467ef711489c1d4e12718a7f5"
+        },
+        {
+          "file": "native/RedshankSeed/applied-light.png",
+          "sha256": "e53800415e8a0f747c06421f2c6a57a87283ed970d504186ea1085059689f668"
+        },
+        {
+          "file": "native/RedshankSeed/saved-copy.png",
+          "sha256": "c7daed484f6455cfb34ef379bee84647a0b4388d6836eb8bf47c67bbce979174"
+        },
+        {
+          "file": "native/RedshankSeed/workshop.png",
+          "sha256": "5b7efe520d300c45fe5e21103614382505f0fe529cfc5b1f22d8571b2f31b0dc"
+        }
+      ],
+      "visual_review": "all captures reviewed",
+      "runtime_log_sha256": "bac960d7532708bd4ca65cd91a7661b9ba70fae20af52c03f2722c31868d0534"
+    },
+    {
+      "name": "SetReopenQualified",
+      "status": "RESULT ok",
+      "source_revision": "df5d3f41f3579994e9fd67c7c306716785e9f316",
+      "binary_sha256": "664af7a93e279af3d97a081c838eb41fe9409161031787a2085130ea0c82b477",
+      "scenario_sha256": "36be45927f740b973600de0f7a0d831a17af3093ddfab36f33c317e2578dcf5e",
+      "presented_frames": 74,
+      "captures": 3,
+      "blank": 0,
+      "images": [
+        {
+          "file": "native/SetReopenQualified/01_set_source_fresh_reopen.png",
+          "sha256": "a449657c738d1407c122a3afa4afffe4e34f131ecbac13349440e53336abd74c"
+        },
+        {
+          "file": "native/SetReopenQualified/02_set_source_replayed.png",
+          "sha256": "4c559124786f19ddd5541478ba09ef24f3cd3bf80ee56d9269a6248311419d61"
+        },
+        {
+          "file": "native/SetReopenQualified/03_saved_backing_still_retained.png",
+          "sha256": "d9d5cf509ff7933c4e63c2c44ddce79ceed04b99991b540406d2bda3e0cf3d90"
+        }
+      ],
+      "visual_review": "all captures reviewed",
+      "runtime_log_sha256": "a9c418fb5d1dbe09afd6f917cd405f0eaf6a869ceba22c79f6b41fc7f8e687f4"
+    },
+    {
+      "name": "SetSeed",
+      "status": "RESULT fail",
+      "source_revision": "eff92ae9c914b27aa1d0c76924d0ff4642bd74df",
+      "binary_sha256": "a11add56da8e9f4da73673fda36ff9deeaa6657aaaf3aa29da6b2f896eec8e14",
+      "scenario_sha256": "21d2e51e74a10952306137bb4f24cc8dbde2f43cfb59dc72a4f20af354a89ced",
+      "presented_frames": 110,
+      "captures": 3,
+      "blank": 0,
+      "images": [
+        {
+          "file": "native/SetSeed/01_set_backing_admitted.png",
+          "sha256": "10f6cdf8ed9d7b1cfee24c0a6a281c6b36ebf04e250ce24f2656dde39e770090"
+        },
+        {
+          "file": "native/SetSeed/02_exact_saved_backing_retained.png",
+          "sha256": "a6201ce4a86bccae547855c632c5bc25591cb11c7c85a8b90713785c5c5a30a2"
+        },
+        {
+          "file": "native/SetSeed/03_set_source_ready_to_reopen.png",
+          "sha256": "51babcaf8f2c7c69d5ba9fb35da7ceddcdb1fa459424c00db908ca9b4bab0404"
+        }
+      ],
+      "visual_review": "Failed receipt: preserved images are not counted as qualified captures; no full visual qualification claimed.",
+      "runtime_log_sha256": "b35d4019516ae3d031f4d138444e91027f117609b759957c708159b11a1253a5"
+    },
+    {
+      "name": "SetSeedQualified",
+      "status": "RESULT ok",
+      "source_revision": "df5d3f41f3579994e9fd67c7c306716785e9f316",
+      "binary_sha256": "664af7a93e279af3d97a081c838eb41fe9409161031787a2085130ea0c82b477",
+      "scenario_sha256": "4670b9c45c61bbda52ea739f88688ce0e7ca0b8e0b163242c1ebf332cf4a3050",
+      "presented_frames": 111,
+      "captures": 3,
+      "blank": 0,
+      "images": [
+        {
+          "file": "native/SetSeedQualified/01_set_backing_admitted.png",
+          "sha256": "75c4f0a2e14f44c57120b279bba0e81a25cdd7f0c5be3fbdeecc7d9c44c95dfc"
+        },
+        {
+          "file": "native/SetSeedQualified/02_exact_saved_backing_retained.png",
+          "sha256": "a834210543121eed7fe02dcc4af43d0cd4ac02ece11db3b73be00617e4d0f3ad"
+        },
+        {
+          "file": "native/SetSeedQualified/03_set_source_ready_to_reopen.png",
+          "sha256": "c46f2fd363eeb4611b5f971ecb53808c6b59a859be5ff586695c2348cabc9319"
+        }
+      ],
+      "visual_review": "all captures reviewed",
+      "runtime_log_sha256": "a31e16939bbbb87ae4c9a6e045a02102231cabbcdd9356e60baa2526f251909f"
+    }
+  ],
+  "closure": {
+    "root": {
+      "metadata_sha256": "6a8b728864b72708fd0ff275ab885130ad3ca6a8f392de53f4514ef26a3ad6b5",
+      "shared_git_sources": {
+        "git+https://github.com/merely-made/mere.git?rev=0e78fcffb140395a5c0d2f64a4dfda2b81751681#0e78fcffb140395a5c0d2f64a4dfda2b81751681": [
+          "armillary 0.1.1",
+          "cambium 0.3.3",
+          "cambium-genet-web-host 0.1.0",
+          "cambium-genet-winit-host 0.1.0",
+          "cambium-rootstock 0.1.0",
+          "cambium-winit 0.3.0",
+          "cambium-winit-a11y 0.3.0",
+          "chartulary 0.2.2",
+          "chirograph 0.0.2",
+          "command-menu 0.1.0",
+          "document-canvas 0.1.0",
+          "edit-history 0.1.0",
+          "eidetic 0.0.2",
+          "esp 0.1.0",
+          "graphshell 0.0.2",
+          "graphshell-client 0.0.2",
+          "graphshell-endpoint 0.0.2",
+          "illume 0.0.2",
+          "incipit 0.2.0",
+          "inker 0.1.1",
+          "luggage 0.1.0",
+          "mere 0.0.2",
+          "mere-alembic 0.0.1",
+          "mere-apparatus 0.0.1",
+          "mere-cartography 0.0.2",
+          "mere-curation 0.1.0",
+          "mere-document-lanes 0.1.0",
+          "mere-fleece 0.0.1",
+          "mere-forme 0.1.0",
+          "mere-kernel 0.0.2",
+          "mere-persona-picker 0.0.1",
+          "mere-proofs 0.1.0",
+          "mere-surface-api 0.1.0",
+          "mere-transport 0.0.2",
+          "mere-webrtc-carrier 0.0.1",
+          "meristem 0.2.0",
+          "mesquite 0.1.0",
+          "muniment 0.1.2",
+          "numen 0.2.0",
+          "pandect 0.1.1",
+          "pictograph 0.2.0",
+          "sceno 0.0.4",
+          "scenograph 0.0.4",
+          "scenomise 0.0.4",
+          "scenotime 0.0.4",
+          "seiche 0.0.6",
+          "sprigging 0.2.1",
+          "stickleback 0.1.1",
+          "tabard 0.0.1",
+          "tabard-workshop 0.0.1",
+          "tinct 0.1.2",
+          "uxtree 0.0.2",
+          "workbench 0.1.0"
+        ],
+        "git+https://github.com/merely-made/genet.git?rev=4bc75583865c2fb862b7acd7fe16dc28eb591042#4bc75583865c2fb862b7acd7fe16dc28eb591042": [
+          "buckram 0.0.3",
+          "cadency 0.0.1",
+          "document-session-api 0.1.0",
+          "engine-observables-api 0.2.0",
+          "fleece 0.5.0",
+          "genet-document-resources 0.2.1",
+          "genet-fontique 0.10.0",
+          "genet-host-api 0.2.0",
+          "genet-livery 0.0.4",
+          "genet-paint-types 0.2.0",
+          "genet-parley 0.10.0",
+          "genet-render 0.2.0",
+          "genet-render-host 0.2.0",
+          "genet-scripted-dom 0.1.2",
+          "genet-static-dom 0.1.1",
+          "genet-taffy 0.14.0",
+          "genet-text 0.1.0",
+          "genet-winit-host 0.2.0",
+          "layout-dom-api 0.1.1",
+          "livery 0.0.5",
+          "regress 0.11.1",
+          "taproot 0.1.0"
+        ],
+        "git+https://github.com/merely-made/dramatis.git?rev=0234e7eea6f2ddf2330a71b9425da01b06ae0391#0234e7eea6f2ddf2330a71b9425da01b06ae0391": [
+          "dramatis 0.0.3",
+          "insigne 0.0.2",
+          "notochord 0.1.1",
+          "personae 0.3.0"
+        ],
+        "git+https://github.com/merely-made/netrender.git?rev=ef5412d760a978584c8c1801e8a765c51aecd403#ef5412d760a978584c8c1801e8a765c51aecd403": [
+          "netrender 0.1.2",
+          "netrender_device 0.1.2",
+          "paint_list_api 0.1.2",
+          "paint_list_render 0.1.2"
+        ],
+        "git+https://github.com/mark-ik/vello.git?rev=5862bba26c8a9f56f6a5fdc8ea6966b360a5d63a#5862bba26c8a9f56f6a5fdc8ea6966b360a5d63a": [
+          "netrender-vello 0.11.0",
+          "vello_encoding 0.11.0",
+          "vello_shaders 0.11.0"
+        ]
+      }
+    },
+    "hocket": {
+      "metadata_sha256": "13825915f742c827fd32246d21b37a31dbdba2082e965937058ac360a8bc92ed",
+      "shared_git_sources": {
+        "git+https://github.com/merely-made/mere.git?rev=0e78fcffb140395a5c0d2f64a4dfda2b81751681#0e78fcffb140395a5c0d2f64a4dfda2b81751681": [
+          "armillary 0.1.1",
+          "cambium 0.3.3",
+          "cambium-genet-winit-host 0.1.0",
+          "cambium-rootstock 0.1.0",
+          "cambium-winit 0.3.0",
+          "cambium-winit-a11y 0.3.0",
+          "chartulary 0.2.2",
+          "chirograph 0.0.2",
+          "command-menu 0.1.0",
+          "document-canvas 0.1.0",
+          "edit-history 0.1.0",
+          "eidetic 0.0.2",
+          "esp 0.1.0",
+          "graphshell 0.0.2",
+          "graphshell-client 0.0.2",
+          "graphshell-endpoint 0.0.2",
+          "illume 0.0.2",
+          "incipit 0.2.0",
+          "inker 0.1.1",
+          "luggage 0.1.0",
+          "mere 0.0.2",
+          "mere-alembic 0.0.1",
+          "mere-apparatus 0.0.1",
+          "mere-cartography 0.0.2",
+          "mere-curation 0.1.0",
+          "mere-document-lanes 0.1.0",
+          "mere-fleece 0.0.1",
+          "mere-forme 0.1.0",
+          "mere-kernel 0.0.2",
+          "mere-proofs 0.1.0",
+          "mere-surface-api 0.1.0",
+          "mere-transport 0.0.2",
+          "mere-webrtc-carrier 0.0.1",
+          "meristem 0.2.0",
+          "mesquite 0.1.0",
+          "muniment 0.1.2",
+          "numen 0.2.0",
+          "pandect 0.1.1",
+          "pictograph 0.2.0",
+          "sceno 0.0.4",
+          "scenograph 0.0.4",
+          "scenomise 0.0.4",
+          "scenotime 0.0.4",
+          "seiche 0.0.6",
+          "sprigging 0.2.1",
+          "stickleback 0.1.1",
+          "tabard 0.0.1",
+          "tabard-workshop 0.0.1",
+          "tinct 0.1.2",
+          "uxtree 0.0.2",
+          "workbench 0.1.0"
+        ],
+        "git+https://github.com/merely-made/genet.git?rev=4bc75583865c2fb862b7acd7fe16dc28eb591042#4bc75583865c2fb862b7acd7fe16dc28eb591042": [
+          "buckram 0.0.3",
+          "cadency 0.0.1",
+          "document-session-api 0.1.0",
+          "engine-observables-api 0.2.0",
+          "fleece 0.5.0",
+          "genet-clipboard 0.1.0",
+          "genet-document-resources 0.2.1",
+          "genet-fontique 0.10.0",
+          "genet-host-api 0.2.0",
+          "genet-livery 0.0.4",
+          "genet-paint-types 0.2.0",
+          "genet-parley 0.10.0",
+          "genet-render 0.2.0",
+          "genet-render-host 0.2.0",
+          "genet-scripted-dom 0.1.2",
+          "genet-static-dom 0.1.1",
+          "genet-taffy 0.14.0",
+          "genet-text 0.1.0",
+          "genet-winit-host 0.2.0",
+          "layout-dom-api 0.1.1",
+          "livery 0.0.5",
+          "regress 0.11.1",
+          "taproot 0.1.0"
+        ],
+        "git+https://github.com/merely-made/dramatis.git?rev=0234e7eea6f2ddf2330a71b9425da01b06ae0391#0234e7eea6f2ddf2330a71b9425da01b06ae0391": [
+          "dramatis 0.0.3",
+          "insigne 0.0.2",
+          "notochord 0.1.1",
+          "personae 0.3.0"
+        ],
+        "git+https://github.com/merely-made/netrender.git?rev=ef5412d760a978584c8c1801e8a765c51aecd403#ef5412d760a978584c8c1801e8a765c51aecd403": [
+          "netrender 0.1.2",
+          "netrender_device 0.1.2",
+          "paint_list_api 0.1.2",
+          "paint_list_render 0.1.2"
+        ],
+        "git+https://github.com/mark-ik/vello.git?rev=5862bba26c8a9f56f6a5fdc8ea6966b360a5d63a#5862bba26c8a9f56f6a5fdc8ea6966b360a5d63a": [
+          "netrender-vello 0.11.0",
+          "vello_encoding 0.11.0",
+          "vello_shaders 0.11.0"
+        ]
+      }
+    },
+    "redshank": {
+      "metadata_sha256": "af546ec5ef6b041626b31f8900cceb516bb2c507dcf217ba664d9920cca0208b",
+      "shared_git_sources": {
+        "git+https://github.com/merely-made/genet.git?rev=4bc75583865c2fb862b7acd7fe16dc28eb591042#4bc75583865c2fb862b7acd7fe16dc28eb591042": [
+          "buckram 0.0.3",
+          "cadency 0.0.1",
+          "document-session-api 0.1.0",
+          "engine-observables-api 0.2.0",
+          "fleece 0.5.0",
+          "genet-document-resources 0.2.1",
+          "genet-fontique 0.10.0",
+          "genet-host-api 0.2.0",
+          "genet-livery 0.0.4",
+          "genet-paint-types 0.2.0",
+          "genet-parley 0.10.0",
+          "genet-render 0.2.0",
+          "genet-render-host 0.2.0",
+          "genet-scripted-dom 0.1.2",
+          "genet-static-dom 0.1.1",
+          "genet-text 0.1.0",
+          "genet-winit-host 0.2.0",
+          "ipc-channel 0.22.0",
+          "layout-dom-api 0.1.1",
+          "livery 0.0.5",
+          "netfetcher 0.1.1",
+          "regress 0.11.1",
+          "servo-media-player 0.2.0",
+          "servo-media-streams 0.2.0",
+          "servo-media-traits 0.2.0",
+          "taproot 0.1.0"
+        ],
+        "git+https://github.com/merely-made/mere.git?rev=0e78fcffb140395a5c0d2f64a4dfda2b81751681#0e78fcffb140395a5c0d2f64a4dfda2b81751681": [
+          "cambium 0.3.3",
+          "cambium-genet-web-host 0.1.0",
+          "cambium-genet-winit-host 0.1.0",
+          "cambium-rootstock 0.1.0",
+          "cambium-winit 0.3.0",
+          "cambium-winit-a11y 0.3.0",
+          "command-menu 0.1.0",
+          "document-canvas 0.1.0",
+          "edit-history 0.1.0",
+          "errand 0.4.0",
+          "illume 0.0.2",
+          "inker 0.1.1",
+          "mere-apparatus 0.0.1",
+          "mere-document-lanes 0.1.0",
+          "mere-fetch 0.0.1",
+          "mere-fleece 0.0.1",
+          "mere-page-load 0.0.1",
+          "mere-surface-api 0.1.0",
+          "meristem 0.2.0",
+          "mesquite 0.1.0",
+          "sceno 0.0.4",
+          "sprigging 0.2.1",
+          "tabard 0.0.1",
+          "tabard-workshop 0.0.1",
+          "tinct 0.1.2",
+          "workbench 0.1.0"
+        ],
+        "git+https://github.com/merely-made/netrender.git?rev=ef5412d760a978584c8c1801e8a765c51aecd403#ef5412d760a978584c8c1801e8a765c51aecd403": [
+          "netrender 0.1.2",
+          "netrender_device 0.1.2",
+          "paint_list_api 0.1.2",
+          "paint_list_render 0.1.2"
+        ],
+        "git+https://github.com/mark-ik/vello.git?rev=5862bba26c8a9f56f6a5fdc8ea6966b360a5d63a#5862bba26c8a9f56f6a5fdc8ea6966b360a5d63a": [
+          "netrender-vello 0.11.0",
+          "vello_encoding 0.11.0",
+          "vello_shaders 0.11.0"
+        ]
+      }
+    },
+    "relationship": {
+      "metadata_sha256": "20c1e5f2664dde279c477a95132a801b73919e5fd6df9b015d8bff5ba7cc0a15",
+      "shared_git_sources": {
+        "git+https://github.com/merely-made/mere.git?rev=0e78fcffb140395a5c0d2f64a4dfda2b81751681#0e78fcffb140395a5c0d2f64a4dfda2b81751681": [
+          "armillary 0.1.1",
+          "cambium 0.3.3",
+          "cambium-rootstock 0.1.0",
+          "cambium-winit 0.3.0",
+          "chartulary 0.2.2",
+          "chirograph 0.0.2",
+          "command-menu 0.1.0",
+          "document-canvas 0.1.0",
+          "edit-history 0.1.0",
+          "eidetic 0.0.2",
+          "esp 0.1.0",
+          "graphshell 0.0.2",
+          "graphshell-client 0.0.2",
+          "graphshell-endpoint 0.0.2",
+          "illume 0.0.2",
+          "incipit 0.2.0",
+          "inker 0.1.1",
+          "luggage 0.1.0",
+          "mere 0.0.2",
+          "mere-alembic 0.0.1",
+          "mere-cartography 0.0.2",
+          "mere-curation 0.1.0",
+          "mere-document-lanes 0.1.0",
+          "mere-fleece 0.0.1",
+          "mere-forme 0.1.0",
+          "mere-kernel 0.0.2",
+          "mere-persona-picker 0.0.1",
+          "mere-proofs 0.1.0",
+          "mere-surface-api 0.1.0",
+          "mere-transport 0.0.2",
+          "mere-webrtc-carrier 0.0.1",
+          "meristem 0.2.0",
+          "muniment 0.1.2",
+          "numen 0.2.0",
+          "pandect 0.1.1",
+          "pictograph 0.2.0",
+          "sceno 0.0.4",
+          "scenograph 0.0.4",
+          "scenomise 0.0.4",
+          "scenotime 0.0.4",
+          "seiche 0.0.6",
+          "sprigging 0.2.1",
+          "stickleback 0.1.1",
+          "tabard 0.0.1",
+          "tabard-workshop 0.0.1",
+          "tinct 0.1.2",
+          "uxtree 0.0.2",
+          "workbench 0.1.0"
+        ],
+        "git+https://github.com/merely-made/genet.git?rev=4bc75583865c2fb862b7acd7fe16dc28eb591042#4bc75583865c2fb862b7acd7fe16dc28eb591042": [
+          "buckram 0.0.3",
+          "cadency 0.0.1",
+          "document-session-api 0.1.0",
+          "engine-observables-api 0.2.0",
+          "fleece 0.5.0",
+          "genet-document-resources 0.2.1",
+          "genet-fontique 0.10.0",
+          "genet-host-api 0.2.0",
+          "genet-livery 0.0.4",
+          "genet-paint-types 0.2.0",
+          "genet-parley 0.10.0",
+          "genet-render 0.2.0",
+          "genet-render-host 0.2.0",
+          "genet-scripted-dom 0.1.2",
+          "genet-static-dom 0.1.1",
+          "genet-taffy 0.14.0",
+          "genet-text 0.1.0",
+          "layout-dom-api 0.1.1",
+          "livery 0.0.5",
+          "regress 0.11.1"
+        ],
+        "git+https://github.com/merely-made/dramatis.git?rev=0234e7eea6f2ddf2330a71b9425da01b06ae0391#0234e7eea6f2ddf2330a71b9425da01b06ae0391": [
+          "dramatis 0.0.3",
+          "insigne 0.0.2",
+          "notochord 0.1.1",
+          "personae 0.3.0"
+        ],
+        "git+https://github.com/merely-made/netrender.git?rev=ef5412d760a978584c8c1801e8a765c51aecd403#ef5412d760a978584c8c1801e8a765c51aecd403": [
+          "netrender 0.1.2",
+          "netrender_device 0.1.2",
+          "paint_list_api 0.1.2",
+          "paint_list_render 0.1.2"
+        ],
+        "git+https://github.com/mark-ik/vello.git?rev=5862bba26c8a9f56f6a5fdc8ea6966b360a5d63a#5862bba26c8a9f56f6a5fdc8ea6966b360a5d63a": [
+          "netrender-vello 0.11.0",
+          "vello_encoding 0.11.0",
+          "vello_shaders 0.11.0"
+        ]
+      }
+    }
+  },
+  "passed_native_runs": 8,
+  "passed_captures": 38,
+  "passed_presentations": 780,
+  "sleep_prevention_expires_utc": "2026-10-11 20:21:46 UTC",
+  "open": [
+    "Hocket fresh-process appearance reopen: two attempts occluded before any presented frame",
+    "Redshank fresh-process appearance reopen: occluded before any presented frame",
+    "No new narrow-start reopen pair, OS IME, other headed platforms, microphone/recording or physical listening qualification"
+  ],
+  "relationship_instrument": {
+    "status": "seed and fresh-process reopen pass",
+    "scope": "consumer relationship compiler and FsBackend fixture; no native pixels or keeper admission claim",
+    "binary_sha256": "41b1f75bc920262eec7736f7d6130625c90a38292ec9a89ba94d7e157308191c",
+    "tests_passed": 5,
+    "tests_ignored": 1
+  },
+  "audio_ddx": {
+    "binary_sha256": "72f9396daeed8c3a5ec3c5e5d97dd3092e6570920ad30476806a47d89feccd01",
+    "modes": [
+      "scale",
+      "song"
+    ],
+    "device_events": 0,
+    "output": "muted",
+    "microphone": false
+  },
+  "product_tests": {
+    "woodshed": {
+      "passed": 870,
+      "failed": 0,
+      "ignored": 1
+    },
+    "hocket": {
+      "passed": 166,
+      "failed": 0,
+      "ignored": 1
+    },
+    "redshank": {
+      "passed": 261,
+      "failed": 0,
+      "ignored": 7
+    },
+    "ringdown": {
+      "passed": 157,
+      "failed": 0,
+      "ignored": 0
+    }
+  }
+}
