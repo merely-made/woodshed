@@ -1,0 +1,64 @@
+# PREPARATION ONLY: frozen production audio runtime, isolated profile, no MIDI/input.
+# Five explicit clock samples must show increasing device frames/node blocks
+# and processor click=false/true/false/true/false in the final runtime log.
+settle 3
+click .pill Tools
+click .lens Metronome
+settle 3
+assert snap output-streams == 1
+assert snap output-device-frames >= 1
+assert snap output-processing-blocks >= 1
+assert snap output-capture-invalid == false
+assert snap capture-input-rate == none
+assert snap output-click-playing == false
+act sample-output-clock
+assert event output-clock streams=1
+click .t-btn Play
+settle 60
+assert text Stop
+assert snap output-streams == 1
+assert snap output-device-frames >= 1
+assert snap output-processing-blocks >= 1
+assert snap output-capture-invalid == false
+assert snap capture-input-rate == none
+assert snap output-click-playing == true
+act sample-output-clock
+assert event output-clock streams=1
+capture 01_metronome_playing
+click .t-btn Stop
+settle 12
+assert text Play
+assert snap output-streams == 1
+assert snap output-device-frames >= 1
+assert snap output-processing-blocks >= 1
+assert snap output-capture-invalid == false
+assert snap capture-input-rate == none
+assert snap output-click-playing == false
+act sample-output-clock
+assert event output-clock streams=1
+capture 02_metronome_stopped
+click .t-btn Play
+settle 60
+assert text Stop
+assert snap output-streams == 1
+assert snap output-device-frames >= 1
+assert snap output-processing-blocks >= 1
+assert snap output-capture-invalid == false
+assert snap capture-input-rate == none
+assert snap output-click-playing == true
+act sample-output-clock
+assert event output-clock streams=1
+capture 03_metronome_restarted
+click .t-btn Stop
+settle 12
+assert text Play
+assert snap output-streams == 1
+assert snap output-device-frames >= 1
+assert snap output-processing-blocks >= 1
+assert snap output-capture-invalid == false
+assert snap capture-input-rate == none
+assert snap output-click-playing == false
+act sample-output-clock
+assert event output-clock streams=1
+capture 04_metronome_final_stop
+log Single output metronome stop restart complete

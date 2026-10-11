@@ -121,8 +121,10 @@ before any other doc in this directory.
   The October 11 single-output runtime retires both callback mixer engines,
   keeping click, preview and backing on one Firewheel/device clock. It passes
   144 audio and 29 focused desktop checks plus three muted one-stream device
-  runs. Native GUI seed/reopen and click stop/restart qualification remain
-  pending the foreground handoff; durable PCM and full P7 remain open.
+  runs. Five native GUI processes qualify seed/reopen and click stop/restart
+  with 791 presentations and 16 reviewed full captures; 17 checkpoints retain
+  unopened input and one output stream. Physical capture, durable PCM and full
+  P7 remain open.
   The October 7 captured-scale-pattern follow-up extends copied instructions
   to degree pairs in thirds/fourths, with base-scale exploration and unchanged
   owner boundaries. The 613-check gate and committed desktop build pass; eight

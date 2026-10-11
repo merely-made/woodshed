@@ -1,0 +1,12 @@
+RESULT ok
+captured 01_metronome_playing
+captured 02_metronome_stopped
+captured 03_metronome_restarted
+captured 04_metronome_final_stop
+Single output metronome stop restart complete
+capture 01_metronome_playing 2360x1600 digest=bb979420fa50681c file=$ARTIFACT_ROOT/native/RuntimeMetro/01_metronome_playing.png
+capture 02_metronome_stopped 2360x1600 digest=b1d492b4b56d7013 file=$ARTIFACT_ROOT/native/RuntimeMetro/02_metronome_stopped.png
+capture 03_metronome_restarted 2360x1600 digest=7937dc28c0eebe07 file=$ARTIFACT_ROOT/native/RuntimeMetro/03_metronome_restarted.png
+capture 04_metronome_final_stop 2360x1600 digest=c974c576dd9cd448 file=$ARTIFACT_ROOT/native/RuntimeMetro/04_metronome_final_stop.png
+frames: 4 captured, 0 blank, 4 distinct digests
+presentation: 214 frames, 1145 redraws, 931 unpresented redraws

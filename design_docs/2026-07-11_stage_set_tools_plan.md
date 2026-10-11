@@ -2850,8 +2850,9 @@ fixture reopening, preserving the acoustic/vault/release boundaries.
 
 ### October 11 follow-up: single output runtime
 
-**Status: implemented; CPU/build and muted single-stream device checks pass.
-Native GUI seed/reopen qualification remains pending the foreground handoff.**
+**Status: implemented and qualified for the bounded macOS runtime slice.
+CPU/build, muted device checks and native GUI seed/reopen pass at frozen source
+`4a4aba4`; physical capture and broader P7 remain open.**
 
 This root-owned slice starts at `48d4e5a` and preserves the shared UI family
 and the corrected owned Firewheel revision
@@ -2911,8 +2912,9 @@ The production desktop and diagnostic example build at frozen source
 Hocket/Redshank appearance-reopen follow-up `0032f35` without changing the
 Woodshed UI family. The [source/build receipt](../validation/output-runtime_20261011/receipt.json)
 records component commits, exact binary hashes and focused logs. Native GUI
-qualification is pending the shared foreground handoff; muted command-line
-device checks are complete.
+qualification and muted command-line device checks are complete at that same
+freeze. The subsequently published `49efa77` has identical product source and
+manifests; only documentation and evidence follow the freeze.
 
 Three muted native diagnostic processes at that freeze each report one output
 stream at 48 kHz and zero observed CPAL status events. Chord, scale and backing
@@ -2926,3 +2928,34 @@ and tempo. These are device/status and control-responsiveness observations,
 not acoustic quality, hardware clock synchronization, callback-gap measurements
 or controlled performance comparisons. The [device receipt](../validation/output-runtime_20261011/ddx/receipt.json)
 retains all three logs and OS CPU/wall measurements.
+
+The five native GUI processes report `RESULT ok`: metronome 214 presented
+frames/four captures, Set seed 126/three and fresh reopen 90/three, preview seed
+179/three and fresh reopen 182/three. All 16 full nonblank captures are visually
+reviewed, for 791 total presentations. Seventeen checkpoints confirm one
+output stream, positive device/graph clocks and unopened capture input. The
+metronome's coherent samples advance from 1,438,720 to 1,628,160 device frames
+and 1,405 to 1,590 graph blocks through stopped/playing/stopped/restarted/stopped;
+Song playback and capture-invalid remain false in that click-only fixture.
+
+The Set's 125 BPM, explicit 5/4 clock and Once mode survive fresh-process
+reopening, while the exact four-bar 240 BPM C/F/G/C compatibility backing
+remains available. A retained C Major thirds recipe keeps 92 BPM, deleted-source
+provenance, Pinned placement and Orbits scene settings across reopening.
+Repeated Hear retains one preview voice; Rewind and Run/Pause clear preview
+playback, ending with four Cards and paused rehearsal. These flows use the
+isolated production Keeper fixture; they do not alter personal persisted data
+or qualify microphone recording/PCM durability.
+
+The [native receipt](../validation/output-runtime_20261011/gui/receipt.json)
+contains exact scenarios, concise logs, completion/presentation receipts,
+separate validator/result hashes, safe profile hashes and all capture hashes
+and dimensions. Full PNGs and original logs remain under
+`/Users/markik/Code/testing/woodshed/output-runtime-20261011/native/`.
+Native window Raise is used; background occlusion/unpresented redraw counts
+are retained rather than claimed as idle rendering or startup-performance
+qualification. Three post-Raise observation errors reflect finite app exit;
+actual successful completion receipts were checked before the next launch,
+without repeating a seed. No further product-source correction was needed.
+All acceptance apps exited and the owned Keeper fixture was stopped. The
+existing four-hour sleep prevention was preserved.
