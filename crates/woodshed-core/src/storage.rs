@@ -154,6 +154,13 @@ pub struct PersistedSession {
     pub active_exploration: Option<crate::catalog_explorations::CatalogExplorationState>,
     /// The song lane: bars + song-level flags.
     pub song: crate::song::SongDoc,
+    /// Source selection and explicit clock only; derived plans and PCM are
+    /// transient. Absent on legacy saves, which retain their backing song.
+    #[serde(
+        default,
+        skip_serializing_if = "crate::loop_plan::LooperConfig::is_default"
+    )]
+    pub looper: crate::loop_plan::LooperConfig,
     /// Typed catalog engagement used by Related ranking and future history
     /// views. Defaults empty for sessions written before the field existed.
     pub practice_history: crate::history::PracticeHistory,
@@ -203,6 +210,7 @@ impl PersistedSession {
             musical_context: crate::musical_context::MusicalContext::default(),
             active_exploration: None,
             song: song.clone(),
+            looper: crate::loop_plan::LooperConfig::default(),
             practice_history: practice_history.clone(),
             workspace_json: None,
             relationship_reading_json: None,

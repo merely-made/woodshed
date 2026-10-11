@@ -4,12 +4,16 @@
 
 use woodshed_audio::{
     Bar, CalibrationOutcome, CalibrationSession, ChordRef, InputEngine, InputEngineBuilder,
-    LooperCaptureHandle, OnsetAnalyzer, OnsetHandle, PendingChange, SampleBuffer, SequencerEngine,
+    LooperCaptureHandle, OnsetAnalyzer, OnsetHandle, PendingChange, SequencerEngine,
     SequencerPattern, Song, SongEngine, SongEngineHandle, Sound, Step, Subdivision, TimeSignature,
     Track, TunerHandle,
 };
 use woodshed_core::audio::{AudioBackend, CalibrationStatus, TransportState, TunerReading};
+use woodshed_core::loop_plan::{LoopPlan, LoopSegmentId};
 use woodshed_core::song::SongDoc;
+
+mod loop_projection;
+use loop_projection::{LoopCaptures, arm_capture, capture_busy, stop_capture};
 
 /// A 4/4 quarter-note click at `bpm`, downbeat accented.
 fn click_pattern(bpm: f32) -> SequencerPattern {
@@ -98,6 +102,7 @@ pub struct CpalBackend {
     /// the handle.
     _song: Option<SongEngine>,
     song: Option<SongEngineHandle>,
+    captures: LoopCaptures,
     /// Startup output errors survive an input retry.
     initial_error: Option<String>,
     error: Option<String>,
@@ -186,6 +191,7 @@ impl CpalBackend {
             latency_ms: None,
             _song: song_engine,
             song,
+            captures: LoopCaptures::default(),
             initial_error: error.clone(),
             error,
         }
@@ -290,23 +296,92 @@ impl AudioBackend for CpalBackend {
     fn set_song(&mut self, doc: &SongDoc) {
         if let Some(song) = self.song.as_ref() {
             let was_playing = song.with_song(|s| s.playing);
-            // Preserve recorded loops across a structural update — a chord
-            // or tempo edit shouldn't wipe what you've laid down. Carried
-            // over by bar index (buffers are Arc-shared, so cheap); a
-            // reorder/insert can misalign, which is acceptable for now.
-            let loops: Vec<Option<SampleBuffer>> =
-                song.with_song(|s| s.bars.iter().map(|b| b.audio_buffer.clone()).collect());
+            self.captures.remember(&song.song());
+            // Legacy edits retain their existing index-based compatibility.
+            // Set captures live in a separate owner-qualified bank.
+            self.captures.plan = None;
             song.set_song(to_song(doc));
             song.with_song(|s| {
-                for (i, buf) in loops.into_iter().enumerate() {
-                    if let (Some(bar), Some(buf)) = (s.bars.get_mut(i), buf) {
-                        bar.audio_buffer = Some(buf);
+                for (i, buf) in self.captures.saved_song.iter().enumerate() {
+                    if let (Some(bar), Some(buf)) = (s.bars.get_mut(i), buf.as_ref()) {
+                        bar.audio_buffer = Some(buf.clone());
                     }
                 }
             });
+            if let Some(input) = &self.input {
+                input.capture.set_enabled(false);
+            }
             if was_playing {
                 song.play();
             }
+        }
+    }
+
+    fn set_loop_plan(&mut self, plan: &LoopPlan) -> Result<(), String> {
+        let song = self
+            .song
+            .as_ref()
+            .ok_or("Set backing output is unavailable.")?;
+        let current = song.song();
+        let projected = self.captures.prepare_replacement(&current, plan)?;
+        song.set_song(projected);
+        self.captures.plan = Some(plan.clone());
+        if current.playing {
+            song.play();
+        }
+        Ok(())
+    }
+
+    fn clear_loop_session(&mut self) {
+        self.loop_stop_record();
+        self.captures = LoopCaptures::default();
+        if let Some(song) = &self.song {
+            song.set_song(Song::new());
+        }
+    }
+
+    fn loop_arm_record(&mut self, id: LoopSegmentId) -> Result<(), String> {
+        let index = self.captures.index_of(id)?;
+        if self.song.is_none() {
+            return Err("Set backing output is unavailable.".into());
+        }
+        if !self.ensure_input() {
+            return Err(self
+                .error
+                .clone()
+                .unwrap_or_else(|| "Audio input is unavailable.".into()));
+        }
+        if let Some(input) = &self.input {
+            input.capture.set_enabled(true);
+        }
+        if let Some(song) = &self.song {
+            song.with_song(|song| arm_capture(song, index));
+        }
+        Ok(())
+    }
+
+    fn loop_clear(&mut self, id: LoopSegmentId) -> Result<(), String> {
+        let index = self.captures.index_of(id)?;
+        if self.loop_capture_busy() {
+            return Err("Stop recording / armed capture before clearing a Card loop.".into());
+        }
+        self.song_clear_loop(index);
+        self.captures.clear(id);
+        Ok(())
+    }
+
+    fn loop_capture_busy(&self) -> bool {
+        self.song
+            .as_ref()
+            .is_some_and(|song| song.with_song(|song| capture_busy(song)))
+    }
+
+    fn loop_stop_record(&mut self) {
+        if let Some(song) = &self.song {
+            song.with_song(stop_capture);
+        }
+        if let Some(input) = &self.input {
+            input.capture.set_enabled(false);
         }
     }
 
@@ -496,6 +571,7 @@ mod tests {
             latency_ms: None,
             _song: None,
             song: None,
+            captures: LoopCaptures::default(),
             initial_error: None,
             error: None,
         }
@@ -650,5 +726,31 @@ mod tests {
         audio.set_tuner_enabled(true);
         assert_eq!(attempts.get(), 2);
         assert!(audio.error().is_none());
+    }
+
+    #[test]
+    fn legacy_song_keeps_authored_frequencies_meter_tempo_and_lengths() {
+        let mut doc = SongDoc::default();
+        doc.bars.push(Default::default());
+        doc.name = "authored".into();
+        doc.one_shot = true;
+        doc.click = false;
+        doc.bars[0].pitches_hz = vec![261.111, 394.875, 522.333];
+        doc.bars[0].root_freq_hz = 258.625;
+        doc.bars[0].beats = 7;
+        doc.bars[0].bpm = 83.75;
+        doc.bars[0].length = 3;
+        let song = to_song(&doc);
+        assert_eq!(song.name, doc.name);
+        assert!(song.one_shot);
+        assert!(!song.click_enabled);
+        let bar = &song.bars[0];
+        let chord = bar.chord_ref.as_ref().unwrap();
+        assert_eq!(chord.pitches_hz, doc.bars[0].pitches_hz);
+        assert_eq!(chord.root_freq_hz, 258.625);
+        assert_eq!(bar.time_signature, TimeSignature::new(7, 4));
+        assert_eq!(bar.bpm, 83.75);
+        assert_eq!(bar.length, 3);
+        assert!((bar.duration_secs() - 7.0 * 3.0 * 60.0 / 83.75).abs() < 0.000002);
     }
 }

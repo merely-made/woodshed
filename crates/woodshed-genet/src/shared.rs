@@ -264,7 +264,9 @@ pub struct Shared {
     pub last_rehearsal_step: Option<std::time::Instant>,
     pub last_rehearsal_instruction: Option<String>,
     /// The song last pushed through the backend seam (push on change).
-    pub last_song: woodshed_core::song::SongDoc,
+    pub last_song: Option<woodshed_core::song::SongDoc>,
+    pub last_loop_plan: Option<woodshed_core::loop_plan::LoopPlan>,
+    pub last_audio_session: Option<std::sync::Arc<()>>,
 
     /// Rebuild signatures for the custom-paint leaves: a leaf is re-rendered
     /// only when the model behind it actually moved.
@@ -314,7 +316,9 @@ impl Shared {
             last_arp_step: None,
             last_rehearsal_step: None,
             last_rehearsal_instruction: None,
-            last_song: woodshed_core::song::SongDoc::default(),
+            last_song: None,
+            last_loop_plan: None,
+            last_audio_session: None,
             neighborhood_sig: 0,
             set_graph_sig: 0,
             overview_sig: 0,

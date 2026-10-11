@@ -20,6 +20,7 @@ use woodshed_core::harmony::KeyedCatalogRef;
 use woodshed_core::history::{
     EngagementKind, ObservationProvenance, PracticeHistory, catalog_id_for_card,
 };
+use woodshed_core::loop_plan::{LoopPlan, LoopSegmentId, LooperConfig};
 use woodshed_core::mere::{MereScope, WoodshedMereSnapshot, woodshed_mere};
 use woodshed_core::search::{SearchHit, search_corpus};
 use woodshed_core::settings::{AppSettings, RelatedGraphScope, SettingsPage, StageGraphReading};
@@ -868,6 +869,15 @@ pub struct UiState {
     /// Last explicit shape-selection failure, scoped to its Card occurrence.
     pub card_shape_notice: Option<(CardId, String)>,
     pub song: SongDoc,
+    pub looper: LooperConfig,
+    /// Host-admitted snapshot, distinct from a requested edit that failed
+    /// readiness or is waiting for capture to stop. Never persisted.
+    pub loop_admitted: Option<LoopPlan>,
+    pub loop_notice: Option<String>,
+    pub loop_selected: Option<LoopSegmentId>,
+    /// Process-local session generation. Reset/open replaces this identity so
+    /// a host cannot reuse transient PCM under repeated persisted Card ids.
+    pub audio_session: std::sync::Arc<()>,
     pub song_playing: bool,
     /// Host-polled live bar cursor during playback (timeline follow).
     pub song_bar_live: usize,
@@ -1080,6 +1090,11 @@ impl UiState {
             rehearsal_running: false,
             card_shape_notice: None,
             song: SongDoc::default(),
+            looper: LooperConfig::default(),
+            loop_admitted: None,
+            loop_notice: None,
+            loop_selected: None,
+            audio_session: std::sync::Arc::new(()),
             song_playing: false,
             song_bar_live: 0,
             song_edit_cursor: 0,
@@ -2002,6 +2017,7 @@ impl UiState {
         );
         session.retained_sets = self.retained_sets.clone();
         session.working_sets = self.working_sets.clone();
+        session.looper = self.looper.clone();
         session.musical_context = self.musical_context.normalized();
         session.relationship_reading_json = self.relationship_reading_json.clone();
         session.overview_presentation_json = self
@@ -2053,6 +2069,15 @@ impl UiState {
         self.rehearsal_observed_card = None;
         self.card_started_ms = None;
         self.song = session.song.clone();
+        self.looper = session.looper.clone();
+        self.loop_admitted = None;
+        self.loop_notice = None;
+        self.loop_selected = None;
+        self.audio_session = std::sync::Arc::new(());
+        self.song_playing = false;
+        self.song_recording = false;
+        self.song_loop_bars.clear();
+        self.audio_requests.clear();
         self.practice_history = session.practice_history.clone();
         self.app_settings = app_settings;
         self.appearance.reset_active();

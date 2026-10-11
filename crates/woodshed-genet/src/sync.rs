@@ -7,7 +7,9 @@
 
 use cambium_genet_winit_host::AppCtx;
 use woodshed_core::audio::{AudioBackend, AudioRequest, CalibrationStatus};
+use woodshed_core::loop_plan::{LoopPlan, LooperSource};
 use woodshed_core::midi::MidiBackend as _;
+use woodshed_core::song::SongDoc;
 use woodshed_views::stage::{UiChild, UiState};
 
 use crate::shared::Shared;
@@ -61,8 +63,24 @@ fn push_backend(shared: &mut Shared, ctx: &mut Ctx<'_>) {
     let mut persisted: Option<String> = None;
     let mut persisted_settings: Option<String> = None;
 
+    // Set/Card ids are session-local. Every reset/open, including reopening
+    // the same persona, releases PCM custody before admitting incoming ids.
+    let audio_session = ctx.runner.state().audio_session.clone();
+    if shared
+        .last_audio_session
+        .as_ref()
+        .is_none_or(|last| !std::sync::Arc::ptr_eq(last, &audio_session))
+    {
+        if let Some(backend) = shared.backend.as_mut() {
+            backend.clear_loop_session();
+        }
+        shared.last_song = None;
+        shared.last_loop_plan = None;
+        shared.last_audio_session = Some(audio_session);
+    }
     let backend = shared.backend.as_mut();
     let last_song = &mut shared.last_song;
+    let last_loop_plan = &mut shared.last_loop_plan;
     let storage = shared.storage.as_ref();
     ctx.runner.update(|ui| {
         ui.sync();
@@ -79,14 +97,12 @@ fn push_backend(shared: &mut Shared, ctx: &mut Ctx<'_>) {
                 backend.set_metronome(ui.transport);
             }
             backend.set_tuner_enabled(ui.tuner.enabled);
-            if ui.song != *last_song {
-                backend.set_song(&ui.song);
-                *last_song = ui.song.clone();
-            }
+            admit_playback(ui, backend, last_song, last_loop_plan);
             backend.set_song_transport(ui.song_playing);
             // Every one-shot command the views queued this frame, realized in
             // the order the user asked for it. Draining here is the only place
             // a request is consumed, so none can be left set or cleared twice.
+            let mut capture_changed = false;
             for request in std::mem::take(&mut ui.audio_requests) {
                 match request {
                     AudioRequest::SongRewind => backend.song_rewind(),
@@ -126,19 +142,59 @@ fn push_backend(shared: &mut Shared, ctx: &mut Ctx<'_>) {
                         }
                         ui.calib_status = CalibrationStatus::Idle;
                     },
-                    AudioRequest::SongRecordToggle => {
+                    AudioRequest::SongRecordToggle
+                        if ui.looper.source == LooperSource::SavedSong =>
+                    {
                         if ui.song_recording {
-                            backend.song_stop_record();
+                            backend.loop_stop_record();
                         } else {
                             backend.song_arm_record(ui.song_edit_cursor);
                         }
                     },
-                    AudioRequest::SongClearLoop => backend.song_clear_loop(ui.song_edit_cursor),
+                    AudioRequest::SongClearLoop if ui.looper.source == LooperSource::SavedSong => {
+                        backend.song_clear_loop(ui.song_edit_cursor)
+                    },
+                    AudioRequest::SongRecordToggle | AudioRequest::SongClearLoop => {},
+                    AudioRequest::LoopRecordToggle(id) => {
+                        let result = if ui.looper.source == LooperSource::SavedSong {
+                            Err("Choose Set backing before recording a Card.".into())
+                        } else if last_loop_plan
+                            .as_ref()
+                            .is_none_or(|plan| plan.index_of(id).is_none())
+                        {
+                            Err("That Card is not in the currently loaded backing.".into())
+                        } else if backend.loop_capture_busy() {
+                            backend.loop_stop_record();
+                            capture_changed = true;
+                            Ok(())
+                        } else {
+                            backend.loop_arm_record(id)
+                        };
+                        if let Err(reason) = result {
+                            ui.loop_notice = Some(reason);
+                        }
+                    },
+                    AudioRequest::LoopClear(id) => {
+                        if ui.looper.source == LooperSource::SavedSong {
+                            ui.loop_notice =
+                                Some("Choose Set backing before clearing a Card loop.".into());
+                        } else {
+                            match backend.loop_clear(id) {
+                                Ok(()) => capture_changed = true,
+                                Err(reason) => ui.loop_notice = Some(reason),
+                            }
+                        }
+                    },
                 }
+            }
+            if capture_changed {
+                admit_playback(ui, backend, last_song, last_loop_plan);
+                backend.set_song_transport(ui.song_playing);
             }
             ui.latency_ms = backend.latency_ms();
             backend.song_set_record_replace(ui.song_record_replace);
-            ui.song_recording = backend.song_recording();
+            // Source controls must include delayed legacy capture as well.
+            ui.song_recording = backend.loop_capture_busy();
             ui.song_loop_bars = backend.song_loop_bars();
             ui.audio_error = backend.error().map(str::to_owned);
         }
@@ -187,4 +243,368 @@ fn midi_devices(shared: &mut Shared, ctx: &mut Ctx<'_>) {
         ui.midi.connected_in = midi.connected_input().map(str::to_string);
         ui.midi.connected_out = midi.connected_output().map(str::to_string);
     });
+}
+
+/// Publish the admitted snapshot to the view. A refused edit must not make the
+/// timeline or capture controls describe a plan the engine never loaded.
+fn admit_playback(
+    ui: &mut UiState,
+    backend: &mut impl AudioBackend,
+    last_song: &mut Option<SongDoc>,
+    last_loop_plan: &mut Option<LoopPlan>,
+) {
+    let loaded_source = last_loop_plan
+        .as_ref()
+        .map_or(LooperSource::SavedSong, |plan| {
+            LooperSource::Set(plan.owner)
+        });
+    if ui.looper.source != loaded_source && backend.loop_capture_busy() {
+        ui.looper.source = loaded_source;
+        ui.loop_admitted = last_loop_plan.clone();
+        ui.loop_notice = Some("Stop recording / armed capture before changing backing source. The loaded backing remains active.".into());
+        return;
+    }
+    match ui.looper.source {
+        LooperSource::SavedSong => {
+            if last_loop_plan.is_some() || last_song.as_ref() != Some(&ui.song) {
+                backend.set_song(&ui.song);
+                *last_song = Some(ui.song.clone());
+                ui.loop_notice = None;
+            }
+            *last_loop_plan = None;
+            ui.loop_admitted = None;
+        },
+        LooperSource::Set(_) => {
+            match ui.requested_loop_plan() {
+                Ok(plan) => {
+                    if last_loop_plan.as_ref() != Some(&plan) {
+                        match backend.set_loop_plan(&plan) {
+                            Ok(()) => {
+                                *last_loop_plan = Some(plan);
+                                *last_song = None;
+                                ui.loop_notice = None;
+                                ui.song_bar_live = 0;
+                            },
+                            Err(reason) => ui.loop_notice = Some(reason),
+                        }
+                    }
+                },
+                Err(_) => ui.loop_notice = Some("The selected Set is not ready. The loaded backing remains unchanged; open a Card below to resolve its readiness.".into()),
+            }
+            ui.loop_admitted = last_loop_plan.clone();
+            if let Some(plan) = last_loop_plan.as_ref() {
+                if ui
+                    .loop_selected
+                    .is_none_or(|id| plan.index_of(id).is_none())
+                {
+                    ui.loop_selected = plan.segments.first().map(|segment| segment.id);
+                }
+            }
+            if last_loop_plan.is_none() {
+                ui.song_playing = false;
+            }
+        },
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use woodshed_core::audio::{TransportState, TunerReading};
+    use woodshedding::rehearsal::{Hold, Set};
+
+    #[derive(Default)]
+    struct Backend {
+        admitted: Option<LoopPlan>,
+        songs: Vec<SongDoc>,
+        reject: bool,
+        busy: bool,
+    }
+    impl AudioBackend for Backend {
+        fn set_metronome(&mut self, _: TransportState) {}
+        fn set_tuner_enabled(&mut self, _: bool) {}
+        fn tuner_reading(&self) -> Option<TunerReading> {
+            None
+        }
+        fn set_song(&mut self, doc: &SongDoc) {
+            self.songs.push(doc.clone());
+            self.admitted = None;
+        }
+        fn set_loop_plan(&mut self, plan: &LoopPlan) -> Result<(), String> {
+            if self.reject {
+                return Err("Stop armed recording".into());
+            }
+            self.admitted = Some(plan.clone());
+            Ok(())
+        }
+        fn set_song_transport(&mut self, _: bool) {}
+        fn loop_capture_busy(&self) -> bool {
+            self.busy
+        }
+        fn song_rewind(&mut self) {}
+        fn song_bar(&self) -> Option<usize> {
+            None
+        }
+        fn error(&self) -> Option<&str> {
+            None
+        }
+    }
+
+    fn ready_ui() -> UiState {
+        let mut ui = UiState::new();
+        ui.song.bars.push(Default::default());
+        ui.stage.set_lens(woodshed_core::Lens::Chords);
+        let mut card = ui.stage.card_from_lens().unwrap();
+        card.timing.hold = Hold::Bars(1);
+        ui.set.push(card);
+        ui.loop_working_set(ui.working_sets.active_id);
+        ui
+    }
+
+    #[test]
+    fn refused_edit_and_other_owner_keep_the_actual_admitted_timeline() {
+        let mut ui = ready_ui();
+        let mut backend = Backend::default();
+        let (mut song, mut plan) = (None, None);
+        admit_playback(&mut ui, &mut backend, &mut song, &mut plan);
+        let loaded = plan.clone().unwrap();
+        ui.song_playing = true;
+        ui.set.cards[0].label = "pending edit".into();
+        backend.reject = true;
+        admit_playback(&mut ui, &mut backend, &mut song, &mut plan);
+        assert_eq!(ui.loop_admitted, Some(loaded.clone()));
+        assert_eq!(backend.admitted, Some(loaded.clone()));
+        assert!(ui.loop_notice.as_deref().unwrap().contains("armed"));
+        assert!(ui.song_playing);
+        let mut other = Set::default();
+        other.push(ui.set.cards[0].clone());
+        let owner = ui.working_sets.create(&mut ui.set, "Other", other);
+        ui.loop_working_set(owner);
+        admit_playback(&mut ui, &mut backend, &mut song, &mut plan);
+        assert_eq!(ui.loop_admitted, Some(loaded));
+        assert_ne!(
+            ui.requested_loop_plan().unwrap().owner,
+            plan.as_ref().unwrap().owner
+        );
+        backend.reject = false;
+        admit_playback(&mut ui, &mut backend, &mut song, &mut plan);
+        assert_eq!(ui.loop_admitted.as_ref().unwrap().owner, owner);
+        assert!(ui.loop_notice.is_none());
+    }
+
+    #[test]
+    fn unready_initial_source_cannot_play_and_saved_song_restores_exact_data() {
+        let mut ui = ready_ui();
+        ui.set.cards[0].timing.hold = Hold::Manual;
+        ui.song_playing = true;
+        let mut backend = Backend::default();
+        let (mut song, mut plan) = (None, None);
+        admit_playback(&mut ui, &mut backend, &mut song, &mut plan);
+        assert!(plan.is_none());
+        assert!(!ui.song_playing);
+        ui.looper.source = LooperSource::SavedSong;
+        ui.song.bars[0].pitches_hz = vec![261.111, 399.777];
+        ui.song.bars[0].beats = 5;
+        ui.song.bars[0].length = 3;
+        admit_playback(&mut ui, &mut backend, &mut song, &mut plan);
+        assert_eq!(backend.songs, vec![ui.song.clone()]);
+        assert!(ui.loop_admitted.is_none());
+    }
+
+    #[test]
+    fn loop_source_reopens_in_a_fresh_process() {
+        let dir = tempfile::tempdir().unwrap();
+        for mode in ["seed", "verify"] {
+            let output = std::process::Command::new(std::env::current_exe().unwrap())
+                .args([
+                    "--exact",
+                    "sync::tests::loop_source_receipt_worker",
+                    "--nocapture",
+                ])
+                .env("WOODSHED_LOOP_WORKER", mode)
+                .env("WOODSHED_STATE", dir.path().join("practice.json"))
+                .env("WOODSHED_SETTINGS", dir.path().join("settings.json"))
+                .output()
+                .unwrap();
+            assert!(
+                output.status.success(),
+                "{mode}: {}\n{}",
+                String::from_utf8_lossy(&output.stdout),
+                String::from_utf8_lossy(&output.stderr)
+            );
+            assert!(String::from_utf8_lossy(&output.stdout).contains("loop-source PASS"));
+        }
+    }
+
+    #[test]
+    fn loop_source_receipt_worker() {
+        let Ok(mode) = std::env::var("WOODSHED_LOOP_WORKER") else {
+            return;
+        };
+        let backend: crate::storage::HostBackend = Box::<crate::storage::FsBackend>::default();
+        let store = woodshed_core::storage::SessionStore::new(backend);
+        let mut expected = ready_ui();
+        expected.looper.beats = 3;
+        expected.looper.inherited_bpm = 98.75;
+        expected.song.bars[0].pitches_hz = vec![267.125, 409.875];
+        expected.song.bars[0].beats = 7;
+        expected.song.bars[0].length = 2;
+        let expected_plan = expected.requested_loop_plan().unwrap();
+        if mode == "seed" {
+            store.save(&serde_json::to_string(&expected.to_persisted()).unwrap());
+            store.save_settings(&serde_json::to_string(&expected.app_settings).unwrap());
+            assert!(store.load().is_some());
+        } else {
+            assert_eq!(mode, "verify");
+            let mut reopened = UiState::new();
+            let generation = reopened.audio_session.clone();
+            crate::session::restore(&store, &mut reopened);
+            assert!(!std::sync::Arc::ptr_eq(
+                &generation,
+                &reopened.audio_session
+            ));
+            assert_eq!(reopened.looper, expected.looper);
+            assert_eq!(reopened.requested_loop_plan().unwrap(), expected_plan);
+            assert_eq!(reopened.song, expected.song);
+            assert!(!reopened.song_playing);
+            assert!(reopened.loop_admitted.is_none());
+            let mut backend = Backend::default();
+            let (mut song, mut plan) = (None, None);
+            admit_playback(&mut reopened, &mut backend, &mut song, &mut plan);
+            assert_eq!(backend.admitted, Some(expected_plan));
+            assert!(backend.songs.is_empty());
+        }
+        println!("loop-source PASS {mode}");
+    }
+
+    #[test]
+    fn looper_controls_show_readiness_route_owned_capture_and_retain_saved_backing() {
+        use cambium_genet_winit_host::Harness;
+        use taproot::Selector;
+        use woodshed_views::stage::stage_root;
+        for scenario in [
+            include_str!("../../../scenarios/set_loop_plan.scn"),
+            include_str!("../../../scenarios/set_loop_plan_reopen.scn"),
+        ] {
+            taproot::Scenario::parse(scenario).expect("Set backing native scenario grammar");
+        }
+        let mut ui = ready_ui();
+        ui.looper.source = LooperSource::SavedSong;
+        ui.song.bars[0].pitches_hz = vec![258.123, 417.875];
+        let saved = ui.song.clone();
+        ui.set.cards[0].timing.hold = Hold::Manual;
+        ui.select_app_section(woodshed_core::storage::AppSection::Looper);
+        ui.set_viewport_width(1100.0);
+        ui.set_viewport_height(900.0);
+        let logic: Logic = Box::new(stage_root);
+        let mut h = Harness::new(woodshed_views::theme::slate_stage_css(), ui, logic);
+        h.layout_at(1100.0, 900.0);
+        assert!(h.click_on(&Selector::class("t-btn").containing("Loop this Set")));
+        let mut backend = Backend::default();
+        let (mut song, mut plan) = (None, None);
+        h.update(|ui| admit_playback(ui, &mut backend, &mut song, &mut plan));
+        {
+            let dom = h.runner().dom();
+            let dom = dom.borrow();
+            assert!(
+                !taproot::matching(
+                    &dom,
+                    &Selector::class("t-readout").containing("Choose a positive Bars hold")
+                )
+                .is_empty()
+            );
+        }
+        assert!(h.click_on(&Selector::class("t-btn").containing("Play")));
+        assert!(!h.state().song_playing);
+        h.update(|ui| {
+            ui.set.cards[0].timing.hold = Hold::Bars(1);
+            admit_playback(ui, &mut backend, &mut song, &mut plan);
+        });
+        let first = plan.as_ref().unwrap().segments[0].id;
+        assert!(h.click_on(&Selector::class("t-btn").containing("Clock: 4/4")));
+        assert_eq!(h.state().looper.beats, 5);
+        assert!(h.click_on(&Selector::class("t-btn").containing("Tempo +")));
+        assert_eq!(h.state().looper.inherited_bpm, 125.0);
+        h.update(|ui| admit_playback(ui, &mut backend, &mut song, &mut plan));
+        h.update(|ui| {
+            let mut other = ui.set.cards[0].clone();
+            other.label = "other Card".into();
+            ui.set.push(other);
+            ui.set.cards.reverse();
+            admit_playback(ui, &mut backend, &mut song, &mut plan);
+        });
+        assert_eq!(h.state().loop_selected, Some(first));
+        assert_eq!(plan.as_ref().unwrap().index_of(first), Some(1));
+        assert!(h.click_on(&Selector::class("t-btn").containing("Rec Card")));
+        assert_eq!(
+            h.state().audio_requests,
+            vec![AudioRequest::LoopRecordToggle(first)]
+        );
+        assert!(h.click_on(&Selector::class("t-btn").containing("Saved backing")));
+        h.update(|ui| admit_playback(ui, &mut backend, &mut song, &mut plan));
+        assert_eq!(h.state().looper.source, LooperSource::SavedSong);
+        assert_eq!(h.state().song, saved);
+        assert!(h.state().loop_admitted.is_none());
+    }
+
+    #[test]
+    fn armed_source_switches_are_refused_in_both_directions_without_replacing_backing() {
+        let mut ui = ready_ui();
+        let mut backend = Backend::default();
+        let (mut song, mut plan) = (None, None);
+        admit_playback(&mut ui, &mut backend, &mut song, &mut plan);
+        let loaded = plan.clone();
+        ui.song_playing = true;
+        backend.busy = true;
+        ui.looper.source = LooperSource::SavedSong;
+        admit_playback(&mut ui, &mut backend, &mut song, &mut plan);
+        assert_eq!(
+            ui.looper.source,
+            LooperSource::Set(loaded.as_ref().unwrap().owner)
+        );
+        assert_eq!(ui.loop_admitted, loaded);
+        assert_eq!(backend.admitted, loaded);
+        assert!(backend.songs.is_empty());
+        assert!(backend.busy && ui.song_playing);
+        assert!(ui.loop_notice.as_deref().unwrap().contains("armed"));
+        backend.busy = false;
+        ui.looper.source = LooperSource::SavedSong;
+        admit_playback(&mut ui, &mut backend, &mut song, &mut plan);
+        let saved = backend.songs.clone();
+        let last_saved = song.clone();
+        backend.busy = true;
+        ui.looper.source = LooperSource::Set(ui.working_sets.active_id);
+        admit_playback(&mut ui, &mut backend, &mut song, &mut plan);
+        assert_eq!(ui.looper.source, LooperSource::SavedSong);
+        assert!(plan.is_none() && backend.admitted.is_none());
+        assert_eq!(song, last_saved);
+        assert_eq!(backend.songs, saved);
+        assert!(backend.busy && ui.song_playing);
+        assert!(ui.loop_notice.as_deref().unwrap().contains("armed"));
+    }
+
+    #[test]
+    fn source_controls_refuse_known_armed_capture_in_both_directions() {
+        use cambium_genet_winit_host::Harness;
+        use taproot::Selector;
+        use woodshed_views::stage::stage_root;
+        let mut ui = ready_ui();
+        ui.song_recording = true;
+        ui.song_playing = true;
+        let original_source = ui.looper.source;
+        ui.select_app_section(woodshed_core::storage::AppSection::Looper);
+        ui.set_viewport_width(1100.0);
+        ui.set_viewport_height(900.0);
+        let logic: Logic = Box::new(stage_root);
+        let mut h = Harness::new(woodshed_views::theme::slate_stage_css(), ui, logic);
+        h.layout_at(1100.0, 900.0);
+        assert!(h.click_on(&Selector::class("t-btn").containing("Saved backing")));
+        assert_eq!(h.state().looper.source, original_source);
+        assert!(h.state().song_recording && h.state().song_playing);
+        h.update(|ui| ui.looper.source = LooperSource::SavedSong);
+        assert!(h.click_on(&Selector::class("t-btn").containing("Loop this Set")));
+        assert_eq!(h.state().looper.source, LooperSource::SavedSong);
+        assert!(h.state().song_recording && h.state().song_playing);
+        assert!(h.state().loop_notice.as_deref().unwrap().contains("armed"));
+    }
 }
