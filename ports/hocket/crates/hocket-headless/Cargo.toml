@@ -1,7 +1,7 @@
 [package]
 name = "hocket-headless"
 version = "0.1.0"
-description = "Headless audio-engine test harness for Hocket — scripted demos without the UI."
+description = "Manual Hocket audio-device capture/replay demonstration without the UI."
 edition.workspace = true
 license.workspace = true
 authors.workspace = true
