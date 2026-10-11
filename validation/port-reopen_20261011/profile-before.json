@@ -1,0 +1,20 @@
+{
+  "HOCKET": {
+    "profile": "/Users/markik/Code/testing/woodshed/stack-adoption-20261011/profiles/hocket-wide",
+    "files_sha256": {
+      "themes.json.workshop.json": "94cbe08be3789094f09e81aafbf50af50c3df7a4b0e0b790a71a8a47529c822b",
+      "themes.json.lock": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "themes.json": "d7725c03fa833c92223d52919d518c836836b0aa8ae679345327564e5a832960",
+      "appearance.json": "94cbe08be3789094f09e81aafbf50af50c3df7a4b0e0b790a71a8a47529c822b"
+    }
+  },
+  "REDSHANK": {
+    "profile": "/Users/markik/Code/testing/woodshed/stack-adoption-20261011/profiles/redshank",
+    "files_sha256": {
+      "themes.json.workshop.json": "94cbe08be3789094f09e81aafbf50af50c3df7a4b0e0b790a71a8a47529c822b",
+      "themes.json.lock": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "themes.json": "5efb2d0266e6b5394af9b547e19f364080f2a0c9026b2772050bbb5d3a463d56",
+      "appearance.json": "79238c2a8b6db0e579a45ac8ea07e22339fed7fa62a7446c75727599c64f4602"
+    }
+  }
+}

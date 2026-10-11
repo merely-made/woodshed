@@ -11,7 +11,7 @@ before any other doc in this directory.
 
 ## Active Plans
 
-- [2026-10-08_tabard_adoption_plan.md](2026-10-08_tabard_adoption_plan.md) — Shared appearance authoring and native title-bar adoption in Woodshed; preserves named themes and persona settings; the October 10 coherent stack and repaired renderer pass 444 CPU tests and four native lanes with 20 reviewed captures. The October 11 Classic 0.11 family is integrated across the three independent UI workspaces: 1,454 active tests and eight native runs with 38 reviewed captures; Woodshed Set, preview/rehearsal and appearance reopening pass, while Hocket/Redshank appearance reopening remains open.
+- [2026-10-08_tabard_adoption_plan.md](2026-10-08_tabard_adoption_plan.md) — Shared appearance authoring and native title-bar adoption in Woodshed; preserves named themes and persona settings; the October 10 coherent stack and repaired renderer pass 444 CPU tests and four native lanes with 20 reviewed captures. The October 11 Classic 0.11 family is integrated across the three independent UI workspaces: 1,454 active tests and eight native runs with 38 reviewed captures; Woodshed Set, preview/rehearsal and appearance reopening pass, and the later Hocket/Redshank appearance reopen follow-through passes with four additional reviewed captures.
 
 - [2026-09-13_redshank_gui_implementation_plan.md](2026-09-13_redshank_gui_implementation_plan.md)
   — **Active.** Implements the endorsed Redshank design canvas: fixed-height

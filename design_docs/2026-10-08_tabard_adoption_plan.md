@@ -311,3 +311,30 @@ remains an explicit next acceptance gate rather than a publication claim.
   fixture was stopped; the maintainer's personal vault was not used. Hocket and
   Redshank appearance reopen, narrow-start reopen pairs and wider platform/device
   qualification remain subsequent bounded work.
+
+
+## Port appearance reopen follow-through — 2026-10-11
+
+- Hocket and Redshank now pass fresh-process appearance reopening from committed
+  source `977e594c`, using the unchanged isolated profiles saved by the prior
+  coherent-family seeds. Hocket restores HocketAcceptance in Dark; Redshank
+  restores its saved copy in High Contrast Dark. Hocket's exact theme identity,
+  clock, four tracks and inactive recorder/project state are asserted; Redshank
+  retains idle transport and empty items/notes.
+- The two native processes produce 33 presentations and four reviewed nonblank
+  captures. The relevant desktop suites pass 68 Hocket and 77 Redshank tests,
+  with one existing ignored Hocket test; both production executables build.
+  Profile file hashes are unchanged. The prior failed attempts are preserved.
+- Both port scenario adapters expose the existing Mesquite presentation deadline
+  as an explicit 10–60 second acceptance allowance with the ten-second default
+  unchanged. The two finite runs completed before native-control's initial
+  accessibility read returned; their receipts, captures and exited processes
+  establish completion without relaunching them. Unattended background
+  presentation is not broadly qualified.
+- Latest Mere `8f61cfe52` retains the same selected renderer/identity family and
+  unchanged Mesquite code; locked metadata verifies the consumer closure. This
+  follow-through keeps the qualified family and does not overlap the separate
+  Woodshed output-runtime implementation or Knot's live-dynamics native lane.
+- [Port reopening receipts](../validation/port-reopen_20261011/README.md) close
+  the two appearance reopen gates. Narrow-start pairs, wider platforms, Hocket
+  project/media/custody and physical device qualification retain separate gates.

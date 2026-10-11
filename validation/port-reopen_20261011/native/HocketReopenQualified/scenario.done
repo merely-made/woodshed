@@ -1,0 +1,7 @@
+RESULT ok
+captured recorder_reopened
+captured appearance_reopened
+capture recorder_reopened 2360x1400 digest=db470190b6e98b01 file=/Users/markik/Code/testing/woodshed/port-reopen-20261011/native/HocketReopenQualified/recorder_reopened.png
+capture appearance_reopened 2360x1400 digest=aa3267bf324830ac file=/Users/markik/Code/testing/woodshed/port-reopen-20261011/native/HocketReopenQualified/appearance_reopened.png
+frames: 2 captured, 0 blank, 2 distinct digests
+presentation: 21 frames, 22 redraws, 1 unpresented redraws

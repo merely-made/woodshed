@@ -100,3 +100,13 @@ receipts retain their own sources and are not promoted to this stack.
 The requested four-hour display/system sleep assertion runs independently until
 2026-10-11 20:21:46 UTC (4:21 p.m. Eastern). It prevents idle sleep; it does not
 unlock the Mac or disable authentication.
+
+
+## Later port reopen evidence
+
+The original failures above remain unchanged. The subsequent
+[committed-source Hocket/Redshank follow-through](../port-reopen_20261011/README.md)
+passes both saved appearance reopen checks using the unchanged seed profiles,
+with 33 presentations and four reviewed nonblank captures. Those new receipts
+close the two appearance reopen gates; they do not promote the earlier failed
+or unattributed captures into successful evidence.
