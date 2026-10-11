@@ -112,6 +112,10 @@ pub enum AudioRequest {
     SongRecordToggle,
     /// Clear the recorded loop at the edit cursor.
     SongClearLoop,
+    /// Record on an explicitly owned Card occurrence, never a view position.
+    LoopRecordToggle(crate::loop_plan::LoopSegmentId),
+    /// Clear only this Card's captured material.
+    LoopClear(crate::loop_plan::LoopSegmentId),
 }
 
 /// The host-supplied audio realization. Implementations should be
@@ -128,6 +132,26 @@ pub trait AudioBackend {
     /// Load the song lane (replaces the current song; the transport
     /// keeps its playing state).
     fn set_song(&mut self, doc: &crate::song::SongDoc);
+    /// Admit a derived Set projection atomically, or explain why the current
+    /// projection must remain loaded. A missing implementation is visible.
+    fn set_loop_plan(&mut self, _plan: &crate::loop_plan::LoopPlan) -> Result<(), String> {
+        Err("This host does not support Set backing playback.".into())
+    }
+    /// Forget transient capture custody when the practice session changes.
+    fn clear_loop_session(&mut self) {}
+    fn loop_arm_record(&mut self, _id: crate::loop_plan::LoopSegmentId) -> Result<(), String> {
+        Err("This host does not support Card recording.".into())
+    }
+    fn loop_clear(&mut self, _id: crate::loop_plan::LoopSegmentId) -> Result<(), String> {
+        Err("This host does not support Card recording.".into())
+    }
+    /// Includes an armed, boundary-delayed capture, not just active input.
+    fn loop_capture_busy(&self) -> bool {
+        self.song_recording()
+    }
+    fn loop_stop_record(&mut self) {
+        self.song_stop_record();
+    }
     /// Start/stop song playback (idempotent).
     fn set_song_transport(&mut self, playing: bool);
     /// Snap the song cursor back to the top.
