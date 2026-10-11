@@ -499,6 +499,10 @@ impl Snapshot<'_, '_> {
                 "output-click-playing",
                 self.shared.backend.as_ref().and_then(|backend| backend.output_snapshot()).is_some_and(|snapshot| snapshot.click_playing).to_string(),
             )
+            .with_field(
+                "capture-input-rate",
+                self.shared.backend.as_ref().and_then(|backend| backend.capture_source_rate()).map_or_else(|| "none".into(), |rate| rate.to_string()),
+            )
             .with_field("song-bars", ui.song.bars.len().to_string())
             .with_field("song-playing", ui.song_playing.to_string())
             .with_field("song-live-bar", ui.song_bar_live.to_string())
