@@ -1614,7 +1614,7 @@ The bounded WebVTT parser, explicit offline transcript saving, and cue/seek proj
 
 ### Bounded local generation retention (2026-10-11)
 
-**Status: implemented; scoped CPU validation passed, native reopen pending.**
+**Status: implemented; scoped CPU and native recovery validation passed.**
 The standalone `JsonDirectoryStore` keeps the newest three valid published
 model generations: current state and two recovery states. Cleanup follows the
 existing flushed file, same-directory rename, and directory-sync publication.
@@ -1628,5 +1628,37 @@ with bounded published history, fallback through two corrupt latest states,
 invalid/pending/unrelated file handling, preservation of all recovery states
 on failed publication, and readable replacement state after cleanup failure.
 This retains Redshank's recovery contract rather than replacing it with a
-latest-state slot. Wider orchestration and native acceptance follow the
+latest-state slot. Three finite native processes at `9632f37` qualify eleven
+shipping-host writes, bounded history, fresh saved-settings reopen and recovery
+after corrupting the two latest published generations. All three captures were
+reviewed; the [source receipt](receipts/audio_foundation_20261011/retention/README.md)
+retains exact process/image hashes and the rejected preliminary script.
+Wider orchestration and audio acceptance follow the
 [audio family plan](2026-09-09_audio_ports_rehome_plan.md#standalone-audio-foundation-and-consolidation-2026-10-11).
+
+### Standalone streaming migration (2026-10-11)
+
+**Status: integration in progress; physical-device acceptance remains open.**
+The playback runtime is migrating to the maintained Firewheel 0.14 fork with
+separate host-owned CPAL stream lifetime and fallible graph construction.
+The stream bridge owns bounded output-frame capacity and actual resampler
+headroom; Redshank retires the fixed-resample 0.9.2 rate-ratio workaround.
+Progressive decoding retains every unaccepted frame for retry. Integer bridge
+presentation frames feed the existing WSOLA marks, preserving source clocks
+and frozen representation/annotation authority. Initial latency and underrun
+zeros never advance the source clock. End-of-file seals and flushes the final
+resampler packet, then waits for exact drain; the old five-millisecond empty
+queue approximation is retired.
+
+Offline consumer tests drive actual graphs at eight rate pairs, mono/stereo,
+long uneven backlogs and 37-frame clips, and combine WSOLA EOF with graph EOF at
+six playback rates. Rejected stream admission removes its graph node; output
+failure retires the backend so a later load can open a fresh device. Existing
+progressive HTTP, accurate seek/preroll, source mutation, anchors and gain/duck
+tests remain in the consumer scope. Physical unplug/retry and audible playback
+are separate gates. The standalone microphone adapter retains its own CPAL
+0.17 profile rather than inheriting the output backend's CPAL 0.18 profile.
+
+The 37-frame 8k-to-44.1k test reproduced all-zero EOF output despite correct
+frame counters. Fork integration is held until its preallocated packet adapter
+fixes the dependency's delay-trimming copy range and material-output tests pass.

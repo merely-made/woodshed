@@ -30,7 +30,7 @@ before any other doc in this directory.
 - [2026-09-09_audio_ports_rehome_plan.md](2026-09-09_audio_ports_rehome_plan.md)
   — **Rehome landed; October 11 consolidation in progress.** Coordinates
   standalone Firewheel streaming, independently gated consumer migration,
-  CI/release boundaries, Hocket Mesquite adoption, bounded Redshank retention,
+  CI/release boundaries, Hocket Mesquite lifecycle, bounded Redshank retention,
   and the existing Set/Looper and portable product seams. Hocket and Ringdown
   are history-preserving nested `ports/`
   workspaces with local dependency seams, independent release boundaries, and

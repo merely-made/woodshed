@@ -201,7 +201,7 @@ products require explicit product decisions, not generic cleanup.
 - **2026-10-11:** The audit passed 747 current-source CPU checks plus five
   migration probes; seven Redshank fixture/device tests were ignored. This is
   a baseline at its source revision, not consumer migration or new native proof.
-- **2026-10-11:** CI checks only the root workspace. Windows release still
+- **2026-10-11 (audit `6dfb2fe`):** CI checks only the root workspace. Windows release still
   listens for `v*`. Hocket owns custom blocking readback and ignores capture
   errors. Redshank publishes full immutable model generations without pruning.
   Woodshed starts two output engines with callback mutexes/recording allocation;
@@ -227,3 +227,28 @@ products require explicit product decisions, not generic cleanup.
   and history add 54 passing checks. The normal project tree excludes Firewheel
   and CPAL; model schema, MediaRef, project and envelope formats are preserved.
   Combined host validation and native project acceptance follow integration.
+- **2026-10-11:** F1 CI/release changes integrated: independent locked-resolution
+  and scoped CPU gates for Woodshed/Hocket/Redshank/Ringdown; release tags use
+  `woodshed-v*`, with version-derived prerelease classification. The CI lane
+  passes 1,328 CPU checks (eight ignored), four resolution checks, actionlint and
+  eight real PowerShell fixture packaging cases. Windows binary qualification
+  and actual GitHub Actions execution are separate from those local fixtures.
+- **2026-10-11:** Hocket host/manual F1 source integrated. Residual close/readback
+  and project-worker quiescence fixes pass 70 CPU checks plus five finite native
+  processes, 19 reviewed captures and two appearance reopens at `9dc042f`.
+  See the [port receipt](../ports/hocket/design_docs/receipts/host_acceptance_20261011/README.md).
+  The integrated host/project scope passes 152 CPU tests (one custody receipt
+  ignored). Native project save/open/export and handoff activity remain open.
+- **2026-10-11:** Redshank F1 retention passes three native processes: eleven
+  shipping-host writes prune twenty generations to three; fresh reopen restores
+  saved settings; corrupting both latest states recovers the oldest retained
+  valid state. Pending and unrelated media survive. The
+  [source-bound receipt](receipts/audio_foundation_20261011/retention/README.md)
+  qualifies `9632f37`, before consumer migration.
+- **2026-10-11:** F2 fork branch `owned/stream-foundation` is pushed at exact
+  revision `2a0a342da32a1d2eba7c73ede7424d93d76e420c`; its
+  [draft PR](https://github.com/mark-ik/firewheel/pull/1) restores bounded nodes,
+  integer source clocks, EOF flush/drain and safe preallocation limits. Fourteen
+  offline graph tests, callback allocation guards, a concurrent EOF publication
+  check and feature/lint gates pass. Physical audio and consumer acceptance
+  remain separate; F3 consumers now migrate against this exact revision.
