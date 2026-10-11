@@ -20,6 +20,10 @@ struct Offline {
 
 impl Offline {
     fn new(sample_rate: u32) -> Self {
+        Self::with_input_channels(sample_rate, 1)
+    }
+
+    fn with_input_channels(sample_rate: u32, input_channels: u32) -> Self {
         let mut cx = FirewheelContext::new(FirewheelConfig {
             num_graph_inputs: ChannelCount::MONO,
             ..Default::default()
@@ -28,7 +32,7 @@ impl Offline {
             .activate(ActivateInfo {
                 sample_rate: NonZeroU32::new(sample_rate).unwrap(),
                 max_block_frames: NonZeroU32::new(8192).unwrap(),
-                num_stream_in_channels: 1,
+                num_stream_in_channels: input_channels,
                 num_stream_out_channels: 2,
                 input_to_output_latency_seconds: 0.0,
             })
@@ -41,7 +45,9 @@ impl Offline {
             engine,
             frames: 0,
         };
-        offline.block(&[0.0; 256]);
+        if input_channels > 0 {
+            offline.block(&[0.0; 256]);
+        }
         offline
     }
 
@@ -461,4 +467,27 @@ fn completed_capture_survives_later_background_reader_overflow() {
         offline.engine.take_bar_aligned_capture().unwrap(),
         vec![0.25; 32]
     );
+}
+
+#[test]
+fn output_only_stream_refuses_both_capture_modes() {
+    let mut offline = Offline::with_input_channels(48_000, 0);
+    assert!(!offline.engine.input_available());
+    assert!(matches!(
+        offline.engine.start_free_capture(),
+        Err(EngineError::InputUnavailable)
+    ));
+    assert!(matches!(
+        offline.engine.arm_bar_aligned_capture(1, 1),
+        Err(EngineError::InputUnavailable)
+    ));
+    assert_eq!(
+        offline.engine.pending_capture_progress(),
+        CapturePhase::Idle
+    );
+    assert!(offline.engine.take_bar_aligned_capture().is_none());
+    let mut input = Offline::new(48_000);
+    assert!(input.engine.input_available());
+    input.engine.stop();
+    assert!(!input.engine.input_available());
 }

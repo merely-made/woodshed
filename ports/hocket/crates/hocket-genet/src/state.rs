@@ -203,7 +203,12 @@ impl AppState {
             match Engine::new() {
                 Ok(e) => {
                     let sr = e.sample_rate();
-                    (Ok(e), sr, "system audio".to_string())
+                    let status = if e.input_available() {
+                        "system audio"
+                    } else {
+                        "output only · input unavailable"
+                    };
+                    (Ok(e), sr, status.to_string())
                 },
                 Err(e) => (Err(e.to_string()), 0, "audio unavailable".to_string()),
             }
@@ -1092,6 +1097,10 @@ impl AppState {
         &self.audio_status
     }
 
+    pub fn input_available(&self) -> bool {
+        self.engine.as_ref().is_ok_and(Engine::input_available)
+    }
+
     // === the engine tick (host calls ~60fps via runner.update) ===
 
     /// Advance the engine, read back the meter + capture phase, and promote a
@@ -1223,6 +1232,12 @@ impl AppState {
     /// The Record gesture. Master clock on → a bar-aligned, count-in, fixed
     /// capture. Master clock off → toggle a free/variable-length capture.
     pub fn toggle_record(&mut self) {
+        if !self.input_available() {
+            if self.engine.is_ok() {
+                self.audio_status = "audio input is unavailable".to_string();
+            }
+            return;
+        }
         let Some(armed) = self.armed_index() else {
             return;
         };
@@ -1402,7 +1417,12 @@ impl AppState {
                 self.engine = Ok(engine);
                 self.applied_audio_input = input;
                 self.applied_audio_output = output;
-                self.audio_status = "audio switched".to_string();
+                self.audio_status = if self.input_available() {
+                    "audio switched"
+                } else {
+                    "audio switched · input unavailable"
+                }
+                .to_string();
                 self.resync_tempo();
                 self.reconcile_all_playback();
             }
