@@ -1,0 +1,41 @@
+# Empty listener profile seeded with twenty published generations.
+settle 2
+wait 300
+assert snap item-count == 0
+act mode:light
+wait 300
+assert snap mode == light
+act mode:hc-dark
+wait 300
+assert snap mode == hc-dark
+act mode:hc-light
+wait 300
+assert snap mode == hc-light
+act mode:dark
+wait 300
+assert snap mode == dark
+act mode:light
+wait 300
+assert snap mode == light
+act mode:hc-dark
+wait 300
+assert snap mode == hc-dark
+act mode:hc-light
+wait 300
+assert snap mode == hc-light
+act mode:dark
+wait 300
+assert snap mode == dark
+act mode:light
+wait 300
+assert snap mode == light
+act mode:hc-dark
+wait 300
+assert snap mode == hc-dark
+act mode:hc-light
+wait 300
+assert snap mode == hc-light
+act tab:settings
+settle 2
+capture retained-settings
+log retention published

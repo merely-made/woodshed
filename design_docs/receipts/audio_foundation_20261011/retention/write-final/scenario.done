@@ -1,0 +1,18 @@
+RESULT ok
+waited 0 frames
+waited 0 frames
+waited 0 frames
+waited 0 frames
+waited 0 frames
+waited 0 frames
+waited 0 frames
+waited 0 frames
+waited 0 frames
+waited 0 frames
+waited 0 frames
+waited 0 frames
+captured retained-settings
+retention published
+capture retained-settings 1720x1360 digest=db5fee7f8e756112 file=/Users/markik/Code/testing/woodshed/audio-foundation-20261011/retention-native/write-final/retained-settings.png
+frames: 1 captured, 0 blank, 1 distinct digests
+presentation: 45 frames, 46 redraws, 1 unpresented redraws

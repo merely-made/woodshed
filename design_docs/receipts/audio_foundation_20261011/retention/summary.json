@@ -1,0 +1,53 @@
+{
+  "source_commit": "9632f37c7fb7e505018f619949bfb9c77a539484",
+  "binary_sha256": "4fcfb147a71fba0e9408040affc4210ad98e9389b56522fc5ec0239210d2e262",
+  "target": "aarch64-apple-darwin",
+  "native_processes": 3,
+  "successful_processes": 3,
+  "captures": 3,
+  "visually_reviewed": 3,
+  "publication": {
+    "before_valid_generations": 20,
+    "app_saves": 11,
+    "after_valid_generations": [
+      30,
+      31,
+      32
+    ],
+    "pending_preserved": true,
+    "unrelated_media_preserved": true
+  },
+  "fresh_processes": [
+    "reopen saved hc_light",
+    "corrupt latest two; recover generation30/light"
+  ],
+  "rejected_attempt": "scenario used unsupported await-idle verb; replaced with documented wait300 and reseeded fresh profile",
+  "remaining": [
+    "No physical audio-device acceptance",
+    "Firewheel consumer migration not included at this source"
+  ],
+  "files_sha256": {
+    "reopen.scn": "49f0fb882b230585ed91b17a431347b9232545acf15ae8037eb4e395ca6a4be6",
+    "fallback.scn": "1235c929ea00850f2c884e1793671b2529e610bb82d0f64bc5173c41ef82e00f",
+    "rejected-script.done": "56c6610d3e5247e5883d34a79e050f5bf35db61f807ff316e9f07ee14afa7ed7",
+    "write.scn": "6a05e53a4d4618944c12c76ff275e746a01941118d17b87ec093691a4418289d",
+    "reopen-final/reopened-settings.png": "bffda7bc0ac307a65f2989deac011319fb0ef61e681e881f0df54766714850f1",
+    "reopen-final/native.log": "4b636373bcde5344eddd07c53e0ff4d23be7c4bdf94766a1d53e3b92f91010a4",
+    "reopen-final/scenario.done": "2994ed462643aa1b10059aba33df5da16a07b7d7bba4aae309917a6bcf4d8f0e",
+    "reopen-final/process.json": "8667598b3ed5dc9392f4381c0fbd46fa1046c90fceb5550e8401f5570e432e42",
+    "reopen-final/launcher.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "write-final/retained-settings.png": "0c5f2349ea3cc0c311dcd3539fa7777e4a482cfa46e8fb0590930a20f31932f9",
+    "write-final/native.log": "53239496d137e240865440af976c31ca37f9b98f1d664e34048af4d68aeaf141",
+    "write-final/scenario.done": "e2ea036c9a579532e83779962c452fce7a708fa0d558f6c05bacea710e24f7f3",
+    "write-final/process.json": "e649fa1f1d6d3b34c4754964854717b54c859fc332cb958071796e404f0f15fe",
+    "write-final/launcher.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "fallback-final/recovered-settings.png": "df953ed46ca65088a14199a956aca1e3b8f22b2d332535c17ecab099c5d5bdfb",
+    "fallback-final/native.log": "d148ee45d3482ace4bc0e31fed23fa43437d8cbf000cb31ddd1c8e8178c3a8e5",
+    "fallback-final/scenario.done": "d989c501817d852a46cf6f99a0f9411952aaceb4a49839e05e93dc56324ae3a2",
+    "fallback-final/process.json": "1e0d8153f5a21fba3489aeece0cef8dd5d773420d3ab36a777fe4eab206db614",
+    "fallback-final/launcher.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "published-before-corruption/state-00000000000000000030.json": "2fef29f5393b3df3ab9fc41e138cf243e8eea6dbce393f19fd82fb0ca84806d2",
+    "published-before-corruption/state-00000000000000000031.json": "2448723e6ff5d85f82bbf95d1b875a428e4ceca15497acfab835439039564608",
+    "published-before-corruption/state-00000000000000000032.json": "ac845bda3f1e7ac9766b39a53c55515397f300a3359b625724753d9b1b127259"
+  }
+}
