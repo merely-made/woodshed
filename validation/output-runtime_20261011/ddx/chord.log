@@ -1,0 +1,8 @@
+DDX mode=chord output_streams=1 sample_rate=48000
+DDX 2.127s phase=cold request_ms=0.021
+DDX 2.137s phase=cold ready_ms=10.151
+DDX 4.140s phase=warm request_ms=0.020
+DDX 4.165s phase=warm ready_ms=25.483
+DDX 6.167s phase=edited request_ms=0.020
+DDX 6.193s phase=edited ready_ms=25.374
+DDX complete output_streams=1 device_frames=387072 processing_blocks=378 device_events=0

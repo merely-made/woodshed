@@ -1,0 +1,21 @@
+warning: patch `p2panda-auth v0.7.1 (https://github.com/mark-ik/p2panda.git?tag=mere-p2panda-net-0.7.5-upstream-20261011#d8acabc9)` was not used in the crate graph
+warning: patch `p2panda-stream v0.7.1 (https://github.com/mark-ik/p2panda.git?tag=mere-p2panda-net-0.7.5-upstream-20261011#d8acabc9)` was not used in the crate graph
+help: Check that the patched package version and available features are compatible
+      with the dependency requirements. If the patch has a different version from
+      what is locked in the Cargo.lock file, run `cargo update` to use the new
+      version. This may also occur with an optional dependency that is not enabled.
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.03s
+     Running unittests src/main.rs (/Users/markik/Code/worktrees/woodshed-audit-20261011/target/debug/deps/woodshed_genet-ceee9e7b729660dc)
+
+running 9 tests
+test sync::tests::loop_source_receipt_worker ... ok
+test sync::tests::unready_initial_source_cannot_play_and_saved_song_restores_exact_data ... ok
+test sync::tests::refused_edit_and_other_owner_keep_the_actual_admitted_timeline ... ok
+test sync::tests::armed_source_switches_are_refused_in_both_directions_without_replacing_backing ... ok
+test sync::tests::unavailable_saved_replacement_keeps_loaded_set_and_an_unready_set_keeps_saved_backing ... ok
+test sync::tests::saved_bar_edit_refusal_preserves_accepted_payload_and_capture_state ... ok
+test sync::tests::loop_source_reopens_in_a_fresh_process ... ok
+test sync::tests::source_controls_refuse_known_armed_capture_in_both_directions ... ok
+test sync::tests::looper_controls_show_readiness_route_owned_capture_and_retain_saved_backing ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 91 filtered out; finished in 1.31s

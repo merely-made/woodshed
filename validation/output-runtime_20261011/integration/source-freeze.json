@@ -1,0 +1,33 @@
+{
+  "source": "4a4aba45791c151438a7ab01628e60962fbe86d7",
+  "checkout": "/Users/markik/Code/worktrees/woodshed-orchestrate-20261011",
+  "firewheel": "2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc",
+  "cargo_command": [
+    "cargo",
+    "+1.97.1",
+    "build",
+    "--manifest-path",
+    "/Users/markik/Code/worktrees/woodshed-orchestrate-20261011/Cargo.toml",
+    "--locked",
+    "-p",
+    "woodshed-genet",
+    "--bin",
+    "woodshed-genet",
+    "-p",
+    "woodshed-audio",
+    "--example",
+    "audio_ddx"
+  ],
+  "build_log": "/Users/markik/Code/testing/woodshed/output-runtime-20261011/integration/production-build.log",
+  "binaries": {
+    "woodshed-genet": {
+      "path": "/Users/markik/Code/testing/woodshed/output-runtime-20261011/integration/frozen-binaries/woodshed-genet",
+      "sha256": "ef2a109428ccaffa1f2bc1eaec81f2b6cac717647a1b6a642f8330cf70aa015d"
+    },
+    "audio_ddx": {
+      "path": "/Users/markik/Code/testing/woodshed/output-runtime-20261011/integration/frozen-binaries/audio_ddx",
+      "sha256": "1703701addd18819fc2e0d65f311349eba83c72dcc251ba68cd18febb4c2fc16"
+    }
+  },
+  "native_status": "pending foreground handoff"
+}

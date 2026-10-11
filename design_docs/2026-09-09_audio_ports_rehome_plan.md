@@ -170,10 +170,14 @@ native capture, or fresh-process reopen acceptance.
 
 ### F4. Consolidate Woodshed product execution
 
-**Single-output runtime status (2026-10-11): IN PROGRESS.** The maintainer
-authorized implementation and direct-main publication from refreshed `48d4e5a`.
-Runtime, desktop integration and input/calibration are disjoint source lanes;
-the Woodshed agent prepares native checks and waits for a source/binary freeze.
+**Single-output runtime status (2026-10-11): IMPLEMENTED.** From refreshed
+`48d4e5a`, the root now uses one Firewheel context and CPAL output stream for
+click, preview and backing. At frozen source `4a4aba4`, 144 audio and 29 focused
+desktop checks pass; three muted device processes each prove one output stream,
+frame progress and zero observed CPAL status events. The Woodshed agent has
+prepared GUI seed/reopen and stop/restart fixtures against exact binary hashes;
+their qualification waits for the shared foreground handoff. See the
+[P7 implementation record](2026-07-11_stage_set_tools_plan.md#october-11-follow-up-single-output-runtime).
 
 Follow [P7](2026-07-11_stage_set_tools_plan.md#p7-rebuild-song-as-looper-over-set)
 for Set-derived LoopPlan, stable capture segment identity, saved-song migration,
@@ -183,7 +187,7 @@ recording allocations; the connected Hear/Add/rehearse/loop/edit/reopen flow
 passes current-source automated and native acceptance. Preserve exploration
 and deliberate practice as complementary flows.
 
-The next runtime slice belongs to root `woodshed-audio`: one `OutputRuntime`,
+The implemented runtime belongs to root `woodshed-audio`: one `OutputRuntime`,
 one Firewheel context and CPAL output stream, and processor-owned click,
 preview and backing lanes. Keep Set/Card ownership, admission and prepared PCM
 on the control side; publish bounded commands and generation-qualified status.
@@ -203,8 +207,8 @@ service for preview completions, Firewheel updates and resource retirement,
 and adapt calibration to a small click-control/clock seam. Keeping the old
 metronome solely for calibration would preserve the second output stream.
 
-Separately, replace infallible saved-song admission and fallible Set admission
-with one guarded, fallible backing operation. Every rejected replacement,
+Saved-song and Set admission now share guarded, fallible desktop backing
+operations. Every rejected replacement,
 including an edit to an already loaded saved song during capture, must retain
 the previous accepted backing. Output unavailability must not look accepted.
 The independent SongDoc/bar editor is still live. Lossless migration requires
@@ -380,3 +384,12 @@ product's existing recording/Turnstone gates.
   overview, 11 view overview and 2 one-shot tests pass with locked dependencies
   under Rust 1.97.1. Changed-file formatting, whitespace and new doc links pass.
   No new native run, durable capture migration or one-clock runtime is claimed.
+- **2026-10-11:** The separate `0032f35` follow-up closes the earlier Hocket
+  and Redshank appearance-reopen presentation residuals, with four reviewed
+  nonblank captures. Its [port receipt](../validation/port-reopen_20261011/receipt.json)
+  preserves the failed attempts and exact source/binaries. The next root slice
+  implements the single-output runtime, with 144 audio and 29 focused desktop
+  checks and three muted one-stream device runs at `4a4aba4`. Source/binary
+  hashes and scope are recorded in the [runtime receipt](../validation/output-runtime_20261011/receipt.json).
+  The prepared GUI seed/reopen and metronome stop/restart runs still await the
+  shared foreground handoff; full P7 and durable PCM remain open.

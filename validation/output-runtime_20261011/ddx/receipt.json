@@ -1,0 +1,118 @@
+[
+  {
+    "mode": "chord",
+    "source_commit": "4a4aba45791c151438a7ab01628e60962fbe86d7",
+    "binary_sha256": "1703701addd18819fc2e0d65f311349eba83c72dcc251ba68cd18febb4c2fc16",
+    "exit": 0,
+    "wall_seconds": 8.487531042,
+    "cpu_seconds": 0.41428499999999996,
+    "mean_cpu_percent": 4.881101441042599,
+    "log": "chord.log",
+    "log_sha256": "d56347169c4d8d66cc4d7f92ba59ea4dfff547afd08b24e1977aef662995fc7e",
+    "measurement": "OS child user plus system CPU time divided by monotonic wall duration",
+    "sample_rate": 48000,
+    "output_streams": 1,
+    "device_frames": 387072,
+    "processing_blocks": 378,
+    "device_events": 0,
+    "phases": [
+      {
+        "label": "cold",
+        "request_ms": 0.021,
+        "ready_ms": 10.151
+      },
+      {
+        "label": "warm",
+        "request_ms": 0.02,
+        "ready_ms": 25.483
+      },
+      {
+        "label": "edited",
+        "request_ms": 0.02,
+        "ready_ms": 25.374
+      }
+    ],
+    "processing_blocks_meaning": "Firewheel graph processing blocks, not CPAL callbacks or callback gap measurements",
+    "input_scope": "Muted output only; no capture input or GUI launched",
+    "qualification_scope": "Native device execution in current environment; not controlled acoustic or end-to-end latency qualification",
+    "last_output_error": [],
+    "preview_request_scope": "Three repeated identical requests; phase labels do not imply edited preview inputs"
+  },
+  {
+    "mode": "scale",
+    "source_commit": "4a4aba45791c151438a7ab01628e60962fbe86d7",
+    "binary_sha256": "1703701addd18819fc2e0d65f311349eba83c72dcc251ba68cd18febb4c2fc16",
+    "exit": 0,
+    "wall_seconds": 9.376621584,
+    "cpu_seconds": 1.6617430000000002,
+    "mean_cpu_percent": 17.722193277326568,
+    "log": "scale.log",
+    "log_sha256": "fea31cd8ca249125efed59bada87e101915b2539fa608fb4300673def1e49df8",
+    "measurement": "OS child user plus system CPU time divided by monotonic wall duration",
+    "sample_rate": 48000,
+    "output_streams": 1,
+    "device_frames": 444416,
+    "processing_blocks": 434,
+    "device_events": 0,
+    "phases": [
+      {
+        "label": "cold",
+        "request_ms": 0.03,
+        "ready_ms": 422.215
+      },
+      {
+        "label": "warm",
+        "request_ms": 0.031,
+        "ready_ms": 420.53
+      },
+      {
+        "label": "edited",
+        "request_ms": 0.032,
+        "ready_ms": 423.916
+      }
+    ],
+    "processing_blocks_meaning": "Firewheel graph processing blocks, not CPAL callbacks or callback gap measurements",
+    "input_scope": "Muted output only; no capture input or GUI launched",
+    "qualification_scope": "Native device execution in current environment; not controlled acoustic or end-to-end latency qualification",
+    "last_output_error": [],
+    "preview_request_scope": "Three repeated identical requests; phase labels do not imply edited preview inputs"
+  },
+  {
+    "mode": "song",
+    "source_commit": "4a4aba45791c151438a7ab01628e60962fbe86d7",
+    "binary_sha256": "1703701addd18819fc2e0d65f311349eba83c72dcc251ba68cd18febb4c2fc16",
+    "exit": 0,
+    "wall_seconds": 17.2788455,
+    "cpu_seconds": 0.9081580000000004,
+    "mean_cpu_percent": 5.255895134891972,
+    "log": "song.log",
+    "log_sha256": "ca2cf6c59826d0773812095241957fbec25d753ce7f6a05708ba73e52b799c8e",
+    "measurement": "OS child user plus system CPU time divided by monotonic wall duration",
+    "sample_rate": 48000,
+    "output_streams": 1,
+    "device_frames": 822272,
+    "processing_blocks": 803,
+    "device_events": 0,
+    "phases": [
+      {
+        "label": "cold",
+        "request_ms": 68.362,
+        "ready_ms": 68.434
+      },
+      {
+        "label": "warm",
+        "request_ms": 0.003,
+        "ready_ms": 0.174
+      },
+      {
+        "label": "edited",
+        "request_ms": 56.125,
+        "ready_ms": 56.196
+      }
+    ],
+    "processing_blocks_meaning": "Firewheel graph processing blocks, not CPAL callbacks or callback gap measurements",
+    "input_scope": "Muted output only; no capture input or GUI launched",
+    "qualification_scope": "Native device execution in current environment; not controlled acoustic or end-to-end latency qualification",
+    "last_output_error": []
+  }
+]
