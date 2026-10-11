@@ -170,6 +170,11 @@ native capture, or fresh-process reopen acceptance.
 
 ### F4. Consolidate Woodshed product execution
 
+**Single-output runtime status (2026-10-11): IN PROGRESS.** The maintainer
+authorized implementation and direct-main publication from refreshed `48d4e5a`.
+Runtime, desktop integration and input/calibration are disjoint source lanes;
+the Woodshed agent prepares native checks and waits for a source/binary freeze.
+
 Follow [P7](2026-07-11_stage_set_tools_plan.md#p7-rebuild-song-as-looper-over-set)
 for Set-derived LoopPlan, stable capture segment identity, saved-song migration,
 and companion persistence. Done when one output device/clock runs click,

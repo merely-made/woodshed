@@ -2846,3 +2846,61 @@ The portable receipt and concise logs are committed in
 `validation/preview-worker_20261008/`; full local evidence remains in the
 artifact directory noted above. This qualifies native dispatch and unsealed
 fixture reopening, preserving the acoustic/vault/release boundaries.
+
+
+### October 11 follow-up: single output runtime
+
+**Status: implementation in progress; committed-source native qualification pending.**
+
+This root-owned slice starts at `48d4e5a` and preserves the shared UI family
+and the corrected owned Firewheel revision
+`2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc`. `OutputRuntime` replaces both
+legacy output engines with one Firewheel context, one CPAL output stream and
+one device sample clock. Click, preview and backing retain independent
+transport offsets. The root imports no Hocket model or engine authority.
+
+Control prepares exact saved pitch vectors, variable tempo/meter segments,
+legacy strummed chord PCM and click patterns before publication. Unchanged
+backing chords reuse the existing PCM cache. The bounded preview worker keeps
+one in-flight render and one replaceable pending request, wakes the host when
+complete, and publishes only the current request generation. The host services
+Firewheel and returned resources on ordinary frames and explicit wakes; its
+heartbeat is 50 ms during live work and one second when fully stopped.
+
+The output processor has fixed voice slots and bounded command/boundary
+reservations. It fills every output frame, including the one-shot tail, and
+preserves tempo phase and accepted boundary order. Capture storage is prepared
+on the control thread and uniquely owned while recording. A completed valid
+take immediately becomes replayable in the processor; its immutable PCM and
+retired backing return to control without output-thread allocation, buffer
+copy-on-write or final resource destruction. Source admission stays refused
+until that return is collected. Clear-session generations prevent old-owner
+PCM from being inherited by replacement backing.
+
+The shared microphone session remains lazy. Its capture lane transfers one
+SPSC reader, publishes the actual configured input rate and counts loss
+without evicting accepted audio. Capture refuses unknown or unequal nominal
+input/output rates; starvation or overflow during a take invalidates it rather
+than publishing incomplete PCM. Equal nominal rates do not synchronize device
+clocks. Existing tuner/onset locks and input downmix allocation remain outside
+this output-thread change. Calibration now uses a fallible click-control seam
+on the same output runtime, retaining the approximate control-time timing
+anchor rather than claiming sample-accurate acoustic measurement.
+
+Saved and Set backing both use guarded, fallible desktop admission. Same-source
+edits while capture is queued, armed or active preserve the accepted backing;
+missing output cannot report a successful replacement. Legacy authoring and
+its exact pitches and per-bar clocks remain available. Durable PCM companion
+storage, mixed-material Set execution and the rest of P7 remain open.
+
+The integrated audio library passes 144 tests, including 19 production
+Firewheel graph cases. Every guarded render in those cases observes zero
+allocation and zero deallocation on the rendering thread. The cases cover
+in-block seek/arm, loss before versus during a take, same-backing capture
+replay, owner reset, boundary backpressure/order, one-shot tails, count-in,
+tempo phase, single-step clicks, atomic calibration admission, preview
+cancellation and exact legacy chord PCM/cache reuse. Focused desktop gates
+pass 29 checks (17 audio, nine backing/persistence, three runtime observation).
+Headless storage reopen is distinct from native or personal-custody proof.
+Scoped audio Clippy passes with two documented pre-existing input lint
+exceptions; changed-file formatting and whitespace checks pass.

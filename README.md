@@ -44,6 +44,13 @@ part of broader release preparation.
   products. Each is an embeddable nested Cargo workspace with its own lockfile,
   package versions, release tags, and validation commands. Shared audio code
   stays in the root `crates/` directory.
+- Root desktop audio uses one Firewheel graph and CPAL output stream for click,
+  preview, saved backing and Set loops. Prepared commands, bounded voices and
+  exclusive capture buffers replace the previous callback mixer locks. The
+  shared tuner/onset/capture input remains lazy; capture currently requires
+  equal nominal input/output rates. See the
+  [runtime implementation record](design_docs/2026-07-11_stage_set_tools_plan.md#october-11-follow-up-single-output-runtime)
+  for the source-specific checks and remaining capture boundaries.
 
 Current plans and completed records are indexed in
 [design_docs/](design_docs/DOC_README.md). The release baseline is a clean

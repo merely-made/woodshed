@@ -9,9 +9,9 @@
 //! # What this module is, what it isn't
 //!
 //! **Is**: a pure-data model with operations (add, remove, copy/paste,
-//! seek, advance) and tests. Bar-by-bar audio rendering, integration
-//! with the [`crate::SequencerEngine`] mixer, and the UI gestures
-//! live elsewhere — this is the foundation those layers build on.
+//! seek, advance) and tests. Output rendering and UI gestures live elsewhere.
+//! The single output runtime lowers this control-side document into prepared
+//! segments; it does not make this document a second product authority.
 //!
 //! **Isn't**: a multi-track DAW. Each bar holds at most one audio
 //! buffer (the practice-recording layer). Want chords too? Use the
@@ -186,10 +186,10 @@ impl std::fmt::Display for SongError {
         match self {
             Self::BarIndexOutOfRange { idx, len } => {
                 write!(f, "bar index {idx} out of range (len {len})")
-            }
+            },
             Self::CannotRemoveLastBar => {
                 f.write_str("cannot remove the last bar; songs must have ≥1 bar")
-            }
+            },
         }
     }
 }
@@ -396,9 +396,9 @@ impl Song {
     /// Apply queued changes; called when the playback cursor reaches
     /// a bar boundary. Returns the number of changes applied.
     ///
-    /// Engine integration: call this from the audio thread (or from
-    /// a control thread that holds the song lock) every time the
-    /// cursor wraps from bar N to bar N+1.
+    /// This data-model helper consumes the pending vector on the control side.
+    /// The output processor uses its own bounded boundary commands rather than
+    /// moving or destroying this document's allocations on the audio thread.
     pub fn on_bar_boundary(&mut self) -> usize {
         let n = self.pending.len();
         let changes = std::mem::take(&mut self.pending);
@@ -406,19 +406,19 @@ impl Song {
             match change {
                 PendingChange::StartRecording { bar_idx } => {
                     self.recording = self.cursor.bar_idx == bar_idx;
-                }
+                },
                 PendingChange::StopRecording => {
                     self.recording = false;
-                }
+                },
                 PendingChange::SeekTo { bar_idx } => {
                     if bar_idx < self.bars.len() {
                         self.cursor.bar_idx = bar_idx;
                         self.cursor.sample_in_bar = 0;
                     }
-                }
+                },
                 PendingChange::SetPlaying(p) => {
                     self.playing = p;
-                }
+                },
             }
         }
         n
