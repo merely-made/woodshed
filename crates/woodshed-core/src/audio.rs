@@ -132,6 +132,18 @@ pub trait AudioBackend {
     /// Load the song lane (replaces the current song; the transport
     /// keeps its playing state).
     fn set_song(&mut self, doc: &crate::song::SongDoc);
+    /// Admit saved backing without discarding an armed or active capture.
+    /// Hosts with fallible output admission override this adapter and leave
+    /// the previous backing loaded when they return an error.
+    fn try_set_song(&mut self, doc: &crate::song::SongDoc) -> Result<(), String> {
+        if self.loop_capture_busy() {
+            return Err(
+                "Stop recording / armed capture before updating the loaded backing.".into(),
+            );
+        }
+        self.set_song(doc);
+        Ok(())
+    }
     /// Admit a derived Set projection atomically, or explain why the current
     /// projection must remain loaded. A missing implementation is visible.
     fn set_loop_plan(&mut self, _plan: &crate::loop_plan::LoopPlan) -> Result<(), String> {

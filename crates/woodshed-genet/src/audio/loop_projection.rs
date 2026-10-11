@@ -10,8 +10,8 @@ use woodshed_core::loop_plan::{LoopPlan, LoopSegment, LoopSegmentId};
 #[derive(Clone)]
 struct Capture {
     buffer: SampleBuffer,
-    /// Preserve the clock under which the PCM was captured. The engine's
-    /// resize-on-record path must never silently rewrite it after a Card edit.
+    /// Preserve the clock under which the PCM was captured. A Card clock
+    /// change requires an explicit clear rather than rewriting that take.
     bpm: f32,
     beats: u8,
     bars: u8,
@@ -140,35 +140,6 @@ pub(super) fn capture_busy(song: &Song) -> bool {
             .any(|change| matches!(change, PendingChange::StartRecording { .. }))
 }
 
-/// At the next boundary, enter the selected Card before arming capture.
-/// A lone StartRecording is consumed at that boundary even if a different
-/// bar is current; the paired seek keeps this explicit owner action exact.
-pub(super) fn arm_capture(song: &mut Song, index: usize) {
-    song.queue(PendingChange::SeekTo { bar_idx: index });
-    song.queue(PendingChange::StartRecording { bar_idx: index });
-}
-
-/// Cancelling an armed capture must work while playback is stopped, when no
-/// boundary can consume the engine's normal delayed StopRecording command.
-pub(super) fn stop_capture(song: &mut Song) {
-    song.recording = false;
-    let mut index = 0;
-    while index < song.pending.len() {
-        let armed_seek = matches!((song.pending.get(index), song.pending.get(index + 1)),
-            (Some(PendingChange::SeekTo { bar_idx: seek }), Some(PendingChange::StartRecording { bar_idx: record })) if seek == record);
-        if armed_seek {
-            song.pending.drain(index..index + 2);
-        } else if matches!(
-            song.pending[index],
-            PendingChange::StartRecording { .. } | PendingChange::StopRecording
-        ) {
-            song.pending.remove(index);
-        } else {
-            index += 1;
-        }
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -276,14 +247,15 @@ mod tests {
     }
 
     #[test]
-    fn armed_capture_blocks_replacement_and_stop_cancels_it_even_without_a_boundary() {
+    fn armed_or_active_capture_snapshot_refuses_replacement() {
         let mut song = Song::new();
         let loaded = plan(1);
         let mut bank = LoopCaptures {
             plan: Some(loaded.clone()),
             ..Default::default()
         };
-        arm_capture(&mut song, 0);
+        song.pending
+            .push(PendingChange::StartRecording { bar_idx: 0 });
         assert!(capture_busy(&song));
         assert!(
             bank.prepare_replacement(&song, &plan(2))
@@ -291,7 +263,7 @@ mod tests {
                 .contains("armed")
         );
         assert_eq!(bank.plan, Some(loaded.clone()));
-        stop_capture(&mut song);
+        song.pending.clear();
         assert!(!capture_busy(&song));
         song.on_bar_boundary();
         assert!(!song.recording);
@@ -300,21 +272,9 @@ mod tests {
         assert!(capture_busy(&song));
         assert!(bank.prepare_replacement(&song, &plan(2)).is_err());
         assert_eq!(bank.plan, Some(loaded));
-        stop_capture(&mut song);
+        song.recording = false;
         assert!(!capture_busy(&song));
         assert!(bank.prepare_replacement(&song, &plan(2)).is_ok());
-    }
-
-    #[test]
-    fn armed_card_is_entered_at_the_next_boundary_before_capture_starts() {
-        let mut song = Song::new();
-        song.add_bar();
-        song.add_bar();
-        song.cursor.bar_idx = 1;
-        arm_capture(&mut song, 0);
-        song.on_bar_boundary();
-        assert_eq!(song.cursor.bar_idx, 0);
-        assert!(song.recording);
     }
 
     #[test]
