@@ -3,7 +3,7 @@ name: Release Windows alpha
 on:
   push:
     tags:
-      - "v*"
+      - "woodshed-v*"
   workflow_dispatch:
 
 permissions:
@@ -11,6 +11,9 @@ permissions:
 
 jobs:
   package:
+    # workflow_dispatch can select a tag too; another product's tag must not
+    # package Woodshed even when the workflow is launched manually.
+    if: github.ref_type != 'tag' || startsWith(github.ref_name, 'woodshed-v')
     runs-on: windows-latest
     env:
       CARGO_NET_GIT_FETCH_WITH_CLI: "true"
@@ -24,8 +27,12 @@ jobs:
       - name: Package portable ZIP
         shell: pwsh
         run: |
+          $ErrorActionPreference = 'Stop'
           $version = if ($env:GITHUB_REF_TYPE -eq 'tag') {
-            $env:GITHUB_REF_NAME -replace '^v', ''
+            if (-not $env:GITHUB_REF_NAME.StartsWith('woodshed-v', [StringComparison]::Ordinal)) {
+              throw "Woodshed packaging requires a woodshed-v* tag."
+            }
+            $env:GITHUB_REF_NAME.Substring('woodshed-v'.Length)
           } else {
             '0.1.0-alpha.0.manual'
           }

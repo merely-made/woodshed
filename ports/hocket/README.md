@@ -45,14 +45,20 @@ settings are session settings, not fixed limits.
 
 ```sh
 cargo run -p hocket-genet      # desktop app
-cargo run -p hocket-headless   # scripted engine harness
-cargo test -p hocket-model
-cargo test -p hocket-engine
+cargo run -p hocket-headless   # manual audio-device demo
+../../scripts/validate-workspace.sh lockfile hocket
+../../scripts/validate-workspace.sh test hocket
 ```
 
-Building needs a sibling `../genet` checkout for the `[patch.crates-io]` path
-entries; the other family dependencies resolve as git dependencies. Release
-cutting is documented in `design_docs/RELEASING.md`.
+The committed manifests and lockfile resolve the family from Git; no sibling
+Genet checkout is required. Optional local Cargo overrides are development
+plumbing and are excluded from the clean-checkout validation commands above.
+CI runs model, portable project/media, engine, and desktop-host unit tests;
+ignored device/custody receipts and the manual headless demo are separate
+acceptance lanes. Release
+cutting is documented in `design_docs/RELEASING.md`. Hocket's tags use
+`hocket-v*`; its signed updater manifest must stay on a Hocket-only URL because
+the shared repository has one global latest release.
 
 ## License
 

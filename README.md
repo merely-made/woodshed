@@ -33,8 +33,9 @@ part of broader release preparation.
   settings have their own file and one-time migration (2026-08-07).
 - Window frame moved onto the host seam 2026-08-10; window-chrome controls
   are named for screen readers.
-- Nine root workspace crates: `woodshedding` (pure theory), `audio-primitives`
-  (shared pure-std DSP), `woodshed-audio` (audio, pitch, MIDI, looping),
+- Ten root workspace crates: `woodshedding` (pure theory), `audio-primitives`
+  (shared pure-std DSP), `timed-text` (portable transcript parsing),
+  `woodshed-audio` (audio, pitch, MIDI, looping),
   `woodshed-core` (portable state and host seams), `woodshed-graph` (theory
   catalog as a content graph), `woodshed-views` (Cambium product views),
   `woodshed-genet` (desktop application), `woodshed-web` (unshipped browser
@@ -47,7 +48,8 @@ part of broader release preparation.
 
 Current plans and completed records are indexed in
 [design_docs/](design_docs/DOC_README.md). The release baseline is a clean
-locked checkout, green core and Windows-host CI, and a checksummed tagged ZIP.
+locked checkout, green scoped CPU and Windows-host CI, and a checksummed tagged
+ZIP.
 That baseline is not the 1.0 product proof. The 1.0 claim requires one
 persisted practice flow that connects musical material, a playable instrument
 route, honest practice history, and an intelligible next step.
@@ -75,7 +77,8 @@ and validation, including the remaining fresh-window native presentation gate.
 
 ```sh
 cargo run -p woodshed-genet     # the desktop app
-cargo test --workspace
+scripts/validate-workspace.sh lockfile woodshed
+scripts/validate-workspace.sh test woodshed
 ```
 
 The committed manifest and lockfile resolve the Genet family from the same
@@ -83,12 +86,42 @@ revision Mere uses, without local sibling checkouts. A gitignored
 `.cargo/config.toml` may redirect those sources to sibling paths for local
 development, but it is optional development plumbing rather than part of the
 release graph.
+
+CI independently checks the lockfile and scoped CPU tests for each workspace.
+`scripts/validate-workspace.sh <lockfile|test> <workspace>` runs from a temporary
+directory outside repository Cargo configuration, using the selected workspace's
+toolchain or the root toolchain when the port has none. It preserves each
+workspace's own manifest and lockfile. Select `woodshed`, `hocket`, `redshank`,
+or `ringdown`:
+
+| Workspace | CPU-test scope |
+| --- | --- |
+| Woodshed | Theory, DSP, timed text, audio, core, graph, views, and portable instrument state |
+| Hocket | Model, portable project/media operations, engine, and desktop-host unit tests |
+| Redshank | Model, storage, cache, feeds, playback, surfaces, and desktop-host unit tests |
+| Ringdown | Protocol, client, BLE helpers, and probe unit tests |
+
+Linux builds need ALSA, Fontconfig, D-Bus development headers, and `pkg-config`
+(`libasound2-dev libfontconfig1-dev libdbus-1-dev pkg-config` on Ubuntu).
+These jobs run the suites with their default ignored-test policy; they do not
+open audio/Bluetooth devices or qualify native capture, fresh-process reopen,
+or hardware behavior. Those acceptance lanes retain their explicit fixtures
+and device requirements.
+
 `scripts/package-windows.ps1`, `scripts/package-macos.sh`, and
 `scripts/package-linux.sh` produce checksummed platform archives. The macOS
 archive contains an unsigned, architecture-specific app; Linux packaging is
 portable archive packaging, with host library requirements. See the
 [release baseline and candidate assessment](design_docs/2026-07-11_stage_set_tools_plan.md#release-baseline-and-10-product-proof)
 for the remaining validation and catalog roadmap.
+
+Release tags are product-qualified: `woodshed-v*`, `hocket-v*`, `redshank-v*`,
+and `ringdown-v*`. The Windows release workflow packages Woodshed only for
+`woodshed-v<version>` tags; it strips that product prefix before passing the
+version to the packager. Manual dispatch on a branch produces a manual alpha
+artifact, while manual dispatch on another product's tag is skipped. The macOS
+and Linux packaging workflows remain manual. A port's tag does not admit a
+Woodshed package or change a port's independently managed updater feed.
 
 ## License
 

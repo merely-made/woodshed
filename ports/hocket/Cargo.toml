@@ -130,13 +130,8 @@ tabard-workshop = { git = "https://github.com/merely-made/mere.git", rev = "e953
 luggage = { git = "https://github.com/merely-made/mere.git", rev = "e95326dc08446a9256d3e340c63e571684afe697" }
 velopack = "1.2.0"
 
-# Audio I/O + DSP
-cpal = "0.15"
+# Audio file decoding/encoding; native I/O is supplied by Firewheel.
 hound = "3.5"
-
-# Realtime-safe primitives
-rtrb = "0.3"
-basedrop = "0.1"
 
 # Persistence
 serde = { version = "1.0", features = ["derive"] }
