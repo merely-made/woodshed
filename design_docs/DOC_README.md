@@ -118,6 +118,11 @@ before any other doc in this directory.
   six reviewed captures qualify committed native seed/reopen. Committed scale
   enqueue takes 0.014–0.061 ms; a monitor-only startup event is preserved beside
   the zero-event repeat and song regression. The receipt records the boundaries.
+  The October 11 single-output runtime retires both callback mixer engines,
+  keeping click, preview and backing on one Firewheel/device clock. It passes
+  144 audio and 29 focused desktop checks plus three muted one-stream device
+  runs. Native GUI seed/reopen and click stop/restart qualification remain
+  pending the foreground handoff; durable PCM and full P7 remain open.
   The October 7 captured-scale-pattern follow-up extends copied instructions
   to degree pairs in thirds/fourths, with base-scale exploration and unchanged
   owner boundaries. The 613-check gate and committed desktop build pass; eight

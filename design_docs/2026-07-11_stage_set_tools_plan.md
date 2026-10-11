@@ -2850,7 +2850,8 @@ fixture reopening, preserving the acoustic/vault/release boundaries.
 
 ### October 11 follow-up: single output runtime
 
-**Status: implementation in progress; committed-source native qualification pending.**
+**Status: implemented; CPU/build and muted single-stream device checks pass.
+Native GUI seed/reopen qualification remains pending the foreground handoff.**
 
 This root-owned slice starts at `48d4e5a` and preserves the shared UI family
 and the corrected owned Firewheel revision
@@ -2904,3 +2905,24 @@ pass 29 checks (17 audio, nine backing/persistence, three runtime observation).
 Headless storage reopen is distinct from native or personal-custody proof.
 Scoped audio Clippy passes with two documented pre-existing input lint
 exceptions; changed-file formatting and whitespace checks pass.
+
+The production desktop and diagnostic example build at frozen source
+`4a4aba45791c151438a7ab01628e60962fbe86d7`. The freeze preserves the separate
+Hocket/Redshank appearance-reopen follow-up `0032f35` without changing the
+Woodshed UI family. The [source/build receipt](../validation/output-runtime_20261011/receipt.json)
+records component commits, exact binary hashes and focused logs. Native GUI
+qualification is pending the shared foreground handoff; muted command-line
+device checks are complete.
+
+Three muted native diagnostic processes at that freeze each report one output
+stream at 48 kHz and zero observed CPAL status events. Chord, scale and backing
+advance 387,072 / 444,416 / 822,272 device frames and 378 / 434 / 803 graph
+processing blocks respectively. The long-scale requests return in
+0.030–0.032 ms; separately awaited synthesis completes in 420.530–423.916 ms.
+Song preparation takes 68.362 ms cold and 56.125 ms after pitch/tempo edits;
+warm replay returns in 0.003 ms. Preview trial labels reflect request order
+with identical parameters; the backing's edited trial changes actual pitches
+and tempo. These are device/status and control-responsiveness observations,
+not acoustic quality, hardware clock synchronization, callback-gap measurements
+or controlled performance comparisons. The [device receipt](../validation/output-runtime_20261011/ddx/receipt.json)
+retains all three logs and OS CPU/wall measurements.

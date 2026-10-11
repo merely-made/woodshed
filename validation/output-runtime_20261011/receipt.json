@@ -1,0 +1,77 @@
+{
+  "date": "2026-10-11",
+  "source": "4a4aba45791c151438a7ab01628e60962fbe86d7",
+  "source_components": {
+    "input": "5ccb00c81f264990f3eb812cdd11686ed0fed48a",
+    "calibration": "01c0ffcfa5ec8141853e1bb4f056922d1b467e22",
+    "runtime": "d7f0f003bec9a34d5116277fc588b3ef7df1174c",
+    "desktop": "fc69d9a25ad3b7b3d20414abcdd7be9d1bc995a6",
+    "port_reopen_preserved": "0032f35"
+  },
+  "cpu": {
+    "audio_passed": 144,
+    "runtime_graph_cases": 19,
+    "guarded_render_allocations": 0,
+    "guarded_render_deallocations": 0,
+    "desktop_audio_passed": 17,
+    "desktop_sync_passed": 9,
+    "desktop_drive_passed": 3,
+    "headless_storage_reopen": "passed; distinct from native/custody proof"
+  },
+  "build": {
+    "desktop": "passed",
+    "audio_ddx": "passed",
+    "freeze": "integration/source-freeze.json"
+  },
+  "toolchain": {
+    "rust": "1.97.1",
+    "locked": true,
+    "build_jobs": 2,
+    "cwd": "outside repository Cargo config"
+  },
+  "lint": {
+    "result": "passed scoped audio --no-deps with two pre-existing input lint exceptions",
+    "exceptions": [
+      "clippy::unnecessary_cast",
+      "clippy::manual_range_contains"
+    ]
+  },
+  "native_device_status": "passed three muted CPAL processes at frozen source; zero status events, one output stream each",
+  "native_gui_status": "pending foreground handoff",
+  "limits": [
+    "Capture requires equal nonzero nominal input/output rates; hardware clocks are not synchronized.",
+    "Physical capture quality and sample-accurate acoustic calibration are unqualified.",
+    "Tuner/onset locks and input downmix allocation are outside the output-thread guarantee.",
+    "Durable PCM companion storage and full P7 migration remain open."
+  ],
+  "native_device_receipt": "ddx/receipt.json",
+  "native_device_trials": {
+    "chord": {
+      "output_streams": 1,
+      "device_frames": 387072,
+      "graph_processing_blocks": 378,
+      "device_status_events": 0,
+      "sample_rate_hz": 48000
+    },
+    "scale": {
+      "output_streams": 1,
+      "device_frames": 444416,
+      "graph_processing_blocks": 434,
+      "device_status_events": 0,
+      "sample_rate_hz": 48000
+    },
+    "song": {
+      "output_streams": 1,
+      "device_frames": 822272,
+      "graph_processing_blocks": 803,
+      "device_status_events": 0,
+      "sample_rate_hz": 48000
+    }
+  },
+  "diagnostic_limits": [
+    "Muted runs establish device processing and status telemetry, not acoustic quality or latency.",
+    "Graph processing blocks are not exact CPAL callbacks or callback-gap measurements.",
+    "Preview trial phase labels denote request order; all three use the same pitches/duration. Song edited phase changes pitches and tempo.",
+    "Concurrent system workload was not controlled."
+  ]
+}
