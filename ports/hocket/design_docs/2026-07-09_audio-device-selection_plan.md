@@ -33,3 +33,9 @@ machine-specific hardware part of a shared Hocket project.
 - 2026-07-09: **LANDED.** Firewheel device enumeration and selection now back
   Genet transport dropdowns. Focused tests cover selector mapping, malformed
   IDs following the system-default fallback, and source-rate playback speed.
+
+- 2026-10-11: The standalone 0.14 migration preserves this host-local device
+  policy while separately owning `CpalStream`. Offline graph checks render
+  playback across 44.1/48 kHz, prove fresh-engine state reset and retain
+  malformed-ID fallback. Actual physical selection/restart and hot-plug remain
+  unqualified in this lane; see [Firewheel adoption](2026-10-11_firewheel_adoption_plan.md).

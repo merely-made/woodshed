@@ -11,6 +11,12 @@ before any other doc in this directory.
 
 ## Active Plans
 
+- [2026-10-11_firewheel_adoption_plan.md](2026-10-11_firewheel_adoption_plan.md) —
+  **Offline gate passed; native pending.** Standalone Firewheel 0.14 at the
+  exact owned fork revision, with 165 CPU checks and eleven rendered graph
+  capture/replay/lifecycle tests. Native regression and physical devices are
+  separate acceptance gates.
+
 - [2026-10-11_host_acceptance_plan.md](2026-10-11_host_acceptance_plan.md) —
   **Landed on isolated lane.** Tightens existing Mesquite close/readback and project-worker
   boundaries, removes unused capture dependencies, and makes the manual audio
@@ -185,9 +191,10 @@ section whenever a durable working insight emerges from a session.
 - **Firewheel is the audio substrate.** Not Dropseed (back-burner),
   not a SequencerEngine wrap (placeholder from FT1). At FT3b-prime
   the engine moves to a Firewheel graph: loop tracks as sample-player
-  nodes, mix bus, input capture node, optional click node. **On
-  crates.io** at `firewheel-graph` 0.10.x — pin a version, only
-  path-dep if unreleased fixes are needed.
+  nodes, mix bus, input capture node, optional click node. The independent
+  workspace pins the standalone owned 0.14 fork by exact Git revision for
+  bounded stream nodes; native consumption and physical audio acceptance
+  remain separate from provider qualification.
 - **hocket-model is the authority; Firewheel is the runtime.**
   Session truth lives in the model; the audio graph plays the
   *projected state*. Don't let runtime concerns leak back into the

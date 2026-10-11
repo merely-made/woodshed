@@ -52,10 +52,9 @@ insigne = { git = "https://github.com/merely-made/dramatis.git", rev = "c1d62076
 # decoded f32 samples, unchanged by the codec swap.
 wavicle = { git = "https://github.com/merely-made/wavicle.git", branch = "main", version = "0.1.0", features = ["encode"] }
 
-# Firewheel: modular audio graph engine, the spine of hocket-engine
-# (FT3b-prime). cpal feature enables the default native backend; the
-# symphonium feature gives sample-loading helpers we'll want at FT8.
-firewheel = { version = "0.10", features = [
+# Standalone Firewheel 0.14 with the owned bounded stream-node foundation.
+# Keep the exact pushed revision coherent with the other audio consumers.
+firewheel = { git = "https://github.com/mark-ik/firewheel.git", rev = "2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc", version = "0.14", features = [
     "cpal",
     "symphonium",
     "peak_meter_node",
