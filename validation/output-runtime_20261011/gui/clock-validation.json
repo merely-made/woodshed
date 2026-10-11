@@ -1,0 +1,45 @@
+{
+  "status": "ok",
+  "samples": [
+    {
+      "streams": 1,
+      "frames": 1438720,
+      "blocks": 1405,
+      "click": false,
+      "playing": false,
+      "capture_invalid": false
+    },
+    {
+      "streams": 1,
+      "frames": 1496064,
+      "blocks": 1461,
+      "click": true,
+      "playing": false,
+      "capture_invalid": false
+    },
+    {
+      "streams": 1,
+      "frames": 1527808,
+      "blocks": 1492,
+      "click": false,
+      "playing": false,
+      "capture_invalid": false
+    },
+    {
+      "streams": 1,
+      "frames": 1597440,
+      "blocks": 1560,
+      "click": true,
+      "playing": false,
+      "capture_invalid": false
+    },
+    {
+      "streams": 1,
+      "frames": 1628160,
+      "blocks": 1590,
+      "click": false,
+      "playing": false,
+      "capture_invalid": false
+    }
+  ]
+}

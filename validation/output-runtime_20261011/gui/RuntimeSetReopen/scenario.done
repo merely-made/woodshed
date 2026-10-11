@@ -1,0 +1,10 @@
+RESULT ok
+captured 01_set_source_fresh_reopen
+captured 02_set_source_replayed
+captured 03_saved_backing_still_retained
+Set LoopPlan source and settings reopen complete
+capture 01_set_source_fresh_reopen 2360x1600 digest=d2d8c856b8563761 file=$ARTIFACT_ROOT/native/RuntimeSetReopen/01_set_source_fresh_reopen.png
+capture 02_set_source_replayed 2360x1600 digest=a20270be2e5d995d file=$ARTIFACT_ROOT/native/RuntimeSetReopen/02_set_source_replayed.png
+capture 03_saved_backing_still_retained 2360x1600 digest=4319398d2536ac45 file=$ARTIFACT_ROOT/native/RuntimeSetReopen/03_saved_backing_still_retained.png
+frames: 3 captured, 0 blank, 3 distinct digests
+presentation: 90 frames, 747 redraws, 657 unpresented redraws
