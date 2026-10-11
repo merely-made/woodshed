@@ -76,6 +76,8 @@ pub struct PersonaSwitch {
 }
 
 pub struct AppState {
+    pub appearance: crate::appearance::AppearanceState,
+    pub window_commands: cambium_genet_winit_host::WindowCommands,
     pub session: Session,
     pub history: History,
 
@@ -159,6 +161,7 @@ impl AppState {
         update_worker: ActorHandle<crate::update::worker::UpdateCommand>,
         update_settings: crate::update::UpdateSettings,
         identity: Result<LocalIdentity, String>,
+        receipt: bool,
     ) -> Self {
         Self::from_project_parts(
             Session::new_default(),
@@ -169,6 +172,7 @@ impl AppState {
             update_worker,
             update_settings,
             identity,
+            receipt,
         )
     }
 
@@ -182,17 +186,32 @@ impl AppState {
         update_worker: ActorHandle<crate::update::worker::UpdateCommand>,
         update_settings: crate::update::UpdateSettings,
         identity: Result<LocalIdentity, String>,
+        receipt: bool,
     ) -> Self {
-        let audio_devices = available_audio_devices();
-        let (engine, sample_rate, audio_status) = match Engine::new() {
-            Ok(e) => {
-                let sr = e.sample_rate();
-                (Ok(e), sr, "system audio".to_string())
+        let audio_devices = if receipt {
+            AudioDevices::default()
+        } else {
+            available_audio_devices()
+        };
+        let (engine, sample_rate, audio_status) = if receipt {
+            (
+                Err("audio inactive in appearance receipt".into()),
+                0,
+                "appearance receipt · audio inactive".into(),
+            )
+        } else {
+            match Engine::new() {
+                Ok(e) => {
+                    let sr = e.sample_rate();
+                    (Ok(e), sr, "system audio".to_string())
+                },
+                Err(e) => (Err(e.to_string()), 0, "audio unavailable".to_string()),
             }
-            Err(e) => (Err(e.to_string()), 0, "audio unavailable".to_string()),
         };
         let saved_head = history.head;
         let mut state = Self {
+            appearance: crate::appearance::AppearanceState::default(),
+            window_commands: cambium_genet_winit_host::WindowCommands::new(),
             session,
             history,
             engine,
@@ -213,7 +232,7 @@ impl AppState {
             update_settings,
             update_worker,
             identity,
-            clipboard: SystemClipboard::new().ok(),
+            clipboard: if receipt { None } else { SystemClipboard::new().ok() },
             recipient: None,
             persona_switch: None,
             reshare_notice: false,
@@ -232,6 +251,15 @@ impl AppState {
         // Apply the initial click + tempo to the engine.
         state.resync_tempo();
         state
+    }
+
+    pub fn protect_appearance_exports(&mut self) {
+        let mut paths = vec![crate::update::settings_path()];
+        paths.extend(self.project_path.clone());
+        self.appearance.protect_media(paths);
+        self.appearance
+            .workshop
+            .set_protected_export_directories(crate::identity::protected_data_directories());
     }
 
     pub fn project_label(&self) -> String {

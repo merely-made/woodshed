@@ -421,3 +421,25 @@ mod dr_c_receipts {
         assert!(!consent_path(temp.path()).exists());
     }
 }
+
+/// Theme exports cannot overwrite identity/custody metadata, including absent files.
+pub(crate) fn protected_data_directories() -> Vec<PathBuf> {
+    [default_data_root().ok(), legacy_data_root()]
+        .into_iter()
+        .flatten()
+        .collect()
+}
+
+/// Appearance overrides must not use the existing custody destinations.
+pub(crate) fn protected_appearance_destinations() -> Vec<PathBuf> {
+    protected_data_directories()
+        .into_iter()
+        .flat_map(|root| {
+            [
+                root.join(MARKER),
+                root.join("family-persona.json"),
+                root.join(LEGACY_ROOT),
+            ]
+        })
+        .collect()
+}

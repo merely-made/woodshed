@@ -11,6 +11,10 @@
 //! Hocket supplies its state, views, custom leaves, workers, and scenario
 //! policy through the host hooks below.
 
+mod appearance;
+#[cfg(test)]
+mod appearance_tests;
+mod appearance_view;
 mod identity;
 mod leaves;
 mod project_io;
@@ -21,14 +25,13 @@ mod update;
 mod view;
 
 use std::cell::RefCell;
-use std::path::PathBuf;
 use std::rc::Rc;
 use std::sync::mpsc::Receiver;
 
 use armillary::Wake;
 use cambium_genet_winit_host::{
-    AppCtx, CloseDisposition, HostHooks, HostOptions, HostPointer, HostWake, HostWindow, Init,
-    Runner, Surface, WindowCommands, run,
+    AppCtx, CloseDisposition, FocusedTextSlot, HostHooks, HostOptions, HostWake, HostWindow, Init,
+    Runner, WindowCommands, WindowFrame, run,
 };
 
 use identity::LocalIdentity;
@@ -47,6 +50,7 @@ struct Runtime {
     update_statuses: Option<Receiver<update::UpdateStatus>>,
     waveform_cache: leaves::WaveformCache,
     scenario: Option<scenario::Run>,
+    previews: tabard_workshop::native_host::PreviewBindings,
 }
 
 impl Runtime {
@@ -56,75 +60,15 @@ impl Runtime {
             update_statuses: None,
             waveform_cache: leaves::WaveformCache::new(),
             scenario,
+            previews: Default::default(),
         }
-    }
-}
-
-/// A temporary adapter between a host frame and `taproot`'s generic
-/// scenario grammar. Pointer deliveries and captures go back through the
-/// host, so the receipt uses the same layout and presented frame as a person.
-struct ScenarioDriver<'a, 'b> {
-    ctx: &'a mut AppCtx<'b, AppState, Logic, Child>,
-    capture_dir: PathBuf,
-}
-
-impl taproot::Automatable for ScenarioDriver<'_, '_> {
-    fn with_surfaces<R>(&self, f: impl FnOnce(&[taproot::ProbeSurface<'_>]) -> R) -> R {
-        let dom = self.ctx.runner.dom();
-        let dom = dom.borrow();
-        let (width, height) = self.ctx.logical_size;
-        let sheet = theme::sheet();
-        let surfaces = [taproot::ProbeSurface {
-            name: "hocket",
-            dom: &dom,
-            rect: [0.0, 0.0, width, height],
-            sheet: &sheet,
-        }];
-        f(&surfaces)
-    }
-
-    fn snapshot(&self) -> taproot::ProbeSnapshot {
-        taproot::ProbeSnapshot::default()
-            .with_field("status", self.ctx.runner.state().project_status_label())
-    }
-
-    fn drain_events(&mut self) -> Vec<String> {
-        Vec::new()
-    }
-
-    fn act(&mut self, _label: &str) -> bool {
-        false
-    }
-
-    fn press(&mut self, x: f32, y: f32) {
-        self.ctx.pointer.push(HostPointer::Press(x, y));
-    }
-
-    fn moved(&mut self, x: f32, y: f32) {
-        self.ctx.pointer.push(HostPointer::Moved(x, y));
-    }
-
-    fn release(&mut self, x: f32, y: f32) {
-        self.ctx.pointer.push(HostPointer::Release(x, y));
-    }
-}
-
-impl taproot::Driveable for ScenarioDriver<'_, '_> {
-    fn capture(&mut self, name: &str) -> bool {
-        let path = self.capture_dir.join(format!("{name}.png"));
-        *self.ctx.capture = Some(Box::new(
-            move |surface: &dyn Surface, view, width, height| {
-                let _ = scenario::capture_frame(surface, view, width, height, &path);
-            },
-        ));
-        true
     }
 }
 
 fn boot_state(
     runtime: &Rc<RefCell<Runtime>>,
     _window: &dyn HostWindow,
-    _commands: &WindowCommands,
+    commands: &WindowCommands,
     host_wake: &HostWake,
 ) -> Init<AppState, Logic> {
     let wake: Wake = host_wake.callback();
@@ -145,10 +89,21 @@ fn boot_state(
         runtime.update_statuses = Some(update_statuses);
     }
     let identity = LocalIdentity::open_default().map_err(|error| error.to_string());
+    let mut state = AppState::new(
+        project_worker,
+        update_worker,
+        update_settings,
+        identity,
+        appearance::device_free_receipt(),
+    );
+    state.appearance = appearance::load();
+    state.window_commands = commands.clone();
+    state.protect_appearance_exports();
+    let sheet = state.appearance.take_stylesheet_change().unwrap();
     Init {
-        state: AppState::new(project_worker, update_worker, update_settings, identity),
+        state,
         logic: root as Logic,
-        sheet: theme::sheet(),
+        sheet,
         fonts: Vec::new(),
         images: Vec::new(),
     }
@@ -182,34 +137,105 @@ fn hooks(runtime: &Rc<RefCell<Runtime>>) -> HostHooks<AppState, Logic, Child> {
             let mut runtime = frame_runtime.borrow_mut();
             drain_worker_updates(ctx, &runtime);
             ctx.runner.update(AppState::tick);
-            leaves::reconcile(ctx.leaves, &mut runtime.waveform_cache, ctx.runner.state());
+            if ctx.runner.state().appearance.editor_open {
+                runtime.previews.register(
+                    &ctx.runner.state().appearance.workshop,
+                    ctx.leaves,
+                    ctx.producers,
+                );
+            } else {
+                leaves::reconcile(ctx.leaves, &mut runtime.waveform_cache, ctx.runner.state());
+            }
             true
         }),
-        after_dispatch: Box::new(|_ctx| {}),
+        after_dispatch: Box::new(appearance_dispatch),
         after_frame: Box::new(move |ctx| {
             let mut runtime = scenario_runtime.borrow_mut();
             let Some(mut run) = runtime.scenario.take() else {
                 return;
             };
-            let capture_dir = run.dir.clone();
-            let progress = {
-                let mut driver = ScenarioDriver { ctx, capture_dir };
-                let progress = run.scenario.tick(&mut driver);
-                drop(driver);
-                progress
-            };
-            match progress {
-                taproot::Progress::Running => runtime.scenario = Some(run),
-                taproot::Progress::Done => {
-                    scenario::write_done(&run.dir, &run.scenario.finish());
-                    *ctx.close = true;
-                }
-            }
+            scenario::drive(&mut run, ctx);
+            runtime.scenario = Some(run);
         }),
         after_wake: Box::new(|_ctx| {}),
-        close_request: Box::new(|_ctx, _request| CloseDisposition::Exit),
-        focused_text: Box::new(|_runner: &AppRunner| None),
+        close_request: Box::new(|ctx, _request| {
+            let mut allow = true;
+            ctx.runner.update(|state| {
+                if state.appearance.editor_open {
+                    state.appearance.close_app = true;
+                    allow = state.appearance.workshop.request_close();
+                }
+            });
+            if allow {
+                CloseDisposition::Exit
+            } else {
+                CloseDisposition::KeepVisible
+            }
+        }),
+        focused_text: Box::new(|runner: &AppRunner| {
+            if !runner.state().appearance.editor_open {
+                return None;
+            }
+            let node = runner.focus()?;
+            let field = tabard_workshop::native_host::focused_field(
+                &runner.dom(),
+                node,
+                &runner.state().appearance.workshop,
+            )?;
+            let mutable = field.clone();
+            Some(FocusedTextSlot {
+                node,
+                get: Box::new(move |state| {
+                    state
+                        .appearance
+                        .workshop
+                        .text_field(&field)
+                        .expect("shared field")
+                }),
+                get_mut: Box::new(move |state| {
+                    state
+                        .appearance
+                        .workshop
+                        .text_field_mut(&mutable)
+                        .expect("shared field")
+                }),
+            })
+        }),
         key_intercept: Box::new(|_runner, _press| false),
+    }
+}
+
+fn appearance_dispatch(ctx: &mut AppCtx<'_, AppState, Logic, Child>) {
+    let mut close = false;
+    let mut sheet = None;
+    ctx.runner.update(|state| {
+        if state.appearance.editor_open {
+            state.protect_appearance_exports();
+            let exit = tabard_workshop::native_host::sync_and_export(
+                &mut state.appearance.workshop,
+                &mut |artifact| {
+                    let extension = if artifact.format == tabard_workshop::ExportFormat::Css {
+                        "css"
+                    } else {
+                        "json"
+                    };
+                    cambium_genet_winit_host::choose_save_path(
+                        "Export theme",
+                        &artifact.suggested_name,
+                        &[extension],
+                    )
+                },
+            );
+            close = appearance_view::sync_editor(state, exit);
+        }
+        state.appearance.commit_requested();
+        sheet = state.appearance.take_stylesheet_change();
+    });
+    if let Some(sheet) = sheet {
+        *ctx.set_sheet = Some(sheet);
+    }
+    if close {
+        *ctx.close = true;
     }
 }
 
@@ -238,6 +264,7 @@ fn main() {
     let init_runtime = runtime.clone();
     let options = HostOptions {
         title: "Hocket".into(),
+        window_frame: WindowFrame::App,
         initial_logical_size: (1_180.0, 700.0),
         size_env: Some(("HOCKET_WIDTH".into(), "HOCKET_HEIGHT".into())),
         ..Default::default()

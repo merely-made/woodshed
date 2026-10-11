@@ -11,13 +11,14 @@
 //! property set inline. S5 replaces the waveform/meter stand-ins with
 //! chisel leaves.
 
-/// The full stylesheet. Static (no per-frame interpolation); the design
-/// is a fixed warm-dark world for v1.
+/// Recorder layout and the retained warm default. Shared roles override colors
+/// only after an explicit application appearance selection.
 pub fn sheet() -> String {
     r#"
-/* Palette lives on `.app`, the tree's root element — so `:root` and `.app`
-   are the same element here and the vars cascade to every descendant, like the
-   inline per-lane `--voice` does. */
+/* Recorder colors live on `.app`; the desktop wrapper receives shared root
+   tokens. Semantic voice/record colors and inline lane `--voice` values stay
+   with the recorder. */
+.hocket-desktop { --ground: #17130e; --surface: #201a12; --text: #ece3d2; --voice-amber: #e0a64b; }
 .app { display: flex; flex-direction: column; width: 100%; height: 100%;
        box-sizing: border-box; font-family: sans-serif; font-size: 15px;
        --ground: #17130e; --surface: #201a12; --surface-2: #2b2318; --raised: #342a1c;
@@ -41,7 +42,7 @@ pub fn sheet() -> String {
    shouts over the session name it abuts. Amber because it is actionable
    information rather than a fault. Wide enough that the common
    "Version x.y.z available" fits whole; longer failure text still
-   ellipsizes, and `--update-now` prints it in full. */
+   ellipsizes, and `--update-now` prints it in full.
    `flex-shrink: 0` is what actually keeps it whole: in this flex row a
    default-shrink item gets squeezed and ellipsises mid-word regardless of
    max-width. The cap still bounds a long failure message. */
@@ -200,4 +201,45 @@ pub fn sheet() -> String {
 .mpeak { color: var(--text-dim); font-size: 11px; }
 "#
     .to_string()
+}
+
+/// Portable built-in copy retains the recorder's exact palette in dark mode.
+pub fn builtin() -> tabard::Theme {
+    let mut theme = tabard::Theme::new(
+        crate::appearance::PRODUCT_DEFAULT,
+        "Hocket warm",
+        tinct::Seeds {
+            primary: tinct::Srgb::rgb(0xe0, 0xa6, 0x4b),
+            secondary: tinct::Srgb::rgb(0x56, 0xb3, 0xa8),
+            tertiary: tinct::Srgb::rgb(0xe0, 0x79, 0x6a),
+            neutral: tinct::Srgb::rgb(0x20, 0x1a, 0x12),
+            text_header: None,
+            text_body: None,
+            success: tinct::Srgb::rgb(0xa9, 0xb9, 0x6b),
+            danger: tinct::Srgb::rgb(0xe2, 0x49, 0x3a),
+            dark: true,
+        },
+    );
+    theme.source = tabard::theme::registry::ThemeSource::BuiltIn;
+    theme.mode_sheets.insert(
+        "dark".into(),
+        vec![format!(
+            "{}\n.hocket-desktop, .app {{ --line:#3a3020; --line-soft:#2e2619; }}",
+            DEFAULT_TOKENS
+        )],
+    );
+    theme
+}
+
+const DEFAULT_TOKENS: &str = ":root { --tabard-color-bg:#17130e; --tabard-color-surface:#201a12; --tabard-color-surface-2:#2b2318; --tabard-color-surface-hover:#342a1c; --tabard-color-text:#ece3d2; --tabard-color-text-dim:#a3937a; --tabard-color-text-disabled:#6f6350; --tabard-color-text-header:#ece3d2; --tabard-color-primary:#e0a64b; --tabard-color-on-primary:#17130e; --tabard-syntax-link:#56b3a8; --tabard-syntax-emphasis:#ece3d2; --tabard-syntax-keyword:#e0a64b; --tabard-syntax-string:#a9b96b; --tabard-syntax-number:#e0796a; }";
+
+/// Project authorship/track colors and recording red remain semantic colors.
+pub fn role_css() -> &'static str {
+    ".hocket-desktop, .app { --ground:var(--tabard-color-bg); --surface:var(--tabard-color-surface); --surface-2:var(--tabard-color-surface-2); --raised:var(--tabard-color-surface-hover); --line:var(--tabard-color-surface-hover); --line-soft:var(--tabard-color-surface-hover); --text:var(--tabard-color-text); --text-dim:var(--tabard-color-text-dim); --text-faint:var(--tabard-color-text-disabled); }"
+}
+
+/// Sparse authored sheets can use shared tokens or recorder selectors. Omitted
+/// token roles retain the warm palette rather than becoming unset CSS values.
+pub fn default_tokens() -> &'static str {
+    DEFAULT_TOKENS
 }

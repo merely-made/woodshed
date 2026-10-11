@@ -112,12 +112,19 @@ before any other doc in this directory.
   `wavicle::encode_float`/`decode_stream`, with `MediaRef` still BLAKE3 over the
   decoded f32 samples. WAV is retained only for the offline mix export.
 
+## Appearance acceptance
+
+- [Tabard native receipt](receipts/tabard_20261011/README.md) — Shared application appearance, authoring, Save/Apply, four modes and fresh reopen; 102 CPU assertions and 17 native captures accepted.
+
 ## Archive
 
+- [2026-10-11 Tabard adoption](archive_docs/2026-10-11/2026-10-11_tabard_adoption_plan.md) — Landed application appearance and qualification.
 - `archive_docs/` — retired plans and superseded notes (created on
   first archive).
 
 ## Working Principles for AI Assistants
+
+- **Appearance is presentation, separate from recorder truth.** Use Tabard, Tinct, the shared workshop/native binding and Cambium title bar. Save registers a definition; explicit Apply alone replaces the installed snapshot, including same-identity edits. Mesquite owns native scenario and capture behavior.
 
 These principles apply to AI-assisted work on this project. Update this
 section whenever a durable working insight emerges from a session.

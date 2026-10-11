@@ -116,6 +116,9 @@ wgpu = { version = "30", default-features = false, features = ["std"] }
 # component, in mere since the 2026-09-03 boundary pass; the standalone mirror
 # repo retired with the 2026-07-23 consolidation.
 tinct = { git = "https://github.com/merely-made/mere.git", rev = "e95326dc08446a9256d3e340c63e571684afe697", version = "0.1.2" }
+mesquite = { git = "https://github.com/merely-made/mere.git", rev = "e95326dc08446a9256d3e340c63e571684afe697" }
+tabard = { git = "https://github.com/merely-made/mere.git", rev = "e95326dc08446a9256d3e340c63e571684afe697" }
+tabard-workshop = { git = "https://github.com/merely-made/mere.git", rev = "e95326dc08446a9256d3e340c63e571684afe697", features = ["native-host"] }
 
 # Auto-update (2026-07-24 auto-update plan). Luggage is the family's update
 # pipeline (the cargo-packager-updater fork living in mere; ruled 2026-07-24):

@@ -50,6 +50,10 @@ hocket-model = { workspace = true }
 hocket-engine = { workspace = true }
 audio-primitives = { workspace = true }
 cambium = { workspace = true }
+tinct = { workspace = true }
+mesquite = { workspace = true }
+tabard = { workspace = true }
+tabard-workshop = { workspace = true }
 sprigging = { workspace = true }
 luggage = { workspace = true }
 velopack = { workspace = true }

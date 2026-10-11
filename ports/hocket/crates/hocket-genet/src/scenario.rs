@@ -4,168 +4,112 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 // SPDX-License-Identifier: MPL-2.0
 
-//! The self-drive scenario lane, adopted from turnstone.
-//!
-//! Hocket drives ITSELF from a scenario file, so a headed receipt needs no OS
-//! synthetic input: no focus race, no key theft while a human uses the machine.
-//! Set `HOCKET_SCENARIO` to a scenario path before launch; captures and the
-//! receipt land in `HOCKET_CAPTURE_DIR` (default: beside the scenario). The run
-//! writes `scenario.done` (first line `RESULT ok|fail`, then the log) and exits
-//! without saving, so a scenario never mutates a profile and reruns stay
-//! deterministic.
-//!
-//! The grammar is taproot's shared one, driven through the [`Automatable`]
-//! and [`Driveable`] impls on the host: `settle`, `click role:name text` /
-//! `click .class text`, `capture <name>`, `assert text <substr>`,
-//! `assert snap <field> <op> <value>`, `log`. Hocket adds no app-specific verbs
-//! yet, so an unknown verb fails loudly through the default `app_step`.
+//! Hocket observations over Mesquite's shared scenario/capture lifecycle.
+//! Set HOCKET_SCENARIO and HOCKET_CAPTURE_DIR; isolate profile paths for any
+//! explicit appearance writes. Mesquite owns input text, retained clicks,
+//! resizing, captures, presentation evidence, completion and bounded waits.
 
-use std::path::{Path, PathBuf};
-
-use cambium_genet_winit_host::Surface;
-use image::ImageEncoder;
-use netrender::ExternalTexturePlacement;
-
-pub use taproot::{Outcome, Scenario};
-
-/// A loaded scenario plus the directory its captures and receipt land in.
-pub struct Run {
-    pub scenario: Scenario,
-    pub dir: PathBuf,
+use crate::{AppState, Child, Logic};
+use cambium_genet_winit_host::AppCtx;
+type Ctx<'a> = AppCtx<'a, AppState, Logic, Child>;
+pub type Run = mesquite::Lane<Product>;
+pub struct Product {
+    sheet: String,
 }
 
-/// Load the scenario named by `HOCKET_SCENARIO`, or `None` for a normal launch.
-/// A malformed scenario panics at startup rather than launching into a run that
-/// cannot mean anything.
 pub fn load() -> Option<Run> {
-    let path = PathBuf::from(std::env::var_os("HOCKET_SCENARIO")?);
-    let body = std::fs::read_to_string(&path)
-        .unwrap_or_else(|error| panic!("read scenario {path:?}: {error}"));
-    let scenario =
-        Scenario::parse(&body).unwrap_or_else(|error| panic!("parse scenario {path:?}: {error}"));
-    let dir = std::env::var_os("HOCKET_CAPTURE_DIR")
-        .map(PathBuf::from)
-        .or_else(|| path.parent().map(Path::to_path_buf))
-        .unwrap_or_else(|| PathBuf::from("."));
-    let _ = std::fs::create_dir_all(&dir);
-    Some(Run { scenario, dir })
-}
-
-/// Write the run receipt: `RESULT ok|fail`, then the log lines.
-pub fn write_done(dir: &Path, outcome: &Outcome) {
-    let mut text = format!("RESULT {}\n", if outcome.ok { "ok" } else { "fail" });
-    for line in &outcome.log {
-        text.push_str(line);
-        text.push('\n');
-    }
-    let _ = std::fs::write(dir.join("scenario.done"), text);
-}
-
-/// Self-capture the composed frame to a PNG. Composes the same rasterized scene
-/// `view` a normal frame presents into a `COPY_SRC` target and reads it back, so
-/// the receipt is the presented frame, immune to occlusion and focus theft.
-pub fn capture_frame(
-    surface: &dyn Surface,
-    view: &wgpu::TextureView,
-    width: u32,
-    height: u32,
-    path: &Path,
-) -> bool {
-    let target = surface.device().create_texture(&wgpu::TextureDescriptor {
-        label: Some("hocket scenario capture"),
-        size: wgpu::Extent3d {
-            width,
-            height,
-            depth_or_array_layers: 1,
-        },
-        mip_level_count: 1,
-        sample_count: 1,
-        dimension: wgpu::TextureDimension::D2,
-        format: wgpu::TextureFormat::Rgba8Unorm,
-        usage: wgpu::TextureUsages::RENDER_ATTACHMENT | wgpu::TextureUsages::COPY_SRC,
-        view_formats: &[],
-    });
-    let target_view = target.create_view(&wgpu::TextureViewDescriptor::default());
-    surface.renderer().compose_external_texture(
-        view,
-        &target_view,
-        wgpu::TextureFormat::Rgba8Unorm,
-        width,
-        height,
-        ExternalTexturePlacement::new([0.0, 0.0, width as f32, height as f32]),
-    );
-    let rgba = read_texture_rgba(surface.device(), surface.queue(), &target, width, height);
-    if rgba.is_empty() {
-        return false;
-    }
-    let Ok(file) = std::fs::File::create(path) else {
-        return false;
-    };
-    image::codecs::png::PngEncoder::new(file)
-        .write_image(&rgba, width, height, image::ExtendedColorType::Rgba8)
-        .is_ok()
-}
-
-/// Read a texture back as tightly packed RGBA8 (empty on failure). Standard wgpu
-/// readback: copy into a row-aligned buffer, map, strip the per-row padding.
-fn read_texture_rgba(
-    device: &wgpu::Device,
-    queue: &wgpu::Queue,
-    texture: &wgpu::Texture,
-    width: u32,
-    height: u32,
-) -> Vec<u8> {
-    let row_bytes = width * 4;
-    let padded = row_bytes.next_multiple_of(wgpu::COPY_BYTES_PER_ROW_ALIGNMENT);
-    let buffer = device.create_buffer(&wgpu::BufferDescriptor {
-        label: Some("hocket capture readback"),
-        size: padded as u64 * height as u64,
-        usage: wgpu::BufferUsages::COPY_DST | wgpu::BufferUsages::MAP_READ,
-        mapped_at_creation: false,
-    });
-    let mut encoder = device.create_command_encoder(&wgpu::CommandEncoderDescriptor {
-        label: Some("hocket capture readback"),
-    });
-    encoder.copy_texture_to_buffer(
-        wgpu::TexelCopyTextureInfo {
-            texture,
-            mip_level: 0,
-            origin: wgpu::Origin3d { x: 0, y: 0, z: 0 },
-            aspect: wgpu::TextureAspect::All,
-        },
-        wgpu::TexelCopyBufferInfo {
-            buffer: &buffer,
-            layout: wgpu::TexelCopyBufferLayout {
-                offset: 0,
-                bytes_per_row: Some(padded),
-                rows_per_image: Some(height),
+    let config = mesquite::LaneConfig::from_env("HOCKET")?;
+    Some(
+        mesquite::Lane::from_config(
+            config,
+            Product {
+                sheet: crate::theme::sheet(),
             },
-        },
-        wgpu::Extent3d {
-            width,
-            height,
-            depth_or_array_layers: 1,
-        },
-    );
-    queue.submit([encoder.finish()]);
-    let slice = buffer.slice(..);
-    let (tx, rx) = std::sync::mpsc::channel();
-    slice.map_async(wgpu::MapMode::Read, move |result| {
-        let _ = tx.send(result);
-    });
-    if device.poll(wgpu::PollType::wait_indefinitely()).is_err() {
-        return Vec::new();
+            cambium_genet_winit_host::read_file,
+        )
+        .expect("load Hocket scenario"),
+    )
+}
+
+pub fn drive(lane: &mut Run, ctx: &mut Ctx<'_>) {
+    lane.product_mut().sheet = ctx.runner.state().appearance.stylesheet();
+    lane.after_frame(ctx);
+}
+
+impl mesquite::Product for Product {
+    type State = AppState;
+    type Logic = Logic;
+    type View = Child;
+    const KIND: &'static str = "hocket";
+    const SURFACE: &'static str = "hocket";
+    const LOG_PREFIX: &'static str = "hocket-genet";
+    fn sheet(&self) -> &str {
+        &self.sheet
     }
-    if !matches!(rx.recv(), Ok(Ok(()))) {
-        return Vec::new();
+    fn snapshot(&self, ctx: &Ctx<'_>, _: usize, _: f32) -> taproot::ProbeSnapshot {
+        let state = ctx.runner.state();
+        let appearance = &state.appearance;
+        taproot::ProbeSnapshot::default()
+            .with_field("status", state.project_status_label())
+            .with_field(
+                "appearance-device-free",
+                crate::appearance::device_free_receipt().to_string(),
+            )
+            .with_field(
+                "appearance-authoring",
+                appearance.authoring_available.to_string(),
+            )
+            .with_field("appearance-theme", appearance.active_id())
+            .with_field(
+                "appearance-mode",
+                appearance
+                    .applied()
+                    .and_then(|applied| applied.resolved.theme_mode.as_ref())
+                    .map_or("default".into(), |mode| mode.as_key()),
+            )
+            .with_field("appearance-workshop", appearance.editor_open.to_string())
+            .with_field(
+                "appearance-name",
+                appearance.workshop.draft_theme().name.clone(),
+            )
+            .with_field(
+                "appearance-dirty",
+                appearance.workshop.has_changes().to_string(),
+            )
+            .with_field("tracks", state.session.tracks.len().to_string())
+            .with_field("history-head", format!("{:?}", state.history.head))
     }
-    let Ok(mapped) = slice.get_mapped_range() else {
-        return Vec::new();
-    };
-    let mut out = Vec::with_capacity((row_bytes * height) as usize);
-    for row in 0..height as usize {
-        let start = row * padded as usize;
-        out.extend_from_slice(&mapped[start..start + row_bytes as usize]);
+    fn viewport(&self, ctx: &Ctx<'_>) -> Option<mesquite::Viewport> {
+        // Mesquite compares the recorder, excluding the appearance controls.
+        // Geometry is the same retained host rect used for native input.
+        if ctx.runner.state().appearance.editor_open {
+            return None;
+        }
+        let node = taproot::matching(&ctx.runner.dom().borrow(), &taproot::Selector::class("app"))
+            .into_iter()
+            .next()?;
+        let (x, y, width, height) = ctx.painted_rect(node)?;
+        let scale = ctx.window?.scale_factor() as f32 * ctx.ui_zoom;
+        Some(mesquite::Viewport::new([x, y, width, height], scale, 1.0))
     }
-    out
+    fn busy(&self, _: &Ctx<'_>, capture_pending: bool) -> Option<bool> {
+        Some(capture_pending)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn existing_and_appearance_scenarios_parse_without_a_product_grammar_fork() {
+        for body in [
+            include_str!("../../../scenarios/update_status.scn"),
+            include_str!("../../../scenarios/update_action.scn"),
+            include_str!("../../../scenarios/handoff_circle.scn"),
+            include_str!("../../../scenarios/tabard_appearance.scn"),
+            include_str!("../../../scenarios/tabard_appearance_reopen.scn"),
+            include_str!("../../../scenarios/tabard_appearance_same_id.scn"),
+        ] {
+            taproot::Scenario::parse(body).expect("shared scenario grammar");
+        }
+    }
 }
