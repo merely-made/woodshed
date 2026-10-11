@@ -12,10 +12,10 @@ before any other doc in this directory.
 ## Active Plans
 
 - [2026-10-11_firewheel_adoption_plan.md](2026-10-11_firewheel_adoption_plan.md) —
-  **Offline gate passed; native pending.** Standalone Firewheel 0.14 at the
-  exact owned fork revision, with 166 CPU checks and twelve rendered graph
-  capture/replay/lifecycle tests. Native regression and physical devices are
-  separate acceptance gates.
+  **Consumer/native regression accepted; physical audio open.** Standalone
+  Firewheel 0.14 at the exact owned fork revision, with 166 CPU checks, twelve
+  rendered graph capture/replay/lifecycle tests and 19 reviewed native captures.
+  Physical devices and latency remain separate acceptance gates.
 
 - [2026-10-11_host_acceptance_plan.md](2026-10-11_host_acceptance_plan.md) —
   **In progress.** Tightens existing Mesquite close/readback and project-worker
@@ -130,6 +130,13 @@ before any other doc in this directory.
 ## Appearance acceptance
 
 - [Tabard native receipt](receipts/tabard_20261011/README.md) — Shared application appearance, authoring, Save/Apply, four modes and fresh reopen; 102 CPU assertions and 17 native captures accepted.
+
+## Audio consumer acceptance
+
+- [Standalone Firewheel consumer receipt](receipts/firewheel_20261011/README.md)
+  — Exact provider/consumer hashes, locked workspace and offline graph tests,
+  gain correction reproduction, five native recorder/appearance processes and
+  two fresh appearance reopens; physical audio qualification remains open.
 
 ## Archive
 

@@ -1,0 +1,8 @@
+{"launch_method": "LaunchServices temporary application bundle", "launcher_exit": 0, "timeout": false, "success": true, "elapsed_seconds": 5.554, "binary_sha256": "1c2a342559ac839d4561af92c341513054bbf254f0098da7eb28bd05cd0c720a", "scenario_sha256": "fb770b3962552ee36249092db0f59efa9c1ca1198c8954267d2c41f92b8529a0", "receipt": "scenario.done", "captures": 2}
+RESULT ok
+captured recorder_reopened
+captured appearance_reopened
+capture recorder_reopened 2360x1400 digest=2c77bf57df3e3368 file=/Users/markik/Code/testing/hocket-firewheel-f3-20261011/native-reopen/recorder_reopened.png
+capture appearance_reopened 2360x1400 digest=785f7d43d04968d0 file=/Users/markik/Code/testing/hocket-firewheel-f3-20261011/native-reopen/appearance_reopened.png
+frames: 2 captured, 0 blank, 2 distinct digests
+presentation: 13 frames, 15 redraws, 2 unpresented redraws
