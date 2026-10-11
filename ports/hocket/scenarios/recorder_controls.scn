@@ -3,6 +3,7 @@
 # scenarios. This does not qualify microphone capture or audible playback.
 settle 3
 assert snap appearance-device-free == true
+assert snap input-available == false
 assert snap tracks == 4
 assert snap bpm == 120
 assert snap master-clock == true

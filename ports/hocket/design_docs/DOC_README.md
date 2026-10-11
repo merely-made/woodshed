@@ -13,7 +13,7 @@ before any other doc in this directory.
 
 - [2026-10-11_firewheel_adoption_plan.md](2026-10-11_firewheel_adoption_plan.md) —
   **Offline gate passed; native pending.** Standalone Firewheel 0.14 at the
-  exact owned fork revision, with 165 CPU checks and eleven rendered graph
+  exact owned fork revision, with 166 CPU checks and twelve rendered graph
   capture/replay/lifecycle tests. Native regression and physical devices are
   separate acceptance gates.
 
