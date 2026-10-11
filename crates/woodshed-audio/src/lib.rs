@@ -8,7 +8,9 @@
 //!   pitch shift).
 //! - [`samples`] — [`SampleBank`] for loading WAV files into runtime
 //!   buffers.
-//! - [`engine`] — cpal output stream + voice mixer.
+//! - [`output_runtime`] — one Firewheel graph/device clock with bounded
+//!   processor-owned click, preview, backing and recording lanes.
+//! - [`engine`] — shared native input operation errors.
 //!
 //! ## Input path
 //! - [`input`] — [`InputEngine`] owns one cpal input stream; analyzers
@@ -27,6 +29,7 @@
 //! - [`looper`] — bar-aligned audio loop record + overdub.
 
 pub mod calibration;
+pub mod capture_feed;
 pub mod chord_audio;
 pub mod engine;
 pub mod input;
@@ -34,15 +37,15 @@ pub mod looper;
 pub mod midi;
 pub mod offline;
 pub mod onset;
+pub mod output_runtime;
 pub mod samples;
 pub mod sequencer;
 pub mod song;
-pub mod song_engine;
 pub mod sound;
 
-pub use calibration::{estimate_latency_from_pairs, CalibrationOutcome, CalibrationSession};
-pub use chord_audio::{render_chord, ChordRender};
-pub use engine::{AudioError, EngineHandle, SequencerEngine};
+pub use calibration::{CalibrationOutcome, CalibrationSession, estimate_latency_from_pairs};
+pub use chord_audio::{ChordRender, render_chord};
+pub use engine::AudioError;
 pub use input::{
     Analyzer, DetectedNote, DetectedNoteName, DetectorKind, InputEngine, InputEngineBuilder,
     LooperCaptureAnalyzer, LooperCaptureHandle, PitchAnalyzer, TunerEngine, TunerHandle,
@@ -50,15 +53,15 @@ pub use input::{
 };
 pub use looper::Looper;
 pub use midi::{
-    list_input_ports as list_midi_input_ports, list_output_ports as list_midi_output_ports,
     MidiClockSync, MidiError, MidiEvent, MidiIn, MidiInState, MidiOut,
+    list_input_ports as list_midi_input_ports, list_output_ports as list_midi_output_ports,
 };
 pub use offline::{export_wav, render_pattern};
 pub use onset::{
-    estimate_bpm, DetectedOnset, OnsetAnalyzer, OnsetDetector, OnsetHandle, OnsetSnapshot,
+    DetectedOnset, OnsetAnalyzer, OnsetDetector, OnsetHandle, OnsetSnapshot, estimate_bpm,
 };
+pub use output_runtime::{OutputError, OutputRuntime, OutputSnapshot};
 pub use samples::{SampleBank, SampleError};
 pub use sequencer::{SequencerPattern, Step, Subdivision, TimeSignature, Track};
 pub use song::{Bar, ChordRef, PendingChange, Song, SongCursor, SongError};
-pub use song_engine::{SongEngine, SongEngineHandle};
 pub use sound::{SampleBuffer, Sound};
