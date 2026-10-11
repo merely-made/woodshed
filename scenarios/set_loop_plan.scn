@@ -25,7 +25,7 @@ click .t-btn Tempo +
 settle 3
 assert text Inherited: 125 bpm
 click .t-btn Click: on
-click .t-btn Loop
+click role:button @data-action=toggle-set-one-shot
 settle 3
 assert text Click: off
 assert text Once
