@@ -137,6 +137,7 @@ before any other doc in this directory.
   Committed-source Tabard regression, fresh appearance reopening and recorder
   controls after close/readback hardening; 19 reviewed native captures.
 
+- [Coherent-family appearance reopen](../../../validation/port-reopen_20261011/README.md) — Later committed-source reopening restores HocketAcceptance/Dark and unchanged recorder state; two reviewed captures.
 - [Tabard native receipt](receipts/tabard_20261011/README.md) — Shared application appearance, authoring, Save/Apply, four modes and fresh reopen; 102 CPU assertions and 17 native captures accepted.
 
 

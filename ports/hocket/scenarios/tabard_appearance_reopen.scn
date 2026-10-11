@@ -1,8 +1,16 @@
 settle 3
 assert snap appearance-device-free == true
 assert snap appearance-authoring == true
+assert snap appearance-theme == theme:copy-1
 assert snap appearance-mode == dark
+assert snap appearance-workshop == false
 assert snap tracks == 4
+assert snap bpm == 120
+assert snap master-clock == true
+assert snap recording == false
+assert snap project-busy == false
+assert snap muted-tracks == 0
+assert snap solo-tracks == 0
 capture recorder_reopened
 click role:button @data-action=toggle-appearance
 assert text HocketAcceptance
