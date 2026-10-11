@@ -17,7 +17,7 @@
 //! | `frame` | advance the transports and the tuner ([`drive`]), refresh the leaves ([`leaves`]) |
 //! | `after_dispatch` | push state through the backend, MIDI, chrome, and persistence seams ([`sync`]) |
 //! | `after_frame` | pump the scenario one step ([`scenario`]) |
-//! | `after_wake` | no worker channel to drain yet |
+//! | `after_wake` | service output, preview completions and accepted transport status |
 //! | `close_request` | exit: Woodshed has no background operation to retain |
 //! | `focused_text` | the focused product or shared workshop text field ([`text`]) |
 //! | `key_intercept` | Escape closes an open dropdown |
@@ -79,10 +79,14 @@ fn boot_state(
     shared: &Rc<RefCell<Shared>>,
     window: &dyn cambium_genet_winit_host::HostWindow,
     commands: &WindowCommands,
+    wake: &cambium_genet_winit_host::HostWake,
 ) -> Init<UiState, Logic> {
     let mut shared = shared.borrow_mut();
     let device_free_receipt = appearance::device_free_receipt();
-    let backend = (!device_free_receipt).then(CpalBackend::new);
+    let mut backend = (!device_free_receipt).then(CpalBackend::new);
+    if let Some(backend) = &mut backend {
+        backend.set_wake(wake.callback());
+    }
     let mut ui = UiState::new();
     ui.event_clock = Some(drive::wall_time_ms);
     let (size_w, size_h) = window.inner_size();
@@ -107,7 +111,10 @@ fn boot_state(
     // and they cannot drift apart again.
     ui.seal = shared.seal.clone();
     // A pending identity saves nothing (D12), so the notice says so.
-    if matches!(ui.seal, Some(woodshed_views::persona::PracticeSeal::Pending { .. })) {
+    if matches!(
+        ui.seal,
+        Some(woodshed_views::persona::PracticeSeal::Pending { .. })
+    ) {
         ui.practice_saved = false;
     }
     appearance::load_library(&mut ui);
@@ -233,6 +240,7 @@ fn hooks(shared: &Rc<RefCell<Shared>>) -> HostHooks<UiState, Logic, UiChild> {
     let frame_shared = shared.clone();
     let dispatch_shared = shared.clone();
     let after_frame_shared = shared.clone();
+    let wake_shared = shared.clone();
     let close_shared = shared.clone();
     let mut previews = appearance::PreviewBindings::default();
     HostHooks {
@@ -283,7 +291,14 @@ fn hooks(shared: &Rc<RefCell<Shared>>) -> HostHooks<UiState, Logic, UiChild> {
                 scenario::drive(lane, ctx);
             }
         }),
-        after_wake: Box::new(|_ctx| {}),
+        after_wake: Box::new(move |ctx: &mut Ctx<'_>| {
+            let observation = drive::poll_audio(&mut wake_shared.borrow_mut());
+            if let Some(observation) = observation {
+                if observation.changed(ctx.runner.state()) {
+                    ctx.runner.update(|ui| observation.apply(ui));
+                }
+            }
+        }),
         close_request: Box::new(move |ctx, _request| {
             if let Some(geometry) = ctx.geometry {
                 persist_window_geometry(&mut close_shared.borrow_mut(), ctx, geometry);
@@ -314,7 +329,7 @@ fn main() {
     };
     run(
         options,
-        move |window, commands, _wake| boot_state(&init_shared, window, commands),
+        move |window, commands, wake| boot_state(&init_shared, window, commands, wake),
         hooks(&shared),
     )
     .expect("run app");
