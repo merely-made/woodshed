@@ -1,0 +1,65 @@
+# PREPARATION ONLY: requires frozen single-output-runtime build.
+# Bounded Set backing admission through shipping controls. The existing fixture
+# supplies two block Chords, explicit instrument/tuning and one-Bar holds.
+# Use isolated WOODSHED_STATE/WOODSHED_SETTINGS paths, then run the reopen file
+# in a separate process against those same files. Requires an output engine;
+# physical microphone capture and PCM persistence are separate qualifications.
+settle 3
+ui-zoom 0.8
+act song-cache-example
+settle 3
+assert snap song-bars == 4
+act chord-approach-example
+settle 3
+assert snap set-cards == 2
+click .pill Looper
+settle 3
+click .t-btn Loop this Set
+settle 3
+assert text Source: working Set 1
+assert text Loaded Set 1:
+assert snap song-bars == 4
+click .t-btn Clock: 4/4
+settle 3
+assert text explicit 5/4 clock
+click .t-btn Tempo +
+settle 3
+assert text Inherited: 125 bpm
+click .t-btn Click: on
+click role:button @data-action=toggle-set-one-shot
+settle 3
+assert text Click: off
+assert text Once
+click .t-btn Play
+settle 30
+assert snap song-playing == true
+assert snap output-streams == 1
+assert snap output-device-frames >= 1
+assert snap output-processing-blocks >= 1
+assert snap output-capture-invalid == false
+assert snap capture-input-rate == none
+capture 01_set_backing_admitted
+click .t-btn Stop
+settle 3
+click .t-btn Saved backing
+settle 3
+assert snap song-bars == 4
+assert snap song-first-bpm == 240
+assert snap output-streams == 1
+assert snap output-device-frames >= 1
+assert snap output-processing-blocks >= 1
+assert snap output-capture-invalid == false
+assert snap capture-input-rate == none
+capture 02_exact_saved_backing_retained
+click .t-btn Loop this Set
+settle 3
+assert text Loaded Set 1:
+assert text explicit 5/4 clock
+assert text Inherited: 125 bpm
+assert snap output-streams == 1
+assert snap output-device-frames >= 1
+assert snap output-processing-blocks >= 1
+assert snap output-capture-invalid == false
+assert snap capture-input-rate == none
+capture 03_set_source_ready_to_reopen
+log Set LoopPlan seed complete
