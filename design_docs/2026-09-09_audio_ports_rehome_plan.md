@@ -251,4 +251,46 @@ products require explicit product decisions, not generic cleanup.
   integer source clocks, EOF flush/drain and safe preallocation limits. Fourteen
   offline graph tests, callback allocation guards, a concurrent EOF publication
   check and feature/lint gates pass. Physical audio and consumer acceptance
-  remain separate; F3 consumers now migrate against this exact revision.
+  remain separate. This provisional revision is superseded by the final
+  material-EOF correction below.
+- **2026-10-11:** Consumer review reproduced all-zero short EOF PCM at the
+  provisional fork pin. Final pushed provider `2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc`
+  corrects the resampler packet copy after delay trimming. The short-EOF matrix
+  renders 288 reader/writer cases across rates, lengths, qualities and channels;
+  callback allocation guards and concurrent EOF checks pass. GitHub Actions
+  passes standalone Linux/macOS/Windows, full tests, formatting and docs at
+  that exact head. Both consumers now use the corrected immutable revision.
+- **2026-10-11:** Redshank's migrated playback scope passes 261 CPU tests with
+  seven explicitly ignored device/fixture checks. Exact presented-source
+  accounting replaces capacity guesses and EOF timing heuristics; progressive
+  decode, WSOLA flush, partial admission and annotation clocks remain covered.
+  Runtime replacement and arena Node ID reuse cannot let a retired preview
+  remove a node from the replacement graph. The migrated desktop passes three
+  finite native processes and twelve reviewed nonblank captures, including
+  authored-theme fresh-process reopening. See the
+  [consumer receipt](receipts/audio_foundation_20261011/redshank-consumer/README.md).
+- **2026-10-11:** Hocket's migrated independent workspace passes 166 CPU tests
+  with one custody-specific ignore and twelve production-graph offline cases.
+  The runtime uses current sampler resource/restart APIs, retires the silent
+  input monitor and restores the model/export's linear gain contract. Actual
+  input channels and liveness now gate Record for output-only fallback streams.
+  Physical input resampling and sample-accurate calibration remain open.
+  Five native processes qualify recorder/appearance regression with nineteen
+  reviewed captures and two fresh appearance reopens at committed source
+  `f5e0aed`; the [Hocket consumer receipt](../ports/hocket/design_docs/receipts/firewheel_20261011/README.md)
+  preserves the exact source and device-free limits.
+- **2026-10-11:** F4's first slice derives Set backing and preserves captures
+  by owner/Card identity. Reorder/pitch edits retain PCM; changes to its clock
+  and armed/active source switches are refused. Production storage tests cover
+  source/settings reopen, while saved backing retains exact legacy pitches
+  and timing. The full P7 migration, durable PCM, mixed material and one output
+  clock without callback locks/recording allocations remain open.
+- **2026-10-11:** The integrated family gate passes 1,454 CPU checks with nine
+  explicit ignores (Woodshed 870/1, Hocket 166/1, Redshank 261/7, Ringdown
+  157/0). Four independent locked metadata checks pass outside repository Cargo
+  overrides. CI now includes Woodshed's desktop application tests and Hocket's
+  device-free manual CLI tests. Both migrated consumers remain exact-pinned;
+  Woodshed's older two-engine runtime is a separate follow-up. The first native
+  Set replay is retained as failed: the locked Mac reports an occluded surface
+  and zero presentations. Native Set flow and keeper-backed reopening remain
+  open. See the [integration receipt](receipts/audio_foundation_20261011/integration/README.md).

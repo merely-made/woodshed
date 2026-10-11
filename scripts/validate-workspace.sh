@@ -17,11 +17,12 @@ case "$workspace" in
     workspace_dir="$root"
     packages=(-p woodshedding -p audio-primitives -p timed-text
       -p woodshed-audio -p woodshed-core -p woodshed-graph
-      -p woodshed-views -p woodshed-instrument)
+      -p woodshed-views -p woodshed-instrument -p woodshed-genet)
     ;;
   hocket)
     workspace_dir="$root/ports/hocket"
-    packages=(-p hocket-model -p hocket-project -p hocket-engine -p hocket-genet)
+    packages=(-p hocket-model -p hocket-project -p hocket-engine -p hocket-genet
+      -p hocket-headless)
     ;;
   redshank)
     workspace_dir="$root/ports/redshank"

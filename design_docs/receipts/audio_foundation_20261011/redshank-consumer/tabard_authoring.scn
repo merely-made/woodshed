@@ -1,0 +1,46 @@
+# Fresh disposable data/appearance/library profiles; no audio fixture or live feed.
+assert snap transport == IDLE
+assert snap item-count == 0
+assert snap appearance-id == redshank:default
+assert snap appearance-mode == legacy
+assert snap appearance-authoring == true
+click role:button Appearance
+settle 1
+capture appearance
+click role:button Edit themes…
+settle 2
+assert snap appearance-editor == true
+capture workshop
+click role:button Apply to Redshank
+settle 1
+assert snap appearance-id == redshank:default
+click role:button Save theme
+settle 1
+click role:button Apply to Redshank
+settle 1
+assert snap appearance-id == theme:copy-1
+assert snap appearance-mode == dark
+capture saved-copy
+click role:button Back to Redshank
+settle 2
+assert snap appearance-editor == false
+assert snap transport == IDLE
+assert snap item-count == 0
+capture applied-dark
+click role:button @data-appearance-mode=light
+settle 2
+assert snap appearance-mode == light
+assert snap appearance-id == theme:copy-1
+capture applied-light
+click role:button @data-appearance-mode=hc_light
+settle 2
+assert snap appearance-mode == hc_light
+assert snap appearance-id == theme:copy-1
+capture applied-hc-light
+click role:button @data-appearance-mode=hc_dark
+settle 2
+assert snap appearance-mode == hc_dark
+assert snap appearance-id == theme:copy-1
+assert snap item-count == 0
+assert snap note-count == 0
+capture applied-hc-dark
