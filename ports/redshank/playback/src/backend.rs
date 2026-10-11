@@ -14,7 +14,10 @@ use audio_primitives::Stretcher;
 use fetch::Fetch;
 use firewheel::{
     node::NodeID,
-    nodes::stream::writer::{PushStatus, StreamWriterState},
+    nodes::stream::{
+        StreamStats,
+        writer::{PushStatus, StreamWriterState},
+    },
 };
 use redshank_model::RepresentationReceipt;
 use servo_media_player::controller::PlaybackRateRange;
@@ -42,8 +45,6 @@ pub(super) const UNITY_RATE_PERCENT: u16 = 100;
 /// Packets decoded per pump while the output queue is below its low water
 /// mark. Enough source for the fastest rate even on a slow decode.
 const DECODE_PACKETS_PER_PUMP: usize = 4;
-/// Queue occupancy below which the output counts as emptied.
-const DRAINED_SECONDS: f64 = 0.005;
 
 /// Rates the loaded source can be played at, which is now every rate the
 /// stretcher accepts rather than none.
@@ -139,38 +140,9 @@ impl RateStage {
 pub(super) struct Sink {
     pub(super) state: Arc<Mutex<StreamWriterState>>,
     pub(super) node: NodeID,
-    pub(super) accepted_frames: u64,
     pub(super) rate: u32,
-    pub(super) resampler_headroom: usize,
     pub(super) channels: usize,
-}
-
-/// fixed-resample 0.9.2 budgets channel vacancy at the nominal rate ratio,
-/// but its High-quality rubato FFT stage can carry almost one FFT grain into
-/// the next 1024-frame input block. Reserve that grain before admitting more
-/// source frames; otherwise a variable output packet can overflow the ring.
-/// Pinned construction: FftFixedIn(input_rate, output_rate, 1024, 2, channels).
-pub(super) fn resampler_headroom(input_rate: u32, output_rate: u32) -> usize {
-    if input_rate == output_rate {
-        return 0;
-    }
-    let (mut a, mut b) = (input_rate, output_rate);
-    while b != 0 {
-        (a, b) = (b, a % b);
-    }
-    let minimum_grain = (input_rate / a) as usize;
-    512_usize.div_ceil(minimum_grain) * minimum_grain
-}
-
-pub(super) fn writable_frames(available: usize, headroom: usize, requested: usize) -> usize {
-    available.saturating_sub(headroom).min(requested)
-}
-
-/// Output frames the listener has actually heard: everything the sink took,
-/// less everything still sitting in its queue.
-pub(super) fn presented_frames(accepted_frames: u64, rate: u32, queued_seconds: f64) -> u64 {
-    let queued = (queued_seconds.max(0.0) * f64::from(rate)) as u64;
-    accepted_frames.saturating_sub(queued)
+    pub(super) generation: Arc<()>,
 }
 
 pub(super) fn consume_frames(pending: &mut Vec<f32>, accepted_frames: usize, channels: usize) {
@@ -179,21 +151,20 @@ pub(super) fn consume_frames(pending: &mut Vec<f32>, accepted_frames: usize, cha
 
 /// End of stream: the decoder is finished, the stretcher has been flushed,
 /// nothing is waiting for the sink, and the output queue has emptied.
-pub(super) fn drained(flushed: bool, held: usize, queued_seconds: f64) -> bool {
-    flushed && held == 0 && queued_seconds <= DRAINED_SECONDS
+pub(super) fn drained(flushed: bool, held: usize, writer_drained: bool) -> bool {
+    flushed && held == 0 && writer_drained
 }
 
 impl Sink {
-    fn push(&mut self, samples: &[f32]) -> Result<usize> {
+    pub(super) fn push(&mut self, samples: &[f32]) -> Result<usize> {
         let mut writer = self
             .state
             .lock()
             .map_err(|_| anyhow!("audio writer lock poisoned"))?;
-        let frames = writable_frames(
-            writer.available_frames(),
-            self.resampler_headroom,
-            samples.len() / self.channels,
-        );
+        if !writer.is_active() {
+            return Err(anyhow!("audio writer stream was stopped"));
+        }
+        let frames = writer.available_frames().min(samples.len() / self.channels);
         if frames == 0 {
             return Ok(0);
         }
@@ -203,8 +174,28 @@ impl Sink {
             PushStatus::OutputNotReady => 0,
             PushStatus::OverflowOccurred { num_frames_pushed } => num_frames_pushed,
         };
-        self.accepted_frames += accepted as u64;
         Ok(accepted)
+    }
+
+    pub(super) fn stats(&self) -> Result<StreamStats> {
+        let writer = self
+            .state
+            .lock()
+            .map_err(|_| anyhow!("audio writer lock poisoned"))?;
+        if !writer.is_active() {
+            return Err(anyhow!("audio writer stream was stopped"));
+        }
+        writer
+            .stats()
+            .ok_or_else(|| anyhow!("audio writer stream is unavailable"))
+    }
+
+    pub(super) fn finish(&self) -> Result<bool> {
+        Ok(self
+            .state
+            .lock()
+            .map_err(|_| anyhow!("audio writer lock poisoned"))?
+            .finish_stream())
     }
 
     fn pause(&self) -> Result<()> {
@@ -593,8 +584,10 @@ impl Backend {
     pub(super) fn position(&self) -> Result<Duration, String> {
         let played = match (self.sink.as_ref(), self.stage.as_ref()) {
             (Some(sink), Some(stage)) => {
-                let presented =
-                    presented_frames(sink.accepted_frames, sink.rate, self.queued_seconds()?);
+                let presented = sink
+                    .stats()
+                    .map_err(|error| error.to_string())?
+                    .presented_source_frames;
                 stage.source_frames_at(presented) * 1000 / u64::from(sink.rate)
             },
             _ => 0,
@@ -740,8 +733,20 @@ impl Backend {
                 PumpState::Idle
             });
         }
-        if let Some(audio) = self.audio.borrow_mut().as_mut() {
-            audio.tick().map_err(|error| error.to_string())?;
+        if self.sink.as_ref().is_some_and(|sink| {
+            self.audio
+                .borrow()
+                .as_ref()
+                .is_none_or(|audio| !audio.owns_sink(sink))
+        }) {
+            return Err("shared audio output was retired; reload this stream to restart".into());
+        }
+        let audio_tick = self.audio.borrow_mut().as_mut().map(AudioRuntime::tick);
+        if let Some(Err(error)) = audio_tick {
+            // Retire the failed backend before reporting Unavailable. A later
+            // load must open a fresh CpalStream, not reuse a stopped device.
+            self.audio.borrow_mut().take();
+            return Err(error.to_string());
         }
         if self.decoder.is_none() {
             return Ok(PumpState::Idle);
@@ -818,13 +823,28 @@ impl Backend {
             }
         }
         if let (Some(sink), Some(stage)) = (self.sink.as_ref(), self.stage.as_mut()) {
-            stage.prune(presented_frames(sink.accepted_frames, sink.rate, queued));
+            stage.prune(
+                sink.stats()
+                    .map_err(|error| error.to_string())?
+                    .presented_source_frames,
+            );
         }
-        Ok(if drained(self.eof_flushed, self.stretched.len(), queued) {
-            PumpState::EndOfStream
+        // Decoder EOF is not graph EOF: seal and publish the final partial
+        // resampler packet before accepting the bridge's exact drain report.
+        let writer_drained = if self.eof_flushed && self.stretched.is_empty() {
+            let sink = self.sink.as_ref().ok_or("audio sink was not initialized")?;
+            sink.finish().map_err(|error| error.to_string())?
+                && sink.stats().map_err(|error| error.to_string())?.drained
         } else {
-            PumpState::Idle
-        })
+            false
+        };
+        Ok(
+            if drained(self.eof_flushed, self.stretched.len(), writer_drained) {
+                PumpState::EndOfStream
+            } else {
+                PumpState::Idle
+            },
+        )
     }
 
     fn decode_next_packet(&mut self) -> Result<(), String> {
@@ -1039,5 +1059,54 @@ mod seek_tests {
                 }
             }
         }
+    }
+}
+
+#[cfg(test)]
+mod runtime_generation_tests {
+    use super::*;
+    use firewheel::{
+        FirewheelContext,
+        nodes::stream::{media_channel_config, writer::StreamWriterNode},
+    };
+    use std::num::NonZeroU32;
+
+    #[test]
+    fn preview_with_retired_shared_runtime_fails_and_clears_its_sink() {
+        // Actual bridge state can retain frozen counters after the device's
+        // context disappears. A separate preview backend must reject that
+        // generation before assuming Some(sink) still means live output.
+        let mut context = FirewheelContext::new(Default::default());
+        let node = context.add_node(StreamWriterNode, None).unwrap();
+        let mut state = context
+            .node_state::<StreamWriterState>(node)
+            .unwrap()
+            .clone();
+        let _event = state
+            .start_stream(
+                NonZeroU32::new(48000).unwrap(),
+                NonZeroU32::new(48000).unwrap(),
+                media_channel_config(1.0),
+            )
+            .unwrap();
+        assert!(state.is_active());
+        let mut preview = Backend::with_audio(Rc::new(RefCell::new(None)), crate::own_fetch());
+        preview.sink = Some(Sink {
+            state: Arc::new(Mutex::new(state.clone())),
+            node,
+            rate: 48000,
+            channels: 2,
+            generation: Arc::new(()),
+        });
+        preview.requested_playing = true;
+        assert!(
+            preview
+                .pump()
+                .unwrap_err()
+                .contains("shared audio output was retired")
+        );
+        preview.clear().unwrap();
+        assert!(preview.sink.is_none());
+        assert!(!state.is_active());
     }
 }

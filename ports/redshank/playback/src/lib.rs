@@ -24,10 +24,7 @@ mod worker;
 
 pub(crate) use backend::Backend;
 #[cfg(test)]
-use backend::{
-    Decoded, RateStage, consume_frames, decode_packet, drained, open_http, open_local,
-    presented_frames,
-};
+use backend::{Decoded, RateStage, consume_frames, decode_packet, drained, open_http, open_local};
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub enum PlaybackState {
@@ -466,11 +463,10 @@ mod tests {
         let mut pcm = vec![0.0; 10];
         consume_frames(&mut pcm, 3, 2);
         assert_eq!(pcm.len(), 4);
-        assert_eq!(presented_frames(48_000, 48_000, 0.08), 44_160);
-        assert_eq!(presented_frames(100, 48_000, 1.0), 0);
-        assert!(!drained(true, 4, 0.0));
-        assert!(!drained(false, 0, 0.0));
-        assert!(drained(true, 0, 0.005));
+        assert!(!drained(true, 4, true));
+        assert!(!drained(false, 0, true));
+        assert!(!drained(true, 0, false));
+        assert!(drained(true, 0, true));
     }
 
     /// A pure tone pair written as PCM, decodable by the same Symphonia path
@@ -539,7 +535,7 @@ mod tests {
 
             // Output still queued is source time not yet heard, at the rate.
             let queued = 0.5_f64;
-            let presented = presented_frames(output_frames, 48_000, queued);
+            let presented = output_frames.saturating_sub((queued * 48_000.0) as u64);
             let behind = (source_frames - stage.source_frames_at(presented)) as f64;
             let expected_behind = queued * 48_000.0 * f64::from(percent) / 100.0;
             assert!(
