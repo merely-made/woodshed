@@ -6,6 +6,11 @@ tested, and released embeddable products. Woodshed and Redshank use MPL-2.0.
 The former repositories are archived with relocation notices. The inherited
 formatting and Hocket Clippy cleanup recorded below remains separate work.
 
+**Follow-up status (2026-10-11): IN PROGRESS.** The maintainer approved
+orchestrating the current-source Firewheel migration and family consolidation
+assessment. The implementation sequence and lane gates are recorded below;
+the original history-preserving rehome remains landed.
+
 ## Ruling
 
 `ports/` is the home for independently named audio and instrument products
@@ -107,3 +112,103 @@ Done when:
   The former Hocket repository points to its new home at `b163858`; the former
   Ringdown repository does the same at `30af57d`. Both source repositories are
   archived read-only after those notices became reachable.
+
+## Standalone audio foundation and consolidation (2026-10-11)
+
+### Decision and ownership
+
+Accepted by the maintainer after the October 11 assessment: maintain the
+Firewheel fork as a standalone graph foundation with bounded continuous capture
+and producer playback. Each product retains its own schema, identity, history,
+and authority. A graph is a runtime projection. Pure DSP remains in
+`audio-primitives`; network, codecs, durable bytes, and product rules stay
+outside the graph kernel. The unimplemented streamed sampler is not a shipping
+replacement for the removed stream nodes.
+
+Use independently reviewable branches and exact-revision integration. Root CI,
+Hocket host infrastructure, and Redshank retention can proceed independently of
+the fork bridge. Consumer API migration follows bridge checks. The root
+coordinator owns integration, canonical status updates, source receipts, and
+cross-product acceptance. Agents own disjoint source paths in separate
+worktrees; they report commits, commands, failures, and unrun gates explicitly.
+
+The September 26 Redshank own-repository ruling in the
+[listening plan](2026-09-01_listening_annotation_port_plan.md) supersedes the
+earlier general incubation direction for that product. Its extraction follows
+its existing recording/Turnstone/native gates and independently sourced shared
+crates. Hocket and Ringdown remain independent nested workspaces.
+
+### F1. Enforce existing product boundaries
+
+Done when all four workspace roots have committed locked-resolution and scoped
+CPU-test CI jobs; Windows release triggers and version parsing agree with
+product-qualified tags; Hocket uses Mesquite capture lifecycle with truthful
+failure outcomes; and Redshank bounds generation retention while preserving
+last-valid recovery and failed-publication behavior. Cosmetic cleanup is
+limited to verified obsolete claims and unused declarations. Preserve live
+updater choices and historical/data compatibility paths.
+
+### F2. Restore the standalone streaming contract
+
+Done when the owned Firewheel 0.14 foundation exposes bounded capture and
+producer adapters; offline graph tests cover exact samples, partial transfers,
+backpressure, overflow/underrun, EOF/reset, channel and rate conversion, and
+frame accounting; normal processing adds no mutex or per-buffer allocation;
+and stream/device ownership is explicit. A supported feature excludes Bevy ECS.
+Keep attribution and upstream history. A 0.10 maintenance backport remains a
+fallback if adapting the focused bridge is infeasible.
+
+### F3. Migrate consumers independently
+
+Done when Hocket and Redshank use an exact fork revision, handle fallible graph
+construction and separate CPAL stream lifetime, and pass their locked gates.
+Hocket retires reproduced sampler/silent-monitor workarounds and qualifies
+count-in/capture/replay timing and restart. Redshank preserves progressive
+decoding, rates/channels, queued/presented source clocks, seeks, EOF, gain/duck,
+resume, and frozen annotation anchors. Headless results do not close device,
+native capture, or fresh-process reopen acceptance.
+
+### F4. Consolidate Woodshed product execution
+
+Follow [P7](2026-07-11_stage_set_tools_plan.md#p7-rebuild-song-as-looper-over-set)
+for Set-derived LoopPlan, stable capture segment identity, saved-song migration,
+and companion persistence. Done when one output device/clock runs click,
+preview, Set playback and loop voices without callback control mutexes or
+recording allocations; the connected Hear/Add/rehearse/loop/edit/reopen flow
+passes current-source automated and native acceptance. Preserve exploration
+and deliberate practice as complementary flows.
+
+### F5. Complete portable product seams
+
+Done when Hocket project/media/store/export/handoff operations can be used
+without its device runtime; Redshank shares portable transitions required by
+its standalone and Turnstone hosts, explicitly admits host audio/microphone
+capabilities, and completes its ruled extraction after existing gates. Shared
+path crates need independent Git/package sourcing before extraction. Package
+renaming, retiring updater transports, and promoting browser previews to full
+products require explicit product decisions, not generic cleanup.
+
+### Findings
+
+- **2026-10-11:** Audit source was Woodshed `6dfb2fe`, Firewheel fork `34b35ca`
+  (0.14), and Turnstone `53fa567`. Current implementation starts at Woodshed
+  `cd69da0`, preserving the subsequent Hocket Tabard integration and Rust 1.97
+  toolchain update. All three UI roots use Mere `e95326d` / Genet `7422e90`.
+- **2026-10-11:** Current Firewheel consumers use 0.10. The fork removed
+  reader/writer stream nodes; its streamed sampler contains panic paths.
+  Isolated probes reproduce the old play-event mismatch and verify new helper,
+  post-construction PCM, within-block scheduling, and input-only graph behavior.
+- **2026-10-11:** The audit passed 747 current-source CPU checks plus five
+  migration probes; seven Redshank fixture/device tests were ignored. This is
+  a baseline at its source revision, not consumer migration or new native proof.
+- **2026-10-11:** CI checks only the root workspace. Windows release still
+  listens for `v*`. Hocket owns custom blocking readback and ignores capture
+  errors. Redshank publishes full immutable model generations without pruning.
+  Woodshed starts two output engines with callback mutexes/recording allocation;
+  its independent SongDoc/bar editor remains the open P7 authority duplication.
+
+### Progress
+
+- **2026-10-11:** Refreshed remotes, created isolated integration worktree at
+  `cd69da0`, and opened parallel foundation lanes. No stack repin is inferred
+  from newer upstream revisions; native receipts remain revision-specific.
