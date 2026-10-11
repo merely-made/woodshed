@@ -30,7 +30,7 @@ before any other doc in this directory.
 - [2026-09-09_audio_ports_rehome_plan.md](2026-09-09_audio_ports_rehome_plan.md)
   — **Rehome landed; October 11 consolidation in progress.** Coordinates
   standalone Firewheel streaming, independently gated consumer migration,
-  CI/release boundaries, Hocket Mesquite lifecycle, bounded Redshank retention,
+  local validation/release boundaries, Hocket Mesquite lifecycle, bounded Redshank retention,
   and the existing Set/Looper and portable product seams. Hocket and Ringdown
   are history-preserving nested `ports/`
   workspaces with local dependency seams, independent release boundaries, and
@@ -290,7 +290,7 @@ section whenever a durable working insight emerges from a session.
 - **The committed lock is the release graph**: the gitignored
   `.cargo/config.toml` is optional sibling-checkout plumbing and must not be
   required to resolve `Cargo.lock`. Generate and verify the lock from outside
-  the repository config path; CI's clean-checkout metadata preflight is the
+  the repository config path; the local clean-checkout metadata preflight is the
   gate that catches a lock accidentally written under local path patches.
 - **Exploration and drilling are complementary**: lateral relationships across
   catalogs and deliberate Set rehearsal both help assemble material and act on

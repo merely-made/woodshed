@@ -53,7 +53,8 @@ cargo run -p hocket-headless -- --run # manual microphone/output demo
 The committed manifests and lockfile resolve the family from Git; no sibling
 Genet checkout is required. Optional local Cargo overrides are development
 plumbing and are excluded from the clean-checkout validation commands above.
-CI runs model, portable project/media, engine, and desktop-host unit tests;
+The local validation command runs model, portable project/media, engine,
+desktop-host unit tests, and device-free manual CLI tests;
 ignored device/custody receipts and the manual headless demo are separate
 acceptance lanes.
 

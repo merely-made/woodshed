@@ -18,7 +18,7 @@ addendum identifies the next product questions and corrections before S1-S4.
 
 **Status (reviewed 2026-10-05): in progress.** P1-P3 are partial. P4a and
 P4b landed; P4c and P4d have bounded headed receipts; P4e is partial and P4f
-is open. P5-P8 remain open. The clean-lock and CI repair is a release-baseline
+is open. P5-P8 remain open. Clean-lock and local validation are release-baseline
 gate, not completion of this product plan.
 
 > **2026-08-10 — the gate is open.** The scenograph scene contract this plan
@@ -939,9 +939,15 @@ open.
 ## Release baseline and 1.0 product proof
 
 The release baseline is reached when a clean checkout resolves the committed
-lock without local sibling patches, core and Windows-host CI pass, and a tag
-produces a checksummed Windows ZIP. Repairing that baseline makes the alpha
+lock without local sibling patches, local CPU and intended-platform host checks
+pass, and explicit packaging produces a checksummed, extracted-app-validated
+archive. Repairing that baseline makes the alpha
 credible; it does not close any product phase below.
+
+**2026-10-11 maintainer ruling:** no GitHub workflows and no default pull-request
+review step. Run validation and packaging locally, retain the exact source
+receipts, and push qualified commits directly to `main`. The Actions evidence
+in the dated September assessment below remains historical.
 
 **2026-09-30 publishing assessment:** use a downloadable desktop alpha as the
 initial candidate while audience choice remains open. The pushed scale slice

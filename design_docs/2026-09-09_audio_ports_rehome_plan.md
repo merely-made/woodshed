@@ -125,7 +125,7 @@ and authority. A graph is a runtime projection. Pure DSP remains in
 outside the graph kernel. The unimplemented streamed sampler is not a shipping
 replacement for the removed stream nodes.
 
-Use independently reviewable branches and exact-revision integration. Root CI,
+Use exact-revision integration and directly published commits. Local validation,
 Hocket host infrastructure, and Redshank retention can proceed independently of
 the fork bridge. Consumer API migration follows bridge checks. The root
 coordinator owns integration, canonical status updates, source receipts, and
@@ -140,9 +140,9 @@ crates. Hocket and Ringdown remain independent nested workspaces.
 
 ### F1. Enforce existing product boundaries
 
-Done when all four workspace roots have committed locked-resolution and scoped
-CPU-test CI jobs; Windows release triggers and version parsing agree with
-product-qualified tags; Hocket uses Mesquite capture lifecycle with truthful
+Done when all four workspace roots have runnable local locked-resolution and
+scoped CPU checks; platform packaging remains explicit and release tags remain
+product-qualified; Hocket uses Mesquite capture lifecycle with truthful
 failure outcomes; and Redshank bounds generation retention while preserving
 last-valid recovery and failed-publication behavior. Cosmetic cleanup is
 limited to verified obsolete claims and unused declarations. Preserve live
@@ -294,3 +294,15 @@ products require explicit product decisions, not generic cleanup.
   Set replay is retained as failed: the locked Mac reports an occluded surface
   and zero presentations. Native Set flow and keeper-backed reopening remain
   open. See the [integration receipt](receipts/audio_foundation_20261011/integration/README.md).
+- **2026-10-11 (maintainer correction):** No GitHub workflows or default pull
+  request review step. Remove all root workflows and the fork's inherited
+  workflow; retain ordinary local validation and platform packaging commands.
+  Publish the qualified foundation directly to each repository's `main` after
+  refreshing remote state and preserving concurrent work. Earlier Actions and
+  draft-PR observations above are historical evidence, not continuing gates.
+  Canonical plans and source already carry the execution frontier; PRs and
+  issues would duplicate it and become stale as scope changes. During rapid
+  prototyping, use focused local checks for concrete risks in the change.
+  Existing suite commands remain available, rather than becoming mandatory
+  gates for every interim commit. Broader conformance and automation belong
+  to behavior intentionally stabilized for evaluation.

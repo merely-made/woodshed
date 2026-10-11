@@ -103,5 +103,15 @@
     "scenarios/set_loop_plan.scn": "21d2e51e74a10952306137bb4f24cc8dbde2f43cfb59dc72a4f20af354a89ced",
     "scenarios/set_loop_plan_reopen.scn": "36be45927f740b973600de0f7a0d831a17af3093ddfab36f33c317e2578dcf5e",
     "scripts/validate-workspace.sh": "74382fbcfb48ee084bfa5f4ec57943fd601bd6def874eaadba6f2600e5f29d10"
+  },
+  "maintainer_publication_policy": {
+    "github_workflows": false,
+    "default_pull_request": false,
+    "publication": "direct main push with scoped validation appropriate to the change",
+    "retired_frozen_files": [
+      ".github/workflows/ci.yml",
+      ".github/workflows/release-windows.yml"
+    ],
+    "note": "Earlier workflow hashes and Actions observations remain evidence for their recorded source. Workflow removal changes publication plumbing and documentation; no product Rust source, manifest, lockfile, or family-validation script changed."
   }
 }
