@@ -1,0 +1,67 @@
+[
+  {
+    "launch_method": "LaunchServices temporary application bundle",
+    "launcher_exit": 0,
+    "timeout": false,
+    "success": true,
+    "elapsed_seconds": 20.561,
+    "binary_sha256": "1c2a342559ac839d4561af92c341513054bbf254f0098da7eb28bd05cd0c720a",
+    "scenario_sha256": "5cbbf5ca9ddb9f8d9a967d85f61ac48f6586edf6a66af296e7670793d32a6fd7",
+    "receipt": "scenario.done",
+    "captures": 9,
+    "name": "native-seed",
+    "scenario": "tabard_appearance.scn"
+  },
+  {
+    "launch_method": "LaunchServices temporary application bundle",
+    "launcher_exit": 0,
+    "timeout": false,
+    "success": true,
+    "elapsed_seconds": 5.554,
+    "binary_sha256": "1c2a342559ac839d4561af92c341513054bbf254f0098da7eb28bd05cd0c720a",
+    "scenario_sha256": "fb770b3962552ee36249092db0f59efa9c1ca1198c8954267d2c41f92b8529a0",
+    "receipt": "scenario.done",
+    "captures": 2,
+    "name": "native-reopen",
+    "scenario": "tabard_appearance_reopen.scn"
+  },
+  {
+    "launch_method": "LaunchServices temporary application bundle",
+    "launcher_exit": 0,
+    "timeout": false,
+    "success": true,
+    "elapsed_seconds": 15.791,
+    "binary_sha256": "1c2a342559ac839d4561af92c341513054bbf254f0098da7eb28bd05cd0c720a",
+    "scenario_sha256": "01afa701c4be69b21a93caeebbce3d8636a0e90ebe6c3b46314a12aac1ecb9bf",
+    "receipt": "scenario.done",
+    "captures": 4,
+    "name": "native-same-id",
+    "scenario": "tabard_appearance_same_id.scn"
+  },
+  {
+    "launch_method": "LaunchServices temporary application bundle",
+    "launcher_exit": 0,
+    "timeout": false,
+    "success": true,
+    "elapsed_seconds": 5.078,
+    "binary_sha256": "1c2a342559ac839d4561af92c341513054bbf254f0098da7eb28bd05cd0c720a",
+    "scenario_sha256": "fb770b3962552ee36249092db0f59efa9c1ca1198c8954267d2c41f92b8529a0",
+    "receipt": "scenario.done",
+    "captures": 2,
+    "name": "native-reopen-brown",
+    "scenario": "tabard_appearance_reopen.scn"
+  },
+  {
+    "launch_method": "LaunchServices temporary application bundle",
+    "launcher_exit": 0,
+    "timeout": false,
+    "success": true,
+    "elapsed_seconds": 9.315,
+    "binary_sha256": "1c2a342559ac839d4561af92c341513054bbf254f0098da7eb28bd05cd0c720a",
+    "scenario_sha256": "192d793adfa49907b0c95079260e0efe96d210f17aa111708ad009d4886254be",
+    "receipt": "scenario.done",
+    "captures": 2,
+    "name": "native-recorder",
+    "scenario": "recorder_controls.scn"
+  }
+]

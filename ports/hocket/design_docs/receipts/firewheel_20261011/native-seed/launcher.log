@@ -1,0 +1,22 @@
+{"launch_method": "LaunchServices temporary application bundle", "launcher_exit": 0, "timeout": false, "success": true, "elapsed_seconds": 20.561, "binary_sha256": "1c2a342559ac839d4561af92c341513054bbf254f0098da7eb28bd05cd0c720a", "scenario_sha256": "5cbbf5ca9ddb9f8d9a967d85f61ac48f6586edf6a66af296e7670793d32a6fd7", "receipt": "scenario.done", "captures": 9}
+RESULT ok
+captured recorder_default
+captured recorder_light
+captured recorder_dark
+captured recorder_hc_light
+captured recorder_hc_dark
+captured workshop_saved
+captured recorder_applied
+captured workshop_narrow
+captured recorder_final
+capture recorder_default 2360x1400 digest=760ecf4f2242226e file=/Users/markik/Code/testing/hocket-firewheel-f3-20261011/native-seed/recorder_default.png
+capture recorder_light 2360x1400 digest=46dc858e23887e1d file=/Users/markik/Code/testing/hocket-firewheel-f3-20261011/native-seed/recorder_light.png
+capture recorder_dark 2360x1400 digest=36d82c896c669af7 file=/Users/markik/Code/testing/hocket-firewheel-f3-20261011/native-seed/recorder_dark.png
+capture recorder_hc_light 2360x1400 digest=ee08bf00f0d37dda file=/Users/markik/Code/testing/hocket-firewheel-f3-20261011/native-seed/recorder_hc_light.png
+capture recorder_hc_dark 2360x1400 digest=131405293b29c136 file=/Users/markik/Code/testing/hocket-firewheel-f3-20261011/native-seed/recorder_hc_dark.png
+capture workshop_saved 2360x1400 digest=3a9027ea6802e932 file=/Users/markik/Code/testing/hocket-firewheel-f3-20261011/native-seed/workshop_saved.png
+capture recorder_applied 2360x1400 digest=0a02c49433205dd9 file=/Users/markik/Code/testing/hocket-firewheel-f3-20261011/native-seed/recorder_applied.png
+capture workshop_narrow 840x2000 digest=4fad145984cc675b file=/Users/markik/Code/testing/hocket-firewheel-f3-20261011/native-seed/workshop_narrow.png
+capture recorder_final 2360x1400 digest=ce97a95888fd5014 file=/Users/markik/Code/testing/hocket-firewheel-f3-20261011/native-seed/recorder_final.png
+frames: 9 captured, 0 blank, 9 distinct digests
+presentation: 79 frames, 80 redraws, 1 unpresented redraws
