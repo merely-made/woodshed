@@ -1211,9 +1211,11 @@ case locally is the evidence that would justify promoting it.
 
 ### Replace the Song model
 
-`SongDoc`, `SongBar`, `Tab::Song`, and the public Song engine vocabulary are
-retired. They overstate the product and duplicate the ordered timing already
-owned by Set.
+The target retires `SongDoc`, `SongBar`, `Tab::Song`, and the public Song engine
+vocabulary because they duplicate material and timing owned by Set. As of
+2026-10-11, SongDoc/SongBar and their editable compatibility path remain live;
+the bounded Set backing below has not completed that migration. Preserve exact
+saved pitches and timing until the replacement can represent them losslessly.
 
 Replace them with two narrower models:
 
@@ -1572,6 +1574,15 @@ changes during armed or active capture. Set source and clock settings persist.
 `SongDoc` remains the exact saved-backing compatibility path; its authored
 pitches, meter and duration are preserved. Full saved-song migration, mixed
 material lowering, WAV export and companion PCM persistence remain open.
+
+The overview now routes Looper relations to the host-admitted Set owner,
+including when another owner is edited or a replacement is refused. It retains
+the independent rehearsal owner and labels the unchanged Song artifact as
+saved compatibility backing. Next consolidate saved/Set admission into one
+fallible guarded operation; same-source saved-bar edits must also respect
+armed/active capture. Current Cards cannot losslessly represent every saved
+bar's arbitrary pitch vector, root/display data and individual meter. Resolve
+that representation before removing the bar editor or converting saved songs.
 
 Complete `LoopPlan` lowering and readiness validation. Migrate the current song
 engine to a loop engine that plays Set-derived segments and preserves captures

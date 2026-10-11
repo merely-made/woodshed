@@ -266,6 +266,13 @@ They are not current product authority.
 
 ## Working Principles for AI Assistants
 
+- **Prototype through source and canonical plans**: publish directly to `main`
+  after refreshing remote state and preserving concurrent work. PRs are used
+  only when requested; GitHub workflows are not part of this execution path.
+  Use focused local checks to answer concrete questions about a change.
+  Broader conformance and automation follow behavior deliberately stabilized
+  for evaluation, rather than every interim prototype commit.
+
 These principles apply to AI-assisted work on this project. Update this
 section whenever a durable working insight emerges from a session.
 

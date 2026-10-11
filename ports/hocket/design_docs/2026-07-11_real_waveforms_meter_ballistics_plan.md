@@ -14,7 +14,7 @@ hold without putting host display policy into project state.
 
 - `audio-primitives` owns pure signed min/max peak extraction and configurable
   normalized meter ballistics. It depends on neither Firewheel nor Chisel.
-- `hocket-engine::waveform` owns Hocket track/layer projection. Track views
+- `hocket-project::waveform` owns Hocket track/layer projection. Track views
   reuse export's source selection and repeating-loop renderer, so gain, mute,
   `Sum`/`SelectOne`, sample-rate validation, and free-loop repetition agree.
 - `hocket-genet` owns projection caches, model-id-to-leaf keys, responsive

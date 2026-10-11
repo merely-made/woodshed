@@ -178,6 +178,38 @@ recording allocations; the connected Hear/Add/rehearse/loop/edit/reopen flow
 passes current-source automated and native acceptance. Preserve exploration
 and deliberate practice as complementary flows.
 
+The next runtime slice belongs to root `woodshed-audio`: one `OutputRuntime`,
+one Firewheel context and CPAL output stream, and processor-owned click,
+preview and backing lanes. Keep Set/Card ownership, admission and prepared PCM
+on the control side; publish bounded commands and generation-qualified status.
+Use the device sample clock while preserving independent logical transport
+offsets, phase-preserving tempo edits, variable backing boundaries and ordered
+seek/record-arm. Fill every output frame, including a one-shot's final tail.
+Hocket's public engine carries Hocket model identities and different tempo and
+next-bar semantics; root must not acquire a dependency on that port.
+
+Prepare recording storage before arming and transfer exclusive mutable buffer
+ownership to the processor. A bounded input feed must report overflow and
+invalidate a truncated take; input-rate conversion or refusal is explicit.
+Preserve the host's lazy shared tuner/onset/capture input session. One output
+clock does not qualify input/output hardware synchronization or remove the
+existing input-analyzer locks. Before replacing the engines, wire idle host
+service for preview completions, Firewheel updates and resource retirement,
+and adapt calibration to a small click-control/clock seam. Keeping the old
+metronome solely for calibration would preserve the second output stream.
+
+Separately, replace infallible saved-song admission and fallible Set admission
+with one guarded, fallible backing operation. Every rejected replacement,
+including an edit to an already loaded saved song during capture, must retain
+the previous accepted backing. Output unavailability must not look accepted.
+The independent SongDoc/bar editor is still live. Lossless migration requires
+exact pitch vectors, root frequency and display formula, per-bar tempo/meter,
+and hold duration; current Cards and the global LoopPlan meter cannot express
+all of those values. Freezing legacy authoring removes a product capability
+and needs its own decision. Do not silently revoice or flatten saved material.
+Transient Set PCM still needs companion storage and transaction rules before
+recordings can be claimed to survive session replacement or restart.
+
 ### F5. Complete portable product seams
 
 Done when Hocket project/media/store/export/handoff operations can be used
@@ -187,6 +219,24 @@ capabilities, and completes its ruled extraction after existing gates. Shared
 path crates need independent Git/package sourcing before extraction. Package
 renaming, retiring updater transports, and promoting browser previews to full
 products require explicit product decisions, not generic cleanup.
+
+The current Hocket boundary is model-owned session/history/schema and
+`hocket-project`-owned media/store/export/handoff/waveforms, with the engine
+executing a projection. Its project dependency closure excludes Firewheel,
+CPAL and windowing. The next host correction is explicit operation/session
+generation correlation for project-worker replies: display status currently
+stands in for busy state, handoff commands do not reserve it, and a late save
+reply can apply after a session replacement. Portable acceptance and native
+save/open/export/handoff are separate claims.
+
+Redshank's portable transition candidate remains its desktop `Session`:
+selection, load generations, progress, capture anchors and projection. Extract
+the transitions needed by actual hosts and admit microphone/playback
+capabilities explicitly. The browser's in-memory fixture path does not qualify
+real clocks, device capture or durability. Its shared root `audio-primitives`
+and `timed-text` paths need independent Git/package sourcing before extraction.
+The October 11 follow-up did not refresh Turnstone source or close that
+product's existing recording/Turnstone gates.
 
 ### Findings
 
@@ -306,3 +356,22 @@ products require explicit product decisions, not generic cleanup.
   Existing suite commands remain available, rather than becoming mandatory
   gates for every interim commit. Broader conformance and automation belong
   to behavior intentionally stabilized for evaluation.
+- **2026-10-11:** The parallel Woodshed stack lane published `8846b13` with
+  coherent Mere/Genet/Dramatis/Netrender pins and Classic 0.11 across the UI
+  workspaces. Its [acceptance record](../validation/stack-family_20261011/README.md)
+  qualifies eight native runs and 38 reviewed captures: Woodshed Set,
+  preview/rehearsal and appearance seed/reopen, plus Hocket and Redshank
+  appearance seeds. The ports' appearance reopen attempts remain open after
+  zero qualified presentations. Those source/binary receipts precede the
+  following audit fixes and do not certify their native behavior.
+- **2026-10-11:** Three bounded source corrections follow the audit:
+  `a090e2f` retains both peers' append-only captured phrases/media while
+  accepting a same-root Hocket branch, refusing conflicting immutable phrase
+  IDs and malformed snapshots transactionally; `a3871e2` projects Looper
+  relations from the host-admitted backing owner while preserving rehearsal's
+  owner and the saved Song payload; `894cfc1` silences unwritten callback frames
+  after one-shot backing stops. The handoff and one-shot regressions failed
+  before their fixes. After merging the stack family, 8 handoff, 11 core
+  overview, 11 view overview and 2 one-shot tests pass with locked dependencies
+  under Rust 1.97.1. Changed-file formatting, whitespace and new doc links pass.
+  No new native run, durable capture migration or one-clock runtime is claimed.

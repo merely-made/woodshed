@@ -60,16 +60,18 @@ before any other doc in this directory.
 - [2026-07-10_signed-handoff-envelope_plan.md](2026-07-10_signed-handoff-envelope_plan.md)
   - **PARTIAL.** Signed, complete, recipient-addressed project hand-off bytes
   with durable-sender attestation; raw bytes are not encrypted.
-  durable Windows host identity and engine branch acceptance are landed.
-  Recipient exchange, carrier, review UI, user-facing acceptance, and branch
-  merge remain separate work. Host-side gaps are carried forward in the
+  Durable Windows host identity and portable `hocket-project` branch acceptance
+  are landed. The file carrier, recipient exchange and review/accept gestures
+  are implemented; branch merge and current native project acceptance remain
+  separate work. Host sequencing is carried forward in the
   hand-off UI plan below.
 - [2026-07-18_handoff-ui_plan.md](2026-07-18_handoff-ui_plan.md)
-  - **SCOPED.** The host-facing pass-the-mic gesture: a file carrier over the
+  - **IMPLEMENTED; HOST ACCEPTANCE OPEN.** The pass-the-mic gesture: a file carrier over the
   existing project worker, a copyable contact token with auto-addressed replies,
   incoming staging and review in the circle, and same-session or new-session
   acceptance. Cleartext carrier, stated honestly; encryption and a network
-  carrier are later.
+  carrier are later. Project-worker reply correlation and current native
+  save/open/export/handoff qualification remain open.
 - [2026-08-08_persona_timeline_design.md](2026-08-08_persona_timeline_design.md)
   - **DESIGN SKETCH** (from Mark, no implementation planned). A persona as a
   lens over the session: click a participant, see their contributions laid out
@@ -225,9 +227,11 @@ section whenever a durable working insight emerges from a session.
   bespoke converter. The specialty-project-format norm (opaque, app-only) is a
   failure mode we reject as product identity, alongside plugin gravity and
   DAW scope creep. Long-term target is a zip container of standard-audio media
-  plus documented structure. Realized 2026-07-14: a `.hock` is a zip of
-  `manifest.cbor` (self-describing CBOR) + `media/<hash>.wav` (standard audio),
-  over a Muniment `ZipBackend`. FLAC and a provenance entry are follow-on. See
+  plus documented structure. A `.hock` is a zip of `manifest.cbor`
+  (self-describing CBOR), `media/<hash>.wv` (lossless WavPack via wavicle), and
+  `meta.json` (provenance), over a Muniment `ZipBackend`. Offline rendered
+  exports use WAV; project media preserve floating-point captures in WavPack.
+  FLAC was evaluated and rejected for that storage requirement. See
   [2026-07-14_open-project-format_plan.md](2026-07-14_open-project-format_plan.md).
 
 ## Reference reading

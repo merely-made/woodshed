@@ -8,7 +8,7 @@ have already been reconciled.
 
 ## Design
 
-- `hocket-engine::handoff` builds a versioned envelope containing a project
+- `hocket-project::handoff` builds a versioned envelope containing a project
   bundle plus every media blob referenced by its phrases. It refuses incomplete
   snapshots and verifies each media hash on receipt.
 - The sender derives a session-scoped signing key through `personae`; a
@@ -43,6 +43,13 @@ have already been reconciled.
   untouched.
 
 ## Progress
+
+- 2026-10-11: Protocol/media/acceptance now live in the device-free
+  `hocket-project` seam. Same-root branch acceptance retains local and inactive
+  incoming captures in the append-only phrase pool; conflicting phrase IDs and
+  malformed snapshot projections fail transactionally. Eight focused handoff
+  tests pass. This selects an incoming head and retains the local branch;
+  conflict reconciliation and native project acceptance remain open.
 
 - 2026-07-10: **PARTIAL.** The engine protocol and focused tests are landed.
   Core same-root branch acceptance is landed; branch merge still waits for a
