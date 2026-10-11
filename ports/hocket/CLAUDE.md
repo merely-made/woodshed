@@ -21,8 +21,8 @@ Read `design_docs/DOC_README.md` before planning or changing subsystem scope.
 crates/
   hocket-model/     Session and history authority; framework independent
   hocket-engine/    Firewheel capture, playback, click, and device runtime
-  hocket-project/   Portable media, storage, offline export, and signed handoff
-  hocket-headless/  Scripted audio-engine harness
+  hocket-project/   Portable media, storage, offline export, handoff and waveforms
+  hocket-headless/  Explicit manual audio-device demonstration (`--run`)
   hocket-genet/    Genet/winit application host and recorder UI
 ```
 

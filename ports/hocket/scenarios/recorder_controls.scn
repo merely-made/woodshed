@@ -1,0 +1,28 @@
+# Finite retained-input proof for the recorder model controls. Use a private
+# profile and HOCKET_APPEARANCE_RECEIPT=1, which explicitly admits device-free
+# scenarios. This does not qualify microphone capture or audible playback.
+settle 3
+assert snap appearance-device-free == true
+assert snap tracks == 4
+assert snap bpm == 120
+assert snap master-clock == true
+assert snap recording == false
+capture recorder_initial
+click .add-track
+assert snap tracks == 5
+click role:switch @aria-label=Arm track 2
+assert snap armed-track == 1
+click role:switch @aria-label=Mute track 1
+assert snap muted-tracks == 1
+click role:switch @aria-label=Solo track 2
+assert snap solo-tracks == 1
+click role:button @aria-label=Increase tempo
+assert snap bpm == 122
+click role:switch @aria-label=Master clock
+assert snap master-clock == false
+click role:switch @aria-label=Record
+assert snap recording == false
+click role:button @aria-label=Stop all loops
+assert snap tracks == 5
+assert snap recording == false
+capture recorder_controls

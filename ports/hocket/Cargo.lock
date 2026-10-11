@@ -3981,13 +3981,11 @@ dependencies = [
  "hocket-engine",
  "hocket-model",
  "hocket-project",
- "image",
  "insigne",
  "luggage",
  "mere-surface-api",
  "mesquite",
  "muniment",
- "netrender",
  "paint_list_api",
  "personae",
  "pollster",
@@ -4001,7 +3999,6 @@ dependencies = [
  "tempfile",
  "tinct",
  "velopack",
- "wgpu",
  "workbench",
 ]
 
