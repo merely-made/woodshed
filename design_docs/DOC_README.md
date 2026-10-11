@@ -59,6 +59,9 @@ before any other doc in this directory.
   rendering remain open.
 
 - [2026-09-01_listening_annotation_port_plan.md](2026-09-01_listening_annotation_port_plan.md)
+  October 11 bounds standalone published model history to three valid
+  generations while preserving corrupt-state fallback; ten storage tests and
+  strict package Clippy pass, with native reopen pending.
   **Active; Phases 0-3 complete, Phase 5 closed 2026-09-26, Phase 7 met 2026-09-22, Phase 4 in progress, Phase 6 identity/seek and synthetic alignment implemented; extraction to its own repository ruled 2026-09-26.** Redshank is a separate audio-listening and timed
   text/voice-annotation port incubated in this repository. The September 6
   local-file slice adds a Symphonia/Firewheel worker, full listening surfaces,

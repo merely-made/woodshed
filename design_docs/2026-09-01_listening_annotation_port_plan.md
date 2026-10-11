@@ -1611,3 +1611,22 @@ rejected for the reasons recorded in the 2026-09-01 planning pass.
 ## 2026-09-26 timed transcript slice
 
 The bounded WebVTT parser, explicit offline transcript saving, and cue/seek projection are tracked in [the timed transcripts plan](2026-09-26_timed_transcripts_plan.md). Full text-track rendering and headed real-episode acceptance remain open.
+
+### Bounded local generation retention (2026-10-11)
+
+**Status: implemented; scoped CPU validation passed, native reopen pending.**
+The standalone `JsonDirectoryStore` keeps the newest three valid published
+model generations: current state and two recovery states. Cleanup follows the
+existing flushed file, same-directory rename, and directory-sync publication.
+Invalid older published files do not consume recovery slots; pending files and
+unrelated media are untouched. A cleanup I/O error is reported without rolling
+back the already-published replacement. A caller may retry, and reopening reads
+the durable latest valid state.
+
+Ten storage tests and strict package Clippy pass. Tests cover repeated saves
+with bounded published history, fallback through two corrupt latest states,
+invalid/pending/unrelated file handling, preservation of all recovery states
+on failed publication, and readable replacement state after cleanup failure.
+This retains Redshank's recovery contract rather than replacing it with a
+latest-state slot. Wider orchestration and native acceptance follow the
+[audio family plan](2026-09-09_audio_ports_rehome_plan.md#standalone-audio-foundation-and-consolidation-2026-10-11).

@@ -212,3 +212,13 @@ products require explicit product decisions, not generic cleanup.
 - **2026-10-11:** Refreshed remotes, created isolated integration worktree at
   `cd69da0`, and opened parallel foundation lanes. No stack repin is inferred
   from newer upstream revisions; native receipts remain revision-specific.
+- **2026-10-11:** Refresh corrected the Hocket scenario finding: `cd69da0`
+  already adopted Mesquite in its Tabard integration. The host lane preserves
+  that work and addresses residual capture-only dependencies, early-close
+  lifecycle and project-worker quiescence, plus manual-demo failure semantics.
+- **2026-10-11:** Redshank generation retention implemented: current published
+  state plus two valid recovery states, pruning only after flushed publication.
+  Pending and unrelated files remain untouched. Ten storage tests and strict
+  package Clippy pass, including repeated saves, two corrupt latest states,
+  invalid newer files, failed publication, and explicit post-publication cleanup
+  error behavior. Desktop/reopen qualification is pending.
