@@ -1,0 +1,297 @@
+{
+  "accepted_source_commit": "f5e0aedc47de0674ab4e9556925da2e1a47e8798",
+  "provider_rev": "2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc",
+  "binary_sha256": "1c2a342559ac839d4561af92c341513054bbf254f0098da7eb28bd05cd0c720a",
+  "compiler": "rustc 1.97.1",
+  "workspace_tests": {
+    "passed": 166,
+    "ignored": 1,
+    "offline_production_graph_cases": 12
+  },
+  "native": {
+    "launch_services_processes": 5,
+    "captures": 19,
+    "blank_captures": 0,
+    "presented_frames": 178,
+    "redraws": 186,
+    "unpresented_redraws": 8,
+    "device_free": true,
+    "results": [
+      {
+        "launch_method": "LaunchServices temporary application bundle",
+        "launcher_exit": 0,
+        "timeout": false,
+        "success": true,
+        "elapsed_seconds": 20.561,
+        "binary_sha256": "1c2a342559ac839d4561af92c341513054bbf254f0098da7eb28bd05cd0c720a",
+        "scenario_sha256": "5cbbf5ca9ddb9f8d9a967d85f61ac48f6586edf6a66af296e7670793d32a6fd7",
+        "receipt": "scenario.done",
+        "captures": 9,
+        "name": "native-seed",
+        "scenario": "tabard_appearance.scn",
+        "presented_frames": 79,
+        "redraws": 80,
+        "unpresented_redraws": 1
+      },
+      {
+        "launch_method": "LaunchServices temporary application bundle",
+        "launcher_exit": 0,
+        "timeout": false,
+        "success": true,
+        "elapsed_seconds": 5.554,
+        "binary_sha256": "1c2a342559ac839d4561af92c341513054bbf254f0098da7eb28bd05cd0c720a",
+        "scenario_sha256": "fb770b3962552ee36249092db0f59efa9c1ca1198c8954267d2c41f92b8529a0",
+        "receipt": "scenario.done",
+        "captures": 2,
+        "name": "native-reopen",
+        "scenario": "tabard_appearance_reopen.scn",
+        "presented_frames": 13,
+        "redraws": 15,
+        "unpresented_redraws": 2
+      },
+      {
+        "launch_method": "LaunchServices temporary application bundle",
+        "launcher_exit": 0,
+        "timeout": false,
+        "success": true,
+        "elapsed_seconds": 15.791,
+        "binary_sha256": "1c2a342559ac839d4561af92c341513054bbf254f0098da7eb28bd05cd0c720a",
+        "scenario_sha256": "01afa701c4be69b21a93caeebbce3d8636a0e90ebe6c3b46314a12aac1ecb9bf",
+        "receipt": "scenario.done",
+        "captures": 4,
+        "name": "native-same-id",
+        "scenario": "tabard_appearance_same_id.scn",
+        "presented_frames": 43,
+        "redraws": 45,
+        "unpresented_redraws": 2
+      },
+      {
+        "launch_method": "LaunchServices temporary application bundle",
+        "launcher_exit": 0,
+        "timeout": false,
+        "success": true,
+        "elapsed_seconds": 5.078,
+        "binary_sha256": "1c2a342559ac839d4561af92c341513054bbf254f0098da7eb28bd05cd0c720a",
+        "scenario_sha256": "fb770b3962552ee36249092db0f59efa9c1ca1198c8954267d2c41f92b8529a0",
+        "receipt": "scenario.done",
+        "captures": 2,
+        "name": "native-reopen-brown",
+        "scenario": "tabard_appearance_reopen.scn",
+        "presented_frames": 13,
+        "redraws": 15,
+        "unpresented_redraws": 2
+      },
+      {
+        "launch_method": "LaunchServices temporary application bundle",
+        "launcher_exit": 0,
+        "timeout": false,
+        "success": true,
+        "elapsed_seconds": 9.315,
+        "binary_sha256": "1c2a342559ac839d4561af92c341513054bbf254f0098da7eb28bd05cd0c720a",
+        "scenario_sha256": "192d793adfa49907b0c95079260e0efe96d210f17aa111708ad009d4886254be",
+        "receipt": "scenario.done",
+        "captures": 2,
+        "name": "native-recorder",
+        "scenario": "recorder_controls.scn",
+        "presented_frames": 30,
+        "redraws": 31,
+        "unpresented_redraws": 1
+      }
+    ]
+  },
+  "profile": {
+    "appearance_file": "appearance.json",
+    "theme_library_file": "themes.json",
+    "theme_id": "theme:copy-1",
+    "theme_mode": "dark",
+    "authored_theme_count": 1
+  },
+  "viewport_comparison": {
+    "physical_crop": [
+      0,
+      84,
+      2360,
+      1400
+    ],
+    "tolerance_channel_units": 2,
+    "save_changed_pixels_above_tolerance": 0,
+    "save_maximum_channel_difference": 1,
+    "apply_changed_pixels_above_tolerance": 3078997,
+    "compared_pixels": 3105760
+  },
+  "launcher": {
+    "mere_rev": "e95326d",
+    "script_sha256": "ca8bc5d355d02f2e46760f3196c02b24db75828493e745cf171531826037020d",
+    "command_provenance": "run_native.py"
+  },
+  "captures": [
+    {
+      "file": "native-seed/recorder_applied.png",
+      "sha256": "55bdfa4f0d20e14724bac2e793cb91b3f803dfa2bddbb146e0fcce418ac3f13f",
+      "width": 2360,
+      "height": 1400,
+      "visually_reviewed": true,
+      "record_region_red_pixels": 4004
+    },
+    {
+      "file": "native-seed/recorder_dark.png",
+      "sha256": "f85fc77f633f84e52ef5fb0f6a4ad8113b89155671b5061dec3e7427e85ebd6d",
+      "width": 2360,
+      "height": 1400,
+      "visually_reviewed": true,
+      "record_region_red_pixels": 4004
+    },
+    {
+      "file": "native-seed/recorder_default.png",
+      "sha256": "cd34c321b198babdc3542ae4ba81865d7a08e75aaa0aa642f97e1f98d38c93d1",
+      "width": 2360,
+      "height": 1400,
+      "visually_reviewed": true,
+      "record_region_red_pixels": 4004
+    },
+    {
+      "file": "native-seed/recorder_final.png",
+      "sha256": "cd3403a4149b0a91eab044fd3a62cae90297898396b2cd19eac07a6479652552",
+      "width": 2360,
+      "height": 1400,
+      "visually_reviewed": true,
+      "record_region_red_pixels": 4004
+    },
+    {
+      "file": "native-seed/recorder_hc_dark.png",
+      "sha256": "ca91f005d6c92a3c573d0d5dbb5324c2da87c9c5566228cf3b3d5f62e139f06b",
+      "width": 2360,
+      "height": 1400,
+      "visually_reviewed": true,
+      "record_region_red_pixels": 4004
+    },
+    {
+      "file": "native-seed/recorder_hc_light.png",
+      "sha256": "e5e8b3bc89d42bdd5abce972f7eab97f4232ca239ceec5a39e2b97175100fd2d",
+      "width": 2360,
+      "height": 1400,
+      "visually_reviewed": true,
+      "record_region_red_pixels": 4004
+    },
+    {
+      "file": "native-seed/recorder_light.png",
+      "sha256": "39117cb01c6510343e0290cb6d9bb5a2c8a3dfcfdcf60031f91ed9ae1c938843",
+      "width": 2360,
+      "height": 1400,
+      "visually_reviewed": true,
+      "record_region_red_pixels": 4004
+    },
+    {
+      "file": "native-seed/workshop_narrow.png",
+      "sha256": "0f3f6264a05854310e17667da264364d61dc51dc89d3cf4982bd463d34ee9f85",
+      "width": 840,
+      "height": 2000,
+      "visually_reviewed": true,
+      "record_region_red_pixels": 0
+    },
+    {
+      "file": "native-seed/workshop_saved.png",
+      "sha256": "ce4b8be4d78afd35360e5a0e570b7d9b68900dc382f3bb045cbf250f648a5306",
+      "width": 2360,
+      "height": 1400,
+      "visually_reviewed": true,
+      "record_region_red_pixels": 0
+    },
+    {
+      "file": "native-reopen/appearance_reopened.png",
+      "sha256": "c03492bcf29a2732311f39eda46ac5498dcde7c32fb98d78129d95abaa8b25af",
+      "width": 2360,
+      "height": 1400,
+      "visually_reviewed": true,
+      "record_region_red_pixels": 4004
+    },
+    {
+      "file": "native-reopen/recorder_reopened.png",
+      "sha256": "6ac64361bf155d11ef7f772c69f5f6b6a7fc9b301c5be40c9a0f6bc405de0fc7",
+      "width": 2360,
+      "height": 1400,
+      "visually_reviewed": true,
+      "record_region_red_pixels": 4004
+    },
+    {
+      "file": "native-same-id/recorder_after_apply.png",
+      "sha256": "1186d5bab40c419d4829a21b7f1223a815ba513c7c652434a3af9f63de9ca0f6",
+      "width": 2360,
+      "height": 1400,
+      "visually_reviewed": true,
+      "record_region_red_pixels": 4004
+    },
+    {
+      "file": "native-same-id/recorder_after_save.png",
+      "sha256": "d3e55549e63334e98f1c044d38d451c58e63a2fdbf12651216afcb579ea78aa1",
+      "width": 2360,
+      "height": 1400,
+      "visually_reviewed": true,
+      "record_region_red_pixels": 4004
+    },
+    {
+      "file": "native-same-id/recorder_before_edit.png",
+      "sha256": "8e3a0dc50f86e098a4646633a4118f591cb8b2d1f4400fa1c70b6d428e09dcdc",
+      "width": 2360,
+      "height": 1400,
+      "visually_reviewed": true,
+      "record_region_red_pixels": 4004
+    },
+    {
+      "file": "native-same-id/workshop_same_id_saved.png",
+      "sha256": "7f478db9cd1685308eca21f4ca4dae2b77be03edce38b22d26f1cff3a6c55750",
+      "width": 2360,
+      "height": 1400,
+      "visually_reviewed": true,
+      "record_region_red_pixels": 0
+    },
+    {
+      "file": "native-reopen-brown/appearance_reopened.png",
+      "sha256": "f028d0884e7ae5fabc44c70e8741d526618e7cec15ff70995e7eda3f4ccf0ee4",
+      "width": 2360,
+      "height": 1400,
+      "visually_reviewed": true,
+      "record_region_red_pixels": 4004
+    },
+    {
+      "file": "native-reopen-brown/recorder_reopened.png",
+      "sha256": "764ac7a1b1bf93d9bb67288d7736afedbd8cde1d1af60c9859bacd014452fb37",
+      "width": 2360,
+      "height": 1400,
+      "visually_reviewed": true,
+      "record_region_red_pixels": 4004
+    },
+    {
+      "file": "native-recorder/recorder_controls.png",
+      "sha256": "18bc9304d361022c971aeaa4e0da454e194bd23c09f520e1aa6ee865d5eb402b",
+      "width": 2360,
+      "height": 1400,
+      "visually_reviewed": true,
+      "record_region_red_pixels": 4004
+    },
+    {
+      "file": "native-recorder/recorder_initial.png",
+      "sha256": "3cc783f364a14d768abb20d66a92f106bce0a01ce4c468b381fa9a29fad2d992",
+      "width": 2360,
+      "height": 1400,
+      "visually_reviewed": true,
+      "record_region_red_pixels": 4004
+    }
+  ],
+  "visual_review": [
+    "Warm default, all four canonical modes and authored blue/brown recorder controls are readable.",
+    "Every original recorder/appearance capture retains the semantic red Record dot.",
+    "840x2000 narrow workshop keeps name, seed, slider, harmony, library and host return/apply controls visible.",
+    "Save preserves the installed blue recorder snapshot; explicit Apply installs the same-id brown definition.",
+    "Two fresh processes restore the authored blue then brown application appearance.",
+    "Recorder case shows five tracks, track 2 armed and solo, track 1 muted, tempo 122 and master clock off. Missing input remains unavailable and capture stays idle."
+  ],
+  "limits": [
+    "Native receipt profile disables audio hardware explicitly.",
+    "Physical input/output selection, microphone permission, audible capture/replay, restart and latency calibration remain unqualified.",
+    "Input resampling is disabled as in the previous consumer; mixed-rate CPAL fallback may produce an output-only stream.",
+    "Missing-input refusal is tested; enabling mixed-rate input capability requires separate qualification.",
+    "Fresh reopen qualifies appearance persistence; native project-file persistence and keeper custody are separate gates.",
+    "Windows/Linux native presentation and release packaging/publication are unqualified."
+  ]
+}

@@ -1,0 +1,12 @@
+{"launch_method": "LaunchServices temporary application bundle", "launcher_exit": 0, "timeout": false, "success": true, "elapsed_seconds": 15.791, "binary_sha256": "1c2a342559ac839d4561af92c341513054bbf254f0098da7eb28bd05cd0c720a", "scenario_sha256": "01afa701c4be69b21a93caeebbce3d8636a0e90ebe6c3b46314a12aac1ecb9bf", "receipt": "scenario.done", "captures": 4}
+RESULT ok
+captured recorder_before_edit
+captured workshop_same_id_saved
+captured recorder_after_save
+captured recorder_after_apply
+capture recorder_before_edit 2360x1400 digest=cc3cc2f37c2311d7 file=/Users/markik/Code/testing/hocket-firewheel-f3-20261011/native-same-id/recorder_before_edit.png
+capture workshop_same_id_saved 2360x1400 digest=c315202161921400 file=/Users/markik/Code/testing/hocket-firewheel-f3-20261011/native-same-id/workshop_same_id_saved.png
+capture recorder_after_save 2360x1400 digest=1ca7df49d70184b2 file=/Users/markik/Code/testing/hocket-firewheel-f3-20261011/native-same-id/recorder_after_save.png
+capture recorder_after_apply 2360x1400 digest=7624c2809e2ae877 file=/Users/markik/Code/testing/hocket-firewheel-f3-20261011/native-same-id/recorder_after_apply.png
+frames: 4 captured, 0 blank, 4 distinct digests
+presentation: 43 frames, 45 redraws, 2 unpresented redraws

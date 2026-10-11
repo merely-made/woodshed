@@ -1,6 +1,6 @@
 # Hocket standalone Firewheel 0.14 adoption
 
-**Status (2026-10-11): offline consumer gate passed; native regression pending.** Migrate the device/runtime consumer from
+**Status (2026-10-11): consumer migration, offline gate and native regression accepted; physical audio gates open.** Migrate the device/runtime consumer from
 published Firewheel 0.10 to the pushed standalone fork at exact revision
 `2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc`. The lane starts from integrated
 Woodshed commit `2c21326`, including the portable `hocket-project` extraction
@@ -143,3 +143,16 @@ migration is separately reportable from release publication or main merge.
   gate: 166 tests, one keeper-specific ignore, twelve offline production-graph
   cases, scoped engine Clippy and desktop/manual builds. Native qualification
   will use the follow-up source commit with this availability check.
+
+- **2026-10-11:** Committed consumer source `f5e0aed` passes five finite native
+  recorder/Tabard processes using the final provider `2b03846`: 19 reviewed
+  original captures, zero blanks and 178 presented frames. Both fresh authored
+  appearance reopens and the Save-before-Apply boundary pass. Native input
+  unavailability is explicit in the device-free recorder fixture. Source and
+  binary hashes, workspace tests, the original gain reproduction, build/lint
+  results and profile fixtures are retained in the
+  [consumer receipt](receipts/firewheel_20261011/README.md). This accepts F3a/F3b
+  and the bounded native portion of F3c. Physical input/output, permissions,
+  audible replay, device restart, mixed-rate input capability and latency
+  calibration remain open; no physical manual demo or native project-file
+  persistence is claimed.

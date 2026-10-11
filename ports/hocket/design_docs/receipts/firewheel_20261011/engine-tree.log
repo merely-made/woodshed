@@ -1,0 +1,214 @@
+hocket-engine v0.1.0 (/Users/markik/Code/worktrees/hocket-firewheel-f3-20261011/ports/hocket/crates/hocket-engine)
+├── audio-primitives v0.1.0 (/Users/markik/Code/worktrees/hocket-firewheel-f3-20261011/crates/audio-primitives)
+├── firewheel v0.14.0 (https://github.com/mark-ik/firewheel.git?rev=2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc#2b03846d)
+│   ├── firewheel-core v0.14.0 (https://github.com/mark-ik/firewheel.git?rev=2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc#2b03846d)
+│   │   ├── arrayvec v0.7.8
+│   │   ├── audioadapter v5.0.0
+│   │   ├── audioadapter-buffers v5.2.0
+│   │   │   ├── audioadapter v5.0.0
+│   │   │   ├── audioadapter-sample v5.2.0
+│   │   │   │   ├── audio-codec-algorithms v0.8.1
+│   │   │   │   └── num-traits v0.2.19
+│   │   │   │       [build-dependencies]
+│   │   │   │       └── autocfg v1.5.1
+│   │   │   └── num-traits v0.2.19 (*)
+│   │   ├── audioadapter-sample v5.2.0 (*)
+│   │   ├── bevy_platform v0.19.1
+│   │   │   ├── foldhash v0.2.0
+│   │   │   ├── hashbrown v0.16.1
+│   │   │   │   └── equivalent v1.0.2
+│   │   │   └── spin v0.10.1
+│   │   ├── bitflags v2.13.0
+│   │   ├── firewheel-macros v0.14.0 (proc-macro) (https://github.com/mark-ik/firewheel.git?rev=2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc#2b03846d)
+│   │   │   ├── bevy_macro_utils v0.19.1
+│   │   │   │   ├── proc-macro2 v1.0.106
+│   │   │   │   │   └── unicode-ident v1.0.24
+│   │   │   │   ├── quote v1.0.46
+│   │   │   │   │   └── proc-macro2 v1.0.106 (*)
+│   │   │   │   ├── syn v2.0.118
+│   │   │   │   │   ├── proc-macro2 v1.0.106 (*)
+│   │   │   │   │   ├── quote v1.0.46 (*)
+│   │   │   │   │   └── unicode-ident v1.0.24
+│   │   │   │   └── toml_edit v0.25.12+spec-1.1.0
+│   │   │   │       ├── indexmap v2.14.0
+│   │   │   │       │   ├── equivalent v1.0.2
+│   │   │   │       │   └── hashbrown v0.17.1
+│   │   │   │       ├── toml_datetime v1.1.1+spec-1.1.0
+│   │   │   │       ├── toml_parser v1.1.2+spec-1.1.0
+│   │   │   │       │   └── winnow v1.0.4
+│   │   │   │       └── winnow v1.0.4
+│   │   │   ├── proc-macro2 v1.0.106 (*)
+│   │   │   ├── quote v1.0.46 (*)
+│   │   │   ├── syn v2.0.118 (*)
+│   │   │   └── toml_edit v0.23.10+spec-1.0.0
+│   │   │       ├── indexmap v2.14.0 (*)
+│   │   │       ├── toml_datetime v0.7.5+spec-1.1.0
+│   │   │       ├── toml_parser v1.1.2+spec-1.1.0 (*)
+│   │   │       └── winnow v0.7.15
+│   │   ├── num-traits v0.2.19 (*)
+│   │   ├── portable-atomic v1.13.1
+│   │   ├── ringbuf v0.5.3
+│   │   │   ├── crossbeam-utils v0.8.22
+│   │   │   ├── portable-atomic v1.13.1
+│   │   │   └── portable-atomic-util v0.2.7
+│   │   │       └── portable-atomic v1.13.1
+│   │   ├── smallvec v1.15.2
+│   │   ├── thiserror v2.0.18
+│   │   │   └── thiserror-impl v2.0.18 (proc-macro)
+│   │   │       ├── proc-macro2 v1.0.106 (*)
+│   │   │       ├── quote v1.0.46 (*)
+│   │   │       └── syn v2.0.118 (*)
+│   │   └── thunderdome v0.6.1
+│   ├── firewheel-cpal v0.14.0 (https://github.com/mark-ik/firewheel.git?rev=2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc#2b03846d)
+│   │   ├── audioadapter-buffers v5.2.0 (*)
+│   │   ├── bevy_platform v0.19.1 (*)
+│   │   ├── cpal v0.18.2
+│   │   │   ├── coreaudio-rs v0.14.2
+│   │   │   │   ├── bitflags v2.13.0
+│   │   │   │   ├── libc v0.2.186
+│   │   │   │   ├── objc2-audio-toolbox v0.3.2
+│   │   │   │   │   ├── bitflags v2.13.0
+│   │   │   │   │   ├── libc v0.2.186
+│   │   │   │   │   ├── objc2 v0.6.4
+│   │   │   │   │   │   └── objc2-encode v4.1.0
+│   │   │   │   │   ├── objc2-core-audio v0.3.2
+│   │   │   │   │   │   ├── objc2 v0.6.4 (*)
+│   │   │   │   │   │   ├── objc2-core-audio-types v0.3.2
+│   │   │   │   │   │   │   ├── bitflags v2.13.0
+│   │   │   │   │   │   │   └── objc2 v0.6.4 (*)
+│   │   │   │   │   │   ├── objc2-core-foundation v0.3.2
+│   │   │   │   │   │   │   ├── bitflags v2.13.0
+│   │   │   │   │   │   │   ├── block2 v0.6.2
+│   │   │   │   │   │   │   │   └── objc2 v0.6.4 (*)
+│   │   │   │   │   │   │   ├── dispatch2 v0.3.1
+│   │   │   │   │   │   │   │   ├── bitflags v2.13.0
+│   │   │   │   │   │   │   │   └── objc2 v0.6.4 (*)
+│   │   │   │   │   │   │   ├── libc v0.2.186
+│   │   │   │   │   │   │   └── objc2 v0.6.4 (*)
+│   │   │   │   │   │   └── objc2-foundation v0.3.2
+│   │   │   │   │   │       ├── bitflags v2.13.0
+│   │   │   │   │   │       └── objc2 v0.6.4 (*)
+│   │   │   │   │   ├── objc2-core-audio-types v0.3.2 (*)
+│   │   │   │   │   ├── objc2-core-foundation v0.3.2 (*)
+│   │   │   │   │   └── objc2-foundation v0.3.2 (*)
+│   │   │   │   ├── objc2-core-audio v0.3.2 (*)
+│   │   │   │   ├── objc2-core-audio-types v0.3.2 (*)
+│   │   │   │   └── objc2-core-foundation v0.3.2 (*)
+│   │   │   ├── dasp_sample v0.11.0
+│   │   │   ├── mach2 v0.6.0
+│   │   │   ├── objc2 v0.6.4 (*)
+│   │   │   ├── objc2-audio-toolbox v0.3.2 (*)
+│   │   │   ├── objc2-core-audio v0.3.2 (*)
+│   │   │   ├── objc2-core-audio-types v0.3.2 (*)
+│   │   │   ├── objc2-core-foundation v0.3.2 (*)
+│   │   │   └── objc2-foundation v0.3.2 (*)
+│   │   ├── firewheel-core v0.14.0 (https://github.com/mark-ik/firewheel.git?rev=2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc#2b03846d) (*)
+│   │   ├── firewheel-graph v0.14.0 (https://github.com/mark-ik/firewheel.git?rev=2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc#2b03846d)
+│   │   │   ├── arrayvec v0.7.8
+│   │   │   ├── audioadapter v5.0.0
+│   │   │   ├── bevy_platform v0.19.1 (*)
+│   │   │   ├── bitflags v2.13.0
+│   │   │   ├── firewheel-core v0.14.0 (https://github.com/mark-ik/firewheel.git?rev=2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc#2b03846d) (*)
+│   │   │   ├── num-traits v0.2.19 (*)
+│   │   │   ├── ringbuf v0.5.3 (*)
+│   │   │   ├── smallvec v1.15.2
+│   │   │   ├── thiserror v2.0.18 (*)
+│   │   │   ├── thunderdome v0.6.1
+│   │   │   ├── tracing v0.1.44
+│   │   │   │   ├── pin-project-lite v0.2.17
+│   │   │   │   ├── tracing-attributes v0.1.31 (proc-macro)
+│   │   │   │   │   ├── proc-macro2 v1.0.106 (*)
+│   │   │   │   │   ├── quote v1.0.46 (*)
+│   │   │   │   │   └── syn v2.0.118 (*)
+│   │   │   │   └── tracing-core v0.1.36
+│   │   │   │       └── once_cell v1.21.4
+│   │   │   └── triple_buffer v9.0.0
+│   │   │       └── crossbeam-utils v0.8.22
+│   │   ├── fixed-resample v0.13.0
+│   │   │   ├── audioadapter v5.0.0
+│   │   │   ├── audioadapter-buffers v5.2.0 (*)
+│   │   │   ├── ringbuf v0.5.3 (*)
+│   │   │   └── rubato v5.0.1
+│   │   │       ├── audioadapter v5.0.0
+│   │   │       ├── audioadapter-buffers v5.2.0 (*)
+│   │   │       ├── num-complex v0.4.6
+│   │   │       │   └── num-traits v0.2.19 (*)
+│   │   │       ├── num-integer v0.1.46
+│   │   │       │   └── num-traits v0.2.19 (*)
+│   │   │       ├── num-traits v0.2.19 (*)
+│   │   │       ├── realfft v3.5.0
+│   │   │       │   └── rustfft v6.4.1
+│   │   │       │       ├── num-complex v0.4.6 (*)
+│   │   │       │       ├── num-integer v0.1.46 (*)
+│   │   │       │       ├── num-traits v0.2.19 (*)
+│   │   │       │       ├── primal-check v0.3.4
+│   │   │       │       │   └── num-integer v0.1.46 (*)
+│   │   │       │       ├── strength_reduce v0.2.4
+│   │   │       │       └── transpose v0.2.3
+│   │   │       │           ├── num-integer v0.1.46 (*)
+│   │   │       │           └── strength_reduce v0.2.4
+│   │   │       ├── visibility v0.1.1 (proc-macro)
+│   │   │       │   ├── proc-macro2 v1.0.106 (*)
+│   │   │       │   ├── quote v1.0.46 (*)
+│   │   │       │   └── syn v2.0.118 (*)
+│   │   │       └── windowfunctions v0.1.1
+│   │   │           └── num-traits v0.2.19 (*)
+│   │   ├── thiserror v2.0.18 (*)
+│   │   └── tracing v0.1.44 (*)
+│   ├── firewheel-graph v0.14.0 (https://github.com/mark-ik/firewheel.git?rev=2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc#2b03846d) (*)
+│   ├── firewheel-nodes v0.14.0 (https://github.com/mark-ik/firewheel.git?rev=2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc#2b03846d)
+│   │   ├── audioadapter v5.0.0
+│   │   ├── audioadapter-buffers v5.2.0 (*)
+│   │   ├── bevy_platform v0.19.1 (*)
+│   │   ├── firewheel-core v0.14.0 (https://github.com/mark-ik/firewheel.git?rev=2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc#2b03846d) (*)
+│   │   ├── fixed-resample v0.13.0 (*)
+│   │   ├── num-traits v0.2.19 (*)
+│   │   ├── ringbuf v0.5.3 (*)
+│   │   ├── smallvec v1.15.2
+│   │   ├── thiserror v2.0.18 (*)
+│   │   └── triple_buffer v9.0.0 (*)
+│   ├── firewheel-symphonium v0.14.0 (https://github.com/mark-ik/firewheel.git?rev=2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc#2b03846d)
+│   │   ├── bevy_platform v0.19.1 (*)
+│   │   ├── firewheel-core v0.14.0 (https://github.com/mark-ik/firewheel.git?rev=2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc#2b03846d) (*)
+│   │   └── symphonium v0.13.0
+│   │       ├── symphonia v0.6.1
+│   │       │   ├── lazy_static v1.5.0
+│   │       │   ├── symphonia-core v0.6.1
+│   │       │   │   ├── bitflags v2.13.0
+│   │       │   │   ├── bytemuck v1.25.1
+│   │       │   │   ├── lazy_static v1.5.0
+│   │       │   │   ├── log v0.4.33
+│   │       │   │   ├── num-complex v0.4.6 (*)
+│   │       │   │   └── smallvec v1.15.2
+│   │       │   └── symphonia-metadata v0.6.1
+│   │       │       ├── lazy_static v1.5.0
+│   │       │       ├── log v0.4.33
+│   │       │       ├── regex-lite v0.1.9
+│   │       │       ├── smallvec v1.15.2
+│   │       │       └── symphonia-core v0.6.1 (*)
+│   │       └── tracing v0.1.44 (*)
+│   └── thiserror v2.0.18 (*)
+└── hocket-model v0.1.0 (/Users/markik/Code/worktrees/hocket-firewheel-f3-20261011/ports/hocket/crates/hocket-model)
+    ├── ciborium v0.2.2
+    │   ├── ciborium-io v0.2.2
+    │   ├── ciborium-ll v0.2.2
+    │   │   ├── ciborium-io v0.2.2
+    │   │   └── half v2.7.1
+    │   │       ├── cfg-if v1.0.4
+    │   │       └── zerocopy v0.8.54
+    │   │           └── zerocopy-derive v0.8.54 (proc-macro)
+    │   │               ├── proc-macro2 v1.0.106 (*)
+    │   │               ├── quote v1.0.46 (*)
+    │   │               └── syn v2.0.118 (*)
+    │   └── serde v1.0.228
+    │       ├── serde_core v1.0.228
+    │       └── serde_derive v1.0.228 (proc-macro)
+    │           ├── proc-macro2 v1.0.106 (*)
+    │           ├── quote v1.0.46 (*)
+    │           └── syn v2.0.118 (*)
+    ├── serde v1.0.228 (*)
+    └── uuid v1.23.5
+        ├── getrandom v0.4.3
+        │   ├── cfg-if v1.0.4
+        │   └── libc v0.2.186
+        └── serde_core v1.0.228
