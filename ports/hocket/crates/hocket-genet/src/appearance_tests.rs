@@ -13,6 +13,10 @@ use taproot::Selector;
 type Host = Harness<AppState, Logic, Child>;
 
 fn mounted(dir: &tempfile::TempDir) -> Host {
+    mounted_with_runtime(dir, Rc::new(RefCell::new(Runtime::new(None))))
+}
+
+pub(super) fn mounted_with_runtime(dir: &tempfile::TempDir, runtime: Rc<RefCell<Runtime>>) -> Host {
     let wake: armillary::Wake = Arc::new(|| {});
     let (project, _) = armillary::spawn::<
         crate::project_io::ProjectCommand,
@@ -37,7 +41,6 @@ fn mounted(dir: &tempfile::TempDir) -> Host {
         vec![],
     );
     let sheet = state.appearance.take_stylesheet_change().unwrap();
-    let runtime = Rc::new(RefCell::new(Runtime::new(None)));
     let mut host = Harness::with_hooks(
         Init {
             state,

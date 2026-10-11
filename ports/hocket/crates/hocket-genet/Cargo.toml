@@ -5,7 +5,7 @@ edition.workspace = true
 license.workspace = true
 authors.workspace = true
 repository.workspace = true
-description = "Hocket's genet desktop host: winit window + netrender present over the genet view layer. Genet-host refactor S0+."
+description = "Hocket's recorder and appearance views on the shared Cambium desktop host."
 
 # Packaging (2026-07-24 auto-update plan). `cargo packager` builds the
 # installers luggage then updates from: NSIS on Windows, .app on macOS,
@@ -62,10 +62,7 @@ genet-clipboard = { workspace = true }
 taproot = { workspace = true }
 mere-surface-api = { workspace = true }
 workbench = { workspace = true }
-image = { workspace = true }
-netrender = { workspace = true }
 paint_list_api = { workspace = true }
-wgpu = { workspace = true }
 muniment = { workspace = true, features = ["zip"] }
 armillary = { workspace = true }
 personae = { workspace = true }

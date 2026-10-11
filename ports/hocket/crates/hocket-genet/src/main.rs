@@ -130,6 +130,8 @@ fn drain_worker_updates(ctx: &mut AppCtx<'_, AppState, Logic, Child>, runtime: &
 fn hooks(runtime: &Rc<RefCell<Runtime>>) -> HostHooks<AppState, Logic, Child> {
     let frame_runtime = runtime.clone();
     let scenario_runtime = runtime.clone();
+    let dispatch_runtime = runtime.clone();
+    let close_runtime = runtime.clone();
     HostHooks {
         // Firewheel's meter/capture promotion and Hocket's custom leaves are
         // live frame work, so retain the original 60 fps tick policy.
@@ -148,7 +150,12 @@ fn hooks(runtime: &Rc<RefCell<Runtime>>) -> HostHooks<AppState, Logic, Child> {
             }
             true
         }),
-        after_dispatch: Box::new(appearance_dispatch),
+        after_dispatch: Box::new(move |ctx| {
+            appearance_dispatch(ctx);
+            if *ctx.close && defer_scenario_close(&dispatch_runtime) {
+                *ctx.close = false;
+            }
+        }),
         after_frame: Box::new(move |ctx| {
             let mut runtime = scenario_runtime.borrow_mut();
             let Some(mut run) = runtime.scenario.take() else {
@@ -158,7 +165,7 @@ fn hooks(runtime: &Rc<RefCell<Runtime>>) -> HostHooks<AppState, Logic, Child> {
             runtime.scenario = Some(run);
         }),
         after_wake: Box::new(|_ctx| {}),
-        close_request: Box::new(|ctx, _request| {
+        close_request: Box::new(move |ctx, _request| {
             let mut allow = true;
             ctx.runner.update(|state| {
                 if state.appearance.editor_open {
@@ -166,7 +173,7 @@ fn hooks(runtime: &Rc<RefCell<Runtime>>) -> HostHooks<AppState, Logic, Child> {
                     allow = state.appearance.workshop.request_close();
                 }
             });
-            if allow {
+            if allow && !defer_scenario_close(&close_runtime) {
                 CloseDisposition::Exit
             } else {
                 CloseDisposition::KeepVisible
@@ -203,6 +210,18 @@ fn hooks(runtime: &Rc<RefCell<Runtime>>) -> HostHooks<AppState, Logic, Child> {
         }),
         key_intercept: Box::new(|_runner, _press| false),
     }
+}
+
+/// An accepted close still owes the scenario's pending pixels and outcome.
+/// Mesquite marks unfinished scenarios interrupted and closes after readback.
+/// Appearance cancellation reaches neither this function nor that interruption.
+fn defer_scenario_close(runtime: &Rc<RefCell<Runtime>>) -> bool {
+    let mut runtime = runtime.borrow_mut();
+    let Some(lane) = runtime.scenario.as_mut().filter(|lane| !lane.finished()) else {
+        return false;
+    };
+    lane.request_close();
+    true
 }
 
 fn appearance_dispatch(ctx: &mut AppCtx<'_, AppState, Logic, Child>) {

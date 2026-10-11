@@ -11,6 +11,11 @@ before any other doc in this directory.
 
 ## Active Plans
 
+- [2026-10-11_host_acceptance_plan.md](2026-10-11_host_acceptance_plan.md) —
+  **In progress.** Tightens existing Mesquite close/readback and project-worker
+  boundaries, removes unused capture dependencies, and makes the manual audio
+  demo explicit and unsuccessful when execution fails.
+
 - [2026-05-18_initial_plan.md](2026-05-18_initial_plan.md) — Initial
   scaffold, workspace skeleton, and feature-target ladder from
   click-track engine through P2P session hand-off.
@@ -125,6 +130,9 @@ before any other doc in this directory.
 ## Working Principles for AI Assistants
 
 - **Appearance is presentation, separate from recorder truth.** Use Tabard, Tinct, the shared workshop/native binding and Cambium title bar. Save registers a definition; explicit Apply alone replaces the installed snapshot, including same-identity edits. Mesquite owns native scenario and capture behavior.
+- **Accepted close preserves scenario evidence.** An unfinished Mesquite lane
+  receives `request_close` and finishes its queued readback and interrupted
+  receipt before the host exits. Dirty-close cancellation keeps the lane live.
 
 These principles apply to AI-assisted work on this project. Update this
 section whenever a durable working insight emerges from a session.

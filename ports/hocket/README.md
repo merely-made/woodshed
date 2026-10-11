@@ -45,14 +45,21 @@ settings are session settings, not fixed limits.
 
 ```sh
 cargo run -p hocket-genet      # desktop app
-cargo run -p hocket-headless   # scripted engine harness
+cargo run -p hocket-headless -- --run # manual microphone/output demo
 cargo test -p hocket-model
 cargo test -p hocket-engine
 ```
 
-Building needs a sibling `../genet` checkout for the `[patch.crates-io]` path
-entries; the other family dependencies resolve as git dependencies. Release
-cutting is documented in `design_docs/RELEASING.md`.
+The headless demo opens real default audio devices for about twelve seconds.
+Use headphones or turn the speakers down to avoid feedback. It requires
+explicit `--run`; `--help` and an invocation without arguments only describe
+the demonstration. Missing hardware, engine errors or capture that never
+completes produce a nonzero exit. A successful run reports completed capture
+and queued replay, while audibility and musical timing still need a person's
+review. It is a manual demonstration, not an automated hardware acceptance gate.
+
+The committed lockfile resolves the pinned family Git dependencies without
+sibling checkouts. Release cutting is documented in `design_docs/RELEASING.md`.
 
 ## License
 
