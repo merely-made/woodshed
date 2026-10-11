@@ -271,3 +271,11 @@ repeats native appearance and connected Set/preview/Looper reopening. Ringdown's
 independent gate must also remain passing. Native captures, hardware/audio
 observations, keeper admission and publication are recorded separately; old
 consumer receipts do not qualify the new renderer.
+
+- The first current-family Set native seed reached 110 presented frames and
+  three nonblank captures, with encrypted session/settings written through an
+  isolated production Djinn Keeper. It failed its Once assertion: the fixture's
+  substring selector for Loop matched Loop this Set. The Set repeat control now
+  exposes its own action identity; the mounted-host clock test checks that
+  identity changes both the preference and admitted plan. The failed attempt
+  remains evidence, and a new isolated seed/reopen must pass before acceptance.
