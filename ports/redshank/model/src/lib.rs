@@ -12,6 +12,8 @@ pub struct ItemId(pub String);
 #[serde(transparent)]
 pub struct AnnotationId(pub String);
 
+pub mod selected_export;
+
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 pub struct SavedTranscript {
     pub resource: FeedTranscript,
