@@ -23,8 +23,11 @@ source hashes are retained here. The initial CI lane separately qualifies
 actionlint, shell syntax and eight real PowerShell release-tag fixture cases
 in [its receipt](../ci/README.md). The provider's exact-head GitHub Actions pass
 Linux/macOS/Windows standalone streams, full tests, formatting and docs;
-`firewheel-pr-status-final.json` retains that observation. Consumer PR Actions
-are a separate gate, not inferred from local success.
+`firewheel-pr-status-final.json` retains that historical observation. The
+maintainer subsequently removed GitHub workflows and the default PR review
+step. Local validation is the continuing gate; the foundation is published
+directly to both repositories' main branches. No additional Actions result is
+required or inferred.
 
 Native proof is source-specific:
 
@@ -50,4 +53,5 @@ companion PCM, WAV export, mixed material and one output clock without callback
 mutexes or recording allocations still need implementation and acceptance.
 Hocket native project/handoff custody, Redshank Turnstone and its ruled repo
 extraction, Windows/Linux native presentation and release publication remain
-separate gates. No main merge or release tag is part of this receipt.
+separate gates. Direct main publication follows these recorded source checks;
+release tagging is a separate action.

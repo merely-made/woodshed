@@ -83,6 +83,20 @@ repository proximity does not authorize direct port-to-port dependencies.
 
 ## Workspace tooling
 
+Development is rapid prototyping toward a shape the maintainer can evaluate.
+Canonical plans and source carry decisions and next steps; do not maintain
+pull requests or issues as a duplicate execution frontier. Do not add GitHub
+Actions workflows. Commit and push directly to `main` after refreshing remote
+state and preserving concurrent work; open a pull request only when the
+maintainer explicitly requests one.
+
+Use focused local checks to answer concrete questions about a change.
+`scripts/validate-workspace.sh` is available for relevant workspace checks,
+not a mandatory full-suite gate for every interim commit. Reserve broader
+conformance and automation for behavior intentionally stabilized for
+evaluation. Keep existing native/device evidence tied to its source and do
+not claim acceptance that has not been observed.
+
 sem and weave are wired into this repo. Both are described once in
 `Code/CLAUDE.md`, which loads for any session at or below `Code`.
 

@@ -12,13 +12,12 @@ environment. The theory model supports arbitrary string counts and tunings.
   <sub>Stage: inspect a playable chord across the neck, then stage related practice material.</sub>
 </p>
 
-## Status (2026-09-30)
+## Status (2026-10-11)
 
-Desktop alpha with macOS, Linux, and Windows host CI. Source builds are the
-supported way to try it. Manual workflows have produced checksummed macOS app
-and Linux portable archives; the Windows tag workflow can publish a portable
-ZIP. No public GitHub release is currently recorded. A downloadable candidate
-needs packaging and extracted-app validation at its exact revision. Signing,
+Desktop alpha. Source builds are the supported way to try it. Local packaging
+scripts produce checksummed macOS app, Linux portable, and Windows ZIP archives.
+A downloadable candidate needs packaging and extracted-app validation at its
+exact revision. Signing,
 notarization where applicable, third-party notices, and installer work remain
 part of broader release preparation.
 
@@ -48,8 +47,8 @@ part of broader release preparation.
 
 Current plans and completed records are indexed in
 [design_docs/](design_docs/DOC_README.md). The release baseline is a clean
-locked checkout, green scoped CPU and Windows-host CI, and a checksummed tagged
-ZIP.
+locked checkout, passing local CPU and intended-platform host checks, and a
+checksummed package validated after extraction.
 That baseline is not the 1.0 product proof. The 1.0 claim requires one
 persisted practice flow that connects musical material, a playable instrument
 route, honest practice history, and an intelligible next step.
@@ -87,7 +86,7 @@ revision Mere uses, without local sibling checkouts. A gitignored
 development, but it is optional development plumbing rather than part of the
 release graph.
 
-CI independently checks the lockfile and scoped CPU tests for each workspace.
+Run the local lockfile and scoped CPU checks independently for each workspace.
 `scripts/validate-workspace.sh <lockfile|test> <workspace>` runs from a temporary
 directory outside repository Cargo configuration, using the selected workspace's
 toolchain or the root toolchain when the port has none. It preserves each
@@ -96,14 +95,14 @@ or `ringdown`:
 
 | Workspace | CPU-test scope |
 | --- | --- |
-| Woodshed | Theory, DSP, timed text, audio, core, graph, views, and portable instrument state |
-| Hocket | Model, portable project/media operations, engine, and desktop-host unit tests |
+| Woodshed | Theory, DSP, timed text, audio, core, graph, views, portable instrument state, and desktop application tests |
+| Hocket | Model, portable project/media operations, engine, desktop-host unit tests, and device-free manual CLI tests |
 | Redshank | Model, storage, cache, feeds, playback, surfaces, and desktop-host unit tests |
 | Ringdown | Protocol, client, BLE helpers, and probe unit tests |
 
 Linux builds need ALSA, Fontconfig, D-Bus development headers, and `pkg-config`
 (`libasound2-dev libfontconfig1-dev libdbus-1-dev pkg-config` on Ubuntu).
-These jobs run the suites with their default ignored-test policy; they do not
+These commands run the suites with their default ignored-test policy; they do not
 open audio/Bluetooth devices or qualify native capture, fresh-process reopen,
 or hardware behavior. Those acceptance lanes retain their explicit fixtures
 and device requirements.
@@ -116,12 +115,11 @@ portable archive packaging, with host library requirements. See the
 for the remaining validation and catalog roadmap.
 
 Release tags are product-qualified: `woodshed-v*`, `hocket-v*`, `redshank-v*`,
-and `ringdown-v*`. The Windows release workflow packages Woodshed only for
-`woodshed-v<version>` tags; it strips that product prefix before passing the
-version to the packager. Manual dispatch on a branch produces a manual alpha
-artifact, while manual dispatch on another product's tag is skipped. The macOS
-and Linux packaging workflows remain manual. A port's tag does not admit a
-Woodshed package or change a port's independently managed updater feed.
+and `ringdown-v*`. Packaging is an explicit local command with a version
+argument; a port's tag does not admit a Woodshed package or change a port's
+independently managed updater feed. This repository has no GitHub Actions
+workflows. Qualified changes are committed and pushed directly to `main`;
+pull requests are used only when the maintainer asks for one.
 
 ## License
 
