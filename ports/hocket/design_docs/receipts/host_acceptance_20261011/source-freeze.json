@@ -1,0 +1,25 @@
+{
+  "source_commit": "9dc042f03d862ac71cf53d9a144f26e22d16d1a0",
+  "binary_sha256": "b070337242d37e0b8576962353b9a41226ed37edb76b43bad0fd5c6ac2f402c5",
+  "files": {
+    "ports/hocket/Cargo.toml": "dc30e2eb3e0628b954bff350cd5140bc100b9cb817188f327913c083c2b42eba",
+    "ports/hocket/Cargo.lock": "2c620a95da013a60fc765f88e3c85126c5539f5664a6f56e064aa26111345657",
+    "ports/hocket/crates/hocket-genet/src/appearance_view.rs": "980597dae6289f5e38badc5e8aacb2e08b8f1ba4b17e3283640b12eb23211386",
+    "ports/hocket/crates/hocket-genet/src/theme.rs": "4edbedf8efb816a092ada8e9e4c58b430e42962e949385d00eae6675c4ab8607",
+    "ports/hocket/crates/hocket-genet/src/update.rs": "236fc0a9bb4b43fe430e16dfa7f05e828b8efa120efe170752e7754851a2b424",
+    "ports/hocket/crates/hocket-genet/src/identity.rs": "2b787ec7801cb3324d90164036b2f0b87e6f4e4b9afba9942f02bcb9f78133dc",
+    "ports/hocket/crates/hocket-genet/src/appearance.rs": "8c9263a8d05a06df336fe52bb2b2c02b89e7e0d5b25ac6fb6768d41754c9ec99",
+    "ports/hocket/crates/hocket-genet/src/state.rs": "d05416f4101cfd7d7ba45a2f5eac7e755e30441106eed49abae59b71840936a5",
+    "ports/hocket/crates/hocket-genet/src/main.rs": "ae9334b831cfb2baa21d261739643c9512adc55ab5cf782db6736c17ed4698b6",
+    "ports/hocket/crates/hocket-genet/src/project_io.rs": "256b32125a4c1cf63a3463ef4a9e5e044802c7426e99441521109c7a3227aae5",
+    "ports/hocket/crates/hocket-genet/src/leaves.rs": "bf2e97dd8322f8109e114f3545242efd1d430603ed8090328a9954417a3f79c4",
+    "ports/hocket/crates/hocket-genet/src/scenario.rs": "fbf3c832c39fbf19f5ee168cc469616d448272532fed6a3de5cc1ea403f5abc4",
+    "ports/hocket/crates/hocket-genet/src/appearance_tests.rs": "50b371e8753e40049a8ab0a2b2a02240d19f9fcd8c0a34f6d2e974fbdff43ebf",
+    "ports/hocket/crates/hocket-genet/src/view.rs": "8fdfcf71b059bc8ac616d6d4fc0bf2fa946b162822b6e12a9e9020d303278bb1",
+    "ports/hocket/crates/hocket-genet/src/update/velopack_transport.rs": "8de3a6fc3b0f148bd8a61bf7118953c916c29226ede8bbea33a5bfd3d20153cb",
+    "ports/hocket/crates/hocket-genet/src/update/worker.rs": "dc460e39c96597441d04a19e5d7cb5d72df5ec1136b84556a0dcbc7fb68374ce",
+    "ports/hocket/crates/hocket-genet/src/update/luggage_transport.rs": "c2d52ab08a3ab738150858633ae5e2777554b57e9c6f63879d32f4e19ea7aa88",
+    "ports/hocket/crates/hocket-genet/src/update/cli.rs": "2d290a9b19317511a2755d1a005ab344bd22633f0fc0098be1db4c24f883dc0c",
+    "ports/hocket/crates/hocket-headless/src/main.rs": "9a3eee1bccf0af91acf808ccee36c64297e020fca4977403389d27ef647a9aec"
+  }
+}

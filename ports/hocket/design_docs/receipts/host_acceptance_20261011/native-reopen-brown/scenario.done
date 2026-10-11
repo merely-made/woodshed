@@ -1,0 +1,7 @@
+RESULT ok
+captured recorder_reopened
+captured appearance_reopened
+capture recorder_reopened 2360x1400 digest=aeeac856b0cbe6c9 file=/Users/markik/Code/testing/hocket-host-f1-20261011/native-reopen-brown/recorder_reopened.png
+capture appearance_reopened 2360x1400 digest=1e1da472f3f27f2f file=/Users/markik/Code/testing/hocket-host-f1-20261011/native-reopen-brown/appearance_reopened.png
+frames: 2 captured, 0 blank, 2 distinct digests
+presentation: 13 frames, 14 redraws, 1 unpresented redraws
