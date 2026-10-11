@@ -28,7 +28,11 @@ before any other doc in this directory.
   Woodshed root/Hocket pins and concurrent transcript work remain independently owned.
 
 - [2026-09-09_audio_ports_rehome_plan.md](2026-09-09_audio_ports_rehome_plan.md)
-  — **Landed.** Hocket and Ringdown are history-preserving nested `ports/`
+  — **Rehome landed; October 11 consolidation in progress.** Coordinates
+  standalone Firewheel streaming, independently gated consumer migration,
+  CI/release boundaries, Hocket Mesquite adoption, bounded Redshank retention,
+  and the existing Set/Looper and portable product seams. Hocket and Ringdown
+  are history-preserving nested `ports/`
   workspaces with local dependency seams, independent release boundaries, and
   MPL-2.0 repository licensing. Their former repositories are archived with
   relocation notices; inherited family-format and Hocket-Clippy drift is
