@@ -25,6 +25,7 @@ jobs:
       - name: Build release binary
         run: cargo build --release -p woodshed-genet --locked
       - name: Package portable ZIP
+        id: package
         shell: pwsh
         run: |
           $ErrorActionPreference = 'Stop'
@@ -37,12 +38,13 @@ jobs:
             '0.1.0-alpha.0.manual'
           }
           .\scripts\package-windows.ps1 -Version $version
+          "version=$version" >> $env:GITHUB_OUTPUT
       - name: Publish GitHub release
         if: github.ref_type == 'tag'
         uses: softprops/action-gh-release@v2
         with:
           generate_release_notes: true
-          prerelease: ${{ contains(github.ref_name, '-') }}
+          prerelease: ${{ contains(steps.package.outputs.version, '-') }}
           files: |
             dist/*.zip
             dist/*.sha256
