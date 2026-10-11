@@ -386,7 +386,7 @@ dependencies = [
 [[package]]
 name = "armillary"
 version = "0.1.1"
-source = "git+https://github.com/merely-made/mere.git?rev=e95326dc08446a9256d3e340c63e571684afe697#e95326dc08446a9256d3e340c63e571684afe697"
+source = "git+https://github.com/merely-made/mere.git?rev=5758724e86fcccad4df526514741d74445074bf7#5758724e86fcccad4df526514741d74445074bf7"
 dependencies = [
  "tracing",
 ]
@@ -1181,7 +1181,7 @@ dependencies = [
 [[package]]
 name = "cambium"
 version = "0.3.3"
-source = "git+https://github.com/merely-made/mere.git?rev=e95326dc08446a9256d3e340c63e571684afe697#e95326dc08446a9256d3e340c63e571684afe697"
+source = "git+https://github.com/merely-made/mere.git?rev=5758724e86fcccad4df526514741d74445074bf7#5758724e86fcccad4df526514741d74445074bf7"
 dependencies = [
  "command-menu",
  "edit-history",
@@ -1200,7 +1200,7 @@ dependencies = [
 [[package]]
 name = "cambium-genet-web-host"
 version = "0.1.0"
-source = "git+https://github.com/merely-made/mere.git?rev=e95326dc08446a9256d3e340c63e571684afe697#e95326dc08446a9256d3e340c63e571684afe697"
+source = "git+https://github.com/merely-made/mere.git?rev=5758724e86fcccad4df526514741d74445074bf7#5758724e86fcccad4df526514741d74445074bf7"
 dependencies = [
  "accesskit",
  "cambium",
@@ -1221,7 +1221,7 @@ dependencies = [
 [[package]]
 name = "cambium-genet-winit-host"
 version = "0.1.0"
-source = "git+https://github.com/merely-made/mere.git?rev=e95326dc08446a9256d3e340c63e571684afe697#e95326dc08446a9256d3e340c63e571684afe697"
+source = "git+https://github.com/merely-made/mere.git?rev=5758724e86fcccad4df526514741d74445074bf7#5758724e86fcccad4df526514741d74445074bf7"
 dependencies = [
  "accesskit",
  "cambium",
@@ -1250,7 +1250,7 @@ dependencies = [
 [[package]]
 name = "cambium-rootstock"
 version = "0.1.0"
-source = "git+https://github.com/merely-made/mere.git?rev=e95326dc08446a9256d3e340c63e571684afe697#e95326dc08446a9256d3e340c63e571684afe697"
+source = "git+https://github.com/merely-made/mere.git?rev=5758724e86fcccad4df526514741d74445074bf7#5758724e86fcccad4df526514741d74445074bf7"
 dependencies = [
  "cambium",
  "cambium-winit",
@@ -1272,7 +1272,7 @@ dependencies = [
 [[package]]
 name = "cambium-winit"
 version = "0.3.0"
-source = "git+https://github.com/merely-made/mere.git?rev=e95326dc08446a9256d3e340c63e571684afe697#e95326dc08446a9256d3e340c63e571684afe697"
+source = "git+https://github.com/merely-made/mere.git?rev=5758724e86fcccad4df526514741d74445074bf7#5758724e86fcccad4df526514741d74445074bf7"
 dependencies = [
  "cambium",
  "web-time",
@@ -1282,7 +1282,7 @@ dependencies = [
 [[package]]
 name = "cambium-winit-a11y"
 version = "0.3.0"
-source = "git+https://github.com/merely-made/mere.git?rev=e95326dc08446a9256d3e340c63e571684afe697#e95326dc08446a9256d3e340c63e571684afe697"
+source = "git+https://github.com/merely-made/mere.git?rev=5758724e86fcccad4df526514741d74445074bf7#5758724e86fcccad4df526514741d74445074bf7"
 dependencies = [
  "accesskit",
  "cambium-rootstock",
@@ -1415,7 +1415,7 @@ dependencies = [
 [[package]]
 name = "chartulary"
 version = "0.2.2"
-source = "git+https://github.com/merely-made/mere.git?rev=e95326dc08446a9256d3e340c63e571684afe697#e95326dc08446a9256d3e340c63e571684afe697"
+source = "git+https://github.com/merely-made/mere.git?rev=5758724e86fcccad4df526514741d74445074bf7#5758724e86fcccad4df526514741d74445074bf7"
 dependencies = [
  "muniment",
  "petgraph",
@@ -1429,7 +1429,7 @@ dependencies = [
 [[package]]
 name = "chirograph"
 version = "0.0.2"
-source = "git+https://github.com/merely-made/mere.git?rev=e95326dc08446a9256d3e340c63e571684afe697#e95326dc08446a9256d3e340c63e571684afe697"
+source = "git+https://github.com/merely-made/mere.git?rev=5758724e86fcccad4df526514741d74445074bf7#5758724e86fcccad4df526514741d74445074bf7"
 dependencies = [
  "base64 0.22.1",
  "blake3",
@@ -1565,7 +1565,7 @@ dependencies = [
 [[package]]
 name = "command-menu"
 version = "0.1.0"
-source = "git+https://github.com/merely-made/mere.git?rev=e95326dc08446a9256d3e340c63e571684afe697#e95326dc08446a9256d3e340c63e571684afe697"
+source = "git+https://github.com/merely-made/mere.git?rev=5758724e86fcccad4df526514741d74445074bf7#5758724e86fcccad4df526514741d74445074bf7"
 dependencies = [
  "serde",
 ]
@@ -2292,7 +2292,7 @@ dependencies = [
 [[package]]
 name = "document-canvas"
 version = "0.1.0"
-source = "git+https://github.com/merely-made/mere.git?rev=e95326dc08446a9256d3e340c63e571684afe697#e95326dc08446a9256d3e340c63e571684afe697"
+source = "git+https://github.com/merely-made/mere.git?rev=5758724e86fcccad4df526514741d74445074bf7#5758724e86fcccad4df526514741d74445074bf7"
 dependencies = [
  "genet-parley",
  "inker",
@@ -2428,12 +2428,12 @@ dependencies = [
 [[package]]
 name = "edit-history"
 version = "0.1.0"
-source = "git+https://github.com/merely-made/mere.git?rev=e95326dc08446a9256d3e340c63e571684afe697#e95326dc08446a9256d3e340c63e571684afe697"
+source = "git+https://github.com/merely-made/mere.git?rev=5758724e86fcccad4df526514741d74445074bf7#5758724e86fcccad4df526514741d74445074bf7"
 
 [[package]]
 name = "eidetic"
 version = "0.0.2"
-source = "git+https://github.com/merely-made/mere.git?rev=e95326dc08446a9256d3e340c63e571684afe697#e95326dc08446a9256d3e340c63e571684afe697"
+source = "git+https://github.com/merely-made/mere.git?rev=5758724e86fcccad4df526514741d74445074bf7#5758724e86fcccad4df526514741d74445074bf7"
 dependencies = [
  "async-trait",
  "blake3",
@@ -2441,6 +2441,7 @@ dependencies = [
  "muniment",
  "serde",
  "serde_json",
+ "url",
 ]
 
 [[package]]
@@ -2593,7 +2594,7 @@ dependencies = [
 [[package]]
 name = "esp"
 version = "0.1.0"
-source = "git+https://github.com/merely-made/mere.git?rev=e95326dc08446a9256d3e340c63e571684afe697#e95326dc08446a9256d3e340c63e571684afe697"
+source = "git+https://github.com/merely-made/mere.git?rev=5758724e86fcccad4df526514741d74445074bf7#5758724e86fcccad4df526514741d74445074bf7"
 dependencies = [
  "serde",
 ]
@@ -3369,7 +3370,7 @@ dependencies = [
 [[package]]
 name = "graphshell"
 version = "0.0.2"
-source = "git+https://github.com/merely-made/mere.git?rev=e95326dc08446a9256d3e340c63e571684afe697#e95326dc08446a9256d3e340c63e571684afe697"
+source = "git+https://github.com/merely-made/mere.git?rev=5758724e86fcccad4df526514741d74445074bf7#5758724e86fcccad4df526514741d74445074bf7"
 dependencies = [
  "base64 0.22.1",
  "blake3",
@@ -3410,7 +3411,7 @@ dependencies = [
 [[package]]
 name = "graphshell-client"
 version = "0.0.2"
-source = "git+https://github.com/merely-made/mere.git?rev=e95326dc08446a9256d3e340c63e571684afe697#e95326dc08446a9256d3e340c63e571684afe697"
+source = "git+https://github.com/merely-made/mere.git?rev=5758724e86fcccad4df526514741d74445074bf7#5758724e86fcccad4df526514741d74445074bf7"
 dependencies = [
  "chirograph",
  "sceno",
@@ -3422,7 +3423,7 @@ dependencies = [
 [[package]]
 name = "graphshell-endpoint"
 version = "0.0.2"
-source = "git+https://github.com/merely-made/mere.git?rev=e95326dc08446a9256d3e340c63e571684afe697#e95326dc08446a9256d3e340c63e571684afe697"
+source = "git+https://github.com/merely-made/mere.git?rev=5758724e86fcccad4df526514741d74445074bf7#5758724e86fcccad4df526514741d74445074bf7"
 dependencies = [
  "chirograph",
  "serde_json",
@@ -4053,7 +4054,7 @@ dependencies = [
 [[package]]
 name = "illume"
 version = "0.0.2"
-source = "git+https://github.com/merely-made/mere.git?rev=e95326dc08446a9256d3e340c63e571684afe697#e95326dc08446a9256d3e340c63e571684afe697"
+source = "git+https://github.com/merely-made/mere.git?rev=5758724e86fcccad4df526514741d74445074bf7#5758724e86fcccad4df526514741d74445074bf7"
 dependencies = [
  "jotdown",
  "logos",
@@ -4100,7 +4101,7 @@ checksum = "6e44b0a4eaa4c82f441d50a963f2d5f05a787240aeee097597033e72accfd22f"
 [[package]]
 name = "incipit"
 version = "0.2.0"
-source = "git+https://github.com/merely-made/mere.git?rev=e95326dc08446a9256d3e340c63e571684afe697#e95326dc08446a9256d3e340c63e571684afe697"
+source = "git+https://github.com/merely-made/mere.git?rev=5758724e86fcccad4df526514741d74445074bf7#5758724e86fcccad4df526514741d74445074bf7"
 dependencies = [
  "serde",
  "uuid",
@@ -4130,7 +4131,7 @@ dependencies = [
 [[package]]
 name = "inker"
 version = "0.1.1"
-source = "git+https://github.com/merely-made/mere.git?rev=e95326dc08446a9256d3e340c63e571684afe697#e95326dc08446a9256d3e340c63e571684afe697"
+source = "git+https://github.com/merely-made/mere.git?rev=5758724e86fcccad4df526514741d74445074bf7#5758724e86fcccad4df526514741d74445074bf7"
 dependencies = [
  "accesskit",
  "document-session-api",
@@ -5040,7 +5041,7 @@ checksum = "4050469837a6ff301cd14c1f8f24f88549e6d548f24f64e2148eb0f72cebc51f"
 [[package]]
 name = "luggage"
 version = "0.1.0"
-source = "git+https://github.com/merely-made/mere.git?rev=e95326dc08446a9256d3e340c63e571684afe697#e95326dc08446a9256d3e340c63e571684afe697"
+source = "git+https://github.com/merely-made/mere.git?rev=5758724e86fcccad4df526514741d74445074bf7#5758724e86fcccad4df526514741d74445074bf7"
 dependencies = [
  "semver",
  "serde",
@@ -5138,7 +5139,7 @@ dependencies = [
 [[package]]
 name = "mere"
 version = "0.0.2"
-source = "git+https://github.com/merely-made/mere.git?rev=e95326dc08446a9256d3e340c63e571684afe697#e95326dc08446a9256d3e340c63e571684afe697"
+source = "git+https://github.com/merely-made/mere.git?rev=5758724e86fcccad4df526514741d74445074bf7#5758724e86fcccad4df526514741d74445074bf7"
 dependencies = [
  "accesskit",
  "inker",
@@ -5157,7 +5158,7 @@ dependencies = [
 [[package]]
 name = "mere-alembic"
 version = "0.0.1"
-source = "git+https://github.com/merely-made/mere.git?rev=e95326dc08446a9256d3e340c63e571684afe697#e95326dc08446a9256d3e340c63e571684afe697"
+source = "git+https://github.com/merely-made/mere.git?rev=5758724e86fcccad4df526514741d74445074bf7#5758724e86fcccad4df526514741d74445074bf7"
 dependencies = [
  "mere-kernel",
  "serde",
@@ -5166,7 +5167,7 @@ dependencies = [
 [[package]]
 name = "mere-apparatus"
 version = "0.0.1"
-source = "git+https://github.com/merely-made/mere.git?rev=e95326dc08446a9256d3e340c63e571684afe697#e95326dc08446a9256d3e340c63e571684afe697"
+source = "git+https://github.com/merely-made/mere.git?rev=5758724e86fcccad4df526514741d74445074bf7#5758724e86fcccad4df526514741d74445074bf7"
 dependencies = [
  "serde",
 ]
@@ -5174,7 +5175,7 @@ dependencies = [
 [[package]]
 name = "mere-cartography"
 version = "0.0.2"
-source = "git+https://github.com/merely-made/mere.git?rev=e95326dc08446a9256d3e340c63e571684afe697#e95326dc08446a9256d3e340c63e571684afe697"
+source = "git+https://github.com/merely-made/mere.git?rev=5758724e86fcccad4df526514741d74445074bf7#5758724e86fcccad4df526514741d74445074bf7"
 dependencies = [
  "mere-kernel",
  "sceno",
@@ -5185,7 +5186,7 @@ dependencies = [
 [[package]]
 name = "mere-curation"
 version = "0.1.0"
-source = "git+https://github.com/merely-made/mere.git?rev=e95326dc08446a9256d3e340c63e571684afe697#e95326dc08446a9256d3e340c63e571684afe697"
+source = "git+https://github.com/merely-made/mere.git?rev=5758724e86fcccad4df526514741d74445074bf7#5758724e86fcccad4df526514741d74445074bf7"
 dependencies = [
  "serde",
 ]
@@ -5193,24 +5194,32 @@ dependencies = [
 [[package]]
 name = "mere-document-lanes"
 version = "0.1.0"
-source = "git+https://github.com/merely-made/mere.git?rev=e95326dc08446a9256d3e340c63e571684afe697#e95326dc08446a9256d3e340c63e571684afe697"
+source = "git+https://github.com/merely-made/mere.git?rev=5758724e86fcccad4df526514741d74445074bf7#5758724e86fcccad4df526514741d74445074bf7"
 dependencies = [
  "document-canvas",
  "document-session-api",
- "fleece",
  "genet-host-api",
  "genet-static-dom",
  "image",
  "inker",
+ "mere-fleece",
  "netrender",
  "tabard",
  "url",
 ]
 
 [[package]]
+name = "mere-fleece"
+version = "0.0.1"
+source = "git+https://github.com/merely-made/mere.git?rev=5758724e86fcccad4df526514741d74445074bf7#5758724e86fcccad4df526514741d74445074bf7"
+dependencies = [
+ "fleece",
+]
+
+[[package]]
 name = "mere-forme"
 version = "0.1.0"
-source = "git+https://github.com/merely-made/mere.git?rev=e95326dc08446a9256d3e340c63e571684afe697#e95326dc08446a9256d3e340c63e571684afe697"
+source = "git+https://github.com/merely-made/mere.git?rev=5758724e86fcccad4df526514741d74445074bf7#5758724e86fcccad4df526514741d74445074bf7"
 dependencies = [
  "mere-curation",
  "serde",
@@ -5222,7 +5231,7 @@ dependencies = [
 [[package]]
 name = "mere-kernel"
 version = "0.0.2"
-source = "git+https://github.com/merely-made/mere.git?rev=e95326dc08446a9256d3e340c63e571684afe697#e95326dc08446a9256d3e340c63e571684afe697"
+source = "git+https://github.com/merely-made/mere.git?rev=5758724e86fcccad4df526514741d74445074bf7#5758724e86fcccad4df526514741d74445074bf7"
 dependencies = [
  "accesskit",
  "chartulary",
@@ -5277,7 +5286,7 @@ dependencies = [
 [[package]]
 name = "mere-persona-picker"
 version = "0.0.1"
-source = "git+https://github.com/merely-made/mere.git?rev=e95326dc08446a9256d3e340c63e571684afe697#e95326dc08446a9256d3e340c63e571684afe697"
+source = "git+https://github.com/merely-made/mere.git?rev=5758724e86fcccad4df526514741d74445074bf7#5758724e86fcccad4df526514741d74445074bf7"
 dependencies = [
  "cambium",
  "dramatis",
@@ -5287,7 +5296,7 @@ dependencies = [
 [[package]]
 name = "mere-proofs"
 version = "0.1.0"
-source = "git+https://github.com/merely-made/mere.git?rev=e95326dc08446a9256d3e340c63e571684afe697#e95326dc08446a9256d3e340c63e571684afe697"
+source = "git+https://github.com/merely-made/mere.git?rev=5758724e86fcccad4df526514741d74445074bf7#5758724e86fcccad4df526514741d74445074bf7"
 dependencies = [
  "blake3",
  "serde",
@@ -5297,7 +5306,7 @@ dependencies = [
 [[package]]
 name = "mere-surface-api"
 version = "0.1.0"
-source = "git+https://github.com/merely-made/mere.git?rev=e95326dc08446a9256d3e340c63e571684afe697#e95326dc08446a9256d3e340c63e571684afe697"
+source = "git+https://github.com/merely-made/mere.git?rev=5758724e86fcccad4df526514741d74445074bf7#5758724e86fcccad4df526514741d74445074bf7"
 dependencies = [
  "workbench",
 ]
@@ -5305,7 +5314,7 @@ dependencies = [
 [[package]]
 name = "mere-transport"
 version = "0.0.2"
-source = "git+https://github.com/merely-made/mere.git?rev=e95326dc08446a9256d3e340c63e571684afe697#e95326dc08446a9256d3e340c63e571684afe697"
+source = "git+https://github.com/merely-made/mere.git?rev=5758724e86fcccad4df526514741d74445074bf7#5758724e86fcccad4df526514741d74445074bf7"
 dependencies = [
  "bytes",
  "iroh",
@@ -5327,7 +5336,7 @@ dependencies = [
 [[package]]
 name = "mere-webrtc-carrier"
 version = "0.0.1"
-source = "git+https://github.com/merely-made/mere.git?rev=e95326dc08446a9256d3e340c63e571684afe697#e95326dc08446a9256d3e340c63e571684afe697"
+source = "git+https://github.com/merely-made/mere.git?rev=5758724e86fcccad4df526514741d74445074bf7#5758724e86fcccad4df526514741d74445074bf7"
 dependencies = [
  "blake3",
  "luggage",
@@ -5337,7 +5346,7 @@ dependencies = [
 [[package]]
 name = "meristem"
 version = "0.2.0"
-source = "git+https://github.com/merely-made/mere.git?rev=e95326dc08446a9256d3e340c63e571684afe697#e95326dc08446a9256d3e340c63e571684afe697"
+source = "git+https://github.com/merely-made/mere.git?rev=5758724e86fcccad4df526514741d74445074bf7#5758724e86fcccad4df526514741d74445074bf7"
 dependencies = [
  "anymore",
  "tracing",
@@ -5346,7 +5355,7 @@ dependencies = [
 [[package]]
 name = "mesquite"
 version = "0.1.0"
-source = "git+https://github.com/merely-made/mere.git?rev=e95326dc08446a9256d3e340c63e571684afe697#e95326dc08446a9256d3e340c63e571684afe697"
+source = "git+https://github.com/merely-made/mere.git?rev=5758724e86fcccad4df526514741d74445074bf7#5758724e86fcccad4df526514741d74445074bf7"
 dependencies = [
  "cambium",
  "cambium-rootstock",
@@ -5467,7 +5476,7 @@ dependencies = [
 [[package]]
 name = "muniment"
 version = "0.1.2"
-source = "git+https://github.com/merely-made/mere.git?rev=e95326dc08446a9256d3e340c63e571684afe697#e95326dc08446a9256d3e340c63e571684afe697"
+source = "git+https://github.com/merely-made/mere.git?rev=5758724e86fcccad4df526514741d74445074bf7#5758724e86fcccad4df526514741d74445074bf7"
 dependencies = [
  "async-trait",
  "blake3",
@@ -6157,7 +6166,7 @@ dependencies = [
 [[package]]
 name = "numen"
 version = "0.2.0"
-source = "git+https://github.com/merely-made/mere.git?rev=e95326dc08446a9256d3e340c63e571684afe697#e95326dc08446a9256d3e340c63e571684afe697"
+source = "git+https://github.com/merely-made/mere.git?rev=5758724e86fcccad4df526514741d74445074bf7#5758724e86fcccad4df526514741d74445074bf7"
 dependencies = [
  "serde",
  "strum",
@@ -6863,7 +6872,7 @@ dependencies = [
 [[package]]
 name = "pandect"
 version = "0.1.1"
-source = "git+https://github.com/merely-made/mere.git?rev=e95326dc08446a9256d3e340c63e571684afe697#e95326dc08446a9256d3e340c63e571684afe697"
+source = "git+https://github.com/merely-made/mere.git?rev=5758724e86fcccad4df526514741d74445074bf7#5758724e86fcccad4df526514741d74445074bf7"
 dependencies = [
  "async-trait",
  "blake3",
@@ -7151,7 +7160,7 @@ dependencies = [
 [[package]]
 name = "pictograph"
 version = "0.2.0"
-source = "git+https://github.com/merely-made/mere.git?rev=e95326dc08446a9256d3e340c63e571684afe697#e95326dc08446a9256d3e340c63e571684afe697"
+source = "git+https://github.com/merely-made/mere.git?rev=5758724e86fcccad4df526514741d74445074bf7#5758724e86fcccad4df526514741d74445074bf7"
 dependencies = [
  "armillary",
  "chartulary",
@@ -8552,7 +8561,7 @@ dependencies = [
 [[package]]
 name = "sceno"
 version = "0.0.4"
-source = "git+https://github.com/merely-made/mere.git?rev=e95326dc08446a9256d3e340c63e571684afe697#e95326dc08446a9256d3e340c63e571684afe697"
+source = "git+https://github.com/merely-made/mere.git?rev=5758724e86fcccad4df526514741d74445074bf7#5758724e86fcccad4df526514741d74445074bf7"
 dependencies = [
  "serde",
  "serde_json",
@@ -8561,7 +8570,7 @@ dependencies = [
 [[package]]
 name = "scenograph"
 version = "0.0.4"
-source = "git+https://github.com/merely-made/mere.git?rev=e95326dc08446a9256d3e340c63e571684afe697#e95326dc08446a9256d3e340c63e571684afe697"
+source = "git+https://github.com/merely-made/mere.git?rev=5758724e86fcccad4df526514741d74445074bf7#5758724e86fcccad4df526514741d74445074bf7"
 dependencies = [
  "mere-curation",
  "sceno",
@@ -8572,7 +8581,7 @@ dependencies = [
 [[package]]
 name = "scenomise"
 version = "0.0.4"
-source = "git+https://github.com/merely-made/mere.git?rev=e95326dc08446a9256d3e340c63e571684afe697#e95326dc08446a9256d3e340c63e571684afe697"
+source = "git+https://github.com/merely-made/mere.git?rev=5758724e86fcccad4df526514741d74445074bf7#5758724e86fcccad4df526514741d74445074bf7"
 dependencies = [
  "sceno",
  "scenograph",
@@ -8583,7 +8592,7 @@ dependencies = [
 [[package]]
 name = "scenotime"
 version = "0.0.4"
-source = "git+https://github.com/merely-made/mere.git?rev=e95326dc08446a9256d3e340c63e571684afe697#e95326dc08446a9256d3e340c63e571684afe697"
+source = "git+https://github.com/merely-made/mere.git?rev=5758724e86fcccad4df526514741d74445074bf7#5758724e86fcccad4df526514741d74445074bf7"
 dependencies = [
  "sceno",
  "serde",
@@ -8673,7 +8682,7 @@ dependencies = [
 [[package]]
 name = "seiche"
 version = "0.0.6"
-source = "git+https://github.com/merely-made/mere.git?rev=e95326dc08446a9256d3e340c63e571684afe697#e95326dc08446a9256d3e340c63e571684afe697"
+source = "git+https://github.com/merely-made/mere.git?rev=5758724e86fcccad4df526514741d74445074bf7#5758724e86fcccad4df526514741d74445074bf7"
 dependencies = [
  "armillary",
  "euclid",
@@ -9133,7 +9142,7 @@ dependencies = [
 [[package]]
 name = "sprigging"
 version = "0.2.1"
-source = "git+https://github.com/merely-made/mere.git?rev=e95326dc08446a9256d3e340c63e571684afe697#e95326dc08446a9256d3e340c63e571684afe697"
+source = "git+https://github.com/merely-made/mere.git?rev=5758724e86fcccad4df526514741d74445074bf7#5758724e86fcccad4df526514741d74445074bf7"
 dependencies = [
  "accesskit",
  "paint_list_api",
@@ -9240,7 +9249,7 @@ checksum = "a2eb9349b6444b326872e140eb1cf5e7c522154d69e7a0ffb0fb81c06b37543f"
 [[package]]
 name = "stickleback"
 version = "0.1.1"
-source = "git+https://github.com/merely-made/mere.git?rev=e95326dc08446a9256d3e340c63e571684afe697#e95326dc08446a9256d3e340c63e571684afe697"
+source = "git+https://github.com/merely-made/mere.git?rev=5758724e86fcccad4df526514741d74445074bf7#5758724e86fcccad4df526514741d74445074bf7"
 dependencies = [
  "blake3",
  "futures-util",
@@ -9450,7 +9459,7 @@ dependencies = [
 [[package]]
 name = "tabard"
 version = "0.0.1"
-source = "git+https://github.com/merely-made/mere.git?rev=e95326dc08446a9256d3e340c63e571684afe697#e95326dc08446a9256d3e340c63e571684afe697"
+source = "git+https://github.com/merely-made/mere.git?rev=5758724e86fcccad4df526514741d74445074bf7#5758724e86fcccad4df526514741d74445074bf7"
 dependencies = [
  "serde",
  "serde_json",
@@ -9460,7 +9469,7 @@ dependencies = [
 [[package]]
 name = "tabard-workshop"
 version = "0.0.1"
-source = "git+https://github.com/merely-made/mere.git?rev=e95326dc08446a9256d3e340c63e571684afe697#e95326dc08446a9256d3e340c63e571684afe697"
+source = "git+https://github.com/merely-made/mere.git?rev=5758724e86fcccad4df526514741d74445074bf7#5758724e86fcccad4df526514741d74445074bf7"
 dependencies = [
  "cambium",
  "genet-livery",
@@ -9617,7 +9626,7 @@ version = "0.1.0"
 [[package]]
 name = "tinct"
 version = "0.1.2"
-source = "git+https://github.com/merely-made/mere.git?rev=e95326dc08446a9256d3e340c63e571684afe697#e95326dc08446a9256d3e340c63e571684afe697"
+source = "git+https://github.com/merely-made/mere.git?rev=5758724e86fcccad4df526514741d74445074bf7#5758724e86fcccad4df526514741d74445074bf7"
 dependencies = [
  "serde",
 ]
@@ -10081,7 +10090,7 @@ dependencies = [
 [[package]]
 name = "uxtree"
 version = "0.0.2"
-source = "git+https://github.com/merely-made/mere.git?rev=e95326dc08446a9256d3e340c63e571684afe697#e95326dc08446a9256d3e340c63e571684afe697"
+source = "git+https://github.com/merely-made/mere.git?rev=5758724e86fcccad4df526514741d74445074bf7#5758724e86fcccad4df526514741d74445074bf7"
 dependencies = [
  "accesskit",
  "inker",
@@ -11309,7 +11318,7 @@ dependencies = [
 [[package]]
 name = "workbench"
 version = "0.1.0"
-source = "git+https://github.com/merely-made/mere.git?rev=e95326dc08446a9256d3e340c63e571684afe697#e95326dc08446a9256d3e340c63e571684afe697"
+source = "git+https://github.com/merely-made/mere.git?rev=5758724e86fcccad4df526514741d74445074bf7#5758724e86fcccad4df526514741d74445074bf7"
 
 [[package]]
 name = "writeable"
