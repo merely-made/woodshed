@@ -1,0 +1,63 @@
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on build directory
+   Compiling indexmap v2.14.1
+   Compiling av-scenechange v0.14.1
+   Compiling av1-grain v0.2.5
+   Compiling naga-types v30.0.1
+   Compiling genet-fontique v0.10.0 (https://github.com/merely-made/genet.git?rev=4bc75583865c2fb862b7acd7fe16dc28eb591042#4bc75583)
+   Compiling naga v30.0.1
+   Compiling wgpu-types v30.0.1
+   Compiling rav1e v0.8.1
+   Compiling logos-codegen v0.16.1
+   Compiling genet-parley v0.10.0 (https://github.com/merely-made/genet.git?rev=4bc75583865c2fb862b7acd7fe16dc28eb591042#4bc75583)
+   Compiling logos-derive v0.16.1
+   Compiling ravif v0.13.0
+   Compiling wgpu-naga-bridge v30.0.1
+   Compiling wgpu-hal v30.0.1
+   Compiling wgpu-core-deps-apple v30.0.1
+   Compiling wgpu-core v30.0.1
+   Compiling image v0.25.10
+   Compiling logos v0.16.1
+   Compiling illume v0.0.2 (https://github.com/merely-made/mere.git?rev=0e78fcffb140395a5c0d2f64a4dfda2b81751681#0e78fcff)
+   Compiling wgpu v30.0.1
+   Compiling netrender-vello v0.11.0 (https://github.com/mark-ik/vello.git?rev=5862bba26c8a9f56f6a5fdc8ea6966b360a5d63a#5862bba2)
+   Compiling netrender_device v0.1.2 (https://github.com/merely-made/netrender.git?rev=ef5412d760a978584c8c1801e8a765c51aecd403#ef5412d7)
+   Compiling netrender v0.1.2 (https://github.com/merely-made/netrender.git?rev=ef5412d760a978584c8c1801e8a765c51aecd403#ef5412d7)
+   Compiling sprigging v0.2.1 (https://github.com/merely-made/mere.git?rev=0e78fcffb140395a5c0d2f64a4dfda2b81751681#0e78fcff)
+   Compiling sceno v0.0.4 (https://github.com/merely-made/mere.git?rev=0e78fcffb140395a5c0d2f64a4dfda2b81751681#0e78fcff)
+   Compiling genet-livery v0.0.4 (https://github.com/merely-made/genet.git?rev=4bc75583865c2fb862b7acd7fe16dc28eb591042#4bc75583)
+   Compiling paint_list_render v0.1.2 (https://github.com/merely-made/netrender.git?rev=ef5412d760a978584c8c1801e8a765c51aecd403#ef5412d7)
+   Compiling cambium v0.3.3 (https://github.com/merely-made/mere.git?rev=0e78fcffb140395a5c0d2f64a4dfda2b81751681#0e78fcff)
+   Compiling h2 v0.4.19
+   Compiling genet-render-host v0.2.0 (https://github.com/merely-made/genet.git?rev=4bc75583865c2fb862b7acd7fe16dc28eb591042#4bc75583)
+   Compiling hyper v1.11.1
+   Compiling cambium-winit v0.3.0 (https://github.com/merely-made/mere.git?rev=0e78fcffb140395a5c0d2f64a4dfda2b81751681#0e78fcff)
+   Compiling hyper-util v0.1.20
+   Compiling genet-render v0.2.0 (https://github.com/merely-made/genet.git?rev=4bc75583865c2fb862b7acd7fe16dc28eb591042#4bc75583)
+   Compiling redshank-model v0.0.0 (/Users/markik/Code/worktrees/woodshed-stack-20261011/ports/redshank/model)
+   Compiling petgraph v0.8.3
+   Compiling cambium-rootstock v0.1.0 (https://github.com/merely-made/mere.git?rev=0e78fcffb140395a5c0d2f64a4dfda2b81751681#0e78fcff)
+   Compiling hyper-rustls v0.27.10
+   Compiling netfetcher v0.1.1 (https://github.com/merely-made/genet.git?rev=4bc75583865c2fb862b7acd7fe16dc28eb591042#4bc75583)
+   Compiling genet-winit-host v0.2.0 (https://github.com/merely-made/genet.git?rev=4bc75583865c2fb862b7acd7fe16dc28eb591042#4bc75583)
+   Compiling inker v0.1.1 (https://github.com/merely-made/mere.git?rev=0e78fcffb140395a5c0d2f64a4dfda2b81751681#0e78fcff)
+   Compiling taproot v0.1.0 (https://github.com/merely-made/genet.git?rev=4bc75583865c2fb862b7acd7fe16dc28eb591042#4bc75583)
+   Compiling mere-fetch v0.0.1 (https://github.com/merely-made/mere.git?rev=0e78fcffb140395a5c0d2f64a4dfda2b81751681#0e78fcff)
+   Compiling document-canvas v0.1.0 (https://github.com/merely-made/mere.git?rev=0e78fcffb140395a5c0d2f64a4dfda2b81751681#0e78fcff)
+   Compiling cambium-winit-a11y v0.3.0 (https://github.com/merely-made/mere.git?rev=0e78fcffb140395a5c0d2f64a4dfda2b81751681#0e78fcff)
+   Compiling misfin v0.0.4
+   Compiling tabard v0.0.1 (https://github.com/merely-made/mere.git?rev=0e78fcffb140395a5c0d2f64a4dfda2b81751681#0e78fcff)
+   Compiling cambium-genet-winit-host v0.1.0 (https://github.com/merely-made/mere.git?rev=0e78fcffb140395a5c0d2f64a4dfda2b81751681#0e78fcff)
+   Compiling errand v0.4.0 (https://github.com/merely-made/mere.git?rev=0e78fcffb140395a5c0d2f64a4dfda2b81751681#0e78fcff)
+   Compiling redshank-playback v0.0.0 (/Users/markik/Code/worktrees/woodshed-stack-20261011/ports/redshank/playback)
+   Compiling redshank-surfaces v0.0.0 (/Users/markik/Code/worktrees/woodshed-stack-20261011/ports/redshank/surfaces)
+   Compiling mere-document-lanes v0.1.0 (https://github.com/merely-made/mere.git?rev=0e78fcffb140395a5c0d2f64a4dfda2b81751681#0e78fcff)
+   Compiling tabard-workshop v0.0.1 (https://github.com/merely-made/mere.git?rev=0e78fcffb140395a5c0d2f64a4dfda2b81751681#0e78fcff)
+   Compiling mesquite v0.1.0 (https://github.com/merely-made/mere.git?rev=0e78fcffb140395a5c0d2f64a4dfda2b81751681#0e78fcff)
+   Compiling redshank-feed v0.0.0 (/Users/markik/Code/worktrees/woodshed-stack-20261011/ports/redshank/feed)
+   Compiling redshank-cache v0.0.0 (/Users/markik/Code/worktrees/woodshed-stack-20261011/ports/redshank/cache)
+   Compiling redshank-storage v0.0.0 (/Users/markik/Code/worktrees/woodshed-stack-20261011/ports/redshank/storage)
+   Compiling redshank-desktop v0.0.0 (/Users/markik/Code/worktrees/woodshed-stack-20261011/ports/redshank/desktop)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1m 29s

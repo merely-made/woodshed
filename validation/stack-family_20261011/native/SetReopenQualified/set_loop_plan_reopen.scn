@@ -1,0 +1,28 @@
+# Separate process, same isolated production session/settings files as seed.
+settle 3
+ui-zoom 0.8
+click .pill Looper
+settle 3
+assert text Source: working Set 1
+assert text explicit 5/4 clock
+assert text Inherited: 125 bpm
+assert text Click: off
+assert text Once
+assert text Loaded Set 1:
+assert snap song-bars == 4
+assert snap song-playing == false
+capture 01_set_source_fresh_reopen
+click .t-btn Play
+settle 30
+assert snap song-playing == true
+capture 02_set_source_replayed
+click .t-btn Stop
+settle 3
+click .t-btn Saved backing
+settle 3
+assert snap song-bars == 4
+assert snap song-first-bpm == 240
+capture 03_saved_backing_still_retained
+click .t-btn Loop this Set
+settle 3
+log Set LoopPlan source and settings reopen complete

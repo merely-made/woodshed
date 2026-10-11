@@ -257,7 +257,8 @@ nonblocking legibility follow-up; no formal contrast audit is claimed.
 
 ## Coherent family adoption — 2026-10-11
 
-**Status: in progress.** Adopt the published production family from Mere
+**Status: integrated; bounded qualification recorded.** Adopt the published
+production family from Mere
 `0e78fcff`, rather than independently selecting each supplier's latest head:
 Genet `4bc75583`, Dramatis `0234e7ee`, Netrender `ef5412d7`, and the maintained
 Classic 0.11 renderer/encoding/shader source `5862bba2`. Root Woodshed, Hocket
@@ -270,7 +271,8 @@ Cargo overrides, application and audio gates pass, and the new production host
 repeats native appearance and connected Set/preview/Looper reopening. Ringdown's
 independent gate must also remain passing. Native captures, hardware/audio
 observations, keeper admission and publication are recorded separately; old
-consumer receipts do not qualify the new renderer.
+consumer receipts do not qualify the new renderer. Unobserved port reopening
+remains an explicit next acceptance gate rather than a publication claim.
 
 - The first current-family Set native seed reached 110 presented frames and
   three nonblank captures, with encrypted session/settings written through an
@@ -279,3 +281,33 @@ consumer receipts do not qualify the new renderer.
   exposes its own action identity; the mounted-host clock test checks that
   identity changes both the preference and admitted plan. The failed attempt
   remains evidence, and a new isolated seed/reopen must pass before acceptance.
+
+- The final independent product gates pass 1,454 active tests (870 Woodshed,
+  166 Hocket, 261 Redshank, 157 Ringdown; nine existing ignored). All three UI
+  executables build. The final Woodshed desktop suite repeats 91 active tests
+  successfully after the Set selector correction and bounded scenario timeout.
+- Set seed/fresh reopen and preview/rehearsal seed/fresh reopen pass through the
+  exact production Djinn Keeper route using a synthetic isolated fixture. The
+  retained 5/4, 125 BPM, click-off and Once Set plan, exact legacy backing, saved
+  thirds recipe and pinned Orbits scene survive fresh processes. Woodshed
+  appearance seed/reopen also passes; Hocket and Redshank appearance seeds pass.
+  Eight successful native runs total 780 presentations and 38 reviewed nonblank
+  captures. The standalone relationship compiler instrument also builds and
+  passes seed/fresh-process FsBackend reopen; it is not keeper/native proof.
+- Muted hardware scale-preview and cold/warm/edited backing diagnostics complete
+  with zero device events on the live Apple M4/arm64 host. This does not qualify
+  physical listening or microphone capture. Seven rejected native attempts are
+  retained: the corrected ambiguous Set selector, three occluded preview runs,
+  two Hocket reopen attempts and one Redshank reopen attempt. The port reopen
+  attempts produced no frames; their new-family reopening remains open.
+- Native-control background launch can outlast the default ten-second frame
+  stall deadline. Woodshed's explicit scenario-only timeout uses the existing
+  Mesquite API, bounded to 10–60 seconds with the default unchanged. Thirty
+  seconds plus raising the observed window qualifies preview and appearance
+  reopening without advancing any assertion ahead of actual presentation.
+- [Revision-specific receipts and remaining gates](../validation/stack-family_20261011/README.md)
+  preserve exact source/binary/scenario/image hashes, metadata closure, complete
+  receipts, all reviewed captures and successful/rejected logs. The private
+  fixture was stopped; the maintainer's personal vault was not used. Hocket and
+  Redshank appearance reopen, narrow-start reopen pairs and wider platform/device
+  qualification remain subsequent bounded work.

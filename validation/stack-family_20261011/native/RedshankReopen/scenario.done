@@ -1,0 +1,4 @@
+RESULT fail
+frames: 0 captured, 0 blank, 0 distinct digests
+presentation: 0 frames, 932 redraws, 932 unpresented redraws
+FAIL: native presentation stalled for 10000 ms (932 redraws, 0 presented frames)

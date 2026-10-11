@@ -1,0 +1,17 @@
+RESULT ok
+captured appearance
+captured workshop
+captured saved-copy
+captured applied-dark
+captured applied-light
+captured applied-hc-light
+captured applied-hc-dark
+capture appearance 2360x1600 digest=8b9d3dd527f280d2 file=/Users/markik/Code/testing/woodshed/stack-adoption-20261011/native/RedshankSeed/appearance.png
+capture workshop 2360x1600 digest=b0b154639b33c6b0 file=/Users/markik/Code/testing/woodshed/stack-adoption-20261011/native/RedshankSeed/workshop.png
+capture saved-copy 2360x1600 digest=0e5235b16532de90 file=/Users/markik/Code/testing/woodshed/stack-adoption-20261011/native/RedshankSeed/saved-copy.png
+capture applied-dark 2360x1600 digest=6aa9e479de7f8db6 file=/Users/markik/Code/testing/woodshed/stack-adoption-20261011/native/RedshankSeed/applied-dark.png
+capture applied-light 2360x1600 digest=3860115ca877404c file=/Users/markik/Code/testing/woodshed/stack-adoption-20261011/native/RedshankSeed/applied-light.png
+capture applied-hc-light 2360x1600 digest=da58f6c5878a9062 file=/Users/markik/Code/testing/woodshed/stack-adoption-20261011/native/RedshankSeed/applied-hc-light.png
+capture applied-hc-dark 2360x1600 digest=41c9079c42fea385 file=/Users/markik/Code/testing/woodshed/stack-adoption-20261011/native/RedshankSeed/applied-hc-dark.png
+frames: 7 captured, 0 blank, 7 distinct digests
+presentation: 64 frames, 917 redraws, 853 unpresented redraws
