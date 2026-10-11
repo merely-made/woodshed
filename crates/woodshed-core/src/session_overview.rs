@@ -6,6 +6,7 @@
 
 use crate::{
     history::PracticeHistory,
+    loop_plan::LoopPlan,
     retained_sets::{RetainedSets, SavedSetId},
     song::SongDoc,
 };
@@ -323,7 +324,7 @@ pub fn session_overview(input: &SessionOverviewInput<'_>) -> OverviewSnapshot {
     let catalog = Catalog("woodshed-catalog".into());
     result.nodes.extend([
         OverviewNode { id: Artifact(WorkingSet), label: "Working Set".into(), detail: format!("{} ordered Cards in the Set you are editing.", input.working_set.cards.len()) },
-        OverviewNode { id: Artifact(Song), label: if input.song.name.trim().is_empty() { "Looper form".into() } else { input.song.name.clone() }, detail: format!("{} bars in the current Looper form.", input.song.bars.len()) },
+        OverviewNode { id: Artifact(Song), label: if input.song.name.trim().is_empty() { "Saved compatibility backing".into() } else { format!("Saved compatibility backing · {}", input.song.name) }, detail: format!("{} retained bars in the saved compatibility backing. Its authored material stays independent of working Sets.", input.song.bars.len()) },
         OverviewNode { id: Artifact(History), label: "Practice history".into(), detail: format!("{} recorded engagements. Observations retain their own event-time provenance.", input.history.len()) },
         OverviewNode { id: catalog.clone(), label: "Catalog".into(), detail: "Reference to Woodshed's theory and exercise catalogs. Catalog contents remain owned by their catalog authority.".into() },
     ]);
@@ -425,6 +426,9 @@ pub struct ConfiguredSessionOverviewInput<'a> {
     pub active_exploration: &'a crate::catalog_explorations::CatalogExplorationState,
     /// The actual runner owner, even when it is parked in the bank.
     pub runner_owner: Option<crate::working_sets::WorkingSetId>,
+    /// The host-accepted Set backing, retained when a requested replacement
+    /// fails. None means the saved compatibility backing remains loaded.
+    pub admitted_loop_plan: Option<&'a LoopPlan>,
 }
 
 /// Overview of multiple real owners. No legacy active-Set alias is emitted.
@@ -546,6 +550,51 @@ pub fn configured_session_overview(input: &ConfiguredSessionOverviewInput<'_>) -
             });
         }
     }
+    if let Some(plan) = input.admitted_loop_plan {
+        let owner = input
+            .working_sets
+            .get(plan.owner, input.session.working_set)
+            .map(|_| Artifact(WorkingSetInstance(plan.owner)));
+        // A loaded snapshot can outlive its source. Keep that absence visible
+        // rather than retargeting it to the edited Set or the saved backing.
+        let unavailable = format!(
+            "Loaded Set backing belongs to unavailable working Set {}. Its owner is not reassigned.",
+            plan.owner.0
+        );
+        for view in input.session.views {
+            if view.domain != SessionViewDomain::Looper {
+                continue;
+            }
+            let id = View(view.id.clone());
+            result
+                .relations
+                .retain(|edge| !(edge.from == id && edge.kind == OverviewRelationKind::Presents));
+            if let Some(owner) = &owner {
+                result.relations.push(OverviewRelation {
+                    from: id,
+                    to: owner.clone(),
+                    kind: OverviewRelationKind::Presents,
+                });
+            } else if let Some(node) = result.nodes.iter_mut().find(|node| node.id == id) {
+                node.detail = unavailable.clone();
+            }
+        }
+        let process = Process(OverviewProcess::Looper);
+        result
+            .relations
+            .retain(|edge| !(edge.from == process && edge.kind == OverviewRelationKind::ActsOn));
+        if input.session.activity.looper {
+            if let Some(owner) = owner {
+                result.relations.push(OverviewRelation {
+                    from: process,
+                    to: owner,
+                    kind: OverviewRelationKind::ActsOn,
+                });
+            } else if let Some(node) = result.nodes.iter_mut().find(|node| node.id == process) {
+                node.detail = unavailable;
+            }
+        }
+    }
     result
 }
 
@@ -642,6 +691,209 @@ pub fn overview_scene(overview: &OverviewSnapshot) -> SceneSnapshot {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    fn admitted_plan(owner: crate::working_sets::WorkingSetId) -> LoopPlan {
+        LoopPlan {
+            owner,
+            name: "Loaded backing".into(),
+            one_shot: false,
+            click: true,
+            segments: vec![crate::loop_plan::LoopSegment {
+                id: crate::loop_plan::LoopSegmentId {
+                    set: owner,
+                    card: woodshedding::rehearsal::CardId(7),
+                },
+                label: "Accepted Card".into(),
+                bpm: 97.0,
+                beats: 3,
+                bars: 2,
+                pitches_hz: vec![220.0, 277.182_62, 329.627_56],
+            }],
+        }
+    }
+
+    fn backing_overview(admitted_loop_plan: Option<&LoopPlan>) -> OverviewSnapshot {
+        use crate::{
+            catalog_explorations::{CatalogExplorationState, CatalogExplorations},
+            song::SongBar,
+            working_sets::WorkingSets,
+        };
+        let mut set = Set::default();
+        let mut sets = WorkingSets::default();
+        let editing = sets.create(&mut set, "Requested backing", Set::default());
+        let song = SongDoc {
+            name: "Authored legacy form".into(),
+            bars: vec![SongBar {
+                label: "Exact old material".into(),
+                chord_label: "Custom pitches".into(),
+                formula_name: "Custom formula".into(),
+                root_pc: 9,
+                root_freq_hz: 217.3,
+                pitches_hz: vec![217.3, 281.6, 336.2],
+                bpm: 113.5,
+                beats: 5,
+                length: 3,
+            }],
+            one_shot: true,
+            click: false,
+        };
+        let retained = RetainedSets::default();
+        let history = PracticeHistory::default();
+        let explorations = CatalogExplorations::default();
+        let state = CatalogExplorationState::default();
+        let views = [
+            SessionView {
+                id: "looper".into(),
+                label: "Actual Looper view".into(),
+                domain: SessionViewDomain::Looper,
+            },
+            SessionView {
+                id: "rehearsal".into(),
+                label: "Actual rehearsal view".into(),
+                domain: SessionViewDomain::Rehearsal,
+            },
+        ];
+        let payload = serde_json::to_value(&song).unwrap();
+        let result = configured_session_overview(&ConfiguredSessionOverviewInput {
+            session: SessionOverviewInput {
+                working_set: &set,
+                retained_sets: &retained,
+                song: &song,
+                history: &history,
+                views: &views,
+                activity: SessionActivity {
+                    rehearsal: true,
+                    looper: true,
+                    tuner: false,
+                },
+            },
+            working_sets: &sets,
+            explorations: &explorations,
+            active_exploration: &state,
+            runner_owner: Some(editing),
+            admitted_loop_plan,
+        });
+        assert_eq!(serde_json::to_value(&song).unwrap(), payload);
+        assert_eq!(
+            result
+                .nodes
+                .iter()
+                .filter(|node| matches!(node.id, OverviewNodeId::View(_)))
+                .count(),
+            views.len()
+        );
+        assert!(
+            result.relations.iter().all(|edge| result
+                .nodes
+                .iter()
+                .any(|node| node.id == edge.from)
+                && result.nodes.iter().any(|node| node.id == edge.to))
+        );
+        result
+    }
+
+    #[test]
+    fn admitted_backing_owner_is_independent_of_editing_and_rehearsal_owners() {
+        use crate::working_sets::WorkingSetId;
+        let graph = backing_overview(Some(&admitted_plan(WorkingSetId(1))));
+        let owner =
+            |id| OverviewNodeId::Artifact(SessionArtifactId::WorkingSetInstance(WorkingSetId(id)));
+        for (from, to, kind) in [
+            (
+                OverviewNodeId::Process(OverviewProcess::Looper),
+                owner(1),
+                OverviewRelationKind::ActsOn,
+            ),
+            (
+                OverviewNodeId::View("looper".into()),
+                owner(1),
+                OverviewRelationKind::Presents,
+            ),
+            (
+                OverviewNodeId::Process(OverviewProcess::Rehearsal),
+                owner(2),
+                OverviewRelationKind::ActsOn,
+            ),
+        ] {
+            let targets: Vec<_> = graph
+                .relations
+                .iter()
+                .filter(|edge| edge.from == from && edge.kind == kind)
+                .map(|edge| &edge.to)
+                .collect();
+            assert_eq!(targets, vec![&to]);
+        }
+        let song = graph
+            .nodes
+            .iter()
+            .find(|node| node.id == OverviewNodeId::Artifact(SessionArtifactId::Song))
+            .unwrap();
+        assert_eq!(song.id.wire_key(), "artifact:song");
+        assert_eq!(
+            song.label,
+            "Saved compatibility backing · Authored legacy form"
+        );
+        assert!(song.detail.starts_with("1 retained bars"));
+    }
+
+    #[test]
+    fn unavailable_admitted_owner_is_visible_without_reassignment_or_dangling_edges() {
+        use crate::working_sets::WorkingSetId;
+        let graph = backing_overview(Some(&admitted_plan(WorkingSetId(999))));
+        for id in [
+            OverviewNodeId::View("looper".into()),
+            OverviewNodeId::Process(OverviewProcess::Looper),
+        ] {
+            assert!(!graph.relations.iter().any(|edge| edge.from == id
+                && matches!(
+                    edge.kind,
+                    OverviewRelationKind::ActsOn | OverviewRelationKind::Presents
+                )));
+            let node = graph.nodes.iter().find(|node| node.id == id).unwrap();
+            assert!(node.detail.contains("unavailable working Set 999"));
+        }
+        assert!(!graph.nodes.iter().any(|node| node.id
+            == OverviewNodeId::Artifact(SessionArtifactId::WorkingSetInstance(WorkingSetId(999)))));
+        assert!(graph.relations.contains(&OverviewRelation {
+            from: OverviewNodeId::Process(OverviewProcess::Rehearsal),
+            to: OverviewNodeId::Artifact(SessionArtifactId::WorkingSetInstance(WorkingSetId(2))),
+            kind: OverviewRelationKind::ActsOn,
+        }));
+    }
+
+    #[test]
+    fn saved_backing_fallback_keeps_the_song_artifact_and_loaded_relations() {
+        let graph = backing_overview(None);
+        let song = OverviewNodeId::Artifact(SessionArtifactId::Song);
+        for (from, kind) in [
+            (
+                OverviewNodeId::Process(OverviewProcess::Looper),
+                OverviewRelationKind::ActsOn,
+            ),
+            (
+                OverviewNodeId::View("looper".into()),
+                OverviewRelationKind::Presents,
+            ),
+        ] {
+            let targets: Vec<_> = graph
+                .relations
+                .iter()
+                .filter(|edge| edge.from == from && edge.kind == kind)
+                .map(|edge| &edge.to)
+                .collect();
+            assert_eq!(targets, vec![&song]);
+        }
+        assert_eq!(
+            graph
+                .nodes
+                .iter()
+                .find(|node| node.id == song)
+                .unwrap()
+                .label,
+            "Saved compatibility backing · Authored legacy form"
+        );
+    }
+
     #[test]
     fn recipe_overview_discloses_copied_setup_without_formula_pitch_edges() {
         use crate::{
@@ -841,6 +1093,7 @@ mod tests {
                 explorations: &explorations,
                 active_exploration: &state,
                 runner_owner: None,
+                admitted_loop_plan: None,
             })
         }
         let mut current = Set::default();
@@ -930,6 +1183,7 @@ mod tests {
             explorations: &explorations,
             active_exploration: &exploration_state,
             runner_owner: Some(background),
+            admitted_loop_plan: None,
         };
         let graph = configured_session_overview(&input);
         assert!(

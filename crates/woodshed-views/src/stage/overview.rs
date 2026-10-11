@@ -72,6 +72,7 @@ pub fn overview_snapshot(ui: &UiState) -> OverviewSnapshot {
         explorations: &ui.catalog_explorations,
         active_exploration: &active_exploration,
         runner_owner: ui.rehearsal_owner,
+        admitted_loop_plan: ui.loop_admitted.as_ref(),
         session: SessionOverviewInput {
             working_set: &ui.set,
             retained_sets: &ui.retained_sets,
@@ -1076,6 +1077,105 @@ mod tests {
         ui.stage_current(None);
         assert!(!ui.set.cards.is_empty());
         ui
+    }
+
+    #[test]
+    fn overview_uses_retained_admission_when_requested_replacement_is_unready() {
+        use woodshed_core::session_overview::{OverviewRelation, OverviewRelationKind};
+        use woodshedding::rehearsal::{Hold, Set};
+        let mut ui = UiState::new();
+        ui.stage.set_lens(woodshed_core::Lens::Chords);
+        ui.stage_current(None);
+        ui.set.cards[0].timing.hold = Hold::Bars(2);
+        let admitted_owner = ui.working_sets.active_id;
+        ui.loop_working_set(admitted_owner);
+        let admitted = ui.requested_loop_plan().unwrap();
+        ui.loop_admitted = Some(admitted.clone());
+        ui.song_playing = true;
+
+        let requested_owner =
+            ui.working_sets
+                .create(&mut ui.set, "Unready replacement", Set::default());
+        ui.loop_working_set(requested_owner);
+        ui.rehearsal_running = true;
+        ui.rehearsal_owner = Some(requested_owner);
+        assert!(ui.requested_loop_plan().is_err());
+        assert_eq!(ui.loop_admitted.as_ref(), Some(&admitted));
+        let payload = serde_json::to_value(ui.to_persisted()).unwrap();
+        let graph = overview_snapshot(&ui);
+        let looper = OverviewNodeId::Process(OverviewProcess::Looper);
+        let targets: Vec<_> = graph
+            .relations
+            .iter()
+            .filter(|edge| edge.from == looper && edge.kind == OverviewRelationKind::ActsOn)
+            .map(|edge| &edge.to)
+            .collect();
+        let admitted_artifact =
+            OverviewNodeId::Artifact(SessionArtifactId::WorkingSetInstance(admitted_owner));
+        assert_eq!(targets, vec![&admitted_artifact]);
+        assert!(graph.relations.contains(&OverviewRelation {
+            from: OverviewNodeId::Process(OverviewProcess::Rehearsal),
+            to: OverviewNodeId::Artifact(SessionArtifactId::WorkingSetInstance(requested_owner)),
+            kind: OverviewRelationKind::ActsOn,
+        }));
+        assert_eq!(serde_json::to_value(ui.to_persisted()).unwrap(), payload);
+        assert_eq!(ui.loop_admitted.as_ref(), Some(&admitted));
+        // The host supplies only actual workspace occurrences. Correcting
+        // the process owner must not create a Looper tile that does not exist.
+        assert_eq!(
+            graph
+                .nodes
+                .iter()
+                .filter(|node| matches!(node.id, OverviewNodeId::View(_)))
+                .count(),
+            WorkspacePanel::ALL
+                .into_iter()
+                .filter(|panel| ui.workspace.tree().find(panel.tile_id()).is_some())
+                .count()
+        );
+    }
+
+    #[test]
+    fn requested_set_without_admission_still_projects_loaded_saved_backing() {
+        use woodshed_core::session_overview::OverviewRelationKind;
+        use woodshed_core::song::SongBar;
+        let mut ui = with_card();
+        ui.song.name = "Original form".into();
+        ui.song.bars.push(SongBar {
+            label: "Exact saved bar".into(),
+            pitches_hz: vec![217.3, 281.6, 336.2],
+            root_freq_hz: 217.3,
+            bpm: 113.5,
+            beats: 5,
+            length: 3,
+            ..SongBar::default()
+        });
+        ui.loop_working_set(ui.working_sets.active_id);
+        assert!(ui.loop_admitted.is_none());
+        ui.song_playing = true;
+        let payload = serde_json::to_value(ui.to_persisted()).unwrap();
+        let graph = overview_snapshot(&ui);
+        let song = OverviewNodeId::Artifact(SessionArtifactId::Song);
+        let targets: Vec<_> = graph
+            .relations
+            .iter()
+            .filter(|edge| {
+                edge.from == OverviewNodeId::Process(OverviewProcess::Looper)
+                    && edge.kind == OverviewRelationKind::ActsOn
+            })
+            .map(|edge| &edge.to)
+            .collect();
+        assert_eq!(targets, vec![&song]);
+        assert_eq!(
+            graph
+                .nodes
+                .iter()
+                .find(|node| node.id == song)
+                .unwrap()
+                .label,
+            "Saved compatibility backing · Original form"
+        );
+        assert_eq!(serde_json::to_value(ui.to_persisted()).unwrap(), payload);
     }
 
     #[test]
