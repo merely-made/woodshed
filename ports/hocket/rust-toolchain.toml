@@ -1,3 +1,4 @@
 [toolchain]
-channel = "1.96.0"
+# Match the parent Woodshed toolchain used for native host acceptance.
+channel = "1.97.1"
 components = ["clippy", "rustfmt"]

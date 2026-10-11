@@ -1,0 +1,11 @@
+RESULT ok
+captured recorder_before_edit
+captured workshop_same_id_saved
+captured recorder_after_save
+captured recorder_after_apply
+capture recorder_before_edit 2360x1400 digest=4cf3d3c66c09b56f file=/Users/markik/Code/tabard-app-receipts/hocket-20261011/publication/same-id/recorder_before_edit.png
+capture workshop_same_id_saved 2360x1400 digest=56c1df35cc800d4b file=/Users/markik/Code/tabard-app-receipts/hocket-20261011/publication/same-id/workshop_same_id_saved.png
+capture recorder_after_save 2360x1400 digest=8f8cff6a94726572 file=/Users/markik/Code/tabard-app-receipts/hocket-20261011/publication/same-id/recorder_after_save.png
+capture recorder_after_apply 2360x1400 digest=aa6be754f4b899a0 file=/Users/markik/Code/tabard-app-receipts/hocket-20261011/publication/same-id/recorder_after_apply.png
+frames: 4 captured, 0 blank, 4 distinct digests
+presentation: 42 frames, 47 redraws, 5 unpresented redraws

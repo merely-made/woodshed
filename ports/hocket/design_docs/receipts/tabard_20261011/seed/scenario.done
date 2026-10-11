@@ -1,0 +1,21 @@
+RESULT ok
+captured recorder_default
+captured recorder_light
+captured recorder_dark
+captured recorder_hc_light
+captured recorder_hc_dark
+captured workshop_saved
+captured recorder_applied
+captured workshop_narrow
+captured recorder_final
+capture recorder_default 2360x1400 digest=3fd14692e8c63574 file=/Users/markik/Code/tabard-app-receipts/hocket-20261011/publication/seed/recorder_default.png
+capture recorder_light 2360x1400 digest=499261659cf0ad13 file=/Users/markik/Code/tabard-app-receipts/hocket-20261011/publication/seed/recorder_light.png
+capture recorder_dark 2360x1400 digest=abbc42c089512225 file=/Users/markik/Code/tabard-app-receipts/hocket-20261011/publication/seed/recorder_dark.png
+capture recorder_hc_light 2360x1400 digest=99ee16eee498d9f8 file=/Users/markik/Code/tabard-app-receipts/hocket-20261011/publication/seed/recorder_hc_light.png
+capture recorder_hc_dark 2360x1400 digest=03120a7ac1912566 file=/Users/markik/Code/tabard-app-receipts/hocket-20261011/publication/seed/recorder_hc_dark.png
+capture workshop_saved 2360x1400 digest=7053d91a0591f994 file=/Users/markik/Code/tabard-app-receipts/hocket-20261011/publication/seed/workshop_saved.png
+capture recorder_applied 2360x1400 digest=b81d8d507adaef76 file=/Users/markik/Code/tabard-app-receipts/hocket-20261011/publication/seed/recorder_applied.png
+capture workshop_narrow 840x2000 digest=26465e67e024b060 file=/Users/markik/Code/tabard-app-receipts/hocket-20261011/publication/seed/workshop_narrow.png
+capture recorder_final 2360x1400 digest=fcf57e16597a1953 file=/Users/markik/Code/tabard-app-receipts/hocket-20261011/publication/seed/recorder_final.png
+frames: 9 captured, 0 blank, 9 distinct digests
+presentation: 79 frames, 84 redraws, 5 unpresented redraws

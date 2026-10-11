@@ -12,10 +12,8 @@
 //! shows the local performer only; peers arrive with the sync layer. Waveform
 //! and meter drawing use host-owned chisel leaves.
 
+use cambium::{AnyView, GenetCtx, GenetElement, SelectState, clickable, el, lens, select, text};
 use hocket_model::{PhraseId, PlaybackMode, TrackColor, TrackId};
-use cambium::{
-    AnyView, SelectState, GenetCtx, GenetElement, clickable, el, lens, select, text,
-};
 
 use crate::leaves::{METER_L, METER_R, layer_wave_key, wave_key};
 use crate::state::AppState;
@@ -56,7 +54,17 @@ fn hex(c: TrackColor) -> String {
 }
 
 pub fn root(state: &AppState) -> Child {
-    Box::new(el("div", (top(state), body(state), transport(state))).attr("class", "app"))
+    if state.appearance.editor_open {
+        return crate::appearance_view::editor(state);
+    }
+    let mut children = vec![crate::appearance_view::chrome(state)];
+    if state.appearance.open {
+        children.push(crate::appearance_view::panel(state));
+    }
+    children.push(Box::new(
+        el("div", (top(state), body(state), transport(state))).attr("class", "app"),
+    ));
+    Box::new(el("div", children).attr("class", "hocket-desktop"))
 }
 
 /// The update state, shown only when there is something true to say.
