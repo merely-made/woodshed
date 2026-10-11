@@ -80,6 +80,10 @@ pub trait ClickControl {
     fn set_click_pattern(&mut self, pattern: SequencerPattern) -> Result<(), Self::Error>;
     fn play_click(&mut self) -> Result<(), Self::Error>;
     fn stop_click(&mut self) -> Result<(), Self::Error>;
+
+    /// Admit pattern and playback together, preserving prior output when
+    /// the operation is rejected. Bounded runtimes use one atomic command.
+    fn start_click_pattern(&mut self, pattern: SequencerPattern) -> Result<(), Self::Error>;
 }
 
 /// Phase the calibration session is in.
@@ -199,8 +203,7 @@ impl CalibrationSession {
 
         let pattern =
             SequencerPattern::metronome(self.bpm, TimeSignature::new(4, 4), Subdivision::QUARTER);
-        engine.set_click_pattern(pattern)?;
-        engine.play_click()?;
+        engine.start_click_pattern(pattern)?;
         onset.reset();
         onset.set_enabled(true);
 
@@ -340,6 +343,16 @@ mod tests {
             self.stops += 1;
             Ok(())
         }
+        fn start_click_pattern(&mut self, pattern: SequencerPattern) -> Result<(), Self::Error> {
+            if self.fail_pattern {
+                return Err("pattern rejected");
+            }
+            if self.fail_play {
+                return Err("play rejected");
+            }
+            self.set_click_pattern(pattern)?;
+            self.play_click()
+        }
     }
 
     #[test]
@@ -411,6 +424,8 @@ mod tests {
         assert_eq!(session.phase(), CalibrationPhase::Idle);
         assert!(!onset.is_enabled());
         assert!(session.expected_clicks.is_empty());
+        assert!(click.pattern.is_none());
+        assert_eq!(click.plays, 0);
         click.fail_play = false;
         session.start(&mut click, &onset).unwrap();
         click.fail_stop = true;
