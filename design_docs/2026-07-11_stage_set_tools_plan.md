@@ -1556,11 +1556,18 @@ and remain fully operable by keyboard.
 
 ### P7. Rebuild Song as Looper over Set
 
-**Current state: open.** `SongDoc` and the current song-shaped audio lowering
-still exist; `LoopPlan`/stable-segment capture and companion persistence have
-not landed.
+**Current state (2026-10-11): bounded Set backing implemented; P7 remains open.**
+`LoopPlan` now derives block-chord backing from explicitly owned Set Cards with
+Bars holds, instrument/tuning and an explicit quarter-note clock. Readiness
+names unsupported Cards rather than silently dropping or approximating them.
+The desktop preserves captures by Set/Card identity across reorder and pitch
+edits, refuses clock changes while dependent PCM exists, and refuses source
+changes during armed or active capture. Set source and clock settings persist.
+`SongDoc` remains the exact saved-backing compatibility path; its authored
+pitches, meter and duration are preserved. Full saved-song migration, mixed
+material lowering, WAV export and companion PCM persistence remain open.
 
-Add `LoopPlan` lowering and readiness validation. Migrate the current song
+Complete `LoopPlan` lowering and readiness validation. Migrate the current song
 engine to a loop engine that plays Set-derived segments and preserves captures
 by stable segment ID. Provide count-in, play/stop/rewind, replace, overdub,
 clear, input level, and capture status.
