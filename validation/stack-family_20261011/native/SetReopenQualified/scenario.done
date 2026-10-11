@@ -1,0 +1,10 @@
+RESULT ok
+captured 01_set_source_fresh_reopen
+captured 02_set_source_replayed
+captured 03_saved_backing_still_retained
+Set LoopPlan source and settings reopen complete
+capture 01_set_source_fresh_reopen 2360x1600 digest=0d8246bd160287ac file=/Users/markik/Code/testing/woodshed/stack-adoption-20261011/native/SetReopenQualified/01_set_source_fresh_reopen.png
+capture 02_set_source_replayed 2360x1600 digest=9ffc50ed4911cc8a file=/Users/markik/Code/testing/woodshed/stack-adoption-20261011/native/SetReopenQualified/02_set_source_replayed.png
+capture 03_saved_backing_still_retained 2360x1600 digest=a4f5141c4716e5b6 file=/Users/markik/Code/testing/woodshed/stack-adoption-20261011/native/SetReopenQualified/03_saved_backing_still_retained.png
+frames: 3 captured, 0 blank, 3 distinct digests
+presentation: 74 frames, 75 redraws, 1 unpresented redraws

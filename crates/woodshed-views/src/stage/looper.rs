@@ -525,7 +525,7 @@ fn set_screen(ui: &UiState) -> UiChild {
                     if ui.loop_admitted.is_some() || ui.requested_loop_plan().is_ok() { ui.song_playing = !ui.song_playing; }
                 }),
             clickable(el("div", text("Rewind")).attr("class", "t-btn"), |ui: &mut UiState, _| ui.request(AudioRequest::SongRewind)),
-            clickable(el("div", text(if ui.looper.one_shot { "Once" } else { "Loop" })).attr("class", "t-btn"),
+            clickable(el("div", text(if ui.looper.one_shot { "Once" } else { "Loop" })).attr("class", "t-btn").attr("role", "button").attr("data-action", "toggle-set-one-shot"),
                 |ui: &mut UiState, _| ui.looper.one_shot = !ui.looper.one_shot),
             clickable(el("div", text(if ui.looper.click { "Click: on" } else { "Click: off" })).attr("class", "t-btn"),
                 |ui: &mut UiState, _| ui.looper.click = !ui.looper.click),

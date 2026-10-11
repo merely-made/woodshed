@@ -525,7 +525,11 @@ mod tests {
         assert_eq!(h.state().looper.beats, 5);
         assert!(h.click_on(&Selector::class("t-btn").containing("Tempo +")));
         assert_eq!(h.state().looper.inherited_bpm, 125.0);
+        let repeat = Selector::role("button").with_attr("data-action", "toggle-set-one-shot");
+        assert!(h.click_on(&repeat));
+        assert!(h.state().looper.one_shot);
         h.update(|ui| admit_playback(ui, &mut backend, &mut song, &mut plan));
+        assert!(plan.as_ref().unwrap().one_shot);
         h.update(|ui| {
             let mut other = ui.set.cards[0].clone();
             other.label = "other Card".into();

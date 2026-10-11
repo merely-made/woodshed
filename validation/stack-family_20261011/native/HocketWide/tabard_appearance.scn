@@ -1,0 +1,52 @@
+# Scenario-only audio isolation and scratch HOCKET_SETTINGS/APPEARANCE/THEME_LIBRARY.
+settle 3
+assert snap appearance-device-free == true
+assert snap appearance-authoring == true
+assert snap appearance-theme == hocket:default
+assert snap tracks == 4
+capture recorder_default
+click role:button @data-action=toggle-appearance
+click role:button @data-appearance-theme=theme:default
+click role:button @data-appearance-mode=light
+settle 3
+capture recorder_light
+click role:button @data-appearance-mode=dark
+settle 3
+capture recorder_dark
+captures-differ recorder_light recorder_dark
+click role:button @data-appearance-mode=hc_light
+settle 3
+capture recorder_hc_light
+click role:button @data-appearance-mode=hc_dark
+settle 3
+capture recorder_hc_dark
+captures-differ recorder_hc_light recorder_hc_dark
+click role:button @data-appearance-mode=dark
+settle 3
+click role:button @data-action=edit-appearance
+assert snap appearance-workshop == true
+click role:textbox @data-field=name
+input-text HocketAcceptance
+assert snap appearance-name == HocketAcceptance
+click role:button @data-action=toggle-stylesheet
+click role:textbox @data-field=mode-sheet
+input-text :root{--tabard-color-bg:#142238;--tabard-color-surface:#1b2e49;--tabard-color-surface-2:#243d5e;--tabard-color-surface-hover:#31577c;--tabard-color-text:#eaf2ff;--tabard-color-text-dim:#b6cee4;--tabard-color-text-disabled:#879eba;--tabard-color-text-header:#eaf2ff;--tabard-color-primary:#b6cee4;--tabard-color-on-primary:#142238;--tabard-syntax-link:#b6cee4;--tabard-syntax-emphasis:#eaf2ff;--tabard-syntax-keyword:#b6cee4;--tabard-syntax-string:#eaf2ff;--tabard-syntax-number:#b6cee4;}
+click role:button @data-action=apply-stylesheet
+click role:button @data-action=save
+assert snap appearance-dirty == false
+assert snap appearance-theme == theme:default
+capture workshop_saved
+click role:button @data-action=apply-to-hocket
+click role:button @data-action=back-to-hocket
+assert snap appearance-workshop == false
+assert snap appearance-mode == dark
+assert snap tracks == 4
+capture recorder_applied
+click role:button @data-action=edit-appearance
+resize 420 1000
+settle 3
+capture workshop_narrow
+resize 1180 700
+settle 3
+click role:button @data-action=back-to-hocket
+capture recorder_final
