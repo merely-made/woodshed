@@ -25,6 +25,10 @@
 //! pointed at `REDSHANK_WIDTH` / `REDSHANK_HEIGHT`, so one `.scn` is captured
 //! at every artboard width by the driver script.
 
+//! `REDSHANK_PRESENTATION_TIMEOUT_SECS` optionally allows 10–60 seconds to
+//! bring a background acceptance window forward. The default is ten seconds;
+//! scenario progress still requires presented frames.
+
 use cambium_genet_winit_host::{AppCtx, HostPointer, Key, KeyPress, NamedKey};
 use redshank_model::{AnnotationId, ItemId, ResumeCompleted, ThemeMode, ThemeSeed};
 use redshank_surfaces::{
@@ -76,7 +80,14 @@ pub(crate) fn from_env(
             },
             cambium_genet_winit_host::read_file,
         )
-        .expect("load Redshank scenario"),
+        .expect("load Redshank scenario")
+        .with_presentation_timeout(std::time::Duration::from_secs(
+            std::env::var("REDSHANK_PRESENTATION_TIMEOUT_SECS")
+                .ok()
+                .and_then(|value| value.parse::<u64>().ok())
+                .unwrap_or(10)
+                .clamp(10, 60),
+        )),
     )
 }
 
