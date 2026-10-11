@@ -129,3 +129,17 @@ migration is separately reportable from release publication or main merge.
   dependency-inclusive Clippy attempt stops at nine pre-existing model lints;
   those files are unchanged by this lane. Completed capture data is preserved
   if the continuously running reader overflows later.
+
+- **2026-10-11:** Final profile review confirms `cpal_resample_inputs` is
+  disabled, matching the prior 0.10 consumer. Mismatched input/output rates can
+  cause CPAL's `fail_on_no_input=false` fallback to omit input. The engine/host
+  now derive input availability from actual stream input channel count and
+  liveness, refuse either capture mode for an output-only stream, and mark the
+  Record switch unavailable. Enabling input resampling and qualifying physical
+  mixed-rate device selection are deferred capabilities. An offline zero-input
+  stream verifies refusal without promoting graph silence into a phrase.
+
+- **2026-10-11:** The output-only input guard passes the final locked workspace
+  gate: 166 tests, one keeper-specific ignore, twelve offline production-graph
+  cases, scoped engine Clippy and desktop/manual builds. Native qualification
+  will use the follow-up source commit with this availability check.

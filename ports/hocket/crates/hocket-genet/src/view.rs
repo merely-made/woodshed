@@ -748,7 +748,11 @@ fn transport(state: &AppState) -> Child {
                             "false"
                         },
                     )
-                    .attr("aria-label", "Record"),
+                    .attr("aria-label", "Record")
+                    .attr(
+                        "aria-disabled",
+                        if state.input_available() { "false" } else { "true" },
+                    ),
                 |state: &mut AppState, _| state.toggle_record(),
             ),
             el(

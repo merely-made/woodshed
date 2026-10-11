@@ -83,6 +83,7 @@ impl mesquite::Product for Product {
                 state.session.master_clock_enabled.to_string(),
             )
             .with_field("recording", state.is_recording().to_string())
+            .with_field("input-available", state.input_available().to_string())
             .with_field(
                 "armed-track",
                 state
