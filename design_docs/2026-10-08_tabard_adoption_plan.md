@@ -253,3 +253,21 @@ nonblocking legibility follow-up; no formal contrast audit is claimed.
   preserve source closure, CPU/build logs, complete receipts, hashes and images.
   Native OS decorations, live accessibility/IME and other headed platforms
   remain unqualified; this matrix does not claim audio/MIDI hardware coverage.
+
+
+## Coherent family adoption — 2026-10-11
+
+**Status: in progress.** Adopt the published production family from Mere
+`0e78fcff`, rather than independently selecting each supplier's latest head:
+Genet `4bc75583`, Dramatis `0234e7ee`, Netrender `ef5412d7`, and the maintained
+Classic 0.11 renderer/encoding/shader source `5862bba2`. Root Woodshed, Hocket
+and Redshank retain independent manifests and lockfiles. Root patches are
+explicit in each consuming workspace; the p2panda eight-package compatibility
+tag stays coherent. Existing Firewheel `2b03846` and product authority remain.
+
+Done when each affected workspace resolves the published family without local
+Cargo overrides, application and audio gates pass, and the new production host
+repeats native appearance and connected Set/preview/Looper reopening. Ringdown's
+independent gate must also remain passing. Native captures, hardware/audio
+observations, keeper admission and publication are recorded separately; old
+consumer receipts do not qualify the new renderer.
