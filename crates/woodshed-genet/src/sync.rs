@@ -215,6 +215,7 @@ fn push_backend(shared: &mut Shared, ctx: &mut Ctx<'_>) {
                                 Ok(()) => {
                                     capture_persistence.forget(id);
                                     capture_changed = true;
+                                    ui.loop_notice = None;
                                 },
                                 Err(reason) => ui.loop_notice = Some(reason),
                             }
@@ -240,6 +241,7 @@ fn push_backend(shared: &mut Shared, ctx: &mut Ctx<'_>) {
                         if ui.loop_captures.takes.iter().any(|take| take.id == id) =>
                     {
                         capture_persistence.forget(id);
+                        ui.loop_notice = None;
                     },
                     other => retained_requests.push(other),
                 }

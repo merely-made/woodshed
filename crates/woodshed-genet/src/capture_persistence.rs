@@ -638,11 +638,13 @@ mod tests {
         assert_eq!(reopened.set.cards[0].label, "Practice with no output");
         assert_eq!(reopened.loop_captures, original);
         // The removed occurrence's reference has its own explicit Clear action.
+        host.update(|ui| ui.loop_notice = Some("Prior capture refusal".into()));
         host.layout_at(1280.0, 960.0);
         assert!(host.click_on(
             &taproot::Selector::role("button").with_attr("data-action", "clear-stored-loop")
         ));
         host.after_dispatch();
+        assert!(host.state().loop_notice.is_none());
         crate::session::restore(shared.borrow().storage.as_ref().unwrap(), &mut reopened);
         assert!(reopened.loop_captures.is_empty());
         assert_eq!(reopened.set.cards[0].label, "Practice with no output");
