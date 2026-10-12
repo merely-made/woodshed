@@ -4,7 +4,7 @@ use woodshed_core::loop_plan::{LoopPlan, LoopReadiness, LoopSegmentId, LooperSou
 use woodshed_core::song::{SECTION_LABELS, song_from_progression};
 use woodshed_core::working_sets::WorkingSetId;
 
-use super::{UiChild, UiState};
+use super::{LoopExportRequest, UiChild, UiState};
 
 fn song_deck(ui: &UiState) -> UiChild {
     let from_prog_label = match ui.stage.progression_idx {
@@ -563,6 +563,85 @@ fn set_screen(ui: &UiState) -> UiChild {
     )))
 }
 
+fn export_controls(ui: &UiState) -> UiChild {
+    let waiting = ui.loop_export_busy || !ui.loop_export_requests.is_empty();
+    let choose_disabled = waiting || ui.loop_export_replace.is_some();
+    let mut controls: Vec<UiChild> = vec![Box::new(clickable(
+        el("div", text("Export WAV"))
+            .attr("class", "t-btn")
+            .attr("role", "button")
+            .attr("data-action", "export-wav")
+            .attr("aria-disabled", choose_disabled.to_string()),
+        |ui: &mut UiState, _| {
+            if !ui.loop_export_busy
+                && ui.loop_export_requests.is_empty()
+                && ui.loop_export_replace.is_none()
+            {
+                ui.loop_export_requests
+                    .push(LoopExportRequest::ChooseDestination);
+            }
+        },
+    ))];
+    if let Some((token, filename)) = &ui.loop_export_replace {
+        let token = *token;
+        controls.push(Box::new(
+            el("div", text(format!("WAV already exists: {filename}"))).attr("class", "t-readout"),
+        ));
+        for (label, action, request) in [
+            (
+                "Replace WAV",
+                "replace-wav",
+                LoopExportRequest::Replace(token),
+            ),
+            (
+                "Cancel",
+                "cancel-replace-wav",
+                LoopExportRequest::CancelReplace(token),
+            ),
+        ] {
+            controls.push(Box::new(clickable(
+                el("div", text(label))
+                    .attr("class", "t-btn")
+                    .attr("role", "button")
+                    .attr("data-action", action)
+                    .attr("aria-disabled", waiting.to_string()),
+                move |ui: &mut UiState, _| {
+                    if !ui.loop_export_busy
+                        && ui.loop_export_requests.is_empty()
+                        && ui
+                            .loop_export_replace
+                            .as_ref()
+                            .is_some_and(|(current, _)| *current == token)
+                    {
+                        ui.loop_export_requests.push(request);
+                    }
+                },
+            )));
+        }
+    }
+    let notice = ui.loop_export_notice.clone().unwrap_or_else(|| {
+        if ui.loop_export_busy {
+            "Export in progress.".into()
+        } else {
+            String::new()
+        }
+    });
+    Box::new(el(
+        "div",
+        (
+            el("div", controls).attr("class", "transport"),
+            el(
+                "div",
+                text("One pass · backing + completed loops · click follows Looper"),
+            )
+            .attr("class", "t-readout"),
+            el("div", text(notice))
+                .attr("class", "t-readout")
+                .attr("role", "status"),
+        ),
+    ))
+}
+
 pub(super) fn screen(ui: &UiState) -> UiChild {
     let retained_ids: std::collections::BTreeSet<_> = ui
         .loop_retained_ids
@@ -596,6 +675,7 @@ pub(super) fn screen(ui: &UiState) -> UiChild {
         "div",
         (
             source_controls(ui),
+            export_controls(ui),
             el("div", text(ui.loop_notice.clone().unwrap_or_default())).attr("class", "t-readout"),
             el(
                 "div",
@@ -623,6 +703,92 @@ mod tests {
         ui.set.push(card);
         ui.loop_working_set(ui.working_sets.active_id);
         ui
+    }
+
+    #[test]
+    fn wav_export_controls_require_host_collision_token_and_reset_with_session() {
+        use cambium_genet_winit_host::Harness;
+        use taproot::Selector;
+
+        let mut ui = ready_ui();
+        ui.select_app_section(woodshed_core::storage::AppSection::Looper);
+        ui.set_viewport_width(1100.0);
+        ui.set_viewport_height(900.0);
+        let logic: Box<dyn FnMut(&UiState) -> UiChild> = Box::new(super::super::stage_root);
+        let mut h = Harness::new(crate::theme::slate_stage_css(), ui, logic);
+        h.layout_at(1100.0, 900.0);
+        let export = Selector::class("t-btn").containing("Export WAV");
+        let replace = Selector::class("t-btn").containing("Replace WAV");
+        assert!(!h.click_on(&replace));
+        assert!(h.click_on(&export));
+        let _ = h.click_on(&export);
+        assert_eq!(
+            h.state().loop_export_requests,
+            [LoopExportRequest::ChooseDestination]
+        );
+
+        h.update(|ui| {
+            ui.loop_export_requests.clear();
+            ui.loop_export_busy = true;
+            ui.loop_export_notice = Some("Choosing WAV destination…".into());
+        });
+        let _ = h.click_on(&export);
+        assert!(h.state().loop_export_requests.is_empty());
+        h.update(|ui| {
+            ui.loop_export_busy = false;
+            ui.loop_export_replace = Some((73, "practice.wav".into()));
+            ui.loop_export_notice = Some("Choose Replace WAV to replace the existing file.".into());
+        });
+        let _ = h.click_on(&export);
+        assert!(h.state().loop_export_requests.is_empty());
+        assert!(h.click_on(&replace));
+        assert_eq!(
+            h.state().loop_export_requests,
+            [LoopExportRequest::Replace(73)]
+        );
+        let _ = h.click_on(&replace);
+        assert_eq!(h.state().loop_export_requests.len(), 1);
+
+        h.update(|ui| {
+            ui.loop_export_requests.clear();
+            ui.loop_export_replace = Some((91, "second.wav".into()));
+        });
+        assert!(h.click_on(&Selector::class("t-btn").containing("Cancel")));
+        assert_eq!(
+            h.state().loop_export_requests,
+            [LoopExportRequest::CancelReplace(91)]
+        );
+        h.update(|ui| {
+            ui.loop_export_requests.clear();
+            ui.loop_export_replace = None;
+            ui.loop_export_notice = Some("Export cancelled.".into());
+        });
+        assert!(h.click_on(&export));
+        assert_eq!(
+            h.state().loop_export_requests,
+            [LoopExportRequest::ChooseDestination]
+        );
+
+        h.update(|ui| {
+            ui.loop_export_busy = true;
+            ui.loop_export_replace = Some((117, "never-persisted.wav".into()));
+            ui.loop_export_notice = Some("Write refused; previous WAV retained.".into());
+            let persisted = ui.to_persisted();
+            let json = serde_json::to_value(&persisted).unwrap();
+            for key in [
+                "loop_export_requests",
+                "loop_export_busy",
+                "loop_export_notice",
+                "loop_export_replace",
+            ] {
+                assert!(json.get(key).is_none());
+            }
+            ui.apply_persisted(&persisted, Default::default());
+        });
+        assert!(h.state().loop_export_requests.is_empty());
+        assert!(!h.state().loop_export_busy);
+        assert!(h.state().loop_export_notice.is_none());
+        assert!(h.state().loop_export_replace.is_none());
     }
 
     #[test]

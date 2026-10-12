@@ -50,6 +50,7 @@ pub fn after_dispatch(shared: &mut Shared, ctx: &mut Ctx<'_>) {
     }
     shared.full_dispatch_syncs = shared.full_dispatch_syncs.saturating_add(1);
     push_backend(shared, ctx);
+    crate::wav_export::after_dispatch(shared, ctx);
     // Window verbs used to be drained here from four `UiState` flags. The
     // host owns them now: the caption buttons call `WindowCommands` directly
     // and the title bar drags from its `--app-region` declaration.
@@ -61,6 +62,10 @@ pub fn after_dispatch(shared: &mut Shared, ctx: &mut Ctx<'_>) {
 fn push_backend(shared: &mut Shared, ctx: &mut Ctx<'_>) {
     let mut sheet = None;
     let mut persisted_settings: Option<String> = None;
+
+    if !crate::capture_persistence::session_current(shared, ctx.runner.state()) {
+        shared.wav_export.revoke_session();
+    }
 
     // Set/Card ids are session-local. Every reset/open, including reopening
     // the same persona, releases PCM custody before admitting incoming ids.

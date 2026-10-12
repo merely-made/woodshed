@@ -48,6 +48,7 @@ use crate::sync::Ctx;
 pub struct Product {
     shared: Rc<RefCell<Shared>>,
     sheet: String,
+    export_wait: Option<(String, std::time::Instant)>,
 }
 
 pub fn from_env(shared: Rc<RefCell<Shared>>) -> Option<mesquite::Lane<Product>> {
@@ -56,7 +57,11 @@ pub fn from_env(shared: Rc<RefCell<Shared>>) -> Option<mesquite::Lane<Product>> 
     Some(
         mesquite::Lane::from_config(
             config,
-            Product { shared, sheet },
+            Product {
+                shared,
+                sheet,
+                export_wait: None,
+            },
             cambium_genet_winit_host::read_file,
         )
         .expect("load Woodshed scenario")
@@ -90,13 +95,49 @@ impl mesquite::Product for Product {
     fn drain_events(&mut self, _: &mut Ctx<'_>) -> Vec<String> {
         std::mem::take(&mut self.shared.borrow_mut().events)
     }
-    fn busy(&self, _: &Ctx<'_>, capture_pending: bool) -> Option<bool> {
+    fn busy(&self, ctx: &Ctx<'_>, capture_pending: bool) -> Option<bool> {
+        let export_wait = self.export_wait.as_ref().is_some_and(|(expected, started)| {
+            started.elapsed().as_secs() < 180
+                && !ctx.runner.state().loop_export_notice.as_deref()
+                    .is_some_and(|notice| notice.contains(expected))
+        });
         Some(
-            capture_pending
+            export_wait
+                || ctx.runner.state().loop_export_busy
+                || capture_pending
                 || self.shared.borrow().backend.as_ref().is_some_and(|backend| backend.preview_busy()),
         )
     }
     fn act(&mut self, ctx: &mut Ctx<'_>, label: &str) -> bool {
+        if let Some(expected) = match label {
+            "wav-native-await-cancel" => Some("WAV export cancelled"),
+            "wav-native-await-save" => Some("Exported "),
+            "wav-native-await-collision" => Some("already exists"),
+            "wav-native-await-replacement-cancel" => Some("WAV replacement cancelled"),
+            _ => None,
+        } {
+            ctx.runner.update(|ui| ui.loop_export_notice = None);
+            self.export_wait = Some((expected.into(), std::time::Instant::now()));
+            return true;
+        }
+        if label == "wav-export-fixture" || label == "wav-export-backing-fixture" {
+            let Some(directory) = std::env::var_os("WOODSHED_CAPTURE_DIR") else {
+                return false;
+            };
+            let name = if label == "wav-export-fixture" {
+                "loop-export.wav"
+            } else {
+                "backing-export.wav"
+            };
+            let path = std::path::PathBuf::from(directory).join(name);
+            ctx.runner.update(|ui| {
+                ui.loop_export_requests.push(woodshed_views::stage::LoopExportRequest::ChooseDestination);
+            });
+            crate::wav_export::after_dispatch_with_chooser(
+                &mut self.shared.borrow_mut(), ctx, |_| Some(path.clone()),
+            );
+            return true;
+        }
         Probe {
             ctx,
             shared: &mut self.shared.borrow_mut(),
@@ -525,6 +566,9 @@ impl Snapshot<'_, '_> {
             )
             .with_field("song-bars", ui.song.bars.len().to_string())
             .with_field("song-playing", ui.song_playing.to_string())
+            .with_field("loop-export-busy", ui.loop_export_busy.to_string())
+            .with_field("loop-export-replace", ui.loop_export_replace.is_some().to_string())
+            .with_field("loop-export-notice", ui.loop_export_notice.clone().unwrap_or_default())
             .with_field("song-live-bar", ui.song_bar_live.to_string())
             .with_field("song-first-bpm", ui.song.bars.first().map_or(0.0, |bar| bar.bpm).to_string())
             .with_field("song-first-root", ui.song.bars.first().map_or(0, |bar| bar.root_pc).to_string())

@@ -201,6 +201,20 @@ impl CpalBackend {
         self.output.as_ref().map(OutputRuntime::sample_rate)
     }
 
+    /// Immutable completed material from the accepted output document. No
+    /// transport command, input stream or requested projection is realized.
+    pub(crate) fn export_backing(&mut self) -> Result<(Song, u32), String> {
+        self.service();
+        if self.session_reset_pending {
+            return Err("Captured loops are waiting for the current session to restore.".into());
+        }
+        if self.loop_capture_busy() {
+            return Err("Stop recording / armed capture before exporting WAV.".into());
+        }
+        let output = self.output.as_ref().ok_or("Audio output is unavailable.")?;
+        Ok((output.song(), output.sample_rate()))
+    }
+
     /// The caller services completed output returns before exporting this
     /// cheap immutable snapshot. Inactive Sets retain their completed takes.
     pub(crate) fn capture_snapshot(&self) -> Vec<CaptureSnapshot> {
@@ -1072,6 +1086,33 @@ mod tests {
                 rate,
             ),
         }
+    }
+
+    #[test]
+    fn wav_snapshot_retains_completed_pcm_and_refuses_armed_capture() {
+        let mut audio = backend(Box::new(successful_input));
+        let take = stored_take(1, 48_000, 0.25);
+        audio.restore_loop_captures(vec![take.clone()]).unwrap();
+        audio.set_loop_plan(&owned_plan(1)).unwrap();
+        render(&mut audio, 32);
+        let (frozen, rate) = audio.export_backing().unwrap();
+        assert_eq!(rate, 48_000);
+        assert!(Arc::ptr_eq(
+            &frozen.bars[0].audio_buffer.as_ref().unwrap().data,
+            &take.buffer.data
+        ));
+        assert!(audio.input.is_none());
+        audio.clear_stored_capture(take.id).unwrap();
+        assert_eq!(frozen.bars[0].audio_buffer.as_ref().unwrap().data[0], 0.25);
+        assert!(
+            audio.output.as_ref().unwrap().song().bars[0]
+                .audio_buffer
+                .is_none()
+        );
+        render(&mut audio, 32);
+        audio.loop_arm_record(take.id).unwrap();
+        assert!(audio.export_backing().unwrap_err().contains("armed"));
+        assert_eq!(frozen.bars[0].audio_buffer.as_ref().unwrap().data[0], 0.25);
     }
 
     fn quota_bank(count: u64, frames: usize, rate: u32) -> Vec<CaptureSnapshot> {
