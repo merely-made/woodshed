@@ -1,0 +1,28 @@
+# Separate process after seed. Verify hydrated PCM, clock refusal and Clear.
+settle 5
+ui-zoom 0.8
+assert snap set-cards == 2
+assert snap loop-capture-references == 1
+assert snap loop-active-captures == 1
+assert snap capture-input-rate == none
+assert snap output-streams == 1
+assert text Card loops saved: 1
+capture 01_card_loop_fresh_reopen
+click .t-btn Play
+settle 12
+assert snap song-playing == true
+click .t-btn Stop
+settle 3
+click .t-btn Tempo +
+settle 3
+assert text Clear the captured loop
+assert snap loop-capture-references == 1
+capture 02_recorded_clock_refused
+click role:button @data-action=clear-stored-loop
+settle 4
+assert snap loop-capture-references == 0
+assert snap loop-active-captures == 0
+assert text Inherited: 125 bpm
+assert snap capture-input-rate == none
+capture 03_card_loop_cleared
+log Set capture fresh reopen and clear complete
