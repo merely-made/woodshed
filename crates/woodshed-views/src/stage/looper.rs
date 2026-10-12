@@ -392,7 +392,8 @@ impl UiState {
     }
 
     fn selected_loop_segment(&self) -> Option<LoopSegmentId> {
-        let plan = self.loop_admitted.as_ref()?;
+        let requested = self.requested_loop_plan().ok();
+        let plan = self.loop_admitted.as_ref().or(requested.as_ref())?;
         self.loop_selected
             .filter(|id| plan.index_of(*id).is_some())
             .or_else(|| plan.segments.first().map(|segment| segment.id))
@@ -563,6 +564,30 @@ fn set_screen(ui: &UiState) -> UiChild {
 }
 
 pub(super) fn screen(ui: &UiState) -> UiChild {
+    let retained_ids: std::collections::BTreeSet<_> = ui
+        .loop_retained_ids
+        .iter()
+        .copied()
+        .chain(ui.loop_captures.takes.iter().map(|take| take.id))
+        .collect();
+    let retained: Vec<UiChild> = retained_ids
+        .into_iter()
+        .map(|id| {
+            Box::new(clickable(
+                el(
+                    "div",
+                    text(format!(
+                        "Clear stored loop: Set {} Card {}",
+                        id.set.0, id.card.0
+                    )),
+                )
+                .attr("class", "t-btn")
+                .attr("role", "button")
+                .attr("data-action", "clear-stored-loop"),
+                move |ui: &mut UiState, _| ui.request(AudioRequest::LoopClear(id)),
+            )) as UiChild
+        })
+        .collect();
     let body = match ui.looper.source {
         LooperSource::SavedSong => saved_song_screen(ui),
         LooperSource::Set(_) => set_screen(ui),
@@ -572,6 +597,12 @@ pub(super) fn screen(ui: &UiState) -> UiChild {
         (
             source_controls(ui),
             el("div", text(ui.loop_notice.clone().unwrap_or_default())).attr("class", "t-readout"),
+            el(
+                "div",
+                text(ui.loop_capture_notice.clone().unwrap_or_default()),
+            )
+            .attr("class", "t-readout"),
+            el("div", retained).attr("class", "transport"),
             body,
         ),
     ))

@@ -503,6 +503,26 @@ impl Snapshot<'_, '_> {
                 "capture-input-rate",
                 self.shared.backend.as_ref().and_then(|backend| backend.capture_source_rate()).map_or_else(|| "none".into(), |rate| rate.to_string()),
             )
+            .with_field(
+                "loop-capture-references",
+                ui.loop_captures.takes.len().to_string(),
+            )
+            .with_field(
+                "loop-capture-frames",
+                ui.loop_captures
+                    .takes
+                    .iter()
+                    .fold(0usize, |total, take| total.saturating_add(take.frames))
+                    .to_string(),
+            )
+            .with_field(
+                "loop-active-captures",
+                ui.song_loop_bars
+                    .iter()
+                    .filter(|present| **present)
+                    .count()
+                    .to_string(),
+            )
             .with_field("song-bars", ui.song.bars.len().to_string())
             .with_field("song-playing", ui.song_playing.to_string())
             .with_field("song-live-bar", ui.song_bar_live.to_string())
@@ -1155,6 +1175,55 @@ impl Automatable for Probe<'_, '_> {
     }
 
     fn act(&mut self, label: &str) -> bool {
+        if label == "seed-loop-capture" {
+            use woodshed_core::audio::AudioBackend;
+            let Some(plan) = self.ctx.runner.state().loop_admitted.clone() else {
+                return false;
+            };
+            let Some(segment) = plan.segments.first() else {
+                return false;
+            };
+            let Some(backend) = self.shared.backend.as_mut() else {
+                return false;
+            };
+            let Some(rate) = backend.output_sample_rate() else {
+                return false;
+            };
+            if backend.loop_capture_busy() {
+                return false;
+            }
+            // Only the self-drive fixture supplies these exact samples. The
+            // native flow qualifies storage/replay without requesting a mic.
+            let frames = woodshed_audio::Bar {
+                bpm: segment.bpm,
+                time_signature: woodshed_audio::TimeSignature::new(segment.beats, 4),
+                length: segment.bars,
+                ..Default::default()
+            }
+            .duration_samples(rate as f32) as usize;
+            let samples = (0..frames)
+                .map(|frame| [0.000125, -0.00025, -0.0, 0.0005][frame % 4])
+                .collect();
+            let mut takes = backend.capture_snapshot();
+            takes.retain(|take| take.id != segment.id);
+            takes.push(crate::audio::CaptureSnapshot {
+                id: segment.id,
+                bpm: segment.bpm,
+                beats: segment.beats,
+                bars: segment.bars,
+                buffer: woodshed_audio::SampleBuffer::new(samples, rate),
+            });
+            backend.clear_loop_session();
+            if let Err(error) = backend
+                .restore_loop_captures(takes)
+                .and_then(|_| backend.set_loop_plan(&plan))
+            {
+                eprintln!("capture fixture refused: {error}");
+                return false;
+            }
+            crate::sync::after_dispatch(self.shared, self.ctx);
+            return true;
+        }
         if label == "sample-output-clock" {
             let Some(backend) = self.shared.backend.as_ref() else {
                 return false;

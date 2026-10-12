@@ -24,6 +24,7 @@
 
 mod appearance;
 mod audio;
+mod capture_persistence;
 mod drive;
 #[cfg(test)]
 mod layout_tests;
@@ -246,6 +247,9 @@ fn hooks(shared: &Rc<RefCell<Shared>>) -> HostHooks<UiState, Logic, UiChild> {
     HostHooks {
         frame: Box::new(move |ctx: &mut Ctx<'_>| {
             let mut shared = frame_shared.borrow_mut();
+            if !capture_persistence::session_current(&shared, ctx.runner.state()) {
+                sync::after_dispatch(&mut shared, ctx);
+            }
             let drag_active = ctx.runner.state().set_graph_drag_active;
             shared.drag_frame_metrics.begin(drag_active);
             let phase = std::time::Instant::now();
@@ -292,10 +296,25 @@ fn hooks(shared: &Rc<RefCell<Shared>>) -> HostHooks<UiState, Logic, UiChild> {
             }
         }),
         after_wake: Box::new(move |ctx: &mut Ctx<'_>| {
-            let observation = drive::poll_audio(&mut wake_shared.borrow_mut());
+            let mut shared = wake_shared.borrow_mut();
+            if !capture_persistence::session_current(&shared, ctx.runner.state()) {
+                sync::after_dispatch(&mut shared, ctx);
+                if !capture_persistence::session_current(&shared, ctx.runner.state()) {
+                    if let Some(backend) = shared.backend.as_mut() {
+                        backend.service();
+                    }
+                    return;
+                }
+            }
+            let observation = drive::poll_audio(&mut shared);
             if let Some(observation) = observation {
-                if observation.changed(ctx.runner.state()) {
-                    ctx.runner.update(|ui| observation.apply(ui));
+                if observation.changed(ctx.runner.state())
+                    || capture_persistence::pending(&shared, ctx.runner.state())
+                {
+                    ctx.runner.update(|ui| {
+                        observation.apply(ui);
+                        capture_persistence::persist_if_changed(&mut shared, ui);
+                    });
                 }
             }
         }),

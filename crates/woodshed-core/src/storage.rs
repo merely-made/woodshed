@@ -5,10 +5,14 @@
 //! desktop, OPFS in the browser. Every field is `#[serde(default)]`-safe
 //! so old files keep loading as the struct grows.
 
-use muniment::Backend;
+use muniment::{Backend, StoreError};
 use serde::{Deserialize, Serialize};
 
 use crate::arpeggio::ArpeggioDirection;
+use crate::loop_capture::{
+    LoopCaptureManifest, LoopCaptureRef, decode_pcm, encode_pcm, pcm_digest, pcm_key,
+    validate_namespace,
+};
 use crate::settings::AppSettings;
 pub use crate::settings::RelatedSettings;
 use crate::{Lens, StageState};
@@ -52,6 +56,71 @@ impl<B: Backend> SessionStore<B> {
 
     pub fn save(&self, contents: &str) {
         self.write(SESSION_SLOT, contents);
+    }
+
+    /// Commit a session reference only after its companion blobs have been
+    /// accepted. Readback detects a backend that reports success but drops a
+    /// changed write. The host still checks its custody seal before claiming
+    /// durability; already-existing identical bytes cannot prove a new write.
+    pub fn try_save(&self, contents: &str) -> Result<(), StoreError> {
+        pollster::block_on(self.backend.put(SESSION_SLOT, contents.as_bytes()))?;
+        let stored = pollster::block_on(self.backend.get(SESSION_SLOT))?;
+        if stored.as_deref() != Some(contents.as_bytes()) {
+            return Err(StoreError::Backend(
+                "Session write could not be verified by readback.".into(),
+            ));
+        }
+        Ok(())
+    }
+
+    pub fn try_read_capture(
+        &self,
+        namespace: &str,
+        reference: &LoopCaptureRef,
+    ) -> Result<Vec<f32>, String> {
+        reference.validate()?;
+        let key = pcm_key(namespace, &reference.digest)?;
+        let bytes = pollster::block_on(self.backend.get(&key))
+            .map_err(|error| format!("Could not read loop PCM: {error}"))?
+            .ok_or("Loop PCM companion is missing or could not be unsealed.")?;
+        decode_pcm(&bytes, reference)
+    }
+
+    /// Write the blob before publishing its reference in the session. Sealing
+    /// is composed at Backend, so both write and readback use plaintext here.
+    /// A failed later session write may leave an unreferenced blob; this slice
+    /// deliberately performs no collection or deletion.
+    /// The host backend must publish companion keys without overwriting an
+    /// existing file: sealing may hide another persona's bytes from `get`.
+    pub fn try_write_capture(
+        &self,
+        namespace: &str,
+        rate: u32,
+        samples: &[f32],
+    ) -> Result<(String, usize), String> {
+        validate_namespace(namespace)?;
+        let bytes = encode_pcm(rate, samples)?;
+        let digest = pcm_digest(&bytes);
+        let key = pcm_key(namespace, &digest)?;
+        if let Some(stored) = pollster::block_on(self.backend.get(&key))
+            .map_err(|error| format!("Could not inspect existing loop PCM: {error}"))?
+        {
+            if stored == bytes && pcm_digest(&stored) == digest {
+                return Ok((digest, samples.len()));
+            }
+            return Err(
+                "Existing loop PCM does not match its address; it remains unchanged.".into(),
+            );
+        }
+        pollster::block_on(self.backend.put(&key, &bytes))
+            .map_err(|error| format!("Could not write loop PCM: {error}"))?;
+        let stored = pollster::block_on(self.backend.get(&key))
+            .map_err(|error| format!("Could not verify loop PCM: {error}"))?
+            .ok_or("Loop PCM write was not retained by its backend.")?;
+        if stored != bytes || pcm_digest(&stored) != digest {
+            return Err("Loop PCM write failed its readback integrity check.".into());
+        }
+        Ok((digest, samples.len()))
     }
 
     pub fn load_settings(&self) -> Option<String> {
@@ -154,13 +223,17 @@ pub struct PersistedSession {
     pub active_exploration: Option<crate::catalog_explorations::CatalogExplorationState>,
     /// The song lane: bars + song-level flags.
     pub song: crate::song::SongDoc,
-    /// Source selection and explicit clock only; derived plans and PCM are
-    /// transient. Absent on legacy saves, which retain their backing song.
+    /// Source selection and explicit clock; derived plans are transient.
+    /// Absent on legacy saves, which retain their backing song.
     #[serde(
         default,
         skip_serializing_if = "crate::loop_plan::LooperConfig::is_default"
     )]
     pub looper: crate::loop_plan::LooperConfig,
+    /// Owner-qualified Set takes whose exact PCM lives in companion blobs.
+    /// Missing/corrupt references remain authored data until explicitly cleared.
+    #[serde(default, skip_serializing_if = "LoopCaptureManifest::is_empty")]
+    pub loop_captures: LoopCaptureManifest,
     /// Typed catalog engagement used by Related ranking and future history
     /// views. Defaults empty for sessions written before the field existed.
     pub practice_history: crate::history::PracticeHistory,
@@ -211,6 +284,7 @@ impl PersistedSession {
             active_exploration: None,
             song: song.clone(),
             looper: crate::loop_plan::LooperConfig::default(),
+            loop_captures: LoopCaptureManifest::default(),
             practice_history: practice_history.clone(),
             workspace_json: None,
             relationship_reading_json: None,
@@ -295,6 +369,174 @@ pub(crate) const WOODSHED_SEAL_CONTEXT: &[u8] = b"woodshed.practice-session.seal
 #[cfg(test)]
 mod tests {
     use super::*;
+    const NAMESPACE: &str = "0123456789abcdef0123456789abcdef";
+
+    fn capture_ref(digest: String, frames: usize) -> LoopCaptureRef {
+        LoopCaptureRef {
+            id: crate::loop_plan::LoopSegmentId {
+                set: crate::working_sets::WorkingSetId(3),
+                card: woodshedding::rehearsal::CardId(7),
+            },
+            bpm: 83.75,
+            beats: 7,
+            bars: 3,
+            sample_rate: 48_000,
+            frames,
+            digest,
+        }
+    }
+
+    #[test]
+    fn legacy_capture_defaults_and_unavailable_references_survive_session_roundtrip() {
+        let mut session = decode_session("{}").unwrap().session;
+        assert!(session.loop_captures.is_empty());
+        assert!(
+            serde_json::to_value(&session)
+                .unwrap()
+                .get("loop_captures")
+                .is_none()
+        );
+        session
+            .loop_captures
+            .takes
+            .push(capture_ref("a".repeat(64), 3));
+        session.loop_captures.namespace = Some(NAMESPACE.into());
+        let loaded = decode_session(&serde_json::to_string(&session).unwrap())
+            .unwrap()
+            .session;
+        assert_eq!(loaded.loop_captures, session.loop_captures);
+        let store = SessionStore::new(muniment::MemoryBackend::default());
+        assert!(
+            store
+                .try_read_capture(NAMESPACE, &loaded.loop_captures.takes[0])
+                .is_err()
+        );
+        assert_eq!(loaded.loop_captures, session.loop_captures);
+        session.loop_captures.version = 2;
+        session.loop_captures.takes.clear();
+        assert!(
+            serde_json::to_value(&session)
+                .unwrap()
+                .get("loop_captures")
+                .is_some()
+        );
+    }
+
+    #[test]
+    fn sealed_companion_roundtrips_exact_pcm_and_wrong_persona_refuses_it() {
+        let inner = muniment::MemoryBackend::default();
+        let store = SessionStore::new(crate::sealed_backend::SealedBackend::new(
+            inner.clone(),
+            [1; 32],
+        ));
+        let samples = [0.0, -0.0, 0.25, -1.5];
+        let (digest, frames) = store
+            .try_write_capture(NAMESPACE, 48_000, &samples)
+            .unwrap();
+        let reference = capture_ref(digest.clone(), frames);
+        let decoded = store.try_read_capture(NAMESPACE, &reference).unwrap();
+        assert_eq!(
+            decoded.iter().map(|x| x.to_bits()).collect::<Vec<_>>(),
+            samples.iter().map(|x| x.to_bits()).collect::<Vec<_>>()
+        );
+        let raw = pollster::block_on(inner.get(&pcm_key(NAMESPACE, &digest).unwrap()))
+            .unwrap()
+            .unwrap();
+        assert_ne!(raw, encode_pcm(48_000, &samples).unwrap());
+        assert!(decode_pcm(&raw, &reference).is_err());
+        store.try_save("{\"take\":\"sealed\"}").unwrap();
+        let other = SessionStore::new(crate::sealed_backend::SealedBackend::new(inner, [2; 32]));
+        assert!(
+            other
+                .try_read_capture(NAMESPACE, &reference)
+                .unwrap_err()
+                .contains("unsealed")
+        );
+    }
+
+    #[derive(Clone, Copy)]
+    enum Fault {
+        Drop,
+        CorruptCapture,
+        RefuseSession,
+    }
+
+    struct FaultBackend {
+        inner: muniment::MemoryBackend,
+        fault: Fault,
+    }
+
+    #[async_trait::async_trait]
+    impl Backend for FaultBackend {
+        async fn get(&self, key: &str) -> Result<Option<Vec<u8>>, StoreError> {
+            self.inner.get(key).await
+        }
+        async fn put(&self, key: &str, bytes: &[u8]) -> Result<(), StoreError> {
+            match self.fault {
+                Fault::Drop => Ok(()),
+                Fault::RefuseSession if key == SESSION_SLOT => {
+                    Err(StoreError::Backend("refused session replacement".into()))
+                },
+                Fault::CorruptCapture if key.starts_with("loop-pcm/") => {
+                    let mut bad = bytes.to_vec();
+                    *bad.last_mut().unwrap() ^= 1;
+                    self.inner.put(key, &bad).await
+                },
+                _ => self.inner.put(key, bytes).await,
+            }
+        }
+        async fn delete(&self, key: &str) -> Result<(), StoreError> {
+            self.inner.delete(key).await
+        }
+        async fn list(&self, prefix: &str) -> Result<Vec<String>, StoreError> {
+            self.inner.list(prefix).await
+        }
+        async fn scan(&self, start: &str, end: &str) -> Result<Vec<String>, StoreError> {
+            self.inner.scan(start, end).await
+        }
+        async fn apply(&self, _ops: &[muniment::backend::WriteOp]) -> Result<(), StoreError> {
+            Err(StoreError::Backend("no multi-file transaction".into()))
+        }
+    }
+
+    #[test]
+    fn dropped_and_corrupt_writes_cannot_claim_durability() {
+        for fault in [Fault::Drop, Fault::CorruptCapture] {
+            let store = SessionStore::new(FaultBackend {
+                inner: muniment::MemoryBackend::default(),
+                fault,
+            });
+            assert!(store.try_write_capture(NAMESPACE, 48_000, &[0.25]).is_err());
+        }
+        let store = SessionStore::new(FaultBackend {
+            inner: muniment::MemoryBackend::default(),
+            fault: Fault::Drop,
+        });
+        assert!(store.try_save("changed session").is_err());
+    }
+
+    #[test]
+    fn refused_session_replacement_retains_previous_reference_and_orphan_blob() {
+        let inner = muniment::MemoryBackend::default();
+        pollster::block_on(inner.put(SESSION_SLOT, b"previous authored session")).unwrap();
+        let store = SessionStore::new(FaultBackend {
+            inner: inner.clone(),
+            fault: Fault::RefuseSession,
+        });
+        let (digest, frames) = store.try_write_capture(NAMESPACE, 48_000, &[0.25]).unwrap();
+        assert!(store.try_save("replacement manifest").is_err());
+        assert_eq!(store.load().as_deref(), Some("previous authored session"));
+        assert_eq!(
+            store
+                .try_read_capture(NAMESPACE, &capture_ref(digest.clone(), frames))
+                .unwrap(),
+            vec![0.25]
+        );
+        assert_eq!(
+            pollster::block_on(inner.list("loop-pcm/")).unwrap(),
+            vec![pcm_key(NAMESPACE, &digest).unwrap()]
+        );
+    }
 
     #[test]
     fn legacy_session_defaults_authored_musical_context_and_roundtrips_it() {

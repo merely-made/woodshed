@@ -217,8 +217,13 @@ exact pitch vectors, root frequency and display formula, per-bar tempo/meter,
 and hold duration; current Cards and the global LoopPlan meter cannot express
 all of those values. Freezing legacy authoring removes a product capability
 and needs its own decision. Do not silently revoice or flatten saved material.
-Transient Set PCM still needs companion storage and transaction rules before
-recordings can be claimed to survive session replacement or restart.
+Set PCM now has exact sealed companion storage and a bounded ownership
+manifest; source checks and fresh-process CPU round-trips pass, with native
+qualification in progress in the
+[P7 capture slice](2026-07-11_stage_set_tools_plan.md#p7-rebuild-song-as-looper-over-set).
+Blob publication precedes session replacement; post-commit readback failure
+is unconfirmed rather than rolled back. Saved-song PCM, physical capture,
+acoustic calibration and full P7 remain open.
 
 ### F5. Complete portable product seams
 

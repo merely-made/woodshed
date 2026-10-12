@@ -93,10 +93,18 @@ fn observe_audio(backend: &mut crate::audio::CpalBackend) -> AudioObservation {
 /// Advance the live clocks against `ui`. Returns `true` while something is
 /// animating.
 pub fn frame(shared: &mut Shared, ui: &mut UiState) -> bool {
+    if !crate::capture_persistence::session_current(shared, ui) {
+        if let Some(backend) = shared.backend.as_mut() {
+            backend.service();
+            return backend.needs_service();
+        }
+        return false;
+    }
     let mut animating = false;
     if let Some(observation) = poll_audio(shared) {
         observation.apply(ui);
     }
+    crate::capture_persistence::persist_if_changed(shared, ui);
     // Poll the MIDI seam (immutable) before borrowing the backend.
     let midi_in_connected = shared.midi.connected_input().is_some();
     let midi_clock_bpm = shared.midi.clock_bpm();

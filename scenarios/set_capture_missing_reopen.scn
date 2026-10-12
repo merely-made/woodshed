@@ -1,0 +1,21 @@
+# Reopen a copy of the sealed seed fixture with one companion held aside.
+settle 5
+ui-zoom 0.8
+assert snap loop-capture-references == 1
+assert snap loop-active-captures == 0
+assert snap capture-input-rate == none
+assert snap output-streams == 1
+assert text unavailable or damaged
+capture 01_missing_companion_reference_retained
+click .t-btn Rec Card
+settle 3
+assert text Clear the unavailable
+assert snap capture-input-rate == none
+assert snap loop-capture-references == 1
+click role:button @data-action=clear-stored-loop
+settle 4
+assert snap loop-capture-references == 0
+assert snap loop-active-captures == 0
+assert snap capture-input-rate == none
+capture 02_missing_companion_explicitly_cleared
+log Missing companion reference recovery complete

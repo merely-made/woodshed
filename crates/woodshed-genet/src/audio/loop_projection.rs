@@ -7,6 +7,21 @@ use woodshed_audio::{
 };
 use woodshed_core::loop_plan::{LoopPlan, LoopSegment, LoopSegmentId};
 
+/// Completed Set/Card PCM and the exact clock under which it was recorded.
+/// Cloning this snapshot shares the immutable samples; legacy saved-song
+/// compatibility buffers never enter this custody boundary.
+#[derive(Clone)]
+pub(crate) struct CaptureSnapshot {
+    pub id: LoopSegmentId,
+    pub bpm: f32,
+    pub beats: u8,
+    pub bars: u8,
+    pub buffer: SampleBuffer,
+}
+
+const MAX_STORED_CAPTURES: usize = 256;
+const MAX_STORED_FRAMES: usize = 16_777_216;
+
 #[derive(Clone)]
 struct Capture {
     buffer: SampleBuffer,
@@ -32,6 +47,112 @@ pub(super) struct LoopCaptures {
 }
 
 impl LoopCaptures {
+    pub(super) fn snapshot(&self) -> Vec<CaptureSnapshot> {
+        self.cards
+            .iter()
+            .map(|(&id, capture)| CaptureSnapshot {
+                id,
+                bpm: capture.bpm,
+                beats: capture.beats,
+                bars: capture.bars,
+                buffer: capture.buffer.clone(),
+            })
+            .collect()
+    }
+
+    /// Validate the complete incoming bank before replacing any completed
+    /// take. Output admission still checks its actual device rate separately.
+    pub(super) fn restore(&mut self, takes: Vec<CaptureSnapshot>) -> Result<(), String> {
+        if takes.len() > MAX_STORED_CAPTURES {
+            return Err("Stored Set captures exceed the 256-take bound.".into());
+        }
+        let mut frames = 0usize;
+        let mut validated = BTreeMap::new();
+        for take in takes {
+            if take.id.set.0 == 0
+                || take.id.card.0 == 0
+                || validated.contains_key(&take.id)
+                || !take.bpm.is_finite()
+                || take.bpm < 1.0
+                || !(1..=16).contains(&take.beats)
+                || take.bars == 0
+                || !(1000..=384_000).contains(&take.buffer.sample_rate_hz)
+            {
+                return Err("Stored Set capture has an invalid or duplicate identity, clock or sample rate.".into());
+            }
+            frames = frames
+                .checked_add(take.buffer.len())
+                .filter(|&frames| frames <= MAX_STORED_FRAMES)
+                .ok_or("Stored Set captures exceed the 16777216-frame bound.")?;
+            let expected = Bar {
+                bpm: take.bpm,
+                time_signature: TimeSignature::new(take.beats, 4),
+                length: take.bars,
+                ..Bar::default()
+            }
+            .duration_samples(take.buffer.sample_rate_hz as f32);
+            if expected == 0 || expected != take.buffer.len() as u64 {
+                return Err(
+                    "Stored Set capture PCM length does not match its recorded clock.".into(),
+                );
+            }
+            if take.buffer.data.iter().any(|sample| !sample.is_finite()) {
+                return Err("Stored Set capture contains nonfinite PCM samples.".into());
+            }
+            validated.insert(
+                take.id,
+                Capture {
+                    buffer: take.buffer,
+                    bpm: take.bpm,
+                    beats: take.beats,
+                    bars: take.bars,
+                },
+            );
+        }
+        self.cards = validated;
+        Ok(())
+    }
+
+    /// A take may continue through every admitted bar. Reserve those slots
+    /// together with inactive custody before input is opened or recording is
+    /// armed; existing current-plan IDs are replaced rather than counted twice.
+    pub(super) fn check_capture_quota(&self, song: &Song, output_rate: u32) -> Result<(), String> {
+        let Some(plan) = &self.plan else {
+            // Legacy saved-song recording has separate custody and the
+            // runtime's own allocation bounds; it cannot grow the Set bank.
+            return Ok(());
+        };
+        if plan.segments.len() != song.bars.len() || output_rate == 0 {
+            return Err("Set capture quota requires the current admitted backing clock.".into());
+        }
+        let current: BTreeSet<_> = plan.segments.iter().map(|segment| segment.id).collect();
+        if current.len() != plan.segments.len() {
+            return Err("Set capture quota contains duplicate admitted Card identities.".into());
+        }
+        let mut count = current.len();
+        let mut frames = 0u64;
+        for (id, capture) in &self.cards {
+            if !current.contains(id) {
+                count += 1;
+                frames = frames
+                    .checked_add(capture.buffer.len() as u64)
+                    .filter(|&frames| frames <= MAX_STORED_FRAMES as u64)
+                    .ok_or("Set capture quota exceeds the stored frame bound.")?;
+            }
+        }
+        if count > MAX_STORED_CAPTURES {
+            return Err("Set capture quota would exceed 256 stored takes. Clear stored Card loops before recording this Set.".into());
+        }
+        for bar in &song.bars {
+            // Match Recording::prepare's exact per-bar storage reservation.
+            frames = frames
+                .checked_add(bar.duration_samples(output_rate as f32).max(1))
+                .filter(|&frames| frames <= MAX_STORED_FRAMES as u64)
+                .ok_or("Set capture quota would exceed 16777216 stored frames. Clear stored Card loops before recording this Set.")?;
+        }
+        Ok(())
+    }
+
     pub(super) fn prepare_replacement(
         &mut self,
         current: &Song,
@@ -168,6 +289,263 @@ mod tests {
                 })
                 .collect(),
         }
+    }
+
+    fn take(owner: u64, card: u64, rate: u32) -> CaptureSnapshot {
+        let bar = Bar {
+            bpm: 137.0,
+            time_signature: TimeSignature::new(7, 4),
+            length: 3,
+            ..Bar::default()
+        };
+        CaptureSnapshot {
+            id: LoopSegmentId {
+                set: WorkingSetId(owner),
+                card: CardId(card),
+            },
+            bpm: bar.bpm,
+            beats: bar.time_signature.numerator,
+            bars: bar.length,
+            buffer: SampleBuffer::new(vec![0.25; bar.duration_samples(rate as f32) as usize], rate),
+        }
+    }
+
+    fn quota_take(id: LoopSegmentId, buffer: &SampleBuffer) -> CaptureSnapshot {
+        CaptureSnapshot {
+            id,
+            bpm: 60.0 * buffer.sample_rate_hz as f32 / buffer.len() as f32,
+            beats: 1,
+            bars: 1,
+            buffer: buffer.clone(),
+        }
+    }
+
+    #[test]
+    fn quota_reserves_every_current_bar_not_only_the_requested_first_bar() {
+        let pcm = SampleBuffer::new(vec![0.0; 65536], 48000);
+        let takes = (1..=254)
+            .map(|card| {
+                quota_take(
+                    LoopSegmentId {
+                        set: WorkingSetId(2),
+                        card: CardId(card),
+                    },
+                    &pcm,
+                )
+            })
+            .collect();
+        let mut bank = LoopCaptures::default();
+        bank.restore(takes).unwrap();
+        let mut admitted = plan(1);
+        for segment in &mut admitted.segments {
+            segment.beats = 1;
+            segment.bars = 1;
+        }
+        admitted.segments[0].bpm = 6000.0;
+        admitted.segments[1].bpm = 60.0 * 48000.0 / 131000.0;
+        let song = bank.prepare(&admitted).unwrap();
+        bank.plan = Some(admitted);
+        assert_eq!(song.bars[0].duration_samples(48000.0), 480);
+        assert!(song.bars[0].duration_samples(48000.0) <= (MAX_STORED_FRAMES - 254 * 65536) as u64);
+        assert!(
+            bank.check_capture_quota(&song, 48000)
+                .unwrap_err()
+                .contains("16777216")
+        );
+        assert_eq!(bank.snapshot().len(), 254);
+    }
+
+    #[test]
+    fn quota_replaces_existing_ids_once_and_keeps_legacy_custody_separate() {
+        let pcm = SampleBuffer::new(vec![0.0; 65536], 48000);
+        let mut takes: Vec<_> = (1..=255)
+            .map(|card| {
+                quota_take(
+                    LoopSegmentId {
+                        set: WorkingSetId(2),
+                        card: CardId(card),
+                    },
+                    &pcm,
+                )
+            })
+            .collect();
+        let id = LoopSegmentId {
+            set: WorkingSetId(1),
+            card: CardId(1),
+        };
+        takes.push(quota_take(id, &pcm));
+        let mut bank = LoopCaptures::default();
+        bank.restore(takes).unwrap();
+        let mut admitted = plan(1);
+        admitted.segments.truncate(1);
+        admitted.segments[0].bpm = 60.0 * 48000.0 / 65536.0;
+        admitted.segments[0].beats = 1;
+        admitted.segments[0].bars = 1;
+        let song = bank.prepare(&admitted).unwrap();
+        bank.plan = Some(admitted);
+        bank.saved_song = vec![Some(SampleBuffer::new(vec![0.1; 1], 1000))];
+        bank.check_capture_quota(&song, 48000).unwrap();
+        assert_eq!(bank.snapshot().len(), 256);
+        bank.plan = None;
+        bank.check_capture_quota(&Song::new(), 48000).unwrap();
+    }
+
+    #[test]
+    fn snapshots_share_completed_pcm_across_inactive_owners_and_exclude_saved_slots() {
+        let first = take(1, 1, 1000);
+        let inactive = take(2, 9, 1000);
+        let mut bank = LoopCaptures::default();
+        bank.saved_song = vec![Some(SampleBuffer::new(vec![0.2; 10], 1000))];
+        bank.restore(vec![inactive.clone(), first.clone()]).unwrap();
+        let snapshots = bank.snapshot();
+        assert_eq!(
+            snapshots.iter().map(|take| take.id).collect::<Vec<_>>(),
+            vec![first.id, inactive.id]
+        );
+        assert!(Arc::ptr_eq(&snapshots[0].buffer.data, &first.buffer.data));
+        assert!(Arc::ptr_eq(
+            &snapshots[1].buffer.data,
+            &inactive.buffer.data
+        ));
+        assert!(bank.saved_song[0].is_some());
+    }
+
+    #[test]
+    fn restore_validates_exact_runtime_frames_at_integer_and_fractional_clocks() {
+        let mut bank = LoopCaptures::default();
+        for rate in [1000, 44100, 48000] {
+            let good = take(1, 7, rate);
+            bank.restore(vec![good.clone()]).unwrap();
+            for delta in [-1, 1] {
+                let mut bad = good.clone();
+                bad.buffer = SampleBuffer::new(
+                    vec![0.0; (good.buffer.len() as isize + delta) as usize],
+                    rate,
+                );
+                assert!(bank.restore(vec![bad]).unwrap_err().contains("length"));
+                assert!(Arc::ptr_eq(
+                    &bank.snapshot()[0].buffer.data,
+                    &good.buffer.data
+                ));
+            }
+        }
+    }
+
+    #[test]
+    fn malformed_restore_cannot_partially_replace_the_current_bank() {
+        let original = take(1, 1, 1000);
+        let incoming = take(2, 2, 1000);
+        let mut bank = LoopCaptures::default();
+        bank.restore(vec![original.clone()]).unwrap();
+        for corruption in 0..10 {
+            let mut bad = take(3, 3, 1000);
+            match corruption {
+                0 => bad.id.set.0 = 0,
+                1 => bad.id.card.0 = 0,
+                2 => bad.bpm = f32::NAN,
+                3 => bad.bpm = f32::INFINITY,
+                4 => bad.bpm = 0.0,
+                5 => bad.beats = 0,
+                6 => bad.beats = 17,
+                7 => bad.bars = 0,
+                8 => bad.buffer.sample_rate_hz = 0,
+                _ => Arc::make_mut(&mut bad.buffer.data)[0] = f32::NAN,
+            }
+            assert!(bank.restore(vec![incoming.clone(), bad]).is_err());
+            let snapshot = bank.snapshot();
+            assert_eq!(snapshot.len(), 1);
+            assert_eq!(snapshot[0].id, original.id);
+            assert!(Arc::ptr_eq(&snapshot[0].buffer.data, &original.buffer.data));
+        }
+        assert!(bank.restore(vec![incoming.clone(), incoming]).is_err());
+        assert_eq!(bank.snapshot()[0].id, original.id);
+    }
+
+    #[test]
+    fn restore_checks_take_count_and_aggregate_frames_without_reassigning_custody() {
+        let original = take(1, 1, 1000);
+        let mut bank = LoopCaptures::default();
+        bank.restore(vec![original.clone()]).unwrap();
+        let too_many: Vec<_> = (1..=257)
+            .map(|card| CaptureSnapshot {
+                id: LoopSegmentId {
+                    set: WorkingSetId(2),
+                    card: CardId(card),
+                },
+                ..original.clone()
+            })
+            .collect();
+        assert!(bank.restore(too_many).unwrap_err().contains("256"));
+        let rate = 48000;
+        let frames = 65537;
+        let bpm = 60.0 * rate as f32 / frames as f32;
+        let bar = Bar {
+            bpm,
+            time_signature: TimeSignature::new(1, 4),
+            ..Bar::default()
+        };
+        assert_eq!(bar.duration_samples(rate as f32), frames as u64);
+        let pcm = SampleBuffer::new(vec![0.0; frames], rate);
+        let oversized: Vec<_> = (1..=256)
+            .map(|card| CaptureSnapshot {
+                id: LoopSegmentId {
+                    set: WorkingSetId(2),
+                    card: CardId(card),
+                },
+                bpm,
+                beats: 1,
+                bars: 1,
+                buffer: pcm.clone(),
+            })
+            .collect();
+        assert!(bank.restore(oversized).unwrap_err().contains("16777216"));
+        assert_eq!(bank.snapshot()[0].id, original.id);
+        assert!(Arc::ptr_eq(
+            &bank.snapshot()[0].buffer.data,
+            &original.buffer.data
+        ));
+    }
+
+    #[test]
+    fn hydrated_clock_custody_survives_reorder_missing_cards_and_pitch_edits_until_clear() {
+        let mut loaded = plan(1);
+        loaded.segments[0].bpm = 137.0;
+        loaded.segments[0].beats = 7;
+        loaded.segments[0].bars = 3;
+        let original = take(1, 1, 1000);
+        let mut bank = LoopCaptures::default();
+        bank.restore(vec![original.clone(), take(2, 9, 1000)])
+            .unwrap();
+        loaded.segments.reverse();
+        loaded.segments[1].pitches_hz = vec![333.1];
+        let projected = bank.prepare(&loaded).unwrap();
+        assert!(Arc::ptr_eq(
+            &projected.bars[1].audio_buffer.as_ref().unwrap().data,
+            &original.buffer.data
+        ));
+        let mut edited = loaded.clone();
+        edited.segments[1].bpm = 90.0;
+        assert!(
+            bank.prepare(&edited)
+                .unwrap_err()
+                .contains("Clear the captured loop")
+        );
+        let mut missing = loaded;
+        missing.segments.retain(|segment| segment.id != original.id);
+        assert!(
+            bank.prepare(&missing).unwrap().bars[0]
+                .audio_buffer
+                .is_none()
+        );
+        assert_eq!(bank.snapshot().len(), 2);
+        bank.clear(original.id);
+        assert!(
+            bank.prepare(&edited).unwrap().bars[1]
+                .audio_buffer
+                .is_none()
+        );
+        assert_eq!(bank.snapshot().len(), 1);
+        assert_eq!(bank.snapshot()[0].id.set, WorkingSetId(2));
     }
 
     #[test]
