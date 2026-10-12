@@ -1,0 +1,23 @@
+{
+  "status": "passed",
+  "immutable_companion_hashes_unchanged": true,
+  "companion_count": 1,
+  "reference_report_equal_to_seed": true,
+  "reference_report": {
+    "captured_takes": 1,
+    "channels": 1,
+    "click": false,
+    "frames": 192000,
+    "rate": 48000,
+    "segments": 2
+  },
+  "accepted_loop_and_backing_pcm_equal_to_seed": true,
+  "whole_profile_hashes_unchanged": false,
+  "changed_whole_files": [
+    "practice.json",
+    "settings.json"
+  ],
+  "native_projection_assertions": "2 Cards, 1 retained/hydrated take, no input, 1 output across all reopened processes",
+  "scope": "same admitted segment clocks/order/pitches and captures established by exact PCM/reference counts plus native assertions; full raw session semantic dump not performed",
+  "after_reference_profile_unchanged": true
+}

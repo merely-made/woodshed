@@ -128,8 +128,13 @@ before any other doc in this directory.
   stored-reference Clear; focused checks and fresh-process CPU retention pass,
   with four native processes, 160 presentations and eight reviewed captures
   qualifying reopen and missing-companion recovery. Existing recorded-loop
-  glyph fallback is recorded under P8. Physical capture, saved-song PCM and
-  full P7 remain open.
+  glyph fallback is recorded under P8. The October 12 follow-through adds
+  admitted backing/completed-loop mono float32 WAV export with an explicit
+  native save/replace seam; 77 distinct focused checks and the production build
+  pass. Five native processes and nine reviewed full captures qualify actual
+  macOS Cancel/Save/replacement and default-zoom layout; both output files
+  match the frozen backing-plus-take reference and independently decode.
+  Physical capture, saved-song PCM and full P7 remain open.
   The October 7 captured-scale-pattern follow-up extends copied instructions
   to degree pairs in thirds/fourths, with base-scale exploration and unchanged
   owner boundaries. The 613-check gate and committed desktop build pass; eight

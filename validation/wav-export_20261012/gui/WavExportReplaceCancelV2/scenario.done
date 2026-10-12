@@ -1,0 +1,10 @@
+RESULT ok
+waited 3729 frames
+captured 01_existing_wav_confirmation
+waited 1275 frames
+captured 02_existing_wav_replacement_cancelled
+Actual replacement cancellation complete
+capture 01_existing_wav_confirmation 2360x1600 digest=94e447c89af76938 file=/Users/markik/Code/testing/woodshed/wav-export-20261012/native/WavExportReplaceCancelV2/01_existing_wav_confirmation.png
+capture 02_existing_wav_replacement_cancelled 2360x1600 digest=b3dc0441fb05e988 file=/Users/markik/Code/testing/woodshed/wav-export-20261012/native/WavExportReplaceCancelV2/02_existing_wav_replacement_cancelled.png
+frames: 2 captured, 0 blank, 2 distinct digests
+presentation: 5037 frames, 5038 redraws, 1 unpresented redraws

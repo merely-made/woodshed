@@ -1,0 +1,9 @@
+RESULT ok
+captured 01_wav_reopened_before_cancel
+waited 2930 frames
+captured 02_real_save_panel_cancelled
+Actual native WAV chooser cancellation complete
+capture 01_wav_reopened_before_cancel 2360x1600 digest=7c4ef4ea9cea36a7 file=/Users/markik/Code/testing/woodshed/wav-export-20261012/native/WavExportCancelV2/01_wav_reopened_before_cancel.png
+capture 02_real_save_panel_cancelled 2360x1600 digest=a915d77e28ead35f file=/Users/markik/Code/testing/woodshed/wav-export-20261012/native/WavExportCancelV2/02_real_save_panel_cancelled.png
+frames: 2 captured, 0 blank, 2 distinct digests
+presentation: 2958 frames, 2959 redraws, 1 unpresented redraws

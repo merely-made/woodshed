@@ -1,0 +1,17 @@
+warning: patch `p2panda-auth v0.7.1 (https://github.com/mark-ik/p2panda.git?tag=mere-p2panda-net-0.7.5-upstream-20261011#d8acabc9)` was not used in the crate graph
+warning: patch `p2panda-stream v0.7.1 (https://github.com/mark-ik/p2panda.git?tag=mere-p2panda-net-0.7.5-upstream-20261011#d8acabc9)` was not used in the crate graph
+help: Check that the patched package version and available features are compatible
+      with the dependency requirements. If the patch has a different version from
+      what is locked in the Cargo.lock file, run `cargo update` to use the new
+      version. This may also occur with an optional dependency that is not enabled.
+   Compiling woodshed-genet v0.1.0 (/Users/markik/Code/worktrees/woodshed-orchestrate-20261011/crates/woodshed-genet)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 6.23s
+     Running unittests src/main.rs (/Users/markik/Code/worktrees/woodshed-audit-20261011/target/debug/deps/woodshed_genet-63d01c9b9697e4d3)
+
+running 3 tests
+test drive::tests::dwell_restarts_after_instruction_edits_cursor_changes_and_pause ... ok
+test drive::tests::background_dwell_keeps_its_owner_clock_cursor_and_inherited_sound ... ok
+test drive::tests::accepted_one_shot_status_stops_the_ui_without_restarting_or_retargeting_backing ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 142 filtered out; finished in 0.46s
+
