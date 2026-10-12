@@ -423,3 +423,17 @@ product's existing recording/Turnstone gates.
   scoped revisions and limits. Existing loop-marker glyph fallback is recorded
   under P8; saved-song PCM, physical capture/acoustic calibration, WAV export,
   orphan collection and full P7 remain separate.
+- **2026-10-12:** The next root slice implements admitted backing/completed-loop
+  WAV export at `f5cc69d`: one exact cycle through the same Firewheel processor,
+  mono float32 at the accepted device rate, explicit native destination and
+  reviewed atomic replacement. Frozen capture/source/session custody and
+  application-storage protection pass 77 distinct focused checks; the locked
+  production build passes. macOS native choice uses an in-process AppKit panel
+  after the initial script-backed chooser could not be reached by the native
+  provider. Five final native processes/nine reviewed captures qualify actual
+  Cancel/Save/Replace, exact reference-equal WAV and preserved sealed capture
+  custody, with input unopened. Pipit/Wavicle current-source inspection confirms speech
+  framing and lossless WavPack respectively; existing Hound writes WAV without
+  another codec or a root-to-port dependency. Source, codec decision and limits
+  remain in [P7's follow-through](2026-07-11_stage_set_tools_plan.md#october-12-follow-through-backing-and-completed-loop-wav-export)
+  and the [export receipt](../validation/wav-export_20261012/receipt.json).

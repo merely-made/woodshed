@@ -1,0 +1,90 @@
+{
+  "source": "f5cc69d4f441f01bf928ce60aae7ed9596fede3a",
+  "status": "passed bounded backing/completed-loop WAV export and macOS native acceptance",
+  "format": {
+    "encoding": "IEEE float32",
+    "channels": 1,
+    "rate": "admitted device rate",
+    "duration": "sum of rounded per-segment clock frames, exactly one cycle",
+    "click": "Looper backing setting",
+    "gain": 0.8,
+    "extra_tail": false
+  },
+  "checks": "checks.json",
+  "source_freeze": "source-freeze.json",
+  "product": "no native input/output device created by offline render",
+  "reuse": {
+    "pipit": "e41954790fee7c76221a5a88796875c6668ac2ac",
+    "wavicle": "3b5938b21b0a52b9224573eef1ae32665dc5add5",
+    "decision": "existing hound WAV; no codec dependency or repin"
+  },
+  "scope_limits": [
+    "synthetic completed captures; physical microphone/calibration/drift not qualified",
+    "saved backing accepts completed in-memory takes; saved-song PCM durability remains open",
+    "one cycle, mono, bounded16777216frames; broader export formats/settings not part of slice",
+    "existing recorded-loop glyph residual underP8 remains"
+  ],
+  "initial_source": "ca60bf0825f40cccb558f4db3c1cf2b60e13ad54",
+  "chooser": "macOS in-process rfd0.17.2 AppKit; one worker spans dialog and render; shared fallback on other platforms",
+  "initial_native": "seed passed; actual script-backed Save/Cancel attempt inaccessible and unqualified, retained separately",
+  "native": "gui/receipt.json",
+  "unique_focused_checks": 77,
+  "native_processes": 5,
+  "reviewed_full_captures": 9,
+  "presented_frames": 16256,
+  "file_validation": {
+    "rate": 48000,
+    "frames": 192000,
+    "duration_seconds": 4.0,
+    "channels": 1,
+    "bits": 32,
+    "pcm_sha256": "51966f89d016ade8cd01b32dfa8583cc2fbe452e5a3bc620f6dc44daeb3401e0",
+    "matches_frozen_reference": true,
+    "differs_backing_only_reference": true,
+    "afinfo": "passed"
+  },
+  "retention": {
+    "status": "passed",
+    "immutable_companion_hashes_unchanged": true,
+    "companion_count": 1,
+    "reference_report_equal_to_seed": true,
+    "reference_report": {
+      "captured_takes": 1,
+      "channels": 1,
+      "click": false,
+      "frames": 192000,
+      "rate": 48000,
+      "segments": 2
+    },
+    "accepted_loop_and_backing_pcm_equal_to_seed": true,
+    "whole_profile_hashes_unchanged": false,
+    "changed_whole_files": [
+      "practice.json",
+      "settings.json"
+    ],
+    "native_projection_assertions": "2 Cards, 1 retained/hydrated take, no input, 1 output across all reopened processes",
+    "scope": "same admitted segment clocks/order/pitches and captures established by exact PCM/reference counts plus native assertions; full raw session semantic dump not performed",
+    "after_reference_profile_unchanged": true
+  },
+  "cleanup": {
+    "status": "all owned native acceptance processes, chooser, Keeper and lifecycle sleep prevention stopped",
+    "terminated_verified_owned": [
+      {
+        "pid": 38584,
+        "command": "/usr/bin/caffeinate -di -w 35110"
+      },
+      {
+        "pid": 35110,
+        "command": "/Users/markik/Code/testing/woodshed/stack-adoption-20261011/keeper-target/debug/dr-c-receipt-host /tmp/ws-wav-20261012.sock /Users/markik/Code/testing/woodshed/wav-native-20261012/private-keeper unlocked"
+      }
+    ],
+    "old_blocked_parent_pid": 35365,
+    "old_blocked_child_pid": 35432,
+    "old_blocked_processes_already_stopped": true,
+    "native_inventory_acceptance_apps": 0,
+    "fixture_payloads_retained_locally": true,
+    "native_ui_cleanup": "accepted scenario processes exited naturally; only owned Keeper/caffeinate signalled",
+    "scope": "no user resident or personal profile affected"
+  },
+  "no_raw_payloads_in_packet": true
+}

@@ -1,0 +1,16 @@
+File:           /Users/markik/Code/testing/woodshed/wav-native-rfd-20261012/cpu-reference/loop-reference.wav
+File type ID:   WAVE
+Num Tracks:     1
+----
+Data format:     1 ch,  48000 Hz, Float32
+Channel layout: Left
+estimated duration: 4.000000 sec
+audio bytes: 768000
+audio packets: 192000
+bit rate: 1536000 bits per second
+packet size upper bound: 4
+maximum packet size: 4
+audio data file offset: 68
+optimized
+source bit depth: F32
+----

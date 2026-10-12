@@ -1,0 +1,7 @@
+RESULT ok
+waited 0 frames
+captured 01_wav_seed_completed_take
+WAV completed-take seed complete
+capture 01_wav_seed_completed_take 2360x1600 digest=7b310d363535828d file=/Users/markik/Code/testing/woodshed/wav-export-20261012/native/WavExportSeedV2/01_wav_seed_completed_take.png
+frames: 1 captured, 0 blank, 1 distinct digests
+presentation: 33 frames, 34 redraws, 1 unpresented redraws

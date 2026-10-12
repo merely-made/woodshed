@@ -1,0 +1,23 @@
+# Separate process restoring the owned sealed seed profile.
+settle 5
+ui-zoom 0.8
+assert snap set-cards == 2
+assert snap loop-capture-references == 1
+assert snap loop-active-captures == 1
+assert snap capture-input-rate == none
+assert snap output-streams == 1
+assert text Card loops saved: 1
+act wav-native-await-save
+wait 18000
+assert text Exported
+assert snap loop-export-busy == false
+assert snap loop-export-replace == false
+assert snap loop-capture-references == 1
+assert snap loop-active-captures == 1
+assert snap capture-input-rate == none
+assert snap output-streams == 1
+capture 01_real_save_panel_saved
+ui-zoom 1.0
+settle 3
+capture 02_real_save_panel_saved_default_zoom
+log Actual native WAV save complete

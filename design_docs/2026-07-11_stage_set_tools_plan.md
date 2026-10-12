@@ -1588,10 +1588,11 @@ session. Theme exports protect the whole companion directory, including
 future namespace paths.
 Done for this slice when exact PCM survives a fresh process, reordered Cards
 keep their takes, failed writes cannot publish dangling references, and clear
-survives reopening. Saved-song PCM, export, hardware capture/drift and full P7
-remain separate.
+survives reopening. Saved-song PCM, hardware capture/drift and full P7 remain
+separate; the October 12 WAV follow-through is described below.
 
-**Current state (2026-10-11): bounded Set backing implemented; P7 remains open.**
+**Current state (2026-10-12): bounded Set backing and WAV export implemented;
+P7 remains open.**
 `LoopPlan` now derives block-chord backing from explicitly owned Set Cards with
 Bars holds, instrument/tuning and an explicit quarter-note clock. Readiness
 names unsupported Cards rather than silently dropping or approximating them.
@@ -1600,7 +1601,7 @@ edits, refuses clock changes while dependent PCM exists, and refuses source
 changes during armed or active capture. Set source and clock settings persist.
 `SongDoc` remains the exact saved-backing compatibility path; its authored
 pitches, meter and duration are preserved. Full saved-song migration, mixed
-material lowering, WAV export and saved-song PCM persistence remain open.
+material lowering and saved-song PCM persistence remain open.
 Set/Card companion persistence is implemented in the October 11 slice above.
 
 The overview now routes Looper relations to the host-admitted Set owner,
@@ -1617,9 +1618,14 @@ engine to a loop engine that plays Set-derived segments and preserves captures
 by stable segment ID. Provide count-in, play/stop/rewind, replace, overdub,
 clear, input level, and capture status.
 
-Export the rendered backing plus captured loop to WAV through an explicit host
-file-save seam. Set/Card recordings use companion persistence in the bounded
-October 11 slice; saved-song recording durability remains separate.
+The October 12 slice exports one complete admitted backing pass, including
+completed captures and the Looper click policy, through an explicit native save
+seam. It uses mono float32 WAV at the admitted device rate and the same output
+processor, without preview, independent metronome, count-in or appended tails.
+Native Save/Cancel/Replace and exact file readback are qualified in the
+follow-through below. Set/Card recordings
+use companion persistence in the bounded October 11 slice; saved-song recording
+durability remains separate.
 
 Done when a clock-ready mixed Set loops without a parallel bar editor, capture
 survives Set reordering where Card identity is retained, exported WAV duration
@@ -1709,8 +1715,9 @@ receipts are recorded before those platforms are advertised.
   currently bypass Set and become Song bars directly.
 - Recorded loops are preserved by bar index during Song updates. Insert or
   reorder can attach a recording to the wrong musical material.
-- Offline WAV export exists for sequencer patterns, but captured loop export is
-  not exposed through the application backend.
+- Historical sequencer-pattern WAV export remains separate. The October 12
+  Looper export snapshots admitted backing and completed captures through an
+  explicit host save action; its render clock is the production output clock.
 - Settings currently combines theme/layout, device status, MIDI, and latency
   in one screen. Several durable settings still live as view-owned fields.
 - Responsive width classes exist, but product sections do not yet have a
@@ -3040,3 +3047,121 @@ Native Raise/finite-exit observation and background unpresented redraw counts
 are recorded without claiming startup, idle-paint or rendering performance.
 All four acceptance apps exit; the owned Keeper and lifecycle sleep assertion
 are stopped. The user's expired four-hour timer and other processes are untouched.
+
+
+### October 12 follow-through: backing and completed-loop WAV export
+
+Product source is frozen at `f5cc69d4f441f01bf928ce60aae7ed9596fede3a`,
+starting from refreshed `b15c9be`; the unchanged renderer was first frozen
+at `ca60bf0`. Export WAV captures the accepted backing,
+its immutable completed PCM and the session epoch before opening the native
+save panel. Requested source/clock changes that were refused cannot redirect
+export. Armed/active capture, pending session reset and missing/damaged takes
+referenced by the current Set refuse export; unavailable inactive-owner takes
+do not block independent backing. Saved compatibility backing retains its
+exact authored pitches, per-bar clocks and any completed in-memory bar takes.
+
+`woodshed-audio::export_song_wav_to` renders one pass from bar zero through a
+separate device-free instance of the production Firewheel processor. Float32
+mono WAV retains the admitted rate and rounded integer segment boundaries.
+Completed takes, chord strikes, backing click, default live gain `0.8` and
+clamping match playback. Preview, independent metronome and count-in are
+excluded. The file ends exactly at the final segment boundary. Validation and
+graph preparation precede the first writer operation; 4,096-frame rendering
+and buffered writing stay off the UI thread. Maximum cycle size is
+16,777,216 frames, using the existing WAV dependency and supplier pins.
+
+The views queue portable choose/replace/cancel requests and display transient
+status. The desktop owns the chooser, destination and worker. A synced sibling
+temporary file is finalized before atomic no-clobber publication. A collision
+retains that same rendered artifact until explicit Replace or Cancel; later
+backing edits cannot change its contents. Replace rechecks the existing
+regular file's content immediately before atomic rename. This is not a
+filesystem compare-and-swap against arbitrary external writers. Application
+session/settings/theme paths, capture storage, existing aliases and future
+case variants are protected. Failure/cancellation cleans temporary artifacts
+and preserves the existing destination. Session revocation and final commit
+share a mutex gate; persona switching revokes before opening incoming storage.
+Completion wakes the host without adding idle retained-root rebuilds. Closing
+waits for the worker and then honors the ordinary dirty-appearance close gate.
+
+Focused locked checks pass: 19 audio offline cases (seven new), 21 desktop
+audio cases, 12 persistence cases, nine sync, three drive, four Looper view
+cases and eleven WAV-focused desktop cases. Two cases overlap the audio and
+persistence scopes, leaving 77 distinct checks; the persistence receipt also
+contains four independent child-process probes. Bitwise production-processor
+parity covers variable clocks, segment/chunk boundaries, exact capture PCM,
+click, one-pass termination and live-state isolation. Host checks cover
+actual chooser injection cancellation, collision/replace, protected paths,
+revoked publication, frozen take custody, reset backpressure and dirty-close
+retention. The locked desktop build passes. Five final native processes qualify the in-process Save panel and exported
+files at `f5cc69d`, after the chooser correction below.
+
+The initial `ca60bf0` native seed and sealed-profile CPU references pass. The
+first actual chooser attempt exposes a host/tool ownership limitation: shared
+`light-file-dialog` waits on an `osascript` child running its Save panel; the
+parent becomes inaccessible to the native automation provider and the child
+has no selectable app surface. Process samples establish modal waiting, not a
+deadlock. Save/Cancel are not qualified by that attempt. The final macOS WAV
+seam uses the same `rfd 0.17.2` already used directly by Hocket, without a port
+dependency. One worker queues AppKit work after dispatch/shared borrows are
+released, and retains the original epoch through panel choice and rendering.
+Cancel writes nothing; revocation is checked before/after the panel and at
+commit. The guard is not held during modal interaction. Only RFD is added to
+the root lock, with existing package versions and supplier revisions retained.
+Other platforms retain the shared native chooser; their native behavior is
+not qualified by this macOS slice. Dialog dwell is user-controlled; revocation
+does not programmatically dismiss an already-open panel.
+
+The [export receipt](../validation/wav-export_20261012/receipt.json) and
+[native receipt](../validation/wav-export_20261012/gui/receipt.json) retain
+scoped component revisions, binary/scenario/log/completion/image hashes and
+limits. Seed, fresh-process native Cancel, Save, replacement Cancel and Replace
+pass with 16,256 presentations and nine full reviewed 2360×1600 captures;
+all are nonblank. The actual native panel and OS overwrite sheet were observed
+through CUA, followed by the product's explicit Replace/Cancel decision. The
+83-byte owned sentinel remains byte-identical after Cancel and at the app's
+replacement boundary; explicit Replace changes it to the rendered WAV while
+retaining its original backup. Save controls and completion text fit both
+0.8 and default zoom. All nine input/output checkpoints retain unopened input
+and one output stream. Manual panel dwell/presentation counts do not qualify
+startup, idle rendering or export performance.
+
+Both native output files are byte-identical, independently parsed and decoded
+by `afinfo`: mono float32, 48 kHz, 192,000 frames/four seconds. Their PCM digest
+`51966f89d016ade8cd01b32dfa8583cc2fbe452e5a3bc620f6dc44daeb3401e0`
+matches the frozen sealed-profile CPU backing-plus-take reference and differs
+from backing-only
+`e4911029b436d2bcee6635d7780fc01b893fdca00f8fed34061822a53b3d9e58`.
+After the full native sequence, an independent sealed restore retains the
+same two-segment/one-take report and both exact reference PCM results. The
+immutable sealed companion remains byte-identical. Whole practice/settings
+ciphertext hashes can change during ordinary autosave; this receipt does not
+claim a full raw-session semantic dump.
+
+All five final apps exit naturally; the prior script-backed parent/child and
+owned Keeper/lifecycle sleep assertion are stopped. The user resident/profile
+and expired timer are unaffected. Private vault, session payload, WAV/PCM and
+app binaries stay outside the repository packet. Full images and frozen
+binaries remain in `/Users/markik/Code/testing/woodshed/wav-export-20261012/`.
+The earlier `ca60bf0` seed/reference and blocked chooser are retained separately
+and excluded from accepted final counts.
+
+Pipit and Wavicle were inspected at current upstream sources rather than
+introduced as dependencies. [Pipit `e419547`](https://github.com/merely-made/pipit/tree/e41954790fee7c76221a5a88796875c6668ac2ac)
+is a lossy `i16` speech codec/framing library (IMA ADPCM/LPC), licensed MIT OR
+Apache-2.0. [Wavicle `3b5938b`](https://github.com/merely-made/wavicle/tree/3b5938b21b0a52b9224573eef1ae32665dc5add5)
+is lossless WavPack `.wv`, licensed MPL-2.0 with retained upstream BSD notice.
+Neither provides a WAV writer. Hocket's existing Wavicle `5e1b248` remains
+independently pinned under its earlier grant; the 11 current codec source
+files differ only by added license headers. Existing Hound writes the standard
+WAV needed here. Wavicle is a possible later compressed-companion/export
+format, requiring explicit versioning, decoded-frame bounds, namespace,
+sealing and digest migration; Pipit belongs to compact speech transport. No
+root-to-port dependency or mid-slice stack repin is added.
+
+This closes the bounded WAV implementation seam, not full P7. Mixed-material
+lowering, lossless saved-song migration/editor retirement, durable saved-song
+PCM, physical microphone capture/calibration/drift and orphan collection/disk
+quota remain separate. The existing recorded-loop glyph fallback stays under
+P8, including later shared-font intake.

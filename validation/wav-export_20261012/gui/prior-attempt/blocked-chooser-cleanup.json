@@ -1,0 +1,20 @@
+{
+  "status": "owned blocked parent and chooser child terminated after evidence retained",
+  "terminated": [
+    {
+      "pid": 35365,
+      "command": "/Users/markik/Code/testing/woodshed/wav-export-20261012/native/WavExportCancel/WavExportCancel.app/Contents/MacOS/product"
+    },
+    {
+      "pid": 35432,
+      "command": "osascript -e try -e POSIX path of (choose file name with prompt \"Export Looper WAV\" default location \".\" default name \"Working Set 1.wav\") -e on error number -128 -e end try"
+    }
+  ],
+  "native_cancel_save_qualified": false,
+  "scenario_done_exists": false,
+  "keeper_retained_for_parent_read_only_diagnosis": 35110,
+  "profile_retained": "/Users/markik/Code/testing/woodshed/wav-native-20261012/profiles/happy",
+  "exports_absent": true,
+  "sentinel_sha256": "1b76b392a6af3d9069263df8f1632585f6a49178624b0d3b312b26303c0b3ba4",
+  "pcm_reference_after_reopen_equal": true
+}
