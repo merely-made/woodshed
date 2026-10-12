@@ -1564,6 +1564,33 @@ and remain fully operable by keyboard.
 
 ### P7. Rebuild Song as Looper over Set
 
+**October 11 next slice: durable Set captures — implementation checks pass;
+native seed/reopen qualification in progress.** Completed
+Set/Card takes will use exact mono f32 companion blobs through the existing
+persona-sealed backend. A bounded session manifest retains identity, captured
+clock, sample rate, frame count and content digest. A persisted random artifact
+namespace separates identical PCM sealed by different personas. Write and
+verify immutable companions first, then atomically replace the session
+reference. Pre-publication failures retain the previous persisted session and
+the in-memory take; a failed readback after replacement is reported as
+unconfirmed, without attempting rollback. Hydrate after
+session reset and before backing admission; missing/corrupt companions retain
+their references with an actionable notice until explicit clear. Preserve
+clock/rate refusal, owner isolation and inactive-Set captures. Initial storage
+retains unreferenced companions; deletion needs a separate ownership policy.
+The 256-take and 16,777,216-frame limits cover the live bank/session catalog,
+including inactive owners and prospective recording across the entire loaded
+plan. They are not an on-disk quota while companion collection is deferred.
+Explicit stored-reference Clear remains available after a Card is deleted or
+backing admission fails. Ordinary practice saves still work without audio;
+pending output resets cannot publish an old owner's observations to a new
+session. Theme exports protect the whole companion directory, including
+future namespace paths.
+Done for this slice when exact PCM survives a fresh process, reordered Cards
+keep their takes, failed writes cannot publish dangling references, and clear
+survives reopening. Saved-song PCM, export, hardware capture/drift and full P7
+remain separate.
+
 **Current state (2026-10-11): bounded Set backing implemented; P7 remains open.**
 `LoopPlan` now derives block-chord backing from explicitly owned Set Cards with
 Bars holds, instrument/tuning and an explicit quarter-note clock. Readiness
@@ -1573,14 +1600,15 @@ edits, refuses clock changes while dependent PCM exists, and refuses source
 changes during armed or active capture. Set source and clock settings persist.
 `SongDoc` remains the exact saved-backing compatibility path; its authored
 pitches, meter and duration are preserved. Full saved-song migration, mixed
-material lowering, WAV export and companion PCM persistence remain open.
+material lowering, WAV export and saved-song PCM persistence remain open.
+Set/Card companion persistence is implemented in the October 11 slice above.
 
 The overview now routes Looper relations to the host-admitted Set owner,
 including when another owner is edited or a replacement is refused. It retains
 the independent rehearsal owner and labels the unchanged Song artifact as
-saved compatibility backing. Next consolidate saved/Set admission into one
-fallible guarded operation; same-source saved-bar edits must also respect
-armed/active capture. Current Cards cannot losslessly represent every saved
+saved compatibility backing. Saved/Set admission now uses guarded fallible
+operations, including same-source saved-bar edits during armed/active capture.
+Current Cards cannot losslessly represent every saved
 bar's arbitrary pitch vector, root/display data and individual meter. Resolve
 that representation before removing the bar editor or converting saved songs.
 
@@ -1590,9 +1618,8 @@ by stable segment ID. Provide count-in, play/stop/rewind, replace, overdub,
 clear, input level, and capture status.
 
 Export the rendered backing plus captured loop to WAV through an explicit host
-file-save seam. Keep raw captured audio available to the session while the app
-is open; define companion-file persistence before claiming that recordings
-survive restart.
+file-save seam. Set/Card recordings use companion persistence in the bounded
+October 11 slice; saved-song recording durability remains separate.
 
 Done when a clock-ready mixed Set loops without a parallel bar editor, capture
 survives Set reordering where Card identity is retained, exported WAV duration

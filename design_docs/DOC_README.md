@@ -123,7 +123,10 @@ before any other doc in this directory.
   144 audio and 29 focused desktop checks plus three muted one-stream device
   runs. Five native GUI processes qualify seed/reopen and click stop/restart
   with 791 presentations and 16 reviewed full captures; 17 checkpoints retain
-  unopened input and one output stream. Physical capture, durable PCM and full
+  unopened input and one output stream. The next October 11 slice adds exact
+  sealed Set/Card companions, bounded owner/clock manifests and explicit
+  stored-reference Clear; focused checks and fresh-process CPU retention pass,
+  with native reopening in progress. Physical capture, saved-song PCM and full
   P7 remain open.
   The October 7 captured-scale-pattern follow-up extends copied instructions
   to degree pairs in thirds/fourths, with base-scale exploration and unchanged

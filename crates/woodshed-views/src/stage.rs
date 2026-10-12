@@ -870,6 +870,11 @@ pub struct UiState {
     pub card_shape_notice: Option<(CardId, String)>,
     pub song: SongDoc,
     pub looper: LooperConfig,
+    /// References to sealed companion PCM; hosts own loading and writing it.
+    pub loop_captures: woodshed_core::loop_capture::LoopCaptureManifest,
+    pub loop_capture_notice: Option<String>,
+    /// Completed live custody, including takes not yet confirmed in storage.
+    pub loop_retained_ids: Vec<LoopSegmentId>,
     /// Host-admitted snapshot, distinct from a requested edit that failed
     /// readiness or is waiting for capture to stop. Never persisted.
     pub loop_admitted: Option<LoopPlan>,
@@ -1091,6 +1096,9 @@ impl UiState {
             card_shape_notice: None,
             song: SongDoc::default(),
             looper: LooperConfig::default(),
+            loop_captures: Default::default(),
+            loop_capture_notice: None,
+            loop_retained_ids: Vec::new(),
             loop_admitted: None,
             loop_notice: None,
             loop_selected: None,
@@ -2018,6 +2026,7 @@ impl UiState {
         session.retained_sets = self.retained_sets.clone();
         session.working_sets = self.working_sets.clone();
         session.looper = self.looper.clone();
+        session.loop_captures = self.loop_captures.clone();
         session.musical_context = self.musical_context.normalized();
         session.relationship_reading_json = self.relationship_reading_json.clone();
         session.overview_presentation_json = self
@@ -2070,6 +2079,14 @@ impl UiState {
         self.card_started_ms = None;
         self.song = session.song.clone();
         self.looper = session.looper.clone();
+        self.loop_captures = session.loop_captures.clone();
+        self.loop_capture_notice = None;
+        self.loop_retained_ids = session
+            .loop_captures
+            .takes
+            .iter()
+            .map(|take| take.id)
+            .collect();
         self.loop_admitted = None;
         self.loop_notice = None;
         self.loop_selected = None;

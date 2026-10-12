@@ -67,6 +67,9 @@ fn load_library_at(ui: &mut UiState, path: PathBuf) {
             appearance.workshop.set_protected_export_paths(
                 crate::storage::FsBackend::new().protected_export_paths(),
             );
+            appearance.workshop.set_protected_export_directories(
+                crate::storage::FsBackend::new().protected_export_directories(),
+            );
             ui.appearance = appearance;
             ui.appearance_authoring_available = true;
             ui.appearance_notice = None;
@@ -420,6 +423,52 @@ mod tests {
             assert!(!missing_session.exists());
             assert!(!library.exists());
         }
+    }
+
+    #[test]
+    fn theme_export_cannot_replace_existing_or_future_capture_companions() {
+        let dir = tempfile::tempdir().unwrap();
+        let library = dir.path().join("themes.json");
+        let captures = dir.path().join("practice.loop-pcm");
+        let existing = captures.join("owned").join("take.bin");
+        let future = captures.join("future").join("new.bin");
+        let external = dir.path().join("theme-export.json");
+        std::fs::create_dir_all(existing.parent().unwrap()).unwrap();
+        std::fs::write(&existing, b"sealed owned PCM").unwrap();
+        let destination = Rc::new(RefCell::new(Some(existing.clone())));
+        let mut ui = editing(library.clone());
+        ui.appearance
+            .workshop
+            .set_protected_export_directories(vec![captures]);
+        let mut host = mount(ui, destination.clone());
+        for output in [&existing, &future] {
+            *destination.borrow_mut() = Some(output.clone());
+            host.update(|ui| ui.appearance.workshop.request_export());
+            host.after_dispatch();
+            assert!(
+                host.state()
+                    .appearance
+                    .workshop
+                    .status()
+                    .contains("protected application")
+            );
+            host.update(|ui| ui.appearance.workshop.replace_export());
+            host.after_dispatch();
+            assert!(
+                host.state()
+                    .appearance
+                    .workshop
+                    .status()
+                    .contains("protected application")
+            );
+            assert_eq!(std::fs::read(&existing).unwrap(), b"sealed owned PCM");
+            assert!(!future.exists());
+        }
+        *destination.borrow_mut() = Some(external.clone());
+        host.update(|ui| ui.appearance.workshop.request_export());
+        host.after_dispatch();
+        assert!(external.exists());
+        assert!(!library.exists());
     }
 
     #[test]

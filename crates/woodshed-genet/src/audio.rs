@@ -20,6 +20,7 @@ use woodshed_core::loop_plan::{LoopPlan, LoopSegmentId};
 use woodshed_core::song::SongDoc;
 
 mod loop_projection;
+pub(crate) use loop_projection::CaptureSnapshot;
 use loop_projection::LoopCaptures;
 
 /// Context/resource/status servicing continues when the UI has no animation.
@@ -196,6 +197,61 @@ fn to_song(doc: &SongDoc) -> Song {
 }
 
 impl CpalBackend {
+    pub(crate) fn output_sample_rate(&self) -> Option<u32> {
+        self.output.as_ref().map(OutputRuntime::sample_rate)
+    }
+
+    /// The caller services completed output returns before exporting this
+    /// cheap immutable snapshot. Inactive Sets retain their completed takes.
+    pub(crate) fn capture_snapshot(&self) -> Vec<CaptureSnapshot> {
+        if self.session_reset_pending {
+            Vec::new()
+        } else {
+            self.captures.snapshot()
+        }
+    }
+
+    /// Hydrate completed takes after the host has cleared a prior session's
+    /// audio identity. Installing custody does not replace accepted output;
+    /// normal guarded Set-plan admission resolves these buffers by owner/Card.
+    pub(crate) fn restore_loop_captures(
+        &mut self,
+        takes: Vec<CaptureSnapshot>,
+    ) -> Result<(), String> {
+        self.finish_session_reset()?;
+        if self.loop_capture_busy() {
+            return Err(
+                "Stop recording / armed capture before restoring stored Set captures.".into(),
+            );
+        }
+        self.captures.restore(takes)
+    }
+
+    /// Explicit recovery can clear a stored take before its edited Card clock
+    /// is admissible. Other loaded material and other owners remain intact.
+    pub(crate) fn clear_stored_capture(&mut self, id: LoopSegmentId) -> Result<(), String> {
+        if id.set.0 == 0 || id.card.0 == 0 {
+            return Err("Stored capture clear requires a nonzero Set/Card identity.".into());
+        }
+        self.finish_session_reset()?;
+        self.service();
+        if self.loop_capture_busy() {
+            return Err(
+                "Stop recording / armed capture before clearing a stored Card loop.".into(),
+            );
+        }
+        if let Some(index) = self
+            .captures
+            .plan
+            .as_ref()
+            .and_then(|plan| plan.index_of(id))
+        {
+            self.with_output(|output| output.clear_recording(index))?;
+        }
+        self.captures.clear(id);
+        Ok(())
+    }
+
     pub fn preview_busy(&self) -> bool {
         self.output
             .as_ref()
@@ -415,6 +471,18 @@ impl CpalBackend {
         Ok(())
     }
 
+    fn check_set_capture_quota(&self) -> Result<(), String> {
+        if self.captures.plan.is_none() {
+            return Ok(());
+        }
+        let output = self
+            .output
+            .as_ref()
+            .ok_or("Set capture output is unavailable.")?;
+        self.captures
+            .check_capture_quota(&output.song(), output.sample_rate())
+    }
+
     /// A reset that met output backpressure must finish before admitting
     /// incoming session-local ids. Old PCM cannot be inherited by those ids.
     fn finish_session_reset(&mut self) -> Result<(), String> {
@@ -561,6 +629,7 @@ impl AudioBackend for CpalBackend {
         if self.loop_capture_busy() {
             return Err("Capture is already armed or active.".into());
         }
+        self.check_set_capture_quota()?;
         self.ensure_capture_input()?;
         if let Some(input) = &self.input {
             input.capture.set_enabled(true);
@@ -720,6 +789,10 @@ impl AudioBackend for CpalBackend {
 
     fn song_arm_record(&mut self, bar_idx: usize) {
         if self.loop_capture_busy() {
+            return;
+        }
+        if let Err(error) = self.check_set_capture_quota() {
+            self.error = Some(error);
             return;
         }
         if let Err(error) = self.ensure_capture_input() {
@@ -978,6 +1051,318 @@ mod tests {
                 pitches_hz: vec![217.3, 281.6, 336.2],
             }],
         }
+    }
+
+    fn stored_take(owner: u64, rate: u32, value: f32) -> CaptureSnapshot {
+        let plan = owned_plan(owner);
+        let segment = &plan.segments[0];
+        let bar = Bar {
+            bpm: segment.bpm,
+            time_signature: TimeSignature::new(segment.beats, 4),
+            length: segment.bars,
+            ..Bar::default()
+        };
+        CaptureSnapshot {
+            id: segment.id,
+            bpm: segment.bpm,
+            beats: segment.beats,
+            bars: segment.bars,
+            buffer: woodshed_audio::SampleBuffer::new(
+                vec![value; bar.duration_samples(rate as f32) as usize],
+                rate,
+            ),
+        }
+    }
+
+    fn quota_bank(count: u64, frames: usize, rate: u32) -> Vec<CaptureSnapshot> {
+        let buffer = woodshed_audio::SampleBuffer::new(vec![0.25; frames], rate);
+        (1..=count)
+            .map(|card| CaptureSnapshot {
+                id: LoopSegmentId {
+                    set: woodshed_core::working_sets::WorkingSetId(2),
+                    card: woodshedding::rehearsal::CardId(card),
+                },
+                bpm: 60.0 * rate as f32 / frames as f32,
+                beats: 1,
+                bars: 1,
+                buffer: buffer.clone(),
+            })
+            .collect()
+    }
+
+    #[test]
+    fn set_arm_quota_refuses_count_and_frames_before_either_route_opens_input() {
+        for frame_quota in [false, true] {
+            for song_route in [false, true] {
+                let attempts = Rc::new(Cell::new(0));
+                let observed = attempts.clone();
+                let mut audio = backend(Box::new(move || {
+                    observed.set(observed.get() + 1);
+                    successful_input()
+                }));
+                let takes = if frame_quota {
+                    quota_bank(255, 65536, 48000)
+                } else {
+                    quota_bank(256, 500, 1000)
+                };
+                audio.restore_loop_captures(takes).unwrap();
+                let plan = owned_plan(1);
+                audio.set_loop_plan(&plan).unwrap();
+                render(&mut audio, 32);
+                let snapshots = audio.capture_snapshot();
+                let before = audio.output_snapshot().unwrap();
+                let error = if song_route {
+                    audio.song_arm_record(0);
+                    audio.error().unwrap().to_owned()
+                } else {
+                    audio.loop_arm_record(plan.segments[0].id).unwrap_err()
+                };
+                assert!(error.contains(if frame_quota { "16777216" } else { "256" }));
+                assert_eq!(attempts.get(), 0);
+                assert!(audio.input.is_none());
+                assert!(!audio.capture_attached);
+                assert!(!audio.loop_capture_busy());
+                assert_eq!(audio.captures.plan, Some(plan));
+                assert_eq!(audio.output_snapshot().unwrap(), before);
+                let after = audio.capture_snapshot();
+                assert_eq!(after.len(), snapshots.len());
+                for (old, new) in snapshots.iter().zip(&after) {
+                    assert_eq!(old.id, new.id);
+                    assert!(Arc::ptr_eq(&old.buffer.data, &new.buffer.data));
+                }
+                assert!(
+                    audio.output.as_ref().unwrap().song().bars[0]
+                        .audio_buffer
+                        .is_none()
+                );
+            }
+        }
+    }
+
+    #[test]
+    fn set_arm_can_replace_the_same_id_at_the_exact_stored_quota() {
+        let attempts = Rc::new(Cell::new(0));
+        let observed = attempts.clone();
+        let mut audio = backend(Box::new(move || {
+            observed.set(observed.get() + 1);
+            successful_input()
+        }));
+        let mut takes = quota_bank(255, 65536, 48000);
+        let mut plan = owned_plan(1);
+        plan.segments[0].bpm = 60.0 * 48000.0 / 65536.0;
+        plan.segments[0].beats = 1;
+        plan.segments[0].bars = 1;
+        let pcm = takes[0].buffer.clone();
+        takes.push(CaptureSnapshot {
+            id: plan.segments[0].id,
+            bpm: plan.segments[0].bpm,
+            beats: 1,
+            bars: 1,
+            buffer: pcm.clone(),
+        });
+        audio.restore_loop_captures(takes).unwrap();
+        audio.set_loop_plan(&plan).unwrap();
+        render(&mut audio, 32);
+        audio.loop_arm_record(plan.segments[0].id).unwrap();
+        assert_eq!(attempts.get(), 1);
+        assert!(audio.loop_capture_busy());
+        assert_eq!(audio.capture_snapshot().len(), 256);
+        let stored = audio
+            .capture_snapshot()
+            .into_iter()
+            .find(|take| take.id == plan.segments[0].id)
+            .unwrap();
+        assert!(Arc::ptr_eq(&stored.buffer.data, &pcm.data));
+        audio.loop_stop_record();
+        render(&mut audio, 32);
+    }
+
+    #[test]
+    fn restoring_set_custody_leaves_saved_output_and_compatibility_pcm_untouched() {
+        let mut audio = backend(Box::new(|| panic!("capture hydration opened input")));
+        let mut saved = Song::new();
+        saved.name = "Saved backing".into();
+        let legacy = woodshed_audio::SampleBuffer::new(
+            vec![0.1; saved.bars[0].duration_samples(48000.0) as usize],
+            48000,
+        );
+        saved.bars[0].audio_buffer = Some(legacy.clone());
+        audio.output.as_mut().unwrap().set_song(saved).unwrap();
+        render(&mut audio, 32);
+        let incoming = stored_take(1, 48000, 0.6);
+        audio.restore_loop_captures(vec![incoming.clone()]).unwrap();
+        let snapshots = audio.capture_snapshot();
+        assert_eq!(snapshots.len(), 1);
+        assert_eq!(snapshots[0].id, incoming.id);
+        assert!(Arc::ptr_eq(
+            &snapshots[0].buffer.data,
+            &incoming.buffer.data
+        ));
+        let current = audio.output.as_ref().unwrap().song();
+        assert_eq!(current.name, "Saved backing");
+        assert!(Arc::ptr_eq(
+            &current.bars[0].audio_buffer.as_ref().unwrap().data,
+            &legacy.data
+        ));
+        assert!(Arc::ptr_eq(
+            &audio.captures.saved_song[0].as_ref().unwrap().data,
+            &legacy.data
+        ));
+        audio.clear_stored_capture(incoming.id).unwrap();
+        assert!(audio.capture_snapshot().is_empty());
+        assert!(Arc::ptr_eq(
+            &audio.output.as_ref().unwrap().song().bars[0]
+                .audio_buffer
+                .as_ref()
+                .unwrap()
+                .data,
+            &legacy.data
+        ));
+        assert!(audio.input.is_none());
+    }
+
+    #[test]
+    fn hydration_rejects_busy_capture_before_replacing_any_completed_take() {
+        let mut audio = backend(Box::new(successful_input));
+        let old = stored_take(1, 48000, 0.2);
+        audio.restore_loop_captures(vec![old.clone()]).unwrap();
+        let plan = owned_plan(1);
+        audio.set_loop_plan(&plan).unwrap();
+        render(&mut audio, 32);
+        audio.loop_arm_record(old.id).unwrap();
+        assert!(
+            audio
+                .restore_loop_captures(vec![stored_take(2, 48000, 0.8)])
+                .unwrap_err()
+                .contains("armed")
+        );
+        assert!(audio.clear_stored_capture(old.id).is_err());
+        let snapshots = audio.capture_snapshot();
+        assert_eq!(snapshots.len(), 1);
+        assert_eq!(snapshots[0].id, old.id);
+        assert!(Arc::ptr_eq(&snapshots[0].buffer.data, &old.buffer.data));
+        assert_eq!(audio.captures.plan, Some(plan));
+    }
+
+    #[test]
+    fn hydration_finishes_pending_identity_reset_before_installing_reused_ids() {
+        let mut audio = backend(Box::new(|| panic!("hydration opened input")));
+        let old = stored_take(1, 48000, 0.2);
+        audio.restore_loop_captures(vec![old.clone()]).unwrap();
+        let plan = owned_plan(1);
+        audio.set_loop_plan(&plan).unwrap();
+        render(&mut audio, 32);
+        for _ in 0..64 {
+            audio.output.as_mut().unwrap().set_output_gain(0.5).unwrap();
+        }
+        audio.clear_loop_session();
+        assert!(audio.session_reset_pending);
+        // Pending identity resets must not export the old session's takes.
+        assert!(audio.capture_snapshot().is_empty());
+        let incoming = stored_take(1, 48000, 0.7);
+        assert!(audio.restore_loop_captures(vec![incoming.clone()]).is_err());
+        render(&mut audio, 32);
+        audio.restore_loop_captures(vec![incoming.clone()]).unwrap();
+        assert!(!audio.session_reset_pending);
+        assert!(audio.captures.plan.is_none());
+        audio.set_loop_plan(&plan).unwrap();
+        render(&mut audio, 32);
+        let snapshots = audio.capture_snapshot();
+        assert_eq!(snapshots.len(), 1);
+        assert!(Arc::ptr_eq(
+            &snapshots[0].buffer.data,
+            &incoming.buffer.data
+        ));
+        assert!(!Arc::ptr_eq(&snapshots[0].buffer.data, &old.buffer.data));
+        audio.clear_loop_session();
+        render(&mut audio, 32);
+        assert!(audio.capture_snapshot().is_empty());
+    }
+
+    #[test]
+    fn hydrated_pcm_rate_is_preserved_then_refused_by_normal_output_admission() {
+        let mut audio = backend(Box::new(|| panic!("hydration opened input")));
+        let incoming = stored_take(1, 44100, 0.5);
+        audio.restore_loop_captures(vec![incoming.clone()]).unwrap();
+        let current = audio.output.as_ref().unwrap().song();
+        assert!(
+            audio
+                .set_loop_plan(&owned_plan(1))
+                .unwrap_err()
+                .contains("rate")
+        );
+        assert!(audio.captures.plan.is_none());
+        assert_eq!(audio.output.as_ref().unwrap().song().name, current.name);
+        let snapshots = audio.capture_snapshot();
+        assert_eq!(snapshots[0].buffer.sample_rate_hz, 44100);
+        assert_eq!(snapshots[0].buffer.len(), incoming.buffer.len());
+        assert!(Arc::ptr_eq(
+            &snapshots[0].buffer.data,
+            &incoming.buffer.data
+        ));
+    }
+
+    #[test]
+    fn explicit_unadmitted_clear_recovers_an_edited_clock_and_keeps_other_owners() {
+        let mut audio = backend(Box::new(|| panic!("stored clear opened input")));
+        let old = stored_take(1, 48000, 0.2);
+        let inactive = stored_take(2, 48000, 0.6);
+        audio
+            .restore_loop_captures(vec![old.clone(), inactive.clone()])
+            .unwrap();
+        let mut edited = owned_plan(1);
+        edited.segments[0].bpm = 90.0;
+        assert!(
+            audio
+                .set_loop_plan(&edited)
+                .unwrap_err()
+                .contains("Clear the captured loop")
+        );
+        assert!(audio.captures.plan.is_none());
+        let before = audio.output_snapshot().unwrap();
+        audio.clear_stored_capture(old.id).unwrap();
+        assert_eq!(audio.output_snapshot().unwrap(), before);
+        let snapshots = audio.capture_snapshot();
+        assert_eq!(snapshots.len(), 1);
+        assert_eq!(snapshots[0].id, inactive.id);
+        audio.set_loop_plan(&edited).unwrap();
+        assert!(
+            audio.output.as_ref().unwrap().song().bars[0]
+                .audio_buffer
+                .is_none()
+        );
+        audio
+            .clear_stored_capture(LoopSegmentId {
+                set: woodshed_core::working_sets::WorkingSetId(3),
+                card: woodshedding::rehearsal::CardId(99),
+            })
+            .unwrap();
+        assert_eq!(audio.capture_snapshot()[0].id, inactive.id);
+    }
+
+    #[test]
+    fn clearing_an_admitted_stored_capture_updates_output_without_touching_inactive_sets() {
+        let mut audio = backend(Box::new(|| panic!("stored clear opened input")));
+        let loaded = stored_take(1, 48000, 0.2);
+        let inactive = stored_take(2, 48000, 0.6);
+        audio
+            .restore_loop_captures(vec![loaded.clone(), inactive.clone()])
+            .unwrap();
+        let plan = owned_plan(1);
+        audio.set_loop_plan(&plan).unwrap();
+        render(&mut audio, 32);
+        assert!(audio.song_loop_bars()[0]);
+        audio.clear_stored_capture(loaded.id).unwrap();
+        render(&mut audio, 32);
+        assert!(!audio.song_loop_bars()[0]);
+        assert_eq!(audio.captures.plan, Some(plan));
+        let snapshots = audio.capture_snapshot();
+        assert_eq!(snapshots.len(), 1);
+        assert_eq!(snapshots[0].id, inactive.id);
+        assert!(Arc::ptr_eq(
+            &snapshots[0].buffer.data,
+            &inactive.buffer.data
+        ));
     }
 
     #[test]

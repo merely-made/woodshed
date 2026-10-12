@@ -43,6 +43,7 @@ mesquite = { workspace = true }
 # Window types used by the native chrome hooks. Mesquite owns GPU readback.
 winit = { workspace = true }
 directories = "5"
+getrandom = "0.4"
 serde_json = { workspace = true }
 # The shared persona picker's event type. The list itself is drawn in
 # woodshed-views; this crate only reads what the user answered.

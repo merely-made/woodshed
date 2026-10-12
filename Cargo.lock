@@ -11755,6 +11755,7 @@ dependencies = [
  "directories",
  "dramatis",
  "genet-scripted-dom",
+ "getrandom 0.4.3",
  "graphshell",
  "layout-dom-api",
  "mere-persona-picker",

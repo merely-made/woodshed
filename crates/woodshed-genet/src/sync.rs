@@ -60,33 +60,34 @@ pub fn after_dispatch(shared: &mut Shared, ctx: &mut Ctx<'_>) {
 /// seam, capture the skin settings, and persist.
 fn push_backend(shared: &mut Shared, ctx: &mut Ctx<'_>) {
     let mut sheet = None;
-    let mut persisted: Option<String> = None;
     let mut persisted_settings: Option<String> = None;
 
     // Set/Card ids are session-local. Every reset/open, including reopening
     // the same persona, releases PCM custody before admitting incoming ids.
-    let audio_session = ctx.runner.state().audio_session.clone();
-    if shared
-        .last_audio_session
-        .as_ref()
-        .is_none_or(|last| !std::sync::Arc::ptr_eq(last, &audio_session))
+    let restore_notice = match crate::capture_persistence::begin_session(shared, ctx.runner.state())
     {
-        if let Some(backend) = shared.backend.as_mut() {
-            backend.clear_loop_session();
-        }
-        shared.last_song = None;
-        shared.last_loop_plan = None;
-        shared.last_audio_session = Some(audio_session);
-    }
+        Ok(notice) => notice,
+        Err(error) => {
+            ctx.runner.update(|ui| {
+                ui.loop_capture_notice =
+                    Some(format!("Captured loops are waiting to restore: {error}"))
+            });
+            return;
+        },
+    };
     if let Some(backend) = shared.backend.as_mut() {
         // Retire capture/preview work before any source admission or command.
         backend.service();
     }
-    let backend = shared.backend.as_mut();
-    let last_song = &mut shared.last_song;
-    let last_loop_plan = &mut shared.last_loop_plan;
-    let storage = shared.storage.as_ref();
     ctx.runner.update(|ui| {
+        if let Some(notice) = &restore_notice {
+            ui.loop_capture_notice = notice.clone();
+        }
+        let backend = shared.backend.as_mut();
+        let last_song = &mut shared.last_song;
+        let last_loop_plan = &mut shared.last_loop_plan;
+        let capture_persistence = &mut shared.capture_persistence;
+        let storage = shared.storage.as_ref();
         ui.sync();
         let appearance_attempted = woodshed_views::appearance::commit_selection(ui, |settings| {
             let store = storage.ok_or("Choose a persona before saving appearance.")?;
@@ -178,19 +179,43 @@ fn push_backend(shared: &mut Shared, ctx: &mut Ctx<'_>) {
                             capture_changed = true;
                             Ok(())
                         } else {
-                            backend.loop_arm_record(id)
+                            let plan = last_loop_plan.as_ref().expect("capture owner checked");
+                            backend
+                                .output_sample_rate()
+                                .ok_or_else(|| "Audio output is unavailable.".to_string())
+                                .and_then(|rate| {
+                                    capture_persistence.permit_record(
+                                        plan,
+                                        rate,
+                                        backend.capture_snapshot(),
+                                    )
+                                })
+                                .and_then(|_| backend.loop_arm_record(id))
                         };
                         if let Err(reason) = result {
                             ui.loop_notice = Some(reason);
                         }
                     },
                     AudioRequest::LoopClear(id) => {
-                        if last_loop_plan.is_none() {
+                        let visible = ui.loop_captures.takes.iter().any(|take| take.id == id)
+                            || ui.loop_retained_ids.contains(&id)
+                            || ui
+                                .loop_admitted
+                                .as_ref()
+                                .is_some_and(|plan| plan.index_of(id).is_some())
+                            || ui
+                                .requested_loop_plan()
+                                .ok()
+                                .is_some_and(|plan| plan.index_of(id).is_some());
+                        if !visible {
                             ui.loop_notice =
-                                Some("Choose Set backing before clearing a Card loop.".into());
+                                Some("Choose the owning Set before clearing a Card loop.".into());
                         } else {
-                            match backend.loop_clear(id) {
-                                Ok(()) => capture_changed = true,
+                            match backend.clear_stored_capture(id) {
+                                Ok(()) => {
+                                    capture_persistence.forget(id);
+                                    capture_changed = true;
+                                },
                                 Err(reason) => ui.loop_notice = Some(reason),
                             }
                         }
@@ -207,12 +232,25 @@ fn push_backend(shared: &mut Shared, ctx: &mut Ctx<'_>) {
             ui.song_recording = backend.loop_capture_busy();
             ui.song_loop_bars = backend.song_loop_bars();
             ui.audio_error = backend.error().map(str::to_owned);
+        } else {
+            let mut retained_requests = Vec::new();
+            for request in std::mem::take(&mut ui.audio_requests) {
+                match request {
+                    AudioRequest::LoopClear(id)
+                        if ui.loop_captures.takes.iter().any(|take| take.id == id) =>
+                    {
+                        capture_persistence.forget(id);
+                    },
+                    other => retained_requests.push(other),
+                }
+            }
+            ui.audio_requests = retained_requests;
         }
         sheet = Some(crate::appearance::stylesheet(ui));
-        persisted = serde_json::to_string(&ui.to_persisted()).ok();
         if !appearance_attempted {
             persisted_settings = serde_json::to_string(&ui.app_settings).ok();
         }
+        crate::capture_persistence::persist(shared, ui);
     });
 
     if let Some(sheet) = sheet.and_then(|sheet| shared.reskin_sheet(sheet)) {
@@ -225,9 +263,6 @@ fn push_backend(shared: &mut Shared, ctx: &mut Ctx<'_>) {
     let Some(storage) = shared.storage.as_ref() else {
         return;
     };
-    if let Some(json) = persisted {
-        storage.save(&json);
-    }
     if let Some(json) = persisted_settings {
         storage.save_settings(&json);
     }
