@@ -1564,8 +1564,8 @@ and remain fully operable by keyboard.
 
 ### P7. Rebuild Song as Looper over Set
 
-**October 11 next slice: durable Set captures — implementation checks pass;
-native seed/reopen qualification in progress.** Completed
+**October 11 slice: durable Set captures — implemented and qualified for
+bounded synthetic storage, native reopen and recovery.** Completed
 Set/Card takes will use exact mono f32 companion blobs through the existing
 persona-sealed backend. A bounded session manifest retains identity, captured
 clock, sample rate, frame count and content digest. A persisted random artifact
@@ -1629,6 +1629,10 @@ and tempo match the LoopPlan, and the UI contains no Song or DAW language.
 
 **Current state: open.** Windows alpha behavior exists. Three-width product
 acceptance, touch/reduced-motion coverage, and Mac/Linux receipts remain open.
+The October 11 Set-capture review also records an existing rendering residual:
+the `⟳` recorded-loop marker appears as an empty square at 2360×1600. Saved
+count, Card ownership and explicit stored-reference Clear remain readable.
+This belongs to P8 rendering polish, separate from qualified PCM retention.
 
 Give each section explicit wide, medium, and narrow compositions. Wide layouts
 may expose the Set tray and tool panels simultaneously. Narrow layouts use one
@@ -2986,3 +2990,53 @@ actual successful completion receipts were checked before the next launch,
 without repeating a seed. No further product-source correction was needed.
 All acceptance apps exited and the owned Keeper fixture was stopped. The
 existing four-hour sleep prevention was preserved.
+
+### October 11 follow-up: sealed Set capture companions
+
+**Status: implemented and qualified at source `a6288eb`.** The implementation
+starts at refreshed `961731a`, preserving the selected Redshank export and
+the qualified UI/Firewheel family. `8ec1578` adds portable capture manifests,
+exact mono f32 companions, bounded capture custody and host integration;
+`a6288eb` clears a stale refusal notice after successful recovery. The final
+desktop binary SHA256 is
+`b11df9aea95c01c0653bf069e5798528fbdf4f2974221e12812530d96acf52e4`.
+
+The [capture receipt](../validation/set-captures_20261011/receipt.json) records
+80 focused checks: codec/manifest 4, core storage 11, host persistence 11,
+audio custody/admission 32, filesystem/sealing 6, sync 9, drive 3, export
+protection 1 and Looper views 3. Four independent CPU processes retain exact
+sample bits, including negative zero, through sealed filesystem reopening,
+reorder, clock refusal, explicit Clear and another reopening. Failure probes
+cover missing/corrupt companions, dropped writes, pre-commit refusal and
+accepted publication with failed readback. The affected persistence/sync
+checks are rerun after the notice correction; unchanged component evidence
+retains its exact revision in the receipt. The locked production build passes.
+
+Four native processes use that final binary and unchanged scenarios: seed
+49 presentations/two captures, fresh reopen 58/three, cleared reopen 18/one,
+and missing-companion recovery 35/two. All eight full nonblank captures are
+reviewed, for 160 presentations. Eight checkpoints report unopened input;
+each process reports one output stream. The take follows Set 1/Card 1 through
+reorder and fresh hydration. Play/Stop works; its captured clock refuses a
+tempo change until explicit Clear, then 125 BPM backing and cleared state
+survive the next process. A copied sealed seed profile with one companion
+held aside retains its reference, refuses Rec before input opens, and clears
+the reference and refusal notice only through the explicit stored-loop action.
+
+The [native receipt](../validation/set-captures_20261011/gui/receipt.json)
+retains source/binary/scenario/log/completion hashes, all image hashes and
+dimensions, profile hashes and the P8 glyph observation. Original encrypted
+companion bytes remain unchanged after Clear/reopen; the deliberately held
+copy is restored at cleanup with the same hash, without restoring its cleared
+session reference. No private vault, persisted payload, PCM or app binary is
+included in the repository evidence. Full local captures remain under
+`/Users/markik/Code/testing/woodshed/set-captures-20261011/native/`.
+
+This is synthetic completed-take storage/replay acceptance, supported by
+independent exact-sample CPU probes. It does not qualify physical microphone
+capture, acoustic quality/calibration, hardware-clock drift, saved-song
+bar-index PCM durability, WAV export, orphan collection/disk quota or full P7.
+Native Raise/finite-exit observation and background unpresented redraw counts
+are recorded without claiming startup, idle-paint or rendering performance.
+All four acceptance apps exit; the owned Keeper and lifecycle sleep assertion
+are stopped. The user's expired four-hour timer and other processes are untouched.

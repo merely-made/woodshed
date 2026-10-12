@@ -1,0 +1,182 @@
+[
+  {
+    "label": "core-codec",
+    "command": [
+      "cargo",
+      "+1.97.1",
+      "test",
+      "--locked",
+      "--manifest-path",
+      "/Users/markik/Code/worktrees/woodshed-orchestrate-20261011/Cargo.toml",
+      "-p",
+      "woodshed-core",
+      "loop_capture::tests"
+    ],
+    "exit_code": 0,
+    "seconds": 4.28,
+    "log": "logs/core-codec.log",
+    "passed": 4,
+    "portable_log_sha256": "a740ee0d2b4145eb3ed77e72dc1361c1aaeb8935ee7ff7a2c2f90a06b49622c4",
+    "source_revision": "8ec1578ab4c4498e14ee6940264f9f248d62186a"
+  },
+  {
+    "label": "core-storage",
+    "command": [
+      "cargo",
+      "+1.97.1",
+      "test",
+      "--locked",
+      "--manifest-path",
+      "/Users/markik/Code/worktrees/woodshed-orchestrate-20261011/Cargo.toml",
+      "-p",
+      "woodshed-core",
+      "storage::tests"
+    ],
+    "exit_code": 0,
+    "seconds": 0.634,
+    "log": "logs/core-storage.log",
+    "passed": 11,
+    "portable_log_sha256": "e7bfe57a136e008d72d86d4d92f9752020d06775fecf2dd177af173507ad0d9c",
+    "source_revision": "8ec1578ab4c4498e14ee6940264f9f248d62186a"
+  },
+  {
+    "label": "host-persistence",
+    "command": [
+      "cargo",
+      "+1.97.1",
+      "test",
+      "--locked",
+      "--manifest-path",
+      "/Users/markik/Code/worktrees/woodshed-orchestrate-20261011/Cargo.toml",
+      "-p",
+      "woodshed-genet",
+      "capture_persistence::tests"
+    ],
+    "exit_code": 0,
+    "seconds": 8.364,
+    "log": "logs/host-persistence.log",
+    "passed": 11,
+    "portable_log_sha256": "df025fba74bf0e8bdb4988b46cbdb1b72425c763d6e6537821d69561665822ff",
+    "source_revision": "a6288eb1b5068aee8c618012aeb41cde865ef5c0"
+  },
+  {
+    "label": "host-audio",
+    "command": [
+      "cargo",
+      "+1.97.1",
+      "test",
+      "--locked",
+      "--manifest-path",
+      "/Users/markik/Code/worktrees/woodshed-orchestrate-20261011/Cargo.toml",
+      "-p",
+      "woodshed-genet",
+      "audio::"
+    ],
+    "exit_code": 0,
+    "seconds": 1.257,
+    "log": "logs/host-audio.log",
+    "passed": 32,
+    "portable_log_sha256": "067a10d1a84056a9ba07792176f555146605a1401a9554cadba0745df66a967e",
+    "source_revision": "8ec1578ab4c4498e14ee6940264f9f248d62186a"
+  },
+  {
+    "label": "host-filesystem",
+    "command": [
+      "cargo",
+      "+1.97.1",
+      "test",
+      "--locked",
+      "--manifest-path",
+      "/Users/markik/Code/worktrees/woodshed-orchestrate-20261011/Cargo.toml",
+      "-p",
+      "woodshed-genet",
+      "storage::capture_tests"
+    ],
+    "exit_code": 0,
+    "seconds": 0.849,
+    "log": "logs/host-filesystem.log",
+    "passed": 6,
+    "portable_log_sha256": "d5a54706c49032e630442fdeea81fcb6c06c82886839bb112358070cbd236621",
+    "source_revision": "8ec1578ab4c4498e14ee6940264f9f248d62186a"
+  },
+  {
+    "label": "host-sync",
+    "command": [
+      "cargo",
+      "+1.97.1",
+      "test",
+      "--locked",
+      "--manifest-path",
+      "/Users/markik/Code/worktrees/woodshed-orchestrate-20261011/Cargo.toml",
+      "-p",
+      "woodshed-genet",
+      "sync::tests"
+    ],
+    "exit_code": 0,
+    "seconds": 1.851,
+    "log": "logs/host-sync.log",
+    "passed": 9,
+    "portable_log_sha256": "0f6879e8a6100162aecd11ccf09a4bb1134676cef97f901737ebe97bc907f51f",
+    "source_revision": "a6288eb1b5068aee8c618012aeb41cde865ef5c0"
+  },
+  {
+    "label": "host-drive",
+    "command": [
+      "cargo",
+      "+1.97.1",
+      "test",
+      "--locked",
+      "--manifest-path",
+      "/Users/markik/Code/worktrees/woodshed-orchestrate-20261011/Cargo.toml",
+      "-p",
+      "woodshed-genet",
+      "drive::tests"
+    ],
+    "exit_code": 0,
+    "seconds": 1.044,
+    "log": "logs/host-drive.log",
+    "passed": 3,
+    "portable_log_sha256": "5b4b54604fd8d687b930a1c48ef0bc5c62fa47aa75d944364911c31a2ed80fc1",
+    "source_revision": "8ec1578ab4c4498e14ee6940264f9f248d62186a"
+  },
+  {
+    "label": "host-export-protection",
+    "command": [
+      "cargo",
+      "+1.97.1",
+      "test",
+      "--locked",
+      "--manifest-path",
+      "/Users/markik/Code/worktrees/woodshed-orchestrate-20261011/Cargo.toml",
+      "-p",
+      "woodshed-genet",
+      "appearance::tests::theme_export_cannot_replace_existing_or_future_capture_companions"
+    ],
+    "exit_code": 0,
+    "seconds": 1.799,
+    "log": "logs/host-export-protection.log",
+    "passed": 1,
+    "portable_log_sha256": "2a458024724441886f01384c4ef44fda2ccc79a37f51da5298385182af20d87f",
+    "source_revision": "8ec1578ab4c4498e14ee6940264f9f248d62186a"
+  },
+  {
+    "label": "views-looper",
+    "command": [
+      "cargo",
+      "+1.97.1",
+      "test",
+      "--locked",
+      "--manifest-path",
+      "/Users/markik/Code/worktrees/woodshed-orchestrate-20261011/Cargo.toml",
+      "-p",
+      "woodshed-views",
+      "stage::looper::tests"
+    ],
+    "exit_code": 0,
+    "seconds": 11.981,
+    "log": "logs/views-looper.log",
+    "passed": 3,
+    "portable_log_sha256": "c79cdf4545a6a45aea838290fc41bfcfae2a8241505e46463604f6439bd51250",
+    "source_revision": "8ec1578ab4c4498e14ee6940264f9f248d62186a"
+  }
+]

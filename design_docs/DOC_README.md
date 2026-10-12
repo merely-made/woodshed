@@ -126,8 +126,10 @@ before any other doc in this directory.
   unopened input and one output stream. The next October 11 slice adds exact
   sealed Set/Card companions, bounded owner/clock manifests and explicit
   stored-reference Clear; focused checks and fresh-process CPU retention pass,
-  with native reopening in progress. Physical capture, saved-song PCM and full
-  P7 remain open.
+  with four native processes, 160 presentations and eight reviewed captures
+  qualifying reopen and missing-companion recovery. Existing recorded-loop
+  glyph fallback is recorded under P8. Physical capture, saved-song PCM and
+  full P7 remain open.
   The October 7 captured-scale-pattern follow-up extends copied instructions
   to degree pairs in thirds/fourths, with base-scale exploration and unchanged
   owner boundaries. The 613-check gate and committed desktop build pass; eight

@@ -218,8 +218,8 @@ and hold duration; current Cards and the global LoopPlan meter cannot express
 all of those values. Freezing legacy authoring removes a product capability
 and needs its own decision. Do not silently revoice or flatten saved material.
 Set PCM now has exact sealed companion storage and a bounded ownership
-manifest; source checks and fresh-process CPU round-trips pass, with native
-qualification in progress in the
+manifest; 80 focused checks and four independent CPU round-trips pass, together
+with four native processes, 160 presentations and eight reviewed captures in the
 [P7 capture slice](2026-07-11_stage_set_tools_plan.md#p7-rebuild-song-as-looper-over-set).
 Blob publication precedes session replacement; post-commit readback failure
 is unconfirmed rather than rolled back. Saved-song PCM, physical capture,
@@ -410,3 +410,16 @@ product's existing recording/Turnstone gates.
   preserves source/binary/scenario hashes, logs, presentation counts, capture
   hashes and native-control limits. The one-output runtime slice is qualified;
   physical capture, acoustic calibration, durable PCM and full P7 remain open.
+- **2026-10-11:** Set/Card companion persistence is qualified at `a6288eb`,
+  on the unchanged UI/output family. Exact f32/rate/frame/hash validation,
+  artifact namespaces and no-clobber sealed companions preserve owner custody;
+  verified blobs precede atomic session-reference replacement. Live/catalog
+  quota is reserved before recording, and unavailable/deleted Card references
+  remain explicitly clearable without admitted backing or output. Completion
+  service saves current practice without a new dispatch or stale full-session
+  snapshot. Eight reviewed native captures qualify reorder/reopen, clock
+  refusal, Clear/reopen and missing-companion recovery with input unopened.
+  The [capture receipt](../validation/set-captures_20261011/receipt.json) retains
+  scoped revisions and limits. Existing loop-marker glyph fallback is recorded
+  under P8; saved-song PCM, physical capture/acoustic calibration, WAV export,
+  orphan collection and full P7 remain separate.

@@ -1,0 +1,6 @@
+RESULT ok
+captured 01_cleared_loop_fresh_reopen
+Set capture clear survives fresh process
+capture 01_cleared_loop_fresh_reopen 2360x1600 digest=73b82c746b4fb3f1 file=$ARTIFACT_ROOT/native/SetCaptureClearedReopen/01_cleared_loop_fresh_reopen.png
+frames: 1 captured, 0 blank, 1 distinct digests
+presentation: 18 frames, 816 redraws, 798 unpresented redraws

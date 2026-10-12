@@ -1,0 +1,23 @@
+warning: patch `p2panda-auth v0.7.1 (https://github.com/mark-ik/p2panda.git?tag=mere-p2panda-net-0.7.5-upstream-20261011#d8acabc9)` was not used in the crate graph
+warning: patch `p2panda-stream v0.7.1 (https://github.com/mark-ik/p2panda.git?tag=mere-p2panda-net-0.7.5-upstream-20261011#d8acabc9)` was not used in the crate graph
+help: Check that the patched package version and available features are compatible
+      with the dependency requirements. If the patch has a different version from
+      what is locked in the Cargo.lock file, run `cargo update` to use the new
+      version. This may also occur with an optional dependency that is not enabled.
+   Compiling woodshed-core v0.1.0 ($SOURCE_ROOT/crates/woodshed-core)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 3.52s
+     Running unittests src/lib.rs ($TARGET_DIR/debug/deps/woodshed_core-a5905681d8367aca)
+
+running 4 tests
+test loop_capture::tests::corruption_truncation_trailing_bytes_and_ref_disagreement_are_refused ... ok
+test loop_capture::tests::nonfinite_samples_invalid_rates_and_path_shaped_digests_are_refused ... ok
+test loop_capture::tests::version_one_wire_and_exact_sample_bits_are_stable ... ok
+test loop_capture::tests::manifest_retains_owner_clock_and_enforces_unique_bounded_references ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 224 filtered out; finished in 0.00s
+
+     Running tests/stage_backdrop.rs ($TARGET_DIR/debug/deps/stage_backdrop-f0faad474605e2e3)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
