@@ -575,6 +575,7 @@ fn start_dialog(
     choose: impl FnOnce(&str) -> Option<PathBuf> + Send + 'static,
 ) -> Result<(), String> {
     exporter.spawn(session, move |cancelled| {
+        drop(commit_permit(&cancelled)?);
         let Some(path) = choose(&name) else {
             return Ok(Outcome::Cancelled);
         };
