@@ -7,7 +7,7 @@ use std::io::Read;
 use std::path::{Component, Path, PathBuf};
 use std::sync::{Arc, Mutex, MutexGuard, mpsc};
 
-use cambium_genet_winit_host::{CloseDisposition, choose_save_path};
+use cambium_genet_winit_host::CloseDisposition;
 use muniment::blob::Hash;
 use tempfile::NamedTempFile;
 use woodshed_audio::Song;
@@ -170,6 +170,7 @@ struct Collision {
 enum Outcome {
     Saved(PathBuf, SongExportReport),
     Collision(Artifact, Hash),
+    Cancelled,
 }
 struct Job {
     session: Arc<()>,
@@ -251,6 +252,9 @@ impl WavExport {
     fn complete(&mut self, ui: &mut UiState, result: Result<Outcome, String>) {
         ui.loop_export_busy = false;
         match result {
+            Ok(Outcome::Cancelled) => {
+                ui.loop_export_notice = Some("WAV export cancelled; no file was written.".into());
+            },
             Ok(Outcome::Saved(path, report)) => {
                 ui.loop_export_notice = Some(format!(
                     "Exported {} · {:.3} s · {} Hz · backing + completed loops.",
@@ -414,15 +418,35 @@ fn commit_permit(cancelled: &Mutex<bool>) -> Result<MutexGuard<'_, bool>, String
 }
 
 pub fn after_dispatch(shared: &mut Shared, ctx: &mut Ctx<'_>) {
-    after_dispatch_with_chooser(shared, ctx, |name| {
-        choose_save_path("Export Looper WAV", name, &["wav"])
-    });
+    after_dispatch_inner(shared, ctx, None::<fn(&str) -> Option<PathBuf>>);
+}
+
+#[cfg(target_os = "macos")]
+fn choose_wav_destination(name: &str) -> Option<PathBuf> {
+    rfd::FileDialog::new()
+        .set_title("Export Looper WAV")
+        .set_file_name(name)
+        .add_filter("Wave audio", &["wav"])
+        .save_file()
+}
+
+#[cfg(not(target_os = "macos"))]
+fn choose_wav_destination(name: &str) -> Option<PathBuf> {
+    cambium_genet_winit_host::choose_save_path("Export Looper WAV", name, &["wav"])
 }
 
 pub(crate) fn after_dispatch_with_chooser(
     shared: &mut Shared,
     ctx: &mut Ctx<'_>,
-    mut choose: impl FnMut(&str) -> Option<PathBuf>,
+    choose: impl FnMut(&str) -> Option<PathBuf>,
+) {
+    after_dispatch_inner(shared, ctx, Some(choose));
+}
+
+fn after_dispatch_inner<F: FnMut(&str) -> Option<PathBuf>>(
+    shared: &mut Shared,
+    ctx: &mut Ctx<'_>,
+    mut choose: Option<F>,
 ) {
     poll(shared, ctx);
     if ctx.runner.state().loop_export_requests.is_empty() {
@@ -437,7 +461,7 @@ pub(crate) fn after_dispatch_with_chooser(
                 if shared.wav_export.job.is_some() {
                     Err("A WAV export is already finishing.".into())
                 } else {
-                    choose_and_start(shared, ctx, &mut choose)
+                    choose_and_start(shared, ctx, choose.as_mut())
                 }
             },
             LoopExportRequest::Replace(token) => replace(shared, ctx, token),
@@ -468,10 +492,10 @@ pub(crate) fn after_dispatch_with_chooser(
     }
 }
 
-fn choose_and_start(
+fn choose_and_start<F: FnMut(&str) -> Option<PathBuf>>(
     shared: &mut Shared,
     ctx: &mut Ctx<'_>,
-    choose: &mut impl FnMut(&str) -> Option<PathBuf>,
+    choose: Option<&mut F>,
 ) -> Result<(), String> {
     let (song, rate) = snapshot(shared, ctx.runner.state())?;
     let session = ctx.runner.state().audio_session.clone();
@@ -485,6 +509,25 @@ fn choose_and_start(
     );
     shared.wav_export.pending = None;
     ctx.runner.update(|ui| ui.loop_export_replace = None);
+    // RFD marshals AppKit work to the main queue. Schedule it only after the
+    // dispatch returns, releasing Shared and the host's input-handler borrows
+    // before AppKit enters its nested modal event loop.
+    let Some(choose) = choose else {
+        start_dialog(
+            &mut shared.wav_export,
+            session,
+            song,
+            rate,
+            name,
+            Protection::current(),
+            choose_wav_destination,
+        )?;
+        ctx.runner.update(|ui| {
+            ui.loop_export_busy = true;
+            ui.loop_export_notice = Some("Choose a WAV destination…".into());
+        });
+        return Ok(());
+    };
     let Some(mut path) = choose(&name) else {
         ctx.runner.update(|ui| {
             ui.loop_export_notice = Some("WAV export cancelled; no file was written.".into())
@@ -496,15 +539,7 @@ fn choose_and_start(
             "The practice session changed while choosing a WAV destination. Export again.".into(),
         );
     }
-    if path.extension().is_none() {
-        path.set_extension("wav");
-    }
-    if !path
-        .extension()
-        .is_some_and(|ext| ext.eq_ignore_ascii_case("wav"))
-    {
-        return Err("Choose a .wav destination.".into());
-    }
+    path = wav_path(path)?;
     let protection = Protection::current();
     let path = protection.check(&path)?;
     shared.wav_export.spawn(session, move |cancelled| {
@@ -515,6 +550,39 @@ fn choose_and_start(
         ui.loop_export_notice = Some("Rendering backing + completed loops…".into());
     });
     Ok(())
+}
+
+fn wav_path(mut path: PathBuf) -> Result<PathBuf, String> {
+    if path.extension().is_none() {
+        path.set_extension("wav");
+    }
+    if !path
+        .extension()
+        .is_some_and(|ext| ext.eq_ignore_ascii_case("wav"))
+    {
+        return Err("Choose a .wav destination.".into());
+    }
+    Ok(path)
+}
+
+fn start_dialog(
+    exporter: &mut WavExport,
+    session: Arc<()>,
+    song: Song,
+    rate: u32,
+    name: String,
+    protection: Protection,
+    choose: impl FnOnce(&str) -> Option<PathBuf> + Send + 'static,
+) -> Result<(), String> {
+    exporter.spawn(session, move |cancelled| {
+        let Some(path) = choose(&name) else {
+            return Ok(Outcome::Cancelled);
+        };
+        // Recheck after the modal choice; a profile change can revoke this job
+        // while the native panel is open. Final publication checks the gate too.
+        drop(commit_permit(&cancelled)?);
+        render(song, rate, wav_path(path)?, protection, &cancelled)
+    })
 }
 
 fn replace(shared: &mut Shared, ctx: &mut Ctx<'_>, token: u64) -> Result<(), String> {
@@ -549,6 +617,69 @@ mod tests {
     use std::cell::Cell;
     use std::rc::Rc;
     use taproot::Selector;
+
+    #[test]
+    fn deferred_dialog_cancel_and_epoch_revocation_preserve_destinations() {
+        let dir = tempfile::tempdir().unwrap();
+        let path = dir.path().join("chosen.wav");
+        let mut exporter = WavExport::default();
+        let mut ui = UiState::new();
+        start_dialog(
+            &mut exporter,
+            ui.audio_session.clone(),
+            song(0.1),
+            48_000,
+            "take.wav".into(),
+            Protection::default(),
+            |_| None,
+        )
+        .unwrap();
+        let job = exporter.job.take().unwrap();
+        exporter.complete(&mut ui, job.receiver.recv().unwrap());
+        assert!(
+            ui.loop_export_notice
+                .as_ref()
+                .unwrap()
+                .contains("cancelled")
+        );
+        assert!(!path.exists());
+
+        fs::write(&path, b"keep").unwrap();
+        let target = path.clone();
+        let (entered, ready) = mpsc::channel();
+        let (release, blocked) = mpsc::channel();
+        start_dialog(
+            &mut exporter,
+            ui.audio_session.clone(),
+            song(0.1),
+            48_000,
+            "take.wav".into(),
+            Protection::default(),
+            move |_| {
+                entered.send(()).unwrap();
+                blocked.recv().unwrap();
+                Some(target)
+            },
+        )
+        .unwrap();
+        ready.recv().unwrap();
+        exporter.revoke_session();
+        let saved = ui.to_persisted();
+        ui.apply_persisted(&saved, ui.app_settings.clone());
+        release.send(()).unwrap();
+        let job = exporter.job.take().unwrap();
+        assert!(
+            job.receiver
+                .recv()
+                .unwrap()
+                .err()
+                .unwrap()
+                .contains("cancelled")
+        );
+        assert!(ui.loop_export_notice.is_none());
+        assert_eq!(fs::read(&path).unwrap(), b"keep");
+        assert_eq!(fs::read_dir(dir.path()).unwrap().count(), 1);
+    }
 
     #[test]
     fn deferred_export_close_preserves_the_dirty_appearance_gate() {
