@@ -37,6 +37,7 @@ mod shared;
 mod storage;
 mod sync;
 mod text;
+mod wav_export;
 
 use std::cell::RefCell;
 use std::rc::Rc;
@@ -89,6 +90,7 @@ fn boot_state(
         backend.set_wake(wake.callback());
     }
     let mut ui = UiState::new();
+    shared.wav_export.set_wake(wake.callback());
     ui.event_clock = Some(drive::wall_time_ms);
     let (size_w, size_h) = window.inner_size();
     let scale = window.scale_factor() as f32;
@@ -297,6 +299,7 @@ fn hooks(shared: &Rc<RefCell<Shared>>) -> HostHooks<UiState, Logic, UiChild> {
         }),
         after_wake: Box::new(move |ctx: &mut Ctx<'_>| {
             let mut shared = wake_shared.borrow_mut();
+            wav_export::poll(&mut shared, ctx);
             if !capture_persistence::session_current(&shared, ctx.runner.state()) {
                 sync::after_dispatch(&mut shared, ctx);
                 if !capture_persistence::session_current(&shared, ctx.runner.state()) {
@@ -321,6 +324,9 @@ fn hooks(shared: &Rc<RefCell<Shared>>) -> HostHooks<UiState, Logic, UiChild> {
         close_request: Box::new(move |ctx, _request| {
             if let Some(geometry) = ctx.geometry {
                 persist_window_geometry(&mut close_shared.borrow_mut(), ctx, geometry);
+            }
+            if let Some(disposition) = wav_export::close_request(&mut close_shared.borrow_mut(), ctx) {
+                return disposition;
             }
             appearance::close_request(ctx)
         }),

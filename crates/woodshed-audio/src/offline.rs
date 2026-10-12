@@ -17,6 +17,9 @@ use crate::sequencer::SequencerPattern;
 use crate::sequencer::Step;
 use crate::sound::Sound;
 
+mod song_export;
+pub use song_export::{SongExportError, SongExportReport, export_song_wav_to};
+
 /// How many frames to process per chunk. The mixer loops over voices
 /// once per frame, so smaller chunks mean more loop iterations per
 /// second of audio; larger chunks use more memory transiently. 4096

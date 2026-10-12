@@ -46,18 +46,22 @@ pub fn device_free_receipt() -> bool {
 }
 
 pub fn load_library(ui: &mut UiState) {
-    let path = library_path(
-        std::env::var_os("WOODSHED_THEME_LIBRARY"),
-        std::env::var_os("WOODSHED_STATE"),
-        ProjectDirs::from("dev", "Woodshed", "Woodshed")
-            .map(|dirs| dirs.config_dir().to_path_buf()),
-    );
+    let path = configured_library_path();
     ui.appearance_authoring_available = false;
     let Some(path) = path else {
         ui.appearance_notice = Some("Appearance authoring is unavailable because no application configuration directory was found.".into());
         return;
     };
     load_library_at(ui, path);
+}
+
+pub(crate) fn configured_library_path() -> Option<PathBuf> {
+    library_path(
+        std::env::var_os("WOODSHED_THEME_LIBRARY"),
+        std::env::var_os("WOODSHED_STATE"),
+        ProjectDirs::from("dev", "Woodshed", "Woodshed")
+            .map(|dirs| dirs.config_dir().to_path_buf()),
+    )
 }
 
 fn load_library_at(ui: &mut UiState, path: PathBuf) {

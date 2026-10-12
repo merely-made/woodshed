@@ -45,13 +45,10 @@ winit = { workspace = true }
 directories = "5"
 getrandom = "0.4"
 serde_json = { workspace = true }
+# Exclusive sibling temporary files for atomic media export publication.
+tempfile = "3"
 # The shared persona picker's event type. The list itself is drawn in
 # woodshed-views; this crate only reads what the user answered.
 persona-picker = { workspace = true }
 dramatis = { workspace = true }
 graphshell = { workspace = true }
-
-[dev-dependencies]
-# The persona-gate tests build a real vault in a scratch directory rather than
-# mocking the roster: what is being tested is a decision about a vault.
-tempfile = "3"

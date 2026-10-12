@@ -819,6 +819,15 @@ impl Default for MidiUiState {
     }
 }
 
+/// One explicit WAV-export decision. The host owns the accepted audio
+/// snapshot, chooser, destination and replacement-token lifetime.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum LoopExportRequest {
+    ChooseDestination,
+    Replace(u64),
+    CancelReplace(u64),
+}
+
 /// Runner state: the portable core slice plus view-layer widget state.
 pub struct UiState {
     pub stage: StageState,
@@ -875,6 +884,13 @@ pub struct UiState {
     pub loop_capture_notice: Option<String>,
     /// Completed live custody, including takes not yet confirmed in storage.
     pub loop_retained_ids: Vec<LoopSegmentId>,
+    /// Transient export decisions drained once by the host, independently
+    /// of audio commands. No destination path enters persisted practice.
+    pub loop_export_requests: Vec<LoopExportRequest>,
+    pub loop_export_busy: bool,
+    pub loop_export_notice: Option<String>,
+    /// Opaque host replacement token and display filename, never a path.
+    pub loop_export_replace: Option<(u64, String)>,
     /// Host-admitted snapshot, distinct from a requested edit that failed
     /// readiness or is waiting for capture to stop. Never persisted.
     pub loop_admitted: Option<LoopPlan>,
@@ -1099,6 +1115,10 @@ impl UiState {
             loop_captures: Default::default(),
             loop_capture_notice: None,
             loop_retained_ids: Vec::new(),
+            loop_export_requests: Vec::new(),
+            loop_export_busy: false,
+            loop_export_notice: None,
+            loop_export_replace: None,
             loop_admitted: None,
             loop_notice: None,
             loop_selected: None,
@@ -2088,6 +2108,10 @@ impl UiState {
             .map(|take| take.id)
             .collect();
         self.loop_admitted = None;
+        self.loop_export_requests.clear();
+        self.loop_export_busy = false;
+        self.loop_export_notice = None;
+        self.loop_export_replace = None;
         self.loop_notice = None;
         self.loop_selected = None;
         self.audio_session = std::sync::Arc::new(());

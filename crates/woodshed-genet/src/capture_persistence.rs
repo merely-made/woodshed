@@ -42,6 +42,27 @@ fn same_take(a: &CaptureSnapshot, b: &CaptureSnapshot) -> bool {
 }
 
 impl CapturePersistence {
+    pub(crate) fn permit_export(
+        &self,
+        plan: Option<&woodshed_core::loop_plan::LoopPlan>,
+    ) -> Result<(), String> {
+        if let Some(error) = &self.blocked {
+            if plan.is_some() {
+                return Err(format!(
+                    "Resolve the captured-loop catalog before exporting: {error}"
+                ));
+            }
+        }
+        if plan.is_some_and(|plan| {
+            self.unavailable
+                .iter()
+                .any(|take| plan.index_of(take.id).is_some())
+        }) {
+            return Err("A captured loop in this backing is unavailable or damaged. Restore it or explicitly Clear stored loop before exporting WAV.".into());
+        }
+        Ok(())
+    }
+
     fn restore(
         storage: Option<&SessionStore<HostBackend>>,
         manifest: &LoopCaptureManifest,
@@ -460,6 +481,36 @@ mod tests {
             buffer: SampleBuffer::new(samples, 48_000),
         };
         (ui, take)
+    }
+
+    #[test]
+    fn wav_export_refuses_only_relevant_unavailable_set_captures() {
+        let (ui, take) = fixture();
+        let plan = ui.requested_loop_plan().unwrap();
+        let mut state = CapturePersistence {
+            unavailable: vec![LoopCaptureRef {
+                id: take.id,
+                bpm: take.bpm,
+                beats: take.beats,
+                bars: take.bars,
+                sample_rate: 48_000,
+                frames: take.buffer.len(),
+                digest: "00".repeat(32),
+            }],
+            ..Default::default()
+        };
+        assert!(
+            state
+                .permit_export(Some(&plan))
+                .unwrap_err()
+                .contains("unavailable")
+        );
+        assert!(state.permit_export(None).is_ok());
+        state.unavailable[0].id.card.0 += 1000;
+        assert!(state.permit_export(Some(&plan)).is_ok());
+        state.blocked = Some("invalid catalog".into());
+        assert!(state.permit_export(Some(&plan)).is_err());
+        assert!(state.permit_export(None).is_ok());
     }
 
     struct Failing {

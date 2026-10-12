@@ -171,6 +171,7 @@ fn settle(
 ) {
     // djinn switches to the choice and remembers it for the family; a switch
     // it refuses leaves the store pending rather than on somebody else.
+    shared.wav_export.revoke_session();
     let (storage, seal) = open_store_as(chosen);
     ctx.runner.update(|ui| {
         if purpose == PickPurpose::Switch {

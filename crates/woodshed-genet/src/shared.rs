@@ -268,6 +268,7 @@ pub struct Shared {
     pub last_loop_plan: Option<woodshed_core::loop_plan::LoopPlan>,
     pub last_audio_session: Option<std::sync::Arc<()>>,
     pub capture_persistence: crate::capture_persistence::CapturePersistence,
+    pub wav_export: crate::wav_export::WavExport,
 
     /// Rebuild signatures for the custom-paint leaves: a leaf is re-rendered
     /// only when the model behind it actually moved.
@@ -329,6 +330,7 @@ impl Shared {
             last_loop_plan: None,
             last_audio_session: None,
             capture_persistence: Default::default(),
+            wav_export: Default::default(),
             neighborhood_sig: 0,
             set_graph_sig: 0,
             overview_sig: 0,

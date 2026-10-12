@@ -56,7 +56,9 @@ pub use midi::{
     MidiClockSync, MidiError, MidiEvent, MidiIn, MidiInState, MidiOut,
     list_input_ports as list_midi_input_ports, list_output_ports as list_midi_output_ports,
 };
-pub use offline::{export_wav, render_pattern};
+pub use offline::{
+    SongExportError, SongExportReport, export_song_wav_to, export_wav, render_pattern,
+};
 pub use onset::{
     DetectedOnset, OnsetAnalyzer, OnsetDetector, OnsetHandle, OnsetSnapshot, estimate_bpm,
 };
