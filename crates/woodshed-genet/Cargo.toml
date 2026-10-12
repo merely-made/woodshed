@@ -52,3 +52,8 @@ tempfile = "3"
 persona-picker = { workspace = true }
 dramatis = { workspace = true }
 graphshell = { workspace = true }
+
+[target.'cfg(target_os = "macos")'.dependencies]
+# In-process AppKit Save panel; the shared script-backed chooser lives in a
+# child process and prevents native access to the parent while it waits.
+rfd = { version = "0.17.2", default-features = false }
