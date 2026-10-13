@@ -1,4 +1,5 @@
 [package]
+rust-version = "1.97.1"
 name = "woodshed-relationship-recipe-proof"
 version = "0.1.0"
 edition = "2021"
@@ -41,3 +42,6 @@ vello_shaders = { git = "https://github.com/mark-ik/vello.git", rev = "5862bba26
 layout-dom-api = { git = "https://github.com/merely-made/genet.git", rev = "4bc75583865c2fb862b7acd7fe16dc28eb591042", version = "=0.1.1" }
 genet-scripted-dom = { git = "https://github.com/merely-made/genet.git", rev = "4bc75583865c2fb862b7acd7fe16dc28eb591042", version = "=0.1.2" }
 taffy = { package = "genet-taffy", git = "https://github.com/merely-made/genet.git", rev = "4bc75583865c2fb862b7acd7fe16dc28eb591042", version = "=0.14.0" }
+
+[workspace.package]
+rust-version = "1.97.1"

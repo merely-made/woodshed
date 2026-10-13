@@ -6,7 +6,8 @@ exclude = ["spikes/playback"]
 [workspace.package]
 edition = "2024"
 license = "MPL-2.0"
-rust-version = "1.97"
+
+rust-version = "1.97.1"
 
 [workspace.dependencies]
 apparatus = { package = "mere-apparatus", git = "https://github.com/merely-made/mere.git", rev = "0e78fcffb140395a5c0d2f64a4dfda2b81751681", default-features = false, features = ["serde"] }

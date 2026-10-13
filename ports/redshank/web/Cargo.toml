@@ -3,7 +3,8 @@ name = "redshank-web"
 version = "0.0.0"
 edition = "2024"
 license = "MPL-2.0"
-rust-version = "1.97"
+
+rust-version = "1.97.1"
 description = "Redshank in a browser: the same surfaces the desktop draws, mounted on a canvas."
 publish = false
 

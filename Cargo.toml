@@ -31,7 +31,8 @@ edition = "2021"
 license = "MPL-2.0"
 authors = ["Mark <sgt.mark3@gmail.com>"]
 repository = "https://github.com/merely-made/woodshed"
-rust-version = "1.96"
+
+rust-version = "1.97.1"
 
 [workspace.dependencies]
 pictograph = { git = "https://github.com/merely-made/mere.git", rev = "8568f42fdf57f997274c74e63bd4ee045fe1a2b4", default-features = false, features = ["canvas"] }
