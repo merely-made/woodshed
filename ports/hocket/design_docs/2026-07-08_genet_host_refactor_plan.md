@@ -486,3 +486,15 @@ accepted-playback observations truthful without changing the frame schedule.
   after-dispatch service accepts queued recorder edits before another gesture
   can snapshot a project for Save/Export. General project-worker reply
   correlation remains the separate portable-host follow-up in F5.
+
+- **2026-10-13:** Native source `3d51e4a` resolves the scoped recorder controls
+  and preserves the visible record dot, track addition, arm/mute/solo and master
+  clock input. The default ten-second launch stalled before presentation;
+  the existing sixty-second acceptance allowance plus observed foreground
+  Raise produced 30 presentations and two nonblank captures. That run is
+  rejected as acceptance because the controller refused offline tempo
+  authoring (expected 122 BPM, observed 120). The controller correction
+  preserves project authoring when no output runtime exists while retaining
+  explicit pending clock admission; a fresh committed-source run follows.
+  The second-host example uses the same explicit 10–60-second foreground
+  allowance. Neither extended allowance qualifies default startup.
