@@ -56,7 +56,7 @@ settle 3
 capture 07_font_fretboard_labels
 click .workspace-panel Set
 settle 3
-capture 08_font_set_labels
+capture 08_rehearsal_baseline
 click .workspace-panel Mere
 settle 3
 capture 09_font_graph_labels
@@ -68,6 +68,10 @@ settle 3
 click role:textbox @data-font-role=label
 settle 3
 capture 10_font_compact_panel
+click role:textbox @data-font-role=code
+click role:button @data-action=apply-font-roles
+settle 3
+capture 10b_font_compact_apply
 resize 1180 800
 click .pill Looper
 settle 3
