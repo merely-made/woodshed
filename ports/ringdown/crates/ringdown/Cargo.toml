@@ -2,7 +2,8 @@
 name = "ringdown"
 version = "0.1.0"
 edition.workspace = true
-rust-version.workspace = true
+
+rust-version = "1.97.1"
 license.workspace = true
 authors.workspace = true
 repository.workspace = true
