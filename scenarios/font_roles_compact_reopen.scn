@@ -12,7 +12,11 @@ click .side-item Appearance
 settle 3
 click role:textbox @data-font-role=label
 settle 3
-capture 01_font_compact_reopened
+capture 01_font_compact_reopen
+click role:textbox @data-font-role=code
+click role:button @data-action=apply-font-roles
+settle 3
+capture 01b_font_compact_applyed
 click .pill Looper
 settle 3
 assert snap font-request-roles == 3
