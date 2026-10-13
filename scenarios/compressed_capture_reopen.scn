@@ -1,0 +1,12 @@
+# A new normal-output process after the copied raw profile was migrated.
+settle 5
+ui-zoom 1.0
+assert snap set-cards == 2
+assert snap loop-capture-references == 1
+assert snap loop-capture-frames == 96000
+assert snap loop-active-captures == 1
+assert snap capture-input-rate == none
+assert snap output-streams == 1
+assert text Card loops saved: 1
+capture 01_compressed_capture_fresh_reopen
+log Normal-output compressed capture fresh reopen complete
