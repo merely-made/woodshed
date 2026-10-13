@@ -3155,9 +3155,9 @@ is lossless WavPack `.wv`, licensed MPL-2.0 with retained upstream BSD notice.
 Neither provides a WAV writer. Hocket's existing Wavicle `5e1b248` remains
 independently pinned under its earlier grant; the 11 current codec source
 files differ only by added license headers. Existing Hound writes the standard
-WAV needed here. Wavicle is a possible later compressed-companion/export
-format, requiring explicit versioning, decoded-frame bounds, namespace,
-sealing and digest migration; Pipit belongs to compact speech transport. No
+WAV needed here. That WAV slice deferred compressed companions to the
+follow-through below; compressed export remains separate. Pipit belongs to
+compact speech transport. No
 root-to-port dependency or mid-slice stack repin is added.
 
 This closes the bounded WAV implementation seam, not full P7. Mixed-material
@@ -3165,3 +3165,79 @@ lowering, lossless saved-song migration/editor retirement, durable saved-song
 PCM, physical microphone capture/calibration/drift and orphan collection/disk
 quota remain separate. The existing recorded-loop glyph fallback stays under
 P8, including later shared-font intake.
+
+
+### October 12 follow-through: lossless compressed capture storage
+
+**Status (2026-10-12): implementation and focused CPU migration checks pass;
+combined-family production build and native migration/reopen are pending.**
+This extends the existing bounded Set/Card capture seam, preserving its exact
+PCM, owner/clock admission, persona seal, namespace and decoded-frame budget.
+It does not extend saved-song capture durability or change the WAV audio result.
+
+The portable core pins [Wavicle `2c5a49f`](https://github.com/merely-made/wavicle/tree/2c5a49fd48db7a54aeab9e712804fd065411aef9),
+with encode/decode features and no runtime dependencies. That supplier repair
+checks block-size and entropy escape addition, makes the reference unsigned
+entropy arithmetic explicit, and handles signed history expansion without a
+negation panic. Its seven unit and fourteen existing codec fixture/round-trip
+cases pass. Hocket remains independently pinned; no root-to-port dependency
+is introduced. MPL-2.0 and inherited WavPack notices remain intact.
+
+Manifest version 2 adds an explicit per-reference codec. A missing codec keeps
+`LegacyRawF32V1`; its existing `WSHPCM` version-1 blob and digest remain exact.
+New writes select `WavpackF32V1` only when the complete 24-byte-header container
+is smaller than equivalent raw storage. The new `WSHWVC` version-1 container
+contains rate, decoded frames and a mono float32 WavPack stream. An uneconomical
+or returned-error encode uses explicit `RawF32V1`, with the original raw wire
+format; its policy marker avoids encoding it again on reopening. The full
+versioned blob remains the content address, so successful compression changes
+the digest while retaining exact decoded float bits, including signed zero and
+subnormals. Namespace, immutable no-clobber publication and sealing are unchanged.
+
+Compressed reads verify the complete digest, envelope, all block framing, mono
+float32/rate consistency, contiguous indices, declared/actual totals and required
+metadata before calling the allocating decoder. Blocks contain at most 32,768
+frames; the existing 16,777,216 total decoded frames and 256-take limits remain.
+Compressed companions are strictly smaller than raw, so the desktop ciphertext
+read bound remains the same raw limit plus the pinned 40-byte seal envelope.
+Corruption, truncation, unsupported formats and nonfinite decoded samples are
+refused rather than changed to silence. Unknown codec strings round-trip as
+unavailable individual references, preserving other authored practice and the
+explicit Clear path; unsupported manifest versions/structural damage retain
+the existing blocked-catalog policy.
+
+Successfully hydrated legacy takes migrate per reference on the next save or
+completion wake. Missing/corrupt/unknown references remain unchanged; a recovered
+legacy take inside a mixed version-2 manifest is still eligible. New immutable
+companions pass readback before the current session replaces references. Old
+raw blobs remain retained, and failed publication preserves accepted references
+and live PCM. Post-commit readback failure remains unconfirmed without destructive
+rollback. Orphan collection and physical disk quota remain separate.
+
+One bounded, lazily started codec worker prepares immutable sample snapshots.
+The optimized decision probe took about 1.64 seconds for the maximum 16,777,216
+frames, motivating removal of compression from dispatch. Jobs contain no storage,
+custody keys, UI state or devices. A retained lane, cancellation generation,
+session epoch and exact take/sample Arc match prevent old results from publishing
+after Clear or persona/session replacement. Prepared bytes survive failed saves;
+quota admission precedes thread submission, and idle wakes do not repeatedly
+serialize/write while encoding is pending. Ordinary edits save with the previous
+verified capture manifest, and publication serializes current UI only after
+preparation. Completion wakes the host without another input action.
+
+Close waits for new, unpublished live PCM, then honors the existing appearance
+save/discard gate and any WAV work. A failed policy-only migration can close
+with already verified raw references. The mounted actual main-hooks case proves
+editing while the encoder is blocked, wake publication of the latest edit and
+subsequent dirty-appearance gating. Hashing, sealing, filesystem publication and
+readback, session serialization and hydration decoding remain control-side work;
+this slice does not claim general long-bank UI or disk performance qualification.
+
+Focused source checks pass ten portable codec cases, thirteen storage cases and
+26 host persistence cases. The latter includes five independent child processes
+for raw version-1 seed, migration, reorder/reopen, Clear and cleared reopen, plus
+worker/cache, owner/session, seal, quota, unavailable recovery and prepared-metadata
+binding regressions. The native lane will copy the existing real Keeper-sealed
+raw profile, compare raw/decoded and full WAV identities, exercise migration and
+fresh reopening, and review captures after the concurrent font-family publication
+is integrated. Native and combined-source acceptance are not yet claimed.

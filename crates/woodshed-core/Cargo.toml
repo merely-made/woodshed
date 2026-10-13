@@ -38,6 +38,8 @@ pollster = "0.4"
 # woodshed-graph's catalog graph; the same sibling-repo git dep.
 chartulary = { git = "https://github.com/merely-made/mere.git", rev = "0e78fcffb140395a5c0d2f64a4dfda2b81751681" }
 hex = "0.4"
+# Portable lossless companion storage; no audio driver or device dependency.
+wavicle = { git = "https://github.com/merely-made/wavicle.git", rev = "2c5a49fd48db7a54aeab9e712804fd065411aef9", default-features = false, features = ["encode", "decode"] }
 
 [dev-dependencies]
 serde_json = { workspace = true }

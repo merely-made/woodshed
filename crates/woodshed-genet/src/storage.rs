@@ -517,7 +517,7 @@ impl Backend for FsBackend {
 #[cfg(test)]
 mod capture_tests {
     use super::*;
-    use woodshed_core::loop_capture::{LoopCaptureRef, encode_pcm, pcm_digest};
+    use woodshed_core::loop_capture::{LoopCaptureCodec, LoopCaptureRef, encode_pcm, pcm_digest};
     use woodshed_core::storage::PersistedSession;
     const NAMESPACE: &str = "0123456789abcdef0123456789abcdef";
     const OTHER_NAMESPACE: &str = "fedcba9876543210fedcba9876543210";
@@ -551,6 +551,7 @@ mod capture_tests {
             bars: 3,
             sample_rate: 48_000,
             frames,
+            codec: LoopCaptureCodec::LegacyRawF32V1,
             digest,
         }
     }

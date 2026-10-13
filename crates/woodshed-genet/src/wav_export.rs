@@ -384,7 +384,10 @@ pub fn poll(shared: &mut Shared, ctx: &mut Ctx<'_>) {
         ctx.runner
             .update(|ui| shared.wav_export.complete(ui, result));
     }
-    if shared.wav_export.close_when_finished && shared.wav_export.job.is_none() {
+    if shared.wav_export.close_when_finished
+        && shared.wav_export.job.is_none()
+        && !shared.capture_persistence.is_busy()
+    {
         shared.wav_export.close_when_finished = false;
         shared.wav_export.pending = None;
         ctx.runner.update(|ui| ui.loop_export_replace = None);
@@ -836,7 +839,8 @@ mod tests {
             .unwrap();
         assert_eq!(export_song_wav_to(&frozen, rate, backing).unwrap(), report);
         fs::write(directory.join("reference.json"),serde_json::to_vec_pretty(&serde_json::json!({
-            "frames":report.frames,"rate":rate,"channels":report.channels,"click":plan.click,"segments":plan.segments.len(),"captured_takes":ui.loop_captures.takes.len()
+            "frames":report.frames,"rate":rate,"channels":report.channels,"click":plan.click,"segments":plan.segments.len(),"captured_takes":ui.loop_captures.takes.len(),
+            "capture_manifest":ui.loop_captures
         })).unwrap()).unwrap();
         assert!(backend.capture_source_rate().is_none());
     }
