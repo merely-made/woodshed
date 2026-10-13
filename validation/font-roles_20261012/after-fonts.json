@@ -1,0 +1,371 @@
+{
+  "appearance": {
+    "theme": "Slate",
+    "theme_choice": {
+      "fonts": {
+        "heading": [
+          "Source Serif 4"
+        ],
+        "label": [
+          "IBM Plex Mono"
+        ],
+        "reading": [
+          "Source Serif 4"
+        ]
+      },
+      "theme_id": "theme:woodshed-font-acceptance",
+      "theme_mode": "hc_light"
+    }
+  },
+  "domain": {
+    "active_exploration": {
+      "arpeggio_direction": "UpDown",
+      "arpeggio_idx": 0,
+      "arpeggio_inversion": 0,
+      "arpeggio_position_idx": 0,
+      "chord_idx": 6,
+      "context_focus": null,
+      "exercise_idx": 0,
+      "exercise_starting_fret": 1,
+      "fretboard": {
+        "board_layout": "Two pane",
+        "marker_style": "Sharp",
+        "neck_end": null,
+        "neck_start": 0,
+        "orientation": "Horizontal"
+      },
+      "lens": "Chords",
+      "progression_expanded": 0,
+      "progression_idx": null,
+      "root_idx": 3,
+      "scale_idx": 8,
+      "search_query": "",
+      "stage_settings": {
+        "context": {
+          "enabled": true,
+          "node_limit": 24
+        },
+        "related": {
+          "arrangement": "Radial",
+          "dismissed_ids": [],
+          "graph_scope": "Selection",
+          "relation_depth": 1,
+          "show_neighborhood": true,
+          "use_history": true
+        },
+        "set_arrangement": "Snake",
+        "set_graph_height": 520,
+        "set_graph_reading": "CircleOfFifths",
+        "set_graph_width": 520,
+        "visible_set_relations": [
+          "Next"
+        ]
+      },
+      "tuning": {
+        "tuning_idx": 0
+      }
+    },
+    "arpeggio_direction": "UpDown",
+    "arpeggio_idx": 0,
+    "arpeggio_inversion": 0,
+    "arpeggio_position_idx": 0,
+    "catalog_explorations": {
+      "active_id": 1,
+      "active_name": "Catalog exploration 1",
+      "inactive": [],
+      "next_id": 1
+    },
+    "chord_idx": 6,
+    "exercise_idx": 0,
+    "exercise_starting_fret": 1,
+    "lens": "Chords",
+    "loop_captures": {
+      "namespace": "b5370837504f7ea66b56e7ca158828e5",
+      "takes": [
+        {
+          "bars": 1,
+          "beats": 4,
+          "bpm": 120.0,
+          "digest": "d0451d00335e995c3d1077108dc1c06d329de681a650d523a19d0afcf12b743e",
+          "frames": 96000,
+          "id": {
+            "card": 1,
+            "set": 1
+          },
+          "sample_rate": 48000
+        }
+      ],
+      "version": 1
+    },
+    "looper": {
+      "beats": 4,
+      "click": false,
+      "inherited_bpm": 120.0,
+      "one_shot": false,
+      "source": {
+        "Set": 1
+      }
+    },
+    "musical_context": {
+      "entries": [],
+      "next_id": 0
+    },
+    "overview_presentation_json": "{\"version\":1,\"pan\":[0.0,0.0],\"zoom\":1.0,\"motion\":false,\"reduced_motion\":true,\"atmosphere\":{\"kind\":\"None\",\"seed\":1},\"positions\":[[{\"Artifact\":{\"WorkingSetInstance\":1}},[0.5,0.111111104]],[{\"Artifact\":{\"Exploration\":1}},[0.6964286,0.111111104]],[{\"Artifact\":\"Song\"},[0.107142866,0.111111104]],[{\"Artifact\":\"History\"},[0.30357143,0.111111104]],[{\"View\":\"1464814917\"},[0.107142866,0.3611111]],[{\"View\":\"1464815698\"},[0.30357143,0.3611111]],[{\"View\":\"1464816197\"},[0.6964286,0.3611111]],[{\"View\":\"1464816453\"},[0.5,0.3611111]],[{\"View\":\"1464816455\"},[0.89285713,0.3611111]],[{\"Catalog\":\"woodshed-catalog\"},[0.107142866,0.8611111]]],\"focus\":null,\"roles\":[],\"background\":[]}",
+    "practice_history": {
+      "entries": [
+        {
+          "first_seen_at_ms": 1791826563929,
+          "key": "chord:Minor 7",
+          "last_seen_at_ms": 1791826563929,
+          "payload": null,
+          "privacy": "LocalOnly",
+          "visit_count": 1
+        },
+        {
+          "first_seen_at_ms": 1791826563930,
+          "key": "chord:Major 7",
+          "last_seen_at_ms": 1791826563930,
+          "payload": null,
+          "privacy": "LocalOnly",
+          "visit_count": 1
+        }
+      ],
+      "owners": [
+        {
+          "creator": null,
+          "current": 1,
+          "identity": "practitioner",
+          "origin": 0,
+          "owned_visits": [
+            0,
+            1
+          ],
+          "pending_origin_parent": null
+        }
+      ],
+      "visits": [
+        {
+          "bindings": [
+            {
+              "forward_child": 1,
+              "last_accessed_at_ms": 1791826563930,
+              "owner": 0
+            }
+          ],
+          "children": [
+            1
+          ],
+          "context": {
+            "dated": true,
+            "from_id": null,
+            "kind": "Staged",
+            "practiced_ms": null,
+            "provenance": {
+              "card_snapshot": {
+                "from": null,
+                "id": 1,
+                "label": "Am7 (Minor 7)",
+                "material": {
+                  "Chord": {
+                    "name": "Minor 7",
+                    "root": 9
+                  }
+                },
+                "setting": {
+                  "capo": null,
+                  "fret_window": null,
+                  "instrument": "Guitar",
+                  "mark_mode": "Off",
+                  "marked": [],
+                  "tuning": "Standard",
+                  "voicing_fingerprint": null,
+                  "voicing_idx": null,
+                  "voicing_profile": null
+                },
+                "timing": {
+                  "bpm": null,
+                  "hold": "Manual"
+                },
+                "touch": "Block"
+              },
+              "occurrence_id": 1,
+              "working_set_id": 1
+            }
+          },
+          "created_at_ms": 1791826563929,
+          "entry": 0,
+          "inbound": null,
+          "parent": null
+        },
+        {
+          "bindings": [
+            {
+              "forward_child": null,
+              "last_accessed_at_ms": 1791826563930,
+              "owner": 0
+            }
+          ],
+          "children": [],
+          "context": {
+            "dated": true,
+            "from_id": null,
+            "kind": "Staged",
+            "practiced_ms": null,
+            "provenance": {
+              "card_snapshot": {
+                "from": null,
+                "id": 2,
+                "label": "Cmaj7 (Major 7)",
+                "material": {
+                  "Chord": {
+                    "name": "Major 7",
+                    "root": 0
+                  }
+                },
+                "setting": {
+                  "capo": null,
+                  "fret_window": null,
+                  "instrument": "Guitar",
+                  "mark_mode": "Off",
+                  "marked": [],
+                  "tuning": "Standard",
+                  "voicing_fingerprint": null,
+                  "voicing_idx": null,
+                  "voicing_profile": null
+                },
+                "timing": {
+                  "bpm": null,
+                  "hold": "Manual"
+                },
+                "touch": "Block"
+              },
+              "occurrence_id": 2,
+              "working_set_id": 1
+            }
+          },
+          "created_at_ms": 1791826563930,
+          "entry": 1,
+          "inbound": {
+            "at_ms": 1791826563930,
+            "kind": "Unknown"
+          },
+          "parent": 0
+        }
+      ]
+    },
+    "progression_expanded": 0,
+    "progression_idx": null,
+    "retained_sets": {
+      "entries": [],
+      "next_id": 0
+    },
+    "root_idx": 3,
+    "scale_idx": 8,
+    "section": "Looper",
+    "set": {
+      "cards": [
+        {
+          "from": null,
+          "id": 1,
+          "label": "Am7 (Minor 7)",
+          "material": {
+            "Chord": {
+              "name": "Minor 7",
+              "root": 9
+            }
+          },
+          "setting": {
+            "capo": null,
+            "fret_window": {
+              "span": 6,
+              "start": 2
+            },
+            "instrument": "Guitar",
+            "mark_mode": "Off",
+            "marked": [],
+            "tuning": "Standard",
+            "voicing_fingerprint": "5-3-2-0-x-x",
+            "voicing_idx": 0,
+            "voicing_profile": "root-bass/position4/v1"
+          },
+          "timing": {
+            "bpm": null,
+            "hold": {
+              "Bars": 1
+            }
+          },
+          "touch": "Block"
+        },
+        {
+          "from": null,
+          "id": 2,
+          "label": "Cmaj7 (Major 7)",
+          "material": {
+            "Chord": {
+              "name": "Major 7",
+              "root": 0
+            }
+          },
+          "setting": {
+            "capo": 2,
+            "fret_window": {
+              "span": 12,
+              "start": 2
+            },
+            "instrument": "Ukulele",
+            "mark_mode": "Off",
+            "marked": [],
+            "tuning": "Standard (high-G)",
+            "voicing_fingerprint": "0-0-0-2",
+            "voicing_idx": 0,
+            "voicing_profile": "root-bass/position4/v1"
+          },
+          "timing": {
+            "bpm": null,
+            "hold": {
+              "Bars": 1
+            }
+          },
+          "touch": "Block"
+        }
+      ],
+      "cursor": 0,
+      "last_card_id": 2,
+      "loop_mode": "Off"
+    },
+    "song": {
+      "bars": [],
+      "click": true,
+      "name": "",
+      "one_shot": false
+    },
+    "working_sets": {
+      "active_id": 1,
+      "active_name": "Working Set 1",
+      "inactive": [],
+      "next_id": 1
+    },
+    "workspace_json": "{\"tree\":{\"stack\":{\"tabs\":[{\"panel\":\"overview\",\"id\":1464814917,\"title\":\"Mere\",\"kind\":\"woodshed.overview\",\"content_id\":\"overview\"},{\"panel\":\"practice\",\"id\":1464815698,\"title\":\"Practice\",\"kind\":\"woodshed.practice\",\"content_id\":\"stage\"},{\"panel\":\"set\",\"id\":1464816453,\"title\":\"Set\",\"kind\":\"woodshed.set\",\"content_id\":\"rehearsal\"},{\"panel\":\"related\",\"id\":1464816197,\"title\":\"Related\",\"kind\":\"woodshed.related\",\"content_id\":\"stage\"},{\"panel\":\"settings\",\"id\":1464816455,\"title\":\"Settings\",\"kind\":\"woodshed.settings\",\"content_id\":\"settings\"}],\"active\":4}},\"active_panel\":\"settings\"}"
+  },
+  "fonts": {
+    "heading": [
+      "Source Serif 4"
+    ],
+    "label": [
+      "IBM Plex Mono"
+    ],
+    "reading": [
+      "Source Serif 4"
+    ]
+  },
+  "fretboard": {
+    "board_layout": "Two pane",
+    "marker_style": "Sharp",
+    "neck_end": null,
+    "neck_start": 0,
+    "orientation": "Horizontal"
+  },
+  "metronome": {
+    "bpm": 120.0
+  }
+}

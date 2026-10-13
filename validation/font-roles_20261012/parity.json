@@ -1,0 +1,45 @@
+{
+  "source": "751858f0461b71fe7fa03392b13d65363b9e7ff6",
+  "domain_equal": false,
+  "differing_domain_keys": [
+    "overview_presentation_json",
+    "workspace_json"
+  ],
+  "metronome_equal": true,
+  "fretboard_equal": true,
+  "fonts": {
+    "heading": [
+      "Source Serif 4"
+    ],
+    "label": [
+      "IBM Plex Mono"
+    ],
+    "reading": [
+      "Source Serif 4"
+    ]
+  },
+  "appearance": {
+    "theme": "Slate",
+    "theme_choice": {
+      "fonts": {
+        "heading": [
+          "Source Serif 4"
+        ],
+        "label": [
+          "IBM Plex Mono"
+        ],
+        "reading": [
+          "Source Serif 4"
+        ]
+      },
+      "theme_id": "theme:woodshed-font-acceptance",
+      "theme_mode": "hc_light"
+    }
+  },
+  "fullWAV_bytes_equal": true,
+  "loop_capture_manifest_equal": true,
+  "explained_domain_differences": {
+    "workspace_json": "explicit navigation retains active Settings panel/tab; tab identities and order unchanged",
+    "overview_presentation_json": "visiting Mere materializes ten view/artifact/catalog positions; authored graph controls unchanged"
+  }
+}

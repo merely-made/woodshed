@@ -1,0 +1,190 @@
+{
+  "source": "751858f0461b71fe7fa03392b13d65363b9e7ff6",
+  "compiled_source": "a9e1e87556c62bfcd503e429708af68ce62826ba",
+  "binary": {
+    "path": "/Users/markik/Code/testing/woodshed/font-roles-20261012/combined/frozen-binaries/woodshed-genet-product-a9e1e87",
+    "sha256": "621acbb78f6d97aac1124784a8ec7a55fab10c6562c99477c9c47ae613d93ca3"
+  },
+  "runs": [
+    {
+      "name": "FontsSeedV2",
+      "result": "ok",
+      "presented_frames": 136,
+      "redraws": 1108,
+      "unpresented_redraws": 972,
+      "captures": [
+        {
+          "name": "01_font_roles_applied.png",
+          "width": 2360,
+          "height": 1600,
+          "sha256": "19e983f0ebf4716b58801ee12c88a8fd85e18458c8f0b1f216c245668dcdb69b",
+          "local_path": "/Users/markik/Code/testing/woodshed/font-roles-20261012/combined-v2/native/FontsSeedV2/01_font_roles_applied.png"
+        },
+        {
+          "name": "02_missing_font_request.png",
+          "width": 2360,
+          "height": 1600,
+          "sha256": "3b40fe3e4f0b20f129cdc0f79232dd79cd6bb1791075a259352a58b7d923fbaa",
+          "local_path": "/Users/markik/Code/testing/woodshed/font-roles-20261012/combined-v2/native/FontsSeedV2/02_missing_font_request.png"
+        },
+        {
+          "name": "03_font_light.png",
+          "width": 2360,
+          "height": 1600,
+          "sha256": "bd617e229e30da62c88b56202831343f754a9e021b5194d71a701619ae0d0f26",
+          "local_path": "/Users/markik/Code/testing/woodshed/font-roles-20261012/combined-v2/native/FontsSeedV2/03_font_light.png"
+        },
+        {
+          "name": "04_font_dark.png",
+          "width": 2360,
+          "height": 1600,
+          "sha256": "1e3fae26d6577137468d4fe5a51ccb26c609a661b5ff99139e42fef85dc7bcb1",
+          "local_path": "/Users/markik/Code/testing/woodshed/font-roles-20261012/combined-v2/native/FontsSeedV2/04_font_dark.png"
+        },
+        {
+          "name": "05_font_hc_dark.png",
+          "width": 2360,
+          "height": 1600,
+          "sha256": "feb6b2f45da5e08094e78c2c2823b1a73e8aef0b624523cfe687d268ffd16a4d",
+          "local_path": "/Users/markik/Code/testing/woodshed/font-roles-20261012/combined-v2/native/FontsSeedV2/05_font_hc_dark.png"
+        },
+        {
+          "name": "06_font_hc_light.png",
+          "width": 2360,
+          "height": 1600,
+          "sha256": "b1edddc09f4e3e63dcc305750880aec3dd0c7fa87471eb21ed54e63551cd295c",
+          "local_path": "/Users/markik/Code/testing/woodshed/font-roles-20261012/combined-v2/native/FontsSeedV2/06_font_hc_light.png"
+        },
+        {
+          "name": "07_font_fretboard_labels.png",
+          "width": 2360,
+          "height": 1600,
+          "sha256": "3ac280bc968029081b246ecc6924e1c6d927a9cc53bed673048203e796eeb067",
+          "local_path": "/Users/markik/Code/testing/woodshed/font-roles-20261012/combined-v2/native/FontsSeedV2/07_font_fretboard_labels.png"
+        },
+        {
+          "name": "08_rehearsal_baseline.png",
+          "width": 2360,
+          "height": 1600,
+          "sha256": "6669df565df8787443433d7dd7768c6ddbc98992a07b534d96b04a5aa1c96c5e",
+          "local_path": "/Users/markik/Code/testing/woodshed/font-roles-20261012/combined-v2/native/FontsSeedV2/08_rehearsal_baseline.png"
+        },
+        {
+          "name": "09_font_graph_labels.png",
+          "width": 2360,
+          "height": 1600,
+          "sha256": "abe0cccb2d143362866519983267cb80f8ee17f60f28c44a8db3aac8558854d2",
+          "local_path": "/Users/markik/Code/testing/woodshed/font-roles-20261012/combined-v2/native/FontsSeedV2/09_font_graph_labels.png"
+        },
+        {
+          "name": "10_font_compact_panel.png",
+          "width": 960,
+          "height": 1800,
+          "sha256": "b9502befdfd40d169399e005b63e85c30e82d2f6e653a2ab28df942aafc8f3e5",
+          "local_path": "/Users/markik/Code/testing/woodshed/font-roles-20261012/combined-v2/native/FontsSeedV2/10_font_compact_panel.png"
+        },
+        {
+          "name": "10b_font_compact_apply.png",
+          "width": 960,
+          "height": 1800,
+          "sha256": "90ff09c8ad954dd5072881664a9ed1969222256e7e60b3d50b1b7218e20a4454",
+          "local_path": "/Users/markik/Code/testing/woodshed/font-roles-20261012/combined-v2/native/FontsSeedV2/10b_font_compact_apply.png"
+        },
+        {
+          "name": "11_font_retained_looper.png",
+          "width": 2360,
+          "height": 1600,
+          "sha256": "fd800419f425ebb1f1d30ea38fcb55c38d4f75c8a063d1adedb95cb35e24cc05",
+          "local_path": "/Users/markik/Code/testing/woodshed/font-roles-20261012/combined-v2/native/FontsSeedV2/11_font_retained_looper.png"
+        }
+      ],
+      "full_log_local_path": "/Users/markik/Code/testing/woodshed/font-roles-20261012/combined-v2/native/FontsSeedV2/native.log",
+      "full_log_sha256": "c17488a040cce9707cdf74bc76f21c57feaa26f0c67eeae0f76f0f5d9187a2fa",
+      "portable_log": "native/FontsSeedV2/native.log",
+      "activation": "fullpath native control launch; observed window Raise; completed receipt checked before any further app action"
+    },
+    {
+      "name": "FontsReopenV2",
+      "result": "ok",
+      "presented_frames": 48,
+      "redraws": 481,
+      "unpresented_redraws": 433,
+      "captures": [
+        {
+          "name": "01_font_requests_reopened.png",
+          "width": 2360,
+          "height": 1600,
+          "sha256": "72963d2d77b32b5ea5d1b830d14e993dfd0bf233745fae614b5bc08a04d6ed74",
+          "local_path": "/Users/markik/Code/testing/woodshed/font-roles-20261012/combined-v2/native/FontsReopenV2/01_font_requests_reopened.png"
+        },
+        {
+          "name": "02_font_fretboard_reopened.png",
+          "width": 2360,
+          "height": 1600,
+          "sha256": "f0c36c7f5b1d364f69184a1fd73d5ab38c4d6cb1b134811bbfb47471f5d9eeed",
+          "local_path": "/Users/markik/Code/testing/woodshed/font-roles-20261012/combined-v2/native/FontsReopenV2/02_font_fretboard_reopened.png"
+        },
+        {
+          "name": "03_font_set_reopened.png",
+          "width": 2360,
+          "height": 1600,
+          "sha256": "a8e497e5b397486b7a9a50b7b4c771f25d6e691a419a63bd17078a72c3cc9c01",
+          "local_path": "/Users/markik/Code/testing/woodshed/font-roles-20261012/combined-v2/native/FontsReopenV2/03_font_set_reopened.png"
+        },
+        {
+          "name": "04_font_looper_reopened.png",
+          "width": 2360,
+          "height": 1600,
+          "sha256": "ce61f4a519de8d09867eb7b16d5c1bad944ffe767be8edb4e4af4efc23b24015",
+          "local_path": "/Users/markik/Code/testing/woodshed/font-roles-20261012/combined-v2/native/FontsReopenV2/04_font_looper_reopened.png"
+        }
+      ],
+      "full_log_local_path": "/Users/markik/Code/testing/woodshed/font-roles-20261012/combined-v2/native/FontsReopenV2/native.log",
+      "full_log_sha256": "c3f603d11085ee12db55892aa0681ba9a37adcbacd67599a946855b765ecadbf",
+      "portable_log": "native/FontsReopenV2/native.log",
+      "activation": "fullpath native control launch; observed window Raise; completed receipt checked before any further app action"
+    },
+    {
+      "name": "FontsCompactReopenV2",
+      "result": "ok",
+      "presented_frames": 46,
+      "redraws": 511,
+      "unpresented_redraws": 465,
+      "captures": [
+        {
+          "name": "01_font_compact_reopen.png",
+          "width": 960,
+          "height": 1800,
+          "sha256": "028830375a1566a8d4b96f74881b2ea018be2bbbf3c258e453c4e0732ab1be45",
+          "local_path": "/Users/markik/Code/testing/woodshed/font-roles-20261012/combined-v2/native/FontsCompactReopenV2/01_font_compact_reopen.png"
+        },
+        {
+          "name": "01b_font_compact_applyed.png",
+          "width": 960,
+          "height": 1800,
+          "sha256": "12d7f2371036ac4aec40801bb460a7a10a29f91cb59f3aba40b605c3f74d2eeb",
+          "local_path": "/Users/markik/Code/testing/woodshed/font-roles-20261012/combined-v2/native/FontsCompactReopenV2/01b_font_compact_applyed.png"
+        },
+        {
+          "name": "02_font_compact_looper.png",
+          "width": 960,
+          "height": 1800,
+          "sha256": "796f4762ae266319a1c2deacee839ea2ee75a909a432c0dc9dac4943e6ff6571",
+          "local_path": "/Users/markik/Code/testing/woodshed/font-roles-20261012/combined-v2/native/FontsCompactReopenV2/02_font_compact_looper.png"
+        }
+      ],
+      "full_log_local_path": "/Users/markik/Code/testing/woodshed/font-roles-20261012/combined-v2/native/FontsCompactReopenV2/native.log",
+      "full_log_sha256": "9c5f32ce2458e82f5eff883240dfbcc480b572c837729b933dbb1bf55ea67bc6",
+      "portable_log": "native/FontsCompactReopenV2/native.log",
+      "activation": "fullpath native control launch; observed window Raise; completed receipt checked before any further app action"
+    }
+  ],
+  "presented_frames": 230,
+  "captures": 19,
+  "watchdog": {
+    "fixture_seconds": 60,
+    "default_seconds": 10,
+    "default_startup_qualified": false
+  },
+  "capture_review": "all full-frame images reviewed by owner and shared coordinator; compact Code/Apply visible; Rehearsal baseline and glyph boundary disclosed"
+}

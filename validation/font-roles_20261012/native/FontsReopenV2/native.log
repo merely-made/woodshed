@@ -1,0 +1,10 @@
+[woodshed] practice sealed to persona "default" (Passphrase (held by djinn))
+[cambium-winit] window-frame backend=macos policy=App decorated=true transparent=false
+[cambium-winit] accessibility Installed, 67 nodes projected
+[cambium-host] initial reveal macos app_active=false app_hidden=false policy=NSApplicationActivationPolicy(0) launched=true window_visible=true key=false can_key=true active_space=true occlusion=NSWindowOcclusionState(8192) frame=CGRect { origin: CGPoint { x: 530.0, y: 230.0 }, size: CGSize { width: 1180.0, height: 800.0 } }
+woodshed-genet: captured 01_font_requests_reopened
+woodshed-genet: captured 02_font_fretboard_reopened
+woodshed-genet: captured 03_font_set_reopened
+woodshed-genet: captured 04_font_looper_reopened
+woodshed-genet: Woodshed font requests and retained domain reopen complete
+woodshed-genet: RESULT ok (48 frames, 4 captures)

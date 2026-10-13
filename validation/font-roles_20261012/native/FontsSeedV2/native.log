@@ -1,0 +1,18 @@
+[woodshed] practice sealed to persona "default" (Passphrase (held by djinn))
+[cambium-winit] window-frame backend=macos policy=App decorated=true transparent=false
+[cambium-winit] accessibility Installed, 67 nodes projected
+[cambium-host] initial reveal macos app_active=false app_hidden=false policy=NSApplicationActivationPolicy(0) launched=true window_visible=true key=false can_key=true active_space=true occlusion=NSWindowOcclusionState(8192) frame=CGRect { origin: CGPoint { x: 530.0, y: 230.0 }, size: CGSize { width: 1180.0, height: 800.0 } }
+woodshed-genet: captured 01_font_roles_applied
+woodshed-genet: captured 02_missing_font_request
+woodshed-genet: captured 03_font_light
+woodshed-genet: captured 04_font_dark
+woodshed-genet: captured 05_font_hc_dark
+woodshed-genet: captured 06_font_hc_light
+woodshed-genet: captured 07_font_fretboard_labels
+woodshed-genet: captured 08_rehearsal_baseline
+woodshed-genet: captured 09_font_graph_labels
+woodshed-genet: captured 10_font_compact_panel
+woodshed-genet: captured 10b_font_compact_apply
+woodshed-genet: captured 11_font_retained_looper
+woodshed-genet: Shared Woodshed font roles seed complete
+woodshed-genet: RESULT ok (136 frames, 12 captures)

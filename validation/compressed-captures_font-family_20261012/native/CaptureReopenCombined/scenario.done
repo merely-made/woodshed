@@ -1,0 +1,6 @@
+RESULT ok
+captured 01_compressed_capture_fresh_reopen
+Normal-output compressed capture fresh reopen complete
+capture 01_compressed_capture_fresh_reopen 2360x1600 digest=b76eee0f8dab22db file=/Users/markik/Code/testing/woodshed/font-roles-20261012/combined-v2/native/CaptureReopenCombined/01_compressed_capture_fresh_reopen.png
+frames: 1 captured, 0 blank, 1 distinct digests
+presentation: 17 frames, 447 redraws, 430 unpresented redraws

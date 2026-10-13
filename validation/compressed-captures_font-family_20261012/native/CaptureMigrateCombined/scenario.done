@@ -1,0 +1,8 @@
+RESULT ok
+captured 01_legacy_capture_hydrated
+captured 02_capture_storage_retained
+Normal-output copied raw capture migration host complete
+capture 01_legacy_capture_hydrated 2360x1600 digest=ffd2108d9ed34046 file=/Users/markik/Code/testing/woodshed/font-roles-20261012/combined-v2/native/CaptureMigrateCombined/01_legacy_capture_hydrated.png
+capture 02_capture_storage_retained 2360x1600 digest=527327d82d8c0db4 file=/Users/markik/Code/testing/woodshed/font-roles-20261012/combined-v2/native/CaptureMigrateCombined/02_capture_storage_retained.png
+frames: 2 captured, 0 blank, 2 distinct digests
+presentation: 37 frames, 492 redraws, 455 unpresented redraws
