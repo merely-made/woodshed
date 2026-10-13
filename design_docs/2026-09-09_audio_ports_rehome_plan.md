@@ -446,6 +446,13 @@ product's existing recording/Turnstone gates.
   The locked current-family build and 76 root/21 supplier cases pass; five
   synthetic child processes and five actual Keeper/profile processes retain exact
   PCM and WAV across migration/reopen, reducing the referenced fixture by 31.6%.
-  Old raw blobs remain, so collection remains separate. Native replay and the
-  independently owned font-family intake are pending the shared foreground lane.
-  Details remain in [P7's compressed-storage follow-through](2026-07-11_stage_set_tools_plan.md#october-12-follow-through-lossless-compressed-capture-storage).
+  The subsequent combined font-family source `751858f` passes 556 core/view/host
+  cases and the production build. Two normal-output native processes qualify
+  actual worker migration and fresh reopening with 54 presentations, three
+  reviewed captures, unopened input, one output and exact PCM/full-WAV parity.
+  Old raw blobs remain, so collection remains separate; startup timing, glyph
+  coverage and physical capture stay open. Details remain in
+  [P7's compressed-storage follow-through](2026-07-11_stage_set_tools_plan.md#october-12-follow-through-lossless-compressed-capture-storage)
+  and its separate [combined native receipt](../validation/compressed-captures_font-family_20261012/receipt.json).
+  Hocket's earlier codec pin remains independent: this root intake does not
+  qualify Hocket's archive decoder or adopt the arithmetic repair there.

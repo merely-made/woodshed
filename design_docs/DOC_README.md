@@ -138,7 +138,10 @@ before any other doc in this directory.
   compatibility, bounded decode admission and one encode-only worker; focused
   codec/storage/host, locked current-family build and five actual Keeper/profile
   processes retain exact PCM/WAV across migration, with 31.6% smaller referenced
-  fixture storage. Native replay and independent font intake remain pending.
+  fixture storage. The combined font family passes 556 core/view/host tests and
+  its production build; two normal-output migration/reopen processes add 54
+  presentations and three reviewed captures with exact PCM/WAV parity. Physical
+  capture, disk collection, startup timing and the existing loop glyph remain open.
   Physical capture, saved-song PCM and full P7 remain open.
   The October 7 captured-scale-pattern follow-up extends copied instructions
   to degree pairs in thirds/fourths, with base-scale exploration and unchanged

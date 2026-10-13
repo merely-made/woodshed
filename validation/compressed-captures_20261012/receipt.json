@@ -1,7 +1,7 @@
 {
   "schema": "woodshed-compressed-captures-receipt-v1",
   "source": "28f7209c58bca683734e612b59c470f18999462e",
-  "status": "implemented; CPU, build, real custody and fresh-process storage acceptance pass; native replay pending",
+  "status": "original published-family CPU/build/real-custody acceptance complete; later combined-family native acceptance is recorded separately",
   "storage": {
     "manifest_version": 2,
     "raw_blob_version": 1,
@@ -42,7 +42,8 @@
     "thread_id": "01a0f0e4-7935-7401-8ff2-b56c0508b03f",
     "required_followthrough": "Preserve published compression, rebase font adoption, rebuild/freeze combined source, then copied raw migration and native fresh reopen.",
     "claimed_native_processes": 0,
-    "claimed_reviewed_captures": 0
+    "claimed_reviewed_captures": 0,
+    "scope": "Original publication snapshot for source28f7209; zero native processes claimed for that earlier source."
   },
   "custody": {
     "actual_keeper": true,
@@ -60,5 +61,13 @@
     "Orphan collection and physical disk quota remain separate.",
     "The Wavicle repair is a narrow arithmetic fix; arbitrary-stream certification is not claimed.",
     "Concurrent unpublished font-family behavior is excluded."
-  ]
+  ],
+  "publication_followthrough": {
+    "source": "751858f0461b71fe7fa03392b13d65363b9e7ff6",
+    "receipt": "../compressed-captures_font-family_20261012/receipt.json",
+    "native_processes": 2,
+    "reviewed_captures": 3,
+    "presented_frames": 54,
+    "status": "normal-output native migration and fresh-process reopening qualified; original CPU evidence unchanged"
+  }
 }
