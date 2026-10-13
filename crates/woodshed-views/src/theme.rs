@@ -692,12 +692,19 @@ pub fn apply_accessibility(mut css: String, reduce_motion: bool, text_scale: f32
 
 /// Scale every `font-size: Npx` in a sheet by `scale`, leaving all else intact.
 fn scale_font_sizes(css: &str, scale: f32) -> String {
-    const NEEDLE: &str = "font-size: ";
+    let mut css = scale_px_declarations(css, "font-size: ", scale);
+    for role in tabard::typography::FontRole::ALL {
+        css = scale_px_declarations(&css, &format!("--tabard-font-{}-size: ", role.key()), scale);
+    }
+    css
+}
+
+fn scale_px_declarations(css: &str, needle: &str, scale: f32) -> String {
     let mut out = String::with_capacity(css.len() + 32);
     let mut rest = css;
-    while let Some(pos) = rest.find(NEEDLE) {
-        out.push_str(&rest[..pos + NEEDLE.len()]);
-        rest = &rest[pos + NEEDLE.len()..];
+    while let Some(pos) = rest.find(needle) {
+        out.push_str(&rest[..pos + needle.len()]);
+        rest = &rest[pos + needle.len()..];
         match rest.find("px") {
             Some(px) => match rest[..px].trim().parse::<f32>() {
                 Ok(n) => {

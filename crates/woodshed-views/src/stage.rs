@@ -1494,8 +1494,15 @@ impl UiState {
     }
 
     pub fn set_theme(&mut self, theme: ThemeMode) {
+        let fonts = self.appearance.choice(&self.app_settings.appearance).fonts;
         self.app_settings.appearance.theme = theme.label().to_string();
-        self.app_settings.appearance.theme_choice = None;
+        self.app_settings.appearance.theme_choice = if fonts.is_empty() {
+            None
+        } else {
+            let mut choice = tabard::theme::choice::ThemeChoice::new(theme.theme_id(), None);
+            choice.fonts = fonts;
+            Some(choice)
+        };
     }
 
     pub fn board_layout(&self) -> BoardLayout {
@@ -2122,6 +2129,8 @@ impl UiState {
         self.practice_history = session.practice_history.clone();
         self.app_settings = app_settings;
         self.appearance.reset_active();
+        self.appearance
+            .reset_font_editor(&self.app_settings.appearance);
         if let Some(config) = &session.active_exploration {
             config.apply(&mut self.stage, &mut self.app_settings);
             self.search = TextInput::new(config.search_query.clone());

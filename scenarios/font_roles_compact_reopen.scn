@@ -1,0 +1,22 @@
+# Separate compact startup, not a resized screenshot alone.
+settle 5
+ui-zoom 1.0
+assert snap appearance-device-free == true
+assert snap font-request-roles == 3
+assert snap font-label-mono == true
+assert snap font-reading-serif == true
+assert snap set-cards == 2
+assert snap loop-capture-references == 1
+click .pill Settings
+click .side-item Appearance
+settle 3
+click role:textbox @data-font-role=label
+settle 3
+capture 01_font_compact_reopened
+click .pill Looper
+settle 3
+assert snap font-request-roles == 3
+assert snap loop-capture-references == 1
+assert snap capture-input-rate == none
+capture 02_font_compact_looper
+log Woodshed compact font reopen complete

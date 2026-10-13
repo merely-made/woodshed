@@ -18,6 +18,35 @@ receipts below remain specific to their original binary.
 
 ## Scope and ownership
 
+**Font-role follow-through — 2026-10-12: in progress.** The maintainer has
+authorized shared font-role adoption in Knot and Woodshed through independent
+consumer qualification and direct publication. Woodshed starts from published
+`c817e59`; the completed WAV slice remains intact. The agreed root family is
+Mere `8568f42`, Genet `2c7ef73`, Netrender `c74b7cb`, Dramatis `0234e7e` and
+Classic Vello `2eae624`. Hocket and Redshank remain independent workspaces;
+their source, locks and acceptance are outside this root consumer slice.
+
+The application consumes shared `ThemeChoice.fonts`, `FontPreferences`,
+`FontRoleEditor` and native family inventory. Authored `Theme.typography` supplies
+optional defaults for the same five roles. Application family requests follow
+theme variables; ordinary authored CSS retains its cascade authority. Absent
+size/leading properties preserve each Woodshed surface's current dimensions.
+No private font schema or second theme editor is introduced.
+
+Done-conditions are preserved ordered requests across theme/mode changes,
+workshop Apply and fresh reopening; explicit reset and missing-family intent;
+failed-write stability; actual text measurement, updated hit geometry and paint
+for mapped graph, fretboard, tempo and Set labels; default and compact native
+layout; and retained Set, selection, clocks and capture companions. Unsupported
+canvas properties require an explicit tested boundary. Family inventory alone
+does not establish per-glyph coverage: the existing `⟳` marker stays an open
+glyph gate unless fallback and visible paint are separately proved.
+
+CPU/source work is parallel with Knot. Native runs are serialized by the shared
+coordinator after committed source/binary freezes. The independently authorized
+capture-compression lane will rebase onto the published font family before its
+own combined build and native freeze; it owns codec/storage changes separately.
+
 The existing six named Woodshed themes remain selectable with their original
 seed values and palette rules. The product owns those definitions and its
 `stage_css` mapping. Tinct supplies derivation; Tabard supplies definition,
@@ -338,3 +367,23 @@ remains an explicit next acceptance gate rather than a publication claim.
 - [Port reopening receipts](../validation/port-reopen_20261011/README.md) close
   the two appearance reopen gates. Narrow-start pairs, wider platforms, Hocket
   project/media/custody and physical device qualification retain separate gates.
+
+
+### October 12 font-role consumer progress
+
+- Root-only supplier intake resolves one source each at the agreed family.
+  Six unchanged bundled Plex Mono/Source Serif faces retain their OFL notices.
+- Shared family picker and controlled caret/search slots are mounted in the
+  existing appearance settings. Theme, mode, typed named-theme writes and
+  restoration preserve ordered requests; font-only Apply retains the applied
+  theme snapshot when a same-ID library edit awaits explicit Theme Apply.
+- Current validation passes 161 view tests and 145 host tests (five explicit
+  host helpers/diagnostics ignored), plus the locked production build. Actual
+  Plex advances, Serif relayout, authored family precedence, interface control
+  sizing/hit targets and positioned-label limits are measured in the host.
+  [CPU evidence](../validation/font-roles_20261012/checks.json) records scope.
+- Ordinary mapped text consumes explicit authored size/leading. Graph and
+  fretboard overlays consume the label family and retain fixed size/leading
+  and picking geometry; the settings disclosure states this boundary.
+- Native default/compact layout and sealed fresh-process retention remain
+  pending the committed-source freeze and Knot's explicit lane release.
