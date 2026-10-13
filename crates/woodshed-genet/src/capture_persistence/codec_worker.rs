@@ -67,6 +67,10 @@ impl CodecWorker {
         &self.prepared
     }
 
+    pub fn clear_prepared(&mut self) {
+        self.prepared.clear();
+    }
+
     pub fn encoded(&self, take: &CaptureSnapshot) -> Option<&EncodedCapture> {
         self.prepared
             .iter()
