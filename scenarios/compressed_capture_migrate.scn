@@ -1,0 +1,20 @@
+# Normal-output host on a copied sealed legacy raw profile. No input is opened.
+settle 5
+ui-zoom 1.0
+assert snap set-cards == 2
+assert snap loop-capture-references == 1
+assert snap loop-capture-frames == 96000
+assert snap loop-active-captures == 1
+assert snap capture-input-rate == none
+assert snap output-streams == 1
+assert text Card loops saved: 1
+capture 01_legacy_capture_hydrated
+click role:button @data-action=toggle-set-one-shot
+click role:button @data-action=toggle-set-one-shot
+settle 12
+assert snap loop-capture-references == 1
+assert snap loop-active-captures == 1
+assert snap capture-input-rate == none
+assert snap output-streams == 1
+capture 02_capture_storage_retained
+log Normal-output copied raw capture migration host complete
