@@ -26,6 +26,7 @@ mod appearance;
 mod audio;
 mod capture_persistence;
 mod drive;
+mod fonts;
 #[cfg(test)]
 mod layout_tests;
 mod leaves;
@@ -139,7 +140,7 @@ fn boot_state(
         state: ui,
         logic: Box::new(move |ui: &UiState| desktop_root(ui, &commands)) as Logic,
         sheet,
-        fonts: Vec::new(),
+        fonts: fonts::bundled_fonts(),
         images: Vec::new(),
     }
 }

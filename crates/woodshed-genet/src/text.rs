@@ -49,6 +49,13 @@ pub fn focused_text(runner: &Runner<UiState, Logic, UiChild>) -> Option<FocusedT
             });
         }
     }
+    if let Some(field) = tabard_workshop::fonts::focused_font_field(&runner.dom(), node) {
+        return Some(FocusedTextSlot {
+            node,
+            get: Box::new(move |ui| ui.appearance.font_editor.text_field(field)),
+            get_mut: Box::new(move |ui| ui.appearance.font_editor.text_field_mut(field)),
+        });
+    }
     let field = {
         let dom = runner.dom();
         let dom = dom.borrow();
