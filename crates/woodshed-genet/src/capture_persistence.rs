@@ -2068,6 +2068,180 @@ mod tests {
         }
     }
 
+    /// CPU-only qualification of an explicitly copied Keeper profile. The
+    /// caller owns the isolated vault/socket and all supplied filesystem paths.
+    #[test]
+    #[ignore = "requires an isolated unlocked Keeper and copied profile overrides"]
+    fn sealed_profile_compression_probe() {
+        use std::io::Write;
+        use std::path::PathBuf;
+
+        let state_path = PathBuf::from(
+            std::env::var_os("WOODSHED_STATE").expect("explicit copied WOODSHED_STATE is required"),
+        );
+        let settings_path = PathBuf::from(
+            std::env::var_os("WOODSHED_SETTINGS")
+                .expect("explicit copied WOODSHED_SETTINGS is required"),
+        );
+        let output_dir = PathBuf::from(
+            std::env::var_os("WOODSHED_CAPTURE_PROBE_DIR")
+                .expect("owned WOODSHED_CAPTURE_PROBE_DIR is required"),
+        );
+        assert!(
+            state_path.is_absolute() && settings_path.is_absolute() && output_dir.is_absolute()
+        );
+        assert!(state_path.is_file(), "copied profile session must exist");
+        assert!(
+            output_dir.is_dir(),
+            "owned probe output directory must exist"
+        );
+        let mode = std::env::var("WOODSHED_CAPTURE_PROBE_MODE")
+            .expect("WOODSHED_CAPTURE_PROBE_MODE must be inspect or migrate");
+        assert!(matches!(mode.as_str(), "inspect" | "migrate"));
+        let report_path = output_dir.join(format!("{mode}.json"));
+        let mut report_file = std::fs::OpenOptions::new()
+            .write(true)
+            .create_new(true)
+            .open(&report_path)
+            .expect("probe reports never overwrite existing files");
+
+        let (storage, seal) = crate::storage::open_store_as(None);
+        assert!(
+            matches!(seal, PracticeSeal::Sealed { .. }),
+            "actual Keeper custody must be sealed"
+        );
+        let original_json = storage
+            .load()
+            .expect("copied sealed session must be readable");
+        let original = woodshed_core::storage::decode_session(&original_json)
+            .unwrap()
+            .session;
+        let mut ui = UiState::new();
+        crate::session::restore(&storage, &mut ui);
+        assert_eq!(ui.loop_captures, original.loop_captures);
+        let shared = Shared::with_store(Some(storage), Some(seal), None);
+        let mut shared = shared.borrow_mut();
+        shared.backend = Some(CpalBackend::offline_for_test());
+        begin_session(&mut shared, &ui)
+            .expect("actual capture bank must hydrate through session reset");
+        let plan_admission = ui
+            .requested_loop_plan()
+            .map(|plan| shared.backend.as_mut().unwrap().set_loop_plan(&plan));
+        let native_stream_count = shared.backend.as_ref().unwrap().output_stream_count();
+        assert_eq!(native_stream_count, 0);
+        assert!(
+            shared
+                .backend
+                .as_ref()
+                .unwrap()
+                .capture_source_rate()
+                .is_none()
+        );
+        let before = shared.backend.as_ref().unwrap().capture_snapshot();
+        let manifest_before = ui.loop_captures.clone();
+        let unavailable_before = shared.capture_persistence.unavailable.clone();
+        let mut persistence = std::mem::take(&mut shared.capture_persistence);
+        let storage = shared.storage.take().unwrap();
+        let backend = shared.backend.take().unwrap();
+        drop(shared);
+
+        fn captured_metadata(takes: &[CaptureSnapshot]) -> Vec<serde_json::Value> {
+            takes
+                .iter()
+                .map(|take| {
+                    let mut exact_bytes = Vec::with_capacity(take.buffer.len() * 4);
+                    for sample in take.buffer.data.iter() {
+                        exact_bytes.extend_from_slice(&sample.to_le_bytes());
+                    }
+                    serde_json::json!({
+                        "id": take.id,
+                        "bpm": take.bpm,
+                        "beats": take.beats,
+                        "bars": take.bars,
+                        "sample_rate": take.buffer.sample_rate_hz,
+                        "frames": take.buffer.len(),
+                        "pcm_f32le_blake3": muniment::blob::Hash::of(&exact_bytes).to_hex(),
+                    })
+                })
+                .collect()
+        }
+
+        let captures_before = captured_metadata(&before);
+        let migration_needed_before = persistence.needs_migration();
+        let started = Instant::now();
+        if mode == "migrate" {
+            let wakes = completion_wake(&mut persistence);
+            persistence
+                .persist_async(&storage, true, backend.capture_snapshot(), &mut ui)
+                .expect("production capture preparation must be accepted");
+            if persistence.worker.is_busy() {
+                wakes
+                    .recv_timeout(Duration::from_secs(30))
+                    .expect("actual Keeper compression must signal readiness within 30 seconds");
+                persistence
+                    .persist_async(&storage, true, backend.capture_snapshot(), &mut ui)
+                    .expect("prepared captures must publish through actual custody backend");
+            }
+            assert!(!persistence.is_busy());
+            assert!(persistence.worker.prepared().is_empty());
+            assert!(!persistence.needs_migration());
+        }
+        // This read traverses Custodied::get and rechecks the real unlocked
+        // identity; a cached PracticeSeal flag alone cannot certify publication.
+        let final_json = storage
+            .load()
+            .expect("actual custody must still permit sealed readback");
+        let published = woodshed_core::storage::decode_session(&final_json)
+            .unwrap()
+            .session;
+        let after = backend.capture_snapshot();
+        let captures_after = captured_metadata(&after);
+        assert_eq!(
+            captures_before, captures_after,
+            "captured float bits and clocks must remain exact"
+        );
+        assert_eq!(manifest_before.namespace, ui.loop_captures.namespace);
+        assert_eq!(published.loop_captures, ui.loop_captures);
+        if mode == "inspect" {
+            assert_eq!(
+                original_json, final_json,
+                "inspect must not save the copied profile"
+            );
+        }
+        let report = serde_json::json!({
+            "schema": "woodshed-sealed-profile-compression-probe-v1",
+            "mode": mode,
+            "seal": "sealed",
+            "native_stream_count": native_stream_count,
+            "input_opened": false,
+            "plan_admission": match plan_admission {
+                Ok(Ok(())) => serde_json::json!({"admitted": true}),
+                Ok(Err(error)) => serde_json::json!({"admitted": false, "reason": error}),
+                Err(readiness) => serde_json::json!({
+                    "admitted": false,
+                    "readiness": format!("{readiness:?}"),
+                }),
+            },
+            "migration_needed_before": migration_needed_before,
+            "elapsed_ms": started.elapsed().as_millis(),
+            "manifest_before": manifest_before,
+            "manifest_after": ui.loop_captures,
+            "unavailable_before": unavailable_before,
+            "unavailable_after": persistence.unavailable,
+            "captures_before": captures_before,
+            "captures_after": captures_after,
+            "session_before_blake3": muniment::blob::Hash::of(original_json.as_bytes()).to_hex(),
+            "session_after_blake3": muniment::blob::Hash::of(final_json.as_bytes()).to_hex(),
+        });
+        serde_json::to_writer_pretty(&mut report_file, &report).unwrap();
+        report_file.write_all(b"\n").unwrap();
+        report_file.sync_all().unwrap();
+        println!(
+            "sealed profile {mode} probe wrote metadata-only report {}",
+            report_path.display()
+        );
+    }
+
     #[test]
     #[ignore = "fresh-process child, invoked by the sealed capture test"]
     fn fresh_process_fixture() {
