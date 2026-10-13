@@ -3264,10 +3264,10 @@ and binaries stay local outside the repository packet.
 
 Keeping old raw blobs means migration does not immediately reclaim existing
 disk bytes; it reduces referenced storage and new capture size. Collection is
-still a separate operation. The shared foreground lane remains occupied by
-Knot activation diagnosis, also delaying Woodshed's independently owned font
-replay. Compression is published on the existing qualified family rather than
-holding the requested direct push for that separate gate. The Woodshed agent
-will preserve this main, rebase/rebuild/freeze the font combination, then replay
-copied raw migration and native reopening when the lane is released. No native
+still a separate operation. Knot activation diagnosis delayed the shared
+foreground lane during CPU qualification. It released the lane at publication
+handoff, and Woodshed acquired the reservation. Compression is published on
+the existing qualified family. The Woodshed agent will preserve this main,
+rebase/rebuild/freeze the independently owned font combination, then replay
+copied raw migration and native reopening in the reserved lane. No native
 capture or combined-family acceptance is claimed by this receipt.
