@@ -516,6 +516,9 @@ pub(super) fn screen(ui: &UiState) -> UiChild {
                 {
                     ui.reconcile_overview_dynamics();
                     match drag.phase {
+                        cambium::PointerPhase::Cancel => {
+                            ui.overview_dynamics.drag_end();
+                        },
                         cambium::PointerPhase::Down => {
                             ui.overview_dynamics.drag_start(&drag.id);
                         },
