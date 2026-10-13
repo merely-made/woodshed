@@ -3169,8 +3169,9 @@ P8, including later shared-font intake.
 
 ### October 12 follow-through: lossless compressed capture storage
 
-**Status (2026-10-12): implementation and focused CPU migration checks pass;
-combined-family production build and native migration/reopen are pending.**
+**Status (2026-10-12): implementation, locked production build, focused checks
+and actual Keeper/fresh-process migration pass at source `28f7209`. Native
+replay and the independently owned font-family adoption remain pending.**
 This extends the existing bounded Set/Card capture seam, preserving its exact
 PCM, owner/clock admission, persona seal, namespace and decoded-frame budget.
 It does not extend saved-song capture durability or change the WAV audio result.
@@ -3233,11 +3234,40 @@ subsequent dirty-appearance gating. Hashing, sealing, filesystem publication and
 readback, session serialization and hydration decoding remain control-side work;
 this slice does not claim general long-bank UI or disk performance qualification.
 
-Focused source checks pass ten portable codec cases, thirteen storage cases and
-26 host persistence cases. The latter includes five independent child processes
-for raw version-1 seed, migration, reorder/reopen, Clear and cleared reopen, plus
+The [storage receipt](../validation/compressed-captures_20261012/receipt.json),
+[checks](../validation/compressed-captures_20261012/checks.json) and
+[source freeze](../validation/compressed-captures_20261012/source-freeze.json)
+retain 76 distinct root cases: ten portable codec, thirteen core storage,
+26 host persistence, six filesystem/custody, nine WAV publication, nine sync
+and three drive. The host cases include five independent child processes for
+raw version-1 seed, migration, reorder/reopen, Clear and cleared reopen, plus
 worker/cache, owner/session, seal, quota, unavailable recovery and prepared-metadata
-binding regressions. The native lane will copy the existing real Keeper-sealed
-raw profile, compare raw/decoded and full WAV identities, exercise migration and
-fresh reopening, and review captures after the concurrent font-family publication
-is integrated. Native and combined-source acceptance are not yet claimed.
+binding regressions. The locked production build passes on the published WAV
+family, with only Wavicle added to its lock. The unpublished font intake is
+excluded from this source and acceptance claim.
+
+Five further CPU processes use an actual owned Keeper authority and a copy of
+the previous sealed raw native profile: raw inspection, WAV before, production
+worker migration, fresh inspection and WAV after. The 96,000-frame/48-kHz capture
+retains owner, clock, namespace and exact f32LE BLAKE3
+`ceb886a770b4f14eb9e56fd069ab17517494d1208c5d6c70f904d901d03d0a50`.
+The referenced sealed companion shrinks from 384,064 to 262,824 bytes (31.6%),
+while the original fixture and retained raw companion stay byte-identical.
+Both full backing-plus-take WAV PCM digests remain
+`51966f89d016ade8cd01b32dfa8583cc2fbe452e5a3bc620f6dc44daeb3401e0`,
+with unchanged backing-only
+`e4911029b436d2bcee6635d7780fc01b893fdca00f8fed34061822a53b3d9e58`.
+The independent WAV parser checks mono float32/48 kHz/192,000 frames. The helper
+uses device-free output and unopened input; its five processes qualify storage,
+not native presentation. The owned broker is stopped, and payloads, vault, WAV
+and binaries stay local outside the repository packet.
+
+Keeping old raw blobs means migration does not immediately reclaim existing
+disk bytes; it reduces referenced storage and new capture size. Collection is
+still a separate operation. The shared foreground lane remains occupied by
+Knot activation diagnosis, also delaying Woodshed's independently owned font
+replay. Compression is published on the existing qualified family rather than
+holding the requested direct push for that separate gate. The Woodshed agent
+will preserve this main, rebase/rebuild/freeze the font combination, then replay
+copied raw migration and native reopening when the lane is released. No native
+capture or combined-family acceptance is claimed by this receipt.

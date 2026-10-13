@@ -1,0 +1,40 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.01s
+     Running unittests src/lib.rs (/Users/markik/Code/testing/woodshed/compressed-captures-20261012/wavicle-target/debug/deps/wavicle-7e5bb4c2945a647e)
+
+running 7 tests
+test bitstream::tests::bits_come_lsb_first ... ok
+test bitstream::tests::read_code_powers_of_two_are_fixed_width ... ok
+test bitstream::tests::escaped_ones_count_overflow_is_refused_without_wrapping ... ok
+test block::tests::overflowing_block_size_is_refused_before_iteration ... ok
+test entropy::tests::exp2s_matches_reference_anchor_points ... ok
+test entropy::tests::extreme_history_logs_and_median_updates_keep_reference_wrapping ... ok
+test entropy::tests::large_escaped_residual_range_is_bounded_without_arithmetic_panics ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/conformance.rs (/Users/markik/Code/testing/woodshed/compressed-captures-20261012/wavicle-target/debug/deps/conformance-4399a4c2d33b33a0)
+
+running 14 tests
+test multiblock_stream_has_more_than_one_block ... ok
+test hybrid_stream_is_rejected_as_out_of_scope ... ok
+test corrupt_audio_fails_the_crc_hard ... ok
+test single_block_fixtures_scan_as_one_block ... ok
+test synthetic_headers_reject_bad_version_and_dsd ... ok
+test scan_reproduces_reference_ss_fields_for_every_lossless_fixture ... ok
+test non_standard_sample_rate_round_trips ... ok
+test float_decode_is_bit_exact_and_blake3_stable ... ok
+test decode_matches_reference_raw_output_for_every_int_fixture ... ok
+test encode_round_trips_losslessly_through_ourselves_and_the_reference ... ok
+test float_encode_round_trips_bit_exact_with_blake3_identity ... ok
+test encoded_size_is_reasonable_versus_raw_and_reference ... ok
+test long_inputs_split_into_blocks_and_round_trip ... ok
+test decode_never_panics_on_arbitrary_or_mutated_bytes ... ok
+
+test result: ok. 14 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 5.95s
+
+   Doc-tests wavicle
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

@@ -1,0 +1,12 @@
+
+running 6 tests
+test storage::capture_tests::filesystem_rejects_unknown_and_path_shaped_keys_without_touching_session ... ok[woodshed] identity pending: practice is not being saved
+
+test storage::capture_tests::sealed_filesystem_blobs_and_pending_write_drop_keep_custody_semantics ... ok
+test storage::capture_tests::filesystem_bounds_reads_and_reports_corrupt_or_truncated_companions ... ok
+test storage::capture_tests::failed_companion_write_retains_previous_session_and_failed_rename_cleans_temp ... ok
+test storage::capture_tests::two_personas_share_pcm_only_through_distinct_artifacts_and_cannot_clobber_ciphertext ... ok
+test storage::capture_tests::filesystem_companion_reopens_exact_pcm_after_session_reference_commit ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 155 filtered out; finished in 0.10s
+

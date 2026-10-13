@@ -1,0 +1,15 @@
+
+running 10 tests
+test wav_export::tests::sealed_profile_export_reference ... ignored, native receipt helper; requires an isolated sealed profile and owned reference directory
+test wav_export::tests::protects_existing_missing_storage_and_future_capture_destinations ... ok
+test wav_export::tests::collision_cancellation_and_invalid_render_leave_no_temporary_file ... ok
+test wav_export::tests::publication_collision_replace_and_changed_destination_preserve_files ... ok
+test wav_export::tests::deferred_dialog_cancel_and_epoch_revocation_preserve_destinations ... ok
+test wav_export::tests::snapshot_requires_current_admitted_backing_and_keeps_complete_pcm ... ok
+test wav_export::tests::prior_session_completion_and_replacement_do_not_cross_personas ... ok
+test wav_export::tests::cancelled_worker_cannot_publish_new_or_replacement_file ... ok
+test wav_export::tests::deferred_export_close_preserves_the_dirty_appearance_gate ... ok
+test wav_export::tests::native_chooser_cancellation_is_one_request_and_writes_nothing ... ok
+
+test result: ok. 9 passed; 0 failed; 1 ignored; 0 measured; 151 filtered out; finished in 1.02s
+
