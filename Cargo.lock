@@ -4087,6 +4087,58 @@ dependencies = [
 ]
 
 [[package]]
+name = "hocket-model"
+version = "0.1.0"
+dependencies = [
+ "ciborium",
+ "serde",
+ "uuid",
+]
+
+[[package]]
+name = "hocket-project"
+version = "0.1.0"
+dependencies = [
+ "audio-primitives",
+ "blake3",
+ "ciborium",
+ "hocket-model",
+ "hound",
+ "insigne",
+ "muniment",
+ "personae",
+ "pollster 0.4.0",
+ "serde",
+ "tempfile",
+ "wavicle",
+]
+
+[[package]]
+name = "hocket-recorder"
+version = "0.1.0"
+dependencies = [
+ "audio-primitives",
+ "hocket-model",
+ "hocket-project",
+]
+
+[[package]]
+name = "hocket-views"
+version = "0.1.0"
+dependencies = [
+ "audio-primitives",
+ "cambium",
+ "cambium-genet-winit-host",
+ "hocket-model",
+ "hocket-project",
+ "hocket-recorder",
+ "mesquite",
+ "paint_list_api",
+ "sprigging",
+ "taproot",
+]
+
+[[package]]
 name = "hound"
 version = "3.5.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"

@@ -4,6 +4,10 @@ members = [
     "crates/woodshedding",
     "crates/woodshed-audio",
     "crates/audio-primitives",
+    "crates/hocket-model",
+    "crates/hocket-project",
+    "crates/hocket-recorder",
+    "crates/hocket-views",
     "crates/timed-text",
     "crates/woodshed-core",
     "crates/woodshed-views",
@@ -36,6 +40,10 @@ scenograph = { git = "https://github.com/merely-made/mere.git", rev = "8568f42fd
 scenomise = { git = "https://github.com/merely-made/mere.git", rev = "8568f42fdf57f997274c74e63bd4ee045fe1a2b4" }
 blake3 = "1"
 # Internal crates
+hocket-model = { path = "crates/hocket-model", version = "0.1.0" }
+hocket-project = { path = "crates/hocket-project", version = "0.1.0" }
+hocket-recorder = { path = "crates/hocket-recorder", version = "0.1.0" }
+hocket-views = { path = "crates/hocket-views", version = "0.1.0" }
 woodshedding = { path = "crates/woodshedding", version = "0.1.0" }
 # Portable state/logic core for the genet-host stack (W1.1 split).
 woodshed-core = { path = "crates/woodshed-core", version = "0.1.0" }
@@ -134,6 +142,11 @@ hound = "3.5"
 midir = "0.11"
 
 # Persistence
+ciborium = "0.2"
+uuid = { version = "1.10", features = ["v4", "serde"] }
+muniment = { git = "https://github.com/merely-made/mere.git", rev = "8568f42fdf57f997274c74e63bd4ee045fe1a2b4", version = "0.1.0", default-features = false }
+insigne = { git = "https://github.com/merely-made/dramatis.git", rev = "0234e7eea6f2ddf2330a71b9425da01b06ae0391", features = ["verify"] }
+wavicle = { git = "https://github.com/merely-made/wavicle.git", rev = "2c5a49fd48db7a54aeab9e712804fd065411aef9", default-features = false, features = ["encode", "decode"] }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 

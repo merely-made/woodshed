@@ -2,7 +2,7 @@
 name = "hocket-project"
 version = "0.1.0"
 description = "Portable Hocket media, project storage, loop export, and signed handoff."
-edition.workspace = true
+edition = "2024"
 license.workspace = true
 authors.workspace = true
 repository.workspace = true

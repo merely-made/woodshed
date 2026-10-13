@@ -19,18 +19,18 @@ Read `design_docs/DOC_README.md` before planning or changing subsystem scope.
 
 ```
 crates/
-  hocket-model/     Session and history authority; framework independent
   hocket-engine/    Firewheel capture, playback, click, and device runtime
-  hocket-project/   Portable media, storage, offline export, handoff and waveforms
   hocket-headless/  Explicit manual audio-device demonstration (`--run`)
-  hocket-genet/    Genet/winit application host and recorder UI
+  hocket-genet/     Genet/winit application host and recorder adapters
 ```
 
 Run the desktop application with `cargo run -p hocket-genet`. The retired
 Masonry application and `hocket-widgets` crate are not part of this workspace.
 
-The root `../../crates/audio-primitives` path dependency provides shared pure
-DSP helpers. Hocket remains its own nested workspace and release. Do not couple
+The root `../../crates/hocket-model`, `hocket-project`, `hocket-recorder` and
+`hocket-views` libraries supply model, portable project operations, recorder
+transitions and reusable Cambium views. The root
+`../../crates/audio-primitives` path dependency provides shared pure DSP helpers. Hocket remains its own nested workspace and release. Do not couple
 it to a Woodshed application crate or another port.
 
 ## Boundaries
@@ -42,6 +42,10 @@ it to a Woodshed application crate or another port.
 - Keep portable media/project/export/handoff operations in `hocket-project`.
   It must not depend on Firewheel or CPAL; session and MediaRef identity remain
   in `hocket-model`, and hosts supply storage/identity capabilities.
+- Keep `hocket-recorder` device-free: hosts provide fallible audio services;
+  capture completion carries the admitted session generation, track and clock.
+- Keep `hocket-views` mount-scoped and independent of desktop AppState/services.
+  Full and compact presentations consume the same recorder state and actions.
 - Keep `hocket-genet` thin. Host-local presentation state is acceptable;
   session, media, and collaboration semantics are not.
 - Build local durability before peer synchronization: a peer cannot reliably

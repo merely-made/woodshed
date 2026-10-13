@@ -2,7 +2,7 @@
 name = "hocket-model"
 version = "0.1.0"
 description = "Nondestructive session data model for Hocket: Tracks-of-Phrases, history graph."
-edition.workspace = true
+edition = "2024"
 license.workspace = true
 authors.workspace = true
 repository.workspace = true

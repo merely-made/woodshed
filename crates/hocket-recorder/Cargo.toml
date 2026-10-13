@@ -1,0 +1,15 @@
+[package]
+name = "hocket-recorder"
+version = "0.1.0"
+description = "Device-free Hocket recorder controller over explicit host audio services."
+edition = "2024"
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+publish = false
+
+[dependencies]
+hocket-model.workspace = true
+hocket-project.workspace = true
+audio-primitives.workspace = true

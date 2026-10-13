@@ -227,6 +227,16 @@ acoustic calibration and full P7 remain open.
 
 ### F5. Complete portable product seams
 
+**Hocket recorder composition (2026-10-13): accepted; extraction in progress.**
+The [host-refactor follow-through](../ports/hocket/design_docs/2026-07-08_genet_host_refactor_plan.md#embeddable-recorder-follow-through-2026-10-13)
+owns the first shared-controller/surface slice. Reusable Hocket model/project
+and recorder/views live in root `crates/`; the standalone port supplies
+services. Woodshed's accepted Set/Card/saved-Song, single-output, sealed
+capture and WAV behavior stay the preservation baseline for later adoption.
+Shared views require a coherent Cambium type graph, so Hocket takes the root's
+qualified supplier family; root pins remain unchanged.
+
+
 Done when Hocket project/media/store/export/handoff operations can be used
 without its device runtime; Redshank shares portable transitions required by
 its standalone and Turnstone hosts, explicitly admits host audio/microphone

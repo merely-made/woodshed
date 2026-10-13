@@ -28,7 +28,11 @@ before any other doc in this directory.
   scaffold, workspace skeleton, and feature-target ladder from
   click-track engine through P2P session hand-off.
 - [2026-07-08_genet_host_refactor_plan.md](2026-07-08_genet_host_refactor_plan.md)
-  — **LANDED.** UI rebuilt fresh on Cambium (then `xilem_serval`) (the one-screen loop-recorder
+  — **Original host rebuild landed; October 13 recorder extraction in progress.**
+  Shared model/project, device-free recorder controller and scoped Cambium
+  surface become root libraries used by standalone Hocket and a second host
+  harness. Actual Woodshed replacement and shared DSP remain later phases.
+  UI rebuilt fresh on Cambium (then `xilem_serval`) (the one-screen loop-recorder
   design, not a Masonry port) with `chisel` leaf waveforms/meters and the
   `hocket_engine` spine wired in. The Masonry app + the `mark-ik/xilem` fork
   are deleted family-wide (hocket + woodshed). Deferred follow-ups listed in

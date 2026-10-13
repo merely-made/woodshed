@@ -9,7 +9,7 @@ assert snap bpm == 120
 assert snap master-clock == true
 assert snap recording == false
 capture recorder_initial
-click .add-track
+click .hocket-recorder-add-track
 assert snap tracks == 5
 click role:switch @aria-label=Arm track 2
 assert snap armed-track == 1

@@ -28,7 +28,10 @@ before any other doc in this directory.
   Woodshed root/Hocket pins and concurrent transcript work remain independently owned.
 
 - [2026-09-09_audio_ports_rehome_plan.md](2026-09-09_audio_ports_rehome_plan.md)
-  — **Rehome landed; October 11 consolidation in progress.** Coordinates
+  — **Rehome landed; audio consolidation and October 13 Hocket recorder extraction in progress.**
+  Hocket shared model/project/controller/views move to root libraries while the
+  standalone application remains independent; Woodshed adoption follows a
+  second device-free mount and standalone regression. Coordinates
   standalone Firewheel streaming, independently gated consumer migration,
   local validation/release boundaries, Hocket Mesquite lifecycle, bounded Redshank retention,
   and the existing Set/Looper and portable product seams. Hocket and Ringdown

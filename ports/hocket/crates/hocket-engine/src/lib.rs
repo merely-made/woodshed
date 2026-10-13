@@ -102,10 +102,9 @@ pub fn available_audio_devices() -> AudioDevices {
     }
 }
 
-/// Soft cap on simultaneously playing layer voices. Each voice is a
-/// `SamplerNode` dynamically added to the graph on `play_layer` and
-/// removed on `stop_layer`. The cap exists so a runaway host can't
-/// allocate unbounded nodes.
+/// Soft cap on distinct active or accepted queued layer voices. Each voice is
+/// a `SamplerNode` added on playback and removed on `stop_layer`. Queued starts
+/// reserve a slot too, so accepted scheduling cannot exceed the node bound.
 ///
 /// Deeler profile maxes at 10 tracks × 1 active = 10 voices; looper
 /// profile is bounded by the user's captured layer count.
@@ -631,6 +630,8 @@ impl Engine {
     }
 
     /// Queue a layer for the next bar, preserving its source sample rate.
+    /// A queued key reserves a voice slot; re-queueing that key replaces its
+    /// earlier request rather than retaining another PCM buffer.
     pub fn play_layer_at_next_bar_at_sample_rate(
         &mut self,
         key: LayerKey,
@@ -639,10 +640,11 @@ impl Engine {
         gain: f32,
         looping: bool,
     ) -> Result<(), EngineError> {
+        self.check_voice_capacity(key)?;
         let last_in_bar_phase = self
             .click_in_bar_phase()
             .ok_or_else(|| EngineError::Graph("click bar-phase unavailable".into()))?;
-        self.pending_layers.push(PendingLayer {
+        let pending = PendingLayer {
             bars_until_start: 1,
             last_in_bar_phase,
             key,
@@ -650,8 +652,32 @@ impl Engine {
             sample_rate,
             gain,
             looping,
-        });
+        };
+        if let Some(old) = self.pending_layers.iter_mut().find(|old| old.key == key) {
+            *old = pending;
+        } else {
+            self.pending_layers.push(pending);
+        }
         Ok(())
+    }
+
+    fn check_voice_capacity(&self, key: LayerKey) -> Result<(), EngineError> {
+        if self.voice_nodes.contains_key(&key)
+            || self.pending_layers.iter().any(|pending| pending.key == key)
+        {
+            return Ok(());
+        }
+        let reserved = self.voice_nodes.len()
+            + self
+                .pending_layers
+                .iter()
+                .filter(|pending| !self.voice_nodes.contains_key(&pending.key))
+                .count();
+        if reserved >= VOICE_POOL_SIZE {
+            Err(EngineError::NoFreeVoices)
+        } else {
+            Ok(())
+        }
     }
 
     // --- Pending-state advancement (called from tick / drain_input) ---
@@ -843,6 +869,7 @@ impl Engine {
         gain: f32,
         looping: bool,
     ) -> Result<(), EngineError> {
+        self.check_voice_capacity(key)?;
         let sampler_id = if let Some(&id) = self.voice_nodes.get(&key) {
             id
         } else {
@@ -869,12 +896,16 @@ impl Engine {
         );
 
         self.voice_nodes.insert(key, sampler_id);
+        // Immediate admission supersedes an older next-bar request for this
+        // key; it must not restart the voice later with retired PCM.
+        self.pending_layers.retain(|pending| pending.key != key);
         Ok(())
     }
 
-    /// Stop the layer's voice and remove its node from the graph.
-    /// No-op if the key has no voice assigned.
+    /// Cancel the layer's accepted queued start and remove its active voice.
+    /// No-op if the key has neither a queued nor an assigned voice.
     pub fn stop_layer(&mut self, key: LayerKey) {
+        self.pending_layers.retain(|pending| pending.key != key);
         if let Some(sampler_id) = self.voice_nodes.remove(&key) {
             let _ = self.cx.remove_node(sampler_id);
         }

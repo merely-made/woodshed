@@ -49,6 +49,8 @@ signing-identity = "Developer ID Application: Mark Boykim (HWVZ5S7ACJ)"
 hocket-model = { workspace = true }
 hocket-engine = { workspace = true }
 hocket-project = { workspace = true }
+hocket-recorder = { workspace = true }
+hocket-views = { workspace = true }
 audio-primitives = { workspace = true }
 cambium = { workspace = true }
 tinct = { workspace = true }

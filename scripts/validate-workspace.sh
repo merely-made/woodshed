@@ -21,7 +21,8 @@ case "$workspace" in
     ;;
   hocket)
     workspace_dir="$root/ports/hocket"
-    packages=(-p hocket-model -p hocket-project -p hocket-engine -p hocket-genet
+    packages=(-p hocket-model -p hocket-project -p hocket-recorder -p hocket-views
+      -p hocket-engine -p hocket-genet
       -p hocket-headless)
     ;;
   redshank)
