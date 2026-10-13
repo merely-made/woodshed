@@ -3169,9 +3169,10 @@ P8, including later shared-font intake.
 
 ### October 12 follow-through: lossless compressed capture storage
 
-**Status (2026-10-12): implementation, locked production build, focused checks
-and actual Keeper/fresh-process migration pass at source `28f7209`. Native
-replay and the independently owned font-family adoption remain pending.**
+**Status (2026-10-12): implemented and qualified.** Source `28f7209` passes
+focused checks, the locked build and actual Keeper/fresh-process storage tests;
+combined font-family source `751858f` adds normal-output native migration/reopen,
+three reviewed captures and exact PCM/WAV parity, as recorded below.
 This extends the existing bounded Set/Card capture seam, preserving its exact
 PCM, owner/clock admission, persona seal, namespace and decoded-frame budget.
 It does not extend saved-song capture durability or change the WAV audio result.
@@ -3243,8 +3244,9 @@ and three drive. The host cases include five independent child processes for
 raw version-1 seed, migration, reorder/reopen, Clear and cleared reopen, plus
 worker/cache, owner/session, seal, quota, unavailable recovery and prepared-metadata
 binding regressions. The locked production build passes on the published WAV
-family, with only Wavicle added to its lock. The unpublished font intake is
-excluded from this source and acceptance claim.
+family, with only Wavicle added to its lock. The then-unpublished font intake
+is excluded from this first source and acceptance claim; its combined
+qualification is recorded separately below.
 
 Five further CPU processes use an actual owned Keeper authority and a copy of
 the previous sealed raw native profile: raw inspection, WAV before, production
@@ -3267,10 +3269,10 @@ disk bytes; it reduces referenced storage and new capture size. Collection is
 still a separate operation. Knot activation diagnosis delayed the shared
 foreground lane during CPU qualification. It released the lane at publication
 handoff, and Woodshed acquired the reservation. Compression is published on
-the existing qualified family. The Woodshed agent will preserve this main,
-rebase/rebuild/freeze the independently owned font combination, then replay
-copied raw migration and native reopening in the reserved lane. No native
-capture or combined-family acceptance is claimed by this receipt.
+the existing qualified family. The Woodshed agent preserved that publication,
+rebased/rebuilt/froze the font combination, and completed the separate native
+follow-through below. The original CPU receipt does not claim native acceptance
+for its earlier source.
 
 
 ### October 12 combined font-family native capture follow-through
@@ -3285,7 +3287,8 @@ Two normal-output native processes on a fresh copy of the sealed raw profile
 pass 54 presentations and three nonblank captures. Both assert two Cards, one
 96,000-frame retained and hydrated take, unopened input and one output stream,
 and show the saved-loop controls. The product's production worker performs
-raw-v1 to WavPack-v2 migration; read-only Keeper inspectors run before migration,
+legacy raw companions to version-2 manifest references backed by version-1
+WavPack containers; read-only Keeper inspectors run before migration,
 after migration and after fresh native reopen. No CPU migration helper mutates
 this profile. Namespace, owner, 120 BPM, 4/4 clock, sample rate and exact float
 bits remain unchanged. The old sealed 384,064-byte blob remains byte-identical;
