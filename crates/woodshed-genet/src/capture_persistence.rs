@@ -348,7 +348,15 @@ impl CapturePersistence {
         let mut worker = std::mem::take(&mut self.worker);
         let prepared = worker.prepare(&ui.audio_session, &takes, required);
         let result = match prepared {
-            Ok(true) => self.persist_prepared(storage, sealed, takes, ui, worker.prepared()),
+            Ok(true) => {
+                let result = self.persist_prepared(storage, sealed, takes, ui, worker.prepared());
+                if result.is_ok() {
+                    // Accepted explicit-codec references are now authoritative;
+                    // only unconfirmed publication needs encoded retry storage.
+                    worker.clear_prepared();
+                }
+                result
+            },
             Ok(false) => {
                 // Ordinary edits remain durable while the previous capture
                 // manifest is the only fully verified set of references.
@@ -520,6 +528,7 @@ impl CapturePersistence {
         self.buffers = takes;
         self.cleared = false;
         self.awaiting_commit = false;
+        self.worker.clear_prepared();
         ui.loop_captures = manifest;
         ui.loop_capture_notice = self.notice();
         Ok(())
@@ -1019,6 +1028,7 @@ mod tests {
             .persist_async(&storage, true, vec![take.clone()], &mut ui)
             .unwrap();
         assert!(!state.is_busy());
+        assert!(state.worker.prepared().is_empty());
         let published = woodshed_core::storage::decode_session(&storage.load().unwrap())
             .unwrap()
             .session;
@@ -1070,6 +1080,7 @@ mod tests {
         );
         assert!(!state.worker.is_busy());
         assert!(state.is_busy());
+        assert_eq!(state.worker.prepared().len(), 1);
         assert_eq!(good.load().unwrap(), previous);
         assert!(
             state
@@ -1077,12 +1088,14 @@ mod tests {
                 .is_err()
         );
         assert!(state.is_busy());
+        assert_eq!(state.worker.prepared().len(), 1);
         assert_eq!(good.load().unwrap(), previous);
         assert!(ui.loop_captures.is_empty());
         state
             .persist_async(&good, true, vec![take], &mut ui)
             .unwrap();
         assert!(!state.is_busy());
+        assert!(state.worker.prepared().is_empty());
         assert_eq!(calls.load(std::sync::atomic::Ordering::Relaxed), 1);
 
         let (mut legacy_ui, legacy_take) = fixture();

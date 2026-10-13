@@ -3219,7 +3219,7 @@ The optimized decision probe took about 1.64 seconds for the maximum 16,777,216
 frames, motivating removal of compression from dispatch. Jobs contain no storage,
 custody keys, UI state or devices. A retained lane, cancellation generation,
 session epoch and exact take/sample Arc match prevent old results from publishing
-after Clear or persona/session replacement. Prepared bytes survive failed saves;
+after Clear or persona/session replacement. Prepared bytes survive failed saves and are released after confirmed publication;
 quota admission precedes thread submission, and idle wakes do not repeatedly
 serialize/write while encoding is pending. Ordinary edits save with the previous
 verified capture manifest, and publication serializes current UI only after
