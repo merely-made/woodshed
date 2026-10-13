@@ -1,0 +1,192 @@
+warning: patch `p2panda-auth v0.7.1 (https://github.com/mark-ik/p2panda.git?tag=mere-p2panda-net-0.7.5-upstream-20261011#d8acabc9)` was not used in the crate graph
+warning: patch `p2panda-stream v0.7.1 (https://github.com/mark-ik/p2panda.git?tag=mere-p2panda-net-0.7.5-upstream-20261011#d8acabc9)` was not used in the crate graph
+help: Check that the patched package version and available features are compatible
+      with the dependency requirements. If the patch has a different version from
+      what is locked in the Cargo.lock file, run `cargo update` to use the new
+      version. This may also occur with an optional dependency that is not enabled.
+   Compiling woodshed-views v0.1.0 (<woodshed-font-worktree>/crates/woodshed-views)
+   Compiling woodshed-genet v0.1.0 (<woodshed-font-worktree>/crates/woodshed-genet)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 11.03s
+     Running unittests src/main.rs (/Users/markik/Code/testing/woodshed/font-roles-20261012/target/debug/deps/woodshed_genet-e1bf027bfc2c3fe6)
+
+running 150 tests
+test appearance::tests::explicit_and_scenario_library_paths_preserve_private_profile_isolation ... ok
+test audio::loop_projection::tests::armed_or_active_capture_snapshot_refuses_replacement ... ok
+test audio::loop_projection::tests::captures_follow_card_across_reorder_and_pitch_edit_and_never_cross_sets ... ok
+test audio::loop_projection::tests::hydrated_clock_custody_survives_reorder_missing_cards_and_pitch_edits_until_clear ... ok
+test appearance::tests::current_native_appearance_scenarios_parse_with_the_shared_driver ... ok
+test audio::loop_projection::tests::recorded_clock_edits_are_refused_without_resizing_pcm_then_clear_permits_them ... ok
+test audio::loop_projection::tests::malformed_restore_cannot_partially_replace_the_current_bank ... ok
+test audio::loop_projection::tests::restore_validates_exact_runtime_frames_at_integer_and_fractional_clocks ... ok
+test audio::loop_projection::tests::saved_backing_capture_slots_are_independent_of_card_capture_custody ... ok
+test audio::loop_projection::tests::snapshots_share_completed_pcm_across_inactive_owners_and_exclude_saved_slots ... ok
+test audio::loop_projection::tests::stale_or_other_owner_capture_commands_cannot_resolve_to_a_bar ... ok
+test audio::tests::clearing_an_admitted_stored_capture_updates_output_without_touching_inactive_sets ... ok
+test audio::tests::each_input_feature_can_open_the_one_shared_session ... ok
+test audio::tests::explicit_calibration_and_recording_requests_retry_without_losing_output_error ... ok
+test audio::tests::explicit_unadmitted_clear_recovers_an_edited_clock_and_keeps_other_owners ... ok
+test audio::tests::failed_calibration_stop_invalidates_cache_and_retries_ordinary_click_atomically ... ok
+test audio::tests::failed_tuner_enable_is_visible_and_only_explicit_reenable_retries ... ok
+test audio::tests::hydrated_pcm_rate_is_preserved_then_refused_by_normal_output_admission ... ok
+test audio::loop_projection::tests::restore_checks_take_count_and_aggregate_frames_without_reassigning_custody ... ok
+test audio::loop_projection::tests::quota_reserves_every_current_bar_not_only_the_requested_first_bar ... ok
+test audio::tests::legacy_song_keeps_authored_frequencies_meter_tempo_and_lengths ... ok
+test audio::loop_projection::tests::quota_replaces_existing_ids_once_and_keeps_legacy_custody_separate ... ok
+test audio::tests::preview_completion_wakes_control_and_services_the_real_graph_without_input ... ok
+test audio::tests::ordinary_synchronization_and_polls_do_not_open_microphone ... ok
+test audio::tests::hydration_rejects_busy_capture_before_replacing_any_completed_take ... ok
+test audio::tests::recording_retry_restores_pending_tuner_enable_on_same_session ... ok
+test audio::tests::queued_capture_blocks_all_backing_replacements_before_the_processor_runs ... ok
+test audio::tests::hydration_finishes_pending_identity_reset_before_installing_reused_ids ... ok
+test audio::tests::restoring_set_custody_leaves_saved_output_and_compatibility_pcm_untouched ... ok
+test audio::tests::recording_rate_mismatch_keeps_the_reader_available_and_current_owner_loaded ... ok
+test audio::tests::unsupported_saved_clock_is_refused_without_normalizing_the_authored_payload ... ok
+test audio::tests::reset_backpressure_cannot_transfer_old_pcm_into_incoming_session_ids ... ok
+test audio::tests::wav_snapshot_retains_completed_pcm_and_refuses_armed_capture ... ok
+test audio::tests::set_arm_can_replace_the_same_id_at_the_exact_stored_quota ... ok
+test capture_persistence::tests::capture_native_scenarios_parse_with_shared_driver ... ok
+test capture_persistence::tests::accepted_session_with_failed_readback_is_unconfirmed_without_rollback ... ok
+test appearance::tests::corrupt_library_disables_authoring_and_preserves_the_requested_appearance_and_file ... ok
+test audio::tests::set_arm_quota_refuses_count_and_frames_before_either_route_opens_input ... ok
+test capture_persistence::tests::damaged_companion_reference_survives_saves_until_explicit_clear ... ok
+test capture_persistence::tests::fresh_process_fixture ... ignored, fresh-process child, invoked by the sealed capture test
+
+running 1 test
+test capture_persistence::tests::companion_or_session_failure_retains_previous_session_and_live_take ... ok
+test capture_persistence::tests::completion_service_saves_without_dispatch_using_current_practice_edits ... ok
+test capture_persistence::tests::malformed_manifest_never_overwrites_a_saved_session ... ok
+test capture_persistence::tests::pending_seal_cannot_publish_even_an_existing_companion ... ok
+test capture_persistence::tests::unavailable_inactive_references_reserve_catalog_budget_before_recording ... ok
+test capture_persistence::tests::wav_export_refuses_only_relevant_unavailable_set_captures ... ok
+test capture_persistence::tests::unready_incoming_epoch_never_observes_prior_playing_or_cursor ... ok
+test drive::tests::accepted_one_shot_status_stops_the_ui_without_restarting_or_retargeting_backing ... ok
+sealed capture seed: 24000 exact frames, no input device
+test capture_persistence::tests::fresh_process_fixture ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 149 filtered out; finished in 0.21s
+
+test drive::tests::background_dwell_keeps_its_owner_clock_cursor_and_inherited_sound ... ok
+
+running 1 test
+test drive::tests::dwell_restarts_after_instruction_edits_cursor_changes_and_pause ... ok
+test fonts::tests::prepare_font_theme_fixture ... ignored, writes only an explicitly owned isolated theme library
+test fonts::tests::sealed_profile_font_snapshot ... ignored, requires an owned sealed font profile and live isolated Keeper
+test capture_persistence::tests::absent_audio_still_saves_practice_and_retains_then_explicitly_clears_orphan_refs ... ok
+test fonts::tests::appearance_buttons_use_requested_interface_family_and_authored_size ... ok
+fresh process: exact samples and Set/Card identity retained across reorder
+test capture_persistence::tests::fresh_process_fixture ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 149 filtered out; finished in 0.23s
+
+
+running 1 test
+test fonts::tests::fonts_shape_remeasure_and_keep_authored_precedence_with_fixed_overlay_geometry ... ok
+fresh process: clock refusal resolved by explicit clear and persisted
+test capture_persistence::tests::fresh_process_fixture ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 149 filtered out; finished in 0.23s
+
+
+running 1 test
+test appearance::tests::native_save_confirmation_persists_the_definition_then_closes_the_application ... ok
+fresh process: cleared capture remains absent
+test capture_persistence::tests::fresh_process_fixture ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 149 filtered out; finished in 0.18s
+
+test capture_persistence::tests::exact_sealed_set_capture_survives_fresh_process_reorder_and_clear ... ok
+test appearance::tests::export_destination_cancellation_and_collision_leave_library_unsaved ... ok
+test appearance::tests::native_export_rejects_existing_and_missing_application_destinations ... ok
+test appearance::tests::theme_export_cannot_replace_existing_or_future_capture_companions ... ok
+test appearance::tests::cancelled_native_close_then_embedded_discard_does_not_exit_the_application ... ok
+test layout_tests::discovered_scale_uses_its_saved_ukulele_board_and_physical_solo_contact ... ok
+test layout_tests::background_runner_inherits_the_starting_exploration_setup ... ok
+test layout_tests::invalid_saved_scale_setup_shows_the_reason_and_cannot_sound_the_live_guitar ... ok
+test layout_tests::connected_discovery_controls_stage_the_selected_shape_and_run_it ... ok
+test layout_tests::compatible_scale_controls_choose_audition_stage_and_drill_without_changing_the_chord ... ok
+test layout_tests::expanded_graph_editor_keeps_discovery_outside_the_canvas ... ok
+test layout_tests::narrow_settings_navigation_stacks_and_selects_a_page ... ok
+test layout_tests::exact_tone_relationship_controls_rebind_and_open_the_containing_scale_at_two_widths ... ok
+test layout_tests::inspected_pattern_revalidates_removed_and_invalid_sources_before_authoring ... ok
+test layout_tests::card_parameters_and_explanations_do_not_overlap_and_related_rows_still_stage ... ok
+test layout_tests::rehearsal_board_scroll_preserves_extent_and_note_hits ... ok
+test layout_tests::neck_comparison_tracks_previous_card_and_shape_controls ... ok
+test layout_tests::rehearsal_shape_controls_change_notes_and_clear_to_the_map ... ok
+test layout_tests::reopened_scale_editor_has_no_empty_chord_discovery_panels ... ok
+test layout_tests::narrow_stage_preserves_graph_width_and_horizontal_scroll ... ok
+test layout_tests::selected_card_geometry_overrides_the_live_guitar ... ok
+test leaves::atmosphere_tests::atmosphere_is_clipped_resized_and_beneath_graph_independently_of_camera ... ok
+test persona::tests::a_chosen_persona_is_not_asked_again ... ok
+test persona::tests::a_pending_store_reads_but_never_writes ... ok
+test persona::tests::a_sole_persona_is_not_a_question ... ok
+test layout_tests::settings_uses_the_shared_page_scroll_owner ... ok
+test persona::tests::asking_for_a_new_persona_keeps_the_gate_up_and_says_why ... ok
+test persona::tests::declining_is_not_a_dead_end_the_settings_switch_starts_saving ... ok
+test persona::tests::clicking_a_persona_records_the_choice_the_host_acts_on ... ok
+test persona::tests::djinn_absent_is_stepped_over_rather_than_asked_about ... ok
+test persona::tests::switching_into_an_unused_persona_does_not_carry_the_last_one_in ... ok
+test persona::tests::escape_dismisses_the_gate_so_practice_is_never_blocked ... ok
+test persona::tests::switching_persona_retains_the_global_library_load_error ... ok
+test persona::tests::switching_persona_retains_the_global_authored_library_but_restores_incoming_selection ... ok
+test persona::tests::the_gate_is_reachable_by_a_driver ... ok
+test persona::tests::the_gate_stands_in_front_of_the_product_rather_than_over_it ... ok
+test persona::tests::the_settings_row_asks_even_when_the_startup_rule_would_not ... ok
+test persona::tests::the_gate_takes_the_keyboard_without_a_tab ... ok
+test persona::tests::two_personas_and_no_choice_is_the_one_case_worth_asking_about ... ok
+test layout_tests::wide_stage_keeps_board_and_expanded_tray_reachable ... ok
+test session::tests::chord_approach_session_receipt_worker ... ok
+test persona::tests::two_personas_sharing_a_name_are_still_told_apart ... ok
+test session::tests::connected_session_receipt_worker ... ok
+test persona::tests::the_unsaved_notice_is_on_screen_for_a_declined_session ... ok
+test session::tests::chord_approach_session_replays_saved_target_shapes_in_a_fresh_process ... ok
+test session::tests::independent_instances_receipt_worker ... ok
+test session::tests::host_session_restores_the_workspace_policy ... ok
+test session::tests::legacy_four_panel_workspace_and_session_restore_without_a_retained_library ... ok
+test session::tests::connected_session_reopens_in_a_fresh_process ... ok
+test session::tests::mixed_catalog_session_receipt_worker ... ok
+test session::tests::legacy_single_owner_session_adopts_instances_without_changing_authored_work ... ok
+test session::tests::independent_working_sets_and_explorations_reopen_in_a_fresh_process ... ok
+test session::tests::retained_library_receipt_worker ... ok
+test session::tests::scale_pattern_session_receipt_worker ... ok
+test layout_tests::unselected_target_approach_keeps_repeated_pitch_visits_in_production_audio ... ok
+test session::tests::settings_apply_without_a_practice_session ... ok
+test storage::capture_tests::failed_companion_write_retains_previous_session_and_failed_rename_cleans_temp ... ok
+test session::tests::mixed_catalog_session_reopens_in_a_fresh_process ... ok
+test storage::capture_tests::filesystem_bounds_reads_and_reports_corrupt_or_truncated_companions ... ok
+test session::tests::retained_library_and_overview_reopen_ordered_music_in_a_fresh_process ... ok
+test storage::capture_tests::filesystem_rejects_unknown_and_path_shaped_keys_without_touching_session ... ok
+test storage::capture_tests::filesystem_companion_reopens_exact_pcm_after_session_reference_commit ... ok
+test session::tests::scale_pattern_session_replays_ordered_visits_in_a_fresh_process ... ok
+test storage::dr_c_receipts::dr_c_woodshed_identity_stays_pending ... ignored, run mere/scripts/dr_c_receipts.py against the isolated receipt keeper
+test storage::capture_tests::sealed_filesystem_blobs_and_pending_write_drop_keep_custody_semantics ... ok
+test sync::tests::loop_source_receipt_worker ... ok
+test storage::capture_tests::two_personas_share_pcm_only_through_distinct_artifacts_and_cannot_clobber_ciphertext ... ok
+test sync::tests::armed_source_switches_are_refused_in_both_directions_without_replacing_backing ... ok
+test sync::tests::refused_edit_and_other_owner_keep_the_actual_admitted_timeline ... ok
+test layout_tests::relationship_recipe_controls_compile_explain_and_return_to_exact_source_at_two_widths ... ok
+test sync::tests::saved_bar_edit_refusal_preserves_accepted_payload_and_capture_state ... ok
+test sync::tests::unavailable_saved_replacement_keeps_loaded_set_and_an_unready_set_keeps_saved_backing ... ok
+test sync::tests::unready_initial_source_cannot_play_and_saved_song_restores_exact_data ... ok
+test sync::tests::loop_source_reopens_in_a_fresh_process ... ok
+test tests::window_geometry_conversion_preserves_every_axis ... ok
+test wav_export::tests::cancelled_worker_cannot_publish_new_or_replacement_file ... ok
+test wav_export::tests::collision_cancellation_and_invalid_render_leave_no_temporary_file ... ok
+test wav_export::tests::deferred_dialog_cancel_and_epoch_revocation_preserve_destinations ... ok
+test sync::tests::source_controls_refuse_known_armed_capture_in_both_directions ... ok
+test tests::shared_title_bar_fills_viewport_and_keeps_editor_below_it ... ok
+test wav_export::tests::prior_session_completion_and_replacement_do_not_cross_personas ... ok
+test wav_export::tests::protects_existing_missing_storage_and_future_capture_destinations ... ok
+test wav_export::tests::publication_collision_replace_and_changed_destination_preserve_files ... ok
+test wav_export::tests::sealed_profile_export_reference ... ignored, native receipt helper; requires an isolated sealed profile and owned reference directory
+test wav_export::tests::snapshot_requires_current_admitted_backing_and_keeps_complete_pcm ... ok
+test sync::tests::looper_controls_show_readiness_route_owned_capture_and_retain_saved_backing ... ok
+test wav_export::tests::deferred_export_close_preserves_the_dirty_appearance_gate ... ok
+test tests::native_workshop_routes_name_and_stylesheet_text_through_owned_model ... ok
+test wav_export::tests::native_chooser_cancellation_is_one_request_and_writes_nothing ... ok
+test layout_tests::inspected_chord_approach_rejects_stale_pairs_and_saved_shape_failures ... ok
+test layout_tests::adjacent_chord_approach_controls_preserve_physical_pairs_shapes_and_originals ... ok
+test layout_tests::scale_pattern_controls_preserve_order_source_and_occurrences_in_wide_and_narrow_views ... ok
+test layout_tests::session_overview_inspects_retains_and_opens_real_work_without_navigation_side_effects ... ok
+test layout_tests::independent_instances_keep_background_rehearsal_and_explicit_staging_bound_to_their_owners ... ok
+
+test result: ok. 145 passed; 0 failed; 5 ignored; 0 measured; 0 filtered out; finished in 12.82s

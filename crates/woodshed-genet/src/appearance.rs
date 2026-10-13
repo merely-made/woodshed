@@ -68,6 +68,10 @@ fn load_library_at(ui: &mut UiState, path: PathBuf) {
     ui.appearance_authoring_available = false;
     match AppearanceState::load(&path) {
         Ok(mut appearance) => {
+            appearance.set_available_fonts(cambium_genet_winit_host::available_font_families(
+                &crate::fonts::bundled_fonts(),
+            ));
+            appearance.reset_font_editor(&ui.app_settings.appearance);
             appearance.workshop.set_protected_export_paths(
                 crate::storage::FsBackend::new().protected_export_paths(),
             );

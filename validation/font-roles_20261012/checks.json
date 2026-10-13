@@ -1,0 +1,39 @@
+{
+  "status": "CPU implementation complete; native source freeze pending",
+  "base": "c817e59d7227c94978d60994a81da560e7c1a773",
+  "tests": {
+    "views-lib.log": {
+      "passed": 161,
+      "failed": 0,
+      "ignored": 0
+    },
+    "host-all.log": {
+      "passed": 145,
+      "failed": 0,
+      "ignored": 5
+    }
+  },
+  "unique_consumer_passes": 306,
+  "ignored_scope": "five host helpers/diagnostics; two newly explicit owned font fixtures and three earlier ignored cases",
+  "production_build": "passed locked desktop build",
+  "source_family": {
+    "mere.git": "git+https://github.com/merely-made/mere.git?rev=8568f42fdf57f997274c74e63bd4ee045fe1a2b4#8568f42fdf57f997274c74e63bd4ee045fe1a2b4",
+    "genet.git": "git+https://github.com/merely-made/genet.git?rev=2c7ef73bfa44c07744e0643e3c6f98be3cbd7947#2c7ef73bfa44c07744e0643e3c6f98be3cbd7947",
+    "dramatis.git": "git+https://github.com/merely-made/dramatis.git?rev=0234e7eea6f2ddf2330a71b9425da01b06ae0391#0234e7eea6f2ddf2330a71b9425da01b06ae0391",
+    "netrender.git": "git+https://github.com/merely-made/netrender.git?rev=c74b7cb28090c28b1c6d80b08dcdea18aff48d3e#c74b7cb28090c28b1c6d80b08dcdea18aff48d3e",
+    "mark-ik/vello": "git+https://github.com/mark-ik/vello?rev=2eae6243881d5b24c984d5ee35dde509ca5db782#2eae6243881d5b24c984d5ee35dde509ca5db782"
+  },
+  "ports": "Hocket/Redshank/Ringdown source/locks unchanged",
+  "glyph_gate": "existing circular-arrow marker coverage not qualified",
+  "font_faces_sha256": {
+    "assets/fonts/ibm-plex-mono/IBMPlexMono-Bold.ttf": "ac27abd6450a64dd94467580a02fe6235156d5b92f2926ebbc8e7489df64e0be",
+    "assets/fonts/ibm-plex-mono/IBMPlexMono-BoldItalic.ttf": "af4e05a761e98c1adf064c48a6352c9bec1a6ad70982cd2a544149323391f98e",
+    "assets/fonts/ibm-plex-mono/IBMPlexMono-Italic.ttf": "3362fc791b0652193328b862c1c5f23a789bc7288b1617fa63302f88689a2a34",
+    "assets/fonts/ibm-plex-mono/IBMPlexMono-Regular.ttf": "6a3412f058c7d8dfd9170c41e85ade48e5156ecb89356110ca57a0a27734af46",
+    "assets/fonts/ibm-plex-mono/OFL.txt": "37784b44044a4ffd9256702b7c0982c37e5c8887ba90c6dca0479aea93dc898d",
+    "assets/fonts/source-serif-4/OFL.txt": "5f94c3fd3a23131a417ab5a0c8452de57e70c3cfb9f604d88241f7065ebf9fd9",
+    "assets/fonts/source-serif-4/SourceSerif4-Italic.ttf": "15fbc7e4679489a501998c3669272637a6646388ef7e4bd77eebb5bf967a1f42",
+    "assets/fonts/source-serif-4/SourceSerif4.ttf": "97b2d4da6e3cb494b5a1e66ae176914d852ccabef49e0c02c0df25f3e39aca0b"
+  },
+  "native": "pending committed source/binary and explicit Knot cleanup release"
+}

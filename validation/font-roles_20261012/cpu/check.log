@@ -1,0 +1,797 @@
+warning: patch `p2panda-auth v0.7.1 (https://github.com/mark-ik/p2panda.git?tag=mere-p2panda-net-0.7.5-upstream-20261011#d8acabc9)` was not used in the crate graph
+warning: patch `p2panda-stream v0.7.1 (https://github.com/mark-ik/p2panda.git?tag=mere-p2panda-net-0.7.5-upstream-20261011#d8acabc9)` was not used in the crate graph
+help: Check that the patched package version and available features are compatible
+      with the dependency requirements. If the patch has a different version from
+      what is locked in the Cargo.lock file, run `cargo update` to use the new
+      version. This may also occur with an optional dependency that is not enabled.
+   Compiling proc-macro2 v1.0.107
+   Compiling quote v1.0.47
+   Compiling unicode-ident v1.0.26
+   Compiling libc v0.2.190
+   Compiling syn v3.0.6
+   Compiling syn v2.0.119
+   Compiling serde_core v1.0.229
+   Compiling serde_derive v1.0.229
+   Compiling serde v1.0.229
+    Checking cfg-if v1.0.5
+    Checking typenum v1.20.1
+   Compiling libm v0.2.16
+    Checking smallvec v1.16.2
+   Compiling zeroize_derive v1.5.0
+   Compiling autocfg v1.5.1
+    Checking zeroize v1.9.0
+    Checking bitflags v2.13.2
+   Compiling num-traits v0.2.19
+    Checking memchr v2.8.3
+    Checking rand_core v0.10.1
+    Checking log v0.4.34
+   Compiling version_check v0.9.5
+   Compiling getrandom v0.4.3
+   Compiling portable-atomic v1.15.0
+    Checking foldhash v0.2.0
+    Checking arrayvec v0.7.8
+    Checking pin-project-lite v0.2.17
+   Compiling shlex v2.0.1
+    Checking equivalent v1.0.2
+   Compiling jobserver v0.1.35
+    Checking subtle v2.6.1
+   Compiling find-msvc-tools v0.1.14
+   Compiling cc v1.6.0
+   Compiling cfg_aliases v0.2.2
+    Checking itoa v1.0.18
+   Compiling thiserror-impl v2.0.21
+    Checking critical-section v1.2.0
+    Checking once_cell v1.21.4
+    Checking stable_deref_trait v1.2.1
+    Checking objc2-encode v4.1.0
+    Checking futures-core v0.3.34
+   Compiling generic-array v0.14.7
+   Compiling thiserror v2.0.21
+    Checking hashbrown v0.17.1
+    Checking hybrid-array v0.4.15
+   Compiling objc2 v0.6.4
+    Checking crypto-common v0.2.2
+    Checking block-buffer v0.12.1
+   Compiling synstructure v0.14.0
+    Checking block2 v0.6.2
+    Checking crypto-common v0.1.7
+    Checking indexmap v2.14.2
+    Checking dispatch2 v0.3.1
+   Compiling zerofrom-derive v0.1.8
+   Compiling semver v1.0.28
+   Compiling rustc_version v0.4.1
+    Checking objc2-core-foundation v0.3.2
+    Checking zerofrom v0.1.8
+   Compiling yoke-derive v0.8.4
+    Checking bytes v1.12.1
+   Compiling zerocopy v0.8.59
+    Checking yoke v0.8.3
+   Compiling zerocopy-derive v0.8.59
+   Compiling zerovec-derive v0.11.6
+    Checking zerovec v0.11.8
+    Checking getrandom v0.2.17
+   Compiling displaydoc v0.2.7
+    Checking writeable v0.6.4
+    Checking tracing-core v0.1.36
+    Checking tinystr v0.8.4
+    Checking litemap v0.8.3
+    Checking zerotrie v0.2.5
+    Checking icu_locale_core v2.3.0
+    Checking potential_utf v0.1.6
+   Compiling tracing-attributes v0.1.31
+    Checking icu_provider v2.3.1
+    Checking tracing v0.1.44
+    Checking utf8_iter v1.0.4
+    Checking icu_collections v2.3.0
+   Compiling icu_properties_data v2.3.0
+    Checking const-oid v0.10.2
+    Checking cmov v0.5.4
+   Compiling icu_normalizer_data v2.3.0
+    Checking ctutils v0.4.2
+    Checking scopeguard v1.2.0
+   Compiling parking_lot_core v0.9.12
+    Checking icu_properties v2.3.0
+    Checking sha1_smol v1.0.1
+    Checking icu_normalizer v2.3.0
+    Checking lock_api v0.4.14
+   Compiling bytemuck_derive v1.12.1
+    Checking slab v0.4.12
+    Checking futures-io v0.3.34
+    Checking digest v0.11.3
+    Checking percent-encoding v2.3.2
+   Compiling zmij v1.0.23
+    Checking bytemuck v1.25.2
+    Checking parking_lot v0.12.5
+    Checking num-integer v0.1.47
+   Compiling serde_json v1.0.151
+    Checking const-oid v0.9.6
+    Checking idna_adapter v1.2.2
+    Checking socket2 v0.6.5
+    Checking siphasher v1.0.4
+    Checking byteorder v1.5.0
+    Checking futures-sink v0.3.34
+    Checking futures-channel v0.3.34
+    Checking idna v1.1.0
+    Checking form_urlencoded v1.2.2
+    Checking objc2-foundation v0.3.2
+    Checking mio v1.2.4
+   Compiling futures-macro v0.3.34
+   Compiling tokio-macros v2.7.2
+    Checking futures-task v0.3.34
+    Checking futures-util v0.3.34
+    Checking tokio v1.53.2
+    Checking url v2.5.8
+    Checking serde_bytes v0.11.19
+    Checking cpufeatures v0.3.1
+   Compiling crossbeam-utils v0.8.23
+    Checking sha2 v0.11.0
+    Checking inout v0.2.2
+    Checking cpufeatures v0.2.17
+    Checking uuid v1.27.0
+    Checking block-buffer v0.10.4
+   Compiling anyhow v1.0.104
+   Compiling winnow v1.0.4
+    Checking digest v0.10.7
+    Checking cipher v0.5.2
+   Compiling blake3 v1.8.7
+   Compiling toml_parser v1.1.3+spec-1.1.0
+    Checking chacha20 v0.10.2
+   Compiling toml_datetime v1.1.1+spec-1.1.0
+    Checking core-foundation-sys v0.8.7
+    Checking constant_time_eq v0.4.2
+    Checking rand_core v0.6.4
+    Checking base64ct v1.8.3
+    Checking simdutf8 v0.1.5
+    Checking block-padding v0.3.3
+   Compiling phf_shared v0.13.1
+    Checking inout v0.1.4
+    Checking euclid v0.22.14
+   Compiling fastrand v2.5.0
+   Compiling phf_generator v0.13.1
+    Checking cipher v0.4.4
+   Compiling profiling-procmacros v1.0.18
+   Compiling rustversion v1.0.23
+    Checking profiling v1.0.18
+    Checking pem-rfc7468 v1.0.0
+   Compiling heapless v0.7.17
+    Checking der v0.8.2
+    Checking hash32 v0.2.1
+    Checking half v2.7.1
+   Compiling curve25519-dalek v5.0.0
+    Checking universal-hash v0.5.1
+    Checking opaque-debug v0.3.1
+    Checking spki v0.8.1
+    Checking rand v0.10.3
+    Checking cobs v0.3.0
+   Compiling postcard-derive v0.2.2
+    Checking base16ct v1.0.0
+    Checking new_debug_unreachable v1.0.6
+    Checking allocator-api2 v0.2.21
+    Checking postcard v1.1.3
+    Checking hashbrown v0.16.1
+    Checking serdect v0.4.3
+    Checking pkcs8 v0.11.0
+   Compiling phf_macros v0.13.1
+    Checking tokio-util v0.7.19
+    Checking objc2-metal v0.3.2
+    Checking objc2-core-graphics v0.3.2
+    Checking signature v3.0.0
+    Checking raw-window-handle v0.6.2
+    Checking static_assertions v1.1.0
+    Checking simd-adler32 v0.3.10
+    Checking rustc-hash v1.1.0
+    Checking naga-types v30.0.1
+    Checking ed25519 v3.0.0
+    Checking phf v0.13.1
+    Checking polyval v0.6.2
+    Checking aead v0.5.2
+   Compiling naga v30.0.1
+    Checking adler2 v2.0.1
+   Compiling crc32fast v1.5.2
+    Checking objc2-quartz-core v0.3.2
+    Checking unicode-width v0.2.2
+    Checking fnv v1.0.7
+    Checking bit-vec v0.9.1
+    Checking codespan-reporting v0.13.1
+    Checking bit-set v0.10.0
+    Checking ghash v0.5.1
+    Checking ed25519-dalek v3.0.0
+    Checking aes v0.8.4
+    Checking ctr v0.9.2
+   Compiling string_cache_codegen v0.6.1
+   Compiling phf_codegen v0.13.1
+    Checking sha2 v0.10.9
+    Checking linebender_resource_handle v0.1.1
+    Checking der v0.7.10
+   Compiling ring v0.17.14
+   Compiling web_atoms v0.2.6
+    Checking aes-gcm v0.10.3
+    Checking miniz_oxide v0.9.1
+    Checking wgpu-types v30.0.1
+    Checking ppv-lite86 v0.2.21
+   Compiling wgpu-hal v30.0.1
+    Checking precomputed-hash v0.1.1
+    Checking deranged v0.5.8
+    Checking time-core v0.1.9
+    Checking spin v0.10.1
+    Checking num-conv v0.2.2
+    Checking powerfmt v0.2.1
+   Compiling heck v0.5.0
+    Checking time v0.3.55
+    Checking string_cache v0.9.0
+    Checking wgpu-naga-bridge v30.0.1
+    Checking flate2 v1.1.10
+    Checking raw-window-metal v1.1.0
+    Checking miniz_oxide v0.8.9
+    Checking fdeflate v0.3.7
+    Checking http v1.5.0
+    Checking rustls-pki-types v1.15.1
+    Checking libloading v0.8.9
+   Compiling enumn v0.1.14
+   Compiling unicode-segmentation v1.13.3
+    Checking untrusted v0.9.0
+    Checking either v1.18.0
+   Compiling convert_case v0.10.0
+    Checking accesskit v0.24.1
+    Checking tendril v0.5.1
+   Compiling toml_edit v0.25.15+spec-1.1.0
+    Checking hmac v0.12.1
+    Checking font-types v0.12.6
+   Compiling wgpu-core v30.0.1
+    Checking polycool v0.4.0
+   Compiling litrs v1.0.0
+    Checking base64 v0.23.1
+   Compiling unicode-xid v0.2.6
+   Compiling derive_more-impl v2.1.1
+   Compiling document-features v0.2.12
+    Checking kurbo v0.13.1
+    Checking read-fonts v0.41.0
+    Checking markup5ever v0.39.0
+    Checking wgpu-core-deps-apple v30.0.1
+    Checking png v0.18.1
+    Checking ff v0.13.1
+    Checking core-foundation v0.10.1
+    Checking num-bigint v0.4.8
+   Compiling wgpu v30.0.1
+    Checking color v0.3.3
+    Checking fixedbitset v0.5.7
+    Checking svg_fmt v0.4.5
+    Checking base16ct v0.2.0
+   Compiling rustls v0.23.45
+    Checking sec1 v0.7.3
+    Checking guillotiere v0.7.0
+    Checking peniko v0.6.1
+    Checking num-rational v0.4.2
+    Checking skrifa v0.44.0
+    Checking group v0.13.0
+   Compiling vello_shaders v0.11.0 (https://github.com/mark-ik/vello?rev=2eae6243881d5b24c984d5ee35dde509ca5db782#2eae6243)
+    Checking derive_more v2.1.1
+    Checking hkdf v0.12.4
+    Checking rustls-webpki v0.103.15
+   Compiling strum_macros v0.28.0
+    Checking rand_chacha v0.3.1
+    Checking spki v0.7.3
+    Checking signature v2.2.0
+    Checking crypto-bigint v0.5.5
+   Compiling pin-project-internal v1.1.13
+   Compiling crossbeam-epoch v0.9.21
+    Checking parking v2.2.1
+   Compiling httparse v1.10.1
+    Checking ipnet v2.12.2
+    Checking futures-lite v2.6.1
+    Checking pin-project v1.1.13
+    Checking elliptic-curve v0.13.8
+    Checking rand v0.8.8
+    Checking strum v0.28.0
+    Checking vello_encoding v0.11.0 (https://github.com/mark-ik/vello?rev=2eae6243881d5b24c984d5ee35dde509ca5db782#2eae6243)
+    Checking http-body v1.1.0
+   Compiling n0-error-macros v1.0.1
+   Compiling spez v0.1.2
+   Compiling crossbeam-deque v0.8.8
+    Checking atomic-waker v1.1.2
+    Checking n0-error v1.0.1
+    Checking layout-dom-api v0.1.1 (https://github.com/merely-made/genet.git?rev=2c7ef73bfa44c07744e0643e3c6f98be3cbd7947#2c7ef73b)
+    Checking sceno v0.0.4 (https://github.com/merely-made/mere.git?rev=8568f42fdf57f997274c74e63bd4ee045fe1a2b4#8568f42f)
+    Checking futures-intrusive v0.5.0
+   Compiling equator-macro v0.4.2
+    Checking tower-service v0.3.3
+    Checking try-lock v0.2.5
+    Checking base64 v0.22.1
+   Compiling rayon-core v1.13.0
+    Checking want v0.3.2
+    Checking equator v0.4.2
+    Checking netrender-vello v0.11.0 (https://github.com/mark-ik/vello?rev=2eae6243881d5b24c984d5ee35dde509ca5db782#2eae6243)
+    Checking h2 v0.4.20
+    Checking rfc6979 v0.4.0
+    Checking security-framework-sys v2.17.0
+   Compiling curve25519-dalek v4.1.3
+   Compiling n0-future v0.3.2
+   Compiling thiserror v1.0.69
+    Checking foldhash v0.1.5
+    Checking cordyceps v0.3.5
+    Checking spin v0.9.9
+   Compiling object v0.39.1
+    Checking httpdate v1.0.3
+    Checking diatomic-waker v0.2.3
+    Checking futures-buffered v0.2.13
+    Checking lazy_static v1.5.1
+    Checking hashbrown v0.15.5
+    Checking hyper v1.12.0
+    Checking security-framework v3.7.0
+    Checking ecdsa v0.16.9
+    Checking aligned-vec v0.6.4
+    Checking primeorder v0.13.6
+    Checking paint_list_api v0.1.2 (https://github.com/merely-made/netrender.git?rev=c74b7cb28090c28b1c6d80b08dcdea18aff48d3e#c74b7cb2)
+    Checking font-types v0.11.3
+    Checking sync_wrapper v1.0.2
+   Compiling thiserror-impl v1.0.69
+   Compiling icu_locale_fallback_data v2.3.0
+    Checking read-fonts v0.39.2
+    Checking rustls-platform-verifier v0.7.1
+    Checking v_frame v0.3.9
+    Checking rayon v1.12.0
+    Checking hyper-util v0.1.21
+    Checking petgraph v0.8.3
+    Checking poly1305 v0.8.0
+    Checking chacha20 v0.9.1
+    Checking objc2-core-text v0.3.2
+    Checking as-slice v0.2.1
+   Compiling noq-udp v1.3.0
+   Compiling ptr_meta_derive v0.3.2
+   Compiling built v0.8.1
+   Compiling paste v1.0.15
+   Compiling redb v2.6.4
+    Checking tower-layer v0.3.3
+   Compiling av-scenechange v0.14.1
+    Checking data-encoding v2.11.1
+   Compiling icu_segmenter_data v2.3.0
+    Checking ryu v1.0.23
+   Compiling rav1e v0.8.1
+   Compiling ar_archive_writer v0.5.3
+    Checking ptr_meta v0.3.2
+    Checking aligned v0.4.3
+    Checking http-body-util v0.1.5
+    Checking tokio-rustls v0.26.6
+    Checking xml5ever v0.39.0
+    Checking html5ever v0.39.0
+   Compiling encoding_rs v0.8.42
+    Checking app_units v0.7.8
+   Compiling slotmap v1.1.1
+    Checking nom v8.0.0
+    Checking no_std_io2 v0.9.4
+    Checking command-menu v0.1.0 (https://github.com/merely-made/mere.git?rev=8568f42fdf57f997274c74e63bd4ee045fe1a2b4#8568f42f)
+    Checking tinct v0.1.2 (https://github.com/merely-made/mere.git?rev=8568f42fdf57f997274c74e63bd4ee045fe1a2b4#8568f42f)
+   Compiling async-trait v0.1.92
+   Compiling arg_enum_proc_macro v0.3.4
+   Compiling num-bigint-dig v0.8.6
+   Compiling getrandom v0.3.4
+    Checking y4m v0.8.0
+    Checking tinyvec v1.13.3
+   Compiling system-configuration-sys v0.6.0
+   Compiling pkg-config v0.3.34
+    Checking rustc-hash v2.1.3
+    Checking pollster v1.0.1
+   Compiling vcpkg v0.2.15
+   Compiling pastey v0.1.1
+   Compiling libz-sys v1.1.29
+   Compiling data-encoding-macro-internal v0.1.19
+    Checking netrender_device v0.1.2 (https://github.com/merely-made/netrender.git?rev=c74b7cb28090c28b1c6d80b08dcdea18aff48d3e#c74b7cb2)
+    Checking av1-grain v0.2.5
+    Checking bitstream-io v4.10.0
+    Checking genet-paint-types v0.2.0 (https://github.com/merely-made/genet.git?rev=2c7ef73bfa44c07744e0643e3c6f98be3cbd7947#2c7ef73b)
+    Checking genet-static-dom v0.1.1 (https://github.com/merely-made/genet.git?rev=2c7ef73bfa44c07744e0643e3c6f98be3cbd7947#2c7ef73b)
+    Checking icu_locale_fallback v2.3.0
+   Compiling psm v0.1.32
+    Checking rancor v0.1.3
+    Checking tower v0.5.3
+    Checking maybe-rayon v0.1.1
+    Checking p384 v0.13.1
+    Checking p256 v0.13.2
+    Checking pkcs8 v0.10.2
+   Compiling proc-macro-crate v3.5.0
+    Checking itertools v0.14.0
+   Compiling aho-corasick v1.1.5
+    Checking pem-rfc7468 v0.7.0
+   Compiling serde_spanned v1.1.1
+    Checking futures-executor v0.3.34
+    Checking num-iter v0.1.46
+    Checking hex v0.4.3
+    Checking memmap2 v0.9.11
+   Compiling bytecheck_derive v0.8.3
+   Compiling num-derive v0.4.2
+   Compiling simd_helpers v0.1.0
+   Compiling multiversion_no_op v1.0.0
+    Checking alloc-no-stdlib v2.0.4
+   Compiling noop_proc_macro v0.3.0
+   Compiling objc-sys v0.3.5
+    Checking imgref v1.12.3
+    Checking parlance v0.1.0
+   Compiling toml_writer v1.1.2+spec-1.1.0
+   Compiling rustix v1.1.5
+   Compiling wuff-capi v0.2.0
+    Checking quick-error v2.0.1
+   Compiling regex-syntax v0.8.11
+    Checking dtoa v1.0.11
+    Checking dtoa-short v0.3.5
+   Compiling toml v1.1.6+spec-1.1.0
+   Compiling regex-automata v0.4.18
+    Checking genet-fontique v0.10.0 (https://github.com/merely-made/genet.git?rev=2c7ef73bfa44c07744e0643e3c6f98be3cbd7947#2c7ef73b)
+    Checking loop9 v0.1.5
+    Checking brotli-decompressor v5.0.3
+    Checking bytecheck v0.8.3
+    Checking futures v0.3.34
+    Checking ssh-encoding v0.2.0
+    Checking muniment v0.1.2 (https://github.com/merely-made/mere.git?rev=8568f42fdf57f997274c74e63bd4ee045fe1a2b4#8568f42f)
+    Checking pkcs1 v0.7.5
+    Checking tower-http v0.6.11
+    Checking icu_segmenter v2.3.0
+    Checking engine-observables-api v0.2.0 (https://github.com/merely-made/genet.git?rev=2c7ef73bfa44c07744e0643e3c6f98be3cbd7947#2c7ef73b)
+    Checking netrender v0.1.2 (https://github.com/merely-made/netrender.git?rev=c74b7cb28090c28b1c6d80b08dcdea18aff48d3e#c74b7cb2)
+    Checking data-encoding-macro v0.1.21
+    Checking hyper-rustls v0.27.10
+    Checking harfrust v0.8.4
+    Checking skrifa v0.42.1
+    Checking ed25519 v2.2.3
+    Checking tokio-stream v0.1.19
+    Checking regress v0.11.1 (https://github.com/merely-made/genet.git?rev=2c7ef73bfa44c07744e0643e3c6f98be3cbd7947#2c7ef73b)
+    Checking blowfish v0.9.1
+    Checking cbc v0.1.2
+    Checking pbkdf2 v0.12.2
+    Checking fastbloom v0.17.0
+    Checking parley_data v0.10.0
+    Checking objc2-security v0.3.2
+   Compiling stacker v0.1.25
+   Compiling noq v1.3.0
+    Checking avif-serialize v0.8.9
+    Checking rand_pcg v0.10.2
+    Checking quick-xml v0.42.0
+    Checking errno v0.3.14
+   Compiling enum-assoc v1.4.1
+   Compiling cssparser-macros v0.7.1
+   Compiling munge_macro v0.4.7
+   Compiling netdev v0.46.3
+    Checking rawpointer v0.2.1
+   Compiling n0-dns-resolver v0.1.0
+   Compiling glob v0.3.4
+    Checking sorted-index-buffer v0.2.1
+    Checking zune-core v0.5.3
+    Checking color_quant v1.1.0
+    Checking weezl v0.1.12
+    Checking byteorder-lite v0.1.0
+    Checking pxfm v0.1.30
+    Checking identity-hash v0.1.0
+    Checking rgb v0.8.53
+    Checking lru-slab v0.1.3
+    Checking noq-proto v1.3.0
+    Checking moxcms v0.8.1
+    Checking ravif v0.13.0
+   Compiling logos-codegen v0.16.1
+    Checking gif v0.14.2
+    Checking image-webp v0.2.4
+    Checking zune-jpeg v0.5.15
+   Compiling fontsan v0.7.0
+    Checking munge v0.4.7
+    Checking cssparser v0.37.0
+    Checking plist v1.10.1
+    Checking genet-scripted-dom v0.1.2 (https://github.com/merely-made/genet.git?rev=2c7ef73bfa44c07744e0643e3c6f98be3cbd7947#2c7ef73b)
+    Checking objc2-system-configuration v0.3.2
+    Checking genet-parley v0.10.0 (https://github.com/merely-made/genet.git?rev=2c7ef73bfa44c07744e0643e3c6f98be3cbd7947#2c7ef73b)
+    Checking bcrypt-pbkdf v0.10.0
+    Checking ssh-cipher v0.2.0
+    Checking ed25519-dalek v2.2.0
+   Compiling livery v0.0.5 (https://github.com/merely-made/genet.git?rev=2c7ef73bfa44c07744e0643e3c6f98be3cbd7947#2c7ef73b)
+    Checking reqwest v0.13.5
+    Checking iroh-base v1.3.0
+    Checking system-configuration v0.8.0
+    Checking rsa v0.9.10
+    Checking rend v0.5.4
+    Checking wuff v0.2.9
+   Compiling num_enum_derive v0.7.6
+    Checking p521 v0.13.3
+    Checking webpki-roots v1.0.9
+   Compiling iroh-metrics-derive v1.0.1
+    Checking universal-hash v0.6.1
+    Checking lru v0.18.5
+   Compiling iroh-dns v1.3.0
+   Compiling netwatch v0.19.3
+    Checking num-complex v0.4.6
+    Checking simple-dns v0.12.0
+   Compiling rkyv_derive v0.8.18
+    Checking xml-rs v0.8.29
+    Checking web-time v1.1.0
+    Checking mac-addr v0.3.0
+    Checking genet-host-api v0.2.0 (https://github.com/merely-made/genet.git?rev=2c7ef73bfa44c07744e0643e3c6f98be3cbd7947#2c7ef73b)
+    Checking xmltree v0.10.3
+    Checking rkyv v0.8.18
+    Checking poly1305 v0.9.1
+    Checking iroh-metrics v1.0.2
+    Checking ssh-key v0.6.7
+    Checking num_enum v0.7.6
+    Checking objc2 v0.5.2
+    Checking cadency v0.0.1 (https://github.com/merely-made/genet.git?rev=2c7ef73bfa44c07744e0643e3c6f98be3cbd7947#2c7ef73b)
+    Checking image v0.25.10
+   Compiling logos-derive v0.16.1
+    Checking n0-watcher v1.0.0
+    Checking attohttpc v0.30.1
+    Checking arc-swap v1.9.2
+    Checking aead v0.6.1
+   Compiling iroh-relay v1.3.0
+    Checking genet-taffy v0.14.0 (https://github.com/merely-made/genet.git?rev=2c7ef73bfa44c07744e0643e3c6f98be3cbd7947#2c7ef73b)
+    Checking document-session-api v0.1.0 (https://github.com/merely-made/genet.git?rev=2c7ef73bfa44c07744e0643e3c6f98be3cbd7947#2c7ef73b)
+   Compiling hax-lib v0.3.7
+   Compiling syn v1.0.109
+    Checking workbench v0.1.0 (https://github.com/merely-made/mere.git?rev=8568f42fdf57f997274c74e63bd4ee045fe1a2b4#8568f42f)
+    Checking buckram v0.0.3 (https://github.com/merely-made/genet.git?rev=2c7ef73bfa44c07744e0643e3c6f98be3cbd7947#2c7ef73b)
+    Checking chacha20poly1305 v0.11.0
+    Checking igd-next v0.17.1
+    Checking logos v0.16.1
+    Checking block2 v0.5.1
+    Checking chartulary v0.2.2 (https://github.com/merely-made/mere.git?rev=8568f42fdf57f997274c74e63bd4ee045fe1a2b4#8568f42f)
+    Checking genet-document-resources v0.2.1 (https://github.com/merely-made/genet.git?rev=2c7ef73bfa44c07744e0643e3c6f98be3cbd7947#2c7ef73b)
+    Checking gethostname v1.1.0
+    Checking paint_list_render v0.1.2 (https://github.com/merely-made/netrender.git?rev=c74b7cb28090c28b1c6d80b08dcdea18aff48d3e#c74b7cb2)
+    Checking tokio-websockets v0.13.3
+    Checking insigne v0.0.2 (https://github.com/merely-made/dramatis.git?rev=0234e7eea6f2ddf2330a71b9425da01b06ae0391#0234e7ee)
+   Compiling iroh v1.3.0
+    Checking mere-curation v0.1.0 (https://github.com/merely-made/mere.git?rev=8568f42fdf57f997274c74e63bd4ee045fe1a2b4#8568f42f)
+   Compiling hax-lib-macros v0.3.7
+    Checking jotdown v0.10.0
+    Checking seize v0.5.1
+   Compiling portable-atomic-util v0.2.8
+    Checking dispatch v0.2.0
+    Checking anymore v1.0.0
+   Compiling ident_case v1.0.1
+    Checking bitflags v1.3.2
+    Checking data-url v0.3.2
+   Compiling strsim v0.11.1
+   Compiling unicase v2.10.0
+    Checking edit-history v0.1.0 (https://github.com/merely-made/mere.git?rev=8568f42fdf57f997274c74e63bd4ee045fe1a2b4#8568f42f)
+   Compiling mime_guess v2.0.5
+   Compiling darling_core v0.24.1
+    Checking meristem v0.2.0 (https://github.com/merely-made/mere.git?rev=8568f42fdf57f997274c74e63bd4ee045fe1a2b4#8568f42f)
+    Checking objc2-foundation v0.2.2
+    Checking papaya v0.2.5
+    Checking illume v0.0.2 (https://github.com/merely-made/mere.git?rev=8568f42fdf57f997274c74e63bd4ee045fe1a2b4#8568f42f)
+    Checking personae v0.3.0 (https://github.com/merely-made/dramatis.git?rev=0234e7eea6f2ddf2330a71b9425da01b06ae0391#0234e7ee)
+    Checking portmapper v0.19.3
+    Checking mere-surface-api v0.1.0 (https://github.com/merely-made/mere.git?rev=8568f42fdf57f997274c74e63bd4ee045fe1a2b4#8568f42f)
+    Checking genet-text v0.1.0 (https://github.com/merely-made/genet.git?rev=2c7ef73bfa44c07744e0643e3c6f98be3cbd7947#2c7ef73b)
+    Checking sprigging v0.2.1 (https://github.com/merely-made/mere.git?rev=8568f42fdf57f997274c74e63bd4ee045fe1a2b4#8568f42f)
+    Checking backon v1.6.0
+    Checking core-foundation v0.9.4
+    Checking approx v0.5.1
+   Compiling proc-macro-error-attr v0.4.12
+   Compiling matrixmultiply v0.3.11
+    Checking cbor-core v0.10.1
+   Compiling foreign-types-macros v0.2.4
+    Checking foreign-types-shared v0.3.1
+    Checking audio-codec-algorithms v0.8.1
+    Checking grid v1.0.1
+   Compiling prettyplease v0.3.0
+    Checking taffy v0.11.0-experimental-cache-fix.3
+    Checking audioadapter-sample v5.2.0
+    Checking foreign-types v0.5.0
+    Checking p2panda-core v0.7.1 (https://github.com/mark-ik/p2panda.git?tag=mere-p2panda-net-0.7.5-upstream-20261011#d8acabc9)
+    Checking core-graphics-types v0.1.3
+    Checking genet-livery v0.0.4 (https://github.com/merely-made/genet.git?rev=2c7ef73bfa44c07744e0643e3c6f98be3cbd7947#2c7ef73b)
+    Checking cambium v0.3.3 (https://github.com/merely-made/mere.git?rev=8568f42fdf57f997274c74e63bd4ee045fe1a2b4#8568f42f)
+   Compiling syn-mid v0.5.4
+    Checking objc2-app-kit v0.2.2
+   Compiling darling_macro v0.24.1
+    Checking numen v0.2.0 (https://github.com/merely-made/mere.git?rev=8568f42fdf57f997274c74e63bd4ee045fe1a2b4#8568f42f)
+    Checking pem v4.0.0
+    Checking yasna v0.6.0
+    Checking cfb v0.7.3
+    Checking wide v1.7.1
+   Compiling acto v0.8.2
+   Compiling winit v0.30.13
+   Compiling proc-macro-error v0.4.12
+   Compiling async-stream-impl v0.3.6
+   Compiling proc-macro-hack v0.5.20+deprecated
+   Compiling toml_datetime v0.7.5+spec-1.1.0
+    Checking audioadapter v5.0.0
+    Checking mime v0.3.17
+   Compiling winnow v0.7.15
+   Compiling libcrux-intrinsics v0.0.8
+   Compiling toml_edit v0.23.10+spec-1.0.0
+    Checking simba v0.10.2
+    Checking audioadapter-buffers v5.2.0
+    Checking async-stream v0.3.6
+    Checking infer v0.19.0
+    Checking rcgen v0.14.10
+   Compiling darling v0.24.1
+    Checking ringbuf v0.5.3
+    Checking core-graphics v0.23.2
+    Checking mere-forme v0.1.0 (https://github.com/merely-made/mere.git?rev=8568f42fdf57f997274c74e63bd4ee045fe1a2b4#8568f42f)
+    Checking glam v0.33.12
+    Checking libcrux-secrets v0.0.6
+    Checking scenotime v0.0.4 (https://github.com/merely-made/mere.git?rev=8568f42fdf57f997274c74e63bd4ee045fe1a2b4#8568f42f)
+   Compiling bevy_macro_utils v0.19.1
+    Checking crossbeam-channel v0.5.17
+    Checking objc2-core-audio-types v0.3.2
+   Compiling nalgebra-macros v0.3.0
+   Compiling irpc-derive v0.17.0
+    Checking dpi v0.1.2
+   Compiling ref-cast v1.0.27
+    Checking smol_str v0.1.24
+    Checking cursor-icon v1.2.0
+    Checking smol_str v0.2.2
+   Compiling libcrux-sha3 v0.0.10
+    Checking irpc v0.17.0
+    Checking nalgebra v0.35.0
+    Checking objc2-core-audio v0.3.2
+    Checking mere-kernel v0.0.2 (https://github.com/merely-made/mere.git?rev=8568f42fdf57f997274c74e63bd4ee045fe1a2b4#8568f42f)
+   Compiling firewheel-macros v0.14.0 (https://github.com/mark-ik/firewheel.git?rev=2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc#2b03846d)
+    Checking libcrux-traits v0.0.8
+   Compiling bon-macros v3.10.2
+    Checking p2panda-store v0.7.1 (https://github.com/mark-ik/p2panda.git?tag=mere-p2panda-net-0.7.5-upstream-20261011#d8acabc9)
+    Checking hickory-proto v0.26.3
+    Checking tabard v0.0.1 (https://github.com/merely-made/mere.git?rev=8568f42fdf57f997274c74e63bd4ee045fe1a2b4#8568f42f)
+    Checking bevy_platform v0.19.1
+    Checking rand_chacha v0.10.0
+    Checking hpke-rs-crypto v0.7.0
+    Checking hmac v0.13.0
+   Compiling num-complex v0.2.4
+    Checking libcrux-platform v0.0.3
+   Compiling ref-cast-impl v1.0.27
+    Checking robust v1.2.0
+    Checking thunderdome v0.6.1
+    Checking hashbrown v0.14.5
+    Checking dashmap v6.2.1
+    Checking firewheel-core v0.14.0 (https://github.com/mark-ik/firewheel.git?rev=2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc#2b03846d)
+    Checking spade v2.15.1
+    Checking hkdf v0.13.0
+    Checking swarm-discovery v0.6.4
+    Checking bon v3.10.2
+   Compiling genawaiter-proc-macro v0.99.1
+    Checking glamx v0.3.1
+    Checking objc2-audio-toolbox v0.3.2
+    Checking chirograph v0.0.2 (https://github.com/merely-made/mere.git?rev=8568f42fdf57f997274c74e63bd4ee045fe1a2b4#8568f42f)
+    Checking scenograph v0.0.4 (https://github.com/merely-made/mere.git?rev=8568f42fdf57f997274c74e63bd4ee045fe1a2b4#8568f42f)
+    Checking genet-render-host v0.2.0 (https://github.com/merely-made/genet.git?rev=2c7ef73bfa44c07744e0643e3c6f98be3cbd7947#2c7ef73b)
+    Checking rand_core v0.9.5
+    Checking chacha20poly1305 v0.10.1
+    Checking x25519-dalek v2.0.1
+    Checking futures-concurrency v7.7.1
+    Checking k256 v0.13.4
+    Checking ordered-float v5.5.0
+    Checking ena v0.14.4
+    Checking inplace-vec-builder v0.1.1
+   Compiling num-derive v0.5.1
+   Compiling coremidi-sys v3.2.1
+    Checking binary-merge v0.1.2
+    Checking downcast-rs v2.0.2
+    Checking option-ext v0.2.0
+    Checking genawaiter-macro v0.99.1
+    Checking strength_reduce v0.2.4
+   Compiling cpal v0.18.2
+   Compiling redb v4.3.0
+   Compiling ndarray v0.13.1
+    Checking unicode-bidi v0.3.18
+    Checking fleece v0.5.0 (https://github.com/merely-made/genet.git?rev=2c7ef73bfa44c07744e0643e3c6f98be3cbd7947#2c7ef73b)
+    Checking iroh-gossip v0.101.0
+    Checking transpose v0.2.3
+    Checking genawaiter v0.99.1
+    Checking dirs-sys v0.4.1
+    Checking parry2d v0.31.1
+    Checking range-collections v0.4.6
+    Checking hpke-rs-rust-crypto v0.7.0
+    Checking rand_chacha v0.9.0
+    Checking scenomise v0.0.4 (https://github.com/merely-made/mere.git?rev=8568f42fdf57f997274c74e63bd4ee045fe1a2b4#8568f42f)
+    Checking coreaudio-rs v0.14.2
+    Checking iroh-mdns-address-lookup v0.6.0
+    Checking ractor v0.16.5
+    Checking hpke-rs v0.7.0
+    Checking matchers v0.2.0
+    Checking p2panda-discovery v0.7.1 (https://github.com/mark-ik/p2panda.git?tag=mere-p2panda-net-0.7.5-upstream-20261011#d8acabc9)
+    Checking p2panda-sync v0.7.1 (https://github.com/mark-ik/p2panda.git?tag=mere-p2panda-net-0.7.5-upstream-20261011#d8acabc9)
+    Checking cambium-winit v0.3.0 (https://github.com/merely-made/mere.git?rev=8568f42fdf57f997274c74e63bd4ee045fe1a2b4#8568f42f)
+    Checking genet-render v0.2.0 (https://github.com/merely-made/genet.git?rev=2c7ef73bfa44c07744e0643e3c6f98be3cbd7947#2c7ef73b)
+    Checking inker v0.1.1 (https://github.com/merely-made/mere.git?rev=8568f42fdf57f997274c74e63bd4ee045fe1a2b4#8568f42f)
+    Checking matrixmultiply v0.2.4
+    Checking sharded-slab v0.1.7
+    Checking iroh-io v0.6.2
+    Checking accesskit_consumer v0.38.0
+    Checking x25519-dalek v3.0.0
+    Checking iana-time-zone v0.1.65
+    Checking triple_buffer v9.0.0
+    Checking primal-check v0.3.4
+    Checking tracing-log v0.2.0
+   Compiling iroh-blobs v0.103.1
+    Checking approx v0.3.2
+    Checking csv-core v0.1.13
+    Checking thread_local v1.1.10
+    Checking positioned-io v0.3.5
+    Checking mach2 v0.6.0
+    Checking ciborium-io v0.2.2
+    Checking dasp_sample v0.11.0
+    Checking nu-ansi-term v0.50.3
+    Checking self_cell v1.3.0
+    Checking bao-tree v0.16.1
+    Checking tracing-subscriber v0.3.23
+    Checking ciborium-ll v0.2.2
+    Checking csv v1.4.0
+    Checking rustfft v6.4.1
+    Checking firewheel-graph v0.14.0 (https://github.com/mark-ik/firewheel.git?rev=2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc#2b03846d)
+    Checking chrono v0.4.45
+    Checking document-canvas v0.1.0 (https://github.com/merely-made/mere.git?rev=8568f42fdf57f997274c74e63bd4ee045fe1a2b4#8568f42f)
+    Checking p2panda-encryption v0.7.1 (https://github.com/mark-ik/p2panda.git?tag=mere-p2panda-net-0.7.5-upstream-20261011#d8acabc9)
+    Checking accesskit_macos v0.26.3
+    Checking cambium-rootstock v0.1.0 (https://github.com/merely-made/mere.git?rev=8568f42fdf57f997274c74e63bd4ee045fe1a2b4#8568f42f)
+    Checking mere-p2panda-net v0.7.5 (https://github.com/mark-ik/p2panda.git?tag=mere-p2panda-net-0.7.5-upstream-20261011#d8acabc9)
+    Checking rapier2d v0.36.0
+    Checking mere-fleece v0.0.1 (https://github.com/merely-made/mere.git?rev=8568f42fdf57f997274c74e63bd4ee045fe1a2b4#8568f42f)
+    Checking fixed-resample v0.13.0
+    Checking iroh-util v0.6.0
+    Checking notochord v0.1.1 (https://github.com/merely-made/dramatis.git?rev=0234e7eea6f2ddf2330a71b9425da01b06ae0391#0234e7ee)
+    Checking dramatis v0.0.3 (https://github.com/merely-made/dramatis.git?rev=0234e7eea6f2ddf2330a71b9425da01b06ae0391#0234e7ee)
+    Checking iroh-tickets v1.0.0
+   Compiling nested_enum_utils v0.2.3
+    Checking mere-proofs v0.1.0 (https://github.com/merely-made/mere.git?rev=8568f42fdf57f997274c74e63bd4ee045fe1a2b4#8568f42f)
+    Checking objc2-core-image v0.3.2
+    Checking objc2-core-data v0.3.2
+    Checking objc2-cloud-kit v0.3.2
+    Checking armillary v0.1.1 (https://github.com/merely-made/mere.git?rev=8568f42fdf57f997274c74e63bd4ee045fe1a2b4#8568f42f)
+    Checking objc2-core-video v0.3.2
+    Checking serde_path_to_error v0.1.20
+    Checking woodshedding v0.1.0 (<woodshed-font-worktree>/crates/woodshedding)
+    Checking reflink-copy v0.1.30
+    Checking raunch v1.0.1
+   Compiling midir v0.11.0
+    Checking luggage v0.1.0 (https://github.com/merely-made/mere.git?rev=8568f42fdf57f997274c74e63bd4ee045fe1a2b4#8568f42f)
+    Checking woodshed-graph v0.1.0 (<woodshed-font-worktree>/crates/woodshed-graph)
+    Checking service-binding v3.0.1
+    Checking seiche v0.0.6 (https://github.com/merely-made/mere.git?rev=8568f42fdf57f997274c74e63bd4ee045fe1a2b4#8568f42f)
+    Checking objc2-app-kit v0.3.2
+    Checking stickleback v0.1.1 (https://github.com/merely-made/mere.git?rev=8568f42fdf57f997274c74e63bd4ee045fe1a2b4#8568f42f)
+    Checking firewheel-cpal v0.14.0 (https://github.com/mark-ik/firewheel.git?rev=2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc#2b03846d)
+    Checking mere-document-lanes v0.1.0 (https://github.com/merely-made/mere.git?rev=8568f42fdf57f997274c74e63bd4ee045fe1a2b4#8568f42f)
+    Checking coremidi v0.9.2
+    Checking genet-winit-host v0.2.0 (https://github.com/merely-made/genet.git?rev=2c7ef73bfa44c07744e0643e3c6f98be3cbd7947#2c7ef73b)
+    Checking fitting v0.3.0
+    Checking peak_finder v1.0.1
+    Checking ciborium v0.2.2
+    Checking mere-cartography v0.0.2 (https://github.com/merely-made/mere.git?rev=8568f42fdf57f997274c74e63bd4ee045fe1a2b4#8568f42f)
+    Checking dirs v5.0.1
+    Checking firewheel-nodes v0.14.0 (https://github.com/mark-ik/firewheel.git?rev=2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc#2b03846d)
+    Checking mere-alembic v0.0.1 (https://github.com/merely-made/mere.git?rev=8568f42fdf57f997274c74e63bd4ee045fe1a2b4#8568f42f)
+    Checking taproot v0.1.0 (https://github.com/merely-made/genet.git?rev=2c7ef73bfa44c07744e0643e3c6f98be3cbd7947#2c7ef73b)
+    Checking eidetic v0.0.2 (https://github.com/merely-made/mere.git?rev=8568f42fdf57f997274c74e63bd4ee045fe1a2b4#8568f42f)
+    Checking itertools v0.10.5
+    Checking incipit v0.2.0 (https://github.com/merely-made/mere.git?rev=8568f42fdf57f997274c74e63bd4ee045fe1a2b4#8568f42f)
+    Checking secrecy v0.10.3
+    Checking esp v0.1.0 (https://github.com/merely-made/mere.git?rev=8568f42fdf57f997274c74e63bd4ee045fe1a2b4#8568f42f)
+   Compiling rfd v0.17.2
+    Checking pollster v0.4.0
+    Checking emblem v0.2.0
+    Checking apodize v1.0.0
+    Checking pitch-detector v0.3.1
+    Checking pictograph v0.2.0 (https://github.com/merely-made/mere.git?rev=8568f42fdf57f997274c74e63bd4ee045fe1a2b4#8568f42f)
+    Checking woodshed-core v0.1.0 (<woodshed-font-worktree>/crates/woodshed-core)
+    Checking ssh-agent-lib v0.6.0
+    Checking pandect v0.1.1 (https://github.com/merely-made/mere.git?rev=8568f42fdf57f997274c74e63bd4ee045fe1a2b4#8568f42f)
+    Checking firewheel v0.14.0 (https://github.com/mark-ik/firewheel.git?rev=2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc#2b03846d)
+    Checking cambium-winit-a11y v0.3.0 (https://github.com/merely-made/mere.git?rev=8568f42fdf57f997274c74e63bd4ee045fe1a2b4#8568f42f)
+    Checking tabard-workshop v0.0.1 (https://github.com/merely-made/mere.git?rev=8568f42fdf57f997274c74e63bd4ee045fe1a2b4#8568f42f)
+    Checking mere-transport v0.0.2 (https://github.com/merely-made/mere.git?rev=8568f42fdf57f997274c74e63bd4ee045fe1a2b4#8568f42f)
+    Checking mere-webrtc-carrier v0.0.1 (https://github.com/merely-made/mere.git?rev=8568f42fdf57f997274c74e63bd4ee045fe1a2b4#8568f42f)
+    Checking mere-persona-picker v0.0.1 (https://github.com/merely-made/mere.git?rev=8568f42fdf57f997274c74e63bd4ee045fe1a2b4#8568f42f)
+    Checking pitch-detection v0.3.0
+    Checking graphshell-client v0.0.2 (https://github.com/merely-made/mere.git?rev=8568f42fdf57f997274c74e63bd4ee045fe1a2b4#8568f42f)
+    Checking graphshell-endpoint v0.0.2 (https://github.com/merely-made/mere.git?rev=8568f42fdf57f997274c74e63bd4ee045fe1a2b4#8568f42f)
+    Checking png v0.17.16
+    Checking chatelaine v0.0.3 (https://github.com/merely-made/dramatis.git?rev=0234e7eea6f2ddf2330a71b9425da01b06ae0391#0234e7ee)
+    Checking mere-apparatus v0.0.1 (https://github.com/merely-made/mere.git?rev=8568f42fdf57f997274c74e63bd4ee045fe1a2b4#8568f42f)
+    Checking audio-primitives v0.1.0 (<woodshed-font-worktree>/crates/audio-primitives)
+    Checking light-file-dialog v3.21.3
+    Checking rtrb v0.3.5
+    Checking hound v3.5.1
+    Checking cambium-genet-winit-host v0.1.0 (https://github.com/merely-made/mere.git?rev=8568f42fdf57f997274c74e63bd4ee045fe1a2b4#8568f42f)
+    Checking woodshed-audio v0.1.0 (<woodshed-font-worktree>/crates/woodshed-audio)
+    Checking graphshell v0.0.2 (https://github.com/merely-made/mere.git?rev=8568f42fdf57f997274c74e63bd4ee045fe1a2b4#8568f42f)
+    Checking mesquite v0.1.0 (https://github.com/merely-made/mere.git?rev=8568f42fdf57f997274c74e63bd4ee045fe1a2b4#8568f42f)
+    Checking woodshed-views v0.1.0 (<woodshed-font-worktree>/crates/woodshed-views)
+    Checking directories v5.0.1
+    Checking tempfile v3.27.0
+    Checking woodshed-genet v0.1.0 (<woodshed-font-worktree>/crates/woodshed-genet)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 2m 52s

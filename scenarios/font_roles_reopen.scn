@@ -1,0 +1,31 @@
+# Fresh process, same sealed font profile and unchanged raw capture companion.
+settle 5
+ui-zoom 1.0
+assert snap appearance-device-free == true
+assert snap set-cards == 2
+assert snap loop-capture-references == 1
+assert snap font-request-roles == 3
+assert snap font-label-mono == true
+assert snap font-reading-serif == true
+assert snap font-heading-serif == true
+assert snap appearance-theme == theme:woodshed-font-acceptance
+assert snap appearance-mode == hc_light
+assert snap capture-input-rate == none
+click .pill Settings
+click .side-item Appearance
+settle 3
+capture 01_font_requests_reopened
+click .pill Stage
+settle 3
+capture 02_font_fretboard_reopened
+click .workspace-panel Set
+settle 3
+capture 03_font_set_reopened
+click .workspace-panel Practice
+click .pill Looper
+settle 3
+assert snap set-cards == 2
+assert snap loop-capture-references == 1
+assert snap font-label-mono == true
+capture 04_font_looper_reopened
+log Woodshed font requests and retained domain reopen complete

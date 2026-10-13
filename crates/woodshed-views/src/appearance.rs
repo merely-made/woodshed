@@ -16,6 +16,7 @@ use woodshed_core::settings::AppearanceSettings;
 
 use crate::theme::{ThemeMode, stage_css, stage_css_from_roles};
 
+pub mod fonts;
 mod view;
 pub use view::{appearance_page, appearance_stylesheet, workshop_screen};
 
@@ -37,6 +38,9 @@ pub struct AppearanceResolution {
     pub mode: Mode,
     pub palette: Palette,
     pub stylesheet: String,
+    /// Applied theme snapshot without application-owned family variables.
+    /// A font-only Apply must not activate a same-ID library edit.
+    base_stylesheet: String,
     /// Missing definitions or modes remain visible without damaging the saved
     /// request, so reinstalling the library can recover the user's selection.
     pub fallback_reason: Option<String>,
@@ -45,6 +49,8 @@ pub struct AppearanceResolution {
 pub struct AppearanceState {
     pub workshop: WorkshopState,
     pub workshop_open: bool,
+    pub font_editor: tabard_workshop::fonts::FontRoleEditor,
+    pub available_fonts: Vec<String>,
     active: RefCell<Option<(AppearanceSettings, AppearanceResolution)>>,
     pending: Option<AppearanceSelection>,
 }
@@ -65,6 +71,8 @@ impl AppearanceState {
         Self {
             workshop: WorkshopState::in_memory(),
             workshop_open: false,
+            font_editor: tabard_workshop::fonts::FontRoleEditor::new(Default::default()),
+            available_fonts: Vec::new(),
             active: RefCell::new(None),
             pending: None,
         }
@@ -88,6 +96,8 @@ impl AppearanceState {
         Ok(Self {
             workshop,
             workshop_open: false,
+            font_editor: tabard_workshop::fonts::FontRoleEditor::new(Default::default()),
+            available_fonts: Vec::new(),
             active: RefCell::new(None),
             pending: None,
         })
@@ -156,6 +166,19 @@ impl AppearanceState {
         self.pending = None;
     }
 
+    pub fn reset_font_editor(&mut self, settings: &AppearanceSettings) {
+        self.font_editor = tabard_workshop::fonts::FontRoleEditor::new(self.choice(settings).fonts);
+        self.font_editor
+            .set_available_families(self.available_fonts.clone());
+    }
+
+    pub fn set_available_fonts(&mut self, families: Vec<String>) {
+        self.font_editor.set_available_families(families.clone());
+        self.workshop.set_installed_font_families(families.clone());
+        self.available_fonts = families;
+        self.reset_active();
+    }
+
     fn resolve_current(&self, settings: &AppearanceSettings) -> AppearanceResolution {
         let choice = self.choice(settings);
         let mut reason = None;
@@ -181,10 +204,16 @@ impl AppearanceState {
         }
         match render(&theme, &mode) {
             Ok((palette, stylesheet, presentation_notice)) => AppearanceResolution {
-                theme,
+                theme: theme.clone(),
                 mode,
                 palette,
-                stylesheet,
+                stylesheet: fonts::with_requests(
+                    &stylesheet,
+                    &theme,
+                    &choice.fonts,
+                    &self.available_fonts,
+                ),
+                base_stylesheet: stylesheet,
                 fallback_reason: match (reason, presentation_notice) {
                     (Some(reason), Some(notice)) => Some(format!("{reason} {notice}")),
                     (reason, notice) => reason.or_else(|| notice.map(str::to_owned)),
@@ -199,7 +228,8 @@ impl AppearanceState {
                     theme,
                     mode,
                     palette,
-                    stylesheet,
+                    stylesheet: stylesheet.clone(),
+                    base_stylesheet: stylesheet,
                     fallback_reason: Some(format!(
                         "Could not render selected appearance: {error}; using Slate."
                     )),
@@ -224,7 +254,10 @@ impl AppearanceState {
         if let Some(builtin) = ThemeMode::from_theme_id(&theme.id) {
             settings.theme = builtin.label().into();
         }
-        settings.theme_choice = Some(ThemeChoice::new(theme.id, mode));
+        let fonts = self.choice(settings).fonts;
+        let mut choice = ThemeChoice::new(theme.id, mode);
+        choice.fonts = fonts;
+        settings.theme_choice = Some(choice);
         Ok(())
     }
 
@@ -317,6 +350,23 @@ pub fn commit_selection(
     ui: &mut crate::stage::UiState,
     persist: impl FnOnce(&woodshed_core::settings::AppSettings) -> Result<(), String>,
 ) -> bool {
+    if let Some(fonts) = ui.appearance.font_editor.take_requested() {
+        let mut presentation = ui.appearance.resolve(&ui.app_settings.appearance);
+        let mut candidate = ui.app_settings.appearance.clone();
+        let mut choice = ui.appearance.choice(&candidate);
+        choice.fonts = fonts;
+        presentation.stylesheet = fonts::with_requests(
+            &presentation.base_stylesheet,
+            &presentation.theme,
+            &choice.fonts,
+            &ui.appearance.available_fonts,
+        );
+        candidate.theme_choice = Some(choice);
+        ui.appearance.pending = Some(AppearanceSelection {
+            presentation,
+            settings: candidate,
+        });
+    }
     let Some(candidate) = ui.appearance.pending.take() else {
         return false;
     };
@@ -325,6 +375,8 @@ pub fn commit_selection(
     match persist(&settings) {
         Ok(()) => {
             ui.app_settings = settings;
+            let fonts = ui.appearance.choice(&ui.app_settings.appearance).fonts;
+            ui.appearance.font_editor.applied(fonts);
             *ui.appearance.active.get_mut() = Some((candidate.settings, candidate.presentation));
             ui.appearance_notice = Some("Selected appearance applied to Woodshed.".into());
         },
@@ -346,9 +398,16 @@ fn render(theme: &Theme, mode: &Mode) -> Result<(Palette, String, Option<&'stati
         .presentation_for_mode(mode)
         .map_err(|error| error.to_string())?
     {
-        ThemePresentation::Derived(resolved) => {
-            Ok((resolved.palette, stage_css(&resolved.palette), None))
-        },
+        ThemePresentation::Derived(resolved) => Ok((
+            resolved.palette,
+            format!(
+                "{}\n{}\n{}",
+                stage_css(&resolved.palette),
+                view::APPEARANCE_CSS,
+                fonts::role_stylesheet(theme)
+            ),
+            None,
+        )),
         ThemePresentation::AuthoredStylesheet(rules) => {
             // Existing typed paint leaves need explicit defaults. These seeds
             // supply fallback colors only; they are not the authored CSS's
@@ -365,7 +424,13 @@ fn render(theme: &Theme, mode: &Mode) -> Result<(Palette, String, Option<&'stati
                 .palette_for_mode(&profile)
                 .map_err(|error| error.to_string())?
                 .palette;
-            let stylesheet = format!("{}\n{}", stage_css_from_roles(&palette), rules.join("\n"));
+            let stylesheet = format!(
+                "{}\n{}\n{}\n{}",
+                stage_css_from_roles(&palette),
+                view::APPEARANCE_CSS,
+                fonts::role_stylesheet(theme),
+                rules.join("\n")
+            );
             Ok((
                 palette,
                 stylesheet,
@@ -417,7 +482,10 @@ mod tests {
             let resolved = state.resolve(&settings);
             assert_eq!(resolved.theme.id, builtin.theme_id());
             assert_eq!(resolved.palette, tinct::derive_palette(&builtin.seeds()));
-            assert_eq!(resolved.stylesheet, builtin.css());
+            assert!(
+                resolved.stylesheet.starts_with(&builtin.css()),
+                "every legacy stage rule stays verbatim before optional role mappings"
+            );
             assert_eq!(resolved.mode.dark(), builtin.seeds().dark);
             assert!(!resolved.mode.high_contrast());
             assert!(resolved.fallback_reason.is_none());

@@ -7,6 +7,132 @@ use taproot::Selector;
 
 type Host = Harness<UiState, fn(&UiState) -> UiChild, UiChild>;
 
+#[test]
+fn font_drafts_and_rejected_apply_preserve_applied_settings_and_practice() {
+    use tabard::typography::FontRole;
+    let mut ui = UiState::new();
+    ui.appearance_authoring_available = true;
+    ui.appearance
+        .set_available_fonts(vec!["IBM Plex Mono".into()]);
+    let original_settings = ui.app_settings.clone();
+    let original_practice = serde_json::to_value(ui.to_persisted()).unwrap();
+    let mut host = mount_with_persistence(ui, false);
+    host.update(|ui| {
+        *ui.appearance.font_editor.field_mut(FontRole::Label) =
+            cambium::TextInput::new("IBM Plex Mono");
+    });
+    assert_eq!(
+        host.state().app_settings,
+        original_settings,
+        "editing is a draft"
+    );
+    click(&mut host, action("apply-font-roles"));
+    assert_eq!(host.state().app_settings, original_settings);
+    assert_eq!(
+        serde_json::to_value(host.state().to_persisted()).unwrap(),
+        original_practice
+    );
+    assert_eq!(
+        host.state()
+            .appearance
+            .font_editor
+            .field(FontRole::Label)
+            .text(),
+        "IBM Plex Mono"
+    );
+    assert!(
+        host.state()
+            .appearance_notice
+            .as_deref()
+            .unwrap()
+            .contains("rejected")
+    );
+    host.update(|ui| {
+        assert!(!commit_selection(ui, |_| panic!(
+            "a failed request must be drained"
+        )));
+    });
+}
+
+#[test]
+fn ordered_font_requests_survive_theme_mode_restore_and_explicit_reset() {
+    use tabard::typography::FontRole;
+    let mut ui = UiState::new();
+    ui.appearance_authoring_available = true;
+    let fonts: tabard::typography::FontPreferences =
+        serde_json::from_str(r#"{"label":["Missing Woodshed Face","IBM Plex Mono","sans-serif"]}"#)
+            .unwrap();
+    let mut choice = ui.appearance.choice(&ui.app_settings.appearance);
+    choice.fonts = fonts.clone();
+    ui.app_settings.appearance.theme_choice = Some(choice);
+    ui.appearance.reset_font_editor(&ui.app_settings.appearance);
+    let practice = serde_json::to_value(ui.to_persisted()).unwrap();
+    let mut host = mount(ui);
+    click(&mut host, theme("woodshed:ember"));
+    click(&mut host, mode("hc_light"));
+    assert_eq!(
+        host.state()
+            .appearance
+            .choice(&host.state().app_settings.appearance)
+            .fonts,
+        fonts
+    );
+    host.update(|ui| {
+        let session = ui.to_persisted();
+        ui.apply_persisted(&session, ui.app_settings.clone());
+    });
+    assert_eq!(
+        host.state()
+            .appearance
+            .font_editor
+            .field(FontRole::Label)
+            .text(),
+        "Missing Woodshed Face"
+    );
+    assert_eq!(
+        serde_json::to_value(host.state().to_persisted()).unwrap(),
+        practice
+    );
+    click(
+        &mut host,
+        Selector::role("button").with_attr("data-font-default", "label"),
+    );
+    click(&mut host, action("apply-font-roles"));
+    assert!(
+        host.state()
+            .appearance
+            .choice(&host.state().app_settings.appearance)
+            .fonts
+            .is_empty()
+    );
+}
+
+#[test]
+fn missing_font_intent_retains_its_order_and_reports_local_fallback() {
+    let mut ui = UiState::new();
+    let requests: tabard::typography::FontPreferences =
+        serde_json::from_str(r#"{"reading":["Absent Reading Face","serif"]}"#).unwrap();
+    let mut choice = ui.appearance.choice(&ui.app_settings.appearance);
+    choice.fonts = requests.clone();
+    ui.app_settings.appearance.theme_choice = Some(choice);
+    let resolved = ui.appearance.resolve(&ui.app_settings.appearance);
+    let notices = super::fonts::diagnostics(&resolved.theme, &requests, &[]);
+    assert!(
+        notices
+            .iter()
+            .any(|notice| notice.contains("Absent Reading Face") && notice.contains("serif"))
+    );
+    assert!(
+        resolved
+            .stylesheet
+            .contains("--tabard-font-reading: serif;")
+    );
+    assert_eq!(
+        ui.appearance.choice(&ui.app_settings.appearance).fonts,
+        requests
+    );
+}
+
 fn root(ui: &UiState) -> UiChild {
     if ui.appearance.workshop_open {
         workshop_screen(ui)
@@ -77,6 +203,7 @@ fn rejected_preference_write_keeps_the_applied_theme_and_practice_state() {
 
 #[test]
 fn saving_an_applied_identity_retains_active_css_until_explicit_apply() {
+    use tabard::typography::FontRole;
     let mut ui = UiState::new();
     ui.appearance_authoring_available = true;
     let mut authored = Theme::new(
@@ -128,6 +255,17 @@ fn saving_an_applied_identity_retains_active_css_until_explicit_apply() {
     );
     click(&mut host, action("back-to-woodshed"));
     assert_eq!(appearance_stylesheet(host.state()), initial);
+    // Font Apply changes only application family requests; a same-ID saved
+    // library edit still requires the separate Theme Apply boundary.
+    host.update(|ui| {
+        *ui.appearance.font_editor.field_mut(FontRole::Label) =
+            cambium::TextInput::new("monospace");
+    });
+    click(&mut host, action("apply-font-roles"));
+    assert!(appearance_stylesheet(host.state()).contains(original));
+    assert!(!appearance_stylesheet(host.state()).contains(revised));
+    assert!(appearance_stylesheet(host.state()).contains("--tabard-font-label: monospace;"));
+    let choice = host.state().app_settings.appearance.clone();
     click(&mut host, action("edit-appearance"));
     assert_eq!(
         host.state()

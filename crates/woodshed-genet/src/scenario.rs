@@ -397,6 +397,14 @@ impl Snapshot<'_, '_> {
             .unwrap_or_default();
         let reading = ui.relationship_reading().ok().flatten();
         let appearance = ui.appearance.resolve(&ui.app_settings.appearance);
+        let font_requests = ui.appearance.choice(&ui.app_settings.appearance).fonts;
+        let requested_font = |role, name: &str| {
+            font_requests
+                .0
+                .get(&role)
+                .and_then(|stack| stack.first())
+                .is_some_and(|family| family.name() == name)
+        };
         let mut snap = ProbeSnapshot::default()
             .with_field(
                 "appearance-device-free",
@@ -406,8 +414,47 @@ impl Snapshot<'_, '_> {
                     && ui.midi.output_ports.is_empty())
                 .to_string(),
             )
-            .with_field("appearance-theme", appearance.theme.id)
+            .with_field("appearance-theme", appearance.theme.id.clone())
             .with_field("appearance-mode", appearance.mode.as_key())
+            .with_field("font-request-roles", font_requests.0.len().to_string())
+            .with_field(
+                "font-label-mono",
+                requested_font(tabard::typography::FontRole::Label, "IBM Plex Mono").to_string(),
+            )
+            .with_field(
+                "font-reading-serif",
+                requested_font(tabard::typography::FontRole::Reading, "Source Serif 4").to_string(),
+            )
+            .with_field(
+                "font-heading-serif",
+                requested_font(tabard::typography::FontRole::Heading, "Source Serif 4").to_string(),
+            )
+            .with_field(
+                "font-local-mono",
+                ui.appearance
+                    .available_fonts
+                    .iter()
+                    .any(|name| name == "IBM Plex Mono")
+                    .to_string(),
+            )
+            .with_field(
+                "font-local-serif",
+                ui.appearance
+                    .available_fonts
+                    .iter()
+                    .any(|name| name == "Source Serif 4")
+                    .to_string(),
+            )
+            .with_field(
+                "font-fallback-notice",
+                (!woodshed_views::appearance::fonts::diagnostics(
+                    &appearance.theme,
+                    &font_requests,
+                    &ui.appearance.available_fonts,
+                )
+                .is_empty())
+                .to_string(),
+            )
             .with_field(
                 "appearance-authoring",
                 ui.appearance_authoring_available.to_string(),

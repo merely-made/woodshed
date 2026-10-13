@@ -1,0 +1,80 @@
+# Copied owned sealed raw Set profile. Font changes never record or edit Cards.
+settle 5
+ui-zoom 1.0
+assert snap appearance-device-free == true
+assert snap set-cards == 2
+assert snap loop-capture-references == 1
+assert snap capture-input-rate == none
+click .pill Settings
+click .side-item Appearance
+assert snap font-local-mono == true
+assert snap font-local-serif == true
+click role:button @data-appearance-theme=theme:woodshed-font-acceptance
+click role:button @data-font-choose=label
+click role:textbox @data-font-search=true
+input-text IBM Plex Mono
+click role:button @data-font-family=IBM Plex Mono
+assert snap font-request-roles == 0
+click role:textbox @data-font-role=reading
+input-text Source Serif 4
+click role:textbox @data-font-role=heading
+input-text Source Serif 4
+click role:button @data-action=apply-font-roles
+settle 3
+assert snap font-request-roles == 3
+assert snap font-label-mono == true
+assert snap font-reading-serif == true
+assert snap font-heading-serif == true
+capture 01_font_roles_applied
+click role:textbox @data-font-role=code
+input-text Woodshed Missing Font Face
+click role:button @data-action=apply-font-roles
+assert snap font-request-roles == 4
+assert snap font-fallback-notice == true
+assert text Saved font requests are retained.
+capture 02_missing_font_request
+click role:button @data-font-default=code
+click role:button @data-action=apply-font-roles
+assert snap font-request-roles == 3
+assert snap font-fallback-notice == false
+click role:button @data-appearance-mode=light
+settle 3
+capture 03_font_light
+click role:button @data-appearance-mode=dark
+settle 3
+capture 04_font_dark
+click role:button @data-appearance-mode=hc_dark
+settle 3
+capture 05_font_hc_dark
+click role:button @data-appearance-mode=hc_light
+settle 3
+capture 06_font_hc_light
+assert snap font-label-mono == true
+assert snap font-reading-serif == true
+click .pill Stage
+settle 3
+capture 07_font_fretboard_labels
+click .workspace-panel Set
+settle 3
+capture 08_font_set_labels
+click .workspace-panel Mere
+settle 3
+capture 09_font_graph_labels
+click .workspace-panel Practice
+click .pill Settings
+click .side-item Appearance
+resize 480 900
+settle 3
+click role:textbox @data-font-role=label
+settle 3
+capture 10_font_compact_panel
+resize 1180 800
+click .pill Looper
+settle 3
+assert snap font-request-roles == 3
+assert snap font-label-mono == true
+assert snap set-cards == 2
+assert snap loop-capture-references == 1
+assert snap capture-input-rate == none
+capture 11_font_retained_looper
+log Shared Woodshed font roles seed complete
