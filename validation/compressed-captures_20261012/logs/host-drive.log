@@ -1,0 +1,8 @@
+
+running 3 tests
+test drive::tests::dwell_restarts_after_instruction_edits_cursor_changes_and_pause ... ok
+test drive::tests::background_dwell_keeps_its_owner_clock_cursor_and_inherited_sound ... ok
+test drive::tests::accepted_one_shot_status_stops_the_ui_without_restarting_or_retargeting_backing ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 158 filtered out; finished in 0.05s
+

@@ -443,6 +443,9 @@ product's existing recording/Turnstone gates.
   storage selects compression only when smaller; missing/future-codec references
   stay clearable, and verified companions precede the current session. One bounded
   encode-only worker preserves epoch/custody and caches failed publication work.
-  Focused codec/storage/host checks and five-process raw migration/reopen pass;
-  combined-font-family build and native sealed-profile migration are pending.
+  The locked current-family build and 76 root/21 supplier cases pass; five
+  synthetic child processes and five actual Keeper/profile processes retain exact
+  PCM and WAV across migration/reopen, reducing the referenced fixture by 31.6%.
+  Old raw blobs remain, so collection remains separate. Native replay and the
+  independently owned font-family intake are pending the shared foreground lane.
   Details remain in [P7's compressed-storage follow-through](2026-07-11_stage_set_tools_plan.md#october-12-follow-through-lossless-compressed-capture-storage).

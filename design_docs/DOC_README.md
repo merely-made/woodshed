@@ -136,8 +136,9 @@ before any other doc in this directory.
   match the frozen backing-plus-take reference and independently decode.
   The next October 12 slice implements Wavicle compressed companions with raw
   compatibility, bounded decode admission and one encode-only worker; focused
-  codec/storage/host and five-process legacy migration checks pass. Combined-family
-  build and native sealed-profile migration/reopen remain pending.
+  codec/storage/host, locked current-family build and five actual Keeper/profile
+  processes retain exact PCM/WAV across migration, with 31.6% smaller referenced
+  fixture storage. Native replay and independent font intake remain pending.
   Physical capture, saved-song PCM and full P7 remain open.
   The October 7 captured-scale-pattern follow-up extends copied instructions
   to degree pairs in thirds/fourths, with base-scale exploration and unchanged
