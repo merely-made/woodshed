@@ -1,0 +1,28 @@
+{
+  "name": "CaptureReopenCombined",
+  "binary": "/Users/markik/Code/testing/woodshed/font-roles-20261012/combined/frozen-binaries/woodshed-genet-product-a9e1e87",
+  "scenario": "/Users/markik/Code/worktrees/woodshed-audit-20261011/scenarios/compressed_capture_reopen.scn",
+  "prefix": "WOODSHED",
+  "output": "/Users/markik/Code/testing/woodshed/font-roles-20261012/combined-v2/native/CaptureReopenCombined",
+  "env": {
+    "WOODSHED_STATE": "/Users/markik/Code/testing/woodshed/font-roles-20261012/combined-v2/codec-profile/practice.json",
+    "WOODSHED_SETTINGS": "/Users/markik/Code/testing/woodshed/font-roles-20261012/combined-v2/codec-profile/settings.json",
+    "WOODSHED_THEME_LIBRARY": "/Users/markik/Code/testing/woodshed/font-roles-20261012/combined-v2/codec-profile/themes.json",
+    "WOODSHED_WIDTH": "1180",
+    "WOODSHED_HEIGHT": "800",
+    "WOODSHED_PRESENTATION_TIMEOUT_SECS": "60",
+    "XDG_DATA_HOME": "/Users/markik/Code/testing/woodshed/font-roles-20261012/combined-v2/codec-profile/data",
+    "XDG_CONFIG_HOME": "/Users/markik/Code/testing/woodshed/font-roles-20261012/combined-v2/codec-profile/config",
+    "XDG_CACHE_HOME": "/Users/markik/Code/testing/woodshed/font-roles-20261012/combined-v2/codec-profile/cache",
+    "MERE_ROOT": "/Users/markik/Code/testing/woodshed/font-roles-20261012/combined-v2/codec-profile/mere",
+    "GRAPHSHELL_APP_ENDPOINT": "/tmp/ws-font-20261012.sock",
+    "GRAPHSHELL_DEVICE_ENDPOINT": "/tmp/ws-font-device-20261012.sock",
+    "CAMBIUM_HOST_FRAME_TRACE": "1"
+  },
+  "frozen_source_revision": "751858f0461b71fe7fa03392b13d65363b9e7ff6",
+  "expected_binary_sha256": "621acbb78f6d97aac1124784a8ec7a55fab10c6562c99477c9c47ae613d93ca3",
+  "app": "/Users/markik/Code/testing/woodshed/font-roles-20261012/combined-v2/native/CaptureReopenCombined/CaptureReopenCombined.app",
+  "binary_sha256": "621acbb78f6d97aac1124784a8ec7a55fab10c6562c99477c9c47ae613d93ca3",
+  "scenario_sha256": "5f851885fad0c218aecf43c2e36b1c40e8036cdfbf09e52c56af7f0f4ab6768e",
+  "launch_method": "native control of prepared app bundle"
+}

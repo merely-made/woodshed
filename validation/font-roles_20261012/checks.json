@@ -1,27 +1,16 @@
 {
-  "status": "CPU implementation complete; native source freeze pending",
-  "base": "c817e59d7227c94978d60994a81da560e7c1a773",
-  "tests": {
-    "views-lib.log": {
-      "passed": 161,
-      "failed": 0,
-      "ignored": 0
-    },
-    "host-all.log": {
-      "passed": 145,
-      "failed": 0,
-      "ignored": 5
-    }
-  },
-  "unique_consumer_passes": 306,
-  "ignored_scope": "five host helpers/diagnostics; two newly explicit owned font fixtures and three earlier ignored cases",
+  "status": "combined CPU/build, full capture review and native font reopen qualified",
+  "base": "1f78d03ec9ffd0f9dc555aa34ac6264913518c01",
+  "unique_consumer_passes": 556,
+  "ignored_scope": "six explicit host fixture/diagnostic helpers; no ignored core/view cases",
   "production_build": "passed locked desktop build",
   "source_family": {
     "mere.git": "git+https://github.com/merely-made/mere.git?rev=8568f42fdf57f997274c74e63bd4ee045fe1a2b4#8568f42fdf57f997274c74e63bd4ee045fe1a2b4",
     "genet.git": "git+https://github.com/merely-made/genet.git?rev=2c7ef73bfa44c07744e0643e3c6f98be3cbd7947#2c7ef73bfa44c07744e0643e3c6f98be3cbd7947",
     "dramatis.git": "git+https://github.com/merely-made/dramatis.git?rev=0234e7eea6f2ddf2330a71b9425da01b06ae0391#0234e7eea6f2ddf2330a71b9425da01b06ae0391",
     "netrender.git": "git+https://github.com/merely-made/netrender.git?rev=c74b7cb28090c28b1c6d80b08dcdea18aff48d3e#c74b7cb28090c28b1c6d80b08dcdea18aff48d3e",
-    "mark-ik/vello": "git+https://github.com/mark-ik/vello?rev=2eae6243881d5b24c984d5ee35dde509ca5db782#2eae6243881d5b24c984d5ee35dde509ca5db782"
+    "mark-ik/vello": "git+https://github.com/mark-ik/vello?rev=2eae6243881d5b24c984d5ee35dde509ca5db782#2eae6243881d5b24c984d5ee35dde509ca5db782",
+    "wavicle.git": "git+https://github.com/merely-made/wavicle.git?rev=2c5a49fd48db7a54aeab9e712804fd065411aef9#2c5a49fd48db7a54aeab9e712804fd065411aef9"
   },
   "ports": "Hocket/Redshank/Ringdown source/locks unchanged",
   "glyph_gate": "existing circular-arrow marker coverage not qualified",
@@ -35,5 +24,51 @@
     "assets/fonts/source-serif-4/SourceSerif4-Italic.ttf": "15fbc7e4679489a501998c3669272637a6646388ef7e4bd77eebb5bf967a1f42",
     "assets/fonts/source-serif-4/SourceSerif4.ttf": "97b2d4da6e3cb494b5a1e66ae176914d852ccabef49e0c02c0df25f3e39aca0b"
   },
-  "native": "pending committed source/binary and explicit Knot cleanup release"
+  "native": "native.json; 3 processes, 19 captures, 230 presentations",
+  "pre_compression_tests": {
+    "views-lib.log": {
+      "passed": 161,
+      "failed": 0,
+      "ignored": 0
+    },
+    "host-all.log": {
+      "passed": 145,
+      "failed": 0,
+      "ignored": 5
+    }
+  },
+  "tests": {
+    "core": {
+      "exit": 0,
+      "tests": [
+        236,
+        0,
+        0
+      ]
+    },
+    "views": {
+      "exit": 0,
+      "tests": [
+        161,
+        0,
+        0
+      ]
+    },
+    "host": {
+      "exit": 0,
+      "tests": [
+        159,
+        0,
+        6
+      ]
+    },
+    "build": {
+      "exit": 0,
+      "tests": null
+    },
+    "source": "a9e1e87556c62bfcd503e429708af68ce62826ba"
+  },
+  "source": "751858f0461b71fe7fa03392b13d65363b9e7ff6",
+  "compiled_source": "a9e1e87556c62bfcd503e429708af68ce62826ba",
+  "compiled_source_difference": "scenario text only; all Rust/Cargo/font asset bytes unchanged"
 }

@@ -18,7 +18,7 @@ receipts below remain specific to their original binary.
 
 ## Scope and ownership
 
-**Font-role follow-through — 2026-10-12: in progress.** The maintainer has
+**Font-role follow-through — 2026-10-12: qualified.** The maintainer has
 authorized shared font-role adoption in Knot and Woodshed through independent
 consumer qualification and direct publication. Woodshed starts from published
 `c817e59`; the completed WAV slice remains intact. The agreed root family is
@@ -44,8 +44,9 @@ glyph gate unless fallback and visible paint are separately proved.
 
 CPU/source work is parallel with Knot. Native runs are serialized by the shared
 coordinator after committed source/binary freezes. The independently authorized
-capture-compression lane will rebase onto the published font family before its
-own combined build and native freeze; it owns codec/storage changes separately.
+capture-compression lane published first as `1f78d03`; the font branch then
+rebased onto it and qualified a fresh combined build. Codec/storage implementation
+and the earlier published-family CPU receipt retain their separate ownership.
 
 The existing six named Woodshed themes remain selectable with their original
 seed values and palette rules. The product owns those definitions and its
@@ -385,5 +386,33 @@ remains an explicit next acceptance gate rather than a publication claim.
 - Ordinary mapped text consumes explicit authored size/leading. Graph and
   fretboard overlays consume the label family and retain fixed size/leading
   and picking geometry; the settings disclosure states this boundary.
-- Native default/compact layout and sealed fresh-process retention remain
-  pending the committed-source freeze and Knot's explicit lane release.
+- The initial CPU results above are pre-compression. After rebasing onto
+  published compression `1f78d03`, the combined family passes 236 core, 161 view
+  and 159 host tests (556 distinct cases; six explicit host helpers ignored)
+  and the locked production build. The accepted scenario source is `751858f`;
+  its compiled Rust/Cargo/font bytes are identical to built `a9e1e87`. Only two
+  scenario texts changed to reveal compact Code/Apply and name Rehearsal accurately.
+- Three fresh native processes pass 230 presentations and 19 nonblank captures.
+  Wide and 480px compact reopening retain the three requested families, theme
+  and high-contrast-light mode. Code/Apply are reachable together by normal
+  focus/scroll. The Rehearsal filmstrip is a baseline capture, not evidence that
+  its unclassed headings use the Label role. Set-tray controls, positioned
+  fretboard/graph labels and ordinary text follow their documented mappings.
+- Sealed readback preserves Set/Card/material/history/clock/capture state,
+  metronome and fretboard settings, and exact exported WAV bytes. Explicit
+  navigation retains the active Settings tab and visiting Mere materializes
+  ten graph positions; these are disclosed view-state changes. The device-free
+  font runs retain the version-1 raw manifest and unopened input.
+- The [font receipt](../validation/font-roles_20261012/receipt.json),
+  [native captures](../validation/font-roles_20261012/native.json) and
+  [parity](../validation/font-roles_20261012/parity.json) carry exact hashes and
+  local full-frame paths. The [packet verifier](../validation/font-roles_20261012/verify.py)
+  checks the source hashes, test counts, accepted receipts, view-state exceptions,
+  exact PCM/WAV metadata and optional local captures/binaries/blobs. The earlier
+  seed/post-completion relaunch attempt is
+  excluded from final retention proof; clean V2 copies supply acceptance.
+- Separate normal-output native migration/reopen passes on this same family;
+  see the [combined storage receipt](../validation/compressed-captures_font-family_20261012/receipt.json).
+  The bounded fixture presentation deadline is 60 seconds; default 10-second
+  startup and the existing circular-arrow glyph remain open. Owned apps, Keeper
+  and lifecycle sleep prevention are stopped before the native lane is released.

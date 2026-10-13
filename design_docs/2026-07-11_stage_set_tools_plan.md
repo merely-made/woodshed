@@ -3271,3 +3271,34 @@ the existing qualified family. The Woodshed agent will preserve this main,
 rebase/rebuild/freeze the independently owned font combination, then replay
 copied raw migration and native reopening in the reserved lane. No native
 capture or combined-family acceptance is claimed by this receipt.
+
+
+### October 12 combined font-family native capture follow-through
+
+The original published-family compression receipt above remains unchanged. The
+font branch rebased onto published `1f78d03` and qualified source `751858f` on
+Mere `8568f42`, Genet `2c7ef73`, Netrender `c74b7cb`, Classic Vello `2eae624`,
+Dramatis `0234e7e` and Wavicle `2c5a49f`. Its Rust/Cargo/font bytes match the
+built `a9e1e87`; only two font scenario texts changed before the accepted runs.
+
+Two normal-output native processes on a fresh copy of the sealed raw profile
+pass 54 presentations and three nonblank captures. Both assert two Cards, one
+96,000-frame retained and hydrated take, unopened input and one output stream,
+and show the saved-loop controls. The product's production worker performs
+raw-v1 to WavPack-v2 migration; read-only Keeper inspectors run before migration,
+after migration and after fresh native reopen. No CPU migration helper mutates
+this profile. Namespace, owner, 120 BPM, 4/4 clock, sample rate and exact float
+bits remain unchanged. The old sealed 384,064-byte blob remains byte-identical;
+the referenced new blob is 262,824 bytes (31.6% smaller). Both full WAV files
+are byte-identical before/after, and independent RIFF and macOS decoder checks
+pass. The original fixture is unchanged.
+
+The [combined-family receipt](../validation/compressed-captures_font-family_20261012/receipt.json),
+[native evidence](../validation/compressed-captures_font-family_20261012/native.json)
+and [codec parity](../validation/compressed-captures_font-family_20261012/codec-parity.json)
+keep this proof separate from the earlier CPU receipt and the device-free font
+processes. This qualifies native hydration, storage controls, migration and
+fresh reopening. Microphone/physical capture, extra listening playback, general
+long-bank performance, disk collection and the circular-arrow glyph stay open.
+Owned native apps, Keeper and lifecycle sleep prevention are stopped; the
+coordinator has released the foreground lane to Knot.

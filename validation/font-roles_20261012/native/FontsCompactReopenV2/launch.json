@@ -1,0 +1,29 @@
+{
+  "name": "FontsCompactReopenV2",
+  "binary": "/Users/markik/Code/testing/woodshed/font-roles-20261012/combined/frozen-binaries/woodshed-genet-product-a9e1e87",
+  "scenario": "/Users/markik/Code/worktrees/woodshed-audit-20261011/scenarios/font_roles_compact_reopen.scn",
+  "prefix": "WOODSHED",
+  "output": "/Users/markik/Code/testing/woodshed/font-roles-20261012/combined-v2/native/FontsCompactReopenV2",
+  "env": {
+    "WOODSHED_STATE": "/Users/markik/Code/testing/woodshed/font-roles-20261012/combined-v2/profile/practice.json",
+    "WOODSHED_SETTINGS": "/Users/markik/Code/testing/woodshed/font-roles-20261012/combined-v2/profile/settings.json",
+    "WOODSHED_THEME_LIBRARY": "/Users/markik/Code/testing/woodshed/font-roles-20261012/combined-v2/profile/themes.json",
+    "WOODSHED_WIDTH": "480",
+    "WOODSHED_HEIGHT": "900",
+    "WOODSHED_PRESENTATION_TIMEOUT_SECS": "60",
+    "WOODSHED_APPEARANCE_RECEIPT": "1",
+    "XDG_DATA_HOME": "/Users/markik/Code/testing/woodshed/font-roles-20261012/combined-v2/profile/data",
+    "XDG_CONFIG_HOME": "/Users/markik/Code/testing/woodshed/font-roles-20261012/combined-v2/profile/config",
+    "XDG_CACHE_HOME": "/Users/markik/Code/testing/woodshed/font-roles-20261012/combined-v2/profile/cache",
+    "MERE_ROOT": "/Users/markik/Code/testing/woodshed/font-roles-20261012/combined-v2/profile/mere",
+    "GRAPHSHELL_APP_ENDPOINT": "/tmp/ws-font-20261012.sock",
+    "GRAPHSHELL_DEVICE_ENDPOINT": "/tmp/ws-font-device-20261012.sock",
+    "CAMBIUM_HOST_FRAME_TRACE": "1"
+  },
+  "frozen_source_revision": "751858f0461b71fe7fa03392b13d65363b9e7ff6",
+  "expected_binary_sha256": "621acbb78f6d97aac1124784a8ec7a55fab10c6562c99477c9c47ae613d93ca3",
+  "app": "/Users/markik/Code/testing/woodshed/font-roles-20261012/combined-v2/native/FontsCompactReopenV2/FontsCompactReopenV2.app",
+  "binary_sha256": "621acbb78f6d97aac1124784a8ec7a55fab10c6562c99477c9c47ae613d93ca3",
+  "scenario_sha256": "b6f1ca3dae7e6fea5450a36912e11a9eb27b0f0b9a17493b6f10797081636f4c",
+  "launch_method": "native control of prepared app bundle"
+}
