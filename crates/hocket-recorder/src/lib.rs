@@ -343,6 +343,59 @@ mod tests {
         assert!(!r.is_recording());
         assert!(!r.input_available());
     }
+
+    #[test]
+    fn offline_project_authors_clock_then_syncs_on_recovery_but_live_refusal_does_not_author() {
+        let mut r = Recorder::default();
+        let mut a = FakeAudio {
+            availability: AudioAvailability {
+                sample_rate: 0,
+                input: false,
+                error: Some("audio unavailable".into()),
+            },
+            fail_clock: true,
+            ..Default::default()
+        };
+        let initial = r.history.head;
+        r.bpm_nudge(2.0);
+        r.toggle_click();
+        service(&mut r, &mut a);
+        assert_eq!(r.session.bpm, 122.0);
+        assert!(!r.click);
+        assert_ne!(r.history.head, initial);
+        assert!(r.needs_sync);
+        assert!(!r.input_available());
+        assert_eq!(r.accepted_voice_count(), 0);
+        assert_eq!(r.audio_status_label(), "audio unavailable");
+        assert!(a.clocks.is_empty());
+        let authored = r.history.head;
+        let bundle = hocket_model::ProjectBundle::new(r.session.clone(), r.history.clone());
+        let reopened =
+            hocket_model::ProjectBundle::from_bytes(&bundle.to_bytes().unwrap()).unwrap();
+        assert_eq!(reopened.session.bpm, 122.0);
+        assert_eq!(reopened.history.head, authored);
+        service(&mut r, &mut a);
+        assert_eq!(r.audio_status_label(), "audio unavailable");
+        assert!(r.needs_sync);
+        assert!(a.clocks.is_empty());
+        a.availability = AudioAvailability {
+            sample_rate: 48_000,
+            input: true,
+            error: None,
+        };
+        a.fail_clock = false;
+        service(&mut r, &mut a);
+        assert_eq!(a.clocks.last(), Some(&(122.0, false)));
+        assert!(!r.needs_sync);
+        assert_eq!(r.history.head, authored);
+        assert_eq!(r.audio_status_label(), "system audio");
+        a.fail_clock = true;
+        r.bpm_nudge(2.0);
+        service(&mut r, &mut a);
+        assert_eq!(r.session.bpm, 122.0);
+        assert_eq!(r.history.head, authored);
+        assert!(r.audio_status_label().contains("clock refused"));
+    }
     #[test]
     fn playback_failure_retains_completed_pcm_without_claiming_an_accepted_voice() {
         let (mut r, mut a, token) = armed();
@@ -652,6 +705,8 @@ pub struct CaptureCompletion {
 
 #[derive(Clone, Debug, Default)]
 pub struct AudioAvailability {
+    /// Zero means no output runtime has an admitted clock. Desired project
+    /// clock edits remain authorable and wait for output recovery.
     pub sample_rate: u32,
     pub input: bool,
     pub error: Option<String>,
@@ -822,7 +877,15 @@ impl Recorder {
     pub fn service(&mut self, audio: &mut impl RecorderAudio, now_ms: u64, delta_secs: f32) {
         let had_error = self.availability.error.is_some();
         self.availability = audio.availability();
-        if self.availability.error.is_none() && (had_error || self.status == "audio unavailable") {
+        if self.availability.sample_rate == 0 {
+            self.status = self
+                .availability
+                .error
+                .clone()
+                .unwrap_or_else(|| "audio unavailable".into());
+        } else if self.availability.error.is_none()
+            && (had_error || self.status == "audio unavailable")
+        {
             self.status = if self.availability.input {
                 "system audio"
             } else {
@@ -872,7 +935,11 @@ impl Recorder {
             self.stop_voices(audio);
             self.retire_voices = !self.playing.is_empty();
         }
-        if self.needs_sync && !self.is_recording() && !self.retire_voices {
+        if self.needs_sync
+            && !self.is_recording()
+            && !self.retire_voices
+            && self.availability.sample_rate != 0
+        {
             match self.sync_audio(audio) {
                 Ok(()) => {
                     self.needs_sync = false;
@@ -1135,6 +1202,12 @@ impl Recorder {
                 if (to - from).abs() < f32::EPSILON {
                     return Ok(());
                 }
+                if self.offline_authoring() {
+                    self.history
+                        .commit(Edit::SetBpm { from, to }, &mut self.session, now);
+                    self.needs_sync = true;
+                    return Ok(());
+                }
                 self.stop_voices(audio);
                 if !self.playing.is_empty() {
                     return Err("previous recorder voices have not stopped".into());
@@ -1160,6 +1233,11 @@ impl Recorder {
                 );
             },
             RecorderAction::ToggleClick => {
+                if self.offline_authoring() {
+                    self.click = !self.click;
+                    self.needs_sync = true;
+                    return Ok(());
+                }
                 audio.set_click(!self.click)?;
                 self.click = !self.click;
             },
@@ -1366,6 +1444,12 @@ impl Recorder {
     }
     pub fn audio_status_label(&self) -> &str {
         &self.status
+    }
+    fn offline_authoring(&self) -> bool {
+        self.availability.sample_rate == 0
+            && self.playing.is_empty()
+            && self.pending_stops.is_empty()
+            && !self.is_recording()
     }
     pub fn report_audio_status(&mut self, status: String) {
         self.status = status;

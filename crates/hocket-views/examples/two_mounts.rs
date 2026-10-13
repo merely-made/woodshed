@@ -273,6 +273,13 @@ impl Runtime {
                 cambium_genet_winit_host::read_file,
             )
             .expect("load recorder mount scenario")
+            .with_presentation_timeout(std::time::Duration::from_secs(
+                std::env::var("HOCKET_VIEWS_PRESENTATION_TIMEOUT_SECS")
+                    .ok()
+                    .and_then(|value| value.parse::<u64>().ok())
+                    .unwrap_or(10)
+                    .clamp(10, 60),
+            ))
         });
         Self {
             full: RecorderLeaves::new(FULL),
