@@ -18,6 +18,7 @@ mod appearance_view;
 mod identity;
 mod leaves;
 mod project_io;
+mod recorder_audio;
 mod scenario;
 mod state;
 mod theme;
@@ -151,6 +152,9 @@ fn hooks(runtime: &Rc<RefCell<Runtime>>) -> HostHooks<AppState, Logic, Child> {
             true
         }),
         after_dispatch: Box::new(move |ctx| {
+            // Accept recorder actions before another input can snapshot a
+            // project for Save/Export; the frame hook still services live audio.
+            ctx.runner.update(AppState::tick);
             appearance_dispatch(ctx);
             if *ctx.close && defer_scenario_close(&dispatch_runtime) {
                 *ctx.close = false;

@@ -404,7 +404,7 @@ fn source_sample_rate_preserves_one_shot_duration_after_device_change() {
 }
 
 #[test]
-fn deferred_voice_limit_error_reaches_tick_and_existing_key_can_restart() {
+fn active_voice_limit_rejects_queue_at_admission_and_existing_key_can_restart() {
     let mut offline = Offline::new(48_000);
     offline.fast_bar();
     let keys: Vec<_> = (0..VOICE_POOL_SIZE)
@@ -422,28 +422,166 @@ fn deferred_voice_limit_error_reaches_tick_and_existing_key_can_restart() {
         offline.engine.play_layer(extra, vec![0.0; 32], 1.0, true),
         Err(EngineError::NoFreeVoices)
     ));
+    assert!(matches!(
+        offline
+            .engine
+            .play_layer_at_next_bar(extra, vec![0.0; 32], 1.0, true),
+        Err(EngineError::NoFreeVoices)
+    ));
+    assert!(offline.engine.pending_layers.is_empty());
     offline
         .engine
-        .play_layer(keys[0], vec![0.1; 32], 1.0, true)
+        .play_layer_at_next_bar(keys[0], vec![0.1; 32], 1.0, true)
         .unwrap();
-    offline
-        .engine
-        .play_layer_at_next_bar(extra, vec![0.0; 32], 1.0, true)
-        .unwrap();
-    offline.engine.cx.update().unwrap();
-    let mut failed = false;
+    assert_eq!(offline.engine.pending_layers.len(), 1);
     for _ in 0..25 {
-        offline.process(&[0.0; 256]);
-        if matches!(offline.engine.tick(), Err(EngineError::NoFreeVoices)) {
-            failed = true;
-            break;
+        offline.block(&[0.0; 256]);
+    }
+    assert_eq!(offline.engine.voice_count(), VOICE_POOL_SIZE);
+    assert!(!offline.engine.is_layer_assigned(extra));
+    assert_level(&offline.block(&[0.0; 2048]), 0.1);
+}
+
+#[test]
+fn stopping_one_queued_layer_preserves_other_stored_rate_start_without_resurrection() {
+    let mut offline = Offline::new(48_000);
+    offline.fast_bar();
+    let cancelled = Offline::key(0);
+    let retained = Offline::key(1);
+    offline
+        .engine
+        .play_layer_at_next_bar(cancelled, vec![0.5; 48], 1.0, true)
+        .unwrap();
+    offline
+        .engine
+        .play_layer_at_next_bar_at_sample_rate(retained, vec![0.125; 44], 44_100, 1.0, true)
+        .unwrap();
+    // This is the engine operation used by target mute and StopAll/reset.
+    offline.engine.stop_layer(cancelled);
+    assert_eq!(offline.engine.pending_layers.len(), 1);
+    assert_eq!(offline.engine.pending_layers[0].key, retained);
+    assert_eq!(offline.engine.pending_layers[0].sample_rate, 44_100);
+    for _ in 0..25 {
+        let output = offline.block(&[0.0; 256]);
+        assert!(output.iter().all(|sample| sample.abs() <= 0.126));
+        assert!(!offline.engine.is_layer_assigned(cancelled));
+    }
+    assert!(offline.engine.is_layer_assigned(retained));
+    assert_level(&offline.block(&[0.0; 2048]), 0.125);
+}
+
+#[test]
+fn stopping_all_queued_keys_before_boundary_allows_only_replacement_project_to_sound() {
+    let mut offline = Offline::new(48_000);
+    offline.fast_bar();
+    let old = [Offline::key(0), Offline::key(1)];
+    for key in old {
+        offline
+            .engine
+            .play_layer_at_next_bar(key, vec![0.5; 48], 1.0, true)
+            .unwrap();
+    }
+    for key in old {
+        offline.engine.stop_layer(key);
+    }
+    assert!(offline.engine.pending_layers.is_empty());
+    let replacement = Offline::key(2);
+    offline
+        .engine
+        .play_layer_at_next_bar(replacement, vec![-0.25; 48], 1.0, true)
+        .unwrap();
+    for _ in 0..25 {
+        let output = offline.block(&[0.0; 256]);
+        assert!(output.iter().all(|sample| *sample <= 1e-5));
+        assert!(
+            old.iter()
+                .all(|key| !offline.engine.is_layer_assigned(*key))
+        );
+    }
+    assert_eq!(offline.engine.voice_count(), 1);
+    assert_level(&offline.block(&[0.0; 2048]), -0.25);
+}
+
+#[test]
+fn pending_voice_reservations_reject_extra_immediate_or_queued_keys_before_tick() {
+    let mut offline = Offline::new(48_000);
+    offline.fast_bar();
+    let keys: Vec<_> = (0..VOICE_POOL_SIZE)
+        .map(|index| Offline::key(index as u16))
+        .collect();
+    for (index, &key) in keys.iter().enumerate() {
+        if index < VOICE_POOL_SIZE / 2 {
+            offline
+                .engine
+                .play_layer(key, vec![0.0; 32], 1.0, true)
+                .unwrap();
+        } else {
+            offline
+                .engine
+                .play_layer_at_next_bar(key, vec![0.0; 32], 1.0, true)
+                .unwrap();
         }
     }
-    assert!(
-        failed,
-        "scheduled playback must report its voice allocation failure"
-    );
+    let extra = Offline::key(32);
+    assert!(matches!(
+        offline.engine.play_layer(extra, vec![0.5; 32], 1.0, true),
+        Err(EngineError::NoFreeVoices)
+    ));
+    assert!(matches!(
+        offline
+            .engine
+            .play_layer_at_next_bar(extra, vec![0.5; 32], 1.0, true),
+        Err(EngineError::NoFreeVoices)
+    ));
+    let queued = keys[VOICE_POOL_SIZE / 2];
+    offline
+        .engine
+        .play_layer_at_next_bar_at_sample_rate(queued, vec![0.125; 44], 44_100, 1.0, true)
+        .unwrap();
+    assert_eq!(offline.engine.pending_layers.len(), VOICE_POOL_SIZE / 2);
+    let accepted = offline
+        .engine
+        .pending_layers
+        .iter()
+        .find(|pending| pending.key == queued)
+        .unwrap();
+    assert_eq!(accepted.sample_rate, 44_100);
+    assert_eq!(accepted.samples, vec![0.125; 44]);
+    // Cancelling a reservation releases it immediately for another key.
+    offline.engine.stop_layer(keys[VOICE_POOL_SIZE / 2 + 1]);
+    offline
+        .engine
+        .play_layer(extra, vec![0.0; 32], 1.0, true)
+        .unwrap();
+    offline.engine.cx.update().unwrap();
+    for _ in 0..25 {
+        offline.block(&[0.0; 256]);
+    }
     assert_eq!(offline.engine.voice_count(), VOICE_POOL_SIZE);
+    assert!(offline.engine.pending_layers.is_empty());
+    assert_level(&offline.block(&[0.0; 2048]), 0.125);
+}
+
+#[test]
+fn immediate_start_supersedes_older_queued_pcm_for_the_same_key() {
+    let mut offline = Offline::new(48_000);
+    offline.fast_bar();
+    let key = Offline::key(0);
+    offline
+        .engine
+        .play_layer_at_next_bar(key, vec![0.75; 48], 1.0, true)
+        .unwrap();
+    offline
+        .engine
+        .play_layer_at_sample_rate(key, vec![0.125; 44], 44_100, 1.0, true)
+        .unwrap();
+    assert!(offline.engine.pending_layers.is_empty());
+    offline.engine.cx.update().unwrap();
+    for _ in 0..25 {
+        offline.block(&[0.0; 256]);
+    }
+    assert_eq!(offline.engine.voice_count(), 1);
+    assert_level(&offline.block(&[0.0; 2048]), 0.125);
 }
 
 #[test]

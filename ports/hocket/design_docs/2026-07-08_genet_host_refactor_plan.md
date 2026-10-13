@@ -8,6 +8,11 @@ and the `mark-ik/xilem` fork are deleted family-wide (hocket + woodshed). See
 the Progress log for the slice-by-slice receipts; the design-forward track ran
 S0 (scaffold) → S1 (UI) → S2 (model) → S5 (chisel leaves) → engine → S6 (cut).
 
+**Recorder follow-through (2026-10-13): IMPLEMENTED; native qualification pending.** The standalone UI
+uses Cambium already; the accepted next slice extracts its recorder controller
+and surface for reuse by another host. The original Masonry retirement remains
+landed. See [the current extraction phases](#embeddable-recorder-follow-through-2026-10-13).
+
 Code samples are illustrative unless marked implementation-ready.
 
 **Current-host note (2026-09-02):** Genet retired the Stylo and
@@ -372,3 +377,112 @@ either the Masonry `hocket` (until S6) or `hocket-genet` runnable.
   (`view/{mod,transport,tracks}.rs`, `audio-widgets/knob.rs`), the chisel design
   (`genet/docs/2026-07-07_chisel_widget_leaf_design.md`), and woodshed's shipped
   genet migration.
+
+
+## Embeddable recorder follow-through (2026-10-13)
+
+**Status: IMPLEMENTED; native qualification pending.** Mark accepted Hocket as a reusable digital
+looper/recorder with both embedded and standalone compositions. This first
+slice extracts the controller and Cambium surface and makes standalone Hocket
+consume them. Woodshed's actual Looper replacement and shared audio-kernel
+consolidation remain later phases.
+
+### Ownership and constraints
+
+The reusable libraries live under root `crates/`: `hocket-model` retains
+Session/History/Phrase/Layer authority; `hocket-project` retains portable
+media, waveforms, storage, export and handoff; `hocket-recorder` owns recorder
+gestures, capture promotion and explicit host audio seams; `hocket-views` owns
+the Cambium recorder surface. The independent application workspace stays in
+`ports/hocket`, providing native audio, device selection, identity, workers,
+project dialogs, appearance, updates and window lifecycle. Shared code never
+depends on that application workspace.
+
+Both full and compact presentations consume the same recorder actions and
+state. Embedded mounting scopes CSS and waveform/meter keys. Construction of
+the reusable recorder and views opens no devices and constructs no identity,
+window, clipboard, project or update service. Capture completion is correlated
+with a session generation, stable target track and capture ticket; accepted
+capture metadata retains the clock and rate admitted at arming. An old
+completion after replacement cannot become a new session's layer. Runtime
+refusal must remain visible without inventing accepted playback.
+
+Woodshed keeps its Set/Card ownership, accepted backing and timing, sealed
+session/capture companions and backing-plus-loop WAV contract. Its recorder
+adapter will bind those owners explicitly. `.hock` project identity and
+Woodshed's encoded companion digest are separate formats; extraction does not
+rewrite either. Shared runtime work will preserve Woodshed's existing
+frame-driven/preallocated capture baseline and each product's admitted
+schedule. This slice leaves Woodshed DSP/backend and Hocket capture scheduling intact.
+A narrowly required Hocket control correction cancels pending next-bar starts
+when their layer is stopped and reserves the existing 32-voice capacity at
+queue admission. This makes the shared controller's stop/mute/reset and
+accepted-playback observations truthful without changing the frame schedule.
+
+### Phases and done-conditions
+
+1. **Shared recorder boundary.** Promote model/project without changing saved
+   schemas or media identity; extract recorder transitions behind a fallible
+   host audio seam. Done when controller tests exercise accepted/rejected
+   recording, capture promotion, mute/solo, unavailable media and stale
+   completion after session replacement without native services.
+2. **One reusable surface, two host compositions.** Standalone Hocket consumes
+   shared views/controller; a device-free host mounts the same component in a
+   different outer state, including compact and multiple scoped mounts. Done
+   when genuine routed actions/history and waveform/meter resources work
+   without constructing the standalone AppState or its services.
+3. **Bounded standalone regression and publication.** Run focused portable
+   checks, locked desktop build and finite native recorder captures on the
+   coherent supplier family. Done when visible controls and fresh mounting
+   are inspected, current source/commands/results are recorded, canonical
+   documentation is current and direct-main publication is verified. Physical
+   microphone/latency and Hocket project/handoff qualification are separate.
+4. **Later Woodshed adoption.** Mount the shared surface over its current
+   backend, preserving existing Set/Card/saved-Song, custody and export
+   behavior. Then extract the shared frame-driven audio mechanism and migrate
+   both product adapters before retiring duplicate recorder paths.
+
+### Findings (2026-10-13)
+
+- Baseline `fde91c42bef801f596333da4aae8bc2f7fb8d593` is clean and equal to
+  fetched `origin/main`. Hocket already uses Cambium, but recorder views bind
+  directly to its standalone `AppState`, which owns desktop services and
+  constructs `Engine::new`.
+- Model/project are portable; waveform rendering uses the same project mix
+  helpers as offline export, so their source moves together and those
+  algorithms remain single-owned.
+- Hocket's engine opens its own graph/CPAL stream and polls bar wraps from its
+  host tick. Woodshed's processor instead advances capture per output frame.
+  Reusable view/controller extraction does not qualify shared DSP/device
+  attachment.
+- Root and Hocket previously pinned different Cambium families. Shared views
+  require one source identity per application graph; Hocket adopts the root's
+  already qualified Mere `8568f42`, Genet `2c7ef73`, Netrender `c74b7cb` and
+  Classic `2eae624` family for this slice. Root application pins stay fixed.
+  The promoted project library uses root's exact Wavicle `2c5a49`; its project
+  regressions must qualify that consumer intake.
+
+### Progress
+
+- **2026-10-13:** Maintainer accepted extraction. Model/project source promotion
+  and manifests are prepared; controller, surface, focused checks and native
+  regression are in progress. No Woodshed replacement or DSP acceptance is
+  claimed.
+
+- **2026-10-13:** Shared model/project/controller/views and standalone adapters
+  are implemented. All 14 relocated Rust source/test files remain byte-identical
+  to `fde91c4`; 72 model/project cases pass. The final shared controller/view
+  gate passes another 26 cases (17 controller, five real leaf/mount and four
+  mounted second-host cases). Hocket's 32 engine, 64 desktop and two manual
+  cases pass with one existing custody-specific ignore. Root Woodshed's locked
+  application check passes and its product Rust sources remain unchanged.
+  Native committed-source recorder/mount regression and publication follow.
+- **2026-10-13:** Reviews corrected target mute without restarting unrelated
+  tracks, capture tickets after reconstructed/same-session replacement, imported
+  source-rate audio through the shared recorder, click-preserving atomic clock
+  admission, pending queued-voice cancellation and explicit voice reservations.
+  Failed ordinary stops retain their accepted keys and retry by target on
+  service; later audible intent supersedes obsolete stop requests. Native
+  after-dispatch service accepts queued recorder edits before another gesture
+  can snapshot a project for Save/Export. General project-worker reply
+  correlation remains the separate portable-host follow-up in F5.

@@ -45,6 +45,10 @@ crates/
   audio-primitives/  Pure-std DSP helpers (click synth, onset/tempo,
                      latency, waveform projection, meter ballistics).
                      Shared cross-repo with hocket.
+  hocket-model/     Shared recorder Session/History/Phrase/Layer authority.
+  hocket-project/   Portable recorder media, projects, export and handoff.
+  hocket-recorder/  Device-free recorder transitions and host audio seams.
+  hocket-views/     Mount-scoped reusable Cambium recorder surface.
   woodshed-audio/    Real-time audio: cpal drivers, tuner-grade pitch
                      detection, MIDI, looping, calibration.
   woodshed-core/     Portable application state, persistence payloads, and

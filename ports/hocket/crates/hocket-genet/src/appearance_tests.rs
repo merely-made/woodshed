@@ -202,7 +202,7 @@ fn canonical_mode_changes_preserve_the_visible_record_dot() {
     let dir = tempfile::tempdir().unwrap();
     let mut host = mounted(&dir);
     let dot = |host: &Host| {
-        host.with_dom(|dom| taproot::matching(dom, &Selector::class("record-core"))[0])
+        host.with_dom(|dom| taproot::matching(dom, &Selector::class("hocket-recorder-record-core"))[0])
     };
     let baseline = host.computed_value(dot(&host), "background-color").unwrap();
     click(&mut host, "toggle-appearance");

@@ -1,0 +1,24 @@
+[package]
+name = "hocket-views"
+version = "0.1.0"
+description = "Embeddable Cambium recorder surface shared by Hocket hosts."
+edition = "2024"
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+publish = false
+
+[dependencies]
+hocket-model.workspace = true
+hocket-project.workspace = true
+hocket-recorder.workspace = true
+audio-primitives.workspace = true
+cambium.workspace = true
+sprigging.workspace = true
+
+[dev-dependencies]
+cambium-genet-winit-host.workspace = true
+mesquite.workspace = true
+taproot.workspace = true
+paint_list_api = { git = "https://github.com/merely-made/netrender.git", rev = "c74b7cb28090c28b1c6d80b08dcdea18aff48d3e" }

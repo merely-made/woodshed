@@ -7,7 +7,11 @@ not a DAW: a session is a small set of mono tracks, recording appends a
 layer, and layers mute independently.
 
 Hocket is hosted under Woodshed's `ports/hocket` directory but remains a
-separately versioned, tested, and released nested workspace.
+separately versioned, tested, and released nested workspace. Its reusable
+model, project, recorder-controller and Cambium-view libraries live under root
+`crates/`; the standalone host supplies devices, identity, workers and window
+services. The [recorder extraction plan](design_docs/2026-07-08_genet_host_refactor_plan.md#embeddable-recorder-follow-through-2026-10-13)
+records the current embedding boundary and its scoped acceptance.
 
 ## Status (2026-08-12)
 
@@ -53,7 +57,8 @@ cargo run -p hocket-headless -- --run # manual microphone/output demo
 The committed manifests and lockfile resolve the family from Git; no sibling
 Genet checkout is required. Optional local Cargo overrides are development
 plumbing and are excluded from the clean-checkout validation commands above.
-The local validation command runs model, portable project/media, engine,
+The local validation command runs model, portable project/media, shared
+recorder/controller and view, engine,
 desktop-host unit tests, and device-free manual CLI tests;
 ignored device/custody receipts and the manual headless demo are separate
 acceptance lanes.
