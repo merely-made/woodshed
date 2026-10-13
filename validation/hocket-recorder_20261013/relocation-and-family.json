@@ -1,0 +1,167 @@
+{
+  "baseline": "fde91c42bef801f596333da4aae8bc2f7fb8d593",
+  "source_moves": [
+    {
+      "from": "ports/hocket/crates/hocket-model/src/history.rs",
+      "to": "crates/hocket-model/src/history.rs",
+      "byte_identical": true,
+      "sha256": "5de0cdfd6690bb0f7d24e380a3cff853cad41abc04ed05309f47e338acd8fec9"
+    },
+    {
+      "from": "ports/hocket/crates/hocket-model/src/ids.rs",
+      "to": "crates/hocket-model/src/ids.rs",
+      "byte_identical": true,
+      "sha256": "f82cfc7ae84f2f6fe7402bb7d07fb365104cf74c7cd066249e1f164337bd9c45"
+    },
+    {
+      "from": "ports/hocket/crates/hocket-model/src/lib.rs",
+      "to": "crates/hocket-model/src/lib.rs",
+      "byte_identical": true,
+      "sha256": "5edf255b5669f59c919466c3b576fefe7163706ffac9e166cdd343f811613127"
+    },
+    {
+      "from": "ports/hocket/crates/hocket-model/src/persistence.rs",
+      "to": "crates/hocket-model/src/persistence.rs",
+      "byte_identical": true,
+      "sha256": "cab90715db2e0ad1ae2d3a7dee782b2bdf19288ce0716ee097e814d863799842"
+    },
+    {
+      "from": "ports/hocket/crates/hocket-model/src/phrase.rs",
+      "to": "crates/hocket-model/src/phrase.rs",
+      "byte_identical": true,
+      "sha256": "864c46574603a51d30d39e75dac3fc707bad774f47cfdf319a132ac9d5fe9bc5"
+    },
+    {
+      "from": "ports/hocket/crates/hocket-model/src/session.rs",
+      "to": "crates/hocket-model/src/session.rs",
+      "byte_identical": true,
+      "sha256": "647e1b9a38805817ffad54ab2ba500551b50a713835b0d887895eea985dcc6d0"
+    },
+    {
+      "from": "ports/hocket/crates/hocket-model/src/track.rs",
+      "to": "crates/hocket-model/src/track.rs",
+      "byte_identical": true,
+      "sha256": "a449de22dbc2389da5cb73062555699a75849c7683e1071ede2fcd80ec3c1c69"
+    },
+    {
+      "from": "ports/hocket/crates/hocket-model/tests/validation.rs",
+      "to": "crates/hocket-model/tests/validation.rs",
+      "byte_identical": true,
+      "sha256": "49d177f0f7cfa3d3b4bd2badb45ab990fa83f3e2ee9c5c62e90cad859c4f3a37"
+    },
+    {
+      "from": "ports/hocket/crates/hocket-project/src/export.rs",
+      "to": "crates/hocket-project/src/export.rs",
+      "byte_identical": true,
+      "sha256": "4ee4f8e30176707a137e6712c7a4779c2ff763ff471abcc5a5828e1ed0af531c"
+    },
+    {
+      "from": "ports/hocket/crates/hocket-project/src/handoff.rs",
+      "to": "crates/hocket-project/src/handoff.rs",
+      "byte_identical": true,
+      "sha256": "dc35a2ec035a4da362c9e716192f725a94c78ff1cbf6fa630d7adcb2ccf03fe5"
+    },
+    {
+      "from": "ports/hocket/crates/hocket-project/src/lib.rs",
+      "to": "crates/hocket-project/src/lib.rs",
+      "byte_identical": true,
+      "sha256": "2e975a8c0fa9f7d67c5399ed8ff4a91a7171ff3121f7bb9473bea76dcadd667e"
+    },
+    {
+      "from": "ports/hocket/crates/hocket-project/src/media.rs",
+      "to": "crates/hocket-project/src/media.rs",
+      "byte_identical": true,
+      "sha256": "a9a851ef81b927c8287b21f5f76ce1aed92edb23cde887accc3b6f3c3326919d"
+    },
+    {
+      "from": "ports/hocket/crates/hocket-project/src/project_store.rs",
+      "to": "crates/hocket-project/src/project_store.rs",
+      "byte_identical": true,
+      "sha256": "6155ae3fecc47be345d419879483ad4ea0e980f9f99342be7cb753fb96e5d525"
+    },
+    {
+      "from": "ports/hocket/crates/hocket-project/src/waveform.rs",
+      "to": "crates/hocket-project/src/waveform.rs",
+      "byte_identical": true,
+      "sha256": "afd561d806eeedaf0e45989fd317c17f6cd3167fa7d3cbe4438b3c6e46d29184"
+    }
+  ],
+  "source_family": {
+    "root": {
+      "cambium": {
+        "version": "0.3.3",
+        "source": "git+https://github.com/merely-made/mere.git?rev=8568f42fdf57f997274c74e63bd4ee045fe1a2b4#8568f42fdf57f997274c74e63bd4ee045fe1a2b4"
+      },
+      "cambium-genet-winit-host": {
+        "version": "0.1.0",
+        "source": "git+https://github.com/merely-made/mere.git?rev=8568f42fdf57f997274c74e63bd4ee045fe1a2b4#8568f42fdf57f997274c74e63bd4ee045fe1a2b4"
+      },
+      "sprigging": {
+        "version": "0.2.1",
+        "source": "git+https://github.com/merely-made/mere.git?rev=8568f42fdf57f997274c74e63bd4ee045fe1a2b4#8568f42fdf57f997274c74e63bd4ee045fe1a2b4"
+      },
+      "genet-livery": {
+        "version": "0.0.4",
+        "source": "git+https://github.com/merely-made/genet.git?rev=2c7ef73bfa44c07744e0643e3c6f98be3cbd7947#2c7ef73bfa44c07744e0643e3c6f98be3cbd7947"
+      },
+      "netrender": {
+        "version": "0.1.2",
+        "source": "git+https://github.com/merely-made/netrender.git?rev=c74b7cb28090c28b1c6d80b08dcdea18aff48d3e#c74b7cb28090c28b1c6d80b08dcdea18aff48d3e"
+      },
+      "paint_list_api": {
+        "version": "0.1.2",
+        "source": "git+https://github.com/merely-made/netrender.git?rev=c74b7cb28090c28b1c6d80b08dcdea18aff48d3e#c74b7cb28090c28b1c6d80b08dcdea18aff48d3e"
+      },
+      "netrender-vello": {
+        "version": "0.11.0",
+        "source": "git+https://github.com/mark-ik/vello?rev=2eae6243881d5b24c984d5ee35dde509ca5db782#2eae6243881d5b24c984d5ee35dde509ca5db782"
+      },
+      "wavicle": {
+        "version": "0.1.0",
+        "source": "git+https://github.com/merely-made/wavicle.git?rev=2c5a49fd48db7a54aeab9e712804fd065411aef9#2c5a49fd48db7a54aeab9e712804fd065411aef9"
+      },
+      "firewheel": {
+        "version": "0.14.0",
+        "source": "git+https://github.com/mark-ik/firewheel.git?rev=2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc#2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc"
+      }
+    },
+    "hocket": {
+      "cambium": {
+        "version": "0.3.3",
+        "source": "git+https://github.com/merely-made/mere.git?rev=8568f42fdf57f997274c74e63bd4ee045fe1a2b4#8568f42fdf57f997274c74e63bd4ee045fe1a2b4"
+      },
+      "cambium-genet-winit-host": {
+        "version": "0.1.0",
+        "source": "git+https://github.com/merely-made/mere.git?rev=8568f42fdf57f997274c74e63bd4ee045fe1a2b4#8568f42fdf57f997274c74e63bd4ee045fe1a2b4"
+      },
+      "sprigging": {
+        "version": "0.2.1",
+        "source": "git+https://github.com/merely-made/mere.git?rev=8568f42fdf57f997274c74e63bd4ee045fe1a2b4#8568f42fdf57f997274c74e63bd4ee045fe1a2b4"
+      },
+      "genet-livery": {
+        "version": "0.0.4",
+        "source": "git+https://github.com/merely-made/genet.git?rev=2c7ef73bfa44c07744e0643e3c6f98be3cbd7947#2c7ef73bfa44c07744e0643e3c6f98be3cbd7947"
+      },
+      "netrender": {
+        "version": "0.1.2",
+        "source": "git+https://github.com/merely-made/netrender.git?rev=c74b7cb28090c28b1c6d80b08dcdea18aff48d3e#c74b7cb28090c28b1c6d80b08dcdea18aff48d3e"
+      },
+      "paint_list_api": {
+        "version": "0.1.2",
+        "source": "git+https://github.com/merely-made/netrender.git?rev=c74b7cb28090c28b1c6d80b08dcdea18aff48d3e#c74b7cb28090c28b1c6d80b08dcdea18aff48d3e"
+      },
+      "netrender-vello": {
+        "version": "0.11.0",
+        "source": "git+https://github.com/mark-ik/vello?rev=2eae6243881d5b24c984d5ee35dde509ca5db782#2eae6243881d5b24c984d5ee35dde509ca5db782"
+      },
+      "wavicle": {
+        "version": "0.1.0",
+        "source": "git+https://github.com/merely-made/wavicle.git?rev=2c5a49fd48db7a54aeab9e712804fd065411aef9#2c5a49fd48db7a54aeab9e712804fd065411aef9"
+      },
+      "firewheel": {
+        "version": "0.14.0",
+        "source": "git+https://github.com/mark-ik/firewheel.git?rev=2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc#2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc"
+      }
+    }
+  }
+}

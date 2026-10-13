@@ -1,0 +1,147 @@
+warning: patch `p2panda-auth v0.7.1 (https://github.com/mark-ik/p2panda.git?tag=mere-p2panda-net-0.7.5-upstream-20261011#d8acabc9)` was not used in the crate graph
+warning: patch `p2panda-stream v0.7.1 (https://github.com/mark-ik/p2panda.git?tag=mere-p2panda-net-0.7.5-upstream-20261011#d8acabc9)` was not used in the crate graph
+help: Check that the patched package version and available features are compatible
+      with the dependency requirements. If the patch has a different version from
+      what is locked in the Cargo.lock file, run `cargo update` to use the new
+      version. This may also occur with an optional dependency that is not enabled.
+   Compiling hocket-recorder v0.1.0 (/Users/markik/Code/worktrees/woodshed-orchestrate-20261011/crates/hocket-recorder)
+   Compiling rustix v1.1.5
+   Compiling hocket-views v0.1.0 (/Users/markik/Code/worktrees/woodshed-orchestrate-20261011/crates/hocket-views)
+   Compiling tempfile v3.27.0
+   Compiling hocket-project v0.1.0 (/Users/markik/Code/worktrees/woodshed-orchestrate-20261011/crates/hocket-project)
+   Compiling hocket-model v0.1.0 (/Users/markik/Code/worktrees/woodshed-orchestrate-20261011/crates/hocket-model)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 7.21s
+     Running unittests src/lib.rs (/Users/markik/Code/testing/woodshed/font-roles-20261012/target/debug/deps/hocket_model-86301e7c5ea92f2f)
+
+running 36 tests
+test history::tests::new_history_has_only_root ... ok
+test history::tests::checkout_back_inverts ... ok
+test history::tests::commit_after_checkout_back_retains_future_branch ... ok
+test history::tests::commit_advances_head_and_applies ... ok
+test history::tests::add_track_round_trip ... ok
+test history::tests::checkout_moves_between_retained_sibling_branches ... ok
+test history::tests::integrate_rejects_an_incompatible_graph ... ok
+test history::tests::checkout_forward_applies ... ok
+test history::tests::append_layer_round_trip ... ok
+test history::tests::integrate_retains_remote_branch_without_moving_the_local_head ... ok
+test history::tests::select_active_layer_on_sum_track_is_noop ... ok
+test history::tests::select_active_layer_round_trip ... ok
+test history::tests::set_layer_gain_round_trip ... ok
+test history::tests::set_track_playback_mode_round_trip ... ok
+test history::tests::two_appends_then_mute_one ... ok
+test history::tests::undo_redo_round_trips ... ok
+test history::tests::unknown_target_yields_unknown_node ... ok
+test ids::tests::ids_are_unique_per_call ... ok
+test ids::tests::media_ref_display_is_short_hex ... ok
+test ids::tests::media_ref_zero_constant ... ok
+test persistence::tests::encoding_is_deterministic_for_equal_input ... ok
+test phrase::tests::layer_new_defaults ... ok
+test phrase::tests::phrase_new_assigns_fresh_id ... ok
+test session::tests::new_deeler_profile_has_ten_select_one_tracks ... ok
+test session::tests::new_default_is_looper_profile ... ok
+test session::tests::new_default_tracks_start_empty ... ok
+test session::tests::new_with_track_count_respects_count_and_mode ... ok
+test track::tests::palette_indices_differ ... ok
+test track::tests::palette_indices_wrap ... ok
+test track::tests::playback_mode_select_one_none_means_silent ... ok
+test track::tests::playback_mode_select_one_only_active_layer_audible ... ok
+test persistence::tests::rejects_unknown_format_version ... ok
+test track::tests::playback_mode_sum_audible_when_unmuted ... ok
+test track::tests::track_new_has_no_layers_and_sum_mode ... ok
+test track::tests::track_new_with_mode_records_mode ... ok
+test persistence::tests::session_with_layers_round_trips ... ok
+
+test result: ok. 36 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/validation.rs (/Users/markik/Code/testing/woodshed/font-roles-20261012/target/debug/deps/validation-dff2739ea04e4295)
+
+running 2 tests
+test divergent_histories_union_deterministically ... ok
+test one_hundred_commit_scrub_under_sixteen_ms ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running unittests src/lib.rs (/Users/markik/Code/testing/woodshed/font-roles-20261012/target/debug/deps/hocket_project-16b674dc17816502)
+
+running 34 tests
+test export::tests::bar_duration_requires_at_least_one_bar ... ok
+test export::tests::render_reports_an_unrepresentable_frame_request ... ok
+test export::tests::explicit_frames_repeat_shorter_loops ... ok
+test export::tests::solo_and_track_mute_control_the_export_mix ... ok
+test export::tests::one_cycle_requires_equal_loop_lengths ... ok
+test export::tests::wav_bytes_round_trip_preserves_mono_samples ... ok
+test export::tests::one_cycle_sums_audible_layers_with_gain ... ok
+test export::tests::writes_stereo_float_wav ... ok
+test export::tests::bar_duration_repeats_unequal_free_loops_with_session_meter ... ok
+test handoff::tests::handoff_requires_all_referenced_media ... ok
+test media::tests::get_round_trips_buffer ... ok
+test media::tests::hash_buffer_matches_put_ref ... ok
+test media::tests::put_different_bytes_yields_different_refs ... ok
+test handoff::tests::accepting_a_same_root_handoff_retains_the_local_branch ... ok
+test media::tests::put_returns_stable_ref_for_same_bytes ... ok
+test media::tests::put_same_samples_different_rate_yields_different_ref ... ok
+test project_store::tests::corrupt_media_is_rejected ... ok
+test handoff::tests::acceptance_rejects_conflicting_phrase_identity_without_mutation ... ok
+test project_store::tests::load_keeps_project_when_a_media_blob_is_missing ... ok
+test handoff::tests::acceptance_retains_incoming_captures_from_an_inactive_branch ... ok
+test project_store::tests::save_and_load_round_trip_manifest_and_media ... ok
+test handoff::tests::accepting_divergent_captures_retains_both_pools_and_local_checkout ... ok
+test project_store::tests::save_heals_a_corrupt_existing_media_blob ... ok
+test project_store::tests::save_rejects_manifest_that_references_missing_media ... ok
+test project_store::tests::save_prunes_media_the_new_project_no_longer_references ... ok
+test waveform::tests::layer_peaks_remain_available_while_muted ... ok
+test waveform::tests::missing_media_is_reported_instead_of_fabricated ... ok
+test waveform::tests::track_peaks_follow_select_one_and_layer_mute ... ok
+test project_store::tests::save_uses_human_friendly_entry_names ... ok
+test waveform::tests::zero_columns_is_an_empty_projection ... ok
+test waveform::tests::track_peaks_use_real_mixed_samples_and_gain ... ok
+test handoff::tests::signed_handoff_round_trips_complete_project_media ... ok
+test handoff::tests::handoff_rejects_the_wrong_recipient_and_tampering ... ok
+test handoff::tests::acceptance_rejects_malformed_snapshots_without_mutation ... ok
+
+test result: ok. 34 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running unittests src/lib.rs (/Users/markik/Code/testing/woodshed/font-roles-20261012/target/debug/deps/hocket_recorder-4fdf5a12ef161d1a)
+
+running 17 tests
+test tests::deleted_capture_target_does_not_receive_or_store_a_delayed_take ... ok
+test tests::duplicate_phrase_action_targets_qualified_layer_occurrence ... ok
+test tests::capture_admission_and_invalid_completion_fail_without_history_or_media_mutation ... ok
+test tests::later_unmute_supersedes_a_still_failed_stop_without_late_silencing ... ok
+test tests::fixed_rearm_and_clock_changes_are_refused_while_free_stop_keeps_its_target ... ok
+test tests::imported_audio_only_starts_the_appended_layer_at_its_stored_rate ... ok
+test tests::failed_stop_all_retries_only_remaining_accepted_keys ... ok
+test tests::delayed_capture_keeps_admitted_track_clock_and_sample_rate ... ok
+test tests::failed_target_mute_retries_without_another_action_or_unrelated_restart ... ok
+test tests::failed_voice_stop_refuses_clock_commit_and_preserves_accepted_key ... ok
+test tests::muted_click_clock_admission_and_input_absence_remain_truthful ... ok
+test tests::playback_failure_retains_completed_pcm_without_claiming_an_accepted_voice ... ok
+test tests::recreated_controller_for_same_session_cannot_reuse_capture_ticket ... ok
+test tests::same_session_replacement_retires_delayed_capture_and_queued_actions ... ok
+test tests::replacing_project_stops_old_voices_even_while_retired_capture_drains ... ok
+test tests::stale_completion_cannot_consume_current_ticket_and_idle_needs_explicit_retirement ... ok
+test tests::target_mute_keeps_unrelated_voices_and_missing_media_remains_visible ... ok
+
+test result: ok. 17 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (/Users/markik/Code/testing/woodshed/font-roles-20261012/target/debug/deps/hocket_views-3930d138078b6ba2)
+
+running 5 tests
+test leaves::tests::model_identity_produces_stable_distinct_leaf_keys ... ok
+test leaves::tests::unchanged_waveform_signature_produces_zero_repaints ... ok
+test leaves::tests::silent_waveform_paints_a_center_line ... ok
+test leaves::tests::same_phrase_occurrences_render_independent_real_gain_envelopes ... ok
+test leaves::tests::mount_reconciliation_reorder_and_unmount_preserve_other_leaf_owners ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests examples/two_mounts.rs (/Users/markik/Code/testing/woodshed/font-roles-20261012/target/debug/examples/two_mounts-a96f3438f3652d40)
+
+running 4 tests
+test tests::rejected_synthetic_capture_preserves_existing_layers_and_other_mount ... ok
+test tests::duplicate_phrase_second_occurrence_routes_and_renders_independently ... ok
+test tests::second_host_promotes_capture_and_exposes_real_media_leaves ... ok
+test tests::full_and_compact_gestures_route_to_independent_controllers ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.06s
+

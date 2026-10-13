@@ -1,0 +1,7 @@
+RESULT ok
+captured two_mounts_initial
+captured two_mounts_controls
+capture two_mounts_initial 2480x1640 digest=d1320bd399a09eea file=/Users/markik/Code/testing/hocket/recorder-extraction-20261013/native-two-mounts/two_mounts_initial.png
+capture two_mounts_controls 2480x1640 digest=32dafafe41c3db67 file=/Users/markik/Code/testing/hocket/recorder-extraction-20261013/native-two-mounts/two_mounts_controls.png
+frames: 2 captured, 0 blank, 2 distinct digests
+presentation: 25 frames, 618 redraws, 593 unpresented redraws

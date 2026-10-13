@@ -8,9 +8,9 @@ and the `mark-ik/xilem` fork are deleted family-wide (hocket + woodshed). See
 the Progress log for the slice-by-slice receipts; the design-forward track ran
 S0 (scaffold) → S1 (UI) → S2 (model) → S5 (chisel leaves) → engine → S6 (cut).
 
-**Recorder follow-through (2026-10-13): IMPLEMENTED; native qualification pending.** The standalone UI
-uses Cambium already; the accepted next slice extracts its recorder controller
-and surface for reuse by another host. The original Masonry retirement remains
+**Recorder follow-through (2026-10-13): IMPLEMENTED; bounded native recorder acceptance complete.** The standalone UI
+uses the shared recorder controller and Cambium surface; a second outer host
+mounts the same component in full and compact layouts. The original Masonry retirement remains
 landed. See [the current extraction phases](#embeddable-recorder-follow-through-2026-10-13).
 
 Code samples are illustrative unless marked implementation-ready.
@@ -381,7 +381,7 @@ either the Masonry `hocket` (until S6) or `hocket-genet` runnable.
 
 ## Embeddable recorder follow-through (2026-10-13)
 
-**Status: IMPLEMENTED; native qualification pending.** Mark accepted Hocket as a reusable digital
+**Status: IMPLEMENTED; bounded native recorder acceptance complete.** Mark accepted Hocket as a reusable digital
 looper/recorder with both embedded and standalone compositions. This first
 slice extracts the controller and Cambium surface and makes standalone Hocket
 consume them. Woodshed's actual Looper replacement and shared audio-kernel
@@ -498,3 +498,22 @@ accepted-playback observations truthful without changing the frame schedule.
   explicit pending clock admission; a fresh committed-source run follows.
   The second-host example uses the same explicit 10–60-second foreground
   allowance. Neither extended allowance qualifies default startup.
+
+- **2026-10-13:** Compiled source `65a0145` passes the corrected standalone
+  recorder scenario (30 presentations/two reviewed captures) and the distinct
+  full/compact host scenario (25 presentations/two reviewed captures). The
+  standalone keeps absent input explicit and authors 122 BPM offline; the
+  second host records actual synthetic PCM into an independently controlled
+  compact mount, while the full mount retains its own tempo and layers.
+  The final unique gate is 197 cases: 72 model/project, 18 controller, five
+  leaf/mount, four routed host, 32 engine, 64 desktop and two manual cases;
+  one existing custody case remains ignored. Locked builds and Woodshed's
+  root consumer check pass. The [bounded receipt](../../../validation/hocket-recorder_20261013/receipt.json)
+  records source relocation, the coherent family, binary/source hashes, logs,
+  rejected runs and all four inspected captures. Sixty-second allowance plus
+  observed foreground Raise qualifies these finite native flows, not default
+  startup. Existing standalone status clipping is retained; arbitrary sizes,
+  compact scrolling, physical audio and native project/custody reopening are
+  not qualified here. Phases 1–3 are complete subject to direct-main publication
+  verification; phase 4 and general project-worker reply correlation remain
+  later work.
