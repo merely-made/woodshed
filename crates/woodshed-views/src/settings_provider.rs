@@ -130,8 +130,22 @@ impl SettingsProvider for WoodshedSettingsProvider {
                     message: format!("unknown theme {theme}"),
                 });
             }
+            let fonts = self
+                .settings
+                .appearance
+                .theme_choice
+                .as_ref()
+                .map(|choice| choice.fonts.clone())
+                .unwrap_or_default();
+            let mode = ThemeMode::from_name(&theme).expect("validated named theme");
             self.settings.appearance.theme = theme;
-            self.settings.appearance.theme_choice = None;
+            self.settings.appearance.theme_choice = if fonts.is_empty() {
+                None
+            } else {
+                let mut choice = tabard::theme::choice::ThemeChoice::new(mode.theme_id(), None);
+                choice.fonts = fonts;
+                Some(choice)
+            };
             return Ok(());
         }
 
@@ -216,5 +230,32 @@ mod tests {
             provider.apply(&reference, "appearance.theme", SettingValue::Boolean(true)),
             Err(SettingsError::InvalidValue { .. })
         ));
+    }
+
+    #[test]
+    fn typed_named_theme_write_preserves_ordered_font_requests() {
+        let mut settings = AppSettings::default();
+        let mut choice = tabard::theme::choice::ThemeChoice::new("theme:authored", None);
+        let fonts: tabard::typography::FontPreferences =
+            serde_json::from_str(r#"{"label":["Missing first","IBM Plex Mono","sans-serif"]}"#)
+                .unwrap();
+        choice.fonts = fonts.clone();
+        settings.appearance.theme_choice = Some(choice);
+        let mut provider = WoodshedSettingsProvider::new(settings);
+        provider
+            .apply(
+                &SettingsRef(APPEARANCE_REFERENCE.into()),
+                "appearance.theme",
+                SettingValue::Text("Ember".into()),
+            )
+            .unwrap();
+        let retained = provider
+            .settings()
+            .appearance
+            .theme_choice
+            .as_ref()
+            .unwrap();
+        assert_eq!(retained.theme_id, ThemeMode::Ember.theme_id());
+        assert_eq!(retained.fonts, fonts);
     }
 }
