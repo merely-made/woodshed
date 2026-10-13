@@ -10,8 +10,9 @@ use serde::{Deserialize, Serialize};
 
 use crate::arpeggio::ArpeggioDirection;
 use crate::loop_capture::{
-    LoopCaptureManifest, LoopCaptureRef, decode_pcm, encode_pcm, pcm_digest, pcm_key,
-    validate_namespace,
+    EncodedCapture, LoopCaptureCodec, LoopCaptureManifest, LoopCaptureRef, MAX_CAPTURE_FRAMES,
+    MAX_PCM_BYTES, PCM_HEADER_BYTES, decode_capture, encode_capture, encode_pcm, pcm_digest,
+    pcm_key, validate_namespace,
 };
 use crate::settings::AppSettings;
 pub use crate::settings::RelatedSettings;
@@ -83,7 +84,7 @@ impl<B: Backend> SessionStore<B> {
         let bytes = pollster::block_on(self.backend.get(&key))
             .map_err(|error| format!("Could not read loop PCM: {error}"))?
             .ok_or("Loop PCM companion is missing or could not be unsealed.")?;
-        decode_pcm(&bytes, reference)
+        decode_capture(&bytes, reference)
     }
 
     /// Write the blob before publishing its reference in the session. Sealing
@@ -100,19 +101,85 @@ impl<B: Backend> SessionStore<B> {
     ) -> Result<(String, usize), String> {
         validate_namespace(namespace)?;
         let bytes = encode_pcm(rate, samples)?;
-        let digest = pcm_digest(&bytes);
+        let digest = self.try_write_capture_blob(namespace, &bytes)?;
+        Ok((digest, samples.len()))
+    }
+
+    /// Store exact PCM using the current lossless compression policy. Legacy
+    /// raw companions keep their existing addresses and remain readable.
+    pub fn try_write_capture_compressed(
+        &self,
+        namespace: &str,
+        rate: u32,
+        samples: &[f32],
+    ) -> Result<(LoopCaptureCodec, String, usize), String> {
+        validate_namespace(namespace)?;
+        let encoded = encode_capture(rate, samples)?;
+        self.try_write_encoded_capture(namespace, rate, samples.len(), &encoded)
+    }
+
+    /// Publish a prepared result from `encode_capture`, allowing hosts to keep
+    /// codec work on a worker without moving persona custody or storage there.
+    /// Full validation of an untrusted stored blob remains `decode_capture`.
+    pub fn try_write_encoded_capture(
+        &self,
+        namespace: &str,
+        expected_rate: u32,
+        expected_frames: usize,
+        encoded: &EncodedCapture,
+    ) -> Result<(LoopCaptureCodec, String, usize), String> {
+        validate_namespace(namespace)?;
+        let bytes = &encoded.bytes;
+        if !(PCM_HEADER_BYTES..=MAX_PCM_BYTES).contains(&bytes.len()) {
+            return Err("Prepared loop capture exceeds its storage bound.".into());
+        }
+        let magic = match encoded.codec {
+            LoopCaptureCodec::RawF32V1 => b"WSHPCM\0\0",
+            LoopCaptureCodec::WavpackF32V1 => b"WSHWVC\0\0",
+            _ => return Err("Prepared loop capture has an unsupported codec.".into()),
+        };
+        let version = u32::from_le_bytes(bytes[8..12].try_into().unwrap());
+        let rate = u32::from_le_bytes(bytes[12..16].try_into().unwrap());
+        let frames = usize::try_from(u64::from_le_bytes(bytes[16..24].try_into().unwrap()))
+            .map_err(|_| "Prepared loop capture frame count is unsupported.")?;
+        if &bytes[..8] != magic
+            || version != 1
+            || !(1_000..=384_000).contains(&rate)
+            || frames == 0
+            || frames > MAX_CAPTURE_FRAMES
+            || rate != expected_rate
+            || frames != expected_frames
+        {
+            return Err("Prepared loop capture has an invalid header.".into());
+        }
+        let raw_len = PCM_HEADER_BYTES + frames * 4;
+        if match encoded.codec {
+            LoopCaptureCodec::RawF32V1 => bytes.len() != raw_len,
+            LoopCaptureCodec::WavpackF32V1 => {
+                bytes.len() <= PCM_HEADER_BYTES || bytes.len() >= raw_len
+            },
+            _ => true,
+        } {
+            return Err("Prepared loop capture length differs from its codec policy.".into());
+        }
+        let digest = self.try_write_capture_blob(namespace, bytes)?;
+        Ok((encoded.codec.clone(), digest, frames))
+    }
+
+    fn try_write_capture_blob(&self, namespace: &str, bytes: &[u8]) -> Result<String, String> {
+        let digest = pcm_digest(bytes);
         let key = pcm_key(namespace, &digest)?;
         if let Some(stored) = pollster::block_on(self.backend.get(&key))
             .map_err(|error| format!("Could not inspect existing loop PCM: {error}"))?
         {
             if stored == bytes && pcm_digest(&stored) == digest {
-                return Ok((digest, samples.len()));
+                return Ok(digest);
             }
             return Err(
                 "Existing loop PCM does not match its address; it remains unchanged.".into(),
             );
         }
-        pollster::block_on(self.backend.put(&key, &bytes))
+        pollster::block_on(self.backend.put(&key, bytes))
             .map_err(|error| format!("Could not write loop PCM: {error}"))?;
         let stored = pollster::block_on(self.backend.get(&key))
             .map_err(|error| format!("Could not verify loop PCM: {error}"))?
@@ -120,7 +187,7 @@ impl<B: Backend> SessionStore<B> {
         if stored != bytes || pcm_digest(&stored) != digest {
             return Err("Loop PCM write failed its readback integrity check.".into());
         }
-        Ok((digest, samples.len()))
+        Ok(digest)
     }
 
     pub fn load_settings(&self) -> Option<String> {
@@ -369,6 +436,7 @@ pub(crate) const WOODSHED_SEAL_CONTEXT: &[u8] = b"woodshed.practice-session.seal
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::loop_capture::decode_pcm;
     const NAMESPACE: &str = "0123456789abcdef0123456789abcdef";
 
     fn capture_ref(digest: String, frames: usize) -> LoopCaptureRef {
@@ -383,6 +451,7 @@ mod tests {
             sample_rate: 48_000,
             frames,
             digest,
+            codec: LoopCaptureCodec::LegacyRawF32V1,
         }
     }
 
@@ -412,7 +481,7 @@ mod tests {
                 .is_err()
         );
         assert_eq!(loaded.loop_captures, session.loop_captures);
-        session.loop_captures.version = 2;
+        session.loop_captures.version = 99;
         session.loop_captures.takes.clear();
         assert!(
             serde_json::to_value(&session)
@@ -451,6 +520,71 @@ mod tests {
                 .try_read_capture(NAMESPACE, &reference)
                 .unwrap_err()
                 .contains("unsealed")
+        );
+    }
+
+    #[test]
+    fn compressed_companion_is_sealed_and_reopens_with_exact_bits() {
+        let inner = muniment::MemoryBackend::default();
+        let store = SessionStore::new(crate::sealed_backend::SealedBackend::new(
+            inner.clone(),
+            [19; 32],
+        ));
+        let samples: Vec<f32> = (0..96_000)
+            .map(|index| [0.125, -0.25, -0.0, f32::from_bits(1)][index % 4])
+            .collect();
+        let (codec, digest, frames) = store
+            .try_write_capture_compressed(NAMESPACE, 48_000, &samples)
+            .unwrap();
+        assert_eq!(codec, LoopCaptureCodec::WavpackF32V1);
+        let mut reference = capture_ref(digest.clone(), frames);
+        reference.codec = codec;
+        let key = pcm_key(NAMESPACE, &digest).unwrap();
+        let sealed = pollster::block_on(inner.get(&key)).unwrap().unwrap();
+        assert!(sealed.len() < encode_pcm(48_000, &samples).unwrap().len());
+        let reopened = SessionStore::new(crate::sealed_backend::SealedBackend::new(
+            inner.clone(),
+            [19; 32],
+        ));
+        let decoded = reopened.try_read_capture(NAMESPACE, &reference).unwrap();
+        assert!(
+            decoded
+                .iter()
+                .zip(&samples)
+                .all(|(a, b)| a.to_bits() == b.to_bits())
+        );
+        assert!(decode_capture(&sealed, &reference).is_err());
+        let other = SessionStore::new(crate::sealed_backend::SealedBackend::new(inner, [20; 32]));
+        assert!(other.try_read_capture(NAMESPACE, &reference).is_err());
+        assert!(
+            reopened
+                .try_read_capture("fedcba9876543210fedcba9876543210", &reference)
+                .is_err()
+        );
+        let mut relabelled = reference;
+        relabelled.codec = LoopCaptureCodec::RawF32V1;
+        assert!(reopened.try_read_capture(NAMESPACE, &relabelled).is_err());
+    }
+
+    #[test]
+    fn prepared_capture_must_match_its_source_before_writing() {
+        let inner = muniment::MemoryBackend::default();
+        let store = SessionStore::new(inner.clone());
+        let encoded = encode_capture(48_000, &vec![0.25; 96_000]).unwrap();
+        assert!(
+            store
+                .try_write_encoded_capture(NAMESPACE, 44_100, 96_000, &encoded)
+                .is_err()
+        );
+        assert!(
+            store
+                .try_write_encoded_capture(NAMESPACE, 48_000, 48_000, &encoded)
+                .is_err()
+        );
+        assert!(
+            pollster::block_on(inner.list("loop-pcm/"))
+                .unwrap()
+                .is_empty()
         );
     }
 
@@ -507,6 +641,11 @@ mod tests {
                 fault,
             });
             assert!(store.try_write_capture(NAMESPACE, 48_000, &[0.25]).is_err());
+            assert!(
+                store
+                    .try_write_capture_compressed(NAMESPACE, 48_000, &vec![0.25; 48_000])
+                    .is_err()
+            );
         }
         let store = SessionStore::new(FaultBackend {
             inner: muniment::MemoryBackend::default(),

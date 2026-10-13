@@ -10,7 +10,9 @@ use std::time::{Duration, Instant};
 
 use woodshed_audio::SampleBuffer;
 use woodshed_core::audio::AudioBackend;
-use woodshed_core::loop_capture::{LoopCaptureManifest, LoopCaptureRef};
+use woodshed_core::loop_capture::{
+    CAPTURE_VERSION, LoopCaptureCodec, LoopCaptureManifest, LoopCaptureRef,
+};
 use woodshed_core::loop_plan::LoopSegmentId;
 use woodshed_core::storage::SessionStore;
 use woodshed_views::persona::PracticeSeal;
@@ -19,6 +21,9 @@ use woodshed_views::stage::UiState;
 use crate::audio::{CaptureSnapshot, CpalBackend};
 use crate::shared::Shared;
 use crate::storage::HostBackend;
+
+mod codec_worker;
+use codec_worker::{CodecWorker, PreparedTake};
 
 #[derive(Default)]
 pub struct CapturePersistence {
@@ -30,6 +35,8 @@ pub struct CapturePersistence {
     last_attempt: Option<Instant>,
     cleared: bool,
     audio_absent: bool,
+    worker: CodecWorker,
+    awaiting_commit: bool,
 }
 
 fn same_take(a: &CaptureSnapshot, b: &CaptureSnapshot) -> bool {
@@ -42,6 +49,16 @@ fn same_take(a: &CaptureSnapshot, b: &CaptureSnapshot) -> bool {
 }
 
 impl CapturePersistence {
+    pub fn set_wake(&mut self, wake: Arc<dyn Fn() + Send + Sync>) {
+        self.worker.set_wake(wake);
+    }
+
+    /// Includes a finished codec result awaiting custody publication. Failed
+    /// publication keeps live PCM and this reservation until retry or reset.
+    pub fn is_busy(&self) -> bool {
+        self.worker.is_busy() || self.awaiting_commit
+    }
+
     pub(crate) fn permit_export(
         &self,
         plan: Option<&woodshed_core::loop_plan::LoopPlan>,
@@ -166,6 +183,7 @@ impl CapturePersistence {
                     bars: take.bars,
                     sample_rate: take.buffer.sample_rate_hz,
                     frames: take.buffer.len(),
+                    codec: LoopCaptureCodec::RawF32V1,
                     digest: "0".repeat(64),
                 },
             );
@@ -189,6 +207,7 @@ impl CapturePersistence {
                     bars: segment.bars,
                     sample_rate: rate,
                     frames,
+                    codec: LoopCaptureCodec::RawF32V1,
                     digest: "0".repeat(64),
                 },
             );
@@ -221,8 +240,31 @@ impl CapturePersistence {
             .then(|| format!("Card loops saved: {}", self.manifest.takes.len()))
     }
 
+    fn needs_migration(&self) -> bool {
+        // Only successfully hydrated legacy takes may be encoded. Unavailable
+        // references retain their codec/address and can migrate if recovered
+        // later, even when other valid takes already published a V2 catalog.
+        self.buffers.iter().any(|take| {
+            self.reference_for(take)
+                .is_some_and(|reference| reference.codec == LoopCaptureCodec::LegacyRawF32V1)
+        })
+    }
+
+    fn reference_for(&self, take: &CaptureSnapshot) -> Option<&LoopCaptureRef> {
+        self.buffers
+            .iter()
+            .find(|old| same_take(old, take))
+            .and_then(|_| {
+                self.manifest
+                    .takes
+                    .iter()
+                    .find(|reference| reference.id == take.id)
+            })
+    }
+
     fn changed(&self, takes: &[CaptureSnapshot]) -> bool {
-        self.cleared
+        self.needs_migration()
+            || self.cleared
             || self.buffers.len() != takes.len()
             || takes
                 .iter()
@@ -234,12 +276,138 @@ impl CapturePersistence {
             .is_none_or(|last| last.elapsed() >= Duration::from_secs(1))
     }
 
+    fn admit(&self, sealed: bool, takes: &[CaptureSnapshot]) -> Result<(), String> {
+        if let Some(error) = &self.blocked {
+            return Err(format!("{error} The saved session is retained."));
+        }
+        if (!takes.is_empty() || !self.manifest.is_empty()) && !sealed {
+            return Err("Choose an unlocked persona to save captured loops. Live takes remain available in this session.".into());
+        }
+        if self
+            .unavailable
+            .iter()
+            .any(|reference| takes.iter().any(|take| take.id == reference.id))
+        {
+            return Err(
+                "Clear the unavailable Card loop before replacing its saved reference.".into(),
+            );
+        }
+        // Decoded-frame admission must finish before any worker request.
+        let mut manifest = LoopCaptureManifest {
+            namespace: Some(self.namespace.clone().unwrap_or_else(|| "0".repeat(32))),
+            takes: self.unavailable.clone(),
+            ..Default::default()
+        };
+        for take in takes {
+            manifest.takes.push(LoopCaptureRef {
+                id: take.id,
+                bpm: take.bpm,
+                beats: take.beats,
+                bars: take.bars,
+                sample_rate: take.buffer.sample_rate_hz,
+                frames: take.buffer.len(),
+                codec: LoopCaptureCodec::RawF32V1,
+                digest: "0".repeat(64),
+            });
+        }
+        manifest.validate()
+    }
+
+    fn required(&self, takes: &[CaptureSnapshot]) -> Vec<CaptureSnapshot> {
+        takes
+            .iter()
+            .filter(|take| {
+                self.reference_for(take)
+                    .is_none_or(|reference| reference.codec == LoopCaptureCodec::LegacyRawF32V1)
+            })
+            .cloned()
+            .collect()
+    }
+
+    fn persist_async(
+        &mut self,
+        storage: &SessionStore<HostBackend>,
+        sealed: bool,
+        takes: Vec<CaptureSnapshot>,
+        ui: &mut UiState,
+    ) -> Result<(), String> {
+        // A failed policy-only rewrite may close with its verified legacy
+        // references. New/replaced live PCM must remain available until its
+        // companion and current session references are confirmed.
+        self.awaiting_commit = takes.iter().any(|take| self.reference_for(take).is_none());
+        if let Err(error) = self.admit(sealed, &takes) {
+            // Drain a finished preparation even if the custody seal changed;
+            // keep its cached bytes, but never publish under the rejected seal.
+            let _ = self.worker.prepare(&ui.audio_session, &takes, Vec::new());
+            self.last_attempt = Some(Instant::now());
+            return Err(error);
+        }
+        let required = self.required(&takes);
+        // Temporarily separate the lane/cache from the transaction borrow. A
+        // default lane starts no thread, and the original is always restored.
+        let mut worker = std::mem::take(&mut self.worker);
+        let prepared = worker.prepare(&ui.audio_session, &takes, required);
+        let result = match prepared {
+            Ok(true) => self.persist_prepared(storage, sealed, takes, ui, worker.prepared()),
+            Ok(false) => {
+                // Ordinary edits remain durable while the previous capture
+                // manifest is the only fully verified set of references.
+                let mut session = ui.to_persisted();
+                session.loop_captures = self.manifest.clone();
+                serde_json::to_string(&session).map_err(|error| error.to_string()).and_then(|json| {
+                    if !takes.is_empty() || !self.manifest.is_empty() {
+                        storage.try_save(&json).map_err(|error| error.to_string())
+                    } else {
+                        storage.save(&json);
+                        Ok(())
+                    }
+                }).map(|()| {
+                    ui.loop_capture_notice = Some("Preparing captured Card loops for storage. Live takes remain available.".into());
+                })
+            },
+            Err(error) => Err(error),
+        };
+        self.worker = worker;
+        if result.is_err() {
+            self.last_attempt = Some(Instant::now());
+        }
+        result
+    }
+
+    // Exact CPU/fixture helper: production always uses the bounded worker.
+    #[cfg(test)]
     fn persist(
         &mut self,
         storage: &SessionStore<HostBackend>,
         sealed: bool,
         takes: Vec<CaptureSnapshot>,
         ui: &mut UiState,
+    ) -> Result<(), String> {
+        self.admit(sealed, &takes)?;
+        let prepared = self
+            .required(&takes)
+            .into_iter()
+            .map(|take| {
+                let encoded = woodshed_core::loop_capture::encode_capture(
+                    take.buffer.sample_rate_hz,
+                    &take.buffer.data,
+                )?;
+                Ok(PreparedTake {
+                    take,
+                    encoded: Arc::new(encoded),
+                })
+            })
+            .collect::<Result<Vec<_>, String>>()?;
+        self.persist_prepared(storage, sealed, takes, ui, &prepared)
+    }
+
+    fn persist_prepared(
+        &mut self,
+        storage: &SessionStore<HostBackend>,
+        sealed: bool,
+        takes: Vec<CaptureSnapshot>,
+        ui: &mut UiState,
+        prepared: &[PreparedTake],
     ) -> Result<(), String> {
         self.last_attempt = Some(Instant::now());
         if let Some(error) = &self.blocked {
@@ -259,6 +427,17 @@ impl CapturePersistence {
             );
         }
         let mut manifest = LoopCaptureManifest {
+            // Keep an entirely unavailable V1 catalog eligible for migration if
+            // its companions can be restored later. An explicit raw codec records
+            // that compression policy has already selected raw fallback.
+            version: if self.manifest.version == 1
+                && takes.is_empty()
+                && !self.unavailable.is_empty()
+            {
+                1
+            } else {
+                CAPTURE_VERSION
+            },
             namespace: self.namespace.clone(),
             takes: self
                 .unavailable
@@ -276,16 +455,7 @@ impl CapturePersistence {
             self.namespace = manifest.namespace.clone();
         }
         for take in &takes {
-            let old = self
-                .buffers
-                .iter()
-                .find(|old| same_take(old, take))
-                .and_then(|_| {
-                    self.manifest
-                        .takes
-                        .iter()
-                        .find(|reference| reference.id == take.id)
-                });
+            let old = self.reference_for(take);
             let digest = old.map_or_else(|| "0".repeat(64), |reference| reference.digest.clone());
             manifest.takes.push(LoopCaptureRef {
                 id: take.id,
@@ -294,6 +464,9 @@ impl CapturePersistence {
                 bars: take.bars,
                 sample_rate: take.buffer.sample_rate_hz,
                 frames: take.buffer.len(),
+                codec: old.map_or(LoopCaptureCodec::RawF32V1, |reference| {
+                    reference.codec.clone()
+                }),
                 digest,
             });
         }
@@ -304,23 +477,31 @@ impl CapturePersistence {
         manifest.validate()?;
         // Catalog admission precedes any sample encoding or companion write.
         for take in &takes {
-            if !self.buffers.iter().any(|old| same_take(old, take)) {
-                let digest = storage
-                    .try_write_capture(
-                        manifest
-                            .namespace
-                            .as_deref()
-                            .expect("capture namespace prepared"),
-                        take.buffer.sample_rate_hz,
-                        &take.buffer.data,
-                    )?
-                    .0;
-                manifest
+            if self
+                .reference_for(take)
+                .is_none_or(|reference| reference.codec == LoopCaptureCodec::LegacyRawF32V1)
+            {
+                let encoded = prepared
+                    .iter()
+                    .find(|prepared| same_take(&prepared.take, take))
+                    .ok_or("Captured-loop codec preparation is not current.")?;
+                let (codec, digest, frames) = storage.try_write_encoded_capture(
+                    manifest
+                        .namespace
+                        .as_deref()
+                        .expect("capture namespace prepared"),
+                    take.buffer.sample_rate_hz,
+                    take.buffer.len(),
+                    &encoded.encoded,
+                )?;
+                let reference = manifest
                     .takes
                     .iter_mut()
                     .find(|reference| reference.id == take.id)
-                    .expect("validated take reference")
-                    .digest = digest;
+                    .expect("validated take reference");
+                reference.codec = codec;
+                reference.digest = digest;
+                reference.frames = frames;
             }
         }
         let mut session = ui.to_persisted();
@@ -338,6 +519,7 @@ impl CapturePersistence {
         self.namespace = manifest.namespace.clone();
         self.buffers = takes;
         self.cleared = false;
+        self.awaiting_commit = false;
         ui.loop_captures = manifest;
         ui.loop_capture_notice = self.notice();
         Ok(())
@@ -355,7 +537,7 @@ pub fn begin_session(shared: &mut Shared, ui: &UiState) -> Result<Option<Option<
     {
         return Ok(None);
     }
-    let state = if let Some(backend) = shared.backend.as_mut() {
+    let mut state = if let Some(backend) = shared.backend.as_mut() {
         backend.clear_loop_session();
         CapturePersistence::restore(shared.storage.as_ref(), &ui.loop_captures, backend)?
     } else {
@@ -369,6 +551,8 @@ pub fn begin_session(shared: &mut Shared, ui: &UiState) -> Result<Option<Option<
         }
     };
     let notice = state.notice();
+    state.worker = std::mem::take(&mut shared.capture_persistence.worker);
+    state.worker.cancel_epoch();
     shared.capture_persistence = state;
     shared.last_song = None;
     shared.last_loop_plan = None;
@@ -389,12 +573,14 @@ pub fn pending(shared: &Shared, ui: &UiState) -> bool {
         .last_audio_session
         .as_ref()
         .is_some_and(|last| Arc::ptr_eq(last, &ui.audio_session))
-        && shared.capture_persistence.retry_ready()
-        && shared.backend.as_ref().is_some_and(|backend| {
-            shared
-                .capture_persistence
-                .changed(&backend.capture_snapshot())
-        })
+        && (shared.capture_persistence.worker.completion_ready()
+            || (!shared.capture_persistence.worker.is_busy()
+                && shared.capture_persistence.retry_ready()
+                && shared.backend.as_ref().is_some_and(|backend| {
+                    shared
+                        .capture_persistence
+                        .changed(&backend.capture_snapshot())
+                })))
 }
 
 /// Used by dispatch, and by completion service without another user action.
@@ -417,12 +603,19 @@ pub fn persist(shared: &mut Shared, ui: &mut UiState) {
     let sealed = matches!(shared.seal, Some(PracticeSeal::Sealed { .. }));
     if let Err(error) = shared
         .capture_persistence
-        .persist(storage, sealed, takes, ui)
+        .persist_async(storage, sealed, takes, ui)
     {
         ui.loop_capture_notice = Some(format!(
             "Captured-loop save is unconfirmed: {error} Live takes remain available."
         ));
     }
+}
+
+/// Queue current capture preparation and let the host defer native close until
+/// publication completes. No join or codec execution runs on the UI thread.
+pub fn close_request(shared: &mut Shared, ui: &mut UiState) -> bool {
+    persist(shared, ui);
+    shared.capture_persistence.is_busy()
 }
 
 pub fn persist_if_changed(shared: &mut Shared, ui: &mut UiState) {
@@ -483,6 +676,768 @@ mod tests {
         (ui, take)
     }
 
+    const LEGACY_NAMESPACE: &str = "0123456789abcdef0123456789abcdef";
+
+    fn seed_legacy(
+        storage: &SessionStore<HostBackend>,
+        ui: &mut UiState,
+        takes: &[CaptureSnapshot],
+    ) -> LoopCaptureManifest {
+        let mut manifest = LoopCaptureManifest {
+            version: 1,
+            namespace: Some(LEGACY_NAMESPACE.into()),
+            takes: Vec::new(),
+        };
+        for take in takes {
+            let (digest, frames) = storage
+                .try_write_capture(
+                    LEGACY_NAMESPACE,
+                    take.buffer.sample_rate_hz,
+                    &take.buffer.data,
+                )
+                .unwrap();
+            manifest.takes.push(LoopCaptureRef {
+                id: take.id,
+                bpm: take.bpm,
+                beats: take.beats,
+                bars: take.bars,
+                sample_rate: take.buffer.sample_rate_hz,
+                frames,
+                codec: LoopCaptureCodec::LegacyRawF32V1,
+                digest,
+            });
+        }
+        manifest.validate().unwrap();
+        ui.loop_captures = manifest.clone();
+        storage
+            .try_save(&serde_json::to_string(&ui.to_persisted()).unwrap())
+            .unwrap();
+        manifest
+    }
+
+    fn bits(samples: &[f32]) -> Vec<u32> {
+        samples.iter().map(|sample| sample.to_bits()).collect()
+    }
+
+    fn ready<T>(future: impl std::future::Future<Output = T>) -> T {
+        let mut future = std::pin::pin!(future);
+        let mut context = std::task::Context::from_waker(std::task::Waker::noop());
+        match future.as_mut().poll(&mut context) {
+            std::task::Poll::Ready(value) => value,
+            std::task::Poll::Pending => panic!("memory fixture unexpectedly awaited external work"),
+        }
+    }
+
+    #[test]
+    fn hydrated_v1_capture_migrates_with_exact_sealed_readback_and_retains_old_blob() {
+        let inner = MemoryBackend::default();
+        let storage: SessionStore<HostBackend> =
+            SessionStore::new(Box::new(SealedBackend::new(inner.clone(), [53; 32])));
+        let (mut ui, take) = fixture();
+        let old = seed_legacy(&storage, &mut ui, &[take.clone()]);
+        let old_key =
+            woodshed_core::loop_capture::pcm_key(LEGACY_NAMESPACE, &old.takes[0].digest).unwrap();
+        let old_blob = ready(inner.get(&old_key)).unwrap().unwrap();
+        let mut backend = CpalBackend::offline_for_test();
+        let mut state = CapturePersistence::restore(Some(&storage), &old, &mut backend).unwrap();
+        assert!(state.needs_migration());
+        assert!(state.changed(&backend.capture_snapshot()));
+        state
+            .persist(&storage, true, backend.capture_snapshot(), &mut ui)
+            .unwrap();
+        assert_eq!(ui.loop_captures.version, 2);
+        assert_eq!(ui.loop_captures.namespace, old.namespace);
+        let reference = &ui.loop_captures.takes[0];
+        assert_eq!(reference.codec, LoopCaptureCodec::WavpackF32V1);
+        assert_eq!(reference.id, old.takes[0].id);
+        assert_eq!(reference.bpm, old.takes[0].bpm);
+        assert_eq!(reference.beats, old.takes[0].beats);
+        assert_eq!(reference.bars, old.takes[0].bars);
+        assert_eq!(reference.sample_rate, old.takes[0].sample_rate);
+        assert_eq!(reference.frames, old.takes[0].frames);
+        assert_ne!(reference.digest, old.takes[0].digest);
+        assert_eq!(
+            bits(
+                &storage
+                    .try_read_capture(LEGACY_NAMESPACE, reference)
+                    .unwrap()
+            ),
+            bits(&take.buffer.data)
+        );
+        assert_eq!(ready(inner.get(&old_key)).unwrap().unwrap(), old_blob);
+        let reopened = woodshed_core::storage::decode_session(&storage.load().unwrap())
+            .unwrap()
+            .session;
+        assert_eq!(reopened.loop_captures, ui.loop_captures);
+        assert!(!state.needs_migration());
+        assert!(!state.changed(&backend.capture_snapshot()));
+    }
+
+    struct CountCompanions {
+        inner: MemoryBackend,
+        operations: Arc<std::sync::atomic::AtomicUsize>,
+    }
+
+    #[async_trait]
+    impl Backend for CountCompanions {
+        async fn get(&self, key: &str) -> Result<Option<Vec<u8>>, StoreError> {
+            if key.starts_with("loop-pcm/") {
+                self.operations
+                    .fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+            }
+            self.inner.get(key).await
+        }
+        async fn put(&self, key: &str, bytes: &[u8]) -> Result<(), StoreError> {
+            if key.starts_with("loop-pcm/") {
+                self.operations
+                    .fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+            }
+            self.inner.put(key, bytes).await
+        }
+        async fn delete(&self, key: &str) -> Result<(), StoreError> {
+            self.inner.delete(key).await
+        }
+        async fn list(&self, prefix: &str) -> Result<Vec<String>, StoreError> {
+            self.inner.list(prefix).await
+        }
+        async fn scan(&self, start: &str, end: &str) -> Result<Vec<String>, StoreError> {
+            self.inner.scan(start, end).await
+        }
+        async fn apply(&self, _: &[WriteOp]) -> Result<(), StoreError> {
+            panic!("capture persistence must not assume multi-file apply is atomic")
+        }
+    }
+
+    #[test]
+    fn raw_fallback_records_policy_once_and_does_not_touch_companions_again() {
+        let operations = Arc::new(std::sync::atomic::AtomicUsize::new(0));
+        let storage: SessionStore<HostBackend> = SessionStore::new(Box::new(CountCompanions {
+            inner: MemoryBackend::default(),
+            operations: operations.clone(),
+        }));
+        let (mut ui, mut take) = fixture();
+        // Full finite f32 bit entropy keeps this deterministic noise at raw
+        // size. Explicit fallback must not be re-evaluated after reopening.
+        let mut random = 0x1234_5678u32;
+        let samples = (0..8192)
+            .map(|_| {
+                random ^= random << 13;
+                random ^= random >> 17;
+                random ^= random << 5;
+                let bits = if random & 0x7f80_0000 == 0x7f80_0000 {
+                    random ^ 0x0080_0000
+                } else {
+                    random
+                };
+                f32::from_bits(bits)
+            })
+            .collect();
+        take.bpm = 60.0 * 1000.0 / 8192.0;
+        take.beats = 1;
+        take.bars = 1;
+        take.buffer = SampleBuffer::new(samples, 1000);
+        let mut state = CapturePersistence::default();
+        state
+            .persist(&storage, true, vec![take.clone()], &mut ui)
+            .unwrap();
+        assert_eq!(ui.loop_captures.version, 2);
+        assert_eq!(ui.loop_captures.takes[0].codec, LoopCaptureCodec::RawF32V1);
+        let accepted = ui.loop_captures.clone();
+        let before = operations.load(std::sync::atomic::Ordering::Relaxed);
+        assert!(before > 0);
+        ui.set.cards[1].label = "Current ordinary edit".into();
+        state
+            .persist(&storage, true, vec![take.clone()], &mut ui)
+            .unwrap();
+        assert_eq!(
+            operations.load(std::sync::atomic::Ordering::Relaxed),
+            before
+        );
+        assert_eq!(ui.loop_captures, accepted);
+        let mut backend = CpalBackend::offline_for_test();
+        let mut reopened =
+            CapturePersistence::restore(Some(&storage), &accepted, &mut backend).unwrap();
+        assert!(!reopened.needs_migration());
+        let after_restore = operations.load(std::sync::atomic::Ordering::Relaxed);
+        reopened
+            .persist(&storage, true, backend.capture_snapshot(), &mut ui)
+            .unwrap();
+        assert_eq!(
+            operations.load(std::sync::atomic::Ordering::Relaxed),
+            after_restore
+        );
+        assert_eq!(
+            bits(&backend.capture_snapshot()[0].buffer.data),
+            bits(&take.buffer.data)
+        );
+    }
+
+    #[test]
+    fn mixed_legacy_unavailable_reference_can_recover_and_migrate_inside_v2() {
+        let inner = MemoryBackend::default();
+        let storage: SessionStore<HostBackend> = SessionStore::new(Box::new(inner.clone()));
+        let (mut ui, first) = fixture();
+        let mut second = first.clone();
+        let plan = ui.requested_loop_plan().unwrap();
+        second.id = plan.segments[1].id;
+        let old = seed_legacy(&storage, &mut ui, &[first.clone(), second.clone()]);
+        let missing_key =
+            woodshed_core::loop_capture::pcm_key(LEGACY_NAMESPACE, &old.takes[1].digest).unwrap();
+        // Different PCM is needed for distinct content addresses.
+        assert_eq!(old.takes[0].digest, old.takes[1].digest);
+        // Preserve the first take's bytes but publish a missing address for the
+        // second owner; later recovery supplies that exact original raw blob.
+        let mut mixed = old.clone();
+        let mut samples = second.buffer.data.as_ref().clone();
+        samples[0] = 0.0625;
+        second.buffer = SampleBuffer::new(samples, 48_000);
+        let raw = woodshed_core::loop_capture::encode_pcm(48_000, &second.buffer.data).unwrap();
+        mixed.takes[1].digest = woodshed_core::loop_capture::pcm_digest(&raw);
+        let recovery_key =
+            woodshed_core::loop_capture::pcm_key(LEGACY_NAMESPACE, &mixed.takes[1].digest).unwrap();
+        assert_ne!(recovery_key, missing_key);
+        ui.loop_captures = mixed.clone();
+        let mut backend = CpalBackend::offline_for_test();
+        let mut state = CapturePersistence::restore(Some(&storage), &mixed, &mut backend).unwrap();
+        assert_eq!(state.buffers.len(), 1);
+        assert_eq!(state.unavailable, vec![mixed.takes[1].clone()]);
+        state
+            .persist(&storage, true, backend.capture_snapshot(), &mut ui)
+            .unwrap();
+        assert_eq!(ui.loop_captures.version, 2);
+        let retained = ui
+            .loop_captures
+            .takes
+            .iter()
+            .find(|r| r.id == second.id)
+            .unwrap();
+        assert_eq!(retained, &mixed.takes[1]);
+        ready(inner.put(&recovery_key, &raw)).unwrap();
+        let mut recovered_backend = CpalBackend::offline_for_test();
+        let mut recovered =
+            CapturePersistence::restore(Some(&storage), &ui.loop_captures, &mut recovered_backend)
+                .unwrap();
+        assert!(recovered.needs_migration());
+        assert!(recovered.unavailable.is_empty());
+        recovered
+            .persist(
+                &storage,
+                true,
+                recovered_backend.capture_snapshot(),
+                &mut ui,
+            )
+            .unwrap();
+        assert!(
+            ui.loop_captures
+                .takes
+                .iter()
+                .all(|r| r.codec == LoopCaptureCodec::WavpackF32V1)
+        );
+        assert_eq!(
+            bits(
+                &storage
+                    .try_read_capture(
+                        LEGACY_NAMESPACE,
+                        ui.loop_captures
+                            .takes
+                            .iter()
+                            .find(|r| r.id == second.id)
+                            .unwrap(),
+                    )
+                    .unwrap()
+            ),
+            bits(&second.buffer.data)
+        );
+        recovered_backend.clear_stored_capture(second.id).unwrap();
+        recovered.forget(second.id);
+        recovered
+            .persist(
+                &storage,
+                true,
+                recovered_backend.capture_snapshot(),
+                &mut ui,
+            )
+            .unwrap();
+        assert_eq!(ui.loop_captures.takes.len(), 1);
+        assert_eq!(ui.loop_captures.takes[0].id, first.id);
+    }
+
+    fn completion_wake(state: &mut CapturePersistence) -> std::sync::mpsc::Receiver<()> {
+        let (sender, receiver) = std::sync::mpsc::channel();
+        state.set_wake(Arc::new(move || {
+            let _ = sender.send(());
+        }));
+        receiver
+    }
+
+    fn await_completion(receiver: &std::sync::mpsc::Receiver<()>) {
+        receiver
+            .recv_timeout(Duration::from_secs(10))
+            .expect("bounded codec completion wake");
+    }
+
+    #[test]
+    fn worker_prepares_without_blocking_authoring_and_publishes_current_edits_on_wake() {
+        let storage: SessionStore<HostBackend> =
+            SessionStore::new(Box::new(MemoryBackend::default()));
+        let (mut ui, take) = fixture();
+        let (started, started_rx) = std::sync::mpsc::channel();
+        let (release, release_rx) = std::sync::mpsc::channel();
+        let release_rx = std::sync::Mutex::new(release_rx);
+        let control_thread = std::thread::current().id();
+        let mut state = CapturePersistence::default();
+        state.worker = CodecWorker::with_encoder(Arc::new(move |rate, samples| {
+            assert_ne!(std::thread::current().id(), control_thread);
+            started.send(()).unwrap();
+            release_rx.lock().unwrap().recv().unwrap();
+            woodshed_core::loop_capture::encode_capture(rate, samples)
+        }));
+        let wakes = completion_wake(&mut state);
+        state
+            .persist_async(&storage, true, vec![take.clone()], &mut ui)
+            .unwrap();
+        await_completion(&started_rx);
+        assert!(state.is_busy());
+        assert!(ui.loop_captures.is_empty());
+        let provisional = woodshed_core::storage::decode_session(&storage.load().unwrap())
+            .unwrap()
+            .session;
+        assert!(provisional.loop_captures.is_empty());
+        ui.set.cards[1].label = "Latest edit while compression waits".into();
+        state
+            .persist_async(&storage, true, vec![take.clone()], &mut ui)
+            .unwrap();
+        let ordinary = woodshed_core::storage::decode_session(&storage.load().unwrap())
+            .unwrap()
+            .session;
+        assert_eq!(ordinary.set.cards[1].label, ui.set.cards[1].label);
+        assert!(ordinary.loop_captures.is_empty());
+        release.send(()).unwrap();
+        await_completion(&wakes);
+        assert!(state.worker.completion_ready());
+        state
+            .persist_async(&storage, true, vec![take.clone()], &mut ui)
+            .unwrap();
+        assert!(!state.is_busy());
+        let published = woodshed_core::storage::decode_session(&storage.load().unwrap())
+            .unwrap()
+            .session;
+        assert_eq!(
+            published.set.cards[1].label,
+            "Latest edit while compression waits"
+        );
+        assert_eq!(published.loop_captures.takes.len(), 1);
+        assert_eq!(
+            bits(
+                &storage
+                    .try_read_capture(
+                        published.loop_captures.namespace.as_deref().unwrap(),
+                        &published.loop_captures.takes[0],
+                    )
+                    .unwrap()
+            ),
+            bits(&take.buffer.data)
+        );
+    }
+
+    #[test]
+    fn worker_cache_survives_session_failure_and_close_holds_only_new_live_pcm() {
+        let inner = MemoryBackend::default();
+        let good: SessionStore<HostBackend> = SessionStore::new(Box::new(inner.clone()));
+        let failing: SessionStore<HostBackend> = SessionStore::new(Box::new(Failing {
+            inner,
+            key: "session",
+            refuse_session_read: false,
+        }));
+        let (mut ui, take) = fixture();
+        let calls = Arc::new(std::sync::atomic::AtomicUsize::new(0));
+        let count = calls.clone();
+        let mut state = CapturePersistence::default();
+        state.worker = CodecWorker::with_encoder(Arc::new(move |rate, samples| {
+            count.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+            woodshed_core::loop_capture::encode_capture(rate, samples)
+        }));
+        let wakes = completion_wake(&mut state);
+        state
+            .persist_async(&good, true, vec![take.clone()], &mut ui)
+            .unwrap();
+        let previous = good.load().unwrap();
+        await_completion(&wakes);
+        assert!(
+            state
+                .persist_async(&good, false, vec![take.clone()], &mut ui)
+                .is_err()
+        );
+        assert!(!state.worker.is_busy());
+        assert!(state.is_busy());
+        assert_eq!(good.load().unwrap(), previous);
+        assert!(
+            state
+                .persist_async(&failing, true, vec![take.clone()], &mut ui)
+                .is_err()
+        );
+        assert!(state.is_busy());
+        assert_eq!(good.load().unwrap(), previous);
+        assert!(ui.loop_captures.is_empty());
+        state
+            .persist_async(&good, true, vec![take], &mut ui)
+            .unwrap();
+        assert!(!state.is_busy());
+        assert_eq!(calls.load(std::sync::atomic::Ordering::Relaxed), 1);
+
+        let (mut legacy_ui, legacy_take) = fixture();
+        let legacy = seed_legacy(&good, &mut legacy_ui, &[legacy_take.clone()]);
+        let mut backend = CpalBackend::offline_for_test();
+        let mut migration =
+            CapturePersistence::restore(Some(&good), &legacy, &mut backend).unwrap();
+        let wakes = completion_wake(&mut migration);
+        migration
+            .persist_async(&good, true, backend.capture_snapshot(), &mut legacy_ui)
+            .unwrap();
+        assert!(migration.is_busy());
+        await_completion(&wakes);
+        assert!(
+            migration
+                .persist_async(&failing, true, backend.capture_snapshot(), &mut legacy_ui)
+                .is_err()
+        );
+        assert!(!migration.is_busy());
+        assert_eq!(migration.manifest, legacy);
+        assert_eq!(
+            bits(
+                &good
+                    .try_read_capture(LEGACY_NAMESPACE, &legacy.takes[0])
+                    .unwrap()
+            ),
+            bits(&legacy_take.buffer.data)
+        );
+    }
+
+    #[test]
+    fn epoch_reset_reuses_one_lane_and_discards_old_prepared_results() {
+        let storage: SessionStore<HostBackend> =
+            SessionStore::new(Box::new(MemoryBackend::default()));
+        let shared = Shared::with_store(
+            Some(storage),
+            Some(PracticeSeal::Sealed {
+                persona: "isolated".into(),
+                protection: "fixture".into(),
+            }),
+            None,
+        );
+        let (mut old_ui, old_take) = fixture();
+        let calls = Arc::new(std::sync::atomic::AtomicUsize::new(0));
+        let count = calls.clone();
+        let thread_id = Arc::new(std::sync::Mutex::new(None));
+        let observed_thread = thread_id.clone();
+        let (started, started_rx) = std::sync::mpsc::channel();
+        let (release, release_rx) = std::sync::mpsc::channel();
+        let release_rx = std::sync::Mutex::new(release_rx);
+        let mut shared = shared.borrow_mut();
+        shared.backend = Some(CpalBackend::offline_for_test());
+        shared.capture_persistence.worker =
+            CodecWorker::with_encoder(Arc::new(move |rate, samples| {
+                let id = std::thread::current().id();
+                let mut observed = observed_thread.lock().unwrap();
+                if let Some(previous) = *observed {
+                    assert_eq!(previous, id);
+                } else {
+                    *observed = Some(id);
+                }
+                drop(observed);
+                if count.fetch_add(1, std::sync::atomic::Ordering::Relaxed) == 0 {
+                    started.send(()).unwrap();
+                    release_rx.lock().unwrap().recv().unwrap();
+                }
+                woodshed_core::loop_capture::encode_capture(rate, samples)
+            }));
+        let wakes = completion_wake(&mut shared.capture_persistence);
+        begin_session(&mut shared, &old_ui).unwrap();
+        shared
+            .backend
+            .as_mut()
+            .unwrap()
+            .restore_loop_captures(vec![old_take.clone()])
+            .unwrap();
+        persist(&mut shared, &mut old_ui);
+        await_completion(&started_rx);
+        assert!(!pending(&shared, &old_ui));
+        let (mut incoming, mut replacement) = fixture();
+        replacement.buffer = SampleBuffer::new(vec![0.0625; old_take.buffer.len()], 48_000);
+        begin_session(&mut shared, &incoming).unwrap();
+        assert!(shared.capture_persistence.is_busy());
+        shared
+            .backend
+            .as_mut()
+            .unwrap()
+            .restore_loop_captures(vec![replacement.clone()])
+            .unwrap();
+        persist(&mut shared, &mut incoming);
+        assert_eq!(calls.load(std::sync::atomic::Ordering::Relaxed), 1);
+        assert!(incoming.loop_captures.is_empty());
+        release.send(()).unwrap();
+        await_completion(&wakes);
+        persist_if_changed(&mut shared, &mut incoming);
+        await_completion(&wakes);
+        shared.capture_persistence.last_attempt = Some(Instant::now());
+        assert!(pending(&shared, &incoming));
+        persist_if_changed(&mut shared, &mut incoming);
+        assert!(!shared.capture_persistence.is_busy());
+        assert_eq!(calls.load(std::sync::atomic::Ordering::Relaxed), 2);
+        let reference = &incoming.loop_captures.takes[0];
+        assert_eq!(
+            bits(
+                &shared
+                    .storage
+                    .as_ref()
+                    .unwrap()
+                    .try_read_capture(
+                        incoming.loop_captures.namespace.as_deref().unwrap(),
+                        reference,
+                    )
+                    .unwrap()
+            ),
+            bits(&replacement.buffer.data)
+        );
+        assert_ne!(bits(&replacement.buffer.data), bits(&old_take.buffer.data));
+    }
+
+    #[test]
+    fn explicit_clear_while_preparing_cannot_republish_retired_pcm() {
+        let storage: SessionStore<HostBackend> =
+            SessionStore::new(Box::new(MemoryBackend::default()));
+        let shared = Shared::with_store(
+            Some(storage),
+            Some(PracticeSeal::Sealed {
+                persona: "isolated".into(),
+                protection: "fixture".into(),
+            }),
+            None,
+        );
+        let (mut ui, take) = fixture();
+        let (started, started_rx) = std::sync::mpsc::channel();
+        let (release, release_rx) = std::sync::mpsc::channel();
+        let release_rx = std::sync::Mutex::new(release_rx);
+        let mut shared = shared.borrow_mut();
+        shared.backend = Some(CpalBackend::offline_for_test());
+        shared.capture_persistence.worker =
+            CodecWorker::with_encoder(Arc::new(move |rate, samples| {
+                started.send(()).unwrap();
+                release_rx.lock().unwrap().recv().unwrap();
+                woodshed_core::loop_capture::encode_capture(rate, samples)
+            }));
+        let wakes = completion_wake(&mut shared.capture_persistence);
+        begin_session(&mut shared, &ui).unwrap();
+        shared
+            .backend
+            .as_mut()
+            .unwrap()
+            .restore_loop_captures(vec![take.clone()])
+            .unwrap();
+        persist(&mut shared, &mut ui);
+        await_completion(&started_rx);
+        shared
+            .backend
+            .as_mut()
+            .unwrap()
+            .clear_stored_capture(take.id)
+            .unwrap();
+        shared.capture_persistence.forget(take.id);
+        persist(&mut shared, &mut ui);
+        assert!(ui.loop_captures.is_empty());
+        assert!(shared.capture_persistence.worker.is_busy());
+        release.send(()).unwrap();
+        await_completion(&wakes);
+        assert!(pending(&shared, &ui));
+        persist_if_changed(&mut shared, &mut ui);
+        assert!(!shared.capture_persistence.is_busy());
+        assert!(shared.capture_persistence.worker.encoded(&take).is_none());
+        assert!(ui.loop_captures.is_empty());
+        let published = woodshed_core::storage::decode_session(
+            &shared.storage.as_ref().unwrap().load().unwrap(),
+        )
+        .unwrap()
+        .session;
+        assert!(published.loop_captures.is_empty());
+    }
+
+    #[test]
+    fn prepared_wrong_rate_or_frames_cannot_publish_or_touch_companion_storage() {
+        for wrong_rate in [true, false] {
+            let operations = Arc::new(std::sync::atomic::AtomicUsize::new(0));
+            let storage: SessionStore<HostBackend> = SessionStore::new(Box::new(CountCompanions {
+                inner: MemoryBackend::default(),
+                operations: operations.clone(),
+            }));
+            let (mut ui, take) = fixture();
+            let mut state = CapturePersistence::default();
+            state.worker = CodecWorker::with_encoder(Arc::new(move |rate, samples| {
+                if wrong_rate {
+                    woodshed_core::loop_capture::encode_capture(rate + 1, samples)
+                } else {
+                    woodshed_core::loop_capture::encode_capture(rate, &samples[..samples.len() - 1])
+                }
+            }));
+            let wakes = completion_wake(&mut state);
+            state
+                .persist_async(&storage, true, vec![take.clone()], &mut ui)
+                .unwrap();
+            let previous = storage.load().unwrap();
+            await_completion(&wakes);
+            assert!(
+                state
+                    .persist_async(&storage, true, vec![take.clone()], &mut ui)
+                    .is_err()
+            );
+            assert_eq!(operations.load(std::sync::atomic::Ordering::Relaxed), 0);
+            assert_eq!(storage.load().unwrap(), previous);
+            assert!(ui.loop_captures.is_empty());
+            assert!(state.is_busy());
+            assert_eq!(
+                bits(&state.worker.prepared()[0].take.buffer.data),
+                bits(&take.buffer.data)
+            );
+        }
+    }
+
+    #[test]
+    fn mounted_main_close_waits_for_capture_worker_then_preserves_dirty_appearance_gate() {
+        use cambium_genet_winit_host::{CloseRequest, Harness, Init};
+        let directory = tempfile::tempdir().unwrap();
+        let storage: SessionStore<HostBackend> =
+            SessionStore::new(Box::new(MemoryBackend::default()));
+        let shared = Shared::with_store(
+            Some(storage),
+            Some(PracticeSeal::Sealed {
+                persona: "isolated".into(),
+                protection: "fixture".into(),
+            }),
+            None,
+        );
+        let (mut ui, take) = fixture();
+        ui.appearance =
+            woodshed_views::appearance::AppearanceState::load(directory.path().join("themes.json"))
+                .unwrap();
+        ui.appearance
+            .begin_edit(&ui.app_settings.appearance)
+            .unwrap();
+        ui.appearance.workshop.new_copy();
+        assert!(ui.appearance.workshop.has_changes());
+        let (started, started_rx) = std::sync::mpsc::channel();
+        let (release, release_rx) = std::sync::mpsc::channel();
+        let release_rx = std::sync::Mutex::new(release_rx);
+        {
+            let mut shared = shared.borrow_mut();
+            shared.backend = Some(CpalBackend::offline_for_test());
+            begin_session(&mut shared, &ui).unwrap();
+            shared
+                .backend
+                .as_mut()
+                .unwrap()
+                .restore_loop_captures(vec![take.clone()])
+                .unwrap();
+            shared
+                .backend
+                .as_mut()
+                .unwrap()
+                .set_loop_plan(&ui.requested_loop_plan().unwrap())
+                .unwrap();
+            shared.capture_persistence.worker =
+                CodecWorker::with_encoder(Arc::new(move |rate, samples| {
+                    started.send(()).unwrap();
+                    release_rx.lock().unwrap().recv().unwrap();
+                    woodshed_core::loop_capture::encode_capture(rate, samples)
+                }));
+        }
+        let logic: crate::sync::Logic = Box::new(woodshed_views::stage::stage_root);
+        let mut host = Harness::with_hooks(
+            Init {
+                sheet: crate::appearance::stylesheet(&ui),
+                state: ui,
+                logic,
+                fonts: Vec::new(),
+                images: Vec::new(),
+            },
+            crate::hooks(&shared),
+        );
+        host.layout_at(1280.0, 960.0);
+        let wake = host.wake().callback();
+        let (completion, completed) = std::sync::mpsc::channel();
+        shared
+            .borrow_mut()
+            .capture_persistence
+            .set_wake(Arc::new(move || {
+                wake();
+                let _ = completion.send(());
+            }));
+        host.request_close(CloseRequest::Native);
+        await_completion(&started_rx);
+        assert!(!host.close_requested());
+        assert!(shared.borrow().capture_persistence.is_busy());
+        host.update(|ui| ui.set.cards[1].label = "Edit while native close waits".into());
+        host.after_dispatch();
+        host.layout_at(1280.0, 960.0);
+        assert_eq!(
+            host.state().set.cards[1].label,
+            "Edit while native close waits"
+        );
+        assert!(!host.close_requested());
+        assert!(host.state().loop_captures.is_empty());
+        release.send(()).unwrap();
+        await_completion(&completed);
+        assert!(host.process_wake());
+        assert!(!shared.borrow().capture_persistence.is_busy());
+        assert!(!host.close_requested());
+        assert!(host.state().appearance.workshop.has_changes());
+        assert!(host.state().appearance.workshop.close_requested());
+        assert!(host.state().appearance_close_app);
+        let shared = shared.borrow();
+        let store = shared.storage.as_ref().unwrap();
+        let published = woodshed_core::storage::decode_session(&store.load().unwrap())
+            .unwrap()
+            .session;
+        assert_eq!(
+            published.set.cards[1].label,
+            "Edit while native close waits"
+        );
+        assert_eq!(published.loop_captures.takes.len(), 1);
+        assert_eq!(
+            bits(
+                &store
+                    .try_read_capture(
+                        published.loop_captures.namespace.as_deref().unwrap(),
+                        &published.loop_captures.takes[0],
+                    )
+                    .unwrap()
+            ),
+            bits(&take.buffer.data)
+        );
+    }
+
+    #[test]
+    fn worker_quota_rejection_precedes_thread_request_and_keeps_current_session() {
+        let storage: SessionStore<HostBackend> =
+            SessionStore::new(Box::new(MemoryBackend::default()));
+        let (mut ui, take) = fixture();
+        storage.save("previous session");
+        let calls = Arc::new(std::sync::atomic::AtomicUsize::new(0));
+        let count = calls.clone();
+        let mut state = CapturePersistence::default();
+        state.worker = CodecWorker::with_encoder(Arc::new(move |rate, samples| {
+            count.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+            woodshed_core::loop_capture::encode_capture(rate, samples)
+        }));
+        let duplicate = vec![take.clone(), take];
+        assert!(
+            state
+                .persist_async(&storage, true, duplicate, &mut ui)
+                .is_err()
+        );
+        assert_eq!(calls.load(std::sync::atomic::Ordering::Relaxed), 0);
+        assert!(!state.worker.is_busy());
+        assert_eq!(storage.load().unwrap(), "previous session");
+    }
+
     #[test]
     fn wav_export_refuses_only_relevant_unavailable_set_captures() {
         let (ui, take) = fixture();
@@ -495,6 +1450,7 @@ mod tests {
                 bars: take.bars,
                 sample_rate: 48_000,
                 frames: take.buffer.len(),
+                codec: LoopCaptureCodec::RawF32V1,
                 digest: "00".repeat(32),
             }],
             ..Default::default()
@@ -581,6 +1537,135 @@ mod tests {
                 &take.buffer.data
             ));
         }
+    }
+
+    #[test]
+    fn failed_legacy_migration_preserves_previous_refs_namespace_and_pcm_until_retry() {
+        for key in ["loop-pcm/", "session"] {
+            let inner = MemoryBackend::default();
+            let good: SessionStore<HostBackend> =
+                SessionStore::new(Box::new(SealedBackend::new(inner.clone(), [59; 32])));
+            let (mut ui, take) = fixture();
+            let legacy = seed_legacy(&good, &mut ui, &[take.clone()]);
+            let previous = good.load().unwrap();
+            let mut backend = CpalBackend::offline_for_test();
+            let mut state =
+                CapturePersistence::restore(Some(&good), &legacy, &mut backend).unwrap();
+            let hydrated = backend.capture_snapshot();
+            assert!(
+                state
+                    .persist(&good, false, hydrated.clone(), &mut ui)
+                    .is_err()
+            );
+            assert_eq!(good.load().unwrap(), previous);
+            let failing: SessionStore<HostBackend> =
+                SessionStore::new(Box::new(SealedBackend::new(
+                    Failing {
+                        inner: inner.clone(),
+                        key,
+                        refuse_session_read: false,
+                    },
+                    [59; 32],
+                )));
+            assert!(
+                state
+                    .persist(&failing, true, hydrated.clone(), &mut ui)
+                    .is_err()
+            );
+            assert_eq!(good.load().unwrap(), previous);
+            assert_eq!(ui.loop_captures, legacy);
+            assert_eq!(state.manifest, legacy);
+            assert_eq!(state.namespace.as_deref(), Some(LEGACY_NAMESPACE));
+            assert!(state.needs_migration());
+            assert!(Arc::ptr_eq(
+                &state.buffers[0].buffer.data,
+                &hydrated[0].buffer.data
+            ));
+            assert_eq!(
+                bits(&backend.capture_snapshot()[0].buffer.data),
+                bits(&take.buffer.data)
+            );
+            state.persist(&good, true, hydrated, &mut ui).unwrap();
+            assert_eq!(
+                ui.loop_captures.takes[0].codec,
+                LoopCaptureCodec::WavpackF32V1
+            );
+            assert!(!state.needs_migration());
+        }
+    }
+
+    #[test]
+    fn legacy_migration_is_pending_on_wake_and_cannot_publish_into_another_epoch() {
+        let inner = MemoryBackend::default();
+        let storage: SessionStore<HostBackend> =
+            SessionStore::new(Box::new(SealedBackend::new(inner.clone(), [61; 32])));
+        let (mut ui, take) = fixture();
+        let legacy = seed_legacy(&storage, &mut ui, &[take]);
+        let previous = storage.load().unwrap();
+        let shared = Shared::with_store(
+            Some(storage),
+            Some(PracticeSeal::Sealed {
+                persona: "isolated".into(),
+                protection: "fixture".into(),
+            }),
+            None,
+        );
+        let mut shared = shared.borrow_mut();
+        shared.backend = Some(CpalBackend::offline_for_test());
+        let wakes = completion_wake(&mut shared.capture_persistence);
+        begin_session(&mut shared, &ui).unwrap();
+        assert!(pending(&shared, &ui));
+        let mut incoming = UiState::new();
+        persist(&mut shared, &mut incoming);
+        assert_eq!(shared.storage.as_ref().unwrap().load().unwrap(), previous);
+        assert_eq!(shared.capture_persistence.manifest, legacy);
+        ui.set.cards[1].label = "Edit at legacy migration wake".into();
+        crate::drive::frame(&mut shared, &mut ui);
+        await_completion(&wakes);
+        persist_if_changed(&mut shared, &mut ui);
+        assert_eq!(ui.loop_captures.version, 2);
+        assert!(!pending(&shared, &ui));
+        let reopened = woodshed_core::storage::decode_session(
+            &shared.storage.as_ref().unwrap().load().unwrap(),
+        )
+        .unwrap()
+        .session;
+        assert_eq!(reopened.set.cards[1].label, "Edit at legacy migration wake");
+        assert_eq!(reopened.loop_captures, ui.loop_captures);
+        begin_session(&mut shared, &incoming).unwrap();
+        assert!(
+            shared
+                .backend
+                .as_ref()
+                .unwrap()
+                .capture_snapshot()
+                .is_empty()
+        );
+        assert!(!shared.capture_persistence.needs_migration());
+    }
+
+    #[test]
+    fn unavailable_only_v1_catalog_is_retained_until_explicit_clear() {
+        let inner = MemoryBackend::default();
+        let storage: SessionStore<HostBackend> = SessionStore::new(Box::new(inner.clone()));
+        let (mut ui, take) = fixture();
+        let legacy = seed_legacy(&storage, &mut ui, &[take.clone()]);
+        let key = woodshed_core::loop_capture::pcm_key(LEGACY_NAMESPACE, &legacy.takes[0].digest)
+            .unwrap();
+        ready(inner.delete(&key)).unwrap();
+        let mut backend = CpalBackend::offline_for_test();
+        let mut state = CapturePersistence::restore(Some(&storage), &legacy, &mut backend).unwrap();
+        assert!(!state.needs_migration());
+        state
+            .persist(&storage, true, backend.capture_snapshot(), &mut ui)
+            .unwrap();
+        assert_eq!(ui.loop_captures, legacy);
+        backend.clear_stored_capture(take.id).unwrap();
+        state.forget(take.id);
+        state
+            .persist(&storage, true, backend.capture_snapshot(), &mut ui)
+            .unwrap();
+        assert!(ui.loop_captures.is_empty());
     }
 
     #[test]
@@ -731,11 +1816,14 @@ mod tests {
             .unwrap()
             .set_loop_plan(&ui.requested_loop_plan().unwrap())
             .unwrap();
+        let wakes = completion_wake(&mut shared.capture_persistence);
         // A later practice edit must be captured at publication, not replaced
         // by a session JSON prepared when recording began.
         ui.set.cards[1].label = "Current edit at completion".into();
         assert!(pending(&shared, &ui));
         crate::drive::frame(&mut shared, &mut ui);
+        await_completion(&wakes);
+        persist_if_changed(&mut shared, &mut ui);
         let mut reopened = UiState::new();
         crate::session::restore(shared.storage.as_ref().unwrap(), &mut reopened);
         assert_eq!(reopened.loop_captures.takes.len(), 1);
@@ -864,6 +1952,56 @@ mod tests {
     }
 
     #[test]
+    fn future_codec_is_retained_unavailable_without_losing_authoring_and_can_be_cleared() {
+        let storage: SessionStore<HostBackend> =
+            SessionStore::new(Box::new(MemoryBackend::default()));
+        let (mut ui, take) = fixture();
+        let mut manifest = seed_legacy(&storage, &mut ui, &[take]);
+        manifest.version = 2;
+        manifest.takes[0].codec = LoopCaptureCodec::Unsupported("future-exact-f32-v9".into());
+        ui.loop_captures = manifest.clone();
+        ui.set.cards[0].label = "Authored session with future companion".into();
+        let previous = serde_json::to_string(&ui.to_persisted()).unwrap();
+        storage.save(&previous);
+        let mut reopened = UiState::new();
+        crate::session::restore(&storage, &mut reopened);
+        assert_eq!(reopened.set.cards[0].label, ui.set.cards[0].label);
+        assert_eq!(reopened.loop_captures, manifest);
+        let mut backend = CpalBackend::offline_for_test();
+        let mut state =
+            CapturePersistence::restore(Some(&storage), &reopened.loop_captures, &mut backend)
+                .unwrap();
+        assert!(state.blocked.is_none());
+        assert_eq!(state.unavailable, manifest.takes);
+        reopened.set.cards[1].label = "Current ordinary edit".into();
+        state
+            .persist(&storage, true, Vec::new(), &mut reopened)
+            .unwrap();
+        let published = woodshed_core::storage::decode_session(&storage.load().unwrap())
+            .unwrap()
+            .session;
+        assert_eq!(published.set.cards[1].label, "Current ordinary edit");
+        assert_eq!(published.loop_captures, manifest);
+        assert!(backend.capture_snapshot().is_empty());
+        assert!(
+            state
+                .permit_export(Some(&reopened.requested_loop_plan().unwrap()))
+                .is_err()
+        );
+        assert!(
+            state
+                .permit_record(&reopened.requested_loop_plan().unwrap(), 48_000, Vec::new())
+                .is_err()
+        );
+        backend.clear_stored_capture(manifest.takes[0].id).unwrap();
+        state.forget(manifest.takes[0].id);
+        state
+            .persist(&storage, true, Vec::new(), &mut reopened)
+            .unwrap();
+        assert!(reopened.loop_captures.is_empty());
+    }
+
+    #[test]
     fn unavailable_inactive_references_reserve_catalog_budget_before_recording() {
         let (ui, take) = fixture();
         let retained = LoopCaptureRef {
@@ -876,6 +2014,7 @@ mod tests {
             bars: 1,
             sample_rate: 48_000,
             frames: woodshed_core::loop_capture::MAX_CAPTURE_FRAMES,
+            codec: LoopCaptureCodec::RawF32V1,
             digest: "0".repeat(64),
         };
         let state = CapturePersistence {
@@ -893,7 +2032,13 @@ mod tests {
     #[test]
     fn exact_sealed_set_capture_survives_fresh_process_reorder_and_clear() {
         let dir = tempfile::tempdir().unwrap();
-        for mode in ["seed", "reopen", "clear", "reopen-cleared"] {
+        for mode in [
+            "seed-legacy",
+            "migrate",
+            "reopen",
+            "clear",
+            "reopen-cleared",
+        ] {
             let status = std::process::Command::new(std::env::current_exe().unwrap())
                 .args([
                     "--exact",
@@ -919,18 +2064,54 @@ mod tests {
             [37; 32],
         )));
         let (expected_ui, expected) = fixture();
-        let mut ui = if mode == "seed" {
+        let mut ui = if matches!(mode.as_str(), "seed" | "seed-legacy") {
             expected_ui
         } else {
             let mut ui = UiState::new();
             crate::session::restore(&storage, &mut ui);
             ui
         };
+        if mode == "seed-legacy" {
+            seed_legacy(&storage, &mut ui, &[expected]);
+            assert_eq!(ui.loop_captures.version, 1);
+            assert_eq!(
+                ui.loop_captures.takes[0].codec,
+                LoopCaptureCodec::LegacyRawF32V1
+            );
+            println!("sealed V1 raw capture seed: exact frames, no input device");
+            return;
+        }
         let mut backend = CpalBackend::offline_for_test();
         backend.clear_loop_session();
         let mut state =
             CapturePersistence::restore(Some(&storage), &ui.loop_captures, &mut backend).unwrap();
-        if mode == "seed" {
+        if mode == "migrate" {
+            let legacy = ui.loop_captures.clone();
+            assert_eq!(legacy.version, 1);
+            assert!(state.needs_migration());
+            state
+                .persist(&storage, true, backend.capture_snapshot(), &mut ui)
+                .unwrap();
+            assert_eq!(ui.loop_captures.version, 2);
+            assert_eq!(ui.loop_captures.namespace, legacy.namespace);
+            assert_eq!(
+                ui.loop_captures.takes[0].codec,
+                LoopCaptureCodec::WavpackF32V1
+            );
+            assert_eq!(
+                bits(
+                    &storage
+                        .try_read_capture(LEGACY_NAMESPACE, &legacy.takes[0],)
+                        .unwrap()
+                ),
+                bits(&expected.buffer.data)
+            );
+            assert_eq!(
+                bits(&backend.capture_snapshot()[0].buffer.data),
+                bits(&expected.buffer.data)
+            );
+            println!("fresh process: V1 raw migrated to exact V2 WavPack; legacy blob retained");
+        } else if mode == "seed" {
             backend
                 .restore_loop_captures(vec![expected.clone()])
                 .unwrap();

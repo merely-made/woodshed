@@ -437,3 +437,12 @@ product's existing recording/Turnstone gates.
   another codec or a root-to-port dependency. Source, codec decision and limits
   remain in [P7's follow-through](2026-07-11_stage_set_tools_plan.md#october-12-follow-through-backing-and-completed-loop-wav-export)
   and the [export receipt](../validation/wav-export_20261012/receipt.json).
+
+- **2026-10-12:** Root compressed capture storage uses repaired Wavicle `2c5a49f`,
+  explicit codec/manifest versions and per-reference legacy migration. Exact float
+  storage selects compression only when smaller; missing/future-codec references
+  stay clearable, and verified companions precede the current session. One bounded
+  encode-only worker preserves epoch/custody and caches failed publication work.
+  Focused codec/storage/host checks and five-process raw migration/reopen pass;
+  combined-font-family build and native sealed-profile migration are pending.
+  Details remain in [P7's compressed-storage follow-through](2026-07-11_stage_set_tools_plan.md#october-12-follow-through-lossless-compressed-capture-storage).

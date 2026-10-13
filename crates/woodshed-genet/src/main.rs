@@ -18,7 +18,7 @@
 //! | `after_dispatch` | push state through the backend, MIDI, chrome, and persistence seams ([`sync`]) |
 //! | `after_frame` | pump the scenario one step ([`scenario`]) |
 //! | `after_wake` | service output, preview completions and accepted transport status |
-//! | `close_request` | exit: Woodshed has no background operation to retain |
+//! | `close_request` | finish capture storage and WAV work, then honor appearance changes |
 //! | `focused_text` | the focused product or shared workshop text field ([`text`]) |
 //! | `key_intercept` | Escape closes an open dropdown |
 
@@ -39,7 +39,7 @@ mod sync;
 mod text;
 mod wav_export;
 
-use std::cell::RefCell;
+use std::cell::{Cell, RefCell};
 use std::rc::Rc;
 
 use cambium::{el, text as text_node, title_bar};
@@ -91,6 +91,7 @@ fn boot_state(
     }
     let mut ui = UiState::new();
     shared.wav_export.set_wake(wake.callback());
+    shared.capture_persistence.set_wake(wake.callback());
     ui.event_clock = Some(drive::wall_time_ms);
     let (size_w, size_h) = window.inner_size();
     let scale = window.scale_factor() as f32;
@@ -245,6 +246,8 @@ fn hooks(shared: &Rc<RefCell<Shared>>) -> HostHooks<UiState, Logic, UiChild> {
     let after_frame_shared = shared.clone();
     let wake_shared = shared.clone();
     let close_shared = shared.clone();
+    let capture_close_requested = Rc::new(Cell::new(false));
+    let wake_close_requested = capture_close_requested.clone();
     let mut previews = appearance::PreviewBindings::default();
     HostHooks {
         frame: Box::new(move |ctx: &mut Ctx<'_>| {
@@ -319,11 +322,36 @@ fn hooks(shared: &Rc<RefCell<Shared>>) -> HostHooks<UiState, Logic, UiChild> {
                         capture_persistence::persist_if_changed(&mut shared, ui);
                     });
                 }
+            } else if capture_persistence::pending(&shared, ctx.runner.state()) {
+                ctx.runner.update(|ui| {
+                    capture_persistence::persist_if_changed(&mut shared, ui);
+                });
+            }
+            if wake_close_requested.get()
+                && !shared.capture_persistence.is_busy()
+                && wav_export::close_request(&mut shared, ctx).is_none()
+            {
+                wake_close_requested.set(false);
+                if !*ctx.close
+                    && appearance::close_request(ctx)
+                        == cambium_genet_winit_host::CloseDisposition::Exit
+                {
+                    *ctx.close = true;
+                }
             }
         }),
         close_request: Box::new(move |ctx, _request| {
             if let Some(geometry) = ctx.geometry {
                 persist_window_geometry(&mut close_shared.borrow_mut(), ctx, geometry);
+            }
+            let mut capture_pending = false;
+            ctx.runner.update(|ui| {
+                capture_pending =
+                    capture_persistence::close_request(&mut close_shared.borrow_mut(), ui);
+            });
+            if capture_pending {
+                capture_close_requested.set(true);
+                return cambium_genet_winit_host::CloseDisposition::KeepVisible;
             }
             if let Some(disposition) = wav_export::close_request(&mut close_shared.borrow_mut(), ctx) {
                 return disposition;

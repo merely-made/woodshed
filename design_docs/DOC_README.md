@@ -134,6 +134,10 @@ before any other doc in this directory.
   pass. Five native processes and nine reviewed full captures qualify actual
   macOS Cancel/Save/replacement and default-zoom layout; both output files
   match the frozen backing-plus-take reference and independently decode.
+  The next October 12 slice implements Wavicle compressed companions with raw
+  compatibility, bounded decode admission and one encode-only worker; focused
+  codec/storage/host and five-process legacy migration checks pass. Combined-family
+  build and native sealed-profile migration/reopen remain pending.
   Physical capture, saved-song PCM and full P7 remain open.
   The October 7 captured-scale-pattern follow-up extends copied instructions
   to degree pairs in thirds/fourths, with base-scale exploration and unchanged

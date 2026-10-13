@@ -10788,6 +10788,11 @@ dependencies = [
 ]
 
 [[package]]
+name = "wavicle"
+version = "0.1.0"
+source = "git+https://github.com/merely-made/wavicle.git?rev=2c5a49fd48db7a54aeab9e712804fd065411aef9#2c5a49fd48db7a54aeab9e712804fd065411aef9"
+
+[[package]]
 name = "wayland-backend"
 version = "0.3.17"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -11762,6 +11767,7 @@ dependencies = [
  "serde_json",
  "tabard",
  "tokio",
+ "wavicle",
  "woodshed-graph",
  "woodshedding",
 ]
