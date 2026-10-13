@@ -1,0 +1,218 @@
+{
+  "source_revision": "3d51e4a5ec9a5f6df13e31cf9442fde60312190c",
+  "baseline": "fde91c42bef801f596333da4aae8bc2f7fb8d593",
+  "files": [
+    {
+      "path": "crates/hocket-model/Cargo.toml",
+      "sha256": "143d673490271e606d991bad9db1077e29babb73683926c5917043113340062f"
+    },
+    {
+      "path": "crates/hocket-model/src/history.rs",
+      "sha256": "5de0cdfd6690bb0f7d24e380a3cff853cad41abc04ed05309f47e338acd8fec9"
+    },
+    {
+      "path": "crates/hocket-model/src/ids.rs",
+      "sha256": "f82cfc7ae84f2f6fe7402bb7d07fb365104cf74c7cd066249e1f164337bd9c45"
+    },
+    {
+      "path": "crates/hocket-model/src/lib.rs",
+      "sha256": "5edf255b5669f59c919466c3b576fefe7163706ffac9e166cdd343f811613127"
+    },
+    {
+      "path": "crates/hocket-model/src/persistence.rs",
+      "sha256": "cab90715db2e0ad1ae2d3a7dee782b2bdf19288ce0716ee097e814d863799842"
+    },
+    {
+      "path": "crates/hocket-model/src/phrase.rs",
+      "sha256": "864c46574603a51d30d39e75dac3fc707bad774f47cfdf319a132ac9d5fe9bc5"
+    },
+    {
+      "path": "crates/hocket-model/src/session.rs",
+      "sha256": "647e1b9a38805817ffad54ab2ba500551b50a713835b0d887895eea985dcc6d0"
+    },
+    {
+      "path": "crates/hocket-model/src/track.rs",
+      "sha256": "a449de22dbc2389da5cb73062555699a75849c7683e1071ede2fcd80ec3c1c69"
+    },
+    {
+      "path": "crates/hocket-model/tests/validation.rs",
+      "sha256": "49d177f0f7cfa3d3b4bd2badb45ab990fa83f3e2ee9c5c62e90cad859c4f3a37"
+    },
+    {
+      "path": "crates/hocket-project/Cargo.toml",
+      "sha256": "cd490f6b2eb53239a33e3c9b72ce32454706e01de300f67f7bc3519e99e51c88"
+    },
+    {
+      "path": "crates/hocket-project/src/export.rs",
+      "sha256": "4ee4f8e30176707a137e6712c7a4779c2ff763ff471abcc5a5828e1ed0af531c"
+    },
+    {
+      "path": "crates/hocket-project/src/handoff.rs",
+      "sha256": "dc35a2ec035a4da362c9e716192f725a94c78ff1cbf6fa630d7adcb2ccf03fe5"
+    },
+    {
+      "path": "crates/hocket-project/src/lib.rs",
+      "sha256": "2e975a8c0fa9f7d67c5399ed8ff4a91a7171ff3121f7bb9473bea76dcadd667e"
+    },
+    {
+      "path": "crates/hocket-project/src/media.rs",
+      "sha256": "a9a851ef81b927c8287b21f5f76ce1aed92edb23cde887accc3b6f3c3326919d"
+    },
+    {
+      "path": "crates/hocket-project/src/project_store.rs",
+      "sha256": "6155ae3fecc47be345d419879483ad4ea0e980f9f99342be7cb753fb96e5d525"
+    },
+    {
+      "path": "crates/hocket-project/src/waveform.rs",
+      "sha256": "afd561d806eeedaf0e45989fd317c17f6cd3167fa7d3cbe4438b3c6e46d29184"
+    },
+    {
+      "path": "crates/hocket-recorder/Cargo.toml",
+      "sha256": "f4700ccc7adb716f4b3d3cfb55796924db8002629e46d33de59fe83c715f97e5"
+    },
+    {
+      "path": "crates/hocket-recorder/src/lib.rs",
+      "sha256": "11dcf9daa0a187e695cbda94ae2d415712b8f104300201dbe1638a60ddcd2353"
+    },
+    {
+      "path": "crates/hocket-views/Cargo.toml",
+      "sha256": "250375cf1c679942d1f1abab3dd2a436c09e82ac65406fb45f844087e1df2769"
+    },
+    {
+      "path": "crates/hocket-views/examples/two_mounts.rs",
+      "sha256": "545998aaa1dca58d2dfc0565b2ab06f10a71be76585def1a98f0d965f39d0ed5"
+    },
+    {
+      "path": "crates/hocket-views/examples/two_mounts.scn",
+      "sha256": "6727825883468cfa73678f8635c01bd66103e00f7982be660d4a2c91bb4a5ecf"
+    },
+    {
+      "path": "crates/hocket-views/src/leaves.rs",
+      "sha256": "13b498b250c168bc79a9c65e5087df59568dcb9af7a154d9220511786a4e397e"
+    },
+    {
+      "path": "crates/hocket-views/src/lib.rs",
+      "sha256": "12fc821f11e2246344e536547142fcbb2d5b6f7bc50b11c3c7ae32da32d52b7d"
+    },
+    {
+      "path": "crates/hocket-views/src/theme.rs",
+      "sha256": "adbbe9ede209ffafc045cae056e09d6d10bf9a17fd35bec5d2085ba5367b16c1"
+    },
+    {
+      "path": "ports/hocket/crates/hocket-engine/Cargo.toml",
+      "sha256": "80b580c776092c1b2d27d6ed267c590b5c51d86285f4703bb1e1708d6782681c"
+    },
+    {
+      "path": "ports/hocket/crates/hocket-engine/src/capture.rs",
+      "sha256": "a70c03c1fed2920d95a8abbb9ae3b876e43788ca8794fed8f7a9d83a9cce0f2a"
+    },
+    {
+      "path": "ports/hocket/crates/hocket-engine/src/click.rs",
+      "sha256": "60652e1c30239ee502365c07fbb922dc64bd9d9dea2592c736760e63eb0fdb41"
+    },
+    {
+      "path": "ports/hocket/crates/hocket-engine/src/lib.rs",
+      "sha256": "c95274c13d819b297f05d25355ace7eaa9dda84bfdd7e57d0dcf811806c26bca"
+    },
+    {
+      "path": "ports/hocket/crates/hocket-engine/src/offline_tests.rs",
+      "sha256": "7942efec4c0e83ef3b3cd4fd3b63965847010f101bd658d9e513b65f2167599d"
+    },
+    {
+      "path": "ports/hocket/crates/hocket-engine/tests/capture_pipeline.rs",
+      "sha256": "5c4b0dd89d79ee6b4788a0ea9acd9ecc08e9db071e5a0fc463ceafd261f365ba"
+    },
+    {
+      "path": "ports/hocket/crates/hocket-genet/Cargo.toml",
+      "sha256": "12fe16919c53ece1c96ab8c02a1f77844b99c80e97652f19c74ed2c238632b54"
+    },
+    {
+      "path": "ports/hocket/crates/hocket-genet/src/appearance.rs",
+      "sha256": "8c9263a8d05a06df336fe52bb2b2c02b89e7e0d5b25ac6fb6768d41754c9ec99"
+    },
+    {
+      "path": "ports/hocket/crates/hocket-genet/src/appearance_tests.rs",
+      "sha256": "0d219b915d2f2f776901288d7d599c91047b330da690bdd49ec645ad4536d65d"
+    },
+    {
+      "path": "ports/hocket/crates/hocket-genet/src/appearance_view.rs",
+      "sha256": "980597dae6289f5e38badc5e8aacb2e08b8f1ba4b17e3283640b12eb23211386"
+    },
+    {
+      "path": "ports/hocket/crates/hocket-genet/src/identity.rs",
+      "sha256": "2b787ec7801cb3324d90164036b2f0b87e6f4e4b9afba9942f02bcb9f78133dc"
+    },
+    {
+      "path": "ports/hocket/crates/hocket-genet/src/leaves.rs",
+      "sha256": "6bf2aeb8c8866d9a317118da62f3241997af3175a091917a0a5f427ff3891cdb"
+    },
+    {
+      "path": "ports/hocket/crates/hocket-genet/src/main.rs",
+      "sha256": "082bc6f7173e10e48b9c0838de50e1f89858d0d6bd2e4b6e474b78d41fac9804"
+    },
+    {
+      "path": "ports/hocket/crates/hocket-genet/src/project_io.rs",
+      "sha256": "beaea20c110b8fa3287e4ae3e2f9a34c99a886f47b075e7de997bf642308cfe6"
+    },
+    {
+      "path": "ports/hocket/crates/hocket-genet/src/recorder_audio.rs",
+      "sha256": "9ff6e840bb3ac1e8b3e2b38edd5195e003066dc077f8fa4cd965ab232675b3c2"
+    },
+    {
+      "path": "ports/hocket/crates/hocket-genet/src/scenario.rs",
+      "sha256": "c522b847d4d23bf5ab87220d62e32ec33683f27b7257242218fea6e2ddef3e88"
+    },
+    {
+      "path": "ports/hocket/crates/hocket-genet/src/state.rs",
+      "sha256": "f0871b00d1c5457f6a85bfd795d0e22ebf4fa6b50ce13c64ae0e705f54f5713b"
+    },
+    {
+      "path": "ports/hocket/crates/hocket-genet/src/theme.rs",
+      "sha256": "32778651b0a35777a8546324b01add7bbb5f73524ba401dd44b6c17fc14262ae"
+    },
+    {
+      "path": "ports/hocket/crates/hocket-genet/src/update/cli.rs",
+      "sha256": "2d290a9b19317511a2755d1a005ab344bd22633f0fc0098be1db4c24f883dc0c"
+    },
+    {
+      "path": "ports/hocket/crates/hocket-genet/src/update/luggage_transport.rs",
+      "sha256": "c2d52ab08a3ab738150858633ae5e2777554b57e9c6f63879d32f4e19ea7aa88"
+    },
+    {
+      "path": "ports/hocket/crates/hocket-genet/src/update/velopack_transport.rs",
+      "sha256": "8de3a6fc3b0f148bd8a61bf7118953c916c29226ede8bbea33a5bfd3d20153cb"
+    },
+    {
+      "path": "ports/hocket/crates/hocket-genet/src/update/worker.rs",
+      "sha256": "dc460e39c96597441d04a19e5d7cb5d72df5ec1136b84556a0dcbc7fb68374ce"
+    },
+    {
+      "path": "ports/hocket/crates/hocket-genet/src/update.rs",
+      "sha256": "236fc0a9bb4b43fe430e16dfa7f05e828b8efa120efe170752e7754851a2b424"
+    },
+    {
+      "path": "ports/hocket/crates/hocket-genet/src/view.rs",
+      "sha256": "1637b1f657ec3f4bf9e836413799109ffda0f6a07324b6615628cf390a35f893"
+    },
+    {
+      "path": "Cargo.toml",
+      "sha256": "76dd6d467bac119d18b264812f72832cf91c0e302300d6721281972cfea2fa8a"
+    },
+    {
+      "path": "Cargo.lock",
+      "sha256": "35af6a84484b135e9c19a866430138a89a09a5053ade6bdd5332c749ba56061c"
+    },
+    {
+      "path": "ports/hocket/Cargo.toml",
+      "sha256": "877d5aabcd56e34500482d111469a6a5aca16e98ef774971b975fcb6164f7160"
+    },
+    {
+      "path": "ports/hocket/Cargo.lock",
+      "sha256": "01796e355ee4cd56cc4a34bc4bf717d2be55a3c3a5ca213c4e2a86945eeec013"
+    },
+    {
+      "path": "ports/hocket/scenarios/recorder_controls.scn",
+      "sha256": "d10a7abb03847efaff5cad622b45912ab890e62300507ea131d7233080601e12"
+    }
+  ]
+}

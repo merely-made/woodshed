@@ -227,9 +227,11 @@ acoustic calibration and full P7 remain open.
 
 ### F5. Complete portable product seams
 
-**Hocket recorder composition (2026-10-13): accepted; extraction in progress.**
+**Hocket recorder composition (2026-10-13): shared extraction implemented; bounded native acceptance complete.**
 The [host-refactor follow-through](../ports/hocket/design_docs/2026-07-08_genet_host_refactor_plan.md#embeddable-recorder-follow-through-2026-10-13)
-owns the first shared-controller/surface slice. Reusable Hocket model/project
+owns the first shared-controller/surface slice and its
+[197-case/four-capture receipt](../validation/hocket-recorder_20261013/receipt.json).
+Reusable Hocket model/project
 and recorder/views live in root `crates/`; the standalone port supplies
 services. Woodshed's accepted Set/Card/saved-Song, single-output, sealed
 capture and WAV behavior stay the preservation baseline for later adoption.
