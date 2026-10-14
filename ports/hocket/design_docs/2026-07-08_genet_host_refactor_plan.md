@@ -8,10 +8,15 @@ and the `mark-ik/xilem` fork are deleted family-wide (hocket + woodshed). See
 the Progress log for the slice-by-slice receipts; the design-forward track ran
 S0 (scaffold) → S1 (UI) → S2 (model) → S5 (chisel leaves) → engine → S6 (cut).
 
-**Recorder follow-through (2026-10-13): IMPLEMENTED; bounded native recorder acceptance complete.** The standalone UI
-uses the shared recorder controller and Cambium surface; a second outer host
-mounts the same component in full and compact layouts. The original Masonry retirement remains
-landed. See [the current extraction phases](#embeddable-recorder-follow-through-2026-10-13).
+**Recorder follow-through (2026-10-13): shared extraction and Woodshed surface adoption implemented; bounded native acceptance complete.**
+Standalone Hocket uses the shared recorder controller and Cambium surface;
+a second outer host mounts the component in full and compact layouts.
+Woodshed now mounts that surface over its existing OutputRuntime through
+borrowed observations and guarded host controls. Its fresh native/reopen/export
+[adoption receipt](../../../validation/hocket-looper_20261013/receipt.json)
+is separate from the original extraction receipt. The original Masonry
+retirement remains landed; shared DSP consolidation remains later work. See
+[the current extraction phases](#embeddable-recorder-follow-through-2026-10-13).
 
 Code samples are illustrative unless marked implementation-ready.
 
@@ -381,11 +386,13 @@ either the Masonry `hocket` (until S6) or `hocket-genet` runnable.
 
 ## Embeddable recorder follow-through (2026-10-13)
 
-**Status: IMPLEMENTED; bounded native recorder acceptance complete.** Mark accepted Hocket as a reusable digital
-looper/recorder with both embedded and standalone compositions. This first
-slice extracts the controller and Cambium surface and makes standalone Hocket
-consume them. Woodshed's actual Looper replacement and shared audio-kernel
-consolidation remain later phases.
+**Status: shared extraction and Woodshed surface adoption implemented; bounded native acceptance complete.**
+Hocket provides reusable recorder libraries and a standalone composition.
+The original extraction qualified the controller, Cambium surface and distinct
+host mounting. Woodshed subsequently adopted the surface through its own
+accepted backing and guarded controls. Its seven-capture native/reopen/export
+qualification is recorded separately; shared audio-kernel consolidation remains
+later work.
 
 ### Ownership and constraints
 
@@ -407,13 +414,14 @@ capture metadata retains the clock and rate admitted at arming. An old
 completion after replacement cannot become a new session's layer. Runtime
 refusal must remain visible without inventing accepted playback.
 
-Woodshed keeps its Set/Card ownership, accepted backing and timing, sealed
-session/capture companions and backing-plus-loop WAV contract. Its recorder
-adapter will bind those owners explicitly. `.hock` project identity and
-Woodshed's encoded companion digest are separate formats; extraction does not
-rewrite either. Shared runtime work will preserve Woodshed's existing
-frame-driven/preallocated capture baseline and each product's admitted
-schedule. This slice leaves Woodshed DSP/backend and Hocket capture scheduling intact.
+Woodshed keeps its Set/Card ownership, accepted backing and heterogeneous
+timing, sealed session/capture companions and backing-plus-loop WAV contract.
+Its surface adapter binds those owners explicitly and shares completed PCM
+Arcs without creating a Hocket project. `.hock` project identity and
+Woodshed's encoded companion digest remain separate formats. Surface adoption
+leaves Woodshed's frame-driven/preallocated capture and Hocket's capture
+scheduling intact. Future shared runtime work must preserve both products'
+admitted schedules.
 A narrowly required Hocket control correction cancels pending next-bar starts
 when their layer is stopped and reserves the existing 32-voice capacity at
 queue admission. This makes the shared controller's stop/mute/reset and
@@ -437,10 +445,13 @@ accepted-playback observations truthful without changing the frame schedule.
    are inspected, current source/commands/results are recorded, canonical
    documentation is current and direct-main publication is verified. Physical
    microphone/latency and Hocket project/handoff qualification are separate.
-4. **Later Woodshed adoption.** Mount the shared surface over its current
-   backend, preserving existing Set/Card/saved-Song, custody and export
-   behavior. Then extract the shared frame-driven audio mechanism and migrate
-   both product adapters before retiring duplicate recorder paths.
+4. **Woodshed surface adoption and later DSP consolidation.** The shared
+   surface is implemented over Woodshed's existing backend, preserving ordered
+   Set/Card/saved-Song timing, custody and export behavior. Focused ownership
+   checks, export parity and fresh native mounting/reopen evidence pass in the
+   separate adoption receipt. Shared frame-driven audio mechanism extraction
+   remains later work and requires both product adapters to preserve their
+   capture schedules.
 
 ### Findings (2026-10-13)
 
@@ -531,3 +542,12 @@ accepted-playback observations truthful without changing the frame schedule.
   export parity, compact reopen and standalone regression follow. Shared DSP
   extraction, physical audio and general Hocket project-worker correlation
   remain later work.
+
+- **2026-10-13:** Woodshed surface adoption passes focused ownership checks,
+  finite native mounting, fresh compact reopening and media/export parity on
+  compiled source `d2d4bc7`. The root
+  [F5 result](../../../design_docs/2026-09-09_audio_ports_rehome_plan.md#f5-complete-portable-product-seams)
+  and [separate adoption receipt](../../../validation/hocket-looper_20261013/receipt.json)
+  record the current supplier/build identities and 591-case/seven-capture scope.
+  Standalone Hocket's active mute/solo colors remain visible. Shared DSP,
+  physical audio and general project-worker reply correlation remain open.

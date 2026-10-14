@@ -1,0 +1,25 @@
+{
+  "copied_from": "/Users/markik/Code/testing/woodshed/font-roles-20261012/combined-v2/codec-profile",
+  "files": [
+    {
+      "path": "practice.json",
+      "sha256": "420a1198cbc986b8fcb4a70a7932ca9f3ac111c9dbf368597074735d075621eb",
+      "bytes": 5335
+    },
+    {
+      "path": "practice.loop-pcm/b5370837504f7ea66b56e7ca158828e5/aa60d8b25e04f9d08e28a428fb20b2c9cbfc5cecd7254ed386c81d88700da50e.bin",
+      "sha256": "7f1d21321516b5dbc6f5817a2fd5c85e3d9f908560b7e198e82073fe64700e94",
+      "bytes": 262824
+    },
+    {
+      "path": "practice.loop-pcm/b5370837504f7ea66b56e7ca158828e5/d0451d00335e995c3d1077108dc1c06d329de681a650d523a19d0afcf12b743e.bin",
+      "sha256": "b4edec51fa263f8572810d9619411f8837a89a195a3d67159a9391655c0677ec",
+      "bytes": 384064
+    },
+    {
+      "path": "settings.json",
+      "sha256": "7da6d51dd87b2b3a6c9b092f1dd9782b9464e43ab142f1641cafe7864b40d3e0",
+      "bytes": 613
+    }
+  ]
+}

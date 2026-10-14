@@ -1,0 +1,10 @@
+warning: patch `ipc-channel v0.22.0 (https://github.com/merely-made/genet.git?rev=7a8c5b8cb499f2d3b91083c2f7e38236599f98dc#7a8c5b8c)` was not used in the crate graph
+warning: patch `p2panda-auth v0.7.1 (https://github.com/mark-ik/p2panda.git?tag=mere-p2panda-net-0.7.5-upstream-20261013#1f69c9bc)` was not used in the crate graph
+warning: patch `p2panda-stream v0.7.1 (https://github.com/mark-ik/p2panda.git?tag=mere-p2panda-net-0.7.5-upstream-20261013#1f69c9bc)` was not used in the crate graph
+help: Check that the patched package version and available features are compatible
+      with the dependency requirements. If the patch has a different version from
+      what is locked in the Cargo.lock file, run `cargo update` to use the new
+      version. This may also occur with an optional dependency that is not enabled.
+   Compiling hocket-views v0.1.0 (/Users/markik/Code/worktrees/woodshed-orchestrate-20261011/crates/hocket-views)
+   Compiling hocket-genet v0.2.0 (/Users/markik/Code/worktrees/woodshed-orchestrate-20261011/ports/hocket/crates/hocket-genet)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 8.50s

@@ -1,0 +1,43 @@
+{
+  "metadata_probe_binary": "/Users/markik/Code/worktrees/woodshed-orchestrate-20261011/target/build/debug/deps/woodshed_genet-62251ae28ee8521e",
+  "metadata_probe_sha256": "338d9d4025554adc10295438c11616805bdac75f55dbfd3858fb10be3a2eb220",
+  "metadata_probe_source": "f95d85227acdf1063999e21637e2b71e24da707f",
+  "final_native_source": "d2d4bc750f63e5715ae780f076062b807dad0652",
+  "manifest_exact": true,
+  "decoded_pcm_bits_exact": true,
+  "input_opened": false,
+  "output_streams": 0,
+  "captures": [
+    {
+      "bars": 1,
+      "beats": 4,
+      "bpm": 120.0,
+      "frames": 96000,
+      "id": {
+        "card": 1,
+        "set": 1
+      },
+      "pcm_f32le_blake3": "ceb886a770b4f14eb9e56fd069ab17517494d1208c5d6c70f904d901d03d0a50",
+      "sample_rate": 48000
+    }
+  ],
+  "manifest": {
+    "namespace": "b5370837504f7ea66b56e7ca158828e5",
+    "takes": [
+      {
+        "bars": 1,
+        "beats": 4,
+        "bpm": 120.0,
+        "codec": "wavpack-f32-v1",
+        "digest": "aa60d8b25e04f9d08e28a428fb20b2c9cbfc5cecd7254ed386c81d88700da50e",
+        "frames": 96000,
+        "id": {
+          "card": 1,
+          "set": 1
+        },
+        "sample_rate": 48000
+      }
+    ],
+    "version": 2
+  }
+}

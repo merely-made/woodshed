@@ -1,0 +1,36 @@
+warning: patch `p2panda-auth v0.7.1 (https://github.com/mark-ik/p2panda.git?tag=mere-p2panda-net-0.7.5-upstream-20261013#1f69c9bc)` was not used in the crate graph
+warning: patch `p2panda-stream v0.7.1 (https://github.com/mark-ik/p2panda.git?tag=mere-p2panda-net-0.7.5-upstream-20261013#1f69c9bc)` was not used in the crate graph
+help: Check that the patched package version and available features are compatible
+      with the dependency requirements. If the patch has a different version from
+      what is locked in the Cargo.lock file, run `cargo update` to use the new
+      version. This may also occur with an optional dependency that is not enabled.
+   Compiling hocket-views v0.1.0 (/Users/markik/Code/worktrees/woodshed-orchestrate-20261011/crates/hocket-views)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 3.09s
+     Running unittests src/lib.rs (/Users/markik/Code/worktrees/woodshed-orchestrate-20261011/target/build/debug/deps/hocket_views-b28d2a15b4e50b42)
+
+running 12 tests
+test leaves::tests::model_identity_produces_stable_distinct_leaf_keys ... ok
+test leaves::tests::silent_waveform_paints_a_center_line ... ok
+test leaves::tests::quiet_pcm_keeps_visible_silence_baseline_and_exact_subpixel_envelope ... ok
+test leaves::tests::unchanged_waveform_signature_produces_zero_repaints ... ok
+test leaves::tests::host_owned_pcm_uses_same_retained_leaf_without_fabricated_meters ... ok
+test leaves::tests::lazy_host_projection_is_evaluated_only_when_material_revision_changes ... ok
+test leaves::tests::same_phrase_occurrences_render_independent_real_gain_envelopes ... ok
+test leaves::tests::mount_reconciliation_reorder_and_unmount_preserve_other_leaf_owners ... ok
+test projection_tests::unavailable_command_cannot_emit_a_host_action ... ok
+test projection_tests::heterogeneous_clocks_and_unsupported_controls_remain_honest ... ok
+test projection_tests::lazy_input_does_not_disable_first_record_request ... ok
+test projection_tests::accepted_capture_target_is_independent_of_current_selection ... ok
+
+test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.18s
+
+     Running unittests examples/two_mounts.rs (/Users/markik/Code/worktrees/woodshed-orchestrate-20261011/target/build/debug/examples/two_mounts-0cbfb04ea3453eff)
+
+running 4 tests
+test tests::rejected_synthetic_capture_preserves_existing_layers_and_other_mount ... ok
+test tests::duplicate_phrase_second_occurrence_routes_and_renders_independently ... ok
+test tests::second_host_promotes_capture_and_exposes_real_media_leaves ... ok
+test tests::full_and_compact_gestures_route_to_independent_controllers ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.13s
+

@@ -1,0 +1,1357 @@
+[woodshed] identity pending (djinn is not reachable: transport failed: No such file or directory (os error 2)); practice is not saved
+[cambium-winit] window-frame backend=macos policy=App decorated=true transparent=false
+[cambium-frame] host=1 last-presented=0 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=0 elapsed=95us phase=files-begin 
+[cambium-frame] host=1 last-presented=0 elapsed=124us phase=files-end 
+[cambium-frame] host=1 last-presented=0 elapsed=143us phase=frame-hook-begin 
+[woodshed] identity pending: practice is not being saved
+[cambium-frame] host=1 last-presented=0 elapsed=10718us phase=frame-hook-end animating=true
+[cambium-frame] host=1 last-presented=0 elapsed=10761us phase=layout-begin physical=2360x1600 scale=2
+[cambium-frame] host=1 last-presented=0 elapsed=420808us phase=layout-end 
+[cambium-frame] host=1 last-presented=0 elapsed=420848us phase=producers-begin 
+[cambium-frame] host=1 last-presented=0 elapsed=420876us phase=producers-end 
+[cambium-frame] host=1 last-presented=0 elapsed=420892us phase=leaf-fragments-begin 
+[cambium-frame] host=1 last-presented=0 elapsed=420992us phase=leaf-fragments-end 
+[cambium-frame] host=1 last-presented=0 elapsed=421012us phase=scene-begin 
+[cambium-frame] host=1 last-presented=0 elapsed=425955us phase=scene-emitted 
+[cambium-frame] host=1 last-presented=0 elapsed=425973us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=0 elapsed=425986us phase=shadows-end 
+[cambium-frame] host=1 last-presented=0 elapsed=425999us phase=raster-begin 
+[cambium-frame] host=1 last-presented=0 elapsed=554338us phase=raster-end 
+[cambium-frame] host=1 last-presented=0 elapsed=554384us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=0 elapsed=554431us phase=acquire-unavailable surface acquire skipped: Occluded
+[cambium-frame] host=1 last-presented=0 elapsed=554481us phase=return unwinding=false
+[cambium-winit] accessibility Installed, 280 nodes projected
+[cambium-host] initial reveal macos app_active=true app_hidden=false policy=NSApplicationActivationPolicy(0) launched=true window_visible=true key=true can_key=true active_space=true occlusion=NSWindowOcclusionState(8192) frame=CGRect { origin: CGPoint { x: 530.0, y: 230.0 }, size: CGSize { width: 1180.0, height: 800.0 } }
+[cambium-frame] host=1 last-presented=0 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=0 elapsed=29us phase=files-begin 
+[cambium-frame] host=1 last-presented=0 elapsed=45us phase=files-end 
+[cambium-frame] host=1 last-presented=0 elapsed=59us phase=frame-hook-begin 
+[cambium-frame] host=1 last-presented=0 elapsed=1246us phase=frame-hook-end animating=false
+[cambium-frame] host=1 last-presented=0 elapsed=1295us phase=layout-begin physical=2360x1600 scale=2
+[cambium-frame] host=1 last-presented=0 elapsed=1479us phase=layout-end 
+[cambium-frame] host=1 last-presented=0 elapsed=1496us phase=producers-begin 
+[cambium-frame] host=1 last-presented=0 elapsed=1513us phase=producers-end 
+[cambium-frame] host=1 last-presented=0 elapsed=1529us phase=leaf-fragments-begin 
+[cambium-frame] host=1 last-presented=0 elapsed=1548us phase=leaf-fragments-end 
+[cambium-frame] host=1 last-presented=0 elapsed=1564us phase=scene-begin 
+[cambium-frame] host=1 last-presented=0 elapsed=6470us phase=scene-emitted 
+[cambium-frame] host=1 last-presented=0 elapsed=6492us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=0 elapsed=6506us phase=shadows-end 
+[cambium-frame] host=1 last-presented=0 elapsed=6522us phase=raster-begin 
+[cambium-frame] host=1 last-presented=0 elapsed=46155us phase=raster-end 
+[cambium-frame] host=1 last-presented=0 elapsed=46181us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=0 elapsed=46215us phase=acquire-unavailable surface acquire skipped: Occluded
+[cambium-frame] host=1 last-presented=0 elapsed=46250us phase=return unwinding=false
+[cambium-host] unpresented redraw macos app_active=true app_hidden=false policy=NSApplicationActivationPolicy(0) launched=true window_visible=true key=true can_key=true active_space=true occlusion=NSWindowOcclusionState(8192) frame=CGRect { origin: CGPoint { x: 530.0, y: 230.0 }, size: CGSize { width: 1180.0, height: 800.0 } }
+[cambium-host] unpresented redraw visible=Some(true) focused=true minimized=Some(false)
+[cambium-frame] host=1 last-presented=0 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=0 elapsed=31us phase=files-begin 
+[cambium-frame] host=1 last-presented=0 elapsed=43us phase=files-end 
+[cambium-frame] host=1 last-presented=0 elapsed=52us phase=frame-hook-begin 
+[cambium-frame] host=1 last-presented=0 elapsed=1232us phase=frame-hook-end animating=false
+[cambium-frame] host=1 last-presented=0 elapsed=1265us phase=layout-begin physical=2360x1600 scale=2
+[cambium-frame] host=1 last-presented=0 elapsed=1442us phase=layout-end 
+[cambium-frame] host=1 last-presented=0 elapsed=1453us phase=producers-begin 
+[cambium-frame] host=1 last-presented=0 elapsed=1465us phase=producers-end 
+[cambium-frame] host=1 last-presented=0 elapsed=1475us phase=leaf-fragments-begin 
+[cambium-frame] host=1 last-presented=0 elapsed=1490us phase=leaf-fragments-end 
+[cambium-frame] host=1 last-presented=0 elapsed=1500us phase=scene-begin 
+[cambium-frame] host=1 last-presented=0 elapsed=6265us phase=scene-emitted 
+[cambium-frame] host=1 last-presented=0 elapsed=6278us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=0 elapsed=6288us phase=shadows-end 
+[cambium-frame] host=1 last-presented=0 elapsed=6298us phase=raster-begin 
+[cambium-frame] host=1 last-presented=0 elapsed=47370us phase=raster-end 
+[cambium-frame] host=1 last-presented=0 elapsed=47409us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=0 elapsed=51803us phase=acquire-end 
+[cambium-frame] host=1 last-presented=0 elapsed=114134us phase=compose-end 
+[cambium-frame] host=1 last-presented=0 elapsed=114157us phase=present-begin 
+[cambium-frame] host=1 last-presented=0 elapsed=114217us phase=present-end 
+[cambium-frame] host=1 last-presented=0 elapsed=114232us phase=presentation-recorded sequence=1
+[cambium-frame] host=1 last-presented=0 elapsed=114264us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=1 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=1 elapsed=53us phase=files-begin 
+[cambium-frame] host=1 last-presented=1 elapsed=71us phase=files-end 
+[cambium-frame] host=1 last-presented=1 elapsed=87us phase=frame-hook-begin 
+[cambium-frame] host=1 last-presented=1 elapsed=1319us phase=frame-hook-end animating=false
+[cambium-frame] host=1 last-presented=1 elapsed=1358us phase=layout-begin physical=2360x1600 scale=2
+[cambium-frame] host=1 last-presented=1 elapsed=1553us phase=layout-end 
+[cambium-frame] host=1 last-presented=1 elapsed=1570us phase=producers-begin 
+[cambium-frame] host=1 last-presented=1 elapsed=1587us phase=producers-end 
+[cambium-frame] host=1 last-presented=1 elapsed=1602us phase=leaf-fragments-begin 
+[cambium-frame] host=1 last-presented=1 elapsed=1621us phase=leaf-fragments-end 
+[cambium-frame] host=1 last-presented=1 elapsed=1637us phase=scene-begin 
+[cambium-frame] host=1 last-presented=1 elapsed=6939us phase=scene-emitted 
+[cambium-frame] host=1 last-presented=1 elapsed=6968us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=1 elapsed=6985us phase=shadows-end 
+[cambium-frame] host=1 last-presented=1 elapsed=7000us phase=raster-begin 
+[cambium-frame] host=1 last-presented=1 elapsed=52470us phase=raster-end 
+[cambium-frame] host=1 last-presented=1 elapsed=52510us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=1 elapsed=52910us phase=acquire-end 
+[cambium-frame] host=1 last-presented=1 elapsed=53428us phase=compose-end 
+[cambium-frame] host=1 last-presented=1 elapsed=53449us phase=present-begin 
+[cambium-frame] host=1 last-presented=1 elapsed=53505us phase=present-end 
+[cambium-frame] host=1 last-presented=1 elapsed=53524us phase=presentation-recorded sequence=2
+[cambium-frame] host=1 last-presented=1 elapsed=53573us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=2 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=2 elapsed=37us phase=files-begin 
+[cambium-frame] host=1 last-presented=2 elapsed=54us phase=files-end 
+[cambium-frame] host=1 last-presented=2 elapsed=76us phase=frame-hook-begin 
+[cambium-frame] host=1 last-presented=2 elapsed=1349us phase=frame-hook-end animating=false
+[cambium-frame] host=1 last-presented=2 elapsed=1393us phase=layout-begin physical=2360x1600 scale=2
+[cambium-frame] host=1 last-presented=2 elapsed=1595us phase=layout-end 
+[cambium-frame] host=1 last-presented=2 elapsed=1610us phase=producers-begin 
+[cambium-frame] host=1 last-presented=2 elapsed=1624us phase=producers-end 
+[cambium-frame] host=1 last-presented=2 elapsed=1636us phase=leaf-fragments-begin 
+[cambium-frame] host=1 last-presented=2 elapsed=1653us phase=leaf-fragments-end 
+[cambium-frame] host=1 last-presented=2 elapsed=1664us phase=scene-begin 
+[cambium-frame] host=1 last-presented=2 elapsed=7138us phase=scene-emitted 
+[cambium-frame] host=1 last-presented=2 elapsed=7163us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=2 elapsed=7177us phase=shadows-end 
+[cambium-frame] host=1 last-presented=2 elapsed=7189us phase=raster-begin 
+[cambium-frame] host=1 last-presented=2 elapsed=49788us phase=raster-end 
+[cambium-frame] host=1 last-presented=2 elapsed=49825us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=2 elapsed=49906us phase=acquire-end 
+[cambium-frame] host=1 last-presented=2 elapsed=50368us phase=compose-end 
+[cambium-frame] host=1 last-presented=2 elapsed=50383us phase=present-begin 
+[cambium-frame] host=1 last-presented=2 elapsed=50431us phase=present-end 
+[cambium-frame] host=1 last-presented=2 elapsed=50443us phase=presentation-recorded sequence=3
+[cambium-frame] host=1 last-presented=2 elapsed=50483us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=3 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=3 elapsed=28us phase=files-begin 
+[cambium-frame] host=1 last-presented=3 elapsed=42us phase=files-end 
+[cambium-frame] host=1 last-presented=3 elapsed=55us phase=frame-hook-begin 
+[cambium-frame] host=1 last-presented=3 elapsed=1932us phase=frame-hook-end animating=false
+[cambium-frame] host=1 last-presented=3 elapsed=1979us phase=layout-begin physical=2360x1600 scale=2
+[cambium-frame] host=1 last-presented=3 elapsed=2213us phase=layout-end 
+[cambium-frame] host=1 last-presented=3 elapsed=2226us phase=producers-begin 
+[cambium-frame] host=1 last-presented=3 elapsed=2238us phase=producers-end 
+[cambium-frame] host=1 last-presented=3 elapsed=2249us phase=leaf-fragments-begin 
+[cambium-frame] host=1 last-presented=3 elapsed=2266us phase=leaf-fragments-end 
+[cambium-frame] host=1 last-presented=3 elapsed=2285us phase=scene-begin 
+[cambium-frame] host=1 last-presented=3 elapsed=7733us phase=scene-emitted 
+[cambium-frame] host=1 last-presented=3 elapsed=7752us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=3 elapsed=7763us phase=shadows-end 
+[cambium-frame] host=1 last-presented=3 elapsed=7774us phase=raster-begin 
+[cambium-frame] host=1 last-presented=3 elapsed=48576us phase=raster-end 
+[cambium-frame] host=1 last-presented=3 elapsed=48613us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=3 elapsed=48703us phase=acquire-end 
+[cambium-frame] host=1 last-presented=3 elapsed=49223us phase=compose-end 
+[cambium-frame] host=1 last-presented=3 elapsed=49239us phase=present-begin 
+[cambium-frame] host=1 last-presented=3 elapsed=49286us phase=present-end 
+[cambium-frame] host=1 last-presented=3 elapsed=49299us phase=presentation-recorded sequence=4
+[cambium-frame] host=1 last-presented=3 elapsed=49345us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=4 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=4 elapsed=33us phase=files-begin 
+[cambium-frame] host=1 last-presented=4 elapsed=45us phase=files-end 
+[cambium-frame] host=1 last-presented=4 elapsed=56us phase=frame-hook-begin 
+[cambium-frame] host=1 last-presented=4 elapsed=1280us phase=frame-hook-end animating=false
+[cambium-frame] host=1 last-presented=4 elapsed=1320us phase=layout-begin physical=2360x1600 scale=2
+[cambium-frame] host=1 last-presented=4 elapsed=1515us phase=layout-end 
+[cambium-frame] host=1 last-presented=4 elapsed=1537us phase=producers-begin 
+[cambium-frame] host=1 last-presented=4 elapsed=1549us phase=producers-end 
+[cambium-frame] host=1 last-presented=4 elapsed=1559us phase=leaf-fragments-begin 
+[cambium-frame] host=1 last-presented=4 elapsed=1576us phase=leaf-fragments-end 
+[cambium-frame] host=1 last-presented=4 elapsed=1587us phase=scene-begin 
+[cambium-frame] host=1 last-presented=4 elapsed=6799us phase=scene-emitted 
+[cambium-frame] host=1 last-presented=4 elapsed=6820us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=4 elapsed=6830us phase=shadows-end 
+[cambium-frame] host=1 last-presented=4 elapsed=6841us phase=raster-begin 
+[cambium-frame] host=1 last-presented=4 elapsed=48953us phase=raster-end 
+[cambium-frame] host=1 last-presented=4 elapsed=48986us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=4 elapsed=49050us phase=acquire-end 
+[cambium-frame] host=1 last-presented=4 elapsed=49453us phase=compose-end 
+[cambium-frame] host=1 last-presented=4 elapsed=49467us phase=present-begin 
+[cambium-frame] host=1 last-presented=4 elapsed=49513us phase=present-end 
+[cambium-frame] host=1 last-presented=4 elapsed=49525us phase=presentation-recorded sequence=5
+[cambium-frame] host=1 last-presented=4 elapsed=49559us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=5 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=5 elapsed=22us phase=files-begin 
+[cambium-frame] host=1 last-presented=5 elapsed=34us phase=files-end 
+[cambium-frame] host=1 last-presented=5 elapsed=45us phase=frame-hook-begin 
+[cambium-frame] host=1 last-presented=5 elapsed=1253us phase=frame-hook-end animating=false
+[cambium-frame] host=1 last-presented=5 elapsed=1287us phase=layout-begin physical=2360x1600 scale=2
+[cambium-frame] host=1 last-presented=5 elapsed=1445us phase=layout-end 
+[cambium-frame] host=1 last-presented=5 elapsed=1457us phase=producers-begin 
+[cambium-frame] host=1 last-presented=5 elapsed=1469us phase=producers-end 
+[cambium-frame] host=1 last-presented=5 elapsed=1482us phase=leaf-fragments-begin 
+[cambium-frame] host=1 last-presented=5 elapsed=1497us phase=leaf-fragments-end 
+[cambium-frame] host=1 last-presented=5 elapsed=1507us phase=scene-begin 
+[cambium-frame] host=1 last-presented=5 elapsed=6776us phase=scene-emitted 
+[cambium-frame] host=1 last-presented=5 elapsed=6796us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=5 elapsed=6806us phase=shadows-end 
+[cambium-frame] host=1 last-presented=5 elapsed=6819us phase=raster-begin 
+[cambium-frame] host=1 last-presented=5 elapsed=46778us phase=raster-end 
+[cambium-frame] host=1 last-presented=5 elapsed=46799us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=5 elapsed=46860us phase=acquire-end 
+[cambium-frame] host=1 last-presented=5 elapsed=47234us phase=compose-end 
+[cambium-frame] host=1 last-presented=5 elapsed=47247us phase=present-begin 
+[cambium-frame] host=1 last-presented=5 elapsed=47300us phase=present-end 
+[cambium-frame] host=1 last-presented=5 elapsed=47312us phase=presentation-recorded sequence=6
+[cambium-frame] host=1 last-presented=5 elapsed=47344us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=6 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=6 elapsed=25us phase=files-begin 
+[cambium-frame] host=1 last-presented=6 elapsed=37us phase=files-end 
+[cambium-frame] host=1 last-presented=6 elapsed=47us phase=frame-hook-begin 
+[cambium-frame] host=1 last-presented=6 elapsed=1370us phase=frame-hook-end animating=false
+[cambium-frame] host=1 last-presented=6 elapsed=1410us phase=layout-begin physical=2360x1600 scale=2
+[cambium-frame] host=1 last-presented=6 elapsed=1597us phase=layout-end 
+[cambium-frame] host=1 last-presented=6 elapsed=1610us phase=producers-begin 
+[cambium-frame] host=1 last-presented=6 elapsed=1623us phase=producers-end 
+[cambium-frame] host=1 last-presented=6 elapsed=1633us phase=leaf-fragments-begin 
+[cambium-frame] host=1 last-presented=6 elapsed=1649us phase=leaf-fragments-end 
+[cambium-frame] host=1 last-presented=6 elapsed=1670us phase=scene-begin 
+[cambium-frame] host=1 last-presented=6 elapsed=6932us phase=scene-emitted 
+[cambium-frame] host=1 last-presented=6 elapsed=6952us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=6 elapsed=6962us phase=shadows-end 
+[cambium-frame] host=1 last-presented=6 elapsed=6974us phase=raster-begin 
+[cambium-frame] host=1 last-presented=6 elapsed=46231us phase=raster-end 
+[cambium-frame] host=1 last-presented=6 elapsed=46261us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=6 elapsed=46330us phase=acquire-end 
+[cambium-frame] host=1 last-presented=6 elapsed=46733us phase=compose-end 
+[cambium-frame] host=1 last-presented=6 elapsed=46748us phase=present-begin 
+[cambium-frame] host=1 last-presented=6 elapsed=46793us phase=present-end 
+[cambium-frame] host=1 last-presented=6 elapsed=46806us phase=presentation-recorded sequence=7
+[cambium-frame] host=1 last-presented=6 elapsed=46839us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=7 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=7 elapsed=28us phase=files-begin 
+[cambium-frame] host=1 last-presented=7 elapsed=41us phase=files-end 
+[cambium-frame] host=1 last-presented=7 elapsed=51us phase=frame-hook-begin 
+[cambium-frame] host=1 last-presented=7 elapsed=1227us phase=frame-hook-end animating=false
+[cambium-frame] host=1 last-presented=7 elapsed=1260us phase=layout-begin physical=2360x1600 scale=2
+[cambium-frame] host=1 last-presented=7 elapsed=1421us phase=layout-end 
+[cambium-frame] host=1 last-presented=7 elapsed=1434us phase=producers-begin 
+[cambium-frame] host=1 last-presented=7 elapsed=1446us phase=producers-end 
+[cambium-frame] host=1 last-presented=7 elapsed=1456us phase=leaf-fragments-begin 
+[cambium-frame] host=1 last-presented=7 elapsed=1471us phase=leaf-fragments-end 
+[cambium-frame] host=1 last-presented=7 elapsed=1481us phase=scene-begin 
+[cambium-frame] host=1 last-presented=7 elapsed=6995us phase=scene-emitted 
+[cambium-frame] host=1 last-presented=7 elapsed=7033us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=7 elapsed=7045us phase=shadows-end 
+[cambium-frame] host=1 last-presented=7 elapsed=7056us phase=raster-begin 
+[cambium-frame] host=1 last-presented=7 elapsed=47378us phase=raster-end 
+[cambium-frame] host=1 last-presented=7 elapsed=47430us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=7 elapsed=47523us phase=acquire-end 
+[cambium-frame] host=1 last-presented=7 elapsed=47978us phase=compose-end 
+[cambium-frame] host=1 last-presented=7 elapsed=47997us phase=present-begin 
+[cambium-frame] host=1 last-presented=7 elapsed=48119us phase=present-end 
+[cambium-frame] host=1 last-presented=7 elapsed=48140us phase=presentation-recorded sequence=8
+[cambium-frame] host=1 last-presented=7 elapsed=48204us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=8 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=8 elapsed=28us phase=files-begin 
+[cambium-frame] host=1 last-presented=8 elapsed=41us phase=files-end 
+[cambium-frame] host=1 last-presented=8 elapsed=51us phase=frame-hook-begin 
+[cambium-frame] host=1 last-presented=8 elapsed=851us phase=frame-hook-end animating=false
+[cambium-frame] host=1 last-presented=8 elapsed=886us phase=layout-begin physical=2360x1600 scale=2
+[cambium-frame] host=1 last-presented=8 elapsed=668958us phase=layout-end 
+[cambium-frame] host=1 last-presented=8 elapsed=668998us phase=producers-begin 
+[cambium-frame] host=1 last-presented=8 elapsed=669010us phase=producers-end 
+[cambium-frame] host=1 last-presented=8 elapsed=669019us phase=leaf-fragments-begin 
+[cambium-frame] host=1 last-presented=8 elapsed=669032us phase=leaf-fragments-end 
+[cambium-frame] host=1 last-presented=8 elapsed=669043us phase=scene-begin 
+[cambium-frame] host=1 last-presented=8 elapsed=670192us phase=scene-emitted 
+[cambium-frame] host=1 last-presented=8 elapsed=670209us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=8 elapsed=670218us phase=shadows-end 
+[cambium-frame] host=1 last-presented=8 elapsed=670240us phase=raster-begin 
+[cambium-frame] host=1 last-presented=8 elapsed=705319us phase=raster-end 
+[cambium-frame] host=1 last-presented=8 elapsed=705354us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=8 elapsed=705426us phase=acquire-end 
+[cambium-frame] host=1 last-presented=8 elapsed=705857us phase=compose-end 
+[cambium-frame] host=1 last-presented=8 elapsed=705876us phase=present-begin 
+[cambium-frame] host=1 last-presented=8 elapsed=705931us phase=present-end 
+[cambium-frame] host=1 last-presented=8 elapsed=705942us phase=presentation-recorded sequence=9
+[cambium-frame] host=1 last-presented=8 elapsed=705965us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=9 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=9 elapsed=24us phase=files-begin 
+[cambium-frame] host=1 last-presented=9 elapsed=37us phase=files-end 
+[cambium-frame] host=1 last-presented=9 elapsed=46us phase=frame-hook-begin 
+[cambium-frame] host=1 last-presented=9 elapsed=846us phase=frame-hook-end animating=false
+[cambium-frame] host=1 last-presented=9 elapsed=871us phase=layout-begin physical=2360x1600 scale=2
+[cambium-frame] host=1 last-presented=9 elapsed=964us phase=layout-end 
+[cambium-frame] host=1 last-presented=9 elapsed=975us phase=producers-begin 
+[cambium-frame] host=1 last-presented=9 elapsed=986us phase=producers-end 
+[cambium-frame] host=1 last-presented=9 elapsed=996us phase=leaf-fragments-begin 
+[cambium-frame] host=1 last-presented=9 elapsed=1012us phase=leaf-fragments-end 
+[cambium-frame] host=1 last-presented=9 elapsed=1023us phase=scene-begin 
+[cambium-frame] host=1 last-presented=9 elapsed=2155us phase=scene-emitted 
+[cambium-frame] host=1 last-presented=9 elapsed=2165us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=9 elapsed=2174us phase=shadows-end 
+[cambium-frame] host=1 last-presented=9 elapsed=2185us phase=raster-begin 
+[cambium-frame] host=1 last-presented=9 elapsed=18653us phase=raster-end 
+[cambium-frame] host=1 last-presented=9 elapsed=18674us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=9 elapsed=18724us phase=acquire-end 
+[cambium-frame] host=1 last-presented=9 elapsed=19025us phase=compose-end 
+[cambium-frame] host=1 last-presented=9 elapsed=19041us phase=present-begin 
+[cambium-frame] host=1 last-presented=9 elapsed=19088us phase=present-end 
+[cambium-frame] host=1 last-presented=9 elapsed=19099us phase=presentation-recorded sequence=10
+[cambium-frame] host=1 last-presented=9 elapsed=19119us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=10 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=10 elapsed=25us phase=files-begin 
+[cambium-frame] host=1 last-presented=10 elapsed=36us phase=files-end 
+[cambium-frame] host=1 last-presented=10 elapsed=46us phase=frame-hook-begin 
+[cambium-frame] host=1 last-presented=10 elapsed=931us phase=frame-hook-end animating=false
+[cambium-frame] host=1 last-presented=10 elapsed=965us phase=layout-begin physical=2360x1600 scale=2
+[cambium-frame] host=1 last-presented=10 elapsed=1060us phase=layout-end 
+[cambium-frame] host=1 last-presented=10 elapsed=1072us phase=producers-begin 
+[cambium-frame] host=1 last-presented=10 elapsed=1082us phase=producers-end 
+[cambium-frame] host=1 last-presented=10 elapsed=1091us phase=leaf-fragments-begin 
+[cambium-frame] host=1 last-presented=10 elapsed=1105us phase=leaf-fragments-end 
+[cambium-frame] host=1 last-presented=10 elapsed=1116us phase=scene-begin 
+[cambium-frame] host=1 last-presented=10 elapsed=2313us phase=scene-emitted 
+[cambium-frame] host=1 last-presented=10 elapsed=2329us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=10 elapsed=2339us phase=shadows-end 
+[cambium-frame] host=1 last-presented=10 elapsed=2349us phase=raster-begin 
+[cambium-frame] host=1 last-presented=10 elapsed=19638us phase=raster-end 
+[cambium-frame] host=1 last-presented=10 elapsed=19659us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=10 elapsed=19714us phase=acquire-end 
+[cambium-frame] host=1 last-presented=10 elapsed=20011us phase=compose-end 
+[cambium-frame] host=1 last-presented=10 elapsed=20035us phase=present-begin 
+[cambium-frame] host=1 last-presented=10 elapsed=20088us phase=present-end 
+[cambium-frame] host=1 last-presented=10 elapsed=20101us phase=presentation-recorded sequence=11
+[cambium-frame] host=1 last-presented=10 elapsed=20121us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=11 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=11 elapsed=13us phase=files-begin 
+[cambium-frame] host=1 last-presented=11 elapsed=23us phase=files-end 
+[cambium-frame] host=1 last-presented=11 elapsed=32us phase=frame-hook-begin 
+[cambium-frame] host=1 last-presented=11 elapsed=765us phase=frame-hook-end animating=false
+[cambium-frame] host=1 last-presented=11 elapsed=790us phase=layout-begin physical=2360x1600 scale=2
+[cambium-frame] host=1 last-presented=11 elapsed=867us phase=layout-end 
+[cambium-frame] host=1 last-presented=11 elapsed=877us phase=producers-begin 
+[cambium-frame] host=1 last-presented=11 elapsed=887us phase=producers-end 
+[cambium-frame] host=1 last-presented=11 elapsed=896us phase=leaf-fragments-begin 
+[cambium-frame] host=1 last-presented=11 elapsed=909us phase=leaf-fragments-end 
+[cambium-frame] host=1 last-presented=11 elapsed=920us phase=scene-begin 
+[cambium-frame] host=1 last-presented=11 elapsed=2027us phase=scene-emitted 
+[cambium-frame] host=1 last-presented=11 elapsed=2041us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=11 elapsed=2052us phase=shadows-end 
+[cambium-frame] host=1 last-presented=11 elapsed=2062us phase=raster-begin 
+[cambium-frame] host=1 last-presented=11 elapsed=18221us phase=raster-end 
+[cambium-frame] host=1 last-presented=11 elapsed=18245us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=11 elapsed=18293us phase=acquire-end 
+[cambium-frame] host=1 last-presented=11 elapsed=18614us phase=compose-end 
+[cambium-frame] host=1 last-presented=11 elapsed=18635us phase=present-begin 
+[cambium-frame] host=1 last-presented=11 elapsed=18679us phase=present-end 
+[cambium-frame] host=1 last-presented=11 elapsed=18694us phase=presentation-recorded sequence=12
+[cambium-frame] host=1 last-presented=11 elapsed=18717us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=12 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=12 elapsed=15us phase=files-begin 
+[cambium-frame] host=1 last-presented=12 elapsed=26us phase=files-end 
+[cambium-frame] host=1 last-presented=12 elapsed=36us phase=frame-hook-begin 
+[cambium-frame] host=1 last-presented=12 elapsed=764us phase=frame-hook-end animating=false
+[cambium-frame] host=1 last-presented=12 elapsed=788us phase=layout-begin physical=2360x1600 scale=2
+[cambium-frame] host=1 last-presented=12 elapsed=866us phase=layout-end 
+[cambium-frame] host=1 last-presented=12 elapsed=876us phase=producers-begin 
+[cambium-frame] host=1 last-presented=12 elapsed=886us phase=producers-end 
+[cambium-frame] host=1 last-presented=12 elapsed=895us phase=leaf-fragments-begin 
+[cambium-frame] host=1 last-presented=12 elapsed=908us phase=leaf-fragments-end 
+[cambium-frame] host=1 last-presented=12 elapsed=918us phase=scene-begin 
+[cambium-frame] host=1 last-presented=12 elapsed=2055us phase=scene-emitted 
+[cambium-frame] host=1 last-presented=12 elapsed=2068us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=12 elapsed=2078us phase=shadows-end 
+[cambium-frame] host=1 last-presented=12 elapsed=2088us phase=raster-begin 
+[cambium-frame] host=1 last-presented=12 elapsed=18220us phase=raster-end 
+[cambium-frame] host=1 last-presented=12 elapsed=18246us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=12 elapsed=18296us phase=acquire-end 
+[cambium-frame] host=1 last-presented=12 elapsed=18612us phase=compose-end 
+[cambium-frame] host=1 last-presented=12 elapsed=18628us phase=present-begin 
+[cambium-frame] host=1 last-presented=12 elapsed=18676us phase=present-end 
+[cambium-frame] host=1 last-presented=12 elapsed=18691us phase=presentation-recorded sequence=13
+[cambium-frame] host=1 last-presented=12 elapsed=18724us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=13 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=13 elapsed=16us phase=files-begin 
+[cambium-frame] host=1 last-presented=13 elapsed=26us phase=files-end 
+[cambium-frame] host=1 last-presented=13 elapsed=35us phase=frame-hook-begin 
+[cambium-frame] host=1 last-presented=13 elapsed=686us phase=frame-hook-end animating=false
+[cambium-frame] host=1 last-presented=13 elapsed=712us phase=layout-begin physical=2360x1600 scale=2
+[cambium-frame] host=1 last-presented=13 elapsed=784us phase=layout-end 
+[cambium-frame] host=1 last-presented=13 elapsed=795us phase=producers-begin 
+[cambium-frame] host=1 last-presented=13 elapsed=806us phase=producers-end 
+[cambium-frame] host=1 last-presented=13 elapsed=818us phase=leaf-fragments-begin 
+[cambium-frame] host=1 last-presented=13 elapsed=832us phase=leaf-fragments-end 
+[cambium-frame] host=1 last-presented=13 elapsed=844us phase=scene-begin 
+[cambium-frame] host=1 last-presented=13 elapsed=1950us phase=scene-emitted 
+[cambium-frame] host=1 last-presented=13 elapsed=1964us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=13 elapsed=1974us phase=shadows-end 
+[cambium-frame] host=1 last-presented=13 elapsed=1983us phase=raster-begin 
+[cambium-frame] host=1 last-presented=13 elapsed=19450us phase=raster-end 
+[cambium-frame] host=1 last-presented=13 elapsed=19468us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=13 elapsed=19521us phase=acquire-end 
+[cambium-frame] host=1 last-presented=13 elapsed=19846us phase=compose-end 
+[cambium-frame] host=1 last-presented=13 elapsed=19861us phase=present-begin 
+[cambium-frame] host=1 last-presented=13 elapsed=19912us phase=present-end 
+[cambium-frame] host=1 last-presented=13 elapsed=19926us phase=presentation-recorded sequence=14
+[cambium-frame] host=1 last-presented=13 elapsed=19948us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=14 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=14 elapsed=19us phase=files-begin 
+[cambium-frame] host=1 last-presented=14 elapsed=33us phase=files-end 
+[cambium-frame] host=1 last-presented=14 elapsed=45us phase=frame-hook-begin 
+[cambium-frame] host=1 last-presented=14 elapsed=802us phase=frame-hook-end animating=false
+[cambium-frame] host=1 last-presented=14 elapsed=830us phase=layout-begin physical=2360x1600 scale=2
+[cambium-frame] host=1 last-presented=14 elapsed=919us phase=layout-end 
+[cambium-frame] host=1 last-presented=14 elapsed=931us phase=producers-begin 
+[cambium-frame] host=1 last-presented=14 elapsed=941us phase=producers-end 
+[cambium-frame] host=1 last-presented=14 elapsed=949us phase=leaf-fragments-begin 
+[cambium-frame] host=1 last-presented=14 elapsed=962us phase=leaf-fragments-end 
+[cambium-frame] host=1 last-presented=14 elapsed=973us phase=scene-begin 
+[cambium-frame] host=1 last-presented=14 elapsed=2195us phase=scene-emitted 
+[cambium-frame] host=1 last-presented=14 elapsed=2208us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=14 elapsed=2218us phase=shadows-end 
+[cambium-frame] host=1 last-presented=14 elapsed=2228us phase=raster-begin 
+[cambium-frame] host=1 last-presented=14 elapsed=18444us phase=raster-end 
+[cambium-frame] host=1 last-presented=14 elapsed=18459us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=14 elapsed=18501us phase=acquire-end 
+[cambium-frame] host=1 last-presented=14 elapsed=18773us phase=compose-end 
+[cambium-frame] host=1 last-presented=14 elapsed=18788us phase=present-begin 
+[cambium-frame] host=1 last-presented=14 elapsed=18834us phase=present-end 
+[cambium-frame] host=1 last-presented=14 elapsed=18848us phase=presentation-recorded sequence=15
+[cambium-frame] host=1 last-presented=14 elapsed=18869us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=15 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=15 elapsed=13us phase=files-begin 
+[cambium-frame] host=1 last-presented=15 elapsed=23us phase=files-end 
+[cambium-frame] host=1 last-presented=15 elapsed=32us phase=frame-hook-begin 
+[cambium-frame] host=1 last-presented=15 elapsed=695us phase=frame-hook-end animating=false
+[cambium-frame] host=1 last-presented=15 elapsed=720us phase=layout-begin physical=2360x1600 scale=2
+[cambium-frame] host=1 last-presented=15 elapsed=790us phase=layout-end 
+[cambium-frame] host=1 last-presented=15 elapsed=800us phase=producers-begin 
+[cambium-frame] host=1 last-presented=15 elapsed=810us phase=producers-end 
+[cambium-frame] host=1 last-presented=15 elapsed=819us phase=leaf-fragments-begin 
+[cambium-frame] host=1 last-presented=15 elapsed=831us phase=leaf-fragments-end 
+[cambium-frame] host=1 last-presented=15 elapsed=841us phase=scene-begin 
+[cambium-frame] host=1 last-presented=15 elapsed=1942us phase=scene-emitted 
+[cambium-frame] host=1 last-presented=15 elapsed=1954us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=15 elapsed=1964us phase=shadows-end 
+[cambium-frame] host=1 last-presented=15 elapsed=1974us phase=raster-begin 
+[cambium-frame] host=1 last-presented=15 elapsed=17318us phase=raster-end 
+[cambium-frame] host=1 last-presented=15 elapsed=17336us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=15 elapsed=17377us phase=acquire-end 
+[cambium-frame] host=1 last-presented=15 elapsed=17645us phase=compose-end 
+[cambium-frame] host=1 last-presented=15 elapsed=17661us phase=present-begin 
+[cambium-frame] host=1 last-presented=15 elapsed=17726us phase=present-end 
+[cambium-frame] host=1 last-presented=15 elapsed=17745us phase=presentation-recorded sequence=16
+[cambium-frame] host=1 last-presented=15 elapsed=17766us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=16 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=16 elapsed=12us phase=files-begin 
+[cambium-frame] host=1 last-presented=16 elapsed=24us phase=files-end 
+[cambium-frame] host=1 last-presented=16 elapsed=35us phase=frame-hook-begin 
+[cambium-frame] host=1 last-presented=16 elapsed=663us phase=frame-hook-end animating=false
+[cambium-frame] host=1 last-presented=16 elapsed=697us phase=layout-begin physical=2360x1600 scale=2
+[cambium-frame] host=1 last-presented=16 elapsed=770us phase=layout-end 
+[cambium-frame] host=1 last-presented=16 elapsed=781us phase=producers-begin 
+[cambium-frame] host=1 last-presented=16 elapsed=790us phase=producers-end 
+[cambium-frame] host=1 last-presented=16 elapsed=799us phase=leaf-fragments-begin 
+[cambium-frame] host=1 last-presented=16 elapsed=812us phase=leaf-fragments-end 
+[cambium-frame] host=1 last-presented=16 elapsed=824us phase=scene-begin 
+[cambium-frame] host=1 last-presented=16 elapsed=1848us phase=scene-emitted 
+[cambium-frame] host=1 last-presented=16 elapsed=1860us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=16 elapsed=1869us phase=shadows-end 
+[cambium-frame] host=1 last-presented=16 elapsed=1878us phase=raster-begin 
+[cambium-frame] host=1 last-presented=16 elapsed=17795us phase=raster-end 
+[cambium-frame] host=1 last-presented=16 elapsed=17810us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=16 elapsed=17850us phase=acquire-end 
+[cambium-frame] host=1 last-presented=16 elapsed=18145us phase=compose-end 
+[cambium-frame] host=1 last-presented=16 elapsed=18160us phase=present-begin 
+[cambium-frame] host=1 last-presented=16 elapsed=18213us phase=present-end 
+[cambium-frame] host=1 last-presented=16 elapsed=18227us phase=presentation-recorded sequence=17
+[cambium-frame] host=1 last-presented=16 elapsed=18245us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=17 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=17 elapsed=11us phase=files-begin 
+[cambium-frame] host=1 last-presented=17 elapsed=20us phase=files-end 
+[cambium-frame] host=1 last-presented=17 elapsed=29us phase=frame-hook-begin 
+[cambium-frame] host=1 last-presented=17 elapsed=623us phase=frame-hook-end animating=false
+[cambium-frame] host=1 last-presented=17 elapsed=656us phase=layout-begin physical=2360x1600 scale=2
+[cambium-frame] host=1 last-presented=17 elapsed=729us phase=layout-end 
+[cambium-frame] host=1 last-presented=17 elapsed=752us phase=producers-begin 
+[cambium-frame] host=1 last-presented=17 elapsed=762us phase=producers-end 
+[cambium-frame] host=1 last-presented=17 elapsed=772us phase=leaf-fragments-begin 
+[cambium-frame] host=1 last-presented=17 elapsed=784us phase=leaf-fragments-end 
+[cambium-frame] host=1 last-presented=17 elapsed=796us phase=scene-begin 
+[cambium-frame] host=1 last-presented=17 elapsed=1893us phase=scene-emitted 
+[cambium-frame] host=1 last-presented=17 elapsed=1903us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=17 elapsed=1912us phase=shadows-end 
+[cambium-frame] host=1 last-presented=17 elapsed=1921us phase=raster-begin 
+[cambium-frame] host=1 last-presented=17 elapsed=18831us phase=raster-end 
+[cambium-frame] host=1 last-presented=17 elapsed=18845us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=17 elapsed=18885us phase=acquire-end 
+[cambium-frame] host=1 last-presented=17 elapsed=19156us phase=compose-end 
+[cambium-frame] host=1 last-presented=17 elapsed=19175us phase=present-begin 
+[cambium-frame] host=1 last-presented=17 elapsed=19220us phase=present-end 
+[cambium-frame] host=1 last-presented=17 elapsed=19234us phase=presentation-recorded sequence=18
+[cambium-frame] host=1 last-presented=17 elapsed=19256us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=18 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=18 elapsed=13us phase=files-begin 
+[cambium-frame] host=1 last-presented=18 elapsed=23us phase=files-end 
+[cambium-frame] host=1 last-presented=18 elapsed=32us phase=frame-hook-begin 
+[cambium-frame] host=1 last-presented=18 elapsed=627us phase=frame-hook-end animating=false
+[cambium-frame] host=1 last-presented=18 elapsed=651us phase=layout-begin physical=2360x1600 scale=2
+[cambium-frame] host=1 last-presented=18 elapsed=721us phase=layout-end 
+[cambium-frame] host=1 last-presented=18 elapsed=731us phase=producers-begin 
+[cambium-frame] host=1 last-presented=18 elapsed=740us phase=producers-end 
+[cambium-frame] host=1 last-presented=18 elapsed=749us phase=leaf-fragments-begin 
+[cambium-frame] host=1 last-presented=18 elapsed=760us phase=leaf-fragments-end 
+[cambium-frame] host=1 last-presented=18 elapsed=771us phase=scene-begin 
+[cambium-frame] host=1 last-presented=18 elapsed=1844us phase=scene-emitted 
+[cambium-frame] host=1 last-presented=18 elapsed=1856us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=18 elapsed=1866us phase=shadows-end 
+[cambium-frame] host=1 last-presented=18 elapsed=1876us phase=raster-begin 
+[cambium-frame] host=1 last-presented=18 elapsed=17881us phase=raster-end 
+[cambium-frame] host=1 last-presented=18 elapsed=17895us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=18 elapsed=17933us phase=acquire-end 
+[cambium-frame] host=1 last-presented=18 elapsed=18211us phase=compose-end 
+[cambium-frame] host=1 last-presented=18 elapsed=18226us phase=present-begin 
+[cambium-frame] host=1 last-presented=18 elapsed=18276us phase=present-end 
+[cambium-frame] host=1 last-presented=18 elapsed=18290us phase=presentation-recorded sequence=19
+[cambium-frame] host=1 last-presented=18 elapsed=18311us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=19 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=19 elapsed=16us phase=files-begin 
+[cambium-frame] host=1 last-presented=19 elapsed=26us phase=files-end 
+[cambium-frame] host=1 last-presented=19 elapsed=34us phase=frame-hook-begin 
+[cambium-frame] host=1 last-presented=19 elapsed=614us phase=frame-hook-end animating=false
+[cambium-frame] host=1 last-presented=19 elapsed=641us phase=layout-begin physical=2360x1600 scale=2
+[cambium-frame] host=1 last-presented=19 elapsed=717us phase=layout-end 
+[cambium-frame] host=1 last-presented=19 elapsed=728us phase=producers-begin 
+[cambium-frame] host=1 last-presented=19 elapsed=739us phase=producers-end 
+[cambium-frame] host=1 last-presented=19 elapsed=749us phase=leaf-fragments-begin 
+[cambium-frame] host=1 last-presented=19 elapsed=761us phase=leaf-fragments-end 
+[cambium-frame] host=1 last-presented=19 elapsed=781us phase=scene-begin 
+[cambium-frame] host=1 last-presented=19 elapsed=1871us phase=scene-emitted 
+[cambium-frame] host=1 last-presented=19 elapsed=1883us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=19 elapsed=1891us phase=shadows-end 
+[cambium-frame] host=1 last-presented=19 elapsed=1900us phase=raster-begin 
+[cambium-frame] host=1 last-presented=19 elapsed=19441us phase=raster-end 
+[cambium-frame] host=1 last-presented=19 elapsed=19458us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=19 elapsed=19496us phase=acquire-end 
+[cambium-frame] host=1 last-presented=19 elapsed=19763us phase=compose-end 
+[cambium-frame] host=1 last-presented=19 elapsed=19779us phase=present-begin 
+[cambium-frame] host=1 last-presented=19 elapsed=19828us phase=present-end 
+[cambium-frame] host=1 last-presented=19 elapsed=19841us phase=presentation-recorded sequence=20
+[cambium-frame] host=1 last-presented=19 elapsed=19860us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=20 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=20 elapsed=17us phase=files-begin 
+[cambium-frame] host=1 last-presented=20 elapsed=27us phase=files-end 
+[cambium-frame] host=1 last-presented=20 elapsed=36us phase=frame-hook-begin 
+[cambium-frame] host=1 last-presented=20 elapsed=616us phase=frame-hook-end animating=false
+[cambium-frame] host=1 last-presented=20 elapsed=646us phase=layout-begin physical=2360x1600 scale=2
+[cambium-frame] host=1 last-presented=20 elapsed=712us phase=layout-end 
+[cambium-frame] host=1 last-presented=20 elapsed=722us phase=producers-begin 
+[cambium-frame] host=1 last-presented=20 elapsed=732us phase=producers-end 
+[cambium-frame] host=1 last-presented=20 elapsed=742us phase=leaf-fragments-begin 
+[cambium-frame] host=1 last-presented=20 elapsed=754us phase=leaf-fragments-end 
+[cambium-frame] host=1 last-presented=20 elapsed=765us phase=scene-begin 
+[cambium-frame] host=1 last-presented=20 elapsed=1776us phase=scene-emitted 
+[cambium-frame] host=1 last-presented=20 elapsed=1787us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=20 elapsed=1796us phase=shadows-end 
+[cambium-frame] host=1 last-presented=20 elapsed=1805us phase=raster-begin 
+[cambium-frame] host=1 last-presented=20 elapsed=17621us phase=raster-end 
+[cambium-frame] host=1 last-presented=20 elapsed=17636us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=20 elapsed=17674us phase=acquire-end 
+[cambium-frame] host=1 last-presented=20 elapsed=17945us phase=compose-end 
+[cambium-frame] host=1 last-presented=20 elapsed=17956us phase=present-begin 
+[cambium-frame] host=1 last-presented=20 elapsed=18005us phase=present-end 
+[cambium-frame] host=1 last-presented=20 elapsed=18016us phase=presentation-recorded sequence=21
+[cambium-frame] host=1 last-presented=20 elapsed=18033us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=21 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=21 elapsed=14us phase=files-begin 
+[cambium-frame] host=1 last-presented=21 elapsed=24us phase=files-end 
+[cambium-frame] host=1 last-presented=21 elapsed=33us phase=frame-hook-begin 
+[cambium-frame] host=1 last-presented=21 elapsed=598us phase=frame-hook-end animating=false
+[cambium-frame] host=1 last-presented=21 elapsed=622us phase=layout-begin physical=2360x1600 scale=2
+[cambium-frame] host=1 last-presented=21 elapsed=690us phase=layout-end 
+[cambium-frame] host=1 last-presented=21 elapsed=702us phase=producers-begin 
+[cambium-frame] host=1 last-presented=21 elapsed=712us phase=producers-end 
+[cambium-frame] host=1 last-presented=21 elapsed=722us phase=leaf-fragments-begin 
+[cambium-frame] host=1 last-presented=21 elapsed=734us phase=leaf-fragments-end 
+[cambium-frame] host=1 last-presented=21 elapsed=745us phase=scene-begin 
+[cambium-frame] host=1 last-presented=21 elapsed=1854us phase=scene-emitted 
+[cambium-frame] host=1 last-presented=21 elapsed=1865us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=21 elapsed=1875us phase=shadows-end 
+[cambium-frame] host=1 last-presented=21 elapsed=1892us phase=raster-begin 
+[cambium-frame] host=1 last-presented=21 elapsed=17351us phase=raster-end 
+[cambium-frame] host=1 last-presented=21 elapsed=17364us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=21 elapsed=17397us phase=acquire-end 
+[cambium-frame] host=1 last-presented=21 elapsed=17654us phase=compose-end 
+[cambium-frame] host=1 last-presented=21 elapsed=17669us phase=present-begin 
+[cambium-frame] host=1 last-presented=21 elapsed=17712us phase=present-end 
+[cambium-frame] host=1 last-presented=21 elapsed=17726us phase=presentation-recorded sequence=22
+[cambium-frame] host=1 last-presented=21 elapsed=17746us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=22 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=22 elapsed=18us phase=files-begin 
+[cambium-frame] host=1 last-presented=22 elapsed=33us phase=files-end 
+[cambium-frame] host=1 last-presented=22 elapsed=51us phase=frame-hook-begin 
+[cambium-frame] host=1 last-presented=22 elapsed=727us phase=frame-hook-end animating=false
+[cambium-frame] host=1 last-presented=22 elapsed=755us phase=layout-begin physical=2360x1600 scale=2
+[cambium-frame] host=1 last-presented=22 elapsed=840us phase=layout-end 
+[cambium-frame] host=1 last-presented=22 elapsed=851us phase=producers-begin 
+[cambium-frame] host=1 last-presented=22 elapsed=862us phase=producers-end 
+[cambium-frame] host=1 last-presented=22 elapsed=871us phase=leaf-fragments-begin 
+[cambium-frame] host=1 last-presented=22 elapsed=885us phase=leaf-fragments-end 
+[cambium-frame] host=1 last-presented=22 elapsed=896us phase=scene-begin 
+[cambium-frame] host=1 last-presented=22 elapsed=1989us phase=scene-emitted 
+[cambium-frame] host=1 last-presented=22 elapsed=2002us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=22 elapsed=2012us phase=shadows-end 
+[cambium-frame] host=1 last-presented=22 elapsed=2022us phase=raster-begin 
+[cambium-frame] host=1 last-presented=22 elapsed=19764us phase=raster-end 
+[cambium-frame] host=1 last-presented=22 elapsed=19780us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=22 elapsed=19822us phase=acquire-end 
+[cambium-frame] host=1 last-presented=22 elapsed=20105us phase=compose-end 
+[cambium-frame] host=1 last-presented=22 elapsed=20121us phase=present-begin 
+[cambium-frame] host=1 last-presented=22 elapsed=20172us phase=present-end 
+[cambium-frame] host=1 last-presented=22 elapsed=20187us phase=presentation-recorded sequence=23
+[cambium-frame] host=1 last-presented=22 elapsed=20210us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=23 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=23 elapsed=16us phase=files-begin 
+[cambium-frame] host=1 last-presented=23 elapsed=27us phase=files-end 
+[cambium-frame] host=1 last-presented=23 elapsed=38us phase=frame-hook-begin 
+[cambium-frame] host=1 last-presented=23 elapsed=710us phase=frame-hook-end animating=false
+[cambium-frame] host=1 last-presented=23 elapsed=735us phase=layout-begin physical=2360x1600 scale=2
+[cambium-frame] host=1 last-presented=23 elapsed=813us phase=layout-end 
+[cambium-frame] host=1 last-presented=23 elapsed=824us phase=producers-begin 
+[cambium-frame] host=1 last-presented=23 elapsed=834us phase=producers-end 
+[cambium-frame] host=1 last-presented=23 elapsed=844us phase=leaf-fragments-begin 
+[cambium-frame] host=1 last-presented=23 elapsed=857us phase=leaf-fragments-end 
+[cambium-frame] host=1 last-presented=23 elapsed=868us phase=scene-begin 
+[cambium-frame] host=1 last-presented=23 elapsed=2011us phase=scene-emitted 
+[cambium-frame] host=1 last-presented=23 elapsed=2022us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=23 elapsed=2032us phase=shadows-end 
+[cambium-frame] host=1 last-presented=23 elapsed=2042us phase=raster-begin 
+[cambium-frame] host=1 last-presented=23 elapsed=19987us phase=raster-end 
+[cambium-frame] host=1 last-presented=23 elapsed=20002us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=23 elapsed=20055us phase=acquire-end 
+[cambium-frame] host=1 last-presented=23 elapsed=20333us phase=compose-end 
+[cambium-frame] host=1 last-presented=23 elapsed=20348us phase=present-begin 
+[cambium-frame] host=1 last-presented=23 elapsed=20400us phase=present-end 
+[cambium-frame] host=1 last-presented=23 elapsed=20414us phase=presentation-recorded sequence=24
+[cambium-frame] host=1 last-presented=23 elapsed=20431us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=24 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=24 elapsed=16us phase=files-begin 
+[cambium-frame] host=1 last-presented=24 elapsed=26us phase=files-end 
+[cambium-frame] host=1 last-presented=24 elapsed=36us phase=frame-hook-begin 
+[cambium-frame] host=1 last-presented=24 elapsed=607us phase=frame-hook-end animating=false
+[cambium-frame] host=1 last-presented=24 elapsed=632us phase=layout-begin physical=2360x1600 scale=2
+[cambium-frame] host=1 last-presented=24 elapsed=705us phase=layout-end 
+[cambium-frame] host=1 last-presented=24 elapsed=716us phase=producers-begin 
+[cambium-frame] host=1 last-presented=24 elapsed=726us phase=producers-end 
+[cambium-frame] host=1 last-presented=24 elapsed=736us phase=leaf-fragments-begin 
+[cambium-frame] host=1 last-presented=24 elapsed=748us phase=leaf-fragments-end 
+[cambium-frame] host=1 last-presented=24 elapsed=761us phase=scene-begin 
+[cambium-frame] host=1 last-presented=24 elapsed=1813us phase=scene-emitted 
+[cambium-frame] host=1 last-presented=24 elapsed=1827us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=24 elapsed=1837us phase=shadows-end 
+[cambium-frame] host=1 last-presented=24 elapsed=1847us phase=raster-begin 
+[cambium-frame] host=1 last-presented=24 elapsed=20399us phase=raster-end 
+[cambium-frame] host=1 last-presented=24 elapsed=20415us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=24 elapsed=20454us phase=acquire-end 
+[cambium-frame] host=1 last-presented=24 elapsed=20714us phase=compose-end 
+[cambium-frame] host=1 last-presented=24 elapsed=20727us phase=present-begin 
+[cambium-frame] host=1 last-presented=24 elapsed=20776us phase=present-end 
+[cambium-frame] host=1 last-presented=24 elapsed=20790us phase=presentation-recorded sequence=25
+[cambium-frame] host=1 last-presented=24 elapsed=23495us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=25 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=25 elapsed=27us phase=files-begin 
+[cambium-frame] host=1 last-presented=25 elapsed=38us phase=files-end 
+[cambium-frame] host=1 last-presented=25 elapsed=47us phase=frame-hook-begin 
+[cambium-frame] host=1 last-presented=25 elapsed=851us phase=frame-hook-end animating=false
+[cambium-frame] host=1 last-presented=25 elapsed=884us phase=layout-begin physical=2360x1600 scale=2
+[cambium-frame] host=1 last-presented=25 elapsed=977us phase=layout-end 
+[cambium-frame] host=1 last-presented=25 elapsed=988us phase=producers-begin 
+[cambium-frame] host=1 last-presented=25 elapsed=999us phase=producers-end 
+[cambium-frame] host=1 last-presented=25 elapsed=1009us phase=leaf-fragments-begin 
+[cambium-frame] host=1 last-presented=25 elapsed=1024us phase=leaf-fragments-end 
+[cambium-frame] host=1 last-presented=25 elapsed=1035us phase=scene-begin 
+[cambium-frame] host=1 last-presented=25 elapsed=2181us phase=scene-emitted 
+[cambium-frame] host=1 last-presented=25 elapsed=2193us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=25 elapsed=2202us phase=shadows-end 
+[cambium-frame] host=1 last-presented=25 elapsed=2212us phase=raster-begin 
+[cambium-frame] host=1 last-presented=25 elapsed=34365us phase=raster-end 
+[cambium-frame] host=1 last-presented=25 elapsed=34378us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=25 elapsed=34430us phase=acquire-end 
+[cambium-frame] host=1 last-presented=25 elapsed=34728us phase=compose-end 
+[cambium-frame] host=1 last-presented=25 elapsed=34741us phase=present-begin 
+[cambium-frame] host=1 last-presented=25 elapsed=34794us phase=present-end 
+[cambium-frame] host=1 last-presented=25 elapsed=34808us phase=presentation-recorded sequence=26
+[cambium-frame] host=1 last-presented=25 elapsed=34843us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=26 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=26 elapsed=18us phase=files-begin 
+[cambium-frame] host=1 last-presented=26 elapsed=29us phase=files-end 
+[cambium-frame] host=1 last-presented=26 elapsed=49us phase=frame-hook-begin 
+[cambium-frame] host=1 last-presented=26 elapsed=692us phase=frame-hook-end animating=false
+[cambium-frame] host=1 last-presented=26 elapsed=719us phase=layout-begin physical=2360x1600 scale=2
+[cambium-frame] host=1 last-presented=26 elapsed=793us phase=layout-end 
+[cambium-frame] host=1 last-presented=26 elapsed=804us phase=producers-begin 
+[cambium-frame] host=1 last-presented=26 elapsed=814us phase=producers-end 
+[cambium-frame] host=1 last-presented=26 elapsed=823us phase=leaf-fragments-begin 
+[cambium-frame] host=1 last-presented=26 elapsed=835us phase=leaf-fragments-end 
+[cambium-frame] host=1 last-presented=26 elapsed=845us phase=scene-begin 
+[cambium-frame] host=1 last-presented=26 elapsed=1860us phase=scene-emitted 
+[cambium-frame] host=1 last-presented=26 elapsed=1871us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=26 elapsed=1880us phase=shadows-end 
+[cambium-frame] host=1 last-presented=26 elapsed=1889us phase=raster-begin 
+[cambium-frame] host=1 last-presented=26 elapsed=18691us phase=raster-end 
+[cambium-frame] host=1 last-presented=26 elapsed=18708us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=26 elapsed=18751us phase=acquire-end 
+[cambium-frame] host=1 last-presented=26 elapsed=19035us phase=compose-end 
+[cambium-frame] host=1 last-presented=26 elapsed=19052us phase=present-begin 
+[cambium-frame] host=1 last-presented=26 elapsed=19100us phase=present-end 
+[cambium-frame] host=1 last-presented=26 elapsed=19116us phase=presentation-recorded sequence=27
+[cambium-frame] host=1 last-presented=26 elapsed=19138us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=27 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=27 elapsed=11us phase=files-begin 
+[cambium-frame] host=1 last-presented=27 elapsed=20us phase=files-end 
+[cambium-frame] host=1 last-presented=27 elapsed=29us phase=frame-hook-begin 
+[cambium-frame] host=1 last-presented=27 elapsed=606us phase=frame-hook-end animating=false
+[cambium-frame] host=1 last-presented=27 elapsed=633us phase=layout-begin physical=2360x1600 scale=2
+[cambium-frame] host=1 last-presented=27 elapsed=712us phase=layout-end 
+[cambium-frame] host=1 last-presented=27 elapsed=723us phase=producers-begin 
+[cambium-frame] host=1 last-presented=27 elapsed=734us phase=producers-end 
+[cambium-frame] host=1 last-presented=27 elapsed=743us phase=leaf-fragments-begin 
+[cambium-frame] host=1 last-presented=27 elapsed=756us phase=leaf-fragments-end 
+[cambium-frame] host=1 last-presented=27 elapsed=767us phase=scene-begin 
+[cambium-frame] host=1 last-presented=27 elapsed=1858us phase=scene-emitted 
+[cambium-frame] host=1 last-presented=27 elapsed=1873us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=27 elapsed=1883us phase=shadows-end 
+[cambium-frame] host=1 last-presented=27 elapsed=1892us phase=raster-begin 
+[cambium-frame] host=1 last-presented=27 elapsed=17944us phase=raster-end 
+[cambium-frame] host=1 last-presented=27 elapsed=17959us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=27 elapsed=18001us phase=acquire-end 
+[cambium-frame] host=1 last-presented=27 elapsed=18288us phase=compose-end 
+[cambium-frame] host=1 last-presented=27 elapsed=18304us phase=present-begin 
+[cambium-frame] host=1 last-presented=27 elapsed=18353us phase=present-end 
+[cambium-frame] host=1 last-presented=27 elapsed=18368us phase=presentation-recorded sequence=28
+[cambium-frame] host=1 last-presented=27 elapsed=18390us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=28 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=28 elapsed=15us phase=files-begin 
+[cambium-frame] host=1 last-presented=28 elapsed=24us phase=files-end 
+[cambium-frame] host=1 last-presented=28 elapsed=40us phase=frame-hook-begin 
+[cambium-frame] host=1 last-presented=28 elapsed=611us phase=frame-hook-end animating=false
+[cambium-frame] host=1 last-presented=28 elapsed=638us phase=layout-begin physical=2360x1600 scale=2
+[cambium-frame] host=1 last-presented=28 elapsed=711us phase=layout-end 
+[cambium-frame] host=1 last-presented=28 elapsed=722us phase=producers-begin 
+[cambium-frame] host=1 last-presented=28 elapsed=733us phase=producers-end 
+[cambium-frame] host=1 last-presented=28 elapsed=742us phase=leaf-fragments-begin 
+[cambium-frame] host=1 last-presented=28 elapsed=755us phase=leaf-fragments-end 
+[cambium-frame] host=1 last-presented=28 elapsed=766us phase=scene-begin 
+[cambium-frame] host=1 last-presented=28 elapsed=1822us phase=scene-emitted 
+[cambium-frame] host=1 last-presented=28 elapsed=1834us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=28 elapsed=1844us phase=shadows-end 
+[cambium-frame] host=1 last-presented=28 elapsed=1853us phase=raster-begin 
+[cambium-frame] host=1 last-presented=28 elapsed=18463us phase=raster-end 
+[cambium-frame] host=1 last-presented=28 elapsed=18476us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=28 elapsed=18511us phase=acquire-end 
+[cambium-frame] host=1 last-presented=28 elapsed=18767us phase=compose-end 
+[cambium-frame] host=1 last-presented=28 elapsed=18778us phase=present-begin 
+[cambium-frame] host=1 last-presented=28 elapsed=18827us phase=present-end 
+[cambium-frame] host=1 last-presented=28 elapsed=18841us phase=presentation-recorded sequence=29
+[cambium-frame] host=1 last-presented=28 elapsed=19289us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=29 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=29 elapsed=17us phase=files-begin 
+[cambium-frame] host=1 last-presented=29 elapsed=32us phase=files-end 
+[cambium-frame] host=1 last-presented=29 elapsed=45us phase=frame-hook-begin 
+[cambium-frame] host=1 last-presented=29 elapsed=755us phase=frame-hook-end animating=false
+[cambium-frame] host=1 last-presented=29 elapsed=786us phase=layout-begin physical=2360x1600 scale=2
+[cambium-frame] host=1 last-presented=29 elapsed=84579us phase=layout-end 
+[cambium-frame] host=1 last-presented=29 elapsed=84599us phase=producers-begin 
+[cambium-frame] host=1 last-presented=29 elapsed=84618us phase=producers-end 
+[cambium-frame] host=1 last-presented=29 elapsed=84630us phase=leaf-fragments-begin 
+[cambium-frame] host=1 last-presented=29 elapsed=84645us phase=leaf-fragments-end 
+[cambium-frame] host=1 last-presented=29 elapsed=84658us phase=scene-begin 
+[cambium-frame] host=1 last-presented=29 elapsed=85804us phase=scene-emitted 
+[cambium-frame] host=1 last-presented=29 elapsed=85818us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=29 elapsed=85828us phase=shadows-end 
+[cambium-frame] host=1 last-presented=29 elapsed=85838us phase=raster-begin 
+[cambium-frame] host=1 last-presented=29 elapsed=110430us phase=raster-end 
+[cambium-frame] host=1 last-presented=29 elapsed=110451us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=29 elapsed=110519us phase=acquire-end 
+[cambium-frame] host=1 last-presented=29 elapsed=110827us phase=compose-end 
+[cambium-frame] host=1 last-presented=29 elapsed=110843us phase=present-begin 
+[cambium-frame] host=1 last-presented=29 elapsed=110899us phase=present-end 
+[cambium-frame] host=1 last-presented=29 elapsed=110915us phase=presentation-recorded sequence=30
+[cambium-frame] host=1 last-presented=29 elapsed=110940us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=30 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=30 elapsed=13us phase=files-begin 
+[cambium-frame] host=1 last-presented=30 elapsed=24us phase=files-end 
+[cambium-frame] host=1 last-presented=30 elapsed=33us phase=frame-hook-begin 
+[cambium-frame] host=1 last-presented=30 elapsed=674us phase=frame-hook-end animating=false
+[cambium-frame] host=1 last-presented=30 elapsed=698us phase=layout-begin physical=2360x1600 scale=2
+[cambium-frame] host=1 last-presented=30 elapsed=81713us phase=layout-end 
+[cambium-frame] host=1 last-presented=30 elapsed=81736us phase=producers-begin 
+[cambium-frame] host=1 last-presented=30 elapsed=81750us phase=producers-end 
+[cambium-frame] host=1 last-presented=30 elapsed=81760us phase=leaf-fragments-begin 
+[cambium-frame] host=1 last-presented=30 elapsed=81774us phase=leaf-fragments-end 
+[cambium-frame] host=1 last-presented=30 elapsed=81786us phase=scene-begin 
+[cambium-frame] host=1 last-presented=30 elapsed=82872us phase=scene-emitted 
+[cambium-frame] host=1 last-presented=30 elapsed=82886us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=30 elapsed=82896us phase=shadows-end 
+[cambium-frame] host=1 last-presented=30 elapsed=82907us phase=raster-begin 
+[cambium-frame] host=1 last-presented=30 elapsed=124735us phase=raster-end 
+[cambium-frame] host=1 last-presented=30 elapsed=124751us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=30 elapsed=124806us phase=acquire-end 
+[cambium-frame] host=1 last-presented=30 elapsed=125113us phase=compose-end 
+[cambium-frame] host=1 last-presented=30 elapsed=125130us phase=present-begin 
+[cambium-frame] host=1 last-presented=30 elapsed=125187us phase=present-end 
+[cambium-frame] host=1 last-presented=30 elapsed=125202us phase=presentation-recorded sequence=31
+[cambium-frame] host=1 last-presented=30 elapsed=125226us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=31 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=31 elapsed=11us phase=files-begin 
+[cambium-frame] host=1 last-presented=31 elapsed=22us phase=files-end 
+[cambium-frame] host=1 last-presented=31 elapsed=31us phase=frame-hook-begin 
+[cambium-frame] host=1 last-presented=31 elapsed=772us phase=frame-hook-end animating=false
+[cambium-frame] host=1 last-presented=31 elapsed=797us phase=layout-begin physical=2360x1600 scale=2
+[cambium-frame] host=1 last-presented=31 elapsed=871us phase=layout-end 
+[cambium-frame] host=1 last-presented=31 elapsed=881us phase=producers-begin 
+[cambium-frame] host=1 last-presented=31 elapsed=891us phase=producers-end 
+[cambium-frame] host=1 last-presented=31 elapsed=900us phase=leaf-fragments-begin 
+[cambium-frame] host=1 last-presented=31 elapsed=912us phase=leaf-fragments-end 
+[cambium-frame] host=1 last-presented=31 elapsed=922us phase=scene-begin 
+[cambium-frame] host=1 last-presented=31 elapsed=1986us phase=scene-emitted 
+[cambium-frame] host=1 last-presented=31 elapsed=1997us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=31 elapsed=2008us phase=shadows-end 
+[cambium-frame] host=1 last-presented=31 elapsed=2017us phase=raster-begin 
+[cambium-frame] host=1 last-presented=31 elapsed=20960us phase=raster-end 
+[cambium-frame] host=1 last-presented=31 elapsed=20975us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=31 elapsed=21012us phase=acquire-end 
+[cambium-frame] host=1 last-presented=31 elapsed=21278us phase=compose-end 
+[cambium-frame] host=1 last-presented=31 elapsed=21289us phase=present-begin 
+[cambium-frame] host=1 last-presented=31 elapsed=21338us phase=present-end 
+[cambium-frame] host=1 last-presented=31 elapsed=21359us phase=presentation-recorded sequence=32
+[cambium-frame] host=1 last-presented=31 elapsed=21382us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=32 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=32 elapsed=14us phase=files-begin 
+[cambium-frame] host=1 last-presented=32 elapsed=30us phase=files-end 
+[cambium-frame] host=1 last-presented=32 elapsed=39us phase=frame-hook-begin 
+[cambium-frame] host=1 last-presented=32 elapsed=639us phase=frame-hook-end animating=false
+[cambium-frame] host=1 last-presented=32 elapsed=667us phase=layout-begin physical=2360x1600 scale=2
+[cambium-frame] host=1 last-presented=32 elapsed=739us phase=layout-end 
+[cambium-frame] host=1 last-presented=32 elapsed=751us phase=producers-begin 
+[cambium-frame] host=1 last-presented=32 elapsed=761us phase=producers-end 
+[cambium-frame] host=1 last-presented=32 elapsed=771us phase=leaf-fragments-begin 
+[cambium-frame] host=1 last-presented=32 elapsed=794us phase=leaf-fragments-end 
+[cambium-frame] host=1 last-presented=32 elapsed=805us phase=scene-begin 
+[cambium-frame] host=1 last-presented=32 elapsed=1853us phase=scene-emitted 
+[cambium-frame] host=1 last-presented=32 elapsed=1866us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=32 elapsed=1876us phase=shadows-end 
+[cambium-frame] host=1 last-presented=32 elapsed=1888us phase=raster-begin 
+[cambium-frame] host=1 last-presented=32 elapsed=19086us phase=raster-end 
+[cambium-frame] host=1 last-presented=32 elapsed=19102us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=32 elapsed=19139us phase=acquire-end 
+[cambium-frame] host=1 last-presented=32 elapsed=19388us phase=compose-end 
+[cambium-frame] host=1 last-presented=32 elapsed=19406us phase=present-begin 
+[cambium-frame] host=1 last-presented=32 elapsed=19453us phase=present-end 
+[cambium-frame] host=1 last-presented=32 elapsed=19468us phase=presentation-recorded sequence=33
+[cambium-frame] host=1 last-presented=32 elapsed=19490us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=33 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=33 elapsed=12us phase=files-begin 
+[cambium-frame] host=1 last-presented=33 elapsed=21us phase=files-end 
+[cambium-frame] host=1 last-presented=33 elapsed=30us phase=frame-hook-begin 
+[cambium-frame] host=1 last-presented=33 elapsed=619us phase=frame-hook-end animating=false
+[cambium-frame] host=1 last-presented=33 elapsed=646us phase=layout-begin physical=2360x1600 scale=2
+[cambium-frame] host=1 last-presented=33 elapsed=723us phase=layout-end 
+[cambium-frame] host=1 last-presented=33 elapsed=734us phase=producers-begin 
+[cambium-frame] host=1 last-presented=33 elapsed=745us phase=producers-end 
+[cambium-frame] host=1 last-presented=33 elapsed=754us phase=leaf-fragments-begin 
+[cambium-frame] host=1 last-presented=33 elapsed=767us phase=leaf-fragments-end 
+[cambium-frame] host=1 last-presented=33 elapsed=779us phase=scene-begin 
+[cambium-frame] host=1 last-presented=33 elapsed=1860us phase=scene-emitted 
+[cambium-frame] host=1 last-presented=33 elapsed=1874us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=33 elapsed=1888us phase=shadows-end 
+[cambium-frame] host=1 last-presented=33 elapsed=1897us phase=raster-begin 
+[cambium-frame] host=1 last-presented=33 elapsed=18959us phase=raster-end 
+[cambium-frame] host=1 last-presented=33 elapsed=18978us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=33 elapsed=19019us phase=acquire-end 
+[cambium-frame] host=1 last-presented=33 elapsed=19311us phase=compose-end 
+[cambium-frame] host=1 last-presented=33 elapsed=19332us phase=present-begin 
+[cambium-frame] host=1 last-presented=33 elapsed=19379us phase=present-end 
+[cambium-frame] host=1 last-presented=33 elapsed=19394us phase=presentation-recorded sequence=34
+[cambium-frame] host=1 last-presented=33 elapsed=19415us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=34 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=34 elapsed=15us phase=files-begin 
+[cambium-frame] host=1 last-presented=34 elapsed=25us phase=files-end 
+[cambium-frame] host=1 last-presented=34 elapsed=34us phase=frame-hook-begin 
+[cambium-frame] host=1 last-presented=34 elapsed=644us phase=frame-hook-end animating=false
+[cambium-frame] host=1 last-presented=34 elapsed=670us phase=layout-begin physical=2360x1600 scale=2
+[cambium-frame] host=1 last-presented=34 elapsed=750us phase=layout-end 
+[cambium-frame] host=1 last-presented=34 elapsed=762us phase=producers-begin 
+[cambium-frame] host=1 last-presented=34 elapsed=772us phase=producers-end 
+[cambium-frame] host=1 last-presented=34 elapsed=783us phase=leaf-fragments-begin 
+[cambium-frame] host=1 last-presented=34 elapsed=800us phase=leaf-fragments-end 
+[cambium-frame] host=1 last-presented=34 elapsed=817us phase=scene-begin 
+[cambium-frame] host=1 last-presented=34 elapsed=1923us phase=scene-emitted 
+[cambium-frame] host=1 last-presented=34 elapsed=1936us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=34 elapsed=1955us phase=shadows-end 
+[cambium-frame] host=1 last-presented=34 elapsed=1964us phase=raster-begin 
+[cambium-frame] host=1 last-presented=34 elapsed=19257us phase=raster-end 
+[cambium-frame] host=1 last-presented=34 elapsed=19274us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=34 elapsed=19312us phase=acquire-end 
+[cambium-frame] host=1 last-presented=34 elapsed=19586us phase=compose-end 
+[cambium-frame] host=1 last-presented=34 elapsed=19603us phase=present-begin 
+[cambium-frame] host=1 last-presented=34 elapsed=19654us phase=present-end 
+[cambium-frame] host=1 last-presented=34 elapsed=19670us phase=presentation-recorded sequence=35
+[cambium-frame] host=1 last-presented=34 elapsed=19691us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=35 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=35 elapsed=12us phase=files-begin 
+[cambium-frame] host=1 last-presented=35 elapsed=22us phase=files-end 
+[cambium-frame] host=1 last-presented=35 elapsed=31us phase=frame-hook-begin 
+[cambium-frame] host=1 last-presented=35 elapsed=621us phase=frame-hook-end animating=false
+[cambium-frame] host=1 last-presented=35 elapsed=646us phase=layout-begin physical=2360x1600 scale=2
+[cambium-frame] host=1 last-presented=35 elapsed=724us phase=layout-end 
+[cambium-frame] host=1 last-presented=35 elapsed=734us phase=producers-begin 
+[cambium-frame] host=1 last-presented=35 elapsed=743us phase=producers-end 
+[cambium-frame] host=1 last-presented=35 elapsed=752us phase=leaf-fragments-begin 
+[cambium-frame] host=1 last-presented=35 elapsed=768us phase=leaf-fragments-end 
+[cambium-frame] host=1 last-presented=35 elapsed=779us phase=scene-begin 
+[cambium-frame] host=1 last-presented=35 elapsed=1876us phase=scene-emitted 
+[cambium-frame] host=1 last-presented=35 elapsed=1890us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=35 elapsed=1901us phase=shadows-end 
+[cambium-frame] host=1 last-presented=35 elapsed=1911us phase=raster-begin 
+[cambium-frame] host=1 last-presented=35 elapsed=20367us phase=raster-end 
+[cambium-frame] host=1 last-presented=35 elapsed=20384us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=35 elapsed=20420us phase=acquire-end 
+[cambium-frame] host=1 last-presented=35 elapsed=20751us phase=compose-end 
+[cambium-frame] host=1 last-presented=35 elapsed=20766us phase=present-begin 
+[cambium-frame] host=1 last-presented=35 elapsed=20815us phase=present-end 
+[cambium-frame] host=1 last-presented=35 elapsed=20828us phase=presentation-recorded sequence=36
+[cambium-frame] host=1 last-presented=35 elapsed=20850us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=36 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=36 elapsed=13us phase=files-begin 
+[cambium-frame] host=1 last-presented=36 elapsed=26us phase=files-end 
+[cambium-frame] host=1 last-presented=36 elapsed=36us phase=frame-hook-begin 
+[cambium-frame] host=1 last-presented=36 elapsed=613us phase=frame-hook-end animating=false
+[cambium-frame] host=1 last-presented=36 elapsed=642us phase=layout-begin physical=2360x1600 scale=2
+[cambium-frame] host=1 last-presented=36 elapsed=716us phase=layout-end 
+[cambium-frame] host=1 last-presented=36 elapsed=728us phase=producers-begin 
+[cambium-frame] host=1 last-presented=36 elapsed=742us phase=producers-end 
+[cambium-frame] host=1 last-presented=36 elapsed=752us phase=leaf-fragments-begin 
+[cambium-frame] host=1 last-presented=36 elapsed=766us phase=leaf-fragments-end 
+[cambium-frame] host=1 last-presented=36 elapsed=777us phase=scene-begin 
+[cambium-frame] host=1 last-presented=36 elapsed=1856us phase=scene-emitted 
+[cambium-frame] host=1 last-presented=36 elapsed=1867us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=36 elapsed=1876us phase=shadows-end 
+[cambium-frame] host=1 last-presented=36 elapsed=1885us phase=raster-begin 
+[cambium-frame] host=1 last-presented=36 elapsed=18263us phase=raster-end 
+[cambium-frame] host=1 last-presented=36 elapsed=18279us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=36 elapsed=18310us phase=acquire-end 
+[cambium-frame] host=1 last-presented=36 elapsed=18564us phase=compose-end 
+[cambium-frame] host=1 last-presented=36 elapsed=18580us phase=present-begin 
+[cambium-frame] host=1 last-presented=36 elapsed=18636us phase=present-end 
+[cambium-frame] host=1 last-presented=36 elapsed=18649us phase=presentation-recorded sequence=37
+[cambium-frame] host=1 last-presented=36 elapsed=18666us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=37 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=37 elapsed=12us phase=files-begin 
+[cambium-frame] host=1 last-presented=37 elapsed=21us phase=files-end 
+[cambium-frame] host=1 last-presented=37 elapsed=30us phase=frame-hook-begin 
+[cambium-frame] host=1 last-presented=37 elapsed=673us phase=frame-hook-end animating=false
+[cambium-frame] host=1 last-presented=37 elapsed=707us phase=layout-begin physical=2360x1600 scale=2
+[cambium-frame] host=1 last-presented=37 elapsed=781us phase=layout-end 
+[cambium-frame] host=1 last-presented=37 elapsed=796us phase=producers-begin 
+[cambium-frame] host=1 last-presented=37 elapsed=810us phase=producers-end 
+[cambium-frame] host=1 last-presented=37 elapsed=819us phase=leaf-fragments-begin 
+[cambium-frame] host=1 last-presented=37 elapsed=831us phase=leaf-fragments-end 
+[cambium-frame] host=1 last-presented=37 elapsed=847us phase=scene-begin 
+[cambium-frame] host=1 last-presented=37 elapsed=2002us phase=scene-emitted 
+[cambium-frame] host=1 last-presented=37 elapsed=2014us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=37 elapsed=2024us phase=shadows-end 
+[cambium-frame] host=1 last-presented=37 elapsed=2036us phase=raster-begin 
+[cambium-frame] host=1 last-presented=37 elapsed=20825us phase=raster-end 
+[cambium-frame] host=1 last-presented=37 elapsed=20844us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=37 elapsed=20883us phase=acquire-end 
+[cambium-frame] host=1 last-presented=37 elapsed=21167us phase=compose-end 
+[cambium-frame] host=1 last-presented=37 elapsed=21195us phase=present-begin 
+[cambium-frame] host=1 last-presented=37 elapsed=21236us phase=present-end 
+[cambium-frame] host=1 last-presented=37 elapsed=21249us phase=presentation-recorded sequence=38
+[cambium-frame] host=1 last-presented=37 elapsed=21274us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=38 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=38 elapsed=18us phase=files-begin 
+[cambium-frame] host=1 last-presented=38 elapsed=29us phase=files-end 
+[cambium-frame] host=1 last-presented=38 elapsed=38us phase=frame-hook-begin 
+[cambium-frame] host=1 last-presented=38 elapsed=745us phase=frame-hook-end animating=false
+[cambium-frame] host=1 last-presented=38 elapsed=783us phase=layout-begin physical=2360x1600 scale=2
+[cambium-frame] host=1 last-presented=38 elapsed=858us phase=layout-end 
+[cambium-frame] host=1 last-presented=38 elapsed=873us phase=producers-begin 
+[cambium-frame] host=1 last-presented=38 elapsed=888us phase=producers-end 
+[cambium-frame] host=1 last-presented=38 elapsed=902us phase=leaf-fragments-begin 
+[cambium-frame] host=1 last-presented=38 elapsed=916us phase=leaf-fragments-end 
+[cambium-frame] host=1 last-presented=38 elapsed=928us phase=scene-begin 
+[cambium-frame] host=1 last-presented=38 elapsed=2115us phase=scene-emitted 
+[cambium-frame] host=1 last-presented=38 elapsed=2131us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=38 elapsed=2143us phase=shadows-end 
+[cambium-frame] host=1 last-presented=38 elapsed=2156us phase=raster-begin 
+[cambium-frame] host=1 last-presented=38 elapsed=19418us phase=raster-end 
+[cambium-frame] host=1 last-presented=38 elapsed=19436us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=38 elapsed=19473us phase=acquire-end 
+[cambium-frame] host=1 last-presented=38 elapsed=19728us phase=compose-end 
+[cambium-frame] host=1 last-presented=38 elapsed=19746us phase=present-begin 
+[cambium-frame] host=1 last-presented=38 elapsed=19801us phase=present-end 
+[cambium-frame] host=1 last-presented=38 elapsed=19815us phase=presentation-recorded sequence=39
+[cambium-frame] host=1 last-presented=38 elapsed=19837us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=39 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=39 elapsed=25us phase=files-begin 
+[cambium-frame] host=1 last-presented=39 elapsed=41us phase=files-end 
+[cambium-frame] host=1 last-presented=39 elapsed=56us phase=frame-hook-begin 
+[cambium-frame] host=1 last-presented=39 elapsed=740us phase=frame-hook-end animating=false
+[cambium-frame] host=1 last-presented=39 elapsed=770us phase=layout-begin physical=2360x1600 scale=2
+[cambium-frame] host=1 last-presented=39 elapsed=858us phase=layout-end 
+[cambium-frame] host=1 last-presented=39 elapsed=871us phase=producers-begin 
+[cambium-frame] host=1 last-presented=39 elapsed=882us phase=producers-end 
+[cambium-frame] host=1 last-presented=39 elapsed=891us phase=leaf-fragments-begin 
+[cambium-frame] host=1 last-presented=39 elapsed=903us phase=leaf-fragments-end 
+[cambium-frame] host=1 last-presented=39 elapsed=914us phase=scene-begin 
+[cambium-frame] host=1 last-presented=39 elapsed=2014us phase=scene-emitted 
+[cambium-frame] host=1 last-presented=39 elapsed=2027us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=39 elapsed=2038us phase=shadows-end 
+[cambium-frame] host=1 last-presented=39 elapsed=2048us phase=raster-begin 
+[cambium-frame] host=1 last-presented=39 elapsed=21326us phase=raster-end 
+[cambium-frame] host=1 last-presented=39 elapsed=21345us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=39 elapsed=21378us phase=acquire-end 
+[cambium-frame] host=1 last-presented=39 elapsed=21619us phase=compose-end 
+[cambium-frame] host=1 last-presented=39 elapsed=21635us phase=present-begin 
+[cambium-frame] host=1 last-presented=39 elapsed=21788us phase=present-end 
+[cambium-frame] host=1 last-presented=39 elapsed=21805us phase=presentation-recorded sequence=40
+[cambium-frame] host=1 last-presented=39 elapsed=21824us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=40 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=40 elapsed=18us phase=files-begin 
+[cambium-frame] host=1 last-presented=40 elapsed=32us phase=files-end 
+[cambium-frame] host=1 last-presented=40 elapsed=47us phase=frame-hook-begin 
+[cambium-frame] host=1 last-presented=40 elapsed=759us phase=frame-hook-end animating=false
+[cambium-frame] host=1 last-presented=40 elapsed=786us phase=layout-begin physical=2360x1600 scale=2
+[cambium-frame] host=1 last-presented=40 elapsed=874us phase=layout-end 
+[cambium-frame] host=1 last-presented=40 elapsed=885us phase=producers-begin 
+[cambium-frame] host=1 last-presented=40 elapsed=895us phase=producers-end 
+[cambium-frame] host=1 last-presented=40 elapsed=906us phase=leaf-fragments-begin 
+[cambium-frame] host=1 last-presented=40 elapsed=924us phase=leaf-fragments-end 
+[cambium-frame] host=1 last-presented=40 elapsed=941us phase=scene-begin 
+[cambium-frame] host=1 last-presented=40 elapsed=2143us phase=scene-emitted 
+[cambium-frame] host=1 last-presented=40 elapsed=2157us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=40 elapsed=2171us phase=shadows-end 
+[cambium-frame] host=1 last-presented=40 elapsed=2186us phase=raster-begin 
+[cambium-frame] host=1 last-presented=40 elapsed=20568us phase=raster-end 
+[cambium-frame] host=1 last-presented=40 elapsed=20585us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=40 elapsed=20635us phase=acquire-end 
+[cambium-frame] host=1 last-presented=40 elapsed=20936us phase=compose-end 
+[cambium-frame] host=1 last-presented=40 elapsed=20953us phase=present-begin 
+[cambium-frame] host=1 last-presented=40 elapsed=21003us phase=present-end 
+[cambium-frame] host=1 last-presented=40 elapsed=21018us phase=presentation-recorded sequence=41
+[cambium-frame] host=1 last-presented=40 elapsed=21043us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=41 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=41 elapsed=15us phase=files-begin 
+[cambium-frame] host=1 last-presented=41 elapsed=26us phase=files-end 
+[cambium-frame] host=1 last-presented=41 elapsed=37us phase=frame-hook-begin 
+[cambium-frame] host=1 last-presented=41 elapsed=699us phase=frame-hook-end animating=false
+[cambium-frame] host=1 last-presented=41 elapsed=727us phase=layout-begin physical=2360x1600 scale=2
+[cambium-frame] host=1 last-presented=41 elapsed=802us phase=layout-end 
+[cambium-frame] host=1 last-presented=41 elapsed=814us phase=producers-begin 
+[cambium-frame] host=1 last-presented=41 elapsed=825us phase=producers-end 
+[cambium-frame] host=1 last-presented=41 elapsed=834us phase=leaf-fragments-begin 
+[cambium-frame] host=1 last-presented=41 elapsed=847us phase=leaf-fragments-end 
+[cambium-frame] host=1 last-presented=41 elapsed=857us phase=scene-begin 
+[cambium-frame] host=1 last-presented=41 elapsed=2004us phase=scene-emitted 
+[cambium-frame] host=1 last-presented=41 elapsed=2016us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=41 elapsed=2027us phase=shadows-end 
+[cambium-frame] host=1 last-presented=41 elapsed=2037us phase=raster-begin 
+[cambium-frame] host=1 last-presented=41 elapsed=19185us phase=raster-end 
+[cambium-frame] host=1 last-presented=41 elapsed=19206us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=41 elapsed=19250us phase=acquire-end 
+[cambium-frame] host=1 last-presented=41 elapsed=19523us phase=compose-end 
+[cambium-frame] host=1 last-presented=41 elapsed=19542us phase=present-begin 
+[cambium-frame] host=1 last-presented=41 elapsed=19593us phase=present-end 
+[cambium-frame] host=1 last-presented=41 elapsed=19609us phase=presentation-recorded sequence=42
+[cambium-frame] host=1 last-presented=41 elapsed=19627us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=42 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=42 elapsed=13us phase=files-begin 
+[cambium-frame] host=1 last-presented=42 elapsed=24us phase=files-end 
+[cambium-frame] host=1 last-presented=42 elapsed=33us phase=frame-hook-begin 
+[cambium-frame] host=1 last-presented=42 elapsed=672us phase=frame-hook-end animating=false
+[cambium-frame] host=1 last-presented=42 elapsed=700us phase=layout-begin physical=2360x1600 scale=2
+[cambium-frame] host=1 last-presented=42 elapsed=769us phase=layout-end 
+[cambium-frame] host=1 last-presented=42 elapsed=782us phase=producers-begin 
+[cambium-frame] host=1 last-presented=42 elapsed=794us phase=producers-end 
+[cambium-frame] host=1 last-presented=42 elapsed=805us phase=leaf-fragments-begin 
+[cambium-frame] host=1 last-presented=42 elapsed=816us phase=leaf-fragments-end 
+[cambium-frame] host=1 last-presented=42 elapsed=828us phase=scene-begin 
+[cambium-frame] host=1 last-presented=42 elapsed=1918us phase=scene-emitted 
+[cambium-frame] host=1 last-presented=42 elapsed=1931us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=42 elapsed=1941us phase=shadows-end 
+[cambium-frame] host=1 last-presented=42 elapsed=1951us phase=raster-begin 
+[cambium-frame] host=1 last-presented=42 elapsed=19089us phase=raster-end 
+[cambium-frame] host=1 last-presented=42 elapsed=19107us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=42 elapsed=19145us phase=acquire-end 
+[cambium-frame] host=1 last-presented=42 elapsed=19414us phase=compose-end 
+[cambium-frame] host=1 last-presented=42 elapsed=19433us phase=present-begin 
+[cambium-frame] host=1 last-presented=42 elapsed=19488us phase=present-end 
+[cambium-frame] host=1 last-presented=42 elapsed=19503us phase=presentation-recorded sequence=43
+[cambium-frame] host=1 last-presented=42 elapsed=19525us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=43 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=43 elapsed=18us phase=files-begin 
+[cambium-frame] host=1 last-presented=43 elapsed=30us phase=files-end 
+[cambium-frame] host=1 last-presented=43 elapsed=41us phase=frame-hook-begin 
+[cambium-frame] host=1 last-presented=43 elapsed=655us phase=frame-hook-end animating=false
+[cambium-frame] host=1 last-presented=43 elapsed=680us phase=layout-begin physical=2360x1600 scale=2
+[cambium-frame] host=1 last-presented=43 elapsed=752us phase=layout-end 
+[cambium-frame] host=1 last-presented=43 elapsed=762us phase=producers-begin 
+[cambium-frame] host=1 last-presented=43 elapsed=772us phase=producers-end 
+[cambium-frame] host=1 last-presented=43 elapsed=781us phase=leaf-fragments-begin 
+[cambium-frame] host=1 last-presented=43 elapsed=792us phase=leaf-fragments-end 
+[cambium-frame] host=1 last-presented=43 elapsed=802us phase=scene-begin 
+[cambium-frame] host=1 last-presented=43 elapsed=1956us phase=scene-emitted 
+[cambium-frame] host=1 last-presented=43 elapsed=1970us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=43 elapsed=1980us phase=shadows-end 
+[cambium-frame] host=1 last-presented=43 elapsed=1990us phase=raster-begin 
+[cambium-frame] host=1 last-presented=43 elapsed=19701us phase=raster-end 
+[cambium-frame] host=1 last-presented=43 elapsed=19715us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=43 elapsed=19751us phase=acquire-end 
+[cambium-frame] host=1 last-presented=43 elapsed=20037us phase=compose-end 
+[cambium-frame] host=1 last-presented=43 elapsed=20054us phase=present-begin 
+[cambium-frame] host=1 last-presented=43 elapsed=20099us phase=present-end 
+[cambium-frame] host=1 last-presented=43 elapsed=20114us phase=presentation-recorded sequence=44
+[cambium-frame] host=1 last-presented=43 elapsed=20136us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=44 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=44 elapsed=18us phase=files-begin 
+[cambium-frame] host=1 last-presented=44 elapsed=28us phase=files-end 
+[cambium-frame] host=1 last-presented=44 elapsed=38us phase=frame-hook-begin 
+[cambium-frame] host=1 last-presented=44 elapsed=732us phase=frame-hook-end animating=false
+[cambium-frame] host=1 last-presented=44 elapsed=758us phase=layout-begin physical=2360x1600 scale=2
+[cambium-frame] host=1 last-presented=44 elapsed=844us phase=layout-end 
+[cambium-frame] host=1 last-presented=44 elapsed=856us phase=producers-begin 
+[cambium-frame] host=1 last-presented=44 elapsed=868us phase=producers-end 
+[cambium-frame] host=1 last-presented=44 elapsed=877us phase=leaf-fragments-begin 
+[cambium-frame] host=1 last-presented=44 elapsed=893us phase=leaf-fragments-end 
+[cambium-frame] host=1 last-presented=44 elapsed=910us phase=scene-begin 
+[cambium-frame] host=1 last-presented=44 elapsed=2100us phase=scene-emitted 
+[cambium-frame] host=1 last-presented=44 elapsed=2111us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=44 elapsed=2121us phase=shadows-end 
+[cambium-frame] host=1 last-presented=44 elapsed=2130us phase=raster-begin 
+[cambium-frame] host=1 last-presented=44 elapsed=21243us phase=raster-end 
+[cambium-frame] host=1 last-presented=44 elapsed=21263us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=44 elapsed=21299us phase=acquire-end 
+[cambium-frame] host=1 last-presented=44 elapsed=21561us phase=compose-end 
+[cambium-frame] host=1 last-presented=44 elapsed=21577us phase=present-begin 
+[cambium-frame] host=1 last-presented=44 elapsed=21627us phase=present-end 
+[cambium-frame] host=1 last-presented=44 elapsed=21642us phase=presentation-recorded sequence=45
+[cambium-frame] host=1 last-presented=44 elapsed=21661us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=45 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=45 elapsed=16us phase=files-begin 
+[cambium-frame] host=1 last-presented=45 elapsed=27us phase=files-end 
+[cambium-frame] host=1 last-presented=45 elapsed=36us phase=frame-hook-begin 
+[cambium-frame] host=1 last-presented=45 elapsed=606us phase=frame-hook-end animating=false
+[cambium-frame] host=1 last-presented=45 elapsed=631us phase=layout-begin physical=2360x1600 scale=2
+[cambium-frame] host=1 last-presented=45 elapsed=699us phase=layout-end 
+[cambium-frame] host=1 last-presented=45 elapsed=710us phase=producers-begin 
+[cambium-frame] host=1 last-presented=45 elapsed=719us phase=producers-end 
+[cambium-frame] host=1 last-presented=45 elapsed=729us phase=leaf-fragments-begin 
+[cambium-frame] host=1 last-presented=45 elapsed=742us phase=leaf-fragments-end 
+[cambium-frame] host=1 last-presented=45 elapsed=753us phase=scene-begin 
+[cambium-frame] host=1 last-presented=45 elapsed=1846us phase=scene-emitted 
+[cambium-frame] host=1 last-presented=45 elapsed=1858us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=45 elapsed=1869us phase=shadows-end 
+[cambium-frame] host=1 last-presented=45 elapsed=1879us phase=raster-begin 
+[cambium-frame] host=1 last-presented=45 elapsed=18641us phase=raster-end 
+[cambium-frame] host=1 last-presented=45 elapsed=18656us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=45 elapsed=18692us phase=acquire-end 
+[cambium-frame] host=1 last-presented=45 elapsed=18959us phase=compose-end 
+[cambium-frame] host=1 last-presented=45 elapsed=18978us phase=present-begin 
+[cambium-frame] host=1 last-presented=45 elapsed=19031us phase=present-end 
+[cambium-frame] host=1 last-presented=45 elapsed=19046us phase=presentation-recorded sequence=46
+[cambium-frame] host=1 last-presented=45 elapsed=19064us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=46 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=46 elapsed=13us phase=files-begin 
+[cambium-frame] host=1 last-presented=46 elapsed=23us phase=files-end 
+[cambium-frame] host=1 last-presented=46 elapsed=32us phase=frame-hook-begin 
+[cambium-frame] host=1 last-presented=46 elapsed=618us phase=frame-hook-end animating=false
+[cambium-frame] host=1 last-presented=46 elapsed=646us phase=layout-begin physical=2360x1600 scale=2
+[cambium-frame] host=1 last-presented=46 elapsed=729us phase=layout-end 
+[cambium-frame] host=1 last-presented=46 elapsed=743us phase=producers-begin 
+[cambium-frame] host=1 last-presented=46 elapsed=756us phase=producers-end 
+[cambium-frame] host=1 last-presented=46 elapsed=769us phase=leaf-fragments-begin 
+[cambium-frame] host=1 last-presented=46 elapsed=784us phase=leaf-fragments-end 
+[cambium-frame] host=1 last-presented=46 elapsed=797us phase=scene-begin 
+[cambium-frame] host=1 last-presented=46 elapsed=2026us phase=scene-emitted 
+[cambium-frame] host=1 last-presented=46 elapsed=2043us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=46 elapsed=2055us phase=shadows-end 
+[cambium-frame] host=1 last-presented=46 elapsed=2065us phase=raster-begin 
+[cambium-frame] host=1 last-presented=46 elapsed=20783us phase=raster-end 
+[cambium-frame] host=1 last-presented=46 elapsed=20798us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=46 elapsed=20832us phase=acquire-end 
+[cambium-frame] host=1 last-presented=46 elapsed=21068us phase=compose-end 
+[cambium-frame] host=1 last-presented=46 elapsed=21084us phase=present-begin 
+[cambium-frame] host=1 last-presented=46 elapsed=21148us phase=present-end 
+[cambium-frame] host=1 last-presented=46 elapsed=21163us phase=presentation-recorded sequence=47
+[cambium-frame] host=1 last-presented=46 elapsed=21182us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=47 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=47 elapsed=13us phase=files-begin 
+[cambium-frame] host=1 last-presented=47 elapsed=23us phase=files-end 
+[cambium-frame] host=1 last-presented=47 elapsed=32us phase=frame-hook-begin 
+[cambium-frame] host=1 last-presented=47 elapsed=632us phase=frame-hook-end animating=false
+[cambium-frame] host=1 last-presented=47 elapsed=660us phase=layout-begin physical=2360x1600 scale=2
+[cambium-frame] host=1 last-presented=47 elapsed=732us phase=layout-end 
+[cambium-frame] host=1 last-presented=47 elapsed=744us phase=producers-begin 
+[cambium-frame] host=1 last-presented=47 elapsed=754us phase=producers-end 
+[cambium-frame] host=1 last-presented=47 elapsed=766us phase=leaf-fragments-begin 
+[cambium-frame] host=1 last-presented=47 elapsed=780us phase=leaf-fragments-end 
+[cambium-frame] host=1 last-presented=47 elapsed=792us phase=scene-begin 
+[cambium-frame] host=1 last-presented=47 elapsed=1892us phase=scene-emitted 
+[cambium-frame] host=1 last-presented=47 elapsed=1907us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=47 elapsed=1917us phase=shadows-end 
+[cambium-frame] host=1 last-presented=47 elapsed=1927us phase=raster-begin 
+[cambium-frame] host=1 last-presented=47 elapsed=18649us phase=raster-end 
+[cambium-frame] host=1 last-presented=47 elapsed=18668us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=47 elapsed=18700us phase=acquire-end 
+[cambium-frame] host=1 last-presented=47 elapsed=18963us phase=compose-end 
+[cambium-frame] host=1 last-presented=47 elapsed=18982us phase=present-begin 
+[cambium-frame] host=1 last-presented=47 elapsed=19034us phase=present-end 
+[cambium-frame] host=1 last-presented=47 elapsed=19050us phase=presentation-recorded sequence=48
+[cambium-frame] host=1 last-presented=47 elapsed=19071us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=48 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=48 elapsed=14us phase=files-begin 
+[cambium-frame] host=1 last-presented=48 elapsed=24us phase=files-end 
+[cambium-frame] host=1 last-presented=48 elapsed=33us phase=frame-hook-begin 
+[cambium-frame] host=1 last-presented=48 elapsed=674us phase=frame-hook-end animating=false
+[cambium-frame] host=1 last-presented=48 elapsed=708us phase=layout-begin physical=2360x1600 scale=2
+[cambium-frame] host=1 last-presented=48 elapsed=781us phase=layout-end 
+[cambium-frame] host=1 last-presented=48 elapsed=795us phase=producers-begin 
+[cambium-frame] host=1 last-presented=48 elapsed=809us phase=producers-end 
+[cambium-frame] host=1 last-presented=48 elapsed=820us phase=leaf-fragments-begin 
+[cambium-frame] host=1 last-presented=48 elapsed=833us phase=leaf-fragments-end 
+[cambium-frame] host=1 last-presented=48 elapsed=845us phase=scene-begin 
+[cambium-frame] host=1 last-presented=48 elapsed=2007us phase=scene-emitted 
+[cambium-frame] host=1 last-presented=48 elapsed=2021us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=48 elapsed=2032us phase=shadows-end 
+[cambium-frame] host=1 last-presented=48 elapsed=2042us phase=raster-begin 
+[cambium-frame] host=1 last-presented=48 elapsed=18912us phase=raster-end 
+[cambium-frame] host=1 last-presented=48 elapsed=18927us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=48 elapsed=18962us phase=acquire-end 
+[cambium-frame] host=1 last-presented=48 elapsed=19212us phase=compose-end 
+[cambium-frame] host=1 last-presented=48 elapsed=19228us phase=present-begin 
+[cambium-frame] host=1 last-presented=48 elapsed=19275us phase=present-end 
+[cambium-frame] host=1 last-presented=48 elapsed=19290us phase=presentation-recorded sequence=49
+[cambium-frame] host=1 last-presented=48 elapsed=19309us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=49 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=49 elapsed=13us phase=files-begin 
+[cambium-frame] host=1 last-presented=49 elapsed=24us phase=files-end 
+[cambium-frame] host=1 last-presented=49 elapsed=33us phase=frame-hook-begin 
+[cambium-frame] host=1 last-presented=49 elapsed=594us phase=frame-hook-end animating=false
+[cambium-frame] host=1 last-presented=49 elapsed=618us phase=layout-begin physical=2360x1600 scale=2
+[cambium-frame] host=1 last-presented=49 elapsed=687us phase=layout-end 
+[cambium-frame] host=1 last-presented=49 elapsed=698us phase=producers-begin 
+[cambium-frame] host=1 last-presented=49 elapsed=708us phase=producers-end 
+[cambium-frame] host=1 last-presented=49 elapsed=717us phase=leaf-fragments-begin 
+[cambium-frame] host=1 last-presented=49 elapsed=728us phase=leaf-fragments-end 
+[cambium-frame] host=1 last-presented=49 elapsed=739us phase=scene-begin 
+[cambium-frame] host=1 last-presented=49 elapsed=1753us phase=scene-emitted 
+[cambium-frame] host=1 last-presented=49 elapsed=1767us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=49 elapsed=1780us phase=shadows-end 
+[cambium-frame] host=1 last-presented=49 elapsed=1792us phase=raster-begin 
+[cambium-frame] host=1 last-presented=49 elapsed=18425us phase=raster-end 
+[cambium-frame] host=1 last-presented=49 elapsed=18440us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=49 elapsed=18480us phase=acquire-end 
+[cambium-frame] host=1 last-presented=49 elapsed=18738us phase=compose-end 
+[cambium-frame] host=1 last-presented=49 elapsed=18752us phase=present-begin 
+[cambium-frame] host=1 last-presented=49 elapsed=18802us phase=present-end 
+[cambium-frame] host=1 last-presented=49 elapsed=18816us phase=presentation-recorded sequence=50
+[cambium-frame] host=1 last-presented=49 elapsed=18837us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=50 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=50 elapsed=15us phase=files-begin 
+[cambium-frame] host=1 last-presented=50 elapsed=26us phase=files-end 
+[cambium-frame] host=1 last-presented=50 elapsed=36us phase=frame-hook-begin 
+[cambium-frame] host=1 last-presented=50 elapsed=664us phase=frame-hook-end animating=false
+[cambium-frame] host=1 last-presented=50 elapsed=698us phase=layout-begin physical=2360x1600 scale=2
+[cambium-frame] host=1 last-presented=50 elapsed=772us phase=layout-end 
+[cambium-frame] host=1 last-presented=50 elapsed=786us phase=producers-begin 
+[cambium-frame] host=1 last-presented=50 elapsed=800us phase=producers-end 
+[cambium-frame] host=1 last-presented=50 elapsed=809us phase=leaf-fragments-begin 
+[cambium-frame] host=1 last-presented=50 elapsed=822us phase=leaf-fragments-end 
+[cambium-frame] host=1 last-presented=50 elapsed=833us phase=scene-begin 
+[cambium-frame] host=1 last-presented=50 elapsed=1977us phase=scene-emitted 
+[cambium-frame] host=1 last-presented=50 elapsed=1989us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=50 elapsed=2001us phase=shadows-end 
+[cambium-frame] host=1 last-presented=50 elapsed=2013us phase=raster-begin 
+[cambium-frame] host=1 last-presented=50 elapsed=20906us phase=raster-end 
+[cambium-frame] host=1 last-presented=50 elapsed=20925us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=50 elapsed=20962us phase=acquire-end 
+[cambium-frame] host=1 last-presented=50 elapsed=21223us phase=compose-end 
+[cambium-frame] host=1 last-presented=50 elapsed=21239us phase=present-begin 
+[cambium-frame] host=1 last-presented=50 elapsed=21301us phase=present-end 
+[cambium-frame] host=1 last-presented=50 elapsed=21317us phase=presentation-recorded sequence=51
+[cambium-frame] host=1 last-presented=50 elapsed=21336us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=51 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=51 elapsed=17us phase=files-begin 
+[cambium-frame] host=1 last-presented=51 elapsed=28us phase=files-end 
+[cambium-frame] host=1 last-presented=51 elapsed=39us phase=frame-hook-begin 
+[cambium-frame] host=1 last-presented=51 elapsed=764us phase=frame-hook-end animating=false
+[cambium-frame] host=1 last-presented=51 elapsed=792us phase=layout-begin physical=2360x1600 scale=2
+[cambium-frame] host=1 last-presented=51 elapsed=873us phase=layout-end 
+[cambium-frame] host=1 last-presented=51 elapsed=886us phase=producers-begin 
+[cambium-frame] host=1 last-presented=51 elapsed=897us phase=producers-end 
+[cambium-frame] host=1 last-presented=51 elapsed=907us phase=leaf-fragments-begin 
+[cambium-frame] host=1 last-presented=51 elapsed=921us phase=leaf-fragments-end 
+[cambium-frame] host=1 last-presented=51 elapsed=933us phase=scene-begin 
+[cambium-frame] host=1 last-presented=51 elapsed=2043us phase=scene-emitted 
+[cambium-frame] host=1 last-presented=51 elapsed=2056us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=51 elapsed=2066us phase=shadows-end 
+[cambium-frame] host=1 last-presented=51 elapsed=2078us phase=raster-begin 
+[cambium-frame] host=1 last-presented=51 elapsed=19286us phase=raster-end 
+[cambium-frame] host=1 last-presented=51 elapsed=19302us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=51 elapsed=19338us phase=acquire-end 
+[cambium-frame] host=1 last-presented=51 elapsed=19597us phase=compose-end 
+[cambium-frame] host=1 last-presented=51 elapsed=19614us phase=present-begin 
+[cambium-frame] host=1 last-presented=51 elapsed=19680us phase=present-end 
+[cambium-frame] host=1 last-presented=51 elapsed=19694us phase=presentation-recorded sequence=52
+[cambium-frame] host=1 last-presented=51 elapsed=19716us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=52 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=52 elapsed=16us phase=files-begin 
+[cambium-frame] host=1 last-presented=52 elapsed=26us phase=files-end 
+[cambium-frame] host=1 last-presented=52 elapsed=37us phase=frame-hook-begin 
+[cambium-frame] host=1 last-presented=52 elapsed=676us phase=frame-hook-end animating=false
+[cambium-frame] host=1 last-presented=52 elapsed=706us phase=layout-begin physical=2360x1600 scale=2
+[cambium-frame] host=1 last-presented=52 elapsed=782us phase=layout-end 
+[cambium-frame] host=1 last-presented=52 elapsed=797us phase=producers-begin 
+[cambium-frame] host=1 last-presented=52 elapsed=809us phase=producers-end 
+[cambium-frame] host=1 last-presented=52 elapsed=819us phase=leaf-fragments-begin 
+[cambium-frame] host=1 last-presented=52 elapsed=833us phase=leaf-fragments-end 
+[cambium-frame] host=1 last-presented=52 elapsed=843us phase=scene-begin 
+[cambium-frame] host=1 last-presented=52 elapsed=2016us phase=scene-emitted 
+[cambium-frame] host=1 last-presented=52 elapsed=2032us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=52 elapsed=2043us phase=shadows-end 
+[cambium-frame] host=1 last-presented=52 elapsed=2053us phase=raster-begin 
+[cambium-frame] host=1 last-presented=52 elapsed=21377us phase=raster-end 
+[cambium-frame] host=1 last-presented=52 elapsed=21390us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=52 elapsed=21427us phase=acquire-end 
+[cambium-frame] host=1 last-presented=52 elapsed=21707us phase=compose-end 
+[cambium-frame] host=1 last-presented=52 elapsed=21732us phase=present-begin 
+[cambium-frame] host=1 last-presented=52 elapsed=21795us phase=present-end 
+[cambium-frame] host=1 last-presented=52 elapsed=21810us phase=presentation-recorded sequence=53
+[cambium-frame] host=1 last-presented=52 elapsed=21834us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=53 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=53 elapsed=14us phase=files-begin 
+[cambium-frame] host=1 last-presented=53 elapsed=23us phase=files-end 
+[cambium-frame] host=1 last-presented=53 elapsed=32us phase=frame-hook-begin 
+[cambium-frame] host=1 last-presented=53 elapsed=628us phase=frame-hook-end animating=false
+[cambium-frame] host=1 last-presented=53 elapsed=657us phase=layout-begin physical=2360x1600 scale=2
+[cambium-frame] host=1 last-presented=53 elapsed=733us phase=layout-end 
+[cambium-frame] host=1 last-presented=53 elapsed=743us phase=producers-begin 
+[cambium-frame] host=1 last-presented=53 elapsed=754us phase=producers-end 
+[cambium-frame] host=1 last-presented=53 elapsed=765us phase=leaf-fragments-begin 
+[cambium-frame] host=1 last-presented=53 elapsed=779us phase=leaf-fragments-end 
+[cambium-frame] host=1 last-presented=53 elapsed=790us phase=scene-begin 
+[cambium-frame] host=1 last-presented=53 elapsed=1886us phase=scene-emitted 
+[cambium-frame] host=1 last-presented=53 elapsed=1896us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=53 elapsed=1905us phase=shadows-end 
+[cambium-frame] host=1 last-presented=53 elapsed=1914us phase=raster-begin 
+[cambium-frame] host=1 last-presented=53 elapsed=18742us phase=raster-end 
+[cambium-frame] host=1 last-presented=53 elapsed=18758us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=53 elapsed=18794us phase=acquire-end 
+[cambium-frame] host=1 last-presented=53 elapsed=19046us phase=compose-end 
+[cambium-frame] host=1 last-presented=53 elapsed=19062us phase=present-begin 
+[cambium-frame] host=1 last-presented=53 elapsed=19116us phase=present-end 
+[cambium-frame] host=1 last-presented=53 elapsed=19129us phase=presentation-recorded sequence=54
+[cambium-frame] host=1 last-presented=53 elapsed=19464us phase=return unwinding=false
+woodshed-genet: FAIL: assert snap set-cards Eq '2': got '0'
+woodshed-genet: FAIL: assert snap loop-capture-references Eq '1': got '0'
+woodshed-genet: FAIL: assert snap loop-capture-frames Eq '96000': got '0'
+woodshed-genet: FAIL: assert snap loop-active-captures Eq '1': got '0'
+woodshed-genet: FAIL: assert snap recorder-rows Eq '2': got '0'
+woodshed-genet: FAIL: assert snap recorder-waveforms Eq '1': got '0'
+woodshed-genet: FAIL: assert text 'Card loops saved: 1': not on any surface
+woodshed-genet: captured 01_shared_recorder_hydrated
+woodshed-genet: FAIL: assert snap recorder-selected-card Eq '2': got '0'
+woodshed-genet: FAIL: assert snap loop-capture-references Eq '1': got '0'
+woodshed-genet: captured 02_owned_selection
+woodshed-genet: captured 03_backing_plus_capture_export
+woodshed-genet: FAIL: no current DOM target for Selector { surface: None, matcher: Role("switch"), text: None, attr: Some(("aria-label", "Select Card 2")) }
+woodshed-genet: RESULT fail (54 frames, 3 captures)

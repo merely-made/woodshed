@@ -1,0 +1,694 @@
+{
+  "source_revision": "d2d4bc750f63e5715ae780f076062b807dad0652",
+  "baseline": "210235d9c1955dc9f32f29925b5cda8d1c713dd5",
+  "files": [
+    {
+      "path": "Cargo.lock",
+      "sha256": "660c4dda62f3445c0a56f8a12cc200dc8ba9247a74463f8328e09b5c0e3c9c23"
+    },
+    {
+      "path": "Cargo.toml",
+      "sha256": "566399a8f52ae8eaea69caa8044521c18eed22ece1f092ad8384dc7d74c3e32c"
+    },
+    {
+      "path": "crates/hocket-model/Cargo.toml",
+      "sha256": "8c06b3ec64c6bac10e5ea92bb78e2b89973ee680bbb2436aae23da6035564d84"
+    },
+    {
+      "path": "crates/hocket-model/src/history.rs",
+      "sha256": "5de0cdfd6690bb0f7d24e380a3cff853cad41abc04ed05309f47e338acd8fec9"
+    },
+    {
+      "path": "crates/hocket-model/src/ids.rs",
+      "sha256": "f82cfc7ae84f2f6fe7402bb7d07fb365104cf74c7cd066249e1f164337bd9c45"
+    },
+    {
+      "path": "crates/hocket-model/src/lib.rs",
+      "sha256": "5edf255b5669f59c919466c3b576fefe7163706ffac9e166cdd343f811613127"
+    },
+    {
+      "path": "crates/hocket-model/src/persistence.rs",
+      "sha256": "cab90715db2e0ad1ae2d3a7dee782b2bdf19288ce0716ee097e814d863799842"
+    },
+    {
+      "path": "crates/hocket-model/src/phrase.rs",
+      "sha256": "864c46574603a51d30d39e75dac3fc707bad774f47cfdf319a132ac9d5fe9bc5"
+    },
+    {
+      "path": "crates/hocket-model/src/session.rs",
+      "sha256": "647e1b9a38805817ffad54ab2ba500551b50a713835b0d887895eea985dcc6d0"
+    },
+    {
+      "path": "crates/hocket-model/src/track.rs",
+      "sha256": "a449de22dbc2389da5cb73062555699a75849c7683e1071ede2fcd80ec3c1c69"
+    },
+    {
+      "path": "crates/hocket-model/tests/validation.rs",
+      "sha256": "49d177f0f7cfa3d3b4bd2badb45ab990fa83f3e2ee9c5c62e90cad859c4f3a37"
+    },
+    {
+      "path": "crates/hocket-project/Cargo.toml",
+      "sha256": "20e9ecd10b3050134970fb37b8c14f0d95c615df902436d577f38ef101aa3c03"
+    },
+    {
+      "path": "crates/hocket-project/src/export.rs",
+      "sha256": "4ee4f8e30176707a137e6712c7a4779c2ff763ff471abcc5a5828e1ed0af531c"
+    },
+    {
+      "path": "crates/hocket-project/src/handoff.rs",
+      "sha256": "dc35a2ec035a4da362c9e716192f725a94c78ff1cbf6fa630d7adcb2ccf03fe5"
+    },
+    {
+      "path": "crates/hocket-project/src/lib.rs",
+      "sha256": "2e975a8c0fa9f7d67c5399ed8ff4a91a7171ff3121f7bb9473bea76dcadd667e"
+    },
+    {
+      "path": "crates/hocket-project/src/media.rs",
+      "sha256": "a9a851ef81b927c8287b21f5f76ce1aed92edb23cde887accc3b6f3c3326919d"
+    },
+    {
+      "path": "crates/hocket-project/src/project_store.rs",
+      "sha256": "6155ae3fecc47be345d419879483ad4ea0e980f9f99342be7cb753fb96e5d525"
+    },
+    {
+      "path": "crates/hocket-project/src/waveform.rs",
+      "sha256": "afd561d806eeedaf0e45989fd317c17f6cd3167fa7d3cbe4438b3c6e46d29184"
+    },
+    {
+      "path": "crates/hocket-recorder/Cargo.toml",
+      "sha256": "003f205117b796f626b23b642865d167c6bbf23d783eaca54a030efbcef00dd9"
+    },
+    {
+      "path": "crates/hocket-recorder/src/host_policy.rs",
+      "sha256": "5f5a15b77cc879717764f81455de36090121a2f9b6214cc2ed30820c417bd664"
+    },
+    {
+      "path": "crates/hocket-recorder/src/lib.rs",
+      "sha256": "7133dcc2ef5021b32c3226f9807694e3a523676c1f3f7c4f56d763a02ba4eda4"
+    },
+    {
+      "path": "crates/hocket-views/Cargo.toml",
+      "sha256": "fa006e24f634b9b1725e7de700a6810ccca2e2ddb80c55f218f423333363e824"
+    },
+    {
+      "path": "crates/hocket-views/examples/two_mounts.rs",
+      "sha256": "a05e9b3f5a77064aed7e4eab348d8abe9e1e616874ca520231a1ae417c66fbf5"
+    },
+    {
+      "path": "crates/hocket-views/examples/two_mounts.scn",
+      "sha256": "6727825883468cfa73678f8635c01bd66103e00f7982be660d4a2c91bb4a5ecf"
+    },
+    {
+      "path": "crates/hocket-views/src/leaves.rs",
+      "sha256": "a7c57d224693203232c14e9fea11be8cb491dec71edd10369bff8e879cadc9e5"
+    },
+    {
+      "path": "crates/hocket-views/src/lib.rs",
+      "sha256": "c23878fc5cd6dce7df1ca04201dbcb191cb9de9d12910d80893cbc24d986aa8e"
+    },
+    {
+      "path": "crates/hocket-views/src/projection.rs",
+      "sha256": "02165e95d008b812e1de1f90fbbafcda5158c9bfdd7aa874bc550fbd321f0d49"
+    },
+    {
+      "path": "crates/hocket-views/src/projection_tests.rs",
+      "sha256": "473c96b4cbf75eb01411314580d272559b3bb03a35791be6a4b6cb3ae12f88c5"
+    },
+    {
+      "path": "crates/hocket-views/src/recorder_adapter.rs",
+      "sha256": "6e23fd2ac0ca04dbd8b8df02244fd17c4184cdbb7be384d9a6552f013921dc0e"
+    },
+    {
+      "path": "crates/hocket-views/src/surface.rs",
+      "sha256": "b59f0991dcb3cda252701e0d6801d660125dd3738180eaae1097789a6606455e"
+    },
+    {
+      "path": "crates/hocket-views/src/theme.rs",
+      "sha256": "adc7347846826a86fba7c4f5783832da7ad84fa7ed37950f63e48835c6a6fce0"
+    },
+    {
+      "path": "crates/woodshed-audio/Cargo.toml",
+      "sha256": "fbee19737731c7b9d3cae38ec1aa48ad9052f1d6f991acf076d560aee75cdb15"
+    },
+    {
+      "path": "crates/woodshed-audio/examples/audio_ddx.rs",
+      "sha256": "d6aa4d0685b22ca046390decd74986a5b94aaa39515f91245281366e8da8b158"
+    },
+    {
+      "path": "crates/woodshed-audio/src/calibration.rs",
+      "sha256": "29de685751f6b3a5642972fd8c5a8f9c04e6becd8683f590ad7b94f37364ba7d"
+    },
+    {
+      "path": "crates/woodshed-audio/src/capture_feed.rs",
+      "sha256": "0306b174ffe17552eff48eaa2c2dd2e72aa40e53146ec7c15d4a9312b99cd9f3"
+    },
+    {
+      "path": "crates/woodshed-audio/src/chord_audio.rs",
+      "sha256": "c6f56bd11da671c48acc3a1732e341e90f2c812150dcbb66c8dd9baf06a42047"
+    },
+    {
+      "path": "crates/woodshed-audio/src/engine.rs",
+      "sha256": "1834a77b86839edb1ddbe6d091360588ee46782129a216756082865a3547d723"
+    },
+    {
+      "path": "crates/woodshed-audio/src/input.rs",
+      "sha256": "803ab5c766676031fdcd64535390d69802ed3281fcc49a9ac6fdaed11e6cbf0e"
+    },
+    {
+      "path": "crates/woodshed-audio/src/lib.rs",
+      "sha256": "031f1e29034579389a963169c7ef98f47d21604e76efa76bb91d3125edc39e5f"
+    },
+    {
+      "path": "crates/woodshed-audio/src/looper.rs",
+      "sha256": "fb2d73574968a537ee35490f0f6bcea35b3d5e75874f7969bc5a0336cc6f90f7"
+    },
+    {
+      "path": "crates/woodshed-audio/src/midi.rs",
+      "sha256": "9f2474b8dd0cfa7ae24dc7b1f62ac7685168930113b4718322b1409a5143fee9"
+    },
+    {
+      "path": "crates/woodshed-audio/src/offline.rs",
+      "sha256": "3bf8ef3818b45d5a18668a7e0df49ff2760d36f238b8c66e913db00497363a9d"
+    },
+    {
+      "path": "crates/woodshed-audio/src/offline/song_export.rs",
+      "sha256": "9001050936c67f9377308cf7123ac9a1552d6e4d416c06d699a1bc6f620d9013"
+    },
+    {
+      "path": "crates/woodshed-audio/src/offline/song_export/tests.rs",
+      "sha256": "bf1cb2e43672e0cd63516ab48dbf92ce3ea21577ee8a559d76997dfa9c29e518"
+    },
+    {
+      "path": "crates/woodshed-audio/src/onset.rs",
+      "sha256": "f02ce805acde4b66a358cec8c04a9138cf1b9178ff465922cfa157fd05ccf652"
+    },
+    {
+      "path": "crates/woodshed-audio/src/output_runtime.rs",
+      "sha256": "cd0c3866f3634c74a1818c2ae27b17ac8156ac4c7f6e7a95f0f804609aa11f81"
+    },
+    {
+      "path": "crates/woodshed-audio/src/output_runtime/preview.rs",
+      "sha256": "a1c5d679816966db9f82cb3b76661d624e650c6643f716f9b4afb8df235e3e6f"
+    },
+    {
+      "path": "crates/woodshed-audio/src/output_runtime/processor.rs",
+      "sha256": "642f8a7a80f773ad73320a301393cccf2a8096566d16cb9aa9f1430780c6b770"
+    },
+    {
+      "path": "crates/woodshed-audio/src/output_runtime/tests.rs",
+      "sha256": "086064fabbe63278d70244f978df550f19eeb4281f6bfa86967d26b9a64533e0"
+    },
+    {
+      "path": "crates/woodshed-audio/src/samples.rs",
+      "sha256": "fe828259b1d720a16b53281f15963848032735e656eef6a2e3e5e16d227a2c41"
+    },
+    {
+      "path": "crates/woodshed-audio/src/sequencer.rs",
+      "sha256": "c766d3c3ad3cd8233ce6a48a6b3746a3bfe15efe6027224ed9841f87993cb09e"
+    },
+    {
+      "path": "crates/woodshed-audio/src/song.rs",
+      "sha256": "36218f5c17345485d6c425f813ee793c875cf428feb4bde71028b7575e1f40ce"
+    },
+    {
+      "path": "crates/woodshed-audio/src/sound.rs",
+      "sha256": "f9ff48f987289ca3520a23f3d02960d78719ae2d9065ae0f6dbb1d7265b3e82b"
+    },
+    {
+      "path": "crates/woodshed-core/Cargo.toml",
+      "sha256": "d509ccc1f6de958f9f8d6be9b8325fa2a819730a496e673345323865165c2f9a"
+    },
+    {
+      "path": "crates/woodshed-core/examples/musical_comparison_export.rs",
+      "sha256": "b395095105b4de96fdb94c86f8e7c16bad5a0dafb4877939099bb0806b63ef67"
+    },
+    {
+      "path": "crates/woodshed-core/examples/relationship_disclosure_export.rs",
+      "sha256": "b2445d343d33ddd7b61a9149c4faf5fccafd54755a41d4eed833bb7acb6ea79c"
+    },
+    {
+      "path": "crates/woodshed-core/examples/stage_projection_export.rs",
+      "sha256": "933abacb3c05df424743d334ca0165bb6fd46a785ec19f3be08cc839c2c689f0"
+    },
+    {
+      "path": "crates/woodshed-core/src/arpeggio.rs",
+      "sha256": "2f34728e332c2849b6180c454773d06d6ea8bd385d508c0f34d6d76b17916172"
+    },
+    {
+      "path": "crates/woodshed-core/src/arrangement.rs",
+      "sha256": "8f9d69e663f4b9bd735e0a72944138fe7d68c9cef00e799b23fcb4a61a622207"
+    },
+    {
+      "path": "crates/woodshed-core/src/audio.rs",
+      "sha256": "2a028172097cc4c1d0cb36220d428b27e1e8854eb62c94ed7e8fbd72cbe2779c"
+    },
+    {
+      "path": "crates/woodshed-core/src/captured_arpeggio.rs",
+      "sha256": "1bf6cad58a1d6bb8d18d83d450eda587b5da2ebeb938146c03cf84f3e6be2fa0"
+    },
+    {
+      "path": "crates/woodshed-core/src/card_shapes.rs",
+      "sha256": "d9b82c5df0f29a933a3fa8ba678712879e22b55ec5e64b877b11169b8ce3eda8"
+    },
+    {
+      "path": "crates/woodshed-core/src/catalog_explorations.rs",
+      "sha256": "3708c8c0d771e4a89fd64f6e2f43187c7b92b769c327c536c5471b3e0af6bec8"
+    },
+    {
+      "path": "crates/woodshed-core/src/chord_approach.rs",
+      "sha256": "3a2def2a06a456c00b17cde7e74522a8a7ae345175ba2fe2abe1bc6022feef15"
+    },
+    {
+      "path": "crates/woodshed-core/src/comparison_disclosure.rs",
+      "sha256": "64552dddb6d0e36f2fa15628aad507ee28231f8413b24049ee24df759871b0b4"
+    },
+    {
+      "path": "crates/woodshed-core/src/connected_catalog.rs",
+      "sha256": "e0b268af85dd1afbe538148e88a3f06af6d15b7f1703cc5eac488e0fc07c3ae4"
+    },
+    {
+      "path": "crates/woodshed-core/src/connected_scales.rs",
+      "sha256": "1ee312bc1a5fba429ab5f95b00375e58a58b4564b3813c8c5fcc100c56bb3d14"
+    },
+    {
+      "path": "crates/woodshed-core/src/harmony.rs",
+      "sha256": "7e7cbf57aa1d1d928db96951272ee799d76b0078a92506b7a0a3a3eedca93c88"
+    },
+    {
+      "path": "crates/woodshed-core/src/history.rs",
+      "sha256": "0650b77adf8a381219ec38dfa1f3650f7425324827e8aee1fd5a1e5a00df9bf0"
+    },
+    {
+      "path": "crates/woodshed-core/src/lib.rs",
+      "sha256": "0065aee3ba4106401c9177684f7dc481212bb5cd4c199ad3a1443548df6acc6e"
+    },
+    {
+      "path": "crates/woodshed-core/src/loop_capture.rs",
+      "sha256": "55301833387fcc7fa35fcc6aeac0d77e1111ba11dd0f7f53a8c80560a421c333"
+    },
+    {
+      "path": "crates/woodshed-core/src/loop_plan.rs",
+      "sha256": "ab499eeb1b8b31a5580ca297a4b4e8a392f8861db0acad1e19035f7674373b6e"
+    },
+    {
+      "path": "crates/woodshed-core/src/mere.rs",
+      "sha256": "51eb02f34ed4039a9259037739b04c1c88b27d58dda7b39c839018b22a84fb3e"
+    },
+    {
+      "path": "crates/woodshed-core/src/midi.rs",
+      "sha256": "7d60941c7a65d54a3f715d6066d20b5278b930029c20bbc3580486cc6f857c00"
+    },
+    {
+      "path": "crates/woodshed-core/src/musical_context.rs",
+      "sha256": "cd07c18cddab31b87213d66057eaf23111cd3fec99493922d4a76580ed95855a"
+    },
+    {
+      "path": "crates/woodshed-core/src/pitch_motion_reading.rs",
+      "sha256": "3a1dec2a86b3f40a4464b60390ab304270906def29529222899f61938379fbdc"
+    },
+    {
+      "path": "crates/woodshed-core/src/retained_sets.rs",
+      "sha256": "28c07e4ea0bd16b26afb59a370dc7b40938006bb98471b099b3f75bc1bdc5de9"
+    },
+    {
+      "path": "crates/woodshed-core/src/scale_pattern_discovery.rs",
+      "sha256": "e36348ff2720eff1ef905bdd9b4138f5181c7f954ff35b0285de9ca53797ef98"
+    },
+    {
+      "path": "crates/woodshed-core/src/scale_realization.rs",
+      "sha256": "3b740903bcb92e41d3703a6734b8256f220a8409d8961f7016d021e1b9da51f3"
+    },
+    {
+      "path": "crates/woodshed-core/src/sealed_backend.rs",
+      "sha256": "71fda62eade8f56f2411acc699f8af33038b8f5cc68253a13d117f4f6439462f"
+    },
+    {
+      "path": "crates/woodshed-core/src/search.rs",
+      "sha256": "f0515dbeeb631e93e79e2c9a871adf308023d49a96b93144514eabf557422223"
+    },
+    {
+      "path": "crates/woodshed-core/src/session_overview.rs",
+      "sha256": "adeb3d3ee9b3d463cec22291d03c269d6ac8655e6f790e0fd914911b7dd1b414"
+    },
+    {
+      "path": "crates/woodshed-core/src/settings.rs",
+      "sha256": "62ce96c25ff29451b9bd19ec1d8e3a224494452cc0a2978a584e942e0ef7923f"
+    },
+    {
+      "path": "crates/woodshed-core/src/shape_movement.rs",
+      "sha256": "fca578dc51a5630bdb7da1b2be626453ca9629add55aced534d606ea06f543fe"
+    },
+    {
+      "path": "crates/woodshed-core/src/song.rs",
+      "sha256": "c0df0263e9b81ad366d61f521803e6dd9b7d29b57d71ad9d72cdbbddcf324882"
+    },
+    {
+      "path": "crates/woodshed-core/src/stage_candidates.rs",
+      "sha256": "46e38afb5ea9a023f4696529a30875a11c90b34b75e1aeeecc2166a76425a66a"
+    },
+    {
+      "path": "crates/woodshed-core/src/stage_context.rs",
+      "sha256": "2c001b4b147ac93df91b93a24c7492d73b08ebfbcfcb7fedc1b7a197fb9197c7"
+    },
+    {
+      "path": "crates/woodshed-core/src/stage_scene.rs",
+      "sha256": "e977fc114b8f8686a05e3d1b41982b3664302b07f0e156e71b96829e40121980"
+    },
+    {
+      "path": "crates/woodshed-core/src/storage.rs",
+      "sha256": "fc52c668d13ded64fbfe2eb6023a9d25b23d17f3bc2c9ccfd27133e5ac1fe728"
+    },
+    {
+      "path": "crates/woodshed-core/src/tonnetz.rs",
+      "sha256": "f1ca3beed248aeb3a6e5b884be10390b26c4ed54a14f4792a46a7c90b90abfd7"
+    },
+    {
+      "path": "crates/woodshed-core/src/working_sets.rs",
+      "sha256": "2bdb270e928f3527ff23f92c5c8d892f6e3ff7917bb1aaba130b54be9a6b4341"
+    },
+    {
+      "path": "crates/woodshed-core/tests/stage_backdrop.rs",
+      "sha256": "3e699317b1fca9355a13ff4004226890eefdac7062bb09017e25d3b54163bbfc"
+    },
+    {
+      "path": "crates/woodshed-genet/Cargo.toml",
+      "sha256": "6bb787e78b305739399c8abb672564acaad257a5f2084f750bd0181d827e54f8"
+    },
+    {
+      "path": "crates/woodshed-genet/src/appearance.rs",
+      "sha256": "41ded074fa5158bffa41f1db9b0d06610c9475f2fb9f3ce37e00a7b8a3d07983"
+    },
+    {
+      "path": "crates/woodshed-genet/src/audio.rs",
+      "sha256": "71bc762e15c26e200bc9a6f607f5448d0bf7b635093421be4b9d727c357ca6db"
+    },
+    {
+      "path": "crates/woodshed-genet/src/audio/loop_projection.rs",
+      "sha256": "83be23d03b1e1ae6e640bcee4525f733a0635a81e4da776025d245b1a76e08ba"
+    },
+    {
+      "path": "crates/woodshed-genet/src/capture_persistence.rs",
+      "sha256": "f602392c947ae9bb6336b3e7c79ebb442014adf5bf5b493ceedd75b081bbb557"
+    },
+    {
+      "path": "crates/woodshed-genet/src/capture_persistence/codec_worker.rs",
+      "sha256": "9ece09be493f6b37b611e0d2c358835b94b764b07a4778771a6713bde482bf7c"
+    },
+    {
+      "path": "crates/woodshed-genet/src/drive.rs",
+      "sha256": "b2ad68aa2396c2783c13919e8a6c90ce1e57f15bb29053458e23e12c6731bf10"
+    },
+    {
+      "path": "crates/woodshed-genet/src/fonts.rs",
+      "sha256": "d66a396c84ca5b25830a6529bec0dafedb9883bcf83b3d68622401a659310517"
+    },
+    {
+      "path": "crates/woodshed-genet/src/layout_tests.rs",
+      "sha256": "d37b6a004f23e482213701972aea140025cd557f5372480cb508e5d3d2e0c755"
+    },
+    {
+      "path": "crates/woodshed-genet/src/leaves.rs",
+      "sha256": "58c529d76867f847128f6265fa1a3146f17385473f4ab9642149162e36ea289b"
+    },
+    {
+      "path": "crates/woodshed-genet/src/main.rs",
+      "sha256": "eeeb26574995edb9fe3db9fbb89837587636b115694930d872c9228ca34d3ac6"
+    },
+    {
+      "path": "crates/woodshed-genet/src/midi.rs",
+      "sha256": "d10ec69d3971936ccfefcf56974790f004d0d8d0ff4734eb126170e220da338f"
+    },
+    {
+      "path": "crates/woodshed-genet/src/persona.rs",
+      "sha256": "c4841720d0ba072183675d6dcfa2338b54a436b1962db80179b15febcf076fdf"
+    },
+    {
+      "path": "crates/woodshed-genet/src/scenario.rs",
+      "sha256": "895dcea4791392c5b8317fb50922347cd05927c61fe8004e84ad184469ee9cf9"
+    },
+    {
+      "path": "crates/woodshed-genet/src/session.rs",
+      "sha256": "c72b4d8560f2b24c4ba683434d3f8846f82529dd82f2e540728290eff66078c5"
+    },
+    {
+      "path": "crates/woodshed-genet/src/shared.rs",
+      "sha256": "62dc14db264504b134e188134a8f7334289b9dd74f58675a5bd8c9ceec3932a0"
+    },
+    {
+      "path": "crates/woodshed-genet/src/storage.rs",
+      "sha256": "21418b938e9631402a6083bdd0d9c4d73dad062a19a6f89c38bd9e9baa8ff7de"
+    },
+    {
+      "path": "crates/woodshed-genet/src/sync.rs",
+      "sha256": "65a565c44c35e884beaa46b8525b234c11c48370f0cc3b4147771f89e79a385e"
+    },
+    {
+      "path": "crates/woodshed-genet/src/text.rs",
+      "sha256": "1ef381a9cf2e6c950debae7de4f5ac2ffd07f598ec5f8a1673adfef85e7eefa9"
+    },
+    {
+      "path": "crates/woodshed-genet/src/wav_export.rs",
+      "sha256": "d51d785d6c835a9d5f04b0a18f3441f5d3680feaf31ed94f8db0a7fb5b875dc5"
+    },
+    {
+      "path": "crates/woodshed-views/Cargo.toml",
+      "sha256": "e40718a47f2c2a3c419317dd88125bf9791a2b05a8a979e5a76d86c7e401c469"
+    },
+    {
+      "path": "crates/woodshed-views/src/appearance.rs",
+      "sha256": "d58b0d80269a14d601c0eea715da51d6c82a062bfbfac3824ef45e698a248ef4"
+    },
+    {
+      "path": "crates/woodshed-views/src/appearance/fonts.rs",
+      "sha256": "13319c4279829d84944504128240139d063316fe3ec017a356cb14c595732e6d"
+    },
+    {
+      "path": "crates/woodshed-views/src/appearance/view.rs",
+      "sha256": "c00e587911132556017a3591158ca6b80d3f7f6d8adb2415b85418c4519649d4"
+    },
+    {
+      "path": "crates/woodshed-views/src/appearance/view_tests.rs",
+      "sha256": "778d0c718612c8fb2b8fadd7e6a4e2c14cc8437558645af515fda0715c77a55c"
+    },
+    {
+      "path": "crates/woodshed-views/src/demo.rs",
+      "sha256": "fbdd4bd1e7d04f9ede90e27d65c9f60ad1c9bde947654d76b4a2edb10b05ba20"
+    },
+    {
+      "path": "crates/woodshed-views/src/fretboard_leaf.rs",
+      "sha256": "2a83e58e8126aac936c0735581f773c932657e6d3fe810a222c7bc53a8ff042a"
+    },
+    {
+      "path": "crates/woodshed-views/src/lib.rs",
+      "sha256": "8cce68f8482beef66d5f83bec8f5fd442f82dbae82776a29fa529b037efbb35f"
+    },
+    {
+      "path": "crates/woodshed-views/src/persona.rs",
+      "sha256": "2811acafff79757972f1698528922c09068a8df0eaaeb823cb51bc69bc6c9dd2"
+    },
+    {
+      "path": "crates/woodshed-views/src/settings_provider.rs",
+      "sha256": "205ca1674daa59dfba7553ba526cea09d52c1515492199c779530e02044e878a"
+    },
+    {
+      "path": "crates/woodshed-views/src/stage.rs",
+      "sha256": "b0178393bcc9dbbbfbe0d475c7767a6a795c3f076bc807b8a160164d5626ca4b"
+    },
+    {
+      "path": "crates/woodshed-views/src/stage/chord_approaches.rs",
+      "sha256": "2d7d06c0175ae363ffcb85fc374c562c71aab42cd18939b748e48416bc8dbe36"
+    },
+    {
+      "path": "crates/woodshed-views/src/stage/connected.rs",
+      "sha256": "b251ed8fc2a211f39001fe033ba2189c5d2b7f1dba2b85cedf56ff6cbb5dde8c"
+    },
+    {
+      "path": "crates/woodshed-views/src/stage/connected_scales.rs",
+      "sha256": "0e8e851d0125172b5109c2d26e4f6ed993bbcd46f357273e619ed77cae8d7882"
+    },
+    {
+      "path": "crates/woodshed-views/src/stage/context.rs",
+      "sha256": "e60a5f40cc90e01ae3eddbf7a1ad69bbbb5c4a6ccda0f48a1ea6d29b47c71eeb"
+    },
+    {
+      "path": "crates/woodshed-views/src/stage/context_tests.rs",
+      "sha256": "191cb406fdb79a81e788c34ed592ff86242e979632eec5fbfb4288e18df5a62c"
+    },
+    {
+      "path": "crates/woodshed-views/src/stage/instances.rs",
+      "sha256": "5fbf42e70ca06ecdc68b053bfe76ab26659faaa6ef9fc4880ebf59b3b9c176c8"
+    },
+    {
+      "path": "crates/woodshed-views/src/stage/looper.rs",
+      "sha256": "0afb74587109fc8ee589b1d143a6980f137c22f0517db70f51b51a0c33c2e5db"
+    },
+    {
+      "path": "crates/woodshed-views/src/stage/looper/recorder.rs",
+      "sha256": "4b782629c8febaafd3eb0144af2a705e265fbdfc06b2d299d0d931b93199cc78"
+    },
+    {
+      "path": "crates/woodshed-views/src/stage/musical_context.rs",
+      "sha256": "a84a3269252d22b8ec8ea14bf498a6c06f8e5697fad24a4d5de7ebb9c23931f3"
+    },
+    {
+      "path": "crates/woodshed-views/src/stage/overview.rs",
+      "sha256": "9efecc468266e83c5e85517e813c50709f4522ecf1728b01648ab1d3ff61bf19"
+    },
+    {
+      "path": "crates/woodshed-views/src/stage/overview_atmosphere.rs",
+      "sha256": "3d026e591adbd240119fbaa29c9b605eabef1473549d86d66a396e29a79b48fd"
+    },
+    {
+      "path": "crates/woodshed-views/src/stage/overview_dynamics.rs",
+      "sha256": "098f7160191bd131f7b313e7f292668a2d3d4d1865d635dee9ac67ce31e2af98"
+    },
+    {
+      "path": "crates/woodshed-views/src/stage/overview_presentation.rs",
+      "sha256": "c3447e39b1f9f786f502f7582de1aea46ba789f0ef0f629e99e422d59c7bd14c"
+    },
+    {
+      "path": "crates/woodshed-views/src/stage/pitch_motion.rs",
+      "sha256": "9f3d0a3bb2a84c072a080241aa02c2039596d773a67c7fb5c1961fb08c733dc7"
+    },
+    {
+      "path": "crates/woodshed-views/src/stage/rehearsal.rs",
+      "sha256": "b9e9678f967fcc930d21d25663d27606695c32f3cd0c3174a615fe5511b6bd10"
+    },
+    {
+      "path": "crates/woodshed-views/src/stage/related.rs",
+      "sha256": "05c3de7a3df90876eed6e57ce702d5bdeca66916f373ea5bbf40152c39394494"
+    },
+    {
+      "path": "crates/woodshed-views/src/stage/relationship.rs",
+      "sha256": "e40bb5c91f89858f7f11437bc4242e22a56d1d04cf26953c5c779148673a750c"
+    },
+    {
+      "path": "crates/woodshed-views/src/stage/scale_patterns.rs",
+      "sha256": "dc7deb2726aaf859d33ca2fc32540724c691b33670086c0c2b634015b9057ad5"
+    },
+    {
+      "path": "crates/woodshed-views/src/stage/set_tray.rs",
+      "sha256": "3060a5a762e96db1ab9d3d74f1f026c89810b6efc2995d0a648045de314467bf"
+    },
+    {
+      "path": "crates/woodshed-views/src/stage/settings.rs",
+      "sha256": "760a080b885f89241b518f775ac8e372c9cff52a5bb914a85edf17b952cb0dc1"
+    },
+    {
+      "path": "crates/woodshed-views/src/stage/shapes.rs",
+      "sha256": "636eb0dbc25b4f92a575790d2c027805238bd83fba0eb9d756aff8a1de77c0c9"
+    },
+    {
+      "path": "crates/woodshed-views/src/stage/templates.rs",
+      "sha256": "3fc44a709409d4114c92516d59206117756896fb239730286ccbc79525e5b8fe"
+    },
+    {
+      "path": "crates/woodshed-views/src/stage/tools.rs",
+      "sha256": "fb445e4adde8bc553d19d8f240c2ed9b09c820e1245af664002f961b7bfff4ba"
+    },
+    {
+      "path": "crates/woodshed-views/src/theme.rs",
+      "sha256": "493a73195b57cdde02b749d748621fd27893a5b24b36f09709e3b9f2a58bc792"
+    },
+    {
+      "path": "crates/woodshed-views/src/workspace.rs",
+      "sha256": "babfbbaa3eac59c445d15f4a9986fd9e20ce43fa3c0420e8347486857fc56af2"
+    },
+    {
+      "path": "ports/hocket/Cargo.lock",
+      "sha256": "1151240de300fbe8d84c67c75ea2bdddcc30757cca45a33a16e2283dfb75808b"
+    },
+    {
+      "path": "ports/hocket/Cargo.toml",
+      "sha256": "c631a3141a3acd31ab5078d20c3ce12fc82358c3d9000af12c1bd2a8ace8a806"
+    },
+    {
+      "path": "ports/hocket/crates/hocket-genet/Cargo.toml",
+      "sha256": "283b5bd4c0f9b75da988d42b29a998716003254e7a3090bb698bc9bdc68554e1"
+    },
+    {
+      "path": "ports/hocket/crates/hocket-genet/icons/icon.png",
+      "sha256": "df4ccf89a1b5f0ac6ae34b53ad5df62b76a863a5c94b9ca305ec99ebbc367da3"
+    },
+    {
+      "path": "ports/hocket/crates/hocket-genet/src/appearance.rs",
+      "sha256": "8c9263a8d05a06df336fe52bb2b2c02b89e7e0d5b25ac6fb6768d41754c9ec99"
+    },
+    {
+      "path": "ports/hocket/crates/hocket-genet/src/appearance_tests.rs",
+      "sha256": "0d219b915d2f2f776901288d7d599c91047b330da690bdd49ec645ad4536d65d"
+    },
+    {
+      "path": "ports/hocket/crates/hocket-genet/src/appearance_view.rs",
+      "sha256": "980597dae6289f5e38badc5e8aacb2e08b8f1ba4b17e3283640b12eb23211386"
+    },
+    {
+      "path": "ports/hocket/crates/hocket-genet/src/identity.rs",
+      "sha256": "2b787ec7801cb3324d90164036b2f0b87e6f4e4b9afba9942f02bcb9f78133dc"
+    },
+    {
+      "path": "ports/hocket/crates/hocket-genet/src/leaves.rs",
+      "sha256": "6bf2aeb8c8866d9a317118da62f3241997af3175a091917a0a5f427ff3891cdb"
+    },
+    {
+      "path": "ports/hocket/crates/hocket-genet/src/main.rs",
+      "sha256": "082bc6f7173e10e48b9c0838de50e1f89858d0d6bd2e4b6e474b78d41fac9804"
+    },
+    {
+      "path": "ports/hocket/crates/hocket-genet/src/project_io.rs",
+      "sha256": "beaea20c110b8fa3287e4ae3e2f9a34c99a886f47b075e7de997bf642308cfe6"
+    },
+    {
+      "path": "ports/hocket/crates/hocket-genet/src/recorder_audio.rs",
+      "sha256": "9ff6e840bb3ac1e8b3e2b38edd5195e003066dc077f8fa4cd965ab232675b3c2"
+    },
+    {
+      "path": "ports/hocket/crates/hocket-genet/src/scenario.rs",
+      "sha256": "c522b847d4d23bf5ab87220d62e32ec33683f27b7257242218fea6e2ddef3e88"
+    },
+    {
+      "path": "ports/hocket/crates/hocket-genet/src/state.rs",
+      "sha256": "f0871b00d1c5457f6a85bfd795d0e22ebf4fa6b50ce13c64ae0e705f54f5713b"
+    },
+    {
+      "path": "ports/hocket/crates/hocket-genet/src/theme.rs",
+      "sha256": "32778651b0a35777a8546324b01add7bbb5f73524ba401dd44b6c17fc14262ae"
+    },
+    {
+      "path": "ports/hocket/crates/hocket-genet/src/update.rs",
+      "sha256": "236fc0a9bb4b43fe430e16dfa7f05e828b8efa120efe170752e7754851a2b424"
+    },
+    {
+      "path": "ports/hocket/crates/hocket-genet/src/update/cli.rs",
+      "sha256": "2d290a9b19317511a2755d1a005ab344bd22633f0fc0098be1db4c24f883dc0c"
+    },
+    {
+      "path": "ports/hocket/crates/hocket-genet/src/update/luggage_transport.rs",
+      "sha256": "c2d52ab08a3ab738150858633ae5e2777554b57e9c6f63879d32f4e19ea7aa88"
+    },
+    {
+      "path": "ports/hocket/crates/hocket-genet/src/update/velopack_transport.rs",
+      "sha256": "8de3a6fc3b0f148bd8a61bf7118953c916c29226ede8bbea33a5bfd3d20153cb"
+    },
+    {
+      "path": "ports/hocket/crates/hocket-genet/src/update/worker.rs",
+      "sha256": "dc460e39c96597441d04a19e5d7cb5d72df5ec1136b84556a0dcbc7fb68374ce"
+    },
+    {
+      "path": "ports/hocket/crates/hocket-genet/src/view.rs",
+      "sha256": "1637b1f657ec3f4bf9e836413799109ffda0f6a07324b6615628cf390a35f893"
+    },
+    {
+      "path": "scenarios/hocket_looper_compact_reopen.scn",
+      "sha256": "c82319f3908ab967bb90f1e4da213c82dac0578c7473dc7122a1d2793ae44f02"
+    },
+    {
+      "path": "scenarios/hocket_looper_offline.scn",
+      "sha256": "ac3ad7ce626c4b76cbfa2f03a0646f7309830c12b9aab8c282a01b5c5b29b17b"
+    },
+    {
+      "path": "scenarios/hocket_looper_reopen.scn",
+      "sha256": "9650457e0d91ac38b4a0e8492c0c339d84ec9f6493b0ef80d59f3608d431dab2"
+    }
+  ]
+}
