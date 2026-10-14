@@ -188,7 +188,7 @@ fn recorder_mount(ui: &UiState) -> UiChild {
                 "style",
                 format!(
                     "height: {}px; min-height: 340px;",
-                    (ui.viewport_h - 270.0).clamp(380.0, 700.0)
+                    (ui.viewport_h - 400.0).clamp(340.0, 500.0)
                 ),
             ),
     )

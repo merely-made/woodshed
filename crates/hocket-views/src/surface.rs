@@ -578,14 +578,22 @@ where
     K: Clone + 'static,
     F: Fn(&mut S, ProjectedAction<K>) + 'static,
 {
+    let transport_toggle = class
+        .split_ascii_whitespace()
+        .any(|token| token == "hocket-recorder-toggle");
     let class = if control.active {
-        format!("{class} hocket-recorder-lctl-on hocket-recorder-toggle-on")
+        let active_class = if transport_toggle {
+            "hocket-recorder-toggle-on"
+        } else {
+            "hocket-recorder-lctl-on"
+        };
+        format!("{class} {active_class}")
     } else {
         class.into()
     };
     let enabled = control.enabled;
     let mut children: Vec<Child<S>> = Vec::new();
-    if class.contains("hocket-recorder-toggle") {
+    if transport_toggle {
         children.push(Box::new(
             el("span", ()).attr("class", "hocket-recorder-led"),
         ));
