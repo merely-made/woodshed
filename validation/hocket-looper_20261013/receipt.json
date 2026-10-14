@@ -1,0 +1,281 @@
+{
+  "schema": "woodshed-hocket-looper-adoption-receipt-v1",
+  "baseline": "210235d9c1955dc9f32f29925b5cda8d1c713dd5",
+  "compiled_source": "d2d4bc750f63e5715ae780f076062b807dad0652",
+  "implementation_source": "f95d85227acdf1063999e21637e2b71e24da707f",
+  "status": "Shared Hocket surface mounted in Woodshed; bounded CPU, native, sealed reopen and WAV parity accepted; exact direct-main publication reported separately",
+  "source_freeze": "source-freeze.json",
+  "source_files": 172,
+  "supplier_family": {
+    "rust": "1.99.0",
+    "msrv": "1.97.1",
+    "mere": "0b9b7a9b218579f1f36cc1ab05a51b2a13128f1d",
+    "genet": "7a8c5b8cb499f2d3b91083c2f7e38236599f98dc",
+    "firewheel": "2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc",
+    "wavicle": "2c5a49fd48db7a54aeab9e712804fd065411aef9",
+    "classic": "2eae6243881d5b24c984d5ee35dde509ca5db782"
+  },
+  "preservation": [
+    "ordered heterogeneous LoopPlan and accepted per-segment clock",
+    "SetId/CardId and saved-song authoring custody",
+    "single OutputRuntime and lazy input construction",
+    "sealed compressed companions, codec/digest/decodedfloatbits",
+    "production backing-plus-captured-loop WAV snapshot/render/publication",
+    "no persisted UiState recorder observation or schema migration"
+  ],
+  "new_behavior": [
+    "shared borrowed RecorderProjection, host-sequenced policy and generic scoped leaves",
+    "frozen session/source/Card-or-bar requests checked after backing admission",
+    "original capture owner and per-take epoch retained independently of cursor/selection",
+    "draft clock authoring remains available without an admitted backend",
+    "optional unavailable controls/meters omitted according to root capability",
+    "visible quiet PCM baseline, bounded embedded height, correct active lane styling"
+  ],
+  "cpu_unique_passed": 591,
+  "cpu_commands": [
+    {
+      "scope": "shared host policy/controller",
+      "packages": [
+        "hocket-recorder"
+      ],
+      "log": "logs/adapter-tests-correlation.log",
+      "unique_passed": 27,
+      "note": "source equals frozen final controller/host_policy; later changes are shared rendering only"
+    },
+    {
+      "scope": "shared final renderer and second-host mounts",
+      "command": "cargo +1.99.0 test --manifest-path ROOT/Cargo.toml --locked -p hocket-views --all-targets",
+      "log": "logs/shared-view-final-v2-tests.log",
+      "unique_passed": 16
+    },
+    {
+      "scope": "root audio/desktop/views",
+      "command": "cargo +1.99.0 test --manifest-path ROOT/Cargo.toml --locked -p woodshed-audio -p woodshed-genet -p woodshed-views",
+      "log": "logs/consumer-tests-final.log",
+      "unique_passed": 482,
+      "breakdown": {
+        "audio": 151,
+        "desktop": 162,
+        "views": 169
+      },
+      "ignored": 6,
+      "note": "five nested fresh-process1-case summaries overlap parent suite; not added again"
+    },
+    {
+      "scope": "queued record correlation added after consumer gate",
+      "log": "logs/queued-record-final.log",
+      "unique_passed": 1
+    },
+    {
+      "scope": "standalone Hocket desktop",
+      "command": "cargo +1.99.0 test --manifest-path ROOT/ports/hocket/Cargo.toml --locked -p hocket-genet",
+      "log": "logs/hocket-standalone-tests.log",
+      "unique_passed": 64,
+      "ignored": 1
+    },
+    {
+      "scope": "actual sealed Keeper inspection before and after native reopening",
+      "command": "FROZEN_DESKTOP_TEST_BINARY --exact capture_persistence::tests::sealed_profile_compression_probe --ignored --nocapture",
+      "logs": [
+        "sealed-gold/probe.log",
+        "sealed-reopened/probe.log",
+        "sealed-final/probe.log"
+      ],
+      "unique_passed": 1,
+      "repeated_processes": 3,
+      "note": "one otherwise-ignored consumer case, counted once; test/source identity in comparison metadata"
+    },
+    {
+      "scope": "root final view rendering after native refinements",
+      "command": "cargo +1.99.0 test --manifest-path ROOT/Cargo.toml --locked -p woodshed-views --lib",
+      "log": "logs/root-view-final-tests.log",
+      "unique_additional_passed": 0,
+      "passed": 169,
+      "note": "same169 cases rerun on final compiled code; see source freeze"
+    }
+  ],
+  "ignored_remaining": "5 root environment-dependent cases and1 Hocket custody case; the sealed probe is separately exercised",
+  "native": [
+    {
+      "case": "WoodshedHocketWideFinal",
+      "source_revision": "d2d4bc750f63e5715ae780f076062b807dad0652",
+      "binary_sha256": "ec9afd16307bd9ff1bc1b773500dbf08efffc053f03594c400153ee175824e44",
+      "result": "ok",
+      "scenario": "/Users/markik/Code/worktrees/woodshed-orchestrate-20261011/scenarios/hocket_looper_reopen.scn",
+      "backend": "normal single root output",
+      "presentation_timeout_secs": 60,
+      "foreground": "current supplier initial reveal; native finite scenario replay",
+      "presentation_frames": 54,
+      "redraws": 55,
+      "unpresented_redraws": 1,
+      "captured_frames": 3,
+      "blank_captures": 0,
+      "reviewed_all_images": true,
+      "images": [
+        {
+          "path": "native/WoodshedHocketWideFinal/01_shared_recorder_hydrated.png",
+          "sha256": "5cca6aec402e2a7c82ba748804c349b33173e9f5be0456ccea485cc37f8e6633"
+        },
+        {
+          "path": "native/WoodshedHocketWideFinal/02_owned_selection.png",
+          "sha256": "ec3d3b753f5cb7b7325de5bf586ad28807316d9c11ffd013f88dfa8a31c435d4"
+        },
+        {
+          "path": "native/WoodshedHocketWideFinal/03_backing_plus_capture_export.png",
+          "sha256": "acc3ef34a5554e56a0878971d03ab16ec3cee0ba7f912b7175e862b8443c77c9"
+        }
+      ],
+      "findings": [
+        "real sealed take hydrated; Card1 waveform visible and owned; selecting Card2 preserves Card1 take",
+        "Record/play/stop/rewind and clock controls visible; root storage/export remain outside shared surface",
+        "production backing-plus-loop export completes at private destination; exact bytes match gold"
+      ]
+    },
+    {
+      "case": "WoodshedHocketCompactFinal",
+      "source_revision": "d2d4bc750f63e5715ae780f076062b807dad0652",
+      "binary_sha256": "ec9afd16307bd9ff1bc1b773500dbf08efffc053f03594c400153ee175824e44",
+      "result": "ok",
+      "scenario": "/Users/markik/Code/worktrees/woodshed-orchestrate-20261011/scenarios/hocket_looper_compact_reopen.scn",
+      "backend": "normal single root output",
+      "presentation_timeout_secs": 60,
+      "foreground": "current supplier initial reveal; native finite scenario replay",
+      "presentation_frames": 23,
+      "redraws": 25,
+      "unpresented_redraws": 2,
+      "captured_frames": 1,
+      "blank_captures": 0,
+      "reviewed_all_images": true,
+      "images": [
+        {
+          "path": "native/WoodshedHocketCompactFinal/01_compact_shared_recorder_reopened.png",
+          "sha256": "242cda8d7e749283e5bd0d6d12948a9f9f069320ea8cc9bd07dc376572ca49e9"
+        }
+      ],
+      "findings": [
+        "fresh process on same sealed profile; two ordered Cards and actual take retained",
+        "compact table scrolls within component; transport stays visible; input remains unopened"
+      ]
+    },
+    {
+      "case": "WoodshedHocketOfflineFinal",
+      "source_revision": "d2d4bc750f63e5715ae780f076062b807dad0652",
+      "binary_sha256": "ec9afd16307bd9ff1bc1b773500dbf08efffc053f03594c400153ee175824e44",
+      "result": "ok",
+      "scenario": "/Users/markik/Code/worktrees/woodshed-orchestrate-20261011/scenarios/hocket_looper_offline.scn",
+      "backend": "device-free",
+      "presentation_timeout_secs": 60,
+      "foreground": "current supplier initial reveal; native finite scenario replay",
+      "presentation_frames": 21,
+      "redraws": 23,
+      "unpresented_redraws": 2,
+      "captured_frames": 1,
+      "blank_captures": 0,
+      "reviewed_all_images": true,
+      "images": [
+        {
+          "path": "native/WoodshedHocketOfflineFinal/01_offline_clock_authoring.png",
+          "sha256": "6bdd18c7932f10ffbb62d5789e91562393a594e9c902945a05d43c29605d5b6e"
+        }
+      ],
+      "findings": [
+        "device-free draft inherited clock authored120 to125; refusal remains explicit; no accepted backing/playback invented"
+      ]
+    },
+    {
+      "case": "HocketSharedFinal",
+      "source_revision": "d2d4bc750f63e5715ae780f076062b807dad0652",
+      "binary_sha256": "52e94f91015441f5d0091eeffafa3c5ca7739dba30296ba49145f5f6ea666e5f",
+      "result": "ok",
+      "scenario": "/Users/markik/Code/worktrees/woodshed-orchestrate-20261011/ports/hocket/scenarios/recorder_controls.scn",
+      "backend": "device-free",
+      "presentation_timeout_secs": 60,
+      "foreground": "current supplier initial reveal; native finite scenario replay",
+      "presentation_frames": 30,
+      "redraws": 32,
+      "unpresented_redraws": 2,
+      "captured_frames": 2,
+      "blank_captures": 0,
+      "reviewed_all_images": true,
+      "images": [
+        {
+          "path": "native/HocketSharedFinal/recorder_controls.png",
+          "sha256": "173a0eb3b28ce7b57e27881bb74634b8bb3194b9bc4ee0c8be3ceb1f1c11a123"
+        },
+        {
+          "path": "native/HocketSharedFinal/recorder_initial.png",
+          "sha256": "e4be262ae9a4f131faff085f65a67c9af04702f0ce9a46cb4c2f170bc6f45b16"
+        }
+      ],
+      "findings": [
+        "standalone device-free initial and control captures reviewed",
+        "red Record dot remains visible; arm/add/BPM122/mute/solo/master-off routes accepted",
+        "active M/S colors restored, without spurious LED; prior audio-status clipping retained"
+      ]
+    }
+  ],
+  "native_totals": {
+    "processes": 4,
+    "presentations": 128,
+    "captures": 7,
+    "blank_captures": 0,
+    "all_images_reviewed": true
+  },
+  "builds": [
+    {
+      "command": "cargo +1.99.0 build --manifest-path ROOT/Cargo.toml --locked -p woodshed-genet --bin woodshed-genet --message-format=json",
+      "log": "logs/woodshed-build-final.log",
+      "binary": "woodshed-genet-binary-final.json",
+      "result": "passed"
+    },
+    {
+      "command": "cargo +1.99.0 build --manifest-path ROOT/ports/hocket/Cargo.toml --locked -p hocket-genet --bin hocket-genet --message-format=json",
+      "log": "logs/hocket-build-final.log",
+      "binary": "hocket-genet-binary-final.json",
+      "result": "passed"
+    }
+  ],
+  "build_environment": {
+    "cwd": "/tmp",
+    "ROOT": "/Users/markik/Code/worktrees/woodshed-orchestrate-20261011",
+    "CARGO_TARGET_DIR": "/Users/markik/Code/testing/woodshed/hocket-adoption-20261013/target",
+    "CARGO_BUILD_JOBS": 2,
+    "cargo_config": "build.build-dir=\"/Users/markik/Code/worktrees/woodshed-orchestrate-20261011/target/build\""
+  },
+  "sealed_reopen": "sealed-final-comparison.json",
+  "profile_originals_and_companions": "profile-retention.json",
+  "wav_parity": "wav-parity-final.json",
+  "isolated_keeper": {
+    "source_revision": "0b9b7a9b218579f1f36cc1ab05a51b2a13128f1d",
+    "source": "ports/djinn/src/bin/dr_c_receipt_host.rs",
+    "launch_mode": "unlocked public synthetic fixture",
+    "receipts": [
+      "keeper-receipt.json",
+      "keeper-final-receipt.json"
+    ],
+    "owned_processes_remaining": 0,
+    "personal_vault_opened": false
+  },
+  "rejected_attempts": [
+    {
+      "case": "WoodshedHocketWide",
+      "reason": "private identity service absent; profile could not hydrate; rejected fixture result; originals unchanged"
+    },
+    {
+      "case": "HocketSharedRegression",
+      "reason": "state assertions passed; native visual review rejected white active M/S and unintendedLED; fixed before final gate"
+    },
+    {
+      "log": "rejected/shared-view-final-tests.log",
+      "reason": "new quiet waveform test usedfield accessor against method-basedgeometry; corrected and16case gate passed"
+    }
+  ],
+  "scope_limits": [
+    "no physical microphone, acoustic audibility, latency or hardware clock qualification",
+    "60-second finite presentation allowance; default startup not certified",
+    "saved-Song binding/queues covered by focused source/action cases; normal-output native fixture is Set/Card",
+    "native WAV path uses private scenario chooser target through actual export worker; save-panel matrix not repeated",
+    "shared DSP consolidation and general Hocket project-worker reply correlation remain later work",
+    "no broad interim conformance gate, GitHub workflow or PR created"
+  ]
+}

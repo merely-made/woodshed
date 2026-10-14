@@ -227,16 +227,23 @@ acoustic calibration and full P7 remain open.
 
 ### F5. Complete portable product seams
 
-**Hocket recorder composition (2026-10-13): shared extraction implemented; bounded native acceptance complete.**
+**Hocket recorder composition (2026-10-13): shared extraction and Woodshed surface adoption implemented; bounded native acceptance complete.**
 The [host-refactor follow-through](../ports/hocket/design_docs/2026-07-08_genet_host_refactor_plan.md#embeddable-recorder-follow-through-2026-10-13)
-owns the first shared-controller/surface slice and its
-[197-case/four-capture receipt](../validation/hocket-recorder_20261013/receipt.json).
-Reusable Hocket model/project
-and recorder/views live in root `crates/`; the standalone port supplies
-services. Woodshed's accepted Set/Card/saved-Song, single-output, sealed
-capture and WAV behavior stay the preservation baseline for later adoption.
-Shared views require a coherent Cambium type graph, so Hocket takes the root's
-qualified supplier family; root pins remain unchanged.
+owns the shared controller/surface and its original
+[197-case/four-capture extraction receipt](../validation/hocket-recorder_20261013/receipt.json).
+Shared model/project/controller/views live in root `crates/`; standalone
+Hocket supplies native services. Woodshed now mounts the shared surface
+through borrowed accepted-backing observations and guarded host controls.
+Its ordered heterogeneous LoopPlan, Set/Card and saved-bar custody, single
+OutputRuntime, compressed companions and WAV contract remain host-owned.
+The separate [adoption receipt](../validation/hocket-looper_20261013/receipt.json)
+records 591 distinct focused cases, four native processes/seven reviewed
+captures, fresh compact reopening, exact sealed media retention and byte-identical
+backing-plus-loop WAV. Shared DSP extraction remains later work.
+
+Shared views require a coherent Cambium type graph. The adoption preserves
+the concurrent Rust 1.99.0/MSRV 1.97.1 and Murm supplier move; its compiled
+source uses Mere `0b9b7a9` and Genet `7a8c5b8`, recorded in the receipt.
 
 
 Done when Hocket project/media/store/export/handoff operations can be used
@@ -490,3 +497,19 @@ product's existing recording/Turnstone gates.
   take. A stale Stop cannot cancel a later take on the same start segment.
   Draft config authoring is distinct from runtime acceptance. Source review
   closes the concrete adapter blockers; native and publication gates follow.
+
+- **2026-10-13:** Woodshed shared-recorder adoption is accepted on compiled
+  source `d2d4bc7` after source/ownership review and 591 distinct focused cases
+  (repeated sub-process cases are counted once). Four finite native processes
+  produced 128 presentations and seven inspected, nonblank captures: normal
+  output wide/compact reopening, offline inherited-clock authoring and standalone
+  Hocket controls. The reopened 96,000-frame WavPack take retains its exact
+  Set/Card owner, clock, digest and decoded float bits; the 192,000-frame backing
+  plus loop WAV is byte-identical to the earlier accepted gold. The current
+  supplier's private synthetic Keeper is stopped and originals are unchanged.
+  Quiet PCM gets a visible centerline without gain normalization; transport
+  sizing and active mute/solo colors are corrected. The
+  [adoption receipt](../validation/hocket-looper_20261013/receipt.json) preserves
+  source/build identities, scoped checks, rejected attempts and native evidence.
+  No workflows or PRs are added. Shared DSP, physical microphone/audibility,
+  default startup and general Hocket project-worker reply correlation remain open.

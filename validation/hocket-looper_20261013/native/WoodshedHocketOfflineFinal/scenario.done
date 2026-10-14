@@ -1,0 +1,5 @@
+RESULT ok
+captured 01_offline_clock_authoring
+capture 01_offline_clock_authoring 2360x1600 digest=fc92a115f161ccdc file=/Users/markik/Code/testing/woodshed/hocket-adoption-20261013/native/WoodshedHocketOfflineFinal/01_offline_clock_authoring.png
+frames: 1 captured, 0 blank, 1 distinct digests
+presentation: 21 frames, 23 redraws, 2 unpresented redraws

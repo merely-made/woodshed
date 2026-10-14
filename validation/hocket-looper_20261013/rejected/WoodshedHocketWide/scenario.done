@@ -1,0 +1,19 @@
+RESULT fail
+FAIL: assert snap set-cards Eq '2': got '0'
+FAIL: assert snap loop-capture-references Eq '1': got '0'
+FAIL: assert snap loop-capture-frames Eq '96000': got '0'
+FAIL: assert snap loop-active-captures Eq '1': got '0'
+FAIL: assert snap recorder-rows Eq '2': got '0'
+FAIL: assert snap recorder-waveforms Eq '1': got '0'
+FAIL: assert text 'Card loops saved: 1': not on any surface
+captured 01_shared_recorder_hydrated
+FAIL: assert snap recorder-selected-card Eq '2': got '0'
+FAIL: assert snap loop-capture-references Eq '1': got '0'
+captured 02_owned_selection
+captured 03_backing_plus_capture_export
+capture 01_shared_recorder_hydrated 2360x1600 digest=37f1048a5ded9699 file=/Users/markik/Code/testing/woodshed/hocket-adoption-20261013/native/WoodshedHocketWide/01_shared_recorder_hydrated.png
+capture 02_owned_selection 2360x1600 digest=bf91930f466d836f file=/Users/markik/Code/testing/woodshed/hocket-adoption-20261013/native/WoodshedHocketWide/02_owned_selection.png
+capture 03_backing_plus_capture_export 2360x1600 digest=c065c23fda9c9595 file=/Users/markik/Code/testing/woodshed/hocket-adoption-20261013/native/WoodshedHocketWide/03_backing_plus_capture_export.png
+frames: 3 captured, 0 blank, 3 distinct digests
+presentation: 54 frames, 55 redraws, 1 unpresented redraws
+FAIL: no current DOM target for Selector { surface: None, matcher: Role("switch"), text: None, attr: Some(("aria-label", "Select Card 2")) }

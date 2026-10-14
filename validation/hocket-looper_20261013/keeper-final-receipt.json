@@ -1,0 +1,16 @@
+{
+  "provider_revision": "0b9b7a9b218579f1f36cc1ab05a51b2a13128f1d",
+  "provider_binary": "/Users/markik/Code/testing/woodshed/hocket-adoption-20261013/provider-target/debug/dr-c-receipt-host",
+  "sha256": "819b981db28431b7b1d3d350c9d2ce5e6f434efda5632cdb03ab188c19743c55",
+  "root": "/Users/markik/Code/testing/woodshed/hocket-adoption-20261013/private-keeper-final",
+  "endpoint": "/tmp/ws-hocket13-app.sock",
+  "pid": 20117,
+  "isolated_synthetic_fixture": true,
+  "ready": "unlocked",
+  "purpose": "post-final-native sealed inspection",
+  "cleanup": {
+    "owned_processes_remaining": 0,
+    "endpoint_removed": true,
+    "generated_fixture_retained": true
+  }
+}
