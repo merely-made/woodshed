@@ -468,3 +468,25 @@ product's existing recording/Turnstone gates.
   and its separate [combined native receipt](../validation/compressed-captures_font-family_20261012/receipt.json).
   Hocket's earlier codec pin remains independent: this root intake does not
   qualify Hocket's archive decoder or adopt the arithmetic repair there.
+
+- **2026-10-13:** Woodshed Looper adoption is accepted and in progress from
+  fetched `210235d` (including the concurrent Murm and Rust policy move). The
+  shared recorder gets host-sequenced policy and a disposable view projection;
+  Woodshed keeps its ordered heterogeneous LoopPlan, Set/Card identity,
+  saved-song compatibility, single output and sealed capture/export authority.
+  No shadow Hocket Session/History or independent parallel sampler is created.
+  Input remains lazy on Record; no output meters are invented where the root
+  runtime has no publication. A concurrent Rust-policy GitHub workflow is
+  removed under the maintainer's explicit no-workflows instruction, while the
+  toolchain/MSRV and supplier changes remain. Focused ownership/action checks,
+  export/capture parity and fresh committed native mounting/reopen follow.
+
+- **2026-10-13:** Shared recorder mounting and host-sequenced policy are wired
+  into both Looper sources. Disposable observation carries admitted source
+  metadata and completed PCM Arcs; accepted arm/start and active recording row
+  stay distinct. Runtime controls emit frozen source/session/Card-or-bar
+  requests and are checked again after dispatch-tail admission; two queued
+  saved-bar clears retain different targets, and re-arm cannot toggle the first
+  take. A stale Stop cannot cancel a later take on the same start segment.
+  Draft config authoring is distinct from runtime acceptance. Source review
+  closes the concrete adapter blockers; native and publication gates follow.

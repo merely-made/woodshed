@@ -9,6 +9,8 @@ repository.workspace = true
 description = "Woodshed's desktop application over the shared Cambium desktop host: state, views, backends, and the self-drive lane. The native host itself is genet's."
 
 [dependencies]
+hocket-views.workspace = true
+hocket-recorder.workspace = true
 # The desktop realization of muniment's Backend. woodshed-core names the slots;
 # this crate only decides which file each one lives in.
 muniment = { git = "https://www.github.com/merely-made/mere.git", rev = "0b9b7a9b218579f1f36cc1ab05a51b2a13128f1d" }

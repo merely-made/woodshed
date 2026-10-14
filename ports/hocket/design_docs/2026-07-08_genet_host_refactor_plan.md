@@ -517,3 +517,17 @@ accepted-playback observations truthful without changing the frame schedule.
   not qualified here. Phases 1–3 are complete subject to direct-main publication
   verification; phase 4 and general project-worker reply correlation remain
   later work.
+
+- **2026-10-13:** Woodshed adoption source is implemented after the concurrent
+  `210235d` supplier/toolchain move. A borrowed recorder projection and explicit
+  host-sequenced policy now feed the same renderer/leaves as standalone Hocket.
+  Woodshed retains ordered segment clocks, its admitted backing, Set/Card and
+  saved-bar ownership, single output, codec/custody and WAV path. Unsupported
+  concurrent-track controls and unobserved meters are omitted. Offline config
+  remains authorable; queued record/clear commands freeze source/session/target
+  until execution, and Stop retains the accepted capture epoch. Focused source
+  review found and closed offline-authoring and positional-queue regressions.
+  Root source checks and package tests pass; final frozen native hydration,
+  export parity, compact reopen and standalone regression follow. Shared DSP
+  extraction, physical audio and general Hocket project-worker correlation
+  remain later work.

@@ -267,6 +267,7 @@ pub struct Shared {
     pub last_song: Option<woodshed_core::song::SongDoc>,
     pub last_loop_plan: Option<woodshed_core::loop_plan::LoopPlan>,
     pub last_audio_session: Option<std::sync::Arc<()>>,
+    pub recorder_leaves: hocket_views::RecorderLeaves,
     pub capture_persistence: crate::capture_persistence::CapturePersistence,
     pub wav_export: crate::wav_export::WavExport,
 
@@ -329,6 +330,9 @@ impl Shared {
             last_song: None,
             last_loop_plan: None,
             last_audio_session: None,
+            recorder_leaves: hocket_views::RecorderLeaves::new(
+                woodshed_views::stage::RECORDER_MOUNT,
+            ),
             capture_persistence: Default::default(),
             wav_export: Default::default(),
             neighborhood_sig: 0,

@@ -9,6 +9,8 @@
 //! and only promotes audio returned for its current, accepted capture ticket.
 #![forbid(unsafe_code)]
 
+pub mod host_policy;
+
 use audio_primitives::{MeterBallistics, PeakMeterSmoother, WaveformPeak};
 use hocket_model::{
     Edit, History, Layer, MediaRef, Phrase, PhraseId, Session, SessionId, Track, TrackColor,
@@ -310,12 +312,16 @@ mod tests {
         r.toggle_record();
         service(&mut r, &mut a);
         let old_id = r.session.tracks[0].id;
+        assert_eq!(r.active_capture_track(), Some(old_id));
         r.arm(1);
         service(&mut r, &mut a);
         assert!(r.is_recording());
+        assert_eq!(r.active_capture_track(), Some(old_id));
+        assert_ne!(r.session.tracks[r.armed_index().unwrap()].id, old_id);
         service(&mut r, &mut a);
         assert_eq!(r.session.track(old_id).unwrap().layers.len(), 1);
         assert!(r.session.tracks[1].armed);
+        assert_eq!(r.active_capture_track(), None);
     }
     #[test]
     fn muted_click_clock_admission_and_input_absence_remain_truthful() {
@@ -1456,6 +1462,11 @@ impl Recorder {
     }
     pub fn active_capture_token(&self) -> Option<CaptureToken> {
         self.ticket.as_ref().map(|ticket| ticket.token)
+    }
+    /// The accepted capture owner, separate from the currently armed track.
+    /// A stopped free take retains its owner until completion is serviced.
+    pub fn active_capture_track(&self) -> Option<TrackId> {
+        self.ticket.as_ref().map(|ticket| ticket.track)
     }
     pub fn accepted_voice_count(&self) -> usize {
         self.playing.len()
