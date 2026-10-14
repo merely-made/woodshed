@@ -3,7 +3,7 @@
 Rust policy (2026-10-13): working toolchain 1.99.0 and shared MSRV 1.97.1, qualified separately. Canonical policy: `mere/design_docs/2026-08-12_family_composition_thesis_brief.md`, section "Shared Rust toolchain and minimum version".
 
 Murm source adoption (2026-10-13) is tracked in
-`retinue/design_docs/2026-10-13_murm_family_move_plan.md`. Active consumer roots
+`murm/design_docs/2026-10-13_murm_family_move_plan.md`. Active consumer roots
 use the imported transport supplier and coherent Mere/Dramatis/p2panda
 composition patches. Compile and software-test receipts are scoped to this
 cutover; previous physical and headed receipts retain their original inputs.
