@@ -1355,7 +1355,7 @@ algorithms consulted, their licenses, and what was independently written.
 ### Decision: Redshank
 
 **Redshank** is the chosen product name. The Retinue host-tier founding note at
-`retinue/design_docs/2026-08-06_signalman_founding.md` banked it as the sentinel
+`murm/design_docs/2026-08-06_signalman_founding.md` banked it as the sentinel
 shorebird, Turnstone's pair, for a future application. This use earns that
 relationship: Redshank is the sovereign listening tool, while Turnstone becomes
 its first embedded host and can project selected timed notes into the browsing
