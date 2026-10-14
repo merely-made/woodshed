@@ -115,6 +115,19 @@ fn push_backend(shared: &mut Shared, ctx: &mut Ctx<'_>) {
             let mut capture_changed = false;
             for request in std::mem::take(&mut ui.audio_requests) {
                 match request {
+                    AudioRequest::Recorder(request) => {
+                        match execute_recorder_request(
+                            &request,
+                            &ui.audio_session,
+                            backend,
+                            capture_persistence,
+                            last_song.as_ref(),
+                            last_loop_plan.as_ref(),
+                        ) {
+                            Ok(changed) => capture_changed |= changed,
+                            Err(reason) => ui.loop_notice = Some(reason),
+                        }
+                    },
                     AudioRequest::SongRewind => backend.song_rewind(),
                     AudioRequest::CancelPreview => backend.cancel_preview(),
                     AudioRequest::PreviewVoicing => {
@@ -238,6 +251,7 @@ fn push_backend(shared: &mut Shared, ctx: &mut Ctx<'_>) {
             ui.song_recording = backend.loop_capture_busy();
             ui.song_loop_bars = backend.song_loop_bars();
             ui.audio_error = backend.error().map(str::to_owned);
+            ui.recorder_observation = backend.recorder_observation(last_song.as_ref());
         } else {
             let mut retained_requests = Vec::new();
             for request in std::mem::take(&mut ui.audio_requests) {
@@ -272,6 +286,71 @@ fn push_backend(shared: &mut Shared, ctx: &mut Ctx<'_>) {
     };
     if let Some(json) = persisted_settings {
         storage.save_settings(&json);
+    }
+}
+
+/// Execute after backing admission using the frozen source/epoch, not the UI
+/// selection at queue drain. Arm commands never toggle somebody else's take.
+pub(crate) fn execute_recorder_request(
+    request: &woodshed_core::audio::RecorderRequest,
+    session: &std::sync::Arc<()>,
+    backend: &mut crate::audio::CpalBackend,
+    persistence: &mut crate::capture_persistence::CapturePersistence,
+    song: Option<&SongDoc>,
+    plan: Option<&LoopPlan>,
+) -> Result<bool, String> {
+    use woodshed_core::audio::{RecorderBacking, RecorderCommand};
+    if !request.is_current(session, song, plan) {
+        return Err(
+            "This queued recorder source or session has changed. Use its current controls.".into(),
+        );
+    }
+    match (&request.backing, &request.command) {
+        (RecorderBacking::Set(plan), RecorderCommand::RecordCard(id)) => {
+            if plan.index_of(*id).is_none() {
+                return Err("That Card is not in the admitted backing.".into());
+            }
+            persistence.permit_record(
+                plan,
+                backend
+                    .output_sample_rate()
+                    .ok_or("Audio output is unavailable.")?,
+                backend.capture_snapshot(),
+            )?;
+            backend.loop_arm_record(*id)?;
+            Ok(false)
+        },
+        (RecorderBacking::Set(plan), RecorderCommand::ClearCard(id)) => {
+            if plan.index_of(*id).is_none() {
+                return Err("That Card is not in the admitted backing.".into());
+            }
+            backend.clear_stored_capture(*id)?;
+            persistence.forget(*id);
+            Ok(true)
+        },
+        (RecorderBacking::Saved(song), RecorderCommand::RecordSavedBar(index))
+            if *index < song.bars.len() =>
+        {
+            backend.recorder_arm_saved(*index)?;
+            Ok(false)
+        },
+        (RecorderBacking::Saved(song), RecorderCommand::ClearSavedBar(index))
+            if *index < song.bars.len() =>
+        {
+            backend.recorder_clear_saved(*index)?;
+            Ok(true)
+        },
+        (
+            _,
+            RecorderCommand::StopCapture {
+                start_bar,
+                capture_epoch,
+            },
+        ) => {
+            backend.recorder_stop_capture(*start_bar, *capture_epoch)?;
+            Ok(true)
+        },
+        _ => Err("The queued recorder target does not match its admitted backing.".into()),
     }
 }
 
@@ -647,7 +726,7 @@ mod tests {
                 .is_empty()
             );
         }
-        assert!(h.click_on(&Selector::class("t-btn").containing("Play")));
+        assert!(h.click_on(&Selector::role("button").with_attr("aria-label", "Play backing")));
         assert!(!h.state().song_playing);
         h.update(|ui| {
             ui.set.cards[0].timing.hold = Hold::Bars(1);
@@ -656,7 +735,7 @@ mod tests {
         let first = plan.as_ref().unwrap().segments[0].id;
         assert!(h.click_on(&Selector::class("t-btn").containing("Clock: 4/4")));
         assert_eq!(h.state().looper.beats, 5);
-        assert!(h.click_on(&Selector::class("t-btn").containing("Tempo +")));
+        assert!(h.click_on(&Selector::role("button").with_attr("aria-label", "Increase tempo")));
         assert_eq!(h.state().looper.inherited_bpm, 125.0);
         let repeat = Selector::role("button").with_attr("data-action", "toggle-set-one-shot");
         assert!(h.click_on(&repeat));
@@ -672,10 +751,17 @@ mod tests {
         });
         assert_eq!(h.state().loop_selected, Some(first));
         assert_eq!(plan.as_ref().unwrap().index_of(first), Some(1));
-        assert!(h.click_on(&Selector::class("t-btn").containing("Rec Card")));
-        assert_eq!(
-            h.state().audio_requests,
-            vec![AudioRequest::LoopRecordToggle(first)]
+        h.update(|ui| {
+            ui.recorder_observation = woodshed_views::stage::RecorderObservation {
+                source: plan.as_ref().map(|plan| LooperSource::Set(plan.owner)),
+                plan: plan.clone(),
+                output_rate: Some(48000),
+                ..Default::default()
+            };
+        });
+        assert!(h.click_on(&Selector::role("switch").with_attr("aria-label", "Record")));
+        assert!(
+            matches!(&h.state().audio_requests[..],[AudioRequest::Recorder(request)] if request.command==woodshed_core::audio::RecorderCommand::RecordCard(first))
         );
         assert!(h.click_on(&Selector::class("t-btn").containing("Saved backing")));
         h.update(|ui| admit_playback(ui, &mut backend, &mut song, &mut plan));

@@ -153,6 +153,9 @@ pub struct CpalBackend {
     /// synchronization must not reopen the microphone after a failure.
     tuner_requested: bool,
     capture_attached: bool,
+    /// Render-time target accepted by arm_capture, retained until returns drain.
+    recorder_capture_target: Option<usize>,
+    recorder_capture_epoch: u64,
     session_reset_pending: bool,
     #[cfg(test)]
     input_factory: Option<InputFactory>,
@@ -199,6 +202,110 @@ fn to_song(doc: &SongDoc) -> Song {
 impl CpalBackend {
     pub(crate) fn output_sample_rate(&self) -> Option<u32> {
         self.output.as_ref().map(OutputRuntime::sample_rate)
+    }
+
+    /// Read admitted backing and shared PCM without opening input, admitting a
+    /// document, or invoking export (which deliberately refuses busy capture).
+    pub(crate) fn recorder_observation(
+        &self,
+        saved_song: Option<&SongDoc>,
+    ) -> woodshed_views::stage::RecorderObservation {
+        use woodshed_views::stage::{RecorderBuffer, RecorderObservation};
+        if self.session_reset_pending {
+            return RecorderObservation::default();
+        }
+        let output_rate = self
+            .output
+            .as_ref()
+            .filter(|_| !self.native_output || self.output_stream_count() != 0)
+            .map(OutputRuntime::sample_rate);
+        let (snapshot, capture_busy) = self
+            .output
+            .as_ref()
+            .map(OutputRuntime::capture_observation)
+            .unwrap_or_default();
+        let plan = self.captures.plan.clone();
+        let source = plan
+            .as_ref()
+            .map(|plan| woodshed_core::loop_plan::LooperSource::Set(plan.owner))
+            .or_else(|| saved_song.map(|_| woodshed_core::loop_plan::LooperSource::SavedSong));
+        let buffers = self
+            .output
+            .as_ref()
+            .map(|output| {
+                output
+                    .song()
+                    .bars
+                    .into_iter()
+                    .map(|bar| {
+                        bar.audio_buffer.map(|buffer| RecorderBuffer {
+                            samples: buffer.data,
+                            sample_rate: buffer.sample_rate_hz,
+                        })
+                    })
+                    .collect()
+            })
+            .unwrap_or_default();
+        RecorderObservation {
+            source,
+            plan,
+            saved_song: saved_song.cloned(),
+            buffers,
+            capture_target: self.recorder_capture_target.filter(|_| capture_busy),
+            capture_epoch: capture_busy.then_some(self.recorder_capture_epoch),
+            capture_busy,
+            capture_armed: snapshot.capture_armed,
+            capture_invalid: snapshot.capture_invalid,
+            recording_bar: snapshot.recording.then_some(snapshot.cursor.bar_idx),
+            output_rate,
+            input_rate: self.capture_source_rate(),
+            status: self.error().map(str::to_owned).unwrap_or_else(|| {
+                if output_rate.is_none() {
+                    "Audio output is unavailable.".into()
+                } else if self.input.is_none() {
+                    "One shared output · input opens on Record".into()
+                } else {
+                    "One shared output · input configuration opened".into()
+                }
+            }),
+        }
+    }
+
+    /// Runtime execution of a frozen saved-bar request; positional targets do
+    /// not pass through the mutable UI editor cursor.
+    pub(crate) fn recorder_arm_saved(&mut self, index: usize) -> Result<(), String> {
+        if self.loop_capture_busy() {
+            return Err("Capture is already armed or active.".into());
+        }
+        self.check_set_capture_quota()?;
+        self.ensure_capture_input()?;
+        if let Some(input) = &self.input {
+            input.capture.set_enabled(true);
+        }
+        if let Err(error) = self.with_output(|output| output.arm_capture(index, false)) {
+            if let Some(input) = &self.input {
+                input.capture.set_enabled(false);
+            }
+            return Err(error);
+        }
+        self.recorder_capture_epoch = self.recorder_capture_epoch.wrapping_add(1);
+        self.recorder_capture_target = Some(index);
+        Ok(())
+    }
+    pub(crate) fn recorder_clear_saved(&mut self, index: usize) -> Result<(), String> {
+        if self.loop_capture_busy() {
+            return Err("Stop recording / armed capture before clearing a saved bar.".into());
+        }
+        self.with_output(|output| output.clear_recording(index))
+    }
+    pub(crate) fn recorder_stop_capture(&mut self, index: usize, epoch: u64) -> Result<(), String> {
+        if !self.loop_capture_busy()
+            || self.recorder_capture_target != Some(index)
+            || self.recorder_capture_epoch != epoch
+        {
+            return Err("The accepted capture has changed. Use its current Stop control.".into());
+        }
+        self.with_output(OutputRuntime::stop_capture_now)
     }
 
     /// Immutable completed material from the accepted output document. No
@@ -340,6 +447,7 @@ impl CpalBackend {
         // Disabling the producer before Stop reaches the processor could
         // invalidate a valid take in a still-running block. Await retirement.
         if !self.loop_capture_busy() {
+            self.recorder_capture_target = None;
             if let Some(input) = &self.input {
                 input.capture.set_enabled(false);
             }
@@ -394,6 +502,8 @@ impl CpalBackend {
             input: None,
             tuner_requested: false,
             capture_attached: false,
+            recorder_capture_target: None,
+            recorder_capture_epoch: 0,
             session_reset_pending: false,
             #[cfg(test)]
             input_factory: None,
@@ -630,6 +740,7 @@ impl AudioBackend for CpalBackend {
     }
 
     fn clear_loop_session(&mut self) {
+        self.recorder_capture_target = None;
         if let Some(input) = &self.input {
             input.capture.set_enabled(false);
             input.capture.clear();
@@ -654,6 +765,8 @@ impl AudioBackend for CpalBackend {
             }
             return Err(error);
         }
+        self.recorder_capture_epoch = self.recorder_capture_epoch.wrapping_add(1);
+        self.recorder_capture_target = Some(index);
         Ok(())
     }
 
@@ -802,27 +915,8 @@ impl AudioBackend for CpalBackend {
     }
 
     fn song_arm_record(&mut self, bar_idx: usize) {
-        if self.loop_capture_busy() {
-            return;
-        }
-        if let Err(error) = self.check_set_capture_quota() {
+        if let Err(error) = self.recorder_arm_saved(bar_idx) {
             self.error = Some(error);
-            return;
-        }
-        if let Err(error) = self.ensure_capture_input() {
-            self.error = Some(error);
-            return;
-        }
-        if let Some(input) = &self.input {
-            input.capture.set_enabled(true);
-        }
-        if self
-            .with_output(|output| output.arm_capture(bar_idx, false))
-            .is_err()
-        {
-            if let Some(input) = &self.input {
-                input.capture.set_enabled(false);
-            }
         }
     }
 
@@ -1113,6 +1207,173 @@ mod tests {
         audio.loop_arm_record(take.id).unwrap();
         assert!(audio.export_backing().unwrap_err().contains("armed"));
         assert_eq!(frozen.bars[0].audio_buffer.as_ref().unwrap().data[0], 0.25);
+    }
+
+    #[test]
+    fn recorder_observation_uses_completed_pcm_without_input_or_export_and_freezes_arm_target() {
+        let mut audio = backend(Box::new(|| successful_input()));
+        let take = stored_take(1, 48000, 0.25);
+        audio.restore_loop_captures(vec![take.clone()]).unwrap();
+        let plan = owned_plan(1);
+        audio.set_loop_plan(&plan).unwrap();
+        render(&mut audio, 32);
+        let first = audio.recorder_observation(None);
+        assert_eq!(first.plan, Some(plan.clone()));
+        assert!(Arc::ptr_eq(
+            &first.buffers[0].as_ref().unwrap().samples,
+            &take.buffer.data
+        ));
+        assert_eq!(first.input_rate, None);
+        assert!(audio.input.is_none());
+        assert_eq!(audio.recorder_observation(None), first);
+        audio.loop_arm_record(plan.segments[0].id).unwrap();
+        let armed = audio.recorder_observation(None);
+        assert_eq!(armed.capture_target, Some(0));
+        assert!(armed.capture_busy);
+        assert!(armed.recording_bar.is_none());
+        assert_eq!(armed.input_rate, Some(48000));
+        assert!(audio.export_backing().is_err());
+        // A failed or pending stop is not an invented idle observation.
+        audio.loop_stop_record();
+        let pending = audio.recorder_observation(None);
+        assert!(pending.capture_busy);
+        assert_eq!(pending.capture_target, Some(0));
+    }
+
+    #[test]
+    fn frozen_saved_bar_queue_clears_distinct_pcm_and_refuses_replaced_source_or_session() {
+        use woodshed_core::audio::{RecorderBacking, RecorderCommand, RecorderRequest};
+        let mut audio = backend(Box::new(|| panic!("clear opened input")));
+        let mut doc = SongDoc::default();
+        doc.bars = vec![Default::default(), Default::default()];
+        audio.try_set_song(&doc).unwrap();
+        let mut accepted = audio.output.as_ref().unwrap().song();
+        for (index, bar) in accepted.bars.iter_mut().enumerate() {
+            bar.audio_buffer = Some(woodshed_audio::SampleBuffer::new(
+                vec![0.1 + index as f32 * 0.1; bar.duration_samples(48000.0) as usize],
+                48000,
+            ));
+        }
+        audio.output.as_mut().unwrap().set_song(accepted).unwrap();
+        render(&mut audio, 32);
+        assert!(audio.song_loop_bars().iter().all(|value| *value));
+        let session = Arc::new(());
+        let mut persistence = crate::capture_persistence::CapturePersistence::default();
+        let requests: Vec<_> = (0..2)
+            .map(|index| RecorderRequest {
+                session: session.clone(),
+                backing: RecorderBacking::Saved(doc.clone()),
+                command: RecorderCommand::ClearSavedBar(index),
+            })
+            .collect();
+        for request in &requests {
+            crate::sync::execute_recorder_request(
+                request,
+                &session,
+                &mut audio,
+                &mut persistence,
+                Some(&doc),
+                None,
+            )
+            .unwrap();
+        }
+        assert_eq!(audio.song_loop_bars(), [false, false]);
+        assert!(audio.input.is_none());
+        let mut changed = doc.clone();
+        changed.bars.reverse();
+        changed.bars[0].bpm = 90.0;
+        assert!(
+            crate::sync::execute_recorder_request(
+                &requests[0],
+                &session,
+                &mut audio,
+                &mut persistence,
+                Some(&changed),
+                None
+            )
+            .is_err()
+        );
+        assert!(
+            crate::sync::execute_recorder_request(
+                &requests[0],
+                &Arc::new(()),
+                &mut audio,
+                &mut persistence,
+                Some(&doc),
+                None
+            )
+            .is_err()
+        );
+    }
+
+    #[test]
+    fn stale_stop_epoch_cannot_cancel_a_new_take_on_the_same_start_bar() {
+        let mut audio = backend(Box::new(successful_input));
+        let plan = owned_plan(1);
+        audio.set_loop_plan(&plan).unwrap();
+        render(&mut audio, 32);
+        audio.loop_arm_record(plan.segments[0].id).unwrap();
+        let first = audio.recorder_capture_epoch;
+        assert!(
+            audio
+                .recorder_stop_capture(0, first.wrapping_sub(1))
+                .is_err()
+        );
+        assert!(audio.loop_capture_busy());
+        assert!(audio.recorder_stop_capture(0, first).is_ok());
+        assert!(audio.loop_capture_busy());
+        render(&mut audio, 32);
+        assert!(!audio.loop_capture_busy());
+        audio.loop_arm_record(plan.segments[0].id).unwrap();
+        let second = audio.recorder_capture_epoch;
+        assert_ne!(first, second);
+        assert!(audio.recorder_stop_capture(0, first).is_err());
+        assert!(audio.loop_capture_busy());
+        assert_eq!(audio.recorder_observation(None).capture_epoch, Some(second));
+        assert!(audio.recorder_stop_capture(0, second).is_ok());
+    }
+
+    #[test]
+    fn two_queued_saved_record_requests_do_not_toggle_or_retarget_the_first_accepted_take() {
+        use woodshed_core::audio::{RecorderBacking, RecorderCommand, RecorderRequest};
+        let mut audio = backend(Box::new(successful_input));
+        let mut doc = SongDoc::default();
+        doc.bars = vec![Default::default(), Default::default()];
+        audio.try_set_song(&doc).unwrap();
+        render(&mut audio, 32);
+        let session = Arc::new(());
+        let mut persistence = crate::capture_persistence::CapturePersistence::default();
+        let requests: Vec<_> = (0..2)
+            .map(|index| RecorderRequest {
+                session: session.clone(),
+                backing: RecorderBacking::Saved(doc.clone()),
+                command: RecorderCommand::RecordSavedBar(index),
+            })
+            .collect();
+        crate::sync::execute_recorder_request(
+            &requests[0],
+            &session,
+            &mut audio,
+            &mut persistence,
+            Some(&doc),
+            None,
+        )
+        .unwrap();
+        let epoch = audio.recorder_capture_epoch;
+        assert!(
+            crate::sync::execute_recorder_request(
+                &requests[1],
+                &session,
+                &mut audio,
+                &mut persistence,
+                Some(&doc),
+                None
+            )
+            .is_err()
+        );
+        assert!(audio.loop_capture_busy());
+        assert_eq!(audio.recorder_capture_target, Some(0));
+        assert_eq!(audio.recorder_capture_epoch, epoch);
     }
 
     fn quota_bank(count: u64, frames: usize, rate: u32) -> Vec<CaptureSnapshot> {

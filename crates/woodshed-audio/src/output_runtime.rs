@@ -360,9 +360,15 @@ impl OutputRuntime {
             .queue_event_for(self.node, NodeEventType::custom(command));
         Ok(())
     }
+    /// Read one processor publication plus the control-side reservation. A UI
+    /// projection must not combine different blocks' capture phase and cursor.
+    pub fn capture_observation(&self) -> (OutputSnapshot, bool) {
+        let snapshot = self.snapshot();
+        let busy = self.capture_requested || snapshot.recording || snapshot.capture_armed;
+        (snapshot, busy)
+    }
     pub fn capture_busy(&self) -> bool {
-        let s = self.snapshot();
-        self.capture_requested || s.recording || s.capture_armed
+        self.capture_observation().1
     }
     pub fn song(&self) -> Song {
         let mut song = self.song.clone();

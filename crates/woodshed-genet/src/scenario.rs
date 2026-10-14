@@ -611,6 +611,12 @@ impl Snapshot<'_, '_> {
                     .count()
                     .to_string(),
             )
+            .with_field("recorder-rows", woodshed_views::stage::recorder_projection(ui).lanes.len().to_string())
+            .with_field("recorder-waveforms", ui.recorder_observation.buffers.iter().flatten().filter(|buffer|!buffer.samples.is_empty()).count().to_string())
+            .with_field("recorder-admitted", ui.recorder_observation.source.is_some().to_string())
+            .with_field("recorder-selected-card", ui.loop_selected.map_or(0,|id|id.card.0).to_string())
+            .with_field("recorder-capture-busy", ui.recorder_observation.capture_busy.to_string())
+            .with_field("recorder-inherited-bpm", ui.looper.inherited_bpm.to_string())
             .with_field("song-bars", ui.song.bars.len().to_string())
             .with_field("song-playing", ui.song_playing.to_string())
             .with_field("loop-export-busy", ui.loop_export_busy.to_string())

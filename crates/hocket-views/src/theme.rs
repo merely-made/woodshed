@@ -70,6 +70,11 @@ pub fn sheet() -> &'static str {
 .hocket-recorder-t-left { display: flex; align-items: center; flex-grow: 1; }
 .hocket-recorder-t-right { display: flex; align-items: center; flex-grow: 1; }
 .hocket-recorder-t-right-inner { display: flex; align-items: center; margin-left: auto; }
+.hocket-recorder-transport-wrap { flex-shrink:0; }
+.hocket-recorder-status { color:var(--text-dim); font-size:11px; padding:4px 12px; }
+.hocket-recorder-clear { width:auto; padding:0 8px; }
+.hocket-recorder-stop-capture { width:auto; min-width:46px; padding:0 12px; }
+.hocket-recorder-playing { color:var(--voice-teal); border-color:var(--voice-teal); }
 .hocket-recorder-readout { display: flex; flex-direction: column; margin-right: 18px; }
 .hocket-recorder-readout-val { font-size: 22px; color: var(--text); }
 .hocket-recorder-readout-val small { font-size: 12px; color: var(--text-dim); }
@@ -116,5 +121,6 @@ pub fn sheet() -> &'static str {
 .hocket-recorder-compact.hocket-recorder-transport { flex-wrap:wrap; gap:8px; padding:10px; }
 .hocket-recorder-compact .hocket-recorder-record { width:54px; height:54px; }
 .hocket-recorder-compact .hocket-recorder-record-core { width:28px; height:28px; }
+.hocket-recorder-compact .hocket-recorder-t-right-inner { flex-wrap:wrap; gap:4px; }
 "#
 }

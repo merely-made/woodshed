@@ -50,6 +50,7 @@ pub struct AudioObservation {
     capture_busy: bool,
     loops: Vec<bool>,
     error: Option<String>,
+    recorder: woodshed_views::stage::RecorderObservation,
 }
 
 impl AudioObservation {
@@ -59,6 +60,7 @@ impl AudioObservation {
             || self.capture_busy != ui.song_recording
             || self.loops != ui.song_loop_bars
             || self.error != ui.audio_error
+            || self.recorder != ui.recorder_observation
     }
 
     pub fn apply(self, ui: &mut UiState) {
@@ -69,6 +71,7 @@ impl AudioObservation {
         ui.song_recording = self.capture_busy;
         ui.song_loop_bars = self.loops;
         ui.audio_error = self.error;
+        ui.recorder_observation = self.recorder;
     }
 }
 
@@ -76,7 +79,9 @@ impl AudioObservation {
 /// reaches its current owner before a subsequent dispatch can replace backing.
 pub fn poll_audio(shared: &mut Shared) -> Option<AudioObservation> {
     let backend = shared.backend.as_mut()?;
-    Some(observe_audio(backend))
+    let mut observation = observe_audio(backend);
+    observation.recorder = backend.recorder_observation(shared.last_song.as_ref());
+    Some(observation)
 }
 
 fn observe_audio(backend: &mut crate::audio::CpalBackend) -> AudioObservation {
@@ -87,6 +92,7 @@ fn observe_audio(backend: &mut crate::audio::CpalBackend) -> AudioObservation {
         capture_busy: backend.loop_capture_busy(),
         loops: backend.song_loop_bars(),
         error: backend.error().map(str::to_owned),
+        recorder: backend.recorder_observation(None),
     }
 }
 

@@ -652,9 +652,10 @@ fn stage_css_with_roles(p: &Palette, authored_roles: bool) -> String {
 "#
     );
     format!(
-        "{}\n{}\n{themed}",
+        "{}\n{}\n{}\n{themed}\n.woodshed-recorder-mount {{ width:100%; min-width:0; }}\n.woodshed-recorder-mount .hocket-recorder {{ --ground:{bg}; --surface:{surface}; --surface-2:{surface_2}; --raised:{surface_hover}; --line:{text_disabled}; --line-soft:{surface_2}; --text:{text}; --text-dim:{text_dim}; --text-faint:{text_disabled}; --voice-amber:{secondary}; --record:{danger}; }}",
         cambium::GRAPH_CANVAS_SWATCH_CSS,
         cambium::RESIZE_HANDLE_CSS,
+        hocket_views::theme::sheet(),
     )
 }
 

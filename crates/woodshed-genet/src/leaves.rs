@@ -166,6 +166,10 @@ fn hasher() -> std::collections::hash_map::DefaultHasher {
 /// Refresh every leaf from the current state. Called from the frame hook,
 /// before the host lays out and paints.
 pub fn sync_all(shared: &mut Shared, ui: &UiState, leaves: &mut LeafRegistry<u64>) {
+    let recorder = woodshed_views::stage::recorder_projection(ui);
+    shared
+        .recorder_leaves
+        .reconcile_projection(leaves, &recorder);
     sync_overview(shared, ui, leaves);
     let mut h = hasher();
     ui.relationship_open.hash(&mut h);

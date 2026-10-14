@@ -1,0 +1,14 @@
+# Device-free source/config authoring must not depend on audio admission.
+settle 4
+ui-zoom 0.85
+act chord-approach-example
+click .pill Looper
+click .t-btn Loop this Set
+settle 3
+assert snap recorder-admitted == false
+assert snap recorder-inherited-bpm == 120
+click role:button @aria-label=Increase tempo
+assert snap recorder-inherited-bpm == 125
+assert snap song-playing == false
+assert snap capture-input-rate == none
+capture 01_offline_clock_authoring

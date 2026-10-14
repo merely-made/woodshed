@@ -8,10 +8,14 @@
 //! Media projection stays in the portable Recorder. Hosts own the registry;
 //! this module qualifies keys by mount and reconciles only its own leaves.
 
-use std::collections::{HashMap, HashSet};
+use std::collections::HashSet;
+use std::hash::{Hash, Hasher};
 
+use crate::{
+    HocketKey, RecorderProjection, WaveformProjection, WaveformSource, recorder_projection,
+};
 use audio_primitives::WaveformPeak;
-use hocket_model::{MediaRef, PhraseId, TrackColor, TrackId};
+use hocket_model::{PhraseId, TrackId};
 use sprigging::{ColorF, Leaf, LeafRegistry, PaintCx, Path, Size, SizeHint};
 
 #[cfg(test)]
@@ -34,17 +38,22 @@ impl RecorderMount {
         self.0
     }
     pub fn wave_key(self, track: TrackId) -> u64 {
-        TRACK_WAVE_NAMESPACE
-            | (hash_ids(&[&self.0.to_le_bytes(), track.0.as_bytes()]) & KEY_PAYLOAD_MASK)
+        self.projected_wave_key(&HocketKey::Track(track))
     }
     pub fn layer_wave_key(self, track: TrackId, layer_index: usize, phrase: PhraseId) -> u64 {
+        self.projected_layer_wave_key(&HocketKey::Layer {
+            track,
+            layer_index,
+            phrase,
+        })
+    }
+    pub fn projected_wave_key<K: Hash>(self, key: &K) -> u64 {
+        TRACK_WAVE_NAMESPACE
+            | (hash_ids(&[&self.0.to_le_bytes(), &key_hash(key).to_le_bytes()]) & KEY_PAYLOAD_MASK)
+    }
+    pub fn projected_layer_wave_key<K: Hash>(self, key: &K) -> u64 {
         LAYER_WAVE_NAMESPACE
-            | (hash_ids(&[
-                &self.0.to_le_bytes(),
-                track.0.as_bytes(),
-                &(layer_index as u64).to_le_bytes(),
-                phrase.0.as_bytes(),
-            ]) & KEY_PAYLOAD_MASK)
+            | (hash_ids(&[&self.0.to_le_bytes(), &key_hash(key).to_le_bytes()]) & KEY_PAYLOAD_MASK)
     }
     pub fn meter_key(self, channel: u8) -> u64 {
         METER_NAMESPACE | (hash_ids(&[&self.0.to_le_bytes(), &[channel]]) & KEY_PAYLOAD_MASK)
@@ -58,7 +67,7 @@ const KEY_PAYLOAD_MASK: u64 = 0x0fff_ffff_ffff_ffff;
 const TRACK_COLUMNS: usize = 128;
 const LAYER_COLUMNS: usize = 48;
 
-fn hash_ids(parts: &[&[u8]]) -> u64 {
+pub(crate) fn hash_ids(parts: &[&[u8]]) -> u64 {
     parts
         .iter()
         .flat_map(|part| part.iter().copied())
@@ -146,84 +155,12 @@ impl Leaf for WaveformLeaf {
     }
 }
 
-// --- reconcile from the portable Recorder -------------------------------------------
+// --- reconcile the same leaves from either display authority ------------
 
-fn color_of(c: TrackColor) -> ColorF {
-    ColorF {
-        r: c.r as f32 / 255.0,
-        g: c.g as f32 / 255.0,
-        b: c.b as f32 / 255.0,
-        a: 1.0,
-    }
-}
-
-/// Host-owned waveform projection cache. Leaf retention prevents per-frame
-/// recomputation; these maps additionally deduplicate media projections across
-/// views and discard superseded track mixes during reconciliation.
-#[derive(Default)]
-struct ProjectionCache {
-    tracks: HashMap<(TrackId, u64, usize), Vec<WaveformPeak>>,
-    layers: HashMap<(MediaRef, u32, usize), Vec<WaveformPeak>>,
-}
-
-impl ProjectionCache {
-    pub fn new() -> Self {
-        Self::default()
-    }
-
-    fn track_peaks(
-        &mut self,
-        state: &Recorder,
-        track_index: usize,
-        signature: u64,
-        columns: usize,
-    ) -> Option<Vec<WaveformPeak>> {
-        let track_id = state.session.tracks.get(track_index)?.id;
-        let key = (track_id, signature, columns);
-        if !self.tracks.contains_key(&key) {
-            self.tracks
-                .insert(key, state.render_track_waveform(track_index, columns)?);
-        }
-        self.tracks.get(&key).cloned()
-    }
-
-    fn layer_peaks(
-        &mut self,
-        state: &Recorder,
-        track_index: usize,
-        layer_index: usize,
-        columns: usize,
-    ) -> Option<Vec<WaveformPeak>> {
-        let track = state.session.tracks.get(track_index)?;
-        let layer = track.layers.get(layer_index)?;
-        let media = state.session.phrases.get(&layer.phrase_id)?.media;
-        let key = (media, layer.gain.to_bits(), columns);
-        if !self.layers.contains_key(&key) {
-            self.layers.insert(
-                key,
-                state.render_layer_waveform(track_index, layer_index, columns)?,
-            );
-        }
-        self.layers.get(&key).cloned()
-    }
-
-    fn retain_current(
-        &mut self,
-        track_signatures: &HashMap<TrackId, u64>,
-        active_media: &HashSet<MediaRef>,
-    ) {
-        self.tracks
-            .retain(|(track, signature, _), _| track_signatures.get(track) == Some(signature));
-        self.layers
-            .retain(|(media, _, _), _| active_media.contains(media));
-    }
-}
-
-/// Per-mount leaf ownership and cached real media projections. Reconciliation
-/// removes only this mount's retired leaves, preserving unrelated host leaves.
+/// Each mount owns only its registered keys. The waveform leaf retains its
+/// accepted peak envelope, so unchanged lazy projections never run again.
 pub struct RecorderLeaves {
     mount: RecorderMount,
-    cache: ProjectionCache,
     keys: HashSet<u64>,
 }
 
@@ -231,119 +168,139 @@ impl RecorderLeaves {
     pub fn new(mount: RecorderMount) -> Self {
         Self {
             mount,
-            cache: ProjectionCache::new(),
             keys: HashSet::new(),
         }
     }
-
     pub fn mount(&self) -> RecorderMount {
         self.mount
     }
 
     pub fn reconcile(&mut self, registry: &mut LeafRegistry<u64>, state: &Recorder) {
-        let mut active_keys = HashSet::from([self.mount.meter_key(0), self.mount.meter_key(1)]);
-        let mut track_signatures = HashMap::new();
-        let mut active_media = HashSet::new();
-        for (i, track) in state.session.tracks.iter().enumerate() {
-            let color = color_of(track.color);
-            let color_sig = (u64::from(track.color.r) << 16)
-                | (u64::from(track.color.g) << 8)
-                | u64::from(track.color.b);
-            let signature = track_sig(track, state);
-            if state.track_waveform_available(i) {
-                let sig = signature ^ color_sig;
-                track_signatures.insert(track.id, sig);
-                if let Some(peaks) = self.cache.track_peaks(state, i, sig, TRACK_COLUMNS) {
-                    let key = self.mount.wave_key(track.id);
-                    ensure_waveform(
-                        registry,
-                        key,
-                        peaks,
-                        color,
-                        sig,
-                        Size {
-                            width: 280.0,
-                            height: 40.0,
-                        },
-                    );
-                    active_keys.insert(key);
-                }
-            }
-            for (layer_index, layer) in track.layers.iter().enumerate() {
-                let Some(phrase) = state.session.phrases.get(&layer.phrase_id) else {
-                    continue;
-                };
-                active_media.insert(phrase.media);
-                if !state.layer_waveform_available(i, layer_index) {
-                    continue;
-                }
-                let signature = signature ^ hash_ids(&[layer.phrase_id.0.as_bytes()]);
-                if let Some(peaks) = self.cache.layer_peaks(state, i, layer_index, LAYER_COLUMNS) {
-                    let key = self
-                        .mount
-                        .layer_wave_key(track.id, layer_index, layer.phrase_id);
-                    ensure_waveform(
-                        registry,
-                        key,
-                        peaks,
-                        color,
-                        signature ^ color_sig,
-                        Size {
-                            width: 180.0,
-                            height: 11.0,
-                        },
-                    );
-                    active_keys.insert(key);
-                }
-            }
-        }
-        for channel in 0..2 {
-            ensure_meter(
-                registry,
-                self.mount.meter_key(channel as u8),
-                state.meter_level(channel),
-                state.meter_peak_level(channel),
-            );
-        }
-        registry.retain(|key| !self.keys.contains(key) || active_keys.contains(key));
-        self.keys = active_keys;
-        self.cache.retain_current(&track_signatures, &active_media);
+        self.reconcile_projection(registry, &recorder_projection(state));
     }
 
-    /// The host calls this when unmounting; other mounts retain their leaves.
+    pub fn reconcile_projection<K: Hash>(
+        &mut self,
+        registry: &mut LeafRegistry<u64>,
+        projection: &RecorderProjection<'_, K>,
+    ) {
+        let mut active = HashSet::new();
+        for lane in &projection.lanes {
+            let color = ColorF {
+                r: f32::from(lane.color[0]) / 255.0,
+                g: f32::from(lane.color[1]) / 255.0,
+                b: f32::from(lane.color[2]) / 255.0,
+                a: 1.0,
+            };
+            let key = self.mount.projected_wave_key(&lane.key);
+            if reconcile_wave(
+                registry,
+                key,
+                &lane.waveform,
+                color,
+                TRACK_COLUMNS,
+                Size {
+                    width: 280.0,
+                    height: 40.0,
+                },
+            ) {
+                active.insert(key);
+            }
+            for layer in &lane.layers {
+                let key = self.mount.projected_layer_wave_key(&layer.key);
+                if reconcile_wave(
+                    registry,
+                    key,
+                    &layer.waveform,
+                    color,
+                    LAYER_COLUMNS,
+                    Size {
+                        width: 180.0,
+                        height: 11.0,
+                    },
+                ) {
+                    active.insert(key);
+                }
+            }
+        }
+        if let Some(meters) = &projection.meters {
+            for (channel, reading) in meters.iter().enumerate() {
+                let key = self.mount.meter_key(channel as u8);
+                ensure_meter(registry, key, reading.level, reading.peak);
+                active.insert(key);
+            }
+        }
+        registry.retain(|key| !self.keys.contains(key) || active.contains(key));
+        self.keys = active;
+    }
+
     pub fn unmount(&mut self, registry: &mut LeafRegistry<u64>) {
         registry.retain(|key| !self.keys.contains(key));
         self.keys.clear();
-        self.cache = ProjectionCache::new();
     }
 }
 
-/// Renderer content signature, independent of row position and audio devices.
-fn track_sig(track: &hocket_model::Track, state: &Recorder) -> u64 {
-    let mut signature = hash_ids(&[track.id.0.as_bytes()]);
-    signature = match track.playback_mode {
-        hocket_model::PlaybackMode::Sum => signature ^ 0x51,
-        hocket_model::PlaybackMode::SelectOne { active } => {
-            signature ^ 0xa7 ^ u64::from(active.unwrap_or(u16::MAX))
-        },
+fn reconcile_wave(
+    registry: &mut LeafRegistry<u64>,
+    key: u64,
+    waveform: &WaveformProjection<'_>,
+    color: ColorF,
+    columns: usize,
+    intrinsic: Size,
+) -> bool {
+    let WaveformProjection::Data { revision, source } = waveform else {
+        return false;
     };
-    for layer in &track.layers {
-        let media = state
-            .session
-            .phrases
-            .get(&layer.phrase_id)
-            .map(|phrase| phrase.media.0)
-            .unwrap_or([0; 32]);
-        signature = hash_ids(&[
-            &signature.to_le_bytes(),
-            &media,
-            &layer.gain.to_bits().to_le_bytes(),
-        ]);
-        if layer.muted {
-            signature ^= 0x9e37_79b9_7f4a_7c15;
+    if matches!(source, WaveformSource::Pcm(samples) if samples.is_empty())
+        || matches!(source, WaveformSource::Peaks(peaks) if peaks.is_empty())
+    {
+        return false;
+    }
+    let sig = hash_ids(&[
+        &revision.to_le_bytes(),
+        &color.r.to_bits().to_le_bytes(),
+        &color.g.to_bits().to_le_bytes(),
+        &color.b.to_bits().to_le_bytes(),
+    ]);
+    if registry
+        .get_mut_as::<WaveformLeaf>(&key)
+        .is_some_and(|leaf| leaf.sig == sig)
+    {
+        return true;
+    }
+    let peaks = match source {
+        WaveformSource::Pcm(samples) if !samples.is_empty() => {
+            audio_primitives::min_max_peaks(samples, columns)
+        },
+        WaveformSource::Peaks(peaks) if !peaks.is_empty() => peaks.to_vec(),
+        WaveformSource::Lazy(project) => match project(columns) {
+            Some(peaks) if !peaks.is_empty() => peaks,
+            _ => return false,
+        },
+        _ => return false,
+    };
+    ensure_waveform(registry, key, peaks, color, sig, intrinsic);
+    true
+}
+
+fn key_hash<K: Hash>(key: &K) -> u64 {
+    struct KeyHasher(u64);
+    impl Hasher for KeyHasher {
+        fn finish(&self) -> u64 {
+            self.0
+        }
+        fn write(&mut self, bytes: &[u8]) {
+            for byte in bytes {
+                self.0 = (self.0 ^ u64::from(*byte)).wrapping_mul(0x0100_0000_01b3);
+            }
+        }
+        fn write_usize(&mut self, value: usize) {
+            self.write(&(value as u64).to_le_bytes());
         }
     }
-    signature
+    let mut hasher = KeyHasher(0xcbf2_9ce4_8422_2325);
+    key.hash(&mut hasher);
+    hasher.finish()
 }
 
 fn ensure_waveform(
@@ -567,5 +524,74 @@ mod tests {
                 .get_mut_as::<WaveformLeaf>(&b.wave_key(track))
                 .is_some()
         );
+    }
+
+    fn projected_pcm<'a>(samples: &'a [f32], revision: u64) -> RecorderProjection<'a, (u64, u64)> {
+        use crate::{LaneControls, LaneProjection, RecordingState, TransportProjection};
+        RecorderProjection {
+            title: "Set backing".into(),
+            hint: "".into(),
+            meters: None,
+            transport: TransportProjection::new((7, 0)),
+            lanes: vec![LaneProjection {
+                key: (7, 9),
+                name: "authored card".into(),
+                owner: "Set 7".into(),
+                clock: "83.75 bpm · 7/8 · 3 bars".into(),
+                color: [80, 180, 140],
+                selected: true,
+                recording: RecordingState::Idle,
+                waveform: WaveformProjection::Data {
+                    revision,
+                    source: WaveformSource::Pcm(samples),
+                },
+                layers: Vec::new(),
+                controls: LaneControls::default(),
+            }],
+        }
+    }
+
+    #[test]
+    fn host_owned_pcm_uses_same_retained_leaf_without_fabricated_meters() {
+        let mut registry = LeafRegistry::new();
+        let mount = RecorderMount::new(71);
+        let mut leaves = RecorderLeaves::new(mount);
+        leaves.reconcile_projection(&mut registry, &projected_pcm(&[-0.5, 0.75], 1));
+        let key = mount.projected_wave_key(&(7u64, 9u64));
+        let leaf = registry.get_mut_as::<WaveformLeaf>(&key).unwrap();
+        assert!(leaf.peaks.iter().any(|peak| peak.min == -0.5));
+        assert!(leaf.peaks.iter().any(|peak| peak.max == 0.75));
+        assert!(
+            registry
+                .get_mut_as::<sprigging::Meter>(&mount.meter_key(0))
+                .is_none()
+        );
+        leaves.reconcile_projection(&mut registry, &projected_pcm(&[-0.25, 0.5], 2));
+        let leaf = registry.get_mut_as::<WaveformLeaf>(&key).unwrap();
+        assert!(leaf.peaks.iter().any(|peak| peak.max == 0.5));
+        leaves.reconcile_projection(&mut registry, &projected_pcm(&[], 2));
+        assert!(registry.get_mut_as::<WaveformLeaf>(&key).is_none());
+    }
+
+    #[test]
+    fn lazy_host_projection_is_evaluated_only_when_material_revision_changes() {
+        let calls = std::cell::Cell::new(0);
+        let mut registry = LeafRegistry::new();
+        let mut leaves = RecorderLeaves::new(RecorderMount::new(72));
+        for revision in [1, 1, 2] {
+            let mut projection = projected_pcm(&[0.0], revision);
+            projection.lanes[0].waveform = WaveformProjection::Data {
+                revision,
+                source: WaveformSource::Lazy(Box::new(|_| {
+                    calls.set(calls.get() + 1);
+                    Some(vec![WaveformPeak {
+                        min: -0.25,
+                        max: 0.5,
+                    }])
+                })),
+            };
+            leaves.reconcile_projection(&mut registry, &projection);
+        }
+        assert_eq!(calls.get(), 2);
     }
 }

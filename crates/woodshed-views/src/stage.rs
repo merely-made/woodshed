@@ -14,6 +14,8 @@ use cambium::{
     GraphCanvasSubgraph, GraphCanvasSwatch, GraphViewport, SelectState, TextInput, clickable,
     custom_leaf, el, map_state, select, text, text_field,
 };
+pub use looper::{RecorderBuffer, RecorderObservation};
+pub use looper::recorder::{RecorderKey, RECORDER_MOUNT, projection as recorder_projection, dispatch as dispatch_recorder};
 use woodshed_core::arrangement::{GraphArrangement, arrange_graph};
 use woodshed_core::audio::{AudioRequest, CalibrationStatus, TransportState, TunerState};
 use woodshed_core::harmony::KeyedCatalogRef;
@@ -830,6 +832,8 @@ pub enum LoopExportRequest {
 
 /// Runner state: the portable core slice plus view-layer widget state.
 pub struct UiState {
+    /// Host-reflected recorder projection; PCM stays shared and never enters Session.
+    pub recorder_observation: looper::RecorderObservation,
     pub stage: StageState,
     pub set: Set,
     pub working_sets: woodshed_core::working_sets::WorkingSets,
@@ -1112,6 +1116,7 @@ impl UiState {
             card_shape_notice: None,
             song: SongDoc::default(),
             looper: LooperConfig::default(),
+            recorder_observation: Default::default(),
             loop_captures: Default::default(),
             loop_capture_notice: None,
             loop_retained_ids: Vec::new(),
@@ -2115,6 +2120,7 @@ impl UiState {
             .map(|take| take.id)
             .collect();
         self.loop_admitted = None;
+        self.recorder_observation = Default::default();
         self.loop_export_requests.clear();
         self.loop_export_busy = false;
         self.loop_export_notice = None;

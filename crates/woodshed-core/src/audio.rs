@@ -71,6 +71,53 @@ pub struct TunerState {
     pub reading: Option<TunerReading>,
 }
 
+/// Frozen musical backing for a queued recorder command. No Hocket project is
+/// created; these are Woodshed's existing product snapshots.
+#[derive(Clone, Debug, PartialEq)]
+pub enum RecorderBacking {
+    Set(crate::loop_plan::LoopPlan),
+    Saved(crate::song::SongDoc),
+}
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum RecorderCommand {
+    RecordCard(crate::loop_plan::LoopSegmentId),
+    ClearCard(crate::loop_plan::LoopSegmentId),
+    RecordSavedBar(usize),
+    ClearSavedBar(usize),
+    StopCapture {
+        start_bar: usize,
+        capture_epoch: u64,
+    },
+}
+#[derive(Clone, Debug)]
+pub struct RecorderRequest {
+    pub session: std::sync::Arc<()>,
+    pub backing: RecorderBacking,
+    pub command: RecorderCommand,
+}
+impl PartialEq for RecorderRequest {
+    fn eq(&self, other: &Self) -> bool {
+        std::sync::Arc::ptr_eq(&self.session, &other.session)
+            && self.backing == other.backing
+            && self.command == other.command
+    }
+}
+impl RecorderRequest {
+    /// Queue execution checks this AFTER any pending admission at dispatch tail.
+    pub fn is_current(
+        &self,
+        session: &std::sync::Arc<()>,
+        song: Option<&crate::song::SongDoc>,
+        plan: Option<&crate::loop_plan::LoopPlan>,
+    ) -> bool {
+        std::sync::Arc::ptr_eq(&self.session, session)
+            && match &self.backing {
+                RecorderBacking::Set(expected) => plan == Some(expected) && song.is_none(),
+                RecorderBacking::Saved(expected) => song == Some(expected) && plan.is_none(),
+            }
+    }
+}
+
 /// One thing the view layer asks the audio host to do, once.
 ///
 /// These are commands, not settings: continuous state (metronome transport,
@@ -82,11 +129,13 @@ pub struct TunerState {
 /// things in, and has to be cleared correctly at every consumption site. A
 /// queue keeps every request, in order, drained in one place.
 ///
-/// Nothing here carries a correlation id, because nothing here has an answer
-/// that could arrive late: results (recording status, calibration progress,
-/// measured latency) are polled from the backend each frame.
+/// Recorder commands additionally freeze their session, admitted backing and
+/// target until execution; UI selection or a new admission cannot redirect a
+/// queued command. Recording/calibration results remain host-polled.
 #[derive(Clone, Debug, PartialEq)]
 pub enum AudioRequest {
+    /// The reusable surface freezes source/epoch and positional targets until execution.
+    Recorder(RecorderRequest),
     /// Rewind the song transport to its start.
     SongRewind,
     /// Cancel pending preview work and sounding preview envelopes.
