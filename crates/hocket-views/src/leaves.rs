@@ -128,12 +128,14 @@ impl Leaf for WaveformLeaf {
         let y = |sample: f32| mid - sample.clamp(-1.0, 1.0) * amplitude;
         let x_at = |i: usize| (i as f32 / (n - 1).max(1) as f32) * s.width;
 
+        // Accepted PCM always has a visible baseline, even when its true
+        // amplitude envelope is smaller than one pixel. Do not normalize it.
+        cx.fill_rect(0.0, mid, s.width, 1.0, self.color);
         if self
             .peaks
             .iter()
             .all(|peak| peak.min == 0.0 && peak.max == 0.0)
         {
-            cx.fill_rect(0.0, mid, s.width, 1.0, self.color);
             self.dirty = false;
             return;
         }
@@ -423,6 +425,54 @@ mod tests {
         let mut cx = PaintCx::new(&mut commands, size);
         leaf.paint(&mut cx);
         assert!(matches!(commands.as_slice(), [PaintCmd::DrawRect(_)]));
+    }
+
+    #[test]
+    fn quiet_pcm_keeps_visible_silence_baseline_and_exact_subpixel_envelope() {
+        use paint_list_api::PathCommand;
+
+        let size = Size {
+            width: 80.0,
+            height: 40.0,
+        };
+        let paint = |samples: &[f32]| {
+            let peaks = audio_primitives::min_max_peaks(samples, 4);
+            let mut leaf = WaveformLeaf::new(peaks, color(), 1, size);
+            let mut commands = Vec::new();
+            leaf.paint(&mut PaintCx::new(&mut commands, size));
+            commands
+        };
+        let silence = paint(&[0.0; 4]);
+        let [PaintCmd::DrawRect(silent_baseline)] = silence.as_slice() else {
+            panic!("accepted silence must remain a single visible baseline");
+        };
+
+        // The hydrated public capture fixture peaks at approximately this
+        // amplitude: its 40px leaf envelope is only about 0.015px high.
+        let peak = 0.000_400_066;
+        let quiet = paint(&[0.0, peak, -peak, 0.0]);
+        let [PaintCmd::DrawRect(baseline), PaintCmd::DrawPath(envelope)] = quiet.as_slice() else {
+            panic!("quiet PCM must paint a baseline beneath its real envelope");
+        };
+        assert_eq!(baseline.placement, silent_baseline.placement);
+        assert_eq!(baseline.placement.bounds.size.width, size.width);
+        assert_eq!(baseline.placement.bounds.size.height, 1.0);
+        let ys: Vec<_> = envelope
+            .path
+            .commands
+            .iter()
+            .filter_map(|command| match command {
+                PathCommand::MoveTo(point) | PathCommand::LineTo(point) => Some(point.y),
+                _ => None,
+            })
+            .collect();
+        let min = ys.iter().copied().fold(f32::INFINITY, f32::min);
+        let max = ys.iter().copied().fold(f32::NEG_INFINITY, f32::max);
+        let mid = size.height * 0.5;
+        let amplitude = size.height * 0.5 - 1.0;
+        assert!((min - (mid - peak * amplitude)).abs() < 1e-6);
+        assert!((max - (mid + peak * amplitude)).abs() < 1e-6);
+        assert!(max > min && max - min < 0.02);
     }
 
     fn recorder_with_aliases() -> Recorder {
