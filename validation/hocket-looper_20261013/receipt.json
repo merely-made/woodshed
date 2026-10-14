@@ -154,7 +154,7 @@
       ],
       "findings": [
         "fresh process on same sealed profile; two ordered Cards and actual take retained",
-        "compact table scrolls within component; transport stays visible; input remains unopened"
+        "compact rows mount within the bounded table; transport stays visible; input remains unopened"
       ]
     },
     {
