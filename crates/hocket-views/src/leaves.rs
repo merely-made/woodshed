@@ -455,8 +455,8 @@ mod tests {
             panic!("quiet PCM must paint a baseline beneath its real envelope");
         };
         assert_eq!(baseline.placement, silent_baseline.placement);
-        assert_eq!(baseline.placement.bounds.size.width, size.width);
-        assert_eq!(baseline.placement.bounds.size.height, 1.0);
+        assert_eq!(baseline.placement.bounds.width(), size.width);
+        assert_eq!(baseline.placement.bounds.height(), 1.0);
         let ys: Vec<_> = envelope
             .path
             .commands
