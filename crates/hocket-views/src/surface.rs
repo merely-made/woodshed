@@ -419,7 +419,7 @@ where
                 "div",
                 (
                     el("b", text(control.label.to_string())),
-                    el("span", text(transport.record_note.to_string())),
+                    el("span", text(format!(" {}", transport.record_note))),
                 ),
             )
             .attr("class", "hocket-recorder-record-label"),
