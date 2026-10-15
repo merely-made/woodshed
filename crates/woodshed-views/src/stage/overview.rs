@@ -1,11 +1,13 @@
 //! Session Mere: inspect real assets, workspace views and host activity before acting.
-use super::canvas_camera::{CanvasSurface, apply_canvas_command, pan_by_fraction, zoom_by};
-use super::{UiChild, UiState, WorkspacePanel};
-use pictograph::canvas::controls::CanvasCommand;
-use cambium::{
-    GraphCanvasEvent, GraphCanvasNode, GraphCanvasRelation, GraphCanvasSubgraph, GraphCanvasSwatch,
-    clickable, el, graph_canvas, map_state, text, text_field,
+use super::canvas_camera::{
+    CanvasSurface, apply_canvas_command, apply_wheel, pan_by_fraction, zoom_by,
 };
+use super::{UiChild, UiState, WorkspacePanel};
+use cambium::{
+    GraphCanvasEvent, GraphCanvasInput, GraphCanvasNode, GraphCanvasRelation, GraphCanvasSubgraph,
+    GraphCanvasSwatch, clickable, el, graph_canvas_with_wheel, map_state, text, text_field,
+};
+use pictograph::canvas::controls::CanvasCommand;
 use std::collections::BTreeMap;
 use woodshed_core::retained_sets::SavedSetId;
 use woodshed_core::session_overview::{
@@ -492,46 +494,51 @@ impl UiState {
 pub(super) fn screen(ui: &UiState) -> UiChild {
     let snapshot = overview_snapshot(ui);
     let swatch = overview_swatch(ui);
-    let graph = graph_canvas(
+    let graph = graph_canvas_with_wheel(
         &swatch,
-        |ui: &mut UiState, event: GraphCanvasEvent<OverviewNodeId>| match event {
-            GraphCanvasEvent::Activate(id) => ui.inspect_overview_node(id),
-            GraphCanvasEvent::Drag(drag) => {
-                if overview_snapshot(ui)
-                    .nodes
-                    .iter()
-                    .any(|node| node.id == drag.id)
-                {
-                    ui.reconcile_overview_dynamics();
-                    match drag.phase {
-                        cambium::PointerPhase::Cancel => {
-                            ui.overview_dynamics.drag_end();
-                        },
-                        cambium::PointerPhase::Down => {
-                            ui.overview_dynamics.drag_start(&drag.id);
-                        },
-                        cambium::PointerPhase::Move => {
-                            ui.overview_dynamics.drag_move(drag.position);
-                        },
-                        cambium::PointerPhase::Up => {
-                            ui.overview_dynamics.drag_move(drag.position);
-                            ui.overview_dynamics.drag_end();
-                            if let Some(position) = ui.overview_dynamics.positions().get(&drag.id) {
-                                ui.overview_positions.insert(drag.id, *position);
-                            }
-                        },
+        |ui: &mut UiState, input: GraphCanvasInput<OverviewNodeId>| match input {
+            GraphCanvasInput::Wheel(event) => apply_wheel(ui, CanvasSurface::Overview, &event),
+            GraphCanvasInput::Event(event) => match event {
+                GraphCanvasEvent::Activate(id) => ui.inspect_overview_node(id),
+                GraphCanvasEvent::Drag(drag) => {
+                    if overview_snapshot(ui)
+                        .nodes
+                        .iter()
+                        .any(|node| node.id == drag.id)
+                    {
+                        ui.reconcile_overview_dynamics();
+                        match drag.phase {
+                            cambium::PointerPhase::Cancel => {
+                                ui.overview_dynamics.drag_end();
+                            },
+                            cambium::PointerPhase::Down => {
+                                ui.overview_dynamics.drag_start(&drag.id);
+                            },
+                            cambium::PointerPhase::Move => {
+                                ui.overview_dynamics.drag_move(drag.position);
+                            },
+                            cambium::PointerPhase::Up => {
+                                ui.overview_dynamics.drag_move(drag.position);
+                                ui.overview_dynamics.drag_end();
+                                if let Some(position) =
+                                    ui.overview_dynamics.positions().get(&drag.id)
+                                {
+                                    ui.overview_positions.insert(drag.id, *position);
+                                }
+                            },
+                        }
                     }
-                }
+                },
+                GraphCanvasEvent::Pan { delta } => {
+                    ui.overview_viewport.pan.0 += delta.0;
+                    ui.overview_viewport.pan.1 += delta.1;
+                },
+                GraphCanvasEvent::Zoom { factor } => {
+                    let command = zoom_by(ui, CanvasSurface::Overview, factor);
+                    apply_canvas_command(ui, CanvasSurface::Overview, command);
+                },
+                _ => {},
             },
-            GraphCanvasEvent::Pan { delta } => {
-                ui.overview_viewport.pan.0 += delta.0;
-                ui.overview_viewport.pan.1 += delta.1;
-            },
-            GraphCanvasEvent::Zoom { factor } => {
-                let command = zoom_by(ui, CanvasSurface::Overview, factor);
-                apply_canvas_command(ui, CanvasSurface::Overview, command);
-            },
-            _ => {},
         },
     );
     let mut controls: Vec<UiChild> = [

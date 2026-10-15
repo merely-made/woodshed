@@ -7,13 +7,13 @@
 //! that viewport as a pictograph [`CameraView`] so the same commands drive it.
 //! Cameras are presentation only: no command here edits a Set or a Mere.
 
-use cambium::{GraphCanvasSwatch, GraphViewport, clickable, el, text};
-use sprigging::Size;
+use cambium::{GraphCanvasSwatch, GraphViewport, WheelEvent, clickable, el, text};
 use pictograph::canvas::CameraView;
 use pictograph::canvas::camera_host::{CameraHost, FaceGeometry, FitHost, ScreenRect};
 use pictograph::canvas::controls::CanvasCommand;
 use pictograph::canvas::face_alignment::FaceAlignment;
-use pictograph::canvas::gestures::PAN_GLIDE;
+use pictograph::canvas::gestures::{PAN_GLIDE, WheelMode, WheelUse, wheel_use, wheel_zoom};
+use sprigging::Size;
 
 use super::{UiChild, UiState};
 
@@ -254,7 +254,11 @@ pub fn zoom_by(ui: &UiState, surface: CanvasSurface, factor: f32) -> CanvasComma
 
 /// A keyboard-style pan that travels `fraction` of the canvas's inner box
 /// once its glide completes.
-pub fn pan_by_fraction(ui: &UiState, surface: CanvasSurface, fraction: (f32, f32)) -> CanvasCommand {
+pub fn pan_by_fraction(
+    ui: &UiState,
+    surface: CanvasSurface,
+    fraction: (f32, f32),
+) -> CanvasCommand {
     let inner = surface_leaf(ui, surface).inner();
     CanvasCommand::Pan {
         dx: fraction.0 * inner.0 / PAN_GLIDE,
@@ -295,6 +299,41 @@ pub fn camera_controls(surface: CanvasSurface, prefix: &'static str) -> Vec<UiCh
         )) as UiChild
     })
     .collect()
+}
+
+/// One wheel notch over a surface, under pictograph's wheel policy: plain
+/// wheel zooms at the pointer, Ctrl/Meta always zoom (trackpad pinch), and a
+/// notch the policy leaves to the page keeps the host's scroll default.
+pub fn apply_wheel(ui: &mut UiState, surface: CanvasSurface, event: &WheelEvent) {
+    match wheel_use(
+        WheelMode::default(),
+        event.modifiers.ctrl,
+        event.modifiers.meta,
+    ) {
+        WheelUse::Page => {},
+        WheelUse::Zoom => {
+            if event.delta.1 == 0.0 {
+                return;
+            }
+            event.prevent_default();
+            // Cambium's positive y scrolls toward the top; pictograph takes
+            // the DOM sign, positive down.
+            wheel_zoom(
+                &mut SurfaceCamera::new(ui, surface),
+                event.local,
+                -event.delta.1,
+            );
+        },
+        WheelUse::Pan => {
+            event.prevent_default();
+            let mut camera = SurfaceCamera::new(ui, surface);
+            let view = camera.camera();
+            camera.set_camera(CameraView {
+                offset: (view.offset.0 + event.delta.0, view.offset.1 + event.delta.1),
+                ..view
+            });
+        },
+    }
 }
 
 /// A swatch's view-layer hit targets (faces) against the nodes its painted
@@ -438,7 +477,10 @@ mod tests {
         let centre = (LEAF.size.0 * 0.5, LEAF.size.1 * 0.5);
         let world_at_centre = |host: &Owned| {
             let c = host.camera();
-            ((centre.0 - c.offset.0) / c.zoom, (centre.1 - c.offset.1) / c.zoom)
+            (
+                (centre.0 - c.offset.0) / c.zoom,
+                (centre.1 - c.offset.1) / c.zoom,
+            )
         };
         let before = world_at_centre(&host);
         CanvasCommand::SetZoom { zoom: 2.5 }.apply(&mut host, LEAF.viewport_px());
@@ -541,9 +583,16 @@ mod tests {
                 apply_canvas_command(&mut ui, surface, command);
                 let faces = measure_surface_faces(&ui, surface).unwrap();
                 assert_eq!(faces.missing, 0, "{surface:?} after {command:?}");
-                assert!(faces.offset_max < 1e-3, "{surface:?} after {command:?}: {faces:?}");
+                assert!(
+                    faces.offset_max < 1e-3,
+                    "{surface:?} after {command:?}: {faces:?}"
+                );
             }
-            assert_eq!(serde_json::to_value(&ui.set).unwrap(), set, "{surface:?} edited the Set");
+            assert_eq!(
+                serde_json::to_value(&ui.set).unwrap(),
+                set,
+                "{surface:?} edited the Set"
+            );
             apply_canvas_command(&mut ui, surface, CanvasCommand::RestoreArrangement);
             let restored = match surface {
                 CanvasSurface::Overview => ui.overview_viewport,
@@ -561,8 +610,43 @@ mod tests {
             apply_canvas_command(&mut ui, surface, CanvasCommand::TogglePhysics);
             assert_eq!(
                 ui.overview_motion,
-                if surface == CanvasSurface::Overview { !before } else { before }
+                if surface == CanvasSurface::Overview {
+                    !before
+                } else {
+                    before
+                }
             );
+        }
+    }
+
+    #[test]
+    fn a_wheel_notch_toward_the_top_zooms_in_about_the_pointer() {
+        for (surface, mut ui) in surfaces() {
+            apply_canvas_command(&mut ui, surface, CanvasCommand::Fit);
+            let leaf = SurfaceCamera::new(&mut ui, surface).leaf();
+            let at = (leaf.size.0 * 0.3, leaf.size.1 * 0.6);
+            let world = |ui: &mut UiState| {
+                let view = SurfaceCamera::new(ui, surface).camera();
+                (
+                    (at.0 - view.offset.0) / view.zoom,
+                    (at.1 - view.offset.1) / view.zoom,
+                )
+            };
+            let (before_world, before_zoom) = (
+                world(&mut ui),
+                SurfaceCamera::new(&mut ui, surface).camera().zoom,
+            );
+            let event = WheelEvent::new((0.0, 40.0), at, leaf.size);
+            apply_wheel(&mut ui, surface, &event);
+            let after_zoom = SurfaceCamera::new(&mut ui, surface).camera().zoom;
+            assert!(
+                after_zoom > before_zoom || after_zoom == ZOOM_RANGE.1,
+                "{surface:?}"
+            );
+            assert!(close(world(&mut ui), before_world), "{surface:?}");
+            let faces = measure_surface_faces(&ui, surface).unwrap();
+            assert_eq!(faces.missing, 0);
+            assert!(faces.offset_max < 1e-3);
         }
     }
 }

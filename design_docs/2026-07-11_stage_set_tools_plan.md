@@ -3411,6 +3411,15 @@ pictograph's `FaceAlignment`. Scenario snapshots expose
 **Open.**
 - The native receipt (`scenarios/canvas_controls_p2.scn`) waits for the
   machine to be unlocked.
-- Wheel policy (`wheel_use`, anchored `wheel_zoom`) waits for Mere's
-  `graph_canvas_with_wheel`.
+- **Wheel (follow-up, same day, Mere `1b4172b2`).** All three surfaces take
+  the whole notch through `graph_canvas_with_wheel`, or the lower-level
+  builder's wheel hook on Related, and apply pictograph's `wheel_use` and
+  pointer-anchored `wheel_zoom`. Cambium's positive y means toward the top, so
+  the call negates it to pictograph's DOM sign. A notch the policy leaves to
+  the page keeps the host's scroll default.
+  - A CPU test checks, on every surface, that a notch toward the top zooms in,
+    keeps the world point under the pointer, and keeps faces on bodies.
+  - The host has no scripted wheel input (`HostPointer` covers move, press,
+    release and cancel only), so no scenario can drive a wheel notch; this
+    needs a hand check.
 - Touch is deferred until the host delivers touch input (Mark's ruling).

@@ -1,8 +1,8 @@
 //! A retained reading belongs to Woodshed; authored grammar and layout are shared.
 use super::{UiChild, UiState, WorkspacePanel};
 use cambium::{
-    GraphCanvasEvent, GraphCanvasNode, GraphCanvasRelation, GraphCanvasSubgraph, GraphCanvasSwatch,
-    clickable, el, graph_canvas, map_state, text, text_field,
+    GraphCanvasEvent, GraphCanvasInput, GraphCanvasNode, GraphCanvasRelation, GraphCanvasSubgraph,
+    GraphCanvasSwatch, clickable, el, graph_canvas_with_wheel, map_state, text, text_field,
 };
 use scenograph::relationship::{
     RecipeEdit, RelationshipRecipeDraft, RelationshipSnapshot, relationship_recipe,
@@ -563,7 +563,18 @@ pub(super) fn screen(ui: &UiState) -> UiChild {
                         "div",
                         el(
                             "div",
-                            graph_canvas(&swatch, |ui: &mut UiState, event| {
+                            graph_canvas_with_wheel(&swatch, |ui: &mut UiState, input| {
+                                let event = match input {
+                                    GraphCanvasInput::Wheel(event) => {
+                                        super::canvas_camera::apply_wheel(
+                                            ui,
+                                            super::canvas_camera::CanvasSurface::Relationship,
+                                            &event,
+                                        );
+                                        return;
+                                    },
+                                    GraphCanvasInput::Event(event) => event,
+                                };
                                 let r = match event {
                                     GraphCanvasEvent::Activate(id) => {
                                         ui.select_relationship(Some(id), None)
