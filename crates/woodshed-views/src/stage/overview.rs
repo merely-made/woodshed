@@ -73,6 +73,7 @@ pub fn overview_snapshot(ui: &UiState) -> OverviewSnapshot {
         active_exploration: &active_exploration,
         runner_owner: ui.rehearsal_owner,
         admitted_loop_plan: ui.loop_admitted.as_ref(),
+        loop_captures: &ui.loop_captures,
         session: SessionOverviewInput {
             working_set: &ui.set,
             retained_sets: &ui.retained_sets,
@@ -469,6 +470,9 @@ impl UiState {
             OverviewNodeId::Artifact(SessionArtifactId::WorkingSet) => {
                 self.activate_workspace_panel(WorkspacePanel::Set)
             },
+            OverviewNodeId::Artifact(SessionArtifactId::LoopTake(take)) => {
+                self.open_loop_take(take);
+            },
             OverviewNodeId::Artifact(SessionArtifactId::Song)
             | OverviewNodeId::Process(OverviewProcess::Looper) => {
                 self.select_app_section(AppSection::Looper)
@@ -642,6 +646,9 @@ pub(super) fn screen(ui: &UiState) -> UiChild {
                         el(
                             "div",
                             text(match node.id {
+                                OverviewNodeId::Artifact(SessionArtifactId::LoopTake(_)) => {
+                                    "Retained Looper take"
+                                },
                                 OverviewNodeId::Artifact(_) => "Retained / working material",
                                 OverviewNodeId::View(_) => "Workspace view",
                                 OverviewNodeId::Process(_) => "Live activity",
@@ -719,6 +726,7 @@ pub(super) fn screen(ui: &UiState) -> UiChild {
                 }
             },
             OverviewNodeId::Artifact(SessionArtifactId::SavedSet(_)) => "Open copy",
+            OverviewNodeId::Artifact(SessionArtifactId::LoopTake(_)) => "Open in Looper",
             OverviewNodeId::Catalog(_) => "Explore catalog",
             OverviewNodeId::Artifact(SessionArtifactId::History) => {
                 "Explore recorded relationships"
@@ -752,6 +760,20 @@ pub(super) fn screen(ui: &UiState) -> UiChild {
                         },
                     )) as UiChild,
                 ]
+            } else if let OverviewNodeId::Artifact(SessionArtifactId::LoopTake(take)) = id {
+                // Card setup is separate from Looper navigation; orphans have none.
+                ui.working_sets
+                    .get(take.set, &ui.set)
+                    .and_then(|set| set.card(take.card))
+                    .map(|_| {
+                        Box::new(clickable(
+                            el("button", text("Card setup"))
+                                .attr("class", "t-btn overview-take-card-setup"),
+                            move |ui: &mut UiState, _| ui.open_loop_card(take),
+                        )) as UiChild
+                    })
+                    .into_iter()
+                    .collect()
             } else {
                 Vec::new()
             };
@@ -1080,6 +1102,236 @@ mod tests {
         ui.stage_current(None);
         assert!(!ui.set.cards.is_empty());
         ui
+    }
+
+    fn loop_ready_ui() -> UiState {
+        use woodshedding::rehearsal::Hold;
+        let mut ui = UiState::new();
+        ui.stage.set_lens(woodshed_core::Lens::Chords);
+        ui.stage_current(None);
+        ui.stage_current(None);
+        for card in &mut ui.set.cards {
+            card.timing.hold = Hold::Bars(2);
+        }
+        assert_eq!(ui.set.cards.len(), 2);
+        ui
+    }
+
+    fn stored_take(
+        id: woodshed_core::loop_plan::LoopSegmentId,
+    ) -> woodshed_core::loop_capture::LoopCaptureRef {
+        woodshed_core::loop_capture::LoopCaptureRef {
+            id,
+            bpm: 120.0,
+            beats: 4,
+            bars: 2,
+            sample_rate: 48_000,
+            frames: 192_000,
+            digest: "cd".repeat(32),
+            codec: Default::default(),
+        }
+    }
+
+    fn take_id(
+        set: woodshed_core::working_sets::WorkingSetId,
+        card: CardId,
+    ) -> woodshed_core::loop_plan::LoopSegmentId {
+        woodshed_core::loop_plan::LoopSegmentId { set, card }
+    }
+
+    fn with_takes(ui: &mut UiState, ids: &[woodshed_core::loop_plan::LoopSegmentId]) {
+        ui.loop_captures.namespace = Some("0123456789abcdef0123456789abcdef".into());
+        ui.loop_captures.takes = ids.iter().copied().map(stored_take).collect();
+    }
+
+    fn take_node(id: woodshed_core::loop_plan::LoopSegmentId) -> OverviewNodeId {
+        OverviewNodeId::Artifact(SessionArtifactId::LoopTake(id))
+    }
+
+    #[test]
+    fn opening_an_admitted_take_selects_its_lane_without_writing_takes() {
+        use woodshed_core::loop_plan::LooperSource;
+        let mut ui = loop_ready_ui();
+        let owner = ui.working_sets.active_id;
+        let second = take_id(owner, ui.set.cards[1].id);
+        with_takes(&mut ui, &[second]);
+        ui.loop_working_set(owner);
+        ui.loop_admitted = Some(ui.requested_loop_plan().unwrap());
+        ui.loop_selected = None;
+        let manifest = ui.loop_captures.clone();
+        let set = serde_json::to_value(&ui.set).unwrap();
+        ui.inspect_overview_node(take_node(second));
+        assert_eq!(ui.overview_focus, Some(take_node(second)));
+        assert_ne!(ui.section, AppSection::Looper);
+        assert_eq!(ui.loop_selected, None);
+        ui.open_overview_node(take_node(second));
+        assert_eq!(ui.section, AppSection::Looper);
+        assert_eq!(ui.looper.source, LooperSource::Set(owner));
+        // Without this selection the recorder would fall back to its first row.
+        assert_eq!(ui.loop_selected, Some(second));
+        assert_eq!(ui.loop_notice, None);
+        assert_eq!(ui.loop_captures, manifest);
+        assert_eq!(serde_json::to_value(&ui.set).unwrap(), set);
+        assert!(ui.audio_requests.is_empty());
+        assert!(!ui.song_playing && !ui.rehearsal_running);
+    }
+
+    #[test]
+    fn unadmitted_take_requests_its_set_and_explains_the_pending_lane() {
+        use woodshed_core::loop_plan::LooperSource;
+        use woodshedding::rehearsal::Set;
+        let mut ui = loop_ready_ui();
+        let take_owner = ui.working_sets.active_id;
+        let take = take_id(take_owner, ui.set.cards[0].id);
+        ui.loop_working_set(take_owner);
+        let loaded_owner = ui
+            .working_sets
+            .create(&mut ui.set, "Loaded", Set::default());
+        ui.loop_working_set(loaded_owner);
+        ui.loop_admitted = None;
+        with_takes(&mut ui, &[take]);
+        assert_eq!(ui.working_sets.active_id, loaded_owner);
+        let detail = overview_snapshot(&ui)
+            .nodes
+            .into_iter()
+            .find(|node| node.id == take_node(take))
+            .unwrap()
+            .detail;
+        assert!(detail.contains("once that backing is admitted"));
+        ui.open_overview_node(take_node(take));
+        assert_eq!(ui.section, AppSection::Looper);
+        assert_eq!(ui.looper.source, LooperSource::Set(take_owner));
+        assert_eq!(ui.loop_selected, Some(take));
+        assert!(
+            ui.loop_notice
+                .as_deref()
+                .unwrap()
+                .contains("once the backing is admitted")
+        );
+        // Looper navigation does not switch the edited Set.
+        assert_eq!(ui.working_sets.active_id, loaded_owner);
+    }
+
+    #[test]
+    fn recording_refuses_take_navigation_to_another_source() {
+        use woodshed_core::loop_plan::LooperSource;
+        use woodshedding::rehearsal::Set;
+        let mut ui = loop_ready_ui();
+        let take_owner = ui.working_sets.active_id;
+        let take = take_id(take_owner, ui.set.cards[0].id);
+        let recording_owner = ui
+            .working_sets
+            .create(&mut ui.set, "Recording", Set::default());
+        ui.loop_working_set(recording_owner);
+        with_takes(&mut ui, &[take]);
+        ui.song_recording = true;
+        ui.open_overview_node(take_node(take));
+        assert_eq!(ui.section, AppSection::Looper);
+        assert_eq!(ui.looper.source, LooperSource::Set(recording_owner));
+        assert_eq!(ui.loop_selected, None);
+        assert!(
+            ui.loop_notice
+                .as_deref()
+                .unwrap()
+                .contains("Stop recording")
+        );
+    }
+
+    #[test]
+    fn orphan_take_stays_visible_and_opens_the_looper_without_retargeting() {
+        use woodshed_core::loop_plan::LooperSource;
+        let mut ui = loop_ready_ui();
+        let owner = ui.working_sets.active_id;
+        let removed = take_id(owner, CardId(4_000));
+        let gone_set = take_id(
+            woodshed_core::working_sets::WorkingSetId(4_000),
+            ui.set.cards[0].id,
+        );
+        with_takes(&mut ui, &[removed, gone_set]);
+        let source = ui.looper.source;
+        let graph = overview_snapshot(&ui);
+        for orphan in [removed, gone_set] {
+            let node = graph
+                .nodes
+                .iter()
+                .find(|node| node.id == take_node(orphan))
+                .unwrap();
+            assert!(node.detail.contains("not reassigned"));
+            assert!(
+                !graph
+                    .relations
+                    .iter()
+                    .any(|edge| edge.from == take_node(orphan))
+            );
+            ui.loop_notice = None;
+            ui.open_overview_node(take_node(orphan));
+            assert_eq!(ui.section, AppSection::Looper);
+            assert_eq!(ui.looper.source, source);
+            assert_eq!(ui.loop_selected, None);
+            assert!(
+                ui.loop_notice
+                    .as_deref()
+                    .unwrap()
+                    .contains("no current Card")
+            );
+        }
+        assert_eq!(ui.loop_captures.takes.len(), 2);
+        assert!(source != LooperSource::Set(gone_set.set));
+    }
+
+    #[test]
+    fn retained_take_placement_survives_manifest_edits_and_reopen() {
+        let mut ui = loop_ready_ui();
+        let owner = ui.working_sets.active_id;
+        let first = take_id(owner, ui.set.cards[0].id);
+        let second = take_id(owner, ui.set.cards[1].id);
+        with_takes(&mut ui, &[second]);
+        let epoch = overview_scene(&overview_snapshot(&ui)).epoch;
+        ui.overview_positions
+            .insert(take_node(second), (0.21, 0.67));
+        ui.overview_roles.insert(take_node(second), "pinned".into());
+        ui.overview_background.insert(take_node(second));
+        ui.overview_focus = Some(take_node(second));
+        // A new earlier take reorders dense instances and changes the epoch.
+        with_takes(&mut ui, &[first, second]);
+        assert_ne!(overview_scene(&overview_snapshot(&ui)).epoch, epoch);
+        ui.reconcile_overview_dynamics();
+        let placed = |ui: &UiState| {
+            overview_swatch(ui)
+                .graph
+                .nodes
+                .into_iter()
+                .find(|node| node.id == take_node(second))
+                .unwrap()
+                .position
+        };
+        let position = placed(&ui);
+        assert!((position.0 - 0.21).abs() < 0.001 && (position.1 - 0.67).abs() < 0.001);
+        let session = ui.to_persisted();
+        let json = session.overview_presentation_json.clone().unwrap();
+        assert!(json.contains(r#""version":2"#));
+        let decoded = serde_json::from_str(&serde_json::to_string(&session).unwrap()).unwrap();
+        let mut reopened = UiState::new();
+        reopened.apply_persisted(&decoded, Default::default());
+        assert_eq!(reopened.loop_captures, ui.loop_captures);
+        assert_eq!(reopened.overview_focus, Some(take_node(second)));
+        assert!(reopened.overview_background.contains(&take_node(second)));
+        assert_eq!(
+            reopened
+                .overview_roles
+                .get(&take_node(second))
+                .map(String::as_str),
+            Some("pinned")
+        );
+        reopened.reconcile_overview_dynamics();
+        let position = placed(&reopened);
+        assert!((position.0 - 0.21).abs() < 0.001 && (position.1 - 0.67).abs() < 0.001);
+        // Removing the other take leaves this identity and placement intact.
+        let mut edited = reopened;
+        with_takes(&mut edited, &[second]);
+        edited.reconcile_overview_dynamics();
+        let position = placed(&edited);
+        assert!((position.0 - 0.21).abs() < 0.001 && (position.1 - 0.67).abs() < 0.001);
     }
 
     #[test]

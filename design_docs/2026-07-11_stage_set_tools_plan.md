@@ -3305,3 +3305,66 @@ fresh reopening. Microphone/physical capture, extra listening playback, general
 long-bank performance, disk collection and the circular-arrow glyph stay open.
 Owned native apps, Keeper and lifecycle sleep prevention are stopped; the
 coordinator has released the foreground lane to Knot.
+
+
+### October 14 slice: Looper takes in the session Mere
+
+**Status: implemented; focused automated checks and one unsealed native fixture run pass.** A survey of Graphshell-in-Woodshed with Hocket
+integration found the session Mere already composed from shared Mere crates,
+with Graphshell used only for custody. The mounted Hocket recorder projects
+Woodshed-owned state (`LoopPlan`, `LoopCaptureManifest`); woodshed-core owns
+takes, one per Card, with no layers. Per the boundary above, Graphshell is
+not a second owner of Woodshed data. The smallest useful next step is to show
+retained takes in the Mere and let it navigate into the Looper. It adds no
+live Graphshell endpoint and no standalone Hocket projection.
+
+Take nodes come from the persisted capture manifest
+(`PersistedSession.loop_captures`). Each node's identity is its
+owner-qualified `LoopSegmentId` (`artifact:loop-take:<set>:<card>`). Each
+take that still has its Set and Card relates to its working Set. The overview
+reads the manifest only. It never records, copies, clears or reassigns a take.
+Saved-song bars are positional and have no persisted PCM, so they get no node.
+Orphaned takes (Set or Card removed) stay visible under their original
+identity, with no relation and no retargeting. They point to the Looper's
+existing explicit "Clear stored loop" list.
+
+Opening a take selects the Looper, requests its owning Set as the backing and
+selects that Card's lane. While a capture is armed or recording, the Looper's
+existing refusal stands and the selection is left unchanged. A Set that is
+not the admitted plan has no recorder lane until the host admits it. The
+notice says so, and the selection survives admission. A Card outside the
+Set's loop-ready plan is reported without inventing a lane. "Card setup"
+remains a separate inspector action through `open_loop_card`.
+
+The new node variant changes the retained presentation payload, so its
+version moves to 2. Version-1 payloads still load. Older builds treat
+version 2 as unknown, keep it opaque and preserve it on save, so they never
+misread a take identity as invalid and reset it. Dense scene instances and
+the content-hash epoch change on manifest edits. Retained placements, roles
+and emphasis are keyed by `OverviewNodeId`, so they survive. Done-conditions:
+focused core and views tests pass for take projection, orphans, payload
+version seam and placement survival. A native capture must show take nodes
+and Looper activation before this slice is described as qualified.
+
+**Validation (2026-10-14):** woodshed-core passes 240 tests, including four
+new take-projection tests. woodshed-views passes 175, including six new
+navigation, orphan, payload-version and placement-survival tests. The desktop
+crate builds. The scenario lane adds observations for `overview-takes`,
+`overview-take-links`, `loop-source-set`, `loop-admitted-set` and
+`recorder-selected-set`.
+
+One native process ran at 1180x800 against an isolated, unsealed plaintext
+fixture: two working Sets, three manifest take references without PCM
+companions, and a version-1 presentation payload. It passed with five
+captures. The Mere showed three take nodes and two owner links. Opening the
+second Set's take requested and admitted that Set and selected its lane,
+leaving the edited Set and the manifest unchanged. The orphan opened the
+Looper with its no-current-Card notice, left the source unchanged and kept
+its explicit Clear entry. Evidence is outside the repository in
+`/Users/markik/Code/testing/woodshed/mere-takes-20261014/receipt.json`.
+
+This run does not establish sealed take hydration or playback reached from
+the Mere, the narrow layout, or a native fresh-process reopen of a version-2
+payload. It also exposed a density issue: on the wide canvas, new take nodes
+at their default slots overlap labels placed by the retained version-1
+arrangement. That is a presentation follow-up, not an identity defect.

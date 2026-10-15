@@ -239,6 +239,49 @@ impl UiState {
         }
     }
 
+    /// Navigate from a retained take into the Looper. Only the requested
+    /// backing and lane selection change; the take, its PCM and the admitted
+    /// plan are left to the host. A missing owner is reported, not retargeted.
+    pub fn open_loop_take(&mut self, id: LoopSegmentId) {
+        self.select_app_section(woodshed_core::storage::AppSection::Looper);
+        if self
+            .working_sets
+            .get(id.set, &self.set)
+            .and_then(|set| set.card(id.card))
+            .is_none()
+        {
+            self.loop_notice = Some(format!(
+                "The take for Set {} Card {} has no current Card. It is kept and not reassigned; clear it below if it is no longer wanted.",
+                id.set.0, id.card.0
+            ));
+            return;
+        }
+        // Refuses (and explains) while capture is armed for another source.
+        self.loop_working_set(id.set);
+        if self.looper.source != LooperSource::Set(id.set) {
+            return;
+        }
+        self.loop_selected = Some(id);
+        if self
+            .loop_admitted
+            .as_ref()
+            .is_some_and(|plan| plan.index_of(id).is_some())
+        {
+            return;
+        }
+        self.loop_notice = Some(
+            if self
+                .requested_loop_plan()
+                .is_ok_and(|plan| plan.index_of(id).is_some())
+            {
+                "Loading this take's Set. Its recorder lane appears once the backing is admitted."
+            } else {
+                "This take's Card is not in the Set's loop-ready backing. The take is kept; use Card setup to resolve it."
+            }
+            .into(),
+        );
+    }
+
     fn selected_loop_segment(&self) -> Option<LoopSegmentId> {
         let requested = self.requested_loop_plan().ok();
         let plan = self.loop_admitted.as_ref().or(requested.as_ref())?;
