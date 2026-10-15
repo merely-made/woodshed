@@ -13,7 +13,7 @@ hocket-views.workspace = true
 hocket-recorder.workspace = true
 # The desktop realization of muniment's Backend. woodshed-core names the slots;
 # this crate only decides which file each one lives in.
-muniment = { git = "https://www.github.com/merely-made/mere.git", rev = "1b4172b254401b4913f9de1317717ffcb40a1694" }
+muniment = { git = "https://www.github.com/merely-made/mere.git", rev = "39c3c955d686fb0304fea47dc35c402049fceca1" }
 # The family-shared identity vault: which persona this machine practices as,
 # and the key its practice session is sealed under. Desktop-only, which is why
 # it is declared here rather than in the portable core. Declared in the

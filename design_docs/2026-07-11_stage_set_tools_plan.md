@@ -3423,3 +3423,24 @@ pictograph's `FaceAlignment`. Scenario snapshots expose
     release and cancel only), so no scenario can drive a wheel notch; this
     needs a hand check.
 - Touch is deferred until the host delivers touch input (Mark's ruling).
+
+**Native receipt (2026-10-15).** The receipt is
+[`validation/canvas-p2_20261015/receipt.json`](../validation/canvas-p2_20261015/receipt.json),
+from four runs of `scenarios/canvas_controls_p2.scn` on Mere `39c3c955d`.
+
+- **Final run:** RESULT ok over 241 frames, with eight distinct captures.
+- **Natively:** buttons were clicked through host hit-testing, scripted
+  wheel notches (plain and Ctrl) landed on the relationship editor and
+  Related, and per-surface zoom and face fields were asserted.
+- **Bug found and fixed.** Review found that the relationship and Related
+  leaves did not repaint on camera-only changes: their repaint keys left
+  out the viewport. Hit targets moved while paint stayed. The keys now
+  include the camera.
+- **New assertions.** `painted_cameras` records the camera each leaf was
+  last painted with, and eleven `*-paint-current` assertions now hold.
+  These are needed because `FaceAlignment` measures a freshly painted leaf
+  and cannot see a stale registered one.
+- **Styling.** Related's camera buttons received button chrome.
+- **Not covered natively.** Overview wheel (its canvas sits below the fold
+  at the receipt window size) is covered by a CPU test. Touch remains
+  deferred.

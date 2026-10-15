@@ -1202,6 +1202,18 @@ impl Snapshot<'_, '_> {
             (CanvasSurface::Related, "related"),
             (CanvasSurface::Relationship, "relationship"),
         ] {
+            let live = match surface {
+                CanvasSurface::Overview => ui.overview_viewport,
+                CanvasSurface::Related => ui.related_viewport,
+                CanvasSurface::Relationship => ui.relationship_viewport,
+            };
+            let painted = self.shared.painted_cameras[surface as usize];
+            snap = snap
+                .with_field(format!("{prefix}-paint-zoom"), format!("{:.2}", painted.2))
+                .with_field(
+                    format!("{prefix}-paint-current"),
+                    (painted == (live.pan.0, live.pan.1, live.zoom)).to_string(),
+                );
             if let Some(faces) = canvas_camera::measure_surface_faces(ui, surface) {
                 for (name, value) in faces.fields() {
                     snap = snap.with_field(format!("{prefix}-{name}"), value);

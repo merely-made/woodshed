@@ -379,6 +379,8 @@ fn stage_css_with_roles(p: &Palette, authored_roles: bool) -> String {
    narrow). */
 .related-body {{ display: flex; align-items: flex-start; flex-wrap: wrap; }}
 .related-graph-col {{ flex: 0 0 auto; background-color: {surface_2}; border-radius: 8px; padding: 4px; margin-right: 10px; margin-bottom: 10px; }}
+.related-camera-controls {{ display: flex; flex-wrap: wrap; gap: 6px; padding: 6px 2px 2px; }}
+.related-camera-controls .t-btn {{ background-color: {surface_hover}; min-height: 28px; padding: 6px 10px; }}
 .related-pane-col {{ flex: 1; min-width: 150px; }}
 /* Cambium graph-canvas-swatch: the painted leaf shows the nodes and emphasis;
    the buttons are transparent hit targets. A small quiet Expand button. */
