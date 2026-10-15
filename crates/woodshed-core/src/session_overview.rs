@@ -6,7 +6,8 @@
 
 use crate::{
     history::PracticeHistory,
-    loop_plan::LoopPlan,
+    loop_capture::{LoopCaptureManifest, MAX_CAPTURE_TAKES},
+    loop_plan::{LoopPlan, LoopSegmentId},
     retained_sets::{RetainedSets, SavedSetId},
     song::SongDoc,
 };
@@ -29,6 +30,9 @@ pub enum SessionArtifactId {
     SavedSet(SavedSetId),
     Song,
     History,
+    /// A retained Looper take, qualified by its owning Set and Card. The
+    /// overview references the capture manifest entry; it never owns the take.
+    LoopTake(LoopSegmentId),
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
@@ -79,6 +83,9 @@ impl OverviewNodeId {
             },
             Self::Artifact(SessionArtifactId::Song) => "artifact:song".into(),
             Self::Artifact(SessionArtifactId::History) => "artifact:practice-history".into(),
+            Self::Artifact(SessionArtifactId::LoopTake(id)) => {
+                format!("artifact:loop-take:{}:{}", id.set.0, id.card.0)
+            },
             Self::View(id) => format!("view:{id}"),
             Self::Process(process) => format!(
                 "process:{}",
@@ -147,6 +154,7 @@ pub enum OverviewRelationKind {
     EqualTones,
     ContainsTones,
     SharesTones,
+    CapturedFor,
 }
 
 impl OverviewRelationKind {
@@ -162,6 +170,7 @@ impl OverviewRelationKind {
             Self::EqualTones => "same pitch classes",
             Self::ContainsTones => "contains all pitch classes of",
             Self::SharesTones => "shares pitch classes with",
+            Self::CapturedFor => "take captured for a Card of",
         }
     }
     pub fn stable_id(self) -> &'static str {
@@ -176,6 +185,7 @@ impl OverviewRelationKind {
             Self::EqualTones => "woodshed:equal-pitch-classes",
             Self::ContainsTones => "woodshed:contains-pitch-classes",
             Self::SharesTones => "woodshed:shares-pitch-classes",
+            Self::CapturedFor => "woodshed:loop-take-of",
         }
     }
 }
@@ -429,6 +439,8 @@ pub struct ConfiguredSessionOverviewInput<'a> {
     /// The host-accepted Set backing, retained when a requested replacement
     /// fails. None means the saved compatibility backing remains loaded.
     pub admitted_loop_plan: Option<&'a LoopPlan>,
+    /// The persisted capture manifest. Takes are referenced, never written.
+    pub loop_captures: &'a LoopCaptureManifest,
 }
 
 /// Overview of multiple real owners. No legacy active-Set alias is emitted.
@@ -595,7 +607,92 @@ pub fn configured_session_overview(input: &ConfiguredSessionOverviewInput<'_>) -
             }
         }
     }
+    append_loop_takes(&mut result, input);
     result
+}
+
+/// Retained takes from the persisted capture manifest. Saved-song bars are
+/// positional and have no persisted PCM, so they never appear here. A take
+/// whose Set or Card is gone keeps its identity and gains no relation; it is
+/// not reassigned to whichever Set is open.
+fn append_loop_takes(result: &mut OverviewSnapshot, input: &ConfiguredSessionOverviewInput<'_>) {
+    use OverviewNodeId::Artifact;
+    use SessionArtifactId::{LoopTake, WorkingSetInstance};
+    let manifest = input.loop_captures;
+    let refused = manifest.validate().err();
+    for take in manifest.takes.iter().take(MAX_CAPTURE_TAKES) {
+        let id = Artifact(LoopTake(take.id));
+        if result.nodes.iter().any(|node| node.id == id) {
+            continue;
+        }
+        let owner = input
+            .working_sets
+            .get(take.id.set, input.session.working_set);
+        let set_name = owner.and_then(|_| {
+            result
+                .nodes
+                .iter()
+                .find(|node| node.id == Artifact(WorkingSetInstance(take.id.set)))
+                .map(|node| node.label.clone())
+        });
+        let card = owner.and_then(|set| set.card(take.id.card));
+        let seconds = if take.sample_rate > 0 {
+            take.frames as f64 / f64::from(take.sample_rate)
+        } else {
+            0.0
+        };
+        let clock = format!(
+            "{} × {}/4 at {} bpm, {:.1} s",
+            take.bars, take.beats, take.bpm, seconds
+        );
+        let related = card.is_some() && set_name.is_some();
+        let (label, mut detail) = match (card, set_name) {
+            (Some(card), Some(set_name)) => {
+                let lane = match input.admitted_loop_plan {
+                    Some(plan) if plan.index_of(take.id).is_some() => {
+                        "Its recorder lane is loaded in the Looper."
+                    },
+                    Some(plan) if plan.owner == take.id.set => {
+                        "Its Card is not in the loaded backing; the take is kept."
+                    },
+                    _ => {
+                        "Opening loads its Set in the Looper; the recorder lane appears once that backing is admitted."
+                    },
+                };
+                (
+                    format!("Take · {}", card.label),
+                    format!(
+                        "Looper take ({clock}) for {} in {set_name}. {lane}",
+                        card.label
+                    ),
+                )
+            },
+            _ => (
+                format!("Take · Set {} Card {}", take.id.set.0, take.id.card.0),
+                format!(
+                    "Looper take ({clock}) for Card {} of working Set {}, which is no longer available. The take is kept and not reassigned; clear it from the Looper's stored loops if it is no longer wanted.",
+                    take.id.card.0, take.id.set.0
+                ),
+            ),
+        };
+        if let Some(reason) = &refused {
+            detail = format!(
+                "{detail} The capture manifest is refused ({reason}); references are kept unchanged."
+            );
+        }
+        result.nodes.push(OverviewNode {
+            id: id.clone(),
+            label,
+            detail,
+        });
+        if related {
+            result.relations.push(OverviewRelation {
+                from: id,
+                to: Artifact(WorkingSetInstance(take.id.set)),
+                kind: OverviewRelationKind::CapturedFor,
+            });
+        }
+    }
 }
 
 /// Lower the typed read model into the shared portable scene contract. Identity
@@ -772,6 +869,7 @@ mod tests {
             active_exploration: &state,
             runner_owner: Some(editing),
             admitted_loop_plan,
+            loop_captures: &LoopCaptureManifest::default(),
         });
         assert_eq!(serde_json::to_value(&song).unwrap(), payload);
         assert_eq!(
@@ -1094,6 +1192,7 @@ mod tests {
                 active_exploration: &state,
                 runner_owner: None,
                 admitted_loop_plan: None,
+                loop_captures: &LoopCaptureManifest::default(),
             })
         }
         let mut current = Set::default();
@@ -1140,6 +1239,251 @@ mod tests {
             && relation.kind == OverviewRelationKind::UsesCatalog));
     }
 
+    fn take(
+        set: crate::working_sets::WorkingSetId,
+        card: u64,
+    ) -> crate::loop_capture::LoopCaptureRef {
+        crate::loop_capture::LoopCaptureRef {
+            id: LoopSegmentId {
+                set,
+                card: woodshedding::rehearsal::CardId(card),
+            },
+            bpm: 120.0,
+            beats: 4,
+            bars: 2,
+            sample_rate: 48_000,
+            frames: 192_000,
+            digest: "ab".repeat(32),
+            codec: Default::default(),
+        }
+    }
+
+    fn take_overview(
+        set: &Set,
+        sets: &crate::working_sets::WorkingSets,
+        admitted: Option<&LoopPlan>,
+        manifest: &LoopCaptureManifest,
+    ) -> OverviewSnapshot {
+        use crate::catalog_explorations::{CatalogExplorationState, CatalogExplorations};
+        configured_session_overview(&ConfiguredSessionOverviewInput {
+            session: SessionOverviewInput {
+                working_set: set,
+                retained_sets: &RetainedSets::default(),
+                song: &SongDoc::default(),
+                history: &PracticeHistory::default(),
+                views: &[],
+                activity: SessionActivity::default(),
+            },
+            working_sets: sets,
+            explorations: &CatalogExplorations::default(),
+            active_exploration: &CatalogExplorationState::default(),
+            runner_owner: None,
+            admitted_loop_plan: admitted,
+            loop_captures: manifest,
+        })
+    }
+
+    fn riff(label: &str) -> woodshedding::rehearsal::Card {
+        woodshedding::rehearsal::Card {
+            id: woodshedding::rehearsal::CardId::UNASSIGNED,
+            label: label.into(),
+            material: woodshedding::rehearsal::Material::Riff {
+                name: "Unlisted riff".into(),
+            },
+            setting: Default::default(),
+            touch: Default::default(),
+            timing: Default::default(),
+            from: None,
+        }
+    }
+
+    #[test]
+    fn takes_are_owner_qualified_navigation_nodes_and_orphans_stay_unassigned() {
+        use crate::working_sets::{WorkingSetId, WorkingSets};
+        let mut set = Set::default();
+        let mut sets = WorkingSets::default();
+        let first = sets.active_id;
+        set.push(riff("Verse"));
+        let verse = set.cards[0].id;
+        let mut other = Set::default();
+        other.push(riff("Bridge"));
+        let bridge = other.cards[0].id;
+        let second = sets.create(&mut set, "Second", other);
+        // Card IDs are local to a Set: both owners hold the same local Card id.
+        assert_eq!(verse, bridge);
+        let missing_set = WorkingSetId(999);
+        let mut manifest = LoopCaptureManifest {
+            namespace: Some("0123456789abcdef0123456789abcdef".into()),
+            ..Default::default()
+        };
+        manifest.takes = vec![
+            take(first, verse.0),
+            take(second, bridge.0),
+            take(first, 77),
+            take(missing_set, verse.0),
+        ];
+        manifest.validate().unwrap();
+        let before = serde_json::to_value(&manifest).unwrap();
+        let sets_before = serde_json::to_value(&sets).unwrap();
+        let graph = take_overview(&set, &sets, None, &manifest);
+        assert_eq!(serde_json::to_value(&manifest).unwrap(), before);
+        assert_eq!(serde_json::to_value(&sets).unwrap(), sets_before);
+        let takes: Vec<_> = graph
+            .nodes
+            .iter()
+            .filter(|node| {
+                matches!(
+                    node.id,
+                    OverviewNodeId::Artifact(SessionArtifactId::LoopTake(_))
+                )
+            })
+            .collect();
+        assert_eq!(takes.len(), 4);
+        let id = |set, card| {
+            OverviewNodeId::Artifact(SessionArtifactId::LoopTake(LoopSegmentId {
+                set,
+                card: woodshedding::rehearsal::CardId(card),
+            }))
+        };
+        assert_eq!(
+            id(second, bridge.0).wire_key(),
+            format!("artifact:loop-take:{}:{}", second.0, bridge.0)
+        );
+        assert_ne!(
+            id(first, verse.0).wire_key(),
+            id(second, bridge.0).wire_key()
+        );
+        let node = |key: &OverviewNodeId| graph.nodes.iter().find(|node| &node.id == key).unwrap();
+        assert_eq!(node(&id(first, verse.0)).label, "Take · Verse");
+        assert_eq!(node(&id(second, bridge.0)).label, "Take · Bridge");
+        assert!(
+            node(&id(second, bridge.0))
+                .detail
+                .contains("once that backing is admitted")
+        );
+        for orphan in [id(first, 77), id(missing_set, verse.0)] {
+            assert!(node(&orphan).label.starts_with("Take · Set "));
+            assert!(node(&orphan).detail.contains("not reassigned"));
+            assert!(
+                !graph
+                    .relations
+                    .iter()
+                    .any(|edge| edge.from == orphan || edge.to == orphan)
+            );
+        }
+        for (take, owner) in [(id(first, verse.0), first), (id(second, bridge.0), second)] {
+            assert_eq!(
+                graph
+                    .relations
+                    .iter()
+                    .filter(|edge| edge.from == take)
+                    .cloned()
+                    .collect::<Vec<_>>(),
+                vec![OverviewRelation {
+                    from: take.clone(),
+                    to: OverviewNodeId::Artifact(SessionArtifactId::WorkingSetInstance(owner)),
+                    kind: OverviewRelationKind::CapturedFor,
+                }]
+            );
+        }
+        // Admission only changes lane disclosure; it never adds or moves takes.
+        let mut plan = admitted_plan(second);
+        plan.segments[0].id.card = bridge;
+        let admitted = take_overview(&set, &sets, Some(&plan), &manifest);
+        let admitted_node = admitted
+            .nodes
+            .iter()
+            .find(|node| node.id == id(second, bridge.0))
+            .unwrap();
+        assert!(admitted_node.detail.contains("recorder lane is loaded"));
+        assert!(
+            admitted
+                .nodes
+                .iter()
+                .find(|node| node.id == id(first, verse.0))
+                .unwrap()
+                .detail
+                .contains("once that backing is admitted")
+        );
+    }
+
+    #[test]
+    fn empty_manifest_projects_no_takes() {
+        use crate::working_sets::WorkingSets;
+        let mut set = Set::default();
+        set.push(riff("Verse"));
+        let sets = WorkingSets::default();
+        let graph = take_overview(&set, &sets, None, &LoopCaptureManifest::default());
+        assert!(!graph.nodes.iter().any(|node| matches!(
+            node.id,
+            OverviewNodeId::Artifact(SessionArtifactId::LoopTake(_))
+        )));
+        assert!(
+            !graph
+                .relations
+                .iter()
+                .any(|edge| edge.kind == OverviewRelationKind::CapturedFor)
+        );
+    }
+
+    #[test]
+    fn refused_manifest_keeps_references_visible_and_explained() {
+        use crate::working_sets::WorkingSets;
+        let mut set = Set::default();
+        set.push(riff("Verse"));
+        let sets = WorkingSets::default();
+        let card = set.cards[0].id.0;
+        let manifest = LoopCaptureManifest {
+            version: 99,
+            namespace: Some("0123456789abcdef0123456789abcdef".into()),
+            takes: vec![take(sets.active_id, card), take(sets.active_id, card)],
+        };
+        assert!(manifest.validate().is_err());
+        let graph = take_overview(&set, &sets, None, &manifest);
+        let takes: Vec<_> = graph
+            .nodes
+            .iter()
+            .filter(|node| {
+                matches!(
+                    node.id,
+                    OverviewNodeId::Artifact(SessionArtifactId::LoopTake(_))
+                )
+            })
+            .collect();
+        // Duplicate identities never mint ambiguous navigation targets.
+        assert_eq!(takes.len(), 1);
+        assert!(takes[0].detail.contains("manifest is refused"));
+    }
+
+    #[test]
+    fn take_edits_change_the_epoch_but_not_node_identity() {
+        use crate::working_sets::WorkingSets;
+        let mut set = Set::default();
+        set.push(riff("Verse"));
+        set.push(riff("Chorus"));
+        let sets = WorkingSets::default();
+        let owner = sets.active_id;
+        let mut manifest = LoopCaptureManifest {
+            namespace: Some("0123456789abcdef0123456789abcdef".into()),
+            ..Default::default()
+        };
+        manifest.takes.push(take(owner, set.cards[1].id.0));
+        let before = take_overview(&set, &sets, None, &manifest);
+        manifest.takes.insert(0, take(owner, set.cards[0].id.0));
+        let after = take_overview(&set, &sets, None, &manifest);
+        assert_ne!(overview_scene(&before).epoch, overview_scene(&after).epoch);
+        let chorus = OverviewNodeId::Artifact(SessionArtifactId::LoopTake(manifest.takes[1].id));
+        let source = |graph: &OverviewSnapshot| {
+            graph
+                .nodes
+                .iter()
+                .find(|node| node.id == chorus)
+                .map(|node| node.id.source_ref())
+        };
+        assert_eq!(source(&before), source(&after));
+        assert!(source(&before).is_some());
+    }
+
     #[test]
     fn configured_overview_uses_real_banks_and_background_runner_owner() {
         use crate::{
@@ -1184,6 +1528,7 @@ mod tests {
             active_exploration: &exploration_state,
             runner_owner: Some(background),
             admitted_loop_plan: None,
+            loop_captures: &LoopCaptureManifest::default(),
         };
         let graph = configured_session_overview(&input);
         assert!(

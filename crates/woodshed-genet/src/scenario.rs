@@ -634,6 +634,11 @@ impl Snapshot<'_, '_> {
             .with_field("overview-context-containment", overview.relations.iter().filter(|relation| relation.kind == woodshed_core::session_overview::OverviewRelationKind::ContainsTones).count().to_string())
             .with_field("overview-context-links", overview.relations.iter().filter(|relation| relation.kind == woodshed_core::session_overview::OverviewRelationKind::ContextFor).count().to_string())
             .with_field("overview-nodes", overview.nodes.len().to_string())
+            .with_field("overview-takes", overview.nodes.iter().filter(|node| matches!(node.id, woodshed_core::session_overview::OverviewNodeId::Artifact(woodshed_core::session_overview::SessionArtifactId::LoopTake(_)))).count().to_string())
+            .with_field("overview-take-links", overview.relations.iter().filter(|relation| relation.kind == woodshed_core::session_overview::OverviewRelationKind::CapturedFor).count().to_string())
+            .with_field("loop-source-set", match ui.looper.source { woodshed_core::loop_plan::LooperSource::Set(id) => id.0.to_string(), woodshed_core::loop_plan::LooperSource::SavedSong => "saved".into() })
+            .with_field("loop-admitted-set", ui.loop_admitted.as_ref().map_or("none".into(), |plan| plan.owner.0.to_string()))
+            .with_field("recorder-selected-set", ui.loop_selected.map_or(0, |id| id.set.0).to_string())
             .with_field(
                 "overview-views",
                 overview

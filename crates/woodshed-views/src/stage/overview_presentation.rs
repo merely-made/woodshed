@@ -5,7 +5,11 @@ use serde::{Deserialize, Serialize};
 use std::collections::{BTreeMap, BTreeSet};
 use woodshed_core::session_overview::OverviewNodeId;
 
-const VERSION: u32 = 1;
+/// Version 2 admits Looper take identities. Version 1 payloads are a subset
+/// and still load; a version-1 reader keeps version 2 opaque instead of
+/// failing on an unknown identity and resetting the whole arrangement.
+const VERSION: u32 = 2;
+const READABLE_VERSIONS: [u32; 2] = [1, VERSION];
 const MAX_ENTRIES: usize = 512;
 const MAX_JSON_BYTES: usize = 512 * 1024;
 const MAX_COORDINATE: f32 = 100_000.0;
@@ -94,11 +98,12 @@ impl OverviewPresentation {
         .expect("capture uses the current version")
     }
 
-    /// Reject a future schema rather than interpreting its fields as version 1.
+    /// Reject a future schema rather than interpreting its fields as current.
     pub fn sanitized(mut self) -> Option<Self> {
-        if self.version != VERSION {
+        if !READABLE_VERSIONS.contains(&self.version) {
             return None;
         }
+        self.version = VERSION;
         self.pan = point(self.pan);
         self.zoom = if self.zoom.is_finite() {
             self.zoom.clamp(0.25, 8.0)
@@ -128,7 +133,11 @@ impl OverviewPresentation {
             && serde_json::from_str::<serde_json::Value>(json)
                 .ok()
                 .and_then(|value| value.get("version").and_then(serde_json::Value::as_u64))
-                .is_some_and(|version| version != u64::from(VERSION))
+                .is_some_and(|version| {
+                    !READABLE_VERSIONS
+                        .iter()
+                        .any(|readable| u64::from(*readable) == version)
+                })
     }
 
     pub fn from_json(json: Option<&str>) -> Option<Self> {
@@ -266,7 +275,7 @@ mod tests {
 
     #[test]
     fn invalid_and_future_payloads_only_reset_presentation() {
-        for payload in ["{", r#"{"version":2,"zoom":2.0}"#, r#"{"zoom":null}"#] {
+        for payload in ["{", r#"{"version":3,"zoom":2.0}"#, r#"{"zoom":null}"#] {
             let mut ui = UiState::new();
             ui.stage.set_root(7);
             let mut session = ui.to_persisted();
@@ -286,6 +295,40 @@ mod tests {
                 );
             }
         }
+    }
+
+    #[test]
+    fn version_one_payloads_load_and_take_identities_save_as_version_two() {
+        use woodshed_core::{loop_plan::LoopSegmentId, working_sets::WorkingSetId};
+        use woodshedding::rehearsal::CardId;
+        let legacy = r#"{"version":1,"zoom":2.0,"positions":[[{"Artifact":"Song"},[0.25,0.5]]]}"#;
+        let old = OverviewPresentation::from_json(Some(legacy)).unwrap();
+        assert!(!OverviewPresentation::is_unknown_version(legacy));
+        assert_eq!(old.version, VERSION);
+        assert_eq!(
+            old.positions,
+            vec![(
+                OverviewNodeId::Artifact(SessionArtifactId::Song),
+                (0.25, 0.5)
+            )]
+        );
+        let take = OverviewNodeId::Artifact(SessionArtifactId::LoopTake(LoopSegmentId {
+            set: WorkingSetId(3),
+            card: CardId(9),
+        }));
+        let value = OverviewPresentation {
+            positions: vec![(take.clone(), (0.4, 0.6))],
+            focus: Some(take.clone()),
+            ..Default::default()
+        };
+        let json = value.to_json().unwrap();
+        // An older reader rejects version 2 as unknown and keeps it opaque,
+        // rather than resetting on an identity it cannot decode.
+        let wire: serde_json::Value = serde_json::from_str(&json).unwrap();
+        assert_eq!(wire["version"], 2);
+        let decoded = OverviewPresentation::from_json(Some(&json)).unwrap();
+        assert_eq!(decoded.positions, vec![(take.clone(), (0.4, 0.6))]);
+        assert_eq!(decoded.focus, Some(take));
     }
 
     #[test]
