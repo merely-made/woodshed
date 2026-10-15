@@ -1,0 +1,7 @@
+RESULT ok
+captured reopened-hc-dark
+captured reopened-choice
+capture reopened-hc-dark 1720x1360 digest=8b97d013e9610133 file=/Users/markik/Code/testing/woodshed/audio-foundation-20261011/redshank-native/reopen/reopened-hc-dark.png
+capture reopened-choice 1720x1360 digest=3d776293ac2f0bd7 file=/Users/markik/Code/testing/woodshed/audio-foundation-20261011/redshank-native/reopen/reopened-choice.png
+frames: 2 captured, 0 blank, 2 distinct digests
+presentation: 12 frames, 13 redraws, 1 unpresented redraws

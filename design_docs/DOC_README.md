@@ -1,5 +1,13 @@
 # design_docs Index
 
+Rust policy (2026-10-13): working toolchain 1.99.0 and shared MSRV 1.97.1, qualified separately. Canonical policy: `mere/design_docs/2026-08-12_family_composition_thesis_brief.md`, section "Shared Rust toolchain and minimum version".
+
+Murm source adoption (2026-10-13) is tracked in
+`murm/design_docs/2026-10-13_murm_family_move_plan.md`. Active consumer roots
+use the imported transport supplier and coherent Mere/Dramatis/p2panda
+composition patches. Compile and software-test receipts are scoped to this
+cutover; previous physical and headed receipts retain their original inputs.
+
 Canonical first-reference document for project documentation. Read this
 before any other doc in this directory.
 
@@ -11,7 +19,7 @@ before any other doc in this directory.
 
 ## Active Plans
 
-- [2026-10-08_tabard_adoption_plan.md](2026-10-08_tabard_adoption_plan.md) — Shared appearance authoring and native title-bar adoption in Woodshed; preserves named themes and persona settings while qualifying the shared workshop and native presentation boundary.
+- [2026-10-08_tabard_adoption_plan.md](2026-10-08_tabard_adoption_plan.md) — Shared appearance authoring and native title-bar adoption in Woodshed; October 12 root font roles are qualified on the agreed Mere `8568f42` family with 556 combined CPU cases, three native font processes and 19 reviewed captures, preserving application requests, authored precedence, domain geometry and exact WAV bytes. Separate normal-output capture migration/reopen passes on the same build. Earlier qualification preserves named themes and persona settings; the October 10 coherent stack and repaired renderer pass 444 CPU tests and four native lanes with 20 reviewed captures. The October 11 Classic 0.11 family is integrated across the three independent UI workspaces: 1,454 active tests and eight native runs with 38 reviewed captures; Woodshed Set, preview/rehearsal and appearance reopening pass, and the later Hocket/Redshank appearance reopen follow-through passes with four additional reviewed captures.
 
 - [2026-09-13_redshank_gui_implementation_plan.md](2026-09-13_redshank_gui_implementation_plan.md)
   — **Active.** Implements the endorsed Redshank design canvas: fixed-height
@@ -28,7 +36,16 @@ before any other doc in this directory.
   Woodshed root/Hocket pins and concurrent transcript work remain independently owned.
 
 - [2026-09-09_audio_ports_rehome_plan.md](2026-09-09_audio_ports_rehome_plan.md)
-  — **Landed.** Hocket and Ringdown are history-preserving nested `ports/`
+  — **Rehome landed; shared recorder extraction and Woodshed surface adoption implemented.**
+  Hocket model/project/controller/views are root libraries. Woodshed now mounts
+  the shared surface over its existing single OutputRuntime, preserving ordered
+  clocks, capture custody and export. The separate adoption receipt records
+  591 focused cases, seven native captures, compact reopening and exact WAV/media
+  retention; shared DSP extraction remains later work. Coordinates
+  standalone Firewheel streaming, independently gated consumer migration,
+  local validation/release boundaries, Hocket Mesquite lifecycle, bounded Redshank retention,
+  and the existing Set/Looper and portable product seams. Hocket and Ringdown
+  are history-preserving nested `ports/`
   workspaces with local dependency seams, independent release boundaries, and
   MPL-2.0 repository licensing. Their former repositories are archived with
   relocation notices; inherited family-format and Hocket-Clippy drift is
@@ -55,6 +72,9 @@ before any other doc in this directory.
   rendering remain open.
 
 - [2026-09-01_listening_annotation_port_plan.md](2026-09-01_listening_annotation_port_plan.md)
+  October 11 bounds standalone published model history to three valid
+  generations while preserving corrupt-state fallback; ten storage tests and
+  strict package Clippy pass, with native reopen pending.
   **Active; Phases 0-3 complete, Phase 5 closed 2026-09-26, Phase 7 met 2026-09-22, Phase 4 in progress, Phase 6 identity/seek and synthetic alignment implemented; extraction to its own repository ruled 2026-09-26.** Redshank is a separate audio-listening and timed
   text/voice-annotation port incubated in this repository. The September 6
   local-file slice adds a Symphonia/Firewheel worker, full listening surfaces,
@@ -101,6 +121,41 @@ before any other doc in this directory.
   hardware evidence distinguishes device events from duplicated stream logs;
   192 audio/desktop checks and a committed native seed/fresh-reopen replay pass;
   four captures are reviewed, with zero buffer errors on the qualified route.
+  The song-cache follow-up removes cold chord synthesis from the callback,
+  preserves matching PCM across reads/edits and rejects stale render results;
+  212 checks, cold/warm/edited hardware trials and a committed native seed/reopen
+  pass, with four reviewed captures and zero buffer errors in the qualified runs.
+  The bounded preview-worker follow-up moves Hear/step synthesis off the UI
+  caller, bounds pending work to the latest request, and cancels obsolete PCM
+  across transport changes, rehearsal Pause and shutdown. All 577 checks pass;
+  six reviewed captures qualify committed native seed/reopen. Committed scale
+  enqueue takes 0.014–0.061 ms; a monitor-only startup event is preserved beside
+  the zero-event repeat and song regression. The receipt records the boundaries.
+  The October 11 single-output runtime retires both callback mixer engines,
+  keeping click, preview and backing on one Firewheel/device clock. It passes
+  144 audio and 29 focused desktop checks plus three muted one-stream device
+  runs. Five native GUI processes qualify seed/reopen and click stop/restart
+  with 791 presentations and 16 reviewed full captures; 17 checkpoints retain
+  unopened input and one output stream. The next October 11 slice adds exact
+  sealed Set/Card companions, bounded owner/clock manifests and explicit
+  stored-reference Clear; focused checks and fresh-process CPU retention pass,
+  with four native processes, 160 presentations and eight reviewed captures
+  qualifying reopen and missing-companion recovery. Existing recorded-loop
+  glyph fallback is recorded under P8. The October 12 follow-through adds
+  admitted backing/completed-loop mono float32 WAV export with an explicit
+  native save/replace seam; 77 distinct focused checks and the production build
+  pass. Five native processes and nine reviewed full captures qualify actual
+  macOS Cancel/Save/replacement and default-zoom layout; both output files
+  match the frozen backing-plus-take reference and independently decode.
+  The next October 12 slice implements Wavicle compressed companions with raw
+  compatibility, bounded decode admission and one encode-only worker; focused
+  codec/storage/host, locked current-family build and five actual Keeper/profile
+  processes retain exact PCM/WAV across migration, with 31.6% smaller referenced
+  fixture storage. The combined font family passes 556 core/view/host tests and
+  its production build; two normal-output migration/reopen processes add 54
+  presentations and three reviewed captures with exact PCM/WAV parity. Physical
+  capture, disk collection, startup timing and the existing loop glyph remain open.
+  Physical capture, saved-song PCM and full P7 remain open.
   The October 7 captured-scale-pattern follow-up extends copied instructions
   to degree pairs in thirds/fourths, with base-scale exploration and unchanged
   owner boundaries. The 613-check gate and committed desktop build pass; eight
@@ -249,6 +304,13 @@ They are not current product authority.
 
 ## Working Principles for AI Assistants
 
+- **Prototype through source and canonical plans**: publish directly to `main`
+  after refreshing remote state and preserving concurrent work. PRs are used
+  only when requested; GitHub workflows are not part of this execution path.
+  Use focused local checks to answer concrete questions about a change.
+  Broader conformance and automation follow behavior deliberately stabilized
+  for evaluation, rather than every interim prototype commit.
+
 These principles apply to AI-assisted work on this project. Update this
 section whenever a durable working insight emerges from a session.
 
@@ -273,7 +335,7 @@ section whenever a durable working insight emerges from a session.
 - **The committed lock is the release graph**: the gitignored
   `.cargo/config.toml` is optional sibling-checkout plumbing and must not be
   required to resolve `Cargo.lock`. Generate and verify the lock from outside
-  the repository config path; CI's clean-checkout metadata preflight is the
+  the repository config path; the local clean-checkout metadata preflight is the
   gate that catches a lock accidentally written under local path patches.
 - **Exploration and drilling are complementary**: lateral relationships across
   catalogs and deliberate Set rehearsal both help assemble material and act on

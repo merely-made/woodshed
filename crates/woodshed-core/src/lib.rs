@@ -21,6 +21,8 @@ pub mod connected_catalog;
 pub mod connected_scales;
 pub mod harmony;
 pub mod history;
+pub mod loop_capture;
+pub mod loop_plan;
 pub mod mere;
 pub mod midi;
 pub mod musical_context;

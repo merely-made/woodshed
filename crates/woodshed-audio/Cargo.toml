@@ -1,12 +1,13 @@
 [package]
 name = "woodshed-audio"
 version = "0.1.0"
-description = "Real-time audio engine for stringed-instrument practice tools: cpal-backed sequencer with BPM-stable click synthesis, plus tuner-grade pitch detection with harmonic-confusion suppression and fundamental-bias smoothing."
+description = "One Firewheel output graph for practice click, preview and backing, with independently lazy CPAL tuner and bounded capture input."
 edition.workspace = true
 license.workspace = true
 authors.workspace = true
 repository.workspace = true
-rust-version.workspace = true
+
+rust-version = "1.97.1"
 readme = "../../README.md"
 keywords = ["audio", "tuner", "metronome", "pitch-detection", "guitar"]
 categories = ["multimedia::audio"]
@@ -17,6 +18,9 @@ categories = ["multimedia::audio"]
 # Sound::Click voice) in this crate are built on top of these.
 audio-primitives = { workspace = true }
 cpal = { workspace = true }
+firewheel = { workspace = true }
+rtrb = { workspace = true }
+audioadapter-buffers = { workspace = true }
 pitch-detector = { workspace = true }
 pitch-detection = { workspace = true }
 hound = { workspace = true }

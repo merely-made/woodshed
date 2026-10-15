@@ -1,0 +1,74 @@
+{
+  "tool": "PowerShell 7.6.6 on macOS arm64",
+  "scope": "Exact workflow package block and real package-windows.ps1 with fixture bytes",
+  "not_qualified": [
+    "GitHub dispatch behavior",
+    "Windows binary/build/native runtime"
+  ],
+  "cases": [
+    {
+      "ref_type": "branch",
+      "ref_name": "main",
+      "version": "0.1.0-alpha.0.manual",
+      "prerelease": true,
+      "exit_code": 0,
+      "passed": true
+    },
+    {
+      "ref_type": "tag",
+      "ref_name": "woodshed-v0.2.3",
+      "version": "0.2.3",
+      "prerelease": false,
+      "exit_code": 0,
+      "passed": true
+    },
+    {
+      "ref_type": "tag",
+      "ref_name": "woodshed-v0.2.3-alpha.1",
+      "version": "0.2.3-alpha.1",
+      "prerelease": true,
+      "exit_code": 0,
+      "passed": true
+    },
+    {
+      "ref_type": "tag",
+      "ref_name": "hocket-v0.2.3",
+      "version": null,
+      "prerelease": null,
+      "exit_code": 1,
+      "passed": true
+    },
+    {
+      "ref_type": "tag",
+      "ref_name": "redshank-v0.2.3",
+      "version": null,
+      "prerelease": null,
+      "exit_code": 1,
+      "passed": true
+    },
+    {
+      "ref_type": "tag",
+      "ref_name": "ringdown-v0.2.3",
+      "version": null,
+      "prerelease": null,
+      "exit_code": 1,
+      "passed": true
+    },
+    {
+      "ref_type": "tag",
+      "ref_name": "v0.2.3",
+      "version": null,
+      "prerelease": null,
+      "exit_code": 1,
+      "passed": true
+    },
+    {
+      "ref_type": "tag",
+      "ref_name": "woodshed-vjunk",
+      "version": null,
+      "prerelease": null,
+      "exit_code": 1,
+      "passed": true
+    }
+  ]
+}

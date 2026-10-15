@@ -6,7 +6,8 @@ edition.workspace = true
 license.workspace = true
 authors.workspace = true
 repository.workspace = true
-rust-version.workspace = true
+
+rust-version = "1.97.1"
 publish = false
 
 [dependencies]
@@ -15,15 +16,7 @@ hocket-model = { workspace = true }
 # cores available for FT3c calibration + bar-alignment work).
 audio-primitives = { workspace = true }
 firewheel = { workspace = true }
-blake3 = { workspace = true }
-muniment = { workspace = true }
-wavicle = { workspace = true }
-# WAV is retained for the offline mix export, not for stored media (now .wv).
-hound = { workspace = true }
-personae = { workspace = true }
-serde = { workspace = true }
-ciborium = { workspace = true }
 
 [dev-dependencies]
-pollster = "0.4"
-tempfile = "3"
+hocket-project.workspace = true
+audioadapter-buffers = "5.0"

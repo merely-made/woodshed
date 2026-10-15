@@ -1,0 +1,14 @@
+
+running 9 tests
+test sync::tests::loop_source_receipt_worker ... ok
+test sync::tests::saved_bar_edit_refusal_preserves_accepted_payload_and_capture_state ... ok
+test sync::tests::refused_edit_and_other_owner_keep_the_actual_admitted_timeline ... ok
+test sync::tests::armed_source_switches_are_refused_in_both_directions_without_replacing_backing ... ok
+test sync::tests::unavailable_saved_replacement_keeps_loaded_set_and_an_unready_set_keeps_saved_backing ... ok
+test sync::tests::unready_initial_source_cannot_play_and_saved_song_restores_exact_data ... ok
+test sync::tests::loop_source_reopens_in_a_fresh_process ... ok
+test sync::tests::source_controls_refuse_known_armed_capture_in_both_directions ... ok
+test sync::tests::looper_controls_show_readiness_route_owned_capture_and_retain_saved_backing ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 152 filtered out; finished in 0.84s
+

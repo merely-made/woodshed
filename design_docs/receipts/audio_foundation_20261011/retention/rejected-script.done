@@ -1,0 +1,18 @@
+RESULT fail
+FAIL: unknown verb: await-idle
+FAIL: unknown verb: await-idle
+FAIL: unknown verb: await-idle
+FAIL: unknown verb: await-idle
+FAIL: unknown verb: await-idle
+FAIL: unknown verb: await-idle
+FAIL: unknown verb: await-idle
+FAIL: unknown verb: await-idle
+FAIL: unknown verb: await-idle
+FAIL: unknown verb: await-idle
+FAIL: unknown verb: await-idle
+FAIL: unknown verb: await-idle
+captured retained-settings
+retention published
+capture retained-settings 1720x1360 digest=aebb783816ae0c45 file=/Users/markik/Code/testing/woodshed/audio-foundation-20261011/retention-native/write/retained-settings.png
+frames: 1 captured, 0 blank, 1 distinct digests
+presentation: 45 frames, 46 redraws, 1 unpresented redraws

@@ -1,0 +1,59 @@
+{
+  "version": 1,
+  "themes": [
+    {
+      "id": "user:role-fixture",
+      "name": "Authored role fixture",
+      "source": "User",
+      "seeds": {
+        "primary": {
+          "r": 58,
+          "g": 102,
+          "b": 166,
+          "a": 255
+        },
+        "secondary": {
+          "r": 44,
+          "g": 132,
+          "b": 125,
+          "a": 255
+        },
+        "tertiary": {
+          "r": 166,
+          "g": 113,
+          "b": 47,
+          "a": 255
+        },
+        "neutral": {
+          "r": 30,
+          "g": 34,
+          "b": 42,
+          "a": 255
+        },
+        "success": {
+          "r": 55,
+          "g": 132,
+          "b": 80,
+          "a": 255
+        },
+        "danger": {
+          "r": 200,
+          "g": 70,
+          "b": 76,
+          "a": 255
+        },
+        "text_header": null,
+        "text_body": null,
+        "dark": false
+      },
+      "mode_sheets": {
+        "dark": [
+          ":root { --tabard-color-bg: #142536; --tabard-color-surface: #123456; --tabard-color-text: #f1f2f3; --tabard-color-primary: #abcdef; --tabard-syntax-heading: #fedcba; }"
+        ],
+        "custom:garden": [
+          ":root { --tabard-color-bg: #203020; --tabard-color-surface: #284428; --tabard-color-text: #f0fff0; --tabard-color-primary: #a4d6a4; }"
+        ]
+      }
+    }
+  ]
+}

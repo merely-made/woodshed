@@ -2,7 +2,8 @@
 name = "woodshed-web"
 version = "0.0.1"
 edition = "2024"
-rust-version = "1.92"
+
+rust-version = "1.97.1"
 license = "MPL-2.0"
 repository = "https://github.com/merely-made/woodshed"
 description = "Woodshed in a browser: the same views the desktop draws, mounted on a canvas."

@@ -1,0 +1,73 @@
+{
+  "schema": "woodshed-compressed-captures-receipt-v1",
+  "source": "28f7209c58bca683734e612b59c470f18999462e",
+  "status": "original published-family CPU/build/real-custody acceptance complete; later combined-family native acceptance is recorded separately",
+  "storage": {
+    "manifest_version": 2,
+    "raw_blob_version": 1,
+    "wavpack_container_version": 1,
+    "namespace_retained": true,
+    "legacy_raw_readable": true,
+    "migration_per_reference": true,
+    "compressed_only_if_smaller": true,
+    "unknown_codecs_retained_unavailable": true,
+    "old_blobs_deleted": false,
+    "quota_unit": "decoded frames",
+    "max_frames": 16777216,
+    "max_takes": 256,
+    "max_block_frames": 32768
+  },
+  "cpu_checks": {
+    "distinct_root_cases": 76,
+    "wavicle_cases": 21,
+    "synthetic_sealed_child_processes": 5,
+    "actual_keeper_processes": 5,
+    "checks": "checks.json",
+    "actual_keeper": "cpu-real-keeper/runs.json"
+  },
+  "captured_fixture": {
+    "sealed_old_bytes": 384064,
+    "sealed_new_bytes": 262824,
+    "saved_bytes": 121240,
+    "decoded_capture_blake3": "ceb886a770b4f14eb9e56fd069ab17517494d1208c5d6c70f904d901d03d0a50",
+    "full_wav_pcm_sha256": "51966f89d016ade8cd01b32dfa8583cc2fbe452e5a3bc620f6dc44daeb3401e0",
+    "backing_only_pcm_sha256": "e4911029b436d2bcee6635d7780fc01b893fdca00f8fed34061822a53b3d9e58",
+    "original_unchanged": true,
+    "old_blob_unchanged": true
+  },
+  "native": {
+    "status": "pending",
+    "reason": "Knot released the shared foreground lane after the CPU receipt; Woodshed has reserved it and awaits compression publication/rebase/rebuild of the independently owned font combination.",
+    "owner_chat": "Review Woodshed checkout",
+    "thread_id": "01a0f0e4-7935-7401-8ff2-b56c0508b03f",
+    "required_followthrough": "Preserve published compression, rebase font adoption, rebuild/freeze combined source, then copied raw migration and native fresh reopen.",
+    "claimed_native_processes": 0,
+    "claimed_reviewed_captures": 0,
+    "scope": "Original publication snapshot for source28f7209; zero native processes claimed for that earlier source."
+  },
+  "custody": {
+    "actual_keeper": true,
+    "fresh_synthetic_receipt_authority": true,
+    "input_opened": false,
+    "cpu_native_streams": 0,
+    "cleanup": "cpu-real-keeper/cleanup.json",
+    "fixture_payloads_and_vault_retained_local_only": true
+  },
+  "limits": [
+    "Root Set/Card captures only; saved-song PCM durability remains separate.",
+    "No physical microphone or acoustic qualification.",
+    "Hashing, sealing, filesystem I/O and hydration decode remain control-side work; long-bank UI/disk performance is unqualified.",
+    "The original immutable raw blob remains on disk, so this migration reduces referenced storage, not existing physical disk usage.",
+    "Orphan collection and physical disk quota remain separate.",
+    "The Wavicle repair is a narrow arithmetic fix; arbitrary-stream certification is not claimed.",
+    "Concurrent unpublished font-family behavior is excluded."
+  ],
+  "publication_followthrough": {
+    "source": "751858f0461b71fe7fa03392b13d65363b9e7ff6",
+    "receipt": "../compressed-captures_font-family_20261012/receipt.json",
+    "native_processes": 2,
+    "reviewed_captures": 3,
+    "presented_frames": 54,
+    "status": "normal-output native migration and fresh-process reopening qualified; original CPU evidence unchanged"
+  }
+}

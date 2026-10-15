@@ -1,0 +1,33 @@
+DDX mode=song device=DeviceDescription { name: "iMac Speakers", manufacturer: None, driver: None, device_type: Unknown, interface_type: Unknown, direction: Output, address: None, extended: [] } config=SupportedStreamConfig { channels: 2, sample_rate: 48000, buffer_size: Range { min: 15, max: 4096 }, sample_format: F32 }
+DDX negotiated_frames=Ok(512)
+DDX 4.118s phase=cold begin
+DDX 4.118s phase=cold work_ms=0.005
+DDX 4.145s device_event=A buffer underrun or overrun occurred.
+audio stream error: A buffer underrun or overrun occurred.
+song engine stream error: A buffer underrun or overrun occurred.
+DDX 5.147s device_event=A buffer underrun or overrun occurred.
+audio stream error: A buffer underrun or overrun occurred.
+song engine stream error: A buffer underrun or overrun occurred.
+DDX 6.161s device_event=A buffer underrun or overrun occurred.
+audio stream error: A buffer underrun or overrun occurred.
+song engine stream error: A buffer underrun or overrun occurred.
+DDX 7.174s device_event=A buffer underrun or overrun occurred.
+audio stream error: A buffer underrun or overrun occurred.
+song engine stream error: A buffer underrun or overrun occurred.
+DDX 9.123s phase=cold cumulative_events=4
+DDX 9.123s phase=warm begin
+DDX 9.123s phase=warm work_ms=0.001
+DDX 14.128s phase=warm cumulative_events=4
+DDX 14.128s phase=edited begin
+DDX 14.128s phase=edited work_ms=0.022
+DDX 14.950s device_event=A buffer underrun or overrun occurred.
+audio stream error: A buffer underrun or overrun occurred.
+song engine stream error: A buffer underrun or overrun occurred.
+DDX 15.761s device_event=A buffer underrun or overrun occurred.
+audio stream error: A buffer underrun or overrun occurred.
+song engine stream error: A buffer underrun or overrun occurred.
+DDX 16.571s device_event=A buffer underrun or overrun occurred.
+audio stream error: A buffer underrun or overrun occurred.
+song engine stream error: A buffer underrun or overrun occurred.
+DDX 19.129s phase=edited cumulative_events=7
+DDX complete callbacks=1776 device_events=7 max_callback_gap_us=23386

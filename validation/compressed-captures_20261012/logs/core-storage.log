@@ -1,0 +1,33 @@
+warning: patch `p2panda-auth v0.7.1 (https://github.com/mark-ik/p2panda.git?tag=mere-p2panda-net-0.7.5-upstream-20261011#d8acabc9)` was not used in the crate graph
+warning: patch `p2panda-stream v0.7.1 (https://github.com/mark-ik/p2panda.git?tag=mere-p2panda-net-0.7.5-upstream-20261011#d8acabc9)` was not used in the crate graph
+help: Check that the patched package version and available features are compatible
+      with the dependency requirements. If the patch has a different version from
+      what is locked in the Cargo.lock file, run `cargo update` to use the new
+      version. This may also occur with an optional dependency that is not enabled.
+   Compiling woodshed-core v0.1.0 (/Users/markik/Code/worktrees/woodshed-orchestrate-20261011/crates/woodshed-core)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 6.84s
+     Running unittests src/lib.rs (/Users/markik/Code/testing/woodshed/compressed-captures-20261012/target/debug/deps/woodshed_core-0a9a2efc74a4d934)
+
+running 13 tests
+test storage::tests::legacy_tabs_migrate_to_current_sections ... ok
+test storage::tests::refused_session_replacement_retains_previous_reference_and_orphan_blob ... ok
+test storage::tests::the_legacy_sequence_edge_toggle_becomes_a_relation_set ... ok
+test storage::tests::multiple_owner_banks_preserve_legacy_active_content_and_round_trip ... ok
+test storage::tests::legacy_session_defaults_authored_musical_context_and_roundtrips_it ... ok
+test storage::tests::legacy_capture_defaults_and_unavailable_references_survive_session_roundtrip ... ok
+test storage::tests::retained_sets_default_for_legacy_and_round_trip_separately_from_working_set ... ok
+test storage::tests::session_round_trips_through_json ... ok
+test storage::tests::sealed_companion_roundtrips_exact_pcm_and_wrong_persona_refuses_it ... ok
+test storage::tests::unknown_fields_and_missing_fields_tolerated ... ok
+test storage::tests::dropped_and_corrupt_writes_cannot_claim_durability ... ok
+test storage::tests::prepared_capture_must_match_its_source_before_writing ... ok
+test storage::tests::compressed_companion_is_sealed_and_reopens_with_exact_bits ... ok
+
+test result: ok. 13 passed; 0 failed; 0 ignored; 0 measured; 223 filtered out; finished in 0.15s
+
+     Running tests/stage_backdrop.rs (/Users/markik/Code/testing/woodshed/compressed-captures-20261012/target/debug/deps/stage_backdrop-3e8c5c1cd30af04b)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+

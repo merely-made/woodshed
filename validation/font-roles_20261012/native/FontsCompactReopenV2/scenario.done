@@ -1,0 +1,10 @@
+RESULT ok
+captured 01_font_compact_reopen
+captured 01b_font_compact_applyed
+captured 02_font_compact_looper
+Woodshed compact font reopen complete
+capture 01_font_compact_reopen 960x1800 digest=38323f17c1a1d1d4 file=/Users/markik/Code/testing/woodshed/font-roles-20261012/combined-v2/native/FontsCompactReopenV2/01_font_compact_reopen.png
+capture 01b_font_compact_applyed 960x1800 digest=243b68de02a6583b file=/Users/markik/Code/testing/woodshed/font-roles-20261012/combined-v2/native/FontsCompactReopenV2/01b_font_compact_applyed.png
+capture 02_font_compact_looper 960x1800 digest=ae5973b5abeb600a file=/Users/markik/Code/testing/woodshed/font-roles-20261012/combined-v2/native/FontsCompactReopenV2/02_font_compact_looper.png
+frames: 3 captured, 0 blank, 3 distinct digests
+presentation: 46 frames, 511 redraws, 465 unpresented redraws

@@ -1,0 +1,8 @@
+DDX mode=scale output_streams=1 sample_rate=48000
+DDX 2.062s phase=cold request_ms=0.030
+DDX 2.484s phase=cold ready_ms=422.215
+DDX 4.485s phase=warm request_ms=0.031
+DDX 4.905s phase=warm ready_ms=420.530
+DDX 6.907s phase=edited request_ms=0.032
+DDX 7.331s phase=edited ready_ms=423.916
+DDX complete output_streams=1 device_frames=444416 processing_blocks=434 device_events=0

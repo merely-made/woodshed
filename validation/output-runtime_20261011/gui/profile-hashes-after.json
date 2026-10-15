@@ -1,0 +1,14 @@
+{
+  "metro": {
+    "settings.json": "7ea2da4a679980818c5a32f09c34bb9a80e70905cde7a806cbe62f3c8bbca988",
+    "practice.json": "18c906649f06ce59e09f98a526ba3c68f3f2ed06a15098779c5214c9ad6e9e4f"
+  },
+  "set": {
+    "settings.json": "58378b18f83fe9b17dd853368a7794fe66f32e92b5d00ad34e683e38ad606cd3",
+    "practice.json": "08a2c69b9884490e004c91443dd837165fb787a629df35d3cd8dabcf698d217e"
+  },
+  "preview": {
+    "settings.json": "f1fbcb5941f0cfb64e5aac40b9d676d920998612e5f889a8ebe1b1061f4e291e",
+    "practice.json": "0cf64c5630ef20e75c23b427a859ff6aebf87b78fd066f509365f405c12a18d0"
+  }
+}

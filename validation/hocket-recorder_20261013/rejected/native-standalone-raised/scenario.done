@@ -1,0 +1,8 @@
+RESULT fail
+captured recorder_initial
+FAIL: assert snap bpm Eq '122': got '120'
+captured recorder_controls
+capture recorder_initial 2360x1400 digest=933d22be4da8c69a file=/Users/markik/Code/testing/hocket/recorder-extraction-20261013/native-standalone-raised/recorder_initial.png
+capture recorder_controls 2360x1400 digest=ad6f091205c6f34b file=/Users/markik/Code/testing/hocket/recorder-extraction-20261013/native-standalone-raised/recorder_controls.png
+frames: 2 captured, 0 blank, 2 distinct digests
+presentation: 30 frames, 631 redraws, 601 unpresented redraws

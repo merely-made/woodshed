@@ -1,0 +1,19 @@
+# Synthetic producer + real shared controls/leaves. No physical audio claim.
+settle 3
+assert snap backend == synthetic
+assert snap full-tracks == 4
+assert snap compact-tracks == 4
+assert snap full-layers == 1
+assert snap compact-layers == 1
+assert snap full-input == true
+assert snap compact-input == true
+capture two_mounts_initial
+click .hocket-recorder-mount-11 Increase tempo
+assert snap full-bpm == 122
+assert snap compact-bpm == 120
+click .hocket-recorder-mount-12 Record
+settle 3
+assert snap full-layers == 1
+assert snap compact-layers == 2
+click .hocket-recorder-mount-12 Mute layer L2
+capture two_mounts_controls

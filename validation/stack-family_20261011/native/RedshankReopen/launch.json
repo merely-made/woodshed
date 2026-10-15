@@ -1,0 +1,24 @@
+{
+  "name": "RedshankReopen",
+  "binary": "/Users/markik/Code/worktrees/woodshed-audit-20261011/target/debug/redshank-desktop",
+  "scenario": "/Users/markik/Code/worktrees/woodshed-stack-20261011/ports/redshank/scenarios/tabard_reopen.scn",
+  "prefix": "REDSHANK",
+  "output": "/Users/markik/Code/testing/woodshed/stack-adoption-20261011/native/RedshankReopen",
+  "env": {
+    "REDSHANK_DATA_DIR": "/Users/markik/Code/testing/woodshed/stack-adoption-20261011/profiles/redshank/listener",
+    "REDSHANK_APPEARANCE_STORE": "/Users/markik/Code/testing/woodshed/stack-adoption-20261011/profiles/redshank/appearance.json",
+    "REDSHANK_THEME_LIBRARY": "/Users/markik/Code/testing/woodshed/stack-adoption-20261011/profiles/redshank/themes.json",
+    "REDSHANK_WIDTH": "1180",
+    "REDSHANK_HEIGHT": "800",
+    "XDG_DATA_HOME": "/Users/markik/Code/testing/woodshed/stack-adoption-20261011/profiles/redshank/data",
+    "XDG_CONFIG_HOME": "/Users/markik/Code/testing/woodshed/stack-adoption-20261011/profiles/redshank/config",
+    "XDG_CACHE_HOME": "/Users/markik/Code/testing/woodshed/stack-adoption-20261011/profiles/redshank/cache",
+    "MERE_ROOT": "/Users/markik/Code/testing/woodshed/stack-adoption-20261011/profiles/redshank/mere",
+    "GRAPHSHELL_APP_ENDPOINT": "/tmp/ws-stack-20261011.sock",
+    "GRAPHSHELL_DEVICE_ENDPOINT": "/tmp/ws-stack-20261011-device.sock"
+  },
+  "app": "/Users/markik/Code/testing/woodshed/stack-adoption-20261011/native/RedshankReopen/RedshankReopen.app",
+  "binary_sha256": "e838bcf87c2e7b8b025306771ddaad705fb38ea29585311d1429bebda75c8d00",
+  "scenario_sha256": "ce4c49f7f45a30f7524f1f545c9f20d565091e5fc619497364b82ba8acff517b",
+  "launch_method": "native control of prepared app bundle"
+}

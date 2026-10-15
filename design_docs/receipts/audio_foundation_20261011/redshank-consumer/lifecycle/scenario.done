@@ -1,0 +1,10 @@
+RESULT ok
+captured lifecycle-listen
+captured lifecycle-selector-notes
+captured lifecycle-final
+mesquite lifecycle complete
+capture lifecycle-listen 1720x1360 digest=b407a099f2e707a4 file=/Users/markik/Code/testing/woodshed/audio-foundation-20261011/redshank-native/lifecycle/lifecycle-listen.png
+capture lifecycle-selector-notes 1720x1360 digest=fc056eae116d06ce file=/Users/markik/Code/testing/woodshed/audio-foundation-20261011/redshank-native/lifecycle/lifecycle-selector-notes.png
+capture lifecycle-final 1720x1360 digest=287f45ac04e48020 file=/Users/markik/Code/testing/woodshed/audio-foundation-20261011/redshank-native/lifecycle/lifecycle-final.png
+frames: 3 captured, 0 blank, 3 distinct digests
+presentation: 22 frames, 23 redraws, 1 unpresented redraws

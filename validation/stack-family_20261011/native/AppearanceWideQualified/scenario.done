@@ -1,0 +1,23 @@
+RESULT ok
+Shared Tabard appearance authoring in Woodshed
+captured appearance_light
+captured appearance_dark
+captured appearance_hc_dark
+captured appearance_settings
+captured appearance_workshop
+captured appearance_applied
+captured appearance_narrow_reader
+captured appearance_narrow_graph
+captured appearance_resized_applied
+Shared Tabard appearance acceptance complete
+capture appearance_light 2360x1600 digest=a461f4d635d73711 file=/Users/markik/Code/testing/woodshed/stack-adoption-20261011/native/AppearanceWideQualified/appearance_light.png
+capture appearance_dark 2360x1600 digest=4e97188dada0b42f file=/Users/markik/Code/testing/woodshed/stack-adoption-20261011/native/AppearanceWideQualified/appearance_dark.png
+capture appearance_hc_dark 2360x1600 digest=b80b6ae80a35aa19 file=/Users/markik/Code/testing/woodshed/stack-adoption-20261011/native/AppearanceWideQualified/appearance_hc_dark.png
+capture appearance_settings 2360x1600 digest=ef4d84123daef723 file=/Users/markik/Code/testing/woodshed/stack-adoption-20261011/native/AppearanceWideQualified/appearance_settings.png
+capture appearance_workshop 2360x1600 digest=440d48683a2c6a64 file=/Users/markik/Code/testing/woodshed/stack-adoption-20261011/native/AppearanceWideQualified/appearance_workshop.png
+capture appearance_applied 2360x1600 digest=e4bc8a1c1d9407e1 file=/Users/markik/Code/testing/woodshed/stack-adoption-20261011/native/AppearanceWideQualified/appearance_applied.png
+capture appearance_narrow_reader 1280x1600 digest=515631f41d3c4fe6 file=/Users/markik/Code/testing/woodshed/stack-adoption-20261011/native/AppearanceWideQualified/appearance_narrow_reader.png
+capture appearance_narrow_graph 1280x1600 digest=da23114f0315c252 file=/Users/markik/Code/testing/woodshed/stack-adoption-20261011/native/AppearanceWideQualified/appearance_narrow_graph.png
+capture appearance_resized_applied 1280x1600 digest=1a8797d18a00710e file=/Users/markik/Code/testing/woodshed/stack-adoption-20261011/native/AppearanceWideQualified/appearance_resized_applied.png
+frames: 9 captured, 0 blank, 9 distinct digests
+presentation: 102 frames, 979 redraws, 877 unpresented redraws

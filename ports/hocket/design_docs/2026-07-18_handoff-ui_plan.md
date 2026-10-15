@@ -5,6 +5,14 @@ That plan landed the signed envelope protocol and left four host-side gaps in
 its Progress log: recipient key exchange, a carrier, incoming staging and
 review, and the user-facing acceptance action. This plan closes them.
 
+**Current boundary (2026-10-11):** portable envelope/media/branch acceptance
+lives in `hocket-project`; the engine executes the selected model projection.
+Same-root acceptance now retains both peers' append-only captured phrases and
+media, including inactive incoming history, while selecting the incoming head.
+Conflicting immutable phrase IDs or malformed snapshot projections are refused
+without changing local state. Native project save/open/export/handoff acceptance
+remains open; appearance/recorder runs do not qualify that flow.
+
 ## Goal
 
 Make the pass-the-mic gesture usable from the Genet host. A musician can send a
@@ -13,7 +21,7 @@ overstating confidentiality or pretending divergent edits are merged.
 
 ## Context (what already exists)
 
-- **Engine.** `hocket-engine::handoff` builds and verifies the signed envelope:
+- **Project.** `hocket-project::handoff` builds and verifies the signed envelope:
   `HandoffEnvelope::{create, to_bytes, from_bytes, receive}` and
   `ReceivedHandoff::accept_branch`. Covered by focused tests. `receive` takes
   the recipient's public key by value and needs no private key, so it can run
@@ -34,7 +42,7 @@ overstating confidentiality or pretending divergent edits are merged.
 ## Design
 
 Boundary rule from the repo guide: collaboration semantics stay in
-`hocket-engine` (they already do). The host carries bytes, holds presentation
+`hocket-project`. The host carries bytes, holds presentation
 state, and wires gestures. `hocket-genet` stays thin.
 
 ### Carrier: a file, over the existing project worker
@@ -85,7 +93,7 @@ state, and wires gestures. `hocket-genet` stays thin.
 - **Same `session.id`.** Build a `ProjectBundle` from the live session and
   history, call `ReceivedHandoff::accept_branch`, and on success write session,
   history, and store back, then resync tempo and reconcile playback. This
-  mirrors the `Opened` path. The engine retains the prior local branch.
+  mirrors the `Opened` path. The project operation retains the prior local branch.
 - **Different `session.id`.** Adopt wholesale: stop playback, then replace
   session, history, and store, mirroring `apply_project_update(Opened)`.
 - Either way: remember the sender for a one-tap reply, mark the project dirty
@@ -150,6 +158,12 @@ Organized by feature target and validation, not by time.
 
 ## Findings
 
+- **2026-10-11:** The host still derives project-worker busy state from display
+  status; handoff commands do not reserve that state and updates carry no
+  operation/session generation. Add explicit correlation before letting stale
+  replies affect a replaced session or its saved-file association. Portable
+  branch acceptance does not close this host sequencing defect.
+
 - `receive()` needs only the recipient public key, so verification and
   materialization run entirely in the worker while the private identity stays on
   the main thread.
@@ -166,6 +180,12 @@ Organized by feature target and validation, not by time.
   is unrelated: it is a graph-object inspector panel.
 
 ## Progress
+
+- **2026-10-11:** `a090e2f` fixes divergent captured-branch acceptance. The new
+  common-root capture regression first failed with `SnapshotMismatch`; eight
+  focused handoff tests now cover retained local/inactive incoming material,
+  checkout back to the local branch, exact snapshot validation and transactional
+  refusal of conflicting phrase contents. No project-native claim is added.
 
 - 2026-07-18: Scoped. Read the envelope engine, host identity, `AppState`,
   `view.rs`, the project worker, and the personae key API. Plan drafted against

@@ -1,0 +1,11 @@
+output-clock streams=1 frames=1438720 blocks=1405 click=false playing=false capture-invalid=false
+output-clock streams=1 frames=1496064 blocks=1461 click=true playing=false capture-invalid=false
+output-clock streams=1 frames=1527808 blocks=1492 click=false playing=false capture-invalid=false
+output-clock streams=1 frames=1597440 blocks=1560 click=true playing=false capture-invalid=false
+output-clock streams=1 frames=1628160 blocks=1590 click=false playing=false capture-invalid=false
+woodshed-genet: captured 01_metronome_playing
+woodshed-genet: captured 02_metronome_stopped
+woodshed-genet: captured 03_metronome_restarted
+woodshed-genet: captured 04_metronome_final_stop
+woodshed-genet: Single output metronome stop restart complete
+woodshed-genet: RESULT ok (214 frames, 4 captures)

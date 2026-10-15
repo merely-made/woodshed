@@ -7,7 +7,11 @@ not a DAW: a session is a small set of mono tracks, recording appends a
 layer, and layers mute independently.
 
 Hocket is hosted under Woodshed's `ports/hocket` directory but remains a
-separately versioned, tested, and released nested workspace.
+separately versioned, tested, and released nested workspace. Its reusable
+model, project, recorder-controller and Cambium-view libraries live under root
+`crates/`; the standalone host supplies devices, identity, workers and window
+services. The [recorder extraction plan](design_docs/2026-07-08_genet_host_refactor_plan.md#embeddable-recorder-follow-through-2026-10-13)
+records the current embedding boundary and its scoped acceptance.
 
 ## Status (2026-08-12)
 
@@ -45,14 +49,31 @@ settings are session settings, not fixed limits.
 
 ```sh
 cargo run -p hocket-genet      # desktop app
-cargo run -p hocket-headless   # scripted engine harness
-cargo test -p hocket-model
-cargo test -p hocket-engine
+cargo run -p hocket-headless -- --run # manual microphone/output demo
+../../scripts/validate-workspace.sh lockfile hocket
+../../scripts/validate-workspace.sh test hocket
 ```
 
-Building needs a sibling `../genet` checkout for the `[patch.crates-io]` path
-entries; the other family dependencies resolve as git dependencies. Release
-cutting is documented in `design_docs/RELEASING.md`.
+The committed manifests and lockfile resolve the family from Git; no sibling
+Genet checkout is required. Optional local Cargo overrides are development
+plumbing and are excluded from the clean-checkout validation commands above.
+The local validation command runs model, portable project/media, shared
+recorder/controller and view, engine,
+desktop-host unit tests, and device-free manual CLI tests;
+ignored device/custody receipts and the manual headless demo are separate
+acceptance lanes.
+
+The headless demo opens real default audio devices for about twelve seconds.
+Use headphones or turn the speakers down to avoid feedback. It requires
+explicit `--run`; `--help` and an invocation without arguments only describe
+the demonstration. Missing hardware, engine errors or capture that never
+completes produce a nonzero exit. A successful run reports completed capture
+and queued replay, while audibility and musical timing still need a person's
+review. It is a manual demonstration, not an automated hardware acceptance gate.
+
+Release cutting is documented in `design_docs/RELEASING.md`. Hocket's tags use
+`hocket-v*`; its signed updater manifest must stay on a Hocket-only URL because
+the shared repository has one global latest release.
 
 ## License
 

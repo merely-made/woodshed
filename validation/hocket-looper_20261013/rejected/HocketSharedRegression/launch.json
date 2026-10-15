@@ -1,0 +1,22 @@
+{
+  "source_revision": "f95d85227acdf1063999e21637e2b71e24da707f",
+  "binary": {
+    "source_revision": "f95d85227acdf1063999e21637e2b71e24da707f",
+    "binary": "/Users/markik/Code/testing/woodshed/hocket-adoption-20261013/frozen-binaries/hocket-genet-f95d852",
+    "sha256": "19845479f3023b332527d2636ccaf846bb5231031fa887890587f4ce39a4f28d"
+  },
+  "environment": {
+    "HOCKET_APPEARANCE": "/Users/markik/Code/testing/hocket/recorder-extraction-20261013/profile/appearance.json",
+    "HOCKET_APPEARANCE_RECEIPT": "1",
+    "HOCKET_CAPTURE_DIR": "/Users/markik/Code/testing/woodshed/hocket-adoption-20261013/native/HocketSharedRegression",
+    "HOCKET_PRESENTATION_TIMEOUT_SECS": "60",
+    "HOCKET_RECEIPT": "/Users/markik/Code/testing/woodshed/hocket-adoption-20261013/native/HocketSharedRegression/scenario.done",
+    "HOCKET_SCENARIO": "/Users/markik/Code/worktrees/woodshed-orchestrate-20261011/ports/hocket/scenarios/recorder_controls.scn",
+    "HOCKET_SETTINGS": "/Users/markik/Code/testing/hocket/recorder-extraction-20261013/profile/update-settings.json",
+    "HOCKET_THEME_LIBRARY": "/Users/markik/Code/testing/hocket/recorder-extraction-20261013/profile/themes.json",
+    "XDG_CONFIG_HOME": "/Users/markik/Code/testing/hocket/recorder-extraction-20261013/profile/config",
+    "XDG_DATA_HOME": "/Users/markik/Code/testing/hocket/recorder-extraction-20261013/profile/data",
+    "XDG_RUNTIME_DIR": "/tmp/hocket-recorder-20261013"
+  },
+  "bundle": "/Users/markik/Code/testing/woodshed/hocket-adoption-20261013/native/HocketSharedRegression/HocketSharedRegression.app"
+}

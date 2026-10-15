@@ -1,0 +1,1609 @@
+    Updating git repository `https://github.com/merely-made/retinue.git`
+    Updating git repository `https://github.com/mark-ik/kiss3d.git`
+    Updating git repository `https://github.com/merely-made/knot-editor.git`
+    Updating crates.io index
+    Updating git repository `https://github.com/mark-ik/boa.git`
+warning: patch `boa_engine v1.0.0-dev (https://github.com/mark-ik/boa.git?branch=genet#52cfb6ff)` was not used in the crate graph
+  |
+  = help: perhaps you meant one of the following:
+          	https://github.com/mark-ik/boa.git
+warning: patch `boa_gc v1.0.0-dev (https://github.com/mark-ik/boa.git?branch=genet#52cfb6ff)` was not used in the crate graph
+  |
+  = help: perhaps you meant one of the following:
+          	https://github.com/mark-ik/boa.git
+   Compiling proc-macro2 v1.0.107
+   Compiling quote v1.0.47
+   Compiling unicode-ident v1.0.26
+   Compiling libc v0.2.190
+   Compiling syn v3.0.6
+   Compiling syn v2.0.119
+   Compiling serde_core v1.0.229
+   Compiling serde_derive v1.0.229
+   Compiling serde v1.0.229
+   Compiling cfg-if v1.0.5
+   Compiling typenum v1.20.1
+   Compiling zeroize_derive v1.5.0
+   Compiling smallvec v1.16.1
+   Compiling zeroize v1.9.1
+   Compiling version_check v0.9.5
+   Compiling memchr v2.8.3
+   Compiling log v0.4.34
+   Compiling rand_core v0.10.1
+   Compiling getrandom v0.4.3
+   Compiling libm v0.2.16
+   Compiling jobserver v0.1.35
+   Compiling shlex v2.0.1
+   Compiling find-msvc-tools v0.1.14
+   Compiling pin-project-lite v0.2.17
+   Compiling cc v1.6.0
+   Compiling portable-atomic v1.15.0
+   Compiling autocfg v1.5.1
+   Compiling foldhash v0.2.0
+   Compiling subtle v2.6.1
+   Compiling critical-section v1.2.0
+   Compiling bitflags v2.13.2
+   Compiling once_cell v1.21.4
+   Compiling equivalent v1.0.2
+   Compiling stable_deref_trait v1.2.1
+   Compiling num-traits v0.2.19
+   Compiling itoa v1.0.18
+   Compiling arrayvec v0.7.8
+   Compiling cfg_aliases v0.2.2
+   Compiling generic-array v0.14.7
+   Compiling bytes v1.12.1
+   Compiling getrandom v0.2.17
+   Compiling allocator-api2 v0.2.21
+   Compiling hybrid-array v0.4.15
+   Compiling synstructure v0.14.0
+   Compiling errno v0.3.14
+   Compiling futures-core v0.3.34
+   Compiling crypto-common v0.1.7
+   Compiling hashbrown v0.17.1
+   Compiling zerofrom-derive v0.1.8
+   Compiling yoke-derive v0.8.3
+   Compiling zerofrom v0.1.8
+   Compiling crypto-common v0.2.2
+   Compiling yoke v0.8.3
+   Compiling thiserror-impl v2.0.21
+   Compiling zerovec-derive v0.11.6
+   Compiling displaydoc v0.2.7
+   Compiling zerovec v0.11.8
+   Compiling block-buffer v0.12.1
+   Compiling writeable v0.6.4
+   Compiling socket2 v0.6.5
+   Compiling indexmap v2.14.2
+   Compiling tinystr v0.8.4
+   Compiling thiserror v2.0.21
+   Compiling litemap v0.8.3
+   Compiling icu_locale_core v2.3.0
+   Compiling potential_utf v0.1.6
+   Compiling zerotrie v0.2.5
+   Compiling signal-hook-registry v1.4.8
+   Compiling tokio-macros v2.7.2
+   Compiling mio v1.2.3
+   Compiling zerocopy v0.8.57
+   Compiling tokio v1.53.2
+   Compiling icu_provider v2.3.1
+   Compiling zerocopy-derive v0.8.57
+   Compiling utf8_iter v1.0.4
+   Compiling icu_collections v2.3.0
+   Compiling semver v1.0.28
+   Compiling icu_properties_data v2.3.0
+   Compiling tracing-core v0.1.36
+   Compiling icu_normalizer_data v2.3.0
+   Compiling tracing-attributes v0.1.31
+   Compiling icu_properties v2.3.0
+   Compiling tracing v0.1.44
+   Compiling rustc_version v0.4.1
+   Compiling icu_normalizer v2.3.0
+   Compiling percent-encoding v2.3.2
+   Compiling slab v0.4.12
+   Compiling idna_adapter v1.2.2
+   Compiling futures-io v0.3.34
+   Compiling const-oid v0.9.6
+   Compiling idna v1.1.0
+   Compiling form_urlencoded v1.2.2
+   Compiling objc2-encode v4.1.0
+   Compiling url v2.5.8
+   Compiling zmij v1.0.23
+   Compiling siphasher v1.0.3
+   Compiling sha1_smol v1.0.1
+   Compiling block-padding v0.4.2
+   Compiling serde_json v1.0.151
+   Compiling futures-sink v0.3.34
+   Compiling futures-channel v0.3.34
+   Compiling inout v0.2.2
+   Compiling block-buffer v0.10.4
+   Compiling futures-macro v0.3.34
+   Compiling parking_lot_core v0.9.12
+   Compiling scopeguard v1.2.0
+   Compiling futures-task v0.3.34
+   Compiling cmov v0.5.4
+   Compiling const-oid v0.10.2
+   Compiling futures-util v0.3.34
+   Compiling ctutils v0.4.2
+   Compiling digest v0.10.7
+   Compiling cpufeatures v0.2.17
+   Compiling objc2 v0.6.4
+   Compiling lock_api v0.4.14
+   Compiling cipher v0.5.2
+   Compiling ring v0.17.14
+   Compiling dispatch2 v0.3.1
+   Compiling block2 v0.6.2
+   Compiling parking_lot v0.12.5
+   Compiling digest v0.11.3
+   Compiling blake3 v1.8.7
+   Compiling objc2-core-foundation v0.3.2
+   Compiling bytemuck_derive v1.12.1
+   Compiling constant_time_eq v0.4.2
+   Compiling bytemuck v1.25.2
+   Compiling chacha20 v0.10.2
+   Compiling uuid v1.27.0
+   Compiling byteorder v1.5.0
+   Compiling untrusted v0.9.0
+   Compiling rustls-pki-types v1.15.1
+   Compiling cpufeatures v0.3.1
+   Compiling base64ct v1.8.3
+   Compiling num-conv v0.2.2
+   Compiling time-core v0.1.9
+   Compiling time-macros v0.2.32
+   Compiling rand_core v0.6.4
+   Compiling powerfmt v0.2.0
+   Compiling deranged v0.5.8
+   Compiling sha2 v0.11.0
+   Compiling time v0.3.55
+   Compiling base64 v0.22.1
+   Compiling serde_bytes v0.11.19
+   Compiling anyhow v1.0.104
+   Compiling rustls v0.23.45
+   Compiling rustls-webpki v0.103.15
+   Compiling block-padding v0.3.3
+   Compiling num-integer v0.1.47
+   Compiling fnv v1.0.7
+   Compiling inout v0.1.4
+   Compiling core-foundation-sys v0.8.7
+   Compiling cipher v0.4.4
+   Compiling rand v0.10.3
+   Compiling pem-rfc7468 v1.0.0
+   Compiling simdutf8 v0.1.5
+   Compiling der v0.8.2
+   Compiling tokio-util v0.7.19
+   Compiling curve25519-dalek v5.0.0
+   Compiling spki v0.8.0
+   Compiling phf_shared v0.13.1
+   Compiling universal-hash v0.5.1
+   Compiling unicode-segmentation v1.13.3
+   Compiling opaque-debug v0.3.1
+   Compiling base16ct v1.0.0
+   Compiling serdect v0.4.3
+   Compiling pkcs8 v0.11.0
+   Compiling euclid v0.22.14
+   Compiling http v1.5.0
+   Compiling signature v3.0.0
+   Compiling fastrand v2.5.0
+   Compiling phf_generator v0.13.1
+   Compiling ed25519 v3.0.0
+   Compiling sha2 v0.10.9
+   Compiling ppv-lite86 v0.2.21
+   Compiling crossbeam-utils v0.8.23
+   Compiling ed25519-dalek v3.0.0
+   Compiling polyval v0.6.2
+   Compiling aead v0.5.2
+   Compiling rustversion v1.0.23
+   Compiling ghash v0.5.1
+   Compiling ctr v0.9.2
+   Compiling aes v0.8.4
+   Compiling fixedbitset v0.5.7
+   Compiling rustc-hash v1.1.0
+   Compiling heck v0.5.0
+   Compiling aes-gcm v0.10.3
+   Compiling tokio-rustls v0.26.6
+   Compiling objc2-foundation v0.3.2
+   Compiling der v0.7.10
+   Compiling heapless v0.7.17
+   Compiling winnow v1.0.4
+   Compiling toml_parser v1.1.3+spec-1.1.0
+   Compiling toml_datetime v1.1.1+spec-1.1.0
+   Compiling hash32 v0.2.1
+   Compiling half v2.7.1
+   Compiling profiling-procmacros v1.0.18
+   Compiling static_assertions v1.1.0
+   Compiling httparse v1.10.1
+   Compiling bit-vec v0.9.1
+   Compiling getrandom v0.3.4
+   Compiling new_debug_unreachable v1.0.6
+   Compiling unicode-width v0.2.2
+   Compiling codespan-reporting v0.13.1
+   Compiling bit-set v0.10.0
+   Compiling profiling v1.0.18
+   Compiling phf_macros v0.13.1
+   Compiling core-foundation v0.10.1
+   Compiling cobs v0.3.0
+   Compiling postcard-derive v0.2.2
+   Compiling simd-adler32 v0.3.10
+   Compiling phf v0.13.1
+   Compiling postcard v1.1.3
+   Compiling strum_macros v0.28.0
+   Compiling convert_case v0.10.0
+   Compiling security-framework-sys v2.17.0
+   Compiling num-bigint v0.4.8
+   Compiling hmac v0.12.1
+   Compiling adler2 v2.0.1
+   Compiling unicode-xid v0.2.6
+   Compiling crc32fast v1.5.2
+   Compiling ipnet v2.12.2
+   Compiling derive_more-impl v2.1.1
+   Compiling strum v0.28.0
+   Compiling num-rational v0.4.2
+   Compiling security-framework v3.7.0
+   Compiling string_cache_codegen v0.6.1
+   Compiling phf_codegen v0.13.1
+   Compiling http-body v1.1.0
+   Compiling ff v0.13.1
+   Compiling enumn v0.1.14
+   Compiling base16ct v0.2.0
+   Compiling foldhash v0.1.5
+   Compiling spin v0.9.9
+   Compiling atomic-waker v1.1.2
+   Compiling lazy_static v1.5.0
+   Compiling hashbrown v0.15.5
+   Compiling accesskit v0.24.1
+   Compiling sec1 v0.7.3
+   Compiling group v0.13.0
+   Compiling web_atoms v0.2.6
+   Compiling derive_more v2.1.1
+   Compiling rustls-platform-verifier v0.7.0
+   Compiling miniz_oxide v0.9.1
+   Compiling hkdf v0.12.4
+   Compiling spki v0.7.3
+   Compiling naga-types v30.0.1
+   Compiling rand_chacha v0.3.1
+   Compiling linebender_resource_handle v0.1.1
+   Compiling signature v2.2.0
+   Compiling crypto-bigint v0.5.5
+   Compiling naga v30.0.1
+   Compiling pin-project-internal v1.1.13
+   Compiling tower-service v0.3.3
+   Compiling precomputed-hash v0.1.1
+   Compiling raw-window-handle v0.6.2
+   Compiling parking v2.2.1
+   Compiling try-lock v0.2.5
+   Compiling want v0.3.1
+   Compiling futures-lite v2.6.1
+   Compiling string_cache v0.9.0
+   Compiling pin-project v1.1.13
+   Compiling elliptic-curve v0.13.8
+   Compiling rand v0.8.8
+   Compiling flate2 v1.1.10
+   Compiling petgraph v0.8.3
+   Compiling h2 v0.4.19
+   Compiling objc2-metal v0.3.2
+   Compiling objc2-core-graphics v0.3.2
+   Compiling n0-error-macros v1.0.1
+   Compiling spez v0.1.2
+   Compiling redb v2.6.3
+   Compiling httpdate v1.0.3
+   Compiling base64 v0.23.1
+   Compiling tinyvec v1.13.3
+   Compiling rustc-hash v2.1.3
+   Compiling data-encoding v2.11.1
+   Compiling hyper v1.11.1
+   Compiling n0-error v1.0.1
+   Compiling objc2-quartz-core v0.3.2
+   Compiling wgpu-types v30.0.1
+   Compiling tendril v0.5.1
+   Compiling curve25519-dalek v4.1.3
+   Compiling wgpu-hal v30.0.1
+   Compiling async-trait v0.1.92
+   Compiling regex-syntax v0.8.11
+   Compiling pkg-config v0.3.34
+   Compiling wgpu-naga-bridge v30.0.1
+   Compiling markup5ever v0.39.0
+   Compiling raw-window-metal v1.1.0
+   Compiling hyper-util v0.1.20
+   Compiling rfc6979 v0.4.0
+   Compiling num-iter v0.1.46
+   Compiling webpki-roots v1.0.9
+   Compiling futures-executor v0.3.34
+   Compiling fastbloom v0.17.0
+   Compiling n0-future v0.3.2
+   Compiling rand_pcg v0.10.2
+   Compiling libloading v0.8.9
+   Compiling diatomic-waker v0.2.3
+   Compiling cordyceps v0.3.5
+   Compiling spin v0.10.1
+   Compiling lru-slab v0.1.3
+   Compiling futures-buffered v0.2.13
+   Compiling futures v0.3.34
+   Compiling muniment v0.1.2 (/Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/0e78fcf/crates/eidetic/muniment)
+   Compiling ecdsa v0.16.9
+   Compiling primeorder v0.13.6
+   Compiling http-body-util v0.1.5
+   Compiling poly1305 v0.8.0
+   Compiling chacha20 v0.9.1
+   Compiling font-types v0.12.5
+   Compiling sync_wrapper v1.0.2
+   Compiling wgpu-core v30.0.1
+   Compiling polycool v0.4.0
+   Compiling litrs v1.0.0
+   Compiling document-features v0.2.12
+   Compiling kurbo v0.13.1
+   Compiling read-fonts v0.41.0
+   Compiling wgpu-core-deps-apple v30.0.1
+   Compiling miniz_oxide v0.8.9
+   Compiling fdeflate v0.3.7
+   Compiling noq-udp v1.3.0
+   Compiling wgpu v30.0.1
+   Compiling slotmap v1.1.1
+   Compiling color v0.3.3
+   Compiling ptr_meta_derive v0.3.2
+   Compiling rustix v1.1.5
+   Compiling svg_fmt v0.4.5
+   Compiling tower-layer v0.3.3
+   Compiling guillotiere v0.7.0
+   Compiling ptr_meta v0.3.2
+   Compiling peniko v0.6.1
+   Compiling png v0.18.1
+   Compiling vello_shaders v0.11.0 (https://github.com/mark-ik/vello?rev=5862bba26c8a9f56f6a5fdc8ea6966b360a5d63a#5862bba2)
+   Compiling skrifa v0.44.0
+   Compiling hyper-rustls v0.27.9
+   Compiling toml_edit v0.25.15+spec-1.1.0
+   Compiling sceno v0.0.4 (/Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/0e78fcf/crates/cambium/scenes/sceno)
+   Compiling num-complex v0.4.6
+   Compiling nom v8.0.0
+   Compiling unicase v2.9.0
+   Compiling num-bigint-dig v0.8.6
+   Compiling system-configuration-sys v0.6.0
+   Compiling thiserror v1.0.69
+   Compiling data-encoding-macro-internal v0.1.19
+   Compiling proc-macro-crate v3.5.0
+   Compiling vello_encoding v0.11.0 (https://github.com/mark-ik/vello?rev=5862bba26c8a9f56f6a5fdc8ea6966b360a5d63a#5862bba2)
+   Compiling rancor v0.1.3
+   Compiling tower v0.5.3
+   Compiling p256 v0.13.2
+   Compiling p384 v0.13.1
+   Compiling pkcs8 v0.10.2
+   Compiling pem-rfc7468 v0.7.0
+   Compiling hashbrown v0.16.1
+   Compiling hex v0.4.3
+   Compiling thiserror-impl v1.0.69
+   Compiling bytecheck_derive v0.8.3
+   Compiling alloc-no-stdlib v2.0.4
+   Compiling crossbeam-epoch v0.9.21
+   Compiling either v1.18.0
+   Compiling alloc-stdlib v0.2.4
+   Compiling bytecheck v0.8.3
+   Compiling ssh-encoding v0.2.0
+   Compiling pkcs1 v0.7.5
+   Compiling tower-http v0.6.11
+   Compiling data-encoding-macro v0.1.21
+   Compiling layout-dom-api v0.1.1 (https://github.com/merely-made/genet.git?rev=4bc75583865c2fb862b7acd7fe16dc28eb591042#4bc75583)
+   Compiling ed25519 v2.2.3
+   Compiling paint_list_api v0.1.2 (https://github.com/merely-made/netrender.git?rev=ef5412d760a978584c8c1801e8a765c51aecd403#ef5412d7)
+   Compiling tokio-stream v0.1.19
+   Compiling cbc v0.1.2
+   Compiling blowfish v0.9.1
+   Compiling objc2-security v0.3.2
+   Compiling futures-intrusive v0.5.0
+   Compiling pbkdf2 v0.12.2
+   Compiling noq v1.3.0
+   Compiling quick-xml v0.42.0
+   Compiling command-menu v0.1.0 (/Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/0e78fcf/crates/cambium/command-menu)
+   Compiling mere-curation v0.1.0 (/Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/0e78fcf/crates/forme/curation)
+   Compiling munge_macro v0.4.7
+   Compiling enum-assoc v1.4.1
+   Compiling sorted-index-buffer v0.2.1
+   Compiling crossbeam-deque v0.8.8
+   Compiling crunchy v0.2.4
+   Compiling n0-dns-resolver v0.1.0
+   Compiling identity-hash v0.1.0
+   Compiling netdev v0.46.3
+   Compiling noq-proto v1.3.0
+   Compiling munge v0.4.7
+   Compiling plist v1.10.1
+   Compiling bcrypt-pbkdf v0.10.0
+   Compiling netrender-vello v0.11.0 (https://github.com/mark-ik/vello?rev=5862bba26c8a9f56f6a5fdc8ea6966b360a5d63a#5862bba2)
+   Compiling objc2-system-configuration v0.3.2
+   Compiling ssh-cipher v0.2.0
+   Compiling ed25519-dalek v2.2.0
+   Compiling rsa v0.9.10
+   Compiling system-configuration v0.8.0
+   Compiling iroh-base v1.3.0
+   Compiling reqwest v0.13.5
+   Compiling rend v0.5.4
+   Compiling brotli-decompressor v5.0.3
+   Compiling num_enum_derive v0.7.6
+   Compiling p521 v0.13.3
+   Compiling iroh-metrics-derive v1.0.1
+   Compiling universal-hash v0.6.1
+   Compiling lru v0.18.4
+   Compiling iroh-dns v1.3.0
+   Compiling netwatch v0.19.3
+   Compiling simple-dns v0.12.0
+   Compiling aho-corasick v1.1.5
+   Compiling equator-macro v0.4.2
+   Compiling rkyv_derive v0.8.18
+   Compiling tiny-keccak v2.0.2
+   Compiling rayon-core v1.13.0
+   Compiling xml-rs v0.8.29
+   Compiling object v0.39.1
+   Compiling mac-addr v0.3.0
+   Compiling ryu v1.0.23
+   Compiling iroh-metrics v1.0.2
+   Compiling rkyv v0.8.18
+   Compiling xmltree v0.10.3
+   Compiling equator v0.4.2
+   Compiling regex-automata v0.4.18
+   Compiling ssh-key v0.6.7
+   Compiling poly1305 v0.9.1
+   Compiling num_enum v0.7.6
+   Compiling n0-watcher v1.0.0
+   Compiling xml5ever v0.39.0
+   Compiling html5ever v0.39.0
+   Compiling arc-swap v1.9.2
+   Compiling encoding_rs v0.8.42
+   Compiling attohttpc v0.30.1
+   Compiling font-types v0.11.3
+   Compiling aead v0.6.1
+   Compiling app_units v0.7.8
+   Compiling iroh-relay v1.3.0
+   Compiling document-session-api v0.1.0 (https://github.com/merely-made/genet.git?rev=4bc75583865c2fb862b7acd7fe16dc28eb591042#4bc75583)
+   Compiling hax-lib v0.3.7
+   Compiling grid v1.0.1
+   Compiling icu_locale_fallback_data v2.3.0
+   Compiling taffy v0.11.0-experimental-cache-fix.3
+   Compiling genet-paint-types v0.2.0 (https://github.com/merely-made/genet.git?rev=4bc75583865c2fb862b7acd7fe16dc28eb591042#4bc75583)
+   Compiling chacha20poly1305 v0.11.0
+   Compiling igd-next v0.17.1
+   Compiling read-fonts v0.39.2
+   Compiling genet-static-dom v0.1.1 (https://github.com/merely-made/genet.git?rev=4bc75583865c2fb862b7acd7fe16dc28eb591042#4bc75583)
+   Compiling chartulary v0.2.2 (/Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/0e78fcf/crates/eidetic/chartulary)
+   Compiling aligned-vec v0.6.4
+   Compiling gethostname v1.1.0
+   Compiling mime_guess v2.0.5
+   Compiling rand_core v0.9.5
+   Compiling tokio-websockets v0.13.3
+   Compiling insigne v0.0.2 (https://github.com/merely-made/dramatis.git?rev=0234e7eea6f2ddf2330a71b9425da01b06ae0391#0234e7ee)
+   Compiling iroh v1.3.0
+   Compiling hax-lib-macros v0.3.7
+   Compiling seize v0.5.1
+   Compiling syn v1.0.109
+   Compiling icu_segmenter_data v2.3.0
+   Compiling web-time v1.1.0
+   Compiling strsim v0.11.1
+   Compiling multiversion_no_op v1.0.0
+   Compiling ident_case v1.0.1
+   Compiling darling_core v0.24.1
+   Compiling papaya v0.2.5
+   Compiling const-random-macro v0.1.16
+   Compiling personae v0.3.0 (https://github.com/merely-made/dramatis.git?rev=0234e7eea6f2ddf2330a71b9425da01b06ae0391#0234e7ee)
+   Compiling ar_archive_writer v0.5.3
+   Compiling rand_chacha v0.9.0
+   Compiling v_frame v0.3.9
+   Compiling rayon v1.12.0
+   Compiling portmapper v0.19.3
+   Compiling engine-observables-api v0.2.0 (https://github.com/merely-made/genet.git?rev=4bc75583865c2fb862b7acd7fe16dc28eb591042#4bc75583)
+   Compiling mere-forme v0.1.0 (/Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/0e78fcf/crates/forme/forme)
+   Compiling regress v0.11.1 (https://github.com/merely-made/genet.git?rev=4bc75583865c2fb862b7acd7fe16dc28eb591042#4bc75583)
+   Compiling numen v0.2.0 (/Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/0e78fcf/crates/conatus/numen)
+   Compiling backon v1.6.0
+   Compiling cfb v0.7.3
+   Compiling hmac v0.13.0
+   Compiling as-slice v0.2.1
+   Compiling ahash v0.8.12
+   Compiling cbor-core v0.10.1
+   Compiling mime v0.3.17
+   Compiling paste v1.0.15
+   Compiling av-scenechange v0.14.1
+   Compiling built v0.8.1
+   Compiling vcpkg v0.2.15
+   Compiling prettyplease v0.3.0
+   Compiling libz-sys v1.1.29
+   Compiling rav1e v0.8.1
+   Compiling p2panda-core v0.7.1 (https://github.com/mark-ik/p2panda.git?tag=mere-p2panda-net-0.7.5-upstream-20261011#d8acabc9)
+   Compiling aligned v0.4.3
+   Compiling infer v0.19.0
+   Compiling genet-scripted-dom v0.1.2 (https://github.com/merely-made/genet.git?rev=4bc75583865c2fb862b7acd7fe16dc28eb591042#4bc75583)
+   Compiling icu_locale_fallback v2.3.0
+   Compiling psm v0.1.32
+   Compiling const-random v0.1.18
+   Compiling darling_macro v0.24.1
+   Compiling inker v0.1.1 (/Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/0e78fcf/crates/inker/inker)
+   Compiling pem v4.0.0
+   Compiling serde_spanned v1.1.1
+   Compiling crossbeam-channel v0.5.17
+   Compiling yasna v0.6.0
+   Compiling objc2-core-text v0.3.2
+   Compiling acto v0.8.2
+   Compiling approx v0.5.1
+   Compiling matrixmultiply v0.3.11
+   Compiling no_std_io2 v0.9.4
+   Compiling proc-macro-error-attr v0.4.12
+   Compiling arg_enum_proc_macro v0.3.4
+   Compiling async-stream-impl v0.3.6
+   Compiling memmap2 v0.9.11
+   Compiling parlance v0.1.0
+   Compiling libcrux-intrinsics v0.0.8
+   Compiling wuff-capi v0.2.0
+   Compiling y4m v0.8.0
+   Compiling dtoa v1.0.11
+   Compiling pastey v0.1.1
+   Compiling toml_writer v1.1.2+spec-1.1.0
+   Compiling objc-sys v0.3.5
+   Compiling toml v1.1.6+spec-1.1.0
+   Compiling dtoa-short v0.3.5
+   Compiling genet-fontique v0.10.0 (https://github.com/merely-made/genet.git?rev=4bc75583865c2fb862b7acd7fe16dc28eb591042#4bc75583)
+   Compiling async-stream v0.3.6
+   Compiling bitstream-io v4.10.0
+   Compiling rcgen v0.14.10
+   Compiling mere-kernel v0.0.2 (/Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/0e78fcf/crates/graph/graph-kernel)
+   Compiling darling v0.24.1
+warning: unused imports: `astar`, `dijkstra`, `has_path_connecting`, and `kosaraju_scc`
+  --> crates/graph/graph-kernel/src/graph/mod.rs:21:22
+   |
+21 | use petgraph::algo::{astar, dijkstra, has_path_connecting, kosaraju_scc};
+   |                      ^^^^^  ^^^^^^^^  ^^^^^^^^^^^^^^^^^^^  ^^^^^^^^^^^^
+   |
+   = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused imports: `Archived`, `Place`, and `Resolver`
+  --> crates/graph/graph-kernel/src/graph/mod.rs:25:21
+   |
+25 | use rkyv::{Archive, Archived, Deserialize, Place, Resolver, Serialize, rancor::Fallible};
+   |                     ^^^^^^^^               ^^^^^  ^^^^^^^^
+
+warning: unused import: `HashSet`
+  --> crates/graph/graph-kernel/src/graph/mod.rs:26:43
+   |
+26 | use std::collections::{BTreeMap, HashMap, HashSet};
+   |                                           ^^^^^^^
+
+warning: unused imports: `GraphSnapshot`, `PersistedAddress`, `PersistedArrangementEdgeData`, `PersistedArrangementSubKind`, `PersistedContainmentEdgeData`, `PersistedContainmentSubKind`, `PersistedEdgeFamily`, `PersistedEdge`, `PersistedImportedEdgeData`, `PersistedImportedSubKind`, `PersistedNavigationTrigger`, `PersistedNodeSessionState`, `PersistedNode`, `PersistedProvenanceEdgeData`, `PersistedProvenanceSubKind`, `PersistedSemanticEdgeData`, `PersistedSemanticSubKind`, `PersistedTraversalEdgeData`, `PersistedTraversalMetrics`, and `PersistedTraversalRecord`
+  --> crates/graph/graph-kernel/src/graph/mod.rs:35:5
+   |
+35 |     GraphSnapshot, PersistedAddress, PersistedArrangementEdgeData, PersistedArrangementSubKind,
+   |     ^^^^^^^^^^^^^  ^^^^^^^^^^^^^^^^  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^  ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+36 |     PersistedContainmentEdgeData, PersistedContainmentSubKind, PersistedEdge, PersistedEdgeFamily,
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^  ^^^^^^^^^^^^^^^^^^^^^^^^^^^  ^^^^^^^^^^^^^  ^^^^^^^^^^^^^^^^^^^
+37 |     PersistedImportedEdgeData, PersistedImportedSubKind, PersistedNavigationTrigger, PersistedNode,
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^  ^^^^^^^^^^^^^^^^^^^^^^^^  ^^^^^^^^^^^^^^^^^^^^^^^^^^  ^^^^^^^^^^^^^
+38 |     PersistedNodeSessionState, PersistedProvenanceEdgeData, PersistedProvenanceSubKind,
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^  ^^^^^^^^^^^^^^^^^^^^^^^^^^^  ^^^^^^^^^^^^^^^^^^^^^^^^^^
+39 |     PersistedSemanticEdgeData, PersistedSemanticSubKind, PersistedTraversalEdgeData,
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^  ^^^^^^^^^^^^^^^^^^^^^^^^  ^^^^^^^^^^^^^^^^^^^^^^^^^^
+40 |     PersistedTraversalMetrics, PersistedTraversalRecord,
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^  ^^^^^^^^^^^^^^^^^^^^^^^^
+
+   Compiling icu_segmenter v2.3.0
+warning: unused import: `NodeTagPresentationState`
+  --> crates/graph/graph-kernel/src/graph/node_facets.rs:17:54
+   |
+17 | use crate::types::{NodeClassification, NodeProperty, NodeTagPresentationState};
+   |                                                      ^^^^^^^^^^^^^^^^^^^^^^^^
+
+   Compiling syn-mid v0.5.4
+warning: unused import: `EdgeRef`
+  --> crates/graph/graph-kernel/src/graph/mod.rs:24:23
+   |
+24 | use petgraph::visit::{EdgeRef, IntoEdgeReferences};
+   |                       ^^^^^^^
+
+warning: unused import: `rancor::Fallible`
+  --> crates/graph/graph-kernel/src/graph/mod.rs:25:72
+   |
+25 | use rkyv::{Archive, Archived, Deserialize, Place, Resolver, Serialize, rancor::Fallible};
+   |                                                                        ^^^^^^^^^^^^^^^^
+
+   Compiling hkdf v0.13.0
+   Compiling maybe-rayon v0.1.1
+   Compiling av1-grain v0.2.5
+   Compiling libcrux-secrets v0.0.6
+   Compiling skrifa v0.42.1
+warning: methods `navigate_node`, `branch_history`, `node_history_back`, and `node_history_forward` are never used
+   --> crates/graph/graph-kernel/src/graph/mod.rs:707:19
+    |
+404 | impl Graph {
+    | ---------- methods in this implementation
+...
+707 |     pub(crate) fn navigate_node(&mut self, key: NodeKey, url: &str) {
+    |                   ^^^^^^^^^^^^^
+...
+721 |     pub(crate) fn branch_history(&mut self, child: NodeKey, parent: NodeKey) {
+    |                   ^^^^^^^^^^^^^^
+...
+733 |     pub(crate) fn node_history_back(&mut self, key: NodeKey) -> Option<String> {
+    |                   ^^^^^^^^^^^^^^^^^
+...
+743 |     pub(crate) fn node_history_forward(&mut self, key: NodeKey) -> Option<String> {
+    |                   ^^^^^^^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: methods `assert_semantic_predicate`, `assert_semantic_relation_in_scope`, and `assert_semantic_predicate_in_scope` are never used
+   --> crates/graph/graph-kernel/src/graph/edge_payload.rs:258:19
+    |
+ 45 | impl EdgePayload {
+    | ---------------- methods in this implementation
+...
+258 |     pub(crate) fn assert_semantic_predicate(&mut self, predicate: String) -> bool {
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+262 |     pub(crate) fn assert_semantic_relation_in_scope(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+271 |     pub(crate) fn assert_semantic_predicate_in_scope(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: struct `LogIdAsString` is never constructed
+   --> crates/graph/graph-kernel/src/graph/identity.rs:160:19
+    |
+160 | pub(crate) struct LogIdAsString;
+    |                   ^^^^^^^^^^^^^
+
+warning: multiple methods are never used
+   --> crates/graph/graph-kernel/src/graph/resource_content.rs:86:19
+    |
+ 85 | impl Graph {
+    | ---------- methods in this implementation
+ 86 |     pub(crate) fn insert_node_tag(&mut self, key: NodeKey, tag: String) -> bool {
+    |                   ^^^^^^^^^^^^^^^
+...
+ 89 |     pub(crate) fn remove_node_tag(&mut self, key: NodeKey, tag: &str) -> bool {
+    |                   ^^^^^^^^^^^^^^^
+...
+ 92 |     pub(crate) fn append_node_property(&mut self, key: NodeKey, property: NodeProperty) -> bool {
+    |                   ^^^^^^^^^^^^^^^^^^^^
+...
+ 95 |     pub(crate) fn add_node_classification(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^
+...
+102 |     pub(crate) fn remove_node_classification(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+116 |     pub(crate) fn set_node_classification_status(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+131 |     pub(crate) fn set_node_primary_classification(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: multiple methods are never used
+   --> crates/graph/graph-kernel/src/graph/edge_ops.rs:177:19
+    |
+ 32 | impl Graph {
+    | ---------- methods in this implementation
+...
+177 |     pub(crate) fn assert_semantic_predicate(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+244 |     pub(crate) fn replay_assert_relation_by_ids(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+261 |     pub(crate) fn replay_set_edge_semantic_predicate_by_ids(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+279 |     pub(crate) fn replay_assert_semantic_predicate_by_ids(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+307 |     pub(crate) fn dissolve_remove_node_collect_traversals(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+418 |     pub(crate) fn assert_surface_persisted_semantic_statement(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+601 |     pub(crate) fn set_edge_semantic_predicate(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: method `get_node_mut` is never used
+   --> crates/graph/graph-kernel/src/graph/query.rs:227:19
+    |
+220 | impl Graph {
+    | ---------- method in this implementation
+...
+227 |     pub(crate) fn get_node_mut(&mut self, key: NodeKey) -> Option<&mut Node> {
+    |                   ^^^^^^^^^^^^
+
+   Compiling harfrust v0.8.4
+   Compiling itertools v0.14.0
+   Compiling zstd-sys v2.1.0+zstd.1.5.7
+   Compiling wide v1.7.1
+   Compiling parley_data v0.10.0
+   Compiling stacker v0.1.25
+   Compiling proc-macro-error v0.4.12
+   Compiling irpc-derive v0.17.0
+   Compiling num-derive v0.4.2
+warning: `mere-kernel` (lib) generated 13 warnings (run `cargo fix --lib -p mere-kernel` to apply 5 suggestions)
+   Compiling cssparser-macros v0.7.1
+   Compiling simd_helpers v0.1.0
+   Compiling proc-macro-hack v0.5.20+deprecated
+   Compiling noop_proc_macro v0.3.0
+   Compiling workbench v0.1.0 (/Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/0e78fcf/crates/cambium/workbench)
+   Compiling glob v0.3.4
+   Compiling smol_str v0.1.24
+   Compiling quick-error v2.0.1
+   Compiling libcrux-sha3 v0.0.10
+   Compiling bit-vec v0.6.3
+   Compiling imgref v1.12.3
+   Compiling pollster v1.0.1
+   Compiling rawpointer v0.2.1
+   Compiling netrender_device v0.1.2 (https://github.com/merely-made/netrender.git?rev=ef5412d760a978584c8c1801e8a765c51aecd403#ef5412d7)
+   Compiling bit-set v0.5.3
+   Compiling loop9 v0.1.5
+   Compiling fontsan v0.7.0
+   Compiling cssparser v0.37.0
+   Compiling irpc v0.17.0
+   Compiling genet-parley v0.10.0 (https://github.com/merely-made/genet.git?rev=4bc75583865c2fb862b7acd7fe16dc28eb591042#4bc75583)
+   Compiling simba v0.10.2
+   Compiling libcrux-traits v0.0.8
+   Compiling bon-macros v3.10.1
+   Compiling livery v0.0.5 (https://github.com/merely-made/genet.git?rev=4bc75583865c2fb862b7acd7fe16dc28eb591042#4bc75583)
+   Compiling p2panda-store v0.7.1 (https://github.com/mark-ik/p2panda.git?tag=mere-p2panda-net-0.7.5-upstream-20261011#d8acabc9)
+   Compiling glam v0.33.8
+   Compiling wuff v0.2.9
+   Compiling num v0.4.3
+   Compiling chacha20poly1305 v0.10.1
+   Compiling hickory-proto v0.26.3
+   Compiling rand_chacha v0.10.0
+   Compiling x25519-dalek v3.0.0
+   Compiling hpke-rs-crypto v0.7.0
+   Compiling yasna v0.5.2
+   Compiling pem v3.0.6
+   Compiling avif-serialize v0.8.9
+   Compiling tinct v0.1.2 (/Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/0e78fcf/crates/cambium/tinct)
+   Compiling nalgebra-macros v0.3.0
+   Compiling libcrux-platform v0.0.3
+   Compiling genet-host-api v0.2.0 (https://github.com/merely-made/genet.git?rev=4bc75583865c2fb862b7acd7fe16dc28eb591042#4bc75583)
+   Compiling color_quant v1.1.0
+   Compiling ref-cast v1.0.27
+   Compiling hashbrown v0.14.5
+   Compiling anymore v1.0.0
+   Compiling pxfm v0.1.30
+   Compiling zune-core v0.5.3
+   Compiling rgb v0.8.53
+   Compiling byteorder-lite v0.1.0
+   Compiling weezl v0.1.12
+   Compiling gif v0.14.2
+   Compiling moxcms v0.8.1
+   Compiling image-webp v0.2.4
+   Compiling ravif v0.13.0
+   Compiling zune-jpeg v0.5.15
+   Compiling dashmap v6.2.1
+   Compiling meristem v0.2.0 (/Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/0e78fcf/crates/cambium/meristem)
+   Compiling nalgebra v0.35.0
+   Compiling rcgen v0.13.2
+   Compiling swarm-discovery v0.6.3 (https://github.com/mark-ik/swarm-discovery.git?branch=mere#99dd24c5)
+   Compiling fraction v0.15.4
+   Compiling objc2 v0.5.2
+   Compiling bon v3.10.1
+   Compiling cadency v0.0.1 (https://github.com/merely-made/genet.git?rev=4bc75583865c2fb862b7acd7fe16dc28eb591042#4bc75583)
+   Compiling netrender v0.1.2 (https://github.com/merely-made/netrender.git?rev=ef5412d760a978584c8c1801e8a765c51aecd403#ef5412d7)
+   Compiling fancy-regex v0.13.0
+   Compiling mere-surface-api v0.1.0 (/Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/0e78fcf/crates/system/surface-api)
+   Compiling regex v1.13.1
+   Compiling sprigging v0.2.1 (/Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/0e78fcf/crates/cambium/sprigging)
+   Compiling scenograph v0.0.4 (/Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/0e78fcf/crates/cambium/scenes/scenograph)
+   Compiling iso8601 v0.6.6
+   Compiling scenotime v0.0.4 (/Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/0e78fcf/crates/cambium/scenes/scenotime)
+   Compiling x25519-dalek v2.0.1
+   Compiling k256 v0.13.4
+   Compiling futures-concurrency v7.7.1
+   Compiling gemini-protocol v0.1.7
+   Compiling genet-text v0.1.0 (https://github.com/merely-made/genet.git?rev=4bc75583865c2fb862b7acd7fe16dc28eb591042#4bc75583)
+   Compiling genet-taffy v0.14.0 (https://github.com/merely-made/genet.git?rev=4bc75583865c2fb862b7acd7fe16dc28eb591042#4bc75583)
+   Compiling ref-cast-impl v1.0.27
+   Compiling zstd-safe v8.0.0
+   Compiling edit-history v0.1.0 (/Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/0e78fcf/crates/cambium/edit-history)
+   Compiling robust v1.2.0
+   Compiling num-cmp v0.1.0
+   Compiling option-ext v0.2.0
+   Compiling ciborium-io v0.2.2
+   Compiling bytecount v0.6.9
+   Compiling jsonschema v0.18.3
+   Compiling ciborium-ll v0.2.2
+   Compiling dirs-sys v0.4.1
+   Compiling spade v2.15.1
+   Compiling cambium v0.3.3 (/Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/0e78fcf/crates/cambium/cambium)
+   Compiling buckram v0.0.3 (https://github.com/merely-made/genet.git?rev=4bc75583865c2fb862b7acd7fe16dc28eb591042#4bc75583)
+   Compiling scroll-protocol v0.1.0
+   Compiling iroh-gossip v0.101.0
+   Compiling hpke-rs-rust-crypto v0.7.0
+   Compiling chirograph v0.0.2 (/Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/0e78fcf/crates/chirograph)
+   Compiling scenomise v0.0.4 (/Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/0e78fcf/crates/cambium/scenes/scenomise)
+   Compiling genawaiter-proc-macro v0.99.1
+   Compiling ractor v0.16.5
+   Compiling block2 v0.5.1
+   Compiling glamx v0.3.1
+   Compiling iroh-mdns-address-lookup v0.6.0
+   Compiling hpke-rs v0.7.0
+   Compiling image v0.25.10
+   Compiling genet-document-resources v0.2.1 (https://github.com/merely-made/genet.git?rev=4bc75583865c2fb862b7acd7fe16dc28eb591042#4bc75583)
+   Compiling tabard v0.0.1 (/Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/0e78fcf/crates/system/tabard)
+   Compiling p2panda-discovery v0.7.1 (https://github.com/mark-ik/p2panda.git?tag=mere-p2panda-net-0.7.5-upstream-20261011#d8acabc9)
+   Compiling p2panda-sync v0.7.1 (https://github.com/mark-ik/p2panda.git?tag=mere-p2panda-net-0.7.5-upstream-20261011#d8acabc9)
+   Compiling notochord v0.1.1 (https://github.com/merely-made/dramatis.git?rev=0234e7eea6f2ddf2330a71b9425da01b06ae0391#0234e7ee)
+   Compiling core-foundation v0.9.4
+   Compiling blake2 v0.10.6
+   Compiling spartan-protocol v0.1.1
+   Compiling ordered-float v5.5.0
+   Compiling quinn-udp v0.5.15
+   Compiling quick-xml v0.39.4
+   Compiling ena v0.14.4
+   Compiling inplace-vec-builder v0.1.1
+   Compiling foreign-types-macros v0.2.4
+   Compiling num-derive v0.5.1
+   Compiling genawaiter-macro v0.99.1
+   Compiling foreign-types-shared v0.3.1
+   Compiling bitflags v1.3.2
+   Compiling binary-merge v0.1.2
+   Compiling redb v4.3.0
+   Compiling downcast-rs v2.0.2
+   Compiling dispatch v0.2.0
+   Compiling data-url v0.3.2
+   Compiling parry2d v0.31.1
+   Compiling genet-livery v0.0.4 (https://github.com/merely-made/genet.git?rev=4bc75583865c2fb862b7acd7fe16dc28eb591042#4bc75583)
+   Compiling objc2-foundation v0.2.2
+   Compiling range-collections v0.4.6
+   Compiling core-graphics-types v0.1.3
+   Compiling foreign-types v0.5.0
+   Compiling genawaiter v0.99.1
+   Compiling mere-p2panda-net v0.7.5 (https://github.com/mark-ik/p2panda.git?tag=mere-p2panda-net-0.7.5-upstream-20261011#d8acabc9)
+   Compiling p2panda-encryption v0.7.1 (https://github.com/mark-ik/p2panda.git?tag=mere-p2panda-net-0.7.5-upstream-20261011#d8acabc9)
+   Compiling logos-codegen v0.16.1
+   Compiling dirs v5.0.1
+   Compiling ciborium v0.2.2
+   Compiling eidetic v0.0.2 (/Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/0e78fcf/crates/eidetic/eidetic-core)
+   Compiling paint_list_render v0.1.2 (https://github.com/merely-made/netrender.git?rev=ef5412d760a978584c8c1801e8a765c51aecd403#ef5412d7)
+   Compiling misfin v0.0.4
+   Compiling mere-alembic v0.0.1 (/Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/0e78fcf/crates/distillery/alembic)
+   Compiling matchers v0.2.0
+   Compiling mere-proofs v0.1.0 (/Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/0e78fcf/crates/system/proofs)
+   Compiling iroh-io v0.6.2
+   Compiling sharded-slab v0.1.7
+   Compiling iana-time-zone v0.1.65
+   Compiling incipit v0.2.0 (/Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/0e78fcf/crates/incipit)
+   Compiling guppy-protocol v0.1.1
+   Compiling nex-protocol v0.1.1
+   Compiling gopher-protocol v0.2.0
+   Compiling finger-protocol v0.1.1
+   Compiling armillary v0.1.1 (/Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/0e78fcf/crates/armillary)
+   Compiling snow v0.10.0
+   Compiling tracing-log v0.2.0
+   Compiling quinn v0.11.12
+   Compiling iroh-blobs v0.103.1
+   Compiling winit v0.30.13
+   Compiling esp v0.1.0 (/Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/0e78fcf/crates/intel/esp)
+   Compiling thread_local v1.1.10
+   Compiling positioned-io v0.3.5
+   Compiling nu-ansi-term v0.50.3
+   Compiling self_cell v1.3.0
+   Compiling pulldown-cmark v0.13.4
+   Compiling bao-tree v0.16.1
+   Compiling tracing-subscriber v0.3.23
+   Compiling errand v0.4.0 (/Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/0e78fcf/crates/system/errand)
+   Compiling pandect v0.1.1 (/Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/0e78fcf/crates/system/pandect)
+warning: unused import: `std::io`
+  --> crates/system/pandect/src/wallet_grant/pairing.rs:10:5
+   |
+10 | use std::io;
+   |     ^^^^^^^
+   |
+   = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused import: `std::io`
+  --> crates/system/pandect/src/wallet_grant/records.rs:10:5
+   |
+10 | use std::io;
+   |     ^^^^^^^
+
+warning: unused import: `std::path::Path`
+  --> crates/system/pandect/src/wallet_grant/records.rs:11:5
+   |
+11 | use std::path::Path;
+   |     ^^^^^^^^^^^^^^^
+
+warning: unused imports: `Ed25519Keypair`, `IdentityProvider`, `InMemoryProvider`, and `PersonaId`
+  --> crates/system/pandect/src/wallet_grant/records.rs:13:16
+   |
+13 | use identity::{Ed25519Keypair, IdentityProvider, InMemoryProvider, PersonaId};
+   |                ^^^^^^^^^^^^^^  ^^^^^^^^^^^^^^^^  ^^^^^^^^^^^^^^^^  ^^^^^^^^^
+
+warning: unused import: `Ed25519Signature`
+  --> crates/system/pandect/src/wallet_grant/types.rs:14:16
+   |
+14 | use identity::{Ed25519Signature, PersonaId};
+   |                ^^^^^^^^^^^^^^^^
+
+warning: unused imports: `DEVICE_GRANT_SCHEMA_VERSION` and `DeviceGrantError`
+  --> crates/system/pandect/src/wallet_grant/types.rs:19:5
+   |
+19 |     DEVICE_GRANT_SCHEMA_VERSION, DeviceExposure, DeviceGrantError, DeviceId, DevicePublicKey,
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^                  ^^^^^^^^^^^^^^^^
+
+   Compiling chrono v0.4.45
+   Compiling stickleback v0.1.1 (/Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/0e78fcf/crates/stickleback)
+warning: method `into_graph` is never used
+   --> crates/system/pandect/src/graph_codicil.rs:149:19
+    |
+148 | impl GraphCodicil {
+    | ----------------- method in this implementation
+149 |     pub(crate) fn into_graph(self) -> Result<Graph> {
+    |                   ^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+   Compiling logos-derive v0.16.1
+   Compiling zstd v0.14.0
+   Compiling core-graphics v0.23.2
+   Compiling objc2-app-kit v0.2.2
+warning: `pandect` (lib) generated 7 warnings (run `cargo fix --lib -p pandect` to apply 6 suggestions)
+   Compiling rapier2d v0.36.0
+   Compiling iroh-util v0.6.0
+   Compiling rand v0.9.5
+   Compiling brotli v8.0.4
+   Compiling iroh-tickets v1.0.0
+   Compiling nested_enum_utils v0.2.3
+   Compiling quinn-proto v0.11.18
+   Compiling sha1 v0.10.7
+   Compiling serde_path_to_error v0.1.20
+   Compiling smartstring v1.0.1
+   Compiling cookie v0.18.2
+   Compiling reflink-copy v0.1.30
+   Compiling raunch v1.0.1
+   Compiling dpi v0.1.2
+   Compiling pollster v0.4.0
+   Compiling compression-core v0.4.33
+   Compiling smol_str v0.2.2
+   Compiling cursor-icon v1.2.0
+   Compiling jotdown v0.10.0
+   Compiling compression-codecs v0.4.43
+   Compiling service-binding v3.0.0
+   Compiling seiche v0.0.6 (/Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/0e78fcf/crates/conatus/seiche)
+   Compiling tungstenite v0.29.0
+   Compiling logos v0.16.1
+   Compiling mere-cartography v0.0.2 (/Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/0e78fcf/crates/canvas/cartography)
+   Compiling uxtree v0.0.2 (/Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/0e78fcf/crates/forme/uxtree)
+   Compiling webpki-roots v0.26.11
+   Compiling h3 v0.0.8
+   Compiling secrecy v0.10.3
+   Compiling psl-types v2.0.11
+   Compiling emblem v0.2.0
+   Compiling same-file v1.0.6
+   Compiling heapless v0.9.3
+   Compiling h3-quinn v0.0.10
+   Compiling pictograph v0.2.0 (/Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/0e78fcf/crates/canvas/pictograph)
+   Compiling psl v2.1.234
+   Compiling ssh-agent-lib v0.6.0
+warning: function `build_affinity_spring` is never used
+  --> crates/canvas/pictograph/src/canvas.rs:66:4
+   |
+66 | fn build_affinity_spring(scores: &crate::signals::AffinityScores) -> AffinitySpring {
+   |    ^^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+   Compiling tokio-tungstenite v0.29.0
+   Compiling nematic v0.1.1 (/Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/0e78fcf/crates/nematic/nematic)
+warning: unused imports: `BlockProvenanceMap`, `DocumentProvenance`, and `DocumentTrustState`
+  --> crates/nematic/nematic/src/knot/expand.rs:20:12
+   |
+20 |     Block, BlockProvenanceMap, DocumentProvenance, DocumentTrustState, Engine, EngineInput,
+   |            ^^^^^^^^^^^^^^^^^^  ^^^^^^^^^^^^^^^^^^  ^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused import: `EngineDocument`
+ --> crates/nematic/nematic/src/knot/expand/build.rs:7:80
+  |
+7 | use inker::{Block, BlockProvenanceMap, DocumentProvenance, DocumentTrustState, EngineDocument};
+  |                                                                                ^^^^^^^^^^^^^^
+
+warning: `nematic` (lib) generated 2 warnings (run `cargo fix --lib -p nematic` to apply 2 suggestions)
+   Compiling mere-transport v0.0.2 (/Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/0e78fcf/crates/murm/transport)
+warning: missing documentation for an associated function
+   --> crates/murm/transport/src/p2panda_transport.rs:629:5
+    |
+629 |     pub fn builder_from_seed_ref(signing_seed: &[u8; 32]) -> P2pandaTransportBuilder<'static> {
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+note: the lint level is defined here
+   --> crates/murm/transport/src/lib.rs:46:9
+    |
+ 46 | #![warn(missing_docs)]
+    |         ^^^^^^^^^^^^
+
+warning: `mere-transport` (lib) generated 1 warning
+   Compiling illume v0.0.2 (/Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/0e78fcf/crates/nematic/illume)
+   Compiling async-compression v0.4.48
+   Compiling cambium-winit v0.3.0 (/Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/0e78fcf/crates/cambium/cambium-winit)
+   Compiling knot-file-catalog v0.0.1 (https://github.com/merely-made/knot-editor.git?rev=4d8b81c5ed8fbe29bac9fc762cb71f161e00c784#4d8b81c5)
+   Compiling genet-render v0.2.0 (https://github.com/merely-made/genet.git?rev=4bc75583865c2fb862b7acd7fe16dc28eb591042#4bc75583)
+   Compiling graphshell-endpoint v0.0.2 (/Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/0e78fcf/crates/graphshell/graphshell-endpoint)
+   Compiling genet-render-host v0.2.0 (https://github.com/merely-made/genet.git?rev=4bc75583865c2fb862b7acd7fe16dc28eb591042#4bc75583)
+warning: `pictograph` (lib) generated 1 warning
+   Compiling document-canvas v0.1.0 (/Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/0e78fcf/crates/inker/document-canvas)
+   Compiling dramatis v0.0.3 (https://github.com/merely-made/dramatis.git?rev=0234e7eea6f2ddf2330a71b9425da01b06ae0391#0234e7ee)
+   Compiling luggage v0.1.0 (/Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/0e78fcf/crates/system/luggage)
+   Compiling tempfile v3.27.0
+   Compiling hash32 v0.3.1
+   Compiling rhai_codegen v3.2.0
+   Compiling thin-vec v0.2.20
+   Compiling libbz2-rs-sys v0.2.5
+   Compiling cpubits v0.1.1
+   Compiling aes v0.9.3
+   Compiling bzip2 v0.6.1
+   Compiling rhai v1.26.1
+   Compiling platen v0.0.1 (/Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/0e78fcf/crates/platen/platen)
+   Compiling mere-webrtc-carrier v0.0.1 (/Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/0e78fcf/crates/murm/webrtc-carrier)
+   Compiling cambium-rootstock v0.1.0 (/Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/0e78fcf/crates/cambium/cambium-rootstock)
+   Compiling knot-capture v0.0.1 (https://github.com/merely-made/knot-editor.git?rev=4d8b81c5ed8fbe29bac9fc762cb71f161e00c784#4d8b81c5)
+   Compiling netfetcher v0.1.1 (https://github.com/merely-made/genet.git?rev=4bc75583865c2fb862b7acd7fe16dc28eb591042#4bc75583)
+   Compiling knot-editor-host v0.1.1 (/Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/0e78fcf/crates/inker/knot-editor-host)
+   Compiling mere v0.0.2 (/Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/0e78fcf/crates/mere)
+   Compiling walkdir v2.5.0
+   Compiling graphshell-client v0.0.2 (/Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/0e78fcf/crates/graphshell/graphshell-client)
+   Compiling layout-dom-api v0.1.1 (https://github.com/merely-made/genet.git?rev=7422e90613f9017e5bb790e3acb48f61776b2eda#7422e906)
+   Compiling password-hash v0.5.0
+   Compiling reference-data v0.0.1 (/Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/0e78fcf/crates/intel/reference-data)
+   Compiling cbc v0.2.1
+   Compiling notify-types v2.1.0
+   Compiling toml_datetime v0.6.11
+   Compiling serde_spanned v0.6.9
+   Compiling fsevent-sys v4.1.0
+   Compiling winnow v0.7.15
+   Compiling mere-page-load v0.0.1 (/Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/0e78fcf/crates/system/page-load)
+   Compiling mora v0.1.0
+   Compiling unicode-bidi v0.3.18
+   Compiling toml_write v0.1.2
+   Compiling toml_edit v0.22.27
+   Compiling fleece v0.5.0 (https://github.com/merely-made/genet.git?rev=7422e90613f9017e5bb790e3acb48f61776b2eda#7422e906)
+   Compiling mora-cmudict v0.0.1 (/Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/0e78fcf/crates/intel/mora-cmudict)
+   Compiling mere-fetch v0.0.1 (/Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/0e78fcf/crates/system/fetch)
+   Compiling notify v8.2.0
+   Compiling retinue v0.2.0 (https://github.com/merely-made/retinue.git?rev=fa4f925059cc698058cb21fecc1c825d095741a9#fa4f9250)
+   Compiling knot-composition v0.0.1 (https://github.com/merely-made/knot-editor.git?rev=4d8b81c5ed8fbe29bac9fc762cb71f161e00c784#4d8b81c5)
+   Compiling argon2 v0.5.3
+   Compiling graphshell v0.0.2 (/Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/0e78fcf/ports/graphshell)
+warning: unused import: `Hash`
+  --> ports/graphshell/src/native/carriage_host.rs:30:26
+   |
+30 | use p2panda_core::{Body, Hash, Header, Operation, SigningKey, Topic, VerifyingKey};
+   |                          ^^^^
+   |
+   = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused import: `HeldLease`
+  --> ports/graphshell/src/native/carriage_host_commissioning.rs:42:64
+   |
+42 | use super::{CarriageCeilings, CarriageHost, CarriageHostError, HeldLease, now_ms};
+   |                                                                ^^^^^^^^^
+
+warning: unused import: `happens_before`
+  --> ports/graphshell/src/personal_sync.rs:34:5
+   |
+34 |     happens_before, observed_frontier, stable_writer_subject, validate_causal_metadata,
+   |     ^^^^^^^^^^^^^^
+
+   Compiling knot-document v0.0.1 (https://github.com/merely-made/knot-editor.git?rev=4d8b81c5ed8fbe29bac9fc762cb71f161e00c784#4d8b81c5)
+   Compiling script-rhai v0.0.1 (/Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/0e78fcf/crates/script/rhai)
+   Compiling mere-mesh v0.0.1 (/Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/0e78fcf/crates/mesh/mesh)
+warning: unused import: `personae::AttestationKeys`
+  --> ports/graphshell/src/webrtc_door.rs:78:5
+   |
+78 | use personae::AttestationKeys;
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: method `begin_session` is never used
+   --> ports/graphshell/src/mere_host.rs:383:19
+    |
+222 | impl<B: Backend + Clone> MereHost<B> {
+    | ------------------------------------ method in this implementation
+...
+383 |     pub(crate) fn begin_session(&mut self, graph: Graph) {
+    |                   ^^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: field `ceilings` is never read
+  --> ports/graphshell/src/native/carriage_host.rs:72:5
+   |
+62 | pub struct CarriageHost {
+   |            ------------ field in this struct
+...
+72 |     ceilings: CarriageCeilings,
+   |     ^^^^^^^^
+
+warning: function `codicil_graph` is never used
+    --> ports/graphshell/src/product.rs:1102:4
+     |
+1102 | fn codicil_graph(snapshot: GraphSnapshot, facets: NodeFacetStore) -> Result<Graph, ProductError> {
+     |    ^^^^^^^^^^^^^
+
+warning: function `decode_codicil` is never used
+    --> ports/graphshell/src/product.rs:1504:15
+     |
+1504 | pub(crate) fn decode_codicil(bytes: &[u8]) -> Result<ProductCodicilV3, ProductError> {
+     |               ^^^^^^^^^^^^^^
+
+   Compiling servitor v0.0.2 (/Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/0e78fcf/crates/servitor)
+   Compiling sha1 v0.11.0
+   Compiling chatelaine v0.0.3 (https://github.com/merely-made/dramatis.git?rev=0234e7eea6f2ddf2330a71b9425da01b06ae0391#0234e7ee)
+   Compiling rtoolbox v0.0.6
+   Compiling language-tags v0.3.2
+   Compiling similar v2.7.0
+   Compiling knot-editor v0.0.3 (https://github.com/merely-made/knot-editor.git?rev=4d8b81c5ed8fbe29bac9fc762cb71f161e00c784#4d8b81c5)
+warning: `graphshell` (lib) generated 8 warnings (run `cargo fix --lib -p graphshell` to apply 3 suggestions)
+   Compiling knot-site v0.0.1 (https://github.com/merely-made/knot-editor.git?rev=4d8b81c5ed8fbe29bac9fc762cb71f161e00c784#4d8b81c5)
+   Compiling rpassword v7.5.4
+   Compiling castellan v0.0.3 (/Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/0e78fcf/ports/castellan)
+warning: unused imports: `Deserialize` and `Serialize`
+  --> ports/castellan/src/custody/startup_unlock.rs:22:13
+   |
+22 | use serde::{Deserialize, Serialize};
+   |             ^^^^^^^^^^^  ^^^^^^^^^
+   |
+   = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused variable: `provider`
+  --> ports/castellan/src/custody/wallet/refresh.rs:51:5
+   |
+51 |     provider: &InMemoryProvider,
+   |     ^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_provider`
+   |
+   = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default
+
+warning: missing documentation for a variant
+  --> ports/castellan/src/authority.rs:97:5
+   |
+97 |     UnknownIntent,
+   |     ^^^^^^^^^^^^^
+   |
+note: the lint level is defined here
+  --> ports/castellan/src/lib.rs:78:9
+   |
+78 | #![warn(missing_docs)]
+   |         ^^^^^^^^^^^^
+
+warning: missing documentation for a variant
+  --> ports/castellan/src/authority.rs:99:5
+   |
+99 |     InvalidPayload(#[from] serde_json::Error),
+   |     ^^^^^^^^^^^^^^
+
+warning: missing documentation for a variant
+   --> ports/castellan/src/authority.rs:101:5
+    |
+101 |     Decision(#[from] DecisionError),
+    |     ^^^^^^^^
+
+warning: missing documentation for a variant
+   --> ports/castellan/src/authority.rs:103:5
+    |
+103 |     Identity(IdentityError),
+    |     ^^^^^^^^
+
+warning: missing documentation for a variant
+   --> ports/castellan/src/authority.rs:111:5
+    |
+111 |     KeyGeneration,
+    |     ^^^^^^^^^^^^^
+
+warning: missing documentation for a variant
+   --> ports/castellan/src/authority.rs:113:5
+    |
+113 |     PublicEncoding,
+    |     ^^^^^^^^^^^^^^
+
+warning: missing documentation for a variant
+   --> ports/castellan/src/authority.rs:115:5
+    |
+115 |     InvalidComment,
+    |     ^^^^^^^^^^^^^^
+
+warning: missing documentation for a variant
+   --> ports/castellan/src/authority.rs:120:5
+    |
+120 |     InvalidProfileId,
+    |     ^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a variant
+   --> ports/castellan/src/authority.rs:122:5
+    |
+122 |     InvalidProfileName,
+    |     ^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a variant
+   --> ports/castellan/src/authority.rs:124:5
+    |
+124 |     InvalidIdleWindow,
+    |     ^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a variant
+   --> ports/castellan/src/authority.rs:126:5
+    |
+126 |     ConfirmationRequired,
+    |     ^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a variant
+   --> ports/castellan/src/authority.rs:128:5
+    |
+128 |     KeyNotFound,
+    |     ^^^^^^^^^^^
+
+warning: missing documentation for a variant
+   --> ports/castellan/src/authority.rs:130:5
+    |
+130 |     NativeHandoffRequired,
+    |     ^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a variant
+   --> ports/castellan/src/authority.rs:132:5
+    |
+132 |     DeviceRevocationConfirmationRequired,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a variant
+   --> ports/castellan/src/authority.rs:134:5
+    |
+134 |     CarryUnavailable,
+    |     ^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a variant
+   --> ports/castellan/src/authority.rs:136:5
+    |
+136 |     DeviceRevocation(std::io::ErrorKind),
+    |     ^^^^^^^^^^^^^^^^
+
+   Compiling distillery v0.0.1 (/Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/0e78fcf/ports/distillery)
+warning: missing documentation for a variant
+  --> ports/distillery/src/mesh_host/courier.rs:42:5
+   |
+42 |     MalformedDigest,
+   |     ^^^^^^^^^^^^^^^
+   |
+note: the lint level is defined here
+  --> ports/distillery/src/lib.rs:45:9
+   |
+45 | #![warn(missing_docs)]
+   |         ^^^^^^^^^^^^
+
+warning: missing documentation for a variant
+  --> ports/distillery/src/mesh_host/courier.rs:44:5
+   |
+44 |     Store(String),
+   |     ^^^^^
+
+warning: missing documentation for a method
+   --> ports/distillery/src/mesh_host/courier.rs:131:5
+    |
+131 |     pub async fn has(&self, blob: &BlobRef) -> bool {
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for an associated function
+   --> ports/distillery/src/mesh_host/courier.rs:219:5
+    |
+219 |     pub fn new(transport: Arc<P2pandaTransport>, blobs: Arc<BlobStore>) -> Self {
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a method
+  --> ports/distillery/src/mesh_host/host.rs:32:5
+   |
+32 |     fn as_source(&self) -> &dyn BlobSource;
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a method
+  --> ports/distillery/src/mesh_host/host.rs:33:5
+   |
+33 |     fn as_sink(&self) -> &dyn BlobSink;
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+  --> ports/distillery/src/mesh_host/host.rs:47:5
+   |
+47 |     pub registry: ResourceRegistry,
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+  --> ports/distillery/src/mesh_host/host.rs:48:5
+   |
+48 |     pub blobs: Arc<dyn BlobSpace>,
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+  --> ports/distillery/src/mesh_host/host.rs:51:5
+   |
+51 |     pub clock: Arc<dyn Clock>,
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+  --> ports/distillery/src/mesh_host/host.rs:52:5
+   |
+52 |     pub conditions: Arc<dyn ConditionSource>,
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+  --> ports/distillery/src/mesh_host/host.rs:53:5
+   |
+53 |     pub facts: HostFacts,
+   |     ^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+  --> ports/distillery/src/mesh_host/host.rs:54:5
+   |
+54 |     pub policy: DevicePolicy,
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+  --> ports/distillery/src/mesh_host/host.rs:55:5
+   |
+55 |     pub lease: LeasePolicy,
+   |     ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a variant
+  --> ports/distillery/src/mesh_host/host.rs:83:5
+   |
+83 |     Claimed {
+   |     ^^^^^^^
+
+warning: missing documentation for a struct field
+  --> ports/distillery/src/mesh_host/host.rs:84:9
+   |
+84 |         job: JobId,
+   |         ^^^^^^^^^^
+
+warning: missing documentation for a variant
+  --> ports/distillery/src/mesh_host/host.rs:86:5
+   |
+86 |     Granted {
+   |     ^^^^^^^
+
+warning: missing documentation for a struct field
+  --> ports/distillery/src/mesh_host/host.rs:87:9
+   |
+87 |         job: JobId,
+   |         ^^^^^^^^^^
+
+warning: missing documentation for a struct field
+  --> ports/distillery/src/mesh_host/host.rs:88:9
+   |
+88 |         epoch: u32,
+   |         ^^^^^^^^^^
+
+warning: missing documentation for a struct field
+  --> ports/distillery/src/mesh_host/host.rs:89:9
+   |
+89 |         lease: LeaseId,
+   |         ^^^^^^^^^^^^^^
+
+warning: missing documentation for a variant
+  --> ports/distillery/src/mesh_host/host.rs:91:5
+   |
+91 |     Heartbeat {
+   |     ^^^^^^^^^
+
+warning: missing documentation for a struct field
+  --> ports/distillery/src/mesh_host/host.rs:92:9
+   |
+92 |         job: JobId,
+   |         ^^^^^^^^^^
+
+warning: missing documentation for a struct field
+  --> ports/distillery/src/mesh_host/host.rs:93:9
+   |
+93 |         lease: LeaseId,
+   |         ^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+  --> ports/distillery/src/mesh_host/host.rs:94:9
+   |
+94 |         progress: LeaseProgress,
+   |         ^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+  --> ports/distillery/src/mesh_host/host.rs:98:9
+   |
+98 |         job: JobId,
+   |         ^^^^^^^^^^
+
+warning: missing documentation for a struct field
+  --> ports/distillery/src/mesh_host/host.rs:99:9
+   |
+99 |         lease: Option<LeaseId>,
+   |         ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a variant
+   --> ports/distillery/src/mesh_host/host.rs:101:5
+    |
+101 |     Completed {
+    |     ^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> ports/distillery/src/mesh_host/host.rs:102:9
+    |
+102 |         job: JobId,
+    |         ^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> ports/distillery/src/mesh_host/host.rs:103:9
+    |
+103 |         lease: Option<LeaseId>,
+    |         ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a variant
+   --> ports/distillery/src/mesh_host/host.rs:105:5
+    |
+105 |     Released {
+    |     ^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> ports/distillery/src/mesh_host/host.rs:106:9
+    |
+106 |         job: JobId,
+    |         ^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> ports/distillery/src/mesh_host/host.rs:107:9
+    |
+107 |         lease: LeaseId,
+    |         ^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> ports/distillery/src/mesh_host/host.rs:108:9
+    |
+108 |         reason: ReleaseReason,
+    |         ^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> ports/distillery/src/mesh_host/host.rs:113:9
+    |
+113 |         job: JobId,
+    |         ^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> ports/distillery/src/mesh_host/host.rs:118:9
+    |
+118 |         job: JobId,
+    |         ^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> ports/distillery/src/mesh_host/host.rs:119:9
+    |
+119 |         lease: LeaseId,
+    |         ^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> ports/distillery/src/mesh_host/host.rs:120:9
+    |
+120 |         reason: ReclaimReason,
+    |         ^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> ports/distillery/src/mesh_host/host.rs:121:9
+    |
+121 |         stopped_at: LeaseProgress,
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> ports/distillery/src/mesh_host/host.rs:127:9
+    |
+127 |         job: JobId,
+    |         ^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> ports/distillery/src/mesh_host/host.rs:128:9
+    |
+128 |         lease: LeaseId,
+    |         ^^^^^^^^^^^^^^
+
+warning: missing documentation for a variant
+   --> ports/distillery/src/mesh_host/host.rs:130:5
+    |
+130 |     Idle,
+    |     ^^^^
+
+warning: missing documentation for a variant
+   --> ports/distillery/src/mesh_host/host.rs:137:5
+    |
+137 |     Sync(#[from] MeshSyncError),
+    |     ^^^^
+
+warning: missing documentation for a variant
+   --> ports/distillery/src/mesh_host/host.rs:139:5
+    |
+139 |     Store(#[from] MeshStoreError),
+    |     ^^^^^
+
+warning: missing documentation for an associated function
+   --> ports/distillery/src/mesh_host/host.rs:157:5
+    |
+157 |     pub fn new(synced: SyncedMesh<B>, keypair: Ed25519Keypair, config: HostConfig) -> Self {
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a method
+   --> ports/distillery/src/mesh_host/host.rs:168:5
+    |
+168 |     pub fn me(&self) -> [u8; 32] {
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a method
+   --> ports/distillery/src/mesh_host/host.rs:172:5
+    |
+172 |     pub fn synced(&self) -> &SyncedMesh<B> {
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a method
+   --> ports/distillery/src/mesh_host/host.rs:186:5
+    |
+186 |     pub fn policy(&self) -> &DevicePolicy {
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+  --> ports/distillery/src/mesh_host/inflight.rs:30:5
+   |
+30 |     pub reason: ReclaimReason,
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+  --> ports/distillery/src/mesh_host/inflight.rs:41:5
+   |
+41 |     pub handle: JobControlHandle,
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+  --> ports/distillery/src/mesh_host/inflight.rs:42:5
+   |
+42 |     pub task: JoinHandle<Result<RunOutcome, RunError>>,
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+  --> ports/distillery/src/mesh_host/inflight.rs:45:5
+   |
+45 |     pub reclaim: Option<Reclaiming>,
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a method
+  --> ports/distillery/src/mesh_host/sense.rs:27:5
+   |
+27 |     fn now_ms(&self) -> u64;
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for an associated function
+  --> ports/distillery/src/mesh_host/sense.rs:52:5
+   |
+52 |     pub fn at(now_ms: u64) -> Self {
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a method
+  --> ports/distillery/src/mesh_host/sense.rs:58:5
+   |
+58 |     pub fn set(&self, now_ms: u64) {
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a method
+  --> ports/distillery/src/mesh_host/sense.rs:62:5
+   |
+62 |     pub fn advance(&self, by_ms: u64) {
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a method
+  --> ports/distillery/src/mesh_host/sense.rs:80:5
+   |
+80 |     fn conditions(&self) -> DeviceConditions;
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for an associated function
+  --> ports/distillery/src/mesh_host/sense.rs:91:5
+   |
+91 |     pub fn new(conditions: DeviceConditions) -> Self {
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a method
+   --> ports/distillery/src/mesh_host/sense.rs:102:5
+    |
+102 |     pub fn set(&self, conditions: DeviceConditions) {
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: `castellan` (lib) generated 18 warnings (run `cargo fix --lib -p castellan` to apply 2 suggestions)
+   Compiling toml v0.8.23
+warning: `distillery` (lib) generated 57 warnings
+   Compiling light-file-dialog v3.21.3
+   Compiling djinn v0.0.2 (/Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/0e78fcf/ports/djinn)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 7m 57s

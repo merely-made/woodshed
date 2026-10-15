@@ -71,6 +71,53 @@ pub struct TunerState {
     pub reading: Option<TunerReading>,
 }
 
+/// Frozen musical backing for a queued recorder command. No Hocket project is
+/// created; these are Woodshed's existing product snapshots.
+#[derive(Clone, Debug, PartialEq)]
+pub enum RecorderBacking {
+    Set(crate::loop_plan::LoopPlan),
+    Saved(crate::song::SongDoc),
+}
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum RecorderCommand {
+    RecordCard(crate::loop_plan::LoopSegmentId),
+    ClearCard(crate::loop_plan::LoopSegmentId),
+    RecordSavedBar(usize),
+    ClearSavedBar(usize),
+    StopCapture {
+        start_bar: usize,
+        capture_epoch: u64,
+    },
+}
+#[derive(Clone, Debug)]
+pub struct RecorderRequest {
+    pub session: std::sync::Arc<()>,
+    pub backing: RecorderBacking,
+    pub command: RecorderCommand,
+}
+impl PartialEq for RecorderRequest {
+    fn eq(&self, other: &Self) -> bool {
+        std::sync::Arc::ptr_eq(&self.session, &other.session)
+            && self.backing == other.backing
+            && self.command == other.command
+    }
+}
+impl RecorderRequest {
+    /// Queue execution checks this AFTER any pending admission at dispatch tail.
+    pub fn is_current(
+        &self,
+        session: &std::sync::Arc<()>,
+        song: Option<&crate::song::SongDoc>,
+        plan: Option<&crate::loop_plan::LoopPlan>,
+    ) -> bool {
+        std::sync::Arc::ptr_eq(&self.session, session)
+            && match &self.backing {
+                RecorderBacking::Set(expected) => plan == Some(expected) && song.is_none(),
+                RecorderBacking::Saved(expected) => song == Some(expected) && plan.is_none(),
+            }
+    }
+}
+
 /// One thing the view layer asks the audio host to do, once.
 ///
 /// These are commands, not settings: continuous state (metronome transport,
@@ -82,13 +129,17 @@ pub struct TunerState {
 /// things in, and has to be cleared correctly at every consumption site. A
 /// queue keeps every request, in order, drained in one place.
 ///
-/// Nothing here carries a correlation id, because nothing here has an answer
-/// that could arrive late: results (recording status, calibration progress,
-/// measured latency) are polled from the backend each frame.
+/// Recorder commands additionally freeze their session, admitted backing and
+/// target until execution; UI selection or a new admission cannot redirect a
+/// queued command. Recording/calibration results remain host-polled.
 #[derive(Clone, Debug, PartialEq)]
 pub enum AudioRequest {
+    /// The reusable surface freezes source/epoch and positional targets until execution.
+    Recorder(RecorderRequest),
     /// Rewind the song transport to its start.
     SongRewind,
+    /// Cancel pending preview work and sounding preview envelopes.
+    CancelPreview,
     /// Voice the current lens or rehearsal card.
     PreviewVoicing,
     /// Audition a resolved selection. Carrying its pitches keeps later focus
@@ -110,6 +161,10 @@ pub enum AudioRequest {
     SongRecordToggle,
     /// Clear the recorded loop at the edit cursor.
     SongClearLoop,
+    /// Record on an explicitly owned Card occurrence, never a view position.
+    LoopRecordToggle(crate::loop_plan::LoopSegmentId),
+    /// Clear only this Card's captured material.
+    LoopClear(crate::loop_plan::LoopSegmentId),
 }
 
 /// The host-supplied audio realization. Implementations should be
@@ -126,14 +181,49 @@ pub trait AudioBackend {
     /// Load the song lane (replaces the current song; the transport
     /// keeps its playing state).
     fn set_song(&mut self, doc: &crate::song::SongDoc);
+    /// Admit saved backing without discarding an armed or active capture.
+    /// Hosts with fallible output admission override this adapter and leave
+    /// the previous backing loaded when they return an error.
+    fn try_set_song(&mut self, doc: &crate::song::SongDoc) -> Result<(), String> {
+        if self.loop_capture_busy() {
+            return Err(
+                "Stop recording / armed capture before updating the loaded backing.".into(),
+            );
+        }
+        self.set_song(doc);
+        Ok(())
+    }
+    /// Admit a derived Set projection atomically, or explain why the current
+    /// projection must remain loaded. A missing implementation is visible.
+    fn set_loop_plan(&mut self, _plan: &crate::loop_plan::LoopPlan) -> Result<(), String> {
+        Err("This host does not support Set backing playback.".into())
+    }
+    /// Forget transient capture custody when the practice session changes.
+    fn clear_loop_session(&mut self) {}
+    fn loop_arm_record(&mut self, _id: crate::loop_plan::LoopSegmentId) -> Result<(), String> {
+        Err("This host does not support Card recording.".into())
+    }
+    fn loop_clear(&mut self, _id: crate::loop_plan::LoopSegmentId) -> Result<(), String> {
+        Err("This host does not support Card recording.".into())
+    }
+    /// Includes an armed, boundary-delayed capture, not just active input.
+    fn loop_capture_busy(&self) -> bool {
+        self.song_recording()
+    }
+    fn loop_stop_record(&mut self) {
+        self.song_stop_record();
+    }
     /// Start/stop song playback (idempotent).
     fn set_song_transport(&mut self, playing: bool);
     /// Snap the song cursor back to the top.
     fn song_rewind(&mut self);
     /// The bar block under the playback cursor (for timeline follow).
     fn song_bar(&self) -> Option<usize>;
+    /// Cancel queued/in-flight previews and their sounding envelopes.
+    fn cancel_preview(&mut self) {}
     /// Voice a set of chord / scale tones on demand — the "hear it"
-    /// preview — independent of transport. `strum_ms` staggers note
+    /// preview. The desktop queues previews while song playback is stopped.
+    /// `strum_ms` staggers note
     /// onsets: 0 = block chord, ~18 = a gentle strum, larger = an
     /// arpeggiated cascade (a scale run). Default no-op so a backend
     /// that can't voice previews stays silent rather than being forced

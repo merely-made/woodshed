@@ -1,0 +1,10 @@
+RESULT ok
+captured 01_recipe_reopened
+captured 02_reopened_scene
+captured 03_paused_rehearsal
+Preview worker fresh process replay and Pause complete
+capture 01_recipe_reopened 2560x1800 digest=addfc922083209b4 file=/Users/markik/Code/testing/woodshed/preview-worker-20261008/native-committed/reopen/01_recipe_reopened.png
+capture 02_reopened_scene 2560x1800 digest=a932305b87c92689 file=/Users/markik/Code/testing/woodshed/preview-worker-20261008/native-committed/reopen/02_reopened_scene.png
+capture 03_paused_rehearsal 2560x1800 digest=5f8cb3f31476a12b file=/Users/markik/Code/testing/woodshed/preview-worker-20261008/native-committed/reopen/03_paused_rehearsal.png
+frames: 3 captured, 0 blank, 3 distinct digests
+presentation: 165 frames, 166 redraws, 1 unpresented redraws

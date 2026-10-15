@@ -1,19 +1,46 @@
 # Isolated native acceptance. Use scratch WOODSHED_STATE, WOODSHED_SETTINGS,
 # WOODSHED_THEME_LIBRARY, XDG_DATA_HOME and PERSONAE_PASSPHRASE.
+# Enable WOODSHED_APPEARANCE_RECEIPT=1 to leave musical devices inactive.
 log Shared Tabard appearance authoring in Woodshed
 settle 3
+assert snap appearance-device-free == true
 assert snap appearance-authoring == true
+assert snap set-cards == 0
+assert snap working-set-id == 1
+assert snap song-bars == 0
+assert snap song-playing == false
 click .pill Settings
 click .side-item Appearance
 click role:button @data-appearance-theme=woodshed:ember
 assert snap appearance-theme == woodshed:ember
+click role:button @data-appearance-mode=light
+settle 3
+assert snap appearance-mode == light
+capture appearance_light
+click role:button @data-appearance-mode=dark
+settle 3
+assert snap appearance-mode == dark
+capture appearance_dark
+captures-differ appearance_light appearance_dark
+click role:button @data-appearance-mode=hc_dark
+settle 3
+assert snap appearance-mode == hc_dark
+capture appearance_hc_dark
 click role:button @data-appearance-mode=hc_light
+settle 3
 assert snap appearance-mode == hc_light
 capture appearance_settings
+captures-differ appearance_light appearance_settings
+captures-differ appearance_dark appearance_hc_dark
 click role:button @data-action=edit-appearance
 assert snap appearance-workshop == true
 click role:textbox @data-field=name
 input-text WoodshedAcceptance
+assert snap appearance-name == WoodshedAcceptance
+click role:button @data-action=toggle-stylesheet
+click role:textbox @data-field=mode-sheet
+input-text :root{--tabard-color-bg:#142238;--tabard-color-surface:#1B2E49;--tabard-color-surface-2:#243D5E;--tabard-color-surface-hover:#31577C;--tabard-color-text:#EAF2FF;--tabard-color-text-header:#F4F8FF;--tabard-color-text-dim:#B6CEE4;--tabard-color-text-disabled:#879EBA;--tabard-color-primary:#155EC9;--tabard-color-secondary:#88BAEE;--tabard-color-tertiary:#A4E8D1;--tabard-color-on-primary:white;}
+click role:button @data-action=apply-stylesheet
 click role:button @data-action=save
 assert snap appearance-dirty == false
 capture appearance_workshop
@@ -38,4 +65,8 @@ click role:button @data-action=back-to-woodshed
 assert snap appearance-workshop == false
 assert snap appearance-mode == hc_light
 capture appearance_resized_applied
+assert snap set-cards == 0
+assert snap working-set-id == 1
+assert snap song-bars == 0
+assert snap song-playing == false
 log Shared Tabard appearance acceptance complete

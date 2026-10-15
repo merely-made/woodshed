@@ -1,0 +1,7 @@
+RESULT ok
+captured reopened-hc-dark
+captured reopened-choice
+capture reopened-hc-dark 2360x1600 digest=9fbb0c92f9dfc30d file=/Users/markik/Code/testing/woodshed/port-reopen-20261011/native/RedshankReopenQualified/reopened-hc-dark.png
+capture reopened-choice 2360x1600 digest=85a2d3fe3028ca53 file=/Users/markik/Code/testing/woodshed/port-reopen-20261011/native/RedshankReopenQualified/reopened-choice.png
+frames: 2 captured, 0 blank, 2 distinct digests
+presentation: 12 frames, 13 redraws, 1 unpresented redraws

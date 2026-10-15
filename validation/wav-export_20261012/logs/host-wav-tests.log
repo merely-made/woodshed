@@ -1,0 +1,25 @@
+warning: patch `p2panda-auth v0.7.1 (https://github.com/mark-ik/p2panda.git?tag=mere-p2panda-net-0.7.5-upstream-20261011#d8acabc9)` was not used in the crate graph
+warning: patch `p2panda-stream v0.7.1 (https://github.com/mark-ik/p2panda.git?tag=mere-p2panda-net-0.7.5-upstream-20261011#d8acabc9)` was not used in the crate graph
+help: Check that the patched package version and available features are compatible
+      with the dependency requirements. If the patch has a different version from
+      what is locked in the Cargo.lock file, run `cargo update` to use the new
+      version. This may also occur with an optional dependency that is not enabled.
+   Compiling woodshed-genet v0.1.0 (/Users/markik/Code/worktrees/woodshed-orchestrate-20261011/crates/woodshed-genet)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 6.09s
+     Running unittests src/main.rs (/Users/markik/Code/worktrees/woodshed-audit-20261011/target/debug/deps/woodshed_genet-63d01c9b9697e4d3)
+
+running 11 tests
+test wav_export::tests::sealed_profile_export_reference ... ignored, native receipt helper; requires an isolated sealed profile and owned reference directory
+test wav_export::tests::protects_existing_missing_storage_and_future_capture_destinations ... ok
+test audio::tests::wav_snapshot_retains_completed_pcm_and_refuses_armed_capture ... ok
+test wav_export::tests::collision_cancellation_and_invalid_render_leave_no_temporary_file ... ok
+test wav_export::tests::publication_collision_replace_and_changed_destination_preserve_files ... ok
+test capture_persistence::tests::wav_export_refuses_only_relevant_unavailable_set_captures ... ok
+test wav_export::tests::cancelled_worker_cannot_publish_new_or_replacement_file ... ok
+test wav_export::tests::snapshot_requires_current_admitted_backing_and_keeps_complete_pcm ... ok
+test wav_export::tests::prior_session_completion_and_replacement_do_not_cross_personas ... ok
+test wav_export::tests::deferred_export_close_preserves_the_dirty_appearance_gate ... ok
+test wav_export::tests::native_chooser_cancellation_is_one_request_and_writes_nothing ... ok
+
+test result: ok. 10 passed; 0 failed; 1 ignored; 0 measured; 134 filtered out; finished in 1.05s
+

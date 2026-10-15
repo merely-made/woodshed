@@ -1,0 +1,7 @@
+RESULT ok
+Reopen saved Woodshed appearance
+captured appearance_reopened
+Saved appearance reopen complete
+capture appearance_reopened 2360x1600 digest=b4f5c41b282b2f9b file=/Users/markik/Code/testing/woodshed/stack-adoption-20261011/native/AppearanceWideReopenQualified/appearance_reopened.png
+frames: 1 captured, 0 blank, 1 distinct digests
+presentation: 20 frames, 1018 redraws, 998 unpresented redraws

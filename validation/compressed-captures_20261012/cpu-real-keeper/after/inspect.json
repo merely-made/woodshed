@@ -1,0 +1,82 @@
+{
+  "captures_after": [
+    {
+      "bars": 1,
+      "beats": 4,
+      "bpm": 120.0,
+      "frames": 96000,
+      "id": {
+        "card": 1,
+        "set": 1
+      },
+      "pcm_f32le_blake3": "ceb886a770b4f14eb9e56fd069ab17517494d1208c5d6c70f904d901d03d0a50",
+      "sample_rate": 48000
+    }
+  ],
+  "captures_before": [
+    {
+      "bars": 1,
+      "beats": 4,
+      "bpm": 120.0,
+      "frames": 96000,
+      "id": {
+        "card": 1,
+        "set": 1
+      },
+      "pcm_f32le_blake3": "ceb886a770b4f14eb9e56fd069ab17517494d1208c5d6c70f904d901d03d0a50",
+      "sample_rate": 48000
+    }
+  ],
+  "elapsed_ms": 7,
+  "input_opened": false,
+  "manifest_after": {
+    "namespace": "b5370837504f7ea66b56e7ca158828e5",
+    "takes": [
+      {
+        "bars": 1,
+        "beats": 4,
+        "bpm": 120.0,
+        "codec": "wavpack-f32-v1",
+        "digest": "aa60d8b25e04f9d08e28a428fb20b2c9cbfc5cecd7254ed386c81d88700da50e",
+        "frames": 96000,
+        "id": {
+          "card": 1,
+          "set": 1
+        },
+        "sample_rate": 48000
+      }
+    ],
+    "version": 2
+  },
+  "manifest_before": {
+    "namespace": "b5370837504f7ea66b56e7ca158828e5",
+    "takes": [
+      {
+        "bars": 1,
+        "beats": 4,
+        "bpm": 120.0,
+        "codec": "wavpack-f32-v1",
+        "digest": "aa60d8b25e04f9d08e28a428fb20b2c9cbfc5cecd7254ed386c81d88700da50e",
+        "frames": 96000,
+        "id": {
+          "card": 1,
+          "set": 1
+        },
+        "sample_rate": 48000
+      }
+    ],
+    "version": 2
+  },
+  "migration_needed_before": false,
+  "mode": "inspect",
+  "native_stream_count": 0,
+  "plan_admission": {
+    "admitted": true
+  },
+  "schema": "woodshed-sealed-profile-compression-probe-v1",
+  "seal": "sealed",
+  "session_after_blake3": "50675a6ccf290bc2040cbad514b800d3a6b347128087e73a78b3e80fc8599e05",
+  "session_before_blake3": "50675a6ccf290bc2040cbad514b800d3a6b347128087e73a78b3e80fc8599e05",
+  "unavailable_after": [],
+  "unavailable_before": []
+}

@@ -1,0 +1,461 @@
+{
+  "schema_version": 1,
+  "status": "passed bounded synthetic macOS WAV native acceptance",
+  "source": "f5cc69d4f441f01bf928ce60aae7ed9596fede3a",
+  "source_files_reverified": 217,
+  "source_manifest_sha256": "d1890c7b4139e71f388833bfbf9fdb3928043538b8c896ab8277e7e2a73e8128",
+  "binaries": {
+    "product": {
+      "path": "/Users/markik/Code/testing/woodshed/wav-export-20261012/frozen-binaries/woodshed-genet-product-f5cc69d",
+      "sha256": "940c5658f2e41b50fc0cac1b53723e7d58d40d3c995f48e2aa3072ffe9bfebd9"
+    },
+    "tests": {
+      "path": "/Users/markik/Code/testing/woodshed/wav-export-20261012/frozen-binaries/woodshed-genet-tests-f5cc69d",
+      "sha256": "d702dde54dfac510c79e939abf999868f7742e347f1a98f9acff6341dca296d0"
+    }
+  },
+  "apps": [
+    {
+      "name": "WavExportSeedV2",
+      "status": "passed",
+      "source": "f5cc69d4f441f01bf928ce60aae7ed9596fede3a",
+      "scenario": "/Users/markik/Code/testing/woodshed/wav-native-rfd-20261012/scenarios/wav_seed.scn",
+      "scenario_sha256": "71d1f7e80f7d84cd5cb9d472b54db6054286174d19049d9119402e4ff8fe65ca",
+      "product_sha256": "940c5658f2e41b50fc0cac1b53723e7d58d40d3c995f48e2aa3072ffe9bfebd9",
+      "done": "/Users/markik/Code/testing/woodshed/wav-export-20261012/native/WavExportSeedV2/scenario.done",
+      "done_sha256": "e85b00669ab4090ceb5ceb9c9fa244ce9745d998760abc60f7f86726682dfbb0",
+      "native_log": "/Users/markik/Code/testing/woodshed/wav-export-20261012/native/WavExportSeedV2/native.log",
+      "native_log_sha256": "3af5fbfceda452630b985e62317fd7b645bb82f661ea233d1d5fa992182195e1",
+      "presented_frames": 33,
+      "redraws": 34,
+      "unpresented_redraws": 1,
+      "captures": 1,
+      "input_none_assertions": 1,
+      "output_streams_one_assertions": 1
+    },
+    {
+      "name": "WavExportCancelV2",
+      "status": "passed",
+      "source": "f5cc69d4f441f01bf928ce60aae7ed9596fede3a",
+      "scenario": "/Users/markik/Code/testing/woodshed/wav-native-rfd-20261012/scenarios/wav_native_cancel.scn",
+      "scenario_sha256": "94dc6d4d190913140c0f2d825b8c7c9cf5466af490b0391ef4546ce3a8ef2a16",
+      "product_sha256": "940c5658f2e41b50fc0cac1b53723e7d58d40d3c995f48e2aa3072ffe9bfebd9",
+      "done": "/Users/markik/Code/testing/woodshed/wav-export-20261012/native/WavExportCancelV2/scenario.done",
+      "done_sha256": "4fc8ab33ad7472cd73b0ddb948d30575e7ca6451513441db1baa70fce2efc3cd",
+      "native_log": "/Users/markik/Code/testing/woodshed/wav-export-20261012/native/WavExportCancelV2/native.log",
+      "native_log_sha256": "720373050d9e9570458343b30de5a008c2520df804e5ad919a3557f9eff06f20",
+      "presented_frames": 2958,
+      "redraws": 2959,
+      "unpresented_redraws": 1,
+      "captures": 2,
+      "input_none_assertions": 2,
+      "output_streams_one_assertions": 2
+    },
+    {
+      "name": "WavExportSaveV2",
+      "status": "passed",
+      "source": "f5cc69d4f441f01bf928ce60aae7ed9596fede3a",
+      "scenario": "/Users/markik/Code/testing/woodshed/wav-native-rfd-20261012/scenarios/wav_native_save.scn",
+      "scenario_sha256": "a850122c390a2121167385414a12a05094fbaefad8ca9290de7410cf3a2f05a3",
+      "product_sha256": "940c5658f2e41b50fc0cac1b53723e7d58d40d3c995f48e2aa3072ffe9bfebd9",
+      "done": "/Users/markik/Code/testing/woodshed/wav-export-20261012/native/WavExportSaveV2/scenario.done",
+      "done_sha256": "9a2c808414e9c5056a08ac01745a30267c1fee66fd65621c17df1c313afad7ae",
+      "native_log": "/Users/markik/Code/testing/woodshed/wav-export-20261012/native/WavExportSaveV2/native.log",
+      "native_log_sha256": "3152ef92e9c0dcde15a3ddb56f1b1c9cc724352466b9b94ad66b70a11d898e48",
+      "presented_frames": 3060,
+      "redraws": 3065,
+      "unpresented_redraws": 5,
+      "captures": 2,
+      "input_none_assertions": 2,
+      "output_streams_one_assertions": 2
+    },
+    {
+      "name": "WavExportReplaceCancelV2",
+      "status": "passed",
+      "source": "f5cc69d4f441f01bf928ce60aae7ed9596fede3a",
+      "scenario": "/Users/markik/Code/testing/woodshed/wav-native-rfd-20261012/scenarios/wav_native_replace_cancel.scn",
+      "scenario_sha256": "a9db519544b73565b5f96e6df4bf10fddfac3202f21d9ebf9a2dcbff7bc2df88",
+      "product_sha256": "940c5658f2e41b50fc0cac1b53723e7d58d40d3c995f48e2aa3072ffe9bfebd9",
+      "done": "/Users/markik/Code/testing/woodshed/wav-export-20261012/native/WavExportReplaceCancelV2/scenario.done",
+      "done_sha256": "ba9109e71b0e580f23d999c4692ddc9b14419db57c78ecb993645ce517f1c9a9",
+      "native_log": "/Users/markik/Code/testing/woodshed/wav-export-20261012/native/WavExportReplaceCancelV2/native.log",
+      "native_log_sha256": "05f02367073aef0e6bf3be3abad23b67580b35b9877394c1dba5d05e08eac05e",
+      "presented_frames": 5037,
+      "redraws": 5038,
+      "unpresented_redraws": 1,
+      "captures": 2,
+      "input_none_assertions": 2,
+      "output_streams_one_assertions": 2
+    },
+    {
+      "name": "WavExportReplaceV2",
+      "status": "passed",
+      "source": "f5cc69d4f441f01bf928ce60aae7ed9596fede3a",
+      "scenario": "/Users/markik/Code/testing/woodshed/wav-native-rfd-20261012/scenarios/wav_native_replace.scn",
+      "scenario_sha256": "d68ada6adeab33a5b7b040dbd9f88856b32c16a440c4d933bd64ed66d3c301f4",
+      "product_sha256": "940c5658f2e41b50fc0cac1b53723e7d58d40d3c995f48e2aa3072ffe9bfebd9",
+      "done": "/Users/markik/Code/testing/woodshed/wav-export-20261012/native/WavExportReplaceV2/scenario.done",
+      "done_sha256": "9a0766d051f6590325ed4f4c89f29c3bd2aab89a1c65783df730668c60e10837",
+      "native_log": "/Users/markik/Code/testing/woodshed/wav-export-20261012/native/WavExportReplaceV2/native.log",
+      "native_log_sha256": "d503b9d1ae7260375d18b086876204b7d71ec9be683292217ea0f9195d8ea85c",
+      "presented_frames": 5168,
+      "redraws": 5169,
+      "unpresented_redraws": 1,
+      "captures": 2,
+      "input_none_assertions": 2,
+      "output_streams_one_assertions": 2
+    }
+  ],
+  "presented_frames": 16256,
+  "reviewed_full_captures": 9,
+  "captures": [
+    {
+      "path": "/Users/markik/Code/testing/woodshed/wav-export-20261012/native/WavExportSeedV2/01_wav_seed_completed_take.png",
+      "app": "WavExportSeedV2",
+      "sha256": "5eeb568d41428152461d425f99c949ce78d66e00ce80807d691a6c43b569ff81",
+      "width": 2360,
+      "height": 1600,
+      "blank": false,
+      "visual_review": "full image inspected; controls/status/backing Cards readable, known existing empty loop glyph marker retained",
+      "default_zoom": false
+    },
+    {
+      "path": "/Users/markik/Code/testing/woodshed/wav-export-20261012/native/WavExportCancelV2/01_wav_reopened_before_cancel.png",
+      "app": "WavExportCancelV2",
+      "sha256": "2ca2dbbdac6a5787231a68ff0a9d3b737c7482ca0aabc1ac43034f0700f9ac33",
+      "width": 2360,
+      "height": 1600,
+      "blank": false,
+      "visual_review": "full image inspected; controls/status/backing Cards readable, known existing empty loop glyph marker retained",
+      "default_zoom": false
+    },
+    {
+      "path": "/Users/markik/Code/testing/woodshed/wav-export-20261012/native/WavExportCancelV2/02_real_save_panel_cancelled.png",
+      "app": "WavExportCancelV2",
+      "sha256": "8e2b6189bfa3ac445f7897e3c8559a83568e95bb837594556f43c99c8ec41a07",
+      "width": 2360,
+      "height": 1600,
+      "blank": false,
+      "visual_review": "full image inspected; controls/status/backing Cards readable, known existing empty loop glyph marker retained",
+      "default_zoom": false
+    },
+    {
+      "path": "/Users/markik/Code/testing/woodshed/wav-export-20261012/native/WavExportSaveV2/01_real_save_panel_saved.png",
+      "app": "WavExportSaveV2",
+      "sha256": "a36cbc123a7fc32e7b3aa2ff869501a3671ca6fcd7886a5d26f5e72860f8d13c",
+      "width": 2360,
+      "height": 1600,
+      "blank": false,
+      "visual_review": "full image inspected; controls/status/backing Cards readable, known existing empty loop glyph marker retained",
+      "default_zoom": false
+    },
+    {
+      "path": "/Users/markik/Code/testing/woodshed/wav-export-20261012/native/WavExportSaveV2/02_real_save_panel_saved_default_zoom.png",
+      "app": "WavExportSaveV2",
+      "sha256": "76aea393bae32ab0b248cdba3f9367cc7e3355f5659d3a4a98b47ecc31ce5b29",
+      "width": 2360,
+      "height": 1600,
+      "blank": false,
+      "visual_review": "full image inspected; controls/status/backing Cards readable, known existing empty loop glyph marker retained",
+      "default_zoom": true
+    },
+    {
+      "path": "/Users/markik/Code/testing/woodshed/wav-export-20261012/native/WavExportReplaceCancelV2/01_existing_wav_confirmation.png",
+      "app": "WavExportReplaceCancelV2",
+      "sha256": "efbb5244388341f33ea6ec618a58acc2b4f909cd38006b27c37406901099a4ff",
+      "width": 2360,
+      "height": 1600,
+      "blank": false,
+      "visual_review": "full image inspected; controls/status/backing Cards readable, known existing empty loop glyph marker retained",
+      "default_zoom": false
+    },
+    {
+      "path": "/Users/markik/Code/testing/woodshed/wav-export-20261012/native/WavExportReplaceCancelV2/02_existing_wav_replacement_cancelled.png",
+      "app": "WavExportReplaceCancelV2",
+      "sha256": "e9118e44b3df6b8ebb04f85bc3d330bba20c8dafe5f7cc1a442ddb913cc41a08",
+      "width": 2360,
+      "height": 1600,
+      "blank": false,
+      "visual_review": "full image inspected; controls/status/backing Cards readable, known existing empty loop glyph marker retained",
+      "default_zoom": false
+    },
+    {
+      "path": "/Users/markik/Code/testing/woodshed/wav-export-20261012/native/WavExportReplaceV2/01_existing_wav_before_replace.png",
+      "app": "WavExportReplaceV2",
+      "sha256": "939f0c87720811ce8ed29114ea7663c3d190d5f32ae35c93f4451051084e8b7b",
+      "width": 2360,
+      "height": 1600,
+      "blank": false,
+      "visual_review": "full image inspected; controls/status/backing Cards readable, known existing empty loop glyph marker retained",
+      "default_zoom": false
+    },
+    {
+      "path": "/Users/markik/Code/testing/woodshed/wav-export-20261012/native/WavExportReplaceV2/02_existing_wav_replaced.png",
+      "app": "WavExportReplaceV2",
+      "sha256": "824764c2fe9532d610d384d5208060ee4f28f6c19224d06b98666f57633e50c2",
+      "width": 2360,
+      "height": 1600,
+      "blank": false,
+      "visual_review": "full image inspected; controls/status/backing Cards readable, known existing empty loop glyph marker retained",
+      "default_zoom": false
+    }
+  ],
+  "actual_panel_checks": {
+    "native_save_cancel": {
+      "status": "passed",
+      "actual_native_panel_observed": true,
+      "actual_panel_cancel_button_clicked": true,
+      "scenario_result": "ok",
+      "new_output_exists": false,
+      "sentinel_sha256": "bd9681a7996feec35f9d73697a5bec3e0e116dfa149f530d4de703fad21dd75d",
+      "observation_after_click": "App quit; completed scenario receipt confirms cancellationnotice/ref/input/output assertions"
+    },
+    "native_new_file_save": {
+      "status": "passed",
+      "actual_native_panel_save_clicked": true,
+      "validation": {
+        "path": "/Users/markik/Code/testing/woodshed/wav-native-rfd-20261012/exports/accepted-loop.wav",
+        "status": "passed",
+        "file_bytes": 768068,
+        "file_sha256": "6c0726336b2e14bdea1031ed183b42358336b0c0d064332531cf91f5618409ff",
+        "chunks": [
+          {
+            "id": "fmt ",
+            "offset": 20,
+            "bytes": 40
+          },
+          {
+            "id": "data",
+            "offset": 68,
+            "bytes": 768000
+          }
+        ],
+        "format_tag": 65534,
+        "channels": 1,
+        "sample_rate_hz": 48000,
+        "bits_per_sample": 32,
+        "block_alignment": 4,
+        "byte_rate": 192000,
+        "frames": 192000,
+        "duration_seconds": 4.0,
+        "pcm_sha256": "51966f89d016ade8cd01b32dfa8583cc2fbe452e5a3bc620f6dc44daeb3401e0",
+        "peak": 0.7797104716300964,
+        "rms": 0.2471484429542788,
+        "nonzero_frames": 191999,
+        "expected_rate_hz": 48000,
+        "expected_frames": 192000,
+        "expected_pcm_sha256": "51966f89d016ade8cd01b32dfa8583cc2fbe452e5a3bc620f6dc44daeb3401e0",
+        "limits": "Container and PCM checks; acoustic/device behavior is separately qualified."
+      },
+      "afinfo": "passed",
+      "default_zoom_capture": "/Users/markik/Code/testing/woodshed/wav-export-20261012/native/WavExportSaveV2/02_real_save_panel_saved_default_zoom.png"
+    },
+    "native_existing_file_replace_sheet_then_app_cancel": {
+      "status": "passed",
+      "actual_native_existing_target_sheet_replace_clicked": true,
+      "actual_app_cancel_clicked": true,
+      "original_bytes_unchanged": true,
+      "sha256": "bd9681a7996feec35f9d73697a5bec3e0e116dfa149f530d4de703fad21dd75d",
+      "bytes": 83,
+      "scenario_result": "ok"
+    },
+    "native_existing_file_replace_sheet_then_app_replace": {
+      "status": "passed",
+      "actual_native_existing_target_sheet_replace_clicked": true,
+      "actual_app_replace_wav_clicked": true,
+      "old_sentinel": {
+        "target": "/Users/markik/Code/testing/woodshed/wav-native-rfd-20261012/exports/replace-target.wav",
+        "backup": "/Users/markik/Code/testing/woodshed/wav-native-rfd-20261012/replacement-sentinel.original",
+        "bytes": 83,
+        "sha256": "bd9681a7996feec35f9d73697a5bec3e0e116dfa149f530d4de703fad21dd75d",
+        "new_save_target": "/Users/markik/Code/testing/woodshed/wav-native-rfd-20261012/exports/accepted-loop.wav"
+      },
+      "validation": {
+        "path": "/Users/markik/Code/testing/woodshed/wav-native-rfd-20261012/exports/replace-target.wav",
+        "status": "passed",
+        "file_bytes": 768068,
+        "file_sha256": "6c0726336b2e14bdea1031ed183b42358336b0c0d064332531cf91f5618409ff",
+        "chunks": [
+          {
+            "id": "fmt ",
+            "offset": 20,
+            "bytes": 40
+          },
+          {
+            "id": "data",
+            "offset": 68,
+            "bytes": 768000
+          }
+        ],
+        "format_tag": 65534,
+        "channels": 1,
+        "sample_rate_hz": 48000,
+        "bits_per_sample": 32,
+        "block_alignment": 4,
+        "byte_rate": 192000,
+        "frames": 192000,
+        "duration_seconds": 4.0,
+        "pcm_sha256": "51966f89d016ade8cd01b32dfa8583cc2fbe452e5a3bc620f6dc44daeb3401e0",
+        "peak": 0.7797104716300964,
+        "rms": 0.2471484429542788,
+        "nonzero_frames": 191999,
+        "expected_rate_hz": 48000,
+        "expected_frames": 192000,
+        "expected_pcm_sha256": "51966f89d016ade8cd01b32dfa8583cc2fbe452e5a3bc620f6dc44daeb3401e0",
+        "limits": "Container and PCM checks; acoustic/device behavior is separately qualified."
+      },
+      "file_changed": true,
+      "retained_original_unchanged": true,
+      "same_bytes_as_native_save": true,
+      "afinfo": "passed",
+      "scenario_result": "ok"
+    }
+  },
+  "reference": {
+    "status": "passed",
+    "source": "f5cc69d4f441f01bf928ce60aae7ed9596fede3a",
+    "test_binary_sha256": "d702dde54dfac510c79e939abf999868f7742e347f1a98f9acff6341dca296d0",
+    "reference": {
+      "captured_takes": 1,
+      "channels": 1,
+      "click": false,
+      "frames": 192000,
+      "rate": 48000,
+      "segments": 2
+    },
+    "profile_hashes_unchanged": true,
+    "loop": {
+      "path": "/Users/markik/Code/testing/woodshed/wav-native-rfd-20261012/cpu-reference/loop-reference.wav",
+      "status": "passed",
+      "file_bytes": 768068,
+      "file_sha256": "6c0726336b2e14bdea1031ed183b42358336b0c0d064332531cf91f5618409ff",
+      "chunks": [
+        {
+          "id": "fmt ",
+          "offset": 20,
+          "bytes": 40
+        },
+        {
+          "id": "data",
+          "offset": 68,
+          "bytes": 768000
+        }
+      ],
+      "format_tag": 65534,
+      "channels": 1,
+      "sample_rate_hz": 48000,
+      "bits_per_sample": 32,
+      "block_alignment": 4,
+      "byte_rate": 192000,
+      "frames": 192000,
+      "duration_seconds": 4.0,
+      "pcm_sha256": "51966f89d016ade8cd01b32dfa8583cc2fbe452e5a3bc620f6dc44daeb3401e0",
+      "peak": 0.7797104716300964,
+      "rms": 0.2471484429542788,
+      "nonzero_frames": 191999,
+      "expected_rate_hz": 48000,
+      "expected_frames": 192000,
+      "expected_pcm_sha256": null,
+      "limits": "Container and PCM checks; acoustic/device behavior is separately qualified."
+    },
+    "backing": {
+      "path": "/Users/markik/Code/testing/woodshed/wav-native-rfd-20261012/cpu-reference/backing-reference.wav",
+      "status": "passed",
+      "file_bytes": 768068,
+      "file_sha256": "f13a15e5060f80aab2a9d53b8f010f8094f58063702968389d0734edfddd9a4b",
+      "chunks": [
+        {
+          "id": "fmt ",
+          "offset": 20,
+          "bytes": 40
+        },
+        {
+          "id": "data",
+          "offset": 68,
+          "bytes": 768000
+        }
+      ],
+      "format_tag": 65534,
+      "channels": 1,
+      "sample_rate_hz": 48000,
+      "bits_per_sample": 32,
+      "block_alignment": 4,
+      "byte_rate": 192000,
+      "frames": 192000,
+      "duration_seconds": 4.0,
+      "pcm_sha256": "e4911029b436d2bcee6635d7780fc01b893fdca00f8fed34061822a53b3d9e58",
+      "peak": 0.7797104716300964,
+      "rms": 0.24714839204134997,
+      "nonzero_frames": 191998,
+      "expected_rate_hz": 48000,
+      "expected_frames": 192000,
+      "expected_pcm_sha256": null,
+      "limits": "Container and PCM checks; acoustic/device behavior is separately qualified."
+    },
+    "parser_sha256": "aec69d92ccdf7fd6e793b563f21a3eab63fd85c486ec02310f5dd9c2f1db380b",
+    "afinfo": "both reference WAVs decoded"
+  },
+  "retention": {
+    "status": "passed",
+    "immutable_companion_hashes_unchanged": true,
+    "companion_count": 1,
+    "reference_report_equal_to_seed": true,
+    "reference_report": {
+      "captured_takes": 1,
+      "channels": 1,
+      "click": false,
+      "frames": 192000,
+      "rate": 48000,
+      "segments": 2
+    },
+    "accepted_loop_and_backing_pcm_equal_to_seed": true,
+    "whole_profile_hashes_unchanged": false,
+    "changed_whole_files": [
+      "practice.json",
+      "settings.json"
+    ],
+    "native_projection_assertions": "2 Cards, 1 retained/hydrated take, no input, 1 output across all reopened processes",
+    "scope": "same admitted segment clocks/order/pitches and captures established by exact PCM/reference counts plus native assertions; full raw session semantic dump not performed",
+    "after_reference_profile_unchanged": true
+  },
+  "cleanup": {
+    "status": "all owned native acceptance processes, chooser, Keeper and lifecycle sleep prevention stopped",
+    "terminated_verified_owned": [
+      {
+        "pid": 38584,
+        "command": "/usr/bin/caffeinate -di -w 35110"
+      },
+      {
+        "pid": 35110,
+        "command": "/Users/markik/Code/testing/woodshed/stack-adoption-20261011/keeper-target/debug/dr-c-receipt-host /tmp/ws-wav-20261012.sock /Users/markik/Code/testing/woodshed/wav-native-20261012/private-keeper unlocked"
+      }
+    ],
+    "old_blocked_parent_pid": 35365,
+    "old_blocked_child_pid": 35432,
+    "old_blocked_processes_already_stopped": true,
+    "native_inventory_acceptance_apps": 0,
+    "fixture_payloads_retained_locally": true,
+    "native_ui_cleanup": "accepted scenario processes exited naturally; only owned Keeper/caffeinate signalled",
+    "scope": "no user resident or personal profile affected"
+  },
+  "default_zoom_capture_review": "1.0 capture after successful0.8 Save in same process; export row/status and backing fit ordinary1180x800 view",
+  "original_scenario_hashes_preserved": true,
+  "sealed_profile_reference_processes": 2,
+  "input_none_assertions": 9,
+  "output_streams_one_assertions": 9,
+  "prior_attempt": {
+    "source": "ca60bf0825f40cccb558f4db3c1cf2b60e13ad54",
+    "record": "/Users/markik/Code/testing/woodshed/wav-native-20261012/acceptance-receipt.json",
+    "status": "incomplete; excluded from acceptedV2 process/capture/frame counts"
+  },
+  "stack_scope": "Supplier pins unchanged; host-only macOS rfd0.17.2 dialog intake; no font/glyph adoption claim",
+  "publication": "integration owns canonical docs/evidence commit and main push; not yet verified by native lane",
+  "limits": [
+    "Synthetic completed capture; no microphone/physical or acoustic qualification.",
+    "Four-second two-Card click-off fixture; other clocks/click/capture refusal/revocation/close/path cases rely on separately recorded focused CPU checks.",
+    "Retention verified immutable PCM companion, nativeSet/take assertions and exact admitted PCM/reference report across sealed restore; no full raw-session semantic dump.",
+    "Known prior empty loop glyph remains visible.",
+    "Native panel and OS overwrite sheet observed through CUA; stored image packet contains full product readbacks, panel screenshot remains in tool transcript.",
+    "No injected destination substituted for actual native Save/Cancel."
+  ]
+}

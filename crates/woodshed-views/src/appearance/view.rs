@@ -4,9 +4,9 @@ use tabard_workshop::{WorkshopState, workshop_stylesheet, workshop_view};
 use crate::stage::{UiChild, UiState};
 use crate::theme::{apply_accessibility, text_scale_factor};
 
-const APPEARANCE_CSS: &str = "
+pub(super) const APPEARANCE_CSS: &str = "
 .appearance-options, .appearance-modes { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
-.appearance-options button, .appearance-modes button { font-family: sans-serif; font-size: 13px; padding: 9px 12px; border: 1px solid currentColor; border-radius: 6px; cursor: pointer; }
+.appearance-options button, .appearance-modes button { font-family: var(--tabard-font-interface, sans-serif); font-size: 13px; padding: 9px 12px; border: 1px solid currentColor; border-radius: 6px; cursor: pointer; }
 .appearance-options button[aria-pressed=\"false\"], .appearance-modes button[aria-pressed=\"false\"] { background: transparent; }
 .appearance-options button:focus-visible, .appearance-modes button:focus-visible, .appearance-edit:focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
 .appearance-notice { margin: 10px 0; font-size: 13px; line-height: 1.5; }
@@ -34,7 +34,7 @@ pub fn appearance_stylesheet(ui: &UiState) -> String {
             ui.appearance
                 .resolve(&ui.app_settings.appearance)
                 .stylesheet,
-            APPEARANCE_CSS
+            tabard_workshop::fonts::FONT_ROLE_CSS
         )
     };
     apply_accessibility(
@@ -57,7 +57,7 @@ pub fn appearance_page(ui: &UiState) -> UiChild {
                 button(option.name, move |ui: &mut UiState, _: PointerClick| {
                     ui.appearance_notice = ui
                         .appearance
-                        .select(&mut ui.app_settings.appearance, &id, None)
+                        .request_selection(&ui.app_settings.appearance, &id, None)
                         .err();
                 })
                 .attr("data-appearance-theme", option.id)
@@ -85,8 +85,8 @@ pub fn appearance_page(ui: &UiState) -> UiChild {
                     let choice = ui.appearance.resolve(&ui.app_settings.appearance);
                     ui.appearance_notice = ui
                         .appearance
-                        .select(
-                            &mut ui.app_settings.appearance,
+                        .request_selection(
+                            &ui.app_settings.appearance,
                             &choice.theme.id,
                             Some(mode.clone()),
                         )
@@ -120,6 +120,27 @@ pub fn appearance_page(ui: &UiState) -> UiChild {
                 .attr("aria-label", "Presentation mode"),
         ),
     ];
+    if ui.appearance_authoring_available {
+        content.push(Box::new(lens(
+            |editor: &mut tabard_workshop::fonts::FontRoleEditor| {
+                tabard_workshop::fonts::font_role_view(editor)
+            },
+            |ui: &mut UiState| &mut ui.appearance.font_editor,
+        )));
+        content.push(Box::new(el("p", text("Font sizes and line spacing from a theme apply to text panels and controls. Positioned fretboard and graph labels keep their existing sizes.")).attr("class", "settings-line")));
+    }
+    let choice = ui.appearance.choice(&ui.app_settings.appearance);
+    for notice in super::fonts::diagnostics(
+        &resolved.theme,
+        &choice.fonts,
+        &ui.appearance.available_fonts,
+    ) {
+        content.push(Box::new(
+            el("p", text(notice))
+                .attr("class", "appearance-notice")
+                .attr("role", "status"),
+        ));
+    }
     for notice in [
         resolved.fallback_reason.as_ref(),
         ui.appearance_notice.as_ref(),
@@ -167,10 +188,8 @@ pub fn workshop_screen(ui: &UiState) -> UiChild {
             }
         }).attr("data-action", "back-to-woodshed"),
         button("Apply to Woodshed", |ui: &mut UiState, _: PointerClick| {
-            ui.appearance_notice = match ui.appearance.apply_workshop(&mut ui.app_settings.appearance) {
-                Ok(()) => Some("Saved theme applied to Woodshed.".into()),
-                Err(error) => Some(error),
-            };
+            ui.appearance_notice = ui.appearance
+                .request_workshop_selection(&ui.app_settings.appearance).err();
         }).attr("data-action", "apply-to-woodshed").attr("class", "primary-button"),
         el("p", text("Previewing and editing here leaves your Woodshed appearance selected until you apply.")),
     )).attr("class", "woodshed-workshop-controls"))];

@@ -19,6 +19,9 @@
 //! - `WOODSHED_CAPTURE_DIR` — where `capture <name>` writes `<name>.png` and,
 //!   at the end, `scenario.done` whose first line is `RESULT ok` or
 //!   `RESULT fail`.
+//! - `WOODSHED_PRESENTATION_TIMEOUT_SECS` — optional acceptance-only startup
+//!   allowance, bounded to 10–60 seconds, for bringing a background window
+//!   forward. The default remains ten seconds; progress still requires frames.
 //!
 //! Captures are in-process readbacks of the same rasterized view the frame
 //! presented, so they need no compositor, no foreground, and no ffmpeg, and
@@ -45,6 +48,7 @@ use crate::sync::Ctx;
 pub struct Product {
     shared: Rc<RefCell<Shared>>,
     sheet: String,
+    export_wait: Option<(String, std::time::Instant)>,
 }
 
 pub fn from_env(shared: Rc<RefCell<Shared>>) -> Option<mesquite::Lane<Product>> {
@@ -53,10 +57,21 @@ pub fn from_env(shared: Rc<RefCell<Shared>>) -> Option<mesquite::Lane<Product>> 
     Some(
         mesquite::Lane::from_config(
             config,
-            Product { shared, sheet },
+            Product {
+                shared,
+                sheet,
+                export_wait: None,
+            },
             cambium_genet_winit_host::read_file,
         )
-        .expect("load Woodshed scenario"),
+        .expect("load Woodshed scenario")
+        .with_presentation_timeout(std::time::Duration::from_secs(
+            std::env::var("WOODSHED_PRESENTATION_TIMEOUT_SECS")
+                .ok()
+                .and_then(|value| value.parse::<u64>().ok())
+                .unwrap_or(10)
+                .clamp(10, 60),
+        )),
     )
 }
 
@@ -80,10 +95,49 @@ impl mesquite::Product for Product {
     fn drain_events(&mut self, _: &mut Ctx<'_>) -> Vec<String> {
         std::mem::take(&mut self.shared.borrow_mut().events)
     }
-    fn busy(&self, _: &Ctx<'_>, capture_pending: bool) -> Option<bool> {
-        Some(capture_pending)
+    fn busy(&self, ctx: &Ctx<'_>, capture_pending: bool) -> Option<bool> {
+        let export_wait = self.export_wait.as_ref().is_some_and(|(expected, started)| {
+            started.elapsed().as_secs() < 180
+                && !ctx.runner.state().loop_export_notice.as_deref()
+                    .is_some_and(|notice| notice.contains(expected))
+        });
+        Some(
+            export_wait
+                || ctx.runner.state().loop_export_busy
+                || capture_pending
+                || self.shared.borrow().backend.as_ref().is_some_and(|backend| backend.preview_busy()),
+        )
     }
     fn act(&mut self, ctx: &mut Ctx<'_>, label: &str) -> bool {
+        if let Some(expected) = match label {
+            "wav-native-await-cancel" => Some("WAV export cancelled"),
+            "wav-native-await-save" => Some("Exported "),
+            "wav-native-await-collision" => Some("already exists"),
+            "wav-native-await-replacement-cancel" => Some("WAV replacement cancelled"),
+            _ => None,
+        } {
+            ctx.runner.update(|ui| ui.loop_export_notice = None);
+            self.export_wait = Some((expected.into(), std::time::Instant::now()));
+            return true;
+        }
+        if label == "wav-export-fixture" || label == "wav-export-backing-fixture" {
+            let Some(directory) = std::env::var_os("WOODSHED_CAPTURE_DIR") else {
+                return false;
+            };
+            let name = if label == "wav-export-fixture" {
+                "loop-export.wav"
+            } else {
+                "backing-export.wav"
+            };
+            let path = std::path::PathBuf::from(directory).join(name);
+            ctx.runner.update(|ui| {
+                ui.loop_export_requests.push(woodshed_views::stage::LoopExportRequest::ChooseDestination);
+            });
+            crate::wav_export::after_dispatch_with_chooser(
+                &mut self.shared.borrow_mut(), ctx, |_| Some(path.clone()),
+            );
+            return true;
+        }
         Probe {
             ctx,
             shared: &mut self.shared.borrow_mut(),
@@ -343,9 +397,64 @@ impl Snapshot<'_, '_> {
             .unwrap_or_default();
         let reading = ui.relationship_reading().ok().flatten();
         let appearance = ui.appearance.resolve(&ui.app_settings.appearance);
+        let font_requests = ui.appearance.choice(&ui.app_settings.appearance).fonts;
+        let requested_font = |role, name: &str| {
+            font_requests
+                .0
+                .get(&role)
+                .and_then(|stack| stack.first())
+                .is_some_and(|family| family.name() == name)
+        };
         let mut snap = ProbeSnapshot::default()
-            .with_field("appearance-theme", appearance.theme.id)
+            .with_field(
+                "appearance-device-free",
+                (crate::appearance::device_free_receipt()
+                    && self.shared.backend.is_none()
+                    && ui.midi.input_ports.is_empty()
+                    && ui.midi.output_ports.is_empty())
+                .to_string(),
+            )
+            .with_field("appearance-theme", appearance.theme.id.clone())
             .with_field("appearance-mode", appearance.mode.as_key())
+            .with_field("font-request-roles", font_requests.0.len().to_string())
+            .with_field(
+                "font-label-mono",
+                requested_font(tabard::typography::FontRole::Label, "IBM Plex Mono").to_string(),
+            )
+            .with_field(
+                "font-reading-serif",
+                requested_font(tabard::typography::FontRole::Reading, "Source Serif 4").to_string(),
+            )
+            .with_field(
+                "font-heading-serif",
+                requested_font(tabard::typography::FontRole::Heading, "Source Serif 4").to_string(),
+            )
+            .with_field(
+                "font-local-mono",
+                ui.appearance
+                    .available_fonts
+                    .iter()
+                    .any(|name| name == "IBM Plex Mono")
+                    .to_string(),
+            )
+            .with_field(
+                "font-local-serif",
+                ui.appearance
+                    .available_fonts
+                    .iter()
+                    .any(|name| name == "Source Serif 4")
+                    .to_string(),
+            )
+            .with_field(
+                "font-fallback-notice",
+                (!woodshed_views::appearance::fonts::diagnostics(
+                    &appearance.theme,
+                    &font_requests,
+                    &ui.appearance.available_fonts,
+                )
+                .is_empty())
+                .to_string(),
+            )
             .with_field(
                 "appearance-authoring",
                 ui.appearance_authoring_available.to_string(),
@@ -450,6 +559,72 @@ impl Snapshot<'_, '_> {
                     .count()
                     .to_string(),
             )
+            .with_field(
+                "preview-busy",
+                self.shared.backend.as_ref().is_some_and(|backend| backend.preview_busy()).to_string(),
+            )
+            .with_field(
+                "preview-voices",
+                self.shared.backend.as_ref().map_or(0, |backend| backend.preview_voice_count()).to_string(),
+            )
+            .with_field(
+                "output-streams",
+                self.shared.backend.as_ref().map_or(0, |backend| backend.output_stream_count()).to_string(),
+            )
+            .with_field(
+                "output-device-frames",
+                self.shared.backend.as_ref().and_then(|backend| backend.output_snapshot()).map_or(0, |snapshot| snapshot.device_frames).to_string(),
+            )
+            .with_field(
+                "output-processing-blocks",
+                self.shared.backend.as_ref().and_then(|backend| backend.output_snapshot()).map_or(0, |snapshot| snapshot.processing_blocks).to_string(),
+            )
+            .with_field(
+                "output-capture-invalid",
+                self.shared.backend.as_ref().and_then(|backend| backend.output_snapshot()).is_some_and(|snapshot| snapshot.capture_invalid).to_string(),
+            )
+            .with_field(
+                "output-click-playing",
+                self.shared.backend.as_ref().and_then(|backend| backend.output_snapshot()).is_some_and(|snapshot| snapshot.click_playing).to_string(),
+            )
+            .with_field(
+                "capture-input-rate",
+                self.shared.backend.as_ref().and_then(|backend| backend.capture_source_rate()).map_or_else(|| "none".into(), |rate| rate.to_string()),
+            )
+            .with_field(
+                "loop-capture-references",
+                ui.loop_captures.takes.len().to_string(),
+            )
+            .with_field(
+                "loop-capture-frames",
+                ui.loop_captures
+                    .takes
+                    .iter()
+                    .fold(0usize, |total, take| total.saturating_add(take.frames))
+                    .to_string(),
+            )
+            .with_field(
+                "loop-active-captures",
+                ui.song_loop_bars
+                    .iter()
+                    .filter(|present| **present)
+                    .count()
+                    .to_string(),
+            )
+            .with_field("recorder-rows", woodshed_views::stage::recorder_projection(ui).lanes.len().to_string())
+            .with_field("recorder-waveforms", ui.recorder_observation.buffers.iter().flatten().filter(|buffer|!buffer.samples.is_empty()).count().to_string())
+            .with_field("recorder-admitted", ui.recorder_observation.source.is_some().to_string())
+            .with_field("recorder-selected-card", ui.loop_selected.map_or(0,|id|id.card.0).to_string())
+            .with_field("recorder-capture-busy", ui.recorder_observation.capture_busy.to_string())
+            .with_field("recorder-inherited-bpm", ui.looper.inherited_bpm.to_string())
+            .with_field("song-bars", ui.song.bars.len().to_string())
+            .with_field("song-playing", ui.song_playing.to_string())
+            .with_field("loop-export-busy", ui.loop_export_busy.to_string())
+            .with_field("loop-export-replace", ui.loop_export_replace.is_some().to_string())
+            .with_field("loop-export-notice", ui.loop_export_notice.clone().unwrap_or_default())
+            .with_field("song-live-bar", ui.song_bar_live.to_string())
+            .with_field("song-first-bpm", ui.song.bars.first().map_or(0.0, |bar| bar.bpm).to_string())
+            .with_field("song-first-root", ui.song.bars.first().map_or(0, |bar| bar.root_pc).to_string())
             .with_field("overview-context-recipes", ui.musical_context.items().iter().filter(|item| item.captured_recipe.is_some()).count().to_string())
             .with_field("overview-recipe-source-present", ui.musical_context.items().iter().filter_map(|item| item.captured_recipe.as_ref()).any(|recipe| ui.set.cards.iter().any(|card| card.id == recipe.source_card)).to_string())
             .with_field("overview-recipe-bpm", ui.musical_context.items().iter().find_map(|item| item.captured_recipe.as_ref()).and_then(|recipe| recipe.card().ok()).and_then(|card| card.timing.bpm).map_or("none".into(), |bpm| bpm.to_string()))
@@ -1097,6 +1272,75 @@ impl Automatable for Probe<'_, '_> {
     }
 
     fn act(&mut self, label: &str) -> bool {
+        if label == "seed-loop-capture" {
+            use woodshed_core::audio::AudioBackend;
+            let Some(plan) = self.ctx.runner.state().loop_admitted.clone() else {
+                return false;
+            };
+            let Some(segment) = plan.segments.first() else {
+                return false;
+            };
+            let Some(backend) = self.shared.backend.as_mut() else {
+                return false;
+            };
+            let Some(rate) = backend.output_sample_rate() else {
+                return false;
+            };
+            if backend.loop_capture_busy() {
+                return false;
+            }
+            // Only the self-drive fixture supplies these exact samples. The
+            // native flow qualifies storage/replay without requesting a mic.
+            let frames = woodshed_audio::Bar {
+                bpm: segment.bpm,
+                time_signature: woodshed_audio::TimeSignature::new(segment.beats, 4),
+                length: segment.bars,
+                ..Default::default()
+            }
+            .duration_samples(rate as f32) as usize;
+            let samples = (0..frames)
+                .map(|frame| [0.000125, -0.00025, -0.0, 0.0005][frame % 4])
+                .collect();
+            let mut takes = backend.capture_snapshot();
+            takes.retain(|take| take.id != segment.id);
+            takes.push(crate::audio::CaptureSnapshot {
+                id: segment.id,
+                bpm: segment.bpm,
+                beats: segment.beats,
+                bars: segment.bars,
+                buffer: woodshed_audio::SampleBuffer::new(samples, rate),
+            });
+            backend.clear_loop_session();
+            if let Err(error) = backend
+                .restore_loop_captures(takes)
+                .and_then(|_| backend.set_loop_plan(&plan))
+            {
+                eprintln!("capture fixture refused: {error}");
+                return false;
+            }
+            crate::sync::after_dispatch(self.shared, self.ctx);
+            return true;
+        }
+        if label == "sample-output-clock" {
+            let Some(backend) = self.shared.backend.as_ref() else {
+                return false;
+            };
+            let Some(snapshot) = backend.output_snapshot() else {
+                return false;
+            };
+            let observation = format!(
+                "output-clock streams={} frames={} blocks={} click={} playing={} capture-invalid={}",
+                backend.output_stream_count(),
+                snapshot.device_frames,
+                snapshot.processing_blocks,
+                snapshot.click_playing,
+                snapshot.playing,
+                snapshot.capture_invalid,
+            );
+            eprintln!("{observation}");
+            self.shared.events.push(observation);
+            return true;
+        }
         if label == "reset-dispatch-sync-counts" {
             self.shared.view_only_dispatches = 0;
             self.shared.full_dispatch_syncs = 0;
@@ -1106,6 +1350,25 @@ impl Automatable for Probe<'_, '_> {
         }
         let mut known = true;
         self.ctx.runner.update(|ui| match label {
+            "song-cache-example" => {
+                ui.stop_rehearsal();
+                ui.song = woodshed_core::song::SongDoc {
+                    name: "Chord cache qualification".into(),
+                    click: false,
+                    bars: [0, 5, 7, 0].into_iter().enumerate().map(|(i, root)| {
+                        let mut bar = woodshed_core::song::SongBar {
+                            root_pc: root, bpm: 240.0, label: format!("Bar {}", i + 1),
+                            ..Default::default()
+                        };
+                        bar.revoice(); bar
+                    }).collect(),
+                    ..Default::default()
+                };
+                ui.song_playing = false;
+                ui.song_bar_live = 0;
+                ui.song_edit_cursor = 0;
+                ui.select_app_section(woodshed_core::storage::AppSection::Looper);
+            },
             "tone-relationships-example" => {
                 use woodshed_core::harmony::KeyedCatalogRef;
                 use woodshedding::pitch::PitchClass;

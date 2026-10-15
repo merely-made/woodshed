@@ -1,0 +1,9 @@
+RESULT ok
+waited 3029 frames
+captured 01_real_save_panel_saved
+captured 02_real_save_panel_saved_default_zoom
+Actual native WAV save complete
+capture 01_real_save_panel_saved 2360x1600 digest=1ddae17c17705d35 file=/Users/markik/Code/testing/woodshed/wav-export-20261012/native/WavExportSaveV2/01_real_save_panel_saved.png
+capture 02_real_save_panel_saved_default_zoom 2360x1600 digest=295ef2d264705aa9 file=/Users/markik/Code/testing/woodshed/wav-export-20261012/native/WavExportSaveV2/02_real_save_panel_saved_default_zoom.png
+frames: 2 captured, 0 blank, 2 distinct digests
+presentation: 3060 frames, 3065 redraws, 5 unpresented redraws

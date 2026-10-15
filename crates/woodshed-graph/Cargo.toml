@@ -2,7 +2,8 @@
 name = "woodshed-graph"
 version = "0.1.0"
 edition.workspace = true
-rust-version.workspace = true
+
+rust-version = "1.97.1"
 license.workspace = true
 authors.workspace = true
 repository.workspace = true
@@ -12,6 +13,6 @@ categories = ["data-structures"]
 
 [dependencies]
 # The chartulary substrate lives in sibling repos alongside woodshed.
-chartulary = { git = "https://github.com/merely-made/mere.git", rev = "7d2a5f3cfe97174058368073d2bae809fffbf902" }
+chartulary = { git = "https://www.github.com/merely-made/mere.git", rev = "0b9b7a9b218579f1f36cc1ab05a51b2a13128f1d" }
 # woodshed's own theory-catalog crate, now a workspace sibling.
 woodshedding = { workspace = true }

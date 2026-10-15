@@ -72,7 +72,8 @@ fn profile(mode: Mode) -> ModeProfile {
     }
 }
 
-fn seeds(seed: Seed) -> Seeds {
+/// Existing endorsed product seeds, also used when forking a shared theme.
+pub fn seeds(seed: Seed) -> Seeds {
     match seed {
         Seed::Wetland => wetland_seeds(),
         Seed::BrandShell => brand_seeds(),
@@ -155,6 +156,32 @@ fn roles(palette: &Palette) -> String {
     .map(|(role, colour)| format!("--t-{role}: {};", hex(colour)))
     .collect::<Vec<_>>()
     .join(" ")
+}
+
+/// Exact product roles for a saved CSS-authoritative fork. This preserves
+/// Wetland's endorsed dark overrides without deriving a second color ladder.
+pub fn tabard_role_css(seed: Seed, mode: Mode) -> String {
+    format!(
+        ":root {{ {} }}",
+        roles(&palette(seed, mode)).replace("--t-", "--tabard-color-")
+    )
+}
+
+/// Map a composing host's Tabard semantic roles onto the existing Redshank
+/// tokens. Omitted host roles preserve this seed/mode's exact endorsed colors.
+/// The host owns choice and stylesheet publication; this function has no store.
+pub fn host_role_css(seed: Seed, mode: Mode) -> String {
+    let values = roles(&palette(seed, mode));
+    let mut mapped = String::new();
+    for declaration in values.split(';').filter(|value| !value.trim().is_empty()) {
+        let (name, fallback) = declaration.trim().split_once(':').expect("generated role");
+        let role = name.strip_prefix("--t-").expect("generated token");
+        mapped.push_str(&format!(
+            "{name}:var(--tabard-color-{role},{});",
+            fallback.trim()
+        ));
+    }
+    format!(".rs-app {{ {mapped} }}")
 }
 
 /// The faces `--font-ui` and `--font-mono` name, bundled rather than assumed:
@@ -350,5 +377,56 @@ mod tests {
             .collect::<String>();
         assert!(!rules.contains("outline"));
         assert!(!rules.contains("text-overflow"));
+    }
+}
+
+#[cfg(test)]
+mod hosted_role_tests {
+    use crate::{CompactPlayerState, CompactView};
+    use cambium::el;
+    use cambium_genet_winit_host::{Harness, Init, inert_hooks};
+
+    fn root(state: &CompactPlayerState) -> CompactView {
+        Box::new(
+            el("div", crate::compact_surface(state))
+                .attr("class", "rs-app rs-hosted-dock t-redshank"),
+        )
+    }
+
+    #[test]
+    fn embedded_dock_paints_host_roles_and_exact_legacy_fallbacks() {
+        for (host_roles, expected) in [
+            ("", "#101716"),
+            (":root { --tabard-color-bg:#123456; }", "#123456"),
+        ] {
+            let mut host = Harness::with_hooks(
+                Init {
+                    state: CompactPlayerState::default(),
+                    logic: root as fn(&CompactPlayerState) -> CompactView,
+                    sheet: format!("{}\n{host_roles}", crate::surface_api::compact_stylesheet()),
+                    fonts: Vec::new(),
+                    images: Vec::new(),
+                },
+                inert_hooks(),
+            );
+            host.layout_at(960.0, 180.0);
+            let actual = host
+                .computed_value(host.runner().root(), "background-color")
+                .unwrap()
+                .to_ascii_lowercase()
+                .replace(' ', "");
+            let color = tinct::color_from_hex(expected).unwrap();
+            assert!(
+                [
+                    expected.to_owned(),
+                    format!("rgb({},{},{})", color.r, color.g, color.b),
+                    format!("rgba({},{},{},1)", color.r, color.g, color.b)
+                ]
+                .contains(&actual),
+                "actual embedded paint {actual}"
+            );
+            assert_eq!(*host.state(), CompactPlayerState::default());
+            host.update(|state| assert_eq!(state.drain_commands().count(), 0));
+        }
     }
 }

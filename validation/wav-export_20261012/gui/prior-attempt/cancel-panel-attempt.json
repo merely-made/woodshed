@@ -1,0 +1,25 @@
+{
+  "status": "native chooser interaction incomplete",
+  "source": "ca60bf0825f40cccb558f4db3c1cf2b60e13ad54",
+  "parent_pid": 35365,
+  "child_pid": 35432,
+  "actual_export_button_observed": true,
+  "actual_native_panel_observed": false,
+  "parent_ax_and_screenshot": "timeoutReached",
+  "targeted_escape": "timeoutReached; cancellation unconfirmed",
+  "inventory_child": "not exposed as app",
+  "child_cua_by_path": "Invalid app: /usr/bin/osascript",
+  "child_cua_by_name": "Invalid app: osascript",
+  "child_stack": "StandardAdditions NSSavePanel runModal; main native event wait",
+  "parent_stack": "choose_save_path -> light_file_dialog SaveFileDialog::show -> child wait",
+  "machine_accessible": "Finder AX and screenshot work",
+  "profile_hashes_unchanged": false,
+  "new_output_exists": false,
+  "replacement_sentinel_sha256": "1b76b392a6af3d9069263df8f1632585f6a49178624b0d3b312b26303c0b3ba4",
+  "captures": [
+    "01_wav_reopened_before_cancel.png"
+  ],
+  "scenario_done_exists": false,
+  "native_save_cancel_qualified": false,
+  "preservation": "owned app/child/keeper retained pending parent diagnosis"
+}

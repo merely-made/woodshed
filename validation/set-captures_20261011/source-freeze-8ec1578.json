@@ -1,0 +1,24 @@
+{
+  "source_revision": "8ec1578ab4c4498e14ee6940264f9f248d62186a",
+  "base_revision": "961731ace9ae9e687bdf8d40a032f2e1fbbf3321",
+  "binary": "/Users/markik/Code/testing/woodshed/set-captures-20261011/frozen-binaries/woodshed-genet",
+  "binary_sha256": "32da7f32a46eef251cb3b506167ebc4a9503cd974dbb4c78fef6162510c42fd9",
+  "command": [
+    "cargo",
+    "+1.97.1",
+    "build",
+    "--locked",
+    "--manifest-path",
+    "/Users/markik/Code/worktrees/woodshed-orchestrate-20261011/Cargo.toml",
+    "-p",
+    "woodshed-genet"
+  ],
+  "seconds": 38.928,
+  "code_and_manifests_frozen": true,
+  "scenarios": {
+    "set_capture_reopen.scn": "d1f7686410d6d8ca9a4becbbec6d7167035bbea05e0acae3aa250bd98ccb374c",
+    "set_capture_missing_reopen.scn": "5a53d4b5c7e371ba802df5612779b78f996a5eedcb1d14362b56729a8d30544f",
+    "set_capture_seed.scn": "bf037df7c7bc43d5565e15a91f2fa9d5e5691b05f91663949afa7a8c190bbf70",
+    "set_capture_cleared_reopen.scn": "8d50cb09b12818f4e6f0e522a33f1144e65f390148df69dbf1b7cab1c6a8d489"
+  }
+}

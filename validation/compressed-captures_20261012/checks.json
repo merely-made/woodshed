@@ -1,0 +1,64 @@
+{
+  "schema": "woodshed-compressed-captures-checks-v1",
+  "source": "28f7209c58bca683734e612b59c470f18999462e",
+  "distinct_root_cases": 76,
+  "root_checks": [
+    {
+      "scope": "loop_capture::tests",
+      "passed": 10,
+      "log": "logs/core-codec.log",
+      "log_sha256": "77a59083e25863bb5b093e451cc256eb775ba07913055762446a2e71aa362024"
+    },
+    {
+      "scope": "storage::tests",
+      "passed": 13,
+      "log": "logs/core-storage.log",
+      "log_sha256": "fc2340d29538af0b64da5c2ed524ae514f2972193bdb7c2875b4e9a017360969"
+    },
+    {
+      "scope": "capture_persistence::tests",
+      "passed": 26,
+      "log": "logs/host-persistence.log",
+      "log_sha256": "ab56e687fd8fc1f81fbb10eb76455501a1c72fdbf3db501a777f7629f3c177f3"
+    },
+    {
+      "scope": "storage::capture_tests",
+      "passed": 6,
+      "log": "logs/host-storage.log",
+      "log_sha256": "9d87dfbbe467e408d193d7be257a42b90524eb3eba51c333b13744c7db686e52"
+    },
+    {
+      "scope": "wav_export::tests",
+      "passed": 9,
+      "log": "logs/host-wav.log",
+      "log_sha256": "7ffd8e0d49c410226df662545d56caa9313a1af711bfa6ee2fb8c0712230e4ce"
+    },
+    {
+      "scope": "sync::tests",
+      "passed": 9,
+      "log": "logs/host-sync.log",
+      "log_sha256": "50bcc2727bd3d2d54bd4d58206f238a6497cfe3509c8c3fb4266747e003b2e79"
+    },
+    {
+      "scope": "drive::tests",
+      "passed": 3,
+      "log": "logs/host-drive.log",
+      "log_sha256": "45c9dfb69cca4ef1a51011d60a2256be1eb41df8e561375aea025e844683d6d8"
+    }
+  ],
+  "supplier_checks": {
+    "revision": "2c5a49fd48db7a54aeab9e712804fd065411aef9",
+    "unit_passed": 7,
+    "fixture_passed": 14,
+    "log": "logs/wavicle-tests.log"
+  },
+  "build": {
+    "status": "passed",
+    "locked": true,
+    "rust_toolchain": "1.97.1",
+    "product_sha256": "251cab2d5a83751a8f2bb403199ce775c571b18630193f79fae382fa668baf52",
+    "product_local_path": "/Users/markik/Code/testing/woodshed/compressed-captures-20261012/frozen-binaries/woodshed-genet-product-28f7209",
+    "log": "logs/build.log"
+  },
+  "scope_limit": "Root host scopes were rerun from the frozen final source test binary; portable core source and pins are unchanged from their passing checks. Native replay and concurrent font-family adoption remain separate."
+}

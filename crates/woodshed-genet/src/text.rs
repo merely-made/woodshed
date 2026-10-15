@@ -3,7 +3,7 @@
 //! The host owns the caret, the selection overlay, IME, drag selection, and
 //! visual (layout-aware) caret movement — but it cannot know where an
 //! application keeps its text. This is woodshed's half of that seam: recognize
-//! the focused `<input>` by the class of its wrapper, and hand back borrows of
+//! the focused `div[role=textbox]` by the class of its wrapper, and hand back borrows of
 //! the matching [`TextInput`].
 
 use cambium_genet_winit_host::{FocusedTextSlot, Runner};
@@ -49,10 +49,19 @@ pub fn focused_text(runner: &Runner<UiState, Logic, UiChild>) -> Option<FocusedT
             });
         }
     }
+    if let Some(field) = tabard_workshop::fonts::focused_font_field(&runner.dom(), node) {
+        return Some(FocusedTextSlot {
+            node,
+            get: Box::new(move |ui| ui.appearance.font_editor.text_field(field)),
+            get_mut: Box::new(move |ui| ui.appearance.font_editor.text_field_mut(field)),
+        });
+    }
     let field = {
         let dom = runner.dom();
         let dom = dom.borrow();
-        if dom.element_name(node)?.local.as_ref() != "input" {
+        // Cambium's single-line fields are `div[role=textbox]` since mere r44.
+        let attr = |name: &str| dom.attribute(node, &Namespace::from(""), &LocalName::from(name));
+        if attr("role") != Some("textbox") || attr("aria-multiline") == Some("true") {
             return None;
         }
         let parent = dom.parent(node)?;

@@ -1,0 +1,7 @@
+RESULT ok
+captured recorder_reopened
+captured appearance_reopened
+capture recorder_reopened 2360x1400 digest=2c77bf57df3e3368 file=/Users/markik/Code/testing/hocket-firewheel-f3-20261011/native-reopen/recorder_reopened.png
+capture appearance_reopened 2360x1400 digest=785f7d43d04968d0 file=/Users/markik/Code/testing/hocket-firewheel-f3-20261011/native-reopen/appearance_reopened.png
+frames: 2 captured, 0 blank, 2 distinct digests
+presentation: 13 frames, 15 redraws, 2 unpresented redraws

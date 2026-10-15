@@ -1,0 +1,50 @@
+{
+  "schema": "woodshed-font-roles-receipt-v1",
+  "source": "751858f0461b71fe7fa03392b13d65363b9e7ff6",
+  "compiled_source": "a9e1e87556c62bfcd503e429708af68ce62826ba",
+  "status": "CPU/build, capture review and native fresh-process qualification complete",
+  "cpu_unique_cases": 556,
+  "build": "locked production desktop passed",
+  "native": "native.json",
+  "source_freeze": "source-freeze.json",
+  "persistence": "parity.json",
+  "cleanup": "cleanup.json",
+  "roles": [
+    "Interface",
+    "Reading",
+    "Heading",
+    "Label",
+    "Code"
+  ],
+  "requests": {
+    "heading": [
+      "Source Serif 4"
+    ],
+    "label": [
+      "IBM Plex Mono"
+    ],
+    "reading": [
+      "Source Serif 4"
+    ]
+  },
+  "theme_mode": "hc_light",
+  "retention": "Set/Card/material/history/clock/capture state exact; workspace active tab and generated graph positions are explained navigation/layout deltas",
+  "limits": [
+    "root native consumer only; independent Hocket/Redshank/Ringdown source and locks unchanged",
+    "application family requests and authored typography cascade qualified; positioned fretboard/graph labels retain fixed size/leading/hit geometry",
+    "Rehearsal capture is baseline, not proof of Label mapping for unclassed Rehearsal headings",
+    "Set tray controls visible; not blanket Set/Rehearsal typography adoption",
+    "glyph-level coverage including existing circular-arrow marker remains open",
+    "bounded 60-second fixture presentation protocol; ordinary default 10-second startup is not qualified",
+    "device-free font processes preserve old raw manifest; separate native codec receipt qualifies migration",
+    "no physical microphone/acoustic recording or general disk performance claim"
+  ],
+  "excluded_attempts": [
+    {
+      "path": "/Users/markik/Code/testing/woodshed/font-roles-20261012/combined/native/FontsCombinedSeed",
+      "reason": "first seed passed; post-completion native control relaunched bundle and altered saved mode; repeated clean V2 fixture supplies final retention evidence"
+    }
+  ],
+  "combined_native_storage": "../compressed-captures_font-family_20261012/receipt.json",
+  "verifier": "verify.py --local"
+}

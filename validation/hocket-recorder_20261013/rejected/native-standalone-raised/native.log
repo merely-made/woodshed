@@ -1,0 +1,5 @@
+[cambium-winit] accessibility Installed, 145 nodes projected
+hocket-genet: captured recorder_initial
+hocket-genet: FAIL: assert snap bpm Eq '122': got '120'
+hocket-genet: captured recorder_controls
+hocket-genet: RESULT fail (30 frames, 2 captures)

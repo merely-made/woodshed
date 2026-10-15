@@ -1,0 +1,20 @@
+{
+  "status": "all owned native acceptance processes, chooser, Keeper and lifecycle sleep prevention stopped",
+  "terminated_verified_owned": [
+    {
+      "pid": 38584,
+      "command": "/usr/bin/caffeinate -di -w 35110"
+    },
+    {
+      "pid": 35110,
+      "command": "/Users/markik/Code/testing/woodshed/stack-adoption-20261011/keeper-target/debug/dr-c-receipt-host /tmp/ws-wav-20261012.sock /Users/markik/Code/testing/woodshed/wav-native-20261012/private-keeper unlocked"
+    }
+  ],
+  "old_blocked_parent_pid": 35365,
+  "old_blocked_child_pid": 35432,
+  "old_blocked_processes_already_stopped": true,
+  "native_inventory_acceptance_apps": 0,
+  "fixture_payloads_retained_locally": true,
+  "native_ui_cleanup": "accepted scenario processes exited naturally; only owned Keeper/caffeinate signalled",
+  "scope": "no user resident or personal profile affected"
+}

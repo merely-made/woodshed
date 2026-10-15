@@ -1,0 +1,21 @@
+RESULT ok
+captured recorder_default
+captured recorder_light
+captured recorder_dark
+captured recorder_hc_light
+captured recorder_hc_dark
+captured workshop_saved
+captured recorder_applied
+captured workshop_narrow
+captured recorder_final
+capture recorder_default 2360x1400 digest=65bbda99b14b7368 file=/Users/markik/Code/testing/woodshed/stack-adoption-20261011/native/HocketWide/recorder_default.png
+capture recorder_light 2360x1400 digest=057c9b0c5a59d85c file=/Users/markik/Code/testing/woodshed/stack-adoption-20261011/native/HocketWide/recorder_light.png
+capture recorder_dark 2360x1400 digest=6686fae2d87a4a95 file=/Users/markik/Code/testing/woodshed/stack-adoption-20261011/native/HocketWide/recorder_dark.png
+capture recorder_hc_light 2360x1400 digest=45e183dfe4b405c6 file=/Users/markik/Code/testing/woodshed/stack-adoption-20261011/native/HocketWide/recorder_hc_light.png
+capture recorder_hc_dark 2360x1400 digest=ff02999e54d2c772 file=/Users/markik/Code/testing/woodshed/stack-adoption-20261011/native/HocketWide/recorder_hc_dark.png
+capture workshop_saved 2360x1400 digest=15d6eb85946d60dd file=/Users/markik/Code/testing/woodshed/stack-adoption-20261011/native/HocketWide/workshop_saved.png
+capture recorder_applied 2360x1400 digest=b21dedaf101be441 file=/Users/markik/Code/testing/woodshed/stack-adoption-20261011/native/HocketWide/recorder_applied.png
+capture workshop_narrow 840x2000 digest=510adab1651eac5a file=/Users/markik/Code/testing/woodshed/stack-adoption-20261011/native/HocketWide/workshop_narrow.png
+capture recorder_final 2360x1400 digest=00dbd7f5c31c3ef9 file=/Users/markik/Code/testing/woodshed/stack-adoption-20261011/native/HocketWide/recorder_final.png
+frames: 9 captured, 0 blank, 9 distinct digests
+presentation: 79 frames, 80 redraws, 1 unpresented redraws

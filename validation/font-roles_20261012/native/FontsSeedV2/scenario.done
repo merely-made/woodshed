@@ -1,0 +1,28 @@
+RESULT ok
+captured 01_font_roles_applied
+captured 02_missing_font_request
+captured 03_font_light
+captured 04_font_dark
+captured 05_font_hc_dark
+captured 06_font_hc_light
+captured 07_font_fretboard_labels
+captured 08_rehearsal_baseline
+captured 09_font_graph_labels
+captured 10_font_compact_panel
+captured 10b_font_compact_apply
+captured 11_font_retained_looper
+Shared Woodshed font roles seed complete
+capture 01_font_roles_applied 2360x1600 digest=76ff27bea3904cf8 file=/Users/markik/Code/testing/woodshed/font-roles-20261012/combined-v2/native/FontsSeedV2/01_font_roles_applied.png
+capture 02_missing_font_request 2360x1600 digest=b2b5c10831abbbef file=/Users/markik/Code/testing/woodshed/font-roles-20261012/combined-v2/native/FontsSeedV2/02_missing_font_request.png
+capture 03_font_light 2360x1600 digest=892438eca2ee32bd file=/Users/markik/Code/testing/woodshed/font-roles-20261012/combined-v2/native/FontsSeedV2/03_font_light.png
+capture 04_font_dark 2360x1600 digest=dcc3b04d5c77c5a1 file=/Users/markik/Code/testing/woodshed/font-roles-20261012/combined-v2/native/FontsSeedV2/04_font_dark.png
+capture 05_font_hc_dark 2360x1600 digest=eb04a762bbdff7b4 file=/Users/markik/Code/testing/woodshed/font-roles-20261012/combined-v2/native/FontsSeedV2/05_font_hc_dark.png
+capture 06_font_hc_light 2360x1600 digest=f1affdb22e103579 file=/Users/markik/Code/testing/woodshed/font-roles-20261012/combined-v2/native/FontsSeedV2/06_font_hc_light.png
+capture 07_font_fretboard_labels 2360x1600 digest=58bda154764cbd42 file=/Users/markik/Code/testing/woodshed/font-roles-20261012/combined-v2/native/FontsSeedV2/07_font_fretboard_labels.png
+capture 08_rehearsal_baseline 2360x1600 digest=b5b5a41ffd179a42 file=/Users/markik/Code/testing/woodshed/font-roles-20261012/combined-v2/native/FontsSeedV2/08_rehearsal_baseline.png
+capture 09_font_graph_labels 2360x1600 digest=2af4a2bb388952bf file=/Users/markik/Code/testing/woodshed/font-roles-20261012/combined-v2/native/FontsSeedV2/09_font_graph_labels.png
+capture 10_font_compact_panel 960x1800 digest=57f217fa81364d9e file=/Users/markik/Code/testing/woodshed/font-roles-20261012/combined-v2/native/FontsSeedV2/10_font_compact_panel.png
+capture 10b_font_compact_apply 960x1800 digest=77753f8ce97902ce file=/Users/markik/Code/testing/woodshed/font-roles-20261012/combined-v2/native/FontsSeedV2/10b_font_compact_apply.png
+capture 11_font_retained_looper 2360x1600 digest=77cbc9603b14729f file=/Users/markik/Code/testing/woodshed/font-roles-20261012/combined-v2/native/FontsSeedV2/11_font_retained_looper.png
+frames: 12 captured, 0 blank, 12 distinct digests
+presentation: 136 frames, 1108 redraws, 972 unpresented redraws

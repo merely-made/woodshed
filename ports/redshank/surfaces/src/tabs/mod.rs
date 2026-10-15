@@ -83,7 +83,8 @@ pub const TABS_CSS: &str = r#"
    as tall as the panel. */
 .rs-listen-pane { display: none; align-self: start; justify-self: start; }
 .rs-listen-pane .rs-segment { margin-left: 0; align-self: flex-start; }
-.rs-listen-editor-field textarea { width: 100%; min-height: 72px; background: var(--t-bg);
+.rs-listen-editor-field textarea,
+.rs-listen-editor-field [role="textbox"][aria-multiline="true"] { width: 100%; min-height: 72px; background: var(--t-bg);
   color: var(--t-text); border: 1px solid var(--t-surface-2); font-family: var(--font-ui); }
 .rs-listen-save { background: var(--t-text); color: var(--t-bg); border: none;
   border-radius: 2px; padding: 5px 12px; font-size: var(--text-ui-12); }
@@ -110,7 +111,8 @@ pub const TABS_CSS: &str = r#"
   overflow: hidden; white-space: nowrap; }
 .rs-library-field { display: flex; gap: var(--space-6); align-items: center;
   margin-top: var(--space-10); }
-.rs-library-field textarea { flex: 1; min-height: 28px; background: var(--t-bg);
+.rs-library-field textarea,
+.rs-library-field [role="textbox"][aria-multiline="true"] { flex: 1; min-height: 28px; background: var(--t-bg);
   color: var(--t-text); border: 1px dashed var(--t-surface-2); font-family: var(--font-mono);
   font-size: var(--text-ui-12); }
 .rs-library-open { background: transparent; border: none; color: var(--t-text-dim);

@@ -1,0 +1,9 @@
+RESULT ok
+captured 01_shared_recorder_hydrated
+captured 02_owned_selection
+captured 03_backing_plus_capture_export
+capture 01_shared_recorder_hydrated 2360x1600 digest=136d64edfe72e7b3 file=/Users/markik/Code/testing/woodshed/hocket-adoption-20261013/native/WoodshedHocketWideFinal/01_shared_recorder_hydrated.png
+capture 02_owned_selection 2360x1600 digest=b6860eaa938102cd file=/Users/markik/Code/testing/woodshed/hocket-adoption-20261013/native/WoodshedHocketWideFinal/02_owned_selection.png
+capture 03_backing_plus_capture_export 2360x1600 digest=a675a77087015b43 file=/Users/markik/Code/testing/woodshed/hocket-adoption-20261013/native/WoodshedHocketWideFinal/03_backing_plus_capture_export.png
+frames: 3 captured, 0 blank, 3 distinct digests
+presentation: 54 frames, 55 redraws, 1 unpresented redraws

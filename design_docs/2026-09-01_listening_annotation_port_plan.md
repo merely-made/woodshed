@@ -1355,7 +1355,7 @@ algorithms consulted, their licenses, and what was independently written.
 ### Decision: Redshank
 
 **Redshank** is the chosen product name. The Retinue host-tier founding note at
-`retinue/design_docs/2026-08-06_signalman_founding.md` banked it as the sentinel
+`murm/design_docs/2026-08-06_signalman_founding.md` banked it as the sentinel
 shorebird, Turnstone's pair, for a future application. This use earns that
 relationship: Redshank is the sovereign listening tool, while Turnstone becomes
 its first embedded host and can project selected timed notes into the browsing
@@ -1611,3 +1611,61 @@ rejected for the reasons recorded in the 2026-09-01 planning pass.
 ## 2026-09-26 timed transcript slice
 
 The bounded WebVTT parser, explicit offline transcript saving, and cue/seek projection are tracked in [the timed transcripts plan](2026-09-26_timed_transcripts_plan.md). Full text-track rendering and headed real-episode acceptance remain open.
+
+### Bounded local generation retention (2026-10-11)
+
+**Status: implemented; scoped CPU and native recovery validation passed.**
+The standalone `JsonDirectoryStore` keeps the newest three valid published
+model generations: current state and two recovery states. Cleanup follows the
+existing flushed file, same-directory rename, and directory-sync publication.
+Invalid older published files do not consume recovery slots; pending files and
+unrelated media are untouched. A cleanup I/O error is reported without rolling
+back the already-published replacement. A caller may retry, and reopening reads
+the durable latest valid state.
+
+Ten storage tests and strict package Clippy pass. Tests cover repeated saves
+with bounded published history, fallback through two corrupt latest states,
+invalid/pending/unrelated file handling, preservation of all recovery states
+on failed publication, and readable replacement state after cleanup failure.
+This retains Redshank's recovery contract rather than replacing it with a
+latest-state slot. Three finite native processes at `9632f37` qualify eleven
+shipping-host writes, bounded history, fresh saved-settings reopen and recovery
+after corrupting the two latest published generations. All three captures were
+reviewed; the [source receipt](receipts/audio_foundation_20261011/retention/README.md)
+retains exact process/image hashes and the rejected preliminary script.
+Wider orchestration and audio acceptance follow the
+[audio family plan](2026-09-09_audio_ports_rehome_plan.md#standalone-audio-foundation-and-consolidation-2026-10-11).
+
+### Standalone streaming migration (2026-10-11)
+
+**Status: consumer implemented and CPU-qualified; physical-device acceptance remains open.**
+The playback runtime uses the maintained Firewheel 0.14 fork at exact revision
+`2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc`, with
+separate host-owned CPAL stream lifetime and fallible graph construction.
+The stream bridge owns bounded output-frame capacity and actual resampler
+headroom; Redshank retires the fixed-resample 0.9.2 rate-ratio workaround.
+Progressive decoding retains every unaccepted frame for retry. Integer bridge
+presentation frames feed the existing WSOLA marks, preserving source clocks
+and frozen representation/annotation authority. Initial latency and underrun
+zeros never advance the source clock. End-of-file seals and flushes the final
+resampler packet, then waits for exact drain; the old five-millisecond empty
+queue approximation is retired.
+
+Offline consumer tests drive actual graphs at eight rate pairs, mono/stereo,
+long uneven backlogs and 37-frame clips, and combine WSOLA EOF with graph EOF at
+six playback rates. Rejected stream admission removes its graph node; output
+failure retires the backend so a later load can open a fresh device. Existing
+progressive HTTP, accurate seek/preroll, source mutation, anchors and gain/duck
+tests remain in the consumer scope. Physical unplug/retry and audible playback
+are separate gates. The standalone microphone adapter retains its own CPAL
+0.17 profile rather than inheriting the output backend's CPAL 0.18 profile.
+
+The 37-frame 8k-to-44.1k test reproduced all-zero EOF output despite correct
+frame counters. The fork's preallocated packet adapter corrects the dependency's
+delay-trimming copy range; all consumer material-output cases now pass. The
+independent locked Redshank scope passes 261 tests, with seven physical-device
+fixtures ignored. Scoped playback Clippy passes, its normal tree excludes Bevy
+ECS, and Linux dependency inspection retains the existing ALSA prerequisite.
+An independent source review closes fallible node cleanup, stale episode/preview
+generation handling, integer source clock mapping and EOF drain findings. Actual
+output disconnect/retry remains a physical-device gate.

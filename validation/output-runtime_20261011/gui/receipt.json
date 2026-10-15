@@ -1,0 +1,268 @@
+{
+  "status": "qualified bounded macOS native GUI replay and two fresh-process reopen pairs",
+  "frozen_source": "4a4aba45791c151438a7ab01628e60962fbe86d7",
+  "published_code_identical_source": "49efa77d7ccb91b7d7e2fc39a95680c91827bbad",
+  "desktop_binary_sha256": "ef2a109428ccaffa1f2bc1eaec81f2b6cac717647a1b6a642f8330cf70aa015d",
+  "supplier_family_held": "Mere0e78fcff with previously qualified coherent renderer family",
+  "runs": [
+    {
+      "name": "RuntimeMetro",
+      "result": "ok",
+      "scenario": "scenarios/metronome_stop_restart.scn",
+      "scenario_sha256": "0fca751621ed6cfd7d2ff366ff08349262c2cc19151fbbb37026495105661a7e",
+      "binary_sha256": "ef2a109428ccaffa1f2bc1eaec81f2b6cac717647a1b6a642f8330cf70aa015d",
+      "presented_frames": 214,
+      "redraws": 1145,
+      "unpresented_redraws": 931,
+      "captures": [
+        {
+          "file": "native/RuntimeMetro/01_metronome_playing.png",
+          "sha256": "a969d1957b3b85454041a7ed5ecff2b7f91d5919ec621740bf1f4abd23f9261d",
+          "width": 2360,
+          "height": 1600,
+          "full_frame_reviewed": true
+        },
+        {
+          "file": "native/RuntimeMetro/02_metronome_stopped.png",
+          "sha256": "7ce78a05435e0ac40f5265f0c4d2305650c6a8119fe23ef34973b9da8b52c4b6",
+          "width": 2360,
+          "height": 1600,
+          "full_frame_reviewed": true
+        },
+        {
+          "file": "native/RuntimeMetro/03_metronome_restarted.png",
+          "sha256": "ab5f11cf2d0337b4f8e89c98890e18fefc5a331a928e3757f1048afeb7ae0e13",
+          "width": 2360,
+          "height": 1600,
+          "full_frame_reviewed": true
+        },
+        {
+          "file": "native/RuntimeMetro/04_metronome_final_stop.png",
+          "sha256": "d41b242ab935d8b98a504cf57c527cb3c79d18b9564dcb1983cda129b9ce21ca",
+          "width": 2360,
+          "height": 1600,
+          "full_frame_reviewed": true
+        }
+      ],
+      "blank_captures": 0,
+      "distinct_capture_digests": 4,
+      "lazy_input_none_checkpoints": 5,
+      "output_streams_asserted": 1,
+      "positive_device_frames_and_graph_blocks_asserted": true,
+      "recording_armed": false,
+      "original_full_log": "native/RuntimeMetro/native.log",
+      "original_full_log_sha256": "2a0443f92e8ac2f96144856a4604f373cbcb32925ce91c14e92554bbe2751dca",
+      "original_completion_receipt_sha256": "d9740b4d446c6817aa6cf1560fbb6af45148667759774cedacc831302bbb5c7d",
+      "portable_completion_receipt_sha256": "2b55981c34377f72d817c92bffbed8d3465727fe1fe9133ca171b830c1207fa0",
+      "concise_log_sha256": "d1577a46382dc175daa2277e4c18cf327bed3e801129bf81bb069456a8890bee"
+    },
+    {
+      "name": "RuntimeSetSeed",
+      "result": "ok",
+      "scenario": "scenarios/set_loop_plan.scn",
+      "scenario_sha256": "2f2b96f32fa82f28fa425779d5215a52c6f3dba2c0c5d769f58e15fc5b513f85",
+      "binary_sha256": "ef2a109428ccaffa1f2bc1eaec81f2b6cac717647a1b6a642f8330cf70aa015d",
+      "presented_frames": 126,
+      "redraws": 999,
+      "unpresented_redraws": 873,
+      "captures": [
+        {
+          "file": "native/RuntimeSetSeed/01_set_backing_admitted.png",
+          "sha256": "33d2c0745c9a4474ad80eb917585f98fcbc24b4f457229e94963c863835a43d5",
+          "width": 2360,
+          "height": 1600,
+          "full_frame_reviewed": true
+        },
+        {
+          "file": "native/RuntimeSetSeed/02_exact_saved_backing_retained.png",
+          "sha256": "63189c0f66d4fc4b1567bcf93d7a639430adbe248d4dc222c766e31472fabfa6",
+          "width": 2360,
+          "height": 1600,
+          "full_frame_reviewed": true
+        },
+        {
+          "file": "native/RuntimeSetSeed/03_set_source_ready_to_reopen.png",
+          "sha256": "cd6eae2a20f6dfdebcd4d824cff152042f923752c54d81cb5d57ba7d0f455108",
+          "width": 2360,
+          "height": 1600,
+          "full_frame_reviewed": true
+        }
+      ],
+      "blank_captures": 0,
+      "distinct_capture_digests": 3,
+      "lazy_input_none_checkpoints": 3,
+      "output_streams_asserted": 1,
+      "positive_device_frames_and_graph_blocks_asserted": true,
+      "recording_armed": false,
+      "original_full_log": "native/RuntimeSetSeed/native.log",
+      "original_full_log_sha256": "38fabd227a6d819643c8b4b74a4b822ce3705b355caa91bac3c27a99a0e023e4",
+      "original_completion_receipt_sha256": "5cc934610a6f4fe83fd8b434058a9dd68d7e1a24c8a98dd70d5126f92b0edcca",
+      "portable_completion_receipt_sha256": "26932015ee8a11e9ca5bf2d3fb96044b1a4d49c5b77ed338b6827fde8009eba3",
+      "concise_log_sha256": "016b26c4ed80d4c8b10876487d6d1b4ca35ef37d4ba651be3987c82a081f60c5"
+    },
+    {
+      "name": "RuntimeSetReopen",
+      "result": "ok",
+      "scenario": "scenarios/set_loop_plan_reopen.scn",
+      "scenario_sha256": "c9a43a3ed7c8a03b6ae5f69f7fd983a725e337f1fa5b32bfa6795b18a3c7f8d1",
+      "binary_sha256": "ef2a109428ccaffa1f2bc1eaec81f2b6cac717647a1b6a642f8330cf70aa015d",
+      "presented_frames": 90,
+      "redraws": 747,
+      "unpresented_redraws": 657,
+      "captures": [
+        {
+          "file": "native/RuntimeSetReopen/01_set_source_fresh_reopen.png",
+          "sha256": "e7aa37a6e12723d4fdf55360876942f7f790f69b5993f5531ad052fbd9babbb4",
+          "width": 2360,
+          "height": 1600,
+          "full_frame_reviewed": true
+        },
+        {
+          "file": "native/RuntimeSetReopen/02_set_source_replayed.png",
+          "sha256": "217c6c3ca002fb91e7cd027bb37f52b23a69179d40508d92097961606b38fc85",
+          "width": 2360,
+          "height": 1600,
+          "full_frame_reviewed": true
+        },
+        {
+          "file": "native/RuntimeSetReopen/03_saved_backing_still_retained.png",
+          "sha256": "5eaf88fbad93c828f4b75dedd71e6eef941c8255dfe74104bc37d0f80e128d29",
+          "width": 2360,
+          "height": 1600,
+          "full_frame_reviewed": true
+        }
+      ],
+      "blank_captures": 0,
+      "distinct_capture_digests": 3,
+      "lazy_input_none_checkpoints": 3,
+      "output_streams_asserted": 1,
+      "positive_device_frames_and_graph_blocks_asserted": true,
+      "recording_armed": false,
+      "original_full_log": "native/RuntimeSetReopen/native.log",
+      "original_full_log_sha256": "b8b413b664992376cffbd92890a275c4a2ea2f38c4f189349bdc51d1eb2be470",
+      "original_completion_receipt_sha256": "6a3fe5cecb8d5a55bbfde3cfcaef25f2bd346fa8855f3f3861fd790005b6885c",
+      "portable_completion_receipt_sha256": "438e77652613ef3db8c4d6fa49fde34ca46e2f6e16c6c3093856902b4d94dfc7",
+      "concise_log_sha256": "acf9c01c1d8e95841462604976488056284756a5b44f314d68b4716f87b23611"
+    },
+    {
+      "name": "RuntimePreviewSeed",
+      "result": "ok",
+      "scenario": "scenarios/preview_worker.scn",
+      "scenario_sha256": "ba19047df9672d34afebff27a7fcbdd6a46ffeb48cb442724ad09dea5c5029e8",
+      "binary_sha256": "ef2a109428ccaffa1f2bc1eaec81f2b6cac717647a1b6a642f8330cf70aa015d",
+      "presented_frames": 179,
+      "redraws": 958,
+      "unpresented_redraws": 779,
+      "captures": [
+        {
+          "file": "native/RuntimePreviewSeed/01_captured_recipe.png",
+          "sha256": "ef3939e831066895bcde719241553c1a0e6a9ebc0356f1a053244045815cafd3",
+          "width": 2560,
+          "height": 1800,
+          "full_frame_reviewed": true
+        },
+        {
+          "file": "native/RuntimePreviewSeed/02_recipe_scene.png",
+          "sha256": "3ec12d5dae4ba74db59fd18329a19fcccd37210750ae3e33ec9f2c95d2924c29",
+          "width": 2560,
+          "height": 1800,
+          "full_frame_reviewed": true
+        },
+        {
+          "file": "native/RuntimePreviewSeed/03_latest_hear.png",
+          "sha256": "b5d88047051a8f0bf66c003c3c9e3e3b24c99259f4bd2ade5826d4ccc2c605c0",
+          "width": 2560,
+          "height": 1800,
+          "full_frame_reviewed": true
+        }
+      ],
+      "blank_captures": 0,
+      "distinct_capture_digests": 3,
+      "lazy_input_none_checkpoints": 3,
+      "output_streams_asserted": 1,
+      "positive_device_frames_and_graph_blocks_asserted": true,
+      "recording_armed": false,
+      "original_full_log": "native/RuntimePreviewSeed/native.log",
+      "original_full_log_sha256": "aa356619f7c01a26b380132fc4c0cb51b7dbe2971cd0920865eeb3fdb5f67e53",
+      "original_completion_receipt_sha256": "afb36ca1d5484192bbcef2f13fb54faddc9fc1c15c84f4b29822c633210b8987",
+      "portable_completion_receipt_sha256": "0e2c66ca5078f0b2886ffa66725653ade198ec6fca662441ddda8668de27018d",
+      "concise_log_sha256": "105de6f60f8dbfc9081d607e4e07f7656a12b1e16eb8d91c88c14f7a7524a2e7"
+    },
+    {
+      "name": "RuntimePreviewReopen",
+      "result": "ok",
+      "scenario": "scenarios/preview_worker_reopen.scn",
+      "scenario_sha256": "2fbdb2935ac6ca82e0ba05298acef2dd2e7043214a25261a634fff25f2e07538",
+      "binary_sha256": "ef2a109428ccaffa1f2bc1eaec81f2b6cac717647a1b6a642f8330cf70aa015d",
+      "presented_frames": 182,
+      "redraws": 994,
+      "unpresented_redraws": 812,
+      "captures": [
+        {
+          "file": "native/RuntimePreviewReopen/01_recipe_reopened.png",
+          "sha256": "551b692014b97d25b7dbcb83f6ecfcef0bcf748d6c20dbc018bdb602b9dc306e",
+          "width": 2560,
+          "height": 1800,
+          "full_frame_reviewed": true
+        },
+        {
+          "file": "native/RuntimePreviewReopen/02_reopened_scene.png",
+          "sha256": "9d7a24db9084393aaa5c2996e98271a5d1b6708f51905cfe49b52813feee085e",
+          "width": 2560,
+          "height": 1800,
+          "full_frame_reviewed": true
+        },
+        {
+          "file": "native/RuntimePreviewReopen/03_paused_rehearsal.png",
+          "sha256": "b5b65a10c6e42967ec53296477d4cc0460d751e69f9eae88e33284fc12ff8648",
+          "width": 2560,
+          "height": 1800,
+          "full_frame_reviewed": true
+        }
+      ],
+      "blank_captures": 0,
+      "distinct_capture_digests": 3,
+      "lazy_input_none_checkpoints": 3,
+      "output_streams_asserted": 1,
+      "positive_device_frames_and_graph_blocks_asserted": true,
+      "recording_armed": false,
+      "original_full_log": "native/RuntimePreviewReopen/native.log",
+      "original_full_log_sha256": "186139b9030a59ac0e103fa9723af536307b7645d7f8678236a3b7211541a0b5",
+      "original_completion_receipt_sha256": "5dc6e4e2f544533e76ebe1e975ef8f594bc74285722db27e4a1477aaed4419af",
+      "portable_completion_receipt_sha256": "d21248747351a4090c658e4d9ef06df631166e4570ecbe266ac67ff7bc7c847c",
+      "concise_log_sha256": "a3e9bf9d54f1722b887db41e569c211dc0957ac901fb380f420cf4b11848ec9f"
+    }
+  ],
+  "total_native_processes": 5,
+  "total_presented_frames": 791,
+  "total_reviewed_nonblank_full_captures": 16,
+  "clock_validator": "verify_metronome_clock.py",
+  "clock_validator_sha256": "da3c87abcd0eec0370b407c0852110a430ebe71bade9fd14c5b9e60b29fe6ce1",
+  "processing_blocks_meaning": "Firewheel graph/node processing blocks; no CPAL callback-gap measurement",
+  "full_capture_archive": "Local synthetic artifact root native/<fixture>/<capture>.png; exact SHA256 and dimensions above",
+  "semantic_review": [
+    "Metronome120bpm Stop/Play/Stop/Play controls match five coherent processor click-state and strictly advancing frame/block samples.",
+    "Set125bpm explicit5/4 clock and Once mode survive fresh reopen; exact four-bar240bpm C/F/G/C saved compatibility backing remains intact.",
+    "Retained C Major thirds recipe92bpm, source Card3 provenance, Pinned placement and Orbits scene survive deleted original and fresh reopen.",
+    "Repeated Hear retains one preview voice; Rewind and Run/Pause clear preview playback; final rehearsal is paused with four Cards."
+  ],
+  "native_control_notes": [
+    "Each app was launched through native control after confirming no competing acceptance app.",
+    "Observed Woodshed window Raise was used for presentation; background occlusion redraws are retained in original local logs and receipt counts.",
+    "Set/preview processes completed during post-Raise observation; cgWindowNotFound/App quit tool results were checked against successful actual completion receipts before any next launch."
+  ],
+  "scope_limits": [
+    "No tuner, calibration or recording request; capture-input-rate stays none at all17 checkpoints.",
+    "output-capture-invalid false in no-input runs is not physical microphone/capture or durable PCM qualification.",
+    "No acoustic or end-to-end latency proof, second renderer-family adoption, or closure of full P7/durable PCM work."
+  ],
+  "portable_evidence": "Exact scenarios, concise diagnostic logs, original-source hashes and completion/presentation receipts; no separate audit/summary document, private vault or persisted payloads included",
+  "cleanup": {
+    "all_acceptance_apps_exited": true,
+    "owned_keeper_stopped": true,
+    "requested_four_hour_sleep_prevention_preserved": true
+  },
+  "clock_validation": "clock-validation.json",
+  "clock_validation_sha256": "2700aa54938aa8c1da6023a5d667eed6d9b78452f9dadfd2cada210958c27af1",
+  "local_full_evidence_root": "/Users/markik/Code/testing/woodshed/output-runtime-20261011"
+}

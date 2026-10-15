@@ -1,0 +1,9 @@
+{
+  "status": "passed",
+  "actual_native_panel_observed": true,
+  "actual_panel_cancel_button_clicked": true,
+  "scenario_result": "ok",
+  "new_output_exists": false,
+  "sentinel_sha256": "bd9681a7996feec35f9d73697a5bec3e0e116dfa149f530d4de703fad21dd75d",
+  "observation_after_click": "App quit; completed scenario receipt confirms cancellationnotice/ref/input/output assertions"
+}

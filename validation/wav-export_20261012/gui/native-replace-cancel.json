@@ -1,0 +1,9 @@
+{
+  "status": "passed",
+  "actual_native_existing_target_sheet_replace_clicked": true,
+  "actual_app_cancel_clicked": true,
+  "original_bytes_unchanged": true,
+  "sha256": "bd9681a7996feec35f9d73697a5bec3e0e116dfa149f530d4de703fad21dd75d",
+  "bytes": 83,
+  "scenario_result": "ok"
+}

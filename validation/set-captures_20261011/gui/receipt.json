@@ -1,0 +1,209 @@
+{
+  "status": "bounded synthetic Set/Card storage, native replay and Clear qualification passed; recorded-loop glyph rendering observation retained",
+  "source_revision": "a6288eb1b5068aee8c618012aeb41cde865ef5c0",
+  "base_revision": "961731ace9ae9e687bdf8d40a032f2e1fbbf3321",
+  "binary_sha256": "b11df9aea95c01c0653bf069e5798528fbdf4f2974221e12812530d96acf52e4",
+  "scenarios_unchanged_from_freeze": true,
+  "processes": [
+    {
+      "name": "SetCaptureSeed",
+      "result": "ok",
+      "scenario": "scenarios/set_capture_seed.scn",
+      "scenario_sha256": "bf037df7c7bc43d5565e15a91f2fa9d5e5691b05f91663949afa7a8c190bbf70",
+      "binary_sha256": "b11df9aea95c01c0653bf069e5798528fbdf4f2974221e12812530d96acf52e4",
+      "source_revision": "a6288eb1b5068aee8c618012aeb41cde865ef5c0",
+      "presented_frames": 49,
+      "redraws": 1555,
+      "unpresented_redraws": 1506,
+      "captures": [
+        {
+          "file": "native/SetCaptureSeed/01_card_loop_saved.png",
+          "sha256": "86afb5656aa2c8fe8be401beb199a9e6fe189c1d135c2221209c104f02a27767",
+          "width": 2360,
+          "height": 1600,
+          "full_frame_reviewed": true
+        },
+        {
+          "file": "native/SetCaptureSeed/02_card_loop_reordered.png",
+          "sha256": "90051dfedbfdbd48fe417a2e59d888177506823bdade8f4e2e39306b72d7a06b",
+          "width": 2360,
+          "height": 1600,
+          "full_frame_reviewed": true
+        }
+      ],
+      "blank_captures": 0,
+      "distinct_capture_digests": 2,
+      "input_none_checkpoints": 2,
+      "one_output_checkpoints": 1,
+      "original_completion_sha256": "c12db4f867a9b380b6c0c224450c2b01a94af96ea7c5aea4b49cbbf873a3aa5b",
+      "portable_completion_sha256": "a7f82fd6eac36afaa1e7f79c496f453764546285c322dbb0674e7952cbd18fdc",
+      "original_full_log": "native/SetCaptureSeed/native.log",
+      "original_full_log_sha256": "d47b9487a9eafc89ed5efe7fd854692f078c3dc1a9a695a47f9c2a7f784be774",
+      "concise_log_sha256": "776df530a9ab2de4d1407d1ac4a29c69282016a5c78c890d086a8265bd6bc2a1"
+    },
+    {
+      "name": "SetCaptureReopen",
+      "result": "ok",
+      "scenario": "scenarios/set_capture_reopen.scn",
+      "scenario_sha256": "d1f7686410d6d8ca9a4becbbec6d7167035bbea05e0acae3aa250bd98ccb374c",
+      "binary_sha256": "b11df9aea95c01c0653bf069e5798528fbdf4f2974221e12812530d96acf52e4",
+      "source_revision": "a6288eb1b5068aee8c618012aeb41cde865ef5c0",
+      "presented_frames": 58,
+      "redraws": 804,
+      "unpresented_redraws": 746,
+      "captures": [
+        {
+          "file": "native/SetCaptureReopen/01_card_loop_fresh_reopen.png",
+          "sha256": "fcda61f480e5f912437a43353e310cde40cee482911891119feb3831c9f09c88",
+          "width": 2360,
+          "height": 1600,
+          "full_frame_reviewed": true
+        },
+        {
+          "file": "native/SetCaptureReopen/02_recorded_clock_refused.png",
+          "sha256": "d3893fec720bbad07a14a8cbe8dd87e39a4c85fd8c07ea9cdf9cc746864c2f3e",
+          "width": 2360,
+          "height": 1600,
+          "full_frame_reviewed": true
+        },
+        {
+          "file": "native/SetCaptureReopen/03_card_loop_cleared.png",
+          "sha256": "84127d706fd1ebb240d448d9ae61fff7d7594a69a553210ad4e1ac75fa42ca65",
+          "width": 2360,
+          "height": 1600,
+          "full_frame_reviewed": true
+        }
+      ],
+      "blank_captures": 0,
+      "distinct_capture_digests": 3,
+      "input_none_checkpoints": 2,
+      "one_output_checkpoints": 1,
+      "original_completion_sha256": "2d45fb2ef4f1f7c83366d3f43b3da115da012d92d19ab5cec7cce5fc89bc6d25",
+      "portable_completion_sha256": "35f0900d9e6661f726b329c3c70136d9e310b794396c12d8b39236aab1b9cd78",
+      "original_full_log": "native/SetCaptureReopen/native.log",
+      "original_full_log_sha256": "faf9b2835c4e3d2c63868930ecc3693b9da0d891a80e378e7710e0d80d8d3b62",
+      "concise_log_sha256": "4ef4fcae744d1134d5a5661b4f2123b030d30f21c6bc3b20121ba38f0508ba4d"
+    },
+    {
+      "name": "SetCaptureClearedReopen",
+      "result": "ok",
+      "scenario": "scenarios/set_capture_cleared_reopen.scn",
+      "scenario_sha256": "8d50cb09b12818f4e6f0e522a33f1144e65f390148df69dbf1b7cab1c6a8d489",
+      "binary_sha256": "b11df9aea95c01c0653bf069e5798528fbdf4f2974221e12812530d96acf52e4",
+      "source_revision": "a6288eb1b5068aee8c618012aeb41cde865ef5c0",
+      "presented_frames": 18,
+      "redraws": 816,
+      "unpresented_redraws": 798,
+      "captures": [
+        {
+          "file": "native/SetCaptureClearedReopen/01_cleared_loop_fresh_reopen.png",
+          "sha256": "84127d706fd1ebb240d448d9ae61fff7d7594a69a553210ad4e1ac75fa42ca65",
+          "width": 2360,
+          "height": 1600,
+          "full_frame_reviewed": true
+        }
+      ],
+      "blank_captures": 0,
+      "distinct_capture_digests": 1,
+      "input_none_checkpoints": 1,
+      "one_output_checkpoints": 1,
+      "original_completion_sha256": "a024d4cfe635d0a70ad6ae25167384ee4a97a640971053e09de396b560a242d1",
+      "portable_completion_sha256": "908329de437bae1ef3dc6a4dd33cd31f51094bb817c34f4b8aedee7b712aebb8",
+      "original_full_log": "native/SetCaptureClearedReopen/native.log",
+      "original_full_log_sha256": "5ee20933761d9935fea893a6a70db0a2f61159efc15475d665710e28fb1864eb",
+      "concise_log_sha256": "59d0c6c9665c29433fa42fb2221d3b5e58e7a04a2245df17cc153127cf1ec6d2"
+    },
+    {
+      "name": "SetCaptureMissingReopen",
+      "result": "ok",
+      "scenario": "scenarios/set_capture_missing_reopen.scn",
+      "scenario_sha256": "5a53d4b5c7e371ba802df5612779b78f996a5eedcb1d14362b56729a8d30544f",
+      "binary_sha256": "b11df9aea95c01c0653bf069e5798528fbdf4f2974221e12812530d96acf52e4",
+      "source_revision": "a6288eb1b5068aee8c618012aeb41cde865ef5c0",
+      "presented_frames": 35,
+      "redraws": 728,
+      "unpresented_redraws": 693,
+      "captures": [
+        {
+          "file": "native/SetCaptureMissingReopen/01_missing_companion_reference_retained.png",
+          "sha256": "45cd71598fc1b3fd019039450e7ba543be8abecaf915c957c6b6baed4aaf13ee",
+          "width": 2360,
+          "height": 1600,
+          "full_frame_reviewed": true
+        },
+        {
+          "file": "native/SetCaptureMissingReopen/02_missing_companion_explicitly_cleared.png",
+          "sha256": "371ebf433de085822cc1fed4a83d86d2d88e90f6c852dd37a29cde00a6d77eba",
+          "width": 2360,
+          "height": 1600,
+          "full_frame_reviewed": true
+        }
+      ],
+      "blank_captures": 0,
+      "distinct_capture_digests": 2,
+      "input_none_checkpoints": 3,
+      "one_output_checkpoints": 1,
+      "original_completion_sha256": "9d7ac5e8fc16d418f1ddc0b288d0d5a94fb1b69359c135be965cf30b9060b62b",
+      "portable_completion_sha256": "03195b3247866b1b3de40d0800195c09daad13c1b853a1d350d468fbb121ee46",
+      "original_full_log": "native/SetCaptureMissingReopen/native.log",
+      "original_full_log_sha256": "068e98d82f47c6828d69a669987edf5bb4f16fe58109845a147367c0b7d3a21c",
+      "concise_log_sha256": "c8dcf55d38ffce8d99f03f92be2d91209fce1d8f82a7328701252ba1b6f6f691"
+    }
+  ],
+  "total_native_processes": 4,
+  "total_presented_frames": 160,
+  "total_reviewed_nonblank_captures": 8,
+  "input_none_checkpoints": 8,
+  "one_output_checkpoints": 4,
+  "isolation": {
+    "profiles": "Synthetic profiles only; real isolated production Keeper on unchanged Mere0e78fcff source",
+    "fault": "Copied entire sealed seed profile before Clear; moved one owned companion aside reversibly; original companion intact",
+    "private_data": "No vault, sealed practice/settings payload, companion bytes or app binaries included in portable GUI packet"
+  },
+  "semantic_acceptance": [
+    "Saved loop follows stable Set1/Card1 through reorder and fresh-process hydration.",
+    "Fresh reopen plays/stops, refuses captured-clock edit, and explicit Clear permits125bpm backing.",
+    "Next fresh process retains zero capture references and zero active PCM; prior Clear capture and fresh-cleared capture digests match.",
+    "Missing companion retains its reference and displays recovery notice; Rec is refused before microphone/input opens; explicit stored Clear removes reference and stale refusal notice."
+  ],
+  "rendering_observations": [
+    {
+      "severity": "minor",
+      "scope": "pre-existing \u27f3 loop-presence marker in looper view",
+      "observation": "Recorded-loop glyph renders as an empty square on Am7 at original2360x1600 resolution; saved-count/global Clear text and ownership/order remain readable",
+      "captures": [
+        "SetCaptureSeed/01_card_loop_saved.png",
+        "SetCaptureSeed/02_card_loop_reordered.png",
+        "SetCaptureReopen/01_card_loop_fresh_reopen.png",
+        "SetCaptureReopen/02_recorded_clock_refused.png"
+      ],
+      "owner_notified": true,
+      "owner_decision": "Accepted documented P8 residual for this bounded slice; no additional source/build or replay"
+    }
+  ],
+  "native_control_notes": [
+    "No competing acceptance app before each launch; observed window0 Raise used for presentation.",
+    "All four finite apps exited during post-Raise accessibility observation; successful completion receipts inspected before each next launch, no repeated seed.",
+    "Original8ec1578/32da7f32 preparation was held and superseded before any launch; all actual runs use correcteda6288eb/b11df9ae."
+  ],
+  "limits": [
+    "Synthetic completed-take fixture qualifies companion storage/hydration/replay; physical microphone and acoustic/latency quality remain unqualified.",
+    "Exact samples/rates/digests and negative-zero preservation qualified separately by independent fresh-process CPU probes.",
+    "Saved-song bar-index recording persistence, multi-file atomic transaction, orphan collection/disk quota and full P7 remain separate."
+  ],
+  "full_capture_archive": "Exact full-resolution PNGs remain locally at native/<fixture>/<capture>.png, with hashes/dimensions above",
+  "cleanup": {
+    "all_four_acceptance_apps_exited": true,
+    "owned_keeper_pid": 4979,
+    "owned_keeper_stopped": true,
+    "lifecycle_sleep_prevention_pid": 5220,
+    "lifecycle_sleep_prevention_stopped": true,
+    "original_expired_four_hour_timer_unchanged": true,
+    "fault_companion_restored_reversibly": true,
+    "restored_companion_sha256": "1850b67dd9e4cb3827645ac5a07ca71351037f21d37d92bf66cbee1a5b5acc9a",
+    "restoring_orphan_bytes_does_not_restore_cleared_session_reference": true,
+    "private_fixture_data_retained_locally_only": true,
+    "completed_utc": "2026-10-12T03:46:27.287358+00:00"
+  },
+  "local_full_evidence_root": "/Users/markik/Code/testing/woodshed/set-captures-20261011"
+}

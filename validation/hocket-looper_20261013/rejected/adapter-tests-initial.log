@@ -1,0 +1,1070 @@
+warning: patch `p2panda-auth v0.7.1 (https://github.com/mark-ik/p2panda.git?tag=mere-p2panda-net-0.7.5-upstream-20261013#1f69c9bc)` was not used in the crate graph
+warning: patch `p2panda-stream v0.7.1 (https://github.com/mark-ik/p2panda.git?tag=mere-p2panda-net-0.7.5-upstream-20261013#1f69c9bc)` was not used in the crate graph
+help: Check that the patched package version and available features are compatible
+      with the dependency requirements. If the patch has a different version from
+      what is locked in the Cargo.lock file, run `cargo update` to use the new
+      version. This may also occur with an optional dependency that is not enabled.
+   Compiling unicode-ident v1.0.26
+   Compiling serde_core v1.0.229
+   Compiling proc-macro2 v1.0.107
+   Compiling quote v1.0.47
+   Compiling syn v3.0.6
+   Compiling syn v2.0.119
+   Compiling serde_derive v1.0.229
+   Compiling cfg-if v1.0.5
+   Compiling typenum v1.20.1
+   Compiling libm v0.2.16
+   Compiling serde v1.0.229
+   Compiling zeroize_derive v1.5.0
+   Compiling zeroize v1.9.0
+   Compiling smallvec v1.16.2
+   Compiling rand_core v0.10.1
+   Compiling num-traits v0.2.19
+   Compiling memchr v2.8.3
+   Compiling getrandom v0.4.3
+   Compiling log v0.4.34
+   Compiling arrayvec v0.7.8
+   Compiling portable-atomic v1.15.0
+   Compiling jobserver v0.1.35
+   Compiling pin-project-lite v0.2.17
+   Compiling cc v1.6.0
+   Compiling subtle v2.6.1
+   Compiling critical-section v1.2.0
+   Compiling once_cell v1.21.4
+   Compiling thiserror-impl v2.0.21
+   Compiling stable_deref_trait v1.2.1
+   Compiling hybrid-array v0.4.15
+   Compiling futures-core v0.3.34
+   Compiling hashbrown v0.17.1
+   Compiling crypto-common v0.2.2
+   Compiling generic-array v0.14.7
+   Compiling thiserror v2.0.21
+   Compiling block-buffer v0.12.1
+   Compiling semver v1.0.28
+   Compiling objc2 v0.6.4
+   Compiling rustc_version v0.4.1
+   Compiling crypto-common v0.1.7
+   Compiling indexmap v2.14.2
+   Compiling block2 v0.6.2
+   Compiling synstructure v0.14.0
+   Compiling zerocopy-derive v0.8.59
+   Compiling zerofrom-derive v0.1.8
+   Compiling zerofrom v0.1.8
+   Compiling zerocopy v0.8.59
+   Compiling yoke-derive v0.8.4
+   Compiling dispatch2 v0.3.1
+   Compiling objc2-core-foundation v0.3.2
+   Compiling yoke v0.8.3
+   Compiling zerovec-derive v0.11.6
+   Compiling bytes v1.12.1
+   Compiling zerovec v0.11.8
+   Compiling displaydoc v0.2.7
+   Compiling getrandom v0.2.17
+   Compiling writeable v0.6.4
+   Compiling tracing-core v0.1.36
+   Compiling tinystr v0.8.4
+   Compiling sha1_smol v1.0.1
+   Compiling litemap v0.8.3
+   Compiling potential_utf v0.1.6
+   Compiling icu_locale_core v2.3.0
+   Compiling zerotrie v0.2.5
+   Compiling tracing-attributes v0.1.31
+   Compiling cmov v0.5.4
+   Compiling const-oid v0.10.2
+   Compiling ctutils v0.4.2
+   Compiling tracing v0.1.44
+   Compiling icu_provider v2.3.1
+   Compiling utf8_iter v1.0.4
+   Compiling icu_collections v2.3.0
+   Compiling icu_properties_data v2.3.0
+   Compiling icu_normalizer_data v2.3.0
+   Compiling digest v0.11.3
+   Compiling icu_properties v2.3.0
+   Compiling scopeguard v1.2.0
+   Compiling icu_normalizer v2.3.0
+   Compiling bytemuck_derive v1.12.1
+   Compiling siphasher v1.0.4
+   Compiling serde_json v1.0.151
+   Compiling bytemuck v1.25.2
+   Compiling parking_lot_core v0.9.12
+   Compiling lock_api v0.4.14
+   Compiling num-integer v0.1.47
+   Compiling byteorder v1.5.0
+   Compiling uuid v1.27.0
+   Compiling const-oid v0.9.6
+   Compiling cpufeatures v0.3.1
+   Compiling percent-encoding v2.3.2
+   Compiling sha2 v0.11.0
+   Compiling parking_lot v0.12.5
+   Compiling idna_adapter v1.2.2
+   Compiling objc2-foundation v0.3.2
+   Compiling blake3 v1.8.7
+   Compiling idna v1.1.0
+   Compiling form_urlencoded v1.2.2
+   Compiling cpufeatures v0.2.17
+   Compiling constant_time_eq v0.4.2
+   Compiling url v2.5.8
+   Compiling block-buffer v0.10.4
+   Compiling serde_bytes v0.11.19
+   Compiling digest v0.10.7
+   Compiling inout v0.2.2
+   Compiling slab v0.4.12
+   Compiling futures-io v0.3.34
+   Compiling cipher v0.5.2
+   Compiling chacha20 v0.10.2
+   Compiling crossbeam-utils v0.8.23
+   Compiling rand_core v0.6.4
+   Compiling futures-sink v0.3.34
+   Compiling base64ct v1.8.3
+   Compiling simdutf8 v0.1.5
+   Compiling futures-channel v0.3.34
+   Compiling futures-macro v0.3.34
+   Compiling fnv v1.0.7
+   Compiling futures-task v0.3.34
+   Compiling phf_shared v0.13.1
+   Compiling futures-util v0.3.34
+   Compiling half v2.7.1
+   Compiling block-padding v0.3.3
+   Compiling unicode-segmentation v1.13.3
+   Compiling inout v0.1.4
+   Compiling euclid v0.22.14
+   Compiling socket2 v0.6.5
+   Compiling rustc-hash v1.1.0
+   Compiling phf_generator v0.13.1
+   Compiling cipher v0.4.4
+   Compiling profiling-procmacros v1.0.18
+   Compiling tokio-macros v2.7.2
+   Compiling mio v1.2.4
+   Compiling profiling v1.0.18
+   Compiling tokio v1.53.2
+   Compiling unicode-width v0.2.2
+   Compiling bit-vec v0.9.1
+   Compiling bit-set v0.10.0
+   Compiling codespan-reporting v0.13.1
+   Compiling pem-rfc7468 v1.0.0
+   Compiling der v0.8.2
+   Compiling universal-hash v0.5.1
+   Compiling curve25519-dalek v5.0.0
+   Compiling heapless v0.7.17
+   Compiling opaque-debug v0.3.1
+   Compiling spki v0.8.1
+   Compiling objc2-metal v0.3.2
+   Compiling hash32 v0.2.1
+   Compiling objc2-core-graphics v0.3.2
+   Compiling static_assertions v1.1.0
+   Compiling new_debug_unreachable v1.0.6
+   Compiling raw-window-handle v0.6.2
+   Compiling base16ct v1.0.0
+   Compiling allocator-api2 v0.2.21
+   Compiling simd-adler32 v0.3.10
+   Compiling hashbrown v0.16.1
+   Compiling objc2-quartz-core v0.3.2
+   Compiling serdect v0.4.3
+   Compiling pkcs8 v0.11.0
+   Compiling phf_macros v0.13.1
+   Compiling naga-types v30.0.1
+   Compiling sha2 v0.10.9
+   Compiling cobs v0.3.0
+   Compiling signature v3.0.0
+   Compiling postcard-derive v0.2.2
+   Compiling adler2 v2.0.1
+   Compiling ed25519 v3.0.0
+   Compiling phf v0.13.1
+   Compiling postcard v1.1.3
+   Compiling polyval v0.6.2
+   Compiling linebender_resource_handle v0.1.1
+   Compiling aead v0.5.2
+   Compiling ghash v0.5.1
+   Compiling naga v30.0.1
+   Compiling ed25519-dalek v3.0.0
+   Compiling crc32fast v1.5.2
+   Compiling miniz_oxide v0.9.1
+   Compiling wgpu-types v30.0.1
+   Compiling aes v0.8.4
+   Compiling ctr v0.9.2
+   Compiling phf_codegen v0.13.1
+   Compiling string_cache_codegen v0.6.1
+   Compiling der v0.7.10
+   Compiling web_atoms v0.2.6
+   Compiling wgpu-naga-bridge v30.0.1
+   Compiling aes-gcm v0.10.3
+   Compiling flate2 v1.1.10
+   Compiling miniz_oxide v0.8.9
+   Compiling raw-window-metal v1.1.0
+   Compiling fdeflate v0.3.7
+   Compiling ppv-lite86 v0.2.21
+   Compiling libloading v0.8.9
+   Compiling enumn v0.1.14
+   Compiling precomputed-hash v0.1.1
+   Compiling string_cache v0.9.0
+   Compiling accesskit v0.24.1
+   Compiling wgpu-hal v30.0.1
+   Compiling font-types v0.12.6
+   Compiling polycool v0.4.0
+   Compiling kurbo v0.13.1
+   Compiling read-fonts v0.41.0
+   Compiling wgpu-core-deps-apple v30.0.1
+   Compiling png v0.18.1
+   Compiling tendril v0.5.1
+   Compiling hmac v0.12.1
+   Compiling color v0.3.3
+   Compiling svg_fmt v0.4.5
+   Compiling guillotiere v0.7.0
+   Compiling peniko v0.6.1
+   Compiling skrifa v0.44.0
+   Compiling markup5ever v0.39.0
+   Compiling wgpu-core v30.0.1
+   Compiling vello_shaders v0.11.0 (https://github.com/mark-ik/vello?rev=2eae6243881d5b24c984d5ee35dde509ca5db782#2eae6243)
+   Compiling ff v0.13.1
+   Compiling base16ct v0.2.0
+   Compiling sec1 v0.7.3
+   Compiling group v0.13.0
+   Compiling vello_encoding v0.11.0 (https://github.com/mark-ik/vello?rev=2eae6243881d5b24c984d5ee35dde509ca5db782#2eae6243)
+   Compiling wgpu v30.0.1
+   Compiling hkdf v0.12.4
+   Compiling rand_chacha v0.3.1
+   Compiling spki v0.7.3
+   Compiling crypto-bigint v0.5.5
+   Compiling signature v2.2.0
+   Compiling num-bigint v0.4.8
+   Compiling num-rational v0.4.2
+   Compiling elliptic-curve v0.13.8
+   Compiling rand v0.8.8
+   Compiling futures-intrusive v0.5.0
+   Compiling async-trait v0.1.92
+   Compiling netrender-vello v0.11.0 (https://github.com/mark-ik/vello?rev=2eae6243881d5b24c984d5ee35dde509ca5db782#2eae6243)
+   Compiling redb v2.6.4
+   Compiling layout-dom-api v0.1.1 (https://github.com/merely-made/genet.git?rev=7a8c5b8cb499f2d3b91083c2f7e38236599f98dc#7a8c5b8c)
+   Compiling rand v0.10.3
+   Compiling fixedbitset v0.5.7
+   Compiling fastrand v2.5.0
+   Compiling spin v0.9.9
+   Compiling lazy_static v1.5.1
+   Compiling muniment v0.1.2 (https://www.github.com/merely-made/mere.git?rev=0b9b7a9b218579f1f36cc1ab05a51b2a13128f1d#0b9b7a9b)
+   Compiling crossbeam-epoch v0.9.21
+   Compiling rfc6979 v0.4.0
+   Compiling tokio-util v0.7.19
+   Compiling paint_list_api v0.1.2 (https://github.com/merely-made/netrender.git?rev=c74b7cb28090c28b1c6d80b08dcdea18aff48d3e#c74b7cb2)
+   Compiling curve25519-dalek v4.1.3
+   Compiling equator-macro v0.4.2
+   Compiling deranged v0.5.8
+   Compiling num-conv v0.2.2
+   Compiling powerfmt v0.2.1
+   Compiling time-core v0.1.9
+   Compiling time v0.3.55
+   Compiling equator v0.4.2
+   Compiling ecdsa v0.16.9
+   Compiling crossbeam-deque v0.8.8
+   Compiling primeorder v0.13.6
+   Compiling font-types v0.11.3
+   Compiling thiserror-impl v1.0.69
+   Compiling read-fonts v0.39.2
+   Compiling thiserror v1.0.69
+   Compiling rayon-core v1.13.0
+   Compiling aligned-vec v0.6.4
+   Compiling poly1305 v0.8.0
+   Compiling chacha20 v0.9.1
+   Compiling sceno v0.0.4 (https://www.github.com/merely-made/mere.git?rev=0b9b7a9b218579f1f36cc1ab05a51b2a13128f1d#0b9b7a9b)
+   Compiling objc2-core-text v0.3.2
+   Compiling ring v0.17.14
+   Compiling errno v0.3.14
+   Compiling rustix v1.1.5
+   Compiling v_frame v0.3.9
+   Compiling rayon v1.12.0
+   Compiling icu_locale_fallback_data v2.3.0
+   Compiling xml5ever v0.39.0
+   Compiling html5ever v0.39.0
+   Compiling as-slice v0.2.1
+   Compiling app_units v0.7.8
+   Compiling pollster v1.0.1
+   Compiling foldhash v0.1.5
+   Compiling hashbrown v0.15.5
+   Compiling netrender_device v0.1.2 (https://github.com/merely-made/netrender.git?rev=c74b7cb28090c28b1c6d80b08dcdea18aff48d3e#c74b7cb2)
+   Compiling genet-paint-types v0.2.0 (https://github.com/merely-made/genet.git?rev=7a8c5b8cb499f2d3b91083c2f7e38236599f98dc#7a8c5b8c)
+   Compiling aligned v0.4.3
+   Compiling genet-static-dom v0.1.1 (https://github.com/merely-made/genet.git?rev=7a8c5b8cb499f2d3b91083c2f7e38236599f98dc#7a8c5b8c)
+   Compiling icu_locale_fallback v2.3.0
+   Compiling icu_segmenter_data v2.3.0
+   Compiling p256 v0.13.2
+   Compiling p384 v0.13.1
+   Compiling strum_macros v0.28.0
+   Compiling pkcs8 v0.10.2
+   Compiling pem-rfc7468 v0.7.0
+   Compiling num-iter v0.1.46
+   Compiling http v1.5.0
+   Compiling no_std_io2 v0.9.4
+   Compiling nom v8.0.0
+   Compiling rustls-pki-types v1.15.1
+   Compiling arg_enum_proc_macro v0.3.4
+   Compiling memmap2 v0.9.11
+   Compiling y4m v0.8.0
+   Compiling untrusted v0.9.0
+   Compiling parlance v0.1.0
+   Compiling av1-grain v0.2.5
+   Compiling genet-fontique v0.10.0 (https://github.com/merely-made/genet.git?rev=7a8c5b8cb499f2d3b91083c2f7e38236599f98dc#7a8c5b8c)
+   Compiling encoding_rs v0.8.42
+   Compiling libz-sys v1.1.29
+   Compiling av-scenechange v0.14.1
+   Compiling bitstream-io v4.10.0
+   Compiling ssh-encoding v0.2.0
+   Compiling num-bigint-dig v0.8.6
+   Compiling strum v0.28.0
+   Compiling pkcs1 v0.7.5
+   Compiling icu_segmenter v2.3.0
+   Compiling psm v0.1.32
+   Compiling engine-observables-api v0.2.0 (https://github.com/merely-made/genet.git?rev=7a8c5b8cb499f2d3b91083c2f7e38236599f98dc#7a8c5b8c)
+   Compiling getrandom v0.3.4
+   Compiling netrender v0.1.2 (https://github.com/merely-made/netrender.git?rev=c74b7cb28090c28b1c6d80b08dcdea18aff48d3e#c74b7cb2)
+   Compiling petgraph v0.8.3
+   Compiling maybe-rayon v0.1.1
+   Compiling harfrust v0.8.4
+   Compiling skrifa v0.42.1
+   Compiling ed25519 v2.2.3
+   Compiling itertools v0.14.0
+   Compiling regress v0.11.1 (https://github.com/merely-made/genet.git?rev=7a8c5b8cb499f2d3b91083c2f7e38236599f98dc#7a8c5b8c)
+   Compiling cbc v0.1.2
+   Compiling blowfish v0.9.1
+   Compiling convert_case v0.10.0
+   Compiling toml_edit v0.25.15+spec-1.1.0
+   Compiling pbkdf2 v0.12.2
+   Compiling parley_data v0.10.0
+   Compiling tinct v0.1.2 (https://www.github.com/merely-made/mere.git?rev=0b9b7a9b218579f1f36cc1ab05a51b2a13128f1d#0b9b7a9b)
+   Compiling num-derive v0.4.2
+   Compiling ptr_meta_derive v0.3.2
+   Compiling simd_helpers v0.1.0
+   Compiling alloc-no-stdlib v2.0.4
+   Compiling base64 v0.23.1
+   Compiling imgref v1.12.3
+   Compiling quick-error v2.0.1
+   Compiling dtoa v1.0.11
+   Compiling dtoa-short v0.3.5
+   Compiling derive_more-impl v2.1.1
+   Compiling loop9 v0.1.5
+   Compiling brotli-decompressor v5.0.3
+   Compiling rav1e v0.8.1
+   Compiling ptr_meta v0.3.2
+   Compiling genet-parley v0.10.0 (https://github.com/merely-made/genet.git?rev=7a8c5b8cb499f2d3b91083c2f7e38236599f98dc#7a8c5b8c)
+   Compiling bcrypt-pbkdf v0.10.0
+   Compiling ssh-cipher v0.2.0
+   Compiling genet-scripted-dom v0.1.2 (https://github.com/merely-made/genet.git?rev=7a8c5b8cb499f2d3b91083c2f7e38236599f98dc#7a8c5b8c)
+   Compiling ed25519-dalek v2.2.0
+   Compiling rsa v0.9.10
+   Compiling p521 v0.13.3
+   Compiling universal-hash v0.6.1
+   Compiling stacker v0.1.25
+   Compiling avif-serialize v0.8.9
+   Compiling document-session-api v0.1.0 (https://github.com/merely-made/genet.git?rev=7a8c5b8cb499f2d3b91083c2f7e38236599f98dc#7a8c5b8c)
+   Compiling command-menu v0.1.0 (https://www.github.com/merely-made/mere.git?rev=0b9b7a9b218579f1f36cc1ab05a51b2a13128f1d#0b9b7a9b)
+   Compiling cssparser-macros v0.7.1
+   Compiling base64 v0.22.1
+   Compiling weezl v0.1.12
+   Compiling rgb v0.8.53
+   Compiling zune-core v0.5.3
+   Compiling byteorder-lite v0.1.0
+   Compiling pxfm v0.1.30
+   Compiling color_quant v1.1.0
+   Compiling gif v0.14.2
+   Compiling rustls v0.23.45
+   Compiling moxcms v0.8.1
+   Compiling fontsan v0.7.0
+   Compiling image-webp v0.2.4
+   Compiling zune-jpeg v0.5.15
+   Compiling ravif v0.13.0
+   Compiling cssparser v0.37.0
+   Compiling poly1305 v0.9.1
+   Compiling ssh-key v0.6.7
+   Compiling livery v0.0.5 (https://github.com/merely-made/genet.git?rev=7a8c5b8cb499f2d3b91083c2f7e38236599f98dc#7a8c5b8c)
+   Compiling slotmap v1.1.1
+   Compiling rancor v0.1.3
+   Compiling wuff v0.2.9
+   Compiling derive_more v2.1.1
+   Compiling rustls-webpki v0.103.15
+   Compiling aead v0.6.1
+   Compiling pin-project-internal v1.1.13
+   Compiling bytecheck_derive v0.8.3
+   Compiling genet-host-api v0.2.0 (https://github.com/merely-made/genet.git?rev=7a8c5b8cb499f2d3b91083c2f7e38236599f98dc#7a8c5b8c)
+   Compiling parking v2.2.1
+   Compiling ipnet v2.12.2
+   Compiling futures-lite v2.6.1
+   Compiling pin-project v1.1.13
+   Compiling bytecheck v0.8.3
+   Compiling chacha20poly1305 v0.11.0
+   Compiling wuff-capi v0.2.0
+   Compiling cadency v0.0.1 (https://github.com/merely-made/genet.git?rev=7a8c5b8cb499f2d3b91083c2f7e38236599f98dc#7a8c5b8c)
+   Compiling image v0.25.10
+   Compiling paint_list_render v0.1.2 (https://github.com/merely-made/netrender.git?rev=c74b7cb28090c28b1c6d80b08dcdea18aff48d3e#c74b7cb2)
+   Compiling http-body v1.1.0
+   Compiling gethostname v1.1.0
+   Compiling insigne v0.0.2 (https://github.com/merely-made/dramatis.git?rev=0234e7eea6f2ddf2330a71b9425da01b06ae0391#0234e7ee)
+   Compiling genet-taffy v0.14.0 (https://github.com/merely-made/genet.git?rev=7a8c5b8cb499f2d3b91083c2f7e38236599f98dc#7a8c5b8c)
+   Compiling spez v0.1.2
+   Compiling munge_macro v0.4.7
+   Compiling n0-error-macros v1.0.1
+   Compiling atomic-waker v1.1.2
+   Compiling n0-error v1.0.1
+   Compiling munge v0.4.7
+   Compiling buckram v0.0.3 (https://github.com/merely-made/genet.git?rev=7a8c5b8cb499f2d3b91083c2f7e38236599f98dc#7a8c5b8c)
+   Compiling personae v0.3.0 (https://github.com/merely-made/dramatis.git?rev=0234e7eea6f2ddf2330a71b9425da01b06ae0391#0234e7ee)
+   Compiling rend v0.5.4
+   Compiling logos-codegen v0.16.1
+   Compiling httparse v1.10.1
+   Compiling genet-document-resources v0.2.1 (https://github.com/merely-made/genet.git?rev=7a8c5b8cb499f2d3b91083c2f7e38236599f98dc#7a8c5b8c)
+   Compiling rkyv_derive v0.8.18
+   Compiling try-lock v0.2.5
+   Compiling workbench v0.1.0 (https://www.github.com/merely-made/mere.git?rev=0b9b7a9b218579f1f36cc1ab05a51b2a13128f1d#0b9b7a9b)
+   Compiling data-url v0.3.2
+   Compiling tower-service v0.3.3
+   Compiling genet-livery v0.0.4 (https://github.com/merely-made/genet.git?rev=7a8c5b8cb499f2d3b91083c2f7e38236599f98dc#7a8c5b8c)
+   Compiling rkyv v0.8.18
+   Compiling want v0.3.2
+   Compiling logos-derive v0.16.1
+   Compiling objc-sys v0.3.5
+   Compiling h2 v0.4.20
+   Compiling security-framework-sys v2.17.0
+   Compiling genet-text v0.1.0 (https://github.com/merely-made/genet.git?rev=7a8c5b8cb499f2d3b91083c2f7e38236599f98dc#7a8c5b8c)
+   Compiling web-time v1.1.0
+   Compiling cordyceps v0.3.5
+   Compiling diatomic-waker v0.2.3
+   Compiling httpdate v1.0.3
+   Compiling hyper v1.12.0
+   Compiling futures-buffered v0.2.13
+   Compiling security-framework v3.7.0
+   Compiling objc2 v0.5.2
+   Compiling logos v0.16.1
+   Compiling chartulary v0.2.2 (https://www.github.com/merely-made/mere.git?rev=0b9b7a9b218579f1f36cc1ab05a51b2a13128f1d#0b9b7a9b)
+   Compiling sync_wrapper v1.0.2
+   Compiling anymore v1.0.0
+   Compiling jotdown v0.10.0
+   Compiling illume v0.0.2 (https://www.github.com/merely-made/mere.git?rev=0b9b7a9b218579f1f36cc1ab05a51b2a13128f1d#0b9b7a9b)
+   Compiling meristem v0.2.0 (https://www.github.com/merely-made/mere.git?rev=0b9b7a9b218579f1f36cc1ab05a51b2a13128f1d#0b9b7a9b)
+   Compiling block2 v0.5.1
+   Compiling rustls-platform-verifier v0.7.1
+   Compiling n0-future v0.3.2
+   Compiling hyper-util v0.1.21
+   Compiling mere-surface-api v0.1.0 (https://www.github.com/merely-made/mere.git?rev=0b9b7a9b218579f1f36cc1ab05a51b2a13128f1d#0b9b7a9b)
+   Compiling sprigging v0.2.1 (https://www.github.com/merely-made/mere.git?rev=0b9b7a9b218579f1f36cc1ab05a51b2a13128f1d#0b9b7a9b)
+   Compiling num-complex v0.4.6
+   Compiling hex v0.4.3
+   Compiling data-encoding v2.11.1
+   Compiling tower-layer v0.3.3
+   Compiling bitflags v1.3.2
+   Compiling dispatch v0.2.0
+   Compiling edit-history v0.1.0 (https://www.github.com/merely-made/mere.git?rev=0b9b7a9b218579f1f36cc1ab05a51b2a13128f1d#0b9b7a9b)
+   Compiling ciborium-io v0.2.2
+   Compiling ciborium-ll v0.2.2
+   Compiling cambium v0.3.3 (https://www.github.com/merely-made/mere.git?rev=0b9b7a9b218579f1f36cc1ab05a51b2a13128f1d#0b9b7a9b)
+   Compiling objc2-foundation v0.2.2
+   Compiling http-body-util v0.1.5
+   Compiling tokio-rustls v0.26.6
+   Compiling core-foundation v0.9.4
+   Compiling foreign-types-macros v0.2.4
+   Compiling foreign-types-shared v0.3.1
+   Compiling tinyvec v1.13.3
+   Compiling rustc-hash v2.1.3
+   Compiling data-encoding-macro-internal v0.1.19
+   Compiling foreign-types v0.5.0
+   Compiling core-graphics-types v0.1.3
+   Compiling noq-udp v1.3.0
+   Compiling objc2-app-kit v0.2.2
+   Compiling ciborium v0.2.2
+   Compiling tower v0.5.3
+   Compiling proc-macro-crate v3.5.0
+   Compiling futures-executor v0.3.34
+   Compiling mere-curation v0.1.0 (https://www.github.com/merely-made/mere.git?rev=0b9b7a9b218579f1f36cc1ab05a51b2a13128f1d#0b9b7a9b)
+   Compiling futures v0.3.34
+   Compiling tower-http v0.6.11
+   Compiling core-graphics v0.23.2
+   Compiling system-configuration-sys v0.6.0
+   Compiling data-encoding-macro v0.1.21
+   Compiling hyper-rustls v0.27.10
+   Compiling tokio-stream v0.1.19
+   Compiling fastbloom v0.17.0
+   Compiling objc2-security v0.3.2
+   Compiling approx v0.5.1
+   Compiling quick-xml v0.42.0
+   Compiling rand_pcg v0.10.2
+   Compiling enum-assoc v1.4.1
+   Compiling dpi v0.1.2
+   Compiling identity-hash v0.1.0
+   Compiling lru-slab v0.1.3
+   Compiling sorted-index-buffer v0.2.1
+   Compiling unicase v2.10.0
+   Compiling grid v1.0.1
+   Compiling smol_str v0.2.2
+   Compiling cursor-icon v1.2.0
+   Compiling winit v0.30.13
+   Compiling taffy v0.11.0-experimental-cache-fix.3
+   Compiling mime_guess v2.0.5
+   Compiling noq-proto v1.3.0
+   Compiling plist v1.10.1
+   Compiling objc2-system-configuration v0.3.2
+   Compiling reqwest v0.13.5
+   Compiling iroh-base v1.3.0
+   Compiling system-configuration v0.8.0
+   Compiling num_enum_derive v0.7.6
+   Compiling genet-render v0.2.0 (https://github.com/merely-made/genet.git?rev=7a8c5b8cb499f2d3b91083c2f7e38236599f98dc#7a8c5b8c)
+   Compiling webpki-roots v1.0.9
+   Compiling iroh-metrics-derive v1.0.1
+   Compiling wide v1.7.1
+   Compiling lru v0.18.5
+   Compiling simple-dns v0.12.0
+   Compiling mac-addr v0.3.0
+   Compiling xml-rs v0.8.29
+   Compiling wavicle v0.1.0 (https://github.com/merely-made/wavicle.git?rev=2c5a49fd48db7a54aeab9e712804fd065411aef9#2c5a49fd)
+   Compiling xmltree v0.10.3
+   Compiling netdev v0.46.3
+   Compiling n0-dns-resolver v0.1.0
+   Compiling simba v0.10.2
+   Compiling iroh-metrics v1.0.2
+   Compiling num_enum v0.7.6
+   Compiling noq v1.3.0
+   Compiling matrixmultiply v0.3.11
+   Compiling mere-forme v0.1.0 (https://www.github.com/merely-made/mere.git?rev=0b9b7a9b218579f1f36cc1ab05a51b2a13128f1d#0b9b7a9b)
+   Compiling glam v0.33.12
+   Compiling hocket-model v0.1.0 (/Users/markik/Code/worktrees/woodshed-orchestrate-20261011/crates/hocket-model)
+   Compiling n0-watcher v1.0.0
+   Compiling attohttpc v0.30.1
+   Compiling inker v0.1.1 (https://www.github.com/merely-made/mere.git?rev=0b9b7a9b218579f1f36cc1ab05a51b2a13128f1d#0b9b7a9b)
+   Compiling genet-render-host v0.2.0 (https://github.com/merely-made/genet.git?rev=7a8c5b8cb499f2d3b91083c2f7e38236599f98dc#7a8c5b8c)
+   Compiling numen v0.2.0 (https://www.github.com/merely-made/mere.git?rev=0b9b7a9b218579f1f36cc1ab05a51b2a13128f1d#0b9b7a9b)
+   Compiling arc-swap v1.9.2
+   Compiling cfb v0.7.3
+   Compiling nalgebra-macros v0.3.0
+   Compiling mime v0.3.17
+   Compiling nalgebra v0.35.0
+   Compiling infer v0.19.0
+   Compiling iroh-dns v1.3.0
+   Compiling igd-next v0.17.1
+   Compiling netwatch v0.19.3
+   Compiling hocket-project v0.1.0 (/Users/markik/Code/worktrees/woodshed-orchestrate-20261011/crates/hocket-project)
+   Compiling cambium-winit v0.3.0 (https://www.github.com/merely-made/mere.git?rev=0b9b7a9b218579f1f36cc1ab05a51b2a13128f1d#0b9b7a9b)
+   Compiling tokio-websockets v0.13.3
+   Compiling tabard v0.0.1 (https://www.github.com/merely-made/mere.git?rev=0b9b7a9b218579f1f36cc1ab05a51b2a13128f1d#0b9b7a9b)
+   Compiling scenotime v0.0.4 (https://www.github.com/merely-made/mere.git?rev=0b9b7a9b218579f1f36cc1ab05a51b2a13128f1d#0b9b7a9b)
+   Compiling crossbeam-channel v0.5.17
+   Compiling hax-lib-macros v0.3.7
+   Compiling seize v0.5.1
+   Compiling unicode-bidi v0.3.18
+   Compiling robust v1.2.0
+   Compiling darling_core v0.24.1
+   Compiling spade v2.15.1
+   Compiling fleece v0.5.0 (https://github.com/merely-made/genet.git?rev=7a8c5b8cb499f2d3b91083c2f7e38236599f98dc#7a8c5b8c)
+   Compiling papaya v0.2.5
+   Compiling hax-lib v0.3.7
+   Compiling mere-kernel v0.0.2 (https://www.github.com/merely-made/mere.git?rev=0b9b7a9b218579f1f36cc1ab05a51b2a13128f1d#0b9b7a9b)
+   Compiling iroh-relay v1.3.0
+   Compiling cambium-rootstock v0.1.0 (https://www.github.com/merely-made/mere.git?rev=0b9b7a9b218579f1f36cc1ab05a51b2a13128f1d#0b9b7a9b)
+   Compiling portmapper v0.19.3
+   Compiling glamx v0.3.1
+   Compiling syn v1.0.109
+   Compiling eidetic v0.0.2 (https://www.github.com/merely-made/mere.git?rev=0b9b7a9b218579f1f36cc1ab05a51b2a13128f1d#0b9b7a9b)
+   Compiling backon v1.6.0
+   Compiling accesskit_consumer v0.38.0
+   Compiling ena v0.14.4
+   Compiling ordered-float v5.5.0
+   Compiling cbor-core v0.10.1
+   Compiling num-derive v0.5.1
+   Compiling downcast-rs v2.0.2
+   Compiling regex-syntax v0.8.11
+   Compiling parry2d v0.31.1
+   Compiling regex-automata v0.4.18
+   Compiling audioadapter-sample v5.2.0
+   Compiling p2panda-core v0.7.1 (https://github.com/mark-ik/p2panda.git?tag=mere-p2panda-net-0.7.5-upstream-20261013#1f69c9bc)
+   Compiling accesskit_macos v0.26.3
+   Compiling iroh v1.3.0
+   Compiling syn-mid v0.5.4
+   Compiling portable-atomic-util v0.2.8
+   Compiling darling_macro v0.24.1
+   Compiling chirograph v0.0.2 (https://www.github.com/merely-made/mere.git?rev=0b9b7a9b218579f1f36cc1ab05a51b2a13128f1d#0b9b7a9b)
+   Compiling hocket-recorder v0.1.0 (/Users/markik/Code/worktrees/woodshed-orchestrate-20261011/crates/hocket-recorder)
+   Compiling document-canvas v0.1.0 (https://www.github.com/merely-made/mere.git?rev=0b9b7a9b218579f1f36cc1ab05a51b2a13128f1d#0b9b7a9b)
+   Compiling scenograph v0.0.4 (https://www.github.com/merely-made/mere.git?rev=0b9b7a9b218579f1f36cc1ab05a51b2a13128f1d#0b9b7a9b)
+   Compiling pem v4.0.0
+   Compiling yasna v0.6.0
+   Compiling objc2-core-image v0.3.2
+   Compiling objc2-cloud-kit v0.3.2
+   Compiling objc2-core-data v0.3.2
+   Compiling objc2-core-video v0.3.2
+   Compiling acto v0.8.2
+   Compiling async-stream-impl v0.3.6
+   Compiling toml_edit v0.23.10+spec-1.0.0
+   Compiling audioadapter-buffers v5.2.0
+   Compiling async-stream v0.3.6
+   Compiling objc2-app-kit v0.3.2
+   Compiling rcgen v0.14.10
+   Compiling scenomise v0.0.4 (https://www.github.com/merely-made/mere.git?rev=0b9b7a9b218579f1f36cc1ab05a51b2a13128f1d#0b9b7a9b)
+   Compiling darling v0.24.1
+   Compiling ringbuf v0.5.3
+   Compiling proc-macro-error-attr v0.4.12
+   Compiling genet-winit-host v0.2.0 (https://github.com/merely-made/genet.git?rev=7a8c5b8cb499f2d3b91083c2f7e38236599f98dc#7a8c5b8c)
+   Compiling prettyplease v0.3.0
+   Compiling rapier2d v0.36.0
+   Compiling matchers v0.2.0
+   Compiling mere-fleece v0.0.1 (https://www.github.com/merely-made/mere.git?rev=0b9b7a9b218579f1f36cc1ab05a51b2a13128f1d#0b9b7a9b)
+   Compiling libcrux-secrets v0.0.6
+   Compiling taproot v0.1.0 (https://github.com/merely-made/genet.git?rev=7a8c5b8cb499f2d3b91083c2f7e38236599f98dc#7a8c5b8c)
+   Compiling bevy_macro_utils v0.19.1
+   Compiling tempfile v3.27.0
+   Compiling sharded-slab v0.1.7
+   Compiling armillary v0.1.1 (https://www.github.com/merely-made/mere.git?rev=0b9b7a9b218579f1f36cc1ab05a51b2a13128f1d#0b9b7a9b)
+   Compiling tracing-log v0.2.0
+   Compiling objc2-core-audio-types v0.3.2
+   Compiling serde_path_to_error v0.1.20
+   Compiling thread_local v1.1.10
+   Compiling irpc-derive v0.17.0
+   Compiling smol_str v0.1.24
+   Compiling nu-ansi-term v0.50.3
+   Compiling tracing-subscriber v0.3.23
+   Compiling irpc v0.17.0
+   Compiling seiche v0.0.6 (https://www.github.com/merely-made/mere.git?rev=0b9b7a9b218579f1f36cc1ab05a51b2a13128f1d#0b9b7a9b)
+   Compiling objc2-core-audio v0.3.2
+   Compiling mere-document-lanes v0.1.0 (https://www.github.com/merely-made/mere.git?rev=0b9b7a9b218579f1f36cc1ab05a51b2a13128f1d#0b9b7a9b)
+   Compiling firewheel-macros v0.14.0 (https://github.com/mark-ik/firewheel.git?rev=2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc#2b03846d)
+   Compiling libcrux-traits v0.0.8
+   Compiling bon-macros v3.10.2
+   Compiling cambium-winit-a11y v0.3.0 (https://www.github.com/merely-made/mere.git?rev=0b9b7a9b218579f1f36cc1ab05a51b2a13128f1d#0b9b7a9b)
+   Compiling proc-macro-error v0.4.12
+   Compiling mere-cartography v0.0.2 (https://www.github.com/merely-made/mere.git?rev=0b9b7a9b218579f1f36cc1ab05a51b2a13128f1d#0b9b7a9b)
+   Compiling p2panda-store v0.7.1 (https://github.com/mark-ik/p2panda.git?tag=mere-p2panda-net-0.7.5-upstream-20261013#1f69c9bc)
+   Compiling libcrux-intrinsics v0.0.8
+   Compiling hickory-proto v0.26.3
+   Compiling bevy_platform v0.19.1
+   Compiling hpke-rs-crypto v0.7.0
+   Compiling rand_chacha v0.10.0
+   Compiling hmac v0.13.0
+   Compiling esp v0.1.0 (https://www.github.com/merely-made/mere.git?rev=0b9b7a9b218579f1f36cc1ab05a51b2a13128f1d#0b9b7a9b)
+   Compiling ref-cast-impl v1.0.27
+   Compiling libcrux-platform v0.0.3
+   Compiling hashbrown v0.14.5
+   Compiling emblem v0.2.0
+   Compiling light-file-dialog v3.21.3
+   Compiling cambium-genet-winit-host v0.1.0 (https://www.github.com/merely-made/mere.git?rev=0b9b7a9b218579f1f36cc1ab05a51b2a13128f1d#0b9b7a9b)
+   Compiling pictograph v0.2.0 (https://www.github.com/merely-made/mere.git?rev=0b9b7a9b218579f1f36cc1ab05a51b2a13128f1d#0b9b7a9b)
+   Compiling dashmap v6.2.1
+   Compiling firewheel-core v0.14.0 (https://github.com/mark-ik/firewheel.git?rev=2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc#2b03846d)
+   Compiling libcrux-sha3 v0.0.10
+   Compiling ref-cast v1.0.27
+   Compiling hkdf v0.13.0
+   Compiling swarm-discovery v0.6.4
+   Compiling genawaiter-proc-macro v0.99.1
+   Compiling bon v3.10.2
+   Compiling objc2-audio-toolbox v0.3.2
+   Compiling hocket-views v0.1.0 (/Users/markik/Code/worktrees/woodshed-orchestrate-20261011/crates/hocket-views)
+   Compiling dramatis v0.0.3 (https://github.com/merely-made/dramatis.git?rev=0234e7eea6f2ddf2330a71b9425da01b06ae0391#0234e7ee)
+   Compiling futures-concurrency v7.7.1
+   Compiling rand_core v0.9.5
+   Compiling chacha20poly1305 v0.10.1
+   Compiling x25519-dalek v2.0.1
+   Compiling k256 v0.13.4
+   Compiling inplace-vec-builder v0.1.1
+   Compiling woodshedding v0.1.0 (/Users/markik/Code/worktrees/woodshed-orchestrate-20261011/crates/woodshedding)
+   Compiling genawaiter-macro v0.99.1
+   Compiling option-ext v0.2.0
+   Compiling binary-merge v0.1.2
+   Compiling range-collections v0.4.6
+   Compiling transpose v0.2.3
+   Compiling dirs-sys v0.4.1
+   Compiling genawaiter v0.99.1
+   Compiling woodshed-graph v0.1.0 (/Users/markik/Code/worktrees/woodshed-orchestrate-20261011/crates/woodshed-graph)
+   Compiling hpke-rs-rust-crypto v0.7.0
+   Compiling rand_chacha v0.9.0
+   Compiling iroh-gossip v0.101.0
+   Compiling coreaudio-rs v0.14.2
+   Compiling ractor v0.16.5
+   Compiling iroh-mdns-address-lookup v0.6.0
+   Compiling num-complex v0.2.4
+   Compiling hpke-rs v0.7.0
+   Compiling p2panda-discovery v0.7.1 (https://github.com/mark-ik/p2panda.git?tag=mere-p2panda-net-0.7.5-upstream-20261013#1f69c9bc)
+   Compiling p2panda-sync v0.7.1 (https://github.com/mark-ik/p2panda.git?tag=mere-p2panda-net-0.7.5-upstream-20261013#1f69c9bc)
+   Compiling png v0.17.16
+   Compiling iroh-io v0.6.2
+   Compiling x25519-dalek v3.0.0
+   Compiling iana-time-zone v0.1.65
+   Compiling triple_buffer v9.0.0
+   Compiling primal-check v0.3.4
+   Compiling approx v0.3.2
+   Compiling csv-core v0.1.13
+   Compiling mere-apparatus v0.0.1 (https://www.github.com/merely-made/mere.git?rev=0b9b7a9b218579f1f36cc1ab05a51b2a13128f1d#0b9b7a9b)
+   Compiling positioned-io v0.3.5
+   Compiling self_cell v1.3.0
+   Compiling pollster v0.4.0
+   Compiling cpal v0.18.2
+   Compiling woodshed-core v0.1.0 (/Users/markik/Code/worktrees/woodshed-orchestrate-20261011/crates/woodshed-core)
+   Compiling bao-tree v0.16.1
+   Compiling mesquite v0.1.0 (https://www.github.com/merely-made/mere.git?rev=0b9b7a9b218579f1f36cc1ab05a51b2a13128f1d#0b9b7a9b)
+   Compiling csv v1.4.0
+   Compiling ndarray v0.13.1
+   Compiling rustfft v6.4.1
+   Compiling firewheel-graph v0.14.0 (https://github.com/mark-ik/firewheel.git?rev=2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc#2b03846d)
+   Compiling chrono v0.4.45
+   Compiling p2panda-encryption v0.7.1 (https://github.com/mark-ik/p2panda.git?tag=mere-p2panda-net-0.7.5-upstream-20261013#1f69c9bc)
+   Compiling mere-p2panda-net v0.7.5 (https://github.com/mark-ik/p2panda.git?tag=mere-p2panda-net-0.7.5-upstream-20261013#1f69c9bc)
+   Compiling redb v4.3.0
+   Compiling mere-persona-picker v0.0.1 (https://www.github.com/merely-made/mere.git?rev=0b9b7a9b218579f1f36cc1ab05a51b2a13128f1d#0b9b7a9b)
+   Compiling tabard-workshop v0.0.1 (https://www.github.com/merely-made/mere.git?rev=0b9b7a9b218579f1f36cc1ab05a51b2a13128f1d#0b9b7a9b)
+   Compiling fixed-resample v0.13.0
+   Compiling iroh-util v0.6.0
+   Compiling uxtree v0.0.2 (https://www.github.com/merely-made/mere.git?rev=0b9b7a9b218579f1f36cc1ab05a51b2a13128f1d#0b9b7a9b)
+   Compiling iroh-tickets v1.0.0
+   Compiling nested_enum_utils v0.2.3
+   Compiling notochord v0.1.1 (https://github.com/merely-made/dramatis.git?rev=0234e7eea6f2ddf2330a71b9425da01b06ae0391#0234e7ee)
+   Compiling mere-proofs v0.1.0 (https://www.github.com/merely-made/mere.git?rev=0b9b7a9b218579f1f36cc1ab05a51b2a13128f1d#0b9b7a9b)
+   Compiling reflink-copy v0.1.30
+   Compiling raunch v1.0.1
+   Compiling browsing-context-api v0.1.0 (https://github.com/merely-made/genet.git?rev=7a8c5b8cb499f2d3b91083c2f7e38236599f98dc#7a8c5b8c)
+   Compiling genet-documents v0.1.0 (https://github.com/merely-made/genet.git?rev=7a8c5b8cb499f2d3b91083c2f7e38236599f98dc#7a8c5b8c)
+   Compiling service-binding v3.0.1
+   Compiling iroh-blobs v0.103.1
+   Compiling stickleback v0.1.1 (https://www.github.com/merely-made/mere.git?rev=0b9b7a9b218579f1f36cc1ab05a51b2a13128f1d#0b9b7a9b)
+   Compiling firewheel-cpal v0.14.0 (https://github.com/mark-ik/firewheel.git?rev=2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc#2b03846d)
+   Compiling coremidi v0.9.2
+   Compiling fitting v0.3.0
+   Compiling peak_finder v1.0.1
+   Compiling dirs v5.0.1
+   Compiling firewheel-nodes v0.14.0 (https://github.com/mark-ik/firewheel.git?rev=2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc#2b03846d)
+   Compiling mere-alembic v0.0.1 (https://www.github.com/merely-made/mere.git?rev=0b9b7a9b218579f1f36cc1ab05a51b2a13128f1d#0b9b7a9b)
+   Compiling luggage v0.1.0 (https://www.github.com/merely-made/mere.git?rev=0b9b7a9b218579f1f36cc1ab05a51b2a13128f1d#0b9b7a9b)
+   Compiling incipit v0.2.0 (https://www.github.com/merely-made/mere.git?rev=0b9b7a9b218579f1f36cc1ab05a51b2a13128f1d#0b9b7a9b)
+   Compiling secrecy v0.10.3
+   Compiling mere-page-load v0.0.1 (https://www.github.com/merely-made/mere.git?rev=0b9b7a9b218579f1f36cc1ab05a51b2a13128f1d#0b9b7a9b)
+   Compiling pitch-detector v0.3.1
+   Compiling pelt-core v0.2.0 (https://www.github.com/merely-made/mere.git?rev=0b9b7a9b218579f1f36cc1ab05a51b2a13128f1d#0b9b7a9b)
+   Compiling ssh-agent-lib v0.6.0
+   Compiling pandect v0.1.1 (https://www.github.com/merely-made/mere.git?rev=0b9b7a9b218579f1f36cc1ab05a51b2a13128f1d#0b9b7a9b)
+   Compiling mere-webrtc-carrier v0.0.1 (https://github.com/merely-made/murm.git?rev=b49df894635bac95823284efee6c445885eaf62a#b49df894)
+   Compiling firewheel v0.14.0 (https://github.com/mark-ik/firewheel.git?rev=2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc#2b03846d)
+   Compiling midir v0.11.0
+   Compiling mere-transport v0.0.2 (https://github.com/merely-made/murm.git?rev=b49df894635bac95823284efee6c445885eaf62a#b49df894)
+   Compiling mere v0.0.2 (https://www.github.com/merely-made/mere.git?rev=0b9b7a9b218579f1f36cc1ab05a51b2a13128f1d#0b9b7a9b)
+   Compiling platen v0.0.1 (https://www.github.com/merely-made/mere.git?rev=0b9b7a9b218579f1f36cc1ab05a51b2a13128f1d#0b9b7a9b)
+   Compiling woodshed-views v0.1.0 (/Users/markik/Code/worktrees/woodshed-orchestrate-20261011/crates/woodshed-views)
+   Compiling pitch-detection v0.3.0
+   Compiling graphshell-client v0.0.2 (https://www.github.com/merely-made/mere.git?rev=0b9b7a9b218579f1f36cc1ab05a51b2a13128f1d#0b9b7a9b)
+   Compiling graphshell-endpoint v0.0.2 (https://www.github.com/merely-made/mere.git?rev=0b9b7a9b218579f1f36cc1ab05a51b2a13128f1d#0b9b7a9b)
+   Compiling chatelaine v0.0.3 (https://github.com/merely-made/dramatis.git?rev=0234e7eea6f2ddf2330a71b9425da01b06ae0391#0234e7ee)
+   Compiling woodshed-audio v0.1.0 (/Users/markik/Code/worktrees/woodshed-orchestrate-20261011/crates/woodshed-audio)
+warning: use of deprecated method `std::sync::atomic::Atomic::<u64>::fetch_update`: renamed to `try_update` for consistency
+  --> crates/woodshed-audio/src/capture_feed.rs:33:14
+   |
+33 |             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |generation| {
+   |              ^^^^^^^^^^^^
+   |
+   = note: `#[warn(deprecated)]` on by default
+help: replace the use of the deprecated method
+   |
+33 -             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |generation| {
+33 +             .try_update(Ordering::AcqRel, Ordering::Acquire, |generation| {
+   |
+
+warning: use of deprecated method `std::sync::atomic::Atomic::<usize>::fetch_update`: renamed to `try_update` for consistency
+   --> crates/woodshed-audio/src/output_runtime.rs:289:14
+    |
+289 |             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |              ^^^^^^^^^^^^
+    |
+help: replace the use of the deprecated method
+    |
+289 -             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+289 +             .try_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |
+
+warning: use of deprecated method `std::sync::atomic::Atomic::<usize>::fetch_update`: renamed to `try_update` for consistency
+   --> crates/woodshed-audio/src/output_runtime.rs:334:14
+    |
+334 |             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |              ^^^^^^^^^^^^
+    |
+help: replace the use of the deprecated method
+    |
+334 -             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+334 +             .try_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |
+
+warning: use of deprecated method `std::sync::atomic::Atomic::<usize>::fetch_update`: renamed to `try_update` for consistency
+   --> crates/woodshed-audio/src/output_runtime.rs:355:14
+    |
+355 |             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |              ^^^^^^^^^^^^
+    |
+help: replace the use of the deprecated method
+    |
+355 -             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+355 +             .try_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |
+
+warning: `woodshed-audio` (lib) generated 4 warnings (run `cargo fix --lib -p woodshed-audio` to apply 4 suggestions)
+   Compiling graphshell v0.0.2 (https://www.github.com/merely-made/mere.git?rev=0b9b7a9b218579f1f36cc1ab05a51b2a13128f1d#0b9b7a9b)
+   Compiling rfd v0.17.2
+   Compiling directories v5.0.1
+   Compiling woodshed-genet v0.1.0 (/Users/markik/Code/worktrees/woodshed-orchestrate-20261011/crates/woodshed-genet)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 4m 43s
+     Running unittests src/lib.rs (/Users/markik/Code/testing/woodshed/hocket-adoption-20261013/target/debug/deps/hocket_recorder-de75c0aab0d6c675)
+
+running 27 tests
+test host_policy::tests::unavailable_audio_refuses_play_record_but_preserves_explicit_reference_clear ... ok
+test host_policy::tests::armed_or_recording_target_guards_retargeting_clear_and_clock_policy ... ok
+test host_policy::tests::busy_capture_without_projectable_target_still_guards_clock_clear_source_and_record ... ok
+test host_policy::tests::rendered_target_survives_selection_change_and_stop_uses_accepted_target ... ok
+test host_policy::tests::heterogeneous_row_tempo_uses_qualified_target_without_authoring_other_rows ... ok
+test host_policy::tests::unsupported_hocket_controls_and_invalid_clock_are_refused ... ok
+test host_policy::tests::stale_context_and_row_keys_cannot_mutate_another_session ... ok
+test host_policy::tests::record_requests_lazy_input_but_never_claims_or_changes_capture_admission ... ok
+test host_policy::tests::backing_refusal_does_not_lose_stop_or_retained_clear_operations ... ok
+test tests::duplicate_phrase_action_targets_qualified_layer_occurrence ... ok
+test tests::deleted_capture_target_does_not_receive_or_store_a_delayed_take ... ok
+test tests::capture_admission_and_invalid_completion_fail_without_history_or_media_mutation ... ok
+test tests::delayed_capture_keeps_admitted_track_clock_and_sample_rate ... ok
+test tests::failed_voice_stop_refuses_clock_commit_and_preserves_accepted_key ... ok
+test tests::imported_audio_only_starts_the_appended_layer_at_its_stored_rate ... ok
+test tests::later_unmute_supersedes_a_still_failed_stop_without_late_silencing ... ok
+test tests::fixed_rearm_and_clock_changes_are_refused_while_free_stop_keeps_its_target ... ok
+test tests::failed_target_mute_retries_without_another_action_or_unrelated_restart ... ok
+test tests::failed_stop_all_retries_only_remaining_accepted_keys ... ok
+test tests::muted_click_clock_admission_and_input_absence_remain_truthful ... ok
+test tests::playback_failure_retains_completed_pcm_without_claiming_an_accepted_voice ... ok
+test tests::recreated_controller_for_same_session_cannot_reuse_capture_ticket ... ok
+test tests::replacing_project_stops_old_voices_even_while_retired_capture_drains ... ok
+test tests::same_session_replacement_retires_delayed_capture_and_queued_actions ... ok
+test tests::stale_completion_cannot_consume_current_ticket_and_idle_needs_explicit_retirement ... ok
+test tests::target_mute_keeps_unrelated_voices_and_missing_media_remains_visible ... ok
+test tests::offline_project_authors_clock_then_syncs_on_recovery_but_live_refusal_does_not_author ... ok
+
+test result: ok. 27 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (/Users/markik/Code/testing/woodshed/hocket-adoption-20261013/target/debug/deps/hocket_views-7adbe7cfd225e766)
+
+running 11 tests
+test leaves::tests::model_identity_produces_stable_distinct_leaf_keys ... ok
+test leaves::tests::silent_waveform_paints_a_center_line ... ok
+test leaves::tests::lazy_host_projection_is_evaluated_only_when_material_revision_changes ... ok
+test leaves::tests::host_owned_pcm_uses_same_retained_leaf_without_fabricated_meters ... ok
+test leaves::tests::same_phrase_occurrences_render_independent_real_gain_envelopes ... ok
+test leaves::tests::mount_reconciliation_reorder_and_unmount_preserve_other_leaf_owners ... ok
+test leaves::tests::unchanged_waveform_signature_produces_zero_repaints ... ok
+test projection_tests::unavailable_command_cannot_emit_a_host_action ... ok
+test projection_tests::heterogeneous_clocks_and_unsupported_controls_remain_honest ... ok
+test projection_tests::lazy_input_does_not_disable_first_record_request ... ok
+test projection_tests::accepted_capture_target_is_independent_of_current_selection ... ok
+
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.17s
+
+     Running unittests src/main.rs (/Users/markik/Code/testing/woodshed/hocket-adoption-20261013/target/debug/deps/woodshed_genet-62251ae28ee8521e)
+
+running 166 tests
+test appearance::tests::explicit_and_scenario_library_paths_preserve_private_profile_isolation ... ok
+test audio::loop_projection::tests::armed_or_active_capture_snapshot_refuses_replacement ... ok
+test audio::loop_projection::tests::hydrated_clock_custody_survives_reorder_missing_cards_and_pitch_edits_until_clear ... ok
+test audio::loop_projection::tests::captures_follow_card_across_reorder_and_pitch_edit_and_never_cross_sets ... ok
+test appearance::tests::current_native_appearance_scenarios_parse_with_the_shared_driver ... ok
+test audio::loop_projection::tests::recorded_clock_edits_are_refused_without_resizing_pcm_then_clear_permits_them ... ok
+test audio::loop_projection::tests::malformed_restore_cannot_partially_replace_the_current_bank ... ok
+test audio::loop_projection::tests::restore_validates_exact_runtime_frames_at_integer_and_fractional_clocks ... ok
+test audio::loop_projection::tests::saved_backing_capture_slots_are_independent_of_card_capture_custody ... ok
+test audio::loop_projection::tests::snapshots_share_completed_pcm_across_inactive_owners_and_exclude_saved_slots ... ok
+test audio::loop_projection::tests::stale_or_other_owner_capture_commands_cannot_resolve_to_a_bar ... ok
+test audio::tests::clearing_an_admitted_stored_capture_updates_output_without_touching_inactive_sets ... ok
+test audio::tests::each_input_feature_can_open_the_one_shared_session ... ok
+test audio::tests::explicit_calibration_and_recording_requests_retry_without_losing_output_error ... ok
+test audio::loop_projection::tests::quota_reserves_every_current_bar_not_only_the_requested_first_bar ... ok
+test audio::loop_projection::tests::quota_replaces_existing_ids_once_and_keeps_legacy_custody_separate ... ok
+test audio::tests::explicit_unadmitted_clear_recovers_an_edited_clock_and_keeps_other_owners ... ok
+test audio::tests::failed_calibration_stop_invalidates_cache_and_retries_ordinary_click_atomically ... ok
+test audio::tests::failed_tuner_enable_is_visible_and_only_explicit_reenable_retries ... ok
+test audio::tests::hydrated_pcm_rate_is_preserved_then_refused_by_normal_output_admission ... ok
+test audio::tests::legacy_song_keeps_authored_frequencies_meter_tempo_and_lengths ... ok
+test audio::loop_projection::tests::restore_checks_take_count_and_aggregate_frames_without_reassigning_custody ... ok
+test audio::tests::preview_completion_wakes_control_and_services_the_real_graph_without_input ... ok
+test audio::tests::ordinary_synchronization_and_polls_do_not_open_microphone ... ok
+test audio::tests::hydration_rejects_busy_capture_before_replacing_any_completed_take ... ok
+test audio::tests::queued_capture_blocks_all_backing_replacements_before_the_processor_runs ... ok
+test audio::tests::recording_retry_restores_pending_tuner_enable_on_same_session ... ok
+test audio::tests::recorder_observation_uses_completed_pcm_without_input_or_export_and_freezes_arm_target ... ok
+test audio::tests::recording_rate_mismatch_keeps_the_reader_available_and_current_owner_loaded ... ok
+test audio::tests::restoring_set_custody_leaves_saved_output_and_compatibility_pcm_untouched ... ok
+test audio::tests::hydration_finishes_pending_identity_reset_before_installing_reused_ids ... ok
+test audio::tests::unsupported_saved_clock_is_refused_without_normalizing_the_authored_payload ... ok
+test audio::tests::reset_backpressure_cannot_transfer_old_pcm_into_incoming_session_ids ... ok
+test audio::tests::wav_snapshot_retains_completed_pcm_and_refuses_armed_capture ... ok
+test audio::tests::set_arm_can_replace_the_same_id_at_the_exact_stored_quota ... ok
+test capture_persistence::tests::capture_native_scenarios_parse_with_shared_driver ... ok
+test capture_persistence::tests::accepted_session_with_failed_readback_is_unconfirmed_without_rollback ... ok
+test appearance::tests::corrupt_library_disables_authoring_and_preserves_the_requested_appearance_and_file ... ok
+test capture_persistence::tests::companion_or_session_failure_retains_previous_session_and_live_take ... ok
+test capture_persistence::tests::damaged_companion_reference_survives_saves_until_explicit_clear ... ok
+test audio::tests::set_arm_quota_refuses_count_and_frames_before_either_route_opens_input ... ok
+
+running 1 test
+test capture_persistence::tests::completion_service_saves_without_dispatch_using_current_practice_edits ... ok
+test capture_persistence::tests::explicit_clear_while_preparing_cannot_republish_retired_pcm ... ok
+test capture_persistence::tests::fresh_process_fixture ... ignored, fresh-process child, invoked by the sealed capture test
+test capture_persistence::tests::epoch_reset_reuses_one_lane_and_discards_old_prepared_results ... ok
+test capture_persistence::tests::future_codec_is_retained_unavailable_without_losing_authoring_and_can_be_cleared ... ok
+sealed V1 raw capture seed: exact frames, no input device
+test capture_persistence::tests::fresh_process_fixture ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 165 filtered out; finished in 0.21s
+
+
+running 1 test
+test capture_persistence::tests::hydrated_v1_capture_migrates_with_exact_sealed_readback_and_retains_old_blob ... ok
+test capture_persistence::tests::malformed_manifest_never_overwrites_a_saved_session ... ok
+test capture_persistence::tests::failed_legacy_migration_preserves_previous_refs_namespace_and_pcm_until_retry ... ok
+test capture_persistence::tests::legacy_migration_is_pending_on_wake_and_cannot_publish_into_another_epoch ... ok
+test capture_persistence::tests::mixed_legacy_unavailable_reference_can_recover_and_migrate_inside_v2 ... ok
+test capture_persistence::tests::pending_seal_cannot_publish_even_an_existing_companion ... ok
+fresh process: V1 raw migrated to exact V2 WavPack; legacy blob retained
+test capture_persistence::tests::fresh_process_fixture ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 165 filtered out; finished in 0.27s
+
+
+running 1 test
+test capture_persistence::tests::prepared_wrong_rate_or_frames_cannot_publish_or_touch_companion_storage ... ok
+test capture_persistence::tests::sealed_profile_compression_probe ... ignored, requires an isolated unlocked Keeper and copied profile overrides
+test capture_persistence::tests::raw_fallback_records_policy_once_and_does_not_touch_companions_again ... ok
+test capture_persistence::tests::unavailable_inactive_references_reserve_catalog_budget_before_recording ... ok
+test capture_persistence::tests::unavailable_only_v1_catalog_is_retained_until_explicit_clear ... ok
+test capture_persistence::tests::wav_export_refuses_only_relevant_unavailable_set_captures ... ok
+fresh process: exact samples and Set/Card identity retained across reorder
+test capture_persistence::tests::fresh_process_fixture ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 165 filtered out; finished in 0.19s
+
+
+running 1 test
+test capture_persistence::tests::unready_incoming_epoch_never_observes_prior_playing_or_cursor ... ok
+test capture_persistence::tests::worker_prepares_without_blocking_authoring_and_publishes_current_edits_on_wake ... ok
+test capture_persistence::tests::worker_quota_rejection_precedes_thread_request_and_keeps_current_session ... ok
+test capture_persistence::tests::worker_cache_survives_session_failure_and_close_holds_only_new_live_pcm ... ok
+test appearance::tests::native_save_confirmation_persists_the_definition_then_closes_the_application ... ok
+test drive::tests::background_dwell_keeps_its_owner_clock_cursor_and_inherited_sound ... ok
+test drive::tests::dwell_restarts_after_instruction_edits_cursor_changes_and_pause ... ok
+test drive::tests::accepted_one_shot_status_stops_the_ui_without_restarting_or_retargeting_backing ... ok
+test fonts::tests::prepare_font_theme_fixture ... ignored, writes only an explicitly owned isolated theme library
+test fonts::tests::sealed_profile_font_snapshot ... ignored, requires an owned sealed font profile and live isolated Keeper
+fresh process: clock refusal resolved by explicit clear and persisted
+test capture_persistence::tests::fresh_process_fixture ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 165 filtered out; finished in 0.20s
+
+
+running 1 test
+test fonts::tests::appearance_buttons_use_requested_interface_family_and_authored_size ... ok
+fresh process: cleared capture remains absent
+test capture_persistence::tests::fresh_process_fixture ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 165 filtered out; finished in 0.18s
+
+test capture_persistence::tests::exact_sealed_set_capture_survives_fresh_process_reorder_and_clear ... ok
+test appearance::tests::export_destination_cancellation_and_collision_leave_library_unsaved ... ok
+test fonts::tests::fonts_shape_remeasure_and_keep_authored_precedence_with_fixed_overlay_geometry ... ok
+test capture_persistence::tests::absent_audio_still_saves_practice_and_retains_then_explicitly_clears_orphan_refs ... ok
+test capture_persistence::tests::mounted_main_close_waits_for_capture_worker_then_preserves_dirty_appearance_gate ... ok
+test appearance::tests::native_export_rejects_existing_and_missing_application_destinations ... ok
+test appearance::tests::theme_export_cannot_replace_existing_or_future_capture_companions ... ok
+test appearance::tests::cancelled_native_close_then_embedded_discard_does_not_exit_the_application ... ok
+test layout_tests::discovered_scale_uses_its_saved_ukulele_board_and_physical_solo_contact ... ok
+test layout_tests::background_runner_inherits_the_starting_exploration_setup ... ok
+test layout_tests::invalid_saved_scale_setup_shows_the_reason_and_cannot_sound_the_live_guitar ... ok
+test layout_tests::expanded_graph_editor_keeps_discovery_outside_the_canvas ... ok
+test layout_tests::connected_discovery_controls_stage_the_selected_shape_and_run_it ... ok
+test layout_tests::compatible_scale_controls_choose_audition_stage_and_drill_without_changing_the_chord ... ok
+test layout_tests::exact_tone_relationship_controls_rebind_and_open_the_containing_scale_at_two_widths ... ok
+test layout_tests::narrow_settings_navigation_stacks_and_selects_a_page ... ok
+test layout_tests::inspected_pattern_revalidates_removed_and_invalid_sources_before_authoring ... ok
+test layout_tests::card_parameters_and_explanations_do_not_overlap_and_related_rows_still_stage ... ok
+test layout_tests::rehearsal_board_scroll_preserves_extent_and_note_hits ... ok
+test layout_tests::reopened_scale_editor_has_no_empty_chord_discovery_panels ... ok
+test layout_tests::neck_comparison_tracks_previous_card_and_shape_controls ... ok
+test layout_tests::rehearsal_shape_controls_change_notes_and_clear_to_the_map ... ok
+test layout_tests::narrow_stage_preserves_graph_width_and_horizontal_scroll ... ok
+test layout_tests::selected_card_geometry_overrides_the_live_guitar ... ok
+test leaves::atmosphere_tests::atmosphere_is_clipped_resized_and_beneath_graph_independently_of_camera ... ok
+test persona::tests::a_chosen_persona_is_not_asked_again ... ok
+test persona::tests::a_pending_store_reads_but_never_writes ... ok
+test persona::tests::a_sole_persona_is_not_a_question ... ok
+test persona::tests::asking_for_a_new_persona_keeps_the_gate_up_and_says_why ... ok
+test layout_tests::settings_uses_the_shared_page_scroll_owner ... ok
+test persona::tests::declining_is_not_a_dead_end_the_settings_switch_starts_saving ... ok
+test persona::tests::djinn_absent_is_stepped_over_rather_than_asked_about ... ok
+test persona::tests::clicking_a_persona_records_the_choice_the_host_acts_on ... ok
+test persona::tests::escape_dismisses_the_gate_so_practice_is_never_blocked ... ok
+test persona::tests::switching_into_an_unused_persona_does_not_carry_the_last_one_in ... ok
+test persona::tests::switching_persona_retains_the_global_library_load_error ... ok
+test persona::tests::switching_persona_retains_the_global_authored_library_but_restores_incoming_selection ... ok
+test layout_tests::wide_stage_keeps_board_and_expanded_tray_reachable ... ok
+test persona::tests::the_gate_is_reachable_by_a_driver ... ok
+test persona::tests::the_settings_row_asks_even_when_the_startup_rule_would_not ... ok
+test persona::tests::the_gate_stands_in_front_of_the_product_rather_than_over_it ... ok
+test persona::tests::two_personas_and_no_choice_is_the_one_case_worth_asking_about ... ok
+test persona::tests::the_gate_takes_the_keyboard_without_a_tab ... ok
+test session::tests::chord_approach_session_receipt_worker ... ok
+test session::tests::chord_approach_session_replays_saved_target_shapes_in_a_fresh_process ... ok
+test session::tests::connected_session_receipt_worker ... ok
+test persona::tests::the_unsaved_notice_is_on_screen_for_a_declined_session ... ok
+test persona::tests::two_personas_sharing_a_name_are_still_told_apart ... ok
+test session::tests::independent_instances_receipt_worker ... ok
+test session::tests::host_session_restores_the_workspace_policy ... ok
+test session::tests::legacy_four_panel_workspace_and_session_restore_without_a_retained_library ... ok
+test session::tests::connected_session_reopens_in_a_fresh_process ... ok
+test session::tests::mixed_catalog_session_receipt_worker ... ok
+test session::tests::legacy_single_owner_session_adopts_instances_without_changing_authored_work ... ok
+test session::tests::independent_working_sets_and_explorations_reopen_in_a_fresh_process ... ok
+test session::tests::retained_library_receipt_worker ... ok
+test session::tests::scale_pattern_session_receipt_worker ... ok
+test layout_tests::unselected_target_approach_keeps_repeated_pitch_visits_in_production_audio ... ok
+test session::tests::settings_apply_without_a_practice_session ... ok
+test storage::capture_tests::failed_companion_write_retains_previous_session_and_failed_rename_cleans_temp ... ok
+test storage::capture_tests::filesystem_bounds_reads_and_reports_corrupt_or_truncated_companions ... ok
+test session::tests::mixed_catalog_session_reopens_in_a_fresh_process ... ok
+test storage::capture_tests::filesystem_rejects_unknown_and_path_shaped_keys_without_touching_session ... ok
+test session::tests::retained_library_and_overview_reopen_ordered_music_in_a_fresh_process ... ok
+test storage::capture_tests::filesystem_companion_reopens_exact_pcm_after_session_reference_commit ... ok
+test storage::dr_c_receipts::dr_c_woodshed_identity_stays_pending ... ignored, run mere/scripts/dr_c_receipts.py against the isolated receipt keeper
+test storage::capture_tests::sealed_filesystem_blobs_and_pending_write_drop_keep_custody_semantics ... ok
+test sync::tests::loop_source_receipt_worker ... ok
+test session::tests::scale_pattern_session_replays_ordered_visits_in_a_fresh_process ... ok
+test storage::capture_tests::two_personas_share_pcm_only_through_distinct_artifacts_and_cannot_clobber_ciphertext ... ok
+test layout_tests::relationship_recipe_controls_compile_explain_and_return_to_exact_source_at_two_widths ... ok
+test sync::tests::armed_source_switches_are_refused_in_both_directions_without_replacing_backing ... ok
+test sync::tests::refused_edit_and_other_owner_keep_the_actual_admitted_timeline ... ok
+test sync::tests::saved_bar_edit_refusal_preserves_accepted_payload_and_capture_state ... ok
+test sync::tests::unavailable_saved_replacement_keeps_loaded_set_and_an_unready_set_keeps_saved_backing ... ok
+test sync::tests::unready_initial_source_cannot_play_and_saved_song_restores_exact_data ... ok
+test sync::tests::loop_source_reopens_in_a_fresh_process ... ok
+test tests::window_geometry_conversion_preserves_every_axis ... ok
+test wav_export::tests::cancelled_worker_cannot_publish_new_or_replacement_file ... ok
+test wav_export::tests::collision_cancellation_and_invalid_render_leave_no_temporary_file ... ok
+test wav_export::tests::deferred_dialog_cancel_and_epoch_revocation_preserve_destinations ... ok
+test tests::shared_title_bar_fills_viewport_and_keeps_editor_below_it ... ok
+test sync::tests::source_controls_refuse_known_armed_capture_in_both_directions ... ok
+test wav_export::tests::prior_session_completion_and_replacement_do_not_cross_personas ... ok
+test wav_export::tests::protects_existing_missing_storage_and_future_capture_destinations ... ok
+test wav_export::tests::publication_collision_replace_and_changed_destination_preserve_files ... ok
+test wav_export::tests::sealed_profile_export_reference ... ignored, native receipt helper; requires an isolated sealed profile and owned reference directory
+test wav_export::tests::snapshot_requires_current_admitted_backing_and_keeps_complete_pcm ... ok
+test wav_export::tests::deferred_export_close_preserves_the_dirty_appearance_gate ... ok
+test sync::tests::looper_controls_show_readiness_route_owned_capture_and_retain_saved_backing ... FAILED
+test layout_tests::inspected_chord_approach_rejects_stale_pairs_and_saved_shape_failures ... ok
+test tests::native_workshop_routes_name_and_stylesheet_text_through_owned_model ... ok
+test wav_export::tests::native_chooser_cancellation_is_one_request_and_writes_nothing ... ok
+test layout_tests::adjacent_chord_approach_controls_preserve_physical_pairs_shapes_and_originals ... ok
+test layout_tests::scale_pattern_controls_preserve_order_source_and_occurrences_in_wide_and_narrow_views ... ok
+test layout_tests::session_overview_inspects_retains_and_opens_real_work_without_navigation_side_effects ... ok
+test layout_tests::independent_instances_keep_background_rehearsal_and_explicit_staging_bound_to_their_owners ... ok
+
+failures:
+
+---- sync::tests::looper_controls_show_readiness_route_owned_capture_and_retain_saved_backing stdout ----
+
+thread 'sync::tests::looper_controls_show_readiness_route_owned_capture_and_retain_saved_backing' (28384903) panicked at crates/woodshed-genet/src/sync.rs:651:9:
+assertion failed: h.click_on(&Selector::class("t-btn").containing("Play"))
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    sync::tests::looper_controls_show_readiness_route_owned_capture_and_retain_saved_backing
+
+test result: FAILED. 159 passed; 1 failed; 6 ignored; 0 measured; 0 filtered out; finished in 12.46s
+
+error: test failed, to rerun pass `-p woodshed-genet --bin woodshed-genet`

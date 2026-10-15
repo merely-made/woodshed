@@ -34,14 +34,83 @@ pub fn requires_live_frame(shared: &Shared, ui: &UiState) -> bool {
         || ui.stage.exercise_playing
         || ui.stage.scale_run_playing
         || ui.calib_active
+        || shared
+            .backend
+            .as_ref()
+            .is_some_and(crate::audio::CpalBackend::needs_service)
         || (shared.midi.connected_input().is_some()
             && (ui.midi.clock_slave || ui.section == woodshed_core::storage::AppSection::Settings))
+}
+
+/// Observations come from the accepted runtime, including after a one-shot
+/// stops. Reading them does not admit or replace any product source.
+pub struct AudioObservation {
+    playing: bool,
+    bar: Option<usize>,
+    capture_busy: bool,
+    loops: Vec<bool>,
+    error: Option<String>,
+    recorder: woodshed_views::stage::RecorderObservation,
+}
+
+impl AudioObservation {
+    pub fn changed(&self, ui: &UiState) -> bool {
+        self.playing != ui.song_playing
+            || self.bar.is_some_and(|bar| bar != ui.song_bar_live)
+            || self.capture_busy != ui.song_recording
+            || self.loops != ui.song_loop_bars
+            || self.error != ui.audio_error
+            || self.recorder != ui.recorder_observation
+    }
+
+    pub fn apply(self, ui: &mut UiState) {
+        ui.song_playing = self.playing;
+        if let Some(bar) = self.bar {
+            ui.song_bar_live = bar;
+        }
+        ui.song_recording = self.capture_busy;
+        ui.song_loop_bars = self.loops;
+        ui.audio_error = self.error;
+        ui.recorder_observation = self.recorder;
+    }
+}
+
+/// Service the context even if every UI transport is stopped. Completed PCM
+/// reaches its current owner before a subsequent dispatch can replace backing.
+pub fn poll_audio(shared: &mut Shared) -> Option<AudioObservation> {
+    let backend = shared.backend.as_mut()?;
+    let mut observation = observe_audio(backend);
+    observation.recorder = backend.recorder_observation(shared.last_song.as_ref());
+    Some(observation)
+}
+
+fn observe_audio(backend: &mut crate::audio::CpalBackend) -> AudioObservation {
+    backend.service();
+    AudioObservation {
+        playing: backend.observe_song_playing(),
+        bar: backend.song_bar(),
+        capture_busy: backend.loop_capture_busy(),
+        loops: backend.song_loop_bars(),
+        error: backend.error().map(str::to_owned),
+        recorder: backend.recorder_observation(None),
+    }
 }
 
 /// Advance the live clocks against `ui`. Returns `true` while something is
 /// animating.
 pub fn frame(shared: &mut Shared, ui: &mut UiState) -> bool {
+    if !crate::capture_persistence::session_current(shared, ui) {
+        if let Some(backend) = shared.backend.as_mut() {
+            backend.service();
+            return backend.needs_service();
+        }
+        return false;
+    }
     let mut animating = false;
+    if let Some(observation) = poll_audio(shared) {
+        observation.apply(ui);
+    }
+    crate::capture_persistence::persist_if_changed(shared, ui);
     // Poll the MIDI seam (immutable) before borrowing the backend.
     let midi_in_connected = shared.midi.connected_input().is_some();
     let midi_clock_bpm = shared.midi.clock_bpm();
@@ -66,14 +135,7 @@ pub fn frame(shared: &mut Shared, ui: &mut UiState) -> bool {
         ui.tuner.reading = backend.tuner_reading();
         animating = true;
     }
-    if ui.song_playing {
-        if let Some(bar) = backend.song_bar() {
-            ui.song_bar_live = bar;
-        }
-        ui.song_recording = backend.song_recording();
-        ui.song_loop_bars = backend.song_loop_bars();
-        animating = true;
-    }
+    animating |= ui.song_playing || backend.needs_service();
     animating |= rehearsal_dwell(&mut shared.last_rehearsal_step, ui, backend, now);
     animating |= transport_steps(&mut shared.last_arp_step, ui, backend, now);
 
@@ -236,6 +298,51 @@ fn transport_steps(
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn accepted_one_shot_status_stops_the_ui_without_restarting_or_retargeting_backing() {
+        let mut ui = UiState::new();
+        ui.stage.set_lens(woodshed_core::Lens::Chords);
+        ui.stage_current(None);
+        ui.set.cards[0].timing.hold = woodshedding::rehearsal::Hold::Bars(1);
+        ui.looper.inherited_bpm = 300.0;
+        ui.looper.beats = 1;
+        ui.looper.one_shot = true;
+        ui.looper.click = false;
+        ui.loop_working_set(ui.working_sets.active_id);
+        let plan = ui.requested_loop_plan().unwrap();
+        ui.loop_admitted = Some(plan.clone());
+        let payload = serde_json::to_value(ui.to_persisted()).unwrap();
+        let mut backend = crate::audio::CpalBackend::offline_for_test();
+        backend.set_loop_plan(&plan).unwrap();
+        backend.set_song_transport(true);
+        // Before a graph block, queued Play remains the accepted control fact.
+        observe_audio(&mut backend).apply(&mut ui);
+        assert!(ui.song_playing);
+        for _ in 0..3 {
+            backend.process_for_test(4096);
+        }
+        // An unrelated dispatch may arrive before any wake/frame publication.
+        // Its stale true is not an explicit new Play request.
+        backend.set_song_transport(ui.song_playing);
+        assert!(!backend.song_playing());
+        let stopped = observe_audio(&mut backend);
+        assert!(stopped.changed(&ui));
+        stopped.apply(&mut ui);
+        assert!(!ui.song_playing);
+        // Ordinary dispatch now sees false rather than reissuing stale Play.
+        backend.set_song_transport(ui.song_playing);
+        backend.process_for_test(256);
+        assert!(!backend.song_playing());
+        // After stopped status has reached the UI, a new Play is authoritative.
+        backend.set_song_transport(true);
+        assert!(backend.song_playing());
+        backend.process_for_test(256);
+        assert!(backend.song_playing());
+        assert_eq!(ui.loop_admitted, Some(plan));
+        assert_eq!(serde_json::to_value(ui.to_persisted()).unwrap(), payload);
+        assert!(backend.capture_source_rate().is_none());
+    }
 
     #[derive(Default)]
     struct RecordedAudio {

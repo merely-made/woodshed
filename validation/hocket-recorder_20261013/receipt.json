@@ -1,0 +1,315 @@
+{
+  "schema": "hocket-recorder-extraction-receipt-v1",
+  "baseline": "fde91c42bef801f596333da4aae8bc2f7fb8d593",
+  "compiled_source": "65a0145a28161f84c552ea38c0998eaa601ff0aa",
+  "status": "Shared controller/surface implemented; bounded CPU/build/native controls accepted; exact publication revision reported separately after direct-main push",
+  "source_freeze": "source-freeze.json",
+  "source_identity": "relocation-and-family.json",
+  "source_moves": 14,
+  "source_moves_byte_identical": true,
+  "root_product_rust_sources_unchanged": true,
+  "cpu_unique_passed": 197,
+  "cpu_unique_shared": 99,
+  "cpu_unique_standalone": 98,
+  "existing_custody_ignore": 1,
+  "commands": [
+    {
+      "scope": "shared model/project/controller/views, including mounted host example",
+      "command": "cargo +1.97.1 test --manifest-path ROOT/Cargo.toml --locked -p hocket-model -p hocket-project -p hocket-recorder -p hocket-views --all-targets",
+      "logs": [
+        "logs/shared-tests.log"
+      ],
+      "passed": 98,
+      "note": "3d51e4a shared gate; portable model/project files and views source hashes preserved through65a0145"
+    },
+    {
+      "scope": "offline correction and mounted host rerun",
+      "command": "cargo +1.97.1 test --manifest-path ROOT/Cargo.toml --locked -p hocket-recorder -p hocket-views --all-targets",
+      "logs": [
+        "logs/shared-tests-offline.log"
+      ],
+      "passed": 27,
+      "note": "18 controller,5 leaf/mount,4 routed host cases; overlaps prior gate except new offline case"
+    },
+    {
+      "scope": "standalone engine/desktop/headless",
+      "command": "cargo +1.97.1 test --manifest-path ROOT/ports/hocket/Cargo.toml --locked -p hocket-engine -p hocket-genet -p hocket-headless",
+      "logs": [
+        "logs/standalone-tests.log"
+      ],
+      "passed": 98,
+      "ignored": 1
+    },
+    {
+      "scope": "standalone offline correction rerun",
+      "command": "cargo +1.97.1 test --manifest-path ROOT/ports/hocket/Cargo.toml --locked -p hocket-genet",
+      "logs": [
+        "logs/standalone-tests-offline.log"
+      ],
+      "passed": 64,
+      "ignored": 1,
+      "note": "same64 desktop cases"
+    },
+    {
+      "scope": "Woodshed root consumer",
+      "command": "cargo +1.97.1 check --manifest-path ROOT/Cargo.toml --locked -p woodshed-genet",
+      "logs": [
+        "logs/woodshed-check.log"
+      ],
+      "result": "passed"
+    },
+    {
+      "scope": "standalone desktop build",
+      "command": "cargo +1.97.1 build --manifest-path ROOT/ports/hocket/Cargo.toml --locked -p hocket-genet",
+      "logs": [
+        "logs/standalone-build-offline.log"
+      ],
+      "result": "passed"
+    },
+    {
+      "scope": "second host native build",
+      "command": "cargo +1.97.1 build --manifest-path ROOT/Cargo.toml --locked -p hocket-views --example two_mounts",
+      "logs": [
+        "logs/mount-build-offline.log"
+      ],
+      "result": "passed"
+    }
+  ],
+  "build_environment": {
+    "cwd": "/tmp",
+    "ROOT": "/Users/markik/Code/worktrees/woodshed-orchestrate-20261011",
+    "CARGO_TARGET_DIR": "/Users/markik/Code/testing/woodshed/font-roles-20261012/target",
+    "CARGO_BUILD_JOBS": 2
+  },
+  "native": [
+    {
+      "case": "native-standalone-recovered",
+      "source_revision": "65a0145a28161f84c552ea38c0998eaa601ff0aa",
+      "result": "ok",
+      "backend": "device-free standalone",
+      "presentation_timeout_secs": 60,
+      "foreground": "CLI open, CUA observed standard-window Raise",
+      "presentations": 30,
+      "redraws": 508,
+      "captures": 2,
+      "blank_captures": 0,
+      "review": {
+        "status": "all images inspected",
+        "findings": [
+          "record dot remains visible; track add, arm/mute/solo, BPM122 and master clock gestures accepted; input absence remains explicit; pre-existing status line clipping retained"
+        ]
+      },
+      "launch_command": "/usr/bin/open -n -W --stdout /Users/markik/Code/testing/hocket/recorder-extraction-20261013/native-standalone-recovered/native.log --stderr /Users/markik/Code/testing/hocket/recorder-extraction-20261013/native-standalone-recovered/native.log /Users/markik/Code/testing/hocket/recorder-extraction-20261013/HocketRecorderRecovered.app",
+      "bundle_id": "dev.hocket.recorder.20261013.recovered",
+      "launch_environment": {
+        "HOCKET_APPEARANCE": "/Users/markik/Code/testing/hocket/recorder-extraction-20261013/profile/appearance.json",
+        "HOCKET_APPEARANCE_RECEIPT": "1",
+        "HOCKET_CAPTURE_DIR": "/Users/markik/Code/testing/hocket/recorder-extraction-20261013/native-standalone-recovered",
+        "HOCKET_PRESENTATION_TIMEOUT_SECS": "60",
+        "HOCKET_RECEIPT": "/Users/markik/Code/testing/hocket/recorder-extraction-20261013/native-standalone-recovered/scenario.done",
+        "HOCKET_SCENARIO": "/Users/markik/Code/worktrees/woodshed-orchestrate-20261011/ports/hocket/scenarios/recorder_controls.scn",
+        "HOCKET_SETTINGS": "/Users/markik/Code/testing/hocket/recorder-extraction-20261013/profile/update-settings.json",
+        "HOCKET_THEME_LIBRARY": "/Users/markik/Code/testing/hocket/recorder-extraction-20261013/profile/themes.json",
+        "XDG_CONFIG_HOME": "/Users/markik/Code/testing/hocket/recorder-extraction-20261013/profile/config",
+        "XDG_DATA_HOME": "/Users/markik/Code/testing/hocket/recorder-extraction-20261013/profile/data",
+        "XDG_RUNTIME_DIR": "/tmp/hocket-recorder-20261013"
+      },
+      "launcher_exit_code": 0,
+      "app_binary_sha256": "3d9d1204c417a5032d6dd6fcbf6f0591a2259bbafa3b97e84876c4e48f3e8be4"
+    },
+    {
+      "case": "native-two-mounts",
+      "source_revision": "65a0145a28161f84c552ea38c0998eaa601ff0aa",
+      "result": "ok",
+      "backend": "synthetic PCM and meter observations",
+      "presentation_timeout_secs": 60,
+      "foreground": "CLI open, CUA observed standard-window Raise",
+      "presentations": 25,
+      "redraws": 618,
+      "captures": 2,
+      "blank_captures": 0,
+      "review": {
+        "status": "all images inspected",
+        "findings": [
+          "distinct outer host state; full and compact mounts share model IDs but independent actions and leaf owners; full BPM122 vs compact120; compact second layer captured and muted; host-owned table/transport styles remain independent",
+          "compact table scrolls above transport; capture does not qualify arbitrary sizes or scrolling"
+        ]
+      },
+      "launch_command": "/usr/bin/open -n -W --stdout /Users/markik/Code/testing/hocket/recorder-extraction-20261013/native-two-mounts/native.log --stderr /Users/markik/Code/testing/hocket/recorder-extraction-20261013/native-two-mounts/native.log /Users/markik/Code/testing/hocket/recorder-extraction-20261013/HocketTwoMounts.app",
+      "bundle_id": "dev.hocket.recorder.20261013.two-mounts",
+      "launch_environment": {
+        "HOCKET_VIEWS_CAPTURE_DIR": "/Users/markik/Code/testing/hocket/recorder-extraction-20261013/native-two-mounts",
+        "HOCKET_VIEWS_PRESENTATION_TIMEOUT_SECS": "60",
+        "HOCKET_VIEWS_RECEIPT": "/Users/markik/Code/testing/hocket/recorder-extraction-20261013/native-two-mounts/scenario.done",
+        "HOCKET_VIEWS_SCENARIO": "/Users/markik/Code/worktrees/woodshed-orchestrate-20261011/crates/hocket-views/examples/two_mounts.scn"
+      },
+      "launcher_exit_code": 0,
+      "app_binary_sha256": "d457109b44ab0d20c5249c9f358fb2829cc43b26e976e30b0df3fb8e5e77bce0"
+    }
+  ],
+  "native_presentations": 55,
+  "native_reviewed_captures": 4,
+  "rejected_attempts": [
+    {
+      "case": "native-standalone",
+      "source_revision": "3d51e4a5ec9a5f6df13e31cf9442fde60312190c",
+      "reason": "default ten-second startup expired with no presentations",
+      "local_capture_directory": "/Users/markik/Code/testing/hocket/recorder-extraction-20261013/native-standalone"
+    },
+    {
+      "case": "native-standalone-foreground",
+      "source_revision": "3d51e4a5ec9a5f6df13e31cf9442fde60312190c",
+      "reason": "default ten-second startup expired with no presentations",
+      "local_capture_directory": "/Users/markik/Code/testing/hocket/recorder-extraction-20261013/native-standalone-foreground"
+    },
+    {
+      "case": "native-standalone-qualified",
+      "source_revision": "3d51e4a5ec9a5f6df13e31cf9442fde60312190c",
+      "reason": "extended foreground run rejected: expected122 BPM observed120",
+      "local_capture_directory": "/Users/markik/Code/testing/hocket/recorder-extraction-20261013/native-standalone-qualified"
+    },
+    {
+      "case": "native-standalone-raised",
+      "source_revision": "3d51e4a5ec9a5f6df13e31cf9442fde60312190c",
+      "reason": "extended foreground repeat rejected: expected122 BPM observed120",
+      "local_capture_directory": "/Users/markik/Code/testing/hocket/recorder-extraction-20261013/native-standalone-raised"
+    }
+  ],
+  "local_artifacts": "/Users/markik/Code/testing/hocket/recorder-extraction-20261013",
+  "limits": [
+    "Default ten-second launch remains unqualified; finite native proof uses explicit sixty-second allowance and observed foreground Raise",
+    "Standalone native scenario admits device-free appearance receipt; no microphone/audible playback/latency claim",
+    "Second host uses explicitly synthetic capture/playback/meter backend and actual finite PCM; no physical device qualification",
+    "Full/compact native capture sizes are bounded; compact table extends into a scroll viewport; arbitrary responsive sizes/scroll gestures remain unqualified",
+    "Existing standalone audio-status clipping retained",
+    "Portable project/storage/export and CBOR reopen regressions pass; current native project-file custody/handoff reopening is not qualified here",
+    "Woodshed Looper replacement and shared frame-driven DSP/backend migration remain later phases; Set/Card/saved-Song/capture custody/WAV product code unchanged",
+    "General Hocket project-worker reply correlation remains the separate F5 follow-up"
+  ],
+  "artifacts": [
+    {
+      "path": "logs/mount-build-offline.log",
+      "sha256": "946a4560073fe1c7a2a656193f0753db7abba4cd708c59ae0f9d5c60f7cb6136"
+    },
+    {
+      "path": "logs/shared-tests-offline.log",
+      "sha256": "f5f1e8ff05d1f3673cd6e538004e32fe3759b0ab916a6f5a7f9e19478d2c7d17"
+    },
+    {
+      "path": "logs/shared-tests.log",
+      "sha256": "03a5b8f7804a579bf9266a23f0c5084382855ac526c05749d4368c607e43f297"
+    },
+    {
+      "path": "logs/standalone-build-offline.log",
+      "sha256": "996ddefce992527f32dff8cff228c4202afe0ee2698cd15547bfb5544f8173d9"
+    },
+    {
+      "path": "logs/standalone-tests-offline.log",
+      "sha256": "5855f7698bada55a3c9d7eb7402fedf4f245dd28f1e5cbaaf72065505744169f"
+    },
+    {
+      "path": "logs/standalone-tests.log",
+      "sha256": "0ff2e13d1f856d071a5c328294b61271936fe86c4952aba3b9ef024cb3caaa71"
+    },
+    {
+      "path": "logs/woodshed-check.log",
+      "sha256": "893f80e9658d8a79376b25345d85ed6bb1f89382537af92f2f46db3eb5598851"
+    },
+    {
+      "path": "mount-binary-offline.json",
+      "sha256": "0280eadb733e3134e045f150534f9bba6d5daa6c74a684e868916704ba7462bf"
+    },
+    {
+      "path": "native/native-standalone-recovered/native.log",
+      "sha256": "ff73021b95638c918cec64919dccd974e969ab231b2dacf6f43ee0317c0ebb59"
+    },
+    {
+      "path": "native/native-standalone-recovered/recorder_controls.png",
+      "sha256": "6a62d7cff1fd927da83bfe3607abd140bbdd3172b497b39ff283738d8efc31b9"
+    },
+    {
+      "path": "native/native-standalone-recovered/recorder_initial.png",
+      "sha256": "739fb34fbfd34f92fca64e66fbab335ea673de1ed6f412c1fcd6c420ee10f426"
+    },
+    {
+      "path": "native/native-standalone-recovered/scenario.done",
+      "sha256": "27c985af2e99962d48581ee9f4687b7d7daa241c03a1852a27984477508b070c"
+    },
+    {
+      "path": "native/native-two-mounts/native.log",
+      "sha256": "cb1f210ee94b5ad14583518242a6522514df4d4ac9639ab9a289046fdfd567fe"
+    },
+    {
+      "path": "native/native-two-mounts/scenario.done",
+      "sha256": "5ec3ce91c4477534f4e04eea70b39fbd2165c2f4b55be9b7367e533584f96fcf"
+    },
+    {
+      "path": "native/native-two-mounts/two_mounts_controls.png",
+      "sha256": "a6692b6cffa689927e1df70754d04191b58440099f3822203e89630ffd115edb"
+    },
+    {
+      "path": "native/native-two-mounts/two_mounts_initial.png",
+      "sha256": "188ef8c314717cbbdef8b1d3c9e2d0b652fceb75fa23c25d0f6f8e6f45365d78"
+    },
+    {
+      "path": "rejected/native-standalone/launcher.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "rejected/native-standalone/native.log",
+      "sha256": "40fa166ed40c5b133cef4416679b5b78af567d5ad27de1d2b8dd3df6b791caff"
+    },
+    {
+      "path": "rejected/native-standalone/process.json",
+      "sha256": "27ef359f1d8b8f24c52a49f3198d92387eb400703917b11f2965431af55d3edc"
+    },
+    {
+      "path": "rejected/native-standalone/scenario.done",
+      "sha256": "f07e8a4367e37e864ed83bb850b71ba1aa2cb2ed33aa6e3fd379349028c8a8f1"
+    },
+    {
+      "path": "rejected/native-standalone-foreground/scenario.done",
+      "sha256": "1bf8a116e0170cd243e525d760aa434984d9180eec3c9655ad0eaf5e99c8dfae"
+    },
+    {
+      "path": "rejected/native-standalone-qualified/scenario.done",
+      "sha256": "c68f2f007dcba6dd704cd4b57f66ae9ec7b894cd8b7cd95ab6f8a226a69dff1a"
+    },
+    {
+      "path": "rejected/native-standalone-raised/native.log",
+      "sha256": "e5ddb9c4374d7cc8283bb76342f8ad805f49f5c232cea390a8aa2e62b01cc068"
+    },
+    {
+      "path": "rejected/native-standalone-raised/scenario.done",
+      "sha256": "1b8b1fd52bd88bbb8f00d8adb2b451af5f7c48f30d69258ddc040cb4823a88af"
+    },
+    {
+      "path": "relocation-and-family.json",
+      "sha256": "c6b8af873ec2915988e0eee9ee2c0e9101ca6073421459da7290b2ada60fbcfc"
+    },
+    {
+      "path": "source-freeze-3d51e4a.json",
+      "sha256": "2da0221ec5b2228e213a63165f96b5278b551115a389ff26c0b7a17a6c5a026e"
+    },
+    {
+      "path": "source-freeze.json",
+      "sha256": "75b01dfa1a65e3a188588ef53d5dcbd797366e4d9dca4ac1e689ac98bc0aae16"
+    },
+    {
+      "path": "standalone-binary-offline.json",
+      "sha256": "63edb0f8cad052ef4d01cd094f0ca13ae468b0ebc40d57c443c52c66d3836c6d"
+    }
+  ],
+  "final_verification": {
+    "source_revision": "65a0145a28161f84c552ea38c0998eaa601ff0aa",
+    "source_files_match_commit_and_sha256": 53,
+    "artifacts_sha256_checked": 28,
+    "relocated_rust_files_byte_identical": 14,
+    "coherent_supplier_sources": 9,
+    "changed_doc_local_links_checked": 91,
+    "root_product_rust_unchanged": true,
+    "whitespace": "git diff --check passed",
+    "owned_native_processes_remaining": 0,
+    "primary_checkout_clean_before_publication": true
+  }
+}

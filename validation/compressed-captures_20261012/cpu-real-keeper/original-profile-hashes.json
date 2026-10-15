@@ -1,0 +1,14 @@
+{
+  "settings.json": {
+    "bytes": 613,
+    "sha256": "f73f86cf8f6f026d62cf3dd0733a5848a87d9394eaf8c91a18f82d1926dcfe63"
+  },
+  "practice.json": {
+    "bytes": 5310,
+    "sha256": "2aae45571e1b96791dcbf289ea0e3c66a09e1b6adbc089c9bb60ba5e819817d9"
+  },
+  "practice.loop-pcm/b5370837504f7ea66b56e7ca158828e5/d0451d00335e995c3d1077108dc1c06d329de681a650d523a19d0afcf12b743e.bin": {
+    "bytes": 384064,
+    "sha256": "b4edec51fa263f8572810d9619411f8837a89a195a3d67159a9391655c0677ec"
+  }
+}

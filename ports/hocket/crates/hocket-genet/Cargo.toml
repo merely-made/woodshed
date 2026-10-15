@@ -1,11 +1,12 @@
 [package]
+rust-version = "1.97.1"
 name = "hocket-genet"
 version = "0.2.0"
 edition.workspace = true
 license.workspace = true
 authors.workspace = true
 repository.workspace = true
-description = "Hocket's genet desktop host: winit window + netrender present over the genet view layer. Genet-host refactor S0+."
+description = "Hocket's recorder and appearance views on the shared Cambium desktop host."
 
 # Packaging (2026-07-24 auto-update plan). `cargo packager` builds the
 # installers luggage then updates from: NSIS on Windows, .app on macOS,
@@ -48,25 +49,30 @@ signing-identity = "Developer ID Application: Mark Boykim (HWVZ5S7ACJ)"
 [dependencies]
 hocket-model = { workspace = true }
 hocket-engine = { workspace = true }
+hocket-project = { workspace = true }
+hocket-recorder = { workspace = true }
+hocket-views = { workspace = true }
 audio-primitives = { workspace = true }
 cambium = { workspace = true }
+tinct = { workspace = true }
+mesquite = { workspace = true }
+tabard = { workspace = true }
+tabard-workshop = { workspace = true }
 sprigging = { workspace = true }
 luggage = { workspace = true }
 velopack = { workspace = true }
 cambium-genet-winit-host = { workspace = true }
 genet-clipboard = { workspace = true }
-genet-probe = { workspace = true }
+taproot = { workspace = true }
 mere-surface-api = { workspace = true }
 workbench = { workspace = true }
-image = { workspace = true }
-netrender = { workspace = true }
 paint_list_api = { workspace = true }
-wgpu = { workspace = true }
 muniment = { workspace = true, features = ["zip"] }
 armillary = { workspace = true }
 personae = { workspace = true }
-# Opaque round-trip of the sealed identity record when re-sealing it under the
-# post-rename record name (see identity.rs).
+graphshell = { workspace = true }
+insigne = { workspace = true }
+# djinn's forwarding note naming the persona that holds Hocket's key.
 serde_json = { workspace = true }
 serde = { workspace = true }
 pollster = "0.4"
