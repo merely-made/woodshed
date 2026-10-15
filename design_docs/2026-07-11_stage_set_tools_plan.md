@@ -3368,3 +3368,49 @@ the Mere, the narrow layout, or a native fresh-process reopen of a version-2
 payload. It also exposed a density issue: on the wide canvas, new take nodes
 at their default slots overlap labels placed by the retained version-1
 arrangement. That is a presentation follow-up, not an identity defect.
+
+### October 15 slice: pictograph canvas commands on three graph surfaces
+
+The Graphshell stack lift's P2 moved canvas commands, gestures and face
+measurement into `pictograph::canvas`, made generic over a host camera
+(Mere `a26ed1caf`; Woodshed pins `ea530d41`).
+
+**Surfaces.** Mark ruled that Woodshed is P2's second host on three surfaces:
+- the Session Mere overview;
+- the Related graph;
+- the relationship recipe editor.
+
+**Adapter.** `woodshed-views::stage::canvas_camera` presents each surface's
+Cambium `GraphViewport` as a pictograph `CameraView`. One `SurfaceCamera`
+implements `CameraHost` and `FitHost`:
+- Fit and FitVisible frame the surface's positions.
+- FitSelection centres the overview focus.
+- Restore resets the overview arrangement, or another surface's camera.
+- Physics maps to overview scene motion only.
+
+**Controls.**
+- The overview's camera buttons, wheel zoom and motion toggle now send
+  `CanvasCommand`s.
+- Related and the relationship editor gain view-local cameras, kept in
+  memory only (no saved format change), and the same camera button row.
+- The relationship editor's drag-pan and wheel move its camera.
+
+**FaceAlignment.** `SwatchFaces` compares Cambium's view-layer hit targets
+(faces) with the nodes Sprigging's painted leaf draws (bodies), through
+pictograph's `FaceAlignment`. Scenario snapshots expose
+`{overview,related,relationship}-face-*` and per-surface zoom.
+
+**CPU evidence.**
+- Seven new tests: conversion round-trip, centre-keeping SetZoom with
+  clamping, pan glide distance, absent verbs, fit framing, overview-only
+  physics, and a cross-surface test.
+- The cross-surface test drives every command on all three surfaces. It
+  asserts no missing bodies, zero face offset and an unchanged Set.
+- 768 root tests pass, and Hocket and Redshank check.
+
+**Open.**
+- The native receipt (`scenarios/canvas_controls_p2.scn`) waits for the
+  machine to be unlocked.
+- Wheel policy (`wheel_use`, anchored `wheel_zoom`) waits for Mere's
+  `graph_canvas_with_wheel`.
+- Touch is deferred until the host delivers touch input (Mark's ruling).

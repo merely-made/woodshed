@@ -289,9 +289,9 @@ repin forward
   - 761 root tests pass (6 ignored), now including `woodshed-views`;
   - 101 Hocket and 262 Redshank tests pass.
 
-  Adopting P2's canvas controls on three Woodshed surfaces waits for Mere to
-  make those helpers generic over a host camera trait (Mark's ruling: Session
-  Mere overview, Related and the relationship editor).
+  Mere then made those helpers generic over a host camera (`a26ed1caf`), and
+  all four roots moved to `ea530d41`. The three-surface adoption is recorded
+  in the [stage plan](2026-07-11_stage_set_tools_plan.md).
 - **Historical families.** The `8568f42`/`2c7ef73` family cited in the Tabard
   and Hocket host-refactor plans is the family those slices qualified, not a
   current pin.
