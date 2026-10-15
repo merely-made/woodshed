@@ -101,8 +101,10 @@ conformance and automation for behavior intentionally stabilized for
 evaluation. Keep existing native/device evidence tied to its source and do
 not claim acceptance that has not been observed.
 
-sem and weave are wired into this repo. Both are described once in
-`Code/CLAUDE.md`, which loads for any session at or below `Code`.
+sem is wired into this repo. The `weave` merge driver was removed on
+2026-10-15 after it garbled merges: merges are plain git merges, with
+`merge.conflictStyle=zdiff3` and `rerere` enabled in user git. Read merged
+files before committing.
 
 ## Important Don'ts
 
