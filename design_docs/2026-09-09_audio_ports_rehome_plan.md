@@ -282,6 +282,16 @@ repin forward
   `redshank-web` checks for `wasm32-unknown-unknown`, 262 tests pass
   (7 ignored), and the lock has no duplicate git sources. Its pre-existing
   unused p2panda/muniment patch rows are untouched.
+- **Follow-up bump (later 2026-10-15).** All four roots moved to Mere
+  `8357b00d`, which includes the Graphshell lift's P2/P3 (`e92572a4e`); the
+  rest of the family is unchanged. CPU only:
+  - all four roots check;
+  - 761 root tests pass (6 ignored), now including `woodshed-views`;
+  - 101 Hocket and 262 Redshank tests pass.
+
+  Adopting P2's canvas controls on three Woodshed surfaces waits for Mere to
+  make those helpers generic over a host camera trait (Mark's ruling: Session
+  Mere overview, Related and the relationship editor).
 - **Historical families.** The `8568f42`/`2c7ef73` family cited in the Tabard
   and Hocket host-refactor plans is the family those slices qualified, not a
   current pin.
