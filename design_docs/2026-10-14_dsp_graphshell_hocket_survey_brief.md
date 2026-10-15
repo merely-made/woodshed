@@ -1,8 +1,9 @@
 # Shared DSP, Graphshell and Hocket Integration Survey
 
-**Status (2026-10-14): research brief.** Read-only survey; no code changed.
-Decisions listed below remain with the maintainer. Three bounded follow-ups
-started the same day (see [Follow-ups](#follow-ups)).
+**Status (2026-10-14): research brief with rulings.** The survey itself was
+read-only. Mark ruled on all six decisions the same day (see
+[Rulings](#rulings-mark-2026-10-14)), and three bounded follow-ups started
+(see [Follow-ups](#follow-ups)).
 
 ## Origin
 
@@ -221,7 +222,45 @@ cross-repo path consumers.
    and its open host-acceptance defects (project-worker reply correlation,
    native handoff qualification), come first.
 
-## Decisions for the maintainer
+## Rulings (Mark, 2026-10-14)
+
+1. **Bar length: Hocket's rule is canonical.** Use quarter-note BPM, honour
+   `beat_unit` and round per beat (`audio_primitives::frames_per_bar`).
+   Woodshed's `Bar::duration_samples` and processor truncation move to it in a
+   later slice. That slice must re-qualify the WAV gold and sealed capture
+   clocks for any meter where the two rules differ. Ringdown's loop-file
+   convention is reconciled separately.
+2. **Graphshell: Woodshed-native first.** Woodshed keeps building its own
+   graph surfaces over its own data, starting with take nodes. Publishing to
+   Graphshell (b) and embedding Graphshell views (c) wait for stable ids and
+   revisions.
+3. **Mere extraction: coordinate with the Knot font-role adoption lane.** That
+   lane's "Plan lifting Graphshell port code into the stack" session received
+   Woodshed's second-consumer requirements on 2026-10-14:
+   - client holders only;
+   - wasm-clean model crates;
+   - pictograph `signals`;
+   - the vendored `woodshed-stage.json` fixture.
+4. **Pin: repin forward to Mere main.** This is a coordinated
+   Mere/Genet/Netrender/Murm move across root, `ports/hocket` and
+   `ports/redshank`. It is sequenced after the `graphshell` narrowing lands,
+   because both touch the same manifests.
+5. **Hocket carrier: per-turn signed operations.** Each `HistoryNode` becomes
+   one signed operation on a Stickleback domain, with blobs carried
+   separately. A turn mark and per-node authorship enter `hocket-model`.
+   Hocket's local-durability-first rule and its open host-acceptance defects
+   still come first. Hocket's
+   [PROJECT_DESCRIPTION](../ports/hocket/design_docs/PROJECT_DESCRIPTION.md)
+   was updated with Mark's authorization to name a coop over Stickleback with
+   Gemot write delegation instead of Moothold/Murm. Mere's data-formats brief
+   still carries the old Moothold wording.
+6. **Woodshed custody: move to a reservoir mere.** Practice data becomes a
+   djinn-held reservoir domain with a Woodshed validator. That needs
+   Mere/djinn work and a migration from persona-sealed muniment slots. Mere
+   gets a Git dependency on a pure Woodshed domain crate, as djinn already
+   has for Cleromancy.
+
+## Decisions for the maintainer (as posed)
 
 1. **Canonical bar length.** Quarter-note BPM honouring `beat_unit` (Hocket),
    ignoring the denominator (Woodshed), Ringdown's convention, or a recorded

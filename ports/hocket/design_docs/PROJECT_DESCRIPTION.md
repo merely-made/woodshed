@@ -40,8 +40,8 @@ a mic around in a circle and building loops turn by turn!
   are nodes in an append-only history graph. Branches and suggestions
   reconcile via CRDT-shaped merges of *session structure*, not of
   audio buffers (which are content-addressed and travel as blobs).
-- **Peer-to-peer by default.** Session state and media sync via
-  Moothold/Murm — no centralized server, no account required.
+- **Peer-to-peer by default.** Session state and media sync as a Mere
+  coop over Stickleback — no centralized server, no account required.
 - **Native and web from day one** *(web is a gated proof, not a free
   capability — see Tech Stack)*. Xilem + xilem_web for UI;
   [Firewheel](https://github.com/BillyDM/Firewheel) for the audio
@@ -146,10 +146,11 @@ who want exactly that workflow (like myself).
   (BillyDM-maintained crates that pair with Firewheel)
 - **Realtime-safe primitives**: rtrb + basedrop
 - **Persistence**: content-addressed sessions; postcard today, ciborium
-  (CBOR) at FT8 to align with Moothold
-- **P2P sync**: Moothold + Murm (sibling projects in the Merely
-  family); content-addressed audio blobs travel separately from
-  session structure
+  (CBOR) at FT8 to align with the Mere family's signed peer domains
+- **P2P sync**: a coop over Stickleback (Merely family): one signed
+  operation per turn, with Gemot delegation deciding who may write;
+  content-addressed audio blobs travel separately from session
+  structure
 
 ## Relationship to Woodshed and Mere
 
