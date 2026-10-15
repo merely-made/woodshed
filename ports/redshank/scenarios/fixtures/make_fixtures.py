@@ -42,6 +42,19 @@ VOICE_ID = f"voice:{VOICE_BLOB}"
 
 GENERATION = "state-{:020d}.json".format(1)
 
+# A real publisher episode that advertises a text/vtt transcript: Podnews
+# Daily, 2026-09-25 (301 s, 4 838 864 bytes, 90 cues). The enclosure goes
+# through the publisher's op3.dev prefix exactly as the feed serves it.
+PODNEWS_FEED = "https://podnews.net/rss"
+PODNEWS_MP3 = ("https://op3.dev/e,pg=9b024349-ccf0-5f69-a609-6b82873eab3c/"
+               "podnews.net/audio/podnews260925.mp3")
+PODNEWS_VTT = "https://podnews.net/audio/podnews260925.mp3.vtt"
+
+# The same episode served from this machine, so a receipt can stop the origin:
+# the mp3 through the byte-range server on 8765, the transcript through a
+# plain directory server on 8766 (the driver starts neither for the verify run).
+TRANSCRIPT_BASE = "http://127.0.0.1:8766"
+
 
 def receipt(**fields: object) -> dict:
     base = {
@@ -105,7 +118,9 @@ def local_item(item_id: str, title: str, path: str = STEREO_M4A) -> dict:
 
 
 def episode(item_id: str, feed_url: str, guid: str, title: str, url: str,
-            published: str | None = None) -> dict:
+            published: str | None = None, *, transcripts: list[dict] | None = None,
+            media_type: str = "audio/mp4", byte_length: int = 33236,
+            duration: str = "0:32") -> dict:
     return {
         "kind": "feed_episode",
         "id": item_id,
@@ -116,14 +131,20 @@ def episode(item_id: str, feed_url: str, guid: str, title: str, url: str,
         "facts": {
             "published": published,
             "summary": None,
-            "duration": "0:32",
+            "duration": duration,
             "artwork": None,
-            "enclosure_media_type": "audio/mp4",
-            "enclosure_byte_length": 33236,
+            "enclosure_media_type": media_type,
+            "enclosure_byte_length": byte_length,
             "chapters": [],
-            "transcripts": [],
+            "transcripts": transcripts or [],
         },
     }
+
+
+def transcript(url: str, media_type: str = "text/vtt",
+               language: str | None = None, relation: str | None = "captions") -> dict:
+    return {"url": url, "media_type": media_type, "language": language,
+            "relation": relation}
 
 
 def progress(position_ms: int, completed: bool = False,
@@ -316,6 +337,59 @@ def main() -> None:
                 "diagnostics": [],
             }],
             annotations=[text_note("long-note", "long-local", 2_000, LONG[:120])],
+        ),
+    )
+
+    # (h) podnews-transcript: one real episode with an advertised text/vtt
+    # transcript, selected, nothing saved yet. Needs the network.
+    write_fixture(
+        "podnews-transcript",
+        model(
+            [episode("podnews-260925", PODNEWS_FEED,
+                     "https://podnews.net/update/youtube-new-features",
+                     "YouTube reveals new features", PODNEWS_MP3,
+                     "Fri, 25 Sep 2026 12:07:35 +0000",
+                     transcripts=[transcript(PODNEWS_VTT)],
+                     media_type="audio/mpeg", byte_length=4_838_864,
+                     duration="301")],
+            selected="podnews-260925",
+            subscriptions=[{
+                "feed_url": PODNEWS_FEED,
+                "title": "Podnews Daily",
+                "subtitle": "The latest from podnews.net",
+                "link": "https://podnews.net",
+                "language": "en",
+                "artwork": None,
+                "last_refreshed_ms": 1_758_800_000_000,
+                "diagnostics": [],
+            }],
+        ),
+    )
+
+    # (i) local-transcript: the same episode off local servers, so the
+    # origin-stopped restart receipt can actually stop the origin.
+    local_feed = f"{RANGE_BASE}/podnews.xml"
+    write_fixture(
+        "local-transcript",
+        model(
+            [episode("local-260925", local_feed, "local-260925",
+                     "YouTube reveals new features (local origin)",
+                     f"{RANGE_BASE}/podnews260925.mp3",
+                     "Fri, 25 Sep 2026 12:07:35 +0000",
+                     transcripts=[transcript(f"{TRANSCRIPT_BASE}/podnews260925.mp3.vtt")],
+                     media_type="audio/mpeg", byte_length=4_838_864,
+                     duration="301")],
+            selected="local-260925",
+            subscriptions=[{
+                "feed_url": local_feed,
+                "title": "Podnews Daily (local origin)",
+                "subtitle": "One episode served from this machine",
+                "link": None,
+                "language": "en",
+                "artwork": None,
+                "last_refreshed_ms": 1_758_800_000_000,
+                "diagnostics": [],
+            }],
         ),
     )
 

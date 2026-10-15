@@ -57,7 +57,9 @@ transcript reads retain their separate 4 MiB bound.
 `recording`, `queue-size`, `note-count`, `marker-count`, `layout`, `scene`,
 `seed`, `mode`, `item-count`, `feed-count`, `session-count`, `rate-percent`,
 `volume-percent`, `voice-available`, `notes-filter`, `selected-feed`,
-`item-id`, `item-title`, `text-capture`, `notice`, `unavailable`, `focused`.
+`item-id`, `item-title`, `text-capture`, `notice`, `unavailable`, `focused`,
+`transcript-item`, `transcript-cues`, `transcript-active` (cues containing
+the playhead; a count because cues may overlap).
 
 ## Events an `assert event` can match
 

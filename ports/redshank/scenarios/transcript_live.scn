@@ -1,0 +1,53 @@
+# Fixture: podnews-transcript. A real publisher episode (Podnews Daily,
+# 2026-09-25) whose feed advertises a text/vtt transcript. Needs the network:
+# the save fetches the transcript from podnews.net and playback streams the
+# enclosure through the publisher's op3.dev prefix. Widths come from the driver.
+settle 30
+assert snap item-count >= 1
+assert snap item-id == podnews-260925
+act pane:notes
+settle 10
+# Nothing is saved yet: the pane offers the advertised transcript and no cues.
+assert snap transcript-cues == 0
+capture transcript-offer
+
+# The listener saves it explicitly, through the shipping button, not a lane
+# verb. The lane cannot see the fetch thread, so this is a frame budget, not a
+# wait; the file is 7 KiB and the bound generous.
+# Logical-space click at the button's centre (960x640 artboard): the probe's
+# own selector layout resolved role:button to a point the host did not route
+# to this button (2026-09-26), so this receipt is pinned to one artboard.
+pointer-click 520 221
+settle 240
+assert snap transcript-item == podnews-260925
+assert snap transcript-cues >= 80
+capture transcript-saved
+
+# The episode must actually play from the publisher, from the start. Frame
+# budgets while playing are small on purpose: with 90 cue rows mounted a
+# playing frame took ~1.25 s in the debug build (2026-09-26 pacing run), so
+# eight frames is ten seconds of wall clock, not a blink.
+act seek:0
+act play
+settle 8
+assert event transport PLAYING
+act pause
+settle 20
+
+# An external seek lands inside a cue interval (0:12.020 -> 0:16.800) and the
+# list must mark it without a click on the list.
+act seek:12500
+settle 30
+assert snap transcript-active >= 1
+capture transcript-active
+
+# A cue click issues the shipping seek: the 0:06.600 row (logical y 353 sits
+# inside it whether or not the notice bar is showing) moves the playhead there
+# and becomes the active row.
+pointer-click 600 353
+settle 20
+assert snap position-ms >= 6000
+assert snap position-ms <= 9800
+assert snap transcript-active >= 1
+capture transcript-cue-seek
+log transcript_live complete
