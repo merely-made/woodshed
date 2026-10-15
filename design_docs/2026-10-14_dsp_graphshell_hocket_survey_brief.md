@@ -254,7 +254,10 @@ cross-repo path consumers.
 4. **Pin: repin forward to Mere main.** This is a coordinated
    Mere/Genet/Netrender/Murm move across root, `ports/hocket` and
    `ports/redshank`. It is sequenced after the `graphshell` narrowing lands,
-   because both touch the same manifests.
+   because both touch the same manifests. *Landed 2026-10-15 for the root,
+   `ports/hocket` and the recipe instrument, at Mere `90ce8f12d` with
+   `graphshell_endpoint::door`. Redshank remains open.* See the
+   [rehome plan](2026-09-09_audio_ports_rehome_plan.md).
 5. **Hocket carrier: per-turn signed operations.** Each `HistoryNode` becomes
    one signed operation on a Stickleback domain, with blobs carried
    separately. A turn mark and per-node authorship enter `hocket-model`.

@@ -13,7 +13,7 @@ hocket-views.workspace = true
 hocket-recorder.workspace = true
 # The desktop realization of muniment's Backend. woodshed-core names the slots;
 # this crate only decides which file each one lives in.
-muniment = { git = "https://www.github.com/merely-made/mere.git", rev = "0b9b7a9b218579f1f36cc1ab05a51b2a13128f1d" }
+muniment = { git = "https://www.github.com/merely-made/mere.git", rev = "90ce8f12d80d002303eada6b4ab9da9d7a530d83" }
 # The family-shared identity vault: which persona this machine practices as,
 # and the key its practice session is sealed under. Desktop-only, which is why
 # it is declared here rather than in the portable core. Declared in the
@@ -55,7 +55,7 @@ tempfile = "3"
 # woodshed-views; this crate only reads what the user answered.
 persona-picker = { workspace = true }
 dramatis = { workspace = true }
-graphshell = { workspace = true }
+graphshell-endpoint = { workspace = true }
 
 [target.'cfg(target_os = "macos")'.dependencies]
 # In-process AppKit Save panel; the shared script-backed chooser lives in a

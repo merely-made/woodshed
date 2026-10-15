@@ -20,7 +20,7 @@
 
 use std::path::{Path, PathBuf};
 
-use graphshell::native::custody_identity::CustodyIdentity;
+use graphshell_endpoint::door::custody_identity::CustodyIdentity;
 use insigne::DerivedKeyAttestation;
 use personae::{Ed25519Keypair, Ed25519PublicKey, IdentityError, IdentityProvider, ProfileId};
 
@@ -396,9 +396,9 @@ mod dr_c_receipts {
         let mode = std::env::var("DR_C_RECEIPT_MODE").expect("receipt mode");
         assert!(mode == "absent" || mode == "locked");
         if mode == "locked" {
-            let mut client = graphshell::native::custody_client::BlockingCustodyClient::open(
-                graphshell::native::app_admission::AppId::new(CUSTODY_APP)).unwrap();
-            assert_eq!(client.status().unwrap().lock, graphshell::identity::VaultLockView::Locked);
+            let mut client = graphshell_endpoint::door::custody_client::BlockingCustodyClient::open(
+                graphshell_endpoint::door::app_admission::AppId::new(CUSTODY_APP)).unwrap();
+            assert_eq!(client.status().unwrap().lock, graphshell_endpoint::door::identity::VaultLockView::Locked);
             assert!(!client.roster().unwrap().entries.is_empty(), "public persona roster remains readable");
         }
         let temp = tempfile::tempdir().unwrap();

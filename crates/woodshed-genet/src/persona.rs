@@ -15,8 +15,8 @@
 //! absent or Locked is not a question either: the store opens pending (D12).
 
 use dramatis::roster::Roster;
-use graphshell::native::app_admission::AppId;
-use graphshell::native::custody_client::BlockingCustodyClient;
+use graphshell_endpoint::door::app_admission::AppId;
+use graphshell_endpoint::door::custody_client::BlockingCustodyClient;
 use persona_picker::PickerEvent;
 use woodshed_views::persona::{PersonaPick, PickPurpose};
 
