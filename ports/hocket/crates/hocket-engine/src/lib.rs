@@ -167,6 +167,12 @@ pub struct Engine {
     /// each tick checks if the click playhead has crossed the
     /// scheduled boundary and fires the underlying `play_layer`.
     pending_layers: Vec<PendingLayer>,
+    /// Set by `set_tempo` while the restarted click playhead has not yet been
+    /// observed; see [`TempoResync`].
+    tempo_resync: Option<TempoResync>,
+    /// True for the current `tick` while wrap detection is suspended by
+    /// `tempo_resync`.
+    suppress_wraps: bool,
     reader_state: StreamReaderState,
     #[cfg(test)]
     reader_id: NodeID,
@@ -195,9 +201,13 @@ enum PendingCapture {
     /// `last_in_bar_phase` is the most recent in-bar position we
     /// observed, used to detect wrap-around (when the new position
     /// is smaller than the last, we crossed a boundary).
+    ///
+    /// `bars` is the phrase length in bars, not samples: the target is sized
+    /// when recording starts, so a tempo change while waiting re-arms the
+    /// capture on the new grid instead of keeping a stale-length phrase.
     Waiting {
         bars_until_start: u8,
-        target_samples: usize,
+        bars: u8,
         last_in_bar_phase: usize,
     },
     /// Currently accumulating real input samples.
@@ -209,6 +219,25 @@ enum PendingCapture {
     /// Capture completed; buffer ready for `take_bar_aligned_capture`.
     Complete(Vec<f32>),
 }
+
+/// Internal: bookkeeping for the window after `set_tempo` restarts the click
+/// playhead.
+///
+/// The restart is queued as Firewheel events, so the UI-visible playhead keeps
+/// its old-grid value until the audio thread applies them, then drops to ~0.
+/// That drop is indistinguishable from a bar wrap. While this is set, `tick`
+/// suspends wrap detection (pending items still refresh their phase baseline),
+/// ending when the playhead is seen to move backwards (the restart) or after
+/// [`TEMPO_RESYNC_MAX_TICKS`] ticks without one (restart landed within a tick of
+/// the old phase, so no drop is visible).
+#[derive(Clone, Copy)]
+struct TempoResync {
+    last_seen: Option<usize>,
+    ticks: u8,
+}
+
+/// Upper bound on ticks wrap detection stays suspended after `set_tempo`.
+const TEMPO_RESYNC_MAX_TICKS: u8 = 3;
 
 /// Internal: a layer playback queued to start at a bar boundary.
 /// Same wrap-detection technique as `PendingCapture::Waiting`.
@@ -316,6 +345,8 @@ impl Engine {
             pending_capture: PendingCapture::Idle,
             input_scratch: Vec::with_capacity(8192),
             pending_layers: Vec::new(),
+            tempo_resync: None,
+            suppress_wraps: false,
             reader_state,
             #[cfg(test)]
             reader_id,
@@ -362,6 +393,7 @@ impl Engine {
             self.reader_state.discard_frames();
             return Err(EngineError::InputOverflow(rejected));
         }
+        self.step_tempo_resync();
         self.drain_and_advance_capture();
         self.advance_pending_layers()?;
         self.cx
@@ -483,7 +515,9 @@ impl Engine {
     /// `None` if the click state is unreachable.
     pub fn samples_to_next_bar(&self) -> Option<usize> {
         let in_bar = self.click_in_bar_phase()?;
-        Some(self.samples_per_bar() - in_bar)
+        // Saturate: right after `set_tempo` the playhead can still hold the
+        // old, longer bar's phase until the audio thread applies the restart.
+        Some(self.samples_per_bar().saturating_sub(in_bar))
     }
 
     /// Audio backend sample rate, in Hz.
@@ -527,7 +561,6 @@ impl Engine {
         let last_in_bar_phase = self
             .click_in_bar_phase()
             .ok_or_else(|| EngineError::Graph("click bar-phase unavailable".into()))?;
-        let target_samples = bars as usize * self.samples_per_bar();
         // Semantic: `count_in_bars` is full bars of click between "we
         // hit the next bar boundary" and "recording begins." The
         // initial wait to the *next* boundary doesn't count as
@@ -543,7 +576,7 @@ impl Engine {
         // every case.)
         self.pending_capture = PendingCapture::Waiting {
             bars_until_start: 1 + count_in_bars,
-            target_samples,
+            bars,
             last_in_bar_phase,
         };
         Ok(())
@@ -696,8 +729,29 @@ impl Engine {
     /// Requiring a half-bar gap eliminates jitter false positives
     /// while still catching every real wrap (a real wrap goes from
     /// near `bar_samples` to near 0 — a gap of nearly a full bar).
-    fn crossed_bar_boundary(last: usize, cur: usize, bar_samples: usize) -> bool {
-        cur < last && (last - cur) > bar_samples / 2
+    fn crossed_bar_boundary(&self, last: usize, cur: usize, bar_samples: usize) -> bool {
+        !self.suppress_wraps && cur < last && (last - cur) > bar_samples / 2
+    }
+
+    /// Per-tick step of the post-`set_tempo` resync window: decide whether
+    /// this tick's wrap detection is suspended (see [`TempoResync`]).
+    fn step_tempo_resync(&mut self) {
+        self.suppress_wraps = false;
+        let Some(mut resync) = self.tempo_resync else {
+            return;
+        };
+        let Some(cur) = self.click_in_bar_phase() else {
+            return;
+        };
+        self.suppress_wraps = true;
+        resync.ticks += 1;
+        let restarted = resync.last_seen.is_some_and(|last| cur < last);
+        self.tempo_resync = if restarted || resync.ticks >= TEMPO_RESYNC_MAX_TICKS {
+            None
+        } else {
+            resync.last_seen = Some(cur);
+            Some(resync)
+        };
     }
 
     fn advance_pending_capture(&mut self, new_samples: &[f32]) {
@@ -715,23 +769,23 @@ impl Engine {
             },
             PendingCapture::Waiting {
                 bars_until_start,
-                target_samples,
+                bars,
                 last_in_bar_phase,
             } => {
-                let crossed =
-                    Self::crossed_bar_boundary(last_in_bar_phase, cur_in_bar, bar_samples);
+                let crossed = self.crossed_bar_boundary(last_in_bar_phase, cur_in_bar, bar_samples);
                 let bars_remaining = if crossed {
                     bars_until_start.saturating_sub(1)
                 } else {
                     bars_until_start
                 };
                 if bars_remaining == 0 {
-                    // Boundary just crossed and no more count-in.
-                    // Recording starts now. We accept up to one
-                    // drain-interval (~15 ms = ~720 samples at 48 kHz)
-                    // of phase imprecision because we don't trim the
-                    // overshoot in new_samples.
-                    let mut c = capture::Capture::new(target_samples);
+                    // Drained-input start: the boundary was observed on a tick
+                    // that also drained input. The *whole* batch is fed, so the
+                    // phrase begins at the first frame of that batch, up to one
+                    // tick (~15 ms) *before* the boundary was observed, and the
+                    // overshoot is not trimmed. Pinned by
+                    // `drained_input_start_feeds_the_whole_overshooting_batch`.
+                    let mut c = capture::Capture::new(bars as usize * bar_samples);
                     c.arm();
                     c.feed_slice(new_samples);
                     if matches!(c.state(), capture::CaptureState::Complete) {
@@ -742,7 +796,7 @@ impl Engine {
                 } else {
                     PendingCapture::Waiting {
                         bars_until_start: bars_remaining,
-                        target_samples,
+                        bars,
                         last_in_bar_phase: cur_in_bar,
                     }
                 }
@@ -761,6 +815,11 @@ impl Engine {
     /// Advance only the "waiting" state of pending capture (called
     /// when drain_input returned zero — the wait counter still
     /// advances based on click playhead even if no new input arrived).
+    ///
+    /// Wait-only start: no input was drained on the tick that observed the
+    /// boundary, so recording begins with an *empty* `Capture` and the phrase's
+    /// first frame is the first frame drained on a later tick. Pinned by
+    /// `wait_only_start_begins_with_an_empty_capture`.
     fn advance_pending_capture_wait_only(&mut self) {
         let bar_samples = self.samples_per_bar();
         let cur_in_bar = match self.click_in_bar_phase() {
@@ -769,20 +828,20 @@ impl Engine {
         };
         if let PendingCapture::Waiting {
             bars_until_start,
-            target_samples,
+            bars,
             last_in_bar_phase,
         } = self.pending_capture
         {
-            if Self::crossed_bar_boundary(last_in_bar_phase, cur_in_bar, bar_samples) {
+            if self.crossed_bar_boundary(last_in_bar_phase, cur_in_bar, bar_samples) {
                 let bars_remaining = bars_until_start.saturating_sub(1);
                 if bars_remaining == 0 {
-                    let mut c = capture::Capture::new(target_samples);
+                    let mut c = capture::Capture::new(bars as usize * bar_samples);
                     c.arm();
                     self.pending_capture = PendingCapture::Recording(c);
                 } else {
                     self.pending_capture = PendingCapture::Waiting {
                         bars_until_start: bars_remaining,
-                        target_samples,
+                        bars,
                         last_in_bar_phase: cur_in_bar,
                     };
                 }
@@ -791,7 +850,7 @@ impl Engine {
                 // baseline for boundary detection.
                 self.pending_capture = PendingCapture::Waiting {
                     bars_until_start,
-                    target_samples,
+                    bars,
                     last_in_bar_phase: cur_in_bar,
                 };
             }
@@ -807,7 +866,7 @@ impl Engine {
         let mut ready: Vec<PendingLayer> = Vec::new();
         let mut still_pending: Vec<PendingLayer> = Vec::new();
         for mut layer in std::mem::take(&mut self.pending_layers) {
-            if Self::crossed_bar_boundary(layer.last_in_bar_phase, cur_in_bar, bar_samples) {
+            if self.crossed_bar_boundary(layer.last_in_bar_phase, cur_in_bar, bar_samples) {
                 layer.bars_until_start = layer.bars_until_start.saturating_sub(1);
             }
             layer.last_in_bar_phase = cur_in_bar;
@@ -932,6 +991,13 @@ impl Engine {
     /// and time signature, read by [`Self::samples_per_bar`]) updates to
     /// match, so capture/replay stay aligned to the new grid.
     ///
+    /// **Pending work.** A capture still `Waiting` (and any queued next-bar
+    /// layer) is re-armed on the new grid: it keeps its remaining bar count
+    /// (a full new bar from the restart counts as the first boundary), a
+    /// waiting capture's phrase length is re-sized to `bars` of the *new* bar,
+    /// and the playhead restart is never counted as a bar wrap. A capture that
+    /// is already `Recording` keeps the length it was sized with.
+    ///
     /// Already-playing layers are fixed-length buffers captured at the
     /// old tempo — they are *not* time-stretched; tempo is meant to be
     /// set before recording (or accepted as a deliberate re-pitch). The
@@ -958,6 +1024,13 @@ impl Engine {
         self.bpm = bpm;
         self.beats_per_bar = beats_per_bar;
         self.beat_unit = beat_unit;
+        // Restarting the playhead is not a bar wrap. Pending bar-aligned work
+        // keeps its bar count and waits for the new grid's boundary; wrap
+        // detection is suspended until the restart is observed.
+        self.tempo_resync = Some(TempoResync {
+            last_seen: self.click_in_bar_phase(),
+            ticks: 0,
+        });
         Ok(())
     }
 
@@ -1140,5 +1213,7 @@ mod tests {
     }
 }
 
+#[cfg(test)]
+mod alloc_tests;
 #[cfg(test)]
 mod offline_tests;

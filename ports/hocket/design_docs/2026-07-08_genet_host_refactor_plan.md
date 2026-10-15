@@ -551,3 +551,38 @@ accepted-playback observations truthful without changing the frame schedule.
   record the current supplier/build identities and 591-case/seven-capture scope.
   Standalone Hocket's active mute/solo colors remain visible. Shared DSP,
   physical audio and general project-worker reply correlation remain open.
+
+- **2026-10-14:** Capture-schedule evidence for `hocket-engine`, added before any
+  shared pure-state extraction (wrap detector, take accumulator) into root
+  `crates/`. The poll-based schedule is unchanged: wraps are still detected from
+  the ~60 fps tick's playhead reads, and the start overshoot is still not
+  trimmed. Three additions:
+  - **`set_tempo` with pending work.** The click restart is queued as events, so
+    the playhead kept its old-grid phase until the audio thread applied it and
+    then dropped to ~0, which a `Waiting` capture or queued layer read as a bar
+    wrap (capture started within a tick, at the old phrase length; also
+    `samples_to_next_bar` underflowed, a debug panic). Decision: *re-arm, not
+    cancel.* `Waiting` now stores `bars` and sizes the phrase when recording
+    starts, and `set_tempo` suspends wrap detection until the restart is observed
+    (playhead moves backwards) or three ticks pass; pending items keep their
+    remaining bar count and wait for the new grid's boundary (a restarted bar
+    counts as the first). A `Recording` capture keeps its length. Cancelling was
+    rejected because queued layers have no retirement path to the host. Known
+    limit: a restart applied more than three ticks late still reads as one wrap.
+  - **Both start paths pinned to exact frames** (4800-frame bar, 1000-frame
+    ticks, click origin 256): drained-input start feeds the whole observing
+    batch, beginning 544 frames *before* the boundary; wait-only start (reader
+    empty on the observing tick) begins with an empty `Capture`, so the phrase
+    starts at the next drained batch. The count-in test's `9000..=10000` range is
+    now the exact 9472. Both paths are documented on the functions.
+  - **Allocation guard** (`alloc_tests.rs`, counting `#[global_allocator]` in the
+    lib test binary, per-thread and scoped to the call): the control-path feed
+    (`step_tempo_resync`, `drain_and_advance_capture`, `advance_pending_layers`
+    with no queued layers) allocates nothing on steady `Waiting`, wait-only and
+    `Recording` ticks; `Waiting`→`Recording` allocates exactly the phrase buffer;
+    free capture allocates only on `Vec` growth. Not covered: `Engine::tick`'s
+    `FirewheelContext::update`, and `advance_pending_layers` with a queued layer,
+    which still rebuilds two `Vec`s per tick. Hocket's feed is not audio-thread
+    code, unlike Woodshed's guarded output processor.
+  Verified: `cargo test -p hocket-engine` (34 + 3 pass), clippy clean; the new
+  tempo test fails with the resync disabled. No device or native run.
