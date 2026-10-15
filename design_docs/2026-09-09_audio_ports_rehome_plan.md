@@ -276,8 +276,12 @@ repin forward
   - The recipe binary checks. Its test target still fails on a missing
     `tempfile` dev-dependency used by the included `storage.rs` tests; that
     gap predates this repin (since `8ec1578`).
-- **Not covered.** `ports/redshank` keeps its own pin and is not part of
-  this repin.
+- **Redshank (same day).** `ports/redshank` and its `web` member moved to the
+  same family with the same bridge. Redshank uses neither `graphshell` nor
+  `mere-view`, so no code changed. Its workspace checks with `--all-targets`,
+  `redshank-web` checks for `wasm32-unknown-unknown`, 262 tests pass
+  (7 ignored), and the lock has no duplicate git sources. Its pre-existing
+  unused p2panda/muniment patch rows are untouched.
 - **Historical families.** The `8568f42`/`2c7ef73` family cited in the Tabard
   and Hocket host-refactor plans is the family those slices qualified, not a
   current pin.

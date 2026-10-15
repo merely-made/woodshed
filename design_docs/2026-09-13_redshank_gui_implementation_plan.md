@@ -617,3 +617,17 @@ run against the same contract.
   establish source-family compatibility without qualifying browser subtree
   joining or actions. Native presentation/audio, browser bindgen/runtime,
   human accessibility and whole-Woodshed acceptance remain separate gates.
+- **2026-10-15, Mere application-door family adoption.**
+  - **What moved.** The nested workspace and the `redshank-web` host moved
+    together to Mere `90ce8f12d80d002303eada6b4ab9da9d7a530d83`, Genet
+    `ae3d9f5d`, Murm `3d9e799f` and the vello fork `276b4664`. Mere's
+    restated `netrender.git` bridge patch keeps the renderer on Netrender
+    `f4f9c0d8`. This matches the Woodshed root and Hocket repin
+    ([rehome plan](2026-09-09_audio_ports_rehome_plan.md)).
+  - **No code changed.** Redshank uses neither `graphshell` nor `mere-view`.
+  - **CPU checks pass.** The workspace checks with `--all-targets`, and
+    `redshank-web` checks for `wasm32-unknown-unknown`. 262 workspace tests
+    pass with seven playback ignores, and the lock has no package from two
+    git sources.
+  - **Open gates.** Native presentation/audio, browser runtime and human
+    accessibility gates are unchanged.
