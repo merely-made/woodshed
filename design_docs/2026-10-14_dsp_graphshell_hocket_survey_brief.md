@@ -123,6 +123,16 @@ cross-repo path consumers.
   (root `Cargo.toml:~164`), which compiles the retained-content cone.
   Cleromancy instead narrows it with
   `default-features = false, features = ["native"]`.
+  **Narrowed 2026-10-14:** all three now declare
+  `default-features = false, features = ["native"]` at the unchanged
+  `0b9b7a9` pin (root `Cargo.toml`, `ports/hocket/Cargo.toml`,
+  `validation/relationship-recipe/Cargo.toml`). At that rev the custody
+  modules (`native::{app_admission, custody, custody_client,
+  custody_identity}`, `identity`) are gated on `native` alone, so
+  `web`/`retained-content` (platen, pelt-core, netrender, inker, tabard,
+  mere, chartulary, ...) no longer compile. The `graphshell-endpoint` and
+  `graphshell-client` rows are `[patch]` source-unification entries, not
+  dependencies, and stay.
 - **Woodshed already hosts native graph surfaces** on Mere's shared crates
   (sceno/scenograph/scenomise/scenotime, pictograph, workbench, Cambium
   `graph_canvas`):

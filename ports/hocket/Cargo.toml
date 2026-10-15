@@ -43,7 +43,7 @@ armillary = { git = "https://www.github.com/merely-made/mere.git", rev = "0b9b7a
 personae = { git = "https://github.com/merely-made/dramatis.git", rev = "0234e7eea6f2ddf2330a71b9425da01b06ae0391", version = "0.3.0" }
 # djinn's custody route: Hocket speaks as the persona djinn holds and opens no
 # vault, record or DPAPI root of its own (dramatis D5, D13).
-graphshell = { git = "https://www.github.com/merely-made/mere.git", rev = "0b9b7a9b218579f1f36cc1ab05a51b2a13128f1d" }
+graphshell = { git = "https://www.github.com/merely-made/mere.git", rev = "0b9b7a9b218579f1f36cc1ab05a51b2a13128f1d", default-features = false, features = ["native"] }
 # The derived-key attestation a hand-off envelope carries; personae no longer
 # re-exports it (insigne proofs plan).
 insigne = { git = "https://github.com/merely-made/dramatis.git", rev = "0234e7eea6f2ddf2330a71b9425da01b06ae0391", features = ["verify"] }
