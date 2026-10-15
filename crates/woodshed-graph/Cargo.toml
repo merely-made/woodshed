@@ -13,6 +13,6 @@ categories = ["data-structures"]
 
 [dependencies]
 # The chartulary substrate lives in sibling repos alongside woodshed.
-chartulary = { git = "https://www.github.com/merely-made/mere.git", rev = "90ce8f12d80d002303eada6b4ab9da9d7a530d83" }
+chartulary = { git = "https://www.github.com/merely-made/mere.git", rev = "8357b00d0e692dec3a377c842e82d5e396d43d09" }
 # woodshed's own theory-catalog crate, now a workspace sibling.
 woodshedding = { workspace = true }
