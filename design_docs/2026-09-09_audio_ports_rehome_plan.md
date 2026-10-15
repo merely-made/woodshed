@@ -245,6 +245,43 @@ Shared views require a coherent Cambium type graph. The adoption preserves
 the concurrent Rust 1.99.0/MSRV 1.97.1 and Murm supplier move; its compiled
 source uses Mere `0b9b7a9` and Genet `7a8c5b8`, recorded in the receipt.
 
+**Mere application-door repin (2026-10-15).** Mark ruled on 2026-10-14 to
+repin forward
+([survey brief, Rulings §4](2026-10-14_dsp_graphshell_hocket_survey_brief.md)).
+
+- **Revisions.** The root, `ports/hocket` and `validation/relationship-recipe`
+  now pin:
+  - Mere `90ce8f12d`;
+  - Genet `ae3d9f5d`;
+  - Murm `3d9e799f`;
+  - Netrender `f4f9c0d8`, through the `www` source with Mere's restated
+    `github.com/merely-made/netrender.git` bridge patch;
+  - the vello fork `276b4664`.
+
+  This follows Knot's `a27911a` cascade.
+- **Custody imports.** Custody now comes from
+  `graphshell_endpoint::door` (feature `door`). `graphshell` is no longer a
+  dependency of any of the three roots, so the p2panda patch rows and the
+  Retinue compatibility source keys, which existed only for its transport
+  cone, are removed.
+- **Member crates.** Direct Mere and Netrender pins in `woodshed-core`,
+  `woodshed-graph`, `woodshed-genet` and `hocket-views` moved too. None of
+  the three lockfiles has a package from two git sources.
+- **CPU checks only (no native runs).**
+  - The root workspace checks with `--all-targets`.
+  - 586 root tests pass (6 ignored) across `woodshed-genet`,
+    `woodshed-audio`, `woodshed-core`, `woodshed-graph` and `hocket-views`.
+  - The Hocket workspace checks.
+  - 101 `hocket-genet`/`hocket-engine` tests pass (1 ignored).
+  - The recipe binary checks. Its test target still fails on a missing
+    `tempfile` dev-dependency used by the included `storage.rs` tests; that
+    gap predates this repin (since `8ec1578`).
+- **Not covered.** `ports/redshank` keeps its own pin and is not part of
+  this repin.
+- **Historical families.** The `8568f42`/`2c7ef73` family cited in the Tabard
+  and Hocket host-refactor plans is the family those slices qualified, not a
+  current pin.
+
 
 Done when Hocket project/media/store/export/handoff operations can be used
 without its device runtime; Redshank shares portable transitions required by

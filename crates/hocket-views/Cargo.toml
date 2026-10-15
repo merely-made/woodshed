@@ -22,4 +22,4 @@ sprigging.workspace = true
 cambium-genet-winit-host.workspace = true
 mesquite.workspace = true
 taproot.workspace = true
-paint_list_api = { git = "https://github.com/merely-made/netrender.git", rev = "c74b7cb28090c28b1c6d80b08dcdea18aff48d3e" }
+paint_list_api = { git = "https://www.github.com/merely-made/netrender.git", rev = "f4f9c0d87e6a6030b61075a45118055dfe6a12df" }
