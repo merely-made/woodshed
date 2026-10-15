@@ -480,7 +480,42 @@ impl mesquite::Product for Product {
                 state.selected_feed.clone().unwrap_or_default(),
             )
             .with_field("notice", state.notice.clone().unwrap_or_default())
-            .with_field("text-capture", state.text_capture.is_some().to_string());
+            .with_field("text-capture", state.text_capture.is_some().to_string())
+            // The saved-transcript projection: which item it belongs to, how
+            // many cues parsed, and how many contain the playhead right now.
+            // Counts rather than booleans, because cues may overlap and a
+            // receipt should be able to say so.
+            .with_field(
+                "transcript-item",
+                state
+                    .transcript
+                    .as_ref()
+                    .map(|(id, _, _)| id.0.clone())
+                    .unwrap_or_default(),
+            )
+            .with_field(
+                "transcript-cues",
+                state
+                    .transcript
+                    .as_ref()
+                    .map_or(0, |(_, _, parsed)| parsed.cues.len())
+                    .to_string(),
+            )
+            .with_field(
+                "transcript-active",
+                state
+                    .transcript
+                    .as_ref()
+                    .zip(now)
+                    .map_or(0, |((_, _, parsed), now)| {
+                        parsed
+                            .cues
+                            .iter()
+                            .filter(|cue| cue.active_at(now.position_ms))
+                            .count()
+                    })
+                    .to_string(),
+            );
         if let Some(now) = now {
             snap = snap
                 .with_field("item-id", now.item_id.0.clone())

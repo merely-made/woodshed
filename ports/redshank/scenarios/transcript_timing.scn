@@ -1,0 +1,21 @@
+# Diagnostic: frame pacing with 90 cues on screen. Capture mtimes give the
+# wall time of 30 presented frames, paused and then playing. Run with
+# CAMBIUM_HOST_PERF_TRACE=1 for the host's per-frame breakdown in stderr.log.
+settle 30
+act pane:notes
+settle 10
+pointer-click 520 221
+settle 120
+assert snap transcript-cues >= 80
+capture t0
+settle 30
+capture t1-paused-30
+act seek:0
+act play
+settle 30
+capture t2-playing-30
+assert event transport PLAYING
+act pause
+settle 30
+capture t3-paused-again-30
+log timing complete

@@ -1,0 +1,57 @@
+{
+  "schema_version": 1,
+  "library": {
+    "local-260925": {
+      "kind": "feed_episode",
+      "id": "local-260925",
+      "feed_url": "http://127.0.0.1:8765/podnews.xml",
+      "guid": "local-260925",
+      "title": "YouTube reveals new features (local origin)",
+      "source": {
+        "kind": "enclosure",
+        "url": "http://127.0.0.1:8765/podnews260925.mp3"
+      },
+      "facts": {
+        "published": "Fri, 25 Sep 2026 12:07:35 +0000",
+        "summary": null,
+        "duration": "301",
+        "artwork": null,
+        "enclosure_media_type": "audio/mpeg",
+        "enclosure_byte_length": 4838864,
+        "chapters": [],
+        "transcripts": [
+          {
+            "url": "http://127.0.0.1:8766/podnews260925.mp3.vtt",
+            "media_type": "text/vtt",
+            "language": null,
+            "relation": "captions"
+          }
+        ]
+      }
+    }
+  },
+  "subscriptions": {
+    "http://127.0.0.1:8765/podnews.xml": {
+      "feed_url": "http://127.0.0.1:8765/podnews.xml",
+      "title": "Podnews Daily (local origin)",
+      "subtitle": "One episode served from this machine",
+      "link": null,
+      "language": "en",
+      "artwork": null,
+      "last_refreshed_ms": 1758800000000,
+      "diagnostics": []
+    }
+  },
+  "queue": [
+    "local-260925"
+  ],
+  "selected_item": "local-260925",
+  "progress": {},
+  "annotations": {},
+  "listening_sessions": [],
+  "settings": {
+    "capture_playback": "pause",
+    "skip_forward_ms": 30000,
+    "skip_backward_ms": 15000
+  }
+}

@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import mimetypes
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
@@ -49,7 +50,9 @@ class RangeHandler(BaseHTTPRequestHandler):
         partial = requested is not None
         self.send_response(206 if partial else 200)
         self.send_header("Accept-Ranges", "bytes")
-        self.send_header("Content-Type", "audio/mp4")
+        # By extension, so an mp3 fixture is not announced as mp4; mp4 stays
+        # the fallback for the phase-4 stereo.m4a this was written around.
+        self.send_header("Content-Type", mimetypes.guess_type(source.name)[0] or "audio/mp4")
         self.send_header("Content-Length", str(end - start + 1))
         if partial:
             self.send_header("Content-Range", f"bytes {start}-{end}/{length}")

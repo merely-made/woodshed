@@ -1,0 +1,15 @@
+# Fixture: none; the data directory transcript_offline_seed left behind, with
+# both local origins stopped. The saved transcript must project from the store
+# with nothing to fetch from, and must still track an external seek.
+settle 30
+assert snap item-id == local-260925
+act pane:notes
+settle 20
+assert snap transcript-item == local-260925
+assert snap transcript-cues >= 80
+capture transcript-offline
+act seek:12500
+settle 30
+capture transcript-offline-seek
+assert snap transcript-active >= 1
+log transcript_offline_verify complete

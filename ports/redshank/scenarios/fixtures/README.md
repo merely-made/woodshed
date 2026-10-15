@@ -30,6 +30,8 @@ a fixture may name a new field before every consumer reads it.
 | `cluster` | One local item with ten text notes at 250–259 ms and one span note (900 → 1 800 ms) | Notes timeline cluster chip, span wash, span card |
 | `empty` | The default model — no library, no queue, no notes | Empty state across every tab |
 | `longnames` | Item, episode and feed titles of exactly 120 characters | Truncation at every width, and at 200 % / 400 % `ui-zoom` |
+| `podnews-transcript` | One real `Enclosure` episode (Podnews Daily, 2026-09-25) whose facts advertise a `text/vtt` transcript, selected, nothing saved | Transcript offer, save, cue list and active cue against a real publisher; needs the network |
+| `local-transcript` | The same episode off `127.0.0.1:8765` (mp3, range server) and `127.0.0.1:8766` (transcript, directory server) | The origin-stopped restart receipt: `transcript_offline_seed` then `transcript_offline_verify` on one data directory |
 
 ## The voice blob
 
@@ -51,7 +53,11 @@ python ../spikes/playback/scripts/range_server.py \
 ```
 
 `redshank-run-scenario.ps1 -Fixture remote-buffering` starts and stops it for
-you (`-NoRangeServer` opts out when one is already running). The server ignores
+you (`-NoRangeServer` opts out when one is already running; `-RangeSource`
+names another file, which `local-transcript` needs for the episode mp3 under
+`testing/woodshed/redshank-transcript-20260926/`). The transcript on 8766 is a
+plain `python -m http.server 8766` in that directory; the driver does not
+start it, so the verify run can be certain it is down. The server ignores
 the request path, so all three episodes resolve to the same bytes — which is
 what the buffering and roster artboards need, not three distinct recordings.
 

@@ -1,0 +1,24 @@
+# Fixture: local-transcript, with both local origins up (the byte-range server
+# on 8765 for the mp3, the directory server on 8766 for the transcript). Saves
+# the transcript and plays once, then lets persistence finish. Run before
+# transcript_offline_verify against the same data directory.
+settle 30
+assert snap item-id == local-260925
+act pane:notes
+settle 10
+assert snap transcript-cues == 0
+# Logical-space click at the button's centre (960x640 artboard): the probe's
+# own selector layout resolved role:button to a point the host did not route
+# to this button (2026-09-26), so this receipt is pinned to one artboard.
+pointer-click 520 221
+settle 180
+assert snap transcript-item == local-260925
+assert snap transcript-cues >= 80
+act seek:0
+act play
+settle 8
+assert event transport PLAYING
+act pause
+settle 60
+capture transcript-seeded
+log transcript_offline_seed complete
