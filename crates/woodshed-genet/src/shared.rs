@@ -277,6 +277,10 @@ pub struct Shared {
     pub set_graph_sig: u64,
     pub overview_sig: u64,
     pub relationship_sig: u64,
+    /// The camera each graph leaf was last painted with, as (pan x, pan y,
+    /// zoom), indexed overview / Related / relationship editor. Scenarios
+    /// compare it with the live camera to prove paint follows camera commands.
+    pub painted_cameras: [(f32, f32, f32); 3],
     pub fretboard_sig: u64,
     pub rehearsal_fretboard_sig: u64,
 
@@ -339,6 +343,7 @@ impl Shared {
             set_graph_sig: 0,
             overview_sig: 0,
             relationship_sig: 0,
+            painted_cameras: [(0.0, 0.0, 0.0); 3],
             fretboard_sig: 0,
             rehearsal_fretboard_sig: 0,
             events: Vec::new(),

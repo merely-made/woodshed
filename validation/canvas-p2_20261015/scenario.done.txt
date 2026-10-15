@@ -1,0 +1,21 @@
+RESULT ok
+P2: canvas commands over the Session Mere, relationship editor and Related graph
+captured 01_overview_zoomed
+captured 02_overview_fit
+captured 03_relationship_zoomed
+captured 04_relationship_fit
+captured 04b_relationship_wheel
+captured 05_related_zoomed
+captured 06_related_fit
+captured 07_related_wheel
+P2 canvas commands held on all three surfaces
+capture 01_overview_zoomed 2200x1328 digest=81a8469bc923a6c2 file=/Users/markik/Code/testing/woodshed/canvas-p2-20261015/captures/01_overview_zoomed.png
+capture 02_overview_fit 2200x1328 digest=0ceacbe12d3ee54b file=/Users/markik/Code/testing/woodshed/canvas-p2-20261015/captures/02_overview_fit.png
+capture 03_relationship_zoomed 2200x1328 digest=d9598904cb4a7ea9 file=/Users/markik/Code/testing/woodshed/canvas-p2-20261015/captures/03_relationship_zoomed.png
+capture 04_relationship_fit 2200x1328 digest=ed4132f5769d416c file=/Users/markik/Code/testing/woodshed/canvas-p2-20261015/captures/04_relationship_fit.png
+capture 04b_relationship_wheel 2200x1328 digest=57956a289ceaee7a file=/Users/markik/Code/testing/woodshed/canvas-p2-20261015/captures/04b_relationship_wheel.png
+capture 05_related_zoomed 2200x1328 digest=7850b93e576b6f06 file=/Users/markik/Code/testing/woodshed/canvas-p2-20261015/captures/05_related_zoomed.png
+capture 06_related_fit 2200x1328 digest=93c67e28dfeb3812 file=/Users/markik/Code/testing/woodshed/canvas-p2-20261015/captures/06_related_fit.png
+capture 07_related_wheel 2200x1328 digest=fd56abb8d6139c3a file=/Users/markik/Code/testing/woodshed/canvas-p2-20261015/captures/07_related_wheel.png
+frames: 8 captured, 0 blank, 8 distinct digests
+presentation: 241 frames, 242 redraws, 1 unpresented redraws

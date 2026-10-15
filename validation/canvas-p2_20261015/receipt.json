@@ -1,0 +1,52 @@
+{
+  "receipt": "Graphshell stack lift P2: Woodshed second-host native receipt",
+  "date": "2026-10-15",
+  "mere": "39c3c955d686fb0304fea47dc35c402049fceca1",
+  "scenario": "scenarios/canvas_controls_p2.scn",
+  "source_base": "26214308646e1df89b1691a39eb9b2368a97db82",
+  "source_dirty": "repaint-key fix, paint-currency fields, Related button style (committed with this receipt)",
+  "inputs_sha256": [
+    "5cfde526f67fce7a63e100cf953758e0ce7c4efe9203a01a537a7b2ab95284d3  target/debug/woodshed-genet",
+    "ae67bc7e76c18a11725f02356f4186fdbfbeac4f554a0bd84ae54504780e71ee  scenarios/canvas_controls_p2.scn"
+  ],
+  "result": "RESULT ok",
+  "frames": 241,
+  "captures_sha256": {
+    "01_overview_zoomed.png": "0969b49fcd94a07f1a240f0e6dc71aeebb20df480c00736452cba1a9868e863d",
+    "02_overview_fit.png": "933071fca71eb1fec8a9e40f5908544adf416c0dba602ff15bcc04ae6f8c48bd",
+    "03_relationship_zoomed.png": "8d6c3ce1a10780ed0b4fcbdb2a58762238fe78f927af0e8fdd600321652224d0",
+    "04_relationship_fit.png": "baad32d1a874688e181a52ec0275221d3f28154adbe566fe3fa511480392a9ef",
+    "04b_relationship_wheel.png": "1e980ddd2d3ae6a1f5a5e2e0f1fb6c1a31d898d3d9cf7f31190327ff46b434b7",
+    "05_related_zoomed.png": "a4c232626b80306a4a30b92c2180c5a962c4a6cfb3c89b07ffa61747ef5bf9ce",
+    "06_related_fit.png": "9c3460c33629a1d6808be57efda0d509c61a170ee436990a58d61edc100422b7",
+    "07_related_wheel.png": "1f3d563b270ac1df3442f7e26e6d4e2dd87403d384ba9e73d68035955bf3c8fa"
+  },
+  "artifacts_outside_repo": "/Users/markik/Code/testing/woodshed/canvas-p2-20261015",
+  "runs": [
+    {
+      "run": 1,
+      "result": "ok",
+      "finding": "Related camera buttons blended into panel (same surface colour)"
+    },
+    {
+      "run": 2,
+      "result": "fail",
+      "finding": "Related wheel targeted .related-graph-col centre, outside the canvas; relationship wheel passed"
+    },
+    {
+      "run": 3,
+      "result": "ok",
+      "finding": "review showed relationship/Related paint not following camera-only changes (repaint keys lacked the viewport)"
+    },
+    {
+      "run": 4,
+      "result": "ok",
+      "finding": "repaint keys fixed; 11 paint-current assertions hold; paint visibly tracks zoom and wheel"
+    }
+  ],
+  "not_covered": [
+    "overview wheel natively (canvas mostly below the fold; covered by CPU test)",
+    "touch (deferred: no host touch input)",
+    "FaceAlignment measures a freshly painted leaf, so paint currency is asserted separately via painted_cameras"
+  ]
+}
