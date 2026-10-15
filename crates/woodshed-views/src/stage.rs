@@ -43,6 +43,7 @@ use crate::workspace::{
     WoodshedWorkspace, WorkspaceEffect, WorkspaceEvent, WorkspaceOutcome, WorkspacePanel,
 };
 
+pub mod canvas_camera;
 mod chord_approaches;
 mod connected;
 mod connected_scales;
@@ -319,7 +320,9 @@ fn compact_relation_summaries(
 
 pub fn related_swatch(ui: &UiState) -> GraphCanvasSwatch<String, &'static str> {
     let snapshot = related_mere_snapshot(ui);
-    related_swatch_from_snapshot(&snapshot, ui, ui.related_expanded)
+    let mut swatch = related_swatch_from_snapshot(&snapshot, ui, ui.related_expanded);
+    swatch.viewport = ui.related_viewport;
+    swatch
 }
 
 /// The current Set as a numbered, selectable graph. The ordered Set remains
@@ -855,6 +858,10 @@ pub struct UiState {
     pub overview_focus: Option<woodshed_core::session_overview::OverviewNodeId>,
     pub overview_notice: Option<String>,
     pub overview_viewport: GraphViewport,
+    /// View-local cameras for the Related graph and relationship editor.
+    /// Presentation only; not persisted.
+    pub related_viewport: GraphViewport,
+    pub relationship_viewport: GraphViewport,
     pub overview_positions: BTreeMap<woodshed_core::session_overview::OverviewNodeId, (f32, f32)>,
     pub overview_roles: BTreeMap<woodshed_core::session_overview::OverviewNodeId, String>,
     pub overview_background: BTreeSet<woodshed_core::session_overview::OverviewNodeId>,
@@ -1094,6 +1101,8 @@ impl UiState {
             overview_focus: None,
             overview_notice: None,
             overview_viewport: GraphViewport::default(),
+            related_viewport: GraphViewport::default(),
+            relationship_viewport: GraphViewport::default(),
             overview_positions: BTreeMap::new(),
             overview_roles: BTreeMap::new(),
             overview_background: BTreeSet::new(),

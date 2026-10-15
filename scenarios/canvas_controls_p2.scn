@@ -1,0 +1,68 @@
+# Graphshell stack lift P2: pictograph's canvas commands drive Woodshed's three
+# graph surfaces through Cambium cameras, and pictograph's face measurement
+# checks view-layer hit targets against painted nodes after each command.
+#
+# Drive with WOODSHED_SCENARIO, WOODSHED_CAPTURE_DIR and an isolated WOODSHED_STATE.
+
+log P2: canvas commands over the Session Mere, relationship editor and Related graph
+settle 90
+act relationship-example
+settle 5
+
+# Session Mere overview.
+click .workspace-panel Mere
+settle 5
+click .overview-zoom-in Zoom in
+settle 3
+assert snap overview-zoom == 1.25
+assert snap overview-face-missing == 0
+assert snap overview-face-offset-max == 0.0000
+capture 01_overview_zoomed
+click .overview-fit Fit scene
+settle 3
+assert snap overview-face-nodes >= 1
+assert snap overview-face-offset-max == 0.0000
+capture 02_overview_fit
+click .overview-motion-toggle Enable scene motion
+settle 3
+assert snap overview-motion == true
+click .overview-motion-toggle Pause scene motion
+settle 3
+assert snap overview-motion == false
+
+# Relationship editor.
+click .overview-relationship Relationship recipe
+settle 5
+click .relationship-bind Use selected Card relationships
+settle 5
+assert snap recipe-valid == true
+click .relationship-camera-zoom-in Zoom in
+settle 3
+assert snap relationship-zoom == 1.25
+assert snap relationship-face-missing == 0
+capture 03_relationship_zoomed
+click .relationship-camera-pan-left Pan left
+click .relationship-camera-fit Fit
+settle 3
+assert snap relationship-face-nodes >= 1
+assert snap relationship-face-offset-max == 0.0000
+capture 04_relationship_fit
+click .relationship-camera-restore Restore view
+settle 3
+assert snap relationship-zoom == 1.00
+assert snap set-cards == 3
+
+# Related graph.
+click .workspace-panel Related
+settle 5
+click .related-camera-zoom-in Zoom in
+settle 3
+assert snap related-zoom == 1.25
+assert snap related-face-missing == 0
+capture 05_related_zoomed
+click .related-camera-fit Fit
+settle 3
+assert snap related-face-nodes >= 1
+assert snap related-face-offset-max == 0.0000
+capture 06_related_fit
+log P2 canvas commands held on all three surfaces

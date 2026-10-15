@@ -331,7 +331,9 @@ impl UiState {
 pub fn relationship_swatch(ui: &UiState) -> Option<GraphCanvasSwatch<String, &'static str>> {
     let reading = ui.relationship_reading().ok()??;
     let compiled = reading.compile().ok()?;
-    Some(swatch_from(&reading, &compiled, ui.viewport_width))
+    let mut swatch = swatch_from(&reading, &compiled, ui.viewport_width);
+    swatch.viewport = ui.relationship_viewport;
+    Some(swatch)
 }
 fn swatch_from(
     reading: &RelationshipReading,
@@ -554,7 +556,8 @@ pub(super) fn screen(ui: &UiState) -> UiChild {
                 }
             }
             {
-                let swatch = swatch_from(&reading, &compiled, ui.viewport_width);
+                let mut swatch = swatch_from(&reading, &compiled, ui.viewport_width);
+                swatch.viewport = ui.relationship_viewport;
                 children.push(Box::new(
                     el(
                         "div",
@@ -578,6 +581,24 @@ pub(super) fn screen(ui: &UiState) -> UiChild {
                                             );
                                         ui.select_relationship(left, Some(id))
                                     },
+                                    GraphCanvasEvent::Pan { delta } => {
+                                        ui.relationship_viewport.pan.0 += delta.0;
+                                        ui.relationship_viewport.pan.1 += delta.1;
+                                        return;
+                                    },
+                                    GraphCanvasEvent::Zoom { factor } => {
+                                        let command = super::canvas_camera::zoom_by(
+                                            ui,
+                                            super::canvas_camera::CanvasSurface::Relationship,
+                                            factor,
+                                        );
+                                        super::canvas_camera::apply_canvas_command(
+                                            ui,
+                                            super::canvas_camera::CanvasSurface::Relationship,
+                                            command,
+                                        );
+                                        return;
+                                    },
                                     _ => return,
                                 };
                                 ui.relationship_result(r)
@@ -589,6 +610,16 @@ pub(super) fn screen(ui: &UiState) -> UiChild {
                         ),
                     )
                     .attr("class", "relationship-graph"),
+                ));
+                children.push(Box::new(
+                    el(
+                        "div",
+                        super::canvas_camera::camera_controls(
+                            super::canvas_camera::CanvasSurface::Relationship,
+                            "relationship-camera",
+                        ),
+                    )
+                    .attr("class", "relationship-camera-controls"),
                 ));
             }
             for occurrence in &reading.dataset.dataset.occurrences {

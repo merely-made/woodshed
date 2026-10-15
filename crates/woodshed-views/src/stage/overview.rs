@@ -1,5 +1,7 @@
 //! Session Mere: inspect real assets, workspace views and host activity before acting.
+use super::canvas_camera::{CanvasSurface, apply_canvas_command, pan_by_fraction, zoom_by};
 use super::{UiChild, UiState, WorkspacePanel};
+use pictograph::canvas::controls::CanvasCommand;
 use cambium::{
     GraphCanvasEvent, GraphCanvasNode, GraphCanvasRelation, GraphCanvasSubgraph, GraphCanvasSwatch,
     clickable, el, graph_canvas, map_state, text, text_field,
@@ -349,25 +351,7 @@ impl UiState {
     }
     /// Fit the current arrangement without changing its retained positions.
     pub fn fit_overview(&mut self) {
-        let graph = overview_swatch(self);
-        if graph.graph.nodes.is_empty() {
-            self.overview_viewport = cambium::GraphViewport::default();
-            return;
-        }
-        let mut min = (f32::INFINITY, f32::INFINITY);
-        let mut max = (f32::NEG_INFINITY, f32::NEG_INFINITY);
-        for node in graph.graph.nodes {
-            min.0 = min.0.min(node.position.0);
-            min.1 = min.1.min(node.position.1);
-            max.0 = max.0.max(node.position.0);
-            max.1 = max.1.max(node.position.1);
-        }
-        let zoom = (0.82 / (max.0 - min.0).max(max.1 - min.1).max(0.1)).clamp(0.25, 8.0);
-        self.overview_viewport.zoom = zoom;
-        self.overview_viewport.pan = (
-            (0.5 - (min.0 + max.0) * 0.5) * zoom,
-            (0.5 - (min.1 + max.1) * 0.5) * zoom,
-        );
+        apply_canvas_command(self, CanvasSurface::Overview, CanvasCommand::Fit);
     }
 
     pub fn restore_overview_arrangement(&mut self) {
@@ -544,7 +528,8 @@ pub(super) fn screen(ui: &UiState) -> UiChild {
                 ui.overview_viewport.pan.1 += delta.1;
             },
             GraphCanvasEvent::Zoom { factor } => {
-                ui.overview_viewport.zoom = (ui.overview_viewport.zoom * factor).clamp(0.25, 8.0)
+                let command = zoom_by(ui, CanvasSurface::Overview, factor);
+                apply_canvas_command(ui, CanvasSurface::Overview, command);
             },
             _ => {},
         },
@@ -568,18 +553,19 @@ pub(super) fn screen(ui: &UiState) -> UiChild {
         Box::new(clickable(
             el("button", text(label)).attr("class", format!("t-btn {class}")),
             move |ui: &mut UiState, _| match command {
-                0 => ui.fit_overview(),
-                1 => ui.restore_overview_arrangement(),
-                2 => {
-                    ui.overview_viewport.zoom = (ui.overview_viewport.zoom * 1.25).clamp(0.25, 8.0)
+                0..=7 => {
+                    let canvas = match command {
+                        0 => CanvasCommand::Fit,
+                        1 => CanvasCommand::RestoreArrangement,
+                        2 => zoom_by(ui, CanvasSurface::Overview, 1.25),
+                        3 => zoom_by(ui, CanvasSurface::Overview, 1.0 / 1.25),
+                        4 => pan_by_fraction(ui, CanvasSurface::Overview, (0.1, 0.0)),
+                        5 => pan_by_fraction(ui, CanvasSurface::Overview, (-0.1, 0.0)),
+                        6 => pan_by_fraction(ui, CanvasSurface::Overview, (0.0, 0.1)),
+                        _ => pan_by_fraction(ui, CanvasSurface::Overview, (0.0, -0.1)),
+                    };
+                    apply_canvas_command(ui, CanvasSurface::Overview, canvas);
                 },
-                3 => {
-                    ui.overview_viewport.zoom = (ui.overview_viewport.zoom / 1.25).clamp(0.25, 8.0)
-                },
-                4 => ui.overview_viewport.pan.0 += 0.1,
-                5 => ui.overview_viewport.pan.0 -= 0.1,
-                6 => ui.overview_viewport.pan.1 += 0.1,
-                7 => ui.overview_viewport.pan.1 -= 0.1,
                 8 => ui.move_overview_selection((-0.03, 0.0)),
                 9 => ui.move_overview_selection((0.03, 0.0)),
                 10 => ui.move_overview_selection((0.0, -0.03)),
@@ -1015,8 +1001,11 @@ pub(super) fn screen(ui: &UiState) -> UiChild {
                             )
                             .attr("class", "t-btn overview-motion-toggle"),
                             |ui: &mut UiState, _| {
-                                ui.overview_motion = !ui.overview_motion;
-                                ui.reconcile_overview_dynamics();
+                                apply_canvas_command(
+                                    ui,
+                                    CanvasSurface::Overview,
+                                    CanvasCommand::TogglePhysics,
+                                );
                             },
                         ),
                         clickable(

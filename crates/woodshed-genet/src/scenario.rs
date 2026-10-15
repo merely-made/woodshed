@@ -37,6 +37,7 @@ use std::rc::Rc;
 use cambium_genet_winit_host::HostPointer;
 use taproot::{Automatable, AutomatableExt, ProbeSnapshot, ProbeSurface, Selector};
 use woodshed_core::Lens;
+use woodshed_views::stage::canvas_camera::{self, CanvasSurface};
 use woodshed_views::stage::{
     UiState, set_graph_relation_choices, set_graph_snapshot, set_graph_swatch_from_snapshot,
 };
@@ -1187,6 +1188,25 @@ impl Snapshot<'_, '_> {
                         .collect::<Vec<_>>()
                         .join(","),
                 );
+        }
+        // Graphshell stack lift P2: each graph surface's camera, and pictograph's
+        // face measurement of hit targets against painted nodes.
+        snap = snap
+            .with_field("related-zoom", format!("{:.2}", ui.related_viewport.zoom))
+            .with_field(
+                "relationship-zoom",
+                format!("{:.2}", ui.relationship_viewport.zoom),
+            );
+        for (surface, prefix) in [
+            (CanvasSurface::Overview, "overview"),
+            (CanvasSurface::Related, "related"),
+            (CanvasSurface::Relationship, "relationship"),
+        ] {
+            if let Some(faces) = canvas_camera::measure_surface_faces(ui, surface) {
+                for (name, value) in faces.fields() {
+                    snap = snap.with_field(format!("{prefix}-{name}"), value);
+                }
+            }
         }
         if !cursor_label.is_empty() {
             snap = snap.with_focus(cursor_label);

@@ -137,7 +137,7 @@ pub(super) fn panel(ui: &UiState) -> UiChild {
         Box::new(
             el(
                 "div",
-                graph_canvas_swatch_with_drag_and_relations(
+                (graph_canvas_swatch_with_drag_and_relations(
                     &swatch,
                     |ui: &mut UiState, id: String| {
                         ui.stage.select_catalog_id(&id);
@@ -158,6 +158,14 @@ pub(super) fn panel(ui: &UiState) -> UiChild {
                         ui.related_expanded = !ui.related_expanded;
                     },
                 ),
+                el(
+                    "div",
+                    super::canvas_camera::camera_controls(
+                        super::canvas_camera::CanvasSurface::Related,
+                        "related-camera",
+                    ),
+                )
+                .attr("class", "related-camera-controls")),
             )
             .attr("class", "related-graph-col"),
         )
