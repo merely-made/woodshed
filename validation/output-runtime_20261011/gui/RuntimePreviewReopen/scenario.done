@@ -1,0 +1,10 @@
+RESULT ok
+captured 01_recipe_reopened
+captured 02_reopened_scene
+captured 03_paused_rehearsal
+Preview worker fresh process replay and Pause complete
+capture 01_recipe_reopened 2560x1800 digest=2683041a546c3d55 file=$ARTIFACT_ROOT/native/RuntimePreviewReopen/01_recipe_reopened.png
+capture 02_reopened_scene 2560x1800 digest=495f00c3bfe2d5bb file=$ARTIFACT_ROOT/native/RuntimePreviewReopen/02_reopened_scene.png
+capture 03_paused_rehearsal 2560x1800 digest=76790a99f53f61de file=$ARTIFACT_ROOT/native/RuntimePreviewReopen/03_paused_rehearsal.png
+frames: 3 captured, 0 blank, 3 distinct digests
+presentation: 182 frames, 994 redraws, 812 unpresented redraws

@@ -87,10 +87,15 @@ impl OverviewDynamics {
         self.roles = roles.clone();
         self.law = law;
         self.motion = motion;
-        self.board.set_choice(PhysicsChoice {
-            law,
-            ..PhysicsChoice::default()
-        });
+        self.board
+            .set_stage(
+                &PhysicsChoice {
+                    law,
+                    ..PhysicsChoice::default()
+                }
+                .into_spec(),
+            )
+            .expect("built-in Woodshed physics laws have valid stages");
         self.board.sync(
             items
                 .iter()
@@ -231,10 +236,15 @@ impl OverviewDynamics {
                 }
             }
             self.board = PhysicsBoard::new();
-            self.board.set_choice(PhysicsChoice {
-                law: self.law,
-                ..PhysicsChoice::default()
-            });
+            self.board
+                .set_stage(
+                    &PhysicsChoice {
+                        law: self.law,
+                        ..PhysicsChoice::default()
+                    }
+                    .into_spec(),
+                )
+                .expect("built-in Woodshed physics laws have valid stages");
             self.board.sync(
                 self.items
                     .iter()

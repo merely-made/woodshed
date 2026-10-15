@@ -1,0 +1,11 @@
+RESULT fail
+FAIL: assert text 'Once': not on any surface
+captured 01_set_backing_admitted
+captured 02_exact_saved_backing_retained
+captured 03_set_source_ready_to_reopen
+Set LoopPlan seed complete
+capture 01_set_backing_admitted 2360x1600 digest=9696defa982dc515 file=/Users/markik/Code/testing/woodshed/stack-adoption-20261011/native/SetSeed/01_set_backing_admitted.png
+capture 02_exact_saved_backing_retained 2360x1600 digest=56205928041cff22 file=/Users/markik/Code/testing/woodshed/stack-adoption-20261011/native/SetSeed/02_exact_saved_backing_retained.png
+capture 03_set_source_ready_to_reopen 2360x1600 digest=83d4468870ac84f8 file=/Users/markik/Code/testing/woodshed/stack-adoption-20261011/native/SetSeed/03_set_source_ready_to_reopen.png
+frames: 3 captured, 0 blank, 3 distinct digests
+presentation: 110 frames, 111 redraws, 1 unpresented redraws

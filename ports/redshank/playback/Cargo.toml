@@ -3,7 +3,8 @@ name = "redshank-playback"
 version = "0.0.0"
 edition.workspace = true
 license.workspace = true
-rust-version.workspace = true
+
+rust-version = "1.97.1"
 publish = false
 
 [dependencies]
@@ -19,4 +20,4 @@ tempfile.workspace = true
 
 [dev-dependencies]
 hound.workspace = true
-fixed-resample = "=0.9.2"
+audioadapter-buffers = "5.0"

@@ -1,0 +1,31 @@
+{
+  "status": "implemented and qualified for bounded synthetic Set/Card companion persistence and native recovery",
+  "source_revision": "a6288eb1b5068aee8c618012aeb41cde865ef5c0",
+  "base_revision": "961731ace9ae9e687bdf8d40a032f2e1fbbf3321",
+  "binary_sha256": "b11df9aea95c01c0653bf069e5798528fbdf4f2974221e12812530d96acf52e4",
+  "focused_checks": 80,
+  "independent_cpu_processes": 4,
+  "checks": "checks.json",
+  "source_freeze": "source-freeze.json",
+  "native_status": "four processes passed;160 presentations,8 reviewed nonblank captures;unopened input and one output stream",
+  "feature": "Exact sealed Set/Card companion PCM, bounded manifest and live custody, explicit retained-reference Clear",
+  "limits": [
+    "Set/Card only; saved-song PCM durability and full P7 remain open.",
+    "Synthetic completion/storage/replay qualification; physical microphone, acoustic quality/calibration and hardware clock drift remain open.",
+    "256 takes and 16777216 aggregate frames bound live custody/catalog/prospective recording; orphan companions are retained, so this is not an on-disk quota.",
+    "Companions are verified before session reference publication; pre-publication failure retains prior files, post-publication readback failure is unconfirmed with no destructive rollback.",
+    "Native source/binary frozen; supplier/UI family unchanged."
+  ],
+  "initial_scenario_correction": "Shared parser supports >=, not >; changed positive-frame assertion to >=1 before source freeze. Original grammar-failure log retained.",
+  "notice_followup": "Four added lines: successful Clear resets prior refusal notice in audio/no-output paths; actual-button assertion added. Host persistence11/sync9 retested; other focused source/component checks unchanged.",
+  "focused_check_revisions": "checks.json records per-scope revisions; unchanged component gates retained, affected host gates rerun after the notice repair.",
+  "native_receipt": "gui/receipt.json",
+  "native": {
+    "processes": 4,
+    "presented_frames": 160,
+    "reviewed_nonblank_captures": 8,
+    "input_none_checkpoints": 8,
+    "one_output_checkpoints": 4
+  },
+  "rendering_residual": "Existing recorded-loop arrow glyph renders as an empty square; saved-count and retained-reference Clear text are readable. Recorded under P8 without broad rendering qualification."
+}

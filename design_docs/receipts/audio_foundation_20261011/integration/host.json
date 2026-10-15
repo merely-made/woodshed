@@ -1,0 +1,13 @@
+{
+  "verified_commands": [
+    "uname -m",
+    "sysctl -n hw.model machdep.cpu.brand_string",
+    "sw_vers"
+  ],
+  "architecture": "arm64",
+  "model": "Mac16,3",
+  "cpu": "Apple M4",
+  "macos": "26.5.1",
+  "build": "25F80",
+  "note": "Live integration host observation; earlier inherited Intel/Xeon prose label in Hocket receipt corrected. No physical audio qualification follows from this observation."
+}

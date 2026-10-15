@@ -1,0 +1,300 @@
+warning: patch `ipc-channel v0.22.0 (https://github.com/merely-made/genet.git?rev=7422e90613f9017e5bb790e3acb48f61776b2eda#7422e906)` was not used in the crate graph
+warning: patch `p2panda-auth v0.7.1 (https://github.com/mark-ik/p2panda.git?tag=mere-p2panda-net-0.7.5#1bec457e)` was not used in the crate graph
+warning: patch `p2panda-stream v0.7.1 (https://github.com/mark-ik/p2panda.git?tag=mere-p2panda-net-0.7.5#1bec457e)` was not used in the crate graph
+help: Check that the patched package version and available features are compatible
+      with the dependency requirements. If the patch has a different version from
+      what is locked in the Cargo.lock file, run `cargo update` to use the new
+      version. This may also occur with an optional dependency that is not enabled.
+    Checking libc v0.2.186
+    Checking cfg-if v1.0.4
+    Checking num-traits v0.2.19
+    Checking bitflags v2.13.0
+    Checking rand_core v0.10.1
+    Checking typenum v1.20.1
+    Checking getrandom v0.4.3
+    Checking num-complex v0.4.6
+    Checking objc2-encode v4.1.0
+    Checking objc2 v0.6.4
+    Checking hybrid-array v0.4.13
+    Checking crypto-common v0.2.2
+    Checking arrayvec v0.7.8
+   Compiling equivalent v1.0.2
+   Compiling indexmap v2.14.0
+    Checking smallvec v1.15.2
+    Checking audio-codec-algorithms v0.8.1
+    Checking audioadapter-sample v5.2.0
+    Checking portable-atomic v1.13.1
+    Checking serde_core v1.0.228
+    Checking crossbeam-utils v0.8.22
+    Checking block-buffer v0.12.1
+    Checking num-integer v0.1.46
+    Checking audioadapter v5.0.0
+   Compiling toml_edit v0.25.12+spec-1.1.0
+    Checking audioadapter-buffers v5.2.0
+    Checking portable-atomic-util v0.2.7
+    Checking strength_reduce v0.2.4
+   Compiling toml_edit v0.23.10+spec-1.0.0
+    Checking hashbrown v0.16.1
+    Checking transpose v0.2.3
+    Checking ringbuf v0.5.3
+   Compiling bevy_macro_utils v0.19.1
+    Checking primal-check v0.3.4
+    Checking block2 v0.6.2
+    Checking dispatch2 v0.3.1
+    Checking once_cell v1.21.4
+    Checking spin v0.10.1
+    Checking foldhash v0.2.0
+    Checking objc2-core-foundation v0.3.2
+    Checking bevy_platform v0.19.1
+    Checking tracing-core v0.1.36
+    Checking thiserror v2.0.18
+    Checking serde v1.0.228
+    Checking zeroize v1.9.0
+   Compiling firewheel-macros v0.14.0 (https://github.com/mark-ik/firewheel.git?rev=2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc#2b03846d)
+    Checking rustfft v6.4.1
+    Checking objc2-foundation v0.3.2
+    Checking objc2-core-audio-types v0.3.2
+    Checking thunderdome v0.6.1
+    Checking lazy_static v1.5.0
+    Checking bytemuck v1.25.1
+    Checking log v0.4.33
+    Checking pin-project-lite v0.2.17
+    Checking tracing v0.1.44
+    Checking symphonia-core v0.6.1
+    Checking realfft v3.5.0
+    Checking firewheel-core v0.14.0 (https://github.com/mark-ik/firewheel.git?rev=2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc#2b03846d)
+    Checking zerocopy v0.8.54
+    Checking objc2-core-audio v0.3.2
+    Checking digest v0.11.3
+    Checking inout v0.2.2
+    Checking windowfunctions v0.1.1
+    Checking cmov v0.5.4
+    Checking regex-lite v0.1.9
+    Checking symphonia-metadata v0.6.1
+    Checking ctutils v0.4.2
+    Checking rubato v5.0.1
+    Checking objc2-audio-toolbox v0.3.2
+    Checking triple_buffer v9.0.0
+    Checking cpufeatures v0.3.0
+    Checking arrayref v0.3.9
+    Checking ciborium-io v0.2.2
+    Checking signature v3.0.0
+    Checking subtle v2.6.1
+    Checking half v2.7.1
+    Checking constant_time_eq v0.4.2
+    Checking blake3 v1.8.5
+    Checking ciborium-ll v0.2.2
+    Checking curve25519-dalek v5.0.0
+    Checking ed25519 v3.0.0
+    Checking sha2 v0.11.0
+    Checking coreaudio-rs v0.14.2
+    Checking fixed-resample v0.13.0
+    Checking universal-hash v0.6.1
+    Checking symphonia v0.6.1
+    Checking cipher v0.5.2
+    Checking uuid v1.23.5
+    Checking mach2 v0.6.0
+    Checking dasp_sample v0.11.0
+    Checking chacha20 v0.10.1
+    Checking symphonium v0.13.0
+    Checking cpal v0.18.2
+    Checking poly1305 v0.9.1
+    Checking ed25519-dalek v3.0.0
+    Checking zmij v1.0.23
+    Checking ciborium v0.2.2
+    Checking firewheel-graph v0.14.0 (https://github.com/mark-ik/firewheel.git?rev=2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc#2b03846d)
+    Checking aead v0.6.1
+    Checking memchr v2.8.3
+    Checking itoa v1.0.18
+    Checking firewheel-cpal v0.14.0 (https://github.com/mark-ik/firewheel.git?rev=2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc#2b03846d)
+    Checking serde_json v1.0.150
+    Checking thiserror v1.0.69
+    Checking chacha20poly1305 v0.11.0
+    Checking hocket-model v0.1.0 (/Users/markik/Code/worktrees/hocket-firewheel-f3-20261011/ports/hocket/crates/hocket-model)
+    Checking insigne v0.0.1 (https://github.com/merely-made/dramatis.git?rev=c1d620764315b4c750fcffea30b8c898b8bb73bc#c1d62076)
+    Checking firewheel-symphonium v0.14.0 (https://github.com/mark-ik/firewheel.git?rev=2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc#2b03846d)
+    Checking getrandom v0.3.4
+    Checking firewheel-nodes v0.14.0 (https://github.com/mark-ik/firewheel.git?rev=2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc#2b03846d)
+error: this `if` statement can be collapsed
+   --> crates/hocket-model/src/history.rs:189:17
+    |
+189 | /                 if let Some(t) = session.track_mut(*track_id) {
+190 | |                     if let Some(layer) = t.layers.get_mut(*layer_index as usize) {
+191 | |                         layer.gain = *to;
+192 | |                     }
+193 | |                 }
+    | |_________________^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.97.0/index.html#collapsible_if
+    = note: `-D clippy::collapsible-if` implied by `-D warnings`
+    = help: to override `-D warnings` add `#[allow(clippy::collapsible_if)]`
+help: collapse nested if block
+    |
+189 ~                 if let Some(t) = session.track_mut(*track_id)
+190 ~                     && let Some(layer) = t.layers.get_mut(*layer_index as usize) {
+191 |                         layer.gain = *to;
+192 ~                     }
+    |
+
+error: this `if` statement can be collapsed
+   --> crates/hocket-model/src/history.rs:201:17
+    |
+201 | /                 if let Some(t) = session.track_mut(*track_id) {
+202 | |                     if let Some(layer) = t.layers.get_mut(*layer_index as usize) {
+203 | |                         layer.muted = *to;
+204 | |                     }
+205 | |                 }
+    | |_________________^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.97.0/index.html#collapsible_if
+help: collapse nested if block
+    |
+201 ~                 if let Some(t) = session.track_mut(*track_id)
+202 ~                     && let Some(layer) = t.layers.get_mut(*layer_index as usize) {
+203 |                         layer.muted = *to;
+204 ~                     }
+    |
+
+error: this `if` statement can be collapsed
+   --> crates/hocket-model/src/history.rs:213:17
+    |
+213 | /                 if let Some(t) = session.track_mut(*track_id) {
+214 | |                     if let PlaybackMode::SelectOne { active } = &mut t.playback_mode {
+215 | |                         *active = *to;
+...   |
+218 | |                 }
+    | |_________________^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.97.0/index.html#collapsible_if
+help: collapse nested if block
+    |
+213 ~                 if let Some(t) = session.track_mut(*track_id)
+214 ~                     && let PlaybackMode::SelectOne { active } = &mut t.playback_mode {
+215 |                         *active = *to;
+216 |                     }
+217 ~                     // No-op on Sum-mode tracks (documented).
+    |
+
+error: this `if` statement can be collapsed
+   --> crates/hocket-model/src/history.rs:271:17
+    |
+271 | /                 if let Some(t) = session.track_mut(*track_id) {
+272 | |                     if let Some(layer) = t.layers.get_mut(*layer_index as usize) {
+273 | |                         layer.gain = *from;
+274 | |                     }
+275 | |                 }
+    | |_________________^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.97.0/index.html#collapsible_if
+help: collapse nested if block
+    |
+271 ~                 if let Some(t) = session.track_mut(*track_id)
+272 ~                     && let Some(layer) = t.layers.get_mut(*layer_index as usize) {
+273 |                         layer.gain = *from;
+274 ~                     }
+    |
+
+error: this `if` statement can be collapsed
+   --> crates/hocket-model/src/history.rs:283:17
+    |
+283 | /                 if let Some(t) = session.track_mut(*track_id) {
+284 | |                     if let Some(layer) = t.layers.get_mut(*layer_index as usize) {
+285 | |                         layer.muted = *from;
+286 | |                     }
+287 | |                 }
+    | |_________________^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.97.0/index.html#collapsible_if
+help: collapse nested if block
+    |
+283 ~                 if let Some(t) = session.track_mut(*track_id)
+284 ~                     && let Some(layer) = t.layers.get_mut(*layer_index as usize) {
+285 |                         layer.muted = *from;
+286 ~                     }
+    |
+
+error: this `if` statement can be collapsed
+   --> crates/hocket-model/src/history.rs:295:17
+    |
+295 | /                 if let Some(t) = session.track_mut(*track_id) {
+296 | |                     if let PlaybackMode::SelectOne { active } = &mut t.playback_mode {
+297 | |                         *active = *from;
+298 | |                     }
+299 | |                 }
+    | |_________________^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.97.0/index.html#collapsible_if
+help: collapse nested if block
+    |
+295 ~                 if let Some(t) = session.track_mut(*track_id)
+296 ~                     && let PlaybackMode::SelectOne { active } = &mut t.playback_mode {
+297 |                         *active = *from;
+298 ~                     }
+    |
+
+error: this `if` statement can be collapsed
+   --> crates/hocket-model/src/history.rs:460:13
+    |
+460 | /             if let Some(local_node) = self.nodes.get(id) {
+461 | |                 if local_node != incoming_node {
+462 | |                     return Err(HistoryError::ConflictingNode(*id));
+463 | |                 }
+464 | |             }
+    | |_____________^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.97.0/index.html#collapsible_if
+help: collapse nested if block
+    |
+460 ~             if let Some(local_node) = self.nodes.get(id)
+461 ~                 && local_node != incoming_node {
+462 |                     return Err(HistoryError::ConflictingNode(*id));
+463 ~                 }
+    |
+
+error: this `if` statement can be collapsed
+   --> crates/hocket-model/src/history.rs:473:13
+    |
+473 | /             if let Some(parent) = node.parent {
+474 | |                 if !combined_ids.contains(&parent) {
+475 | |                     return Err(HistoryError::MissingParent {
+476 | |                         node: node.id,
+...   |
+480 | |             }
+    | |_____________^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.97.0/index.html#collapsible_if
+help: collapse nested if block
+    |
+473 ~             if let Some(parent) = node.parent
+474 ~                 && !combined_ids.contains(&parent) {
+475 |                     return Err(HistoryError::MissingParent {
+...
+478 |                     });
+479 ~                 }
+    |
+
+error: this `impl` can be derived
+  --> crates/hocket-model/src/track.rs:90:1
+   |
+90 | / impl Default for PlaybackMode {
+91 | |     fn default() -> Self {
+92 | |         Self::Sum
+93 | |     }
+94 | | }
+   | |_^
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.97.0/index.html#derivable_impls
+   = note: `-D clippy::derivable-impls` implied by `-D warnings`
+   = help: to override `-D warnings` add `#[allow(clippy::derivable_impls)]`
+help: replace the manual implementation with a derive attribute and mark the default variant
+   |
+77 + #[derive(Default)]
+78 | pub enum PlaybackMode {
+79 |     /// All unmuted layers play simultaneously, summed at the track
+80 |     /// mixer. The looper-pedal model.
+81 ~     #[default]
+82 ~     Sum,
+   |
+
+error: could not compile `hocket-model` (lib) due to 9 previous errors
+warning: build failed, waiting for other jobs to finish...

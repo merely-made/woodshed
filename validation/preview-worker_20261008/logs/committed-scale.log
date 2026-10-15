@@ -1,0 +1,13 @@
+DDX mode=scale device=DeviceDescription { name: "iMac Speakers", manufacturer: None, driver: None, device_type: Unknown, interface_type: Unknown, direction: Output, address: None, extended: [] } config=SupportedStreamConfig { channels: 2, sample_rate: 48000, buffer_size: Range { min: 15, max: 4096 }, sample_format: F32 }
+DDX negotiated_frames=Ok(512)
+DDX 0.196s device_event=A buffer underrun or overrun occurred.
+DDX 4.210s trial=0 begin
+DDX 4.210s trial=0 work_ms=0.017
+DDX 4.745s trial=0 complete_ms=534.926
+DDX 6.749s trial=1 begin
+DDX 6.749s trial=1 work_ms=0.017
+DDX 7.339s trial=1 complete_ms=590.390
+DDX 9.349s trial=2 begin
+DDX 9.349s trial=2 work_ms=0.019
+DDX 10.295s trial=2 complete_ms=945.795
+DDX complete callbacks=1135 device_events=1 max_callback_gap_us=13693

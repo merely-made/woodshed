@@ -1,0 +1,273 @@
+{
+  "source_revision": "977e594c03d79db0f296bf4ea44b9281c071e3ab",
+  "base": "48d4e5a320e7af6e88dcb941d2b3c815bd294249",
+  "native_attempts": [
+    {
+      "name": "HocketReopenQualified",
+      "source_revision": "977e594c03d79db0f296bf4ea44b9281c071e3ab",
+      "status": "RESULT ok",
+      "presented_frames": 21,
+      "captures": 2,
+      "blank": 0,
+      "visual_review": "Both captures inspected at full-frame resolution",
+      "images": [
+        {
+          "file": "native/HocketReopenQualified/appearance_reopened.png",
+          "sha256": "656e74bffcbcf41141d2de29c6d5bdbb15337b1e6ec89bbc406e5610fc3c9b8a"
+        },
+        {
+          "file": "native/HocketReopenQualified/recorder_reopened.png",
+          "sha256": "d0806d7ce70d591ce5a36926f5a5d372b176fcf39c97311214872be0c7ad3285"
+        }
+      ],
+      "binary_sha256": "d43f604bf97bf3b021370de3709cf65ac4d4db6e89aa96bcc98b5e80edb3942b",
+      "scenario_sha256": "b5f80cdc939271e160cc6002886e83a2faa590a297c22556b3da75d98fef6dec",
+      "runtime_log_sha256": "fc3d3fca2a4bfbc48c8f81f81e3c7526fc87b933fd687608d43cbfb1ad795ef3",
+      "ui_observation": "Native-control returned Running application not found after the finite self-drive process had exited; completion receipt and captures establish success. No relaunch or manual Raise performed."
+    },
+    {
+      "name": "RedshankReopenQualified",
+      "source_revision": "977e594c03d79db0f296bf4ea44b9281c071e3ab",
+      "status": "RESULT ok",
+      "presented_frames": 12,
+      "captures": 2,
+      "blank": 0,
+      "visual_review": "Both captures inspected at full-frame resolution",
+      "images": [
+        {
+          "file": "native/RedshankReopenQualified/reopened-choice.png",
+          "sha256": "eaae6ff35bfcb5c590ea36964a4be2e56b2e82cb978d2888fff960d85b854ea1"
+        },
+        {
+          "file": "native/RedshankReopenQualified/reopened-hc-dark.png",
+          "sha256": "d0678735caebd7504007c9c76d7234e0884992fe64237776cc3d9a59d805289e"
+        }
+      ],
+      "binary_sha256": "d1b8be4ed288b081c37beee85e8aef5c49556ac1f64965efcde1c487b1ed0f17",
+      "scenario_sha256": "ce4c49f7f45a30f7524f1f545c9f20d565091e5fc619497364b82ba8acff517b",
+      "runtime_log_sha256": "a2a77e32e148d6b16bb37f8f14baec146812f856582373b5600d37ef9f72260e",
+      "ui_observation": "Native-control returned Running application not found after the finite self-drive process had exited; completion receipt and captures establish success. No relaunch or manual Raise performed."
+    }
+  ],
+  "presented_frames": 33,
+  "captures": 4,
+  "blank": 0,
+  "closure": {
+    "hocket": {
+      "mere.git": {
+        "revision": "0e78fcffb140395a5c0d2f64a4dfda2b81751681",
+        "packages": [
+          "armillary 0.1.1",
+          "cambium 0.3.3",
+          "cambium-genet-winit-host 0.1.0",
+          "cambium-rootstock 0.1.0",
+          "cambium-winit 0.3.0",
+          "cambium-winit-a11y 0.3.0",
+          "chartulary 0.2.2",
+          "chirograph 0.0.2",
+          "command-menu 0.1.0",
+          "document-canvas 0.1.0",
+          "edit-history 0.1.0",
+          "eidetic 0.0.2",
+          "esp 0.1.0",
+          "graphshell 0.0.2",
+          "graphshell-client 0.0.2",
+          "graphshell-endpoint 0.0.2",
+          "illume 0.0.2",
+          "incipit 0.2.0",
+          "inker 0.1.1",
+          "luggage 0.1.0",
+          "mere 0.0.2",
+          "mere-alembic 0.0.1",
+          "mere-apparatus 0.0.1",
+          "mere-cartography 0.0.2",
+          "mere-curation 0.1.0",
+          "mere-document-lanes 0.1.0",
+          "mere-fleece 0.0.1",
+          "mere-forme 0.1.0",
+          "mere-kernel 0.0.2",
+          "mere-proofs 0.1.0",
+          "mere-surface-api 0.1.0",
+          "mere-transport 0.0.2",
+          "mere-webrtc-carrier 0.0.1",
+          "meristem 0.2.0",
+          "mesquite 0.1.0",
+          "muniment 0.1.2",
+          "numen 0.2.0",
+          "pandect 0.1.1",
+          "pictograph 0.2.0",
+          "sceno 0.0.4",
+          "scenograph 0.0.4",
+          "scenomise 0.0.4",
+          "scenotime 0.0.4",
+          "seiche 0.0.6",
+          "sprigging 0.2.1",
+          "stickleback 0.1.1",
+          "tabard 0.0.1",
+          "tabard-workshop 0.0.1",
+          "tinct 0.1.2",
+          "uxtree 0.0.2",
+          "workbench 0.1.0"
+        ]
+      },
+      "genet.git": {
+        "revision": "4bc75583865c2fb862b7acd7fe16dc28eb591042",
+        "packages": [
+          "buckram 0.0.3",
+          "cadency 0.0.1",
+          "document-session-api 0.1.0",
+          "engine-observables-api 0.2.0",
+          "fleece 0.5.0",
+          "genet-clipboard 0.1.0",
+          "genet-document-resources 0.2.1",
+          "genet-fontique 0.10.0",
+          "genet-host-api 0.2.0",
+          "genet-livery 0.0.4",
+          "genet-paint-types 0.2.0",
+          "genet-parley 0.10.0",
+          "genet-render 0.2.0",
+          "genet-render-host 0.2.0",
+          "genet-scripted-dom 0.1.2",
+          "genet-static-dom 0.1.1",
+          "genet-taffy 0.14.0",
+          "genet-text 0.1.0",
+          "genet-winit-host 0.2.0",
+          "layout-dom-api 0.1.1",
+          "livery 0.0.5",
+          "regress 0.11.1",
+          "taproot 0.1.0"
+        ]
+      },
+      "dramatis.git": {
+        "revision": "0234e7eea6f2ddf2330a71b9425da01b06ae0391",
+        "packages": [
+          "dramatis 0.0.3",
+          "insigne 0.0.2",
+          "notochord 0.1.1",
+          "personae 0.3.0"
+        ]
+      },
+      "netrender.git": {
+        "revision": "ef5412d760a978584c8c1801e8a765c51aecd403",
+        "packages": [
+          "netrender 0.1.2",
+          "netrender_device 0.1.2",
+          "paint_list_api 0.1.2",
+          "paint_list_render 0.1.2"
+        ]
+      },
+      "mark-ik/vello": {
+        "revision": "5862bba26c8a9f56f6a5fdc8ea6966b360a5d63a",
+        "packages": [
+          "netrender-vello 0.11.0",
+          "vello_encoding 0.11.0",
+          "vello_shaders 0.11.0"
+        ]
+      }
+    },
+    "redshank": {
+      "mere.git": {
+        "revision": "0e78fcffb140395a5c0d2f64a4dfda2b81751681",
+        "packages": [
+          "cambium 0.3.3",
+          "cambium-genet-web-host 0.1.0",
+          "cambium-genet-winit-host 0.1.0",
+          "cambium-rootstock 0.1.0",
+          "cambium-winit 0.3.0",
+          "cambium-winit-a11y 0.3.0",
+          "command-menu 0.1.0",
+          "document-canvas 0.1.0",
+          "edit-history 0.1.0",
+          "errand 0.4.0",
+          "illume 0.0.2",
+          "inker 0.1.1",
+          "mere-apparatus 0.0.1",
+          "mere-document-lanes 0.1.0",
+          "mere-fetch 0.0.1",
+          "mere-fleece 0.0.1",
+          "mere-page-load 0.0.1",
+          "mere-surface-api 0.1.0",
+          "meristem 0.2.0",
+          "mesquite 0.1.0",
+          "sceno 0.0.4",
+          "sprigging 0.2.1",
+          "tabard 0.0.1",
+          "tabard-workshop 0.0.1",
+          "tinct 0.1.2",
+          "workbench 0.1.0"
+        ]
+      },
+      "genet.git": {
+        "revision": "4bc75583865c2fb862b7acd7fe16dc28eb591042",
+        "packages": [
+          "buckram 0.0.3",
+          "cadency 0.0.1",
+          "document-session-api 0.1.0",
+          "engine-observables-api 0.2.0",
+          "fleece 0.5.0",
+          "genet-document-resources 0.2.1",
+          "genet-fontique 0.10.0",
+          "genet-host-api 0.2.0",
+          "genet-livery 0.0.4",
+          "genet-paint-types 0.2.0",
+          "genet-parley 0.10.0",
+          "genet-render 0.2.0",
+          "genet-render-host 0.2.0",
+          "genet-scripted-dom 0.1.2",
+          "genet-static-dom 0.1.1",
+          "genet-text 0.1.0",
+          "genet-winit-host 0.2.0",
+          "ipc-channel 0.22.0",
+          "layout-dom-api 0.1.1",
+          "livery 0.0.5",
+          "netfetcher 0.1.1",
+          "regress 0.11.1",
+          "servo-media-player 0.2.0",
+          "servo-media-streams 0.2.0",
+          "servo-media-traits 0.2.0",
+          "taproot 0.1.0"
+        ]
+      },
+      "netrender.git": {
+        "revision": "ef5412d760a978584c8c1801e8a765c51aecd403",
+        "packages": [
+          "netrender 0.1.2",
+          "netrender_device 0.1.2",
+          "paint_list_api 0.1.2",
+          "paint_list_render 0.1.2"
+        ]
+      },
+      "mark-ik/vello": {
+        "revision": "5862bba26c8a9f56f6a5fdc8ea6966b360a5d63a",
+        "packages": [
+          "netrender-vello 0.11.0",
+          "vello_encoding 0.11.0",
+          "vello_shaders 0.11.0"
+        ]
+      }
+    }
+  },
+  "profile_file_changes": {
+    "HOCKET": [],
+    "REDSHANK": []
+  },
+  "stack_review": {
+    "mere_published_head": "8f61cfe524b9bf3be70ec371ae05dc8581289852",
+    "genet_published_head": "4bc75583865c2fb862b7acd7fe16dc28eb591042",
+    "dramatis_published_head": "c6be9046276f56000d707bc66343e29d1f09c4b1",
+    "netrender_published_head": "ef5412d760a978584c8c1801e8a765c51aecd403",
+    "vello_published_head": "f3000c8d9e7a9c7e6abb09b9587238bf8b4860ff",
+    "decision": "Keep the coherent production family. Latest Mere pins the same renderer/identity family, and its Mesquite source is unchanged from 0e78fcff. Suppliers independent newer heads are not required for this consumer reopen qualification."
+  },
+  "scope": "Saved device-local appearance on existing isolated synthetic profiles. Hocket appearance lane explicitly disables its audio runtime; Redshank has no media and never requests playback, recording or a feed. No personal keeper or handoff proof.",
+  "desktop_tests": {
+    "hocket": {
+      "passed": 68,
+      "ignored": 1
+    },
+    "redshank": {
+      "passed": 77,
+      "ignored": 0
+    }
+  }
+}

@@ -1,0 +1,10 @@
+RESULT ok
+captured 01_captured_recipe
+captured 03_latest_hear
+captured 02_recipe_scene
+Captured scale-pattern retained
+capture 01_captured_recipe 2560x1800 digest=402e418dfd617a13 file=$ARTIFACT_ROOT/native/RuntimePreviewSeed/01_captured_recipe.png
+capture 03_latest_hear 2560x1800 digest=194cad3e0e27c6a0 file=$ARTIFACT_ROOT/native/RuntimePreviewSeed/03_latest_hear.png
+capture 02_recipe_scene 2560x1800 digest=80063a8042aa00f8 file=$ARTIFACT_ROOT/native/RuntimePreviewSeed/02_recipe_scene.png
+frames: 3 captured, 0 blank, 3 distinct digests
+presentation: 179 frames, 958 redraws, 779 unpresented redraws

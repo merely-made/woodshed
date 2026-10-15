@@ -18,7 +18,7 @@ addendum identifies the next product questions and corrections before S1-S4.
 
 **Status (reviewed 2026-10-05): in progress.** P1-P3 are partial. P4a and
 P4b landed; P4c and P4d have bounded headed receipts; P4e is partial and P4f
-is open. P5-P8 remain open. The clean-lock and CI repair is a release-baseline
+is open. P5-P8 remain open. Clean-lock and local validation are release-baseline
 gate, not completion of this product plan.
 
 > **2026-08-10 — the gate is open.** The scenograph scene contract this plan
@@ -939,9 +939,15 @@ open.
 ## Release baseline and 1.0 product proof
 
 The release baseline is reached when a clean checkout resolves the committed
-lock without local sibling patches, core and Windows-host CI pass, and a tag
-produces a checksummed Windows ZIP. Repairing that baseline makes the alpha
+lock without local sibling patches, local CPU and intended-platform host checks
+pass, and explicit packaging produces a checksummed, extracted-app-validated
+archive. Repairing that baseline makes the alpha
 credible; it does not close any product phase below.
+
+**2026-10-11 maintainer ruling:** no GitHub workflows and no default pull-request
+review step. Run validation and packaging locally, retain the exact source
+receipts, and push qualified commits directly to `main`. The Actions evidence
+in the dated September assessment below remains historical.
 
 **2026-09-30 publishing assessment:** use a downloadable desktop alpha as the
 initial candidate while audience choice remains open. The pushed scale slice
@@ -1205,9 +1211,11 @@ case locally is the evidence that would justify promoting it.
 
 ### Replace the Song model
 
-`SongDoc`, `SongBar`, `Tab::Song`, and the public Song engine vocabulary are
-retired. They overstate the product and duplicate the ordered timing already
-owned by Set.
+The target retires `SongDoc`, `SongBar`, `Tab::Song`, and the public Song engine
+vocabulary because they duplicate material and timing owned by Set. As of
+2026-10-11, SongDoc/SongBar and their editable compatibility path remain live;
+the bounded Set backing below has not completed that migration. Preserve exact
+saved pitches and timing until the replacement can represent them losslessly.
 
 Replace them with two narrower models:
 
@@ -1556,19 +1564,68 @@ and remain fully operable by keyboard.
 
 ### P7. Rebuild Song as Looper over Set
 
-**Current state: open.** `SongDoc` and the current song-shaped audio lowering
-still exist; `LoopPlan`/stable-segment capture and companion persistence have
-not landed.
+**October 11 slice: durable Set captures — implemented and qualified for
+bounded synthetic storage, native reopen and recovery.** Completed
+Set/Card takes will use exact mono f32 companion blobs through the existing
+persona-sealed backend. A bounded session manifest retains identity, captured
+clock, sample rate, frame count and content digest. A persisted random artifact
+namespace separates identical PCM sealed by different personas. Write and
+verify immutable companions first, then atomically replace the session
+reference. Pre-publication failures retain the previous persisted session and
+the in-memory take; a failed readback after replacement is reported as
+unconfirmed, without attempting rollback. Hydrate after
+session reset and before backing admission; missing/corrupt companions retain
+their references with an actionable notice until explicit clear. Preserve
+clock/rate refusal, owner isolation and inactive-Set captures. Initial storage
+retains unreferenced companions; deletion needs a separate ownership policy.
+The 256-take and 16,777,216-frame limits cover the live bank/session catalog,
+including inactive owners and prospective recording across the entire loaded
+plan. They are not an on-disk quota while companion collection is deferred.
+Explicit stored-reference Clear remains available after a Card is deleted or
+backing admission fails. Ordinary practice saves still work without audio;
+pending output resets cannot publish an old owner's observations to a new
+session. Theme exports protect the whole companion directory, including
+future namespace paths.
+Done for this slice when exact PCM survives a fresh process, reordered Cards
+keep their takes, failed writes cannot publish dangling references, and clear
+survives reopening. Saved-song PCM, hardware capture/drift and full P7 remain
+separate; the October 12 WAV follow-through is described below.
 
-Add `LoopPlan` lowering and readiness validation. Migrate the current song
+**Current state (2026-10-12): bounded Set backing and WAV export implemented;
+P7 remains open.**
+`LoopPlan` now derives block-chord backing from explicitly owned Set Cards with
+Bars holds, instrument/tuning and an explicit quarter-note clock. Readiness
+names unsupported Cards rather than silently dropping or approximating them.
+The desktop preserves captures by Set/Card identity across reorder and pitch
+edits, refuses clock changes while dependent PCM exists, and refuses source
+changes during armed or active capture. Set source and clock settings persist.
+`SongDoc` remains the exact saved-backing compatibility path; its authored
+pitches, meter and duration are preserved. Full saved-song migration, mixed
+material lowering and saved-song PCM persistence remain open.
+Set/Card companion persistence is implemented in the October 11 slice above.
+
+The overview now routes Looper relations to the host-admitted Set owner,
+including when another owner is edited or a replacement is refused. It retains
+the independent rehearsal owner and labels the unchanged Song artifact as
+saved compatibility backing. Saved/Set admission now uses guarded fallible
+operations, including same-source saved-bar edits during armed/active capture.
+Current Cards cannot losslessly represent every saved
+bar's arbitrary pitch vector, root/display data and individual meter. Resolve
+that representation before removing the bar editor or converting saved songs.
+
+Complete `LoopPlan` lowering and readiness validation. Migrate the current song
 engine to a loop engine that plays Set-derived segments and preserves captures
 by stable segment ID. Provide count-in, play/stop/rewind, replace, overdub,
 clear, input level, and capture status.
 
-Export the rendered backing plus captured loop to WAV through an explicit host
-file-save seam. Keep raw captured audio available to the session while the app
-is open; define companion-file persistence before claiming that recordings
-survive restart.
+The October 12 slice exports one complete admitted backing pass, including
+completed captures and the Looper click policy, through an explicit native save
+seam. It uses mono float32 WAV at the admitted device rate and the same output
+processor, without preview, independent metronome, count-in or appended tails.
+Native Save/Cancel/Replace and exact file readback are qualified in the
+follow-through below. Set/Card recordings
+use companion persistence in the bounded October 11 slice; saved-song recording
+durability remains separate.
 
 Done when a clock-ready mixed Set loops without a parallel bar editor, capture
 survives Set reordering where Card identity is retained, exported WAV duration
@@ -1578,6 +1635,10 @@ and tempo match the LoopPlan, and the UI contains no Song or DAW language.
 
 **Current state: open.** Windows alpha behavior exists. Three-width product
 acceptance, touch/reduced-motion coverage, and Mac/Linux receipts remain open.
+The October 11 Set-capture review also records an existing rendering residual:
+the `⟳` recorded-loop marker appears as an empty square at 2360×1600. Saved
+count, Card ownership and explicit stored-reference Clear remain readable.
+This belongs to P8 rendering polish, separate from qualified PCM retention.
 
 Give each section explicit wide, medium, and narrow compositions. Wide layouts
 may expose the Set tray and tool panels simultaneously. Narrow layouts use one
@@ -1654,8 +1715,9 @@ receipts are recorded before those platforms are advertised.
   currently bypass Set and become Song bars directly.
 - Recorded loops are preserved by bar index during Song updates. Insert or
   reorder can attach a recording to the wrong musical material.
-- Offline WAV export exists for sequencer patterns, but captured loop export is
-  not exposed through the application backend.
+- Historical sequencer-pattern WAV export remains separate. The October 12
+  Looper export snapshots admitted backing and completed captures through an
+  explicit host save action; its render clock is the production output clock.
 - Settings currently combines theme/layout, device status, MIDI, and latency
   in one screen. Several durable settings still live as view-owned fields.
 - Responsive width classes exist, but product sections do not yet have a
@@ -2648,7 +2710,8 @@ still takes 354–360 ms on the caller. This fixes callback starvation without
 a buffer-size increase or a claim that synthesis is asynchronous. Evidence is
 in `/Users/markik/Code/testing/woodshed/audio-ddx-20261008/`.
 
-Remaining source-observed hardening: song-mode chord-cache misses still synthesize
+At the preview checkpoint, remaining source-observed hardening included
+song-mode chord-cache misses that still synthesize
 in `process_song_buffer`, and the engines still share mutable state through
 mutexes. This diagnosis does not establish a completely allocation-free or
 lock-free callback architecture, nor acoustically qualify every device. Those
@@ -2666,3 +2729,579 @@ dispatch and unsealed fixture persistence, not acoustic listening, vault
 storage, all song-mode cache paths or other output devices. The receipt records
 exact revisions, binary/capture/log hashes and the hardware differential matrix:
 `/Users/markik/Code/testing/woodshed/audio-ddx-20261008/receipt.json`.
+
+### October 8 follow-up: prepared song chords outside the callback
+
+**Status: implemented and qualified; audio/desktop gates and native seed/reopen pass.**
+
+The next audio slice starts at clean main `9e4b37238d5febfcfe73b4bc9e291ec93b2ee1cd`,
+including Tabard adoption and the owner's lazy input-startup fix. No shared
+contract or dependency repin is needed for this Woodshed-owned mixer change.
+
+The muted `audio_ddx song` control plays four eight-pitch bars at 240 BPM,
+replays their warm cache, then changes pitches and tempo to 300 BPM. On the
+default iMac Speakers output (48 kHz stereo, 512 frames), the first baseline
+produces four cold-play overload notifications, zero warm-play notifications
+and two edited-play notifications; the maximum callback gap is 21.64 ms.
+The callback previously ran `ensure_chord_cached` at each uncached measure.
+These controls establish that this path is a second reproducible audio fault,
+distinct from the already-qualified stopped-song preview fix.
+
+Song construction and replacement now prepare chord PCM before stream startup
+or outside the mixer mutex, respectively. Replacement publishes the document
+and its ready cache together; a request revision prevents a slow older
+replacement from overwriting a newer request. `with_song` preserves slots whose audible inputs
+match, invalidates changed slots and prepares their replacements outside the
+mutex. A key includes ordered pitch bits (or the root fallback), rendered
+per-measure duration and output sample rate; cosmetic names, recorded loops
+and block length do not invalidate PCM. A completed render publishes only if
+the current bar still matches, so concurrent replacement cannot accept stale
+audio. Read-only handle calls no longer invalidate the entire cache.
+
+The callback only looks up and validates ready PCM; it does not synthesize a
+miss. An in-flight low-level live edit can leave a slot unavailable at a
+measure boundary. That strike is skipped, and ready audio starts at the next
+measure, preserving transport rather than stalling, substituting stale audio
+or starting a late strike. The desktop document replacement route publishes
+ready PCM atomically. Preparation remains synchronous on the caller; a bounded
+worker for UI responsiveness is the following slice. Other callback locks and
+allocations, including recording-buffer handling, remain separate hardening.
+
+Six new deterministic regressions cover callback progress and missing-buffer
+behavior, stale render/replacement rejection, exact edited PCM and cache reuse, root/rate
+identity, and preserved count-in/multi-measure trigger times. The native
+`song_cache.scn` and `song_cache_reopen.scn` scenarios exercise actual Play,
+Stop, Rewind, root/tempo edits and fresh-process replay of the saved arrangement.
+Evidence is retained under
+`/Users/markik/Code/testing/woodshed/song-cache-20261008/`.
+
+Two controlled before/after hardware runs reproduce 13 baseline notifications
+in total (cold 4+4, edited 2+3, warm 0+0), then zero in both fixed runs. Maximum
+callback gaps are 21.64/23.39 ms before and 10.72/10.71 ms after. Preparation
+moves to the caller (48–81 ms for this four-bar fixture); warm replay is
+0.005–0.009 ms. The 133 audio tests and 79 current desktop tests pass (212 total).
+
+Native preflight exposed a separate development-build issue after the current
+Tabard/Genet integration: both the default Stage and direct Looper attempts
+remained near 100% CPU before reaching the playback assertions, and UI access
+failed with `noWindowsAvailable` / `AXError.cannotComplete`. Samples terminate
+in the pinned Genet layout/text path (`TextSystem::intern_font` / `content_key`);
+these attempts logged additional device overloads and are not qualification
+receipts. The original package overrides name legacy `netrender` packages.
+Current `genet-render`, `genet-livery`, `genet-taffy` and `buckram` now receive
+the existing opt-level-2 runtime policy while Woodshed/audio stay debuggable.
+No shared source or dependency pin changes are included. Native acceptance
+must be rerun with this build; the samples and failed launch logs are retained.
+
+Final committed-source qualification (`0812c67`, audio implementation `f8e4037`):
+the desktop gate passes again under the current runtime profile (79 tests),
+and the 133 audio tests remain green, for 212 checks. The final muted hardware
+replay has zero overloads in cold/warm/edited phases, a 10.741 ms maximum
+callback gap, and preparation times of 63.065/0.006/46.928 ms on the caller.
+The native seed and fresh-process reopen report `RESULT ok`, 514/178 successful
+presentations and four reviewed nonblank captures, with zero buffer-error logs
+in either process. Four bars persist; the first retains C-sharp Major and
+245 BPM, then replays through the actual desktop backend. Both apps exit.
+The fixture selects Looper at startup; it does not claim broader startup
+performance or acoustic/device-wide quality. Earlier preflight failures and
+the corrected `+` selector mistake remain retained. The receipt and concise
+logs are committed in `validation/song-cache_20261008/`; full PNG/sample
+evidence remains in the local artifact directory noted above.
+
+
+### October 8 follow-up: bounded preview synthesis worker
+
+**Status: implemented and qualified; gates, committed hardware control and native seed/reopen pass.**
+
+This Woodshed-owned slice starts at clean main
+`0f104028523b22cd2f13ee0ff73f3cc889b3d873`. It preserves the current Mere/Genet
+pins and the already-prepared song chord cache. It addresses the remaining
+caller stall in stopped-song previews, rather than changing song preparation.
+
+Each SongEngine now owns one named preview thread, with one in-flight render
+and one replaceable pending request. Hear and exercise notes enqueue work and
+return without synthesizing PCM. New requests invalidate unfinished older
+requests; the renderer checks cancellation every 1024 samples and final
+publication rechecks the request revision under the mixer lock. The ready
+voice starts at the current one-shot clock. The queue cannot accumulate a
+backlog of old scale runs. A full Hear also replaces sounding preview
+envelopes; step notes preserve already sounding envelopes for sequential
+exercise playback. Under overload, unfinished step requests use the same
+latest-request policy. The existing sixteen-voice bound remains.
+
+Stop, Rewind, explicit cancellation, queued transport/seek changes, song
+replacement and song playback invalidate pending/in-flight previews and clear
+sounding one-shots. Song playback rejects preview submissions, preventing a
+hidden preview from sounding after Stop. Metronome start/stop transitions also
+cancel previews; ordinary stopped-state synchronization does not. Engine
+shutdown closes and joins the worker, even if an external handle survives.
+The worker holds a weak mixer reference, avoiding a lifecycle cycle.
+
+Rehearsal Pause and the exercise/arpeggio/scale Stop controls send an explicit
+cancellation request, independent of idempotent transport polling.
+
+Five new deterministic audio regressions cover bounded bursts and stale
+publication, transport cancellation, overlapping step envelopes versus Hear,
+shutdown with a surviving handle, and cancellable renderer PCM identity. The
+existing callback-progress test now also proves caller return while synthesis
+is deliberately blocked. The 138-test audio gate passes. Read-only native
+observations expose worker activity and sounding voice count; the desktop
+scenario busy flag includes queued synthesis. `preview_worker.scn` and its
+fresh-process companion exercise repeated Hear, Rewind cancellation and
+saved recipe replay. Muted hardware diagnostics separately measure request
+return and completed synthesis, so a fast enqueue cannot conceal unfinished
+work. Evidence lives in
+`/Users/markik/Code/testing/woodshed/preview-worker-20261008/`.
+
+Song-cache preparation remains synchronous on the caller. Callback mutexes,
+recording allocation, broad startup/layout performance, acoustic quality and
+release packaging remain separate acceptance boundaries.
+
+
+Committed-source qualification (`c97be58`): 577 checks pass (138 audio, 212 core,
+148 views and 79 desktop), and both committed builds pass. The long-scale
+baseline takes 478.970–631.302 ms on the caller; six committed enqueue trials
+return in 0.014–0.061 ms. Completion is separately awaited and takes
+534.926–1910.830 ms in those runs. This confirms UI responsiveness without
+claiming faster synthesis. One monitor-only startup event at 0.196 s precedes
+Woodshed engine creation in the first committed control, with no subsequent
+preview events. Its repeat has zero events and a 12.537 ms maximum callback
+gap. The committed cold/warm/edited song control also has zero events and a
+10.734 ms maximum gap. The startup observation remains retained.
+
+The committed native seed/fresh-process reopen complete with 162/165
+presentations, six reviewed nonblank PNGs and zero buffer-error logs. Repeated
+Hear publishes one voice; Rewind clears voices/work. The saved 92 BPM Thirds
+recipe retains deleted-source provenance, pin/background state and Orbits.
+Reopen Hear/Add preserves copied instructions, and rehearsal Run/Pause ends
+with zero preview work/voices; the final Set has four Cards. Inspector captures
+show the scrolled graph portion, while Fit scene shows the connected nodes.
+No new responsive-layout acceptance is claimed. Both processes exit. Initial
+UI-state queries return AXError.cannotComplete for these short-lived launches;
+no query retry or accidental relaunch is performed. In-process results,
+presentation receipts and reviewed GPU-readback PNGs establish acceptance.
+The portable receipt and concise logs are committed in
+`validation/preview-worker_20261008/`; full local evidence remains in the
+artifact directory noted above. This qualifies native dispatch and unsealed
+fixture reopening, preserving the acoustic/vault/release boundaries.
+
+
+### October 11 follow-up: single output runtime
+
+**Status: implemented and qualified for the bounded macOS runtime slice.
+CPU/build, muted device checks and native GUI seed/reopen pass at frozen source
+`4a4aba4`; physical capture and broader P7 remain open.**
+
+This root-owned slice starts at `48d4e5a` and preserves the shared UI family
+and the corrected owned Firewheel revision
+`2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc`. `OutputRuntime` replaces both
+legacy output engines with one Firewheel context, one CPAL output stream and
+one device sample clock. Click, preview and backing retain independent
+transport offsets. The root imports no Hocket model or engine authority.
+
+Control prepares exact saved pitch vectors, variable tempo/meter segments,
+legacy strummed chord PCM and click patterns before publication. Unchanged
+backing chords reuse the existing PCM cache. The bounded preview worker keeps
+one in-flight render and one replaceable pending request, wakes the host when
+complete, and publishes only the current request generation. The host services
+Firewheel and returned resources on ordinary frames and explicit wakes; its
+heartbeat is 50 ms during live work and one second when fully stopped.
+
+The output processor has fixed voice slots and bounded command/boundary
+reservations. It fills every output frame, including the one-shot tail, and
+preserves tempo phase and accepted boundary order. Capture storage is prepared
+on the control thread and uniquely owned while recording. A completed valid
+take immediately becomes replayable in the processor; its immutable PCM and
+retired backing return to control without output-thread allocation, buffer
+copy-on-write or final resource destruction. Source admission stays refused
+until that return is collected. Clear-session generations prevent old-owner
+PCM from being inherited by replacement backing.
+
+The shared microphone session remains lazy. Its capture lane transfers one
+SPSC reader, publishes the actual configured input rate and counts loss
+without evicting accepted audio. Capture refuses unknown or unequal nominal
+input/output rates; starvation or overflow during a take invalidates it rather
+than publishing incomplete PCM. Equal nominal rates do not synchronize device
+clocks. Existing tuner/onset locks and input downmix allocation remain outside
+this output-thread change. Calibration now uses a fallible click-control seam
+on the same output runtime, retaining the approximate control-time timing
+anchor rather than claiming sample-accurate acoustic measurement.
+
+Saved and Set backing both use guarded, fallible desktop admission. Same-source
+edits while capture is queued, armed or active preserve the accepted backing;
+missing output cannot report a successful replacement. Legacy authoring and
+its exact pitches and per-bar clocks remain available. Durable PCM companion
+storage, mixed-material Set execution and the rest of P7 remain open.
+
+The integrated audio library passes 144 tests, including 19 production
+Firewheel graph cases. Every guarded render in those cases observes zero
+allocation and zero deallocation on the rendering thread. The cases cover
+in-block seek/arm, loss before versus during a take, same-backing capture
+replay, owner reset, boundary backpressure/order, one-shot tails, count-in,
+tempo phase, single-step clicks, atomic calibration admission, preview
+cancellation and exact legacy chord PCM/cache reuse. Focused desktop gates
+pass 29 checks (17 audio, nine backing/persistence, three runtime observation).
+Headless storage reopen is distinct from native or personal-custody proof.
+Scoped audio Clippy passes with two documented pre-existing input lint
+exceptions; changed-file formatting and whitespace checks pass.
+
+The production desktop and diagnostic example build at frozen source
+`4a4aba45791c151438a7ab01628e60962fbe86d7`. The freeze preserves the separate
+Hocket/Redshank appearance-reopen follow-up `0032f35` without changing the
+Woodshed UI family. The [source/build receipt](../validation/output-runtime_20261011/receipt.json)
+records component commits, exact binary hashes and focused logs. Native GUI
+qualification and muted command-line device checks are complete at that same
+freeze. The subsequently published `49efa77` has identical product source and
+manifests; only documentation and evidence follow the freeze.
+
+Three muted native diagnostic processes at that freeze each report one output
+stream at 48 kHz and zero observed CPAL status events. Chord, scale and backing
+advance 387,072 / 444,416 / 822,272 device frames and 378 / 434 / 803 graph
+processing blocks respectively. The long-scale requests return in
+0.030–0.032 ms; separately awaited synthesis completes in 420.530–423.916 ms.
+Song preparation takes 68.362 ms cold and 56.125 ms after pitch/tempo edits;
+warm replay returns in 0.003 ms. Preview trial labels reflect request order
+with identical parameters; the backing's edited trial changes actual pitches
+and tempo. These are device/status and control-responsiveness observations,
+not acoustic quality, hardware clock synchronization, callback-gap measurements
+or controlled performance comparisons. The [device receipt](../validation/output-runtime_20261011/ddx/receipt.json)
+retains all three logs and OS CPU/wall measurements.
+
+The five native GUI processes report `RESULT ok`: metronome 214 presented
+frames/four captures, Set seed 126/three and fresh reopen 90/three, preview seed
+179/three and fresh reopen 182/three. All 16 full nonblank captures are visually
+reviewed, for 791 total presentations. Seventeen checkpoints confirm one
+output stream, positive device/graph clocks and unopened capture input. The
+metronome's coherent samples advance from 1,438,720 to 1,628,160 device frames
+and 1,405 to 1,590 graph blocks through stopped/playing/stopped/restarted/stopped;
+Song playback and capture-invalid remain false in that click-only fixture.
+
+The Set's 125 BPM, explicit 5/4 clock and Once mode survive fresh-process
+reopening, while the exact four-bar 240 BPM C/F/G/C compatibility backing
+remains available. A retained C Major thirds recipe keeps 92 BPM, deleted-source
+provenance, Pinned placement and Orbits scene settings across reopening.
+Repeated Hear retains one preview voice; Rewind and Run/Pause clear preview
+playback, ending with four Cards and paused rehearsal. These flows use the
+isolated production Keeper fixture; they do not alter personal persisted data
+or qualify microphone recording/PCM durability.
+
+The [native receipt](../validation/output-runtime_20261011/gui/receipt.json)
+contains exact scenarios, concise logs, completion/presentation receipts,
+separate validator/result hashes, safe profile hashes and all capture hashes
+and dimensions. Full PNGs and original logs remain under
+`/Users/markik/Code/testing/woodshed/output-runtime-20261011/native/`.
+Native window Raise is used; background occlusion/unpresented redraw counts
+are retained rather than claimed as idle rendering or startup-performance
+qualification. Three post-Raise observation errors reflect finite app exit;
+actual successful completion receipts were checked before the next launch,
+without repeating a seed. No further product-source correction was needed.
+All acceptance apps exited and the owned Keeper fixture was stopped. The
+existing four-hour sleep prevention was preserved.
+
+### October 11 follow-up: sealed Set capture companions
+
+**Status: implemented and qualified at source `a6288eb`.** The implementation
+starts at refreshed `961731a`, preserving the selected Redshank export and
+the qualified UI/Firewheel family. `8ec1578` adds portable capture manifests,
+exact mono f32 companions, bounded capture custody and host integration;
+`a6288eb` clears a stale refusal notice after successful recovery. The final
+desktop binary SHA256 is
+`b11df9aea95c01c0653bf069e5798528fbdf4f2974221e12812530d96acf52e4`.
+
+The [capture receipt](../validation/set-captures_20261011/receipt.json) records
+80 focused checks: codec/manifest 4, core storage 11, host persistence 11,
+audio custody/admission 32, filesystem/sealing 6, sync 9, drive 3, export
+protection 1 and Looper views 3. Four independent CPU processes retain exact
+sample bits, including negative zero, through sealed filesystem reopening,
+reorder, clock refusal, explicit Clear and another reopening. Failure probes
+cover missing/corrupt companions, dropped writes, pre-commit refusal and
+accepted publication with failed readback. The affected persistence/sync
+checks are rerun after the notice correction; unchanged component evidence
+retains its exact revision in the receipt. The locked production build passes.
+
+Four native processes use that final binary and unchanged scenarios: seed
+49 presentations/two captures, fresh reopen 58/three, cleared reopen 18/one,
+and missing-companion recovery 35/two. All eight full nonblank captures are
+reviewed, for 160 presentations. Eight checkpoints report unopened input;
+each process reports one output stream. The take follows Set 1/Card 1 through
+reorder and fresh hydration. Play/Stop works; its captured clock refuses a
+tempo change until explicit Clear, then 125 BPM backing and cleared state
+survive the next process. A copied sealed seed profile with one companion
+held aside retains its reference, refuses Rec before input opens, and clears
+the reference and refusal notice only through the explicit stored-loop action.
+
+The [native receipt](../validation/set-captures_20261011/gui/receipt.json)
+retains source/binary/scenario/log/completion hashes, all image hashes and
+dimensions, profile hashes and the P8 glyph observation. Original encrypted
+companion bytes remain unchanged after Clear/reopen; the deliberately held
+copy is restored at cleanup with the same hash, without restoring its cleared
+session reference. No private vault, persisted payload, PCM or app binary is
+included in the repository evidence. Full local captures remain under
+`/Users/markik/Code/testing/woodshed/set-captures-20261011/native/`.
+
+This is synthetic completed-take storage/replay acceptance, supported by
+independent exact-sample CPU probes. It does not qualify physical microphone
+capture, acoustic quality/calibration, hardware-clock drift, saved-song
+bar-index PCM durability, WAV export, orphan collection/disk quota or full P7.
+Native Raise/finite-exit observation and background unpresented redraw counts
+are recorded without claiming startup, idle-paint or rendering performance.
+All four acceptance apps exit; the owned Keeper and lifecycle sleep assertion
+are stopped. The user's expired four-hour timer and other processes are untouched.
+
+
+### October 12 follow-through: backing and completed-loop WAV export
+
+Product source is frozen at `f5cc69d4f441f01bf928ce60aae7ed9596fede3a`,
+starting from refreshed `b15c9be`; the unchanged renderer was first frozen
+at `ca60bf0`. Export WAV captures the accepted backing,
+its immutable completed PCM and the session epoch before opening the native
+save panel. Requested source/clock changes that were refused cannot redirect
+export. Armed/active capture, pending session reset and missing/damaged takes
+referenced by the current Set refuse export; unavailable inactive-owner takes
+do not block independent backing. Saved compatibility backing retains its
+exact authored pitches, per-bar clocks and any completed in-memory bar takes.
+
+`woodshed-audio::export_song_wav_to` renders one pass from bar zero through a
+separate device-free instance of the production Firewheel processor. Float32
+mono WAV retains the admitted rate and rounded integer segment boundaries.
+Completed takes, chord strikes, backing click, default live gain `0.8` and
+clamping match playback. Preview, independent metronome and count-in are
+excluded. The file ends exactly at the final segment boundary. Validation and
+graph preparation precede the first writer operation; 4,096-frame rendering
+and buffered writing stay off the UI thread. Maximum cycle size is
+16,777,216 frames, using the existing WAV dependency and supplier pins.
+
+The views queue portable choose/replace/cancel requests and display transient
+status. The desktop owns the chooser, destination and worker. A synced sibling
+temporary file is finalized before atomic no-clobber publication. A collision
+retains that same rendered artifact until explicit Replace or Cancel; later
+backing edits cannot change its contents. Replace rechecks the existing
+regular file's content immediately before atomic rename. This is not a
+filesystem compare-and-swap against arbitrary external writers. Application
+session/settings/theme paths, capture storage, existing aliases and future
+case variants are protected. Failure/cancellation cleans temporary artifacts
+and preserves the existing destination. Session revocation and final commit
+share a mutex gate; persona switching revokes before opening incoming storage.
+Completion wakes the host without adding idle retained-root rebuilds. Closing
+waits for the worker and then honors the ordinary dirty-appearance close gate.
+
+Focused locked checks pass: 19 audio offline cases (seven new), 21 desktop
+audio cases, 12 persistence cases, nine sync, three drive, four Looper view
+cases and eleven WAV-focused desktop cases. Two cases overlap the audio and
+persistence scopes, leaving 77 distinct checks; the persistence receipt also
+contains four independent child-process probes. Bitwise production-processor
+parity covers variable clocks, segment/chunk boundaries, exact capture PCM,
+click, one-pass termination and live-state isolation. Host checks cover
+actual chooser injection cancellation, collision/replace, protected paths,
+revoked publication, frozen take custody, reset backpressure and dirty-close
+retention. The locked desktop build passes. Five final native processes qualify the in-process Save panel and exported
+files at `f5cc69d`, after the chooser correction below.
+
+The initial `ca60bf0` native seed and sealed-profile CPU references pass. The
+first actual chooser attempt exposes a host/tool ownership limitation: shared
+`light-file-dialog` waits on an `osascript` child running its Save panel; the
+parent becomes inaccessible to the native automation provider and the child
+has no selectable app surface. Process samples establish modal waiting, not a
+deadlock. Save/Cancel are not qualified by that attempt. The final macOS WAV
+seam uses the same `rfd 0.17.2` already used directly by Hocket, without a port
+dependency. One worker queues AppKit work after dispatch/shared borrows are
+released, and retains the original epoch through panel choice and rendering.
+Cancel writes nothing; revocation is checked before/after the panel and at
+commit. The guard is not held during modal interaction. Only RFD is added to
+the root lock, with existing package versions and supplier revisions retained.
+Other platforms retain the shared native chooser; their native behavior is
+not qualified by this macOS slice. Dialog dwell is user-controlled; revocation
+does not programmatically dismiss an already-open panel.
+
+The [export receipt](../validation/wav-export_20261012/receipt.json) and
+[native receipt](../validation/wav-export_20261012/gui/receipt.json) retain
+scoped component revisions, binary/scenario/log/completion/image hashes and
+limits. Seed, fresh-process native Cancel, Save, replacement Cancel and Replace
+pass with 16,256 presentations and nine full reviewed 2360×1600 captures;
+all are nonblank. The actual native panel and OS overwrite sheet were observed
+through CUA, followed by the product's explicit Replace/Cancel decision. The
+83-byte owned sentinel remains byte-identical after Cancel and at the app's
+replacement boundary; explicit Replace changes it to the rendered WAV while
+retaining its original backup. Save controls and completion text fit both
+0.8 and default zoom. All nine input/output checkpoints retain unopened input
+and one output stream. Manual panel dwell/presentation counts do not qualify
+startup, idle rendering or export performance.
+
+Both native output files are byte-identical, independently parsed and decoded
+by `afinfo`: mono float32, 48 kHz, 192,000 frames/four seconds. Their PCM digest
+`51966f89d016ade8cd01b32dfa8583cc2fbe452e5a3bc620f6dc44daeb3401e0`
+matches the frozen sealed-profile CPU backing-plus-take reference and differs
+from backing-only
+`e4911029b436d2bcee6635d7780fc01b893fdca00f8fed34061822a53b3d9e58`.
+After the full native sequence, an independent sealed restore retains the
+same two-segment/one-take report and both exact reference PCM results. The
+immutable sealed companion remains byte-identical. Whole practice/settings
+ciphertext hashes can change during ordinary autosave; this receipt does not
+claim a full raw-session semantic dump.
+
+All five final apps exit naturally; the prior script-backed parent/child and
+owned Keeper/lifecycle sleep assertion are stopped. The user resident/profile
+and expired timer are unaffected. Private vault, session payload, WAV/PCM and
+app binaries stay outside the repository packet. Full images and frozen
+binaries remain in `/Users/markik/Code/testing/woodshed/wav-export-20261012/`.
+The earlier `ca60bf0` seed/reference and blocked chooser are retained separately
+and excluded from accepted final counts.
+
+Pipit and Wavicle were inspected at current upstream sources rather than
+introduced as dependencies. [Pipit `e419547`](https://github.com/merely-made/pipit/tree/e41954790fee7c76221a5a88796875c6668ac2ac)
+is a lossy `i16` speech codec/framing library (IMA ADPCM/LPC), licensed MIT OR
+Apache-2.0. [Wavicle `3b5938b`](https://github.com/merely-made/wavicle/tree/3b5938b21b0a52b9224573eef1ae32665dc5add5)
+is lossless WavPack `.wv`, licensed MPL-2.0 with retained upstream BSD notice.
+Neither provides a WAV writer. Hocket's existing Wavicle `5e1b248` remains
+independently pinned under its earlier grant; the 11 current codec source
+files differ only by added license headers. Existing Hound writes the standard
+WAV needed here. That WAV slice deferred compressed companions to the
+follow-through below; compressed export remains separate. Pipit belongs to
+compact speech transport. No
+root-to-port dependency or mid-slice stack repin is added.
+
+This closes the bounded WAV implementation seam, not full P7. Mixed-material
+lowering, lossless saved-song migration/editor retirement, durable saved-song
+PCM, physical microphone capture/calibration/drift and orphan collection/disk
+quota remain separate. The existing recorded-loop glyph fallback stays under
+P8, including later shared-font intake.
+
+
+### October 12 follow-through: lossless compressed capture storage
+
+**Status (2026-10-12): implemented and qualified.** Source `28f7209` passes
+focused checks, the locked build and actual Keeper/fresh-process storage tests;
+combined font-family source `751858f` adds normal-output native migration/reopen,
+three reviewed captures and exact PCM/WAV parity, as recorded below.
+This extends the existing bounded Set/Card capture seam, preserving its exact
+PCM, owner/clock admission, persona seal, namespace and decoded-frame budget.
+It does not extend saved-song capture durability or change the WAV audio result.
+
+The portable core pins [Wavicle `2c5a49f`](https://github.com/merely-made/wavicle/tree/2c5a49fd48db7a54aeab9e712804fd065411aef9),
+with encode/decode features and no runtime dependencies. That supplier repair
+checks block-size and entropy escape addition, makes the reference unsigned
+entropy arithmetic explicit, and handles signed history expansion without a
+negation panic. Its seven unit and fourteen existing codec fixture/round-trip
+cases pass. Hocket remains independently pinned; no root-to-port dependency
+is introduced. MPL-2.0 and inherited WavPack notices remain intact.
+
+Manifest version 2 adds an explicit per-reference codec. A missing codec keeps
+`LegacyRawF32V1`; its existing `WSHPCM` version-1 blob and digest remain exact.
+New writes select `WavpackF32V1` only when the complete 24-byte-header container
+is smaller than equivalent raw storage. The new `WSHWVC` version-1 container
+contains rate, decoded frames and a mono float32 WavPack stream. An uneconomical
+or returned-error encode uses explicit `RawF32V1`, with the original raw wire
+format; its policy marker avoids encoding it again on reopening. The full
+versioned blob remains the content address, so successful compression changes
+the digest while retaining exact decoded float bits, including signed zero and
+subnormals. Namespace, immutable no-clobber publication and sealing are unchanged.
+
+Compressed reads verify the complete digest, envelope, all block framing, mono
+float32/rate consistency, contiguous indices, declared/actual totals and required
+metadata before calling the allocating decoder. Blocks contain at most 32,768
+frames; the existing 16,777,216 total decoded frames and 256-take limits remain.
+Compressed companions are strictly smaller than raw, so the desktop ciphertext
+read bound remains the same raw limit plus the pinned 40-byte seal envelope.
+Corruption, truncation, unsupported formats and nonfinite decoded samples are
+refused rather than changed to silence. Unknown codec strings round-trip as
+unavailable individual references, preserving other authored practice and the
+explicit Clear path; unsupported manifest versions/structural damage retain
+the existing blocked-catalog policy.
+
+Successfully hydrated legacy takes migrate per reference on the next save or
+completion wake. Missing/corrupt/unknown references remain unchanged; a recovered
+legacy take inside a mixed version-2 manifest is still eligible. New immutable
+companions pass readback before the current session replaces references. Old
+raw blobs remain retained, and failed publication preserves accepted references
+and live PCM. Post-commit readback failure remains unconfirmed without destructive
+rollback. Orphan collection and physical disk quota remain separate.
+
+One bounded, lazily started codec worker prepares immutable sample snapshots.
+The optimized decision probe took about 1.64 seconds for the maximum 16,777,216
+frames, motivating removal of compression from dispatch. Jobs contain no storage,
+custody keys, UI state or devices. A retained lane, cancellation generation,
+session epoch and exact take/sample Arc match prevent old results from publishing
+after Clear or persona/session replacement. Prepared bytes survive failed saves and are released after confirmed publication;
+quota admission precedes thread submission, and idle wakes do not repeatedly
+serialize/write while encoding is pending. Ordinary edits save with the previous
+verified capture manifest, and publication serializes current UI only after
+preparation. Completion wakes the host without another input action.
+
+Close waits for new, unpublished live PCM, then honors the existing appearance
+save/discard gate and any WAV work. A failed policy-only migration can close
+with already verified raw references. The mounted actual main-hooks case proves
+editing while the encoder is blocked, wake publication of the latest edit and
+subsequent dirty-appearance gating. Hashing, sealing, filesystem publication and
+readback, session serialization and hydration decoding remain control-side work;
+this slice does not claim general long-bank UI or disk performance qualification.
+
+The [storage receipt](../validation/compressed-captures_20261012/receipt.json),
+[checks](../validation/compressed-captures_20261012/checks.json) and
+[source freeze](../validation/compressed-captures_20261012/source-freeze.json)
+retain 76 distinct root cases: ten portable codec, thirteen core storage,
+26 host persistence, six filesystem/custody, nine WAV publication, nine sync
+and three drive. The host cases include five independent child processes for
+raw version-1 seed, migration, reorder/reopen, Clear and cleared reopen, plus
+worker/cache, owner/session, seal, quota, unavailable recovery and prepared-metadata
+binding regressions. The locked production build passes on the published WAV
+family, with only Wavicle added to its lock. The then-unpublished font intake
+is excluded from this first source and acceptance claim; its combined
+qualification is recorded separately below.
+
+Five further CPU processes use an actual owned Keeper authority and a copy of
+the previous sealed raw native profile: raw inspection, WAV before, production
+worker migration, fresh inspection and WAV after. The 96,000-frame/48-kHz capture
+retains owner, clock, namespace and exact f32LE BLAKE3
+`ceb886a770b4f14eb9e56fd069ab17517494d1208c5d6c70f904d901d03d0a50`.
+The referenced sealed companion shrinks from 384,064 to 262,824 bytes (31.6%),
+while the original fixture and retained raw companion stay byte-identical.
+Both full backing-plus-take WAV PCM digests remain
+`51966f89d016ade8cd01b32dfa8583cc2fbe452e5a3bc620f6dc44daeb3401e0`,
+with unchanged backing-only
+`e4911029b436d2bcee6635d7780fc01b893fdca00f8fed34061822a53b3d9e58`.
+The independent WAV parser checks mono float32/48 kHz/192,000 frames. The helper
+uses device-free output and unopened input; its five processes qualify storage,
+not native presentation. The owned broker is stopped, and payloads, vault, WAV
+and binaries stay local outside the repository packet.
+
+Keeping old raw blobs means migration does not immediately reclaim existing
+disk bytes; it reduces referenced storage and new capture size. Collection is
+still a separate operation. Knot activation diagnosis delayed the shared
+foreground lane during CPU qualification. It released the lane at publication
+handoff, and Woodshed acquired the reservation. Compression is published on
+the existing qualified family. The Woodshed agent preserved that publication,
+rebased/rebuilt/froze the font combination, and completed the separate native
+follow-through below. The original CPU receipt does not claim native acceptance
+for its earlier source.
+
+
+### October 12 combined font-family native capture follow-through
+
+The original published-family compression receipt above remains unchanged. The
+font branch rebased onto published `1f78d03` and qualified source `751858f` on
+Mere `8568f42`, Genet `2c7ef73`, Netrender `c74b7cb`, Classic Vello `2eae624`,
+Dramatis `0234e7e` and Wavicle `2c5a49f`. Its Rust/Cargo/font bytes match the
+built `a9e1e87`; only two font scenario texts changed before the accepted runs.
+
+Two normal-output native processes on a fresh copy of the sealed raw profile
+pass 54 presentations and three nonblank captures. Both assert two Cards, one
+96,000-frame retained and hydrated take, unopened input and one output stream,
+and show the saved-loop controls. The product's production worker performs
+legacy raw companions to version-2 manifest references backed by version-1
+WavPack containers; read-only Keeper inspectors run before migration,
+after migration and after fresh native reopen. No CPU migration helper mutates
+this profile. Namespace, owner, 120 BPM, 4/4 clock, sample rate and exact float
+bits remain unchanged. The old sealed 384,064-byte blob remains byte-identical;
+the referenced new blob is 262,824 bytes (31.6% smaller). Both full WAV files
+are byte-identical before/after, and independent RIFF and macOS decoder checks
+pass. The original fixture is unchanged.
+
+The [combined-family receipt](../validation/compressed-captures_font-family_20261012/receipt.json),
+[native evidence](../validation/compressed-captures_font-family_20261012/native.json)
+and [codec parity](../validation/compressed-captures_font-family_20261012/codec-parity.json)
+keep this proof separate from the earlier CPU receipt and the device-free font
+processes. This qualifies native hydration, storage controls, migration and
+fresh reopening. Microphone/physical capture, extra listening playback, general
+long-bank performance, disk collection and the circular-arrow glyph stay open.
+Owned native apps, Keeper and lifecycle sleep prevention are stopped; the
+coordinator has released the foreground lane to Knot.

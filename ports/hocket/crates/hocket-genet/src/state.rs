@@ -4,48 +4,30 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 // SPDX-License-Identifier: MPL-2.0
 
-//! The app state behind the genet UI: the real `hocket_model::Session` +
-//! `History`, plus the audio `hocket_engine::Engine` and its content store.
-//!
-//! Every data-bearing gesture commits a real `Edit`, so undo/redo + the future
-//! sync layer see exactly what the UI did; the engine-driving methods mirror the
-//! host's (`record` / `arm` / `stop_all` / `play_layer_from_store` / …)
-//! so audio behaviour remains independent of the UI framework. The `Engine` is
-//! `!Send`; winit runs the app on the main thread, so it lives directly here and
-//! is advanced by [`tick`](AppState::tick) from the host's ~60fps timer.
+//! Standalone application services around the reusable Hocket recorder.
+//! Recorder gestures, capture custody, history edits and waveforms live in
+//! hocket-recorder; this wrapper supplies native audio, project actors, identity,
+//! clipboard, updater, appearance and window policy.
 
 use std::collections::BTreeSet;
 use std::path::PathBuf;
 use std::time::Instant;
 
+use crate::recorder_audio::DesktopRecorderAudio;
 use armillary::ActorHandle;
-use audio_primitives::{MeterBallistics, PeakMeterSmoother, WaveformPeak};
-use hocket_engine::export::ExportLength;
-use hocket_engine::media::{InMemoryStore, MediaStore};
-use hocket_engine::{
-    AudioDeviceSelection, AudioDevices, CapturePhase, Engine, LayerKey, available_audio_devices,
-};
-use hocket_model::{
-    Edit, History, Layer, MediaRef, Phrase, ProjectBundle, Session, Track, TrackColor, TrackId,
-};
+use audio_primitives::MeterBallistics;
 use cambium::SelectState;
 use genet_clipboard::{Clipboard, ClipboardItem, SystemClipboard, TextClipboard};
-use hocket_engine::handoff::{HandoffEnvelope, ReceivedHandoff};
+use hocket_engine::{AudioDeviceSelection, AudioDevices, available_audio_devices};
+use hocket_model::{History, MediaRef, ProjectBundle, Session};
+use hocket_project::export::ExportLength;
+use hocket_project::handoff::{HandoffEnvelope, ReceivedHandoff};
+use hocket_project::media::{InMemoryStore, MediaStore};
+use hocket_recorder::Recorder;
 use personae::{Ed25519PublicKey, IdentityProvider};
 
 use crate::identity::{LocalIdentity, parse_contact_token};
 use crate::project_io::{ProjectCommand, ProjectUpdate};
-
-/// Meter dB floor for the 0..1 level the output meters display.
-const METER_FLOOR_DB: f32 = -60.0;
-
-fn normalize_meter_db(db: f32) -> f32 {
-    if !db.is_finite() || db <= METER_FLOOR_DB {
-        0.0
-    } else {
-        ((db - METER_FLOOR_DB) / -METER_FLOOR_DB).clamp(0.0, 1.0)
-    }
-}
 
 enum ProjectStatus {
     Idle,
@@ -76,27 +58,11 @@ pub struct PersonaSwitch {
 }
 
 pub struct AppState {
-    pub session: Session,
-    pub history: History,
-
-    // === audio ===
-    engine: Result<Engine, String>,
-    sample_rate: u32,
-    store: InMemoryStore,
-    capture_phase: CapturePhase,
-    /// The track the in-flight capture targets (snapshot at Record time, so
-    /// re-arming mid-capture does not redirect it).
-    capturing_track: Option<usize>,
-    /// Engine layer keys currently looping, so stop-all / mute can stop them.
-    playing: Vec<LayerKey>,
-    /// Latest output peak, dB per channel, read back each tick.
-    meter_db: [f32; 2],
-    /// Host-local display smoothing; timing is UI policy, not session state.
-    meter_display: [PeakMeterSmoother; 2],
+    pub appearance: crate::appearance::AppearanceState,
+    pub window_commands: cambium_genet_winit_host::WindowCommands,
+    pub recorder: Recorder,
+    audio: DesktopRecorderAudio,
     last_meter_tick: Instant,
-    /// Blobs referenced by an opened project but unavailable locally. Their
-    /// layers remain in the model and stay silent until the blobs arrive.
-    pub missing_media: BTreeSet<MediaRef>,
     project_path: Option<PathBuf>,
     saved_head: hocket_model::NodeId,
     project_status: ProjectStatus,
@@ -143,13 +109,6 @@ pub struct AppState {
     applied_audio_input: usize,
     applied_audio_output: usize,
     audio_status: String,
-
-    // === app-local UI (graduation notes) ===
-    /// Audible metronome. Drives the engine click directly; distinct from the
-    /// master clock (which governs bar-aligned capture + count-in).
-    pub click: bool,
-    /// Solo set. App-local: the model has no solo yet (a mix-bus concern).
-    pub solo: BTreeSet<TrackId>,
 }
 
 impl AppState {
@@ -159,6 +118,7 @@ impl AppState {
         update_worker: ActorHandle<crate::update::worker::UpdateCommand>,
         update_settings: crate::update::UpdateSettings,
         identity: Result<LocalIdentity, String>,
+        receipt: bool,
     ) -> Self {
         Self::from_project_parts(
             Session::new_default(),
@@ -169,6 +129,7 @@ impl AppState {
             update_worker,
             update_settings,
             identity,
+            receipt,
         )
     }
 
@@ -182,29 +143,27 @@ impl AppState {
         update_worker: ActorHandle<crate::update::worker::UpdateCommand>,
         update_settings: crate::update::UpdateSettings,
         identity: Result<LocalIdentity, String>,
+        receipt: bool,
     ) -> Self {
-        let audio_devices = available_audio_devices();
-        let (engine, sample_rate, audio_status) = match Engine::new() {
-            Ok(e) => {
-                let sr = e.sample_rate();
-                (Ok(e), sr, "system audio".to_string())
-            }
-            Err(e) => (Err(e.to_string()), 0, "audio unavailable".to_string()),
+        let audio_devices = if receipt {
+            AudioDevices::default()
+        } else {
+            available_audio_devices()
         };
+        let audio = DesktopRecorderAudio::new(receipt);
+        let audio_status = if receipt {
+            "appearance receipt · audio inactive"
+        } else {
+            "system audio"
+        }
+        .to_string();
         let saved_head = history.head;
         let mut state = Self {
-            session,
-            history,
-            engine,
-            sample_rate,
-            store,
-            capture_phase: CapturePhase::Idle,
-            capturing_track: None,
-            playing: Vec::new(),
-            meter_db: [f32::NEG_INFINITY; 2],
-            meter_display: [PeakMeterSmoother::default(), PeakMeterSmoother::default()],
+            appearance: crate::appearance::AppearanceState::default(),
+            window_commands: cambium_genet_winit_host::WindowCommands::new(),
+            recorder: Recorder::new(session, history, store, missing_media),
+            audio,
             last_meter_tick: Instant::now(),
-            missing_media,
             project_path: None,
             saved_head,
             project_status: ProjectStatus::Idle,
@@ -213,7 +172,11 @@ impl AppState {
             update_settings,
             update_worker,
             identity,
-            clipboard: SystemClipboard::new().ok(),
+            clipboard: if receipt {
+                None
+            } else {
+                SystemClipboard::new().ok()
+            },
             recipient: None,
             persona_switch: None,
             reshare_notice: false,
@@ -225,13 +188,20 @@ impl AppState {
             applied_audio_input: 0,
             applied_audio_output: 0,
             audio_status,
-            click: true,
-            solo: BTreeSet::new(),
         };
         state.set_meter_ballistics(MeterBallistics::default());
         // Apply the initial click + tempo to the engine.
         state.resync_tempo();
         state
+    }
+
+    pub fn protect_appearance_exports(&mut self) {
+        let mut paths = vec![crate::update::settings_path()];
+        paths.extend(self.project_path.clone());
+        self.appearance.protect_media(paths);
+        self.appearance
+            .workshop
+            .set_protected_export_directories(crate::identity::protected_data_directories());
     }
 
     pub fn project_label(&self) -> String {
@@ -253,7 +223,7 @@ impl AppState {
                 } else {
                     "saved".to_string()
                 }
-            }
+            },
             ProjectStatus::Exported(path) => format!(
                 "exported {}",
                 path.file_name().unwrap_or_default().to_string_lossy()
@@ -275,7 +245,7 @@ impl AppState {
                 } else {
                     "new session".to_string()
                 }
-            }
+            },
         }
     }
 
@@ -303,7 +273,10 @@ impl AppState {
     /// The local identity's contact token (full public key as hex), if the
     /// identity is available. A peer needs this to address a hand-off here.
     pub fn contact_token(&self) -> Option<String> {
-        self.identity.as_ref().ok().map(LocalIdentity::contact_token)
+        self.identity
+            .as_ref()
+            .ok()
+            .map(LocalIdentity::contact_token)
     }
 
     /// Copy the contact token to the OS clipboard through genet's shared
@@ -322,11 +295,9 @@ impl AppState {
                 Ok(()) => self.project_status = ProjectStatus::TokenCopied,
                 Err(error) => {
                     self.project_status = ProjectStatus::Error(format!("copy token: {error}"))
-                }
+                },
             },
-            None => {
-                self.project_status = ProjectStatus::Error("clipboard unavailable".to_string())
-            }
+            None => self.project_status = ProjectStatus::Error("clipboard unavailable".to_string()),
         }
     }
 
@@ -340,24 +311,24 @@ impl AppState {
                 ProjectStatus::Error("stop recording before copying audio".to_string());
             return;
         }
-        let mix = match hocket_engine::export::render_mix(
-            &self.session,
-            &self.store,
-            &self.solo,
+        let mix = match hocket_project::export::render_mix(
+            &self.recorder.session,
+            &self.recorder.store,
+            &self.recorder.solo,
             self.export_length,
         ) {
             Ok(mix) => mix,
             Err(error) => {
                 self.project_status = ProjectStatus::Error(format!("copy audio: {error}"));
                 return;
-            }
+            },
         };
-        let bytes = match hocket_engine::export::encode_stereo_wav_bytes(&mix) {
+        let bytes = match hocket_project::export::encode_stereo_wav_bytes(&mix) {
             Ok(bytes) => bytes,
             Err(error) => {
                 self.project_status = ProjectStatus::Error(format!("copy audio: {error}"));
                 return;
-            }
+            },
         };
         let label = format!("{} loop", self.project_label());
         let item = ClipboardItem::new()
@@ -368,11 +339,9 @@ impl AppState {
                 Ok(()) => self.project_status = ProjectStatus::AudioCopied,
                 Err(error) => {
                     self.project_status = ProjectStatus::Error(format!("copy audio: {error}"))
-                }
+                },
             },
-            None => {
-                self.project_status = ProjectStatus::Error("clipboard unavailable".to_string())
-            }
+            None => self.project_status = ProjectStatus::Error("clipboard unavailable".to_string()),
         }
     }
 
@@ -396,45 +365,33 @@ impl AppState {
                     self.project_status =
                         ProjectStatus::Error("no audio on the clipboard".to_string());
                     return;
-                }
+                },
             },
             None => {
                 self.project_status = ProjectStatus::Error("clipboard unavailable".to_string());
                 return;
-            }
+            },
         };
-        let mix = match hocket_engine::export::decode_wav_bytes(&bytes) {
+        let mix = match hocket_project::export::decode_wav_bytes(&bytes) {
             Ok(mix) => mix,
             Err(error) => {
                 self.project_status = ProjectStatus::Error(format!("paste audio: {error}"));
                 return;
-            }
+            },
         };
         if mix.samples.is_empty() {
             self.project_status = ProjectStatus::Error("pasted audio is empty".to_string());
             return;
         }
-        let media = self.store.put(&mix.samples, mix.sample_rate);
-        let phrase = Phrase::new(
-            media,
-            self.session.bars_per_phrase,
-            self.session.bpm,
+        let track_id = self.recorder.session.tracks[track_idx].id;
+        if let Err(error) = self.recorder.append_imported_audio(
+            track_id,
+            &mix.samples,
+            mix.sample_rate,
             Self::now_ms(),
-        );
-        let layer = Layer::new(phrase.id);
-        let track_id = self.session.tracks[track_idx].id;
-        let layer_index = self.session.tracks[track_idx].layers.len() as u16;
-        self.history.commit(
-            Edit::AppendLayer {
-                track_id,
-                phrase,
-                layer,
-            },
-            &mut self.session,
-            Self::now_ms(),
-        );
-        if self.track_is_audible(track_idx) {
-            self.play_layer_from_store(track_idx, layer_index as usize);
+        ) {
+            self.project_status = ProjectStatus::Error(format!("paste audio: {error}"));
+            return;
         }
         self.project_status = ProjectStatus::AudioPasted;
     }
@@ -459,22 +416,22 @@ impl AppState {
                 Err(error) => {
                     self.project_status = ProjectStatus::Error(format!("paste: {error}"));
                     return;
-                }
+                },
             },
             None => {
                 self.project_status = ProjectStatus::Error("clipboard unavailable".to_string());
                 return;
-            }
+            },
         };
         match parse_contact_token(&text) {
             Ok(key) => {
                 let fingerprint = key_fingerprint(&key);
                 self.recipient = Some(key);
                 self.project_status = ProjectStatus::RecipientSet(fingerprint);
-            }
+            },
             Err(reason) => {
                 self.project_status = ProjectStatus::Error(format!("recipient: {reason}"));
-            }
+            },
         }
     }
 
@@ -500,16 +457,18 @@ impl AppState {
             Err(_) => {
                 self.project_status = ProjectStatus::Error("identity unavailable".to_string());
                 return;
-            }
+            },
         };
-        let bundle = ProjectBundle::new(self.session.clone(), self.history.clone());
-        let envelope = match HandoffEnvelope::create(&bundle, &self.store, recipient, identity) {
-            Ok(envelope) => envelope,
-            Err(error) => {
-                self.project_status = ProjectStatus::Error(format!("hand off: {error}"));
-                return;
-            }
-        };
+        let bundle =
+            ProjectBundle::new(self.recorder.session.clone(), self.recorder.history.clone());
+        let envelope =
+            match HandoffEnvelope::create(&bundle, &self.recorder.store, recipient, identity) {
+                Ok(envelope) => envelope,
+                Err(error) => {
+                    self.project_status = ProjectStatus::Error(format!("hand off: {error}"));
+                    return;
+                },
+            };
         let file_name = format!("{}.hocket", self.project_label());
         let Some(path) = rfd::FileDialog::new()
             .add_filter("Hocket hand-off", &["hocket"])
@@ -574,17 +533,17 @@ impl AppState {
         let Ok(identity) = self.identity.as_mut() else {
             return;
         };
-        match identity.join_family(&personae::bootstrap::default_vault_dir()) {
+        match identity.join_family() {
             Ok(()) => {
                 self.reshare_notice = true;
                 // The addressed reply belonged to the old identity's
                 // conversation; keeping it would send the next hand-off as
                 // somebody the peer no longer recognises.
                 self.recipient = None;
-            }
+            },
             Err(error) => {
                 eprintln!("[hocket] could not join the family persona: {error}");
-            }
+            },
         }
     }
 
@@ -611,7 +570,7 @@ impl AppState {
         self.incoming.as_ref().map(|received| {
             let session = &received.bundle.session;
             let layers: usize = session.tracks.iter().map(|track| track.layers.len()).sum();
-            let continues = session.id == self.session.id;
+            let continues = session.id == self.recorder.session.id;
             format!(
                 "{} \u{00b7} {} tracks \u{00b7} {} layers \u{00b7} {} media",
                 if continues {
@@ -638,7 +597,7 @@ impl AppState {
             Err(_) => {
                 self.project_status = ProjectStatus::Error("identity unavailable".to_string());
                 return;
-            }
+            },
         };
         let Some(path) = rfd::FileDialog::new()
             .add_filter("Hocket hand-off", &["hocket"])
@@ -668,35 +627,38 @@ impl AppState {
             return;
         };
         let sender = received.sender;
-        if received.bundle.session.id == self.session.id {
-            let mut bundle = ProjectBundle::new(self.session.clone(), self.history.clone());
-            let mut media = self.store.clone();
+        if received.bundle.session.id == self.recorder.session.id {
+            let mut bundle =
+                ProjectBundle::new(self.recorder.session.clone(), self.recorder.history.clone());
+            let mut media = self.recorder.store.clone();
             match received.accept_branch(&mut bundle, &mut media) {
                 Ok(_report) => {
                     self.stop_all();
-                    self.session = bundle.session;
-                    self.history = bundle.history;
-                    self.store = media;
+                    self.recorder.replace_project(
+                        bundle.session,
+                        bundle.history,
+                        media,
+                        self.recorder.missing_media.clone(),
+                    );
                     self.recipient = Some(sender);
                     self.project_status = ProjectStatus::HandoffAccepted;
                     self.resync_tempo();
                     self.reconcile_all_playback();
-                }
+                },
                 Err(error) => {
                     self.project_status = ProjectStatus::Error(format!("accept: {error}"));
-                }
+                },
             }
         } else {
             // A new session from a peer: adopt it wholesale, like opening a
             // project, but with no file yet so it reads as unsaved.
             self.stop_all();
-            self.session = received.bundle.session;
-            self.history = received.bundle.history;
-            self.store = received.media;
-            self.missing_media.clear();
-            self.capture_phase = CapturePhase::Idle;
-            self.capturing_track = None;
-            self.solo.clear();
+            self.recorder.replace_project(
+                received.bundle.session,
+                received.bundle.history,
+                received.media,
+                BTreeSet::new(),
+            );
             self.project_path = None;
             self.recipient = Some(sender);
             self.project_status = ProjectStatus::HandoffAccepted;
@@ -748,13 +710,14 @@ impl AppState {
                 .map(|path| ensure_extension(path, "hock")),
         };
         if let Some(path) = path {
-            let bundle = ProjectBundle::new(self.session.clone(), self.history.clone());
+            let bundle =
+                ProjectBundle::new(self.recorder.session.clone(), self.recorder.history.clone());
             self.project_status = ProjectStatus::Saving;
             if !self.project_worker.command(ProjectCommand::Save {
                 path,
                 bundle,
-                media: self.store.clone(),
-                saved_head: self.history.head,
+                media: self.recorder.store.clone(),
+                saved_head: self.recorder.history.head,
             }) {
                 self.project_status = ProjectStatus::Error("project worker stopped".to_string());
             }
@@ -780,9 +743,9 @@ impl AppState {
             self.project_status = ProjectStatus::Exporting;
             if !self.project_worker.command(ProjectCommand::ExportMix {
                 path,
-                session: self.session.clone(),
-                media: self.store.clone(),
-                solo: self.solo.clone(),
+                session: self.recorder.session.clone(),
+                media: self.recorder.store.clone(),
+                solo: self.recorder.solo.clone(),
                 length: self.export_length,
             }) {
                 self.project_status = ProjectStatus::Error("project worker stopped".to_string());
@@ -806,13 +769,13 @@ impl AppState {
     }
 
     pub fn export_session_bars(&mut self) {
-        self.export_length = ExportLength::Bars(self.session.bars_per_phrase.max(1));
+        self.export_length = ExportLength::Bars(self.recorder.session.bars_per_phrase.max(1));
     }
 
     pub fn adjust_export_bars(&mut self, delta: i8) {
         let bars = self
             .export_bars()
-            .unwrap_or_else(|| self.session.bars_per_phrase.max(1));
+            .unwrap_or_else(|| self.recorder.session.bars_per_phrase.max(1));
         self.export_length = ExportLength::Bars(if delta.is_negative() {
             bars.saturating_sub(delta.unsigned_abs()).max(1)
         } else {
@@ -854,7 +817,7 @@ impl AppState {
                     settings: self.update_settings,
                     user_asked: true,
                 })
-            }
+            },
             // In flight, off, or impossible here: nothing to advance.
             UpdateStatus::Checking
             | UpdateStatus::Downloading { .. }
@@ -878,42 +841,42 @@ impl AppState {
                 self.project_path = Some(path);
                 self.saved_head = saved_head;
                 self.project_status = ProjectStatus::Saved;
-            }
+            },
             ProjectUpdate::Opened { path, loaded } => {
                 self.stop_all();
-                self.session = loaded.bundle.session;
-                self.history = loaded.bundle.history;
-                self.store = loaded.media;
-                self.missing_media = loaded.missing_media;
-                self.capture_phase = CapturePhase::Idle;
-                self.capturing_track = None;
-                self.solo.clear();
+                self.recorder.replace_project(
+                    loaded.bundle.session,
+                    loaded.bundle.history,
+                    loaded.media,
+                    loaded.missing_media,
+                );
                 self.project_path = Some(path);
-                self.saved_head = self.history.head;
+                self.saved_head = self.recorder.history.head;
                 self.project_status = ProjectStatus::Saved;
                 self.resync_tempo();
                 self.reconcile_all_playback();
-            }
+            },
             ProjectUpdate::Exported { path } => {
                 self.project_status = ProjectStatus::Exported(path);
-            }
+            },
             ProjectUpdate::HandoffWritten { path } => {
                 self.project_status = ProjectStatus::HandedOff(path);
-            }
+            },
             ProjectUpdate::HandoffReceived { received } => {
                 // Stage the authenticated hand-off for review. It does not touch
                 // the live session until the musician accepts it.
-                self.project_status = ProjectStatus::HandoffReceived(key_fingerprint(&received.sender));
+                self.project_status =
+                    ProjectStatus::HandoffReceived(key_fingerprint(&received.sender));
                 self.incoming = Some(received);
-            }
+            },
             ProjectUpdate::Failed { action, message } => {
                 self.project_status = ProjectStatus::Error(format!("{action}: {message}"));
-            }
+            },
         }
     }
 
     fn is_dirty(&self) -> bool {
-        self.history.head != self.saved_head
+        self.recorder.history.head != self.saved_head
     }
 
     fn now_ms() -> u64 {
@@ -921,135 +884,6 @@ impl AppState {
             .duration_since(std::time::UNIX_EPOCH)
             .map(|d| d.as_millis() as u64)
             .unwrap_or(0)
-    }
-
-    // === derived state the view reads ===
-
-    pub fn armed_index(&self) -> Option<usize> {
-        self.session.tracks.iter().position(|t| t.armed)
-    }
-
-    /// Whether a capture is in progress (drives the record light + rail).
-    pub fn is_recording(&self) -> bool {
-        matches!(
-            self.capture_phase,
-            CapturePhase::Waiting { .. }
-                | CapturePhase::Recording { .. }
-                | CapturePhase::FreeRecording { .. }
-        )
-    }
-
-    /// The output meter level `0..1` for channel `ch` (0 = L, 1 = R), mapped
-    /// from the read-back dB against the display floor.
-    pub fn meter_level(&self, ch: usize) -> f32 {
-        self.meter_display
-            .get(ch)
-            .map(|meter| meter.reading().level)
-            .unwrap_or(0.0)
-    }
-
-    pub fn meter_peak_level(&self, ch: usize) -> f32 {
-        self.meter_display
-            .get(ch)
-            .map(|meter| meter.reading().peak)
-            .unwrap_or(0.0)
-    }
-
-    /// Latest output level in dB, for the textual peak readout.
-    pub fn meter_db(&self, ch: usize) -> f32 {
-        self.meter_db.get(ch).copied().unwrap_or(f32::NEG_INFINITY)
-    }
-
-    /// Host-local meter timing. A settings surface can replace this without
-    /// mutating project or collaboration state.
-    pub fn set_meter_ballistics(&mut self, ballistics: MeterBallistics) {
-        for meter in &mut self.meter_display {
-            meter.set_ballistics(ballistics);
-        }
-    }
-
-    pub(crate) fn render_track_waveform(
-        &self,
-        track_index: usize,
-        columns: usize,
-    ) -> Option<Vec<WaveformPeak>> {
-        hocket_engine::waveform::render_track_peaks(
-            &self.session,
-            &self.store,
-            track_index,
-            columns,
-        )
-        .ok()
-    }
-
-    pub(crate) fn render_layer_waveform(
-        &self,
-        track_index: usize,
-        layer_index: usize,
-        columns: usize,
-    ) -> Option<Vec<WaveformPeak>> {
-        hocket_engine::waveform::render_layer_peaks(
-            &self.session,
-            &self.store,
-            track_index,
-            layer_index,
-            columns,
-        )
-        .ok()
-    }
-
-    pub fn layer_waveform_available(&self, track_index: usize, layer_index: usize) -> bool {
-        self.session
-            .tracks
-            .get(track_index)
-            .and_then(|track| track.layers.get(layer_index))
-            .and_then(|layer| self.session.phrases.get(&layer.phrase_id))
-            .and_then(|phrase| self.store.get(&phrase.media))
-            .is_some_and(|buffer| !buffer.samples.is_empty())
-    }
-
-    pub fn track_has_audible_layers(&self, track_index: usize) -> bool {
-        self.session.tracks.get(track_index).is_some_and(|track| {
-            track.layers.iter().enumerate().any(|(index, layer)| {
-                track
-                    .playback_mode
-                    .is_layer_audible(index as u16, layer.muted)
-            })
-        })
-    }
-
-    pub fn track_waveform_available(&self, track_index: usize) -> bool {
-        let Some(track) = self.session.tracks.get(track_index) else {
-            return false;
-        };
-        let mut sample_rate = None;
-        let mut found = false;
-        for (index, layer) in track.layers.iter().enumerate() {
-            if !track
-                .playback_mode
-                .is_layer_audible(index as u16, layer.muted)
-            {
-                continue;
-            }
-            let Some(buffer) = self
-                .session
-                .phrases
-                .get(&layer.phrase_id)
-                .and_then(|phrase| self.store.get(&phrase.media))
-            else {
-                return false;
-            };
-            if buffer.samples.is_empty() {
-                return false;
-            }
-            match sample_rate {
-                Some(expected) if expected != buffer.sample_rate => return false,
-                None => sample_rate = Some(buffer.sample_rate),
-                _ => {}
-            }
-            found = true;
-        }
-        found
     }
 
     pub fn input_device_options(&self) -> Vec<String> {
@@ -1061,277 +895,20 @@ impl AppState {
     }
 
     pub fn audio_status_label(&self) -> &str {
-        &self.audio_status
+        self.recorder.audio_status_label()
     }
 
-    // === the engine tick (host calls ~60fps via runner.update) ===
-
-    /// Advance the engine, read back the meter + capture phase, and promote a
-    /// completed capture into a model layer + looping playback.
+    /// Service the host adapter and device-free recorder controller.
     pub fn tick(&mut self) {
         let now = Instant::now();
-        let meter_delta = now
+        let delta = now
             .duration_since(self.last_meter_tick)
             .as_secs_f32()
             .clamp(0.0, 0.25);
         self.last_meter_tick = now;
         self.apply_audio_device_selection();
-        let (meter, phase, captured) = match &mut self.engine {
-            Ok(engine) => {
-                let _ = engine.tick();
-                (
-                    engine.peak_db(),
-                    engine.pending_capture_progress(),
-                    engine.take_bar_aligned_capture(),
-                )
-            }
-            Err(_) => ([f32::NEG_INFINITY; 2], self.capture_phase.clone(), None),
-        };
-        self.meter_db = meter;
-        for (channel, smoother) in self.meter_display.iter_mut().enumerate() {
-            smoother.update(normalize_meter_db(meter[channel]), meter_delta);
-        }
-        self.capture_phase = phase;
-
-        if let Some(samples) = captured {
-            let Some(track_idx) = self.capturing_track.take() else {
-                return;
-            };
-            // A free capture stopped instantly yields an empty buffer — skip.
-            if samples.is_empty() || track_idx >= self.session.tracks.len() {
-                return;
-            }
-            let media = self.store.put(&samples, self.sample_rate);
-            let phrase = Phrase::new(
-                media,
-                self.session.bars_per_phrase,
-                self.session.bpm,
-                Self::now_ms(),
-            );
-            let layer = Layer::new(phrase.id);
-            let track_id = self.session.tracks[track_idx].id;
-            let layer_index = self.session.tracks[track_idx].layers.len() as u16;
-            self.history.commit(
-                Edit::AppendLayer {
-                    track_id,
-                    phrase,
-                    layer,
-                },
-                &mut self.session,
-                Self::now_ms(),
-            );
-            if self.track_is_audible(track_idx) {
-                let key = LayerKey::new(track_id, layer_index);
-                let clocked = self.session.master_clock_enabled;
-                if let Ok(engine) = &mut self.engine {
-                    let _ = if clocked {
-                        engine.play_layer_at_next_bar(key, samples, 1.0, true)
-                    } else {
-                        engine.play_layer(key, samples, 1.0, true)
-                    };
-                }
-                self.playing.push(key);
-            }
-        }
-    }
-
-    // === gestures (commit a real Edit, then drive the engine) ===
-
-    /// Arm track `idx` (single-arm: unarm the previous holder). Stops a live
-    /// capture first so the flag never points at an un-armed track.
-    pub fn arm(&mut self, idx: usize) {
-        if self.session.tracks.get(idx).is_none_or(|t| t.armed) {
-            return;
-        }
-        if self.is_recording() {
-            self.stop_capture();
-        }
-        let now = Self::now_ms();
-        if let Some(prev) = self.armed_index() {
-            let track_id = self.session.tracks[prev].id;
-            self.history.commit(
-                Edit::ArmTrack {
-                    track_id,
-                    from: true,
-                    to: false,
-                },
-                &mut self.session,
-                now,
-            );
-        }
-        let track_id = self.session.tracks[idx].id;
-        self.history.commit(
-            Edit::ArmTrack {
-                track_id,
-                from: false,
-                to: true,
-            },
-            &mut self.session,
-            now,
-        );
-    }
-
-    /// Add an empty track using the session's selected playback profile.
-    pub fn add_track(&mut self) {
-        let index = self.session.tracks.len();
-        let track = Track::new_with_mode(
-            format!("track {}", index + 1),
-            TrackColor::from_palette_index(index),
-            self.session.default_playback_mode,
-        );
-        self.history
-            .commit(Edit::AddTrack { track }, &mut self.session, Self::now_ms());
-    }
-
-    /// The Record gesture. Master clock on → a bar-aligned, count-in, fixed
-    /// capture. Master clock off → toggle a free/variable-length capture.
-    pub fn toggle_record(&mut self) {
-        let Some(armed) = self.armed_index() else {
-            return;
-        };
-        if self.session.master_clock_enabled {
-            let count_in = self.session.count_in_bars;
-            if let Ok(engine) = &mut self.engine {
-                if engine
-                    .arm_bar_aligned_capture(self.session.bars_per_phrase, count_in)
-                    .is_ok()
-                {
-                    self.capturing_track = Some(armed);
-                }
-            }
-        } else if matches!(self.capture_phase, CapturePhase::FreeRecording { .. }) {
-            self.stop_capture();
-        } else if let Ok(engine) = &mut self.engine {
-            if engine.start_free_capture().is_ok() {
-                self.capturing_track = Some(armed);
-            }
-        }
-    }
-
-    /// Stop an in-flight free capture (the tick picks up the Complete buffer).
-    fn stop_capture(&mut self) {
-        if let Ok(engine) = &mut self.engine {
-            engine.stop_free_capture();
-        }
-    }
-
-    /// Toggle track-level mute (the lane's M): stop / replay the track's voices.
-    pub fn toggle_track_mute(&mut self, idx: usize) {
-        let Some(track) = self.session.tracks.get(idx) else {
-            return;
-        };
-        let (track_id, from) = (track.id, track.muted);
-        self.history.commit(
-            Edit::MuteTrack {
-                track_id,
-                from,
-                to: !from,
-            },
-            &mut self.session,
-            Self::now_ms(),
-        );
-        if !from {
-            // Now muted: stop every voice on this track.
-            let keys: Vec<LayerKey> = self
-                .playing
-                .iter()
-                .copied()
-                .filter(|k| k.track_id == track_id)
-                .collect();
-            for key in keys {
-                self.stop_layer_key(key);
-            }
-        } else if self.track_is_audible(idx) {
-            self.reconcile_track_playback(idx);
-        }
-    }
-
-    /// Toggle one layer's mute (tap a layer row): stop / replay that voice.
-    pub fn toggle_layer_mute(&mut self, track_idx: usize, layer_index: u16) {
-        let Some(track) = self.session.tracks.get(track_idx) else {
-            return;
-        };
-        let track_id = track.id;
-        let Some(layer) = track.layers.get(layer_index as usize) else {
-            return;
-        };
-        let from = layer.muted;
-        self.history.commit(
-            Edit::SetLayerMute {
-                track_id,
-                layer_index,
-                from,
-                to: !from,
-            },
-            &mut self.session,
-            Self::now_ms(),
-        );
-        let key = LayerKey::new(track_id, layer_index);
-        if !from {
-            self.stop_layer_key(key);
-        } else if self.track_is_audible(track_idx) {
-            self.play_layer_from_store(track_idx, layer_index as usize);
-        }
-    }
-
-    /// Nudge tempo (clamped) and re-sync the engine grid.
-    pub fn bpm_nudge(&mut self, delta: f32) {
-        let from = self.session.bpm;
-        let to = (from + delta).clamp(40.0, 240.0);
-        if (to - from).abs() < f32::EPSILON {
-            return;
-        }
-        self.history
-            .commit(Edit::SetBpm { from, to }, &mut self.session, Self::now_ms());
-        self.resync_tempo();
-    }
-
-    /// Toggle the master clock (bar-aligned capture + count-in). Model-only;
-    /// the audible metronome is the separate [`toggle_click`](Self::toggle_click).
-    pub fn toggle_master_clock(&mut self) {
-        let from = self.session.master_clock_enabled;
-        self.history.commit(
-            Edit::SetMasterClock { from, to: !from },
-            &mut self.session,
-            Self::now_ms(),
-        );
-    }
-
-    /// Toggle the audible metronome click on the engine.
-    pub fn toggle_click(&mut self) {
-        self.click = !self.click;
-        if let Ok(engine) = &mut self.engine {
-            engine.set_click_enabled(self.click);
-        }
-    }
-
-    /// Toggle solo membership for track `idx` and reconcile the engine with the
-    /// resulting audible-track set.
-    pub fn toggle_solo(&mut self, idx: usize) {
-        let Some(track) = self.session.tracks.get(idx) else {
-            return;
-        };
-        let id = track.id;
-        if !self.solo.remove(&id) {
-            self.solo.insert(id);
-        }
-        self.reconcile_all_playback();
-    }
-
-    // === engine playback helpers ===
-
-    /// Push tempo + full time signature to the click and re-apply the click enable.
-    /// Stops all playing loops first — they were captured at the old grid and
-    /// would drift.
-    fn resync_tempo(&mut self) {
-        self.stop_all();
-        let bpm = self.session.bpm;
-        let time_signature = self.session.time_signature;
-        let click = self.click;
-        if let Ok(engine) = &mut self.engine {
-            let _ = engine.set_tempo(bpm, time_signature.numerator, time_signature.denominator);
-            engine.set_click_enabled(click);
-        }
+        self.recorder
+            .service(&mut self.audio, Self::now_ms(), delta);
     }
 
     fn apply_audio_device_selection(&mut self) {
@@ -1344,6 +921,7 @@ impl AppState {
             self.audio_input_select.selected = self.applied_audio_input;
             self.audio_output_select.selected = self.applied_audio_output;
             self.audio_status = "stop capture before changing audio".to_string();
+            self.recorder.report_audio_status(self.audio_status.clone());
             return;
         }
 
@@ -1352,127 +930,31 @@ impl AppState {
             output_id: selected_device_id(&self.audio_devices.outputs, output),
         };
         self.stop_all();
-        let old_engine = std::mem::replace(&mut self.engine, Err("restarting audio".to_string()));
-        drop(old_engine);
-
-        match Engine::new_with_audio_devices(&selection) {
-            Ok(engine) => {
-                self.sample_rate = engine.sample_rate();
-                self.engine = Ok(engine);
+        match self.audio.restart(&selection) {
+            Ok(()) => {
                 self.applied_audio_input = input;
                 self.applied_audio_output = output;
-                self.audio_status = "audio switched".to_string();
-                self.resync_tempo();
-                self.reconcile_all_playback();
-            }
+                self.audio_status = "audio switched".into();
+                self.recorder.audio_restarted();
+            },
             Err(error) => {
-                self.audio_input_select.selected = self.applied_audio_input;
-                self.audio_output_select.selected = self.applied_audio_output;
-                match Engine::new() {
-                    Ok(engine) => {
-                        self.sample_rate = engine.sample_rate();
-                        self.engine = Ok(engine);
-                        self.audio_input_select.selected = 0;
-                        self.audio_output_select.selected = 0;
-                        self.applied_audio_input = 0;
-                        self.applied_audio_output = 0;
+                self.audio_input_select.selected = 0;
+                self.audio_output_select.selected = 0;
+                self.applied_audio_input = 0;
+                self.applied_audio_output = 0;
+                match self.audio.restart(&AudioDeviceSelection::default()) {
+                    Ok(()) => {
                         self.audio_status =
                             format!("audio switch failed: {error}; restored default");
-                        self.resync_tempo();
-                        self.reconcile_all_playback();
-                    }
-                    Err(fallback_error) => {
-                        self.engine = Err(format!(
-                            "{error}; default audio also failed: {fallback_error}"
-                        ));
-                        self.audio_status = "audio unavailable".to_string();
-                    }
+                        self.recorder.audio_restarted();
+                    },
+                    Err(fallback) => {
+                        self.audio_status = format!("audio unavailable: {error}; {fallback}")
+                    },
                 }
-            }
+            },
         }
-    }
-
-    /// Stop every live loop. The session layers remain intact and can be
-    /// projected back into the engine after a transport command or state change.
-    pub fn stop_all(&mut self) {
-        let keys: Vec<LayerKey> = self.playing.drain(..).collect();
-        if let Ok(engine) = &mut self.engine {
-            for key in keys {
-                engine.stop_layer(key);
-            }
-        }
-    }
-
-    fn stop_layer_key(&mut self, key: LayerKey) {
-        if let Ok(engine) = &mut self.engine {
-            engine.stop_layer(key);
-        }
-        self.playing.retain(|k| *k != key);
-    }
-
-    /// (Re)play every audible layer of track `idx` from the store.
-    fn reconcile_track_playback(&mut self, idx: usize) {
-        let Some(track) = self.session.tracks.get(idx) else {
-            return;
-        };
-        let audible: Vec<usize> = track
-            .layers
-            .iter()
-            .enumerate()
-            .filter(|(li, layer)| {
-                track
-                    .playback_mode
-                    .is_layer_audible(*li as u16, layer.muted)
-            })
-            .map(|(li, _)| li)
-            .collect();
-        for li in audible {
-            self.play_layer_from_store(idx, li);
-        }
-    }
-
-    fn track_is_audible(&self, idx: usize) -> bool {
-        let Some(track) = self.session.tracks.get(idx) else {
-            return false;
-        };
-        !track.muted && (self.solo.is_empty() || self.solo.contains(&track.id))
-    }
-
-    fn reconcile_all_playback(&mut self) {
-        self.stop_all();
-        let audible: Vec<usize> = (0..self.session.tracks.len())
-            .filter(|&idx| self.track_is_audible(idx))
-            .collect();
-        for idx in audible {
-            self.reconcile_track_playback(idx);
-        }
-    }
-
-    /// Play a layer from the store at the next bar, at its stored gain. No-op
-    /// when the media is unavailable in the current store.
-    fn play_layer_from_store(&mut self, track_idx: usize, layer_idx: usize) {
-        let Some(track) = self.session.tracks.get(track_idx) else {
-            return;
-        };
-        let Some(layer) = track.layers.get(layer_idx) else {
-            return;
-        };
-        let Some(phrase) = self.session.phrases.get(&layer.phrase_id) else {
-            return;
-        };
-        let Some(buf) = self.store.get(&phrase.media) else {
-            return;
-        };
-        let samples = buf.samples.clone();
-        let sample_rate = buf.sample_rate;
-        let (gain, key) = (layer.gain, LayerKey::new(track.id, layer_idx as u16));
-        if let Ok(engine) = &mut self.engine {
-            let _ =
-                engine.play_layer_at_next_bar_at_sample_rate(key, samples, sample_rate, gain, true);
-        }
-        if !self.playing.contains(&key) {
-            self.playing.push(key);
-        }
+        self.recorder.report_audio_status(self.audio_status.clone());
     }
 }
 
@@ -1529,12 +1011,16 @@ mod tests {
         assert_eq!(selected_device_id(&devices, 0), None);
         assert_eq!(selected_device_id(&devices, 1).as_deref(), Some("input-1"));
     }
+}
 
-    #[test]
-    fn meter_db_normalization_has_an_explicit_floor() {
-        assert_eq!(normalize_meter_db(f32::NEG_INFINITY), 0.0);
-        assert_eq!(normalize_meter_db(-60.0), 0.0);
-        assert!((normalize_meter_db(-30.0) - 0.5).abs() < f32::EPSILON);
-        assert_eq!(normalize_meter_db(0.0), 1.0);
+impl std::ops::Deref for AppState {
+    type Target = Recorder;
+    fn deref(&self) -> &Recorder {
+        &self.recorder
+    }
+}
+impl std::ops::DerefMut for AppState {
+    fn deref_mut(&mut self) -> &mut Recorder {
+        &mut self.recorder
     }
 }

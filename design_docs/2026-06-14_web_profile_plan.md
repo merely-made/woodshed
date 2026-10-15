@@ -118,10 +118,11 @@ desktop too. None exist today.
 ### Tier 2 — deploy (last, small once Tier 0/1 compile)
 
 - **W2.1 — `trunk` + `index.html`** (DOM/canvas mount, HiDPI sizing).
-- **W2.2 — GitHub Actions `deploy-pages`** (add the `wasm32` target, `trunk`
-  build, `actions/deploy-pages`; Pages source = GitHub Actions). Single-thread
-  build means **stock Pages works, no COOP/COEP**. The same Actions infra
-  hosts the release CI, so build it once.
+- **W2.2 — Explicit local build and publication.** Add the `wasm32` target,
+  build with `trunk`, and select a static host if the web profile proceeds.
+  Single-thread builds need no COOP/COEP headers. The October 11 maintainer
+  ruling removes the earlier GitHub Actions deployment proposal; hosting is
+  an explicit later decision, independent of desktop development.
 - **W2.3 — Demo content + framing.** Decide which presets ship; add a landing
   note ("audio is limited in the browser, download the desktop app for the
   tuner and full audio"); aggregate third-party licenses for the bundled fork

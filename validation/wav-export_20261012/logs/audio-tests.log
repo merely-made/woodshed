@@ -1,0 +1,60 @@
+warning: patch `p2panda-auth v0.7.1 (https://github.com/mark-ik/p2panda.git?tag=mere-p2panda-net-0.7.5-upstream-20261011#d8acabc9)` was not used in the crate graph
+warning: patch `p2panda-stream v0.7.1 (https://github.com/mark-ik/p2panda.git?tag=mere-p2panda-net-0.7.5-upstream-20261011#d8acabc9)` was not used in the crate graph
+help: Check that the patched package version and available features are compatible
+      with the dependency requirements. If the patch has a different version from
+      what is locked in the Cargo.lock file, run `cargo update` to use the new
+      version. This may also occur with an optional dependency that is not enabled.
+   Compiling crossbeam-utils v0.8.23
+   Compiling hashbrown v0.17.1
+   Compiling indexmap v2.14.2
+   Compiling syn v3.0.6
+   Compiling toml_datetime v1.1.1+spec-1.1.0
+   Compiling audioadapter-sample v5.2.0
+   Compiling toml_edit v0.25.15+spec-1.1.0
+   Compiling thiserror v2.0.21
+   Compiling audioadapter-buffers v5.2.0
+   Compiling toml_edit v0.23.10+spec-1.0.0
+   Compiling ringbuf v0.5.3
+   Compiling thiserror-impl v2.0.21
+   Compiling bevy_macro_utils v0.19.1
+   Compiling hashbrown v0.16.1
+   Compiling bevy_platform v0.19.1
+   Compiling firewheel-macros v0.14.0 (https://github.com/mark-ik/firewheel.git?rev=2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc#2b03846d)
+   Compiling arrayvec v0.7.8
+   Compiling smallvec v1.16.2
+   Compiling firewheel-core v0.14.0 (https://github.com/mark-ik/firewheel.git?rev=2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc#2b03846d)
+   Compiling triple_buffer v9.0.0
+   Compiling fixed-resample v0.13.0
+   Compiling serde_derive v1.0.229
+   Compiling firewheel-graph v0.14.0 (https://github.com/mark-ik/firewheel.git?rev=2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc#2b03846d)
+   Compiling firewheel-cpal v0.14.0 (https://github.com/mark-ik/firewheel.git?rev=2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc#2b03846d)
+   Compiling firewheel-nodes v0.14.0 (https://github.com/mark-ik/firewheel.git?rev=2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc#2b03846d)
+   Compiling firewheel v0.14.0 (https://github.com/mark-ik/firewheel.git?rev=2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc#2b03846d)
+   Compiling serde v1.0.229
+   Compiling woodshed-audio v0.1.0 (/Users/markik/Code/worktrees/woodshed-orchestrate-20261011/crates/woodshed-audio)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 8.53s
+     Running unittests src/lib.rs (/Users/markik/Code/worktrees/woodshed-audit-20261011/target/debug/deps/woodshed_audio-e28cc32842b6406c)
+
+running 19 tests
+test offline::mixer_tests::process_buffer_silent_when_stopped ... ok
+test offline::mixer_tests::process_buffer_voices_decay_to_silence ... ok
+test offline::song_export::tests::buffered_sink_failure_is_reported_at_finalization ... ok
+test offline::song_export::tests::malformed_snapshots_and_preparation_bounds_refuse_before_touching_the_writer ... ok
+test offline::song_export::tests::float_wav_preserves_completed_pcm_default_gain_and_one_cycle_hard_end ... ok
+test offline::song_export::tests::frozen_export_does_not_advance_or_change_an_existing_live_runtime ... ok
+test offline::mixer_tests::process_buffer_step_count_scales_with_bpm ... ok
+test offline::song_export::tests::backing_click_is_honored_without_a_count_in_or_appended_tail ... ok
+test offline::song_export::tests::unrelated_pending_transport_commands_do_not_change_the_complete_export_cycle ... ok
+test offline::mixer_tests::bpm_increase_speeds_up_without_glitch ... ok
+test offline::mixer_tests::bpm_change_does_not_pause_playback ... ok
+test offline::mixer_tests::process_buffer_advances_step_at_predicted_time ... ok
+test offline::tests::export_wav_writes_readable_file ... ok
+test offline::tests::render_pattern_returns_correct_buffer_length ... ok
+test offline::mixer_tests::process_buffer_produces_audio_when_playing ... ok
+test offline::tests::render_pattern_produces_audio_not_silence ... ok
+test offline::mixer_tests::process_buffer_subdivision_scales_step_count ... ok
+test offline::tests::render_pattern_clicks_are_localized_to_beats ... ok
+test offline::song_export::tests::wav_matches_live_processor_across_fractional_clocks_measures_and_chunk_boundaries ... ok
+
+test result: ok. 19 passed; 0 failed; 0 ignored; 0 measured; 132 filtered out; finished in 0.01s
+

@@ -38,13 +38,15 @@ fn library_path(
         .or_else(|| config.map(|path| path.join("themes.json")))
 }
 
+/// The isolated visual lane keeps the production host, views and stores while
+/// avoiding audio device activation. Ordinary startup always retains hardware.
+pub fn device_free_receipt() -> bool {
+    std::env::var("WOODSHED_APPEARANCE_RECEIPT").as_deref() == Ok("1")
+        && std::env::var_os("WOODSHED_SCENARIO").is_some()
+}
+
 pub fn load_library(ui: &mut UiState) {
-    let path = library_path(
-        std::env::var_os("WOODSHED_THEME_LIBRARY"),
-        std::env::var_os("WOODSHED_STATE"),
-        ProjectDirs::from("dev", "Woodshed", "Woodshed")
-            .map(|dirs| dirs.config_dir().to_path_buf()),
-    );
+    let path = configured_library_path();
     ui.appearance_authoring_available = false;
     let Some(path) = path else {
         ui.appearance_notice = Some("Appearance authoring is unavailable because no application configuration directory was found.".into());
@@ -53,10 +55,29 @@ pub fn load_library(ui: &mut UiState) {
     load_library_at(ui, path);
 }
 
+pub(crate) fn configured_library_path() -> Option<PathBuf> {
+    library_path(
+        std::env::var_os("WOODSHED_THEME_LIBRARY"),
+        std::env::var_os("WOODSHED_STATE"),
+        ProjectDirs::from("dev", "Woodshed", "Woodshed")
+            .map(|dirs| dirs.config_dir().to_path_buf()),
+    )
+}
+
 fn load_library_at(ui: &mut UiState, path: PathBuf) {
     ui.appearance_authoring_available = false;
     match AppearanceState::load(&path) {
-        Ok(appearance) => {
+        Ok(mut appearance) => {
+            appearance.set_available_fonts(cambium_genet_winit_host::available_font_families(
+                &crate::fonts::bundled_fonts(),
+            ));
+            appearance.reset_font_editor(&ui.app_settings.appearance);
+            appearance.workshop.set_protected_export_paths(
+                crate::storage::FsBackend::new().protected_export_paths(),
+            );
+            appearance.workshop.set_protected_export_directories(
+                crate::storage::FsBackend::new().protected_export_directories(),
+            );
             ui.appearance = appearance;
             ui.appearance_authoring_available = true;
             ui.appearance_notice = None;
@@ -368,5 +389,103 @@ mod tests {
         assert_eq!(std::fs::read(output).unwrap(), original);
         assert!(!library.exists());
         assert!(host.state().appearance.workshop.has_changes());
+    }
+
+    #[test]
+    fn native_export_rejects_existing_and_missing_application_destinations() {
+        let dir = tempfile::tempdir().unwrap();
+        let library = dir.path().join("themes.json");
+        let preferences = dir.path().join("settings.json");
+        let missing_session = dir.path().join("practice.json");
+        std::fs::write(&preferences, b"owned preference bytes").unwrap();
+        let destination = Rc::new(RefCell::new(Some(preferences.clone())));
+        let mut ui = editing(library.clone());
+        ui.appearance
+            .workshop
+            .set_protected_export_paths(vec![preferences.clone(), missing_session.clone()]);
+        let mut host = mount(ui, destination.clone());
+        for output in [&preferences, &missing_session] {
+            *destination.borrow_mut() = Some(output.clone());
+            host.update(|ui| ui.appearance.workshop.request_export());
+            host.after_dispatch();
+            assert!(
+                host.state()
+                    .appearance
+                    .workshop
+                    .status()
+                    .contains("protected application")
+            );
+            host.update(|ui| ui.appearance.workshop.replace_export());
+            host.after_dispatch();
+            assert!(
+                host.state()
+                    .appearance
+                    .workshop
+                    .status()
+                    .contains("protected application")
+            );
+            assert_eq!(
+                std::fs::read(&preferences).unwrap(),
+                b"owned preference bytes"
+            );
+            assert!(!missing_session.exists());
+            assert!(!library.exists());
+        }
+    }
+
+    #[test]
+    fn theme_export_cannot_replace_existing_or_future_capture_companions() {
+        let dir = tempfile::tempdir().unwrap();
+        let library = dir.path().join("themes.json");
+        let captures = dir.path().join("practice.loop-pcm");
+        let existing = captures.join("owned").join("take.bin");
+        let future = captures.join("future").join("new.bin");
+        let external = dir.path().join("theme-export.json");
+        std::fs::create_dir_all(existing.parent().unwrap()).unwrap();
+        std::fs::write(&existing, b"sealed owned PCM").unwrap();
+        let destination = Rc::new(RefCell::new(Some(existing.clone())));
+        let mut ui = editing(library.clone());
+        ui.appearance
+            .workshop
+            .set_protected_export_directories(vec![captures]);
+        let mut host = mount(ui, destination.clone());
+        for output in [&existing, &future] {
+            *destination.borrow_mut() = Some(output.clone());
+            host.update(|ui| ui.appearance.workshop.request_export());
+            host.after_dispatch();
+            assert!(
+                host.state()
+                    .appearance
+                    .workshop
+                    .status()
+                    .contains("protected application")
+            );
+            host.update(|ui| ui.appearance.workshop.replace_export());
+            host.after_dispatch();
+            assert!(
+                host.state()
+                    .appearance
+                    .workshop
+                    .status()
+                    .contains("protected application")
+            );
+            assert_eq!(std::fs::read(&existing).unwrap(), b"sealed owned PCM");
+            assert!(!future.exists());
+        }
+        *destination.borrow_mut() = Some(external.clone());
+        host.update(|ui| ui.appearance.workshop.request_export());
+        host.after_dispatch();
+        assert!(external.exists());
+        assert!(!library.exists());
+    }
+
+    #[test]
+    fn current_native_appearance_scenarios_parse_with_the_shared_driver() {
+        for scenario in [
+            include_str!("../../../scenarios/tabard_appearance.scn"),
+            include_str!("../../../scenarios/tabard_appearance_reopen.scn"),
+        ] {
+            taproot::Scenario::parse(scenario).expect("production appearance scenario grammar");
+        }
     }
 }

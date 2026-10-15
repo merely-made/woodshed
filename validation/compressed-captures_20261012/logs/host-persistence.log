@@ -1,0 +1,72 @@
+
+running 28 tests
+test capture_persistence::tests::capture_native_scenarios_parse_with_shared_driver ... ok
+test capture_persistence::tests::fresh_process_fixture ... ignored, fresh-process child, invoked by the sealed capture test
+
+running 1 test
+[woodshed] unavailable Card loop LoopSegmentId { set: WorkingSetId(1), card: CardId(1) }: Loop compressed PCM has an invalid header or storage bound.
+test capture_persistence::tests::accepted_session_with_failed_readback_is_unconfirmed_without_rollback ... ok
+test capture_persistence::tests::damaged_companion_reference_survives_saves_until_explicit_clear ... ok
+test capture_persistence::tests::explicit_clear_while_preparing_cannot_republish_retired_pcm ... ok
+[woodshed] unavailable Card loop LoopSegmentId { set: WorkingSetId(1), card: CardId(1) }: Unsupported loop capture codec: future-exact-f32-v9.
+test capture_persistence::tests::future_codec_is_retained_unavailable_without_losing_authoring_and_can_be_cleared ... ok
+sealed V1 raw capture seed: exact frames, no input device
+test capture_persistence::tests::fresh_process_fixture ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 160 filtered out; finished in 0.23s
+
+test capture_persistence::tests::companion_or_session_failure_retains_previous_session_and_live_take ... ok
+test capture_persistence::tests::epoch_reset_reuses_one_lane_and_discards_old_prepared_results ... ok
+
+running 1 test
+test capture_persistence::tests::completion_service_saves_without_dispatch_using_current_practice_edits ... ok
+test capture_persistence::tests::malformed_manifest_never_overwrites_a_saved_session ... ok
+test capture_persistence::tests::pending_seal_cannot_publish_even_an_existing_companion ... ok
+test capture_persistence::tests::sealed_profile_compression_probe ... ignored, requires an isolated unlocked Keeper and copied profile overrides
+[woodshed] unavailable Card loop LoopSegmentId { set: WorkingSetId(1), card: CardId(2) }: Loop PCM companion is missing or could not be unsealed.
+test capture_persistence::tests::raw_fallback_records_policy_once_and_does_not_touch_companions_again ... ok
+test capture_persistence::tests::hydrated_v1_capture_migrates_with_exact_sealed_readback_and_retains_old_blob ... ok
+test capture_persistence::tests::mixed_legacy_unavailable_reference_can_recover_and_migrate_inside_v2 ... ok
+test capture_persistence::tests::unavailable_inactive_references_reserve_catalog_budget_before_recording ... ok
+test capture_persistence::tests::prepared_wrong_rate_or_frames_cannot_publish_or_touch_companion_storage ... ok
+[woodshed] unavailable Card loop LoopSegmentId { set: WorkingSetId(1), card: CardId(1) }: Loop PCM companion is missing or could not be unsealed.
+test capture_persistence::tests::unavailable_only_v1_catalog_is_retained_until_explicit_clear ... ok
+test capture_persistence::tests::legacy_migration_is_pending_on_wake_and_cannot_publish_into_another_epoch ... ok
+test capture_persistence::tests::wav_export_refuses_only_relevant_unavailable_set_captures ... ok
+test capture_persistence::tests::failed_legacy_migration_preserves_previous_refs_namespace_and_pcm_until_retry ... ok
+test capture_persistence::tests::worker_quota_rejection_precedes_thread_request_and_keeps_current_session ... ok
+test capture_persistence::tests::worker_prepares_without_blocking_authoring_and_publishes_current_edits_on_wake ... ok
+fresh process: V1 raw migrated to exact V2 WavPack; legacy blob retained
+test capture_persistence::tests::fresh_process_fixture ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 160 filtered out; finished in 0.25s
+
+
+running 1 test
+test capture_persistence::tests::unready_incoming_epoch_never_observes_prior_playing_or_cursor ... ok
+test capture_persistence::tests::worker_cache_survives_session_failure_and_close_holds_only_new_live_pcm ... ok
+test capture_persistence::tests::absent_audio_still_saves_practice_and_retains_then_explicitly_clears_orphan_refs ... ok
+fresh process: exact samples and Set/Card identity retained across reorder
+test capture_persistence::tests::fresh_process_fixture ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 160 filtered out; finished in 0.13s
+
+
+running 1 test
+fresh process: clock refusal resolved by explicit clear and persisted
+test capture_persistence::tests::fresh_process_fixture ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 160 filtered out; finished in 0.11s
+
+
+running 1 test
+fresh process: cleared capture remains absent
+test capture_persistence::tests::fresh_process_fixture ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 160 filtered out; finished in 0.09s
+
+test capture_persistence::tests::exact_sealed_set_capture_survives_fresh_process_reorder_and_clear ... ok
+test capture_persistence::tests::mounted_main_close_waits_for_capture_worker_then_preserves_dirty_appearance_gate ... ok
+
+test result: ok. 26 passed; 0 failed; 2 ignored; 0 measured; 133 filtered out; finished in 0.97s
+

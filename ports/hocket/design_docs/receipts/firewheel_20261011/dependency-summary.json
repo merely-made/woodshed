@@ -1,0 +1,81 @@
+{
+  "workspace_members": 5,
+  "provider_family": [
+    {
+      "name": "firewheel",
+      "version": "0.14.0",
+      "source": "git+https://github.com/mark-ik/firewheel.git?rev=2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc#2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc",
+      "features": [
+        "cpal",
+        "default",
+        "peak_meter_node",
+        "sampler_node",
+        "std",
+        "stream_nodes",
+        "symphonium",
+        "tracing"
+      ]
+    },
+    {
+      "name": "firewheel-core",
+      "version": "0.14.0",
+      "source": "git+https://github.com/mark-ik/firewheel.git?rev=2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc#2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc",
+      "features": [
+        "std"
+      ]
+    },
+    {
+      "name": "firewheel-cpal",
+      "version": "0.14.0",
+      "source": "git+https://github.com/mark-ik/firewheel.git?rev=2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc#2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc",
+      "features": [
+        "tracing"
+      ]
+    },
+    {
+      "name": "firewheel-graph",
+      "version": "0.14.0",
+      "source": "git+https://github.com/mark-ik/firewheel.git?rev=2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc#2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc",
+      "features": [
+        "std",
+        "tracing"
+      ]
+    },
+    {
+      "name": "firewheel-macros",
+      "version": "0.14.0",
+      "source": "git+https://github.com/mark-ik/firewheel.git?rev=2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc#2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc",
+      "features": []
+    },
+    {
+      "name": "firewheel-nodes",
+      "version": "0.14.0",
+      "source": "git+https://github.com/mark-ik/firewheel.git?rev=2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc#2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc",
+      "features": [
+        "peak_meter",
+        "sampler",
+        "std",
+        "stream"
+      ]
+    },
+    {
+      "name": "firewheel-rtaudio",
+      "version": "0.14.0",
+      "source": "git+https://github.com/mark-ik/firewheel.git?rev=2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc#2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc",
+      "features": [
+        "tracing"
+      ]
+    },
+    {
+      "name": "firewheel-symphonium",
+      "version": "0.14.0",
+      "source": "git+https://github.com/mark-ik/firewheel.git?rev=2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc#2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc",
+      "features": [
+        "tracing"
+      ]
+    }
+  ],
+  "bevy_ecs_in_selected_engine_normal_build_tree": false,
+  "ecs_evidence": "engine-tree.log, cargo tree --locked -p hocket-engine --edges normal,build",
+  "metadata_scope": "Metadata full resolve contains optional dependencies; selected cargo tree establishes the compiled engine graph."
+}

@@ -1,0 +1,42 @@
+{
+  "schema": "woodshed-compressed-captures-font-family-receipt-v1",
+  "source": "751858f0461b71fe7fa03392b13d65363b9e7ff6",
+  "compiled_source": "a9e1e87556c62bfcd503e429708af68ce62826ba",
+  "status": "CPU/build, capture review and native fresh-process qualification complete",
+  "source_freeze": "source-freeze.json",
+  "native": "native.json",
+  "persistence": "codec-parity.json",
+  "prior_cpu_publication": "../compressed-captures_20261012/receipt.json",
+  "font_receipt": "../font-roles_20261012/receipt.json",
+  "actual_migration": "production native worker; CPU inspector helpers only read before/after",
+  "native_processes": 2,
+  "captures": 3,
+  "presented_frames": 54,
+  "assertions": {
+    "set_cards": 2,
+    "capture_refs": 1,
+    "active_captures": 1,
+    "capture_frames": 96000,
+    "input_rate": "none",
+    "output_streams": 1,
+    "saved_notice": true
+  },
+  "full_WAV_bytes_equal": true,
+  "original_fixture_unchanged": true,
+  "old_raw_blob_unchanged": true,
+  "referenced_sealed_bytes": {
+    "before": 384064,
+    "after": 262824,
+    "saved": 121240,
+    "percent_reduction": 31.567655390768206
+  },
+  "limits": [
+    "old raw blobs retained; migration reduces referenced size but does not reclaim existing directory bytes",
+    "no microphone input opened, physical capture or acoustic qualification",
+    "normal-output hydration/storage controls qualified; no additional playback listening claim",
+    "prior published-family receipt is not rewritten as combined-family evidence",
+    "default startup and circular-arrow glyph coverage remain open"
+  ],
+  "cleanup": "cleanup.json",
+  "verifier": "../font-roles_20261012/verify.py --local"
+}

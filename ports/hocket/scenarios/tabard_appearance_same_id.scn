@@ -1,0 +1,30 @@
+settle 3
+assert snap appearance-theme == theme:copy-1
+assert snap appearance-mode == dark
+capture recorder_before_edit
+click role:button @data-action=toggle-appearance
+click role:button @data-action=edit-appearance
+click role:button @data-action=toggle-stylesheet
+click role:textbox @data-field=mode-sheet
+input-text :root{--tabard-color-bg:#342214;--tabard-color-surface:#49321b;--tabard-color-surface-2:#5e4324;--tabard-color-surface-hover:#7c5731;--tabard-color-text:#fff2ea;--tabard-color-text-dim:#e4ceb6;--tabard-color-text-disabled:#ba9e87;--tabard-color-text-header:#fff2ea;--tabard-color-primary:#e4ceb6;--tabard-color-on-primary:#142238;--tabard-syntax-link:#e4ceb6;--tabard-syntax-emphasis:#fff2ea;--tabard-syntax-keyword:#e4ceb6;--tabard-syntax-string:#fff2ea;--tabard-syntax-number:#e4ceb6;}
+click role:button @data-action=apply-stylesheet
+click role:button @data-action=save
+assert snap appearance-dirty == false
+capture workshop_same_id_saved
+click role:button @data-action=back-to-hocket
+click role:button @data-action=toggle-appearance
+settle 3
+capture recorder_after_save
+# Save preserves the installed snapshot even for the same identity.
+viewport-pixels-same recorder_before_edit recorder_after_save
+click role:button @data-action=toggle-appearance
+click role:button @data-action=edit-appearance
+click role:button @data-action=apply-to-hocket
+click role:button @data-action=back-to-hocket
+click role:button @data-action=toggle-appearance
+settle 3
+capture recorder_after_apply
+viewport-pixels-change recorder_after_save recorder_after_apply
+captures-differ recorder_after_save recorder_after_apply
+assert snap appearance-theme == theme:copy-1
+assert snap tracks == 4

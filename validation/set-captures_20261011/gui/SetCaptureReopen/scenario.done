@@ -1,0 +1,10 @@
+RESULT ok
+captured 01_card_loop_fresh_reopen
+captured 02_recorded_clock_refused
+captured 03_card_loop_cleared
+Set capture fresh reopen and clear complete
+capture 01_card_loop_fresh_reopen 2360x1600 digest=848dbccae02e2c13 file=$ARTIFACT_ROOT/native/SetCaptureReopen/01_card_loop_fresh_reopen.png
+capture 02_recorded_clock_refused 2360x1600 digest=db8a797a5edc6c06 file=$ARTIFACT_ROOT/native/SetCaptureReopen/02_recorded_clock_refused.png
+capture 03_card_loop_cleared 2360x1600 digest=73b82c746b4fb3f1 file=$ARTIFACT_ROOT/native/SetCaptureReopen/03_card_loop_cleared.png
+frames: 3 captured, 0 blank, 3 distinct digests
+presentation: 58 frames, 804 redraws, 746 unpresented redraws

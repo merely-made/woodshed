@@ -44,16 +44,14 @@ this section (not the FTs) when direction changes.
 
 ### Audio engine
 
-- **Firewheel as the substrate** ([github.com/BillyDM/Firewheel](https://github.com/BillyDM/Firewheel)).
-  BillyDM pivoted from Dropseed to Firewheel — a modular audio graph
-  engine, deliberately *not* a DAW engine. Better fit for a loop
-  recorder than Dropseed would have been. Active, 702 commits, dual
-  MIT/Apache-2.0, "no mutexes" realtime constraints, ships native +
-  WASM backends.
-- **Firewheel is on crates.io.** `firewheel-graph` at 0.10.2 as of
-  2026-03-17. Pin a crates.io version; only path-dep if we need
-  unreleased fixes. *(Prior plan text said "not yet on crates.io" —
-  that was wrong. Corrected here.)*
+- **Firewheel as the substrate.** Hocket consumes a standalone modular audio
+  graph and native device backend. Session authority stays outside the graph.
+- **Standalone 0.14 adoption (2026-10-11).** The independent workspace now
+  adopts the owned `mark-ik/firewheel` fork by exact Git revision for bounded
+  reader/writer nodes. The earlier crates.io 0.10 strategy and “don't fork”
+  guidance below describe the historical runtime proof. Current migration and
+  acceptance authority is [the October 11 adoption plan](2026-10-11_firewheel_adoption_plan.md),
+  including provider revisions, offline consumer evidence and physical gates.
 - **hocket-model is the authority; Firewheel is the runtime.**
   Session, tracks, layers, history, turn state, media refs all live
   in `hocket-model`. Firewheel just plays/captures/mixes the

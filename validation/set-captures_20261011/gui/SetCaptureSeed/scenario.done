@@ -1,0 +1,8 @@
+RESULT ok
+captured 01_card_loop_saved
+captured 02_card_loop_reordered
+Sealed Set capture seed complete
+capture 01_card_loop_saved 2360x1600 digest=a3d4568c70057efa file=$ARTIFACT_ROOT/native/SetCaptureSeed/01_card_loop_saved.png
+capture 02_card_loop_reordered 2360x1600 digest=bde87903e6b3f156 file=$ARTIFACT_ROOT/native/SetCaptureSeed/02_card_loop_reordered.png
+frames: 2 captured, 0 blank, 2 distinct digests
+presentation: 49 frames, 1555 redraws, 1506 unpresented redraws

@@ -6,7 +6,10 @@ use scenograph::relationship::{
     RecipeEdit, RelationshipRecipeDraft, RelationshipSnapshot, relationship_recipe,
 };
 use scenograph::{ProjectionInputBinding, RevisionEvidence};
-use scenomise::projection::{RelationshipDataset, compile_relationship_snapshot};
+use scenomise::projection::{
+    CompileIssue, CompiledRelationshipProjection, ItemSizes, ProjectionCompiler,
+    RelationshipDataset,
+};
 use woodshed_core::settings::AppSettings;
 use woodshed_core::storage::{PersistedSession, SessionStore};
 use woodshed_views::stage::UiState;
@@ -19,6 +22,17 @@ mod export;
 #[rustfmt::skip]
 #[path = "../../../crates/woodshed-genet/src/storage.rs"]
 mod host_storage;
+
+// Scenomise compiles through a consumer-sized compiler; Woodshed's card footprint.
+fn compile_relationship_snapshot(
+    snapshot: &RelationshipSnapshot,
+    data: &RelationshipDataset,
+) -> Result<CompiledRelationshipProjection, Vec<CompileIssue>> {
+    ProjectionCompiler::new(ItemSizes {
+        card: sceno::Size2::new(164.0, 68.0),
+    })
+    .compile_relationship_snapshot(snapshot, data)
+}
 
 fn dataset() -> RelationshipDataset {
     serde_json::from_value(export::fixture_json()).expect("Woodshed exports the shared schema")

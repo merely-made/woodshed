@@ -4,11 +4,11 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 // SPDX-License-Identifier: MPL-2.0
 
-//! Hocket — application binary.
-//!
-//! Until Feature Target 4 (Xilem app shell) lands, this binary serves
-//! as a scripted demo of the Firewheel-backed audio engine. Run it
-//! to validate FT3b's bar-aligned capture and playback end-to-end.
+//! Manual audio-device demonstration, separate from Hocket's desktop host.
+//! `hocket-headless --run` opens the real default input/output devices and
+//! exercises bar-aligned capture followed by queued replay. A person must
+//! listen to assess sound, timing and feedback. This is not a CI acceptance
+//! gate: missing devices and incomplete execution are failures, never skips.
 //!
 //! Demo timeline (turn your volume down — feedback risk if mic and
 //! speakers are close):
@@ -21,10 +21,11 @@
 //!    boundary. Replay loops endlessly until shutdown.
 //! 4. **~12 s** — done. Stop the replay loop.
 
+use std::process::ExitCode;
 use std::thread;
 use std::time::{Duration, Instant};
 
-use hocket_engine::{CapturePhase, Engine, LayerKey, ModelTrackId};
+use hocket_engine::{CapturePhase, Engine, EngineError, LayerKey, ModelTrackId};
 
 const TICK_INTERVAL: Duration = Duration::from_millis(15);
 const METER_PRINT_INTERVAL: Duration = Duration::from_millis(250);
@@ -36,20 +37,64 @@ const CAPTURE_BARS: u8 = 1;
 /// Bars of click count-in before capture begins.
 const COUNT_IN_BARS: u8 = 1;
 
-fn main() {
-    println!("hocket — FT3b bar-aligned demo");
+const HELP: &str = "hocket-headless — manual audio-device demonstration\n\
+Usage: hocket-headless --run\n\
+       hocket-headless --help\n\n\
+--run opens the default microphone and speakers for about 12 seconds.\n\
+Turn the speakers down and use headphones to avoid feedback.\n\
+Success means capture completed and replay was queued without engine errors.\n\
+Audibility, calibration and musical timing require a person's review.\n\
+Missing hardware or incomplete execution exits unsuccessfully; no CI skip.\n";
+
+#[derive(Debug, PartialEq, Eq)]
+enum Invocation {
+    Help,
+    Run,
+}
+
+fn invocation(args: impl IntoIterator<Item = String>) -> Result<Invocation, String> {
+    let args: Vec<_> = args.into_iter().collect();
+    match args.as_slice() {
+        [] => Ok(Invocation::Help),
+        [arg] if arg == "--help" || arg == "-h" => Ok(Invocation::Help),
+        [arg] if arg == "--run" => Ok(Invocation::Run),
+        _ => Err("expected --run or --help".into()),
+    }
+}
+
+fn main() -> ExitCode {
+    match invocation(std::env::args().skip(1)) {
+        Ok(Invocation::Help) => {
+            print!("{HELP}");
+            ExitCode::SUCCESS
+        },
+        Ok(Invocation::Run) => match run_demo(Engine::new) {
+            Ok(()) => ExitCode::SUCCESS,
+            Err(error) => {
+                eprintln!("manual demo failed: {error}");
+                ExitCode::FAILURE
+            },
+        },
+        Err(error) => {
+            eprintln!("{error}\n{HELP}");
+            ExitCode::from(2)
+        },
+    }
+}
+
+fn run_demo(start_audio: impl FnOnce() -> Result<Engine, EngineError>) -> Result<(), String> {
+    println!("hocket — manual bar-aligned capture/replay demo");
     println!("turn your speakers down (feedback risk).");
     println!();
 
-    let mut engine = match Engine::new() {
-        Ok(e) => e,
-        Err(err) => {
-            eprintln!("could not start audio engine: {err}");
-            eprintln!("(this is expected on headless CI without an audio device)");
-            std::process::exit(0);
-        }
-    };
+    let mut engine =
+        start_audio().map_err(|error| format!("could not start audio engine: {error}"))?;
+    let result = demonstrate(&mut engine);
+    engine.stop();
+    result
+}
 
+fn demonstrate(engine: &mut Engine) -> Result<(), String> {
     let sample_rate = engine.sample_rate();
     let bar_samples = engine.samples_per_bar();
     println!(
@@ -80,10 +125,8 @@ fn main() {
                          {COUNT_IN_BARS} bar count-in, then capture {CAPTURE_BARS} bar(s)",
                         fmt_elapsed(now - start),
                     );
-                }
-                Err(err) => {
-                    eprintln!("arm failed: {err}");
-                }
+                },
+                Err(err) => return Err(format!("arm failed: {err}")),
             }
             armed = true;
         }
@@ -91,23 +134,24 @@ fn main() {
         // Advance the engine: drains mic input, advances the
         // bar-aligned capture + queued layers, flushes Firewheel.
         if let Err(err) = engine.tick() {
-            eprintln!("engine tick error: {err}");
-            break;
+            return Err(format!("engine tick error: {err}"));
         }
 
         // Promote capture to replay when complete.
         if !replay_scheduled {
             if let Some(captured) = engine.take_bar_aligned_capture() {
+                if captured.is_empty() {
+                    return Err("capture completed without any input samples".into());
+                }
                 println!(
                     "[{:>4}] captured {} samples (~{:.2} s); queuing replay at next bar…",
                     fmt_elapsed(now - start),
                     captured.len(),
                     captured.len() as f32 / sample_rate as f32
                 );
-                if let Err(err) =
-                    engine.play_layer_at_next_bar(demo_layer_key, captured, 1.0, true)
+                if let Err(err) = engine.play_layer_at_next_bar(demo_layer_key, captured, 1.0, true)
                 {
-                    eprintln!("schedule replay failed: {err}");
+                    return Err(format!("schedule replay failed: {err}"));
                 }
                 replay_scheduled = true;
             }
@@ -128,10 +172,10 @@ fn main() {
                 ),
                 CapturePhase::Recording { progress } => {
                     format!("Recording {:.0}%", progress * 100.0)
-                }
+                },
                 CapturePhase::FreeRecording { samples_done } => {
                     format!("FreeRecording ({samples_done} samples)")
-                }
+                },
                 CapturePhase::Complete => "Complete".to_string(),
             };
             println!(
@@ -150,9 +194,34 @@ fn main() {
 
     engine.stop_layer(demo_layer_key);
 
+    if !replay_scheduled {
+        return Err("capture did not complete and queue replay within the 12-second demo".into());
+    }
+
     println!();
-    println!("done.");
-    engine.stop();
+    println!("capture completed; replay queued. Review audible timing separately.");
+    Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn only_explicit_run_opens_the_hardware_demonstration() {
+        for args in [vec![], vec!["--help".into()], vec!["-h".into()]] {
+            assert_eq!(invocation(args), Ok(Invocation::Help));
+        }
+        assert_eq!(invocation(vec!["--run".into()]), Ok(Invocation::Run));
+        assert!(invocation(vec!["--run".into(), "--help".into()]).is_err());
+        assert!(invocation(vec!["--ci".into()]).is_err());
+    }
+
+    #[test]
+    fn unavailable_audio_is_an_execution_failure_not_a_successful_skip() {
+        let result = run_demo(|| Err(EngineError::CpalInit("fixture: no device".into())));
+        assert!(result.unwrap_err().contains("fixture: no device"));
+    }
 }
 
 fn fmt_elapsed(d: Duration) -> String {

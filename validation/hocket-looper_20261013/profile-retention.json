@@ -1,0 +1,30 @@
+{
+  "original_files": [
+    {
+      "path": "practice.json",
+      "original_unchanged": true,
+      "private_sha256": "974e82c77d7e1635acc9cdf205ea3b8e03d9a782cc1696682cc242730ad123c5",
+      "companion_unchanged": null
+    },
+    {
+      "path": "practice.loop-pcm/b5370837504f7ea66b56e7ca158828e5/aa60d8b25e04f9d08e28a428fb20b2c9cbfc5cecd7254ed386c81d88700da50e.bin",
+      "original_unchanged": true,
+      "private_sha256": "7f1d21321516b5dbc6f5817a2fd5c85e3d9f908560b7e198e82073fe64700e94",
+      "companion_unchanged": true
+    },
+    {
+      "path": "practice.loop-pcm/b5370837504f7ea66b56e7ca158828e5/d0451d00335e995c3d1077108dc1c06d329de681a650d523a19d0afcf12b743e.bin",
+      "original_unchanged": true,
+      "private_sha256": "b4edec51fa263f8572810d9619411f8837a89a195a3d67159a9391655c0677ec",
+      "companion_unchanged": true
+    },
+    {
+      "path": "settings.json",
+      "original_unchanged": true,
+      "private_sha256": "ca9a908bda6eeceac00e9ce891a6302a48e43ea812688ad4b2912e80f2178a02",
+      "companion_unchanged": null
+    }
+  ],
+  "logical_manifest_and_pcm_comparison": "sealed-final-comparison.json",
+  "settings_and_session_private_rewrites_expected": true
+}

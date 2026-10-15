@@ -1,0 +1,176 @@
+{
+  "baseline_revision": "9e4b37238d5febfcfe73b4bc9e291ec93b2ee1cd",
+  "fixed_revision": "f8e40371d5ad95c087106b8fab15f32ae039155b",
+  "native_binary_sha256": "68164156cd5ca0738f8f1add313e27bb008075f0dbf8bd7d06e7a6f7532ecd2f",
+  "automated_checks": {
+    "audio": 133,
+    "desktop": 79
+  },
+  "native_revision": "0812c6769d5e3c322c368913d4e4b84ae8ab643b",
+  "device": {
+    "name": "iMac Speakers",
+    "sample_rate": 48000,
+    "channels": 2,
+    "buffer_frames": 512,
+    "muted_differential": true
+  },
+  "hardware": {
+    "before-song": {
+      "device_events": 6,
+      "max_callback_gap_us": 21638,
+      "callbacks": 1777,
+      "phase_events": {
+        "cold": 4,
+        "warm": 0,
+        "edited": 2
+      },
+      "phase_work_ms": {
+        "cold": 0.012,
+        "warm": 0.039,
+        "edited": 0.013
+      },
+      "log_sha256": "ffa0fda23393ad55d87f1d59daab715189475d83ab39f6703e69cbce99ebc83a",
+      "provenance": "baseline 9e4b37238d5febfcfe73b4bc9e291ec93b2ee1cd"
+    },
+    "before-song-repeat": {
+      "device_events": 7,
+      "max_callback_gap_us": 23386,
+      "callbacks": 1776,
+      "phase_events": {
+        "cold": 4,
+        "warm": 0,
+        "edited": 3
+      },
+      "phase_work_ms": {
+        "cold": 0.005,
+        "warm": 0.001,
+        "edited": 0.022
+      },
+      "log_sha256": "dc701b1997d29bbcabf63571d01f8a585103765373aff680eedc0c04901282de",
+      "provenance": "baseline 9e4b37238d5febfcfe73b4bc9e291ec93b2ee1cd"
+    },
+    "after-song": {
+      "device_events": 0,
+      "max_callback_gap_us": 10722,
+      "callbacks": 1796,
+      "phase_events": {
+        "cold": 0,
+        "warm": 0,
+        "edited": 0
+      },
+      "phase_work_ms": {
+        "cold": 66.055,
+        "warm": 0.009,
+        "edited": 65.383
+      },
+      "log_sha256": "9eb4b46ec4cd407165deb9d314af4e1adacb97e123a2d2abf19974cca8f57754",
+      "provenance": "precommit precursor; exact binary hash retained"
+    },
+    "after-song-repeat": {
+      "device_events": 0,
+      "max_callback_gap_us": 10712,
+      "callbacks": 1797,
+      "phase_events": {
+        "cold": 0,
+        "warm": 0,
+        "edited": 0
+      },
+      "phase_work_ms": {
+        "cold": 81.379,
+        "warm": 0.005,
+        "edited": 48.509
+      },
+      "log_sha256": "2727b271dfc7829a139b3f1977cf45b795bcb89df84162b71dbb2762bcc11e5e",
+      "provenance": "precommit precursor; exact binary hash retained"
+    },
+    "committed-song": {
+      "device_events": 0,
+      "max_callback_gap_us": 10741,
+      "callbacks": 1795,
+      "phase_events": {
+        "cold": 0,
+        "warm": 0,
+        "edited": 0
+      },
+      "phase_work_ms": {
+        "cold": 63.065,
+        "warm": 0.006,
+        "edited": 46.928
+      },
+      "log_sha256": "ceb4988510649276e4da5faf9514423acc63e5cad105c4f13b26f73804511506",
+      "provenance": "committed f8e40371d5ad95c087106b8fab15f32ae039155b"
+    }
+  },
+  "binaries": {
+    "before-audio-ddx": "ecc76d339899bdb43eb085eed3c52ea0048830f80bab18f7dd21fcdb4dd514d1",
+    "after-audio-ddx": "4480ea73e6e7bcaad5fce9a94d3b7e09cd350e47ed9ff803c79672f9afe63f2b",
+    "committed-audio-ddx": "5cbd1475cb7acab53d782bcf97a5782c73e0debab7b585526bf0e595bcf7ccec"
+  },
+  "native": {
+    "seed": {
+      "result": "ok",
+      "frames": 514,
+      "captures": 3,
+      "buffer_errors": 0,
+      "presented_frames": 514,
+      "redraws": 515,
+      "unpresented_redraws": 1,
+      "log_sha256": "81e35d18c289a8d3a2a95c6147a390c4e94a53f7758cae5fba024e993e65b16a",
+      "scenario_sha256": "72f134ba763206e47156e199a32e452d2e7ae16fc64d2424117ccd766222d9ce",
+      "reviewed_pngs": {
+        "01_cold_play.png": "532da04f6304de8eb991e489c4c93be4f699221d3a126821ed26aea37ca95f44",
+        "02_warm_play.png": "c3b23e8615ffda00a4514fcde8575eb92f1de4f8bb4af70ef0ea75aa742da380",
+        "03_edited_play.png": "7b62e3081f7d8a9de6fd531e4b90b94d57ec7476b9f1831ea8db4e82b7d959ba"
+      }
+    },
+    "reopen": {
+      "result": "ok",
+      "frames": 178,
+      "captures": 1,
+      "buffer_errors": 0,
+      "presented_frames": 178,
+      "redraws": 179,
+      "unpresented_redraws": 1,
+      "log_sha256": "287bdb1b27380ee4fbc4db1aa461c64db187a9240d3b8d2a269d3e1041d400d6",
+      "scenario_sha256": "7a15798f3cdab081977b6b9c98676bf690dcb88d06b74b2e820d606bb1d4432c",
+      "reviewed_pngs": {
+        "01_reopened_play.png": "861cff9781e720ef5acb3f63fff42cdf5fe263d0911b24e380fe81584dc71fde"
+      }
+    }
+  },
+  "persisted_song": {
+    "bars": 4,
+    "first_root_pc": 1,
+    "first_bpm": 245,
+    "click": false,
+    "fresh_process_replayed": true,
+    "storage": "isolated unsealed fixture"
+  },
+  "limits": [
+    "No acoustic listening/device-wide qualification",
+    "Preparation remains synchronous on caller",
+    "A low-level edit may skip an unready measure strike",
+    "Other callback mutexes/allocations remain",
+    "Native profile starts in Looper; prior startup/layout attempts retained, not counted as acceptance"
+  ],
+  "failed_native_attempts": {
+    "native-wide": {
+      "log_sha256": "f19534075821592ad40111dc5a6a22153b15d0c29dd1832494d4078545464515",
+      "buffer_error_logs": 10,
+      "accepted": false,
+      "note": "Stopped during initial layout"
+    },
+    "native-looper": {
+      "log_sha256": "502b69f8b509a5f17387978c89216cc2ad9b3ea39a66b2d43472e1c198dab30a",
+      "buffer_error_logs": 4,
+      "accepted": false,
+      "note": "Stopped during initial layout"
+    },
+    "native-current": {
+      "log_sha256": "6233c0c33806ce377c4a01a2ceb008c019cd2999d2e11752c9ff73e049e1873e",
+      "buffer_error_logs": 1,
+      "accepted": false,
+      "note": "Tempo selector matched + Bar; AX refresh also relaunched the finished app and collided with captures"
+    }
+  }
+}

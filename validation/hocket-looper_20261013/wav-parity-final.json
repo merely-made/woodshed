@@ -1,0 +1,14 @@
+{
+  "path": "/Users/markik/Code/testing/woodshed/hocket-adoption-20261013/native/WoodshedHocketWideFinal/loop-export.wav",
+  "sha256": "6c0726336b2e14bdea1031ed183b42358336b0c0d064332531cf91f5618409ff",
+  "gold_path": "/Users/markik/Code/testing/woodshed/font-roles-20261012/combined-v2/codec-after-wav/loop-reference.wav",
+  "gold_bytes_equal": true,
+  "frames": 192000,
+  "sample_rate": 48000,
+  "channels": 1,
+  "seconds": 4.0,
+  "bytes": 768068,
+  "includes_backing_and_captured_loop": true,
+  "click": false,
+  "worker": "production WavExport snapshot/render/publication, scenario private chooser target"
+}

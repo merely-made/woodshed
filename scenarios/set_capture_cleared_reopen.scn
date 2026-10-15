@@ -1,0 +1,12 @@
+# Separate process after explicit Clear: references absent, edited clock ready.
+settle 5
+ui-zoom 0.8
+assert snap set-cards == 2
+assert snap loop-capture-references == 0
+assert snap loop-active-captures == 0
+assert snap capture-input-rate == none
+assert snap output-streams == 1
+assert text Inherited: 125 bpm
+assert text Loaded Set 1:
+capture 01_cleared_loop_fresh_reopen
+log Set capture clear survives fresh process

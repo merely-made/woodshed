@@ -3,7 +3,8 @@ name = "redshank-surfaces"
 version = "0.0.0"
 edition.workspace = true
 license.workspace = true
-rust-version.workspace = true
+
+rust-version = "1.97.1"
 publish = false
 
 [dependencies]
@@ -18,5 +19,7 @@ tinct.workspace = true
 time = { version = "=0.3.55", features = ["parsing", "macros"] }
 
 [dev-dependencies]
+tempfile.workspace = true
+url.workspace = true
 cambium-genet-winit-host.workspace = true
 layout-dom-api.workspace = true

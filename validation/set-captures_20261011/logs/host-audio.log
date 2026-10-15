@@ -1,0 +1,44 @@
+warning: patch `p2panda-auth v0.7.1 (https://github.com/mark-ik/p2panda.git?tag=mere-p2panda-net-0.7.5-upstream-20261011#d8acabc9)` was not used in the crate graph
+warning: patch `p2panda-stream v0.7.1 (https://github.com/mark-ik/p2panda.git?tag=mere-p2panda-net-0.7.5-upstream-20261011#d8acabc9)` was not used in the crate graph
+help: Check that the patched package version and available features are compatible
+      with the dependency requirements. If the patch has a different version from
+      what is locked in the Cargo.lock file, run `cargo update` to use the new
+      version. This may also occur with an optional dependency that is not enabled.
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.05s
+     Running unittests src/main.rs ($TARGET_DIR/debug/deps/woodshed_genet-63d01c9b9697e4d3)
+
+running 32 tests
+test audio::loop_projection::tests::armed_or_active_capture_snapshot_refuses_replacement ... ok
+test audio::loop_projection::tests::saved_backing_capture_slots_are_independent_of_card_capture_custody ... ok
+test audio::loop_projection::tests::captures_follow_card_across_reorder_and_pitch_edit_and_never_cross_sets ... ok
+test audio::loop_projection::tests::hydrated_clock_custody_survives_reorder_missing_cards_and_pitch_edits_until_clear ... ok
+test audio::loop_projection::tests::recorded_clock_edits_are_refused_without_resizing_pcm_then_clear_permits_them ... ok
+test audio::loop_projection::tests::stale_or_other_owner_capture_commands_cannot_resolve_to_a_bar ... ok
+test audio::loop_projection::tests::snapshots_share_completed_pcm_across_inactive_owners_and_exclude_saved_slots ... ok
+test audio::loop_projection::tests::malformed_restore_cannot_partially_replace_the_current_bank ... ok
+test audio::tests::explicit_calibration_and_recording_requests_retry_without_losing_output_error ... ok
+test audio::tests::failed_tuner_enable_is_visible_and_only_explicit_reenable_retries ... ok
+test audio::tests::hydrated_pcm_rate_is_preserved_then_refused_by_normal_output_admission ... ok
+test audio::tests::failed_calibration_stop_invalidates_cache_and_retries_ordinary_click_atomically ... ok
+test audio::tests::legacy_song_keeps_authored_frequencies_meter_tempo_and_lengths ... ok
+test audio::loop_projection::tests::restore_validates_exact_runtime_frames_at_integer_and_fractional_clocks ... ok
+test audio::tests::each_input_feature_can_open_the_one_shared_session ... ok
+test audio::tests::preview_completion_wakes_control_and_services_the_real_graph_without_input ... ok
+test audio::tests::ordinary_synchronization_and_polls_do_not_open_microphone ... ok
+test audio::tests::recording_retry_restores_pending_tuner_enable_on_same_session ... ok
+test audio::tests::clearing_an_admitted_stored_capture_updates_output_without_touching_inactive_sets ... ok
+test audio::tests::hydration_rejects_busy_capture_before_replacing_any_completed_take ... ok
+test audio::tests::queued_capture_blocks_all_backing_replacements_before_the_processor_runs ... ok
+test audio::tests::explicit_unadmitted_clear_recovers_an_edited_clock_and_keeps_other_owners ... ok
+test audio::tests::restoring_set_custody_leaves_saved_output_and_compatibility_pcm_untouched ... ok
+test audio::tests::unsupported_saved_clock_is_refused_without_normalizing_the_authored_payload ... ok
+test audio::tests::recording_rate_mismatch_keeps_the_reader_available_and_current_owner_loaded ... ok
+test audio::tests::hydration_finishes_pending_identity_reset_before_installing_reused_ids ... ok
+test audio::tests::reset_backpressure_cannot_transfer_old_pcm_into_incoming_session_ids ... ok
+test audio::loop_projection::tests::quota_replaces_existing_ids_once_and_keeps_legacy_custody_separate ... ok
+test audio::loop_projection::tests::restore_checks_take_count_and_aggregate_frames_without_reassigning_custody ... ok
+test audio::loop_projection::tests::quota_reserves_every_current_bar_not_only_the_requested_first_bar ... ok
+test audio::tests::set_arm_can_replace_the_same_id_at_the_exact_stored_quota ... ok
+test audio::tests::set_arm_quota_refuses_count_and_frames_before_either_route_opens_input ... ok
+
+test result: ok. 32 passed; 0 failed; 0 ignored; 0 measured; 101 filtered out; finished in 0.16s

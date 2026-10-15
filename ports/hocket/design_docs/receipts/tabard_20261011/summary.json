@@ -1,0 +1,76 @@
+{
+  "date": "2026-10-11",
+  "host": "Intel Xeon W iMac, Radeon Pro Vega 56, macOS Metal",
+  "compiler": "Rust 1.97.1",
+  "binary_sha256": "43ca2156392c884eacb0366b6e8fda190ae86a8c646c67ad9c8f5e7e41ce744f",
+  "cases": {
+    "seed": {
+      "captures": 9,
+      "blank": 0,
+      "presented_frames": 79,
+      "elapsed_seconds": 35.07
+    },
+    "reopen": {
+      "captures": 2,
+      "blank": 0,
+      "presented_frames": 13,
+      "elapsed_seconds": 10.642
+    },
+    "same-id": {
+      "captures": 4,
+      "blank": 0,
+      "presented_frames": 42,
+      "elapsed_seconds": 27.696
+    },
+    "reopen-final": {
+      "captures": 2,
+      "blank": 0,
+      "presented_frames": 13,
+      "elapsed_seconds": 11.011
+    }
+  },
+  "total_captures": 17,
+  "total_presented_frames": 147,
+  "same_identity_save_changed_pixels_over_2": 0,
+  "same_identity_save_max_channel_difference": 1,
+  "same_identity_apply_changed_pixels_over_2": 3277240,
+  "seed_recording_red_pixels": {
+    "recorder_hc_dark.png": 3908,
+    "recorder_applied.png": 3908,
+    "recorder_light.png": 3908,
+    "recorder_hc_light.png": 3908,
+    "recorder_dark.png": 3908,
+    "recorder_final.png": 3908,
+    "recorder_default.png": 3908
+  },
+  "png_sha256": {
+    "seed/recorder_hc_dark.png": "113b710e7d6fd72dd9b05775809aa62b6611c66be9b2904447fd67e05488d378",
+    "seed/workshop_narrow.png": "522fb5fa1add570fec82c103b9ff17145ec6aed639feec3d4486ed627de60220",
+    "seed/recorder_applied.png": "76a5239f92eeec0531b0f2509896290bd608619fb23ff631610997c41e635ea6",
+    "seed/recorder_light.png": "d27ef75e8980c033675243bfc3a89f2fc20d3173413c45829ef246998047a78e",
+    "seed/workshop_saved.png": "4c7219f2dab14c708b1e016adbcf86ec8db6a54022941cae2e1617d1aeca0a33",
+    "seed/recorder_hc_light.png": "c49dec1cf74678d8ea9256a4fb8d4df312421eb75cf43e79aac136de3772dbcb",
+    "seed/recorder_dark.png": "25751030a03036859ecdacbdcc00f97575b184103140346d3d1ecd8c15922ac5",
+    "seed/recorder_final.png": "a245e070a28dc707f03b3383e79298b0ab9afbdc6f1d39f8a4b7d7348bcdf1f8",
+    "seed/recorder_default.png": "55e1164864573d913541736039519146c9216d7d546f4a5871aedbe4efea9cc8",
+    "reopen/appearance_reopened.png": "65b78d42b941c729b84f4e6ae55a4af55152376e604e74ce9281ec5d9fe07c37",
+    "reopen/recorder_reopened.png": "a019ce3de12d2dc89911ad566cba549e7a84efcb9cdf840e81c2962c4f297f19",
+    "same-id/recorder_after_save.png": "adebcb792ac21854db2c89000176745cc8b1cfacf9dcb7243580e4edbbfe3ee2",
+    "same-id/workshop_same_id_saved.png": "0e0e738ce25e6e4bee116fa6ebbc62ab083576fffe246fa9fca6fd821bd70822",
+    "same-id/recorder_after_apply.png": "9dfe5ceb2394384bf52d58490c956117cacd7603aa044649e6bd8887626452d7",
+    "same-id/recorder_before_edit.png": "b3628be345fb2c566d8a38bdcca9d581e5e767c4a49919b9b9f918e73008296c",
+    "reopen-final/appearance_reopened.png": "42e939211cb716d6c12349aef1179d894a6ed40540d16641eb8c42e5e5d0b6c6",
+    "reopen-final/recorder_reopened.png": "53e395f9fe2fd4a85d9fa5bdca1974fff817285e79a6bbd6a6cac185f2fb5548"
+  },
+  "cpu": {
+    "desktop_passed": 64,
+    "desktop_keeper_ignored": 1,
+    "model_passed": 36,
+    "history_passed": 2
+  },
+  "reset_observation": {
+    "start_unix": 1791705851.177724,
+    "end_unix": 1791707828.191126,
+    "new_reports": []
+  }
+}

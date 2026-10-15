@@ -18,7 +18,7 @@
 use std::f32::consts::TAU;
 
 use hocket_engine::capture::{Capture, CaptureState};
-use hocket_engine::media::{InMemoryStore, MediaStore};
+use hocket_project::media::{InMemoryStore, MediaStore};
 use hocket_model::{Edit, History, Layer, Phrase, Session};
 
 const SAMPLE_RATE: u32 = 48_000;

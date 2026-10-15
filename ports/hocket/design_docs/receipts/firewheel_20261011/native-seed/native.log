@@ -1,0 +1,13 @@
+[genet-render-host] surface acquire skipped: Occluded
+[cambium-winit] accessibility Installed, 145 nodes projected
+[genet-render-host] surface acquire skipped: Occluded
+hocket-genet: captured recorder_default
+hocket-genet: captured recorder_light
+hocket-genet: captured recorder_dark
+hocket-genet: captured recorder_hc_light
+hocket-genet: captured recorder_hc_dark
+hocket-genet: captured workshop_saved
+hocket-genet: captured recorder_applied
+hocket-genet: captured workshop_narrow
+hocket-genet: captured recorder_final
+hocket-genet: RESULT ok (79 frames, 9 captures)

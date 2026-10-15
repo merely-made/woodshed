@@ -17,14 +17,16 @@
 //! | `frame` | advance the transports and the tuner ([`drive`]), refresh the leaves ([`leaves`]) |
 //! | `after_dispatch` | push state through the backend, MIDI, chrome, and persistence seams ([`sync`]) |
 //! | `after_frame` | pump the scenario one step ([`scenario`]) |
-//! | `after_wake` | no worker channel to drain yet |
-//! | `close_request` | exit: Woodshed has no background operation to retain |
+//! | `after_wake` | service output, preview completions and accepted transport status |
+//! | `close_request` | finish capture storage and WAV work, then honor appearance changes |
 //! | `focused_text` | the focused product or shared workshop text field ([`text`]) |
 //! | `key_intercept` | Escape closes an open dropdown |
 
 mod appearance;
 mod audio;
+mod capture_persistence;
 mod drive;
+mod fonts;
 #[cfg(test)]
 mod layout_tests;
 mod leaves;
@@ -36,8 +38,9 @@ mod shared;
 mod storage;
 mod sync;
 mod text;
+mod wav_export;
 
-use std::cell::RefCell;
+use std::cell::{Cell, RefCell};
 use std::rc::Rc;
 
 use cambium::{el, text as text_node, title_bar};
@@ -79,16 +82,25 @@ fn boot_state(
     shared: &Rc<RefCell<Shared>>,
     window: &dyn cambium_genet_winit_host::HostWindow,
     commands: &WindowCommands,
+    wake: &cambium_genet_winit_host::HostWake,
 ) -> Init<UiState, Logic> {
     let mut shared = shared.borrow_mut();
-    let backend = CpalBackend::new();
+    let device_free_receipt = appearance::device_free_receipt();
+    let mut backend = (!device_free_receipt).then(CpalBackend::new);
+    if let Some(backend) = &mut backend {
+        backend.set_wake(wake.callback());
+    }
     let mut ui = UiState::new();
+    shared.wav_export.set_wake(wake.callback());
+    shared.capture_persistence.set_wake(wake.callback());
     ui.event_clock = Some(drive::wall_time_ms);
     let (size_w, size_h) = window.inner_size();
     let scale = window.scale_factor() as f32;
     ui.set_viewport_width(size_w as f32 / scale);
     ui.set_viewport_height(size_h as f32 / scale);
-    ui.audio_error = backend.error().map(String::from);
+    ui.audio_error = backend
+        .as_ref()
+        .and_then(|backend| backend.error().map(String::from));
 
     // Restore the artifact session and the separate application settings, when
     // there is a store to restore from. There is not, on a machine whose vault
@@ -103,6 +115,13 @@ fn boot_state(
     // persona while the store was sealed to one. One assignment, both paths,
     // and they cannot drift apart again.
     ui.seal = shared.seal.clone();
+    // A pending identity saves nothing (D12), so the notice says so.
+    if matches!(
+        ui.seal,
+        Some(woodshed_views::persona::PracticeSeal::Pending { .. })
+    ) {
+        ui.practice_saved = false;
+    }
     appearance::load_library(&mut ui);
     shared.theme = ui.theme();
     shared.reduce_motion = ui.app_settings.accessibility.reduce_motion;
@@ -110,16 +129,18 @@ fn boot_state(
     let sheet = appearance::stylesheet(&ui);
     shared.appearance_sheet = Some(sheet.clone());
     // Populate the MIDI port pickers with what's plugged in now.
-    ui.midi.input_ports = shared.midi.input_ports();
-    ui.midi.output_ports = shared.midi.output_ports();
-    shared.backend = Some(backend);
+    if !device_free_receipt {
+        ui.midi.input_ports = shared.midi.input_ports();
+        ui.midi.output_ports = shared.midi.output_ports();
+    }
+    shared.backend = backend;
 
     let commands = commands.clone();
     Init {
         state: ui,
         logic: Box::new(move |ui: &UiState| desktop_root(ui, &commands)) as Logic,
         sheet,
-        fonts: Vec::new(),
+        fonts: fonts::bundled_fonts(),
         images: Vec::new(),
     }
 }
@@ -224,11 +245,17 @@ fn hooks(shared: &Rc<RefCell<Shared>>) -> HostHooks<UiState, Logic, UiChild> {
     let frame_shared = shared.clone();
     let dispatch_shared = shared.clone();
     let after_frame_shared = shared.clone();
+    let wake_shared = shared.clone();
     let close_shared = shared.clone();
+    let capture_close_requested = Rc::new(Cell::new(false));
+    let wake_close_requested = capture_close_requested.clone();
     let mut previews = appearance::PreviewBindings::default();
     HostHooks {
         frame: Box::new(move |ctx: &mut Ctx<'_>| {
             let mut shared = frame_shared.borrow_mut();
+            if !capture_persistence::session_current(&shared, ctx.runner.state()) {
+                sync::after_dispatch(&mut shared, ctx);
+            }
             let drag_active = ctx.runner.state().set_graph_drag_active;
             shared.drag_frame_metrics.begin(drag_active);
             let phase = std::time::Instant::now();
@@ -274,10 +301,61 @@ fn hooks(shared: &Rc<RefCell<Shared>>) -> HostHooks<UiState, Logic, UiChild> {
                 scenario::drive(lane, ctx);
             }
         }),
-        after_wake: Box::new(|_ctx| {}),
+        after_wake: Box::new(move |ctx: &mut Ctx<'_>| {
+            let mut shared = wake_shared.borrow_mut();
+            wav_export::poll(&mut shared, ctx);
+            if !capture_persistence::session_current(&shared, ctx.runner.state()) {
+                sync::after_dispatch(&mut shared, ctx);
+                if !capture_persistence::session_current(&shared, ctx.runner.state()) {
+                    if let Some(backend) = shared.backend.as_mut() {
+                        backend.service();
+                    }
+                    return;
+                }
+            }
+            let observation = drive::poll_audio(&mut shared);
+            if let Some(observation) = observation {
+                if observation.changed(ctx.runner.state())
+                    || capture_persistence::pending(&shared, ctx.runner.state())
+                {
+                    ctx.runner.update(|ui| {
+                        observation.apply(ui);
+                        capture_persistence::persist_if_changed(&mut shared, ui);
+                    });
+                }
+            } else if capture_persistence::pending(&shared, ctx.runner.state()) {
+                ctx.runner.update(|ui| {
+                    capture_persistence::persist_if_changed(&mut shared, ui);
+                });
+            }
+            if wake_close_requested.get()
+                && !shared.capture_persistence.is_busy()
+                && wav_export::close_request(&mut shared, ctx).is_none()
+            {
+                wake_close_requested.set(false);
+                if !*ctx.close
+                    && appearance::close_request(ctx)
+                        == cambium_genet_winit_host::CloseDisposition::Exit
+                {
+                    *ctx.close = true;
+                }
+            }
+        }),
         close_request: Box::new(move |ctx, _request| {
             if let Some(geometry) = ctx.geometry {
                 persist_window_geometry(&mut close_shared.borrow_mut(), ctx, geometry);
+            }
+            let mut capture_pending = false;
+            ctx.runner.update(|ui| {
+                capture_pending =
+                    capture_persistence::close_request(&mut close_shared.borrow_mut(), ui);
+            });
+            if capture_pending {
+                capture_close_requested.set(true);
+                return cambium_genet_winit_host::CloseDisposition::KeepVisible;
+            }
+            if let Some(disposition) = wav_export::close_request(&mut close_shared.borrow_mut(), ctx) {
+                return disposition;
             }
             appearance::close_request(ctx)
         }),
@@ -305,7 +383,7 @@ fn main() {
     };
     run(
         options,
-        move |window, commands, _wake| boot_state(&init_shared, window, commands),
+        move |window, commands, wake| boot_state(&init_shared, window, commands, wake),
         hooks(&shared),
     )
     .expect("run app");

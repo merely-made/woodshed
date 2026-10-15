@@ -1,0 +1,5 @@
+RESULT ok
+captured 01_compact_shared_recorder_reopened
+capture 01_compact_shared_recorder_reopened 960x1800 digest=c4fead8b6a9270d8 file=/Users/markik/Code/testing/woodshed/hocket-adoption-20261013/native/WoodshedHocketCompactFinal/01_compact_shared_recorder_reopened.png
+frames: 1 captured, 0 blank, 1 distinct digests
+presentation: 23 frames, 25 redraws, 2 unpresented redraws

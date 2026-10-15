@@ -1,0 +1,10 @@
+RESULT ok
+captured 01_captured_recipe
+captured 03_latest_hear
+captured 02_recipe_scene
+Captured scale-pattern retained
+capture 01_captured_recipe 2560x1800 digest=7425b31423aea333 file=/Users/markik/Code/testing/woodshed/preview-worker-20261008/native-committed/seed/01_captured_recipe.png
+capture 03_latest_hear 2560x1800 digest=0a2ad200579a0470 file=/Users/markik/Code/testing/woodshed/preview-worker-20261008/native-committed/seed/03_latest_hear.png
+capture 02_recipe_scene 2560x1800 digest=f1b36a1f94b77f33 file=/Users/markik/Code/testing/woodshed/preview-worker-20261008/native-committed/seed/02_recipe_scene.png
+frames: 3 captured, 0 blank, 3 distinct digests
+presentation: 162 frames, 163 redraws, 1 unpresented redraws

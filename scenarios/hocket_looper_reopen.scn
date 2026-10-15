@@ -1,0 +1,27 @@
+# Current shared recorder over an isolated sealed compressed-capture fixture.
+# Normal root output; input remains unopened. Export takes the real host worker.
+settle 5
+ui-zoom 1.0
+click .pill Looper
+settle 3
+assert snap set-cards == 2
+assert snap loop-capture-references == 1
+assert snap loop-capture-frames == 96000
+assert snap loop-active-captures == 1
+assert snap recorder-admitted == true
+assert snap recorder-rows == 2
+assert snap recorder-waveforms == 1
+assert snap capture-input-rate == none
+assert snap output-streams == 1
+assert text Ordered backing segments
+assert text Card loops saved: 1
+capture 01_shared_recorder_hydrated
+click role:switch @aria-label=Select Card 2
+assert snap recorder-selected-card == 2
+assert snap loop-capture-references == 1
+capture 02_owned_selection
+act wav-export-fixture
+settle 20
+assert text Exported
+assert snap capture-input-rate == none
+capture 03_backing_plus_capture_export

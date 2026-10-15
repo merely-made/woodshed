@@ -1,0 +1,27 @@
+# Isolated sealed profile. Synthetic completed PCM; never opens microphone.
+settle 3
+ui-zoom 0.8
+act chord-approach-example
+settle 3
+click .pill Looper
+settle 3
+click .t-btn Loop this Set
+settle 3
+click .t-btn Click: on
+act seed-loop-capture
+settle 4
+assert snap set-cards == 2
+assert snap loop-capture-references == 1
+assert snap loop-capture-frames >= 1
+assert snap loop-active-captures == 1
+assert snap capture-input-rate == none
+assert snap output-streams == 1
+assert text Card loops saved: 1
+capture 01_card_loop_saved
+act move-selected-down
+settle 4
+assert snap loop-active-captures == 1
+assert snap loop-capture-references == 1
+assert snap capture-input-rate == none
+capture 02_card_loop_reordered
+log Sealed Set capture seed complete

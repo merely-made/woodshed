@@ -1,0 +1,34 @@
+{
+  "path": "/Users/markik/Code/testing/woodshed/font-roles-20261012/combined-v2/codec-after-wav/loop-reference.wav",
+  "status": "passed",
+  "file_bytes": 768068,
+  "file_sha256": "6c0726336b2e14bdea1031ed183b42358336b0c0d064332531cf91f5618409ff",
+  "chunks": [
+    {
+      "id": "fmt ",
+      "offset": 20,
+      "bytes": 40
+    },
+    {
+      "id": "data",
+      "offset": 68,
+      "bytes": 768000
+    }
+  ],
+  "format_tag": 65534,
+  "channels": 1,
+  "sample_rate_hz": 48000,
+  "bits_per_sample": 32,
+  "block_alignment": 4,
+  "byte_rate": 192000,
+  "frames": 192000,
+  "duration_seconds": 4.0,
+  "pcm_sha256": "51966f89d016ade8cd01b32dfa8583cc2fbe452e5a3bc620f6dc44daeb3401e0",
+  "peak": 0.7797104716300964,
+  "rms": 0.2471484429542788,
+  "nonzero_frames": 191999,
+  "expected_rate_hz": 48000,
+  "expected_frames": 192000,
+  "expected_pcm_sha256": "51966f89d016ade8cd01b32dfa8583cc2fbe452e5a3bc620f6dc44daeb3401e0",
+  "limits": "Container and PCM checks; acoustic/device behavior is separately qualified."
+}

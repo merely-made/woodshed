@@ -1,0 +1,13 @@
+warning: patch `p2panda-auth v0.7.1 (https://github.com/mark-ik/p2panda.git?tag=mere-p2panda-net-0.7.5-upstream-20261011#d8acabc9)` was not used in the crate graph
+warning: patch `p2panda-stream v0.7.1 (https://github.com/mark-ik/p2panda.git?tag=mere-p2panda-net-0.7.5-upstream-20261011#d8acabc9)` was not used in the crate graph
+help: Check that the patched package version and available features are compatible
+      with the dependency requirements. If the patch has a different version from
+      what is locked in the Cargo.lock file, run `cargo update` to use the new
+      version. This may also occur with an optional dependency that is not enabled.
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.67s
+     Running unittests src/main.rs ($TARGET_DIR/debug/deps/woodshed_genet-63d01c9b9697e4d3)
+
+running 1 test
+test appearance::tests::theme_export_cannot_replace_existing_or_future_capture_companions ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 132 filtered out; finished in 1.08s

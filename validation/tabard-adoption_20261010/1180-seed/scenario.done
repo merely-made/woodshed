@@ -1,0 +1,23 @@
+RESULT ok
+Shared Tabard appearance authoring in Woodshed
+captured appearance_light
+captured appearance_dark
+captured appearance_hc_dark
+captured appearance_settings
+captured appearance_workshop
+captured appearance_applied
+captured appearance_narrow_reader
+captured appearance_narrow_graph
+captured appearance_resized_applied
+Shared Tabard appearance acceptance complete
+capture appearance_light 2360x1600 digest=02bde3ddd18dcb57 file=/Users/markik/Code/tabard-app-receipts/2026-10-10/woodshed/fixed-renderer-01/1180-seed/appearance_light.png
+capture appearance_dark 2360x1600 digest=04a8699e47e702db file=/Users/markik/Code/tabard-app-receipts/2026-10-10/woodshed/fixed-renderer-01/1180-seed/appearance_dark.png
+capture appearance_hc_dark 2360x1600 digest=ede747545acae6b8 file=/Users/markik/Code/tabard-app-receipts/2026-10-10/woodshed/fixed-renderer-01/1180-seed/appearance_hc_dark.png
+capture appearance_settings 2360x1600 digest=12d72baf1d351016 file=/Users/markik/Code/tabard-app-receipts/2026-10-10/woodshed/fixed-renderer-01/1180-seed/appearance_settings.png
+capture appearance_workshop 2360x1600 digest=7402c1a1de512296 file=/Users/markik/Code/tabard-app-receipts/2026-10-10/woodshed/fixed-renderer-01/1180-seed/appearance_workshop.png
+capture appearance_applied 2360x1600 digest=6361c325f1f46434 file=/Users/markik/Code/tabard-app-receipts/2026-10-10/woodshed/fixed-renderer-01/1180-seed/appearance_applied.png
+capture appearance_narrow_reader 1280x1600 digest=a81ca8df49381b8e file=/Users/markik/Code/tabard-app-receipts/2026-10-10/woodshed/fixed-renderer-01/1180-seed/appearance_narrow_reader.png
+capture appearance_narrow_graph 1280x1600 digest=1ddb33573d66ed1d file=/Users/markik/Code/tabard-app-receipts/2026-10-10/woodshed/fixed-renderer-01/1180-seed/appearance_narrow_graph.png
+capture appearance_resized_applied 1280x1600 digest=b074241eab9056eb file=/Users/markik/Code/tabard-app-receipts/2026-10-10/woodshed/fixed-renderer-01/1180-seed/appearance_resized_applied.png
+frames: 9 captured, 0 blank, 9 distinct digests
+presentation: 102 frames, 105 redraws, 3 unpresented redraws

@@ -14,12 +14,15 @@ use cambium::{
     GraphCanvasSubgraph, GraphCanvasSwatch, GraphViewport, SelectState, TextInput, clickable,
     custom_leaf, el, map_state, select, text, text_field,
 };
+pub use looper::{RecorderBuffer, RecorderObservation};
+pub use looper::recorder::{RecorderKey, RECORDER_MOUNT, projection as recorder_projection, dispatch as dispatch_recorder};
 use woodshed_core::arrangement::{GraphArrangement, arrange_graph};
 use woodshed_core::audio::{AudioRequest, CalibrationStatus, TransportState, TunerState};
 use woodshed_core::harmony::KeyedCatalogRef;
 use woodshed_core::history::{
     EngagementKind, ObservationProvenance, PracticeHistory, catalog_id_for_card,
 };
+use woodshed_core::loop_plan::{LoopPlan, LoopSegmentId, LooperConfig};
 use woodshed_core::mere::{MereScope, WoodshedMereSnapshot, woodshed_mere};
 use woodshed_core::search::{SearchHit, search_corpus};
 use woodshed_core::settings::{AppSettings, RelatedGraphScope, SettingsPage, StageGraphReading};
@@ -818,8 +821,19 @@ impl Default for MidiUiState {
     }
 }
 
+/// One explicit WAV-export decision. The host owns the accepted audio
+/// snapshot, chooser, destination and replacement-token lifetime.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum LoopExportRequest {
+    ChooseDestination,
+    Replace(u64),
+    CancelReplace(u64),
+}
+
 /// Runner state: the portable core slice plus view-layer widget state.
 pub struct UiState {
+    /// Host-reflected recorder projection; PCM stays shared and never enters Session.
+    pub recorder_observation: looper::RecorderObservation,
     pub stage: StageState,
     pub set: Set,
     pub working_sets: woodshed_core::working_sets::WorkingSets,
@@ -868,6 +882,27 @@ pub struct UiState {
     /// Last explicit shape-selection failure, scoped to its Card occurrence.
     pub card_shape_notice: Option<(CardId, String)>,
     pub song: SongDoc,
+    pub looper: LooperConfig,
+    /// References to sealed companion PCM; hosts own loading and writing it.
+    pub loop_captures: woodshed_core::loop_capture::LoopCaptureManifest,
+    pub loop_capture_notice: Option<String>,
+    /// Completed live custody, including takes not yet confirmed in storage.
+    pub loop_retained_ids: Vec<LoopSegmentId>,
+    /// Transient export decisions drained once by the host, independently
+    /// of audio commands. No destination path enters persisted practice.
+    pub loop_export_requests: Vec<LoopExportRequest>,
+    pub loop_export_busy: bool,
+    pub loop_export_notice: Option<String>,
+    /// Opaque host replacement token and display filename, never a path.
+    pub loop_export_replace: Option<(u64, String)>,
+    /// Host-admitted snapshot, distinct from a requested edit that failed
+    /// readiness or is waiting for capture to stop. Never persisted.
+    pub loop_admitted: Option<LoopPlan>,
+    pub loop_notice: Option<String>,
+    pub loop_selected: Option<LoopSegmentId>,
+    /// Process-local session generation. Reset/open replaces this identity so
+    /// a host cannot reuse transient PCM under repeated persisted Card ids.
+    pub audio_session: std::sync::Arc<()>,
     pub song_playing: bool,
     /// Host-polled live bar cursor during playback (timeline follow).
     pub song_bar_live: usize,
@@ -1080,6 +1115,19 @@ impl UiState {
             rehearsal_running: false,
             card_shape_notice: None,
             song: SongDoc::default(),
+            looper: LooperConfig::default(),
+            recorder_observation: Default::default(),
+            loop_captures: Default::default(),
+            loop_capture_notice: None,
+            loop_retained_ids: Vec::new(),
+            loop_export_requests: Vec::new(),
+            loop_export_busy: false,
+            loop_export_notice: None,
+            loop_export_replace: None,
+            loop_admitted: None,
+            loop_notice: None,
+            loop_selected: None,
+            audio_session: std::sync::Arc::new(()),
             song_playing: false,
             song_bar_live: 0,
             song_edit_cursor: 0,
@@ -1451,8 +1499,15 @@ impl UiState {
     }
 
     pub fn set_theme(&mut self, theme: ThemeMode) {
+        let fonts = self.appearance.choice(&self.app_settings.appearance).fonts;
         self.app_settings.appearance.theme = theme.label().to_string();
-        self.app_settings.appearance.theme_choice = None;
+        self.app_settings.appearance.theme_choice = if fonts.is_empty() {
+            None
+        } else {
+            let mut choice = tabard::theme::choice::ThemeChoice::new(theme.theme_id(), None);
+            choice.fonts = fonts;
+            Some(choice)
+        };
     }
 
     pub fn board_layout(&self) -> BoardLayout {
@@ -2002,6 +2057,8 @@ impl UiState {
         );
         session.retained_sets = self.retained_sets.clone();
         session.working_sets = self.working_sets.clone();
+        session.looper = self.looper.clone();
+        session.loop_captures = self.loop_captures.clone();
         session.musical_context = self.musical_context.normalized();
         session.relationship_reading_json = self.relationship_reading_json.clone();
         session.overview_presentation_json = self
@@ -2053,8 +2110,33 @@ impl UiState {
         self.rehearsal_observed_card = None;
         self.card_started_ms = None;
         self.song = session.song.clone();
+        self.looper = session.looper.clone();
+        self.loop_captures = session.loop_captures.clone();
+        self.loop_capture_notice = None;
+        self.loop_retained_ids = session
+            .loop_captures
+            .takes
+            .iter()
+            .map(|take| take.id)
+            .collect();
+        self.loop_admitted = None;
+        self.recorder_observation = Default::default();
+        self.loop_export_requests.clear();
+        self.loop_export_busy = false;
+        self.loop_export_notice = None;
+        self.loop_export_replace = None;
+        self.loop_notice = None;
+        self.loop_selected = None;
+        self.audio_session = std::sync::Arc::new(());
+        self.song_playing = false;
+        self.song_recording = false;
+        self.song_loop_bars.clear();
+        self.audio_requests.clear();
         self.practice_history = session.practice_history.clone();
         self.app_settings = app_settings;
+        self.appearance.reset_active();
+        self.appearance
+            .reset_font_editor(&self.app_settings.appearance);
         if let Some(config) = &session.active_exploration {
             config.apply(&mut self.stage, &mut self.app_settings);
             self.search = TextInput::new(config.search_query.clone());
@@ -2495,6 +2577,9 @@ fn exercise_board_view(ui: &UiState) -> UiChild {
                     el("div", text(play_label)).attr("class", "t-btn"),
                     |ui: &mut UiState, _| {
                         ui.stage.exercise_playing = !ui.stage.exercise_playing;
+                        if !ui.stage.exercise_playing {
+                            ui.request(AudioRequest::CancelPreview);
+                        }
                     },
                 ),
                 clickable(
@@ -2597,6 +2682,9 @@ fn arpeggio_board_view(ui: &UiState) -> UiChild {
                     el("div", text(play_label)).attr("class", "t-btn"),
                     |ui: &mut UiState, _| {
                         ui.stage.arpeggio_playing = !ui.stage.arpeggio_playing;
+                        if !ui.stage.arpeggio_playing {
+                            ui.request(AudioRequest::CancelPreview);
+                        }
                     },
                 ),
                 clickable(
@@ -2874,7 +2962,12 @@ pub(super) fn board(ui: &UiState) -> UiChild {
                                 }),
                             )
                             .attr("class", "run-btn"),
-                            |ui: &mut UiState, _| ui.stage.toggle_scale_run(),
+                            |ui: &mut UiState, _| {
+                                ui.stage.toggle_scale_run();
+                                if !ui.stage.scale_run_playing {
+                                    ui.request(AudioRequest::CancelPreview);
+                                }
+                            },
                         ),
                         clickable(
                             el("div", text("Path")).attr(

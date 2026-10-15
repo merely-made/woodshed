@@ -1,0 +1,12 @@
+RESULT ok
+captured 01_font_requests_reopened
+captured 02_font_fretboard_reopened
+captured 03_font_set_reopened
+captured 04_font_looper_reopened
+Woodshed font requests and retained domain reopen complete
+capture 01_font_requests_reopened 2360x1600 digest=54b6e1ce220f351e file=/Users/markik/Code/testing/woodshed/font-roles-20261012/combined-v2/native/FontsReopenV2/01_font_requests_reopened.png
+capture 02_font_fretboard_reopened 2360x1600 digest=4ded7c54d1162780 file=/Users/markik/Code/testing/woodshed/font-roles-20261012/combined-v2/native/FontsReopenV2/02_font_fretboard_reopened.png
+capture 03_font_set_reopened 2360x1600 digest=bb0d170a8a0df555 file=/Users/markik/Code/testing/woodshed/font-roles-20261012/combined-v2/native/FontsReopenV2/03_font_set_reopened.png
+capture 04_font_looper_reopened 2360x1600 digest=86c0ebe0c9f767f0 file=/Users/markik/Code/testing/woodshed/font-roles-20261012/combined-v2/native/FontsReopenV2/04_font_looper_reopened.png
+frames: 4 captured, 0 blank, 4 distinct digests
+presentation: 48 frames, 481 redraws, 433 unpresented redraws

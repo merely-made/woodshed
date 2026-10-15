@@ -1,0 +1,17 @@
+RESULT ok
+captured appearance
+captured workshop
+captured saved-copy
+captured applied-dark
+captured applied-light
+captured applied-hc-light
+captured applied-hc-dark
+capture appearance 1720x1360 digest=c569a2e0cc3f16f4 file=/Users/markik/Code/testing/woodshed/audio-foundation-20261011/redshank-native/appearance/appearance.png
+capture workshop 1720x1360 digest=ab7c202a36bafa89 file=/Users/markik/Code/testing/woodshed/audio-foundation-20261011/redshank-native/appearance/workshop.png
+capture saved-copy 1720x1360 digest=a2828e5153fb2256 file=/Users/markik/Code/testing/woodshed/audio-foundation-20261011/redshank-native/appearance/saved-copy.png
+capture applied-dark 1720x1360 digest=65464f778071f11e file=/Users/markik/Code/testing/woodshed/audio-foundation-20261011/redshank-native/appearance/applied-dark.png
+capture applied-light 1720x1360 digest=7602787b83e84fbe file=/Users/markik/Code/testing/woodshed/audio-foundation-20261011/redshank-native/appearance/applied-light.png
+capture applied-hc-light 1720x1360 digest=ad9235ca60918ec1 file=/Users/markik/Code/testing/woodshed/audio-foundation-20261011/redshank-native/appearance/applied-hc-light.png
+capture applied-hc-dark 1720x1360 digest=a794689fc49e7ce6 file=/Users/markik/Code/testing/woodshed/audio-foundation-20261011/redshank-native/appearance/applied-hc-dark.png
+frames: 7 captured, 0 blank, 7 distinct digests
+presentation: 60 frames, 62 redraws, 2 unpresented redraws

@@ -1,0 +1,47 @@
+[
+  {
+    "attempt": "seed",
+    "reason": "60-second timeout; missing completion receipt",
+    "process": {
+      "launch_method": "LaunchServices temporary application bundle",
+      "launcher_exit": 0,
+      "timeout": true,
+      "success": false,
+      "elapsed_seconds": 61.574,
+      "binary_sha256": "1d54969b7e087426582ad078cf70c41a20bfd64fe9d36773eb09f21199ceff4c",
+      "scenario_sha256": "d78633352f5386c6b8dd4c851054b4fa98013d7acf7205fa5490df4a64520605",
+      "receipt": null,
+      "captures": 6
+    }
+  },
+  {
+    "attempt": "same-id",
+    "reason": "adapter did not yet declare retained recorder viewport",
+    "process": {
+      "launch_method": "LaunchServices temporary application bundle",
+      "launcher_exit": 0,
+      "timeout": false,
+      "success": false,
+      "elapsed_seconds": 32.4,
+      "binary_sha256": "1d54969b7e087426582ad078cf70c41a20bfd64fe9d36773eb09f21199ceff4c",
+      "scenario_sha256": "4fca407e0b81bb07efd05d024218443618bedcf6e2382539adaacb56cd18d135",
+      "receipt": "scenario.done",
+      "captures": 4
+    }
+  },
+  {
+    "attempt": "final/same-id",
+    "reason": "open appearance notice moved recorder viewport; geometry mismatch",
+    "process": {
+      "launch_method": "LaunchServices temporary application bundle",
+      "launcher_exit": 0,
+      "timeout": false,
+      "success": false,
+      "elapsed_seconds": 34.347,
+      "binary_sha256": "2ddfd3e26a4cab7840591001af396207e5443438443de03e2778e200a6333de6",
+      "scenario_sha256": "99cabe1cc5c1d8a021678244e11bed94523c2e91ac4b14bbf6ab36b91e528dd7",
+      "receipt": "scenario.done",
+      "captures": 4
+    }
+  }
+]

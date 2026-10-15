@@ -1,0 +1,18 @@
+warning: patch `p2panda-auth v0.7.1 (https://github.com/mark-ik/p2panda.git?tag=mere-p2panda-net-0.7.5-upstream-20261011#d8acabc9)` was not used in the crate graph
+warning: patch `p2panda-stream v0.7.1 (https://github.com/mark-ik/p2panda.git?tag=mere-p2panda-net-0.7.5-upstream-20261011#d8acabc9)` was not used in the crate graph
+help: Check that the patched package version and available features are compatible
+      with the dependency requirements. If the patch has a different version from
+      what is locked in the Cargo.lock file, run `cargo update` to use the new
+      version. This may also occur with an optional dependency that is not enabled.
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.71s
+     Running unittests src/main.rs ($TARGET_DIR/debug/deps/woodshed_genet-63d01c9b9697e4d3)
+
+running 6 tests
+test storage::capture_tests::filesystem_rejects_unknown_and_path_shaped_keys_without_touching_session ... ok
+test storage::capture_tests::sealed_filesystem_blobs_and_pending_write_drop_keep_custody_semantics ... ok
+test storage::capture_tests::filesystem_bounds_reads_and_reports_corrupt_or_truncated_companions ... ok
+test storage::capture_tests::failed_companion_write_retains_previous_session_and_failed_rename_cleans_temp ... ok
+test storage::capture_tests::two_personas_share_pcm_only_through_distinct_artifacts_and_cannot_clobber_ciphertext ... ok
+test storage::capture_tests::filesystem_companion_reopens_exact_pcm_after_session_reference_commit ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 127 filtered out; finished in 0.09s

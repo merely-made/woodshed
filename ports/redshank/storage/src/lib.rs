@@ -11,6 +11,9 @@ use std::fs::File;
 
 use redshank_model::RedshankModel;
 
+/// Keep the current published state and two valid recovery generations.
+const RETAINED_GENERATIONS: usize = 3;
+
 #[derive(Debug)]
 pub enum StoreError {
     Io(io::Error),
@@ -36,7 +39,9 @@ pub trait ModelStore {
 
 /// A crash-tolerant local store made from immutable numbered generations.
 /// Pending or corrupt newer files are ignored, leaving the latest valid prior
-/// generation readable.
+/// generation readable. Successful publication retains the newest three valid
+/// generations. Pending files are never pruned: another writer may still be
+/// publishing them.
 pub struct JsonDirectoryStore {
     root: PathBuf,
     #[cfg(test)]
@@ -96,6 +101,37 @@ impl JsonDirectoryStore {
     fn generation_path(&self, generation: u64) -> PathBuf {
         self.root.join(format!("state-{generation:020}.json"))
     }
+
+    /// Only run after the replacement has been flushed and published. Count
+    /// valid states rather than filenames so corruption cannot evict recovery
+    /// data. A cleanup error is returned to the caller, but does not roll back
+    /// the already-published replacement or remove retained recovery states.
+    fn prune_generations(&self) -> Result<(), StoreError> {
+        let mut retained = 0;
+        let mut removed = false;
+        for (_, path) in self.generations()?.into_iter().rev() {
+            let bytes = match fs::read(&path) {
+                Ok(bytes) => bytes,
+                Err(error) if error.kind() == io::ErrorKind::NotFound => continue,
+                Err(error) => return Err(error.into()),
+            };
+            if retained < RETAINED_GENERATIONS
+                && serde_json::from_slice::<RedshankModel>(&bytes).is_ok()
+            {
+                retained += 1;
+                continue;
+            }
+            match fs::remove_file(&path) {
+                Ok(()) => removed = true,
+                Err(error) if error.kind() == io::ErrorKind::NotFound => {},
+                Err(error) => return Err(error.into()),
+            }
+        }
+        if removed {
+            sync_directory(&self.root)?;
+        }
+        Ok(())
+    }
 }
 
 fn generation_number(name: &str, suffix: &str) -> Option<u64> {
@@ -143,7 +179,7 @@ impl ModelStore for JsonDirectoryStore {
 
         fs::rename(&pending_path, &final_path)?;
         sync_directory(&self.root)?;
-        Ok(())
+        self.prune_generations()
     }
 }
 
@@ -389,6 +425,109 @@ mod tests {
         fs::write(store.generation_path(2), b"not json").unwrap();
 
         assert_eq!(store.load().unwrap(), Some(expected));
+    }
+
+    #[test]
+    fn repeated_saves_bound_disk_history_and_keep_two_recovery_states() {
+        let directory = tempdir().unwrap();
+        let store = JsonDirectoryStore::new(directory.path());
+        let mut model = populated_model();
+        for offset in 1..=20 {
+            model.settings.skip_forward_ms = offset * 1_000;
+            store.save(&model).unwrap();
+            assert!(store.generations().unwrap().len() <= RETAINED_GENERATIONS);
+        }
+        let generations = store.generations().unwrap();
+        assert_eq!(
+            generations
+                .iter()
+                .map(|(number, _)| *number)
+                .collect::<Vec<_>>(),
+            [18, 19, 20]
+        );
+        assert_eq!(store.load().unwrap(), Some(model.clone()));
+
+        fs::write(&generations[2].1, b"corrupt latest").unwrap();
+        model.settings.skip_forward_ms = 19_000;
+        assert_eq!(
+            JsonDirectoryStore::new(directory.path()).load().unwrap(),
+            Some(model.clone())
+        );
+        fs::write(&generations[1].1, b"corrupt second latest").unwrap();
+        model.settings.skip_forward_ms = 18_000;
+        assert_eq!(
+            JsonDirectoryStore::new(directory.path()).load().unwrap(),
+            Some(model)
+        );
+    }
+
+    #[test]
+    fn pruning_counts_valid_states_and_leaves_pending_and_unrelated_files() {
+        let directory = tempdir().unwrap();
+        let store = JsonDirectoryStore::new(directory.path());
+        let mut model = populated_model();
+        for offset in 1..=3 {
+            model.settings.skip_forward_ms = offset * 1_000;
+            store.save(&model).unwrap();
+        }
+        fs::write(store.generation_path(4), b"corrupt newer state").unwrap();
+        let pending = pending_path(&store.generation_path(5));
+        fs::write(&pending, b"unfinished publication").unwrap();
+        let unrelated = directory.path().join("voice-note.wav");
+        fs::write(&unrelated, b"owned media").unwrap();
+
+        model.settings.skip_forward_ms = 6_000;
+        store.save(&model).unwrap();
+        assert_eq!(
+            store
+                .generations()
+                .unwrap()
+                .iter()
+                .map(|(number, _)| *number)
+                .collect::<Vec<_>>(),
+            [2, 3, 6]
+        );
+        assert_eq!(fs::read(pending).unwrap(), b"unfinished publication");
+        assert_eq!(fs::read(unrelated).unwrap(), b"owned media");
+        fs::write(store.generation_path(6), b"corrupt replacement").unwrap();
+        model.settings.skip_forward_ms = 3_000;
+        assert_eq!(store.load().unwrap(), Some(model));
+    }
+
+    #[test]
+    fn failed_publication_does_not_prune_retained_recovery_states() {
+        let directory = tempdir().unwrap();
+        let store = JsonDirectoryStore::new(directory.path());
+        let mut previous = populated_model();
+        for offset in 1..=3 {
+            previous.settings.skip_forward_ms = offset * 1_000;
+            store.save(&previous).unwrap();
+        }
+        let failing = JsonDirectoryStore {
+            root: directory.path().into(),
+            fail_before_publish: true,
+        };
+        let mut replacement = previous.clone();
+        replacement.settings.skip_forward_ms = 60_000;
+        assert!(failing.save(&replacement).is_err());
+        assert_eq!(store.generations().unwrap().len(), RETAINED_GENERATIONS);
+        assert_eq!(
+            JsonDirectoryStore::new(directory.path()).load().unwrap(),
+            Some(previous)
+        );
+    }
+
+    #[test]
+    fn cleanup_error_reports_failure_without_rolling_back_published_state() {
+        let directory = tempdir().unwrap();
+        let store = JsonDirectoryStore::new(directory.path());
+        // An unreadable generation is an I/O error rather than JSON corruption.
+        fs::create_dir(store.generation_path(1)).unwrap();
+        let replacement = populated_model();
+        assert!(store.save(&replacement).is_err());
+        assert_eq!(store.load().unwrap(), Some(replacement));
+        assert!(store.generation_path(1).is_dir());
+        assert!(store.generation_path(2).is_file());
     }
 
     #[test]

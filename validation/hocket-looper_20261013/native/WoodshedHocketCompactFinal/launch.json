@@ -1,0 +1,26 @@
+{
+  "source_revision": "d2d4bc750f63e5715ae780f076062b807dad0652",
+  "binary": {
+    "binary": "/Users/markik/Code/testing/woodshed/hocket-adoption-20261013/frozen-binaries/woodshed-genet-d2d4bc7",
+    "sha256": "ec9afd16307bd9ff1bc1b773500dbf08efffc053f03594c400153ee175824e44"
+  },
+  "environment": {
+    "WOODSHED_STATE": "/Users/markik/Code/testing/woodshed/hocket-adoption-20261013/profile/practice.json",
+    "WOODSHED_SETTINGS": "/Users/markik/Code/testing/woodshed/hocket-adoption-20261013/profile/settings.json",
+    "WOODSHED_THEME_LIBRARY": "/Users/markik/Code/testing/woodshed/hocket-adoption-20261013/profile/themes.json",
+    "WOODSHED_WIDTH": "480",
+    "WOODSHED_HEIGHT": "900",
+    "WOODSHED_PRESENTATION_TIMEOUT_SECS": "60",
+    "XDG_DATA_HOME": "/Users/markik/Code/testing/woodshed/hocket-adoption-20261013/profile/data",
+    "XDG_CONFIG_HOME": "/Users/markik/Code/testing/woodshed/hocket-adoption-20261013/profile/config",
+    "XDG_CACHE_HOME": "/Users/markik/Code/testing/woodshed/hocket-adoption-20261013/profile/cache",
+    "MERE_ROOT": "/Users/markik/Code/testing/woodshed/hocket-adoption-20261013/profile/mere",
+    "GRAPHSHELL_APP_ENDPOINT": "/tmp/ws-hocket13-app.sock",
+    "GRAPHSHELL_DEVICE_ENDPOINT": "/tmp/ws-hocket13-dev.sock",
+    "CAMBIUM_HOST_FRAME_TRACE": "1",
+    "WOODSHED_SCENARIO": "/Users/markik/Code/worktrees/woodshed-orchestrate-20261011/scenarios/hocket_looper_compact_reopen.scn",
+    "WOODSHED_CAPTURE_DIR": "/Users/markik/Code/testing/woodshed/hocket-adoption-20261013/native/WoodshedHocketCompactFinal",
+    "WOODSHED_RECEIPT": "/Users/markik/Code/testing/woodshed/hocket-adoption-20261013/native/WoodshedHocketCompactFinal/scenario.done"
+  },
+  "bundle": "/Users/markik/Code/testing/woodshed/hocket-adoption-20261013/native/WoodshedHocketCompactFinal/WoodshedHocketCompactFinal.app"
+}

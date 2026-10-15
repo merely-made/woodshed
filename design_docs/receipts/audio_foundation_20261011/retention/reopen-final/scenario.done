@@ -1,0 +1,6 @@
+RESULT ok
+waited 0 frames
+captured reopened-settings
+capture reopened-settings 1720x1360 digest=32861a6aae3d0166 file=/Users/markik/Code/testing/woodshed/audio-foundation-20261011/retention-native/reopen-final/reopened-settings.png
+frames: 1 captured, 0 blank, 1 distinct digests
+presentation: 11 frames, 13 redraws, 2 unpresented redraws

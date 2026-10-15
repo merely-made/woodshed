@@ -167,18 +167,36 @@ pub fn slate_seeds() -> Seeds {
 
 /// The Stage sheet rendered from a derived palette.
 pub fn stage_css(p: &Palette) -> String {
-    let bg = color_to_hex(p.bg);
-    let surface = color_to_hex(p.surface);
-    let surface_2 = color_to_hex(p.surface_2);
-    let surface_hover = color_to_hex(p.surface_hover);
-    let text_header = color_to_hex(p.text_header);
-    let text = color_to_hex(p.text);
-    let text_dim = color_to_hex(p.text_dim);
-    let text_disabled = color_to_hex(p.text_disabled);
-    let on_primary = color_to_hex(p.on_primary);
-    let secondary = color_to_hex(p.secondary);
-    let tertiary = color_to_hex(p.tertiary);
-    let danger = color_to_hex(p.danger);
+    stage_css_with_roles(p, false)
+}
+
+/// The same product mapping with shared role-variable intake. Fallback colors
+/// stay explicit; arbitrary authored CSS is never converted into a palette.
+pub fn stage_css_from_roles(fallback: &Palette) -> String {
+    stage_css_with_roles(fallback, true)
+}
+
+fn stage_css_with_roles(p: &Palette, authored_roles: bool) -> String {
+    let color = |role: &str, value| {
+        let fallback = color_to_hex(value);
+        if authored_roles {
+            format!("var(--tabard-color-{role}, {fallback})")
+        } else {
+            fallback
+        }
+    };
+    let bg = color("bg", p.bg);
+    let surface = color("surface", p.surface);
+    let surface_2 = color("surface-2", p.surface_2);
+    let surface_hover = color("surface-hover", p.surface_hover);
+    let text_header = color("text-header", p.text_header);
+    let text = color("text", p.text);
+    let text_dim = color("text-dim", p.text_dim);
+    let text_disabled = color("text-disabled", p.text_disabled);
+    let on_primary = color("on-primary", p.on_primary);
+    let secondary = color("secondary", p.secondary);
+    let tertiary = color("tertiary", p.tertiary);
+    let danger = color("danger", p.danger);
     let themed = format!(
         r#"
 .root {{ width: 100%; height: 100%; box-sizing: border-box;
@@ -219,11 +237,11 @@ pub fn stage_css(p: &Palette) -> String {
 .workspace-panel-active {{ background-color: {surface_2}; color: {tertiary}; font-weight: 600; }}
 .nav-spacer {{ flex-grow: 1; }}
 .search-wrap {{ width: 240px; margin-right: 8px; box-sizing: border-box; }}
-.search-wrap input {{ display: block; width: 240px; box-sizing: border-box;
+.search-wrap [role=textbox] {{ display: block; width: 240px; box-sizing: border-box;
                      height: 32px; line-height: 30px;
                      background-color: {surface_2}; color: {text}; padding: 0 12px;
                      border-radius: 10px; border: 1px solid {surface_2}; font-size: 13px; }}
-.search-wrap input:focus {{ border: 1px solid {tertiary}; }}
+.search-wrap [role=textbox]:focus {{ border: 1px solid {tertiary}; }}
 /* The field renders its text as element content and carries no browser input
    value semantics, so there is no ::placeholder to style. The hint is a sibling
    overlaid on the empty field, and pointer-events: none keeps a click on it
@@ -334,13 +352,13 @@ pub fn stage_css(p: &Palette) -> String {
 .draw-tool.save {{ color: {tertiary}; }}
 .draw-tool.save:hover {{ background-color: {surface_hover}; color: {text_header}; }}
 /* Rename field for the selected card. The inner input needs its own box (like
-   .search-wrap input): a text field renders its buffer as element content, so
+   .search-wrap [role=textbox]): a text field renders its buffer as element content, so
    without padding/display it has no hit area to click into and never focuses. */
 .card-rename {{ width: 260px; margin-right: 12px; box-sizing: border-box; }}
-.card-rename input {{ display: block; width: 260px; box-sizing: border-box;
+.card-rename [role=textbox] {{ display: block; width: 260px; box-sizing: border-box;
                      background-color: {surface_2}; color: {text}; padding: 6px 12px;
                      border-radius: 8px; border: 1px solid {surface_2}; font-size: 13px; }}
-.card-rename input:focus {{ border: 1px solid {tertiary}; }}
+.card-rename [role=textbox]:focus {{ border: 1px solid {tertiary}; }}
 /* Segmented mode control [Off · Solo · Mute]: a structured toggle, not a loose
    button row. The active segment is lit. */
 .mode-seg {{ display: flex; margin-right: 12px; border-radius: 6px; }}
@@ -426,7 +444,7 @@ pub fn stage_css(p: &Palette) -> String {
 .relationship-choices {{ display: flex; flex-wrap: wrap; gap: 8px; }}
 .relationship-graph {{ flex: 0 0 220px; min-height: 220px; height: 220px; overflow: auto; max-width: 100%; }}
 .relationship-label {{ width: 100%; max-width: 640px; }}
-.relationship-label input {{ width: 100%; min-height: 34px; padding: 8px 10px; background: {surface_2}; color: {text}; border-radius: 4px; }}
+.relationship-label [role=textbox] {{ width: 100%; min-height: 34px; padding: 8px 10px; background: {surface_2}; color: {text}; border-radius: 4px; }}
 .relationship-explanation, .relationship-refusal {{ padding: 12px; background: {surface_2}; }}
 .session-overview .t-btn {{ min-height: 34px; padding: 8px 12px; white-space: normal; }}
 .session-overview .overview-atmosphere-selected {{ color: {tertiary}; border: 1px solid {tertiary}; }}
@@ -583,7 +601,7 @@ pub fn stage_css(p: &Palette) -> String {
 .search-item, .prog-card {{ transition: background-color 0.12s ease, color 0.12s ease; }}
 .pill, .lens {{ transition: background-color 0.14s ease, color 0.14s ease; }}
 .film-card, .recipe-tile, .bar-chip {{ transition: border-color 0.14s ease, background-color 0.14s ease; }}
-.search-wrap input {{ transition: border-color 0.12s ease; }}
+.search-wrap [role=textbox] {{ transition: border-color 0.12s ease; }}
 /* The persona gate (P1): the whole product root, replaced by one question,
    because nothing behind it has been read yet. Centred rather than anchored:
    there is no trigger control to point back at. */
@@ -622,7 +640,7 @@ pub fn stage_css(p: &Palette) -> String {
 /* Narrow drops search to its own row; cap it so it reads as a field, not a
    full-width empty strip (a 2x-DPI desktop is ~640 logical px, always narrow). */
 .viewport-narrow .search-wrap {{ width: 100%; max-width: 340px; margin: 0 0 8px 0; }}
-.viewport-narrow .search-wrap input, .viewport-narrow .search-list {{ width: 100%; }}
+.viewport-narrow .search-wrap [role=textbox], .viewport-narrow .search-list {{ width: 100%; }}
 .viewport-narrow .header-row, .viewport-narrow .transport,
 .viewport-narrow .prog-cards {{ flex-wrap: wrap; }}
 .viewport-narrow .header-gap {{ width: 10px; }}
@@ -634,9 +652,10 @@ pub fn stage_css(p: &Palette) -> String {
 "#
     );
     format!(
-        "{}\n{}\n{themed}",
+        "{}\n{}\n{}\n{themed}\n.woodshed-recorder-mount {{ width:100%; min-width:0; }}\n.woodshed-recorder-mount .hocket-recorder {{ --ground:{bg}; --surface:{surface}; --surface-2:{surface_2}; --raised:{surface_hover}; --line:{text_disabled}; --line-soft:{surface_2}; --text:{text}; --text-dim:{text_dim}; --text-faint:{text_disabled}; --voice-amber:{secondary}; --record:{danger}; }}",
         cambium::GRAPH_CANVAS_SWATCH_CSS,
         cambium::RESIZE_HANDLE_CSS,
+        hocket_views::theme::sheet(),
     )
 }
 
@@ -666,7 +685,7 @@ pub fn apply_accessibility(mut css: String, reduce_motion: bool, text_scale: f32
         // rules (theme.rs) to none.
         css.push_str(
             "\n.search-item, .prog-card, .pill, .lens, .film-card, .recipe-tile, \
-             .bar-chip, .search-wrap input { transition: none; }\n",
+             .bar-chip, .search-wrap [role=textbox] { transition: none; }\n",
         );
     }
     css
@@ -674,12 +693,19 @@ pub fn apply_accessibility(mut css: String, reduce_motion: bool, text_scale: f32
 
 /// Scale every `font-size: Npx` in a sheet by `scale`, leaving all else intact.
 fn scale_font_sizes(css: &str, scale: f32) -> String {
-    const NEEDLE: &str = "font-size: ";
+    let mut css = scale_px_declarations(css, "font-size: ", scale);
+    for role in tabard::typography::FontRole::ALL {
+        css = scale_px_declarations(&css, &format!("--tabard-font-{}-size: ", role.key()), scale);
+    }
+    css
+}
+
+fn scale_px_declarations(css: &str, needle: &str, scale: f32) -> String {
     let mut out = String::with_capacity(css.len() + 32);
     let mut rest = css;
-    while let Some(pos) = rest.find(NEEDLE) {
-        out.push_str(&rest[..pos + NEEDLE.len()]);
-        rest = &rest[pos + NEEDLE.len()..];
+    while let Some(pos) = rest.find(needle) {
+        out.push_str(&rest[..pos + needle.len()]);
+        rest = &rest[pos + needle.len()..];
         match rest.find("px") {
             Some(px) => match rest[..px].trim().parse::<f32>() {
                 Ok(n) => {

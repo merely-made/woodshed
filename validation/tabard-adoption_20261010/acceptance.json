@@ -1,0 +1,66 @@
+{
+  "source": {
+    "mere": "11236fd4f8da9b7e2ce3712b4f036fbf676b1c8d",
+    "genet": "7422e90613f9017e5bb790e3acb48f61776b2eda",
+    "renderer": "491c376cf2b01fc11132cf8f86419dec114ae032"
+  },
+  "launch_method": "real production binary via shared LaunchServices runner",
+  "lanes": [
+    {
+      "lane": "1180-seed",
+      "presented": 102,
+      "redraws": 105,
+      "unpresented": 3,
+      "captures": 9,
+      "blanks": 0,
+      "distinct": 9,
+      "elapsed_seconds": 31.587,
+      "binary_sha256": "89abee996338444d84fe16df1114caea5f03fe0d14617bc6edecbc7bdb63e53f"
+    },
+    {
+      "lane": "1180-reopen",
+      "presented": 19,
+      "redraws": 22,
+      "unpresented": 3,
+      "captures": 1,
+      "blanks": 0,
+      "distinct": 1,
+      "elapsed_seconds": 9.319,
+      "binary_sha256": "89abee996338444d84fe16df1114caea5f03fe0d14617bc6edecbc7bdb63e53f"
+    },
+    {
+      "lane": "640-seed",
+      "presented": 102,
+      "redraws": 107,
+      "unpresented": 5,
+      "captures": 9,
+      "blanks": 0,
+      "distinct": 9,
+      "elapsed_seconds": 21.46,
+      "binary_sha256": "89abee996338444d84fe16df1114caea5f03fe0d14617bc6edecbc7bdb63e53f"
+    },
+    {
+      "lane": "640-reopen",
+      "presented": 19,
+      "redraws": 22,
+      "unpresented": 3,
+      "captures": 1,
+      "blanks": 0,
+      "distinct": 1,
+      "elapsed_seconds": 7.994,
+      "binary_sha256": "89abee996338444d84fe16df1114caea5f03fe0d14617bc6edecbc7bdb63e53f"
+    }
+  ],
+  "total_presented": 242,
+  "total_captures": 20,
+  "total_blank": 0,
+  "all_pngs_visually_inspected": true,
+  "new_gpu_reset": false,
+  "notes": [
+    "Startup surface occlusion recovered before scenarios advanced.",
+    "Shared client title bar, canonical modes, authored Save/Apply/Back, narrow reader/syntax/selected graph and fresh-process reopening are visible.",
+    "Scroll captures show graph nodes and selection; lower graph card content is outside these capture positions.",
+    "Existing gold selected navigation on pale Woodshed Settings and intentionally incomplete custom CSS link/code colors are not a formal contrast qualification.",
+    "Explicit receipt lane has no audio/MIDI backend; transport/session snapshot assertions remain unchanged."
+  ]
+}

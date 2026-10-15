@@ -1,0 +1,58 @@
+{
+  "version": 1,
+  "themes": [
+    {
+      "id": "theme:copy-1",
+      "name": "Redshank copy",
+      "source": "User",
+      "seeds": {
+        "primary": {
+          "r": 211,
+          "g": 232,
+          "b": 220,
+          "a": 255
+        },
+        "secondary": {
+          "r": 73,
+          "g": 100,
+          "b": 92,
+          "a": 255
+        },
+        "tertiary": {
+          "r": 199,
+          "g": 128,
+          "b": 47,
+          "a": 255
+        },
+        "neutral": {
+          "r": 23,
+          "g": 32,
+          "b": 31,
+          "a": 255
+        },
+        "text_header": null,
+        "text_body": null,
+        "success": {
+          "r": 79,
+          "g": 179,
+          "b": 110,
+          "a": 255
+        },
+        "danger": {
+          "r": 141,
+          "g": 52,
+          "b": 52,
+          "a": 255
+        },
+        "dark": true
+      },
+      "high_contrast": false,
+      "harmony": "Custom",
+      "mode_sheets": {
+        "dark": [
+          ":root { --tabard-color-bg: #101716; --tabard-color-surface: #17201F; --tabard-color-surface-2: #293A36; --tabard-color-surface-hover: #30423D; --tabard-color-text-header: #EDF2EF; --tabard-color-text: #EDF2EF; --tabard-color-text-dim: #B5C4BD; --tabard-color-text-disabled: #6F8079; --tabard-color-primary: #D3E8DC; --tabard-color-on-primary: #14141A; --tabard-color-secondary: #49645C; --tabard-color-on-secondary: #F4F4F8; --tabard-color-tertiary: #C7802F; --tabard-color-on-tertiary: #14141A; --tabard-color-success: #4FB36E; --tabard-color-danger: #8D3434; }"
+        ]
+      }
+    }
+  ]
+}

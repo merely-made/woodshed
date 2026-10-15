@@ -1,0 +1,263 @@
+ringdown: test (Rust 1.97.1; outside repository Cargo config)
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+   Compiling proc-macro2 v1.0.107
+   Compiling unicode-ident v1.0.24
+   Compiling quote v1.0.47
+   Compiling memchr v2.8.3
+   Compiling serde_core v1.0.229
+   Compiling pin-project-lite v0.2.17
+   Compiling zmij v1.0.23
+   Compiling serde v1.0.229
+   Compiling hashbrown v0.17.1
+   Compiling equivalent v1.0.2
+   Compiling serde_json v1.0.151
+   Compiling objc-sys v0.3.5
+   Compiling futures-sink v0.3.34
+   Compiling futures-core v0.3.34
+   Compiling itoa v1.0.18
+   Compiling thiserror v2.0.20
+   Compiling libc v0.2.189
+   Compiling objc2-encode v4.1.0
+   Compiling indexmap v2.14.0
+   Compiling futures-channel v0.3.34
+   Compiling futures-task v0.3.34
+   Compiling slab v0.4.12
+   Compiling crossbeam-utils v0.8.22
+   Compiling futures-io v0.3.34
+   Compiling parking_lot_core v0.9.12
+   Compiling smallvec v1.15.2
+   Compiling scopeguard v1.2.0
+   Compiling bitflags v2.13.1
+   Compiling bytes v1.12.1
+   Compiling cfg-if v1.0.4
+   Compiling lock_api v0.4.14
+   Compiling hashbrown v0.14.5
+   Compiling objc2 v0.5.2
+   Compiling once_cell v1.21.4
+   Compiling uuid v1.26.0
+   Compiling syn v3.0.4
+   Compiling log v0.4.34
+   Compiling static_assertions v1.1.0
+   Compiling dashmap v6.2.1
+   Compiling block2 v0.5.1
+   Compiling objc2-foundation v0.2.2
+   Compiling objc2-core-bluetooth v0.2.2
+   Compiling serde_derive v1.0.229
+   Compiling tokio-macros v2.7.2
+   Compiling thiserror-impl v2.0.20
+   Compiling futures-macro v0.3.34
+   Compiling async-trait v0.1.92
+   Compiling tokio v1.53.1
+   Compiling futures-util v0.3.34
+   Compiling ringdown v0.1.0 (/Users/markik/Code/worktrees/woodshed-orchestrate-20261011/ports/ringdown/crates/ringdown)
+   Compiling futures-executor v0.3.34
+   Compiling tokio-util v0.7.19
+   Compiling futures v0.3.34
+   Compiling tokio-stream v0.1.19
+   Compiling ringdown-client v0.0.1 (/Users/markik/Code/worktrees/woodshed-orchestrate-20261011/ports/ringdown/crates/ringdown-client)
+   Compiling btleplug v0.11.8
+   Compiling ringdown-ble v0.0.1 (/Users/markik/Code/worktrees/woodshed-orchestrate-20261011/ports/ringdown/crates/ringdown-ble)
+   Compiling ringdown-probe v0.0.1 (/Users/markik/Code/worktrees/woodshed-orchestrate-20261011/ports/ringdown/apps/probe)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 9.44s
+     Running unittests src/lib.rs (/Users/markik/Code/worktrees/woodshed-orchestrate-20261011/ports/ringdown/target/debug/deps/ringdown-aaea34d3a34531ac)
+
+running 131 tests
+test compress::tests::bcd_covers_exactly_the_characters_numbers_use ... ok
+test compress::tests::decode_rejects_input_that_is_not_this_format ... ok
+test compress::captured_replies::a_real_readbank_reply_decodes ... ok
+test compress::tests::compression_actually_compresses_a_real_message ... ok
+test compress::nested_params::an_effect_with_parameters_round_trips ... ok
+test compress::tests::a_real_reply_round_trips ... ok
+test compress::tests::decode_rejects_a_truncated_document ... ok
+test compress::tests::a_real_request_round_trips ... ok
+test compress::tests::dictionary_positions_are_pinned ... ok
+test compress::tests::a_document_using_many_dictionary_words_round_trips ... ok
+test compress::tests::dictionary_strings_compress_to_twelve_bits ... ok
+test compress::tests::encode_error_messages_name_the_limit ... ok
+test compress::tests::escaped_quotes_do_not_end_a_string ... ok
+test compress::tests::multibyte_strings_round_trip ... ok
+test compress::tests::nibble_writer_and_reader_agree_at_both_alignments ... ok
+test compress::tests::numbers_of_every_shape_round_trip ... ok
+test compress::tests::strings_round_trip_from_either_alignment ... ok
+test compress::tests::decode_survives_arbitrary_bytes_without_panicking ... ok
+test compress::tests::structural_tokens_round_trip ... ok
+test compress::tests::short_and_long_strings_round_trip ... ok
+test compress::tests::the_captured_analysis_round_trips ... ok
+test compress::tests::the_dictionary_is_the_size_the_format_assumes ... ok
+test compress::tests::whitespace_between_tokens_is_dropped ... ok
+test compress::tests::oversized_inputs_are_refused_rather_than_truncated ... ok
+test compress::tests::every_dictionary_entry_round_trips_by_index ... ok
+test compress::tests::the_dictionary_has_no_duplicates ... ok
+test crc32::tests::a_single_flipped_bit_changes_the_checksum ... ok
+test crc32::tests::an_empty_input_is_the_initial_value ... ok
+test crc32::tests::the_published_check_value_matches ... ok
+test crc32::tests::the_table_is_generated_not_transcribed ... ok
+test crc32::tests::this_is_not_the_common_crc32 ... ok
+test effects::tests::a_new_bank_does_not_default_to_a_silent_gain ... ok
+test effects::tests::den_error_names_the_whitelist ... ok
+test effects::tests::gate_and_delay_take_the_keys_the_app_writes ... ok
+test effects::tests::a_key_from_the_wrong_effect_is_refused_with_the_right_list ... ok
+test effects::tests::a_bare_effect_still_sends_an_empty_params_array ... ok
+test effects::tests::a_typed_effect_serialises_in_wire_order ... ok
+test effects::tests::a_bank_spec_serialises_in_model_order_and_omits_absent_fields ... ok
+test effects::tests::keys_are_matched_case_insensitively_and_sent_canonically ... ok
+test crc32::tests::incremental_and_whole_buffer_agree ... ok
+test effects::tests::the_parameter_table_covers_every_effect_exactly_once ... ok
+test effects::tests::the_unchecked_path_sends_what_it_is_given ... ok
+test effects::tests::the_captured_bank_object_is_reproducible ... ok
+test effects::tests::tremolo_takes_lfo_and_not_frequency ... ok
+test handshake::tests::a_leading_v_is_ignored_the_way_the_vendor_ignores_it ... ok
+test handshake::tests::extra_components_are_ignored_and_digitless_ones_dropped ... ok
+test handshake::tests::parses_the_legacy_single_version_banner_and_flags_the_assumption ... ok
+test handshake::tests::parses_the_two_processor_banner ... ok
+test handshake::tests::rejects_things_that_are_not_banners ... ok
+test handshake::tests::short_versions_fill_with_zero ... ok
+test handshake::tests::the_reference_instruments_versions_parse ... ok
+test handshake::tests::tolerates_a_missing_newline_and_crlf ... ok
+test handshake::tests::versions_display_and_order ... ok
+test llt2::tests::a_compressed_reply_is_not_mistaken_for_an_ack ... ok
+test llt2::tests::a_high_frame_number_survives_both_bytes ... ok
+test llt2::tests::a_short_message_is_sent_bare ... ok
+test llt2::tests::acks_parse_and_shorter_frames_are_declined ... ok
+test llt2::tests::an_unknown_status_byte_is_not_an_ack ... ok
+test llt2::tests::oversized_messages_are_refused_rather_than_sent ... ok
+test llt2::tests::version_gate_matches_the_vendors_rule ... ok
+test llt::tests::a_message_exactly_at_the_limit_is_not_chunked ... ok
+test llt::tests::acks_parse_and_non_acks_are_declined ... ok
+test llt2::tests::a_write_length_too_small_for_a_header_is_refused ... ok
+test llt2::tests::a_long_message_is_framed_and_reassembles ... ok
+test llt2::tests::frames_are_numbered_from_one_and_carry_the_object_id ... ok
+test llt::tests::chunks_reassemble_to_the_original ... ok
+test llt::tests::frames_end_with_a_newline ... ok
+test llt::tests::only_ok_continues_a_transfer ... ok
+test llt::tests::refuses_a_write_length_that_could_never_fit ... ok
+test llt::tests::short_messages_skip_llt_entirely ... ok
+test llt::tests::status_codes_round_trip ... ok
+test llt::tests::every_frame_carries_the_total_size ... ok
+test loopfile::tests::a_short_read_is_reported_as_truncation_not_as_a_bad_file ... ok
+test llt2::tests::the_first_frame_carries_the_total_and_later_ones_do_not ... ok
+test loopfile::tests::a_zero_tempo_does_not_divide_by_zero ... ok
+test loopfile::tests::a_wav_without_the_label_parses_but_carries_no_metadata ... ok
+test loopfile::tests::an_odd_length_chunk_is_padded_before_the_next_one ... ok
+test loopfile::tests::block_rounding_is_load_bearing ... ok
+test loopfile::tests::something_that_is_not_a_wav_is_refused ... ok
+test loopfile::tests::the_length_check_reports_which_case_it_found ... ok
+test loopfile::tests::the_bar_count_varies_and_the_meter_does_not ... ok
+test loopfile::tests::the_partial_flag_is_a_flag_and_it_varies ... ok
+test loopfile::tests::the_model_predicts_all_thirty_one_loops ... ok
+test loopfile::tests::the_reference_header_reads_as_the_file_it_came_from ... ok
+test loopfile::tests::the_reference_metadata_reads_as_four_bars_of_seven ... ok
+test loopfile::tests::the_riff_size_agrees_with_what_the_instrument_reported ... ok
+test loopfile::tests::two_hundred_and_fifty_six_is_the_block_and_512_is_not ... ok
+test plan::tests::add_effect_encodes_the_octave_oracle_exactly ... ok
+test plan::tests::effect_chain_planners_pin_their_wire_bytes ... ok
+test plan::tests::bank_planners_pin_their_wire_bytes ... ok
+test plan::tests::metronome_planners_pin_their_wire_bytes_and_refuse_bad_den ... ok
+test plan::tests::every_planner_matches_its_declared_shape ... ok
+test plan::tests::every_edit_plans_the_same_call_as_its_planner ... ok
+test profile::tests::a_profile_round_trips_through_serde_in_its_own_vocabulary ... ok
+test profile::tests::add_bank_inserts_shifts_and_returns_the_bank_pushed_off ... ok
+test profile::tests::chain_edits_track_what_was_sent ... ok
+test profile::tests::remove_bank_shifts_down_and_leaves_the_last_slot_empty ... ok
+test profile::tests::edits_that_the_shadow_cannot_honestly_record_are_refused ... ok
+test rpc::tests::a_fractional_id_answers_nothing ... ok
+test rpc::tests::a_den_outside_the_whitelist_is_refused_not_sent ... ok
+test rpc::tests::a_minimal_request_has_the_expected_shape ... ok
+test rpc::tests::a_numeric_jsonrpc_in_a_reply_also_parses ... ok
+test rpc::tests::a_result_absent_response_is_null_not_an_error ... ok
+test rpc::tests::a_sparse_status_still_decodes ... ok
+test rpc::tests::a_status_result_decodes_into_its_type ... ok
+test rpc::tests::a_success_response_decodes ... ok
+test rpc::tests::absent_optionals_are_omitted_rather_than_nulled ... ok
+test rpc::tests::an_error_response_becomes_an_err ... ok
+test rpc::tests::bank_and_effect_reordering_keep_their_different_keys ... ok
+test rpc::tests::every_method_has_a_distinct_wire_name ... ok
+test rpc::tests::ids_sent_as_floats_still_match ... ok
+test rpc::tests::every_constructor_matches_its_declared_shape ... ok
+test rpc::tests::metronome_params_keep_wire_order_not_alphabetical ... ok
+test rpc::tests::methods_round_trip_through_their_wire_names ... ok
+test rpc::tests::no_method_declares_a_duplicate_key ... ok
+test rpc::tests::params_use_the_wire_vocabulary ... ok
+test rpc::tests::request_ids_are_unique_and_start_at_one ... ok
+test rpc::tests::request_ids_wrap_rather_than_overflow ... ok
+test rpc::tests::the_captured_reply_parses ... ok
+test rpc::tests::the_captured_versions_carry_a_v_prefix ... ok
+test rpc::tests::the_irregular_wire_names_are_exact ... ok
+test rpc::tests::the_protocol_version_is_a_number_not_a_string ... ok
+test rpc::tests::the_shape_table_covers_every_method_with_variety ... ok
+test tests::a_nonsensical_mtu_does_not_underflow ... ok
+test tests::negotiated_mtu_yields_the_expected_write_length ... ok
+test tests::the_minimum_ble_mtu_yields_the_documented_default ... ok
+test llt2::tests::every_frame_fits_the_write_length ... ok
+test llt::tests::multibyte_characters_are_never_split ... ok
+test llt::tests::control_characters_still_fit_every_frame ... ok
+test llt::tests::escaping_heavy_payloads_still_fit_every_frame ... ok
+test rpc::tests::a_large_request_survives_llt_framing ... ok
+
+test result: ok. 131 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+
+     Running unittests src/lib.rs (/Users/markik/Code/worktrees/woodshed-orchestrate-20261011/ports/ringdown/target/debug/deps/ringdown_ble-edda6be93a8039d3)
+
+running 5 tests
+test tests::the_uuid_constants_parse ... ok
+test tests::the_uuids_are_distinct ... ok
+test tests::the_manuals_bt_id_example_is_recognised ... ok
+test tests::other_product_spellings_are_recognised ... ok
+test tests::unrelated_devices_are_not_matched ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (/Users/markik/Code/worktrees/woodshed-orchestrate-20261011/ports/ringdown/target/debug/deps/ringdown_client-879525231c2c8cf8)
+
+running 10 tests
+test tests::an_unnumbered_name_declines_rather_than_guessing ... ok
+test tests::a_numbered_recording_splits_for_stepping_back ... ok
+test tests::hex_replies_decode_and_bad_ones_are_refused ... ok
+test tests::read_config_is_refused_before_anything_is_written ... ok
+test tests::a_refused_den_never_reaches_the_link ... ok
+test tests::edit_applies_to_the_shadow_only_when_the_reply_parsed ... ok
+test tests::bank_methods_send_their_documented_params ... ok
+test tests::listening_refuses_writes_but_not_reads ... ok
+test tests::a_typed_write_sends_the_planned_bytes_and_carries_the_reply ... ok
+test tests::restore_bank_drains_to_false_then_pushes_in_h33_order ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/main.rs (/Users/markik/Code/worktrees/woodshed-orchestrate-20261011/ports/ringdown/target/debug/deps/ringdown_probe-c32438f47425966e)
+
+running 9 tests
+test tests::a_path_with_no_number_is_declined_rather_than_guessed ... ok
+test tests::a_recording_path_splits_into_stem_number_and_extension ... ok
+test pklg::tests::records_parse_in_either_byte_order ... ok
+test pklg::tests::acl_fragments_reassemble_into_one_att_pdu ... ok
+test pklg::tests::uuids_render_canonically ... ok
+test pklg::tests::an_llt2_ack_is_not_mistaken_for_a_message ... ok
+test tests::only_the_digits_immediately_before_the_extension_count ... ok
+test pklg::tests::a_plain_json_write_is_reported_as_a_message ... ok
+test pklg::tests::a_compressed_write_decodes_through_the_codec ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests ringdown
+
+running 1 test
+test crates/ringdown/src/lib.rs - write_len_for_mtu (line 104) ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+all doctests ran in 0.30s; merged doctests compilation took 0.13s
+   Doc-tests ringdown_ble
+
+running 1 test
+test crates/ringdown-ble/src/lib.rs - (line 8) - compile ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+all doctests ran in 0.35s; merged doctests compilation took 0.17s
+   Doc-tests ringdown_client
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

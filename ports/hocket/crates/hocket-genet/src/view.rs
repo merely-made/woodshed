@@ -7,56 +7,47 @@
 //! The Hocket UI as genet views (2026-07-08 concept; S2: real data).
 //!
 //! One screen: the pass-the-mic circle | the loop table | the transport.
-//! Everything data-bearing derives from [`AppState`]'s `Session`; gestures
-//! call the `AppState` methods, which commit real `Edit`s. The rail currently
-//! shows the local performer only; peers arrive with the sync layer. Waveform
-//! and meter drawing use host-owned chisel leaves.
+//! The shared recorder surface reads `AppState.recorder` and queues typed
+//! actions for its portable controller. This host keeps the project toolbar,
+//! local-performer rail, appearance and device controls. Actual waveforms and
+//! meters use the shared recorder leaves in the host-owned registry.
 
-use hocket_model::{PhraseId, PlaybackMode, TrackColor, TrackId};
-use cambium::{
-    AnyView, SelectState, GenetCtx, GenetElement, clickable, el, lens, select, text,
-};
+use cambium::{AnyView, GenetCtx, GenetElement, SelectState, clickable, el, lens, select, text};
+use hocket_model::PlaybackMode;
+use hocket_recorder::RecorderAction;
+use hocket_views::RecorderLayout;
 
-use crate::leaves::{METER_L, METER_R, layer_wave_key, wave_key};
+use crate::leaves::STANDALONE_MOUNT;
 use crate::state::AppState;
 
 pub type Child = Box<dyn AnyView<AppState, (), GenetCtx, GenetElement>>;
 
-/// A `<chisel-leaf>` block: carries only its key + box; the host renders the
-/// registered leaf's Path-A commands into it (see [`crate::leaves`]).
-fn chisel_leaf(key: u64, w: u32, h: u32) -> Child {
-    Box::new(el("chisel-leaf", ()).attr("key", key.to_string()).attr(
-        "style",
-        format!("display: block; width: {w}px; height: {h}px"),
-    ))
-}
-
-fn responsive_chisel_leaf(key: u64, height: u32) -> Child {
-    Box::new(
-        el("chisel-leaf", ())
-            .attr("key", key.to_string())
-            .attr("aria-hidden", "true")
-            .attr(
-                "style",
-                format!("display: block; width: 100%; height: {height}px"),
-            ),
-    )
-}
-
-fn wave_leaf(track: TrackId) -> Child {
-    responsive_chisel_leaf(wave_key(track), 40)
-}
-
-fn layer_wave_leaf(track: TrackId, phrase: PhraseId) -> Child {
-    responsive_chisel_leaf(layer_wave_key(track, phrase), 11)
-}
-
-fn hex(c: TrackColor) -> String {
-    format!("#{:02x}{:02x}{:02x}", c.r, c.g, c.b)
-}
-
 pub fn root(state: &AppState) -> Child {
-    Box::new(el("div", (top(state), body(state), transport(state))).attr("class", "app"))
+    if state.appearance.editor_open {
+        return crate::appearance_view::editor(state);
+    }
+    let mut children = vec![crate::appearance_view::chrome(state)];
+    if state.appearance.open {
+        children.push(crate::appearance_view::panel(state));
+    }
+    children.push(Box::new(
+        el(
+            "div",
+            (
+                top(state),
+                body(state),
+                hocket_views::transport(
+                    &state.recorder,
+                    STANDALONE_MOUNT,
+                    RecorderLayout::Full,
+                    recorder_action,
+                    Some(audio_device_controls(state)),
+                ),
+            ),
+        )
+        .attr("class", "app"),
+    ));
+    Box::new(el("div", children).attr("class", "hocket-desktop"))
 }
 
 /// The update state, shown only when there is something true to say.
@@ -226,7 +217,21 @@ fn export_length_control(state: &AppState) -> Child {
 }
 
 fn body(state: &AppState) -> Child {
-    Box::new(el("div", (rail(state), table(state))).attr("class", "body"))
+    Box::new(
+        el(
+            "div",
+            (
+                rail(state),
+                hocket_views::table(
+                    &state.recorder,
+                    STANDALONE_MOUNT,
+                    RecorderLayout::Full,
+                    recorder_action,
+                ),
+            ),
+        )
+        .attr("class", "body"),
+    )
 }
 
 fn peer(name: &str, initials: &str, voice: &str, sub: &str, turn: bool) -> Child {
@@ -428,353 +433,6 @@ fn rail(state: &AppState) -> Child {
     Box::new(el("div", kids).attr("class", "rail"))
 }
 
-fn table(state: &AppState) -> Child {
-    let mut kids: Vec<Child> = vec![Box::new(
-        el(
-            "div",
-            (
-                el("div", text("loops")).attr("class", "eyebrow"),
-                el("div", text("tap a dot to arm \u{00b7} tap a layer to mute"))
-                    .attr("class", "table-hint"),
-            ),
-        )
-        .attr("class", "table-head"),
-    )];
-    for i in 0..state.session.tracks.len() {
-        kids.push(lane(state, i));
-    }
-    kids.push(Box::new(clickable(
-        el("div", text("+ add track"))
-            .attr("class", "add-track")
-            .attr("role", "button"),
-        |state: &mut AppState, _| state.add_track(),
-    )));
-    Box::new(el("div", kids).attr("class", "table"))
-}
-
-fn lane(state: &AppState, i: usize) -> Child {
-    let track = &state.session.tracks[i];
-    let recording = track.armed && state.is_recording();
-    let mut cls = String::from("lane");
-    if recording {
-        cls.push_str(" lane-rec");
-    } else if track.armed {
-        cls.push_str(" lane-armed");
-    }
-    let style = format!("--voice: {}", hex(track.color));
-    let owner = "you";
-    let n = track.layers.len();
-
-    let id = el(
-        "div",
-        (
-            el(
-                "div",
-                (
-                    clickable(
-                        el("div", ())
-                            .attr("class", "arm")
-                            .attr("role", "switch")
-                            .attr("aria-checked", if track.armed { "true" } else { "false" })
-                            .attr("aria-label", format!("Arm {}", track.name)),
-                        move |state: &mut AppState, _| {
-                            state.arm(i);
-                        },
-                    ),
-                    el("span", text(track.name.clone())).attr("class", "lane-title"),
-                ),
-            )
-            .attr("class", "lane-name"),
-            el(
-                "div",
-                (
-                    el("span", text(owner.to_string())).attr("class", "tag tag-voice"),
-                    el(
-                        "span",
-                        text(if n == 0 {
-                            "empty".to_string()
-                        } else {
-                            format!("{n} layers")
-                        }),
-                    )
-                    .attr("class", "tag mono"),
-                ),
-            )
-            .attr("class", "lane-meta"),
-        ),
-    )
-    .attr("class", "lane-id");
-
-    let wavecol: Child = if n == 0 {
-        Box::new(
-            el(
-                "div",
-                el(
-                    "span",
-                    text("no layers yet \u{00b7} arm and record to start the loop"),
-                )
-                .attr("class", "wave-empty"),
-            )
-            .attr("class", "lane-wave"),
-        )
-    } else {
-        // Newest layer on top: display index li walks the stack from the end.
-        let layer_rows: Vec<Child> = (0..n)
-            .rev()
-            .map(|li| {
-                let muted = track.layers[li].muted;
-                let phrase_id = track.layers[li].phrase_id;
-                let cls = if muted { "layer layer-muted" } else { "layer" };
-                let waveform: Child = if state.layer_waveform_available(i, li) {
-                    layer_wave_leaf(track.id, phrase_id)
-                } else {
-                    Box::new(
-                        el("span", text("media unavailable")).attr("class", "wave-unavailable"),
-                    )
-                };
-                Box::new(clickable(
-                    el(
-                        "div",
-                        (
-                            el("span", text(format!("L{}", li + 1))).attr("class", "lnum mono"),
-                            el("div", waveform).attr("class", "layer-wave"),
-                        ),
-                    )
-                    .attr("class", cls)
-                    .attr("role", "switch")
-                    .attr("aria-checked", if muted { "true" } else { "false" })
-                    .attr("aria-label", format!("Mute layer L{}", li + 1)),
-                    move |state: &mut AppState, _| {
-                        state.toggle_layer_mute(i, li as u16);
-                    },
-                )) as Child
-            })
-            .collect();
-        let summary: Child = if state.track_waveform_available(i) {
-            wave_leaf(track.id)
-        } else {
-            Box::new(
-                el(
-                    "span",
-                    text(if state.track_has_audible_layers(i) {
-                        "media unavailable"
-                    } else {
-                        "all layers muted"
-                    }),
-                )
-                .attr("class", "wave-unavailable"),
-            )
-        };
-        Box::new(
-            el(
-                "div",
-                (summary, el("div", layer_rows).attr("class", "layers")),
-            )
-            .attr("class", "lane-wave"),
-        )
-    };
-
-    let m_cls = if track.muted { "lctl lctl-on" } else { "lctl" };
-    let s_cls = if state.solo.contains(&track.id) {
-        "lctl lctl-on"
-    } else {
-        "lctl"
-    };
-    let ctl = el(
-        "div",
-        (
-            clickable(
-                el("div", text("M"))
-                    .attr("class", m_cls)
-                    .attr("role", "switch")
-                    .attr("aria-checked", if track.muted { "true" } else { "false" })
-                    .attr("aria-label", format!("Mute {}", track.name)),
-                move |state: &mut AppState, _| state.toggle_track_mute(i),
-            ),
-            clickable(
-                el("div", text("S"))
-                    .attr("class", s_cls)
-                    .attr("role", "switch")
-                    .attr(
-                        "aria-checked",
-                        if state.solo.contains(&track.id) {
-                            "true"
-                        } else {
-                            "false"
-                        },
-                    )
-                    .attr("aria-label", format!("Solo {}", track.name)),
-                move |state: &mut AppState, _| state.toggle_solo(i),
-            ),
-        ),
-    )
-    .attr("class", "lane-ctl");
-
-    Box::new(
-        el("div", (id, wavecol, ctl))
-            .attr("class", cls)
-            .attr("style", style),
-    )
-}
-
-fn transport(state: &AppState) -> Child {
-    let rec_cls = if state.is_recording() {
-        "record record-armed"
-    } else {
-        "record"
-    };
-    let bpm = format!("{}", state.session.bpm.round() as u32);
-    let ts = state.session.time_signature;
-    let meter_txt = format!("{}/{}", ts.numerator, ts.denominator);
-    let rec_label = match state.armed_index() {
-        Some(i) => format!(" \u{00b7} {} armed", state.session.tracks[i].name),
-        None => " \u{00b7} nothing armed".to_string(),
-    };
-    let click_cls = if state.click {
-        "toggle toggle-on"
-    } else {
-        "toggle"
-    };
-    let clock_cls = if state.session.master_clock_enabled {
-        "toggle toggle-on"
-    } else {
-        "toggle"
-    };
-
-    let left = el(
-        "div",
-        (
-            el(
-                "div",
-                (
-                    el("div", text("tempo")).attr("class", "eyebrow"),
-                    el(
-                        "div",
-                        (
-                            clickable(
-                                el("div", text("\u{2212}"))
-                                    .attr("class", "step")
-                                    .attr("role", "button")
-                                    .attr("aria-label", "Decrease tempo"),
-                                |state: &mut AppState, _| state.bpm_nudge(-2.0),
-                            ),
-                            el("span", text(bpm)).attr("class", "step-val mono"),
-                            clickable(
-                                el("div", text("+"))
-                                    .attr("class", "step")
-                                    .attr("role", "button")
-                                    .attr("aria-label", "Increase tempo"),
-                                |state: &mut AppState, _| state.bpm_nudge(2.0),
-                            ),
-                        ),
-                    )
-                    .attr("class", "stepper"),
-                ),
-            )
-            .attr("class", "readout"),
-            el(
-                "div",
-                (
-                    el("div", text("meter")).attr("class", "eyebrow"),
-                    el("div", text(meter_txt)).attr("class", "readout-val mono"),
-                ),
-            )
-            .attr("class", "readout"),
-            el(
-                "div",
-                (
-                    clickable(
-                        el(
-                            "div",
-                            (
-                                el("span", ()).attr("class", "led"),
-                                el("span", text("Click")),
-                            ),
-                        )
-                        .attr("class", click_cls)
-                        .attr("role", "switch")
-                        .attr("aria-checked", if state.click { "true" } else { "false" })
-                        .attr("aria-label", "Click track"),
-                        |state: &mut AppState, _| state.toggle_click(),
-                    ),
-                    clickable(
-                        el(
-                            "div",
-                            (
-                                el("span", ()).attr("class", "led"),
-                                el("span", text("Master clock")),
-                            ),
-                        )
-                        .attr("class", clock_cls)
-                        .attr("role", "switch")
-                        .attr(
-                            "aria-checked",
-                            if state.session.master_clock_enabled {
-                                "true"
-                            } else {
-                                "false"
-                            },
-                        )
-                        .attr("aria-label", "Master clock"),
-                        |state: &mut AppState, _| state.toggle_master_clock(),
-                    ),
-                ),
-            )
-            .attr("class", "toggles"),
-        ),
-    )
-    .attr("class", "t-left");
-
-    let center = el(
-        "div",
-        (
-            clickable(
-                el("div", el("div", ()).attr("class", "record-core"))
-                    .attr("class", rec_cls)
-                    .attr("role", "switch")
-                    .attr(
-                        "aria-checked",
-                        if state.is_recording() {
-                            "true"
-                        } else {
-                            "false"
-                        },
-                    )
-                    .attr("aria-label", "Record"),
-                |state: &mut AppState, _| state.toggle_record(),
-            ),
-            el(
-                "div",
-                (el("b", text("Record")), el("span", text(rec_label))),
-            )
-            .attr("class", "record-label"),
-        ),
-    )
-    .attr("class", "record-wrap");
-
-    let right = el(
-        "div",
-        el(
-            "div",
-            (
-                audio_device_controls(state),
-                clickable(
-                    el("div", text("\u{25a0}"))
-                        .attr("class", "stop")
-                        .attr("role", "button")
-                        .attr("aria-label", "Stop all loops"),
-                    |state: &mut AppState, _| state.stop_all(),
-                ),
-                meter(state),
-            ),
-        )
-        .attr("class", "t-right-inner"),
-    )
-    .attr("class", "t-right");
-
-    Box::new(el("div", (left, center, right)).attr("class", "transport"))
-}
-
 fn audio_device_controls(state: &AppState) -> Child {
     let input_labels = state.input_device_options();
     let output_labels = state.output_device_options();
@@ -820,41 +478,6 @@ fn audio_device_controls(state: &AppState) -> Child {
     )
 }
 
-fn meter(state: &AppState) -> Child {
-    // The L/R output bars are chisel `Meter` leaves (host-owned).
-    let col = |key: u64, label: &str| -> Child {
-        Box::new(
-            el(
-                "div",
-                (
-                    chisel_leaf(key, 10, 46),
-                    el("span", text(label.to_string())).attr("class", "mlbl mono"),
-                ),
-            )
-            .attr("class", "mcol"),
-        )
-    };
-    let peak = state.meter_db(0).max(state.meter_db(1));
-    let peak_text = if peak.is_finite() {
-        format!("{peak:.1} dB")
-    } else {
-        "-- dB".to_string()
-    };
-    Box::new(
-        el(
-            "div",
-            (
-                el("div", (col(METER_L, "L"), col(METER_R, "R"))).attr("class", "mbars"),
-                el(
-                    "div",
-                    (
-                        el("div", text("out")).attr("class", "eyebrow"),
-                        el("div", text(peak_text)).attr("class", "mpeak mono"),
-                    ),
-                )
-                .attr("class", "readout"),
-            ),
-        )
-        .attr("class", "meter"),
-    )
+fn recorder_action(state: &mut AppState, action: RecorderAction) {
+    state.recorder.request(action);
 }

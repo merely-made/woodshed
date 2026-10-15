@@ -1,0 +1,26 @@
+# Separate process restoring the owned sealed seed profile.
+settle 5
+ui-zoom 0.8
+assert snap set-cards == 2
+assert snap loop-capture-references == 1
+assert snap loop-active-captures == 1
+assert snap capture-input-rate == none
+assert snap output-streams == 1
+assert text Card loops saved: 1
+act wav-native-await-collision
+wait 18000
+assert snap loop-export-busy == false
+assert snap loop-export-replace == true
+assert text already exists.
+capture 01_existing_wav_confirmation
+act wav-native-await-replacement-cancel
+wait 18000
+assert text WAV replacement cancelled; the existing file is unchanged.
+assert snap loop-export-busy == false
+assert snap loop-export-replace == false
+assert snap loop-capture-references == 1
+assert snap loop-active-captures == 1
+assert snap capture-input-rate == none
+assert snap output-streams == 1
+capture 02_existing_wav_replacement_cancelled
+log Actual replacement cancellation complete

@@ -1,0 +1,72 @@
+{
+  "source": "f5cc69d4f441f01bf928ce60aae7ed9596fede3a",
+  "scopes": [
+    {
+      "scope": "audio-tests",
+      "passed": 19,
+      "failed": 0,
+      "ignored": 0,
+      "log": "audio-tests.log",
+      "sha256": "b14ad8c9ae3f27e4c75f9ee9e06ebef5cc12164e36e934047b4c39a8b9a199d8",
+      "source": "ca60bf0825f40cccb558f4db3c1cf2b60e13ad54"
+    },
+    {
+      "scope": "host-wav-tests",
+      "passed": 11,
+      "failed": 0,
+      "ignored": 1,
+      "log": "host-wav-rfd-tests.log",
+      "sha256": "2ef97f0e4af8a6072075d0cf0373dd3d5e807dfdd3faaca8c146bcb734dc2a57",
+      "source": "f5cc69d4f441f01bf928ce60aae7ed9596fede3a"
+    },
+    {
+      "scope": "host-audio-tests",
+      "passed": 21,
+      "failed": 0,
+      "ignored": 0,
+      "log": "host-audio-tests.log",
+      "sha256": "d253344f9932c6553839a4339c7f9bf9379591aa5a0e64ffab46ef9f33d0ebf7",
+      "source": "ca60bf0825f40cccb558f4db3c1cf2b60e13ad54"
+    },
+    {
+      "scope": "host-persistence",
+      "passed": 12,
+      "failed": 0,
+      "ignored": 1,
+      "log": "host-persistence.log",
+      "sha256": "1304c7c0e64de2920659723012f285e57a3d903b1a9fbeeae35789d1b0a8a0c7",
+      "source": "ca60bf0825f40cccb558f4db3c1cf2b60e13ad54"
+    },
+    {
+      "scope": "host-sync",
+      "passed": 9,
+      "failed": 0,
+      "ignored": 0,
+      "log": "host-sync.log",
+      "sha256": "d381127afcefa5084801a46d51d776b3ee0eb9a39be62fd2a9802f884fa5db3a",
+      "source": "ca60bf0825f40cccb558f4db3c1cf2b60e13ad54"
+    },
+    {
+      "scope": "host-drive",
+      "passed": 3,
+      "failed": 0,
+      "ignored": 0,
+      "log": "host-drive.log",
+      "sha256": "7d1ebd2bcb292f1a05002d07cca41b82da8722faf33cee1c0d8d2667180bed25",
+      "source": "ca60bf0825f40cccb558f4db3c1cf2b60e13ad54"
+    },
+    {
+      "scope": "views-looper",
+      "passed": 4,
+      "failed": 0,
+      "ignored": 0,
+      "log": "views-looper.log",
+      "sha256": "171f774f94874ad26362a047f29a06e8b201ac87556ba3c79d863cdf38bc5278",
+      "source": "ca60bf0825f40cccb558f4db3c1cf2b60e13ad54"
+    }
+  ],
+  "unique_checks": 77,
+  "overlap": "host-wav-tests includes one audio snapshot and one capture permission check also covered in their respective scopes; 4 subprocess retention probes are additional",
+  "build": "build-rfd.log",
+  "component_evidence": "Unchanged audio/persistence/views/sync/drive component sources retain initial checks; final host chooser/lifecycle tests repeat on f5cc69d. No supplier revisions changed; lock adds only rfd."
+}

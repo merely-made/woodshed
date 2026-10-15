@@ -1,0 +1,34 @@
+    Updating git repository `https://github.com/merely-made/wavicle.git`
+warning: patch `p2panda-auth v0.7.1 (https://github.com/mark-ik/p2panda.git?tag=mere-p2panda-net-0.7.5-upstream-20261011#d8acabc9)` was not used in the crate graph
+warning: patch `p2panda-stream v0.7.1 (https://github.com/mark-ik/p2panda.git?tag=mere-p2panda-net-0.7.5-upstream-20261011#d8acabc9)` was not used in the crate graph
+help: Check that the patched package version and available features are compatible
+      with the dependency requirements. If the patch has a different version from
+      what is locked in the Cargo.lock file, run `cargo update` to use the new
+      version. This may also occur with an optional dependency that is not enabled.
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+   Compiling wavicle v0.1.0 (https://github.com/merely-made/wavicle.git?rev=2c5a49fd48db7a54aeab9e712804fd065411aef9#2c5a49fd)
+   Compiling woodshed-core v0.1.0 (/Users/markik/Code/worktrees/woodshed-orchestrate-20261011/crates/woodshed-core)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 20.01s
+     Running unittests src/lib.rs (/Users/markik/Code/testing/woodshed/compressed-captures-20261012/target/debug/deps/woodshed_core-0a9a2efc74a4d934)
+
+running 10 tests
+test loop_capture::tests::version_one_wire_and_exact_sample_bits_are_stable ... ok
+test loop_capture::tests::corruption_truncation_trailing_bytes_and_ref_disagreement_are_refused ... ok
+test loop_capture::tests::nonfinite_samples_invalid_rates_and_path_shaped_digests_are_refused ... ok
+test loop_capture::tests::rehashed_entropy_escape_overflow_is_an_error_without_supplier_panic ... ok
+test loop_capture::tests::manifest_retains_owner_clock_and_enforces_unique_bounded_references ... ok
+test loop_capture::tests::legacy_manifest_wire_and_unknown_codecs_survive_roundtrip ... ok
+test loop_capture::tests::rehashed_compressed_header_frame_channel_and_order_mismatches_are_refused ... ok
+test loop_capture::tests::rehashed_compressed_metadata_rate_crc_and_nonfinite_samples_are_refused ... ok
+test loop_capture::tests::incompressible_and_small_capture_fallbacks_keep_exact_raw_v1_bytes ... ok
+test loop_capture::tests::compressed_multiblock_custom_rate_preserves_signed_zero_and_subnormals ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 225 filtered out; finished in 0.04s
+
+     Running tests/stage_backdrop.rs (/Users/markik/Code/testing/woodshed/compressed-captures-20261012/target/debug/deps/stage_backdrop-3e8c5c1cd30af04b)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+

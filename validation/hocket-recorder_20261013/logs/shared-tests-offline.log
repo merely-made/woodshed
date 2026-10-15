@@ -1,0 +1,54 @@
+warning: patch `p2panda-auth v0.7.1 (https://github.com/mark-ik/p2panda.git?tag=mere-p2panda-net-0.7.5-upstream-20261011#d8acabc9)` was not used in the crate graph
+warning: patch `p2panda-stream v0.7.1 (https://github.com/mark-ik/p2panda.git?tag=mere-p2panda-net-0.7.5-upstream-20261011#d8acabc9)` was not used in the crate graph
+help: Check that the patched package version and available features are compatible
+      with the dependency requirements. If the patch has a different version from
+      what is locked in the Cargo.lock file, run `cargo update` to use the new
+      version. This may also occur with an optional dependency that is not enabled.
+   Compiling hocket-recorder v0.1.0 (/Users/markik/Code/worktrees/woodshed-orchestrate-20261011/crates/hocket-recorder)
+   Compiling hocket-views v0.1.0 (/Users/markik/Code/worktrees/woodshed-orchestrate-20261011/crates/hocket-views)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 5.51s
+     Running unittests src/lib.rs (/Users/markik/Code/testing/woodshed/font-roles-20261012/target/debug/deps/hocket_recorder-4fdf5a12ef161d1a)
+
+running 18 tests
+test tests::deleted_capture_target_does_not_receive_or_store_a_delayed_take ... ok
+test tests::capture_admission_and_invalid_completion_fail_without_history_or_media_mutation ... ok
+test tests::duplicate_phrase_action_targets_qualified_layer_occurrence ... ok
+test tests::failed_voice_stop_refuses_clock_commit_and_preserves_accepted_key ... ok
+test tests::imported_audio_only_starts_the_appended_layer_at_its_stored_rate ... ok
+test tests::failed_stop_all_retries_only_remaining_accepted_keys ... ok
+test tests::delayed_capture_keeps_admitted_track_clock_and_sample_rate ... ok
+test tests::fixed_rearm_and_clock_changes_are_refused_while_free_stop_keeps_its_target ... ok
+test tests::later_unmute_supersedes_a_still_failed_stop_without_late_silencing ... ok
+test tests::failed_target_mute_retries_without_another_action_or_unrelated_restart ... ok
+test tests::muted_click_clock_admission_and_input_absence_remain_truthful ... ok
+test tests::playback_failure_retains_completed_pcm_without_claiming_an_accepted_voice ... ok
+test tests::recreated_controller_for_same_session_cannot_reuse_capture_ticket ... ok
+test tests::replacing_project_stops_old_voices_even_while_retired_capture_drains ... ok
+test tests::same_session_replacement_retires_delayed_capture_and_queued_actions ... ok
+test tests::stale_completion_cannot_consume_current_ticket_and_idle_needs_explicit_retirement ... ok
+test tests::target_mute_keeps_unrelated_voices_and_missing_media_remains_visible ... ok
+test tests::offline_project_authors_clock_then_syncs_on_recovery_but_live_refusal_does_not_author ... ok
+
+test result: ok. 18 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (/Users/markik/Code/testing/woodshed/font-roles-20261012/target/debug/deps/hocket_views-3930d138078b6ba2)
+
+running 5 tests
+test leaves::tests::model_identity_produces_stable_distinct_leaf_keys ... ok
+test leaves::tests::silent_waveform_paints_a_center_line ... ok
+test leaves::tests::unchanged_waveform_signature_produces_zero_repaints ... ok
+test leaves::tests::same_phrase_occurrences_render_independent_real_gain_envelopes ... ok
+test leaves::tests::mount_reconciliation_reorder_and_unmount_preserve_other_leaf_owners ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests examples/two_mounts.rs (/Users/markik/Code/testing/woodshed/font-roles-20261012/target/debug/examples/two_mounts-a96f3438f3652d40)
+
+running 4 tests
+test tests::rejected_synthetic_capture_preserves_existing_layers_and_other_mount ... ok
+test tests::duplicate_phrase_second_occurrence_routes_and_renders_independently ... ok
+test tests::second_host_promotes_capture_and_exposes_real_media_leaves ... ok
+test tests::full_and_compact_gestures_route_to_independent_controllers ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.06s
+

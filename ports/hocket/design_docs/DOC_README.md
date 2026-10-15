@@ -11,11 +11,31 @@ before any other doc in this directory.
 
 ## Active Plans
 
+- [2026-10-11_firewheel_adoption_plan.md](2026-10-11_firewheel_adoption_plan.md) —
+  **Consumer/native regression accepted; physical audio open.** Standalone
+  Firewheel 0.14 at the exact owned fork revision, with 166 CPU checks, twelve
+  rendered graph capture/replay/lifecycle tests and 19 reviewed native captures.
+  Physical devices and latency remain separate acceptance gates.
+
+- [2026-10-11_host_acceptance_plan.md](2026-10-11_host_acceptance_plan.md) —
+  **Landed on isolated lane.** Tightens existing Mesquite close/readback and project-worker
+  boundaries, removes unused capture dependencies, and makes the manual audio
+  demo explicit and unsuccessful when execution fails. Seventy CPU checks,
+  five finite native processes, 19 reviewed captures and two appearance
+  reopens pass; actual hardware audio/custody remain separate gates.
+
 - [2026-05-18_initial_plan.md](2026-05-18_initial_plan.md) — Initial
   scaffold, workspace skeleton, and feature-target ladder from
   click-track engine through P2P session hand-off.
 - [2026-07-08_genet_host_refactor_plan.md](2026-07-08_genet_host_refactor_plan.md)
-  — **LANDED.** UI rebuilt fresh on Cambium (then `xilem_serval`) (the one-screen loop-recorder
+  — **Original host rebuild landed; shared extraction and Woodshed surface adoption implemented.**
+  Shared model/project, device-free recorder controller and scoped Cambium
+  surface are root libraries. Woodshed mounts the surface through borrowed
+  accepted-backing observations and guarded controls over its existing single
+  output runtime. The separate adoption receipt records 591 focused cases,
+  seven inspected captures, compact reopening and exact media/WAV retention.
+  Shared DSP, default startup and physical audio remain open.
+  UI rebuilt fresh on Cambium (then `xilem_serval`) (the one-screen loop-recorder
   design, not a Masonry port) with `chisel` leaf waveforms/meters and the
   `hocket_engine` spine wired in. The Masonry app + the `mark-ik/xilem` fork
   are deleted family-wide (hocket + woodshed). Deferred follow-ups listed in
@@ -25,6 +45,10 @@ before any other doc in this directory.
   solo/stop behavior, and removal of collaboration/demo affordances that had
   no backing subsystem. Persistence and sync remain separately scoped.
 - [2026-07-09_muniment-project-store_plan.md](2026-07-09_muniment-project-store_plan.md)
+  - October 11 extracts portable media/store/export/handoff/waveform into
+  `hocket-project`, keeping device execution in `hocket-engine` and preserving
+  model/media identity and existing project formats. All 84 relevant CPU tests
+  pass; combined desktop and native project acceptance follow integration.
   - **LANDED.** Local project persistence over Muniment's generic backend seam,
   with a Genet-host Redb API. The manifest retains Hocket's session/history
   semantics and media keeps its existing `MediaRef` identity.
@@ -43,16 +67,18 @@ before any other doc in this directory.
 - [2026-07-10_signed-handoff-envelope_plan.md](2026-07-10_signed-handoff-envelope_plan.md)
   - **PARTIAL.** Signed, complete, recipient-addressed project hand-off bytes
   with durable-sender attestation; raw bytes are not encrypted.
-  durable Windows host identity and engine branch acceptance are landed.
-  Recipient exchange, carrier, review UI, user-facing acceptance, and branch
-  merge remain separate work. Host-side gaps are carried forward in the
+  Durable Windows host identity and portable `hocket-project` branch acceptance
+  are landed. The file carrier, recipient exchange and review/accept gestures
+  are implemented; branch merge and current native project acceptance remain
+  separate work. Host sequencing is carried forward in the
   hand-off UI plan below.
 - [2026-07-18_handoff-ui_plan.md](2026-07-18_handoff-ui_plan.md)
-  - **SCOPED.** The host-facing pass-the-mic gesture: a file carrier over the
+  - **IMPLEMENTED; HOST ACCEPTANCE OPEN.** The pass-the-mic gesture: a file carrier over the
   existing project worker, a copyable contact token with auto-addressed replies,
   incoming staging and review in the circle, and same-session or new-session
   acceptance. Cleartext carrier, stated honestly; encryption and a network
-  carrier are later.
+  carrier are later. Project-worker reply correlation and current native
+  save/open/export/handoff qualification remain open.
 - [2026-08-08_persona_timeline_design.md](2026-08-08_persona_timeline_design.md)
   - **DESIGN SKETCH** (from Mark, no implementation planned). A persona as a
   lens over the session: click a participant, see their contributions laid out
@@ -112,12 +138,35 @@ before any other doc in this directory.
   `wavicle::encode_float`/`decode_stream`, with `MediaRef` still BLAKE3 over the
   decoded f32 samples. WAV is retained only for the offline mix export.
 
+## Appearance acceptance
+
+- [Host acceptance receipt](receipts/host_acceptance_20261011/README.md) —
+  Committed-source Tabard regression, fresh appearance reopening and recorder
+  controls after close/readback hardening; 19 reviewed native captures.
+
+- [Coherent-family appearance reopen](../../../validation/port-reopen_20261011/README.md) — Later committed-source reopening restores HocketAcceptance/Dark and unchanged recorder state; two reviewed captures.
+- [Tabard native receipt](receipts/tabard_20261011/README.md) — Shared application appearance, authoring, Save/Apply, four modes and fresh reopen; 102 CPU assertions and 17 native captures accepted.
+
+
+## Audio consumer acceptance
+
+- [Standalone Firewheel consumer receipt](receipts/firewheel_20261011/README.md)
+  — Exact provider/consumer hashes, locked workspace and offline graph tests,
+  gain correction reproduction, five native recorder/appearance processes and
+  two fresh appearance reopens; physical audio qualification remains open.
+
 ## Archive
 
+- [2026-10-11 Tabard adoption](archive_docs/2026-10-11/2026-10-11_tabard_adoption_plan.md) — Landed application appearance and qualification.
 - `archive_docs/` — retired plans and superseded notes (created on
   first archive).
 
 ## Working Principles for AI Assistants
+
+- **Appearance is presentation, separate from recorder truth.** Use Tabard, Tinct, the shared workshop/native binding and Cambium title bar. Save registers a definition; explicit Apply alone replaces the installed snapshot, including same-identity edits. Mesquite owns native scenario and capture behavior.
+- **Accepted close preserves scenario evidence.** An unfinished Mesquite lane
+  receives `request_close` and finishes its queued readback and interrupted
+  receipt before the host exits. Dirty-close cancellation keeps the lane live.
 
 These principles apply to AI-assisted work on this project. Update this
 section whenever a durable working insight emerges from a session.
@@ -160,9 +209,10 @@ section whenever a durable working insight emerges from a session.
 - **Firewheel is the audio substrate.** Not Dropseed (back-burner),
   not a SequencerEngine wrap (placeholder from FT1). At FT3b-prime
   the engine moves to a Firewheel graph: loop tracks as sample-player
-  nodes, mix bus, input capture node, optional click node. **On
-  crates.io** at `firewheel-graph` 0.10.x — pin a version, only
-  path-dep if unreleased fixes are needed.
+  nodes, mix bus, input capture node, optional click node. The independent
+  workspace pins the standalone owned 0.14 fork by exact Git revision for
+  bounded stream nodes; native consumption and physical audio acceptance
+  remain separate from provider qualification.
 - **hocket-model is the authority; Firewheel is the runtime.**
   Session truth lives in the model; the audio graph plays the
   *projected state*. Don't let runtime concerns leak back into the
@@ -185,9 +235,11 @@ section whenever a durable working insight emerges from a session.
   bespoke converter. The specialty-project-format norm (opaque, app-only) is a
   failure mode we reject as product identity, alongside plugin gravity and
   DAW scope creep. Long-term target is a zip container of standard-audio media
-  plus documented structure. Realized 2026-07-14: a `.hock` is a zip of
-  `manifest.cbor` (self-describing CBOR) + `media/<hash>.wav` (standard audio),
-  over a Muniment `ZipBackend`. FLAC and a provenance entry are follow-on. See
+  plus documented structure. A `.hock` is a zip of `manifest.cbor`
+  (self-describing CBOR), `media/<hash>.wv` (lossless WavPack via wavicle), and
+  `meta.json` (provenance), over a Muniment `ZipBackend`. Offline rendered
+  exports use WAV; project media preserve floating-point captures in WavPack.
+  FLAC was evaluated and rejected for that storage requirement. See
   [2026-07-14_open-project-format_plan.md](2026-07-14_open-project-format_plan.md).
 
 ## Reference reading

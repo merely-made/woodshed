@@ -1,0 +1,12 @@
+{
+  "pid": 27819,
+  "command": [
+    "caffeinate",
+    "-di",
+    "-t",
+    "14400"
+  ],
+  "started_utc": "2026-10-11T16:21:46.377594+00:00",
+  "expires_utc": "2026-10-11T20:21:46.377594+00:00",
+  "purpose": "user requested four hours of display and idle-system sleep prevention"
+}

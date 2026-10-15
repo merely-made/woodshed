@@ -1,0 +1,17 @@
+warning: patch `p2panda-auth v0.7.1 (https://github.com/mark-ik/p2panda.git?tag=mere-p2panda-net-0.7.5-upstream-20261011#d8acabc9)` was not used in the crate graph
+warning: patch `p2panda-stream v0.7.1 (https://github.com/mark-ik/p2panda.git?tag=mere-p2panda-net-0.7.5-upstream-20261011#d8acabc9)` was not used in the crate graph
+help: Check that the patched package version and available features are compatible
+      with the dependency requirements. If the patch has a different version from
+      what is locked in the Cargo.lock file, run `cargo update` to use the new
+      version. This may also occur with an optional dependency that is not enabled.
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.87s
+     Running unittests src/lib.rs (/Users/markik/Code/worktrees/woodshed-audit-20261011/target/debug/deps/woodshed_views-73a3101868ceae9d)
+
+running 4 tests
+test stage::looper::tests::source_stays_with_its_set_while_exploration_and_rehearsal_choose_other_owners ... ok
+test stage::looper::tests::selection_and_queued_capture_keep_identity_across_reorder ... ok
+test stage::looper::tests::persisted_source_reopens_without_copying_or_revoicing_legacy_song ... ok
+test stage::looper::tests::wav_export_controls_require_host_collision_token_and_reset_with_session ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 153 filtered out; finished in 1.29s
+

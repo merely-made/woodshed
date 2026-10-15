@@ -1,0 +1,10 @@
+RESULT ok
+captured 01_set_backing_admitted
+captured 02_exact_saved_backing_retained
+captured 03_set_source_ready_to_reopen
+Set LoopPlan seed complete
+capture 01_set_backing_admitted 2360x1600 digest=ef47486f13f44b1a file=$ARTIFACT_ROOT/native/RuntimeSetSeed/01_set_backing_admitted.png
+capture 02_exact_saved_backing_retained 2360x1600 digest=0b47dc98a08179cc file=$ARTIFACT_ROOT/native/RuntimeSetSeed/02_exact_saved_backing_retained.png
+capture 03_set_source_ready_to_reopen 2360x1600 digest=9fb5c07159661131 file=$ARTIFACT_ROOT/native/RuntimeSetSeed/03_set_source_ready_to_reopen.png
+frames: 3 captured, 0 blank, 3 distinct digests
+presentation: 126 frames, 999 redraws, 873 unpresented redraws

@@ -1,0 +1,8 @@
+RESULT ok
+captured 01_missing_companion_reference_retained
+captured 02_missing_companion_explicitly_cleared
+Missing companion reference recovery complete
+capture 01_missing_companion_reference_retained 2360x1600 digest=ba8ed1ef56c387e9 file=$ARTIFACT_ROOT/native/SetCaptureMissingReopen/01_missing_companion_reference_retained.png
+capture 02_missing_companion_explicitly_cleared 2360x1600 digest=3e09fdaa37891f5b file=$ARTIFACT_ROOT/native/SetCaptureMissingReopen/02_missing_companion_explicitly_cleared.png
+frames: 2 captured, 0 blank, 2 distinct digests
+presentation: 35 frames, 728 redraws, 693 unpresented redraws

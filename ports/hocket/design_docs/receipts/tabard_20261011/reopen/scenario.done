@@ -1,0 +1,7 @@
+RESULT ok
+captured recorder_reopened
+captured appearance_reopened
+capture recorder_reopened 2360x1400 digest=2bc740d3a9029e60 file=/Users/markik/Code/tabard-app-receipts/hocket-20261011/publication/reopen/recorder_reopened.png
+capture appearance_reopened 2360x1400 digest=47519897516b9adb file=/Users/markik/Code/tabard-app-receipts/hocket-20261011/publication/reopen/appearance_reopened.png
+frames: 2 captured, 0 blank, 2 distinct digests
+presentation: 13 frames, 18 redraws, 5 unpresented redraws

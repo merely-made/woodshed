@@ -1,0 +1,12 @@
+[genet-render-host] surface acquire skipped: Occluded
+[cambium-winit] accessibility Installed, 54 nodes projected
+[genet-render-host] surface acquire skipped: Occluded
+[genet-render-host] surface acquire skipped: Occluded
+redshank-scenario: captured appearance
+redshank-scenario: captured workshop
+redshank-scenario: captured saved-copy
+redshank-scenario: captured applied-dark
+redshank-scenario: captured applied-light
+redshank-scenario: captured applied-hc-light
+redshank-scenario: captured applied-hc-dark
+redshank-scenario: RESULT ok (60 frames, 7 captures)

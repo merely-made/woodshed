@@ -1,0 +1,185 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-11",
+  "lane": "F1 CI, release boundaries, and verified declaration cleanup",
+  "worktree": "/Users/markik/Code/worktrees/woodshed-ci-release-20261011",
+  "branch": "codex/audio-foundation-ci-20261011",
+  "source_base": "95abb13f35029aa7e0c100043ba03532d4f6905a",
+  "commits": [
+    "84ad2010b6098ba1474204d3ac67fd235eb0a1e7",
+    "73df29050b67cb9196c7cf04012acfedd044af98"
+  ],
+  "head": "73df29050b67cb9196c7cf04012acfedd044af98",
+  "host": "macOS arm64",
+  "rust": "1.97.1",
+  "lockfile_sha256": {
+    "woodshed": "799db1d7ca2f2e7d3f64ca983a2a2ec4203c2738e5e9ad3d4def3286f752b161",
+    "hocket": "b84b8dd3fd07c92ed6bc01e6d46086edaf2e3a1b27b829722fe693bdadefe944",
+    "redshank": "4ba5a225fa08bff9e3c127dab1d82bf87af2bdab18adcb46f9a4a4f4e1bfeda0",
+    "ringdown": "9c1b9afdd823e02effcade345140463f20185b9a79b83e8844d3109df395f6c0"
+  },
+  "locked_metadata": {
+    "woodshed": {
+      "exit_code": 0,
+      "log": "woodshed-metadata.log"
+    },
+    "hocket": {
+      "exit_code": 0,
+      "log": "hocket-metadata.log"
+    },
+    "redshank": {
+      "exit_code": 0,
+      "log": "redshank-metadata.log"
+    },
+    "ringdown": {
+      "exit_code": 0,
+      "log": "ringdown-metadata.log"
+    }
+  },
+  "cpu_tests": {
+    "woodshed": {
+      "exit_code": 0,
+      "passed": 770,
+      "failed": 0,
+      "ignored": 0,
+      "scope": [
+        "woodshedding",
+        "audio-primitives",
+        "timed-text",
+        "woodshed-audio",
+        "woodshed-core",
+        "woodshed-graph",
+        "woodshed-views",
+        "woodshed-instrument"
+      ],
+      "log": "woodshed-tests-rerun.log",
+      "entry": "validate-workspace.sh test woodshed",
+      "outside_repository_cargo_config": true
+    },
+    "hocket": {
+      "exit_code": 0,
+      "passed": 148,
+      "failed": 0,
+      "ignored": 1,
+      "scope": [
+        "hocket-model",
+        "hocket-engine",
+        "hocket-genet"
+      ],
+      "log": "hocket-tests-rerun.log",
+      "entry": "cargo +1.97.1 test --manifest-path ports/hocket/Cargo.toml --locked -p hocket-model -p hocket-engine -p hocket-genet",
+      "outside_repository_cargo_config": true
+    },
+    "redshank": {
+      "exit_code": 0,
+      "passed": 253,
+      "failed": 0,
+      "ignored": 7,
+      "scope": [
+        "redshank-model",
+        "redshank-storage",
+        "redshank-cache",
+        "redshank-feed",
+        "redshank-playback",
+        "redshank-surfaces",
+        "redshank-desktop"
+      ],
+      "log": "redshank-tests-rerun.log",
+      "entry": "validate-workspace.sh test redshank",
+      "outside_repository_cargo_config": true
+    },
+    "ringdown": {
+      "exit_code": 0,
+      "passed": 157,
+      "failed": 0,
+      "ignored": 0,
+      "scope": [
+        "--workspace"
+      ],
+      "log": "ringdown-tests.log",
+      "entry": "validate-workspace.sh test ringdown",
+      "outside_repository_cargo_config": true
+    }
+  },
+  "cpu_commands": {
+    "working_directory": "/Users/markik/Code/testing",
+    "CARGO_BUILD_JOBS": "2",
+    "woodshed": {
+      "command": "/Users/markik/Code/worktrees/woodshed-ci-release-20261011/scripts/validate-workspace.sh test woodshed",
+      "CARGO_TARGET_DIR": "/Users/markik/Code/worktrees/woodshed-audit-20261011/target"
+    },
+    "redshank": {
+      "command": "/Users/markik/Code/worktrees/woodshed-ci-release-20261011/scripts/validate-workspace.sh test redshank",
+      "CARGO_TARGET_DIR": "/Users/markik/Code/worktrees/woodshed-audit-20261011/ports/redshank/target"
+    },
+    "hocket": {
+      "command": "cargo +1.97.1 test --manifest-path /Users/markik/Code/worktrees/woodshed-ci-release-20261011/ports/hocket/Cargo.toml --locked -p hocket-model -p hocket-engine -p hocket-genet",
+      "CARGO_TARGET_DIR": "/Users/markik/Code/worktrees/woodshed-audit-20261011/ports/hocket/target"
+    },
+    "ringdown": {
+      "command": "/Users/markik/Code/worktrees/woodshed-ci-release-20261011/scripts/validate-workspace.sh test ringdown",
+      "CARGO_TARGET_DIR": "/Users/markik/Code/testing/woodshed-ci-release-20261011/ringdown-target"
+    }
+  },
+  "cpu_totals": {
+    "passed": 1328,
+    "failed": 0,
+    "ignored": 8
+  },
+  "workflow_validation": {
+    "tool": "actionlint 1.7.12",
+    "exit_code": 0,
+    "scope": "all four .github/workflows/*.yml; optional shellcheck disabled"
+  },
+  "shell_syntax": {
+    "command": "bash -n scripts/validate-workspace.sh",
+    "exit_code": 0
+  },
+  "whitespace": {
+    "command": "git diff --check",
+    "exit_code": 0
+  },
+  "release_fixture_results": "release-fixture-results.json",
+  "linux_target_dependency_inspection": {
+    "woodshed": [
+      "alsa-sys",
+      "yeslogic-fontconfig-sys",
+      "libdbus-sys"
+    ],
+    "hocket": [
+      "alsa-sys",
+      "yeslogic-fontconfig-sys"
+    ],
+    "redshank": [
+      "alsa-sys",
+      "yeslogic-fontconfig-sys"
+    ],
+    "ringdown": [
+      "libdbus-sys"
+    ],
+    "scope": "locked cargo tree for x86_64-unknown-linux-gnu, normal/build edges",
+    "not_a_linux_build": true
+  },
+  "qualification_limits": [
+    "Committed Hocket script adds hocket-project for coordinator integration; this base has no hocket-project package. Its moved tests/dependency tree and final script scope require integrated-head verification.",
+    "Mac CPU results do not qualify execution on hosted Linux/Windows runners.",
+    "PowerShell package tests use fixture executable bytes on macOS; no actual Windows binary/build/native runtime qualified.",
+    "GitHub dispatch/publish behavior has not run; workflows are statically validated.",
+    "One custody receipt and seven Redshank device/fixture tests remain ignored.",
+    "Native capture, audio/Bluetooth hardware, and fresh-process reopen were not part of this lane."
+  ],
+  "operational_note": "Initial long test runs emitted a shell EOF diagnostic because the validation script was edited after launch to add hocket-project. Frozen-script reruns/equivalent pre-extraction Hocket command all exit 0; only these rerun logs qualify the wrapper result.",
+  "production_changes": [
+    "workspace CI scopes",
+    "Woodshed Windows release tag/channel selection",
+    "validation script",
+    "derived README guidance",
+    "unused Hocket cpal/rtrb/basedrop declarations"
+  ],
+  "unchanged": [
+    "all lockfiles",
+    "canonical plans/index",
+    "updater transports",
+    "product Rust source"
+  ]
+}

@@ -4,7 +4,7 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 // SPDX-License-Identifier: MPL-2.0
 
-//! Hocket audio engine, built on [Firewheel](https://github.com/BillyDM/Firewheel) 0.10.
+//! Hocket audio engine, built on standalone Firewheel 0.14.
 //!
 //! ## Architecture
 //!
@@ -22,7 +22,6 @@
 //!
 //! ```text
 //!  graph_in ──► stream_reader     (mono capture tap)
-//!  graph_in ──► silent_monitor ──► graph_out  (keeps input path live)
 //!
 //!  click_sampler ────┐
 //!  voice[0..N]   ────┼──► peak_meter ──► graph_out (stereo)
@@ -40,31 +39,22 @@
 
 pub mod capture;
 pub mod click;
-pub mod export;
-pub mod handoff;
-pub mod media;
-pub mod project_store;
-pub mod waveform;
 
 use std::collections::BTreeMap;
-use std::sync::Arc;
+use std::num::NonZeroU32;
 
 use firewheel::core::node::NodeID;
-use firewheel::nodes::stream::ResamplingChannelConfig;
+use firewheel::nodes::stream::media_channel_config;
 use firewheel::{
     FirewheelConfig, FirewheelContext,
     channel_config::{ChannelCount, NonZeroChannelCount},
-    collector::ArcGc,
-    cpal::{CpalConfig, CpalEnumerator, CpalInputConfig, CpalOutputConfig},
-    diff::Notify,
+    cpal::{CpalConfig, CpalInputConfig, CpalOutputConfig, CpalStream},
     dsp::volume::Volume,
     nodes::{
         peak_meter::{PeakMeterStereoNode, PeakMeterStereoState},
-        sampler::{PlayFrom, RepeatMode, SamplerNode, SamplerState},
+        sampler::{RepeatMode, SamplerNode, SamplerState},
         stream::reader::{StreamReaderConfig, StreamReaderNode, StreamReaderState},
-        volume::{VolumeNode, VolumeNodeConfig},
     },
-    sample_resource::SampleResource,
 };
 use hocket_model::TrackId;
 
@@ -100,7 +90,7 @@ pub struct AudioDeviceSelection {
 
 /// Enumerate input and output devices from Firewheel's CPAL backend.
 pub fn available_audio_devices() -> AudioDevices {
-    let host = CpalEnumerator {}.default_host();
+    let host = firewheel::cpal::default_host_enumerator();
     let map = |device: firewheel::cpal::DeviceInfo| AudioDevice {
         id: device.id.to_string(),
         name: device.name.unwrap_or_else(|| "unnamed device".to_string()),
@@ -112,10 +102,9 @@ pub fn available_audio_devices() -> AudioDevices {
     }
 }
 
-/// Soft cap on simultaneously playing layer voices. Each voice is a
-/// `SamplerNode` dynamically added to the graph on `play_layer` and
-/// removed on `stop_layer`. The cap exists so a runaway host can't
-/// allocate unbounded nodes.
+/// Soft cap on distinct active or accepted queued layer voices. Each voice is
+/// a `SamplerNode` added on playback and removed on `stop_layer`. Queued starts
+/// reserve a slot too, so accepted scheduling cannot exceed the node bound.
 ///
 /// Deeler profile maxes at 10 tracks × 1 active = 10 voices; looper
 /// profile is bounded by the user's captured layer count.
@@ -144,11 +133,12 @@ impl LayerKey {
     }
 }
 
-/// The Hocket audio engine. Owns the Firewheel context (which in
-/// turn owns the cpal stream after `start_stream`).
+/// The Hocket audio engine. Owns the native stream separately from the graph.
 ///
 /// Not `Send` (cpal streams aren't `Send` on most platforms).
 pub struct Engine {
+    // Drop the stream before the context; its processor must return first.
+    stream: Option<CpalStream>,
     cx: FirewheelContext,
     meter_id: NodeID,
     click_id: NodeID,
@@ -162,15 +152,8 @@ pub struct Engine {
     /// playing that layer. Nodes are added by `play_layer` and
     /// removed by `stop_layer`.
     ///
-    /// **Why dynamic add/remove instead of a pre-allocated pool**:
-    /// Firewheel 0.10.0's `SamplerNode` has documented state-machine
-    /// bugs around post-construction state transitions (BillyDM's
-    /// own TODO at the top of `sampler.rs`). Post-hoc
-    /// `sync_*_event` calls to mutate an empty sampler into a
-    /// playing one don't audibly take effect. The pattern that
-    /// works is the one the click uses: construct the sampler
-    /// fully populated and hand it to `cx.add_node`. So each
-    /// `play_layer` adds a fresh node; each `stop_layer` removes it.
+    /// Existing keys restart through resource/play events on the same node.
+    /// New keys allocate a voice, bounded by `VOICE_POOL_SIZE`.
     voice_nodes: BTreeMap<LayerKey, NodeID>,
     /// Bar-aligned capture state machine. Set by
     /// `arm_bar_aligned_capture`; advanced inside `tick`. See
@@ -185,6 +168,8 @@ pub struct Engine {
     /// scheduled boundary and fires the underlying `play_layer`.
     pending_layers: Vec<PendingLayer>,
     reader_state: StreamReaderState,
+    #[cfg(test)]
+    reader_id: NodeID,
     meter_state: PeakMeterStereoState,
     sample_rate: u32,
     /// Onset detection over captured mic input, backed by the shared
@@ -252,87 +237,66 @@ impl Engine {
             ..Default::default()
         });
 
-        cx.start_stream(cpal_config(selection))
+        let stream = CpalStream::new(&mut cx, cpal_config(selection))
             .map_err(|e| EngineError::CpalInit(format!("{e:?}")))?;
-
-        let stream_info = cx
+        let sample_rate = cx
             .stream_info()
-            .ok_or_else(|| EngineError::CpalInit("no stream_info after start".into()))?;
-        let sample_rate = stream_info.sample_rate.get();
-        let sr_nz = stream_info.sample_rate;
+            .ok_or_else(|| EngineError::CpalInit("no stream info after start".into()))?
+            .sample_rate
+            .get();
+        Self::build_graph(cx, Some(stream), sample_rate)
+    }
 
-        // --- Click sampler (fully populated at add_node time;
-        //     `Notify<bool>::patch` rejects post-hoc Bool events) ---
-        let click_buf = click::render_click_loop(sample_rate, 120.0, 4, 4);
-        let click_resource = make_mono_resource(click_buf);
-        let click_node = SamplerNode {
-            sample: Some(click_resource),
-            repeat_mode: RepeatMode::RepeatEndlessly,
-            play: Notify::new(true),
-            play_from: PlayFrom::BEGINNING,
-            ..SamplerNode::default()
-        };
-        let click_id = cx.add_node(click_node, None);
-
-        let reader_id = cx.add_node(
-            StreamReaderNode,
-            Some(StreamReaderConfig {
-                channels: NonZeroChannelCount::MONO,
-            }),
-        );
-        let meter_id = cx.add_node(PeakMeterStereoNode { enabled: true }, None);
-
-        // Silent monitor: graph_in → VolumeNode(SILENT) → graph_out.
-        // Keeps the input path live so the reader actually receives
-        // samples (Firewheel prunes input processing when no path
-        // reaches output).
-        let monitor_id = cx.add_node(
-            VolumeNode {
-                volume: Volume::SILENT,
-                ..VolumeNode::default()
-            },
-            Some(VolumeNodeConfig {
-                channels: NonZeroChannelCount::MONO,
-            }),
-        );
+    // Shared construction also lets tests drive the exact graph with an offline
+    // processor, without enumerating or opening a device.
+    fn build_graph(
+        mut cx: FirewheelContext,
+        stream: Option<CpalStream>,
+        sample_rate: u32,
+    ) -> Result<Self, EngineError> {
+        let sr_nz = NonZeroU32::new(sample_rate)
+            .ok_or_else(|| EngineError::Graph("zero graph sample rate".into()))?;
+        let click_id = cx
+            .add_node(SamplerNode::default(), None)
+            .map_err(|e| EngineError::Graph(format!("click node: {e:?}")))?;
+        let reader_id = cx
+            .add_node(
+                StreamReaderNode,
+                Some(StreamReaderConfig {
+                    channels: NonZeroChannelCount::MONO,
+                }),
+            )
+            .map_err(|e| EngineError::Graph(format!("reader node: {e:?}")))?;
+        let meter_id = cx
+            .add_node(PeakMeterStereoNode { enabled: true }, None)
+            .map_err(|e| EngineError::Graph(format!("meter node: {e:?}")))?;
 
         let in_id = cx.graph_in_node_id();
         let out_id = cx.graph_out_node_id();
-
-        // --- Wire graph ---
+        // The restored reader is an input-only sink. No monitor path or
+        // microphone-to-output connection is needed to keep capture alive.
         cx.connect(in_id, reader_id, &[(0, 0)], false)
             .map_err(|e| EngineError::Graph(format!("in→reader: {e:?}")))?;
-        cx.connect(in_id, monitor_id, &[(0, 0)], false)
-            .map_err(|e| EngineError::Graph(format!("in→monitor: {e:?}")))?;
-        cx.connect(monitor_id, out_id, &[(0, 0), (0, 1)], false)
-            .map_err(|e| EngineError::Graph(format!("monitor→out: {e:?}")))?;
-
-        // Click feeds the meter. Voice nodes are added dynamically
-        // in `play_layer` and wired to the meter at that time.
         cx.connect(click_id, meter_id, &[(0, 0), (1, 1)], false)
             .map_err(|e| EngineError::Graph(format!("click→meter: {e:?}")))?;
         cx.connect(meter_id, out_id, &[(0, 0), (1, 1)], false)
             .map_err(|e| EngineError::Graph(format!("meter→out: {e:?}")))?;
+        queue_sampler_start(
+            &mut cx,
+            click_id,
+            click::render_click_loop(sample_rate, 120.0, 4, 4),
+            1.0,
+            1.0,
+            true,
+        );
 
-        // Tell click's shared state it's playing so SamplerState
-        // exposes the right status from t=0.
-        if let Some(state) = cx.node_state::<SamplerState>(click_id) {
-            state.mark_playing();
-        }
-
-        // --- Reader stream (non-RT consumer; autocorrect disabled) ---
         let mut reader_state = cx
             .node_state::<StreamReaderState>(reader_id)
             .ok_or_else(|| EngineError::Graph("reader state missing".into()))?
             .clone();
-        let channel_config = ResamplingChannelConfig {
-            underflow_autocorrect_percent_threshold: None,
-            overflow_autocorrect_percent_threshold: None,
-            ..ResamplingChannelConfig::default()
-        };
         let new_stream_event = reader_state
-            .start_stream(sr_nz, sr_nz, channel_config)
-            .map_err(|_| EngineError::Graph("reader start_stream failed".into()))?;
+            .start_stream(sr_nz, sr_nz, media_channel_config(0.5))
+            .map_err(|e| EngineError::Graph(format!("reader start: {e}")))?;
         cx.queue_event_for(reader_id, new_stream_event.into());
 
         let meter_state = cx
@@ -341,6 +305,7 @@ impl Engine {
             .clone();
 
         Ok(Self {
+            stream,
             cx,
             meter_id,
             click_id,
@@ -352,6 +317,8 @@ impl Engine {
             input_scratch: Vec::with_capacity(8192),
             pending_layers: Vec::new(),
             reader_state,
+            #[cfg(test)]
+            reader_id,
             meter_state,
             sample_rate,
             onset_detector: OnsetDetector::new(sample_rate as f32),
@@ -368,8 +335,35 @@ impl Engine {
     /// not need to drain input separately; capture progresses purely
     /// from `tick`.
     pub fn tick(&mut self) -> Result<(), EngineError> {
+        let stream_error = self
+            .stream
+            .as_mut()
+            .and_then(|stream| stream.poll_status().last());
+        if self
+            .stream
+            .as_ref()
+            .is_some_and(|stream| !stream.all_streams_ok())
+        {
+            self.abort_incomplete_capture();
+            return Err(EngineError::Tick("audio device stream stopped".into()));
+        }
+        if let Some(error) = stream_error {
+            return Err(EngineError::Tick(format!("audio device: {error}")));
+        }
+        if self.reader_state.overflow_occurred() {
+            let rejected = self
+                .reader_state
+                .stats()
+                .map_or(0, |stats| stats.rejected_source_frames);
+            // A live capture cannot retry the missing input. Abort rather than
+            // promote a phrase with an undisclosed gap in source time.
+            self.abort_incomplete_capture();
+            self.input_scratch.clear();
+            self.reader_state.discard_frames();
+            return Err(EngineError::InputOverflow(rejected));
+        }
         self.drain_and_advance_capture();
-        self.advance_pending_layers();
+        self.advance_pending_layers()?;
         self.cx
             .update()
             .map_err(|e| EngineError::Tick(format!("{e:?}")))
@@ -380,6 +374,13 @@ impl Engine {
     /// buffer is overwritten each tick.
     pub fn recent_input(&self) -> &[f32] {
         &self.input_scratch
+    }
+
+    fn abort_incomplete_capture(&mut self) {
+        // Media completed before the input fault is still valid and drainable.
+        if !matches!(self.pending_capture, PendingCapture::Complete(_)) {
+            self.pending_capture = PendingCapture::Idle;
+        }
     }
 
     /// Enable or disable onset detection over captured mic input.
@@ -490,6 +491,16 @@ impl Engine {
         self.sample_rate
     }
 
+    /// Whether the actual stream provides input to the live capture reader.
+    /// An output-only CPAL fallback is valid for playback, but cannot record.
+    pub fn input_available(&self) -> bool {
+        self.cx
+            .stream_info()
+            .is_some_and(|info| info.num_stream_in_channels > 0)
+            && self.reader_state.is_active()
+            && self.stream.as_ref().is_none_or(CpalStream::input_stream_ok)
+    }
+
     // --- Bar-aligned capture ---
 
     /// Arm a bar-aligned capture. After this call, the engine waits
@@ -507,6 +518,9 @@ impl Engine {
         bars: u8,
         count_in_bars: u8,
     ) -> Result<(), EngineError> {
+        if !self.input_available() {
+            return Err(EngineError::InputUnavailable);
+        }
         if !matches!(self.pending_capture, PendingCapture::Idle) {
             return Err(EngineError::Graph("capture already in progress".into()));
         }
@@ -541,6 +555,9 @@ impl Engine {
     /// mode (variable-length loops). Returns `Err` if a capture is
     /// already in progress.
     pub fn start_free_capture(&mut self) -> Result<(), EngineError> {
+        if !self.input_available() {
+            return Err(EngineError::InputUnavailable);
+        }
         if !matches!(self.pending_capture, PendingCapture::Idle) {
             return Err(EngineError::Graph("capture already in progress".into()));
         }
@@ -613,6 +630,8 @@ impl Engine {
     }
 
     /// Queue a layer for the next bar, preserving its source sample rate.
+    /// A queued key reserves a voice slot; re-queueing that key replaces its
+    /// earlier request rather than retaining another PCM buffer.
     pub fn play_layer_at_next_bar_at_sample_rate(
         &mut self,
         key: LayerKey,
@@ -621,10 +640,11 @@ impl Engine {
         gain: f32,
         looping: bool,
     ) -> Result<(), EngineError> {
+        self.check_voice_capacity(key)?;
         let last_in_bar_phase = self
             .click_in_bar_phase()
             .ok_or_else(|| EngineError::Graph("click bar-phase unavailable".into()))?;
-        self.pending_layers.push(PendingLayer {
+        let pending = PendingLayer {
             bars_until_start: 1,
             last_in_bar_phase,
             key,
@@ -632,8 +652,32 @@ impl Engine {
             sample_rate,
             gain,
             looping,
-        });
+        };
+        if let Some(old) = self.pending_layers.iter_mut().find(|old| old.key == key) {
+            *old = pending;
+        } else {
+            self.pending_layers.push(pending);
+        }
         Ok(())
+    }
+
+    fn check_voice_capacity(&self, key: LayerKey) -> Result<(), EngineError> {
+        if self.voice_nodes.contains_key(&key)
+            || self.pending_layers.iter().any(|pending| pending.key == key)
+        {
+            return Ok(());
+        }
+        let reserved = self.voice_nodes.len()
+            + self
+                .pending_layers
+                .iter()
+                .filter(|pending| !self.voice_nodes.contains_key(&pending.key))
+                .count();
+        if reserved >= VOICE_POOL_SIZE {
+            Err(EngineError::NoFreeVoices)
+        } else {
+            Ok(())
+        }
     }
 
     // --- Pending-state advancement (called from tick / drain_input) ---
@@ -668,7 +712,7 @@ impl Engine {
             PendingCapture::FreeRecording(mut buf) => {
                 buf.extend_from_slice(new_samples);
                 PendingCapture::FreeRecording(buf)
-            }
+            },
             PendingCapture::Waiting {
                 bars_until_start,
                 target_samples,
@@ -702,7 +746,7 @@ impl Engine {
                         last_in_bar_phase: cur_in_bar,
                     }
                 }
-            }
+            },
             PendingCapture::Recording(mut c) => {
                 c.feed_slice(new_samples);
                 if matches!(c.state(), capture::CaptureState::Complete) {
@@ -710,7 +754,7 @@ impl Engine {
                 } else {
                     PendingCapture::Recording(c)
                 }
-            }
+            },
         };
     }
 
@@ -754,11 +798,11 @@ impl Engine {
         }
     }
 
-    fn advance_pending_layers(&mut self) {
+    fn advance_pending_layers(&mut self) -> Result<(), EngineError> {
         let bar_samples = self.samples_per_bar();
         let cur_in_bar = match self.click_in_bar_phase() {
             Some(p) => p,
-            None => return,
+            None => return Ok(()),
         };
         let mut ready: Vec<PendingLayer> = Vec::new();
         let mut still_pending: Vec<PendingLayer> = Vec::new();
@@ -775,14 +819,15 @@ impl Engine {
         }
         self.pending_layers = still_pending;
         for layer in ready {
-            let _ = self.play_layer_at_sample_rate(
+            self.play_layer_at_sample_rate(
                 layer.key,
                 layer.samples,
                 layer.sample_rate,
                 layer.gain,
                 layer.looping,
-            );
+            )?;
         }
+        Ok(())
     }
 
     /// Latest output meter peaks (left, right) in decibels. Returns
@@ -793,9 +838,8 @@ impl Engine {
 
     /// Start (or restart) playback of a layer.
     ///
-    /// Adds a fresh, fully-populated `SamplerNode` to the graph and
-    /// wires it to the meter. If `key` already has a node, the old
-    /// one is removed first (effectively a restart with new state).
+    /// Adds a sampler voice and wires it to the meter. If `key` already has
+    /// a node, resource and playback events restart that same voice.
     /// Returns `Err(NoFreeVoices)` if the cap would be exceeded.
     ///
     /// `samples` is treated as mono at the engine's sample rate.
@@ -825,47 +869,43 @@ impl Engine {
         gain: f32,
         looping: bool,
     ) -> Result<(), EngineError> {
-        // Restart? Remove the existing node first.
-        if let Some(old_id) = self.voice_nodes.remove(&key) {
-            let _ = self.cx.remove_node(old_id);
-        } else if self.voice_nodes.len() >= VOICE_POOL_SIZE {
-            return Err(EngineError::NoFreeVoices);
-        }
-
-        let resource = make_mono_resource(samples);
-        let repeat_mode = if looping {
-            RepeatMode::RepeatEndlessly
+        self.check_voice_capacity(key)?;
+        let sampler_id = if let Some(&id) = self.voice_nodes.get(&key) {
+            id
         } else {
-            RepeatMode::PlayOnce
+            if self.voice_nodes.len() >= VOICE_POOL_SIZE {
+                return Err(EngineError::NoFreeVoices);
+            }
+            let id = self
+                .cx
+                .add_node(SamplerNode::default(), None)
+                .map_err(|e| EngineError::Graph(format!("voice node: {e:?}")))?;
+            if let Err(e) = self.cx.connect(id, self.meter_id, &[(0, 0), (1, 1)], false) {
+                let _ = self.cx.remove_node(id);
+                return Err(EngineError::Graph(format!("voice→meter: {e:?}")));
+            }
+            id
         };
-        let node = SamplerNode {
-            sample: Some(resource),
-            volume: Volume::Linear(gain),
-            speed: playback_speed(sample_rate, self.sample_rate),
-            repeat_mode,
-            play: Notify::new(true),
-            play_from: PlayFrom::BEGINNING,
-            ..SamplerNode::default()
-        };
-        let sampler_id = self.cx.add_node(node, None);
-
-        // Wire to meter (stereo since SamplerNode does mono→stereo).
-        self.cx
-            .connect(sampler_id, self.meter_id, &[(0, 0), (1, 1)], false)
-            .map_err(|e| EngineError::Graph(format!("voice→meter: {e:?}")))?;
-
-        // Tell shared state we're playing so SamplerState reports it.
-        if let Some(state) = self.cx.node_state::<SamplerState>(sampler_id) {
-            state.mark_playing();
-        }
+        queue_sampler_start(
+            &mut self.cx,
+            sampler_id,
+            samples,
+            gain,
+            playback_speed(sample_rate, self.sample_rate),
+            looping,
+        );
 
         self.voice_nodes.insert(key, sampler_id);
+        // Immediate admission supersedes an older next-bar request for this
+        // key; it must not restart the voice later with retired PCM.
+        self.pending_layers.retain(|pending| pending.key != key);
         Ok(())
     }
 
-    /// Stop the layer's voice and remove its node from the graph.
-    /// No-op if the key has no voice assigned.
+    /// Cancel the layer's accepted queued start and remove its active voice.
+    /// No-op if the key has neither a queued nor an assigned voice.
     pub fn stop_layer(&mut self, key: LayerKey) {
+        self.pending_layers.retain(|pending| pending.key != key);
         if let Some(sampler_id) = self.voice_nodes.remove(&key) {
             let _ = self.cx.remove_node(sampler_id);
         }
@@ -874,14 +914,11 @@ impl Engine {
     /// Update the gain on a playing layer. No-op if the key has no
     /// voice assigned.
     ///
-    /// Uses `sync_volume_event` which produces a `ParamData::Volume`
-    /// event. `Volume`'s patch path accepts this variant (unlike
-    /// `Notify<bool>::patch` which rejects `ParamData::Bool`), so
-    /// this works post-hoc on an active sampler.
+    /// Sends a volume parameter event to the active sampler.
     pub fn set_layer_gain(&mut self, key: LayerKey, gain: f32) {
         if let Some(&sampler_id) = self.voice_nodes.get(&key) {
             let node = SamplerNode {
-                volume: Volume::Linear(gain),
+                volume: amplitude_volume(gain),
                 ..SamplerNode::default()
             };
             self.cx
@@ -890,9 +927,7 @@ impl Engine {
     }
 
     /// Re-render the click loop at a new tempo / bar length and swap it
-    /// into the graph. Post-hoc sample swaps on `SamplerNode` are
-    /// unreliable, so this *rebuilds* the click node (remove + add) —
-    /// the same add-on-demand pattern the voices use. The click playhead
+    /// into the existing click sampler using resource/playback events. Its playhead
     /// restarts at bar 0, and the engine's bar-phase reference (the full tempo
     /// and time signature, read by [`Self::samples_per_bar`]) updates to
     /// match, so capture/replay stay aligned to the new grid.
@@ -912,24 +947,14 @@ impl Engine {
         let bpm = bpm.max(1.0);
         let beats_per_bar = beats_per_bar.max(1);
         let beat_unit = beat_unit.max(1);
-        let click_buf = click::render_click_loop(self.sample_rate, bpm, beats_per_bar, beat_unit);
-        let resource = make_mono_resource(click_buf);
-        let node = SamplerNode {
-            sample: Some(resource),
-            repeat_mode: RepeatMode::RepeatEndlessly,
-            play: Notify::new(true),
-            play_from: PlayFrom::BEGINNING,
-            ..SamplerNode::default()
-        };
-        let _ = self.cx.remove_node(self.click_id);
-        let new_id = self.cx.add_node(node, None);
-        self.cx
-            .connect(new_id, self.meter_id, &[(0, 0), (1, 1)], false)
-            .map_err(|e| EngineError::Graph(format!("click→meter: {e:?}")))?;
-        if let Some(state) = self.cx.node_state::<SamplerState>(new_id) {
-            state.mark_playing();
-        }
-        self.click_id = new_id;
+        queue_sampler_start(
+            &mut self.cx,
+            self.click_id,
+            click::render_click_loop(self.sample_rate, bpm, beats_per_bar, beat_unit),
+            1.0,
+            1.0,
+            true,
+        );
         self.bpm = bpm;
         self.beats_per_bar = beats_per_bar;
         self.beat_unit = beat_unit;
@@ -937,9 +962,7 @@ impl Engine {
     }
 
     /// Mute or unmute the click loop. Used when the session's master
-    /// clock is toggled off/on. Patches the click sampler's volume the
-    /// same way [`Self::set_layer_gain`] does (`sync_volume_event` is
-    /// accepted post-hoc, unlike a `play` toggle), so the click keeps
+    /// clock is toggled off/on. Patches the click sampler's volume so it keeps
     /// running on its grid but goes silent — bar-phase math that reads
     /// the click's playhead is unaffected.
     pub fn set_click_enabled(&mut self, enabled: bool) {
@@ -970,13 +993,16 @@ impl Engine {
 
     /// Stop the audio stream. Also runs on drop.
     pub fn stop(&mut self) {
-        self.cx.stop_stream();
+        self.stream.take();
+        self.reader_state.stop_stream();
+        self.pending_capture = PendingCapture::Idle;
+        self.pending_layers.clear();
     }
 }
 
 impl Drop for Engine {
     fn drop(&mut self) {
-        self.cx.stop_stream();
+        self.stop();
     }
 }
 
@@ -998,16 +1024,44 @@ fn playback_speed(source_sample_rate: u32, engine_sample_rate: u32) -> f64 {
     source_sample_rate.max(1) as f64 / engine_sample_rate.max(1) as f64
 }
 
-/// Wrap a mono `Vec<f32>` into an `ArcGc<dyn SampleResource>` that the
-/// SamplerNode can play. Uses the bundled `impl SampleResource for
-/// Vec<Vec<f32>>` (de-interleaved channels = outer Vec, samples = inner
-/// Vec) — we have one channel.
-fn make_mono_resource(samples: Vec<f32>) -> ArcGc<dyn SampleResource> {
-    let buffer: Vec<Vec<f32>> = vec![samples];
-    ArcGc::new_unsized(|| {
-        let arc: Arc<dyn SampleResource> = Arc::new(buffer);
-        arc
-    })
+/// Set the resource and all playback parameters on an existing sampler.
+/// The 0.14 play helper emits the Notify ID expected by the processor; no
+/// host-side "mark playing" status workaround is needed.
+fn queue_sampler_start(
+    cx: &mut FirewheelContext,
+    id: NodeID,
+    samples: Vec<f32>,
+    gain: f32,
+    speed: f64,
+    looping: bool,
+) {
+    let mut node = SamplerNode {
+        volume: amplitude_volume(gain),
+        speed,
+        repeat_mode: if looping {
+            RepeatMode::RepeatEndlessly
+        } else {
+            RepeatMode::PlayOnce
+        },
+        ..Default::default()
+    };
+    node.start_or_restart();
+    cx.queue_event_for(id, SamplerNode::set_sample_event(vec![samples]));
+    cx.queue_event_for(id, node.sync_volume_event());
+    cx.queue_event_for(id, node.sync_speed_event());
+    cx.queue_event_for(id, node.sync_repeat_mode_event());
+    cx.queue_event_for(id, node.sync_play_from_event());
+    cx.queue_event_for(id, node.sync_play_event());
+}
+
+// Firewheel's Linear volume is a squared slider taper. Layer gain is a raw
+// amplitude multiplier, matching hocket-project's offline mix/export path.
+fn amplitude_volume(gain: f32) -> Volume {
+    if gain > 0.0 {
+        Volume::Decibels(firewheel::dsp::volume::amp_to_db(gain))
+    } else {
+        Volume::SILENT
+    }
 }
 
 /// Snapshot of bar-aligned capture progress, for UI display.
@@ -1035,6 +1089,9 @@ pub enum EngineError {
     CpalInit(String),
     Graph(String),
     Tick(String),
+    /// Live input exceeded its bounded queue. An unfinished capture was aborted.
+    InputOverflow(u64),
+    InputUnavailable,
     /// Voice pool is full — no idle voice could be allocated for a
     /// new `play_layer` call. Either `stop_layer` an existing one or
     /// raise `VOICE_POOL_SIZE`.
@@ -1047,6 +1104,11 @@ impl std::fmt::Display for EngineError {
             Self::CpalInit(m) => write!(f, "audio backend init failed: {m}"),
             Self::Graph(m) => write!(f, "audio graph error: {m}"),
             Self::Tick(m) => write!(f, "engine tick failed: {m}"),
+            Self::InputOverflow(frames) => write!(
+                f,
+                "input overflow: {frames} source frames rejected; unfinished capture aborted"
+            ),
+            Self::InputUnavailable => write!(f, "audio input is unavailable"),
             Self::NoFreeVoices => write!(
                 f,
                 "voice pool exhausted (max {VOICE_POOL_SIZE} simultaneous layers)"
@@ -1077,3 +1139,6 @@ mod tests {
         assert!(config.input.unwrap().device_id.is_none());
     }
 }
+
+#[cfg(test)]
+mod offline_tests;

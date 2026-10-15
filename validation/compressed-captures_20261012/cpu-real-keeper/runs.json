@@ -1,0 +1,47 @@
+{
+  "source": "28f7209c58bca683734e612b59c470f18999462e",
+  "pre_family": true,
+  "binary": "/Users/markik/Code/testing/woodshed/compressed-captures-20261012/frozen-binaries/woodshed-genet-tests-28f7209",
+  "binary_sha256": "6fc65401ac4ed4c8e0caf509ec057dac27d14555b6bb87b4f3ac74ee503609b9",
+  "runs": [
+    {
+      "name": "before",
+      "test": "capture_persistence::tests::sealed_profile_compression_probe",
+      "exit": 0,
+      "log_sha256": "5cd6f02bcae2d6c40bc3245b17da1fab9929ca4363d52f80e1a29bbd691a6dd9"
+    },
+    {
+      "name": "wav-before",
+      "test": "wav_export::tests::sealed_profile_export_reference",
+      "exit": 0,
+      "log_sha256": "6815c9e21c9604684c168ce46c2c3cc9926218ff8bcb9e202f526a6e44fc0067"
+    },
+    {
+      "name": "migration",
+      "test": "capture_persistence::tests::sealed_profile_compression_probe",
+      "exit": 0,
+      "log_sha256": "62e2b68e65ffc5d13f930a8bfc6e8707404c8a34953059eccfa00db9d0427915"
+    },
+    {
+      "name": "after",
+      "test": "capture_persistence::tests::sealed_profile_compression_probe",
+      "exit": 0,
+      "log_sha256": "2e5d8ea1c787412e5b1c5729eb91f91c48af53a2d846297208a8f35d4f82c565"
+    },
+    {
+      "name": "wav-after",
+      "test": "wav_export::tests::sealed_profile_export_reference",
+      "exit": 0,
+      "log_sha256": "3ff4bdab6a4d41fbce6f26b6403de8e9ee3ea646d8cb43908f9ddfaf01713995"
+    }
+  ],
+  "original_unchanged": true,
+  "old_blob_unchanged": true,
+  "sealed_old_bytes": 384064,
+  "sealed_new_bytes": 262824,
+  "saved_bytes": 121240,
+  "decoded_capture_blake3": "ceb886a770b4f14eb9e56fd069ab17517494d1208c5d6c70f904d901d03d0a50",
+  "manifest_version_after": 2,
+  "full_wav_pcm_sha256": "51966f89d016ade8cd01b32dfa8583cc2fbe452e5a3bc620f6dc44daeb3401e0",
+  "backing_only_pcm_sha256": "e4911029b436d2bcee6635d7780fc01b893fdca00f8fed34061822a53b3d9e58"
+}

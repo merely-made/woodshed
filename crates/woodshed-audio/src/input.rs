@@ -28,8 +28,8 @@ use std::time::Instant;
 
 use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
 use cpal::{Stream, StreamConfig};
-use pitch_detection::detector::mcleod::McLeodDetector;
 use pitch_detection::detector::PitchDetector as McLeodTrait;
+use pitch_detection::detector::mcleod::McLeodDetector;
 use pitch_detector::core::NoteName as PdNoteName;
 use pitch_detector::note::detect_note_in_range;
 use pitch_detector::note::hinted::HintedNoteDetector;
@@ -48,7 +48,8 @@ thread_local! {
     );
 }
 
-use crate::engine::AudioError;
+use crate::AudioError;
+use crate::capture_feed::{self, CaptureFeedConsumer, CaptureFeedControl, CaptureFeedProducer};
 
 // =================================================================
 // Analyzer trait — the contract every consumer of input audio meets.
@@ -64,6 +65,10 @@ use crate::engine::AudioError;
 /// - publish results through shared state (typically `Arc<Mutex<...>>`)
 ///   that UI / control threads read non-blockingly.
 pub trait Analyzer: Send {
+    /// Prepare from the actual stream configuration before callbacks begin.
+    /// Runs on the control thread, so analyzers may allocate rate-specific state.
+    fn prepare(&mut self, _sample_rate: u32) {}
+
     /// Process one batch of mono input samples. May be empty.
     fn process(&mut self, samples: &[f32], sample_rate_hz: f32, at: Instant);
 }
@@ -401,10 +406,10 @@ impl Analyzer for PitchAnalyzer {
                 ),
                 (DetectorKind::Fft, None) => {
                     detect_note_in_range(signal, &mut self.fft_detector, sample_rate, range)
-                }
+                },
                 (DetectorKind::Cepstrum, None) => {
                     detect_note_in_range(signal, &mut self.cepstrum_detector, sample_rate, range)
-                }
+                },
                 // McLeod returns a raw frequency + clarity; we
                 // resolve to note name / cents locally since
                 // pitch-detector's NoteDetectionResult builder
@@ -469,7 +474,7 @@ impl Analyzer for PitchAnalyzer {
                         self.history.pop_front();
                     }
                     self.history.push_back(note);
-                }
+                },
                 None => self.history.clear(),
             }
         }
@@ -556,32 +561,18 @@ fn compute_stable(history: &VecDeque<DetectedNote>) -> Option<DetectedNote> {
 }
 
 // =================================================================
-// Looper-capture analyzer — feeds an unbounded ring with input samples
-// for the song-mode recorder to consume.
+// Looper-capture analyzer — bounded SPSC input feed.
 // =================================================================
 
-/// Maximum samples buffered between input thread and consumer. ~3
-/// seconds at 48 kHz; if the consumer falls further behind we drop
-/// the oldest frames rather than blow memory. Practical worst case
-/// is "user backgrounded the app" — better to forget audio than to
-/// allocate without bound.
+/// Three seconds at 48 kHz. The queue never grows; rejected samples
+/// increment an overflow count that invalidates an armed/recording take.
 pub const LOOPER_CAPTURE_RING_LIMIT: usize = 48_000 * 3;
 
-/// Shared sample ring used by [`LooperCaptureAnalyzer`] (writer, audio
-/// thread) and the song engine (reader, output thread). Both sides
-/// lock the same mutex; held briefly.
-pub type LooperRing = Arc<Mutex<VecDeque<f32>>>;
-
-/// Input-side analyzer for song-mode loop recording. Pushes samples
-/// into a shared ring; the song engine drains the ring when its
-/// `recording` flag is on.
-///
-/// Cheap when not in use: when the analyzer is disabled, `process` is
-/// a near-no-op and the ring is cleared so old audio doesn't leak
-/// into the next recording session.
+/// Input-side owner of the capture producer. Disabled by default and
+/// registered alongside pitch/onset on the one lazy input stream.
 pub struct LooperCaptureAnalyzer {
-    ring: LooperRing,
-    enabled: Arc<Mutex<bool>>,
+    producer: CaptureFeedProducer,
+    handle: LooperCaptureHandle,
 }
 
 impl Default for LooperCaptureAnalyzer {
@@ -592,72 +583,64 @@ impl Default for LooperCaptureAnalyzer {
 
 impl LooperCaptureAnalyzer {
     pub fn new() -> Self {
+        let (producer, consumer, control) = capture_feed::channel(LOOPER_CAPTURE_RING_LIMIT);
         Self {
-            ring: Arc::new(Mutex::new(VecDeque::with_capacity(
-                LOOPER_CAPTURE_RING_LIMIT,
-            ))),
-            enabled: Arc::new(Mutex::new(false)),
+            producer,
+            handle: LooperCaptureHandle {
+                control,
+                consumer: Arc::new(Mutex::new(Some(consumer))),
+            },
         }
     }
 
-    /// Clone-able handle into the analyzer's shared state.
     pub fn handle(&self) -> LooperCaptureHandle {
-        LooperCaptureHandle {
-            ring: Arc::clone(&self.ring),
-            enabled: Arc::clone(&self.enabled),
-        }
+        self.handle.clone()
     }
 }
 
 impl Analyzer for LooperCaptureAnalyzer {
+    fn prepare(&mut self, sample_rate: u32) {
+        self.producer.prepare(sample_rate);
+    }
+
     fn process(&mut self, samples: &[f32], _sample_rate_hz: f32, _at: Instant) {
-        let enabled = *self.enabled.lock().unwrap();
-        if !enabled {
-            return;
-        }
-        let mut ring = self.ring.lock().unwrap();
-        for &s in samples {
-            ring.push_back(s);
-            if ring.len() > LOOPER_CAPTURE_RING_LIMIT {
-                ring.pop_front();
-            }
-        }
+        self.producer.push_samples(samples);
     }
 }
 
-/// Caller-side handle for the looper-capture analyzer. Used by the
-/// song engine (drain samples) and the UI (enable/disable / clear).
+/// Cloneable control handle. The mutex protects only the one-time transfer
+/// of consumer ownership on a control thread; callbacks never acquire it.
 #[derive(Clone)]
 pub struct LooperCaptureHandle {
-    ring: LooperRing,
-    enabled: Arc<Mutex<bool>>,
+    control: CaptureFeedControl,
+    consumer: Arc<Mutex<Option<CaptureFeedConsumer>>>,
 }
 
 impl LooperCaptureHandle {
-    /// Enable or disable capture. Disabling also drains the ring so
-    /// the next enable starts clean.
+    /// Change capture generation on enable/disable edges. Earlier samples
+    /// remain bounded in the queue but cannot enter a later take.
     pub fn set_enabled(&self, on: bool) {
-        let mut e = self.enabled.lock().unwrap();
-        if !*e && on {
-            // Edge: off → on. Drain stale samples.
-            self.ring.lock().unwrap().clear();
-        }
-        *e = on;
+        self.control.set_enabled(on);
     }
 
     pub fn is_enabled(&self) -> bool {
-        *self.enabled.lock().unwrap()
+        self.control.is_enabled()
     }
 
-    /// Borrow the shared ring for the audio engine to drain. Locks
-    /// for the duration of the closure.
-    pub fn ring_arc(&self) -> LooperRing {
-        Arc::clone(&self.ring)
+    /// Move the sole reader into the output processor. Calling through any
+    /// clone again returns `None`; extraction never happens on a callback.
+    pub fn take_consumer(&self) -> Option<CaptureFeedConsumer> {
+        self.consumer.lock().unwrap().take()
     }
 
-    /// Forcibly clear any buffered samples.
+    /// Reset the capture generation without changing its enabled state.
     pub fn clear(&self) {
-        self.ring.lock().unwrap().clear();
+        self.control.clear();
+    }
+
+    /// Actual configured input rate; zero before stream preparation.
+    pub fn source_rate(&self) -> u32 {
+        self.control.source_rate()
     }
 }
 
@@ -712,8 +695,17 @@ impl InputEngineBuilder {
         (self, handle)
     }
 
+    /// Prepare registered analyzers for an explicitly configured source.
+    /// Useful for device-free input harnesses. `build` always repeats this
+    /// with the actual CPAL configuration; there is no default capture rate.
+    pub fn prepare_analyzers(&mut self, source_rate: u32) {
+        for analyzer in &mut self.analyzers {
+            analyzer.prepare(source_rate);
+        }
+    }
+
     /// Open the cpal input stream and start running the analyzers.
-    pub fn build(self) -> Result<InputEngine, AudioError> {
+    pub fn build(mut self) -> Result<InputEngine, AudioError> {
         let host = cpal::default_host();
         let device = host
             .default_input_device()
@@ -724,8 +716,10 @@ impl InputEngineBuilder {
         let sample_format = supported.sample_format();
         let config: StreamConfig = supported.into();
         let channels = config.channels as usize;
-        let sample_rate_hz = config.sample_rate as f32;
+        let source_rate = config.sample_rate;
+        let sample_rate_hz = source_rate as f32;
 
+        self.prepare_analyzers(source_rate);
         let mut analyzers = self.analyzers;
         // Reusable scratch buffer for the per-callback mono downmix.
         // Grows on first callback then stays sized.
@@ -757,7 +751,7 @@ impl InputEngineBuilder {
 
         Ok(InputEngine {
             _stream: stream,
-            sample_rate_hz,
+            source_rate,
         })
     }
 }
@@ -766,12 +760,17 @@ impl InputEngineBuilder {
 /// running. Drop it to stop capture.
 pub struct InputEngine {
     _stream: Stream,
-    sample_rate_hz: f32,
+    source_rate: u32,
 }
 
 impl InputEngine {
     pub fn sample_rate_hz(&self) -> f32 {
-        self.sample_rate_hz
+        self.source_rate as f32
+    }
+
+    /// Actual configured input rate, without a provisional default or cast.
+    pub fn source_rate(&self) -> u32 {
+        self.source_rate
     }
 }
 
@@ -809,6 +808,46 @@ impl TunerEngine {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn capture_consumer_is_transferred_once_and_rate_precedes_callbacks() {
+        let mut analyzer = LooperCaptureAnalyzer::new();
+        let handle = analyzer.handle();
+        let mut consumer = handle.take_consumer().unwrap();
+        assert!(handle.clone().take_consumer().is_none());
+        assert_eq!(handle.source_rate(), 0);
+        analyzer.prepare(44_100);
+        assert_eq!(handle.source_rate(), 44_100);
+        assert_eq!(consumer.source_rate(), 44_100);
+        assert!(consumer.validate_output_rate(48_000).is_err());
+        handle.set_enabled(true);
+        analyzer.process(&[0.4, -0.2], 44_100.0, Instant::now());
+        assert_eq!(consumer.pop_sample(), Some(0.4));
+        assert_eq!(consumer.pop_sample(), Some(-0.2));
+        handle.clear();
+        assert!(handle.is_enabled());
+        handle.set_enabled(false);
+        assert!(!handle.is_enabled());
+    }
+
+    #[test]
+    fn builder_prepares_capture_from_explicit_source_configuration() {
+        let (mut builder, handle) = InputEngineBuilder::new().with_looper_capture();
+        assert_eq!(handle.source_rate(), 0);
+        builder.prepare_analyzers(48_000);
+        assert_eq!(handle.source_rate(), 48_000);
+        assert!(
+            handle
+                .take_consumer()
+                .unwrap()
+                .validate_output_rate(48_000)
+                .is_ok()
+        );
+        // Physical build supplies its own configuration, never retaining a
+        // harness/provisional rate; repeated preparation updates the handle.
+        builder.prepare_analyzers(44_100);
+        assert_eq!(handle.source_rate(), 44_100);
+    }
 
     #[test]
     fn rms_of_silence_is_zero() {

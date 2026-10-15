@@ -17,7 +17,8 @@ repository = "https://github.com/merely-made/woodshed/tree/main/ports/ringdown"
 # — set it from `cargo msrv` (or a pinned-toolchain CI job) once the crate has
 # code, and hold it in CI thereafter. Until then this is a placeholder, not a
 # promise: see the retinue workspace for how the family states and enforces one.
-rust-version = "1.88"
+
+rust-version = "1.97.1"
 
 [workspace.dependencies]
 ringdown = { path = "crates/ringdown", version = "0.1.0" }

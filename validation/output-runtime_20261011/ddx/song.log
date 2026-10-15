@@ -1,0 +1,8 @@
+DDX mode=song output_streams=1 sample_rate=48000
+DDX 2.132s phase=cold request_ms=68.362
+DDX 2.132s phase=cold ready_ms=68.434
+DDX 7.133s phase=warm request_ms=0.003
+DDX 7.133s phase=warm ready_ms=0.174
+DDX 12.190s phase=edited request_ms=56.125
+DDX 12.190s phase=edited ready_ms=56.196
+DDX complete output_streams=1 device_frames=822272 processing_blocks=803 device_events=0

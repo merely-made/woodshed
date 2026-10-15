@@ -1,0 +1,10 @@
+# Fresh process using the saved isolated authoring profile, still device-free.
+assert snap transport == IDLE
+assert snap item-count == 0
+assert snap appearance-id == theme:copy-1
+assert snap appearance-mode == hc_dark
+assert snap appearance-editor == false
+capture reopened-hc-dark
+click role:button Appearance
+settle 1
+capture reopened-choice

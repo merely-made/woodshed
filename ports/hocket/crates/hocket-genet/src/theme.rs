@@ -11,13 +11,16 @@
 //! property set inline. S5 replaces the waveform/meter stand-ins with
 //! chisel leaves.
 
-/// The full stylesheet. Static (no per-frame interpolation); the design
-/// is a fixed warm-dark world for v1.
+/// Recorder layout and the retained warm default. Shared roles override colors
+/// only after an explicit application appearance selection.
 pub fn sheet() -> String {
-    r#"
-/* Palette lives on `.app`, the tree's root element — so `:root` and `.app`
-   are the same element here and the vars cascade to every descendant, like the
-   inline per-lane `--voice` does. */
+    format!(
+        "{}\n{}",
+        r#"
+/* Recorder colors live on `.app`; the desktop wrapper receives shared root
+   tokens. Semantic voice/record colors and inline lane `--voice` values stay
+   with the recorder. */
+.hocket-desktop { --ground: #17130e; --surface: #201a12; --text: #ece3d2; --voice-amber: #e0a64b; }
 .app { display: flex; flex-direction: column; width: 100%; height: 100%;
        box-sizing: border-box; font-family: sans-serif; font-size: 15px;
        --ground: #17130e; --surface: #201a12; --surface-2: #2b2318; --raised: #342a1c;
@@ -41,7 +44,7 @@ pub fn sheet() -> String {
    shouts over the session name it abuts. Amber because it is actionable
    information rather than a fault. Wide enough that the common
    "Version x.y.z available" fits whole; longer failure text still
-   ellipsizes, and `--update-now` prints it in full. */
+   ellipsizes, and `--update-now` prints it in full.
    `flex-shrink: 0` is what actually keeps it whole: in this flex row a
    default-shrink item gets squeezed and ellipsises mid-word regardless of
    max-width. The cap still bounds a long failure message. */
@@ -96,56 +99,6 @@ pub fn sheet() -> String {
 .handoff:hover { background-color: #edb45a; }
 .handoff-note { text-align: center; color: var(--text-faint); font-size: 11px; padding-top: 8px; }
 
-/* loop table */
-.table { display: flex; flex-direction: column; flex-grow: 1; min-width: 0; min-height: 0;
-         padding: 12px 20px 8px; overflow: scroll; }
-.table-head { display: flex; padding: 0 2px 6px; }
-.table-hint { flex-grow: 1; text-align: right; color: var(--text-faint); font-size: 12px; }
-
-.lane { display: flex; align-items: stretch; background-color: var(--surface);
-        border: 1px solid var(--line-soft); border-radius: 14px; padding: 11px 15px; margin-bottom: 9px; }
-.lane-armed { border: 1px solid var(--voice); background-color: var(--surface-2); }
-.lane-rec { border: 1px solid var(--record); background-color: var(--surface-2); }
-
-.lane-id { display: flex; flex-direction: column; width: 168px; }
-.lane-name { display: flex; align-items: center; }
-.arm { width: 15px; height: 15px; border-radius: 8px; border: 2px solid var(--text-faint);
-       margin-right: 9px; }
-.lane-armed .arm { border: 2px solid var(--voice); background-color: var(--voice); }
-.lane-rec .arm { border: 2px solid var(--record); background-color: var(--record); }
-.lane-title { color: var(--text); font-size: 16px; }
-.lane-meta { display: flex; padding-top: 6px; }
-.tag { font-size: 11px; color: var(--text-dim); background-color: var(--raised);
-       padding: 2px 7px; border-radius: 6px; margin-right: 8px; }
-.tag-voice { color: var(--voice); }
-
-.lane-wave { display: flex; flex-direction: column; flex-grow: 1; padding: 0 16px; }
-.wave-summed { height: 40px; display: flex; align-items: center; flex-grow: 1; }
-.layers { display: flex; flex-direction: column; padding-top: 4px; }
-.layer { display: flex; align-items: center; height: 15px; }
-.lnum { color: var(--text-faint); font-size: 9px; width: 18px; }
-.layer-muted { opacity: 0.34; }
-.wave-empty { color: var(--text-faint); font-size: 12px; align-self: center; }
-
-.layer-wave { display: flex; align-items: center; flex-grow: 1; height: 11px; }
-.wave-unavailable { color: var(--text-faint); font-size: 10px; align-self: center; }
-
-.lane-ctl { display: flex; align-items: center; }
-.lctl { width: 30px; height: 30px; border-radius: 8px; background-color: var(--raised);
-        color: var(--text-dim); text-align: center; line-height: 30px; font-size: 12px; margin-left: 6px;
-        border: 1px solid transparent; }
-.lctl:hover { color: var(--text); border-color: var(--line); }
-.lctl-on { color: var(--voice); }
-.add-track { text-align: center; color: var(--text-faint); font-size: 13px; padding: 12px;
-             border: 1px dashed var(--line); border-radius: 14px; }
-.add-track:hover { color: var(--text-dim); border-color: var(--text-faint); }
-
-/* transport */
-.transport { display: flex; align-items: center; padding: 12px 24px 14px; flex-shrink: 0;
-             border-top: 1px solid var(--line-soft); background-color: var(--surface); }
-.t-left { display: flex; align-items: center; flex-grow: 1; }
-.t-right { display: flex; align-items: center; flex-grow: 1; }
-.t-right-inner { display: flex; align-items: center; margin-left: auto; }
 .audio-devices { display: flex; flex-direction: column; align-items: flex-end; margin-right: 14px; }
 .device-select { display: flex; align-items: center; margin-bottom: 3px; }
 .device-label { color: var(--text-faint); font-size: 9px; width: 24px; text-transform: uppercase; }
@@ -162,42 +115,47 @@ pub fn sheet() -> String {
 .device-select .select-option:hover { color: var(--text); background-color: var(--raised); }
 .audio-status { color: var(--text-faint); font-size: 9px; max-width: 178px; overflow: hidden;
                 white-space: nowrap; text-overflow: ellipsis; }
-.readout { display: flex; flex-direction: column; margin-right: 18px; }
-.readout-val { font-size: 22px; color: var(--text); }
-.readout-val small { font-size: 12px; color: var(--text-dim); }
-.stepper { display: flex; align-items: center; }
-.step { width: 26px; height: 26px; border-radius: 7px; background-color: var(--raised);
-        border: 1px solid var(--line-soft); color: var(--text-dim); text-align: center; line-height: 24px; }
-.step:hover { color: var(--text); }
-.step-val { font-size: 22px; color: var(--text); padding: 0 10px; }
-.toggles { display: flex; flex-direction: column; }
-.toggle { display: flex; align-items: center; background-color: var(--surface-2);
-          border: 1px solid var(--line-soft); color: var(--text-dim); font-size: 13px;
-          padding: 7px 12px; border-radius: 10px; margin-bottom: 6px; }
-.toggle-on { color: var(--text); border-color: var(--line); }
-.led { width: 8px; height: 8px; border-radius: 4px; background-color: var(--text-faint); margin-right: 8px; }
-.toggle-on .led { background-color: var(--voice-teal); }
+"#,
+        hocket_views::theme::sheet()
+    )
+}
+/// Portable built-in copy retains the recorder's exact palette in dark mode.
+pub fn builtin() -> tabard::Theme {
+    let mut theme = tabard::Theme::new(
+        crate::appearance::PRODUCT_DEFAULT,
+        "Hocket warm",
+        tinct::Seeds {
+            primary: tinct::Srgb::rgb(0xe0, 0xa6, 0x4b),
+            secondary: tinct::Srgb::rgb(0x56, 0xb3, 0xa8),
+            tertiary: tinct::Srgb::rgb(0xe0, 0x79, 0x6a),
+            neutral: tinct::Srgb::rgb(0x20, 0x1a, 0x12),
+            text_header: None,
+            text_body: None,
+            success: tinct::Srgb::rgb(0xa9, 0xb9, 0x6b),
+            danger: tinct::Srgb::rgb(0xe2, 0x49, 0x3a),
+            dark: true,
+        },
+    );
+    theme.source = tabard::theme::registry::ThemeSource::BuiltIn;
+    theme.mode_sheets.insert(
+        "dark".into(),
+        vec![format!(
+            "{}\n.hocket-desktop, .app, .hocket-recorder {{ --line:#3a3020; --line-soft:#2e2619; }}",
+            DEFAULT_TOKENS
+        )],
+    );
+    theme
+}
 
-.record-wrap { display: flex; flex-direction: column; align-items: center; }
-.record { width: 76px; height: 76px; border-radius: 38px; background-color: #2a2013;
-          border: 2px solid var(--line); display: flex; align-items: center; justify-content: center; }
-.record-armed { border: 2px solid var(--record); }
-.record-core { width: 36px; height: 36px; border-radius: 18px; background-color: var(--record); }
-.record:hover { border-color: var(--record); }
-.record-label { color: var(--text-dim); font-size: 12px; padding-top: 7px; }
-.record-label b { color: var(--text); }
+const DEFAULT_TOKENS: &str = ":root { --tabard-color-bg:#17130e; --tabard-color-surface:#201a12; --tabard-color-surface-2:#2b2318; --tabard-color-surface-hover:#342a1c; --tabard-color-text:#ece3d2; --tabard-color-text-dim:#a3937a; --tabard-color-text-disabled:#6f6350; --tabard-color-text-header:#ece3d2; --tabard-color-primary:#e0a64b; --tabard-color-on-primary:#17130e; --tabard-syntax-link:#56b3a8; --tabard-syntax-emphasis:#ece3d2; --tabard-syntax-keyword:#e0a64b; --tabard-syntax-string:#a9b96b; --tabard-syntax-number:#e0796a; }";
 
-.stop { width: 46px; height: 46px; border-radius: 12px; background-color: var(--surface-2);
-        border: 1px solid var(--line); color: var(--text-dim); text-align: center; line-height: 44px;
-        font-size: 16px; margin-right: 16px; }
-.stop:hover { color: var(--text); }
-.meter { display: flex; align-items: flex-end; }
-.mbars { display: flex; align-items: flex-end; height: 46px; margin-right: 12px; }
-.mcol { display: flex; flex-direction: column; align-items: center; margin-right: 4px; }
-.mbar-stack { display: flex; flex-direction: column-reverse; width: 12px; height: 40px; }
-.mlbl { color: var(--text-faint); font-size: 9px; padding-top: 3px; }
-.mseg { height: 3px; margin-top: 2px; border-radius: 1px; }
-.mpeak { color: var(--text-dim); font-size: 11px; }
-"#
-    .to_string()
+/// Project authorship/track colors and recording red remain semantic colors.
+pub fn role_css() -> &'static str {
+    ".hocket-desktop, .app, .hocket-recorder { --ground:var(--tabard-color-bg); --surface:var(--tabard-color-surface); --surface-2:var(--tabard-color-surface-2); --raised:var(--tabard-color-surface-hover); --line:var(--tabard-color-surface-hover); --line-soft:var(--tabard-color-surface-hover); --text:var(--tabard-color-text); --text-dim:var(--tabard-color-text-dim); --text-faint:var(--tabard-color-text-disabled); }"
+}
+
+/// Sparse authored sheets can use shared tokens or recorder selectors. Omitted
+/// token roles retain the warm palette rather than becoming unset CSS values.
+pub fn default_tokens() -> &'static str {
+    DEFAULT_TOKENS
 }

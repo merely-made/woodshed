@@ -1,0 +1,117 @@
+{
+  "base": "cd69da04bb7ee2719d358fdff91c46317b965c2e",
+  "cpu_source": "900094c",
+  "source_note": "Family tests and four metadata checks ran with source through 900094c; Hocket receipts integrated afterward; validation script scope additions are frozen below. Later changes are documentation/evidence only.",
+  "provider": "2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc",
+  "toolchain": "1.97.1",
+  "outside_repository_cargo_config": true,
+  "cpu_scopes": {
+    "woodshed": {
+      "passed": 870,
+      "ignored": 1,
+      "suites": 18
+    },
+    "hocket": {
+      "passed": 166,
+      "ignored": 1,
+      "suites": 10
+    },
+    "redshank": {
+      "passed": 261,
+      "ignored": 7,
+      "suites": 17
+    },
+    "ringdown": {
+      "passed": 157,
+      "ignored": 0,
+      "suites": 7
+    }
+  },
+  "passed_total": 1454,
+  "ignored_total": 9,
+  "commands": [
+    "TMPDIR=/tmp scripts/validate-workspace.sh test <woodshed|hocket|redshank|ringdown>",
+    "TMPDIR=/tmp scripts/validate-workspace.sh lockfile <woodshed|hocket|redshank|ringdown>"
+  ],
+  "woodshed_target": "/Users/markik/Code/worktrees/woodshed-audit-20261011/target",
+  "native": {
+    "hocket": "5 processes, 19 reviewed captures; source f5e0aed, copied source hashes match integration",
+    "redshank": "3 processes, 12 reviewed captures; source 7d44ab1",
+    "woodshed": "first run rejected: locked Mac, 0 presented frames, Occluded surface; no native success or reopen claimed"
+  },
+  "remaining": [
+    "physical input/output, audible replay, microphone permission and latency calibration",
+    "Woodshed native Set flow and keeper-backed reopen",
+    "SongDoc authority migration, companion PCM and WAV export",
+    "one output clock, callback mutex removal and recording preallocation",
+    "Hocket native project-file/handoff and keeper flows",
+    "Redshank Turnstone/native capability gates and ruled repository extraction",
+    "Windows/Linux native presentation and release publication"
+  ],
+  "frozen_files": {
+    ".github/workflows/ci.yml": "b606e4c9f1b89ddb0959fae05ff5123bf32cfa4222ade2922524190befdf098e",
+    ".github/workflows/release-windows.yml": "d778d786564eef4320714a3fc8c29decde371348bcf82b471d5aac1e83ed25e0",
+    "Cargo.lock": "799db1d7ca2f2e7d3f64ca983a2a2ec4203c2738e5e9ad3d4def3286f752b161",
+    "Cargo.toml": "001e55aeec4982a9675872734cf591e9df53316c6d266a74976c199a42be09be",
+    "crates/woodshed-core/src/audio.rs": "89183b5715cb38b1b3b246b3fd8c69a89924ceff6bb61feaf5cb00c8cc0d2df6",
+    "crates/woodshed-core/src/lib.rs": "2278667982a71a328e94a3725f647a51025d38a2dde6dae28f2d405c538a8c2f",
+    "crates/woodshed-core/src/loop_plan.rs": "ab499eeb1b8b31a5580ca297a4b4e8a392f8861db0acad1e19035f7674373b6e",
+    "crates/woodshed-core/src/storage.rs": "8f09c0a2adedf6af35a33b377978986451923f13ddaef2a1071149e41c5c4e0e",
+    "crates/woodshed-genet/src/audio.rs": "e143b94088b735281ce5b39624b360b5fc0cb6ee0eeda0739960a84469eb9809",
+    "crates/woodshed-genet/src/audio/loop_projection.rs": "fc555c14e4bb82aab12b9cba2a9377cc7e1acbfd553aa8d1582295430a1b585e",
+    "crates/woodshed-genet/src/shared.rs": "864d9d680183420a711342060ad19eb8ef0d19f23d10a74064377d2cbbb9d6f3",
+    "crates/woodshed-genet/src/sync.rs": "9ca69c88622809bc09412665e91f24341814c593425a1f22ec2ce20e6f2e1a35",
+    "crates/woodshed-views/src/stage.rs": "0e46dc13a32e2ca97dfbb5b1a3c0e4d758d4feed32d83c4d97197f7eb075f5c8",
+    "crates/woodshed-views/src/stage/looper.rs": "7754c7421df130501cde257c320cc9f3636dfe520992e5823bdafc2f090f73c3",
+    "design_docs/receipts/audio_foundation_20261011/redshank-consumer/summary.json": "21dbc407d579cff6d130a6be3599719ee20a788a50d7de9c1d5e8196f19abb1f",
+    "design_docs/receipts/audio_foundation_20261011/retention/fallback.scn": "1235c929ea00850f2c884e1793671b2529e610bb82d0f64bc5173c41ef82e00f",
+    "design_docs/receipts/audio_foundation_20261011/retention/reopen.scn": "49f0fb882b230585ed91b17a431347b9232545acf15ae8037eb4e395ca6a4be6",
+    "design_docs/receipts/audio_foundation_20261011/retention/summary.json": "e45645ae8f1e47ef113d47f16b48214edba1f497bbc33eef3e6f9e830b91fae7",
+    "design_docs/receipts/audio_foundation_20261011/retention/write.scn": "6a05e53a4d4618944c12c76ff275e746a01941118d17b87ec093691a4418289d",
+    "ports/hocket/Cargo.lock": "df436f4767e55e04a6e77c9a5b6ffc81d0c260be61ff72d9dfd7ef3c7059dc44",
+    "ports/hocket/Cargo.toml": "4c785ae82642d31d508ab86050784a2efe3080560f7ec77ecef3f618db7294c6",
+    "ports/hocket/crates/hocket-engine/Cargo.toml": "80b580c776092c1b2d27d6ed267c590b5c51d86285f4703bb1e1708d6782681c",
+    "ports/hocket/crates/hocket-engine/src/lib.rs": "b6db36118dbaa6c7054ef97d0645955721704feefd8bf8d98778a946f40c51db",
+    "ports/hocket/crates/hocket-engine/src/offline_tests.rs": "88d04eb8499c2accad25e4a199b306ec408adb5fcd327eaec399e0b1ee06eba7",
+    "ports/hocket/crates/hocket-engine/tests/capture_pipeline.rs": "5c4b0dd89d79ee6b4788a0ea9acd9ecc08e9db071e5a0fc463ceafd261f365ba",
+    "ports/hocket/crates/hocket-genet/Cargo.toml": "66568a4440468a4740d7de7c380b18d956035b8ec28853ec9ac0362fe9aebb64",
+    "ports/hocket/crates/hocket-genet/src/appearance_tests.rs": "50b371e8753e40049a8ab0a2b2a02240d19f9fcd8c0a34f6d2e974fbdff43ebf",
+    "ports/hocket/crates/hocket-genet/src/main.rs": "ae9334b831cfb2baa21d261739643c9512adc55ab5cf782db6736c17ed4698b6",
+    "ports/hocket/crates/hocket-genet/src/project_io.rs": "beaea20c110b8fa3287e4ae3e2f9a34c99a886f47b075e7de997bf642308cfe6",
+    "ports/hocket/crates/hocket-genet/src/scenario.rs": "4fcb608e13382ae22cbe24e6fbdde237f22640b318c51a6f93bff3963b69bebb",
+    "ports/hocket/crates/hocket-genet/src/state.rs": "5ff8b52ef9eeb833496656bff16126bafc8fd41a1db21fbd9fc814b2543466b7",
+    "ports/hocket/crates/hocket-genet/src/view.rs": "139d15108756b0496e1bb2b9329bce760569415e84f3b957d992a1720101e4e2",
+    "ports/hocket/crates/hocket-headless/Cargo.toml": "5bb00e56cf51eb31482640b3d491861a6e2980fc7753c1bc74d0c7cf97bebae9",
+    "ports/hocket/crates/hocket-headless/src/main.rs": "9a3eee1bccf0af91acf808ccee36c64297e020fca4977403389d27ef647a9aec",
+    "ports/hocket/crates/hocket-project/Cargo.toml": "c7fe7d3dc634cc5a92fed516fc186ab3afcf6161519f2994e2498eaa6ca1fcfd",
+    "ports/hocket/crates/hocket-project/src/export.rs": "4ee4f8e30176707a137e6712c7a4779c2ff763ff471abcc5a5828e1ed0af531c",
+    "ports/hocket/crates/hocket-project/src/handoff.rs": "03f01ec60ff5a95c89c940e5af12bb35f713d67ba2dc6c316fbc10467856dee5",
+    "ports/hocket/crates/hocket-project/src/lib.rs": "2e975a8c0fa9f7d67c5399ed8ff4a91a7171ff3121f7bb9473bea76dcadd667e",
+    "ports/hocket/crates/hocket-project/src/media.rs": "a9a851ef81b927c8287b21f5f76ce1aed92edb23cde887accc3b6f3c3326919d",
+    "ports/hocket/crates/hocket-project/src/project_store.rs": "6155ae3fecc47be345d419879483ad4ea0e980f9f99342be7cb753fb96e5d525",
+    "ports/hocket/crates/hocket-project/src/waveform.rs": "afd561d806eeedaf0e45989fd317c17f6cd3167fa7d3cbe4438b3c6e46d29184",
+    "ports/hocket/design_docs/receipts/firewheel_20261011/source-freeze.json": "3cde7356dce7e4aee956642507398e6f65475e140d811932d246b66074db2c34",
+    "ports/hocket/scenarios/recorder_controls.scn": "192d793adfa49907b0c95079260e0efe96d210f17aa111708ad009d4886254be",
+    "ports/redshank/Cargo.lock": "acd936d5aaf538d1e19e713974b4144c106389cc0914072041dfef874b7c2936",
+    "ports/redshank/Cargo.toml": "5adbbed5b68cb4b2097435cc242e58735b45da6561dc504c6680508889153f8f",
+    "ports/redshank/playback/Cargo.toml": "5c862e7fcb6d2f0d478bc586752b48515d3552d70fbd888a9ae9727c483e7ac1",
+    "ports/redshank/playback/src/backend.rs": "970d337fc61a32fd39e7d9fa85537c1f2fd3996ac66dc22cfa5deab5b569a3e0",
+    "ports/redshank/playback/src/lib.rs": "9a3be551e705c897ee70e292791b943c5540136116afdb7fa31c4573f2cba14e",
+    "ports/redshank/playback/src/output.rs": "9ab867c3884cb32610e42f4b02e0596b39536d45f1560aff955e4e69744fdb69",
+    "ports/redshank/storage/src/lib.rs": "a98f35e6c0f5a1a3eeb6f5d6e8b1401df120c814d3a5b5926f00dec2c714c6b7",
+    "rust-toolchain.toml": "d62fe5942695d5651454b25402abba836210f5e3bd335a150589733dc9cbf39c",
+    "scenarios/set_loop_plan.scn": "21d2e51e74a10952306137bb4f24cc8dbde2f43cfb59dc72a4f20af354a89ced",
+    "scenarios/set_loop_plan_reopen.scn": "36be45927f740b973600de0f7a0d831a17af3093ddfab36f33c317e2578dcf5e",
+    "scripts/validate-workspace.sh": "74382fbcfb48ee084bfa5f4ec57943fd601bd6def874eaadba6f2600e5f29d10"
+  },
+  "maintainer_publication_policy": {
+    "github_workflows": false,
+    "default_pull_request": false,
+    "publication": "direct main push with scoped validation appropriate to the change",
+    "retired_frozen_files": [
+      ".github/workflows/ci.yml",
+      ".github/workflows/release-windows.yml"
+    ],
+    "note": "Earlier workflow hashes and Actions observations remain evidence for their recorded source. Workflow removal changes publication plumbing and documentation; no product Rust source, manifest, lockfile, or family-validation script changed."
+  }
+}

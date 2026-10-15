@@ -44,3 +44,5 @@
 *.kojo merge=weave
 *.mill merge=weave
 *.dart merge=weave
+# Preserve the imported OFL notice bytes, including their original trailing spaces.
+assets/fonts/*/OFL.txt whitespace=-blank-at-eol

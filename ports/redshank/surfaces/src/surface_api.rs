@@ -60,6 +60,13 @@ pub fn compact_descriptor() -> SurfaceDescriptor {
 pub fn compact_stylesheet() -> String {
     let mut sheet = crate::theme::sheet();
     sheet.push_str(HOSTED_DOCK_CSS);
+    for (seed, mode) in crate::theme::SCOPES {
+        let roles = crate::theme::host_role_css(seed, mode);
+        sheet.push_str(&roles.replace(
+            ".rs-app",
+            &format!(".rs-app.rs-hosted-dock.{}", scope_class(seed, mode)),
+        ));
+    }
     sheet
 }
 
