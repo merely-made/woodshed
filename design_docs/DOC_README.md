@@ -235,6 +235,12 @@ before any other doc in this directory.
 
 ## Current Supporting Design
 
+- [2026-10-14_dsp_graphshell_hocket_survey_brief.md](2026-10-14_dsp_graphshell_hocket_survey_brief.md)
+  — Verified survey of shared frame-driven DSP between Hocket and Woodshed
+  (divergent capture schedules and bar-length rules, Hocket guard gaps), what
+  "Graphshell in Woodshed" can mean against the custody-only dependency and
+  the second-owner rule, and Hocket handoff over Mere. Lists six maintainer
+  decisions and three follow-ups started 2026-10-14.
 - [2026-07-15_material_and_touch_model.md](2026-07-15_material_and_touch_model.md)
   — Material and Touch reframe for the Stage/Set model; design direction, not a
   standalone implementation plan.
