@@ -1,6 +1,6 @@
 use cambium::{
-    HoverEvent, HoverPhase, clickable, el, graph_canvas_swatch_with_drag_and_relations, on_hover,
-    text,
+    HoverEvent, HoverPhase, clickable, el, graph_canvas_swatch_with_focus_and_drag_and_relations,
+    on_hover, text,
 };
 use woodshed_core::RelatedSuggestion;
 
@@ -137,35 +137,46 @@ pub(super) fn panel(ui: &UiState) -> UiChild {
         Box::new(
             el(
                 "div",
-                (graph_canvas_swatch_with_drag_and_relations(
-                    &swatch,
-                    |ui: &mut UiState, id: String| {
-                        ui.stage.select_catalog_id(&id);
-                    },
-                    |ui: &mut UiState, id: Option<String>| {
-                        ui.related_hover = id
-                            .as_deref()
-                            .and_then(|id| ui.stage.related_target_for_id(id));
-                    },
-                    |_ui: &mut UiState, _drag| {},
-                    |ui: &mut UiState, relation| {
-                        ui.related_relation = (ui.related_relation.as_deref()
-                            != Some(relation.as_str()))
-                        .then_some(relation);
-                    },
-                    |_ui: &mut UiState, _relation| {},
-                    |ui: &mut UiState| {
-                        ui.related_expanded = !ui.related_expanded;
-                    },
-                ),
-                el(
-                    "div",
-                    super::canvas_camera::camera_controls(
-                        super::canvas_camera::CanvasSurface::Related,
-                        "related-camera",
+                (
+                    graph_canvas_swatch_with_focus_and_drag_and_relations(
+                        &swatch,
+                        |ui: &mut UiState, id: String| {
+                            ui.stage.select_catalog_id(&id);
+                        },
+                        |ui: &mut UiState, id: Option<String>| {
+                            ui.related_hover = id
+                                .as_deref()
+                                .and_then(|id| ui.stage.related_target_for_id(id));
+                        },
+                        |_ui: &mut UiState, _focus: Option<String>| {},
+                        |_ui: &mut UiState, _drag| {},
+                        |ui: &mut UiState, relation| {
+                            ui.related_relation = (ui.related_relation.as_deref()
+                                != Some(relation.as_str()))
+                            .then_some(relation);
+                        },
+                        |_ui: &mut UiState, _relation| {},
+                        |ui: &mut UiState| {
+                            ui.related_expanded = !ui.related_expanded;
+                        },
+                        |_ui: &mut UiState, _event: cambium::PointerEvent| {},
+                        |ui: &mut UiState, event: cambium::WheelEvent| {
+                            super::canvas_camera::apply_wheel(
+                                ui,
+                                super::canvas_camera::CanvasSurface::Related,
+                                &event,
+                            );
+                        },
                     ),
-                )
-                .attr("class", "related-camera-controls")),
+                    el(
+                        "div",
+                        super::canvas_camera::camera_controls(
+                            super::canvas_camera::CanvasSurface::Related,
+                            "related-camera",
+                        ),
+                    )
+                    .attr("class", "related-camera-controls"),
+                ),
             )
             .attr("class", "related-graph-col"),
         )
