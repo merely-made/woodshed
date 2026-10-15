@@ -256,7 +256,7 @@ cross-repo path consumers.
    `ports/redshank`. It is sequenced after the `graphshell` narrowing lands,
    because both touch the same manifests. *Landed 2026-10-15 for the root,
    `ports/hocket` and the recipe instrument, at Mere `90ce8f12d` with
-   `graphshell_endpoint::door`. Redshank remains open.* See the
+   `graphshell_endpoint::door`; Redshank followed the same day.* See the
    [rehome plan](2026-09-09_audio_ports_rehome_plan.md).
 5. **Hocket carrier: per-turn signed operations.** Each `HistoryNode` becomes
    one signed operation on a Stickleback domain, with blobs carried

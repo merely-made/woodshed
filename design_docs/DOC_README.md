@@ -42,7 +42,7 @@ before any other doc in this directory.
   clocks, capture custody and export. The separate adoption receipt records
   591 focused cases, seven native captures, compact reopening and exact WAV/media
   retention; shared DSP extraction remains later work. On October 15 the root,
-  Hocket and recipe roots repinned to Mere `90ce8f12d` and take custody from
+  Hocket, Redshank and recipe roots repinned to Mere `90ce8f12d` and take custody from
   `graphshell_endpoint::door` instead of `graphshell`. Coordinates
   standalone Firewheel streaming, independently gated consumer migration,
   local validation/release boundaries, Hocket Mesquite lifecycle, bounded Redshank retention,
