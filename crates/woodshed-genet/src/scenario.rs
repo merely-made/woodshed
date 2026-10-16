@@ -175,6 +175,7 @@ impl mesquite::Product for Product {
         let scenario_wait = match label {
             "p5a-wait-for-manual" => Some((2, std::time::Duration::from_secs(1))),
             "p5a-wait-on-manual" => Some((2, std::time::Duration::from_secs(2))),
+            "p5a-wait-on-retried-manual" => Some((4, std::time::Duration::from_secs(2))),
             _ => None,
         };
         if let Some((expected_cursor, minimum)) = scenario_wait {
