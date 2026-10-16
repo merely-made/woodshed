@@ -179,6 +179,7 @@ fn to_song(doc: &SongDoc) -> Song {
         .bars
         .iter()
         .map(|b| Bar {
+            legacy_clock: false,
             bpm: b.bpm,
             time_signature: TimeSignature::new(b.beats, 4),
             subdivision: Subdivision::QUARTER,
@@ -1171,6 +1172,7 @@ mod tests {
             ..Bar::default()
         };
         CaptureSnapshot {
+            legacy_clock: false,
             id: segment.id,
             bpm: segment.bpm,
             beats: segment.beats,
@@ -1380,6 +1382,7 @@ mod tests {
         let buffer = woodshed_audio::SampleBuffer::new(vec![0.25; frames], rate);
         (1..=count)
             .map(|card| CaptureSnapshot {
+                legacy_clock: false,
                 id: LoopSegmentId {
                     set: woodshed_core::working_sets::WorkingSetId(2),
                     card: woodshedding::rehearsal::CardId(card),
@@ -1456,6 +1459,7 @@ mod tests {
         plan.segments[0].bars = 1;
         let pcm = takes[0].buffer.clone();
         takes.push(CaptureSnapshot {
+            legacy_clock: false,
             id: plan.segments[0].id,
             bpm: plan.segments[0].bpm,
             beats: 1,

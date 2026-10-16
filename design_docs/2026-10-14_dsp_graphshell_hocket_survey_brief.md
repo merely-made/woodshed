@@ -236,8 +236,8 @@ cross-repo path consumers.
 
 1. **Bar length: Hocket's rule is canonical.** Use quarter-note BPM, honour
    `beat_unit` and round per beat (`audio_primitives::frames_per_bar`).
-   Woodshed's `Bar::duration_samples` and processor truncation move to it in a
-   later slice. That slice must re-qualify the WAV gold and sealed capture
+   Woodshed's `Bar::duration_samples` and processor truncation adopt it in
+   the October 16 slice, preserving old capture clocks as Mark subsequently ruled. That slice must re-qualify the WAV gold and sealed capture
    clocks for any meter where the two rules differ. Ringdown's loop-file
    convention is reconciled separately.
 2. **Graphshell: Woodshed-native first.** Woodshed keeps building its own

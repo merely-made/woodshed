@@ -1117,6 +1117,7 @@ mod tests {
         id: woodshed_core::loop_plan::LoopSegmentId,
     ) -> woodshed_core::loop_capture::LoopCaptureRef {
         woodshed_core::loop_capture::LoopCaptureRef {
+            clock: None,
             id,
             bpm: 120.0,
             beats: 4,

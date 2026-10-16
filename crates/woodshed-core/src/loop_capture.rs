@@ -12,7 +12,9 @@ use serde::{Deserialize, Serialize};
 
 use crate::loop_plan::LoopSegmentId;
 
-pub const CAPTURE_VERSION: u32 = 2;
+pub const CAPTURE_VERSION: u32 = 3;
+/// Absent clock fields retain whole-block clocks from manifests V1/V2.
+pub const PER_BEAT_CLOCK: &str = "per-beat-v1";
 pub const PCM_VERSION: u32 = 1;
 pub const MAX_CAPTURE_TAKES: usize = 256;
 pub const MAX_CAPTURE_FRAMES: usize = 16_777_216;
@@ -91,11 +93,13 @@ impl Default for LoopCaptureManifest {
 
 impl LoopCaptureManifest {
     pub fn is_empty(&self) -> bool {
-        self.version == CAPTURE_VERSION && self.namespace.is_none() && self.takes.is_empty()
+        matches!(self.version, 1 | 2 | CAPTURE_VERSION)
+            && self.namespace.is_none()
+            && self.takes.is_empty()
     }
 
     pub fn validate(&self) -> Result<(), String> {
-        if !matches!(self.version, 1 | CAPTURE_VERSION) {
+        if !matches!(self.version, 1 | 2 | CAPTURE_VERSION) {
             return Err("Unsupported loop capture manifest version.".into());
         }
         if self.takes.len() > MAX_CAPTURE_TAKES {
@@ -112,6 +116,9 @@ impl LoopCaptureManifest {
         let mut frames = 0usize;
         for take in &self.takes {
             take.validate()?;
+            if self.version < 3 && take.clock.is_some() {
+                return Err("Explicit capture clock policies require manifest version 3.".into());
+            }
             if self.version == 1 && take.codec != LoopCaptureCodec::LegacyRawF32V1 {
                 return Err("Version-one loop capture manifests require legacy raw PCM.".into());
             }
@@ -138,9 +145,18 @@ pub struct LoopCaptureRef {
     pub digest: String,
     #[serde(default, skip_serializing_if = "LoopCaptureCodec::is_legacy")]
     pub codec: LoopCaptureCodec,
+    /// Missing means the original whole-block clock; new captures explicitly
+    /// name per-beat rounding. Unknown policies survive decoding but refuse
+    /// admission, retaining their reference and immutable companion.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub clock: Option<String>,
 }
 
 impl LoopCaptureRef {
+    pub fn legacy_clock(&self) -> bool {
+        self.clock.is_none()
+    }
+
     pub fn validate(&self) -> Result<(), String> {
         if self.id.set.0 == 0 || self.id.card.0 == 0 {
             return Err("Loop capture requires a nonzero Set/Card identity.".into());
@@ -151,6 +167,9 @@ impl LoopCaptureRef {
             || self.bars == 0
         {
             return Err("Loop capture has an invalid tempo, meter or hold.".into());
+        }
+        if self.clock.as_deref().is_some_and(|clock| clock != PER_BEAT_CLOCK) {
+            return Err("Unsupported loop capture clock policy.".into());
         }
         validate_pcm_shape(self.sample_rate, self.frames)?;
         validate_hex(&self.digest, 64, "digest")?;
@@ -458,6 +477,7 @@ mod tests {
 
     fn reference(bytes: &[u8], frames: usize) -> LoopCaptureRef {
         LoopCaptureRef {
+            clock: None,
             id: LoopSegmentId {
                 set: WorkingSetId(3),
                 card: CardId(7),
@@ -894,10 +914,34 @@ mod tests {
         };
         assert!(manifest.validate().is_err());
         manifest = LoopCaptureManifest {
-            version: 3,
+            version: CAPTURE_VERSION + 1,
             ..Default::default()
         };
         assert!(!manifest.is_empty());
         assert!(manifest.validate().is_err());
+    }
+    #[test]
+    fn missing_clock_stays_legacy_and_explicit_policies_require_v3() {
+        let take = reference(&encode_pcm(48_000, &[0.25]).unwrap(), 1);
+        let old = serde_json::to_value(&take).unwrap();
+        assert!(old.get("clock").is_none());
+        let mut decoded: LoopCaptureRef = serde_json::from_value(old.clone()).unwrap();
+        assert!(decoded.legacy_clock());
+        assert_eq!(serde_json::to_value(&decoded).unwrap(), old);
+        decoded.clock = Some(PER_BEAT_CLOCK.into());
+        let mut manifest = LoopCaptureManifest {
+            namespace: Some(NAMESPACE.into()),
+            takes: vec![decoded],
+            ..Default::default()
+        };
+        manifest.validate().unwrap();
+        manifest.version = 2;
+        assert!(manifest.validate().unwrap_err().contains("version 3"));
+        manifest.version = CAPTURE_VERSION;
+        manifest.takes[0].clock = Some("future-clock-v4".into());
+        let wire = serde_json::to_value(&manifest).unwrap();
+        let reopened: LoopCaptureManifest = serde_json::from_value(wire.clone()).unwrap();
+        assert_eq!(serde_json::to_value(&reopened).unwrap(), wire);
+        assert!(reopened.validate().unwrap_err().contains("clock policy"));
     }
 }
