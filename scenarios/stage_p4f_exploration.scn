@@ -30,6 +30,19 @@ settle 5
 click .related-stage @data-target=chord:Minor
 settle 5
 assert snap set-cards == 2
+click .related-claims @data-target=chord:Major
+settle 5
+click .workspace-panel Related
+settle 5
+assert snap claims-generated-count >= 1
+checkpoint-p4f before-return-reason-hear
+click role:button @data-assertion-action=audition
+settle 3
+assert text Audition queued in assertion direction
+checkpoint-p4f after-return-reason-hear
+capture 02b_return_directed_reason
+click .workspace-panel Practice
+settle 5
 click .related-stage @data-target=chord:Major
 settle 5
 assert snap set-cards == 3
