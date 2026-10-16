@@ -1,0 +1,15 @@
+RESULT ok
+captured 01_rehearsal_default_zoom
+captured 02_stage_card_default_zoom
+captured 03_related_default_zoom
+captured 04_related_scrolled
+captured 05_related_narrow
+captured 06_rehearsal_narrow
+capture 01_rehearsal_default_zoom 2360x1800 digest=a474f0635d50b7ba file=/Users/markik/Code/testing/woodshed/stage-p4f-20261016/native-v4/layout/01_rehearsal_default_zoom.png
+capture 02_stage_card_default_zoom 2360x1800 digest=0b4bcfb0f9c4b9ed file=/Users/markik/Code/testing/woodshed/stage-p4f-20261016/native-v4/layout/02_stage_card_default_zoom.png
+capture 03_related_default_zoom 2360x1800 digest=067dd36cfe9e25fd file=/Users/markik/Code/testing/woodshed/stage-p4f-20261016/native-v4/layout/03_related_default_zoom.png
+capture 04_related_scrolled 2360x1800 digest=0317798068cfa09b file=/Users/markik/Code/testing/woodshed/stage-p4f-20261016/native-v4/layout/04_related_scrolled.png
+capture 05_related_narrow 1280x1800 digest=bfd17449abcbd4fa file=/Users/markik/Code/testing/woodshed/stage-p4f-20261016/native-v4/layout/05_related_narrow.png
+capture 06_rehearsal_narrow 1280x1800 digest=51aa4cb7f284afa9 file=/Users/markik/Code/testing/woodshed/stage-p4f-20261016/native-v4/layout/06_rehearsal_narrow.png
+frames: 6 captured, 0 blank, 6 distinct digests
+presentation: 112 frames, 113 redraws, 1 unpresented redraws

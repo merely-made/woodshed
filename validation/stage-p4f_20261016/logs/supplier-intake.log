@@ -1,0 +1,58 @@
+    Updating git repository `https://github.com/merely-made/mere.git`
+    Updating crates.io index
+    Updating git repository `https://github.com/merely-made/dramatis.git`
+    Updating git repository `https://github.com/merely-made/netrender.git`
+    Updating git repository `https://github.com/merely-made/genet.git`
+    Updating git repository `https://github.com/mark-ik/vello`
+warning: patch `mere-proofs v0.1.0 (https://github.com/merely-made/mere.git?branch=main#65750750)` was not used in the crate graph
+warning: patch `mere-transport v0.0.2 (https://github.com/merely-made/murm.git?branch=main#cba46d85)` was not used in the crate graph
+warning: patch `mere-webrtc-carrier v0.0.1 (https://github.com/merely-made/murm.git?branch=main#cba46d85)` was not used in the crate graph
+help: Check that the patched package version and available features are compatible
+      with the dependency requirements. If the patch has a different version from
+      what is locked in the Cargo.lock file, run `cargo update` to use the new
+      version. This may also occur with an optional dependency that is not enabled.
+    Updating armillary v0.1.1 (https://github.com/merely-made/mere.git?branch=main#b7146e25) -> #65750750
+    Updating backstep v0.1.0 (https://github.com/merely-made/mere.git?branch=main#b7146e25) -> #65750750
+    Updating cambium v0.3.3 (https://github.com/merely-made/mere.git?branch=main#b7146e25) -> #65750750
+    Updating cambium-genet-web-host v0.1.0 (https://github.com/merely-made/mere.git?branch=main#b7146e25) -> #65750750
+    Updating cambium-genet-winit-host v0.1.0 (https://github.com/merely-made/mere.git?branch=main#b7146e25) -> #65750750
+    Updating cambium-rootstock v0.1.0 (https://github.com/merely-made/mere.git?branch=main#b7146e25) -> #65750750
+    Updating cambium-winit v0.3.0 (https://github.com/merely-made/mere.git?branch=main#b7146e25) -> #65750750
+    Updating cambium-winit-a11y v0.3.0 (https://github.com/merely-made/mere.git?branch=main#b7146e25) -> #65750750
+    Updating chartulary v0.2.2 (https://github.com/merely-made/mere.git?branch=main#b7146e25) -> #65750750
+    Updating chirograph v0.0.2 (https://github.com/merely-made/mere.git?branch=main#b7146e25) -> #65750750
+    Updating command-menu v0.1.0 (https://github.com/merely-made/mere.git?branch=main#b7146e25) -> #65750750
+    Updating document-canvas v0.1.0 (https://github.com/merely-made/mere.git?branch=main#b7146e25) -> #65750750
+    Updating eidetic v0.0.2 (https://github.com/merely-made/mere.git?branch=main#b7146e25) -> #65750750
+    Updating esp v0.1.0 (https://github.com/merely-made/mere.git?branch=main#b7146e25) -> #65750750
+    Updating graphshell-endpoint v0.0.2 (https://github.com/merely-made/mere.git?branch=main#b7146e25) -> #65750750
+    Updating illume v0.0.2 (https://github.com/merely-made/mere.git?branch=main#b7146e25) -> #65750750
+    Updating incipit v0.2.0 (https://github.com/merely-made/mere.git?branch=main#b7146e25) -> #65750750
+    Updating inker v0.1.1 (https://github.com/merely-made/mere.git?branch=main#b7146e25) -> #65750750
+    Updating mere-alembic v0.0.1 (https://github.com/merely-made/mere.git?branch=main#b7146e25) -> #65750750
+    Updating mere-apparatus v0.0.1 (https://github.com/merely-made/mere.git?branch=main#b7146e25) -> #65750750
+    Updating mere-cartography v0.0.2 (https://github.com/merely-made/mere.git?branch=main#b7146e25) -> #65750750
+    Updating mere-curation v0.1.1 (https://github.com/merely-made/mere.git?branch=main#b7146e25) -> #65750750
+    Updating mere-document-lanes v0.1.0 (https://github.com/merely-made/mere.git?branch=main#b7146e25) -> #65750750
+    Updating mere-fleece v0.0.1 (https://github.com/merely-made/mere.git?branch=main#b7146e25) -> #65750750
+    Updating mere-forme v0.2.0 (https://github.com/merely-made/mere.git?branch=main#b7146e25) -> #65750750
+    Updating mere-kernel v0.0.2 (https://github.com/merely-made/mere.git?branch=main#b7146e25) -> #65750750
+    Updating mere-persona-picker v0.0.1 (https://github.com/merely-made/mere.git?branch=main#b7146e25) -> #65750750
+    Updating mere-surface-api v0.1.0 (https://github.com/merely-made/mere.git?branch=main#b7146e25) -> #65750750
+    Updating meristem v0.2.0 (https://github.com/merely-made/mere.git?branch=main#b7146e25) -> #65750750
+    Updating mesquite v0.1.0 (https://github.com/merely-made/mere.git?branch=main#b7146e25) -> #65750750
+    Updating muniment v0.1.2 (https://github.com/merely-made/mere.git?branch=main#b7146e25) -> #65750750
+    Updating numen v0.2.0 (https://github.com/merely-made/mere.git?branch=main#b7146e25) -> #65750750
+    Updating pandect v0.1.1 (https://github.com/merely-made/mere.git?branch=main#b7146e25) -> #65750750
+    Updating pictograph v0.2.0 (https://github.com/merely-made/mere.git?branch=main#b7146e25) -> #65750750
+    Updating sceno v0.0.5 (https://github.com/merely-made/mere.git?branch=main#b7146e25) -> #65750750
+    Updating scenograph v0.0.4 (https://github.com/merely-made/mere.git?branch=main#b7146e25) -> #65750750
+    Updating scenomise v0.0.5 (https://github.com/merely-made/mere.git?branch=main#b7146e25) -> #65750750
+    Updating scenotime v0.0.4 (https://github.com/merely-made/mere.git?branch=main#b7146e25) -> #65750750
+    Updating seiche v0.0.6 (https://github.com/merely-made/mere.git?branch=main#b7146e25) -> #65750750
+    Updating sprigging v0.2.1 (https://github.com/merely-made/mere.git?branch=main#b7146e25) -> #65750750
+    Updating tabard v0.0.1 (https://github.com/merely-made/mere.git?branch=main#b7146e25) -> #65750750
+    Updating tabard-workshop v0.0.1 (https://github.com/merely-made/mere.git?branch=main#b7146e25) -> #65750750
+    Updating tinct v0.1.2 (https://github.com/merely-made/mere.git?branch=main#b7146e25) -> #65750750
+    Updating workbench v0.1.0 (https://github.com/merely-made/mere.git?branch=main#b7146e25) -> #65750750
+note: pass `--verbose` to see 44 unchanged dependencies behind latest

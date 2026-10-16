@@ -1,0 +1,88 @@
+{
+  "trial": "/Users/markik/Code/testing/woodshed/stage-p4f-20261016/native-v4",
+  "auditions": {
+    "reason": {
+      "same_runtime": 1,
+      "preview_starts_before": 0,
+      "preview_starts_after": 1,
+      "domain_facts_unchanged": [
+        "working_owner",
+        "cards",
+        "cursor",
+        "realizations",
+        "stage_projection",
+        "workspace",
+        "personal_relations"
+      ]
+    },
+    "return-reason": {
+      "same_runtime": 1,
+      "preview_starts_before": 1,
+      "preview_starts_after": 2,
+      "domain_facts_unchanged": [
+        "working_owner",
+        "cards",
+        "cursor",
+        "realizations",
+        "stage_projection",
+        "workspace",
+        "personal_relations"
+      ]
+    },
+    "card": {
+      "same_runtime": 1,
+      "preview_starts_before": 2,
+      "preview_starts_after": 3,
+      "domain_facts_unchanged": [
+        "working_owner",
+        "cards",
+        "cursor",
+        "realizations",
+        "stage_projection",
+        "workspace",
+        "personal_relations"
+      ]
+    }
+  },
+  "reopen": {
+    "working_owner": {
+      "exact": true,
+      "sha256": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b"
+    },
+    "cards": {
+      "exact": true,
+      "sha256": "b755e2272602a961b84296b474cb93b9148bfa1a99d96e341f7eb1193f33bf70"
+    },
+    "cursor": {
+      "exact": true,
+      "sha256": "d4735e3a265e16eee03f59718b9b5d03019c07d8b6c51f90da3a666eec13ab35"
+    },
+    "realizations": {
+      "exact": true,
+      "sha256": "c3b54702c8e162aa98951b0bad3ca95e8607ebc3234cf21c28a0bead0c4256a5"
+    },
+    "stage_projection": {
+      "exact": true,
+      "sha256": "1ac62e157b8f13a58f46b1b794eadb3f38e312dd4a81e450688a9bca6c6221c6"
+    },
+    "workspace": {
+      "exact": true,
+      "sha256": "161644ac62aa9c97061e4bc284ee4b1f7cb1bae65f8faa529282a1c2dc51d2a6"
+    },
+    "personal_relations": {
+      "exact": true,
+      "sha256": "26a511abdb0f4f6629732a7abff6a526b48a0a6885888cd0718b885c55e8f84b"
+    }
+  },
+  "distinct_card_ids": [
+    1,
+    2,
+    3
+  ],
+  "voicing_indices": [
+    0,
+    0,
+    1
+  ],
+  "scenario_result": "seed and fresh-process reopen pass"
+}

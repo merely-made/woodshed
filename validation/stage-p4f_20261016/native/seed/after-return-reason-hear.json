@@ -1,0 +1,118 @@
+{
+  "cards": [
+    {
+      "from": null,
+      "id": 1,
+      "label": "A Major",
+      "material": {
+        "Chord": {
+          "name": "Major",
+          "root": 9
+        }
+      },
+      "setting": {
+        "capo": null,
+        "fret_window": null,
+        "instrument": "Guitar",
+        "mark_mode": "Off",
+        "marked": [],
+        "tuning": "Standard",
+        "voicing_fingerprint": null,
+        "voicing_idx": null,
+        "voicing_profile": null
+      },
+      "timing": {
+        "bpm": null,
+        "hold": "Manual"
+      },
+      "touch": "Block"
+    },
+    {
+      "from": null,
+      "id": 2,
+      "label": "Am (Minor)",
+      "material": {
+        "Chord": {
+          "name": "Minor",
+          "root": 9
+        }
+      },
+      "setting": {
+        "capo": null,
+        "fret_window": null,
+        "instrument": "Guitar",
+        "mark_mode": "Off",
+        "marked": [],
+        "tuning": "Standard",
+        "voicing_fingerprint": null,
+        "voicing_idx": null,
+        "voicing_profile": null
+      },
+      "timing": {
+        "bpm": null,
+        "hold": "Manual"
+      },
+      "touch": "Block"
+    }
+  ],
+  "cursor": 0,
+  "output_observation_id": 1,
+  "personal_relations": {
+    "journal": {
+      "entries": [],
+      "id": null,
+      "parents": [],
+      "provenance": null
+    },
+    "source_id": "fbee8b12-8935-4a45-91fa-a87e3a602803"
+  },
+  "practice_saved": true,
+  "preview_starts": 2,
+  "preview_voices": 0,
+  "realizations": [
+    {
+      "card": 1,
+      "duration_bits": 1068708659,
+      "pitch_bits": [
+        1130102784,
+        1133156192,
+        1134874708
+      ],
+      "strum_bits": 1099956224
+    },
+    {
+      "card": 2,
+      "duration_bits": 1068708659,
+      "pitch_bits": [
+        1130102784,
+        1132646419,
+        1134874708
+      ],
+      "strum_bits": 1099956224
+    }
+  ],
+  "save_problem": null,
+  "stage_projection": {
+    "context": {
+      "enabled": true,
+      "node_limit": 24
+    },
+    "related": {
+      "arrangement": "Radial",
+      "dismissed_ids": [],
+      "graph_scope": "Selection",
+      "relation_depth": 1,
+      "show_neighborhood": true,
+      "use_history": true
+    },
+    "set_arrangement": "Snake",
+    "set_graph_height": 260,
+    "set_graph_reading": "Set",
+    "set_graph_width": 520,
+    "visible_set_relations": [
+      "Next"
+    ]
+  },
+  "working_owner": 1,
+  "workspace": "{\"tree\":{\"stack\":{\"tabs\":[{\"panel\":\"overview\",\"id\":1464814917,\"title\":\"Mere\",\"kind\":\"woodshed.overview\",\"content_id\":\"overview\"},{\"panel\":\"practice\",\"id\":1464815698,\"title\":\"Practice\",\"kind\":\"woodshed.practice\",\"content_id\":\"stage\"},{\"panel\":\"set\",\"id\":1464816453,\"title\":\"Set\",\"kind\":\"woodshed.set\",\"content_id\":\"rehearsal\"},{\"panel\":\"related\",\"id\":1464816197,\"title\":\"Related\",\"kind\":\"woodshed.related\",\"content_id\":\"stage\"},{\"panel\":\"settings\",\"id\":1464816455,\"title\":\"Settings\",\"kind\":\"woodshed.settings\",\"content_id\":\"settings\"}],\"active\":3}},\"active_panel\":\"related\"}"
+}

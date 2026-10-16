@@ -1,0 +1,116 @@
+{
+  "status": "qualified",
+  "date": "2026-10-16",
+  "scope": "Bounded Stage P4f exploration, realization, directed audition, manual numbered rehearsal, sealed fresh-process reopen; bounded safe-save/close prerequisites",
+  "baseline": "c32b60af83efb335153b539c7a2d16d40ece8c17",
+  "rust_source_revision": "d2adb09ac3b04110508e91a0e539ad8310c766db",
+  "layout_scenario_revision": "7500d1b",
+  "binary_sha256": "00a5fca5ca06a39f37b35fcf116648912f050b87c5a2f74addb2e4bf93bf709a",
+  "source_binding": {
+    "hash_file": "source-hashes.json",
+    "unchanged_source_paths": 210,
+    "only_subsequent_source_change": {
+      "scenarios/stage_p4f_layout.scn": "4a1c89894f7663837367bf7dfe56d3eacca7df1bc10e3f81d4109fb4d2bd53a3"
+    },
+    "subsequent_change_kind": "layout scenario only; no Rust change"
+  },
+  "suppliers": {
+    "mere.git": [
+      "git+https://github.com/merely-made/mere.git?branch=main#6575075057e8909032475ae6c88118a19969eadc"
+    ],
+    "genet.git": [
+      "git+https://github.com/merely-made/genet.git?branch=main#6186c81ad7019ea51dd28861ef83574bfc992ed1",
+      "git+https://github.com/merely-made/genet.git?branch=main#e37762d752e423dc43f920bd728c83f70c47f2cc"
+    ],
+    "netrender.git": [
+      "git+https://github.com/merely-made/netrender.git?branch=main#8960024f7b1f2b7a5ba382972f08b2f75eb7a0f0"
+    ]
+  },
+  "lock_delta": "Mere package revisions b7146e25\u219265750750, libloading edge0.8.9\u21920.7.4, two windows edges0.62.2\u21920.61.3; Genet/Netrender sources unchanged, nested port locks unchanged",
+  "checks": {
+    "command": "cargo test --offline --locked -p woodshed-core -p woodshed-audio -p woodshed-views -p woodshed-genet --quiet",
+    "audio": 158,
+    "core": 252,
+    "core_integration": 1,
+    "host": 177,
+    "views": 201,
+    "suite_and_integration_passes": 789,
+    "host_existing_ignores": 7,
+    "separate_fresh_process_child_invocations": 5,
+    "desktop_build": "cargo build --offline --locked -p woodshed-genet; passed"
+  },
+  "native": {
+    "completed_processes": 4,
+    "reviewed_captures": [
+      "native/seed/04_numbered_rehearsal.png",
+      "native/seed/03_numbered_voicings.png",
+      "native/seed/02_directed_reason.png",
+      "native/seed/02b_return_directed_reason.png",
+      "native/seed/01_visible_frontier.png",
+      "native/seed/05_retained_set.png",
+      "native/close/01_retry_keeps_open.png",
+      "native/layout/01_rehearsal_default_zoom.png",
+      "native/layout/02_stage_card_default_zoom.png",
+      "native/layout/03_related_default_zoom.png",
+      "native/layout/04_related_scrolled.png",
+      "native/layout/05_related_narrow.png",
+      "native/layout/06_rehearsal_narrow.png",
+      "native/reopen/01_reopened_set_and_voicing.png"
+    ],
+    "scenario_seed": "RESULT ok;342 frames/343redraws;6captures",
+    "scenario_reopen": "RESULT ok;110frames/111redraws;1capture",
+    "scenario_layout": "RESULT ok;112frames/113redraws;6captures",
+    "quarantine_close": "native close keeps open; Retry retains; Cancel resumes; explicit Discard exits; original bytes unchanged, no settings file",
+    "comparison": "comparison.json",
+    "independent_review": "coordinator-review.json",
+    "software_preview_admission_counts": [
+      [
+        0,
+        1
+      ],
+      [
+        1,
+        2
+      ],
+      [
+        2,
+        3
+      ]
+    ],
+    "runtime_observation_id": 1,
+    "fresh_process_exact": [
+      "working owner",
+      "Cards and IDs",
+      "material and voicing instructions",
+      "cursor",
+      "realization float bits",
+      "projection",
+      "workspace",
+      "personal source/journal"
+    ]
+  },
+  "earlier_attempts": {
+    "native-v1": "failed preliminary preparation/layout/presentation; preserved externally",
+    "native-v2": "failed shared shadow presentation; partial proof only",
+    "native-v3": "disqualified mixed evidence after inspection raced exit and relaunched same bundle; preserved externally",
+    "native-v4": "fresh profile; one-use O_EXCL launchers; phase exit and evidence hashes recorded"
+  },
+  "limits": [
+    "Software PCM tests and processor admission do not establish physical audibility, microphone quality or latency.",
+    "Full per-persona namespace migration remains deferred; quarantine mitigates destructive fallback, not a complete B01 migration.",
+    "Other62-item audit remediation, P4e full catalog and P5-P8 are outside this bounded acceptance.",
+    "Narrow view uses ordinary scroll; verbose source IDs and long voicing summaries retain separate polish work.",
+    "No Windows or browser native qualification from this macOS receipt."
+  ],
+  "publication": {
+    "target": "main",
+    "mode": "authorized direct push, no PR",
+    "receipt_commit": "See Git history for the containing documentation/evidence commit; exact push verification is recorded in the external coordination receipt."
+  },
+  "cleanup": {
+    "four_native_processes_exited": true,
+    "isolated_keeper_pid": 76939,
+    "isolated_keeper_stopped": true,
+    "keeper_original_files_unchanged": true
+  }
+}

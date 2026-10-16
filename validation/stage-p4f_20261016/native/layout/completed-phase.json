@@ -1,0 +1,23 @@
+{
+  "pid": 95795,
+  "process_exited": true,
+  "once_only_launcher": true,
+  "profile_sha256": {
+    "settings.json": "02ae578e881ea1f1c0bc56920d3fcf99d643531ee4f6a6e29d6622d0e76cb679",
+    "practice.bin": "ea56150186dac05ce7bd38f41529093ae7464802c5b486fa5f3fc13fe4e99e1e"
+  },
+  "artifacts_sha256": {
+    "launch.once": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "01_rehearsal_default_zoom.png": "fef43bb8152526c8254303a46bcd5c65a86ed554791edb2766ca3bb12b441937",
+    "02_stage_card_default_zoom.png": "e238e4e47e625175907e44d547442b1903b6c1ad822601e5f5243271e989af2c",
+    "03_related_default_zoom.png": "88dbad4e17db3b4f89dc76a2ca25111333884973f083ded07d2339ece2f37103",
+    "native.log": "2b33995169541e672973e6510eba2ceec30624e5cac513adcfdea290a2e05ba9",
+    "scenario.done": "1b81a1264e8219e9d29e114107d4926d0fc57f872759cc3bb157c4b17276f9f6",
+    "native.pid": "1ff71f42b8445ed90da8885bdf18e3d25282688537420ac17e6c37bf3f462cc0",
+    "launch.json": "91cbb1ff31b08413f6c90df07154f45a77925e0d9af04fa33e6901881912cbd9",
+    "04_related_scrolled.png": "0ba5186822dede0c6ff86c3017225ee0b2e863b03be6825825d0d4f2824afaec",
+    "05_related_narrow.png": "256fd5ceaea7f325c447649bc62720c2732a0a8877bfdddf0ef191b1b8b0fd86",
+    "launcher.c": "4e2be5ff1db4b531856fc66bc3b1efce6268924db4465ddfc97a1990ab37af6f",
+    "06_rehearsal_narrow.png": "6ed68d523beb4a15bf953ea2786fc278c01b1145c4b8b15ab3c4eada8514c799"
+  }
+}

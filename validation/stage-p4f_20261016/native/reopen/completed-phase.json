@@ -1,0 +1,18 @@
+{
+  "pid": 95622,
+  "process_exited": true,
+  "profile_sha256": {
+    "settings.json": "f0a2109da0249b1e348377c6ec18a3ae68a2847277612da57c93efef94081494",
+    "practice.bin": "c353fea5719892f8fe88a991de3fdd7b45afc5ca69800f44ce176d75e2e6c9dd"
+  },
+  "artifacts_sha256": {
+    "launch.once": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "01_reopened_set_and_voicing.png": "6015e5dc4e62709fde3dc30af0611f9a85181d4449091e034f4c5fd536b95691",
+    "native.log": "5f0f96056ae9bd2612b69f2e831295dc4506e4e1dc13ef9e3b87fd5715293147",
+    "reopened.json": "4ca842bdc7832676c1a1df19b84ee80e2696ce45f382080bb93e8234fdcf9f68",
+    "scenario.done": "cf319418252e7bb7e43ae8f8bb7eaddc4820fa86820eed061e88cf650d870320",
+    "native.pid": "ae0e21e5767a09956a34211a6aa5ffbde95d119f38c0af93f0a59c8e7a924f8a",
+    "launch.json": "e645ea570edf6221420839f40ca026f575bae2078d585722ae89bd608a77d7ae",
+    "launcher.c": "072ef7f51a3409799602d2acac3befb066560fa2909dbde664bff4cb5591c0d6"
+  }
+}

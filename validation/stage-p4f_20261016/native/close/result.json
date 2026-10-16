@@ -1,0 +1,17 @@
+{
+  "status": "pass",
+  "source": "d2adb09ac3b04110508e91a0e539ad8310c766db",
+  "binary_sha256": "00a5fca5ca06a39f37b35fcf116648912f050b87c5a2f74addb2e4bf93bf709a",
+  "native_close_kept_open": true,
+  "retry_kept_open": true,
+  "cancel_resumed": true,
+  "explicit_discard_exited": true,
+  "pid": 96134,
+  "original_unchanged": true,
+  "original_sha256": "1f6fc98e18bf1caef2120a7437df28e6f1d6a35cc9e6781628fac670e24fa732",
+  "profile_files": [
+    "practice.bin"
+  ],
+  "accessibility_reason": "actual unseal/read refusal; no missing-persona claim",
+  "capture": "01_retry_keeps_open.png"
+}
