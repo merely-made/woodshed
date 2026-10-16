@@ -19,7 +19,7 @@ before any other doc in this directory.
 
 ## Active Plans
 
-- [2026-10-16_mere_take_acceptance_plan.md](2026-10-16_mere_take_acceptance_plan.md) — Remaining loop-take native acceptance and fallback-placement correction; isolated sealed profile and fresh-process reopening.
+- [2026-10-16_mere_take_acceptance_plan.md](2026-10-16_mere_take_acceptance_plan.md) — Loop-take native acceptance complete: fallback placement preserves retained v1 positions; 442 cases, desktop build, three sealed native runs and ten reviewed captures, including wide/narrow fresh-process v2 reopening.
 
 - [2026-10-16_shared_capture_accumulator_plan.md](2026-10-16_shared_capture_accumulator_plan.md) — Shared capture writes, input feed, completion envelope and Hocket bar countdown implemented; 256 CPU/offline cases and both host all-target checks pass. Adapter scheduling and integrity remain product-owned.
 
