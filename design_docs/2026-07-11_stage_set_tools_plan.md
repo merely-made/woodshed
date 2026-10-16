@@ -3430,6 +3430,18 @@ payload. It also exposed a density issue: on the wide canvas, new take nodes
 at their default slots overlap labels placed by the retained version-1
 arrangement. That is a presentation follow-up, not an identity defect.
 
+**October 16 native closure:** [the take acceptance plan](2026-10-16_mere_take_acceptance_plan.md)
+and `validation/mere-take-acceptance_20261016/receipt.json` close the four open
+checks above. New take defaults avoid retained v1 labels without rewriting ten
+retained positions. Three final native processes (wide seed, wide fresh reopen,
+narrow fresh reopen) pass with ten reviewed captures and a real isolated Keeper.
+The 192,000-frame Set 1/Card 2 take is bit-exact against sealed storage and the
+output cursor reaches its segment after navigation from the Mere in each run.
+Presentation v2, focus, roles, positions and manifest are identical across all
+three reports. 442 automated cases and the desktop build pass. The two intentionally
+missing fixture references remain explicit; physical input, audibility and latency
+remain outside this acceptance. The older unsealed receipt remains unchanged.
+
 ### October 15 slice: pictograph canvas commands on three graph surfaces
 
 The Graphshell stack lift's P2 moved canvas commands, gestures and face

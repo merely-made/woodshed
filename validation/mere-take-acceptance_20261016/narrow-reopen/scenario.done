@@ -1,0 +1,10 @@
+RESULT ok
+captured 01_v2_take_reopened
+captured 02_reopened_take_in_looper
+waited 112 frames
+captured 03_reopened_take_playing
+capture 01_v2_take_reopened 920x1800 digest=f0cfd4f0bbf704b7 file=/Users/markik/Code/testing/woodshed/mere-take-acceptance-20261016/narrow-reopen/01_v2_take_reopened.png
+capture 02_reopened_take_in_looper 920x1800 digest=072e88f92af36c64 file=/Users/markik/Code/testing/woodshed/mere-take-acceptance-20261016/narrow-reopen/02_reopened_take_in_looper.png
+capture 03_reopened_take_playing 920x1800 digest=f20f2c0e3f588bca file=/Users/markik/Code/testing/woodshed/mere-take-acceptance-20261016/narrow-reopen/03_reopened_take_playing.png
+frames: 3 captured, 0 blank, 3 distinct digests
+presentation: 175 frames, 176 redraws, 1 unpresented redraws
