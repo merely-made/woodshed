@@ -9,10 +9,15 @@ click .relationship-bind Use selected Card relationships
 settle 5
 assert snap recipe-valid == true
 assert snap set-cards == 3
+click .relationship-camera-fit Fit
+settle 3
+capture 01_resting_links
 click .graph-canvas-swatch-relation
 settle 5
 assert text Surface link
 assert text Assertion 1
 assert text Source stratum
-capture 01_opened_link_pair
+click .detail-value Surface
+settle 3
+capture 02_opened_link_pair
 assert snap set-cards == 3
