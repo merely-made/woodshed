@@ -1714,6 +1714,14 @@ impl Snapshot<'_, '_> {
             // `data-key` — rather than from a UiState field that would report
             // "none" forever.
             .with_field("graph-focus", self.graph_focus_key())
+            .with_field("arrangement-producer", self.ctx.producers.contains(woodshed_views::stage::arrangement_editor::PRIMARY_KEY).to_string())
+            .with_field("arrangement-related-producer", self.ctx.producers.contains(woodshed_views::stage::arrangement_editor::RELATED_KEY).to_string())
+            .with_field("arrangement-saved",ui.set.progression_arrangement.is_some().to_string())
+            .with_field("arrangement-dirty",ui.arrangement_editor.dirty().to_string())
+            .with_field("arrangement-primary",ui.arrangement_editor.surfaces.borrow().primary.is_some().to_string())
+            .with_field("arrangement-related",ui.arrangement_editor.surfaces.borrow().related.is_some().to_string())
+            .with_field("arrangement-selection",ui.arrangement_editor.surfaces.borrow().primary.as_ref().and_then(|s|s.selected()).unwrap_or("").to_string())
+            .with_field("arrangement-error",ui.arrangement_editor.surfaces.borrow().error.clone().unwrap_or_default())
             .with_field("section", ui.section.label().to_string())
             .with_field(
                 "shape-index",
@@ -2386,6 +2394,7 @@ impl Automatable for Probe<'_, '_> {
                 let id = ui.stage_scale_pattern().expect("fixture scale pattern");
                 ui.set.select_id(id);
             },
+            "arrangement-editor-example" => crate::arrangement::seed_example(ui),
             "p5a-timing-admission-example" => {
                 use woodshed_core::harmony::KeyedCatalogRef;
                 use woodshedding::pitch::PitchClass;
@@ -2596,6 +2605,40 @@ impl Probe<'_, '_> {
     fn app_step(&mut self, line: &str) -> Result<(), String> {
         let mut parts = line.split_whitespace();
         match parts.next() {
+            Some("checkpoint-arrangement") => {
+                use std::io::Write;
+                let name = parts.next().ok_or("checkpoint-arrangement wants a name")?;
+                if parts.next().is_some()
+                    || name.is_empty()
+                    || !name.bytes().all(|b| b.is_ascii_alphanumeric() || b == b'-')
+                {
+                    return Err("simple checkpoint name required".into());
+                }
+                let directory = std::env::var_os("WOODSHED_CAPTURE_DIR")
+                    .ok_or("isolated capture directory required")?;
+                let ui = self.ctx.runner.state();
+                if !matches!(self.shared.seal, Some(woodshed_views::persona::PracticeSeal::Sealed { .. })) {
+                    return Err("arrangement checkpoint requires sealed custody".into());
+                }
+                let stored = self.shared.storage.as_ref().ok_or("no store")?
+                    .load().ok_or("unreadable sealed session")?;
+                let persisted = woodshed_core::storage::decode_session(&stored)
+                    .map_err(|e| e.to_string())?.session;
+                let surfaces = ui.arrangement_editor.surfaces.borrow();
+                let value = serde_json::json!({
+                    "live": ui.to_persisted(),
+                    "stored": persisted,
+                    "draft_dirty": ui.arrangement_editor.dirty(),
+                    "document": surfaces.document,
+                    "selection": surfaces.primary.as_ref().and_then(|s| s.selected()),
+                    "error": surfaces.error,
+                });
+                let path = std::path::PathBuf::from(directory).join(format!("{name}.json"));
+                std::fs::OpenOptions::new().write(true).create_new(true).open(path)
+                    .map_err(|e| e.to_string())?
+                    .write_all(&serde_json::to_vec_pretty(&value).map_err(|e| e.to_string())?)
+                    .map_err(|e| e.to_string())
+            },
             Some("checkpoint-p4f") => {
                 let name = parts.next().ok_or("checkpoint-p4f wants a name")?;
                 if parts.next().is_some()

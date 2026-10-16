@@ -1,0 +1,23 @@
+# Same frozen binary and isolated sealed profile; no fixture reset.
+settle 90
+ui-zoom 1
+assert snap practice-saved == true
+assert snap arrangement-saved == true
+assert snap arrangement-dirty == false
+assert snap arrangement-primary == true
+assert snap set-cards == 4
+checkpoint-arrangement reopened
+capture 01_reopened_arrangement
+assert snap arrangement-producer == true
+click .arrangement-inspect Inspect Card 4
+settle 6
+assert snap arrangement-selection == card-4
+assert snap arrangement-related == true
+wheel 0 -2000 px on .workspace-screen
+settle 6
+capture 02_reopened_voicing
+resize 420 1000
+settle 10
+wheel 0 -2000 px on .workspace-screen
+settle 6
+capture 03_reopened_narrow

@@ -3812,3 +3812,21 @@ application acceptance is claimed. The [receipt](../validation/saved-arrangement
 records source hashes, exchange files, test logs, screenshots and limits. Native
 arrangement authoring/panels and persona-store exchange controls remain later
 product work; this slice supplies their persisted model and export seam.
+
+### Native arrangement editor and panel (2026-10-16)
+
+**Status:** implementation in progress, explicitly requested after the saved
+Set/export slice. The Arrangement workspace edits a per-working-Set draft of
+role spans, placed/unplaced Card occurrences and authored rests. Preview and
+inspection use Pictograph's existing BackdropSurface and Rootstock's native
+SceneProducer, with the same Scenomise document as Graphshell. Save validates
+before replacing only the Set's arrangement attachment; discard/reload and
+close preservation keep drafts separate from saved instructions. Captured
+musical/setup context remains authoritative until explicit rebinding.
+
+Done when native controls author and save an arrangement, select distinct
+saved voicings, disclose errors without stale paint, preserve independent Set
+drafts and reject stale saved-state replacement. The new panel must survive
+workspace save/reopen; text/keyboard routing, shared producer cleanup, sealed
+fresh-process reopening and wide/narrow presentation get distinct receipts.
+No audio transport or Card timing mutation is part of arrangement authoring.
