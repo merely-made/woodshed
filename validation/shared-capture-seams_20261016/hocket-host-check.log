@@ -1,0 +1,96 @@
+warning: patch `ipc-channel v0.22.0 (https://github.com/merely-made/genet.git?branch=main#e37762d7)` was not used in the crate graph
+warning: patch `mere-proofs v0.1.0 (https://github.com/merely-made/mere.git?branch=main#59f88e63)` was not used in the crate graph
+warning: patch `mere-transport v0.0.2 (https://github.com/merely-made/murm.git?branch=main#cba46d85)` was not used in the crate graph
+warning: patch `mere-webrtc-carrier v0.0.1 (https://github.com/merely-made/murm.git?branch=main#cba46d85)` was not used in the crate graph
+help: Check that the patched package version and available features are compatible
+      with the dependency requirements. If the patch has a different version from
+      what is locked in the Cargo.lock file, run `cargo update` to use the new
+      version. This may also occur with an optional dependency that is not enabled.
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Checking layout-dom-api v0.1.1 (https://github.com/merely-made/genet.git?branch=main#e37762d7)
+    Checking genet-paint-types v0.2.0 (https://github.com/merely-made/genet.git?branch=main#e37762d7)
+    Checking command-menu v0.1.0 (https://github.com/merely-made/mere.git?branch=main#59f88e63)
+    Checking tinct v0.1.2 (https://github.com/merely-made/mere.git?branch=main#59f88e63)
+    Checking genet-fontique v0.10.0 (https://github.com/merely-made/genet.git?branch=main#e37762d7)
+    Checking regress v0.11.1 (https://github.com/merely-made/genet.git?branch=main#e37762d7)
+    Checking sceno v0.0.5 (https://github.com/merely-made/mere.git?branch=main#59f88e63)
+   Compiling livery v0.0.5 (https://github.com/merely-made/genet.git?branch=main#e37762d7)
+    Checking document-session-api v0.1.0 (https://github.com/merely-made/genet.git?branch=main#e37762d7)
+    Checking genet-host-api v0.2.0 (https://github.com/merely-made/genet.git?branch=main#e37762d7)
+    Checking muniment v0.1.2 (https://github.com/merely-made/mere.git?branch=main#59f88e63)
+    Checking cadency v0.0.1 (https://github.com/merely-made/genet.git?branch=main#e37762d7)
+    Checking genet-taffy v0.14.0 (https://github.com/merely-made/genet.git?branch=main#e37762d7)
+    Checking workbench v0.1.0 (https://github.com/merely-made/mere.git?branch=main#59f88e63)
+    Checking genet-parley v0.10.0 (https://github.com/merely-made/genet.git?branch=main#e37762d7)
+    Checking genet-static-dom v0.1.1 (https://github.com/merely-made/genet.git?branch=main#e37762d7)
+    Checking genet-document-resources v0.2.1 (https://github.com/merely-made/genet.git?branch=main#e37762d7)
+    Checking mere-surface-api v0.1.0 (https://github.com/merely-made/mere.git?branch=main#59f88e63)
+    Checking meristem v0.2.0 (https://github.com/merely-made/mere.git?branch=main#59f88e63)
+    Checking illume v0.0.2 (https://github.com/merely-made/mere.git?branch=main#59f88e63)
+    Checking engine-observables-api v0.2.0 (https://github.com/merely-made/genet.git?branch=main#e37762d7)
+    Checking insigne v0.0.2 (https://github.com/merely-made/dramatis.git?branch=main#5c89001a)
+    Checking genet-text v0.1.0 (https://github.com/merely-made/genet.git?branch=main#e37762d7)
+    Checking sprigging v0.2.1 (https://github.com/merely-made/mere.git?branch=main#59f88e63)
+    Checking backstep v0.1.0 (https://github.com/merely-made/mere.git?branch=main#59f88e63)
+    Checking personae v0.3.0 (https://github.com/merely-made/dramatis.git?branch=main#5c89001a)
+    Checking genet-render-host v0.2.0 (https://github.com/merely-made/genet.git?branch=main#e37762d7)
+    Checking chartulary v0.2.2 (https://github.com/merely-made/mere.git?branch=main#59f88e63)
+    Checking mere-curation v0.1.1 (https://github.com/merely-made/mere.git?branch=main#59f88e63)
+    Checking numen v0.2.0 (https://github.com/merely-made/mere.git?branch=main#59f88e63)
+    Checking tabard v0.0.1 (https://github.com/merely-made/mere.git?branch=main#59f88e63)
+    Checking buckram v0.0.3 (https://github.com/merely-made/genet.git?branch=main#e37762d7)
+    Checking audio-primitives v0.1.0 (/Users/markik/Code/repos/woodshed/crates/audio-primitives)
+    Checking mere-forme v0.2.0 (https://github.com/merely-made/mere.git?branch=main#59f88e63)
+    Checking genet-scripted-dom v0.1.2 (https://github.com/merely-made/genet.git?branch=main#e37762d7)
+    Checking fleece v0.5.0 (https://github.com/merely-made/genet.git?branch=main#e37762d7)
+    Checking genet-winit-host v0.2.0 (https://github.com/merely-made/genet.git?branch=main#e37762d7)
+    Checking inker v0.1.1 (https://github.com/merely-made/mere.git?branch=main#59f88e63)
+    Checking scenotime v0.0.4 (https://github.com/merely-made/mere.git?branch=main#59f88e63)
+    Checking mere-fleece v0.0.1 (https://github.com/merely-made/mere.git?branch=main#59f88e63)
+    Checking incipit v0.2.0 (https://github.com/merely-made/mere.git?branch=main#59f88e63)
+    Checking chatelaine v0.0.3 (https://github.com/merely-made/dramatis.git?branch=main#5c89001a)
+    Checking hocket-project v0.1.0 (/Users/markik/Code/repos/woodshed/crates/hocket-project)
+    Checking cambium v0.3.3 (https://github.com/merely-made/mere.git?branch=main#59f88e63)
+    Checking notochord v0.1.1 (https://github.com/merely-made/dramatis.git?branch=main#5c89001a)
+    Checking chirograph v0.0.2 (https://github.com/merely-made/mere.git?branch=main#59f88e63)
+    Checking hocket-recorder v0.1.0 (/Users/markik/Code/repos/woodshed/crates/hocket-recorder)
+    Checking dramatis v0.0.3 (https://github.com/merely-made/dramatis.git?branch=main#5c89001a)
+    Checking mere-apparatus v0.0.1 (https://github.com/merely-made/mere.git?branch=main#59f88e63)
+    Checking mere-kernel v0.0.2 (https://github.com/merely-made/mere.git?branch=main#59f88e63)
+    Checking eidetic v0.0.2 (https://github.com/merely-made/mere.git?branch=main#59f88e63)
+    Checking luggage v0.1.0 (https://github.com/merely-made/mere.git?branch=main#59f88e63)
+    Checking genet-clipboard v0.1.0 (https://github.com/merely-made/genet.git?branch=main#e37762d7)
+    Checking hocket-engine v0.1.0 (/Users/markik/Code/repos/woodshed/ports/hocket/crates/hocket-engine)
+    Checking armillary v0.1.1 (https://github.com/merely-made/mere.git?branch=main#59f88e63)
+    Checking genet-livery v0.0.4 (https://github.com/merely-made/genet.git?branch=main#e37762d7)
+    Checking document-canvas v0.1.0 (https://github.com/merely-made/mere.git?branch=main#59f88e63)
+    Checking cambium-winit v0.3.0 (https://github.com/merely-made/mere.git?branch=main#59f88e63)
+    Checking hocket-views v0.1.0 (/Users/markik/Code/repos/woodshed/crates/hocket-views)
+    Checking mere-document-lanes v0.1.0 (https://github.com/merely-made/mere.git?branch=main#59f88e63)
+    Checking genet-render v0.2.0 (https://github.com/merely-made/genet.git?branch=main#e37762d7)
+    Checking taproot v0.1.0 (https://github.com/merely-made/genet.git?branch=main#e37762d7)
+    Checking cambium-rootstock v0.1.0 (https://github.com/merely-made/mere.git?branch=main#59f88e63)
+    Checking cambium-winit-a11y v0.3.0 (https://github.com/merely-made/mere.git?branch=main#59f88e63)
+    Checking mesquite v0.1.0 (https://github.com/merely-made/mere.git?branch=main#59f88e63)
+    Checking cambium-genet-winit-host v0.1.0 (https://github.com/merely-made/mere.git?branch=main#59f88e63)
+    Checking tabard-workshop v0.0.1 (https://github.com/merely-made/mere.git?branch=main#59f88e63)
+    Checking mere-alembic v0.0.1 (https://github.com/merely-made/mere.git?branch=main#59f88e63)
+    Checking pandect v0.1.1 (https://github.com/merely-made/mere.git?branch=main#59f88e63)
+    Checking graphshell-endpoint v0.0.2 (https://github.com/merely-made/mere.git?branch=main#59f88e63)
+    Checking hocket-genet v0.2.0 (/Users/markik/Code/repos/woodshed/ports/hocket/crates/hocket-genet)
+warning: method `path` is never used
+   --> crates/hocket-genet/src/update.rs:184:12
+    |
+153 | impl UpdateSettingsProvider {
+    | --------------------------- method in this implementation
+...
+184 |     pub fn path(&self) -> &Path {
+    |            ^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `hocket-genet` (bin "hocket-genet") generated 1 warning
+warning: `hocket-genet` (bin "hocket-genet" test) generated 1 warning (1 duplicate)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 15.88s

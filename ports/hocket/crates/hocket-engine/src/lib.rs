@@ -40,6 +40,7 @@
 pub mod capture;
 pub mod click;
 
+use audio_primitives::capture::{BarCountdown, CompletedTake};
 use std::collections::BTreeMap;
 use std::num::NonZeroU32;
 
@@ -197,18 +198,14 @@ pub struct Engine {
 /// crossings (playhead wrap-arounds) and decrement a bar countdown.
 enum PendingCapture {
     Idle,
-    /// Waiting for `bars_until_start` more bar boundaries to pass.
-    /// `last_in_bar_phase` is the most recent in-bar position we
-    /// observed, used to detect wrap-around (when the new position
-    /// is smaller than the last, we crossed a boundary).
+    /// Waiting for the shared phase countdown to reach zero.
     ///
     /// `bars` is the phrase length in bars, not samples: the target is sized
     /// when recording starts, so a tempo change while waiting re-arms the
     /// capture on the new grid instead of keeping a stale-length phrase.
     Waiting {
-        bars_until_start: u8,
+        countdown: BarCountdown,
         bars: u8,
-        last_in_bar_phase: usize,
     },
     /// Currently accumulating real input samples.
     Recording(capture::Capture),
@@ -217,7 +214,7 @@ enum PendingCapture {
     /// looper mode (variable-length loops).
     FreeRecording(Vec<f32>),
     /// Capture completed; buffer ready for `take_bar_aligned_capture`.
-    Complete(Vec<f32>),
+    Complete(CompletedTake<Vec<f32>, u32>),
 }
 
 /// Internal: bookkeeping for the window after `set_tempo` restarts the click
@@ -242,8 +239,7 @@ const TEMPO_RESYNC_MAX_TICKS: u8 = 3;
 /// Internal: a layer playback queued to start at a bar boundary.
 /// Same wrap-detection technique as `PendingCapture::Waiting`.
 struct PendingLayer {
-    bars_until_start: u8,
-    last_in_bar_phase: usize,
+    countdown: BarCountdown,
     key: LayerKey,
     samples: Vec<f32>,
     sample_rate: u32,
@@ -575,9 +571,8 @@ impl Engine {
         // (So count-in is *at least* `count_in_bars` full bars in
         // every case.)
         self.pending_capture = PendingCapture::Waiting {
-            bars_until_start: 1 + count_in_bars,
+            countdown: BarCountdown::new(1 + count_in_bars, last_in_bar_phase),
             bars,
-            last_in_bar_phase,
         };
         Ok(())
     }
@@ -605,7 +600,10 @@ impl Engine {
         if matches!(self.pending_capture, PendingCapture::FreeRecording(_)) {
             let taken = std::mem::replace(&mut self.pending_capture, PendingCapture::Idle);
             if let PendingCapture::FreeRecording(buf) = taken {
-                self.pending_capture = PendingCapture::Complete(buf);
+                self.pending_capture = PendingCapture::Complete(CompletedTake {
+                    storage: buf,
+                    stamp: self.sample_rate,
+                });
             }
         }
     }
@@ -618,7 +616,10 @@ impl Engine {
         }
         let taken = std::mem::replace(&mut self.pending_capture, PendingCapture::Idle);
         match taken {
-            PendingCapture::Complete(buf) => Some(buf),
+            PendingCapture::Complete(take) => {
+                debug_assert_eq!(take.stamp, self.sample_rate);
+                Some(take.storage)
+            },
             _ => unreachable!(),
         }
     }
@@ -628,10 +629,8 @@ impl Engine {
     pub fn pending_capture_progress(&self) -> CapturePhase {
         match &self.pending_capture {
             PendingCapture::Idle => CapturePhase::Idle,
-            PendingCapture::Waiting {
-                bars_until_start, ..
-            } => CapturePhase::Waiting {
-                bars_remaining: *bars_until_start,
+            PendingCapture::Waiting { countdown, .. } => CapturePhase::Waiting {
+                bars_remaining: countdown.remaining(),
                 samples_until_next_bar: self.samples_to_next_bar().unwrap_or(0),
             },
             PendingCapture::Recording(c) => CapturePhase::Recording {
@@ -678,8 +677,7 @@ impl Engine {
             .click_in_bar_phase()
             .ok_or_else(|| EngineError::Graph("click bar-phase unavailable".into()))?;
         let pending = PendingLayer {
-            bars_until_start: 1,
-            last_in_bar_phase,
+            countdown: BarCountdown::new(1, last_in_bar_phase),
             key,
             samples,
             sample_rate,
@@ -714,24 +712,6 @@ impl Engine {
     }
 
     // --- Pending-state advancement (called from tick / drain_input) ---
-
-    /// True if `cur` is on the other side of a bar boundary from
-    /// `last`. The click playhead wraps from `bar_samples - 1` to 0
-    /// on each bar boundary, so we look for `cur` to be far less
-    /// than `last` (more than half a bar) — that's an unambiguous
-    /// wrap.
-    ///
-    /// Why the "half a bar" gate: `SamplerState::playhead_frames` is
-    /// read across the audio-thread/UI-thread boundary and can
-    /// momentarily return a slightly stale (smaller) value due to
-    /// internal buffering. A bare `cur < last` check fires on
-    /// every such jitter, decrementing the bar counter spuriously.
-    /// Requiring a half-bar gap eliminates jitter false positives
-    /// while still catching every real wrap (a real wrap goes from
-    /// near `bar_samples` to near 0 — a gap of nearly a full bar).
-    fn crossed_bar_boundary(&self, last: usize, cur: usize, bar_samples: usize) -> bool {
-        !self.suppress_wraps && cur < last && (last - cur) > bar_samples / 2
-    }
 
     /// Per-tick step of the post-`set_tempo` resync window: decide whether
     /// this tick's wrap detection is suspended (see [`TempoResync`]).
@@ -768,17 +748,10 @@ impl Engine {
                 PendingCapture::FreeRecording(buf)
             },
             PendingCapture::Waiting {
-                bars_until_start,
+                mut countdown,
                 bars,
-                last_in_bar_phase,
             } => {
-                let crossed = self.crossed_bar_boundary(last_in_bar_phase, cur_in_bar, bar_samples);
-                let bars_remaining = if crossed {
-                    bars_until_start.saturating_sub(1)
-                } else {
-                    bars_until_start
-                };
-                if bars_remaining == 0 {
+                if countdown.observe(cur_in_bar, bar_samples, self.suppress_wraps) {
                     // Drained-input start: the boundary was observed on a tick
                     // that also drained input. The *whole* batch is fed, so the
                     // phrase begins at the first frame of that batch, up to one
@@ -789,22 +762,24 @@ impl Engine {
                     c.arm();
                     c.feed_slice(new_samples);
                     if matches!(c.state(), capture::CaptureState::Complete) {
-                        PendingCapture::Complete(c.take_completed().expect("complete"))
+                        PendingCapture::Complete(CompletedTake {
+                            storage: c.take_completed().expect("complete"),
+                            stamp: self.sample_rate,
+                        })
                     } else {
                         PendingCapture::Recording(c)
                     }
                 } else {
-                    PendingCapture::Waiting {
-                        bars_until_start: bars_remaining,
-                        bars,
-                        last_in_bar_phase: cur_in_bar,
-                    }
+                    PendingCapture::Waiting { countdown, bars }
                 }
             },
             PendingCapture::Recording(mut c) => {
                 c.feed_slice(new_samples);
                 if matches!(c.state(), capture::CaptureState::Complete) {
-                    PendingCapture::Complete(c.take_completed().expect("complete"))
+                    PendingCapture::Complete(CompletedTake {
+                        storage: c.take_completed().expect("complete"),
+                        stamp: self.sample_rate,
+                    })
                 } else {
                     PendingCapture::Recording(c)
                 }
@@ -827,32 +802,16 @@ impl Engine {
             None => return,
         };
         if let PendingCapture::Waiting {
-            bars_until_start,
+            mut countdown,
             bars,
-            last_in_bar_phase,
         } = self.pending_capture
         {
-            if self.crossed_bar_boundary(last_in_bar_phase, cur_in_bar, bar_samples) {
-                let bars_remaining = bars_until_start.saturating_sub(1);
-                if bars_remaining == 0 {
-                    let mut c = capture::Capture::new(bars as usize * bar_samples);
-                    c.arm();
-                    self.pending_capture = PendingCapture::Recording(c);
-                } else {
-                    self.pending_capture = PendingCapture::Waiting {
-                        bars_until_start: bars_remaining,
-                        bars,
-                        last_in_bar_phase: cur_in_bar,
-                    };
-                }
+            if countdown.observe(cur_in_bar, bar_samples, self.suppress_wraps) {
+                let mut c = capture::Capture::new(bars as usize * bar_samples);
+                c.arm();
+                self.pending_capture = PendingCapture::Recording(c);
             } else {
-                // Update last_in_bar_phase so next call sees a fresh
-                // baseline for boundary detection.
-                self.pending_capture = PendingCapture::Waiting {
-                    bars_until_start,
-                    bars,
-                    last_in_bar_phase: cur_in_bar,
-                };
+                self.pending_capture = PendingCapture::Waiting { countdown, bars };
             }
         }
     }
@@ -866,11 +825,10 @@ impl Engine {
         let mut ready: Vec<PendingLayer> = Vec::new();
         let mut still_pending: Vec<PendingLayer> = Vec::new();
         for mut layer in std::mem::take(&mut self.pending_layers) {
-            if self.crossed_bar_boundary(layer.last_in_bar_phase, cur_in_bar, bar_samples) {
-                layer.bars_until_start = layer.bars_until_start.saturating_sub(1);
-            }
-            layer.last_in_bar_phase = cur_in_bar;
-            if layer.bars_until_start == 0 {
+            if layer
+                .countdown
+                .observe(cur_in_bar, bar_samples, self.suppress_wraps)
+            {
                 ready.push(layer);
             } else {
                 still_pending.push(layer);

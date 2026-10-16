@@ -2,7 +2,66 @@
 // SPDX-License-Identifier: MPL-2.0
 
 //! Allocation-free accumulation into caller-owned, initialized PCM storage.
-//! The host owns capture timing, input integrity, storage and completion.
+//! The host owns capture timing, input integrity, storage and completion
+//! admission. Shared state expresses only sample writes and observed bar wraps.
+
+/// Move-only completion envelope. Storage can be a PCM buffer or a deferred-
+/// destruction handle; the host stamp retains its own clock, generation and
+/// admission facts. Constructing/moving this value does not allocate or copy PCM.
+/// Completion alone does not imply that a host has admitted or persisted a take.
+#[derive(Debug)]
+pub struct CompletedTake<Storage, Stamp> {
+    pub storage: Storage,
+    pub stamp: Stamp,
+}
+
+/// Minimal mono input seam. Implementations retain stream and generation ownership.
+/// `None` means no sample is available now, not end-of-stream. Implementations
+/// used on an audio thread must neither allocate nor block.
+pub trait InputFeed {
+    fn pop_sample(&mut self) -> Option<f32>;
+}
+
+/// A borrowed, already-drained batch; no driver or stream ownership.
+impl InputFeed for std::slice::Iter<'_, f32> {
+    fn pop_sample(&mut self) -> Option<f32> {
+        self.next().copied()
+    }
+}
+
+/// Poll-driven countdown, preserving Hocket's half-bar jitter gate.
+/// The host supplies bar length and suppresses wraps during clock restart.
+/// A backwards phase gap must exceed half a bar: smaller gaps may be stale
+/// cross-thread playhead observations. The host must poll often enough to see
+/// each wrap; this cannot recover multiple wraps between observations.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct BarCountdown {
+    remaining: u8,
+    last_phase: usize,
+}
+
+impl BarCountdown {
+    pub fn new(remaining: u8, last_phase: usize) -> Self {
+        Self {
+            remaining,
+            last_phase,
+        }
+    }
+
+    pub fn remaining(&self) -> u8 {
+        self.remaining
+    }
+
+    /// Observe a phase even when suppressed, so the next tick uses a fresh
+    /// baseline. Returns true once the requested number of wraps has passed.
+    pub fn observe(&mut self, phase: usize, bar_frames: usize, suppress: bool) -> bool {
+        if !suppress && phase < self.last_phase && self.last_phase - phase > bar_frames / 2 {
+            self.remaining = self.remaining.saturating_sub(1);
+        }
+        self.last_phase = phase;
+        self.remaining == 0
+    }
+}
 
 /// How a sample changes its destination. Append preserves raw input bits;
 /// indexed modes retain Woodshed's existing clipping behavior.
@@ -20,6 +79,19 @@ pub struct TakeAccumulator {
 }
 
 impl TakeAccumulator {
+    /// Consume only the remaining append capacity. Unwritten input stays in
+    /// the feed for its caller to discard or reuse according to host policy.
+    pub fn append_from(&mut self, storage: &mut [f32], input: &mut impl InputFeed) -> usize {
+        let before = self.appended;
+        while self.appended < storage.len() {
+            let Some(sample) = input.pop_sample() else {
+                break;
+            };
+            self.write(storage, WriteMode::Append, 0, sample);
+        }
+        self.appended - before
+    }
+
     pub fn reset(&mut self) {
         self.appended = 0;
     }

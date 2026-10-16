@@ -1,0 +1,113 @@
+    Blocking waiting for file lock on package cache
+warning: patch `mere-proofs v0.1.0 (https://github.com/merely-made/mere.git?branch=main#ee324e51)` was not used in the crate graph
+warning: patch `mere-transport v0.0.2 (https://github.com/merely-made/murm.git?branch=main#cba46d85)` was not used in the crate graph
+warning: patch `mere-webrtc-carrier v0.0.1 (https://github.com/merely-made/murm.git?branch=main#cba46d85)` was not used in the crate graph
+help: Check that the patched package version and available features are compatible
+      with the dependency requirements. If the patch has a different version from
+      what is locked in the Cargo.lock file, run `cargo update` to use the new
+      version. This may also occur with an optional dependency that is not enabled.
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Checking mere-curation v0.1.1 (https://github.com/merely-made/mere.git?branch=main#ee324e51)
+    Checking sceno v0.0.5 (https://github.com/merely-made/mere.git?branch=main#ee324e51)
+    Checking command-menu v0.1.0 (https://github.com/merely-made/mere.git?branch=main#ee324e51)
+    Checking tinct v0.1.2 (https://github.com/merely-made/mere.git?branch=main#ee324e51)
+    Checking muniment v0.1.2 (https://github.com/merely-made/mere.git?branch=main#ee324e51)
+    Checking workbench v0.1.0 (https://github.com/merely-made/mere.git?branch=main#ee324e51)
+    Checking illume v0.0.2 (https://github.com/merely-made/mere.git?branch=main#ee324e51)
+    Checking meristem v0.2.0 (https://github.com/merely-made/mere.git?branch=main#ee324e51)
+    Checking sprigging v0.2.1 (https://github.com/merely-made/mere.git?branch=main#ee324e51)
+    Checking backstep v0.1.0 (https://github.com/merely-made/mere.git?branch=main#ee324e51)
+    Checking numen v0.2.0 (https://github.com/merely-made/mere.git?branch=main#ee324e51)
+    Checking mere-surface-api v0.1.0 (https://github.com/merely-made/mere.git?branch=main#ee324e51)
+    Checking audio-primitives v0.1.0 (/Users/markik/Code/repos/woodshed/crates/audio-primitives)
+    Checking inker v0.1.1 (https://github.com/merely-made/mere.git?branch=main#ee324e51)
+    Checking mere-forme v0.2.0 (https://github.com/merely-made/mere.git?branch=main#ee324e51)
+    Checking tabard v0.0.1 (https://github.com/merely-made/mere.git?branch=main#ee324e51)
+    Checking mere-fleece v0.0.1 (https://github.com/merely-made/mere.git?branch=main#ee324e51)
+    Checking armillary v0.1.1 (https://github.com/merely-made/mere.git?branch=main#ee324e51)
+    Checking incipit v0.2.0 (https://github.com/merely-made/mere.git?branch=main#ee324e51)
+    Checking chartulary v0.2.2 (https://github.com/merely-made/mere.git?branch=main#ee324e51)
+    Checking hocket-project v0.1.0 (/Users/markik/Code/repos/woodshed/crates/hocket-project)
+    Checking esp v0.1.0 (https://github.com/merely-made/mere.git?branch=main#ee324e51)
+    Checking seiche v0.0.6 (https://github.com/merely-made/mere.git?branch=main#ee324e51)
+    Checking mere-apparatus v0.0.1 (https://github.com/merely-made/mere.git?branch=main#ee324e51)
+    Checking woodshed-audio v0.1.0 (/Users/markik/Code/repos/woodshed/crates/woodshed-audio)
+    Checking hocket-recorder v0.1.0 (/Users/markik/Code/repos/woodshed/crates/hocket-recorder)
+warning: use of deprecated method `std::sync::atomic::Atomic::<u64>::fetch_update`: renamed to `try_update` for consistency
+  --> crates/woodshed-audio/src/capture_feed.rs:33:14
+   |
+33 |             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |generation| {
+   |              ^^^^^^^^^^^^
+   |
+   = note: `#[warn(deprecated)]` on by default
+help: replace the use of the deprecated method
+   |
+33 -             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |generation| {
+33 +             .try_update(Ordering::AcqRel, Ordering::Acquire, |generation| {
+   |
+
+    Checking scenograph v0.0.4 (https://github.com/merely-made/mere.git?branch=main#ee324e51)
+    Checking scenotime v0.0.4 (https://github.com/merely-made/mere.git?branch=main#ee324e51)
+warning: use of deprecated method `std::sync::atomic::Atomic::<usize>::fetch_update`: renamed to `try_update` for consistency
+   --> crates/woodshed-audio/src/output_runtime.rs:292:14
+    |
+292 |             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |              ^^^^^^^^^^^^
+    |
+help: replace the use of the deprecated method
+    |
+292 -             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+292 +             .try_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |
+
+warning: use of deprecated method `std::sync::atomic::Atomic::<usize>::fetch_update`: renamed to `try_update` for consistency
+   --> crates/woodshed-audio/src/output_runtime.rs:337:14
+    |
+337 |             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |              ^^^^^^^^^^^^
+    |
+help: replace the use of the deprecated method
+    |
+337 -             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+337 +             .try_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |
+
+warning: use of deprecated method `std::sync::atomic::Atomic::<usize>::fetch_update`: renamed to `try_update` for consistency
+   --> crates/woodshed-audio/src/output_runtime.rs:358:14
+    |
+358 |             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |              ^^^^^^^^^^^^
+    |
+help: replace the use of the deprecated method
+    |
+358 -             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+358 +             .try_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |
+
+warning: `woodshed-audio` (lib) generated 4 warnings (run `cargo fix --lib -p woodshed-audio` to apply 4 suggestions)
+    Checking chirograph v0.0.2 (https://github.com/merely-made/mere.git?branch=main#ee324e51)
+    Checking mere-kernel v0.0.2 (https://github.com/merely-made/mere.git?branch=main#ee324e51)
+    Checking eidetic v0.0.2 (https://github.com/merely-made/mere.git?branch=main#ee324e51)
+    Checking woodshed-graph v0.1.0 (/Users/markik/Code/repos/woodshed/crates/woodshed-graph)
+    Checking document-canvas v0.1.0 (https://github.com/merely-made/mere.git?branch=main#ee324e51)
+    Checking woodshed-core v0.1.0 (/Users/markik/Code/repos/woodshed/crates/woodshed-core)
+    Checking scenomise v0.0.5 (https://github.com/merely-made/mere.git?branch=main#ee324e51)
+    Checking mere-document-lanes v0.1.0 (https://github.com/merely-made/mere.git?branch=main#ee324e51)
+    Checking cambium v0.3.3 (https://github.com/merely-made/mere.git?branch=main#ee324e51)
+    Checking cambium-winit v0.3.0 (https://github.com/merely-made/mere.git?branch=main#ee324e51)
+    Checking mere-persona-picker v0.0.1 (https://github.com/merely-made/mere.git?branch=main#ee324e51)
+    Checking tabard-workshop v0.0.1 (https://github.com/merely-made/mere.git?branch=main#ee324e51)
+    Checking hocket-views v0.1.0 (/Users/markik/Code/repos/woodshed/crates/hocket-views)
+    Checking cambium-rootstock v0.1.0 (https://github.com/merely-made/mere.git?branch=main#ee324e51)
+    Checking cambium-winit-a11y v0.3.0 (https://github.com/merely-made/mere.git?branch=main#ee324e51)
+    Checking mesquite v0.1.0 (https://github.com/merely-made/mere.git?branch=main#ee324e51)
+    Checking cambium-genet-winit-host v0.1.0 (https://github.com/merely-made/mere.git?branch=main#ee324e51)
+    Checking mere-cartography v0.0.2 (https://github.com/merely-made/mere.git?branch=main#ee324e51)
+    Checking mere-alembic v0.0.1 (https://github.com/merely-made/mere.git?branch=main#ee324e51)
+    Checking pandect v0.1.1 (https://github.com/merely-made/mere.git?branch=main#ee324e51)
+    Checking pictograph v0.2.0 (https://github.com/merely-made/mere.git?branch=main#ee324e51)
+    Checking woodshed-views v0.1.0 (/Users/markik/Code/repos/woodshed/crates/woodshed-views)
+    Checking graphshell-endpoint v0.0.2 (https://github.com/merely-made/mere.git?branch=main#ee324e51)
+    Checking woodshed-genet v0.1.0 (/Users/markik/Code/repos/woodshed/crates/woodshed-genet)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 17.66s

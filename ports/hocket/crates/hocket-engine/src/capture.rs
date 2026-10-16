@@ -133,13 +133,20 @@ impl Capture {
     /// once the capture completes, so callers can pass an entire input
     /// buffer without worrying about overrun.
     pub fn feed_slice(&mut self, samples: &[f32]) {
-        for &s in samples {
-            if matches!(self.state, CaptureState::Recording { .. }) {
-                self.feed(s);
-            } else {
-                return;
-            }
+        if !matches!(self.state, CaptureState::Recording { .. }) {
+            return;
         }
+        self.accumulator
+            .append_from(&mut self.buffer, &mut samples.iter());
+        let done = self.accumulator.appended();
+        self.state = if done >= self.samples_per_phrase.max(1) {
+            CaptureState::Complete
+        } else {
+            CaptureState::Recording {
+                samples_done: done,
+                samples_total: self.samples_per_phrase,
+            }
+        };
     }
 
     /// If state is `Complete`, drain the captured buffer and reset to
