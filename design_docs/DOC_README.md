@@ -21,6 +21,8 @@ before any other doc in this directory.
 
 - [Session Mere selection folds](2026-07-11_stage_set_tools_plan.md#session-mere-selection-folds-2026-10-16) — In progress: native member folds, view-owned retention and undo/redo; source and sealed native reopen gates.
 
+- [Native arrangement editor and panel](2026-07-11_stage_set_tools_plan.md#native-arrangement-editor-and-panel-2026-10-16) — Qualified on macOS: per-Set drafts, role/Card/rest editing and linked saved voicings over the shared scene surface; 393 parent-suite cases plus five child invocations, desktop build, two sealed native processes and 12 reviewed wide/narrow captures with exact Set/document reopening. [Receipt](../validation/native-arrangement_20261016/receipt.json).
+
 - [Saved progression arrangements](2026-07-11_stage_set_tools_plan.md#saved-progression-arrangements-and-portable-export-2026-10-16) — Qualified: Set-owned musical alignment, identity-safe snapshot copies and explicit session exchange export to Graphshell; 656 suite cases, feature-disabled retention, fresh CLI processes and browser receiving.
 
 - [Stage P5a Card timing and admission](2026-07-11_stage_set_tools_plan.md#p5a-admit-one-resolved-card-timing-contract-2026-10-16) — Bounded slice qualified: shared fallible dwell/ordered-preview timing, literal authored BPM, visible refusal and retry; 804 cases plus five child invocations, desktop build and eight reviewed native seed/reopen captures with exact sealed Card/resolution preservation. Full P5 shared clock remains open. [Receipt](../validation/stage-p5a_20261016/receipt.json).

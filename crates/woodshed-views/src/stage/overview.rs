@@ -66,6 +66,7 @@ pub fn overview_snapshot(ui: &UiState) -> OverviewSnapshot {
                 WorkspacePanel::Practice => SessionViewDomain::Stage,
                 WorkspacePanel::Related => SessionViewDomain::Catalog,
                 WorkspacePanel::Set => SessionViewDomain::Rehearsal,
+                WorkspacePanel::Arrangement => SessionViewDomain::Stage,
                 WorkspacePanel::Settings => SessionViewDomain::Tools,
             },
         })

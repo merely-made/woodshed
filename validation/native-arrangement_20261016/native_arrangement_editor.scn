@@ -1,0 +1,102 @@
+# Musical fixture only; all arrangement authoring goes through native controls.
+settle 90
+ui-zoom 1
+assert snap practice-saved == true
+act arrangement-editor-example
+settle 8
+assert snap set-cards == 4
+checkpoint-arrangement before
+click .workspace-panel Arrangement
+settle 6
+click .arrangement-start
+settle 6
+assert snap arrangement-dirty == true
+assert snap arrangement-primary == true
+assert snap arrangement-saved == false
+capture 01_unplaced_template
+click .arrangement-place-order
+settle 6
+click .arrangement-field @data-arrangement-field=name
+input-text Native ii-V-I study
+settle 4
+click .arrangement-field @data-arrangement-field=role-2-length
+input-text 32
+settle 4
+click .arrangement-add-rest
+settle 4
+click .arrangement-field @data-arrangement-field=card-2-length
+input-text 8
+settle 4
+click .arrangement-field @data-arrangement-field=card-4-role
+input-text 3
+settle 4
+click .arrangement-field @data-arrangement-field=rest-rest-1-start
+input-text 24
+settle 4
+click .arrangement-field @data-arrangement-field=rest-rest-1-length
+input-text 8
+settle 4
+click .arrangement-field @data-arrangement-field=extent
+input-text -1
+settle 6
+assert snap arrangement-primary == false
+assert snap arrangement-producer == false
+assert snap arrangement-related-producer == false
+capture 02_invalid_draft
+click .arrangement-save
+settle 4
+assert snap arrangement-saved == false
+click .arrangement-field @data-arrangement-field=extent
+input-text 64
+settle 6
+assert snap arrangement-primary == true
+assert snap arrangement-producer == true
+click .arrangement-inspect Inspect Card 3
+settle 6
+assert snap arrangement-selection == card-3
+assert snap arrangement-related == true
+assert snap arrangement-related-producer == true
+wheel 0 -2000 px on .workspace-screen
+settle 6
+capture 03_tonic_first_voicing
+click .arrangement-inspect Inspect Card 4
+settle 6
+assert snap arrangement-selection == card-4
+assert snap arrangement-related == true
+wheel 0 -2000 px on .workspace-screen
+settle 6
+capture 04_tonic_second_voicing
+captures-differ 03_tonic_first_voicing 04_tonic_second_voicing
+click .arrangement-inspect Inspect rest
+settle 6
+assert snap arrangement-selection == rest-rest-1
+assert snap arrangement-related == false
+assert snap arrangement-related-producer == false
+click .arrangement-save
+settle 12
+assert snap arrangement-dirty == false
+assert snap arrangement-saved == true
+assert snap practice-saved == true
+checkpoint-arrangement saved
+wheel 0 -2000 px on .workspace-screen
+settle 6
+capture 05_saved_arrangement
+resize 420 1000
+settle 12
+wheel 0 -2000 px on .workspace-screen
+settle 6
+capture 06_narrow_arrangement
+wheel 320 0 px on .arrangement-scene-scroll
+settle 6
+capture 07_narrow_full_span
+resize 1180 1100
+settle 10
+click .workspace-panel Practice
+settle 6
+assert snap arrangement-producer == false
+assert snap arrangement-related-producer == false
+click .workspace-panel Arrangement
+settle 6
+assert snap arrangement-producer == true
+assert snap practice-saved == true
+capture 08_panel_return

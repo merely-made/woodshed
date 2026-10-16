@@ -17,7 +17,7 @@ sceno.workspace = true
 scenograph.workspace = true
 scenomise.workspace = true
 blake3.workspace = true
-woodshed-core = { workspace = true }
+woodshed-core = { workspace = true, features = ["portable-scenes"] }
 mere-surface-api = { workspace = true }
 workbench = { workspace = true }
 woodshedding = { workspace = true }
