@@ -3408,10 +3408,7 @@ pictograph's `FaceAlignment`. Scenario snapshots expose
   asserts no missing bodies, zero face offset and an unchanged Set.
 - 768 root tests pass, and Hocket and Redshank check.
 
-**Open.**
-- The native receipt (`scenarios/canvas_controls_p2.scn`) waits for the
-  machine to be unlocked.
-- **Wheel (follow-up, same day, Mere `1b4172b2`).** All three surfaces take
+**Wheel adoption (same day, Mere `1b4172b2`).** All three surfaces take
   the whole notch through `graph_canvas_with_wheel`, or the lower-level
   builder's wheel hook on Related, and apply pictograph's `wheel_use` and
   pointer-anchored `wheel_zoom`. Cambium's positive y means toward the top, so
@@ -3419,9 +3416,8 @@ pictograph's `FaceAlignment`. Scenario snapshots expose
   the page keeps the host's scroll default.
   - A CPU test checks, on every surface, that a notch toward the top zooms in,
     keeps the world point under the pointer, and keeps faces on bodies.
-  - The host has no scripted wheel input (`HostPointer` covers move, press,
-    release and cancel only), so no scenario can drive a wheel notch; this
-    needs a hand check.
+  - Subsequent Mere `39c3c955d` adds scripted host wheel delivery, used by
+    the native receipts below.
 - Touch is deferred until the host delivers touch input (Mark's ruling).
 
 **Native receipt (2026-10-15).** The receipt is
@@ -3441,6 +3437,22 @@ from four runs of `scenarios/canvas_controls_p2.scn` on Mere `39c3c955d`.
   These are needed because `FaceAlignment` measures a freshly painted leaf
   and cannot see a stale registered one.
 - **Styling.** Related's camera buttons received button chrome.
-- **Not covered natively.** Overview wheel (its canvas sits below the fold
-  at the receipt window size) is covered by a CPU test. Touch remains
-  deferred.
+- **Original receipt limit.** Overview wheel was CPU-only because the
+  canvas sits below the fold. The refresh below closes that input-routing
+  gap. Touch remains deferred.
+
+**Current-family native refresh (2026-10-15).**
+[Refresh receipt](../validation/canvas-p2_20261015/refresh-receipt.json) binds
+the committed scenario `4eddaba` to locked Mere `59f88e63` / Genet `7af8de32`
+and Dramatis `5c89001a`. The locked desktop build succeeds; all 183
+`woodshed-views` tests pass, including eight focused camera cases (counted
+once). The final native process passes over 274 presented frames with nine
+nonblank, distinct captures, all visually reviewed. The scenario now reveals
+the overview's song node before delivering wheel input, closing the original
+overview wheel-routing gap. Buttons, plain wheel on every surface, the
+relationship editor's Ctrl-wheel, face alignment, paint currency and the
+unchanged three-Card Set pass. The overview remains partly below the fold and
+some Related labels overlap at the exercised zooms. These are bounded camera
+and rendering results, not compact-layout polish, physical input hardware or
+sealed persistence/reopen qualification. Djinn was unavailable; runs used
+explicit isolated state paths. Touch remains deferred.

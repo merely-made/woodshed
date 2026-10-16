@@ -1,0 +1,23 @@
+RESULT ok
+P2: canvas commands over the Session Mere, relationship editor and Related graph
+captured 01_overview_zoomed
+captured 02_overview_fit
+captured 03_relationship_zoomed
+captured 04_relationship_fit
+captured 04b_relationship_wheel
+captured 05_related_zoomed
+captured 06_related_fit
+captured 07_related_wheel
+captured 08_overview_wheel
+P2 canvas commands held on all three surfaces
+capture 01_overview_zoomed 2200x1328 digest=6a1b69c702ee5759 file=/Users/markik/Code/testing/woodshed/canvas-p2-refresh-20261015/committed-captures/01_overview_zoomed.png
+capture 02_overview_fit 2200x1328 digest=89bd1ba2cf186cb6 file=/Users/markik/Code/testing/woodshed/canvas-p2-refresh-20261015/committed-captures/02_overview_fit.png
+capture 03_relationship_zoomed 2200x1328 digest=f92b891c5d4501ae file=/Users/markik/Code/testing/woodshed/canvas-p2-refresh-20261015/committed-captures/03_relationship_zoomed.png
+capture 04_relationship_fit 2200x1328 digest=52d5a5e37c73218e file=/Users/markik/Code/testing/woodshed/canvas-p2-refresh-20261015/committed-captures/04_relationship_fit.png
+capture 04b_relationship_wheel 2200x1328 digest=58de68ecc30982d8 file=/Users/markik/Code/testing/woodshed/canvas-p2-refresh-20261015/committed-captures/04b_relationship_wheel.png
+capture 05_related_zoomed 2200x1328 digest=a5cf3fc06a942ae3 file=/Users/markik/Code/testing/woodshed/canvas-p2-refresh-20261015/committed-captures/05_related_zoomed.png
+capture 06_related_fit 2200x1328 digest=0951cdbd8cca0f43 file=/Users/markik/Code/testing/woodshed/canvas-p2-refresh-20261015/committed-captures/06_related_fit.png
+capture 07_related_wheel 2200x1328 digest=3e318cf74eb07179 file=/Users/markik/Code/testing/woodshed/canvas-p2-refresh-20261015/committed-captures/07_related_wheel.png
+capture 08_overview_wheel 2200x1328 digest=dee8c7df168f8560 file=/Users/markik/Code/testing/woodshed/canvas-p2-refresh-20261015/committed-captures/08_overview_wheel.png
+frames: 9 captured, 0 blank, 9 distinct digests
+presentation: 274 frames, 275 redraws, 1 unpresented redraws

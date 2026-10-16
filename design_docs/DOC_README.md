@@ -104,6 +104,9 @@ before any other doc in this directory.
   states, and responsive wireframe done-conditions. It is separate from the
   Woodshed product graph.
 - [2026-07-11_stage_set_tools_plan.md](2026-07-11_stage_set_tools_plan.md)
+  — October 15 P2 camera receipt refreshed on the current locked family: 183 view tests,
+  274 presented frames and nine reviewed captures; native wheel routing now covers
+  the overview, Related and relationship editor. Touch and sealed reopen remain outside this receipt.
   — October 5 adds owner-qualified relational disclosure, a shared-compiler
   compatibility instrument, and fresh-process retention through the desktop
   session path. The visible shared-recipe host integration is qualified with 558 automated
