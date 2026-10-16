@@ -1,0 +1,11 @@
+RESULT ok
+captured 01_reopened_arrangement
+captured 02_reopened_voicing
+captured 03_reopened_narrow
+captured 04_reopened_full_span
+capture 01_reopened_arrangement 2360x2200 digest=b5d94ac09ab997d0 file=/Users/markik/Code/testing/woodshed/native-arrangement-20261016/reopen-v3/01_reopened_arrangement.png
+capture 02_reopened_voicing 2360x2200 digest=b21fff561d1e2172 file=/Users/markik/Code/testing/woodshed/native-arrangement-20261016/reopen-v3/02_reopened_voicing.png
+capture 03_reopened_narrow 840x2000 digest=2594c95313c9f185 file=/Users/markik/Code/testing/woodshed/native-arrangement-20261016/reopen-v3/03_reopened_narrow.png
+capture 04_reopened_full_span 840x2000 digest=d4d6bacc339d48e0 file=/Users/markik/Code/testing/woodshed/native-arrangement-20261016/reopen-v3/04_reopened_full_span.png
+frames: 4 captured, 0 blank, 4 distinct digests
+presentation: 151 frames, 154 redraws, 3 unpresented redraws

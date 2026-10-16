@@ -3815,8 +3815,8 @@ product work; this slice supplies their persisted model and export seam.
 
 ### Native arrangement editor and panel (2026-10-16)
 
-**Status:** implementation in progress, explicitly requested after the saved
-Set/export slice. The Arrangement workspace edits a per-working-Set draft of
+**Status:** bounded native editor and panel qualified on macOS, 2026-10-16,
+after the saved Set/export slice. The Arrangement workspace edits a per-working-Set draft of
 role spans, placed/unplaced Card occurrences and authored rests. Preview and
 inspection use Pictograph's existing BackdropSurface and Rootstock's native
 SceneProducer, with the same Scenomise document as Graphshell. Save validates
@@ -3824,12 +3824,13 @@ before replacing only the Set's arrangement attachment; discard/reload and
 close preservation keep drafts separate from saved instructions. Captured
 musical/setup context remains authoritative until explicit rebinding.
 
-Done when native controls author and save an arrangement, select distinct
-saved voicings, disclose errors without stale paint, preserve independent Set
-drafts and reject stale saved-state replacement. The new panel must survive
-workspace save/reopen; text/keyboard routing, shared producer cleanup, sealed
-fresh-process reopening and wide/narrow presentation get distinct receipts.
-No audio transport or Card timing mutation is part of arrangement authoring.
+Native controls author and save an arrangement, select distinct saved
+voicings and disclose errors without stale paint. Model tests preserve
+independent Set drafts and reject stale saved-state replacement; host tests
+cover keyboard routing, frame reconciliation and draft close protection. The
+native seed/reopen runs cover producer cleanup, workspace restoration, sealed
+fresh-process reopening and wide/narrow presentation. No audio transport or
+Card timing mutation is part of arrangement authoring.
 
 **Findings (2026-10-16):** The first native pass exposed two presentation
 conditions that CPU model checks did not establish: text injected through the
@@ -3839,3 +3840,13 @@ reconciles the draft before producer binding; a regression checks invalid and
 corrected fields without a dispatch tail. Compact primary scenes retain a
 readable minimum width in an ordinary horizontal scroll area. The failed first
 run remains evidence, rather than acceptance.
+
+**Progress (2026-10-16):** Source `f4d08be` passes 211 view cases and 182
+native-host cases (seven existing ignored helpers), plus five child-process
+invocations and the locked desktop build. Two native processes present 513
+frames and produce 12 reviewed captures. Actual sealed-store loads equal the
+live saved/reopened Sets; Card instructions and the complete shared
+SceneDocument reopen exactly. Compact captures show both ends of the scene
+through horizontal scrolling. The first failed pass is preserved beside the
+accepted receipt. Physical audio and other operating systems remain outside
+this qualification. [Receipt](../validation/native-arrangement_20261016/receipt.json).

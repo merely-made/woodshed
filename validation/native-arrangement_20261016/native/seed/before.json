@@ -1,0 +1,484 @@
+{
+  "document": null,
+  "draft_dirty": false,
+  "error": null,
+  "live": {
+    "active_exploration": {
+      "arpeggio_direction": "UpDown",
+      "arpeggio_idx": 0,
+      "arpeggio_inversion": 0,
+      "arpeggio_position_idx": 0,
+      "chord_idx": 0,
+      "context_focus": null,
+      "exercise_idx": 0,
+      "exercise_starting_fret": 1,
+      "fretboard": {
+        "board_layout": "Two pane",
+        "marker_style": "Sharp",
+        "neck_end": null,
+        "neck_start": 0,
+        "orientation": "Horizontal"
+      },
+      "lens": "Progressions",
+      "progression_expanded": 2,
+      "progression_idx": 6,
+      "root_idx": 3,
+      "scale_idx": 8,
+      "search_query": "",
+      "stage_settings": {
+        "context": {
+          "enabled": true,
+          "node_limit": 24
+        },
+        "related": {
+          "arrangement": "Radial",
+          "dismissed_ids": [],
+          "graph_scope": "Selection",
+          "relation_depth": 1,
+          "show_neighborhood": true,
+          "use_history": true
+        },
+        "set_arrangement": "Snake",
+        "set_graph_height": 260,
+        "set_graph_reading": "Set",
+        "set_graph_width": 520,
+        "visible_set_relations": [
+          "Next"
+        ]
+      },
+      "tuning": {
+        "tuning_idx": 0
+      }
+    },
+    "arpeggio_direction": "UpDown",
+    "arpeggio_idx": 0,
+    "arpeggio_inversion": 0,
+    "arpeggio_position_idx": 0,
+    "catalog_explorations": {
+      "active_id": 1,
+      "active_name": "Catalog exploration 1",
+      "inactive": [],
+      "next_id": 1
+    },
+    "chord_idx": 0,
+    "exercise_idx": 0,
+    "exercise_starting_fret": 1,
+    "lens": "Progressions",
+    "musical_context": {
+      "entries": [],
+      "next_id": 0
+    },
+    "overview_presentation_json": "{\"version\":2,\"pan\":[0.0,0.0],\"zoom\":1.0,\"motion\":false,\"reduced_motion\":true,\"atmosphere\":{\"kind\":\"None\",\"seed\":1},\"positions\":[],\"focus\":null,\"roles\":[],\"background\":[]}",
+    "personal_relations": {
+      "journal": {
+        "entries": [],
+        "id": null,
+        "parents": [],
+        "provenance": null
+      },
+      "source_id": "aa5c7f45-2244-4d79-b98b-ee7dffff0c88"
+    },
+    "practice_history": {
+      "entries": [],
+      "owners": [],
+      "visits": []
+    },
+    "progression_expanded": 2,
+    "progression_idx": 6,
+    "retained_sets": {
+      "entries": [],
+      "next_id": 0
+    },
+    "root_idx": 3,
+    "scale_idx": 8,
+    "section": "Stage",
+    "set": {
+      "cards": [
+        {
+          "from": {
+            "Progression": {
+              "key": 0,
+              "name": "ii-V-I (Jazz)"
+            }
+          },
+          "id": 1,
+          "label": "Dm7 (iim7)",
+          "material": {
+            "Chord": {
+              "name": "Minor 7",
+              "root": 2
+            }
+          },
+          "setting": {
+            "capo": null,
+            "fret_window": null,
+            "instrument": "Guitar",
+            "mark_mode": "Off",
+            "marked": [],
+            "tuning": "Standard",
+            "voicing_fingerprint": "x-x-0-2-1-1",
+            "voicing_idx": 0,
+            "voicing_profile": "root-bass/position4/v1"
+          },
+          "timing": {
+            "bpm": null,
+            "hold": "Manual"
+          },
+          "touch": "Block"
+        },
+        {
+          "from": {
+            "Progression": {
+              "key": 0,
+              "name": "ii-V-I (Jazz)"
+            }
+          },
+          "id": 2,
+          "label": "G7 (V7)",
+          "material": {
+            "Chord": {
+              "name": "Dominant 7",
+              "root": 7
+            }
+          },
+          "setting": {
+            "capo": null,
+            "fret_window": null,
+            "instrument": "Guitar",
+            "mark_mode": "Off",
+            "marked": [],
+            "tuning": "Standard",
+            "voicing_fingerprint": "3-2-3-x-3-x",
+            "voicing_idx": 0,
+            "voicing_profile": "root-bass/position4/v1"
+          },
+          "timing": {
+            "bpm": null,
+            "hold": "Manual"
+          },
+          "touch": "Block"
+        },
+        {
+          "from": {
+            "Progression": {
+              "key": 0,
+              "name": "ii-V-I (Jazz)"
+            }
+          },
+          "id": 3,
+          "label": "Cmaj7 (IM7)",
+          "material": {
+            "Chord": {
+              "name": "Major 7",
+              "root": 0
+            }
+          },
+          "setting": {
+            "capo": null,
+            "fret_window": null,
+            "instrument": "Guitar",
+            "mark_mode": "Off",
+            "marked": [],
+            "tuning": "Standard",
+            "voicing_fingerprint": "x-3-2-0-0-x",
+            "voicing_idx": 0,
+            "voicing_profile": "root-bass/position4/v1"
+          },
+          "timing": {
+            "bpm": null,
+            "hold": "Manual"
+          },
+          "touch": "Block"
+        },
+        {
+          "from": {
+            "Progression": {
+              "key": 0,
+              "name": "ii-V-I (Jazz)"
+            }
+          },
+          "id": 4,
+          "label": "Cmaj7 (IM7)",
+          "material": {
+            "Chord": {
+              "name": "Major 7",
+              "root": 0
+            }
+          },
+          "setting": {
+            "capo": null,
+            "fret_window": null,
+            "instrument": "Guitar",
+            "mark_mode": "Off",
+            "marked": [],
+            "tuning": "Standard",
+            "voicing_fingerprint": "x-3-x-0-0-0",
+            "voicing_idx": 1,
+            "voicing_profile": "root-bass/position4/v1"
+          },
+          "timing": {
+            "bpm": null,
+            "hold": "Manual"
+          },
+          "touch": "Block"
+        }
+      ],
+      "cursor": 0,
+      "last_card_id": 4,
+      "loop_mode": "Off"
+    },
+    "song": {
+      "bars": [],
+      "click": true,
+      "name": "",
+      "one_shot": false
+    },
+    "working_sets": {
+      "active_id": 1,
+      "active_name": "Working Set 1",
+      "inactive": [],
+      "next_id": 1
+    },
+    "workspace_json": "{\"tree\":{\"stack\":{\"tabs\":[{\"panel\":\"overview\",\"id\":1464814917,\"title\":\"Mere\",\"kind\":\"woodshed.overview\",\"content_id\":\"overview\"},{\"panel\":\"practice\",\"id\":1464815698,\"title\":\"Practice\",\"kind\":\"woodshed.practice\",\"content_id\":\"stage\"},{\"panel\":\"set\",\"id\":1464816453,\"title\":\"Set\",\"kind\":\"woodshed.set\",\"content_id\":\"rehearsal\"},{\"panel\":\"related\",\"id\":1464816197,\"title\":\"Related\",\"kind\":\"woodshed.related\",\"content_id\":\"stage\"},{\"panel\":\"arrangement\",\"id\":1464811858,\"title\":\"Arrangement\",\"kind\":\"woodshed.arrangement\",\"content_id\":\"stage\"},{\"panel\":\"settings\",\"id\":1464816455,\"title\":\"Settings\",\"kind\":\"woodshed.settings\",\"content_id\":\"settings\"}],\"active\":1}},\"active_panel\":\"practice\"}"
+  },
+  "selection": null,
+  "stored": {
+    "active_exploration": {
+      "arpeggio_direction": "UpDown",
+      "arpeggio_idx": 0,
+      "arpeggio_inversion": 0,
+      "arpeggio_position_idx": 0,
+      "chord_idx": 0,
+      "context_focus": null,
+      "exercise_idx": 0,
+      "exercise_starting_fret": 1,
+      "fretboard": {
+        "board_layout": "Two pane",
+        "marker_style": "Sharp",
+        "neck_end": null,
+        "neck_start": 0,
+        "orientation": "Horizontal"
+      },
+      "lens": "Progressions",
+      "progression_expanded": 2,
+      "progression_idx": 6,
+      "root_idx": 3,
+      "scale_idx": 8,
+      "search_query": "",
+      "stage_settings": {
+        "context": {
+          "enabled": true,
+          "node_limit": 24
+        },
+        "related": {
+          "arrangement": "Radial",
+          "dismissed_ids": [],
+          "graph_scope": "Selection",
+          "relation_depth": 1,
+          "show_neighborhood": true,
+          "use_history": true
+        },
+        "set_arrangement": "Snake",
+        "set_graph_height": 260,
+        "set_graph_reading": "Set",
+        "set_graph_width": 520,
+        "visible_set_relations": [
+          "Next"
+        ]
+      },
+      "tuning": {
+        "tuning_idx": 0
+      }
+    },
+    "arpeggio_direction": "UpDown",
+    "arpeggio_idx": 0,
+    "arpeggio_inversion": 0,
+    "arpeggio_position_idx": 0,
+    "catalog_explorations": {
+      "active_id": 1,
+      "active_name": "Catalog exploration 1",
+      "inactive": [],
+      "next_id": 1
+    },
+    "chord_idx": 0,
+    "exercise_idx": 0,
+    "exercise_starting_fret": 1,
+    "lens": "Progressions",
+    "musical_context": {
+      "entries": [],
+      "next_id": 0
+    },
+    "overview_presentation_json": "{\"version\":2,\"pan\":[0.0,0.0],\"zoom\":1.0,\"motion\":false,\"reduced_motion\":true,\"atmosphere\":{\"kind\":\"None\",\"seed\":1},\"positions\":[],\"focus\":null,\"roles\":[],\"background\":[]}",
+    "personal_relations": {
+      "journal": {
+        "entries": [],
+        "id": null,
+        "parents": [],
+        "provenance": null
+      },
+      "source_id": "aa5c7f45-2244-4d79-b98b-ee7dffff0c88"
+    },
+    "practice_history": {
+      "entries": [],
+      "owners": [],
+      "visits": []
+    },
+    "progression_expanded": 2,
+    "progression_idx": 6,
+    "retained_sets": {
+      "entries": [],
+      "next_id": 0
+    },
+    "root_idx": 3,
+    "scale_idx": 8,
+    "section": "Stage",
+    "set": {
+      "cards": [
+        {
+          "from": {
+            "Progression": {
+              "key": 0,
+              "name": "ii-V-I (Jazz)"
+            }
+          },
+          "id": 1,
+          "label": "Dm7 (iim7)",
+          "material": {
+            "Chord": {
+              "name": "Minor 7",
+              "root": 2
+            }
+          },
+          "setting": {
+            "capo": null,
+            "fret_window": null,
+            "instrument": "Guitar",
+            "mark_mode": "Off",
+            "marked": [],
+            "tuning": "Standard",
+            "voicing_fingerprint": "x-x-0-2-1-1",
+            "voicing_idx": 0,
+            "voicing_profile": "root-bass/position4/v1"
+          },
+          "timing": {
+            "bpm": null,
+            "hold": "Manual"
+          },
+          "touch": "Block"
+        },
+        {
+          "from": {
+            "Progression": {
+              "key": 0,
+              "name": "ii-V-I (Jazz)"
+            }
+          },
+          "id": 2,
+          "label": "G7 (V7)",
+          "material": {
+            "Chord": {
+              "name": "Dominant 7",
+              "root": 7
+            }
+          },
+          "setting": {
+            "capo": null,
+            "fret_window": null,
+            "instrument": "Guitar",
+            "mark_mode": "Off",
+            "marked": [],
+            "tuning": "Standard",
+            "voicing_fingerprint": "3-2-3-x-3-x",
+            "voicing_idx": 0,
+            "voicing_profile": "root-bass/position4/v1"
+          },
+          "timing": {
+            "bpm": null,
+            "hold": "Manual"
+          },
+          "touch": "Block"
+        },
+        {
+          "from": {
+            "Progression": {
+              "key": 0,
+              "name": "ii-V-I (Jazz)"
+            }
+          },
+          "id": 3,
+          "label": "Cmaj7 (IM7)",
+          "material": {
+            "Chord": {
+              "name": "Major 7",
+              "root": 0
+            }
+          },
+          "setting": {
+            "capo": null,
+            "fret_window": null,
+            "instrument": "Guitar",
+            "mark_mode": "Off",
+            "marked": [],
+            "tuning": "Standard",
+            "voicing_fingerprint": "x-3-2-0-0-x",
+            "voicing_idx": 0,
+            "voicing_profile": "root-bass/position4/v1"
+          },
+          "timing": {
+            "bpm": null,
+            "hold": "Manual"
+          },
+          "touch": "Block"
+        },
+        {
+          "from": {
+            "Progression": {
+              "key": 0,
+              "name": "ii-V-I (Jazz)"
+            }
+          },
+          "id": 4,
+          "label": "Cmaj7 (IM7)",
+          "material": {
+            "Chord": {
+              "name": "Major 7",
+              "root": 0
+            }
+          },
+          "setting": {
+            "capo": null,
+            "fret_window": null,
+            "instrument": "Guitar",
+            "mark_mode": "Off",
+            "marked": [],
+            "tuning": "Standard",
+            "voicing_fingerprint": "x-3-x-0-0-0",
+            "voicing_idx": 1,
+            "voicing_profile": "root-bass/position4/v1"
+          },
+          "timing": {
+            "bpm": null,
+            "hold": "Manual"
+          },
+          "touch": "Block"
+        }
+      ],
+      "cursor": 0,
+      "last_card_id": 4,
+      "loop_mode": "Off"
+    },
+    "song": {
+      "bars": [],
+      "click": true,
+      "name": "",
+      "one_shot": false
+    },
+    "working_sets": {
+      "active_id": 1,
+      "active_name": "Working Set 1",
+      "inactive": [],
+      "next_id": 1
+    },
+    "workspace_json": "{\"tree\":{\"stack\":{\"tabs\":[{\"panel\":\"overview\",\"id\":1464814917,\"title\":\"Mere\",\"kind\":\"woodshed.overview\",\"content_id\":\"overview\"},{\"panel\":\"practice\",\"id\":1464815698,\"title\":\"Practice\",\"kind\":\"woodshed.practice\",\"content_id\":\"stage\"},{\"panel\":\"set\",\"id\":1464816453,\"title\":\"Set\",\"kind\":\"woodshed.set\",\"content_id\":\"rehearsal\"},{\"panel\":\"related\",\"id\":1464816197,\"title\":\"Related\",\"kind\":\"woodshed.related\",\"content_id\":\"stage\"},{\"panel\":\"arrangement\",\"id\":1464811858,\"title\":\"Arrangement\",\"kind\":\"woodshed.arrangement\",\"content_id\":\"stage\"},{\"panel\":\"settings\",\"id\":1464816455,\"title\":\"Settings\",\"kind\":\"woodshed.settings\",\"content_id\":\"settings\"}],\"active\":1}},\"active_panel\":\"practice\"}"
+  }
+}
