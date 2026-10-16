@@ -174,8 +174,31 @@ The block lengths above give ii and V one bar each, and I two bars. Graphshell's
 Portable scenes includes exports of this arrangement in C and G alongside
 metre. The shared template owns lanes, nested groups, tick spans, expected
 slots and supplied occurrence alignments. Woodshed owns the chord meaning.
-The adapter currently requires one song block per role; arbitrary role-to-song
-mapping and native progression panels remain separate work. The committed canonical scene cohort supports this optional exporter.
+The SongDoc convenience adapter keeps one block per role. The explicit Set
+adapter below supports independent alignment; native progression panels remain
+separate work. The committed canonical scene cohort supports this optional exporter.
+
+The explicit `arrangement_scene::arrangement_scene(&stage, &set, &arrangement,
+reading_id)` uses the Set's persistent `CardId`s. `ProgressionArrangement`
+keeps expected role spans independent from card spans and explicit rests.
+Several cards can align to one role; absent alignment remains unplaced. Saved
+selected card shapes become occurrence-linked fretboard readings. Unselected
+shapes stay absent; stale fingerprints or setup mismatches are refused.
+Physical fret positions retain capo-aware concert pitches. The adapter borrows
+its sources and performs no playback, source edits or conformity inference.
+
+```sh
+cargo run -p woodshed-core --features portable-scenes --bin woodshed-arrangement-scene -- \
+  regular regular.scene.json
+cargo run -p woodshed-core --features portable-scenes --bin woodshed-arrangement-scene -- \
+  varied varied.scene.json
+```
+
+These reproducible studies use the real Set and shape-selection APIs. Both
+carry the same ii–V–I expectations. The varied study shortens V, inserts a rest,
+and gives two tonic occurrences different saved voicings. Graphshell imports
+the versioned scene document and shows the supplied voicing for the selected
+occurrence, without a Woodshed dependency or a host-side chord resolver.
 
 ## License
 

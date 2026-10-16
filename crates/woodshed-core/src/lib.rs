@@ -44,6 +44,8 @@ pub mod stage_scene;
 pub mod fretboard_scene;
 #[cfg(feature = "portable-scenes")]
 pub mod progression_scene;
+#[cfg(feature = "portable-scenes")]
+pub mod arrangement_scene;
 pub mod storage;
 pub mod tonnetz;
 pub mod working_sets;

@@ -19,6 +19,25 @@ pub fn stage_fretboard_scene(stage: &StageState, reading_id: &str) -> Result<Sce
         _ => None,
     }
     .ok_or("The selected material is absent from Woodshed's catalog")?;
+    let title = format!("{} {} · {}", stage.root_name(), material, tuning.name);
+    fretboard_from_dots(
+        tuning,
+        stage.fret_count,
+        stage.dots(),
+        stage.root().pitch_class(),
+        reading_id,
+        title,
+    )
+}
+
+fn fretboard_from_dots(
+    tuning: woodshedding::tuning::Tuning,
+    frets: u8,
+    dots: Vec<crate::FretDot>,
+    root: u8,
+    reading_id: &str,
+    title: String,
+) -> Result<SceneInput, String> {
     let count = tuning.strings.len();
     let strings = tuning
         .strings
@@ -32,9 +51,8 @@ pub fn stage_fretboard_scene(stage: &StageState, reading_id: &str) -> Result<Sce
             })
         })
         .collect::<Result<Vec<_>, String>>()?;
-    let root = stage.root().pitch_class();
     let mut positions = Vec::new();
-    for dot in stage.dots() {
+    for dot in dots {
         let open = tuning
             .strings
             .get(dot.string_index)
@@ -66,7 +84,7 @@ pub fn stage_fretboard_scene(stage: &StageState, reading_id: &str) -> Result<Sce
     }
     let facts = SceneFacts::Fretboard(Fretboard {
         strings,
-        frets: u16::from(stage.fret_count),
+        frets: u16::from(frets),
         positions,
     });
     let revision = blake3::hash(&serde_json::to_vec(&facts).map_err(|e| e.to_string())?)
@@ -79,11 +97,70 @@ pub fn stage_fretboard_scene(stage: &StageState, reading_id: &str) -> Result<Sce
             id: reading_id.into(),
         },
         revision,
-        title: format!("{} {} · {}", stage.root_name(), material, tuning.name),
+        title,
         facts,
     };
     recipe.compile().map_err(|e| e.to_string())?;
     Ok(recipe)
+}
+
+/// Export only an explicitly selected and currently admitted card shape.
+/// Missing selection remains absent; a stale saved shape is a refusal.
+pub fn selected_card_fretboard_scene(
+    stage: &StageState,
+    card: &woodshedding::rehearsal::Card,
+    reading_id: &str,
+) -> Result<Option<SceneInput>, String> {
+    use crate::card_shapes::CardShapeStatus;
+    use woodshedding::rehearsal::Material;
+    let shape = match stage.card_shape_status(card) {
+        CardShapeStatus::Unselected => return Ok(None),
+        CardShapeStatus::Available(shape) => shape,
+        CardShapeStatus::Unavailable(reason) => {
+            return Err(format!("Selected card voicing refused: {reason}"));
+        },
+        CardShapeStatus::NotChord => {
+            return Err("Only chord cards supply a selected fretboard voicing".into());
+        },
+    };
+    let Material::Chord { root, .. } = &card.material else {
+        unreachable!()
+    };
+    let tuning = stage.resolve_card_tuning(card).map_err(|e| e.to_string())?;
+    let dots = stage
+        .selected_card_shape_dots(card)
+        .ok_or("Selected shape is no longer available")?;
+    // The reading frames the supplied contacts, not the search inventory's
+    // empty remaining neck. Coordinates remain physical nut-relative frets.
+    let frets = dots.iter().map(|dot| dot.fret).max().unwrap_or(1).max(1);
+    let title = format!(
+        "{} · supplied voicing {} · capo {} · {}",
+        card.label,
+        shape.index + 1,
+        shape.geometry.capo,
+        shape.fingerprint
+    );
+    let mut recipe = fretboard_from_dots(
+        tuning,
+        frets,
+        dots,
+        (root.value() + shape.geometry.capo) % 12,
+        reading_id,
+        title,
+    )?;
+    recipe.source.adapter = "woodshed.card-voicing".into();
+    recipe.revision = blake3::hash(
+        &serde_json::to_vec(&(
+            &recipe.facts,
+            &card.setting,
+            &shape.fingerprint,
+            shape.profile,
+        ))
+        .map_err(|e| e.to_string())?,
+    )
+    .to_hex()
+    .to_string();
+    Ok(Some(recipe))
 }
 
 #[cfg(test)]
