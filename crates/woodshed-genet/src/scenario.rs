@@ -52,7 +52,6 @@ pub struct Product {
     export_wait: Option<(String, std::time::Instant)>,
     take_playback_wait: Option<(usize, std::time::Instant, std::cell::Cell<bool>)>,
     scenario_cursor_wait: RefCell<Option<ScenarioCursorWait>>,
-    fold_save_wait: RefCell<Option<std::time::Instant>>,
 }
 
 #[derive(Clone, Copy)]
@@ -74,7 +73,6 @@ pub fn from_env(shared: Rc<RefCell<Shared>>) -> Option<mesquite::Lane<Product>> 
                 export_wait: None,
                 take_playback_wait: None,
                 scenario_cursor_wait: RefCell::new(None),
-                fold_save_wait: RefCell::new(None),
             },
             cambium_genet_winit_host::read_file,
         )
@@ -161,17 +159,8 @@ impl mesquite::Product for Product {
                 None => false,
             }
         };
-        let fold_save_wait = {
-            let mut wait = self.fold_save_wait.borrow_mut();
-            match *wait {
-                Some(start) if start.elapsed().as_secs() < 8
-                    && !crate::fold_receipt::current(ctx.runner.state(), &self.shared.borrow()) => true,
-                Some(_) => { *wait = None; false },
-                None => false,
-            }
-        };
         Some(
-            fold_save_wait || take_wait || scenario_cursor_wait || export_wait
+            take_wait || scenario_cursor_wait || export_wait
                 || ctx.runner.state().loop_export_busy
                 || capture_pending
                 || self
@@ -183,10 +172,6 @@ impl mesquite::Product for Product {
         )
     }
     fn act(&mut self, ctx: &mut Ctx<'_>, label: &str) -> bool {
-        if label == "await-fold-save" {
-            self.fold_save_wait.replace(Some(std::time::Instant::now()));
-            return true;
-        }
         let scenario_wait = match label {
             "p5a-wait-for-manual" => Some((2, std::time::Duration::from_secs(1))),
             "p5a-wait-on-manual" => Some((2, std::time::Duration::from_secs(2))),
