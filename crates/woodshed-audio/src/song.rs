@@ -88,6 +88,11 @@ pub struct Bar {
     /// the next [`Bar`].
     #[serde(default = "default_bar_length")]
     pub length: u8,
+    /// Compatibility playback for an existing take captured before per-beat
+    /// rounding. New songs/captures are canonical; only capture restoration
+    /// selects this policy, and Clear removes it without changing old PCM.
+    #[serde(default)]
+    pub legacy_clock: bool,
 }
 
 /// Serde default for [`Bar::length`] — old saves predate the field and
@@ -106,23 +111,76 @@ impl Default for Bar {
             audio_buffer: None,
             label: String::new(),
             length: 1,
+            legacy_clock: false,
         }
     }
 }
 
 impl Bar {
-    /// Length of this bar in wall-clock seconds — the full block,
-    /// i.e. one measure's duration times [`Bar::length`].
-    pub fn duration_secs(&self) -> f32 {
-        let num = self.time_signature.numerator.max(1) as f32;
-        let secs_per_beat = 60.0 / self.bpm.max(1.0);
-        let measures = self.length.max(1) as f32;
-        num * secs_per_beat * measures
+    /// Musical measure duration. PCM clocks use `duration_samples` instead.
+    pub fn measure_secs(&self) -> f32 {
+        let quarter_seconds = 60.0 / self.bpm.max(1.0);
+        let beat_seconds = if self.legacy_clock {
+            quarter_seconds
+        } else {
+            quarter_seconds * 4.0 / self.time_signature.denominator.max(1) as f32
+        };
+        self.time_signature.numerator.max(1) as f32 * beat_seconds
     }
 
-    /// Length of this bar in samples at the given output rate.
+    /// Preserve the legacy chord-envelope calculation's operation order too.
+    pub(crate) fn chord_measure_secs(&self) -> f32 {
+        if self.legacy_clock {
+            self.time_signature.numerator.max(1) as f32 * 60.0 / self.bpm.max(1.0)
+        } else {
+            self.measure_secs()
+        }
+    }
+
+    pub fn duration_secs(&self) -> f32 {
+        self.measure_secs() * self.length.max(1) as f32
+    }
+
+    /// Frames per beat: canonical clocks round once per denominator-aware
+    /// beat; restored legacy captures keep the original truncation.
+    pub fn beat_frames(&self, rate: u32) -> u64 {
+        if self.legacy_clock {
+            ((60.0 / self.bpm.max(1.0)) * rate as f32) as u64
+        } else {
+            audio_primitives::frames_per_beat(rate, self.bpm, self.time_signature.denominator)
+                as u64
+        }
+        .max(1)
+    }
+
+    pub fn measure_frames(&self, rate: u32) -> u64 {
+        self.beat_frames(rate)
+            .saturating_mul(self.time_signature.numerator.max(1) as u64)
+    }
+
+    pub fn count_in_frames(&self, rate: u32) -> u64 {
+        if self.legacy_clock {
+            (self.time_signature.numerator.max(1) as f32 * (60.0 / self.bpm.max(1.0)) * rate as f32)
+                as u64
+        } else {
+            self.measure_frames(rate)
+        }
+    }
+
+    /// Canonical measures contain an integer number of rounded beats. Existing
+    /// capture playback retains the exact pre-change whole-block expression.
     pub fn duration_samples(&self, sample_rate_hz: f32) -> u64 {
-        (self.duration_secs() * sample_rate_hz).round() as u64
+        if self.legacy_clock {
+            (self.duration_secs() * sample_rate_hz).round() as u64
+        } else {
+            (audio_primitives::frames_per_bar(
+                sample_rate_hz as u32,
+                self.bpm,
+                self.time_signature.numerator.max(1),
+                self.time_signature.denominator,
+            ) as u64)
+                .saturating_mul(self.length.max(1) as u64)
+        }
     }
 
     /// Construct with just BPM + time-signature (the common case for
@@ -302,6 +360,7 @@ impl Song {
         // Don't carry forward the recorded audio when adding a new
         // bar — that would be surprising. Same for any pending state.
         new.audio_buffer = None;
+        new.legacy_clock = false;
         new.label.clear();
         self.bars.push(new);
         self.bars.len() - 1
@@ -471,14 +530,18 @@ impl Song {
     /// Attach a freshly-rendered audio buffer to the bar at `idx`.
     /// Replaces any existing buffer there.
     pub fn attach_buffer(&mut self, idx: usize, buffer: SampleBuffer) -> Result<(), SongError> {
-        self.bar_mut(idx)?.audio_buffer = Some(buffer);
+        let bar = self.bar_mut(idx)?;
+        bar.audio_buffer = Some(buffer);
+        bar.legacy_clock = false;
         Ok(())
     }
 
     /// Detach (and return) the audio buffer on bar `idx`, leaving the
     /// bar audio-empty. Useful for "clear loop" gestures.
     pub fn detach_buffer(&mut self, idx: usize) -> Result<Option<SampleBuffer>, SongError> {
-        Ok(self.bar_mut(idx)?.audio_buffer.take())
+        let bar = self.bar_mut(idx)?;
+        bar.legacy_clock = false;
+        Ok(bar.audio_buffer.take())
     }
 }
 
@@ -699,4 +762,65 @@ mod tests {
         assert!(removed.is_some());
         assert!(s.bar(0).unwrap().audio_buffer.is_none());
     }
+}
+
+#[cfg(test)]
+mod clock_tests {
+    use super::*;
+
+    #[test]
+    fn canonical_clock_honors_meter_and_rounds_per_beat_before_measures() {
+        for (rate, bpm, beats, unit, measures, expected) in [
+            (48_000, 120.0, 3, 8, 1, 36_000),
+            (48_000, 113.5, 5, 4, 2, 253_740),
+            (48_000, 137.0, 7, 4, 3, 441_462),
+            (48_000, 120.0, 4, 4, 1, 96_000),
+        ] {
+            let bar = Bar {
+                bpm,
+                time_signature: TimeSignature::new(beats, unit),
+                length: measures,
+                ..Default::default()
+            };
+            assert_eq!(bar.duration_samples(rate as f32), expected);
+            assert_eq!(
+                bar.duration_samples(rate as f32),
+                bar.measure_frames(rate) * measures as u64
+            );
+            assert_eq!(bar.count_in_frames(rate), bar.measure_frames(rate));
+        }
+        let eighths = Bar::with_tempo(120.0, TimeSignature::new(3, 8));
+        assert_eq!(eighths.duration_secs(), 0.75);
+    }
+
+    #[test]
+    fn legacy_playback_keeps_whole_block_rounding_and_old_beat_and_lead() {
+        let legacy = Bar {
+            bpm: 113.5,
+            time_signature: TimeSignature::new(5, 4),
+            length: 2,
+            legacy_clock: true,
+            ..Default::default()
+        };
+        assert_eq!(legacy.duration_samples(48_000.0), 253_744);
+        assert_eq!(legacy.beat_frames(48_000), 25_374);
+        assert_eq!(legacy.measure_frames(48_000), 126_870);
+        assert_eq!(legacy.count_in_frames(48_000), 126_872);
+        let mut eighths = Bar::with_tempo(120.0, TimeSignature::new(3, 8));
+        eighths.legacy_clock = true;
+        assert_eq!(eighths.duration_samples(48_000.0), 72_000);
+    }
+    #[test]
+    fn new_or_cleared_bars_do_not_inherit_legacy_capture_timing() {
+        let mut song = Song::new();
+        song.bars[0].legacy_clock = true;
+        song.bars[0].audio_buffer = Some(SampleBuffer::new(vec![0.25; 10], 1000));
+        let new = song.add_bar();
+        assert!(!song.bars[new].legacy_clock);
+        assert!(song.bars[0].legacy_clock);
+        let original = song.detach_buffer(0).unwrap().unwrap();
+        assert_eq!(original.data[0], 0.25);
+        assert!(!song.bars[0].legacy_clock);
+    }
+
 }

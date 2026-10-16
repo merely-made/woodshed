@@ -96,12 +96,12 @@ fn wav_matches_live_processor_across_fractional_clocks_measures_and_chunk_bounda
                 length,
                 ..Default::default()
             };
-            let frames = bar.duration_samples(1000.0) as usize;
+            let frames = bar.duration_samples(48000.0) as usize;
             bar.audio_buffer = Some(SampleBuffer::new(
                 (0..frames)
                     .map(|i| (i % 11) as f32 * 0.0125 - 0.0625)
                     .collect(),
-                1000,
+                48000,
             ));
             bar.chord_ref = Some(ChordRef {
                 formula_name: "exact".into(),
@@ -115,15 +115,15 @@ fn wav_matches_live_processor_across_fractional_clocks_measures_and_chunk_bounda
     let expected_frames = song
         .bars
         .iter()
-        .map(|bar| bar.duration_samples(1000.0))
+        .map(|bar| bar.duration_samples(48000.0))
         .sum::<u64>();
     assert!(expected_frames > (CHUNK_FRAMES * 2) as u64);
-    let (report, exported, _) = export(&song, 1000);
+    let (report, exported, _) = export(&song, 48000);
     assert_eq!(report.frames, expected_frames);
     let mut frozen = song.clone();
     frozen.playing = true;
     frozen.one_shot = true;
-    let mut live = OutputRuntime::offline(1000).unwrap();
+    let mut live = OutputRuntime::offline(48000).unwrap();
     assert_eq!(live.native_stream_count(), 0);
     live.set_song(frozen).unwrap();
     live.set_output_gain(0.8).unwrap();

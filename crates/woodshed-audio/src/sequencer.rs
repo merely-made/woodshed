@@ -47,8 +47,8 @@ impl Subdivision {
 pub struct TimeSignature {
     /// Beats per bar.
     pub numerator: u8,
-    /// Beat unit; 4 means quarter note. Currently informational — the
-    /// sequencer treats one beat as one quarter note regardless.
+    /// Beat unit; 4 means quarter note. BPM counts quarter notes; the
+    /// denominator determines each notated beat duration.
     pub denominator: u8,
 }
 
@@ -97,7 +97,7 @@ impl SequencerPattern {
 
     /// Wall-clock duration of one step at the current BPM.
     pub fn step_duration(&self) -> Duration {
-        let secs = 60.0 / (self.bpm * self.subdivision.divisions_per_beat as f32);
+        let secs = 60.0 * 4.0 / (self.bpm * self.time_signature.denominator.max(1) as f32 * self.subdivision.divisions_per_beat.max(1) as f32);
         Duration::from_secs_f32(secs)
     }
 
