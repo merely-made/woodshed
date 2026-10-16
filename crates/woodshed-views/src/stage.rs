@@ -3490,7 +3490,9 @@ fn tab_content(ui: &UiState) -> UiChild {
         AppSection::Stage => match ui.workspace.active_panel() {
             Some(WorkspacePanel::Overview) if ui.relationship_open => relationship::screen(ui),
             Some(WorkspacePanel::Overview) => overview::screen(ui),
-            Some(WorkspacePanel::Related) => related::panel(ui),
+            Some(WorkspacePanel::Related) => Box::new(
+                el("div", related::panel(ui)).attr("class", "related-workspace"),
+            ),
             _ => return stage_screen(ui),
         },
         AppSection::Rehearsal => rehearsal::screen(ui),
@@ -3604,6 +3606,23 @@ mod evidence_tests {
         let mut ui = UiState::new();
         ui.stage_current(None);
         ui
+    }
+
+    #[test]
+    fn related_workspace_uses_page_width_instead_of_sidebar_width() {
+        let mut ui = UiState::new();
+        ui.activate_workspace_panel(WorkspacePanel::Related);
+        let mut host = cambium_genet_winit_host::Harness::new(
+            crate::theme::slate_stage_css(),
+            ui,
+            stage_root as fn(&UiState) -> UiChild,
+        );
+        host.layout_at(1180.0, 900.0);
+        let panel = host.with_dom(|dom| {
+            taproot::matching(dom, &taproot::Selector::class("related-panel"))[0]
+        });
+        let (_, _, width, _) = host.painted_rect(panel).unwrap();
+        assert!(width > 1000.0, "full Related workspace width: {width}");
     }
 
     #[test]

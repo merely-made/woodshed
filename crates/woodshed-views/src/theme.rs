@@ -372,6 +372,7 @@ fn stage_css_with_roles(p: &Palette, authored_roles: bool) -> String {
 /* The panel may give ground down to 300px before the board starts scrolling,
    so a mid-width window keeps all three columns on screen. */
 .related-panel {{ width: 380px; flex: 0 1 380px; min-width: 300px; margin-left: 16px; background-color: {surface}; border-radius: 10px; padding: 14px; box-sizing: border-box; }}
+.related-workspace > .related-panel {{ width: 100%; min-width: 0; margin-left: 0; }}
 .related-heading {{ color: {text}; font-size: 15px; font-weight: 700; }}
 .related-subtitle, .related-empty, .related-why {{ color: {text_dim}; font-size: 12px; }}
 .related-subtitle {{ margin-top: 2px; margin-bottom: 10px; }}
