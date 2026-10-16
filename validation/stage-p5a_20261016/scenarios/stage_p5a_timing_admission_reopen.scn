@@ -1,0 +1,13 @@
+# Fresh app process, same isolated sealed profile and exact native binary.
+settle 90
+ui-zoom 1
+assert snap practice-saved == true
+assert snap practice-save-problem == false
+assert snap set-cards == 5
+assert snap rehearsal-running == false
+assert snap p5a-card-label == Output PCM refusal
+assert snap p5a-card-hold == manual
+act p5a-verify-final
+act p5a-save-reopened
+capture 01_exact_sealed_timing_reopen
+log P5a timing admission fresh-process reopen complete

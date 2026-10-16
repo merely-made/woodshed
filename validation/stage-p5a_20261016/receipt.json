@@ -1,0 +1,122 @@
+{
+  "status": "qualified",
+  "date": "2026-10-16",
+  "scope": "Bounded P5a fallible Card timing shared by actual dwell and ordered previews; current source-bound selected-Card/Run audio admission and refusal/retry.",
+  "baseline": "d12201bfe80cc94345c6308c46caaebf4a9fe42e",
+  "feature_commit": "3b73f75",
+  "rust_source_revision": "409c93c",
+  "native_scenario_revision": "505fb12a223fdb034b21ffeafc150b90e1d2557c",
+  "binary_sha256": "bff89dcd2c822bc3a5acb49389892adda964f99ec4c35bf99dbe721a0ede52a0",
+  "source_binding": {
+    "hash_file": "source-hashes.json",
+    "unchanged_source_paths": 197,
+    "final_native_worktree": "clean before launch",
+    "after_combined_gate": "Only scenario checkpoint/wait harness and scenario selectors changed; host gate repeated after final Rust harness change. Last successor505fb12 changes scenario selector only."
+  },
+  "suppliers": {
+    "mere.git": [
+      "git+https://github.com/merely-made/mere.git?branch=main#6575075057e8909032475ae6c88118a19969eadc"
+    ],
+    "genet.git": [
+      "git+https://github.com/merely-made/genet.git?branch=main#6186c81ad7019ea51dd28861ef83574bfc992ed1",
+      "git+https://github.com/merely-made/genet.git?branch=main#e37762d752e423dc43f920bd728c83f70c47f2cc"
+    ],
+    "netrender.git": [
+      "git+https://github.com/merely-made/netrender.git?branch=main#8960024f7b1f2b7a5ba382972f08b2f75eb7a0f0"
+    ]
+  },
+  "dependency_changes": "None in P5a; upstream saved-arrangement work was fast-forwarded and preserved before integration.",
+  "authored_timing": {
+    "bpm": "Every finite positive authored BPM is honored literally if representable by core and actual output, including20/400 outside UI convenience limits. Only absent BPM inherits fallback.",
+    "legacy_minima": "Positive Seconds below0.5 resolve explicitly to0.5; zero Bars/Reps resolve explicitly to1. Stored instructions remain exact.",
+    "refusal": "Nonpositive/nonfinite explicit timing, checked Duration overflow, sub-frame exact preview timing and actual-rate PCM resource overflow are refused visibly. Manual alone has no automatic dwell.",
+    "audio_authority": "OutputRuntime retains16,777,216-frame/256-pitch bounds at actual admitted device rate; no core seconds cap."
+  },
+  "checks": {
+    "command": "cargo test --offline --locked -p woodshed-core -p woodshed-audio -p woodshed-views -p woodshed-genet --quiet",
+    "audio": 160,
+    "core": 257,
+    "core_integration": 1,
+    "host": 180,
+    "views": 206,
+    "suite_and_integration_passes": 804,
+    "separate_fresh_process_child_invocations": 5,
+    "host_existing_ignores": 7,
+    "combined_log": "checks/coordinator-integrated-v5.log",
+    "final_host_gate": "checks/coordinator-host-native-harness-final.log;180 passes plus5 child invocations,7 existing ignores",
+    "desktop_build": "cargo build --offline --locked -p woodshed-genet;passed;checks/desktop-build-final.log",
+    "raw_guard": "Published1bc4f6a; separate159-audio RED/GREEN source result retained in checks, not added to804."
+  },
+  "native": {
+    "trial": "native-v4 only",
+    "completed_processes": 2,
+    "captures_reviewed": 8,
+    "seed": {
+      "pid": 26512,
+      "exited": true,
+      "result": "ok",
+      "presented_frames": 334,
+      "redraws": 336,
+      "unpresented_redraws": 2,
+      "captures": 7,
+      "blank_captures": 0,
+      "distinct_captures": 7,
+      "phase_hashes_unchanged": true
+    },
+    "reopen": {
+      "pid": 26613,
+      "exited": true,
+      "result": "ok",
+      "presented_frames": 103,
+      "redraws": 105,
+      "unpresented_redraws": 2,
+      "captures": 1,
+      "blank_captures": 0,
+      "distinct_captures": 1,
+      "phase_hashes_unchanged": true
+    },
+    "viewport": "1180x900 logical,2360x1800 captured;ui zoom1",
+    "output_rate": 48000,
+    "seed_runtime_id": 1,
+    "processor_starts_by_checkpoint": [
+      1,
+      2,
+      4,
+      4,
+      4,
+      6
+    ],
+    "manual_wait": "Timed400-BPM Card advances toManual and stays; correctedManual Card stays active until explicitPause.",
+    "refusal_preservation": "Scenario verifies live and sealed Card JSON unchanged after Hear and Run refusal. Only explicit visible Hold correction changes Card5 fromSeconds1e10 toManual. Card4Seconds1e30 retained.",
+    "exact_reopen": "comparison.json",
+    "visual_review": [
+      "coordinator-review.json",
+      "independent-capture-review.json"
+    ],
+    "isolation": "Generated Keeper, isolated sealed profile, frozen native binary and scenarios, one-use launchers, seed exit before expectation copy and reopen. No credentials, sealed vault/profile blobs or binaries are included in this packet.",
+    "keeper": {
+      "generated_isolated_fixture": true,
+      "pid": 26453,
+      "exited": true,
+      "binary_sha256": "848685e001d63724ca869fa58a97021b3fa15821f0d1fa9954c4853080c518f6",
+      "original_files": 4,
+      "original_file_hashes_unchanged": true
+    }
+  },
+  "failed_attempts": {
+    "included_in_acceptance": false,
+    "external_root": "/Users/markik/Code/testing/woodshed/stage-p5a-20261016",
+    "native-v1": "Unsupported assertion comparison; no feature acceptance.",
+    "native-v2": "Stage toggle/DOM targeting; incomplete.",
+    "native-v3": "Parent selector could not match nested film label; incomplete.",
+    "resolution": "Final scenario uses actual Rehearsal film-label controls. No product behavior fix was needed for these harness failures."
+  },
+  "acceptance_limits": [
+    "Software admission does not establish physical audibility, latency or device quality.",
+    "Full P5 shared event/sample clock and pause/tempo phase behavior remain open.",
+    "No-backend silent progression, historical capture clock/PCM changes, persona namespace migration and broad audit remediation are outside scope.",
+    "Discovery/catalog interest remains request-time; this slice qualifies bound selected-Card/Run admission history."
+  ],
+  "publication": "Direct main publication authorized. Final containing commit and remote receipt are reported separately to avoid a self-referential commit hash.",
+  "recovery": "Pre-integration P5a handoff stash retained locally; do not treat it as residual uncommitted work."
+}

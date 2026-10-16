@@ -1,0 +1,7 @@
+{
+  "pid": 26453,
+  "binary": "/Users/markik/Code/testing/woodshed/link-model-p3-20261016/frozen-keeper-ee324e517/dr-c-receipt-host",
+  "binary_sha256": "848685e001d63724ca869fa58a97021b3fa15821f0d1fa9954c4853080c518f6",
+  "root": "/Users/markik/Code/testing/woodshed/stage-p5a-20261016/native-v4/keeper",
+  "endpoint": "/tmp/ws-p5a-20261016-v4.sock"
+}

@@ -1,0 +1,125 @@
+{
+  "checked_at_utc": "2026-10-16T21:05:53.360265+00:00",
+  "source_revision": "505fb12a223fdb034b21ffeafc150b90e1d2557c",
+  "source_paths_unchanged": 197,
+  "binary_sha256": "bff89dcd2c822bc3a5acb49389892adda964f99ec4c35bf99dbe721a0ede52a0",
+  "built_and_frozen_binary_match": true,
+  "phases": {
+    "seed": {
+      "pid": 26512,
+      "exited": true,
+      "result": "ok",
+      "presented_frames": 334,
+      "redraws": 336,
+      "unpresented_redraws": 2,
+      "captures": 7,
+      "blank_captures": 0,
+      "distinct_captures": 7,
+      "phase_hashes_unchanged": true
+    },
+    "reopen": {
+      "pid": 26613,
+      "exited": true,
+      "result": "ok",
+      "presented_frames": 103,
+      "redraws": 105,
+      "unpresented_redraws": 2,
+      "captures": 1,
+      "blank_captures": 0,
+      "distinct_captures": 1,
+      "phase_hashes_unchanged": true
+    }
+  },
+  "exact_reopen": {
+    "cards": true,
+    "owner": true,
+    "cursor": true,
+    "selected_card_id": true,
+    "resolved_preview": true
+  },
+  "sealed_live_cards_match_in_both_processes": true,
+  "expected_checkpoint_copied_only_after_seed_exit": true,
+  "seed_original_hashes_unchanged_after_reopen": true,
+  "checkpoint_observations": [
+    {
+      "checkpoint": "native/seed/p5a-20-bpm.json",
+      "owner": 1,
+      "cursor": 0,
+      "selected_card_id": 1,
+      "output_runtime_id": 1,
+      "output_sample_rate": 48000,
+      "preview_starts": 1,
+      "persisted_cards_match": true,
+      "resolved_duration_seconds": 12.0,
+      "core_refusal": null
+    },
+    {
+      "checkpoint": "native/seed/p5a-400-bpm.json",
+      "owner": 1,
+      "cursor": 1,
+      "selected_card_id": 2,
+      "output_runtime_id": 1,
+      "output_sample_rate": 48000,
+      "preview_starts": 2,
+      "persisted_cards_match": true,
+      "resolved_duration_seconds": 0.6000000238418579,
+      "core_refusal": null
+    },
+    {
+      "checkpoint": "native/seed/p5a-manual-wait.json",
+      "owner": 1,
+      "cursor": 2,
+      "selected_card_id": 3,
+      "output_runtime_id": 1,
+      "output_sample_rate": 48000,
+      "preview_starts": 4,
+      "persisted_cards_match": true,
+      "resolved_duration_seconds": 13.899999618530273,
+      "core_refusal": null
+    },
+    {
+      "checkpoint": "native/seed/p5a-core-before.json",
+      "owner": 1,
+      "cursor": 3,
+      "selected_card_id": 4,
+      "output_runtime_id": 1,
+      "output_sample_rate": 48000,
+      "preview_starts": 4,
+      "persisted_cards_match": true,
+      "resolved_duration_seconds": null,
+      "core_refusal": "Card duration cannot be represented by this clock"
+    },
+    {
+      "checkpoint": "native/seed/p5a-pcm-before.json",
+      "owner": 1,
+      "cursor": 4,
+      "selected_card_id": 5,
+      "output_runtime_id": 1,
+      "output_sample_rate": 48000,
+      "preview_starts": 4,
+      "persisted_cards_match": true,
+      "resolved_duration_seconds": 10000000000.0,
+      "core_refusal": null
+    },
+    {
+      "checkpoint": "native/seed/p5a-final.json",
+      "owner": 1,
+      "cursor": 4,
+      "selected_card_id": 5,
+      "output_runtime_id": 1,
+      "output_sample_rate": 48000,
+      "preview_starts": 6,
+      "persisted_cards_match": true,
+      "resolved_duration_seconds": 4.450000286102295,
+      "core_refusal": null
+    }
+  ],
+  "keeper": {
+    "generated_isolated_fixture": true,
+    "pid": 26453,
+    "exited": true,
+    "binary_sha256": "848685e001d63724ca869fa58a97021b3fa15821f0d1fa9954c4853080c518f6",
+    "original_files": 4,
+    "original_file_hashes_unchanged": true
+  }
+}

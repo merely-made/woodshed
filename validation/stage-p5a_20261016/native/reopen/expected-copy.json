@@ -1,0 +1,6 @@
+{
+  "source": "seed/p5a-final.json",
+  "destination": "reopen/p5a-final.json",
+  "sha256": "3c59e7aab3715253be62fcf1ca2c19d21dbc7582aaf43afcb9fa43ab3ed9c0b5",
+  "copied_after_seed_exit": true
+}

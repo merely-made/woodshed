@@ -1,0 +1,25 @@
+RESULT ok
+waited 2 frames
+captured 01_ordered_20_bpm
+waited 0 frames
+captured 02_ordered_400_bpm
+waited 13 frames
+waited 30 frames
+captured 03_timed_to_manual_wait
+captured 04_core_duration_refusal
+waited 0 frames
+captured 05_output_pcm_refusal
+waited 0 frames
+waited 30 frames
+captured 06_manual_ordered_retry
+captured 07_sealed_authored_timing
+P5a timing admission seed complete
+capture 01_ordered_20_bpm 2360x1800 digest=80d187bc50f51afe file=/Users/markik/Code/testing/woodshed/stage-p5a-20261016/native-v4/seed/01_ordered_20_bpm.png
+capture 02_ordered_400_bpm 2360x1800 digest=9b8dee230d1b3a08 file=/Users/markik/Code/testing/woodshed/stage-p5a-20261016/native-v4/seed/02_ordered_400_bpm.png
+capture 03_timed_to_manual_wait 2360x1800 digest=1c2e96719d6dff43 file=/Users/markik/Code/testing/woodshed/stage-p5a-20261016/native-v4/seed/03_timed_to_manual_wait.png
+capture 04_core_duration_refusal 2360x1800 digest=5ed66d79c03aa4a5 file=/Users/markik/Code/testing/woodshed/stage-p5a-20261016/native-v4/seed/04_core_duration_refusal.png
+capture 05_output_pcm_refusal 2360x1800 digest=fd989d23e06e05dc file=/Users/markik/Code/testing/woodshed/stage-p5a-20261016/native-v4/seed/05_output_pcm_refusal.png
+capture 06_manual_ordered_retry 2360x1800 digest=80478496a4ee1b48 file=/Users/markik/Code/testing/woodshed/stage-p5a-20261016/native-v4/seed/06_manual_ordered_retry.png
+capture 07_sealed_authored_timing 2360x1800 digest=0b1e6bf1526c44c9 file=/Users/markik/Code/testing/woodshed/stage-p5a-20261016/native-v4/seed/07_sealed_authored_timing.png
+frames: 7 captured, 0 blank, 7 distinct digests
+presentation: 334 frames, 336 redraws, 2 unpresented redraws

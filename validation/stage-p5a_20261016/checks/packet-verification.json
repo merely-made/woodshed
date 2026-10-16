@@ -1,0 +1,12 @@
+{
+  "status": "passed",
+  "scope": "Curated packet and newly added documentation links only; no whole-tree documentation acceptance claim.",
+  "packet_payload_hashes_verified": 49,
+  "frozen_source_paths_unchanged": 197,
+  "seed_and_reopen_phase_hashes_verified": true,
+  "frozen_scenarios_match_committed_scenarios": true,
+  "json_files_parse": true,
+  "new_local_doc_links_and_anchors_checked": 3,
+  "new_findings": [],
+  "git_diff_check": "passed"
+}

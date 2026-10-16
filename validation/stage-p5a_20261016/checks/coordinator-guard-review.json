@@ -1,0 +1,26 @@
+{
+  "scope": "independent raw preview numeric-input admission guard",
+  "status": "independent guard source-tested, reviewed and published; shared timing policy pending",
+  "base_revision": "c0f03ec76aee62a993d76b5c0ff54696d5f9fe0d",
+  "source_sha256": {
+    "crates/woodshed-audio/src/output_runtime.rs": "8c72f788eeb3e26d9cdddeba7b20bcc4707f9e412c5378349551f48a52316bd3",
+    "crates/woodshed-audio/src/output_runtime/tests.rs": "1f5ae04270feb5fdcc598782b9312eea58d78e7c113a7f30ebd19c29ef8a94d1"
+  },
+  "red": "new production-runtime regression fails at NaN note duration before guard",
+  "green": {
+    "package": "woodshed-audio",
+    "passed": 159,
+    "failed": 0,
+    "ignored": 0
+  },
+  "log_sha256": {
+    "raw-preview-red.log": "1de35256f2226fb4a5515c4b05d126569a61fb9159c5b91df9c31cbbd43a0103",
+    "raw-preview-green.log": "799c961bbf670bca6c2979477ba57279227d95c6403dab0a86c7ff2789bb28ec"
+  },
+  "review": "Raw finiteness checked before convenience minima and before preview replacement; accepted revision unchanged on refusal; finite zero/negative convenience behavior retained.",
+  "limits": [
+    "No new native or physical audio qualification from this guard.",
+    "Full P5a shared timing and effective BPM policy remain pending the required human choice."
+  ],
+  "published_revision": "1bc4f6ab347cc5c5fcc11ed937f1de2b75614835"
+}

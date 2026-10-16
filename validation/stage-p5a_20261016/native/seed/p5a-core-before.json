@@ -1,0 +1,158 @@
+{
+  "cards": [
+    {
+      "from": null,
+      "id": 1,
+      "label": "Ordered 20 BPM",
+      "material": {
+        "Scale": {
+          "name": "Major",
+          "root": 0
+        }
+      },
+      "setting": {
+        "capo": null,
+        "fret_window": null,
+        "instrument": "",
+        "mark_mode": "Off",
+        "marked": [],
+        "tuning": null,
+        "voicing_fingerprint": null,
+        "voicing_idx": null,
+        "voicing_profile": null
+      },
+      "timing": {
+        "bpm": 20.0,
+        "hold": {
+          "Bars": 1
+        }
+      },
+      "touch": "Walk"
+    },
+    {
+      "from": null,
+      "id": 2,
+      "label": "Ordered 400 BPM",
+      "material": {
+        "Scale": {
+          "name": "Major",
+          "root": 7
+        }
+      },
+      "setting": {
+        "capo": null,
+        "fret_window": null,
+        "instrument": "",
+        "mark_mode": "Off",
+        "marked": [],
+        "tuning": null,
+        "voicing_fingerprint": null,
+        "voicing_idx": null,
+        "voicing_profile": null
+      },
+      "timing": {
+        "bpm": 400.0,
+        "hold": {
+          "Bars": 1
+        }
+      },
+      "touch": "Walk"
+    },
+    {
+      "from": null,
+      "id": 3,
+      "label": "Manual wait",
+      "material": {
+        "Scale": {
+          "name": "Major",
+          "root": 2
+        }
+      },
+      "setting": {
+        "capo": null,
+        "fret_window": null,
+        "instrument": "",
+        "mark_mode": "Off",
+        "marked": [],
+        "tuning": null,
+        "voicing_fingerprint": null,
+        "voicing_idx": null,
+        "voicing_profile": null
+      },
+      "timing": {
+        "bpm": 120.0,
+        "hold": "Manual"
+      },
+      "touch": "Walk"
+    },
+    {
+      "from": null,
+      "id": 4,
+      "label": "Core duration refusal",
+      "material": {
+        "Scale": {
+          "name": "Major",
+          "root": 4
+        }
+      },
+      "setting": {
+        "capo": null,
+        "fret_window": null,
+        "instrument": "",
+        "mark_mode": "Off",
+        "marked": [],
+        "tuning": null,
+        "voicing_fingerprint": null,
+        "voicing_idx": null,
+        "voicing_profile": null
+      },
+      "timing": {
+        "bpm": 120.0,
+        "hold": {
+          "Seconds": 1.0000000150474662e+30
+        }
+      },
+      "touch": "Walk"
+    },
+    {
+      "from": null,
+      "id": 5,
+      "label": "Output PCM refusal",
+      "material": {
+        "Scale": {
+          "name": "Major",
+          "root": 9
+        }
+      },
+      "setting": {
+        "capo": null,
+        "fret_window": null,
+        "instrument": "",
+        "mark_mode": "Off",
+        "marked": [],
+        "tuning": null,
+        "voicing_fingerprint": null,
+        "voicing_idx": null,
+        "voicing_profile": null
+      },
+      "timing": {
+        "bpm": 400.0,
+        "hold": {
+          "Seconds": 10000000000.0
+        }
+      },
+      "touch": "Walk"
+    }
+  ],
+  "cursor": 3,
+  "output_runtime_id": 1,
+  "output_sample_rate": 48000,
+  "owner": 1,
+  "persisted_cards_match": true,
+  "preview_starts": 4,
+  "resolved_preview": {
+    "refused": "Card duration cannot be represented by this clock"
+  },
+  "sealed": true,
+  "selected_card_id": 4
+}

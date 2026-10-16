@@ -1747,13 +1747,14 @@ remain manually advanceable.
 
 #### P5a. Admit one resolved Card timing contract (2026-10-16)
 
-**Status: implementation in progress; authored-BPM ruling received; independent
-raw-input guard landed.** Start
-from published `c0f03ec`, keeping P5's shared device/event clock open. The same
-fallible pure-core timing resolution must serve automatic rehearsal dwell and
-ordered scale/arpeggio preview articulation. Preserve the authored Card and
-Manual semantics. Invalid or unrepresentable timing must be visibly unavailable,
-not a panic, fake Manual instruction or successful silent playback.
+**Status: bounded P5a implemented and qualified (2026-10-16).** Shared fallible
+core timing now serves automatic rehearsal dwell and ordered scale, arpeggio
+and chord-approach preview articulation. Authored Card values and Manual
+semantics are preserved. Invalid or unrepresentable timing is visibly unavailable;
+current audio refusal stops the rejected Run without practice/completion credit
+and permits correction/retry. P5's full shared device/event clock remains open.
+The [qualification receipt](../validation/stage-p5a_20261016/receipt.json) binds
+source, automated checks, desktop binary, native captures and sealed reopening.
 
 At the pre-P5a baseline, `woodshed-core/src/lib.rs::card_dwell` calls the infallible
 `Duration::from_secs_f32` on finite imported Seconds values that can exceed its
@@ -1793,8 +1794,8 @@ are checked for finiteness before existing audio convenience normalization.
 Previously `f32::max` turned NaN into a valid minimum; now nonfinite requests
 return an error without cancelling/replacing accepted preview work. The new
 production-runtime regression fails before the guard and all 159 audio cases
-pass after it. This is a source/test result only; shared Card timing admission
-and its native/reopen receipt remain in progress under the settled authored-BPM ruling.
+pass after it. This independent guard is published as `1bc4f6a`; the complete
+P5a qualification below adds the shared timing and native/reopen evidence.
 
 **Ownership and integration checkpoint (2026-10-16):** the Woodshed chat moved
 to a separately requested architecture audit and explicitly released P5a source,
@@ -1802,10 +1803,10 @@ Cargo, native and publication ownership to the link-model coordinator. Its audit
 reviewers remain read-only. The coordinator preserved the dirty handoff in a
 local recovery stash, fast-forwarded to published saved-arrangement successor
 `d12201b`, and reapplied the P5a work without conflicts. The new arrangement
-authority and evidence stay intact. The first audio gate passes 160 cases,
-including exact short PCM and refusal preservation; wider host fixtures are
-being updated to explicitly acknowledge admission while retaining their prior
-timing, ownership and persistence assertions. Native/reopen acceptance is pending.
+authority and evidence stay intact. Host fixtures explicitly acknowledge
+admission while retaining their timing, ownership and persistence assertions.
+The local handoff stash remains available as recovery; P5a changes no supplier
+revision or lockfile.
 
 **Source/test checkpoint (2026-10-16):** Card dwell and ordered scale,
 arpeggio and chord-approach previews share the fallible resolver. Bound selected
@@ -1818,10 +1819,35 @@ Exact audio admission preserves short durations and refuses sub-frame spacing or
 resource overflow at the actual rate. The combined affected gate passes 804
 suite/integration cases plus five separate fresh-process child checks, with seven
 existing host ignores. The final native receipt probes record exact authored
-Cards and resolved bits, runtime identity and processor starts. Desktop/native
-and fresh sealed reopening remain pending. Discovery/catalog interest still
+Cards and resolved bits, runtime identity and processor starts. Discovery/catalog interest still
 records the request before host admission; this slice qualifies the bound
 selected-Card/Run history seam rather than all audition history.
+
+**Native and reopening qualification (2026-10-16):** source `3b73f75` carries
+the feature; final Rust harness `409c93c` repeats the 180-case host gate plus
+five child invocations and seven existing ignores. The locked desktop build
+passes. Scenario-only successor `505fb12` supplies the final Rehearsal selectors;
+its clean source is frozen with binary SHA256
+`bff89dcd2c822bc3a5acb49389892adda964f99ec4c35bf99dbe721a0ede52a0`.
+All 197 frozen Rust, manifest and lock paths match after both native processes.
+
+The isolated `native-v4` seed completes with 334 presented frames and seven
+nonblank captures; the separate sealed reopen completes with 103 presented
+frames and one nonblank capture. All eight original captures were reviewed by
+the coordinator and an independent agent. Actual 48 kHz output admits the
+ordered 20 BPM/12-second and 400 BPM/600-ms previews on one runtime. Run moves
+the timed Card to Manual and waits. Both checked-Duration and actual-rate PCM
+refusals identify the source Card, stop Run and preserve live/sealed authored
+Cards. Correcting Hold through the visible control admits Hear and Run again.
+Processor-start checkpoints are 1, 2, 4, 4, 4, 6; refused requests start no new
+preview. The fresh process restores exact Card JSON, owner, cursor, selected
+Card and resolved pitch/duration/spacing bits. Both apps exit; the generated
+Keeper exits with its four original fixture files unchanged. Failed harness
+attempts v1–v3 are preserved externally and excluded from acceptance.
+
+Very large imported Seconds values widen the Hold controls in the refusal
+captures, but their notices remain readable. Physical audibility/latency,
+broader responsive polish and the full P5 clock retain their separate gates.
 
 
 ### P6. Finish Rehearsal as the guided Set runner
