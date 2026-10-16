@@ -1,0 +1,22 @@
+{
+  "all_three_reports_identical": true,
+  "companion_unchanged": {
+    "0123456789abcdef0123456789abcdef/7627a2bee8bb4bd6e9bb67db0643a5c101833a5f0c39e0b9c6c84de04efd13bc.bin": "dd9e8b6977326a3ce543c474e8bd87903c1c735a40adc33f18b356d56366f81c"
+  },
+  "original_fixture_files_unchanged": true,
+  "keeper_files_unchanged": true,
+  "presentation_version": 2,
+  "hydrated": [
+    {
+      "exact_fixture_bits": true,
+      "exact_sealed_companion_bits": true,
+      "frames": 192000,
+      "id": {
+        "card": 2,
+        "set": 1
+      },
+      "legacy_clock": false,
+      "sample_rate": 48000
+    }
+  ]
+}
