@@ -120,7 +120,7 @@ impl PreparedBacking {
         for bar in &song.bars {
             let duration = bar.duration_samples(rate as f32).max(1) as usize;
             let chord_len = if bar.chord_ref.is_some() {
-                (bar.time_signature.numerator.max(1) as f32 * 60.0 / bar.bpm.max(1.0))
+                bar.chord_measure_secs()
                     .max(0.5)
                     .clamp(0.3, 2.0)
                     * rate as f32
@@ -144,8 +144,8 @@ impl PreparedBacking {
             }
             let duration = bar.duration_samples(rate as f32).max(1);
             let beats = u64::from(bar.time_signature.numerator.max(1));
-            let beat = ((60.0 / bar.bpm.max(1.0)) * rate as f32) as u64;
-            let measure = beat.max(1).saturating_mul(beats).max(1);
+            let beat = bar.beat_frames(rate);
+            let measure = bar.measure_frames(rate);
             total = total
                 .checked_add(
                     usize::try_from(duration).map_err(|_| err("backing duration is too large"))?,
@@ -175,7 +175,7 @@ impl PreparedBacking {
                     return Err(err("backing chord pitches must be finite and positive"));
                 }
                 // The existing backing strikes once per measure, even for long blocks.
-                let duration_seconds = beats as f32 * 60.0 / bar.bpm.max(1.0);
+                let duration_seconds = bar.chord_measure_secs();
                 let duration_seconds = duration_seconds.max(0.5).clamp(0.3, 2.0);
                 let bits: Vec<_> = pitches.iter().map(|f| f.to_bits()).collect();
                 let pcm = if let Some(hit) = cache.iter().find(|c| {
@@ -202,7 +202,7 @@ impl PreparedBacking {
                 duration,
                 beat: beat.max(1),
                 measure,
-                lead: (beats as f32 * (60.0 / bar.bpm.max(1.0)) * rate as f32) as u64,
+                lead: bar.count_in_frames(rate),
                 beats,
                 chord,
                 loop_pcm: bar.audio_buffer.clone(),
@@ -221,6 +221,7 @@ impl PreparedBacking {
 pub(super) struct PreparedClick {
     steps: Vec<Option<ArcGc<SampleBuffer>>>,
     divisions: u32,
+    beat_unit: u8,
 }
 impl PreparedClick {
     pub fn prepare(pattern: &SequencerPattern, rate: u32) -> Result<Self, OutputError> {
@@ -329,6 +330,7 @@ impl PreparedClick {
         Ok(Self {
             steps,
             divisions: pattern.subdivision.divisions_per_beat.max(1) as u32,
+            beat_unit: pattern.time_signature.denominator,
         })
     }
 }
@@ -539,6 +541,9 @@ struct Processor {
     replace: bool,
     bpm: f32,
     click_playing: bool,
+    // Integer frame numerator (increments by subdivisions); divide by the
+    // rounded beat length only when observing a step. Avoid per-frame
+    // fractional addition, which can put a click one sample after a boundary.
     click_position: f64,
     last_click: Option<u64>,
     song_last_beat: Option<u64>,
@@ -704,7 +709,8 @@ impl Processor {
         }
         if self.click_playing {
             if let Some(click) = self.click.as_ref() {
-                let absolute_step = self.click_position as u64;
+                let beat_frames = audio_primitives::frames_per_beat(self.rate, self.bpm, click.beat_unit).max(1);
+                let absolute_step = (self.click_position / beat_frames as f64) as u64;
                 let index = (absolute_step % click.steps.len() as u64) as usize;
                 if self.last_click != Some(absolute_step) {
                     if let Some(pcm) = &click.steps[index] {
@@ -712,8 +718,7 @@ impl Processor {
                     }
                     self.last_click = Some(absolute_step);
                 }
-                self.click_position +=
-                    self.bpm as f64 * click.divisions as f64 / (60.0 * self.rate as f64);
+                self.click_position += click.divisions as f64;
             }
         }
         let metro = mix(&mut self.click_voices).clamp(-1.0, 1.0);
@@ -859,6 +864,10 @@ impl AudioNodeProcessor for Processor {
                         }
                     },
                     Command::Metronome { bpm, playing } => {
+                        let unit = self.click.as_ref().map_or(4, |click| click.beat_unit);
+                        let before = audio_primitives::frames_per_beat(self.rate, self.bpm, unit).max(1);
+                        let after = audio_primitives::frames_per_beat(self.rate, *bpm, unit).max(1);
+                        self.click_position = self.click_position / before as f64 * after as f64;
                         self.bpm = *bpm;
                         if *playing != self.click_playing {
                             for voice in &mut self.preview_voices {

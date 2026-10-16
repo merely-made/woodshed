@@ -41,6 +41,7 @@ pub struct CapturePersistence {
 
 fn same_take(a: &CaptureSnapshot, b: &CaptureSnapshot) -> bool {
     a.id == b.id
+        && a.legacy_clock == b.legacy_clock
         && a.bpm == b.bpm
         && a.beats == b.beats
         && a.bars == b.bars
@@ -110,6 +111,7 @@ impl CapturePersistence {
             match samples {
                 Ok(samples)
                     if woodshed_audio::Bar {
+                        legacy_clock: reference.legacy_clock(),
                         bpm: reference.bpm,
                         time_signature: woodshed_audio::TimeSignature::new(reference.beats, 4),
                         length: reference.bars,
@@ -119,6 +121,7 @@ impl CapturePersistence {
                         == reference.frames as u64 =>
                 {
                     state.buffers.push(CaptureSnapshot {
+                        legacy_clock: reference.legacy_clock(),
                         id: reference.id,
                         bpm: reference.bpm,
                         beats: reference.beats,
@@ -177,6 +180,7 @@ impl CapturePersistence {
             retained.insert(
                 take.id,
                 LoopCaptureRef {
+                    clock: take.clock_field(),
                     id: take.id,
                     bpm: take.bpm,
                     beats: take.beats,
@@ -201,6 +205,7 @@ impl CapturePersistence {
             retained.insert(
                 segment.id,
                 LoopCaptureRef {
+                    clock: Some(woodshed_core::loop_capture::PER_BEAT_CLOCK.into()),
                     id: segment.id,
                     bpm: segment.bpm,
                     beats: segment.beats,
@@ -300,6 +305,7 @@ impl CapturePersistence {
         };
         for take in takes {
             manifest.takes.push(LoopCaptureRef {
+                clock: take.clock_field(),
                 id: take.id,
                 bpm: take.bpm,
                 beats: take.beats,
@@ -443,6 +449,11 @@ impl CapturePersistence {
                 && !self.unavailable.is_empty()
             {
                 1
+            } else if self.manifest.version <= 2
+                && takes.iter().all(|take| take.legacy_clock)
+                && self.unavailable.iter().all(|reference| reference.legacy_clock())
+            {
+                2
             } else {
                 CAPTURE_VERSION
             },
@@ -466,6 +477,7 @@ impl CapturePersistence {
             let old = self.reference_for(take);
             let digest = old.map_or_else(|| "0".repeat(64), |reference| reference.digest.clone());
             manifest.takes.push(LoopCaptureRef {
+                clock: take.clock_field(),
                 id: take.id,
                 bpm: take.bpm,
                 beats: take.beats,
@@ -676,6 +688,7 @@ mod tests {
             })
             .collect();
         let take = CaptureSnapshot {
+            legacy_clock: false,
             id: segment.id,
             bpm: segment.bpm,
             beats: segment.beats,
@@ -706,6 +719,7 @@ mod tests {
                 )
                 .unwrap();
             manifest.takes.push(LoopCaptureRef {
+                clock: None,
                 id: take.id,
                 bpm: take.bpm,
                 beats: take.beats,
@@ -849,7 +863,7 @@ mod tests {
         state
             .persist(&storage, true, vec![take.clone()], &mut ui)
             .unwrap();
-        assert_eq!(ui.loop_captures.version, 2);
+        assert_eq!(ui.loop_captures.version, CAPTURE_VERSION);
         assert_eq!(ui.loop_captures.takes[0].codec, LoopCaptureCodec::RawF32V1);
         let accepted = ui.loop_captures.clone();
         let before = operations.load(std::sync::atomic::Ordering::Relaxed);
@@ -1457,6 +1471,7 @@ mod tests {
         let plan = ui.requested_loop_plan().unwrap();
         let mut state = CapturePersistence {
             unavailable: vec![LoopCaptureRef {
+                clock: take.clock_field(),
                 id: take.id,
                 bpm: take.bpm,
                 beats: take.beats,
@@ -2018,6 +2033,7 @@ mod tests {
     fn unavailable_inactive_references_reserve_catalog_budget_before_recording() {
         let (ui, take) = fixture();
         let retained = LoopCaptureRef {
+            clock: None,
             id: LoopSegmentId {
                 set: woodshed_core::working_sets::WorkingSetId(99),
                 card: woodshedding::rehearsal::CardId(1),
@@ -2297,7 +2313,7 @@ mod tests {
                 bits(&backend.capture_snapshot()[0].buffer.data),
                 bits(&expected.buffer.data)
             );
-            println!("fresh process: V1 raw migrated to exact V2 WavPack; legacy blob retained");
+            println!("fresh process: V1 raw migrated to exact current WavPack; legacy blob retained");
         } else if mode == "seed" {
             backend
                 .restore_loop_captures(vec![expected.clone()])
@@ -2369,5 +2385,194 @@ mod tests {
                 println!("fresh process: clock refusal resolved by explicit clear and persisted");
             }
         }
+    }
+    #[test]
+    fn sealed_mixed_clock_reopen_preserves_legacy_blob_and_uses_canonical_new_take() {
+        let inner = MemoryBackend::default();
+        let storage: SessionStore<HostBackend> =
+            SessionStore::new(Box::new(SealedBackend::new(inner.clone(), [61; 32])));
+        let (mut ui, _) = fixture();
+        ui.looper.beats = 5;
+        ui.set.cards[0].timing.bpm = Some(113.5);
+        ui.set.cards[0].timing.hold = Hold::Bars(2);
+        ui.set.cards[1].timing.bpm = Some(137.0);
+        ui.set.cards[1].timing.hold = Hold::Bars(1);
+        ui.loop_working_set(ui.working_sets.active_id);
+        let plan = ui.requested_loop_plan().unwrap();
+        let samples: Vec<_> = (0..253_744)
+            .map(|i| [0.125, -0.0, -0.25, 0.5][i % 4])
+            .collect();
+        let (codec, digest, frames) = storage
+            .try_write_capture_compressed(LEGACY_NAMESPACE, 48_000, &samples)
+            .unwrap();
+        let original = LoopCaptureRef {
+            id: plan.segments[0].id,
+            bpm: 113.5,
+            beats: 5,
+            bars: 2,
+            sample_rate: 48_000,
+            frames,
+            digest,
+            codec,
+            clock: None,
+        };
+        let old_key =
+            woodshed_core::loop_capture::pcm_key(LEGACY_NAMESPACE, &original.digest).unwrap();
+        let encrypted_blob = ready(inner.get(&old_key)).unwrap().unwrap();
+        let old_manifest = LoopCaptureManifest {
+            version: 2,
+            namespace: Some(LEGACY_NAMESPACE.into()),
+            takes: vec![original.clone()],
+        };
+        ui.loop_captures = old_manifest.clone();
+        storage
+            .try_save(&serde_json::to_string(&ui.to_persisted()).unwrap())
+            .unwrap();
+        let mut backend = CpalBackend::offline_for_test();
+        let mut state =
+            CapturePersistence::restore(Some(&storage), &old_manifest, &mut backend).unwrap();
+        assert!(state.unavailable.is_empty());
+        assert!(!state.changed(&backend.capture_snapshot()));
+        let mut takes = backend.capture_snapshot();
+        assert!(takes[0].legacy_clock);
+        assert_eq!(bits(&takes[0].buffer.data), bits(&samples));
+        let canonical_frames = woodshed_audio::Bar {
+            bpm: 137.0,
+            time_signature: woodshed_audio::TimeSignature::new(5, 4),
+            ..Default::default()
+        }
+        .duration_samples(48_000.0) as usize;
+        assert_eq!(canonical_frames, 105_110);
+        takes.push(CaptureSnapshot {
+            id: plan.segments[1].id,
+            bpm: 137.0,
+            beats: 5,
+            bars: 1,
+            legacy_clock: false,
+            buffer: SampleBuffer::new(vec![0.0625; canonical_frames], 48_000),
+        });
+        backend.restore_loop_captures(takes).unwrap();
+        backend.set_loop_plan(&plan).unwrap();
+        let (backing, rate) = backend.export_backing().unwrap();
+        assert!(backing.bars[0].legacy_clock);
+        assert!(!backing.bars[1].legacy_clock);
+        assert_eq!(backing.bars[0].duration_samples(rate as f32), 253_744);
+        let mut wav = std::io::Cursor::new(Vec::new());
+        let report = woodshed_audio::offline::export_song_wav_to(&backing, rate, &mut wav).unwrap();
+        assert_eq!(report.frames, 253_744 + 105_110);
+        state
+            .persist(&storage, true, backend.capture_snapshot(), &mut ui)
+            .unwrap();
+        assert_eq!(ui.loop_captures.version, CAPTURE_VERSION);
+        assert_eq!(ui.loop_captures.takes[0], original);
+        assert_eq!(
+            ui.loop_captures.takes[1].clock.as_deref(),
+            Some(woodshed_core::loop_capture::PER_BEAT_CLOCK)
+        );
+        assert_eq!(ready(inner.get(&old_key)).unwrap().unwrap(), encrypted_blob);
+        let reopened = woodshed_core::storage::decode_session(&storage.load().unwrap())
+            .unwrap()
+            .session;
+        let mut fresh = CpalBackend::offline_for_test();
+        let restored =
+            CapturePersistence::restore(Some(&storage), &reopened.loop_captures, &mut fresh)
+                .unwrap();
+        assert!(restored.unavailable.is_empty());
+        let snapshots = fresh.capture_snapshot();
+        assert!(snapshots[0].legacy_clock);
+        assert!(!snapshots[1].legacy_clock);
+        assert_eq!(bits(&snapshots[0].buffer.data), bits(&samples));
+        fresh.set_loop_plan(&plan).unwrap();
+        let (again, _) = fresh.export_backing().unwrap();
+        assert_eq!(again.bars[0].duration_samples(48_000.0), 253_744);
+        assert!(
+            fresh
+                .loop_arm_record(plan.segments[0].id)
+                .unwrap_err()
+                .contains("legacy-clock")
+        );
+        assert!(fresh.capture_source_rate().is_none());
+        assert_eq!(ready(inner.get(&old_key)).unwrap().unwrap(), encrypted_blob);
+    }
+
+    /// Read-only accepted fixture intake. Never opens a device, vault or the
+    /// real practice store; only writes exports to a caller-owned new folder.
+    #[test]
+    #[ignore = "requires accepted fixture JSON/WAV and an owned output directory"]
+    fn canonical_clock_gold_fixture_probe() {
+        let fixture_path = std::env::var("WOODSHED_CLOCK_FIXTURE_JSON").unwrap();
+        let gold_path = std::env::var("WOODSHED_CLOCK_GOLD_WAV").unwrap();
+        let output = std::path::PathBuf::from(std::env::var("WOODSHED_CLOCK_RECEIPT_DIR").unwrap());
+        assert!(output.is_absolute() && output.is_dir());
+        let input: serde_json::Value =
+            serde_json::from_slice(&std::fs::read(fixture_path).unwrap()).unwrap();
+        let domain = &input["domain"];
+        let storage: SessionStore<HostBackend> =
+            SessionStore::new(Box::new(MemoryBackend::default()));
+        storage
+            .try_save(&serde_json::to_string(domain).unwrap())
+            .unwrap();
+        let mut ui = UiState::new();
+        crate::session::restore(&storage, &mut ui);
+        let plan = ui.requested_loop_plan().unwrap();
+        let reference = &ui.loop_captures.takes[0];
+        assert_eq!(reference.frames, 96_000);
+        assert_eq!(reference.sample_rate, 48_000);
+        let samples: Vec<_> = (0..reference.frames)
+            .map(|frame| [0.000125, -0.00025, -0.0, 0.0005][frame % 4])
+            .collect();
+        // This is the exact deterministic take from the original fixture,
+        // checked against its content-address before exporting anything.
+        let raw = woodshed_core::loop_capture::encode_pcm(reference.sample_rate, &samples).unwrap();
+        assert_eq!(
+            woodshed_core::loop_capture::pcm_digest(&raw),
+            reference.digest
+        );
+        let snapshot = CaptureSnapshot {
+            id: reference.id,
+            bpm: reference.bpm,
+            beats: reference.beats,
+            bars: reference.bars,
+            legacy_clock: true,
+            buffer: SampleBuffer::new(samples, reference.sample_rate),
+        };
+        let mut backend = CpalBackend::offline_for_test();
+        backend.restore_loop_captures(vec![snapshot]).unwrap();
+        backend.set_loop_plan(&plan).unwrap();
+        let (mut backing, rate) = backend.export_backing().unwrap();
+        let gold = std::fs::read(gold_path).unwrap();
+        for legacy in [true, false] {
+            for bar in &mut backing.bars {
+                bar.legacy_clock = legacy;
+            }
+            let mut destination = std::io::Cursor::new(Vec::new());
+            let report =
+                woodshed_audio::offline::export_song_wav_to(&backing, rate, &mut destination)
+                    .unwrap();
+            assert_eq!(report.frames, 192_000);
+            let bytes = destination.into_inner();
+            assert_eq!(
+                bytes, gold,
+                "accepted 120 BPM WAV differs under legacy={legacy}"
+            );
+            use std::io::Write;
+            let path = output.join(if legacy {
+                "legacy-gold.wav"
+            } else {
+                "canonical-gold.wav"
+            });
+            std::fs::OpenOptions::new()
+                .create_new(true)
+                .write(true)
+                .open(path)
+                .unwrap()
+                .write_all(&bytes)
+                .unwrap();
+        }
+        assert!(backend.capture_source_rate().is_none());
+        assert_eq!(backend.output_stream_count(), 0);
+        println!(
+            "accepted WAV: legacy and canonical each byte-identical; 192000 frames, 48000 Hz; exact original 96000-frame take; no input/output devices"
+        );
     }
 }

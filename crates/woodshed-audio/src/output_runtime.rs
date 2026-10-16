@@ -419,6 +419,7 @@ impl OutputRuntime {
             .get_mut(bar_idx)
             .ok_or_else(|| err("recording bar out of range"))?
             .audio_buffer = None;
+        song.bars[bar_idx].legacy_clock = false;
         let data = PreparedBacking::prepare(&song, self.rate, &mut self.chord_cache)?;
         self.send(Command::Backing {
             data: Some(OwnedGc::new(data)),
@@ -521,6 +522,9 @@ impl OutputRuntime {
         }
         if bar_idx >= self.song.bars.len() {
             return Err(err("recording bar out of range"));
+        }
+        if self.song.bars.iter().any(|bar| bar.legacy_clock) {
+            return Err(err("Clear the legacy-clock loops before recording. Existing takes keep their original playback clocks."));
         }
         let take = Recording::prepare(
             &self.song,

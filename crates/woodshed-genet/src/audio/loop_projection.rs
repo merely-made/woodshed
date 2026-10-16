@@ -17,6 +17,13 @@ pub(crate) struct CaptureSnapshot {
     pub beats: u8,
     pub bars: u8,
     pub buffer: SampleBuffer,
+    pub legacy_clock: bool,
+}
+
+impl CaptureSnapshot {
+    pub(crate) fn clock_field(&self) -> Option<String> {
+        (!self.legacy_clock).then(|| woodshed_core::loop_capture::PER_BEAT_CLOCK.to_string())
+    }
 }
 
 const MAX_STORED_CAPTURES: usize = 256;
@@ -25,6 +32,7 @@ const MAX_STORED_FRAMES: usize = 16_777_216;
 #[derive(Clone)]
 struct Capture {
     buffer: SampleBuffer,
+    legacy_clock: bool,
     /// Preserve the clock under which the PCM was captured. A Card clock
     /// change requires an explicit clear rather than rewriting that take.
     bpm: f32,
@@ -51,6 +59,7 @@ impl LoopCaptures {
         self.cards
             .iter()
             .map(|(&id, capture)| CaptureSnapshot {
+                legacy_clock: capture.legacy_clock,
                 id,
                 bpm: capture.bpm,
                 beats: capture.beats,
@@ -85,6 +94,7 @@ impl LoopCaptures {
                 .filter(|&frames| frames <= MAX_STORED_FRAMES)
                 .ok_or("Stored Set captures exceed the 16777216-frame bound.")?;
             let expected = Bar {
+                legacy_clock: take.legacy_clock,
                 bpm: take.bpm,
                 time_signature: TimeSignature::new(take.beats, 4),
                 length: take.bars,
@@ -102,6 +112,7 @@ impl LoopCaptures {
             validated.insert(
                 take.id,
                 Capture {
+                    legacy_clock: take.legacy_clock,
                     buffer: take.buffer,
                     bpm: take.bpm,
                     beats: take.beats,
@@ -117,6 +128,9 @@ impl LoopCaptures {
     /// together with inactive custody before input is opened or recording is
     /// armed; existing current-plan IDs are replaced rather than counted twice.
     pub(super) fn check_capture_quota(&self, song: &Song, output_rate: u32) -> Result<(), String> {
+        if song.bars.iter().any(|bar| bar.legacy_clock) {
+            return Err("Clear the legacy-clock loops before recording. Existing takes keep their original playback clocks.".into());
+        }
         let Some(plan) = &self.plan else {
             // Legacy saved-song recording has separate custody and the
             // runtime's own allocation bounds; it cannot grow the Set bank.
@@ -172,6 +186,7 @@ impl LoopCaptures {
                     self.cards.insert(
                         segment.id,
                         Capture {
+                            legacy_clock: bar.legacy_clock,
                             buffer: buffer.clone(),
                             bpm: segment.bpm,
                             beats: segment.beats,
@@ -224,6 +239,7 @@ impl LoopCaptures {
                 ));
             }
             song.bars.push(Bar {
+                legacy_clock: capture.is_some_and(|capture| capture.legacy_clock),
                 bpm: segment.bpm,
                 time_signature: TimeSignature::new(segment.beats, 4),
                 subdivision: Subdivision::QUARTER,
@@ -299,6 +315,7 @@ mod tests {
             ..Bar::default()
         };
         CaptureSnapshot {
+            legacy_clock: false,
             id: LoopSegmentId {
                 set: WorkingSetId(owner),
                 card: CardId(card),
@@ -312,6 +329,7 @@ mod tests {
 
     fn quota_take(id: LoopSegmentId, buffer: &SampleBuffer) -> CaptureSnapshot {
         CaptureSnapshot {
+            legacy_clock: false,
             id,
             bpm: 60.0 * buffer.sample_rate_hz as f32 / buffer.len() as f32,
             beats: 1,
@@ -468,6 +486,7 @@ mod tests {
         bank.restore(vec![original.clone()]).unwrap();
         let too_many: Vec<_> = (1..=257)
             .map(|card| CaptureSnapshot {
+                legacy_clock: false,
                 id: LoopSegmentId {
                     set: WorkingSetId(2),
                     card: CardId(card),
@@ -488,6 +507,7 @@ mod tests {
         let pcm = SampleBuffer::new(vec![0.0; frames], rate);
         let oversized: Vec<_> = (1..=256)
             .map(|card| CaptureSnapshot {
+                legacy_clock: false,
                 id: LoopSegmentId {
                     set: WorkingSetId(2),
                     card: CardId(card),

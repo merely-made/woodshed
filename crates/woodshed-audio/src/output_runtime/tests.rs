@@ -243,14 +243,14 @@ fn terminal_one_shot_cancels_an_unreachable_arm() {
 }
 
 #[test]
-fn fractional_tempo_count_in_preserves_the_legacy_frame_length() {
+fn fractional_tempo_count_in_uses_one_canonical_measure() {
     let mut r = runtime();
     let mut s = song(1);
     s.bars[0].bpm = 137.0;
     s.bars[0].time_signature = TimeSignature::new(4, 4);
     s.click_enabled = true;
     s.playing = true;
-    let expected = (4.0f32 * (60.0 / 137.0) * 1000.0) as usize;
+    let expected = audio_primitives::frames_per_bar(1000, 137.0, 4, 4);
     r.set_song(s).unwrap();
     r.service().unwrap();
     render(&mut r, expected);
@@ -267,7 +267,7 @@ fn variable_tempo_blocks_and_one_shot_clear_the_entire_tail() {
     s.bars[1].bpm = 3000.0;
     s.bars[1].time_signature = TimeSignature::new(3, 8);
     s.bars[1].length = 2;
-    s.bars[1].audio_buffer = Some(SampleBuffer::new(vec![0.5; 120], 1000));
+    s.bars[1].audio_buffer = Some(SampleBuffer::new(vec![0.5; 60], 1000));
     s.playing = true;
     s.one_shot = true;
     r.set_song(s).unwrap();
@@ -275,8 +275,8 @@ fn variable_tempo_blocks_and_one_shot_clear_the_entire_tail() {
     r.service().unwrap();
     let output = render(&mut r, 173);
     assert!(output[..20].iter().all(|v| (*v - 0.2).abs() < 1e-6));
-    assert!(output[20..260].iter().all(|v| (*v - 0.4).abs() < 1e-6));
-    assert!(output[260..].iter().all(|v| *v == 0.0));
+    assert!(output[20..140].iter().all(|v| (*v - 0.4).abs() < 1e-6));
+    assert!(output[140..].iter().all(|v| *v == 0.0));
     assert!(!r.song().playing);
 }
 
@@ -515,4 +515,116 @@ fn unsupported_rates_and_aggregate_resources_are_rejected_before_publication() {
         amplitude: 0.4,
     };
     assert!(r.set_click_pattern(click).is_err());
+}
+
+#[test]
+fn fractional_and_eighth_meter_count_in_and_capture_end_on_exact_frames_without_allocating() {
+    for (rate, bpm, beats, unit, measures) in [
+        (1000, 137.0, 4, 4, 1),
+        (48_000, 120.0, 3, 8, 2),
+        (48_000, 113.5, 5, 4, 2),
+    ] {
+        let bar = Bar {
+            bpm,
+            time_signature: TimeSignature::new(beats, unit),
+            length: measures,
+            ..Default::default()
+        };
+        let measure = audio_primitives::frames_per_bar(rate, bpm, beats, unit);
+        let frames = measure * measures as usize;
+        let mut r = OutputRuntime::offline(rate).unwrap();
+        let (mut producer, _) = feed(&mut r, frames + measure + 16);
+        let mut s = Song::new();
+        s.bars = vec![bar];
+        s.click_enabled = true;
+        s.playing = true;
+        r.set_song(s).unwrap();
+        r.service().unwrap();
+        r.arm_capture(0, true).unwrap();
+        r.service().unwrap();
+        render(&mut r, measure);
+        assert_eq!(r.snapshot().cursor.sample_in_bar, 0);
+        // Existing schedule: a queued Arm starts at the first bar wrap, not
+        // at the end of count-in. Capture exactly the following block.
+        render(&mut r, frames);
+        assert!(r.snapshot().recording);
+        producer.push_samples(&vec![0.25; frames]);
+        render(&mut r, frames - 1);
+        assert_eq!(r.snapshot().cursor.sample_in_bar, frames as u64 - 1);
+        render(&mut r, 1);
+        r.stop_capture_now().unwrap();
+        r.service().unwrap();
+        render(&mut r, 1);
+        r.service().unwrap();
+        assert!(!r.capture_busy());
+        assert!(!r.snapshot().capture_invalid);
+        let captured = r.song().bars[0].audio_buffer.clone().unwrap();
+        assert_eq!(captured.len(), frames);
+        assert!(captured.data.iter().all(|sample| *sample == 0.25));
+    }
+}
+
+#[test]
+fn legacy_capture_plays_exactly_but_clear_is_required_before_new_recording() {
+    let mut r = OutputRuntime::offline(48_000).unwrap();
+    let _ = feed(&mut r, 16);
+    let mut s = Song::new();
+    let pcm = SampleBuffer::new(vec![0.25; 253_744], 48_000);
+    s.bars = vec![Bar {
+        bpm: 113.5,
+        time_signature: TimeSignature::new(5, 4),
+        length: 2,
+        legacy_clock: true,
+        audio_buffer: Some(pcm.clone()),
+        ..Default::default()
+    }];
+    s.click_enabled = false;
+    s.playing = true;
+    s.one_shot = true;
+    r.set_song(s).unwrap();
+    r.service().unwrap();
+    assert!(
+        r.arm_capture(0, true)
+            .unwrap_err()
+            .to_string()
+            .contains("legacy-clock")
+    );
+    let output = render(&mut r, 253_745);
+    assert!(
+        output[..253_744 * 2]
+            .iter()
+            .all(|value| (*value - 0.2).abs() < 1e-6)
+    );
+    assert!(output[253_744 * 2..].iter().all(|value| *value == 0.0));
+    assert!(Arc::ptr_eq(
+        &r.song().bars[0].audio_buffer.as_ref().unwrap().data,
+        &pcm.data
+    ));
+    r.clear_recording(0).unwrap();
+    assert!(!r.song().bars[0].legacy_clock);
+    assert_eq!(r.song().bars[0].duration_samples(48_000.0), 253_740);
+    r.arm_capture(0, true).unwrap();
+}
+
+#[test]
+fn canonical_metronome_uses_rounded_denominator_beats_without_boundary_drift() {
+    let mut r = runtime();
+    let beat = audio_primitives::frames_per_beat(1000, 137.0, 8);
+    let mut pattern = SequencerPattern::metronome(
+        137.0,
+        TimeSignature::new(3, 8),
+        crate::Subdivision::QUARTER,
+    );
+    pattern.tracks[0].sound =
+        Sound::sample_with_buffer("impulse", SampleBuffer::new(vec![0.5, 0.0], 1000));
+    r.set_click_pattern(pattern).unwrap();
+    r.play_click().unwrap();
+    r.service().unwrap();
+    let output = render(&mut r, beat * 8 + 1);
+    let starts: Vec<_> = output
+        .chunks_exact(2)
+        .enumerate()
+        .filter_map(|(i, frame)| (frame[0] != 0.0).then_some(i))
+        .collect();
+    assert_eq!(starts, (0..=8).map(|i| i * beat).collect::<Vec<_>>());
 }
