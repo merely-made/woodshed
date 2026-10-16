@@ -19,9 +19,9 @@ settle 5
 assert snap claims-generated-count >= 1
 assert text Source stratum
 checkpoint-p4f before-reason-hear
-click role:button @data-assertion-action=audition
+click role:button Audition chord:Major → chord:Minor
 settle 3
-assert text Audition queued in assertion direction
+assert snap claims-last-action ~ Audition queued in assertion direction: chord:Major → chord:Minor
 assert snap preview-starts >= 1
 checkpoint-p4f after-reason-hear
 capture 02_directed_reason
@@ -36,9 +36,10 @@ click .workspace-panel Related
 settle 5
 assert snap claims-generated-count >= 1
 checkpoint-p4f before-return-reason-hear
-click role:button @data-assertion-action=audition
+click role:button Audition chord:Minor → chord:Major
 settle 3
 assert text Audition queued in assertion direction
+assert snap claims-last-action ~ Audition queued in assertion direction: chord:Minor → chord:Major
 checkpoint-p4f after-return-reason-hear
 capture 02b_return_directed_reason
 click .workspace-panel Practice
