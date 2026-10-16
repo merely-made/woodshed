@@ -128,5 +128,10 @@
     },
     "scope": "Repeats affected view/native packages and native seed/reopen after cleanly merging concurrent take-navigation main; earlier 619-case source gate remains historical evidence.",
     "doc_audit": "integration/doc-audit-final.json"
+  },
+  "publication_followup": {
+    "merged_main": "f6d2a5929c25bd3db5992a55107ab02b59d1b191",
+    "scope": "Standalone ports/hocket/crates/hocket-genet source and its documentation/receipts only; no root Woodshed runtime or dependency inputs changed after fe54425 qualification. The handoff document merge preserves both lanes.",
+    "p4_qualified_source_unchanged": true
   }
 }
