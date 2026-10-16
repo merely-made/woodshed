@@ -50,6 +50,7 @@ pub struct Product {
     shared: Rc<RefCell<Shared>>,
     sheet: String,
     export_wait: Option<(String, std::time::Instant)>,
+    take_playback_wait: Option<(usize, std::time::Instant, std::cell::Cell<bool>)>,
 }
 
 pub fn from_env(shared: Rc<RefCell<Shared>>) -> Option<mesquite::Lane<Product>> {
@@ -62,6 +63,7 @@ pub fn from_env(shared: Rc<RefCell<Shared>>) -> Option<mesquite::Lane<Product>> 
                 shared,
                 sheet,
                 export_wait: None,
+                take_playback_wait: None,
             },
             cambium_genet_winit_host::read_file,
         )
@@ -92,6 +94,8 @@ impl mesquite::Product for Product {
             shared: &self.shared.borrow(),
         }
         .snapshot()
+        .with_field("take-playback-observed", self.take_playback_wait.as_ref()
+            .is_some_and(|(_, _, observed)| observed.get()).to_string())
     }
     fn drain_events(&mut self, _: &mut Ctx<'_>) -> Vec<String> {
         std::mem::take(&mut self.shared.borrow_mut().events)
@@ -109,8 +113,17 @@ impl mesquite::Product for Product {
                         .as_deref()
                         .is_some_and(|notice| notice.contains(expected))
             });
+        let take_wait = self.take_playback_wait.as_ref().is_some_and(|(bar, started, observed)| {
+            if !observed.get() && self.shared.borrow().backend.as_ref()
+                .and_then(|backend| backend.output_snapshot())
+                .is_some_and(|snapshot| snapshot.playing && snapshot.cursor.bar_idx == *bar
+                    && snapshot.cursor.sample_in_bar > 0) {
+                observed.set(true);
+            }
+            !observed.get() && started.elapsed().as_secs() < 30
+        });
         Some(
-            export_wait
+            take_wait || export_wait
                 || ctx.runner.state().loop_export_busy
                 || capture_pending
                 || self
@@ -122,6 +135,13 @@ impl mesquite::Product for Product {
         )
     }
     fn act(&mut self, ctx: &mut Ctx<'_>, label: &str) -> bool {
+        if label == "await-selected-take-playback" {
+            let ui = ctx.runner.state();
+            let Some(bar) = ui.loop_selected.and_then(|id| ui.loop_admitted.as_ref()?.index_of(id))
+            else { return false; };
+            self.take_playback_wait = Some((bar, std::time::Instant::now(), std::cell::Cell::new(false)));
+            return true;
+        }
         if let Some(expected) = match label {
             "wav-native-await-cancel" => Some("WAV export cancelled"),
             "wav-native-await-save" => Some("Exported "),
@@ -1865,13 +1885,15 @@ impl Automatable for Probe<'_, '_> {
                 return false;
             };
             let observation = format!(
-                "output-clock streams={} frames={} blocks={} click={} playing={} capture-invalid={}",
+                "output-clock streams={} frames={} blocks={} click={} playing={} capture-invalid={} bar={} in-bar={}",
                 backend.output_stream_count(),
                 snapshot.device_frames,
                 snapshot.processing_blocks,
                 snapshot.click_playing,
                 snapshot.playing,
                 snapshot.capture_invalid,
+                snapshot.cursor.bar_idx,
+                snapshot.cursor.sample_in_bar,
             );
             eprintln!("{observation}");
             self.shared.events.push(observation);
