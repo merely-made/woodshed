@@ -418,6 +418,7 @@ impl UiState {
         {
             return;
         }
+        self.arrangement_editor.notice = None;
         let preserve = self.arrangement_editor.owner == Some(owner);
         self.arrangement_editor.owner = Some(owner);
         self.arrangement_editor.signature = signature;
@@ -758,35 +759,48 @@ pub fn screen(ui: &UiState) -> UiChild {
                 600.0
             })
         .clamp(280.0, 1050.0) as u32;
-        preview.push(Box::new(on_pointer(
-            custom_leaf::<UiState, ()>(PRIMARY_KEY, width, 230)
-                .attr("aria-label", "Progression arrangement scene"),
-            |ui: &mut UiState, event: cambium::PointerEvent| {
-                if event.phase == cambium::PointerPhase::Up
-                    && event.button == cambium::PointerButton::Primary
-                {
-                    let key = ui
-                        .arrangement_editor
-                        .surfaces
-                        .borrow()
-                        .primary
-                        .as_ref()
-                        .and_then(|s| {
-                            s.pick(
-                                event.local.0,
-                                event.local.1,
-                                event.size.0.round() as u32,
-                                event.size.1.round() as u32,
-                            )
-                        })
-                        .map(str::to_owned);
-                    ui.arrangement_select(
-                        key.map(BackdropSceneEvent::Select)
-                            .unwrap_or(BackdropSceneEvent::Clear),
-                    );
-                }
-            },
-        )));
+        let primary_width = width.max(580);
+        preview.push(Box::new(
+            el(
+                "div",
+                on_pointer(
+                    custom_leaf::<UiState, ()>(PRIMARY_KEY, primary_width, 230)
+                        .attr("aria-label", "Progression arrangement scene"),
+                    |ui: &mut UiState, event: cambium::PointerEvent| {
+                        if event.phase == cambium::PointerPhase::Up
+                            && event.button == cambium::PointerButton::Primary
+                        {
+                            let key = ui
+                                .arrangement_editor
+                                .surfaces
+                                .borrow()
+                                .primary
+                                .as_ref()
+                                .and_then(|s| {
+                                    s.pick(
+                                        event.local.0,
+                                        event.local.1,
+                                        event.size.0.round() as u32,
+                                        event.size.1.round() as u32,
+                                    )
+                                })
+                                .map(str::to_owned);
+                            ui.arrangement_select(
+                                key.map(BackdropSceneEvent::Select)
+                                    .unwrap_or(BackdropSceneEvent::Clear),
+                            );
+                        }
+                    },
+                ),
+            )
+            .attr("class", "arrangement-scene-scroll"),
+        ));
+        if ui.viewport_width < 1000.0 {
+            preview.push(Box::new(el(
+                "p",
+                text("Scroll the scene sideways to inspect its full span."),
+            )));
+        }
         if let Some(related) = &surfaces.related {
             preview.push(Box::new(el("h3", text(related.scene().title.clone()))));
             preview.push(Box::new(
@@ -806,7 +820,18 @@ pub fn screen(ui: &UiState) -> UiChild {
             |ui: &mut UiState, event| ui.arrangement_select(event),
         )));
     }
-    let preview: UiChild = Box::new(el("div", preview).attr("class", "arrangement-preview"));
+    let preview: UiChild = Box::new(
+        el("div", preview)
+            .attr("class", "arrangement-preview")
+            .attr(
+                "style",
+                if ui.viewport_width < 1000.0 {
+                    "width:100%;flex:none"
+                } else {
+                    "flex:1 1 0"
+                },
+            ),
+    );
     let mut columns: Vec<UiChild> = vec![];
     if ui.viewport_width < 1000.0 {
         columns.push(preview);
@@ -842,6 +867,7 @@ pub const CSS:&str="
 .arrangement-row { padding:8px 0; border-bottom:1px solid #606878; }
 .arrangement-columns {display:flex;gap:16px;align-items:flex-start;min-width:0;}
 .arrangement-preview { flex:1 1 auto; display:flex; flex-direction:column; gap:8px; min-width:0; overflow-x:auto; }
+.arrangement-scene-scroll { width:100%; overflow-x:auto; flex:none; }
 .arrangement-preview .backdrop-scene-reading { display:flex; flex-direction:column; gap:6px; padding:8px; }
 .arrangement-preview .backdrop-scene-reading button { min-height:28px; text-align:left; }
 .arrangement-preview .backdrop-scene-occurrence { padding:5px; }

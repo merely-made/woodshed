@@ -177,6 +177,42 @@ mod tests {
                 .text()
                 .contains("Native proof")
         );
+        // Native text injection and IME can change a field before the ordinary
+        // dispatch tail. A prepared frame must never retain a stale scene.
+        h.update(|ui| {
+            *ui.arrangement_editor.field_mut(owner, "extent").unwrap() =
+                cambium::TextInput::new("-1");
+        });
+        h.prepare_frame();
+        h.relayout();
+        assert!(
+            h.state()
+                .arrangement_editor
+                .surfaces
+                .borrow()
+                .primary
+                .is_none()
+        );
+        h.with_dom(|dom| {
+            assert_eq!(
+                taproot::matching(dom, &Selector::class("arrangement-error")).len(),
+                1
+            );
+        });
+        h.update(|ui| {
+            *ui.arrangement_editor.field_mut(owner, "extent").unwrap() =
+                cambium::TextInput::new("64");
+        });
+        h.prepare_frame();
+        h.relayout();
+        assert!(
+            h.state()
+                .arrangement_editor
+                .surfaces
+                .borrow()
+                .primary
+                .is_some()
+        );
         h.request_close(cambium_genet_winit_host::CloseRequest::Native);
         h.relayout();
         assert!(!h.close_requested());

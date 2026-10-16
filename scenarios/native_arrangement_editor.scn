@@ -86,6 +86,9 @@ settle 12
 wheel 0 -2000 px on .workspace-screen
 settle 6
 capture 06_narrow_arrangement
+wheel 320 0 px on .arrangement-scene-scroll
+settle 6
+capture 07_narrow_full_span
 resize 1180 1100
 settle 10
 click .workspace-panel Practice
@@ -96,4 +99,4 @@ click .workspace-panel Arrangement
 settle 6
 assert snap arrangement-producer == true
 assert snap practice-saved == true
-capture 07_panel_return
+capture 08_panel_return

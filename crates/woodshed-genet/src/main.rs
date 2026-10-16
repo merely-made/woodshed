@@ -386,6 +386,9 @@ fn hooks(shared: &Rc<RefCell<Shared>>) -> HostHooks<UiState, Logic, UiChild> {
                 !drag_active || drive::requires_live_frame(&shared, ctx.runner.state());
             if drive_rebuilt {
                 ctx.runner.update(|ui| {
+                    // The native text seam can update a field between ordinary
+                    // dispatch tails. Refresh derived scenes before binding them.
+                    ui.sync_arrangement_scene();
                     animating = drive::frame(&mut shared, ui)
                         | ui.tick_overview_dynamics()
                         | ui.tick_overview_atmosphere();
