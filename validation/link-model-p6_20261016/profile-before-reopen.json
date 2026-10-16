@@ -1,0 +1,10 @@
+{
+  "settings.json": {
+    "bytes": 602,
+    "sha256": "c2ec420e6e995e8e440e60582e724aaab9016cbfe4a971bf907ff33d01e898ff"
+  },
+  "practice.bin": {
+    "bytes": 10573,
+    "sha256": "1de32538d9631b406663cc3729925103d06659e873f54a53fc2fe81fd01d79b7"
+  }
+}

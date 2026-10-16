@@ -1,0 +1,5 @@
+{
+  "pid": 22252,
+  "exited_before_reopen": true,
+  "native_ui_launch_observation": "The scenario completed and the app exited before the tool could attach accessibility; native receipts confirm 141 presented frames and two nonblank captures."
+}

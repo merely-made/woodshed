@@ -1,0 +1,103 @@
+{
+  "schema": "woodshed.link-model-p6-receiving/v1",
+  "status": "bounded-qualified",
+  "source": "d896e398fe216b1fe5cd97926bd9e2f5337a0b3d",
+  "supplier_mere": "a45a0b6976fa8984ade032d5514d6403d5a216c3",
+  "previous_mere": "91467c0bbf6f92cc26262579dec634155ee33f2d",
+  "updated_mere_package_rows": 45,
+  "other_supplier_sources_preserved": true,
+  "nested_locks_preserved": true,
+  "source_checks": {
+    "passed": 629,
+    "ignored": 7,
+    "fresh_process_children": 5,
+    "packages": {
+      "woodshed_core": 248,
+      "core_stage_backdrop": 1,
+      "woodshed_graph": 18,
+      "woodshed_views": 194,
+      "woodshed_genet": 168
+    },
+    "new_receiving_regression": "stage::related::tests::personal_custom_predicates_reach_shared_reader_with_exact_history_and_basis",
+    "command": "cargo test --locked --offline -j1 -p woodshed-graph -p woodshed-core -p woodshed-views -p woodshed-genet --no-fail-fast",
+    "log": "logs/affected-tests-v2.log"
+  },
+  "desktop_build": {
+    "passed": true,
+    "command": "cargo build --locked --offline -j1 -p woodshed-genet --bin woodshed-genet",
+    "log": "logs/desktop-build.log",
+    "identity": "build-source.json"
+  },
+  "native": {
+    "seed": {
+      "frames": 141,
+      "captures": 2,
+      "receipt": "native-seed/scenario.done"
+    },
+    "reopen": {
+      "frames": 134,
+      "captures": 2,
+      "receipt": "native-reopen/scenario.done"
+    },
+    "reviewed_captures": 4,
+    "logical_window": [
+      1100,
+      900
+    ],
+    "separate_processes": {
+      "seed_pid": 22252,
+      "reopen_pid": 22894,
+      "separate_processes": true,
+      "both_exited": true,
+      "keeper_manifest_unchanged": true,
+      "profile_manifest_unchanged": false,
+      "launch_observation": "Each scenario completed and exited before native accessibility attachment. Original native captures and native presentation receipts were produced."
+    },
+    "source_resource": "working-set:1",
+    "source_revision": "851dd13fad928e423430eb1b1aeb734c4e155b80a8755b96a501c947de128b1f",
+    "assertion_handle": "set:1:music.same_pitch_classes:1:2",
+    "direction": [
+      "set:1:card:1",
+      "set:1:card:2"
+    ],
+    "method": "urn:woodshed:method:woodshed.keyed_pitch_set_comparison.v1",
+    "method_version": "1",
+    "clock_policy": "Source clocks and attribution remain explicitly unavailable.",
+    "keeper_manifest_unchanged": true,
+    "ui_launch_observation": "The UI tool returned an accessibility attachment error after each launch. Both native runs produced successful presentation receipts and original nonblank captures; each process was then observed exited.",
+    "profile_byte_manifests": {
+      "before": "profile-before-reopen.json",
+      "after": "profile-after-reopen.json",
+      "changed_files": [
+        "practice.bin",
+        "settings.json"
+      ],
+      "comparison_scope": "Exact source/recipe identity is checked by native scenarios and reviewed readings; byte-identical sealed envelopes are not required."
+    }
+  },
+  "scope": [
+    "Portable custom-predicate personal assertions retain distinct IDs, actor, scope, basis and evidence through the real reading adapter and shared opened-link compiler.",
+    "Exact personal withdrawal retains a tombstone and the independent held reason.",
+    "Generated Surface relationship recipe native smoke and sealed-profile fresh app process reopen."
+  ],
+  "remaining_scope": [
+    "Mere Graph canonical all-family storage and ingestion are qualified by Mere, which owns that source. Woodshed does not ingest that Graph.",
+    "Full Stage P4f and physical audio qualification retain their separate gates.",
+    "The isolated Keeper stayed in the same process across both app invocations; this is an app-process reopen receipt."
+  ],
+  "publication": {
+    "mode": "direct-main",
+    "verification_home": "mere/support/receipts/link-model-p6-20261016/receiving-hosts.json"
+  },
+  "documentation": {
+    "audit": "doc-link-audit.json",
+    "command": "python3 validation/link-model-p6_20261016/doc_link_audit.py --repo . --base 6ad8b4f8ce447e5e716e45db8194d1e00d90afc2",
+    "scope": [
+      "design_docs/2026-07-11_stage_set_tools_plan.md",
+      "design_docs/DOC_README.md"
+    ],
+    "no_new_findings": true,
+    "baseline_findings": 0,
+    "current_findings": 0
+  }
+}
