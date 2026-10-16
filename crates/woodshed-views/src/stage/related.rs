@@ -44,7 +44,7 @@ pub(super) fn claims_link_reading_for_pair(
     from: &str,
     to: &str,
 ) -> Option<LinkPairReading> {
-    let key = LinkKey::new(LinkStratum::Surface, from.clone(), to.clone());
+    let key = LinkKey::new(LinkStratum::Surface, from, to);
     let mut grouped = std::collections::BTreeMap::<(String, String), Vec<LinkAssertion>>::new();
 
     // Generated reasons remain source-owned read-only claims. Their stable

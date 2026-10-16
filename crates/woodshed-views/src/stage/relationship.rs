@@ -121,7 +121,7 @@ fn relationship_link_source(reading: &RelationshipReading) -> LinkSource {
     LinkSource::Available {
         binding: reading.dataset.dataset.source.clone(),
         revision: LinkSourceRevision::Available {
-            revision: PublicSourceRevision::new(reading.dataset.dataset.revision.clone()),
+            revision: reading.dataset.dataset.revision.clone(),
         },
     }
 }

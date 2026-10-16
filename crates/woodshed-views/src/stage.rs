@@ -676,13 +676,14 @@ pub fn set_graph_swatch_from_snapshot(
                 let (Some(display_from), Some(display_to)) = (display_from, display_to) else {
                     continue;
                 };
-                let (from, to, route, display_from, display_to) = if from.key() <= to.key() {
-                    (from, to, route, display_from, display_to)
-                } else {
-                    let mut reversed_route = route;
-                    reversed_route.reverse();
-                    (to, from, reversed_route, display_to, display_from)
-                };
+                let (from, to, route, display_from, display_to) =
+                    if (from.epoch.0, from.instance.0) <= (to.epoch.0, to.instance.0) {
+                        (from, to, route, display_from, display_to)
+                    } else {
+                        let mut reversed_route = route;
+                        reversed_route.reverse();
+                        (to, from, reversed_route, display_to, display_from)
+                    };
                 if !generated_links
                     .iter()
                     .any(|(peer_key, peer_from, peer_to, ..)| {
