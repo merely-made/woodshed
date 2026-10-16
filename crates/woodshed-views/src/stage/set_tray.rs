@@ -368,15 +368,7 @@ pub(super) fn view(ui: &UiState) -> UiChild {
                 el("div", text(message.unwrap_or_default())).attr("class", "set-graph-relation"),
             ) as UiChild
         });
-    let relation_detail = if ui
-        .set_graph_relation
-        .and_then(|reference| snapshot.relation_source(reference))
-        .is_some_and(|source| {
-            matches!(
-                source,
-                woodshed_core::stage_scene::StageRelationSource::Generated { .. }
-            )
-        }) {
+    let relation_detail = if ui.set_graph_opened_link.is_some() {
         Box::new(
             el(
                 "div",

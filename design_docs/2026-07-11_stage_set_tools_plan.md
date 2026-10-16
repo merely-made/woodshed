@@ -82,6 +82,31 @@ exact source/binary hashes, identity comparison and original rendered captures.
 This closes the bounded P3 receiving gate; physical acoustic output, full P4f
 exploration and the remaining Stage phases keep their own acceptance gates.
 
+### Link-model resting strokes (2026-10-16)
+
+**Status: implemented; receiving qualification in progress.** Mere's link-model
+P4 supplies the shared canonical key and resting summary at `91467c0bb`,
+qualified in its browser with saved-hide reopening. Woodshed starts from
+refreshed `284fa340`; only the root Mere family advances from `ee324e517`.
+Genet, Dramatis, Netrender, registry packages and nested port locks retain their
+qualified inputs.
+
+The relationship editor, Related and Set now draw one source-bound stroke per
+canonical link and displayed occurrence pair. Direction and opposition are
+view marks over held source claims; independent reason IDs, original directed
+buckets, method and evidence remain in the opened shared reader. Resource
+material identity and displayed occurrence identity keep their separate owners.
+Opening never chooses an arbitrary assertion, and exact member actions
+re-resolve the current source, owner and revision. Operational sequence/context
+geometry retains its own references. The existing endpoint force policy stays
+unchanged.
+
+Done conditions are the affected view/desktop checks, a reviewed native
+three-card recipe flow and a fresh-process reopen against the same isolated
+sealed profile. This is the link-model P4 receiving slice; full Stage P4f,
+physical audio quality and later Mere assertion-family migration retain their
+own gates.
+
 > **2026-08-10 — the gate is open.** The scenograph scene contract this plan
 > gates on ("what remains is the freeze, not the proof") froze 2026-07-24 at
 > 0.0.3: emphasis channels and a default pick added, intents stay

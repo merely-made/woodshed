@@ -247,6 +247,9 @@ fn overview_arrangement_swatch(ui: &UiState) -> GraphCanvasSwatch<OverviewNodeId
         .enumerate()
         .map(|(index, relation)| GraphCanvasRelation {
             id: format!("overview:{index}"),
+            link_key: None,
+            marks: sceno::LinkMarks::default(),
+            strength: 1.0,
             from: relation.from.clone(),
             to: relation.to.clone(),
             kind: relation.kind.label().into(),

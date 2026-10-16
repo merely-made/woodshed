@@ -2,17 +2,24 @@
 use super::{UiChild, UiState, WorkspacePanel};
 use cambium::{
     GraphCanvasEvent, GraphCanvasInput, GraphCanvasNode, GraphCanvasRelation, GraphCanvasSubgraph,
-    GraphCanvasSwatch, clickable, el, graph_canvas_with_wheel, map_state, text, text_field,
+    GraphCanvasSwatch, LinkMemberAction, OpenedLinkEvent, clickable, el, graph_canvas_with_wheel,
+    map_state, text, text_field,
+};
+use scenograph::link::{
+    LinkAssertion, LinkAssertionBasis, LinkAssertionMethod, LinkBucket, LinkCoverage, LinkEndpoint,
+    LinkGraphScope, LinkKey, LinkPairReading, LinkReading, LinkRestSummary, LinkSource,
+    LinkSourceRevision, LinkStratum, OpenedLinkLayout,
 };
 use scenograph::relationship::{
     RecipeEdit, RelationshipRecipeDraft, RelationshipSnapshot, relationship_recipe,
 };
+use scenograph::swatch::{Scope, Swatch, SwatchMode};
 use scenograph::{ProjectionInputBinding, PublicSourceRevision, RevisionEvidence};
 use scenomise::projection::{
     CompiledRelationshipProjection, ItemSizes, ProjectionCompiler, RelationshipDataset,
 };
 use serde::{Deserialize, Serialize};
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, BTreeSet};
 use woodshed_core::{comparison_disclosure, working_sets::WorkingSetId};
 use woodshedding::rehearsal::{CardId, Set};
 
@@ -109,6 +116,215 @@ fn owner_set(ui: &UiState, owner: WorkingSetId) -> Result<&Set, String> {
         .get(owner, &ui.set)
         .ok_or_else(|| "The source Set is unavailable.".into())
 }
+
+fn relationship_link_source(reading: &RelationshipReading) -> LinkSource {
+    LinkSource::Available {
+        binding: reading.dataset.dataset.source.clone(),
+        revision: LinkSourceRevision::Available {
+            revision: PublicSourceRevision::new(reading.dataset.dataset.revision.clone()),
+        },
+    }
+}
+
+fn relationship_evidence_token(source: &sceno::SourceRef) -> String {
+    format!(
+        "urn:woodshed:source-ref:v1:{}:{}{}:{}",
+        source.adapter.len(),
+        source.adapter,
+        source.id.len(),
+        source.id
+    )
+}
+
+fn relationship_pair_reading(
+    reading: &RelationshipReading,
+    key: &LinkKey,
+) -> Option<LinkPairReading> {
+    if key.stratum != LinkStratum::Surface {
+        return None;
+    }
+    let mut grouped = BTreeMap::<(String, String), Vec<LinkAssertion>>::new();
+    for relation in &reading.dataset.relationships {
+        let relation_key = LinkKey::new(
+            LinkStratum::Surface,
+            relation.from_occurrence.clone(),
+            relation.to_occurrence.clone(),
+        );
+        if relation_key != *key {
+            continue;
+        }
+        grouped
+            .entry((
+                relation.from_occurrence.clone(),
+                relation.to_occurrence.clone(),
+            ))
+            .or_default()
+            .push(LinkAssertion {
+                // This remains the source disclosure's identity. It is not a
+                // Chartulary EdgeId or a generated pair entity.
+                id: relation.id.clone(),
+                predicate: format!("urn:woodshed:comparison:{}", relation.kind),
+                recognized_kind: Some(relation.kind.clone()),
+                label: Some(format!("{} — {}", relation.label, relation.explanation)),
+                scope: LinkGraphScope::Source,
+                asserter: None,
+                first_asserted_ms: None,
+                asserted_at_ms: None,
+                withdrawn: None,
+                basis: LinkAssertionBasis {
+                    note: None,
+                    method: Some(LinkAssertionMethod {
+                        iri: format!("urn:woodshed:method:{}", relation.provenance.method),
+                        version: Some(relation.provenance.method_version.to_string()),
+                    }),
+                    evidence: relation
+                        .provenance
+                        .evidence
+                        .iter()
+                        .map(relationship_evidence_token)
+                        .collect(),
+                },
+            });
+    }
+    if grouped.is_empty() {
+        return None;
+    }
+    let mut buckets = grouped
+        .into_iter()
+        .map(|((from, to), mut assertions)| {
+            assertions.sort_by(|left, right| left.id.cmp(&right.id));
+            LinkBucket {
+                displayed_from: from.clone(),
+                displayed_to: to.clone(),
+                source_from: LinkEndpoint {
+                    id: from.clone(),
+                    address: Some(from),
+                },
+                source_to: LinkEndpoint {
+                    id: to.clone(),
+                    address: Some(to),
+                },
+                assertions,
+                legacy_members: Vec::new(),
+                legacy_summaries: Vec::new(),
+            }
+        })
+        .collect::<Vec<_>>();
+    buckets.sort_by(|left, right| {
+        (&left.source_from.id, &left.source_to.id)
+            .cmp(&(&right.source_from.id, &right.source_to.id))
+    });
+    Some(LinkPairReading {
+        source: relationship_link_source(reading),
+        links: vec![LinkReading {
+            key: key.clone(),
+            buckets,
+        }],
+        coverage: LinkCoverage::default(),
+    })
+}
+
+fn relationship_link_keys(reading: &RelationshipReading) -> BTreeSet<LinkKey> {
+    reading
+        .dataset
+        .relationships
+        .iter()
+        .map(|relation| {
+            LinkKey::new(
+                LinkStratum::Surface,
+                relation.from_occurrence.clone(),
+                relation.to_occurrence.clone(),
+            )
+        })
+        .collect()
+}
+
+fn relationship_link_summary(
+    reading: &RelationshipReading,
+    key: &LinkKey,
+) -> Option<LinkRestSummary> {
+    let pair = relationship_pair_reading(reading, key)?;
+    pair.links
+        .iter()
+        .find(|link| link.key == *key)
+        .map(|link| link.rest_summary(&key.first, &key.second))
+}
+
+fn relationship_source_is_current(ui: &UiState, reading: &RelationshipReading) -> bool {
+    let Some(source) = &reading.source else {
+        return false;
+    };
+    owner_set(ui, source.owner).is_ok_and(|set| revision(source.owner, set) == source.revision)
+}
+
+fn handle_relationship_link_event(ui: &mut UiState, event: OpenedLinkEvent) {
+    match event {
+        OpenedLinkEvent::Layout(layout) => ui.relationship_opened_link_layout = Some(layout),
+        OpenedLinkEvent::Member { target, action } => {
+            let result = open_relationship_member(ui, &target, &action);
+            ui.relationship_result(result);
+        },
+    }
+}
+
+fn open_relationship_link(ui: &mut UiState, id: &str) -> Result<(), String> {
+    let reading = ui.relationship_reading()?.ok_or("Choose material first.")?;
+    let key = relationship_link_keys(&reading)
+        .into_iter()
+        .find(|key| key.stable_id() == id)
+        .ok_or("The selected relationship link is unavailable.")?;
+    ui.relationship_opened_link = Some(key);
+    ui.relationship_opened_link_layout = None;
+    ui.relationship_notice = None;
+    Ok(())
+}
+
+fn open_relationship_member(
+    ui: &mut UiState,
+    target: &cambium::LinkMemberTarget,
+    action: &str,
+) -> Result<(), String> {
+    if action != "open-source-card" {
+        return Err("This relationship member action is not available.".into());
+    }
+    if LinkKey::new(LinkStratum::Surface, target.from.clone(), target.to.clone()) != target.link {
+        return Err("The selected member direction does not belong to this link.".into());
+    }
+    let mut reading = ui.relationship_reading()?.ok_or("Choose material first.")?;
+    let pair = relationship_pair_reading(&reading, &target.link)
+        .ok_or("The selected link is no longer in the retained reading.")?;
+    if target.source != pair.source {
+        return Err("The selected member belongs to a different source reading.".into());
+    }
+    let member = pair
+        .links
+        .iter()
+        .flat_map(|link| &link.buckets)
+        .find(|bucket| bucket.source_from.id == target.from && bucket.source_to.id == target.to)
+        .and_then(|bucket| {
+            bucket
+                .assertions
+                .iter()
+                .find(|assertion| assertion.id == target.assertion_id)
+        })
+        .ok_or("The exact relationship assertion is no longer available.")?;
+    let Some(source) = reading.source.as_ref() else {
+        return Err("This retained relationship has no current owner action.".into());
+    };
+    let owner = source.owner;
+    let source_revision = source.revision.clone();
+    let set = owner_set(ui, owner)?;
+    if revision(owner, set) != source_revision {
+        return Err(
+            "Source instructions changed. Explicitly rebind before opening a source Card.".into(),
+        );
+    }
+    reading.snapshot.selected_occurrence = Some(target.from.clone());
+    reading.snapshot.selected_relationship = Some(member.id.clone());
+    ui.install_relationship(reading)?;
+    ui.open_relationship_source()
+}
+
 impl UiState {
     pub fn relationship_reading(&self) -> Result<Option<RelationshipReading>, String> {
         self.relationship_reading_json
@@ -331,7 +547,12 @@ impl UiState {
 pub fn relationship_swatch(ui: &UiState) -> Option<GraphCanvasSwatch<String, &'static str>> {
     let reading = ui.relationship_reading().ok()??;
     let compiled = reading.compile().ok()?;
-    let mut swatch = swatch_from(&reading, &compiled, ui.viewport_width);
+    let mut swatch = swatch_from(
+        &reading,
+        &compiled,
+        ui.viewport_width,
+        ui.relationship_opened_link.as_ref(),
+    );
     swatch.viewport = ui.relationship_viewport;
     Some(swatch)
 }
@@ -339,6 +560,7 @@ fn swatch_from(
     reading: &RelationshipReading,
     compiled: &CompiledRelationshipProjection,
     viewport_width: f32,
+    selected_link: Option<&LinkKey>,
 ) -> GraphCanvasSwatch<String, &'static str> {
     let scene = &compiled.projection.scene;
     let bounds = scene.bounds;
@@ -373,26 +595,36 @@ fn swatch_from(
             }
         })
         .collect();
-    let relations = compiled
-        .relationships
-        .iter()
-        .map(|r| {
-            let from = &scene.items[r.from.0 as usize];
-            let to = &scene.items[r.to.0 as usize];
-            GraphCanvasRelation {
-                id: r.disclosure.id.clone(),
-                from: r.disclosure.from_occurrence.clone(),
-                to: r.disclosure.to_occurrence.clone(),
-                kind: r.disclosure.kind.clone(),
-                label: r.disclosure.label.clone(),
+    let relations = relationship_link_keys(reading)
+        .into_iter()
+        .filter_map(|key| {
+            let summary = relationship_link_summary(reading, &key)?;
+            let from_instance = compiled.projection.instance_by_occurrence.get(&key.first)?;
+            let to_instance = compiled
+                .projection
+                .instance_by_occurrence
+                .get(&key.second)?;
+            let from = &scene.items[from_instance.0 as usize];
+            let to = &scene.items[to_instance.0 as usize];
+            Some(GraphCanvasRelation {
+                id: key.stable_id(),
+                link_key: Some(key.clone()),
+                marks: summary.marks,
+                strength: summary.strength,
+                from: key.first.clone(),
+                to: key.second.clone(),
+                kind: "surface-link".into(),
+                label: format!(
+                    "{} held assertions · {} legacy members",
+                    summary.held_assertions, summary.legacy_members
+                ),
                 route: vec![
                     normalize(from.transform.translate.x, from.transform.translate.y),
                     normalize(to.transform.translate.x, to.transform.translate.y),
                 ],
                 visible: true,
-                emphasized: reading.snapshot.selected_relationship.as_ref()
-                    == Some(&r.disclosure.id),
-            }
+                emphasized: selected_link == Some(&key),
+            })
         })
         .collect();
     let mut swatch = GraphCanvasSwatch::new(
@@ -556,7 +788,12 @@ pub(super) fn screen(ui: &UiState) -> UiChild {
                 }
             }
             {
-                let mut swatch = swatch_from(&reading, &compiled, ui.viewport_width);
+                let mut swatch = swatch_from(
+                    &reading,
+                    &compiled,
+                    ui.viewport_width,
+                    ui.relationship_opened_link.as_ref(),
+                );
                 swatch.viewport = ui.relationship_viewport;
                 children.push(Box::new(
                     el(
@@ -577,20 +814,12 @@ pub(super) fn screen(ui: &UiState) -> UiChild {
                                 };
                                 let r = match event {
                                     GraphCanvasEvent::Activate(id) => {
+                                        ui.relationship_opened_link = None;
+                                        ui.relationship_opened_link_layout = None;
                                         ui.select_relationship(Some(id), None)
                                     },
                                     GraphCanvasEvent::RelationActivate(id) => {
-                                        let left =
-                                            ui.relationship_reading().ok().flatten().and_then(
-                                                |r| {
-                                                    r.dataset
-                                                        .relationships
-                                                        .iter()
-                                                        .find(|r| r.id == id)
-                                                        .map(|r| r.from_occurrence.clone())
-                                                },
-                                            );
-                                        ui.select_relationship(left, Some(id))
+                                        open_relationship_link(ui, &id)
                                     },
                                     GraphCanvasEvent::Pan { delta } => {
                                         ui.relationship_viewport.pan.0 += delta.0;
@@ -632,6 +861,44 @@ pub(super) fn screen(ui: &UiState) -> UiChild {
                     )
                     .attr("class", "relationship-camera-controls"),
                 ));
+            }
+            if let Some(key) = ui.relationship_opened_link.as_ref() {
+                if let Some(pair) = relationship_pair_reading(&reading, key) {
+                    let swatch = Swatch {
+                        id: format!("woodshed-relationship-link-{}", key.stable_id()),
+                        scope: Scope::Link(key.clone()),
+                        mode: SwatchMode::Projection {
+                            definition_id: "opened-link".into(),
+                            variant_id: None,
+                        },
+                    };
+                    let layout = ui
+                        .relationship_opened_link_layout
+                        .clone()
+                        .unwrap_or_else(|| OpenedLinkLayout::default_for(&pair));
+                    let can_open_source = relationship_source_is_current(ui, &reading);
+                    children.push(Box::new(cambium::opened_link_swatch(
+                        &swatch,
+                        &pair,
+                        &layout,
+                        scenograph::link::OpenedLinkOptions { now_ms: ui.now_ms },
+                        false,
+                        move |_source, _key, bucket, _assertion| {
+                            if can_open_source {
+                                vec![LinkMemberAction {
+                                    id: "open-source-card".into(),
+                                    label: format!(
+                                        "Open source Card for {} → {}",
+                                        bucket.displayed_from, bucket.displayed_to
+                                    ),
+                                }]
+                            } else {
+                                Vec::new()
+                            }
+                        },
+                        handle_relationship_link_event,
+                    )));
+                }
             }
             for occurrence in &reading.dataset.dataset.occurrences {
                 let id = occurrence.occurrence_id.clone();
@@ -697,6 +964,101 @@ mod tests {
         ui.bind_relationship_recipe(false).unwrap();
         ui
     }
+
+    #[test]
+    fn relationship_canvas_has_one_rest_stroke_and_opens_all_directed_members() {
+        let mut ui = fixture();
+        ui.relationship_cards = vec![ui.set.cards[0].id, ui.set.cards[1].id];
+        ui.bind_relationship_recipe(true).unwrap();
+        let reading = ui.relationship_reading().unwrap().unwrap();
+        let compiled = reading.compile().unwrap();
+        let keys = relationship_link_keys(&reading);
+        assert!(!keys.is_empty());
+
+        let swatch = swatch_from(&reading, &compiled, ui.viewport_width, None);
+        assert_eq!(swatch.relations.len(), keys.len());
+        for key in &keys {
+            let visual = swatch
+                .relations
+                .iter()
+                .find(|relation| relation.link_key.as_ref() == Some(key))
+                .expect("each canonical pair has one resting stroke");
+            let pair = relationship_pair_reading(&reading, key).unwrap();
+            let link = pair.links.iter().find(|link| link.key == *key).unwrap();
+            let summary = link.rest_summary(&key.first, &key.second);
+            assert_eq!(visual.id, key.stable_id());
+            assert_eq!(visual.marks, summary.marks);
+            assert_eq!(visual.strength, summary.strength);
+
+            let projected = reading
+                .dataset
+                .relationships
+                .iter()
+                .filter(|relation| {
+                    LinkKey::new(
+                        LinkStratum::Surface,
+                        relation.from_occurrence.clone(),
+                        relation.to_occurrence.clone(),
+                    ) == *key
+                })
+                .map(|relation| {
+                    (
+                        relation.from_occurrence.clone(),
+                        relation.to_occurrence.clone(),
+                        relation.id.clone(),
+                    )
+                })
+                .collect::<BTreeSet<_>>();
+            let disclosed = link
+                .buckets
+                .iter()
+                .flat_map(|bucket| {
+                    bucket.assertions.iter().map(|assertion| {
+                        (
+                            bucket.source_from.id.clone(),
+                            bucket.source_to.id.clone(),
+                            assertion.id.clone(),
+                        )
+                    })
+                })
+                .collect::<BTreeSet<_>>();
+            assert_eq!(disclosed, projected);
+            assert!(link.buckets.iter().all(|bucket| {
+                bucket.assertions.iter().all(|assertion| {
+                    assertion.scope == LinkGraphScope::Source
+                        && assertion.asserter.is_none()
+                        && assertion.first_asserted_ms.is_none()
+                        && assertion.asserted_at_ms.is_none()
+                })
+            }));
+        }
+
+        let key = keys.iter().next().unwrap().clone();
+        open_relationship_link(&mut ui, &key.stable_id()).unwrap();
+        assert_eq!(ui.relationship_opened_link.as_ref(), Some(&key));
+        let pair = relationship_pair_reading(&reading, &key).unwrap();
+        let bucket = pair.links[0].buckets.first().unwrap();
+        let assertion = bucket.assertions.first().unwrap();
+        let target = cambium::LinkMemberTarget {
+            source: pair.source.clone(),
+            link: key,
+            from: bucket.source_from.id.clone(),
+            to: bucket.source_to.id.clone(),
+            assertion_id: assertion.id.clone(),
+        };
+        let source = reading.source.as_ref().unwrap();
+        let expected_card = source
+            .cards
+            .iter()
+            .copied()
+            .find(|card| comparison_disclosure::occurrence_id(source.owner, *card) == target.from)
+            .unwrap();
+        let cards_before = serde_json::to_value(&ui.set.cards).unwrap();
+        open_relationship_member(&mut ui, &target, "open-source-card").unwrap();
+        assert_eq!(ui.set.cursor_id(), Some(expected_card));
+        assert_eq!(serde_json::to_value(&ui.set.cards).unwrap(), cards_before);
+    }
+
     #[test]
     fn legacy_reading_preserves_evidence_until_explicit_richer_rebind() {
         let mut ui = fixture();

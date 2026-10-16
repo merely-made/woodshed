@@ -36,6 +36,14 @@ fn claims_source(ui: &UiState) -> LinkSource {
 
 fn claims_link_reading(ui: &UiState) -> Option<LinkPairReading> {
     let (from, to) = ui.personal_link_pair.as_ref()?;
+    claims_link_reading_for_pair(ui, from, to)
+}
+
+pub(super) fn claims_link_reading_for_pair(
+    ui: &UiState,
+    from: &str,
+    to: &str,
+) -> Option<LinkPairReading> {
     let key = LinkKey::new(LinkStratum::Surface, from.clone(), to.clone());
     let mut grouped = std::collections::BTreeMap::<(String, String), Vec<LinkAssertion>>::new();
 
@@ -591,22 +599,28 @@ pub(super) fn opened_claims_link(ui: &UiState) -> UiChild {
 }
 
 fn activate_related_relation(ui: &mut UiState, relation_id: String) {
-    ui.related_relation = (ui.related_relation.as_deref() != Some(relation_id.as_str()))
-        .then_some(relation_id.clone());
-    if ui.related_relation.as_deref() != Some(relation_id.as_str()) {
+    if ui.related_relation.as_deref() == Some(relation_id.as_str()) {
+        ui.related_relation = None;
+        ui.personal_link_pair = None;
         return;
     }
-    if let Some(claim) = related_mere_snapshot(ui)
+    let key = related_mere_snapshot(ui)
         .relations
         .into_iter()
-        .find(|claim| claim.claim_id.qualified_key() == relation_id)
-    {
-        ui.personal_link_pair =
-            Some((claim.provenance.original_from, claim.provenance.original_to));
-        ui.personal_link_history = false;
-        ui.personal_link_layout = None;
-        ui.personal_relation_notice = None;
-    }
+        .map(|claim| {
+            LinkKey::new(
+                LinkStratum::Surface,
+                claim.provenance.original_from,
+                claim.provenance.original_to,
+            )
+        })
+        .find(|key| key.stable_id() == relation_id);
+    let Some(key) = key else { return };
+    ui.related_relation = Some(relation_id);
+    ui.personal_link_pair = Some((key.first, key.second));
+    ui.personal_link_history = false;
+    ui.personal_link_layout = None;
+    ui.personal_relation_notice = None;
 }
 
 /// The relation kinds beyond the one the row already shows, so multiplicity is
@@ -1207,6 +1221,32 @@ mod tests {
             actual, raw,
             "both directions keep their exact source buckets"
         );
+
+        let key = LinkKey::new(LinkStratum::Surface, from.clone(), to.clone());
+        let pair_only = woodshed_core::mere::WoodshedMereSnapshot {
+            nodes: pair_snapshot
+                .nodes
+                .iter()
+                .filter(|node| node.id == from || node.id == to)
+                .cloned()
+                .collect(),
+            relations: pair_snapshot
+                .relations
+                .iter()
+                .filter(|relation| {
+                    LinkKey::new(
+                        LinkStratum::Surface,
+                        relation.provenance.original_from.clone(),
+                        relation.provenance.original_to.clone(),
+                    ) == key
+                })
+                .cloned()
+                .collect(),
+        };
+        let swatch = super::super::related_swatch_from_snapshot(&pair_only, &ui, true);
+        assert_eq!(swatch.relations.len(), 1);
+        assert_eq!(swatch.relations[0].link_key.as_ref(), Some(&key));
+        assert_eq!(swatch.relations[0].id, key.stable_id());
     }
 
     #[test]
@@ -1299,11 +1339,16 @@ mod tests {
             inverse.provenance.original_from.clone(),
             inverse.provenance.original_to.clone(),
         );
+        let key = LinkKey::new(LinkStratum::Surface, expected.0.clone(), expected.1.clone());
         let set_before = serde_json::to_value(&ui.set).unwrap();
 
-        activate_related_relation(&mut ui, inverse.claim_id.qualified_key());
+        activate_related_relation(&mut ui, key.stable_id());
 
         assert_eq!(ui.personal_link_pair, Some(expected));
+        assert_eq!(
+            ui.related_relation.as_deref(),
+            Some(key.stable_id().as_str())
+        );
         assert_eq!(serde_json::to_value(&ui.set).unwrap(), set_before);
     }
 }
