@@ -14,14 +14,18 @@ assert snap claims-generated-methods ~ urn:woodshed:method:computed-formula-rela
 assert snap claims-generated-evidence-count >= 2
 assert text urn:woodshed:method:computed-formula-relations
 assert text urn:woodshed:evidence:v1
+click .detail-value urn:woodshed:method:computed-formula-relations
+settle 3
 capture 01_claims_generated_provenance
 
-act claims-note-reason-one
+click role:textbox @data-field=personal-reason
+input-text Independent reason one
 click .personal-add
 settle 3
 assert snap personal-retained-count == 1
 assert snap personal-held-count == 1
-act claims-note-reason-two
+click role:textbox @data-field=personal-reason
+input-text Independent reason two
 click .personal-add
 settle 3
 assert snap personal-retained-count == 2
@@ -54,5 +58,13 @@ assert text Independent reason two
 assert text withdrawn at
 act claims-save-seed-identities
 assert event claims-seed-identities-saved
+click .detail-value withdrawn at
+settle 3
 capture 03_claims_withdrawn_history
+click role:button Timeline by direction
+settle 3
+click .opened-link-timeline-row
+settle 3
+assert text Assertions in time order
+capture 04_claims_direction_timeline
 log Claims seed: two independent reasons; one held and one withdrawn

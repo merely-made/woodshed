@@ -1,6 +1,7 @@
 use cambium::{
     HoverEvent, HoverPhase, OpenedLinkEvent, clickable, el,
-    graph_canvas_swatch_with_focus_and_drag_and_relations, map_state, on_hover, text, text_field,
+    graph_canvas_swatch_with_focus_and_drag_and_relations, map_state, on_hover, text,
+    text_field_typed,
 };
 use scenograph::link::{
     LinkAssertion, LinkAssertionBasis, LinkAssertionMethod, LinkBucket, LinkCoverage, LinkEndpoint,
@@ -469,10 +470,21 @@ pub(super) fn opened_claims_link(ui: &UiState) -> UiChild {
     ];
     let can_write = ui.practice_saved && actor.is_some() && ui.personal_relations.is_some();
     if can_write {
-        children.push(Box::new(map_state(
-            text_field(&ui.personal_relation_note),
-            |ui: &mut UiState| &mut ui.personal_relation_note,
-        )));
+        children.push(Box::new(
+            el(
+                "label",
+                (
+                    text("Personal reason note (optional)"),
+                    map_state(
+                        text_field_typed(&ui.personal_relation_note)
+                            .attr("aria-label", "Personal reason note (optional)")
+                            .attr("data-field", "personal-reason"),
+                        |ui: &mut UiState| &mut ui.personal_relation_note,
+                    ),
+                ),
+            )
+            .attr("class", "claims-reason-field"),
+        ));
         let from_for_assert = from.clone();
         let to_for_assert = to.clone();
         children.push(Box::new(clickable(

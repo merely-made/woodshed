@@ -18,5 +18,13 @@ assert text urn:woodshed:method:computed-formula-relations
 assert text urn:woodshed:evidence:v1
 act claims-verify-reopen-identities
 assert event claims-reopen-identities-match true
+click .detail-value withdrawn at
+settle 3
 capture 01_claims_fresh_reopen
+click role:button Timeline by direction
+settle 3
+click .opened-link-timeline-row
+settle 3
+assert text Assertions in time order
+capture 02_claims_fresh_reopen_timeline
 log Claims reopen: source UUID, held assertion ID and withdrawal tombstone retained
