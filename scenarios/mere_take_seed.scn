@@ -24,6 +24,7 @@ assert snap capture-input-rate == none
 capture 02_sealed_take_in_looper
 click role:button @aria-label=Play backing
 act await-selected-take-playback
+wait 1800
 settle 3
 assert snap take-playback-observed == true
 assert snap song-playing == true
