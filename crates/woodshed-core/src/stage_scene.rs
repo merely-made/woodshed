@@ -1923,7 +1923,7 @@ mod tests {
 
     #[test]
     fn stage_projection_preserves_duplicate_same_kind_claims_and_inverse_source_identity() {
-        let forward_set = set_of(&[("major", chord("Major")), ("dominant", chord("Dominant 7"))]);
+        let forward_set = set_of(&[("minor", chord("Minor")), ("major", chord("Major"))]);
         let forward = stage_scene(&forward_set, &StageSceneOptions::default());
         let forward_claims = forward
             .relations()
@@ -1968,12 +1968,12 @@ mod tests {
                 }
             );
             assert_eq!(provenance.original_kind, RelationKind::UsedTogether);
-            assert_eq!(provenance.original_from, "chord:Major");
-            assert_eq!(provenance.original_to, "chord:Dominant 7");
+            assert_eq!(provenance.original_from, "chord:Minor");
+            assert_eq!(provenance.original_to, "chord:Major");
             assert_eq!(detail.authority, "Catalog");
         }
 
-        let inverse_set = set_of(&[("dominant", chord("Dominant 7")), ("major", chord("Major"))]);
+        let inverse_set = set_of(&[("major", chord("Major")), ("minor", chord("Minor"))]);
         let inverse = stage_scene(&inverse_set, &StageSceneOptions::default());
         let inverse_claims = inverse
             .relations()
@@ -1999,14 +1999,14 @@ mod tests {
             } if *from_occurrence == inverse_set.cards[0].id && *to_occurrence == inverse_set.cards[1].id);
             let (_, provenance) = detail.source.generated_claim().unwrap();
             exact_occurrences
-                && provenance.original_from == "chord:Major"
-                && provenance.original_to == "chord:Dominant 7"
+                && provenance.original_from == "chord:Minor"
+                && provenance.original_to == "chord:Major"
         }));
     }
 
     #[test]
     fn stage_relation_identity_changes_when_the_underlying_generated_source_changes() {
-        let mut set = set_of(&[("left", chord("Major")), ("right", chord("Dominant 7"))]);
+        let mut set = set_of(&[("left", chord("Minor")), ("right", chord("Major"))]);
         let before = stage_scene(&set, &StageSceneOptions::default());
         let before_ids = before
             .relations()
@@ -2016,7 +2016,7 @@ mod tests {
                 detail.source.generated_claim().map(|(id, _)| id.clone())
             })
             .collect::<BTreeSet<_>>();
-        set.cards[1].material = chord("Minor");
+        set.cards[1].material = chord("Dominant 7");
         let after = stage_scene(&set, &StageSceneOptions::default());
         let after_ids = after
             .relations()
@@ -2027,6 +2027,10 @@ mod tests {
             })
             .collect::<BTreeSet<_>>();
         assert_ne!(before_ids, after_ids);
+        assert!(
+            !before_ids.is_empty(),
+            "the original source pair is indexed"
+        );
         assert!(before_ids.is_disjoint(&after_ids));
     }
 
