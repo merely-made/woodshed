@@ -1,0 +1,16 @@
+{
+  "supplier": "ee324e517d501653aee8df7d5a430760a74749c0",
+  "other_family_pins_preserved": true,
+  "packages_added": [],
+  "packages_removed": [],
+  "dependency_changes": [
+    {
+      "package": "cambium",
+      "added": [
+        "scenograph",
+        "scenomise"
+      ],
+      "removed": []
+    }
+  ]
+}

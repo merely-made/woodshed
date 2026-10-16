@@ -14,9 +14,12 @@ Chartulary/shared Graphshell slice is published at `ee324e517`. The
 personal-only withdrawal, generated claims read-only, exact source identity,
 and ordered before/after audition. The root lock alone advances to that supplier;
 other dependency families and nested port locks retain their recorded versions.
-The older snapshot and release receipts below remain historical evidence.
+Source `374c75d` includes canonical-clock main `f83d4da`; 784 affected suite
+cases plus five child invocations and the desktop build pass. Native authoring,
+audition and sealed reopening remain pending an unlocked Mac. The older snapshot
+and release receipts below remain historical evidence.
 
-## 1. Where things stand
+## 1. Historical snapshot as of 2026-10-15
 
 Woodshed `main` is `2f82f5e`, clean. Nothing is uncommitted or in flight in
 the Woodshed/Hocket lane.
