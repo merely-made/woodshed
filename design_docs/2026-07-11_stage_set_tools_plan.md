@@ -82,6 +82,86 @@ exact source/binary hashes, identity comparison and original rendered captures.
 This closes the bounded P3 receiving gate; physical acoustic output, full P4f
 exploration and the remaining Stage phases keep their own acceptance gates.
 
+### Link-model resting strokes (2026-10-16)
+
+**Status: bounded P4 receiving qualification complete.** Mere's link-model
+P4 supplies the shared canonical key and resting summary at `91467c0bb`,
+qualified in its browser with saved-hide reopening. Woodshed starts from
+refreshed `284fa340`; only the root Mere family advances from `ee324e517`.
+Genet, Dramatis, Netrender, registry packages and nested port locks retain their
+qualified inputs.
+
+The relationship editor, Related and Set now draw one source-bound stroke per
+canonical link and displayed occurrence pair. Direction and opposition are
+view marks over held source claims; independent reason IDs, original directed
+buckets, method and evidence remain in the opened shared reader. Resource
+material identity and displayed occurrence identity keep their separate owners.
+Opening never chooses an arbitrary assertion, and exact member actions
+re-resolve the current source, owner and revision. Operational sequence/context
+geometry retains its own references. The existing endpoint force policy stays
+unchanged.
+
+Done conditions are the affected view/desktop checks, a reviewed native
+three-card recipe flow and a fresh-process reopen against the same isolated
+sealed profile. This is the link-model P4 receiving slice; full Stage P4f,
+physical audio quality and later Mere assertion-family migration retain their
+own gates.
+
+**Qualification:** source `a8c2cd2` passes 619 suite cases (core 248, view 192,
+desktop host 168, one backdrop integration case and ten example cases), seven
+existing ignores and five separate fresh-process child invocations. The final
+source `865e0e9` adds capture framing and the existing claim-reader style
+wrapper; its locked offline desktop build and both native flows pass. The seed
+process presents 142 frames and the different reopened process presents 134.
+All four original captures were reviewed: two resting links for the three-card
+recipe, and the opened reader's exact assertion, direction, method, evidence
+and source revision, including after reopening the sealed profile. The four-file
+isolated Keeper manifest is unchanged. This uses a separately frozen real
+Keeper test authority, not a user vault.
+
+**Integrated receiving source:** `fe54425` cleanly merges concurrent take-navigation
+main `ae2f34e`. All 193 view and 168 native-host cases pass, with seven existing
+ignores and five separate fresh-process child invocations; the locked offline
+desktop build passes. Two new native processes present 141 and 135 frames and
+produce four reviewed captures on a fresh sealed profile. The same exact source
+revision, assertion handle and original direction match after reopening.
+
+The [P4 receipt](../validation/link-model-p4_20261016/receipt.json) records exact
+source/binary hashes, dependency preservation, successful checks, initial
+compile/fixture corrections and the superseded capture framing. The receiving
+checks also found and fixed an exact-member visibility defect: the resting
+summary now counts only eligible displayed source rows while opening retains
+the complete source reading. No source assertion is withdrawn by a view hide.
+
+### Portable assertion receiving control (2026-10-16)
+
+**Status: bounded P6 receiving qualification complete.** Woodshed consumes Mere's
+published `a45a0b6` supplier through its existing personal-relation reading path;
+it does not own or ingest a Mere Graph. The focused receiving regression authors
+two independent `RelationClass::App` assertions on one directed pair, adapts
+them to portable custom-predicate `LinkAssertion` records, and sends them
+through the shared Scenomise opened-link compiler used by the Cambium swatch.
+It checks exact IDs, predicate, source scope, asserter, authored clocks, basis
+notes and evidence. Exact withdrawal through Woodshed's existing personal
+assertion journal leaves the second claim held while explicit history retains
+the first claim's tombstone.
+
+Frozen Woodshed source `d896e39` passes 629 affected cases, seven existing
+ignores and five separate fresh-process child invocations; its locked offline
+desktop build passes. The native generated-Surface recipe smoke uses 141 seed
+frames and two captures; a different fresh process reopens the same profile in
+134 frames and produces two more. All four original captures were reviewed.
+The working-Set source identity, public revision, exact assertion handle, original
+direction, method, evidence and unknown clocks agree across both processes. The
+four-file isolated Keeper manifest is unchanged, and both app processes exit
+before the next phase. The [P6 receipt](../validation/link-model-p6_20261016/receipt.json)
+records the exact test/build/native evidence.
+
+This qualifies Woodshed's portable custom-predicate adapter and the generated
+Surface native receiving path. It does not demonstrate Mere Graph ingestion or
+all Mere Graph relation families through Woodshed. Full Stage P4f exploration
+and physical audio output retain separate acceptance gates.
+
 > **2026-08-10 — the gate is open.** The scenograph scene contract this plan
 > gates on ("what remains is the freeze, not the proof") froze 2026-07-24 at
 > 0.0.3: emphasis channels and a default pick added, intents stay
@@ -3429,6 +3509,18 @@ the Mere, the narrow layout, or a native fresh-process reopen of a version-2
 payload. It also exposed a density issue: on the wide canvas, new take nodes
 at their default slots overlap labels placed by the retained version-1
 arrangement. That is a presentation follow-up, not an identity defect.
+
+**October 16 native closure:** [the take acceptance plan](2026-10-16_mere_take_acceptance_plan.md)
+and `validation/mere-take-acceptance_20261016/receipt.json` close the four open
+checks above. New take defaults avoid retained v1 labels without rewriting ten
+retained positions. Three final native processes (wide seed, wide fresh reopen,
+narrow fresh reopen) pass with ten reviewed captures and a real isolated Keeper.
+The 192,000-frame Set 1/Card 2 take is bit-exact against sealed storage and the
+output cursor reaches its segment after navigation from the Mere in each run.
+Presentation v2, focus, roles, positions and manifest are identical across all
+three reports. 442 automated cases and the desktop build pass. The two intentionally
+missing fixture references remain explicit; physical input, audibility and latency
+remain outside this acceptance. The older unsealed receipt remains unchanged.
 
 ### October 15 slice: pictograph canvas commands on three graph surfaces
 

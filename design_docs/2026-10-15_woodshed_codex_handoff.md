@@ -6,7 +6,20 @@ and kept Claude for design. Every ruling below is Mark's and is settled; do
 not re-decide one. If a task needs a decision that isn't written here, stop
 and ask Mark with concrete options.
 
-**2026-10-16 continuation:** the bounded opened-link P3 consumer is qualified
+**2026-10-16 P4 continuation:** the root now pins Mere `91467c0bb` for
+canonical resting links. The bounded receiving gate passes 619 suite cases,
+five fresh-process child invocations, the locked desktop build and native
+seed/reopen on source `865e0e9`, with four reviewed captures. After merging
+concurrent take-navigation main, `fe54425` repeats 361 affected cases, five child
+invocations, the build and native seed/reopen with four new reviewed captures. The
+relationship editor, Related and Set preserve independent reasons inside the
+opened reader; exact member filters reduce only their own resting contribution.
+The [Stage plan](2026-07-11_stage_set_tools_plan.md) and its linked P4 receipt
+own the evidence. Other dependency families and nested port locks remain at
+their qualified inputs. Full Stage P4f, physical audio and later Mere P6/P7
+remain separately gated.
+
+**Earlier 2026-10-16 P3 continuation:** the bounded opened-link P3 consumer is qualified
 from root `aba2c7343`. Mere P2 is qualified, the former O1–O8 questions are
 settled as L5–L12 (with independent reasons ruled as L13), and Mere's P3
 Chartulary/shared Graphshell slice is published at `ee324e517`. The
@@ -231,28 +244,34 @@ voices, count-in semantics and tick cadence.
 
 ### Task 4: finish the loop-take node checks
 
-Still unverified:
-
-- sealed playback opened from the Mere;
-- the narrow layout;
-- a native fresh-process reopen of the version-2 presentation payload;
-- take nodes overlapping labels from a retained v1 arrangement.
-
-Fix the overlap if it's a layout bug. If it's a migration question, bring
-Mark options.
+October 16: complete for the isolated native fixture. New unplaced take defaults
+avoid retained v1 labels without moving retained positions. Sealed hydration and
+playback reached from the Mere, narrow layout, and fresh-process v2 presentation
+reopening pass in three final native processes with ten reviewed captures.
+The selected take's actual output bar was observed in every run; its sealed
+192,000-frame PCM retains exact bits. 442 automated cases and the desktop build
+pass. See [the acceptance plan](2026-10-16_mere_take_acceptance_plan.md) and
+`validation/mere-take-acceptance_20261016/receipt.json`. No physical input,
+audibility or latency claim follows from this receipt.
 
 ### Not for Codex yet (design, or waiting on another lane)
 
 - **Hocket per-turn signed operations (ruling 5).** A design plan only. It is
-  gated on Hocket local durability and on the open host-acceptance defects:
-  project-worker reply correlation and native handoff qualification.
+  gated on Hocket local durability and separate design authorization.
+  Bounded native self-addressed project/handoff qualification now passes; see
+  `ports/hocket/design_docs/2026-10-16_native_project_handoff_plan.md`.
+  Two-peer/network transfer and signed per-turn operations are not qualified. The October 16 correlation follow-up closes the
+  project-worker sequencing defect with request/session-scoped replies and CPU
+  checks; see `ports/hocket/design_docs/2026-10-16_project_worker_correlation_plan.md`.
+  Signed per-turn operations remain outside that host fix.
 - **Saved-song bar graph nodes.** These need stable ids and PCM persistence
   (stage plan P7) first.
 - **Woodshed custody to a reservoir mere (ruling 6).** Mere/djinn work, not
   yet scheduled; Mark schedules it.
 - **Mere's link model:** the former O1–O8 questions are settled; the authorized
-  P3 consumer continuation is recorded in the Stage plan above. Later fan
-  retirement, all-family migration/history budgets and promotion keep their own gates.
+  P3 consumer continuation and qualified P4 resting strokes are recorded in
+  the Stage plan above. Later assertion-family migration/history budgets and
+  promotion keep their own gates.
 - **Touch input on the host** (P2 touch is deferred), waiting on host touch
   input in Mere.
 - **Firewheel and DSP open items from the survey:**

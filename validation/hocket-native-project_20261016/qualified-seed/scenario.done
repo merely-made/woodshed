@@ -1,0 +1,19 @@
+RESULT ok
+waited 0 frames
+waited 0 frames
+waited 0 frames
+captured 01_saved
+waited 0 frames
+waited 0 frames
+waited 0 frames
+waited 0 frames
+waited 0 frames
+captured 02_staged
+waited 0 frames
+waited 0 frames
+captured 03_accepted
+capture 01_saved 2360x1960 digest=d243a6b15e0ada71 file=/Users/markik/Code/testing/hocket/project-handoff-20261016/qualified-seed/01_saved.png
+capture 02_staged 2360x1960 digest=ce95a77301e93181 file=/Users/markik/Code/testing/hocket/project-handoff-20261016/qualified-seed/02_staged.png
+capture 03_accepted 2360x1960 digest=f745e0aa825b9c0d file=/Users/markik/Code/testing/hocket/project-handoff-20261016/qualified-seed/03_accepted.png
+frames: 3 captured, 0 blank, 3 distinct digests
+presentation: 79 frames, 81 redraws, 2 unpresented redraws

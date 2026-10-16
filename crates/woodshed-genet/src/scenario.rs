@@ -50,6 +50,7 @@ pub struct Product {
     shared: Rc<RefCell<Shared>>,
     sheet: String,
     export_wait: Option<(String, std::time::Instant)>,
+    take_playback_wait: Option<(usize, std::time::Instant, std::cell::Cell<bool>)>,
 }
 
 pub fn from_env(shared: Rc<RefCell<Shared>>) -> Option<mesquite::Lane<Product>> {
@@ -62,6 +63,7 @@ pub fn from_env(shared: Rc<RefCell<Shared>>) -> Option<mesquite::Lane<Product>> 
                 shared,
                 sheet,
                 export_wait: None,
+                take_playback_wait: None,
             },
             cambium_genet_winit_host::read_file,
         )
@@ -92,6 +94,8 @@ impl mesquite::Product for Product {
             shared: &self.shared.borrow(),
         }
         .snapshot()
+        .with_field("take-playback-observed", self.take_playback_wait.as_ref()
+            .is_some_and(|(_, _, observed)| observed.get()).to_string())
     }
     fn drain_events(&mut self, _: &mut Ctx<'_>) -> Vec<String> {
         std::mem::take(&mut self.shared.borrow_mut().events)
@@ -109,8 +113,17 @@ impl mesquite::Product for Product {
                         .as_deref()
                         .is_some_and(|notice| notice.contains(expected))
             });
+        let take_wait = self.take_playback_wait.as_ref().is_some_and(|(bar, started, observed)| {
+            if !observed.get() && self.shared.borrow().backend.as_ref()
+                .and_then(|backend| backend.output_snapshot())
+                .is_some_and(|snapshot| snapshot.playing && snapshot.cursor.bar_idx == *bar
+                    && snapshot.cursor.sample_in_bar > 0) {
+                observed.set(true);
+            }
+            !observed.get() && started.elapsed().as_secs() < 30
+        });
         Some(
-            export_wait
+            take_wait || export_wait
                 || ctx.runner.state().loop_export_busy
                 || capture_pending
                 || self
@@ -122,6 +135,13 @@ impl mesquite::Product for Product {
         )
     }
     fn act(&mut self, ctx: &mut Ctx<'_>, label: &str) -> bool {
+        if label == "await-selected-take-playback" {
+            let ui = ctx.runner.state();
+            let Some(bar) = ui.loop_selected.and_then(|id| ui.loop_admitted.as_ref()?.index_of(id))
+            else { return false; };
+            self.take_playback_wait = Some((bar, std::time::Instant::now(), std::cell::Cell::new(false)));
+            return true;
+        }
         if let Some(expected) = match label {
             "wav-native-await-cancel" => Some("WAV export cancelled"),
             "wav-native-await-save" => Some("Exported "),
@@ -132,6 +152,71 @@ impl mesquite::Product for Product {
             ctx.runner.update(|ui| ui.loop_export_notice = None);
             self.export_wait = Some((expected.into(), std::time::Instant::now()));
             return true;
+        }
+        if label == "verify-mere-take-retention" {
+            // Receipt-only observation of an explicitly isolated scenario profile.
+            let verify = || -> Result<(), String> {
+                let shared = self.shared.borrow();
+                if !matches!(shared.seal, Some(woodshed_views::persona::PracticeSeal::Sealed { .. })) {
+                    return Err("take receipt requires real sealed custody".into());
+                }
+                let json = shared.storage.as_ref().ok_or("no store")?
+                    .load().ok_or("sealed session unreadable")?;
+                let persisted = woodshed_core::storage::decode_session(&json)
+                    .map_err(|e| e.to_string())?.session;
+                let presentation: woodshed_views::stage::OverviewPresentation =
+                    serde_json::from_str(persisted.overview_presentation_json.as_deref().ok_or("no presentation")?)
+                    .map_err(|e| e.to_string())?;
+                let ui = ctx.runner.state();
+                if presentation.version != 2 || persisted.loop_captures != ui.loop_captures
+                    || presentation.focus != ui.overview_focus {
+                    return Err("sealed presentation or take manifest differs from the live view".into());
+                }
+                let positions: std::collections::BTreeMap<_, _> = presentation.positions.iter().cloned().collect();
+                let Some(id @ woodshed_core::session_overview::OverviewNodeId::Artifact(
+                    woodshed_core::session_overview::SessionArtifactId::LoopTake(_))) = ui.overview_focus.as_ref()
+                else { return Err("focus is not a retained take".into()); };
+                let live_positions = ui.overview_dynamics.positions();
+                let live = live_positions.get(id).or_else(|| ui.overview_positions.get(id));
+                if !positions.get(id).zip(live).is_some_and(|(stored, live)|
+                    (stored.0-live.0).abs() < 0.00001 && (stored.1-live.1).abs() < 0.00001) {
+                    return Err("take placement did not round-trip".into());
+                }
+                let captures = shared.backend.as_ref().ok_or("no output backend")?.capture_snapshot();
+                if captures.is_empty() { return Err("no hydrated PCM".into()); }
+                for take in &captures {
+                    let reference = persisted.loop_captures.takes.iter().find(|r| r.id == take.id)
+                        .ok_or("hydrated take has no persisted reference")?;
+                    let stored = shared.storage.as_ref().unwrap().try_read_capture(
+                        persisted.loop_captures.namespace.as_deref().ok_or("no capture namespace")?, reference)?;
+                    if stored.len() != take.buffer.len() || !stored.iter().zip(take.buffer.data.iter())
+                        .all(|(stored, live)| stored.to_bits() == live.to_bits()) {
+                        return Err("sealed PCM differs from hydrated PCM".into());
+                    }
+                    for (index, sample) in take.buffer.data.iter().enumerate() {
+                        if sample.to_bits() != [0.000125f32, -0.00025, -0.0, 0.0005][index % 4].to_bits() {
+                            return Err("deterministic PCM bits changed".into());
+                        }
+                    }
+                }
+                let directory = std::path::PathBuf::from(std::env::var_os("WOODSHED_CAPTURE_DIR").ok_or("no receipt directory")?);
+                let report = serde_json::json!({
+                    "sealed": true, "presentation": presentation,
+                    "manifest": persisted.loop_captures,
+                    "hydrated": captures.iter().map(|take| serde_json::json!({
+                        "id": take.id, "frames": take.buffer.len(),
+                        "sample_rate": take.buffer.sample_rate_hz,
+                        "legacy_clock": take.legacy_clock,
+                        "exact_fixture_bits": true, "exact_sealed_companion_bits": true,
+                    })).collect::<Vec<_>>(),
+                });
+                use std::io::Write;
+                let mut file = std::fs::OpenOptions::new().write(true).create_new(true)
+                    .open(directory.join("take-retention.json")).map_err(|e| e.to_string())?;
+                file.write_all(serde_json::to_string_pretty(&report).unwrap().as_bytes()).map_err(|e| e.to_string())?;
+                Ok(())
+            };
+            return match verify() { Ok(()) => true, Err(error) => { eprintln!("Mere take receipt: {error}"); false } };
         }
         if label == "wav-export-fixture" || label == "wav-export-backing-fixture" {
             let Some(directory) = std::env::var_os("WOODSHED_CAPTURE_DIR") else {
@@ -1738,14 +1823,18 @@ impl Automatable for Probe<'_, '_> {
             ));
             return true;
         }
-        if label == "seed-loop-capture" {
+        if label == "seed-loop-capture" || label == "seed-selected-loop-capture" {
             use woodshed_core::audio::AudioBackend;
             let Some(plan) = self.ctx.runner.state().loop_admitted.clone() else {
                 return false;
             };
-            let Some(segment) = plan.segments.first() else {
-                return false;
+            let selected = self.ctx.runner.state().loop_selected;
+            let segment = if label == "seed-selected-loop-capture" {
+                selected.and_then(|id| plan.segments.iter().find(|segment| segment.id == id))
+            } else {
+                plan.segments.first()
             };
+            let Some(segment) = segment else { return false; };
             let Some(backend) = self.shared.backend.as_mut() else {
                 return false;
             };
@@ -1796,13 +1885,15 @@ impl Automatable for Probe<'_, '_> {
                 return false;
             };
             let observation = format!(
-                "output-clock streams={} frames={} blocks={} click={} playing={} capture-invalid={}",
+                "output-clock streams={} frames={} blocks={} click={} playing={} capture-invalid={} bar={} in-bar={}",
                 backend.output_stream_count(),
                 snapshot.device_frames,
                 snapshot.processing_blocks,
                 snapshot.click_playing,
                 snapshot.playing,
                 snapshot.capture_invalid,
+                snapshot.cursor.bar_idx,
+                snapshot.cursor.sample_in_bar,
             );
             eprintln!("{observation}");
             self.shared.events.push(observation);

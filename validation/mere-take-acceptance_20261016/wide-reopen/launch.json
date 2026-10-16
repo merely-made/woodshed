@@ -1,0 +1,23 @@
+{
+  "app": "/Users/markik/Code/testing/woodshed/mere-take-acceptance-20261016/wide-reopen/WoodshedTakeWideReopen.app",
+  "binary": "/Users/markik/Code/testing/woodshed/mere-take-acceptance-20261016/frozen/woodshed-genet",
+  "cwd": "/Users/markik/Code/repos/woodshed-mere-take-acceptance-20261016",
+  "env": {
+    "WOODSHED_SCENARIO": "/Users/markik/Code/repos/woodshed-mere-take-acceptance-20261016/scenarios/mere_take_reopen.scn",
+    "WOODSHED_CAPTURE_DIR": "/Users/markik/Code/testing/woodshed/mere-take-acceptance-20261016/wide-reopen",
+    "WOODSHED_RECEIPT": "/Users/markik/Code/testing/woodshed/mere-take-acceptance-20261016/wide-reopen/scenario.done",
+    "WOODSHED_PRESENTATION_TIMEOUT_SECS": "60",
+    "WOODSHED_WIDTH": "1180",
+    "WOODSHED_HEIGHT": "900",
+    "WOODSHED_STATE": "/Users/markik/Code/testing/woodshed/mere-take-acceptance-20261016/profile/practice.json",
+    "WOODSHED_SETTINGS": "/Users/markik/Code/testing/woodshed/mere-take-acceptance-20261016/profile/settings.json",
+    "GRAPHSHELL_APP_ENDPOINT": "/tmp/ws-take-20261016.sock",
+    "TMPDIR": "/tmp",
+    "XDG_DATA_HOME": "/Users/markik/Code/testing/woodshed/mere-take-acceptance-20261016/data",
+    "XDG_CONFIG_HOME": "/Users/markik/Code/testing/woodshed/mere-take-acceptance-20261016/config",
+    "XDG_CACHE_HOME": "/Users/markik/Code/testing/woodshed/mere-take-acceptance-20261016/cache",
+    "MERE_ROOT": "/Users/markik/Code/testing/woodshed/mere-take-acceptance-20261016/mere"
+  },
+  "source": "bbb9c87ad5598ecdbf2fd86817e6dfbc343586f1",
+  "binary_sha256": "4dad6b816433fde1bf148af9716290888b29423c1ecfbaeb406ee58390af7c05"
+}

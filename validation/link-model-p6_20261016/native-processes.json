@@ -1,0 +1,9 @@
+{
+  "seed_pid": 22252,
+  "reopen_pid": 22894,
+  "separate_processes": true,
+  "both_exited": true,
+  "keeper_manifest_unchanged": true,
+  "profile_manifest_unchanged": false,
+  "launch_observation": "Each scenario completed and exited before native accessibility attachment. Original native captures and native presentation receipts were produced."
+}

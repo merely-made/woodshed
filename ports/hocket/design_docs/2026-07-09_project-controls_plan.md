@@ -36,3 +36,16 @@ Genet kernel or the audio engine.
   touch should stamp Save/Open/Export commands and return that ID on every
   result, replacing the current action-string-only failure correlation. This is
   an adoption note, not a claim that Hocket has migrated yet.
+
+- 2026-10-16: the Armillary adoption above is now implemented for Save/Open/
+  Export and both handoff operations. Results carry request ID and host session
+  scope, and pending work is independent of display status. See
+  [the correlation plan](2026-10-16_project_worker_correlation_plan.md) for the
+  host admission rules and separate native acceptance boundary.
+
+2026-10-16 native follow-through: bounded native Save/Open/WAV export and signed
+self-addressed handoff review/discard/accept/adopt now pass, including exact fresh-
+process project/history/media reopening. See
+[the native acceptance plan](2026-10-16_native_project_handoff_plan.md) and its
+receipt for the two-process/seven-capture boundary. This does not qualify
+two-peer transport, signed per-turn operations or physical audio.

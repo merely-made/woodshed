@@ -1,0 +1,12 @@
+[woodshed] practice sealed to persona "default" (Passphrase (held by djinn))
+[woodshed] unavailable Card loop LoopSegmentId { set: WorkingSetId(1), card: CardId(2) }: Loop PCM companion is missing or could not be unsealed.
+[woodshed] unavailable Card loop LoopSegmentId { set: WorkingSetId(2), card: CardId(1) }: Loop PCM companion is missing or could not be unsealed.
+[woodshed] unavailable Card loop LoopSegmentId { set: WorkingSetId(1), card: CardId(9) }: Loop PCM companion is missing or could not be unsealed.
+[cambium-winit] accessibility Installed, 151 nodes projected
+output-clock streams=1 frames=671744 blocks=656 click=false playing=true capture-invalid=false bar=1 in-bar=19200
+woodshed-genet: captured 01_retained_v1_take_defaults
+woodshed-genet: captured 02_sealed_take_in_looper
+woodshed-genet: waited 111 frames
+woodshed-genet: captured 03_take_playing
+woodshed-genet: captured 04_retained_v2_take
+woodshed-genet: RESULT ok (206 frames, 4 captures)

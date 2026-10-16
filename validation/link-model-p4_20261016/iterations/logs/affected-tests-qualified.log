@@ -1,0 +1,98 @@
+warning: patch `mere-proofs v0.1.0 (https://github.com/merely-made/mere.git?branch=main#91467c0b)` was not used in the crate graph
+warning: patch `mere-transport v0.0.2 (https://github.com/merely-made/murm.git?branch=main#cba46d85)` was not used in the crate graph
+warning: patch `mere-webrtc-carrier v0.0.1 (https://github.com/merely-made/murm.git?branch=main#cba46d85)` was not used in the crate graph
+help: Check that the patched package version and available features are compatible
+      with the dependency requirements. If the patch has a different version from
+      what is locked in the Cargo.lock file, run `cargo update` to use the new
+      version. This may also occur with an optional dependency that is not enabled.
+   Compiling woodshed-core v0.1.0 (/Users/markik/Code/repos/woodshed-link-model-p3-20261016/crates/woodshed-core)
+warning: use of deprecated method `std::sync::atomic::Atomic::<u64>::fetch_update`: renamed to `try_update` for consistency
+  --> crates/woodshed-audio/src/capture_feed.rs:33:14
+   |
+33 |             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |generation| {
+   |              ^^^^^^^^^^^^
+   |
+   = note: `#[warn(deprecated)]` on by default
+help: replace the use of the deprecated method
+   |
+33 -             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |generation| {
+33 +             .try_update(Ordering::AcqRel, Ordering::Acquire, |generation| {
+   |
+
+warning: use of deprecated method `std::sync::atomic::Atomic::<usize>::fetch_update`: renamed to `try_update` for consistency
+   --> crates/woodshed-audio/src/output_runtime.rs:292:14
+    |
+292 |             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |              ^^^^^^^^^^^^
+    |
+help: replace the use of the deprecated method
+    |
+292 -             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+292 +             .try_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |
+
+warning: use of deprecated method `std::sync::atomic::Atomic::<usize>::fetch_update`: renamed to `try_update` for consistency
+   --> crates/woodshed-audio/src/output_runtime.rs:337:14
+    |
+337 |             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |              ^^^^^^^^^^^^
+    |
+help: replace the use of the deprecated method
+    |
+337 -             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+337 +             .try_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |
+
+warning: use of deprecated method `std::sync::atomic::Atomic::<usize>::fetch_update`: renamed to `try_update` for consistency
+   --> crates/woodshed-audio/src/output_runtime.rs:358:14
+    |
+358 |             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |              ^^^^^^^^^^^^
+    |
+help: replace the use of the deprecated method
+    |
+358 -             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+358 +             .try_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |
+
+warning: `woodshed-audio` (lib) generated 4 warnings (run `cargo fix --lib -p woodshed-audio` to apply 4 suggestions)
+   Compiling woodshed-views v0.1.0 (/Users/markik/Code/repos/woodshed-link-model-p3-20261016/crates/woodshed-views)
+warning: call to `.clone()` on a reference in this situation does nothing
+  --> crates/woodshed-views/src/stage/related.rs:47:54
+   |
+47 |     let key = LinkKey::new(LinkStratum::Surface, from.clone(), to.clone());
+   |                                                      ^^^^^^^^ help: remove this redundant call
+   |
+   = note: the type `str` does not implement `Clone`, so calling `clone` on `&str` copies the reference, which does not do anything and can be removed
+   = note: `#[warn(noop_method_call)]` on by default
+
+warning: call to `.clone()` on a reference in this situation does nothing
+  --> crates/woodshed-views/src/stage/related.rs:47:66
+   |
+47 |     let key = LinkKey::new(LinkStratum::Surface, from.clone(), to.clone());
+   |                                                                  ^^^^^^^^ help: remove this redundant call
+   |
+   = note: the type `str` does not implement `Clone`, so calling `clone` on `&str` copies the reference, which does not do anything and can be removed
+
+warning: `woodshed-views` (lib) generated 2 warnings (run `cargo fix --lib -p woodshed-views` to apply 2 suggestions)
+   Compiling woodshed-genet v0.1.0 (/Users/markik/Code/repos/woodshed-link-model-p3-20261016/crates/woodshed-genet)
+error[E0425]: cannot find value `expected_link` in this scope
+    --> crates/woodshed-views/src/stage.rs:4128:57
+     |
+4128 |             related::claims_link_reading_for_pair(&ui, &expected_link.first, &expected_link.second)
+     |                                                         ^^^^^^^^^^^^^ not found in this scope
+
+error[E0425]: cannot find value `expected_link` in this scope
+    --> crates/woodshed-views/src/stage.rs:4128:79
+     |
+4128 |             related::claims_link_reading_for_pair(&ui, &expected_link.first, &expected_link.second)
+     |                                                                               ^^^^^^^^^^^^^ not found in this scope
+
+error[E0425]: cannot find value `expected_link` in this scope
+    --> crates/woodshed-views/src/stage.rs:4133:50
+     |
+4133 |                         .find(|link| link.key == expected_link)
+     |                                                  ^^^^^^^^^^^^^ not found in this scope
+
+For more information about this error, try `rustc --explain E0425`.
+error: could not compile `woodshed-views` (lib test) due to 3 previous errors

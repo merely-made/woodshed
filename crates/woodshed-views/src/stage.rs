@@ -144,25 +144,36 @@ pub fn related_swatch_from_snapshot(
             key: Some(node.id.clone()),
         })
         .collect();
-    let mut claims_by_id = BTreeMap::new();
+    let mut source_links = BTreeSet::new();
     for relation in &projected.relations {
-        claims_by_id
-            .entry(relation.claim_id.clone())
-            .or_insert(relation);
+        source_links.insert(scenograph::link::LinkKey::new(
+            scenograph::link::LinkStratum::Surface,
+            relation.provenance.original_from.clone(),
+            relation.provenance.original_to.clone(),
+        ));
     }
-    let relations = claims_by_id
-        .values()
-        .map(|relation| {
-            let id = relation.claim_id.qualified_key();
+    let relations = source_links
+        .into_iter()
+        .map(|key| {
+            let summary = related::claims_link_reading_for_pair(ui, &key.first, &key.second)
+                .and_then(|pair| pair.links.into_iter().find(|link| link.key == key))
+                .map(|link| link.rest_summary(&key.first, &key.second))
+                .unwrap_or_default();
             GraphCanvasRelation {
-                emphasized: ui.related_relation.as_deref() == Some(id.as_str()),
-                id,
-                from: relation.provenance.original_from.clone(),
-                to: relation.provenance.original_to.clone(),
-                kind: relation.provenance.original_kind.label().to_string(),
-                label: relation.provenance.original_explanation.clone(),
+                id: key.stable_id(),
+                link_key: Some(key.clone()),
+                marks: summary.marks,
+                strength: summary.strength,
+                from: key.first.clone(),
+                to: key.second.clone(),
+                kind: "surface-link".into(),
+                label: format!(
+                    "{} held assertions · {} legacy members",
+                    summary.held_assertions, summary.legacy_members
+                ),
                 route: Vec::new(),
                 visible: true,
+                emphasized: ui.related_relation.as_deref() == Some(key.stable_id().as_str()),
             }
         })
         .collect();
@@ -197,7 +208,8 @@ pub fn related_swatch_from_snapshot(
 /// swatch. The mere retains every node and relation; this view chooses a
 /// weighted spanning neighborhood so cross-links cannot turn a 300px preview
 /// into an induced-graph hairball. Every relation between each disclosed
-/// parent/child pair survives, which keeps multi-reason fanning honest.
+/// parent/child pair survives; the canvas draws one resting stroke and the
+/// shared pair reader exposes each independent reason.
 fn swatch_projection(
     snapshot: &WoodshedMereSnapshot,
     center: Option<&str>,
@@ -587,68 +599,176 @@ pub fn set_graph_swatch_from_snapshot(
             .find(|node| node.id == reference)
             .map(|node| node.position)
     };
-    let relations = snapshot
-        .relations()
-        .into_iter()
-        .filter_map(|(reference, relation)| {
-            let from = StageInstanceRef {
-                epoch: snapshot.epoch(),
-                instance: relation.from,
-            };
-            let to = StageInstanceRef {
-                epoch: snapshot.epoch(),
-                instance: relation.to,
-            };
-            let from_position = node_position(from)?;
-            let to_position = node_position(to)?;
-            let mut route = relation
-                .points
-                .iter()
-                .map(|point| scene_position(snapshot, point.x, point.y))
-                .collect::<Vec<_>>();
-            if route.len() < 2 {
-                route = vec![from_position, to_position];
-            } else {
-                route[0] = from_position;
-                let last = route.len() - 1;
-                route[last] = to_position;
-            }
-            let kind = relation.kind.as_deref().unwrap_or("relation");
-            let from_label = snapshot
-                .node_of(from.instance)
-                .map(|node| node.label.as_str())
-                .unwrap_or("node");
-            let to_label = snapshot
-                .node_of(to.instance)
-                .map(|node| node.label.as_str())
-                .unwrap_or("node");
-            let (id, visible, emphasized) = match snapshot.relation_source(reference) {
-                Some(StageRelationSource::Context { .. }) | None => (
-                    reference.key(),
-                    context_relation_visible(ui, snapshot, reference),
-                    false,
-                ),
-                Some(source) => {
-                    let identity = source.identity();
-                    (
-                        reference.key(),
-                        set_graph_relation_visible(ui, &identity),
-                        ui.set_graph_relation == Some(reference),
-                    )
-                },
-            };
-            Some(GraphCanvasRelation {
-                id,
+    let mut relations = Vec::new();
+    let mut generated_links: Vec<(
+        scenograph::link::LinkKey,
+        StageInstanceRef,
+        StageInstanceRef,
+        Vec<(f32, f32)>,
+        String,
+        String,
+        BTreeSet<String>,
+    )> = Vec::new();
+    for (reference, relation) in snapshot.relations().into_iter() {
+        let from = StageInstanceRef {
+            epoch: snapshot.epoch(),
+            instance: relation.from,
+        };
+        let to = StageInstanceRef {
+            epoch: snapshot.epoch(),
+            instance: relation.to,
+        };
+        let (Some(from_position), Some(to_position)) = (node_position(from), node_position(to))
+        else {
+            continue;
+        };
+        let mut route = relation
+            .points
+            .iter()
+            .map(|point| scene_position(snapshot, point.x, point.y))
+            .collect::<Vec<_>>();
+        if route.len() < 2 {
+            route = vec![from_position, to_position];
+        } else {
+            route[0] = from_position;
+            let last = route.len() - 1;
+            route[last] = to_position;
+        }
+        let kind = relation.kind.as_deref().unwrap_or("relation");
+        let from_label = snapshot
+            .node_of(from.instance)
+            .map(|node| node.label.as_str())
+            .unwrap_or("node");
+        let to_label = snapshot
+            .node_of(to.instance)
+            .map(|node| node.label.as_str())
+            .unwrap_or("node");
+        match snapshot.relation_source(reference) {
+            Some(StageRelationSource::Generated {
+                from_occurrence,
+                to_occurrence,
+                relation,
+            }) => {
+                let identity = StageRelationIdentity::Generated {
+                    claim_id: relation.claim_id.clone(),
+                    from_occurrence: *from_occurrence,
+                    to_occurrence: *to_occurrence,
+                };
+                if !set_graph_relation_visible(ui, &identity) {
+                    continue;
+                }
+                let key = scenograph::link::LinkKey::new(
+                    scenograph::link::LinkStratum::Surface,
+                    relation.provenance.original_from.clone(),
+                    relation.provenance.original_to.clone(),
+                );
+                let display_from = ui
+                    .set
+                    .cards
+                    .iter()
+                    .find(|card| card.id == *from_occurrence)
+                    .and_then(catalog_id_for_card);
+                let display_to = ui
+                    .set
+                    .cards
+                    .iter()
+                    .find(|card| card.id == *to_occurrence)
+                    .and_then(catalog_id_for_card);
+                let (Some(display_from), Some(display_to)) = (display_from, display_to) else {
+                    continue;
+                };
+                let (from, to, route, display_from, display_to) =
+                    if (from.epoch.0, from.instance.0) <= (to.epoch.0, to.instance.0) {
+                        (from, to, route, display_from, display_to)
+                    } else {
+                        let mut reversed_route = route;
+                        reversed_route.reverse();
+                        (to, from, reversed_route, display_to, display_from)
+                    };
+                let assertion_id = format!("generated:{}", relation.claim_id.qualified_key());
+                if let Some((.., eligible_ids)) =
+                    generated_links
+                        .iter_mut()
+                        .find(|(peer_key, peer_from, peer_to, ..)| {
+                            *peer_key == key && *peer_from == from && *peer_to == to
+                        })
+                {
+                    eligible_ids.insert(assertion_id);
+                } else {
+                    generated_links.push((
+                        key,
+                        from,
+                        to,
+                        route,
+                        display_from,
+                        display_to,
+                        BTreeSet::from([assertion_id]),
+                    ));
+                }
+            },
+            Some(source) => {
+                let identity = source.identity();
+                relations.push(GraphCanvasRelation {
+                    id: reference.key(),
+                    link_key: None,
+                    marks: sceno::LinkMarks::default(),
+                    strength: relation.weight.unwrap_or(1.0),
+                    from,
+                    to,
+                    kind: kind.to_string(),
+                    label: format!("{from_label} · {kind} · {to_label}"),
+                    route,
+                    visible: set_graph_relation_visible(ui, &identity),
+                    emphasized: ui.set_graph_relation == Some(reference),
+                });
+            },
+            None => relations.push(GraphCanvasRelation {
+                id: reference.key(),
+                link_key: None,
+                marks: sceno::LinkMarks::default(),
+                strength: relation.weight.unwrap_or(1.0),
                 from,
                 to,
                 kind: kind.to_string(),
                 label: format!("{from_label} · {kind} · {to_label}"),
                 route,
-                visible,
-                emphasized,
-            })
-        })
-        .collect();
+                visible: context_relation_visible(ui, snapshot, reference),
+                emphasized: false,
+            }),
+        }
+    }
+    for (key, from, to, route, display_from, display_to, eligible_ids) in generated_links {
+        let summary = related::claims_link_reading_for_pair(ui, &key.first, &key.second)
+            .and_then(|pair| pair.links.into_iter().find(|link| link.key == key))
+            .map(|mut link| {
+                // Rendering counts only the source rows eligible in this
+                // appearance. Opening still reads the complete source pair.
+                for bucket in &mut link.buckets {
+                    bucket
+                        .assertions
+                        .retain(|assertion| eligible_ids.contains(&assertion.id));
+                }
+                link.rest_summary(&display_from, &display_to)
+            });
+        let summary = summary.unwrap_or_else(|| scenograph::link::LinkRestSummary {
+            strength: 1.0,
+            ..Default::default()
+        });
+        let id = key.stable_id();
+        relations.push(GraphCanvasRelation {
+            id,
+            link_key: Some(key.clone()),
+            marks: summary.marks,
+            strength: summary.strength,
+            from,
+            to,
+            kind: "surface-link".into(),
+            label: format!("{} held claims", summary.held_assertions),
+            route,
+            visible: true,
+            emphasized: ui.set_graph_opened_link.as_ref() == Some(&key),
+        });
+    }
     let (width, height) = if expanded {
         ui.app_settings.stage.set_graph_size()
     } else {
@@ -908,6 +1028,10 @@ pub struct UiState {
     pub relationship_choice_owner: Option<woodshed_core::working_sets::WorkingSetId>,
     pub relationship_label: TextInput,
     pub relationship_notice: Option<String>,
+    /// The selected canonical Surface link in the relationship editor. This
+    /// is presentation state; the retained reading remains the authority.
+    pub relationship_opened_link: Option<scenograph::link::LinkKey>,
+    pub relationship_opened_link_layout: Option<scenograph::link::OpenedLinkLayout>,
     pub retained_set_name: TextInput,
     pub overview_focus: Option<woodshed_core::session_overview::OverviewNodeId>,
     pub overview_notice: Option<String>,
@@ -1061,6 +1185,9 @@ pub struct UiState {
     pub set_graph_hidden_relations: BTreeSet<StageRelationIdentity>,
     /// The activated scene relation, qualified by the dense scene epoch.
     pub set_graph_relation: Option<StageRelationRef>,
+    /// Opened source-owned generated link in the Set graph. Sequence and
+    /// computed-context routes retain their separate operational identity.
+    pub set_graph_opened_link: Option<scenograph::link::LinkKey>,
     /// Note markers the user has pinned as `(string_index, fret)` to keep their
     /// detail card open. Multi-pin, to compare. Transient (not persisted).
     pub pinned_markers: Vec<(usize, u8)>,
@@ -1164,6 +1291,8 @@ impl UiState {
             relationship_choice_owner: None,
             relationship_label: TextInput::new(String::new()),
             relationship_notice: None,
+            relationship_opened_link: None,
+            relationship_opened_link_layout: None,
             retained_set_name: TextInput::new(""),
             overview_focus: None,
             overview_notice: None,
@@ -1243,6 +1372,7 @@ impl UiState {
             set_graph_drag_active: false,
             set_graph_hidden_relations: BTreeSet::new(),
             set_graph_relation: None,
+            set_graph_opened_link: None,
             pinned_markers: Vec::new(),
             hover_peek: None,
             related_hover: None,
@@ -1333,8 +1463,8 @@ impl UiState {
     }
 
     /// Apply one event from the epoch-qualified Set scene. Drag positions are
-    /// view-local, relation activation retains `RelationId`, and stale events
-    /// fail closed when their epoch no longer matches the rendered snapshot.
+    /// view-local, generated link activation opens its shared source pair, and
+    /// operational sequence/context relation ids stay epoch-qualified.
     pub fn handle_set_graph_event(
         &mut self,
         snapshot: &StageGraphSnapshot,
@@ -1359,6 +1489,7 @@ impl UiState {
                     }
                     self.focus_context_catalog(keyed.clone());
                     self.set_graph_relation = None;
+                    self.set_graph_opened_link = None;
                     return;
                 }
                 let Some(id) = snapshot.card_of_ref(reference) else {
@@ -1369,6 +1500,7 @@ impl UiState {
                     return;
                 }
                 self.set_graph_relation = None;
+                self.set_graph_opened_link = None;
                 self.set_graph_card_expanded = if was_selected {
                     !self.set_graph_card_expanded
                 } else {
@@ -1410,10 +1542,47 @@ impl UiState {
                 }
             },
             GraphCanvasEvent::RelationActivate(key) => {
+                let generated_key = snapshot.relations().into_iter().find_map(|(reference, _)| {
+                    match snapshot.relation_source(reference)? {
+                        StageRelationSource::Generated { relation, .. }
+                            if scenograph::link::LinkKey::new(
+                                scenograph::link::LinkStratum::Surface,
+                                relation.provenance.original_from.clone(),
+                                relation.provenance.original_to.clone(),
+                            )
+                            .stable_id()
+                                == key =>
+                        {
+                            Some(scenograph::link::LinkKey::new(
+                                scenograph::link::LinkStratum::Surface,
+                                relation.provenance.original_from.clone(),
+                                relation.provenance.original_to.clone(),
+                            ))
+                        },
+                        _ => None,
+                    }
+                });
+                if let Some(link_key) = generated_key {
+                    if self.set_graph_opened_link.as_ref() == Some(&link_key) {
+                        self.set_graph_opened_link = None;
+                        self.personal_link_pair = None;
+                    } else {
+                        self.set_graph_opened_link = Some(link_key.clone());
+                        self.personal_link_pair =
+                            Some((link_key.first.clone(), link_key.second.clone()));
+                        self.personal_link_history = false;
+                        self.personal_link_layout = None;
+                        self.personal_relation_notice = None;
+                    }
+                    self.set_graph_relation = None;
+                    return;
+                }
                 let Some(reference) = StageRelationRef::from_key(&key) else {
                     return;
                 };
                 if snapshot.relation(reference).is_some() {
+                    self.set_graph_opened_link = None;
+                    self.personal_link_pair = None;
                     self.set_graph_relation =
                         (self.set_graph_relation != Some(reference)).then_some(reference);
                     if self.set_graph_relation == Some(reference) {
@@ -3751,7 +3920,7 @@ mod evidence_tests {
         ui.stage_current(None);
 
         let snapshot = set_graph_snapshot(&ui);
-        let (reference, relation) = snapshot
+        let (_reference, relation) = snapshot
             .relations()
             .into_iter()
             .find_map(
@@ -3766,14 +3935,29 @@ mod evidence_tests {
             relation.provenance.original_from.clone(),
             relation.provenance.original_to.clone(),
         );
+        let expected_link = scenograph::link::LinkKey::new(
+            scenograph::link::LinkStratum::Surface,
+            expected_pair.0.clone(),
+            expected_pair.1.clone(),
+        );
+        let swatch = set_graph_swatch_from_snapshot(&snapshot, &ui, true);
+        let source_strokes = swatch
+            .relations
+            .iter()
+            .filter(|candidate| candidate.link_key.is_some())
+            .collect::<Vec<_>>();
+        assert_eq!(source_strokes.len(), 1);
+        assert_eq!(source_strokes[0].link_key.as_ref(), Some(&expected_link));
+        assert!(source_strokes[0].strength > 1.0);
         let set_before = serde_json::to_value(&ui.set).unwrap();
 
         ui.handle_set_graph_event(
             &snapshot,
-            GraphCanvasEvent::RelationActivate(reference.key()),
+            GraphCanvasEvent::RelationActivate(expected_link.stable_id()),
         );
 
         assert_eq!(ui.personal_link_pair, Some(expected_pair));
+        assert_eq!(ui.set_graph_opened_link, Some(expected_link));
         assert_eq!(serde_json::to_value(&ui.set).unwrap(), set_before);
     }
 
@@ -3878,7 +4062,18 @@ mod evidence_tests {
                 && !choice.authority.is_empty()
         }));
 
-        let hidden = choices[1].clone();
+        let before = set_graph_swatch_from_snapshot(&snapshot, &ui, true);
+        let before_strength = before
+            .relations
+            .iter()
+            .find(|relation| relation.link_key.is_some())
+            .unwrap()
+            .strength;
+        let hidden = choices
+            .iter()
+            .find(|choice| matches!(choice.identity, StageRelationIdentity::Generated { .. }))
+            .unwrap()
+            .clone();
         ui.set_graph_relation = Some(hidden.reference);
         ui.toggle_set_graph_relation(&snapshot, hidden.identity.clone());
         assert_eq!(
@@ -3904,7 +4099,18 @@ mod evidence_tests {
                 .iter()
                 .filter(|relation| relation.visible)
                 .count(),
-            choices.len() - 1
+            2,
+            "one operational sequence and one canonical generated link remain"
+        );
+        let remaining = swatch
+            .relations
+            .iter()
+            .find(|relation| relation.link_key.is_some())
+            .unwrap();
+        assert_eq!(
+            remaining.strength,
+            before_strength - 1.0,
+            "an exact member hide removes only its own resting contribution"
         );
 
         ui.show_all_set_graph_relations();
@@ -3922,7 +4128,7 @@ mod evidence_tests {
     }
 
     #[test]
-    fn stage_scene_parallel_relations_reach_cambium_as_distinct_card_anchored_routes() {
+    fn stage_scene_parallel_claims_share_one_source_link_stroke() {
         let mut ui = UiState::new();
         ui.stage.set_lens(Lens::Chords);
         let major = ui
@@ -3945,17 +4151,44 @@ mod evidence_tests {
         ui.set_graph_card_expanded = true;
         let snapshot = set_graph_snapshot(&ui);
         let swatch = set_graph_swatch_from_snapshot(&snapshot, &ui, true);
-        let routes = swatch.projected_relations();
-        assert!(routes.len() > 2, "sequence plus several catalog reasons");
-        let middles = routes
+        let source_strokes = swatch
+            .relations
             .iter()
-            .filter_map(|(_, route)| route.get(1).copied())
-            .map(|(x, y)| (x.to_bits(), y.to_bits()))
-            .collect::<std::collections::BTreeSet<_>>();
+            .filter(|relation| relation.link_key.is_some())
+            .collect::<Vec<_>>();
+        assert_eq!(source_strokes.len(), 1);
+        let stroke = source_strokes[0];
+        let expected_link = scenograph::link::LinkKey::new(
+            scenograph::link::LinkStratum::Surface,
+            catalog_id_for_card(&ui.set.cards[0]).unwrap(),
+            catalog_id_for_card(&ui.set.cards[1]).unwrap(),
+        );
+        assert_eq!(stroke.link_key.as_ref(), Some(&expected_link));
+        let display_from = snapshot
+            .card_of_ref(stroke.from)
+            .and_then(|card| ui.set.cards.iter().find(|item| item.id == card))
+            .and_then(catalog_id_for_card)
+            .expect("displayed source card has catalog identity");
+        let display_to = snapshot
+            .card_of_ref(stroke.to)
+            .and_then(|card| ui.set.cards.iter().find(|item| item.id == card))
+            .and_then(catalog_id_for_card)
+            .expect("displayed target card has catalog identity");
+        let expected_summary =
+            related::claims_link_reading_for_pair(&ui, &expected_link.first, &expected_link.second)
+                .and_then(|reading| {
+                    reading
+                        .links
+                        .into_iter()
+                        .find(|link| link.key == expected_link)
+                })
+                .map(|link| link.rest_summary(&display_from, &display_to))
+                .expect("the complete source pair has a summary");
+        assert_eq!(stroke.strength, expected_summary.strength);
+        assert_eq!(stroke.marks, expected_summary.marks);
         assert_eq!(
-            middles.len(),
-            routes.len(),
-            "Cambium fans every relation cell onto its own visible route"
+            source_strokes[0].id,
+            source_strokes[0].link_key.as_ref().unwrap().stable_id()
         );
         let selected = swatch.selected.expect("selected occurrence");
         assert!(
@@ -3983,14 +4216,21 @@ mod evidence_tests {
             assert_eq!(
                 ids.len(),
                 swatch.relations.len(),
-                "each route has one exact claim id"
+                "each source link has one closed canvas target"
             );
             assert!(swatch.relations.iter().all(|relation| {
-                snapshot.relations.iter().any(|claim| {
-                    relation.id == claim.claim_id.qualified_key()
-                        && relation.from == claim.provenance.original_from
-                        && relation.to == claim.provenance.original_to
-                })
+                let Some(key) = relation.link_key.as_ref() else {
+                    return false;
+                };
+                relation.id == key.stable_id()
+                    && snapshot.relations.iter().any(|claim| {
+                        scenograph::link::LinkKey::new(
+                            scenograph::link::LinkStratum::Surface,
+                            claim.provenance.original_from.clone(),
+                            claim.provenance.original_to.clone(),
+                        ) == *key
+                    })
+                    && relation.strength > 0.0
             }));
         }
         assert!(expanded.graph.nodes.len() <= 12);
