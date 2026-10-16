@@ -205,6 +205,9 @@ impl mesquite::Product for Product {
             self.export_wait = Some((expected.into(), std::time::Instant::now()));
             return true;
         }
+        if let Some(stem) = label.strip_prefix("fold-checkpoint-") {
+            return crate::fold_receipt::write(ctx.runner.state(), &self.shared.borrow(), stem);
+        }
         if label == "verify-mere-take-retention" {
             // Receipt-only observation of an explicitly isolated scenario profile.
             let verify = || -> Result<(), String> {
@@ -871,6 +874,9 @@ impl Snapshot<'_, '_> {
                 "runner-foreground",
                 ui.is_current_set_rehearsing().to_string(),
             )
+            .with_field("overview-folds", ui.overview_folds.records.len().to_string())
+            .with_field("overview-fold-selection", ui.overview_folds.selected.len().to_string())
+            .with_field("overview-visible-nodes", woodshed_views::stage::overview_swatch(ui).graph.nodes.len().to_string())
             .with_field("overview-zoom", format!("{:.2}", ui.overview_viewport.zoom))
             .with_field(
                 "overview-background",

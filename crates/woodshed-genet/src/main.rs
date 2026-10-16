@@ -27,6 +27,7 @@ mod audio;
 mod capture_persistence;
 mod drive;
 mod fonts;
+mod fold_receipt;
 #[cfg(test)]
 mod layout_tests;
 mod leaves;

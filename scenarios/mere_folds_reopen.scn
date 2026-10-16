@@ -1,0 +1,27 @@
+# Fresh-process reopen uses the same frozen host and sealed store.
+settle 5
+ui-zoom 0.8
+assert snap overview-active == true
+assert snap practice-saved == true
+assert snap overview-folds == 2
+assert snap set-cards == 2
+act fold-checkpoint-restored
+capture 01_restored
+click .graph-canvas-swatch-node @aria-label=Fold 1 +1, activate to expand
+settle 4
+assert snap overview-folds == 1
+act fold-checkpoint-summary-expanded
+capture 02_summary_expanded
+click .overview-fold-undo Undo fold
+settle 3
+assert snap overview-folds == 2
+click .overview-fold-redo Redo fold
+settle 3
+assert snap overview-folds == 1
+click .overview-fold-expand Expand all folds
+settle 5
+assert snap overview-folds == 0
+assert snap set-cards == 2
+act fold-checkpoint-all-expanded
+capture 03_all_expanded
+log Reopened folds expanded without changing owner facts

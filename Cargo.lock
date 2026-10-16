@@ -8453,6 +8453,7 @@ version = "0.1.0"
 dependencies = [
  "accesskit",
  "async-trait",
+ "blake3",
  "cambium",
  "cambium-genet-winit-host",
  "cambium-rootstock",
@@ -8469,6 +8470,7 @@ dependencies = [
  "muniment",
  "personae",
  "rfd",
+ "serde",
  "serde_json",
  "sprigging",
  "tabard",
@@ -8512,6 +8514,7 @@ dependencies = [
  "dramatis",
  "hocket-recorder",
  "hocket-views",
+ "mere-curation",
  "mere-persona-picker",
  "mere-surface-api",
  "personae",

@@ -35,6 +35,7 @@ repository = "https://github.com/merely-made/woodshed"
 rust-version = "1.97.1"
 
 [workspace.dependencies]
+curation = { package = "mere-curation", git = "https://github.com/merely-made/mere.git", branch = "main" }
 pictograph = { git = "https://github.com/merely-made/mere.git", branch = "main", default-features = false, features = ["canvas"] }
 sceno = { git = "https://github.com/merely-made/mere.git", branch = "main" }
 scenograph = { git = "https://github.com/merely-made/mere.git", branch = "main" }

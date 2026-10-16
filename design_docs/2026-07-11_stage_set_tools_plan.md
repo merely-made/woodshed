@@ -3812,3 +3812,29 @@ application acceptance is claimed. The [receipt](../validation/saved-arrangement
 records source hashes, exchange files, test logs, screenshots and limits. Native
 arrangement authoring/panels and persona-store exchange controls remain later
 product work; this slice supplies their persisted model and export seam.
+
+### Session Mere selection folds (2026-10-16)
+
+**Status:** implementation and acceptance in progress on current Woodshed main
+`e6f0950`, fetched before work; the prior checkout was seven commits behind.
+The root supplier lock already contains native v2 fold records at Mere
+`657507505`; add the direct curation dependency without refreshing unrelated
+supplier or nested-port lockfiles.
+
+**Phases and done conditions:** wire explicit multi-selection into the session
+Mere graph and its roster, with a member stand-in, directed family boundary
+counts, activation to expand, Expand all and bounded session undo/redo. Retain
+records in version 3 of the existing presentation payload, read versions 1/2,
+and preserve unsupported payloads. Run focused source/owner/position and
+retention checks, then native seed and fresh-process sealed reopen with
+reviewed captures. Publish only after refreshing and preserving concurrent main.
+
+**Findings (2026-10-16):** the overview uses typed source IDs and its own shared
+Cambium Swatch, rather than `mere-view`. Layout and scene motion reconcile all
+original members before fold projection. The session remains the authority for
+Sets, catalog, lineage and live activity; native curation records are view intent.
+Selection does not infer descendants from practice or catalog links. Nested
+Hocket, Redshank and Ringdown workspaces are separate acceptance scopes.
+
+**Progress (2026-10-16):** initial integration adds host-owned member folds and
+presentation retention; CPU and finite headed checks are underway.

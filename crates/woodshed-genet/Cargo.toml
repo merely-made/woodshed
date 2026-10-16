@@ -9,6 +9,8 @@ repository.workspace = true
 description = "Woodshed's desktop application over the shared Cambium desktop host: state, views, backends, and the self-drive lane. The native host itself is genet's."
 
 [dependencies]
+blake3.workspace = true
+serde.workspace = true
 hocket-views.workspace = true
 hocket-recorder.workspace = true
 # The desktop realization of muniment's Backend. woodshed-core names the slots;
