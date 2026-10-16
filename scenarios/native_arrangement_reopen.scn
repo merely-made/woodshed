@@ -21,3 +21,6 @@ settle 10
 wheel 0 -2000 px on .workspace-screen
 settle 6
 capture 03_reopened_narrow
+wheel 320 0 px on .arrangement-scene-scroll
+settle 6
+capture 04_reopened_full_span

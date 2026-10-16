@@ -3830,3 +3830,12 @@ drafts and reject stale saved-state replacement. The new panel must survive
 workspace save/reopen; text/keyboard routing, shared producer cleanup, sealed
 fresh-process reopening and wide/narrow presentation get distinct receipts.
 No audio transport or Card timing mutation is part of arrangement authoring.
+
+**Findings (2026-10-16):** The first native pass exposed two presentation
+conditions that CPU model checks did not establish: text injected through the
+native seam could leave the derived preview stale until another dispatch,
+and compact fit caused scene labels to overlap. The native frame refresh now
+reconciles the draft before producer binding; a regression checks invalid and
+corrected fields without a dispatch tail. Compact primary scenes retain a
+readable minimum width in an ordinary horizontal scroll area. The failed first
+run remains evidence, rather than acceptance.

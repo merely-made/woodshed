@@ -220,7 +220,8 @@ starting layout. Inspect a Card in the form or scene reading to reveal its
 saved voicing on the linked fretboard. Edits stay in a draft for each working
 Set until **Save arrangement**; Reload discards that draft. Closing with unsaved
 drafts asks whether to keep editing or explicitly discard them. Validation
-errors clear the preview and block Save. Arrangement editing preserves Card
+errors clear the preview and block Save. Compact panels scroll the primary
+scene horizontally to preserve readable labels. Arrangement editing preserves Card
 instructions, rehearsal timing, and audio transport.
 
 `woodshed-saved-arrangement` operates on an explicit JSON session exchange
