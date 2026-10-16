@@ -1,0 +1,8 @@
+RESULT ok
+captured 01_claims_fresh_reopen
+captured 02_claims_fresh_reopen_timeline
+Claims reopen: source UUID, held assertion ID and withdrawal tombstone retained
+capture 01_claims_fresh_reopen 2200x1800 digest=82da0794286f7843 file=/Users/markik/Code/testing/woodshed/link-model-p3-20261016/native-reopen-v2/01_claims_fresh_reopen.png
+capture 02_claims_fresh_reopen_timeline 2200x1800 digest=4d986cd14c6a5bf5 file=/Users/markik/Code/testing/woodshed/link-model-p3-20261016/native-reopen-v2/02_claims_fresh_reopen_timeline.png
+frames: 2 captured, 0 blank, 2 distinct digests
+presentation: 49 frames, 51 redraws, 2 unpresented redraws

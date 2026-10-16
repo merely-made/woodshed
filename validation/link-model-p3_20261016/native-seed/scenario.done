@@ -1,0 +1,14 @@
+RESULT ok
+captured 01_claims_generated_provenance
+captured 00_claims_personal_reason
+captured 02_claims_ordered_audition
+captured 03_claims_withdrawn_history
+captured 04_claims_direction_timeline
+Claims seed: two independent reasons; one held and one withdrawn
+capture 01_claims_generated_provenance 2200x1800 digest=ad1d4a97e0646583 file=/Users/markik/Code/testing/woodshed/link-model-p3-20261016/native-seed-v2/01_claims_generated_provenance.png
+capture 00_claims_personal_reason 2200x1800 digest=070854e1dc7db354 file=/Users/markik/Code/testing/woodshed/link-model-p3-20261016/native-seed-v2/00_claims_personal_reason.png
+capture 02_claims_ordered_audition 2200x1800 digest=ef364a1d60ddd611 file=/Users/markik/Code/testing/woodshed/link-model-p3-20261016/native-seed-v2/02_claims_ordered_audition.png
+capture 03_claims_withdrawn_history 2200x1800 digest=e8b11e0bcc14b72a file=/Users/markik/Code/testing/woodshed/link-model-p3-20261016/native-seed-v2/03_claims_withdrawn_history.png
+capture 04_claims_direction_timeline 2200x1800 digest=1d4e9346b8551a6d file=/Users/markik/Code/testing/woodshed/link-model-p3-20261016/native-seed-v2/04_claims_direction_timeline.png
+frames: 5 captured, 0 blank, 5 distinct digests
+presentation: 103 frames, 104 redraws, 1 unpresented redraws

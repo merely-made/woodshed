@@ -1,0 +1,27 @@
+{
+  "name": "WoodshedClaimsSeedV2",
+  "binary": "/Users/markik/Code/testing/woodshed/link-model-p3-20261016/frozen-474d10a/woodshed-genet",
+  "output": "/Users/markik/Code/testing/woodshed/link-model-p3-20261016/native-seed-v2",
+  "cwd": "/Users/markik/Code/repos/woodshed-link-model-p3-20261016",
+  "args": [],
+  "source": "474d10a1714fa10e97e55c6903adde9e1fb7f712",
+  "env": {
+    "WOODSHED_SCENARIO": "/Users/markik/Code/repos/woodshed-link-model-p3-20261016/scenarios/claims_seed.scn",
+    "WOODSHED_CAPTURE_DIR": "/Users/markik/Code/testing/woodshed/link-model-p3-20261016/native-seed-v2",
+    "WOODSHED_RECEIPT": "/Users/markik/Code/testing/woodshed/link-model-p3-20261016/native-seed-v2/scenario.done",
+    "WOODSHED_PRESENTATION_TIMEOUT_SECS": "60",
+    "WOODSHED_WIDTH": "1100",
+    "WOODSHED_HEIGHT": "900",
+    "WOODSHED_STATE": "/Users/markik/Code/testing/woodshed/link-model-p3-20261016/profile-v2/practice.bin",
+    "WOODSHED_SETTINGS": "/Users/markik/Code/testing/woodshed/link-model-p3-20261016/profile-v2/settings.json",
+    "GRAPHSHELL_APP_ENDPOINT": "/tmp/ws-link-p3-20261016-a.sock",
+    "TMPDIR": "/tmp",
+    "XDG_DATA_HOME": "/Users/markik/Code/testing/woodshed/link-model-p3-20261016/xdg-data",
+    "XDG_CONFIG_HOME": "/Users/markik/Code/testing/woodshed/link-model-p3-20261016/xdg-config",
+    "XDG_CACHE_HOME": "/Users/markik/Code/testing/woodshed/link-model-p3-20261016/xdg-cache",
+    "MERE_ROOT": "/Users/markik/Code/testing/woodshed/link-model-p3-20261016/mere-root"
+  },
+  "app": "/Users/markik/Code/testing/woodshed/link-model-p3-20261016/native-seed-v2/WoodshedClaimsSeedV2.app",
+  "binary_sha256": "47fb26792a8809118496ee8fc1666b320a238f8f06300eb8a84f43fc6ae19078",
+  "launch_method": "native UI launch of prepared task-owned app bundle"
+}
