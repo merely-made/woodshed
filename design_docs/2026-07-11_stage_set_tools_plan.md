@@ -21,6 +21,39 @@ P4b landed; P4c and P4d have bounded headed receipts; P4e is partial and P4f
 is open. P5-P8 remain open. Clean-lock and local validation are release-baseline
 gate, not completion of this product plan.
 
+### Opened-link continuation (2026-10-16)
+
+**Status: in progress.** Mark authorized Mere's link-model P3 consumer work.
+The design and phase contract live in
+`mere/design_docs/mere_docs/technical_architecture/2026-10-15_link_model.md`;
+its implementation plan and receipt own the shared supplier qualification.
+Woodshed starts at `aba2c7343`, with the root lock advancing Mere from
+`59f88e63` to published `ee324e517` while preserving the qualified Genet,
+Dramatis and Netrender revisions. The nested ports keep their separate locks.
+
+Mark ruled that withdrawal applies only to personal assertions; catalog,
+computed and evidence-derived relations stay read-only. Personal assertions
+belong to one retained session source, with a persisted source UUID and
+Chartulary `EdgeId`, independent author/basis/clocks and terminal withdrawal.
+The trusted sealed persona supplies the actor. A missing or unsaved owner
+cannot acquire mutation authority from a displayed label or view key.
+Generated reasons retain their original source identity through inverse display;
+two progressions explaining the same pair remain two distinct reasons.
+
+Use the shared link-scoped Cambium swatch for List and Timeline, keep graph
+scope/source availability explicit, and re-resolve exact actions against the
+current owner. Personal authoring and withdrawal must survive fresh-process
+reopen. Replace the old compact summaries and pair/member identity helpers once
+the new route covers their callers. Existing hide remains a presentation choice.
+
+Mark also ruled that audition plays both endpoints in assertion direction as a
+before/after pair. Woodshed owns that playback plan and its one output runtime;
+two simultaneous replacement previews do not count as ordered playback.
+Acceptance requires focused source/admission/persistence and audio scheduling
+controls, reviewed native captures, and a separate fresh-process reopen. These
+gates advance the bounded P3 flow without declaring all P4f musical exploration,
+hardware output or the whole Stage plan complete.
+
 > **2026-08-10 — the gate is open.** The scenograph scene contract this plan
 > gates on ("what remains is the freeze, not the proof") froze 2026-07-24 at
 > 0.0.3: emphasis channels and a default pick added, intents stay

@@ -97,16 +97,28 @@ impl mesquite::Product for Product {
         std::mem::take(&mut self.shared.borrow_mut().events)
     }
     fn busy(&self, ctx: &Ctx<'_>, capture_pending: bool) -> Option<bool> {
-        let export_wait = self.export_wait.as_ref().is_some_and(|(expected, started)| {
-            started.elapsed().as_secs() < 180
-                && !ctx.runner.state().loop_export_notice.as_deref()
-                    .is_some_and(|notice| notice.contains(expected))
-        });
+        let export_wait = self
+            .export_wait
+            .as_ref()
+            .is_some_and(|(expected, started)| {
+                started.elapsed().as_secs() < 180
+                    && !ctx
+                        .runner
+                        .state()
+                        .loop_export_notice
+                        .as_deref()
+                        .is_some_and(|notice| notice.contains(expected))
+            });
         Some(
             export_wait
                 || ctx.runner.state().loop_export_busy
                 || capture_pending
-                || self.shared.borrow().backend.as_ref().is_some_and(|backend| backend.preview_busy()),
+                || self
+                    .shared
+                    .borrow()
+                    .backend
+                    .as_ref()
+                    .is_some_and(|backend| backend.preview_busy()),
         )
     }
     fn act(&mut self, ctx: &mut Ctx<'_>, label: &str) -> bool {
@@ -132,10 +144,13 @@ impl mesquite::Product for Product {
             };
             let path = std::path::PathBuf::from(directory).join(name);
             ctx.runner.update(|ui| {
-                ui.loop_export_requests.push(woodshed_views::stage::LoopExportRequest::ChooseDestination);
+                ui.loop_export_requests
+                    .push(woodshed_views::stage::LoopExportRequest::ChooseDestination);
             });
             crate::wav_export::after_dispatch_with_chooser(
-                &mut self.shared.borrow_mut(), ctx, |_| Some(path.clone()),
+                &mut self.shared.borrow_mut(),
+                ctx,
+                |_| Some(path.clone()),
             );
             return true;
         }
@@ -473,11 +488,44 @@ impl Snapshot<'_, '_> {
                 ui.appearance.workshop.draft_theme().name.clone(),
             )
             .with_field("recipe-valid", reading.is_some().to_string())
-            .with_field("recipe-label", reading.as_ref().map(|r|r.snapshot.recipe.definition.label.as_str()).unwrap_or(""))
-            .with_field("recipe-spacing", reading.as_ref().map(|r|r.snapshot.recipe.definition.arrangement.spacing).unwrap_or(0).to_string())
-            .with_field("recipe-occurrence", reading.as_ref().and_then(|r|r.snapshot.selected_occurrence.as_deref()).unwrap_or(""))
-            .with_field("recipe-relationship", reading.as_ref().and_then(|r|r.snapshot.selected_relationship.as_deref()).unwrap_or(""))
-            .with_field("recipe-owner", reading.as_ref().and_then(|r|r.source.as_ref()).map(|s|s.owner.0).unwrap_or(0).to_string())
+            .with_field(
+                "recipe-label",
+                reading
+                    .as_ref()
+                    .map(|r| r.snapshot.recipe.definition.label.as_str())
+                    .unwrap_or(""),
+            )
+            .with_field(
+                "recipe-spacing",
+                reading
+                    .as_ref()
+                    .map(|r| r.snapshot.recipe.definition.arrangement.spacing)
+                    .unwrap_or(0)
+                    .to_string(),
+            )
+            .with_field(
+                "recipe-occurrence",
+                reading
+                    .as_ref()
+                    .and_then(|r| r.snapshot.selected_occurrence.as_deref())
+                    .unwrap_or(""),
+            )
+            .with_field(
+                "recipe-relationship",
+                reading
+                    .as_ref()
+                    .and_then(|r| r.snapshot.selected_relationship.as_deref())
+                    .unwrap_or(""),
+            )
+            .with_field(
+                "recipe-owner",
+                reading
+                    .as_ref()
+                    .and_then(|r| r.source.as_ref())
+                    .map(|s| s.owner.0)
+                    .unwrap_or(0)
+                    .to_string(),
+            )
             .with_field(
                 "pattern-sequential",
                 (ui.set.cards.get(ui.set.cursor).is_some_and(|card| {
@@ -562,35 +610,71 @@ impl Snapshot<'_, '_> {
             )
             .with_field(
                 "preview-busy",
-                self.shared.backend.as_ref().is_some_and(|backend| backend.preview_busy()).to_string(),
+                self.shared
+                    .backend
+                    .as_ref()
+                    .is_some_and(|backend| backend.preview_busy())
+                    .to_string(),
             )
             .with_field(
                 "preview-voices",
-                self.shared.backend.as_ref().map_or(0, |backend| backend.preview_voice_count()).to_string(),
+                self.shared
+                    .backend
+                    .as_ref()
+                    .map_or(0, |backend| backend.preview_voice_count())
+                    .to_string(),
             )
             .with_field(
                 "output-streams",
-                self.shared.backend.as_ref().map_or(0, |backend| backend.output_stream_count()).to_string(),
+                self.shared
+                    .backend
+                    .as_ref()
+                    .map_or(0, |backend| backend.output_stream_count())
+                    .to_string(),
             )
             .with_field(
                 "output-device-frames",
-                self.shared.backend.as_ref().and_then(|backend| backend.output_snapshot()).map_or(0, |snapshot| snapshot.device_frames).to_string(),
+                self.shared
+                    .backend
+                    .as_ref()
+                    .and_then(|backend| backend.output_snapshot())
+                    .map_or(0, |snapshot| snapshot.device_frames)
+                    .to_string(),
             )
             .with_field(
                 "output-processing-blocks",
-                self.shared.backend.as_ref().and_then(|backend| backend.output_snapshot()).map_or(0, |snapshot| snapshot.processing_blocks).to_string(),
+                self.shared
+                    .backend
+                    .as_ref()
+                    .and_then(|backend| backend.output_snapshot())
+                    .map_or(0, |snapshot| snapshot.processing_blocks)
+                    .to_string(),
             )
             .with_field(
                 "output-capture-invalid",
-                self.shared.backend.as_ref().and_then(|backend| backend.output_snapshot()).is_some_and(|snapshot| snapshot.capture_invalid).to_string(),
+                self.shared
+                    .backend
+                    .as_ref()
+                    .and_then(|backend| backend.output_snapshot())
+                    .is_some_and(|snapshot| snapshot.capture_invalid)
+                    .to_string(),
             )
             .with_field(
                 "output-click-playing",
-                self.shared.backend.as_ref().and_then(|backend| backend.output_snapshot()).is_some_and(|snapshot| snapshot.click_playing).to_string(),
+                self.shared
+                    .backend
+                    .as_ref()
+                    .and_then(|backend| backend.output_snapshot())
+                    .is_some_and(|snapshot| snapshot.click_playing)
+                    .to_string(),
             )
             .with_field(
                 "capture-input-rate",
-                self.shared.backend.as_ref().and_then(|backend| backend.capture_source_rate()).map_or_else(|| "none".into(), |rate| rate.to_string()),
+                self.shared
+                    .backend
+                    .as_ref()
+                    .and_then(|backend| backend.capture_source_rate())
+                    .map_or_else(|| "none".into(), |rate| rate.to_string()),
             )
             .with_field(
                 "loop-capture-references",
@@ -612,34 +696,202 @@ impl Snapshot<'_, '_> {
                     .count()
                     .to_string(),
             )
-            .with_field("recorder-rows", woodshed_views::stage::recorder_projection(ui).lanes.len().to_string())
-            .with_field("recorder-waveforms", ui.recorder_observation.buffers.iter().flatten().filter(|buffer|!buffer.samples.is_empty()).count().to_string())
-            .with_field("recorder-admitted", ui.recorder_observation.source.is_some().to_string())
-            .with_field("recorder-selected-card", ui.loop_selected.map_or(0,|id|id.card.0).to_string())
-            .with_field("recorder-capture-busy", ui.recorder_observation.capture_busy.to_string())
-            .with_field("recorder-inherited-bpm", ui.looper.inherited_bpm.to_string())
+            .with_field(
+                "recorder-rows",
+                woodshed_views::stage::recorder_projection(ui)
+                    .lanes
+                    .len()
+                    .to_string(),
+            )
+            .with_field(
+                "recorder-waveforms",
+                ui.recorder_observation
+                    .buffers
+                    .iter()
+                    .flatten()
+                    .filter(|buffer| !buffer.samples.is_empty())
+                    .count()
+                    .to_string(),
+            )
+            .with_field(
+                "recorder-admitted",
+                ui.recorder_observation.source.is_some().to_string(),
+            )
+            .with_field(
+                "recorder-selected-card",
+                ui.loop_selected.map_or(0, |id| id.card.0).to_string(),
+            )
+            .with_field(
+                "recorder-capture-busy",
+                ui.recorder_observation.capture_busy.to_string(),
+            )
+            .with_field(
+                "recorder-inherited-bpm",
+                ui.looper.inherited_bpm.to_string(),
+            )
             .with_field("song-bars", ui.song.bars.len().to_string())
             .with_field("song-playing", ui.song_playing.to_string())
             .with_field("loop-export-busy", ui.loop_export_busy.to_string())
-            .with_field("loop-export-replace", ui.loop_export_replace.is_some().to_string())
-            .with_field("loop-export-notice", ui.loop_export_notice.clone().unwrap_or_default())
+            .with_field(
+                "loop-export-replace",
+                ui.loop_export_replace.is_some().to_string(),
+            )
+            .with_field(
+                "loop-export-notice",
+                ui.loop_export_notice.clone().unwrap_or_default(),
+            )
             .with_field("song-live-bar", ui.song_bar_live.to_string())
-            .with_field("song-first-bpm", ui.song.bars.first().map_or(0.0, |bar| bar.bpm).to_string())
-            .with_field("song-first-root", ui.song.bars.first().map_or(0, |bar| bar.root_pc).to_string())
-            .with_field("overview-context-recipes", ui.musical_context.items().iter().filter(|item| item.captured_recipe.is_some()).count().to_string())
-            .with_field("overview-recipe-source-present", ui.musical_context.items().iter().filter_map(|item| item.captured_recipe.as_ref()).any(|recipe| ui.set.cards.iter().any(|card| card.id == recipe.source_card)).to_string())
-            .with_field("overview-recipe-bpm", ui.musical_context.items().iter().find_map(|item| item.captured_recipe.as_ref()).and_then(|recipe| recipe.card().ok()).and_then(|card| card.timing.bpm).map_or("none".into(), |bpm| bpm.to_string()))
-            .with_field("set-last-scale-pattern", ui.set.cards.last().is_some_and(|card| matches!(card.material, woodshedding::rehearsal::Material::ScalePattern { pattern: woodshedding::rehearsal::ScalePattern::Thirds, .. }) && matches!(card.touch, woodshedding::rehearsal::Touch::Walk)).to_string())
-            .with_field("set-last-arpeggio", ui.set.cards.last().is_some_and(|card| matches!(card.touch, woodshedding::rehearsal::Touch::Arpeggiate { direction: woodshedding::rehearsal::ArpeggioDirection::Down, inversion: 1 })).to_string())
-            .with_field("overview-context-items", ui.musical_context.items().len().to_string())
-            .with_field("overview-context-containment", overview.relations.iter().filter(|relation| relation.kind == woodshed_core::session_overview::OverviewRelationKind::ContainsTones).count().to_string())
-            .with_field("overview-context-links", overview.relations.iter().filter(|relation| relation.kind == woodshed_core::session_overview::OverviewRelationKind::ContextFor).count().to_string())
+            .with_field(
+                "song-first-bpm",
+                ui.song.bars.first().map_or(0.0, |bar| bar.bpm).to_string(),
+            )
+            .with_field(
+                "song-first-root",
+                ui.song
+                    .bars
+                    .first()
+                    .map_or(0, |bar| bar.root_pc)
+                    .to_string(),
+            )
+            .with_field(
+                "overview-context-recipes",
+                ui.musical_context
+                    .items()
+                    .iter()
+                    .filter(|item| item.captured_recipe.is_some())
+                    .count()
+                    .to_string(),
+            )
+            .with_field(
+                "overview-recipe-source-present",
+                ui.musical_context
+                    .items()
+                    .iter()
+                    .filter_map(|item| item.captured_recipe.as_ref())
+                    .any(|recipe| {
+                        ui.set
+                            .cards
+                            .iter()
+                            .any(|card| card.id == recipe.source_card)
+                    })
+                    .to_string(),
+            )
+            .with_field(
+                "overview-recipe-bpm",
+                ui.musical_context
+                    .items()
+                    .iter()
+                    .find_map(|item| item.captured_recipe.as_ref())
+                    .and_then(|recipe| recipe.card().ok())
+                    .and_then(|card| card.timing.bpm)
+                    .map_or("none".into(), |bpm| bpm.to_string()),
+            )
+            .with_field(
+                "set-last-scale-pattern",
+                ui.set
+                    .cards
+                    .last()
+                    .is_some_and(|card| {
+                        matches!(
+                            card.material,
+                            woodshedding::rehearsal::Material::ScalePattern {
+                                pattern: woodshedding::rehearsal::ScalePattern::Thirds,
+                                ..
+                            }
+                        ) && matches!(card.touch, woodshedding::rehearsal::Touch::Walk)
+                    })
+                    .to_string(),
+            )
+            .with_field(
+                "set-last-arpeggio",
+                ui.set
+                    .cards
+                    .last()
+                    .is_some_and(|card| {
+                        matches!(
+                            card.touch,
+                            woodshedding::rehearsal::Touch::Arpeggiate {
+                                direction: woodshedding::rehearsal::ArpeggioDirection::Down,
+                                inversion: 1
+                            }
+                        )
+                    })
+                    .to_string(),
+            )
+            .with_field(
+                "overview-context-items",
+                ui.musical_context.items().len().to_string(),
+            )
+            .with_field(
+                "overview-context-containment",
+                overview
+                    .relations
+                    .iter()
+                    .filter(|relation| {
+                        relation.kind
+                            == woodshed_core::session_overview::OverviewRelationKind::ContainsTones
+                    })
+                    .count()
+                    .to_string(),
+            )
+            .with_field(
+                "overview-context-links",
+                overview
+                    .relations
+                    .iter()
+                    .filter(|relation| {
+                        relation.kind
+                            == woodshed_core::session_overview::OverviewRelationKind::ContextFor
+                    })
+                    .count()
+                    .to_string(),
+            )
             .with_field("overview-nodes", overview.nodes.len().to_string())
-            .with_field("overview-takes", overview.nodes.iter().filter(|node| matches!(node.id, woodshed_core::session_overview::OverviewNodeId::Artifact(woodshed_core::session_overview::SessionArtifactId::LoopTake(_)))).count().to_string())
-            .with_field("overview-take-links", overview.relations.iter().filter(|relation| relation.kind == woodshed_core::session_overview::OverviewRelationKind::CapturedFor).count().to_string())
-            .with_field("loop-source-set", match ui.looper.source { woodshed_core::loop_plan::LooperSource::Set(id) => id.0.to_string(), woodshed_core::loop_plan::LooperSource::SavedSong => "saved".into() })
-            .with_field("loop-admitted-set", ui.loop_admitted.as_ref().map_or("none".into(), |plan| plan.owner.0.to_string()))
-            .with_field("recorder-selected-set", ui.loop_selected.map_or(0, |id| id.set.0).to_string())
+            .with_field(
+                "overview-takes",
+                overview
+                    .nodes
+                    .iter()
+                    .filter(|node| {
+                        matches!(
+                            node.id,
+                            woodshed_core::session_overview::OverviewNodeId::Artifact(
+                                woodshed_core::session_overview::SessionArtifactId::LoopTake(_)
+                            )
+                        )
+                    })
+                    .count()
+                    .to_string(),
+            )
+            .with_field(
+                "overview-take-links",
+                overview
+                    .relations
+                    .iter()
+                    .filter(|relation| {
+                        relation.kind
+                            == woodshed_core::session_overview::OverviewRelationKind::CapturedFor
+                    })
+                    .count()
+                    .to_string(),
+            )
+            .with_field(
+                "loop-source-set",
+                match ui.looper.source {
+                    woodshed_core::loop_plan::LooperSource::Set(id) => id.0.to_string(),
+                    woodshed_core::loop_plan::LooperSource::SavedSong => "saved".into(),
+                },
+            )
+            .with_field(
+                "loop-admitted-set",
+                ui.loop_admitted
+                    .as_ref()
+                    .map_or("none".into(), |plan| plan.owner.0.to_string()),
+            )
+            .with_field(
+                "recorder-selected-set",
+                ui.loop_selected.map_or(0, |id| id.set.0).to_string(),
+            )
             .with_field(
                 "overview-views",
                 overview
@@ -1116,6 +1368,106 @@ impl Snapshot<'_, '_> {
             )
             .with_field("lens", format!("{:?}", ui.stage.lens))
             .with_field("material", ui.stage.material_name());
+        let mut personal_ids = ui
+            .personal_relations
+            .as_ref()
+            .into_iter()
+            .flat_map(|source| source.retained_assertions())
+            .filter_map(|record| serde_json::to_string(&record.id).ok())
+            .collect::<Vec<_>>();
+        personal_ids.sort();
+        let retained_count = personal_ids.len();
+        let held_count = ui
+            .personal_relations
+            .as_ref()
+            .map_or(0, |source| source.held_assertions().count());
+        let withdrawn_count = retained_count.saturating_sub(held_count);
+        let personal_source_id = ui
+            .personal_relations
+            .as_ref()
+            .map(|source| source.source_id().as_str().to_owned())
+            .unwrap_or_else(|| "unavailable".into());
+        let sealed_actor = ui.seal.as_ref().is_some_and(|seal| {
+            matches!(
+                seal,
+                woodshed_views::persona::PracticeSeal::Sealed { persona, .. }
+                    if !persona.trim().is_empty() && persona == persona.trim()
+            )
+        });
+        let claims_pair = ui
+            .personal_link_pair
+            .as_ref()
+            .map(|(from, to)| format!("{from} → {to}"))
+            .unwrap_or_else(|| "none".into());
+        let mut generated_by_id =
+            std::collections::BTreeMap::<String, &woodshed_core::mere::MaterialRelation>::new();
+        if let Some((from, to)) = ui.personal_link_pair.as_ref() {
+            for relation in woodshed_views::stage::related_mere_snapshot(ui)
+                .relations
+                .iter()
+                .filter(|relation| {
+                    (relation.source.as_str() == from.as_str()
+                        && relation.target.as_str() == to.as_str())
+                        || (relation.source.as_str() == to.as_str()
+                            && relation.target.as_str() == from.as_str())
+                })
+            {
+                generated_by_id
+                    .entry(relation.claim_id.qualified_key())
+                    .or_insert(relation);
+            }
+        }
+        let generated_methods = generated_by_id
+            .values()
+            .map(|relation| relation.provenance.method.iri)
+            .collect::<std::collections::BTreeSet<_>>()
+            .into_iter()
+            .collect::<Vec<_>>()
+            .join(",");
+        let generated_directions = generated_by_id
+            .values()
+            .map(|relation| {
+                format!(
+                    "{} → {}",
+                    relation.provenance.original_from, relation.provenance.original_to
+                )
+            })
+            .collect::<Vec<_>>()
+            .join(";");
+        let generated_evidence_count = generated_by_id
+            .values()
+            .map(|relation| relation.provenance.evidence.len())
+            .sum::<usize>();
+        snap = snap
+            .with_field(
+                "personal-source-status",
+                if ui.personal_relations.is_some() {
+                    "available"
+                } else {
+                    "unavailable"
+                },
+            )
+            .with_field("personal-source-id", personal_source_id)
+            .with_field(
+                "personal-write-available",
+                (ui.practice_saved && sealed_actor && ui.personal_relations.is_some()).to_string(),
+            )
+            .with_field("personal-retained-count", retained_count.to_string())
+            .with_field("personal-held-count", held_count.to_string())
+            .with_field("personal-withdrawn-count", withdrawn_count.to_string())
+            .with_field("personal-retained-ids", personal_ids.join(","))
+            .with_field("claims-pair", claims_pair)
+            .with_field("claims-generated-count", generated_by_id.len().to_string())
+            .with_field("claims-generated-methods", generated_methods)
+            .with_field("claims-generated-directions", generated_directions)
+            .with_field(
+                "claims-generated-evidence-count",
+                generated_evidence_count.to_string(),
+            )
+            .with_field(
+                "claims-last-action",
+                ui.personal_relation_notice.clone().unwrap_or_default(),
+            );
         // The Related frontier, observed as the app computes it: the top
         // neighbor and how many distinct relations connect it. A scenario can
         // then assert that multiplicity survived ranking, rather than sniffing
@@ -1228,6 +1580,25 @@ impl Snapshot<'_, '_> {
 }
 
 impl Probe<'_, '_> {
+    fn claims_seed_facts_path() -> Option<std::path::PathBuf> {
+        std::env::var_os("WOODSHED_CAPTURE_DIR")
+            .map(std::path::PathBuf::from)
+            .map(|directory| directory.join("claims-seed-identities.json"))
+    }
+
+    fn claims_identity_facts(ui: &UiState) -> Option<serde_json::Value> {
+        let source = ui.personal_relations.as_ref()?;
+        let mut ids = source
+            .retained_assertions()
+            .filter_map(|record| serde_json::to_string(&record.id).ok())
+            .collect::<Vec<_>>();
+        ids.sort();
+        Some(serde_json::json!({
+            "source_id": source.source_id().as_str(),
+            "assertion_ids": ids,
+        }))
+    }
+
     fn stage_node_key(&self, index: usize) -> Option<String> {
         let ui = self.ctx.runner.state();
         let snapshot = set_graph_snapshot(ui);
@@ -1309,6 +1680,67 @@ impl Automatable for Probe<'_, '_> {
     }
 
     fn act(&mut self, label: &str) -> bool {
+        if label == "claims-remember-set" {
+            let Ok(fingerprint) = serde_json::to_string(&self.ctx.runner.state().set) else {
+                return false;
+            };
+            self.shared.scenario_claims_set_before_audition = Some(fingerprint);
+            self.shared
+                .events
+                .push("claims-set-baseline-recorded".into());
+            return true;
+        }
+        if label == "claims-assert-set-unchanged" {
+            let Ok(current) = serde_json::to_string(&self.ctx.runner.state().set) else {
+                return false;
+            };
+            let unchanged = self
+                .shared
+                .scenario_claims_set_before_audition
+                .as_deref()
+                .is_some_and(|before| before == current);
+            self.shared
+                .events
+                .push(format!("claims-set-unchanged {unchanged}"));
+            return true;
+        }
+        if label == "claims-save-seed-identities" {
+            let Some(path) = Self::claims_seed_facts_path() else {
+                return false;
+            };
+            let Some(facts) = Self::claims_identity_facts(self.ctx.runner.state()) else {
+                return false;
+            };
+            let Ok(encoded) = serde_json::to_vec_pretty(&facts) else {
+                return false;
+            };
+            if std::fs::write(path, encoded).is_err() {
+                return false;
+            }
+            self.shared
+                .events
+                .push("claims-seed-identities-saved".into());
+            return true;
+        }
+        if label == "claims-verify-reopen-identities" {
+            let Some(path) = Self::claims_seed_facts_path() else {
+                return false;
+            };
+            let Ok(seed_bytes) = std::fs::read(path) else {
+                return false;
+            };
+            let Ok(seed) = serde_json::from_slice::<serde_json::Value>(&seed_bytes) else {
+                return false;
+            };
+            let Some(current) = Self::claims_identity_facts(self.ctx.runner.state()) else {
+                return false;
+            };
+            self.shared.events.push(format!(
+                "claims-reopen-identities-match {}",
+                seed == current
+            ));
+            return true;
+        }
         if label == "seed-loop-capture" {
             use woodshed_core::audio::AudioBackend;
             let Some(plan) = self.ctx.runner.state().loop_admitted.clone() else {
@@ -1392,13 +1824,20 @@ impl Automatable for Probe<'_, '_> {
                 ui.song = woodshed_core::song::SongDoc {
                     name: "Chord cache qualification".into(),
                     click: false,
-                    bars: [0, 5, 7, 0].into_iter().enumerate().map(|(i, root)| {
-                        let mut bar = woodshed_core::song::SongBar {
-                            root_pc: root, bpm: 240.0, label: format!("Bar {}", i + 1),
-                            ..Default::default()
-                        };
-                        bar.revoice(); bar
-                    }).collect(),
+                    bars: [0, 5, 7, 0]
+                        .into_iter()
+                        .enumerate()
+                        .map(|(i, root)| {
+                            let mut bar = woodshed_core::song::SongBar {
+                                root_pc: root,
+                                bpm: 240.0,
+                                label: format!("Bar {}", i + 1),
+                                ..Default::default()
+                            };
+                            bar.revoice();
+                            bar
+                        })
+                        .collect(),
                     ..Default::default()
                 };
                 ui.song_playing = false;
@@ -1413,8 +1852,17 @@ impl Automatable for Probe<'_, '_> {
                 ui.set = Default::default();
                 ui.working_sets = Default::default();
                 ui.relationship_reading_json = None;
-                for (label, formula, root) in [("Cmaj7", "chord:Major 7", 0), ("Am7", "chord:Minor 7", 9), ("C Major scale", "scale:Major", 0)] {
-                    let mut card = KeyedCatalogRef { formula_id: formula.into(), root: PitchClass::new(root) }.to_card().unwrap();
+                for (label, formula, root) in [
+                    ("Cmaj7", "chord:Major 7", 0),
+                    ("Am7", "chord:Minor 7", 9),
+                    ("C Major scale", "scale:Major", 0),
+                ] {
+                    let mut card = KeyedCatalogRef {
+                        formula_id: formula.into(),
+                        root: PitchClass::new(root),
+                    }
+                    .to_card()
+                    .unwrap();
                     card.label = label.into();
                     ui.set.push(card);
                 }
@@ -1427,9 +1875,18 @@ impl Automatable for Probe<'_, '_> {
                 ui.set = Default::default();
                 ui.working_sets = Default::default();
                 ui.relationship_reading_json = None;
-                for (label, formula, root) in [("C Major", "Major", 0),("C Major again", "Major",0),("A Minor","Minor",9)] {
-                    let mut card = KeyedCatalogRef {formula_id:format!("chord:{formula}"),root:PitchClass::new(root)}.to_card().unwrap();
-                    card.label=label.into();
+                for (label, formula, root) in [
+                    ("C Major", "Major", 0),
+                    ("C Major again", "Major", 0),
+                    ("A Minor", "Minor", 9),
+                ] {
+                    let mut card = KeyedCatalogRef {
+                        formula_id: format!("chord:{formula}"),
+                        root: PitchClass::new(root),
+                    }
+                    .to_card()
+                    .unwrap();
+                    card.label = label.into();
                     ui.set.push(card);
                 }
                 ui.activate_workspace_panel(woodshed_views::workspace::WorkspacePanel::Overview);
@@ -1525,7 +1982,8 @@ impl Automatable for Probe<'_, '_> {
                     let id = ui.stage_chord_arpeggio().expect("fixture arpeggio");
                     let recipe = ui.set.cards.iter_mut().find(|card| card.id == id).unwrap();
                     recipe.touch = woodshedding::rehearsal::Touch::Arpeggiate {
-                        direction: woodshedding::rehearsal::ArpeggioDirection::Down, inversion: 1,
+                        direction: woodshedding::rehearsal::ArpeggioDirection::Down,
+                        inversion: 1,
                     };
                     ui.set.select_id(id);
                 }
@@ -1541,7 +1999,12 @@ impl Automatable for Probe<'_, '_> {
                 ui.working_sets = Default::default();
                 ui.catalog_explorations = Default::default();
                 for (name, root) in [("Major", 0), ("Minor", 9)] {
-                    let mut card = KeyedCatalogRef { formula_id: format!("scale:{name}"), root: PitchClass::new(root) }.to_card().expect("fixture scale");
+                    let mut card = KeyedCatalogRef {
+                        formula_id: format!("scale:{name}"),
+                        root: PitchClass::new(root),
+                    }
+                    .to_card()
+                    .expect("fixture scale");
                     card.setting.fret_window = Some(FretWindow { start: 2, span: 6 });
                     card.timing.hold = Hold::Manual;
                     card.timing.bpm = None;
@@ -1555,8 +2018,19 @@ impl Automatable for Probe<'_, '_> {
                 ui.set.select_id(id);
             },
             "mere-arpeggio-remove-source" | "mere-scale-pattern-remove-source" => {
-                let id = ui.musical_context.items().iter().find_map(|item| item.captured_recipe.as_ref()).expect("kept fixture recipe").source_card;
-                let index = ui.set.cards.iter().position(|card| card.id == id).expect("source present");
+                let id = ui
+                    .musical_context
+                    .items()
+                    .iter()
+                    .find_map(|item| item.captured_recipe.as_ref())
+                    .expect("kept fixture recipe")
+                    .source_card;
+                let index = ui
+                    .set
+                    .cards
+                    .iter()
+                    .position(|card| card.id == id)
+                    .expect("source present");
                 ui.set.remove(index);
                 ui.stage.set_root(5);
                 ui.root_dd.selected = 5;
@@ -1564,12 +2038,14 @@ impl Automatable for Probe<'_, '_> {
             },
             "mere-context-chord-focus" => {
                 ui.focus_context_catalog(woodshed_core::harmony::KeyedCatalogRef {
-                    formula_id: "chord:Major 7".into(), root: woodshedding::pitch::PitchClass::new(0),
+                    formula_id: "chord:Major 7".into(),
+                    root: woodshedding::pitch::PitchClass::new(0),
                 });
             },
             "mere-context-scale-focus" => {
                 ui.focus_context_catalog(woodshed_core::harmony::KeyedCatalogRef {
-                    formula_id: "scale:Major".into(), root: woodshedding::pitch::PitchClass::new(0),
+                    formula_id: "scale:Major".into(),
+                    root: woodshedding::pitch::PitchClass::new(0),
                 });
             },
             "shape-comparison-example" => {
@@ -1629,11 +2105,26 @@ impl Automatable for Probe<'_, '_> {
                 }
                 ui.set_tray_expanded = true;
             },
+            "claims-open-major-major7" => {
+                ui.personal_link_pair = Some(("chord:Major".into(), "chord:Major 7".into()));
+                ui.personal_link_history = false;
+                ui.personal_link_layout = None;
+                ui.personal_relation_notice = None;
+                ui.activate_workspace_panel(woodshed_views::workspace::WorkspacePanel::Related);
+            },
+            "claims-note-reason-one" => {
+                ui.personal_relation_note =
+                    cambium::TextInput::new("Independent reason one".into());
+            },
+            "claims-note-reason-two" => {
+                ui.personal_relation_note =
+                    cambium::TextInput::new("Independent reason two".into());
+            },
             "hide-first-stage-relation" => {
                 let snapshot = set_graph_snapshot(ui);
                 if let Some(key) = set_graph_relation_choices(&snapshot, ui)
                     .first()
-                    .map(|relation| relation.key.clone())
+                    .map(|relation| relation.identity.clone())
                 {
                     ui.toggle_set_graph_relation(&snapshot, key);
                 }

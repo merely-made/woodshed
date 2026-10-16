@@ -173,6 +173,43 @@ pub(crate) fn render_chord_cancellable(
     Some(SampleBuffer::new(out, sample_rate_hz))
 }
 
+/// Render independently voiced chord groups in order, separated by silence.
+/// The worker can cancel between groups and during each chord render. The
+/// caller validates the total frame budget before requesting this work.
+pub(crate) fn render_phrase_cancellable(
+    groups: &[ChordRender],
+    gap_seconds: f32,
+    sample_rate_hz: u32,
+    cancelled: &dyn Fn() -> bool,
+) -> Option<SampleBuffer> {
+    if groups.is_empty() || cancelled() {
+        return None;
+    }
+    let gap_frames = (gap_seconds * sample_rate_hz as f32).round() as usize;
+    let total_frames = groups.iter().try_fold(
+        gap_frames.saturating_mul(groups.len() - 1),
+        |total, group| {
+            let frames = (group.duration_seconds * sample_rate_hz as f32).round() as usize;
+            total.checked_add(frames)
+        },
+    )?;
+    if total_frames > crate::output_runtime::MAX_PCM_FRAMES {
+        return None;
+    }
+    let mut output = Vec::with_capacity(total_frames);
+    for (index, group) in groups.iter().enumerate() {
+        if cancelled() {
+            return None;
+        }
+        let rendered = render_chord_cancellable(group, sample_rate_hz, cancelled)?;
+        output.extend_from_slice(&rendered.data);
+        if index + 1 < groups.len() {
+            output.resize(output.len().checked_add(gap_frames)?, 0.0);
+        }
+    }
+    Some(SampleBuffer::new(output, sample_rate_hz))
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -293,5 +330,23 @@ mod tests {
             triple_peak <= single_peak * 2.5,
             "triple peak {triple_peak} > 2.5× single peak {single_peak}"
         );
+    }
+
+    #[test]
+    fn phrase_keeps_before_and_after_groups_ordered_with_a_silent_gap() {
+        let before = ChordRender::block(vec![220.0], 0.1);
+        let after = ChordRender::block(vec![440.0], 0.1);
+        let first = render_chord(&before, 1_000);
+        let second = render_chord(&after, 1_000);
+        let phrase = render_phrase_cancellable(&[before, after], 0.05, 1_000, &|| false).unwrap();
+
+        assert_eq!(phrase.len(), first.len() + 50 + second.len());
+        assert_eq!(&phrase.data[..first.len()], &first.data[..]);
+        assert!(
+            phrase.data[first.len()..first.len() + 50]
+                .iter()
+                .all(|sample| *sample == 0.0)
+        );
+        assert_eq!(&phrase.data[first.len() + 50..], &second.data[..]);
     }
 }

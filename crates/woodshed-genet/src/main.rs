@@ -122,6 +122,9 @@ fn boot_state(
     ) {
         ui.practice_saved = false;
     }
+    if let Some(storage) = shared.storage.as_ref() {
+        session::ensure_personal_relation_source(storage, &mut ui);
+    }
     appearance::load_library(&mut ui);
     shared.theme = ui.theme();
     shared.reduce_motion = ui.app_settings.accessibility.reduce_motion;
@@ -354,7 +357,9 @@ fn hooks(shared: &Rc<RefCell<Shared>>) -> HostHooks<UiState, Logic, UiChild> {
                 capture_close_requested.set(true);
                 return cambium_genet_winit_host::CloseDisposition::KeepVisible;
             }
-            if let Some(disposition) = wav_export::close_request(&mut close_shared.borrow_mut(), ctx) {
+            if let Some(disposition) =
+                wav_export::close_request(&mut close_shared.borrow_mut(), ctx)
+            {
                 return disposition;
             }
             appearance::close_request(ctx)

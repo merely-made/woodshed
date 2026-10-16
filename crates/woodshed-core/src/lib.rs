@@ -26,6 +26,7 @@ pub mod loop_plan;
 pub mod mere;
 pub mod midi;
 pub mod musical_context;
+pub mod personal_relations;
 pub mod pitch_motion_reading;
 pub mod retained_sets;
 pub mod scale_pattern_discovery;
@@ -912,12 +913,14 @@ impl StageState {
                     };
                     suggestion.relations.insert(
                         0,
-                        woodshed_graph::MaterialRelation::evidence(
+                        woodshed_graph::MaterialRelation::evidence_with_count(
                             selected_id.clone(),
                             target_id.clone(),
                             woodshed_graph::RelationKind::PracticedAfter,
                             (90 + count.min(10)) as u16,
                             explanation,
+                            mere::PracticeEvidenceBasis::StatedFromReason,
+                            u64::try_from(count).expect("practice reason count must fit u64"),
                         ),
                     );
                 }

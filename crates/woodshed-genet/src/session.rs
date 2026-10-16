@@ -6,6 +6,7 @@
 //! the restore has two callers and one run, and it lives here rather than in
 //! either of them.
 
+use woodshed_core::personal_relations::{PersonalRelationSource, PersonalRelationSourceId};
 use woodshed_core::settings::AppSettings;
 use woodshed_core::storage::SessionStore;
 use woodshed_views::stage::UiState;
@@ -66,6 +67,51 @@ pub fn restore(storage: &SessionStore<HostBackend>, ui: &mut UiState) {
             }
         },
         Err(error) => eprintln!("[woodshed-genet] ignoring corrupt session: {error}"),
+    }
+}
+
+/// Ensure the session's stable personal assertion source exists and is saved
+/// before a view can offer authored relation actions. Legacy sessions receive
+/// one random source ID; ordinary reopen never remints it.
+pub fn ensure_personal_relation_source(storage: &SessionStore<HostBackend>, ui: &mut UiState) {
+    if ui.personal_relations.is_some()
+        || !ui.practice_saved
+        || !matches!(
+            ui.seal.as_ref(),
+            Some(woodshed_views::persona::PracticeSeal::Sealed { persona, .. })
+                if !persona.trim().is_empty() && persona == persona.trim()
+        )
+    {
+        return;
+    }
+
+    let mut bytes = [0_u8; 16];
+    if let Err(error) = getrandom::fill(&mut bytes) {
+        ui.personal_relation_notice = Some(format!(
+            "Personal relations are unavailable because a source identity could not be created: {error}"
+        ));
+        return;
+    }
+    ui.personal_relations = Some(PersonalRelationSource::empty(
+        PersonalRelationSourceId::from_random_uuid_bytes(bytes),
+    ));
+    let serialized = serde_json::to_string(&ui.to_persisted());
+    match serialized {
+        Ok(serialized) => match storage.try_save(&serialized) {
+            Ok(()) => ui.personal_relation_notice = None,
+            Err(error) => {
+                ui.personal_relations = None;
+                ui.personal_relation_notice = Some(format!(
+                    "Personal relations are unavailable because their source identity could not be saved: {error}"
+                ));
+            },
+        },
+        Err(error) => {
+            ui.personal_relations = None;
+            ui.personal_relation_notice = Some(format!(
+                "Personal relations are unavailable because their source identity could not be encoded: {error}"
+            ));
+        },
     }
 }
 

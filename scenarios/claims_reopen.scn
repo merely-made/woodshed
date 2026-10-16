@@ -1,0 +1,22 @@
+# Fresh process on the same isolated sealed Keeper profile. Verify the exact
+# source UUID and both retained assertion IDs against claims_seed.scn's receipt.
+settle 3
+act claims-open-major-major7
+settle 3
+assert text Claims
+assert snap personal-source-status == available
+assert snap personal-write-available == true
+assert snap personal-retained-count == 2
+assert snap personal-held-count == 1
+assert snap personal-withdrawn-count == 1
+click .personal-link-history-toggle
+settle 3
+assert text Independent reason one
+assert text Independent reason two
+assert text withdrawn at
+assert text urn:woodshed:method:computed-formula-relations
+assert text urn:woodshed:evidence:v1
+act claims-verify-reopen-identities
+assert event claims-reopen-identities-match true
+capture 01_claims_fresh_reopen
+log Claims reopen: source UUID, held assertion ID and withdrawal tombstone retained

@@ -1,0 +1,58 @@
+# Seed two independent personal reasons through the normal Claims controls,
+# audition a generated directed reason, withdraw one exact ID, and save a
+# capture-directory receipt for fresh-process identity comparison. The native
+# runner supplies an isolated WOODSHED_STATE and sealed Keeper persona.
+settle 3
+act claims-open-major-major7
+settle 3
+assert text Claims
+assert snap personal-source-status == available
+assert snap personal-write-available == true
+assert snap claims-pair == chord:Major → chord:Major 7
+assert snap claims-generated-count >= 1
+assert snap claims-generated-methods ~ urn:woodshed:method:computed-formula-relations
+assert snap claims-generated-evidence-count >= 2
+assert text urn:woodshed:method:computed-formula-relations
+assert text urn:woodshed:evidence:v1
+capture 01_claims_generated_provenance
+
+act claims-note-reason-one
+click .personal-add
+settle 3
+assert snap personal-retained-count == 1
+assert snap personal-held-count == 1
+act claims-note-reason-two
+click .personal-add
+settle 3
+assert snap personal-retained-count == 2
+assert snap personal-held-count == 2
+assert snap personal-withdrawn-count == 0
+assert text Independent reason one
+assert text Independent reason two
+
+# The exact Set serialization is compared around an ordinary UI audition.
+act claims-remember-set
+click role:button Audition chord:Major → chord:Major 7
+settle 3
+assert event audio-preview-phrase ordered
+assert snap claims-last-action ~ Audition queued in assertion direction: chord:Major → chord:Major 7
+act claims-assert-set-unchanged
+assert event claims-set-unchanged true
+capture 02_claims_ordered_audition
+
+# The action button is advertised only for the current persona's held
+# assertion. Its host intent carries the exact owner, source UUID and endpoints.
+click role:button @data-assertion-action=withdraw
+settle 3
+assert snap personal-retained-count == 2
+assert snap personal-held-count == 1
+assert snap personal-withdrawn-count == 1
+click .personal-link-history-toggle
+settle 3
+assert text Independent reason one
+assert text Independent reason two
+assert text withdrawn at
+act claims-save-seed-identities
+assert event claims-seed-identities-saved
+capture 03_claims_withdrawn_history
+log Claims seed: two independent reasons; one held and one withdrawn

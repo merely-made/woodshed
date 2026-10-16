@@ -85,10 +85,23 @@ fn open_backend(profile: Option<&ProfileId>) -> (HostBackend, PracticeSeal) {
             );
         },
     };
-    let persona = identity
-        .profile()
-        .map(|profile| profile.0.clone())
-        .unwrap_or_default();
+    let Some(profile) = identity.profile() else {
+        return (
+            Box::new(PendingBackend::new(FsBackend::new())),
+            PracticeSeal::Pending {
+                reason: "djinn opened no canonical persona profile".into(),
+            },
+        );
+    };
+    let persona = profile.0.clone();
+    if persona.trim().is_empty() || persona != persona.trim() {
+        return (
+            Box::new(PendingBackend::new(FsBackend::new())),
+            PracticeSeal::Pending {
+                reason: "djinn opened an empty or non-canonical persona profile".into(),
+            },
+        );
+    }
     match SealedBackend::for_provider(FsBackend::new(), &identity) {
         // Adopting plaintext is the migration: a session written before sealing
         // was switched on is read once as it stands, and the next save seals it.
@@ -810,10 +823,11 @@ mod dr_c_receipts {
         let mode = std::env::var("DR_C_RECEIPT_MODE").expect("receipt mode");
         assert!(mode == "absent" || mode == "locked");
         if mode == "locked" {
-            let mut client = graphshell_endpoint::door::custody_client::BlockingCustodyClient::open(
-                graphshell_endpoint::door::app_admission::AppId::new(CUSTODY_APP),
-            )
-            .unwrap();
+            let mut client =
+                graphshell_endpoint::door::custody_client::BlockingCustodyClient::open(
+                    graphshell_endpoint::door::app_admission::AppId::new(CUSTODY_APP),
+                )
+                .unwrap();
             assert_eq!(
                 client.status().unwrap().lock,
                 graphshell_endpoint::door::identity::VaultLockView::Locked

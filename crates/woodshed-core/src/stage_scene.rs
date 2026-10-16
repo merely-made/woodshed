@@ -33,7 +33,9 @@ use sceno::{
     SourceRef, Transform2, Vec2,
 };
 use scenotime::{RelationId, Revision, SceneEpoch, SceneSnapshot};
-use woodshed_graph::{MaterialRelation, RelationAuthority, RelationKind, relations_between};
+use woodshed_graph::{
+    GeneratedClaimId, GeneratedClaimProvenance, MaterialRelation, RelationKind, relations_between,
+};
 use woodshedding::rehearsal::{Card, CardId, Material, Set};
 
 use crate::arrangement::{GraphArrangement, arrange_graph};
@@ -118,6 +120,10 @@ pub struct StageGraphSnapshot {
     pub cards: Vec<CardId>,
     /// Product meaning per dense scene instance, including quiet context.
     pub nodes: Vec<StageSceneNode>,
+    /// Relation source metadata aligned with the scene's dense relation table.
+    /// Sceno owns routes; this adapter retains the exact source member that
+    /// produced each route.
+    pub relation_sources: Vec<StageRelationSource>,
 }
 
 /// Product meaning recovered from a generic scene item.
@@ -142,6 +148,80 @@ pub struct StageSceneRelationDetail {
     pub label: String,
 }
 
+/// Exact source of one projected relation. Occurrence IDs locate a claim in
+/// this Set display; they do not replace the generated claim's own identity.
+#[derive(Clone, Debug, PartialEq)]
+pub enum StageRelationSource {
+    /// Authored Set order, independent from all catalog claims.
+    SetSequence { from: CardId, to: CardId },
+    /// One exact generated catalog/computed/evidence claim between two Set
+    /// occurrences. `relation` retains its source-owned identity and original
+    /// assertion direction even if the display route is inverse.
+    Generated {
+        from_occurrence: CardId,
+        to_occurrence: CardId,
+        relation: MaterialRelation,
+    },
+    /// A computed musical-context relation, keyed by its exact displayed nodes.
+    Context {
+        kind: String,
+        from: StageNodeId,
+        to: StageNodeId,
+    },
+}
+
+/// Presentation identity for one displayed relation member. Visibility may
+/// hide this exact member without changing the Set or generated source claim.
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub enum StageRelationIdentity {
+    SetSequence {
+        from: CardId,
+        to: CardId,
+    },
+    Generated {
+        claim_id: GeneratedClaimId,
+        from_occurrence: CardId,
+        to_occurrence: CardId,
+    },
+    Context {
+        kind: String,
+        from: StageNodeId,
+        to: StageNodeId,
+    },
+}
+
+impl StageRelationSource {
+    pub fn identity(&self) -> StageRelationIdentity {
+        match self {
+            Self::SetSequence { from, to } => StageRelationIdentity::SetSequence {
+                from: *from,
+                to: *to,
+            },
+            Self::Generated {
+                from_occurrence,
+                to_occurrence,
+                relation,
+            } => StageRelationIdentity::Generated {
+                claim_id: relation.claim_id.clone(),
+                from_occurrence: *from_occurrence,
+                to_occurrence: *to_occurrence,
+            },
+            Self::Context { kind, from, to } => StageRelationIdentity::Context {
+                kind: kind.clone(),
+                from: from.clone(),
+                to: to.clone(),
+            },
+        }
+    }
+
+    pub fn generated_claim(&self) -> Option<(&GeneratedClaimId, &GeneratedClaimProvenance)> {
+        match self {
+            Self::Generated { relation, .. } => Some((&relation.claim_id, &relation.provenance)),
+            Self::SetSequence { .. } | Self::Context { .. } => None,
+        }
+    }
+}
+
 /// Epoch-qualified item identity used by Cambium callbacks. A stale event from
 /// a previous dense projection cannot name a new occupant of the same slot.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
@@ -158,33 +238,14 @@ pub struct StageRelationRef {
     pub relation: RelationId,
 }
 
-/// Stable, view-local identity for one derivable relation between staged
-/// occurrences. Unlike [`StageRelationRef`], this survives a new dense scene
-/// epoch: occurrence ids and the open relation kind carry the semantic key.
-/// It is suitable for visibility preferences, never for changing relation
-/// truth.
-#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
-pub struct StageRelationKey {
-    pub from: CardId,
-    pub to: CardId,
-    pub kind: String,
-}
-
-impl StageRelationKey {
-    /// A DOM/scenario-safe diagnostic key. Consumers should retain the typed
-    /// value when they can; this string is only an adapter at text boundaries.
-    pub fn wire_key(&self) -> String {
-        format!("{}:{}:{}", self.from.0, self.to.0, self.kind)
-    }
-}
-
 /// Human-facing disclosure for one routed Stage relation. The route remains
 /// in Scenograph; this record restores the Woodshed meaning the product UI is
 /// responsible for explaining.
 #[derive(Clone, Debug, PartialEq)]
 pub struct StageRelationDetail {
     pub reference: StageRelationRef,
-    pub key: StageRelationKey,
+    pub identity: StageRelationIdentity,
+    pub source: StageRelationSource,
     pub label: String,
     pub explanation: String,
     pub authority: &'static str,
@@ -278,71 +339,72 @@ impl StageGraphSnapshot {
             .flatten()
     }
 
-    /// Stable semantic identity for a relation in this snapshot.
-    pub fn relation_key(&self, reference: StageRelationRef) -> Option<StageRelationKey> {
-        let relation = self.relation(reference)?;
-        Some(StageRelationKey {
-            from: self.card_of(relation.from)?,
-            to: self.card_of(relation.to)?,
-            kind: relation.kind.clone().unwrap_or_else(|| "relation".into()),
-        })
+    /// Exact source-qualified presentation identity for a relation in this
+    /// snapshot. Generated claim identity remains independent from its Set
+    /// occurrence endpoints.
+    pub fn relation_identity(&self, reference: StageRelationRef) -> Option<StageRelationIdentity> {
+        self.relation_source(reference)
+            .map(StageRelationSource::identity)
+    }
+
+    pub fn relation_source(&self, reference: StageRelationRef) -> Option<&StageRelationSource> {
+        self.relation(reference)?;
+        (reference.epoch == self.epoch())
+            .then(|| self.relation_sources.get(reference.relation.0 as usize))
+            .flatten()
     }
 
     /// Explain one relation using the owning Woodshed layer. Set sequence is
     /// authored Set truth; catalog relations recover their typed reason and
     /// authority from `woodshed-graph` rather than asking the scene to carry
     /// product vocabulary.
-    pub fn relation_detail(
-        &self,
-        reference: StageRelationRef,
-        set: &Set,
-    ) -> Option<StageRelationDetail> {
-        let key = self.relation_key(reference)?;
-        if key.kind == SEQUENCE_KIND {
-            return Some(StageRelationDetail {
+    pub fn relation_detail(&self, reference: StageRelationRef) -> Option<StageRelationDetail> {
+        let source = self.relation_source(reference)?.clone();
+        let identity = source.identity();
+        match &source {
+            StageRelationSource::SetSequence { .. } => Some(StageRelationDetail {
                 reference,
-                key,
+                identity,
+                source,
                 label: "sequence".into(),
                 explanation: "Earlier card precedes later card in this Set.".into(),
                 authority: "Set",
                 weight: 100,
-            });
-        }
-
-        if key.kind.starts_with("woodshed:keyed-")
-            || key.kind.starts_with("woodshed:tonnetz-")
-            || key.kind == "woodshed:circle-of-fifths"
-            || key.kind == "woodshed:chord-arpeggio"
-            || key.kind == "woodshed:scale-degree-pattern"
-            || key.kind == "woodshed:chord-tone-approach"
-        {
-            let detail = self.scene_relation_detail(reference)?;
-            return Some(StageRelationDetail {
-                reference,
-                key,
-                label: detail.label.clone(),
-                explanation: detail.label,
-                authority: "Computed",
-                weight: (self.relation(reference)?.weight.unwrap_or(0.0) * 100.0).round() as u16,
-            });
-        }
-
-        let reason = self
-            .reasons(key.from, key.to, set)
-            .into_iter()
-            .find(|reason| relation_slug(reason.kind) == key.kind)?;
-        Some(StageRelationDetail {
-            reference,
-            key,
-            label: reason.kind.label().into(),
-            explanation: reason.explanation,
-            authority: match reason.authority {
-                RelationAuthority::Catalog => "Catalog",
-                RelationAuthority::Computed => "Computed",
-                RelationAuthority::Evidence => "Evidence",
+            }),
+            StageRelationSource::Generated { relation, .. } => {
+                let label = relation.kind.label().into();
+                let explanation = relation.explanation.clone();
+                let weight = relation.weight;
+                let authority = match relation.authority {
+                    woodshed_graph::RelationAuthority::Catalog => "Catalog",
+                    woodshed_graph::RelationAuthority::Computed => "Computed",
+                    woodshed_graph::RelationAuthority::Evidence => "Evidence",
+                };
+                Some(StageRelationDetail {
+                    reference,
+                    identity,
+                    source,
+                    label,
+                    explanation,
+                    authority,
+                    weight,
+                })
             },
-            weight: reason.weight,
-        })
+            StageRelationSource::Context { .. } => {
+                let detail = self.scene_relation_detail(reference)?;
+                let label = detail.label;
+                Some(StageRelationDetail {
+                    reference,
+                    identity,
+                    source,
+                    label: label.clone(),
+                    explanation: label,
+                    authority: "Computed",
+                    weight: (self.relation(reference)?.weight.unwrap_or(0.0) * 100.0).round()
+                        as u16,
+                })
+            },
+        }
     }
 
     pub fn items(&self) -> Vec<(StageInstanceRef, &ProjectedItem)> {
@@ -379,8 +441,7 @@ impl StageGraphSnapshot {
             .collect()
     }
 
-    /// Explain a context relation without forcing it into the occurrence-only
-    /// `StageRelationKey` contract used by the existing Set inventory.
+    /// Explain a context relation whose source is a computed keyed reading.
     pub fn scene_relation_detail(
         &self,
         reference: StageRelationRef,
@@ -613,19 +674,28 @@ pub fn stage_scene(set: &Set, options: &StageSceneOptions) -> StageGraphSnapshot
     // Set order, straight from the Set's own graph so sequence truth stays
     // woodshedding's.
     let mut relations = Vec::new();
+    let mut relation_sources = Vec::new();
     if options.sequence {
         for edge in &graph.edges {
             let (Some(from), Some(to)) = (instance(edge.from), instance(edge.to)) else {
                 continue;
             };
-            relations.push(RoutedRelation {
-                from,
-                to,
-                space: Scene::WORLD,
-                points: vec![item_centre(&scene, from), item_centre(&scene, to)],
-                kind: Some(SEQUENCE_KIND.to_string()),
-                weight: Some(1.0),
-            });
+            push_relation(
+                &mut relations,
+                &mut relation_sources,
+                RoutedRelation {
+                    from,
+                    to,
+                    space: Scene::WORLD,
+                    points: vec![item_centre(&scene, from), item_centre(&scene, to)],
+                    kind: Some(SEQUENCE_KIND.to_string()),
+                    weight: Some(1.0),
+                },
+                StageRelationSource::SetSequence {
+                    from: edge.from,
+                    to: edge.to,
+                },
+            );
         }
     }
 
@@ -654,14 +724,23 @@ pub fn stage_scene(set: &Set, options: &StageSceneOptions) -> StageGraphSnapshot
                         continue;
                     }
                 }
-                relations.push(RoutedRelation {
-                    from,
-                    to,
-                    space: Scene::WORLD,
-                    points: vec![item_centre(&scene, from), item_centre(&scene, to)],
-                    kind: Some(relation_slug(relation.kind).to_string()),
-                    weight: Some(f32::from(relation.weight) / 100.0),
-                });
+                push_relation(
+                    &mut relations,
+                    &mut relation_sources,
+                    RoutedRelation {
+                        from,
+                        to,
+                        space: Scene::WORLD,
+                        points: vec![item_centre(&scene, from), item_centre(&scene, to)],
+                        kind: Some(relation_slug(relation.kind).to_string()),
+                        weight: Some(f32::from(relation.weight) / 100.0),
+                    },
+                    StageRelationSource::Generated {
+                        from_occurrence: *from_card,
+                        to_occurrence: *to_card,
+                        relation,
+                    },
+                );
             }
         }
     }
@@ -838,14 +917,24 @@ pub fn stage_scene(set: &Set, options: &StageSceneOptions) -> StageGraphSnapshot
                 let (Some(from), Some(to)) = (from, to) else {
                     continue;
                 };
-                relations.push(RoutedRelation {
+                let route = RoutedRelation {
                     from,
                     to,
                     space: Scene::WORLD,
                     points: vec![item_centre(&scene, from), item_centre(&scene, to)],
                     kind: Some(relation.kind.slug().to_string()),
                     weight: Some((relation.shared_tones.max(1) as f32 / 12.0).min(1.0)),
-                });
+                };
+                push_relation(
+                    &mut relations,
+                    &mut relation_sources,
+                    route,
+                    StageRelationSource::Context {
+                        kind: relation.kind.slug().to_string(),
+                        from: relation.from,
+                        to: relation.to,
+                    },
+                );
             }
         }
     }
@@ -912,7 +1001,7 @@ pub fn stage_scene(set: &Set, options: &StageSceneOptions) -> StageGraphSnapshot
                 if let Some((chord, arp)) = sequential_pair {
                     let kind = "woodshed:chord-arpeggio";
                     if seen.insert((nodes[chord].id.clone(), nodes[arp].id.clone(), kind.into())) {
-                        relations.push(RoutedRelation {
+                        let route = RoutedRelation {
                             from: InstanceId(chord as u32),
                             to: InstanceId(arp as u32),
                             space: Scene::WORLD,
@@ -922,7 +1011,9 @@ pub fn stage_scene(set: &Set, options: &StageSceneOptions) -> StageGraphSnapshot
                             ],
                             kind: Some(kind.into()),
                             weight: Some(1.0),
-                        });
+                        };
+                        let source = context_source(&nodes, &route);
+                        push_relation(&mut relations, &mut relation_sources, route, source);
                     }
                 }
                 let degree_pair = if left.root == right.root {
@@ -954,7 +1045,7 @@ pub fn stage_scene(set: &Set, options: &StageSceneOptions) -> StageGraphSnapshot
                         nodes[pattern].id.clone(),
                         kind.into(),
                     )) {
-                        relations.push(RoutedRelation {
+                        let route = RoutedRelation {
                             from: InstanceId(scale as u32),
                             to: InstanceId(pattern as u32),
                             space: Scene::WORLD,
@@ -964,7 +1055,9 @@ pub fn stage_scene(set: &Set, options: &StageSceneOptions) -> StageGraphSnapshot
                             ],
                             kind: Some(kind.into()),
                             weight: Some(1.0),
-                        });
+                        };
+                        let source = context_source(&nodes, &route);
+                        push_relation(&mut relations, &mut relation_sources, route, source);
                     }
                 }
                 let approach_pair = if left.root == right.root {
@@ -996,7 +1089,7 @@ pub fn stage_scene(set: &Set, options: &StageSceneOptions) -> StageGraphSnapshot
                         nodes[approach].id.clone(),
                         kind.into(),
                     )) {
-                        relations.push(RoutedRelation {
+                        let route = RoutedRelation {
                             from: InstanceId(target as u32),
                             to: InstanceId(approach as u32),
                             space: Scene::WORLD,
@@ -1006,14 +1099,19 @@ pub fn stage_scene(set: &Set, options: &StageSceneOptions) -> StageGraphSnapshot
                             ],
                             kind: Some(kind.into()),
                             weight: Some(1.0),
-                        });
+                        };
+                        let source = context_source(&nodes, &route);
+                        push_relation(&mut relations, &mut relation_sources, route, source);
                     }
                 }
                 let shared = left_set.intersection(&right_set).count();
                 let from = nodes[left_index].id.clone();
                 let to = nodes[right_index].id.clone();
-                let append = |relations: &mut Vec<RoutedRelation>, kind: &str, weight: f32| {
-                    relations.push(RoutedRelation {
+                let append = |relations: &mut Vec<RoutedRelation>,
+                              sources: &mut Vec<StageRelationSource>,
+                              kind: &str,
+                              weight: f32| {
+                    let route = RoutedRelation {
                         from: InstanceId(left_index as u32),
                         to: InstanceId(right_index as u32),
                         space: Scene::WORLD,
@@ -1023,7 +1121,9 @@ pub fn stage_scene(set: &Set, options: &StageSceneOptions) -> StageGraphSnapshot
                         ],
                         kind: Some(kind.to_string()),
                         weight: Some(weight),
-                    });
+                    };
+                    let source = context_source(&nodes, &route);
+                    push_relation(relations, sources, route, source);
                 };
                 let shared_endpoints = canonical_endpoints(from.clone(), to.clone());
                 if shared > 0
@@ -1035,6 +1135,7 @@ pub fn stage_scene(set: &Set, options: &StageSceneOptions) -> StageGraphSnapshot
                 {
                     append(
                         &mut relations,
+                        &mut relation_sources,
                         "woodshed:keyed-shared-tones",
                         shared as f32 / 12.0,
                     );
@@ -1052,7 +1153,12 @@ pub fn stage_scene(set: &Set, options: &StageSceneOptions) -> StageGraphSnapshot
                         "woodshed:circle-of-fifths".into(),
                     ))
                 {
-                    append(&mut relations, "woodshed:circle-of-fifths", 1.0);
+                    append(
+                        &mut relations,
+                        &mut relation_sources,
+                        "woodshed:circle-of-fifths",
+                        1.0,
+                    );
                 }
                 if options
                     .context
@@ -1061,7 +1167,7 @@ pub fn stage_scene(set: &Set, options: &StageSceneOptions) -> StageGraphSnapshot
                 {
                     for (neighbor, kind) in crate::tonnetz::neighbors(left) {
                         if &neighbor == right {
-                            append(&mut relations, kind, 1.0);
+                            append(&mut relations, &mut relation_sources, kind, 1.0);
                         }
                     }
                 }
@@ -1087,7 +1193,7 @@ pub fn stage_scene(set: &Set, options: &StageSceneOptions) -> StageGraphSnapshot
                 if chord.is_subset(&scale)
                     && seen.insert((from, to, "woodshed:keyed-diatonic".into()))
                 {
-                    relations.push(RoutedRelation {
+                    let route = RoutedRelation {
                         from: InstanceId(chord_index as u32),
                         to: InstanceId(scale_index as u32),
                         space: Scene::WORLD,
@@ -1097,37 +1203,48 @@ pub fn stage_scene(set: &Set, options: &StageSceneOptions) -> StageGraphSnapshot
                         ],
                         kind: Some("woodshed:keyed-diatonic".into()),
                         weight: Some(chord.len() as f32 / 12.0),
-                    });
+                    };
+                    let source = context_source(&nodes, &route);
+                    push_relation(&mut relations, &mut relation_sources, route, source);
                 }
             }
         }
     }
     let mut emitted = BTreeSet::new();
-    relations.retain(|route| {
+    let mut retained_relations = Vec::with_capacity(relations.len());
+    let mut retained_sources = Vec::with_capacity(relation_sources.len());
+    for (route, source) in relations.into_iter().zip(relation_sources) {
         let Some(kind) = route.kind.as_deref() else {
-            return true;
+            retained_relations.push(route);
+            retained_sources.push(source);
+            continue;
         };
         let symmetric = matches!(
             kind,
             "woodshed:keyed-shared-tones" | "woodshed:circle-of-fifths"
         );
         if !symmetric && kind != "woodshed:keyed-diatonic" {
-            return true;
+            retained_relations.push(route);
+            retained_sources.push(source);
+            continue;
         }
         let (Some(from), Some(to)) = (
             nodes.get(route.from.0 as usize),
             nodes.get(route.to.0 as usize),
         ) else {
-            return false;
+            continue;
         };
         let (from, to) = if symmetric {
             canonical_endpoints(from.id.clone(), to.id.clone())
         } else {
             (from.id.clone(), to.id.clone())
         };
-        emitted.insert((from, to, kind.to_string()))
-    });
-    scene.relations = relations;
+        if emitted.insert((from, to, kind.to_string())) {
+            retained_relations.push(route);
+            retained_sources.push(source);
+        }
+    }
+    scene.relations = retained_relations;
     let item_bounds = if options.context.is_some() {
         Rect::new(Vec2::new(-900.0, -900.0), Size2::new(1800.0, 1800.0))
     } else {
@@ -1171,6 +1288,7 @@ pub fn stage_scene(set: &Set, options: &StageSceneOptions) -> StageGraphSnapshot
         snapshot,
         cards,
         nodes,
+        relation_sources: retained_sources,
     }
 }
 
@@ -1205,6 +1323,32 @@ fn item_centre(scene: &Scene, instance: InstanceId) -> Vec2 {
         .get(instance.0 as usize)
         .map(|item| Vec2::new(item.transform.translate.x, item.transform.translate.y))
         .unwrap_or(Vec2::new(0.0, 0.0))
+}
+
+fn push_relation(
+    relations: &mut Vec<RoutedRelation>,
+    sources: &mut Vec<StageRelationSource>,
+    relation: RoutedRelation,
+    source: StageRelationSource,
+) {
+    relations.push(relation);
+    sources.push(source);
+}
+
+fn context_source(nodes: &[StageSceneNode], relation: &RoutedRelation) -> StageRelationSource {
+    let from = nodes
+        .get(relation.from.0 as usize)
+        .map(|node| node.id.clone())
+        .expect("routed relation source has a projected node");
+    let to = nodes
+        .get(relation.to.0 as usize)
+        .map(|node| node.id.clone())
+        .expect("routed relation target has a projected node");
+    StageRelationSource::Context {
+        kind: relation.kind.clone().unwrap_or_else(|| "relation".into()),
+        from,
+        to,
+    }
 }
 
 /// Fixed Circle-of-Fifths slots. Relative major/minor share a tonic position:
@@ -1733,7 +1877,7 @@ mod tests {
     }
 
     #[test]
-    fn relation_inventory_keys_survive_dense_scene_epochs() {
+    fn relation_inventory_identities_survive_dense_scene_epochs() {
         let set = set_of(&[("plain", chord("Major")), ("seventh", chord("Major 7"))]);
         let snake = stage_scene(&set, &StageSceneOptions::default());
         let circle = stage_scene(
@@ -1749,7 +1893,7 @@ mod tests {
             snapshot
                 .relations()
                 .into_iter()
-                .map(|(reference, _)| snapshot.relation_detail(reference, &set).unwrap())
+                .map(|(reference, _)| snapshot.relation_detail(reference).unwrap())
                 .collect::<Vec<_>>()
         };
         let snake_details = details(&snake);
@@ -1757,11 +1901,11 @@ mod tests {
         assert_eq!(
             snake_details
                 .iter()
-                .map(|detail| detail.key.clone())
+                .map(|detail| detail.identity.clone())
                 .collect::<Vec<_>>(),
             circle_details
                 .iter()
-                .map(|detail| detail.key.clone())
+                .map(|detail| detail.identity.clone())
                 .collect::<Vec<_>>(),
             "view-local visibility keys do not inherit dense table identity"
         );
@@ -1771,11 +1915,119 @@ mod tests {
                 && !detail.authority.is_empty()
                 && detail.weight > 0
         }));
+        assert!(snake_details.iter().any(|detail| {
+            detail.authority == "Set"
+                && matches!(&detail.identity, StageRelationIdentity::SetSequence { .. })
+        }));
+    }
+
+    #[test]
+    fn stage_projection_preserves_duplicate_same_kind_claims_and_inverse_source_identity() {
+        let forward_set = set_of(&[("major", chord("Major")), ("dominant", chord("Dominant 7"))]);
+        let forward = stage_scene(&forward_set, &StageSceneOptions::default());
+        let forward_claims = forward
+            .relations()
+            .into_iter()
+            .filter_map(|(reference, route)| {
+                (route.kind.as_deref() == Some("woodshed:used-together"))
+                    .then(|| forward.relation_detail(reference).unwrap())
+            })
+            .collect::<Vec<_>>();
         assert!(
-            snake_details
-                .iter()
-                .any(|detail| detail.authority == "Set" && detail.key.kind == SEQUENCE_KIND)
+            forward_claims.len() >= 2,
+            "the same pair has multiple independent UsedTogether reasons"
         );
+        let claim_ids = forward_claims
+            .iter()
+            .filter_map(|detail| detail.source.generated_claim().map(|(id, _)| id.clone()))
+            .collect::<BTreeSet<_>>();
+        assert_eq!(claim_ids.len(), forward_claims.len());
+        let progression_sources = forward_claims
+            .iter()
+            .filter_map(
+                |detail| match detail.source.generated_claim()?.1.evidence.as_slice() {
+                    [
+                        woodshed_graph::GeneratedEvidenceRef::ProgressionAdjacency {
+                            progression_id,
+                            ..
+                        },
+                    ] => Some(progression_id.clone()),
+                    _ => None,
+                },
+            )
+            .collect::<BTreeSet<_>>();
+        assert_eq!(progression_sources.len(), forward_claims.len());
+        for detail in &forward_claims {
+            let (claim_id, provenance) = detail.source.generated_claim().unwrap();
+            assert_eq!(
+                &detail.identity,
+                &StageRelationIdentity::Generated {
+                    claim_id: claim_id.clone(),
+                    from_occurrence: forward_set.cards[0].id,
+                    to_occurrence: forward_set.cards[1].id,
+                }
+            );
+            assert_eq!(provenance.original_kind, RelationKind::UsedTogether);
+            assert_eq!(provenance.original_from, "chord:Major");
+            assert_eq!(provenance.original_to, "chord:Dominant 7");
+            assert_eq!(detail.authority, "Catalog");
+        }
+
+        let inverse_set = set_of(&[("dominant", chord("Dominant 7")), ("major", chord("Major"))]);
+        let inverse = stage_scene(&inverse_set, &StageSceneOptions::default());
+        let inverse_claims = inverse
+            .relations()
+            .into_iter()
+            .filter_map(|(reference, route)| {
+                (route.kind.as_deref() == Some("woodshed:used-together"))
+                    .then(|| inverse.relation_detail(reference).unwrap())
+            })
+            .collect::<Vec<_>>();
+        let inverse_ids = inverse_claims
+            .iter()
+            .filter_map(|detail| detail.source.generated_claim().map(|(id, _)| id.clone()))
+            .collect::<BTreeSet<_>>();
+        assert_eq!(
+            claim_ids, inverse_ids,
+            "inverse display keeps source claim IDs"
+        );
+        assert!(inverse_claims.iter().all(|detail| {
+            let exact_occurrences = matches!(&detail.identity, StageRelationIdentity::Generated {
+                from_occurrence,
+                to_occurrence,
+                ..
+            } if *from_occurrence == inverse_set.cards[0].id && *to_occurrence == inverse_set.cards[1].id);
+            let (_, provenance) = detail.source.generated_claim().unwrap();
+            exact_occurrences
+                && provenance.original_from == "chord:Major"
+                && provenance.original_to == "chord:Dominant 7"
+        }));
+    }
+
+    #[test]
+    fn stage_relation_identity_changes_when_the_underlying_generated_source_changes() {
+        let mut set = set_of(&[("left", chord("Major")), ("right", chord("Dominant 7"))]);
+        let before = stage_scene(&set, &StageSceneOptions::default());
+        let before_ids = before
+            .relations()
+            .into_iter()
+            .filter_map(|(reference, _)| {
+                let detail = before.relation_detail(reference)?;
+                detail.source.generated_claim().map(|(id, _)| id.clone())
+            })
+            .collect::<BTreeSet<_>>();
+        set.cards[1].material = chord("Minor");
+        let after = stage_scene(&set, &StageSceneOptions::default());
+        let after_ids = after
+            .relations()
+            .into_iter()
+            .filter_map(|(reference, _)| {
+                let detail = after.relation_detail(reference)?;
+                detail.source.generated_claim().map(|(id, _)| id.clone())
+            })
+            .collect::<BTreeSet<_>>();
+        assert_ne!(before_ids, after_ids);
+        assert!(before_ids.is_disjoint(&after_ids));
     }
 
     #[test]

@@ -319,6 +319,12 @@ pub struct PersistedSession {
     /// cannot mutate the retained musical material.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub overview_presentation_json: Option<String>,
+    /// Session-owned personal relation assertions. The journal, not a cached
+    /// graph projection, is the authority for retained assertion lifecycle.
+    /// Missing in legacy sessions; the trusted host assigns and persists a
+    /// source UUID before enabling personal relation writes.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub personal_relations: Option<crate::personal_relations::PersistedPersonalRelationJournal>,
 }
 
 impl Default for PersistedSession {
@@ -356,6 +362,7 @@ impl PersistedSession {
             workspace_json: None,
             relationship_reading_json: None,
             overview_presentation_json: None,
+            personal_relations: None,
             section,
             lens: stage.lens,
             root_idx: stage.root_idx,
