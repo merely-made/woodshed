@@ -1,6 +1,6 @@
 # Native project and handoff acceptance
 
-Status (2026-10-16): in progress at source e4ddb67, after coordinated lock intake.
+Status (2026-10-16): bounded native acceptance complete at fd4663a, after coordinated lock intake.
 
 ## Feature target and done conditions
 
@@ -37,3 +37,26 @@ opt-in to the real OS clipboard while retaining device-free audio. Default
 appearance receipts remain clipboard-isolated. This failed probe is excluded
 from acceptance counts. Native filename edits require leaving the field before
 Save; the first path-edit probe was also retained separately.
+
+2026-10-16 final result: two committed-source native processes pass with seven
+reviewed captures at 1180×980 and 960×980. Actual rfd dialogs perform initial
+Save, Open, WAV export, signed handoff write and authenticated receive. Same-
+session acceptance retains a divergent local history branch; the fresh process
+reviews/discards/adopts a new session, saves it, then opens the original saved
+project with exact bundle, history, media identity and all 48,000 PCM float bits.
+Both native stereo WAV exports are byte-identical to the portable reference.
+Compressed archive media and original fixtures are unchanged.
+
+Capture review found compact toolbar label overflow during long statuses. Whole
+controls now wrap rather than their labels; the complete pair was rerun after
+that correction. Status labels still truncate by design. Receipt-directory
+launcher and clipboard probes are excluded from final counts and retained.
+
+Locked offline Hocket workspace tests pass 116 distinct cases, with two opt-in
+tests ignored; the explicit deterministic fixture generator separately passes.
+All-target checking and desktop build pass. The real isolated synthetic Keeper
+was stopped after the runs. No pins, manifests, lockfiles or formats changed.
+Evidence: `../../../validation/hocket-native-project_20261016/receipt.json`, with
+retained external captures and reproducible metadata/file verification. This
+qualifies self-addressed local project/handoff workflow only. Two-peer/network
+transfer, signed per-turn operations and physical audio remain outside scope.

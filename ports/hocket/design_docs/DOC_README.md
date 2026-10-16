@@ -11,9 +11,9 @@ before any other doc in this directory.
 
 ## Active Plans
 
-- [2026-10-16_native_project_handoff_plan.md](2026-10-16_native_project_handoff_plan.md) — Native file-dialog save/open/export and self-addressed handoff acceptance, isolated custody and fresh-process project reopening.
+- [2026-10-16_native_project_handoff_plan.md](2026-10-16_native_project_handoff_plan.md) — Accepted bounded native save/open/export and self-addressed handoff workflow: two processes, seven reviewed captures, exact project/history/media reopening and WAV parity. Physical audio and two-peer transport remain separate.
 
-- [2026-10-16_project_worker_correlation_plan.md](2026-10-16_project_worker_correlation_plan.md) — Implemented and CPU/build qualified: request/session-scoped admission, explicit busy state and stale-reply rejection; 116 tests, all-target checks and desktop build pass. Native handoff qualification remains separate.
+- [2026-10-16_project_worker_correlation_plan.md](2026-10-16_project_worker_correlation_plan.md) — Implemented and CPU/build qualified: request/session-scoped admission, explicit busy state and stale-reply rejection; 116 tests, all-target checks and desktop build pass. Native self-addressed handoff follow-through is recorded in the native project plan above.
 
 - [2026-10-11_firewheel_adoption_plan.md](2026-10-11_firewheel_adoption_plan.md) —
   **Consumer/native regression accepted; physical audio open.** Standalone

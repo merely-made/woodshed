@@ -1,0 +1,217 @@
+{
+  "date": "2026-10-16",
+  "status": "bounded-native-project-handoff-accepted",
+  "source": {
+    "revision": "fd4663a5de8dbf873c77ae18e0de5c8634be1b23",
+    "binary": "/Users/markik/Code/testing/hocket/project-handoff-20261016/frozen/hocket-genet-fd4663a",
+    "binary_sha256": "7b3b5ede9815252a7c7e5f84e7763a77f3f5bdade8291b7b975eb1810ffd6657",
+    "lock_sha256": "a55536801bf3883c0defb1541a19026bd70ee90829d8bc45498b49ca5ced9624"
+  },
+  "source_hashes": {
+    "ports/hocket/Cargo.toml": "f1288749deb69bd3038b4edd8723834e57bbb6e465c48d72189a1bfa33c2bcc8",
+    "ports/hocket/Cargo.lock": "a55536801bf3883c0defb1541a19026bd70ee90829d8bc45498b49ca5ced9624",
+    "ports/hocket/crates/hocket-genet/src/state.rs": "f36b056a95c7308b776a6350888f10e44c77c763f14df908b5f42e2164e62863",
+    "ports/hocket/crates/hocket-genet/src/scenario.rs": "a3679354ebc32038d6e01a2b2cadd95a9b5af08e8e6572c544b3173f90fe0e14",
+    "ports/hocket/crates/hocket-genet/src/theme.rs": "253e39dfd86551b5f0cad9fcec8406dc67608212d9773f9a8184ec3cf85c779f",
+    "ports/hocket/crates/hocket-genet/src/project_io.rs": "c1a5b312406d9eac08e495533516f71cf10787edc8d5939b120a57811cf5a872",
+    "ports/hocket/scenarios/project_native_seed.scn": "acd3f8e3e7d2a17c8d1514ea4281de8707d0e7a3a9a3835441889ec882f92175",
+    "ports/hocket/scenarios/project_native_reopen.scn": "63ba7879e6a1e45b929a57dd45995f3c273f8ee3a14bb8b5b30760f8bc42c863"
+  },
+  "artifact_root": "/Users/markik/Code/testing/hocket/project-handoff-20261016",
+  "checks": {
+    "workspace_tests": {
+      "passed": 116,
+      "ignored": 2,
+      "breakdown": {
+        "engine_unit": 36,
+        "engine_integration": 3,
+        "host": 75,
+        "headless_demo": 2
+      }
+    },
+    "fixture_generator": {
+      "passed": 1,
+      "command": "cargo test --locked --offline -p hocket-genet project_io::tests::prepare_native_project_fixture -- --ignored --exact"
+    },
+    "all_targets": "cargo check --locked --offline --workspace --all-targets: passed",
+    "desktop": "cargo build --locked --offline -p hocket-genet: passed",
+    "warnings": [
+      "existing unused update::UpdateSettingsProvider::path",
+      "unused patch rows; no lock changes"
+    ]
+  },
+  "native": {
+    "qualified_processes": 2,
+    "captures_reviewed": 7,
+    "logical_viewports": [
+      [
+        1180,
+        980
+      ],
+      [
+        960,
+        980
+      ]
+    ],
+    "dialog_operations": {
+      "seed": [
+        "Save blank.hock",
+        "Open project.hock",
+        "Export seed.wav",
+        "Write signed pass.hocket",
+        "Receive pass.hocket"
+      ],
+      "reopen": [
+        "Receive pass.hocket, discard",
+        "Receive pass.hocket, adopt",
+        "Save adopted.hock",
+        "Open project.hock",
+        "Export reopen.wav"
+      ]
+    },
+    "controls": "retained native controls; real rfd file dialogs selected through CUA; metadata-only scenario observation hooks",
+    "seed": "save 5 tracks/3 history nodes; hand off; diverge to 6 tracks/4 nodes; stage without mutation; accept 5 tracks retaining 4 nodes; save",
+    "reopen": "review new session while original 4 tracks remain, discard, receive again and adopt, save, reopen final project and export",
+    "capture_review": "all seven nonblank captures inspected; waveform, review summary, Accept/Discard and transport visible. Compact long-status toolbar wraps whole controls; no label overflow after correction. Status text remains intentionally truncated. Appearance device-free diagnostic can truncate."
+  },
+  "verification": {
+    "exact_bundle_reopen": true,
+    "exact_adopted_bundle": true,
+    "history_branch_retained": true,
+    "pcm_bits_exact": true,
+    "frames": 48000,
+    "sample_rate": 48000,
+    "compressed_media_identical": {
+      "fixtures/fixture.hock": {
+        "media/42141885a0bcdc07c1ee5e45d14b10bf5427e5d3490553cbc7c3a7c72e8dd712.wv": "416ab23ab6bcfe0b0d4c3cb09d13b8e500c08c3e938208792c7c8ca0524792b6"
+      },
+      "project.hock": {
+        "media/42141885a0bcdc07c1ee5e45d14b10bf5427e5d3490553cbc7c3a7c72e8dd712.wv": "416ab23ab6bcfe0b0d4c3cb09d13b8e500c08c3e938208792c7c8ca0524792b6"
+      },
+      "adopted.hock": {
+        "media/42141885a0bcdc07c1ee5e45d14b10bf5427e5d3490553cbc7c3a7c72e8dd712.wv": "416ab23ab6bcfe0b0d4c3cb09d13b8e500c08c3e938208792c7c8ca0524792b6"
+      }
+    },
+    "fixtures_unchanged": true,
+    "wav_sha256": "53d8691ff8cfd00deb2a377e88a34b7beae6586c0d6508daaa416f7ccda05baa",
+    "wav_bytes": 384068,
+    "public_identity": "ed6a47a39da869b5446155e40b2d93f1e3f0167be26732bae7a3ef9d8e3a3fd3",
+    "captures": [
+      {
+        "path": "/Users/markik/Code/testing/hocket/project-handoff-20261016/qualified-seed/01_saved.png",
+        "sha256": "d7e8b4d84f3a465cefd1c6d21cc8eeefd123c949ec5b52d2b3d8a83799bcad62",
+        "pixels": [
+          2360,
+          1960
+        ]
+      },
+      {
+        "path": "/Users/markik/Code/testing/hocket/project-handoff-20261016/qualified-seed/02_staged.png",
+        "sha256": "eec1d44762b016d430bf15314398727f895e31972ac78d371c913f49b3659a09",
+        "pixels": [
+          2360,
+          1960
+        ]
+      },
+      {
+        "path": "/Users/markik/Code/testing/hocket/project-handoff-20261016/qualified-seed/03_accepted.png",
+        "sha256": "1b25f1b53629d28bda6f6e01fafed5fe108ab4e29704f213ec11be1f87e5521e",
+        "pixels": [
+          2360,
+          1960
+        ]
+      },
+      {
+        "path": "/Users/markik/Code/testing/hocket/project-handoff-20261016/qualified-reopen/01_new_session_review.png",
+        "sha256": "2f77c4824d9396cdd3a106a7ad0eba42922d46d971fb92a78352b6e7375431aa",
+        "pixels": [
+          1920,
+          1960
+        ]
+      },
+      {
+        "path": "/Users/markik/Code/testing/hocket/project-handoff-20261016/qualified-reopen/02_adopted.png",
+        "sha256": "6f33214620a194ac6d153c73ea414ce2324f095ef89b3b5753be9093e2568462",
+        "pixels": [
+          1920,
+          1960
+        ]
+      },
+      {
+        "path": "/Users/markik/Code/testing/hocket/project-handoff-20261016/qualified-reopen/03_reopened.png",
+        "sha256": "8220f17654bb8fd983408569c7a5650bf5a5a365ce8e0400a0689a8b36fb6271",
+        "pixels": [
+          1920,
+          1960
+        ]
+      },
+      {
+        "path": "/Users/markik/Code/testing/hocket/project-handoff-20261016/qualified-reopen/04_exported.png",
+        "sha256": "9af69887a5008142037696803e8f8febd99badcf0d9391c67fd2bac9911ccf1a",
+        "pixels": [
+          1920,
+          1960
+        ]
+      }
+    ]
+  },
+  "custody": {
+    "backend": "real isolated synthetic passphrase-protected Keeper, public test identity",
+    "helper": "/Users/markik/Code/testing/woodshed/link-model-p3-20261016/frozen-keeper-ee324e517/dr-c-receipt-host",
+    "endpoint": "/tmp/hk-project-20261016.sock",
+    "native_receive_checks": "product HandoffEnvelope::receive verified recipient, sender derived-key attestation, envelope signature, session identity and media references",
+    "stopped": true
+  },
+  "artifacts": {
+    "blank.hock": {
+      "bytes": 715,
+      "sha256": "bd153e615aa561ce48f04a01ecf70f0d53fbdfcd809b6e7dc964c01b39d8697e"
+    },
+    "project.hock": {
+      "bytes": 1813,
+      "sha256": "d9bf5dfa90b39c5bbc2310c0fd66a2a0e37a4e317debaae2968d0a93748f93ac"
+    },
+    "adopted.hock": {
+      "bytes": 1746,
+      "sha256": "15e2d1328a733b0733fe146094720933f9dfdd23b59f95be1925e9b58b47c5d5"
+    },
+    "pass.hocket": {
+      "bytes": 146140,
+      "sha256": "2af7f75fa403c6b7f8ba7c20cea06566e957095725fa7e386c595a2d315f36fe"
+    },
+    "seed.wav": {
+      "bytes": 384068,
+      "sha256": "53d8691ff8cfd00deb2a377e88a34b7beae6586c0d6508daaa416f7ccda05baa"
+    },
+    "reopen.wav": {
+      "bytes": 384068,
+      "sha256": "53d8691ff8cfd00deb2a377e88a34b7beae6586c0d6508daaa416f7ccda05baa"
+    },
+    "fixtures/fixture.hock": {
+      "bytes": 1656,
+      "sha256": "e27bb0a20ecff88316e1d7b01ec2169fad67722df89f2da93a5cd6220f1aef82"
+    },
+    "fixtures/fixture.json": {
+      "bytes": 4040,
+      "sha256": "60d3f56059ce2746ec7789a01ec733ce461e7b05ab98e0998c3461aa622b1eab"
+    },
+    "fixtures/reference.wav": {
+      "bytes": 384068,
+      "sha256": "53d8691ff8cfd00deb2a377e88a34b7beae6586c0d6508daaa416f7ccda05baa"
+    }
+  },
+  "excluded_probes": [
+    "initial path-edit Save stall; worker sampled blocked in file open; terminated own process",
+    "device-free appearance disabled clipboard, so handoff controls unavailable; corrected explicit opt-in",
+    "overwritten frozen binary launch timeouts; new immutable path launched successfully",
+    "first toolbar rerun launcher retained old capture directory, checkpoints refused overwrite; corrected and reran entire pair",
+    "CUA observation auto-relaunched completed reopen app; extra process stopped without acceptance count"
+  ],
+  "limits": [
+    "self-addressed local handoff, not two peers or network delivery",
+    "cleartext handoff carrier, not encrypted transport",
+    "device-free output; no microphone, listening, latency or physical audio claim",
+    "no signed per-turn operations or wire/storage format changes",
+    "no dependency pins, manifests or lockfiles changed"
+  ]
+}
