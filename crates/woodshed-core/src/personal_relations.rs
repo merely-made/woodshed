@@ -224,10 +224,10 @@ impl PersonalRelationSource {
             .ok_or_else(|| PersonalRelationError::UnknownEndpoint(to.to_owned()))?;
 
         let mut edits = Vec::new();
-        if self.graph.graph().key_of(from).is_none() {
+        if self.graph.graph().key_of(&from.to_owned()).is_none() {
             edits.push(EditSpec::InsertNode(from_node));
         }
-        if from != to && self.graph.graph().key_of(to).is_none() {
+        if from != to && self.graph.graph().key_of(&to.to_owned()).is_none() {
             edits.push(EditSpec::InsertNode(to_node));
         }
         edits.push(EditSpec::Assert {
