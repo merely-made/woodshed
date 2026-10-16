@@ -157,6 +157,28 @@ change is integrated, use
 The temporary patch keeps the scene contract, compiler, authoring and timing
 crates in one cohort without committing local dependency paths.
 
+## Portable progression templates
+
+With `portable-scenes`, `progression_scene::progression_scene(&stage, &song,
+reading_id)` presents the selected progression's relative roles and a supplied
+`SongDoc` arrangement separately. Each role aligns by ordinal to one song
+block; blocks retain their beats, bar lengths, tempo disclosure and rests.
+Relative roles survive transposition while concrete chord identities change.
+The function borrows both sources and performs no playback or harmonic analysis.
+
+```sh
+cargo run --features portable-scenes -p woodshed-core --bin woodshed-progression-scene -- \
+  C 'ii-V-I (Jazz)' 100 1,1,2 progression.scene.json
+```
+
+The block lengths above give ii and V one bar each, and I two bars. Graphshell's
+Portable scenes includes exports of this arrangement in C and G alongside
+metre. The shared template owns lanes, nested groups, tick spans, expected
+slots and supplied occurrence alignments. Woodshed owns the chord meaning.
+The adapter currently requires one song block per role; arbitrary role-to-song
+mapping and native progression panels remain separate work. Use the local
+scene-cohort helper above until the shared API is integrated and repinned.
+
 ## License
 
 MPL-2.0. See [LICENSE](LICENSE).
