@@ -1,0 +1,108 @@
+{
+  "schema": "woodshed.opened-link-qualification/v1",
+  "date": "2026-10-16",
+  "source_revision": "374c75d0c8569b262f73e9ffb6786d2b482f5899",
+  "baseline": "aba2c7343cda147983dd0c770806204fbe6260df",
+  "includes_concurrent_main": "f83d4da",
+  "mere_revision": "ee324e517d501653aee8df7d5a430760a74749c0",
+  "source_qualification": {
+    "result": "passed",
+    "root_suite_cases": 784,
+    "fresh_process_child_invocations": 5,
+    "ignored": 7,
+    "packages": {
+      "woodshed-audio": 158,
+      "woodshed-core": 248,
+      "woodshed-core/stage_backdrop": 1,
+      "woodshed-genet": 168,
+      "woodshed-graph": 18,
+      "woodshed-views": 191
+    },
+    "desktop_build": "passed",
+    "verified": [
+      "persistent personal source UUID and assertion IDs",
+      "exact owner endpoints held state generation and source checks",
+      "uncertain save revokes session write capability",
+      "generated reasons remain read-only",
+      "complete unordered pair read independent of canvas filtering",
+      "eleven real progression adjacency reasons preserve original direction and full provenance",
+      "Set and Related generated edge selections open shared swatch",
+      "ordered before/after request and worker scheduling; Set unchanged",
+      "legacy session deserialization and concurrent canonical-clock code retained"
+    ]
+  },
+  "native_qualification": {
+    "result": "pending",
+    "reason": "Mac locked before first native launch; manual unlock requested",
+    "native_authoring_verified": false,
+    "native_audition_dispatch_verified": false,
+    "native_fresh_process_sealed_reopen_verified": false,
+    "reviewed_native_captures": 0,
+    "planned_viewport": [
+      1100,
+      900
+    ],
+    "frozen_binary_sha256": "adb958b76c8228e1ca450794cab7b7479202896e9fe7ea34f31f247f7597d18c",
+    "external_launches": [
+      "/Users/markik/Code/testing/woodshed/link-model-p3-20261016/native-seed-v1/launch.json",
+      "/Users/markik/Code/testing/woodshed/link-model-p3-20261016/native-reopen-v1/launch.json"
+    ]
+  },
+  "custody_fixture": {
+    "kind": "real isolated djinn Keeper and sealed deterministic public test persona; no user vault",
+    "supplier_source": "ee324e517",
+    "root": "/Users/markik/Code/testing/woodshed/link-model-p3-20261016/keeper-v1",
+    "endpoint": "/tmp/ws-link-p3-20261016-a.sock",
+    "ready": "unlocked",
+    "native_app_not_yet_started": true
+  },
+  "iterations": [
+    "initial compiler API and borrow fixes preserved externally",
+    "Stage fixture corrected to actual catalog pair and full adjacency occurrences",
+    "source review found and removed pair-plus-kind collapse in WoodshedMereSnapshot",
+    "opened pair source separated from unrelated canvas filter",
+    "provenance fixture uses actual ii-V-I (Jazz) catalog ID"
+  ],
+  "outside_scope": [
+    "full P4f musical exploration",
+    "physical audio quality and hardware certification",
+    "nested port qualification",
+    "Mere P4 P6 P7 and automatic resident synchronization"
+  ],
+  "source_sha256": {
+    "Cargo.lock": "76d16e3367a7f23b56a6a6da608e369b8edca17d9ff22acc598c8af11b968e61",
+    "crates/woodshed-audio/src/chord_audio.rs": "934aa382bdeafbc368012253193ec06faa3cf82364d58d6324dd2aff37a7ab8d",
+    "crates/woodshed-audio/src/output_runtime.rs": "adaa8f6f326851313ff7808c002325f827ec0234612576908e50871e334390cc",
+    "crates/woodshed-audio/src/output_runtime/preview.rs": "cf3ededb70f9b0f2af56d3d56b3ba06bcdc4499edd148a7212cc161a841df0b5",
+    "crates/woodshed-core/src/audio.rs": "1b284ac61e9da23417cd853a04a970a7c73a3e1ac31b70f81cd1b1e33ea2f3c0",
+    "crates/woodshed-core/src/lib.rs": "ed0fdbe16fb5e695dabbb4afc6325034a31a5ede0a8b57880e7f59c944dc5f0a",
+    "crates/woodshed-core/src/mere.rs": "452aa9870ca86b1a8edfbc2b8a533d3a57e80aed55ee9cfbac353e81b65952e5",
+    "crates/woodshed-core/src/personal_relations.rs": "db19eba6cfeb68e1f560dbead69243430fb38cd886d8c1868992784d0517e9c2",
+    "crates/woodshed-core/src/stage_scene.rs": "52e65419df9c7a431132b40792aa8540f61467eccd995b94d147e097ef6019b5",
+    "crates/woodshed-core/src/storage.rs": "06c01f9c9d829d1d28dd9ab68694a384c03883ea66eb07a13121fd42d6220cc4",
+    "crates/woodshed-genet/src/audio.rs": "8b2eb57e2d333b716ef7da2dfdf2e5af9828a6921a4edb09e65126856e938fd9",
+    "crates/woodshed-genet/src/main.rs": "5cf51a21e9e7ee0cd8fc0c5c25fdc60c66d37a67d77e2a9a4c0e3cca8d56c536",
+    "crates/woodshed-genet/src/persona.rs": "6eab8db25151c6139c29df55ee7effe45e0a57a8a98396d77c0fdd2cd24ad093",
+    "crates/woodshed-genet/src/scenario.rs": "963e5204aecb6ffd9dd772f35a4f34ad0f6a2c2466e2620013ac86aceb687f34",
+    "crates/woodshed-genet/src/session.rs": "d88bc6b2eb33b0f637bc67eb36b74d699386c8d8f3b60c8cf3be44f92aacb7c2",
+    "crates/woodshed-genet/src/shared.rs": "ef258cff198a8bc83c3431a96392358029ee4213a4c1b2d8e8cc8460e1837f74",
+    "crates/woodshed-genet/src/storage.rs": "4d215bf39fd3ce60fb8c22239e1601322c165d4febc2955b03c0e950ab6e244a",
+    "crates/woodshed-genet/src/sync.rs": "d5e6388ed90d33b15c4a4258986a7619acfe36e9c185bf9d4148041f0ba689b3",
+    "crates/woodshed-graph/src/lib.rs": "0e1bb09a1b0161f93e06788fab237385a1b2dc76f95d3e59366fd23e5ae58c9e",
+    "crates/woodshed-views/src/stage.rs": "5671559d84f941c5c66686a6e8cc339a1c2f3e2059b752f1fe7df16d516f79e5",
+    "crates/woodshed-views/src/stage/related.rs": "eff641916b5d12f417a59284da55eda2068c691b7aa2d3e7af36299eeda4e076",
+    "crates/woodshed-views/src/stage/set_tray.rs": "2e4254bc9d6cf3845024c4b0adc9112346a17187c68691485a153e86d838d4d3",
+    "crates/woodshed-views/src/theme.rs": "91dba416b4c016ca0f2bf6e7da761b819ef90938f6512c9a88e9724264ec0bd1",
+    "scenarios/claims_reopen.scn": "15d332b6260e5266d0a1ceea5307c94ec14c2f551cb96432ad15f08be26b9bea",
+    "scenarios/claims_seed.scn": "2976206c41eb2591c003c4be63b12ab0df57a188deae6972f70023f20fa8ce68"
+  },
+  "artifact_sha256": {
+    "qualified-final-tests.log": "686335be512177874de170bd420007baca15e7d51b9256ef86f67ee459937117",
+    "doc-audit-precommit.json": "478e05cdb9dd46eba52cffe619b3c7df6194c0a8f3a18c638450ad40a656b0e3",
+    "lock-delta.json": "49a4d566a10b42433bbd2026b6eb7e3e39e1f2e88cf67872935527f9dae75c27",
+    "keeper-before.json": "6d6198bc4d1e127a0d28bff85855dc234427661b41f0d6207de071d9ada2a989",
+    "qualified-build.log": "ae54c2733e8439a1744ac84490652b462a8ca149ee5ecd949e9518ba72322123",
+    "doc-audit-final.json": "478e05cdb9dd46eba52cffe619b3c7df6194c0a8f3a18c638450ad40a656b0e3"
+  },
+  "external_evidence": "/Users/markik/Code/testing/woodshed/link-model-p3-20261016"
+}

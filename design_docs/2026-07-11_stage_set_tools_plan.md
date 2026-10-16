@@ -54,6 +54,24 @@ controls, reviewed native captures, and a separate fresh-process reopen. These
 gates advance the bounded P3 flow without declaring all P4f musical exploration,
 hardware output or the whole Stage plan complete.
 
+**Source qualification (2026-10-16):** `374c75d` includes refreshed main
+`f83d4da` and passes 784 affected suite cases, seven existing ignores and five
+additional fresh-process child invocations. The locked offline desktop build
+passes. The [receipt](../validation/link-model-p3_20261016/receipt.json) records
+source hashes, package counts and the preserved dependency-family pins.
+The complete pair reader is independent of the canvas lens/depth filter;
+all eleven real Minor/Major adjacency claims retain source IDs, direction and
+progression/role evidence. Selecting generated edges in Set or Related opens
+the shared reader. Sequence/context details retain their existing sources.
+The old compact summaries and `StageRelationKey`/`SetGraphRelationChoice`
+helpers are removed. Generated evidence references use stable predicate keys.
+
+**Native gate still open:** the Mac locked before the first launch. An isolated
+real Keeper fixture and the exact source-hashed executable are ready, but no
+native authoring/audition capture or fresh-process sealed reopen is claimed yet.
+The personal-intent transaction tests prove admission and failure handling;
+they do not substitute for that receiving-host observation.
+
 > **2026-08-10 — the gate is open.** The scenograph scene contract this plan
 > gates on ("what remains is the freeze, not the proof") froze 2026-07-24 at
 > 0.0.3: emphasis channels and a default pick added, intents stay
