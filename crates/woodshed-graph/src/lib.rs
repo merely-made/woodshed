@@ -1632,7 +1632,7 @@ mod tests {
 
     #[test]
     fn relations_carry_the_authority_that_produced_them() {
-        let contains = relations_between(&progression_id("ii-V-I"), &chord_id("Minor 7"))
+        let contains = relations_between(&progression_id("ii-V-I (Jazz)"), &chord_id("Minor 7"))
             .into_iter()
             .find(|relation| relation.kind == RelationKind::ContainsMaterial)
             .expect("the progression's graph edge is retained as a catalog claim");
@@ -1640,7 +1640,7 @@ mod tests {
         assert_eq!(
             contains.provenance.evidence,
             vec![GeneratedEvidenceRef::CatalogRelation {
-                from: progression_id("ii-V-I"),
+                from: progression_id("ii-V-I (Jazz)"),
                 to: chord_id("Minor 7"),
                 kind: RelationKind::ContainsMaterial,
             }]
