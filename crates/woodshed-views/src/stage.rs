@@ -104,6 +104,19 @@ pub fn related_mere_snapshot(ui: &UiState) -> WoodshedMereSnapshot {
     }
 }
 
+/// Generated source facts for an opened assertion pair, independent of the
+/// Related canvas's current lens and depth filter. A depth-one catalog
+/// neighborhood contains all source relations between the directed endpoints.
+pub fn opened_claims_mere_snapshot(ui: &UiState, from: &str) -> WoodshedMereSnapshot {
+    woodshed_mere(
+        &ui.practice_history,
+        MereScope::Selection {
+            center: from,
+            depth: 1,
+        },
+    )
+}
+
 pub fn related_swatch_from_snapshot(
     snapshot: &WoodshedMereSnapshot,
     ui: &UiState,

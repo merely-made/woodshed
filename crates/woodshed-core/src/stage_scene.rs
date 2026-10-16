@@ -1942,23 +1942,47 @@ mod tests {
             .filter_map(|detail| detail.source.generated_claim().map(|(id, _)| id.clone()))
             .collect::<BTreeSet<_>>();
         assert_eq!(claim_ids.len(), forward_claims.len());
-        let progression_sources = forward_claims
-            .iter()
-            .filter_map(
-                |detail| match detail.source.generated_claim()?.1.evidence.as_slice() {
-                    [
-                        woodshed_graph::GeneratedEvidenceRef::ProgressionAdjacency {
-                            progression_id,
-                            ..
-                        },
-                    ] => Some(progression_id.clone()),
-                    _ => None,
-                },
-            )
-            .collect::<BTreeSet<_>>();
-        assert_eq!(progression_sources.len(), forward_claims.len());
+        let mut evidence_identities = BTreeSet::new();
+        let mut progression_sources = BTreeSet::new();
+        let mut source_by_claim = BTreeMap::new();
         for detail in &forward_claims {
             let (claim_id, provenance) = detail.source.generated_claim().unwrap();
+            let [
+                woodshed_graph::GeneratedEvidenceRef::ProgressionAdjacency {
+                    progression_id,
+                    left_role_ordinal,
+                    right_role_ordinal,
+                },
+            ] = provenance.evidence.as_slice()
+            else {
+                panic!("each catalog adjacency has one exact progression reason");
+            };
+            progression_sources.insert(progression_id.clone());
+            assert!(
+                evidence_identities.insert((
+                    provenance.original_from.clone(),
+                    provenance.original_to.clone(),
+                    progression_id.clone(),
+                    *left_role_ordinal,
+                    *right_role_ordinal,
+                )),
+                "each adjacency occurrence has its own source identity"
+            );
+            assert!(
+                (provenance.original_from == "chord:Minor"
+                    && provenance.original_to == "chord:Major")
+                    || (provenance.original_from == "chord:Major"
+                        && provenance.original_to == "chord:Minor"),
+                "both real source directions may occur in the selected pair"
+            );
+            source_by_claim.insert(
+                claim_id.qualified_key(),
+                (
+                    provenance.original_from.clone(),
+                    provenance.original_to.clone(),
+                    provenance.evidence.clone(),
+                ),
+            );
             assert_eq!(
                 &detail.identity,
                 &StageRelationIdentity::Generated {
@@ -1968,10 +1992,10 @@ mod tests {
                 }
             );
             assert_eq!(provenance.original_kind, RelationKind::UsedTogether);
-            assert_eq!(provenance.original_from, "chord:Minor");
-            assert_eq!(provenance.original_to, "chord:Major");
             assert_eq!(detail.authority, "Catalog");
         }
+        assert_eq!(evidence_identities.len(), forward_claims.len());
+        assert!(progression_sources.len() >= 2);
 
         let inverse_set = set_of(&[("major", chord("Major")), ("minor", chord("Minor"))]);
         let inverse = stage_scene(&inverse_set, &StageSceneOptions::default());
@@ -1991,16 +2015,28 @@ mod tests {
             claim_ids, inverse_ids,
             "inverse display keeps source claim IDs"
         );
+        let inverse_source_by_claim = inverse_claims
+            .iter()
+            .filter_map(|detail| {
+                let (claim_id, provenance) = detail.source.generated_claim()?;
+                Some((
+                    claim_id.qualified_key(),
+                    (
+                        provenance.original_from.clone(),
+                        provenance.original_to.clone(),
+                        provenance.evidence.clone(),
+                    ),
+                ))
+            })
+            .collect::<BTreeMap<_, _>>();
+        assert_eq!(source_by_claim, inverse_source_by_claim);
         assert!(inverse_claims.iter().all(|detail| {
             let exact_occurrences = matches!(&detail.identity, StageRelationIdentity::Generated {
                 from_occurrence,
                 to_occurrence,
                 ..
             } if *from_occurrence == inverse_set.cards[0].id && *to_occurrence == inverse_set.cards[1].id);
-            let (_, provenance) = detail.source.generated_claim().unwrap();
             exact_occurrences
-                && provenance.original_from == "chord:Minor"
-                && provenance.original_to == "chord:Major"
         }));
     }
 
