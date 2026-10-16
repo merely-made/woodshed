@@ -870,6 +870,7 @@ pub(super) fn panel(ui: &UiState) -> UiChild {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use std::collections::BTreeSet;
     use woodshed_core::personal_relations::{
         AssertionBasis, PersonalRelationSource, PersonalRelationSourceId, Relation,
     };
