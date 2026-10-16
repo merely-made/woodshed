@@ -55,3 +55,8 @@ portable-scenes = ["dep:scenomise", "dep:blake3"]
 name = "woodshed-fretboard-scene"
 path = "src/bin/woodshed-fretboard-scene.rs"
 required-features = ["portable-scenes"]
+
+[[bin]]
+name = "woodshed-progression-scene"
+path = "src/bin/woodshed-progression-scene.rs"
+required-features = ["portable-scenes"]
