@@ -1,0 +1,5 @@
+RESULT ok
+captured 01_reopened_set_and_voicing
+capture 01_reopened_set_and_voicing 2360x1800 digest=3fedd855c8896af3 file=/Users/markik/Code/testing/woodshed/stage-p4f-20261016/native-v4/reopen/01_reopened_set_and_voicing.png
+frames: 1 captured, 0 blank, 1 distinct digests
+presentation: 110 frames, 111 redraws, 1 unpresented redraws

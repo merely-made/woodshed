@@ -1,0 +1,30 @@
+{
+  "pid": 95282,
+  "process_exited": true,
+  "once_only_launcher": true,
+  "profile_sha256": {
+    "settings.json": "f97b878788bcd6d7e7cf810e8949b2219d295e6b83a25c09802c65a223441fba",
+    "practice.bin": "81117e21095aee4fe2504b9d602ea80f6baa9d7caabef36c7fc311994f28c6e3"
+  },
+  "artifacts_sha256": {
+    "after-reason-hear.json": "ec734de98bdf745ef801441333b47e50b5bcf3a58a81fd7e5b15a39f4fe70ae7",
+    "launch.once": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "04_numbered_rehearsal.png": "83b4a05e113ca0760ce82f1617268a2fb05092d86c61df0b294b340bd2084106",
+    "03_numbered_voicings.png": "f7c659fd9cb9970ec9f18f0b4088c6968f36c4634b5f931f49255e16135ad02f",
+    "02_directed_reason.png": "65002ff34d29c99c2b790e5c1b8adb7011294a825e0a017e39b5a5912815719c",
+    "02b_return_directed_reason.png": "02177fc4b879f22a963299cc0ea0b2273d01faf1add3e992a58cd93c1ccccfa8",
+    "before-return-reason-hear.json": "dab6519568732d584820be0f0a6bdfac50e714168caa46832100cc27036e0074",
+    "native.log": "36adb51728e394b3db10f036068283553bc15092efb67a03a2230db9bdc2ee29",
+    "scenario.done": "58b4ff1d38f9f52c95982a2dddb78b6abb570886cee2eee2d77d27409488b33d",
+    "native.pid": "e9e1496d6994f83386325a95b6801825cf7f941475fbf9c09f4cd6016ef82f5f",
+    "after-return-reason-hear.json": "fe9e8464b742de8438b611fbf246a29e2924be5c5eace58f46779ce4354ef0d1",
+    "01_visible_frontier.png": "bb8ec13417c582694d26bd03aab0e96fee9a24aa8307db6fcc9e8063fed82d6a",
+    "launch.json": "4347c473b445e69dbaedf90a86c321592369978cc2e368dd097b07fa9396c3d9",
+    "final.json": "fff3f6e7d04a9454442aeab32f80858c6efe50d1ed105f0442a6b729be820865",
+    "05_retained_set.png": "6596a0b4d994e9f760b3b02e5b955014525b9bd52d106c6b0152f7a4ec520c20",
+    "before-reason-hear.json": "9550b74a41d085ac07a8c1e9be5fc7e1666e0abbafa5053ef15df9f583bb356b",
+    "launcher.c": "63428a5fdb8a634d508adecddf7747580e5fc8394b76251c61666b35b3dbc5a9",
+    "before-card-hear.json": "fbe3cb2295a9066f6b66f8a4ace3182b74a07c9afdf1545fc66ea36072d9a595",
+    "after-card-hear.json": "7eaef606b47db0449027c2e40eb0d6686db1f0d15b33898e7b16e2f2c7470e9b"
+  }
+}

@@ -19,7 +19,7 @@ before any other doc in this directory.
 
 ## Active Plans
 
-- [Stage P4f continuation](2026-07-11_stage_set_tools_plan.md#p4f-join-graph-understanding-to-sound-and-practice) — In progress: bounded safe-save/reopen prerequisites and the visible frontier → voicing → directed audition → numbered rehearsal flow; full native/fresh-process receipt pending.
+- [Stage P4f continuation](2026-07-11_stage_set_tools_plan.md#p4f-join-graph-understanding-to-sound-and-practice) — Bounded practice-flow gate qualified: honest save/close outcomes, visible frontier → voicing → exact directed audition → numbered Rehearsal → sealed fresh reopen; 789 cases plus five child invocations, desktop build and 14 reviewed captures. [Receipt](../validation/stage-p4f_20261016/receipt.json).
 
 - [2026-10-16_mere_take_acceptance_plan.md](2026-10-16_mere_take_acceptance_plan.md) — Loop-take native acceptance complete: fallback placement preserves retained v1 positions; 442 cases, desktop build, three sealed native runs and ten reviewed captures, including wide/narrow fresh-process v2 reopening.
 
@@ -204,7 +204,8 @@ before any other doc in this directory.
   arbitrary dynamics grammar editing and a native Graphshell editor remain open.
   — **In progress; product authority.** P1-P3 remain partial. P4a/P4b landed;
   the scene canvas and single-Card expansion have receipts, while the full P4e
-  catalog and P4f practice/sound join remain open. P5-P8 remain open. A repaired
+  catalog remains partial; the bounded P4f practice/sound/fresh-reopen route is
+  qualified on October 16. P5-P8 remain open. A repaired
   release baseline does not close the 1.0 practice proof. The September 30
   connected exploration/drilling direction specifies cross-catalog context,
   shared realization, ambient Mere actions, and integrated acceptance slices.

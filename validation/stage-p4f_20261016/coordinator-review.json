@@ -1,0 +1,103 @@
+{
+  "source": "d2adb09ac3b04110508e91a0e539ad8310c766db",
+  "mere": "6575075057e8909032475ae6c88118a19969eadc",
+  "reviewer": "link-model coordinator",
+  "seed": {
+    "status": "passed; all six originals visually reviewed; reverse audition control additionally reviewed in layout04",
+    "captures_sha256": {
+      "01_visible_frontier.png": "bb8ec13417c582694d26bd03aab0e96fee9a24aa8307db6fcc9e8063fed82d6a",
+      "02_directed_reason.png": "65002ff34d29c99c2b790e5c1b8adb7011294a825e0a017e39b5a5912815719c",
+      "02b_return_directed_reason.png": "02177fc4b879f22a963299cc0ea0b2273d01faf1add3e992a58cd93c1ccccfa8",
+      "03_numbered_voicings.png": "f7c659fd9cb9970ec9f18f0b4088c6968f36c4634b5f931f49255e16135ad02f",
+      "04_numbered_rehearsal.png": "83b4a05e113ca0760ce82f1617268a2fb05092d86c61df0b294b340bd2084106",
+      "05_retained_set.png": "6596a0b4d994e9f760b3b02e5b955014525b9bd52d106c6b0152f7a4ec520c20"
+    },
+    "selected_card_notes": [
+      "A",
+      "E",
+      "A",
+      "C#"
+    ],
+    "distinct_numbered_cards": 3,
+    "selected_shape_display_number": 2,
+    "processor_admissions": [
+      [
+        0,
+        1
+      ],
+      [
+        1,
+        2
+      ],
+      [
+        2,
+        3
+      ]
+    ],
+    "same_output_runtime_id": 1,
+    "exact_durable_facts_unchanged_per_audition": true,
+    "physical_audio_qualified": false
+  },
+  "reopen": {
+    "status": "passed; original capture visually reviewed and exact durable facts independently compared",
+    "exact_fields": [
+      "working_owner",
+      "cards",
+      "cursor",
+      "realizations",
+      "stage_projection",
+      "workspace",
+      "personal_relations"
+    ],
+    "card_ids": [
+      1,
+      2,
+      3
+    ],
+    "voicing_indices": [
+      0,
+      0,
+      1
+    ],
+    "confirmed_saved": true,
+    "capture_sha256": "6015e5dc4e62709fde3dc30af0611f9a85181d4449091e034f4c5fd536b95691"
+  },
+  "layout": {
+    "status": "passed for bounded P4f default/narrow reachability; six originals visually reviewed",
+    "source": "7500d1b (scenario-only successor; Rust/binary unchanged from d2adb09)",
+    "default_logical_size": [
+      1180,
+      900
+    ],
+    "narrow_logical_size": [
+      640,
+      900
+    ],
+    "ui_zoom": 1,
+    "reverse_audition_button_visible_after_ordinary_wheel": true,
+    "captures_sha256": {
+      "01_rehearsal_default_zoom.png": "fef43bb8152526c8254303a46bcd5c65a86ed554791edb2766ca3bb12b441937",
+      "02_stage_card_default_zoom.png": "e238e4e47e625175907e44d547442b1903b6c1ad822601e5f5243271e989af2c",
+      "03_related_default_zoom.png": "88dbad4e17db3b4f89dc76a2ca25111333884973f083ded07d2339ece2f37103",
+      "04_related_scrolled.png": "0ba5186822dede0c6ff86c3017225ee0b2e863b03be6825825d0d4f2824afaec",
+      "05_related_narrow.png": "256fd5ceaea7f325c447649bc62720c2732a0a8877bfdddf0ef191b1b8b0fd86",
+      "06_rehearsal_narrow.png": "6ed68d523beb4a15bf953ea2786fc278c01b1145c4b8b15ab3c4eada8514c799"
+    }
+  },
+  "excluded_trials": [
+    "v1 failed",
+    "v2 failed at Rehearsal presentation",
+    "v3 mixed artifacts after unintended second launch"
+  ],
+  "status": "bounded P4f independently reviewed and accepted",
+  "close": {
+    "status": "passed on final current binary; actual Retry panel visually reviewed",
+    "result_sha256": "137e0429542982e5e37407264dfaf32897b7c9b031006b2b0b0b157a8bbd6634",
+    "capture_sha256": "287de6f9be453e656ded6d536e8bef1dac2f88e48a046a06be0a7ef4d99dc894",
+    "original_bytes_preserved": true,
+    "retry_keeps_open": true,
+    "cancel_resumes": true,
+    "explicit_discard_exits": true
+  },
+  "reviewed_capture_count": 14
+}

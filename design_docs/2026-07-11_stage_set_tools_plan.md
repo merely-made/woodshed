@@ -16,10 +16,11 @@ scenarios passed. Their source-hashed receipt and four GPU frames are under
 `mere/ports/graphshell/docs/receipts/`. The musical-projections plan's review
 addendum identifies the next product questions and corrections before S1-S4.
 
-**Status (reviewed 2026-10-05): in progress.** P1-P3 are partial. P4a and
-P4b landed; P4c and P4d have bounded headed receipts; P4e is partial and P4f
-is open. P5-P8 remain open. Clean-lock and local validation are release-baseline
-gate, not completion of this product plan.
+**Status (reviewed 2026-10-16): in progress.** P1-P3 are partial. P4a and
+P4b landed; P4c and P4d have bounded headed receipts; P4e is partial. The
+bounded P4f practice-flow gate is qualified with native/fresh-process evidence.
+P5-P8 remain open. Clean-lock and local validation are release-baseline gates,
+not completion of this product plan.
 
 ### Opened-link continuation (2026-10-16)
 
@@ -1648,43 +1649,64 @@ interaction receipts rather than static screenshots.
 
 #### P4f. Join graph understanding to sound and practice
 
-**Continuation in progress (2026-10-16):** baseline `c32b60af` and the complete
-source audit identify bounded save/reopen prerequisites: refuse automatic writes
-after uncertain read/unseal/UTF-8/JSON admission, require readback for ordinary
-session/settings saves, and retain an honest unsaved outcome after failure.
-This prevents destructive fallback without claiming a complete persona-namespace
-migration. Navigation, drag cancellation and within-band width admission are
-small existing-owner corrections for the exploration flow. User close policy
-is to keep the window open on an unconfirmed save, offering Retry and explicit
-Discard and close. WAV completion and appearance decisions use that same close
-preservation path. Full persona namespace migration remains separate.
+**Practice-flow gate qualified (2026-10-16).** The visible frontier → explicit
+append → numbered Card/voicing → directed reason/audition → manual Rehearsal →
+sealed fresh-process reopen route passes on source `d2adb09ac3b04110508e91a0e539ad8310c766db`
+and root Mere `6575075057e8909032475ae6c88118a19969eadc`. Layout scenario successor
+`7500d1b` changes only the scenario; the tested Rust and frozen desktop binary
+are unchanged. The [receipt](../validation/stage-p4f_20261016/receipt.json),
+[exact comparison](../validation/stage-p4f_20261016/comparison.json), and
+[independent review](../validation/stage-p4f_20261016/coordinator-review.json)
+bind the source, supplier identities, binary, checks and reviewed originals.
 
-Local source `757108b` was rebased onto incoming `d90d437`, including its Mere
-`b7146e25` cohort. The merged gate passes 787 suite/integration cases plus five
-fresh-process child invocations, with seven existing host ignores, and the
-desktop build passes. Selected Card Hear freezes the retained realization;
-Stage and Rehearsal share its actual board. Catalog Hear is explicitly labeled.
-`6b72545` also gives full Related the available page width (200 view cases).
+The complete source audit exposed bounded save/reopen prerequisites. Uncertain
+read/unseal/UTF-8/JSON admission now quarantines the opened store; ordinary
+session/settings saves require backend acceptance and exact readback. Failed
+save keeps the window open with Retry, explicit Discard and close, and Cancel.
+WAV completion and appearance decisions pass through the same preservation
+path. A final native refusal trial preserves the original bytes through those
+actions and creates no replacement settings file. This mitigates destructive
+fallback without claiming full persona-namespace migration.
 
-Native v2 is **failed/partial**, retained under
-`/Users/markik/Code/testing/woodshed/stage-p4f-20261016/native-v2`.
-It demonstrates three processor admissions and correct selected notes, but
-Rehearsal stops presenting. A separate fresh reopen reproduces zero presented
-frames. Frame trace and independent source review locate a shared Mere
-producer-remap defect: translator-owned blurred-shadow masks are misclassified
-as external producer keys. The supplier owner is correcting that shared seam;
-Woodshed must intake the exact revision and repeat native/reopen acceptance.
-The generic second audition in v2 also selected the first assertion's order;
-the final scenario selects each exact direction explicitly. Do not count v2 as
-proof of both transition directions or full P4f. The isolated quarantine-close
-native check does preserve original bytes through Retry/Cancel/Discard.
+Selected Card Hear freezes the retained realization; Stage and Rehearsal mount
+the same Card board. Catalog Hear is explicitly labeled. Related frontier
+buttons state their append position; full Related uses page width while the
+sidebar retains its own geometry. Search/Rehearse navigation, drag cancellation,
+and within-band width admission use their existing owners.
 
-The full frontier/voicing/directed-audition/rehearsal/fresh-process receipt is
-still pending; earlier bounded link receipts remain scoped as written above.
-Hocket/Redshank/Ringdown remediation stays outside P4f.
+The locked receiving gate passes **789 suite/integration cases plus five
+fresh-process child invocations**, with seven existing host ignores, and the
+desktop build passes. Four final native processes produce **14 reviewed
+captures**, including default zoom and a 640px-wide window. The fixture builds
+Major/Minor/Major through ordinary frontier actions, chooses voicing indices
+0/0/1, exposes exact source reasons and both directed audition orders, and runs
+the three numbered occurrences manually through Rehearsal. Each Hear advances
+processor admission on the same runtime (0→1, 1→2, 2→3) without changing Set,
+realization, workspace or projection truth. Fresh reopen retains exact owner,
+Card IDs/material/voicing, cursor, realization float bits, workspace, personal
+source and Circle projection.
 
-**Current state: open.** Current relation selection and history projection do
-not yet satisfy the audible, playable, persisted progression flow below.
+Native qualification also found a shared supplier bug: legitimate blurred
+shadow masks were misclassified as producer textures and refused before GPU
+presentation, leaving Rehearsal blank. Mere owns the correction and its six
+translator regressions; Woodshed takes that published fix without removing
+product shadows. The Cargo-generated root lock also changes one libloading and
+two Windows dependency edges; Genet/Netrender identities and nested port locks
+stay unchanged. This receipt qualifies macOS, not Windows or browser behavior.
+
+Earlier failed attempts remain external evidence: v1/v2 preparation and
+presentation failures; v3 is disqualified because an inspection call raced exit
+and relaunched the same bundle, mixing its artifacts. Final v4 uses fresh
+profiles, one-use launchers, separate output directories and completed-phase
+hashes. The coherent final Stage and Rehearsal captures both show all four
+retained notes; the earlier ambiguous empty-board observation is not reproduced.
+
+**Limits:** processor admission plus ordered PCM tests is software sound-path
+evidence; physical audibility, microphone and latency qualification remain
+separate. Narrow layouts use ordinary scrolling; verbose source IDs and long
+voicing summaries retain polish work. Full persona namespace migration, other
+audit findings, the full P4e catalog and P5-P8 remain open. Hocket/Redshank/Ringdown
+remediation stays outside this slice.
 
 Selecting a node updates Stage and the Fretboard. Selecting an edge exposes its
 reasons and offers an audition appropriate to the relation: shared tones,

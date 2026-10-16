@@ -1,0 +1,12 @@
+{
+  "mere.git": [
+    "git+https://github.com/merely-made/mere.git?branch=main#6575075057e8909032475ae6c88118a19969eadc"
+  ],
+  "genet.git": [
+    "git+https://github.com/merely-made/genet.git?branch=main#6186c81ad7019ea51dd28861ef83574bfc992ed1",
+    "git+https://github.com/merely-made/genet.git?branch=main#e37762d752e423dc43f920bd728c83f70c47f2cc"
+  ],
+  "netrender.git": [
+    "git+https://github.com/merely-made/netrender.git?branch=main#8960024f7b1f2b7a5ba382972f08b2f75eb7a0f0"
+  ]
+}

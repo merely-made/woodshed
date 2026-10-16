@@ -1,0 +1,15 @@
+{
+  "original_fixture_unchanged": true,
+  "before": {
+    "ready": "fd5b396c4c1877ab875884fa183f469f87bcc136bf2cc76a4c97c4c7cd48a7b8",
+    ".dr-c-generated": "c863b6a361d98d7b3624e9ea7a4a5c31dbe1870b6b08a1e5dd23a6ab17e8959d",
+    "vault/passphrase-root.json": "cbab19814c4fca91be2a78b3c7276d767fce9bc130cef8aabfc4a9bcc325e7ee",
+    "vault/profiles/f78761cf8c3621e851097dff9a4b04633626e62e1f419444898fae02960d89ef.json": "74e50a3eca87251ba05a3d185ba85ea400ffdb57dd391d370f1b69345a81a6d0"
+  },
+  "after": {
+    "ready": "fd5b396c4c1877ab875884fa183f469f87bcc136bf2cc76a4c97c4c7cd48a7b8",
+    ".dr-c-generated": "c863b6a361d98d7b3624e9ea7a4a5c31dbe1870b6b08a1e5dd23a6ab17e8959d",
+    "vault/passphrase-root.json": "cbab19814c4fca91be2a78b3c7276d767fce9bc130cef8aabfc4a9bcc325e7ee",
+    "vault/profiles/f78761cf8c3621e851097dff9a4b04633626e62e1f419444898fae02960d89ef.json": "74e50a3eca87251ba05a3d185ba85ea400ffdb57dd391d370f1b69345a81a6d0"
+  }
+}

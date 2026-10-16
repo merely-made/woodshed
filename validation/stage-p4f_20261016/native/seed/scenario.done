@@ -1,0 +1,15 @@
+RESULT ok
+captured 01_visible_frontier
+captured 02_directed_reason
+captured 02b_return_directed_reason
+captured 03_numbered_voicings
+captured 04_numbered_rehearsal
+captured 05_retained_set
+capture 01_visible_frontier 2360x1800 digest=c4ca06472ef7e75a file=/Users/markik/Code/testing/woodshed/stage-p4f-20261016/native-v4/seed/01_visible_frontier.png
+capture 02_directed_reason 2360x1800 digest=6dcef1dd5d05a6a0 file=/Users/markik/Code/testing/woodshed/stage-p4f-20261016/native-v4/seed/02_directed_reason.png
+capture 02b_return_directed_reason 2360x1800 digest=c905448984a649e0 file=/Users/markik/Code/testing/woodshed/stage-p4f-20261016/native-v4/seed/02b_return_directed_reason.png
+capture 03_numbered_voicings 2360x1800 digest=b501cf7e764cdc26 file=/Users/markik/Code/testing/woodshed/stage-p4f-20261016/native-v4/seed/03_numbered_voicings.png
+capture 04_numbered_rehearsal 2360x1800 digest=1aeabcb69509b80d file=/Users/markik/Code/testing/woodshed/stage-p4f-20261016/native-v4/seed/04_numbered_rehearsal.png
+capture 05_retained_set 2360x1800 digest=95939e839cbb177e file=/Users/markik/Code/testing/woodshed/stage-p4f-20261016/native-v4/seed/05_retained_set.png
+frames: 6 captured, 0 blank, 6 distinct digests
+presentation: 342 frames, 343 redraws, 1 unpresented redraws
