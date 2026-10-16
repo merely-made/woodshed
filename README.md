@@ -128,6 +128,35 @@ independently managed updater feed. This repository has no GitHub Actions
 workflows. Qualified changes are committed and pushed directly to `main`;
 pull requests are used only when the maintainer asks for one.
 
+## Portable fretboard recipes
+
+`woodshed_core::fretboard_scene::stage_fretboard_scene(&stage, reading_id)`
+exports the current resolved Scale or Chord lens as the shared `SceneInput`.
+It reads the real tuning and `StageState::dots()` without changing the Stage,
+audio transport or retained material. Displayed strings are reversed into the
+shared highest-first convention while occurrence keys retain the original
+string/fret identity. Pitch-class resources remain shared across octaves;
+third/fifth roles preserve the source's degree spelling, including altered
+fifths. Unresolved transport/exercise lenses are refused.
+
+An explicit command-line Stage uses the same model and catalog:
+
+```sh
+cargo run --features portable-scenes -p woodshed-core --bin woodshed-fretboard-scene -- \
+  C Major 0 5 fretboard.scene.json
+```
+
+The arguments are root name, exact chord catalog name, tuning catalog index,
+highest fret and a new output path. The output imports into Graphshell's
+Portable scenes or another shared-recipe host. This adds the model adapter and
+file exporter; existing native fretboard controls keep their current renderer.
+
+This branch requires Mere's portable-backdrop implementation. Until the shared
+change is integrated, use
+`python3 /path/to/mere/support/design-studies/backdrops/with_local_scene_source.py /path/to/mere test -p woodshed-core --features portable-scenes --lib fretboard_scene`.
+The temporary patch keeps the scene contract, compiler, authoring and timing
+crates in one cohort without committing local dependency paths.
+
 ## License
 
 MPL-2.0. See [LICENSE](LICENSE).

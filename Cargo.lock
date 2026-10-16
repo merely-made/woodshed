@@ -8428,12 +8428,14 @@ name = "woodshed-core"
 version = "0.1.0"
 dependencies = [
  "async-trait",
+ "blake3",
  "chartulary",
  "hex",
  "muniment",
  "personae",
  "pollster 0.4.0",
  "sceno",
+ "scenomise",
  "scenotime",
  "serde",
  "serde_json",
