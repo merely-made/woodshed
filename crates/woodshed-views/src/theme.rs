@@ -382,6 +382,12 @@ fn stage_css_with_roles(p: &Palette, authored_roles: bool) -> String {
 .related-camera-controls {{ display: flex; flex-wrap: wrap; gap: 6px; padding: 6px 2px 2px; }}
 .related-camera-controls .t-btn {{ background-color: {surface_hover}; min-height: 28px; padding: 6px 10px; }}
 .related-pane-col {{ flex: 1; min-width: 150px; }}
+.claims-link-inspection {{ min-width: 0; }}
+.claims-link-inspection .opened-link-swatch {{ min-width: 0; max-width: 100%; }}
+.claims-link-inspection .opened-link-controls {{ display: flex; flex-wrap: wrap; gap: 6px; min-width: 0; }}
+.claims-link-inspection .opened-link-controls button, .claims-link-inspection button[data-assertion-action] {{ min-width: 0; max-width: 100%; white-space: normal; overflow-wrap: anywhere; }}
+.claims-link-inspection .detail-row {{ display: flex; flex-wrap: wrap; gap: 4px; min-width: 0; overflow-wrap: anywhere; }}
+.claims-link-inspection .detail-row > * {{ min-width: 0; overflow-wrap: anywhere; }}
 /* Cambium graph-canvas-swatch: the painted leaf shows the nodes and emphasis;
    the buttons are transparent hit targets. A small quiet Expand button. */
 .graph-canvas-swatch-node {{ background-color: transparent; border-width: 0; cursor: pointer; }}
