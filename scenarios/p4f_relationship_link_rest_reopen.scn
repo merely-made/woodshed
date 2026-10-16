@@ -9,9 +9,14 @@ click .overview-relationship Relationship recipe
 settle 5
 assert snap recipe-valid == true
 assert snap set-cards == 3
+click .relationship-camera-fit Fit
+settle 3
+capture 01_relationship_links_reopened
 click .graph-canvas-swatch-relation
 settle 5
 assert text Surface link
 assert text Assertion 1
 assert text Source stratum
-capture 01_relationship_link_reopened
+click .detail-value Surface
+settle 3
+capture 02_relationship_link_reopened
