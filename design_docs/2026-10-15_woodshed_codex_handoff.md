@@ -258,7 +258,10 @@ audibility or latency claim follows from this receipt.
 
 - **Hocket per-turn signed operations (ruling 5).** A design plan only. It is
   gated on Hocket local durability and on the open host-acceptance defects:
-  project-worker reply correlation and native handoff qualification.
+  native handoff qualification. The October 16 correlation follow-up closes the
+  project-worker sequencing defect with request/session-scoped replies and CPU
+  checks; see `ports/hocket/design_docs/2026-10-16_project_worker_correlation_plan.md`.
+  Signed per-turn operations remain outside that host fix.
 - **Saved-song bar graph nodes.** These need stable ids and PCM persistence
   (stage plan P7) first.
 - **Woodshed custody to a reservoir mere (ruling 6).** Mere/djinn work, not

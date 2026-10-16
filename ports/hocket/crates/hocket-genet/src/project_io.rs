@@ -14,15 +14,33 @@
 use std::path::PathBuf;
 use std::sync::mpsc::Receiver;
 
-use armillary::{ActorHandle, Emitter, Wake, spawn};
-use muniment::ZipBackend;
-use std::collections::BTreeSet;
+use armillary::{ActorHandle, Correlated, Emitter, Wake, spawn};
+use hocket_model::{NodeId, ProjectBundle, Session, SessionId, TrackId};
 use hocket_project::export::{ExportLength, render_mix, write_stereo_wav};
 use hocket_project::handoff::{HandoffEnvelope, ReceivedHandoff};
 use hocket_project::media::InMemoryStore;
 use hocket_project::project_store::{LoadedProject, ProjectStore};
-use hocket_model::{NodeId, ProjectBundle, Session, TrackId};
+use muniment::ZipBackend;
 use personae::Ed25519PublicKey;
+use std::collections::BTreeSet;
+
+/// Host-owned replacement/identity generation plus persisted session identity.
+/// Neither value is serialized into a project or handoff envelope.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct ProjectScope {
+    pub generation: u64,
+    pub session: SessionId,
+}
+
+pub struct ProjectRequest {
+    pub scope: ProjectScope,
+    pub command: Correlated<ProjectCommand>,
+}
+
+pub struct ProjectReply {
+    pub scope: ProjectScope,
+    pub update: Correlated<ProjectUpdate>,
+}
 
 pub enum ProjectCommand {
     Save {
@@ -84,7 +102,7 @@ pub enum ProjectUpdate {
     },
 }
 
-pub fn spawn_project_worker(wake: Wake) -> (ActorHandle<ProjectCommand>, Receiver<ProjectUpdate>) {
+pub fn spawn_project_worker(wake: Wake) -> (ActorHandle<ProjectRequest>, Receiver<ProjectReply>) {
     spawn(wake, |commands, updates| {
         while let Ok(command) = commands.recv() {
             run_command(command, &updates);
@@ -92,8 +110,16 @@ pub fn spawn_project_worker(wake: Wake) -> (ActorHandle<ProjectCommand>, Receive
     })
 }
 
-fn run_command(command: ProjectCommand, updates: &Emitter<ProjectUpdate>) {
-    match command {
+fn run_command(request: ProjectRequest, updates: &Emitter<ProjectReply>) {
+    let scope = request.scope;
+    let id = request.command.request;
+    let emit = |value| {
+        updates.emit(ProjectReply {
+            scope,
+            update: Correlated::new(id, value),
+        })
+    };
+    match request.command.value {
         ProjectCommand::Save {
             path,
             bundle,
@@ -107,13 +133,13 @@ fn run_command(command: ProjectCommand, updates: &Emitter<ProjectUpdate>) {
                         .map_err(|error| error.to_string())
                 });
             match result {
-                Ok(()) => updates.emit(ProjectUpdate::Saved { path, saved_head }),
-                Err(message) => updates.emit(ProjectUpdate::Failed {
+                Ok(()) => emit(ProjectUpdate::Saved { path, saved_head }),
+                Err(message) => emit(ProjectUpdate::Failed {
                     action: "save",
                     message,
                 }),
             }
-        }
+        },
         ProjectCommand::Open { path } => {
             let result = ZipBackend::open(&path)
                 .map_err(|error| error.to_string())
@@ -122,13 +148,13 @@ fn run_command(command: ProjectCommand, updates: &Emitter<ProjectUpdate>) {
                         .map_err(|error| error.to_string())
                 });
             match result {
-                Ok(loaded) => updates.emit(ProjectUpdate::Opened { path, loaded }),
-                Err(message) => updates.emit(ProjectUpdate::Failed {
+                Ok(loaded) => emit(ProjectUpdate::Opened { path, loaded }),
+                Err(message) => emit(ProjectUpdate::Failed {
                     action: "open",
                     message,
                 }),
             }
-        }
+        },
         ProjectCommand::ExportMix {
             path,
             session,
@@ -138,8 +164,8 @@ fn run_command(command: ProjectCommand, updates: &Emitter<ProjectUpdate>) {
         } => match render_mix(&session, &media, &solo, length)
             .and_then(|mix| write_stereo_wav(&path, &mix))
         {
-            Ok(()) => updates.emit(ProjectUpdate::Exported { path }),
-            Err(error) => updates.emit(ProjectUpdate::Failed {
+            Ok(()) => emit(ProjectUpdate::Exported { path }),
+            Err(error) => emit(ProjectUpdate::Failed {
                 action: "export",
                 message: error.to_string(),
             }),
@@ -150,28 +176,32 @@ fn run_command(command: ProjectCommand, updates: &Emitter<ProjectUpdate>) {
                 .map_err(|error| error.to_string())
                 .and_then(|bytes| std::fs::write(&path, bytes).map_err(|error| error.to_string()));
             match result {
-                Ok(()) => updates.emit(ProjectUpdate::HandoffWritten { path }),
-                Err(message) => updates.emit(ProjectUpdate::Failed {
+                Ok(()) => emit(ProjectUpdate::HandoffWritten { path }),
+                Err(message) => emit(ProjectUpdate::Failed {
                     action: "hand off",
                     message,
                 }),
             }
-        }
+        },
         ProjectCommand::ReadHandoff { path, recipient } => {
             let result = std::fs::read(&path)
                 .map_err(|error| error.to_string())
                 .and_then(|bytes| {
                     HandoffEnvelope::from_bytes(&bytes).map_err(|error| error.to_string())
                 })
-                .and_then(|envelope| envelope.receive(recipient).map_err(|error| error.to_string()));
+                .and_then(|envelope| {
+                    envelope
+                        .receive(recipient)
+                        .map_err(|error| error.to_string())
+                });
             match result {
-                Ok(received) => updates.emit(ProjectUpdate::HandoffReceived { received }),
-                Err(message) => updates.emit(ProjectUpdate::Failed {
+                Ok(received) => emit(ProjectUpdate::HandoffReceived { received }),
+                Err(message) => emit(ProjectUpdate::Failed {
                     action: "open hand-off",
                     message,
                 }),
             }
-        }
+        },
     }
 }
 
@@ -181,9 +211,30 @@ mod tests {
     use std::time::Duration;
 
     use super::*;
-    use hocket_project::media::MediaStore;
     use hocket_model::{Edit, History, Layer, Phrase, Session};
+    use hocket_project::media::MediaStore;
     use personae::{IdentityProvider, InMemoryProvider};
+
+    fn test_scope() -> ProjectScope {
+        ProjectScope {
+            generation: 7,
+            session: serde_json::from_str("\"00000000-0000-4000-8000-000000000023\"").unwrap(),
+        }
+    }
+
+    fn receive(updates: &Receiver<ProjectReply>) -> ProjectUpdate {
+        let reply = updates.recv_timeout(Duration::from_secs(5)).unwrap();
+        assert_eq!(reply.scope, test_scope());
+        assert_eq!(reply.update.request, armillary::RequestId(23));
+        reply.update.value
+    }
+
+    fn send(worker: &ActorHandle<ProjectRequest>, value: ProjectCommand) -> bool {
+        worker.command(ProjectRequest {
+            scope: test_scope(),
+            command: Correlated::new(armillary::RequestId(23), value),
+        })
+    }
 
     #[test]
     fn worker_saves_then_opens_a_project() {
@@ -194,25 +245,28 @@ mod tests {
         let bundle = ProjectBundle::new(Session::new_default(), History::new());
         let saved_head = bundle.history.head;
 
-        assert!(worker.command(ProjectCommand::Save {
-            path: path.clone(),
-            bundle: bundle.clone(),
-            media: InMemoryStore::new(),
-            saved_head,
-        }));
-        match updates.recv_timeout(Duration::from_secs(5)).unwrap() {
+        assert!(send(
+            &worker,
+            ProjectCommand::Save {
+                path: path.clone(),
+                bundle: bundle.clone(),
+                media: InMemoryStore::new(),
+                saved_head,
+            }
+        ));
+        match receive(&updates) {
             ProjectUpdate::Saved {
                 path: saved,
                 saved_head: head,
             } => {
                 assert_eq!(saved, path);
                 assert_eq!(head, saved_head);
-            }
+            },
             _ => panic!("expected save result"),
         }
 
-        assert!(worker.command(ProjectCommand::Open { path }));
-        match updates.recv_timeout(Duration::from_secs(5)).unwrap() {
+        assert!(send(&worker, ProjectCommand::Open { path }));
+        match receive(&updates) {
             ProjectUpdate::Opened { loaded, .. } => assert_eq!(loaded.bundle, bundle),
             _ => panic!("expected open result"),
         }
@@ -232,14 +286,17 @@ mod tests {
         session.phrases.insert(phrase.id, phrase.clone());
         session.tracks[0].layers.push(Layer::new(phrase.id));
 
-        assert!(worker.command(ProjectCommand::ExportMix {
-            path: path.clone(),
-            session,
-            media,
-            solo: BTreeSet::new(),
-            length: ExportLength::OneCycle,
-        }));
-        match updates.recv_timeout(Duration::from_secs(5)).unwrap() {
+        assert!(send(
+            &worker,
+            ProjectCommand::ExportMix {
+                path: path.clone(),
+                session,
+                media,
+                solo: BTreeSet::new(),
+                length: ExportLength::OneCycle,
+            }
+        ));
+        match receive(&updates) {
             ProjectUpdate::Exported { path: exported } => assert_eq!(exported, path),
             _ => panic!("expected export result"),
         }
@@ -278,26 +335,32 @@ mod tests {
         let envelope =
             HandoffEnvelope::create(&bundle, &store, me.master_public_key(), &me).unwrap();
 
-        assert!(worker.command(ProjectCommand::WriteHandoff {
-            path: path.clone(),
-            envelope,
-        }));
-        match updates.recv_timeout(Duration::from_secs(5)).unwrap() {
+        assert!(send(
+            &worker,
+            ProjectCommand::WriteHandoff {
+                path: path.clone(),
+                envelope,
+            }
+        ));
+        match receive(&updates) {
             ProjectUpdate::HandoffWritten { path: written } => assert_eq!(written, path),
             _ => panic!("expected hand-off written"),
         }
         assert!(path.is_file());
 
-        assert!(worker.command(ProjectCommand::ReadHandoff {
-            path,
-            recipient: me.master_public_key(),
-        }));
-        match updates.recv_timeout(Duration::from_secs(5)).unwrap() {
+        assert!(send(
+            &worker,
+            ProjectCommand::ReadHandoff {
+                path,
+                recipient: me.master_public_key(),
+            }
+        ));
+        match receive(&updates) {
             ProjectUpdate::HandoffReceived { received } => {
                 assert_eq!(received.bundle, bundle);
                 assert_eq!(received.media.len(), 1);
                 assert_eq!(received.sender, me.master_public_key());
-            }
+            },
             _ => panic!("expected hand-off received"),
         }
         drop(worker);
@@ -319,25 +382,87 @@ mod tests {
             HandoffEnvelope::create(&bundle, &store, recipient.master_public_key(), &sender)
                 .unwrap();
 
-        assert!(worker.command(ProjectCommand::WriteHandoff {
-            path: path.clone(),
-            envelope,
-        }));
-        match updates.recv_timeout(Duration::from_secs(5)).unwrap() {
-            ProjectUpdate::HandoffWritten { .. } => {}
+        assert!(send(
+            &worker,
+            ProjectCommand::WriteHandoff {
+                path: path.clone(),
+                envelope,
+            }
+        ));
+        match receive(&updates) {
+            ProjectUpdate::HandoffWritten { .. } => {},
             _ => panic!("expected hand-off written"),
         }
 
         // A hand-off addressed to someone else must surface an error, and the
         // worker must survive it (a later read still gets served).
-        assert!(worker.command(ProjectCommand::ReadHandoff {
-            path,
-            recipient: other.master_public_key(),
-        }));
-        match updates.recv_timeout(Duration::from_secs(5)).unwrap() {
+        assert!(send(
+            &worker,
+            ProjectCommand::ReadHandoff {
+                path,
+                recipient: other.master_public_key(),
+            }
+        ));
+        match receive(&updates) {
             ProjectUpdate::Failed { action, .. } => assert_eq!(action, "open hand-off"),
             _ => panic!("expected a surfaced failure"),
         }
         drop(worker);
+    }
+    #[test]
+    fn every_worker_failure_preserves_the_exact_request_and_scope() {
+        let dir = tempfile::tempdir().unwrap();
+        let missing = dir.path().join("missing-parent").join("out");
+        let identity = InMemoryProvider::from_seed([33; 32]);
+        let bundle = ProjectBundle::new(Session::new_default(), History::new());
+        let envelope = HandoffEnvelope::create(
+            &bundle,
+            &InMemoryStore::new(),
+            identity.master_public_key(),
+            &identity,
+        )
+        .unwrap();
+        let commands = [
+            ProjectCommand::Save {
+                path: dir.path().to_owned(),
+                saved_head: bundle.history.head,
+                bundle: bundle.clone(),
+                media: InMemoryStore::new(),
+            },
+            ProjectCommand::Open {
+                path: missing.clone(),
+            },
+            ProjectCommand::ExportMix {
+                path: missing.clone(),
+                session: bundle.session.clone(),
+                media: InMemoryStore::new(),
+                solo: BTreeSet::new(),
+                length: ExportLength::OneCycle,
+            },
+            ProjectCommand::WriteHandoff {
+                path: missing.clone(),
+                envelope,
+            },
+            ProjectCommand::ReadHandoff {
+                path: missing,
+                recipient: identity.master_public_key(),
+            },
+        ];
+        let (worker, updates) = spawn_project_worker(Arc::new(|| {}));
+        for (index, command) in commands.into_iter().enumerate() {
+            let id = armillary::RequestId(100 + index as u64);
+            let scope = ProjectScope {
+                generation: index as u64,
+                session: SessionId::new(),
+            };
+            assert!(worker.command(ProjectRequest {
+                scope,
+                command: Correlated::new(id, command)
+            }));
+            let reply = updates.recv_timeout(Duration::from_secs(5)).unwrap();
+            assert_eq!(reply.scope, scope);
+            assert_eq!(reply.update.request, id);
+            assert!(matches!(reply.update.value, ProjectUpdate::Failed { .. }));
+        }
     }
 }
