@@ -1,0 +1,128 @@
+# Isolated sealed native profile. The fixture stages real catalog material,
+# then supplies imported Card timing; every admission below uses the ordinary
+# Hear/Run controls and the normal audio host at its actual output rate.
+settle 90
+ui-zoom 1
+assert snap practice-saved == true
+act p5a-timing-admission-example
+settle 8
+assert snap set-cards == 5
+click .workspace-panel Set
+settle 6
+
+# The first imported timed instruction resolves to a twelve-second ordered
+# preview at 20 BPM. Select it from Rehearsal's actual filmstrip, then use the
+# shared Card editor's Hear action.
+click .film-label Ordered 20 BPM
+settle 3
+assert snap p5a-card-label == Ordered 20 BPM
+assert snap p5a-card-bpm == 20
+assert snap p5a-card-hold == bars:1
+assert snap p5a-ordered-visits >= 2
+assert snap p5a-core-dwell-ms == 12000
+assert snap p5a-ordered-duration-ms == 12000
+assert snap p5a-ordered-spacing-ms >= 1
+click .card-hear Hear selected Card
+wait 1000
+settle 3
+assert snap p5a-card-timing-notice-empty == true
+assert snap preview-starts >= 1
+act p5a-save-20-bpm
+capture 01_ordered_20_bpm
+
+# The second imported timed instruction resolves to 600 ms at 400 BPM.
+click .film-label Ordered 400 BPM
+settle 3
+assert snap p5a-card-label == Ordered 400 BPM
+assert snap p5a-card-bpm == 400
+assert snap p5a-ordered-visits >= 2
+assert snap p5a-core-dwell-ms == 600
+assert snap p5a-ordered-duration-ms == 600
+assert snap p5a-ordered-spacing-ms >= 1
+click .card-hear Hear selected Card
+wait 1000
+settle 3
+assert snap p5a-card-timing-notice-empty == true
+assert snap preview-starts >= 2
+act p5a-save-400-bpm
+capture 02_ordered_400_bpm
+
+# Run advances the short timed Card to the following Manual Card. Manual stays
+# selected during an ordinary two-second wait.
+click .t-btn Run
+act p5a-wait-for-manual
+wait 1000
+assert snap rehearsal-running == true
+assert snap cursor-number == 3
+assert snap p5a-card-hold == manual
+act p5a-wait-on-manual
+wait 1000
+assert snap rehearsal-running == true
+assert snap cursor-number == 3
+act p5a-save-manual-wait
+capture 03_timed_to_manual_wait
+click .t-btn Pause
+settle 4
+
+# A finite value outside this host clock's representable range is refused by
+# Core for both preview and Run, without rewriting the imported Card or storage.
+click .film-label Core duration refusal
+settle 3
+assert snap p5a-card-label == Core duration refusal
+assert snap p5a-card-hold == seconds:1900671690
+act p5a-save-core-before
+click .card-hear Hear selected Card
+settle 3
+assert snap card-timing-notice ~ cannot be represented
+assert snap rehearsal-running == false
+click .t-btn Run
+settle 4
+assert snap rehearsal-running == false
+assert snap card-timing-notice ~ cannot be represented
+act p5a-verify-core-before
+capture 04_core_duration_refusal
+
+# This value fits Duration but exceeds the PCM frame budget at every nonzero
+# integer output rate. Hear and Run both refuse while preserving authored data.
+click .film-label Output PCM refusal
+settle 3
+assert snap p5a-card-label == Output PCM refusal
+assert snap p5a-card-hold == seconds:1343554297
+assert snap p5a-output-sample-rate >= 1
+act p5a-save-pcm-before
+click .card-hear Hear selected Card
+wait 1000
+settle 3
+assert snap card-timing-notice ~ resource bounds
+assert snap rehearsal-running == false
+click .t-btn Run
+settle 4
+assert snap rehearsal-running == false
+assert snap card-timing-notice ~ resource bounds
+act p5a-verify-pcm-before
+capture 05_output_pcm_refusal
+
+# Correct only through the visible Hold control, then retry through the same
+# real host. The ordered Manual Card previews and Run waits for explicit advance.
+click .t-btn Hold:
+settle 3
+assert snap p5a-card-hold == manual
+click .card-hear Hear selected Card
+wait 1000
+settle 3
+assert snap p5a-card-timing-notice-empty == true
+assert snap preview-starts >= 3
+click .t-btn Run
+act p5a-wait-on-retried-manual
+wait 1000
+assert snap rehearsal-running == true
+assert snap cursor-number == 5
+capture 06_manual_ordered_retry
+click .t-btn Pause
+settle 5
+assert snap rehearsal-running == false
+assert snap practice-saved == true
+assert snap practice-save-problem == false
+act p5a-save-final
+capture 07_sealed_authored_timing
+log P5a timing admission seed complete

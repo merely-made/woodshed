@@ -1,0 +1,27 @@
+{
+  "review": "independent visual review of original native-v4 screenshots",
+  "seed_captures": [
+    "seed/01_ordered_20_bpm.png",
+    "seed/02_ordered_400_bpm.png",
+    "seed/03_timed_to_manual_wait.png",
+    "seed/04_core_duration_refusal.png",
+    "seed/05_output_pcm_refusal.png",
+    "seed/06_manual_ordered_retry.png",
+    "seed/07_sealed_authored_timing.png"
+  ],
+  "reopen_captures": [
+    "reopen/01_exact_sealed_timing_reopen.png"
+  ],
+  "observations": {
+    "seed": "The 20 BPM and 400 BPM authored readouts are visible on Cards 1 and 2. The Manual-wait capture shows the run still active on Card 3. Core-duration and PCM refusal captures show readable notices attributed to Set 1 and the relevant Card. The retry capture shows the run active on Card 5 with Manual timing at 400 BPM; the final seed capture shows Card 5 retained as Manual at 400 BPM with Run available.",
+    "reopen": "The reopened view shows Card 5/5 selected, Hold: manual, and 400 bpm, with Run available and no refusal notice. This visually matches the intended retained timing state."
+  },
+  "issues": [
+    {
+      "severity": "cosmetic",
+      "capture": "seed/04_core_duration_refusal.png and seed/05_output_pcm_refusal.png",
+      "detail": "The intentionally enormous Seconds values make the hold controls unusually wide. The refusal notices remain readable and correctly attributed; this did not block review."
+    }
+  ],
+  "limits": "This is visual evidence only. It cannot establish exact persisted timing bits, phase hashes, process exit status, sealed-session custody, audio output, or that the reopen occurred in a fresh process. Those require the independent source, process, and checkpoint receipts. No other phase artifacts or live UI were inspected."
+}

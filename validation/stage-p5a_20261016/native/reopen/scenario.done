@@ -1,0 +1,6 @@
+RESULT ok
+captured 01_exact_sealed_timing_reopen
+P5a timing admission fresh-process reopen complete
+capture 01_exact_sealed_timing_reopen 2360x1800 digest=e7668eb0e6dbb494 file=/Users/markik/Code/testing/woodshed/stage-p5a-20261016/native-v4/reopen/01_exact_sealed_timing_reopen.png
+frames: 1 captured, 0 blank, 1 distinct digests
+presentation: 103 frames, 105 redraws, 2 unpresented redraws

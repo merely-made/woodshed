@@ -1,0 +1,68 @@
+warning: use of deprecated method `std::sync::atomic::Atomic::<u64>::fetch_update`: renamed to `try_update` for consistency
+  --> crates/woodshed-audio/src/capture_feed.rs:33:14
+   |
+33 |             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |generation| {
+   |              ^^^^^^^^^^^^
+   |
+   = note: `#[warn(deprecated)]` on by default
+help: replace the use of the deprecated method
+   |
+33 -             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |generation| {
+33 +             .try_update(Ordering::AcqRel, Ordering::Acquire, |generation| {
+   |
+
+warning: use of deprecated method `std::sync::atomic::Atomic::<usize>::fetch_update`: renamed to `try_update` for consistency
+   --> crates/woodshed-audio/src/output_runtime.rs:305:14
+    |
+305 |             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |              ^^^^^^^^^^^^
+    |
+help: replace the use of the deprecated method
+    |
+305 -             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+305 +             .try_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |
+
+warning: use of deprecated method `std::sync::atomic::Atomic::<usize>::fetch_update`: renamed to `try_update` for consistency
+   --> crates/woodshed-audio/src/output_runtime.rs:350:14
+    |
+350 |             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |              ^^^^^^^^^^^^
+    |
+help: replace the use of the deprecated method
+    |
+350 -             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+350 +             .try_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |
+
+warning: use of deprecated method `std::sync::atomic::Atomic::<usize>::fetch_update`: renamed to `try_update` for consistency
+   --> crates/woodshed-audio/src/output_runtime.rs:371:14
+    |
+371 |             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |              ^^^^^^^^^^^^
+    |
+help: replace the use of the deprecated method
+    |
+371 -             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+371 +             .try_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |
+
+
+running 1 test
+output_runtime::tests::nonfinite_preview_inputs_are_refused_before_normalization_without_cancelling_valid_work --- FAILED
+
+failures:
+
+---- output_runtime::tests::nonfinite_preview_inputs_are_refused_before_normalization_without_cancelling_valid_work stdout ----
+
+thread 'output_runtime::tests::nonfinite_preview_inputs_are_refused_before_normalization_without_cancelling_valid_work' (39172775) panicked at crates/woodshed-audio/src/output_runtime/tests.rs:51:9:
+assertion failed: r.preview_note(220.0, invalid).is_err()
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    output_runtime::tests::nonfinite_preview_inputs_are_refused_before_normalization_without_cancelling_valid_work
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 158 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `-p woodshed-audio --lib`

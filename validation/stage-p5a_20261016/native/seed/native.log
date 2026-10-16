@@ -1,0 +1,18 @@
+[woodshed] practice sealed to persona "default" (Passphrase (held by djinn))
+[cambium-winit] accessibility Installed, 286 nodes projected
+woodshed-genet: waited 2 frames
+woodshed-genet: captured 01_ordered_20_bpm
+woodshed-genet: waited 0 frames
+woodshed-genet: captured 02_ordered_400_bpm
+woodshed-genet: waited 13 frames
+woodshed-genet: waited 30 frames
+woodshed-genet: captured 03_timed_to_manual_wait
+woodshed-genet: captured 04_core_duration_refusal
+woodshed-genet: waited 0 frames
+woodshed-genet: captured 05_output_pcm_refusal
+woodshed-genet: waited 0 frames
+woodshed-genet: waited 30 frames
+woodshed-genet: captured 06_manual_ordered_retry
+woodshed-genet: captured 07_sealed_authored_timing
+woodshed-genet: P5a timing admission seed complete
+woodshed-genet: RESULT ok (334 frames, 7 captures)

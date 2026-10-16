@@ -1,0 +1,21 @@
+{
+  "01_ordered_20_bpm.png": "f1b8a6f7dbf3f80647f9323b371aeb5f0405d584b98e508287b655b114eeaf42",
+  "02_ordered_400_bpm.png": "02d2be37a8509ff88c81fe4269f6fe02d19a2150dc2fc92cb495f9ca47d7dd48",
+  "03_timed_to_manual_wait.png": "d81604e5838b4ce046c810180b803e46565f6ffa3bbd1f74cc9935a54f035734",
+  "04_core_duration_refusal.png": "4f23110f19752cab622131fc384bb1e02a7ba86552462cf68faa8788f048ed96",
+  "05_output_pcm_refusal.png": "2890b9e4f49d473d511a7643d008f6baadba362f4911bddac753bb04775e346b",
+  "06_manual_ordered_retry.png": "0b71eacfb61e2184ac67b2d13f17e75fa39ffaa2f31ccbcafe66642f71ac49c6",
+  "07_sealed_authored_timing.png": "81d17703f5990c62c48381a3494543f5b8fdbbf2f8a6103036d77d3c63e5a97f",
+  "launch.json": "1b27355855fcd479beffbbd6b338fe55b31c7a2aee1da013bc8b01acad692ef4",
+  "launch.once": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "launcher.c": "3423e23c769fbf6791210f686bd245b3cb77ce11ac10b23a28f323d0405a1895",
+  "native.log": "f3addaadf136999b0103ec0ae1b8815aa9b209848d2d491d332047b12ba03cfb",
+  "native.pid": "41cf1df211f052e020bb2078fe1fd1891da7c3b6156a4d9ca4974b4c4f74291b",
+  "p5a-20-bpm.json": "6a40a714a79ffd3e423c5c295f3197c51a8945f9eff628752d4c3215f043c3d0",
+  "p5a-400-bpm.json": "492c2d06b9ce8f1c5cf9c32a1cef9f4b7540811d865a560d87d03e886864c5f6",
+  "p5a-core-before.json": "c86661c702399d74285dc3700ec3444e10b99d0651bfe11a3a07579743f41ad0",
+  "p5a-final.json": "3c59e7aab3715253be62fcf1ca2c19d21dbc7582aaf43afcb9fa43ab3ed9c0b5",
+  "p5a-manual-wait.json": "e8252749025902c671c010ceba3c00cbdd151452282d381afc25df0d12dfef95",
+  "p5a-pcm-before.json": "c4669896021bc6a789c107e8be1aea4e730e3a899e6f465253746a2b4ca33e59",
+  "scenario.done": "3dac0ab42a5890ad65a0bc75d8f704fe45fd304a0b62a851ad7d22a5bad10b37"
+}
