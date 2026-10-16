@@ -458,9 +458,9 @@ mod tests {
             ui.set.cursor = ui.set.index_of(first).unwrap();
             ui.select_app_section(AppSection::Rehearsal);
             ui.now_ms = Some(1000);
-            ui.toggle_rehearsal();
+            ui.toggle_rehearsal(); crate::tests::acknowledge_card_preview_fixture(&mut ui);
             ui.now_ms = Some(2500);
-            ui.toggle_rehearsal();
+            ui.toggle_rehearsal(); crate::tests::acknowledge_card_preview_fixture(&mut ui);
             storage.save(&serde_json::to_string(&ui.to_persisted()).unwrap());
             storage.save_settings(&serde_json::to_string(&ui.app_settings).unwrap());
             assert!(storage.load().is_some());
@@ -478,7 +478,7 @@ mod tests {
                 assert_eq!(card.timing.bpm, Some(90.0));
                 let pitches = ui
                     .stage
-                    .card_sounding_pitches_at_tempo(card, ui.transport.bpm);
+                    .card_sounding_pitches_at_tempo(card, ui.transport.bpm).unwrap();
                 assert!(!pitches.0.is_empty());
                 assert!(pitches.2 > 0.0);
             }
@@ -574,14 +574,14 @@ mod tests {
             ui.set.select_id(arpeggio);
             ui.select_app_section(AppSection::Rehearsal);
             ui.now_ms = Some(1_000);
-            ui.toggle_rehearsal();
+            ui.toggle_rehearsal(); crate::tests::acknowledge_card_preview_fixture(&mut ui);
             ui.now_ms = Some(2_000);
-            ui.toggle_rehearsal();
+            ui.toggle_rehearsal(); crate::tests::acknowledge_card_preview_fixture(&mut ui);
             ui.set.select_id(scale);
             ui.now_ms = Some(10_000);
-            ui.toggle_rehearsal();
+            ui.toggle_rehearsal(); crate::tests::acknowledge_card_preview_fixture(&mut ui);
             ui.now_ms = Some(11_500);
-            ui.toggle_rehearsal();
+            ui.toggle_rehearsal(); crate::tests::acknowledge_card_preview_fixture(&mut ui);
             storage.save(&serde_json::to_string(&ui.to_persisted()).unwrap());
             storage.save_settings(&serde_json::to_string(&ui.app_settings).unwrap());
             assert!(storage.load().is_some());
@@ -640,7 +640,7 @@ mod tests {
                 (dot.frequency - d4_hz).abs() < 0.001,
                 "saved physical contact is D4 on the Ukulele, not B2 on the live Guitar"
             );
-            let sounding = ui.preview_voicing();
+            let sounding = ui.preview_voicing().unwrap();
             assert_eq!(sounding.0.len(), 1);
             assert!((sounding.0[0] - d4_hz).abs() < 0.001);
             assert_eq!(ui.rehearsal_board_geometry().string_count, 4);
@@ -653,7 +653,7 @@ mod tests {
                 assert!(matches!(card.timing.hold, Hold::Bars(1)));
                 assert!(
                     !ui.stage
-                        .card_sounding_pitches_at_tempo(card, ui.transport.bpm)
+                        .card_sounding_pitches_at_tempo(card, ui.transport.bpm).unwrap()
                         .0
                         .is_empty()
                 );
@@ -758,14 +758,14 @@ mod tests {
                 let id = ui.stage_scale_pattern().unwrap();
                 ui.set.select_id(id);
                 ui.select_app_section(AppSection::Rehearsal);
-                sounds.push(ui.preview_voicing());
+                sounds.push(ui.preview_voicing().unwrap());
                 let subject = catalog_id_for_card(ui.set.card(id).unwrap()).unwrap();
                 assert_ne!(subject, "scale:Major");
                 subjects.push(subject);
                 ui.now_ms = Some(1_000 + index as u64 * 10_000);
-                ui.toggle_rehearsal();
+                ui.toggle_rehearsal(); crate::tests::acknowledge_card_preview_fixture(&mut ui);
                 ui.now_ms = Some(2_500 + index as u64 * 10_000);
-                ui.toggle_rehearsal();
+                ui.toggle_rehearsal(); crate::tests::acknowledge_card_preview_fixture(&mut ui);
             }
             assert_eq!(
                 serde_json::to_value(&ui.set.cards[0]).unwrap(),
@@ -817,7 +817,7 @@ mod tests {
                     matches!(&card.material, Material::ScalePattern { name, root, pattern: saved } if name == "Major" && *root == PitchClass::new(0) && *saved == pattern)
                 );
                 assert_eq!(ui.rehearsal_board_geometry().string_count, 4);
-                let sounding = ui.preview_voicing();
+                let sounding = ui.preview_voicing().unwrap();
                 let expected_sound: (Vec<f32>, f32, f32) =
                     serde_json::from_value(expected["sounds"][index].clone()).unwrap();
                 assert_eq!(
@@ -940,14 +940,14 @@ mod tests {
                 let id = ui.stage_chord_approach().unwrap();
                 ui.set.select_id(id);
                 ui.select_app_section(AppSection::Rehearsal);
-                sounds.push(ui.preview_voicing());
+                sounds.push(ui.preview_voicing().unwrap());
                 let subject = catalog_id_for_card(ui.set.card(id).unwrap()).unwrap();
                 assert_ne!(subject, "chord:Major 7");
                 subjects.push(subject);
                 ui.now_ms = Some(1_000 + index as u64 * 10_000);
-                ui.toggle_rehearsal();
+                ui.toggle_rehearsal(); crate::tests::acknowledge_card_preview_fixture(&mut ui);
                 ui.now_ms = Some(2_500 + index as u64 * 10_000);
-                ui.toggle_rehearsal();
+                ui.toggle_rehearsal(); crate::tests::acknowledge_card_preview_fixture(&mut ui);
             }
             assert_eq!(serde_json::to_value(&ui.set.cards[..2]).unwrap(), originals);
             let ids = ui.set.cards.iter().map(|card| card.id).collect::<Vec<_>>();
@@ -1000,7 +1000,7 @@ mod tests {
                     ui.set.cards[1].setting.voicing_fingerprint
                 );
                 assert_eq!(ui.rehearsal_board_geometry().string_count, 4);
-                let sounding = ui.preview_voicing();
+                let sounding = ui.preview_voicing().unwrap();
                 let expected_sound: (Vec<f32>, f32, f32) =
                     serde_json::from_value(expected["sounds"][index].clone()).unwrap();
                 assert_eq!(
@@ -1035,7 +1035,7 @@ mod tests {
             ui.set.cards[3].setting.voicing_fingerprint = Some("stale-test-shape".into());
             ui.set.cursor = 3;
             assert!(
-                ui.preview_voicing().0.is_empty(),
+                ui.preview_voicing().unwrap().0.is_empty(),
                 "an unavailable saved shape must not fall back to a formula preview after reopen"
             );
         }
@@ -1107,14 +1107,14 @@ mod tests {
             let exercise_id = ui.stage_scale_pattern().unwrap();
             ui.set.select_id(exercise_id);
             ui.activate_workspace_panel(WorkspacePanel::Set);
-            let sound = ui.preview_voicing();
+            let sound = ui.preview_voicing().unwrap();
             assert!(sound.0.windows(2).any(|pair| pair[1] < pair[0]));
             let saved_id = ui.save_working_set().unwrap();
             let saved = serde_json::to_value(ui.retained_sets.get(saved_id).unwrap()).unwrap();
             ui.set.cards[0].label = "Edited working scale".into();
             ui.set.cards[0].timing.bpm = Some(137.0);
             ui.now_ms = Some(1_000);
-            ui.toggle_rehearsal();
+            ui.toggle_rehearsal(); crate::tests::acknowledge_card_preview_fixture(&mut ui);
             ui.activate_workspace_panel(WorkspacePanel::Overview);
             let expected = serde_json::json!({ "saved": saved, "saved_id": saved_id, "sound": sound, "working": ui.set });
             std::fs::write(&expected_path, serde_json::to_vec(&expected).unwrap()).unwrap();
@@ -1168,7 +1168,7 @@ mod tests {
             let sound: (Vec<f32>, f32, f32) =
                 serde_json::from_value(expected["sound"].clone()).unwrap();
             assert_eq!(
-                ui.preview_voicing(),
+                ui.preview_voicing().unwrap(),
                 sound,
                 "restored copy replays exact ordered repeated music through saved Ukulele/capo setup"
             );
@@ -1247,7 +1247,7 @@ mod tests {
             ui.set.select_id(exercise);
             ui.activate_workspace_panel(WorkspacePanel::Set);
             let first = ui.working_sets.active_id;
-            let sound_a = ui.preview_voicing();
+            let sound_a = ui.preview_voicing().unwrap();
             let snapshot = ui.save_working_set().unwrap();
             let library = serde_json::to_value(&ui.retained_sets).unwrap();
             let exploration_a = ui.catalog_explorations.active_id;
@@ -1258,7 +1258,7 @@ mod tests {
             ui.set.cards[0].setting.capo = Some(4);
             ui.set.cards[0].setting.fret_window = Some(FretWindow { start: 4, span: 8 });
             ui.set.cards[0].timing.bpm = Some(117.0);
-            let sound_b = ui.preview_voicing();
+            let sound_b = ui.preview_voicing().unwrap();
             assert_ne!(sound_a.0, sound_b.0);
             let exploration_b = ui.create_exploration();
             ui.stage.set_lens(Lens::Chords);
@@ -1276,10 +1276,10 @@ mod tests {
             ));
             assert!(ui.activate_working_set(first));
             ui.now_ms = Some(1_000);
-            ui.toggle_rehearsal();
+            ui.toggle_rehearsal(); crate::tests::acknowledge_card_preview_fixture(&mut ui);
             assert!(ui.activate_working_set(second));
             assert_eq!(ui.rehearsal_owner, Some(first));
-            assert_eq!(ui.rehearsal_sounding_pitches().unwrap(), sound_a);
+            assert_eq!(ui.rehearsal_sounding_pitches().unwrap().unwrap(), sound_a);
             ui.activate_workspace_panel(WorkspacePanel::Overview);
             let expected = serde_json::json!({
                 "first":first,"second":second,"exploration_a":exploration_a,"exploration_b":exploration_b,
@@ -1329,7 +1329,7 @@ mod tests {
             assert_eq!(ui.rehearsal_board_geometry().string_count, 4);
             let sound_a: (Vec<f32>, f32, f32) =
                 serde_json::from_value(expected["sound_a"].clone()).unwrap();
-            assert_eq!(ui.preview_voicing(), sound_a);
+            assert_eq!(ui.preview_voicing().unwrap(), sound_a);
             assert!(ui.activate_exploration(exploration_a));
             assert_eq!(
                 serde_json::to_value(ui.capture_exploration()).unwrap(),
@@ -1344,7 +1344,7 @@ mod tests {
             assert_eq!(ui.set.cursor, 0);
             let sound_b: (Vec<f32>, f32, f32) =
                 serde_json::from_value(expected["sound_b"].clone()).unwrap();
-            assert_eq!(ui.preview_voicing(), sound_b);
+            assert_eq!(ui.preview_voicing().unwrap(), sound_b);
             assert_eq!(
                 serde_json::to_value(&ui.retained_sets).unwrap(),
                 expected["library"]

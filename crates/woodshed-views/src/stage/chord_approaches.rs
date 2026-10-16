@@ -107,8 +107,10 @@ impl UiState {
         } else {
             &self.stage
         };
-        let (pitches, duration_s, strum_s) =
-            stage.card_sounding_pitches_at_tempo(card, self.transport.bpm);
+        let (pitches, duration_s, strum_s) = match stage.card_sounding_pitches_at_tempo(card, self.transport.bpm) {
+                    Ok(preview) => { self.card_timing_notice = None; preview },
+                    Err(error) => { self.card_timing_notice = Some(error.to_string()); return; },
+                };
         if pitches.is_empty() {
             return;
         }
@@ -451,7 +453,7 @@ mod tests {
         assert_eq!(appended.setting.mark_mode, MarkMode::Off);
         ui.set.select_id(first);
         ui.section = AppSection::Rehearsal;
-        assert_eq!(ui.preview_voicing(), heard);
+        assert_eq!(ui.preview_voicing().unwrap(), heard);
         assert_eq!(ui.rehearsal_board_geometry().string_count, 4);
         assert!(
             ui.rehearsal_approach_status()
@@ -590,7 +592,7 @@ mod tests {
                 .contains("Missing saved target tuning")
         );
         assert_eq!(ui.rehearsal_board_geometry().string_count, 0);
-        assert!(ui.preview_voicing().0.is_empty());
+        assert!(ui.preview_voicing().unwrap().0.is_empty());
         assert!(ui.stage.dots_for_card(&ui.set.cards[index]).is_empty());
     }
 }

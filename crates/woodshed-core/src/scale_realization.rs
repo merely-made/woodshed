@@ -11,7 +11,7 @@ use std::collections::BTreeSet;
 use woodshedding::{
     fretboard::Fretboard,
     pitch::{Pitch, PitchClass, Spelling},
-    rehearsal::{Card, Hold, MarkMode, Material, Touch},
+    rehearsal::{Card, MarkMode, Material, Touch},
 };
 
 use crate::card_shapes::ResolvedShapeSetup;
@@ -179,9 +179,9 @@ impl StageState {
         &self,
         card: &Card,
         apply_marks: bool,
-    ) -> (Vec<f32>, f32, f32) {
+    ) -> crate::CardPreviewResult {
         let Ok(scale) = self.scale_card_realization(card) else {
-            return (Vec::new(), 0.0, 0.0);
+            return Ok((Vec::new(), 0.0, 0.0));
         };
         let mut pitches = scale
             .notes
@@ -222,35 +222,21 @@ impl StageState {
 }
 
 /// Articulate an already ordered visit sequence without sorting or deduplication.
-pub(crate) fn ordered_card_preview(card: &Card, pitches: Vec<f32>) -> (Vec<f32>, f32, f32) {
+pub(crate) fn ordered_card_preview(card: &Card, pitches: Vec<f32>) -> crate::CardPreviewResult {
     if pitches.is_empty() {
-        return (pitches, 0.0, 0.0);
+        return Ok((pitches, 0.0, 0.0));
     }
     if !matches!(card.touch, Touch::Walk) {
         let (duration, offset) = crate::voicing_shape(pitches.len(), false);
-        return (pitches, duration, offset);
+        return Ok((pitches, duration, offset));
     }
-    let bpm = card
-        .timing
-        .bpm
-        .filter(|bpm| bpm.is_finite() && *bpm > 0.0)
-        .unwrap_or(120.0)
-        .max(30.0);
-    let dwell = match card.timing.hold {
-        Hold::Manual => None,
-        Hold::Bars(n) => Some(4.0 * 60.0 / bpm * f32::from(n.max(1))),
-        Hold::Reps(n) => Some(4.0 * 60.0 / bpm * f32::from(n.max(1))),
-        Hold::Seconds(seconds) => Some(if seconds.is_finite() {
-            seconds.max(0.5)
-        } else {
-            0.5
-        }),
-    };
-    let step_secs = dwell.map_or(60.0 / bpm, |duration| duration / pitches.len() as f32);
-    let duration =
-        dwell.unwrap_or_else(|| (pitches.len().saturating_sub(1) as f32 * step_secs) + 0.4);
-    (pitches, duration, step_secs * 1000.0)
+    let timing = crate::resolve_card_timing(&card.timing, 120.0)?;
+    let (duration, strum_ms) = timing.ordered_preview(pitches.len())?;
+    Ok((pitches, duration, strum_ms))
 }
+
+#[cfg(test)]
+use woodshedding::rehearsal::Hold;
 
 #[cfg(test)]
 mod tests {
@@ -317,7 +303,7 @@ mod tests {
             .iter()
             .map(|dot| crate::pc_from_hz(dot.frequency))
             .collect::<BTreeSet<_>>();
-        let (sound, _, _) = state.card_sounding_pitches(&card);
+        let (sound, _, _) = state.card_sounding_pitches(&card).unwrap();
         let sounded = sound
             .iter()
             .map(|hz| crate::pc_from_hz(*hz))
@@ -357,10 +343,10 @@ mod tests {
         let target = &result.dots[0];
         card.setting.marked = vec![(target.string_index, target.fret)];
         card.setting.mark_mode = MarkMode::Solo;
-        let sound = state.card_sounding_pitches(&card).0;
+        let sound = state.card_sounding_pitches(&card).unwrap().0;
         assert_eq!(sound, vec![target.frequency]);
         card.setting.mark_mode = MarkMode::Mute;
-        let sound = state.card_sounding_pitches(&card).0;
+        let sound = state.card_sounding_pitches(&card).unwrap().0;
         assert!(
             sound
                 .iter()
@@ -368,7 +354,7 @@ mod tests {
         );
         card.setting.marked = vec![(99, 99)];
         card.setting.mark_mode = MarkMode::Solo;
-        assert!(state.card_sounding_pitches(&card).0.is_empty());
+        assert!(state.card_sounding_pitches(&card).unwrap().0.is_empty());
     }
 
     #[test]
@@ -383,7 +369,7 @@ mod tests {
             ))
         ));
         assert!(state.dots_for_card(&card).is_empty());
-        assert!(state.card_sounding_pitches(&card).0.is_empty());
+        assert!(state.card_sounding_pitches(&card).unwrap().0.is_empty());
         card.setting.instrument = "Ukulele".into();
         card.setting.tuning = Some("Custom not persisted".into());
         assert!(matches!(
@@ -459,12 +445,12 @@ mod tests {
     fn walk_uses_tempo_and_fits_hold_with_inherited_clock() {
         let state = StageState::new();
         let mut card = scale();
-        let (pitches, duration, offset) = state.card_sounding_pitches_at_tempo(&card, 90.0);
+        let (pitches, duration, offset) = state.card_sounding_pitches_at_tempo(&card, 90.0).unwrap();
         assert!((offset - 666.6667).abs() < 0.01);
         assert!(duration > (pitches.len() - 1) as f32 * offset / 1000.0);
         card.timing.hold = Hold::Bars(1);
-        let (pitches, duration, offset) = state.card_sounding_pitches_at_tempo(&card, 180.0);
-        let dwell = crate::card_dwell(&card, 180.0).unwrap().as_secs_f32();
+        let (pitches, duration, offset) = state.card_sounding_pitches_at_tempo(&card, 180.0).unwrap();
+        let dwell = crate::card_dwell(&card, 180.0).unwrap().unwrap().as_secs_f32();
         assert!((duration - dwell).abs() < 0.00001);
         assert!((pitches.len() - 1) as f32 * offset < dwell * 1000.0);
         assert_eq!(card.timing.bpm, None);

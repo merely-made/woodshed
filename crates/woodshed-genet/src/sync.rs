@@ -120,6 +120,12 @@ fn push_backend(shared: &mut Shared, ctx: &mut Ctx<'_>) {
             let mut capture_changed = false;
             for request in std::mem::take(&mut ui.audio_requests) {
                 match request {
+                    AudioRequest::CardPreview(request) => {
+                        if ui.card_preview_is_current(&request) {
+                            let outcome = backend.admit_card_preview(&request.preview);
+                            ui.finish_card_preview_admission(&request, outcome);
+                        }
+                    },
                     AudioRequest::Recorder(request) => {
                         match execute_recorder_request(
                             &request,
@@ -136,9 +142,13 @@ fn push_backend(shared: &mut Shared, ctx: &mut Ctx<'_>) {
                     AudioRequest::SongRewind => backend.song_rewind(),
                     AudioRequest::CancelPreview => backend.cancel_preview(),
                     AudioRequest::PreviewVoicing => {
-                        let (pitches, dur, strum) = ui.preview_voicing();
-                        if !pitches.is_empty() {
-                            backend.preview_pitches(&pitches, dur, strum);
+                        match ui.preview_voicing() {
+                            Ok(preview) => {
+                                if let Err(error) = backend.admit_card_preview(&preview) {
+                                    ui.card_timing_notice = Some(format!("Queued preview: {error}"));
+                                }
+                            },
+                            Err(error) => ui.card_timing_notice = Some(error.to_string()),
                         }
                     },
                     AudioRequest::PreviewPitches {
@@ -147,7 +157,9 @@ fn push_backend(shared: &mut Shared, ctx: &mut Ctx<'_>) {
                         strum_s,
                     } => {
                         if !pitches.is_empty() {
-                            backend.preview_pitches(&pitches, duration_s, strum_s);
+                            if let Err(error) = backend.admit_card_preview(&(pitches, duration_s, strum_s)) {
+                                ui.card_timing_notice = Some(format!("Queued preview: {error}"));
+                            }
                         }
                     },
                     AudioRequest::PreviewPhrase {

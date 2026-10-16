@@ -1549,7 +1549,7 @@ mod tests {
         ui.approach_source = Some(old);
         ui.card_rename_for = None;
         let owner = ui.working_sets.active_id;
-        ui.toggle_rehearsal();
+        ui.toggle_rehearsal(); ui.admit_previews_for_test();
         assert!(ui.open_retained_set(id));
         assert_ne!(ui.set.cards[0].id, old);
         assert_ne!(ui.set.cards[0].id, CardId::UNASSIGNED);

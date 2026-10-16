@@ -661,3 +661,26 @@ fn canonical_metronome_uses_rounded_denominator_beats_without_boundary_drift() {
         .collect();
     assert_eq!(starts, (0..=8).map(|i| i * beat).collect::<Vec<_>>());
 }
+
+#[test]
+fn exact_card_preview_preserves_short_duration_and_refuses_unrepresentable_output() {
+    let mut r = runtime(); // 1000 Hz actual offline processor
+    r.preview_card_pitches(&[220.0, 330.0], 0.06, 30.0).unwrap();
+    let revision = r.shared.preview_revision.load(Ordering::Acquire);
+    for (duration, spacing) in [(0.0001, 0.0), (0.4, 0.0001), (1e20, 0.0)] {
+        assert!(r.preview_card_pitches(&[220.0, 330.0], duration, spacing).is_err());
+        assert_eq!(r.shared.preview_revision.load(Ordering::Acquire), revision);
+    }
+    let began = std::time::Instant::now();
+    let completed = loop {
+        if let Some(completed) = r.preview.take_completion() { break completed; }
+        assert!(began.elapsed() < std::time::Duration::from_secs(2));
+        std::thread::yield_now();
+    };
+    assert_eq!(completed.buffer.data.len(), 60, "exact Card must not inherit the generic 100-frame minimum");
+    let mut backing = song(1);
+    backing.playing = true;
+    r.set_song(backing).unwrap();
+    assert!(r.preview_card_pitches(&[220.0], 0.2, 0.0).is_err());
+    assert!(r.song().playing, "a refused preview retains the admitted backing");
+}

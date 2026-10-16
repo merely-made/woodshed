@@ -75,6 +75,7 @@ pub(super) fn card_editor(ui: &UiState) -> UiChild {
             "div",
             (
                 el("div", text("Selected Card")).attr("class", "set-editor-label"),
+                ui.selected_timing_interpretation().map(|notice| el("div", text(notice)).attr("class", "card-timing-interpretation").attr("role", "status")),
                 clickable(
                     el("button", text("Hear selected Card"))
                         .attr("class", "t-btn t-hear card-hear"),

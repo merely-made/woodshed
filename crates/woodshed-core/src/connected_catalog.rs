@@ -103,18 +103,18 @@ impl StageState {
 /// existing arpeggio transport does. It does not promise full-shape coverage.
 /// Tempo is quarter-note spacing for Manual, defaulting to 120 bpm. A timed
 /// hold distributes one whole traversal across its dwell, including its tail.
-pub fn arpeggiate_preview(card: &Card, preview: (Vec<f32>, f32, f32)) -> (Vec<f32>, f32, f32) {
+pub fn arpeggiate_preview(card: &Card, preview: (Vec<f32>, f32, f32)) -> crate::CardPreviewResult {
     let Touch::Arpeggiate {
         direction,
         inversion,
     } = card.touch
     else {
-        return preview;
+        return Ok(preview);
     };
     let (mut pitches, _, _) = preview;
     pitches.retain(|hz| hz.is_finite() && *hz > 0.0);
     if pitches.is_empty() {
-        return (pitches, 0.0, 0.0);
+        return Ok((pitches, 0.0, 0.0));
     }
     pitches.sort_by(f32::total_cmp);
     if let Material::Chord { name, root } = &card.material {
@@ -151,26 +151,9 @@ pub fn arpeggiate_preview(card: &Card, preview: (Vec<f32>, f32, f32)) -> (Vec<f3
             pitches.extend(back);
         },
     }
-    let bpm = card
-        .timing
-        .bpm
-        .filter(|bpm| bpm.is_finite() && *bpm > 0.0)
-        .unwrap_or(120.0)
-        .clamp(30.0, 300.0);
-    let dwell = match card.timing.hold {
-        woodshedding::rehearsal::Hold::Manual => None,
-        woodshedding::rehearsal::Hold::Bars(n) => Some(4.0 * 60.0 / bpm * f32::from(n.max(1))),
-        woodshedding::rehearsal::Hold::Reps(n) => Some(4.0 * 60.0 / bpm * f32::from(n.max(1))),
-        woodshedding::rehearsal::Hold::Seconds(seconds) => Some(if seconds.is_finite() {
-            seconds.max(0.5)
-        } else {
-            0.5
-        }),
-    };
-    let step_secs = dwell.map_or(60.0 / bpm, |duration| duration / pitches.len() as f32);
-    let duration =
-        dwell.unwrap_or_else(|| (pitches.len().saturating_sub(1) as f32 * step_secs) + 0.4);
-    (pitches, duration, step_secs * 1000.0)
+    let timing = crate::resolve_card_timing(&card.timing, 120.0)?;
+    let (duration, strum_ms) = timing.ordered_preview(pitches.len())?;
+    Ok((pitches, duration, strum_ms))
 }
 
 #[cfg(test)]
@@ -251,8 +234,8 @@ mod tests {
         card.setting.fret_window = Some(FretWindow { start: 2, span: 4 });
         state.select_next_card_shape(&mut card).unwrap();
         let discovery = state.chord_arpeggio_discovery(&card).unwrap();
-        let mut chord = state.card_sounding_pitches(&card).0;
-        let (mut arpeggio, _, offset) = state.card_sounding_pitches(&discovery.preview);
+        let mut chord = state.card_sounding_pitches(&card).unwrap().0;
+        let (mut arpeggio, _, offset) = state.card_sounding_pitches(&discovery.preview).unwrap();
         chord.sort_by(f32::total_cmp);
         chord.dedup();
         arpeggio.sort_by(f32::total_cmp);
@@ -277,8 +260,8 @@ mod tests {
         card.setting.fret_window = Some(FretWindow { start: 5, span: 4 });
         state.select_next_card_shape(&mut card).unwrap();
         let discovery = state.chord_arpeggio_discovery(&card).unwrap();
-        let mut chord = state.card_sounding_pitches(&card).0;
-        let mut arpeggio = state.card_sounding_pitches(&discovery.preview).0;
+        let mut chord = state.card_sounding_pitches(&card).unwrap().0;
+        let mut arpeggio = state.card_sounding_pitches(&discovery.preview).unwrap().0;
         chord.sort_by(f32::total_cmp);
         chord.dedup();
         arpeggio.sort_by(f32::total_cmp);
@@ -354,7 +337,7 @@ mod tests {
                 .frequency() as f32
         };
         let input = vec![hz(73), hz(62), hz(69), hz(66)];
-        let (pitches, duration, offset) = arpeggiate_preview(&card, (input, 1.4, 18.0));
+        let (pitches, duration, offset) = arpeggiate_preview(&card, (input, 1.4, 18.0)).unwrap();
         assert_eq!(
             pitches,
             vec![hz(62), hz(66), hz(69), hz(73), hz(69), hz(66)]
@@ -366,7 +349,7 @@ mod tests {
             inversion: 1,
         };
         let (pitches, _, _) =
-            arpeggiate_preview(&card, (vec![hz(62), hz(66), hz(69), hz(73)], 0.0, 0.0));
+            arpeggiate_preview(&card, (vec![hz(62), hz(66), hz(69), hz(73)], 0.0, 0.0)).unwrap();
         assert_eq!(pitches, vec![hz(73), hz(69), hz(66)]);
     }
 
@@ -379,7 +362,7 @@ mod tests {
         };
         card.timing.hold = woodshedding::rehearsal::Hold::Seconds(1.0);
         let (pitches, duration, offset) =
-            arpeggiate_preview(&card, (vec![100.0, 200.0, 300.0, 400.0], 1.4, 18.0));
+            arpeggiate_preview(&card, (vec![100.0, 200.0, 300.0, 400.0], 1.4, 18.0)).unwrap();
         assert_eq!(duration, 1.0);
         assert!(offset * ((pitches.len() - 1) as f32) < duration * 1000.0);
     }
@@ -394,14 +377,14 @@ mod tests {
         };
         card.timing.bpm = None;
         card.timing.hold = woodshedding::rehearsal::Hold::Bars(1);
-        let (pitches, duration, offset) = state.card_sounding_pitches_at_tempo(&card, 180.0);
-        let dwell = crate::card_dwell(&card, 180.0).unwrap().as_secs_f32();
+        let (pitches, duration, offset) = state.card_sounding_pitches_at_tempo(&card, 180.0).unwrap();
+        let dwell = crate::card_dwell(&card, 180.0).unwrap().unwrap().as_secs_f32();
         assert!(!pitches.is_empty());
         assert!((duration - dwell).abs() < 0.00001);
         assert!(offset * ((pitches.len() - 1) as f32) < dwell * 1000.0);
         assert_eq!(card.timing.bpm, None);
         card.timing.bpm = Some(90.0);
-        let (_, explicit_duration, _) = state.card_sounding_pitches_at_tempo(&card, 180.0);
+        let (_, explicit_duration, _) = state.card_sounding_pitches_at_tempo(&card, 180.0).unwrap();
         assert!((explicit_duration - dwell * 2.0).abs() < 0.00001);
     }
 }

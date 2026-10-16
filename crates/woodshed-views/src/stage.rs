@@ -53,6 +53,7 @@ mod context;
 #[cfg(test)]
 mod context_tests;
 mod instances;
+mod timing;
 mod looper;
 mod musical_context;
 mod overview;
@@ -1067,6 +1068,9 @@ pub struct UiState {
     pub workspace_effects: Vec<WorkspaceEffect>,
     /// Rehearsal dwell transport running (transient).
     pub rehearsal_running: bool,
+    pub rehearsal_pending: bool,
+    pub rehearsal_epoch: u64,
+    pub card_timing_notice: Option<String>,
     /// Last explicit shape-selection failure, scoped to its Card occurrence.
     pub card_shape_notice: Option<(CardId, String)>,
     pub song: SongDoc,
@@ -1323,6 +1327,9 @@ impl UiState {
             workspace: WoodshedWorkspace::new(),
             workspace_effects: Vec::new(),
             rehearsal_running: false,
+            rehearsal_pending: false,
+            rehearsal_epoch: 0,
+            card_timing_notice: None,
             card_shape_notice: None,
             song: SongDoc::default(),
             looper: LooperConfig::default(),
@@ -2147,14 +2154,14 @@ impl UiState {
     /// context: the current rehearsal card on the Rehearsal tab, else the
     /// active Stage lens. Empty pitches = nothing to voice. The host calls
     /// this when it drains an [`AudioRequest::PreviewVoicing`].
-    pub fn preview_voicing(&self) -> (Vec<f32>, f32, f32) {
+    pub fn preview_voicing(&self) -> woodshed_core::CardPreviewResult {
         if self.section == AppSection::Rehearsal && !self.set.cards.is_empty() {
             let cursor = self.set.cursor.min(self.set.cards.len() - 1);
             return self
                 .current_card_stage()
                 .card_sounding_pitches_at_tempo(&self.set.cards[cursor], self.transport.bpm);
         }
-        self.stage.voicing_preview()
+        Ok(self.stage.voicing_preview())
     }
 
     pub fn refresh_event_time(&mut self) {
@@ -2164,33 +2171,28 @@ impl UiState {
     }
 
     pub fn request_preview(&mut self) {
-        let card = if self.section == AppSection::Rehearsal {
-            self.current_card().cloned()
-        } else {
-            self.stage.card_from_lens()
-        };
-        self.record_preview_interest(card.as_ref());
-        self.request(AudioRequest::PreviewVoicing);
-    }
-
-    /// Expanded Card audition resolves its retained setup now. Later catalog
-    /// focus or navigation cannot redirect this request to the Stage lens.
-    pub fn request_card_preview(&mut self) {
-        let Some(card) = self.current_card().cloned() else {
-            return;
-        };
-        let (pitches, duration_s, strum_s) = self
-            .current_card_stage()
-            .card_sounding_pitches_at_tempo(&card, self.transport.bpm);
-        if pitches.is_empty() {
+        if self.section == AppSection::Rehearsal {
+            self.request_card_preview();
             return;
         }
-        self.record_preview_interest(Some(&card));
-        self.request(AudioRequest::PreviewPitches {
-            pitches,
-            duration_s,
-            strum_s,
-        });
+        let (pitches, duration_s, strum_s) = self.stage.voicing_preview();
+        let card = self.stage.card_from_lens();
+        self.record_preview_interest(card.as_ref());
+        self.request(AudioRequest::PreviewPitches { pitches, duration_s, strum_s });
+    }
+
+    /// Resolve retained sound at the interaction, retaining its source through admission.
+    pub fn request_card_preview(&mut self) {
+        let Some(card) = self.current_card().cloned() else { return; };
+        let preview = match self.current_card_stage().card_sounding_pitches_at_tempo(&card, self.transport.bpm) {
+            Ok(preview) => preview,
+            Err(error) => { self.card_timing_notice = Some(format!("Set {} · Card {}: {error}", self.working_sets.active_id.0, card.id.0)); return; },
+        };
+        self.card_timing_notice = None;
+        match self.bound_card_preview(&card, self.working_sets.active_id, None, preview) {
+            Ok(request) => self.request(AudioRequest::CardPreview(request)),
+            Err(error) => self.card_timing_notice = Some(error),
+        }
     }
 
     /// Both mounts consume the same retained Card projector and paint leaf.
@@ -2259,44 +2261,24 @@ impl UiState {
         }
     }
 
+    /// Request this instruction; its observation opens only on host admission.
     pub fn record_rehearsal_cursor(&mut self) {
-        self.refresh_event_time();
+        self.rehearsal_epoch = self.rehearsal_epoch.wrapping_add(1);
+        self.rehearsal_pending = true;
         if self.rehearsal_owner.is_none() {
             self.rehearsal_owner = Some(self.working_sets.active_id);
         }
-        if self.rehearsal_stage.is_none() {
-            self.capture_runner_stage();
-        }
-        let Some(card) = self.rehearsal_card().cloned() else {
-            return;
+        if self.rehearsal_stage.is_none() { self.capture_runner_stage(); }
+        let Some(card) = self.rehearsal_card().cloned() else { return; };
+        let preview = match self.rehearsal_sounding_pitches() {
+            Ok(Some(preview)) => preview,
+            Ok(None) => return,
+            Err(error) => { self.refuse_current_rehearsal(format!("Set {} · Card {}: {error}", self.rehearsal_owner.unwrap_or(self.working_sets.active_id).0, card.id.0)); return; },
         };
-        self.card_started_ms = self.now_ms;
-        self.rehearsal_observed_card = Some(card.clone());
-        self.rehearsal_observed_midi = self.rehearsal_sounding_pitches().map(|(pitches, _, _)| {
-            pitches
-                .into_iter()
-                .map(|hz| (69.0 + 12.0 * (hz / 440.0).log2()).round() as i32)
-                .collect()
-        });
-        if let Some(id) = catalog_id_for_card(&card) {
-            self.practice_history.record_observation(
-                self.now_ms,
-                id,
-                EngagementKind::Rehearsed,
-                None,
-                None,
-                {
-                    let mut provenance = ObservationProvenance::capture_in_set(
-                        &card,
-                        self.rehearsal_owner.unwrap_or(self.working_sets.active_id),
-                    )
-                    .ok();
-                    if let Some(value) = &mut provenance {
-                        value.presented_midi = self.rehearsal_observed_midi.clone();
-                    }
-                    provenance
-                },
-            );
+        let owner = self.rehearsal_owner.unwrap_or(self.working_sets.active_id);
+        match self.bound_card_preview(&card, owner, Some(self.rehearsal_epoch), preview) {
+            Ok(request) => self.request(AudioRequest::CardPreview(request)),
+            Err(error) => self.refuse_current_rehearsal(error),
         }
     }
 
@@ -2341,15 +2323,7 @@ impl UiState {
             self.capture_runner_stage();
             self.rehearsal_running = true;
             self.record_rehearsal_cursor();
-            if let Some((pitches, duration_s, strum_s)) = self.rehearsal_sounding_pitches() {
-                if !pitches.is_empty() {
-                    self.request(AudioRequest::PreviewPitches {
-                        pitches,
-                        duration_s,
-                        strum_s,
-                    });
-                }
-            }
+
         }
     }
 
@@ -2360,6 +2334,9 @@ impl UiState {
         if !self.rehearsal_running {
             return;
         }
+        if self.rehearsal_pending && self.audio_requests.iter().any(|request| {
+            matches!(request, AudioRequest::CardPreview(request) if request.run_epoch == Some(self.rehearsal_epoch) && self.card_preview_is_current(request))
+        }) { return; }
         let changed = self
             .rehearsal_observed_card
             .as_ref()
@@ -2448,6 +2425,9 @@ impl UiState {
         self.overview_notice = None;
         self.card_rename_for = None;
         self.rehearsal_running = false;
+        self.rehearsal_pending = false;
+        self.rehearsal_epoch = self.rehearsal_epoch.wrapping_add(1);
+        self.card_timing_notice = None;
         self.rehearsal_observed_card = None;
         self.card_started_ms = None;
         self.song = session.song.clone();
@@ -3587,6 +3567,10 @@ pub fn stage_root(ui: &UiState) -> UiChild {
                             .attr("class", "practice-save-notice")
                             .attr("role", "alert")
                     }),
+                ui.card_timing_notice.as_ref().map(|notice| {
+                    el("div", text(format!("Card audio unavailable: {notice}")))
+                        .attr("class", "card-timing-notice").attr("role", "status")
+                }),
                 tab_content(ui),
             ),
         )
@@ -3634,7 +3618,7 @@ mod evidence_tests {
         let before = serde_json::to_value(&ui.set).unwrap();
         let expected = ui
             .stage
-            .card_sounding_pitches_at_tempo(&ui.set.cards[0], ui.transport.bpm);
+            .card_sounding_pitches_at_tempo(&ui.set.cards[0], ui.transport.bpm).unwrap();
         ui.stage.set_root(3);
         assert_ne!(
             ui.stage.voicing_preview().0,
@@ -3644,14 +3628,9 @@ mod evidence_tests {
         assert_eq!(ui.section, AppSection::Stage);
         ui.request_card_preview();
         assert_eq!(serde_json::to_value(&ui.set).unwrap(), before);
-        assert_eq!(
-            ui.audio_requests.last(),
-            Some(&AudioRequest::PreviewPitches {
-                pitches: expected.0,
-                duration_s: expected.1,
-                strum_s: expected.2,
-            })
-        );
+        let Some(AudioRequest::CardPreview(request)) = ui.audio_requests.last() else { panic!("frozen source-bound Card preview"); };
+        assert_eq!(request.preview, expected);
+        assert!(ui.card_preview_is_current(request));
     }
 
     #[test]
@@ -4470,7 +4449,8 @@ mod evidence_tests {
     fn a_rehearsed_card_records_the_span_it_was_actually_played_for() {
         let mut ui = staged_set();
         ui.now_ms = Some(1_000);
-        ui.record_rehearsal_cursor();
+        ui.toggle_rehearsal();
+        ui.admit_previews_for_test();
         // Nine seconds of playing, per the host's clock.
         ui.now_ms = Some(10_000);
         ui.complete_rehearsal_cursor();
@@ -4488,7 +4468,8 @@ mod evidence_tests {
     fn a_host_with_no_clock_measures_nothing_rather_than_guessing() {
         let mut ui = staged_set();
         ui.now_ms = None;
-        ui.record_rehearsal_cursor();
+        ui.toggle_rehearsal();
+        ui.admit_previews_for_test();
         ui.complete_rehearsal_cursor();
 
         let subject = catalog_id_for_card(&ui.set.cards[0]).expect("catalog subject");
@@ -4504,7 +4485,8 @@ mod evidence_tests {
         // A system time change mid-session must not produce a wrapped span.
         let mut ui = staged_set();
         ui.now_ms = Some(10_000);
-        ui.record_rehearsal_cursor();
+        ui.toggle_rehearsal();
+        ui.admit_previews_for_test();
         ui.now_ms = Some(1_000);
         ui.complete_rehearsal_cursor();
 
@@ -4518,7 +4500,8 @@ mod evidence_tests {
         // completion without a new start cannot manufacture another span.
         let mut ui = staged_set();
         ui.now_ms = Some(1_000);
-        ui.record_rehearsal_cursor();
+        ui.toggle_rehearsal();
+        ui.admit_previews_for_test();
         ui.now_ms = Some(5_000);
         ui.complete_rehearsal_cursor();
         assert_eq!(ui.card_started_ms, None);

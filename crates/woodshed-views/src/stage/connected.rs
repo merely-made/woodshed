@@ -61,9 +61,12 @@ impl UiState {
         };
         match self.current_card_stage().chord_arpeggio_discovery(card) {
             Ok(discovery) => {
-                let (pitches, duration_s, strum_s) = self
+                let (pitches, duration_s, strum_s) = match self
                     .current_card_stage()
-                    .card_sounding_pitches_at_tempo(&discovery.preview, self.transport.bpm);
+                    .card_sounding_pitches_at_tempo(&discovery.preview, self.transport.bpm) {
+                    Ok(preview) => { self.card_timing_notice = None; preview },
+                    Err(error) => { self.card_timing_notice = Some(error.to_string()); return; },
+                };
                 if pitches.is_empty() {
                     self.discovery_notice = Some("This realization has no sounding notes. Choose an available shape or change the note selection.".into());
                     return;
@@ -287,11 +290,12 @@ mod tests {
         let added = ui.stage_chord_arpeggio().unwrap();
         ui.set.select_id(added);
         ui.section = woodshed_core::storage::AppSection::Rehearsal;
-        assert!((ui.preview_voicing().2 - fast).abs() < 0.001);
+        assert!((ui.preview_voicing().unwrap().2 - fast).abs() < 0.001);
         ui.toggle_rehearsal();
         assert!(
-            matches!(ui.audio_requests.last(), Some(AudioRequest::PreviewPitches { strum_s, .. }) if (*strum_s - fast).abs() < 0.001)
+            matches!(ui.audio_requests.last(), Some(AudioRequest::CardPreview(request)) if (request.preview.2 - fast).abs() < 0.001)
         );
+        ui.admit_previews_for_test();
     }
 
     #[test]
@@ -318,7 +322,8 @@ mod tests {
         chord(&mut ui);
         assert_eq!(ui.practice_history.recent(1)[0].at_ms, Some(42_000));
         ui.now_ms = Some(2);
-        ui.record_rehearsal_cursor();
+        ui.toggle_rehearsal();
+        ui.admit_previews_for_test();
         assert_eq!(ui.card_started_ms, Some(42_000));
         ui.event_clock = Some(|| Some(43_000));
         ui.complete_rehearsal_cursor();
@@ -379,11 +384,11 @@ mod tests {
         chord(&mut ui);
         let subject = catalog_id_for_card(&ui.set.cards[0]).unwrap();
         ui.now_ms = Some(1_000);
-        ui.toggle_rehearsal();
+        ui.toggle_rehearsal(); ui.admit_previews_for_test();
         ui.now_ms = Some(3_000);
-        ui.toggle_rehearsal();
+        ui.toggle_rehearsal(); ui.admit_previews_for_test();
         ui.now_ms = Some(10_000);
-        ui.toggle_rehearsal();
+        ui.toggle_rehearsal(); ui.admit_previews_for_test();
         ui.now_ms = Some(11_000);
         ui.set.cards[0].timing.bpm = Some(83.0);
         ui.sync();

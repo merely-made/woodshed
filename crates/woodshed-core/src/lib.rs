@@ -13,6 +13,8 @@ pub mod arpeggio;
 pub mod arrangement;
 pub mod audio;
 pub mod card_shapes;
+pub mod card_timing;
+pub use card_timing::{CardPreviewResult, CardTimingError, resolve_card_timing};
 pub mod catalog_explorations;
 pub mod captured_arpeggio;
 pub mod chord_approach;
@@ -609,20 +611,8 @@ pub fn set_from_practice(ps: &PracticeSet) -> Set {
 /// `None` = manual (no auto-advance). The card's own bpm wins over the
 /// transport's; `Reps` counts as bars (one rep per bar until per-rep
 /// audio lands).
-pub fn card_dwell(card: &Card, fallback_bpm: f32) -> Option<std::time::Duration> {
-    use woodshedding::rehearsal::Hold;
-    let bpm = card.timing.bpm.unwrap_or(fallback_bpm).max(30.0);
-    let bar_secs = 4.0 * 60.0 / bpm;
-    match card.timing.hold {
-        Hold::Manual => None,
-        Hold::Bars(n) => Some(std::time::Duration::from_secs_f32(
-            bar_secs * n.max(1) as f32,
-        )),
-        Hold::Seconds(s) => Some(std::time::Duration::from_secs_f32(s.max(0.5))),
-        Hold::Reps(r) => Some(std::time::Duration::from_secs_f32(
-            bar_secs * r.max(1) as f32,
-        )),
-    }
+pub fn card_dwell(card: &Card, fallback_bpm: f32) -> Result<Option<std::time::Duration>, CardTimingError> {
+    Ok(resolve_card_timing(&card.timing, fallback_bpm)?.dwell)
 }
 
 /// Step a rehearsal set's cursor by `dir`, honoring its loop mode.
@@ -1928,7 +1918,8 @@ impl StageState {
     /// A rehearsal card's material as a preview `(pitches Hz, duration
     /// secs, strum offset ms)` — the Rehearsal-tab counterpart to
     /// [`Self::voicing_preview`]. Riff cards don't voice (empty).
-    pub fn card_voicing(&self, card: &Card) -> (Vec<f32>, f32, f32) {
+    pub fn card_voicing(&self, card: &Card) -> CardPreviewResult {
+        resolve_card_timing(&card.timing, 120.0)?;
         if matches!(card.material, Material::ChordApproach { .. }) {
             return self.chord_approach_preview(card, false);
         }
@@ -1989,13 +1980,13 @@ impl StageState {
             },
         };
         if pitches.is_empty() {
-            return (pitches, 0.0, 0.0);
+            return Ok((pitches, 0.0, 0.0));
         }
         // Walk is a behaviour, not a label: it visits the notes one at a time
         // (the cascade shape) rather than sounding them together.
         let scale_like = scale_like || matches!(card.touch, Touch::Walk);
         let (dur, strum) = voicing_shape(pitches.len(), scale_like);
-        (pitches, dur, strum)
+        Ok((pitches, dur, strum))
     }
 
     /// The card's *effective* sound, after its mark mode is applied — the
@@ -2009,7 +2000,7 @@ impl StageState {
         &self,
         card: &Card,
         fallback_bpm: f32,
-    ) -> (Vec<f32>, f32, f32) {
+    ) -> CardPreviewResult {
         if card.timing.bpm.is_some() {
             return self.card_sounding_pitches(card);
         }
@@ -2018,7 +2009,8 @@ impl StageState {
         self.card_sounding_pitches(&effective)
     }
 
-    pub fn card_sounding_pitches(&self, card: &Card) -> (Vec<f32>, f32, f32) {
+    pub fn card_sounding_pitches(&self, card: &Card) -> CardPreviewResult {
+        resolve_card_timing(&card.timing, 120.0)?;
         if matches!(card.material, Material::ChordApproach { .. }) {
             return self.chord_approach_preview(card, true);
         }
@@ -2028,10 +2020,10 @@ impl StageState {
         ) {
             return self.scale_card_preview(card, true);
         }
-        connected_catalog::arpeggiate_preview(card, self.card_sounding_pitches_unarticulated(card))
+        connected_catalog::arpeggiate_preview(card, self.card_sounding_pitches_unarticulated(card)?)
     }
 
-    fn card_sounding_pitches_unarticulated(&self, card: &Card) -> (Vec<f32>, f32, f32) {
+    fn card_sounding_pitches_unarticulated(&self, card: &Card) -> CardPreviewResult {
         let marked = &card.setting.marked;
         if marked.is_empty() || card.setting.mark_mode == MarkMode::Off {
             return self.card_voicing(card);
@@ -2054,7 +2046,7 @@ impl StageState {
                     return self.card_voicing(card);
                 }
                 let (dur, strum) = voicing_shape(hz.len(), false);
-                (hz, dur, strum)
+                Ok((hz, dur, strum))
             },
             MarkMode::Mute => {
                 // Drop the marked notes' pitch classes from the clean voicing,
@@ -2068,16 +2060,16 @@ impl StageState {
                             .map(|d| pc_from_hz(d.frequency))
                     })
                     .collect();
-                let (pitches, _, _) = self.card_voicing(card);
+                let (pitches, _, _) = self.card_voicing(card)?;
                 let kept: Vec<f32> = pitches
                     .into_iter()
                     .filter(|&f| !muted_pcs.contains(&pc_from_hz(f)))
                     .collect();
                 if kept.is_empty() {
-                    return (Vec::new(), 0.0, 0.0);
+                    return Ok((Vec::new(), 0.0, 0.0));
                 }
                 let (dur, strum) = voicing_shape(kept.len(), false);
-                (kept, dur, strum)
+                Ok((kept, dur, strum))
             },
         }
     }
@@ -2186,16 +2178,40 @@ mod tests {
     }
 
     #[test]
+    fn retained_positive_tempo_is_shared_by_dwell_and_ordered_preview_outside_ui_range() {
+        use woodshedding::rehearsal::{ArpeggioDirection, Hold, Touch};
+        let mut stage = StageState::new();
+        stage.set_lens(Lens::Chords);
+        let mut card = stage.card_from_lens().unwrap();
+        card.timing.hold = Hold::Bars(1);
+        card.touch = Touch::Arpeggiate { direction: ArpeggioDirection::Up, inversion: 0 };
+        for bpm in [20.0, 400.0] {
+            card.timing.bpm = Some(bpm);
+            let retained = serde_json::to_value(&card).unwrap();
+            let dwell = card_dwell(&card, 120.0).unwrap().unwrap().as_secs_f32();
+            let (_, duration, _) = stage.card_sounding_pitches_at_tempo(&card, 120.0).unwrap();
+            assert!((dwell - 240.0 / bpm).abs() < 0.0001);
+            assert!((duration - dwell).abs() < 0.0001);
+            assert_eq!(serde_json::to_value(&card).unwrap(), retained);
+            let mut scale = StageState::new().card_from_lens().unwrap();
+            scale.touch = Touch::Walk;
+            scale.timing = card.timing.clone();
+            let (_, scale_duration, _) = stage.card_sounding_pitches_at_tempo(&scale, 90.0).unwrap();
+            assert!((scale_duration - dwell).abs() < 0.0001);
+        }
+    }
+
+    #[test]
     fn card_dwell_follows_hold() {
         use woodshedding::rehearsal::Hold;
         let s = StageState::new();
         let mut card = s.card_from_lens().unwrap();
-        assert!(card_dwell(&card, 120.0).is_none(), "manual by default");
+        assert!(card_dwell(&card, 120.0).unwrap().is_none(), "manual by default");
         card.timing.hold = Hold::Bars(2);
-        let d = card_dwell(&card, 120.0).unwrap();
+        let d = card_dwell(&card, 120.0).unwrap().unwrap();
         assert!((d.as_secs_f32() - 4.0).abs() < 0.01, "2 bars at 120 = 4s");
         card.timing.bpm = Some(60.0);
-        let d = card_dwell(&card, 120.0).unwrap();
+        let d = card_dwell(&card, 120.0).unwrap().unwrap();
         assert!((d.as_secs_f32() - 8.0).abs() < 0.01, "card bpm wins");
     }
 
@@ -2368,13 +2384,13 @@ mod tests {
         let mut s = StageState::new();
         s.set_lens(Lens::Chords);
         let card = s.card_from_lens().unwrap();
-        let (pitches, dur, strum) = s.card_voicing(&card);
+        let (pitches, dur, strum) = s.card_voicing(&card).unwrap();
         assert!(pitches.len() >= 3, "chord card voices its tones");
         assert!(dur > 0.0 && strum < 50.0);
         // A riff (exercise) card doesn't voice.
         s.set_lens(Lens::Exercises);
         let riff = s.card_from_lens().unwrap();
-        assert!(s.card_voicing(&riff).0.is_empty());
+        assert!(s.card_voicing(&riff).unwrap().0.is_empty());
     }
 
     #[test]
@@ -2423,7 +2439,7 @@ mod tests {
         );
         // And it sounds every drawn note (a riff card voices nothing).
         assert_eq!(
-            s.card_voicing(&card).0.len(),
+            s.card_voicing(&card).unwrap().0.len(),
             3,
             "the voicing sounds every drawn note"
         );
@@ -2549,7 +2565,7 @@ mod tests {
         let mut card = s.card_from_lens().unwrap();
 
         // Off (nothing marked): the whole voicing.
-        let full = s.card_sounding_pitches(&card).0;
+        let full = s.card_sounding_pitches(&card).unwrap().0;
         assert!(full.len() >= 3, "off plays the whole voicing");
 
         // Mark one board position.
@@ -2560,7 +2576,7 @@ mod tests {
 
         // Mute: the marked note's pitch class drops from the voicing.
         card.setting.mark_mode = MarkMode::Mute;
-        let muted = s.card_sounding_pitches(&card).0;
+        let muted = s.card_sounding_pitches(&card).unwrap().0;
         assert!(
             muted.iter().all(|&f| pc_from_hz(f) != target_pc),
             "mute drops the marked note's pitch class"
@@ -2569,7 +2585,7 @@ mod tests {
 
         // Solo: only the marked position sounds.
         card.setting.mark_mode = MarkMode::Solo;
-        let solo = s.card_sounding_pitches(&card).0;
+        let solo = s.card_sounding_pitches(&card).unwrap().0;
         assert_eq!(solo.len(), 1, "solo plays only the marked position");
         assert!(
             (solo[0] - target.frequency).abs() < 0.5,

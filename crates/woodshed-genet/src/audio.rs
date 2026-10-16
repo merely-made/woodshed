@@ -468,6 +468,16 @@ impl CpalBackend {
         message
     }
 
+    /// Exact control-side admission for an already resolved Card request.
+    /// Return this operation's result, not an unrelated persistent error.
+    pub(crate) fn admit_card_preview(&mut self, preview: &woodshed_core::card_timing::CardPreview) -> Result<(), String> {
+        let output = self.output.as_mut().ok_or_else(|| "Audio output is unavailable.".to_string())?;
+        // The view checks unmarked availability before declaring silence.
+        // Silence still requires the output to retire the preceding preview.
+        if preview.0.is_empty() { return output.cancel_preview().map_err(|error| error.to_string()); }
+        output.preview_card_pitches(&preview.0, preview.1, preview.2).map_err(|error| error.to_string())
+    }
+
     fn with_output<T>(
         &mut self,
         action: impl FnOnce(&mut OutputRuntime) -> Result<T, OutputError>,
@@ -1004,6 +1014,24 @@ mod tests {
 
     fn render(audio: &mut CpalBackend, frames: usize) {
         audio.process_for_test(frames);
+    }
+
+    #[test]
+    fn admitted_card_silence_retires_the_previous_preview_and_requires_output() {
+        let mut audio = CpalBackend::offline_for_test();
+        audio.admit_card_preview(&(vec![440.0], 1.0, 0.0)).unwrap();
+        let began = std::time::Instant::now();
+        while audio.preview_voice_count() == 0 {
+            assert!(began.elapsed() < std::time::Duration::from_secs(2));
+            render(&mut audio, 128);
+            std::thread::yield_now();
+        }
+        audio.admit_card_preview(&(Vec::new(), 0.0, 0.0)).unwrap();
+        render(&mut audio, 128);
+        assert_eq!(audio.preview_voice_count(), 0);
+        assert!(!audio.preview_busy());
+        audio.output = None;
+        assert!(audio.admit_card_preview(&(Vec::new(), 0.0, 0.0)).is_err());
     }
 
     #[test]

@@ -437,7 +437,7 @@ fn endpoint_preview(ui: &UiState, catalog_id: &str) -> Option<(Vec<f32>, f32, f3
         return None;
     }
     let card = stage.card_from_lens()?;
-    let (pitches, duration, strum) = stage.card_sounding_pitches_at_tempo(&card, ui.transport.bpm);
+    let (pitches, duration, strum) = stage.card_sounding_pitches_at_tempo(&card, ui.transport.bpm).ok()?;
     (!pitches.is_empty()).then_some((pitches, duration, strum))
 }
 

@@ -51,6 +51,14 @@ pub struct Product {
     sheet: String,
     export_wait: Option<(String, std::time::Instant)>,
     take_playback_wait: Option<(usize, std::time::Instant, std::cell::Cell<bool>)>,
+    scenario_cursor_wait: RefCell<Option<ScenarioCursorWait>>,
+}
+
+#[derive(Clone, Copy)]
+struct ScenarioCursorWait {
+    expected_cursor: usize,
+    minimum: std::time::Duration,
+    started: std::time::Instant,
 }
 
 pub fn from_env(shared: Rc<RefCell<Shared>>) -> Option<mesquite::Lane<Product>> {
@@ -64,6 +72,7 @@ pub fn from_env(shared: Rc<RefCell<Shared>>) -> Option<mesquite::Lane<Product>> 
                 sheet,
                 export_wait: None,
                 take_playback_wait: None,
+                scenario_cursor_wait: RefCell::new(None),
             },
             cambium_genet_winit_host::read_file,
         )
@@ -134,8 +143,24 @@ impl mesquite::Product for Product {
                 }
                 !observed.get() && started.elapsed().as_secs() < 30
             });
+        let scenario_cursor_wait = {
+            let mut wait = self.scenario_cursor_wait.borrow_mut();
+            match *wait {
+                Some(wait)
+                    if ctx.runner.state().set.cursor != wait.expected_cursor
+                        || wait.started.elapsed() < wait.minimum =>
+                {
+                    true
+                }
+                Some(_) => {
+                    *wait = None;
+                    false
+                }
+                None => false,
+            }
+        };
         Some(
-            take_wait || export_wait
+            take_wait || scenario_cursor_wait || export_wait
                 || ctx.runner.state().loop_export_busy
                 || capture_pending
                 || self
@@ -147,6 +172,20 @@ impl mesquite::Product for Product {
         )
     }
     fn act(&mut self, ctx: &mut Ctx<'_>, label: &str) -> bool {
+        let scenario_wait = match label {
+            "p5a-wait-for-manual" => Some((2, std::time::Duration::from_secs(1))),
+            "p5a-wait-on-manual" => Some((2, std::time::Duration::from_secs(2))),
+            _ => None,
+        };
+        if let Some((expected_cursor, minimum)) = scenario_wait {
+            self.scenario_cursor_wait.replace(Some(ScenarioCursorWait {
+                expected_cursor,
+                minimum,
+                started: std::time::Instant::now(),
+            }));
+            return true;
+        }
+        self.scenario_cursor_wait.replace(None);
         if label == "await-selected-take-playback" {
             let ui = ctx.runner.state();
             let Some(bar) = ui.loop_selected.and_then(|id| ui.loop_admitted.as_ref()?.index_of(id))
@@ -233,6 +272,12 @@ impl mesquite::Product for Product {
             };
             return match verify() { Ok(()) => true, Err(error) => { eprintln!("Mere take receipt: {error}"); false } };
         }
+        if let Some(stem) = label.strip_prefix("p5a-save-") {
+            return p5a_write_card_receipt(ctx, &self.shared, stem, false);
+        }
+        if let Some(stem) = label.strip_prefix("p5a-verify-") {
+            return p5a_write_card_receipt(ctx, &self.shared, stem, true);
+        }
         if label == "wav-export-fixture" || label == "wav-export-backing-fixture" {
             let Some(directory) = std::env::var_os("WOODSHED_CAPTURE_DIR") else {
                 return false;
@@ -268,6 +313,7 @@ impl mesquite::Product for Product {
         clicks: &mut mesquite::Clicks,
         line: &str,
     ) -> Result<(), String> {
+        self.scenario_cursor_wait.replace(None);
         Probe {
             ctx,
             shared: &mut self.shared.borrow_mut(),
@@ -281,6 +327,144 @@ impl mesquite::Product for Product {
             vec![shared.drag_frame_metrics.summary()]
         } else {
             vec![]
+        }
+    }
+}
+
+/// Save or compare the exact authored Card payload in an isolated sealed
+/// scenario profile. This receipt never edits the session; the UI and normal
+/// host persistence path remain the writers.
+fn p5a_write_card_receipt(
+    ctx: &mut Ctx<'_>,
+    shared: &Rc<RefCell<Shared>>,
+    stem: &str,
+    verify: bool,
+) -> bool {
+    if stem.is_empty()
+        || !stem
+            .bytes()
+            .all(|byte| byte.is_ascii_alphanumeric() || byte == b'-')
+    {
+        eprintln!("P5a receipt refused: invalid receipt stem");
+        return false;
+    }
+    let Some(directory) = std::env::var_os("WOODSHED_CAPTURE_DIR") else {
+        eprintln!("P5a receipt refused: no isolated receipt directory");
+        return false;
+    };
+    let shared = shared.borrow();
+    if !matches!(
+        shared.seal.as_ref(),
+        Some(woodshed_views::persona::PracticeSeal::Sealed { .. })
+    ) {
+        eprintln!("P5a receipt refused: profile is not sealed");
+        return false;
+    }
+    let Some(json) = shared.storage.as_ref().and_then(|storage| storage.load()) else {
+        eprintln!("P5a receipt refused: sealed session is unreadable");
+        return false;
+    };
+    let persisted = match woodshed_core::storage::decode_session(&json) {
+        Ok(decoded) => decoded.session,
+        Err(error) => {
+            eprintln!("P5a receipt refused: session decode failed: {error}");
+            return false;
+        }
+    };
+    let ui = ctx.runner.state();
+    let current_cards = match serde_json::to_value(&ui.set.cards) {
+        Ok(value) => value,
+        Err(error) => {
+            eprintln!("P5a receipt refused: live Card encoding failed: {error}");
+            return false;
+        }
+    };
+    let persisted_cards = match serde_json::to_value(&persisted.set.cards) {
+        Ok(value) => value,
+        Err(error) => {
+            eprintln!("P5a receipt refused: persisted Card encoding failed: {error}");
+            return false;
+        }
+    };
+    if current_cards != persisted_cards {
+        eprintln!("P5a receipt refused: live and sealed Card payloads differ");
+        return false;
+    }
+    let selected = ui.set.cards.get(ui.set.cursor);
+    let resolved_preview = selected.map(|card| {
+        match ui
+            .current_card_stage()
+            .card_sounding_pitches_at_tempo(card, ui.transport.bpm)
+        {
+            Ok((pitches, duration, spacing)) => serde_json::json!({
+                "pitch_bits": pitches.iter().map(|pitch| pitch.to_bits()).collect::<Vec<_>>(),
+                "duration_bits": duration.to_bits(),
+                "spacing_ms_bits": spacing.to_bits(),
+            }),
+            Err(error) => serde_json::json!({ "refused": error.to_string() }),
+        }
+    });
+    let active_owner = ui.working_sets.active_id.0;
+    let cursor = ui.set.cursor;
+    let selected_card_id = selected.map(|card| card.id.0);
+    let path = std::path::PathBuf::from(directory).join(format!("p5a-{stem}.json"));
+    if verify {
+        let expected = match std::fs::read(&path)
+            .ok()
+            .and_then(|bytes| serde_json::from_slice::<serde_json::Value>(&bytes).ok())
+        {
+            Some(value) => value,
+            None => {
+                eprintln!("P5a receipt refused: expected checkpoint is missing or invalid");
+                return false;
+            }
+        };
+        if expected.get("cards") != Some(&current_cards)
+            || expected.get("owner") != Some(&serde_json::json!(active_owner))
+            || expected.get("cursor") != Some(&serde_json::json!(cursor))
+            || expected.get("selected_card_id") != Some(&serde_json::json!(selected_card_id))
+            || expected.get("resolved_preview") != Some(&serde_json::json!(resolved_preview))
+        {
+            eprintln!("P5a receipt refused: reopened authored Cards differ from checkpoint");
+            return false;
+        }
+        return true;
+    }
+    let report = serde_json::json!({
+        "sealed": true,
+        "cards": current_cards,
+        "persisted_cards_match": true,
+        "owner": active_owner,
+        "cursor": cursor,
+        "selected_card_id": selected_card_id,
+        "resolved_preview": resolved_preview,
+        "output_runtime_id": shared.backend.as_ref()
+            .and_then(|backend| backend.output_observation_id()),
+        "preview_starts": shared.backend.as_ref()
+            .and_then(|backend| backend.output_snapshot()).map(|snapshot| snapshot.preview_starts),
+        "output_sample_rate": shared.backend.as_ref()
+            .and_then(|backend| backend.output_sample_rate()),
+    });
+    use std::io::Write;
+    let mut file = match std::fs::OpenOptions::new()
+        .write(true)
+        .create_new(true)
+        .open(path)
+    {
+        Ok(file) => file,
+        Err(error) => {
+            eprintln!("P5a receipt refused: could not create checkpoint: {error}");
+            return false;
+        }
+    };
+    match serde_json::to_vec_pretty(&report)
+        .map_err(|error| error.to_string())
+        .and_then(|bytes| file.write_all(&bytes).map_err(|error| error.to_string()))
+    {
+        Ok(()) => true,
+        Err(error) => {
+            eprintln!("P5a receipt refused: checkpoint write failed: {error}");
+            false
         }
     }
 }
@@ -511,6 +695,15 @@ impl Snapshot<'_, '_> {
             .and_then(|id| ui.set.card(id))
             .map(|card| card.label.clone())
             .unwrap_or_default();
+        let selected_card = ui.set.cards.get(ui.set.cursor);
+        let selected_timing = selected_card.and_then(|card| {
+            woodshed_core::resolve_card_timing(&card.timing, ui.transport.bpm).ok()
+        });
+        let selected_preview = selected_card.and_then(|card| {
+            ui.stage.card_sounding_pitches_at_tempo(card, ui.transport.bpm).ok()
+        });
+        let output_sample_rate = self.shared.backend.as_ref()
+            .and_then(|backend| backend.output_sample_rate());
         let reading = ui.relationship_reading().ok().flatten();
         let appearance = ui.appearance.resolve(&ui.app_settings.appearance);
         let font_requests = ui.appearance.choice(&ui.app_settings.appearance).fonts;
@@ -633,7 +826,7 @@ impl Snapshot<'_, '_> {
                         card.material,
                         woodshedding::rehearsal::Material::ScalePattern { .. }
                     )
-                }) && ui.preview_voicing().2 > 0.0)
+                }) && ui.preview_voicing().is_ok_and(|preview| preview.2 > 0.0))
                     .to_string(),
             )
             .with_field(
@@ -1054,7 +1247,7 @@ impl Snapshot<'_, '_> {
                         card.material,
                         woodshedding::rehearsal::Material::ChordApproach { .. }
                     )
-                }) && ui.preview_voicing().2 > 0.0)
+                }) && ui.preview_voicing().is_ok_and(|preview| preview.2 > 0.0))
                     .to_string(),
             )
             .with_field(
@@ -1066,9 +1259,7 @@ impl Snapshot<'_, '_> {
                     )
                 }) && ui
                     .preview_voicing()
-                    .0
-                    .windows(2)
-                    .any(|notes| notes[1] < notes[0]))
+                    .is_ok_and(|preview| preview.0.windows(2).any(|notes| notes[1] < notes[0])))
                 .to_string(),
             )
             .with_field(
@@ -1124,14 +1315,12 @@ impl Snapshot<'_, '_> {
                             woodshedding::rehearsal::Material::ScalePattern { .. }
                         ) && ui
                             .preview_voicing()
-                            .0
-                            .windows(2)
-                            .any(|notes| notes[1] < notes[0])
+                            .is_ok_and(|preview| preview.0.windows(2).any(|notes| notes[1] < notes[0]))
                     })
                     .to_string(),
             )
             .with_field("pattern-repeats", {
-                let pitches = ui.preview_voicing().0;
+                let pitches = ui.preview_voicing().map(|preview| preview.0).unwrap_or_default();
                 let unique = pitches
                     .iter()
                     .map(|pitch| pitch.to_bits())
@@ -1160,6 +1349,63 @@ impl Snapshot<'_, '_> {
                 ui.practice_save_notice.is_some().to_string(),
             )
             .with_field("rehearsal-running", ui.rehearsal_running.to_string())
+            .with_field("rehearsal-pending", ui.rehearsal_pending.to_string())
+            .with_field("card-preview-error", ui.preview_voicing().is_err().to_string())
+            .with_field("card-timing-notice", ui.card_timing_notice.clone().unwrap_or_default())
+            .with_field(
+                "p5a-card-label",
+                selected_card.map_or("".into(), |card| card.label.clone()),
+            )
+            .with_field(
+                "p5a-card-bpm",
+                selected_card
+                    .and_then(|card| card.timing.bpm)
+                    .map_or("none".into(), |bpm| bpm.to_string()),
+            )
+            .with_field(
+                "p5a-card-hold",
+                selected_card.map_or("none".into(), |card| match &card.timing.hold {
+                    woodshedding::rehearsal::Hold::Manual => "manual".into(),
+                    woodshedding::rehearsal::Hold::Bars(n) => format!("bars:{n}"),
+                    woodshedding::rehearsal::Hold::Seconds(seconds) => {
+                        format!("seconds:{}", seconds.to_bits())
+                    }
+                    woodshedding::rehearsal::Hold::Reps(n) => format!("reps:{n}"),
+                }),
+            )
+            .with_field(
+                "p5a-core-dwell-ms",
+                selected_timing
+                    .and_then(|timing| timing.dwell)
+                    .map_or("none".into(), |dwell| dwell.as_millis().to_string()),
+            )
+            .with_field(
+                "p5a-ordered-visits",
+                selected_preview
+                    .as_ref()
+                    .map_or(0, |preview| preview.0.len())
+                    .to_string(),
+            )
+            .with_field(
+                "p5a-ordered-duration-ms",
+                selected_preview.as_ref().map_or("unavailable".into(), |preview| {
+                    (preview.1 * 1000.0).round().to_string()
+                }),
+            )
+            .with_field(
+                "p5a-ordered-spacing-ms",
+                selected_preview
+                    .as_ref()
+                    .map_or("unavailable".into(), |preview| preview.2.round().to_string()),
+            )
+            .with_field(
+                "p5a-card-timing-notice-empty",
+                ui.card_timing_notice.is_none().to_string(),
+            )
+            .with_field(
+                "p5a-output-sample-rate",
+                output_sample_rate.map_or("none".into(), |rate| rate.to_string()),
+            )
             .with_field("history-events", ui.practice_history.len().to_string())
             .with_field(
                 "history-observed",
@@ -2139,6 +2385,44 @@ impl Automatable for Probe<'_, '_> {
                 let id = ui.stage_scale_pattern().expect("fixture scale pattern");
                 ui.set.select_id(id);
             },
+            "p5a-timing-admission-example" => {
+                use woodshed_core::harmony::KeyedCatalogRef;
+                use woodshedding::pitch::PitchClass;
+                use woodshedding::rehearsal::{Hold, Set, Timing, Touch};
+
+                ui.stop_rehearsal();
+                ui.set = Set::default();
+                ui.practice_history = Default::default();
+                ui.retained_sets = Default::default();
+                ui.working_sets = Default::default();
+                ui.catalog_explorations = Default::default();
+                ui.stage.set_lens(Lens::Scales);
+                for (label, root, bpm, hold) in [
+                    ("Ordered 20 BPM", 0, 20.0, Hold::Bars(1)),
+                    ("Ordered 400 BPM", 7, 400.0, Hold::Bars(1)),
+                    ("Manual wait", 2, 120.0, Hold::Manual),
+                    ("Core duration refusal", 4, 120.0, Hold::Seconds(1e30)),
+                    ("Output PCM refusal", 9, 400.0, Hold::Seconds(1e10)),
+                ] {
+                    let mut card = KeyedCatalogRef {
+                        formula_id: "scale:Major".into(),
+                        root: PitchClass::new(root),
+                    }
+                    .to_card()
+                    .expect("fixture scale exists");
+                    card.label = label.into();
+                    card.touch = Touch::Walk;
+                    // These cards model an imported catalog fixture. Subsequent
+                    // timing changes in the scenario are made through the UI.
+                    card.timing = Timing { bpm: Some(bpm), hold };
+                    ui.set.push(card);
+                }
+                ui.set.cursor = 0;
+                ui.set_tray_expanded = true;
+                ui.set_graph_card_expanded = true;
+                ui.activate_workspace_panel(woodshed_views::workspace::WorkspacePanel::Practice);
+                ui.select_app_section(woodshed_core::storage::AppSection::Stage);
+            },
             "mere-arpeggio-remove-source" | "mere-scale-pattern-remove-source" => {
                 let id = ui
                     .musical_context
@@ -2325,9 +2609,9 @@ impl Probe<'_, '_> {
                     .ok_or("checkpoint-p4f requires an isolated capture directory")?;
                 let ui = self.ctx.runner.state();
                 let realizations: Vec<_> = ui.set.cards.iter().map(|card| {
-                    let (pitches, duration, strum) = ui.stage.card_sounding_pitches_at_tempo(card, ui.transport.bpm);
-                    serde_json::json!({"card":card.id, "pitch_bits":pitches.iter().map(|pitch| pitch.to_bits()).collect::<Vec<_>>(), "duration_bits":duration.to_bits(), "strum_bits":strum.to_bits()})
-                }).collect();
+                    let (pitches, duration, strum) = ui.stage.card_sounding_pitches_at_tempo(card, ui.transport.bpm).map_err(|error| error.to_string())?;
+                    Ok(serde_json::json!({"card":card.id, "pitch_bits":pitches.iter().map(|pitch| pitch.to_bits()).collect::<Vec<_>>(), "duration_bits":duration.to_bits(), "strum_bits":strum.to_bits()}))
+                }).collect::<Result<Vec<_>, String>>()?;
                 let value = serde_json::json!({
                     "working_owner":ui.working_sets.active_id,
                     "cards":ui.set.cards,

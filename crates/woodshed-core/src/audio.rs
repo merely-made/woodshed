@@ -118,6 +118,26 @@ impl RecorderRequest {
     }
 }
 
+/// Frozen retained Card preview, qualified independently of later UI selection.
+#[derive(Clone, Debug)]
+pub struct CardPreviewRequest {
+    pub session: std::sync::Arc<()>,
+    pub owner: crate::working_sets::WorkingSetId,
+    pub card_id: woodshedding::rehearsal::CardId,
+    pub instruction: serde_json::Value,
+    pub fallback_bpm_bits: u32,
+    pub run_epoch: Option<u64>,
+    pub preview: crate::card_timing::CardPreview,
+}
+impl PartialEq for CardPreviewRequest {
+    fn eq(&self, other: &Self) -> bool {
+        std::sync::Arc::ptr_eq(&self.session, &other.session)
+            && self.owner == other.owner && self.card_id == other.card_id
+            && self.instruction == other.instruction && self.fallback_bpm_bits == other.fallback_bpm_bits
+            && self.run_epoch == other.run_epoch && self.preview == other.preview
+    }
+}
+
 /// One thing the view layer asks the audio host to do, once.
 ///
 /// These are commands, not settings: continuous state (metronome transport,
@@ -134,6 +154,7 @@ impl RecorderRequest {
 /// queued command. Recording/calibration results remain host-polled.
 #[derive(Clone, Debug, PartialEq)]
 pub enum AudioRequest {
+    CardPreview(CardPreviewRequest),
     /// The reusable surface freezes source/epoch and positional targets until execution.
     Recorder(RecorderRequest),
     /// Rewind the song transport to its start.

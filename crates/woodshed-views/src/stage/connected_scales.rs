@@ -79,9 +79,12 @@ impl UiState {
             .chord_scale_discovery(card, subject)
         {
             Ok(discovery) => {
-                let (pitches, duration_s, strum_s) = self
+                let (pitches, duration_s, strum_s) = match self
                     .current_card_stage()
-                    .card_sounding_pitches_at_tempo(&discovery.preview, self.transport.bpm);
+                    .card_sounding_pitches_at_tempo(&discovery.preview, self.transport.bpm) {
+                    Ok(preview) => { self.card_timing_notice = None; preview },
+                    Err(error) => { self.card_timing_notice = Some(error.to_string()); return; },
+                };
                 if pitches.is_empty() {
                     self.scale_notice = Some("This scale formula has no sounding notes.".into());
                     return;
