@@ -1,0 +1,67 @@
+{
+  "date": "2026-10-16",
+  "base_revision": "ae2f34e11b5ab92be2f3bc82ca57c519605aa5c1",
+  "scope": "Standalone Hocket host project-worker request/session correlation",
+  "source_sha256": {
+    "ports/hocket/crates/hocket-genet/src/project_io.rs": "1eebd343821b0bcfa14cc67d2bc3c2041a158c5b1a927151e9e1e0fb4ef84105",
+    "ports/hocket/crates/hocket-genet/src/state.rs": "2289593d17a239d4119d4c988fc6084327c0e90b0b46e916d08ffaa811901102",
+    "ports/hocket/crates/hocket-genet/src/project_correlation_tests.rs": "028a0fd0fada60c6d711342e9ff9de4a7c69ec2a96d976be777e01914ae2510c",
+    "ports/hocket/crates/hocket-genet/src/main.rs": "981ffb02232fb3b756cefe0ae697c83243f857a5eed5126a2004758f3832648b",
+    "ports/hocket/crates/hocket-genet/src/appearance_tests.rs": "297144f85c46808e9e2e59fb04361790d77f46363b16d65d8144938b2458542c"
+  },
+  "checks": [
+    {
+      "cwd": "ports/hocket",
+      "command": "cargo test --locked --offline --workspace",
+      "exit_code": 0,
+      "passed": 116,
+      "ignored": 1,
+      "breakdown": {
+        "engine_unit": 36,
+        "engine_integration": 3,
+        "host": 75,
+        "manual_demo": 2
+      }
+    },
+    {
+      "cwd": "ports/hocket",
+      "command": "cargo check --locked --offline --workspace --all-targets",
+      "exit_code": 0
+    },
+    {
+      "cwd": "ports/hocket",
+      "command": "cargo build --locked --offline -p hocket-genet",
+      "exit_code": 0
+    }
+  ],
+  "distinct_passing_cases": 116,
+  "new_regressions": 11,
+  "evidence": [
+    "Actual worker success round trips verify request ID and scope",
+    "All five actual worker failure routes preserve exact issued ID and scope",
+    "Actual actor and AppState Save/Open/WriteHandoff/ReadHandoff round trip",
+    "Same persisted SessionId branch acceptance invalidates the earlier host generation",
+    "Old success/failure cannot change the new project path or release a newer pending request",
+    "Unsolicited, duplicate and wrong-scope replies have no host effect",
+    "Handoff operations reserve explicit pending state independently of status text",
+    "Matching Open retires staged incoming handoff",
+    "Save acknowledges the submitted history head; newer edits remain dirty",
+    "Disconnected worker send clears its admitted pending slot"
+  ],
+  "compatibility": [
+    "No persisted project or handoff format changes",
+    "No family manifest, dependency pin or lockfile changes",
+    "No Woodshed audio/runtime or shared recorder changes"
+  ],
+  "qualification_limits": [
+    "CPU and desktop build only",
+    "Existing isolated-Keeper identity test remains ignored",
+    "Native project file dialogs and save/open/export/handoff workflow not qualified",
+    "Signed per-turn operations not implemented",
+    "Physical input, audibility and latency not qualified",
+    "Already-admitted file writes may finish after host scope retirement; no I/O cancellation/rollback is claimed"
+  ],
+  "warnings": [
+    "Existing unused UpdateSettingsProvider::path warning; existing unused patch warnings"
+  ]
+}
