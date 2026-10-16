@@ -84,7 +84,7 @@ exploration and the remaining Stage phases keep their own acceptance gates.
 
 ### Link-model resting strokes (2026-10-16)
 
-**Status: implemented; receiving qualification in progress.** Mere's link-model
+**Status: bounded P4 receiving qualification complete.** Mere's link-model
 P4 supplies the shared canonical key and resting summary at `91467c0bb`,
 qualified in its browser with saved-hide reopening. Woodshed starts from
 refreshed `284fa340`; only the root Mere family advances from `ee324e517`.
@@ -106,6 +106,25 @@ three-card recipe flow and a fresh-process reopen against the same isolated
 sealed profile. This is the link-model P4 receiving slice; full Stage P4f,
 physical audio quality and later Mere assertion-family migration retain their
 own gates.
+
+**Qualification:** source `a8c2cd2` passes 619 suite cases (core 248, view 192,
+desktop host 168, one backdrop integration case and ten example cases), seven
+existing ignores and five separate fresh-process child invocations. The final
+source `865e0e9` adds capture framing and the existing claim-reader style
+wrapper; its locked offline desktop build and both native flows pass. The seed
+process presents 142 frames and the different reopened process presents 134.
+All four original captures were reviewed: two resting links for the three-card
+recipe, and the opened reader's exact assertion, direction, method, evidence
+and source revision, including after reopening the sealed profile. The four-file
+isolated Keeper manifest is unchanged. This uses a separately frozen real
+Keeper test authority, not a user vault.
+
+The [P4 receipt](../validation/link-model-p4_20261016/receipt.json) records exact
+source/binary hashes, dependency preservation, successful checks, initial
+compile/fixture corrections and the superseded capture framing. The receiving
+checks also found and fixed an exact-member visibility defect: the resting
+summary now counts only eligible displayed source rows while opening retains
+the complete source reading. No source assertion is withdrawn by a view hide.
 
 > **2026-08-10 — the gate is open.** The scenograph scene contract this plan
 > gates on ("what remains is the freeze, not the proof") froze 2026-07-24 at

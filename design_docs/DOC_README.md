@@ -109,7 +109,7 @@ before any other doc in this directory.
   states, and responsive wireframe done-conditions. It is separate from the
   Woodshed product graph.
 - [2026-07-11_stage_set_tools_plan.md](2026-07-11_stage_set_tools_plan.md)
-  — October 16 link-model P4 resting strokes are implemented against Mere `91467c0bb`; receiving source, native and fresh-process checks are in progress.
+  — October 16 bounded link-model P4 is qualified against Mere `91467c0bb`: 619 suite cases plus five child invocations, a locked desktop build and four reviewed native seed/reopen captures on final source `865e0e9`. Exact member filters affect resting strength without dropping source evidence; physical audio and full Stage P4f keep their own gates.
   — October 16 bounded opened-link P3 consumer is qualified on published Mere `ee324e517`: persistent personal assertions, generated reasons read-only, exact source actions and ordered before/after audition. The 784-case source gate on `374c75d` is followed by 191 view cases and a desktop build on final source `474d10a`. Native authoring/audition and fresh-process sealed reopen pass with seven reviewed List/Timeline captures, exact UUID/assertion IDs and withdrawal history; physical audio quality and full P4f remain separate.
   — October 15 P2 camera receipt refreshed on the current locked family: 183 view tests,
   274 presented frames and nine reviewed captures; native wheel routing now covers

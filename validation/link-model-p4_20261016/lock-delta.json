@@ -1,0 +1,9 @@
+{
+  "old_mere": "ee324e517d501653aee8df7d5a430760a74749c0",
+  "new_mere": "91467c0bbf6f92cc26262579dec634155ee33f2d",
+  "coherent_family_packages": 45,
+  "other_sources_unchanged": true,
+  "package_count_unchanged": 853,
+  "extra_dependency": "pandect -> sceno",
+  "discarded_broad_resolution": "lock-expanded.lock"
+}
