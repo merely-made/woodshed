@@ -1,0 +1,19 @@
+RESULT ok
+captured 01_unplaced_template
+captured 02_invalid_draft
+captured 03_tonic_first_voicing
+captured 04_tonic_second_voicing
+captured 05_saved_arrangement
+captured 06_narrow_arrangement
+captured 07_narrow_full_span
+captured 08_panel_return
+capture 01_unplaced_template 2360x2200 digest=3550b3f21e3a058c file=/Users/markik/Code/testing/woodshed/native-arrangement-20261016/seed-v3/01_unplaced_template.png
+capture 02_invalid_draft 2360x2200 digest=22adff3906005389 file=/Users/markik/Code/testing/woodshed/native-arrangement-20261016/seed-v3/02_invalid_draft.png
+capture 03_tonic_first_voicing 2360x2200 digest=3f38dfa64864f802 file=/Users/markik/Code/testing/woodshed/native-arrangement-20261016/seed-v3/03_tonic_first_voicing.png
+capture 04_tonic_second_voicing 2360x2200 digest=2a2772c86b1184d9 file=/Users/markik/Code/testing/woodshed/native-arrangement-20261016/seed-v3/04_tonic_second_voicing.png
+capture 05_saved_arrangement 2360x2200 digest=7fbaa0854cc626b6 file=/Users/markik/Code/testing/woodshed/native-arrangement-20261016/seed-v3/05_saved_arrangement.png
+capture 06_narrow_arrangement 840x2000 digest=9e7beb8f628fe727 file=/Users/markik/Code/testing/woodshed/native-arrangement-20261016/seed-v3/06_narrow_arrangement.png
+capture 07_narrow_full_span 840x2000 digest=d5310a06e0df6399 file=/Users/markik/Code/testing/woodshed/native-arrangement-20261016/seed-v3/07_narrow_full_span.png
+capture 08_panel_return 2360x2200 digest=2401d0b261fb6c9b file=/Users/markik/Code/testing/woodshed/native-arrangement-20261016/seed-v3/08_panel_return.png
+frames: 8 captured, 0 blank, 8 distinct digests
+presentation: 362 frames, 364 redraws, 2 unpresented redraws
