@@ -19,10 +19,11 @@
 //! // Dm7, G7, Cmaj7
 //! ```
 
-use crate::chord::{catalog as chord_catalog, ChordFormula};
+use crate::chord::{ChordFormula, catalog as chord_catalog};
 use crate::interval::Interval;
 use crate::pitch::{Pitch, TranspositionError};
 use crate::scale::ScaleFormula;
+use serde::{Deserialize, Serialize};
 
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum ProgressionCategory {
@@ -34,7 +35,7 @@ pub enum ProgressionCategory {
     Custom,
 }
 
-#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum DegreeAlteration {
     Natural,
     Sharp,
@@ -55,7 +56,7 @@ impl DegreeAlteration {
 }
 
 /// Chord quality for a role in a progression.
-#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum RoleQuality {
     Major,
     Minor,
@@ -128,7 +129,8 @@ impl RoleQuality {
     }
 }
 
-#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct ChordRole {
     /// 1-indexed scale degree (1 = tonic, 2 = supertonic, etc.).
     pub degree: u8,

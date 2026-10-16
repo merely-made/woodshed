@@ -29,6 +29,7 @@ pub mod musical_context;
 pub mod personal_relations;
 pub mod pitch_motion_reading;
 pub mod retained_sets;
+pub mod saved_arrangements;
 pub mod scale_pattern_discovery;
 pub mod scale_realization;
 pub mod sealed_backend;

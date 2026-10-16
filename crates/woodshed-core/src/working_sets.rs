@@ -134,11 +134,7 @@ impl WorkingSets {
     ) -> Option<WorkingSetId> {
         let source = self.get(id, current)?.clone();
         let mut copy = source.clone();
-        copy.ensure_card_ids();
-        copy.cards.clear();
-        for card in source.cards {
-            copy.push(card);
-        }
+        copy.copy_instructions_from(&source).ok()?;
         Some(self.create(current, name, copy))
     }
 }

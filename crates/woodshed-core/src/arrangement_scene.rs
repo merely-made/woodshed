@@ -11,33 +11,36 @@ use scenomise::{
         TemplateSlot, TemplatedSequence,
     },
 };
-use serde::{Deserialize, Serialize};
 use std::collections::HashSet;
-use woodshedding::rehearsal::{CardId, Material, Set};
+use woodshedding::rehearsal::{Material, Set};
 
-#[derive(Clone, Debug, Serialize, Deserialize)]
-#[serde(deny_unknown_fields)]
-pub struct CardAlignment {
-    pub card: CardId,
-    pub placement: Option<Placement>,
-    pub role: Option<usize>,
+pub use woodshedding::rehearsal::arrangement::{
+    ArrangementRest, CardAlignment, ProgressionArrangement,
+};
+fn scene_span(span: woodshedding::rehearsal::arrangement::Span) -> Span {
+    Span {
+        start: span.start,
+        length: span.length,
+    }
 }
-#[derive(Clone, Debug, Serialize, Deserialize)]
-#[serde(deny_unknown_fields)]
-pub struct ArrangementRest {
-    pub key: String,
-    pub placement: Placement,
-    pub role: Option<usize>,
+fn scene_placement(value: &woodshedding::rehearsal::arrangement::Placement) -> Placement {
+    Placement {
+        lane: value.lane,
+        span: scene_span(value.span),
+    }
 }
-#[derive(Clone, Debug, Serialize, Deserialize)]
-#[serde(deny_unknown_fields)]
-pub struct ProgressionArrangement {
-    pub name: String,
-    pub extent: u32,
-    /// Fixed expectations, independent of the cards' spans.
-    pub role_spans: Vec<Span>,
-    pub cards: Vec<CardAlignment>,
-    pub rests: Vec<ArrangementRest>,
+/// Export the Set's retained musical context, independent of live navigation.
+pub fn saved_arrangement_scene(set: &Set, reading_id: &str) -> Result<SceneDocument, String> {
+    if reading_id.trim().is_empty() {
+        return Err("A stable reading identity is required".into());
+    }
+    let stage = crate::saved_arrangements::saved_arrangement_stage(set)?;
+    arrangement_scene(
+        &stage,
+        set,
+        &set.progression_arrangement.as_ref().unwrap().alignment,
+        reading_id,
+    )
 }
 pub fn arrangement_scene(
     stage: &StageState,
@@ -91,7 +94,7 @@ pub fn arrangement_scene(
         .map(|(i, (role, span))| TemplateSlot {
             key: format!("role-{i}"),
             lane: 0,
-            span: *span,
+            span: scene_span(*span),
             label: format_role(role),
             expectation: format!(
                 "{} in {} major · source-declared expectation",
@@ -123,7 +126,7 @@ pub fn arrangement_scene(
                 "{reading_id}#card={} · persistent Set occurrence · supplied alignment",
                 card.id.0
             ),
-            placement: binding.and_then(|b| b.placement.clone()),
+            placement: binding.and_then(|b| b.placement.as_ref().map(scene_placement)),
             slot: slot(binding.and_then(|b| b.role))?,
         });
         if let Some(scene) =
@@ -148,7 +151,7 @@ pub fn arrangement_scene(
             },
             label: "Rest".into(),
             detail: "Explicit authored rest; no chord or voicing inferred".into(),
-            placement: Some(rest.placement.clone()),
+            placement: Some(scene_placement(&rest.placement)),
             slot: slot(rest.role)?,
         });
     }
@@ -219,6 +222,8 @@ pub fn arrangement_scene(
 mod tests {
     use super::*;
     use crate::{Lens, ROOT_NAMES};
+    use woodshedding::rehearsal::CardId;
+    use woodshedding::rehearsal::arrangement::{Placement, Span};
     fn fixture() -> (StageState, Set, ProgressionArrangement) {
         let mut stage = StageState::default();
         stage.lens = Lens::Progressions;

@@ -79,14 +79,7 @@ impl RetainedSets {
         let Some(saved) = self.get(id) else {
             return false;
         };
-        working.ensure_card_ids();
-        working.cards.clear();
-        for card in &saved.set.cards {
-            working.push(card.clone());
-        }
-        working.cursor = saved.set.cursor.min(working.cards.len().saturating_sub(1));
-        working.loop_mode = saved.set.loop_mode;
-        true
+        working.copy_instructions_from(&saved.set).is_ok()
     }
 }
 

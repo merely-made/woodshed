@@ -3714,3 +3714,44 @@ some Related labels overlap at the exercised zooms. These are bounded camera
 and rendering results, not compact-layout polish, physical input hardware or
 sealed persistence/reopen qualification. Djinn was unavailable; runs used
 explicit isolated state paths. Touch remains deferred.
+
+## Saved progression arrangements and portable export (2026-10-16)
+
+**Status, 2026-10-16:** implemented and qualified for portable persistence,
+file exchange and Graphshell receiving. Mark approved durable arrangements
+over ordinary Sets, with Graphshell remaining the first visible scene host. Native
+progression panels and audio synchronization are separate work.
+
+Phase 1 retains musical role spans, Card alignments and rests on the owning
+Set, with its named progression/exact roles, key and inherited neck setup.
+Done when legacy Sets still open, active/inactive Sets and retained snapshots
+carry the attachment, copies remap references to fresh Card IDs, and missing
+Cards or changed catalogs remain retained with an explicit export refusal.
+
+Phase 2 exports a chosen saved Set into the existing portable scene document.
+Done when fresh processes attach alignment to an explicit session exchange
+copy, reopen and export active/inactive working Sets and retained snapshots,
+and Graphshell presents the exported occurrences and saved voicings. Inputs
+and unknown source fields must survive; outputs must refuse replacement of an
+existing file. Retained artifacts are read-only: author on a working copy.
+
+Findings, 2026-10-16: `retained_sets` and `working_sets` already own snapshot
+and instance persistence, while Mere's newer CartographyGeometry persistence
+owns visual graph placement. Musical alignment belongs to `Set` and does not
+reuse visual tile coordinates. Previously the copy paths minted fresh Card
+IDs without any alignment remapping; `Set::copy_instructions_from` now handles
+both live references and reserved missing references. Retention lives in the
+pure `woodshedding` model and remains available without `portable-scenes`.
+
+Progress, 2026-10-16: both phases pass. The final checks comprise 455
+core/theory/integration/documentation cases and 201 view cases, plus the
+feature-disabled retention check. Fresh CLI processes export active/inactive
+working Sets and a retained snapshot; sealed Backend save/reopen retains the
+same arrangement and voicings. Graphshell imports the saved-session export,
+distinguishes the two tonic voicings, clears the related view for an authored
+rest, and exports an equal full document. The existing qualified WebGPU host
+is reused with all 224 served file hashes verified; no new host-build or native
+application acceptance is claimed. The [receipt](../validation/saved-arrangements_20261016/qualification.json)
+records source hashes, exchange files, test logs, screenshots and limits. Native
+arrangement authoring/panels and persona-store exchange controls remain later
+product work; this slice supplies their persisted model and export seam.

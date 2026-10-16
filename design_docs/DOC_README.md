@@ -19,6 +19,8 @@ before any other doc in this directory.
 
 ## Active Plans
 
+- [Saved progression arrangements](2026-07-11_stage_set_tools_plan.md#saved-progression-arrangements-and-portable-export-2026-10-16) — Qualified: Set-owned musical alignment, identity-safe snapshot copies and explicit session exchange export to Graphshell; 656 suite cases, feature-disabled retention, fresh CLI processes and browser receiving.
+
 - [Stage P4f continuation](2026-07-11_stage_set_tools_plan.md#p4f-join-graph-understanding-to-sound-and-practice) — Bounded practice-flow gate qualified: honest save/close outcomes, visible frontier → voicing → exact directed audition → numbered Rehearsal → sealed fresh reopen; 789 cases plus five child invocations, desktop build and 14 reviewed captures. [Receipt](../validation/stage-p4f_20261016/receipt.json).
 
 - [2026-10-16_mere_take_acceptance_plan.md](2026-10-16_mere_take_acceptance_plan.md) — Loop-take native acceptance complete: fallback placement preserves retained v1 positions; 442 cases, desktop build, three sealed native runs and ten reviewed captures, including wide/narrow fresh-process v2 reopening.
