@@ -657,6 +657,8 @@ mod tests {
     #[test]
     fn capture_native_scenarios_parse_with_shared_driver() {
         for scenario in [
+            include_str!("../../../scenarios/mere_take_seed.scn"),
+            include_str!("../../../scenarios/mere_take_reopen.scn"),
             include_str!("../../../scenarios/set_capture_seed.scn"),
             include_str!("../../../scenarios/set_capture_reopen.scn"),
             include_str!("../../../scenarios/set_capture_cleared_reopen.scn"),
