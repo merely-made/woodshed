@@ -3443,7 +3443,7 @@ from four runs of `scenarios/canvas_controls_p2.scn` on Mere `39c3c955d`.
 
 **Current-family native refresh (2026-10-15).**
 [Refresh receipt](../validation/canvas-p2_20261015/refresh-receipt.json) binds
-the committed scenario `4eddaba` to locked Mere `59f88e63` / Genet `7af8de32`
+the committed scenario `4eddaba` to locked Mere `59f88e63` / Genet `e37762d7`
 and Dramatis `5c89001a`. The locked desktop build succeeds; all 183
 `woodshed-views` tests pass, including eight focused camera cases (counted
 once). The final native process passes over 274 presented frames with nine
