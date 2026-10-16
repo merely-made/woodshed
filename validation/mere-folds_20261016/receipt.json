@@ -1,0 +1,326 @@
+{
+  "date": "2026-10-16",
+  "scope": "macOS production session Mere selection folds; root workspace only",
+  "source": "55d3615b1a6b38ecc170e2b3a4f74b024734fb3d",
+  "original_checkout": "d12201bfe80cc94345c6308c46caaebf4a9fe42e",
+  "initial_refreshed_base": "e6f0950477a907033545c6d51f065131f6a56822",
+  "integrated_upstream": "43e40bb07d904783396f1e7b56a75e319a2bd94d",
+  "mere_lock": "6575075057e8909032475ae6c88118a19969eadc",
+  "all_package_versions_and_source_pins_unchanged": true,
+  "root_lock_added_dependency_edges": [
+    "woodshed-views -> mere-curation",
+    "woodshed-genet -> blake3",
+    "woodshed-genet -> serde"
+  ],
+  "cpu": {
+    "passed": 671,
+    "failed": 0,
+    "ignored": 7,
+    "additional_fresh_process_invocations": 5,
+    "root_results": [
+      [
+        268,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        5,
+        0,
+        0,
+        0
+      ],
+      [
+        1,
+        0,
+        0,
+        0
+      ],
+      [
+        183,
+        0,
+        7,
+        0
+      ],
+      [
+        214,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0
+      ]
+    ],
+    "source": "55d3615",
+    "command": "CARGO_PROFILE_DEV_DEBUG=0 CARGO_PROFILE_TEST_DEBUG=0 CARGO_INCREMENTAL=0 cargo test --locked --offline -p woodshed-views -p woodshed-core -p woodshed-genet -j4"
+  },
+  "desktop_build": {
+    "command": "CARGO_PROFILE_DEV_DEBUG=0 CARGO_INCREMENTAL=0 cargo build --locked --offline -p woodshed-genet -j4",
+    "exit_code": 0,
+    "binary_sha256": "b55e087244d78b095be529eb269bf8c835599f0d56ca3df9197330d26f6c1269"
+  },
+  "native_runs": [
+    {
+      "phase": "seed",
+      "launch_method": "LaunchServices temporary application bundle",
+      "launcher_exit": 0,
+      "timeout": false,
+      "success": true,
+      "elapsed_seconds": 33.642,
+      "binary_sha256": "b55e087244d78b095be529eb269bf8c835599f0d56ca3df9197330d26f6c1269",
+      "scenario_sha256": "76b97798c1f331eb8166672eb8689967f7335c3315cf77b4da6b38bc5c2e4291",
+      "receipt": "scenario.done",
+      "captures": 5,
+      "presented_frames": 68,
+      "redraws": 71,
+      "unpresented_redraws": 3
+    },
+    {
+      "phase": "reopen",
+      "launch_method": "LaunchServices temporary application bundle",
+      "launcher_exit": 0,
+      "timeout": false,
+      "success": true,
+      "elapsed_seconds": 25.34,
+      "binary_sha256": "b55e087244d78b095be529eb269bf8c835599f0d56ca3df9197330d26f6c1269",
+      "scenario_sha256": "c2a3dba127391e491b2a9f291d912501cbd99215402a01c541c96777d5e4a383",
+      "receipt": "scenario.done",
+      "captures": 3,
+      "presented_frames": 47,
+      "redraws": 50,
+      "unpresented_redraws": 3
+    }
+  ],
+  "verification": {
+    "ok": true,
+    "source_matches_recorded_commit": true,
+    "working_tree_still_matches_tested_source": true,
+    "exact_sealed_fold_reopen": true,
+    "owner_truth_and_all_member_positions_unchanged": true,
+    "native_actions_leave_processes_stopped": true,
+    "boundary_counts_independently_recomputed": true,
+    "checkpoints": [
+      {
+        "phase": "seed",
+        "checkpoint": "expanded",
+        "folds": 0,
+        "visible_nodes": 11,
+        "source_nodes": 11,
+        "source_relations": 9,
+        "boundary_bundles": 0,
+        "boundary_source_cells": 0,
+        "max_bundle_count": 0
+      },
+      {
+        "phase": "seed",
+        "checkpoint": "one",
+        "folds": 1,
+        "visible_nodes": 10,
+        "source_nodes": 11,
+        "source_relations": 9,
+        "boundary_bundles": 5,
+        "boundary_source_cells": 8,
+        "max_bundle_count": 2
+      },
+      {
+        "phase": "seed",
+        "checkpoint": "two",
+        "folds": 2,
+        "visible_nodes": 9,
+        "source_nodes": 11,
+        "source_relations": 9,
+        "boundary_bundles": 5,
+        "boundary_source_cells": 8,
+        "max_bundle_count": 2
+      },
+      {
+        "phase": "reopen",
+        "checkpoint": "restored",
+        "folds": 2,
+        "visible_nodes": 9,
+        "source_nodes": 11,
+        "source_relations": 9,
+        "boundary_bundles": 5,
+        "boundary_source_cells": 8,
+        "max_bundle_count": 2
+      },
+      {
+        "phase": "reopen",
+        "checkpoint": "summary-expanded",
+        "folds": 1,
+        "visible_nodes": 10,
+        "source_nodes": 11,
+        "source_relations": 9,
+        "boundary_bundles": 2,
+        "boundary_source_cells": 2,
+        "max_bundle_count": 1
+      },
+      {
+        "phase": "reopen",
+        "checkpoint": "all-expanded",
+        "folds": 0,
+        "visible_nodes": 11,
+        "source_nodes": 11,
+        "source_relations": 9,
+        "boundary_bundles": 0,
+        "boundary_source_cells": 0,
+        "max_bundle_count": 0
+      }
+    ],
+    "captures": [
+      {
+        "path": "seed/01_expanded.png",
+        "sha256": "048407185d313f7ce53618b752d72fae6df5b526da1eb4b45315c1f1b4824c05",
+        "size": [
+          2360,
+          1800
+        ],
+        "nonblank": true
+      },
+      {
+        "path": "seed/02_one_fold.png",
+        "sha256": "c0663d62a0c2bd1d5505572241dac5749e513bba06613368fdd800624e2d0326",
+        "size": [
+          2360,
+          1800
+        ],
+        "nonblank": true
+      },
+      {
+        "path": "seed/03_undone.png",
+        "sha256": "904426220a0da37db16602143cd1cd4a2566530634f2e92a0a4cb059fe5d05bd",
+        "size": [
+          2360,
+          1800
+        ],
+        "nonblank": true
+      },
+      {
+        "path": "seed/04_redone.png",
+        "sha256": "552b26206f2d503534767fe588dbd14f05905f2afa8b23516e14b09beaddffe7",
+        "size": [
+          2360,
+          1800
+        ],
+        "nonblank": true
+      },
+      {
+        "path": "seed/05_two_folds.png",
+        "sha256": "2895d2f0b0a5bff57e34e23f48ee061d8f466ed74412a94cd36986a35eb1e6b4",
+        "size": [
+          2360,
+          1800
+        ],
+        "nonblank": true
+      },
+      {
+        "path": "reopen/01_restored.png",
+        "sha256": "55ee628ecc358e1e5347c08a73fe5aa1010544b12b7b4be17d4e6742c7e7d925",
+        "size": [
+          2360,
+          1800
+        ],
+        "nonblank": true
+      },
+      {
+        "path": "reopen/02_summary_expanded.png",
+        "sha256": "7e492949ae6472da8e7278fb11a9d9050995b79876f3c5a678ec929025c8536e",
+        "size": [
+          2360,
+          1800
+        ],
+        "nonblank": true
+      },
+      {
+        "path": "reopen/03_all_expanded.png",
+        "sha256": "0df311dd751cb18705fde0602faeeb679a8a94e4444902329ccc49c04e8d712e",
+        "size": [
+          2360,
+          1800
+        ],
+        "nonblank": true
+      }
+    ],
+    "keeper_exited_and_original_files_unchanged": true,
+    "owner_digest": "ebbdf7366cbd38cde9ec58e778d9ee7f17ec8dfefac091856a17ce44e4323465",
+    "truth_digest": "64ffd18a7fce561ba38a5bd4d94e06af81020e24bc70561f7a3a6cd359fb4c1c",
+    "positions_digest": "8673a6f12e85a94eff6e38cfcbe250dbf66c29b85fb83830fcf81d9c5021759c"
+  },
+  "all_eight_captures_visually_reviewed": true,
+  "history_comparison": "Canonicalize only unordered owned_visits membership and owner-keyed bindings. All event values, references, timestamps, Card order and payload fields remain compared. Regression rejects altered events, timestamps, membership and Card order. No product history serialization was changed.",
+  "raw_logs_byte_preserved": true,
+  "superseded_attempts": [
+    {
+      "cohort": "r1",
+      "reason": "Intermediate owner comparison rejected unordered history membership after typed readback; not acceptance.",
+      "included_in_acceptance": false
+    },
+    {
+      "cohort": "r2",
+      "reason": "Zero presented frames during a presentation stall with another headed lane active; not acceptance.",
+      "included_in_acceptance": false
+    },
+    {
+      "cohort": "r3",
+      "reason": "Diagnosis isolated the owner mismatch to practice_history; folds and confirmed storage agreed. Receipt canonicalization corrected this set-order comparison.",
+      "included_in_acceptance": false
+    }
+  ],
+  "pre_merge_native_proof": {
+    "source": "846ea96",
+    "cohort": "r4",
+    "seed_and_reopen_passed": true,
+    "final_qualification_repeated_on_combined_source": true
+  },
+  "limits": [
+    "Related/catalog and relationship-editor graph surfaces are separate consumers",
+    "No inferred descendant hierarchy",
+    "No physical audio, live screen-reader, global fold shortcut, recovery or Windows/Linux headed qualification"
+  ],
+  "packet_verification": {
+    "all_json_parse": true,
+    "new_local_doc_links_and_anchors_valid": true,
+    "source_and_documentation_whitespace": "passed",
+    "raw_log_whitespace_findings_preserved": [
+      "validation/mere-folds_20261016/logs/merged-tests.log:932: new blank line at EOF.",
+      "validation/mere-folds_20261016/logs/readback-regression.log:158: new blank line at EOF.",
+      "validation/mere-folds_20261016/logs/scenario-final.log:157: new blank line at EOF."
+    ],
+    "runtime_source_matches_qualified_commit": true,
+    "all_package_versions_and_source_pins_unchanged": true
+  }
+}

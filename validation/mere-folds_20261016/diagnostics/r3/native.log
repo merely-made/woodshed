@@ -1,0 +1,13 @@
+[woodshed] practice sealed to persona "default" (Passphrase (held by djinn))
+[cambium-winit] accessibility Installed, 286 nodes projected
+Fold checkpoint refused: live/sealed agreement: owners=false, changed owner keys=["practice_history"], folds=true, confirmed=true
+Fold checkpoint refused: live/sealed agreement: owners=false, changed owner keys=["practice_history"], folds=true, confirmed=true
+woodshed-genet: captured 01_expanded
+woodshed-genet: FAIL: act: no command 'fold-checkpoint-one'
+woodshed-genet: captured 02_one_fold
+woodshed-genet: captured 03_undone
+woodshed-genet: captured 04_redone
+woodshed-genet: FAIL: act: no command 'fold-checkpoint-two'
+woodshed-genet: captured 05_two_folds
+woodshed-genet: Native folds saved
+woodshed-genet: RESULT fail (70 frames, 5 captures)

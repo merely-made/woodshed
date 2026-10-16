@@ -1,0 +1,15 @@
+RESULT fail
+captured 01_expanded
+FAIL: act: no command 'fold-checkpoint-one'
+captured 02_one_fold
+captured 03_undone
+captured 04_redone
+captured 05_two_folds
+Native folds saved
+capture 01_expanded 2360x1800 digest=0c148c9d19efec8b file=/Users/markik/Code/output/woodshed-graph-folds-20261016/native-r1/seed/01_expanded.png
+capture 02_one_fold 2360x1800 digest=5aa86f81dd6b0d75 file=/Users/markik/Code/output/woodshed-graph-folds-20261016/native-r1/seed/02_one_fold.png
+capture 03_undone 2360x1800 digest=13e60729f3ef371e file=/Users/markik/Code/output/woodshed-graph-folds-20261016/native-r1/seed/03_undone.png
+capture 04_redone 2360x1800 digest=e3bcbb7f0ec9090e file=/Users/markik/Code/output/woodshed-graph-folds-20261016/native-r1/seed/04_redone.png
+capture 05_two_folds 2360x1800 digest=5828772e7c9ea28d file=/Users/markik/Code/output/woodshed-graph-folds-20261016/native-r1/seed/05_two_folds.png
+frames: 5 captured, 0 blank, 5 distinct digests
+presentation: 67 frames, 70 redraws, 3 unpresented redraws

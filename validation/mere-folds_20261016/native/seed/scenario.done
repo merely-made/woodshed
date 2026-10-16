@@ -1,0 +1,14 @@
+RESULT ok
+captured 01_expanded
+captured 02_one_fold
+captured 03_undone
+captured 04_redone
+captured 05_two_folds
+Native folds saved
+capture 01_expanded 2360x1800 digest=99417bc3ec0150f7 file=/Users/markik/Code/output/woodshed-graph-folds-20261016/native-r5/seed/01_expanded.png
+capture 02_one_fold 2360x1800 digest=8be4c776f34f6576 file=/Users/markik/Code/output/woodshed-graph-folds-20261016/native-r5/seed/02_one_fold.png
+capture 03_undone 2360x1800 digest=1bce575f66d36756 file=/Users/markik/Code/output/woodshed-graph-folds-20261016/native-r5/seed/03_undone.png
+capture 04_redone 2360x1800 digest=77a9e82ad59256a5 file=/Users/markik/Code/output/woodshed-graph-folds-20261016/native-r5/seed/04_redone.png
+capture 05_two_folds 2360x1800 digest=24300fcbdb2284f8 file=/Users/markik/Code/output/woodshed-graph-folds-20261016/native-r5/seed/05_two_folds.png
+frames: 5 captured, 0 blank, 5 distinct digests
+presentation: 68 frames, 71 redraws, 3 unpresented redraws

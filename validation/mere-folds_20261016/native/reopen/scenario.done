@@ -1,0 +1,10 @@
+RESULT ok
+captured 01_restored
+captured 02_summary_expanded
+captured 03_all_expanded
+Reopened folds expanded without changing owner facts
+capture 01_restored 2360x1800 digest=32acaaba46ddd480 file=/Users/markik/Code/output/woodshed-graph-folds-20261016/native-r5/reopen/01_restored.png
+capture 02_summary_expanded 2360x1800 digest=37e6faf878ceb537 file=/Users/markik/Code/output/woodshed-graph-folds-20261016/native-r5/reopen/02_summary_expanded.png
+capture 03_all_expanded 2360x1800 digest=ccc4e557b9a3250a file=/Users/markik/Code/output/woodshed-graph-folds-20261016/native-r5/reopen/03_all_expanded.png
+frames: 3 captured, 0 blank, 3 distinct digests
+presentation: 47 frames, 50 redraws, 3 unpresented redraws

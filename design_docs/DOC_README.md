@@ -19,7 +19,7 @@ before any other doc in this directory.
 
 ## Active Plans
 
-- [Session Mere selection folds](2026-07-11_stage_set_tools_plan.md#session-mere-selection-folds-2026-10-16) — In progress: native member folds, view-owned retention and undo/redo; source and sealed native reopen gates.
+- [Session Mere selection folds](2026-07-11_stage_set_tools_plan.md#session-mere-selection-folds-2026-10-16) — Qualified on macOS against current native-arrangement main: member folds, view-owned v3 retention and undo/redo; 671 cases plus five child invocations, two native processes, eight reviewed captures and exact sealed fold reopening. [Receipt](../validation/mere-folds_20261016/README.md).
 
 - [Native arrangement editor and panel](2026-07-11_stage_set_tools_plan.md#native-arrangement-editor-and-panel-2026-10-16) — Qualified on macOS: per-Set drafts, role/Card/rest editing and linked saved voicings over the shared scene surface; 393 parent-suite cases plus five child invocations, desktop build, two sealed native processes and 12 reviewed wide/narrow captures with exact Set/document reopening. [Receipt](../validation/native-arrangement_20261016/receipt.json).
 

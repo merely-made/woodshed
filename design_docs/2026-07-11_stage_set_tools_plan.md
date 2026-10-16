@@ -3815,8 +3815,10 @@ product work; this slice supplies their persisted model and export seam.
 
 ### Session Mere selection folds (2026-10-16)
 
-**Status:** implementation and acceptance in progress on current Woodshed main
-`e6f0950`, fetched before work; the prior checkout was seven commits behind.
+**Status:** qualified on macOS, 2026-10-16, on combined source `55d3615`.
+The checkout first advanced seven commits from `d12201b` to fetched main
+`e6f0950`; concurrent native-arrangement main `43e40bb` was merged before the
+final tests and headed seed/reopen.
 The root supplier lock already contains native v2 fold records at Mere
 `657507505`; add the direct curation dependency without refreshing unrelated
 supplier or nested-port lockfiles.
@@ -3836,8 +3838,22 @@ Sets, catalog, lineage and live activity; native curation records are view inten
 Selection does not infer descendants from practice or catalog links. Nested
 Hocket, Redshank and Ringdown workspaces are separate acceptance scopes.
 
-**Progress (2026-10-16):** initial integration adds host-owned member folds and
-presentation retention; CPU and finite headed checks are underway.
+**Progress (2026-10-16):** the combined source passes 671 affected suite cases
+(seven existing ignores) and five child-process invocations, plus the locked
+desktop build. Two finite LaunchServices processes present 68 and 47 frames
+and produce eight reviewed nonblank captures. Actual sealed-store reads match
+folds and owner payloads at six checkpoints, including fresh-process restore,
+summary activation, undo/redo and Expand all. Source readings and every source
+member position remain equal; two folds reduce eleven visible members to nine,
+with eight boundary source cells represented in five directed family bundles.
+History comparison canonicalizes only unordered visit membership and owner-keyed
+bindings; it retains all event values, timestamps, references and Card order.
+A regression rejects changed events, dates, membership and Card order. Native
+curation persists in presentation v3; v1/v2 load and unsupported nested schemas
+remain preserved. The generated Keeper, native products and bounded display
+assertion have exited. [Acceptance receipt](../validation/mere-folds_20261016/README.md).
+Other graph surfaces, descendants without a declared hierarchy, physical audio,
+recovery, live screen-reader use, shortcuts and Windows/Linux keep separate gates.
 
 ### Native arrangement editor and panel (2026-10-16)
 

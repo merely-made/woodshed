@@ -1,0 +1,759 @@
+{
+  "boundary_bundles": [
+    {
+      "from": "artifact:working-set:1",
+      "kind": "uses catalog material",
+      "label": "1 uses catalog material relation",
+      "route": [],
+      "source_link_cleared": true,
+      "to": "artifact:practice-history"
+    },
+    {
+      "from": "artifact:catalog-exploration:1",
+      "kind": "uses catalog material",
+      "label": "1 uses catalog material relation",
+      "route": [],
+      "source_link_cleared": true,
+      "to": "artifact:practice-history"
+    }
+  ],
+  "fold_digest": "6175dd1e08fc115cacbe752c98d773a090b567fd48a6ca445a5f0984a0640eed",
+  "folds": [
+    {
+      "boundary_policy": "BundleByRelationFamily",
+      "id": "session-fold-2",
+      "label": "Fold 2",
+      "members": [
+        "artifact:practice-history",
+        "catalog:woodshed-catalog"
+      ],
+      "rule": "Selection",
+      "source_scope": "woodshed:session-overview",
+      "stand_in": {
+        "Member": "artifact:practice-history"
+      },
+      "version": 2
+    }
+  ],
+  "owner": {
+    "active_exploration": {
+      "arpeggio_direction": "UpDown",
+      "arpeggio_idx": 0,
+      "arpeggio_inversion": 0,
+      "arpeggio_position_idx": 0,
+      "chord_idx": 6,
+      "context_focus": null,
+      "exercise_idx": 0,
+      "exercise_starting_fret": 1,
+      "fretboard": {
+        "board_layout": "Two pane",
+        "marker_style": "Sharp",
+        "neck_end": null,
+        "neck_start": 0,
+        "orientation": "Horizontal"
+      },
+      "lens": "Chords",
+      "progression_expanded": 0,
+      "progression_idx": null,
+      "root_idx": 3,
+      "scale_idx": 8,
+      "search_query": "",
+      "stage_settings": {
+        "context": {
+          "enabled": true,
+          "node_limit": 24
+        },
+        "related": {
+          "arrangement": "Radial",
+          "dismissed_ids": [],
+          "graph_scope": "Selection",
+          "relation_depth": 1,
+          "show_neighborhood": true,
+          "use_history": true
+        },
+        "set_arrangement": "Snake",
+        "set_graph_height": 520,
+        "set_graph_reading": "CircleOfFifths",
+        "set_graph_width": 520,
+        "visible_set_relations": [
+          "Next"
+        ]
+      },
+      "tuning": {
+        "tuning_idx": 0
+      }
+    },
+    "arpeggio_direction": "UpDown",
+    "arpeggio_idx": 0,
+    "arpeggio_inversion": 0,
+    "arpeggio_position_idx": 0,
+    "catalog_explorations": {
+      "active_id": 1,
+      "active_name": "Catalog exploration 1",
+      "inactive": [],
+      "next_id": 1
+    },
+    "chord_idx": 6,
+    "exercise_idx": 0,
+    "exercise_starting_fret": 1,
+    "lens": "Chords",
+    "musical_context": {
+      "entries": [],
+      "next_id": 0
+    },
+    "personal_relations": {
+      "journal": {
+        "entries": [],
+        "id": null,
+        "parents": [],
+        "provenance": null
+      },
+      "source_id": "d4106279-f9df-4d47-8b09-5611ea51ca73"
+    },
+    "practice_history": {
+      "entries": [
+        {
+          "first_seen_at_ms": 1792194325763,
+          "key": "chord:Minor 7",
+          "last_seen_at_ms": 1792194325763,
+          "payload": null,
+          "privacy": "LocalOnly",
+          "visit_count": 1
+        },
+        {
+          "first_seen_at_ms": 1792194325763,
+          "key": "chord:Major 7",
+          "last_seen_at_ms": 1792194325763,
+          "payload": null,
+          "privacy": "LocalOnly",
+          "visit_count": 1
+        }
+      ],
+      "owners": [
+        {
+          "creator": null,
+          "current": 1,
+          "identity": "practitioner",
+          "origin": 0,
+          "owned_visits": [
+            0,
+            1
+          ],
+          "pending_origin_parent": null
+        }
+      ],
+      "visits": [
+        {
+          "bindings": [
+            {
+              "forward_child": 1,
+              "last_accessed_at_ms": 1792194325763,
+              "owner": 0
+            }
+          ],
+          "children": [
+            1
+          ],
+          "context": {
+            "dated": true,
+            "from_id": null,
+            "kind": "Staged",
+            "practiced_ms": null,
+            "provenance": {
+              "card_snapshot": {
+                "from": null,
+                "id": 1,
+                "label": "Am7 (Minor 7)",
+                "material": {
+                  "Chord": {
+                    "name": "Minor 7",
+                    "root": 9
+                  }
+                },
+                "setting": {
+                  "capo": null,
+                  "fret_window": null,
+                  "instrument": "Guitar",
+                  "mark_mode": "Off",
+                  "marked": [],
+                  "tuning": "Standard",
+                  "voicing_fingerprint": null,
+                  "voicing_idx": null,
+                  "voicing_profile": null
+                },
+                "timing": {
+                  "bpm": null,
+                  "hold": "Manual"
+                },
+                "touch": "Block"
+              },
+              "occurrence_id": 1,
+              "working_set_id": 1
+            }
+          },
+          "created_at_ms": 1792194325763,
+          "entry": 0,
+          "inbound": null,
+          "parent": null
+        },
+        {
+          "bindings": [
+            {
+              "forward_child": null,
+              "last_accessed_at_ms": 1792194325763,
+              "owner": 0
+            }
+          ],
+          "children": [],
+          "context": {
+            "dated": true,
+            "from_id": null,
+            "kind": "Staged",
+            "practiced_ms": null,
+            "provenance": {
+              "card_snapshot": {
+                "from": null,
+                "id": 2,
+                "label": "Cmaj7 (Major 7)",
+                "material": {
+                  "Chord": {
+                    "name": "Major 7",
+                    "root": 0
+                  }
+                },
+                "setting": {
+                  "capo": null,
+                  "fret_window": null,
+                  "instrument": "Guitar",
+                  "mark_mode": "Off",
+                  "marked": [],
+                  "tuning": "Standard",
+                  "voicing_fingerprint": null,
+                  "voicing_idx": null,
+                  "voicing_profile": null
+                },
+                "timing": {
+                  "bpm": null,
+                  "hold": "Manual"
+                },
+                "touch": "Block"
+              },
+              "occurrence_id": 2,
+              "working_set_id": 1
+            }
+          },
+          "created_at_ms": 1792194325763,
+          "entry": 1,
+          "inbound": {
+            "at_ms": 1792194325763,
+            "kind": "Unknown"
+          },
+          "parent": 0
+        }
+      ]
+    },
+    "progression_expanded": 0,
+    "progression_idx": null,
+    "retained_sets": {
+      "entries": [],
+      "next_id": 0
+    },
+    "root_idx": 3,
+    "scale_idx": 8,
+    "section": "Stage",
+    "set": {
+      "cards": [
+        {
+          "from": null,
+          "id": 1,
+          "label": "Am7 (Minor 7)",
+          "material": {
+            "Chord": {
+              "name": "Minor 7",
+              "root": 9
+            }
+          },
+          "setting": {
+            "capo": null,
+            "fret_window": {
+              "span": 6,
+              "start": 2
+            },
+            "instrument": "Guitar",
+            "mark_mode": "Off",
+            "marked": [],
+            "tuning": "Standard",
+            "voicing_fingerprint": "5-3-2-0-x-x",
+            "voicing_idx": 0,
+            "voicing_profile": "root-bass/position4/v1"
+          },
+          "timing": {
+            "bpm": null,
+            "hold": "Manual"
+          },
+          "touch": "Block"
+        },
+        {
+          "from": null,
+          "id": 2,
+          "label": "Cmaj7 (Major 7)",
+          "material": {
+            "Chord": {
+              "name": "Major 7",
+              "root": 0
+            }
+          },
+          "setting": {
+            "capo": 2,
+            "fret_window": {
+              "span": 12,
+              "start": 2
+            },
+            "instrument": "Ukulele",
+            "mark_mode": "Off",
+            "marked": [],
+            "tuning": "Standard (high-G)",
+            "voicing_fingerprint": "0-0-0-2",
+            "voicing_idx": 0,
+            "voicing_profile": "root-bass/position4/v1"
+          },
+          "timing": {
+            "bpm": null,
+            "hold": "Manual"
+          },
+          "touch": "Block"
+        }
+      ],
+      "cursor": 0,
+      "last_card_id": 2,
+      "loop_mode": "Off"
+    },
+    "song": {
+      "bars": [],
+      "click": true,
+      "name": "",
+      "one_shot": false
+    },
+    "working_sets": {
+      "active_id": 1,
+      "active_name": "Working Set 1",
+      "inactive": [],
+      "next_id": 1
+    }
+  },
+  "owner_digest": "ebbdf7366cbd38cde9ec58e778d9ee7f17ec8dfefac091856a17ce44e4323465",
+  "persisted_folds_match": true,
+  "persisted_owners_match": true,
+  "positions_digest": "8673a6f12e85a94eff6e38cfcbe250dbf66c29b85fb83830fcf81d9c5021759c",
+  "practice_saved": true,
+  "presentation_version": 3,
+  "projected_relation_count": 8,
+  "rehearsal_running": false,
+  "schema": "woodshed.fold-checkpoint/v1",
+  "sealed": true,
+  "song_playing": false,
+  "source_node_count": 11,
+  "source_positions": [
+    [
+      "artifact:catalog-exploration:1",
+      [
+        0.5820895433425903,
+        0.1111111044883728
+      ]
+    ],
+    [
+      "artifact:practice-history",
+      [
+        0.2537313401699066,
+        0.1111111044883728
+      ]
+    ],
+    [
+      "artifact:song",
+      [
+        0.08955222368240356,
+        0.1111111044883728
+      ]
+    ],
+    [
+      "artifact:working-set:1",
+      [
+        0.41791045665740967,
+        0.1111111044883728
+      ]
+    ],
+    [
+      "catalog:woodshed-catalog",
+      [
+        0.08955222368240356,
+        0.8611111044883728
+      ]
+    ],
+    [
+      "view:1464811858",
+      [
+        0.746268630027771,
+        0.3611111044883728
+      ]
+    ],
+    [
+      "view:1464814917",
+      [
+        0.08955222368240356,
+        0.3611111044883728
+      ]
+    ],
+    [
+      "view:1464815698",
+      [
+        0.2537313401699066,
+        0.3611111044883728
+      ]
+    ],
+    [
+      "view:1464816197",
+      [
+        0.5820895433425903,
+        0.3611111044883728
+      ]
+    ],
+    [
+      "view:1464816453",
+      [
+        0.41791045665740967,
+        0.3611111044883728
+      ]
+    ],
+    [
+      "view:1464816455",
+      [
+        0.9104477763175964,
+        0.3611111044883728
+      ]
+    ]
+  ],
+  "source_relation_count": 9,
+  "source_relations": [
+    {
+      "from": "artifact:working-set:1",
+      "kind": "uses catalog material",
+      "to": "catalog:woodshed-catalog",
+      "visible": true
+    },
+    {
+      "from": "artifact:practice-history",
+      "kind": "records catalog engagement",
+      "to": "catalog:woodshed-catalog",
+      "visible": true
+    },
+    {
+      "from": "view:1464815698",
+      "kind": "presents",
+      "to": "artifact:working-set:1",
+      "visible": true
+    },
+    {
+      "from": "view:1464816453",
+      "kind": "presents",
+      "to": "artifact:working-set:1",
+      "visible": true
+    },
+    {
+      "from": "view:1464811858",
+      "kind": "presents",
+      "to": "artifact:working-set:1",
+      "visible": true
+    },
+    {
+      "from": "artifact:catalog-exploration:1",
+      "kind": "uses catalog material",
+      "to": "catalog:woodshed-catalog",
+      "visible": true
+    },
+    {
+      "from": "view:1464815698",
+      "kind": "presents",
+      "to": "artifact:catalog-exploration:1",
+      "visible": true
+    },
+    {
+      "from": "view:1464816197",
+      "kind": "presents",
+      "to": "artifact:catalog-exploration:1",
+      "visible": true
+    },
+    {
+      "from": "view:1464811858",
+      "kind": "presents",
+      "to": "artifact:catalog-exploration:1",
+      "visible": true
+    }
+  ],
+  "truth": {
+    "nodes": [
+      {
+        "detail": "0 retained bars in the saved compatibility backing. Its authored material stays independent of working Sets.",
+        "id": {
+          "Artifact": "Song"
+        },
+        "label": "Saved compatibility backing"
+      },
+      {
+        "detail": "2 recorded engagements. Observations retain their own event-time provenance.",
+        "id": {
+          "Artifact": "History"
+        },
+        "label": "Practice history"
+      },
+      {
+        "detail": "Reference to Woodshed's theory and exercise catalogs. Catalog contents remain owned by their catalog authority.",
+        "id": {
+          "Catalog": "woodshed-catalog"
+        },
+        "label": "Catalog"
+      },
+      {
+        "detail": "Mere presents one workspace view. Its presentation state is separate from the underlying instructions.",
+        "id": {
+          "View": "1464814917"
+        },
+        "label": "Mere"
+      },
+      {
+        "detail": "Practice presents one workspace view. Its presentation state is separate from the underlying instructions.",
+        "id": {
+          "View": "1464815698"
+        },
+        "label": "Practice"
+      },
+      {
+        "detail": "Set presents one workspace view. Its presentation state is separate from the underlying instructions.",
+        "id": {
+          "View": "1464816453"
+        },
+        "label": "Set"
+      },
+      {
+        "detail": "Related presents one workspace view. Its presentation state is separate from the underlying instructions.",
+        "id": {
+          "View": "1464816197"
+        },
+        "label": "Related"
+      },
+      {
+        "detail": "Arrangement presents one workspace view. Its presentation state is separate from the underlying instructions.",
+        "id": {
+          "View": "1464811858"
+        },
+        "label": "Arrangement"
+      },
+      {
+        "detail": "Settings presents one workspace view. Its presentation state is separate from the underlying instructions.",
+        "id": {
+          "View": "1464816455"
+        },
+        "label": "Settings"
+      },
+      {
+        "detail": "2 ordered Cards. Currently open for editing.",
+        "id": {
+          "Artifact": {
+            "WorkingSetInstance": 1
+          }
+        },
+        "label": "Working Set 1"
+      },
+      {
+        "detail": "Configured Chord exploration. Selection, tuning, fretboard and catalog presentation are retained independently.",
+        "id": {
+          "Artifact": {
+            "Exploration": 1
+          }
+        },
+        "label": "Catalog exploration 1"
+      }
+    ],
+    "relations": [
+      {
+        "from": {
+          "Artifact": {
+            "WorkingSetInstance": 1
+          }
+        },
+        "kind": "UsesCatalog",
+        "to": {
+          "Catalog": "woodshed-catalog"
+        }
+      },
+      {
+        "from": {
+          "Artifact": "History"
+        },
+        "kind": "Records",
+        "to": {
+          "Catalog": "woodshed-catalog"
+        }
+      },
+      {
+        "from": {
+          "View": "1464815698"
+        },
+        "kind": "Presents",
+        "to": {
+          "Artifact": {
+            "WorkingSetInstance": 1
+          }
+        }
+      },
+      {
+        "from": {
+          "View": "1464816453"
+        },
+        "kind": "Presents",
+        "to": {
+          "Artifact": {
+            "WorkingSetInstance": 1
+          }
+        }
+      },
+      {
+        "from": {
+          "View": "1464811858"
+        },
+        "kind": "Presents",
+        "to": {
+          "Artifact": {
+            "WorkingSetInstance": 1
+          }
+        }
+      },
+      {
+        "from": {
+          "Artifact": {
+            "Exploration": 1
+          }
+        },
+        "kind": "UsesCatalog",
+        "to": {
+          "Catalog": "woodshed-catalog"
+        }
+      },
+      {
+        "from": {
+          "View": "1464815698"
+        },
+        "kind": "Presents",
+        "to": {
+          "Artifact": {
+            "Exploration": 1
+          }
+        }
+      },
+      {
+        "from": {
+          "View": "1464816197"
+        },
+        "kind": "Presents",
+        "to": {
+          "Artifact": {
+            "Exploration": 1
+          }
+        }
+      },
+      {
+        "from": {
+          "View": "1464811858"
+        },
+        "kind": "Presents",
+        "to": {
+          "Artifact": {
+            "Exploration": 1
+          }
+        }
+      }
+    ]
+  },
+  "truth_digest": "64ffd18a7fce561ba38a5bd4d94e06af81020e24bc70561f7a3a6cd359fb4c1c",
+  "visible_nodes": [
+    {
+      "key": "artifact:song",
+      "label": "Saved compatibility backing",
+      "position": [
+        0.08955222368240356,
+        0.1111111044883728
+      ]
+    },
+    {
+      "key": "artifact:practice-history",
+      "label": "Fold 2 +1, activate to expand",
+      "position": [
+        0.2537313401699066,
+        0.1111111044883728
+      ]
+    },
+    {
+      "key": "view:1464814917",
+      "label": "Mere",
+      "position": [
+        0.08955222368240356,
+        0.3611111044883728
+      ]
+    },
+    {
+      "key": "view:1464815698",
+      "label": "Practice",
+      "position": [
+        0.2537313401699066,
+        0.3611111044883728
+      ]
+    },
+    {
+      "key": "view:1464816453",
+      "label": "Set",
+      "position": [
+        0.41791045665740967,
+        0.3611111044883728
+      ]
+    },
+    {
+      "key": "view:1464816197",
+      "label": "Related",
+      "position": [
+        0.5820895433425903,
+        0.3611111044883728
+      ]
+    },
+    {
+      "key": "view:1464811858",
+      "label": "Arrangement",
+      "position": [
+        0.746268630027771,
+        0.3611111044883728
+      ]
+    },
+    {
+      "key": "view:1464816455",
+      "label": "Settings",
+      "position": [
+        0.9104477763175964,
+        0.3611111044883728
+      ]
+    },
+    {
+      "key": "artifact:working-set:1",
+      "label": "Working Set 1",
+      "position": [
+        0.41791045665740967,
+        0.1111111044883728
+      ]
+    },
+    {
+      "key": "artifact:catalog-exploration:1",
+      "label": "Catalog exploration 1",
+      "position": [
+        0.5820895433425903,
+        0.1111111044883728
+      ]
+    }
+  ]
+}

@@ -1,0 +1,76 @@
+{
+  "passed": 671,
+  "failed": 0,
+  "ignored": 7,
+  "additional_fresh_process_invocations": 5,
+  "root_results": [
+    [
+      268,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      5,
+      0,
+      0,
+      0
+    ],
+    [
+      1,
+      0,
+      0,
+      0
+    ],
+    [
+      183,
+      0,
+      7,
+      0
+    ],
+    [
+      214,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0
+    ]
+  ],
+  "source": "55d3615",
+  "command": "CARGO_PROFILE_DEV_DEBUG=0 CARGO_PROFILE_TEST_DEBUG=0 CARGO_INCREMENTAL=0 cargo test --locked --offline -p woodshed-views -p woodshed-core -p woodshed-genet -j4"
+}
