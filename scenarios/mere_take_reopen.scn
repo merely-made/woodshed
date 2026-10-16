@@ -18,7 +18,7 @@ capture 02_reopened_take_in_looper
 click role:button @aria-label=Play backing
 settle 12
 assert snap song-playing == true
-assert snap output-device-frames > 0
+assert snap output-device-frames >= 1
 act sample-output-clock
 capture 03_reopened_take_playing
 click role:button @aria-label=Stop all loops
