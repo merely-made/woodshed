@@ -607,6 +607,7 @@ pub fn set_graph_swatch_from_snapshot(
         Vec<(f32, f32)>,
         String,
         String,
+        BTreeSet<String>,
     )> = Vec::new();
     for (reference, relation) in snapshot.relations().into_iter() {
         let from = StageInstanceRef {
@@ -684,13 +685,25 @@ pub fn set_graph_swatch_from_snapshot(
                         reversed_route.reverse();
                         (to, from, reversed_route, display_to, display_from)
                     };
-                if !generated_links
-                    .iter()
-                    .any(|(peer_key, peer_from, peer_to, ..)| {
-                        *peer_key == key && *peer_from == from && *peer_to == to
-                    })
+                let assertion_id = format!("generated:{}", relation.claim_id.qualified_key());
+                if let Some((.., eligible_ids)) =
+                    generated_links
+                        .iter_mut()
+                        .find(|(peer_key, peer_from, peer_to, ..)| {
+                            *peer_key == key && *peer_from == from && *peer_to == to
+                        })
                 {
-                    generated_links.push((key, from, to, route, display_from, display_to));
+                    eligible_ids.insert(assertion_id);
+                } else {
+                    generated_links.push((
+                        key,
+                        from,
+                        to,
+                        route,
+                        display_from,
+                        display_to,
+                        BTreeSet::from([assertion_id]),
+                    ));
                 }
             },
             Some(source) => {
@@ -724,10 +737,19 @@ pub fn set_graph_swatch_from_snapshot(
             }),
         }
     }
-    for (key, from, to, route, display_from, display_to) in generated_links {
+    for (key, from, to, route, display_from, display_to, eligible_ids) in generated_links {
         let summary = related::claims_link_reading_for_pair(ui, &key.first, &key.second)
             .and_then(|pair| pair.links.into_iter().find(|link| link.key == key))
-            .map(|link| link.rest_summary(&display_from, &display_to));
+            .map(|mut link| {
+                // Rendering counts only the source rows eligible in this
+                // appearance. Opening still reads the complete source pair.
+                for bucket in &mut link.buckets {
+                    bucket
+                        .assertions
+                        .retain(|assertion| eligible_ids.contains(&assertion.id));
+                }
+                link.rest_summary(&display_from, &display_to)
+            });
         let summary = summary.unwrap_or_else(|| scenograph::link::LinkRestSummary {
             strength: 1.0,
             ..Default::default()
@@ -4040,7 +4062,18 @@ mod evidence_tests {
                 && !choice.authority.is_empty()
         }));
 
-        let hidden = choices[1].clone();
+        let before = set_graph_swatch_from_snapshot(&snapshot, &ui, true);
+        let before_strength = before
+            .relations
+            .iter()
+            .find(|relation| relation.link_key.is_some())
+            .unwrap()
+            .strength;
+        let hidden = choices
+            .iter()
+            .find(|choice| matches!(choice.identity, StageRelationIdentity::Generated { .. }))
+            .unwrap()
+            .clone();
         ui.set_graph_relation = Some(hidden.reference);
         ui.toggle_set_graph_relation(&snapshot, hidden.identity.clone());
         assert_eq!(
@@ -4066,7 +4099,18 @@ mod evidence_tests {
                 .iter()
                 .filter(|relation| relation.visible)
                 .count(),
-            choices.len() - 1
+            2,
+            "one operational sequence and one canonical generated link remain"
+        );
+        let remaining = swatch
+            .relations
+            .iter()
+            .find(|relation| relation.link_key.is_some())
+            .unwrap();
+        assert_eq!(
+            remaining.strength,
+            before_strength - 1.0,
+            "an exact member hide removes only its own resting contribution"
         );
 
         ui.show_all_set_graph_relations();
