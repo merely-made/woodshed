@@ -388,6 +388,12 @@ fn stage_css_with_roles(p: &Palette, authored_roles: bool) -> String {
 .claims-link-inspection .opened-link-controls button, .claims-link-inspection button[data-assertion-action] {{ min-width: 0; max-width: 100%; white-space: normal; overflow-wrap: anywhere; }}
 .claims-link-inspection .detail-row {{ display: flex; flex-wrap: wrap; gap: 4px; min-width: 0; overflow-wrap: anywhere; }}
 .claims-link-inspection .detail-row > * {{ min-width: 0; overflow-wrap: anywhere; }}
+.claims-reason-field {{ display: flex; flex-direction: column; gap: 4px; margin: 8px 0;
+                        color: {text_dim}; font-size: 12px; }}
+.claims-reason-field [role=textbox] {{ display: block; width: 100%; min-height: 34px;
+                        box-sizing: border-box; padding: 7px 9px; background-color: {surface_2};
+                        color: {text}; border: 1px solid {surface_2}; border-radius: 6px; }}
+.claims-reason-field [role=textbox]:focus {{ border-color: {tertiary}; }}
 /* Cambium graph-canvas-swatch: the painted leaf shows the nodes and emphasis;
    the buttons are transparent hit targets. A small quiet Expand button. */
 .graph-canvas-swatch-node {{ background-color: transparent; border-width: 0; cursor: pointer; }}
