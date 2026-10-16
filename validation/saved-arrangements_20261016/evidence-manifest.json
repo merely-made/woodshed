@@ -1,0 +1,28 @@
+{
+  "hash": "sha256",
+  "files": {
+    "browser-console.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+    "browser-export.json": "0899be0ac5aa3ba9a132ad0e39c64a2c2822406f937965a90aa653e36262a291",
+    "browser-first-voicing.txt": "a13a7c3c05852da43795ec67435d3938607e5c529158991ded0c9441cc18e86a",
+    "browser-rest.txt": "d636bc3d38bd8b5b6c9305f2f63d15ac3b1aeca08aa80f99a4a5a96cd3f63d34",
+    "browser-second-voicing.txt": "6e02292ed49c897cc317722c01ab68eeb1eb2247b8f706440e02d285c297f11a",
+    "exchange/alignment.json": "520f3eda2e9ea671034e8fe7ce2ccb6b5dbb47f37eb23fe4c9efba3297944bc4",
+    "exchange/attached-0.json": "b152698661532cfd3f45a526abfaf7d39a062171d453085d07af69aecb7417c2",
+    "exchange/attached-1.json": "da357774c1beb6c50eab5cb30f4dce4c5970562931e4e7403ee99970a161d128",
+    "exchange/attached-2.json": "35984e9327b13a96f7fac731425a5cafb782a336c42087b2802b02a7c84a1679",
+    "exchange/input.json": "35984e9327b13a96f7fac731425a5cafb782a336c42087b2802b02a7c84a1679",
+    "exchange/scene-0.json": "0899be0ac5aa3ba9a132ad0e39c64a2c2822406f937965a90aa653e36262a291",
+    "exchange/scene-1.json": "0899be0ac5aa3ba9a132ad0e39c64a2c2822406f937965a90aa653e36262a291",
+    "exchange/scene-2.json": "0899be0ac5aa3ba9a132ad0e39c64a2c2822406f937965a90aa653e36262a291",
+    "exchange/settings.json": "12588aca5a4db1f250aef2e32b2d978436f4a453c7826f031eda3bd11c70f4bd",
+    "graphshell-import.scene.json": "0899be0ac5aa3ba9a132ad0e39c64a2c2822406f937965a90aa653e36262a291",
+    "graphshell-saved-first-voicing.jpg": "cc81232eb1fe095faed3aa35e627ebc40b61a0a92ce712622dd8bfc9c61dfab0",
+    "graphshell-saved-second-voicing.jpg": "d7fad2ad7fe375780d38df4610a9356243c0df27c9913898e4537de810b922e9",
+    "logs/core-tests.log": "6191ca7522c986f3aab3bc5999eaa3d89b3aa287a9e46eef1184a712326ee874",
+    "logs/default-feature.log": "e316173e9c0ab79a6d3508a7a35deebf690a8148ca569863e2cf02017d783959",
+    "logs/exchange.log": "922d03096579bef5ac80ccb6f97621d1b778d9eefbb4aa33608494a92deaad9c",
+    "logs/views-tests.log": "6191db803cf6a298ba5114160cfe26aac51ac4562e5cfa5fd6cfc4017370aba1",
+    "qualification.json": "d042e791ac815817fa09f9c4bcd6fbaf8e36fb9a344544d00e142a8c80d8af3a",
+    "source-manifest.json": "6d640bdd3a616024b7d3771b860ba7ce1e7e5b95b623133d53f521b60eea2e7f"
+  }
+}
