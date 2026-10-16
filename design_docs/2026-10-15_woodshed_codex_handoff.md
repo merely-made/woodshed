@@ -85,6 +85,24 @@ From the stack, 2026-10-15:
 
 ### Task 1: join the repin round (spec §7.6)
 
+**Status: done 2026-10-15 at Stage A (Claude, at Mark's direction).**
+- **Pins:** all four roots and the member crates are on Mere R2 `b2c8dcc2`, with
+  Genet `7ffe6620`, and Murm `M` `fb6360c1` through the `www` alias.
+- **Renames:** the `edit-history` patch rows were renamed to `backstep`. The
+  `graphshell_client::line`, `MereViewRequest` and `SessionStep` checks found
+  no hits.
+- **Locks:** each lock resolves one Mere source with no package from two git
+  sources. The netrender bridge is still in use.
+- **Remaining Murm split:** Redshank alone shows a second Murm source, and it
+  comes from Genet. Genet's `netfetcher` pins `murm-wire` through the plain
+  Murm URL at `80d99590`. Mere R2's own lock has the same entry, so it needs
+  a Genet repin, not a Woodshed change.
+- **Counts:** 769 root, 101 Hocket and 262 Redshank tests pass, with every
+  `--all-targets` check, the `redshank-web` wasm32 check and the recipe
+  binary check.
+- **Next for Codex:** Stage B (`branch = "main"`, committed locks) when Mere's
+  family convention lands. Until then, keep these SHAs.
+
 The round is defined in
 `mere/design_docs/mere_docs/technical_architecture/2026-10-15_remote_mere_route_spec.md`
 §7.
