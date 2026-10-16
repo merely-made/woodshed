@@ -151,11 +151,10 @@ highest fret and a new output path. The output imports into Graphshell's
 Portable scenes or another shared-recipe host. This adds the model adapter and
 file exporter; existing native fretboard controls keep their current renderer.
 
-This branch requires Mere's portable-backdrop implementation. Until the shared
-change is integrated, use
-`python3 /path/to/mere/support/design-studies/backdrops/with_local_scene_source.py /path/to/mere test -p woodshed-core --features portable-scenes --lib fretboard_scene`.
-The temporary patch keeps the scene contract, compiler, authoring and timing
-crates in one cohort without committing local dependency paths.
+The portable-scene API is integrated in Mere's canonical `main` source.
+The committed lockfile pins the shared scene cohort, so the commands above
+need no temporary local source patches. Earlier local-cohort receipts remain
+historical evidence; ordinary checks use `--locked` and `portable-scenes`.
 
 ## Portable progression templates
 
@@ -176,8 +175,7 @@ Portable scenes includes exports of this arrangement in C and G alongside
 metre. The shared template owns lanes, nested groups, tick spans, expected
 slots and supplied occurrence alignments. Woodshed owns the chord meaning.
 The adapter currently requires one song block per role; arbitrary role-to-song
-mapping and native progression panels remain separate work. Use the local
-scene-cohort helper above until the shared API is integrated and repinned.
+mapping and native progression panels remain separate work. The committed canonical scene cohort supports this optional exporter.
 
 ## License
 
