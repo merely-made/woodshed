@@ -5,6 +5,8 @@ click .workspace-panel Mere
 settle 3
 assert snap overview-takes == 3
 assert snap overview-take-links == 2
+click .overview-fit Fit scene
+settle 3
 capture 01_retained_v1_take_defaults
 click .overview-node-title Take · Cmaj7 (Major 7)
 click .overview-open Open in Looper
