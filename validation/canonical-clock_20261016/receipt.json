@@ -1,0 +1,153 @@
+{
+  "slice": "Woodshed canonical bar clocks with legacy take preservation",
+  "date": "2026-10-16",
+  "source_revision": "9d27b06b4864d3cee04a61b613c6974c4acfb63d",
+  "baseline_revision": "aba2c73",
+  "ruling": "Preserve original playback clocks and PCM for existing takes; canonical rule for new captures.",
+  "clock_policy": {
+    "new": "audio_primitives::frames_per_bar: quarter-note BPM, denominator honoured, round per beat before multiplying measures",
+    "legacy": "Original whole-block f32 rounding, truncated beats, original count-in and chord-envelope operation order",
+    "wire": "V3 manifests use clock=per-beat-v1 for new takes. Missing clock remains legacy. Unchanged old-only catalogs retain V1/V2 as appropriate.",
+    "recording": "Explicit Clear required for loaded legacy segments before a new take; refusal occurs before input opens.",
+    "clear": "Removes reference/runtime PCM by explicit owner action and returns the segment to canonical clock; no implicit trimming/padding/resampling."
+  },
+  "checks": {
+    "commands": [
+      "cargo test --locked --offline -p woodshed-audio -p woodshed-core -p woodshed-genet -p woodshed-views",
+      "cargo test --locked --offline -p woodshed-genet canonical_clock_gold_fixture_probe -- --ignored --nocapture",
+      "cargo check --locked --offline -p woodshed-genet --all-targets",
+      "cargo build --locked --offline -p woodshed-genet"
+    ],
+    "audio_passed": 157,
+    "core_passed": 241,
+    "host_passed": 164,
+    "views_passed": 183,
+    "distinct_suite_cases": 745,
+    "separate_gold_probe_passed": 1,
+    "ignored_host_cases": 7,
+    "failed": 0,
+    "counting": "Suite totals only; fresh-process child executions and repeated suites are not added again. Gold is one separately invoked ignored probe.",
+    "desktop_build": "passed",
+    "host_all_targets": "passed"
+  },
+  "representative_clock_cases": [
+    {
+      "sample_rate": 48000,
+      "bpm": 120,
+      "meter": "3/8",
+      "measures": 1,
+      "legacy_frames": 72000,
+      "canonical_frames": 36000
+    },
+    {
+      "sample_rate": 48000,
+      "bpm": 113.5,
+      "meter": "5/4",
+      "measures": 2,
+      "legacy_frames": 253744,
+      "canonical_frames": 253740
+    },
+    {
+      "sample_rate": 48000,
+      "bpm": 137,
+      "meter": "7/4",
+      "measures": 3,
+      "legacy_frames": 441460,
+      "canonical_frames": 441462
+    },
+    {
+      "sample_rate": 48000,
+      "bpm": 120,
+      "meter": "4/4",
+      "measures": 1,
+      "legacy_frames": 96000,
+      "canonical_frames": 96000
+    }
+  ],
+  "qualification": [
+    "Fractional and eighth-meter count-in, exact per-frame capture at the existing next-bar-wrap Arm schedule, and no allocations/deallocations in guarded processor renders.",
+    "48 kHz heterogeneous multi-measure WAV/live float-bit parity over varying processing block sizes.",
+    "Sealed mixed-clock restore: 253744-frame legacy take plus 105110-frame canonical take; original reference and encrypted companion unchanged; decoded float bits exact after reopen.",
+    "Fresh-process sealed filesystem V1 migration/reorder/clear/reopen sequence passed.",
+    "Capture clock missing-field roundtrip, V3 admission, preserved unknown clock string with explicit refusal, owner identity and legacy input guard.",
+    "Metronome denominator timing uses integer frame numerators without per-frame fractional drift and preserves phase across tempo edits."
+  ],
+  "accepted_gold": {
+    "source": "/Users/markik/Code/testing/woodshed/font-roles-20261012/combined-v2/codec-after-wav/loop-reference.wav",
+    "sha256": "6c0726336b2e14bdea1031ed183b42358336b0c0d064332531cf91f5618409ff",
+    "export_sha256": {
+      "legacy-gold.wav": "6c0726336b2e14bdea1031ed183b42358336b0c0d064332531cf91f5618409ff",
+      "canonical-gold.wav": "6c0726336b2e14bdea1031ed183b42358336b0c0d064332531cf91f5618409ff"
+    },
+    "byte_identical": true,
+    "frames": 192000,
+    "sample_rate": 48000,
+    "channels": 1,
+    "captured_take_frames": 96000,
+    "fixture": "Read-only original domain snapshot and deterministic quiet PCM fixture, validated against its original raw content-address before rendering. No Keeper or original encrypted profile is opened for this reconstruction.",
+    "rendered_from_committed_source": true
+  },
+  "original_fixture_retention": {
+    "all_current_before_after_files_equal": true,
+    "original_companion_receipt_hashes_match": true,
+    "files": [
+      {
+        "path": "/Users/markik/Code/testing/woodshed/hocket-adoption-20261013/profile/practice.json",
+        "sha256": "974e82c77d7e1635acc9cdf205ea3b8e03d9a782cc1696682cc242730ad123c5",
+        "unchanged_during_this_work": true,
+        "matches_original_receipt": false
+      },
+      {
+        "path": "/Users/markik/Code/testing/woodshed/hocket-adoption-20261013/profile/practice.loop-pcm/b5370837504f7ea66b56e7ca158828e5/aa60d8b25e04f9d08e28a428fb20b2c9cbfc5cecd7254ed386c81d88700da50e.bin",
+        "sha256": "7f1d21321516b5dbc6f5817a2fd5c85e3d9f908560b7e198e82073fe64700e94",
+        "unchanged_during_this_work": true,
+        "matches_original_receipt": true
+      },
+      {
+        "path": "/Users/markik/Code/testing/woodshed/hocket-adoption-20261013/profile/practice.loop-pcm/b5370837504f7ea66b56e7ca158828e5/d0451d00335e995c3d1077108dc1c06d329de681a650d523a19d0afcf12b743e.bin",
+        "sha256": "b4edec51fa263f8572810d9619411f8837a89a195a3d67159a9391655c0677ec",
+        "unchanged_during_this_work": true,
+        "matches_original_receipt": true
+      },
+      {
+        "path": "/Users/markik/Code/testing/woodshed/hocket-adoption-20261013/profile/settings.json",
+        "sha256": "ca9a908bda6eeceac00e9ce891a6302a48e43ea812688ad4b2912e80f2178a02",
+        "unchanged_during_this_work": true,
+        "matches_original_receipt": false
+      }
+    ],
+    "note": "Session/settings already differed from the early profile-before receipt at task start; all four files stayed identical to this task start. Both original companion hashes still match the historical receipt."
+  },
+  "scope_limits": [
+    "Set capture metadata still uses quarter-note meter. x/8 qualification is at the audio/runtime/export layer, not a new saved-product meter editor.",
+    "No foreground native, microphone, acoustic, latency, or physical-device qualification claimed.",
+    "Ringdown file clock convention and Hocket capture scheduling unchanged.",
+    "Shared frame-driven DSP extraction remains the next slice."
+  ],
+  "artifacts": "/Users/markik/Code/testing/woodshed/canonical-clock-20261016",
+  "source_sha256": {
+    "crates/woodshed-audio/src/offline.rs": "b18486dd649b9493a87617d1e831dcf430fc5e5ee51b4ffd31693b62cdb99fb5",
+    "crates/woodshed-audio/src/offline/song_export/tests.rs": "d8287b219ddce748d16ac3a13d015fd153ae5453430eff4970efbccab22095f2",
+    "crates/woodshed-audio/src/output_runtime.rs": "3160dab802faa6b814f38c812b9b13662e44f07a4369dc062b6168bb5329a312",
+    "crates/woodshed-audio/src/output_runtime/processor.rs": "11030fc13d718affc002d01c6683cc847b049dc7d89c6698955d517915de8823",
+    "crates/woodshed-audio/src/output_runtime/tests.rs": "3429eb0cecf45f769be9625de7f42493ed21b98f3bb596ba4fc15d5d1e681e09",
+    "crates/woodshed-audio/src/sequencer.rs": "35a21e4eea6463f7e2fe26e3769c53cd88699cf89f6cdbed27ec688ff7677b18",
+    "crates/woodshed-audio/src/song.rs": "7f8156a98f802cdbf37ab4c8021afa92c75291aeae69b7db04e1bfd49f31558f",
+    "crates/woodshed-core/src/loop_capture.rs": "a88f218076475aa1689c83ac16cf3c4e3c4ab269238cb3e2a50895febf09b582",
+    "crates/woodshed-core/src/session_overview.rs": "89fbd092c9a3ff4197228c1c0a9d7fbe3b16beac08f0f0124d907a2dffe705b2",
+    "crates/woodshed-core/src/storage.rs": "0512a6c862d2915b659a7c550e8a625b2118a2d9980a63fed693984e7f29b77a",
+    "crates/woodshed-genet/src/audio.rs": "8c65c649085e948d7345de13008a768d8c8a80069e00c0721cbe0591b2524b0f",
+    "crates/woodshed-genet/src/audio/loop_projection.rs": "20f29f71e3ef828971852b93ff4395e163334bf1efa4c10f54b9c7a4b22f602c",
+    "crates/woodshed-genet/src/capture_persistence.rs": "649980a2b4a3cbbc378025f94619859437e111b9a7b3b9efc900e3abe17a4d50",
+    "crates/woodshed-genet/src/scenario.rs": "728e78d800af0d39e085d527de384927e9efcb2a825e94fe64094183c3bc4089",
+    "crates/woodshed-genet/src/storage.rs": "be9627f175174435cfe9aee296c59f3cbb92a658ab72b9d60ec379fbe776355d",
+    "crates/woodshed-views/src/stage/overview.rs": "47a8c0ad86f784542b1fe6eba7ee9c605bdb8daaa41ec3ed1467e57be8201e3a"
+  },
+  "cargo_lock_sha256": "ee29f0c4ccc65a9cb5e9385fd11d562b0a3ee46101dca4d27cdff3b0d344a4e9",
+  "logs_sha256": {
+    "final-tests.log": "c58d9865aac14e237d3e8b7ef6ec5b05626db1f69a3ba98a4ef20cc230440aed",
+    "gold-committed.log": "fe63bd3be39b19735b9a31fd90c1aaf23410ecb24557a906bbeaf689a256064e",
+    "host-check.log": "e9024d38a972e9f211fa3ebbd25c134537f30baeb2c01c79cbd92aece09e91a2",
+    "desktop-build.log": "4d76597d88a37076315d8722c5c355e60a04996258839fa2600240dde2eceda7"
+  }
+}

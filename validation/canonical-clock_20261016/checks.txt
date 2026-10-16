@@ -1,0 +1,27 @@
+final-tests.log
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 37.98s
+test result: ok. 157 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.76s
+test result: ok. 241 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.33s
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 170 filtered out; finished in 1.66s
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 170 filtered out; finished in 1.59s
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 170 filtered out; finished in 1.55s
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 170 filtered out; finished in 1.35s
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 170 filtered out; finished in 1.95s
+test result: ok. 164 passed; 0 failed; 7 ignored; 0 measured; 0 filtered out; finished in 48.67s
+test result: ok. 183 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 12.55s
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+gold-committed.log
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 16.68s
+accepted WAV: legacy and canonical each byte-identical; 192000 frames, 48000 Hz; exact original 96000-frame take; no input/output devices
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 170 filtered out; finished in 1.27s
+
+host-check.log
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 18.29s
+
+desktop-build.log
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 25.28s
+

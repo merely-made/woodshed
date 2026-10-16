@@ -227,7 +227,7 @@ acoustic calibration and full P7 remain open.
 
 ### F5. Complete portable product seams
 
-**Canonical bar-clock intake (2026-10-16): implemented; final qualification in progress.**
+**Canonical bar-clock intake (2026-10-16): implemented and CPU-qualified.**
 The approved target is Hocket's `audio_primitives::frames_per_bar`:
 quarter-note BPM, denominator honoured, one rounding per beat, multiplied by
 measure count. Source baseline is Woodshed `aba2c73`.
@@ -633,3 +633,23 @@ when a loaded legacy segment remains, with an explicit Clear message.
 
 Ringdown's file format and Hocket's capture schedule remain separate and
 unchanged. No shared frame-driven DSP crate is extracted in this clock slice.
+
+**Clock-intake qualification (2026-10-16, source `9d27b06`).**
+The new [receipt](../validation/canonical-clock_20261016/receipt.json) records
+745 distinct passing suite cases (157 audio, 241 core, 164 host, 183 views),
+plus one separately invoked accepted-fixture WAV probe; child runs and
+repeated suites count once. The desktop build and all-target host check pass.
+Exact-frame fractional/x/8 capture, zero-allocation renders, 48 kHz
+heterogeneous live/WAV parity, metronome phase, sealed mixed-policy reopen,
+and the sealed filesystem fresh-process sequence pass. Both legacy and
+canonical renders of the accepted four-second fixture are byte-identical to
+the existing WAV gold (`6c072633…`), and both original companion hashes still
+match their historical receipt. This work leaves every archived profile file
+byte-identical to its task-start value.
+
+The sealed mixed-clock fixture preserves a 253,744-frame legacy 5/4 block
+and a 105,110-frame canonical 5/4 block together, including original digest,
+encrypted companion and exact decoded bits. Product Set captures still use
+a quarter-note denominator; x/8 tests exercise the runtime, not a new meter
+editor. No native foreground or physical-audio qualification is claimed.
+This closes the bar-clock prerequisite; shared DSP extraction remains open.
