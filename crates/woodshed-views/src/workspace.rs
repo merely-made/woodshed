@@ -21,15 +21,17 @@ pub enum WorkspacePanel {
     Practice,
     Set,
     Related,
+    Arrangement,
     Settings,
 }
 
 impl WorkspacePanel {
-    pub const ALL: [Self; 5] = [
+    pub const ALL: [Self; 6] = [
         Self::Overview,
         Self::Practice,
         Self::Set,
         Self::Related,
+        Self::Arrangement,
         Self::Settings,
     ];
 
@@ -39,6 +41,7 @@ impl WorkspacePanel {
             Self::Practice => TileId(0x574f_5052),
             Self::Set => TileId(0x574f_5345),
             Self::Related => TileId(0x574f_5245),
+            Self::Arrangement => TileId(0x574f_4152),
             Self::Settings => TileId(0x574f_5347),
         }
     }
@@ -49,6 +52,7 @@ impl WorkspacePanel {
             Self::Practice => "Practice",
             Self::Set => "Set",
             Self::Related => "Related",
+            Self::Arrangement => "Arrangement",
             Self::Settings => "Settings",
         }
     }
@@ -59,6 +63,7 @@ impl WorkspacePanel {
             Self::Practice => ("woodshed.practice", "stage"),
             Self::Set => ("woodshed.set", "rehearsal"),
             Self::Related => ("woodshed.related", "stage"),
+            Self::Arrangement => ("woodshed.arrangement", "stage"),
             Self::Settings => ("woodshed.settings", "settings"),
         }
     }
@@ -642,6 +647,7 @@ mod tests {
                 WorkspacePanel::Practice.tile_id(),
                 WorkspacePanel::Set.tile_id(),
                 WorkspacePanel::Related.tile_id(),
+                WorkspacePanel::Arrangement.tile_id(),
                 WorkspacePanel::Settings.tile_id(),
             ]
         );

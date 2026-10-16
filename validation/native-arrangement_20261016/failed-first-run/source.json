@@ -1,0 +1,6 @@
+{
+  "source": "f8cb61ae425fd9ba461a66483b5c3658156208ba",
+  "binary_sha256": "0c01ac3e73e33ed5ac26251c084929856aa16a97a75290bd96aca83c34d0d2ec",
+  "accepted": false,
+  "reason": "Injected field edits did not reconcile the derived scene until another dispatch; compact labels were squeezed. Fixed by f4d08be."
+}

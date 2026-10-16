@@ -1,0 +1,24 @@
+RESULT fail
+captured 01_unplaced_template
+FAIL: assert snap arrangement-primary Eq 'false': got 'true'
+FAIL: assert snap arrangement-producer Eq 'false': got 'true'
+captured 02_invalid_draft
+FAIL: assert snap arrangement-primary Eq 'true': got 'false'
+FAIL: assert snap arrangement-producer Eq 'true': got 'false'
+FAIL: assert snap arrangement-selection Eq 'card-3': got ''
+FAIL: assert snap arrangement-related Eq 'true': got 'false'
+FAIL: assert snap arrangement-related-producer Eq 'true': got 'false'
+captured 03_tonic_first_voicing
+captured 04_tonic_second_voicing
+captured 05_saved_arrangement
+captured 06_narrow_arrangement
+captured 07_panel_return
+capture 01_unplaced_template 2360x2200 digest=2f8000e1d2b4267e file=/Users/markik/Code/testing/woodshed/native-arrangement-20261016/seed-v1/01_unplaced_template.png
+capture 02_invalid_draft 2360x2200 digest=7243577dd9a171f5 file=/Users/markik/Code/testing/woodshed/native-arrangement-20261016/seed-v1/02_invalid_draft.png
+capture 03_tonic_first_voicing 2360x2200 digest=3fa1d223cd28318d file=/Users/markik/Code/testing/woodshed/native-arrangement-20261016/seed-v1/03_tonic_first_voicing.png
+capture 04_tonic_second_voicing 2360x2200 digest=f5559327a98ed3d2 file=/Users/markik/Code/testing/woodshed/native-arrangement-20261016/seed-v1/04_tonic_second_voicing.png
+capture 05_saved_arrangement 2360x2200 digest=152dcd6143a47905 file=/Users/markik/Code/testing/woodshed/native-arrangement-20261016/seed-v1/05_saved_arrangement.png
+capture 06_narrow_arrangement 840x2000 digest=ebc0293ce09a0bdc file=/Users/markik/Code/testing/woodshed/native-arrangement-20261016/seed-v1/06_narrow_arrangement.png
+capture 07_panel_return 2360x2200 digest=848aef3cff4bc3d2 file=/Users/markik/Code/testing/woodshed/native-arrangement-20261016/seed-v1/07_panel_return.png
+frames: 7 captured, 0 blank, 7 distinct digests
+presentation: 353 frames, 378 redraws, 25 unpresented redraws

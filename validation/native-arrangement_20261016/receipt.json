@@ -1,0 +1,61 @@
+{
+  "date": "2026-10-16",
+  "status": "qualified for native arrangement editing and presentation on this macOS host",
+  "source": {
+    "source": "f4d08be0a8c87fbd5e131c397cb9bad284b316e2",
+    "lock_sha256": "02056748cfc7580fabf88b9260bcae1c9245eb8676f5588482ca4e61a36bc145",
+    "binary_sha256": "f4255517f985791913fae8b3f2ec71a5ca131427ca333146cb235629ef8123ef"
+  },
+  "custody_helper": {
+    "source": "c867737f80c6a924a25f87273f0801a89909b3fb",
+    "lock_sha256": "95210c388525ce55f9865a415625996ccd1040cca52ca6cbab27628b4b83caff",
+    "binary_sha256": "a05212f205e05a2037c57bd23de7e50ca34781964bc5dd6aab5ba5cda010a48e"
+  },
+  "checks": {
+    "command": "cargo test -p woodshed-views -p woodshed-genet --locked --offline",
+    "woodshed_views_passed": 211,
+    "woodshed_genet_passed": 182,
+    "woodshed_genet_ignored": 7,
+    "child_process_invocations": 5,
+    "desktop_build": "cargo build -p woodshed-genet --locked --offline",
+    "cpu_logs": "cpu/"
+  },
+  "native": {
+    "profile": "/Users/markik/Code/testing/woodshed/native-arrangement-20261016/profile",
+    "endpoint": "/tmp/ws-arrangement-20261016.sock",
+    "custody": "Real Djinn Keeper over an isolated synthetic passphrase-backed vault; no personal profile opened",
+    "audio_mode": "WOODSHED_APPEARANCE_RECEIPT=1; physical audio devices are not activated",
+    "seed": {
+      "result": "ok",
+      "presented_frames": 362,
+      "reviewed_captures": 8,
+      "observations": "native/seed/"
+    },
+    "fresh_reopen": {
+      "result": "ok",
+      "presented_frames": 151,
+      "reviewed_captures": 4,
+      "observations": "native/reopen/"
+    }
+  },
+  "observed": [
+    "Native controls edit expected spans, placed Card spans and role assignments, and an authored rest, with independent draft and saved state.",
+    "Invalid numeric input immediately clears the primary scene and removes both native producers; Save refuses without replacing the attachment.",
+    "The two tonic Card occurrences select distinct saved fretboard readings; rest selection removes the linked fretboard.",
+    "Panel leave removes native producers and return restores the primary scene.",
+    "Compact scenes retain readable logical width in a horizontal scroll area; captures show both ends.",
+    "Saved and freshly reopened live Sets equal the actual sealed-store loads; all Card instructions and the full shared SceneDocument match exactly.",
+    "The Arrangement panel restores on startup; occurrence selection remains transient."
+  ],
+  "host_harness": [
+    "Native keyboard seam, prepared-frame refresh without a dispatch tail, Save and Keep editing on native close, plus wide/narrow preview bounds."
+  ],
+  "pure_state": [
+    "Owner-scoped drafts, optimistic saved-state conflict refusal, missing-reference preservation and explicit repair, captured musical context and audio-request preservation."
+  ],
+  "limits": [
+    "This receipt does not qualify physical audio, playback timing, other operating systems or human assistive-technology use."
+  ],
+  "prior_failed_run": "failed-first-run/",
+  "raw_logs": "Copied byte-for-byte, including any trailing blank lines."
+}
