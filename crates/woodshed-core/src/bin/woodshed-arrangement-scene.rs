@@ -1,7 +1,6 @@
 // Copyright 2026 Mark Alan Boykin
 // SPDX-License-Identifier: MPL-2.0
 //! A reproducible study built through the actual Set and saved-shape APIs.
-use scenomise::template::{Placement, Span};
 use std::io::Write;
 use woodshed_core::{
     Lens, ROOT_NAMES, StageState,
@@ -10,6 +9,7 @@ use woodshed_core::{
     },
 };
 use woodshedding::rehearsal::Set;
+use woodshedding::rehearsal::arrangement::{Placement, Span};
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let args = std::env::args().skip(1).collect::<Vec<_>>();
     if args.len() != 2 || !matches!(args[0].as_str(), "regular" | "varied") {

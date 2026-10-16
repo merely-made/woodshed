@@ -200,6 +200,41 @@ and gives two tonic occurrences different saved voicings. Graphshell imports
 the versioned scene document and shows the supplied voicing for the selected
 occurrence, without a Woodshed dependency or a host-side chord resolver.
 
+### Saved Set arrangements
+
+Musical arrangements now travel with the ordinary Set in session persistence,
+inactive working Sets, and retained snapshots. They store independent role
+spans, Card-ID alignments, and authored rests, together with the named
+progression's exact roles, key, tuning pitches, and inherited neck window.
+Navigating to another Stage lens does not retarget a saved arrangement.
+Deleted Cards and changed templates remain authored data; export reports the
+unresolved reference rather than guessing a replacement. Opening a retained
+copy or duplicating a Set remaps its alignment to the new Card IDs, including
+reserved IDs for references whose Cards are missing.
+
+`woodshed-saved-arrangement` operates on an explicit JSON session exchange
+copy (`PersistedSession`) and its settings (`AppSettings`). The desktop's
+persona store continues through its existing sealed storage path. An alignment
+file uses `ProgressionArrangement`; a complete example is committed under
+`validation/saved-arrangements_20261016/exchange/alignment.json`.
+
+```sh
+cargo run -p woodshed-core --features portable-scenes --bin woodshed-saved-arrangement -- \
+  attach session.json settings.json working 1 alignment.json arranged-session.json
+cargo run -p woodshed-core --features portable-scenes --bin woodshed-saved-arrangement -- \
+  export arranged-session.json working 1 my-practice/session-1/set-1 arrangement.scene.json
+```
+
+Choose a persistent working Set ID, including an inactive Set, or use
+`export SESSION.json retained SAVED_SET_ID READING_ID OUTPUT.json` for a
+retained snapshot. The reading ID is an explicit stable namespace chosen by
+the caller; keep it fixed across exports of the same source. Retained snapshots
+are read-only; open a working copy before authoring changes. Attach changes
+only the chosen Set's attachment in the new exchange copy, preserving unknown
+source fields. All inputs remain unchanged and every output path must be new.
+The resulting scene document imports through Graphshell's existing recipe
+control, including its occurrence-linked saved fretboard readings.
+
 ## License
 
 MPL-2.0. See [LICENSE](LICENSE).

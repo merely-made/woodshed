@@ -17,6 +17,7 @@
 use serde::{Deserialize, Serialize};
 
 use crate::pitch::PitchClass;
+pub mod arrangement;
 
 /// Direction the arpeggio transport walks a shape's notes (by pitch).
 /// `UpDown` ascends then descends without repeating the turnaround notes.
@@ -401,6 +402,10 @@ pub enum LoopMode {
 #[derive(Clone, Debug, Default, Serialize, Deserialize)]
 pub struct Set {
     pub cards: Vec<Card>,
+    /// Musical expectations and authored spans, independent of graph layout.
+    /// Missing Cards or changed catalogs remain retained for explicit repair.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub progression_arrangement: Option<arrangement::SavedProgressionArrangement>,
     /// Index of the card on the stage. Meaningless when `cards` is empty;
     /// clamped on mutation. Order is authoritative while the product is
     /// linear, so the cursor stays an index; identity-addressed callers use
@@ -516,6 +521,45 @@ impl Set {
                 self.cards[index].id = self.mint_card_id();
             }
         }
+    }
+
+    /// Copy instructions under fresh occurrence identities, remapping musical
+    /// alignment too. Missing references receive reserved identities, so a
+    /// later insertion cannot accidentally resolve them to unrelated material.
+    pub fn copy_instructions_from(&mut self, source: &Set) -> Result<(), String> {
+        let mut source = source.clone();
+        source.ensure_card_ids();
+        let mut seen = std::collections::HashSet::new();
+        if source.cards.iter().any(|c| !seen.insert(c.id)) {
+            return Err("Cannot copy a Set with duplicate Card identities".into());
+        }
+        let mut copy = self.clone();
+        copy.ensure_card_ids();
+        let mut mapping = std::collections::HashMap::new();
+        copy.cards.clear();
+        for mut card in source.cards {
+            let next = copy.mint_card_id();
+            mapping.insert(card.id, next);
+            card.id = next;
+            copy.cards.push(card);
+        }
+        copy.progression_arrangement = source.progression_arrangement;
+        if let Some(saved) = &mut copy.progression_arrangement {
+            for binding in &mut saved.alignment.cards {
+                if !binding.card.is_assigned() {
+                    return Err("Alignment has an unassigned Card identity".into());
+                }
+                let next = *mapping.entry(binding.card).or_insert_with(|| {
+                    copy.last_card_id += 1;
+                    CardId(copy.last_card_id)
+                });
+                binding.card = next;
+            }
+        }
+        copy.cursor = source.cursor.min(copy.cards.len().saturating_sub(1));
+        copy.loop_mode = source.loop_mode;
+        *self = copy;
+        Ok(())
     }
 
     /// Position of the occurrence `id` in current Set order.

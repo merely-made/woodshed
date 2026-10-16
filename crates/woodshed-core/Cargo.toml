@@ -65,3 +65,8 @@ required-features = ["portable-scenes"]
 name = "woodshed-arrangement-scene"
 path = "src/bin/woodshed-arrangement-scene.rs"
 required-features = ["portable-scenes"]
+
+[[bin]]
+name = "woodshed-saved-arrangement"
+path = "src/bin/woodshed-saved-arrangement.rs"
+required-features = ["portable-scenes"]
