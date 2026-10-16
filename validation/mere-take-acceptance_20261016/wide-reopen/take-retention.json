@@ -1,0 +1,261 @@
+{
+  "hydrated": [
+    {
+      "exact_fixture_bits": true,
+      "exact_sealed_companion_bits": true,
+      "frames": 192000,
+      "id": {
+        "card": 2,
+        "set": 1
+      },
+      "legacy_clock": false,
+      "sample_rate": 48000
+    }
+  ],
+  "manifest": {
+    "namespace": "0123456789abcdef0123456789abcdef",
+    "takes": [
+      {
+        "bars": 2,
+        "beats": 4,
+        "bpm": 120.0,
+        "clock": "per-beat-v1",
+        "codec": "wavpack-f32-v1",
+        "digest": "7627a2bee8bb4bd6e9bb67db0643a5c101833a5f0c39e0b9c6c84de04efd13bc",
+        "frames": 192000,
+        "id": {
+          "card": 2,
+          "set": 1
+        },
+        "sample_rate": 48000
+      },
+      {
+        "bars": 2,
+        "beats": 4,
+        "bpm": 120.0,
+        "codec": "wavpack-f32-v1",
+        "digest": "abababababababababababababababababababababababababababababababab",
+        "frames": 192000,
+        "id": {
+          "card": 9,
+          "set": 1
+        },
+        "sample_rate": 48000
+      },
+      {
+        "bars": 2,
+        "beats": 4,
+        "bpm": 120.0,
+        "codec": "wavpack-f32-v1",
+        "digest": "abababababababababababababababababababababababababababababababab",
+        "frames": 192000,
+        "id": {
+          "card": 1,
+          "set": 2
+        },
+        "sample_rate": 48000
+      }
+    ],
+    "version": 3
+  },
+  "presentation": {
+    "atmosphere": {
+      "kind": "None",
+      "seed": 1
+    },
+    "background": [
+      {
+        "Artifact": {
+          "WorkingSetInstance": 1
+        }
+      }
+    ],
+    "focus": {
+      "Artifact": {
+        "LoopTake": {
+          "card": 2,
+          "set": 1
+        }
+      }
+    },
+    "motion": false,
+    "pan": [
+      -0.04581443592905998,
+      0.014253069646656513
+    ],
+    "positions": [
+      [
+        {
+          "Artifact": {
+            "WorkingSetInstance": 1
+          }
+        },
+        [
+          0.5239999890327454,
+          0.1111111044883728
+        ]
+      ],
+      [
+        {
+          "Artifact": {
+            "WorkingSetInstance": 2
+          }
+        },
+        [
+          0.43820226192474365,
+          0.1111111044883728
+        ]
+      ],
+      [
+        {
+          "Artifact": {
+            "Exploration": 1
+          }
+        },
+        [
+          0.6959051489830017,
+          0.11367833614349365
+        ]
+      ],
+      [
+        {
+          "Artifact": "Song"
+        },
+        [
+          0.1094413697719574,
+          0.11383187770843506
+        ]
+      ],
+      [
+        {
+          "Artifact": "History"
+        },
+        [
+          0.3051397502422333,
+          0.11365848779678345
+        ]
+      ],
+      [
+        {
+          "Artifact": {
+            "LoopTake": {
+              "card": 2,
+              "set": 1
+            }
+          }
+        },
+        [
+          0.6034482717514038,
+          0.5522875785827637
+        ]
+      ],
+      [
+        {
+          "Artifact": {
+            "LoopTake": {
+              "card": 9,
+              "set": 1
+            }
+          }
+        },
+        [
+          0.796146035194397,
+          0.7091503143310547
+        ]
+      ],
+      [
+        {
+          "Artifact": {
+            "LoopTake": {
+              "card": 1,
+              "set": 2
+            }
+          }
+        },
+        [
+          0.9888437986373901,
+          0.5522875785827637
+        ]
+      ],
+      [
+        {
+          "View": "1464814917"
+        },
+        [
+          0.10942468047142029,
+          0.362896203994751
+        ]
+      ],
+      [
+        {
+          "View": "1464815698"
+        },
+        [
+          0.305019348859787,
+          0.36306339502334595
+        ]
+      ],
+      [
+        {
+          "View": "1464816197"
+        },
+        [
+          0.695250391960144,
+          0.36300233006477356
+        ]
+      ],
+      [
+        {
+          "View": "1464816453"
+        },
+        [
+          0.500095546245575,
+          0.36311280727386475
+        ]
+      ],
+      [
+        {
+          "View": "1464816455"
+        },
+        [
+          0.8906466960906982,
+          0.36261582374572754
+        ]
+      ],
+      [
+        {
+          "Catalog": "woodshed-catalog"
+        },
+        [
+          0.11044913530349731,
+          0.8583171367645264
+        ]
+      ]
+    ],
+    "reduced_motion": true,
+    "roles": [
+      [
+        {
+          "Artifact": {
+            "WorkingSetInstance": 1
+          }
+        },
+        "pinned"
+      ],
+      [
+        {
+          "Artifact": {
+            "LoopTake": {
+              "card": 2,
+              "set": 1
+            }
+          }
+        },
+        "pinned"
+      ]
+    ],
+    "version": 2,
+    "zoom": 0.9324337244033813
+  },
+  "sealed": true
+}

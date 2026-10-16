@@ -1,0 +1,200 @@
+{
+  "date": "2026-10-16",
+  "source": "bbb9c87ad5598ecdbf2fd86817e6dfbc343586f1",
+  "base_revision": "284fa34061b0b90dcf121578ee3fe11f9daa5652",
+  "binary_sha256": "4dad6b816433fde1bf148af9716290888b29423c1ecfbaeb406ee58390af7c05",
+  "source_sha256": {
+    "crates/woodshed-views/src/stage/overview.rs": "7ba2358e770f8eff4eeac762e6ad0fd8e9706204fdc9d29ff9c747feba92ffb5",
+    "crates/woodshed-genet/src/scenario.rs": "819143e94d343dcc6c75f1d0e5077edea5f9182e95fc3aca6f9f1622ec20a4f0",
+    "crates/woodshed-genet/src/capture_persistence.rs": "52ea1cd884208a384d42936fdd80619581e054620ff319af2a9fe6ee97bdf830",
+    "scenarios/mere_take_seed.scn": "7c02a0fcc81c579c51521f1ccbf368dfd0d23b94249feca30106467a1364f5b7",
+    "scenarios/mere_take_reopen.scn": "8f6ee18e172f41885069e8e4cc7a1554d1dfcc3d02e6e91b8372f5e93e05881b"
+  },
+  "qualification": "Handoff task 4 complete for isolated native fixture; not physical microphone/audibility/latency qualification",
+  "checks": [
+    {
+      "command": "cargo test --locked --offline -p woodshed-core -p woodshed-views",
+      "exit_code": 0,
+      "passed": 441,
+      "breakdown": {
+        "core_unit": 248,
+        "core_doc": 1,
+        "views_unit": 192
+      }
+    },
+    {
+      "command": "cargo test --locked --offline -p woodshed-genet capture_native_scenarios_parse_with_shared_driver",
+      "exit_code": 0,
+      "passed": 1
+    },
+    {
+      "command": "cargo build --locked --offline -p woodshed-genet",
+      "exit_code": 0
+    }
+  ],
+  "distinct_passing_cases": 442,
+  "native_runs": [
+    {
+      "phase": "seed",
+      "result": "ok",
+      "source": "bbb9c87ad5598ecdbf2fd86817e6dfbc343586f1",
+      "logical_window": [
+        1180,
+        900
+      ],
+      "ui_zoom": 0.8,
+      "presented_frames": 206,
+      "redraws": 207,
+      "captures": [
+        {
+          "path": "/Users/markik/Code/testing/woodshed/mere-take-acceptance-20261016/seed/01_retained_v1_take_defaults.png",
+          "sha256": "469e6067186c664bdccbfe6497469024c0d30caecb848aa8f63d5a5394faa5e6",
+          "reviewed": true
+        },
+        {
+          "path": "/Users/markik/Code/testing/woodshed/mere-take-acceptance-20261016/seed/02_sealed_take_in_looper.png",
+          "sha256": "4a97095943eea0141cdc67e9095e4e0ce367ddf61375fc709d31880ee55ad0d2",
+          "reviewed": true
+        },
+        {
+          "path": "/Users/markik/Code/testing/woodshed/mere-take-acceptance-20261016/seed/03_take_playing.png",
+          "sha256": "8ae5bca952f93df6e88a4c7c12069785a72f5c089d36807387a062c64ea14dd6",
+          "reviewed": true
+        },
+        {
+          "path": "/Users/markik/Code/testing/woodshed/mere-take-acceptance-20261016/seed/04_retained_v2_take.png",
+          "sha256": "d15a8a268a4ee4c78022f4610d12e3c8c360f0d349ae18233a95e74f670fb8bd",
+          "reviewed": true
+        }
+      ],
+      "output_observation": "output-clock streams=1 frames=671744 blocks=656 click=false playing=true capture-invalid=false bar=1 in-bar=19200"
+    },
+    {
+      "phase": "wide-reopen",
+      "result": "ok",
+      "source": "bbb9c87ad5598ecdbf2fd86817e6dfbc343586f1",
+      "logical_window": [
+        1180,
+        900
+      ],
+      "ui_zoom": 0.8,
+      "presented_frames": 170,
+      "redraws": 171,
+      "captures": [
+        {
+          "path": "/Users/markik/Code/testing/woodshed/mere-take-acceptance-20261016/wide-reopen/01_v2_take_reopened.png",
+          "sha256": "8e889014aeaa4ee644174db2da28872a93be457061bed508be3e38022fdd823e",
+          "reviewed": true
+        },
+        {
+          "path": "/Users/markik/Code/testing/woodshed/mere-take-acceptance-20261016/wide-reopen/02_reopened_take_in_looper.png",
+          "sha256": "0119121046e7186c068975634af9b81f2aec7dc221ffcb28123e3cb520ea7c25",
+          "reviewed": true
+        },
+        {
+          "path": "/Users/markik/Code/testing/woodshed/mere-take-acceptance-20261016/wide-reopen/03_reopened_take_playing.png",
+          "sha256": "67db717886899273eae53caf36fb8aa23c3b98cca39286319220b10477144975",
+          "reviewed": true
+        }
+      ],
+      "output_observation": "output-clock streams=1 frames=586752 blocks=573 click=false playing=true capture-invalid=false bar=1 in-bar=18176"
+    },
+    {
+      "phase": "narrow-reopen",
+      "result": "ok",
+      "source": "bbb9c87ad5598ecdbf2fd86817e6dfbc343586f1",
+      "logical_window": [
+        460,
+        900
+      ],
+      "ui_zoom": 0.8,
+      "presented_frames": 175,
+      "redraws": 176,
+      "captures": [
+        {
+          "path": "/Users/markik/Code/testing/woodshed/mere-take-acceptance-20261016/narrow-reopen/01_v2_take_reopened.png",
+          "sha256": "28884d8d1fe0a2aff196e698c226babe106893fec51e22a96cd4932c20ed27d7",
+          "reviewed": true
+        },
+        {
+          "path": "/Users/markik/Code/testing/woodshed/mere-take-acceptance-20261016/narrow-reopen/02_reopened_take_in_looper.png",
+          "sha256": "e62f0a75740129b243b21abfed5e328e5b0053f3be9b49f26c802d70c6f39ff9",
+          "reviewed": true
+        },
+        {
+          "path": "/Users/markik/Code/testing/woodshed/mere-take-acceptance-20261016/narrow-reopen/03_reopened_take_playing.png",
+          "sha256": "bfd402c0054c9811bf9c058e0992d1ca4c4a1627c1fe34b91333aca67b6dc5c6",
+          "reviewed": true
+        }
+      ],
+      "output_observation": "output-clock streams=1 frames=561152 blocks=548 click=false playing=true capture-invalid=false bar=1 in-bar=20224"
+    }
+  ],
+  "final_native_processes": 3,
+  "reviewed_captures": 10,
+  "retention": {
+    "all_three_reports_identical": true,
+    "companion_unchanged": {
+      "0123456789abcdef0123456789abcdef/7627a2bee8bb4bd6e9bb67db0643a5c101833a5f0c39e0b9c6c84de04efd13bc.bin": "dd9e8b6977326a3ce543c474e8bd87903c1c735a40adc33f18b356d56366f81c"
+    },
+    "original_fixture_files_unchanged": true,
+    "keeper_files_unchanged": true,
+    "presentation_version": 2,
+    "hydrated": [
+      {
+        "exact_fixture_bits": true,
+        "exact_sealed_companion_bits": true,
+        "frames": 192000,
+        "id": {
+          "card": 2,
+          "set": 1
+        },
+        "legacy_clock": false,
+        "sample_rate": 48000
+      }
+    ],
+    "original_retained_positions_preserved": 10,
+    "original_roles_and_background_preserved": true
+  },
+  "fixture": {
+    "original": "/Users/markik/Code/testing/woodshed/mere-takes-20261014/fixture-session.json",
+    "original_presentation_version": 1,
+    "custody": "real isolated djinn Keeper, deterministic public test persona, no user vault",
+    "helper_binary": "/Users/markik/Code/testing/woodshed/link-model-p3-20261016/frozen-keeper-ee324e517/dr-c-receipt-host",
+    "helper_sha256": "848685e001d63724ca869fa58a97021b3fa15821f0d1fa9954c4853080c518f6",
+    "profile": "/Users/markik/Code/testing/woodshed/mere-take-acceptance-20261016/profile",
+    "capture_owner": {
+      "set": 1,
+      "card": 2
+    },
+    "missing_placeholder_references_retained": 2,
+    "preparation": "Explicitly Clear stored loop for Set 1 Card 2 before seeding its real canonical take; do not replace unavailable data silently.",
+    "isolated_input_unopened": true
+  },
+  "observations": [
+    "New take defaults clear retained v1 labels; no retained placement or identity rewritten",
+    "v2 presentation including take focus, positions, roles and background identical across seed and both fresh processes",
+    "Real sealed companion decoded and compared to hydrated PCM and deterministic float bits in each process",
+    "Native output cursor reached bar 1, the selected take segment, in all three runs; one output stream",
+    "Narrow labels abbreviate and cull as designed; full identity remains in inspector and recorder",
+    "Two intentionally missing fixture references remain explicit and unretargeted"
+  ],
+  "preliminary_attempts": {
+    "location": "/Users/markik/Code/testing/woodshed/mere-take-acceptance-20261016",
+    "not_counted_in_final_matrix": true,
+    "issues": [
+      "Unsupported > scenario operator corrected to >=",
+      "Receipt initially compared against manual seeds instead of runtime positions",
+      "Unavailable placeholder refused replacement; explicit Clear required before fixture seeding",
+      "Playback observation required wait, rather than a short frame settle"
+    ],
+    "disposition": "Preserved in probe and before-cursor-check directories; final matrix uses committed source and successful fresh profile."
+  },
+  "launch_note": "Native UI control opened prepared task-owned app bundles; fast scenario exit caused AX cannotComplete responses. Owned in-process captures, presented frames, logs, retention readbacks and RESULT ok establish execution.",
+  "limitations": [
+    "Playback transport and cursor path observed; no listening or physical audibility claim",
+    "No microphone capture or latency qualification",
+    "Fallback placement is bounded and does not solve arbitrary manually crowded arrangements",
+    "Earlier accepted WAV and legacy-profile receipts remain tied to their original source; this slice does not alter DSP or persisted clock formats"
+  ]
+}

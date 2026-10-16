@@ -242,15 +242,15 @@ voices, count-in semantics and tick cadence.
 
 ### Task 4: finish the loop-take node checks
 
-Still unverified:
-
-- sealed playback opened from the Mere;
-- the narrow layout;
-- a native fresh-process reopen of the version-2 presentation payload;
-- take nodes overlapping labels from a retained v1 arrangement.
-
-Fix the overlap if it's a layout bug. If it's a migration question, bring
-Mark options.
+October 16: complete for the isolated native fixture. New unplaced take defaults
+avoid retained v1 labels without moving retained positions. Sealed hydration and
+playback reached from the Mere, narrow layout, and fresh-process v2 presentation
+reopening pass in three final native processes with ten reviewed captures.
+The selected take's actual output bar was observed in every run; its sealed
+192,000-frame PCM retains exact bits. 442 automated cases and the desktop build
+pass. See [the acceptance plan](2026-10-16_mere_take_acceptance_plan.md) and
+`validation/mere-take-acceptance_20261016/receipt.json`. No physical input,
+audibility or latency claim follows from this receipt.
 
 ### Not for Codex yet (design, or waiting on another lane)
 
