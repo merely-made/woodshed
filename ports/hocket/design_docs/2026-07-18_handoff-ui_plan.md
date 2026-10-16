@@ -243,3 +243,12 @@ Organized by feature target and validation, not by time.
   `<fingerprint>`); the send and receive gestures that construct the commands are
   tasks 3 and 4, so those two command variants carry a scoped `dead_code` allow
   until then. Full `hocket-genet` suite green (13 tests).
+
+- 2026-10-16: project-worker correlation implemented in the host. All five
+  operations carry Armillary request IDs and a host-owned session/replacement
+  scope on terminal replies. Explicit pending work governs quiescence, including
+  handoff read/write; stale replies cannot replace the live project, reassign its
+  saved path, stage incoming material or release newer work. See
+  [the correlation plan](2026-10-16_project_worker_correlation_plan.md).
+  Native file-dialog save/open/export/handoff qualification remains open; this
+  CPU slice does not qualify that flow or introduce signed per-turn operations.

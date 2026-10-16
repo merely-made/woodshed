@@ -19,8 +19,8 @@ fn mounted(dir: &tempfile::TempDir) -> Host {
 pub(super) fn mounted_with_runtime(dir: &tempfile::TempDir, runtime: Rc<RefCell<Runtime>>) -> Host {
     let wake: armillary::Wake = Arc::new(|| {});
     let (project, _) = armillary::spawn::<
-        crate::project_io::ProjectCommand,
-        crate::project_io::ProjectUpdate,
+        crate::project_io::ProjectRequest,
+        crate::project_io::ProjectReply,
         _,
     >(wake.clone(), |_, _| {});
     let (updates, _) = armillary::spawn::<
