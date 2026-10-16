@@ -19,6 +19,8 @@ before any other doc in this directory.
 
 ## Active Plans
 
+- [2026-10-16_shared_capture_accumulator_plan.md](2026-10-16_shared_capture_accumulator_plan.md) — Shared allocation-free PCM writes; adapter scheduling and integrity remain product-owned.
+
 - [2026-10-15_woodshed_codex_handoff.md](2026-10-15_woodshed_codex_handoff.md) — **Handoff for Codex.** Where Woodshed, Hocket, Redshank and Firewheel stand after the Graphshell lift (door, P2 canvas receipt `4005c5a`), the binding rulings, and ordered tasks: join the repin round (remote mere route spec §7.6; Murm `main` `fb6360c12b`), move bar length to Hocket's rule, the shared pure-state DSP crate, and the loop-take node checks. Lists what waits on design or other lanes, and the native-run traps.
 
 - [2026-10-08_tabard_adoption_plan.md](2026-10-08_tabard_adoption_plan.md) — Shared appearance authoring and native title-bar adoption in Woodshed; October 12 root font roles are qualified on the agreed Mere `8568f42` family with 556 combined CPU cases, three native font processes and 19 reviewed captures, preserving application requests, authored precedence, domain geometry and exact WAV bytes. Separate normal-output capture migration/reopen passes on the same build. Earlier qualification preserves named themes and persona settings; the October 10 coherent stack and repaired renderer pass 444 CPU tests and four native lanes with 20 reviewed captures. The October 11 Classic 0.11 family is integrated across the three independent UI workspaces: 1,454 active tests and eight native runs with 38 reviewed captures; Woodshed Set, preview/rehearsal and appearance reopening pass, and the later Hocket/Redshank appearance reopen follow-through passes with four additional reviewed captures.

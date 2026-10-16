@@ -202,6 +202,12 @@ All of them move to `audio_primitives::frames_per_bar` (`click.rs:43-58`).
 
 ### Task 3: shared pure-state DSP crate (after task 2)
 
+October 16 accumulator slice: both engines consume shared allocation-free PCM
+writes, with 252 focused cases passing. See
+[the accumulator plan](2026-10-16_shared_capture_accumulator_plan.md) and
+`validation/shared-capture_20261016/receipt.json`. Countdown, InputFeed,
+CompletedTake and a shared dev harness remain open.
+
 It goes in root `crates/`, extending `audio-primitives` or sitting beside it.
 
 **Contents:**

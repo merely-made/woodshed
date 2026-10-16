@@ -1,0 +1,31 @@
+{
+  "date": "2026-10-16",
+  "base_revision": "d365952",
+  "scope": "shared sample accumulator only",
+  "source_sha256": {
+    "crates/audio-primitives/src/capture.rs": "4d2e28beab58962dce5d5e83081f4787f11a8846295a81df54984935f774a30b",
+    "crates/audio-primitives/src/lib.rs": "01ffe412a1f40131d708aa16bd8a4aab6d22f6cf282507bfad33c4910e375d10",
+    "crates/woodshed-audio/src/output_runtime/processor.rs": "45a2f87585154e9d0398a7017010bf95ccce795a93aab5700baccbc591929bf0",
+    "ports/hocket/crates/hocket-engine/src/capture.rs": "3915a4a17e8083921f2398f7f7b8c7ced13643fbb892cd1dece74953b95149b7"
+  },
+  "commands": [
+    {
+      "cwd": "root",
+      "command": "cargo test --locked --offline -p audio-primitives -p woodshed-audio",
+      "passed": 213
+    },
+    {
+      "cwd": "ports/hocket",
+      "command": "cargo test --locked --offline -p hocket-engine",
+      "passed": 39
+    }
+  ],
+  "distinct_passing_cases": 252,
+  "remaining": [
+    "bar wrap countdown",
+    "InputFeed trait",
+    "CompletedTake DTO",
+    "shared dev harness"
+  ],
+  "qualification": "CPU/offline only; existing adapter allocation and schedule guards passed"
+}
