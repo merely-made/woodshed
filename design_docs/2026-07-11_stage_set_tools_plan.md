@@ -119,6 +119,13 @@ and source revision, including after reopening the sealed profile. The four-file
 isolated Keeper manifest is unchanged. This uses a separately frozen real
 Keeper test authority, not a user vault.
 
+**Integrated receiving source:** `fe54425` cleanly merges concurrent take-navigation
+main `ae2f34e`. All 193 view and 168 native-host cases pass, with seven existing
+ignores and five separate fresh-process child invocations; the locked offline
+desktop build passes. Two new native processes present 141 and 135 frames and
+produce four reviewed captures on a fresh sealed profile. The same exact source
+revision, assertion handle and original direction match after reopening.
+
 The [P4 receipt](../validation/link-model-p4_20261016/receipt.json) records exact
 source/binary hashes, dependency preservation, successful checks, initial
 compile/fixture corrections and the superseded capture framing. The receiving

@@ -9,7 +9,9 @@ and ask Mark with concrete options.
 **2026-10-16 P4 continuation:** the root now pins Mere `91467c0bb` for
 canonical resting links. The bounded receiving gate passes 619 suite cases,
 five fresh-process child invocations, the locked desktop build and native
-seed/reopen on final source `865e0e9`, with four reviewed captures. The
+seed/reopen on source `865e0e9`, with four reviewed captures. After merging
+concurrent take-navigation main, `fe54425` repeats 361 affected cases, five child
+invocations, the build and native seed/reopen with four new reviewed captures. The
 relationship editor, Related and Set preserve independent reasons inside the
 opened reader; exact member filters reduce only their own resting contribution.
 The [Stage plan](2026-07-11_stage_set_tools_plan.md) and its linked P4 receipt

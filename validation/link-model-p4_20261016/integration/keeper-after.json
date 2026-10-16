@@ -1,0 +1,18 @@
+{
+  ".dr-c-generated": {
+    "bytes": 22,
+    "sha256": "c863b6a361d98d7b3624e9ea7a4a5c31dbe1870b6b08a1e5dd23a6ab17e8959d"
+  },
+  "ready": {
+    "bytes": 8,
+    "sha256": "fd5b396c4c1877ab875884fa183f469f87bcc136bf2cc76a4c97c4c7cd48a7b8"
+  },
+  "vault/passphrase-root.json": {
+    "bytes": 355,
+    "sha256": "fa1b9becfee31602208df913be1b2ecf273ce528f4c2e799f707e2fbdfd37e68"
+  },
+  "vault/profiles/f78761cf8c3621e851097dff9a4b04633626e62e1f419444898fae02960d89ef.json": {
+    "bytes": 792,
+    "sha256": "fa73865bbab6c9d5b1eba9fc3b51aa9587ff7a7998370d8512b12ecbaa747a97"
+  }
+}

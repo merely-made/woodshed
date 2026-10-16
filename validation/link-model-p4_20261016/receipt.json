@@ -78,5 +78,55 @@
     "Mere P6/P7 and automatic synchronization remain later work",
     "Other dependency families and nested port locks are unchanged"
   ],
-  "doc_audit": "doc-audit-final.json"
+  "doc_audit": "doc-audit-final.json",
+  "integration_followup": {
+    "source_revision": "fe54425786779753bf6af1d4f6ea243271f13203",
+    "merged_main": "ae2f34e11b5ab92be2f3bc82ca57c519605aa5c1",
+    "result": "passed",
+    "source_qualification": {
+      "packages": {
+        "woodshed-views": 193,
+        "woodshed-genet": 168
+      },
+      "suite_cases": 361,
+      "ignored": 7,
+      "fresh_process_child_invocations": 5,
+      "log": "integration/integrated-tests.log",
+      "desktop_build": "passed",
+      "build_log": "integration/integrated-build.log"
+    },
+    "native_qualification": {
+      "frozen_binary_sha256": "eb9c0d22d29dbb83a06200ccc5b81462b8dc2d3a8948d0f60e48e63b6203cda1",
+      "seed": {
+        "frames": 141,
+        "process_id": 27617,
+        "captures": 2,
+        "exited_before_reopen": true
+      },
+      "reopen": {
+        "frames": 135,
+        "process_id": 28423,
+        "captures": 2,
+        "different_fresh_process": true,
+        "exited_after_completion": true
+      },
+      "reviewed_native_captures": 4,
+      "visual_identity_comparison": {
+        "source_resource": "working-set:1",
+        "source_revision": "851dd13fad928e423430eb1b1aeb734c4e155b80a8755b96a501c947de128b1f",
+        "assertion_handle": "set:1:music.same_pitch_classes:1:2",
+        "displayed_direction": "set:1:card:1 to set:1:card:2",
+        "matches_in_both_reviewed_metadata_captures": true
+      },
+      "runtime_seal_log_observed": true,
+      "practice_plaintext_markers_absent": [
+        "C Major again",
+        "A Minor",
+        "music.same_pitch_classes"
+      ],
+      "keeper_manifest_unchanged_files": 4
+    },
+    "scope": "Repeats affected view/native packages and native seed/reopen after cleanly merging concurrent take-navigation main; earlier 619-case source gate remains historical evidence.",
+    "doc_audit": "integration/doc-audit-final.json"
+  }
 }
