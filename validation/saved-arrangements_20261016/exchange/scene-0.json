@@ -1,0 +1,562 @@
+{
+  "format": "mere.scene-document",
+  "version": 1,
+  "primary": {
+    "version": 1,
+    "source": {
+      "adapter": "woodshed.progression-arrangement",
+      "id": "session/study"
+    },
+    "revision": "c554fbc5b6955e6a830b136cf7c54aa8e6bc3c794aa85b1f64b9c706b86a37c8",
+    "title": "Saved practice passage · ii-V-I (Jazz) in C",
+    "facts": {
+      "kind": "templated_sequence",
+      "data": {
+        "template": {
+          "lanes": [
+            "ii-V-I (Jazz) · expected roles below / supplied occurrences above"
+          ],
+          "extent": 64,
+          "ticks_per_unit": 4,
+          "unit_label": "quarter-note beat (4 ticks); supplied spans, no playback clock",
+          "groups": [
+            {
+              "key": "phrase",
+              "lane": 0,
+              "span": {
+                "start": 0,
+                "length": 64
+              },
+              "parent": null,
+              "label": "ii-V-I (Jazz)"
+            }
+          ]
+        },
+        "slots": [
+          {
+            "key": "role-0",
+            "lane": 0,
+            "span": {
+              "start": 0,
+              "length": 16
+            },
+            "label": "iim7",
+            "expectation": "iim7 in C major · source-declared expectation"
+          },
+          {
+            "key": "role-1",
+            "lane": 0,
+            "span": {
+              "start": 16,
+              "length": 16
+            },
+            "label": "V7",
+            "expectation": "V7 in C major · source-declared expectation"
+          },
+          {
+            "key": "role-2",
+            "lane": 0,
+            "span": {
+              "start": 32,
+              "length": 32
+            },
+            "label": "IM7",
+            "expectation": "IM7 in C major · source-declared expectation"
+          }
+        ],
+        "occurrences": [
+          {
+            "key": "card-1",
+            "source": {
+              "adapter": "woodshed.chord",
+              "id": "2:Minor 7:capo-0"
+            },
+            "label": "Dm7 (iim7)",
+            "detail": "session/study#card=1 · persistent Set occurrence · supplied alignment",
+            "placement": {
+              "lane": 0,
+              "span": {
+                "start": 0,
+                "length": 16
+              }
+            },
+            "slot": "role-0"
+          },
+          {
+            "key": "card-2",
+            "source": {
+              "adapter": "woodshed.chord",
+              "id": "7:Dominant 7:capo-0"
+            },
+            "label": "G7 (V7)",
+            "detail": "session/study#card=2 · persistent Set occurrence · supplied alignment",
+            "placement": {
+              "lane": 0,
+              "span": {
+                "start": 16,
+                "length": 8
+              }
+            },
+            "slot": "role-1"
+          },
+          {
+            "key": "card-3",
+            "source": {
+              "adapter": "woodshed.chord",
+              "id": "0:Major 7:capo-0"
+            },
+            "label": "Cmaj7 (IM7)",
+            "detail": "session/study#card=3 · persistent Set occurrence · supplied alignment",
+            "placement": {
+              "lane": 0,
+              "span": {
+                "start": 32,
+                "length": 16
+              }
+            },
+            "slot": "role-2"
+          },
+          {
+            "key": "card-4",
+            "source": {
+              "adapter": "woodshed.chord",
+              "id": "0:Major 7:capo-0"
+            },
+            "label": "Cmaj7 (IM7)",
+            "detail": "session/study#card=4 · persistent Set occurrence · supplied alignment",
+            "placement": {
+              "lane": 0,
+              "span": {
+                "start": 48,
+                "length": 16
+              }
+            },
+            "slot": "role-2"
+          },
+          {
+            "key": "rest-breath",
+            "source": {
+              "adapter": "woodshed.arrangement-rest",
+              "id": "session/study#rest=breath"
+            },
+            "label": "Rest",
+            "detail": "Explicit authored rest; no chord or voicing inferred",
+            "placement": {
+              "lane": 0,
+              "span": {
+                "start": 24,
+                "length": 8
+              }
+            },
+            "slot": null
+          }
+        ],
+        "relations": [
+          {
+            "from": "card-1",
+            "to": "card-2",
+            "kind": "woodshed.set-next",
+            "label": "Next Set occurrence",
+            "why": "Persistent Set order; spatial alignment and chord identity remain independent"
+          },
+          {
+            "from": "card-2",
+            "to": "card-3",
+            "kind": "woodshed.set-next",
+            "label": "Next Set occurrence",
+            "why": "Persistent Set order; spatial alignment and chord identity remain independent"
+          },
+          {
+            "from": "card-3",
+            "to": "card-4",
+            "kind": "woodshed.set-next",
+            "label": "Next Set occurrence",
+            "why": "Persistent Set order; spatial alignment and chord identity remain independent"
+          }
+        ]
+      }
+    }
+  },
+  "linked": [
+    {
+      "occurrence": "card-1",
+      "label": "Selected voicing · Dm7 (iim7)",
+      "scene": {
+        "version": 1,
+        "source": {
+          "adapter": "woodshed.card-voicing",
+          "id": "session/study#card=1"
+        },
+        "revision": "ba8ed5e6946cf17cd81cbb6ffc8768519914137862ee27ae6691346a8cc83ad9",
+        "title": "Dm7 (iim7) · supplied voicing 1 · capo 0 · x-x-0-2-1-1",
+        "facts": {
+          "kind": "fretboard",
+          "data": {
+            "strings": [
+              {
+                "label": "E4",
+                "open_midi": 64
+              },
+              {
+                "label": "B3",
+                "open_midi": 59
+              },
+              {
+                "label": "G3",
+                "open_midi": 55
+              },
+              {
+                "label": "D3",
+                "open_midi": 50
+              },
+              {
+                "label": "A2",
+                "open_midi": 45
+              },
+              {
+                "label": "E2",
+                "open_midi": 40
+              }
+            ],
+            "frets": 2,
+            "positions": [
+              {
+                "key": "string-2/fret-0",
+                "source": {
+                  "adapter": "woodshed.pitch-class",
+                  "id": "2"
+                },
+                "string_index": 3,
+                "fret": 0,
+                "pitch_class": 2,
+                "label": "D",
+                "role": "root"
+              },
+              {
+                "key": "string-3/fret-2",
+                "source": {
+                  "adapter": "woodshed.pitch-class",
+                  "id": "9"
+                },
+                "string_index": 2,
+                "fret": 2,
+                "pitch_class": 9,
+                "label": "A",
+                "role": "fifth"
+              },
+              {
+                "key": "string-4/fret-1",
+                "source": {
+                  "adapter": "woodshed.pitch-class",
+                  "id": "0"
+                },
+                "string_index": 1,
+                "fret": 1,
+                "pitch_class": 0,
+                "label": "C",
+                "role": "other"
+              },
+              {
+                "key": "string-5/fret-1",
+                "source": {
+                  "adapter": "woodshed.pitch-class",
+                  "id": "5"
+                },
+                "string_index": 0,
+                "fret": 1,
+                "pitch_class": 5,
+                "label": "F",
+                "role": "third"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "occurrence": "card-2",
+      "label": "Selected voicing · G7 (V7)",
+      "scene": {
+        "version": 1,
+        "source": {
+          "adapter": "woodshed.card-voicing",
+          "id": "session/study#card=2"
+        },
+        "revision": "918dc45ac7a9b0a54b3af498931c269ece8f876e34417135764068cb1e0f767d",
+        "title": "G7 (V7) · supplied voicing 1 · capo 0 · 3-2-3-x-3-x",
+        "facts": {
+          "kind": "fretboard",
+          "data": {
+            "strings": [
+              {
+                "label": "E4",
+                "open_midi": 64
+              },
+              {
+                "label": "B3",
+                "open_midi": 59
+              },
+              {
+                "label": "G3",
+                "open_midi": 55
+              },
+              {
+                "label": "D3",
+                "open_midi": 50
+              },
+              {
+                "label": "A2",
+                "open_midi": 45
+              },
+              {
+                "label": "E2",
+                "open_midi": 40
+              }
+            ],
+            "frets": 3,
+            "positions": [
+              {
+                "key": "string-0/fret-3",
+                "source": {
+                  "adapter": "woodshed.pitch-class",
+                  "id": "7"
+                },
+                "string_index": 5,
+                "fret": 3,
+                "pitch_class": 7,
+                "label": "G",
+                "role": "root"
+              },
+              {
+                "key": "string-1/fret-2",
+                "source": {
+                  "adapter": "woodshed.pitch-class",
+                  "id": "11"
+                },
+                "string_index": 4,
+                "fret": 2,
+                "pitch_class": 11,
+                "label": "B",
+                "role": "third"
+              },
+              {
+                "key": "string-2/fret-3",
+                "source": {
+                  "adapter": "woodshed.pitch-class",
+                  "id": "5"
+                },
+                "string_index": 3,
+                "fret": 3,
+                "pitch_class": 5,
+                "label": "F",
+                "role": "other"
+              },
+              {
+                "key": "string-4/fret-3",
+                "source": {
+                  "adapter": "woodshed.pitch-class",
+                  "id": "2"
+                },
+                "string_index": 1,
+                "fret": 3,
+                "pitch_class": 2,
+                "label": "D",
+                "role": "fifth"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "occurrence": "card-3",
+      "label": "Selected voicing · Cmaj7 (IM7)",
+      "scene": {
+        "version": 1,
+        "source": {
+          "adapter": "woodshed.card-voicing",
+          "id": "session/study#card=3"
+        },
+        "revision": "e3340c944ce0a689f71e2e4316c99353c37d6086fd009624a5a65e7aa43f6d6f",
+        "title": "Cmaj7 (IM7) · supplied voicing 1 · capo 0 · x-3-2-0-0-x",
+        "facts": {
+          "kind": "fretboard",
+          "data": {
+            "strings": [
+              {
+                "label": "E4",
+                "open_midi": 64
+              },
+              {
+                "label": "B3",
+                "open_midi": 59
+              },
+              {
+                "label": "G3",
+                "open_midi": 55
+              },
+              {
+                "label": "D3",
+                "open_midi": 50
+              },
+              {
+                "label": "A2",
+                "open_midi": 45
+              },
+              {
+                "label": "E2",
+                "open_midi": 40
+              }
+            ],
+            "frets": 3,
+            "positions": [
+              {
+                "key": "string-1/fret-3",
+                "source": {
+                  "adapter": "woodshed.pitch-class",
+                  "id": "0"
+                },
+                "string_index": 4,
+                "fret": 3,
+                "pitch_class": 0,
+                "label": "C",
+                "role": "root"
+              },
+              {
+                "key": "string-2/fret-2",
+                "source": {
+                  "adapter": "woodshed.pitch-class",
+                  "id": "4"
+                },
+                "string_index": 3,
+                "fret": 2,
+                "pitch_class": 4,
+                "label": "E",
+                "role": "third"
+              },
+              {
+                "key": "string-3/fret-0",
+                "source": {
+                  "adapter": "woodshed.pitch-class",
+                  "id": "7"
+                },
+                "string_index": 2,
+                "fret": 0,
+                "pitch_class": 7,
+                "label": "G",
+                "role": "fifth"
+              },
+              {
+                "key": "string-4/fret-0",
+                "source": {
+                  "adapter": "woodshed.pitch-class",
+                  "id": "11"
+                },
+                "string_index": 1,
+                "fret": 0,
+                "pitch_class": 11,
+                "label": "B",
+                "role": "other"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "occurrence": "card-4",
+      "label": "Selected voicing · Cmaj7 (IM7)",
+      "scene": {
+        "version": 1,
+        "source": {
+          "adapter": "woodshed.card-voicing",
+          "id": "session/study#card=4"
+        },
+        "revision": "9093185d99269aa97315e642f17fce97f5e0fb1ff3c37b078bef18e91efd0346",
+        "title": "Cmaj7 (IM7) · supplied voicing 2 · capo 0 · x-3-x-0-0-0",
+        "facts": {
+          "kind": "fretboard",
+          "data": {
+            "strings": [
+              {
+                "label": "E4",
+                "open_midi": 64
+              },
+              {
+                "label": "B3",
+                "open_midi": 59
+              },
+              {
+                "label": "G3",
+                "open_midi": 55
+              },
+              {
+                "label": "D3",
+                "open_midi": 50
+              },
+              {
+                "label": "A2",
+                "open_midi": 45
+              },
+              {
+                "label": "E2",
+                "open_midi": 40
+              }
+            ],
+            "frets": 3,
+            "positions": [
+              {
+                "key": "string-1/fret-3",
+                "source": {
+                  "adapter": "woodshed.pitch-class",
+                  "id": "0"
+                },
+                "string_index": 4,
+                "fret": 3,
+                "pitch_class": 0,
+                "label": "C",
+                "role": "root"
+              },
+              {
+                "key": "string-3/fret-0",
+                "source": {
+                  "adapter": "woodshed.pitch-class",
+                  "id": "7"
+                },
+                "string_index": 2,
+                "fret": 0,
+                "pitch_class": 7,
+                "label": "G",
+                "role": "fifth"
+              },
+              {
+                "key": "string-4/fret-0",
+                "source": {
+                  "adapter": "woodshed.pitch-class",
+                  "id": "11"
+                },
+                "string_index": 1,
+                "fret": 0,
+                "pitch_class": 11,
+                "label": "B",
+                "role": "other"
+              },
+              {
+                "key": "string-5/fret-0",
+                "source": {
+                  "adapter": "woodshed.pitch-class",
+                  "id": "4"
+                },
+                "string_index": 0,
+                "fret": 0,
+                "pitch_class": 4,
+                "label": "E",
+                "role": "third"
+              }
+            ]
+          }
+        }
+      }
+    }
+  ]
+}

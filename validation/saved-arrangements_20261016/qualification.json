@@ -1,0 +1,84 @@
+{
+  "schema": "woodshed.saved-arrangements/1",
+  "date_utc": "2026-10-16T20:22:22.384767+00:00",
+  "scope": "Set-owned musical arrangements, saved session exchange, Graphshell receiving",
+  "source_manifest": "source-manifest.json",
+  "checks": [
+    {
+      "command": "cargo test -p woodshed-core -p woodshedding --features woodshed-core/portable-scenes --locked --offline",
+      "log": "logs/core-tests.log",
+      "passed": 455,
+      "result": "pass"
+    },
+    {
+      "command": "cargo test -p woodshed-views --lib --locked --offline",
+      "log": "logs/views-tests.log",
+      "passed": 201,
+      "result": "pass"
+    },
+    {
+      "command": "cargo test -p woodshed-core --no-default-features --lib saved_arrangements --locked --offline",
+      "log": "logs/default-feature.log",
+      "passed": 1,
+      "result": "pass"
+    },
+    {
+      "command": "WOODSHED_SAVED_ARRANGEMENT_RECEIPT_DIR=RECEIPT/exchange cargo test -p woodshed-core --features portable-scenes --test saved_arrangements --locked --offline",
+      "log": "logs/exchange.log",
+      "passed": 5,
+      "result": "pass"
+    }
+  ],
+  "behavior": [
+    "Legacy Sets retain an absent attachment",
+    "Attachment survives normal Set/session serialization and sealed Backend save/reopen",
+    "Active and inactive working Sets keep independent arrangements",
+    "Retained snapshots carry the attachment; opening and duplication remap Card references",
+    "Missing references reserve new IDs when copied and cannot bind to subsequent insertions",
+    "Missing Card, changed progression roles, missing catalog entry, changed tuning pitches and stale selected voicing refuse export without source mutation",
+    "Stage navigation does not retarget saved template or inherited setup",
+    "Fresh CLI processes attach to active/inactive working Sets and export both working Sets and a retained snapshot",
+    "Retained artifacts reject direct alignment edits",
+    "Attachment modifies only the chosen field in a new exchange copy, preserving unknown session/Set/Card fields",
+    "Input bytes remain unchanged; existing output paths and absent owner IDs are refused"
+  ],
+  "supplier": {
+    "mere": "git+https://github.com/merely-made/mere.git?branch=main#6575075057e8909032475ae6c88118a19969eadc",
+    "dependency_lock_changed": false
+  },
+  "browser": {
+    "result": "pass for listed receiving checks",
+    "host": "Existing Graphshell WebGPU preview at http://127.0.0.1:8793/tree.html?app=local&receipt=linked-arrangements",
+    "runtime_provenance": "Mere support/design-studies/backdrops/templates/arrangement-receipt/runtime-manifest.json, source ebc8eece312bf9bc3a75086eb28cc19603c4f634; existing already-qualified host reused for new exchange document",
+    "new_host_build_claimed": false,
+    "cases": [
+      "Imported document exported by a fresh process from saved working Set",
+      "Selected persistent tonic Card 3 shows supplied voicing 1",
+      "Selected persistent tonic Card 4 shows distinct supplied voicing 2",
+      "Authored rest removes the related surface",
+      "Graphshell export equals the full imported SceneDocument including four linked readings"
+    ],
+    "input": "graphshell-import.scene.json",
+    "final_fresh_process_export": "exchange/scene-0.json",
+    "export": "browser-export.json",
+    "console": "browser-console.json",
+    "desktop_viewport": [
+      1280,
+      1200
+    ],
+    "viewport_reset": true,
+    "screenshots": [
+      "graphshell-saved-first-voicing.jpg",
+      "graphshell-saved-second-voicing.jpg"
+    ],
+    "source_exchange_document_matches_browser_input": true,
+    "served_files_verified_against_prior_runtime_manifest": 224
+  },
+  "limits": [
+    "No new native progression panel or arrangement editor",
+    "CLI accepts explicit PersistedSession/AppSettings JSON exchange copies; it does not open a desktop persona store",
+    "No new headed desktop, physical audio, playback-clock, narrow-layout or performance qualification",
+    "The sealed save/reopen check uses SealedBackend over MemoryBackend; fresh process checks use explicit filesystem exchange files"
+  ],
+  "implementation_commit": "25b23ce09144bdc0201d1d291fc7817fe4613225"
+}

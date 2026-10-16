@@ -1,0 +1,309 @@
+warning: skipping duplicate package `mere-proofs v0.1.0 (https://github.com/merely-made/mere.git?branch=main#65750750)`:
+  /Users/markik/Code/worktrees/mere-vello-release-adoption/crates/system/proofs/Cargo.toml
+in favor of /Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/6575075/crates/system/proofs/Cargo.toml
+
+warning: skipping duplicate package `muniment v0.1.2 (https://github.com/merely-made/mere.git?branch=main#65750750)`:
+  /Users/markik/Code/worktrees/mere-vello-release-adoption/crates/eidetic/muniment/Cargo.toml
+in favor of /Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/6575075/crates/eidetic/muniment/Cargo.toml
+
+warning: skipping duplicate package `cambium v0.3.3 (https://github.com/merely-made/mere.git?branch=main#65750750)`:
+  /Users/markik/Code/worktrees/mere-vello-release-adoption/crates/cambium/cambium/Cargo.toml
+in favor of /Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/6575075/crates/cambium/cambium/Cargo.toml
+
+warning: skipping duplicate package `sprigging v0.2.1 (https://github.com/merely-made/mere.git?branch=main#65750750)`:
+  /Users/markik/Code/worktrees/mere-vello-release-adoption/crates/cambium/sprigging/Cargo.toml
+in favor of /Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/6575075/crates/cambium/sprigging/Cargo.toml
+
+warning: skipping duplicate package `chartulary v0.2.2 (https://github.com/merely-made/mere.git?branch=main#65750750)`:
+  /Users/markik/Code/worktrees/mere-vello-release-adoption/crates/eidetic/chartulary/Cargo.toml
+in favor of /Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/6575075/crates/eidetic/chartulary/Cargo.toml
+
+warning: skipping duplicate package `tabard v0.0.1 (https://github.com/merely-made/mere.git?branch=main#65750750)`:
+  /Users/markik/Code/worktrees/mere-vello-release-adoption/crates/system/tabard/Cargo.toml
+in favor of /Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/6575075/crates/system/tabard/Cargo.toml
+
+warning: skipping duplicate package `mere-surface-api v0.1.0 (https://github.com/merely-made/mere.git?branch=main#65750750)`:
+  /Users/markik/Code/worktrees/mere-vello-release-adoption/crates/system/surface-api/Cargo.toml
+in favor of /Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/6575075/crates/system/surface-api/Cargo.toml
+
+warning: skipping duplicate package `tinct v0.1.2 (https://github.com/merely-made/mere.git?branch=main#65750750)`:
+  /Users/markik/Code/worktrees/mere-vello-release-adoption/crates/cambium/tinct/Cargo.toml
+in favor of /Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/6575075/crates/cambium/tinct/Cargo.toml
+
+warning: skipping duplicate package `workbench v0.1.0 (https://github.com/merely-made/mere.git?branch=main#65750750)`:
+  /Users/markik/Code/worktrees/mere-vello-release-adoption/crates/cambium/workbench/Cargo.toml
+in favor of /Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/6575075/crates/cambium/workbench/Cargo.toml
+
+warning: skipping duplicate package `meristem v0.2.0 (https://github.com/merely-made/mere.git?branch=main#65750750)`:
+  /Users/markik/Code/worktrees/mere-vello-release-adoption/crates/cambium/meristem/Cargo.toml
+in favor of /Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/6575075/crates/cambium/meristem/Cargo.toml
+
+warning: skipping duplicate package `cambium-winit v0.3.0 (https://github.com/merely-made/mere.git?branch=main#65750750)`:
+  /Users/markik/Code/worktrees/mere-vello-release-adoption/crates/cambium/cambium-winit/Cargo.toml
+in favor of /Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/6575075/crates/cambium/cambium-winit/Cargo.toml
+
+warning: skipping duplicate package `mere-apparatus v0.0.1 (https://github.com/merely-made/mere.git?branch=main#65750750)`:
+  /Users/markik/Code/worktrees/mere-vello-release-adoption/crates/domain/apparatus/Cargo.toml
+in favor of /Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/6575075/crates/domain/apparatus/Cargo.toml
+
+warning: skipping duplicate package `armillary v0.1.1 (https://github.com/merely-made/mere.git?branch=main#65750750)`:
+  /Users/markik/Code/worktrees/mere-vello-release-adoption/crates/armillary/Cargo.toml
+in favor of /Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/6575075/crates/armillary/Cargo.toml
+
+warning: skipping duplicate package `mere-kernel v0.0.2 (https://github.com/merely-made/mere.git?branch=main#65750750)`:
+  /Users/markik/Code/worktrees/mere-vello-release-adoption/crates/graph/graph-kernel/Cargo.toml
+in favor of /Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/6575075/crates/graph/graph-kernel/Cargo.toml
+
+warning: skipping duplicate package `numen v0.2.0 (https://github.com/merely-made/mere.git?branch=main#65750750)`:
+  /Users/markik/Code/worktrees/mere-vello-release-adoption/crates/conatus/numen/Cargo.toml
+in favor of /Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/6575075/crates/conatus/numen/Cargo.toml
+
+warning: skipping duplicate package `document-canvas v0.1.0 (https://github.com/merely-made/mere.git?branch=main#65750750)`:
+  /Users/markik/Code/worktrees/mere-vello-release-adoption/crates/inker/document-canvas/Cargo.toml
+in favor of /Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/6575075/crates/inker/document-canvas/Cargo.toml
+
+warning: skipping duplicate package `inker v0.1.1 (https://github.com/merely-made/mere.git?branch=main#65750750)`:
+  /Users/markik/Code/worktrees/mere-vello-release-adoption/crates/inker/inker/Cargo.toml
+in favor of /Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/6575075/crates/inker/inker/Cargo.toml
+
+warning: skipping duplicate package `mere-document-lanes v0.1.0 (https://github.com/merely-made/mere.git?branch=main#65750750)`:
+  /Users/markik/Code/worktrees/mere-vello-release-adoption/crates/system/document-lanes/Cargo.toml
+in favor of /Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/6575075/crates/system/document-lanes/Cargo.toml
+
+warning: skipping duplicate package `pandect v0.1.1 (https://github.com/merely-made/mere.git?branch=main#65750750)`:
+  /Users/markik/Code/worktrees/mere-vello-release-adoption/crates/system/pandect/Cargo.toml
+in favor of /Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/6575075/crates/system/pandect/Cargo.toml
+
+warning: skipping duplicate package `illume v0.0.2 (https://github.com/merely-made/mere.git?branch=main#65750750)`:
+  /Users/markik/Code/worktrees/mere-vello-release-adoption/crates/nematic/illume/Cargo.toml
+in favor of /Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/6575075/crates/nematic/illume/Cargo.toml
+
+warning: skipping duplicate package `mere-alembic v0.0.1 (https://github.com/merely-made/mere.git?branch=main#65750750)`:
+  /Users/markik/Code/worktrees/mere-vello-release-adoption/crates/distillery/alembic/Cargo.toml
+in favor of /Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/6575075/crates/distillery/alembic/Cargo.toml
+
+warning: skipping duplicate package `eidetic v0.0.2 (https://github.com/merely-made/mere.git?branch=main#65750750)`:
+  /Users/markik/Code/worktrees/mere-vello-release-adoption/crates/eidetic/eidetic-core/Cargo.toml
+in favor of /Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/6575075/crates/eidetic/eidetic-core/Cargo.toml
+
+warning: skipping duplicate package `incipit v0.2.0 (https://github.com/merely-made/mere.git?branch=main#65750750)`:
+  /Users/markik/Code/worktrees/mere-vello-release-adoption/crates/incipit/Cargo.toml
+in favor of /Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/6575075/crates/incipit/Cargo.toml
+
+warning: patch `mere-proofs v0.1.0 (https://github.com/merely-made/mere.git?branch=main#65750750)` was not used in the crate graph
+warning: patch `mere-transport v0.0.2 (https://github.com/merely-made/murm.git?branch=main#cba46d85)` was not used in the crate graph
+warning: patch `mere-webrtc-carrier v0.0.1 (https://github.com/merely-made/murm.git?branch=main#cba46d85)` was not used in the crate graph
+help: Check that the patched package version and available features are compatible
+      with the dependency requirements. If the patch has a different version from
+      what is locked in the Cargo.lock file, run `cargo update` to use the new
+      version. This may also occur with an optional dependency that is not enabled.
+   Compiling woodshed-core v0.1.0 (/Users/markik/Code/worktrees/woodshed-portable-fretboard/crates/woodshed-core)
+   Compiling woodshed-views v0.1.0 (/Users/markik/Code/worktrees/woodshed-portable-fretboard/crates/woodshed-views)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 15.70s
+     Running unittests src/lib.rs (target/build/debug/deps/woodshed_views-d2da781276054634)
+
+running 201 tests
+test fretboard_leaf::tests::an_authored_name_outranks_the_leaf_fallback ... ok
+test fretboard_leaf::tests::leaf_announces_itself_as_a_described_graphic ... ok
+test persona::tests::a_choice_is_recorded_for_the_host_to_act_on ... ok
+test persona::tests::a_later_choice_clears_an_earlier_notice ... ok
+test persona::tests::a_switch_gate_says_that_declining_keeps_the_current_persona ... ok
+test persona::tests::a_vault_that_will_not_answer_still_puts_its_reason_on_the_gate ... ok
+test persona::tests::asking_for_a_new_persona_says_what_to_do_instead_of_nothing ... ok
+test appearance::tests::failed_library_save_cannot_apply_unsaved_theme_and_preserves_selection ... ok
+test persona::tests::dismissal_is_an_answer_too_so_the_host_can_proceed_unblocked ... ok
+test appearance::view_tests::missing_font_intent_retains_its_order_and_reports_local_fallback ... ok
+test appearance::tests::product_builtin_collision_is_visible_at_load ... ok
+test settings_provider::tests::applies_typed_writes_to_product_settings ... ok
+test settings_provider::tests::describes_theme_and_accessibility_with_axes ... ok
+test settings_provider::tests::typed_named_theme_write_preserves_ordered_font_requests ... ok
+test appearance::tests::canonical_modes_use_shared_derivation_without_changing_legacy_seeds ... ok
+test appearance::tests::legacy_themes_preserve_every_palette_role_and_stage_rule ... ok
+test stage::canvas_camera::tests::a_pan_command_travels_its_glide_distance_in_pixels ... ok
+test persona::tests::declining_takes_the_gate_down_and_stops_saving ... ok
+test appearance::tests::missing_choice_remains_recoverable_and_custom_css_uses_exact_sheet ... ok
+test stage::canvas_camera::tests::fitting_centres_and_frames_the_positions ... ok
+test persona::tests::the_notice_appears_only_for_a_session_nobody_is_saving ... ok
+test stage::canvas_camera::tests::set_zoom_keeps_the_centre_and_clamps_to_the_range ... ok
+test stage::canvas_camera::tests::the_camera_reads_back_the_viewport_projection ... ok
+test stage::canvas_camera::tests::verbs_a_surface_lacks_leave_the_camera_alone ... ok
+test stage::audio_request_tests::draining_leaves_nothing_behind_to_repeat ... ok
+test stage::audio_request_tests::repeated_requests_all_survive_in_the_order_they_were_asked ... ok
+test appearance::tests::saved_builtin_copy_applies_and_restores_without_preview_activating_it ... ok
+test stage::chord_approaches::tests::above_visits_descend_one_semitone_to_target_tones ... ok
+test persona::tests::unsaved_accessibility_notice_reports_actual_save_failure_and_pending_reason ... ok
+test stage::chord_approaches::tests::ambient_choice_binds_the_authored_pair_and_cannot_escape_stale_adjacency ... ok
+test stage::chord_approaches::tests::free_catalog_approach_uses_validated_stage_setup_without_a_passage_claim ... ok
+test appearance::view_tests::rejected_preference_write_keeps_the_applied_theme_and_practice_state ... ok
+test stage::chord_approaches::tests::inspection_hearing_and_appending_preserve_the_passage_and_target_setup ... ok
+test stage::chord_approaches::tests::invalid_appended_setup_has_no_working_rehearsal_geometry_or_notes ... ok
+test stage::chord_approaches::tests::reordered_or_removed_pair_cannot_retarget_an_identical_next_chord ... ok
+test stage::chord_approaches::tests::source_type_and_target_shape_errors_fail_closed ... ok
+test stage::connected::tests::ambient_focus_and_list_actions_share_occurrence_realization ... ok
+test stage::connected::tests::catalog_arpeggio_fallback_is_sequential_and_uses_transport_tempo ... ok
+test appearance::view_tests::font_drafts_and_rejected_apply_preserve_applied_settings_and_practice ... ok
+test stage::connected::tests::discovery_resolves_edits_at_action_time ... ok
+test stage::connected::tests::inherited_tempo_is_shared_by_discovery_and_rehearsal_preview ... ok
+test stage::connected::tests::inspecting_and_hearing_preserve_source_and_explicit_staging_has_new_identity ... ok
+test stage::connected::tests::interaction_clock_is_refreshed_at_staging_and_observation_boundaries ... ok
+test stage::connected::tests::pause_duration_is_excluded_and_edit_retains_old_instruction_provenance ... ok
+test appearance::view_tests::authored_shared_roles_recolor_the_product_surface_and_reset_on_builtin_selection ... ok
+test stage::connected::tests::removed_source_cannot_stage_or_audition_a_stale_preview ... ok
+test stage::connected::tests::repeated_material_with_unavailable_shape_cannot_reuse_previous_occurrence ... ok
+test stage::connected_scales::tests::an_edited_source_rechecks_containment_and_a_removed_source_fails_closed ... ok
+test stage::connected_scales::tests::inspection_and_hearing_are_interest_and_staging_creates_distinct_occurrences ... ok
+test stage::connected_scales::tests::selecting_another_occurrence_does_not_retarget_the_inspected_source ... ok
+test stage::connected_scales::tests::staged_scale_clears_chord_shape_and_marks_without_editing_the_chord ... ok
+test stage::context_tests::adding_focused_material_resolves_focus_to_its_new_foreground_occurrence ... ok
+test stage::context_tests::circle_context_keeps_glyph_centres_smaller_than_hit_rects ... ok
+test stage::context_tests::context_audition_queues_immutable_pitches_after_board_changes ... ok
+test stage::context_tests::focusing_a_keyed_material_preserves_root_through_sync ... ok
+test stage::context_tests::empty_set_pitch_motion_browses_from_captured_live_material ... ok
+test stage::context_tests::hiding_context_preserves_staged_normalized_positions ... ok
+test stage::context_tests::nearby_refresh_keeps_focus_without_authoring_or_auditioning ... ok
+test stage::context_tests::pitch_motion_occurrences_keep_distinct_positions_across_reorder ... ok
+test stage::canvas_camera::tests::only_the_overview_has_physics_to_pause ... ok
+test stage::context_tests::tonnetz_focus_expands_without_moving_or_authoring_material ... ok
+test stage::context_tests::pitch_motion_focus_preserves_anchor_and_projected_positions_until_recenter ... ok
+test stage::evidence_tests::a_backwards_clock_yields_no_measurement ... ok
+test stage::evidence_tests::a_host_with_no_clock_measures_nothing_rather_than_guessing ... ok
+test stage::evidence_tests::a_rehearsed_card_records_the_span_it_was_actually_played_for ... ok
+test stage::evidence_tests::cancelled_and_stale_terminal_drags_release_the_host_tail ... ok
+test stage::evidence_tests::changing_reading_releases_context_and_card_positions ... ok
+test stage::evidence_tests::completion_consumes_the_observed_span ... ok
+test stage::context_tests::saturated_nearby_refresh_admits_an_unseen_ranked_triad ... ok
+test stage::evidence_tests::context_focus_is_separate_from_audition_and_set_add ... ok
+test stage::evidence_tests::context_activation_retains_the_disclosed_neighborhood ... ok
+test stage::evidence_tests::expanded_card_hear_freezes_selected_realization_without_changing_set_truth ... ok
+test stage::evidence_tests::one_stage_snapshot_drives_compact_and_expanded_views ... ok
+test stage::evidence_tests::section_pills_keep_represented_workspace_panels_in_sync ... ok
+test stage::evidence_tests::selected_node_activation_expands_and_collapses_the_same_card_editor ... ok
+test stage::evidence_tests::recipe_search_reveals_and_reopens_the_numbered_set_workspace ... ok
+test stage::evidence_tests::relation_inventory_withholds_edges_without_editing_scene_truth ... ok
+test stage::evidence_tests::selecting_set_generated_relation_opens_its_original_claim_pair ... ok
+test appearance::view_tests::ordered_font_requests_survive_theme_mode_restore_and_explicit_reset ... ok
+test stage::evidence_tests::expanded_stage_board_mounts_retained_shape_and_collapse_returns_to_catalog ... ok
+test stage::evidence_tests::stage_graph_pan_and_zoom_stay_view_local_and_bounded ... ok
+test stage::evidence_tests::stage_relation_activation_and_drag_stay_epoch_and_view_local ... ok
+test stage::evidence_tests::the_set_arrangement_picker_changes_projection_and_releases_manual_pins ... ok
+test stage::evidence_tests::stale_context_activation_cannot_change_focus_or_positions ... ok
+test stage::evidence_tests::workspace_panels_route_to_existing_product_surfaces ... ok
+test stage::evidence_tests::workspace_split_activation_routes_the_selected_panel ... ok
+test stage::evidence_tests::search_reveals_practice_from_every_other_workspace ... ok
+test stage::instances::tests::background_runner_keeps_owner_cursor_sound_and_event_snapshot_across_focus ... ok
+test stage::evidence_tests::stage_scene_parallel_claims_share_one_source_link_stroke ... ok
+test stage::instances::tests::clear_preserves_allocator_and_only_closes_the_active_owner_runner ... ok
+test appearance::view_tests::workshop_sheet_replaces_authored_app_css_and_returns_when_editor_closes ... ok
+test stage::instances::tests::old_scene_cannot_select_identical_occurrences_in_another_owner ... ok
+test stage::instances::tests::opening_recipe_keeps_previous_named_owner_and_background_observation ... ok
+test stage::instances::tests::rehearsal_pause_cancels_audio_in_order_and_inactive_sync_does_not ... ok
+test stage::instances::tests::rename_buffer_follows_occurrence_owner_after_removal_and_same_index_replacement ... ok
+test stage::looper::recorder::authoring_regressions::no_backend_keeps_set_and_saved_bar_clock_authoring_without_runtime_admission ... ok
+test stage::looper::recorder::authoring_regressions::old_transport_controls_cannot_be_redirected_by_valid_pending_backing_edits ... ok
+test stage::looper::recorder::key_and_queue_regressions::signed_zero_saved_guards_use_consistent_bit_qualified_key_equality_and_hash ... ok
+test stage::instances::tests::explorers_restore_scoped_configuration_query_and_focus_without_shared_theme ... ok
+test stage::looper::recorder::key_and_queue_regressions::two_queued_saved_bar_controls_keep_distinct_frozen_targets ... ok
+test stage::looper::recorder::tests::accepted_capture_target_survives_selection_and_active_row_advances_independently ... ok
+test stage::looper::recorder::tests::heterogeneous_projection_uses_actual_pcm_and_render_target_without_authoring_a_second_session ... ok
+test stage::looper::tests::selection_and_queued_capture_keep_identity_across_reorder ... ok
+test stage::looper::tests::source_stays_with_its_set_while_exploration_and_rehearsal_choose_other_owners ... ok
+test stage::musical_context::tests::captured_recipe_add_uses_new_active_owner_and_new_occurrences ... ok
+test stage::musical_context::tests::captured_scale_pattern_add_uses_active_owner_and_explores_base_scale ... ok
+test stage::looper::recorder::tests::stale_session_source_reorder_and_saved_bar_keys_refuse_queued_actions ... ok
+test stage::looper::tests::persisted_source_reopens_without_copying_or_revoicing_legacy_song ... ok
+test stage::evidence_tests::related_workspace_uses_page_width_instead_of_sidebar_width ... ok
+test stage::musical_context::tests::copied_selected_shape_freezes_inherited_window_and_keeps_source_unchanged ... ok
+test stage::musical_context::tests::explicit_add_targets_active_set_without_changing_originating_owner ... ok
+test stage::musical_context::tests::captured_recipe_reopens_and_survives_source_removal_without_rebinding ... ok
+test stage::musical_context::tests::keeping_and_exploring_preserve_set_and_authored_root ... ok
+test stage::musical_context::tests::stale_captured_scale_pattern_refuses_actions_and_remains_removable ... ok
+test stage::evidence_tests::related_swatch_discloses_a_bounded_spanning_neighborhood ... ok
+test stage::musical_context::tests::stale_context_refuses_owner_actions_but_remains_removable ... ok
+test stage::overview::presentation_tests::absent_source_cannot_acquire_presentation_role ... ok
+test stage::overview::presentation_tests::camera_and_emphasis_leave_session_authority_intact ... ok
+test stage::musical_context::tests::retained_context_restores_before_its_scene_presentation ... ok
+test stage::overview::presentation_tests::shared_pin_refuses_host_move_and_restore_keeps_rule ... ok
+test stage::overview::tests::atmosphere_ticks_only_visible_unreduced_scene_and_preserves_owner_facts ... ok
+test stage::overview::tests::narrow_canvas_abbreviates_names_without_changing_full_read_model_or_identity ... ok
+test stage::musical_context::tests::unsupported_recipe_and_removed_identity_do_not_fall_back_to_current_material ... ok
+test stage::overview::tests::narrow_instance_graph_has_separate_rows_and_distinct_compact_names ... ok
+test stage::overview::tests::navigation_and_graph_inspection_do_not_start_or_pause_live_processes ... ok
+test stage::overview::tests::new_take_defaults_clear_retained_v1_positions_without_rewriting_them ... ok
+test stage::overview::tests::open_copy_keeps_previous_work_and_invalidates_occurrence_inspectors ... ok
+test stage::overview::tests::opening_an_admitted_take_selects_its_lane_without_writing_takes ... ok
+test stage::overview::tests::orphan_take_stays_visible_and_opens_the_looper_without_retargeting ... ok
+test stage::overview::tests::overview_uses_retained_admission_when_requested_replacement_is_unready ... ok
+test stage::overview_atmosphere::tests::invalid_viewport_is_not_painted ... ok
+test stage::overview_atmosphere::tests::reopening_reconstructs_pattern_without_solver_history ... ok
+test stage::overview_atmosphere::tests::disabled_motion_preserves_seeded_paint_and_revision ... ok
+test stage::overview_dynamics::tests::keyboard_cancel_returns_origin_and_paused_anchor_returns_home ... ok
+test stage::overview_dynamics::tests::pin_advertisement_refuses_pointer_and_keyboard_move ... ok
+test stage::overview_dynamics::tests::paused_move_is_visible_drops_exactly_and_leaves_other_nodes_still ... ok
+test stage::overview_dynamics::tests::reduced_motion_prevents_ticks_and_preserves_arrangement ... ok
+test stage::musical_context::tests::captured_scale_pattern_reopens_after_source_deletion_and_ignores_live_discovery ... ok
+test stage::overview_presentation::tests::arrangement_and_roles_are_bounded_and_legacy_sessions_default ... ok
+test stage::overview::tests::recording_refuses_take_navigation_to_another_source ... ok
+test stage::overview_presentation::tests::nonfinite_values_and_extremes_are_sanitized_before_encoding ... ok
+test stage::overview::tests::requested_set_without_admission_still_projects_loaded_saved_backing ... ok
+test stage::overview_presentation::tests::version_one_payloads_load_and_take_identities_save_as_version_two ... ok
+test stage::overview::tests::retaining_and_inspecting_does_not_edit_or_practice_the_working_set ... ok
+test stage::overview::tests::unadmitted_take_requests_its_set_and_explains_the_pending_lane ... ok
+test stage::overview_presentation::tests::capture_keeps_current_runtime_positions_without_changing_manual_seeds ... ok
+test stage::overview::tests::retained_take_placement_survives_manifest_edits_and_reopen ... ok
+test stage::related::tests::claims_reading_keeps_generated_and_personal_reasons_with_distinct_owners ... ok
+test stage::musical_context::tests::malformed_or_mismatched_captured_recipe_refuses_actions_without_fallback ... ok
+test stage::related::tests::claims_source_discloses_personal_owner_unavailable_while_generated_reading_remains_current ... ok
+test stage::overview_presentation::tests::atmosphere_recipe_roundtrip_restarts_seed_and_keeps_owner_facts ... ok
+test stage::related::tests::exact_assertion_audition_queues_frozen_before_then_after_without_touching_set ... ok
+test stage::overview_presentation::tests::session_roundtrip_preserves_camera_typed_identity_and_roles ... ok
+test stage::related::tests::generated_inverse_alias_auditions_original_assertion_direction ... ok
+test stage::relationship::authority_tests::pending_choices_cannot_bind_another_owner_with_the_same_card_ids ... ok
+test stage::relationship::authority_tests::source_action_disambiguates_identical_card_numbers_in_two_owners ... ok
+test appearance::view_tests::appearance_settings_offer_named_themes_modes_and_keyboard_focus_without_authoring ... ok
+test stage::relationship::authority_tests::source_envelope_and_unknown_versions_refuse_but_preserve_bytes ... ok
+test stage::overview_presentation::tests::invalid_and_future_payloads_only_reset_presentation ... ok
+test stage::related::tests::opened_minor_major_pair_keeps_all_catalog_adjacency_ids_outside_canvas_filter ... ok
+test stage::related::tests::personal_custom_predicates_reach_shared_reader_with_exact_history_and_basis ... ok
+test stage::relationship::tests::disjoint_reading_compiles_and_returns_to_exact_source ... ok
+test stage::related::tests::opened_pair_claims_ignore_unrelated_selection_canvas_scope ... ok
+test stage::related::tests::selecting_related_inverse_claim_opens_original_directed_pair ... ok
+test stage::relationship::tests::exact_owner_action_preserves_background_runner_and_cursor_navigation_is_current ... ok
+test stage::relationship::tests::explicit_rebind_preserves_recipe_and_occurrences_do_not_change_cards ... ok
+test stage::looper::recorder::tests::mounted_component_routes_real_select_record_and_clear_controls ... ok
+test stage::relationship::tests::incompatible_facet_and_stale_provenance_refuse_without_replacing_payload ... ok
+test stage::scale_patterns::tests::ambient_pattern_focus_uses_the_selected_scale_occurrence ... ok
+test stage::relationship::tests::relationship_canvas_has_one_rest_stroke_and_opens_all_directed_members ... ok
+test stage::relationship::tests::version_two_pair_evidence_stays_unchanged_until_passage_rebind ... ok
+test stage::scale_patterns::tests::invalid_saved_setup_explains_failure_before_authoring ... ok
+test stage::scale_patterns::tests::free_catalog_pattern_is_validated_and_stages_the_recipe_in_current_stage_setup ... ok
+test stage::scale_patterns::tests::pattern_inspection_and_hearing_preserve_source_and_staging_preserves_visit_order ... ok
+test stage::scale_patterns::tests::source_edits_revalidate_the_recipe_and_removal_never_uses_live_stage ... ok
+test stage::relationship::tests::legacy_reading_preserves_evidence_until_explicit_richer_rebind ... ok
+test stage::scale_patterns::tests::stale_ambient_pattern_after_source_edit_cannot_fall_back_to_live_catalog ... ok
+test workspace::tests::activation_selects_the_existing_set_surface ... ok
+test workspace::tests::host_snapshot_json_rejects_an_unknown_or_altered_panel ... ok
+test workspace::tests::host_snapshot_json_round_trips_the_tree_and_active_panel ... ok
+test workspace::tests::host_snapshot_restore_is_deterministic ... ok
+test workspace::tests::legacy_four_panel_snapshot_restores_exactly_then_adds_mere_on_request ... ok
+test workspace::tests::malformed_divider_never_enters_or_restores_from_the_workspace_snapshot ... ok
+test workspace::tests::outside_drop_requests_a_typed_tear_out_without_losing_the_panel ... ok
+test workspace::tests::panels_use_stable_ids_and_open_content_lanes ... ok
+test workspace::tests::split_activation_retains_the_panel_routed_by_the_host ... ok
+test stage::settings::tests::a_declined_gate_outranks_any_seal_left_on_the_state ... ok
+test stage::relationship::tests::shared_edits_selection_and_explanation_survive_session_restore ... ok
+test stage::settings::tests::a_pending_session_says_so_and_says_why ... ok
+test stage::settings::tests::the_persona_line_names_who_is_practising_and_what_holds_the_key ... ok
+test stage::settings::tests::a_store_that_has_not_reported_yet_says_that_rather_than_nothing ... ok
+test stage::shapes::scale_tests::invalid_scale_setup_has_no_live_guitar_geometry_notes_or_working_status ... ok
+test stage::shapes::scale_tests::returning_to_running_inherited_card_keeps_board_hear_and_related_pattern_on_captured_setup ... ok
+test stage::shapes::scale_tests::scale_geometry_uses_stored_four_string_setup_and_physical_capo_window ... ok
+test stage::canvas_camera::tests::a_wheel_notch_toward_the_top_zooms_in_about_the_pointer ... ok
+test stage::relationship::tests::full_instruction_changes_and_missing_or_ambiguous_owners_refuse_without_navigation ... ok
+test stage::relationship::tests::invalid_optional_payload_is_preserved_and_never_discards_sets ... ok
+test stage::canvas_camera::tests::every_surface_keeps_hit_targets_on_painted_nodes_through_commands ... ok
+test appearance::view_tests::saving_an_applied_identity_retains_active_css_until_explicit_apply ... ok
+test appearance::view_tests::authoring_copy_preview_close_cancel_save_and_apply_follow_real_controls ... ok
+test stage::looper::tests::wav_export_controls_require_host_collision_token_and_reset_with_session ... ok
+
+test result: ok. 201 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 9.44s
+

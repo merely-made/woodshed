@@ -1,0 +1,25 @@
+{
+  "hash": "sha256",
+  "base": "25b23ce09144bdc0201d1d291fc7817fe4613225",
+  "files": {
+    "Cargo.lock": "02056748cfc7580fabf88b9260bcae1c9245eb8676f5588482ca4e61a36bc145",
+    "Cargo.toml": "f0c8a84a41a58a0b2c4c8e9fae56a8ab1e684362b45d561e273e4fa0ca8df598",
+    "README.md": "a1ae286c8ba72cac4729bfc2a18abd9fa037976b76b863cdec2401a0b857b89d",
+    "crates/woodshed-core/Cargo.toml": "10c726fdc4bd084f249b1385d71fd2f7929c5f50fbba8518eed79f352f9371c4",
+    "crates/woodshed-core/src/arrangement_scene.rs": "c5922182f53d658db764c02de6081d26737a61b98e6233749b5850b6c6c26438",
+    "crates/woodshed-core/src/bin/woodshed-arrangement-scene.rs": "be12376096c60e8457e8a62a851121d155eca2afa6396463909e6e95747028ef",
+    "crates/woodshed-core/src/bin/woodshed-saved-arrangement.rs": "c7f4dc99fb75eae5eda2588014ca0c3f9a6d0be40843ac40cf3c6df6995e29a2",
+    "crates/woodshed-core/src/lib.rs": "a5692292474e6651357e69532c1660b645cf586d46733bcbfe5a17615003fe7b",
+    "crates/woodshed-core/src/retained_sets.rs": "9a6f78e0c921379ceaca85652430e2862d0d1cdee6d5db8920d496d36986804b",
+    "crates/woodshed-core/src/saved_arrangements.rs": "981cbd264957fe7a4283f120179b6ad3aef264bf59208ec8cc2d6278d8f6f668",
+    "crates/woodshed-core/src/storage.rs": "849dabb177f540fdf90cc0189bcaf55179c48fb31005a2a20cb854c6c3df9906",
+    "crates/woodshed-core/src/working_sets.rs": "6fd586639149ff8bce66089bf68962840aa170a8d6da3449358aff855918df7e",
+    "crates/woodshed-core/tests/saved_arrangements.rs": "8e0c2358a0e8efb7fe1a6469db3ac06188c47a17f2b3fb6434713f1b93239f9d",
+    "crates/woodshed-views/src/stage.rs": "26698c8d2219d9124ead185ef66aa4a5a870452fe303935f19a5f99f2f2bf273",
+    "crates/woodshedding/src/progression.rs": "ec4700a73b0509628f683b1d80da382a73e6c01f5452628f591a0f106bb9cf83",
+    "crates/woodshedding/src/rehearsal.rs": "c6ee7d82485c43523e4dcf969f3bd2af195723310e14ebbba1d13f54dafecaee",
+    "crates/woodshedding/src/rehearsal/arrangement.rs": "7543e3cf5dfaf71d64b7dfdf442b143ba7d3f4e5de1683e2f12fda911228f305",
+    "design_docs/2026-07-11_stage_set_tools_plan.md": "e7b8cf43b2b477d7ab7f25488d13a737497cbd19798c2c0e5a9478cef7198332",
+    "design_docs/DOC_README.md": "f88abef1c4ae554ddfc415b2a473eb3a67da63846844e80466cc3b95771f9cf0"
+  }
+}
