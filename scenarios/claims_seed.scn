@@ -20,6 +20,9 @@ capture 01_claims_generated_provenance
 
 click role:textbox @data-field=personal-reason
 input-text Independent reason one
+assert text Personal reason note (optional)
+assert text Independent reason one
+capture 00_claims_personal_reason
 click .personal-add
 settle 3
 assert snap personal-retained-count == 1
