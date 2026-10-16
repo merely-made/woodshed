@@ -59,6 +59,9 @@ impl CapturePersistence {
     pub fn is_busy(&self) -> bool {
         self.worker.is_busy() || self.awaiting_commit
     }
+    pub fn preparation_busy(&self) -> bool {
+        self.worker.is_busy()
+    }
 
     pub(crate) fn permit_export(
         &self,
@@ -369,12 +372,7 @@ impl CapturePersistence {
                 let mut session = ui.to_persisted();
                 session.loop_captures = self.manifest.clone();
                 serde_json::to_string(&session).map_err(|error| error.to_string()).and_then(|json| {
-                    if !takes.is_empty() || !self.manifest.is_empty() {
-                        storage.try_save(&json).map_err(|error| error.to_string())
-                    } else {
-                        storage.save(&json);
-                        Ok(())
-                    }
+                    storage.try_save(&json).map_err(|error| error.to_string())
                 }).map(|()| {
                     ui.loop_capture_notice = Some("Preparing captured Card loops for storage. Live takes remain available.".into());
                 })
@@ -527,12 +525,7 @@ impl CapturePersistence {
         let mut session = ui.to_persisted();
         session.loop_captures = manifest.clone();
         let json = serde_json::to_string(&session).map_err(|error| error.to_string())?;
-        if durable {
-            storage.try_save(&json).map_err(|error| error.to_string())?;
-        } else {
-            // Preserve ordinary practice's existing best-effort unsaved policy.
-            storage.save(&json);
-        }
+        storage.try_save(&json).map_err(|error| error.to_string())?;
         self.unavailable
             .retain(|reference| !takes.iter().any(|take| take.id == reference.id));
         self.manifest = manifest.clone();
@@ -606,6 +599,9 @@ pub fn pending(shared: &Shared, ui: &UiState) -> bool {
 
 /// Used by dispatch, and by completion service without another user action.
 pub fn persist(shared: &mut Shared, ui: &mut UiState) {
+    if ui.practice_discard_close {
+        return;
+    }
     if shared
         .last_audio_session
         .as_ref()
@@ -626,17 +622,36 @@ pub fn persist(shared: &mut Shared, ui: &mut UiState) {
         .capture_persistence
         .persist_async(storage, sealed, takes, ui)
     {
+        storage.session_unconfirmed(error.clone());
         ui.loop_capture_notice = Some(format!(
-            "Captured-loop save is unconfirmed: {error} Live takes remain available."
+            "Practice save is unconfirmed: {error} Live changes remain available."
         ));
     }
+    crate::session::refresh_save_status(storage, ui);
 }
 
 /// Queue current capture preparation and let the host defer native close until
 /// publication completes. No join or codec execution runs on the UI thread.
 pub fn close_request(shared: &mut Shared, ui: &mut UiState) -> bool {
+    if ui.practice_discard_close {
+        ui.practice_close_pending = false;
+        return false;
+    }
     persist(shared, ui);
-    shared.capture_persistence.is_busy()
+    if let Some(storage) = shared.storage.as_ref() {
+        if let Ok(json) = serde_json::to_string(&ui.app_settings) {
+            storage.save_settings(&json);
+        }
+        crate::session::refresh_save_status(storage, ui);
+    }
+    if shared.capture_persistence.preparation_busy() {
+        return true;
+    }
+    ui.practice_close_pending = !ui.practice_saved || ui.practice_save_notice.is_some();
+    if ui.practice_close_pending && ui.practice_save_notice.is_none() {
+        ui.practice_save_notice = Some("This practice session has not been saved. Choose an unlocked persona to retain it, or explicitly discard it to close.".into());
+    }
+    ui.practice_close_pending
 }
 
 pub fn persist_if_changed(shared: &mut Shared, ui: &mut UiState) {

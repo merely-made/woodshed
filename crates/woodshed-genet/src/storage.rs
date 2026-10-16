@@ -187,8 +187,8 @@ impl<B: Backend + Send + Sync> Backend for Custodied<B> {
 
 /// The store while the identity is pending (D12): reads what is already on
 /// disk (a sealed session simply does not decode), and writes nothing. A
-/// write is dropped, not refused, because the dispatch tail saves every beat
-/// and Settings already says practice is not saved; it is said once here.
+/// write is refused, so callers cannot publish a durable-success notice.
+/// Repeated dispatch attempts are logged only once.
 struct PendingBackend<B> {
     inner: B,
     said: AtomicBool,
@@ -206,7 +206,9 @@ impl<B> PendingBackend<B> {
         if !self.said.swap(true, Ordering::Relaxed) {
             eprintln!("[woodshed] identity pending: practice is not being saved");
         }
-        Ok(())
+        Err(StoreError::Backend(
+            "Identity pending: this session is not being saved.".into(),
+        ))
     }
 }
 
@@ -847,18 +849,22 @@ mod dr_c_receipts {
                 backend.get("session").await.unwrap().unwrap(),
                 b"already-public practice"
             );
-            backend
-                .put("session", b"must never be written in the clear")
-                .await
-                .unwrap();
-            backend.delete("session").await.unwrap();
-            backend
-                .apply(&[WriteOp::Put {
-                    key: "session".into(),
-                    value: b"another forbidden cleartext write".to_vec(),
-                }])
-                .await
-                .unwrap();
+            assert!(
+                backend
+                    .put("session", b"must never be written in the clear")
+                    .await
+                    .is_err()
+            );
+            assert!(backend.delete("session").await.is_err());
+            assert!(
+                backend
+                    .apply(&[WriteOp::Put {
+                        key: "session".into(),
+                        value: b"another forbidden cleartext write".to_vec(),
+                    }])
+                    .await
+                    .is_err()
+            );
         });
         use std::future::Future;
         let mut context = std::task::Context::from_waker(std::task::Waker::noop());

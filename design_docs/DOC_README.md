@@ -19,6 +19,8 @@ before any other doc in this directory.
 
 ## Active Plans
 
+- [Stage P4f continuation](2026-07-11_stage_set_tools_plan.md#p4f-join-graph-understanding-to-sound-and-practice) — In progress: bounded safe-save/reopen prerequisites and the visible frontier → voicing → directed audition → numbered rehearsal flow; full native/fresh-process receipt pending.
+
 - [2026-10-16_mere_take_acceptance_plan.md](2026-10-16_mere_take_acceptance_plan.md) — Loop-take native acceptance complete: fallback placement preserves retained v1 positions; 442 cases, desktop build, three sealed native runs and ten reviewed captures, including wide/narrow fresh-process v2 reopening.
 
 - [Hocket native project/handoff acceptance](../ports/hocket/design_docs/2026-10-16_native_project_handoff_plan.md) — Two native processes/seven reviewed captures qualify Save/Open/WAV export, self-addressed signed handoff review/accept/adopt and exact project/media reopening; physical audio and two-peer transport remain separate.

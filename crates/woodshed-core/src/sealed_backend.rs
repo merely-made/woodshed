@@ -17,7 +17,7 @@
 use async_trait::async_trait;
 use muniment::backend::WriteOp;
 use muniment::{Backend, StoreError};
-use personae::{seal_bytes, unseal_bytes, IdentityProvider};
+use personae::{IdentityProvider, seal_bytes, unseal_bytes};
 
 use crate::storage::WOODSHED_SEAL_CONTEXT;
 
@@ -79,11 +79,8 @@ impl<B> SealedBackend<B> {
 #[cfg_attr(not(target_arch = "wasm32"), async_trait)]
 #[cfg_attr(target_arch = "wasm32", async_trait(?Send))]
 impl<B: Backend + Sync> Backend for SealedBackend<B> {
-    /// Bytes that will not unseal read as absent rather than as an error.
-    ///
-    /// This is the old decorator's contract kept deliberately: a session sealed
-    /// to a different persona, or a truncated file, starts a fresh session
-    /// instead of stranding practice behind an error the user cannot act on.
+    /// Unreadable bytes are an admission error, distinct from a missing slot.
+    /// Hosts can continue unsaved while preserving the original for recovery.
     async fn get(&self, key: &str) -> Result<Option<Vec<u8>>, StoreError> {
         let Some(stored) = self.inner.get(key).await? else {
             return Ok(None);
@@ -94,7 +91,10 @@ impl<B: Backend + Sync> Backend for SealedBackend<B> {
         if self.adopt_plaintext && std::str::from_utf8(&stored).is_ok() {
             return Ok(Some(stored));
         }
-        Ok(None)
+        Err(StoreError::Backend(
+            "Stored bytes could not be unsealed with this persona; original data is retained."
+                .into(),
+        ))
     }
 
     async fn put(&self, key: &str, bytes: &[u8]) -> Result<(), StoreError> {
@@ -159,7 +159,7 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn another_persona_reads_a_fresh_session_rather_than_an_error() {
+    async fn another_persona_refuses_an_unreadable_session() {
         let inner = MemoryBackend::default();
         SealedBackend::new(inner.clone(), [1u8; 32])
             .put("session", b"mine")
@@ -167,10 +167,9 @@ mod tests {
             .unwrap();
 
         let theirs = SealedBackend::new(inner, [2u8; 32]);
-        assert_eq!(
-            theirs.get("session").await.unwrap(),
-            None,
-            "a wrong key starts a fresh session instead of stranding practice"
+        assert!(
+            theirs.get("session").await.is_err(),
+            "a wrong key must not authorize a fresh session overwrite"
         );
     }
 
@@ -244,7 +243,7 @@ mod tests {
 
         let other =
             SealedBackend::for_provider(inner, &InMemoryProvider::from_seed([4u8; 32])).unwrap();
-        assert_eq!(other.get("session").await.unwrap(), None);
+        assert!(other.get("session").await.is_err());
     }
 
     #[tokio::test]
@@ -275,10 +274,9 @@ mod tests {
         let inner = MemoryBackend::default();
         inner.put("session", br#"{"tab":"Stage"}"#).await.unwrap();
         let strict = SealedBackend::new(inner, [1u8; 32]);
-        assert_eq!(
-            strict.get("session").await.unwrap(),
-            None,
-            "adoption is opt-in, so a strict store still refuses unsealed bytes"
+        assert!(
+            strict.get("session").await.is_err(),
+            "adoption is opt-in, so a strict store refuses unsealed bytes"
         );
     }
 

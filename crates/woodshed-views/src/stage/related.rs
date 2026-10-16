@@ -697,7 +697,20 @@ pub(super) fn panel(ui: &UiState) -> UiChild {
                             "div",
                             (
                                 clickable(
-                                    el("div", text("Stage")).attr("class", "related-stage"),
+                                    el(
+                                        "div",
+                                        text(format!("Stage at end · {}", ui.set.cards.len() + 1)),
+                                    )
+                                    .attr("class", "related-stage")
+                                    .attr("data-target", dismiss_id.clone())
+                                    .attr(
+                                        "aria-label",
+                                        format!(
+                                            "Stage {} at end as Card {}",
+                                            item.title,
+                                            ui.set.cards.len() + 1
+                                        ),
+                                    ),
                                     move |ui: &mut UiState, _| {
                                         let from_id = ui.stage.catalog_id();
                                         ui.stage.select_related(target);
@@ -705,7 +718,13 @@ pub(super) fn panel(ui: &UiState) -> UiChild {
                                     },
                                 ),
                                 clickable(
-                                    el("div", text("Claims")).attr("class", "related-claims"),
+                                    el("div", text("Claims"))
+                                        .attr("class", "related-claims")
+                                        .attr("data-target", dismiss_id.clone())
+                                        .attr(
+                                            "aria-label",
+                                            format!("Explain relation to {}", item.title),
+                                        ),
                                     move |ui: &mut UiState, _| {
                                         if let Some(from) = ui.stage.catalog_id() {
                                             let to = ui.stage.related_target_id(target);

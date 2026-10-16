@@ -1648,6 +1648,17 @@ interaction receipts rather than static screenshots.
 
 #### P4f. Join graph understanding to sound and practice
 
+**Continuation in progress (2026-10-16):** baseline `c32b60af` and the complete
+source audit identify bounded save/reopen prerequisites: refuse automatic writes
+after uncertain read/unseal/UTF-8/JSON admission, require readback for ordinary
+session/settings saves, and retain an honest unsaved outcome after failure.
+This prevents destructive fallback without claiming a complete persona-namespace
+migration. Navigation, drag cancellation and within-band width admission are
+small existing-owner corrections for the exploration flow. Root Mere `a45a0b6`
+remains the supplier; Hocket/Redshank/Ringdown remediation stays outside P4f.
+The full frontier/voicing/directed-audition/rehearsal/fresh-process receipt is
+still pending; earlier bounded link receipts remain scoped as written above.
+
 **Current state: open.** Current relation selection and history projection do
 not yet satisfy the audible, playable, persisted progression flow below.
 

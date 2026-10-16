@@ -385,6 +385,9 @@ impl CpalBackend {
             .as_ref()
             .map_or(0, |output| output.snapshot().preview_voices)
     }
+    pub(crate) fn output_observation_id(&self) -> Option<u64> {
+        self.output.as_ref().map(OutputRuntime::observation_id)
+    }
 
     pub fn output_stream_count(&self) -> usize {
         self.output

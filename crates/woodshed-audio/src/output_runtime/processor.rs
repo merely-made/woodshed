@@ -31,6 +31,7 @@ pub(super) struct Shared {
     in_bar: AtomicU64,
     flags: AtomicUsize,
     previews: AtomicUsize,
+    preview_starts: AtomicU64,
     click_step: AtomicUsize,
 }
 impl Shared {
@@ -52,6 +53,8 @@ impl Shared {
         );
         self.previews
             .store(snapshot.preview_voices, Ordering::Relaxed);
+        self.preview_starts
+            .store(snapshot.preview_starts, Ordering::Relaxed);
         self.click_step
             .store(snapshot.click_step, Ordering::Relaxed);
         self.sequence.fetch_add(1, Ordering::Release);
@@ -77,6 +80,7 @@ impl Shared {
                 capture_invalid: flags & 8 != 0,
                 click_playing: flags & 16 != 0,
                 preview_voices: self.previews.load(Ordering::Relaxed),
+                preview_starts: self.preview_starts.load(Ordering::Relaxed),
                 click_step: self.click_step.load(Ordering::Relaxed),
             };
             std::sync::atomic::fence(Ordering::Acquire);
@@ -518,6 +522,7 @@ impl AudioNode for OutputNode {
             click_voices: std::array::from_fn(|_| None),
             song_voices: std::array::from_fn(|_| None),
             preview_voices: std::array::from_fn(|_| None),
+            preview_starts: 0,
             pending: std::array::from_fn(|_| None),
             pending_len: 0,
             rate: cx.stream_info.sample_rate.get(),
@@ -555,6 +560,7 @@ struct Processor {
     click_voices: [Option<Voice>; 8],
     song_voices: [Option<Voice>; 8],
     preview_voices: [Option<Voice>; 16],
+    preview_starts: u64,
     pending: [Option<Boundary>; COMMAND_BOUND],
     pending_len: usize,
     rate: u32,
@@ -932,6 +938,7 @@ impl AudioNodeProcessor for Processor {
                         {
                             if let Some(pcm) = buffer.take() {
                                 trigger(&mut self.preview_voices, pcm);
+                                self.preview_starts = self.preview_starts.saturating_add(1);
                             }
                         }
                     },
@@ -1002,6 +1009,7 @@ impl AudioNodeProcessor for Processor {
                 .any(|op| matches!(op, Some(Boundary::Arm { .. }))),
             capture_invalid: self.invalid,
             preview_voices: self.preview_voices.iter().filter(|v| v.is_some()).count(),
+            preview_starts: self.preview_starts,
             click_playing: self.click_playing,
             click_step: self.click.as_ref().map_or(0, |c| {
                 (self.last_click.unwrap_or(0) % c.steps.len() as u64) as usize

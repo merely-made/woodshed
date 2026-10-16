@@ -313,6 +313,8 @@ fn push_backend(shared: &mut Shared, ctx: &mut Ctx<'_>) {
     };
     if let Some(json) = persisted_settings {
         storage.save_settings(&json);
+        ctx.runner
+            .update(|ui| crate::session::refresh_save_status(storage, ui));
     }
 }
 

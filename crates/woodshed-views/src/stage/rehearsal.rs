@@ -95,8 +95,8 @@ pub(super) fn screen(ui: &UiState) -> UiChild {
                     },
                 ),
                 clickable(
-                    el("div", text("♪ Hear")).attr("class", "t-btn t-hear"),
-                    |ui: &mut UiState, _| ui.request_preview(),
+                    el("div", text("♪ Hear selected Card")).attr("class", "t-btn t-hear"),
+                    |ui: &mut UiState, _| ui.request_card_preview(),
                 ),
                 clickable(
                     el("div", text(loop_label)).attr("class", "t-btn"),
@@ -222,13 +222,36 @@ pub(super) fn screen(ui: &UiState) -> UiChild {
         ));
     }
 
+    Box::new(el(
+        "div",
+        (
+            deck,
+            el("div", films).attr("class", "filmstrip"),
+            editor,
+            scale_status,
+            approach_status,
+            card_board(ui),
+        ),
+    ))
+}
+
+/// Shared retained-Card fretboard used in Stage and Rehearsal.
+/// It never substitutes the live catalog selection for the saved instruction.
+pub(super) fn card_board(ui: &UiState) -> UiChild {
+    for status in [ui.rehearsal_scale_status(), ui.rehearsal_approach_status()] {
+        if let Some(Err(reason)) = status {
+            return Box::new(el("div", text(reason)).attr("role", "status"));
+        }
+    }
     // Current card's material on the big board — the same Sprigging paint leaf
     // the Stage board uses. Over it, one clickable label per note: click *marks*
     // the note (a neutral selection, an accent ring). The [Off · Solo · Mute]
     // control below sets what marks do (Solo plays only the marked, Mute
     // silences them), and the board dims whatever the mode excludes. This is the
     // Selection axis of touch, made interactive.
-    let card = &ui.set.cards[cursor];
+    let Some(card) = ui.current_card() else {
+        return Box::new(el("div", ()));
+    };
     let dot_list = ui.current_card_stage().dots_for_card(card);
     let geom = ui.rehearsal_board_geometry();
     let string_count = geom.string_count;
@@ -326,61 +349,58 @@ pub(super) fn screen(ui: &UiState) -> UiChild {
             move |ui: &mut UiState, _| ui.set_card_mark_mode(m),
         )) as UiChild
     };
-    Box::new(el(
-        "div",
-        (
-            deck,
-            el("div", films).attr("class", "filmstrip"),
-            editor,
-            scale_status,
-            approach_status,
-            el(
-                "div",
-                (
-                    el(
-                        "div",
-                        el(
-                            "div",
-                            (
-                                custom_leaf::<UiState, ()>(REHEARSAL_FRETBOARD_LEAF_KEY, w, h),
-                                el("div", labels).attr("class", "label-layer"),
-                                el("div", peek).attr("class", "card-layer"),
-                            ),
-                        )
-                        .attr("class", "fretboard-stack")
-                        .attr(
-                            "aria-label",
-                            format!("{} fretboard, {} notes", card.label, dot_list.len()),
-                        )
-                        .attr("style", format!("width:{w}px; height:{h}px")),
-                    )
-                    .attr("class", "board-viewport rehearsal-board-viewport")
-                    .attr(
-                        "style",
-                        super::board_viewport_style(geom.orientation, w, h, ui.viewport_h),
-                    ),
+    Box::new(
+        el(
+            "div",
+            (
+                el(
+                    "div",
                     el(
                         "div",
                         (
-                            el(
-                                "div",
-                                (seg(MarkMode::Off), seg(MarkMode::Solo), seg(MarkMode::Mute)),
-                            )
-                            .attr("class", "mode-seg"),
-                            el("div", text(card.label.clone())).attr("class", "scale-name"),
-                            (mark_count > 0).then(|| {
-                                clickable(
-                                    el("div", text(format!("Clear {mark_count} marks")))
-                                        .attr("class", "clear-pins"),
-                                    |ui: &mut UiState, _| ui.clear_card_marks(),
-                                )
-                            }),
+                            custom_leaf::<UiState, ()>(REHEARSAL_FRETBOARD_LEAF_KEY, w, h),
+                            el("div", labels).attr("class", "label-layer"),
+                            el("div", peek).attr("class", "card-layer"),
                         ),
                     )
-                    .attr("class", "board-caption"),
+                    .attr("class", "fretboard-stack")
+                    .attr(
+                        "aria-label",
+                        format!("{} fretboard, {} notes", card.label, dot_list.len()),
+                    )
+                    .attr("style", format!("width:{w}px; height:{h}px")),
+                )
+                .attr("class", "board-viewport rehearsal-board-viewport")
+                .attr(
+                    "style",
+                    super::board_viewport_style(geom.orientation, w, h, ui.viewport_h),
                 ),
-            )
-            .attr("class", "board"),
-        ),
-    ))
+                el(
+                    "div",
+                    (
+                        el(
+                            "div",
+                            (seg(MarkMode::Off), seg(MarkMode::Solo), seg(MarkMode::Mute)),
+                        )
+                        .attr("class", "mode-seg"),
+                        el(
+                            "div",
+                            text(format!("Card {} · {}", ui.set.cursor + 1, card.label)),
+                        )
+                        .attr("class", "scale-name"),
+                        (mark_count > 0).then(|| {
+                            clickable(
+                                el("div", text(format!("Clear {mark_count} marks")))
+                                    .attr("class", "clear-pins"),
+                                |ui: &mut UiState, _| ui.clear_card_marks(),
+                            )
+                        }),
+                    ),
+                )
+                .attr("class", "board-caption"),
+            ),
+        )
+        .attr("class", "board")
+        .attr("data-selected-card", card.id.0.to_string()),
+    )
 }

@@ -476,6 +476,11 @@ fn cancelled_previews_do_not_publish_and_preview_voices_are_bounded() {
         std::thread::yield_now();
     }
     assert!(render(&mut r, 64).iter().all(|v| *v == 0.0));
+    assert_eq!(
+        r.snapshot().preview_starts,
+        0,
+        "cancelled preparation is not processor admission"
+    );
     for _ in 0..20 {
         let revision = r.shared.preview_revision.load(Ordering::Acquire);
         r.send(Command::Preview {
@@ -487,9 +492,15 @@ fn cancelled_previews_do_not_publish_and_preview_voices_are_bounded() {
     r.service().unwrap();
     render(&mut r, 1);
     assert_eq!(r.snapshot().preview_voices, 16);
+    assert_eq!(r.snapshot().preview_starts, 20);
     r.cancel_preview().unwrap();
     r.service().unwrap();
     assert!(render(&mut r, 64).iter().all(|v| *v == 0.0));
+    assert_eq!(
+        r.snapshot().preview_starts,
+        20,
+        "ended voices retain honest admission evidence"
+    );
 }
 
 #[test]

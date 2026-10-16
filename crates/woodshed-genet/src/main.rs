@@ -43,7 +43,7 @@ mod wav_export;
 use std::cell::{Cell, RefCell};
 use std::rc::Rc;
 
-use cambium::{el, text as text_node, title_bar};
+use cambium::{clickable, el, text as text_node, title_bar};
 use cambium_genet_winit_host::{
     CaptionLabels, HostHooks, HostOptions, Init, Key, KeyPress, NamedKey, Runner, WindowCommands,
     WindowFrame, platform_caption_controls, run,
@@ -72,7 +72,82 @@ fn desktop_chrome(commands: &WindowCommands) -> UiChild {
 }
 
 fn desktop_root(ui: &UiState, commands: &WindowCommands) -> UiChild {
-    Box::new(el("div", (desktop_chrome(commands), stage_root(ui))).attr("class", "desktop-frame"))
+    let retry = commands.clone();
+    let discard = commands.clone();
+    let decision = ui.practice_close_pending.then(|| {
+        el(
+            "section",
+            (
+                el("h3", text_node("Practice is not confirmed saved")),
+                el(
+                    "p",
+                    text_node(
+                        ui.practice_save_notice
+                            .clone()
+                            .unwrap_or_else(|| "Current changes remain in this window.".into()),
+                    ),
+                ),
+                el(
+                    "div",
+                    (
+                        clickable(
+                            el("button", text_node("Retry save"))
+                                .attr("class", "t-btn practice-close-retry"),
+                            move |ui: &mut UiState, _| {
+                                ui.practice_close_pending = false;
+                                retry.close();
+                            },
+                        ),
+                        clickable(
+                            el("button", text_node("Discard unsaved practice and close"))
+                                .attr("class", "t-btn practice-close-discard"),
+                            move |ui: &mut UiState, _| {
+                                ui.practice_discard_close = true;
+                                discard.close();
+                            },
+                        ),
+                        clickable(
+                            el("button", text_node("Cancel"))
+                                .attr("class", "t-btn practice-close-cancel"),
+                            |ui: &mut UiState, _| {
+                                ui.practice_close_pending = false;
+                                ui.practice_discard_close = false;
+                            },
+                        ),
+                    ),
+                )
+                .attr("class", "transport"),
+            ),
+        )
+        .attr("class", "practice-close-panel")
+        .attr("role", "alert")
+    });
+    Box::new(
+        el("div", (desktop_chrome(commands), decision, stage_root(ui)))
+            .attr("class", "desktop-frame"),
+    )
+}
+
+/// One preservation path for native close, explicit retry/discard, and the
+/// completion of another product close decision such as appearance.
+fn prepare_close(
+    shared: &mut Shared,
+    ctx: &mut Ctx<'_>,
+) -> cambium_genet_winit_host::CloseDisposition {
+    use cambium_genet_winit_host::CloseDisposition;
+    if !ctx.runner.state().practice_discard_close {
+        if let Some(geometry) = ctx.geometry {
+            persist_window_geometry(shared, ctx, geometry);
+        }
+    }
+    let mut pending = false;
+    ctx.runner.update(|ui| {
+        pending = capture_persistence::close_request(shared, ui);
+    });
+    if pending {
+        return CloseDisposition::KeepVisible;
+    }
+    wav_export::close_request(shared, ctx).unwrap_or_else(|| appearance::close_request(ctx))
 }
 
 /// Build the starting state: the audio backend, the restored session, and the
@@ -154,7 +229,9 @@ fn sync_viewport(ctx: &mut Ctx<'_>) -> bool {
     let (width, height) = ctx.logical_size;
     let changed = {
         let ui = ctx.runner.state();
-        ui.viewport != ViewportClass::for_width(width) || (ui.viewport_h - height).abs() >= 16.0
+        ui.viewport != ViewportClass::for_width(width)
+            || (ui.viewport_width - width).abs() >= 16.0
+            || (ui.viewport_h - height).abs() >= 16.0
     };
     if !changed {
         return false;
@@ -240,6 +317,8 @@ fn persist_window_geometry(
     });
     if let (Some(storage), Some(json)) = (shared.storage.as_ref(), json) {
         storage.save_settings(&json);
+        ctx.runner
+            .update(|ui| session::refresh_save_status(storage, ui));
     }
 }
 
@@ -294,7 +373,24 @@ fn hooks(shared: &Rc<RefCell<Shared>>) -> HostHooks<UiState, Logic, UiChild> {
         }),
         after_dispatch: Box::new(move |ctx: &mut Ctx<'_>| {
             let mut shared = dispatch_shared.borrow_mut();
-            sync::after_dispatch(&mut shared, ctx);
+            if !ctx.runner.state().practice_discard_close {
+                sync::after_dispatch(&mut shared, ctx);
+            } else {
+                // Appearance is a separate close guard. Its confirmation may
+                // finish or cancel this transaction; neither may autosave the
+                // explicitly discarded practice while the decision is pending.
+                let appearance_was_closing = ctx.runner.state().appearance_close_app;
+                appearance::after_dispatch(ctx);
+                if appearance_was_closing && !*ctx.close && !ctx.runner.state().appearance_close_app
+                {
+                    ctx.runner.update(|ui| ui.practice_discard_close = false);
+                }
+            }
+            if *ctx.close {
+                *ctx.close = false;
+                *ctx.close = prepare_close(&mut shared, ctx)
+                    == cambium_genet_winit_host::CloseDisposition::Exit;
+            }
         }),
         after_frame: Box::new(move |ctx: &mut Ctx<'_>| {
             let mut shared = after_frame_shared.borrow_mut();
@@ -307,6 +403,9 @@ fn hooks(shared: &Rc<RefCell<Shared>>) -> HostHooks<UiState, Logic, UiChild> {
         after_wake: Box::new(move |ctx: &mut Ctx<'_>| {
             let mut shared = wake_shared.borrow_mut();
             wav_export::poll(&mut shared, ctx);
+            if *ctx.close {
+                return;
+            }
             if !capture_persistence::session_current(&shared, ctx.runner.state()) {
                 sync::after_dispatch(&mut shared, ctx);
                 if !capture_persistence::session_current(&shared, ctx.runner.state()) {
@@ -332,37 +431,19 @@ fn hooks(shared: &Rc<RefCell<Shared>>) -> HostHooks<UiState, Logic, UiChild> {
                 });
             }
             if wake_close_requested.get()
-                && !shared.capture_persistence.is_busy()
+                && !shared.capture_persistence.preparation_busy()
                 && wav_export::close_request(&mut shared, ctx).is_none()
             {
-                wake_close_requested.set(false);
-                if !*ctx.close
-                    && appearance::close_request(ctx)
-                        == cambium_genet_winit_host::CloseDisposition::Exit
-                {
-                    *ctx.close = true;
-                }
+                let disposition = prepare_close(&mut shared, ctx);
+                wake_close_requested.set(shared.capture_persistence.preparation_busy());
+                *ctx.close = disposition == cambium_genet_winit_host::CloseDisposition::Exit;
             }
         }),
         close_request: Box::new(move |ctx, _request| {
-            if let Some(geometry) = ctx.geometry {
-                persist_window_geometry(&mut close_shared.borrow_mut(), ctx, geometry);
-            }
-            let mut capture_pending = false;
-            ctx.runner.update(|ui| {
-                capture_pending =
-                    capture_persistence::close_request(&mut close_shared.borrow_mut(), ui);
-            });
-            if capture_pending {
-                capture_close_requested.set(true);
-                return cambium_genet_winit_host::CloseDisposition::KeepVisible;
-            }
-            if let Some(disposition) =
-                wav_export::close_request(&mut close_shared.borrow_mut(), ctx)
-            {
-                return disposition;
-            }
-            appearance::close_request(ctx)
+            let mut shared = close_shared.borrow_mut();
+            let disposition = prepare_close(&mut shared, ctx);
+            capture_close_requested.set(shared.capture_persistence.preparation_busy());
+            disposition
         }),
         focused_text: Box::new(text::focused_text),
         key_intercept: Box::new(escape_policy),
@@ -397,6 +478,205 @@ fn main() {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[derive(Clone)]
+    pub(super) struct SaveFailureBackend {
+        pub(super) inner: muniment::MemoryBackend,
+        pub(super) refusing: std::sync::Arc<std::sync::atomic::AtomicBool>,
+    }
+
+    #[async_trait::async_trait]
+    impl muniment::Backend for SaveFailureBackend {
+        async fn get(&self, key: &str) -> Result<Option<Vec<u8>>, muniment::StoreError> {
+            self.inner.get(key).await
+        }
+        async fn put(&self, key: &str, bytes: &[u8]) -> Result<(), muniment::StoreError> {
+            if self.refusing.load(std::sync::atomic::Ordering::Relaxed) {
+                return Err(muniment::StoreError::Backend("test write refused".into()));
+            }
+            self.inner.put(key, bytes).await
+        }
+        async fn delete(&self, key: &str) -> Result<(), muniment::StoreError> {
+            self.inner.delete(key).await
+        }
+        async fn list(&self, prefix: &str) -> Result<Vec<String>, muniment::StoreError> {
+            self.inner.list(prefix).await
+        }
+        async fn scan(&self, start: &str, end: &str) -> Result<Vec<String>, muniment::StoreError> {
+            self.inner.scan(start, end).await
+        }
+        async fn apply(
+            &self,
+            ops: &[muniment::backend::WriteOp],
+        ) -> Result<(), muniment::StoreError> {
+            self.inner.apply(ops).await
+        }
+    }
+
+    pub(super) fn save_close_harness(
+        storage: woodshed_core::storage::SessionStore<storage::HostBackend>,
+    ) -> (
+        Rc<RefCell<Shared>>,
+        cambium_genet_winit_host::Harness<UiState, Logic, UiChild>,
+    ) {
+        let seal = woodshed_views::persona::PracticeSeal::Sealed {
+            persona: "test".into(),
+            protection: "test".into(),
+        };
+        let shared = Shared::with_store(Some(storage), Some(seal.clone()), None);
+        let mut ui = UiState::new();
+        ui.seal = Some(seal);
+        ui.stage_current(None);
+        let mut host = cambium_genet_winit_host::Harness::with_command_init(
+            move |commands| {
+                let commands = commands.clone();
+                Init {
+                    sheet: appearance::stylesheet(&ui),
+                    state: ui,
+                    logic: Box::new(move |ui: &UiState| desktop_root(ui, &commands)) as Logic,
+                    fonts: Vec::new(),
+                    images: Vec::new(),
+                }
+            },
+            hooks(&shared),
+            HostOptions::default(),
+        );
+        host.layout_at(1100.0, 900.0);
+        host.after_dispatch();
+        (shared, host)
+    }
+
+    #[test]
+    fn quarantined_close_can_cancel_retry_and_explicitly_discard_without_writing() {
+        let store = woodshed_core::storage::SessionStore::new(Box::new(
+            muniment::MemoryBackend::default(),
+        ) as storage::HostBackend);
+        let original = serde_json::to_string(&UiState::new().to_persisted()).unwrap();
+        store.try_save(&original).unwrap();
+        store.refuse_writes("original admission is uncertain");
+        let (shared, mut host) = save_close_harness(store);
+        host.request_close(cambium_genet_winit_host::CloseRequest::Native);
+        host.relayout();
+        assert!(!host.close_requested());
+        assert!(host.state().practice_close_pending);
+        assert!(host.click_on(&taproot::Selector::class("practice-close-cancel")));
+        assert!(!host.state().practice_close_pending);
+        assert!(!host.close_requested());
+        host.request_close(cambium_genet_winit_host::CloseRequest::Native);
+        host.relayout();
+        assert!(host.click_on(&taproot::Selector::class("practice-close-retry")));
+        assert!(!host.close_requested());
+        assert!(host.state().practice_close_pending);
+        assert!(host.click_on(&taproot::Selector::class("practice-close-discard")));
+        assert!(host.close_requested());
+        assert_eq!(
+            shared.borrow().storage.as_ref().unwrap().load().as_deref(),
+            Some(original.as_str())
+        );
+    }
+
+    #[test]
+    fn retry_after_transient_write_failure_verifies_both_slots_before_closing() {
+        let refusing = std::sync::Arc::new(std::sync::atomic::AtomicBool::new(true));
+        let backend = SaveFailureBackend {
+            inner: Default::default(),
+            refusing: refusing.clone(),
+        };
+        let store =
+            woodshed_core::storage::SessionStore::new(Box::new(backend) as storage::HostBackend);
+        let (shared, mut host) = save_close_harness(store);
+        host.request_close(cambium_genet_winit_host::CloseRequest::Native);
+        host.relayout();
+        assert!(!host.close_requested());
+        assert!(!host.state().practice_saved);
+        refusing.store(false, std::sync::atomic::Ordering::Relaxed);
+        assert!(host.click_on(&taproot::Selector::class("practice-close-retry")));
+        assert!(host.close_requested());
+        assert!(host.state().practice_saved);
+        let shared = shared.borrow();
+        let store = shared.storage.as_ref().unwrap();
+        assert!(store.save_problem().is_none());
+        assert_eq!(
+            woodshed_core::storage::decode_session(&store.load().unwrap())
+                .unwrap()
+                .session
+                .set
+                .cards
+                .len(),
+            1
+        );
+        assert!(store.load_settings().is_some());
+    }
+
+    #[test]
+    fn discarded_practice_stays_unwritten_until_appearance_close_finishes_or_is_cancelled() {
+        for cancel in [false, true] {
+            let directory = tempfile::tempdir().unwrap();
+            let refusing = std::sync::Arc::new(std::sync::atomic::AtomicBool::new(true));
+            let backend = SaveFailureBackend {
+                inner: Default::default(),
+                refusing: refusing.clone(),
+            };
+            let store = woodshed_core::storage::SessionStore::new(
+                Box::new(backend) as storage::HostBackend
+            );
+            let (shared, mut host) = save_close_harness(store);
+            host.update(|ui| {
+                ui.appearance = woodshed_views::appearance::AppearanceState::load(
+                    directory.path().join("themes.json"),
+                )
+                .unwrap();
+                ui.appearance
+                    .begin_edit(&ui.app_settings.appearance)
+                    .unwrap();
+                ui.appearance.workshop.new_copy();
+            });
+            host.request_close(cambium_genet_winit_host::CloseRequest::Native);
+            host.relayout();
+            assert!(host.click_on(&taproot::Selector::class("practice-close-discard")));
+            assert!(!host.close_requested());
+            assert!(host.state().practice_discard_close);
+            assert!(host.state().appearance_close_app);
+            refusing.store(false, std::sync::atomic::Ordering::Relaxed);
+            host.after_dispatch();
+            assert!(shared.borrow().storage.as_ref().unwrap().load().is_none());
+            assert!(
+                shared
+                    .borrow()
+                    .storage
+                    .as_ref()
+                    .unwrap()
+                    .load_settings()
+                    .is_none()
+            );
+            let action = if cancel {
+                "cancel-close"
+            } else {
+                "discard-close"
+            };
+            assert!(
+                host.click_on(&taproot::Selector::role("button").with_attr("data-action", action))
+            );
+            if cancel {
+                assert!(!host.close_requested());
+                assert!(!host.state().practice_discard_close);
+                host.after_dispatch();
+                assert!(shared.borrow().storage.as_ref().unwrap().load().is_some());
+            } else {
+                assert!(host.close_requested());
+                assert!(shared.borrow().storage.as_ref().unwrap().load().is_none());
+                assert!(
+                    shared
+                        .borrow()
+                        .storage
+                        .as_ref()
+                        .unwrap()
+                        .load_settings()
+                        .is_none()
+                );
+            }
+        }
+    }
 
     #[test]
     fn window_geometry_conversion_preserves_every_axis() {

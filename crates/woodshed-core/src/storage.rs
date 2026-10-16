@@ -32,6 +32,21 @@ use crate::{Lens, StageState};
 /// composed in by the host rather than known about here.
 pub struct SessionStore<B> {
     backend: B,
+    // Admission is shared by clones: reopening an uncertain slot through a
+    // second handle must not silently authorize a default-state overwrite.
+    refusal: std::sync::Arc<std::sync::Mutex<Option<String>>>,
+    write_errors:
+        std::sync::Arc<std::sync::Mutex<std::collections::BTreeMap<&'static str, String>>>,
+}
+
+impl<B: Clone> Clone for SessionStore<B> {
+    fn clone(&self) -> Self {
+        Self {
+            backend: self.backend.clone(),
+            refusal: self.refusal.clone(),
+            write_errors: self.write_errors.clone(),
+        }
+    }
 }
 
 /// The session slot: artifact state, what the practitioner was doing.
@@ -43,7 +58,11 @@ const SETTINGS_SLOT: &str = "settings";
 
 impl<B: Backend> SessionStore<B> {
     pub fn new(backend: B) -> Self {
-        Self { backend }
+        Self {
+            backend,
+            refusal: Default::default(),
+            write_errors: Default::default(),
+        }
     }
 
     /// The backend, for a host that also drives it directly.
@@ -55,6 +74,57 @@ impl<B: Backend> SessionStore<B> {
         self.read(SESSION_SLOT)
     }
 
+    /// Missing is a valid new session; unreadable is retained and quarantined.
+    pub fn try_load(&self) -> Result<Option<String>, StoreError> {
+        self.try_read(SESSION_SLOT)
+    }
+
+    /// A host calls this after semantic/JSON admission fails. There is no
+    /// in-process reset: only a deliberate reopen can admit the original again.
+    pub fn refuse_writes(&self, reason: impl Into<String>) {
+        let mut refusal = self
+            .refusal
+            .lock()
+            .unwrap_or_else(|error| error.into_inner());
+        refusal.get_or_insert_with(|| reason.into());
+    }
+
+    pub fn write_refusal(&self) -> Option<String> {
+        self.refusal
+            .lock()
+            .unwrap_or_else(|error| error.into_inner())
+            .clone()
+    }
+
+    /// A failed slot remains unconfirmed until that same slot is verified.
+    pub fn save_problem(&self) -> Option<String> {
+        self.write_refusal().or_else(|| {
+            let errors = self
+                .write_errors
+                .lock()
+                .unwrap_or_else(|error| error.into_inner());
+            (!errors.is_empty()).then(|| errors.values().cloned().collect::<Vec<_>>().join("; "))
+        })
+    }
+
+    /// A host-side preparation/admission failure also leaves the current
+    /// session unconfirmed. Only a verified session write clears this outcome.
+    pub fn session_unconfirmed(&self, reason: impl Into<String>) {
+        self.write_errors
+            .lock()
+            .unwrap_or_else(|error| error.into_inner())
+            .insert(SESSION_SLOT, reason.into());
+    }
+
+    fn writable(&self) -> Result<(), StoreError> {
+        match self.write_refusal() {
+            Some(reason) => Err(StoreError::Backend(format!(
+                "Saved data is retained; writes are blocked until reopen: {reason}"
+            ))),
+            None => Ok(()),
+        }
+    }
+
     pub fn save(&self, contents: &str) {
         self.write(SESSION_SLOT, contents);
     }
@@ -64,14 +134,7 @@ impl<B: Backend> SessionStore<B> {
     /// changed write. The host still checks its custody seal before claiming
     /// durability; already-existing identical bytes cannot prove a new write.
     pub fn try_save(&self, contents: &str) -> Result<(), StoreError> {
-        pollster::block_on(self.backend.put(SESSION_SLOT, contents.as_bytes()))?;
-        let stored = pollster::block_on(self.backend.get(SESSION_SLOT))?;
-        if stored.as_deref() != Some(contents.as_bytes()) {
-            return Err(StoreError::Backend(
-                "Session write could not be verified by readback.".into(),
-            ));
-        }
-        Ok(())
+        self.try_write_slot(SESSION_SLOT, contents)
     }
 
     pub fn try_read_capture(
@@ -167,6 +230,7 @@ impl<B: Backend> SessionStore<B> {
     }
 
     fn try_write_capture_blob(&self, namespace: &str, bytes: &[u8]) -> Result<String, String> {
+        self.writable().map_err(|error| error.to_string())?;
         let digest = pcm_digest(bytes);
         let key = pcm_key(namespace, &digest)?;
         if let Some(stored) = pollster::block_on(self.backend.get(&key))
@@ -198,27 +262,72 @@ impl<B: Backend> SessionStore<B> {
         self.write(SETTINGS_SLOT, contents);
     }
 
-    /// Preference transactions can require backend acceptance before the host
-    /// activates them. Ordinary practice/settings writes keep their existing
-    /// best-effort policy through `save_settings`.
+    /// A preference is acknowledged only after backend acceptance and exact
+    /// readback, just like the session that may depend on it.
     pub fn try_save_settings(&self, contents: &str) -> Result<(), muniment::StoreError> {
-        pollster::block_on(self.backend.put(SETTINGS_SLOT, contents.as_bytes()))
+        self.try_write_slot(SETTINGS_SLOT, contents)
     }
 
-    /// Read one slot, treating every failure as absence.
-    ///
-    /// A backend error, non-UTF-8 bytes, and a seal that will not open all mean
-    /// the same thing to the app: there is no previous session, start fresh. The
-    /// alternative is stranding practice behind an error the user cannot act on.
+    fn try_write_slot(&self, slot: &'static str, contents: &str) -> Result<(), StoreError> {
+        let result = (|| {
+            self.writable()?;
+            pollster::block_on(self.backend.put(slot, contents.as_bytes()))?;
+            if pollster::block_on(self.backend.get(slot))?.as_deref() != Some(contents.as_bytes()) {
+                return Err(StoreError::Backend(format!(
+                    "{slot} write could not be verified by readback."
+                )));
+            }
+            Ok(())
+        })();
+        let mut errors = self
+            .write_errors
+            .lock()
+            .unwrap_or_else(|error| error.into_inner());
+        match &result {
+            Ok(()) => {
+                errors.remove(slot);
+            }
+            Err(error) => {
+                errors.insert(slot, format!("{slot}: {error}"));
+            }
+        }
+        result
+    }
+
+    /// Compatibility optional read: errors are logged and quarantine writes.
+    /// Hosts needing a visible admission result use `try_load`.
     fn read(&self, slot: &str) -> Option<String> {
-        let bytes = pollster::block_on(self.backend.get(slot)).ok()??;
-        String::from_utf8(bytes).ok()
+        self.try_read(slot).unwrap_or_else(|error| {
+            eprintln!("[woodshed] could not read {slot}: {error}");
+            None
+        })
+    }
+
+    fn try_read(&self, slot: &str) -> Result<Option<String>, StoreError> {
+        let result = pollster::block_on(self.backend.get(slot)).and_then(|bytes| {
+            bytes
+                .map(|bytes| {
+                    String::from_utf8(bytes).map_err(|error| {
+                        StoreError::Backend(format!("{slot} is not UTF-8: {error}"))
+                    })
+                })
+                .transpose()
+        });
+        if let Err(error) = &result {
+            self.refuse_writes(format!("Could not read {slot}: {error}"));
+        }
+        result
     }
 
     /// Write one slot, logging rather than surfacing failure, because a broken
     /// disk must not strand practice.
     fn write(&self, slot: &str, contents: &str) {
-        if let Err(error) = pollster::block_on(self.backend.put(slot, contents.as_bytes())) {
+        let result = if slot == SESSION_SLOT {
+            self.try_save(contents)
+        } else {
+            self.try_save_settings(contents)
+        };
+        if let Err(error) = result {
             eprintln!("[woodshed] could not persist {slot}: {error}");
         }
     }
@@ -446,6 +555,74 @@ mod tests {
     use crate::loop_capture::decode_pcm;
     const NAMESPACE: &str = "0123456789abcdef0123456789abcdef";
 
+    #[test]
+    fn missing_session_initializes_but_unreadable_slot_quarantines_every_clone() {
+        let inner = muniment::MemoryBackend::default();
+        let store = SessionStore::new(inner.clone());
+        let sibling = store.clone();
+        assert!(store.try_load().unwrap().is_none());
+        store.try_save("original session").unwrap();
+        pollster::block_on(inner.put(SETTINGS_SLOT, &[0xff])).unwrap();
+        assert!(store.load_settings().is_none());
+        assert!(sibling.write_refusal().is_some());
+        assert!(sibling.try_save("default replacement").is_err());
+        assert!(sibling.try_save_settings("{}").is_err());
+        assert!(
+            sibling
+                .try_write_capture(NAMESPACE, 48_000, &[0.25])
+                .is_err()
+        );
+        store.save("another default");
+        assert_eq!(
+            pollster::block_on(inner.get(SESSION_SLOT))
+                .unwrap()
+                .unwrap(),
+            b"original session"
+        );
+        assert_eq!(
+            pollster::block_on(inner.get(SETTINGS_SLOT))
+                .unwrap()
+                .unwrap(),
+            [0xff]
+        );
+    }
+
+    #[test]
+    fn wrong_persona_quarantines_without_clobbering_original_session() {
+        let inner = muniment::MemoryBackend::default();
+        let first = SessionStore::new(crate::sealed_backend::SealedBackend::new(
+            inner.clone(),
+            [1; 32],
+        ));
+        first.try_save("original session").unwrap();
+        let ciphertext = pollster::block_on(inner.get(SESSION_SLOT)).unwrap();
+        let second = SessionStore::new(crate::sealed_backend::SealedBackend::new(
+            inner.clone(),
+            [2; 32],
+        ));
+        assert!(second.try_load().is_err());
+        second.save("default session");
+        assert!(second.try_save_settings("{}").is_err());
+        assert_eq!(
+            pollster::block_on(inner.get(SESSION_SLOT)).unwrap(),
+            ciphertext
+        );
+        assert_eq!(
+            first.try_load().unwrap().as_deref(),
+            Some("original session")
+        );
+    }
+
+    #[test]
+    fn dropped_settings_write_is_not_acknowledged() {
+        let store = SessionStore::new(FaultBackend {
+            inner: muniment::MemoryBackend::default(),
+            fault: Fault::Drop,
+        });
+        assert!(store.try_save_settings("{}").is_err());
+        assert!(store.save_problem().unwrap().contains("settings"));
+    }
+
     fn capture_ref(digest: String, frames: usize) -> LoopCaptureRef {
         LoopCaptureRef {
             clock: None,
@@ -596,13 +773,15 @@ mod tests {
         );
     }
 
-    #[derive(Clone, Copy)]
+    #[derive(Clone)]
     enum Fault {
         Drop,
+        DropSettings(std::sync::Arc<std::sync::atomic::AtomicBool>),
         CorruptCapture,
         RefuseSession,
     }
 
+    #[derive(Clone)]
     struct FaultBackend {
         inner: muniment::MemoryBackend,
         fault: Fault,
@@ -614,8 +793,13 @@ mod tests {
             self.inner.get(key).await
         }
         async fn put(&self, key: &str, bytes: &[u8]) -> Result<(), StoreError> {
-            match self.fault {
+            match &self.fault {
                 Fault::Drop => Ok(()),
+                Fault::DropSettings(drop)
+                    if key == SETTINGS_SLOT && drop.load(std::sync::atomic::Ordering::Relaxed) =>
+                {
+                    Ok(())
+                }
                 Fault::RefuseSession if key == SESSION_SLOT => {
                     Err(StoreError::Backend("refused session replacement".into()))
                 },
@@ -639,6 +823,26 @@ mod tests {
         async fn apply(&self, _ops: &[muniment::backend::WriteOp]) -> Result<(), StoreError> {
             Err(StoreError::Backend("no multi-file transaction".into()))
         }
+    }
+
+    #[test]
+    fn settings_failure_survives_successful_session_until_same_slot_verifies_on_a_clone() {
+        let dropping = std::sync::Arc::new(std::sync::atomic::AtomicBool::new(true));
+        let store = SessionStore::new(FaultBackend {
+            inner: muniment::MemoryBackend::default(),
+            fault: Fault::DropSettings(dropping.clone()),
+        });
+        let sibling = store.clone();
+        assert!(store.try_save_settings("authored settings").is_err());
+        sibling.try_save("authored session").unwrap();
+        assert!(store.save_problem().unwrap().contains("settings"));
+        assert!(sibling.save_problem().is_some());
+        dropping.store(false, std::sync::atomic::Ordering::Relaxed);
+        sibling.try_save_settings("authored settings").unwrap();
+        assert!(store.save_problem().is_none());
+        assert!(sibling.save_problem().is_none());
+        assert_eq!(store.load().as_deref(), Some("authored session"));
+        assert_eq!(store.load_settings().as_deref(), Some("authored settings"));
     }
 
     #[test]

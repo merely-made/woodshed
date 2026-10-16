@@ -1,0 +1,92 @@
+# Construct the progression using visible catalog/frontier actions only.
+# No act command seeds or mutates the Set.
+settle 90
+ui-zoom 0.65
+settle 5
+assert snap set-cards == 0
+assert snap practice-saved == true
+assert snap practice-save-problem == false
+click .lens Chord
+settle 3
+click .t-btn Stage
+settle 5
+assert snap set-cards == 1
+capture 01_visible_frontier
+click .related-claims @data-target=chord:Minor
+settle 5
+click .workspace-panel Related
+settle 5
+assert snap claims-generated-count >= 1
+assert text Source stratum
+checkpoint-p4f before-reason-hear
+click role:button @data-assertion-action=audition
+settle 3
+assert text Audition queued in assertion direction
+assert snap preview-starts >= 1
+checkpoint-p4f after-reason-hear
+capture 02_directed_reason
+click .workspace-panel Practice
+settle 5
+click .related-stage @data-target=chord:Minor
+settle 5
+assert snap set-cards == 2
+click .related-stage @data-target=chord:Major
+settle 5
+assert snap set-cards == 3
+assert snap tray-expanded == true
+settle 5
+click-stage-node 0
+settle 3
+assert snap cursor-id == 1
+assert snap selected-card-board-visible == true
+click .card-shape-next
+settle 3
+assert snap shape-index == 0
+click-stage-node 1
+settle 3
+assert snap cursor-id == 2
+click .card-shape-next
+settle 3
+assert snap shape-index == 0
+click-stage-node 2
+settle 3
+assert snap cursor-id == 3
+click .card-shape-next
+settle 3
+click .card-shape-next
+settle 3
+assert snap shape-index == 1
+open-stage-arrangement
+settle 3
+choose-stage-arrangement Circle
+settle 5
+assert snap graph-arrangement == Circle
+capture 03_numbered_voicings
+checkpoint-p4f before-card-hear
+click .card-hear Hear selected Card
+settle 3
+checkpoint-p4f after-card-hear
+click .t-btn Rehearse
+settle 5
+assert snap section == Rehearsal
+click .t-btn Prev
+click .t-btn Prev
+settle 3
+assert snap cursor-number == 1
+click .t-btn Run
+settle 12
+assert snap rehearsal-running == true
+click .t-btn Next
+settle 12
+assert snap cursor-number == 2
+click .t-btn Next
+settle 12
+assert snap cursor-number == 3
+capture 04_numbered_rehearsal
+click .t-btn Pause
+settle 5
+assert snap rehearsal-running == false
+assert snap practice-saved == true
+assert snap practice-save-problem == false
+checkpoint-p4f final
+capture 05_retained_set

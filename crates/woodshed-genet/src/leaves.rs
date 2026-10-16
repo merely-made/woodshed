@@ -558,7 +558,7 @@ fn sync_fretboard_active(ui: &UiState, leaves: &mut LeafRegistry<u64>) {
 /// mode. Only rebuilt while Rehearsal is on screen and the model changes; the
 /// label overlay drives click-to-mark.
 fn sync_rehearsal_fretboard(shared: &mut Shared, ui: &UiState, leaves: &mut LeafRegistry<u64>) {
-    if ui.section != woodshed_core::storage::AppSection::Rehearsal || ui.set.cards.is_empty() {
+    if !ui.selected_card_board_visible() {
         return;
     }
     let cursor = ui.set.cursor.min(ui.set.cards.len() - 1);

@@ -386,12 +386,12 @@ pub fn poll(shared: &mut Shared, ctx: &mut Ctx<'_>) {
     }
     if shared.wav_export.close_when_finished
         && shared.wav_export.job.is_none()
-        && !shared.capture_persistence.is_busy()
+        && !shared.capture_persistence.preparation_busy()
     {
         shared.wav_export.close_when_finished = false;
         shared.wav_export.pending = None;
         ctx.runner.update(|ui| ui.loop_export_replace = None);
-        if crate::appearance::close_request(ctx) == CloseDisposition::Exit {
+        if crate::prepare_close(shared, ctx) == CloseDisposition::Exit {
             *ctx.close = true;
         }
     }
@@ -737,6 +737,87 @@ mod tests {
         assert!(host.state().appearance.workshop.close_requested());
         assert!(host.state().appearance_close_app);
         assert!(!shared.borrow().wav_export.close_when_finished);
+    }
+
+    #[test]
+    fn export_completion_rechecks_later_save_failure_before_closing() {
+        let refusing = Arc::new(std::sync::atomic::AtomicBool::new(false));
+        let backend = crate::tests::SaveFailureBackend {
+            inner: Default::default(),
+            refusing: refusing.clone(),
+        };
+        let store = woodshed_core::storage::SessionStore::new(
+            Box::new(backend) as crate::storage::HostBackend
+        );
+        let (shared, mut host) = crate::tests::save_close_harness(store);
+        let (sender, receiver) = mpsc::channel();
+        shared.borrow_mut().wav_export.job = Some(Job {
+            session: host.state().audio_session.clone(),
+            receiver,
+            cancelled: Arc::new(Mutex::new(false)),
+        });
+        host.request_close(cambium_genet_winit_host::CloseRequest::Native);
+        assert!(!host.close_requested());
+        refusing.store(true, std::sync::atomic::Ordering::Relaxed);
+        host.update(|ui| ui.stage_current(None));
+        host.after_dispatch();
+        sender.send(Err("fixture completion".into())).unwrap();
+        (host.wake().callback())();
+        assert!(host.process_wake());
+        assert!(!host.close_requested());
+        assert!(host.state().practice_close_pending);
+        assert_eq!(host.state().set.cards.len(), 2);
+        let persisted = shared.borrow().storage.as_ref().unwrap().load().unwrap();
+        assert_eq!(
+            woodshed_core::storage::decode_session(&persisted)
+                .unwrap()
+                .session
+                .set
+                .cards
+                .len(),
+            1
+        );
+    }
+
+    #[test]
+    fn explicit_discard_survives_export_deferral_without_later_autosave() {
+        let refusing = Arc::new(std::sync::atomic::AtomicBool::new(true));
+        let backend = crate::tests::SaveFailureBackend {
+            inner: Default::default(),
+            refusing: refusing.clone(),
+        };
+        let store = woodshed_core::storage::SessionStore::new(
+            Box::new(backend) as crate::storage::HostBackend
+        );
+        let (shared, mut host) = crate::tests::save_close_harness(store);
+        let (sender, receiver) = mpsc::channel();
+        shared.borrow_mut().wav_export.job = Some(Job {
+            session: host.state().audio_session.clone(),
+            receiver,
+            cancelled: Arc::new(Mutex::new(false)),
+        });
+        host.request_close(cambium_genet_winit_host::CloseRequest::Native);
+        host.relayout();
+        assert!(host.click_on(&taproot::Selector::class("practice-close-discard")));
+        assert!(host.state().practice_discard_close);
+        assert!(!host.close_requested());
+        refusing.store(false, std::sync::atomic::Ordering::Relaxed);
+        host.after_dispatch();
+        assert!(shared.borrow().storage.as_ref().unwrap().load().is_none());
+        sender.send(Err("fixture completion".into())).unwrap();
+        (host.wake().callback())();
+        assert!(host.process_wake());
+        assert!(host.close_requested());
+        assert!(shared.borrow().storage.as_ref().unwrap().load().is_none());
+        assert!(
+            shared
+                .borrow()
+                .storage
+                .as_ref()
+                .unwrap()
+                .load_settings()
+                .is_none()
+        );
     }
     use woodshed_audio::{Bar, SampleBuffer};
     use woodshed_core::audio::AudioBackend;

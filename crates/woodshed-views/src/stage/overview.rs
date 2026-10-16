@@ -445,7 +445,7 @@ impl UiState {
                 .save_snapshot_from(&self.set, name, self.working_sets.active_id);
         self.overview_focus = Some(OverviewNodeId::Artifact(SessionArtifactId::SavedSet(id)));
         self.overview_notice =
-            Some("Set retained. Later edits to the working Set leave this snapshot intact.".into());
+            Some("Set snapshot prepared in this session. Retention depends on the practice save status; later working edits leave this snapshot intact.".into());
         Some(id)
     }
 

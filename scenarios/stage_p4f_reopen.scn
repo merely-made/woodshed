@@ -1,0 +1,15 @@
+# Fresh app process, same isolated sealed profile and exact binary.
+settle 90
+ui-zoom 0.65
+settle 5
+assert snap practice-saved == true
+assert snap practice-save-problem == false
+assert snap set-cards == 3
+assert snap section == Rehearsal
+assert snap cursor-id == 3
+assert snap cursor-number == 3
+assert snap shape-index == 1
+assert snap graph-arrangement == Circle
+assert snap rehearsal-running == false
+checkpoint-p4f reopened
+capture 01_reopened_set_and_voicing
