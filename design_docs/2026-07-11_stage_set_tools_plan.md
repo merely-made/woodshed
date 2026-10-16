@@ -23,7 +23,7 @@ gate, not completion of this product plan.
 
 ### Opened-link continuation (2026-10-16)
 
-**Status: in progress.** Mark authorized Mere's link-model P3 consumer work.
+**Status: bounded P3 consumer qualified (2026-10-16).** Mark authorized Mere's link-model P3 consumer work.
 The design and phase contract live in
 `mere/design_docs/mere_docs/technical_architecture/2026-10-15_link_model.md`;
 its implementation plan and receipt own the shared supplier qualification.
@@ -66,11 +66,21 @@ the shared reader. Sequence/context details retain their existing sources.
 The old compact summaries and `StageRelationKey`/`SetGraphRelationChoice`
 helpers are removed. Generated evidence references use stable predicate keys.
 
-**Native gate still open:** the Mac locked before the first launch. An isolated
-real Keeper fixture and the exact source-hashed executable are ready, but no
-native authoring/audition capture or fresh-process sealed reopen is claimed yet.
-The personal-intent transaction tests prove admission and failure handling;
-they do not substitute for that receiving-host observation.
+**Native qualification (2026-10-16):** final source `474d10a` follows the
+source gate above with a visible, labelled reason textbox; all 191 view cases
+pass again and the locked offline desktop build passes. The final native seed
+uses ordinary text entry and Add/Audition/Withdraw controls under an isolated
+real Keeper persona. It passes 103 frames and five captures; a separate process
+passes 49 frames and two captures on the same sealed profile. All seven captures
+were reviewed, including List metadata and the direction Timeline. The source
+UUID, both independent assertion IDs, one held reason and the other reason's
+withdrawal tombstone match after reopening. The ordered audition request leaves
+the Set serialization unchanged. The four-file Keeper manifest is unchanged;
+the practice payload is sealed and contains no plaintext qualification notes.
+The [same receipt](../validation/link-model-p3_20261016/receipt.json) holds logs,
+exact source/binary hashes, identity comparison and original rendered captures.
+This closes the bounded P3 receiving gate; physical acoustic output, full P4f
+exploration and the remaining Stage phases keep their own acceptance gates.
 
 > **2026-08-10 — the gate is open.** The scenograph scene contract this plan
 > gates on ("what remains is the freeze, not the proof") froze 2026-07-24 at

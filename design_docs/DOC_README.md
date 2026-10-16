@@ -107,7 +107,7 @@ before any other doc in this directory.
   states, and responsive wireframe done-conditions. It is separate from the
   Woodshed product graph.
 - [2026-07-11_stage_set_tools_plan.md](2026-07-11_stage_set_tools_plan.md)
-  — October 16 opened-link consumer work is in progress on published Mere `ee324e517`: persistent personal assertions, generated reasons read-only, exact source actions and ordered before/after audition. Source `374c75d` passes 784 suite cases plus five child invocations and the desktop build; native authoring/audition/sealed reopen remain pending an unlocked Mac.
+  — October 16 bounded opened-link P3 consumer is qualified on published Mere `ee324e517`: persistent personal assertions, generated reasons read-only, exact source actions and ordered before/after audition. The 784-case source gate on `374c75d` is followed by 191 view cases and a desktop build on final source `474d10a`. Native authoring/audition and fresh-process sealed reopen pass with seven reviewed List/Timeline captures, exact UUID/assertion IDs and withdrawal history; physical audio quality and full P4f remain separate.
   — October 15 P2 camera receipt refreshed on the current locked family: 183 view tests,
   274 presented frames and nine reviewed captures; native wheel routing now covers
   the overview, Related and relationship editor. Touch and sealed reopen remain outside this receipt.

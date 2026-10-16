@@ -1,7 +1,7 @@
 {
   "schema": "woodshed.opened-link-qualification/v1",
   "date": "2026-10-16",
-  "source_revision": "374c75d0c8569b262f73e9ffb6786d2b482f5899",
+  "source_revision": "474d10a1714fa10e97e55c6903adde9e1fb7f712",
   "baseline": "aba2c7343cda147983dd0c770806204fbe6260df",
   "includes_concurrent_main": "f83d4da",
   "mere_revision": "ee324e517d501653aee8df7d5a430760a74749c0",
@@ -29,24 +29,62 @@
       "Set and Related generated edge selections open shared swatch",
       "ordered before/after request and worker scheduling; Set unchanged",
       "legacy session deserialization and concurrent canonical-clock code retained"
-    ]
+    ],
+    "affected_suite_revision": "374c75d0c8569b262f73e9ffb6786d2b482f5899",
+    "final_ui_followup": {
+      "revision": "474d10a1714fa10e97e55c6903adde9e1fb7f712",
+      "woodshed_views_cases": 191,
+      "result": "passed",
+      "desktop_build": "passed",
+      "purpose": "Visible and accessible reason textbox; normal text input and retained-history capture framing"
+    }
   },
   "native_qualification": {
-    "result": "pending",
-    "reason": "Mac locked before first native launch; manual unlock requested",
-    "native_authoring_verified": false,
-    "native_audition_dispatch_verified": false,
-    "native_fresh_process_sealed_reopen_verified": false,
-    "reviewed_native_captures": 0,
-    "planned_viewport": [
+    "result": "passed",
+    "source_revision": "474d10a1714fa10e97e55c6903adde9e1fb7f712",
+    "native_authoring_verified": true,
+    "native_audition_dispatch_verified": true,
+    "native_fresh_process_sealed_reopen_verified": true,
+    "normal_text_entry_verified": true,
+    "set_unchanged_during_audition": true,
+    "reviewed_native_captures": 7,
+    "logical_viewport": [
       1100,
       900
     ],
-    "frozen_binary_sha256": "adb958b76c8228e1ca450794cab7b7479202896e9fe7ea34f31f247f7597d18c",
-    "external_launches": [
-      "/Users/markik/Code/testing/woodshed/link-model-p3-20261016/native-seed-v1/launch.json",
-      "/Users/markik/Code/testing/woodshed/link-model-p3-20261016/native-reopen-v1/launch.json"
-    ]
+    "capture_pixels": [
+      2200,
+      1800
+    ],
+    "frozen_binary_sha256": "47fb26792a8809118496ee8fc1666b320a238f8f06300eb8a84f43fc6ae19078",
+    "seed": {
+      "frames": 103,
+      "captures": 5,
+      "process_id": 51320,
+      "exited_before_reopen": true,
+      "result": "passed"
+    },
+    "reopen": {
+      "frames": 49,
+      "captures": 2,
+      "process_id": 51681,
+      "different_fresh_process": true,
+      "result": "passed"
+    },
+    "identity_comparison": {
+      "assertion_ids": [
+        "{\"writer\":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],\"counter\":0}",
+        "{\"writer\":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],\"counter\":1}"
+      ],
+      "source_id": "e2c3d7fe-cee0-4f06-b646-af7c22c1501e",
+      "source_uuid_and_both_ids_match": true,
+      "retained_assertions": 2,
+      "held_assertions": 1,
+      "withdrawn_assertions": 1
+    },
+    "review": "Visible reason textbox and typed note; source and full generated method/evidence; ordered audition notice; retained personal assertion handle and withdrawal time; direction Timeline with independent withdrawn and held reasons, including after fresh-process reopen.",
+    "launch_note": "Prepared task-owned macOS app bundles launched through native UI control. Scenario completion exits the app before AX attaches; native logs and owned rendered captures establish success.",
+    "audio_scope": "Ordered native request dispatch and worker scheduling are verified; physical acoustic output and hardware quality are outside this receipt."
   },
   "custody_fixture": {
     "kind": "real isolated djinn Keeper and sealed deterministic public test persona; no user vault",
@@ -54,14 +92,23 @@
     "root": "/Users/markik/Code/testing/woodshed/link-model-p3-20261016/keeper-v1",
     "endpoint": "/tmp/ws-link-p3-20261016-a.sock",
     "ready": "unlocked",
-    "native_app_not_yet_started": true
+    "native_sealed_seed_and_reopen": "passed",
+    "keeper_file_manifest_unchanged": true,
+    "keeper_files": 4,
+    "practice_ciphertext_bytes": 3758,
+    "practice_ciphertext_sha256": "e43cf6a091f5eed5b6b87330659badce691620c6a4433b0bfd70acf09c1e74d4",
+    "qualification_note_plaintext_absent": true,
+    "practice_file_not_plaintext_json": true,
+    "profile": "/Users/markik/Code/testing/woodshed/link-model-p3-20261016/profile-v2"
   },
   "iterations": [
     "initial compiler API and borrow fixes preserved externally",
     "Stage fixture corrected to actual catalog pair and full adjacency occurrences",
     "source review found and removed pair-plus-kind collapse in WoodshedMereSnapshot",
     "opened pair source separated from unrelated canvas filter",
-    "provenance fixture uses actual ii-V-I (Jazz) catalog ID"
+    "provenance fixture uses actual ii-V-I (Jazz) catalog ID",
+    "Mac unlocked; first native seed on 374c75d passed but history framing and invisible note field were found during image review",
+    "Final UI field is visibly labelled and accessible; native V2 uses ordinary textbox input and Add/Withdraw/Audition controls; both List and Timeline are captured"
   ],
   "outside_scope": [
     "full P4f musical exploration",
@@ -90,19 +137,47 @@
     "crates/woodshed-genet/src/sync.rs": "d5e6388ed90d33b15c4a4258986a7619acfe36e9c185bf9d4148041f0ba689b3",
     "crates/woodshed-graph/src/lib.rs": "0e1bb09a1b0161f93e06788fab237385a1b2dc76f95d3e59366fd23e5ae58c9e",
     "crates/woodshed-views/src/stage.rs": "5671559d84f941c5c66686a6e8cc339a1c2f3e2059b752f1fe7df16d516f79e5",
-    "crates/woodshed-views/src/stage/related.rs": "eff641916b5d12f417a59284da55eda2068c691b7aa2d3e7af36299eeda4e076",
+    "crates/woodshed-views/src/stage/related.rs": "ea1165ef608b2693d1d3e604d756b21a1ed4d2608eee9523033959b56f44c8ae",
     "crates/woodshed-views/src/stage/set_tray.rs": "2e4254bc9d6cf3845024c4b0adc9112346a17187c68691485a153e86d838d4d3",
-    "crates/woodshed-views/src/theme.rs": "91dba416b4c016ca0f2bf6e7da761b819ef90938f6512c9a88e9724264ec0bd1",
-    "scenarios/claims_reopen.scn": "15d332b6260e5266d0a1ceea5307c94ec14c2f551cb96432ad15f08be26b9bea",
-    "scenarios/claims_seed.scn": "2976206c41eb2591c003c4be63b12ab0df57a188deae6972f70023f20fa8ce68"
+    "crates/woodshed-views/src/theme.rs": "3fe1c4d30658ff881649d666e15b36e0d3b337ca9aa21e81748d7e12520da824",
+    "scenarios/claims_reopen.scn": "43e0b0e65b2b20fbcf67d42228ea307274530937b7a9cc52898bbfa9ad714236",
+    "scenarios/claims_seed.scn": "d205a50f8f31ff800acc66e63b5e35e865f475238b30fe1e8898016e8f6aab18"
   },
   "artifact_sha256": {
     "qualified-final-tests.log": "686335be512177874de170bd420007baca15e7d51b9256ef86f67ee459937117",
+    "keeper-after.json": "6d6198bc4d1e127a0d28bff85855dc234427661b41f0d6207de071d9ada2a989",
     "doc-audit-precommit.json": "478e05cdb9dd46eba52cffe619b3c7df6194c0a8f3a18c638450ad40a656b0e3",
+    "doc-audit-native-close.json": "3954aa9afa2780632c3cb7edd91ab0bff95a468423c86a1ebec9292a0a2db7c0",
     "lock-delta.json": "49a4d566a10b42433bbd2026b6eb7e3e39e1f2e88cf67872935527f9dae75c27",
+    "native-ui-build.log": "9ede8ccc6d33fa795e7274c74af08a2adc893d801c61f26d8381ba2b2cad15c5",
     "keeper-before.json": "6d6198bc4d1e127a0d28bff85855dc234427661b41f0d6207de071d9ada2a989",
+    "doc-audit-final.json": "478e05cdb9dd46eba52cffe619b3c7df6194c0a8f3a18c638450ad40a656b0e3",
+    "native-ui-tests.log": "3ad6c28d03b1657a743c2d650ca4211d8ec01ac205e1fffa0677310abe512e53",
     "qualified-build.log": "ae54c2733e8439a1744ac84490652b462a8ca149ee5ecd949e9518ba72322123",
-    "doc-audit-final.json": "478e05cdb9dd46eba52cffe619b3c7df6194c0a8f3a18c638450ad40a656b0e3"
+    "native-reopen/01_claims_fresh_reopen.png": "fc6ffdf946778fda98d9a557acf0d67938e4dd0e85da2e42a7cc578e2d5fc00b",
+    "native-reopen/claims-seed-identities.json": "562edca3f29bb45d4cfc5cc400337ef4666ba468caca22b2eadfe61a7d289592",
+    "native-reopen/native.log": "601c3ae2587c724c2107135cac066ee2c989cd613fee0a8011aeeee7ea704e87",
+    "native-reopen/scenario.done": "0b16ec721c17a5059e43ab932d0bd0c2c27b4c2e0194d9ce35b803f7dff7f54e",
+    "native-reopen/launch.json": "16ea109152aa40cd96b84da9723a925e06f19d394cb5ab3c16d5134b7de4263e",
+    "native-reopen/02_claims_fresh_reopen_timeline.png": "bf06ab8848270b339bf07ce79316aba4a4aa8886774ba6b501a854fa9231eba6",
+    "native-seed/01_claims_generated_provenance.png": "8a6802ad330205966725ae157a3707b0baa0c573c5ad505c664c0ad8d3a98789",
+    "native-seed/04_claims_direction_timeline.png": "f98a5d0812339e168a18c57cdf7250ec65a1e19696b04d0b580a1d61f754043b",
+    "native-seed/03_claims_withdrawn_history.png": "c4062e08ce153ebdbd11726d5f7939b3c98fa42df9ff0e2a452cf1a97eaa4b7b",
+    "native-seed/02_claims_ordered_audition.png": "1bc3b003276d92820078709e8f0c60d8e60756c9b72c032ddd452f6b619cc151",
+    "native-seed/claims-seed-identities.json": "562edca3f29bb45d4cfc5cc400337ef4666ba468caca22b2eadfe61a7d289592",
+    "native-seed/native.log": "87ed5f3c2364dd250b9f382cfad5b40e7771e6cde01b8241690b6e72679308b7",
+    "native-seed/scenario.done": "08a6e5f7087132443e6537f47cd04bbef5d0d938965119c2b0d1a9426c00f438",
+    "native-seed/00_claims_personal_reason.png": "bd8695944ac38dfa8783a0ebc9403f4cf81dee9ae6e90bc9c177924bbcf203c2",
+    "native-seed/launch.json": "902dd92af120e09abf1eb8bbb2358e5af5a0dca3c1883afcb1f848c13ca0df30"
   },
-  "external_evidence": "/Users/markik/Code/testing/woodshed/link-model-p3-20261016"
+  "external_evidence": "/Users/markik/Code/testing/woodshed/link-model-p3-20261016",
+  "documentation_audit": {
+    "baseline": "d3659526989ccc4bedb3c1d5cde75b31706ebef5",
+    "new_broken_links": 0,
+    "scope": [
+      "design_docs/2026-07-11_stage_set_tools_plan.md",
+      "design_docs/2026-10-15_woodshed_codex_handoff.md",
+      "design_docs/DOC_README.md"
+    ]
+  }
 }

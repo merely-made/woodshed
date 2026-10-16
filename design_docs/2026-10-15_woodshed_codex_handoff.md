@@ -6,7 +6,7 @@ and kept Claude for design. Every ruling below is Mark's and is settled; do
 not re-decide one. If a task needs a decision that isn't written here, stop
 and ask Mark with concrete options.
 
-**2026-10-16 continuation:** the opened-link work is authorized and in progress
+**2026-10-16 continuation:** the bounded opened-link P3 consumer is qualified
 from root `aba2c7343`. Mere P2 is qualified, the former O1–O8 questions are
 settled as L5–L12 (with independent reasons ruled as L13), and Mere's P3
 Chartulary/shared Graphshell slice is published at `ee324e517`. The
@@ -15,8 +15,13 @@ personal-only withdrawal, generated claims read-only, exact source identity,
 and ordered before/after audition. The root lock alone advances to that supplier;
 other dependency families and nested port locks retain their recorded versions.
 Source `374c75d` includes canonical-clock main `f83d4da`; 784 affected suite
-cases plus five child invocations and the desktop build pass. Native authoring,
-audition and sealed reopening remain pending an unlocked Mac. The older snapshot
+cases plus five child invocations and the desktop build pass. Final source
+`474d10a` adds a visible, accessible note field and repeats all 191 view cases
+and the desktop build. Native seed and fresh-process sealed reopen pass with
+seven reviewed captures: normal text entry, two independent reasons, ordered
+audition with Set unchanged, exact personal withdrawal, and retained source
+UUID/assertion IDs/history in List and Timeline. The Stage plan links the exact
+receipt. Physical audio quality and full P4f remain open. The older snapshot
 and release receipts below remain historical evidence.
 
 ## 1. Historical snapshot as of 2026-10-15
