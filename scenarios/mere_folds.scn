@@ -7,7 +7,6 @@ settle 5
 assert snap practice-saved == true
 assert snap set-cards == 2
 assert snap overview-folds == 0
-act await-fold-save
 act fold-checkpoint-expanded
 capture 01_expanded
 click .overview-fold-select Select members for fold
@@ -18,7 +17,6 @@ click .overview-fold-create Fold selected
 settle 4
 assert snap overview-folds == 1
 assert snap overview-fold-selection == 0
-act await-fold-save
 act fold-checkpoint-one
 capture 02_one_fold
 click .overview-fold-undo Undo fold
@@ -37,7 +35,6 @@ click .overview-fold-create Fold selected
 settle 5
 assert snap overview-folds == 2
 assert snap set-cards == 2
-act await-fold-save
 act fold-checkpoint-two
 capture 05_two_folds
 log Native folds saved

@@ -9,6 +9,29 @@ fn owner(mut session: Value) -> Value {
     let object = session.as_object_mut().unwrap();
     object.remove("overview_presentation_json");
     object.remove("workspace_json");
+    // Stemma serializes owned_visits from a HashSet and bindings from a HashMap.
+    // Compare membership canonically without dropping any event or payload value.
+    if let Some(history) = object.get_mut("practice_history") {
+        if let Some(owners) = history.get_mut("owners").and_then(Value::as_array_mut) {
+            for owner in owners {
+                if let Some(visits) = owner.get_mut("owned_visits").and_then(Value::as_array_mut) {
+                    visits.sort_by_key(|value| value.as_u64().unwrap_or(u64::MAX));
+                }
+            }
+        }
+        if let Some(visits) = history.get_mut("visits").and_then(Value::as_array_mut) {
+            for visit in visits {
+                if let Some(bindings) = visit.get_mut("bindings").and_then(Value::as_array_mut) {
+                    bindings.sort_by_key(|value| {
+                        value
+                            .get("owner")
+                            .and_then(Value::as_u64)
+                            .unwrap_or(u64::MAX)
+                    });
+                }
+            }
+        }
+    }
     session
 }
 fn hash(value: &impl serde::Serialize) -> String {
@@ -90,11 +113,6 @@ fn checkpoint(ui: &UiState, shared: &Shared) -> Result<Value, String> {
     }))
 }
 
-/// Read-only readiness for a bounded scenario wait; never initiates a save.
-pub fn current(ui: &UiState, shared: &Shared) -> bool {
-    checkpoint(ui, shared).is_ok()
-}
-
 pub fn write(ui: &UiState, shared: &Shared, stem: &str) -> bool {
     let result = || -> Result<(), String> {
         if stem.is_empty() || !stem.bytes().all(|c| c.is_ascii_alphanumeric() || c == b'-') {
@@ -118,5 +136,37 @@ pub fn write(ui: &UiState, shared: &Shared, stem: &str) -> bool {
             eprintln!("Fold checkpoint refused: {why}");
             false
         },
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn history_membership_order_is_canonical_but_event_edits_still_differ() {
+        let first = json!({"set":{"cards":[1,2]}, "practice_history":{
+            "owners":[{"identity":"practitioner","owned_visits":[1,0]}],
+            "visits":[{"created_at_ms":123,"context":{"kind":"Staged"},
+                "bindings":[{"owner":1,"forward_child":null},{"owner":0,"forward_child":1}]}]
+        }});
+        let mut reordered = first.clone();
+        reordered["practice_history"]["owners"][0]["owned_visits"] = json!([0, 1]);
+        reordered["practice_history"]["visits"][0]["bindings"]
+            .as_array_mut()
+            .unwrap()
+            .reverse();
+        assert_eq!(owner(first.clone()), owner(reordered.clone()));
+        let mut edited = reordered.clone();
+        edited["practice_history"]["visits"][0]["context"]["kind"] = json!("Completed");
+        assert_ne!(owner(first.clone()), owner(edited));
+        let mut edited = reordered.clone();
+        edited["practice_history"]["visits"][0]["created_at_ms"] = json!(124);
+        assert_ne!(owner(first.clone()), owner(edited));
+        let mut edited = reordered.clone();
+        edited["practice_history"]["owners"][0]["owned_visits"] = json!([0]);
+        assert_ne!(owner(first.clone()), owner(edited));
+        let mut edited = reordered;
+        edited["set"]["cards"] = json!([2, 1]);
+        assert_ne!(owner(first), owner(edited));
     }
 }
