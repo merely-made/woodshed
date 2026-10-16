@@ -100,8 +100,17 @@ From the stack, 2026-10-15:
 - **Counts:** 769 root, 101 Hocket and 262 Redshank tests pass, with every
   `--all-targets` check, the `redshank-web` wasm32 check and the recipe
   binary check.
-- **Next for Codex:** Stage B (`branch = "main"`, committed locks) when Mere's
-  family convention lands. Until then, keep these SHAs.
+- **Stage B landed the same day.** Every Mere, Murm, Genet, Netrender and
+  Knot row now reads `git = "https://github.com/merely-made/<repo>.git",
+  branch = "main"`, with no `www` and no `rev`, per Mere's "Family source
+  convention" (`mere/design_docs/2026-08-12_family_composition_thesis_brief.md`).
+  - The same-repo bridge tables (netrender, and Mere in Redshank) are gone.
+    Dramatis and the non-family forks keep their revisions.
+  - Each committed `Cargo.lock` resolves one source per family repo, and the
+    `murm-wire` split is gone.
+  - **Repinning from now on** is `cargo update -p <any package from the repo>`
+    at each root, then that root's checks, then commit the lock. It is no
+    longer a manifest edit.
 
 The round is defined in
 `mere/design_docs/mere_docs/technical_architecture/2026-10-15_remote_mere_route_spec.md`
