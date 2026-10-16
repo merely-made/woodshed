@@ -940,7 +940,7 @@ pub(super) fn screen(ui: &UiState) -> UiChild {
         )),
         Ok(None) => {},
     }
-    Box::new(el("div", children).attr("class", "relationship-screen"))
+    Box::new(el("div", children).attr("class", "relationship-screen claims-link-inspection"))
 }
 
 #[cfg(test)]
