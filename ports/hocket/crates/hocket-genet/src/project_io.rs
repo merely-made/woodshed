@@ -465,4 +465,31 @@ mod tests {
             assert!(matches!(reply.update.value, ProjectUpdate::Failed { .. }));
         }
     }
+    /// Explicit filesystem fixture; never opens a device or user identity.
+    #[test]
+    #[ignore = "requires an owned HOCKET_PROJECT_NATIVE_FIXTURE_DIR"]
+    fn prepare_native_project_fixture() {
+        let directory = std::path::PathBuf::from(std::env::var_os("HOCKET_PROJECT_NATIVE_FIXTURE_DIR").expect("owned fixture directory"));
+        assert!(directory.is_absolute() && directory.is_dir());
+        let path = directory.join("fixture.hock");
+        let wav = directory.join("reference.wav");
+        assert!(!path.exists() && !wav.exists(), "never overwrite fixture artifacts");
+        let mut session = Session::new_default();
+        let mut history = History::new();
+        let mut media = InMemoryStore::new();
+        let samples: Vec<f32> = (0..48_000).map(|i| [0.25, -0.5, 0.75][i % 3]).collect();
+        let reference = media.put(&samples, 48_000);
+        let phrase = Phrase::new(reference, session.bars_per_phrase, session.bpm, 1);
+        let layer = Layer::new(phrase.id);
+        history.commit(Edit::AppendLayer { track_id: session.tracks[0].id, phrase, layer }, &mut session, 1);
+        let mix = render_mix(&session, &media, &BTreeSet::new(), ExportLength::OneCycle).unwrap();
+        write_stereo_wav(&wav, &mix).unwrap();
+        let bundle = ProjectBundle::new(session, history);
+        pollster::block_on(ProjectStore::new(ZipBackend::open(&path).unwrap()).save(&bundle, &media)).unwrap();
+        let stored = pollster::block_on(ProjectStore::new(ZipBackend::open(&path).unwrap()).load()).unwrap();
+        assert_eq!(stored.bundle, bundle);
+        assert_eq!(stored.media.get(&reference).unwrap().samples.iter().map(|s| s.to_bits()).collect::<Vec<_>>(), samples.iter().map(|s| s.to_bits()).collect::<Vec<_>>());
+        std::fs::write(directory.join("fixture.json"), serde_json::to_vec_pretty(&bundle).unwrap()).unwrap();
+    }
+
 }

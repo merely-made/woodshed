@@ -11,6 +11,8 @@ before any other doc in this directory.
 
 ## Active Plans
 
+- [2026-10-16_native_project_handoff_plan.md](2026-10-16_native_project_handoff_plan.md) — Native file-dialog save/open/export and self-addressed handoff acceptance, isolated custody and fresh-process project reopening.
+
 - [2026-10-16_project_worker_correlation_plan.md](2026-10-16_project_worker_correlation_plan.md) — Implemented and CPU/build qualified: request/session-scoped admission, explicit busy state and stale-reply rejection; 116 tests, all-target checks and desktop build pass. Native handoff qualification remains separate.
 
 - [2026-10-11_firewheel_adoption_plan.md](2026-10-11_firewheel_adoption_plan.md) —
