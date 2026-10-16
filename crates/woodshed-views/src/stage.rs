@@ -14,8 +14,10 @@ use cambium::{
     GraphCanvasSubgraph, GraphCanvasSwatch, GraphViewport, SelectState, TextInput, clickable,
     custom_leaf, el, map_state, select, text, text_field,
 };
+pub use looper::recorder::{
+    RECORDER_MOUNT, RecorderKey, dispatch as dispatch_recorder, projection as recorder_projection,
+};
 pub use looper::{RecorderBuffer, RecorderObservation};
-pub use looper::recorder::{RecorderKey, RECORDER_MOUNT, projection as recorder_projection, dispatch as dispatch_recorder};
 use woodshed_core::arrangement::{GraphArrangement, arrange_graph};
 use woodshed_core::audio::{AudioRequest, CalibrationStatus, TransportState, TunerState};
 use woodshed_core::harmony::KeyedCatalogRef;
@@ -29,8 +31,8 @@ use woodshed_core::settings::{AppSettings, RelatedGraphScope, SettingsPage, Stag
 use woodshed_core::song::SongDoc;
 use woodshed_core::stage_context::{StageNodeId, StageNodeKind};
 use woodshed_core::stage_scene::{
-    SEQUENCE_KIND, StageGraphSnapshot, StageInstanceRef, StageRelationKey, StageRelationRef,
-    StageSceneOptions, stage_scene,
+    StageGraphSnapshot, StageInstanceRef, StageRelationIdentity, StageRelationRef,
+    StageRelationSource, StageSceneOptions, stage_scene,
 };
 use woodshed_core::storage::{AppSection, PersistedSession};
 use woodshed_core::{Lens, ROOT_NAMES, RelatedTarget, StageState, set_from_practice, tunings};
@@ -129,33 +131,28 @@ pub fn related_swatch_from_snapshot(
             key: Some(node.id.clone()),
         })
         .collect();
-    let relations = if expanded {
-        projected
-            .relations
-            .iter()
-            .enumerate()
-            .map(|(index, relation)| {
-                let id = format!(
-                    "{}:{}:{}:{index}",
-                    relation.source,
-                    relation.target,
-                    relation.kind.label()
-                );
-                GraphCanvasRelation {
-                    emphasized: ui.related_relation.as_deref() == Some(id.as_str()),
-                    id,
-                    from: relation.source.clone(),
-                    to: relation.target.clone(),
-                    kind: relation.kind.label().to_string(),
-                    label: relation.explanation.clone(),
-                    route: Vec::new(),
-                    visible: true,
-                }
-            })
-            .collect()
-    } else {
-        compact_relation_summaries(&projected, ui.related_relation.as_deref())
-    };
+    let mut claims_by_id = BTreeMap::new();
+    for relation in &projected.relations {
+        claims_by_id
+            .entry(relation.claim_id.clone())
+            .or_insert(relation);
+    }
+    let relations = claims_by_id
+        .values()
+        .map(|relation| {
+            let id = relation.claim_id.qualified_key();
+            GraphCanvasRelation {
+                emphasized: ui.related_relation.as_deref() == Some(id.as_str()),
+                id,
+                from: relation.provenance.original_from.clone(),
+                to: relation.provenance.original_to.clone(),
+                kind: relation.provenance.original_kind.label().to_string(),
+                label: relation.provenance.original_explanation.clone(),
+                route: Vec::new(),
+                visible: true,
+            }
+        })
+        .collect();
     let (w, h) = if expanded { (300, 210) } else { (232, 120) };
     let mut swatch = GraphCanvasSwatch::new(
         NEIGHBORHOOD_LEAF_KEY,
@@ -266,58 +263,6 @@ fn ordered_pair(a: &str, b: &str) -> (String, String) {
     }
 }
 
-/// A compact swatch draws one route per disclosed pair. Multiplicity remains
-/// in the target label and expands into independent routed cells in the taller
-/// view; drawing the whole fan in 120px obscures both nodes and relationships.
-fn compact_relation_summaries(
-    snapshot: &WoodshedMereSnapshot,
-    selected: Option<&str>,
-) -> Vec<GraphCanvasRelation<String>> {
-    let mut groups = BTreeMap::<(String, String), Vec<_>>::new();
-    for relation in &snapshot.relations {
-        groups
-            .entry(ordered_pair(&relation.source, &relation.target))
-            .or_default()
-            .push(relation);
-    }
-    groups
-        .into_iter()
-        .map(|((from, to), relations)| {
-            let strongest = relations
-                .iter()
-                .max_by_key(|relation| relation.weight)
-                .expect("a relation group is non-empty");
-            let id = format!("mere-pair:{from}:{to}");
-            let mut kinds = relations
-                .iter()
-                .map(|relation| relation.kind.label())
-                .collect::<BTreeSet<_>>()
-                .into_iter()
-                .collect::<Vec<_>>();
-            kinds.sort_unstable();
-            let count = relations.len();
-            GraphCanvasRelation {
-                emphasized: selected == Some(id.as_str()),
-                id,
-                from,
-                to,
-                kind: if count == 1 {
-                    strongest.kind.label().to_string()
-                } else {
-                    format!("{count} relations")
-                },
-                label: if count == 1 {
-                    strongest.explanation.clone()
-                } else {
-                    format!("{}: {}", kinds.join(", "), strongest.explanation)
-                },
-                route: Vec::new(),
-                visible: true,
-            }
-        })
-        .collect()
-}
-
 pub fn related_swatch(ui: &UiState) -> GraphCanvasSwatch<String, &'static str> {
     let snapshot = related_mere_snapshot(ui);
     let mut swatch = related_swatch_from_snapshot(&snapshot, ui, ui.related_expanded);
@@ -367,13 +312,14 @@ pub fn set_graph_snapshot(ui: &UiState) -> StageGraphSnapshot {
     )
 }
 
-/// One derivable Stage relation as the Set inventory presents it. `visible`
-/// means present in this graph view; the relation remains in the snapshot when
-/// false.
+/// One source-qualified Stage relation as the Set inventory presents it.
+/// `visible` is presentation state; hiding it does not change Set or generated
+/// source truth.
 #[derive(Clone, Debug, PartialEq)]
-pub struct SetGraphRelationChoice {
+pub struct SetGraphRelationMember {
     pub reference: StageRelationRef,
-    pub key: StageRelationKey,
+    pub identity: StageRelationIdentity,
+    pub source: StageRelationSource,
     pub pair: String,
     pub relation: String,
     pub explanation: String,
@@ -382,49 +328,111 @@ pub struct SetGraphRelationChoice {
     pub visible: bool,
 }
 
-fn set_graph_relation_visible(ui: &UiState, key: &StageRelationKey) -> bool {
-    let family_visible = key.kind != SEQUENCE_KIND
+fn set_graph_relation_visible(ui: &UiState, identity: &StageRelationIdentity) -> bool {
+    let family_visible = !matches!(identity, StageRelationIdentity::SetSequence { .. })
         || ui
             .app_settings
             .stage
             .shows_relation(woodshedding::rehearsal::SetGraphEdgeKind::Next);
-    family_visible && !ui.set_graph_hidden_relations.contains(key)
+    family_visible && !ui.set_graph_hidden_relations.contains(identity)
 }
 
-/// Every relation the current snapshot can derive, including relations the
-/// user has withheld from this view.
+fn stage_relation_identity_wire_key(identity: &StageRelationIdentity) -> String {
+    let components: Vec<String> = match identity {
+        StageRelationIdentity::SetSequence { from, to } => {
+            vec!["set-sequence".into(), from.0.to_string(), to.0.to_string()]
+        },
+        StageRelationIdentity::Generated {
+            claim_id,
+            from_occurrence,
+            to_occurrence,
+        } => vec![
+            "generated".into(),
+            claim_id.qualified_key(),
+            from_occurrence.0.to_string(),
+            to_occurrence.0.to_string(),
+        ],
+        StageRelationIdentity::Context { kind, from, to } => vec![
+            "context".into(),
+            kind.clone(),
+            from.wire_key(),
+            to.wire_key(),
+        ],
+    };
+    components
+        .iter()
+        .map(|component| format!("{}:{component}", component.len()))
+        .collect::<String>()
+}
+
+/// Authored Set sequence and exact generated claims for the current Set,
+/// including members withheld from this view. Context edges have their own
+/// graph controls and are not part of this inventory.
 pub fn set_graph_relation_choices(
     snapshot: &StageGraphSnapshot,
     ui: &UiState,
-) -> Vec<SetGraphRelationChoice> {
+) -> Vec<SetGraphRelationMember> {
     snapshot
         .relations()
         .into_iter()
         .filter_map(|(reference, _)| {
-            let detail = snapshot.relation_detail(reference, &ui.set)?;
-            let from = ui
-                .set
-                .cards
-                .iter()
-                .position(|card| card.id == detail.key.from)?;
-            let to = ui
-                .set
-                .cards
-                .iter()
-                .position(|card| card.id == detail.key.to)?;
-            let from_card = &ui.set.cards[from];
-            let to_card = &ui.set.cards[to];
-            let visible = set_graph_relation_visible(ui, &detail.key);
-            Some(SetGraphRelationChoice {
+            let detail = snapshot.relation_detail(reference)?;
+            let (pair, identity_visible) = match &detail.source {
+                StageRelationSource::SetSequence { from, to } => {
+                    let from_index = ui.set.cards.iter().position(|card| card.id == *from)?;
+                    let to_index = ui.set.cards.iter().position(|card| card.id == *to)?;
+                    let from_card = &ui.set.cards[from_index];
+                    let to_card = &ui.set.cards[to_index];
+                    (
+                        format!(
+                            "{} {} → {} {}",
+                            from_index + 1,
+                            from_card.label,
+                            to_index + 1,
+                            to_card.label
+                        ),
+                        true,
+                    )
+                },
+                StageRelationSource::Generated {
+                    from_occurrence,
+                    to_occurrence,
+                    ..
+                } => {
+                    let from_index = ui
+                        .set
+                        .cards
+                        .iter()
+                        .position(|card| card.id == *from_occurrence)?;
+                    let to_index = ui
+                        .set
+                        .cards
+                        .iter()
+                        .position(|card| card.id == *to_occurrence)?;
+                    let from_card = &ui.set.cards[from_index];
+                    let to_card = &ui.set.cards[to_index];
+                    (
+                        format!(
+                            "{} {} → {} {}",
+                            from_index + 1,
+                            from_card.label,
+                            to_index + 1,
+                            to_card.label
+                        ),
+                        true,
+                    )
+                },
+                // Context edges have their own foreground/context controls;
+                // the Set inventory is for authored sequence and exact
+                // generated claims between Set occurrences.
+                StageRelationSource::Context { .. } => return None,
+            };
+            let visible = identity_visible && set_graph_relation_visible(ui, &detail.identity);
+            Some(SetGraphRelationMember {
                 reference,
-                key: detail.key,
-                pair: format!(
-                    "{} {} → {} {}",
-                    from + 1,
-                    from_card.label,
-                    to + 1,
-                    to_card.label
-                ),
+                identity: detail.identity,
+                source: detail.source,
+                pair,
                 relation: detail.label,
                 explanation: detail.explanation,
                 authority: detail.authority,
@@ -601,18 +609,20 @@ pub fn set_graph_swatch_from_snapshot(
                 .node_of(to.instance)
                 .map(|node| node.label.as_str())
                 .unwrap_or("node");
-            let (id, visible, emphasized) = if let Some(key) = snapshot.relation_key(reference) {
-                (
-                    reference.key(),
-                    set_graph_relation_visible(ui, &key),
-                    ui.set_graph_relation == Some(reference),
-                )
-            } else {
-                (
+            let (id, visible, emphasized) = match snapshot.relation_source(reference) {
+                Some(StageRelationSource::Context { .. }) | None => (
                     reference.key(),
                     context_relation_visible(ui, snapshot, reference),
                     false,
-                )
+                ),
+                Some(source) => {
+                    let identity = source.identity();
+                    (
+                        reference.key(),
+                        set_graph_relation_visible(ui, &identity),
+                        ui.set_graph_relation == Some(reference),
+                    )
+                },
             };
             Some(GraphCanvasRelation {
                 id,
@@ -833,6 +843,37 @@ pub enum LoopExportRequest {
     CancelReplace(u64),
 }
 
+/// A view-originated intent for the Genet host to admit and durably save.
+/// Views never mutate the owner journal directly because that would report a
+/// success before the session store accepted the new journal.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum PersonalRelationIntent {
+    Assert {
+        expected_source_id: woodshed_core::personal_relations::PersonalRelationSourceId,
+        expected_revision: u64,
+        from: String,
+        to: String,
+        note: Option<String>,
+        at_ms: Option<u64>,
+    },
+    Confirm {
+        expected_source_id: woodshed_core::personal_relations::PersonalRelationSourceId,
+        expected_revision: u64,
+        id: String,
+        from: String,
+        to: String,
+        at_ms: Option<u64>,
+    },
+    Withdraw {
+        expected_source_id: woodshed_core::personal_relations::PersonalRelationSourceId,
+        expected_revision: u64,
+        id: String,
+        from: String,
+        to: String,
+        at_ms: Option<u64>,
+    },
+}
+
 /// Runner state: the portable core slice plus view-layer widget state.
 pub struct UiState {
     /// Host-reflected recorder projection; PCM stays shared and never enters Session.
@@ -873,6 +914,9 @@ pub struct UiState {
     pub overview_reduced_motion: bool,
     pub overview_unrecognized_presentation_json: Option<String>,
     pub practice_history: PracticeHistory,
+    /// Session-owned assertions. The core-owned journal is the authority;
+    /// this field is only the live source handle used by the view adapters.
+    pub personal_relations: Option<woodshed_core::personal_relations::PersonalRelationSource>,
     pub app_settings: AppSettings,
     pub appearance: crate::appearance::AppearanceState,
     pub appearance_notice: Option<String>,
@@ -998,10 +1042,10 @@ pub struct UiState {
     /// this to keep pointer motion on the view-only fast path; Up clears it and
     /// permits the ordinary backend/persistence tail once for the gesture.
     pub set_graph_drag_active: bool,
-    /// Derivable relations withheld from this graph view. Semantic keys survive
-    /// dense scene epochs; the underlying relation remains in the snapshot.
+    /// Source-qualified relations withheld from this graph view. The keys
+    /// survive dense scene epochs and affect only this presentation.
     /// Transient until a named graph-view blueprint owns it.
-    pub set_graph_hidden_relations: BTreeSet<StageRelationKey>,
+    pub set_graph_hidden_relations: BTreeSet<StageRelationIdentity>,
     /// The activated scene relation, qualified by the dense scene epoch.
     pub set_graph_relation: Option<StageRelationRef>,
     /// Note markers the user has pinned as `(string_index, fret)` to keep their
@@ -1018,6 +1062,13 @@ pub struct UiState {
     pub related_expanded: bool,
     /// Activated relation cell in the joined-mere swatch.
     pub related_relation: Option<String>,
+    /// Directed catalog endpoints currently opened in the personal assertion
+    /// reader. `LinkKey` is derived on read; it is not a stored pair object.
+    pub personal_link_pair: Option<(String, String)>,
+    pub personal_link_history: bool,
+    pub personal_link_layout: Option<scenograph::link::OpenedLinkLayout>,
+    pub personal_relation_note: TextInput,
+    pub personal_relation_intents: Vec<PersonalRelationIntent>,
     /// View-local focus in the wider Stage context graph. Focusing a
     /// background material does not change Set order or cursor selection.
     pub context_focus: Option<KeyedCatalogRef>,
@@ -1067,6 +1118,9 @@ pub struct UiState {
     /// What is protecting this session, reported by the store when it opened.
     /// `None` before a store opens at all, which includes a declined gate.
     pub seal: Option<crate::persona::PracticeSeal>,
+    /// A host-owned diagnostic when the personal assertion source could not
+    /// be durably initialized or an exact action was refused.
+    pub personal_relation_notice: Option<String>,
 }
 
 impl Default for UiState {
@@ -1114,6 +1168,7 @@ impl UiState {
             overview_reduced_motion: true,
             overview_unrecognized_presentation_json: None,
             practice_history: PracticeHistory::default(),
+            personal_relations: None,
             app_settings,
             appearance: Default::default(),
             appearance_notice: None,
@@ -1180,6 +1235,11 @@ impl UiState {
             related_hover: None,
             related_expanded: false,
             related_relation: None,
+            personal_link_pair: None,
+            personal_link_history: false,
+            personal_link_layout: None,
+            personal_relation_note: TextInput::new(String::new()),
+            personal_relation_intents: Vec::new(),
             context_focus: None,
             arpeggio_source: None,
             discovery_notice: None,
@@ -1203,6 +1263,7 @@ impl UiState {
             persona: None,
             persona_switch_requested: false,
             seal: None,
+            personal_relation_notice: None,
             stage,
         }
     }
@@ -1342,6 +1403,19 @@ impl UiState {
                 if snapshot.relation(reference).is_some() {
                     self.set_graph_relation =
                         (self.set_graph_relation != Some(reference)).then_some(reference);
+                    if self.set_graph_relation == Some(reference) {
+                        if let Some(StageRelationSource::Generated { relation, .. }) =
+                            snapshot.relation_source(reference)
+                        {
+                            self.personal_link_pair = Some((
+                                relation.provenance.original_from.clone(),
+                                relation.provenance.original_to.clone(),
+                            ));
+                            self.personal_link_history = false;
+                            self.personal_link_layout = None;
+                            self.personal_relation_notice = None;
+                        }
+                    }
                 }
             },
             GraphCanvasEvent::Pan { delta } => {
@@ -1362,19 +1436,19 @@ impl UiState {
     pub fn toggle_set_graph_relation(
         &mut self,
         snapshot: &StageGraphSnapshot,
-        key: StageRelationKey,
+        identity: StageRelationIdentity,
     ) {
-        let now_hidden = if self.set_graph_hidden_relations.remove(&key) {
+        let now_hidden = if self.set_graph_hidden_relations.remove(&identity) {
             false
         } else {
-            self.set_graph_hidden_relations.insert(key.clone());
+            self.set_graph_hidden_relations.insert(identity.clone());
             true
         };
         if now_hidden
             && self
                 .set_graph_relation
-                .and_then(|reference| snapshot.relation_key(reference))
-                .is_some_and(|selected| selected == key)
+                .and_then(|reference| snapshot.relation_identity(reference))
+                .is_some_and(|selected| selected == identity)
         {
             self.set_graph_relation = None;
         }
@@ -1394,12 +1468,23 @@ impl UiState {
 
     /// Withhold every currently derivable relation from this graph view.
     pub fn hide_all_set_graph_relations(&mut self, snapshot: &StageGraphSnapshot) {
-        self.set_graph_hidden_relations.extend(
-            snapshot
-                .relations()
-                .into_iter()
-                .filter_map(|(reference, _)| snapshot.relation_key(reference)),
-        );
+        self.set_graph_hidden_relations
+            .extend(
+                snapshot
+                    .relations()
+                    .into_iter()
+                    .filter_map(|(reference, _)| {
+                        matches!(
+                            snapshot.relation_source(reference),
+                            Some(
+                                StageRelationSource::SetSequence { .. }
+                                    | StageRelationSource::Generated { .. }
+                            )
+                        )
+                        .then(|| snapshot.relation_identity(reference))
+                        .flatten()
+                    }),
+            );
         self.set_graph_relation = None;
     }
 
@@ -2075,6 +2160,10 @@ impl UiState {
             .clone()
             .or_else(|| OverviewPresentation::capture(self).to_json());
         session.catalog_explorations = self.catalog_explorations.clone();
+        session.personal_relations = self
+            .personal_relations
+            .as_ref()
+            .map(woodshed_core::personal_relations::PersonalRelationSource::persisted);
         session.active_exploration = Some(self.capture_exploration());
         session.workspace_json = Some(
             self.workspace
@@ -2098,6 +2187,10 @@ impl UiState {
         self.musical_context = session.musical_context.normalized();
         self.relationship_reading_json = session.relationship_reading_json.clone();
         self.catalog_explorations = session.catalog_explorations.clone();
+        self.personal_relations = session
+            .personal_relations
+            .clone()
+            .map(woodshed_core::personal_relations::PersonalRelationSource::restore);
         self.rehearsal_owner = None;
         self.rehearsal_stage = None;
         self.rehearsal_observed_midi = None;
@@ -3624,6 +3717,54 @@ mod evidence_tests {
     }
 
     #[test]
+    fn selecting_set_generated_relation_opens_its_original_claim_pair() {
+        let mut ui = UiState::new();
+        ui.stage.set_lens(Lens::Chords);
+        let major = ui
+            .stage
+            .chords()
+            .iter()
+            .position(|chord| chord.name == "Major")
+            .unwrap();
+        ui.stage.select_chord(major);
+        ui.stage_current(None);
+        let major_seven = ui
+            .stage
+            .chords()
+            .iter()
+            .position(|chord| chord.name == "Major 7")
+            .unwrap();
+        ui.stage.select_chord(major_seven);
+        ui.stage_current(None);
+
+        let snapshot = set_graph_snapshot(&ui);
+        let (reference, relation) = snapshot
+            .relations()
+            .into_iter()
+            .find_map(
+                |(reference, _)| match snapshot.relation_source(reference)? {
+                    StageRelationSource::Generated { relation, .. } => Some((reference, relation)),
+                    StageRelationSource::SetSequence { .. }
+                    | StageRelationSource::Context { .. } => None,
+                },
+            )
+            .expect("the two catalog chords have a generated claim");
+        let expected_pair = (
+            relation.provenance.original_from.clone(),
+            relation.provenance.original_to.clone(),
+        );
+        let set_before = serde_json::to_value(&ui.set).unwrap();
+
+        ui.handle_set_graph_event(
+            &snapshot,
+            GraphCanvasEvent::RelationActivate(reference.key()),
+        );
+
+        assert_eq!(ui.personal_link_pair, Some(expected_pair));
+        assert_eq!(serde_json::to_value(&ui.set).unwrap(), set_before);
+    }
+
+    #[test]
     fn stage_graph_pan_and_zoom_stay_view_local_and_bounded() {
         let mut ui = staged_set();
         let snapshot = set_graph_snapshot(&ui);
@@ -3698,6 +3839,25 @@ mod evidence_tests {
         let choices = set_graph_relation_choices(&snapshot, &ui);
         assert!(choices.len() > 2, "sequence plus catalog relations");
         assert!(choices.iter().all(|choice| choice.visible));
+        let identities = choices
+            .iter()
+            .map(|choice| choice.identity.clone())
+            .collect::<BTreeSet<_>>();
+        assert_eq!(identities.len(), choices.len());
+        assert!(choices.iter().any(|choice| matches!(
+            (&choice.identity, &choice.source),
+            (
+                StageRelationIdentity::SetSequence { from, to },
+                StageRelationSource::SetSequence { from: source_from, to: source_to }
+            ) if from == source_from && to == source_to
+        )));
+        assert!(choices.iter().filter(|choice| matches!(
+            (&choice.identity, &choice.source),
+            (
+                StageRelationIdentity::Generated { claim_id, from_occurrence, to_occurrence },
+                StageRelationSource::Generated { relation, from_occurrence: source_from, to_occurrence: source_to }
+            ) if claim_id == &relation.claim_id && from_occurrence == source_from && to_occurrence == source_to
+        )).count() > 0);
         assert!(choices.iter().all(|choice| {
             !choice.pair.is_empty()
                 && !choice.relation.is_empty()
@@ -3707,7 +3867,7 @@ mod evidence_tests {
 
         let hidden = choices[1].clone();
         ui.set_graph_relation = Some(hidden.reference);
-        ui.toggle_set_graph_relation(&snapshot, hidden.key.clone());
+        ui.toggle_set_graph_relation(&snapshot, hidden.identity.clone());
         assert_eq!(
             snapshot.relations().len(),
             choices.len(),
@@ -3801,7 +3961,25 @@ mod evidence_tests {
 
         assert!(snapshot.nodes.len() > compact.graph.nodes.len());
         assert!(compact.graph.nodes.len() <= 7);
-        assert!(compact.relations.len() <= compact.graph.nodes.len().saturating_sub(1));
+        for swatch in [&compact, &expanded] {
+            let ids = swatch
+                .relations
+                .iter()
+                .map(|relation| relation.id.as_str())
+                .collect::<BTreeSet<_>>();
+            assert_eq!(
+                ids.len(),
+                swatch.relations.len(),
+                "each route has one exact claim id"
+            );
+            assert!(swatch.relations.iter().all(|relation| {
+                snapshot.relations.iter().any(|claim| {
+                    relation.id == claim.claim_id.qualified_key()
+                        && relation.from == claim.provenance.original_from
+                        && relation.to == claim.provenance.original_to
+                })
+            }));
+        }
         assert!(expanded.graph.nodes.len() <= 12);
         assert!(expanded.graph.nodes.len() >= compact.graph.nodes.len());
         for swatch in [&compact, &expanded] {

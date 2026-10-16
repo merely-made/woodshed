@@ -296,6 +296,8 @@ pub struct Shared {
     /// frame-spaced scenario pointer verbs.
     pub drag_frame_metrics: DragFrameMetrics,
     pub scenario_drag_origin: Option<(f32, f32)>,
+    /// Exact Set serialization captured by a Claims audition scenario probe.
+    pub scenario_claims_set_before_audition: Option<String>,
 }
 
 impl Shared {
@@ -352,6 +354,7 @@ impl Shared {
             full_dispatch_syncs: 0,
             drag_frame_metrics: DragFrameMetrics::default(),
             scenario_drag_origin: None,
+            scenario_claims_set_before_audition: None,
         }))
     }
 

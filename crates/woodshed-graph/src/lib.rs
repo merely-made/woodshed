@@ -35,6 +35,12 @@ pub const CONTAINS: u16 = 0;
 pub const FITS_IN_SCALE: u16 = 1;
 /// An arpeggio is the sequential realization of a chord formula.
 pub const REALIZES: u16 = 2;
+/// A user-authored personal relation. Source provenance lives in the
+/// assertion owner; this app-private predicate only says the endpoints are
+/// related and carries no generated/catalog truth.
+pub const RELATED: u16 = 3;
+/// Stable predicate IRI for the app-private personal `related` relation.
+pub const RELATED_PREDICATE_IRI: &str = "urn:woodshed:relation:related";
 
 /// Catalog kind carried by a related-material result. This deliberately names
 /// catalog identities rather than a configured practice Card.
@@ -82,6 +88,203 @@ pub enum RelationAuthority {
     Evidence,
 }
 
+/// The catalog/rule owner that gives a generated reason its stable namespace.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub enum GeneratedClaimOwner {
+    /// Authored in the Woodshed theory catalog.
+    Catalog,
+    /// Reproducibly derived by a named Woodshed rule family.
+    Computed,
+    /// Projected from the session's retained practice history.
+    Evidence,
+}
+
+impl GeneratedClaimOwner {
+    /// Stable wire token for this relation source namespace.
+    pub fn as_str(self) -> &'static str {
+        match self {
+            Self::Catalog => "catalog",
+            Self::Computed => "computed",
+            Self::Evidence => "evidence",
+        }
+    }
+}
+
+/// Source-owned method used to produce a generated claim. The version changes
+/// only when the meaning of the named extraction or computation changes.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub struct GeneratedMethod {
+    pub iri: &'static str,
+    pub version: u16,
+}
+
+/// Exact source material available to explain a generated claim. These are
+/// references, not copied catalog payloads or claims of authorship.
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub enum GeneratedEvidenceRef {
+    /// A catalog relation from the source graph.
+    CatalogRelation {
+        from: String,
+        to: String,
+        kind: RelationKind,
+    },
+    /// Catalog formulas used as the inputs to a deterministic comparison.
+    CatalogMaterial { id: String },
+    /// The exact adjacent roles in a named progression that support a
+    /// UsedTogether claim.
+    ProgressionAdjacency {
+        progression_id: String,
+        left_role_ordinal: usize,
+        right_role_ordinal: usize,
+    },
+    /// An aggregate of retained practice transitions. `None` means the
+    /// projecting caller did not supply a count; no event identity is implied.
+    PracticeTransitionAggregate {
+        from: String,
+        to: String,
+        basis: PracticeEvidenceBasis,
+        count: Option<u64>,
+    },
+}
+
+/// Which practice-history aggregate supports an observed relation.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub enum PracticeEvidenceBasis {
+    /// The retained history recorded adjacent visits along a walked path.
+    WalkedPath,
+    /// The practitioner explicitly staged one material from another.
+    StatedFromReason,
+    /// A caller used the legacy evidence constructor without identifying its
+    /// history projection semantics.
+    Unspecified,
+}
+
+/// Typed provenance retained with one generated reason. The `original_*`
+/// fields describe its source assertion even when a reverse display row swaps
+/// `MaterialRelation.source`, `.target`, and `.kind`.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct GeneratedClaimProvenance {
+    pub original_from: String,
+    pub original_to: String,
+    pub original_kind: RelationKind,
+    pub original_explanation: String,
+    pub method: GeneratedMethod,
+    pub evidence: Vec<GeneratedEvidenceRef>,
+}
+
+const CATALOG_RELATION_METHOD: GeneratedMethod = GeneratedMethod {
+    iri: "urn:woodshed:method:catalog-progression-membership",
+    version: 1,
+};
+const CATALOG_ADJACENCY_METHOD: GeneratedMethod = GeneratedMethod {
+    iri: "urn:woodshed:method:catalog-progression-adjacency",
+    version: 1,
+};
+const COMPUTED_RELATION_METHOD: GeneratedMethod = GeneratedMethod {
+    iri: "urn:woodshed:method:computed-formula-relations",
+    version: 1,
+};
+const PRACTICE_TRANSITION_METHOD: GeneratedMethod = GeneratedMethod {
+    iri: "urn:woodshed:method:practice-relation-aggregate",
+    version: 1,
+};
+const PRACTICE_PATH_METHOD: GeneratedMethod = GeneratedMethod {
+    iri: "urn:woodshed:method:practice-path-transition-aggregate",
+    version: 1,
+};
+const PRACTICE_REASON_METHOD: GeneratedMethod = GeneratedMethod {
+    iri: "urn:woodshed:method:practice-stated-source-aggregate",
+    version: 1,
+};
+
+fn provenance_for(
+    source: &str,
+    target: &str,
+    kind: RelationKind,
+    explanation: &str,
+    evidence: Option<Vec<GeneratedEvidenceRef>>,
+) -> GeneratedClaimProvenance {
+    let (method, evidence) = if let Some(evidence) = evidence {
+        let method = if kind == RelationKind::UsedTogether {
+            CATALOG_ADJACENCY_METHOD
+        } else {
+            CATALOG_RELATION_METHOD
+        };
+        (method, evidence)
+    } else {
+        match kind.authority() {
+            RelationAuthority::Catalog => (
+                CATALOG_RELATION_METHOD,
+                vec![GeneratedEvidenceRef::CatalogRelation {
+                    from: source.to_owned(),
+                    to: target.to_owned(),
+                    kind,
+                }],
+            ),
+            RelationAuthority::Computed => (
+                COMPUTED_RELATION_METHOD,
+                vec![
+                    GeneratedEvidenceRef::CatalogMaterial {
+                        id: source.to_owned(),
+                    },
+                    GeneratedEvidenceRef::CatalogMaterial {
+                        id: target.to_owned(),
+                    },
+                ],
+            ),
+            RelationAuthority::Evidence => (
+                PRACTICE_TRANSITION_METHOD,
+                vec![GeneratedEvidenceRef::PracticeTransitionAggregate {
+                    from: source.to_owned(),
+                    to: target.to_owned(),
+                    basis: PracticeEvidenceBasis::Unspecified,
+                    count: None,
+                }],
+            ),
+        }
+    };
+    GeneratedClaimProvenance {
+        original_from: source.to_owned(),
+        original_to: target.to_owned(),
+        original_kind: kind,
+        original_explanation: explanation.to_owned(),
+        method,
+        evidence,
+    }
+}
+
+/// Stable source-owned identity for one generated relation reason. Inverse
+/// display rows share this identity; independent reasons carry different keys.
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub struct GeneratedClaimId {
+    pub owner: GeneratedClaimOwner,
+    pub key: String,
+}
+
+impl GeneratedClaimId {
+    /// An unambiguous, source-qualified token for portable consumers.
+    pub fn qualified_key(&self) -> String {
+        format!("{}:{}", self.owner.as_str(), self.key)
+    }
+
+    fn new(owner: GeneratedClaimOwner, components: &[&str]) -> Self {
+        let key = components
+            .iter()
+            .map(|component| format!("{}:{component}", component.len()))
+            .collect::<String>();
+        Self { owner, key }
+    }
+
+    fn for_relation(source: &str, target: &str, kind: RelationKind) -> Self {
+        let owner = match kind.authority() {
+            RelationAuthority::Catalog => GeneratedClaimOwner::Catalog,
+            RelationAuthority::Computed => GeneratedClaimOwner::Computed,
+            RelationAuthority::Evidence => GeneratedClaimOwner::Evidence,
+        };
+        Self::new(owner, &[kind.stable_key(), source, target])
+    }
+}
+
 /// The relation vocabulary, root-independent by construction.
 ///
 /// Every kind here relates catalog *formulas*, which is why none of them names
@@ -127,6 +330,33 @@ pub enum RelationKind {
 }
 
 impl RelationKind {
+    fn stable_key(self) -> &'static str {
+        match self {
+            Self::ContainsMaterial => "contains-material",
+            Self::AppearsIn => "appears-in",
+            Self::FitsInScale => "fits-in-scale",
+            Self::ScaleAdmits => "scale-admits",
+            Self::Realizes => "realizes",
+            Self::RealizedBy => "realized-by",
+            Self::ExtendedBy => "extended-by",
+            Self::Extends => "extends",
+            Self::Alters => "alters",
+            Self::SharesTones => "shares-tones",
+            Self::VoiceLeadsTo => "voice-leads-to",
+            Self::ModeOf => "mode-of",
+            Self::ScaleNeighbor => "scale-neighbor",
+            Self::UsedTogether => "used-together",
+            Self::PracticedBefore => "practiced-before",
+            Self::PracticedAfter => "practiced-after",
+        }
+    }
+
+    /// Stable source-owned predicate identifier for this relation kind.
+    /// This is protocol vocabulary; use [`Self::label`] only for display.
+    pub fn predicate_iri(self) -> String {
+        format!("urn:woodshed:relation:{}", self.stable_key())
+    }
+
     /// Short human name, for an edge explanation or a relation filter.
     pub fn label(self) -> &'static str {
         match self {
@@ -211,6 +441,9 @@ impl RelationKind {
 /// chooses what to show first without deleting the rest.
 #[derive(Clone, Debug, PartialEq)]
 pub struct MaterialRelation {
+    /// Stable identity owned by the catalog or computing rule, never a view
+    /// counter or a Chartulary assertion ID.
+    pub claim_id: GeneratedClaimId,
     pub source: String,
     pub target: String,
     pub kind: RelationKind,
@@ -224,6 +457,8 @@ pub struct MaterialRelation {
     /// Why, in the player's words.
     pub explanation: String,
     pub authority: RelationAuthority,
+    /// Original generated assertion direction and typed source evidence.
+    pub provenance: GeneratedClaimProvenance,
 }
 
 impl MaterialRelation {
@@ -234,14 +469,47 @@ impl MaterialRelation {
         weight: u16,
         explanation: impl Into<String>,
     ) -> Self {
+        let source = source.into();
+        let target = target.into();
+        let explanation = explanation.into();
         Self {
-            source: source.into(),
-            target: target.into(),
+            claim_id: GeneratedClaimId::for_relation(&source, &target, kind),
+            provenance: provenance_for(&source, &target, kind, &explanation, None),
+            source,
+            target,
             kind,
             weight,
             distance: None,
             shared_tones: None,
-            explanation: explanation.into(),
+            explanation,
+            authority: kind.authority(),
+        }
+    }
+
+    fn with_claim_components(
+        source: impl Into<String>,
+        target: impl Into<String>,
+        kind: RelationKind,
+        weight: u16,
+        explanation: impl Into<String>,
+        reason_components: &[&str],
+        evidence: Vec<GeneratedEvidenceRef>,
+    ) -> Self {
+        let source = source.into();
+        let target = target.into();
+        let mut components: Vec<&str> = vec![kind.stable_key(), source.as_str(), target.as_str()];
+        components.extend_from_slice(reason_components);
+        let explanation = explanation.into();
+        Self {
+            claim_id: GeneratedClaimId::new(GeneratedClaimOwner::Catalog, &components),
+            provenance: provenance_for(&source, &target, kind, &explanation, Some(evidence)),
+            source,
+            target,
+            kind,
+            weight,
+            distance: None,
+            shared_tones: None,
+            explanation,
             authority: kind.authority(),
         }
     }
@@ -262,10 +530,39 @@ impl MaterialRelation {
             RelationAuthority::Evidence,
             "an observed relation must use an evidence kind"
         );
-        Self {
+        let mut relation = Self {
             authority: RelationAuthority::Evidence,
             ..Self::new(source, target, kind, weight, explanation)
-        }
+        };
+        relation.claim_id.owner = GeneratedClaimOwner::Evidence;
+        relation
+    }
+
+    /// Build an observed aggregate relation while retaining its exact available
+    /// traversal count as typed evidence. The count is an aggregate, not an
+    /// identity for any individual practice event.
+    pub fn evidence_with_count(
+        source: impl Into<String>,
+        target: impl Into<String>,
+        kind: RelationKind,
+        weight: u16,
+        explanation: impl Into<String>,
+        basis: PracticeEvidenceBasis,
+        count: u64,
+    ) -> Self {
+        let mut relation = Self::evidence(source, target, kind, weight, explanation);
+        relation.provenance.method = match basis {
+            PracticeEvidenceBasis::WalkedPath => PRACTICE_PATH_METHOD,
+            PracticeEvidenceBasis::StatedFromReason => PRACTICE_REASON_METHOD,
+            PracticeEvidenceBasis::Unspecified => PRACTICE_TRANSITION_METHOD,
+        };
+        relation.provenance.evidence = vec![GeneratedEvidenceRef::PracticeTransitionAggregate {
+            from: relation.provenance.original_from.clone(),
+            to: relation.provenance.original_to.clone(),
+            basis,
+            count: Some(count),
+        }];
+        relation
     }
 
     fn with_distance(mut self, distance: f32) -> Self {
@@ -622,7 +919,18 @@ impl RelationBuilder {
         reverse: String,
     ) {
         let forward_record = MaterialRelation::new(source, target, kind, weight, forward);
-        let reverse_record = MaterialRelation::new(target, source, kind.inverse(), weight, reverse);
+        let reverse_record = MaterialRelation {
+            claim_id: forward_record.claim_id.clone(),
+            provenance: forward_record.provenance.clone(),
+            source: target.to_owned(),
+            target: source.to_owned(),
+            kind: kind.inverse(),
+            weight,
+            distance: None,
+            shared_tones: None,
+            explanation: reverse,
+            authority: kind.authority(),
+        };
         for record in [forward_record, reverse_record] {
             self.by_source
                 .entry(record.source.clone())
@@ -645,10 +953,13 @@ impl RelationBuilder {
                 .filter_map(|(target, mut relations)| {
                     let kind = *kinds.get(&target)?;
                     relations.sort_by(|a, b| {
-                        (std::cmp::Reverse(a.weight), a.kind)
-                            .cmp(&(std::cmp::Reverse(b.weight), b.kind))
+                        (std::cmp::Reverse(a.weight), a.kind, &a.claim_id).cmp(&(
+                            std::cmp::Reverse(b.weight),
+                            b.kind,
+                            &b.claim_id,
+                        ))
                     });
-                    relations.dedup_by(|a, b| a.kind == b.kind && a.explanation == b.explanation);
+                    relations.dedup_by(|a, b| a.claim_id == b.claim_id);
                     let best = relations.first().map(|r| r.weight).unwrap_or_default();
                     // Multiplicity is evidence of relevance, so it lifts the
                     // rank a little. It never merges the relations: the bonus
@@ -907,7 +1218,7 @@ fn add_scale_relations(builder: &mut RelationBuilder) {
 /// is a different claim from any tone-counting rule and stays a separate record.
 fn add_progression_adjacency(builder: &mut RelationBuilder) {
     for progression in progression::catalog() {
-        for pair in progression.roles.windows(2) {
+        for (adjacency_index, pair) in progression.roles.windows(2).enumerate() {
             let (a, b) = (
                 pair[0].quality.chord_formula_name(),
                 pair[1].quality.chord_formula_name(),
@@ -915,12 +1226,20 @@ fn add_progression_adjacency(builder: &mut RelationBuilder) {
             if a == b {
                 continue;
             }
-            builder.add(MaterialRelation::new(
+            let progression_key = progression_id(progression.name);
+            let adjacency_key = adjacency_index.to_string();
+            builder.add(MaterialRelation::with_claim_components(
                 chord_id(a),
                 chord_id(b),
                 RelationKind::UsedTogether,
                 84,
                 format!("Adjacent in {}", progression.name),
+                &[&progression_key, &adjacency_key],
+                vec![GeneratedEvidenceRef::ProgressionAdjacency {
+                    progression_id: progression_key.clone(),
+                    left_role_ordinal: adjacency_index,
+                    right_role_ordinal: adjacency_index + 1,
+                }],
             ));
         }
     }
@@ -1145,7 +1464,188 @@ mod tests {
     }
 
     #[test]
+    fn generated_reason_identity_survives_inverse_display_and_keeps_independent_reasons() {
+        let forward = relations_between(&chord_id("Major"), &chord_id("Major 7"));
+        let reverse = relations_between(&chord_id("Major 7"), &chord_id("Major"));
+        for relation in &forward {
+            let inverse = reverse
+                .iter()
+                .find(|candidate| candidate.claim_id == relation.claim_id)
+                .expect("the inverse display row preserves the original reason ID");
+            assert_eq!(inverse.claim_id.owner, relation.claim_id.owner);
+            if relation.authority == RelationAuthority::Computed {
+                assert!(relation.claim_id.qualified_key().starts_with("computed:"));
+            }
+        }
+
+        let from = chord_id("Major");
+        let to = chord_id("Major 7");
+        let mut builder = RelationBuilder::default();
+        for progression in ["progression:ii-V-I", "progression:turnaround"] {
+            builder.add(MaterialRelation::with_claim_components(
+                &from,
+                &to,
+                RelationKind::UsedTogether,
+                84,
+                "Adjacent in the progression".to_owned(),
+                &[progression, "0"],
+                vec![GeneratedEvidenceRef::ProgressionAdjacency {
+                    progression_id: progression.to_owned(),
+                    left_role_ordinal: 0,
+                    right_role_ordinal: 1,
+                }],
+            ));
+        }
+        let names = HashMap::from([
+            (from.clone(), "Major".to_owned()),
+            (to.clone(), "Major 7".to_owned()),
+        ]);
+        let kinds = HashMap::from([
+            (from.clone(), CatalogKind::Chord),
+            (to.clone(), CatalogKind::Chord),
+        ]);
+        let index = builder.finish(&names, &kinds);
+        let reasons = &index[&from][0].relations;
+        assert_eq!(reasons.len(), 2, "independent progression reasons survive");
+        assert_ne!(reasons[0].claim_id, reasons[1].claim_id);
+        assert!(
+            reasons
+                .iter()
+                .all(|reason| reason.kind == RelationKind::UsedTogether)
+        );
+        let inverse_reasons = &index[&to][0].relations;
+        assert_eq!(inverse_reasons.len(), 2);
+        let mut evidence_progressions = Vec::new();
+        for reason in reasons {
+            assert_eq!(reason.provenance.original_kind, RelationKind::UsedTogether);
+            assert_eq!(
+                reason.provenance.method, CATALOG_ADJACENCY_METHOD,
+                "catalog adjacency names its source method"
+            );
+            let [
+                GeneratedEvidenceRef::ProgressionAdjacency {
+                    progression_id,
+                    left_role_ordinal,
+                    right_role_ordinal,
+                },
+            ] = reason.provenance.evidence.as_slice()
+            else {
+                panic!("one exact progression adjacency backs each reason");
+            };
+            evidence_progressions.push(progression_id.clone());
+            assert_eq!((*left_role_ordinal, *right_role_ordinal), (0, 1));
+            assert!(inverse_reasons.iter().any(|inverse| {
+                inverse.claim_id == reason.claim_id && inverse.provenance == reason.provenance
+            }));
+        }
+        evidence_progressions.sort();
+        assert_eq!(
+            evidence_progressions,
+            ["progression:ii-V-I", "progression:turnaround"]
+        );
+    }
+
+    #[test]
+    fn generated_provenance_keeps_original_direction_and_typed_computation_inputs() {
+        let forward = relations_between(&chord_id("Major"), &chord_id("Major 7"));
+        let reverse = relations_between(&chord_id("Major 7"), &chord_id("Major"));
+        let relation = forward
+            .iter()
+            .find(|relation| relation.kind == RelationKind::SharesTones)
+            .unwrap();
+        let inverse = reverse
+            .iter()
+            .find(|candidate| candidate.claim_id == relation.claim_id)
+            .unwrap();
+
+        assert_eq!(relation.provenance.original_from, chord_id("Major"));
+        assert_eq!(relation.provenance.original_to, chord_id("Major 7"));
+        assert_eq!(relation.provenance.original_kind, RelationKind::SharesTones);
+        assert_eq!(
+            relation.provenance.original_explanation,
+            relation.explanation
+        );
+        assert_eq!(relation.provenance.method, COMPUTED_RELATION_METHOD);
+        assert_eq!(
+            relation.provenance.evidence,
+            vec![
+                GeneratedEvidenceRef::CatalogMaterial {
+                    id: chord_id("Major"),
+                },
+                GeneratedEvidenceRef::CatalogMaterial {
+                    id: chord_id("Major 7"),
+                },
+            ]
+        );
+        assert_eq!(inverse.provenance, relation.provenance);
+        assert_eq!(inverse.source, relation.target);
+        assert_eq!(inverse.target, relation.source);
+    }
+
+    #[test]
+    fn observed_transition_provenance_names_the_aggregate_without_inventing_event_ids() {
+        let undated = MaterialRelation::evidence(
+            "scale:Dorian",
+            "chord:Minor 7",
+            RelationKind::PracticedAfter,
+            91,
+            "Practiced next 1 times",
+        );
+        assert_eq!(undated.provenance.method, PRACTICE_TRANSITION_METHOD);
+        assert_eq!(
+            undated.provenance.evidence,
+            vec![GeneratedEvidenceRef::PracticeTransitionAggregate {
+                from: "scale:Dorian".into(),
+                to: "chord:Minor 7".into(),
+                basis: PracticeEvidenceBasis::Unspecified,
+                count: None,
+            }]
+        );
+        assert_eq!(
+            undated.provenance.method.iri,
+            "urn:woodshed:method:practice-relation-aggregate"
+        );
+
+        let counted = MaterialRelation::evidence_with_count(
+            "scale:Dorian",
+            "chord:Minor 7",
+            RelationKind::PracticedAfter,
+            91,
+            "Practiced next once",
+            PracticeEvidenceBasis::WalkedPath,
+            1,
+        );
+        assert_eq!(
+            counted.provenance.method.iri,
+            "urn:woodshed:method:practice-path-transition-aggregate"
+        );
+        assert_eq!(
+            counted.provenance.evidence,
+            vec![GeneratedEvidenceRef::PracticeTransitionAggregate {
+                from: "scale:Dorian".into(),
+                to: "chord:Minor 7".into(),
+                basis: PracticeEvidenceBasis::WalkedPath,
+                count: Some(1),
+            }]
+        );
+    }
+
+    #[test]
     fn relations_carry_the_authority_that_produced_them() {
+        let contains = relations_between(&progression_id("ii-V-I"), &chord_id("Minor 7"))
+            .into_iter()
+            .find(|relation| relation.kind == RelationKind::ContainsMaterial)
+            .expect("the progression's graph edge is retained as a catalog claim");
+        assert_eq!(contains.provenance.method, CATALOG_RELATION_METHOD);
+        assert_eq!(
+            contains.provenance.evidence,
+            vec![GeneratedEvidenceRef::CatalogRelation {
+                from: progression_id("ii-V-I"),
+                to: chord_id("Minor 7"),
+                kind: RelationKind::ContainsMaterial,
+            }]
+        );
+
         // Authored by a progression...
         let together = relations_between(&chord_id("Minor 7"), &chord_id("Dominant 7"));
         let authored = together
@@ -1163,6 +1663,34 @@ mod tests {
                 .filter(|r| r.kind != RelationKind::UsedTogether)
                 .all(|r| r.authority == RelationAuthority::Computed)
         );
+    }
+
+    #[test]
+    fn relation_predicate_iris_are_stable_protocol_ids_not_display_labels() {
+        assert_eq!(
+            RelationKind::UsedTogether.predicate_iri(),
+            "urn:woodshed:relation:used-together"
+        );
+        assert_eq!(
+            RelationKind::PracticedAfter.predicate_iri(),
+            "urn:woodshed:relation:practiced-after"
+        );
+        assert_ne!(
+            RelationKind::PracticedAfter.predicate_iri(),
+            RelationKind::PracticedAfter.label()
+        );
+        assert_eq!(
+            RELATED_PREDICATE_IRI, "urn:woodshed:relation:related",
+            "the personal app relation uses the same source-owned predicate namespace"
+        );
+        let mut predicates = RelationKind::DETERMINISTIC
+            .into_iter()
+            .chain([RelationKind::PracticedBefore, RelationKind::PracticedAfter])
+            .map(RelationKind::predicate_iri)
+            .collect::<Vec<_>>();
+        predicates.sort();
+        predicates.dedup();
+        assert_eq!(predicates.len(), RelationKind::DETERMINISTIC.len() + 2);
     }
 
     #[test]

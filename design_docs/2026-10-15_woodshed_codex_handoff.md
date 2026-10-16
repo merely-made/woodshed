@@ -6,6 +6,16 @@ and kept Claude for design. Every ruling below is Mark's and is settled; do
 not re-decide one. If a task needs a decision that isn't written here, stop
 and ask Mark with concrete options.
 
+**2026-10-16 continuation:** the opened-link work is authorized and in progress
+from root `aba2c7343`. Mere P2 is qualified, the former O1–O8 questions are
+settled as L5–L12 (with independent reasons ruled as L13), and Mere's P3
+Chartulary/shared Graphshell slice is published at `ee324e517`. The
+[Stage plan](2026-07-11_stage_set_tools_plan.md) owns Woodshed's consumer work:
+personal-only withdrawal, generated claims read-only, exact source identity,
+and ordered before/after audition. The root lock alone advances to that supplier;
+other dependency families and nested port locks retain their recorded versions.
+The older snapshot and release receipts below remain historical evidence.
+
 ## 1. Where things stand
 
 Woodshed `main` is `2f82f5e`, clean. Nothing is uncommitted or in flight in
@@ -213,8 +223,9 @@ Mark options.
   (stage plan P7) first.
 - **Woodshed custody to a reservoir mere (ruling 6).** Mere/djinn work, not
   yet scheduled; Mark schedules it.
-- **Mere's link model O1–O8** (`mere/design_docs/.../2026-10-15_link_model.md`,
-  `a3c47642e`). O3 gates P2 there, and the decisions are Mark's.
+- **Mere's link model:** the former O1–O8 questions are settled; the authorized
+  P3 consumer continuation is recorded in the Stage plan above. Later fan
+  retirement, all-family migration/history budgets and promotion keep their own gates.
 - **Touch input on the host** (P2 touch is deferred), waiting on host touch
   input in Mere.
 - **Firewheel and DSP open items from the survey:**

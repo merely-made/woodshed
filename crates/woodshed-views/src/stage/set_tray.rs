@@ -258,8 +258,8 @@ pub(super) fn view(ui: &UiState) -> UiChild {
         .iter()
         .cloned()
         .map(|choice| {
-            let key = choice.key.clone();
-            let wire_key = key.wire_key();
+            let identity = choice.identity.clone();
+            let wire_key = super::stage_relation_identity_wire_key(&identity);
             let toggle_snapshot = snapshot.clone();
             let toggle_class = if choice.visible {
                 "set-relation-toggle set-relation-toggle-on"
@@ -275,7 +275,7 @@ pub(super) fn view(ui: &UiState) -> UiChild {
                                 .attr("class", toggle_class)
                                 .attr("aria-pressed", choice.visible.to_string()),
                             move |ui: &mut UiState, _| {
-                                ui.toggle_set_graph_relation(&toggle_snapshot, key.clone());
+                                ui.toggle_set_graph_relation(&toggle_snapshot, identity.clone());
                             },
                         ),
                         el(
@@ -338,7 +338,7 @@ pub(super) fn view(ui: &UiState) -> UiChild {
     );
     let relation_detail: UiChild = ui
         .set_graph_relation
-        .and_then(|reference| snapshot.relation_detail(reference, &ui.set))
+        .and_then(|reference| snapshot.relation_detail(reference))
         .map(|relation| {
             Box::new(
                 el(
@@ -368,6 +368,25 @@ pub(super) fn view(ui: &UiState) -> UiChild {
                 el("div", text(message.unwrap_or_default())).attr("class", "set-graph-relation"),
             ) as UiChild
         });
+    let relation_detail = if ui
+        .set_graph_relation
+        .and_then(|reference| snapshot.relation_source(reference))
+        .is_some_and(|source| {
+            matches!(
+                source,
+                woodshed_core::stage_scene::StageRelationSource::Generated { .. }
+            )
+        }) {
+        Box::new(
+            el(
+                "div",
+                (relation_detail, super::related::opened_claims_link(ui)),
+            )
+            .attr("class", "set-generated-claim-inspection"),
+        ) as UiChild
+    } else {
+        relation_detail
+    };
     let content: UiChild = if ui.set_tray_expanded {
         let graph_card = graph_node_card(ui);
         let resize = resize_handle(

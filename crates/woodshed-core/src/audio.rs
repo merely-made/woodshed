@@ -149,6 +149,16 @@ pub enum AudioRequest {
         duration_s: f32,
         strum_s: f32,
     },
+    /// Play a source-owned relation audition as two ordered chord groups.
+    /// Both groups are frozen when the request is created, so later focus or
+    /// Stage changes cannot redirect either side of the comparison.
+    PreviewPhrase {
+        before: Vec<f32>,
+        after: Vec<f32>,
+        chord_duration_s: f32,
+        gap_s: f32,
+        strum_s: f32,
+    },
     /// Play one note at this frequency (Hz).
     PreviewNote(f32),
     /// Begin latency calibration.
@@ -229,6 +239,18 @@ pub trait AudioBackend {
     /// that can't voice previews stays silent rather than being forced
     /// to implement it.
     fn preview_pitches(&mut self, _pitches_hz: &[f32], _duration_secs: f32, _strum_ms: f32) {}
+    /// Play two frozen chord groups in order. The default stays silent for
+    /// backends that do not support phrase audition; concatenating both groups
+    /// into one chord would change the relation's before/after meaning.
+    fn preview_phrase(
+        &mut self,
+        _before_hz: &[f32],
+        _after_hz: &[f32],
+        _chord_duration_secs: f32,
+        _gap_secs: f32,
+        _strum_ms: f32,
+    ) {
+    }
     /// Voice a single pitched note on demand — the arpeggio / exercise
     /// step-through sonification. Default no-op (see
     /// [`preview_pitches`](Self::preview_pitches)).

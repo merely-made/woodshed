@@ -92,15 +92,20 @@ fn push_backend(shared: &mut Shared, ctx: &mut Ctx<'_>) {
         let last_song = &mut shared.last_song;
         let last_loop_plan = &mut shared.last_loop_plan;
         let capture_persistence = &mut shared.capture_persistence;
-        let storage = shared.storage.as_ref();
         ui.sync();
-        let appearance_attempted = woodshed_views::appearance::commit_selection(ui, |settings| {
-            let store = storage.ok_or("Choose a persona before saving appearance.")?;
-            let json = serde_json::to_string(settings).map_err(|error| error.to_string())?;
-            store
-                .try_save_settings(&json)
-                .map_err(|error| error.to_string())
-        });
+        commit_personal_relation_intents(ui, &mut shared.storage);
+        let storage = shared.storage.as_ref();
+        let appearance_attempted = if storage.is_some() {
+            woodshed_views::appearance::commit_selection(ui, |settings| {
+                let store = storage.ok_or("Choose a persona before saving appearance.")?;
+                let json = serde_json::to_string(settings).map_err(|error| error.to_string())?;
+                store
+                    .try_save_settings(&json)
+                    .map_err(|error| error.to_string())
+            })
+        } else {
+            false
+        };
         if let Some(backend) = backend {
             // Calibration owns the shared runtime's click lane during a run.
             if !ui.calib_active {
@@ -143,6 +148,28 @@ fn push_backend(shared: &mut Shared, ctx: &mut Ctx<'_>) {
                     } => {
                         if !pitches.is_empty() {
                             backend.preview_pitches(&pitches, duration_s, strum_s);
+                        }
+                    },
+                    AudioRequest::PreviewPhrase {
+                        before,
+                        after,
+                        chord_duration_s,
+                        gap_s,
+                        strum_s,
+                    } => {
+                        if !before.is_empty() && !after.is_empty() {
+                            shared.events.push(format!(
+                                "audio-preview-phrase ordered before={} after={}",
+                                before.len(),
+                                after.len()
+                            ));
+                            backend.preview_phrase(
+                                &before,
+                                &after,
+                                chord_duration_s,
+                                gap_s,
+                                strum_s,
+                            );
                         }
                     },
                     AudioRequest::PreviewNote(freq) => backend.preview_note(freq, 0.9),
@@ -286,6 +313,163 @@ fn push_backend(shared: &mut Shared, ctx: &mut Ctx<'_>) {
     };
     if let Some(json) = persisted_settings {
         storage.save_settings(&json);
+    }
+}
+
+/// Apply personal assertion intents to a replayed candidate, persist the
+/// candidate session, and only then publish its new journal in live UI state.
+/// If persistence acknowledgment is uncertain, the current graph stays
+/// unchanged and this session's storage capability is revoked until reopen.
+fn commit_personal_relation_intents(
+    ui: &mut UiState,
+    storage: &mut Option<crate::storage::SessionStore<crate::storage::HostBackend>>,
+) {
+    use woodshed_core::personal_relations::{
+        AssertionBasis, Author, EdgeId, PersonalRelationSource, PersonalRelationSourceId, Relation,
+        RelationClass,
+    };
+    use woodshed_views::stage::PersonalRelationIntent;
+
+    if !ui.practice_saved {
+        ui.personal_relation_intents.clear();
+        return;
+    }
+    let intents = std::mem::take(&mut ui.personal_relation_intents);
+    for intent in intents {
+        let Some(store) = storage.as_ref() else {
+            ui.personal_relation_notice =
+                Some("Personal relation changes are unavailable without a saved session.".into());
+            continue;
+        };
+        let Some(actor) = (match ui.seal.as_ref() {
+            Some(woodshed_views::persona::PracticeSeal::Sealed { persona, .. })
+                if ui.practice_saved && !persona.trim().is_empty() && persona == persona.trim() =>
+            {
+                Some(Author::new(persona.clone()))
+            },
+            _ => None,
+        }) else {
+            ui.personal_relation_notice = Some(
+                "Personal relation changes require a saved session with a sealed persona.".into(),
+            );
+            continue;
+        };
+        let Some(current) = ui.personal_relations.as_ref() else {
+            ui.personal_relation_notice =
+                Some("The personal assertion source is unavailable; no change was saved.".into());
+            continue;
+        };
+        let expected_source_id = match &intent {
+            PersonalRelationIntent::Assert {
+                expected_source_id, ..
+            }
+            | PersonalRelationIntent::Confirm {
+                expected_source_id, ..
+            }
+            | PersonalRelationIntent::Withdraw {
+                expected_source_id, ..
+            } => expected_source_id,
+        };
+        if current.source_id() != expected_source_id {
+            ui.personal_relation_notice = Some(
+                "This relation action belongs to a different saved source; reopen the current source before acting.".into(),
+            );
+            continue;
+        }
+        let mut candidate = PersonalRelationSource::restore(current.persisted());
+        let result = match intent {
+            PersonalRelationIntent::Assert {
+                expected_source_id: _,
+                expected_revision,
+                from,
+                to,
+                note,
+                at_ms,
+            } => candidate
+                .assert_relation(
+                    &actor,
+                    expected_revision,
+                    &from,
+                    &to,
+                    Relation::new(RelationClass::app("woodshed", 3)).with_label("related"),
+                    at_ms,
+                    AssertionBasis {
+                        note,
+                        ..Default::default()
+                    },
+                )
+                .map(|id| Some(id)),
+            PersonalRelationIntent::Confirm {
+                expected_source_id: _,
+                expected_revision,
+                id,
+                from,
+                to,
+                at_ms,
+            } => serde_json::from_str::<EdgeId>(&id)
+                .map_err(|error| {
+                    woodshed_core::personal_relations::PersonalRelationError::Commit(
+                        error.to_string(),
+                    )
+                })
+                .and_then(|id| {
+                    candidate
+                        .confirm_exact(&actor, expected_revision, id, &from, &to, at_ms)
+                        .map(|()| None)
+                }),
+            PersonalRelationIntent::Withdraw {
+                expected_source_id: _,
+                expected_revision,
+                id,
+                from,
+                to,
+                at_ms,
+            } => serde_json::from_str::<EdgeId>(&id)
+                .map_err(|error| {
+                    woodshed_core::personal_relations::PersonalRelationError::Commit(
+                        error.to_string(),
+                    )
+                })
+                .and_then(|id| {
+                    candidate
+                        .withdraw_exact(&actor, expected_revision, id, &from, &to, at_ms)
+                        .map(|()| None)
+                }),
+        };
+        let result = match result {
+            Ok(result) => result,
+            Err(error) => {
+                ui.personal_relation_notice = Some(error.to_string());
+                continue;
+            },
+        };
+        let mut persisted = ui.to_persisted();
+        persisted.personal_relations = Some(candidate.persisted());
+        let encoded = match serde_json::to_string(&persisted) {
+            Ok(encoded) => encoded,
+            Err(error) => {
+                ui.personal_relation_notice = Some(format!(
+                    "Personal relation change could not be encoded; nothing changed: {error}"
+                ));
+                continue;
+            },
+        };
+        if let Err(error) = store.try_save(&encoded) {
+            // A backend may have accepted the put before readback failed. Keep
+            // the live journal unchanged and close this storage capability so
+            // later autosaves cannot overwrite an uncertain candidate.
+            *storage = None;
+            ui.practice_saved = false;
+            ui.personal_relation_notice = Some(format!(
+                "Session write was not confirmed. This session is now read-only; reopen or switch persona to reconcile stored state. Error: {error}"
+            ));
+            return;
+        }
+        ui.personal_relations = Some(candidate);
+        ui.personal_relation_notice = Some(match result {
+            Some(id) => format!("Personal assertion saved: {id:?}"),
+            None => "Personal assertion lifecycle change saved.".into(),
+        });
     }
 }
 
@@ -452,8 +636,331 @@ fn admit_playback(
 #[cfg(test)]
 mod tests {
     use super::*;
+    use std::collections::BTreeMap;
+    use std::sync::atomic::{AtomicUsize, Ordering};
+    use std::sync::{Arc, Mutex};
     use woodshed_core::audio::{TransportState, TunerReading};
+    use woodshed_core::personal_relations::{PersonalRelationSource, PersonalRelationSourceId};
+    use woodshed_core::storage::SessionStore;
     use woodshedding::rehearsal::{Hold, Set};
+
+    struct RejectingSessionBackend(Arc<Mutex<BTreeMap<String, Vec<u8>>>>);
+
+    #[async_trait::async_trait]
+    impl muniment::Backend for RejectingSessionBackend {
+        async fn get(&self, key: &str) -> Result<Option<Vec<u8>>, muniment::StoreError> {
+            Ok(self.0.lock().unwrap().get(key).cloned())
+        }
+        async fn put(&self, _key: &str, _bytes: &[u8]) -> Result<(), muniment::StoreError> {
+            Err(muniment::StoreError::Backend(
+                "write refused for test".into(),
+            ))
+        }
+        async fn delete(&self, key: &str) -> Result<(), muniment::StoreError> {
+            self.0.lock().unwrap().remove(key);
+            Ok(())
+        }
+        async fn list(&self, prefix: &str) -> Result<Vec<String>, muniment::StoreError> {
+            Ok(self
+                .0
+                .lock()
+                .unwrap()
+                .keys()
+                .filter(|key| key.starts_with(prefix))
+                .cloned()
+                .collect())
+        }
+        async fn scan(&self, start: &str, end: &str) -> Result<Vec<String>, muniment::StoreError> {
+            Ok(self
+                .0
+                .lock()
+                .unwrap()
+                .range(start.to_owned()..end.to_owned())
+                .map(|(key, _)| key.clone())
+                .collect())
+        }
+        async fn apply(
+            &self,
+            _ops: &[muniment::backend::WriteOp],
+        ) -> Result<(), muniment::StoreError> {
+            Err(muniment::StoreError::Backend(
+                "write refused for test".into(),
+            ))
+        }
+    }
+
+    struct WriteThenReadFailureBackend {
+        bytes: Arc<Mutex<BTreeMap<String, Vec<u8>>>>,
+        writes: Arc<AtomicUsize>,
+    }
+
+    #[async_trait::async_trait]
+    impl muniment::Backend for WriteThenReadFailureBackend {
+        async fn get(&self, _key: &str) -> Result<Option<Vec<u8>>, muniment::StoreError> {
+            Err(muniment::StoreError::Backend(
+                "readback unavailable after write".into(),
+            ))
+        }
+        async fn put(&self, key: &str, bytes: &[u8]) -> Result<(), muniment::StoreError> {
+            self.bytes
+                .lock()
+                .unwrap()
+                .insert(key.to_owned(), bytes.to_vec());
+            self.writes.fetch_add(1, Ordering::SeqCst);
+            Ok(())
+        }
+        async fn delete(&self, key: &str) -> Result<(), muniment::StoreError> {
+            self.bytes.lock().unwrap().remove(key);
+            Ok(())
+        }
+        async fn list(&self, prefix: &str) -> Result<Vec<String>, muniment::StoreError> {
+            Ok(self
+                .bytes
+                .lock()
+                .unwrap()
+                .keys()
+                .filter(|key| key.starts_with(prefix))
+                .cloned()
+                .collect())
+        }
+        async fn scan(&self, start: &str, end: &str) -> Result<Vec<String>, muniment::StoreError> {
+            Ok(self
+                .bytes
+                .lock()
+                .unwrap()
+                .range(start.to_owned()..end.to_owned())
+                .map(|(key, _)| key.clone())
+                .collect())
+        }
+        async fn apply(
+            &self,
+            _ops: &[muniment::backend::WriteOp],
+        ) -> Result<(), muniment::StoreError> {
+            Err(muniment::StoreError::Backend(
+                "batch writes are unavailable in this test".into(),
+            ))
+        }
+    }
+
+    #[test]
+    fn rejected_personal_relation_save_does_not_publish_candidate_or_advance_identity() {
+        let bytes = Arc::new(Mutex::new(BTreeMap::new()));
+        let mut storage = Some(SessionStore::new(
+            Box::new(RejectingSessionBackend(bytes.clone())) as crate::storage::HostBackend,
+        ));
+        let mut ui = ready_ui();
+        ui.practice_saved = true;
+        ui.seal = Some(woodshed_views::persona::PracticeSeal::Sealed {
+            persona: "personae:alice".into(),
+            protection: "test".into(),
+        });
+        ui.personal_relations = Some(PersonalRelationSource::empty(
+            PersonalRelationSourceId::from_random_uuid_bytes([9; 16]),
+        ));
+        ui.personal_relation_intents
+            .push(woodshed_views::stage::PersonalRelationIntent::Assert {
+                expected_source_id: PersonalRelationSourceId::from_random_uuid_bytes([9; 16]),
+                expected_revision: 0,
+                from: "chord:Major".into(),
+                to: "chord:Minor".into(),
+                note: Some("one reason".into()),
+                at_ms: Some(10),
+            });
+        let original_revision = ui.personal_relations.as_ref().unwrap().runtime_revision();
+
+        commit_personal_relation_intents(&mut ui, &mut storage);
+
+        let source = ui.personal_relations.as_ref().unwrap();
+        assert_eq!(source.runtime_revision(), original_revision);
+        assert_eq!(source.retained_assertions().count(), 0);
+        assert!(
+            ui.personal_relation_notice
+                .as_deref()
+                .unwrap()
+                .contains("not confirmed")
+        );
+        assert!(bytes.lock().unwrap().is_empty());
+    }
+
+    #[test]
+    fn foreign_source_personal_intent_is_rejected_before_candidate_or_store_write() {
+        let mut storage = Some(SessionStore::new(
+            Box::new(muniment::MemoryBackend::default()) as crate::storage::HostBackend,
+        ));
+        let mut ui = ready_ui();
+        ui.practice_saved = true;
+        ui.seal = Some(woodshed_views::persona::PracticeSeal::Sealed {
+            persona: "personae:alice".into(),
+            protection: "test".into(),
+        });
+        ui.personal_relations = Some(PersonalRelationSource::empty(
+            PersonalRelationSourceId::from_random_uuid_bytes([12; 16]),
+        ));
+        let original_revision = ui.personal_relations.as_ref().unwrap().runtime_revision();
+        ui.personal_relation_intents
+            .push(woodshed_views::stage::PersonalRelationIntent::Assert {
+                expected_source_id: PersonalRelationSourceId::from_random_uuid_bytes([13; 16]),
+                expected_revision: 0,
+                from: "chord:Major".into(),
+                to: "chord:Minor".into(),
+                note: Some("foreign source action".into()),
+                at_ms: Some(10),
+            });
+
+        commit_personal_relation_intents(&mut ui, &mut storage);
+
+        let source = ui.personal_relations.as_ref().unwrap();
+        assert_eq!(source.runtime_revision(), original_revision);
+        assert_eq!(source.retained_assertions().count(), 0);
+        assert!(storage.as_ref().unwrap().load().is_none());
+        assert!(
+            ui.personal_relation_notice
+                .as_deref()
+                .unwrap()
+                .contains("different saved source")
+        );
+    }
+
+    #[test]
+    fn uncertain_personal_relation_write_closes_storage_before_any_later_autosave() {
+        let bytes = Arc::new(Mutex::new(BTreeMap::new()));
+        let writes = Arc::new(AtomicUsize::new(0));
+        let backend = WriteThenReadFailureBackend {
+            bytes: bytes.clone(),
+            writes: writes.clone(),
+        };
+        let mut storage = Some(SessionStore::new(
+            Box::new(backend) as crate::storage::HostBackend
+        ));
+        let mut ui = ready_ui();
+        ui.practice_saved = true;
+        ui.seal = Some(woodshed_views::persona::PracticeSeal::Sealed {
+            persona: "personae:alice".into(),
+            protection: "test".into(),
+        });
+        ui.personal_relations = Some(PersonalRelationSource::empty(
+            PersonalRelationSourceId::from_random_uuid_bytes([11; 16]),
+        ));
+        ui.personal_relation_intents
+            .push(woodshed_views::stage::PersonalRelationIntent::Assert {
+                expected_source_id: PersonalRelationSourceId::from_random_uuid_bytes([11; 16]),
+                expected_revision: 0,
+                from: "chord:Major".into(),
+                to: "chord:Minor".into(),
+                note: Some("candidate may be on disk".into()),
+                at_ms: Some(10),
+            });
+        let live_revision = ui.personal_relations.as_ref().unwrap().runtime_revision();
+
+        commit_personal_relation_intents(&mut ui, &mut storage);
+
+        assert!(storage.is_none(), "uncertain session storage is revoked");
+        assert!(!ui.practice_saved, "the current session is read-only");
+        assert_eq!(writes.load(Ordering::SeqCst), 1);
+        assert_eq!(
+            ui.personal_relations.as_ref().unwrap().runtime_revision(),
+            live_revision,
+            "the uncertain candidate was not published into live state"
+        );
+        assert_eq!(
+            ui.personal_relations
+                .as_ref()
+                .unwrap()
+                .retained_assertions()
+                .count(),
+            0
+        );
+        assert!(
+            ui.personal_relation_notice
+                .as_deref()
+                .unwrap()
+                .contains("reopen or switch persona")
+        );
+
+        ui.personal_relation_intents
+            .push(woodshed_views::stage::PersonalRelationIntent::Assert {
+                expected_source_id: PersonalRelationSourceId::from_random_uuid_bytes([11; 16]),
+                expected_revision: 0,
+                from: "chord:Major".into(),
+                to: "chord:Minor".into(),
+                note: Some("must not overwrite uncertain slot".into()),
+                at_ms: Some(11),
+            });
+        commit_personal_relation_intents(&mut ui, &mut storage);
+
+        assert_eq!(writes.load(Ordering::SeqCst), 1);
+        assert_eq!(
+            ui.personal_relations
+                .as_ref()
+                .unwrap()
+                .retained_assertions()
+                .count(),
+            0
+        );
+        let stored = bytes.lock().unwrap();
+        let saved = stored
+            .get("session")
+            .expect("put succeeded before readback failed");
+        let candidate =
+            woodshed_core::storage::decode_session(std::str::from_utf8(saved).unwrap()).unwrap();
+        let persisted =
+            PersonalRelationSource::restore(candidate.session.personal_relations.unwrap());
+        assert_eq!(persisted.retained_assertions().count(), 1);
+    }
+
+    #[test]
+    fn personal_relation_is_published_only_after_session_store_acknowledges_it() {
+        let mut storage = Some(SessionStore::new(
+            Box::new(muniment::MemoryBackend::default()) as crate::storage::HostBackend,
+        ));
+        let mut ui = ready_ui();
+        ui.practice_saved = true;
+        ui.seal = Some(woodshed_views::persona::PracticeSeal::Sealed {
+            persona: "personae:alice".into(),
+            protection: "test".into(),
+        });
+        ui.personal_relations = Some(PersonalRelationSource::empty(
+            PersonalRelationSourceId::from_random_uuid_bytes([10; 16]),
+        ));
+        ui.personal_relation_intents
+            .push(woodshed_views::stage::PersonalRelationIntent::Assert {
+                expected_source_id: PersonalRelationSourceId::from_random_uuid_bytes([10; 16]),
+                expected_revision: 0,
+                from: "chord:Major".into(),
+                to: "chord:Minor".into(),
+                note: Some("one reason".into()),
+                at_ms: Some(10),
+            });
+
+        commit_personal_relation_intents(&mut ui, &mut storage);
+
+        assert_eq!(
+            ui.personal_relations
+                .as_ref()
+                .unwrap()
+                .retained_assertions()
+                .count(),
+            1
+        );
+        let json = storage
+            .as_ref()
+            .unwrap()
+            .load()
+            .expect("acknowledged session exists");
+        let loaded = woodshed_core::storage::decode_session(&json).unwrap();
+        let reopened = PersonalRelationSource::restore(
+            loaded
+                .session
+                .personal_relations
+                .expect("journal is durable"),
+        );
+        let rows = reopened.retained_assertions().collect::<Vec<_>>();
+        assert_eq!(rows.len(), 1);
+        assert_eq!(rows[0].basis.note.as_deref(), Some("one reason"));
+        assert_eq!(rows[0].span.first_asserted_ms, Some(10));
+        assert_eq!(rows[0].from, "chord:Major");
+        assert_eq!(rows[0].to, "chord:Minor");
+    }
 
     #[derive(Default)]
     struct Backend {
@@ -697,8 +1204,10 @@ mod tests {
         for scenario in [
             include_str!("../../../scenarios/set_loop_plan.scn"),
             include_str!("../../../scenarios/set_loop_plan_reopen.scn"),
+            include_str!("../../../scenarios/claims_seed.scn"),
+            include_str!("../../../scenarios/claims_reopen.scn"),
         ] {
-            taproot::Scenario::parse(scenario).expect("Set backing native scenario grammar");
+            taproot::Scenario::parse(scenario).expect("native session scenario grammar");
         }
         let mut ui = ready_ui();
         ui.looper.source = LooperSource::SavedSong;

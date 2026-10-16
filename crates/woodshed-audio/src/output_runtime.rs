@@ -620,6 +620,63 @@ impl OutputRuntime {
             .store(revision, Ordering::Release);
         Ok(())
     }
+
+    /// Queue two independently voiced chord groups as one ordered preview.
+    /// The worker renders both groups and the pause into one bounded buffer,
+    /// so the output processor plays before then after without a later request
+    /// cancelling the first chord.
+    pub fn preview_phrase(
+        &mut self,
+        before_hz: &[f32],
+        after_hz: &[f32],
+        chord_duration_secs: f32,
+        gap_secs: f32,
+        strum_ms: f32,
+    ) -> Result<(), OutputError> {
+        if self.snapshot().playing {
+            return Ok(());
+        }
+        if !chord_duration_secs.is_finite()
+            || chord_duration_secs <= 0.0
+            || !gap_secs.is_finite()
+            || gap_secs < 0.0
+            || !strum_ms.is_finite()
+            || before_hz.len() > 256
+            || after_hz.len() > 256
+            || (2.0 * chord_duration_secs + gap_secs) * self.rate as f32 > MAX_PCM_FRAMES as f32
+        {
+            return Err(err("ordered preview exceeds supported resource bounds"));
+        }
+        let valid = |pitches: &[f32]| {
+            pitches
+                .iter()
+                .copied()
+                .filter(|frequency| frequency.is_finite() && *frequency > 0.0)
+                .collect::<Vec<_>>()
+        };
+        let before = valid(before_hz);
+        let after = valid(after_hz);
+        if before.is_empty() || after.is_empty() {
+            return Ok(());
+        }
+        let group = |pitches_hz| ChordRender {
+            pitches_hz,
+            duration_seconds: chord_duration_secs,
+            strum_offset_ms: strum_ms.max(0.0),
+            ..Default::default()
+        };
+        // Cancel any currently audible preview before replacing its worker
+        // request. Cancelling the worker alone cannot retire a voice already
+        // handed to the processor.
+        self.send(Command::CancelPreview)?;
+        let revision =
+            self.preview
+                .request_phrase(vec![group(before), group(after)], gap_secs, self.rate);
+        self.shared
+            .preview_revision
+            .store(revision, Ordering::Release);
+        Ok(())
+    }
 }
 
 impl crate::calibration::ClickControl for OutputRuntime {

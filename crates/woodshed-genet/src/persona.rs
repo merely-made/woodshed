@@ -34,8 +34,7 @@ pub fn pending_roster() -> Option<Roster> {
 /// none chosen.
 pub fn startup_question(roster: Option<Roster>) -> Option<Roster> {
     let roster = roster?;
-    (roster.entries.len() > 1 && !roster.entries.iter().any(|entry| entry.chosen))
-        .then_some(roster)
+    (roster.entries.len() > 1 && !roster.entries.iter().any(|entry| entry.chosen)).then_some(roster)
 }
 
 /// The whole roster, from djinn, whatever the startup rule would decide (P2).
@@ -187,9 +186,11 @@ fn settle(
         ui.persona = None;
         // After the reset above, so a switch does not wipe the seal it just
         // established. Cloned rather than moved: the callback is `FnMut`.
-        ui.practice_saved =
-            !matches!(seal, woodshed_views::persona::PracticeSeal::Pending { .. });
+        ui.practice_saved = !matches!(seal, woodshed_views::persona::PracticeSeal::Pending { .. });
         ui.seal = Some(seal.clone());
+    });
+    ctx.runner.update(|ui| {
+        crate::session::ensure_personal_relation_source(&storage, ui);
     });
     // Both from the one value, so `Shared` and the view cannot disagree about
     // who is practising.
@@ -223,11 +224,11 @@ pub fn seed(shared: &mut Shared, ui: &mut woodshed_views::stage::UiState) {
 mod tests {
     use super::*;
     use cambium_genet_winit_host::Harness;
+    use dramatis::roster::RosterEntry;
+    use personae::ProfileId;
     use taproot::Selector;
     use winit::keyboard::NamedKey;
     use woodshed_views::stage::{UiChild, UiState};
-    use dramatis::roster::RosterEntry;
-    use personae::ProfileId;
 
     #[test]
     fn switching_persona_retains_the_global_authored_library_but_restores_incoming_selection() {
@@ -336,7 +337,10 @@ mod tests {
         ])))
         .expect("the gate must open");
         assert_eq!(roster.entries.len(), 2);
-        assert!(!roster.description.is_empty(), "djinn says what protects it");
+        assert!(
+            !roster.description.is_empty(),
+            "djinn says what protects it"
+        );
     }
 
     #[test]
@@ -346,11 +350,13 @@ mod tests {
 
     #[test]
     fn a_chosen_persona_is_not_asked_again() {
-        assert!(startup_question(Some(roster_of(vec![
-            entry("alt", 0, true),
-            entry("work", 2, false),
-        ])))
-        .is_none());
+        assert!(
+            startup_question(Some(roster_of(vec![
+                entry("alt", 0, true),
+                entry("work", 2, false),
+            ])))
+            .is_none()
+        );
     }
 
     #[test]

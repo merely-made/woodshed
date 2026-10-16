@@ -104,6 +104,7 @@ before any other doc in this directory.
   states, and responsive wireframe done-conditions. It is separate from the
   Woodshed product graph.
 - [2026-07-11_stage_set_tools_plan.md](2026-07-11_stage_set_tools_plan.md)
+  — October 16 opened-link consumer work is in progress on published Mere `ee324e517`: persistent personal assertions, generated reasons read-only, exact source actions and ordered before/after audition. Native and encrypted reopen gates remain open.
   — October 15 P2 camera receipt refreshed on the current locked family: 183 view tests,
   274 presented frames and nine reviewed captures; native wheel routing now covers
   the overview, Related and relationship editor. Touch and sealed reopen remain outside this receipt.

@@ -8,8 +8,10 @@
 
 use std::collections::{BTreeMap, BTreeSet, VecDeque};
 
-use woodshed_graph::{
-    catalog_materials, related_neighbors, CatalogKind, MaterialRelation, RelationKind,
+use woodshed_graph::{CatalogKind, RelationKind, catalog_materials, related_neighbors};
+pub use woodshed_graph::{
+    GeneratedClaimId, GeneratedClaimProvenance, GeneratedEvidenceRef, GeneratedMethod,
+    MaterialRelation, PracticeEvidenceBasis, RELATED_PREDICATE_IRI,
 };
 
 use crate::history::{PracticeHistory, PracticeTransition};
@@ -70,7 +72,7 @@ pub fn woodshed_mere(history: &PracticeHistory, scope: MereScope<'_>) -> Woodshe
             .collect::<Vec<_>>(),
         MereScope::Selection { center, depth } => {
             selection_ids(center, depth.min(12), &transitions)
-        }
+        },
     };
     let included = ids.iter().cloned().collect::<BTreeSet<_>>();
     let nodes = ids
@@ -118,7 +120,7 @@ pub fn woodshed_mere(history: &PracticeHistory, scope: MereScope<'_>) -> Woodshe
         );
         if seen.insert(key) {
             let times = transition.traversal_count;
-            relations.push(MaterialRelation::evidence(
+            relations.push(MaterialRelation::evidence_with_count(
                 transition.from_id,
                 transition.to_id,
                 RelationKind::PracticedAfter,
@@ -128,6 +130,8 @@ pub fn woodshed_mere(history: &PracticeHistory, scope: MereScope<'_>) -> Woodshe
                 } else {
                     format!("Practiced next {times} times")
                 },
+                PracticeEvidenceBasis::WalkedPath,
+                times,
             ));
         }
     }

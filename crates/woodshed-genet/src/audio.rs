@@ -822,6 +822,19 @@ impl AudioBackend for CpalBackend {
             self.with_output(|output| output.preview_pitches(pitches_hz, duration_secs, strum_ms));
     }
 
+    fn preview_phrase(
+        &mut self,
+        before_hz: &[f32],
+        after_hz: &[f32],
+        chord_duration_secs: f32,
+        gap_secs: f32,
+        strum_ms: f32,
+    ) {
+        let _ = self.with_output(|output| {
+            output.preview_phrase(before_hz, after_hz, chord_duration_secs, gap_secs, strum_ms)
+        });
+    }
+
     fn preview_note(&mut self, freq_hz: f32, duration_secs: f32) {
         let _ = self.with_output(|output| output.preview_note(freq_hz, duration_secs));
     }

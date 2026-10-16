@@ -5,7 +5,8 @@ use std::sync::{
 };
 
 struct Request {
-    params: ChordRender,
+    groups: Vec<ChordRender>,
+    gap_seconds: f32,
     rate: u32,
     revision: u64,
 }
@@ -55,8 +56,9 @@ impl PreviewWorker {
                     };
                     let cancelled =
                         || thread_mailbox.revision.load(Ordering::Acquire) != request.revision;
-                    let buffer = crate::chord_audio::render_chord_cancellable(
-                        &request.params,
+                    let buffer = crate::chord_audio::render_phrase_cancellable(
+                        &request.groups,
+                        request.gap_seconds,
                         request.rate,
                         &cancelled,
                     );
@@ -92,9 +94,13 @@ impl PreviewWorker {
         q.running || q.pending.is_some() || q.completed.is_some()
     }
     pub fn request(&self, params: ChordRender, rate: u32) -> u64 {
+        self.request_phrase(vec![params], 0.0, rate)
+    }
+    pub fn request_phrase(&self, groups: Vec<ChordRender>, gap_seconds: f32, rate: u32) -> u64 {
         let revision = self.cancel();
         self.mailbox.queue.lock().unwrap().pending = Some(Request {
-            params,
+            groups,
+            gap_seconds,
             rate,
             revision,
         });
