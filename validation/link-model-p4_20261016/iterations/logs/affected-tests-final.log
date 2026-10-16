@@ -1,0 +1,118 @@
+warning: patch `mere-proofs v0.1.0 (https://github.com/merely-made/mere.git?branch=main#91467c0b)` was not used in the crate graph
+warning: patch `mere-transport v0.0.2 (https://github.com/merely-made/murm.git?branch=main#cba46d85)` was not used in the crate graph
+warning: patch `mere-webrtc-carrier v0.0.1 (https://github.com/merely-made/murm.git?branch=main#cba46d85)` was not used in the crate graph
+help: Check that the patched package version and available features are compatible
+      with the dependency requirements. If the patch has a different version from
+      what is locked in the Cargo.lock file, run `cargo update` to use the new
+      version. This may also occur with an optional dependency that is not enabled.
+   Compiling woodshed-core v0.1.0 (/Users/markik/Code/repos/woodshed-link-model-p3-20261016/crates/woodshed-core)
+   Compiling pictograph v0.2.0 (https://github.com/merely-made/mere.git?branch=main#91467c0b)
+   Compiling cambium-winit-a11y v0.3.0 (https://github.com/merely-made/mere.git?branch=main#91467c0b)
+   Compiling hocket-views v0.1.0 (/Users/markik/Code/repos/woodshed-link-model-p3-20261016/crates/hocket-views)
+   Compiling tabard-workshop v0.0.1 (https://github.com/merely-made/mere.git?branch=main#91467c0b)
+   Compiling mere-persona-picker v0.0.1 (https://github.com/merely-made/mere.git?branch=main#91467c0b)
+   Compiling mere-alembic v0.0.1 (https://github.com/merely-made/mere.git?branch=main#91467c0b)
+   Compiling eidetic v0.0.2 (https://github.com/merely-made/mere.git?branch=main#91467c0b)
+   Compiling incipit v0.2.0 (https://github.com/merely-made/mere.git?branch=main#91467c0b)
+   Compiling cambium-genet-winit-host v0.1.0 (https://github.com/merely-made/mere.git?branch=main#91467c0b)
+   Compiling pandect v0.1.1 (https://github.com/merely-made/mere.git?branch=main#91467c0b)
+   Compiling mere-apparatus v0.0.1 (https://github.com/merely-made/mere.git?branch=main#91467c0b)
+   Compiling woodshed-audio v0.1.0 (/Users/markik/Code/repos/woodshed-link-model-p3-20261016/crates/woodshed-audio)
+warning: use of deprecated method `std::sync::atomic::Atomic::<u64>::fetch_update`: renamed to `try_update` for consistency
+  --> crates/woodshed-audio/src/capture_feed.rs:33:14
+   |
+33 |             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |generation| {
+   |              ^^^^^^^^^^^^
+   |
+   = note: `#[warn(deprecated)]` on by default
+help: replace the use of the deprecated method
+   |
+33 -             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |generation| {
+33 +             .try_update(Ordering::AcqRel, Ordering::Acquire, |generation| {
+   |
+
+warning: use of deprecated method `std::sync::atomic::Atomic::<usize>::fetch_update`: renamed to `try_update` for consistency
+   --> crates/woodshed-audio/src/output_runtime.rs:292:14
+    |
+292 |             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |              ^^^^^^^^^^^^
+    |
+help: replace the use of the deprecated method
+    |
+292 -             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+292 +             .try_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |
+
+warning: use of deprecated method `std::sync::atomic::Atomic::<usize>::fetch_update`: renamed to `try_update` for consistency
+   --> crates/woodshed-audio/src/output_runtime.rs:337:14
+    |
+337 |             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |              ^^^^^^^^^^^^
+    |
+help: replace the use of the deprecated method
+    |
+337 -             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+337 +             .try_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |
+
+warning: use of deprecated method `std::sync::atomic::Atomic::<usize>::fetch_update`: renamed to `try_update` for consistency
+   --> crates/woodshed-audio/src/output_runtime.rs:358:14
+    |
+358 |             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |              ^^^^^^^^^^^^
+    |
+help: replace the use of the deprecated method
+    |
+358 -             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+358 +             .try_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |
+
+warning: `woodshed-audio` (lib) generated 4 warnings (run `cargo fix --lib -p woodshed-audio` to apply 4 suggestions)
+   Compiling mesquite v0.1.0 (https://github.com/merely-made/mere.git?branch=main#91467c0b)
+   Compiling graphshell-endpoint v0.0.2 (https://github.com/merely-made/mere.git?branch=main#91467c0b)
+   Compiling woodshed-views v0.1.0 (/Users/markik/Code/repos/woodshed-link-model-p3-20261016/crates/woodshed-views)
+error[E0277]: the trait bound `std::string::String: From<PublicSourceRevision>` is not satisfied
+   --> crates/woodshed-views/src/stage/relationship.rs:124:49
+    |
+124 |             revision: PublicSourceRevision::new(reading.dataset.dataset.revision.clone()),
+    |                       ------------------------- ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ the trait `From<PublicSourceRevision>` is not implemented for `std::string::String`
+    |                       |
+    |                       required by a bound introduced by this call
+    |
+    = help: `std::string::String` implements trait `From<T>`:
+              From<&mut str>
+              From<&std::string::String>
+              From<&str>
+              From<&tendril::tendril::Tendril<tendril::fmt::UTF8, A>>
+              From<Box<str>>
+              From<Cow<'_, str>>
+              From<FontFamily>
+              From<Uuid>
+            and 7 others
+    = note: required for `PublicSourceRevision` to implement `Into<std::string::String>`
+note: required by a bound in `PublicSourceRevision::new`
+   --> /Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/91467c0/crates/cambium/scenes/scenograph/src/lib.rs:42:28
+    |
+ 42 |     pub fn new(value: impl Into<String>) -> Self {
+    |                            ^^^^^^^^^^^^ required by this bound in `PublicSourceRevision::new`
+help: consider removing this method call, as the receiver has type `PublicSourceRevision` and `PublicSourceRevision: From<PublicSourceRevision>` trivially holds
+    |
+124 -             revision: PublicSourceRevision::new(reading.dataset.dataset.revision.clone()),
+124 +             revision: PublicSourceRevision::new(reading.dataset.dataset.revision),
+    |
+
+error[E0599]: no method named `key` found for struct `StageInstanceRef` in the current scope
+   --> crates/woodshed-views/src/stage.rs:679:75
+    |
+679 |                 let (from, to, route, display_from, display_to) = if from.key() <= to.key() {
+    |                                                                           ^^^ method not found in `StageInstanceRef`
+
+error[E0599]: no method named `key` found for struct `StageInstanceRef` in the current scope
+   --> crates/woodshed-views/src/stage.rs:679:87
+    |
+679 |                 let (from, to, route, display_from, display_to) = if from.key() <= to.key() {
+    |                                                                                       ^^^ method not found in `StageInstanceRef`
+
+Some errors have detailed explanations: E0277, E0599.
+For more information about an error, try `rustc --explain E0277`.
+error: could not compile `woodshed-views` (lib) due to 3 previous errors

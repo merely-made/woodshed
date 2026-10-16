@@ -181,6 +181,51 @@ fn narrow_positions(
     (positions, height)
 }
 
+/// New take defaults must coexist with retained arrangements. Search nearby
+/// label-sized slots without changing any retained position (including takes).
+/// This is fallback presentation, never a rewrite of the stored arrangement.
+fn place_new_takes(
+    nodes: &mut [GraphCanvasNode<OverviewNodeId, &'static str>],
+    retained: &BTreeMap<OverviewNodeId, (f32, f32)>,
+    width: u32,
+    height: u32,
+) {
+    let sx = width.saturating_sub(14).max(1) as f32;
+    let sy = height.saturating_sub(14).max(1) as f32;
+    let movable: Vec<_> = nodes.iter().enumerate().filter_map(|(index, node)| {
+        (matches!(node.id, OverviewNodeId::Artifact(SessionArtifactId::LoopTake(_)))
+            && !retained.contains_key(&node.id)).then_some(index)
+    }).collect();
+    // The shared label is bounded to 160 px. Allow its node/target clearance
+    // and a full label on either side of a neighboring node.
+    let clear = |a: (f32, f32), b: (f32, f32)| {
+        (a.0 - b.0).abs() * sx >= 380.0 || (a.1 - b.1).abs() * sy >= 40.0
+    };
+    let mut occupied: Vec<_> = nodes.iter().enumerate()
+        .filter(|(index, _)| !movable.contains(index))
+        .map(|(_, node)| node.position).collect();
+    for index in movable {
+        let home = nodes[index].position;
+        let mut candidates = vec![home];
+        for y in (32..height.saturating_sub(16)).step_by(48) {
+            for x in (32..width.saturating_sub(16)).step_by(190) {
+                candidates.push(((x as f32 - 7.0) / sx, (y as f32 - 7.0) / sy));
+            }
+        }
+        candidates.sort_by(|a, b| {
+            let distance = |p: &(f32, f32)| ((p.0-home.0)*sx).powi(2) + ((p.1-home.1)*sy).powi(2);
+            distance(a).total_cmp(&distance(b))
+        });
+        // A completely packed canvas retains its existing default; this does
+        // not claim to solve arbitrary user-authored overlaps.
+        let position = candidates.into_iter()
+            .find(|&at| occupied.iter().all(|&other| clear(at, other)))
+            .unwrap_or(home);
+        nodes[index].position = position;
+        occupied.push(position);
+    }
+}
+
 fn overview_arrangement_swatch(ui: &UiState) -> GraphCanvasSwatch<OverviewNodeId, &'static str> {
     let snapshot = overview_snapshot(ui);
     let scene = overview_scene(&snapshot);
@@ -198,7 +243,7 @@ fn overview_arrangement_swatch(ui: &UiState) -> GraphCanvasSwatch<OverviewNodeId
     } else {
         (BTreeMap::new(), 320)
     };
-    let nodes = snapshot
+    let mut nodes: Vec<_> = snapshot
         .nodes
         .iter()
         .enumerate()
@@ -241,12 +286,18 @@ fn overview_arrangement_swatch(ui: &UiState) -> GraphCanvasSwatch<OverviewNodeId
             key: Some(node.id.wire_key()),
         })
         .collect();
+    if !narrow {
+        place_new_takes(&mut nodes, &ui.overview_positions, width, height);
+    }
     let relations = snapshot
         .relations
         .iter()
         .enumerate()
         .map(|(index, relation)| GraphCanvasRelation {
             id: format!("overview:{index}"),
+            link_key: None,
+            marks: sceno::LinkMarks::default(),
+            strength: 1.0,
             from: relation.from.clone(),
             to: relation.to.clone(),
             kind: relation.kind.label().into(),
@@ -1274,6 +1325,38 @@ mod tests {
         }
         assert_eq!(ui.loop_captures.takes.len(), 2);
         assert!(source != LooperSource::Set(gone_set.set));
+    }
+
+    #[test]
+    fn new_take_defaults_clear_retained_v1_positions_without_rewriting_them() {
+        let mut ui = loop_ready_ui();
+        ui.set_viewport_width(1100.0);
+        let before = overview_swatch(&ui);
+        // Version-1 positions contain every old node, but no take identity.
+        let retained: BTreeMap<_, _> = before.graph.nodes.into_iter()
+            .map(|node| (node.id, node.position)).collect();
+        ui.overview_positions = retained.clone();
+        let ids: Vec<_> = ui.set.cards.iter().map(|card| take_id(ui.working_sets.active_id, card.id)).collect();
+        with_takes(&mut ui, &ids);
+        let swatch = overview_swatch(&ui);
+        for node in &swatch.graph.nodes {
+            if let Some(&position) = retained.get(&node.id) {
+                assert_eq!(node.position, position);
+            }
+        }
+        let projected = swatch.projected_positions();
+        for (id, a) in &projected {
+            if !matches!(id, OverviewNodeId::Artifact(SessionArtifactId::LoopTake(_))) { continue; }
+            for (other, b) in &projected {
+                if id == other { continue; }
+                assert!((a.0-b.0).abs() >= 379.0 || (a.1-b.1).abs() >= 39.0,
+                    "new take {id:?} collided with {other:?}");
+            }
+        }
+        assert_eq!(ui.overview_positions, retained);
+        let take = take_node(ids[0]);
+        ui.overview_positions.insert(take.clone(), (0.31, 0.52));
+        assert_eq!(overview_swatch(&ui).graph.nodes.iter().find(|n| n.id == take).unwrap().position, (0.31, 0.52));
     }
 
     #[test]

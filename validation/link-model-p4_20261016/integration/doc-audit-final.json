@@ -1,0 +1,22 @@
+{
+  "baseline": "ae2f34e11b5ab92be2f3bc82ca57c519605aa5c1",
+  "files": {
+    "design_docs/2026-07-11_stage_set_tools_plan.md": {
+      "baseline_broken": [],
+      "current_broken": [],
+      "new_broken": [],
+      "note": "codex:// thread references are application links, not filesystem paths"
+    },
+    "design_docs/2026-10-15_woodshed_codex_handoff.md": {
+      "baseline_broken": [],
+      "current_broken": [],
+      "new_broken": []
+    },
+    "design_docs/DOC_README.md": {
+      "baseline_broken": [],
+      "current_broken": [],
+      "new_broken": []
+    }
+  },
+  "result": "passed: no new broken relative Markdown links"
+}

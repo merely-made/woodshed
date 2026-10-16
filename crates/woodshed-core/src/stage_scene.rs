@@ -13,11 +13,10 @@
 //! separation used as intended, and it is why a Set that drills one voicing
 //! four times does not carry four copies of it.
 //!
-//! **A pair related for several reasons is several relations.** `sceno`
-//! deliberately gave relations no channel map, because multi-edge is truth and
-//! collapsing to one line is an experience setting. So a chord pair that both
-//! shares tones and voice-leads emits two [`RoutedRelation`]s, each with its
-//! own kind and weight, and a host chooses whether to fan or collapse them.
+//! **Independent reasons retain independent source records.** A chord pair
+//! that shares tones and voice-leads emits two [`RoutedRelation`] contributions,
+//! each with its original kind and weight. Their canonical link key lets a
+//! renderer draw one resting stroke while the opened reader keeps both reasons.
 //!
 //! **Relations here are formula-level, and therefore key-agnostic.**
 //! `woodshed-graph` relates catalog formulas (`Major 7` extends `Major`
@@ -684,6 +683,9 @@ pub fn stage_scene(set: &Set, options: &StageSceneOptions) -> StageGraphSnapshot
                 &mut relations,
                 &mut relation_sources,
                 RoutedRelation {
+                    link_key: None,
+                    marks: Default::default(),
+                    strength: None,
                     from,
                     to,
                     space: Scene::WORLD,
@@ -699,8 +701,8 @@ pub fn stage_scene(set: &Set, options: &StageSceneOptions) -> StageGraphSnapshot
         }
     }
 
-    // Catalog reasons, fanned: one relation per reason per pair, never deduped
-    // to the highest-ranked.
+    // One source contribution per reason and displayed pair. The typed key
+    // coalesces resting strokes without dropping the other source reasons.
     for (i, from_card) in cards.iter().enumerate() {
         let Some(from_material) = set.cards.iter().find(|c| c.id == *from_card) else {
             continue;
@@ -728,6 +730,19 @@ pub fn stage_scene(set: &Set, options: &StageSceneOptions) -> StageGraphSnapshot
                     &mut relations,
                     &mut relation_sources,
                     RoutedRelation {
+                        link_key: Some(sceno::LinkKey::new(
+                            sceno::LinkStratum::Surface,
+                            relation.provenance.original_from.clone(),
+                            relation.provenance.original_to.clone(),
+                        )),
+                        marks: sceno::LinkMarks {
+                            forward: relation.provenance.original_from == from_id
+                                && relation.provenance.original_to == to_id,
+                            reverse: relation.provenance.original_from == to_id
+                                && relation.provenance.original_to == from_id,
+                            opposed: false,
+                        },
+                        strength: Some(1.0),
                         from,
                         to,
                         space: Scene::WORLD,
@@ -918,6 +933,9 @@ pub fn stage_scene(set: &Set, options: &StageSceneOptions) -> StageGraphSnapshot
                     continue;
                 };
                 let route = RoutedRelation {
+                    link_key: None,
+                    marks: Default::default(),
+                    strength: None,
                     from,
                     to,
                     space: Scene::WORLD,
@@ -1002,6 +1020,9 @@ pub fn stage_scene(set: &Set, options: &StageSceneOptions) -> StageGraphSnapshot
                     let kind = "woodshed:chord-arpeggio";
                     if seen.insert((nodes[chord].id.clone(), nodes[arp].id.clone(), kind.into())) {
                         let route = RoutedRelation {
+                            link_key: None,
+                            marks: Default::default(),
+                            strength: None,
                             from: InstanceId(chord as u32),
                             to: InstanceId(arp as u32),
                             space: Scene::WORLD,
@@ -1046,6 +1067,9 @@ pub fn stage_scene(set: &Set, options: &StageSceneOptions) -> StageGraphSnapshot
                         kind.into(),
                     )) {
                         let route = RoutedRelation {
+                            link_key: None,
+                            marks: Default::default(),
+                            strength: None,
                             from: InstanceId(scale as u32),
                             to: InstanceId(pattern as u32),
                             space: Scene::WORLD,
@@ -1090,6 +1114,9 @@ pub fn stage_scene(set: &Set, options: &StageSceneOptions) -> StageGraphSnapshot
                         kind.into(),
                     )) {
                         let route = RoutedRelation {
+                            link_key: None,
+                            marks: Default::default(),
+                            strength: None,
                             from: InstanceId(target as u32),
                             to: InstanceId(approach as u32),
                             space: Scene::WORLD,
@@ -1112,6 +1139,9 @@ pub fn stage_scene(set: &Set, options: &StageSceneOptions) -> StageGraphSnapshot
                               kind: &str,
                               weight: f32| {
                     let route = RoutedRelation {
+                        link_key: None,
+                        marks: Default::default(),
+                        strength: None,
                         from: InstanceId(left_index as u32),
                         to: InstanceId(right_index as u32),
                         space: Scene::WORLD,
@@ -1194,6 +1224,9 @@ pub fn stage_scene(set: &Set, options: &StageSceneOptions) -> StageGraphSnapshot
                     && seen.insert((from, to, "woodshed:keyed-diatonic".into()))
                 {
                     let route = RoutedRelation {
+                        link_key: None,
+                        marks: Default::default(),
+                        strength: None,
                         from: InstanceId(chord_index as u32),
                         to: InstanceId(scale_index as u32),
                         space: Scene::WORLD,
@@ -1832,7 +1865,7 @@ mod tests {
     }
 
     #[test]
-    fn a_pair_related_for_several_reasons_fans_into_several_relations() {
+    fn independent_reasons_keep_one_link_key_in_the_scene() {
         // Major and Major 7 both share tones and stand in an extension
         // relation, which is the multi-reason case the contract exists to
         // carry without a channel map.
@@ -1849,7 +1882,7 @@ mod tests {
             .collect();
         assert!(
             catalog.len() > 1,
-            "expected a fan, got {:?}",
+            "expected independent source contributions, got {:?}",
             catalog.iter().map(|r| &r.kind).collect::<Vec<_>>()
         );
 
@@ -1861,6 +1894,27 @@ mod tests {
             "each reason appears once, not deduped to the best one"
         );
         assert!(catalog.iter().all(|r| r.from != r.to), "no self-relations");
+        let expected_key = sceno::LinkKey::new(
+            sceno::LinkStratum::Surface,
+            crate::history::catalog_id_for_card(&set.cards[0]).unwrap(),
+            crate::history::catalog_id_for_card(&set.cards[1]).unwrap(),
+        );
+        assert!(
+            catalog
+                .iter()
+                .all(|route| route.link_key.as_ref() == Some(&expected_key)),
+            "independent reasons carry one canonical source key through routing"
+        );
+        assert!(
+            catalog
+                .iter()
+                .all(|route| route.marks.forward ^ route.marks.reverse),
+            "each source reason preserves one original direction in this appearance"
+        );
+        assert!(
+            catalog.iter().all(|route| route.strength == Some(1.0)),
+            "each reason contributes once before rendering aggregates the link"
+        );
     }
 
     #[test]
@@ -1869,7 +1923,10 @@ mod tests {
         let snapshot = stage_scene(&set, &StageSceneOptions::default());
         let reasons = snapshot.reasons(snapshot.cards[0], snapshot.cards[1], &set);
 
-        assert!(reasons.len() > 1, "the fan is readable back off the pair");
+        assert!(
+            reasons.len() > 1,
+            "all source reasons are readable from the pair"
+        );
         assert!(
             reasons.iter().all(|r| !r.explanation.is_empty()),
             "every reason explains itself in the player's words"

@@ -62,6 +62,13 @@ impl mesquite::Product for Product {
         let appearance = &state.appearance;
         taproot::ProbeSnapshot::default()
             .with_field("status", state.project_status_label())
+            .with_field("project-label", state.project_label())
+            .with_field("project-dirty", state.is_dirty().to_string())
+            .with_field("has-incoming", state.has_incoming().to_string())
+            .with_field("history-nodes", state.history.nodes.len().to_string())
+            .with_field("phrases", state.session.phrases.len().to_string())
+            .with_field("media", { use hocket_project::media::MediaStore; state.store.len().to_string() })
+            .with_field("identity-ready", state.contact_token().is_some().to_string())
             .with_field(
                 "appearance-device-free",
                 crate::appearance::device_free_receipt().to_string(),
@@ -114,6 +121,43 @@ impl mesquite::Product for Product {
             .with_field("solo-tracks", state.solo.len().to_string())
             .with_field("project-busy", state.is_project_io_active().to_string())
             .with_field("history-head", format!("{:?}", state.history.head))
+    }
+    fn act(&mut self, ctx: &mut Ctx<'_>, label: &str) -> bool {
+        let Some(name) = label.strip_prefix("checkpoint-project ") else { return false; };
+        if name.is_empty() || !name.chars().all(|c| c.is_ascii_alphanumeric() || c == '-') {
+            return false;
+        }
+        let Some(directory) = std::env::var_os("HOCKET_CAPTURE_DIR") else { return false; };
+        use hocket_project::media::MediaStore;
+        let state = ctx.runner.state();
+        let media: Vec<_> = state.session.phrases.values().map(|phrase| {
+            let buffer = state.store.get(&phrase.media);
+            serde_json::json!({
+                "phrase": phrase.id, "reference": phrase.media,
+                "frames": buffer.map(|b| b.samples.len()),
+                "sample_rate": buffer.map(|b| b.sample_rate),
+                "fixture_bits_exact": buffer.is_some_and(|b| b.samples.iter().enumerate()
+                    .all(|(i,s)| s.to_bits() == [0.25f32, -0.5, 0.75][i % 3].to_bits())),
+            })
+        }).collect();
+        let report = serde_json::json!({
+            "bundle": hocket_model::ProjectBundle::new(state.session.clone(), state.history.clone()),
+            "media": media, "missing_media": state.missing_media,
+            "project_label": state.project_label(), "dirty": state.is_dirty(),
+            "busy": state.is_project_io_active(), "identity": state.identity_status_label(),
+            "contact_token": state.contact_token(), "recipient": state.recipient_fingerprint(),
+            "has_incoming": state.has_incoming(), "incoming_summary": state.incoming_summary(),
+            "status": state.project_status_label(),
+        });
+        let result = (|| -> Result<(), String> {
+            use std::io::Write;
+            let mut file = std::fs::OpenOptions::new().write(true).create_new(true)
+                .open(std::path::PathBuf::from(directory).join(format!("{name}.json")))
+                .map_err(|e| e.to_string())?;
+            file.write_all(serde_json::to_string_pretty(&report).unwrap().as_bytes()).map_err(|e| e.to_string())
+        })();
+        if let Err(error) = &result { eprintln!("Hocket native checkpoint: {error}"); }
+        result.is_ok()
     }
     fn viewport(&self, ctx: &Ctx<'_>) -> Option<mesquite::Viewport> {
         // Mesquite compares the recorder, excluding the appearance controls.
@@ -311,6 +355,8 @@ mod tests {
             include_str!("../../../scenarios/update_status.scn"),
             include_str!("../../../scenarios/update_action.scn"),
             include_str!("../../../scenarios/handoff_circle.scn"),
+            include_str!("../../../scenarios/project_native_seed.scn"),
+            include_str!("../../../scenarios/project_native_reopen.scn"),
             include_str!("../../../scenarios/tabard_appearance.scn"),
             include_str!("../../../scenarios/tabard_appearance_reopen.scn"),
             include_str!("../../../scenarios/tabard_appearance_same_id.scn"),

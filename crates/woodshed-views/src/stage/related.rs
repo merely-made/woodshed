@@ -36,7 +36,15 @@ fn claims_source(ui: &UiState) -> LinkSource {
 
 fn claims_link_reading(ui: &UiState) -> Option<LinkPairReading> {
     let (from, to) = ui.personal_link_pair.as_ref()?;
-    let key = LinkKey::new(LinkStratum::Surface, from.clone(), to.clone());
+    claims_link_reading_for_pair(ui, from, to)
+}
+
+pub(super) fn claims_link_reading_for_pair(
+    ui: &UiState,
+    from: &str,
+    to: &str,
+) -> Option<LinkPairReading> {
+    let key = LinkKey::new(LinkStratum::Surface, from, to);
     let mut grouped = std::collections::BTreeMap::<(String, String), Vec<LinkAssertion>>::new();
 
     // Generated reasons remain source-owned read-only claims. Their stable
@@ -591,22 +599,28 @@ pub(super) fn opened_claims_link(ui: &UiState) -> UiChild {
 }
 
 fn activate_related_relation(ui: &mut UiState, relation_id: String) {
-    ui.related_relation = (ui.related_relation.as_deref() != Some(relation_id.as_str()))
-        .then_some(relation_id.clone());
-    if ui.related_relation.as_deref() != Some(relation_id.as_str()) {
+    if ui.related_relation.as_deref() == Some(relation_id.as_str()) {
+        ui.related_relation = None;
+        ui.personal_link_pair = None;
         return;
     }
-    if let Some(claim) = related_mere_snapshot(ui)
+    let key = related_mere_snapshot(ui)
         .relations
         .into_iter()
-        .find(|claim| claim.claim_id.qualified_key() == relation_id)
-    {
-        ui.personal_link_pair =
-            Some((claim.provenance.original_from, claim.provenance.original_to));
-        ui.personal_link_history = false;
-        ui.personal_link_layout = None;
-        ui.personal_relation_notice = None;
-    }
+        .map(|claim| {
+            LinkKey::new(
+                LinkStratum::Surface,
+                claim.provenance.original_from,
+                claim.provenance.original_to,
+            )
+        })
+        .find(|key| key.stable_id() == relation_id);
+    let Some(key) = key else { return };
+    ui.related_relation = Some(relation_id);
+    ui.personal_link_pair = Some((key.first, key.second));
+    ui.personal_link_history = false;
+    ui.personal_link_layout = None;
+    ui.personal_relation_notice = None;
 }
 
 /// The relation kinds beyond the one the row already shows, so multiplicity is
@@ -856,9 +870,168 @@ pub(super) fn panel(ui: &UiState) -> UiChild {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use std::collections::BTreeSet;
     use woodshed_core::personal_relations::{
         AssertionBasis, PersonalRelationSource, PersonalRelationSourceId, Relation,
     };
+
+    #[test]
+    fn personal_custom_predicates_reach_shared_reader_with_exact_history_and_basis() {
+        let from = "chord:Major".to_string();
+        let to = "chord:Minor".to_string();
+        let actor = Author::new("personae:p6-reader");
+        let source_id = PersonalRelationSourceId::from_random_uuid_bytes([0x66; 16]);
+        let mut source = PersonalRelationSource::empty(source_id.clone());
+        let relation = || {
+            Relation::new(RelationClass::app("portable-test", 47)).with_label("custom predicate")
+        };
+        let first = source
+            .assert_relation(
+                &actor,
+                0,
+                &from,
+                &to,
+                relation(),
+                Some(100),
+                AssertionBasis {
+                    note: Some("first reason".into()),
+                    evidence: vec!["urn:evidence:first".into()],
+                    ..Default::default()
+                },
+            )
+            .unwrap();
+        let second = source
+            .assert_relation(
+                &actor,
+                source.runtime_revision(),
+                &from,
+                &to,
+                relation(),
+                Some(110),
+                AssertionBasis {
+                    note: Some("second reason".into()),
+                    evidence: vec!["urn:evidence:second".into()],
+                    ..Default::default()
+                },
+            )
+            .unwrap();
+
+        let mut ui = UiState::new();
+        ui.personal_relations = Some(source);
+        ui.personal_link_pair = Some((from.clone(), to.clone()));
+        let held = claims_link_reading(&ui).expect("the personal pair has a reading");
+        let held_records = held.links[0]
+            .buckets
+            .iter()
+            .flat_map(|bucket| &bucket.assertions)
+            .filter(|assertion| assertion.id.starts_with("personal:"))
+            .collect::<Vec<_>>();
+        assert_eq!(held_records.len(), 2);
+        assert_ne!(held_records[0].id, held_records[1].id);
+        assert!(held_records.iter().all(|assertion| {
+            assertion.predicate == "app:portable-test:47"
+                && assertion.recognized_kind.is_none()
+                && assertion.scope == LinkGraphScope::Custom(source_id.to_string())
+                && assertion.asserter.as_deref() == Some("personae:p6-reader")
+                && assertion.withdrawn.is_none()
+        }));
+        assert_eq!(
+            held_records
+                .iter()
+                .map(|assertion| assertion.basis.note.as_deref())
+                .collect::<BTreeSet<_>>(),
+            BTreeSet::from([Some("first reason"), Some("second reason")])
+        );
+        assert_eq!(
+            held_records
+                .iter()
+                .flat_map(|assertion| assertion.basis.evidence.iter().map(String::as_str))
+                .collect::<BTreeSet<_>>(),
+            BTreeSet::from(["urn:evidence:first", "urn:evidence:second"])
+        );
+
+        let layout = OpenedLinkLayout::default_for(&held);
+        let compiled = scenomise::compile_opened_link(
+            &held,
+            &layout,
+            scenograph::link::OpenedLinkOptions { now_ms: Some(120) },
+        )
+        .expect("the shared reader compiles the portable records");
+        let resolved_ids = compiled
+            .entries
+            .iter()
+            .filter_map(|entry| match compiled.resolve(entry) {
+                Some(scenograph::link::OpenedLinkMember::Assertion(assertion))
+                    if assertion.id.starts_with("personal:") =>
+                {
+                    Some(assertion.id.as_str())
+                },
+                _ => None,
+            })
+            .collect::<BTreeSet<_>>();
+        let first_id = format!("personal:{}", serde_json::to_string(&first).unwrap());
+        let second_id = format!("personal:{}", serde_json::to_string(&second).unwrap());
+        assert_eq!(
+            resolved_ids,
+            BTreeSet::from([first_id.as_str(), second_id.as_str()])
+        );
+        assert_eq!(
+            compiled.reading, held,
+            "compilation retains the source reading"
+        );
+        let LinkSource::Available { binding, revision } = &compiled.reading.source else {
+            panic!("the personal relation source is disclosed");
+        };
+        assert!(binding.resource.contains(&source_id.to_string()));
+        assert!(matches!(revision, LinkSourceRevision::Unavailable { .. }));
+
+        let source = ui.personal_relations.as_mut().unwrap();
+        let first_id_typed = first;
+        source
+            .withdraw_exact(
+                &actor,
+                source.runtime_revision(),
+                first_id_typed,
+                &from,
+                &to,
+                Some(115),
+            )
+            .unwrap();
+        ui.personal_link_history = true;
+        let history = claims_link_reading(&ui).expect("explicit history includes the tombstone");
+        let history_records = history.links[0]
+            .buckets
+            .iter()
+            .flat_map(|bucket| &bucket.assertions)
+            .filter(|assertion| assertion.id.starts_with("personal:"))
+            .collect::<Vec<_>>();
+        assert_eq!(history_records.len(), 2);
+        let withdrawn = history_records
+            .iter()
+            .find(|assertion| assertion.id == first_id)
+            .unwrap();
+        assert_eq!(withdrawn.withdrawn.as_ref().unwrap().at_ms, Some(115));
+        assert_eq!(
+            withdrawn.withdrawn.as_ref().unwrap().by.as_deref(),
+            Some("personae:p6-reader")
+        );
+        assert_eq!(withdrawn.basis.note.as_deref(), Some("first reason"));
+        assert_eq!(withdrawn.basis.evidence, vec!["urn:evidence:first"]);
+        let held_after_withdrawal = history_records
+            .iter()
+            .find(|assertion| assertion.id == second_id)
+            .unwrap();
+        assert!(held_after_withdrawal.withdrawn.is_none());
+        assert_eq!(
+            held_after_withdrawal.basis.note.as_deref(),
+            Some("second reason")
+        );
+        assert_eq!(
+            held_after_withdrawal.basis.evidence,
+            vec!["urn:evidence:second"]
+        );
+        assert_eq!(history.source, held.source);
+    }
 
     #[test]
     fn exact_assertion_audition_queues_frozen_before_then_after_without_touching_set() {
@@ -1207,6 +1380,32 @@ mod tests {
             actual, raw,
             "both directions keep their exact source buckets"
         );
+
+        let key = LinkKey::new(LinkStratum::Surface, from.clone(), to.clone());
+        let pair_only = woodshed_core::mere::WoodshedMereSnapshot {
+            nodes: pair_snapshot
+                .nodes
+                .iter()
+                .filter(|node| node.id == from || node.id == to)
+                .cloned()
+                .collect(),
+            relations: pair_snapshot
+                .relations
+                .iter()
+                .filter(|relation| {
+                    LinkKey::new(
+                        LinkStratum::Surface,
+                        relation.provenance.original_from.clone(),
+                        relation.provenance.original_to.clone(),
+                    ) == key
+                })
+                .cloned()
+                .collect(),
+        };
+        let swatch = super::super::related_swatch_from_snapshot(&pair_only, &ui, true);
+        assert_eq!(swatch.relations.len(), 1);
+        assert_eq!(swatch.relations[0].link_key.as_ref(), Some(&key));
+        assert_eq!(swatch.relations[0].id, key.stable_id());
     }
 
     #[test]
@@ -1299,11 +1498,16 @@ mod tests {
             inverse.provenance.original_from.clone(),
             inverse.provenance.original_to.clone(),
         );
+        let key = LinkKey::new(LinkStratum::Surface, expected.0.clone(), expected.1.clone());
         let set_before = serde_json::to_value(&ui.set).unwrap();
 
-        activate_related_relation(&mut ui, inverse.claim_id.qualified_key());
+        activate_related_relation(&mut ui, key.stable_id());
 
         assert_eq!(ui.personal_link_pair, Some(expected));
+        assert_eq!(
+            ui.related_relation.as_deref(),
+            Some(key.stable_id().as_str())
+        );
         assert_eq!(serde_json::to_value(&ui.set).unwrap(), set_before);
     }
 }

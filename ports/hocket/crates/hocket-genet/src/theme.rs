@@ -32,7 +32,8 @@ pub fn sheet() -> String {
 .mono { font-family: monospace; }
 
 /* top strip */
-.top { display: flex; align-items: center; padding: 12px 22px; flex-shrink: 0;
+.top { display: flex; align-items: center; flex-wrap: wrap; row-gap: 8px;
+       padding: 12px 22px; flex-shrink: 0;
        border-bottom: 1px solid var(--line-soft); }
 .brand { font-size: 17px; color: var(--text); }
 .brand-dot { color: var(--voice-amber); }
@@ -63,6 +64,9 @@ pub fn sheet() -> String {
                    background-color: var(--surface); color: var(--text-dim); font-size: 12px;
                    line-height: 30px; padding: 0 10px; margin-left: 7px; }
 .project-command:hover { color: var(--text); border-color: var(--line); }
+/* Keep command labels inside their hit bounds when a long project status
+   fills the compact toolbar. Wrap whole controls onto another row. */
+.top .project-command, .top .chip, .top .export-length { flex-shrink: 0; white-space: nowrap; }
 .project-save { color: var(--voice-teal); }
 .export-length { display: flex; align-items: center; height: 30px; margin-left: 10px;
                  border: 1px solid var(--line-soft); border-radius: 7px; overflow: hidden; }

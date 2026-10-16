@@ -1,0 +1,45 @@
+# Isolated copied v1 arrangement; real test Keeper; deterministic PCM, no mic.
+settle 5
+ui-zoom 0.8
+click .workspace-panel Mere
+settle 3
+assert snap overview-takes == 3
+assert snap overview-take-links == 2
+click .overview-fit Fit scene
+settle 3
+capture 01_retained_v1_take_defaults
+click .overview-node-title Take · Cmaj7 (Major 7)
+click .overview-open Open in Looper
+settle 8
+assert snap loop-source-set == 1
+assert snap recorder-selected-set == 1
+click .t-btn Clear stored loop: Set 1 Card 2
+settle 4
+act seed-selected-loop-capture
+settle 10
+assert snap loop-active-captures == 1
+assert snap recorder-waveforms == 1
+assert snap loop-capture-references == 3
+assert snap capture-input-rate == none
+capture 02_sealed_take_in_looper
+click role:button @aria-label=Play backing
+act await-selected-take-playback
+wait 1800
+settle 3
+assert snap take-playback-observed == true
+assert snap song-playing == true
+assert snap output-device-frames >= 1
+act sample-output-clock
+capture 03_take_playing
+click role:button @aria-label=Stop all loops
+settle 3
+assert snap song-playing == false
+click .pill Stage
+click .workspace-panel Mere
+settle 4
+click .overview-node-title Take · Cmaj7 (Major 7)
+click .overview-movement-toggle Show movement controls
+click .overview-role-pinned Pin in place
+settle 4
+act verify-mere-take-retention
+capture 04_retained_v2_take

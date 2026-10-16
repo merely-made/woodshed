@@ -1,0 +1,49 @@
+# Requires owned native dialogs: blank.hock, project.hock, seed.wav, pass.hocket, pass.hocket.
+settle 15
+assert snap identity-ready == true
+assert snap tracks == 4
+click role:button @aria-label=Save project
+wait 1800
+click role:button @aria-label=Open project
+wait 1800
+assert snap phrases == 1
+assert snap media == 1
+assert snap tracks == 4
+click .hocket-recorder-add-track
+settle 5
+assert snap tracks == 5
+click role:button @aria-label=Save project
+wait 1800
+assert snap project-dirty == false
+act checkpoint-project saved
+capture 01_saved
+click role:button @aria-label=Export current loop mix as WAV
+wait 1800
+click role:button @aria-label=Copy your contact token to the clipboard
+wait 1800
+click role:button @aria-label=Set the hand-off recipient from a token on the clipboard
+wait 1800
+assert text Hand off
+click role:button @aria-label=Write a signed hand-off for the recipient
+wait 1800
+click .hocket-recorder-add-track
+settle 5
+assert snap tracks == 6
+click role:button @aria-label=Open a hand-off file addressed to you
+wait 1800
+assert snap has-incoming == true
+assert snap tracks == 6
+assert text continues this session
+act checkpoint-project staged
+capture 02_staged
+click role:button @aria-label=Accept the staged hand-off
+wait 1800
+assert snap tracks == 5
+assert snap has-incoming == false
+assert snap history-nodes == 4
+click role:button @aria-label=Save project
+wait 1800
+assert snap project-dirty == false
+act checkpoint-project accepted
+capture 03_accepted
+settle 5

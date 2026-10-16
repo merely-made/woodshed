@@ -1,0 +1,18 @@
+RESULT ok
+waited 0 frames
+captured 01_new_session_review
+waited 0 frames
+waited 0 frames
+waited 0 frames
+captured 02_adopted
+waited 0 frames
+waited 0 frames
+captured 03_reopened
+waited 0 frames
+captured 04_exported
+capture 01_new_session_review 1920x1960 digest=51f37b96eb479c76 file=/Users/markik/Code/testing/hocket/project-handoff-20261016/qualified-reopen/01_new_session_review.png
+capture 02_adopted 1920x1960 digest=681b659939a0ca03 file=/Users/markik/Code/testing/hocket/project-handoff-20261016/qualified-reopen/02_adopted.png
+capture 03_reopened 1920x1960 digest=34d836c506ca778d file=/Users/markik/Code/testing/hocket/project-handoff-20261016/qualified-reopen/03_reopened.png
+capture 04_exported 1920x1960 digest=29f0f5ff636c2496 file=/Users/markik/Code/testing/hocket/project-handoff-20261016/qualified-reopen/04_exported.png
+frames: 4 captured, 0 blank, 4 distinct digests
+presentation: 57 frames, 58 redraws, 1 unpresented redraws

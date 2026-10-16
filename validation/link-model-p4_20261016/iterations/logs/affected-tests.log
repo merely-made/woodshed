@@ -1,0 +1,99 @@
+warning: patch `mere-proofs v0.1.0 (https://github.com/merely-made/mere.git?branch=main#91467c0b)` was not used in the crate graph
+warning: patch `mere-transport v0.0.2 (https://github.com/merely-made/murm.git?branch=main#cba46d85)` was not used in the crate graph
+warning: patch `mere-webrtc-carrier v0.0.1 (https://github.com/merely-made/murm.git?branch=main#cba46d85)` was not used in the crate graph
+help: Check that the patched package version and available features are compatible
+      with the dependency requirements. If the patch has a different version from
+      what is locked in the Cargo.lock file, run `cargo update` to use the new
+      version. This may also occur with an optional dependency that is not enabled.
+   Compiling sceno v0.0.5 (https://github.com/merely-made/mere.git?branch=main#91467c0b)
+   Compiling mere-curation v0.1.1 (https://github.com/merely-made/mere.git?branch=main#91467c0b)
+   Compiling tinct v0.1.2 (https://github.com/merely-made/mere.git?branch=main#91467c0b)
+   Compiling command-menu v0.1.0 (https://github.com/merely-made/mere.git?branch=main#91467c0b)
+   Compiling muniment v0.1.2 (https://github.com/merely-made/mere.git?branch=main#91467c0b)
+   Compiling scenograph v0.0.4 (https://github.com/merely-made/mere.git?branch=main#91467c0b)
+   Compiling scenomise v0.0.5 (https://github.com/merely-made/mere.git?branch=main#91467c0b)
+   Compiling workbench v0.1.0 (https://github.com/merely-made/mere.git?branch=main#91467c0b)
+   Compiling meristem v0.2.0 (https://github.com/merely-made/mere.git?branch=main#91467c0b)
+   Compiling mere-surface-api v0.1.0 (https://github.com/merely-made/mere.git?branch=main#91467c0b)
+   Compiling illume v0.0.2 (https://github.com/merely-made/mere.git?branch=main#91467c0b)
+   Compiling chartulary v0.2.2 (https://github.com/merely-made/mere.git?branch=main#91467c0b)
+   Compiling sprigging v0.2.1 (https://github.com/merely-made/mere.git?branch=main#91467c0b)
+   Compiling backstep v0.1.0 (https://github.com/merely-made/mere.git?branch=main#91467c0b)
+   Compiling cambium v0.3.3 (https://github.com/merely-made/mere.git?branch=main#91467c0b)
+   Compiling numen v0.2.0 (https://github.com/merely-made/mere.git?branch=main#91467c0b)
+   Compiling mere-forme v0.2.0 (https://github.com/merely-made/mere.git?branch=main#91467c0b)
+   Compiling mere-kernel v0.0.2 (https://github.com/merely-made/mere.git?branch=main#91467c0b)
+   Compiling tabard v0.0.1 (https://github.com/merely-made/mere.git?branch=main#91467c0b)
+   Compiling scenotime v0.0.4 (https://github.com/merely-made/mere.git?branch=main#91467c0b)
+   Compiling audio-primitives v0.1.0 (/Users/markik/Code/repos/woodshed-link-model-p3-20261016/crates/audio-primitives)
+   Compiling cambium-winit v0.3.0 (https://github.com/merely-made/mere.git?branch=main#91467c0b)
+   Compiling inker v0.1.1 (https://github.com/merely-made/mere.git?branch=main#91467c0b)
+   Compiling chirograph v0.0.2 (https://github.com/merely-made/mere.git?branch=main#91467c0b)
+   Compiling document-canvas v0.1.0 (https://github.com/merely-made/mere.git?branch=main#91467c0b)
+   Compiling cambium-rootstock v0.1.0 (https://github.com/merely-made/mere.git?branch=main#91467c0b)
+   Compiling hocket-project v0.1.0 (/Users/markik/Code/repos/woodshed-link-model-p3-20261016/crates/hocket-project)
+   Compiling mere-fleece v0.0.1 (https://github.com/merely-made/mere.git?branch=main#91467c0b)
+   Compiling armillary v0.1.1 (https://github.com/merely-made/mere.git?branch=main#91467c0b)
+   Compiling woodshed-graph v0.1.0 (/Users/markik/Code/repos/woodshed-link-model-p3-20261016/crates/woodshed-graph)
+   Compiling seiche v0.0.6 (https://github.com/merely-made/mere.git?branch=main#91467c0b)
+   Compiling mere-document-lanes v0.1.0 (https://github.com/merely-made/mere.git?branch=main#91467c0b)
+   Compiling hocket-recorder v0.1.0 (/Users/markik/Code/repos/woodshed-link-model-p3-20261016/crates/hocket-recorder)
+   Compiling mere-cartography v0.0.2 (https://github.com/merely-made/mere.git?branch=main#91467c0b)
+   Compiling esp v0.1.0 (https://github.com/merely-made/mere.git?branch=main#91467c0b)
+   Compiling woodshed-core v0.1.0 (/Users/markik/Code/repos/woodshed-link-model-p3-20261016/crates/woodshed-core)
+error[E0063]: missing fields `link_key`, `marks` and `strength` in initializer of `RoutedRelation`
+   --> crates/woodshed-core/src/session_overview.rs:737:30
+    |
+737 |         scene.relations.push(RoutedRelation {
+    |                              ^^^^^^^^^^^^^^ missing `link_key`, `marks` and `strength`
+
+error[E0063]: missing fields `link_key`, `marks` and `strength` in initializer of `RoutedRelation`
+   --> crates/woodshed-core/src/stage_scene.rs:686:17
+    |
+686 |                 RoutedRelation {
+    |                 ^^^^^^^^^^^^^^ missing `link_key`, `marks` and `strength`
+
+error[E0063]: missing fields `link_key`, `marks` and `strength` in initializer of `RoutedRelation`
+   --> crates/woodshed-core/src/stage_scene.rs:730:21
+    |
+730 |                     RoutedRelation {
+    |                     ^^^^^^^^^^^^^^ missing `link_key`, `marks` and `strength`
+
+error[E0063]: missing fields `link_key`, `marks` and `strength` in initializer of `RoutedRelation`
+   --> crates/woodshed-core/src/stage_scene.rs:920:29
+    |
+920 |                 let route = RoutedRelation {
+    |                             ^^^^^^^^^^^^^^ missing `link_key`, `marks` and `strength`
+
+error[E0063]: missing fields `link_key`, `marks` and `strength` in initializer of `RoutedRelation`
+    --> crates/woodshed-core/src/stage_scene.rs:1004:37
+     |
+1004 |                         let route = RoutedRelation {
+     |                                     ^^^^^^^^^^^^^^ missing `link_key`, `marks` and `strength`
+
+error[E0063]: missing fields `link_key`, `marks` and `strength` in initializer of `RoutedRelation`
+    --> crates/woodshed-core/src/stage_scene.rs:1048:37
+     |
+1048 |                         let route = RoutedRelation {
+     |                                     ^^^^^^^^^^^^^^ missing `link_key`, `marks` and `strength`
+
+error[E0063]: missing fields `link_key`, `marks` and `strength` in initializer of `RoutedRelation`
+    --> crates/woodshed-core/src/stage_scene.rs:1092:37
+     |
+1092 |                         let route = RoutedRelation {
+     |                                     ^^^^^^^^^^^^^^ missing `link_key`, `marks` and `strength`
+
+error[E0063]: missing fields `link_key`, `marks` and `strength` in initializer of `RoutedRelation`
+    --> crates/woodshed-core/src/stage_scene.rs:1114:33
+     |
+1114 |                     let route = RoutedRelation {
+     |                                 ^^^^^^^^^^^^^^ missing `link_key`, `marks` and `strength`
+
+error[E0063]: missing fields `link_key`, `marks` and `strength` in initializer of `RoutedRelation`
+    --> crates/woodshed-core/src/stage_scene.rs:1196:33
+     |
+1196 |                     let route = RoutedRelation {
+     |                                 ^^^^^^^^^^^^^^ missing `link_key`, `marks` and `strength`
+
+For more information about this error, try `rustc --explain E0063`.
+error: could not compile `woodshed-core` (lib) due to 9 previous errors

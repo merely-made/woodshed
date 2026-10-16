@@ -1,0 +1,5 @@
+RESULT ok
+captured 01_opened_link_pair
+capture 01_opened_link_pair 2200x1800 digest=13415c900e6aa76b file=/Users/markik/Code/testing/woodshed/link-model-p4-20261016/native-seed-v1/01_opened_link_pair.png
+frames: 1 captured, 0 blank, 1 distinct digests
+presentation: 128 frames, 129 redraws, 1 unpresented redraws

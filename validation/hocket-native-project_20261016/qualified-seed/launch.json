@@ -1,0 +1,25 @@
+{
+  "app": "/Users/markik/Code/testing/hocket/project-handoff-20261016/qualified-seed/HocketQualifiedSeed.app",
+  "binary": "/Users/markik/Code/testing/hocket/project-handoff-20261016/frozen/hocket-genet-fd4663a",
+  "cwd": "/Users/markik/Code/repos/woodshed-mere-take-acceptance-20261016/ports/hocket",
+  "env": {
+    "HOCKET_SCENARIO": "/Users/markik/Code/repos/woodshed-mere-take-acceptance-20261016/ports/hocket/scenarios/project_native_seed.scn",
+    "HOCKET_CAPTURE_DIR": "/Users/markik/Code/testing/hocket/project-handoff-20261016/qualified-seed",
+    "HOCKET_RECEIPT": "/Users/markik/Code/testing/hocket/project-handoff-20261016/qualified-seed/scenario.done",
+    "HOCKET_PRESENTATION_TIMEOUT_SECS": "60",
+    "HOCKET_WIDTH": "1180",
+    "HOCKET_HEIGHT": "980",
+    "HOCKET_APPEARANCE_RECEIPT": "1",
+    "HOCKET_SETTINGS": "/Users/markik/Code/testing/hocket/project-handoff-20261016/profile/settings.json",
+    "HOCKET_APPEARANCE": "/Users/markik/Code/testing/hocket/project-handoff-20261016/profile/appearance.json",
+    "HOCKET_THEME_LIBRARY": "/Users/markik/Code/testing/hocket/project-handoff-20261016/profile/themes",
+    "GRAPHSHELL_APP_ENDPOINT": "/tmp/hk-project-20261016.sock",
+    "TMPDIR": "/tmp",
+    "LOCALAPPDATA": "/Users/markik/Code/testing/hocket/project-handoff-20261016/localappdata",
+    "XDG_DATA_HOME": "/Users/markik/Code/testing/hocket/project-handoff-20261016/data",
+    "XDG_CONFIG_HOME": "/Users/markik/Code/testing/hocket/project-handoff-20261016/config",
+    "XDG_CACHE_HOME": "/Users/markik/Code/testing/hocket/project-handoff-20261016/cache",
+    "MERE_ROOT": "/Users/markik/Code/testing/hocket/project-handoff-20261016/mere",
+    "HOCKET_RECEIPT_CLIPBOARD": "1"
+  }
+}

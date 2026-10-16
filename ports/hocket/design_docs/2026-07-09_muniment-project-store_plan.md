@@ -73,3 +73,10 @@ updated without external source/version changes. The 30 project tests and 54
 model/engine/capture/history tests pass. The normal project dependency tree
 contains neither CPAL nor Firewheel. Combined desktop validation follows host
 lane integration; native project save/open/export acceptance remains separate.
+
+2026-10-16 native follow-through: bounded native Save/Open/WAV export and signed
+self-addressed handoff review/discard/accept/adopt now pass, including exact fresh-
+process project/history/media reopening. See
+[the native acceptance plan](2026-10-16_native_project_handoff_plan.md) and its
+receipt for the two-process/seven-capture boundary. This does not qualify
+two-peer transport, signed per-turn operations or physical audio.

@@ -1,0 +1,7 @@
+RESULT ok
+captured 01_relationship_links_reopened
+captured 02_relationship_link_reopened
+capture 01_relationship_links_reopened 2200x1800 digest=7c22b659ba4fcd35 file=/Users/markik/Code/testing/woodshed/link-model-p4-20261016/native-reopen-v4/01_relationship_links_reopened.png
+capture 02_relationship_link_reopened 2200x1800 digest=ad5d7cfb148bdec6 file=/Users/markik/Code/testing/woodshed/link-model-p4-20261016/native-reopen-v4/02_relationship_link_reopened.png
+frames: 2 captured, 0 blank, 2 distinct digests
+presentation: 135 frames, 136 redraws, 1 unpresented redraws

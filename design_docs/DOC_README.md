@@ -19,6 +19,10 @@ before any other doc in this directory.
 
 ## Active Plans
 
+- [2026-10-16_mere_take_acceptance_plan.md](2026-10-16_mere_take_acceptance_plan.md) — Loop-take native acceptance complete: fallback placement preserves retained v1 positions; 442 cases, desktop build, three sealed native runs and ten reviewed captures, including wide/narrow fresh-process v2 reopening.
+
+- [Hocket native project/handoff acceptance](../ports/hocket/design_docs/2026-10-16_native_project_handoff_plan.md) — Two native processes/seven reviewed captures qualify Save/Open/WAV export, self-addressed signed handoff review/accept/adopt and exact project/media reopening; physical audio and two-peer transport remain separate.
+
 - [2026-10-16_shared_capture_accumulator_plan.md](2026-10-16_shared_capture_accumulator_plan.md) — Shared capture writes, input feed, completion envelope and Hocket bar countdown implemented; 256 CPU/offline cases and both host all-target checks pass. Adapter scheduling and integrity remain product-owned.
 
 - [2026-10-15_woodshed_codex_handoff.md](2026-10-15_woodshed_codex_handoff.md) — **Handoff for Codex.** Where Woodshed, Hocket, Redshank and Firewheel stand after the Graphshell lift (door, P2 canvas receipt `4005c5a`), the binding rulings, and ordered tasks: join the repin round (remote mere route spec §7.6; Murm `main` `fb6360c12b`), move bar length to Hocket's rule, the shared pure-state DSP crate, and the loop-take node checks. Lists what waits on design or other lanes, and the native-run traps.
@@ -109,6 +113,7 @@ before any other doc in this directory.
   states, and responsive wireframe done-conditions. It is separate from the
   Woodshed product graph.
 - [2026-07-11_stage_set_tools_plan.md](2026-07-11_stage_set_tools_plan.md)
+  — October 16 bounded link-model P4 is qualified against Mere `91467c0bb`: 619 suite cases plus five child invocations, a locked desktop build and four reviewed native seed/reopen captures on source `865e0e9`; merged source `fe54425` repeats 361 affected cases, the build and four native seed/reopen captures. Bounded P6 receiving qualification on Woodshed `d896e39` passes 629 affected cases, a locked desktop build and four reviewed seed/reopen captures against Mere `a45a0b6`; its portable custom-predicate claims test does not imply Mere Graph ingestion. Exact member filters affect resting strength without dropping source evidence; physical audio and full Stage P4f keep their own gates.
   — October 16 bounded opened-link P3 consumer is qualified on published Mere `ee324e517`: persistent personal assertions, generated reasons read-only, exact source actions and ordered before/after audition. The 784-case source gate on `374c75d` is followed by 191 view cases and a desktop build on final source `474d10a`. Native authoring/audition and fresh-process sealed reopen pass with seven reviewed List/Timeline captures, exact UUID/assertion IDs and withdrawal history; physical audio quality and full P4f remain separate.
   — October 15 P2 camera receipt refreshed on the current locked family: 183 view tests,
   274 presented frames and nine reviewed captures; native wheel routing now covers

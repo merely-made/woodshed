@@ -11,6 +11,10 @@ before any other doc in this directory.
 
 ## Active Plans
 
+- [2026-10-16_native_project_handoff_plan.md](2026-10-16_native_project_handoff_plan.md) — Accepted bounded native save/open/export and self-addressed handoff workflow: two processes, seven reviewed captures, exact project/history/media reopening and WAV parity. Physical audio and two-peer transport remain separate.
+
+- [2026-10-16_project_worker_correlation_plan.md](2026-10-16_project_worker_correlation_plan.md) — Implemented and CPU/build qualified: request/session-scoped admission, explicit busy state and stale-reply rejection; 116 tests, all-target checks and desktop build pass. Native self-addressed handoff follow-through is recorded in the native project plan above.
+
 - [2026-10-11_firewheel_adoption_plan.md](2026-10-11_firewheel_adoption_plan.md) —
   **Consumer/native regression accepted; physical audio open.** Standalone
   Firewheel 0.14 at the exact owned fork revision, with 166 CPU checks, twelve
@@ -77,8 +81,8 @@ before any other doc in this directory.
   existing project worker, a copyable contact token with auto-addressed replies,
   incoming staging and review in the circle, and same-session or new-session
   acceptance. Cleartext carrier, stated honestly; encryption and a network
-  carrier are later. Project-worker reply correlation and current native
-  save/open/export/handoff qualification remain open.
+  carrier are later. Project-worker reply correlation is implemented and CPU-qualified on October 16;
+  current native save/open/export/handoff qualification remains open.
 - [2026-08-08_persona_timeline_design.md](2026-08-08_persona_timeline_design.md)
   - **DESIGN SKETCH** (from Mark, no implementation planned). A persona as a
   lens over the session: click a participant, see their contributions laid out
