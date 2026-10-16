@@ -297,6 +297,10 @@ repin forward
   through the canonical `www` alias. The `edit-history` patch rows are now
   `backstep`. CPU checks and counts are unchanged (769/101/262). The handoff's
   Task 1 records the remaining Genet-sourced `murm-wire` split.
+- **Stage B (same day).** All four roots name the family repos by
+  `branch = "main"` through one canonical URL, and their committed locks are
+  the tested revisions. Repins are now `cargo update -p`. The `murm-wire`
+  split resolved, because Genet now names Murm by branch too.
 - **Historical families.** The `8568f42`/`2c7ef73` family cited in the Tabard
   and Hocket host-refactor plans is the family those slices qualified, not a
   current pin.
