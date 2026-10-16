@@ -12,7 +12,9 @@ use woodshed_core::RelatedSuggestion;
 use woodshed_core::mere::{GeneratedEvidenceRef, PracticeEvidenceBasis};
 use woodshed_core::personal_relations::{Author, EdgeId, RelationClass};
 
-use super::{PersonalRelationIntent, RELATED_LIMIT, UiChild, UiState, related_swatch};
+use super::{
+    PersonalRelationIntent, RELATED_LIMIT, UiChild, UiState, related_mere_snapshot, related_swatch,
+};
 
 fn claims_source(ui: &UiState) -> LinkSource {
     let personal = ui.personal_relations.as_ref().map_or_else(
@@ -286,7 +288,7 @@ fn queue_relation_action(ui: &mut UiState, event: OpenedLinkEvent, expected_revi
                             );
                             return;
                         };
-                        ui.request(crate::audio::AudioRequest::PreviewPhrase {
+                        ui.request(woodshed_core::audio::AudioRequest::PreviewPhrase {
                             before,
                             after,
                             chord_duration_s: before_duration.max(after_duration),
@@ -316,6 +318,7 @@ fn queue_relation_action(ui: &mut UiState, event: OpenedLinkEvent, expected_revi
                     Some("This assertion reading is stale; reopen the link before acting.".into());
                 return;
             }
+            let expected_source_id = source.source_id().clone();
             let Some(raw_id) = target.assertion_id.strip_prefix("personal:") else {
                 ui.personal_relation_notice =
                     Some("The assertion handle has an unknown source namespace.".into());
@@ -365,7 +368,7 @@ fn queue_relation_action(ui: &mut UiState, event: OpenedLinkEvent, expected_revi
                         );
                         return;
                     };
-                    ui.request(crate::audio::AudioRequest::PreviewPhrase {
+                    ui.request(woodshed_core::audio::AudioRequest::PreviewPhrase {
                         before,
                         after,
                         chord_duration_s: before_duration.max(after_duration),
@@ -381,7 +384,7 @@ fn queue_relation_action(ui: &mut UiState, event: OpenedLinkEvent, expected_revi
                     ui.refresh_event_time();
                     ui.personal_relation_intents
                         .push(PersonalRelationIntent::Confirm {
-                            expected_source_id: source.source_id().clone(),
+                            expected_source_id: expected_source_id.clone(),
                             expected_revision,
                             id: raw_id.to_owned(),
                             from: target.from,
@@ -394,7 +397,7 @@ fn queue_relation_action(ui: &mut UiState, event: OpenedLinkEvent, expected_revi
                     ui.refresh_event_time();
                     ui.personal_relation_intents
                         .push(PersonalRelationIntent::Withdraw {
-                            expected_source_id: source.source_id().clone(),
+                            expected_source_id: expected_source_id.clone(),
                             expected_revision,
                             id: raw_id.to_owned(),
                             from: target.from,
@@ -413,7 +416,14 @@ fn queue_relation_action(ui: &mut UiState, event: OpenedLinkEvent, expected_revi
 }
 
 fn endpoint_preview(ui: &UiState, catalog_id: &str) -> Option<(Vec<f32>, f32, f32)> {
-    let mut stage = ui.stage.clone();
+    // StageState intentionally has no Clone: its transient shape cache is
+    // mutable interior state. Resolve the endpoint in a fresh snapshot carrying
+    // the live tuning/root/window instead of cloning that cache.
+    let mut stage = woodshed_core::StageState::new();
+    stage.tuning_idx = ui.stage.tuning_idx;
+    stage.root_idx = ui.stage.root_idx;
+    stage.fret_count = ui.stage.fret_count;
+    stage.fret_start = ui.stage.fret_start;
     if !stage.select_catalog_id(catalog_id) {
         return None;
     }
@@ -474,17 +484,20 @@ pub(super) fn opened_claims_link(ui: &UiState) -> UiChild {
                     );
                     return;
                 }
-                let Some(source) = ui.personal_relations.as_ref() else {
+                let Some((expected_revision, expected_source_id)) = ui
+                    .personal_relations
+                    .as_ref()
+                    .map(|source| (source.runtime_revision(), source.source_id().clone()))
+                else {
                     ui.personal_relation_notice =
                         Some("The personal assertion source has not been saved yet.".into());
                     return;
                 };
-                let expected_revision = source.runtime_revision();
                 ui.refresh_event_time();
                 let note = ui.personal_relation_note.text().trim().to_owned();
                 ui.personal_relation_intents
                     .push(PersonalRelationIntent::Assert {
-                        expected_source_id: source.source_id().clone(),
+                        expected_source_id,
                         expected_revision,
                         from: from_for_assert.clone(),
                         to: to_for_assert.clone(),

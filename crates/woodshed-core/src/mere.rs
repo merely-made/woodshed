@@ -11,7 +11,7 @@ use std::collections::{BTreeMap, BTreeSet, VecDeque};
 use woodshed_graph::{CatalogKind, RelationKind, catalog_materials, related_neighbors};
 pub use woodshed_graph::{
     GeneratedClaimId, GeneratedClaimProvenance, GeneratedEvidenceRef, GeneratedMethod,
-    MaterialRelation, PracticeEvidenceBasis, RELATED_PREDICATE_IRI,
+    MaterialRelation, PracticeEvidenceBasis, RELATED, RELATED_PREDICATE_IRI,
 };
 
 use crate::history::{PracticeHistory, PracticeTransition};
