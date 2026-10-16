@@ -47,12 +47,12 @@ click .t-btn Rehearse
 settle 3
 click .t-btn Run
 act p5a-wait-for-manual
-wait 180
+wait 1000
 assert snap rehearsal-running == true
 assert snap cursor-number == 3
 assert snap p5a-card-hold == manual
 act p5a-wait-on-manual
-wait 180
+wait 1000
 assert snap rehearsal-running == true
 assert snap cursor-number == 3
 capture 03_timed_to_manual_wait
