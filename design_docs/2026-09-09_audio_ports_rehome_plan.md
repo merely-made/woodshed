@@ -666,3 +666,13 @@ and `validation/shared-capture-seams_20261016/receipt.json` hold scoped evidence
 No persistent clocks or PCM changed; earlier native/export receipts retain their
 original sources. Physical input, audibility and latency remain independently
 unqualified by this work.
+
+### October 16 Hocket project-worker correlation
+
+The standalone host now stamps all five project worker operations with Armillary
+request IDs and host session/replacement scope. Explicit admitted pending work
+owns busy state, including handoff read/write. Correlation protects saved-file
+association, live project replacement and staged incoming data from late replies.
+The [port plan](../ports/hocket/design_docs/2026-10-16_project_worker_correlation_plan.md)
+owns implementation and CPU evidence; native project/handoff qualification,
+physical audio and signed turn operations remain separately gated.

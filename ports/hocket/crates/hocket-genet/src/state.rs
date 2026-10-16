@@ -14,7 +14,7 @@ use std::path::PathBuf;
 use std::time::Instant;
 
 use crate::recorder_audio::DesktopRecorderAudio;
-use armillary::ActorHandle;
+use armillary::{ActorHandle, Correlated, RequestId, RequestIds};
 use audio_primitives::MeterBallistics;
 use cambium::SelectState;
 use genet_clipboard::{Clipboard, ClipboardItem, SystemClipboard, TextClipboard};
@@ -27,13 +27,15 @@ use hocket_recorder::Recorder;
 use personae::{Ed25519PublicKey, IdentityProvider};
 
 use crate::identity::{LocalIdentity, parse_contact_token};
-use crate::project_io::{ProjectCommand, ProjectUpdate};
+use crate::project_io::{ProjectCommand, ProjectReply, ProjectRequest, ProjectScope, ProjectUpdate};
 
 enum ProjectStatus {
     Idle,
     Saving,
     Loading,
     Exporting,
+    WritingHandoff,
+    ReadingHandoff,
     Saved,
     Exported(PathBuf),
     HandedOff(PathBuf),
@@ -57,6 +59,12 @@ pub struct PersonaSwitch {
     pub losing_token: String,
 }
 
+#[derive(Clone, Copy)]
+struct PendingProject {
+    request: RequestId,
+    scope: ProjectScope,
+}
+
 pub struct AppState {
     pub appearance: crate::appearance::AppearanceState,
     pub window_commands: cambium_genet_winit_host::WindowCommands,
@@ -66,7 +74,10 @@ pub struct AppState {
     project_path: Option<PathBuf>,
     saved_head: hocket_model::NodeId,
     project_status: ProjectStatus,
-    project_worker: ActorHandle<ProjectCommand>,
+    project_requests: RequestIds,
+    project_generation: u64,
+    pending_project: Option<PendingProject>,
+    project_worker: ActorHandle<ProjectRequest>,
     /// What the app is actually doing about updates. Host-local presentation
     /// state: it never enters a project or a hand-off.
     update_status: crate::update::UpdateStatus,
@@ -114,7 +125,7 @@ pub struct AppState {
 impl AppState {
     /// A new, empty looper-pedal session. Captures append real playable layers.
     pub fn new(
-        project_worker: ActorHandle<ProjectCommand>,
+        project_worker: ActorHandle<ProjectRequest>,
         update_worker: ActorHandle<crate::update::worker::UpdateCommand>,
         update_settings: crate::update::UpdateSettings,
         identity: Result<LocalIdentity, String>,
@@ -139,7 +150,7 @@ impl AppState {
         history: History,
         store: InMemoryStore,
         missing_media: BTreeSet<MediaRef>,
-        project_worker: ActorHandle<ProjectCommand>,
+        project_worker: ActorHandle<ProjectRequest>,
         update_worker: ActorHandle<crate::update::worker::UpdateCommand>,
         update_settings: crate::update::UpdateSettings,
         identity: Result<LocalIdentity, String>,
@@ -167,6 +178,9 @@ impl AppState {
             project_path: None,
             saved_head,
             project_status: ProjectStatus::Idle,
+            project_requests: RequestIds::default(),
+            project_generation: 0,
+            pending_project: None,
             project_worker,
             update_status: crate::update::UpdateStatus::Idle,
             update_settings,
@@ -217,6 +231,8 @@ impl AppState {
             ProjectStatus::Saving => "saving".to_string(),
             ProjectStatus::Loading => "opening".to_string(),
             ProjectStatus::Exporting => "exporting mix".to_string(),
+            ProjectStatus::WritingHandoff => "writing hand-off".to_string(),
+            ProjectStatus::ReadingHandoff => "opening hand-off".to_string(),
             ProjectStatus::Saved => {
                 if self.is_dirty() {
                     "unsaved changes".to_string()
@@ -478,12 +494,7 @@ impl AppState {
         else {
             return;
         };
-        if !self
-            .project_worker
-            .command(ProjectCommand::WriteHandoff { path, envelope })
-        {
-            self.project_status = ProjectStatus::Error("project worker stopped".to_string());
-        }
+        self.submit_project(ProjectCommand::WriteHandoff { path, envelope });
     }
 
     /// Offer to join the family persona, staged for confirmation.
@@ -535,6 +546,7 @@ impl AppState {
         };
         match identity.join_family() {
             Ok(()) => {
+                self.retire_project_work();
                 self.reshare_notice = true;
                 // The addressed reply belonged to the old identity's
                 // conversation; keeping it would send the next hand-off as
@@ -605,12 +617,7 @@ impl AppState {
         else {
             return;
         };
-        if !self
-            .project_worker
-            .command(ProjectCommand::ReadHandoff { path, recipient })
-        {
-            self.project_status = ProjectStatus::Error("project worker stopped".to_string());
-        }
+        self.submit_project(ProjectCommand::ReadHandoff { path, recipient });
     }
 
     /// Discard the staged hand-off without applying it.
@@ -634,6 +641,7 @@ impl AppState {
             match received.accept_branch(&mut bundle, &mut media) {
                 Ok(_report) => {
                     self.stop_all();
+                    self.retire_project_work();
                     self.recorder.replace_project(
                         bundle.session,
                         bundle.history,
@@ -653,6 +661,7 @@ impl AppState {
             // A new session from a peer: adopt it wholesale, like opening a
             // project, but with no file yet so it reads as unsaved.
             self.stop_all();
+            self.retire_project_work();
             self.recorder.replace_project(
                 received.bundle.session,
                 received.bundle.history,
@@ -667,11 +676,48 @@ impl AppState {
         }
     }
 
+    fn project_scope(&self) -> ProjectScope {
+        ProjectScope {
+            generation: self.project_generation,
+            session: self.recorder.session.id,
+        }
+    }
+
+    fn retire_project_work(&mut self) {
+        self.project_generation = self.project_generation.wrapping_add(1);
+        self.pending_project = None;
+        self.incoming = None;
+        self.project_status = ProjectStatus::Idle;
+    }
+
     pub fn is_project_io_active(&self) -> bool {
-        matches!(
-            self.project_status,
-            ProjectStatus::Saving | ProjectStatus::Loading | ProjectStatus::Exporting
-        )
+        self.pending_project
+            .is_some_and(|pending| pending.scope == self.project_scope())
+    }
+
+    fn submit_project(&mut self, command: ProjectCommand) -> bool {
+        if self.is_project_io_active() {
+            return false;
+        }
+        let request = self.project_requests.issue();
+        let scope = self.project_scope();
+        self.project_status = match &command {
+            ProjectCommand::Save { .. } => ProjectStatus::Saving,
+            ProjectCommand::Open { .. } => ProjectStatus::Loading,
+            ProjectCommand::ExportMix { .. } => ProjectStatus::Exporting,
+            ProjectCommand::WriteHandoff { .. } => ProjectStatus::WritingHandoff,
+            ProjectCommand::ReadHandoff { .. } => ProjectStatus::ReadingHandoff,
+        };
+        self.pending_project = Some(PendingProject { request, scope });
+        if !self.project_worker.command(ProjectRequest {
+            scope,
+            command: Correlated::new(request, command),
+        }) {
+            self.pending_project = None;
+            self.project_status = ProjectStatus::Error("project worker stopped".into());
+            return false;
+        }
+        true
     }
 
     pub fn choose_project_to_open(&mut self) {
@@ -686,10 +732,7 @@ impl AppState {
             .add_filter("Hocket project", &["hock"])
             .pick_file()
         {
-            self.project_status = ProjectStatus::Loading;
-            if !self.project_worker.command(ProjectCommand::Open { path }) {
-                self.project_status = ProjectStatus::Error("project worker stopped".to_string());
-            }
+            self.submit_project(ProjectCommand::Open { path });
         }
     }
 
@@ -712,15 +755,12 @@ impl AppState {
         if let Some(path) = path {
             let bundle =
                 ProjectBundle::new(self.recorder.session.clone(), self.recorder.history.clone());
-            self.project_status = ProjectStatus::Saving;
-            if !self.project_worker.command(ProjectCommand::Save {
+            self.submit_project(ProjectCommand::Save {
                 path,
                 bundle,
                 media: self.recorder.store.clone(),
                 saved_head: self.recorder.history.head,
-            }) {
-                self.project_status = ProjectStatus::Error("project worker stopped".to_string());
-            }
+            });
         }
     }
 
@@ -740,16 +780,13 @@ impl AppState {
             .save_file()
             .map(|path| ensure_extension(path, "wav"))
         {
-            self.project_status = ProjectStatus::Exporting;
-            if !self.project_worker.command(ProjectCommand::ExportMix {
+            self.submit_project(ProjectCommand::ExportMix {
                 path,
                 session: self.recorder.session.clone(),
                 media: self.recorder.store.clone(),
                 solo: self.recorder.solo.clone(),
                 length: self.export_length,
-            }) {
-                self.project_status = ProjectStatus::Error("project worker stopped".to_string());
-            }
+            });
         }
     }
 
@@ -835,8 +872,20 @@ impl AppState {
         self.update_status.action_label()
     }
 
-    pub fn apply_project_update(&mut self, update: ProjectUpdate) {
-        match update {
+    pub fn apply_project_update(&mut self, reply: ProjectReply) {
+        let Some(pending) = self.pending_project else {
+            return;
+        };
+        if pending.request != reply.update.request || pending.scope != reply.scope {
+            return;
+        }
+        // A matching old terminal reply may retire its own pending slot, but
+        // never changes the replacement session or releases a newer request.
+        self.pending_project = None;
+        if reply.scope != self.project_scope() {
+            return;
+        }
+        match reply.update.value {
             ProjectUpdate::Saved { path, saved_head } => {
                 self.project_path = Some(path);
                 self.saved_head = saved_head;
@@ -844,6 +893,7 @@ impl AppState {
             },
             ProjectUpdate::Opened { path, loaded } => {
                 self.stop_all();
+                self.retire_project_work();
                 self.recorder.replace_project(
                     loaded.bundle.session,
                     loaded.bundle.history,
@@ -1024,3 +1074,7 @@ impl std::ops::DerefMut for AppState {
         &mut self.recorder
     }
 }
+
+#[cfg(test)]
+#[path = "project_correlation_tests.rs"]
+mod project_correlation_tests;

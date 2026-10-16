@@ -36,7 +36,7 @@ use cambium_genet_winit_host::{
 };
 
 use identity::LocalIdentity;
-use project_io::{ProjectUpdate, spawn_project_worker};
+use project_io::{ProjectReply, spawn_project_worker};
 use state::AppState;
 use view::{Child, root};
 
@@ -47,7 +47,7 @@ type AppRunner = Runner<AppState, Logic, Child>;
 /// [`AppState`]; only their UI-thread receivers and the waveform cache stay
 /// here, where the host hooks can service them.
 struct Runtime {
-    project_updates: Option<Receiver<ProjectUpdate>>,
+    project_updates: Option<Receiver<ProjectReply>>,
     update_statuses: Option<Receiver<update::UpdateStatus>>,
     waveform_cache: leaves::WaveformCache,
     scenario: Option<scenario::Run>,
