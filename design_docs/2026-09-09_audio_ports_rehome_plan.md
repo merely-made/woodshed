@@ -227,6 +227,35 @@ acoustic calibration and full P7 remain open.
 
 ### F5. Complete portable product seams
 
+**Canonical bar-clock intake (2026-10-16): implemented and CPU-qualified.**
+The approved target is Hocket's `audio_primitives::frames_per_bar`:
+quarter-note BPM, denominator honoured, one rounding per beat, multiplied by
+measure count. Source baseline is Woodshed `aba2c73`.
+
+The arithmetic change also affects existing quarter-note Set captures:
+
+| Rate | BPM | Meter | Measures | Existing frames | Canonical frames |
+| --- | --- | --- | --- | --- | --- |
+| 48,000 | 120 | 4/4 | 1 | 96,000 | 96,000 |
+| 48,000 | 120 | 3/8 | 1 | 72,000 | 36,000 |
+| 48,000 | 113.5 | 5/4 | 2 | 253,744 | 253,740 |
+| 48,000 | 137 | 7/4 | 3 | 441,460 | 441,462 |
+
+These were evaluated in Rust with the current Bar expression and the actual
+shared click module, rather than by comparing decimal durations. Both
+`capture_persistence::restore` and `audio::loop_projection::LoopCaptures::restore`
+recalculate expected frame length using `Bar::duration_samples`; changing it
+alone would refuse the differing old takes. `LoopCaptureRef` retains exact
+frames and media digest but has no rounding-policy field. Stored `SongDoc`
+contains musical settings, no sample-clock field or persisted PCM, so it can
+adopt the new calculation without a stored-song schema migration. The earlier
+96,000-frame sealed fixture and four-second WAV gold use the unchanged
+120 BPM quarter-note clock; they do not qualify the fractional-clock case.
+
+The initial assessment stopped at the handoff's Task 2 migration gate. Mark
+then chose legacy clock preservation, recorded below. No original receipt or
+fixture blob is rewritten; qualification writes new artifacts.
+
 **Hocket recorder composition (2026-10-13): shared extraction and Woodshed surface adoption implemented; bounded native acceptance complete.**
 The [host-refactor follow-through](../ports/hocket/design_docs/2026-07-08_genet_host_refactor_plan.md#embeddable-recorder-follow-through-2026-10-13)
 owns the shared controller/surface and its original
@@ -573,3 +602,54 @@ product's existing recording/Turnstone gates.
   source/build identities, scoped checks, rejected attempts and native evidence.
   No workflows or PRs are added. Shared DSP, physical microphone/audibility,
   default startup and general Hocket project-worker reply correlation remain open.
+
+**Clock preservation ruling (Mark, 2026-10-16).** Existing captures retain
+their original whole-block frame count and legacy beat/count-in scheduling;
+new captures use the canonical beat-rounded clock. Add an explicit capture
+clock policy, default missing fields to legacy, and carry it through restored
+backing and export. Do not resample, trim, pad or rewrite old PCM. Clear
+returns a segment to canonical timing; recording refuses a loaded legacy-clock
+segment until explicitly cleared, because a take may span every loaded segment.
+Qualify old/new sealed references, exact fractional and x/8 frame boundaries,
+count-in, zero-allocation and live/WAV parity with a new receipt.
+
+**Implementation (2026-10-16).** `Bar` defaults to canonical timing, using the
+shared beat/bar helpers; prepared backing uses those integer beats for measure
+and count-in boundaries. Meter denominators also govern pattern playback and
+offline rendering. Metronome phase accumulates integer frame numerators rather
+than fractions so rounded beat boundaries do not drift by a sample; tempo
+edits rescale that phase. Legacy playback retains the previous floating-point
+operation order for whole-block lengths, truncated beats, count-in and chord
+envelopes.
+
+A missing capture `clock` field means legacy. New takes name `per-beat-v1` in
+a V3 manifest; unknown policy strings survive deserialization and refuse
+admission. Old-only catalogs retain V1/V2 as appropriate, and unchanged
+references keep their existing codec, digest and frame count. The playback
+projection carries the policy through recall, transport, waveform buffers and
+WAV export. Clear switches the runtime segment to canonical; new empty bars
+do not inherit legacy timing. New recording is refused before opening input
+when a loaded legacy segment remains, with an explicit Clear message.
+
+Ringdown's file format and Hocket's capture schedule remain separate and
+unchanged. No shared frame-driven DSP crate is extracted in this clock slice.
+
+**Clock-intake qualification (2026-10-16, source `9d27b06`).**
+The new [receipt](../validation/canonical-clock_20261016/receipt.json) records
+745 distinct passing suite cases (157 audio, 241 core, 164 host, 183 views),
+plus one separately invoked accepted-fixture WAV probe; child runs and
+repeated suites count once. The desktop build and all-target host check pass.
+Exact-frame fractional/x/8 capture, zero-allocation renders, 48 kHz
+heterogeneous live/WAV parity, metronome phase, sealed mixed-policy reopen,
+and the sealed filesystem fresh-process sequence pass. Both legacy and
+canonical renders of the accepted four-second fixture are byte-identical to
+the existing WAV gold (`6c072633…`), and both original companion hashes still
+match their historical receipt. This work leaves every archived profile file
+byte-identical to its task-start value.
+
+The sealed mixed-clock fixture preserves a 253,744-frame legacy 5/4 block
+and a 105,110-frame canonical 5/4 block together, including original digest,
+encrypted companion and exact decoded bits. Product Set captures still use
+a quarter-note denominator; x/8 tests exercise the runtime, not a new meter
+editor. No native foreground or physical-audio qualification is claimed.
+This closes the bar-clock prerequisite; shared DSP extraction remains open.

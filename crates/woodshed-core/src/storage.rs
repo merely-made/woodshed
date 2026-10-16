@@ -448,6 +448,7 @@ mod tests {
 
     fn capture_ref(digest: String, frames: usize) -> LoopCaptureRef {
         LoopCaptureRef {
+            clock: None,
             id: crate::loop_plan::LoopSegmentId {
                 set: crate::working_sets::WorkingSetId(3),
                 card: woodshedding::rehearsal::CardId(7),

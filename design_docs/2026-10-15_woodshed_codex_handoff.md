@@ -163,6 +163,16 @@ per root.
 
 ### Task 2: move Woodshed's bar length to Hocket's rule (ruling 1)
 
+**Done 2026-10-16, implementation `9d27b06`.** Mark chose preservation of
+existing take clocks. New captures use the canonical rule; legacy takes keep
+original PCM and playback timing, with explicit Clear before new recording.
+[Clock receipt](../validation/canonical-clock_20261016/receipt.json): 745
+suite cases plus one gold probe pass, sealed mixed-clock retention, exact
+fractional/x/8 clocks, zero-allocation/live-WAV parity, successful desktop
+build. Both accepted-gold exports remain byte-identical. See the rehome plan
+for the V3 manifest and old-only catalog compatibility details. The criteria
+below are retained as the task's original acceptance scope.
+
 **Files to change:**
 
 - `crates/woodshed-audio/src/song.rs:124-126` (`Bar::duration_samples`)

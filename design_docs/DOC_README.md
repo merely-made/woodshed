@@ -38,6 +38,9 @@ before any other doc in this directory.
   Woodshed root/Hocket pins and concurrent transcript work remain independently owned.
 
 - [2026-09-09_audio_ports_rehome_plan.md](2026-09-09_audio_ports_rehome_plan.md)
+  — October 16 adds canonical per-beat clocks for new Woodshed captures and
+  explicit legacy-clock preservation for existing takes; 745 suite cases plus an accepted-WAV probe pass,
+  with sealed mixed-clock retention and byte-identical legacy/canonical gold exports.
   — **Rehome landed; shared recorder extraction and Woodshed surface adoption implemented.**
   Hocket model/project/controller/views are root libraries. Woodshed now mounts
   the shared surface over its existing single OutputRuntime, preserving ordered

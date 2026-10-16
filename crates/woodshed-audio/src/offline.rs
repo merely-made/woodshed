@@ -172,8 +172,9 @@ struct Voice {
 /// - `sample_position` is the absolute sample count since playback
 ///   started; used for voice timing (envelope decay, etc.) and is
 ///   independent of BPM.
-/// - `step_position` is fractional steps since playback started; each
-///   frame advances it by `1 / samples_per_step`. This decouples step
+/// - `step_position` is a frame numerator, advancing by subdivisions per
+///   frame and divided by the rounded beat length at observation. Tempo
+///   changes rescale it while preserving musical phase. This decouples step
 ///   triggering from sample count so that BPM changes mid-playback
 ///   don't cause a pause or jump.
 struct PatternRenderState {
@@ -181,6 +182,7 @@ struct PatternRenderState {
     pub sample_rate: f32,
     pub sample_position: u64,
     pub step_position: f64,
+    beat_frames: usize,
     pub last_step: i64,
     pub voices: Vec<Voice>,
     pub playing: bool,
@@ -188,9 +190,11 @@ struct PatternRenderState {
 
 impl PatternRenderState {
     pub(crate) fn new(pattern: SequencerPattern, sample_rate: f32) -> Self {
+        let beat_frames = audio_primitives::frames_per_beat(sample_rate as u32, pattern.bpm, pattern.time_signature.denominator).max(1);
         Self {
             pattern,
             sample_rate,
+            beat_frames,
             sample_position: 0,
             step_position: 0.0,
             last_step: -1,
@@ -213,14 +217,19 @@ fn process_buffer(state: &mut PatternRenderState, output: &mut [f32], channels: 
 
     let bpm = state.pattern.bpm;
     let dpb = state.pattern.subdivision.divisions_per_beat as f32;
-    let samples_per_step = state.sample_rate * 60.0 / (bpm * dpb);
-    let step_inc = 1.0 / samples_per_step as f64;
+    let beat_frames = audio_primitives::frames_per_beat(
+        state.sample_rate as u32, bpm, state.pattern.time_signature.denominator,
+    ).max(1);
+    if beat_frames != state.beat_frames {
+        state.step_position = state.step_position / state.beat_frames as f64 * beat_frames as f64;
+        state.beat_frames = beat_frames;
+    }
     let steps_per_bar = state.pattern.steps_per_bar();
     let sample_rate = state.sample_rate;
 
     for frame in 0..frames {
         let global = state.sample_position + frame as u64;
-        let step_pos = state.step_position + step_inc * frame as f64;
+        let step_pos = (state.step_position + dpb as f64 * frame as f64) / beat_frames as f64;
         let step_idx = step_pos as i64;
 
         if step_idx > state.last_step {
@@ -266,7 +275,7 @@ fn process_buffer(state: &mut PatternRenderState, output: &mut [f32], channels: 
     }
 
     state.sample_position += frames as u64;
-    state.step_position += step_inc * frames as f64;
+    state.step_position += dpb as f64 * frames as f64;
 }
 
 #[cfg(test)]

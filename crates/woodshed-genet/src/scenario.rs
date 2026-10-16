@@ -1773,6 +1773,7 @@ impl Automatable for Probe<'_, '_> {
             let mut takes = backend.capture_snapshot();
             takes.retain(|take| take.id != segment.id);
             takes.push(crate::audio::CaptureSnapshot {
+                legacy_clock: false,
                 id: segment.id,
                 bpm: segment.bpm,
                 beats: segment.beats,

@@ -1244,6 +1244,7 @@ mod tests {
         card: u64,
     ) -> crate::loop_capture::LoopCaptureRef {
         crate::loop_capture::LoopCaptureRef {
+            clock: None,
             id: LoopSegmentId {
                 set,
                 card: woodshedding::rehearsal::CardId(card),
