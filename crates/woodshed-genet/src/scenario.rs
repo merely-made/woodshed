@@ -133,6 +133,60 @@ impl mesquite::Product for Product {
             self.export_wait = Some((expected.into(), std::time::Instant::now()));
             return true;
         }
+        if label == "verify-mere-take-retention" {
+            // Receipt-only observation of an explicitly isolated scenario profile.
+            let verify = || -> Result<(), String> {
+                let shared = self.shared.borrow();
+                if !matches!(shared.seal, Some(woodshed_views::persona::PracticeSeal::Sealed { .. })) {
+                    return Err("take receipt requires real sealed custody".into());
+                }
+                let json = shared.storage.as_ref().ok_or("no store")?
+                    .load().ok_or("sealed session unreadable")?;
+                let persisted = woodshed_core::storage::decode_session(&json)
+                    .map_err(|e| e.to_string())?.session;
+                let presentation: woodshed_views::stage::OverviewPresentation =
+                    serde_json::from_str(persisted.overview_presentation_json.as_deref().ok_or("no presentation")?)
+                    .map_err(|e| e.to_string())?;
+                let ui = ctx.runner.state();
+                if presentation.version != 2 || persisted.loop_captures != ui.loop_captures
+                    || presentation.focus != ui.overview_focus {
+                    return Err("sealed presentation or take manifest differs from the live view".into());
+                }
+                let positions: std::collections::BTreeMap<_, _> = presentation.positions.iter().cloned().collect();
+                let Some(id @ woodshed_core::session_overview::OverviewNodeId::Artifact(
+                    woodshed_core::session_overview::SessionArtifactId::LoopTake(_))) = ui.overview_focus.as_ref()
+                else { return Err("focus is not a retained take".into()); };
+                if positions.get(id) != ui.overview_positions.get(id) || !positions.contains_key(id) {
+                    return Err("take placement did not round-trip".into());
+                }
+                let captures = shared.backend.as_ref().ok_or("no output backend")?.capture_snapshot();
+                if captures.is_empty() { return Err("no hydrated PCM".into()); }
+                for take in &captures {
+                    for (index, sample) in take.buffer.data.iter().enumerate() {
+                        if sample.to_bits() != [0.000125f32, -0.00025, -0.0, 0.0005][index % 4].to_bits() {
+                            return Err("deterministic PCM bits changed".into());
+                        }
+                    }
+                }
+                let directory = std::path::PathBuf::from(std::env::var_os("WOODSHED_CAPTURE_DIR").ok_or("no receipt directory")?);
+                let report = serde_json::json!({
+                    "sealed": true, "presentation": presentation,
+                    "manifest": persisted.loop_captures,
+                    "hydrated": captures.iter().map(|take| serde_json::json!({
+                        "id": take.id, "frames": take.buffer.len(),
+                        "sample_rate": take.buffer.sample_rate_hz,
+                        "legacy_clock": take.legacy_clock,
+                        "exact_fixture_bits": true,
+                    })).collect::<Vec<_>>(),
+                });
+                use std::io::Write;
+                let mut file = std::fs::OpenOptions::new().write(true).create_new(true)
+                    .open(directory.join("take-retention.json")).map_err(|e| e.to_string())?;
+                file.write_all(serde_json::to_string_pretty(&report).unwrap().as_bytes()).map_err(|e| e.to_string())?;
+                Ok(())
+            };
+            return match verify() { Ok(()) => true, Err(error) => { eprintln!("Mere take receipt: {error}"); false } };
+        }
         if label == "wav-export-fixture" || label == "wav-export-backing-fixture" {
             let Some(directory) = std::env::var_os("WOODSHED_CAPTURE_DIR") else {
                 return false;
@@ -1738,14 +1792,18 @@ impl Automatable for Probe<'_, '_> {
             ));
             return true;
         }
-        if label == "seed-loop-capture" {
+        if label == "seed-loop-capture" || label == "seed-selected-loop-capture" {
             use woodshed_core::audio::AudioBackend;
             let Some(plan) = self.ctx.runner.state().loop_admitted.clone() else {
                 return false;
             };
-            let Some(segment) = plan.segments.first() else {
-                return false;
+            let selected = self.ctx.runner.state().loop_selected;
+            let segment = if label == "seed-selected-loop-capture" {
+                selected.and_then(|id| plan.segments.iter().find(|segment| segment.id == id))
+            } else {
+                plan.segments.first()
             };
+            let Some(segment) = segment else { return false; };
             let Some(backend) = self.shared.backend.as_mut() else {
                 return false;
             };
