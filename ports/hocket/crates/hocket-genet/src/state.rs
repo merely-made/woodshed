@@ -186,7 +186,12 @@ impl AppState {
             update_settings,
             update_worker,
             identity,
-            clipboard: if receipt {
+            // Native project receipts exercise the real token controls while
+            // keeping audio devices disabled. Appearance-only receipts retain
+            // their clipboard isolation unless explicitly opted in.
+            clipboard: if receipt
+                && std::env::var("HOCKET_RECEIPT_CLIPBOARD").as_deref() != Ok("1")
+            {
                 None
             } else {
                 SystemClipboard::new().ok()

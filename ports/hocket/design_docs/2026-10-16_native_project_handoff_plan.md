@@ -29,3 +29,11 @@ provide a durable self-addressed identity; the .hocket carrier remains cleartext
 2026-10-16: preparing deterministic file fixtures, metadata-only checkpoints,
 finite native seed/reopen scenarios and isolated launchers. Retain failed probes
 separately and count only the final committed-source matrix.
+
+2026-10-16 probe findings: native Save/Open/edit/save/export completed, but the
+appearance receipt mode deliberately disabled the clipboard, so recipient setup
+and handoff did not execute. Added HOCKET_RECEIPT_CLIPBOARD=1 as an explicit
+opt-in to the real OS clipboard while retaining device-free audio. Default
+appearance receipts remain clipboard-isolated. This failed probe is excluded
+from acceptance counts. Native filename edits require leaving the field before
+Save; the first path-edit probe was also retained separately.
