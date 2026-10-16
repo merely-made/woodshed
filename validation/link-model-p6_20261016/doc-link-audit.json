@@ -1,0 +1,17 @@
+{
+  "scope": [
+    "design_docs/2026-07-11_stage_set_tools_plan.md",
+    "design_docs/DOC_README.md"
+  ],
+  "baseline_revision": "6ad8b4f8ce447e5e716e45db8194d1e00d90afc2",
+  "baseline": {
+    "checked_local_links": 63,
+    "findings": []
+  },
+  "current": {
+    "checked_local_links": 64,
+    "findings": []
+  },
+  "new_findings": [],
+  "no_new_findings": true
+}

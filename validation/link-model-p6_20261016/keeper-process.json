@@ -1,0 +1,10 @@
+{
+  "stopped": [
+    [
+      20955,
+      "/Users/markik/Code/testing/woodshed/link-model-p3-20261016/frozen-keeper-ee324e517/dr-c-receipt-host /tmp/ws-link-p6-20261016-a.sock /Users/markik/Code/testing/woodshed/link-model-p6-20261016/keeper-v1 unlocked"
+    ]
+  ],
+  "signal": "SIGTERM",
+  "scope": "Task-owned isolated custody fixture after both native app processes exited."
+}

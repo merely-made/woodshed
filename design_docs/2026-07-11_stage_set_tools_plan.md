@@ -133,6 +133,35 @@ checks also found and fixed an exact-member visibility defect: the resting
 summary now counts only eligible displayed source rows while opening retains
 the complete source reading. No source assertion is withdrawn by a view hide.
 
+### Portable assertion receiving control (2026-10-16)
+
+**Status: bounded P6 receiving qualification complete.** Woodshed consumes Mere's
+published `a45a0b6` supplier through its existing personal-relation reading path;
+it does not own or ingest a Mere Graph. The focused receiving regression authors
+two independent `RelationClass::App` assertions on one directed pair, adapts
+them to portable custom-predicate `LinkAssertion` records, and sends them
+through the shared Scenomise opened-link compiler used by the Cambium swatch.
+It checks exact IDs, predicate, source scope, asserter, authored clocks, basis
+notes and evidence. Exact withdrawal through Woodshed's existing personal
+assertion journal leaves the second claim held while explicit history retains
+the first claim's tombstone.
+
+Frozen Woodshed source `d896e39` passes 629 affected cases, seven existing
+ignores and five separate fresh-process child invocations; its locked offline
+desktop build passes. The native generated-Surface recipe smoke uses 141 seed
+frames and two captures; a different fresh process reopens the same profile in
+134 frames and produces two more. All four original captures were reviewed.
+The working-Set source identity, public revision, exact assertion handle, original
+direction, method, evidence and unknown clocks agree across both processes. The
+four-file isolated Keeper manifest is unchanged, and both app processes exit
+before the next phase. The [P6 receipt](../validation/link-model-p6_20261016/receipt.json)
+records the exact test/build/native evidence.
+
+This qualifies Woodshed's portable custom-predicate adapter and the generated
+Surface native receiving path. It does not demonstrate Mere Graph ingestion or
+all Mere Graph relation families through Woodshed. Full Stage P4f exploration
+and physical audio output retain separate acceptance gates.
+
 > **2026-08-10 — the gate is open.** The scenograph scene contract this plan
 > gates on ("what remains is the freeze, not the proof") froze 2026-07-24 at
 > 0.0.3: emphasis channels and a default pick added, intents stay
