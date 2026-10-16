@@ -13,12 +13,17 @@ click-stage-node 2
 settle 3
 assert snap selected-card-board-visible == true
 capture 02_stage_card_default_zoom
-click .related-claims @data-target=chord:Minor
+click .side-item Minor (m)
+settle 5
+click .related-claims @data-target=chord:Major
 settle 5
 click .workspace-panel Related
 settle 5
+click role:button Audition chord:Minor → chord:Major
+settle 3
+assert snap claims-last-action ~ Audition queued in assertion direction: chord:Minor → chord:Major
 capture 03_related_default_zoom
-wheel 0 500 px on .workspace-screen
+wheel 0 250 px on .workspace-screen
 settle 5
 capture 04_related_scrolled
 resize 640 900
