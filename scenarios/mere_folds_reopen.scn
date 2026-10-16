@@ -5,11 +5,13 @@ assert snap overview-active == true
 assert snap practice-saved == true
 assert snap overview-folds == 2
 assert snap set-cards == 2
+act await-fold-save
 act fold-checkpoint-restored
 capture 01_restored
 click .graph-canvas-swatch-node @aria-label=Fold 1 +1, activate to expand
 settle 4
 assert snap overview-folds == 1
+act await-fold-save
 act fold-checkpoint-summary-expanded
 capture 02_summary_expanded
 click .overview-fold-undo Undo fold
@@ -22,6 +24,7 @@ click .overview-fold-expand Expand all folds
 settle 5
 assert snap overview-folds == 0
 assert snap set-cards == 2
+act await-fold-save
 act fold-checkpoint-all-expanded
 capture 03_all_expanded
 log Reopened folds expanded without changing owner facts
