@@ -1,0 +1,66 @@
+{
+  "receipt": "P2 current-family native refresh; overview wheel gap closed",
+  "date": "2026-10-15",
+  "source_revision": "4eddaba442cb57d5d2557f0d839a7dd8e4db9536",
+  "binary_source_base": "bd7750f3a7d9f3a7963682d26fda8b2ab96ed050",
+  "source_note": "Only the external scenario changed after building; no Rust or dependency changes. Final run uses the committed scenario.",
+  "suppliers": {
+    "cambium": "git+https://github.com/merely-made/mere.git?branch=main#59f88e63d726bc5f2f5788e89cbd0c37a9ddaf6f",
+    "dramatis": "git+https://github.com/merely-made/dramatis.git?branch=main#5c89001a6ff1aac3f6105ed50b6ae5f09c9f27e2",
+    "genet-scripted-dom": "git+https://github.com/merely-made/genet.git?branch=main#e37762d752e423dc43f920bd728c83f70c47f2cc",
+    "pictograph": "git+https://github.com/merely-made/mere.git?branch=main#59f88e63d726bc5f2f5788e89cbd0c37a9ddaf6f"
+  },
+  "wheel_change": "1b4172b254401b4913f9de1317717ffcb40a1694; verified ancestor of fetched Mere origin/main",
+  "commands": [
+    "cargo test --locked --offline -p woodshed-views canvas_camera",
+    "cargo test --locked --offline -p woodshed-views",
+    "cargo build --locked --offline -p woodshed-genet"
+  ],
+  "tests": {
+    "focused_camera": 8,
+    "views_total_including_focused": 183,
+    "failed": 0
+  },
+  "result": "RESULT ok",
+  "presented_frames": 274,
+  "captures": 9,
+  "blank_captures": 0,
+  "distinct_frame_digests": 9,
+  "inputs_sha256": {
+    "target/debug/woodshed-genet": "bd4b4dfbda90190c36d4c98e7bc783414e286ac9367cbe1cb4c064d32f4f9bc3",
+    "Cargo.lock": "ee29f0c4ccc65a9cb5e9385fd11d562b0a3ee46101dca4d27cdff3b0d344a4e9",
+    "scenarios/canvas_controls_p2.scn": "1cd813aadfb091a54e731f45b676ba64d76ae5f7ec6ab99750e0c09121bd9863"
+  },
+  "captures_sha256": {
+    "01_overview_zoomed.png": "b2e0d8bf460b7b4a4643d47550cb56b61aaec97342050786b6d43b4a305a0e86",
+    "02_overview_fit.png": "13a9854e616ce573881eaa4914d8627257fd29d088c2eaf8436e9bd326c590b3",
+    "03_relationship_zoomed.png": "2b88a6ca9de12fafebd6716444a6a05ccd882ba11c796ec371d53df6878b6198",
+    "04_relationship_fit.png": "e1e57a9030564685edd7ccbc10d5142962e27122022a7ea00f1990b75f2dfb15",
+    "04b_relationship_wheel.png": "5478b62acb51c3b9ea5ca5b47e3d413b06d1a34236ee3352f3787e2d870f4106",
+    "05_related_zoomed.png": "e87b21294d22b81219c1d3b584e6a7b6884c08613e250d846dbc71cbdacf51c1",
+    "06_related_fit.png": "6b57deb88fdb302f80289c897097a262d55f65c3e5f1c1648fdb885264862b8e",
+    "07_related_wheel.png": "bb9e8c26e8d17de5be248068cc5fe1e6d3b1bd00338a05757318970288951570",
+    "08_overview_wheel.png": "ac16c7d3e577d0530a1bf8fa394105d7c25177da91a74316ac479dd4567e6fd6"
+  },
+  "visual_review": {
+    "reviewed": 9,
+    "observations": [
+      "Relationship and Related painted graphs follow zoom, fit and wheel changes; controls visible.",
+      "Overview graph is partially below the fold; revealing its song node allows native wheel delivery. Zoom, paint currency, nonempty face count, no missing bodies, zero face offset and unchanged three-Card Set are asserted.",
+      "Some Related labels overlap at the exercised zooms; no claim of label-layout polish."
+    ]
+  },
+  "scope": [
+    "CanvasCommand controls on all three surfaces",
+    "Scripted wheel events through native host routing on all three surfaces; Ctrl variant on relationship editor",
+    "FaceAlignment plus separately asserted registered-leaf paint currency"
+  ],
+  "not_covered": [
+    "Physical mouse or trackpad hardware qualification",
+    "Touch input remains deferred",
+    "Compact/responsive layout matrix",
+    "Sealed persistence and fresh-process saved-state reopening: djinn unavailable; this is isolated unsaved state"
+  ],
+  "artifact_directory": "/Users/markik/Code/testing/woodshed/canvas-p2-refresh-20261015",
+  "final_capture_directory": "/Users/markik/Code/testing/woodshed/canvas-p2-refresh-20261015/committed-captures"
+}
