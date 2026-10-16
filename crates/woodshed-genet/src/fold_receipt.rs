@@ -40,7 +40,19 @@ fn checkpoint(ui: &UiState, shared: &Shared) -> Result<Value, String> {
         || presentation.folds != ui.overview_folds.records
         || !ui.practice_saved
     {
-        return Err("live owner/fold payload differs from confirmed sealed save".into());
+        let changed: Vec<_> = owners
+            .as_object()
+            .unwrap()
+            .keys()
+            .filter(|key| owners.get(*key) != persisted_owners.get(*key))
+            .cloned()
+            .collect();
+        return Err(format!(
+            "live/sealed agreement: owners={}, changed owner keys={changed:?}, folds={}, confirmed={}",
+            owners == persisted_owners,
+            presentation.folds == ui.overview_folds.records,
+            ui.practice_saved
+        ));
     }
     let source = overview_source_swatch(ui);
     let projected = overview_swatch(ui);
@@ -76,6 +88,11 @@ fn checkpoint(ui: &UiState, shared: &Shared) -> Result<Value, String> {
         "rehearsal_running":ui.rehearsal_running,"song_playing":ui.song_playing,
         "presentation_version":presentation.version,
     }))
+}
+
+/// Read-only readiness for a bounded scenario wait; never initiates a save.
+pub fn current(ui: &UiState, shared: &Shared) -> bool {
+    checkpoint(ui, shared).is_ok()
 }
 
 pub fn write(ui: &UiState, shared: &Shared, stem: &str) -> bool {
