@@ -292,6 +292,11 @@ repin forward
   Mere then made those helpers generic over a host camera (`a26ed1caf`), and
   all four roots moved to `ea530d41`. The three-surface adoption is recorded
   in the [stage plan](2026-07-11_stage_set_tools_plan.md).
+- **Stage A repin round (later 2026-10-15).** All four roots and the member
+  crates moved to Mere R2 `b2c8dcc2`, Genet `7ffe6620`, and Murm `fb6360c1`
+  through the canonical `www` alias. The `edit-history` patch rows are now
+  `backstep`. CPU checks and counts are unchanged (769/101/262). The handoff's
+  Task 1 records the remaining Genet-sourced `murm-wire` split.
 - **Historical families.** The `8568f42`/`2c7ef73` family cited in the Tabard
   and Hocket host-refactor plans is the family those slices qualified, not a
   current pin.
