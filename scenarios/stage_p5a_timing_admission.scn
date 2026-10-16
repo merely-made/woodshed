@@ -17,7 +17,7 @@ assert snap p5a-card-hold == bars:1
 assert snap p5a-ordered-visits >= 2
 assert snap p5a-core-dwell-ms == 12000
 assert snap p5a-ordered-duration-ms == 12000
-assert snap p5a-ordered-spacing-ms > 0
+assert snap p5a-ordered-spacing-ms >= 1
 click .card-hear Hear selected Card
 wait 1000
 settle 3
@@ -33,7 +33,7 @@ assert snap p5a-card-bpm == 400
 assert snap p5a-ordered-visits >= 2
 assert snap p5a-core-dwell-ms == 600
 assert snap p5a-ordered-duration-ms == 600
-assert snap p5a-ordered-spacing-ms > 0
+assert snap p5a-ordered-spacing-ms >= 1
 click .card-hear Hear selected Card
 wait 1000
 settle 3
