@@ -653,3 +653,16 @@ encrypted companion and exact decoded bits. Product Set captures still use
 a quarter-note denominator; x/8 tests exercise the runtime, not a new meter
 editor. No native foreground or physical-audio qualification is claimed.
 This closes the bar-clock prerequisite; shared DSP extraction remains open.
+
+### October 16 shared capture-state extraction
+
+Handoff task 3 is implemented in root `audio-primitives::capture`: caller-owned
+sample accumulation, InputFeed, host-stamped CompletedTake, and Hocket's
+poll-driven BarCountdown. Hocket and Woodshed retain their different capture
+schedules, input integrity admission and stream ownership. The shared dev-only
+harness and existing adapter suites pass 256 cases; both desktop hosts pass
+locked offline all-target checks. The [extraction plan](2026-10-16_shared_capture_accumulator_plan.md)
+and `validation/shared-capture-seams_20261016/receipt.json` hold scoped evidence.
+No persistent clocks or PCM changed; earlier native/export receipts retain their
+original sources. Physical input, audibility and latency remain independently
+unqualified by this work.

@@ -1,5 +1,6 @@
 use super::*;
 use crate::capture_feed::CaptureFeedConsumer;
+use audio_primitives::capture::CompletedTake;
 use firewheel::{
     channel_config::{ChannelConfig, ChannelCount},
     collector::{ArcGc, OwnedGc},
@@ -120,10 +121,7 @@ impl PreparedBacking {
         for bar in &song.bars {
             let duration = bar.duration_samples(rate as f32).max(1) as usize;
             let chord_len = if bar.chord_ref.is_some() {
-                bar.chord_measure_secs()
-                    .max(0.5)
-                    .clamp(0.3, 2.0)
-                    * rate as f32
+                bar.chord_measure_secs().max(0.5).clamp(0.3, 2.0) * rate as f32
             } else {
                 0.0
             };
@@ -340,6 +338,12 @@ pub(super) struct RecordBar {
     pub touched: bool,
     retired: Option<SampleBuffer>,
 }
+pub(super) struct CompletionStamp {
+    pub generation: u64,
+    pub valid: bool,
+}
+pub(super) type CompletedRecording = CompletedTake<OwnedGc<Recording>, CompletionStamp>;
+
 pub(super) struct Recording {
     pub generation: u64,
     pub bars: Vec<RecordBar>,
@@ -460,10 +464,10 @@ fn trigger(voices: &mut [Option<Voice>], pcm: ArcGc<SampleBuffer>) {
 
 pub(super) struct OutputNode {
     shared: Arc<Shared>,
-    returns: RefCell<Option<rtrb::Producer<OwnedGc<Recording>>>>,
+    returns: RefCell<Option<rtrb::Producer<CompletedRecording>>>,
 }
 impl OutputNode {
-    pub fn new(shared: Arc<Shared>, returns: rtrb::Producer<OwnedGc<Recording>>) -> Self {
+    pub fn new(shared: Arc<Shared>, returns: rtrb::Producer<CompletedRecording>) -> Self {
         Self {
             shared,
             returns: RefCell::new(Some(returns)),
@@ -525,12 +529,12 @@ impl AudioNode for OutputNode {
 }
 struct Processor {
     shared: Arc<Shared>,
-    returns: rtrb::Producer<OwnedGc<Recording>>,
+    returns: rtrb::Producer<CompletedRecording>,
     backing: Option<OwnedGc<PreparedBacking>>,
     click: Option<OwnedGc<PreparedClick>>,
     feed: Option<OwnedGc<CaptureFeedConsumer>>,
     take: Option<OwnedGc<Recording>>,
-    completed: Option<OwnedGc<Recording>>,
+    completed: Option<CompletedRecording>,
     generation: u64,
     cursor: SongCursor,
     playing: bool,
@@ -601,7 +605,14 @@ impl Processor {
                     }
                 }
             }
-            self.completed = Some(take);
+            let stamp = CompletionStamp {
+                generation: take.generation,
+                valid: take.valid,
+            };
+            self.completed = Some(CompletedTake {
+                storage: take,
+                stamp,
+            });
         }
     }
     fn flush_return(&mut self) {
@@ -709,7 +720,8 @@ impl Processor {
         }
         if self.click_playing {
             if let Some(click) = self.click.as_ref() {
-                let beat_frames = audio_primitives::frames_per_beat(self.rate, self.bpm, click.beat_unit).max(1);
+                let beat_frames =
+                    audio_primitives::frames_per_beat(self.rate, self.bpm, click.beat_unit).max(1);
                 let absolute_step = (self.click_position / beat_frames as f64) as u64;
                 let index = (absolute_step % click.steps.len() as u64) as usize;
                 if self.last_click != Some(absolute_step) {
@@ -762,7 +774,9 @@ impl Processor {
                     }
                 }
                 if let Some(take) = self.take.as_mut() {
-                    let sample = self.feed.as_mut().and_then(|f| f.pop_sample());
+                    let sample = self.feed.as_mut().and_then(|feed| {
+                        audio_primitives::capture::InputFeed::pop_sample(&mut **feed)
+                    });
                     if let Some(value) = sample {
                         let bar = &mut take.bars[self.cursor.bar_idx];
                         let data = Arc::get_mut(&mut bar.pcm.data)
@@ -868,7 +882,8 @@ impl AudioNodeProcessor for Processor {
                     },
                     Command::Metronome { bpm, playing } => {
                         let unit = self.click.as_ref().map_or(4, |click| click.beat_unit);
-                        let before = audio_primitives::frames_per_beat(self.rate, self.bpm, unit).max(1);
+                        let before =
+                            audio_primitives::frames_per_beat(self.rate, self.bpm, unit).max(1);
                         let after = audio_primitives::frames_per_beat(self.rate, *bpm, unit).max(1);
                         self.click_position = self.click_position / before as f64 * after as f64;
                         self.bpm = *bpm;

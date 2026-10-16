@@ -202,11 +202,14 @@ All of them move to `audio_primitives::frames_per_bar` (`click.rs:43-58`).
 
 ### Task 3: shared pure-state DSP crate (after task 2)
 
-October 16 accumulator slice: both engines consume shared allocation-free PCM
-writes, with 252 focused cases passing. See
-[the accumulator plan](2026-10-16_shared_capture_accumulator_plan.md) and
-`validation/shared-capture_20261016/receipt.json`. Countdown, InputFeed,
-CompletedTake and a shared dev harness remain open.
+October 16 task 3 implemented and CPU/offline qualified: both engines consume
+shared allocation-free writes, InputFeed and CompletedTake; Hocket capture and
+queued replay consume BarCountdown. The independent shared allocator harness and
+both adapter suites pass 256 distinct cases; both desktop hosts pass locked
+all-target checks. See [the extraction plan](2026-10-16_shared_capture_accumulator_plan.md)
+and `validation/shared-capture-seams_20261016/receipt.json`. Native/device
+qualification remains separate; product timing, integrity admission and custody
+stay local.
 
 It goes in root `crates/`, extending `audio-primitives` or sitting beside it.
 

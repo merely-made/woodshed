@@ -21,7 +21,8 @@
 //! - [`calibration`] — [`calibration::estimate_latency_from_pairs`]:
 //!   pair expected click instants with detected onsets, return the
 //!   median input-to-output round-trip latency.
-//! - [`capture`] — allocation-free writes into caller-owned take storage.
+//! - [`capture`] — allocation-free take writes, input feed, completion envelope
+//!   and poll-driven bar countdown. Hosts retain scheduling and admission.
 //! - [`buffer`] — in-place sample-buffer shaping (gain / normalize /
 //!   reverse). The looper/sampler "shape the take" kernels, behind
 //!   Woodshed's `SampleBuffer` and available to any future sampler.

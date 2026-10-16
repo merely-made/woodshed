@@ -236,3 +236,9 @@ mod tests {
         assert_eq!(consumer.pop_sample(), Some(0.3));
     }
 }
+
+impl audio_primitives::capture::InputFeed for CaptureFeedConsumer {
+    fn pop_sample(&mut self) -> Option<f32> {
+        CaptureFeedConsumer::pop_sample(self)
+    }
+}

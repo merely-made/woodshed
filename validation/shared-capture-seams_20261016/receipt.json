@@ -1,0 +1,55 @@
+{
+  "date": "2026-10-16",
+  "base_revision": "9884b64a882628974a0e1071b76216ff65466c46",
+  "scope": "Complete shared pure-state capture seams; no device/stream/scheduler ownership moved",
+  "source_sha256": {
+    "crates/audio-primitives/src/capture.rs": "a3b6976ba1b53942c6c14e59b4840d2a845fc16bc449a3a71e6b12208033bd90",
+    "crates/audio-primitives/src/lib.rs": "484d2b0ab4d47f19b89dec7cf8a2ece04862761aa94979c2b5aa90bed3a59ffa",
+    "crates/audio-primitives/tests/capture_harness.rs": "11d804b5ac538487586b4a626a8c617eb5a5005d217c9ff3d918a7cee9de14c1",
+    "crates/woodshed-audio/src/capture_feed.rs": "09859f554673721b4a297acacf366b62b893a589a50163d796b23f4224ca2d51",
+    "crates/woodshed-audio/src/output_runtime.rs": "f2dd6774c3c485b04f938275a7056444015366c789d66d2294b8ba0645853149",
+    "crates/woodshed-audio/src/output_runtime/processor.rs": "9ba4c7fef9f529cb909709259c2bd20423cb508e104660511e5a56e704352306",
+    "ports/hocket/crates/hocket-engine/src/capture.rs": "7ac0768dd34ce29f8560f7507f6340451aba917078037a4b5a158a655105188c",
+    "ports/hocket/crates/hocket-engine/src/lib.rs": "f49751b4c6995ff524b250855611b3781bfb13bb3f6ac5d0650ef2f93901bbd2"
+  },
+  "checks": [
+    {
+      "cwd": "root",
+      "command": "cargo test --locked --offline -p audio-primitives -p woodshed-audio",
+      "exit_code": 0,
+      "passed": 217
+    },
+    {
+      "cwd": "ports/hocket",
+      "command": "cargo test --locked --offline -p hocket-engine",
+      "exit_code": 0,
+      "passed": 39
+    },
+    {
+      "cwd": "root",
+      "command": "cargo check --locked --offline -p woodshed-genet --all-targets",
+      "exit_code": 0
+    },
+    {
+      "cwd": "ports/hocket",
+      "command": "cargo check --locked --offline -p hocket-genet --all-targets",
+      "exit_code": 0
+    }
+  ],
+  "distinct_passing_cases": 256,
+  "invariants": [
+    "Hocket drained-input overshoot and empty wait-only start preserved",
+    "Hocket jitter gate and tempo restart suppression preserved",
+    "Woodshed exact output-frame schedule preserved",
+    "Allocation/free guards for shared seams and existing product guards pass",
+    "Woodshed stale generation and missing/overflow input rejection preserved",
+    "Woodshed fractional-clock live/WAV parity preserved",
+    "Legacy clocks and stored PCM untouched",
+    "No manifest or lockfile changes"
+  ],
+  "qualification_limits": [
+    "No new native run",
+    "No fresh sealed-profile reopening",
+    "No hardware, audibility or latency qualification"
+  ]
+}

@@ -34,7 +34,8 @@ mod processor;
 mod tests;
 use preview::PreviewWorker;
 use processor::{
-    ChordCache, Command, OutputNode, PreparedBacking, PreparedClick, Recording, Shared,
+    ChordCache, Command, CompletedRecording, OutputNode, PreparedBacking, PreparedClick, Recording,
+    Shared,
 };
 
 pub(crate) const COMMAND_BOUND: usize = 64;
@@ -77,7 +78,7 @@ pub struct OutputRuntime {
     cx: FirewheelContext,
     node: NodeID,
     shared: Arc<Shared>,
-    returns: rtrb::Consumer<OwnedGc<Recording>>,
+    returns: rtrb::Consumer<CompletedRecording>,
     preview: PreviewWorker,
     song: Song,
     chord_cache: Vec<ChordCache>,
@@ -217,14 +218,16 @@ impl OutputRuntime {
                 .unwrap_or_else(|| err("output stream is inactive")));
         }
         while let Ok(mut take) = self.returns.pop() {
-            if take.valid && take.generation == self.shared.generation.load(Ordering::Acquire) {
-                for (idx, bar) in take.bars.iter_mut().enumerate() {
+            if take.stamp.valid
+                && take.stamp.generation == self.shared.generation.load(Ordering::Acquire)
+            {
+                for (idx, bar) in take.storage.bars.iter_mut().enumerate() {
                     if bar.touched {
                         self.song.bars[idx].audio_buffer = Some(bar.pcm.clone());
                     }
                 }
-            } else if !take.valid
-                && take.generation == self.shared.generation.load(Ordering::Acquire)
+            } else if !take.stamp.valid
+                && take.stamp.generation == self.shared.generation.load(Ordering::Acquire)
             {
                 self.last_error = Some(err(
                     "recording invalidated by input loss; incomplete take discarded",
@@ -524,7 +527,9 @@ impl OutputRuntime {
             return Err(err("recording bar out of range"));
         }
         if self.song.bars.iter().any(|bar| bar.legacy_clock) {
-            return Err(err("Clear the legacy-clock loops before recording. Existing takes keep their original playback clocks."));
+            return Err(err(
+                "Clear the legacy-clock loops before recording. Existing takes keep their original playback clocks.",
+            ));
         }
         let take = Recording::prepare(
             &self.song,

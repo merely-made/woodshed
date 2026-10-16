@@ -1,0 +1,308 @@
+warning: patch `mere-proofs v0.1.0 (https://github.com/merely-made/mere.git?branch=main#ee324e51)` was not used in the crate graph
+warning: patch `mere-transport v0.0.2 (https://github.com/merely-made/murm.git?branch=main#cba46d85)` was not used in the crate graph
+warning: patch `mere-webrtc-carrier v0.0.1 (https://github.com/merely-made/murm.git?branch=main#cba46d85)` was not used in the crate graph
+help: Check that the patched package version and available features are compatible
+      with the dependency requirements. If the patch has a different version from
+      what is locked in the Cargo.lock file, run `cargo update` to use the new
+      version. This may also occur with an optional dependency that is not enabled.
+   Compiling audio-primitives v0.1.0 (/Users/markik/Code/repos/woodshed/crates/audio-primitives)
+   Compiling woodshed-audio v0.1.0 (/Users/markik/Code/repos/woodshed/crates/woodshed-audio)
+warning: use of deprecated method `std::sync::atomic::Atomic::<u64>::fetch_update`: renamed to `try_update` for consistency
+  --> crates/woodshed-audio/src/capture_feed.rs:33:14
+   |
+33 |             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |generation| {
+   |              ^^^^^^^^^^^^
+   |
+   = note: `#[warn(deprecated)]` on by default
+help: replace the use of the deprecated method
+   |
+33 -             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |generation| {
+33 +             .try_update(Ordering::AcqRel, Ordering::Acquire, |generation| {
+   |
+
+warning: use of deprecated method `std::sync::atomic::Atomic::<usize>::fetch_update`: renamed to `try_update` for consistency
+   --> crates/woodshed-audio/src/output_runtime.rs:292:14
+    |
+292 |             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |              ^^^^^^^^^^^^
+    |
+help: replace the use of the deprecated method
+    |
+292 -             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+292 +             .try_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |
+
+warning: use of deprecated method `std::sync::atomic::Atomic::<usize>::fetch_update`: renamed to `try_update` for consistency
+   --> crates/woodshed-audio/src/output_runtime.rs:337:14
+    |
+337 |             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |              ^^^^^^^^^^^^
+    |
+help: replace the use of the deprecated method
+    |
+337 -             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+337 +             .try_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |
+
+warning: use of deprecated method `std::sync::atomic::Atomic::<usize>::fetch_update`: renamed to `try_update` for consistency
+   --> crates/woodshed-audio/src/output_runtime.rs:358:14
+    |
+358 |             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |              ^^^^^^^^^^^^
+    |
+help: replace the use of the deprecated method
+    |
+358 -             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+358 +             .try_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |
+
+warning: `woodshed-audio` (lib) generated 4 warnings (run `cargo fix --lib -p woodshed-audio` to apply 4 suggestions)
+warning: `woodshed-audio` (lib test) generated 4 warnings (4 duplicates)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2.15s
+     Running unittests src/lib.rs (target/build/debug/deps/audio_primitives-2a8845ec59a147aa)
+
+running 55 tests
+test buffer::tests::normalize_brings_peak_to_target ... ok
+test buffer::tests::normalize_silent_is_noop ... ok
+test buffer::tests::gain_scales_and_clamps ... ok
+test buffer::tests::reverse_flips_order ... ok
+test calibration::tests::count_matches_includes_only_within_window ... ok
+test calibration::tests::estimate_latency_drops_onsets_outside_match_window ... ok
+test calibration::tests::estimate_latency_filters_negative_offsets ... ok
+test calibration::tests::estimate_latency_finds_median ... ok
+test calibration::tests::estimate_latency_rejects_outliers_via_median ... ok
+test calibration::tests::estimate_latency_returns_none_below_minimum_pairs ... ok
+test capture::tests::append_retains_bits_and_stops_at_capacity ... ok
+test capture::tests::empty_storage_refuses_all_modes ... ok
+test capture::tests::indexed_modes_preserve_clipping_and_repeated_overdubs ... ok
+test alignment::tests::silence_stationary_and_short_material_refuse ... ok
+test click::tests::click_sample_amplitude_bounded ... ok
+test click::tests::click_sample_returns_none_past_duration ... ok
+test click::tests::click_sample_starts_nonzero_and_decays ... ok
+test click::tests::meter_aware_bar_length_honors_the_beat_unit ... ok
+test click::tests::render_click_bar_accents_downbeat ... ok
+test click::tests::render_click_bar_has_expected_length ... ok
+test meter::tests::attack_is_faster_than_release ... ok
+test meter::tests::timing_is_frame_rate_independent ... ok
+test meter::tests::invalid_input_becomes_silence_and_reset_clears_state ... ok
+test meter::tests::peak_holds_then_decays_without_crossing_level ... ok
+test click::tests::render_click_bar_clicks_on_downbeat_then_silence ... ok
+test alignment::tests::validates_bounds_versions_and_pcm_without_partial_mutation ... ok
+test onset::tests::detector_debounces_too_close_hits ... ok
+test onset::tests::detector_finds_isolated_impulse ... ok
+test onset::tests::detector_warmup_returns_no_onsets ... ok
+test onset::tests::estimate_bpm_120bpm_from_quarter_intervals ... ok
+test onset::tests::detector_reset_clears_history ... ok
+test onset::tests::detector_finds_multiple_well_spaced_impulses ... ok
+test onset::tests::detector_handles_split_buffer_seam ... ok
+test onset::tests::estimate_bpm_60bpm_from_one_second_intervals ... ok
+test onset::tests::estimate_bpm_clamps_excessive_tempo ... ok
+test onset::tests::estimate_bpm_clamps_too_slow_tempo ... ok
+test stretch::tests::ratio_is_clamped_to_the_supported_range ... ok
+test onset::tests::estimate_bpm_median_rejects_outlier ... ok
+test onset::tests::estimate_bpm_returns_none_below_two_onsets ... ok
+test stretch::tests::reset_clears_state_and_counters ... ok
+test alignment::tests::presented_anchor_excludes_lookahead_and_tracks_eviction ... ok
+test stretch::tests::unity_ratio_is_a_bit_exact_passthrough ... ok
+test stretch::tests::ratio_changes_mid_stream_stay_continuous ... ok
+test waveform::tests::an_impulse_survives_downsampling ... ok
+test waveform::tests::partitions_every_sample_into_signed_columns ... ok
+test waveform::tests::scaling_preserves_order_for_negative_gain ... ok
+test waveform::tests::silence_and_short_buffers_are_stable ... ok
+test alignment::tests::strong_earlier_match_cannot_override_a_different_tail ... ok
+test stretch::tests::source_front_trails_consumption_by_less_than_a_window ... ok
+test alignment::tests::tolerates_gain_noise_and_different_pcm_sample_rate ... ok
+test stretch::tests::retimed_sine_keeps_its_fundamental_and_hits_the_ratio ... ok
+test alignment::tests::refuses_unrelated_repeated_deleted_and_discontinuous_audio ... ok
+test stretch::tests::stereo_channels_keep_their_own_pitch ... ok
+test alignment::tests::finds_thirty_second_insert_and_longer_preroll ... ok
+test stretch::tests::counters_track_the_ratio_within_one_hop ... ok
+
+test result: ok. 55 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.45s
+
+     Running tests/capture_harness.rs (target/build/debug/deps/capture_harness-3897b7ceabc41bba)
+
+running 4 tests
+test indexed_writes_and_completion_preserve_preallocated_storage_without_allocation_or_free ... ok
+test interrupted_feed_can_resume_without_treating_a_gap_as_end_of_stream ... ok
+test countdown_rejects_jitter_and_strict_half_bar_gap_and_refreshes_during_suppression ... ok
+test borrowed_feed_countdown_and_completion_move_without_allocation_or_free ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/build/debug/deps/woodshed_audio-30aee66853da8853)
+
+running 158 tests
+test calibration::tests::session_starts_idle ... ok
+test calibration::tests::session_with_total_clicks_clamps_minimum ... ok
+test capture_feed::tests::disable_and_clear_exclude_previous_generations ... ok
+test capture_feed::tests::overflow_is_reported_without_evicting_accepted_frames ... ok
+test capture_feed::tests::discard_consumes_only_pending_samples ... ok
+test capture_feed::tests::rate_admission_requires_actual_matching_configuration ... ok
+test calibration::tests::rejected_click_commands_cannot_start_or_complete_calibration ... ok
+test calibration::tests::fake_click_drives_start_completion_and_retry_without_engine ... ok
+test chord_audio::tests::empty_pitches_yields_empty_buffer ... ok
+test chord_audio::tests::phrase_keeps_before_and_after_groups_ordered_with_a_silent_gap ... ok
+test input::tests::builder_prepares_capture_from_explicit_source_configuration ... ok
+test input::tests::capture_consumer_is_transferred_once_and_rate_precedes_callbacks ... ok
+test chord_audio::tests::cancellable_renderer_preserves_pcm_and_abandons_work_between_chunks ... ok
+test input::tests::fundamental_bias_does_not_demote_when_consensus_is_already_lowest ... ok
+test chord_audio::tests::release_tail_decays_toward_zero ... ok
+test input::tests::fundamental_bias_does_not_promote_when_no_sub_multiple_present ... ok
+test input::tests::fundamental_bias_promotes_lower_entry_when_consensus_is_3rd_harmonic ... ok
+test input::tests::pitch_analyzer_disabled_does_not_publish_a_detection ... ok
+test input::tests::pitch_analyzer_handle_starts_with_empty_snapshot ... ok
+test input::tests::pitch_analyzer_set_enabled_round_trips ... ok
+test input::tests::quiet_playing_passes_threshold ... ok
+test input::tests::rms_of_constant_one_is_one ... ok
+test input::tests::rms_of_silence_is_zero ... ok
+test input::tests::same_pitch_is_not_a_harmonic ... ok
+test chord_audio::tests::render_produces_correct_buffer_length ... ok
+test input::tests::second_harmonic_is_recognized ... ok
+test input::tests::rms_of_pure_sine_is_one_over_sqrt_two ... ok
+test input::tests::smoothing_returns_consensus_when_majority_agrees ... ok
+test chord_audio::tests::output_stays_within_unit_range ... ok
+test input::tests::smoothing_returns_none_when_history_too_short ... ok
+test input::tests::smoothing_uses_most_recent_matching_detection ... ok
+test input::tests::smoothing_returns_none_when_no_majority ... ok
+test input::tests::sub_octave_is_recognized ... ok
+test input::tests::third_harmonic_is_recognized ... ok
+test input::tests::unrelated_pitches_are_not_harmonics ... ok
+test looper::tests::arm_record_off_at_bar_boundary ... ok
+test input::tests::silence_threshold_gates_very_quiet_signal ... ok
+test looper::tests::arm_record_takes_effect_at_bar_boundary ... ok
+test looper::tests::fresh_record_after_clear_starts_silent ... ok
+test looper::tests::new_looper_is_quiet_and_empty ... ok
+test looper::tests::overdub_sums_into_existing_buffer ... ok
+test looper::tests::playback_gain_scales_output ... ok
+test looper::tests::playback_loops_at_bar_boundary ... ok
+test looper::tests::playback_returns_recorded_audio ... ok
+test looper::tests::recording_captures_input_at_cursor ... ok
+test looper::tests::soft_clip_compresses_large_signals_below_unity ... ok
+test looper::tests::soft_clip_passes_small_signals_unchanged ... ok
+test midi::tests::clock_sync_60_bpm_from_simulated_ticks ... ok
+test midi::tests::clock_sync_reset_clears_state ... ok
+test midi::tests::clock_sync_returns_none_without_ticks ... ok
+test midi::tests::clock_sync_120_bpm_from_simulated_ticks ... ok
+test midi::tests::parse_control_change ... ok
+test midi::tests::parse_explicit_note_off ... ok
+test midi::tests::parse_note_on_velocity_zero_is_note_off ... ok
+test midi::tests::parse_note_on_with_velocity ... ok
+test midi::tests::parse_realtime_messages ... ok
+test midi::tests::parse_unknown_returns_none ... ok
+test chord_audio::tests::strum_starts_first_note_at_zero ... ok
+test offline::mixer_tests::process_buffer_silent_when_stopped ... ok
+test chord_audio::tests::block_chord_has_simultaneous_onset ... ok
+test offline::mixer_tests::process_buffer_advances_step_at_predicted_time ... ok
+test offline::mixer_tests::process_buffer_voices_decay_to_silence ... ok
+test chord_audio::tests::more_pitches_does_not_clip_louder_than_one_pitch ... ok
+test offline::mixer_tests::bpm_change_does_not_pause_playback ... ok
+test offline::mixer_tests::process_buffer_produces_audio_when_playing ... ok
+test offline::mixer_tests::bpm_increase_speeds_up_without_glitch ... ok
+test offline::song_export::tests::buffered_sink_failure_is_reported_at_finalization ... ok
+test offline::song_export::tests::malformed_snapshots_and_preparation_bounds_refuse_before_touching_the_writer ... ok
+test offline::song_export::tests::frozen_export_does_not_advance_or_change_an_existing_live_runtime ... ok
+test offline::song_export::tests::float_wav_preserves_completed_pcm_default_gain_and_one_cycle_hard_end ... ok
+test offline::mixer_tests::process_buffer_subdivision_scales_step_count ... ok
+test offline::song_export::tests::backing_click_is_honored_without_a_count_in_or_appended_tail ... ok
+test offline::mixer_tests::process_buffer_step_count_scales_with_bpm ... ok
+test offline::song_export::tests::unrelated_pending_transport_commands_do_not_change_the_complete_export_cycle ... ok
+test onset::tests::analyzer_disabled_by_default_emits_nothing ... ok
+test onset::tests::threshold_round_trips_through_handle ... ok
+test output_runtime::tests::backing_click_is_independent_of_calibration_pattern ... ok
+test output_runtime::tests::atomic_calibration_start_uses_one_slot_and_full_queue_rejection_preserves_pattern ... ok
+test output_runtime::tests::a_one_step_click_pattern_retriggers_every_cycle ... ok
+test offline::tests::render_pattern_produces_audio_not_silence ... ok
+test offline::tests::export_wav_writes_readable_file ... ok
+test offline::tests::render_pattern_clicks_are_localized_to_beats ... ok
+test output_runtime::tests::both_metronome_transport_edges_cancel_previews_but_tempo_only_preserves_them ... ok
+test offline::tests::render_pattern_returns_correct_buffer_length ... ok
+test output_runtime::tests::clearing_pcm_preserves_play_accepted_before_the_first_graph_block ... ok
+test output_runtime::tests::boundary_operations_remain_bounded_after_command_acknowledgement ... ok
+test output_runtime::tests::canonical_metronome_uses_rounded_denominator_beats_without_boundary_drift ... ok
+test output_runtime::tests::cancelled_previews_do_not_publish_and_preview_voices_are_bounded ... ok
+test output_runtime::tests::count_in_waits_one_measure_and_muted_click_skips_it ... ok
+test output_runtime::tests::prepared_chord_matches_legacy_strum_and_warm_cache_reuses_pcm ... ok
+test output_runtime::tests::cancellation_keeps_accepted_boundary_operations_in_fifo_order ... ok
+test output_runtime::tests::primed_input_survives_in_block_seek_arm_and_replays_without_edit ... ok
+test output_runtime::tests::fractional_tempo_count_in_uses_one_canonical_measure ... ok
+test output_runtime::tests::overflow_before_boundary_is_ignored_but_during_take_invalidates ... ok
+test output_runtime::tests::production_graph_is_silent_stopped_and_has_one_device_clock ... ok
+test output_runtime::tests::starvation_invalidates_and_reset_does_not_publish_old_owner_pcm ... ok
+test output_runtime::tests::terminal_one_shot_cancels_an_unreachable_arm ... ok
+test samples::tests::bank_build_sound_attaches_when_present ... ok
+test output_runtime::tests::unsupported_rates_and_aggregate_resources_are_rejected_before_publication ... ok
+test samples::tests::bank_build_sound_leaves_empty_when_absent ... ok
+test samples::tests::bank_insert_and_get_round_trip ... ok
+test output_runtime::tests::tempo_edit_preserves_fractional_metronome_phase ... ok
+test samples::tests::rehydrate_pattern_attaches_buffers_for_known_ids ... ok
+test samples::tests::rehydrate_pattern_skips_click_tracks ... ok
+test sequencer::tests::metronome_dense_fires_every_step ... ok
+test sequencer::tests::metronome_downbeat_is_accented ... ok
+test sequencer::tests::metronome_only_beats_fire ... ok
+test sequencer::tests::pattern_round_trips_through_serde_json ... ok
+test sequencer::tests::step_duration_120_bpm_quarter_is_500ms ... ok
+test output_runtime::tests::variable_tempo_blocks_and_one_shot_clear_the_entire_tail ... ok
+test sequencer::tests::step_duration_60_bpm_eighth_is_500ms ... ok
+test sequencer::tests::steps_per_bar_3_4_thirty_second_is_24 ... ok
+test sequencer::tests::steps_per_bar_4_4_quarter_is_4 ... ok
+test samples::tests::load_wav_downmixes_stereo_to_mono ... ok
+test sequencer::tests::steps_per_bar_4_4_sixteenth_is_16 ... ok
+test sequencer::tests::steps_per_bar_6_8_eighth_triplet_is_18 ... ok
+test sequencer::tests::subdivision_constants_are_correct ... ok
+test sequencer::tests::time_signature_defaults_to_4_4 ... ok
+test song::clock_tests::canonical_clock_honors_meter_and_rounds_per_beat_before_measures ... ok
+test song::clock_tests::legacy_playback_keeps_whole_block_rounding_and_old_beat_and_lead ... ok
+test song::clock_tests::new_or_cleared_bars_do_not_inherit_legacy_capture_timing ... ok
+test song::tests::add_bar_appends_and_inherits_settings ... ok
+test song::tests::attach_and_detach_audio_buffer ... ok
+test song::tests::bar_length_multiplies_duration ... ok
+test song::tests::bar_length_serde_default_for_legacy ... ok
+test samples::tests::load_wav_round_trip ... ok
+test song::tests::insert_bar_shifts_cursor_right_when_needed ... ok
+test song::tests::copy_paste_round_trips ... ok
+test song::tests::move_bar_repositions_without_changing_count ... ok
+test song::tests::loop_wraps_at_end ... ok
+test song::tests::multi_measure_bar_advances_after_full_block ... ok
+test song::tests::new_song_has_one_default_bar ... ok
+test song::tests::one_shot_stops_at_end ... ok
+test song::tests::pending_changes_apply_at_bar_boundary ... ok
+test song::tests::pending_clear_drops_unapplied ... ok
+test song::tests::remove_bar_adjusts_cursor ... ok
+test song::tests::remove_last_remaining_bar_errors ... ok
+test sound::tests::accent_uses_different_frequency ... ok
+test song::tests::song_serializes_to_json ... ok
+test sound::tests::click_envelope_decays ... ok
+test sound::tests::click_amplitude_is_bounded ... ok
+test sound::tests::click_render_returns_none_past_duration ... ok
+test sound::tests::click_render_starts_nonzero ... ok
+test sound::tests::gain_scales_and_clamps ... ok
+test sound::tests::normalize_brings_peak_to_target ... ok
+test sound::tests::normalize_silent_is_noop ... ok
+test sound::tests::reverse_flips_order ... ok
+test sound::tests::sample_accent_boosts_gain ... ok
+test sound::tests::sample_pitch_up_consumes_buffer_faster ... ok
+test sound::tests::sample_returns_none_past_end ... ok
+test sound::tests::sample_round_trip_via_serde_preserves_id_and_drops_buffer ... ok
+test sound::tests::sample_with_buffer_renders_value_at_start ... ok
+test sound::tests::sample_without_buffer_renders_none ... ok
+test input::tests::pitch_analyzer_enabled_detects_a4_from_sine ... ok
+test output_runtime::tests::legacy_capture_plays_exactly_but_clear_is_required_before_new_recording ... ok
+test offline::song_export::tests::wav_matches_live_processor_across_fractional_clocks_measures_and_chunk_boundaries ... ok
+test output_runtime::tests::fractional_and_eighth_meter_count_in_and_capture_end_on_exact_frames_without_allocating ... ok
+test midi::tests::list_ports_does_not_panic ... ok
+
+test result: ok. 158 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.73s
+
+   Doc-tests audio_primitives
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests woodshed_audio
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
