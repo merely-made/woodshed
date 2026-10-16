@@ -590,6 +590,9 @@ impl OutputRuntime {
         self.send(Command::CancelPreview)
     }
     pub fn preview_note(&mut self, frequency: f32, duration: f32) -> Result<(), OutputError> {
+        if !duration.is_finite() {
+            return Err(err("preview requires a finite duration"));
+        }
         self.preview_pitches_inner(&[frequency], duration.max(0.05), 0.0, false)
     }
     pub fn preview_pitches(
@@ -598,6 +601,11 @@ impl OutputRuntime {
         duration: f32,
         strum: f32,
     ) -> Result<(), OutputError> {
+        // f32::max treats NaN as the other operand. Validate the authored
+        // request before applying the existing finite convenience minima.
+        if !duration.is_finite() || !strum.is_finite() {
+            return Err(err("preview requires finite duration and strum values"));
+        }
         self.preview_pitches_inner(pitches, duration.max(0.1), strum.max(0.0), true)
     }
     fn preview_pitches_inner(

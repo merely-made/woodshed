@@ -42,6 +42,28 @@ unsafe impl GlobalAlloc for CheckedAllocator {
 #[global_allocator]
 static ALLOCATOR: CheckedAllocator = CheckedAllocator;
 
+#[test]
+fn nonfinite_preview_inputs_are_refused_before_normalization_without_cancelling_valid_work() {
+    let mut r = runtime();
+    r.preview_pitches(&[220.0], 0.2, 0.0).unwrap();
+    let admitted_revision = r.shared.preview_revision.load(Ordering::Acquire);
+    for invalid in [f32::NAN, f32::INFINITY, f32::NEG_INFINITY] {
+        assert!(r.preview_note(220.0, invalid).is_err());
+        assert!(r.preview_pitches(&[220.0], invalid, 0.0).is_err());
+        assert!(r.preview_pitches(&[220.0], 0.2, invalid).is_err());
+        assert_eq!(
+            r.shared.preview_revision.load(Ordering::Acquire),
+            admitted_revision,
+            "refused input must not cancel or replace already accepted preview work"
+        );
+    }
+    assert!(r.preview_busy());
+    // Preserve the existing finite convenience normalization at this audio
+    // boundary; imported Card policy is admitted separately by the product.
+    assert!(r.preview_note(220.0, 0.0).is_ok());
+    assert!(r.preview_pitches(&[220.0], 0.0, -1.0).is_ok());
+}
+
 fn render(runtime: &mut OutputRuntime, frames: usize) -> Vec<f32> {
     let mut output = vec![13.0; frames * 2];
     ALLOCS.with(|n| n.set(0));

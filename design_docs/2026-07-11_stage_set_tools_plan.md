@@ -1745,6 +1745,54 @@ Done when changing tempo affects click, automatic Card dwell, audio preview,
 and highlighted dots together; pause/resume does not drift; and manual Cards
 remain manually advanceable.
 
+#### P5a. Admit one resolved Card timing contract (2026-10-16)
+
+**Status: dependent Card timing contract review pending; independent raw-input
+guard landed.** Start
+from published `c0f03ec`, keeping P5's shared device/event clock open. The same
+fallible pure-core timing resolution must serve automatic rehearsal dwell and
+ordered scale/arpeggio preview articulation. Preserve the authored Card and
+Manual semantics. Invalid or unrepresentable timing must be visibly unavailable,
+not a panic, fake Manual instruction or successful silent playback.
+
+Verified source: `woodshed-core/src/lib.rs::card_dwell` calls the infallible
+`Duration::from_secs_f32` on finite imported Seconds values that can exceed its
+range. `connected_catalog::arpeggiate_preview` repeats hold math with a 300 BPM
+ceiling; `scale_realization::ordered_card_preview` repeats it without that
+ceiling. The runtime already limits preview PCM to 16,777,216 frames at the
+actual admitted sample rate and at most 256 pitches. That resource authority
+stays in audio/host; do not invent a portable seconds ceiling or duplicate
+those constants in core. Existing effective lower-bound/invalid-tempo behavior
+needs explicit reconciliation before dependent code.
+
+Phases and done-conditions:
+
+1. Agree effective BPM/legacy minimum semantics and a typed resolution/error;
+   keep mathematical duration validation separate from device-rate PCM admission.
+2. Route real dwell and both ordered-preview paths through that result, retaining
+   exact stored timing and surfacing an unavailable/retry outcome in the host.
+   A runtime preview refusal cannot leave unsupported rehearsal progressing.
+3. Exercise valid inherited/explicit timing, Manual, imported/extreme timing,
+   actual host refusal/recovery, and consistent ordered articulation. Run the
+   affected package gates and desktop build, then one guarded native timed/manual/
+   refusal flow and exact fresh reopening of authored data.
+4. Reconcile receipt/index and publish reviewed source directly to main. Keep
+   one native/build owner; unique output directories, one-use launchers and
+   explicit process completion prevent mixed receipts.
+
+No-backend automatic progression, pause/tempo-edit phase policy, sample-exact
+shared event positions, replacement OutputRuntime/capture schedules, historical
+capture clocks and persona namespace migration remain outside this slice.
+
+**Independent guard completed (2026-10-16):** raw preview duration/strum inputs
+are checked for finiteness before existing audio convenience normalization.
+Previously `f32::max` turned NaN into a valid minimum; now nonfinite requests
+return an error without cancelling/replacing accepted preview work. The new
+production-runtime regression fails before the guard and all 159 audio cases
+pass after it. This is a source/test result only; shared Card timing admission
+and its native/reopen receipt remain pending the positive-tempo policy ruling.
+
+
 ### P6. Finish Rehearsal as the guided Set runner
 
 **Current state: partial, still open.** A guided runner exists, but the mixed
