@@ -4114,6 +4114,12 @@ mod evidence_tests {
             .collect::<Vec<_>>();
         assert_eq!(source_strokes.len(), 1);
         let stroke = source_strokes[0];
+        let expected_link = scenograph::link::LinkKey::new(
+            scenograph::link::LinkStratum::Surface,
+            catalog_id_for_card(&ui.set.cards[0]).unwrap(),
+            catalog_id_for_card(&ui.set.cards[1]).unwrap(),
+        );
+        assert_eq!(stroke.link_key.as_ref(), Some(&expected_link));
         let display_from = snapshot
             .card_of_ref(stroke.from)
             .and_then(|card| ui.set.cards.iter().find(|item| item.id == card))
