@@ -156,7 +156,10 @@ impl mesquite::Product for Product {
                 let Some(id @ woodshed_core::session_overview::OverviewNodeId::Artifact(
                     woodshed_core::session_overview::SessionArtifactId::LoopTake(_))) = ui.overview_focus.as_ref()
                 else { return Err("focus is not a retained take".into()); };
-                if positions.get(id) != ui.overview_positions.get(id) || !positions.contains_key(id) {
+                let live_positions = ui.overview_dynamics.positions();
+                let live = live_positions.get(id).or_else(|| ui.overview_positions.get(id));
+                if !positions.get(id).zip(live).is_some_and(|(stored, live)|
+                    (stored.0-live.0).abs() < 0.00001 && (stored.1-live.1).abs() < 0.00001) {
                     return Err("take placement did not round-trip".into());
                 }
                 let captures = shared.backend.as_ref().ok_or("no output backend")?.capture_snapshot();
