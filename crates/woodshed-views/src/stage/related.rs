@@ -41,7 +41,7 @@ fn claims_link_reading(ui: &UiState) -> Option<LinkPairReading> {
     // Generated reasons remain source-owned read-only claims. Their stable
     // IDs and directed endpoints come directly from the current mere snapshot;
     // never convert them into Chartulary EdgeIds or infer write authority.
-    let generated = super::related_mere_snapshot(ui);
+    let generated = super::opened_claims_mere_snapshot(ui, from);
     let mut generated_by_id: std::collections::BTreeMap<
         woodshed_core::mere::GeneratedClaimId,
         &woodshed_core::mere::MaterialRelation,
@@ -262,7 +262,7 @@ fn queue_relation_action(ui: &mut UiState, event: OpenedLinkEvent, expected_revi
                 return;
             }
             if let Some(claim_id) = target.assertion_id.strip_prefix("generated:") {
-                let snapshot = super::related_mere_snapshot(ui);
+                let snapshot = super::opened_claims_mere_snapshot(ui, &target.from);
                 let exact = snapshot.relations.iter().find(|relation| {
                     relation.claim_id.qualified_key() == claim_id
                         && relation.provenance.original_from == target.from
@@ -1026,6 +1026,178 @@ mod tests {
             LinkSourceRevision::Unavailable { reason }
                 if reason.contains("no shared immutable public revision")
         ));
+    }
+
+    #[test]
+    fn opened_pair_claims_ignore_unrelated_selection_canvas_scope() {
+        let mut ui = UiState::new();
+        ui.app_settings.stage.related.graph_scope =
+            woodshed_core::settings::RelatedGraphScope::Selection;
+        ui.app_settings.stage.related.relation_depth = 1;
+        ui.stage.set_lens(woodshed_core::Lens::Progressions);
+        ui.personal_link_pair = Some(("chord:Major".into(), "chord:Major 7".into()));
+
+        assert!(
+            super::super::related_mere_snapshot(&ui)
+                .relations
+                .is_empty(),
+            "the current progression selection has no selected catalog center"
+        );
+        let (from, to) = ui.personal_link_pair.as_ref().unwrap();
+        let whole = woodshed_core::mere::woodshed_mere(
+            &ui.practice_history,
+            woodshed_core::mere::MereScope::Whole,
+        );
+        let expected_ids = whole
+            .relations
+            .iter()
+            .filter(|relation| {
+                relation.source.as_str() == from.as_str() && relation.target.as_str() == to.as_str()
+            })
+            .map(|relation| relation.claim_id.qualified_key())
+            .collect::<std::collections::BTreeSet<_>>();
+        assert!(!expected_ids.is_empty());
+
+        let reading = claims_link_reading(&ui).expect("opened pair has a reading");
+        let actual_ids = reading
+            .links
+            .iter()
+            .flat_map(|link| link.buckets.iter())
+            .flat_map(|bucket| bucket.assertions.iter())
+            .filter_map(|assertion| assertion.id.strip_prefix("generated:"))
+            .map(str::to_owned)
+            .collect::<std::collections::BTreeSet<_>>();
+        assert_eq!(actual_ids, expected_ids);
+
+        let target = cambium::LinkMemberTarget {
+            source: reading.source,
+            link: LinkKey::new(LinkStratum::Surface, from.clone(), to.clone()),
+            from: from.clone(),
+            to: to.clone(),
+            assertion_id: format!("generated:{}", expected_ids.first().unwrap()),
+        };
+        queue_relation_action(
+            &mut ui,
+            OpenedLinkEvent::Member {
+                target,
+                action: "audition".into(),
+            },
+            0,
+        );
+        assert!(matches!(
+            ui.audio_requests.as_slice(),
+            [woodshed_core::audio::AudioRequest::PreviewPhrase { .. }]
+        ));
+        assert!(
+            ui.personal_relation_notice
+                .as_deref()
+                .is_some_and(|notice| notice.contains("Audition queued in assertion direction"))
+        );
+    }
+
+    #[test]
+    fn opened_minor_major_pair_keeps_all_catalog_adjacency_ids_outside_canvas_filter() {
+        let mut ui = UiState::new();
+        ui.app_settings.stage.related.graph_scope =
+            woodshed_core::settings::RelatedGraphScope::Selection;
+        ui.app_settings.stage.related.relation_depth = 1;
+        ui.stage.set_lens(woodshed_core::Lens::Progressions);
+        let from = woodshed_graph::chord_id("Minor");
+        let to = woodshed_graph::chord_id("Major");
+        ui.personal_link_pair = Some((from.clone(), to.clone()));
+
+        assert!(
+            super::super::related_mere_snapshot(&ui)
+                .relations
+                .is_empty(),
+            "the selected canvas lens has no active progression center"
+        );
+
+        // Read the source adjacency in both endpoint directions directly.
+        // This is intentionally independent of woodshed_mere, whose projection
+        // is the code path under test.
+        let mut raw = std::collections::BTreeMap::new();
+        for (source, target) in [(&from, &to), (&to, &from)] {
+            for neighbor in woodshed_graph::related_neighbors(source, usize::MAX) {
+                if neighbor.id != *target {
+                    continue;
+                }
+                for relation in neighbor.relations.into_iter().filter(|relation| {
+                    relation.provenance.original_kind == woodshed_graph::RelationKind::UsedTogether
+                }) {
+                    raw.insert(
+                        relation.claim_id.qualified_key(),
+                        (
+                            relation.provenance.original_from,
+                            relation.provenance.original_to,
+                        ),
+                    );
+                }
+            }
+        }
+        assert_eq!(
+            raw.len(),
+            11,
+            "the catalog fixture has eleven source claims"
+        );
+        assert!(
+            raw.values()
+                .filter(|(source, target)| source == &from && target == &to)
+                .count()
+                > 1,
+            "parallel adjacency reasons in the selected direction keep separate IDs"
+        );
+
+        let pair_snapshot = super::super::opened_claims_mere_snapshot(&ui, &from);
+        let projected = pair_snapshot
+            .relations
+            .iter()
+            .filter(|relation| {
+                relation.provenance.original_kind == woodshed_graph::RelationKind::UsedTogether
+                    && ((relation.provenance.original_from == from
+                        && relation.provenance.original_to == to)
+                        || (relation.provenance.original_from == to
+                            && relation.provenance.original_to == from))
+            })
+            .map(|relation| {
+                (
+                    relation.claim_id.qualified_key(),
+                    (
+                        relation.provenance.original_from.clone(),
+                        relation.provenance.original_to.clone(),
+                    ),
+                )
+            })
+            .collect::<std::collections::BTreeMap<_, _>>();
+        assert_eq!(projected, raw);
+
+        let reading = claims_link_reading(&ui).expect("opened pair has a reading");
+        let actual = reading
+            .links
+            .iter()
+            .flat_map(|link| link.buckets.iter())
+            .flat_map(|bucket| {
+                bucket
+                    .assertions
+                    .iter()
+                    .filter(|assertion| {
+                        assertion.predicate
+                            == woodshed_graph::RelationKind::UsedTogether.predicate_iri()
+                    })
+                    .filter_map(|assertion| {
+                        assertion.id.strip_prefix("generated:").map(|id| {
+                            (
+                                id.to_owned(),
+                                (bucket.source_from.id.clone(), bucket.source_to.id.clone()),
+                            )
+                        })
+                    })
+            })
+            .collect::<std::collections::BTreeMap<_, _>>();
+        assert_eq!(
+            actual, raw,
+            "both directions keep their exact source buckets"
+        );
     }
 
     #[test]

@@ -101,7 +101,7 @@ pub fn woodshed_mere(history: &PracticeHistory, scope: MereScope<'_>) -> Woodshe
                 let key = (
                     relation.source.clone(),
                     relation.target.clone(),
-                    relation.kind,
+                    relation.claim_id.qualified_key(),
                 );
                 if seen.insert(key) {
                     relations.push(relation);
@@ -113,26 +113,27 @@ pub fn woodshed_mere(history: &PracticeHistory, scope: MereScope<'_>) -> Woodshe
         if !included.contains(&transition.from_id) || !included.contains(&transition.to_id) {
             continue;
         }
-        let key = (
-            transition.from_id.clone(),
-            transition.to_id.clone(),
+        let times = transition.traversal_count;
+        let relation = MaterialRelation::evidence_with_count(
+            transition.from_id,
+            transition.to_id,
             RelationKind::PracticedAfter,
+            (90 + times.min(10)) as u16,
+            if times == 1 {
+                "Practiced next once".to_string()
+            } else {
+                format!("Practiced next {times} times")
+            },
+            PracticeEvidenceBasis::WalkedPath,
+            times,
+        );
+        let key = (
+            relation.source.clone(),
+            relation.target.clone(),
+            relation.claim_id.qualified_key(),
         );
         if seen.insert(key) {
-            let times = transition.traversal_count;
-            relations.push(MaterialRelation::evidence_with_count(
-                transition.from_id,
-                transition.to_id,
-                RelationKind::PracticedAfter,
-                (90 + times.min(10)) as u16,
-                if times == 1 {
-                    "Practiced next once".to_string()
-                } else {
-                    format!("Practiced next {times} times")
-                },
-                PracticeEvidenceBasis::WalkedPath,
-                times,
-            ));
+            relations.push(relation);
         }
     }
 
@@ -233,5 +234,67 @@ mod tests {
                 && relation.target == chord
                 && relation.kind == RelationKind::PracticedAfter
         }));
+    }
+
+    #[test]
+    fn mere_keeps_each_catalog_adjacency_reason_for_minor_and_major() {
+        let minor = woodshed_graph::chord_id("Minor");
+        let major = woodshed_graph::chord_id("Major");
+        let mut raw = BTreeMap::new();
+        for (source, target) in [(&minor, &major), (&major, &minor)] {
+            for neighbor in related_neighbors(source, usize::MAX) {
+                if neighbor.id != *target {
+                    continue;
+                }
+                for relation in neighbor
+                    .relations
+                    .into_iter()
+                    .filter(|relation| relation.kind == RelationKind::UsedTogether)
+                {
+                    raw.insert(
+                        (
+                            relation.source,
+                            relation.target,
+                            relation.claim_id.qualified_key(),
+                        ),
+                        relation.provenance,
+                    );
+                }
+            }
+        }
+        assert_eq!(
+            raw.len(),
+            22,
+            "each of eleven reasons has two display aliases"
+        );
+        assert_eq!(
+            raw.keys()
+                .map(|(_, _, id)| id)
+                .collect::<BTreeSet<_>>()
+                .len(),
+            11
+        );
+
+        let mere = woodshed_mere(&PracticeHistory::default(), MereScope::Whole);
+        let projected = mere
+            .relations
+            .iter()
+            .filter(|relation| {
+                relation.kind == RelationKind::UsedTogether
+                    && ((relation.source == minor && relation.target == major)
+                        || (relation.source == major && relation.target == minor))
+            })
+            .map(|relation| {
+                (
+                    (
+                        relation.source.clone(),
+                        relation.target.clone(),
+                        relation.claim_id.qualified_key(),
+                    ),
+                    relation.provenance.clone(),
+                )
+            })
+            .collect::<BTreeMap<_, _>>();
+        assert_eq!(projected, raw);
     }
 }
