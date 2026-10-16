@@ -8,5 +8,15 @@
   "json_files_parse": true,
   "new_local_doc_links_and_anchors_checked": 3,
   "new_findings": [],
-  "git_diff_check": "passed"
+  "git_diff_check": {
+    "source_and_documentation": "passed",
+    "raw_original_logs": "Five end-of-file blank-line warnings retained to preserve original log hashes. No source/documentation whitespace findings.",
+    "raw_log_findings": [
+      "validation/stage-p5a_20261016/checks/coordinator-host-final.log:91: new blank line at EOF.",
+      "validation/stage-p5a_20261016/checks/coordinator-host-native-harness-final.log:91: new blank line at EOF.",
+      "validation/stage-p5a_20261016/checks/coordinator-integrated-v5.log:150: new blank line at EOF.",
+      "validation/stage-p5a_20261016/checks/coordinator-timing-extremes.log:15: new blank line at EOF.",
+      "validation/stage-p5a_20261016/checks/raw-preview-green.log:60: new blank line at EOF."
+    ]
+  }
 }
