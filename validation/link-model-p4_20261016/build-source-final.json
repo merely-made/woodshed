@@ -1,0 +1,29 @@
+{
+  "source": "865e0e9a423c70cdc4b65263eab9de08192565ef",
+  "git_status": "",
+  "mere_revision": "91467c0bbf6f92cc26262579dec634155ee33f2d",
+  "binary": "/Users/markik/Code/testing/woodshed/link-model-p4-20261016/frozen-865e0e9/woodshed-genet",
+  "binary_sha256": "113915523899c1b11e6acc3f13f2eeb3eece91933fc262dda91f815a8f0664aa",
+  "source_inputs": {
+    "Cargo.lock": "463871e52227ad62a1ab354b0080bfb9251f6c61e66826a73f66d7f0a4efbdec",
+    "crates/woodshed-core/src/session_overview.rs": "fe2a1a4e257a73e7425e47988885f9180f971e4e47b07748c25fddd98eaadcb6",
+    "crates/woodshed-core/src/stage_scene.rs": "adae4f351e9c81b4f5d99e520464f95763f76ad752b7e3d2397a83a58ce63b35",
+    "crates/woodshed-views/src/stage.rs": "3eea73ac39d60d467aa1abca997035ccd64a55da0e6808061da8a5b2f2c4ed96",
+    "crates/woodshed-views/src/stage/overview.rs": "6687d7a57b9d62deda2fbe2f2477ece8bff71385c699d9d4bb67232e4977abd6",
+    "crates/woodshed-views/src/stage/related.rs": "edf2c8472c5af904df93bc542c049846893faaae85acf01d236b575f74b62b71",
+    "crates/woodshed-views/src/stage/relationship.rs": "eaf378e79cdcd4593d58791d99ca68834a889d6927a54d52a9f8491e808ce70f",
+    "crates/woodshed-views/src/stage/set_tray.rs": "2ab75fe7c970e725262f1f6a0f3b7ce49f580f6156dd6cb2080d5267e305ad4e",
+    "design_docs/2026-07-11_stage_set_tools_plan.md": "4a59a2df41ad5ed6177c5c74727818482f28183301c5da6c6ab806594a692cc2",
+    "design_docs/DOC_README.md": "082bf850fa8f0e03974d84e53faebfd1508941b95062bdecf3864d9b56113f4c",
+    "scenarios/p4f_relationship_link_rest.scn": "fa74abba83d15365fe7c7c9b6e1f65afe5024d5bccc674394ef967fae30fad90",
+    "scenarios/p4f_relationship_link_rest_reopen.scn": "35b7c73efaf0302e1b055fa754af71c5ba36392630981919d332ee8afb363c6d"
+  },
+  "keeper_fixture": {
+    "source": "ee324e517d501653aee8df7d5a430760a74749c0",
+    "binary": "/Users/markik/Code/testing/woodshed/link-model-p3-20261016/frozen-keeper-ee324e517/dr-c-receipt-host",
+    "sha256": "848685e001d63724ca869fa58a97021b3fa15821f0d1fa9954c4853080c518f6",
+    "role": "separately frozen isolated real sealed Keeper test authority; not the new Woodshed executable"
+  },
+  "suite_source": "a8c2cd2329179c3aa1445f14e1d74ed4dc235bf8",
+  "later_changes": "scenario framing and reuse of the existing claim-reader CSS wrapper; final desktop build and both native flows repeated"
+}

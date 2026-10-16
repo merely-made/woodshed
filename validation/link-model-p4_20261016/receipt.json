@@ -1,0 +1,82 @@
+{
+  "schema": "woodshed.link-rest-qualification/v1",
+  "date": "2026-10-16",
+  "source_revision": "865e0e9a423c70cdc4b65263eab9de08192565ef",
+  "baseline": "284fa34061b0b90dcf121578ee3fe11f9daa5652",
+  "mere_revision": "91467c0bbf6f92cc26262579dec634155ee33f2d",
+  "source_qualification": {
+    "result": "passed",
+    "suite_source": "a8c2cd2329179c3aa1445f14e1d74ed4dc235bf8",
+    "root_suite_cases": 619,
+    "fresh_process_child_invocations": 5,
+    "ignored": 7,
+    "packages": {
+      "woodshed-core": 248,
+      "woodshed-core/stage_backdrop": 1,
+      "woodshed-core/examples": 10,
+      "woodshed-genet": 168,
+      "woodshed-views": 192
+    },
+    "later_changes": "Scenario capture framing and one existing claim-reader CSS wrapper; final locked/offline desktop build and both native runs repeated",
+    "desktop_build": "passed",
+    "log": "logs/affected-tests-received.log"
+  },
+  "native_qualification": {
+    "result": "passed",
+    "source_revision": "865e0e9a423c70cdc4b65263eab9de08192565ef",
+    "frozen_binary_sha256": "113915523899c1b11e6acc3f13f2eeb3eece91933fc262dda91f815a8f0664aa",
+    "logical_viewport": [
+      1100,
+      900
+    ],
+    "capture_pixels": [
+      2200,
+      1800
+    ],
+    "seed": {
+      "frames": 142,
+      "captures": 2,
+      "process_id": 25745,
+      "exited_before_reopen": true
+    },
+    "reopen": {
+      "frames": 134,
+      "captures": 2,
+      "process_id": 25932,
+      "different_fresh_process": true
+    },
+    "reviewed_native_captures": 4,
+    "retained_recipe_cards": 3,
+    "visual_identity_comparison": {
+      "source_resource": "working-set:1",
+      "source_revision": "851dd13fad928e423430eb1b1aeb734c4e155b80a8755b96a501c947de128b1f",
+      "assertion_handle": "set:1:music.same_pitch_classes:1:2",
+      "displayed_direction": "set:1:card:1 to set:1:card:2",
+      "matches_in_both_reviewed_metadata_captures": true
+    },
+    "runtime_seal_log_observed": true,
+    "keeper_manifest_unchanged_files": 4,
+    "practice_plaintext_markers_absent": [
+      "C Major again",
+      "A Minor",
+      "music.same_pitch_classes"
+    ],
+    "launch_note": "Task-owned app bundles launched through native UI control. Successful scenarios exit before accessibility attachment; native logs, receipts and original captures establish the outcome."
+  },
+  "verified": [
+    "one resting source link per canonical key/display appearance",
+    "independent generated reasons retain source IDs direction method evidence",
+    "complete reader remains independent of the displayed-member filter",
+    "legacy exact-member hiding removes only that visual contribution",
+    "source identity and direction survive routed scenes",
+    "actual native closed-link activation opens shared source reader",
+    "fresh process restores valid three-card recipe and same source identity"
+  ],
+  "scope_limits": [
+    "Physical audio output and quality not exercised by this P4 flow",
+    "Full Stage P4f exploration remains separate",
+    "Mere P6/P7 and automatic synchronization remain later work",
+    "Other dependency families and nested port locks are unchanged"
+  ],
+  "doc_audit": "doc-audit-final.json"
+}

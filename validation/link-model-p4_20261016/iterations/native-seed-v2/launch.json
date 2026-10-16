@@ -1,0 +1,27 @@
+{
+  "name": "WoodshedLinksRestSeedV2",
+  "binary": "/Users/markik/Code/testing/woodshed/link-model-p4-20261016/frozen-5807b7f/woodshed-genet",
+  "output": "/Users/markik/Code/testing/woodshed/link-model-p4-20261016/native-seed-v2",
+  "cwd": "/Users/markik/Code/repos/woodshed-link-model-p3-20261016",
+  "args": [],
+  "source": "5807b7f6793cf9678cd232ed420c4448715d6cbf",
+  "env": {
+    "WOODSHED_PRESENTATION_TIMEOUT_SECS": "60",
+    "WOODSHED_WIDTH": "1100",
+    "WOODSHED_HEIGHT": "900",
+    "WOODSHED_STATE": "/Users/markik/Code/testing/woodshed/link-model-p4-20261016/profile-v2/practice.bin",
+    "WOODSHED_SETTINGS": "/Users/markik/Code/testing/woodshed/link-model-p4-20261016/profile-v2/settings.json",
+    "GRAPHSHELL_APP_ENDPOINT": "/tmp/ws-link-p4-20261016-a.sock",
+    "TMPDIR": "/tmp",
+    "XDG_DATA_HOME": "/Users/markik/Code/testing/woodshed/link-model-p4-20261016/xdg-data",
+    "XDG_CONFIG_HOME": "/Users/markik/Code/testing/woodshed/link-model-p4-20261016/xdg-config",
+    "XDG_CACHE_HOME": "/Users/markik/Code/testing/woodshed/link-model-p4-20261016/xdg-cache",
+    "MERE_ROOT": "/Users/markik/Code/testing/woodshed/link-model-p4-20261016/mere-root",
+    "WOODSHED_SCENARIO": "/Users/markik/Code/repos/woodshed-link-model-p3-20261016/scenarios/p4f_relationship_link_rest.scn",
+    "WOODSHED_CAPTURE_DIR": "/Users/markik/Code/testing/woodshed/link-model-p4-20261016/native-seed-v2",
+    "WOODSHED_RECEIPT": "/Users/markik/Code/testing/woodshed/link-model-p4-20261016/native-seed-v2/scenario.done"
+  },
+  "app": "/Users/markik/Code/testing/woodshed/link-model-p4-20261016/native-seed-v2/WoodshedLinksRestSeedV2.app",
+  "binary_sha256": "bc4c06f1456537c502f1d8460c4b8c9f3c2a3867e724aea61dd7b0547d5084fb",
+  "launch_method": "native UI launch of prepared task-owned app bundle"
+}

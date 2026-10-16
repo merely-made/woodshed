@@ -6,7 +6,18 @@ and kept Claude for design. Every ruling below is Mark's and is settled; do
 not re-decide one. If a task needs a decision that isn't written here, stop
 and ask Mark with concrete options.
 
-**2026-10-16 continuation:** the bounded opened-link P3 consumer is qualified
+**2026-10-16 P4 continuation:** the root now pins Mere `91467c0bb` for
+canonical resting links. The bounded receiving gate passes 619 suite cases,
+five fresh-process child invocations, the locked desktop build and native
+seed/reopen on final source `865e0e9`, with four reviewed captures. The
+relationship editor, Related and Set preserve independent reasons inside the
+opened reader; exact member filters reduce only their own resting contribution.
+The [Stage plan](2026-07-11_stage_set_tools_plan.md) and its linked P4 receipt
+own the evidence. Other dependency families and nested port locks remain at
+their qualified inputs. Full Stage P4f, physical audio and later Mere P6/P7
+remain separately gated.
+
+**Earlier 2026-10-16 P3 continuation:** the bounded opened-link P3 consumer is qualified
 from root `aba2c7343`. Mere P2 is qualified, the former O1–O8 questions are
 settled as L5–L12 (with independent reasons ruled as L13), and Mere's P3
 Chartulary/shared Graphshell slice is published at `ee324e517`. The
@@ -251,8 +262,9 @@ Mark options.
 - **Woodshed custody to a reservoir mere (ruling 6).** Mere/djinn work, not
   yet scheduled; Mark schedules it.
 - **Mere's link model:** the former O1–O8 questions are settled; the authorized
-  P3 consumer continuation is recorded in the Stage plan above. Later fan
-  retirement, all-family migration/history budgets and promotion keep their own gates.
+  P3 consumer continuation and qualified P4 resting strokes are recorded in
+  the Stage plan above. Later assertion-family migration/history budgets and
+  promotion keep their own gates.
 - **Touch input on the host** (P2 touch is deferred), waiting on host touch
   input in Mere.
 - **Firewheel and DSP open items from the survey:**
