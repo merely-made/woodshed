@@ -589,6 +589,23 @@ impl OutputRuntime {
         self.cancel_worker();
         self.send(Command::CancelPreview)
     }
+    /// Admit an exact resolved Card duration, without generic audition minima.
+    /// Refusal happens before cancellation or worker publication.
+    pub fn preview_card_pitches(&mut self, pitches: &[f32], duration: f32, strum_ms: f32) -> Result<(), OutputError> {
+        if !duration.is_finite() || duration <= 0.0 || !strum_ms.is_finite() || strum_ms < 0.0 {
+            return Err(err("Card preview requires finite positive duration and finite nonnegative spacing"));
+        }
+        if self.song.playing || self.snapshot().playing {
+            return Err(err("Stop backing playback before auditioning this Card"));
+        }
+        if (duration * self.rate as f32).round() < 1.0 {
+            return Err(err("Card preview duration is shorter than one output frame"));
+        }
+        if pitches.len() > 1 && strum_ms > 0.0 && strum_ms / 1000.0 * (self.rate as f32) < 1.0 {
+            return Err(err("Ordered Card spacing is shorter than one output frame"));
+        }
+        self.preview_pitches_inner(pitches, duration, strum_ms, true)
+    }
     pub fn preview_note(&mut self, frequency: f32, duration: f32) -> Result<(), OutputError> {
         if !duration.is_finite() {
             return Err(err("preview requires a finite duration"));

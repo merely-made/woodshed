@@ -181,16 +181,14 @@ impl UiState {
             && self.rehearsal_owner.unwrap_or(self.working_sets.active_id)
                 == self.working_sets.active_id
     }
-    pub fn rehearsal_sounding_pitches(&self) -> Option<(Vec<f32>, f32, f32)> {
-        let card = self.rehearsal_card()?;
-        Some(
-            self.rehearsal_stage
-                .as_ref()
-                .unwrap_or(&self.stage)
-                .card_sounding_pitches_at_tempo(card, self.transport.bpm),
-        )
+    pub fn rehearsal_sounding_pitches(&self) -> Result<Option<woodshed_core::card_timing::CardPreview>, woodshed_core::CardTimingError> {
+        let Some(card) = self.rehearsal_card() else { return Ok(None); };
+        self.rehearsal_stage.as_ref().unwrap_or(&self.stage)
+            .card_sounding_pitches_at_tempo(card, self.transport.bpm).map(Some)
     }
     pub fn stop_rehearsal(&mut self) {
+        self.rehearsal_epoch = self.rehearsal_epoch.wrapping_add(1);
+        self.rehearsal_pending = false;
         if self.rehearsal_running {
             self.request(AudioRequest::CancelPreview);
         }
@@ -297,11 +295,11 @@ mod tests {
         let mut ui = two_cards();
         ui.stop_rehearsal();
         assert!(ui.audio_requests.is_empty());
-        ui.toggle_rehearsal();
+        ui.toggle_rehearsal(); ui.admit_previews_for_test();
         assert!(ui.rehearsal_running);
         ui.audio_requests.clear();
         ui.request(AudioRequest::PreviewNote(440.0));
-        ui.toggle_rehearsal();
+        ui.toggle_rehearsal(); ui.admit_previews_for_test();
         assert!(!ui.rehearsal_running);
         assert_eq!(ui.audio_requests, [AudioRequest::PreviewNote(440.0), AudioRequest::CancelPreview]);
     }
@@ -311,8 +309,8 @@ mod tests {
         let mut ui = two_cards();
         let owner = ui.working_sets.active_id;
         ui.now_ms = Some(100);
-        ui.toggle_rehearsal();
-        let sound = ui.rehearsal_sounding_pitches().unwrap();
+        ui.toggle_rehearsal(); ui.admit_previews_for_test();
+        let sound = ui.rehearsal_sounding_pitches().unwrap().unwrap();
         ui.set_graph_viewport.pan = (0.2, 0.3);
         let other = ui.create_working_set();
         ui.stage.set_tuning(1);
@@ -332,7 +330,7 @@ mod tests {
             observed
         );
         assert_eq!(ui.rehearsal_owner, Some(owner));
-        assert_eq!(ui.rehearsal_sounding_pitches().unwrap(), sound);
+        assert_eq!(ui.rehearsal_sounding_pitches().unwrap().unwrap(), sound);
         assert!(!ui.is_current_set_rehearsing());
         let foreground = serde_json::to_value(&ui.set).unwrap();
         ui.now_ms = Some(1100);
@@ -356,7 +354,7 @@ mod tests {
         assert_eq!(ui.set_graph_viewport.pan, (0.2, 0.3));
         assert!(ui.activate_working_set(other));
         ui.now_ms = Some(1600);
-        ui.toggle_rehearsal();
+        ui.toggle_rehearsal(); ui.admit_previews_for_test();
         assert_eq!(ui.rehearsal_owner, Some(other));
         assert!(ui.is_current_set_rehearsing());
         ui.stop_rehearsal();
@@ -443,7 +441,7 @@ mod tests {
         ui.working_sets.active_name = "Authored passage".into();
         let original = serde_json::to_value(&ui.set).unwrap();
         ui.now_ms = Some(100);
-        ui.toggle_rehearsal();
+        ui.toggle_rehearsal(); ui.admit_previews_for_test();
         let history = ui.practice_history.len();
         let recipe = woodshedding::practice::catalog()
             .into_iter()
@@ -484,7 +482,7 @@ mod tests {
         let mut ui = two_cards();
         let first = ui.working_sets.active_id;
         ui.now_ms = Some(10);
-        ui.toggle_rehearsal();
+        ui.toggle_rehearsal(); ui.admit_previews_for_test();
         let second = ui.duplicate_working_set();
         let cleared = ui.set.cards.last().unwrap().id;
         ui.sync_card_rename();
@@ -501,7 +499,7 @@ mod tests {
         assert!(ui.set.cards[0].id.0 > cleared.0);
         assert_eq!(ui.card_rename.text(), ui.set.cards[0].label);
         ui.now_ms = Some(20);
-        ui.toggle_rehearsal();
+        ui.toggle_rehearsal(); ui.admit_previews_for_test();
         assert_eq!(ui.rehearsal_owner, Some(second));
         ui.now_ms = Some(30);
         ui.clear_working_set();

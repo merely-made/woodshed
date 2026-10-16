@@ -54,7 +54,7 @@ pub(super) fn screen(ui: &UiState) -> UiChild {
                     el(
                         "div",
                         text(if ui.is_current_set_rehearsing() {
-                            "Pause"
+                            if ui.rehearsal_pending { "Cancel start" } else { "Pause" }
                         } else {
                             "Run"
                         }),

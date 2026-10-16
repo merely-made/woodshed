@@ -131,7 +131,7 @@ impl CapturedRecipe {
                 return Err("Captured scale-pattern marked contact is unavailable.".into());
             }
         }
-        let preview = stage.card_sounding_pitches(&card);
+        let preview = stage.card_sounding_pitches(&card).map_err(|error| error.to_string())?;
         if preview.0.is_empty()
             || preview
                 .0
@@ -246,7 +246,7 @@ mod tests {
         stage.select_next_card_shape(&mut card).unwrap();
         assert!(card.setting.voicing_fingerprint.is_some());
         let source_setup = serde_json::to_value(&card.setting).unwrap();
-        let source_pitches = stage.card_sounding_pitches_at_tempo(&card, 91.0);
+        let source_pitches = stage.card_sounding_pitches_at_tempo(&card, 91.0).unwrap();
         let recipe = CapturedArpeggio::capture(&card, &stage, 91.0).unwrap();
         assert_eq!(recipe.preview().unwrap(), source_pitches);
         let saved = recipe.card().unwrap();
@@ -330,11 +330,11 @@ mod tests {
         stage.fret_count = 12;
         let recipe = CapturedArpeggio::capture(&card, &stage, 80.0).unwrap();
         let frozen = recipe.card().unwrap();
-        let before = stage.card_sounding_pitches(&frozen);
+        let before = stage.card_sounding_pitches(&frozen).unwrap();
         stage.fret_start = 11;
         stage.fret_count = 16;
         stage.set_tuning(1);
-        assert_eq!(stage.card_sounding_pitches(&frozen), before);
+        assert_eq!(stage.card_sounding_pitches(&frozen).unwrap(), before);
         assert_eq!(recipe.preview().unwrap(), before);
     }
     fn scale_source(pattern: woodshedding::rehearsal::ScalePattern) -> Card {
@@ -373,7 +373,7 @@ mod tests {
             for mode in [MarkMode::Off, MarkMode::Solo, MarkMode::Mute] {
                 card.setting.mark_mode = mode;
                 let original = serde_json::to_value(&card).unwrap();
-                let expected = stage.card_sounding_pitches_at_tempo(&card, 83.0);
+                let expected = stage.card_sounding_pitches_at_tempo(&card, 83.0).unwrap();
                 let recipe = CapturedRecipe::capture(&card, &stage, 83.0).unwrap();
                 assert_eq!(recipe.preview().unwrap(), expected);
                 assert_eq!(serde_json::to_value(&card).unwrap(), original);
@@ -387,7 +387,7 @@ mod tests {
                 let mut other_stage = StageState::new();
                 other_stage.fret_start = 15;
                 other_stage.fret_count = 20;
-                assert_eq!(other_stage.card_sounding_pitches(&saved), expected);
+                assert_eq!(other_stage.card_sounding_pitches(&saved).unwrap(), expected);
                 let reopened: CapturedRecipe =
                     serde_json::from_value(serde_json::to_value(&recipe).unwrap()).unwrap();
                 assert_eq!(reopened.preview().unwrap(), expected);

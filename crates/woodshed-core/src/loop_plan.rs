@@ -154,8 +154,16 @@ impl LoopPlan {
             }
             // Resolve before marks as well: an unavailable shape/formula must
             // not masquerade as an intentionally muted, silent segment.
-            let (unmarked, _, _) = stage.card_voicing(card);
-            let (pitches_hz, _, _) = stage.card_sounding_pitches_at_tempo(card, bpm);
+            let resolved = stage.card_voicing(card).and_then(|unmarked| {
+                stage.card_sounding_pitches_at_tempo(card, bpm).map(|marked| (unmarked, marked))
+            });
+            let ((unmarked, _, _), (pitches_hz, _, _)) = match resolved {
+                Ok(preview) => preview,
+                Err(error) => {
+                    issues.push(LoopReadiness { segment: Some(id), reason: error.to_string() });
+                    continue;
+                },
+            };
             if unmarked.is_empty()
                 || pitches_hz
                     .iter()
@@ -234,7 +242,7 @@ mod tests {
         assert_eq!(plan.segments[1].bpm, 150.0);
         assert_eq!(
             plan.segments[0].pitches_hz,
-            stage.card_sounding_pitches(&set.cards[0]).0
+            stage.card_sounding_pitches(&set.cards[0]).unwrap().0
         );
     }
 
@@ -283,7 +291,7 @@ mod tests {
         let (mut stage, mut set, clock) = fixture();
         let card = &mut set.cards[0];
         stage.select_card_shape_index(card, 0).unwrap();
-        let exact = stage.card_sounding_pitches(card).0;
+        let exact = stage.card_sounding_pitches(card).unwrap().0;
         let other_tuning = crate::tunings()
             .iter()
             .position(|tuning| tuning.name == "Drop D")

@@ -253,9 +253,9 @@ impl StageState {
         &self,
         card: &Card,
         apply_marks: bool,
-    ) -> (Vec<f32>, f32, f32) {
+    ) -> crate::CardPreviewResult {
         let Ok(realization) = self.chord_approach_realization(card) else {
-            return (Vec::new(), 0.0, 0.0);
+            return Ok((Vec::new(), 0.0, 0.0));
         };
         let mut pitches = realization
             .notes
@@ -439,7 +439,7 @@ mod tests {
                     assert!(note.physical_fret >= 2 && note.physical_fret <= 14);
                 }
             }
-            let sounded = state.card_sounding_pitches(&discovery.preview).0;
+            let sounded = state.card_sounding_pitches(&discovery.preview).unwrap().0;
             assert_eq!(
                 sounded,
                 realized
@@ -611,7 +611,7 @@ mod tests {
             .unwrap()
             .preview;
         let realized = state.chord_approach_realization(&recipe).unwrap();
-        let baseline = state.card_sounding_pitches(&recipe).0;
+        let baseline = state.card_sounding_pitches(&recipe).unwrap().0;
         assert!(baseline.windows(2).any(|pair| pair[0] > pair[1]));
         let target = &realized.notes[1];
         recipe.setting.marked = vec![(target.string_index, target.physical_fret)];
@@ -621,16 +621,16 @@ mod tests {
             .copied()
             .filter(|pitch| *pitch == target.pitch.frequency() as f32)
             .collect::<Vec<_>>();
-        assert_eq!(state.card_sounding_pitches(&recipe).0, expected);
+        assert_eq!(state.card_sounding_pitches(&recipe).unwrap().0, expected);
         recipe.setting.mark_mode = MarkMode::Mute;
         let expected = baseline
             .iter()
             .copied()
             .filter(|pitch| crate::pc_from_hz(*pitch) != target.pitch.pitch_class())
             .collect::<Vec<_>>();
-        assert_eq!(state.card_sounding_pitches(&recipe).0, expected);
+        assert_eq!(state.card_sounding_pitches(&recipe).unwrap().0, expected);
         recipe.setting.mark_mode = MarkMode::Off;
-        let (pitches, duration, offset) = state.card_sounding_pitches_at_tempo(&recipe, 80.0);
+        let (pitches, duration, offset) = state.card_sounding_pitches_at_tempo(&recipe, 80.0).unwrap();
         assert!((duration - 3.0).abs() < 0.00001);
         assert!((pitches.len() - 1) as f32 * offset < duration * 1000.0);
     }
@@ -661,8 +661,8 @@ mod tests {
         assert!(pcs.contains(&PitchClass::new(3)));
         assert!(pcs.contains(&PitchClass::new(6)));
         assert_eq!(
-            state.card_sounding_pitches(&reopened.cards[2]).0,
-            state.card_sounding_pitches(&set.cards[2]).0
+            state.card_sounding_pitches(&reopened.cards[2]).unwrap().0,
+            state.card_sounding_pitches(&set.cards[2]).unwrap().0
         );
     }
 }

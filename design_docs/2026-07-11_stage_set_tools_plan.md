@@ -1747,23 +1747,27 @@ remain manually advanceable.
 
 #### P5a. Admit one resolved Card timing contract (2026-10-16)
 
-**Status: dependent Card timing contract review pending; independent raw-input
-guard landed.** Start
+**Status: implementation in progress; authored-BPM ruling received; independent
+raw-input guard landed.** Start
 from published `c0f03ec`, keeping P5's shared device/event clock open. The same
 fallible pure-core timing resolution must serve automatic rehearsal dwell and
 ordered scale/arpeggio preview articulation. Preserve the authored Card and
 Manual semantics. Invalid or unrepresentable timing must be visibly unavailable,
 not a panic, fake Manual instruction or successful silent playback.
 
-Verified source: `woodshed-core/src/lib.rs::card_dwell` calls the infallible
+At the pre-P5a baseline, `woodshed-core/src/lib.rs::card_dwell` calls the infallible
 `Duration::from_secs_f32` on finite imported Seconds values that can exceed its
 range. `connected_catalog::arpeggiate_preview` repeats hold math with a 300 BPM
 ceiling; `scale_realization::ordered_card_preview` repeats it without that
 ceiling. The runtime already limits preview PCM to 16,777,216 frames at the
 actual admitted sample rate and at most 256 pitches. That resource authority
 stays in audio/host; do not invent a portable seconds ceiling or duplicate
-those constants in core. Existing effective lower-bound/invalid-tempo behavior
-needs explicit reconciliation before dependent code.
+those constants in core. The maintainer chose to honor every finite positive
+authored BPM in Card dwell and ordered previews, including 20 and 400; UI
+convenience limits do not constrain imported Cards. Invalid nonfinite or
+nonpositive timing is refused. Existing positive Seconds below 0.5 use the
+explicit legacy 0.5-second minimum; zero Bars/Reps use effective 1, preserving
+stored values and disclosing the effective interpretation. No new seconds cap.
 
 Phases and done-conditions:
 
@@ -1790,7 +1794,34 @@ Previously `f32::max` turned NaN into a valid minimum; now nonfinite requests
 return an error without cancelling/replacing accepted preview work. The new
 production-runtime regression fails before the guard and all 159 audio cases
 pass after it. This is a source/test result only; shared Card timing admission
-and its native/reopen receipt remain pending the positive-tempo policy ruling.
+and its native/reopen receipt remain in progress under the settled authored-BPM ruling.
+
+**Ownership and integration checkpoint (2026-10-16):** the Woodshed chat moved
+to a separately requested architecture audit and explicitly released P5a source,
+Cargo, native and publication ownership to the link-model coordinator. Its audit
+reviewers remain read-only. The coordinator preserved the dirty handoff in a
+local recovery stash, fast-forwarded to published saved-arrangement successor
+`d12201b`, and reapplied the P5a work without conflicts. The new arrangement
+authority and evidence stay intact. The first audio gate passes 160 cases,
+including exact short PCM and refusal preservation; wider host fixtures are
+being updated to explicitly acknowledge admission while retaining their prior
+timing, ownership and persistence assertions. Native/reopen acceptance is pending.
+
+**Source/test checkpoint (2026-10-16):** Card dwell and ordered scale,
+arpeggio and chord-approach previews share the fallible resolver. Bound selected
+Card/Run requests carry their session pointer, owner/Card, exact instruction,
+inherited tempo and transient Run epoch. Only current accepted requests open
+observations. Refusal stops the rejected instruction without credit and permits
+correction/retry. An unavailable unmarked realization is refused before marked
+silence can be admitted; genuine silence performs a fallible preview cancellation.
+Exact audio admission preserves short durations and refuses sub-frame spacing or
+resource overflow at the actual rate. The combined affected gate passes 804
+suite/integration cases plus five separate fresh-process child checks, with seven
+existing host ignores. The final native receipt probes record exact authored
+Cards and resolved bits, runtime identity and processor starts. Desktop/native
+and fresh sealed reopening remain pending. Discovery/catalog interest still
+records the request before host admission; this slice qualifies the bound
+selected-Card/Run history seam rather than all audition history.
 
 
 ### P6. Finish Rehearsal as the guided Set runner

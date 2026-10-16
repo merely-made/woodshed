@@ -477,6 +477,17 @@ fn main() {
 
 #[cfg(test)]
 mod tests {
+    /// These layout/persistence fixtures model an accepted host operation;
+    /// actual runtime refusal and bound command routing have separate tests.
+    pub(crate) fn acknowledge_card_preview_fixture(ui: &mut woodshed_views::stage::UiState) {
+        let requests = ui.audio_requests.clone();
+        for request in requests {
+            if let woodshed_core::audio::AudioRequest::CardPreview(request) = request {
+                if request.run_epoch.is_some() { ui.finish_card_preview_admission(&request, Ok(())); }
+            }
+        }
+    }
+
     use super::*;
 
     #[derive(Clone)]

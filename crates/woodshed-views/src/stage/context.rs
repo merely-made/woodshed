@@ -104,8 +104,10 @@ impl UiState {
                 let Some(card) = self.stage.card_from_lens() else {
                     return;
                 };
-                self.stage
-                    .card_sounding_pitches_at_tempo(&card, self.transport.bpm)
+                match self.stage.card_sounding_pitches_at_tempo(&card, self.transport.bpm) {
+                    Ok(preview) => { self.card_timing_notice = None; preview },
+                    Err(error) => { self.card_timing_notice = Some(error.to_string()); return; },
+                }
             } else {
                 self.stage.voicing_preview()
             };

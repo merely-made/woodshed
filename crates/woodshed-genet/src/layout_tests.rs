@@ -55,7 +55,7 @@ fn session_overview_inspects_retains_and_opens_real_work_without_navigation_side
         let mut h = harness(width, 664.0);
         h.update(|ui| {
             ui.now_ms = Some(1_000);
-            ui.toggle_rehearsal();
+            ui.toggle_rehearsal(); crate::tests::acknowledge_card_preview_fixture(ui);
             ui.song_playing = true;
             ui.tuner.enabled = true;
         });
@@ -210,8 +210,9 @@ fn independent_instances_keep_background_rehearsal_and_explicit_staging_bound_to
         let owner_a = h.state().working_sets.active_id;
         let card_a = h.state().set.cards[0].clone();
         assert!(h.click_on(&Selector::class("workspace-panel").containing("Set")));
-        let sound_a = h.state().preview_voicing();
+        let sound_a = h.state().preview_voicing().unwrap();
         assert!(h.click_on(&Selector::class("t-btn").containing("Run")));
+        h.update(crate::tests::acknowledge_card_preview_fixture);
         assert_eq!(h.state().rehearsal_owner, Some(owner_a));
         assert!(h.click_on(&Selector::class("workspace-panel").containing("Mere")));
         assert!(h.click_on(&Selector::class("overview-duplicate-set")));
@@ -225,9 +226,9 @@ fn independent_instances_keep_background_rehearsal_and_explicit_staging_bound_to
             ui.set.cards[1].timing.bpm = Some(117.0);
         });
         let b = serde_json::to_value(&h.state().set).unwrap();
-        let sound_b = h.state().preview_voicing();
+        let sound_b = h.state().preview_voicing().unwrap();
         assert_ne!(sound_a.0, sound_b.0);
-        assert_eq!(h.state().rehearsal_sounding_pitches().unwrap(), sound_a);
+        assert_eq!(h.state().rehearsal_sounding_pitches().unwrap().unwrap(), sound_a);
         assert!(h.click_on(&Selector::class("workspace-panel").containing("Mere")));
         assert!(h.click_on(&Selector::class("overview-new-set")));
         let owner_c = h.state().working_sets.active_id;
@@ -267,7 +268,7 @@ fn independent_instances_keep_background_rehearsal_and_explicit_staging_bound_to
             ui.search = cambium::TextInput::new("Minor");
         });
         let config_b = serde_json::to_value(h.state().capture_exploration()).unwrap();
-        assert_eq!(h.state().rehearsal_sounding_pitches().unwrap(), sound_a);
+        assert_eq!(h.state().rehearsal_sounding_pitches().unwrap().unwrap(), sound_a);
         assert!(h.click_on(&Selector::class("staging-target").containing("Working Set 1 copy")));
         assert_eq!(h.state().working_sets.active_id, owner_b);
         assert_eq!(h.state().catalog_explorations.active_id, exploration_b);
@@ -357,9 +358,10 @@ fn independent_instances_keep_background_rehearsal_and_explicit_staging_bound_to
         );
         assert!(h.click_on(&Selector::class("overview-open")));
         assert_eq!(h.state().working_sets.active_id, owner_b);
-        assert_eq!(h.state().preview_voicing(), sound_b);
+        assert_eq!(h.state().preview_voicing().unwrap(), sound_b);
         h.update(|ui| ui.now_ms = Some(3_000));
         assert!(h.click_on(&Selector::class("t-btn").containing("Run")));
+        h.update(crate::tests::acknowledge_card_preview_fixture);
         assert_eq!(h.state().rehearsal_owner, Some(owner_b));
         h.update(|ui| ui.now_ms = Some(4_000));
         assert!(h.click_on(&Selector::class("t-btn").containing("Pause")));
@@ -398,8 +400,9 @@ fn background_runner_inherits_the_starting_exploration_setup() {
         ui.now_ms = Some(1_000);
     });
     assert!(h.state().set.cards[0].setting.tuning.is_none());
-    let inherited = h.state().preview_voicing();
+    let inherited = h.state().preview_voicing().unwrap();
     assert!(h.click_on(&Selector::class("t-btn").containing("Run")));
+        h.update(crate::tests::acknowledge_card_preview_fixture);
     assert!(h.click_on(&Selector::class("workspace-panel").containing("Mere")));
     assert!(h.click_on(&Selector::class("overview-new-exploration")));
     h.update(|ui| {
@@ -409,11 +412,11 @@ fn background_runner_inherits_the_starting_exploration_setup() {
     assert_ne!(
         h.state()
             .stage
-            .card_sounding_pitches_at_tempo(&h.state().set.cards[0], h.state().transport.bpm)
+            .card_sounding_pitches_at_tempo(&h.state().set.cards[0], h.state().transport.bpm).unwrap()
             .0,
         inherited.0
     );
-    assert_eq!(h.state().rehearsal_sounding_pitches().unwrap(), inherited);
+    assert_eq!(h.state().rehearsal_sounding_pitches().unwrap().unwrap(), inherited);
     assert!(h.click_on(&Selector::class("workspace-panel").containing("Mere")));
     assert!(h.click_on(&Selector::class("overview-node-title").containing("Rehearsal running")));
     assert!(h.click_on(&Selector::class("overview-pause-rehearsal")));
@@ -639,7 +642,7 @@ fn rehearsal_shape_controls_change_notes_and_clear_to_the_map() {
         .iter()
         .map(|dot| (dot.string_index, dot.fret))
         .collect::<Vec<_>>();
-    let sound = h.state().preview_voicing().0;
+    let sound = h.state().preview_voicing().unwrap().0;
     let expected = first.iter().map(|dot| dot.frequency).collect::<Vec<_>>();
     assert_eq!(
         sound, expected,
@@ -782,6 +785,7 @@ fn connected_discovery_controls_stage_the_selected_shape_and_run_it() {
             ui.now_ms = Some(2_000);
         });
         assert!(h.click_on(&Selector::class("t-btn").containing("Run")));
+        h.update(crate::tests::acknowledge_card_preview_fixture);
         assert!(h.state().rehearsal_running);
         h.update(|ui| ui.now_ms = Some(3_000));
         assert!(h.click_on(&Selector::class("t-btn").containing("Pause")));
@@ -889,11 +893,12 @@ fn compatible_scale_controls_choose_audition_stage_and_drill_without_changing_th
             ui.now_ms = Some(2_000);
         });
         assert_eq!(
-            h.state().preview_voicing(),
+            h.state().preview_voicing().unwrap(),
             heard,
             "rehearsal consumes the material auditioned during discovery"
         );
         assert!(h.click_on(&Selector::class("t-btn").containing("Run")));
+        h.update(crate::tests::acknowledge_card_preview_fixture);
         assert!(h.state().rehearsal_running);
         h.update(|ui| ui.now_ms = Some(3_000));
         assert!(h.click_on(&Selector::class("t-btn").containing("Pause")));
@@ -1028,9 +1033,9 @@ fn discovered_scale_uses_its_saved_ukulele_board_and_physical_solo_contact() {
         (board.2, board.3),
         (board_size.0 as f32, board_size.1 as f32)
     );
-    assert_eq!(h.state().preview_voicing(), heard);
+    assert_eq!(h.state().preview_voicing().unwrap(), heard);
     let dwell =
-        woodshed_core::card_dwell(&h.state().set.cards[1], h.state().transport.bpm).unwrap();
+        woodshed_core::card_dwell(&h.state().set.cards[1], h.state().transport.bpm).unwrap().unwrap();
     assert!(
         (dwell.as_secs_f32() - 3.0).abs() < 0.001,
         "one bar inherits the 80 BPM runner tempo"
@@ -1060,7 +1065,7 @@ fn discovered_scale_uses_its_saved_ukulele_board_and_physical_solo_contact() {
     );
     assert!(h.click_on(&Selector::class("seg").containing("Solo")));
     assert_eq!(h.state().set.cards[1].setting.mark_mode, MarkMode::Solo);
-    let solo = h.state().preview_voicing();
+    let solo = h.state().preview_voicing().unwrap();
     assert_eq!(solo.0.len(), 1);
     assert!(
         (solo.0[0] - d4_hz).abs() < 0.001,
@@ -1071,9 +1076,10 @@ fn discovered_scale_uses_its_saved_ukulele_board_and_physical_solo_contact() {
         ui.now_ms = Some(1_000);
     });
     assert!(h.click_on(&Selector::class("t-btn").containing("Run")));
+        h.update(crate::tests::acknowledge_card_preview_fixture);
     assert!(
-        matches!(h.state().audio_requests.last(), Some(AudioRequest::PreviewPitches { pitches, .. })
-        if pitches.len() == 1 && (pitches[0] - d4_hz).abs() < 0.001)
+        matches!(h.state().audio_requests.last(), Some(AudioRequest::CardPreview(request))
+        if request.preview.0.len() == 1 && (request.preview.0[0] - d4_hz).abs() < 0.001)
     );
     h.update(|ui| ui.now_ms = Some(2_000));
     assert!(h.click_on(&Selector::class("t-btn").containing("Pause")));
@@ -1125,10 +1131,10 @@ fn invalid_saved_scale_setup_shows_the_reason_and_cannot_sound_the_live_guitar()
         "an invalid scale cannot present clickable live-Guitar contacts"
     );
     assert_eq!(h.state().rehearsal_board_geometry().string_count, 0);
-    assert!(h.state().preview_voicing().0.is_empty());
+    assert!(h.state().preview_voicing().unwrap().0.is_empty());
     assert!(h.click_on(&Selector::class("t-btn").containing("♪ Hear")));
     assert!(
-        h.state().preview_voicing().0.is_empty(),
+        h.state().preview_voicing().unwrap().0.is_empty(),
         "the host's audition seam remains silent"
     );
     assert!(
@@ -1239,7 +1245,7 @@ fn scale_pattern_controls_preserve_order_source_and_occurrences_in_wide_and_narr
             assert_eq!(h.state().stage.string_count(), 6);
             assert_eq!(h.state().rehearsal_board_geometry().string_count, 4);
             assert_eq!(
-                h.state().preview_voicing(),
+                h.state().preview_voicing().unwrap(),
                 heard,
                 "rehearsal must preserve ordered repeated pattern visits"
             );
@@ -1250,8 +1256,9 @@ fn scale_pattern_controls_preserve_order_source_and_occurrences_in_wide_and_narr
             );
             assert_eq!(h.state().practice_history.total_practiced_ms(&subject), 0);
             assert!(h.click_on(&Selector::class("t-btn").containing("Run")));
+        h.update(crate::tests::acknowledge_card_preview_fixture);
             assert!(
-                matches!(h.state().audio_requests.last(), Some(AudioRequest::PreviewPitches { pitches, .. }) if *pitches == heard.0)
+                matches!(h.state().audio_requests.last(), Some(AudioRequest::CardPreview(request)) if request.preview.0 == heard.0)
             );
             h.update(|ui| ui.now_ms = Some(2_500));
             assert!(h.click_on(&Selector::class("t-btn").containing("Pause")));
@@ -1462,12 +1469,13 @@ fn adjacent_chord_approach_controls_preserve_physical_pairs_shapes_and_originals
             });
             assert_eq!(h.state().stage.string_count(), 6);
             assert_eq!(h.state().rehearsal_board_geometry().string_count, 4);
-            assert_eq!(h.state().preview_voicing(), heard);
+            assert_eq!(h.state().preview_voicing().unwrap(), heard);
             let subject = catalog_id_for_card(&h.state().set.cards[2]).unwrap();
             assert_ne!(subject, "chord:Major 7");
             assert!(h.click_on(&Selector::class("t-btn").containing("Run")));
+        h.update(crate::tests::acknowledge_card_preview_fixture);
             assert!(
-                matches!(h.state().audio_requests.last(), Some(AudioRequest::PreviewPitches { pitches, .. }) if *pitches == heard.0)
+                matches!(h.state().audio_requests.last(), Some(AudioRequest::CardPreview(request)) if request.preview.0 == heard.0)
             );
             h.update(|ui| ui.now_ms = Some(2_500));
             assert!(h.click_on(&Selector::class("t-btn").containing("Pause")));
@@ -1591,7 +1599,7 @@ fn unselected_target_approach_keeps_repeated_pitch_visits_in_production_audio() 
     assert!(h.click_on(&Selector::class("t-btn").containing("Append approach exercise")));
     h.update(|ui| ui.set.cursor = 2);
     assert_eq!(
-        h.state().preview_voicing(),
+        h.state().preview_voicing().unwrap(),
         heard,
         "staging cannot sort or deduplicate the repeated recipe visits"
     );

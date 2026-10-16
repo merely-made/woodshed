@@ -564,7 +564,7 @@ mod tests {
             "all-tone chord map remains"
         );
         assert_eq!(
-            state.card_voicing(&card).0.len(),
+            state.card_voicing(&card).unwrap().0.len(),
             3,
             "formula preview remains"
         );
@@ -595,7 +595,7 @@ mod tests {
                 .collect::<Vec<_>>(),
             shape.physical_positions()
         );
-        let heard = state.card_voicing(&card).0;
+        let heard = state.card_voicing(&card).unwrap().0;
         let expected: Vec<f32> = shape
             .concert_pitches()
             .into_iter()
@@ -652,12 +652,12 @@ mod tests {
         card.setting.marked = vec![(target.string_index, target.fret)];
 
         card.setting.mark_mode = MarkMode::Solo;
-        let solo = state.card_sounding_pitches(&card).0;
+        let solo = state.card_sounding_pitches(&card).unwrap().0;
         assert_eq!(solo.len(), 1, "solo keeps the selected physical contact");
         assert!((solo[0] - target.frequency).abs() < 0.5);
 
         card.setting.mark_mode = MarkMode::Mute;
-        let muted = state.card_sounding_pitches(&card).0;
+        let muted = state.card_sounding_pitches(&card).unwrap().0;
         let target_pc = super::pc_from_hz(target.frequency);
         assert!(
             muted
@@ -699,7 +699,7 @@ mod tests {
             2
         );
         let heard_pcs: std::collections::BTreeSet<u8> = state
-            .card_voicing(&card)
+            .card_voicing(&card).unwrap()
             .0
             .into_iter()
             .map(super::pc_from_hz)

@@ -146,7 +146,7 @@ mod tests {
         ] {
             let discovery = state.scale_pattern_discovery(&source, pattern).unwrap();
             let realized = state.scale_card_realization(&discovery.preview).unwrap();
-            let pitches = state.card_sounding_pitches(&discovery.preview).0;
+            let pitches = state.card_sounding_pitches(&discovery.preview).unwrap().0;
             let heard = midi(&pitches);
             assert_eq!(&heard[..6], expected.as_slice());
             assert!(heard.windows(2).any(|pair| pair[0] > pair[1]));
@@ -226,10 +226,10 @@ mod tests {
             .unwrap();
         pattern.setting.marked = vec![(chosen.string_index, chosen.physical_fret)];
         pattern.setting.mark_mode = MarkMode::Solo;
-        let solo = midi(&state.card_sounding_pitches(&pattern).0);
+        let solo = midi(&state.card_sounding_pitches(&pattern).unwrap().0);
         assert!(solo.len() >= 2 && solo.iter().all(|pitch| *pitch == 66));
         pattern.setting.mark_mode = MarkMode::Mute;
-        let muted = midi(&state.card_sounding_pitches(&pattern).0);
+        let muted = midi(&state.card_sounding_pitches(&pattern).unwrap().0);
         let expected = realization
             .notes
             .iter()
@@ -295,14 +295,14 @@ mod tests {
             .stage_scale_pattern(&mut set, id, ScalePattern::Thirds)
             .unwrap();
         assert_ne!(first, second);
-        let (pitches, duration, offset) = state.card_sounding_pitches_at_tempo(&set.cards[1], 80.0);
+        let (pitches, duration, offset) = state.card_sounding_pitches_at_tempo(&set.cards[1], 80.0).unwrap();
         assert!((duration - 3.0).abs() < 0.00001);
         assert!((pitches.len() - 1) as f32 * offset < duration * 1000.0);
         let reopened: Set = serde_json::from_str(&serde_json::to_string(&set).unwrap()).unwrap();
         assert_eq!(reopened.cards[1].id, first);
         assert_eq!(
             state
-                .card_sounding_pitches_at_tempo(&reopened.cards[1], 80.0)
+                .card_sounding_pitches_at_tempo(&reopened.cards[1], 80.0).unwrap()
                 .0,
             pitches
         );

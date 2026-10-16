@@ -46,9 +46,12 @@ impl UiState {
         let Some(card) = self.context_scale_pattern_preview(subject) else {
             return;
         };
-        let (pitches, duration_s, strum_s) = self
+        let (pitches, duration_s, strum_s) = match self
             .stage
-            .card_sounding_pitches_at_tempo(&card, self.transport.bpm);
+            .card_sounding_pitches_at_tempo(&card, self.transport.bpm) {
+                    Ok(preview) => { self.card_timing_notice = None; preview },
+                    Err(error) => { self.card_timing_notice = Some(error.to_string()); return; },
+                };
         if pitches.is_empty() {
             return;
         }
@@ -137,9 +140,12 @@ impl UiState {
             .scale_pattern_discovery(card, pattern)
         {
             Ok(discovery) => {
-                let (pitches, duration_s, strum_s) = self
+                let (pitches, duration_s, strum_s) = match self
                     .current_card_stage()
-                    .card_sounding_pitches_at_tempo(&discovery.preview, self.transport.bpm);
+                    .card_sounding_pitches_at_tempo(&discovery.preview, self.transport.bpm) {
+                    Ok(preview) => { self.card_timing_notice = None; preview },
+                    Err(error) => { self.card_timing_notice = Some(error.to_string()); return; },
+                };
                 if pitches.is_empty() {
                     self.pattern_notice = Some(
                         "This scale pattern has no playable notes in its saved window.".into(),
@@ -410,7 +416,7 @@ mod tests {
         assert_eq!(serde_json::to_value(&ui.set.cards[0]).unwrap(), before[0]);
         ui.set.select_id(first);
         ui.section = woodshed_core::storage::AppSection::Rehearsal;
-        assert_eq!(ui.preview_voicing(), heard);
+        assert_eq!(ui.preview_voicing().unwrap(), heard);
         assert_eq!(ui.rehearsal_board_geometry().string_count, 4);
         assert!(
             ui.rehearsal_scale_status()

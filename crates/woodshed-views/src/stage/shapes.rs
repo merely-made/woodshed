@@ -317,8 +317,8 @@ mod scale_tests {
         let owner = ui.working_sets.active_id;
         ui.activate_workspace_panel(super::super::WorkspacePanel::Set);
         ui.now_ms = Some(1_000);
-        ui.toggle_rehearsal();
-        let sound = ui.rehearsal_sounding_pitches().unwrap();
+        ui.toggle_rehearsal(); ui.admit_previews_for_test();
+        let sound = ui.rehearsal_sounding_pitches().unwrap().unwrap();
         let setup_status = ui.rehearsal_scale_status().unwrap().unwrap();
         let contacts = |stage: &woodshed_core::StageState, card: &woodshedding::rehearsal::Card| {
             stage
@@ -334,7 +334,7 @@ mod scale_tests {
             .unwrap();
         let pattern_sound = ui
             .current_card_stage()
-            .card_sounding_pitches_at_tempo(&pattern.preview, ui.transport.bpm);
+            .card_sounding_pitches_at_tempo(&pattern.preview, ui.transport.bpm).unwrap();
         ui.create_working_set();
         ui.create_exploration();
         let drop_d = woodshed_core::tunings()
@@ -361,7 +361,7 @@ mod scale_tests {
             (6, 0, 2)
         );
         assert_eq!(ui.rehearsal_scale_status().unwrap().unwrap(), setup_status);
-        assert_eq!(ui.preview_voicing(), sound);
+        assert_eq!(ui.preview_voicing().unwrap(), sound);
         ui.audio_requests.clear();
         assert!(ui.inspect_scale_pattern(source, ScalePattern::Thirds));
         ui.hear_scale_pattern();
@@ -372,12 +372,12 @@ mod scale_tests {
         let staged = ui.set.card(appended).unwrap();
         assert_eq!(
             ui.current_card_stage()
-                .card_sounding_pitches_at_tempo(staged, ui.transport.bpm),
+                .card_sounding_pitches_at_tempo(staged, ui.transport.bpm).unwrap(),
             pattern_sound
         );
         ui.activate_workspace_panel(super::super::WorkspacePanel::Practice);
         assert_eq!(
-            ui.preview_voicing(),
+            ui.preview_voicing().unwrap(),
             ui.stage.voicing_preview(),
             "Practice catalog audition retains its visible exploration setup"
         );
@@ -423,7 +423,7 @@ mod scale_tests {
         assert!(status.contains("physical frets 2–6"));
         assert!(
             ui.stage
-                .card_sounding_pitches_at_tempo(card, 90.0)
+                .card_sounding_pitches_at_tempo(card, 90.0).unwrap()
                 .0
                 .iter()
                 .all(|pitch| *pitch > 250.0)
@@ -444,7 +444,7 @@ mod scale_tests {
         assert!(ui.stage.dots_for_card(&ui.set.cards[0]).is_empty());
         assert!(
             ui.stage
-                .card_sounding_pitches_at_tempo(&ui.set.cards[0], 90.0)
+                .card_sounding_pitches_at_tempo(&ui.set.cards[0], 90.0).unwrap()
                 .0
                 .is_empty()
         );
