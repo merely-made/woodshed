@@ -1,0 +1,17 @@
+# Run in a fresh Woodshed process with the same isolated session/profile used
+# by p4f_relationship_link_rest.scn. Re-open the persisted three-card recipe
+# through the ordinary host controls and inspect one source-owned link again.
+settle 90
+assert snap set-cards == 3
+click .workspace-panel Mere
+settle 5
+click .overview-relationship Relationship recipe
+settle 5
+assert snap recipe-valid == true
+assert snap set-cards == 3
+click .graph-canvas-swatch-relation
+settle 5
+assert text Surface link
+assert text Assertion 1
+assert text Source stratum
+capture 01_relationship_link_reopened

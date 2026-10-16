@@ -1,0 +1,18 @@
+# Reuse the real three-occurrence relationship fixture and open one canonical
+# source pair from the relationship editor's single resting stroke.
+settle 90
+act relationship-example
+settle 5
+click .overview-relationship Relationship recipe
+settle 5
+click .relationship-bind Use selected Card relationships
+settle 5
+assert snap recipe-valid == true
+assert snap set-cards == 3
+click .graph-canvas-swatch-relation
+settle 5
+assert text Surface link
+assert text Assertion 1
+assert text Source stratum
+capture 01_opened_link_pair
+assert snap set-cards == 3
