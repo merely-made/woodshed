@@ -845,7 +845,7 @@ pub(super) fn panel(ui: &UiState) -> UiChild {
 mod tests {
     use super::*;
     use woodshed_core::personal_relations::{
-        AssertionBasis, PersonalRelationSource, PersonalRelationSourceId,
+        AssertionBasis, PersonalRelationSource, PersonalRelationSourceId, Relation,
     };
 
     #[test]

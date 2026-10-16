@@ -322,11 +322,10 @@ fn push_backend(shared: &mut Shared, ctx: &mut Ctx<'_>) {
 /// unchanged and this session's storage capability is revoked until reopen.
 fn commit_personal_relation_intents(
     ui: &mut UiState,
-    storage: &mut Option<crate::storage::SessionStore<crate::storage::HostBackend>>,
+    storage: &mut Option<woodshed_core::storage::SessionStore<crate::storage::HostBackend>>,
 ) {
     use woodshed_core::personal_relations::{
-        AssertionBasis, Author, EdgeId, PersonalRelationSource, PersonalRelationSourceId, Relation,
-        RelationClass,
+        AssertionBasis, Author, EdgeId, PersonalRelationSource, Relation, RelationClass,
     };
     use woodshed_views::stage::PersonalRelationIntent;
 

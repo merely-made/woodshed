@@ -1399,19 +1399,16 @@ impl Snapshot<'_, '_> {
             .as_ref()
             .map(|(from, to)| format!("{from} → {to}"))
             .unwrap_or_else(|| "none".into());
+        let generated_snapshot = woodshed_views::stage::related_mere_snapshot(ui);
         let mut generated_by_id =
             std::collections::BTreeMap::<String, &woodshed_core::mere::MaterialRelation>::new();
         if let Some((from, to)) = ui.personal_link_pair.as_ref() {
-            for relation in woodshed_views::stage::related_mere_snapshot(ui)
-                .relations
-                .iter()
-                .filter(|relation| {
-                    (relation.source.as_str() == from.as_str()
-                        && relation.target.as_str() == to.as_str())
-                        || (relation.source.as_str() == to.as_str()
-                            && relation.target.as_str() == from.as_str())
-                })
-            {
+            for relation in generated_snapshot.relations.iter().filter(|relation| {
+                (relation.source.as_str() == from.as_str()
+                    && relation.target.as_str() == to.as_str())
+                    || (relation.source.as_str() == to.as_str()
+                        && relation.target.as_str() == from.as_str())
+            }) {
                 generated_by_id
                     .entry(relation.claim_id.qualified_key())
                     .or_insert(relation);
@@ -2114,12 +2111,10 @@ impl Automatable for Probe<'_, '_> {
                 ui.activate_workspace_panel(woodshed_views::workspace::WorkspacePanel::Related);
             },
             "claims-note-reason-one" => {
-                ui.personal_relation_note =
-                    cambium::TextInput::new("Independent reason one".into());
+                ui.personal_relation_note = cambium::TextInput::new("Independent reason one");
             },
             "claims-note-reason-two" => {
-                ui.personal_relation_note =
-                    cambium::TextInput::new("Independent reason two".into());
+                ui.personal_relation_note = cambium::TextInput::new("Independent reason two");
             },
             "hide-first-stage-relation" => {
                 let snapshot = set_graph_snapshot(ui);
