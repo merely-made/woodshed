@@ -171,13 +171,20 @@ pub fn unsaved_notice(ui: &UiState) -> Option<UiChild> {
     if ui.practice_saved {
         return None;
     }
+    let reason = ui.practice_save_notice.clone().unwrap_or_else(|| match &ui.seal {
+        Some(PracticeSeal::Pending { reason }) => {
+            format!("Practice is not being saved: {reason}.")
+        },
+        Some(PracticeSeal::Sealed { .. }) => "Practice save is unconfirmed.".into(),
+        None => "Practice is not being saved: no persona was chosen.".into(),
+    });
     Some(Box::new(
         el("div", text("Not saving"))
             .attr("class", "unsaved")
             .attr("role", "status")
             .attr(
                 "aria-label",
-                "Practice is not being saved: no persona was chosen.",
+                reason,
             ),
     ))
 }
@@ -358,6 +365,39 @@ mod tests {
         );
         practise_unsaved(&mut ui);
         assert!(unsaved_notice(&ui).is_some());
+    }
+
+    #[test]
+    fn unsaved_accessibility_notice_reports_actual_save_failure_and_pending_reason() {
+        let mut ui = UiState::new();
+        ui.practice_saved = false;
+        ui.seal = Some(PracticeSeal::Sealed {
+            persona: "test".into(),
+            protection: "test".into(),
+        });
+        ui.practice_save_notice = Some("Practice write could not be verified.".into());
+        let mut host = cambium_genet_winit_host::Harness::new(
+            "",
+            ui,
+            |ui: &UiState| unsaved_notice(ui).unwrap(),
+        );
+        host.layout_at(800.0, 600.0);
+        let notice = |reason: &str| {
+            taproot::Selector::class("unsaved").with_attr("aria-label", reason)
+        };
+        assert!(
+            host.resolve(&notice("Practice write could not be verified.")).is_some()
+        );
+        host.update(|ui| {
+            ui.practice_save_notice = None;
+            ui.seal = Some(PracticeSeal::Pending {
+                reason: "vault is locked".into(),
+            });
+        });
+        host.relayout();
+        assert!(
+            host.resolve(&notice("Practice is not being saved: vault is locked.")).is_some()
+        );
     }
 
     #[test]

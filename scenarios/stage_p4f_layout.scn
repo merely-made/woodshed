@@ -1,0 +1,31 @@
+# Reopen the qualified progression at ordinary interface zoom.
+settle 20
+ui-zoom 1
+settle 5
+assert snap set-cards == 3
+assert snap section == Rehearsal
+capture 01_rehearsal_default_zoom
+click .workspace-panel Practice
+settle 5
+click-stage-node 0
+settle 3
+click-stage-node 2
+settle 3
+assert snap selected-card-board-visible == true
+capture 02_stage_card_default_zoom
+click .related-claims @data-target=chord:Minor
+settle 5
+click .workspace-panel Related
+settle 5
+capture 03_related_default_zoom
+wheel 0 500 px on .workspace-screen
+settle 5
+capture 04_related_scrolled
+resize 640 900
+settle 10
+capture 05_related_narrow
+click .workspace-panel Set
+settle 5
+assert snap section == Rehearsal
+capture 06_rehearsal_narrow
+assert snap practice-saved == true

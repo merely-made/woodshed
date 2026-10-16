@@ -1654,10 +1654,34 @@ after uncertain read/unseal/UTF-8/JSON admission, require readback for ordinary
 session/settings saves, and retain an honest unsaved outcome after failure.
 This prevents destructive fallback without claiming a complete persona-namespace
 migration. Navigation, drag cancellation and within-band width admission are
-small existing-owner corrections for the exploration flow. Root Mere `a45a0b6`
-remains the supplier; Hocket/Redshank/Ringdown remediation stays outside P4f.
+small existing-owner corrections for the exploration flow. User close policy
+is to keep the window open on an unconfirmed save, offering Retry and explicit
+Discard and close. WAV completion and appearance decisions use that same close
+preservation path. Full persona namespace migration remains separate.
+
+Local source `757108b` was rebased onto incoming `d90d437`, including its Mere
+`b7146e25` cohort. The merged gate passes 787 suite/integration cases plus five
+fresh-process child invocations, with seven existing host ignores, and the
+desktop build passes. Selected Card Hear freezes the retained realization;
+Stage and Rehearsal share its actual board. Catalog Hear is explicitly labeled.
+`6b72545` also gives full Related the available page width (200 view cases).
+
+Native v2 is **failed/partial**, retained under
+`/Users/markik/Code/testing/woodshed/stage-p4f-20261016/native-v2`.
+It demonstrates three processor admissions and correct selected notes, but
+Rehearsal stops presenting. A separate fresh reopen reproduces zero presented
+frames. Frame trace and independent source review locate a shared Mere
+producer-remap defect: translator-owned blurred-shadow masks are misclassified
+as external producer keys. The supplier owner is correcting that shared seam;
+Woodshed must intake the exact revision and repeat native/reopen acceptance.
+The generic second audition in v2 also selected the first assertion's order;
+the final scenario selects each exact direction explicitly. Do not count v2 as
+proof of both transition directions or full P4f. The isolated quarantine-close
+native check does preserve original bytes through Retry/Cancel/Discard.
+
 The full frontier/voicing/directed-audition/rehearsal/fresh-process receipt is
 still pending; earlier bounded link receipts remain scoped as written above.
+Hocket/Redshank/Ringdown remediation stays outside P4f.
 
 **Current state: open.** Current relation selection and history projection do
 not yet satisfy the audible, playable, persisted progression flow below.
