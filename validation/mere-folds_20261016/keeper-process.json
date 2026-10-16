@@ -1,0 +1,30 @@
+{
+  "pid": 28971,
+  "exited": true,
+  "exit_code": 0,
+  "public_synthetic_fixture": true,
+  "bounded_display_sleep_assertion_exited": true,
+  "before_sha256": {
+    "ready": "d6e48aa79d2881df374e6a52ebd927fa0e07b6ea6b8147f0266abe9c1ea0e78e",
+    ".tucket-custody-generated": "54f38dfc841f794a92b89240beaff5de47f368c7f2851eb9e9470b69c0bae7c5",
+    "vault/passphrase-root.json": "16b12dbb8dc84e6fe58e6b7534d2d310b29eeaf727cfa9ae31501c88755b7e19",
+    "vault/profiles/f78761cf8c3621e851097dff9a4b04633626e62e1f419444898fae02960d89ef.json": "8adab13f2478533a6409b0b06ad587f848914e95d746ee404c0a3c7f2287757e"
+  },
+  "after_sha256": {
+    "ready": "d6e48aa79d2881df374e6a52ebd927fa0e07b6ea6b8147f0266abe9c1ea0e78e",
+    ".tucket-custody-generated": "54f38dfc841f794a92b89240beaff5de47f368c7f2851eb9e9470b69c0bae7c5",
+    "vault/passphrase-root.json": "16b12dbb8dc84e6fe58e6b7534d2d310b29eeaf727cfa9ae31501c88755b7e19",
+    "vault/profiles/f78761cf8c3621e851097dff9a4b04633626e62e1f419444898fae02960d89ef.json": "8adab13f2478533a6409b0b06ad587f848914e95d746ee404c0a3c7f2287757e"
+  },
+  "original_files_unchanged": true,
+  "runs": [
+    {
+      "phase": "seed",
+      "exit_code": 0
+    },
+    {
+      "phase": "reopen",
+      "exit_code": 0
+    }
+  ]
+}
