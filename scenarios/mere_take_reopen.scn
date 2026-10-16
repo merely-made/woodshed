@@ -1,6 +1,9 @@
 # Fresh native process on the sealed v2 presentation and real PCM companion.
 settle 5
 ui-zoom 0.8
+click .pill Stage
+click .workspace-panel Mere
+settle 4
 assert snap overview-active == true
 assert snap overview-takes == 3
 assert snap loop-capture-references == 3

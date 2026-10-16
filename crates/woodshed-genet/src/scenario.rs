@@ -165,6 +165,14 @@ impl mesquite::Product for Product {
                 let captures = shared.backend.as_ref().ok_or("no output backend")?.capture_snapshot();
                 if captures.is_empty() { return Err("no hydrated PCM".into()); }
                 for take in &captures {
+                    let reference = persisted.loop_captures.takes.iter().find(|r| r.id == take.id)
+                        .ok_or("hydrated take has no persisted reference")?;
+                    let stored = shared.storage.as_ref().unwrap().try_read_capture(
+                        persisted.loop_captures.namespace.as_deref().ok_or("no capture namespace")?, reference)?;
+                    if stored.len() != take.buffer.len() || !stored.iter().zip(take.buffer.data.iter())
+                        .all(|(stored, live)| stored.to_bits() == live.to_bits()) {
+                        return Err("sealed PCM differs from hydrated PCM".into());
+                    }
                     for (index, sample) in take.buffer.data.iter().enumerate() {
                         if sample.to_bits() != [0.000125f32, -0.00025, -0.0, 0.0005][index % 4].to_bits() {
                             return Err("deterministic PCM bits changed".into());
@@ -179,7 +187,7 @@ impl mesquite::Product for Product {
                         "id": take.id, "frames": take.buffer.len(),
                         "sample_rate": take.buffer.sample_rate_hz,
                         "legacy_clock": take.legacy_clock,
-                        "exact_fixture_bits": true,
+                        "exact_fixture_bits": true, "exact_sealed_companion_bits": true,
                     })).collect::<Vec<_>>(),
                 });
                 use std::io::Write;

@@ -13,6 +13,8 @@ click .overview-open Open in Looper
 settle 8
 assert snap loop-source-set == 1
 assert snap recorder-selected-set == 1
+click .t-btn Clear stored loop: Set 1 Card 2
+settle 4
 act seed-selected-loop-capture
 settle 10
 assert snap loop-active-captures == 1
