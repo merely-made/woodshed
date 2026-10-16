@@ -23,6 +23,7 @@
 //! | `key_intercept` | Escape closes an open dropdown |
 
 mod appearance;
+mod arrangement;
 mod audio;
 mod capture_persistence;
 mod drive;
@@ -122,9 +123,38 @@ fn desktop_root(ui: &UiState, commands: &WindowCommands) -> UiChild {
         .attr("class", "practice-close-panel")
         .attr("role", "alert")
     });
+    let draft_close = commands.clone();
+    let draft_decision = ui.arrangement_editor.close_pending.then(|| {
+        el(
+            "section",
+            (
+                el("h3", text_node("Arrangement drafts are not saved")),
+                el("p", text_node("Keep editing to save each draft, or explicitly discard the drafts before closing.")),
+                clickable(
+                    el("button", text_node("Keep editing"))
+                        .attr("class", "t-btn arrangement-close-cancel"),
+                    |ui: &mut UiState, _| ui.arrangement_editor.close_pending = false,
+                ),
+                clickable(
+                    el("button", text_node("Discard arrangement drafts and close"))
+                        .attr("class", "t-btn arrangement-close-discard"),
+                    move |ui: &mut UiState, _| {
+                        ui.arrangement_editor.drafts.clear();
+                        ui.arrangement_editor.close_pending = false;
+                        draft_close.close();
+                    },
+                ),
+            ),
+        )
+        .attr("class", "practice-close-panel")
+        .attr("role", "alert")
+    });
     Box::new(
-        el("div", (desktop_chrome(commands), decision, stage_root(ui)))
-            .attr("class", "desktop-frame"),
+        el(
+            "div",
+            (desktop_chrome(commands), decision, draft_decision, stage_root(ui)),
+        )
+        .attr("class", "desktop-frame"),
     )
 }
 
@@ -135,6 +165,10 @@ fn prepare_close(
     ctx: &mut Ctx<'_>,
 ) -> cambium_genet_winit_host::CloseDisposition {
     use cambium_genet_winit_host::CloseDisposition;
+    if ctx.runner.state().arrangement_editor.dirty() {
+        ctx.runner.update(|ui| ui.arrangement_editor.close_pending = true);
+        return CloseDisposition::KeepVisible;
+    }
     if !ctx.runner.state().practice_discard_close {
         if let Some(geometry) = ctx.geometry {
             persist_window_geometry(shared, ctx, geometry);
@@ -332,6 +366,7 @@ fn hooks(shared: &Rc<RefCell<Shared>>) -> HostHooks<UiState, Logic, UiChild> {
     let capture_close_requested = Rc::new(Cell::new(false));
     let wake_close_requested = capture_close_requested.clone();
     let mut previews = appearance::PreviewBindings::default();
+    let mut arrangements = arrangement::Bindings::default();
     HostHooks {
         frame: Box::new(move |ctx: &mut Ctx<'_>| {
             let mut shared = frame_shared.borrow_mut();
@@ -368,6 +403,7 @@ fn hooks(shared: &Rc<RefCell<Shared>>) -> HostHooks<UiState, Logic, UiChild> {
                 leaves::sync_all(&mut shared, ctx.runner.state(), ctx.leaves);
             }
             previews.sync(ctx);
+            arrangements.sync(ctx);
             shared.drag_frame_metrics.note_leaves(phase.elapsed());
             animating
         }),

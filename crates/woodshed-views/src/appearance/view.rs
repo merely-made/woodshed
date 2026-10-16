@@ -38,7 +38,7 @@ pub fn appearance_stylesheet(ui: &UiState) -> String {
         )
     };
     apply_accessibility(
-        css,
+        format!("{}\n{}", css, crate::stage::arrangement_editor::CSS),
         ui.app_settings.accessibility.reduce_motion,
         text_scale_factor(&ui.app_settings.accessibility.text_scale),
     )

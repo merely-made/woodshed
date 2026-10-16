@@ -212,6 +212,17 @@ unresolved reference rather than guessing a replacement. Opening a retained
 copy or duplicating a Set remaps its alignment to the new Card IDs, including
 reserved IDs for references whose Cards are missing.
 
+The native **Arrangement** workspace authors that attachment with a live shared
+scene preview. Choose a progression in Practice, open Arrangement, then start
+a template. Edit expected role spans, placed/unplaced Card spans and role
+assignments, or add authored rests. “Place cards in Set order” is an explicit
+starting layout. Inspect a Card in the form or scene reading to reveal its
+saved voicing on the linked fretboard. Edits stay in a draft for each working
+Set until **Save arrangement**; Reload discards that draft. Closing with unsaved
+drafts asks whether to keep editing or explicitly discard them. Validation
+errors clear the preview and block Save. Arrangement editing preserves Card
+instructions, rehearsal timing, and audio transport.
+
 `woodshed-saved-arrangement` operates on an explicit JSON session exchange
 copy (`PersistedSession`) and its settings (`AppSettings`). The desktop's
 persona store continues through its existing sealed storage path. An alignment

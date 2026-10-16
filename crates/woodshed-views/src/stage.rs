@@ -45,6 +45,7 @@ use crate::workspace::{
     WoodshedWorkspace, WorkspaceEffect, WorkspaceEvent, WorkspaceOutcome, WorkspacePanel,
 };
 
+pub mod arrangement_editor;
 pub mod canvas_camera;
 mod chord_approaches;
 mod connected;
@@ -1034,6 +1035,7 @@ pub struct UiState {
     pub relationship_opened_link: Option<scenograph::link::LinkKey>,
     pub relationship_opened_link_layout: Option<scenograph::link::OpenedLinkLayout>,
     pub retained_set_name: TextInput,
+    pub arrangement_editor: arrangement_editor::ArrangementEditor,
     pub overview_focus: Option<woodshed_core::session_overview::OverviewNodeId>,
     pub overview_notice: Option<String>,
     pub overview_viewport: GraphViewport,
@@ -1302,6 +1304,7 @@ impl UiState {
             relationship_opened_link: None,
             relationship_opened_link_layout: None,
             retained_set_name: TextInput::new(""),
+            arrangement_editor: Default::default(),
             overview_focus: None,
             overview_notice: None,
             overview_viewport: GraphViewport::default(),
@@ -1471,6 +1474,10 @@ impl UiState {
             WorkspacePanel::Related => {
                 self.section = AppSection::Stage;
                 self.related_expanded = true;
+            },
+            WorkspacePanel::Arrangement => {
+                self.section = AppSection::Stage;
+                self.sync_arrangement_scene();
             },
             WorkspacePanel::Settings => self.section = AppSection::Settings,
         }
@@ -1756,6 +1763,7 @@ impl UiState {
     /// every dispatch (the `select` widget mutates only its own
     /// `SelectState`).
     pub fn sync(&mut self) {
+        self.sync_arrangement_scene();
         self.sync_rehearsal_observation();
         self.stage.set_tuning(self.tuning_dd.selected);
         self.app_settings.tuning.tuning_idx = self.stage.tuning_idx;
@@ -2397,6 +2405,7 @@ impl UiState {
         app_settings: AppSettings,
     ) -> Option<crate::workspace::WorkspaceSnapshotError> {
         session.restore(&mut self.stage, &app_settings);
+        self.arrangement_editor = Default::default();
         self.set = session.set.clone();
         self.retained_sets = session.retained_sets.clone();
         self.working_sets = session.working_sets.clone();
@@ -3470,6 +3479,7 @@ fn tab_content(ui: &UiState) -> UiChild {
         AppSection::Stage => match ui.workspace.active_panel() {
             Some(WorkspacePanel::Overview) if ui.relationship_open => relationship::screen(ui),
             Some(WorkspacePanel::Overview) => overview::screen(ui),
+            Some(WorkspacePanel::Arrangement) => arrangement_editor::screen(ui),
             Some(WorkspacePanel::Related) => Box::new(
                 el("div", related::panel(ui)).attr("class", "related-workspace"),
             ),
