@@ -768,11 +768,14 @@ impl Processor {
                         let data = Arc::get_mut(&mut bar.pcm.data)
                             .expect("active recording storage has exclusive ownership");
                         let idx = self.cursor.sample_in_bar as usize % data.len();
-                        data[idx] = if self.replace {
-                            value.clamp(-1.0, 1.0)
+                        let mode = if self.replace {
+                            audio_primitives::capture::WriteMode::IndexedReplace
                         } else {
-                            (data[idx] + value).clamp(-1.0, 1.0)
+                            audio_primitives::capture::WriteMode::IndexedOverdubClamped
                         };
+                        let written = audio_primitives::capture::TakeAccumulator::default()
+                            .write(data, mode, idx, value);
+                        debug_assert!(written);
                         bar.touched = true;
                     } else {
                         take.valid = false;

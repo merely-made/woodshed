@@ -1,0 +1,67 @@
+warning: patch `ipc-channel v0.22.0 (https://github.com/merely-made/genet.git?branch=main#e37762d7)` was not used in the crate graph
+warning: patch `mere-proofs v0.1.0 (https://github.com/merely-made/mere.git?branch=main#59f88e63)` was not used in the crate graph
+warning: patch `mere-transport v0.0.2 (https://github.com/merely-made/murm.git?branch=main#cba46d85)` was not used in the crate graph
+warning: patch `mere-webrtc-carrier v0.0.1 (https://github.com/merely-made/murm.git?branch=main#cba46d85)` was not used in the crate graph
+help: Check that the patched package version and available features are compatible
+      with the dependency requirements. If the patch has a different version from
+      what is locked in the Cargo.lock file, run `cargo update` to use the new
+      version. This may also occur with an optional dependency that is not enabled.
+   Compiling hocket-engine v0.1.0 (/Users/markik/Code/repos/woodshed/ports/hocket/crates/hocket-engine)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.93s
+     Running unittests src/lib.rs (target/build/debug/deps/hocket_engine-953092cde9383597)
+
+running 36 tests
+test capture::tests::cancel_returns_to_idle ... ok
+test capture::tests::arm_then_feed_to_completion ... ok
+test capture::tests::feed_in_idle_is_noop ... ok
+test capture::tests::feed_slice_batches_correctly ... ok
+test capture::tests::new_capture_is_idle ... ok
+test capture::tests::progress_tracks_proportion ... ok
+test capture::tests::rearm_after_drain_reserves_storage_before_feed ... ok
+test capture::tests::rearm_clears_previous_buffer ... ok
+test click::tests::render_click_loop_has_expected_length ... ok
+test offline_tests::completed_capture_survives_later_background_reader_overflow ... ok
+test capture::tests::zero_length_capture_keeps_first_sample_completion_behavior ... ok
+test offline_tests::drained_input_start_feeds_the_whole_overshooting_batch ... ok
+test alloc_tests::capture_feed_allocates_only_the_phrase_buffer_at_start ... ok
+test alloc_tests::free_capture_feed_allocation_is_only_vec_growth ... ok
+test click::tests::render_click_loop_is_silent_between_clicks ... ok
+test click::tests::render_click_loop_starts_with_accent ... ok
+test click::tests::render_click_loop_honors_the_beat_unit ... ok
+test offline_tests::input_only_reader_captures_without_monitor_and_keeps_silence ... ok
+test offline_tests::output_only_stream_refuses_both_capture_modes ... ok
+test offline_tests::reader_finish_drains_and_restart_discards_old_generation ... ok
+test offline_tests::queued_replay_waits_for_boundary_then_loops ... ok
+test offline_tests::immediate_start_supersedes_older_queued_pcm_for_the_same_key ... ok
+test offline_tests::count_in_waits_a_full_bar_then_captures_exact_phrase_length ... ok
+test offline_tests::rendered_gain_and_voice_mix_follow_linear_mute_solo_projection ... ok
+test offline_tests::reader_overflow_aborts_capture_and_next_capture_is_clean ... ok
+test offline_tests::pending_voice_reservations_reject_extra_immediate_or_queued_keys_before_tick ... ok
+test offline_tests::active_voice_limit_rejects_queue_at_admission_and_existing_key_can_restart ... ok
+test offline_tests::source_sample_rate_preserves_one_shot_duration_after_device_change ... ok
+test offline_tests::sampler_resource_events_restart_existing_voice_and_swap_click_in_place ... ok
+test offline_tests::stop_clears_capture_and_queued_replay ... ok
+test offline_tests::stopping_all_queued_keys_before_boundary_allows_only_replacement_project_to_sound ... ok
+test tests::playback_speed_preserves_source_duration_across_device_rates ... ok
+test offline_tests::stopping_one_queued_layer_preserves_other_stored_rate_start_without_resurrection ... ok
+test tests::invalid_device_ids_fall_back_to_system_defaults ... ok
+test offline_tests::wait_only_start_begins_with_an_empty_capture ... ok
+test offline_tests::tempo_change_rearms_waiting_capture_on_the_restarted_grid ... ok
+
+test result: ok. 36 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+
+     Running tests/capture_pipeline.rs (target/build/debug/deps/capture_pipeline-0cc4f74aa4a623f6)
+
+running 3 tests
+test end_to_end_capture_one_phrase_appends_layer ... ok
+test mute_layer_is_undoable ... ok
+test two_captures_on_one_track_stack_layers ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests hocket_engine
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

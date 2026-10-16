@@ -21,6 +21,7 @@
 //! - [`calibration`] — [`calibration::estimate_latency_from_pairs`]:
 //!   pair expected click instants with detected onsets, return the
 //!   median input-to-output round-trip latency.
+//! - [`capture`] — allocation-free writes into caller-owned take storage.
 //! - [`buffer`] — in-place sample-buffer shaping (gain / normalize /
 //!   reverse). The looper/sampler "shape the take" kernels, behind
 //!   Woodshed's `SampleBuffer` and available to any future sampler.
@@ -35,6 +36,7 @@
 pub mod alignment;
 pub mod buffer;
 pub mod calibration;
+pub mod capture;
 pub mod click;
 pub mod meter;
 pub mod onset;

@@ -29,6 +29,8 @@
 //!   `Edit::CapturePhrase`. Playback of captured phrases is a
 //!   follow-on target.
 
+use audio_primitives::capture::{TakeAccumulator, WriteMode};
+
 /// State of an in-progress capture.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum CaptureState {
@@ -57,13 +59,15 @@ pub struct Capture {
     state: CaptureState,
     buffer: Vec<f32>,
     samples_per_phrase: usize,
+    accumulator: TakeAccumulator,
 }
 
 impl Capture {
     pub fn new(samples_per_phrase: usize) -> Self {
         Self {
             state: CaptureState::Idle,
-            buffer: Vec::with_capacity(samples_per_phrase),
+            buffer: vec![0.0; samples_per_phrase.max(1)],
+            accumulator: TakeAccumulator::default(),
             samples_per_phrase,
         }
     }
@@ -81,7 +85,8 @@ impl Capture {
     /// `Recording`. If already `Recording` or `Complete`, this resets
     /// to a fresh `Recording`.
     pub fn arm(&mut self) {
-        self.buffer.clear();
+        self.accumulator.reset();
+        self.buffer.resize(self.samples_per_phrase.max(1), 0.0);
         self.state = CaptureState::Recording {
             samples_done: 0,
             samples_total: self.samples_per_phrase,
@@ -91,7 +96,7 @@ impl Capture {
     /// Abort an in-progress capture without producing a phrase.
     /// Resets to `Idle`.
     pub fn cancel(&mut self) {
-        self.buffer.clear();
+        self.accumulator.reset();
         self.state = CaptureState::Idle;
     }
 
@@ -106,7 +111,12 @@ impl Capture {
             } => (samples_done, samples_total),
             _ => return,
         };
-        self.buffer.push(input);
+        // Re-arming after draining is a control-side operation; ordinary feed
+        // writes only into the storage reserved by new/arm.
+        assert!(
+            self.accumulator
+                .write(&mut self.buffer, WriteMode::Append, 0, input)
+        );
         let new_done = done + 1;
         if new_done >= total {
             self.state = CaptureState::Complete;
@@ -139,6 +149,7 @@ impl Capture {
         if !matches!(self.state, CaptureState::Complete) {
             return None;
         }
+        self.buffer.truncate(self.accumulator.appended());
         let buf = std::mem::take(&mut self.buffer);
         self.state = CaptureState::Idle;
         Some(buf)
@@ -156,7 +167,7 @@ impl Capture {
                 } else {
                     samples_done as f32 / samples_total as f32
                 }
-            }
+            },
             CaptureState::Complete => 1.0,
             CaptureState::Idle => 0.0,
         }
@@ -241,6 +252,30 @@ mod tests {
         assert_eq!(c.state(), &CaptureState::Complete);
         let buf = c.take_completed().unwrap();
         assert_eq!(buf, vec![0.5, 0.6, 0.7]);
+    }
+
+    #[test]
+    fn rearm_after_drain_reserves_storage_before_feed() {
+        let mut capture = Capture::new(2);
+        for _ in 0..3 {
+            capture.arm();
+            let capacity = capture.buffer.capacity();
+            capture.feed_slice(&[-0.0, 2.0, 9.0]);
+            assert_eq!(capture.buffer.capacity(), capacity);
+            let pcm = capture.take_completed().unwrap();
+            assert_eq!(
+                pcm.iter().map(|v| v.to_bits()).collect::<Vec<_>>(),
+                vec![(-0.0f32).to_bits(), 2.0f32.to_bits()]
+            );
+        }
+    }
+
+    #[test]
+    fn zero_length_capture_keeps_first_sample_completion_behavior() {
+        let mut capture = Capture::new(0);
+        capture.arm();
+        capture.feed_slice(&[0.25, 0.5]);
+        assert_eq!(capture.take_completed().unwrap(), vec![0.25]);
     }
 
     #[test]
