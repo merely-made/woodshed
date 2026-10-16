@@ -56,3 +56,10 @@ correlation tests and one all-command worker-failure test. Locked offline
 workspace all-target checks and the desktop build pass. No manifests, family
 pins, lockfiles or persisted formats changed. Evidence:
 `../../../validation/hocket-project-correlation_20261016/receipt.json`.
+
+2026-10-16 native follow-through: bounded native Save/Open/WAV export and signed
+self-addressed handoff review/discard/accept/adopt now pass, including exact fresh-
+process project/history/media reopening. See
+[the native acceptance plan](2026-10-16_native_project_handoff_plan.md) and its
+receipt for the two-process/seven-capture boundary. This does not qualify
+two-peer transport, signed per-turn operations or physical audio.

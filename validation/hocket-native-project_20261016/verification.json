@@ -1,0 +1,81 @@
+{
+  "exact_bundle_reopen": true,
+  "exact_adopted_bundle": true,
+  "history_branch_retained": true,
+  "pcm_bits_exact": true,
+  "frames": 48000,
+  "sample_rate": 48000,
+  "compressed_media_identical": {
+    "fixtures/fixture.hock": {
+      "media/42141885a0bcdc07c1ee5e45d14b10bf5427e5d3490553cbc7c3a7c72e8dd712.wv": "416ab23ab6bcfe0b0d4c3cb09d13b8e500c08c3e938208792c7c8ca0524792b6"
+    },
+    "project.hock": {
+      "media/42141885a0bcdc07c1ee5e45d14b10bf5427e5d3490553cbc7c3a7c72e8dd712.wv": "416ab23ab6bcfe0b0d4c3cb09d13b8e500c08c3e938208792c7c8ca0524792b6"
+    },
+    "adopted.hock": {
+      "media/42141885a0bcdc07c1ee5e45d14b10bf5427e5d3490553cbc7c3a7c72e8dd712.wv": "416ab23ab6bcfe0b0d4c3cb09d13b8e500c08c3e938208792c7c8ca0524792b6"
+    }
+  },
+  "fixtures_unchanged": true,
+  "wav_sha256": "53d8691ff8cfd00deb2a377e88a34b7beae6586c0d6508daaa416f7ccda05baa",
+  "wav_bytes": 384068,
+  "public_identity": "ed6a47a39da869b5446155e40b2d93f1e3f0167be26732bae7a3ef9d8e3a3fd3",
+  "captures": [
+    {
+      "path": "/Users/markik/Code/testing/hocket/project-handoff-20261016/qualified-seed/01_saved.png",
+      "sha256": "d7e8b4d84f3a465cefd1c6d21cc8eeefd123c949ec5b52d2b3d8a83799bcad62",
+      "pixels": [
+        2360,
+        1960
+      ]
+    },
+    {
+      "path": "/Users/markik/Code/testing/hocket/project-handoff-20261016/qualified-seed/02_staged.png",
+      "sha256": "eec1d44762b016d430bf15314398727f895e31972ac78d371c913f49b3659a09",
+      "pixels": [
+        2360,
+        1960
+      ]
+    },
+    {
+      "path": "/Users/markik/Code/testing/hocket/project-handoff-20261016/qualified-seed/03_accepted.png",
+      "sha256": "1b25f1b53629d28bda6f6e01fafed5fe108ab4e29704f213ec11be1f87e5521e",
+      "pixels": [
+        2360,
+        1960
+      ]
+    },
+    {
+      "path": "/Users/markik/Code/testing/hocket/project-handoff-20261016/qualified-reopen/01_new_session_review.png",
+      "sha256": "2f77c4824d9396cdd3a106a7ad0eba42922d46d971fb92a78352b6e7375431aa",
+      "pixels": [
+        1920,
+        1960
+      ]
+    },
+    {
+      "path": "/Users/markik/Code/testing/hocket/project-handoff-20261016/qualified-reopen/02_adopted.png",
+      "sha256": "6f33214620a194ac6d153c73ea414ce2324f095ef89b3b5753be9093e2568462",
+      "pixels": [
+        1920,
+        1960
+      ]
+    },
+    {
+      "path": "/Users/markik/Code/testing/hocket/project-handoff-20261016/qualified-reopen/03_reopened.png",
+      "sha256": "8220f17654bb8fd983408569c7a5650bf5a5a365ce8e0400a0689a8b36fb6271",
+      "pixels": [
+        1920,
+        1960
+      ]
+    },
+    {
+      "path": "/Users/markik/Code/testing/hocket/project-handoff-20261016/qualified-reopen/04_exported.png",
+      "sha256": "9af69887a5008142037696803e8f8febd99badcf0d9391c67fd2bac9911ccf1a",
+      "pixels": [
+        1920,
+        1960
+      ]
+    }
+  ]
+}

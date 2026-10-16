@@ -1,0 +1,295 @@
+{
+  "bundle": {
+    "format_version": 1,
+    "history": {
+      "head": "9e88c45c-efc0-4410-ada2-daa3e5163607",
+      "nodes": {
+        "4525e330-96b1-4367-aad1-68ccda819a90": {
+          "edit": {
+            "AddTrack": {
+              "track": {
+                "armed": false,
+                "color": {
+                  "b": 232,
+                  "g": 138,
+                  "r": 106
+                },
+                "id": "73ad77eb-8445-4c4c-b45a-db91a5593b8f",
+                "layers": [],
+                "muted": false,
+                "name": "track 6",
+                "playback_mode": "Sum"
+              }
+            }
+          },
+          "id": "4525e330-96b1-4367-aad1-68ccda819a90",
+          "parent": "9e88c45c-efc0-4410-ada2-daa3e5163607",
+          "timestamp_ms": 1792154635524
+        },
+        "9e88c45c-efc0-4410-ada2-daa3e5163607": {
+          "edit": {
+            "AddTrack": {
+              "track": {
+                "armed": false,
+                "color": {
+                  "b": 200,
+                  "g": 168,
+                  "r": 74
+                },
+                "id": "3457ce0c-7a7e-45e8-8e6e-135ffda6362c",
+                "layers": [],
+                "muted": false,
+                "name": "track 5",
+                "playback_mode": "Sum"
+              }
+            }
+          },
+          "id": "9e88c45c-efc0-4410-ada2-daa3e5163607",
+          "parent": "cb30d46d-bac6-4f6d-83fe-9b7f220eb08e",
+          "timestamp_ms": 1792154617258
+        },
+        "cb30d46d-bac6-4f6d-83fe-9b7f220eb08e": {
+          "edit": {
+            "AppendLayer": {
+              "layer": {
+                "gain": 1.0,
+                "muted": false,
+                "phrase_id": "0d64f798-5c1a-49b0-951f-acceb261e3ae"
+              },
+              "phrase": {
+                "bpm": 120.0,
+                "captured_at_ms": 1,
+                "id": "0d64f798-5c1a-49b0-951f-acceb261e3ae",
+                "length_bars": 4,
+                "media": [
+                  66,
+                  20,
+                  24,
+                  133,
+                  160,
+                  188,
+                  220,
+                  7,
+                  193,
+                  238,
+                  94,
+                  69,
+                  209,
+                  75,
+                  16,
+                  191,
+                  84,
+                  39,
+                  229,
+                  211,
+                  73,
+                  5,
+                  83,
+                  203,
+                  199,
+                  195,
+                  167,
+                  199,
+                  46,
+                  141,
+                  215,
+                  18
+                ]
+              },
+              "track_id": "10329b52-8a9c-4ee6-b837-e23ea9ce204c"
+            }
+          },
+          "id": "cb30d46d-bac6-4f6d-83fe-9b7f220eb08e",
+          "parent": "e81242af-6f0f-4fc1-80ad-e373b3333ee4",
+          "timestamp_ms": 1
+        },
+        "e81242af-6f0f-4fc1-80ad-e373b3333ee4": {
+          "edit": "Genesis",
+          "id": "e81242af-6f0f-4fc1-80ad-e373b3333ee4",
+          "parent": null,
+          "timestamp_ms": 0
+        }
+      },
+      "root": "e81242af-6f0f-4fc1-80ad-e373b3333ee4"
+    },
+    "session": {
+      "bars_per_phrase": 4,
+      "bpm": 120.0,
+      "count_in_bars": 1,
+      "default_playback_mode": "Sum",
+      "id": "eb386b56-b7e7-480b-9bb2-7fa97519a501",
+      "master_clock_enabled": true,
+      "phrases": {
+        "0d64f798-5c1a-49b0-951f-acceb261e3ae": {
+          "bpm": 120.0,
+          "captured_at_ms": 1,
+          "id": "0d64f798-5c1a-49b0-951f-acceb261e3ae",
+          "length_bars": 4,
+          "media": [
+            66,
+            20,
+            24,
+            133,
+            160,
+            188,
+            220,
+            7,
+            193,
+            238,
+            94,
+            69,
+            209,
+            75,
+            16,
+            191,
+            84,
+            39,
+            229,
+            211,
+            73,
+            5,
+            83,
+            203,
+            199,
+            195,
+            167,
+            199,
+            46,
+            141,
+            215,
+            18
+          ]
+        }
+      },
+      "time_signature": {
+        "denominator": 4,
+        "numerator": 4
+      },
+      "tracks": [
+        {
+          "armed": false,
+          "color": {
+            "b": 106,
+            "g": 106,
+            "r": 232
+          },
+          "id": "10329b52-8a9c-4ee6-b837-e23ea9ce204c",
+          "layers": [
+            {
+              "gain": 1.0,
+              "muted": false,
+              "phrase_id": "0d64f798-5c1a-49b0-951f-acceb261e3ae"
+            }
+          ],
+          "muted": false,
+          "name": "track 1",
+          "playback_mode": "Sum"
+        },
+        {
+          "armed": false,
+          "color": {
+            "b": 74,
+            "g": 160,
+            "r": 232
+          },
+          "id": "96cf7ded-8b1c-4925-acdd-cfb8e18796f2",
+          "layers": [],
+          "muted": false,
+          "name": "track 2",
+          "playback_mode": "Sum"
+        },
+        {
+          "armed": false,
+          "color": {
+            "b": 74,
+            "g": 194,
+            "r": 217
+          },
+          "id": "e8ac898a-f850-4638-b70e-51319dad1668",
+          "layers": [],
+          "muted": false,
+          "name": "track 3",
+          "playback_mode": "Sum"
+        },
+        {
+          "armed": false,
+          "color": {
+            "b": 106,
+            "g": 184,
+            "r": 106
+          },
+          "id": "851b7ad9-d369-4f71-a102-b31891794a2e",
+          "layers": [],
+          "muted": false,
+          "name": "track 4",
+          "playback_mode": "Sum"
+        },
+        {
+          "armed": false,
+          "color": {
+            "b": 200,
+            "g": 168,
+            "r": 74
+          },
+          "id": "3457ce0c-7a7e-45e8-8e6e-135ffda6362c",
+          "layers": [],
+          "muted": false,
+          "name": "track 5",
+          "playback_mode": "Sum"
+        }
+      ]
+    }
+  },
+  "busy": false,
+  "contact_token": "ed6a47a39da869b5446155e40b2d93f1e3f0167be26732bae7a3ef9d8e3a3fd3",
+  "dirty": false,
+  "has_incoming": false,
+  "identity": "local session · ed6a47a39da8",
+  "incoming_summary": null,
+  "media": [
+    {
+      "fixture_bits_exact": true,
+      "frames": 48000,
+      "phrase": "0d64f798-5c1a-49b0-951f-acceb261e3ae",
+      "reference": [
+        66,
+        20,
+        24,
+        133,
+        160,
+        188,
+        220,
+        7,
+        193,
+        238,
+        94,
+        69,
+        209,
+        75,
+        16,
+        191,
+        84,
+        39,
+        229,
+        211,
+        73,
+        5,
+        83,
+        203,
+        199,
+        195,
+        167,
+        199,
+        46,
+        141,
+        215,
+        18
+      ],
+      "sample_rate": 48000
+    }
+  ],
+  "missing_media": [],
+  "project_label": "project",
+  "recipient": "ed6a47a39da8",
+  "status": "saved"
+}

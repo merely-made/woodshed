@@ -257,8 +257,10 @@ audibility or latency claim follows from this receipt.
 ### Not for Codex yet (design, or waiting on another lane)
 
 - **Hocket per-turn signed operations (ruling 5).** A design plan only. It is
-  gated on Hocket local durability and on the open host-acceptance defects:
-  native handoff qualification. The October 16 correlation follow-up closes the
+  gated on Hocket local durability and separate design authorization.
+  Bounded native self-addressed project/handoff qualification now passes; see
+  `ports/hocket/design_docs/2026-10-16_native_project_handoff_plan.md`.
+  Two-peer/network transfer and signed per-turn operations are not qualified. The October 16 correlation follow-up closes the
   project-worker sequencing defect with request/session-scoped replies and CPU
   checks; see `ports/hocket/design_docs/2026-10-16_project_worker_correlation_plan.md`.
   Signed per-turn operations remain outside that host fix.
