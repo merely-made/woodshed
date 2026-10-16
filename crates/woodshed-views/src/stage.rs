@@ -59,10 +59,11 @@ mod musical_context;
 mod overview;
 pub mod overview_atmosphere;
 pub mod overview_dynamics;
+pub mod overview_folds;
 mod overview_presentation;
 pub use overview_presentation::OverviewPresentation;
 pub mod relationship;
-pub use overview::{OVERVIEW_GRAPH_LEAF_KEY, overview_snapshot, overview_swatch};
+pub use overview::{OVERVIEW_GRAPH_LEAF_KEY, overview_snapshot, overview_source_swatch, overview_swatch};
 pub use relationship::{RELATIONSHIP_GRAPH_LEAF_KEY, relationship_swatch};
 mod pitch_motion;
 mod rehearsal;
@@ -1036,6 +1037,7 @@ pub struct UiState {
     pub retained_set_name: TextInput,
     pub overview_focus: Option<woodshed_core::session_overview::OverviewNodeId>,
     pub overview_notice: Option<String>,
+    pub overview_folds: overview_folds::OverviewFolds,
     pub overview_viewport: GraphViewport,
     /// View-local cameras for the Related graph and relationship editor.
     /// Presentation only; not persisted.
@@ -1304,6 +1306,7 @@ impl UiState {
             retained_set_name: TextInput::new(""),
             overview_focus: None,
             overview_notice: None,
+            overview_folds: Default::default(),
             overview_viewport: GraphViewport::default(),
             related_viewport: GraphViewport::default(),
             relationship_viewport: GraphViewport::default(),

@@ -325,7 +325,7 @@ fn overview_arrangement_swatch(ui: &UiState) -> GraphCanvasSwatch<OverviewNodeId
     swatch
 }
 
-pub fn overview_swatch(ui: &UiState) -> GraphCanvasSwatch<OverviewNodeId, &'static str> {
+pub fn overview_source_swatch(ui: &UiState) -> GraphCanvasSwatch<OverviewNodeId, &'static str> {
     let mut swatch = overview_arrangement_swatch(ui);
     let positions = ui.overview_dynamics.positions();
     for node in &mut swatch.graph.nodes {
@@ -334,6 +334,10 @@ pub fn overview_swatch(ui: &UiState) -> GraphCanvasSwatch<OverviewNodeId, &'stat
         }
     }
     swatch
+}
+
+pub fn overview_swatch(ui: &UiState) -> GraphCanvasSwatch<OverviewNodeId, &'static str> {
+    super::overview_folds::project(overview_source_swatch(ui), &ui.overview_folds)
 }
 
 impl UiState {
@@ -388,6 +392,9 @@ impl UiState {
     }
 
     pub fn move_overview_selection(&mut self, delta: (f32, f32)) {
+        if self.overview_focus.as_ref().is_some_and(|id| self.overview_folds.contains(id)) {
+            return;
+        }
         let Some(id) = self.overview_focus.clone() else {
             return;
         };
@@ -470,6 +477,9 @@ impl UiState {
     }
 
     pub fn inspect_overview_node(&mut self, id: OverviewNodeId) {
+        if self.activate_overview_fold(&id) {
+            return;
+        }
         if overview_snapshot(self)
             .nodes
             .iter()
@@ -552,7 +562,9 @@ pub(super) fn screen(ui: &UiState) -> UiChild {
             GraphCanvasInput::Event(event) => match event {
                 GraphCanvasEvent::Activate(id) => ui.inspect_overview_node(id),
                 GraphCanvasEvent::Drag(drag) => {
-                    if overview_snapshot(ui)
+                    if !ui.overview_folds.contains(&drag.id)
+                        && !ui.overview_folds.selecting
+                        && overview_snapshot(ui)
                         .nodes
                         .iter()
                         .any(|node| node.id == drag.id)
@@ -686,7 +698,7 @@ pub(super) fn screen(ui: &UiState) -> UiChild {
                 el(
                     "div",
                     (
-                        el("div", text(node.label.clone())).attr("class", "overview-node-title"),
+                        el("div", text(node.label.clone())).attr("class", "overview-node-title").attr("data-key", node.id.wire_key()),
                         el(
                             "div",
                             text(match node.id {
@@ -704,7 +716,9 @@ pub(super) fn screen(ui: &UiState) -> UiChild {
                 )
                 .attr(
                     "class",
-                    if ui.overview_focus.as_ref() == Some(&node.id) {
+                    if ui.overview_focus.as_ref() == Some(&node.id)
+                        || (ui.overview_folds.selecting && ui.overview_folds.selected.contains(&node.id))
+                    {
                         "overview-node overview-node-selected"
                     } else {
                         "overview-node"
@@ -1095,6 +1109,7 @@ pub(super) fn screen(ui: &UiState) -> UiChild {
                     ),
                 )
                 .attr("class", "overview-instance-actions"),
+                super::overview_folds::controls(ui),
                 el("div", graph).attr("class", "overview-graph"),
                 el("div", (
                     el("div", text(format!("Keep nearby · {} / 12", ui.musical_context.items().len()))).attr("class", "overview-node-title"),
@@ -1389,7 +1404,7 @@ mod tests {
         assert!((position.0 - 0.21).abs() < 0.001 && (position.1 - 0.67).abs() < 0.001);
         let session = ui.to_persisted();
         let json = session.overview_presentation_json.clone().unwrap();
-        assert!(json.contains(r#""version":2"#));
+        assert_eq!(serde_json::from_str::<serde_json::Value>(&json).unwrap()["version"], 3);
         let decoded = serde_json::from_str(&serde_json::to_string(&session).unwrap()).unwrap();
         let mut reopened = UiState::new();
         reopened.apply_persisted(&decoded, Default::default());
