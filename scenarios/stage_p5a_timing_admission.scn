@@ -13,7 +13,7 @@ settle 6
 # The first imported timed instruction resolves to a twelve-second ordered
 # preview at 20 BPM. Select it from Rehearsal's actual filmstrip, then use the
 # shared Card editor's Hear action.
-click .film-card Ordered 20 BPM
+click .film-label Ordered 20 BPM
 settle 3
 assert snap p5a-card-label == Ordered 20 BPM
 assert snap p5a-card-bpm == 20
@@ -31,7 +31,7 @@ act p5a-save-20-bpm
 capture 01_ordered_20_bpm
 
 # The second imported timed instruction resolves to 600 ms at 400 BPM.
-click .film-card Ordered 400 BPM
+click .film-label Ordered 400 BPM
 settle 3
 assert snap p5a-card-label == Ordered 400 BPM
 assert snap p5a-card-bpm == 400
@@ -66,7 +66,7 @@ settle 4
 
 # A finite value outside this host clock's representable range is refused by
 # Core for both preview and Run, without rewriting the imported Card or storage.
-click .film-card Core duration refusal
+click .film-label Core duration refusal
 settle 3
 assert snap p5a-card-label == Core duration refusal
 assert snap p5a-card-hold == seconds:1900671690
@@ -84,7 +84,7 @@ capture 04_core_duration_refusal
 
 # This value fits Duration but exceeds the PCM frame budget at every nonzero
 # integer output rate. Hear and Run both refuse while preserving authored data.
-click .film-card Output PCM refusal
+click .film-label Output PCM refusal
 settle 3
 assert snap p5a-card-label == Output PCM refusal
 assert snap p5a-card-hold == seconds:1343554297
