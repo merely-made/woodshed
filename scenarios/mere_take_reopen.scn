@@ -1,0 +1,29 @@
+# Fresh native process on the sealed v2 presentation and real PCM companion.
+settle 5
+ui-zoom 0.8
+assert snap overview-active == true
+assert snap overview-takes == 3
+assert snap loop-capture-references == 3
+assert snap loop-active-captures == 1
+act verify-mere-take-retention
+capture 01_v2_take_reopened
+click .overview-open Open in Looper
+settle 8
+assert snap loop-source-set == 1
+assert snap loop-admitted-set == 1
+assert snap recorder-selected-set == 1
+assert snap recorder-waveforms == 1
+assert snap capture-input-rate == none
+capture 02_reopened_take_in_looper
+click role:button @aria-label=Play backing
+settle 12
+assert snap song-playing == true
+assert snap output-device-frames > 0
+act sample-output-clock
+capture 03_reopened_take_playing
+click role:button @aria-label=Stop all loops
+settle 3
+assert snap song-playing == false
+click .pill Stage
+click .workspace-panel Mere
+settle 4

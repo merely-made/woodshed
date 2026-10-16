@@ -19,6 +19,8 @@ before any other doc in this directory.
 
 ## Active Plans
 
+- [2026-10-16_mere_take_acceptance_plan.md](2026-10-16_mere_take_acceptance_plan.md) — Remaining loop-take native acceptance and fallback-placement correction; isolated sealed profile and fresh-process reopening.
+
 - [2026-10-16_shared_capture_accumulator_plan.md](2026-10-16_shared_capture_accumulator_plan.md) — Shared capture writes, input feed, completion envelope and Hocket bar countdown implemented; 256 CPU/offline cases and both host all-target checks pass. Adapter scheduling and integrity remain product-owned.
 
 - [2026-10-15_woodshed_codex_handoff.md](2026-10-15_woodshed_codex_handoff.md) — **Handoff for Codex.** Where Woodshed, Hocket, Redshank and Firewheel stand after the Graphshell lift (door, P2 canvas receipt `4005c5a`), the binding rulings, and ordered tasks: join the repin round (remote mere route spec §7.6; Murm `main` `fb6360c12b`), move bar length to Hocket's rule, the shared pure-state DSP crate, and the loop-take node checks. Lists what waits on design or other lanes, and the native-run traps.
