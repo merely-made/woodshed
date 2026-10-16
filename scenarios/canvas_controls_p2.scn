@@ -96,4 +96,22 @@ assert snap related-zoom >= 1.05
 assert snap related-paint-current == true
 assert snap related-face-missing == 0
 capture 07_related_wheel
+# Reveal an overview node before delivering wheel input: the canvas starts
+# below the fold, and wheel selectors do not perform click's scroll reveal.
+click .workspace-panel Mere
+settle 5
+click .overview-restore Restore arrangement
+settle 3
+click .graph-canvas-swatch-node @data-key=artifact:song
+settle 5
+assert snap overview-zoom == 1.00
+wheel 0 1 lines on .graph-canvas-swatch-node @data-key=artifact:song
+settle 3
+assert snap overview-zoom >= 1.05
+assert snap overview-paint-current == true
+assert snap overview-face-nodes >= 1
+assert snap overview-face-missing == 0
+assert snap overview-face-offset-max == 0.0000
+assert snap set-cards == 3
+capture 08_overview_wheel
 log P2 canvas commands held on all three surfaces
