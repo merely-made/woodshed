@@ -7,9 +7,13 @@ assert snap practice-saved == true
 act p5a-timing-admission-example
 settle 8
 assert snap set-cards == 5
-click .workspace-panel Practice
-settle 5
-click-stage-node 0
+click .workspace-panel Set
+settle 6
+
+# The first imported timed instruction resolves to a twelve-second ordered
+# preview at 20 BPM. Select it from Rehearsal's actual filmstrip, then use the
+# shared Card editor's Hear action.
+click .film-card Ordered 20 BPM
 settle 3
 assert snap p5a-card-label == Ordered 20 BPM
 assert snap p5a-card-bpm == 20
@@ -23,10 +27,11 @@ wait 1000
 settle 3
 assert snap p5a-card-timing-notice-empty == true
 assert snap preview-starts >= 1
+act p5a-save-20-bpm
 capture 01_ordered_20_bpm
 
-# The second imported timed instruction is independently resolved at 400 BPM.
-click-stage-node 1
+# The second imported timed instruction resolves to 600 ms at 400 BPM.
+click .film-card Ordered 400 BPM
 settle 3
 assert snap p5a-card-label == Ordered 400 BPM
 assert snap p5a-card-bpm == 400
@@ -39,12 +44,11 @@ wait 1000
 settle 3
 assert snap p5a-card-timing-notice-empty == true
 assert snap preview-starts >= 2
+act p5a-save-400-bpm
 capture 02_ordered_400_bpm
 
-# A short timed Card advances to the following Manual Card. Manual remains on
-# that Card across a real wait until the practitioner advances it.
-click .t-btn Rehearse
-settle 3
+# Run advances the short timed Card to the following Manual Card. Manual stays
+# selected during an ordinary two-second wait.
 click .t-btn Run
 act p5a-wait-for-manual
 wait 1000
@@ -55,16 +59,14 @@ act p5a-wait-on-manual
 wait 1000
 assert snap rehearsal-running == true
 assert snap cursor-number == 3
+act p5a-save-manual-wait
 capture 03_timed_to_manual_wait
 click .t-btn Pause
 settle 4
-click .pill Stage
-settle 4
 
 # A finite value outside this host clock's representable range is refused by
-# Core before audio admission, for both preview and Run, without rewriting the
-# imported Card or storage payload.
-click-stage-node 3
+# Core for both preview and Run, without rewriting the imported Card or storage.
+click .film-card Core duration refusal
 settle 3
 assert snap p5a-card-label == Core duration refusal
 assert snap p5a-card-hold == seconds:1900671690
@@ -73,21 +75,16 @@ click .card-hear Hear selected Card
 settle 3
 assert snap card-timing-notice ~ cannot be represented
 assert snap rehearsal-running == false
-click .t-btn Rehearse
-settle 3
 click .t-btn Run
-settle 3
+settle 4
 assert snap rehearsal-running == false
 assert snap card-timing-notice ~ cannot be represented
 act p5a-verify-core-before
-click .pill Stage
-settle 4
 capture 04_core_duration_refusal
 
-# This value is representable as a Duration but exceeds the PCM frame budget at
-# every nonzero integer output rate. The ordinary audio host reports the actual
-# device rate; Hear and Run both refuse while preserving authored data.
-click-stage-node 4
+# This value fits Duration but exceeds the PCM frame budget at every nonzero
+# integer output rate. Hear and Run both refuse while preserving authored data.
+click .film-card Output PCM refusal
 settle 3
 assert snap p5a-card-label == Output PCM refusal
 assert snap p5a-card-hold == seconds:1343554297
@@ -98,22 +95,15 @@ wait 1000
 settle 3
 assert snap card-timing-notice ~ resource bounds
 assert snap rehearsal-running == false
-click .t-btn Rehearse
-settle 3
 click .t-btn Run
 settle 4
 assert snap rehearsal-running == false
 assert snap card-timing-notice ~ resource bounds
 act p5a-verify-pcm-before
-click .pill Stage
-settle 4
-click-stage-node 4
-settle 3
 capture 05_output_pcm_refusal
 
-# Correct only through the visible Card Hold control, then retry through the
-# same real host. Manual ordered preview is admitted; Run waits without
-# auto-advancing until the visible Next action.
+# Correct only through the visible Hold control, then retry through the same
+# real host. The ordered Manual Card previews and Run waits for explicit advance.
 click .t-btn Hold:
 settle 3
 assert snap p5a-card-hold == manual
@@ -122,10 +112,9 @@ wait 1000
 settle 3
 assert snap p5a-card-timing-notice-empty == true
 assert snap preview-starts >= 3
-click .t-btn Rehearse
-settle 3
 click .t-btn Run
-settle 90
+act p5a-wait-on-retried-manual
+wait 1000
 assert snap rehearsal-running == true
 assert snap cursor-number == 5
 capture 06_manual_ordered_retry
