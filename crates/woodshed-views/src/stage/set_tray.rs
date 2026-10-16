@@ -75,6 +75,11 @@ pub(super) fn card_editor(ui: &UiState) -> UiChild {
             "div",
             (
                 el("div", text("Selected Card")).attr("class", "set-editor-label"),
+                clickable(
+                    el("button", text("Hear selected Card"))
+                        .attr("class", "t-btn t-hear card-hear"),
+                    |ui: &mut UiState, _| ui.request_card_preview(),
+                ),
                 // Rename: the buffer is kept in step with this card's label by
                 // UiState::sync_card_rename, so typing here renames the card.
                 el(
@@ -548,7 +553,7 @@ pub(super) fn view(ui: &UiState) -> UiChild {
                             el("div", text("Rehearse")).attr("class", "t-btn t-hear"),
                             |ui: &mut UiState, _| {
                                 if !ui.set.cards.is_empty() {
-                                    ui.section = AppSection::Rehearsal;
+                                    ui.select_app_section(AppSection::Rehearsal);
                                 }
                             },
                         ),

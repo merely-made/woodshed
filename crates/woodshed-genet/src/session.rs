@@ -22,7 +22,9 @@ pub fn load_settings(storage: &SessionStore<HostBackend>) -> Option<AppSettings>
         .and_then(|json| match serde_json::from_str(&json) {
             Ok(settings) => Some(settings),
             Err(error) => {
-                eprintln!("[woodshed-genet] ignoring corrupt application settings: {error}");
+                storage.refuse_writes(format!(
+                    "Application settings could not be decoded: {error}"
+                ));
                 None
             },
         })
@@ -30,9 +32,8 @@ pub fn load_settings(storage: &SessionStore<HostBackend>) -> Option<AppSettings>
 
 /// Apply the stored session and application settings to a fresh [`UiState`].
 ///
-/// A corrupt file is reported and skipped rather than raised: a session that
-/// will not parse must not stop the application opening, and the next save
-/// replaces it. A legacy flat session migrates its settings when no split
+/// A corrupt file does not stop practice opening, but quarantines all writes
+/// on this store handle and its clones until a deliberate reopen. A legacy flat session migrates its settings when no split
 /// settings file exists yet.
 ///
 /// Settings ride in through [`UiState::apply_persisted`] rather than being
@@ -44,7 +45,9 @@ pub fn load_settings(storage: &SessionStore<HostBackend>) -> Option<AppSettings>
 pub fn restore(storage: &SessionStore<HostBackend>, ui: &mut UiState) {
     let stored_settings = load_settings(storage);
     let mut app_settings = stored_settings.clone().unwrap_or_default();
-    let Some(json) = storage.load() else {
+    let loaded = storage.try_load();
+    refresh_save_status(storage, ui);
+    let Some(json) = loaded.ok().flatten() else {
         if stored_settings.is_some() {
             if let Some(error) = ui.apply_persisted(
                 &woodshed_core::storage::PersistedSession::default(),
@@ -63,11 +66,35 @@ pub fn restore(storage: &SessionStore<HostBackend>, ui: &mut UiState) {
                 }
             }
             if let Some(error) = ui.apply_persisted(&loaded.session, app_settings) {
-                eprintln!("[woodshed-genet] ignoring invalid workspace snapshot: {error}");
+                storage.refuse_writes(format!(
+                    "The retained workspace could not be admitted: {error}"
+                ));
             }
-        },
-        Err(error) => eprintln!("[woodshed-genet] ignoring corrupt session: {error}"),
+        }
+        Err(error) => {
+            storage.refuse_writes(format!(
+                "The saved practice session could not be decoded: {error}"
+            ));
+        }
     }
+    refresh_save_status(storage, ui);
+}
+
+pub fn refresh_save_status(storage: &SessionStore<HostBackend>, ui: &mut UiState) {
+    ui.practice_save_notice = if let Some(reason) = storage.write_refusal() {
+        Some(format!(
+            "Practice is not being saved: {reason}. The existing files will not be overwritten; current changes remain in this window."
+        ))
+    } else {
+        storage.save_problem().map(|reason| format!(
+            "Practice save is unconfirmed: {reason}. A write may already be present, but could not be verified; current changes remain in this window."
+        ))
+    };
+    ui.practice_saved = ui.practice_save_notice.is_none()
+        && !matches!(
+            ui.seal,
+            Some(woodshed_views::persona::PracticeSeal::Pending { .. })
+        );
 }
 
 /// Ensure the session's stable personal assertion source exists and is saved
@@ -113,6 +140,7 @@ pub fn ensure_personal_relation_source(storage: &SessionStore<HostBackend>, ui: 
             ));
         },
     }
+    refresh_save_status(storage, ui);
 }
 
 #[cfg(test)]
@@ -120,6 +148,97 @@ mod tests {
     use super::*;
     use woodshed_core::settings::WindowSettings;
     use woodshed_views::workspace::WorkspacePanel;
+
+    #[test]
+    fn corrupt_session_restore_remains_unsaved_and_source_initialization_cannot_replace_it() {
+        let inner = muniment::MemoryBackend::default();
+        let backend: HostBackend = Box::new(inner.clone());
+        let storage = SessionStore::new(backend);
+        storage.try_save("not a session").unwrap();
+        let mut ui = UiState::new();
+        ui.seal = Some(woodshed_views::persona::PracticeSeal::Sealed {
+            persona: "test".into(),
+            protection: "test".into(),
+        });
+        restore(&storage, &mut ui);
+        assert!(!ui.practice_saved);
+        assert!(
+            ui.practice_save_notice
+                .as_ref()
+                .unwrap()
+                .contains("existing files")
+        );
+        ensure_personal_relation_source(&storage, &mut ui);
+        assert!(ui.personal_relations.is_none());
+        assert!(
+            storage
+                .try_save(&serde_json::to_string(&ui.to_persisted()).unwrap())
+                .is_err()
+        );
+        assert_eq!(storage.load().as_deref(), Some("not a session"));
+    }
+
+    #[test]
+    fn early_settings_decode_refusal_survives_later_restore() {
+        let backend: HostBackend = Box::new(muniment::MemoryBackend::default());
+        let storage = SessionStore::new(backend);
+        storage.try_save_settings("invalid settings").unwrap();
+        assert!(load_settings(&storage).is_none());
+        let mut ui = UiState::new();
+        restore(&storage, &mut ui);
+        assert!(!ui.practice_saved);
+        assert!(ui.practice_save_notice.is_some());
+        assert!(storage.try_save_settings("{}").is_err());
+        assert_eq!(storage.load_settings().as_deref(), Some("invalid settings"));
+    }
+
+    #[test]
+    fn cold_restore_unseal_failure_reports_unsaved_before_automatic_source_creation() {
+        let inner = muniment::MemoryBackend::default();
+        let first = SessionStore::new(woodshed_core::sealed_backend::SealedBackend::new(
+            inner.clone(),
+            [1; 32],
+        ));
+        first
+            .try_save(&serde_json::to_string(&UiState::new().to_persisted()).unwrap())
+            .unwrap();
+        let backend: HostBackend = Box::new(woodshed_core::sealed_backend::SealedBackend::new(
+            inner, [2; 32],
+        ));
+        let second = SessionStore::new(backend);
+        let mut ui = UiState::new();
+        restore(&second, &mut ui);
+        assert!(!ui.practice_saved);
+        assert!(
+            ui.practice_save_notice
+                .as_ref()
+                .unwrap()
+                .contains("existing files")
+        );
+        ensure_personal_relation_source(&second, &mut ui);
+        assert!(ui.personal_relations.is_none());
+        assert!(second.try_save("default").is_err());
+        assert!(first.try_load().unwrap().is_some());
+    }
+
+    #[test]
+    fn unknown_workspace_is_quarantined_without_replacing_its_representation() {
+        let backend: HostBackend = Box::new(muniment::MemoryBackend::default());
+        let storage = SessionStore::new(backend);
+        let mut saved = UiState::new().to_persisted();
+        saved.workspace_json = Some(r#"{"version":999,"future":"retained"}"#.into());
+        let original = serde_json::to_string(&saved).unwrap();
+        storage.try_save(&original).unwrap();
+        let mut ui = UiState::new();
+        restore(&storage, &mut ui);
+        assert!(!ui.practice_saved);
+        assert!(
+            storage
+                .try_save(&serde_json::to_string(&ui.to_persisted()).unwrap())
+                .is_err()
+        );
+        assert_eq!(storage.load().as_deref(), Some(original.as_str()));
+    }
 
     #[test]
     fn settings_apply_without_a_practice_session() {

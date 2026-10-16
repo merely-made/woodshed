@@ -1246,6 +1246,10 @@ pub struct UiState {
     /// either way, which is why the nav row says so rather than leaving it to
     /// be discovered on the next launch.
     pub practice_saved: bool,
+    /// Live persistence outcome; never serialized as an authored preference.
+    pub practice_save_notice: Option<String>,
+    pub practice_close_pending: bool,
+    pub practice_discard_close: bool,
     /// The startup persona pick, while one is open. `Some` only on a machine
     /// whose vault holds several personas with none chosen; the host seeds it
     /// before the first frame and clears it when the choice is acted on. While
@@ -1403,6 +1407,9 @@ impl UiState {
             context_disclosed: BTreeSet::new(),
             context_positions: BTreeMap::new(),
             practice_saved: true,
+            practice_save_notice: None,
+            practice_close_pending: false,
+            practice_discard_close: false,
             persona: None,
             persona_switch_requested: false,
             seal: None,
@@ -1470,6 +1477,19 @@ impl UiState {
         snapshot: &StageGraphSnapshot,
         event: GraphCanvasEvent<StageInstanceRef>,
     ) {
+        // Captured terminal events must release the host tail even when the
+        // scene changed during the gesture. Cancel keeps the last accepted pin.
+        if let GraphCanvasEvent::Drag(drag) = &event {
+            if matches!(
+                drag.phase,
+                cambium::PointerPhase::Up | cambium::PointerPhase::Cancel
+            ) {
+                self.set_graph_drag_active = false;
+            }
+            if matches!(drag.phase, cambium::PointerPhase::Cancel) {
+                return;
+            }
+        }
         if snapshot.epoch() != set_graph_snapshot(self).epoch() {
             return;
         }
@@ -1674,6 +1694,7 @@ impl UiState {
     /// set, or swap the tuning), then clear the field so the dropdown
     /// closes.
     fn apply_search_hit(&mut self, hit: SearchHit) {
+        let practice = !matches!(&hit, SearchHit::Recipe(_));
         match hit {
             SearchHit::Scale(i) => {
                 self.stage.set_lens(Lens::Scales);
@@ -1708,7 +1729,7 @@ impl UiState {
             SearchHit::Recipe(i) => {
                 if let Some(ps) = woodshedding::practice::catalog().get(i) {
                     self.create_working_set_from(ps.name.clone(), set_from_practice(ps));
-                    self.section = AppSection::Rehearsal;
+                    self.select_app_section(AppSection::Rehearsal);
                 }
             },
             SearchHit::Tuning(i) => {
@@ -1716,7 +1737,10 @@ impl UiState {
                 self.app_settings.tuning.tuning_idx = self.stage.tuning_idx;
                 self.tuning_dd = SelectState::new(self.stage.tuning_idx);
                 self.section = AppSection::Stage;
-            },
+            }
+        }
+        if practice {
+            self.activate_workspace_panel(WorkspacePanel::Practice);
         }
         self.search = TextInput::new("");
     }
@@ -2140,18 +2164,52 @@ impl UiState {
     }
 
     pub fn request_preview(&mut self) {
-        self.refresh_event_time();
         let card = if self.section == AppSection::Rehearsal {
             self.current_card().cloned()
         } else {
             self.stage.card_from_lens()
         };
+        self.record_preview_interest(card.as_ref());
+        self.request(AudioRequest::PreviewVoicing);
+    }
+
+    /// Expanded Card audition resolves its retained setup now. Later catalog
+    /// focus or navigation cannot redirect this request to the Stage lens.
+    pub fn request_card_preview(&mut self) {
+        let Some(card) = self.current_card().cloned() else {
+            return;
+        };
+        let (pitches, duration_s, strum_s) = self
+            .current_card_stage()
+            .card_sounding_pitches_at_tempo(&card, self.transport.bpm);
+        if pitches.is_empty() {
+            return;
+        }
+        self.record_preview_interest(Some(&card));
+        self.request(AudioRequest::PreviewPitches {
+            pitches,
+            duration_s,
+            strum_s,
+        });
+    }
+
+    /// Both mounts consume the same retained Card projector and paint leaf.
+    pub fn selected_card_board_visible(&self) -> bool {
+        !self.set.cards.is_empty()
+            && (self.section == AppSection::Rehearsal
+                || (self.section == AppSection::Stage
+                    && self.workspace.active_panel() == Some(WorkspacePanel::Practice)
+                    && self.set_tray_expanded
+                    && self.set_graph_card_expanded))
+    }
+
+    fn record_preview_interest(&mut self, card: Option<&Card>) {
+        self.refresh_event_time();
         let subject_id = card
-            .as_ref()
             .and_then(catalog_id_for_card)
             .or_else(|| self.stage.catalog_id());
         if let Some(subject_id) = subject_id {
-            let provenance = card.as_ref().and_then(|card| {
+            let provenance = card.and_then(|card| {
                 ObservationProvenance::capture_in_set(card, self.working_sets.active_id).ok()
             });
             self.practice_history.record_observation(
@@ -2163,7 +2221,6 @@ impl UiState {
                 provenance,
             );
         }
-        self.request(AudioRequest::PreviewVoicing);
     }
 
     /// Ask the audio host to do one thing. Requests are kept in order and
@@ -2593,7 +2650,7 @@ fn transport(ui: &UiState) -> UiChild {
                     |ui: &mut UiState, _| ui.nudge_bpm(5.0),
                 ),
                 clickable(
-                    el("div", text("♪ Hear")).attr("class", "t-btn t-hear"),
+                    el("div", text("♪ Hear catalog")).attr("class", "t-btn t-hear"),
                     |ui: &mut UiState, _| ui.request_preview(),
                 ),
                 el("span", ()).attr("class", "header-gap"),
@@ -3362,6 +3419,16 @@ pub(super) fn board(ui: &UiState) -> UiChild {
     )
 }
 
+/// Expanding an occurrence reveals its retained realization on the Stage board;
+/// collapsing it returns to catalog exploration without modifying either owner.
+fn stage_board(ui: &UiState) -> UiChild {
+    if ui.selected_card_board_visible() {
+        rehearsal::card_board(ui)
+    } else {
+        board(ui)
+    }
+}
+
 fn stage_screen(ui: &UiState) -> UiChild {
     if ui.stage_page == StagePage::Templates {
         return Box::new(
@@ -3386,15 +3453,15 @@ fn stage_screen(ui: &UiState) -> UiChild {
     );
     let body: UiChild = match (ui.board_layout(), ui.viewport) {
         (BoardLayout::TwoPane, ViewportClass::Wide) => Box::new(
-            el("div", (sidebar(ui), board(ui), related::panel(ui)))
+            el("div", (sidebar(ui), stage_board(ui), related::panel(ui)))
                 .attr("class", "body stage-body"),
         ),
-        (BoardLayout::FullCanvas, _) => board(ui),
+        (BoardLayout::FullCanvas, _) => stage_board(ui),
         // Preserve the catalog on smaller surfaces without narrowing the neck.
         _ => Box::new(el(
             "div",
             (
-                board(ui),
+                stage_board(ui),
                 related::panel(ui),
                 el("div", (sidebar(ui),)).attr("class", "side-strip"),
             ),
@@ -3510,6 +3577,14 @@ pub fn stage_root(ui: &UiState) -> UiChild {
             (
                 workspace_strip(ui),
                 el("div", nav).attr("class", "pills"),
+                ui.practice_save_notice
+                    .as_ref()
+                    .filter(|_| !ui.practice_close_pending)
+                    .map(|notice| {
+                        el("div", text(notice.clone()))
+                            .attr("class", "practice-save-notice")
+                            .attr("role", "alert")
+                    }),
                 tab_content(ui),
             ),
         )
@@ -3529,6 +3604,126 @@ mod evidence_tests {
         let mut ui = UiState::new();
         ui.stage_current(None);
         ui
+    }
+
+    #[test]
+    fn expanded_card_hear_freezes_selected_realization_without_changing_set_truth() {
+        let mut ui = UiState::new();
+        ui.stage.set_lens(Lens::Chords);
+        ui.stage_current(None);
+        ui.step_card_shape(1);
+        let before = serde_json::to_value(&ui.set).unwrap();
+        let expected = ui
+            .stage
+            .card_sounding_pitches_at_tempo(&ui.set.cards[0], ui.transport.bpm);
+        ui.stage.set_root(3);
+        assert_ne!(
+            ui.stage.voicing_preview().0,
+            expected.0,
+            "live catalog focus differs from retained Card"
+        );
+        assert_eq!(ui.section, AppSection::Stage);
+        ui.request_card_preview();
+        assert_eq!(serde_json::to_value(&ui.set).unwrap(), before);
+        assert_eq!(
+            ui.audio_requests.last(),
+            Some(&AudioRequest::PreviewPitches {
+                pitches: expected.0,
+                duration_s: expected.1,
+                strum_s: expected.2,
+            })
+        );
+    }
+
+    #[test]
+    fn expanded_stage_board_mounts_retained_shape_and_collapse_returns_to_catalog() {
+        let mut ui = UiState::new();
+        ui.stage.set_lens(Lens::Chords);
+        ui.stage_current(None);
+        ui.step_card_shape(1);
+        ui.set_tray_expanded = true;
+        ui.set_graph_card_expanded = true;
+        let card = &ui.set.cards[0];
+        let count = ui.stage.dots_for_card(card).len();
+        assert!(count > 0 && count < ui.stage.dots().len());
+        let label = format!("{} fretboard, {} notes", card.label, count);
+        let before = serde_json::to_value(&ui.set).unwrap();
+        ui.stage.set_root(3);
+        let catalog = ui.stage.catalog_id();
+        let mut host =
+            cambium_genet_winit_host::Harness::new("", ui, stage_board as fn(&UiState) -> UiChild);
+        host.layout_at(1000.0, 700.0);
+        let selector = taproot::Selector::class("fretboard-stack").with_attr("aria-label", &label);
+        assert!(host.resolve(&selector).is_some());
+        host.update(|ui| ui.set_graph_card_expanded = false);
+        assert!(host.resolve(&selector).is_none());
+        assert_eq!(host.state().stage.catalog_id(), catalog);
+        assert_eq!(serde_json::to_value(&host.state().set).unwrap(), before);
+    }
+
+    #[test]
+    fn search_reveals_practice_from_every_other_workspace() {
+        for panel in [
+            WorkspacePanel::Overview,
+            WorkspacePanel::Related,
+            WorkspacePanel::Set,
+        ] {
+            let mut ui = UiState::new();
+            ui.activate_workspace_panel(panel);
+            ui.apply_search_hit(SearchHit::Chord(0));
+            assert_eq!(ui.workspace.active_panel(), Some(WorkspacePanel::Practice));
+            assert_eq!(ui.section, AppSection::Stage);
+            assert_eq!(ui.stage.lens, Lens::Chords);
+        }
+    }
+
+    #[test]
+    fn recipe_search_reveals_and_reopens_the_numbered_set_workspace() {
+        let mut ui = UiState::new();
+        ui.activate_workspace_panel(WorkspacePanel::Overview);
+        ui.apply_search_hit(SearchHit::Recipe(0));
+        assert!(!ui.set.cards.is_empty());
+        assert_eq!(ui.workspace.active_panel(), Some(WorkspacePanel::Set));
+        assert_eq!(ui.section, AppSection::Rehearsal);
+        let saved = ui.to_persisted();
+        let mut reopened = UiState::new();
+        assert!(
+            reopened
+                .apply_persisted(&saved, ui.app_settings.clone())
+                .is_none()
+        );
+        assert_eq!(reopened.workspace.active_panel(), Some(WorkspacePanel::Set));
+        assert_eq!(reopened.section, AppSection::Rehearsal);
+        assert_eq!(
+            serde_json::to_value(&reopened.set).unwrap(),
+            serde_json::to_value(&ui.set).unwrap()
+        );
+    }
+
+    #[test]
+    fn cancelled_and_stale_terminal_drags_release_the_host_tail() {
+        let mut ui = staged_set();
+        let snapshot = set_graph_snapshot(&ui);
+        let instance = snapshot.items()[0].0;
+        let event = |phase| {
+            GraphCanvasEvent::Drag(cambium::GraphCanvasNodeDrag {
+                id: instance,
+                phase,
+                position: (0.3, 0.7),
+            })
+        };
+        ui.handle_set_graph_event(&snapshot, event(cambium::PointerPhase::Move));
+        assert!(ui.set_graph_drag_active);
+        ui.handle_set_graph_event(&snapshot, event(cambium::PointerPhase::Cancel));
+        assert!(!ui.set_graph_drag_active);
+        ui.handle_set_graph_event(&snapshot, event(cambium::PointerPhase::Move));
+        assert!(ui.set_graph_drag_active);
+        ui.stage_current(None);
+        ui.handle_set_graph_event(&snapshot, event(cambium::PointerPhase::Up));
+        assert!(
+            !ui.set_graph_drag_active,
+            "stale scene still releases terminal gesture"
+        );
     }
 
     #[test]

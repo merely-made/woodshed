@@ -174,6 +174,9 @@ fn page_nav(ui: &UiState) -> UiChild {
 /// because it outranks the seal: the store never opened, so a seal left on the
 /// state would be from before the decline.
 fn persona_line(ui: &UiState) -> String {
+    if let Some(notice) = &ui.practice_save_notice {
+        return notice.clone();
+    }
     if !ui.practice_saved {
         return "No persona chosen. Nothing from this session is saved.".to_string();
     }

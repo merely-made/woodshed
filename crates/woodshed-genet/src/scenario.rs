@@ -113,15 +113,27 @@ impl mesquite::Product for Product {
                         .as_deref()
                         .is_some_and(|notice| notice.contains(expected))
             });
-        let take_wait = self.take_playback_wait.as_ref().is_some_and(|(bar, started, observed)| {
-            if !observed.get() && self.shared.borrow().backend.as_ref()
-                .and_then(|backend| backend.output_snapshot())
-                .is_some_and(|snapshot| snapshot.playing && snapshot.cursor.bar_idx == *bar
-                    && snapshot.cursor.sample_in_bar > 0) {
-                observed.set(true);
-            }
-            !observed.get() && started.elapsed().as_secs() < 30
-        });
+        let take_wait = self
+            .take_playback_wait
+            .as_ref()
+            .is_some_and(|(bar, started, observed)| {
+                if !observed.get()
+                    && self
+                        .shared
+                        .borrow()
+                        .backend
+                        .as_ref()
+                        .and_then(|backend| backend.output_snapshot())
+                        .is_some_and(|snapshot| {
+                            snapshot.playing
+                                && snapshot.cursor.bar_idx == *bar
+                                && snapshot.cursor.sample_in_bar > 0
+                        })
+                {
+                    observed.set(true);
+                }
+                !observed.get() && started.elapsed().as_secs() < 30
+            });
         Some(
             take_wait || export_wait
                 || ctx.runner.state().loop_export_busy
@@ -177,9 +189,12 @@ impl mesquite::Product for Product {
                     woodshed_core::session_overview::SessionArtifactId::LoopTake(_))) = ui.overview_focus.as_ref()
                 else { return Err("focus is not a retained take".into()); };
                 let live_positions = ui.overview_dynamics.positions();
-                let live = live_positions.get(id).or_else(|| ui.overview_positions.get(id));
-                if !positions.get(id).zip(live).is_some_and(|(stored, live)|
-                    (stored.0-live.0).abs() < 0.00001 && (stored.1-live.1).abs() < 0.00001) {
+                let live = live_positions
+                    .get(id)
+                    .or_else(|| ui.overview_positions.get(id));
+                if !positions.get(id).zip(live).is_some_and(|(stored, live)| {
+                    (stored.0 - live.0).abs() < 0.00001 && (stored.1 - live.1).abs() < 0.00001
+                }) {
                     return Err("take placement did not round-trip".into());
                 }
                 let captures = shared.backend.as_ref().ok_or("no output backend")?.capture_snapshot();
@@ -1130,6 +1145,20 @@ impl Snapshot<'_, '_> {
                 .to_string()
             })
             .with_field("set-cards", observed.cards.to_string())
+            .with_field("practice-saved", ui.practice_saved.to_string())
+            .with_field(
+                "preview-starts",
+                self.shared
+                    .backend
+                    .as_ref()
+                    .and_then(|backend| backend.output_snapshot())
+                    .map_or(0, |snapshot| snapshot.preview_starts)
+                    .to_string(),
+            )
+            .with_field(
+                "practice-save-problem",
+                ui.practice_save_notice.is_some().to_string(),
+            )
             .with_field("rehearsal-running", ui.rehearsal_running.to_string())
             .with_field("history-events", ui.practice_history.len().to_string())
             .with_field(
@@ -1429,6 +1458,10 @@ impl Snapshot<'_, '_> {
             .with_field("relations", observed.relations)
             .with_field("tray-expanded", ui.set_tray_expanded.to_string())
             .with_field("card-expanded", ui.set_graph_card_expanded.to_string())
+            .with_field(
+                "selected-card-board-visible",
+                ui.selected_card_board_visible().to_string(),
+            )
             // Graph focus emphasis belongs to the canvas component now, so it
             // is observed where it actually is — the focused node's rendered
             // `data-key` — rather than from a UiState field that would report
@@ -2278,6 +2311,44 @@ impl Probe<'_, '_> {
     fn app_step(&mut self, line: &str) -> Result<(), String> {
         let mut parts = line.split_whitespace();
         match parts.next() {
+            Some("checkpoint-p4f") => {
+                let name = parts.next().ok_or("checkpoint-p4f wants a name")?;
+                if parts.next().is_some()
+                    || name.is_empty()
+                    || !name
+                        .bytes()
+                        .all(|byte| byte.is_ascii_alphanumeric() || byte == b'-')
+                {
+                    return Err("checkpoint-p4f requires one simple filename stem".into());
+                }
+                let directory = std::env::var_os("WOODSHED_CAPTURE_DIR")
+                    .ok_or("checkpoint-p4f requires an isolated capture directory")?;
+                let ui = self.ctx.runner.state();
+                let realizations: Vec<_> = ui.set.cards.iter().map(|card| {
+                    let (pitches, duration, strum) = ui.stage.card_sounding_pitches_at_tempo(card, ui.transport.bpm);
+                    serde_json::json!({"card":card.id, "pitch_bits":pitches.iter().map(|pitch| pitch.to_bits()).collect::<Vec<_>>(), "duration_bits":duration.to_bits(), "strum_bits":strum.to_bits()})
+                }).collect();
+                let value = serde_json::json!({
+                    "working_owner":ui.working_sets.active_id,
+                    "cards":ui.set.cards,
+                    "cursor":ui.set.cursor,
+                    "realizations":realizations,
+                    "stage_projection":ui.app_settings.stage,
+                    "workspace":ui.workspace.to_snapshot_json().map_err(|error| format!("workspace checkpoint: {error}"))?,
+                    "personal_relations":ui.to_persisted().personal_relations,
+                    "practice_saved":ui.practice_saved,
+                    "save_problem":ui.practice_save_notice,
+                    "preview_voices":self.shared.backend.as_ref().map(|backend| backend.preview_voice_count()),
+                    "preview_starts":self.shared.backend.as_ref().and_then(|backend| backend.output_snapshot()).map(|snapshot|snapshot.preview_starts),
+                    "output_observation_id":self.shared.backend.as_ref().and_then(|backend| backend.output_observation_id()),
+                });
+                let path = std::path::PathBuf::from(directory).join(format!("{name}.json"));
+                std::fs::write(
+                    path,
+                    serde_json::to_vec_pretty(&value).map_err(|error| error.to_string())?,
+                )
+                .map_err(|error| error.to_string())
+            }
             Some("ui-zoom") => {
                 let zoom: f32 = parts
                     .next()

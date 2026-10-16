@@ -25,7 +25,10 @@ use firewheel::{
 };
 use std::{
     num::NonZeroU32,
-    sync::{Arc, atomic::Ordering},
+    sync::{
+        Arc,
+        atomic::{AtomicU64, Ordering},
+    },
 };
 
 mod preview;
@@ -42,6 +45,7 @@ pub(crate) const COMMAND_BOUND: usize = 64;
 pub(crate) const MAX_BARS: usize = 256;
 pub(crate) const MAX_PCM_FRAMES: usize = 16_777_216;
 pub(crate) type Wake = Arc<dyn Fn() + Send + Sync>;
+static RUNTIME_OBSERVATION_IDS: AtomicU64 = AtomicU64::new(1);
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct OutputError(pub String);
@@ -67,11 +71,15 @@ pub struct OutputSnapshot {
     pub capture_armed: bool,
     pub capture_invalid: bool,
     pub preview_voices: usize,
+    /// PCM previews admitted by the processor, including ones already ended.
+    /// This is software admission evidence, not physical audibility.
+    pub preview_starts: u64,
     pub click_playing: bool,
     pub click_step: usize,
 }
 
 pub struct OutputRuntime {
+    observation_id: u64,
     // Streams/processors must return before context destruction.
     stream: Option<CpalStream>,
     offline_processor: Option<FirewheelProcessor>,
@@ -136,6 +144,7 @@ impl OutputRuntime {
             .map_err(|e| err(format!("output wiring: {e:?}")))?;
         let native = stream.is_some();
         let mut result = Self {
+            observation_id: RUNTIME_OBSERVATION_IDS.fetch_add(1, Ordering::Relaxed),
             stream,
             offline_processor,
             cx,
@@ -165,6 +174,10 @@ impl OutputRuntime {
 
     pub fn sample_rate(&self) -> u32 {
         self.rate
+    }
+    /// Process-local diagnostic scope. Never a retained song or Card identity.
+    pub fn observation_id(&self) -> u64 {
+        self.observation_id
     }
     pub fn native_stream_count(&self) -> usize {
         usize::from(self.native && self.stream.is_some())

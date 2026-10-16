@@ -188,6 +188,7 @@ fn settle(
         // established. Cloned rather than moved: the callback is `FnMut`.
         ui.practice_saved = !matches!(seal, woodshed_views::persona::PracticeSeal::Pending { .. });
         ui.seal = Some(seal.clone());
+        crate::session::refresh_save_status(&storage, ui);
     });
     ctx.runner.update(|ui| {
         crate::session::ensure_personal_relation_source(&storage, ui);

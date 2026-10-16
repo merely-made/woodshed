@@ -409,6 +409,7 @@ fn stage_css_with_roles(p: &Palette, authored_roles: bool) -> String {
 .tool-board {{ min-height: 220px; }}
 .tool-reading {{ color: {tertiary}; font-size: 28px; margin-top: 18px; }}
 .settings-shell {{ align-items: flex-start; }}
+.practice-close-panel, .practice-save-notice {{ padding: 12px; background-color: {surface_2}; color: {text}; border-radius: 8px; }}
 .settings-nav {{ flex: 0 0 220px; }}
 .settings-page {{ flex: 1; min-height: 300px; }}
 .settings-options {{ margin-top: 10px; }}
