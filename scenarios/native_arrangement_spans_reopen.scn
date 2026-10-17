@@ -1,0 +1,17 @@
+settle 60
+ui-zoom 1
+assert snap practice-saved == true
+assert snap arrangement-saved == true
+assert snap arrangement-dirty == false
+assert snap arrangement-preview == false
+assert snap arrangement-primary == true
+checkpoint-arrangement reopened
+click .arrangement-inspect Inspect Card 2
+settle 4
+assert text card-2 · start 20 / length 24 ticks
+assert snap arrangement-related == true
+resize 1180 1100
+settle 8
+wheel 0 -2000 px on .workspace-screen
+settle 4
+capture 01_reopened_spans

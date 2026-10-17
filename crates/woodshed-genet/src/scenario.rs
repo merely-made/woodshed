@@ -1998,6 +1998,7 @@ impl Snapshot<'_, '_> {
             .with_field("graph-focus", self.graph_focus_key())
             .with_field("arrangement-producer", self.ctx.producers.contains(woodshed_views::stage::arrangement_editor::PRIMARY_KEY).to_string())
             .with_field("arrangement-related-producer", self.ctx.producers.contains(woodshed_views::stage::arrangement_editor::RELATED_KEY).to_string())
+            .with_field("arrangement-preview",ui.arrangement_editor.preview_active().to_string())
             .with_field("arrangement-saved",ui.set.progression_arrangement.is_some().to_string())
             .with_field("arrangement-dirty",ui.arrangement_editor.dirty().to_string())
             .with_field("arrangement-primary",ui.arrangement_editor.surfaces.borrow().primary.is_some().to_string())
@@ -2259,6 +2260,16 @@ impl Probe<'_, '_> {
             .nodes
             .get(index)
             .and_then(|node| node.key.clone())
+    }
+
+    fn arrangement_scene_rect(&self) -> Result<(f32, f32, f32, f32), String> {
+        let nodes = {
+            let dom = self.ctx.runner.dom();
+            let dom = dom.borrow();
+            taproot::matching(&dom, &Selector::class("arrangement-scene"))
+        };
+        nodes.into_iter().find_map(|node| self.ctx.painted_rect(node))
+            .ok_or("arrangement scene has no native layout".into())
     }
 
     fn stage_relation_id(&self, index: usize) -> Option<String> {
@@ -2931,6 +2942,73 @@ impl Probe<'_, '_> {
     fn app_step(&mut self, line: &str) -> Result<(), String> {
         let mut parts = line.split_whitespace();
         match parts.next() {
+            Some("press-arrangement-span") => {
+                let key = parts
+                    .next()
+                    .ok_or("press-arrangement-span wants occurrence and body/start/end")?;
+                let part = parts
+                    .next()
+                    .ok_or("press-arrangement-span wants body/start/end")?;
+                if parts.next().is_some() || !matches!(part, "body" | "start" | "end") {
+                    return Err("press-arrangement-span wants occurrence and body/start/end".into());
+                }
+                let scene_rect = self.arrangement_scene_rect()?;
+                let ui = self.ctx.runner.state();
+                let surfaces = ui.arrangement_editor.surfaces.borrow();
+                let surface = surfaces
+                    .primary
+                    .as_ref()
+                    .ok_or("no valid arrangement scene")?;
+                let rect = surface
+                    .occurrence_rect(
+                        key,
+                        scene_rect.2.round() as u32,
+                        scene_rect.3.round() as u32,
+                    )
+                    .ok_or("no placed rectangular occurrence")?;
+                let x = match part {
+                    "start" => rect.x + 1.0,
+                    "end" => rect.x + rect.width - 1.0,
+                    _ => rect.x + rect.width / 2.0,
+                };
+                let point = (scene_rect.0 + x, scene_rect.1 + rect.y + rect.height / 2.0);
+                drop(surfaces);
+                self.shared.scenario_drag_origin = Some(point);
+                self.press(point.0, point.1);
+                Ok(())
+            },
+            Some(verb @ ("move-arrangement-span" | "release-arrangement-span")) => {
+                let ticks: f32 = parts
+                    .next()
+                    .and_then(|v| v.parse().ok())
+                    .ok_or("span gesture wants tick delta")?;
+                if !ticks.is_finite() || parts.next().is_some() {
+                    return Err("span gesture wants finite tick delta".into());
+                }
+                let origin = self
+                    .shared
+                    .scenario_drag_origin
+                    .ok_or("no pressed arrangement span")?;
+                let scene_rect = self.arrangement_scene_rect()?;
+                let surfaces = self.ctx.runner.state().arrangement_editor.surfaces.borrow();
+                let surface = surfaces.primary.as_ref().ok_or("no arrangement scene")?;
+                let (w, h) = (scene_rect.2.round() as u32, scene_rect.3.round() as u32);
+                let a = surface
+                    .scene_point(0.0, 0.0, w, h)
+                    .ok_or("invalid viewport")?;
+                let b = surface
+                    .scene_point(1.0, 0.0, w, h)
+                    .ok_or("invalid viewport")?;
+                let point = (origin.0 + ticks * 47.0 / (4.0 * (b.x - a.x)), origin.1);
+                drop(surfaces);
+                if verb == "move-arrangement-span" {
+                    self.moved(point.0, point.1);
+                } else {
+                    self.shared.scenario_drag_origin = None;
+                    self.release(point.0, point.1);
+                }
+                Ok(())
+            },
             Some("checkpoint-arrangement") => {
                 use std::io::Write;
                 let name = parts.next().ok_or("checkpoint-arrangement wants a name")?;
