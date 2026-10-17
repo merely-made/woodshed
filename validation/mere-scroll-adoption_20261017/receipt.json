@@ -1,6 +1,6 @@
 {
   "schema": "woodshed-production-mere-scroll/v1",
-  "status": "qualified locally; publication pending",
+  "status": "qualified and published",
   "source_revision": "6b2c6b3e48cd7c029830a0928cf1b8d1afa24fcf",
   "supplier_revision": "2d95d95e9d843ed6ebb0d38f47f77444823834bb",
   "supplier_base": "df30e97dddcf8f3dc5e9f0da93c76350687212e6",
@@ -271,7 +271,7 @@
   "microphone_evidence": false,
   "excluded_trial": "native-v1 background occlusion, RESULT fail; same product binary passes foreground Finder trial",
   "external_artifacts": "/Users/markik/Code/testing/woodshed/mere-scroll-adoption-20261017/native-v2",
-  "publication": "Mere supplier and Woodshed consumer commits not pushed",
+  "publication": "Mere qualification through 1eba417eb and Woodshed qualification through b01c922 published to main on 2026-10-17; see publication.json",
   "visual_review": {
     "reviewed": 31,
     "seed": {
