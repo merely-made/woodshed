@@ -1,0 +1,15 @@
+{
+  "schema": "woodshed.shared-span-intents/v1",
+  "date": "2026-10-17",
+  "base_commit": "b88cb26836cffb4c4b091d15c53bb1014d575cdc",
+  "shared_mere": "4c4ea11d8ea4b0210fd70af62638484e25f29d5e",
+  "command": "cargo test -p woodshed-views arrangement_editor --locked",
+  "result": "pass",
+  "tests": 9,
+  "source_sha256": {
+    "Cargo.lock": "599fd0b52211578e3593d6f44a455cc8ebff9850a89aabc4b327884bf5e2de64",
+    "crates/woodshed-views/src/stage/arrangement_editor.rs": "36929d7376915ff88d61e689aea98f09cd01872653f80727d9c6e4fb877ea77d"
+  },
+  "other_git_sources_advanced": false,
+  "scope": "CPU/model and native route handlers; no new headed Woodshed acceptance claimed. Prior headed span receipt remains historical."
+}
