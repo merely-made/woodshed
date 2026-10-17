@@ -1,0 +1,19 @@
+RESULT fail
+FAIL: assert snap arrangement-preview Eq 'true': got 'false'
+FAIL: assert text 'card-2 · start 20 / length 16 ticks · drag preview': not on any surface
+captured 01_move_preview
+FAIL: assert text 'card-2 · start 20 / length 16 ticks': not on any surface
+FAIL: assert text 'card-2 · start 24 / length 16 ticks': not on any surface
+FAIL: assert text 'card-2 · start 20 / length 20 ticks': not on any surface
+FAIL: assert text 'card-2 · start 20 / length 24 ticks': not on any surface
+captured 02_edges_and_keyboard
+FAIL: assert text 'rest-rest-1 · start 4 / length 8 ticks · drag preview': not on any surface
+captured 03_compact_rest_preview
+FAIL: assert text 'rest-rest-1 · start 4 / length 8 ticks': not on any surface
+captured 04_compact_saved
+capture 01_move_preview 2360x2200 digest=a49012a8af3eb02d file=/Users/markik/Code/testing/woodshed/arrangement-spans-20261016/seed-v2/01_move_preview.png
+capture 02_edges_and_keyboard 2360x2200 digest=e7eda1ec66d3e70f file=/Users/markik/Code/testing/woodshed/arrangement-spans-20261016/seed-v2/02_edges_and_keyboard.png
+capture 03_compact_rest_preview 840x2200 digest=97a962e864cdba35 file=/Users/markik/Code/testing/woodshed/arrangement-spans-20261016/seed-v2/03_compact_rest_preview.png
+capture 04_compact_saved 840x2200 digest=5a13d189c2f9eb9e file=/Users/markik/Code/testing/woodshed/arrangement-spans-20261016/seed-v2/04_compact_saved.png
+frames: 4 captured, 0 blank, 4 distinct digests
+presentation: 218 frames, 223 redraws, 5 unpresented redraws

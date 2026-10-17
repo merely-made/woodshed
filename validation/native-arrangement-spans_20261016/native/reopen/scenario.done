@@ -1,0 +1,5 @@
+RESULT ok
+captured 01_reopened_spans
+capture 01_reopened_spans 2360x2200 digest=8638006358daa2f9 file=/Users/markik/Code/testing/woodshed/arrangement-spans-20261016/reopen-v1/01_reopened_spans.png
+frames: 1 captured, 0 blank, 1 distinct digests
+presentation: 94 frames, 97 redraws, 3 unpresented redraws
