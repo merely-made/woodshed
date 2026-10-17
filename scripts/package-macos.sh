@@ -110,7 +110,7 @@ cat > "$app/Contents/Info.plist" <<EOF
     <key>NSHighResolutionCapable</key>
     <true/>
     <key>NSMicrophoneUsageDescription</key>
-    <string>Woodshed uses the microphone for the tuner and latency calibration when you enable them.</string>
+    <string>Woodshed uses the microphone for recording, the tuner and latency calibration when you enable them.</string>
 </dict>
 </plist>
 EOF
