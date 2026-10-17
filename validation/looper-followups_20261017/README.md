@@ -1,15 +1,21 @@
 # Looper follow-ups — 2026-10-17
 
-Follow-up to the P7b receipt: compact/short viewport access to all Card rows and
-transport, host-owned timing wording, a distinct visible-envelope waveform
-fixture, and relationship-recipe supplier alignment to the qualified production
-lock. Original quiet fixtures, captured clocks and PCM remain unchanged.
+**Status: implemented locally; physical focus qualification and production supplier adoption remain incomplete.** Latest implementation source is `9cd9f13729a14d29d7be14a21ad8010e6aeefc91`. No follow-up commits have been pushed.
 
-Source changes are under integration checks. Native qualification will run from
-a clean committed candidate, with actual wheel input, reviewed captures, exact
-envelope sample verification, sealed fresh-process reopening and separate
-worker/reference WAV comparison. Prior P7b receipts retain their historical
-source and visual limitations.
+The compact recorder uses one scroll owner, with rows before transport. Host copy now says Selected timing or Capture timing and Bars or Seconds hold. A separate stepped-triangle fixture exposes signed waveform peaks while retaining original quiet fixtures, captured clocks and PCM. The relationship-recipe supplier graph is aligned with the qualified production graph; the production root lock is unchanged.
 
-Physical microphone, audibility and latency require separate observed outcomes.
-Device enumeration and synthetic sample fixtures do not qualify them.
+The user confirmed audible backing and actual microphone recording in the persistent manual trial. That real audio separately sealed-loaded and exported with signal; raw microphone audio and profiles remain outside Git. The initial automatic attempt is excluded because `wait 15000` is a quiescence frame cap, not milliseconds.
+
+The user also found that recording advanced across Cards. Selected-Card recording now repeats its accepted Card and writes only that target until Stop. Inspection selection cannot redirect it, neighboring PCM remains unchanged, and saved-song Follow recording retains its behavior. Busy transport timing follows the accepted target.
+
+Native input opening and destruction now run on a worker. Pending Record retains its accepted session, backing, target and epoch; Stop, reset, timeout and stale replies cannot start a replacement take. Legacy saved-song Clear also refuses during pending admission. The UI distinguishes opening input from active recording.
+
+## Evidence and limits
+
+- [Software native receipt](native-v2/completion.json): source `e25f668`, 18 reviewed seed/reopen captures, exact envelope float bits and sealed reopening; native worker, reopened worker and separate sealed reference WAVs are byte-identical. This historical receipt is not relabelled as evidence for later admission changes.
+- [Current software checks](receipt.json): 695 affected cases, with repeated suites counted once; five capture child invocations are separate. Thirteen admission cases cover blocked opening, authority preservation, cancellation, timeout, late replies, output loss, quota/rate refusals, worker ownership and legacy Clear. Desktop build passes. Recipe has 11 passing cases and one ignored case.
+- [Fresh physical trial](physical-v4/completion.json): backing advanced 241,664 output frames over 5.047271292 monotonic seconds. Input opening then timed out at ten seconds; no active capture baseline or completed take exists. The window remained responsive, displayed the timeout and exited normally. Its scenario records **RESULT fail**. This does not qualify 15 seconds of selected-Card recording or fresh take reopening.
+- [Persistent diagnostic](physical-diagnostic-v5/completion.json): Record before Play reproduced the input worker waiting in CoreAudio HAL stream-registration IPC. Later an output Xrun was also observed. The underlying OS/device cause is unresolved; this is not evidence of failed capture DSP or absent microphone signal. The owned window closed normally.
+- [Isolated scroll receiving proof](scroll-native-v2/completion.json): local Mere `7fb709f` against its qualified `4c4ea11` base, consumer `ee723dd`. Repeated wheels, short/compact/125% zoom, complete control visibility before clicks, and actual document offsets of zero pass. All eleven nonblank captures were [independently reviewed](scroll-native-v2/image-review.md): no black lower strip or footer clipping was observed. At short height the third Card and complete transport are accessible at separate scroll positions. This is not Mere main publication or production Woodshed adoption. [Adoption boundary](scroll-native-v2/adoption-boundary.md) records the required main-based supplier and selector changes.
+
+All owned native apps and generated Keepers have exited, with the four original fixture files unchanged in each completed trial. Raw audio, personal profiles and binaries are not committed. Precise round-trip latency, full touch/platform/reduced-motion acceptance, successful fresh-process microphone admission, the 15-second focused take and its new sealed reopen remain open.

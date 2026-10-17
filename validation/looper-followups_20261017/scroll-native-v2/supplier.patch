@@ -1,0 +1,323 @@
+diff --git a/crates/cambium/cambium-rootstock/src/host.rs b/crates/cambium/cambium-rootstock/src/host.rs
+index 34f66e9e3..52d7e576c 100644
+--- a/crates/cambium/cambium-rootstock/src/host.rs
++++ b/crates/cambium/cambium-rootstock/src/host.rs
+@@ -861,6 +861,12 @@ where
+         layout.visible_rect(&view, node)
+     }
+ 
++    /// Current document scroll offset in logical coordinates. This observes
++    /// the host-owned scroll plane; no layout yet is distinct from zero.
++    pub fn document_scroll(&self) -> Option<(f32, f32)> {
++        self.layout.map(OwnedLayout::viewport_scroll)
++    }
++
+     /// A computed value from the retained layout's own style set. No layout
+     /// or absent property is unavailable, rather than a synthesized default.
+     /// This observes an existing layout and never triggers style or layout work.
+diff --git a/crates/cambium/cambium-rootstock/src/owned_layout.rs b/crates/cambium/cambium-rootstock/src/owned_layout.rs
+index acfff69b8..44a1b2356 100644
+--- a/crates/cambium/cambium-rootstock/src/owned_layout.rs
++++ b/crates/cambium/cambium-rootstock/src/owned_layout.rs
+@@ -118,7 +118,7 @@ impl OwnedLayout {
+         .expect("Cambium's authored Livery layout must resolve");
+         let layout_with_text_us = elapsed_us(phase.elapsed());
+         let phase = crate::Instant::now();
+-        let content_extent = content_extent(dom, &fragments);
++        let content_extent = content_extent(dom, &styles, &fragments);
+         let content_extent_us = elapsed_us(phase.elapsed());
+         Self {
+             style_set,
+@@ -180,7 +180,7 @@ impl OwnedLayout {
+         self.styles = styles;
+         self.fragments = fragments;
+         let phase = crate::Instant::now();
+-        self.content_extent = content_extent(dom, &self.fragments);
++        self.content_extent = content_extent(dom, &self.styles, &self.fragments);
+         self.content_extent_us = elapsed_us(phase.elapsed());
+         self.clamp_viewport_scroll();
+         self.clamp_element_scroll(dom);
+@@ -1093,7 +1093,7 @@ fn element_scroll_range<D: LayoutDom<NodeId = NodeId>>(
+         extent.1 = extent.1.max(lines.y + lines.height + end.1);
+     }
+     for child in dom.dom_children(node) {
+-        extend_element_scroll_extent(dom, styles, fragments, child, end, &mut extent);
++        extend_scroll_extent(dom, styles, fragments, child, end, (true, true), &mut extent);
+     }
+     (
+         (extent.0 - container.x - container.width).max(0.0),
+@@ -1102,29 +1102,47 @@ fn element_scroll_range<D: LayoutDom<NodeId = NodeId>>(
+ }
+ 
+ /// Descendant border boxes contribute before their clipping boundary. Lines
+-/// and deeper fragments contribute only while that content remains visible.
+-/// All bounds stay in layout coordinates, unlike `content_clip`'s painted box.
+-fn extend_element_scroll_extent<D: LayoutDom<NodeId = NodeId>>(
++/// and deeper fragments contribute only on axes still visible to the caller.
++/// Shared by element and document extents, in layout coordinates.
++fn extend_scroll_extent<D: LayoutDom<NodeId = NodeId>>(
+     dom: &D,
+     styles: &StylePlane<NodeId>,
+     fragments: &LiveryLayout<NodeId>,
+     node: NodeId,
+     end: (f32, f32),
++    axes: (bool, bool),
+     extent: &mut (f32, f32),
+ ) {
+     for fragment in fragments.fragments_for_node(node) {
+-        extent.0 = extent.0.max(fragment.x + fragment.width + end.0);
+-        extent.1 = extent.1.max(fragment.y + fragment.height + end.1);
++        if axes.0 {
++            extent.0 = extent.0.max(fragment.x + fragment.width + end.0);
++        }
++        if axes.1 {
++            extent.1 = extent.1.max(fragment.y + fragment.height + end.1);
++        }
+     }
+-    if clips_content(styles, node) {
++    let visible = |property| {
++        styles
++            .computed_style(node, property)
++            .is_none_or(|value| value == "visible")
++    };
++    let axes = (
++        axes.0 && visible("overflow-x"),
++        axes.1 && visible("overflow-y"),
++    );
++    if !axes.0 && !axes.1 {
+         return;
+     }
+     if let Some(lines) = fragments.inline_scroll_bounds(node) {
+-        extent.0 = extent.0.max(lines.x + lines.width + end.0);
+-        extent.1 = extent.1.max(lines.y + lines.height + end.1);
++        if axes.0 {
++            extent.0 = extent.0.max(lines.x + lines.width + end.0);
++        }
++        if axes.1 {
++            extent.1 = extent.1.max(lines.y + lines.height + end.1);
++        }
+     }
+     for child in dom.dom_children(node) {
+-        extend_element_scroll_extent(dom, styles, fragments, child, end, extent);
++        extend_scroll_extent(dom, styles, fragments, child, end, axes, extent);
+     }
+ }
+ 
+@@ -1211,17 +1229,24 @@ fn text_rect_command(rect: genet_livery::TextRect, color: ColorF) -> PaintCmd {
+     })
+ }
+ 
++/// Only overflow visible outside nested clip/scroll boundaries can enlarge
++/// the document. A boundary's own border box still contributes, so an outer
++/// scrollport positioned beyond the viewport remains document-scrollable.
+ fn content_extent<D: LayoutDom<NodeId = NodeId>>(
+     dom: &D,
++    styles: &StylePlane<NodeId>,
+     fragments: &LiveryLayout<NodeId>,
+ ) -> (f32, f32) {
+-    let mut extent: (f32, f32) = (0.0, 0.0);
+-    walk(dom, dom.document(), &mut |node| {
+-        if let Some(fragment) = fragments.get(node) {
+-            extent.0 = extent.0.max(fragment.x + fragment.width);
+-            extent.1 = extent.1.max(fragment.y + fragment.height);
+-        }
+-    });
++    let mut extent = (0.0, 0.0);
++    extend_scroll_extent(
++        dom,
++        styles,
++        fragments,
++        dom.document(),
++        (0.0, 0.0),
++        (true, true),
++        &mut extent,
++    );
+     extent
+ }
+ 
+diff --git a/crates/cambium/cambium-rootstock/src/owned_layout/tests.rs b/crates/cambium/cambium-rootstock/src/owned_layout/tests.rs
+index c545cdc1c..ec81c4852 100644
+--- a/crates/cambium/cambium-rootstock/src/owned_layout/tests.rs
++++ b/crates/cambium/cambium-rootstock/src/owned_layout/tests.rs
+@@ -184,6 +184,181 @@ fn a_plane_carried_onto_a_fresh_session_is_clamped_as_it_is_set() {
+     assert_eq!(fresh.element_scroll().len(), 1);
+ }
+ 
++/// A bounded workspace containing the recorder's three rows and transport.
++/// Both horizontal content and the transport extend beyond the recorder, but
++/// neither may enlarge the document after a wheel reaches the recorder end.
++#[test]
++fn document_extent_nested_recorder_repeated_wheel_stays_in_child() {
++    let mut dom = ScriptedDom::new();
++    let root = dom.document();
++    let workspace = div(&mut dom, root, "width:280px;height:320px;overflow:auto;");
++    let recorder = div(&mut dom, workspace, "width:260px;height:200px;overflow:auto;");
++    let content = div(&mut dom, recorder, "width:900px;height:400px;");
++    div(&mut dom, content, "width:900px;height:120px;");
++    div(&mut dom, content, "width:900px;height:120px;");
++    let third_card = div(&mut dom, content, "width:900px;height:120px;");
++    let transport = div(&mut dom, content, "width:900px;height:40px;");
++    let mut layout = OwnedLayout::new(
++        &dom,
++        &[""],
++        VIEWPORT.0,
++        VIEWPORT.1,
++        &[],
++        &Default::default(),
++    );
++    assert_eq!(
++        layout.scroll_at_target(&dom, 20.0, 20.0, 10_000.0, 10_000.0),
++        Some(ScrollTarget::Element(recorder)),
++    );
++    assert_eq!(layout.element_scroll()[&recorder], (640.0, 200.0));
++    assert_eq!(layout.viewport_scroll(), (0.0, 0.0));
++    assert!(layout.visible_rect(&dom, third_card).is_some());
++    assert!(layout.visible_rect(&dom, transport).is_some());
++    for _ in 0..3 {
++        assert_eq!(
++            layout.scroll_at_target(&dom, 20.0, 180.0, 10_000.0, 10_000.0),
++            None,
++        );
++        assert_eq!(layout.viewport_scroll(), (0.0, 0.0));
++        assert_eq!(layout.element_scroll()[&recorder], (640.0, 200.0));
++        assert!(!layout.element_scroll().contains_key(&workspace));
++    }
++    assert_eq!(
++        layout.scroll_at_target(&dom, 20.0, 180.0, -10_000.0, -10_000.0),
++        Some(ScrollTarget::Element(recorder)),
++    );
++    assert_eq!(layout.element_scroll()[&recorder], (0.0, 0.0));
++    assert_eq!(layout.viewport_scroll(), (0.0, 0.0));
++}
++
++#[test]
++fn document_extent_excludes_hidden_clip_auto_and_scroll_descendants() {
++    for overflow in ["hidden", "clip", "auto", "scroll"] {
++        let mut dom = ScriptedDom::new();
++        let root = dom.document();
++        let boundary = div(
++            &mut dom,
++            root,
++            &format!("width:100px;height:100px;overflow:{overflow};"),
++        );
++        div(&mut dom, boundary, "width:900px;height:1000px;");
++        let mut layout = OwnedLayout::new(
++            &dom,
++            &[""],
++            VIEWPORT.0,
++            VIEWPORT.1,
++            &[],
++            &Default::default(),
++        );
++        layout.set_viewport_scroll((10_000.0, 10_000.0));
++        assert_eq!(layout.viewport_scroll(), (0.0, 0.0), "overflow:{overflow}");
++    }
++}
++
++#[test]
++fn document_extent_clips_only_the_bounded_axis() {
++    for (overflow, expected) in [
++        ("overflow-x:clip;overflow-y:visible;", (0.0, 600.0)),
++        ("overflow-x:visible;overflow-y:clip;", (600.0, 0.0)),
++    ] {
++        let mut dom = ScriptedDom::new();
++        let root = dom.document();
++        let boundary = div(
++            &mut dom,
++            root,
++            &format!("width:100px;height:100px;{overflow}"),
++        );
++        div(&mut dom, boundary, "width:900px;height:1000px;");
++        let mut layout = OwnedLayout::new(
++            &dom,
++            &[""],
++            VIEWPORT.0,
++            VIEWPORT.1,
++            &[],
++            &Default::default(),
++        );
++        assert_eq!(
++            layout.scroll_at_target(&dom, 200.0, 200.0, 10_000.0, 10_000.0),
++            Some(ScrollTarget::Document),
++        );
++        assert_eq!(layout.viewport_scroll(), expected, "{overflow}");
++    }
++}
++
++#[test]
++fn document_extent_preserves_visible_outer_overflow_and_boundary_border_box() {
++    for bounded in [false, true] {
++        let mut dom = ScriptedDom::new();
++        let root = dom.document();
++        let outer_style = if bounded {
++            "margin-left:100px;margin-top:100px;width:500px;height:600px;overflow:auto;"
++        } else {
++            "margin-left:100px;margin-top:100px;width:100px;height:100px;overflow:visible;"
++        };
++        let outer = div(&mut dom, root, outer_style);
++        let inner_style = if bounded {
++            "width:900px;height:1000px;"
++        } else {
++            "width:500px;height:600px;"
++        };
++        div(&mut dom, outer, inner_style);
++        let mut layout = OwnedLayout::new(
++            &dom,
++            &[""],
++            VIEWPORT.0,
++            VIEWPORT.1,
++            &[],
++            &Default::default(),
++        );
++        // Outside the element: real document overflow must still accept wheel.
++        assert_eq!(
++            layout.scroll_at_target(&dom, 20.0, 20.0, 10_000.0, 10_000.0),
++            Some(ScrollTarget::Document),
++        );
++        assert_eq!(layout.viewport_scroll(), (300.0, 300.0), "bounded:{bounded}");
++        assert_eq!(
++            layout.scroll_at_target(&dom, 20.0, 20.0, -10_000.0, -10_000.0),
++            Some(ScrollTarget::Document),
++        );
++        assert_eq!(layout.viewport_scroll(), (0.0, 0.0));
++    }
++}
++
++#[test]
++fn document_extent_preserves_inline_bounds_and_rebuild_reclamps_after_clipping() {
++    let mut dom = ScriptedDom::new();
++    let root = dom.document();
++    let owner = div(
++        &mut dom,
++        root,
++        "width:220px;height:40px;line-height:600px;overflow:visible;",
++    );
++    let text = dom.create_text("Hg");
++    dom.append_child(owner, text);
++    let mut layout = OwnedLayout::new(
++        &dom,
++        &[""],
++        VIEWPORT.0,
++        VIEWPORT.1,
++        &[],
++        &Default::default(),
++    );
++    let lines = layout.fragments.inline_scroll_bounds(owner).unwrap();
++    assert_eq!(lines.height, 600.0);
++    layout.set_viewport_scroll((0.0, 10_000.0));
++    assert!(
++        layout.viewport_scroll().1 >= 200.0,
++        "visible line boxes must contribute",
++    );
++    style(
++        &mut dom,
++        owner,
++        "width:220px;height:40px;line-height:600px;overflow:hidden;",
++    );
++    layout.rebuild(&dom, VIEWPORT.0, VIEWPORT.1);
++    assert_eq!(layout.viewport_scroll(), (0.0, 0.0));
++}
++
+ #[test]
+ fn a_caret_paints_in_its_fields_text_colour() {
+     let mut dom = ScriptedDom::new();

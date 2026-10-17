@@ -1,0 +1,18 @@
+RESULT fail
+waited 73 frames
+captured 01_backing_before_microphone
+waited 137 frames
+FAIL: act: no command 'physical-dwell-assert'
+captured 02_live_input_recording
+FAIL: assert snap loop-capture-references Eq '1': got '0'
+FAIL: assert snap loop-capture-frames Eq '54000': got '0'
+FAIL: assert snap loop-active-captures Eq '1': got '0'
+FAIL: assert snap capture-input-rate Eq '48000': got 'none'
+FAIL: act: no command 'physical-checkpoint'
+captured 03_actual_microphone_take_saved
+Physical microphone recording and actual output complete
+capture 01_backing_before_microphone 2360x2000 digest=0e6d1300fa416224 file=/Users/markik/Code/testing/woodshed/looper-followups-20261017/physical-v4/seed/01_backing_before_microphone.png
+capture 02_live_input_recording 2360x2000 digest=c67c17b4d297fa3d file=/Users/markik/Code/testing/woodshed/looper-followups-20261017/physical-v4/seed/02_live_input_recording.png
+capture 03_actual_microphone_take_saved 2360x2000 digest=90ca9235e28bef9c file=/Users/markik/Code/testing/woodshed/looper-followups-20261017/physical-v4/seed/03_actual_microphone_take_saved.png
+frames: 3 captured, 0 blank, 3 distinct digests
+presentation: 362 frames, 363 redraws, 1 unpresented redraws

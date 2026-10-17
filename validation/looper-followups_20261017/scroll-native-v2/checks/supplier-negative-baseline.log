@@ -1,0 +1,115 @@
+warning: unused variable: `time_range`
+   --> crates/cambium/scenes/scenomise/src/opened_link.rs:599:9
+    |
+599 |     let time_range = timeline_range(pending);
+    |         ^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_time_range`
+    |
+    = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default
+
+warning: use of deprecated method `std::sync::atomic::Atomic::<u64>::fetch_update`: renamed to `try_update` for consistency
+  --> crates/cambium/cambium-rootstock/src/producer/registry.rs:47:10
+   |
+47 |     next.fetch_update(Ordering::Relaxed, Ordering::Relaxed, |key| {
+   |          ^^^^^^^^^^^^
+   |
+   = note: `#[warn(deprecated)]` on by default
+help: replace the use of the deprecated method
+   |
+47 -     next.fetch_update(Ordering::Relaxed, Ordering::Relaxed, |key| {
+47 +     next.try_update(Ordering::Relaxed, Ordering::Relaxed, |key| {
+   |
+
+warning: use of deprecated method `std::sync::atomic::Atomic::<u64>::fetch_update`: renamed to `try_update` for consistency
+  --> crates/cambium/cambium-rootstock/src/scene_producer.rs:25:10
+   |
+25 |         .fetch_update(Ordering::Relaxed, Ordering::Relaxed, |value| {
+   |          ^^^^^^^^^^^^
+   |
+help: replace the use of the deprecated method
+   |
+25 -         .fetch_update(Ordering::Relaxed, Ordering::Relaxed, |value| {
+25 +         .try_update(Ordering::Relaxed, Ordering::Relaxed, |value| {
+   |
+
+warning: use of deprecated method `std::sync::atomic::Atomic::<usize>::fetch_update`: renamed to `try_update` for consistency
+   --> crates/cambium/cambium-rootstock/src/host.rs:116:10
+    |
+116 |     NEXT.fetch_update(Ordering::Relaxed, Ordering::Relaxed, |next| {
+    |          ^^^^^^^^^^^^
+    |
+help: replace the use of the deprecated method
+    |
+116 -     NEXT.fetch_update(Ordering::Relaxed, Ordering::Relaxed, |next| {
+116 +     NEXT.try_update(Ordering::Relaxed, Ordering::Relaxed, |next| {
+    |
+
+warning: calls to `std::mem::drop` with a reference instead of an owned value does nothing
+   --> crates/cambium/cambium-rootstock/src/producer/registry.rs:678:13
+    |
+678 |             drop(renderer);
+    |             ^^^^^--------^
+    |                  |
+    |                  argument has type `&Renderer`
+    |
+    = note: `#[warn(dropping_references)]` on by default
+help: use `let _ = ...` to ignore the expression or result
+    |
+678 -             drop(renderer);
+678 +             let _ = renderer;
+    |
+
+
+running 5 tests
+owned_layout::tests::document_extent_excludes_hidden_clip_auto_and_scroll_descendants --- FAILED
+owned_layout::tests::document_extent_clips_only_the_bounded_axis --- FAILED
+owned_layout::tests::document_extent_nested_recorder_repeated_wheel_stays_in_child --- FAILED
+owned_layout::tests::document_extent_preserves_inline_bounds_and_rebuild_reclamps_after_clipping --- FAILED
+owned_layout::tests::document_extent_preserves_visible_outer_overflow_and_boundary_border_box --- FAILED
+
+failures:
+
+---- owned_layout::tests::document_extent_excludes_hidden_clip_auto_and_scroll_descendants stdout ----
+
+thread 'owned_layout::tests::document_extent_excludes_hidden_clip_auto_and_scroll_descendants' (41628408) panicked at crates/cambium/cambium-rootstock/src/owned_layout/tests.rs:254:9:
+assertion `left == right` failed: overflow:hidden
+  left: (600.0, 600.0)
+ right: (0.0, 0.0)
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+---- owned_layout::tests::document_extent_clips_only_the_bounded_axis stdout ----
+
+thread 'owned_layout::tests::document_extent_clips_only_the_bounded_axis' (41628407) panicked at crates/cambium/cambium-rootstock/src/owned_layout/tests.rs:284:9:
+assertion `left == right` failed: overflow-x:clip;overflow-y:visible;
+  left: (600.0, 600.0)
+ right: (0.0, 600.0)
+
+---- owned_layout::tests::document_extent_nested_recorder_repeated_wheel_stays_in_child stdout ----
+
+thread 'owned_layout::tests::document_extent_nested_recorder_repeated_wheel_stays_in_child' (41628409) panicked at crates/cambium/cambium-rootstock/src/owned_layout/tests.rs:218:9:
+assertion `left == right` failed
+  left: Some(Document)
+ right: None
+
+---- owned_layout::tests::document_extent_preserves_inline_bounds_and_rebuild_reclamps_after_clipping stdout ----
+
+thread 'owned_layout::tests::document_extent_preserves_inline_bounds_and_rebuild_reclamps_after_clipping' (41628410) panicked at crates/cambium/cambium-rootstock/src/owned_layout/tests.rs:349:5:
+visible line boxes must contribute
+
+---- owned_layout::tests::document_extent_preserves_visible_outer_overflow_and_boundary_border_box stdout ----
+
+thread 'owned_layout::tests::document_extent_preserves_visible_outer_overflow_and_boundary_border_box' (41628411) panicked at crates/cambium/cambium-rootstock/src/owned_layout/tests.rs:318:9:
+assertion `left == right` failed: bounded:true
+  left: (700.0, 700.0)
+ right: (300.0, 300.0)
+
+
+failures:
+    owned_layout::tests::document_extent_clips_only_the_bounded_axis
+    owned_layout::tests::document_extent_excludes_hidden_clip_auto_and_scroll_descendants
+    owned_layout::tests::document_extent_nested_recorder_repeated_wheel_stays_in_child
+    owned_layout::tests::document_extent_preserves_inline_bounds_and_rebuild_reclamps_after_clipping
+    owned_layout::tests::document_extent_preserves_visible_outer_overflow_and_boundary_border_box
+
+test result: FAILED. 0 passed; 5 failed; 0 ignored; 0 measured; 110 filtered out; finished in 0.13s
+
+error: test failed, to rerun pass `-p cambium-rootstock --lib`

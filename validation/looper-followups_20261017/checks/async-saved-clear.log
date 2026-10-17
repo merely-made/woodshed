@@ -1,0 +1,78 @@
+warning: patch `mere-proofs v0.1.0 (https://github.com/merely-made/mere.git?branch=main#4c4ea11d)` was not used in the crate graph
+warning: patch `mere-transport v0.0.2 (https://github.com/merely-made/murm.git?branch=main#cba46d85)` was not used in the crate graph
+warning: patch `mere-webrtc-carrier v0.0.1 (https://github.com/merely-made/murm.git?branch=main#cba46d85)` was not used in the crate graph
+help: Check that the patched package version and available features are compatible
+      with the dependency requirements. If the patch has a different version from
+      what is locked in the Cargo.lock file, run `cargo update` to use the new
+      version. This may also occur with an optional dependency that is not enabled.
+warning: use of deprecated method `std::sync::atomic::Atomic::<u64>::fetch_update`: renamed to `try_update` for consistency
+  --> crates/woodshed-audio/src/capture_feed.rs:33:14
+   |
+33 |             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |generation| {
+   |              ^^^^^^^^^^^^
+   |
+   = note: `#[warn(deprecated)]` on by default
+help: replace the use of the deprecated method
+   |
+33 -             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |generation| {
+33 +             .try_update(Ordering::AcqRel, Ordering::Acquire, |generation| {
+   |
+
+warning: use of deprecated method `std::sync::atomic::Atomic::<usize>::fetch_update`: renamed to `try_update` for consistency
+   --> crates/woodshed-audio/src/output_runtime.rs:473:14
+    |
+473 |             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |              ^^^^^^^^^^^^
+    |
+help: replace the use of the deprecated method
+    |
+473 -             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+473 +             .try_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |
+
+warning: use of deprecated method `std::sync::atomic::Atomic::<usize>::fetch_update`: renamed to `try_update` for consistency
+   --> crates/woodshed-audio/src/output_runtime.rs:521:14
+    |
+521 |             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |              ^^^^^^^^^^^^
+    |
+help: replace the use of the deprecated method
+    |
+521 -             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+521 +             .try_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |
+
+warning: use of deprecated method `std::sync::atomic::Atomic::<usize>::fetch_update`: renamed to `try_update` for consistency
+   --> crates/woodshed-audio/src/output_runtime.rs:542:14
+    |
+542 |             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |              ^^^^^^^^^^^^
+    |
+help: replace the use of the deprecated method
+    |
+542 -             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+542 +             .try_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |
+
+warning: `woodshed-audio` (lib) generated 4 warnings (run `cargo fix --lib -p woodshed-audio` to apply 4 suggestions)
+   Compiling woodshed-genet v0.1.0 (/Users/markik/Code/repos/woodshed/crates/woodshed-genet)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 12.44s
+     Running unittests src/main.rs (target/build/debug/deps/woodshed_genet-4e4707fcee7275e9)
+
+running 13 tests
+test audio::input_admission::tests::admitted_handles_wake_service_without_another_user_command ... ok
+test audio::input_admission::tests::timeout_is_visible_bounded_and_late_success_never_arms_or_spawns_a_second_worker ... ok
+test audio::input_admission::tests::native_owner_constructs_and_drops_only_on_worker_without_send_or_ui_join ... ok
+test audio::input_admission::tests::stop_epoch_cancels_pending_record_and_old_stop_cannot_cancel_new_pending_card ... ok
+test audio::input_admission::tests::tuner_latest_desire_and_calibration_cancel_survive_delayed_input_admission ... ok
+test audio::input_admission::tests::blocked_native_opener_does_not_block_service_and_reserves_original_card ... ok
+test audio::input_admission::tests::reset_and_replaced_source_cannot_resurrect_late_record_and_input_is_reused ... ok
+test audio::input_admission::tests::worker_rate_refusal_keeps_backing_and_output_error ... ok
+test audio::input_admission::tests::late_ready_rechecks_native_output_without_treating_historical_error_as_device_loss ... ok
+test audio::input_admission::tests::legacy_saved_clear_refuses_pending_input_without_mutating_pcm_or_reservation ... ok
+test audio::input_admission::tests::worker_completion_rechecks_capture_quota_before_enabling_input ... ok
+test audio::input_admission::tests::completion_revalidates_source_backing_revision_and_output_identity ... ok
+test audio::input_admission::tests::worker_admitted_saved_bar_keeps_follow_traversal_and_reuses_input ... ok
+
+test result: ok. 13 passed; 0 failed; 0 ignored; 0 measured; 234 filtered out; finished in 0.02s
+

@@ -1,0 +1,12 @@
+{
+  "scope": "Diagnostic only, no acceptance",
+  "record_before_play": true,
+  "input_open_timed_out": true,
+  "worker_sample": "manual/process-sample.txt",
+  "ui_remained_responsive": true,
+  "later_output_error_observed": "Output Xrun",
+  "normal_window_close": true,
+  "owned_app_exited": true,
+  "owned_keeper_exited": true,
+  "original_fixture_files_unchanged": true
+}
