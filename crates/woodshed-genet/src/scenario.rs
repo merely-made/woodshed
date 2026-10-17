@@ -976,26 +976,27 @@ impl Snapshot<'_, '_> {
         })
     }
 
-    fn third_card_clear_visible(&self) -> bool {
+    fn card_part_fully_visible(&self, card: u64, class: &str) -> bool {
         use layout_dom_api::{LayoutDom, LocalName, Namespace};
-        let clear = {
+        let part = {
             let dom = self.ctx.runner.dom();
             let dom = dom.borrow();
-            let select = Selector::role("switch").with_attr("aria-label", "Select Card 3");
+            let label = format!("Select Card {card}");
+            let select = Selector::role("switch").with_attr("aria-label", label.as_str());
             taproot::matching(&dom, &select).into_iter().find_map(|node| {
                 let mut ancestor = dom.parent(node);
                 while let Some(parent) = ancestor {
                     if dom.attribute(parent, &Namespace::default(), &LocalName::from("class"))
                         .is_some_and(|classes| classes.split_whitespace().any(|class| class == "hocket-recorder-lane"))
                     {
-                        return dom.all_with_class(parent, "hocket-recorder-clear").into_iter().next();
+                        return dom.all_with_class(parent, class).into_iter().next();
                     }
                     ancestor = dom.parent(parent);
                 }
                 None
             })
         };
-        clear.is_some_and(|node| {
+        part.is_some_and(|node| {
             let Some((_, _, width, height)) = self.ctx.painted_rect(node) else { return false; };
             let Some((_, _, visible_width, visible_height)) = self.ctx.visible_rect(node) else { return false; };
             width > 0.0 && height > 0.0
@@ -1154,8 +1155,18 @@ impl Snapshot<'_, '_> {
             .with_field("document-scroll-x", self.document_scroll().map_or_else(|| "unavailable".into(), |offset| offset.0.to_string()))
             .with_field("document-scroll-y", self.document_scroll().map_or_else(|| "unavailable".into(), |offset| offset.1.to_string()))
             .with_field("recorder-card3-select-visible", self.fully_visible(&Selector::role("switch").with_attr("aria-label", "Select Card 3")).to_string())
-            .with_field("recorder-card3-clear-visible", self.third_card_clear_visible().to_string())
+            .with_field("recorder-card3-clear-visible", self.card_part_fully_visible(3, "hocket-recorder-clear").to_string())
+            .with_field("recorder-card2-select-visible", self.fully_visible(&Selector::role("switch").with_attr("aria-label", "Select Card 2")).to_string())
+            .with_field("recorder-card2-waveform-visible", self.card_part_fully_visible(2, "hocket-recorder-wave-leaf").to_string())
             .with_field("recorder-transport-visible", self.fully_visible(&Selector::class("hocket-recorder-transport")).to_string())
+            .with_field("recorder-record-visible", self.fully_visible(&Selector::role("switch").with_attr("aria-label", "Record")).to_string())
+            .with_field("recorder-play-visible", self.fully_visible(&Selector::role("button").with_attr("aria-label", "Play backing")).to_string())
+            .with_field("recorder-stop-visible", self.fully_visible(&Selector::role("button").with_attr("aria-label", "Stop all loops")).to_string())
+            .with_field("recorder-rewind-visible", self.fully_visible(&Selector::role("button").with_attr("aria-label", "Rewind")).to_string())
+            .with_field("recorder-click-visible", self.fully_visible(&Selector::role("switch").with_attr("aria-label", "Click")).to_string())
+            .with_field("recorder-replace-visible", self.fully_visible(&Selector::role("switch").with_attr("aria-label", "Replace capture")).to_string())
+            .with_field("recorder-tempo-down-visible", self.fully_visible(&Selector::role("button").with_attr("aria-label", "Decrease tempo")).to_string())
+            .with_field("recorder-tempo-up-visible", self.fully_visible(&Selector::role("button").with_attr("aria-label", "Increase tempo")).to_string())
             .with_field(
                 "appearance-device-free",
                 (crate::appearance::device_free_receipt()
