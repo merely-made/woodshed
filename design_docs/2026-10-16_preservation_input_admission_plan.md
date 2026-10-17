@@ -217,3 +217,14 @@ device-free tests, not the native runs. The broader audit findings remain out of
 scope. No physical microphone, playback, or other physical-audio result is
 claimed. Direct publication to `main` is authorized for the coordinating owner; its
 outcome is established separately by Git refs and the final coordinating report.
+
+
+2026-10-17 publication integration: remote `28a0741` adds arrangement edit
+intents and Mere `4c4ea11`. The merged source `39f1dab` repeats 911 affected
+Woodshed cases (including the 205 desktop cases), five separate child invocations,
+seven existing ignores, the desktop build and the P6 native/reopen flow. Its eight
+new captures and exact 22-row sealed reopen are recorded in
+[`stage-p6-merged_20261017`](../validation/stage-p6-merged_20261017/README.md).
+The historical preservation captures above remain bound to their recorded source;
+no new Hocket/Redshank native claim follows from this merge. The supplier's checked
+keyboard and close-hook blobs have no delta in the repin.

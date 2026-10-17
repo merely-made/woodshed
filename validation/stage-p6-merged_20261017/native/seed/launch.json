@@ -1,0 +1,30 @@
+{
+  "app": "/Users/markik/Code/testing/woodshed/stage-p6-20261017/native-merged-v1/seed/AcceptanceWoodshedSeedNativemergedv1.app",
+  "env": {
+    "WOODSHED_SCENARIO": "/Users/markik/Code/testing/woodshed/stage-p6-20261017/native-merged-v1/seed/scenario.scn",
+    "WOODSHED_CAPTURE_DIR": "/Users/markik/Code/testing/woodshed/stage-p6-20261017/native-merged-v1/seed",
+    "WOODSHED_RECEIPT": "/Users/markik/Code/testing/woodshed/stage-p6-20261017/native-merged-v1/seed/scenario.done",
+    "WOODSHED_PRESENTATION_TIMEOUT_SECS": "60",
+    "WOODSHED_WIDTH": "1180",
+    "WOODSHED_HEIGHT": "1000",
+    "TMPDIR": "/tmp",
+    "CAMBIUM_HOST_FRAME_TRACE": "1",
+    "WOODSHED_STATE": "/Users/markik/Code/testing/woodshed/stage-p6-20261017/native-merged-v1/profile/practice.bin",
+    "WOODSHED_SETTINGS": "/Users/markik/Code/testing/woodshed/stage-p6-20261017/native-merged-v1/profile/settings.json",
+    "GRAPHSHELL_APP_ENDPOINT": "/tmp/ws-p6-1017-m1.sock",
+    "XDG_DATA_HOME": "/Users/markik/Code/testing/woodshed/stage-p6-20261017/native-merged-v1/data",
+    "XDG_CONFIG_HOME": "/Users/markik/Code/testing/woodshed/stage-p6-20261017/native-merged-v1/config",
+    "XDG_CACHE_HOME": "/Users/markik/Code/testing/woodshed/stage-p6-20261017/native-merged-v1/cache",
+    "MERE_ROOT": "/Users/markik/Code/testing/woodshed/stage-p6-20261017/native-merged-v1/mere"
+  },
+  "source": {
+    "revision": "39f1dabf6351ce554a2b26bc0487b297f7896a64",
+    "worktree": "",
+    "binaries": {
+      "woodshed": "d6cf8b3a17a3f93a5750e9bb527fec3f521a6f599989906bd8e05e38089a855e"
+    },
+    "source_hashes_sha256": "272b8a261e80f33109241279d4d19bccee2dcc5c124683a8462124086dd346df"
+  },
+  "scenario_sha256": "66aa3c296e0049cee0a19a418193f3f323dc3fc41e109ed08a0ec1dee143d8c8",
+  "binary_sha256": "d6cf8b3a17a3f93a5750e9bb527fec3f521a6f599989906bd8e05e38089a855e"
+}
