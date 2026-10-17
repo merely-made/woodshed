@@ -1,0 +1,196 @@
+{
+  "schema": "woodshed-independent-capture-review/v1",
+  "reviewed_at_utc": "2026-10-17T12:32:09.531637+00:00",
+  "trial": "/Users/markik/Code/testing/woodshed/stage-p7b-20261017/p7b-native-v2",
+  "scope": "All eight actual PNGs: six seed and two reopen. External visual review only. No app interaction, native launch, Cargo, or repository edits.",
+  "image_count": 8,
+  "images": [
+    {
+      "path": "seed/01_seconds_phrase_playback.png",
+      "absolute_path": "/Users/markik/Code/testing/woodshed/stage-p7b-20261017/p7b-native-v2/seed/01_seconds_phrase_playback.png",
+      "sha256": "a9400c98e4619464d7333b225aaaac68b55e259dd911722e1a1b52bc76771399",
+      "bytes": 594259,
+      "width": 2360,
+      "height": 2000,
+      "inspection": "Direct visual inspection using tools.view_image; no source or log inference used for visible observations.",
+      "observations": [
+        "Nonblank wide Looper. Loaded working Set 1 has three Cards in chord, scale, arpeggio order.",
+        "Selected Loop scale is Set 1 / Card 2, labelled 1.125 s, 180 bpm click, 3/4. Loop arpeggio is labelled 0.875 s, 300 bpm click, 3/4. Loop chord shows 240 bpm, 3/4 x 1.",
+        "No captured mix is shown. Transport displays a pause glyph; a still image does not establish audible playback.",
+        "Seconds duration is also readable in the recorder dock. Wide controls and all three rows are unobscured."
+      ],
+      "finding_ids": [
+        "V03"
+      ]
+    },
+    {
+      "path": "seed/02_absolute_seconds_after_tempo_meter_edit.png",
+      "absolute_path": "/Users/markik/Code/testing/woodshed/stage-p7b-20261017/p7b-native-v2/seed/02_absolute_seconds_after_tempo_meter_edit.png",
+      "sha256": "71b26e700cc3738e8defca819b26036794bbe48e6efcafc7dd350fe93d23ae6a",
+      "bytes": 592396,
+      "width": 2360,
+      "height": 2000,
+      "inspection": "Direct visual inspection using tools.view_image; no source or log inference used for visible observations.",
+      "observations": [
+        "Wide Looper now shows explicit 5/4 clock. Selected scale remains labelled 1.125 s while its click context reads 137 bpm, 5/4.",
+        "Arpeggio remains 0.875 s, now with 5/4 click context. Scale remains Set 1 / Card 2. These visible labels can be compared with seed 01; exact runtime duration is not measurable from the PNG.",
+        "No captured mix is shown. Play glyph is visible and all three rows remain readable."
+      ],
+      "finding_ids": [
+        "V03"
+      ]
+    },
+    {
+      "path": "seed/03_seconds_take_follows_card.png",
+      "absolute_path": "/Users/markik/Code/testing/woodshed/stage-p7b-20261017/p7b-native-v2/seed/03_seconds_take_follows_card.png",
+      "sha256": "9188f1e9dafba9ed0ed9906b75c73d488d7af4e0f33018ad6db06dd694e38ad5",
+      "bytes": 603960,
+      "width": 2360,
+      "height": 2000,
+      "inspection": "Direct visual inspection using tools.view_image; no source or log inference used for visible observations.",
+      "observations": [
+        "Scale is visibly first after reordering; its identity remains Set 1 / Card 2 and label remains 1.125 s, 137 bpm click, 5/4.",
+        "Card loops saved: 1 and Clear stored loop: Set 1 Card 2 are visible. Chord and arpeggio follow, with no captured mix notices.",
+        "The scale capture display is a thin horizontal amber line with no discernible varying waveform peaks. Clear is visible. This is a take display, not independent proof of decoded waveform shape or amplitude."
+      ],
+      "finding_ids": [
+        "V02",
+        "V03"
+      ]
+    },
+    {
+      "path": "seed/04_duration_edit_retains_captured_clock.png",
+      "absolute_path": "/Users/markik/Code/testing/woodshed/stage-p7b-20261017/p7b-native-v2/seed/04_duration_edit_retains_captured_clock.png",
+      "sha256": "cc2fe623785265734fe89798f9356f4e959ef39e540cee1b071f3559ab84d062",
+      "bytes": 664590,
+      "width": 2360,
+      "height": 2000,
+      "inspection": "Direct visual inspection using tools.view_image; no source or log inference used for visible observations.",
+      "observations": [
+        "Visible refusal: Clear the captured loop for 'Loop scale' before changing its tempo, meter or hold. The loaded backing keeps its original clock.",
+        "Loaded scale still shows 1.125 s, 137 bpm click, 5/4, Set 1 / Card 2, with one saved loop and the amber horizontal take line.",
+        "The message names the affected Card and the required Clear action. The requested replacement duration is not visible, so this image alone cannot establish its numeric value.",
+        "Wide refusal, source, export button, stored-loop Clear, all three rows and recorder controls are readable."
+      ],
+      "finding_ids": [
+        "V02",
+        "V03"
+      ]
+    },
+    {
+      "path": "seed/05_mixed_duration_export.png",
+      "absolute_path": "/Users/markik/Code/testing/woodshed/stage-p7b-20261017/p7b-native-v2/seed/05_mixed_duration_export.png",
+      "sha256": "08a920c4589b9e68d151525cfb37c507da562108f41f7a36487073081d7e2187",
+      "bytes": 699519,
+      "width": 2360,
+      "height": 2000,
+      "inspection": "Direct visual inspection using tools.view_image; no source or log inference used for visible observations.",
+      "observations": [
+        "Visible export notice: Exported loop-export.wav, 3.250 s, 48000 Hz, backing + completed loops.",
+        "Duration-edit refusal remains visible. Scale remains first and retains Set 1 / Card 2, 1.125 s, 137 bpm click, 5/4 and the horizontal amber take line.",
+        "All three mixed Bars/Seconds rows and wide recorder controls remain visible. The export notice reports an outcome; PNG pixels do not verify WAV bytes or PCM parity."
+      ],
+      "finding_ids": [
+        "V02",
+        "V03"
+      ]
+    },
+    {
+      "path": "seed/06_compact_seconds_backing.png",
+      "absolute_path": "/Users/markik/Code/testing/woodshed/stage-p7b-20261017/p7b-native-v2/seed/06_compact_seconds_backing.png",
+      "sha256": "afe686954f483a7061baf04a5b4fbd97a163d77835c723b9ccbd9d3da189ba23",
+      "bytes": 582272,
+      "width": 840,
+      "height": 2200,
+      "inspection": "Direct visual inspection using tools.view_image; no source or log inference used for visible observations.",
+      "observations": [
+        "Compact layout wraps navigation, source, export report and refusal text without visible right-edge clipping. Refusal and stored-loop Clear remain readable.",
+        "Scale row is fully visible with Set 1 / Card 2, 1.125 s, 137 bpm click, 5/4, horizontal amber take line and Clear.",
+        "Large recorder dock overlaps the chord row below its title/partial metadata; arpeggio is not visible. The selected scale row remains above the dock.",
+        "Recorder controls fit within the image. Duration/click/meter wraps into several lines under METER; Click and Replace capture labels wrap but remain readable. This screenshot does not prove scrolling can expose covered rows."
+      ],
+      "finding_ids": [
+        "V01",
+        "V02",
+        "V03"
+      ]
+    },
+    {
+      "path": "reopen/01_exact_seconds_take_reopened.png",
+      "absolute_path": "/Users/markik/Code/testing/woodshed/stage-p7b-20261017/p7b-native-v2/reopen/01_exact_seconds_take_reopened.png",
+      "sha256": "477b140dfb7704f6bb2ada62f959965e5ea73d2c71679f2c49c084085e77e824",
+      "bytes": 603963,
+      "width": 2360,
+      "height": 2000,
+      "inspection": "Direct visual inspection using tools.view_image; no source or log inference used for visible observations.",
+      "observations": [
+        "Wide reopened view visibly matches the reordered scale, chord, arpeggio arrangement, loaded Set 1 and one saved loop.",
+        "Scale retains Set 1 / Card 2, 1.125 s, 137 bpm click, 5/4 and the same horizontal amber take display. Arpeggio remains 0.875 s with 300 bpm click, 5/4.",
+        "Play glyph and Input unopened status are visible. No prior duration-refusal or export notice is present in this wide image.",
+        "All three rows and controls are unobscured. Visible agreement supports UI retention; exact sealed metadata and PCM equality require the parent reference checks."
+      ],
+      "finding_ids": [
+        "V02",
+        "V03"
+      ]
+    },
+    {
+      "path": "reopen/02_compact_seconds_reopened.png",
+      "absolute_path": "/Users/markik/Code/testing/woodshed/stage-p7b-20261017/p7b-native-v2/reopen/02_compact_seconds_reopened.png",
+      "sha256": "b2bf3086ecfdf6d2397001d1d425cab2bf397088b9c5c0ad9fe535fbe58c5e4c",
+      "bytes": 521114,
+      "width": 840,
+      "height": 2200,
+      "inspection": "Direct visual inspection using tools.view_image; no source or log inference used for visible observations.",
+      "observations": [
+        "Compact reopened Looper shows loaded Set 1, one saved loop, stored-loop Clear, and an export report of 3.250 s at 48000 Hz.",
+        "Scale retains Set 1 / Card 2, 1.125 s, 137 bpm click, 5/4 and the horizontal amber take line. Its Clear remains visible.",
+        "The recorder dock again overlaps the lower chord row and arpeggio is not visible. Recorder controls, wrapped Seconds/click/meter label and footer remain readable within the image.",
+        "No duration-refusal notice appears in this compact reopen image. Pixels do not establish sample-exact reopening or actual audio."
+      ],
+      "finding_ids": [
+        "V01",
+        "V02",
+        "V03"
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "id": "V01",
+      "severity": "P2 layout limitation",
+      "status": "visible",
+      "title": "Compact recorder dock obscures lower Card rows",
+      "images": [
+        "seed/06_compact_seconds_backing.png",
+        "reopen/02_compact_seconds_reopened.png"
+      ],
+      "detail": "The dock overlaps the chord row and its metadata while the arpeggio row is not visible. Selected scale, its Clear, top-level refusal/export status and recorder controls remain readable. The captures do not establish scroll recovery or access to every lower-row control. Full compact-layout acceptance is not supported by these two images."
+    },
+    {
+      "id": "V02",
+      "severity": "observation / waveform qualification limit",
+      "status": "visible; cause unestablished",
+      "title": "Saved take is rendered as a flat amber line",
+      "detail": "In every image showing the saved take, the display has no discernible varying waveform peaks. This could reflect fixture content or rendering; no cause is inferred from pixels. The images support presence and owner placement of the take display, but do not qualify waveform fidelity or prove silent/non-silent PCM."
+    },
+    {
+      "id": "V03",
+      "severity": "P3 copy defect",
+      "status": "visible",
+      "title": "Footer still describes all holds as Bars",
+      "detail": "The footer says Ordered Cards keep their own tempo and Bars hold, despite visible 1.125 s and 0.875 s Seconds labels. It should acknowledge Bars and Seconds. The selected timing summary is also headed METER although it includes absolute duration and click BPM; values remain legible."
+    }
+  ],
+  "conclusion": {
+    "status": "reviewed_with_visible_issues_and_limits",
+    "all_images_nonblank": true,
+    "seconds_labels_readable": true,
+    "refusal_wording_readable_and_actionable": true,
+    "wide_layout": "All three rows and core controls readable in all six wide images. No wide clipping or overlap observed.",
+    "compact_layout": "Selected take and core controls readable, but lower rows are obscured by the recorder dock. Not full responsive acceptance.",
+    "waveform": "Flat line only; waveform shape/fidelity unqualified.",
+    "reopen": "UI identity, ordering and displayed Seconds labels visibly retained. Exact metadata, decoded PCM and WAV equality remain parent-owned evidence.",
+    "boundary": "No visual evidence of ownership/duration-label regression in this set. Do not treat this as whole-product, physical-audio, waveform-fidelity, or full compact-layout acceptance."
+  }
+}
