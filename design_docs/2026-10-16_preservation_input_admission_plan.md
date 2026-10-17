@@ -146,5 +146,8 @@ pin, clock rule or PCM data is changed by this remediation.
 cases (1,150 total), plus five existing capture child-process invocations counted
 separately. Nine ignored tests remain ignored. All three final Cargo commands
 exited zero; the root gate includes the unchanged history scrub timing assertion.
-`git diff --check` passes. Primary source and native validation were untouched by
+Source/design-document `git diff --check 21d0c2e -- crates ports design_docs`
+passes. Raw Cargo logs retain terminal blank lines; the initial staged whitespace
+check flagged those three logs (exit 2), recorded separately in the receipt.
+Primary source and native validation were untouched by
 this lane; the scheduling slot was explicitly released to the P5 owner afterward.
