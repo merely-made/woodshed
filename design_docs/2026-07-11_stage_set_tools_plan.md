@@ -2279,6 +2279,14 @@ that compatibility boundary is recorded without a supplier repin. Current-source
 checks and excluded failures are in `validation/stage-p7b_20261017/`. Native
 qualification is pending on the committed candidate.
 
+2026-10-17 P7b native attempt: implementation `bc6c460` and its frozen binary
+were verified against 335 source bindings. The native launcher reported a locked
+Mac before app launch; there were zero frames or captures, so acceptance remains
+incomplete. Manual unlock was requested. The generated Keeper exited and its
+four original fixture files remain unchanged. No publication occurred. The
+read-only historical verifier and blocked-attempt evidence are retained in the
+P7b receipt; continuation starts with a fresh native trial after manual unlock.
+
 ### P8. Adaptive polish and release acceptance
 
 **Current state: open.** Windows alpha behavior exists. Three-width product
