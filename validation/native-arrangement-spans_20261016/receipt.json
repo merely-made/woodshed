@@ -35,5 +35,18 @@
     "Ordinary form reconstruction preserves gestures; actual draft/source changes, owner/panel switches, capture loss and viewport changes invalidate them."
   ],
   "initial_failure": "initial/ preserves the first native refusal and route regression: conditional notice removal retired capture, and field access during view reconstruction cancelled preview. Stable notice slots and content-signature invalidation fix both.",
-  "scope": "Scene alignment authoring on macOS in device-free audio mode. Shared geometry is checked against progression/metre specimens; no shared source-edit intent API, Knot metre editing or new Graphshell editing route is claimed."
+  "scope": "Scene alignment authoring on macOS in device-free audio mode. Shared geometry is checked against progression/metre specimens; no shared source-edit intent API, Knot metre editing or new Graphshell editing route is claimed.",
+  "integration": {
+    "source": "2ad31ea571d8d45d2068b68024dee2301a29de15",
+    "preserved_concurrent_main": "21d0c2e",
+    "native_host_tests": 3,
+    "view_tests": 11,
+    "locked_desktop_build": "passed",
+    "byte_identical_to_native_capture_source": [
+      "Cargo.lock",
+      "crates/woodshed-views/src/stage/arrangement_editor.rs",
+      "crates/woodshed-genet/src/arrangement.rs"
+    ],
+    "native_capture_source": "b3afe76a655b9ce6f08cd08d2b73ff3ec5a0588e"
+  }
 }
