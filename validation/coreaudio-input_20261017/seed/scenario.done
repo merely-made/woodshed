@@ -1,0 +1,12 @@
+RESULT ok
+waited 70 frames
+captured 01_backing_before_microphone
+waited 266 frames
+captured 02_live_input_recording
+captured 03_actual_microphone_take_saved
+Physical microphone recording and actual output complete
+capture 01_backing_before_microphone 2360x2000 digest=a866ea63a2ed128d file=/Users/markik/Code/testing/woodshed/coreaudio-admission-20261017/native-v1/seed/01_backing_before_microphone.png
+capture 02_live_input_recording 2360x2000 digest=235e334602f2a221 file=/Users/markik/Code/testing/woodshed/coreaudio-admission-20261017/native-v1/seed/02_live_input_recording.png
+capture 03_actual_microphone_take_saved 2360x2000 digest=b5554cc527041345 file=/Users/markik/Code/testing/woodshed/coreaudio-admission-20261017/native-v1/seed/03_actual_microphone_take_saved.png
+frames: 3 captured, 0 blank, 3 distinct digests
+presentation: 488 frames, 489 redraws, 1 unpresented redraws

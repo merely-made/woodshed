@@ -1,0 +1,17 @@
+{
+  "command": [
+    "cargo",
+    "test",
+    "--offline",
+    "--locked",
+    "-j2",
+    "-p",
+    "woodshed-genet",
+    "wav_export::tests::sealed_profile_export_reference",
+    "--",
+    "--exact",
+    "--ignored"
+  ],
+  "exit_code": 0,
+  "source_revision": "10486bcea3248ccd6adc80e55135435b9880ceca"
+}
