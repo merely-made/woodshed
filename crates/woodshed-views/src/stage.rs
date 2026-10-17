@@ -64,6 +64,11 @@ pub mod overview_dynamics;
 pub mod overview_folds;
 mod overview_presentation;
 pub use overview_presentation::OverviewPresentation;
+mod practice_clock;
+pub use practice_clock::{
+    PracticeCardEndReason, PracticeClockCommand, PracticeClockObservation,
+    PracticeClockProjection, PracticeClockStatus,
+};
 pub mod relationship;
 pub use overview::{OVERVIEW_GRAPH_LEAF_KEY, overview_snapshot, overview_source_swatch, overview_swatch};
 pub use relationship::{RELATIONSHIP_GRAPH_LEAF_KEY, relationship_swatch};
@@ -1075,6 +1080,28 @@ pub struct UiState {
     pub rehearsal_running: bool,
     pub rehearsal_pending: bool,
     pub rehearsal_epoch: u64,
+    /// The desktop host opts into device-clock-managed rehearsal after it binds
+    /// the existing OutputRuntime. Portable view fixtures keep the legacy path.
+    pub practice_clock_managed: bool,
+    /// User intent; the host freezes/resumes this exact run epoch and voice.
+    pub rehearsal_paused: bool,
+    /// Frozen disposable realization for the active run. It never enters Session.
+    pub rehearsal_clock_program: Option<woodshed_core::PracticeProgram>,
+    /// Original owner Set order, used to reject stale/reordered source snapshots.
+    pub rehearsal_clock_source_order: Vec<CardId>,
+    /// Original Set cursor passed separately from the unrotated program.
+    pub rehearsal_clock_start_cursor: usize,
+    /// Host-facing non-audio intents for explicit Set cursor controls.
+    pub practice_clock_commands: Vec<PracticeClockCommand>,
+    /// Device clock projection consumed by views/leaves; no view timer is used.
+    pub practice_clock_projection: Option<PracticeClockProjection>,
+    /// Active device-frame measurement for the open accepted Card.
+    pub rehearsal_active_frames: u64,
+    pub rehearsal_sample_rate: Option<u32>,
+    /// Current device-owned live Stage event projection for fretboard leaves.
+    pub stage_clock_event: Option<u32>,
+    pub stage_clock_contacts: Vec<(usize, u8)>,
+    pub stage_clock_beat_ticks: u64,
     pub card_timing_notice: Option<String>,
     pub audition_notice: Option<String>,
     pending_auditions: Vec<std::sync::Arc<()>>,
@@ -1339,6 +1366,18 @@ impl UiState {
             rehearsal_running: false,
             rehearsal_pending: false,
             rehearsal_epoch: 0,
+            practice_clock_managed: false,
+            rehearsal_paused: false,
+            rehearsal_clock_program: None,
+            rehearsal_clock_source_order: Vec::new(),
+            rehearsal_clock_start_cursor: 0,
+            practice_clock_commands: Vec::new(),
+            practice_clock_projection: None,
+            rehearsal_active_frames: 0,
+            rehearsal_sample_rate: None,
+            stage_clock_event: None,
+            stage_clock_contacts: Vec::new(),
+            stage_clock_beat_ticks: 0,
             card_timing_notice: None,
             audition_notice: None,
             pending_auditions: Vec::new(),
@@ -2286,9 +2325,19 @@ impl UiState {
         let Some(card) = self.rehearsal_observed_card.take() else {
             return;
         };
-        let practiced_ms = match (self.now_ms, self.card_started_ms) {
-            (Some(now), Some(started)) => now.checked_sub(started),
-            _ => None,
+        let practiced_ms = if self.practice_clock_managed {
+            self.rehearsal_sample_rate
+                .filter(|rate| *rate > 0)
+                .and_then(|rate| {
+                    self.rehearsal_active_frames
+                        .checked_mul(1_000)
+                        .map(|frames_ms| frames_ms / u64::from(rate))
+                })
+        } else {
+            match (self.now_ms, self.card_started_ms) {
+                (Some(now), Some(started)) => now.checked_sub(started),
+                _ => None,
+            }
         };
         self.card_started_ms = None;
         if let Some(id) = catalog_id_for_card(&card) {
@@ -2311,9 +2360,13 @@ impl UiState {
         self.finish_rehearsal_observation(EngagementKind::Completed);
     }
 
-    /// Pause closes only the active span. Resuming opens a fresh span, keeping
-    /// paused wall time out of observed runner duration.
+    /// The managed host freezes and resumes this run at its device clock. The
+    /// legacy view-fixture path retains its older toggle behavior.
     pub fn toggle_rehearsal(&mut self) {
+        if self.practice_clock_managed {
+            self.toggle_managed_rehearsal();
+            return;
+        }
         if self.is_current_set_rehearsing() {
             self.stop_rehearsal();
         } else if !self.set.cards.is_empty() {
@@ -2331,6 +2384,13 @@ impl UiState {
     /// retroactively to the instruction it replaced.
     fn sync_rehearsal_observation(&mut self) {
         if !self.rehearsal_running {
+            return;
+        }
+        if self.practice_clock_managed {
+            if let Err(reason) = self.validate_live_clock_source() {
+                self.stop_rehearsal();
+                self.card_timing_notice = Some(reason);
+            }
             return;
         }
         if self.rehearsal_pending && self.audio_requests.iter().any(|request| {
@@ -2427,6 +2487,16 @@ impl UiState {
         self.rehearsal_running = false;
         self.rehearsal_pending = false;
         self.rehearsal_epoch = self.rehearsal_epoch.wrapping_add(1);
+        self.rehearsal_paused = false;
+        self.rehearsal_clock_program = None;
+        self.rehearsal_clock_source_order.clear();
+        self.practice_clock_commands.clear();
+        self.practice_clock_projection = None;
+        self.rehearsal_active_frames = 0;
+        self.rehearsal_sample_rate = None;
+        self.stage_clock_event = None;
+        self.stage_clock_contacts.clear();
+        self.stage_clock_beat_ticks = 0;
         self.card_timing_notice = None;
         self.rehearsal_observed_card = None;
         self.card_started_ms = None;

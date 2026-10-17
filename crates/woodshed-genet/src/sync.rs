@@ -107,6 +107,7 @@ fn push_backend(shared: &mut Shared, ctx: &mut Ctx<'_>) {
             false
         };
         if let Some(backend) = backend {
+            backend.sync_practice_clock(ui);
             // Calibration owns the shared runtime's click lane during a run.
             if !ui.calib_active {
                 backend.set_metronome(ui.transport);

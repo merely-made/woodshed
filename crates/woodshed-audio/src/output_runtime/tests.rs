@@ -114,6 +114,534 @@ fn feed(
     (producer, control)
 }
 
+fn program_with_card_count(count: usize, end: ProgramEnd, bpm: f64) -> ProgramPlan {
+    ProgramPlan {
+        cards: (0..count)
+            .map(|index| ProgramCard {
+                token: 10_000 + index as u64,
+                bpm,
+                end,
+                events: if index == 0 {
+                    vec![ProgramEvent {
+                        token: 20_000,
+                        onset: match end {
+                            ProgramEnd::DeviceFrames(_) => ProgramPosition::DeviceFrames(0),
+                            _ => ProgramPosition::BeatTicks(0),
+                        },
+                        onset_offset_frames: 0,
+                        gate: ProgramDuration::UntilCardEnd,
+                        frequency_hz: 100.0,
+                        amplitude: 1.0,
+                    }]
+                } else {
+                    Vec::new()
+                },
+            })
+            .collect(),
+        start_index: 0,
+        loop_mode: ProgramLoop::Once,
+    }
+}
+
+#[test]
+fn idle_attached_capture_does_not_block_program_after_take_is_retired() {
+    let mut r = runtime();
+    let (mut producer, _) = feed(&mut r, 64);
+    let mut s = song(1);
+    s.playing = true;
+    r.set_song(s).unwrap();
+    r.service().unwrap();
+    render(&mut r, 1);
+    r.arm_capture(0, true).unwrap();
+    producer.push_samples(&[0.25; 64]);
+    r.service().unwrap();
+    render(&mut r, 12);
+    assert!(
+        r.snapshot().recording,
+        "fixture must actually enter the recording state"
+    );
+    r.stop_capture_now().unwrap();
+    r.service().unwrap();
+    render(&mut r, 1);
+    r.service().unwrap();
+    assert!(
+        !r.capture_busy(),
+        "recording owner must be retired before Run"
+    );
+    assert!(r.capture_attached, "the idle input stream remains attached");
+    r.stop().unwrap();
+    r.service().unwrap();
+    render(&mut r, 1);
+    let prepared = r
+        .prepare_program(program_with_card_count(1, ProgramEnd::BeatTicks(960), 60.0))
+        .unwrap();
+    let epoch = r.start_program(prepared).unwrap();
+    r.service().unwrap();
+    render(&mut r, 1);
+    assert_eq!(r.snapshot().program.epoch, epoch);
+    assert_eq!(r.snapshot().program.status, ProgramStatus::Playing);
+}
+
+#[test]
+fn arbitrary_finite_tempo_edits_preserve_beat_phase_and_loop_changes_do_not_restart() {
+    let mut r = runtime();
+    let prepared = r
+        .prepare_program(program_with_card_count(2, ProgramEnd::BeatTicks(960), 10.0))
+        .unwrap();
+    let epoch = r.start_program(prepared).unwrap();
+    r.service().unwrap();
+    render(&mut r, 1);
+    render(&mut r, 24);
+    let before = r.snapshot().program;
+    assert!(before.beat_ticks > 0);
+    assert_eq!(f64::from_bits(before.bpm_bits), 10.0);
+    assert_eq!(before.click_subdivision_ticks, PROGRAM_TICKS_PER_BEAT);
+    r.pause_program(epoch).unwrap();
+    r.service().unwrap();
+    render(&mut r, 1);
+    let paused = r.snapshot().program;
+    assert_eq!(paused.status, ProgramStatus::Paused);
+    r.set_program_tempo(epoch, 0, 401.0).unwrap();
+    r.set_program_loop(epoch, ProgramLoop::Set).unwrap();
+    r.service().unwrap();
+    render(&mut r, 1);
+    let after = r.snapshot().program;
+    assert_eq!(
+        after.beat_ticks, paused.beat_ticks,
+        "tempo edit while paused preserves exact beat position"
+    );
+    assert_eq!(
+        f64::from_bits(after.bpm_bits),
+        401.0,
+        "snapshot publishes the applied host-visible tempo"
+    );
+    assert_eq!(
+        after.card_token, before.card_token,
+        "loop edit cannot restart or re-credit the active card"
+    );
+    r.resume_program(epoch).unwrap();
+    r.service().unwrap();
+    render(&mut r, 1);
+    assert!(r.snapshot().program.beat_ticks >= paused.beat_ticks + 6);
+    assert!(r.set_program_tempo(epoch, 0, 0.0).is_err());
+    assert!(r.set_program_tempo(epoch, 0, f64::MAX).is_err());
+}
+
+#[test]
+fn manual_program_keeps_started_span_open_until_explicit_advance() {
+    let mut r = runtime();
+    let mut plan = program_with_card_count(
+        2,
+        ProgramEnd::Manual {
+            preview_ticks: 0,
+            tail_frames: 5,
+        },
+        120.0,
+    );
+    plan.cards[0].events[0].gate = ProgramDuration::UntilCardEnd;
+    let epoch = r.start_program(r.prepare_program(plan).unwrap()).unwrap();
+    r.service().unwrap();
+    render(&mut r, 1);
+    let transitions = r.drain_program_transitions();
+    assert!(
+        transitions
+            .iter()
+            .any(|t| t.epoch == epoch && t.kind == ProgramTransitionKind::Started)
+    );
+    render(&mut r, 6);
+    let waiting = r.snapshot().program;
+    assert_eq!(waiting.status, ProgramStatus::WaitingManual);
+    assert!(waiting.active_frames >= 6);
+    assert_eq!(
+        waiting.card_frames, 6,
+        "card clock freezes once the manual tail ends"
+    );
+    assert!(
+        !r.drain_program_transitions()
+            .iter()
+            .any(|t| matches!(t.kind, ProgramTransitionKind::Ended(_)))
+    );
+    render(&mut r, 4);
+    assert!(r.snapshot().program.active_frames >= waiting.active_frames + 4);
+    r.advance_program(epoch).unwrap();
+    r.service().unwrap();
+    render(&mut r, 1);
+    assert!(
+        r.drain_program_transitions()
+            .iter()
+            .any(|t| t.kind == ProgramTransitionKind::Ended(ProgramEndReason::Completed))
+    );
+    assert_eq!(r.snapshot().program.card_index, 1);
+}
+
+#[test]
+fn explicit_next_completes_a_timed_card_once_and_starts_the_next_card() {
+    let mut r = runtime();
+    let epoch = r
+        .start_program(
+            r.prepare_program(program_with_card_count(
+                2,
+                ProgramEnd::DeviceFrames(10_000),
+                120.0,
+            ))
+            .unwrap(),
+        )
+        .unwrap();
+    r.service().unwrap();
+    render(&mut r, 1);
+    let first = r.drain_program_transitions();
+    assert_eq!(
+        first
+            .iter()
+            .filter(|t| t.kind == ProgramTransitionKind::Started)
+            .count(),
+        1
+    );
+    r.advance_program(epoch).unwrap();
+    r.service().unwrap();
+    render(&mut r, 1);
+    let next = r.drain_program_transitions();
+    assert_eq!(
+        next.iter()
+            .filter(|t| t.kind == ProgramTransitionKind::Ended(ProgramEndReason::Completed))
+            .count(),
+        1,
+        "explicit Next closes the accepted partial span exactly once"
+    );
+    assert_eq!(
+        next.iter()
+            .filter(|t| t.kind == ProgramTransitionKind::Started)
+            .count(),
+        1,
+        "Next starts the following card without changing ownership"
+    );
+    assert_eq!(r.snapshot().program.card_index, 1);
+    assert_eq!(r.snapshot().program.status, ProgramStatus::Playing);
+}
+
+#[test]
+fn grouped_strum_offsets_share_one_onset_and_all_256_legacy_pitch_slots_are_supported() {
+    let mut r = runtime();
+    let events = (0..256)
+        .map(|index| ProgramEvent {
+            token: 77,
+            onset: ProgramPosition::BeatTicks(0),
+            onset_offset_frames: index as u64 * 18,
+            gate: ProgramDuration::UntilCardEnd,
+            frequency_hz: 100.0 + index as f64,
+            amplitude: 0.1,
+        })
+        .collect();
+    let plan = ProgramPlan {
+        cards: vec![ProgramCard {
+            token: 88,
+            bpm: 120.0,
+            end: ProgramEnd::Manual {
+                preview_ticks: 0,
+                tail_frames: 5000,
+            },
+            events,
+        }],
+        start_index: 0,
+        loop_mode: ProgramLoop::Once,
+    };
+    let prepared = r.prepare_program(plan).unwrap();
+    let epoch = r.start_program(prepared).unwrap();
+    r.service().unwrap();
+    render(&mut r, 5000);
+    let snapshot = r.snapshot().program;
+    assert_eq!(snapshot.epoch, epoch);
+    assert_eq!(snapshot.event_index, 256);
+    assert_eq!(snapshot.event_token, Some(77));
+}
+
+#[test]
+fn prepared_integer_cycle_tone_meets_frequency_error_and_has_bounded_loop_seam() {
+    let plan = ProgramPlan {
+        cards: vec![ProgramCard {
+            token: 1,
+            bpm: 120.0,
+            end: ProgramEnd::DeviceFrames(100),
+            events: vec![ProgramEvent {
+                token: 1,
+                onset: ProgramPosition::DeviceFrames(0),
+                onset_offset_frames: 0,
+                gate: ProgramDuration::UntilCardEnd,
+                frequency_hz: 440.123,
+                amplitude: 0.5,
+            }],
+        }],
+        start_index: 0,
+        loop_mode: ProgramLoop::Once,
+    };
+    let prepared = PreparedProgram::prepare(plan, 48_000).unwrap();
+    let tone = &prepared.tones[0];
+    assert!(tone.cycles > 0);
+    assert!(!tone.pcm.is_empty());
+    assert!(tone.pcm.len() <= clock::MAX_PROGRAM_TONE_FRAMES);
+    assert!((tone.actual_frequency_hz - 440.123).abs() / 440.123 <= 1.0e-6);
+    let seam_step_bound = std::f32::consts::TAU * tone.cycles as f32 / tone.pcm.len() as f32
+        * (1.0 + 2.0 * 0.25 + 3.0 * 0.12);
+    let seam_delta = (tone.pcm.data[0] - *tone.pcm.data.last().unwrap()).abs();
+    assert!(seam_delta <= seam_step_bound + f32::EPSILON);
+}
+
+#[test]
+fn unrepresentable_future_tone_becomes_a_per_card_refusal_sentinel() {
+    let mut plan = program_with_card_count(2, ProgramEnd::DeviceFrames(100), 120.0);
+    plan.cards[0].events[0].frequency_hz = 0.01;
+    let prepared = PreparedProgram::prepare(plan, 1000).unwrap();
+    assert_eq!(prepared.cards[0].end, ProgramEnd::Refusal(1));
+    assert!(prepared.refusal_reason(0).is_some());
+    assert_eq!(prepared.cards[1].end, ProgramEnd::DeviceFrames(100));
+}
+
+#[test]
+fn fixed_strum_offset_must_fit_before_the_card_ends() {
+    let mut plan = program_with_card_count(1, ProgramEnd::DeviceFrames(10), 120.0);
+    plan.cards[0].events[0].onset = ProgramPosition::DeviceFrames(8);
+    plan.cards[0].events[0].onset_offset_frames = 2;
+    assert!(PreparedProgram::prepare(plan, 1000).is_err());
+}
+
+#[test]
+fn pause_freezes_program_position_and_pcm_then_resume_continues_the_same_event() {
+    fn started() -> (OutputRuntime, ProgramEpoch) {
+        let mut r = runtime();
+        let mut pattern = SequencerPattern::metronome(
+            120.0,
+            TimeSignature::new(1, 4),
+            crate::Subdivision::QUARTER,
+        );
+        pattern.tracks[0].sound =
+            Sound::sample_with_buffer("pause-click", SampleBuffer::new(vec![0.125; 128], 1000));
+        if let Sound::Sample { accent_gain, .. } = &mut pattern.tracks[0].sound {
+            *accent_gain = 1.0;
+        }
+        r.set_click_pattern_playing(pattern, true).unwrap();
+        let epoch = r
+            .start_program(
+                r.prepare_program(program_with_card_count(
+                    1,
+                    ProgramEnd::DeviceFrames(800),
+                    120.0,
+                ))
+                .unwrap(),
+            )
+            .unwrap();
+        r.service().unwrap();
+        render(&mut r, 24);
+        (r, epoch)
+    }
+
+    let mut continuous = started().0;
+    let expected = render(&mut continuous, 32);
+    let (mut paused_runtime, epoch) = started();
+    let before = paused_runtime.snapshot().program;
+    assert_eq!(before.event_index, 1);
+    paused_runtime.pause_program(epoch).unwrap();
+    paused_runtime.service().unwrap();
+    let silent = render(&mut paused_runtime, 50);
+    assert!(
+        silent.iter().all(|sample| *sample == 0.0),
+        "pause freezes both program and an already-running click tail"
+    );
+    let paused = paused_runtime.snapshot().program;
+    assert_eq!(paused.status, ProgramStatus::Paused);
+    assert_eq!(paused.beat_ticks, before.beat_ticks);
+    assert_eq!(paused.card_frames, before.card_frames);
+    assert_eq!(paused.event_token, before.event_token);
+    paused_runtime.resume_program(epoch).unwrap();
+    paused_runtime.service().unwrap();
+    assert_eq!(
+        render(&mut paused_runtime, 32),
+        expected,
+        "resume continues the exact PCM phase after the pause gap"
+    );
+}
+
+#[test]
+fn seconds_domain_card_and_gate_keep_fixed_device_frame_duration_across_tempo_edit() {
+    let mut r = runtime();
+    let mut plan = program_with_card_count(1, ProgramEnd::DeviceFrames(400), 120.0);
+    plan.cards[0].events[0].onset = ProgramPosition::DeviceFrames(0);
+    plan.cards[0].events[0].gate = ProgramDuration::DeviceFrames(300);
+    let epoch = r.start_program(r.prepare_program(plan).unwrap()).unwrap();
+    r.service().unwrap();
+    render(&mut r, 100);
+    r.set_program_tempo(epoch, 0, 400.0).unwrap();
+    r.service().unwrap();
+    render(&mut r, 200);
+    let middle = r.snapshot().program;
+    assert_eq!(middle.card_frames, 300);
+    assert_eq!(middle.status, ProgramStatus::Playing);
+    render(&mut r, 100);
+    assert_eq!(r.snapshot().program.status, ProgramStatus::Complete);
+}
+
+#[test]
+fn stale_epoch_commands_cannot_pause_or_retime_a_replacement_program() {
+    let mut r = runtime();
+    let first = r
+        .start_program(
+            r.prepare_program(program_with_card_count(
+                1,
+                ProgramEnd::DeviceFrames(10),
+                120.0,
+            ))
+            .unwrap(),
+        )
+        .unwrap();
+    r.service().unwrap();
+    render(&mut r, 1);
+    r.stop_program(first).unwrap();
+    r.service().unwrap();
+    render(&mut r, 1);
+    r.drain_program_transitions();
+    let second = r
+        .start_program(
+            r.prepare_program(program_with_card_count(
+                1,
+                ProgramEnd::DeviceFrames(100),
+                120.0,
+            ))
+            .unwrap(),
+        )
+        .unwrap();
+    r.service().unwrap();
+    render(&mut r, 1);
+    r.pause_program(first).unwrap();
+    r.set_program_tempo(first, 0, 400.0).unwrap();
+    r.service().unwrap();
+    render(&mut r, 1);
+    assert_eq!(r.snapshot().program.epoch, second);
+    assert_eq!(r.snapshot().program.status, ProgramStatus::Playing);
+}
+
+#[test]
+fn full_transition_queue_freezes_clock_and_resume_preserves_every_card_event() {
+    let mut r = runtime();
+    let prepared = r
+        .prepare_program(program_with_card_count(
+            130,
+            ProgramEnd::DeviceFrames(1),
+            120.0,
+        ))
+        .unwrap();
+    let epoch = r.start_program(prepared).unwrap();
+    r.service().unwrap();
+    render(&mut r, 260);
+    let blocked = r.snapshot().program;
+    assert_eq!(blocked.status, ProgramStatus::WaitingObserver);
+    assert!(
+        r.stop_program(epoch).is_err(),
+        "Stop must wait for the observer to drain already-pending transitions"
+    );
+    assert!(
+        r.seek_program(epoch, 129).is_err(),
+        "Seek must not be accepted and then lost under queue pressure"
+    );
+    let queued = r.drain_program_transitions();
+    assert_eq!(queued.len(), 256);
+    render(&mut r, 260);
+    let completed = r.snapshot().program;
+    assert_eq!(completed.status, ProgramStatus::Complete);
+    let remainder = r.drain_program_transitions();
+    assert_eq!(remainder.len(), 4);
+    assert_eq!(
+        queued
+            .iter()
+            .filter(|transition| transition.kind == ProgramTransitionKind::Started)
+            .count(),
+        128
+    );
+    assert_eq!(
+        queued
+            .iter()
+            .filter(|transition| matches!(
+                transition.kind,
+                ProgramTransitionKind::Ended(ProgramEndReason::Completed)
+            ))
+            .count(),
+        128
+    );
+    assert_eq!(
+        remainder
+            .iter()
+            .filter(|transition| transition.kind == ProgramTransitionKind::Started)
+            .count(),
+        2
+    );
+    assert_eq!(
+        remainder
+            .iter()
+            .filter(|transition| matches!(
+                transition.kind,
+                ProgramTransitionKind::Ended(ProgramEndReason::Completed)
+            ))
+            .count(),
+        2
+    );
+}
+
+#[test]
+fn clear_session_silences_and_retires_program_even_when_observer_queue_is_full() {
+    let mut r = runtime();
+    let prepared = r
+        .prepare_program(program_with_card_count(
+            130,
+            ProgramEnd::DeviceFrames(1),
+            120.0,
+        ))
+        .unwrap();
+    let epoch = r.start_program(prepared).unwrap();
+    r.service().unwrap();
+    render(&mut r, 260);
+    assert_eq!(r.snapshot().program.status, ProgramStatus::WaitingObserver);
+
+    // Session reset is a custody boundary: even though the observer must
+    // drain the earlier event first, old program PCM stops at this callback.
+    r.clear_session().unwrap();
+    r.service().unwrap();
+    assert!(render(&mut r, 1).iter().all(|sample| *sample == 0.0));
+    assert_eq!(r.snapshot().program.status, ProgramStatus::WaitingObserver);
+
+    let first_batch = r.drain_program_transitions();
+    assert_eq!(first_batch.len(), 256);
+    assert!(render(&mut r, 1).iter().all(|sample| *sample == 0.0));
+    assert_eq!(r.snapshot().program.status, ProgramStatus::Stopped);
+    let final_batch = r.drain_program_transitions();
+    assert!(final_batch.iter().any(|transition| {
+        transition.epoch == epoch
+            && transition.kind == ProgramTransitionKind::Ended(ProgramEndReason::Stop)
+    }));
+}
+
+#[test]
+fn clear_session_stops_an_audible_program_at_the_next_callback_boundary() {
+    let mut r = runtime();
+    let epoch = r
+        .start_program(
+            r.prepare_program(program_with_card_count(
+                1,
+                ProgramEnd::DeviceFrames(10_000),
+                120.0,
+            ))
+            .unwrap(),
+        )
+        .unwrap();
+    r.service().unwrap();
+    assert!(render(&mut r, 2).iter().any(|sample| *sample != 0.0));
+    r.clear_session().unwrap();
+    r.service().unwrap();
+    assert!(render(&mut r, 4).iter().all(|sample| *sample == 0.0));
+    assert_eq!(r.snapshot().program.status, ProgramStatus::Stopped);
+    assert!(r.drain_program_transitions().iter().any(|transition| {
+        transition.epoch == epoch
+            && transition.kind == ProgramTransitionKind::Ended(ProgramEndReason::Stop)
+    }));
+}
+
 #[test]
 fn production_graph_is_silent_stopped_and_has_one_device_clock() {
     let mut r = runtime();
@@ -643,11 +1171,8 @@ fn legacy_capture_plays_exactly_but_clear_is_required_before_new_recording() {
 fn canonical_metronome_uses_rounded_denominator_beats_without_boundary_drift() {
     let mut r = runtime();
     let beat = audio_primitives::frames_per_beat(1000, 137.0, 8);
-    let mut pattern = SequencerPattern::metronome(
-        137.0,
-        TimeSignature::new(3, 8),
-        crate::Subdivision::QUARTER,
-    );
+    let mut pattern =
+        SequencerPattern::metronome(137.0, TimeSignature::new(3, 8), crate::Subdivision::QUARTER);
     pattern.tracks[0].sound =
         Sound::sample_with_buffer("impulse", SampleBuffer::new(vec![0.5, 0.0], 1000));
     r.set_click_pattern(pattern).unwrap();
@@ -668,19 +1193,31 @@ fn exact_card_preview_preserves_short_duration_and_refuses_unrepresentable_outpu
     r.preview_card_pitches(&[220.0, 330.0], 0.06, 30.0).unwrap();
     let revision = r.shared.preview_revision.load(Ordering::Acquire);
     for (duration, spacing) in [(0.0001, 0.0), (0.4, 0.0001), (1e20, 0.0)] {
-        assert!(r.preview_card_pitches(&[220.0, 330.0], duration, spacing).is_err());
+        assert!(
+            r.preview_card_pitches(&[220.0, 330.0], duration, spacing)
+                .is_err()
+        );
         assert_eq!(r.shared.preview_revision.load(Ordering::Acquire), revision);
     }
     let began = std::time::Instant::now();
     let completed = loop {
-        if let Some(completed) = r.preview.take_completion() { break completed; }
+        if let Some(completed) = r.preview.take_completion() {
+            break completed;
+        }
         assert!(began.elapsed() < std::time::Duration::from_secs(2));
         std::thread::yield_now();
     };
-    assert_eq!(completed.buffer.data.len(), 60, "exact Card must not inherit the generic 100-frame minimum");
+    assert_eq!(
+        completed.buffer.data.len(),
+        60,
+        "exact Card must not inherit the generic 100-frame minimum"
+    );
     let mut backing = song(1);
     backing.playing = true;
     r.set_song(backing).unwrap();
     assert!(r.preview_card_pitches(&[220.0], 0.2, 0.0).is_err());
-    assert!(r.song().playing, "a refused preview retains the admitted backing");
+    assert!(
+        r.song().playing,
+        "a refused preview retains the admitted backing"
+    );
 }

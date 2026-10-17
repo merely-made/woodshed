@@ -1,0 +1,15 @@
+# Fresh process on the same isolated sealed profile. The authored Cards and
+# accepted history reopen exactly, while run state belongs only to the prior
+# process's device epoch and starts stopped here.
+settle 90
+ui-zoom 1
+assert snap practice-saved == true
+assert snap practice-save-problem == false
+assert snap set-cards == 3
+assert snap rehearsal-running == false
+assert snap p5clock-paused == false
+assert snap p5clock-history-count == 6
+assert snap p5clock-status == stopped
+act p5clock-verify-reopen
+capture 01_exact_sealed_clock_reopen
+log P5 shared device-clock fresh-process reopen complete

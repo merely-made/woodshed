@@ -924,7 +924,13 @@ pub(super) fn screen(ui: &UiState) -> UiChild {
                             .attr("class", "overview-detail")
                         },
                     ),
-                    matches!(id,OverviewNodeId::Process(OverviewProcess::Rehearsal)).then(||clickable(el("div",text("Pause rehearsal")).attr("class","t-btn overview-pause-rehearsal"),|ui:&mut UiState,_|ui.stop_rehearsal())),
+                    matches!(id,OverviewNodeId::Process(OverviewProcess::Rehearsal)).then(||clickable(el("div",text(if ui.rehearsal_paused { "Resume rehearsal" } else { "Pause rehearsal" })).attr("class","t-btn overview-pause-rehearsal"),|ui:&mut UiState,_|{
+                        if ui.practice_clock_managed && ui.rehearsal_running {
+                            ui.rehearsal_paused = !ui.rehearsal_paused;
+                        } else {
+                            ui.stop_rehearsal();
+                        }
+                    })),
                     clickable(
                         el("div", text(label)).attr("class", "t-btn overview-open"),
                         move |ui: &mut UiState, _| ui.open_overview_node(id.clone()),

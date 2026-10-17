@@ -54,7 +54,7 @@ pub(super) fn screen(ui: &UiState) -> UiChild {
                     el(
                         "div",
                         text(if ui.is_current_set_rehearsing() {
-                            if ui.rehearsal_pending { "Cancel start" } else { "Pause" }
+                            if ui.rehearsal_paused { "Resume" } else { "Pause" }
                         } else {
                             "Run"
                         }),
@@ -67,6 +67,23 @@ pub(super) fn screen(ui: &UiState) -> UiChild {
                 clickable(
                     el("div", text("Prev")).attr("class", "t-btn"),
                     |ui: &mut UiState, _| {
+                        if ui.practice_clock_managed && ui.is_current_set_rehearsing() {
+                            let set = ui.rehearsal_set();
+                            if !set.cards.is_empty() {
+                                let current = set.cursor.min(set.cards.len() - 1);
+                                let target = if current > 0 {
+                                    current - 1
+                                } else if set.loop_mode == LoopMode::All {
+                                    set.cards.len() - 1
+                                } else {
+                                    current
+                                };
+                                ui.queue_practice_clock_command(
+                                    super::PracticeClockCommand::Seek(target),
+                                );
+                            }
+                            return;
+                        }
                         if ui.is_current_set_rehearsing() {
                             ui.finish_rehearsal_observation(
                                 woodshed_core::history::EngagementKind::Rehearsed,
@@ -81,6 +98,10 @@ pub(super) fn screen(ui: &UiState) -> UiChild {
                 clickable(
                     el("div", text("Next")).attr("class", "t-btn"),
                     |ui: &mut UiState, _| {
+                        if ui.practice_clock_managed && ui.is_current_set_rehearsing() {
+                            ui.advance_rehearsal_cursor();
+                            return;
+                        }
                         if ui.is_current_set_rehearsing() {
                             ui.complete_rehearsal_cursor();
                         }

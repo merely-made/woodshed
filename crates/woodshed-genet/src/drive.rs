@@ -107,6 +107,8 @@ pub fn frame(shared: &mut Shared, ui: &mut UiState) -> bool {
         return false;
     }
     let mut animating = false;
+    let previous_history = ui.practice_history.len();
+    let previous_cursor = ui.rehearsal_set().cursor;
     if let Some(observation) = poll_audio(shared) {
         observation.apply(ui);
     }
@@ -120,24 +122,20 @@ pub fn frame(shared: &mut Shared, ui: &mut UiState) -> bool {
     // have no intervening frames for a long pause.
     ui.now_ms = wall_time_ms();
 
-    refresh_rehearsal_clock(
-        &mut shared.last_rehearsal_step,
-        &mut shared.last_rehearsal_instruction,
-        ui,
-    );
-
     let Some(backend) = shared.backend.as_mut() else {
+        if ui.practice_clock_managed && ui.rehearsal_running {
+            ui.stop_rehearsal();
+            ui.card_timing_notice = Some("Audio output is unavailable. Run requires an active output clock.".into());
+        }
         return false;
     };
-    let now = std::time::Instant::now();
 
     if ui.tuner.enabled {
         ui.tuner.reading = backend.tuner_reading();
         animating = true;
     }
     animating |= ui.song_playing || backend.needs_service();
-    animating |= rehearsal_dwell(&mut shared.last_rehearsal_step, ui, backend, now);
-    animating |= transport_steps(&mut shared.last_arp_step, ui, backend, now);
+    animating |= backend.sync_practice_clock(ui);
 
     // MIDI: reflect polled state; slave the transport to incoming clock.
     ui.midi.clock_bpm = midi_clock_bpm;
@@ -173,6 +171,12 @@ pub fn frame(shared: &mut Shared, ui: &mut UiState) -> bool {
     // Two-way the card-rename buffer: adopt the selected card's label when the
     // selection moves, else commit what was typed.
     ui.sync_card_rename();
+    // Device-originated Card starts/completions can arrive without an input
+    // dispatch. Publish their history/cursor through the ordinary guarded save
+    // path, including the final completion after the user presses Next.
+    if ui.practice_history.len() != previous_history || ui.rehearsal_set().cursor != previous_cursor {
+        crate::capture_persistence::persist(shared, ui);
+    }
     animating
 }
 
@@ -184,6 +188,7 @@ pub fn clock_out(ui: &UiState) -> (bool, bool, f32) {
 
 /// An occurrence edit, cursor change, tempo change or resume starts a fresh
 /// dwell. The old instruction's elapsed time must not advance its replacement.
+#[cfg(test)]
 fn refresh_rehearsal_clock(
     last: &mut Option<std::time::Instant>,
     instruction: &mut Option<String>,
@@ -234,6 +239,7 @@ pub(crate) fn service_audition_request(
         ui.finish_audition_admission(request, result);
     }
 }
+#[cfg(test)]
 fn service_card_requests(ui: &mut UiState, backend: &mut impl CardPreviewAdmission) {
     // Consume only the leading audition/Card/cancel commands; other requests keep
     // their ordering and remain for the ordinary dispatch tail.
@@ -261,6 +267,7 @@ fn service_card_requests(ui: &mut UiState, backend: &mut impl CardPreviewAdmissi
 
 /// The rehearsal set's dwell transport: hold each card for its own dwell, then
 /// advance and voice what you land on.
+#[cfg(test)]
 fn rehearsal_dwell(
     last: &mut Option<std::time::Instant>,
     ui: &mut UiState,
@@ -298,51 +305,6 @@ fn rehearsal_dwell(
         _ => {},
     }
     ui.rehearsal_running
-}
-
-/// The arpeggio / exercise / scale-run step clock: one step per beat at the
-/// transport bpm, sonified as it lands.
-fn transport_steps(
-    last: &mut Option<std::time::Instant>,
-    ui: &mut UiState,
-    backend: &mut crate::audio::CpalBackend,
-    now: std::time::Instant,
-) -> bool {
-    let stepping =
-        ui.stage.arpeggio_playing || ui.stage.exercise_playing || ui.stage.scale_run_playing;
-    if !stepping {
-        *last = None;
-        return false;
-    }
-    let beat = std::time::Duration::from_secs_f32(60.0 / ui.transport.bpm.max(30.0));
-    match last {
-        Some(t) if now.duration_since(*t) >= beat => {
-            // Sonify the step we land on — the arpeggio climbs audibly, the
-            // exercise plays its notes.
-            let note_secs = beat.as_secs_f32() * 0.85;
-            if ui.stage.arpeggio_playing {
-                ui.stage.arpeggio_advance();
-                if let Some(freq) = ui.stage.arpeggio_current_pitch_hz() {
-                    backend.preview_note(freq, note_secs);
-                }
-            }
-            if ui.stage.exercise_playing {
-                ui.stage.exercise_advance();
-                if let Some(freq) = ui.stage.exercise_current_pitch_hz() {
-                    backend.preview_note(freq, note_secs);
-                }
-            }
-            if ui.stage.scale_run_playing {
-                if let Some(freq) = ui.stage.scale_run_tick() {
-                    backend.preview_note(freq, note_secs);
-                }
-            }
-            *last = Some(now);
-        },
-        None => *last = Some(now),
-        _ => {},
-    }
-    true
 }
 
 #[cfg(test)]

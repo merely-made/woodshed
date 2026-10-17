@@ -1733,8 +1733,9 @@ settings after restart.
 
 ### P5. Unify the clock and visual articulation
 
-**Current state: open.** Existing metronome and transport pieces do not yet
-form the stable shared clock/event-position contract in this phase.
+**Current state: in progress (2026-10-16).** P5a is qualified below. The full
+shared clock is now being implemented against `21d0c2e`: the existing
+OutputRuntime processor will own musical position as well as output frames.
 
 Create one core clock snapshot with beat, subdivision, Set cursor, Card-local
 progress, and active sequence step. Map scale, arpeggio, chord, and exercise
@@ -1744,6 +1745,84 @@ same event the audio backend articulates.
 Done when changing tempo affects click, automatic Card dwell, audio preview,
 and highlighted dots together; pause/resume does not drift; and manual Cards
 remain manually advanceable.
+
+**Maintainer ruling (2026-10-16):** Pause freezes the current Card position and
+sound; Resume continues from there. Tempo edits preserve beat position. An
+explicit Seconds hold keeps its authored active duration, excluding paused
+time. Manual plays its ordered phrase once, then waits for explicit Next.
+
+The pure core lowers retained Cards and live Stage sequences to disposable
+occurrence-addressed events, including repeated visits to the same pitch or
+physical contact. A chord event can contain several contacts. The desktop
+maps that result to an opaque-token audio program; neither the core nor audio
+acquires authority over authored Sets, persistence, or practice history. The
+audio program covers the Set so automatic boundaries do not wait for a UI
+poll. An unsupported future Card remains a refusal sentinel at its actual
+boundary. Only a correlated processor Started transition, validated against
+the current session and frozen source, can open that Card's observation.
+
+Prepared native-rate periodic PCM supplies pitch without callback synthesis
+or tempo-dependent resampling. The callback schedules events and click from
+one beat phase and applies envelopes to fixed voice slots. Preparation and
+resource limits remain audio-owned. A bounded transition queue holds musical
+position if the observer falls behind; it cannot silently drop history or
+skip Cards. Pause/Resume keeps one accepted observation span and measures
+practice from active output frames. Material/setup edits invalidate the
+disposable program; BPM edits retime it without reopening the span. Session
+replacement clears every transient cursor and program generation.
+
+Implementation and qualification sequence:
+
+1. Lower Card and live Stage events in core, preserving authored timing,
+   physical contacts, repeated occurrences, marks and unavailable material.
+2. Add bounded prepared programs, epoch-checked commands, coherent position
+   snapshots and lossless Card transitions to the existing OutputRuntime.
+   Preserve backing/capture clocks and reject competing transport custody.
+3. Bind Run/Pause/Resume/Next, dwell, live sequences and both Fretboards to
+   processor observations. Keep explicit auditions on their existing seam;
+   validate source identity before admitting history.
+4. Run focused varied-block offline checks for timing, pause, retime, Seconds,
+   Manual, stale commands, refusal, observer pressure and callback allocation.
+   Then run affected package gates, desktop build, a guarded native flow and
+   exact sealed reopening. Source, CPU, native and reopened claims remain
+   separate until each has its own evidence.
+
+The independent Woodshed preservation/input audit uses an isolated checkout.
+It released primary source ownership and then the Cargo/native slot to P5;
+one owner schedules the heavy builds and native runs. P5 plans no independent
+supplier or lockfile changes.
+
+**Implementation checkpoint (2026-10-17):** core lowering, the bounded prepared
+program, view intent/observation binding and desktop adaptation are implemented.
+Focused checks pass: eight core cases, nine view cases, 38 audio/runtime cases
+and nine desktop clock cases. These are CPU/offline claims; native and sealed
+reopening qualification are pending. Live Stage clocks use the same processor
+and project their counters and physical contacts from its event token. Pausing
+either a live sequence or a Card preserves its epoch and PCM position. Paused
+Next selects the following Card without crediting a start before Resume.
+
+The processor publishes applied BPM, click subdivision, beat position, Card
+frames, active practice frames and opaque Card/event tokens coherently. Manual
+wait keeps its accepted span open until explicit Next; pause and observer
+pressure exclude time from the active-frame measure. Device-originated history
+and cursor changes enter the ordinary guarded save path without requiring a
+later input action. Snapshot polling cannot prove every played pitch, so managed
+history leaves `presented_midi` unset rather than constructing a partial heard
+sequence from occasional UI frames.
+
+The transition ring preserves Started/Ended ordering under observer pressure.
+Deferred cursor seeks coalesce to the latest destination; Stop dominates. A
+session clear silences the old program at the callback boundary even while an
+older transition awaits observation. Fixed chord-strum offsets share an onset
+base, and the 256 voice slots retain the prior Card pitch bound. Prepared tone
+PCM retains the existing harmonic profile and host gain.
+
+Remote `main` advanced to `7c8d19d` during validation, adding qualified native
+arrangement span gestures and Mere `d1e1d7aa`. Preserve that work in a normal
+merge and repeat the affected gates before native qualification. The supplier
+change belongs to that concurrent arrangement work; P5 introduces no separate
+supplier or lockfile policy. Preservation/input audit commits `07c170b` and
+`860c5c1` remain isolated and are not part of this P5 checkpoint.
 
 #### P5a. Admit one resolved Card timing contract (2026-10-16)
 

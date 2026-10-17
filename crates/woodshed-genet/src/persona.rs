@@ -203,6 +203,7 @@ fn settle(
 /// process-wide authored library and its current editor model. Reloading that
 /// library here would introduce profile/environment I/O during a session reset.
 fn reset_for_persona(ui: &mut woodshed_views::stage::UiState) {
+    let practice_clock_managed = ui.practice_clock_managed;
     let appearance = std::mem::take(&mut ui.appearance);
     let authoring_available = ui.appearance_authoring_available;
     let library_notice = if authoring_available {
@@ -211,6 +212,7 @@ fn reset_for_persona(ui: &mut woodshed_views::stage::UiState) {
         ui.appearance_notice.take()
     };
     *ui = woodshed_views::stage::UiState::new();
+    ui.practice_clock_managed = practice_clock_managed;
     ui.appearance = appearance;
     ui.appearance_authoring_available = authoring_available;
     ui.appearance_notice = library_notice;
@@ -230,6 +232,20 @@ mod tests {
     use taproot::Selector;
     use winit::keyboard::NamedKey;
     use woodshed_views::stage::{UiChild, UiState};
+
+    #[test]
+    fn persona_reset_keeps_the_host_clock_binding_and_clears_run_position() {
+        let mut ui = UiState::new();
+        ui.enable_practice_clock();
+        ui.stage_clock_contacts = vec![(0, 1)];
+        ui.stage_clock_event = Some(3);
+        reset_for_persona(&mut ui);
+        assert!(ui.practice_clock_managed);
+        assert!(ui.stage_clock_contacts.is_empty());
+        assert_eq!(ui.stage_clock_event, None);
+        assert!(!ui.rehearsal_running);
+        assert!(ui.rehearsal_clock_program.is_none());
+    }
 
     #[test]
     fn switching_persona_retains_the_global_authored_library_but_restores_incoming_selection() {

@@ -1,0 +1,77 @@
+# Isolated sealed native run. Every wait and receipt below reads the actual
+# device-owned program snapshot; no scenario action fabricates a clock result.
+settle 90
+ui-zoom 1
+assert snap practice-saved == true
+assert snap rehearsal-running == false
+act p5clock-device-clock-example
+settle 5
+assert snap set-cards == 3
+click .workspace-panel Set
+settle 5
+click .film-label Beat clock 20 BPM
+settle 2
+click .t-btn Run
+act p5clock-await-card-0
+assert snap p5clock-status == playing
+assert snap p5clock-card-index == 0
+assert snap p5clock-sample-rate >= 1
+wait 1000
+click .t-btn Pause
+settle 2
+assert snap p5clock-paused == true
+assert snap p5clock-status == paused
+act p5clock-save-paused
+capture 01_paused_device_position
+
+# Pause holds the exact device-frame/beat position while the output frame
+# counter itself continues. The tempo edit is made through the visible Card
+# control while paused and must update the applied BPM without changing that
+# position or run epoch.
+wait 1000
+act p5clock-check-paused
+click .t-btn +
+settle 2
+assert snap p5a-card-bpm == 25
+act p5clock-check-paused-retime
+capture 02_paused_retimed_same_position
+
+act p5clock-save-resume-point
+click .t-btn Resume
+wait 1000
+act p5clock-check-resumed
+assert snap p5clock-status == playing
+assert snap p5clock-card-index == 0
+act p5clock-await-card-1
+assert snap p5clock-status == playing
+assert snap p5clock-card-index == 1
+assert snap p5clock-bpm == 20
+act p5clock-save-seconds-point
+
+# The visible BPM edit on this Seconds Card changes the clock tempo while its
+# target duration remains the authored two seconds. Its accepted history row
+# is checked against measured device frames at the end of the run.
+click .t-btn +
+settle 1
+assert snap p5a-card-bpm == 25
+act p5clock-check-seconds-retime
+act p5clock-await-manual
+assert snap p5clock-status == waiting_manual
+assert snap p5clock-card-index == 2
+assert snap p5clock-history-count == 5
+act p5clock-save-manual-point
+wait 2000
+act p5clock-check-manual-wait
+assert snap p5clock-status == waiting_manual
+capture 03_manual_waits_for_next
+
+# Manual has no automatic dwell. The actual visible Next control completes it.
+click .t-btn Next
+act p5clock-await-complete
+assert snap p5clock-status == complete
+assert snap rehearsal-running == false
+assert snap p5clock-history-count == 6
+assert snap practice-saved == true
+act p5clock-save-final
+capture 04_completed_run_and_history
+log P5 shared device-clock seed complete

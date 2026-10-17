@@ -20,6 +20,7 @@ use woodshed_core::loop_plan::{LoopPlan, LoopSegmentId};
 use woodshed_core::song::SongDoc;
 
 mod loop_projection;
+mod practice_clock;
 pub(crate) use loop_projection::CaptureSnapshot;
 use loop_projection::LoopCaptures;
 
@@ -140,6 +141,7 @@ impl InputSession {
 type InputFactory = Box<dyn FnMut() -> Result<InputSession, String>>;
 
 pub struct CpalBackend {
+    practice_clock: practice_clock::PracticeClockHost,
     /// One context, device stream and sample clock serve all output lanes.
     output: Option<OutputRuntime>,
     native_output: bool,
@@ -517,6 +519,7 @@ impl CpalBackend {
             .as_ref()
             .is_some_and(|output| output.native_stream_count() != 0);
         Self {
+            practice_clock: practice_clock::PracticeClockHost::default(),
             output,
             native_output,
             heartbeat: None,
