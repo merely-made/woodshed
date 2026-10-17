@@ -1,0 +1,13 @@
+{
+  "revision": "2d95d95e9d843ed6ebb0d38f47f77444823834bb",
+  "base": "df30e97dddcf8f3dc5e9f0da93c76350687212e6",
+  "source_hashes": {
+    "crates/cambium/cambium-rootstock/src/owned_layout.rs": "06244e403e768f0d321e9a13b6207440f6bc6cbd9183259366c765e4e495c216",
+    "crates/cambium/cambium-rootstock/src/owned_layout/tests.rs": "08961eecf899b32c26bdc65101181207888723b091a5a66b5448926f78fd1470",
+    "crates/cambium/cambium-rootstock/src/host.rs": "9804ac00e9be68d82a4ee5c2f0b7a35f6f8b254b2787d4fba68247f42811a080",
+    "Cargo.toml": "0ca0f8bb947d9b98ab95fe399521d275e185b1ddf8f8334667ab310db9959ce4",
+    "Cargo.lock": "e7e5c7c71ccbf4c894d4e8aeaa300b413a2aa7fbbb52794ffc2d4aeb05f8dcaa"
+  },
+  "full_gate": "checks/supplier-final-gate.json",
+  "receiving_status_when_this_source_manifest_was_created": "pending; final status belongs to the qualification receipt"
+}

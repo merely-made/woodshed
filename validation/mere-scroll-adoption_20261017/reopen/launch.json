@@ -1,0 +1,33 @@
+{
+  "app": "/Users/markik/Code/testing/woodshed/mere-scroll-adoption-20261017/native-v2/reopen/Woodshed Scroll Adoption.app",
+  "env": {
+    "WOODSHED_CAPTURE_DIR": "/Users/markik/Code/testing/woodshed/mere-scroll-adoption-20261017/native-v2/reopen",
+    "WOODSHED_RECEIPT": "/Users/markik/Code/testing/woodshed/mere-scroll-adoption-20261017/native-v2/reopen/scenario.done",
+    "WOODSHED_SCENARIO": "/Users/markik/Code/testing/woodshed/mere-scroll-adoption-20261017/native-v2/reopen/scenario.scn",
+    "WOODSHED_PRESENTATION_TIMEOUT_SECS": "60",
+    "WOODSHED_WIDTH": "1180",
+    "WOODSHED_HEIGHT": "1000",
+    "TMPDIR": "/tmp",
+    "CAMBIUM_HOST_FRAME_TRACE": "1",
+    "WOODSHED_STATE": "/Users/markik/Code/testing/woodshed/mere-scroll-adoption-20261017/native-v2/profile/practice.bin",
+    "WOODSHED_SETTINGS": "/Users/markik/Code/testing/woodshed/mere-scroll-adoption-20261017/native-v2/profile/settings.json",
+    "GRAPHSHELL_APP_ENDPOINT": "/tmp/ws-scroll-prod1017-v2.sock",
+    "XDG_DATA_HOME": "/Users/markik/Code/testing/woodshed/mere-scroll-adoption-20261017/native-v2/data",
+    "XDG_CONFIG_HOME": "/Users/markik/Code/testing/woodshed/mere-scroll-adoption-20261017/native-v2/config",
+    "XDG_CACHE_HOME": "/Users/markik/Code/testing/woodshed/mere-scroll-adoption-20261017/native-v2/cache",
+    "MERE_ROOT": "/Users/markik/Code/testing/woodshed/mere-scroll-adoption-20261017/native-v2/mere"
+  },
+  "source": {
+    "revision": "6b2c6b3e48cd7c029830a0928cf1b8d1afa24fcf",
+    "worktree": "",
+    "binaries": {
+      "woodshed": "f43227bce168df2e629ebcead9b31b1731eee8d994d03562255fb0fe1ff2e780",
+      "launcher": "858253f018e5120766c99fa9eb9e67c75a5436b72dcb65e86fd547bc5c0908a1"
+    },
+    "source_hashes_sha256": "610a86e373891b4b5a22d751b9674000e447d2045c9ffa4b0530acbb88f756e1"
+  },
+  "bundle_id": "made.merely.woodshed.scrolladoption20261017",
+  "launcher_sha256": "858253f018e5120766c99fa9eb9e67c75a5436b72dcb65e86fd547bc5c0908a1",
+  "binary_sha256": "f43227bce168df2e629ebcead9b31b1731eee8d994d03562255fb0fe1ff2e780",
+  "scenario_sha256": "d901c9ebcf2c21ffab9f6d497cd99ef1b49f9d3190b4ad7dd06ec1a24905ae6a"
+}

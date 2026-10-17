@@ -1,0 +1,9 @@
+{
+  "accepted": false,
+  "reason": "60-second presentation stall after resize to short window; host reported app_active=false and surface Occluded",
+  "scenario_result": "fail",
+  "product_exit_code": 0,
+  "binary_unchanged": true,
+  "keeper_stopped_original_fixture_files_unchanged": true,
+  "retry": "foreground Finder launch of same supervised launcher/product; do not weaken presentation assertions"
+}

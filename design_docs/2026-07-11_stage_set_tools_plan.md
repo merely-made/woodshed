@@ -2376,12 +2376,22 @@ supplier identities and prior dependency edges remain unchanged.
 and optional document-scroll query are ported onto main-based candidate
 `2d95d95e9`, with the current drained-mutation relayout regression. The consumer
 adopts locked Genet `917f88e6`, unifies Netrender at exact `e8cda06`, and migrates
-role queries to retained semantic projections. Root, Hocket, Redshank and recipe
-qualification are in progress; native scroll, sealed reopen and P2 receiving
-checks remain pending. Publication remains separate. See the
+role queries to retained semantic projections. Root (700 cases plus five child invocations), Mere (315), Hocket (129),
+Redshank (270), recipe (11) and two-mount (4) gates pass. Committed receiving
+source `6b2c6b3` passes the wide/compact/short/125% scroll matrix, sealed fresh
+reopening and all three P2 canvas command/wheel surfaces, producing 31 captures.
+Seed, reopened and separate-reference WAVs match byte-for-byte; owner, Seconds
+clock and decoded envelope PCM remain exact with input unopened. All apps exit
+normally with status zero. The background occlusion trial is excluded.
+Publication remains pending. See the
 [production adoption receipt](../validation/mere-scroll-adoption_20261017/README.md).
 
 ### P8. Adaptive polish and release acceptance
+
+The October 17 production scroll/P2 receiving run retains Related Fit label
+overlap, also present in the hash-verified October 15 capture. Camera controls
+and hit-face geometry pass; graph-label readability remains polish work. The
+recorder scroll matrix has no reviewed black lower strip or footer clipping.
 
 **Current state: open.** Windows alpha behavior exists. Three-width product
 acceptance, touch/reduced-motion coverage, and Mac/Linux receipts remain open.

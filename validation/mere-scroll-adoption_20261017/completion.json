@@ -1,0 +1,23 @@
+{
+  "source_revision": "6b2c6b3e48cd7c029830a0928cf1b8d1afa24fcf",
+  "seed_and_reopen_scenarios_passed": true,
+  "owned_apps_and_keeper_exited": true,
+  "keeper_original_fixture_files_unchanged": true,
+  "capture_companions_unchanged": true,
+  "exact_reopen_keys": [
+    "set",
+    "owner",
+    "looper",
+    "saved_backing",
+    "manifest",
+    "captures",
+    "admitted",
+    "backend_admitted",
+    "requested",
+    "wav_frames",
+    "wav_digest"
+  ],
+  "actual_worker_wav_sha256": "311ee69228568df4d75a94b8604aff59a5a6e75849f890a68e410c20088a16c8",
+  "input_unopened": true,
+  "raw_audio_local_only": true
+}

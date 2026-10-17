@@ -1,6 +1,6 @@
 # CoreAudio input admission — 2026-10-17
 
-Status: source, software checks, native selected-Card recording, sealed fresh reopening and separate export reference pass on committed candidate `10486bcea3248ccd6adc80e55135435b9880ceca`. Local commits only; publication is pending.
+Status: source, software checks, native selected-Card recording, sealed fresh reopening and separate export reference pass on committed candidate `10486bcea3248ccd6adc80e55135435b9880ceca`. Published to `main` through `7b68b4bfdc68c3180eb033bef35e03f01b620e2e`; the original machine receipt retains its pre-publication status as historical evidence.
 
 Baseline: Woodshed `4d9434a187e4eea2d230f779c80a47a39a31125f`.
 

@@ -1,0 +1,23 @@
+RESULT ok
+P2: canvas commands over the Session Mere, relationship editor and Related graph
+captured 01_overview_zoomed
+captured 02_overview_fit
+captured 03_relationship_zoomed
+captured 04_relationship_fit
+captured 04b_relationship_wheel
+captured 05_related_zoomed
+captured 06_related_fit
+captured 07_related_wheel
+captured 08_overview_wheel
+P2 canvas commands held on all three surfaces
+capture 01_overview_zoomed 2360x2000 digest=6e98625a8a3bfbd3 file=/Users/markik/Code/testing/woodshed/mere-scroll-adoption-20261017/native-v2/canvas/01_overview_zoomed.png
+capture 02_overview_fit 2360x2000 digest=68a2cc6ffd65840d file=/Users/markik/Code/testing/woodshed/mere-scroll-adoption-20261017/native-v2/canvas/02_overview_fit.png
+capture 03_relationship_zoomed 2360x2000 digest=4c141f44c20b8691 file=/Users/markik/Code/testing/woodshed/mere-scroll-adoption-20261017/native-v2/canvas/03_relationship_zoomed.png
+capture 04_relationship_fit 2360x2000 digest=b461a9ab3737101f file=/Users/markik/Code/testing/woodshed/mere-scroll-adoption-20261017/native-v2/canvas/04_relationship_fit.png
+capture 04b_relationship_wheel 2360x2000 digest=a500fab3a7cf1ff7 file=/Users/markik/Code/testing/woodshed/mere-scroll-adoption-20261017/native-v2/canvas/04b_relationship_wheel.png
+capture 05_related_zoomed 2360x2000 digest=035a73d9bf525891 file=/Users/markik/Code/testing/woodshed/mere-scroll-adoption-20261017/native-v2/canvas/05_related_zoomed.png
+capture 06_related_fit 2360x2000 digest=96017bee7d32ce84 file=/Users/markik/Code/testing/woodshed/mere-scroll-adoption-20261017/native-v2/canvas/06_related_fit.png
+capture 07_related_wheel 2360x2000 digest=2991b9f83ba6d2dd file=/Users/markik/Code/testing/woodshed/mere-scroll-adoption-20261017/native-v2/canvas/07_related_wheel.png
+capture 08_overview_wheel 2360x2000 digest=81df43373d9c6ba7 file=/Users/markik/Code/testing/woodshed/mere-scroll-adoption-20261017/native-v2/canvas/08_overview_wheel.png
+frames: 9 captured, 0 blank, 9 distinct digests
+presentation: 275 frames, 276 redraws, 1 unpresented redraws

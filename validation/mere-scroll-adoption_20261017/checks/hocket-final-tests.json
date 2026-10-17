@@ -1,0 +1,48 @@
+{
+  "command": [
+    "cargo",
+    "test",
+    "--offline",
+    "--locked",
+    "-j2",
+    "-p",
+    "hocket-genet",
+    "-p",
+    "hocket-engine",
+    "--quiet"
+  ],
+  "cwd": "/Users/markik/Code/repos/woodshed/ports/hocket",
+  "started_utc": "2026-10-17T20:46:06.638764+00:00",
+  "ended_utc": "2026-10-17T20:46:40.428400+00:00",
+  "exit_code": 0,
+  "suites": [
+    {
+      "passed": 36,
+      "failed": 0,
+      "ignored": 0,
+      "measured": 0,
+      "filtered_out": 0
+    },
+    {
+      "passed": 3,
+      "failed": 0,
+      "ignored": 0,
+      "measured": 0,
+      "filtered_out": 0
+    },
+    {
+      "passed": 90,
+      "failed": 0,
+      "ignored": 2,
+      "measured": 0,
+      "filtered_out": 0
+    },
+    {
+      "passed": 0,
+      "failed": 0,
+      "ignored": 0,
+      "measured": 0,
+      "filtered_out": 0
+    }
+  ]
+}

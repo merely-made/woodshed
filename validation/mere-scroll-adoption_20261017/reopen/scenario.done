@@ -1,0 +1,26 @@
+RESULT ok
+captured 01_wide_baseline_edges
+captured 02_compact_before_scroll
+captured 03_compact_third_card_edges
+captured 04_compact_transport_boundary_edges
+captured 05_short_workspace_scroll_edges
+captured 06_short_third_card_edges
+captured 07_short_transport_boundary_edges
+captured 08_zoom125_before_scroll
+captured 09_zoom125_third_card_edges
+captured 10_zoom125_transport_boundary_edges
+captured 11_zoom125_recovered_envelope_edges
+Production Mere scroll sealed reopen complete
+capture 01_wide_baseline_edges 2360x2000 digest=d72940ce481fd33b file=/Users/markik/Code/testing/woodshed/mere-scroll-adoption-20261017/native-v2/reopen/01_wide_baseline_edges.png
+capture 02_compact_before_scroll 840x2200 digest=76a995d5b23f58a5 file=/Users/markik/Code/testing/woodshed/mere-scroll-adoption-20261017/native-v2/reopen/02_compact_before_scroll.png
+capture 03_compact_third_card_edges 840x2200 digest=9037afa645295085 file=/Users/markik/Code/testing/woodshed/mere-scroll-adoption-20261017/native-v2/reopen/03_compact_third_card_edges.png
+capture 04_compact_transport_boundary_edges 840x2200 digest=3062970dd0eadcb2 file=/Users/markik/Code/testing/woodshed/mere-scroll-adoption-20261017/native-v2/reopen/04_compact_transport_boundary_edges.png
+capture 05_short_workspace_scroll_edges 840x1440 digest=707b256350898411 file=/Users/markik/Code/testing/woodshed/mere-scroll-adoption-20261017/native-v2/reopen/05_short_workspace_scroll_edges.png
+capture 06_short_third_card_edges 840x1440 digest=07b3f566a7ccfebe file=/Users/markik/Code/testing/woodshed/mere-scroll-adoption-20261017/native-v2/reopen/06_short_third_card_edges.png
+capture 07_short_transport_boundary_edges 840x1440 digest=0b3d4e4788396b52 file=/Users/markik/Code/testing/woodshed/mere-scroll-adoption-20261017/native-v2/reopen/07_short_transport_boundary_edges.png
+capture 08_zoom125_before_scroll 2360x2000 digest=1b1510821739b2f6 file=/Users/markik/Code/testing/woodshed/mere-scroll-adoption-20261017/native-v2/reopen/08_zoom125_before_scroll.png
+capture 09_zoom125_third_card_edges 2360x2000 digest=caafd08b977fbeb3 file=/Users/markik/Code/testing/woodshed/mere-scroll-adoption-20261017/native-v2/reopen/09_zoom125_third_card_edges.png
+capture 10_zoom125_transport_boundary_edges 2360x2000 digest=cc39e71b7c132401 file=/Users/markik/Code/testing/woodshed/mere-scroll-adoption-20261017/native-v2/reopen/10_zoom125_transport_boundary_edges.png
+capture 11_zoom125_recovered_envelope_edges 2360x2000 digest=2e85c2a1eb55ec3a file=/Users/markik/Code/testing/woodshed/mere-scroll-adoption-20261017/native-v2/reopen/11_zoom125_recovered_envelope_edges.png
+frames: 11 captured, 0 blank, 11 distinct digests
+presentation: 436 frames, 437 redraws, 1 unpresented redraws
