@@ -359,18 +359,21 @@ pub fn projection(ui: &super::UiState) -> RecorderProjection<'_, RecorderKey> {
         "Capture target unavailable · stop all loops before recording again".into()
     } else if observed.capture_invalid {
         "Capture input fault · take will be rejected on retirement".into()
+    } else if busy && observed.recording_bar.is_none() && observed.input_rate.is_none() {
+        "Opening microphone · recording starts after input admission".into()
     } else if busy && observed.recording_bar.is_none() {
         "Capture armed / waiting for playback or boundary".into()
     } else {
         observed.status.clone().into()
     };
-    transport.input_status = observed
+    transport.input_status = if busy && observed.recording_bar.is_none() && observed.input_rate.is_none() {
+        "Input admission pending · recording has not started".to_string()
+    } else { observed
         .input_rate
         .map_or_else(
             || "Input unopened · opens on Record".to_string(),
             |rate| format!("Input configuration: {rate} Hz"),
-        )
-        .into();
+        ) }.into();
     transport.record_note = focus
         .map_or_else(
             || if set_capture_busy {
@@ -826,12 +829,15 @@ mod tests {
         let selected = ui.loop_selected;
         let armed = projection(&ui);
         assert_eq!(armed.transport.record_note, "Armed Card 1");
+        assert!(armed.transport.status.contains("Opening microphone"));
+        assert!(armed.transport.input_status.contains("recording has not started"));
         assert_eq!(armed.transport.meter_heading, "Capture timing");
         assert_eq!(armed.transport.meter_label.as_deref(), Some("90 bpm · 7/4 × 1"));
         assert!(armed.lanes[1].selected && !armed.lanes[0].selected);
         assert_eq!(armed.lanes[0].recording, RecordingState::Armed);
         drop(armed);
         ui.recorder_observation.recording_bar = Some(0);
+        ui.recorder_observation.input_rate = Some(48_000);
         let display = projection(&ui);
         assert_eq!(display.lanes[0].recording, RecordingState::Recording);
         assert_eq!(display.lanes[1].recording, RecordingState::Idle);

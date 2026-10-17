@@ -21,6 +21,7 @@ struct Observation {
     output_frames: u64,
     output_rate: u32,
     input_rate: Option<u32>,
+    input_admission_pending: bool,
     native_streams: usize,
     playing: bool,
     recording: bool,
@@ -39,11 +40,12 @@ struct State {
     baseline: Option<Observation>,
     last: Option<Observation>,
     observations: u64,
+    admitted_input_rate: Option<u32>,
     result: Option<Result<(), String>>,
 }
 impl State {
     fn new(mode: Mode, target: usize) -> Self {
-        Self { mode, target, first: None, baseline: None, last: None, observations: 0, result: None }
+        Self { mode, target, first: None, baseline: None, last: None, observations: 0, admitted_input_rate: None, result: None }
     }
     fn fail(&mut self, reason: impl Into<String>) { self.result = Some(Err(reason.into())); }
 
@@ -72,13 +74,26 @@ impl State {
                     return Err("timed out awaiting observed active recording after Record/count-in".into());
                 }
                 if !now.capture_busy || now.capture_target != Some(self.target)
-                    || now.capture_epoch.is_none() || now.input_rate.is_none_or(|rate| rate == 0)
+                    || now.capture_epoch.is_none()
                 {
                     return Err("Record was refused, capture stopped, or selected input/target is not admitted".into());
                 }
                 if let Some(first) = &self.first {
-                    if now.capture_epoch != first.capture_epoch || now.input_rate != first.input_rate {
-                        return Err("capture execution or admitted input rate changed during physical dwell".into());
+                    if now.capture_epoch != first.capture_epoch {
+                        return Err("capture execution changed during physical dwell".into());
+                    }
+                }
+                if let Some(rate) = self.admitted_input_rate {
+                    if now.input_rate != Some(rate) {
+                        return Err("admitted input rate changed or disappeared during physical dwell".into());
+                    }
+                } else {
+                    match now.input_rate {
+                        Some(rate) if rate > 0 => self.admitted_input_rate = Some(rate),
+                        None if now.input_admission_pending && self.baseline.is_none() && !now.recording => {
+                            return Ok(false); // explicit one-click reservation; opening time never counts
+                        },
+                        _ => return Err("input is unavailable without an explicit pending admission".into()),
                     }
                 }
                 if !now.recording {
@@ -146,6 +161,7 @@ impl Dwell {
             output_frames: snapshot.device_frames,
             output_rate: observed.output_rate.ok_or("physical output rate not admitted")?,
             input_rate: observed.input_rate,
+            input_admission_pending: backend.input_admission_pending(),
             native_streams: backend.output_stream_count(),
             playing: snapshot.playing,
             recording: snapshot.recording,
@@ -240,6 +256,7 @@ mod tests {
         Observation {
             monotonic_ns: seconds * 1_000_000_000, unix_ms: 1_800_000_000_000 + seconds * 1_000,
             output_id: 17, output_frames: frames, output_rate: 48_000, input_rate: Some(48_000),
+            input_admission_pending: false,
             native_streams: 1, playing: true, recording: true, capture_busy: true,
             recording_bar: Some(1), cursor_bar: 1,
             capture_target: Some(1), capture_epoch: Some(3), capture_invalid: false,
@@ -278,6 +295,58 @@ mod tests {
         assert!(state.observe(sample(35, 48_000 * 35)));
         assert!(!state.observe(sample(36, 48_000 * 36)));
         assert!(matches!(state.result, Some(Ok(()))));
+    }
+
+    #[test]
+    fn explicit_input_opening_is_allowed_but_only_active_admitted_time_and_frames_count() {
+        let mut state = State::new(Mode::Capture, 1);
+        let opening = |seconds| {
+            let mut now = sample(seconds, 48_000 * seconds);
+            now.recording = false;
+            now.recording_bar = None;
+            now.input_rate = None;
+            now.input_admission_pending = true;
+            now
+        };
+        assert!(state.observe(opening(0)));
+        assert!(state.observe(opening(8)));
+        assert!(state.baseline.is_none());
+        let mut armed = sample(9, 48_000 * 9);
+        armed.recording = false;
+        armed.recording_bar = None;
+        assert!(state.observe(armed));
+        assert!(state.baseline.is_none());
+        assert!(state.observe(sample(10, 48_000 * 10)));
+        assert!(state.observe(sample(24, 48_000 * 25)), "frames alone cannot pass");
+        assert!(!state.observe(sample(25, 48_000 * 25)));
+        assert!(matches!(state.result, Some(Ok(()))));
+        assert_eq!(state.baseline.as_ref().unwrap().monotonic_ns, 10_000_000_000);
+    }
+
+    #[test]
+    fn pending_input_timeout_missing_pending_and_lost_admitted_rate_are_failures() {
+        for defect in 0..4 {
+            let mut state = State::new(Mode::Capture, 1);
+            let mut now = sample(0, 0);
+            now.recording = false;
+            now.recording_bar = None;
+            now.input_rate = None;
+            now.input_admission_pending = true;
+            assert!(state.observe(now.clone()));
+            match defect {
+                0 => { now.monotonic_ns = 30_000_000_000; },
+                1 => { now.input_admission_pending = false; },
+                _ => {
+                    now.input_rate = Some(48_000);
+                    now.input_admission_pending = false;
+                    assert!(state.observe(now.clone()));
+                    now.input_rate = if defect == 2 { None } else { Some(44_100) };
+                    now.input_admission_pending = true; // cannot excuse loss after admission
+                },
+            }
+            assert!(!state.observe(now));
+            assert!(matches!(state.result, Some(Err(_))));
+        }
     }
 
     #[test]

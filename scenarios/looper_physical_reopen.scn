@@ -1,0 +1,21 @@
+# Fresh process over the saved physical-input fixture; never seed or open input.
+# Parent must copy seed/physical-final.json into this phase's capture directory.
+settle 90
+ui-zoom 1
+assert snap practice-saved == true
+assert snap set-cards == 3
+assert snap recorder-waveforms == 1
+assert snap song-playing == false
+assert snap loop-capture-references == 1
+assert snap loop-capture-frames == 54000
+assert snap loop-active-captures == 1
+assert snap capture-input-rate == none
+# Selection is transient; inspect the existing take without modifying it.
+click role:switch @aria-label=Select Card 2
+assert snap recorder-selected-card == 2
+act wav-export-fixture
+settle 8
+assert text Exported
+act physical-verify-reopen
+capture 01_actual_microphone_take_reopened
+log Physical microphone take sealed PCM and worker WAV fresh reopen verified

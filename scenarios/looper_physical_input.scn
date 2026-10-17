@@ -31,5 +31,6 @@ assert snap practice-saved == true
 act wav-export-fixture
 settle 8
 assert text Exported
+act physical-checkpoint
 capture 03_actual_microphone_take_saved
 log Physical microphone recording and actual output complete
