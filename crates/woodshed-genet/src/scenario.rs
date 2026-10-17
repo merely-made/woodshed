@@ -955,6 +955,54 @@ struct Snapshot<'a, 'c> {
 }
 
 impl Snapshot<'_, '_> {
+    /// Receiving proof must observe the host's actual document scroll plane.
+    /// The supplier's read-only AppCtx accessor preserves missing layout as
+    /// unavailable; no second layout or synthesized zero participates.
+    fn document_scroll(&self) -> Option<(f32, f32)> {
+        self.ctx.document_scroll()
+    }
+
+    fn fully_visible(&self, selector: &Selector) -> bool {
+        let nodes = {
+            let dom = self.ctx.runner.dom();
+            let dom = dom.borrow();
+            taproot::matching(&dom, selector)
+        };
+        nodes.into_iter().any(|node| {
+            let Some((_, _, width, height)) = self.ctx.painted_rect(node) else { return false; };
+            let Some((_, _, visible_width, visible_height)) = self.ctx.visible_rect(node) else { return false; };
+            width > 0.0 && height > 0.0
+                && visible_width + 0.5 >= width && visible_height + 0.5 >= height
+        })
+    }
+
+    fn third_card_clear_visible(&self) -> bool {
+        use layout_dom_api::{LayoutDom, LocalName, Namespace};
+        let clear = {
+            let dom = self.ctx.runner.dom();
+            let dom = dom.borrow();
+            let select = Selector::role("switch").with_attr("aria-label", "Select Card 3");
+            taproot::matching(&dom, &select).into_iter().find_map(|node| {
+                let mut ancestor = dom.parent(node);
+                while let Some(parent) = ancestor {
+                    if dom.attribute(parent, &Namespace::default(), &LocalName::from("class"))
+                        .is_some_and(|classes| classes.split_whitespace().any(|class| class == "hocket-recorder-lane"))
+                    {
+                        return dom.all_with_class(parent, "hocket-recorder-clear").into_iter().next();
+                    }
+                    ancestor = dom.parent(parent);
+                }
+                None
+            })
+        };
+        clear.is_some_and(|node| {
+            let Some((_, _, width, height)) = self.ctx.painted_rect(node) else { return false; };
+            let Some((_, _, visible_width, visible_height)) = self.ctx.visible_rect(node) else { return false; };
+            width > 0.0 && height > 0.0
+                && visible_width + 0.5 >= width && visible_height + 0.5 >= height
+        })
+    }
+
     /// The `data-key` of the Set-graph node the canvas is currently painting
     /// as focused, or `"none"`. The canvas owns that emphasis, so the DOM is
     /// the authority for it.
@@ -1102,6 +1150,12 @@ impl Snapshot<'_, '_> {
                 .is_some_and(|family| family.name() == name)
         };
         let mut snap = ProbeSnapshot::default()
+            .with_field("document-scroll-available", self.document_scroll().is_some().to_string())
+            .with_field("document-scroll-x", self.document_scroll().map_or_else(|| "unavailable".into(), |offset| offset.0.to_string()))
+            .with_field("document-scroll-y", self.document_scroll().map_or_else(|| "unavailable".into(), |offset| offset.1.to_string()))
+            .with_field("recorder-card3-select-visible", self.fully_visible(&Selector::role("switch").with_attr("aria-label", "Select Card 3")).to_string())
+            .with_field("recorder-card3-clear-visible", self.third_card_clear_visible().to_string())
+            .with_field("recorder-transport-visible", self.fully_visible(&Selector::class("hocket-recorder-transport")).to_string())
             .with_field(
                 "appearance-device-free",
                 (crate::appearance::device_free_receipt()
