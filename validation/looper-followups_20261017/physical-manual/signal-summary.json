@@ -1,0 +1,8 @@
+{
+  "frames": 132000,
+  "nonzero_mix_delta_samples": 132000,
+  "peak_absolute_mix_delta": 0.8000000864267349,
+  "rms_mix_delta": 0.32528590810886443,
+  "raw_audio_local_only": true,
+  "limit": "Mix delta demonstrates completed recorded audio contribution, not dry mic PCM or latency measurement"
+}

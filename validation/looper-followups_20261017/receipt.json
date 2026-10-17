@@ -1,25 +1,36 @@
 {
-  "status": "affected checks and builds passed; committed native qualification pending",
+  "status": "compact/copy/envelope/recipe software qualified; user confirmed audible playback and input; selected-Card recording correction CPU/build passed, native pending",
   "baseline": "9182823e351c6334b50f3ab52d61cb95b8cd7cab",
   "counts": {
-    "affected_cases": 469,
+    "affected_cases": 680,
     "capture_child_invocations_separate": 5,
     "affected_ignored": 7,
     "recipe_cases": 11,
-    "recipe_ignored": 1
+    "recipe_ignored": 1,
+    "repeated_suites_counted_once": true,
+    "separate_manual_sealed_reference": 1
   },
   "checks": {
     "focused": 0,
     "recipe-all-targets": 0,
     "recipe-tests": 0,
     "desktop-build": 0,
-    "hocket-consumer": 0
+    "hocket-consumer": 0,
+    "focus-and-dwell-gate": 0,
+    "focused-desktop-build": 0,
+    "manual-sealed-reference": 0
   },
   "production_lock_unchanged": true,
-  "physical_audio": "pending user participation; enumeration only establishes built-in 48k input and output availability",
+  "physical_audio": "User confirmed playback and recording worked in persistent manual trial; input saved and separately sealed-loaded, signal present. Initial automatic timing claim excluded; new explicit dwell awaits native.",
   "limits": [
     "Full touch/platform/reduced-motion acceptance remains outside this bounded Looper follow-up",
-    "Synthetic envelope does not qualify physical input, audible output or latency"
+    "Synthetic envelope does not qualify physical input, audible output or latency",
+    "Sharedsupplierphantomdocumentscroll causesblacklowerstrip afterrepeatedwheel; isolatedfixunderqualification, productionnotrepinned",
+    "Zoomedthird-rowrealwheelproofpending"
   ],
-  "publication": "local candidate"
+  "publication": "local candidate",
+  "selected_capture": "Selected Card runtime pin and accepted transport focus implemented, 680affected casespass; realinputfocusnativepending",
+  "native_source_revision": "e25f66860110215a7b3ebf07a7dda81da532c19b",
+  "native_captures": 18,
+  "native_evidence": "native-v2/completion.json"
 }

@@ -1,0 +1,18 @@
+{
+  "01_exact_seconds_take_reopened.png": "e7c47dd5374b494cb8e95c67092ec7fff5abc491f3770dab544a5a63f4c07a5e",
+  "launch.once": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "03_medium_envelope_reopened.png": "d6559160c5f791e348c029f5694c41777bbf0ca365ab173a28a6ed8196a9d0ed",
+  "scenario.scn": "bea900ec9e020dac37f2bdfed546989c5bbd6f30f74f49c44f5a26a4a3565aa6",
+  "expected-copy.json": "ee9bad7f54da911569cb7b888c6f3a32a248d3677adaba1277d1a89d1a362bfe",
+  "native.log": "998eb4598781624310257c059a7199d5deaeb64286d62774c28130eba8028fb3",
+  "scenario.done": "1bb3d4b6e549b6896878f95e56347df64df660953615c6e8acc4dd66915dcac4",
+  "04_short_third_card_reopened.png": "97b6b3cc454683156a7679d98993b555689cd431feb1486e3c12344838251a05",
+  "native.pid": "0421c1b4668d97ebaa2bdb281837e1ce46341e4ee8d0931d0c7d9dba45791ed4",
+  "02_compact_seconds_reopened.png": "67785940af3c3089f55c841ea5e174e5ce2f78b1a88224c08065dc5aa271f787",
+  "p7b-final.json": "008974cd8636f7560bfa6f78e4b385b797cd4b883f71f89ca8f1fb172dabd45c",
+  "p7b-reopenexport.json": "9f9c57dc6e1c49a881c8deb82309ac5da3d339d7518473c6d97aade3c5529de9",
+  "launch.json": "c21d60323186494936d802993db55358e237635a9bf9067df930449a5fdd5542",
+  "p7b-reopened.json": "80166191839090ccf9461acac0e2dc0153976b457278ace4083f6bcb565cf220",
+  "loop-export.wav": "370b53dcf2781e6f3e41f3d948765de3950d4222ed48bf2dd3a7e6dffb36ca52",
+  "launcher.c": "addad9defaab219b9883023592f0167b947719cd10e14deb62cc53e5652538c8"
+}

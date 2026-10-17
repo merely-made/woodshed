@@ -1,0 +1,7 @@
+{
+  "playback": "user confirmed Yes I can hear it",
+  "recording": "user confirmed playback and recording worked",
+  "defect": "Recording traversed Cards and split the performance across them; selected-Card focus fix required",
+  "duration": "No automatic15secondqualification: initial waitcapmistake excluded, manualactive/stop timestamps retained withoutclaimcontinuousduration",
+  "profile": "manual-profile; raw microphone audio remains local"
+}

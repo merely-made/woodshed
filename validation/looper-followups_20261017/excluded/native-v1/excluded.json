@@ -1,0 +1,9 @@
+{
+  "status": "excluded: native presentation stalled before any frame",
+  "source_revision": "e25f66860110215a7b3ebf07a7dda81da532c19b",
+  "frames": 0,
+  "captures": 0,
+  "owned_app_exited": true,
+  "owned_keeper_exited": true,
+  "four_original_keeper_files_unchanged": true
+}
