@@ -1,0 +1,526 @@
+{
+  "baseline": "b88cb26836cffb4c4b091d15c53bb1014d575cdc",
+  "integrated": [
+    "07c170b",
+    "860c5c1"
+  ],
+  "sources": [
+    {
+      "path": "crates/hocket-model/src/history.rs",
+      "sha256": "724d627d113a719e162658873fa0c3aabc180ae51667e2acbeee0c9432bcb7fb"
+    },
+    {
+      "path": "crates/hocket-model/src/persistence.rs",
+      "sha256": "818385e79098662d515ea9318d1c4bdd5bb7f9e4418e424305bfd7de744afd59"
+    },
+    {
+      "path": "crates/hocket-project/src/handoff.rs",
+      "sha256": "b8f7a7f22994e410c924e1774cecf0caba610d29a4cc86dd38dc5776561667df"
+    },
+    {
+      "path": "crates/hocket-project/src/project_store.rs",
+      "sha256": "141bc78a0867d41ee276776906adad7c69244b2b9ad41a0a290c50e1dd2c2269"
+    },
+    {
+      "path": "crates/woodshed-core/src/history.rs",
+      "sha256": "fbefb93ca13cc8638809f97eeefe521dc62286837e54ef56c1b52a8c84526231"
+    },
+    {
+      "path": "crates/woodshed-core/src/storage.rs",
+      "sha256": "4a708f11f5b601c8cc1b17b4cfbdb44b426876de362fe2f04c755bf1cfa1faef"
+    },
+    {
+      "path": "crates/woodshed-genet/src/audio.rs",
+      "sha256": "ae3270e731b35ada02d3515e5877b117b453448495da09286e8d0bdeb3186fde"
+    },
+    {
+      "path": "crates/woodshed-genet/src/capture_persistence.rs",
+      "sha256": "529ac802957087e7833d4af400645f1a85ad0a29cf495682992d76ea1c99b559"
+    },
+    {
+      "path": "crates/woodshed-genet/src/main.rs",
+      "sha256": "8f1717f2a6899780a7d5300975a17624413b439349175404e8f789e0f592c4ed"
+    },
+    {
+      "path": "crates/woodshed-genet/src/persona.rs",
+      "sha256": "b42a9d61f4d3ec893e166b4a1bda34e28e4bda85295c633d6109e90d171e5147"
+    },
+    {
+      "path": "crates/woodshed-genet/src/persona_preservation_tests.rs",
+      "sha256": "c3ef842d0dd56a05c06a39e716d970636edf20718b9cf5c2c6f6ec3be78728b6"
+    },
+    {
+      "path": "crates/woodshed-genet/src/wav_export.rs",
+      "sha256": "6417ecc51e539fafeecf35a7ba3446cd26c37a5c562ffcecf9b4c1f4289cab60"
+    },
+    {
+      "path": "crates/woodshed-views/src/persona.rs",
+      "sha256": "1b9d0b35d472d08f0c051aa688aaecf7fea0e89d3a3b2afe77e0448b7cfa327e"
+    },
+    {
+      "path": "crates/woodshed-views/src/stage.rs",
+      "sha256": "0b7a470340a90a967f5f0054d652c1d3b82ccfc0b0840a2bf232757293d856da"
+    },
+    {
+      "path": "crates/woodshedding/src/rehearsal.rs",
+      "sha256": "e2bcb68dae6e724c328914a27c40c5e7dbbd3108181655d9e6b3f9c9dba5ba4c"
+    },
+    {
+      "path": "ports/hocket/crates/hocket-genet/src/main.rs",
+      "sha256": "06a4b57bcda17278c97e3f88e4624fce6586de5f951a3ab7753dbd921385a117"
+    },
+    {
+      "path": "ports/hocket/crates/hocket-genet/src/native_lifecycle_tests.rs",
+      "sha256": "68918bfd6aeea2740bf2360fe26c08d91209333f7c1cb984948d2b95d7a2f528"
+    },
+    {
+      "path": "ports/hocket/crates/hocket-genet/src/project_correlation_tests.rs",
+      "sha256": "0e183db63cff8471355da8e52adf422f926fa7a85b5a256fb672360ea3edb4de"
+    },
+    {
+      "path": "ports/hocket/crates/hocket-genet/src/state.rs",
+      "sha256": "d49b96ec05f818308ab49d9eba1f1095bb127973676cfc190d8789dc380b2751"
+    },
+    {
+      "path": "ports/hocket/crates/hocket-genet/src/theme.rs",
+      "sha256": "65f23f49bf673c038052fc43d6f786ed9b019db1767df5ef5f97a3740c56e6e9"
+    },
+    {
+      "path": "ports/hocket/crates/hocket-genet/src/view.rs",
+      "sha256": "1e554a005ff5550ac89fb1fcf96ac61271fde1ebb651f7da2f226b0f1a0a7f7d"
+    },
+    {
+      "path": "ports/redshank/desktop/src/main.rs",
+      "sha256": "ba6bf87845ba62c4784247affd4c39a19002574b012995cc2f5013325597c928"
+    },
+    {
+      "path": "ports/redshank/storage/src/lib.rs",
+      "sha256": "6fe384bbb1d97b00ba1051c4aae3d6cea82e5454096bba63e759d699e05a931a"
+    }
+  ],
+  "runs": [
+    {
+      "name": "root",
+      "command": [
+        "cargo",
+        "test",
+        "--offline",
+        "--locked",
+        "-p",
+        "woodshedding",
+        "-p",
+        "woodshed-audio",
+        "-p",
+        "woodshed-core",
+        "-p",
+        "woodshed-views",
+        "-p",
+        "woodshed-genet",
+        "-p",
+        "hocket-model",
+        "-p",
+        "hocket-project",
+        "--quiet"
+      ],
+      "cwd": "/Users/markik/Code/repos/woodshed",
+      "started_utc": "2026-10-17T05:42:54.555358+00:00",
+      "ended_utc": "2026-10-17T05:44:25.979971+00:00",
+      "exit_code": 0,
+      "log": "root.log",
+      "suites": [
+        {
+          "passed": 42,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered_out": 0
+        },
+        {
+          "passed": 2,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered_out": 0
+        },
+        {
+          "passed": 38,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered_out": 0
+        },
+        {
+          "passed": 174,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered_out": 0
+        },
+        {
+          "passed": 285,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered_out": 0
+        },
+        {
+          "passed": 0,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered_out": 0
+        },
+        {
+          "passed": 0,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered_out": 0
+        },
+        {
+          "passed": 0,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered_out": 0
+        },
+        {
+          "passed": 0,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered_out": 0
+        },
+        {
+          "passed": 5,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered_out": 0
+        },
+        {
+          "passed": 1,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered_out": 0
+        },
+        {
+          "passed": 1,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered_out": 208
+        },
+        {
+          "passed": 1,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered_out": 208
+        },
+        {
+          "passed": 1,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered_out": 208
+        },
+        {
+          "passed": 1,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered_out": 208
+        },
+        {
+          "passed": 1,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered_out": 208
+        },
+        {
+          "passed": 202,
+          "failed": 0,
+          "ignored": 7,
+          "measured": 0,
+          "filtered_out": 0
+        },
+        {
+          "passed": 230,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered_out": 0
+        },
+        {
+          "passed": 187,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered_out": 0
+        },
+        {
+          "passed": 0,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered_out": 0
+        },
+        {
+          "passed": 0,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered_out": 0
+        },
+        {
+          "passed": 0,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered_out": 0
+        },
+        {
+          "passed": 0,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered_out": 0
+        },
+        {
+          "passed": 0,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered_out": 0
+        },
+        {
+          "passed": 4,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered_out": 0
+        }
+      ]
+    },
+    {
+      "name": "hocket",
+      "command": [
+        "cargo",
+        "test",
+        "--offline",
+        "--locked",
+        "-p",
+        "hocket-genet",
+        "--quiet"
+      ],
+      "cwd": "/Users/markik/Code/repos/woodshed/ports/hocket",
+      "started_utc": "2026-10-17T05:44:25.980392+00:00",
+      "ended_utc": "2026-10-17T05:44:54.434221+00:00",
+      "exit_code": 0,
+      "log": "hocket.log",
+      "suites": [
+        {
+          "passed": 90,
+          "failed": 0,
+          "ignored": 2,
+          "measured": 0,
+          "filtered_out": 0
+        }
+      ]
+    },
+    {
+      "name": "redshank",
+      "command": [
+        "cargo",
+        "test",
+        "--offline",
+        "--locked",
+        "-p",
+        "redshank-storage",
+        "-p",
+        "redshank-desktop",
+        "--quiet"
+      ],
+      "cwd": "/Users/markik/Code/repos/woodshed/ports/redshank",
+      "started_utc": "2026-10-17T05:44:54.434655+00:00",
+      "ended_utc": "2026-10-17T05:45:50.174672+00:00",
+      "exit_code": 0,
+      "log": "redshank.log",
+      "suites": [
+        {
+          "passed": 80,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered_out": 0
+        },
+        {
+          "passed": 15,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered_out": 0
+        },
+        {
+          "passed": 0,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered_out": 0
+        }
+      ]
+    }
+  ],
+  "native": "not run here; coordinating chat owns bounded preservation native/reopen acceptance after local handoff",
+  "publication": "not pushed here; coordinating chat owns publication",
+  "builds": [
+    {
+      "name": "woodshed",
+      "command": [
+        "cargo",
+        "build",
+        "--offline",
+        "--locked",
+        "-p",
+        "woodshed-genet"
+      ],
+      "cwd": "/Users/markik/Code/repos/woodshed",
+      "started_utc": "2026-10-17T05:45:59.156921+00:00",
+      "ended_utc": "2026-10-17T05:46:09.513448+00:00",
+      "exit_code": 0,
+      "log": "woodshed-build.log",
+      "binary": "/Users/markik/Code/repos/woodshed/target/debug/woodshed-genet",
+      "binary_sha256": "e238473b7b88de2d2d0056031cf67b578e392a57538ad45cde63550967dca9f0"
+    },
+    {
+      "name": "hocket",
+      "command": [
+        "cargo",
+        "build",
+        "--offline",
+        "--locked",
+        "-p",
+        "hocket-genet"
+      ],
+      "cwd": "/Users/markik/Code/repos/woodshed/ports/hocket",
+      "started_utc": "2026-10-17T05:46:09.652569+00:00",
+      "ended_utc": "2026-10-17T05:46:19.834180+00:00",
+      "exit_code": 0,
+      "log": "hocket-build.log",
+      "binary": "/Users/markik/Code/repos/woodshed/ports/hocket/target/debug/hocket-genet",
+      "binary_sha256": "32b6d2c7b0ffaf428308790cfaef4b40dd0125fc7daa9264da197b19f41c1e4e"
+    },
+    {
+      "name": "redshank",
+      "command": [
+        "cargo",
+        "build",
+        "--offline",
+        "--locked",
+        "-p",
+        "redshank-desktop"
+      ],
+      "cwd": "/Users/markik/Code/repos/woodshed/ports/redshank",
+      "started_utc": "2026-10-17T05:46:19.954091+00:00",
+      "ended_utc": "2026-10-17T05:46:29.491147+00:00",
+      "exit_code": 0,
+      "log": "redshank-build.log",
+      "binary": "/Users/markik/Code/repos/woodshed/ports/redshank/target/debug/redshank-desktop",
+      "binary_sha256": "9e36bd094dcade1f39bb42b9a3473e7417fed2d8fa04e17a060bd01f1be8cd89"
+    }
+  ],
+  "counts": {
+    "passing_parent_and_doc_cases": 1355,
+    "capture_child_invocations_counted_separately": 5,
+    "ignored": 9
+  },
+  "merge_review": {
+    "stage.rs": {
+      "reader": "Turing",
+      "complete_inclusive_ranges": [
+        [
+          1,
+          600
+        ],
+        [
+          601,
+          1200
+        ],
+        [
+          1201,
+          1800
+        ],
+        [
+          1801,
+          2400
+        ],
+        [
+          2401,
+          3000
+        ],
+        [
+          3001,
+          3600
+        ],
+        [
+          3601,
+          4150
+        ],
+        [
+          4151,
+          4636
+        ]
+      ],
+      "finding": "P5 retained; only pending persona field/default added"
+    },
+    "persona_main_audio": {
+      "reader": "Dalton",
+      "complete_files_line_counts": {
+        "persona.rs": 821,
+        "main.rs": 845,
+        "audio.rs": 1992
+      },
+      "finding": "both reset bindings retained; no P5 removals"
+    },
+    "index_and_input": {
+      "reader": "Ohm",
+      "index_ranges": [
+        [
+          1,
+          145
+        ],
+        [
+          146,
+          285
+        ],
+        [
+          286,
+          425
+        ]
+      ],
+      "finding": "input source bytes match07c170b; index keeps both plans; stale DSP sentence subsequently clarified"
+    }
+  },
+  "unchanged_locks": {
+    "Cargo.lock": "5d5992edd62d430f7d3c2bc848a9ecfd6054421bf32f4d4329638075893fb0cf",
+    "ports/hocket/Cargo.lock": "a55536801bf3883c0defb1541a19026bd70ee90829d8bc45498b49ca5ced9624",
+    "ports/redshank/Cargo.lock": "4e6f7da96b61053857e9ad34ed1d1238820b84fd1810946bb7d13d6affeda1d8"
+  },
+  "source_document_whitespace_check": {
+    "command": [
+      "git",
+      "diff",
+      "--check",
+      "b88cb26836cffb4c4b091d15c53bb1014d575cdc",
+      "--",
+      "crates",
+      "ports",
+      "design_docs"
+    ],
+    "exit_code": 0,
+    "raw_logs": "retained verbatim, outside source/document whitespace check"
+  }
+}

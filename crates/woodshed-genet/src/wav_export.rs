@@ -188,6 +188,8 @@ pub struct WavExport {
 }
 
 impl WavExport {
+    pub(crate) fn is_finishing(&self) -> bool { self.job.is_some() }
+
     /// Serialize revocation with the worker's final link/rename. A commit
     /// already holding the gate completes before the host changes session.
     pub(crate) fn revoke_session(&mut self) {
@@ -688,8 +690,12 @@ mod tests {
     #[test]
     fn deferred_export_close_preserves_the_dirty_appearance_gate() {
         let dir = tempfile::tempdir().unwrap();
-        let shared = Shared::with_store(None, None, None);
+        let store = woodshed_core::storage::SessionStore::new(
+            Box::new(muniment::MemoryBackend::default()) as crate::storage::HostBackend,
+        );
+        let shared = Shared::with_store(Some(store), None, None);
         let mut ui = UiState::new();
+        crate::capture_persistence::begin_session(&mut shared.borrow_mut(), &ui).unwrap();
         ui.appearance =
             woodshed_views::appearance::AppearanceState::load(dir.path().join("themes.json"))
                 .unwrap();

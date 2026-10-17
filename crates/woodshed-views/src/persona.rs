@@ -35,6 +35,23 @@ pub enum PickPurpose {
     Switch,
 }
 
+/// An explicit decision about leaving unsaved outgoing practice.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum SwitchDecision {
+    Retry,
+    Discard,
+    Cancel,
+}
+
+/// Host-owned pending identity transition. Nothing is persisted or switched
+/// until preservation succeeds, or the user explicitly discards outgoing work.
+pub struct PendingSwitch {
+    pub profile: personae::ProfileId,
+    pub decision: Option<SwitchDecision>,
+    pub waiting: bool,
+    pub notice: String,
+}
+
 /// What the gate is waiting on: the roster to choose from, the picker's own
 /// interaction state, and the answer once there is one.
 pub struct PersonaPick {

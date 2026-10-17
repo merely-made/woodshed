@@ -498,29 +498,62 @@ impl Set {
         set
     }
 
-    /// Hand out the next occurrence id. Monotonic within this Set.
-    fn mint_card_id(&mut self) -> CardId {
-        self.last_card_id += 1;
-        CardId(self.last_card_id)
+    /// Hand out the next occurrence id. Reserve MAX so every published Set
+    /// remains admissible on reopen; exhaustion never wraps or reuses IDs.
+    fn mint_card_id(&mut self) -> Option<CardId> {
+        let next = self
+            .last_card_id
+            .checked_add(1)
+            .filter(|id| *id < u64::MAX)?;
+        self.last_card_id = next;
+        Some(CardId(next))
     }
 
     /// Give every card an occurrence id, for a Set loaded from a session
     /// written before ids existed. Cards that already have one keep it, and
     /// the mint continues past the highest id in the file, so a partially
-    /// migrated Set cannot mint a collision. Idempotent.
+    /// migrated Set cannot mint a collision. Idempotent. Invalid or exhausted
+    /// input stays unchanged; durable callers must use [`Self::admit_card_ids`]
+    /// to report refusal.
     pub fn ensure_card_ids(&mut self) {
-        let highest = self
-            .cards
-            .iter()
-            .map(|card| card.id.0)
-            .max()
-            .unwrap_or_default();
-        self.last_card_id = self.last_card_id.max(highest);
-        for index in 0..self.cards.len() {
-            if !self.cards[index].id.is_assigned() {
-                self.cards[index].id = self.mint_card_id();
+        let _ = self.admit_card_ids();
+    }
+
+    /// Admit persisted occurrence identities. Only legacy unassigned Cards may
+    /// gain IDs: a duplicate assigned ID is ambiguous to arrangements, actions
+    /// and graph references and must never be silently renumbered. Failure
+    /// leaves the Set unchanged, including its mint state. The admitted mint
+    /// must be below MAX even when no legacy Cards require migration.
+    pub fn admit_card_ids(&mut self) -> Result<(), String> {
+        let mut seen = std::collections::HashSet::new();
+        let mut highest = self.last_card_id;
+        let mut missing = 0u64;
+        for card in &self.cards {
+            if card.id.is_assigned() {
+                if !seen.insert(card.id) {
+                    return Err(format!("Duplicate Card identity {}", card.id.0));
+                }
+                highest = highest.max(card.id.0);
+            } else {
+                missing += 1;
             }
         }
+        let migrated_highest = highest
+            .checked_add(missing)
+            .ok_or("Card identity migration exhausted")?;
+        if migrated_highest == u64::MAX {
+            return Err("Card identity mint exhausted".into());
+        }
+        // Preflight above proves all increments fit and stay below MAX. Publish
+        // only after the whole migration has been admitted.
+        self.last_card_id = highest;
+        for card in &mut self.cards {
+            if !card.id.is_assigned() {
+                self.last_card_id += 1;
+                card.id = CardId(self.last_card_id);
+            }
+        }
+        Ok(())
     }
 
     /// Copy instructions under fresh occurrence identities, remapping musical
@@ -528,34 +561,35 @@ impl Set {
     /// later insertion cannot accidentally resolve them to unrelated material.
     pub fn copy_instructions_from(&mut self, source: &Set) -> Result<(), String> {
         let mut source = source.clone();
-        source.ensure_card_ids();
-        let mut seen = std::collections::HashSet::new();
-        if source.cards.iter().any(|c| !seen.insert(c.id)) {
-            return Err("Cannot copy a Set with duplicate Card identities".into());
-        }
+        source.admit_card_ids()?;
         let mut copy = self.clone();
-        copy.ensure_card_ids();
+        copy.admit_card_ids()?;
         let mut mapping = std::collections::HashMap::new();
         copy.cards.clear();
         for mut card in source.cards {
-            let next = copy.mint_card_id();
+            let next = copy.mint_card_id().ok_or("Card identity mint exhausted")?;
             mapping.insert(card.id, next);
             card.id = next;
             copy.cards.push(card);
         }
-        copy.progression_arrangement = source.progression_arrangement;
-        if let Some(saved) = &mut copy.progression_arrangement {
+        let mut arrangement = source.progression_arrangement;
+        if let Some(saved) = &mut arrangement {
             for binding in &mut saved.alignment.cards {
                 if !binding.card.is_assigned() {
                     return Err("Alignment has an unassigned Card identity".into());
                 }
-                let next = *mapping.entry(binding.card).or_insert_with(|| {
-                    copy.last_card_id += 1;
-                    CardId(copy.last_card_id)
-                });
+                let next = match mapping.get(&binding.card) {
+                    Some(next) => *next,
+                    None => {
+                        let next = copy.mint_card_id().ok_or("Card identity mint exhausted")?;
+                        mapping.insert(binding.card, next);
+                        next
+                    },
+                };
                 binding.card = next;
             }
         }
+        copy.progression_arrangement = arrangement;
         copy.cursor = source.cursor.min(copy.cards.len().saturating_sub(1));
         copy.loop_mode = source.loop_mode;
         *self = copy;
@@ -628,17 +662,23 @@ impl Set {
     }
 
     /// Stage a card as a new occurrence. The id is minted here, so staging the
-    /// same material twice yields two distinct occurrences.
+    /// same material twice yields two distinct occurrences. An exhausted mint
+    /// leaves the Set unchanged.
     pub fn push(&mut self, card: Card) {
-        let id = self.mint_card_id();
+        let Some(id) = self.mint_card_id() else {
+            return;
+        };
         self.cards.push(Card { id, ..card });
     }
 
     /// Insert a copy of the card at `idx` right after it. The copy is a new
-    /// occurrence with its own id; the original keeps its own.
+    /// occurrence with its own id; the original keeps its own. An exhausted
+    /// mint leaves the Set unchanged.
     pub fn duplicate(&mut self, idx: usize) {
         if let Some(c) = self.cards.get(idx).cloned() {
-            let id = self.mint_card_id();
+            let Some(id) = self.mint_card_id() else {
+                return;
+            };
             self.cards.insert(idx + 1, Card { id, ..c });
         }
     }
@@ -830,6 +870,143 @@ mod tests {
             set.cards.iter().map(|c| c.id).collect::<Vec<_>>()
         );
         assert_eq!(back.cursor_id(), Some(selected));
+    }
+
+    #[test]
+    fn card_identity_admission_rejects_duplicates_without_mutation_or_copy() {
+        let mut source = set_of(&["One", "Two", "Legacy"]);
+        source.cards[1].id = source.cards[0].id;
+        source.cards[2].id = CardId::UNASSIGNED;
+        let before = serde_json::to_value(&source).unwrap();
+        assert!(source.admit_card_ids().unwrap_err().contains("Duplicate Card identity"));
+        assert_eq!(serde_json::to_value(&source).unwrap(), before);
+        let mut destination = set_of(&["Existing"]);
+        let destination_before = serde_json::to_value(&destination).unwrap();
+        assert!(destination.copy_instructions_from(&source).is_err());
+        assert_eq!(serde_json::to_value(destination).unwrap(), destination_before);
+    }
+
+    #[test]
+    fn card_identity_admission_migrates_only_zeros_and_keeps_mint_and_cursor() {
+        let mut set = set_of(&["Assigned", "Legacy", "Also legacy"]);
+        set.cards[0].id = CardId(40);
+        set.cards[1].id = CardId::UNASSIGNED;
+        set.cards[2].id = CardId::UNASSIGNED;
+        set.last_card_id = 50;
+        set.cursor = 2;
+        set.admit_card_ids().unwrap();
+        assert_eq!(set.cards.iter().map(|card| card.id.0).collect::<Vec<_>>(), [40, 51, 52]);
+        assert_eq!(set.cursor_id(), Some(CardId(52)));
+        let wire = serde_json::to_value(&set).unwrap();
+        set.admit_card_ids().unwrap();
+        assert_eq!(serde_json::to_value(&set).unwrap(), wire);
+        let mut back: Set = serde_json::from_value(wire).unwrap();
+        back.admit_card_ids().unwrap();
+        back.push(card("Next"));
+        assert_eq!(back.cards.last().unwrap().id, CardId(53));
+    }
+
+    #[test]
+    fn exhausted_card_mints_are_refused_even_without_legacy_cards() {
+        for (mint, ids) in [
+            (u64::MAX, vec![]),
+            (u64::MAX, vec![1]),
+            (0, vec![u64::MAX]),
+            (u64::MAX - 1, vec![0]),
+            (u64::MAX - 2, vec![0, 0]),
+        ] {
+            let mut set = Set::default();
+            set.last_card_id = mint;
+            set.cards = ids
+                .into_iter()
+                .map(|id| Card { id: CardId(id), ..card("Input") })
+                .collect();
+            let before = serde_json::to_value(&set).unwrap();
+            assert!(set.admit_card_ids().is_err());
+            assert_eq!(serde_json::to_value(&set).unwrap(), before);
+            set.ensure_card_ids();
+            assert_eq!(serde_json::to_value(&set).unwrap(), before);
+        }
+    }
+
+    #[test]
+    fn admitted_near_exhaustion_sets_never_wrap_on_push_duplicate_or_copy() {
+        let mut set = set_of(&["Existing"]);
+        set.last_card_id = u64::MAX - 2;
+        set.admit_card_ids().unwrap();
+        set.ensure_card_ids();
+        set.push(card("Last available"));
+        assert_eq!(set.cards[1].id, CardId(u64::MAX - 1));
+        let before = serde_json::to_value(&set).unwrap();
+        set.push(card("Refused"));
+        set.duplicate(0);
+        set.ensure_card_ids();
+        assert_eq!(serde_json::to_value(&set).unwrap(), before);
+        set.admit_card_ids().unwrap();
+        let mut reopened: Set = serde_json::from_value(before).unwrap();
+        reopened.admit_card_ids().unwrap();
+
+        let mut legacy = set_of(&["Legacy"]);
+        legacy.last_card_id = u64::MAX - 2;
+        legacy.cards[0].id = CardId::UNASSIGNED;
+        legacy.admit_card_ids().unwrap();
+        assert_eq!(legacy.cards[0].id, CardId(u64::MAX - 1));
+        legacy.ensure_card_ids();
+        legacy.push(card("Refused"));
+        assert_eq!(legacy.cards.len(), 1);
+
+        let mut destination = set_of(&["Destination"]);
+        destination.last_card_id = u64::MAX - 2;
+        destination.admit_card_ids().unwrap();
+        let before = serde_json::to_value(&destination).unwrap();
+        assert!(destination.copy_instructions_from(&set_of(&["One", "Two"])).is_err());
+        assert_eq!(serde_json::to_value(&destination).unwrap(), before);
+        destination.admit_card_ids().unwrap();
+    }
+
+    #[test]
+    fn exhausted_arrangement_reference_mint_refuses_copy_atomically() {
+        let mut source = set_of(&["One"]);
+        source.progression_arrangement = Some(arrangement::SavedProgressionArrangement {
+            version: 1,
+            progression: "Retained".into(),
+            roles: vec![],
+            root_pc: 0,
+            instrument: "guitar".into(),
+            tuning: "standard".into(),
+            open_midi: vec![],
+            fret_start: 0,
+            fret_end: 12,
+            alignment: arrangement::ProgressionArrangement {
+                name: "Retained".into(),
+                extent: 1,
+                role_spans: vec![],
+                cards: vec![arrangement::CardAlignment {
+                    card: CardId(999),
+                    placement: None,
+                    role: None,
+                }],
+                rests: vec![],
+            },
+        });
+        source.admit_card_ids().unwrap();
+        let mut destination = set_of(&["Destination"]);
+        destination.last_card_id = u64::MAX - 2;
+        destination.admit_card_ids().unwrap();
+        let before = serde_json::to_value(&destination).unwrap();
+        // The Card fits; the retained missing-reference reservation does not.
+        assert!(destination.copy_instructions_from(&source).is_err());
+        assert_eq!(serde_json::to_value(&destination).unwrap(), before);
+    }
+
+    #[test]
+    fn exhausted_legacy_card_migration_is_an_error_without_mutation() {
+        let mut set = set_of(&["Assigned", "Legacy"]);
+        set.cards[0].id = CardId(u64::MAX);
+        set.cards[1].id = CardId::UNASSIGNED;
+        let before = serde_json::to_value(&set).unwrap();
+        assert!(set.admit_card_ids().is_err());
+        assert_eq!(serde_json::to_value(&set).unwrap(), before);
     }
 
     #[test]
