@@ -1,0 +1,26 @@
+{
+  "review_scope": "Independent visual review of three completed native-v4 seed originals and the one completed reopen original; no UI was launched or interacted with.",
+  "captures": [
+    {
+      "path": "/Users/markik/Code/testing/woodshed/catalog-audition-20261016/native-v4/seed/01_accepted_major_pattern.png",
+      "observation": "The accepted C Major thirds pattern is visible with a 120 bpm transport, selected source Card, and the pattern's Hear/Stage controls. No refusal notice is visible. The displayed pattern explanation and selected source context remain legible."
+    },
+    {
+      "path": "/Users/markik/Code/testing/woodshed/catalog-audition-20261016/native-v4/seed/02_refused_minor_pattern.png",
+      "observation": "The refusal notice is prominent and readable: 'Audition unavailable: A Minor in thirds: preview exceeds supported resource bounds'. This presents a human-readable formula label rather than an internal catalog identifier. The selected source Card is 'Output refusal source', and the detail panel identifies the pattern as coming from that source. The control row shows 400 bpm and a very long hold, consistent with the refusal setup."
+    },
+    {
+      "path": "/Users/markik/Code/testing/woodshed/catalog-audition-20261016/native-v4/seed/03_accepted_retry_and_history.png",
+      "observation": "The retry state shows the same A Minor thirds pattern at 400 bpm with Manual hold and no stale refusal notice. The source remains selected and the pattern actions remain visible. There is no visible audition-history panel or acceptance indicator in this capture."
+    },
+    {
+      "path": "/Users/markik/Code/testing/woodshed/catalog-audition-20261016/native-v4/reopen/01_exact_accepted_history_reopen.png",
+      "observation": "The reopened view shows the Output refusal source still selected, 400 bpm, Manual hold, and no stale refusal notice. The selected Card and fretboard are visible, and the presentation is complete enough to inspect the restored source state. No history panel or explicit acceptance receipt is visible."
+    }
+  ],
+  "source_label_review": "The refusal notice uses the frozen readable subject label 'A Minor in thirds'; the source Card label remains visible in the pattern detail. No internal catalog key is exposed in these captures.",
+  "limits": [
+    "Images establish visible UI state and copy only; they do not prove the host admitted audio, that sound was physically audible, or that practice-history records were exact or durable.",
+    "Those behavioral and persistence claims require the host receipts, hashes, and reopen checks owned by the parent review."
+  ]
+}

@@ -1,0 +1,56 @@
+# One accepted catalog-derived preview, one real output refusal, and a retry
+# after correcting only the source Card through the ordinary visible control.
+# The isolated sealed profile retains any pre-existing non-pattern history.
+settle 90
+ui-zoom 1
+assert snap practice-saved == true
+act catalog-audition-admission-example
+settle 10
+assert snap set-cards == 2
+assert snap catalog-audition-output-rate >= 1
+act catalog-audition-save-baseline
+
+# The ordinary scale-pattern inspector derives a Major thirds Card from the
+# selected source. Hear goes through the product UI and actual CPAL output.
+click .workspace-panel Set
+settle 4
+click .film-label Accepted source
+settle 4
+click .scale-pattern-choice Inspect diatonic thirds
+settle 3
+click .t-btn Hear pattern
+wait 1000
+settle 4
+assert snap audition-notice-empty == true
+assert snap preview-starts == 1
+act catalog-audition-check-one
+capture 01_accepted_major_pattern
+
+# The Minor source carries a finite 1e10 second timing. The derived pattern
+# stays source-bound, but actual output admission refuses its bounded PCM.
+click .film-label Output refusal source
+settle 4
+click .scale-pattern-choice Inspect diatonic thirds
+settle 3
+click .t-btn Hear pattern
+wait 1000
+settle 4
+assert snap audition-notice ~ supported resource bounds
+assert snap preview-starts == 1
+act catalog-audition-check-one
+capture 02_refused_minor_pattern
+
+# Correct the actual source Card with the visible Hold control. The subsequent
+# real Hear retry is admitted and contributes exactly one additional event.
+click .t-btn Hold:
+settle 4
+assert snap p5a-card-hold == manual
+click .t-btn Hear pattern
+wait 1000
+settle 4
+assert snap audition-notice-empty == true
+assert snap preview-starts == 2
+assert snap practice-saved == true
+act catalog-audition-save-final
+capture 03_accepted_retry_and_history
+log Catalog audition admission seed complete

@@ -1,0 +1,25 @@
+{
+  "app": "/Users/markik/Code/testing/woodshed/catalog-audition-20261016/native-v4/seed/WoodshedCatalogAuditionV4Seed.app",
+  "env": {
+    "WOODSHED_SCENARIO": "/Users/markik/Code/testing/woodshed/catalog-audition-20261016/native-v4/frozen/catalog_audition_admission.scn",
+    "WOODSHED_CAPTURE_DIR": "/Users/markik/Code/testing/woodshed/catalog-audition-20261016/native-v4/seed",
+    "WOODSHED_RECEIPT": "/Users/markik/Code/testing/woodshed/catalog-audition-20261016/native-v4/seed/scenario.done",
+    "WOODSHED_PRESENTATION_TIMEOUT_SECS": "60",
+    "WOODSHED_WIDTH": "1180",
+    "WOODSHED_HEIGHT": "900",
+    "WOODSHED_STATE": "/Users/markik/Code/testing/woodshed/catalog-audition-20261016/native-v4/profile/practice.bin",
+    "WOODSHED_SETTINGS": "/Users/markik/Code/testing/woodshed/catalog-audition-20261016/native-v4/profile/settings.json",
+    "GRAPHSHELL_APP_ENDPOINT": "/tmp/ws-cat-20261016-v4.sock",
+    "TMPDIR": "/tmp",
+    "CAMBIUM_HOST_FRAME_TRACE": "1",
+    "CAMBIUM_ROOTSTOCK_TRACE_PRODUCER_REFUSAL": "1",
+    "XDG_DATA_HOME": "/Users/markik/Code/testing/woodshed/catalog-audition-20261016/native-v4/data",
+    "XDG_CONFIG_HOME": "/Users/markik/Code/testing/woodshed/catalog-audition-20261016/native-v4/config",
+    "XDG_CACHE_HOME": "/Users/markik/Code/testing/woodshed/catalog-audition-20261016/native-v4/cache",
+    "MERE_ROOT": "/Users/markik/Code/testing/woodshed/catalog-audition-20261016/native-v4/mere"
+  },
+  "binary": "/Users/markik/Code/testing/woodshed/catalog-audition-20261016/native-v4/frozen/woodshed-genet",
+  "binary_sha256": "bf07df27b300f35851e1fcd7b51c5b2121012612c19c8ee40606ba12dfb90bc3",
+  "scenario_sha256": "50a500a27d17bf3d1ca3059d6ac51d438f70c903f8dd9408d2efb45a975aa5be",
+  "source_revision": "bd8ff18dca0c2ae107ba1a7d0618a513d909e8cb"
+}
