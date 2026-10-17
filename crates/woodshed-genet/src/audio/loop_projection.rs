@@ -3,7 +3,8 @@
 use std::collections::{BTreeMap, BTreeSet};
 
 use woodshed_audio::{
-    Bar, ChordRef, PendingChange, SampleBuffer, Song, Subdivision, TimeSignature,
+    BackingEvent, BackingPhrase, Bar, ChordRef, PendingChange, SampleBuffer, Song, Subdivision,
+    TimeSignature,
 };
 use woodshed_core::loop_plan::{LoopPlan, LoopSegment, LoopSegmentId};
 
@@ -224,6 +225,7 @@ impl LoopCaptures {
                 || segment.bpm < 1.0
                 || !(1..=16).contains(&segment.beats)
                 || segment.bars == 0
+                || (segment.phrase.is_some() && !segment.pitches_hz.is_empty())
                 || segment
                     .pitches_hz
                     .iter()
@@ -248,6 +250,17 @@ impl LoopCaptures {
                     root_freq_hz: *root,
                     pitches_hz: segment.pitches_hz.clone(),
                     label: segment.label.clone(),
+                }),
+                backing_phrase: segment.phrase.as_ref().map(|phrase| BackingPhrase {
+                    events: phrase
+                        .events
+                        .iter()
+                        .map(|event| BackingEvent {
+                            beat: event.beat,
+                            pitches_hz: event.pitches_hz.clone(),
+                            strum_seconds: event.strum_seconds,
+                        })
+                        .collect(),
                 }),
                 audio_buffer: capture.map(|capture| capture.buffer.clone()),
                 label: segment.label.clone(),
@@ -302,6 +315,7 @@ mod tests {
                     beats: 3,
                     bars: 2,
                     pitches_hz: vec![261.125 + card as f32, 391.777],
+                    phrase: None,
                 })
                 .collect(),
         }

@@ -170,6 +170,7 @@ pub(super) struct PreparedBar {
     lead: u64,
     beats: u64,
     chord: Option<ArcGc<SampleBuffer>>,
+    phrase_pcm: Option<SampleBuffer>,
     loop_pcm: Option<SampleBuffer>,
 }
 pub(super) struct ChordCache {
@@ -194,8 +195,33 @@ impl PreparedBacking {
             return Err(err("backing needs 1..=256 segments"));
         }
         let mut resource_frames = 0usize;
+        let mut render_work = 0u64;
         for bar in &song.bars {
+            if !bar.bpm.is_finite() || bar.bpm <= 0.0 {
+                return Err(err("backing tempo must be finite and positive"));
+            }
             let duration = bar.duration_samples(rate as f32).max(1) as usize;
+            if bar.chord_ref.is_some() && bar.backing_phrase.is_some() {
+                return Err(err("backing chord and phrase are mutually exclusive"));
+            }
+            if let Some(phrase) = &bar.backing_phrase {
+                let beats = u64::from(bar.time_signature.numerator.max(1))
+                    .saturating_mul(u64::from(bar.length.max(1)));
+                let layout = crate::backing_phrase::preflight(
+                    phrase,
+                    duration,
+                    bar.beat_frames(rate),
+                    beats,
+                    rate,
+                )
+                .map_err(err)?;
+                render_work = render_work
+                    .checked_add(layout.work_frames)
+                    .ok_or_else(|| err("aggregate phrase render work overflow"))?;
+                if render_work > crate::backing_phrase::MAX_RENDER_WORK {
+                    return Err(err("aggregate backing phrase exceeds render-work bound"));
+                }
+            }
             let chord_len = if bar.chord_ref.is_some() {
                 bar.chord_measure_secs().max(0.5).clamp(0.3, 2.0) * rate as f32
             } else {
@@ -204,6 +230,13 @@ impl PreparedBacking {
             resource_frames = resource_frames
                 .checked_add(duration)
                 .and_then(|n| n.checked_add(chord_len.ceil() as usize))
+                .and_then(|n| {
+                    n.checked_add(if bar.backing_phrase.is_some() {
+                        duration
+                    } else {
+                        0
+                    })
+                })
                 .ok_or_else(|| err("backing PCM exceeds resource bound"))?;
             if resource_frames > MAX_PCM_FRAMES {
                 return Err(err("aggregate backing PCM exceeds 16777216 frames"));
@@ -218,6 +251,7 @@ impl PreparedBacking {
             }
             let duration = bar.duration_samples(rate as f32).max(1);
             let beats = u64::from(bar.time_signature.numerator.max(1));
+            let phrase_beats = beats.saturating_mul(u64::from(bar.length.max(1)));
             let beat = bar.beat_frames(rate);
             let measure = bar.measure_frames(rate);
             total = total
@@ -272,6 +306,20 @@ impl PreparedBacking {
             } else {
                 None
             };
+            let phrase_pcm = if let Some(phrase) = &bar.backing_phrase {
+                Some(
+                    crate::backing_phrase::render(
+                        phrase,
+                        duration as usize,
+                        beat,
+                        phrase_beats,
+                        rate,
+                    )
+                    .map_err(err)?,
+                )
+            } else {
+                None
+            };
             bars.push(PreparedBar {
                 duration,
                 beat: beat.max(1),
@@ -279,6 +327,7 @@ impl PreparedBacking {
                 lead: bar.count_in_frames(rate),
                 beats,
                 chord,
+                phrase_pcm,
                 loop_pcm: bar.audio_buffer.clone(),
             });
         }
@@ -1539,6 +1588,9 @@ impl Processor {
                         trigger(&mut self.song_voices, pcm.clone());
                     }
                     self.song_last_measure = Some(measure);
+                }
+                if let Some(pcm) = &bar.phrase_pcm {
+                    song_sample += pcm.data[self.cursor.sample_in_bar as usize];
                 }
                 if let Some(take) = &self.take {
                     let data = &take.bars[self.cursor.bar_idx].pcm.data;

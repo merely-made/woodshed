@@ -140,6 +140,7 @@ fn validate(song: &Song, sample_rate: u32) -> Result<u64, SongExportError> {
         ));
     }
     let mut frames = 0u64;
+    let mut phrase_work = 0u64;
     for bar in &song.bars {
         if !bar.bpm.is_finite()
             || bar.bpm <= 0.0
@@ -155,6 +156,27 @@ fn validate(song: &Song, sample_rate: u32) -> Result<u64, SongExportError> {
             .checked_add(duration)
             .filter(|n| *n <= MAX_PCM_FRAMES as u64)
             .ok_or_else(|| invalid("Backing export exceeds 16777216 cycle frames."))?;
+        if bar.chord_ref.is_some() && bar.backing_phrase.is_some() {
+            return Err(invalid(
+                "Backing export chord and phrase are mutually exclusive.",
+            ));
+        }
+        if let Some(phrase) = &bar.backing_phrase {
+            let beats =
+                u64::from(bar.time_signature.numerator).saturating_mul(u64::from(bar.length));
+            let layout = crate::backing_phrase::preflight(
+                phrase,
+                duration as usize,
+                bar.beat_frames(sample_rate),
+                beats,
+                sample_rate,
+            )
+            .map_err(|message| invalid(format!("Backing export phrase: {message}.")))?;
+            phrase_work = phrase_work
+                .checked_add(layout.work_frames)
+                .filter(|work| *work <= crate::backing_phrase::MAX_RENDER_WORK)
+                .ok_or_else(|| invalid("Backing export exceeds phrase render-work bound."))?;
+        }
         if let Some(chord) = &bar.chord_ref {
             if chord.pitches_hz.len() > 256 {
                 return Err(invalid("Backing export chord exceeds 256 pitches."));

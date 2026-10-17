@@ -1,5 +1,5 @@
 use super::*;
-use crate::{Bar, ChordRef, SampleBuffer, SongCursor, TimeSignature};
+use crate::{BackingEvent, BackingPhrase, Bar, ChordRef, SampleBuffer, SongCursor, TimeSignature};
 use std::io::{Cursor, SeekFrom};
 use std::sync::Arc;
 
@@ -285,6 +285,108 @@ fn unrelated_pending_transport_commands_do_not_change_the_complete_export_cycle(
         bits(&export(&pending, 1000).1)
     );
     assert_eq!(pending.pending.len(), 2);
+}
+
+#[test]
+fn phrase_export_matches_live_pcm_at_48k_and_441k_with_variable_meters_and_lengths() {
+    for rate in [48_000, 44_100] {
+        let mut song = Song::new();
+        song.click_enabled = true;
+        song.bars = [(137.0, 3, 2), (113.5, 7, 1)]
+            .into_iter()
+            .map(|(bpm, numerator, length)| {
+                let mut bar = Bar {
+                    bpm,
+                    time_signature: TimeSignature::new(numerator, 4),
+                    length,
+                    ..Default::default()
+                };
+                let frames = bar.duration_samples(rate as f32) as usize;
+                bar.audio_buffer = Some(SampleBuffer::new(
+                    (0..frames)
+                        .map(|i| (i % 17) as f32 * 0.00625 - 0.05)
+                        .collect(),
+                    rate,
+                ));
+                let beats = u32::from(numerator) * u32::from(length);
+                bar.backing_phrase = Some(BackingPhrase {
+                    events: vec![
+                        BackingEvent {
+                            beat: 0.25,
+                            pitches_hz: vec![220.0, 277.18],
+                            strum_seconds: 0.018,
+                        },
+                        BackingEvent {
+                            beat: beats as f64 * 0.55,
+                            pitches_hz: vec![329.63],
+                            strum_seconds: 0.0,
+                        },
+                    ],
+                });
+                bar
+            })
+            .collect();
+        let expected_frames = song
+            .bars
+            .iter()
+            .map(|bar| bar.duration_samples(rate as f32))
+            .sum::<u64>();
+        let (report, exported, _) = export(&song, rate);
+        assert_eq!(report.frames, expected_frames);
+
+        let mut frozen = song.clone();
+        frozen.playing = true;
+        frozen.one_shot = true;
+        let mut live = OutputRuntime::offline(rate).unwrap();
+        live.set_output_gain(0.8).unwrap();
+        live.set_song(frozen).unwrap();
+        live.rewind().unwrap();
+        live.service().unwrap();
+        let mut expected = Vec::with_capacity(expected_frames as usize);
+        let mut remaining = expected_frames;
+        while remaining > 0 {
+            let frames = remaining.min(4096) as usize;
+            let mut scratch = vec![0.0; frames * 2];
+            live.render_offline(&mut scratch).unwrap();
+            expected.extend(scratch.chunks_exact(2).map(|frame| frame[0]));
+            live.service().unwrap();
+            remaining -= frames as u64;
+        }
+        assert_eq!(bits(&exported), bits(&expected), "sample rate {rate}");
+        assert!(!live.snapshot().playing);
+    }
+}
+
+#[test]
+fn phrase_rejections_leave_export_writer_untouched() {
+    let mut song = captured_song();
+    song.bars[0].backing_phrase = Some(BackingPhrase {
+        events: vec![
+            BackingEvent {
+                beat: 0.0,
+                pitches_hz: vec![220.0],
+                strum_seconds: 0.0,
+            },
+            BackingEvent {
+                beat: 0.0001,
+                pitches_hz: vec![330.0],
+                strum_seconds: 0.0,
+            },
+        ],
+    });
+    let mut collision_writer = UntouchedWriter::default();
+    assert!(export_song_wav_to(&song, 1000, &mut collision_writer).is_err());
+    assert_eq!((collision_writer.writes, collision_writer.seeks), (0, 0));
+
+    song.bars[0].chord_ref = Some(ChordRef {
+        formula_name: "conflict".into(),
+        root_freq_hz: 220.0,
+        pitches_hz: vec![220.0],
+        label: String::new(),
+    });
+    let mut conflict_writer = UntouchedWriter::default();
+    assert!(export_song_wav_to(&song, 1000, &mut conflict_writer).is_err());
+    assert_eq!((conflict_writer.writes, conflict_writer.seeks), (0, 0));
 }
 
 struct FailedWriter;

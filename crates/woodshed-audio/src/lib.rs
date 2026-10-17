@@ -28,6 +28,7 @@
 //! - [`midi`] — MIDI in/out, clock-slave BPM derivation.
 //! - [`looper`] — bar-aligned audio loop record + overdub.
 
+pub mod backing_phrase;
 pub mod calibration;
 pub mod capture_feed;
 pub mod chord_audio;
@@ -43,6 +44,7 @@ pub mod sequencer;
 pub mod song;
 pub mod sound;
 
+pub use backing_phrase::{BackingEvent, BackingPhrase};
 pub use calibration::{CalibrationOutcome, CalibrationSession, estimate_latency_from_pairs};
 pub use chord_audio::{ChordRender, render_chord};
 pub use engine::AudioError;

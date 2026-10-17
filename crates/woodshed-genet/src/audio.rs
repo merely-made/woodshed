@@ -21,6 +21,8 @@ use woodshed_core::song::SongDoc;
 
 mod loop_projection;
 mod practice_clock;
+#[cfg(test)]
+mod mixed_loop_tests;
 pub(crate) use loop_projection::CaptureSnapshot;
 use loop_projection::LoopCaptures;
 
@@ -192,6 +194,7 @@ fn to_song(doc: &SongDoc) -> Song {
                 label: b.chord_label.clone(),
             }),
             audio_buffer: None,
+            backing_phrase: None,
             label: b.label.clone(),
             length: b.length,
         })
@@ -1299,6 +1302,7 @@ mod tests {
                 beats: 5,
                 bars: 3,
                 pitches_hz: vec![217.3, 281.6, 336.2],
+                phrase: None,
             }],
         }
     }
