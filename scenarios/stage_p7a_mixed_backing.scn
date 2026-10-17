@@ -13,6 +13,8 @@ act p7a-checkpoint baseline
 click role:switch @aria-label=Select Card 2
 click role:button @aria-label=Play backing
 act await-selected-take-playback
+wait 1800
+settle 3
 assert snap take-playback-observed == true
 assert snap song-playing == true
 act p7a-checkpoint playing
@@ -30,6 +32,8 @@ act p7a-checkpoint reordered
 click role:switch @aria-label=Select Card 2
 click role:button @aria-label=Play backing
 act await-selected-take-playback
+wait 1800
+settle 3
 assert snap take-playback-observed == true
 assert snap recorder-waveforms == 1
 capture 02_capture_follows_reordered_scale
