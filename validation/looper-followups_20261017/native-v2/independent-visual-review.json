@@ -1,0 +1,420 @@
+{
+  "schema": "woodshed-independent-capture-review/v1",
+  "reviewed_at_utc": "2026-10-17T15:17:08.108509+00:00",
+  "trial": "/Users/markik/Code/testing/woodshed/looper-followups-20261017/native-v2",
+  "scope": "All actual native-v2 seed and reopen PNGs. Pixel-based visual review only. Native-v1 zero-frame occlusion excluded and not inspected or combined with this run.",
+  "counts": {
+    "seed": 14,
+    "reopen": 4,
+    "total": 18,
+    "nonblank": 18,
+    "captures_with_complete_visible_envelope": 10
+  },
+  "images": [
+    {
+      "path": "seed/01_seconds_phrase_playback.png",
+      "absolute_path": "/Users/markik/Code/testing/woodshed/looper-followups-20261017/native-v2/seed/01_seconds_phrase_playback.png",
+      "sha256": "57c35bf76457c06393a113fa9d670dc00bf1de0f81848bf6e3e5679c0f6be189",
+      "bytes": 602378,
+      "width": 2360,
+      "height": 2000,
+      "method": "Direct view_image inspection",
+      "envelope_eight_regions_visible": false,
+      "third_card_identity_and_selector_visible": true,
+      "main_transport_controls_visible": true,
+      "observations": [
+        "Wide Looper with chord, scale, arpeggio rows. Selected Set 1 / Card 2 is 1.125 s, 180 bpm click, 3/4; Card 3 is 0.875 s. No capture yet.",
+        "Pause glyph visible. Selected timing heading and Bars or Seconds footer are readable. All rows and transport fit without overlap or horizontal clipping."
+      ],
+      "finding_ids": []
+    },
+    {
+      "path": "seed/02_absolute_seconds_after_tempo_meter_edit.png",
+      "absolute_path": "/Users/markik/Code/testing/woodshed/looper-followups-20261017/native-v2/seed/02_absolute_seconds_after_tempo_meter_edit.png",
+      "sha256": "5acd32fa1990fdd68185e38c07d5da0b6218f1444b956f57fd49c51604f4b67d",
+      "bytes": 600519,
+      "width": 2360,
+      "height": 2000,
+      "method": "Direct view_image inspection",
+      "envelope_eight_regions_visible": false,
+      "third_card_identity_and_selector_visible": true,
+      "main_transport_controls_visible": true,
+      "observations": [
+        "Wide selected Card 2 remains 1.125 s while click context changes to 137 bpm and 5/4. Card 3 remains 0.875 s. No capture yet.",
+        "All rows and transport are readable, with Selected timing heading; no horizontal clipping or row/transport overlay."
+      ],
+      "finding_ids": []
+    },
+    {
+      "path": "seed/03_seconds_take_follows_card.png",
+      "absolute_path": "/Users/markik/Code/testing/woodshed/looper-followups-20261017/native-v2/seed/03_seconds_take_follows_card.png",
+      "sha256": "4424d2cf23a81a6db6502338f1dc50c18817b7d7c0cd6ff1efc16cef8a85bab5",
+      "bytes": 614246,
+      "width": 2360,
+      "height": 2000,
+      "method": "Direct view_image inspection",
+      "envelope_eight_regions_visible": true,
+      "third_card_identity_and_selector_visible": true,
+      "main_transport_controls_visible": true,
+      "observations": [
+        "Scale is first while still Set 1 / Card 2, 1.125 s, 137 bpm click, 5/4. One saved loop and owner-specific stored-loop Clear are visible.",
+        "Amber envelope has eight sequential regions: quiet, very low, medium, tallest, lower, second-tallest, very low, quiet. The six interior bands and quiet ends are visibly distinct. This is visual shape evidence, not numeric sample/amplitude verification.",
+        "Chord and arpeggio remain below. All three rows and transport fit; no overlay or horizontal clipping."
+      ],
+      "finding_ids": []
+    },
+    {
+      "path": "seed/04_duration_edit_retains_captured_clock.png",
+      "absolute_path": "/Users/markik/Code/testing/woodshed/looper-followups-20261017/native-v2/seed/04_duration_edit_retains_captured_clock.png",
+      "sha256": "eac7ecae3c8b9fd39cff32dcf6b0047b94d9d4dd1b0a3230373df7b8bc719a4a",
+      "bytes": 674887,
+      "width": 2360,
+      "height": 2000,
+      "method": "Direct view_image inspection",
+      "envelope_eight_regions_visible": true,
+      "third_card_identity_and_selector_visible": true,
+      "main_transport_controls_visible": true,
+      "observations": [
+        "Refusal visibly names Loop scale and says to clear its captured loop before changing tempo, meter or hold; loaded backing keeps its original clock.",
+        "Displayed capture remains Set 1 / Card 2, 1.125 s, 137 bpm click, 5/4.",
+        "Amber envelope has eight sequential regions: quiet, very low, medium, tallest, lower, second-tallest, very low, quiet. The six interior bands and quiet ends are visibly distinct. This is visual shape evidence, not numeric sample/amplitude verification.",
+        "All rows and transport remain readable, without horizontal clipping or overlap. Requested replacement duration itself is not visible."
+      ],
+      "finding_ids": []
+    },
+    {
+      "path": "seed/05_mixed_duration_export.png",
+      "absolute_path": "/Users/markik/Code/testing/woodshed/looper-followups-20261017/native-v2/seed/05_mixed_duration_export.png",
+      "sha256": "de82b68323a079fa32a76c79db78ba75a335668c6741b0e5b21a2f75cb18d996",
+      "bytes": 709811,
+      "width": 2360,
+      "height": 2000,
+      "method": "Direct view_image inspection",
+      "envelope_eight_regions_visible": true,
+      "third_card_identity_and_selector_visible": true,
+      "main_transport_controls_visible": true,
+      "observations": [
+        "Export notice reports loop-export.wav, 3.250 s, 48000 Hz, backing plus completed loops. Refusal remains readable.",
+        "Selected Card 2 retains its identity and 1.125 s timing.",
+        "Amber envelope has eight sequential regions: quiet, very low, medium, tallest, lower, second-tallest, very low, quiet. The six interior bands and quiet ends are visibly distinct. This is visual shape evidence, not numeric sample/amplitude verification.",
+        "All three rows and full transport fit without overlay or horizontal clipping."
+      ],
+      "finding_ids": []
+    },
+    {
+      "path": "seed/06_medium_envelope.png",
+      "absolute_path": "/Users/markik/Code/testing/woodshed/looper-followups-20261017/native-v2/seed/06_medium_envelope.png",
+      "sha256": "b75afc0e6179099694cee3b55ed290d9d1a7f80db154ec4615b7988c17264313",
+      "bytes": 598991,
+      "width": 1520,
+      "height": 1800,
+      "method": "Direct view_image inspection",
+      "envelope_eight_regions_visible": true,
+      "third_card_identity_and_selector_visible": true,
+      "main_transport_controls_visible": true,
+      "observations": [
+        "Medium layout shows the full scale, chord and arpeggio rows with their Clear controls. Scale remains Set 1 / Card 2, 1.125 s, 137 bpm click, 5/4.",
+        "Amber envelope has eight sequential regions: quiet, very low, medium, tallest, lower, second-tallest, very low, quiet. The six interior bands and quiet ends are visibly distinct. This is visual shape evidence, not numeric sample/amplitude verification.",
+        "Transport sits below the rows. Its controls are tightly packed and Record Selected Card 2 wraps over several lines, but Record, play, stop and rewind remain within the image and identifiable.",
+        "No row/transport overlay or horizontal clipping observed."
+      ],
+      "finding_ids": []
+    },
+    {
+      "path": "seed/07_compact_envelope.png",
+      "absolute_path": "/Users/markik/Code/testing/woodshed/looper-followups-20261017/native-v2/seed/07_compact_envelope.png",
+      "sha256": "f2b112e8dd55be3416657b3f66c83241bd9d717e81ac7016e17950cca85c85f0",
+      "bytes": 552652,
+      "width": 840,
+      "height": 2200,
+      "method": "Direct view_image inspection",
+      "envelope_eight_regions_visible": true,
+      "third_card_identity_and_selector_visible": true,
+      "main_transport_controls_visible": false,
+      "observations": [
+        "Compact layout shows all three vertically stacked rows, including full Card 3 selector and Clear. Selected Card 2 duration and click-context label remain readable.",
+        "Amber envelope has eight sequential regions: quiet, very low, medium, tallest, lower, second-tallest, very low, quiet. The six interior bands and quiet ends are visibly distinct. This is visual shape evidence, not numeric sample/amplitude verification.",
+        "Transport begins at the bottom with only part of Selected timing heading visible; its controls are below the recorder viewport at this scroll position.",
+        "Rows are not covered by the transport. Footer wraps inside the image width; no horizontal clipping observed."
+      ],
+      "finding_ids": [
+        "L01"
+      ]
+    },
+    {
+      "path": "seed/scroll_before_select_third.png",
+      "absolute_path": "/Users/markik/Code/testing/woodshed/looper-followups-20261017/native-v2/seed/scroll_before_select_third.png",
+      "sha256": "d3325ed89723ccfaac85fd14c38d0c9beca4c15edb91befb01ac118028862990",
+      "bytes": 587083,
+      "width": 840,
+      "height": 2200,
+      "method": "Direct view_image inspection",
+      "envelope_eight_regions_visible": false,
+      "third_card_identity_and_selector_visible": true,
+      "main_transport_controls_visible": true,
+      "observations": [
+        "Scrolled compact checkpoint exposes the complete Card 3 row and selector, 0.875 s, 300 bpm click, 5/4; it is not yet selected.",
+        "Transport below is fully visible and still summarizes selected Card 2, 1.125 s. Record, play, stop and rewind are visible.",
+        "Upper chord row is clipped at the scrolling viewport top, not covered by transport. No horizontal clipping or row/transport overlay observed."
+      ],
+      "finding_ids": []
+    },
+    {
+      "path": "seed/08_compact_third_card_reached.png",
+      "absolute_path": "/Users/markik/Code/testing/woodshed/looper-followups-20261017/native-v2/seed/08_compact_third_card_reached.png",
+      "sha256": "3ca7de0cd46bcc093dd7db012a1c3e5b51b3b158c09aa9069813e87791e28564",
+      "bytes": 528155,
+      "width": 840,
+      "height": 2200,
+      "method": "Direct view_image inspection",
+      "envelope_eight_regions_visible": false,
+      "third_card_identity_and_selector_visible": true,
+      "main_transport_controls_visible": true,
+      "observations": [
+        "Card 3 arpeggio has amber selection border and selected indicator. Identity Set 1 / Card 3 and 0.875 s, 300 bpm click, 5/4 are readable.",
+        "Transport follows below the selected row, shows matching 0.875 s timing and Record Selected Card 3. Record, play, stop and rewind are fully visible.",
+        "This supports visible third-Card selection and transport reachability without overlay or horizontal clipping. Still pixels alone do not prove click hit testing."
+      ],
+      "finding_ids": []
+    },
+    {
+      "path": "seed/08b_compact_transport_reached.png",
+      "absolute_path": "/Users/markik/Code/testing/woodshed/looper-followups-20261017/native-v2/seed/08b_compact_transport_reached.png",
+      "sha256": "07f3c7164cf8fe7211bfc33f9c22061111271233391ae3770973dcba9ca1d455",
+      "bytes": 477188,
+      "width": 840,
+      "height": 2200,
+      "method": "Direct view_image inspection",
+      "envelope_eight_regions_visible": false,
+      "third_card_identity_and_selector_visible": true,
+      "main_transport_controls_visible": true,
+      "observations": [
+        "Further scrolled compact view retains selected Card 3 and matching 0.875 s transport. Record, play, stop, rewind, Click and Replace capture are visible without covering the selected row.",
+        "Top content is vertically scrolled offscreen. No horizontal clipping observed.",
+        "A solid black strip occupies the bottom of the PNG below the navy application content. No core control is covered by that strip."
+      ],
+      "finding_ids": [
+        "V01"
+      ]
+    },
+    {
+      "path": "seed/09_short_envelope.png",
+      "absolute_path": "/Users/markik/Code/testing/woodshed/looper-followups-20261017/native-v2/seed/09_short_envelope.png",
+      "sha256": "c51543ae954c3ccb739c95faa4837df09c13546c673e134cf5b01dd4d243e0e5",
+      "bytes": 268018,
+      "width": 840,
+      "height": 1440,
+      "method": "Direct view_image inspection",
+      "envelope_eight_regions_visible": true,
+      "third_card_identity_and_selector_visible": false,
+      "main_transport_controls_visible": false,
+      "observations": [
+        "Short scrolled view shows selected Set 1 / Card 2, 1.125 s and its complete envelope. Chord row is visible below; only the top edge of arpeggio appears at the recorder viewport bottom.",
+        "Amber envelope has eight sequential regions: quiet, very low, medium, tallest, lower, second-tallest, very low, quiet. The six interior bands and quiet ends are visibly distinct. This is visual shape evidence, not numeric sample/amplitude verification.",
+        "Transport and complete third row are not in view at this scroll position. Footer is readable and wraps inside the width.",
+        "No transport overlay or horizontal clipping observed; a solid black lower region remains beneath the application content."
+      ],
+      "finding_ids": [
+        "V01",
+        "L01"
+      ]
+    },
+    {
+      "path": "seed/10_short_third_card_reached.png",
+      "absolute_path": "/Users/markik/Code/testing/woodshed/looper-followups-20261017/native-v2/seed/10_short_third_card_reached.png",
+      "sha256": "a2c37fb39539f27a55d1bf03349eaaa2f9b61dd16818c12d2e1998b032049496",
+      "bytes": 296950,
+      "width": 840,
+      "height": 1440,
+      "method": "Direct view_image inspection",
+      "envelope_eight_regions_visible": false,
+      "third_card_identity_and_selector_visible": true,
+      "main_transport_controls_visible": true,
+      "observations": [
+        "Short view exposes selected arpeggio Card 3, 0.875 s, 300 bpm click, 5/4, and its Clear control. The row top border is clipped by the scroll viewport but identity/selector remain visible.",
+        "Matching Selected timing, Record Selected Card 3, Record/play/stop/rewind controls are visible below the row. Transport does not cover the row and no horizontal clipping is visible.",
+        "A solid black lower region is visible beneath the application content."
+      ],
+      "finding_ids": [
+        "V01"
+      ]
+    },
+    {
+      "path": "seed/10b_short_transport_reached.png",
+      "absolute_path": "/Users/markik/Code/testing/woodshed/looper-followups-20261017/native-v2/seed/10b_short_transport_reached.png",
+      "sha256": "a840ec2233ff60c5d0e1803cdc433b98a5c842771661801e339cdca12682289f",
+      "bytes": 299087,
+      "width": 840,
+      "height": 1440,
+      "method": "Direct view_image inspection",
+      "envelope_eight_regions_visible": false,
+      "third_card_identity_and_selector_visible": false,
+      "main_transport_controls_visible": true,
+      "observations": [
+        "Short view is scrolled farther: upper part of the selected row is outside the recorder viewport; its lower section and Clear remain visible.",
+        "Entire transport is visible with 0.875 s, 300 bpm click, 5/4 and Record Selected Card 3, plus all main transport controls and status.",
+        "No horizontal clipping or transport overlay of the visible row section; solid black lower region persists."
+      ],
+      "finding_ids": [
+        "V01"
+      ]
+    },
+    {
+      "path": "seed/11_zoomed_envelope.png",
+      "absolute_path": "/Users/markik/Code/testing/woodshed/looper-followups-20261017/native-v2/seed/11_zoomed_envelope.png",
+      "sha256": "0b55c7563a05e94b83c95b0161f3d6f82eee413f847c0bdd5d45cc03b8b81bd5",
+      "bytes": 758506,
+      "width": 2360,
+      "height": 2000,
+      "method": "Direct view_image inspection",
+      "envelope_eight_regions_visible": true,
+      "third_card_identity_and_selector_visible": false,
+      "main_transport_controls_visible": true,
+      "observations": [
+        "Zoomed view retains readable Selected timing and Bars or Seconds footer, selected Set 1 / Card 2, 1.125 s and the complete envelope.",
+        "Amber envelope has eight sequential regions: quiet, very low, medium, tallest, lower, second-tallest, very low, quiet. The six interior bands and quiet ends are visibly distinct. This is visual shape evidence, not numeric sample/amplitude verification.",
+        "Scale and chord rows are visible. Only the top sliver of the arpeggio row appears above the transport boundary; full third-row reachability at this zoom is not demonstrated.",
+        "Transport remains readable within the window, with a wrapped timing summary and record caption. No horizontal clipping observed. The picture alone cannot distinguish normal table viewport clipping from an overlap at the hidden third row."
+      ],
+      "finding_ids": [
+        "L02"
+      ]
+    },
+    {
+      "path": "reopen/01_exact_seconds_take_reopened.png",
+      "absolute_path": "/Users/markik/Code/testing/woodshed/looper-followups-20261017/native-v2/reopen/01_exact_seconds_take_reopened.png",
+      "sha256": "e7c47dd5374b494cb8e95c67092ec7fff5abc491f3770dab544a5a63f4c07a5e",
+      "bytes": 614248,
+      "width": 2360,
+      "height": 2000,
+      "method": "Direct view_image inspection",
+      "envelope_eight_regions_visible": true,
+      "third_card_identity_and_selector_visible": true,
+      "main_transport_controls_visible": true,
+      "observations": [
+        "Wide reopened view shows one saved loop, reordered scale/chord/arpeggio rows and selected Set 1 / Card 2, 1.125 s, 137 bpm click, 5/4.",
+        "Amber envelope has eight sequential regions: quiet, very low, medium, tallest, lower, second-tallest, very low, quiet. The six interior bands and quiet ends are visibly distinct. This is visual shape evidence, not numeric sample/amplitude verification.",
+        "All rows and transport fit without overlap or horizontal clipping. Play glyph and Input unopened status are visible. Exact PCM and sealed metadata are not established by pixels."
+      ],
+      "finding_ids": []
+    },
+    {
+      "path": "reopen/02_compact_seconds_reopened.png",
+      "absolute_path": "/Users/markik/Code/testing/woodshed/looper-followups-20261017/native-v2/reopen/02_compact_seconds_reopened.png",
+      "sha256": "67785940af3c3089f55c841ea5e174e5ce2f78b1a88224c08065dc5aa271f787",
+      "bytes": 491492,
+      "width": 840,
+      "height": 2200,
+      "method": "Direct view_image inspection",
+      "envelope_eight_regions_visible": true,
+      "third_card_identity_and_selector_visible": true,
+      "main_transport_controls_visible": false,
+      "observations": [
+        "Compact reopened view shows export report of 3.250 s at 48000 Hz, one saved loop, and selected Set 1 / Card 2 with 1.125 s timing.",
+        "Amber envelope has eight sequential regions: quiet, very low, medium, tallest, lower, second-tallest, very low, quiet. The six interior bands and quiet ends are visibly distinct. This is visual shape evidence, not numeric sample/amplitude verification.",
+        "All three stacked rows, including Card 3 selector and Clear, are visible without a covering transport. Only the beginning of Selected timing appears at the recorder viewport bottom; transport controls are below the current scroll position.",
+        "Footer wraps within the image. No horizontal clipping observed."
+      ],
+      "finding_ids": [
+        "L01"
+      ]
+    },
+    {
+      "path": "reopen/03_medium_envelope_reopened.png",
+      "absolute_path": "/Users/markik/Code/testing/woodshed/looper-followups-20261017/native-v2/reopen/03_medium_envelope_reopened.png",
+      "sha256": "d6559160c5f791e348c029f5694c41777bbf0ca365ab173a28a6ed8196a9d0ed",
+      "bytes": 606791,
+      "width": 1520,
+      "height": 1800,
+      "method": "Direct view_image inspection",
+      "envelope_eight_regions_visible": true,
+      "third_card_identity_and_selector_visible": true,
+      "main_transport_controls_visible": true,
+      "observations": [
+        "Medium reopened view retains the complete envelope, Card 2 identity and 1.125 s timing, all three rows, and all three Clear controls.",
+        "Amber envelope has eight sequential regions: quiet, very low, medium, tallest, lower, second-tallest, very low, quiet. The six interior bands and quiet ends are visibly distinct. This is visual shape evidence, not numeric sample/amplitude verification.",
+        "Transport is below the rows, with tightly packed but identifiable controls and a wrapped Record Selected Card 2 caption. No row/transport overlay or horizontal clipping observed.",
+        "The final footer line is cut by the bottom edge of the viewport; complete footer visibility requires a different scroll position."
+      ],
+      "finding_ids": [
+        "V02"
+      ]
+    },
+    {
+      "path": "reopen/04_short_third_card_reopened.png",
+      "absolute_path": "/Users/markik/Code/testing/woodshed/looper-followups-20261017/native-v2/reopen/04_short_third_card_reopened.png",
+      "sha256": "97b6b3cc454683156a7679d98993b555689cd431feb1486e3c12344838251a05",
+      "bytes": 347927,
+      "width": 840,
+      "height": 1440,
+      "method": "Direct view_image inspection",
+      "envelope_eight_regions_visible": false,
+      "third_card_identity_and_selector_visible": true,
+      "main_transport_controls_visible": true,
+      "observations": [
+        "Short reopened view shows selected Set 1 / Card 3, 0.875 s, 300 bpm click, 5/4 and matching Selected timing/Record Selected Card 3.",
+        "Record, play, stop, rewind, Click, Replace capture and the selected row Clear are all visible, with transport below the row and no horizontal clipping.",
+        "Row top is clipped by its scrolling viewport, but selector, title and metadata are readable. Footer wraps below the transport; unlike several seed scroll captures, no solid black bottom strip is visible."
+      ],
+      "finding_ids": []
+    }
+  ],
+  "findings": [
+    {
+      "id": "V01",
+      "severity": "P3 visual artifact; cause unestablished",
+      "title": "Black lower strip in several scrolled seed captures",
+      "images": [
+        "seed/08b_compact_transport_reached.png",
+        "seed/09_short_envelope.png",
+        "seed/10_short_third_card_reached.png",
+        "seed/10b_short_transport_reached.png"
+      ],
+      "detail": "Pixels show a solid black lower area below navy application content. It does not cover the visible row controls or transport. This review cannot establish whether it comes from application painting or capture/resize behavior. It prevents a blanket claim that every viewport background is cleanly painted."
+    },
+    {
+      "id": "V02",
+      "severity": "P3 viewport clipping observation",
+      "title": "Medium reopen footer extends below viewport",
+      "images": [
+        "reopen/03_medium_envelope_reopened.png"
+      ],
+      "detail": "Last footer line is vertically cut at the image bottom. Core rows and transport remain visible; no horizontal truncation is observed."
+    },
+    {
+      "id": "L01",
+      "severity": "qualification limit, not an overlay finding",
+      "title": "Some initial compact/short captures do not show transport until scrolling",
+      "images": [
+        "seed/07_compact_envelope.png",
+        "seed/09_short_envelope.png",
+        "reopen/02_compact_seconds_reopened.png"
+      ],
+      "detail": "Rows and transport no longer cover one another, but not all content fits simultaneously. Other reviewed scroll checkpoints show the third Card and complete transport. These initial positions alone do not prove reachability."
+    },
+    {
+      "id": "L02",
+      "severity": "qualification limit",
+      "title": "Zoomed third-row reachability not captured",
+      "images": [
+        "seed/11_zoomed_envelope.png"
+      ],
+      "detail": "Full scale envelope and transport are readable, but only a sliver of the third row is shown at the table/transport boundary. There is no zoomed scroll-to-third checkpoint. Do not claim complete all-row access or absence of overlap at that boundary from this image alone."
+    }
+  ],
+  "conclusion": {
+    "status": "bounded_visual_followup_supported_with_explicit_artifacts_and_limits",
+    "waveform": "Ten images show the complete eight-region envelope, including quiet ends and six varying interior plateaus. It remains visible after reorder, refusal, export, resize, zoom and reopen. Numeric amplitudes and exact PCM bits remain separate reference evidence.",
+    "compact_short_reachability": "The reviewed before/after scroll positions visibly expose Card 3 selection and full transport below its row in compact and short seed captures and in short reopen. No row/transport overlay is observed at those revealed positions.",
+    "horizontal_clipping": "No horizontal clipping of the reviewed core labels, Card selectors, Clear controls or transport controls observed at captured widths. Medium controls are tightly packed; full responsive or arbitrary-size acceptance is not claimed.",
+    "copy": "Selected timing heading and Bars or Seconds footer are visible; old Bars-only wording is absent in these captures.",
+    "remaining_limits": [
+      "Black lower viewport strips in four seed images.",
+      "Medium reopen footer clipped vertically.",
+      "Zoomed third-row reachability not demonstrated.",
+      "Screenshots show control visibility and selected state; scenario actions/hit testing and sealed/PCM/WAV equality require separate parent evidence.",
+      "No physical audio or microphone qualification."
+    ],
+    "source_inference_used_for_visible_findings": false
+  }
+}

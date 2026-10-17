@@ -2319,6 +2319,19 @@ native wheel/resize/zoom/fresh-reopen/WAV qualification are recorded separately
 in `validation/looper-followups_20261017/`. Physical input/audio/latency and broader
 P8 device coverage are not implied by those software checks.
 
+2026-10-17 participant follow-up confirmed audible backing and actual microphone
+recording. A persistent manual trial saved real takes that independently
+sealed-loaded and exported with signal, while the original automated “wait
+15000” attempt was excluded: that command waits for quiescence up to a frame
+cap, not milliseconds. New acceptance-only monotonic/device-frame dwells require
+5 seconds of actual output and 15 seconds of active target capture. The user
+also exposed Record Selected Card traversing into adjacent Cards. An explicit
+selected-segment scope now pins the original cursor and write target until Stop,
+preserves neighboring PCM, and leaves saved-Song follow recording unchanged;
+busy transport focus uses the accepted target and clock. The affected 680-case
+gate plus five child invocations and desktop build pass; committed physical-focus
+qualification is pending. Actual microphone audio stays external to Git.
+
 ### P8. Adaptive polish and release acceptance
 
 **Current state: open.** Windows alpha behavior exists. Three-width product

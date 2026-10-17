@@ -789,7 +789,7 @@ impl AudioBackend for CpalBackend {
         if let Some(input) = &self.input {
             input.capture.set_enabled(true);
         }
-        if let Err(error) = self.with_output(|output| output.arm_capture(index, true)) {
+        if let Err(error) = self.with_output(|output| output.arm_selected_capture(index)) {
             if let Some(input) = &self.input {
                 input.capture.set_enabled(false);
             }
@@ -1357,6 +1357,70 @@ mod tests {
         audio.loop_arm_record(take.id).unwrap();
         assert!(audio.export_backing().unwrap_err().contains("armed"));
         assert_eq!(frozen.bars[0].audio_buffer.as_ref().unwrap().data[0], 0.25);
+    }
+
+    #[test]
+    fn selected_card_recording_stays_on_its_owner_and_preserves_neighbor_takes() {
+        use woodshed_audio::{Analyzer, LooperCaptureAnalyzer, PitchAnalyzer};
+        let mut producer = LooperCaptureAnalyzer::new();
+        producer.prepare(48_000);
+        let capture = producer.handle();
+        let mut audio = backend(Box::new(move || Ok(InputSession {
+            _stream: InputStream::Test,
+            tuner: PitchAnalyzer::new().handle(),
+            onset: OnsetAnalyzer::new().handle(),
+            capture: capture.clone(),
+        })));
+        let mut plan = owned_plan(1);
+        let base = plan.segments[0].clone();
+        plan.segments = (0..3).map(|index| {
+            let mut segment = base.clone();
+            segment.id.card = woodshedding::rehearsal::CardId(index + 7);
+            // Accelerated deterministic musical clocks keep this host-route
+            // test small; the processor suite covers authored Bars/Seconds.
+            segment.bpm = 6_000.0;
+            segment.beats = index as u8 + 1;
+            segment.bars = 1;
+            segment
+        }).collect();
+        let old: Vec<_> = [0usize, 2].into_iter().map(|index| {
+            let segment = &plan.segments[index];
+            let bar = Bar { bpm: segment.bpm,
+                time_signature: TimeSignature::new(segment.beats, 4),
+                length: segment.bars, ..Default::default() };
+            CaptureSnapshot { id: segment.id, bpm: segment.bpm,
+                beats: segment.beats, bars: segment.bars, seconds: None,
+                legacy_clock: false,
+                buffer: woodshed_audio::SampleBuffer::new(
+                    vec![if index == 0 { 0.25 } else { -0.25 }; bar.duration_samples(48_000.0) as usize], 48_000) }
+        }).collect();
+        audio.restore_loop_captures(old.clone()).unwrap();
+        audio.set_loop_plan(&plan).unwrap();
+        render(&mut audio, 32);
+        audio.loop_arm_record(plan.segments[1].id).unwrap();
+        audio.set_song_transport(true);
+        for _ in 0..4_000 {
+            producer.process(&[0.0625], 48_000.0, std::time::Instant::now());
+            render(&mut audio, 1);
+            let observed = audio.recorder_observation(None);
+            if observed.recording_bar.is_some() {
+                assert_eq!(observed.recording_bar, Some(1));
+                assert_eq!(observed.capture_target, Some(1));
+            }
+        }
+        assert_eq!(audio.recorder_observation(None).recording_bar, Some(1));
+        assert!(!audio.output_snapshot().unwrap().capture_invalid);
+        audio.loop_stop_record();
+        render(&mut audio, 32);
+        let takes = audio.capture_snapshot();
+        assert_eq!(takes.len(), 3);
+        let selected = takes.iter().find(|take| take.id == plan.segments[1].id).unwrap();
+        assert_eq!(selected.buffer.len(), 960);
+        assert!(selected.buffer.data.iter().all(|sample| *sample > 0.0));
+        for prior in old {
+            let retained = takes.iter().find(|take| take.id == prior.id).unwrap();
+            assert!(Arc::ptr_eq(&retained.buffer.data, &prior.buffer.data));
+        }
     }
 
     #[test]

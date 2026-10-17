@@ -470,7 +470,29 @@ pub(super) struct CompletionStamp {
 }
 pub(super) type CompletedRecording = CompletedTake<OwnedGc<Recording>, CompletionStamp>;
 
+/// Recording ownership is independent of how the initial arm reaches a bar.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub(super) enum RecordingScope {
+    Follow,
+    Selected(usize),
+}
+impl RecordingScope {
+    pub fn includes(self, bar: usize) -> bool {
+        match self {
+            Self::Follow => true,
+            Self::Selected(target) => bar == target,
+        }
+    }
+    fn selected(self) -> Option<usize> {
+        match self {
+            Self::Follow => None,
+            Self::Selected(target) => Some(target),
+        }
+    }
+}
+
 pub(super) struct Recording {
+    pub scope: RecordingScope,
     pub generation: u64,
     pub bars: Vec<RecordBar>,
     pub valid: bool,
@@ -504,6 +526,7 @@ impl Recording {
             });
         }
         Ok(Self {
+            scope: RecordingScope::Follow,
             generation,
             bars,
             valid: true,
@@ -851,8 +874,9 @@ impl Processor {
             }
             if take.valid && take.generation == self.generation {
                 if let Some(backing) = self.backing.as_mut() {
+                    let scope = take.scope;
                     for (idx, bar) in take.bars.iter_mut().enumerate() {
-                        if bar.touched {
+                        if bar.touched && scope.includes(idx) {
                             bar.retired = backing.bars[idx].loop_pcm.replace(bar.pcm.clone());
                         }
                     }
@@ -901,6 +925,22 @@ impl Processor {
             self.shared.boundaries.fetch_sub(1, Ordering::Release);
         } // Retired resources use deferred GC.
     }
+    /// Includes queued selected arms so later controls cannot redirect an
+    /// accepted reservation while it waits for its first boundary/count-in.
+    fn selected_capture_bar(&self) -> Option<usize> {
+        self.take
+            .as_ref()
+            .and_then(|take| take.scope.selected())
+            .or_else(|| {
+                self.pending[..self.pending_len]
+                    .iter()
+                    .find_map(|op| match op {
+                        Some(Boundary::Arm { take, .. }) => take.scope.selected(),
+                        _ => None,
+                    })
+            })
+    }
+
     fn boundary(&mut self) {
         self.song_last_beat = None;
         self.song_last_measure = None;
@@ -909,10 +949,11 @@ impl Processor {
                 self.shared.boundaries.fetch_sub(1, Ordering::Release);
                 match op {
                     Boundary::Change(PendingChange::SeekTo { bar_idx }) => {
-                        if self
-                            .backing
-                            .as_ref()
-                            .is_some_and(|b| bar_idx < b.bars.len())
+                        if self.selected_capture_bar().is_none()
+                            && self
+                                .backing
+                                .as_ref()
+                                .is_some_and(|b| bar_idx < b.bars.len())
                         {
                             self.cursor = SongCursor {
                                 bar_idx,
@@ -1595,7 +1636,8 @@ impl Processor {
                     song_sample += pcm.data[self.cursor.sample_in_bar as usize];
                 }
                 if let Some(take) = &self.take {
-                    let data = &take.bars[self.cursor.bar_idx].pcm.data;
+                    let target = take.scope.selected().unwrap_or(self.cursor.bar_idx);
+                    let data = &take.bars[target].pcm.data;
                     song_sample += data[self.cursor.sample_in_bar as usize % data.len()];
                 } else if let Some(pcm) = &bar.loop_pcm {
                     if !pcm.is_empty() {
@@ -1607,7 +1649,8 @@ impl Processor {
                         audio_primitives::capture::InputFeed::pop_sample(&mut **feed)
                     });
                     if let Some(value) = sample {
-                        let bar = &mut take.bars[self.cursor.bar_idx];
+                        let target = take.scope.selected().unwrap_or(self.cursor.bar_idx);
+                        let bar = &mut take.bars[target];
                         let data = Arc::get_mut(&mut bar.pcm.data)
                             .expect("active recording storage has exclusive ownership");
                         let idx = self.cursor.sample_in_bar as usize % data.len();
@@ -1638,7 +1681,9 @@ impl Processor {
                 let backing = self.backing.as_ref().unwrap();
                 if self.cursor.sample_in_bar >= backing.bars[self.cursor.bar_idx].duration {
                     self.cursor.sample_in_bar = 0;
-                    if self.cursor.bar_idx + 1 == backing.bars.len() {
+                    if let Some(target) = self.selected_capture_bar() {
+                        self.cursor.bar_idx = target;
+                    } else if self.cursor.bar_idx + 1 == backing.bars.len() {
                         if backing.one_shot {
                             self.playing = false;
                             self.clear_voices();
@@ -1773,6 +1818,11 @@ impl AudioNodeProcessor for Processor {
                         }
                     },
                     Command::Rewind => {
+                        // A stale queued rewind cannot redirect a selected take.
+                        if self.selected_capture_bar().is_some() {
+                            self.handled_commands += 1;
+                            continue;
+                        }
                         self.cursor = Default::default();
                         self.count_in = 0;
                         self.clear_voices();
