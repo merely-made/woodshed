@@ -120,6 +120,9 @@ fn push_backend(shared: &mut Shared, ctx: &mut Ctx<'_>) {
             let mut capture_changed = false;
             for request in std::mem::take(&mut ui.audio_requests) {
                 match request {
+                    AudioRequest::Audition(request) => {
+                        crate::drive::service_audition_request(ui, backend, &request);
+                    },
                     AudioRequest::CardPreview(request) => {
                         if ui.card_preview_is_current(&request) {
                             let outcome = backend.admit_card_preview(&request.preview);
@@ -295,6 +298,9 @@ fn push_backend(shared: &mut Shared, ctx: &mut Ctx<'_>) {
             let mut retained_requests = Vec::new();
             for request in std::mem::take(&mut ui.audio_requests) {
                 match request {
+                    AudioRequest::Audition(request) => {
+                        ui.finish_audition_admission(&request, Err("Audio output is unavailable.".into()));
+                    },
                     AudioRequest::LoopClear(id)
                         if ui.loop_captures.takes.iter().any(|take| take.id == id) =>
                     {

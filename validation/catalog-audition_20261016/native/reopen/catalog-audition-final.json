@@ -1,0 +1,168 @@
+{
+  "baseline_events": [],
+  "cards": [
+    {
+      "from": null,
+      "id": 1,
+      "label": "Accepted source",
+      "material": {
+        "Scale": {
+          "name": "Major",
+          "root": 0
+        }
+      },
+      "setting": {
+        "capo": null,
+        "fret_window": {
+          "span": 8,
+          "start": 0
+        },
+        "instrument": "",
+        "mark_mode": "Off",
+        "marked": [],
+        "tuning": null,
+        "voicing_fingerprint": null,
+        "voicing_idx": null,
+        "voicing_profile": null
+      },
+      "timing": {
+        "bpm": 120.0,
+        "hold": {
+          "Bars": 1
+        }
+      },
+      "touch": "Block"
+    },
+    {
+      "from": null,
+      "id": 2,
+      "label": "Output refusal source",
+      "material": {
+        "Scale": {
+          "name": "Minor",
+          "root": 9
+        }
+      },
+      "setting": {
+        "capo": null,
+        "fret_window": {
+          "span": 8,
+          "start": 0
+        },
+        "instrument": "",
+        "mark_mode": "Off",
+        "marked": [],
+        "tuning": null,
+        "voicing_fingerprint": null,
+        "voicing_idx": null,
+        "voicing_profile": null
+      },
+      "timing": {
+        "bpm": 400.0,
+        "hold": "Manual"
+      },
+      "touch": "Block"
+    }
+  ],
+  "events": [
+    {
+      "at_ms": 1792207309144,
+      "from_id": "scale:Minor",
+      "kind": "Previewed",
+      "practiced_ms": null,
+      "provenance": {
+        "card_snapshot": {
+          "from": {
+            "Exercise": {
+              "name": "Scale degree pairs: thirds"
+            }
+          },
+          "id": 0,
+          "label": "A Minor in thirds",
+          "material": {
+            "ScalePattern": {
+              "name": "Minor",
+              "pattern": "Thirds",
+              "root": 9
+            }
+          },
+          "setting": {
+            "capo": null,
+            "fret_window": {
+              "span": 8,
+              "start": 0
+            },
+            "instrument": "",
+            "mark_mode": "Off",
+            "marked": [],
+            "tuning": null,
+            "voicing_fingerprint": null,
+            "voicing_idx": null,
+            "voicing_profile": null
+          },
+          "timing": {
+            "bpm": 400.0,
+            "hold": "Manual"
+          },
+          "touch": "Walk"
+        },
+        "occurrence_id": 0,
+        "working_set_id": 1
+      },
+      "subject_id": "exercise:scale-thirds/v1:Minor"
+    },
+    {
+      "at_ms": 1792207305340,
+      "from_id": "scale:Major",
+      "kind": "Previewed",
+      "practiced_ms": null,
+      "provenance": {
+        "card_snapshot": {
+          "from": {
+            "Exercise": {
+              "name": "Scale degree pairs: thirds"
+            }
+          },
+          "id": 0,
+          "label": "C Major in thirds",
+          "material": {
+            "ScalePattern": {
+              "name": "Major",
+              "pattern": "Thirds",
+              "root": 0
+            }
+          },
+          "setting": {
+            "capo": null,
+            "fret_window": {
+              "span": 8,
+              "start": 0
+            },
+            "instrument": "",
+            "mark_mode": "Off",
+            "marked": [],
+            "tuning": null,
+            "voicing_fingerprint": null,
+            "voicing_idx": null,
+            "voicing_profile": null
+          },
+          "timing": {
+            "bpm": 120.0,
+            "hold": {
+              "Bars": 1
+            }
+          },
+          "touch": "Walk"
+        },
+        "occurrence_id": 0,
+        "working_set_id": 1
+      },
+      "subject_id": "exercise:scale-thirds/v1:Major"
+    }
+  ],
+  "output_observation_id": 1,
+  "output_sample_rate": 48000,
+  "owner": 1,
+  "persisted_events_match": true,
+  "preview_starts": 2
+}

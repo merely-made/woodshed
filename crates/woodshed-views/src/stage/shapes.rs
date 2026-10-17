@@ -366,7 +366,7 @@ mod scale_tests {
         assert!(ui.inspect_scale_pattern(source, ScalePattern::Thirds));
         ui.hear_scale_pattern();
         assert!(
-            matches!(ui.audio_requests.last(), Some(AudioRequest::PreviewPitches { pitches, duration_s, strum_s }) if (pitches.clone(), *duration_s, *strum_s) == pattern_sound)
+            matches!(ui.audio_requests.last(), Some(AudioRequest::Audition(request)) if request.preview == pattern_sound)
         );
         let appended = ui.stage_scale_pattern().unwrap();
         let staged = ui.set.card(appended).unwrap();

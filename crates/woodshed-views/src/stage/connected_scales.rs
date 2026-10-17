@@ -2,7 +2,6 @@
 //! occurrence-bound inspection, audition and authoring actions.
 
 use cambium::{clickable, el, text};
-use woodshed_core::audio::AudioRequest;
 use woodshed_core::harmony::KeyedCatalogRef;
 use woodshed_core::history::{EngagementKind, ObservationProvenance, catalog_id_for_card};
 use woodshedding::rehearsal::{CardId, Material};
@@ -89,23 +88,16 @@ impl UiState {
                     self.scale_notice = Some("This scale formula has no sounding notes.".into());
                     return;
                 }
-                self.practice_history.record_observation(
-                    self.now_ms,
-                    discovery.subject.formula_id.clone(),
-                    EngagementKind::Previewed,
+                self.request_observed_preview(
+                    (pitches, duration_s, strum_s),
+                    Some(discovery.subject.formula_id.clone()),
                     catalog_id_for_card(card),
-                    None,
                     ObservationProvenance::capture_in_set(
                         &discovery.preview,
                         self.working_sets.active_id,
                     )
                     .ok(),
                 );
-                self.request(AudioRequest::PreviewPitches {
-                    pitches,
-                    duration_s,
-                    strum_s,
-                });
                 self.scale_notice = None;
             },
             Err(reason) => self.scale_notice = Some(reason.to_string()),
@@ -294,6 +286,7 @@ pub(super) fn panel(ui: &UiState) -> UiChild {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use woodshed_core::audio::AudioRequest;
     use woodshedding::pitch::PitchClass;
     use woodshedding::rehearsal::MarkMode;
 
@@ -349,7 +342,11 @@ mod tests {
         assert!(ui.audio_requests.is_empty());
         ui.hear_chord_scale();
         assert!(
-            matches!(ui.audio_requests.last(), Some(AudioRequest::PreviewPitches { pitches, strum_s, .. }) if pitches.len() >= 7 && *strum_s > 0.0)
+            matches!(
+                ui.audio_requests.last(),
+                Some(AudioRequest::Audition(request))
+                    if request.preview.0.len() >= 7 && request.preview.2 > 0.0
+            )
         );
         assert_eq!(serde_json::to_value(&ui.set.cards).unwrap(), original);
         let first = ui.stage_chord_scale().unwrap();

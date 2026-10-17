@@ -1,0 +1,65 @@
+{
+  "checked_at_utc": "2026-10-17T03:22:46.423304+00:00",
+  "source_revision": "bd8ff18dca0c2ae107ba1a7d0618a513d909e8cb",
+  "source_paths_unchanged": 202,
+  "binary_sha256": "bf07df27b300f35851e1fcd7b51c5b2121012612c19c8ee40606ba12dfb90bc3",
+  "built_and_frozen_binary_match": true,
+  "phases": {
+    "seed": {
+      "pid": 65749,
+      "exited": true,
+      "result": "ok",
+      "presented_frames": 179,
+      "redraws": 180,
+      "unpresented_redraws": 1,
+      "captures": 3,
+      "blank_captures": 0,
+      "distinct_captures": 3,
+      "wait_frames": [
+        0,
+        0,
+        0
+      ],
+      "phase_hashes_unchanged": true
+    },
+    "reopen": {
+      "pid": 66288,
+      "exited": true,
+      "result": "ok",
+      "presented_frames": 101,
+      "redraws": 103,
+      "unpresented_redraws": 2,
+      "captures": 1,
+      "blank_captures": 0,
+      "distinct_captures": 1,
+      "wait_frames": [],
+      "phase_hashes_unchanged": true
+    }
+  },
+  "exact_reopen": {
+    "cards": true,
+    "owner": true,
+    "events": true
+  },
+  "live_and_sealed_match": true,
+  "expected_checkpoint_copied_only_after_seed_exit": true,
+  "seed_original_hashes_unchanged_after_reopen": true,
+  "accepted_event_count": 2,
+  "refused_event_count": 0,
+  "processor_start_assertions": [
+    1,
+    1,
+    2
+  ],
+  "final_seed_processor_starts": 2,
+  "output_rate": 48000,
+  "seed_runtime_id": 1,
+  "keeper": {
+    "generated_isolated_fixture": true,
+    "pid": 65735,
+    "exited": true,
+    "binary_sha256": "848685e001d63724ca869fa58a97021b3fa15821f0d1fa9954c4853080c518f6",
+    "original_files": 4,
+    "original_file_hashes_unchanged": true
+  }
+}

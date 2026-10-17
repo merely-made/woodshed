@@ -82,14 +82,14 @@ fn context_audition_queues_immutable_pitches_after_board_changes() {
     assert!(ui.focus_context_catalog(c_major()));
     ui.audition_context_focus();
     let expected = match ui.audio_requests.first().expect("preview request") {
-        AudioRequest::PreviewPitches { pitches, .. } => pitches.clone(),
+        AudioRequest::Audition(request) => request.preview.0.clone(),
         other => panic!("unexpected request: {other:?}"),
     };
     ui.stage.set_lens(woodshed_core::Lens::Scales);
     ui.stage.set_root(9);
     ui.section = woodshed_core::storage::AppSection::Rehearsal;
     match &ui.audio_requests[0] {
-        AudioRequest::PreviewPitches { pitches, .. } => assert_eq!(pitches, &expected),
+        AudioRequest::Audition(request) => assert_eq!(&request.preview.0, &expected),
         other => panic!("unexpected request: {other:?}"),
     }
 }

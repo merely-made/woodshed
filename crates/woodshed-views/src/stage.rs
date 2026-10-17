@@ -54,6 +54,7 @@ mod context;
 #[cfg(test)]
 mod context_tests;
 mod instances;
+mod audition;
 mod timing;
 mod looper;
 mod musical_context;
@@ -1075,6 +1076,9 @@ pub struct UiState {
     pub rehearsal_pending: bool,
     pub rehearsal_epoch: u64,
     pub card_timing_notice: Option<String>,
+    pub audition_notice: Option<String>,
+    pending_auditions: Vec<std::sync::Arc<()>>,
+    latest_audition: Option<std::sync::Arc<()>>,
     /// Last explicit shape-selection failure, scoped to its Card occurrence.
     pub card_shape_notice: Option<(CardId, String)>,
     pub song: SongDoc,
@@ -1336,6 +1340,9 @@ impl UiState {
             rehearsal_pending: false,
             rehearsal_epoch: 0,
             card_timing_notice: None,
+            audition_notice: None,
+            pending_auditions: Vec::new(),
+            latest_audition: None,
             card_shape_notice: None,
             song: SongDoc::default(),
             looper: LooperConfig::default(),
@@ -2188,8 +2195,9 @@ impl UiState {
         }
         let (pitches, duration_s, strum_s) = self.stage.voicing_preview();
         let card = self.stage.card_from_lens();
-        self.record_preview_interest(card.as_ref());
-        self.request(AudioRequest::PreviewPitches { pitches, duration_s, strum_s });
+        let subject = card.as_ref().and_then(catalog_id_for_card).or_else(|| self.stage.catalog_id());
+        let provenance = card.as_ref().and_then(|card| ObservationProvenance::capture_in_set(card, self.working_sets.active_id).ok());
+        self.request_observed_preview((pitches, duration_s, strum_s), subject, None, provenance);
     }
 
     /// Resolve retained sound at the interaction, retaining its source through admission.
@@ -2214,26 +2222,6 @@ impl UiState {
                     && self.workspace.active_panel() == Some(WorkspacePanel::Practice)
                     && self.set_tray_expanded
                     && self.set_graph_card_expanded))
-    }
-
-    fn record_preview_interest(&mut self, card: Option<&Card>) {
-        self.refresh_event_time();
-        let subject_id = card
-            .and_then(catalog_id_for_card)
-            .or_else(|| self.stage.catalog_id());
-        if let Some(subject_id) = subject_id {
-            let provenance = card.and_then(|card| {
-                ObservationProvenance::capture_in_set(card, self.working_sets.active_id).ok()
-            });
-            self.practice_history.record_observation(
-                self.now_ms,
-                subject_id,
-                EngagementKind::Previewed,
-                None,
-                None,
-                provenance,
-            );
-        }
     }
 
     /// Ask the audio host to do one thing. Requests are kept in order and
@@ -2442,6 +2430,9 @@ impl UiState {
         self.card_timing_notice = None;
         self.rehearsal_observed_card = None;
         self.card_started_ms = None;
+        self.audition_notice = None;
+        self.pending_auditions.clear();
+        self.latest_audition = None;
         self.song = session.song.clone();
         self.looper = session.looper.clone();
         self.loop_captures = session.loop_captures.clone();
@@ -3584,6 +3575,10 @@ pub fn stage_root(ui: &UiState) -> UiChild {
                     el("div", text(format!("Card audio unavailable: {notice}")))
                         .attr("class", "card-timing-notice").attr("role", "status")
                 }),
+                ui.audition_notice.as_ref().map(|notice| {
+                    el("div", text(format!("Audition unavailable: {notice}")))
+                        .attr("class", "audition-notice").attr("role", "status")
+                }),
                 tab_content(ui),
             ),
         )
@@ -3757,7 +3752,7 @@ mod evidence_tests {
         ui.audition_context_focus();
         assert!(matches!(
             ui.audio_requests.first(),
-            Some(AudioRequest::PreviewPitches { .. })
+            Some(AudioRequest::Audition(_))
         ));
         assert_eq!(ui.set.cards.len(), before);
 

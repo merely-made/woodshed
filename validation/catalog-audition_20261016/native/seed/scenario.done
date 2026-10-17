@@ -1,0 +1,13 @@
+RESULT ok
+waited 0 frames
+captured 01_accepted_major_pattern
+waited 0 frames
+captured 02_refused_minor_pattern
+waited 0 frames
+captured 03_accepted_retry_and_history
+Catalog audition admission seed complete
+capture 01_accepted_major_pattern 2360x1800 digest=96283f3bad941514 file=/Users/markik/Code/testing/woodshed/catalog-audition-20261016/native-v4/seed/01_accepted_major_pattern.png
+capture 02_refused_minor_pattern 2360x1800 digest=5f844ee81c21435d file=/Users/markik/Code/testing/woodshed/catalog-audition-20261016/native-v4/seed/02_refused_minor_pattern.png
+capture 03_accepted_retry_and_history 2360x1800 digest=eb6d31b94b53f47e file=/Users/markik/Code/testing/woodshed/catalog-audition-20261016/native-v4/seed/03_accepted_retry_and_history.png
+frames: 3 captured, 0 blank, 3 distinct digests
+presentation: 179 frames, 180 redraws, 1 unpresented redraws

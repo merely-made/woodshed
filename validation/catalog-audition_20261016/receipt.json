@@ -1,0 +1,129 @@
+{
+  "status": "qualified",
+  "date": "2026-10-16",
+  "scope": "Accepted-only catalog/discovery audition history; frozen subject/from/preview Card/owner; one-use session-bound tickets and latest-only notices.",
+  "baseline": "d3a1350990658ce2875d9ee41c96e759a15acc96",
+  "feature_source_revision": "3689a775c460ad119e9886c9c832c114a49b717c",
+  "final_native_source_revision": "bd8ff18dca0c2ae107ba1a7d0618a513d909e8cb",
+  "binary_sha256": "bf07df27b300f35851e1fcd7b51c5b2121012612c19c8ee40606ba12dfb90bc3",
+  "source_binding": {
+    "hash_file": "source-hashes.json",
+    "unchanged_paths": 202,
+    "candidate_worktree": "clean before freeze",
+    "post_combined_gate": "Readable frozen-material label only; three focused view cases and actual Cpal admission case repeated, final desktop build passed."
+  },
+  "suppliers": {
+    "mere.git": [
+      "git+https://github.com/merely-made/mere.git?branch=main#52fb4900efd958b38595037c8e46fe620fc10e59"
+    ],
+    "genet.git": [
+      "git+https://github.com/merely-made/genet.git?branch=main#6186c81ad7019ea51dd28861ef83574bfc992ed1"
+    ],
+    "netrender.git": [
+      "git+https://github.com/merely-made/netrender.git?branch=main#8960024f7b1f2b7a5ba382972f08b2f75eb7a0f0"
+    ]
+  },
+  "dependency_changes": "No manifest or lock changes in this follow-up; upstream d3a1350 arrangement/fold work preserved.",
+  "behavior": [
+    "All former immediate catalog/discovery Previewed writers defer to actual host admission. Generic context-focus auditions now retain their formula and configured preview provenance.",
+    "Each explicit press carries frozen subject/from/preview Card/owner, a unique one-use ticket, and Arc session identity.",
+    "Accepted callbacks record once at host dispatch time. Same-session focus/edit/navigation cannot redirect the explicit frozen audition; session replacement invalidates pending requests/results.",
+    "Refusal, no output, invalid/empty/partially invalid pitches and stale/duplicate results create no new Previewed history. Newest-ticket-only notices retain the frozen human-readable material label.",
+    "Existing exact timing/output resource checks, single OutputRuntime, generic AudioBackend APIs and selected-Card/Run semantics remain intact."
+  ],
+  "checks": {
+    "core_unit": 268,
+    "core_cli_integration": 5,
+    "core_portability_integration": 1,
+    "host": 184,
+    "views": 218,
+    "suite_integration_total": 676,
+    "separate_host_child_invocations": 5,
+    "existing_host_ignores": 7,
+    "combined": "checks/affected-gate-v2.log",
+    "desktop": "checks/desktop-build.log"
+  },
+  "final_checks": {
+    "views": "three focused cases pass;checks/final-notice-views.log",
+    "actual_cpal": "one focused actual offline graph case passes;checks/final-notice-host.log",
+    "desktop": "cargo build --offline --locked -p woodshed-genet;passed;checks/final-desktop-build.log"
+  },
+  "native": {
+    "trial": "native-v4 only",
+    "source": "bd8ff18dca0c2ae107ba1a7d0618a513d909e8cb",
+    "completed_processes": 2,
+    "reviewed_captures": 4,
+    "viewport": "1180x900 logical;2360x1800 captured;ui zoom1",
+    "phases": {
+      "seed": {
+        "pid": 65749,
+        "exited": true,
+        "result": "ok",
+        "presented_frames": 179,
+        "redraws": 180,
+        "unpresented_redraws": 1,
+        "captures": 3,
+        "blank_captures": 0,
+        "distinct_captures": 3,
+        "wait_frames": [
+          0,
+          0,
+          0
+        ],
+        "phase_hashes_unchanged": true
+      },
+      "reopen": {
+        "pid": 66288,
+        "exited": true,
+        "result": "ok",
+        "presented_frames": 101,
+        "redraws": 103,
+        "unpresented_redraws": 2,
+        "captures": 1,
+        "blank_captures": 0,
+        "distinct_captures": 1,
+        "wait_frames": [],
+        "phase_hashes_unchanged": true
+      }
+    },
+    "admission": "Ordinary visible Hear pattern: Major accepted, inherited authored Minor Seconds1e10 refuses actual-rate PCM; visible Hold correction toManual then accepted retry. No injected fake audio outcome.",
+    "processor_start_assertions": [
+      1,
+      1,
+      2
+    ],
+    "seed_runtime_id": 1,
+    "output_rate": 48000,
+    "accepted_history_events": 2,
+    "refused_history_events": 0,
+    "exact_reopen": {
+      "cards": true,
+      "owner": true,
+      "events": true
+    },
+    "sealed_and_live_match": true,
+    "comparison": "comparison.json",
+    "visual_review": "independent-capture-review.json; coordinator inspected the same four originals. Captures show UI state and source-attributed refusal; history truth comes from checkpoint comparisons and scenario assertions.",
+    "isolation": "Frozen binary/scenarios, generated Keeper, isolated profile, one-use guarded launchers; seed exit and hash freeze before copying expectation to separate reopen process. No credentials, vault/profile blobs or binaries are included.",
+    "keeper": {
+      "generated_isolated_fixture": true,
+      "pid": 65735,
+      "exited": true,
+      "binary_sha256": "848685e001d63724ca869fa58a97021b3fa15821f0d1fa9954c4853080c518f6",
+      "original_files": 4,
+      "original_file_hashes_unchanged": true
+    }
+  },
+  "earlier_attempts": {
+    "native-v1_v2": "Zero presented frames/captures; v2 frame trace reaches raster then acquire Occluded. Excluded. Both processes/Keepers exited and original fixture hashes preserved.",
+    "native-v3": "Behavior and exact reopen passed before final friendly notice copy; superseded by final v4, not counted in final four captures.",
+    "location": "/Users/markik/Code/testing/woodshed/catalog-audition-20261016"
+  },
+  "limits": [
+    "Software host/processor admission does not establish physical audibility, latency or device quality.",
+    "Ordered relation PreviewPhrase history and full P5 shared clock/phase behavior remain separate.",
+    "Independent audit preservation/input remediation is owned in a separate isolated checkout.",
+    "No broad responsive-layout or whole-root/all-feature acceptance claim."
+  ],
+  "publication": "Direct main publication authorized; final containing commit and remote verification recorded separately."
+}

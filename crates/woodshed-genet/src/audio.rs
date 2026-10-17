@@ -478,6 +478,15 @@ impl CpalBackend {
         output.preview_card_pitches(&preview.0, preview.1, preview.2).map_err(|error| error.to_string())
     }
 
+    /// Observed catalog sound must be a complete playable request. The generic
+    /// runtime's empty/filtered no-op result is not an audition receipt.
+    pub(crate) fn admit_audition_preview(&mut self, preview: &woodshed_core::card_timing::CardPreview) -> Result<(), String> {
+        if preview.0.is_empty() || preview.0.iter().any(|pitch| !pitch.is_finite() || *pitch <= 0.0) {
+            return Err("The selected material has no complete playable pitch sequence.".into());
+        }
+        self.admit_card_preview(preview)
+    }
+
     fn with_output<T>(
         &mut self,
         action: impl FnOnce(&mut OutputRuntime) -> Result<T, OutputError>,
@@ -1032,6 +1041,66 @@ mod tests {
         assert!(!audio.preview_busy());
         audio.output = None;
         assert!(audio.admit_card_preview(&(Vec::new(), 0.0, 0.0)).is_err());
+    }
+
+    #[test]
+    fn observed_audition_credits_only_actual_complete_admission_and_preserves_output_on_refusal() {
+        use woodshed_core::audio::AudioRequest;
+        use woodshed_views::stage::UiState;
+        fn request(ui: &mut UiState) -> woodshed_core::audio::AuditionRequest {
+            ui.request_preview();
+            match ui.audio_requests.pop().unwrap() {
+                AudioRequest::Audition(request) => request,
+                _ => panic!("observed catalog audition"),
+            }
+        }
+        let mut ui = UiState::new();
+        let mut audio = CpalBackend::offline_for_test();
+        let runtime = audio.output_observation_id();
+        let accepted = request(&mut ui);
+        assert!(ui.practice_history.is_empty());
+        crate::drive::service_audition_request(&mut ui, &mut audio, &accepted);
+        assert_eq!(ui.practice_history.len(), 1);
+        let began = std::time::Instant::now();
+        while audio.preview_voice_count() == 0 {
+            assert!(began.elapsed() < std::time::Duration::from_secs(2));
+            render(&mut audio, 128);
+            std::thread::yield_now();
+        }
+        let starts = audio.output_snapshot().unwrap().preview_starts;
+        for pitches in [vec![], vec![f32::NAN], vec![440.0, -1.0], vec![f32::INFINITY]] {
+            let mut refused = request(&mut ui);
+            refused.preview.0 = pitches;
+            crate::drive::service_audition_request(&mut ui, &mut audio, &refused);
+            assert_eq!(ui.practice_history.len(), 1);
+            assert!(ui.audition_notice.is_some());
+            assert!(audio.preview_voice_count() > 0);
+            assert_eq!(audio.output_snapshot().unwrap().preview_starts, starts);
+        }
+        let mut too_large = request(&mut ui);
+        too_large.preview.1 = 1.0e10;
+        crate::drive::service_audition_request(&mut ui, &mut audio, &too_large);
+        assert_eq!(ui.practice_history.len(), 1);
+        assert!(ui.audition_notice.as_ref().unwrap().contains("resource bounds"));
+        assert_eq!(audio.output_observation_id(), runtime);
+        assert!(audio.preview_voice_count() > 0);
+        let retry = request(&mut ui);
+        crate::drive::service_audition_request(&mut ui, &mut audio, &retry);
+        assert_eq!(ui.practice_history.len(), 2);
+        assert!(ui.audition_notice.is_none());
+        crate::drive::service_audition_request(&mut ui, &mut audio, &retry);
+        assert_eq!(ui.practice_history.len(), 2);
+        let stale = request(&mut ui);
+        let stored = ui.to_persisted();
+        ui.apply_persisted(&stored, ui.app_settings.clone());
+        crate::drive::service_audition_request(&mut ui, &mut audio, &stale);
+        assert_eq!(ui.practice_history.len(), 2);
+        assert!(ui.audition_notice.is_none());
+        let unavailable = request(&mut ui);
+        audio.output = None;
+        crate::drive::service_audition_request(&mut ui, &mut audio, &unavailable);
+        assert_eq!(ui.practice_history.len(), 2);
+        assert!(ui.audition_notice.as_ref().unwrap().contains("unavailable"));
     }
 
     #[test]

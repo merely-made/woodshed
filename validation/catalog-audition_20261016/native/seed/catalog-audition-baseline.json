@@ -1,0 +1,70 @@
+{
+  "cards": [
+    {
+      "from": null,
+      "id": 1,
+      "label": "Accepted source",
+      "material": {
+        "Scale": {
+          "name": "Major",
+          "root": 0
+        }
+      },
+      "setting": {
+        "capo": null,
+        "fret_window": {
+          "span": 8,
+          "start": 0
+        },
+        "instrument": "",
+        "mark_mode": "Off",
+        "marked": [],
+        "tuning": null,
+        "voicing_fingerprint": null,
+        "voicing_idx": null,
+        "voicing_profile": null
+      },
+      "timing": {
+        "bpm": 120.0,
+        "hold": {
+          "Bars": 1
+        }
+      },
+      "touch": "Block"
+    },
+    {
+      "from": null,
+      "id": 2,
+      "label": "Output refusal source",
+      "material": {
+        "Scale": {
+          "name": "Minor",
+          "root": 9
+        }
+      },
+      "setting": {
+        "capo": null,
+        "fret_window": {
+          "span": 8,
+          "start": 0
+        },
+        "instrument": "",
+        "mark_mode": "Off",
+        "marked": [],
+        "tuning": null,
+        "voicing_fingerprint": null,
+        "voicing_idx": null,
+        "voicing_profile": null
+      },
+      "timing": {
+        "bpm": 400.0,
+        "hold": {
+          "Seconds": 10000000000.0
+        }
+      },
+      "touch": "Block"
+    }
+  ],
+  "events": [],
+  "owner": 1
+}
