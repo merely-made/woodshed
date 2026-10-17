@@ -34,6 +34,8 @@ pub struct RecorderObservation {
     pub recording_bar: Option<usize>,
     pub output_rate: Option<u32>,
     pub input_rate: Option<u32>,
+    /// The OS consent dialog is pending; native input has not been opened.
+    pub input_permission_pending: bool,
     pub status: String,
 }
 
@@ -359,6 +361,8 @@ pub fn projection(ui: &super::UiState) -> RecorderProjection<'_, RecorderKey> {
         "Capture target unavailable · stop all loops before recording again".into()
     } else if observed.capture_invalid {
         "Capture input fault · take will be rejected on retirement".into()
+    } else if busy && observed.input_permission_pending {
+        "Allow microphone access in macOS · recording has not started".into()
     } else if busy && observed.recording_bar.is_none() && observed.input_rate.is_none() {
         "Opening microphone · recording starts after input admission".into()
     } else if busy && observed.recording_bar.is_none() {
@@ -366,7 +370,9 @@ pub fn projection(ui: &super::UiState) -> RecorderProjection<'_, RecorderKey> {
     } else {
         observed.status.clone().into()
     };
-    transport.input_status = if busy && observed.recording_bar.is_none() && observed.input_rate.is_none() {
+    transport.input_status = if busy && observed.input_permission_pending {
+        "Waiting for microphone permission · Stop cancels pending Record".to_string()
+    } else if busy && observed.recording_bar.is_none() && observed.input_rate.is_none() {
         "Input admission pending · recording has not started".to_string()
     } else { observed
         .input_rate
@@ -829,6 +835,14 @@ mod tests {
         let selected = ui.loop_selected;
         let armed = projection(&ui);
         assert_eq!(armed.transport.record_note, "Armed Card 1");
+        drop(armed);
+        ui.recorder_observation.input_permission_pending = true;
+        let consent = projection(&ui);
+        assert!(consent.transport.status.contains("Allow microphone access in macOS"));
+        assert!(consent.transport.input_status.contains("Stop cancels pending Record"));
+        drop(consent);
+        ui.recorder_observation.input_permission_pending = false;
+        let armed = projection(&ui);
         assert!(armed.transport.status.contains("Opening microphone"));
         assert!(armed.transport.input_status.contains("recording has not started"));
         assert_eq!(armed.transport.meter_heading, "Capture timing");
