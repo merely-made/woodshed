@@ -1,0 +1,17 @@
+{
+  "command": [
+    "env",
+    "CARGO_TARGET_DIR=/Users/markik/Code/repos/woodshed/target",
+    "cargo",
+    "check",
+    "--offline",
+    "--locked",
+    "-p",
+    "woodshed-genet"
+  ],
+  "cwd": "/Users/markik/Code/testing/woodshed/looper-followups-20261017/woodshed-scroll-consumer",
+  "started_utc": "2026-10-17T15:52:41.061181+00:00",
+  "ended_utc": "2026-10-17T15:54:25.842376+00:00",
+  "exit_code": 0,
+  "suites": []
+}

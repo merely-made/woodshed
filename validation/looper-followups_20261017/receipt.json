@@ -1,14 +1,15 @@
 {
-  "status": "compact/copy/envelope/recipe software qualified; user confirmed audible playback and input; selected-Card recording correction CPU/build passed, native pending",
+  "status": "Software fixes and build passed; physical input admission times out natively; selected-Card native capture/reopen incomplete; isolated supplier scroll proof passed, production adoption pending",
   "baseline": "9182823e351c6334b50f3ab52d61cb95b8cd7cab",
   "counts": {
-    "affected_cases": 680,
+    "affected_cases": 695,
     "capture_child_invocations_separate": 5,
     "affected_ignored": 7,
     "recipe_cases": 11,
     "recipe_ignored": 1,
     "repeated_suites_counted_once": true,
-    "separate_manual_sealed_reference": 1
+    "separate_manual_sealed_reference": 1,
+    "count_basis": "694 cases in async-admission-gate plus one new legacy Clear regression in async-saved-clear; repeated cases counted once; capture child invocations separate"
   },
   "checks": {
     "focused": 0,
@@ -18,19 +19,34 @@
     "hocket-consumer": 0,
     "focus-and-dwell-gate": 0,
     "focused-desktop-build": 0,
-    "manual-sealed-reference": 0
+    "manual-sealed-reference": 0,
+    "async-admission-gate": 0,
+    "async-saved-clear": 0,
+    "async-desktop-build": 0
   },
   "production_lock_unchanged": true,
-  "physical_audio": "User confirmed playback and recording worked in persistent manual trial; input saved and separately sealed-loaded, signal present. Initial automatic timing claim excluded; new explicit dwell awaits native.",
+  "physical_audio": "Human confirmed audible playback and recording in earlier persistent manual trial. Current fresh native run passed 5.047271292 seconds/241664 output frames, then input admission timed out after 10 seconds; no active capture or take. Persistent stopped-backing diagnostic reproduced worker HAL registration stall. UI remained responsive and closed normally.",
   "limits": [
-    "Full touch/platform/reduced-motion acceptance remains outside this bounded Looper follow-up",
-    "Synthetic envelope does not qualify physical input, audible output or latency",
-    "Sharedsupplierphantomdocumentscroll causesblacklowerstrip afterrepeatedwheel; isolatedfixunderqualification, productionnotrepinned",
-    "Zoomedthird-rowrealwheelproofpending"
+    "Actual 15-second selected-Card input capture and fresh reopen remain incomplete",
+    "Precise round-trip latency is not qualified",
+    "Mere scroll fix is isolated, not on Mere main or production Woodshed lock",
+    "Full touch/platform/reduced-motion acceptance remains outside this follow-up"
   ],
-  "publication": "local candidate",
-  "selected_capture": "Selected Card runtime pin and accepted transport focus implemented, 680affected casespass; realinputfocusnativepending",
+  "publication": "local commits only; no publication of incomplete qualification",
+  "selected_capture": "Selected Card runtime pin and accepted transport focus pass software checks. Actual selected-Card capture and fresh reopening remain unqualified because input opening did not return.",
   "native_source_revision": "e25f66860110215a7b3ebf07a7dda81da532c19b",
   "native_captures": 18,
-  "native_evidence": "native-v2/completion.json"
+  "native_evidence": "native-v2/completion.json",
+  "latest_implementation_revision": "9cd9f13729a14d29d7be14a21ad8010e6aeefc91",
+  "input_admission": "Native stream open/drop worker-owned; frozen pending target/session/epoch; cancellation/timeout/late reply guards and legacy Clear preservation covered by 13 passing tests. Native timeout path observed; native successful admission path remains open.",
+  "supplier_scroll": {
+    "scope": "Isolated receiving proof against qualified old Mere base, not production main adoption",
+    "mere_revision": "7fb709fb103c6d24d9df41e5da66b746ff48c1eb",
+    "consumer_revision": "ee723dd3a3564a8e0e1227e64dfa2e017be5f49d",
+    "scenario": "RESULT ok; 11 nonblank captures; actual document offsets zero; full control visibility checked before clicks",
+    "visual_review": "All 11 actual captures independently reviewed; no black lower strip; third Card and full transport reachable at separate short scroll positions; complete stepped envelope recovered at 125% zoom",
+    "production_adoption": "Requires actual main-based Mere candidate plus coherent Genet/Netrender adoption and receiving qualification"
+  },
+  "production_lock_sha256": "6ad8e0c8904f477164c7741f750a332c4f41411f9c46ff90d9ae3af8845c7154",
+  "fetched_origin_main": "9182823e351c6334b50f3ab52d61cb95b8cd7cab"
 }

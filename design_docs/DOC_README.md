@@ -19,6 +19,8 @@ before any other doc in this directory.
 
 ## Active Plans
 
+- [Looper follow-ups](2026-07-11_stage_set_tools_plan.md#p7-rebuild-song-as-looper-over-set) — Local compact/copy/waveform/recipe and selected-Card/input-admission fixes; software checks pass. Fresh native input opening times out, so focused physical capture/reopen remains incomplete. The isolated Mere scroll proof passes; production supplier adoption remains open. [Receipt](../validation/looper-followups_20261017/README.md).
+
 - [P7b Seconds-held Looper material](2026-07-11_stage_set_tools_plan.md#p7b-seconds-held-looper-material-2026-10-17) — Qualified October 17: absolute Seconds backing, retained captured clocks and exact sealed PCM reopen; 1,015 affected cases plus five child invocations, desktop/shared-leaf checks, eight reviewed native captures and byte-identical worker/reference WAV. [Receipt](../validation/stage-p7b_20261017/README.md).
 
 - [P7a mixed Bars Looper backing](2026-07-11_stage_set_tools_plan.md#p7-rebuild-song-as-looper-over-set) — Qualified October 17: ordered scale/path/arpeggio backing over the explicit Bars clock; 925 cases plus five child invocations, desktop build, a separate sealed-WAV probe and eight reviewed native captures. Exact Set/take reopen and byte-identical 160,800-frame worker/reference WAVs. [Receipt](../validation/stage-p7a_20261017/README.md). Full P7 remains open.

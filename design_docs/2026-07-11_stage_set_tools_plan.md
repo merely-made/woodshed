@@ -2332,6 +2332,28 @@ busy transport focus uses the accepted target and clock. The affected 680-case
 gate plus five child invocations and desktop build pass; committed physical-focus
 qualification is pending. Actual microphone audio stays external to Git.
 
+2026-10-17 input admission follow-up (`9cd9f13`) moves native microphone open
+and Drop off the UI thread. Pending Record retains session/backing/target/epoch;
+Stop/reset/timeout/late replies cannot resurrect a take, and the legacy saved
+Clear path now observes the reservation. Opening input is explicitly separate
+from recording in the UI. The latest affected union is 695 cases plus five
+capture child invocations, with 13 admission regressions and a passing desktop
+build. Native physical-v4 passed 5.047 seconds/241,664 backing frames, then
+input opening timed out after ten seconds: no active take, no 15-second focus
+qualification and no new capture reopen. The responsive window exited normally.
+A persistent Record-before-Play diagnostic reproduced a worker-side CoreAudio
+HAL registration IPC stall; its cause remains unresolved. Earlier user-confirmed
+working playback/recording remains valid evidence for that earlier trial.
+
+An isolated Mere clip-boundary fix against qualified `4c4ea11` passes its five
+negative-control regressions and 114 Rootstock cases (one ignored). Its bounded
+receiving run now passes repeated native wheel/control visibility/document-offset
+checks at compact/short/125% zoom with eleven nonblank captures. This does not
+adopt current Mere main: main requires coherent Genet/Netrender and selector API
+changes, followed by actual receiving qualification. Production suppliers remain
+unchanged. See [follow-up receipt](../validation/looper-followups_20261017/README.md)
+for exact source and the remaining physical/publication boundaries.
+
 ### P8. Adaptive polish and release acceptance
 
 **Current state: open.** Windows alpha behavior exists. Three-width product

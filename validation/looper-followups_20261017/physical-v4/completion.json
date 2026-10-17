@@ -1,0 +1,7 @@
+{
+  "scenario_passed": false,
+  "reason": "Input admission timed out; responsive UI preserved and pending capture cancelled; no completed take or 15second qualification",
+  "owned_app_exited": true,
+  "owned_keeper_exited": true,
+  "original_fixture_files_unchanged": true
+}

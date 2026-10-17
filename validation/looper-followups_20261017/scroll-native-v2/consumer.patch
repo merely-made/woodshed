@@ -1,0 +1,852 @@
+diff --git a/Cargo.lock b/Cargo.lock
+index 01337f5..32be5e1 100644
+--- a/Cargo.lock
++++ b/Cargo.lock
+@@ -327,7 +327,7 @@ dependencies = [
+ [[package]]
+ name = "armillary"
+ version = "0.1.1"
+-source = "git+https://github.com/merely-made/mere.git?branch=main#4c4ea11d8ea4b0210fd70af62638484e25f29d5e"
++source = "git+file:///Users/markik/Code/testing/woodshed/looper-followups-20261017/mere-scroll-proof?rev=7fb709fb103c6d24d9df41e5da66b746ff48c1eb#7fb709fb103c6d24d9df41e5da66b746ff48c1eb"
+ dependencies = [
+  "tracing",
+ ]
+@@ -657,7 +657,7 @@ dependencies = [
+ [[package]]
+ name = "backstep"
+ version = "0.1.0"
+-source = "git+https://github.com/merely-made/mere.git?branch=main#4c4ea11d8ea4b0210fd70af62638484e25f29d5e"
++source = "git+file:///Users/markik/Code/testing/woodshed/looper-followups-20261017/mere-scroll-proof?rev=7fb709fb103c6d24d9df41e5da66b746ff48c1eb#7fb709fb103c6d24d9df41e5da66b746ff48c1eb"
+ 
+ [[package]]
+ name = "base64"
+@@ -747,7 +747,7 @@ dependencies = [
+  "spin 0.10.1",
+  "wasm-bindgen",
+  "wasm-bindgen-futures",
+- "windows-sys 0.61.2",
++ "windows-sys 0.59.0",
+ ]
+ 
+ [[package]]
+@@ -1117,7 +1117,7 @@ dependencies = [
+ [[package]]
+ name = "cambium"
+ version = "0.3.3"
+-source = "git+https://github.com/merely-made/mere.git?branch=main#4c4ea11d8ea4b0210fd70af62638484e25f29d5e"
++source = "git+file:///Users/markik/Code/testing/woodshed/looper-followups-20261017/mere-scroll-proof?rev=7fb709fb103c6d24d9df41e5da66b746ff48c1eb#7fb709fb103c6d24d9df41e5da66b746ff48c1eb"
+ dependencies = [
+  "backstep",
+  "command-menu",
+@@ -1138,7 +1138,7 @@ dependencies = [
+ [[package]]
+ name = "cambium-genet-web-host"
+ version = "0.1.0"
+-source = "git+https://github.com/merely-made/mere.git?branch=main#4c4ea11d8ea4b0210fd70af62638484e25f29d5e"
++source = "git+file:///Users/markik/Code/testing/woodshed/looper-followups-20261017/mere-scroll-proof?rev=7fb709fb103c6d24d9df41e5da66b746ff48c1eb#7fb709fb103c6d24d9df41e5da66b746ff48c1eb"
+ dependencies = [
+  "accesskit",
+  "cambium",
+@@ -1161,7 +1161,7 @@ dependencies = [
+ [[package]]
+ name = "cambium-genet-winit-host"
+ version = "0.1.0"
+-source = "git+https://github.com/merely-made/mere.git?branch=main#4c4ea11d8ea4b0210fd70af62638484e25f29d5e"
++source = "git+file:///Users/markik/Code/testing/woodshed/looper-followups-20261017/mere-scroll-proof?rev=7fb709fb103c6d24d9df41e5da66b746ff48c1eb#7fb709fb103c6d24d9df41e5da66b746ff48c1eb"
+ dependencies = [
+  "accesskit",
+  "cambium",
+@@ -1191,7 +1191,7 @@ dependencies = [
+ [[package]]
+ name = "cambium-rootstock"
+ version = "0.1.0"
+-source = "git+https://github.com/merely-made/mere.git?branch=main#4c4ea11d8ea4b0210fd70af62638484e25f29d5e"
++source = "git+file:///Users/markik/Code/testing/woodshed/looper-followups-20261017/mere-scroll-proof?rev=7fb709fb103c6d24d9df41e5da66b746ff48c1eb#7fb709fb103c6d24d9df41e5da66b746ff48c1eb"
+ dependencies = [
+  "cambium",
+  "cambium-winit",
+@@ -1213,7 +1213,7 @@ dependencies = [
+ [[package]]
+ name = "cambium-winit"
+ version = "0.3.0"
+-source = "git+https://github.com/merely-made/mere.git?branch=main#4c4ea11d8ea4b0210fd70af62638484e25f29d5e"
++source = "git+file:///Users/markik/Code/testing/woodshed/looper-followups-20261017/mere-scroll-proof?rev=7fb709fb103c6d24d9df41e5da66b746ff48c1eb#7fb709fb103c6d24d9df41e5da66b746ff48c1eb"
+ dependencies = [
+  "cambium",
+  "web-time",
+@@ -1223,7 +1223,7 @@ dependencies = [
+ [[package]]
+ name = "cambium-winit-a11y"
+ version = "0.3.0"
+-source = "git+https://github.com/merely-made/mere.git?branch=main#4c4ea11d8ea4b0210fd70af62638484e25f29d5e"
++source = "git+file:///Users/markik/Code/testing/woodshed/looper-followups-20261017/mere-scroll-proof?rev=7fb709fb103c6d24d9df41e5da66b746ff48c1eb#7fb709fb103c6d24d9df41e5da66b746ff48c1eb"
+ dependencies = [
+  "accesskit",
+  "cambium-rootstock",
+@@ -1304,7 +1304,7 @@ dependencies = [
+ [[package]]
+ name = "chartulary"
+ version = "0.2.2"
+-source = "git+https://github.com/merely-made/mere.git?branch=main#4c4ea11d8ea4b0210fd70af62638484e25f29d5e"
++source = "git+file:///Users/markik/Code/testing/woodshed/looper-followups-20261017/mere-scroll-proof?rev=7fb709fb103c6d24d9df41e5da66b746ff48c1eb#7fb709fb103c6d24d9df41e5da66b746ff48c1eb"
+ dependencies = [
+  "muniment",
+  "petgraph",
+@@ -1328,7 +1328,7 @@ dependencies = [
+ [[package]]
+ name = "chirograph"
+ version = "0.0.2"
+-source = "git+https://github.com/merely-made/mere.git?branch=main#4c4ea11d8ea4b0210fd70af62638484e25f29d5e"
++source = "git+file:///Users/markik/Code/testing/woodshed/looper-followups-20261017/mere-scroll-proof?rev=7fb709fb103c6d24d9df41e5da66b746ff48c1eb#7fb709fb103c6d24d9df41e5da66b746ff48c1eb"
+ dependencies = [
+  "base64",
+  "blake3",
+@@ -1431,7 +1431,7 @@ dependencies = [
+ [[package]]
+ name = "command-menu"
+ version = "0.1.0"
+-source = "git+https://github.com/merely-made/mere.git?branch=main#4c4ea11d8ea4b0210fd70af62638484e25f29d5e"
++source = "git+file:///Users/markik/Code/testing/woodshed/looper-followups-20261017/mere-scroll-proof?rev=7fb709fb103c6d24d9df41e5da66b746ff48c1eb#7fb709fb103c6d24d9df41e5da66b746ff48c1eb"
+ dependencies = [
+  "serde",
+ ]
+@@ -1972,7 +1972,7 @@ version = "0.5.3"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "ab8ecd87370524b461f8557c119c405552c396ed91fc0a8eec68679eab26f94a"
+ dependencies = [
+- "libloading 0.7.4",
++ "libloading 0.8.9",
+ ]
+ 
+ [[package]]
+@@ -1988,7 +1988,7 @@ dependencies = [
+ [[package]]
+ name = "document-canvas"
+ version = "0.1.0"
+-source = "git+https://github.com/merely-made/mere.git?branch=main#4c4ea11d8ea4b0210fd70af62638484e25f29d5e"
++source = "git+file:///Users/markik/Code/testing/woodshed/looper-followups-20261017/mere-scroll-proof?rev=7fb709fb103c6d24d9df41e5da66b746ff48c1eb#7fb709fb103c6d24d9df41e5da66b746ff48c1eb"
+ dependencies = [
+  "genet-parley",
+  "inker",
+@@ -2084,7 +2084,7 @@ dependencies = [
+ [[package]]
+ name = "eidetic"
+ version = "0.0.2"
+-source = "git+https://github.com/merely-made/mere.git?branch=main#4c4ea11d8ea4b0210fd70af62638484e25f29d5e"
++source = "git+file:///Users/markik/Code/testing/woodshed/looper-followups-20261017/mere-scroll-proof?rev=7fb709fb103c6d24d9df41e5da66b746ff48c1eb#7fb709fb103c6d24d9df41e5da66b746ff48c1eb"
+ dependencies = [
+  "async-trait",
+  "blake3",
+@@ -2235,13 +2235,13 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "39cab71617ae0d63f51a36d69f866391735b51691dbda63cf6f96d042b63efeb"
+ dependencies = [
+  "libc",
+- "windows-sys 0.61.2",
++ "windows-sys 0.52.0",
+ ]
+ 
+ [[package]]
+ name = "esp"
+ version = "0.1.0"
+-source = "git+https://github.com/merely-made/mere.git?branch=main#4c4ea11d8ea4b0210fd70af62638484e25f29d5e"
++source = "git+file:///Users/markik/Code/testing/woodshed/looper-followups-20261017/mere-scroll-proof?rev=7fb709fb103c6d24d9df41e5da66b746ff48c1eb#7fb709fb103c6d24d9df41e5da66b746ff48c1eb"
+ dependencies = [
+  "serde",
+  "zeroize",
+@@ -3022,13 +3022,13 @@ dependencies = [
+  "log",
+  "presser",
+  "thiserror 2.0.21",
+- "windows 0.61.3",
++ "windows 0.62.2",
+ ]
+ 
+ [[package]]
+ name = "graphshell-endpoint"
+ version = "0.0.2"
+-source = "git+https://github.com/merely-made/mere.git?branch=main#4c4ea11d8ea4b0210fd70af62638484e25f29d5e"
++source = "git+file:///Users/markik/Code/testing/woodshed/looper-followups-20261017/mere-scroll-proof?rev=7fb709fb103c6d24d9df41e5da66b746ff48c1eb#7fb709fb103c6d24d9df41e5da66b746ff48c1eb"
+ dependencies = [
+  "base64",
+  "chatelaine",
+@@ -3415,7 +3415,7 @@ dependencies = [
+ [[package]]
+ name = "illume"
+ version = "0.0.2"
+-source = "git+https://github.com/merely-made/mere.git?branch=main#4c4ea11d8ea4b0210fd70af62638484e25f29d5e"
++source = "git+file:///Users/markik/Code/testing/woodshed/looper-followups-20261017/mere-scroll-proof?rev=7fb709fb103c6d24d9df41e5da66b746ff48c1eb#7fb709fb103c6d24d9df41e5da66b746ff48c1eb"
+ dependencies = [
+  "jotdown",
+  "logos",
+@@ -3462,7 +3462,7 @@ checksum = "6e44b0a4eaa4c82f441d50a963f2d5f05a787240aeee097597033e72accfd22f"
+ [[package]]
+ name = "incipit"
+ version = "0.2.0"
+-source = "git+https://github.com/merely-made/mere.git?branch=main#4c4ea11d8ea4b0210fd70af62638484e25f29d5e"
++source = "git+file:///Users/markik/Code/testing/woodshed/looper-followups-20261017/mere-scroll-proof?rev=7fb709fb103c6d24d9df41e5da66b746ff48c1eb#7fb709fb103c6d24d9df41e5da66b746ff48c1eb"
+ dependencies = [
+  "serde",
+  "uuid",
+@@ -3492,7 +3492,7 @@ dependencies = [
+ [[package]]
+ name = "inker"
+ version = "0.1.1"
+-source = "git+https://github.com/merely-made/mere.git?branch=main#4c4ea11d8ea4b0210fd70af62638484e25f29d5e"
++source = "git+file:///Users/markik/Code/testing/woodshed/looper-followups-20261017/mere-scroll-proof?rev=7fb709fb103c6d24d9df41e5da66b746ff48c1eb#7fb709fb103c6d24d9df41e5da66b746ff48c1eb"
+ dependencies = [
+  "accesskit",
+  "document-session-api",
+@@ -4031,7 +4031,7 @@ dependencies = [
+ [[package]]
+ name = "mere-alembic"
+ version = "0.0.1"
+-source = "git+https://github.com/merely-made/mere.git?branch=main#4c4ea11d8ea4b0210fd70af62638484e25f29d5e"
++source = "git+file:///Users/markik/Code/testing/woodshed/looper-followups-20261017/mere-scroll-proof?rev=7fb709fb103c6d24d9df41e5da66b746ff48c1eb#7fb709fb103c6d24d9df41e5da66b746ff48c1eb"
+ dependencies = [
+  "mere-kernel",
+  "serde",
+@@ -4040,7 +4040,7 @@ dependencies = [
+ [[package]]
+ name = "mere-apparatus"
+ version = "0.0.1"
+-source = "git+https://github.com/merely-made/mere.git?branch=main#4c4ea11d8ea4b0210fd70af62638484e25f29d5e"
++source = "git+file:///Users/markik/Code/testing/woodshed/looper-followups-20261017/mere-scroll-proof?rev=7fb709fb103c6d24d9df41e5da66b746ff48c1eb#7fb709fb103c6d24d9df41e5da66b746ff48c1eb"
+ dependencies = [
+  "serde",
+ ]
+@@ -4048,7 +4048,7 @@ dependencies = [
+ [[package]]
+ name = "mere-cartography"
+ version = "0.0.2"
+-source = "git+https://github.com/merely-made/mere.git?branch=main#4c4ea11d8ea4b0210fd70af62638484e25f29d5e"
++source = "git+file:///Users/markik/Code/testing/woodshed/looper-followups-20261017/mere-scroll-proof?rev=7fb709fb103c6d24d9df41e5da66b746ff48c1eb#7fb709fb103c6d24d9df41e5da66b746ff48c1eb"
+ dependencies = [
+  "mere-kernel",
+  "sceno",
+@@ -4059,7 +4059,7 @@ dependencies = [
+ [[package]]
+ name = "mere-curation"
+ version = "0.1.1"
+-source = "git+https://github.com/merely-made/mere.git?branch=main#4c4ea11d8ea4b0210fd70af62638484e25f29d5e"
++source = "git+file:///Users/markik/Code/testing/woodshed/looper-followups-20261017/mere-scroll-proof?rev=7fb709fb103c6d24d9df41e5da66b746ff48c1eb#7fb709fb103c6d24d9df41e5da66b746ff48c1eb"
+ dependencies = [
+  "serde",
+ ]
+@@ -4067,7 +4067,7 @@ dependencies = [
+ [[package]]
+ name = "mere-document-lanes"
+ version = "0.1.0"
+-source = "git+https://github.com/merely-made/mere.git?branch=main#4c4ea11d8ea4b0210fd70af62638484e25f29d5e"
++source = "git+file:///Users/markik/Code/testing/woodshed/looper-followups-20261017/mere-scroll-proof?rev=7fb709fb103c6d24d9df41e5da66b746ff48c1eb#7fb709fb103c6d24d9df41e5da66b746ff48c1eb"
+ dependencies = [
+  "document-canvas",
+  "document-session-api",
+@@ -4084,7 +4084,7 @@ dependencies = [
+ [[package]]
+ name = "mere-fleece"
+ version = "0.0.1"
+-source = "git+https://github.com/merely-made/mere.git?branch=main#4c4ea11d8ea4b0210fd70af62638484e25f29d5e"
++source = "git+file:///Users/markik/Code/testing/woodshed/looper-followups-20261017/mere-scroll-proof?rev=7fb709fb103c6d24d9df41e5da66b746ff48c1eb#7fb709fb103c6d24d9df41e5da66b746ff48c1eb"
+ dependencies = [
+  "fleece",
+ ]
+@@ -4092,7 +4092,7 @@ dependencies = [
+ [[package]]
+ name = "mere-forme"
+ version = "0.2.0"
+-source = "git+https://github.com/merely-made/mere.git?branch=main#4c4ea11d8ea4b0210fd70af62638484e25f29d5e"
++source = "git+file:///Users/markik/Code/testing/woodshed/looper-followups-20261017/mere-scroll-proof?rev=7fb709fb103c6d24d9df41e5da66b746ff48c1eb#7fb709fb103c6d24d9df41e5da66b746ff48c1eb"
+ dependencies = [
+  "mere-curation",
+  "serde",
+@@ -4104,7 +4104,7 @@ dependencies = [
+ [[package]]
+ name = "mere-kernel"
+ version = "0.0.2"
+-source = "git+https://github.com/merely-made/mere.git?branch=main#4c4ea11d8ea4b0210fd70af62638484e25f29d5e"
++source = "git+file:///Users/markik/Code/testing/woodshed/looper-followups-20261017/mere-scroll-proof?rev=7fb709fb103c6d24d9df41e5da66b746ff48c1eb#7fb709fb103c6d24d9df41e5da66b746ff48c1eb"
+ dependencies = [
+  "accesskit",
+  "chartulary",
+@@ -4131,7 +4131,7 @@ dependencies = [
+ [[package]]
+ name = "mere-persona-picker"
+ version = "0.0.1"
+-source = "git+https://github.com/merely-made/mere.git?branch=main#4c4ea11d8ea4b0210fd70af62638484e25f29d5e"
++source = "git+file:///Users/markik/Code/testing/woodshed/looper-followups-20261017/mere-scroll-proof?rev=7fb709fb103c6d24d9df41e5da66b746ff48c1eb#7fb709fb103c6d24d9df41e5da66b746ff48c1eb"
+ dependencies = [
+  "cambium",
+  "dramatis",
+@@ -4141,7 +4141,7 @@ dependencies = [
+ [[package]]
+ name = "mere-surface-api"
+ version = "0.1.0"
+-source = "git+https://github.com/merely-made/mere.git?branch=main#4c4ea11d8ea4b0210fd70af62638484e25f29d5e"
++source = "git+file:///Users/markik/Code/testing/woodshed/looper-followups-20261017/mere-scroll-proof?rev=7fb709fb103c6d24d9df41e5da66b746ff48c1eb#7fb709fb103c6d24d9df41e5da66b746ff48c1eb"
+ dependencies = [
+  "workbench",
+ ]
+@@ -4149,7 +4149,7 @@ dependencies = [
+ [[package]]
+ name = "meristem"
+ version = "0.2.0"
+-source = "git+https://github.com/merely-made/mere.git?branch=main#4c4ea11d8ea4b0210fd70af62638484e25f29d5e"
++source = "git+file:///Users/markik/Code/testing/woodshed/looper-followups-20261017/mere-scroll-proof?rev=7fb709fb103c6d24d9df41e5da66b746ff48c1eb#7fb709fb103c6d24d9df41e5da66b746ff48c1eb"
+ dependencies = [
+  "anymore",
+  "tracing",
+@@ -4158,7 +4158,7 @@ dependencies = [
+ [[package]]
+ name = "mesquite"
+ version = "0.1.0"
+-source = "git+https://github.com/merely-made/mere.git?branch=main#4c4ea11d8ea4b0210fd70af62638484e25f29d5e"
++source = "git+file:///Users/markik/Code/testing/woodshed/looper-followups-20261017/mere-scroll-proof?rev=7fb709fb103c6d24d9df41e5da66b746ff48c1eb#7fb709fb103c6d24d9df41e5da66b746ff48c1eb"
+ dependencies = [
+  "cambium",
+  "cambium-rootstock",
+@@ -4190,7 +4190,7 @@ dependencies = [
+  "parking_lot",
+  "wasm-bindgen",
+  "web-sys",
+- "windows 0.61.3",
++ "windows 0.62.2",
+ ]
+ 
+ [[package]]
+@@ -4279,7 +4279,7 @@ dependencies = [
+ [[package]]
+ name = "muniment"
+ version = "0.1.2"
+-source = "git+https://github.com/merely-made/mere.git?branch=main#4c4ea11d8ea4b0210fd70af62638484e25f29d5e"
++source = "git+file:///Users/markik/Code/testing/woodshed/looper-followups-20261017/mere-scroll-proof?rev=7fb709fb103c6d24d9df41e5da66b746ff48c1eb#7fb709fb103c6d24d9df41e5da66b746ff48c1eb"
+ dependencies = [
+  "async-trait",
+  "blake3",
+@@ -4504,7 +4504,7 @@ version = "0.50.3"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "7957b9740744892f114936ab4a57b3f487491bbeafaf8083688b16841a4240e5"
+ dependencies = [
+- "windows-sys 0.61.2",
++ "windows-sys 0.59.0",
+ ]
+ 
+ [[package]]
+@@ -4620,7 +4620,7 @@ dependencies = [
+ [[package]]
+ name = "numen"
+ version = "0.2.0"
+-source = "git+https://github.com/merely-made/mere.git?branch=main#4c4ea11d8ea4b0210fd70af62638484e25f29d5e"
++source = "git+file:///Users/markik/Code/testing/woodshed/looper-followups-20261017/mere-scroll-proof?rev=7fb709fb103c6d24d9df41e5da66b746ff48c1eb#7fb709fb103c6d24d9df41e5da66b746ff48c1eb"
+ dependencies = [
+  "serde",
+  "strum",
+@@ -5139,7 +5139,7 @@ dependencies = [
+ [[package]]
+ name = "pandect"
+ version = "0.1.1"
+-source = "git+https://github.com/merely-made/mere.git?branch=main#4c4ea11d8ea4b0210fd70af62638484e25f29d5e"
++source = "git+file:///Users/markik/Code/testing/woodshed/looper-followups-20261017/mere-scroll-proof?rev=7fb709fb103c6d24d9df41e5da66b746ff48c1eb#7fb709fb103c6d24d9df41e5da66b746ff48c1eb"
+ dependencies = [
+  "async-trait",
+  "blake3",
+@@ -5364,7 +5364,7 @@ dependencies = [
+ [[package]]
+ name = "pictograph"
+ version = "0.2.0"
+-source = "git+https://github.com/merely-made/mere.git?branch=main#4c4ea11d8ea4b0210fd70af62638484e25f29d5e"
++source = "git+file:///Users/markik/Code/testing/woodshed/looper-followups-20261017/mere-scroll-proof?rev=7fb709fb103c6d24d9df41e5da66b746ff48c1eb#7fb709fb103c6d24d9df41e5da66b746ff48c1eb"
+ dependencies = [
+  "armillary",
+  "chartulary",
+@@ -6233,7 +6233,7 @@ dependencies = [
+  "errno",
+  "libc",
+  "linux-raw-sys 0.12.1",
+- "windows-sys 0.61.2",
++ "windows-sys 0.52.0",
+ ]
+ 
+ [[package]]
+@@ -6269,7 +6269,7 @@ dependencies = [
+ [[package]]
+ name = "sceno"
+ version = "0.0.5"
+-source = "git+https://github.com/merely-made/mere.git?branch=main#4c4ea11d8ea4b0210fd70af62638484e25f29d5e"
++source = "git+file:///Users/markik/Code/testing/woodshed/looper-followups-20261017/mere-scroll-proof?rev=7fb709fb103c6d24d9df41e5da66b746ff48c1eb#7fb709fb103c6d24d9df41e5da66b746ff48c1eb"
+ dependencies = [
+  "serde",
+  "serde_json",
+@@ -6278,7 +6278,7 @@ dependencies = [
+ [[package]]
+ name = "scenograph"
+ version = "0.0.4"
+-source = "git+https://github.com/merely-made/mere.git?branch=main#4c4ea11d8ea4b0210fd70af62638484e25f29d5e"
++source = "git+file:///Users/markik/Code/testing/woodshed/looper-followups-20261017/mere-scroll-proof?rev=7fb709fb103c6d24d9df41e5da66b746ff48c1eb#7fb709fb103c6d24d9df41e5da66b746ff48c1eb"
+ dependencies = [
+  "mere-curation",
+  "sceno",
+@@ -6289,7 +6289,7 @@ dependencies = [
+ [[package]]
+ name = "scenomise"
+ version = "0.0.5"
+-source = "git+https://github.com/merely-made/mere.git?branch=main#4c4ea11d8ea4b0210fd70af62638484e25f29d5e"
++source = "git+file:///Users/markik/Code/testing/woodshed/looper-followups-20261017/mere-scroll-proof?rev=7fb709fb103c6d24d9df41e5da66b746ff48c1eb#7fb709fb103c6d24d9df41e5da66b746ff48c1eb"
+ dependencies = [
+  "libm",
+  "sceno",
+@@ -6301,7 +6301,7 @@ dependencies = [
+ [[package]]
+ name = "scenotime"
+ version = "0.0.4"
+-source = "git+https://github.com/merely-made/mere.git?branch=main#4c4ea11d8ea4b0210fd70af62638484e25f29d5e"
++source = "git+file:///Users/markik/Code/testing/woodshed/looper-followups-20261017/mere-scroll-proof?rev=7fb709fb103c6d24d9df41e5da66b746ff48c1eb#7fb709fb103c6d24d9df41e5da66b746ff48c1eb"
+ dependencies = [
+  "sceno",
+  "serde",
+@@ -6336,7 +6336,7 @@ dependencies = [
+ [[package]]
+ name = "seiche"
+ version = "0.0.6"
+-source = "git+https://github.com/merely-made/mere.git?branch=main#4c4ea11d8ea4b0210fd70af62638484e25f29d5e"
++source = "git+file:///Users/markik/Code/testing/woodshed/looper-followups-20261017/mere-scroll-proof?rev=7fb709fb103c6d24d9df41e5da66b746ff48c1eb#7fb709fb103c6d24d9df41e5da66b746ff48c1eb"
+ dependencies = [
+  "armillary",
+  "euclid",
+@@ -6691,7 +6691,7 @@ dependencies = [
+ [[package]]
+ name = "sprigging"
+ version = "0.2.1"
+-source = "git+https://github.com/merely-made/mere.git?branch=main#4c4ea11d8ea4b0210fd70af62638484e25f29d5e"
++source = "git+file:///Users/markik/Code/testing/woodshed/looper-followups-20261017/mere-scroll-proof?rev=7fb709fb103c6d24d9df41e5da66b746ff48c1eb#7fb709fb103c6d24d9df41e5da66b746ff48c1eb"
+ dependencies = [
+  "accesskit",
+  "netrender-vello",
+@@ -6828,7 +6828,7 @@ dependencies = [
+ [[package]]
+ name = "tabard"
+ version = "0.0.2"
+-source = "git+https://github.com/merely-made/mere.git?branch=main#4c4ea11d8ea4b0210fd70af62638484e25f29d5e"
++source = "git+file:///Users/markik/Code/testing/woodshed/looper-followups-20261017/mere-scroll-proof?rev=7fb709fb103c6d24d9df41e5da66b746ff48c1eb#7fb709fb103c6d24d9df41e5da66b746ff48c1eb"
+ dependencies = [
+  "serde",
+  "serde_json",
+@@ -6838,7 +6838,7 @@ dependencies = [
+ [[package]]
+ name = "tabard-workshop"
+ version = "0.0.1"
+-source = "git+https://github.com/merely-made/mere.git?branch=main#4c4ea11d8ea4b0210fd70af62638484e25f29d5e"
++source = "git+file:///Users/markik/Code/testing/woodshed/looper-followups-20261017/mere-scroll-proof?rev=7fb709fb103c6d24d9df41e5da66b746ff48c1eb#7fb709fb103c6d24d9df41e5da66b746ff48c1eb"
+ dependencies = [
+  "cambium",
+  "document-canvas",
+@@ -6885,10 +6885,10 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "32497e9a4c7b38532efcdebeef879707aa9f794296a4f0244f6f69e9bc8574bd"
+ dependencies = [
+  "fastrand",
+- "getrandom 0.4.3",
++ "getrandom 0.3.4",
+  "once_cell",
+  "rustix 1.1.5",
+- "windows-sys 0.61.2",
++ "windows-sys 0.52.0",
+ ]
+ 
+ [[package]]
+@@ -7001,7 +7001,7 @@ version = "0.1.0"
+ [[package]]
+ name = "tinct"
+ version = "0.2.0"
+-source = "git+https://github.com/merely-made/mere.git?branch=main#4c4ea11d8ea4b0210fd70af62638484e25f29d5e"
++source = "git+file:///Users/markik/Code/testing/woodshed/looper-followups-20261017/mere-scroll-proof?rev=7fb709fb103c6d24d9df41e5da66b746ff48c1eb#7fb709fb103c6d24d9df41e5da66b746ff48c1eb"
+ dependencies = [
+  "serde",
+ ]
+@@ -7896,7 +7896,7 @@ version = "0.1.11"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "c2a7b1c03c876122aa43f3020e6c3c3ee5c05081c9a00739faf7503aeba10d22"
+ dependencies = [
+- "windows-sys 0.48.0",
++ "windows-sys 0.52.0",
+ ]
+ 
+ [[package]]
+@@ -8564,7 +8564,7 @@ dependencies = [
+ [[package]]
+ name = "workbench"
+ version = "0.1.0"
+-source = "git+https://github.com/merely-made/mere.git?branch=main#4c4ea11d8ea4b0210fd70af62638484e25f29d5e"
++source = "git+file:///Users/markik/Code/testing/woodshed/looper-followups-20261017/mere-scroll-proof?rev=7fb709fb103c6d24d9df41e5da66b746ff48c1eb#7fb709fb103c6d24d9df41e5da66b746ff48c1eb"
+ 
+ [[package]]
+ name = "writeable"
+@@ -8992,7 +8992,12 @@ dependencies = [
+ [[patch.unused]]
+ name = "mere-proofs"
+ version = "0.1.0"
+-source = "git+https://github.com/merely-made/mere.git?branch=main#4c4ea11d8ea4b0210fd70af62638484e25f29d5e"
++source = "git+https://github.com/merely-made/mere.git?branch=main#a17e5bb97c79332b932d10cce70f465b022a3a1a"
++
++[[patch.unused]]
++name = "muniment"
++version = "0.1.2"
++source = "git+https://github.com/merely-made/mere.git?branch=main#a17e5bb97c79332b932d10cce70f465b022a3a1a"
+ 
+ [[patch.unused]]
+ name = "mere-transport"
+diff --git a/Cargo.toml b/Cargo.toml
+index f03ed0f..5826855 100644
+--- a/Cargo.toml
++++ b/Cargo.toml
+@@ -264,3 +264,49 @@ mere-transport = { git = "https://github.com/merely-made/murm.git", branch = "ma
+ notochord = { git = "https://github.com/merely-made/dramatis.git", branch = "main" }
+ personae = { git = "https://github.com/merely-made/dramatis.git", branch = "main" }
+ mere-webrtc-carrier = { git = "https://github.com/merely-made/murm.git", branch = "main" }
++
++# Isolated receiving proof only: coherent local Git Mere family, not production.
++armillary = { git = "file:///Users/markik/Code/testing/woodshed/looper-followups-20261017/mere-scroll-proof", rev = "7fb709fb103c6d24d9df41e5da66b746ff48c1eb" }
++backstep = { git = "file:///Users/markik/Code/testing/woodshed/looper-followups-20261017/mere-scroll-proof", rev = "7fb709fb103c6d24d9df41e5da66b746ff48c1eb" }
++cambium = { git = "file:///Users/markik/Code/testing/woodshed/looper-followups-20261017/mere-scroll-proof", rev = "7fb709fb103c6d24d9df41e5da66b746ff48c1eb" }
++cambium-genet-web-host = { git = "file:///Users/markik/Code/testing/woodshed/looper-followups-20261017/mere-scroll-proof", rev = "7fb709fb103c6d24d9df41e5da66b746ff48c1eb" }
++cambium-genet-winit-host = { git = "file:///Users/markik/Code/testing/woodshed/looper-followups-20261017/mere-scroll-proof", rev = "7fb709fb103c6d24d9df41e5da66b746ff48c1eb" }
++cambium-rootstock = { git = "file:///Users/markik/Code/testing/woodshed/looper-followups-20261017/mere-scroll-proof", rev = "7fb709fb103c6d24d9df41e5da66b746ff48c1eb" }
++cambium-winit = { git = "file:///Users/markik/Code/testing/woodshed/looper-followups-20261017/mere-scroll-proof", rev = "7fb709fb103c6d24d9df41e5da66b746ff48c1eb" }
++cambium-winit-a11y = { git = "file:///Users/markik/Code/testing/woodshed/looper-followups-20261017/mere-scroll-proof", rev = "7fb709fb103c6d24d9df41e5da66b746ff48c1eb" }
++chartulary = { git = "file:///Users/markik/Code/testing/woodshed/looper-followups-20261017/mere-scroll-proof", rev = "7fb709fb103c6d24d9df41e5da66b746ff48c1eb" }
++chirograph = { git = "file:///Users/markik/Code/testing/woodshed/looper-followups-20261017/mere-scroll-proof", rev = "7fb709fb103c6d24d9df41e5da66b746ff48c1eb" }
++command-menu = { git = "file:///Users/markik/Code/testing/woodshed/looper-followups-20261017/mere-scroll-proof", rev = "7fb709fb103c6d24d9df41e5da66b746ff48c1eb" }
++document-canvas = { git = "file:///Users/markik/Code/testing/woodshed/looper-followups-20261017/mere-scroll-proof", rev = "7fb709fb103c6d24d9df41e5da66b746ff48c1eb" }
++eidetic = { git = "file:///Users/markik/Code/testing/woodshed/looper-followups-20261017/mere-scroll-proof", rev = "7fb709fb103c6d24d9df41e5da66b746ff48c1eb" }
++esp = { git = "file:///Users/markik/Code/testing/woodshed/looper-followups-20261017/mere-scroll-proof", rev = "7fb709fb103c6d24d9df41e5da66b746ff48c1eb" }
++graphshell-endpoint = { git = "file:///Users/markik/Code/testing/woodshed/looper-followups-20261017/mere-scroll-proof", rev = "7fb709fb103c6d24d9df41e5da66b746ff48c1eb" }
++illume = { git = "file:///Users/markik/Code/testing/woodshed/looper-followups-20261017/mere-scroll-proof", rev = "7fb709fb103c6d24d9df41e5da66b746ff48c1eb" }
++incipit = { git = "file:///Users/markik/Code/testing/woodshed/looper-followups-20261017/mere-scroll-proof", rev = "7fb709fb103c6d24d9df41e5da66b746ff48c1eb" }
++inker = { git = "file:///Users/markik/Code/testing/woodshed/looper-followups-20261017/mere-scroll-proof", rev = "7fb709fb103c6d24d9df41e5da66b746ff48c1eb" }
++mere-alembic = { git = "file:///Users/markik/Code/testing/woodshed/looper-followups-20261017/mere-scroll-proof", rev = "7fb709fb103c6d24d9df41e5da66b746ff48c1eb" }
++mere-apparatus = { git = "file:///Users/markik/Code/testing/woodshed/looper-followups-20261017/mere-scroll-proof", rev = "7fb709fb103c6d24d9df41e5da66b746ff48c1eb" }
++mere-cartography = { git = "file:///Users/markik/Code/testing/woodshed/looper-followups-20261017/mere-scroll-proof", rev = "7fb709fb103c6d24d9df41e5da66b746ff48c1eb" }
++mere-curation = { git = "file:///Users/markik/Code/testing/woodshed/looper-followups-20261017/mere-scroll-proof", rev = "7fb709fb103c6d24d9df41e5da66b746ff48c1eb" }
++mere-document-lanes = { git = "file:///Users/markik/Code/testing/woodshed/looper-followups-20261017/mere-scroll-proof", rev = "7fb709fb103c6d24d9df41e5da66b746ff48c1eb" }
++mere-fleece = { git = "file:///Users/markik/Code/testing/woodshed/looper-followups-20261017/mere-scroll-proof", rev = "7fb709fb103c6d24d9df41e5da66b746ff48c1eb" }
++mere-forme = { git = "file:///Users/markik/Code/testing/woodshed/looper-followups-20261017/mere-scroll-proof", rev = "7fb709fb103c6d24d9df41e5da66b746ff48c1eb" }
++mere-kernel = { git = "file:///Users/markik/Code/testing/woodshed/looper-followups-20261017/mere-scroll-proof", rev = "7fb709fb103c6d24d9df41e5da66b746ff48c1eb" }
++mere-persona-picker = { git = "file:///Users/markik/Code/testing/woodshed/looper-followups-20261017/mere-scroll-proof", rev = "7fb709fb103c6d24d9df41e5da66b746ff48c1eb" }
++mere-surface-api = { git = "file:///Users/markik/Code/testing/woodshed/looper-followups-20261017/mere-scroll-proof", rev = "7fb709fb103c6d24d9df41e5da66b746ff48c1eb" }
++meristem = { git = "file:///Users/markik/Code/testing/woodshed/looper-followups-20261017/mere-scroll-proof", rev = "7fb709fb103c6d24d9df41e5da66b746ff48c1eb" }
++mesquite = { git = "file:///Users/markik/Code/testing/woodshed/looper-followups-20261017/mere-scroll-proof", rev = "7fb709fb103c6d24d9df41e5da66b746ff48c1eb" }
++muniment = { git = "file:///Users/markik/Code/testing/woodshed/looper-followups-20261017/mere-scroll-proof", rev = "7fb709fb103c6d24d9df41e5da66b746ff48c1eb" }
++numen = { git = "file:///Users/markik/Code/testing/woodshed/looper-followups-20261017/mere-scroll-proof", rev = "7fb709fb103c6d24d9df41e5da66b746ff48c1eb" }
++pandect = { git = "file:///Users/markik/Code/testing/woodshed/looper-followups-20261017/mere-scroll-proof", rev = "7fb709fb103c6d24d9df41e5da66b746ff48c1eb" }
++pictograph = { git = "file:///Users/markik/Code/testing/woodshed/looper-followups-20261017/mere-scroll-proof", rev = "7fb709fb103c6d24d9df41e5da66b746ff48c1eb" }
++sceno = { git = "file:///Users/markik/Code/testing/woodshed/looper-followups-20261017/mere-scroll-proof", rev = "7fb709fb103c6d24d9df41e5da66b746ff48c1eb" }
++scenograph = { git = "file:///Users/markik/Code/testing/woodshed/looper-followups-20261017/mere-scroll-proof", rev = "7fb709fb103c6d24d9df41e5da66b746ff48c1eb" }
++scenomise = { git = "file:///Users/markik/Code/testing/woodshed/looper-followups-20261017/mere-scroll-proof", rev = "7fb709fb103c6d24d9df41e5da66b746ff48c1eb" }
++scenotime = { git = "file:///Users/markik/Code/testing/woodshed/looper-followups-20261017/mere-scroll-proof", rev = "7fb709fb103c6d24d9df41e5da66b746ff48c1eb" }
++seiche = { git = "file:///Users/markik/Code/testing/woodshed/looper-followups-20261017/mere-scroll-proof", rev = "7fb709fb103c6d24d9df41e5da66b746ff48c1eb" }
++sprigging = { git = "file:///Users/markik/Code/testing/woodshed/looper-followups-20261017/mere-scroll-proof", rev = "7fb709fb103c6d24d9df41e5da66b746ff48c1eb" }
++tabard = { git = "file:///Users/markik/Code/testing/woodshed/looper-followups-20261017/mere-scroll-proof", rev = "7fb709fb103c6d24d9df41e5da66b746ff48c1eb" }
++tabard-workshop = { git = "file:///Users/markik/Code/testing/woodshed/looper-followups-20261017/mere-scroll-proof", rev = "7fb709fb103c6d24d9df41e5da66b746ff48c1eb" }
++tinct = { git = "file:///Users/markik/Code/testing/woodshed/looper-followups-20261017/mere-scroll-proof", rev = "7fb709fb103c6d24d9df41e5da66b746ff48c1eb" }
++workbench = { git = "file:///Users/markik/Code/testing/woodshed/looper-followups-20261017/mere-scroll-proof", rev = "7fb709fb103c6d24d9df41e5da66b746ff48c1eb" }
+diff --git a/crates/woodshed-genet/src/scenario.rs b/crates/woodshed-genet/src/scenario.rs
+index 6e5abc9..5d36242 100644
+--- a/crates/woodshed-genet/src/scenario.rs
++++ b/crates/woodshed-genet/src/scenario.rs
+@@ -955,6 +955,55 @@ struct Snapshot<'a, 'c> {
+ }
+ 
+ impl Snapshot<'_, '_> {
++    /// Receiving proof must observe the host's actual document scroll plane.
++    /// The supplier's read-only AppCtx accessor preserves missing layout as
++    /// unavailable; no second layout or synthesized zero participates.
++    fn document_scroll(&self) -> Option<(f32, f32)> {
++        self.ctx.document_scroll()
++    }
++
++    fn fully_visible(&self, selector: &Selector) -> bool {
++        let nodes = {
++            let dom = self.ctx.runner.dom();
++            let dom = dom.borrow();
++            taproot::matching(&dom, selector)
++        };
++        nodes.into_iter().any(|node| {
++            let Some((_, _, width, height)) = self.ctx.painted_rect(node) else { return false; };
++            let Some((_, _, visible_width, visible_height)) = self.ctx.visible_rect(node) else { return false; };
++            width > 0.0 && height > 0.0
++                && visible_width + 0.5 >= width && visible_height + 0.5 >= height
++        })
++    }
++
++    fn card_part_fully_visible(&self, card: u64, class: &str) -> bool {
++        use layout_dom_api::{LayoutDom, LocalName, Namespace};
++        let part = {
++            let dom = self.ctx.runner.dom();
++            let dom = dom.borrow();
++            let label = format!("Select Card {card}");
++            let select = Selector::role("switch").with_attr("aria-label", label.as_str());
++            taproot::matching(&dom, &select).into_iter().find_map(|node| {
++                let mut ancestor = dom.parent(node);
++                while let Some(parent) = ancestor {
++                    if dom.attribute(parent, &Namespace::default(), &LocalName::from("class"))
++                        .is_some_and(|classes| classes.split_whitespace().any(|class| class == "hocket-recorder-lane"))
++                    {
++                        return dom.all_with_class(parent, class).into_iter().next();
++                    }
++                    ancestor = dom.parent(parent);
++                }
++                None
++            })
++        };
++        part.is_some_and(|node| {
++            let Some((_, _, width, height)) = self.ctx.painted_rect(node) else { return false; };
++            let Some((_, _, visible_width, visible_height)) = self.ctx.visible_rect(node) else { return false; };
++            width > 0.0 && height > 0.0
++                && visible_width + 0.5 >= width && visible_height + 0.5 >= height
++        })
++    }
++
+     /// The `data-key` of the Set-graph node the canvas is currently painting
+     /// as focused, or `"none"`. The canvas owns that emphasis, so the DOM is
+     /// the authority for it.
+@@ -1102,6 +1151,22 @@ impl Snapshot<'_, '_> {
+                 .is_some_and(|family| family.name() == name)
+         };
+         let mut snap = ProbeSnapshot::default()
++            .with_field("document-scroll-available", self.document_scroll().is_some().to_string())
++            .with_field("document-scroll-x", self.document_scroll().map_or_else(|| "unavailable".into(), |offset| offset.0.to_string()))
++            .with_field("document-scroll-y", self.document_scroll().map_or_else(|| "unavailable".into(), |offset| offset.1.to_string()))
++            .with_field("recorder-card3-select-visible", self.fully_visible(&Selector::role("switch").with_attr("aria-label", "Select Card 3")).to_string())
++            .with_field("recorder-card3-clear-visible", self.card_part_fully_visible(3, "hocket-recorder-clear").to_string())
++            .with_field("recorder-card2-select-visible", self.fully_visible(&Selector::role("switch").with_attr("aria-label", "Select Card 2")).to_string())
++            .with_field("recorder-card2-waveform-visible", self.card_part_fully_visible(2, "hocket-recorder-wave-leaf").to_string())
++            .with_field("recorder-transport-visible", self.fully_visible(&Selector::class("hocket-recorder-transport")).to_string())
++            .with_field("recorder-record-visible", self.fully_visible(&Selector::role("switch").with_attr("aria-label", "Record")).to_string())
++            .with_field("recorder-play-visible", self.fully_visible(&Selector::role("button").with_attr("aria-label", "Play backing")).to_string())
++            .with_field("recorder-stop-visible", self.fully_visible(&Selector::role("button").with_attr("aria-label", "Stop all loops")).to_string())
++            .with_field("recorder-rewind-visible", self.fully_visible(&Selector::role("button").with_attr("aria-label", "Rewind")).to_string())
++            .with_field("recorder-click-visible", self.fully_visible(&Selector::role("switch").with_attr("aria-label", "Click")).to_string())
++            .with_field("recorder-replace-visible", self.fully_visible(&Selector::role("switch").with_attr("aria-label", "Replace capture")).to_string())
++            .with_field("recorder-tempo-down-visible", self.fully_visible(&Selector::role("button").with_attr("aria-label", "Decrease tempo")).to_string())
++            .with_field("recorder-tempo-up-visible", self.fully_visible(&Selector::role("button").with_attr("aria-label", "Increase tempo")).to_string())
+             .with_field(
+                 "appearance-device-free",
+                 (crate::appearance::device_free_receipt()
+diff --git a/scenarios/looper_scroll_receipt.scn b/scenarios/looper_scroll_receipt.scn
+new file mode 100644
+index 0000000..1f3856e
+--- /dev/null
++++ b/scenarios/looper_scroll_receipt.scn
+@@ -0,0 +1,214 @@
++# Isolated receiving proof for Mere scroll-boundary fix.
++# Snapshot::document_scroll observes the retained plane through AppCtx.
++# Missing observations are unavailable and must fail, never default to zero.
++# Parent owns locked-source generation, native execution and pixel review.
++settle 90
++ui-zoom 1
++resize 1180 1000
++settle 6
++assert snap practice-saved == true
++act song-cache-example
++act p7b-seconds-example
++settle 6
++click role:switch @aria-label=Select Card 2
++act seed-selected-envelope-capture
++settle 8
++act verify-selected-envelope-capture
++assert snap recorder-rows == 3
++assert snap document-scroll-available == true
++assert snap document-scroll-x == 0
++assert snap document-scroll-y == 0
++capture 01_wide_baseline_edges
++
++resize 420 1100
++settle 6
++assert snap document-scroll-available == true
++assert snap document-scroll-x == 0
++assert snap document-scroll-y == 0
++capture 02_compact_before_scroll
++wheel 0 1800 px on .hocket-recorder-surface
++settle 5
++assert snap document-scroll-available == true
++assert snap document-scroll-x == 0
++assert snap document-scroll-y == 0
++assert snap recorder-card3-select-visible == true
++assert snap recorder-card3-clear-visible == true
++click role:switch @aria-label=Select Card 3
++assert snap recorder-selected-card == 3
++settle 3
++assert snap document-scroll-available == true
++assert snap document-scroll-x == 0
++assert snap document-scroll-y == 0
++capture 03_compact_third_card_edges
++wheel 0 1800 px on .hocket-recorder-surface
++settle 5
++assert snap document-scroll-available == true
++assert snap document-scroll-x == 0
++assert snap document-scroll-y == 0
++wheel 0 1800 px on .hocket-recorder-surface
++settle 5
++assert snap document-scroll-available == true
++assert snap document-scroll-x == 0
++assert snap document-scroll-y == 0
++assert snap recorder-transport-visible == true
++assert snap recorder-record-visible == true
++assert snap recorder-play-visible == true
++assert snap recorder-stop-visible == true
++assert snap recorder-rewind-visible == true
++assert snap recorder-click-visible == true
++assert snap recorder-replace-visible == true
++assert snap recorder-tempo-down-visible == true
++assert snap recorder-tempo-up-visible == true
++click role:button @aria-label=Stop all loops
++settle 3
++assert snap document-scroll-available == true
++assert snap document-scroll-x == 0
++assert snap document-scroll-y == 0
++capture 04_compact_transport_boundary_edges
++wheel 0 -1800 px on .hocket-recorder-surface
++settle 5
++assert snap document-scroll-available == true
++assert snap document-scroll-x == 0
++assert snap document-scroll-y == 0
++assert snap recorder-card2-select-visible == true
++assert snap recorder-card2-waveform-visible == true
++click role:switch @aria-label=Select Card 2
++assert snap recorder-selected-card == 2
++settle 3
++assert snap document-scroll-available == true
++assert snap document-scroll-x == 0
++assert snap document-scroll-y == 0
++act verify-selected-envelope-capture
++
++resize 420 720
++settle 6
++wheel 0 500 px on .workspace-screen
++settle 5
++assert snap document-scroll-available == true
++assert snap document-scroll-x == 0
++assert snap document-scroll-y == 0
++capture 05_short_workspace_scroll_edges
++# At 2x DPI Card 3 starts near y=1304, with the surface clip at y=636.
++# Move 300 logical px to expose the whole row without clamping to transport end.
++wheel 0 300 px on .hocket-recorder-surface
++settle 5
++assert snap document-scroll-available == true
++assert snap document-scroll-x == 0
++assert snap document-scroll-y == 0
++assert snap recorder-card3-select-visible == true
++assert snap recorder-card3-clear-visible == true
++click role:switch @aria-label=Select Card 3
++assert snap recorder-selected-card == 3
++settle 3
++assert snap document-scroll-available == true
++assert snap document-scroll-x == 0
++assert snap document-scroll-y == 0
++capture 06_short_third_card_edges
++wheel 0 1800 px on .hocket-recorder-surface
++settle 5
++assert snap document-scroll-available == true
++assert snap document-scroll-x == 0
++assert snap document-scroll-y == 0
++wheel 0 1800 px on .hocket-recorder-surface
++settle 5
++assert snap document-scroll-available == true
++assert snap document-scroll-x == 0
++assert snap document-scroll-y == 0
++assert snap recorder-transport-visible == true
++assert snap recorder-record-visible == true
++assert snap recorder-play-visible == true
++assert snap recorder-stop-visible == true
++assert snap recorder-rewind-visible == true
++assert snap recorder-click-visible == true
++assert snap recorder-replace-visible == true
++assert snap recorder-tempo-down-visible == true
++assert snap recorder-tempo-up-visible == true
++click role:button @aria-label=Stop all loops
++settle 3
++assert snap document-scroll-available == true
++assert snap document-scroll-x == 0
++assert snap document-scroll-y == 0
++capture 07_short_transport_boundary_edges
++wheel 0 -1800 px on .hocket-recorder-surface
++settle 5
++assert snap document-scroll-available == true
++assert snap document-scroll-x == 0
++assert snap document-scroll-y == 0
++assert snap recorder-card2-select-visible == true
++assert snap recorder-card2-waveform-visible == true
++click role:switch @aria-label=Select Card 2
++assert snap recorder-selected-card == 2
++settle 3
++assert snap document-scroll-available == true
++assert snap document-scroll-x == 0
++assert snap document-scroll-y == 0
++act verify-selected-envelope-capture
++
++resize 1180 1000
++settle 6
++ui-zoom 1.25
++settle 6
++assert snap document-scroll-available == true
++assert snap document-scroll-x == 0
++assert snap document-scroll-y == 0
++capture 08_zoom125_before_scroll
++wheel 0 1800 px on .hocket-recorder-table
++settle 5
++assert snap document-scroll-available == true
++assert snap document-scroll-x == 0
++assert snap document-scroll-y == 0
++assert snap recorder-card3-select-visible == true
++assert snap recorder-card3-clear-visible == true
++click role:switch @aria-label=Select Card 3
++assert snap recorder-selected-card == 3
++settle 3
++assert snap document-scroll-available == true
++assert snap document-scroll-x == 0
++assert snap document-scroll-y == 0
++capture 09_zoom125_third_card_edges
++wheel 0 1800 px on .hocket-recorder-table
++settle 5
++assert snap document-scroll-available == true
++assert snap document-scroll-x == 0
++assert snap document-scroll-y == 0
++wheel 0 1800 px on .hocket-recorder-table
++settle 5
++assert snap document-scroll-available == true
++assert snap document-scroll-x == 0
++assert snap document-scroll-y == 0
++assert snap recorder-transport-visible == true
++assert snap recorder-record-visible == true
++assert snap recorder-play-visible == true
++assert snap recorder-stop-visible == true
++assert snap recorder-rewind-visible == true
++assert snap recorder-click-visible == true
++assert snap recorder-replace-visible == true
++assert snap recorder-tempo-down-visible == true
++assert snap recorder-tempo-up-visible == true
++click role:button @aria-label=Stop all loops
++settle 3
++assert snap document-scroll-available == true
++assert snap document-scroll-x == 0
++assert snap document-scroll-y == 0
++capture 10_zoom125_transport_boundary_edges
++wheel 0 -1800 px on .hocket-recorder-table
++settle 5
++assert snap document-scroll-available == true
++assert snap document-scroll-x == 0
++assert snap document-scroll-y == 0
++assert snap recorder-card2-select-visible == true
++assert snap recorder-card2-waveform-visible == true
++click role:switch @aria-label=Select Card 2
++assert snap recorder-selected-card == 2
++settle 3
++assert snap document-scroll-available == true
++assert snap document-scroll-x == 0
++assert snap document-scroll-y == 0
++act verify-selected-envelope-capture
++capture 11_zoom125_recovered_envelope_edges
++ui-zoom 1
++settle 5
++assert snap document-scroll-available == true
++assert snap document-scroll-x == 0
++assert snap document-scroll-y == 0
++log Local Mere receiving scroll proof complete

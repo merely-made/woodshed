@@ -1,0 +1,28 @@
+{
+  "command": [
+    "env",
+    "CARGO_TARGET_DIR=/Users/markik/Code/repos/woodshed/target",
+    "cargo",
+    "test",
+    "--offline",
+    "--locked",
+    "-p",
+    "cambium-rootstock",
+    "--lib",
+    "owned_layout::tests::document_extent_",
+    "--quiet"
+  ],
+  "cwd": "/Users/markik/Code/testing/woodshed/looper-followups-20261017/mere-scroll-proof",
+  "started_utc": "2026-10-17T15:39:45.124131+00:00",
+  "ended_utc": "2026-10-17T15:39:58.611567+00:00",
+  "exit_code": 101,
+  "suites": [
+    {
+      "passed": 0,
+      "failed": 5,
+      "ignored": 0,
+      "measured": 0,
+      "filtered_out": 110
+    }
+  ]
+}

@@ -1,0 +1,214 @@
+# Isolated receiving proof for Mere scroll-boundary fix.
+# Snapshot::document_scroll observes the retained plane through AppCtx.
+# Missing observations are unavailable and must fail, never default to zero.
+# Parent owns locked-source generation, native execution and pixel review.
+settle 90
+ui-zoom 1
+resize 1180 1000
+settle 6
+assert snap practice-saved == true
+act song-cache-example
+act p7b-seconds-example
+settle 6
+click role:switch @aria-label=Select Card 2
+act seed-selected-envelope-capture
+settle 8
+act verify-selected-envelope-capture
+assert snap recorder-rows == 3
+assert snap document-scroll-available == true
+assert snap document-scroll-x == 0
+assert snap document-scroll-y == 0
+capture 01_wide_baseline_edges
+
+resize 420 1100
+settle 6
+assert snap document-scroll-available == true
+assert snap document-scroll-x == 0
+assert snap document-scroll-y == 0
+capture 02_compact_before_scroll
+wheel 0 1800 px on .hocket-recorder-surface
+settle 5
+assert snap document-scroll-available == true
+assert snap document-scroll-x == 0
+assert snap document-scroll-y == 0
+assert snap recorder-card3-select-visible == true
+assert snap recorder-card3-clear-visible == true
+click role:switch @aria-label=Select Card 3
+assert snap recorder-selected-card == 3
+settle 3
+assert snap document-scroll-available == true
+assert snap document-scroll-x == 0
+assert snap document-scroll-y == 0
+capture 03_compact_third_card_edges
+wheel 0 1800 px on .hocket-recorder-surface
+settle 5
+assert snap document-scroll-available == true
+assert snap document-scroll-x == 0
+assert snap document-scroll-y == 0
+wheel 0 1800 px on .hocket-recorder-surface
+settle 5
+assert snap document-scroll-available == true
+assert snap document-scroll-x == 0
+assert snap document-scroll-y == 0
+assert snap recorder-transport-visible == true
+assert snap recorder-record-visible == true
+assert snap recorder-play-visible == true
+assert snap recorder-stop-visible == true
+assert snap recorder-rewind-visible == true
+assert snap recorder-click-visible == true
+assert snap recorder-replace-visible == true
+assert snap recorder-tempo-down-visible == true
+assert snap recorder-tempo-up-visible == true
+click role:button @aria-label=Stop all loops
+settle 3
+assert snap document-scroll-available == true
+assert snap document-scroll-x == 0
+assert snap document-scroll-y == 0
+capture 04_compact_transport_boundary_edges
+wheel 0 -1800 px on .hocket-recorder-surface
+settle 5
+assert snap document-scroll-available == true
+assert snap document-scroll-x == 0
+assert snap document-scroll-y == 0
+assert snap recorder-card2-select-visible == true
+assert snap recorder-card2-waveform-visible == true
+click role:switch @aria-label=Select Card 2
+assert snap recorder-selected-card == 2
+settle 3
+assert snap document-scroll-available == true
+assert snap document-scroll-x == 0
+assert snap document-scroll-y == 0
+act verify-selected-envelope-capture
+
+resize 420 720
+settle 6
+wheel 0 500 px on .workspace-screen
+settle 5
+assert snap document-scroll-available == true
+assert snap document-scroll-x == 0
+assert snap document-scroll-y == 0
+capture 05_short_workspace_scroll_edges
+# At 2x DPI Card 3 starts near y=1304, with the surface clip at y=636.
+# Move 300 logical px to expose the whole row without clamping to transport end.
+wheel 0 300 px on .hocket-recorder-surface
+settle 5
+assert snap document-scroll-available == true
+assert snap document-scroll-x == 0
+assert snap document-scroll-y == 0
+assert snap recorder-card3-select-visible == true
+assert snap recorder-card3-clear-visible == true
+click role:switch @aria-label=Select Card 3
+assert snap recorder-selected-card == 3
+settle 3
+assert snap document-scroll-available == true
+assert snap document-scroll-x == 0
+assert snap document-scroll-y == 0
+capture 06_short_third_card_edges
+wheel 0 1800 px on .hocket-recorder-surface
+settle 5
+assert snap document-scroll-available == true
+assert snap document-scroll-x == 0
+assert snap document-scroll-y == 0
+wheel 0 1800 px on .hocket-recorder-surface
+settle 5
+assert snap document-scroll-available == true
+assert snap document-scroll-x == 0
+assert snap document-scroll-y == 0
+assert snap recorder-transport-visible == true
+assert snap recorder-record-visible == true
+assert snap recorder-play-visible == true
+assert snap recorder-stop-visible == true
+assert snap recorder-rewind-visible == true
+assert snap recorder-click-visible == true
+assert snap recorder-replace-visible == true
+assert snap recorder-tempo-down-visible == true
+assert snap recorder-tempo-up-visible == true
+click role:button @aria-label=Stop all loops
+settle 3
+assert snap document-scroll-available == true
+assert snap document-scroll-x == 0
+assert snap document-scroll-y == 0
+capture 07_short_transport_boundary_edges
+wheel 0 -1800 px on .hocket-recorder-surface
+settle 5
+assert snap document-scroll-available == true
+assert snap document-scroll-x == 0
+assert snap document-scroll-y == 0
+assert snap recorder-card2-select-visible == true
+assert snap recorder-card2-waveform-visible == true
+click role:switch @aria-label=Select Card 2
+assert snap recorder-selected-card == 2
+settle 3
+assert snap document-scroll-available == true
+assert snap document-scroll-x == 0
+assert snap document-scroll-y == 0
+act verify-selected-envelope-capture
+
+resize 1180 1000
+settle 6
+ui-zoom 1.25
+settle 6
+assert snap document-scroll-available == true
+assert snap document-scroll-x == 0
+assert snap document-scroll-y == 0
+capture 08_zoom125_before_scroll
+wheel 0 1800 px on .hocket-recorder-table
+settle 5
+assert snap document-scroll-available == true
+assert snap document-scroll-x == 0
+assert snap document-scroll-y == 0
+assert snap recorder-card3-select-visible == true
+assert snap recorder-card3-clear-visible == true
+click role:switch @aria-label=Select Card 3
+assert snap recorder-selected-card == 3
+settle 3
+assert snap document-scroll-available == true
+assert snap document-scroll-x == 0
+assert snap document-scroll-y == 0
+capture 09_zoom125_third_card_edges
+wheel 0 1800 px on .hocket-recorder-table
+settle 5
+assert snap document-scroll-available == true
+assert snap document-scroll-x == 0
+assert snap document-scroll-y == 0
+wheel 0 1800 px on .hocket-recorder-table
+settle 5
+assert snap document-scroll-available == true
+assert snap document-scroll-x == 0
+assert snap document-scroll-y == 0
+assert snap recorder-transport-visible == true
+assert snap recorder-record-visible == true
+assert snap recorder-play-visible == true
+assert snap recorder-stop-visible == true
+assert snap recorder-rewind-visible == true
+assert snap recorder-click-visible == true
+assert snap recorder-replace-visible == true
+assert snap recorder-tempo-down-visible == true
+assert snap recorder-tempo-up-visible == true
+click role:button @aria-label=Stop all loops
+settle 3
+assert snap document-scroll-available == true
+assert snap document-scroll-x == 0
+assert snap document-scroll-y == 0
+capture 10_zoom125_transport_boundary_edges
+wheel 0 -1800 px on .hocket-recorder-table
+settle 5
+assert snap document-scroll-available == true
+assert snap document-scroll-x == 0
+assert snap document-scroll-y == 0
+assert snap recorder-card2-select-visible == true
+assert snap recorder-card2-waveform-visible == true
+click role:switch @aria-label=Select Card 2
+assert snap recorder-selected-card == 2
+settle 3
+assert snap document-scroll-available == true
+assert snap document-scroll-x == 0
+assert snap document-scroll-y == 0
+act verify-selected-envelope-capture
+capture 11_zoom125_recovered_envelope_edges
+ui-zoom 1
+settle 5
+assert snap document-scroll-available == true
+assert snap document-scroll-x == 0
+assert snap document-scroll-y == 0
+log Local Mere receiving scroll proof complete

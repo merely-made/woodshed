@@ -1,0 +1,52 @@
+{
+  "package_identities_match_production_after_local_supplier_mapping": true,
+  "package_count": 853,
+  "record_differences": [
+    [
+      "bevy_platform",
+      "0.19.1",
+      "registry+https://github.com/rust-lang/crates.io-index"
+    ],
+    [
+      "dlib",
+      "0.5.3",
+      "registry+https://github.com/rust-lang/crates.io-index"
+    ],
+    [
+      "errno",
+      "0.3.14",
+      "registry+https://github.com/rust-lang/crates.io-index"
+    ],
+    [
+      "gpu-allocator",
+      "0.28.0",
+      "registry+https://github.com/rust-lang/crates.io-index"
+    ],
+    [
+      "midir",
+      "0.11.0",
+      "registry+https://github.com/rust-lang/crates.io-index"
+    ],
+    [
+      "nu-ansi-term",
+      "0.50.3",
+      "registry+https://github.com/rust-lang/crates.io-index"
+    ],
+    [
+      "rustix",
+      "1.1.5",
+      "registry+https://github.com/rust-lang/crates.io-index"
+    ],
+    [
+      "tempfile",
+      "3.27.0",
+      "registry+https://github.com/rust-lang/crates.io-index"
+    ],
+    [
+      "winapi-util",
+      "0.1.11",
+      "registry+https://github.com/rust-lang/crates.io-index"
+    ]
+  ],
+  "local_supplier_commit": "7fb709fb103c6d24d9df41e5da66b746ff48c1eb"
+}
