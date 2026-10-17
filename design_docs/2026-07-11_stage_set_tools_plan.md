@@ -3893,9 +3893,12 @@ through horizontal scrolling. The first failed pass is preserved beside the
 accepted receipt. Physical audio and other operating systems remain outside
 this qualification. [Receipt](../validation/native-arrangement_20261016/receipt.json).
 
-**Native spacing follow-up (2026-10-16):** In progress after visual feedback.
-The primary progression canvas increases to 300 logical pixels high. Shared
-Pictograph template framing must use that vertical space independently of the
-long musical timeline, while preserving span positions and inverse picking.
-Done when a new native capture shows separated title, supplied Cards, expected
-roles and grouping labels, with the linked fretboard still proportional.
+**Native spacing follow-up (2026-10-16):** Qualified on source `f683bbe` with
+shared Mere `52fb4900e`. The primary canvas is 300 logical pixels high and
+Pictograph fits template Y coordinates independently of the long musical
+span. Five shared surface tests, 214 view cases, two native editor cases and
+the locked desktop build pass. One sealed native run presents 131 frames;
+three reviewed wide/compact captures show separated title, Cards, expected
+roles and grouping labels, with a proportional fretboard. The live and actual
+sealed Set and complete portable document equal the previous saved fixture
+exactly. [Spacing receipt](../validation/native-arrangement-spacing_20261016/receipt.json).

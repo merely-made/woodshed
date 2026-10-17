@@ -1,0 +1,15 @@
+{
+  "01_roomier_progression.png": "dcdad7829ffa2c25ba8a2b316a01bc0cfd910b2c050f8e2ba5b7330ea48bc14c",
+  "02_roomier_compact.png": "64d1bbafebd5e9cc0fea32fb7a7cc4fa753a3e1ccc3bf09a3bab830ee49e572d",
+  "03_roomier_compact_end.png": "47ff5dd8628aa7e8d04fbb8b821b924a8142edd9a0409405230daf387de57d99",
+  "build.log": "f1f7ecddec36b18be0a24755be8812f41e4919bc16c46073cb432f15f5f2f57a",
+  "host-tests.log": "62ac09e1c1a581fb9a757840cb1173c1ac01d35bfeb138a546b59fe04f6d2157",
+  "launcher.c": "b0e0873da74bde2664702b85237e337c22038ca826f97793f52b4b6221b80fba",
+  "native.log": "ecbf17c78a1ffe6ef0b43184042e4745a0c5100c29685ae3acc84f63a30affdb",
+  "receipt.json": "778d37d280dfed114727c9453836295a94083a0b2aaf4bed5d4cf2840e9e677c",
+  "scenario.done": "94a558f3faf32fdf4020609d9f8b7d6d3bb883f2749247aaef9d701692cb503d",
+  "source.json": "fba05ca78d903b7a319d793476c25511b367ad9698f6209da326cab99bdc3e40",
+  "spacing-saved.json": "4a07c60a4557304d53db598458058d1749e30ae93cd8d6164e5d9cafcde1f3b2",
+  "verify.py": "28660e3bd948a8cf3df6281571cc44e3350704bf4250060f1c9b06fc280d2a50",
+  "view-tests.log": "559a2dca103077e1262f38ac7b4952ccda53267c1eabce284aba2eb15bebfac8"
+}

@@ -1,0 +1,9 @@
+RESULT ok
+captured 01_roomier_progression
+captured 02_roomier_compact
+captured 03_roomier_compact_end
+capture 01_roomier_progression 2360x2200 digest=01dca6a9d80dc4d8 file=/Users/markik/Code/testing/woodshed/arrangement-spacing-20261016/spacing-v1/01_roomier_progression.png
+capture 02_roomier_compact 840x2200 digest=60b7c1ccb8d39a8d file=/Users/markik/Code/testing/woodshed/arrangement-spacing-20261016/spacing-v1/02_roomier_compact.png
+capture 03_roomier_compact_end 840x2200 digest=faa95cb115941efd file=/Users/markik/Code/testing/woodshed/arrangement-spacing-20261016/spacing-v1/03_roomier_compact_end.png
+frames: 3 captured, 0 blank, 3 distinct digests
+presentation: 131 frames, 134 redraws, 3 unpresented redraws
