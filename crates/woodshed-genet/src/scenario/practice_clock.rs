@@ -122,6 +122,13 @@ pub(super) fn product_act(
 
 fn wait_target(label: &str) -> Option<(usize, ProgramStatus, Duration)> {
     match label {
+        "p6-await-chord" => Some((0, ProgramStatus::Playing, Duration::ZERO)),
+        "p6-await-scale" => Some((1, ProgramStatus::Playing, Duration::ZERO)),
+        "p6-await-arpeggio" => Some((2, ProgramStatus::Playing, Duration::ZERO)),
+        "p6-await-set-loop" => Some((0, ProgramStatus::Playing, Duration::from_secs(4))),
+        "p6-await-card-loop" => Some((0, ProgramStatus::Playing, Duration::from_secs(3))),
+        "p6-await-manual" => Some((2, ProgramStatus::WaitingManual, Duration::ZERO)),
+        "p6-await-complete" => Some((2, ProgramStatus::Complete, Duration::ZERO)),
         "p5clock-await-card-0" => Some((0, ProgramStatus::Playing, Duration::ZERO)),
         "p5clock-await-card-1" => Some((1, ProgramStatus::Playing, Duration::ZERO)),
         "p5clock-await-manual" => Some((2, ProgramStatus::WaitingManual, Duration::ZERO)),

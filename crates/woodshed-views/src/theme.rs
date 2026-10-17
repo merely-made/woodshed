@@ -562,6 +562,17 @@ fn stage_css_with_roles(p: &Palette, authored_roles: bool) -> String {
 .rehearsal-transport {{ flex-wrap: wrap; }}
 .rehearsal-transport .working-instance-name,
 .rehearsal-transport .background-rehearsal-status {{ flex-basis: 100%; margin-bottom: 6px; }}
+.rehearsal-transport .t-btn:focus-visible,
+.film-card:focus-visible {{ outline: 2px solid {tertiary}; outline-offset: 2px; }}
+.rehearsal-context {{ display: flex; flex-wrap: wrap; align-items: center; gap: 4px 14px;
+                     margin: 0 0 10px; padding: 8px 10px; background-color: {surface}; border-radius: 8px; }}
+.rehearsal-adjacent {{ color: {text_dim}; font-size: 12px; min-width: 140px; flex: 1 1 150px; }}
+.rehearsal-current {{ color: {text_header}; font-size: 13px; font-weight: 600; min-width: 180px; flex: 1 1 190px; }}
+.rehearsal-progress {{ display: flex; align-items: center; gap: 10px; flex: 1 1 220px; min-width: 180px; }}
+.rehearsal-progress-label {{ color: {text_dim}; font-size: 11px; white-space: nowrap; }}
+.rehearsal-progress-track {{ height: 6px; flex: 1 1 auto; min-width: 55px; overflow: hidden;
+                            background-color: {surface_2}; border-radius: 4px; }}
+.rehearsal-progress-fill {{ height: 100%; background-color: {tertiary}; border-radius: 4px; }}
 .t-btn {{ background-color: {surface_2}; color: {text}; padding: 4px 12px;
          margin-right: 6px; border-radius: 6px; }}
 .t-narrow {{ padding: 4px 9px; }}

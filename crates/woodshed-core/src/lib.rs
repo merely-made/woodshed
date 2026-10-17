@@ -632,7 +632,7 @@ pub fn step_set(set: &mut Set, dir: i32) -> bool {
             set.cursor = next.rem_euclid(n) as usize;
             true
         },
-        LoopMode::Off => {
+        LoopMode::Off | LoopMode::Card => {
             if next < 0 || next >= n {
                 false
             } else {

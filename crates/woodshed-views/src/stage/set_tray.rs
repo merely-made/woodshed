@@ -75,7 +75,11 @@ pub(super) fn card_editor(ui: &UiState) -> UiChild {
             "div",
             (
                 el("div", text("Selected Card")).attr("class", "set-editor-label"),
-                ui.selected_timing_interpretation().map(|notice| el("div", text(notice)).attr("class", "card-timing-interpretation").attr("role", "status")),
+                ui.selected_timing_interpretation().map(|notice| {
+                    el("div", text(notice))
+                        .attr("class", "card-timing-interpretation")
+                        .attr("role", "status")
+                }),
                 clickable(
                     el("button", text("Hear selected Card"))
                         .attr("class", "t-btn t-hear card-hear"),
@@ -170,7 +174,8 @@ fn graph_node_card(ui: &UiState) -> UiChild {
 pub(super) fn view(ui: &UiState) -> UiChild {
     let loop_label = match ui.set.loop_mode {
         LoopMode::Off => "Loop set: off",
-        LoopMode::All => "Loop set: on",
+        LoopMode::All => "Loop set: all",
+        LoopMode::Card => "Loop set: current Card",
     };
     let cards: Vec<UiChild> = ui
         .set
@@ -507,13 +512,10 @@ pub(super) fn view(ui: &UiState) -> UiChild {
                             },
                         ),
                         clickable(
-                            el("div", text(loop_label)).attr("class", "t-btn"),
-                            |ui: &mut UiState, _| {
-                                ui.set.loop_mode = match ui.set.loop_mode {
-                                    LoopMode::Off => LoopMode::All,
-                                    LoopMode::All => LoopMode::Off,
-                                };
-                            },
+                            el("button", text(loop_label))
+                                .attr("class", "t-btn set-loop-mode")
+                                .attr("aria-label", format!("Set loop mode: {loop_label}")),
+                            |ui: &mut UiState, _| ui.cycle_set_loop_mode(),
                         ),
                         clickable(
                             el("div", text("←")).attr("class", "t-btn t-narrow"),

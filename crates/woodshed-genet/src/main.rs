@@ -201,6 +201,16 @@ fn prepare_close(
     wav_export::close_request(shared, ctx).unwrap_or_else(|| appearance::close_request(ctx))
 }
 
+/// Every product-requested exit, including scenario completion after a frame,
+/// passes the same preservation decision as a native window close.
+fn guard_requested_close(shared: &mut Shared, ctx: &mut Ctx<'_>) {
+    if *ctx.close {
+        *ctx.close = false;
+        *ctx.close = prepare_close(shared, ctx)
+            == cambium_genet_winit_host::CloseDisposition::Exit;
+    }
+}
+
 /// Build the starting state: the audio backend, the restored session, and the
 /// application settings. Runs once, inside the host, after the window exists
 /// but before the first frame.
@@ -443,11 +453,7 @@ fn hooks(shared: &Rc<RefCell<Shared>>) -> HostHooks<UiState, Logic, UiChild> {
                     ctx.runner.update(|ui| ui.practice_discard_close = false);
                 }
             }
-            if *ctx.close {
-                *ctx.close = false;
-                *ctx.close = prepare_close(&mut shared, ctx)
-                    == cambium_genet_winit_host::CloseDisposition::Exit;
-            }
+            guard_requested_close(&mut shared, ctx);
         }),
         after_frame: Box::new(move |ctx: &mut Ctx<'_>| {
             let mut shared = after_frame_shared.borrow_mut();
@@ -456,6 +462,7 @@ fn hooks(shared: &Rc<RefCell<Shared>>) -> HostHooks<UiState, Logic, UiChild> {
             if let Some(lane) = &mut lane {
                 scenario::drive(lane, ctx);
             }
+            guard_requested_close(&mut after_frame_shared.borrow_mut(), ctx);
         }),
         after_wake: Box::new(move |ctx: &mut Ctx<'_>| {
             let mut shared = wake_shared.borrow_mut();
@@ -588,6 +595,16 @@ mod tests {
         Rc<RefCell<Shared>>,
         cambium_genet_winit_host::Harness<UiState, Logic, UiChild>,
     ) {
+        save_close_harness_with_frame_exit(storage, false)
+    }
+
+    fn save_close_harness_with_frame_exit(
+        storage: woodshed_core::storage::SessionStore<storage::HostBackend>,
+        mut request_frame_exit: bool,
+    ) -> (
+        Rc<RefCell<Shared>>,
+        cambium_genet_winit_host::Harness<UiState, Logic, UiChild>,
+    ) {
         let seal = woodshed_views::persona::PracticeSeal::Sealed {
             persona: "test".into(),
             protection: "test".into(),
@@ -596,6 +613,14 @@ mod tests {
         let mut ui = UiState::new();
         ui.seal = Some(seal);
         ui.stage_current(None);
+        let mut host_hooks = hooks(&shared);
+        let mut frame = host_hooks.after_frame;
+        host_hooks.after_frame = Box::new(move |ctx| {
+            if std::mem::take(&mut request_frame_exit) {
+                *ctx.close = true;
+            }
+            frame(ctx);
+        });
         let mut host = cambium_genet_winit_host::Harness::with_command_init(
             move |commands| {
                 let commands = commands.clone();
@@ -607,12 +632,36 @@ mod tests {
                     images: Vec::new(),
                 }
             },
-            hooks(&shared),
+            host_hooks,
             HostOptions::default(),
         );
         host.layout_at(1100.0, 900.0);
         host.after_dispatch();
         (shared, host)
+    }
+
+    #[test]
+    fn frame_requested_exit_keeps_quarantined_work_until_explicit_discard() {
+        let store = woodshed_core::storage::SessionStore::new(Box::new(
+            muniment::MemoryBackend::default(),
+        ) as storage::HostBackend);
+        let original = serde_json::to_string(&UiState::new().to_persisted()).unwrap();
+        store.try_save(&original).unwrap();
+        store.refuse_writes("retained input is quarantined");
+        let (shared, mut host) = save_close_harness_with_frame_exit(store, true);
+        let cards = serde_json::to_value(&host.state().set.cards).unwrap();
+        host.after_frame();
+        host.relayout();
+        assert!(!host.close_requested());
+        assert!(host.state().practice_close_pending);
+        assert_eq!(serde_json::to_value(&host.state().set.cards).unwrap(), cards);
+        assert_eq!(shared.borrow().storage.as_ref().unwrap().load().unwrap(), original);
+        assert!(host.click_on(&taproot::Selector::class("practice-close-retry")));
+        assert!(!host.close_requested());
+        assert_eq!(serde_json::to_value(&host.state().set.cards).unwrap(), cards);
+        assert!(host.click_on(&taproot::Selector::class("practice-close-discard")));
+        assert!(host.close_requested());
+        assert_eq!(shared.borrow().storage.as_ref().unwrap().load().unwrap(), original);
     }
 
     #[test]

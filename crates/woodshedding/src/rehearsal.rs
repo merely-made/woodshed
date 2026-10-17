@@ -393,6 +393,9 @@ pub enum LoopMode {
     /// Wrap: stepping past the last card returns to the first (and vice
     /// versa), so a set loops like a practice set.
     All,
+    /// Repeat the focused Card on automatic completion. Explicit navigation
+    /// still selects a different Card; Manual holds still wait for Next.
+    Card,
 }
 
 /// A set: an ordered run of cards plus a cursor (the card on the stage).

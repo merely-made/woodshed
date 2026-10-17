@@ -102,6 +102,7 @@ impl PracticeClockHost {
                 let loop_mode = match ui.rehearsal_set().loop_mode {
                     woodshedding::rehearsal::LoopMode::Off => ProgramLoop::Once,
                     woodshedding::rehearsal::LoopMode::All => ProgramLoop::Set,
+                    woodshedding::rehearsal::LoopMode::Card => ProgramLoop::Card,
                 };
                 (
                     source,
@@ -214,6 +215,7 @@ impl PracticeClockHost {
             match ui.rehearsal_set().loop_mode {
                 woodshedding::rehearsal::LoopMode::Off => ProgramLoop::Once,
                 woodshedding::rehearsal::LoopMode::All => ProgramLoop::Set,
+                woodshedding::rehearsal::LoopMode::Card => ProgramLoop::Card,
             }
         };
         if bound.loop_mode != desired_loop {
@@ -279,6 +281,7 @@ impl PracticeClockHost {
                             active_frames: transition.active_frames,
                             sample_rate: rate,
                             beat_ticks: 0,
+                            ticks_per_beat: BEAT_TICKS,
                             card_frames: 0,
                             status: PracticeClockStatus::Playing,
                         });
@@ -398,6 +401,7 @@ fn observation(
         active_frames: snapshot.active_frames,
         sample_rate: rate,
         beat_ticks: snapshot.beat_ticks,
+        ticks_per_beat: BEAT_TICKS,
         card_frames: snapshot.card_frames,
         status: match snapshot.status {
             ProgramStatus::Stopped => PracticeClockStatus::Stopped,
@@ -633,6 +637,95 @@ mod tests {
             .into_iter()
             .filter(|event| event.kind == kind)
             .count()
+    }
+
+    #[test]
+    fn card_loop_records_each_device_visit_and_next_selects_manual_without_recrediting_pause() {
+        let (mut ui, mut backend) = fixture(&[Hold::Seconds(0.5), Hold::Manual]);
+        ui.set.loop_mode = woodshedding::rehearsal::LoopMode::Card;
+        let baseline = count(&ui, EngagementKind::Rehearsed);
+        ui.toggle_rehearsal();
+        tick(&mut ui, &mut backend, 60_000);
+        let repeated = backend.output.as_ref().unwrap().snapshot().program;
+        assert_eq!(repeated.card_index, 0);
+        assert!(count(&ui, EngagementKind::Completed) >= 2);
+        assert!(count(&ui, EngagementKind::Rehearsed) >= baseline + 3);
+
+        ui.toggle_rehearsal();
+        tick(&mut ui, &mut backend, 1);
+        let before = backend.output.as_ref().unwrap().snapshot().program;
+        ui.set.loop_mode = woodshedding::rehearsal::LoopMode::All;
+        tick(&mut ui, &mut backend, 200);
+        let after = backend.output.as_ref().unwrap().snapshot().program;
+        assert_eq!(after.epoch, before.epoch);
+        assert_eq!(after.beat_ticks, before.beat_ticks);
+        assert_eq!(after.card_frames, before.card_frames);
+        ui.set.loop_mode = woodshedding::rehearsal::LoopMode::Card;
+        ui.queue_practice_clock_command(PracticeClockCommand::Advance);
+        let starts_before = count(&ui, EngagementKind::Rehearsed);
+        tick(&mut ui, &mut backend, 1);
+        assert_eq!(ui.set.cursor, 1);
+        assert!(ui.rehearsal_paused);
+        assert_eq!(count(&ui, EngagementKind::Rehearsed), starts_before);
+        assert!(ui.rehearsal_observed_card.is_none());
+
+        ui.toggle_rehearsal();
+        tick(&mut ui, &mut backend, 150_000);
+        assert_eq!(
+            backend.output.as_ref().unwrap().snapshot().program.status,
+            ProgramStatus::WaitingManual
+        );
+        let waiting_count = ui.practice_history.len();
+        tick(&mut ui, &mut backend, 1_000);
+        assert_eq!(ui.practice_history.len(), waiting_count);
+        ui.queue_practice_clock_command(PracticeClockCommand::Advance);
+        tick(&mut ui, &mut backend, 1);
+        assert!(!ui.rehearsal_running);
+        assert_eq!(
+            backend.output.as_ref().unwrap().snapshot().program.status,
+            ProgramStatus::Complete
+        );
+        assert!(ui.practice_history.recent(1)[0].kind == EngagementKind::Completed);
+    }
+
+    #[test]
+    fn instruction_edit_stops_old_epoch_and_explicit_run_admits_the_corrected_card() {
+        let (mut ui, mut backend) = fixture(&[Hold::Bars(2), Hold::Manual]);
+        ui.toggle_rehearsal();
+        tick(&mut ui, &mut backend, 12_000);
+        let old_epoch = backend.output.as_ref().unwrap().snapshot().program.epoch;
+        let old_card = ui.rehearsal_observed_card.clone().unwrap();
+        ui.set.cards[0].touch = woodshedding::rehearsal::Touch::Walk;
+        tick(&mut ui, &mut backend, 1_000);
+        assert!(!ui.rehearsal_running);
+        assert!(
+            ui.card_timing_notice
+                .as_deref()
+                .unwrap()
+                .contains("start Run again")
+        );
+        assert_eq!(count(&ui, EngagementKind::Completed), 0);
+        let interrupted = ui.practice_history.recent(1)[0].clone();
+        assert_eq!(interrupted.kind, EngagementKind::Rehearsed);
+        assert_eq!(
+            interrupted.provenance.unwrap().card_snapshot,
+            serde_json::to_value(old_card).unwrap()
+        );
+        tick(&mut ui, &mut backend, 100);
+        assert!(
+            !ui.rehearsal_running,
+            "edits cannot automatically restart the run"
+        );
+        ui.toggle_rehearsal();
+        tick(&mut ui, &mut backend, 1_000);
+        assert!(ui.rehearsal_running);
+        assert!(backend.output.as_ref().unwrap().snapshot().program.epoch.0 > old_epoch.0);
+        assert!(ui.card_timing_notice.is_none());
+        assert!(matches!(
+            ui.rehearsal_observed_card.as_ref().unwrap().touch,
+            woodshedding::rehearsal::Touch::Walk
+        ));
+        assert_eq!(count(&ui, EngagementKind::Completed), 0);
     }
 
     #[test]
