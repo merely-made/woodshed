@@ -1,0 +1,99 @@
+warning: patch `mere-transport v0.0.2 (https://github.com/merely-made/murm.git?branch=main#cba46d85)` was not used in the crate graph
+warning: patch `mere-webrtc-carrier v0.0.1 (https://github.com/merely-made/murm.git?branch=main#cba46d85)` was not used in the crate graph
+help: Check that the patched package version and available features are compatible
+      with the dependency requirements. If the patch has a different version from
+      what is locked in the Cargo.lock file, run `cargo update` to use the new
+      version. This may also occur with an optional dependency that is not enabled.
+    Checking mere-curation v0.1.1 (https://github.com/merely-made/mere.git?branch=main#91467c0b)
+    Checking muniment v0.1.2 (https://github.com/merely-made/mere.git?branch=main#91467c0b)
+    Checking sceno v0.0.5 (https://github.com/merely-made/mere.git?branch=main#91467c0b)
+    Checking layout-dom-api v0.1.1 (https://github.com/merely-made/genet.git?branch=main#6186c81a)
+    Checking insigne v0.0.2 (https://github.com/merely-made/dramatis.git?branch=main#2f27f1a9)
+    Checking command-menu v0.1.0 (https://github.com/merely-made/mere.git?branch=main#91467c0b)
+    Checking tinct v0.1.2 (https://github.com/merely-made/mere.git?branch=main#91467c0b)
+    Checking personae v0.3.0 (https://github.com/merely-made/dramatis.git?branch=main#2f27f1a9)
+    Checking chartulary v0.2.2 (https://github.com/merely-made/mere.git?branch=main#91467c0b)
+    Checking scenograph v0.0.4 (https://github.com/merely-made/mere.git?branch=main#91467c0b)
+    Checking genet-paint-types v0.2.0 (https://github.com/merely-made/genet.git?branch=main#6186c81a)
+    Checking genet-static-dom v0.1.1 (https://github.com/merely-made/genet.git?branch=main#6186c81a)
+    Checking scenomise v0.0.5 (https://github.com/merely-made/mere.git?branch=main#91467c0b)
+    Checking numen v0.2.0 (https://github.com/merely-made/mere.git?branch=main#91467c0b)
+    Checking genet-fontique v0.10.0 (https://github.com/merely-made/genet.git?branch=main#6186c81a)
+    Checking engine-observables-api v0.2.0 (https://github.com/merely-made/genet.git?branch=main#6186c81a)
+    Checking mere-forme v0.2.0 (https://github.com/merely-made/mere.git?branch=main#91467c0b)
+    Checking regress v0.11.1 (https://github.com/merely-made/genet.git?branch=main#6186c81a)
+    Checking mere-kernel v0.0.2 (https://github.com/merely-made/mere.git?branch=main#91467c0b)
+    Checking genet-scripted-dom v0.1.2 (https://github.com/merely-made/genet.git?branch=main#6186c81a)
+    Checking genet-parley v0.10.0 (https://github.com/merely-made/genet.git?branch=main#6186c81a)
+   Compiling livery v0.0.5 (https://github.com/merely-made/genet.git?branch=main#6186c81a)
+    Checking tabard v0.0.1 (https://github.com/merely-made/mere.git?branch=main#91467c0b)
+    Checking genet-host-api v0.2.0 (https://github.com/merely-made/genet.git?branch=main#6186c81a)
+    Checking workbench v0.1.0 (https://github.com/merely-made/mere.git?branch=main#91467c0b)
+    Checking mere-surface-api v0.1.0 (https://github.com/merely-made/mere.git?branch=main#91467c0b)
+    Checking illume v0.0.2 (https://github.com/merely-made/mere.git?branch=main#91467c0b)
+    Checking meristem v0.2.0 (https://github.com/merely-made/mere.git?branch=main#91467c0b)
+    Checking cadency v0.0.1 (https://github.com/merely-made/genet.git?branch=main#6186c81a)
+    Checking genet-text v0.1.0 (https://github.com/merely-made/genet.git?branch=main#6186c81a)
+    Checking sprigging v0.2.1 (https://github.com/merely-made/mere.git?branch=main#91467c0b)
+    Checking scenotime v0.0.4 (https://github.com/merely-made/mere.git?branch=main#91467c0b)
+    Checking genet-taffy v0.14.0 (https://github.com/merely-made/genet.git?branch=main#6186c81a)
+    Checking document-session-api v0.1.0 (https://github.com/merely-made/genet.git?branch=main#6186c81a)
+    Checking backstep v0.1.0 (https://github.com/merely-made/mere.git?branch=main#91467c0b)
+    Checking audio-primitives v0.1.0 (/Users/markik/Code/repos/woodshed/crates/audio-primitives)
+    Checking fleece v0.5.0 (https://github.com/merely-made/genet.git?branch=main#6186c81a)
+    Checking inker v0.1.1 (https://github.com/merely-made/mere.git?branch=main#91467c0b)
+    Checking cambium v0.3.3 (https://github.com/merely-made/mere.git?branch=main#91467c0b)
+    Checking buckram v0.0.3 (https://github.com/merely-made/genet.git?branch=main#6186c81a)
+    Checking genet-document-resources v0.2.1 (https://github.com/merely-made/genet.git?branch=main#6186c81a)
+    Checking hocket-model v0.1.0 (/Users/markik/Code/repos/woodshed/crates/hocket-model)
+    Checking chirograph v0.0.2 (https://github.com/merely-made/mere.git?branch=main#91467c0b)
+    Checking genet-livery v0.0.4 (https://github.com/merely-made/genet.git?branch=main#6186c81a)
+    Checking hocket-project v0.1.0 (/Users/markik/Code/repos/woodshed/crates/hocket-project)
+    Checking document-canvas v0.1.0 (https://github.com/merely-made/mere.git?branch=main#91467c0b)
+    Checking mere-fleece v0.0.1 (https://github.com/merely-made/mere.git?branch=main#91467c0b)
+    Checking dramatis v0.0.3 (https://github.com/merely-made/dramatis.git?branch=main#2f27f1a9)
+    Checking armillary v0.1.1 (https://github.com/merely-made/mere.git?branch=main#91467c0b)
+    Checking woodshedding v0.1.0 (/Users/markik/Code/repos/woodshed/crates/woodshedding)
+    Checking seiche v0.0.6 (https://github.com/merely-made/mere.git?branch=main#91467c0b)
+    Checking woodshed-graph v0.1.0 (/Users/markik/Code/repos/woodshed/crates/woodshed-graph)
+    Checking mere-document-lanes v0.1.0 (https://github.com/merely-made/mere.git?branch=main#91467c0b)
+    Checking notochord v0.1.1 (https://github.com/merely-made/dramatis.git?branch=main#2f27f1a9)
+    Checking hocket-recorder v0.1.0 (/Users/markik/Code/repos/woodshed/crates/hocket-recorder)
+    Checking mere-alembic v0.0.1 (https://github.com/merely-made/mere.git?branch=main#91467c0b)
+    Checking mere-cartography v0.0.2 (https://github.com/merely-made/mere.git?branch=main#91467c0b)
+    Checking eidetic v0.0.2 (https://github.com/merely-made/mere.git?branch=main#91467c0b)
+    Checking incipit v0.2.0 (https://github.com/merely-made/mere.git?branch=main#91467c0b)
+    Checking esp v0.1.0 (https://github.com/merely-made/mere.git?branch=main#91467c0b)
+    Checking pictograph v0.2.0 (https://github.com/merely-made/mere.git?branch=main#91467c0b)
+    Checking pandect v0.1.1 (https://github.com/merely-made/mere.git?branch=main#91467c0b)
+    Checking woodshed-core v0.1.0 (/Users/markik/Code/repos/woodshed/crates/woodshed-core)
+error[E0432]: unresolved import `scenomise::backdrops`
+ --> /Users/markik/Code/repos/woodshed/crates/woodshed-core/src/fretboard_scene.rs:6:16
+  |
+6 | use scenomise::backdrops::{
+  |                ^^^^^^^^^ could not find `backdrops` in `scenomise`
+
+error[E0432]: unresolved imports `scenomise::backdrops`, `scenomise::template`
+ --> /Users/markik/Code/repos/woodshed/crates/woodshed-core/src/progression_scene.rs:8:5
+  |
+8 |     backdrops::{BACKDROP_SCENE_VERSION, SceneFacts, SceneInput},
+  |     ^^^^^^^^^ could not find `backdrops` in `scenomise`
+9 |     template::{
+  |     ^^^^^^^^ could not find `template` in `scenomise`
+
+error[E0432]: unresolved imports `scenomise::backdrops`, `scenomise::document`, `scenomise::template`
+ --> /Users/markik/Code/repos/woodshed/crates/woodshed-core/src/arrangement_scene.rs:7:5
+  |
+7 |     backdrops::{BACKDROP_SCENE_VERSION, SceneFacts, SceneInput},
+  |     ^^^^^^^^^ could not find `backdrops` in `scenomise`
+8 |     document::{LinkedScene, SceneDocument},
+  |     ^^^^^^^^ could not find `document` in `scenomise`
+9 |     template::{
+  |     ^^^^^^^^ could not find `template` in `scenomise`
+
+    Checking hocket-views v0.1.0 (/Users/markik/Code/repos/woodshed/crates/hocket-views)
+    Checking tabard-workshop v0.0.1 (https://github.com/merely-made/mere.git?branch=main#91467c0b)
+    Checking mere-persona-picker v0.0.1 (https://github.com/merely-made/mere.git?branch=main#91467c0b)
+For more information about this error, try `rustc --explain E0432`.
+error: could not compile `woodshed-core` (lib) due to 3 previous errors
+warning: build failed, waiting for other jobs to finish...

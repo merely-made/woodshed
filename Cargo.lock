@@ -8431,6 +8431,7 @@ name = "woodshed-core"
 version = "0.1.0"
 dependencies = [
  "async-trait",
+ "audio-primitives",
  "blake3",
  "chartulary",
  "hex",

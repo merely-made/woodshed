@@ -42,6 +42,7 @@ pub mod click;
 pub mod meter;
 pub mod onset;
 pub mod stretch;
+pub mod timing;
 pub mod waveform;
 
 pub use buffer::{apply_gain, normalize, reverse};

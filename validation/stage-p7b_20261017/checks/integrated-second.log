@@ -1,0 +1,69 @@
+warning: use of deprecated method `std::sync::atomic::Atomic::<u64>::fetch_update`: renamed to `try_update` for consistency
+  --> crates/woodshed-audio/src/capture_feed.rs:33:14
+   |
+33 |             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |generation| {
+   |              ^^^^^^^^^^^^
+   |
+   = note: `#[warn(deprecated)]` on by default
+help: replace the use of the deprecated method
+   |
+33 -             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |generation| {
+33 +             .try_update(Ordering::AcqRel, Ordering::Acquire, |generation| {
+   |
+
+warning: use of deprecated method `std::sync::atomic::Atomic::<usize>::fetch_update`: renamed to `try_update` for consistency
+   --> crates/woodshed-audio/src/output_runtime.rs:469:14
+    |
+469 |             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |              ^^^^^^^^^^^^
+    |
+help: replace the use of the deprecated method
+    |
+469 -             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+469 +             .try_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |
+
+warning: use of deprecated method `std::sync::atomic::Atomic::<usize>::fetch_update`: renamed to `try_update` for consistency
+   --> crates/woodshed-audio/src/output_runtime.rs:517:14
+    |
+517 |             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |              ^^^^^^^^^^^^
+    |
+help: replace the use of the deprecated method
+    |
+517 -             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+517 +             .try_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |
+
+warning: use of deprecated method `std::sync::atomic::Atomic::<usize>::fetch_update`: renamed to `try_update` for consistency
+   --> crates/woodshed-audio/src/output_runtime.rs:538:14
+    |
+538 |             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |              ^^^^^^^^^^^^
+    |
+help: replace the use of the deprecated method
+    |
+538 -             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+538 +             .try_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |
+
+error[E0063]: missing field `seconds` in initializer of `LoopSegment`
+   --> crates/woodshed-core/src/session_overview.rs:801:28
+    |
+801 |             segments: vec![crate::loop_plan::LoopSegment {
+    |                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ missing `seconds`
+
+error[E0063]: missing field `seconds` in initializer of `loop_capture::LoopCaptureRef`
+    --> crates/woodshed-core/src/session_overview.rs:1250:9
+     |
+1250 |         crate::loop_capture::LoopCaptureRef {
+     |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ missing `seconds`
+
+error[E0063]: missing field `seconds` in initializer of `loop_capture::LoopCaptureRef`
+   --> crates/woodshed-core/src/storage.rs:645:9
+    |
+645 |         LoopCaptureRef {
+    |         ^^^^^^^^^^^^^^ missing `seconds`
+
+For more information about this error, try `rustc --explain E0063`.
+error: could not compile `woodshed-core` (lib test) due to 3 previous errors

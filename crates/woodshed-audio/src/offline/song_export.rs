@@ -151,7 +151,7 @@ fn validate(song: &Song, sample_rate: u32) -> Result<u64, SongExportError> {
             return Err(invalid("Backing export contains an invalid segment clock."));
         }
         // Match the live processor's exact rounded clock and minimum frame.
-        let duration = bar.duration_samples(sample_rate as f32).max(1);
+        let duration = bar.checked_duration_frames(sample_rate).map_err(invalid)?;
         frames = frames
             .checked_add(duration)
             .filter(|n| *n <= MAX_PCM_FRAMES as u64)

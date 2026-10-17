@@ -1,0 +1,24 @@
+{
+  "command": [
+    "cargo",
+    "test",
+    "--offline",
+    "--locked",
+    "-p",
+    "audio-primitives",
+    "-p",
+    "woodshed-audio",
+    "-p",
+    "woodshed-core",
+    "-p",
+    "woodshed-genet",
+    "-p",
+    "woodshed-views",
+    "--quiet"
+  ],
+  "cwd": "/Users/markik/Code/repos/woodshed",
+  "started_utc": "2026-10-17T11:35:08.919436+00:00",
+  "ended_utc": "2026-10-17T11:35:25.364226+00:00",
+  "exit_code": 101,
+  "suites": []
+}

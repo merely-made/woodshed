@@ -1,0 +1,16 @@
+{
+  "command": [
+    "cargo",
+    "test",
+    "--offline",
+    "--locked",
+    "-p",
+    "woodshed-core",
+    "loop_plan::tests::seconds_use_the_exact_shared_realization_for_every_playable_material",
+    "--",
+    "--exact"
+  ],
+  "exit_code": 0,
+  "started_utc": "2026-10-17T11:40:42.391836+00:00",
+  "ended_utc": "2026-10-17T11:40:51.393124+00:00"
+}

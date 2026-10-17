@@ -19,6 +19,8 @@ before any other doc in this directory.
 
 ## Active Plans
 
+- [P7b Seconds-held Looper material](2026-07-11_stage_set_tools_plan.md#p7b-seconds-held-looper-material-2026-10-17) — In progress: explicit absolute duration, shared event timing, unchanged Bars/saved backing and versioned capture clocks. No new acceptance claim.
+
 - [P7a mixed Bars Looper backing](2026-07-11_stage_set_tools_plan.md#p7-rebuild-song-as-looper-over-set) — Qualified October 17: ordered scale/path/arpeggio backing over the explicit Bars clock; 925 cases plus five child invocations, desktop build, a separate sealed-WAV probe and eight reviewed native captures. Exact Set/take reopen and byte-identical 160,800-frame worker/reference WAVs. [Receipt](../validation/stage-p7a_20261017/README.md). Full P7 remains open.
 
 - [P6 guided Rehearsal runner](2026-07-11_stage_set_tools_plan.md#p6-finish-rehearsal-as-the-guided-set-runner) — Qualified October 17: previous/current/next context, output-clock Card progress, focused Card looping, paused navigation, keyboard controls and edit recovery. Final merged source with Mere `4c4ea11` passes 911 cases plus five child invocations, desktop build and eight reviewed native captures; exact sealed Set, owner and 22 history rows reopen stopped. [Merged receipt](../validation/stage-p6-merged_20261017/README.md); [original receipt](../validation/stage-p6_20261017/README.md).

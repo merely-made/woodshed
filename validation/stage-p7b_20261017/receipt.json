@@ -1,0 +1,151 @@
+{
+  "status": "implementation and affected CPU/build gates passed; native pending",
+  "baseline": "c08ab27a150f284264c3500c8250bd48f8c50232",
+  "counts": {
+    "affected_gate_cases": 1015,
+    "capture_child_invocations_separate": 5,
+    "full_gate_ignored": 7,
+    "repeated_suites_counted_once": true
+  },
+  "source_hashes": [
+    {
+      "path": "Cargo.lock",
+      "sha256": "6ad8e0c8904f477164c7741f750a332c4f41411f9c46ff90d9ae3af8845c7154"
+    },
+    {
+      "path": "crates/audio-primitives/src/lib.rs",
+      "sha256": "5231698b01e72fa31062fd3cc0b44c7c10fdff4f820ec9db4f4990dc75844963"
+    },
+    {
+      "path": "crates/audio-primitives/src/timing.rs",
+      "sha256": "4aa045db03840caed6525216dea4cb45841b6b2b0f86f513ee6d1439cc4f6c69"
+    },
+    {
+      "path": "crates/woodshed-audio/src/backing_phrase.rs",
+      "sha256": "972b50645b7b7641ccc3146d06bea2d5cb2dc0e5cedc981c5580af833205aa83"
+    },
+    {
+      "path": "crates/woodshed-audio/src/offline/song_export.rs",
+      "sha256": "a27fa9d4a939f08b9b9a64a3b511d532904ef2aed3b6cdb4df322f25508c45c1"
+    },
+    {
+      "path": "crates/woodshed-audio/src/offline/song_export/tests.rs",
+      "sha256": "cbcfb8abdb02514d83f78d31cd00a095b332285f34613dbf3dfe29b57227a1fd"
+    },
+    {
+      "path": "crates/woodshed-audio/src/output_runtime/processor.rs",
+      "sha256": "0c0fe33b7abf9eaee7e1c08111a845f2a66ccf89547294e3a76b725507358013"
+    },
+    {
+      "path": "crates/woodshed-audio/src/output_runtime/tests.rs",
+      "sha256": "e87d77bad47517ed4946fe99213cd2db25839dca7850bdf3e7a3fcbed4ecb42a"
+    },
+    {
+      "path": "crates/woodshed-audio/src/song.rs",
+      "sha256": "36a182314eb482330563fe96e135cf34e2b27319d4c8eef81b8ae0e9b889f94a"
+    },
+    {
+      "path": "crates/woodshed-core/Cargo.toml",
+      "sha256": "293b53fc38dbfcbd6981f201fa16779ba51ef1cc50f72afbdbdf4a5bb81226de"
+    },
+    {
+      "path": "crates/woodshed-core/src/loop_capture.rs",
+      "sha256": "aa5d90aafe5e783c8ff6e10cfccf200162787f511e8b7bd74a33579333b5de1c"
+    },
+    {
+      "path": "crates/woodshed-core/src/loop_plan.rs",
+      "sha256": "fa80b6aa61074e7096c59bea43e885897f3df57f068ac60ce3464f8a47390b39"
+    },
+    {
+      "path": "crates/woodshed-core/src/session_overview.rs",
+      "sha256": "39c50f0311d216a90bd7cb878e6d27da38f342d9695eb53258252cc044e634ad"
+    },
+    {
+      "path": "crates/woodshed-core/src/storage.rs",
+      "sha256": "0702b4b58efa6303dcd773bb03a03e77fb34a53afe636cdaa39381512f078560"
+    },
+    {
+      "path": "crates/woodshed-genet/src/audio.rs",
+      "sha256": "27abe04d9cd5ba1bf513e9edc8ca11811ccb9b71c0ac4fb57fbe7f4252ed3590"
+    },
+    {
+      "path": "crates/woodshed-genet/src/audio/loop_projection.rs",
+      "sha256": "ca3fb430c923637025925630e7b6f4ab7f4bf5480202de30d9a3c3537acf99b6"
+    },
+    {
+      "path": "crates/woodshed-genet/src/audio/mixed_loop_tests.rs",
+      "sha256": "b15301680c2fc05f1cbdd3dc57684c596da63adcd272338e462305b8bcffec49"
+    },
+    {
+      "path": "crates/woodshed-genet/src/capture_persistence.rs",
+      "sha256": "a77aa503423aa96f4e27ff3fae8e715d6e2b799d294721ab5401a6e46185103c"
+    },
+    {
+      "path": "crates/woodshed-genet/src/scenario.rs",
+      "sha256": "88b6c716a8cea51e2582942564086325d0b19b715404fc1e8d9c44b6f19d8d46"
+    },
+    {
+      "path": "crates/woodshed-genet/src/scenario/mixed_looper.rs",
+      "sha256": "c15e939b06b9eac89bc19126e8066cf23b1acca8d1e448899d82d438d67edad8"
+    },
+    {
+      "path": "crates/woodshed-genet/src/storage.rs",
+      "sha256": "bac0ea9dfc371b12be4af1b95cf0610883abe00c3687c7cb3477a54b51481cbb"
+    },
+    {
+      "path": "crates/woodshed-genet/src/sync.rs",
+      "sha256": "2eb5a9603a7b9a400e53dec93282a1207f23692a764ae455eced2ed3eb92c3cb"
+    },
+    {
+      "path": "crates/woodshed-views/src/stage/looper/recorder.rs",
+      "sha256": "acc54b77edcb7659e6224231758266e3e0635afcba5a79409bbec140ed57028c"
+    },
+    {
+      "path": "crates/woodshed-views/src/stage/overview.rs",
+      "sha256": "ae4a4955df3340686a49ee8f5cceed49d6f078428e96d93a1bb29543fc0904ad"
+    },
+    {
+      "path": "scenarios/stage_p7a_mixed_backing.scn",
+      "sha256": "e5a43f2aa7e7f2b5430051f4c8360afb5f820ea60d4ffa2c6cfda3f845c48fe2"
+    },
+    {
+      "path": "scenarios/stage_p7b_seconds_backing.scn",
+      "sha256": "e95c3737d9c74f1f6660e80eb75df0e51aa027db3b46b8156661f2db7887d92d"
+    },
+    {
+      "path": "scenarios/stage_p7b_seconds_backing_reopen.scn",
+      "sha256": "f56b8a511268b05c0c672866f942cc4748f26a59ad875b197cba05b31f3fe422"
+    },
+    {
+      "path": "validation/relationship-recipe/Cargo.lock",
+      "sha256": "db8a3780ae623d370002d291993ca12431f894184198da3ecbfa2ba8b774ea3d"
+    }
+  ],
+  "desktop_binary_sha256": "37afca129d0f5c5c6c19f94a34eeac2416468ef3d55e517b4d376c846f2259f1",
+  "auxiliary_checks": {
+    "hocket_shared_leaf": 0,
+    "redshank_shared_leaf": 0,
+    "older_recipe": 101,
+    "recipe_failure_boundary": "checks/recipe-boundary.json"
+  },
+  "peer_review": {
+    "audio": "Dalton verified old Bars/legacy arithmetic, exact units, bounds and callback preparation",
+    "projection_manifest": "Turing verified Seconds phrase admission and mixed V3/V4/unavailable-reference preservation",
+    "acceptance": "Rawls verified per-segment frame rounding, actual worker file comparison, preceding-state refusal equality and stale action dispatch"
+  },
+  "excluded_attempts": [
+    "integrated-first: host type import path and optional fixture field compile omissions",
+    "integrated-second: three additional core test literals lacked seconds metadata",
+    "integrated-third: Thirds pattern fixture was not valid seven-degree Major material",
+    "core-fixture-focused: fixture used u8 where typed PitchClass was required",
+    "integrated-fourth: existing host readiness assertion still expected Bars-only wording"
+  ],
+  "publication": "not pushed",
+  "native": "not run yet",
+  "limits": [
+    "Manual/Reps/eventless material remain unsupported",
+    "Saved-backing migration/removal and saved-song PCM durability remain outside this slice",
+    "Physical microphone/audio/latency and broader responsive P8 qualification remain open",
+    "Existing captures retain explicit Clear before BPM/meter/duration/kind changes"
+  ]
+}

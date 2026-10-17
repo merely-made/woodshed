@@ -200,7 +200,8 @@ impl PreparedBacking {
             if !bar.bpm.is_finite() || bar.bpm <= 0.0 {
                 return Err(err("backing tempo must be finite and positive"));
             }
-            let duration = bar.duration_samples(rate as f32).max(1) as usize;
+            let duration = usize::try_from(bar.checked_duration_frames(rate).map_err(err)?)
+                .map_err(|_| err("backing duration is too large"))?;
             if bar.chord_ref.is_some() && bar.backing_phrase.is_some() {
                 return Err(err("backing chord and phrase are mutually exclusive"));
             }
@@ -249,7 +250,7 @@ impl PreparedBacking {
             if !bar.bpm.is_finite() || bar.bpm <= 0.0 {
                 return Err(err("backing tempo must be finite and positive"));
             }
-            let duration = bar.duration_samples(rate as f32).max(1);
+            let duration = bar.checked_duration_frames(rate).map_err(err)?;
             let beats = u64::from(bar.time_signature.numerator.max(1));
             let phrase_beats = beats.saturating_mul(u64::from(bar.length.max(1)));
             let beat = bar.beat_frames(rate);
@@ -480,7 +481,8 @@ impl Recording {
         let mut bars = Vec::with_capacity(song.bars.len());
         let mut total = 0usize;
         for bar in &song.bars {
-            let len = bar.duration_samples(rate as f32).max(1) as usize;
+            let len = usize::try_from(bar.checked_duration_frames(rate).map_err(err)?)
+                .map_err(|_| err("capture duration is too large"))?;
             total = total
                 .checked_add(len)
                 .ok_or_else(|| err("capture storage exceeds bound"))?;

@@ -17,13 +17,18 @@ pub(crate) struct CaptureSnapshot {
     pub bpm: f32,
     pub beats: u8,
     pub bars: u8,
+    pub seconds: Option<f64>,
     pub buffer: SampleBuffer,
     pub legacy_clock: bool,
 }
 
 impl CaptureSnapshot {
     pub(crate) fn clock_field(&self) -> Option<String> {
-        (!self.legacy_clock).then(|| woodshed_core::loop_capture::PER_BEAT_CLOCK.to_string())
+        if self.seconds.is_some() {
+            Some(woodshed_core::loop_capture::SECONDS_CLOCK.to_string())
+        } else {
+            (!self.legacy_clock).then(|| woodshed_core::loop_capture::PER_BEAT_CLOCK.to_string())
+        }
     }
 }
 
@@ -39,11 +44,13 @@ struct Capture {
     bpm: f32,
     beats: u8,
     bars: u8,
+    seconds: Option<f64>,
 }
 
 impl Capture {
     fn clock_matches(&self, segment: &LoopSegment) -> bool {
         self.bpm == segment.bpm && self.beats == segment.beats && self.bars == segment.bars
+            && self.seconds == segment.seconds
     }
 }
 
@@ -65,6 +72,7 @@ impl LoopCaptures {
                 bpm: capture.bpm,
                 beats: capture.beats,
                 bars: capture.bars,
+                seconds: capture.seconds,
                 buffer: capture.buffer.clone(),
             })
             .collect()
@@ -85,7 +93,8 @@ impl LoopCaptures {
                 || !take.bpm.is_finite()
                 || take.bpm < 1.0
                 || !(1..=16).contains(&take.beats)
-                || take.bars == 0
+                || !valid_hold(take.bars, take.seconds)
+                || (take.seconds.is_some() && take.legacy_clock)
                 || !(1000..=384_000).contains(&take.buffer.sample_rate_hz)
             {
                 return Err("Stored Set capture has an invalid or duplicate identity, clock or sample rate.".into());
@@ -98,10 +107,12 @@ impl LoopCaptures {
                 legacy_clock: take.legacy_clock,
                 bpm: take.bpm,
                 time_signature: TimeSignature::new(take.beats, 4),
-                length: take.bars,
+                length: if take.seconds.is_some() { 1 } else { take.bars },
+                duration_seconds: take.seconds,
                 ..Bar::default()
             }
-            .duration_samples(take.buffer.sample_rate_hz as f32);
+            .checked_duration_frames(take.buffer.sample_rate_hz)
+            .map_err(|error| error.to_string())?;
             if expected == 0 || expected != take.buffer.len() as u64 {
                 return Err(
                     "Stored Set capture PCM length does not match its recorded clock.".into(),
@@ -118,6 +129,7 @@ impl LoopCaptures {
                     bpm: take.bpm,
                     beats: take.beats,
                     bars: take.bars,
+                    seconds: take.seconds,
                 },
             );
         }
@@ -161,7 +173,7 @@ impl LoopCaptures {
         for bar in &song.bars {
             // Match Recording::prepare's exact per-bar storage reservation.
             frames = frames
-                .checked_add(bar.duration_samples(output_rate as f32).max(1))
+                .checked_add(bar.checked_duration_frames(output_rate).map_err(|error| error.to_string())?)
                 .filter(|&frames| frames <= MAX_STORED_FRAMES as u64)
                 .ok_or("Set capture quota would exceed 16777216 stored frames. Clear stored Card loops before recording this Set.")?;
         }
@@ -192,6 +204,7 @@ impl LoopCaptures {
                             bpm: segment.bpm,
                             beats: segment.beats,
                             bars: segment.bars,
+                            seconds: segment.seconds,
                         },
                     );
                 } else {
@@ -224,7 +237,8 @@ impl LoopCaptures {
                 || !segment.bpm.is_finite()
                 || segment.bpm < 1.0
                 || !(1..=16).contains(&segment.beats)
-                || segment.bars == 0
+                || !valid_hold(segment.bars, segment.seconds)
+                || (segment.seconds.is_some() && segment.phrase.is_none())
                 || (segment.phrase.is_some() && !segment.pitches_hz.is_empty())
                 || segment
                     .pitches_hz
@@ -256,7 +270,7 @@ impl LoopCaptures {
                         .events
                         .iter()
                         .map(|event| BackingEvent {
-                            beat: event.beat,
+                            time: event.time,
                             pitches_hz: event.pitches_hz.clone(),
                             strum_seconds: event.strum_seconds,
                         })
@@ -264,7 +278,8 @@ impl LoopCaptures {
                 }),
                 audio_buffer: capture.map(|capture| capture.buffer.clone()),
                 label: segment.label.clone(),
-                length: segment.bars,
+                length: if segment.seconds.is_some() { 1 } else { segment.bars },
+                duration_seconds: segment.seconds,
             });
         }
         Ok(song)
@@ -279,6 +294,13 @@ impl LoopCaptures {
 
     pub(super) fn clear(&mut self, id: LoopSegmentId) {
         self.cards.remove(&id);
+    }
+}
+
+fn valid_hold(bars: u8, seconds: Option<f64>) -> bool {
+    match seconds {
+        Some(seconds) => bars == 0 && seconds.is_finite() && seconds >= 0.5,
+        None => bars > 0,
     }
 }
 
@@ -297,6 +319,158 @@ mod tests {
     use woodshed_core::working_sets::WorkingSetId;
     use woodshedding::rehearsal::CardId;
 
+    fn seconds_take(owner: u64, card: u64, seconds: f64, rate: u32) -> CaptureSnapshot {
+        let frames = (seconds * f64::from(rate)).round() as usize;
+        CaptureSnapshot {
+            id: LoopSegmentId { set: WorkingSetId(owner), card: CardId(card) },
+            bpm: 113.5,
+            beats: 7,
+            bars: 0,
+            seconds: Some(seconds),
+            legacy_clock: false,
+            buffer: SampleBuffer::new(
+                (0..frames).map(|i| [0.125, -0.0, -0.25, 0.5][i % 4]).collect(), rate,
+            ),
+        }
+    }
+
+    fn seconds_plan(take: &CaptureSnapshot) -> LoopPlan {
+        let mut plan = plan(take.id.set.0);
+        let segment = &mut plan.segments[0];
+        segment.id = take.id;
+        segment.bpm = take.bpm;
+        segment.beats = take.beats;
+        segment.bars = 0;
+        segment.seconds = take.seconds;
+        segment.pitches_hz.clear();
+        segment.phrase = Some(woodshed_core::loop_plan::LoopPhrase {
+            events: vec![woodshed_core::loop_plan::LoopEvent {
+                time: woodshed_core::loop_plan::EventTime::Seconds(0.125),
+                pitches_hz: vec![261.625],
+                strum_seconds: 0.0,
+            }],
+        });
+        plan
+    }
+
+    #[test]
+    fn forged_seconds_without_phrase_is_rejected_atomically_but_explicit_mute_is_admitted() {
+        let take = seconds_take(1, 1, 0.50013, 44_100);
+        let mut bank = LoopCaptures::default();
+        bank.restore(vec![take.clone()]).unwrap();
+        let admitted = seconds_plan(&take);
+        let song = bank.prepare(&admitted).unwrap();
+        bank.plan = Some(admitted.clone());
+        for pitches in [Vec::new(), vec![261.625, 391.995]] {
+            let mut forged = admitted.clone();
+            forged.segments[0].phrase = None;
+            forged.segments[0].pitches_hz = pitches;
+            assert!(bank.prepare_replacement(&song, &forged).is_err());
+            assert_eq!(bank.plan, Some(admitted.clone()));
+            let retained = bank.snapshot();
+            assert_eq!(retained.len(), 1);
+            assert_eq!(retained[0].seconds, take.seconds);
+            assert_eq!(retained[0].bars, 0);
+            assert!(Arc::ptr_eq(&retained[0].buffer.data, &take.buffer.data));
+            assert_eq!(retained[0].buffer.data.as_ref(), take.buffer.data.as_ref());
+        }
+        let mut muted = admitted;
+        muted.segments[0].phrase.as_mut().unwrap().events.clear();
+        let projected = bank.prepare_replacement(&song, &muted).unwrap();
+        assert!(projected.bars[0].chord_ref.is_none());
+        assert!(projected.bars[0].backing_phrase.as_ref().unwrap().events.is_empty());
+        assert_eq!(projected.bars[0].duration_seconds, take.seconds);
+        assert_eq!(projected.bars[0].length, 1);
+        assert!(Arc::ptr_eq(&projected.bars[0].audio_buffer.as_ref().unwrap().data, &take.buffer.data));
+    }
+
+    #[test]
+    fn seconds_restore_projection_and_reorder_keep_exact_clock_pcm_and_event_units() {
+        for rate in [1_000, 44_100, 48_000] {
+            let take = seconds_take(1, 1, 2.34567, rate);
+            let mut bank = LoopCaptures::default();
+            bank.restore(vec![take.clone()]).unwrap();
+            let plan = seconds_plan(&take);
+            let song = bank.prepare(&plan).unwrap();
+            let bar = &song.bars[0];
+            assert_eq!(bar.duration_seconds, take.seconds);
+            assert_eq!(bar.length, 1);
+            assert_eq!(bar.duration_samples(rate as f32), take.buffer.len() as u64);
+            assert_eq!(bar.backing_phrase.as_ref().unwrap().events[0].time,
+                woodshed_core::loop_plan::EventTime::Seconds(0.125));
+            assert!(Arc::ptr_eq(&bar.audio_buffer.as_ref().unwrap().data, &take.buffer.data));
+            assert_eq!(song.bars[1].duration_seconds, None);
+            assert_eq!(song.bars[1].length, plan.segments[1].bars);
+            bank.plan = Some(plan.clone());
+            bank.remember(&song);
+            let mut reordered = plan;
+            reordered.segments.swap(0, 1);
+            let next = bank.prepare_replacement(&song, &reordered).unwrap();
+            assert!(Arc::ptr_eq(&next.bars[1].audio_buffer.as_ref().unwrap().data, &take.buffer.data));
+            let snapshot = bank.snapshot();
+            assert_eq!(snapshot[0].id, take.id);
+            assert_eq!(snapshot[0].seconds, take.seconds);
+            assert_eq!(snapshot[0].bars, 0);
+            assert_eq!(snapshot[0].clock_field().as_deref(), Some(woodshed_core::loop_capture::SECONDS_CLOCK));
+            assert!(Arc::ptr_eq(&snapshot[0].buffer.data, &take.buffer.data));
+        }
+    }
+
+    #[test]
+    fn seconds_take_refuses_clock_edits_without_touching_pcm_until_explicit_clear() {
+        let take = seconds_take(1, 1, 0.50013, 44_100);
+        for change in 0..4 {
+            let mut bank = LoopCaptures::default();
+            bank.restore(vec![take.clone()]).unwrap();
+            let original = seconds_plan(&take);
+            let mut edited = original.clone();
+            match change {
+                0 => edited.segments[0].bpm = 137.0,
+                1 => edited.segments[0].beats = 5,
+                2 => edited.segments[0].seconds = Some(0.75),
+                _ => { edited.segments[0].seconds = None; edited.segments[0].bars = 1; },
+            }
+            assert!(bank.prepare(&edited).unwrap_err().contains("Clear the captured loop"));
+            assert!(Arc::ptr_eq(&bank.snapshot()[0].buffer.data, &take.buffer.data));
+            assert_eq!(bank.snapshot()[0].seconds, take.seconds);
+            bank.clear(take.id);
+            assert!(bank.prepare(&edited).unwrap().bars[0].audio_buffer.is_none());
+        }
+        // Duration itself is independent of BPM/meter before capture exists.
+        let bank = LoopCaptures::default();
+        let mut plan = seconds_plan(&take);
+        let before = bank.prepare(&plan).unwrap().bars[0].duration_samples(44_100.0);
+        plan.segments[0].bpm = 300.0;
+        plan.segments[0].beats = 3;
+        assert_eq!(bank.prepare(&plan).unwrap().bars[0].duration_samples(44_100.0), before);
+    }
+
+    #[test]
+    fn invalid_seconds_restore_is_atomic_and_seconds_quota_uses_absolute_frames() {
+        let take = seconds_take(1, 1, 0.50013, 44_100);
+        let mut bank = LoopCaptures::default();
+        bank.restore(vec![take.clone()]).unwrap();
+        for change in 0..6 {
+            let mut bad = take.clone();
+            match change {
+                0 => bad.seconds = Some(f64::NAN),
+                1 => bad.seconds = Some(f64::INFINITY),
+                2 => bad.seconds = Some(0.49),
+                3 => bad.bars = 1,
+                4 => bad.legacy_clock = true,
+                _ => bad.buffer = SampleBuffer::new(vec![0.0; take.buffer.len() - 1], 44_100),
+            }
+            assert!(bank.restore(vec![bad]).is_err());
+            assert!(Arc::ptr_eq(&bank.snapshot()[0].buffer.data, &take.buffer.data));
+        }
+        let mut plan = seconds_plan(&take);
+        plan.segments[0].seconds = Some(MAX_STORED_FRAMES as f64 / 44_100.0 + 1.0);
+        let empty = LoopCaptures::default();
+        let song = empty.prepare(&plan).unwrap();
+        bank.plan = Some(plan);
+        assert!(bank.check_capture_quota(&song, 44_100).unwrap_err().contains("16777216"));
+    }
+
     fn plan(owner: u64) -> LoopPlan {
         LoopPlan {
             owner: WorkingSetId(owner),
@@ -314,6 +488,7 @@ mod tests {
                     bpm: 120.0,
                     beats: 3,
                     bars: 2,
+                    seconds: None,
                     pitches_hz: vec![261.125 + card as f32, 391.777],
                     phrase: None,
                 })
@@ -337,6 +512,7 @@ mod tests {
             bpm: bar.bpm,
             beats: bar.time_signature.numerator,
             bars: bar.length,
+            seconds: None,
             buffer: SampleBuffer::new(vec![0.25; bar.duration_samples(rate as f32) as usize], rate),
         }
     }
@@ -348,6 +524,7 @@ mod tests {
             bpm: 60.0 * buffer.sample_rate_hz as f32 / buffer.len() as f32,
             beats: 1,
             bars: 1,
+            seconds: None,
             buffer: buffer.clone(),
         }
     }
@@ -529,6 +706,7 @@ mod tests {
                 bpm,
                 beats: 1,
                 bars: 1,
+                seconds: None,
                 buffer: pcm.clone(),
             })
             .collect();

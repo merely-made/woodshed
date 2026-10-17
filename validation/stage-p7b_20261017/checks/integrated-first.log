@@ -1,0 +1,98 @@
+warning: use of deprecated method `std::sync::atomic::Atomic::<u64>::fetch_update`: renamed to `try_update` for consistency
+  --> crates/woodshed-audio/src/capture_feed.rs:33:14
+   |
+33 |             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |generation| {
+   |              ^^^^^^^^^^^^
+   |
+   = note: `#[warn(deprecated)]` on by default
+help: replace the use of the deprecated method
+   |
+33 -             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |generation| {
+33 +             .try_update(Ordering::AcqRel, Ordering::Acquire, |generation| {
+   |
+
+warning: use of deprecated method `std::sync::atomic::Atomic::<usize>::fetch_update`: renamed to `try_update` for consistency
+   --> crates/woodshed-audio/src/output_runtime.rs:469:14
+    |
+469 |             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |              ^^^^^^^^^^^^
+    |
+help: replace the use of the deprecated method
+    |
+469 -             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+469 +             .try_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |
+
+warning: use of deprecated method `std::sync::atomic::Atomic::<usize>::fetch_update`: renamed to `try_update` for consistency
+   --> crates/woodshed-audio/src/output_runtime.rs:517:14
+    |
+517 |             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |              ^^^^^^^^^^^^
+    |
+help: replace the use of the deprecated method
+    |
+517 -             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+517 +             .try_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |
+
+warning: use of deprecated method `std::sync::atomic::Atomic::<usize>::fetch_update`: renamed to `try_update` for consistency
+   --> crates/woodshed-audio/src/output_runtime.rs:538:14
+    |
+538 |             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |              ^^^^^^^^^^^^
+    |
+help: replace the use of the deprecated method
+    |
+538 -             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+538 +             .try_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |
+
+error[E0433]: cannot find module or crate `audio_primitives` in this scope
+   --> crates/woodshed-genet/src/audio/loop_projection.rs:347:23
+    |
+347 |                 time: audio_primitives::timing::EventTime::Seconds(0.125),
+    |                       ^^^^^^^^^^^^^^^^ use of unresolved module or unlinked crate `audio_primitives`
+    |
+    = help: if you wanted to use a crate named `audio_primitives`, use `cargo add audio_primitives` to add it to your `Cargo.toml`
+
+error[E0433]: cannot find module or crate `audio_primitives` in this scope
+   --> crates/woodshed-genet/src/audio/loop_projection.rs:368:17
+    |
+368 |                 audio_primitives::timing::EventTime::Seconds(0.125));
+    |                 ^^^^^^^^^^^^^^^^ use of unresolved module or unlinked crate `audio_primitives`
+    |
+    = help: if you wanted to use a crate named `audio_primitives`, use `cargo add audio_primitives` to add it to your `Cargo.toml`
+
+error[E0433]: cannot find module or crate `audio_primitives` in this scope
+   --> crates/woodshed-genet/src/audio/mixed_loop_tests.rs:122:22
+    |
+122 |     events[1].time = audio_primitives::timing::EventTime::Beats(f64::MIN_POSITIVE);
+    |                      ^^^^^^^^^^^^^^^^ use of unresolved module or unlinked crate `audio_primitives`
+    |
+    = help: if you wanted to use a crate named `audio_primitives`, use `cargo add audio_primitives` to add it to your `Cargo.toml`
+
+error[E0433]: cannot find module or crate `audio_primitives` in this scope
+   --> crates/woodshed-genet/src/scenario/mixed_looper.rs:126:39
+    |
+126 | ...   "time":match e.time { audio_primitives::timing::EventTime::Beats(at) => json!({"unit":"beats","at":at}), audio_primitives::ti...
+    |                             ^^^^^^^^^^^^^^^^ use of unresolved module or unlinked crate `audio_primitives`
+    |
+    = help: if you wanted to use a crate named `audio_primitives`, use `cargo add audio_primitives` to add it to your `Cargo.toml`
+
+error[E0433]: cannot find module or crate `audio_primitives` in this scope
+   --> crates/woodshed-genet/src/scenario/mixed_looper.rs:126:122
+    |
+126 | ...unit":"beats","at":at}), audio_primitives::timing::EventTime::Seconds(at) => json!({"unit":"seconds","at":at}) },"pitches_hz":e....
+    |                             ^^^^^^^^^^^^^^^^ use of unresolved module or unlinked crate `audio_primitives`
+    |
+    = help: if you wanted to use a crate named `audio_primitives`, use `cargo add audio_primitives` to add it to your `Cargo.toml`
+
+error[E0063]: missing field `seconds` in initializer of `woodshed_core::loop_capture::LoopCaptureRef`
+   --> crates/woodshed-genet/src/storage.rs:559:9
+    |
+559 |         LoopCaptureRef {
+    |         ^^^^^^^^^^^^^^ missing `seconds`
+
+Some errors have detailed explanations: E0063, E0433.
+For more information about an error, try `rustc --explain E0063`.
+error: could not compile `woodshed-genet` (bin "woodshed-genet" test) due to 6 previous errors

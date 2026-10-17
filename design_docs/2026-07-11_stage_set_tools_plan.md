@@ -2215,6 +2215,70 @@ Done when a clock-ready mixed Set loops without a parallel bar editor, capture
 survives Set reordering where Card identity is retained, exported WAV duration
 and tempo match the LoopPlan, and the UI contains no Song or DAW language.
 
+#### P7b. Seconds-held Looper material (2026-10-17)
+
+**Status: implementation and CPU/build gates passed on `c08ab27a`; native acceptance pending. Primary source/Cargo/native
+ownership handed over from the P7a coordinator.** No new supplier revision or
+saved-backing migration is included.
+
+Decision: retain authored absolute Seconds alongside the existing musical Bars
+clock. Seconds segments have an explicit duration and seconds-positioned events;
+they are never rounded into Bars. A shared pure `EventTime` value and checked
+frame conversion serve the core realization and audio renderer. Existing Bars
+frame arithmetic and saved backing remain unchanged. Seconds uses the existing
+minimum authorable hold of 0.5 seconds; malformed/shorter legacy input refuses
+readiness rather than silently changing its duration. Manual, Reps and eventless
+exercise Cards remain unsupported.
+
+Alternatives considered: rounding Seconds into Bars would change authored time;
+encoding an artificial tempo would conflate click and duration authority. Explicit
+absolute duration adds metadata and compatibility checks, but keeps duration,
+beat/click context and captured PCM ownership independent.
+
+Phases and done-conditions:
+
+- Core lowering: reuse P5 ordered realization and its exact Seconds event times.
+  Block-Chord Seconds is a finite phrase; existing Bars block strikes remain
+  unchanged. Ready when mixed Bars/Seconds lowering preserves authored duration
+  across tempo/meter changes and reports unsupported Cards together.
+- Runtime: prepare bounded phrase PCM before the callback, advance the existing
+  output cursor using exact rounded Seconds frames, and render WAV through that
+  same processor. Ready when block-size invariance, exact full-pass length,
+  overflow/refusal and unchanged Bars/saved-backing gold behavior pass.
+- Custody: extend the existing manifest with an explicit version-four Seconds
+  clock. Old versions retain their original policy and samples. Preserve Set/Card
+  identity, aggregate bounds, unavailable references and explicit Clear before
+  captured clock edits. Ready when exact PCM and captured duration reopen across
+  reorder, with malformed clock combinations refused without rewriting data.
+- Acceptance: focused integration tests, source review and build precede a
+  bounded mixed-duration native seed/reopen and export receipt. Physical input,
+  latency, saved-song PCM durability/migration and broader P8 layout stay open.
+
+Ownership is disjoint: Turing owns core LoopPlan; Ohm owns pure/audio timing and
+renderer; Rawls owns desktop capture projection/persistence; Dalton owns portable
+manifest admission. The integration owner owns view labels, host callers,
+scenarios, lockfile edges, integration checks and acceptance. Agents perform no
+Cargo, native or Git mutation independently.
+
+2026-10-17 P7b integration findings: the shared pure event/time conversion is
+implemented, with absolute runtime duration and version-four capture metadata.
+Peer review tightened forged Seconds-plan admission, mixed V3/V4/unavailable
+reference retention, actual worker-WAV comparison and refusal-state preservation.
+Initial compile checks found undeclared caller paths and omitted optional fixture
+fields; the core re-exports the shared value. Subsequent fixture checks corrected
+a Thirds pattern to valid Major material, retained its typed root, and updated an
+old Bars-only readiness-text assertion. Focused model/host cases now pass; final
+combined gate and native qualification remain in progress. Cargo refreshed one
+root local dependency edge and stale local recipe edges; supplier source/version
+sets are unchanged, and nested Hocket/Redshank locks are untouched.
+
+2026-10-17 P7b CPU/build gate: 1,015 cases plus five capture child invocations,
+seven full-gate ignores; desktop and Hocket/Redshank leaf checks pass. The older
+recipe workspace selects Mere 91467c0 and fails unchanged scenomise scene imports;
+that compatibility boundary is recorded without a supplier repin. Current-source
+checks and excluded failures are in `validation/stage-p7b_20261017/`. Native
+qualification is pending on the committed candidate.
+
 ### P8. Adaptive polish and release acceptance
 
 **Current state: open.** Windows alpha behavior exists. Three-width product

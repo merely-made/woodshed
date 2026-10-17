@@ -996,12 +996,12 @@ fn phrase_mixes_with_capture_and_click_across_loop_boundaries_without_callback_a
     s.bars[0].backing_phrase = Some(BackingPhrase {
         events: vec![
             BackingEvent {
-                beat: 0.0,
+                time: audio_primitives::timing::EventTime::Beats(0.0),
                 pitches_hz: vec![173.3, 261.6],
                 strum_seconds: 0.002,
             },
             BackingEvent {
-                beat: 0.5,
+                time: audio_primitives::timing::EventTime::Beats(0.5),
                 pitches_hz: vec![349.2],
                 strum_seconds: 0.0,
             },
@@ -1031,7 +1031,7 @@ fn invalid_phrase_replacement_preserves_the_accepted_runtime() {
     accepted.playing = true;
     accepted.bars[0].backing_phrase = Some(BackingPhrase {
         events: vec![BackingEvent {
-            beat: 0.0,
+            time: audio_primitives::timing::EventTime::Beats(0.0),
             pitches_hz: vec![220.0],
             strum_seconds: 0.0,
         }],
@@ -1069,7 +1069,7 @@ fn backing_phrase_render_work_is_bounded_across_the_whole_snapshot() {
     let phrase = || BackingPhrase {
         events: (0..256)
             .map(|index| BackingEvent {
-                beat: (300 + index) as f64,
+                time: audio_primitives::timing::EventTime::Beats((300 + index) as f64),
                 pitches_hz: vec![220.0; 4],
                 strum_seconds: 0.0,
             })
@@ -1086,6 +1086,128 @@ fn backing_phrase_render_work_is_bounded_across_the_whole_snapshot() {
         })
         .collect();
     assert!(PreparedBacking::prepare(&s, 1000, &mut Vec::new()).is_err());
+}
+
+#[test]
+fn absolute_backing_duration_and_phrase_are_block_size_invariant_without_callback_allocation() {
+    use audio_primitives::timing::EventTime;
+    let mut s = song(1);
+    s.playing = true;
+    s.one_shot = true;
+    s.bars[0].bpm = 137.0;
+    s.bars[0].duration_seconds = Some(0.537);
+    s.bars[0].backing_phrase = Some(BackingPhrase {
+        events: vec![BackingEvent {
+            time: EventTime::Seconds(0.031),
+            pitches_hz: vec![173.3, 261.6],
+            strum_seconds: 0.002,
+        }],
+    });
+    let mut expected = None;
+    for chunk in [1, 7, 64, 137, 537, 1024] {
+        let mut r = runtime();
+        r.set_song(s.clone()).unwrap();
+        r.rewind().unwrap();
+        r.service().unwrap();
+        let mut pcm = Vec::new();
+        let mut remaining = 537;
+        while remaining > 0 {
+            let n = remaining.min(chunk);
+            pcm.extend(render(&mut r, n));
+            remaining -= n;
+            r.service().unwrap();
+        }
+        assert!(!r.snapshot().playing);
+        assert!(pcm[..62].iter().all(|s| *s == 0.0));
+        assert!(pcm[62..].iter().any(|s| *s != 0.0));
+        let bits: Vec<_> = pcm.iter().map(|s| s.to_bits()).collect();
+        if let Some(expected) = &expected {
+            assert_eq!(&bits, expected);
+        } else {
+            expected = Some(bits);
+        }
+    }
+}
+
+#[test]
+fn invalid_absolute_timing_preserves_admitted_backing_and_capture_refuses_it() {
+    use audio_primitives::timing::EventTime;
+    let mut accepted = song(1);
+    accepted.playing = true;
+    accepted.bars[0].duration_seconds = Some(0.537);
+    accepted.bars[0].backing_phrase = Some(BackingPhrase {
+        events: vec![BackingEvent {
+            time: EventTime::Seconds(0.0),
+            pitches_hz: vec![220.0],
+            strum_seconds: 0.0,
+        }],
+    });
+    let mut r = runtime();
+    r.set_song(accepted.clone()).unwrap();
+    r.rewind().unwrap();
+    r.service().unwrap();
+    render(&mut r, 3);
+    let before = r.snapshot();
+    for case in [
+        "zero",
+        "negative",
+        "nan",
+        "infinite",
+        "subframe",
+        "below minimum",
+        "overflow",
+        "legacy",
+        "beats",
+        "too large",
+    ] {
+        let mut invalid = accepted.clone();
+        match case {
+            "zero" => invalid.bars[0].duration_seconds = Some(0.0),
+            "negative" => invalid.bars[0].duration_seconds = Some(-1.0),
+            "nan" => invalid.bars[0].duration_seconds = Some(f64::NAN),
+            "infinite" => invalid.bars[0].duration_seconds = Some(f64::INFINITY),
+            "subframe" => invalid.bars[0].duration_seconds = Some(0.000001),
+            "below minimum" => invalid.bars[0].duration_seconds = Some(0.499),
+            "overflow" => invalid.bars[0].duration_seconds = Some(f64::MAX),
+            "legacy" => invalid.bars[0].legacy_clock = true,
+            "beats" => {
+                invalid.bars[0].backing_phrase.as_mut().unwrap().events[0].time =
+                    EventTime::Beats(0.0)
+            },
+            "too large" => invalid.bars[0].duration_seconds = Some(20_000.0),
+            _ => unreachable!(),
+        }
+        assert!(r.set_song(invalid.clone()).is_err(), "{case}");
+        assert_eq!(r.snapshot(), before, "{case}");
+        assert_eq!(r.song().bars[0].duration_seconds, Some(0.537));
+        assert!(Recording::prepare(&invalid, 1_000, 1).is_err(), "{case}");
+    }
+    let mut wrong_domain = accepted;
+    wrong_domain.bars[0].duration_seconds = None;
+    assert!(r.set_song(wrong_domain).is_err());
+    assert_eq!(r.snapshot(), before);
+}
+
+#[test]
+fn seconds_phrase_work_is_bounded_across_segments() {
+    use audio_primitives::timing::EventTime;
+    let mut s = Song::new();
+    s.bars = (0..2)
+        .map(|_| Bar {
+            duration_seconds: Some(100.0),
+            backing_phrase: Some(BackingPhrase {
+                events: (0..256)
+                    .map(|index| BackingEvent {
+                        time: EventTime::Seconds((300 + index) as f64 / 10.0),
+                        pitches_hz: vec![220.0; 4],
+                        strum_seconds: 0.0,
+                    })
+                    .collect(),
+            }),
+            ..Default::default()
+        })
+        .collect();
+    assert!(PreparedBacking::prepare(&s, 1_000, &mut Vec::new()).is_err());
 }
 
 #[test]

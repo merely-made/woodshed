@@ -10,6 +10,33 @@ use woodshed_views::stage::UiState;
 use woodshedding::rehearsal::{Hold, Set, Timing, Touch};
 
 pub(super) fn act(ctx: &mut Ctx<'_>, shared: &Rc<RefCell<Shared>>, label: &str) -> Option<bool> {
+    if label == "p7b-seconds-example" {
+        act(ctx, shared, "p7a-mixed-set-example")?;
+        ctx.runner.update(|ui| {
+            ui.set.cards[1].timing.hold = Hold::Seconds(1.125);
+            ui.set.cards[2].timing.hold = Hold::Seconds(0.875);
+        });
+        crate::sync::after_dispatch(&mut shared.borrow_mut(), ctx);
+        return Some(true);
+    }
+    if matches!(label, "p7b-retime" | "p7b-duration-refusal" | "p7b-recover-seconds") {
+        ctx.runner.update(|ui| {
+            let card = ui.set.cards.iter_mut().find(|c|c.label == "Loop scale").unwrap();
+            match label {
+                "p7b-retime" => { card.timing.bpm = Some(137.0); ui.looper.beats = 5; },
+                "p7b-duration-refusal" => card.timing.hold = Hold::Seconds(1.25),
+                _ => card.timing.hold = Hold::Seconds(1.125),
+            }
+        });
+        crate::sync::after_dispatch(&mut shared.borrow_mut(), ctx);
+        return Some(true);
+    }
+    if let Some(name) = label.strip_prefix("p7b-checkpoint ") {
+        return Some(seconds_checkpoint(ctx.runner.state(), &mut shared.borrow_mut(), name));
+    }
+    if label == "p7b-verify-reopen" {
+        return Some(seconds_reopen(ctx.runner.state(), &mut shared.borrow_mut()));
+    }
     if label == "p7a-mixed-set-example" {
         ctx.runner.update(|ui| {
             ui.stop_rehearsal();
@@ -88,15 +115,15 @@ fn path(name: &str) -> Result<PathBuf, String> {
     }
     Ok(
         PathBuf::from(std::env::var_os("WOODSHED_CAPTURE_DIR").ok_or("no receipt directory")?)
-            .join(format!("p7a-{name}.json")),
+            .join(if name.starts_with("p7b-") { format!("{name}.json") } else { format!("p7a-{name}.json") }),
     )
 }
 fn plan_value(plan: &LoopPlan) -> Value {
     json!({"owner":plan.owner,"name":plan.name,"one_shot":plan.one_shot,"click":plan.click,
         "segments":plan.segments.iter().map(|s| json!({"id":s.id,"label":s.label,
-            "bpm":s.bpm,"beats":s.beats,"bars":s.bars,"pitches_hz":s.pitches_hz,
+            "bpm":s.bpm,"beats":s.beats,"bars":s.bars,"seconds":s.seconds,"pitches_hz":s.pitches_hz,
             "phrase":s.phrase.as_ref().map(|p|p.events.iter().map(|e|json!({
-                "beat":e.beat,"pitches_hz":e.pitches_hz,"strum_seconds":e.strum_seconds
+                "time":match e.time { woodshed_core::loop_plan::EventTime::Beats(at) => json!({"unit":"beats","at":at}), woodshed_core::loop_plan::EventTime::Seconds(at) => json!({"unit":"seconds","at":at}) },"pitches_hz":e.pitches_hz,"strum_seconds":e.strum_seconds
             })).collect::<Vec<_>>())})).collect::<Vec<_>>()})
 }
 fn report(ui: &UiState, shared: &mut Shared) -> Result<Value, String> {
@@ -132,7 +159,16 @@ fn report(ui: &UiState, shared: &mut Shared) -> Result<Value, String> {
     {
         return Err("UI admission differs from the actual backend Set plan".into());
     }
+    let captures = backend.capture_snapshot();
     for (bar, segment) in song.bars.iter().zip(&backend_plan.segments) {
+        let take = captures.iter().find(|take| take.id == segment.id);
+        match (&bar.audio_buffer, take) {
+            (None, None) => {},
+            (Some(buffer), Some(take)) if buffer.sample_rate_hz == take.buffer.sample_rate_hz
+                && buffer.len() == take.buffer.len()
+                && buffer.data.iter().zip(take.buffer.data.iter()).all(|(a,b)|a.to_bits()==b.to_bits()) => {},
+            _ => return Err("actual output PCM does not match its Set/Card capture owner".into()),
+        }
         let phrase = segment
             .phrase
             .as_ref()
@@ -141,7 +177,7 @@ fn report(ui: &UiState, shared: &mut Shared) -> Result<Value, String> {
                     .events
                     .iter()
                     .map(|e| woodshed_audio::BackingEvent {
-                        beat: e.beat,
+                        time: e.time,
                         pitches_hz: e.pitches_hz.clone(),
                         strum_seconds: e.strum_seconds,
                     })
@@ -150,7 +186,8 @@ fn report(ui: &UiState, shared: &mut Shared) -> Result<Value, String> {
         if bar.bpm != segment.bpm
             || bar.time_signature.numerator != segment.beats
             || bar.time_signature.denominator != 4
-            || bar.length != segment.bars
+            || bar.duration_seconds != segment.seconds
+            || bar.length != if segment.seconds.is_some() { 1 } else { segment.bars }
             || bar.backing_phrase != phrase
             || bar
                 .chord_ref
@@ -163,7 +200,6 @@ fn report(ui: &UiState, shared: &mut Shared) -> Result<Value, String> {
         }
     }
     let snapshot = backend.output_snapshot().ok_or("no output snapshot")?;
-    let captures = backend.capture_snapshot();
     let input_unopened = backend.capture_source_rate().is_none();
     let selected_has_capture = ui
         .loop_selected
@@ -199,7 +235,7 @@ fn report(ui: &UiState, shared: &mut Shared) -> Result<Value, String> {
             .flat_map(|s| s.to_bits().to_le_bytes())
             .collect();
         take_reports.push(json!({"id":take.id,"frames":samples.len(),"rate":take.buffer.sample_rate_hz,
-            "bpm":take.bpm,"beats":take.beats,"bars":take.bars,"legacy_clock":take.legacy_clock,
+            "bpm":take.bpm,"beats":take.beats,"bars":take.bars,"seconds":take.seconds,"legacy_clock":take.legacy_clock,
             "pcm_bits_digest":woodshed_core::loop_capture::pcm_digest(&bits),"sealed_pcm_exact":true}));
     }
     // This is a read-only reference render of the actual host-admitted snapshot.
@@ -302,5 +338,79 @@ fn verify_reopen(ui: &UiState, shared: &mut Shared) -> bool {
     if let Err(error) = &result {
         eprintln!("P7a reopen: {error}");
     }
+    result.is_ok()
+}
+
+
+fn seconds_checkpoint(ui: &UiState, shared: &mut Shared, name: &str) -> bool {
+    let result = (|| -> Result<(), String> {
+        let mut report = report(ui, shared)?;
+        let plan = ui.loop_admitted.as_ref().ok_or("no admitted plan")?;
+        let seconds: Vec<_> = plan.segments.iter().filter_map(|s|s.seconds).collect();
+        if seconds.len()!=2 || !seconds.contains(&1.125) || !seconds.contains(&0.875) {
+            return Err("admitted absolute Seconds must remain 1.125 and 0.875".into());
+        }
+        if report["phrase_segments"] != 2 || report["input_unopened"] != true || report["streams"] != 1 {
+            return Err("two Seconds phrases, one output stream and unopened input required".into());
+        }
+        if name == "duration-refused" {
+            let prior: Value = serde_json::from_slice(&std::fs::read(path("p7b-reordered")?).map_err(|e|e.to_string())?).map_err(|e|e.to_string())?;
+            for key in ["admitted", "backend_admitted", "manifest", "captures", "wav_digest", "wav_frames"] {
+                if prior[key] != report[key] { return Err(format!("duration refusal changed {key}")); }
+            }
+            if report["requested_ready"] != true || report["admitted"] == report["requested"] {
+                return Err("valid changed duration must remain unadmitted while PCM exists".into());
+            }
+        } else if report["requested_ready"] != true || report["admitted"] != report["requested"] {
+            return Err("current Seconds backing must be admitted".into());
+        }
+        let rate = report["rate"].as_u64().ok_or("no rate")? as f64;
+        let beats = if name == "baseline" { 3 } else { 5 };
+        // Sum separately rounded segment endpoints; at 44.1 kHz the two
+        // fractional-second segments together differ by one frame from a
+        // single rounded total-seconds expression.
+        let expected_frames = beats * (rate * 60.0 / 240.0).round() as u64
+            + (1.125 * rate).round() as u64 + (0.875 * rate).round() as u64;
+        if report["wav_frames"].as_u64() != Some(expected_frames) {
+            return Err("actual render duration differs from Bars plus absolute Seconds".into());
+        }
+        for take in report["captures"].as_array().ok_or("no captures")? {
+            if take["id"]["set"] != 1 || take["id"]["card"] != 2 || take["seconds"] != 1.125 || take["bars"] != 0
+                || take["frames"].as_u64()!=Some((1.125 * report["rate"].as_f64().unwrap()).round() as u64) {
+                return Err("Seconds take identity/absolute clock changed".into());
+            }
+        }
+        if matches!(name,"reordered"|"final"|"duration-refused") && report["captures"].as_array().unwrap().len()!=1 {
+            return Err("one preserved Seconds take required".into());
+        }
+        if matches!(name,"reordered"|"final"|"duration-refused")
+            && (report["selected_index"] != 0 || report["selected_has_capture"] != true) {
+            return Err("reordered Scale Card must own its capture in output row zero".into());
+        }
+        if matches!(name, "final" | "reopenexport") {
+            let directory=PathBuf::from(std::env::var_os("WOODSHED_CAPTURE_DIR").ok_or("no receipt directory")?);
+            let bytes=std::fs::read(directory.join("loop-export.wav")).map_err(|e|e.to_string())?;
+            if woodshed_core::loop_capture::pcm_digest(&bytes) != report["wav_digest"].as_str().ok_or("no reference digest")? {
+                return Err("actual WAV worker file differs from admitted-snapshot reference".into());
+            }
+            report["worker_wav_exact"] = json!(true);
+        }
+        write(&format!("p7b-{name}"), &report)
+    })();
+    if let Err(error)=&result { eprintln!("P7b checkpoint {name}: {error}"); }
+    result.is_ok()
+}
+
+fn seconds_reopen(ui: &UiState, shared: &mut Shared) -> bool {
+    let result = (|| -> Result<(), String> {
+        let expected:Value=serde_json::from_slice(&std::fs::read(path("p7b-final")?).map_err(|e|e.to_string())?).map_err(|e|e.to_string())?;
+        let actual=report(ui,shared)?;
+        for key in ["set","owner","looper","saved_backing","manifest","captures","admitted","backend_admitted","requested","wav_frames","wav_digest"] {
+            if expected[key]!=actual[key] { return Err(format!("reopened {key} differs")); }
+        }
+        if actual["playing"]!=false || actual["input_unopened"]!=true { return Err("reopen must be stopped/input unopened".into()); }
+        write("p7b-reopened",&actual)
+    })();
+    if let Err(error)=&result {eprintln!("P7b reopen: {error}");}
     result.is_ok()
 }

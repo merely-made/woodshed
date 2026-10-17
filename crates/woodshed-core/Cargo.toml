@@ -9,6 +9,7 @@ repository.workspace = true
 description = "Woodshed's portable state/logic core: app state over the woodshedding theory crate, no UI or host dependency. The genet-host plan's W1.1 split; S1 ships the Stage slice."
 
 [dependencies]
+audio-primitives = { workspace = true }
 woodshedding = { workspace = true }
 scenomise = { workspace = true, optional = true }
 blake3 = { version = "1", optional = true }
