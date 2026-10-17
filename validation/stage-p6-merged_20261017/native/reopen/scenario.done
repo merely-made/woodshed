@@ -1,0 +1,8 @@
+RESULT ok
+captured 01_exact_guided_set_reopened
+captured 02_compact_guided_set_reopened
+P6 exact sealed fresh-process reopen complete
+capture 01_exact_guided_set_reopened 2360x2000 digest=00b72139d216b72e file=/Users/markik/Code/testing/woodshed/stage-p6-20261017/native-merged-v1/reopen/01_exact_guided_set_reopened.png
+capture 02_compact_guided_set_reopened 840x2200 digest=bcf01c6d499d7446 file=/Users/markik/Code/testing/woodshed/stage-p6-20261017/native-merged-v1/reopen/02_compact_guided_set_reopened.png
+frames: 2 captured, 0 blank, 2 distinct digests
+presentation: 111 frames, 113 redraws, 2 unpresented redraws

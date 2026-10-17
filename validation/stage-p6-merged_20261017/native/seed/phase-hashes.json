@@ -1,0 +1,19 @@
+{
+  "06_completed_mixed_set.png": "5b36f368bfdfe802ad898664674acd56e8c09d4ea5f72946a341a8116114cab7",
+  "launch.once": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "05_compact_paused_manual.png": "2b9d614875a7fd9d74a83ed42332c4a75ff079513bf4af0674f76582a74f9e71",
+  "p6-card-loop.json": "ee2505d93c80312d8175f1a038017e610bdc0cfa8ab696aabdca824092fd3c5c",
+  "03_edit_stops_old_source.png": "c02479db066f7ad8087bf0101da16e04d37a568cf6ae815f76c8147d8ff11d5f",
+  "p6-set-loop.json": "ce32b5631658c4a301b4a8d713dfb606ba02b6ade80aa9fa3a9e7df5aeed3d74",
+  "04_manual_waiting_for_next.png": "194d2d3988fd12fb726c813c7be350f0135cb921bcc8219a3a311d6a84bda183",
+  "scenario.scn": "66aa3c296e0049cee0a19a418193f3f323dc3fc41e109ed08a0ec1dee143d8c8",
+  "p6-final.json": "c23a97c990ea3beb83c82fdd4f05c64696dcc36dc8ba50e1545286402864b02f",
+  "native.log": "2219ab3b95d85ba4f22b4333570fdc002f2781dc39975420f6669d0e89001825",
+  "01_mixed_set_paused_context.png": "8b67369d8aed53622c7312a1d506b9a35a743a0b95dbc7f39d0b6246caa8fe14",
+  "scenario.done": "13d15cf8af3688f7bf587c1288829c7136a3db46b5241c1a0e7542000bf44233",
+  "native.pid": "d37b7b71eeb705d5f3bc2b51f5bf293d18d93822fb978eaef5b093b5acdb0258",
+  "launch.json": "28d43ea546428ce2917d0cc9006e76d29547c755d962968181a491aedbfa59c4",
+  "p5clock-paused.json": "a79ade2ba6dce76ffa8a87a27c684c620b0191eae1eb0597d9d5c459c9206f2f",
+  "02_paused_seek_to_arpeggio.png": "823bc317925536748b0995ce09960044a31d7acf2d67ebeba1fd2310b00612a9",
+  "launcher.c": "b3b7f55ba84d3340bff17d22e2395674ddc5c298822df44264b3d1d107e7ab96"
+}

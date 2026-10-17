@@ -2092,6 +2092,18 @@ codec-worker/incoming-custody failure observation, physical audio, and broader
 P8 acceptance keep their separate limits.
 [Preservation native receipt](../validation/preservation-input_20261017/native/README.md).
 
+Merged-source follow-through (2026-10-17): final fetch found remote `28a0741`,
+which adopts shared revision-qualified arrangement edit intents and Mere
+`4c4ea11d8ea4b0210fd70af62638484e25f29d5e`. Merge source
+`39f1dabf6351ce554a2b26bc0487b297f7896a64` passes the full affected gate again:
+911 distinct cases, five child invocations, seven existing ignores, and the
+desktop build. Two new native processes present 307 and 111 frames with eight
+reviewed captures; sealed Set/owner/all 22 history rows reopen exactly and stopped.
+The source's 331 Rust/manifest/lock paths bind to historical Git. The previous
+receipts retain their original revisions and evidence. P6's product source is
+unchanged by this merge; the supplier keyboard/close-hook blobs also have no
+change. [Final merged receipt](../validation/stage-p6-merged_20261017/README.md).
+
 ### P7. Rebuild Song as Looper over Set
 
 **October 11 slice: durable Set captures — implemented and qualified for

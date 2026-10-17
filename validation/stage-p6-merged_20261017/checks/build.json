@@ -1,0 +1,14 @@
+{
+  "revision": "39f1dabf6351ce554a2b26bc0487b297f7896a64",
+  "command": [
+    "cargo",
+    "build",
+    "--locked",
+    "--offline",
+    "-j2",
+    "-p",
+    "woodshed-genet"
+  ],
+  "exit_code": 0,
+  "finished": "2026-10-17T06:21:05.879161+00:00"
+}

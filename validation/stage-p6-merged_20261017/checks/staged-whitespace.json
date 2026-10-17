@@ -1,0 +1,6 @@
+{
+  "all_staged_exit": 2,
+  "non_log_exit": 0,
+  "reason": "Exact raw Cargo/native logs retain their original whitespace.",
+  "compiled_source_unchanged_from_native_revision": true
+}

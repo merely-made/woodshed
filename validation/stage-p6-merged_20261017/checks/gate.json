@@ -1,0 +1,21 @@
+{
+  "revision": "39f1dabf6351ce554a2b26bc0487b297f7896a64",
+  "command": [
+    "cargo",
+    "test",
+    "--locked",
+    "--offline",
+    "-j2",
+    "-p",
+    "woodshed-views",
+    "-p",
+    "woodshed-genet",
+    "-p",
+    "woodshed-core",
+    "-p",
+    "woodshed-audio",
+    "--no-fail-fast"
+  ],
+  "exit_code": 0,
+  "finished": "2026-10-17T06:20:50.095996+00:00"
+}

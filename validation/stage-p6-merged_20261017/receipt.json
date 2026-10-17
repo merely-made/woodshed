@@ -1,0 +1,88 @@
+{
+  "status": "qualified",
+  "date": "2026-10-17",
+  "native_source_revision": "39f1dabf6351ce554a2b26bc0487b297f7896a64",
+  "merged_remote": "28a0741d98e71792961cf10bcbe6d0bf0fd84dbf",
+  "previous_p6_source": "d955f5dc3b99ec1efd6ec9a56dd3ba007755409e",
+  "mere_revision": "4c4ea11d8ea4b0210fd70af62638484e25f29d5e",
+  "source_paths_verified": 331,
+  "binary_sha256": "d6cf8b3a17a3f93a5750e9bb527fec3f521a6f599989906bd8e05e38089a855e",
+  "checks": {
+    "audio": 176,
+    "core_unit": 285,
+    "core_card_loop_integration": 1,
+    "core_cli": 5,
+    "core_portability": 1,
+    "desktop": 205,
+    "views": 238,
+    "suite_total": 911,
+    "separate_desktop_child_invocations": 5,
+    "existing_desktop_ignores": 7,
+    "gate": "checks/gate.log",
+    "build": "checks/build.log"
+  },
+  "native": {
+    "phases": {
+      "seed": {
+        "presented_frames": 307,
+        "redraws": 308,
+        "unpresented_redraws": 1,
+        "result": "ok",
+        "captures": 6,
+        "blank_captures": 0,
+        "distinct_captures": 6,
+        "pid": 34977,
+        "process_exited": true,
+        "phase_hashes_unchanged": true
+      },
+      "reopen": {
+        "presented_frames": 111,
+        "redraws": 113,
+        "unpresented_redraws": 2,
+        "result": "ok",
+        "captures": 2,
+        "blank_captures": 0,
+        "distinct_captures": 2,
+        "pid": 35119,
+        "process_exited": true,
+        "phase_hashes_unchanged": true
+      }
+    },
+    "reviewed_captures": 8,
+    "rate": 48000,
+    "history_rows": 22,
+    "exact_reopen": {
+      "set": true,
+      "owner": true,
+      "history": true
+    },
+    "transient_reopened_stopped": true,
+    "viewports": "1180x1000 and 420x1100 logical, zoom1; 2x PNG"
+  },
+  "completion": {
+    "all_owned_app_processes_exited": true,
+    "keeper_exited": true,
+    "keeper_original_file_hashes_unchanged": true,
+    "keeper_original_file_count": 4,
+    "exact_reopen": {
+      "set": true,
+      "owner": true,
+      "history": true
+    },
+    "history_rows": 22,
+    "source_revision": "39f1dabf6351ce554a2b26bc0487b297f7896a64"
+  },
+  "review": "Coordinator independently checked runtime, source and critical captures; cheaper agent reviewed all eight merged-source captures.",
+  "supplier_seam_review": "Between Mere d1e1d7aa and 4c4ea11, exact Cambium event, winit-host and rootstock host blobs governing clickable keyboard operation and close request routing are unchanged. Arrangement edit intents retain host-owned draft validation.",
+  "historical_receipts": [
+    "../stage-p6_20261017/receipt.json",
+    "../preservation-input_20261017/native/receipt.json"
+  ],
+  "limits": [
+    "Bounded P6 Rehearsal qualification, not whole-product P8 acceptance.",
+    "Historical preservation native remains bound to cec2213/d955f5d. Hocket/Redshank current native UI and codec/incoming-custody failure native observation are not claimed.",
+    "No physical audibility, latency, microphone or other-OS qualification."
+  ],
+  "external_evidence": "/Users/markik/Code/testing/woodshed/stage-p6-20261017/native-merged-v1",
+  "evidence_whitespace": "Raw logs retain exact original whitespace; non-log source/docs/structured evidence passes whitespace checks."
+}
