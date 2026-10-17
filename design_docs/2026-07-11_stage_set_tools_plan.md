@@ -2354,6 +2354,19 @@ changes, followed by actual receiving qualification. Production suppliers remain
 unchanged. See [follow-up receipt](../validation/looper-followups_20261017/README.md)
 for exact source and the remaining physical/publication boundaries.
 
+2026-10-17 CoreAudio admission follow-up: controlled GUI probes reported
+undetermined microphone authorization and waited inside HAL input-device
+registration. TCC identified pending consent. After the user approved an
+explicit AVFoundation request, HAL registration returned in 20 ms; the CPAL-only
+probe then opened in approximately 59 ms and received 96,256 samples over two
+seconds. The host now resolves authorization before HAL setup, distinguishes
+consent waiting from recording, and starts the ten-second hardware bound only
+after consent. Cancelled reservations remain cancelled after late approval.
+The 700-case affected gate plus five child invocations passes; actual committed
+15-second selected-Card recording and fresh reopening remain pending below the
+[CoreAudio receipt](../validation/coreaudio-input_20261017/README.md). All Git
+supplier identities and prior dependency edges remain unchanged.
+
 ### P8. Adaptive polish and release acceptance
 
 **Current state: open.** Windows alpha behavior exists. Three-width product

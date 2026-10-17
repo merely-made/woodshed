@@ -22,6 +22,7 @@ use woodshed_core::song::SongDoc;
 mod loop_projection;
 mod practice_clock;
 mod input_admission;
+mod microphone_access;
 #[cfg(test)]
 mod mixed_loop_tests;
 pub(crate) use loop_projection::CaptureSnapshot;
@@ -277,8 +278,13 @@ impl CpalBackend {
             recording_bar: snapshot.recording.then_some(snapshot.cursor.bar_idx),
             output_rate,
             input_rate: self.capture_source_rate(),
+            input_permission_pending: self.input_admission.awaiting_permission(),
             status: if self.input_admission_pending() {
-                let pending = "Opening audio input… Stop cancels pending Record.";
+                let pending = if self.input_admission.awaiting_permission() {
+                    if self.pending_capture.is_some() {
+                        "Waiting for microphone permission in macOS. Stop cancels pending Record; recording has not started."
+                    } else { "Waiting for microphone permission in macOS." }
+                } else { "Opening audio input… Stop cancels pending Record." };
                 self.error().map_or_else(|| pending.into(), |error| format!("{error}; {pending}"))
             } else { self.error().map(str::to_owned).unwrap_or_else(|| {
                 if output_rate.is_none() {

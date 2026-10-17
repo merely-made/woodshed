@@ -5,6 +5,7 @@ use std::time::Instant;
 
 const OPEN_TIMEOUT: Duration = Duration::from_secs(10);
 type Opener = Box<dyn FnMut() -> Result<InputSession, String> + Send>;
+type Authorizer = Box<dyn FnMut(&mut dyn FnMut()) -> Result<(), String> + Send>;
 
 #[derive(Clone)]
 struct Handles {
@@ -23,18 +24,31 @@ impl Handles {
 
 pub(super) struct Worker {
     requests: Option<mpsc::Sender<()>>,
-    replies: Option<mpsc::Receiver<Result<Handles, String>>>,
+    replies: Option<mpsc::Receiver<Event>>,
     opener: Option<Opener>,
+    authorizer: Option<Authorizer>,
     in_flight: bool,
     deadline: Option<Instant>,
     expired: bool,
+    awaiting_permission: bool,
     wake: Option<Arc<dyn Fn() + Send + Sync>>,
 }
 enum Reply { Ready(Handles), Failed(String), Retired }
+enum Event {
+    WaitingPermission(Instant),
+    Opening(Instant),
+    Complete(Instant, Result<Handles, String>),
+}
+impl Event {
+    fn at(&self) -> Instant {
+        match self { Self::WaitingPermission(at) | Self::Opening(at) | Self::Complete(at, _) => *at }
+    }
+}
 impl Worker {
     pub(super) fn new() -> Self {
         Self { requests: None, replies: None, opener: Some(Box::new(InputSession::open)),
-            in_flight: false, deadline: None, expired: false, wake: None }
+            authorizer: Some(Box::new(super::microphone_access::authorize)),
+            in_flight: false, deadline: None, expired: false, awaiting_permission: false, wake: None }
     }
     pub(super) fn request(&mut self, now: Instant) -> Result<(), String> {
         if self.in_flight {
@@ -42,6 +56,7 @@ impl Worker {
         }
         if self.requests.is_none() {
             let mut open = self.opener.take().ok_or("Audio input worker is unavailable.")?;
+            let mut authorize = self.authorizer.take().ok_or("Microphone authorization worker is unavailable.")?;
             let (requests, commands) = mpsc::channel();
             let (results, replies) = mpsc::channel();
             let wake = self.wake.clone();
@@ -49,21 +64,40 @@ impl Worker {
             // retained, and finally dropped inside this closure.
             std::thread::Builder::new().name("woodshed-input-admission".into()).spawn(move || {
                 let mut session: Option<InputSession> = None;
+                let emit = |event| {
+                    let delivered = results.send(event).is_ok();
+                    if delivered { if let Some(wake) = &wake { wake(); } }
+                    delivered
+                };
                 while commands.recv().is_ok() {
                     let result = if let Some(session) = &session {
                         Ok(Handles::from_session(session))
                     } else {
-                        open().map(|opened| {
-                            opened.tuner.set_enabled(false);
-                            opened.onset.set_enabled(false);
-                            opened.capture.set_enabled(false);
-                            let handles = Handles::from_session(&opened);
-                            session = Some(opened);
-                            handles
-                        })
+                        let mut notified = false;
+                        let authorized = authorize(&mut || {
+                            if !notified {
+                                notified = true;
+                                emit(Event::WaitingPermission(Instant::now()));
+                            }
+                        });
+                        match authorized {
+                            Err(error) => Err(error),
+                            Ok(()) => {
+                                // Hardware time starts here, after explicit consent,
+                                // rather than at UI dispatch or delayed UI polling.
+                                if !emit(Event::Opening(Instant::now())) { break; }
+                                open().map(|opened| {
+                                    opened.tuner.set_enabled(false);
+                                    opened.onset.set_enabled(false);
+                                    opened.capture.set_enabled(false);
+                                    let handles = Handles::from_session(&opened);
+                                    session = Some(opened);
+                                    handles
+                                })
+                            },
+                        }
                     };
-                    if results.send(result).is_err() { break; }
-                    if let Some(wake) = &wake { wake(); }
+                    if !emit(Event::Complete(Instant::now(), result)) { break; }
                 }
                 // Native Drop, including a late successful open after backend
                 // destruction, happens here. Never join this worker on UI Drop.
@@ -74,34 +108,65 @@ impl Worker {
         self.requests.as_ref().unwrap().send(()).map_err(|_| "Audio input worker disconnected.".to_string())?;
         self.in_flight = true;
         self.expired = false;
+        self.awaiting_permission = false;
         self.deadline = Some(now + OPEN_TIMEOUT);
         Ok(())
     }
     fn poll(&mut self, now: Instant) -> Option<Reply> {
         if !self.in_flight { return None; }
-        // Deadline wins over a completion first observed after the bound.
+        // Apply queued phase events before comparing UI time. Their actual
+        // worker timestamps distinguish consent time from hardware-open time.
+        loop {
+            match self.replies.as_ref()?.try_recv() {
+                Ok(event) => {
+                    let timed_out = !self.expired && self.deadline.is_some_and(|deadline| event.at() >= deadline);
+                    if timed_out { self.expire(); }
+                    match event {
+                        Event::WaitingPermission(_) if !self.expired => {
+                            self.awaiting_permission = true;
+                            self.deadline = None;
+                        },
+                        Event::Opening(start) if !self.expired => {
+                            self.awaiting_permission = false;
+                            self.deadline = Some(start + OPEN_TIMEOUT);
+                        },
+                        Event::Complete(_, result) => {
+                            self.in_flight = false;
+                            self.deadline = None;
+                            self.awaiting_permission = false;
+                            return Some(if timed_out { Self::timeout_reply() } else if self.expired { Reply::Retired } else {
+                                match result { Ok(handles) => Reply::Ready(handles), Err(error) => Reply::Failed(error) }
+                            });
+                        },
+                        _ => {},
+                    }
+                    if timed_out { return Some(Self::timeout_reply()); }
+                },
+                Err(mpsc::TryRecvError::Empty) => break,
+                Err(mpsc::TryRecvError::Disconnected) => {
+                    self.in_flight = false;
+                    self.deadline = None;
+                    self.awaiting_permission = false;
+                    return Some(Reply::Failed("Audio input worker disconnected.".into()));
+                },
+            }
+        }
         if !self.expired && self.deadline.is_some_and(|deadline| now >= deadline) {
-            self.expired = true;
-            self.deadline = None;
-            return Some(Reply::Failed("Audio input opening timed out after 10 seconds. Stop cancels Record; the OS worker may still be opening. Retry after it returns.".into()));
+            self.expire();
+            return Some(Self::timeout_reply());
         }
-        match self.replies.as_ref()?.try_recv() {
-            Ok(result) => {
-                self.in_flight = false;
-                self.deadline = None;
-                Some(if self.expired { Reply::Retired } else {
-                    match result { Ok(handles) => Reply::Ready(handles), Err(error) => Reply::Failed(error) }
-                })
-            },
-            Err(mpsc::TryRecvError::Empty) => None,
-            Err(mpsc::TryRecvError::Disconnected) => {
-                self.in_flight = false;
-                self.deadline = None;
-                Some(Reply::Failed("Audio input worker disconnected.".into()))
-            },
-        }
+        None
+    }
+    fn expire(&mut self) {
+        self.expired = true;
+        self.awaiting_permission = false;
+        self.deadline = None;
+    }
+    fn timeout_reply() -> Reply {
+        Reply::Failed("Audio input opening timed out after 10 seconds outside explicit consent waiting. The OS worker may still be opening. Retry after it returns.".into())
     }
     pub(super) fn needs_service(&self) -> bool { self.in_flight && !self.expired }
+    pub(super) fn awaiting_permission(&self) -> bool { self.awaiting_permission && self.needs_service() }
     pub(super) fn set_wake(&mut self, wake: Arc<dyn Fn() + Send + Sync>) { self.wake = Some(wake); }
 }
 

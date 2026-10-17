@@ -63,3 +63,9 @@ graphshell-endpoint = { workspace = true }
 # In-process AppKit Save panel; the shared script-backed chooser lives in a
 # child process and prevents native access to the parent while it waits.
 rfd = { version = "0.17.2", default-features = false }
+
+# Resolve macOS microphone consent before CPAL performs synchronous HAL setup.
+# Keep framework bindings limited to capture authorization and audio media type.
+objc2 = "0.6.4"
+block2 = "0.6.2"
+objc2-av-foundation = { version = "0.3.2", default-features = false, features = ["std", "AVCaptureDevice", "AVMediaFormat", "block2"] }

@@ -17,6 +17,7 @@ struct Trial {
     entered: mpsc::Receiver<()>,
     release: mpsc::Sender<()>,
     opened: Arc<AtomicUsize>,
+    authorized: Arc<AtomicUsize>,
     dropped: mpsc::Receiver<(ThreadId, ThreadId)>,
 }
 fn plan(owner: u64) -> LoopPlan {
@@ -35,6 +36,12 @@ fn trial(rate: u32) -> Trial {
     let (release, gate) = mpsc::channel();
     let (retired, dropped) = mpsc::channel();
     let opened = Arc::new(AtomicUsize::new(0));
+    let authorized = Arc::new(AtomicUsize::new(0));
+    let permissions = authorized.clone();
+    audio.input_admission.authorizer = Some(Box::new(move |_| {
+        permissions.fetch_add(1, Ordering::SeqCst);
+        Ok(())
+    }));
     let count = opened.clone();
     audio.input_admission.opener = Some(Box::new(move || {
         count.fetch_add(1, Ordering::SeqCst);
@@ -49,7 +56,7 @@ fn trial(rate: u32) -> Trial {
     }));
     audio.set_loop_plan(&plan(1)).unwrap();
     audio.process_for_test(1);
-    Trial { audio, entered: began, release, opened, dropped }
+    Trial { audio, entered: began, release, opened, authorized, dropped }
 }
 fn settle_worker(audio: &mut CpalBackend) {
     let limit = Instant::now() + Duration::from_secs(2);
@@ -60,11 +67,133 @@ fn settle_worker(audio: &mut CpalBackend) {
     }
 }
 
+fn permission_trial() -> (Trial, mpsc::Receiver<()>, mpsc::Sender<Result<(), String>>) {
+    let mut t = trial(48_000);
+    let (prompt, prompted) = mpsc::channel();
+    let (answer, answers) = mpsc::channel();
+    let authorized = t.authorized.clone();
+    t.audio.input_admission.authorizer = Some(Box::new(move |waiting| {
+        authorized.fetch_add(1, Ordering::SeqCst);
+        waiting();
+        prompt.send(()).map_err(|e| e.to_string())?;
+        answers.recv().map_err(|e| e.to_string())?
+    }));
+    (t, prompted, answer)
+}
+
+#[test]
+fn explicit_consent_wait_excludes_more_than_ten_seconds_and_never_opens_hal_before_grant() {
+    let (mut t, prompted, answer) = permission_trial();
+    t.audio.loop_arm_record(plan(1).segments[1].id).unwrap();
+    prompted.recv_timeout(Duration::from_secs(2)).unwrap();
+    // Virtual elapsed time, no sleep or native prompt. The queued waiting event
+    // was published before the initial deadline, even though UI polling is late.
+    assert!(t.audio.input_admission.poll(Instant::now() + Duration::from_secs(60)).is_none());
+    assert!(t.audio.input_admission.awaiting_permission());
+    assert!(t.audio.input_admission.deadline.is_none());
+    assert!(t.audio.loop_capture_busy() && t.audio.needs_service());
+    assert_eq!(t.opened.load(Ordering::SeqCst), 0);
+    assert!(matches!(t.entered.try_recv(), Err(mpsc::TryRecvError::Empty)));
+    let pending = t.audio.recorder_observation(None);
+    assert!(pending.input_permission_pending);
+    let granted_after = Instant::now();
+    answer.send(Ok(())).unwrap();
+    t.entered.recv_timeout(Duration::from_secs(2)).unwrap();
+    let hardware_started_before = Instant::now();
+    t.audio.service();
+    assert!(!t.audio.input_admission.awaiting_permission());
+    let deadline = t.audio.input_admission.deadline.unwrap();
+    assert!(deadline >= granted_after + OPEN_TIMEOUT);
+    assert!(deadline <= hardware_started_before + OPEN_TIMEOUT);
+    assert!(t.audio.loop_capture_busy(), "grant alone does not finish hardware opening");
+    let opening = t.audio.recorder_observation(None);
+    assert!(!opening.input_permission_pending);
+    assert_eq!(opening.capture_epoch, pending.capture_epoch);
+    t.release.send(()).unwrap();
+    settle_worker(&mut t.audio);
+    assert_eq!(t.audio.recorder_observation(None).capture_target, Some(1));
+    assert_eq!(t.audio.recorder_observation(None).capture_epoch, pending.capture_epoch);
+    assert!(t.audio.input.as_ref().unwrap().capture.is_enabled());
+    assert_eq!(t.opened.load(Ordering::SeqCst), 1);
+}
+
+#[test]
+fn denied_or_restricted_authorization_clears_intent_without_native_open() {
+    for refusal in ["Microphone permission denied", "Microphone access restricted"] {
+        let (mut t, prompted, answer) = permission_trial();
+        t.audio.loop_arm_record(plan(1).segments[1].id).unwrap();
+        prompted.recv_timeout(Duration::from_secs(2)).unwrap();
+        t.audio.calibration_start();
+        answer.send(Err(refusal.into())).unwrap();
+        settle_worker(&mut t.audio);
+        assert!(!t.audio.loop_capture_busy());
+        assert!(!t.audio.pending_calibration);
+        assert!(!t.audio.input_admission.awaiting_permission());
+        assert!(t.audio.input.is_none());
+        assert!(t.audio.error().unwrap().contains(refusal));
+        assert_eq!(t.opened.load(Ordering::SeqCst), 0);
+        assert_eq!(t.authorized.load(Ordering::SeqCst), 1);
+        assert!(matches!(t.entered.try_recv(), Err(mpsc::TryRecvError::Empty)));
+    }
+}
+
+#[test]
+fn cancelled_record_cannot_resurrect_after_late_permission_grant() {
+    let (mut t, prompted, answer) = permission_trial();
+    t.audio.loop_arm_record(plan(1).segments[1].id).unwrap();
+    prompted.recv_timeout(Duration::from_secs(2)).unwrap();
+    t.audio.service();
+    assert!(t.audio.input_admission.awaiting_permission());
+    let epoch = t.audio.recorder_capture_epoch;
+    t.audio.recorder_stop_capture(1, epoch).unwrap();
+    t.audio.process_for_test(1);
+    assert!(!t.audio.loop_capture_busy());
+    assert!(t.audio.pending_capture.is_none());
+    let cancelled = t.audio.recorder_observation(None);
+    assert!(cancelled.input_permission_pending, "OS consent remains pending after Record cancellation");
+    assert!(!cancelled.capture_busy && !cancelled.capture_armed);
+    assert!(cancelled.capture_target.is_none() && cancelled.capture_epoch.is_none());
+    answer.send(Ok(())).unwrap();
+    t.entered.recv_timeout(Duration::from_secs(2)).unwrap();
+    t.release.send(()).unwrap();
+    settle_worker(&mut t.audio);
+    assert!(!t.audio.loop_capture_busy());
+    assert!(t.audio.recorder_observation(None).capture_target.is_none());
+    let output = t.audio.output_snapshot().unwrap();
+    assert!(!output.recording && !output.capture_armed);
+    assert!(!t.audio.input.as_ref().unwrap().capture.is_enabled());
+    assert!(!t.audio.capture_attached);
+}
+
+#[test]
+fn checking_authorization_without_explicit_consent_wait_remains_bounded() {
+    let mut t = trial(48_000);
+    let (checking, checked) = mpsc::channel();
+    let (release, released) = mpsc::channel();
+    t.audio.input_admission.authorizer = Some(Box::new(move |_| {
+        checking.send(()).unwrap();
+        released.recv().unwrap();
+        Err("Authorization check failed".into())
+    }));
+    t.audio.loop_arm_record(plan(1).segments[1].id).unwrap();
+    checked.recv_timeout(Duration::from_secs(2)).unwrap();
+    t.audio.input_admission.deadline = Some(Instant::now());
+    t.audio.service();
+    assert!(!t.audio.loop_capture_busy());
+    assert!(!t.audio.input_admission.awaiting_permission());
+    assert!(t.audio.error().unwrap().contains("timed out"));
+    release.send(()).unwrap();
+    settle_worker(&mut t.audio);
+    assert_eq!(t.opened.load(Ordering::SeqCst), 0);
+    assert!(t.audio.input.is_none());
+}
+
 #[test]
 fn blocked_native_opener_does_not_block_service_and_reserves_original_card() {
     let mut t = trial(48_000);
     t.audio.service();
     assert_eq!(t.opened.load(Ordering::SeqCst), 0, "no opening before explicit request");
+    assert_eq!(t.authorized.load(Ordering::SeqCst), 0, "no permission request before explicit input request");
     let selected = plan(1).segments[1].id;
     t.audio.loop_arm_record(selected).unwrap();
     t.entered.recv_timeout(Duration::from_secs(2)).unwrap();
@@ -165,6 +294,7 @@ fn timeout_is_visible_bounded_and_late_success_never_arms_or_spawns_a_second_wor
     t.audio.loop_arm_record(plan(1).segments[1].id).unwrap();
     t.entered.recv_timeout(Duration::from_secs(2)).unwrap();
     t.audio.calibration_start();
+    t.audio.service(); // Consume the actual hardware Opening(start) phase first.
     t.audio.input_admission.deadline = Some(Instant::now());
     t.audio.service();
     assert!(!t.audio.loop_capture_busy());
@@ -182,6 +312,7 @@ fn timeout_is_visible_bounded_and_late_success_never_arms_or_spawns_a_second_wor
     settle_worker(&mut t.audio);
     assert_eq!(t.audio.recorder_observation(None).capture_target, Some(2));
     assert_eq!(t.opened.load(Ordering::SeqCst), 1);
+    assert_eq!(t.authorized.load(Ordering::SeqCst), 1, "retained native session needs no repeat authorization");
 }
 
 #[test]
@@ -364,6 +495,8 @@ fn admitted_handles_wake_service_without_another_user_command() {
     t.audio.set_tuner_enabled(true);
     t.entered.recv_timeout(Duration::from_secs(2)).unwrap();
     assert!(t.audio.needs_service());
+    // Discard the hardware-start wake; the next wake must be completion.
+    while woke.try_recv().is_ok() {}
     t.release.send(()).unwrap();
     woke.recv_timeout(Duration::from_secs(2)).unwrap();
     // The worker's publication wakes the host; that service call admits the
