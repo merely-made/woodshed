@@ -1,6 +1,8 @@
 {
-  "README.md": "d3282b5628af17c7e7e33a99036b53b0b9f0a0477ab745a7f9191c30d9479012",
+  "README.md": "acc1fda392d41ae91a1187dadd7e6b11e346500ff488023afd66932e773006b3",
   "cpu/build.log": "b93407bb5424c9fadd38b782699c81b02efb241291b2c4cfbf420e325ec54789",
+  "cpu/integration-build.log": "ddb1ac51d5f8b635303157ff9d901661472687650ea610aaa9288058276f6c73",
+  "cpu/integration-tests.log": "9efa749fe5f321dcd163854a2513231d0fdd6bfd74afc258dfc82c8a125a9d31",
   "cpu/tests.log": "a7eeaf1024b30dde84d7d928a6eca38575e87ea7813ee9174c4637b0e55bd294",
   "initial/capture-failure.log": "0bfaeb3b9fa9beb2f10491d717c5a6e12f45debcdb985cf047a7ed306c5ae71e",
   "initial/native.log": "85579d6f2a9d485a785d10870c5d18ac5fbb0f8309be09c1d891bba755eeb9d2",
@@ -22,7 +24,7 @@
   "native/seed/native.log": "1598e64c17e30457b6003e5a339174b9dc416f21de9cfde5feb38e1b6cbe98b8",
   "native/seed/saved.json": "0752cd20136abc5a6e98edeb86ba12908e68adf55cb7b3ef955a5b43432fa4e7",
   "native/seed/scenario.done": "e0499cd4d33b9a0851b69379f64d7bb16b3cb5211870d1e6e241a0d64a178913",
-  "receipt.json": "3bc190c6cfb8aa22da9a2976a91b649f8d96e3ab4e62d4093317e6fab92c9164",
+  "receipt.json": "7c7a3f8450675dfffb6e521e7f2041aa951daeb546718a018ccd92a94ace259b",
   "source.json": "2ef1c44f05e11d8a39b3742db258c6afd070eb31aa9d1e42a3f31593651f789e",
   "verify.py": "00087b1ecabd26168d3fba6b463dd9d4b6e0faa5fe5c673cbb15e00c17f9f191"
 }

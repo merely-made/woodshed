@@ -35,3 +35,9 @@ This qualifies native alignment editing and persistence on this macOS host.
 It does not qualify physical audio, browser deployment, Knot editing, or a
 shared editing-authority contract. Metre is the next concrete editing consumer
 before extracting domain-independent edit intents.
+
+Concurrent main integration: `2ad31ea` merges the catalog-audition lane through
+`21d0c2e`. The arrangement view, native binding and lockfile are byte-identical
+to the headed source `b3afe76`; 14 focused checks and the locked desktop build
+pass again on the combined source. `cpu/integration-*.log` records those checks.
+The five headed captures remain attributed to their exact original source.
