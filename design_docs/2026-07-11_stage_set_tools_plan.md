@@ -3904,7 +3904,7 @@ sealed Set and complete portable document equal the previous saved fixture
 exactly. [Spacing receipt](../validation/native-arrangement-spacing_20261016/receipt.json).
 
 
-### Direct arrangement scene editing (2026-10-16, in progress)
+### Direct arrangement scene editing (2026-10-16, qualified on macOS)
 
 The next bounded native slice adds beat-snapped dragging of placed Card/rest
 occurrences and their start/end edges, keyboard equivalents, and Escape/capture-loss
@@ -3929,3 +3929,14 @@ covers a saved notice, selection, Escape, repeated captured motion, keyboard
 start/end edits and the visible one-beat controls at wide/compact widths.
 Selected span controls now sit immediately after the primary scene, ahead of
 its related fretboard reading.
+
+
+Direct editing acceptance (2026-10-16): Woodshed `b3afe76` with shared Mere
+`d1e1d7aae` passes 14 focused consumer cases, six shared geometry cases and the
+locked desktop build. Two native processes present 323 frames and five reviewed
+captures. Escape restores the original Set/document; after Save only the intended
+Card/rest spans differ, and the sealed Set and full document reopen exactly.
+The committed read-only verifier and raw evidence are under
+`validation/native-arrangement-spans_20261016/`. This completes the bounded
+native slice; metre editing remains the second-consumer gate before shared
+editing intents are extracted.
