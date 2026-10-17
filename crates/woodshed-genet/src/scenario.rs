@@ -49,6 +49,131 @@ mod practice_clock;
 mod guided_rehearsal;
 mod mixed_looper;
 
+/// Explicit synthetic acceptance PCM, unrelated to the historical quiet seeds.
+/// Every value is an exact multiple of 1/64: no gain normalization, noise,
+/// transcendental calculation, or device input participates in this fixture.
+const ENVELOPE_FIXTURE: &str = "stepped-triangle-v1";
+const ENVELOPE_LEVELS: [i16; 8] = [0, 1, 4, 7, 2, 5, 1, 0];
+const ENVELOPE_CARRIER: [i16; 16] = [0, 2, 4, 6, 8, 6, 4, 2, 0, -2, -4, -6, -8, -6, -4, -2];
+
+fn envelope_sample(frame: usize, frames: usize) -> f32 {
+    let band = frame.saturating_mul(8) / frames.max(1);
+    f32::from(ENVELOPE_LEVELS[band.min(7)] * ENVELOPE_CARRIER[frame % 16]) / 64.0
+}
+
+fn envelope_capture(frames: usize) -> Vec<f32> {
+    (0..frames).map(|frame| envelope_sample(frame, frames)).collect()
+}
+
+fn envelope_mismatch(samples: &[f32]) -> Option<usize> {
+    samples.iter().enumerate().find_map(|(frame, sample)| {
+        (sample.to_bits() != envelope_sample(frame, samples.len()).to_bits()).then_some(frame)
+    })
+}
+
+/// Verify restored custody AND the actual output-backed recorder waveform
+/// source. This observation cannot seed, restore, save, or repair anything.
+fn verify_selected_envelope(ui: &UiState, shared: &Shared) -> Result<String, String> {
+    let id = ui.loop_selected.ok_or("select the envelope Card")?;
+    let plan = ui.loop_admitted.as_ref().ok_or("no admitted Set backing")?;
+    let index = plan.index_of(id).ok_or("selected Card is not admitted")?;
+    let segment = &plan.segments[index];
+    let backend = shared.backend.as_ref().ok_or("no output backend")?;
+    let observation = backend.recorder_observation(None);
+    if observation.plan.as_ref() != Some(plan) {
+        return Err("actual output backing differs from the UI admission".into());
+    }
+    let takes = backend.capture_snapshot();
+    let take = takes.iter().find(|take| take.id == id).ok_or("no hydrated envelope take")?;
+    if take.bpm != segment.bpm || take.beats != segment.beats || take.bars != segment.bars
+        || take.seconds != segment.seconds || take.legacy_clock
+    {
+        return Err("hydrated envelope take clock differs from the admitted Card".into());
+    }
+    let frames = woodshed_audio::Bar {
+        duration_seconds: segment.seconds,
+        bpm: segment.bpm,
+        time_signature: woodshed_audio::TimeSignature::new(segment.beats, 4),
+        length: if segment.seconds.is_some() { 1 } else { segment.bars },
+        ..Default::default()
+    }.checked_duration_frames(take.buffer.sample_rate_hz).map_err(str::to_owned)?;
+    let frames = usize::try_from(frames).map_err(|_| "envelope frame count is not representable")?;
+    if frames < 128 || take.buffer.len() != frames {
+        return Err("hydrated envelope take has the wrong frame count".into());
+    }
+    if let Some(frame) = envelope_mismatch(&take.buffer.data) {
+        return Err(format!("hydrated envelope fixture differs at frame {frame}"));
+    }
+    let displayed = observation.buffers.get(index).and_then(Option::as_ref)
+        .ok_or("selected output waveform has no PCM")?;
+    if displayed.sample_rate != take.buffer.sample_rate_hz || displayed.samples.len() != frames
+        || displayed.samples.iter().zip(take.buffer.data.iter()).any(|(a,b)| a.to_bits() != b.to_bits())
+    {
+        return Err("selected output waveform differs from the hydrated envelope take".into());
+    }
+    let visible = ui.recorder_observation.buffers.get(index).and_then(Option::as_ref)
+        .ok_or("selected recorder view has no envelope PCM")?;
+    if ui.recorder_observation.plan.as_ref() != Some(plan)
+        || visible.sample_rate != take.buffer.sample_rate_hz || visible.samples.len() != frames
+        || visible.samples.iter().zip(take.buffer.data.iter()).any(|(a,b)| a.to_bits() != b.to_bits())
+    {
+        return Err("recorder view observation differs from the admitted envelope PCM".into());
+    }
+    let bytes: Vec<u8> = take.buffer.data.iter().flat_map(|sample| sample.to_bits().to_le_bytes()).collect();
+    Ok(format!("envelope-fixture-exact {ENVELOPE_FIXTURE} set={} card={} frames={frames} rate={} pcm-bits-digest={}",
+        id.set.0, id.card.0, take.buffer.sample_rate_hz, woodshed_core::loop_capture::pcm_digest(&bytes)))
+}
+
+#[cfg(test)]
+mod envelope_fixture_tests {
+    use super::*;
+
+    #[test]
+    fn envelope_verifier_rejects_changed_samples_and_signed_zero() {
+        let mut samples = envelope_capture(54_000);
+        assert_eq!(envelope_mismatch(&samples), None);
+        samples[10_000] += 1.0 / 64.0;
+        assert_eq!(envelope_mismatch(&samples), Some(10_000));
+        samples[0] = -0.0;
+        assert_eq!(envelope_mismatch(&samples), Some(0));
+        assert!(envelope_mismatch(&[0.000125, -0.00025, -0.0, 0.0005]).is_some());
+    }
+
+    #[test]
+    fn envelope_is_exact_nonquiet_and_has_distinct_visible_amplitude_bands() {
+        let samples = envelope_capture(128);
+        assert_eq!(&samples[16..32], &[
+            0.0, 0.03125, 0.0625, 0.09375, 0.125, 0.09375, 0.0625, 0.03125,
+            0.0, -0.03125, -0.0625, -0.09375, -0.125, -0.09375, -0.0625, -0.03125,
+        ]);
+        assert_eq!(samples[52].to_bits(), 0.875_f32.to_bits());
+        assert_eq!(samples[60].to_bits(), (-0.875_f32).to_bits());
+        for frames in [128, 500, 54_000, 54_001] {
+            let samples = envelope_capture(frames);
+            assert_eq!(samples.len(), frames);
+            assert!(samples.iter().all(|sample| sample.is_finite() && sample.abs() <= 0.875));
+            // Inspect the middle 128-column bin of each eighth, away from
+            // fractional band boundaries. Every bin includes a whole carrier.
+            let extrema: Vec<_> = (0..8).map(|band| {
+                let column = band * 16 + 8;
+                let start = column * frames / 128;
+                let end = (column + 1) * frames / 128;
+                samples[start..end].iter().fold((f32::INFINITY, f32::NEG_INFINITY),
+                    |(min,max), &sample| (min.min(sample),max.max(sample)))
+            }).collect();
+            if frames >= 16 * 128 {
+                assert_eq!(extrema, vec![
+                    (0.0, 0.0), (-0.125, 0.125), (-0.5, 0.5), (-0.875, 0.875),
+                    (-0.25, 0.25), (-0.625, 0.625), (-0.125, 0.125), (0.0, 0.0),
+                ]);
+            }
+            let bytes: Vec<_> = samples.iter().flat_map(|s| s.to_bits().to_le_bytes()).collect();
+            let repeated: Vec<_> = envelope_capture(frames).iter().flat_map(|s| s.to_bits().to_le_bytes()).collect();
+            assert_eq!(bytes, repeated);
+        }
+    }
+}
+
 /// Product commands and observations; Mesquite owns the frame pump and captures.
 pub struct Product {
     shared: Rc<RefCell<Shared>>,
@@ -2421,13 +2546,19 @@ impl Automatable for Probe<'_, '_> {
             ));
             return true;
         }
-        if label == "seed-loop-capture" || label == "seed-selected-loop-capture" {
+        if label == "verify-selected-envelope-capture" {
+            return match verify_selected_envelope(self.ctx.runner.state(), self.shared) {
+                Ok(receipt) => { self.shared.events.push(receipt); true },
+                Err(error) => { eprintln!("envelope fixture verification refused: {error}"); false },
+            };
+        }
+        if matches!(label, "seed-loop-capture" | "seed-selected-loop-capture" | "seed-selected-envelope-capture") {
             use woodshed_core::audio::AudioBackend;
             let Some(plan) = self.ctx.runner.state().loop_admitted.clone() else {
                 return false;
             };
             let selected = self.ctx.runner.state().loop_selected;
-            let segment = if label == "seed-selected-loop-capture" {
+            let segment = if matches!(label, "seed-selected-loop-capture" | "seed-selected-envelope-capture") {
                 selected.and_then(|id| plan.segments.iter().find(|segment| segment.id == id))
             } else {
                 plan.segments.first()
@@ -2452,9 +2583,14 @@ impl Automatable for Probe<'_, '_> {
                 ..Default::default()
             }
             .duration_samples(rate as f32) as usize;
-            let samples = (0..frames)
-                .map(|frame| [0.000125, -0.00025, -0.0, 0.0005][frame % 4])
-                .collect();
+            let samples = if label == "seed-selected-envelope-capture" {
+                if frames < 128 { return false; }
+                envelope_capture(frames)
+            } else {
+                (0..frames)
+                    .map(|frame| [0.000125, -0.00025, -0.0, 0.0005][frame % 4])
+                    .collect()
+            };
             let mut takes = backend.capture_snapshot();
             takes.retain(|take| take.id != segment.id);
             takes.push(crate::audio::CaptureSnapshot {

@@ -1,0 +1,18 @@
+{
+  "command": [
+    "cargo",
+    "update",
+    "--offline",
+    "--manifest-path",
+    "validation/relationship-recipe/Cargo.toml",
+    "-p",
+    "scenomise@0.0.5",
+    "--precise",
+    "4c4ea11d8ea4b0210fd70af62638484e25f29d5e"
+  ],
+  "cwd": "/Users/markik/Code/repos/woodshed",
+  "started_utc": "2026-10-17T15:07:35.384997+00:00",
+  "ended_utc": "2026-10-17T15:07:40.801623+00:00",
+  "exit_code": 0,
+  "suites": []
+}

@@ -381,7 +381,7 @@ fn set_screen(ui: &UiState) -> UiChild {
         )).attr("class","transport"),
         el("div",issues).attr("class","transport"),
         recorder_mount(ui),
-        el("div",text("Ordered Cards keep their own tempo and Bars hold. Clear a captured mix before changing its clock. Stored material and WAV export stay with the owning Set/Card.")).attr("class","scale-name"),
+        el("div",text("Ordered Cards keep their own tempo and Bars or Seconds hold. Clear a captured mix before changing its clock. Stored material and WAV export stay with the owning Set/Card.")).attr("class","scale-name"),
     )))
 }
 
