@@ -2106,6 +2106,29 @@ change. [Final merged receipt](../validation/stage-p6-merged_20261017/README.md)
 
 ### P7. Rebuild Song as Looper over Set
 
+**Status (2026-10-17): P7a mixed Bars backing in progress.** Baseline `8aba700`
+is current and clean. This bounded slice admits ordered scale/path/chord
+articulation over the existing explicit Looper Bars clock. It preserves the
+old block-Chord renderer, Set/Card take identities, capture clock metadata,
+saved-backing authority, and the existing single output runtime.
+
+Implementation and done-conditions:
+
+- Lower playable positive-Bars Cards using the same ordered realization as P5,
+  adapting beat positions to the explicit Looper numerator. Report every
+  unsupported Card together. Manual, Seconds, Reps and eventless exercise Cards
+  remain explicit readiness failures; no duration or rest is inferred.
+- Carry disposable phrase events beside the old block-Chord segment path.
+  Prepare bounded phrase PCM before the callback, indexed by the accepted
+  segment clock. Playback and WAV export use the same production renderer.
+- Preserve capture PCM by Set/Card across reorder and source edits; reject
+  clock changes until explicit Clear and any replacement while capture is busy.
+  Saved backing retains its exact pitches, meter, duration and compatibility data.
+- Qualify real mixed-Set playback, retained readiness failure/recovery, source
+  edits and take identity, exact one-cycle WAV/frame parity, sealed saving and
+  fresh-process reopening. Keep physical audio and full P7 migration separate.
+
+
 **October 11 slice: durable Set captures — implemented and qualified for
 bounded synthetic storage, native reopen and recovery.** Completed
 Set/Card takes will use exact mono f32 companion blobs through the existing
@@ -2216,6 +2239,15 @@ receipts are recorded before those platforms are advertised.
 
 ## Findings
 
+- **2026-10-17, P7a:** mixed backing can reuse P5's ordered Card realization,
+  but its four-quarter Bars event grid must be scaled to the Looper's explicit
+  numerator. Existing block-Chord mute semantics differ from P5's empty-event
+  refusal; retain that path separately. Ordered phrase PCM is transient and
+  prepared before the callback under a whole-snapshot work bound. Capture
+  clock metadata remains unchanged, and saved backing stays exact. The affected
+  gate passes 925 distinct cases plus five child invocations, seven existing
+  ignores, and the desktop build; native/reopen qualification follows.
+
 - **2026-10-17, P6:** Rehearsal's filmstrip directly changed `Set.cursor`, which
   the next device observation could overwrite. Selection now queues the same
   epoch-fenced seek as Prev. Processor navigation also retains pause across
@@ -2287,6 +2319,12 @@ receipts are recorded before those platforms are advertised.
   coherent narrow-screen information architecture.
 
 ## Progress
+
+2026-10-17: P7a mixed Bars backing implemented on current `8aba700` without
+supplier changes. Core/audio and host reviews cover meter scaling, integer
+strum frames, bounded preparation, capture restore/reorder and exact saved
+backing. CPU/build gates pass; the committed native seed/reopen scenarios now
+qualify the real output, sealed synthetic take and WAV worker.
 
 - **2026-07-24, P4b landed — typed relations, and the end of the flattened
   reason:** `woodshed-graph`'s public boundary was `RelatedMaterial { reason,

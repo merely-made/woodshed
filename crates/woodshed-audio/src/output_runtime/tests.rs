@@ -1,5 +1,5 @@
 use super::*;
-use crate::{Bar, ChordRef, TimeSignature};
+use crate::{BackingEvent, BackingPhrase, Bar, ChordRef, TimeSignature};
 use std::{
     alloc::{GlobalAlloc, Layout, System},
     cell::Cell,
@@ -986,6 +986,106 @@ fn prepared_chord_matches_legacy_strum_and_warm_cache_reuses_pcm() {
     let b = PreparedBacking::prepare(&s, 1000, &mut cache).unwrap();
     assert!(Arc::ptr_eq(&pcm_a, &cache[0].pcm.data));
     drop((a, b));
+}
+
+#[test]
+fn phrase_mixes_with_capture_and_click_across_loop_boundaries_without_callback_allocation() {
+    let mut s = song(1);
+    s.playing = true;
+    s.click_enabled = false;
+    s.bars[0].backing_phrase = Some(BackingPhrase {
+        events: vec![
+            BackingEvent {
+                beat: 0.0,
+                pitches_hz: vec![173.3, 261.6],
+                strum_seconds: 0.002,
+            },
+            BackingEvent {
+                beat: 0.5,
+                pitches_hz: vec![349.2],
+                strum_seconds: 0.0,
+            },
+        ],
+    });
+    s.bars[0].audio_buffer = Some(crate::SampleBuffer::new(vec![0.125; 10], 1000));
+    let mut live = runtime();
+    live.set_song(s.clone()).unwrap();
+    live.rewind().unwrap();
+    live.service().unwrap();
+    let repeated = render(&mut live, 20);
+    assert_ne!(&repeated[..10], &repeated[10..20]);
+    assert_eq!(&repeated[..20], &repeated[20..]);
+
+    let mut with_click = s;
+    with_click.click_enabled = true;
+    let mut click_runtime = runtime();
+    click_runtime.set_song(with_click).unwrap();
+    click_runtime.rewind().unwrap();
+    click_runtime.service().unwrap();
+    assert_ne!(&repeated[..4], &render(&mut click_runtime, 2)[..4]);
+}
+
+#[test]
+fn invalid_phrase_replacement_preserves_the_accepted_runtime() {
+    let mut accepted = song(1);
+    accepted.playing = true;
+    accepted.bars[0].backing_phrase = Some(BackingPhrase {
+        events: vec![BackingEvent {
+            beat: 0.0,
+            pitches_hz: vec![220.0],
+            strum_seconds: 0.0,
+        }],
+    });
+    let mut live = runtime();
+    live.set_song(accepted.clone()).unwrap();
+    live.rewind().unwrap();
+    live.service().unwrap();
+    render(&mut live, 3);
+    let before = live.snapshot();
+    let mut invalid = accepted;
+    invalid.bars[0].chord_ref = Some(ChordRef {
+        formula_name: "conflict".into(),
+        root_freq_hz: 220.0,
+        pitches_hz: vec![220.0],
+        label: String::new(),
+    });
+    assert!(live.set_song(invalid).is_err());
+    assert_eq!(live.snapshot(), before);
+    assert!(live.song().bars[0].chord_ref.is_none());
+    assert!(live.song().bars[0].backing_phrase.is_some());
+    let after_rejection = render(&mut live, 5);
+    let mut control = runtime();
+    let mut control_song = live.song();
+    control_song.playing = true;
+    control.set_song(control_song).unwrap();
+    control.rewind().unwrap();
+    control.service().unwrap();
+    render(&mut control, 3);
+    assert_eq!(after_rejection, render(&mut control, 5));
+}
+
+#[test]
+fn backing_phrase_render_work_is_bounded_across_the_whole_snapshot() {
+    let phrase = || BackingPhrase {
+        events: (0..256)
+            .map(|index| BackingEvent {
+                beat: (300 + index) as f64,
+                pitches_hz: vec![220.0; 4],
+                strum_seconds: 0.0,
+            })
+            .collect(),
+    };
+    let mut s = Song::new();
+    s.bars = (0..2)
+        .map(|_| Bar {
+            bpm: 600.0,
+            time_signature: TimeSignature::new(4, 4),
+            length: 250,
+            backing_phrase: Some(phrase()),
+            ..Default::default()
+        })
+        .collect();
+    assert!(PreparedBacking::prepare(&s, 1000, &mut Vec::new()).is_err());
 }
 
 #[test]

@@ -73,6 +73,10 @@ pub struct Bar {
     /// Optional one-shot chord that plays at the start of this bar.
     /// `None` = silent (just the click + any recorded audio).
     pub chord_ref: Option<ChordRef>,
+    /// Ordered backing events for this bar. Transient host realization; saved
+    /// chord references remain the durable backing representation.
+    #[serde(skip)]
+    pub backing_phrase: Option<crate::backing_phrase::BackingPhrase>,
     /// Recorded audio for this bar (the practice-loop layer). Skipped
     /// from serde — see module docs.
     #[serde(skip)]
@@ -108,6 +112,7 @@ impl Default for Bar {
             time_signature: TimeSignature::default(),
             subdivision: Subdivision::QUARTER,
             chord_ref: None,
+            backing_phrase: None,
             audio_buffer: None,
             label: String::new(),
             length: 1,

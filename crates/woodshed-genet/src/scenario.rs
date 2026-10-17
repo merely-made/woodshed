@@ -47,6 +47,7 @@ use crate::sync::Ctx;
 
 mod practice_clock;
 mod guided_rehearsal;
+mod mixed_looper;
 
 /// Product commands and observations; Mesquite owns the frame pump and captures.
 pub struct Product {
@@ -202,6 +203,9 @@ impl mesquite::Product for Product {
         )
     }
     fn act(&mut self, ctx: &mut Ctx<'_>, label: &str) -> bool {
+        if let Some(result) = mixed_looper::act(ctx, &self.shared, label) {
+            return result;
+        }
         if let Some(result) = guided_rehearsal::act(ctx, &self.shared, label) {
             return result;
         }

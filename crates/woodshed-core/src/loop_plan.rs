@@ -62,8 +62,25 @@ pub struct LoopSegment {
     pub bpm: f32,
     pub beats: u8,
     pub bars: u8,
-    /// Concert pitches resolved from the Card's material and selected shape.
+    /// Resolved pitches for the existing block-Chord path; phrase segments
+    /// carry their ordered pitches in `phrase`.
     pub pitches_hz: Vec<f32>,
+    /// Ordered articulation for phrase-backed Cards. `None` retains the
+    /// existing once-per-measure block-chord backing behavior.
+    pub phrase: Option<LoopPhrase>,
+}
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct LoopPhrase {
+    pub events: Vec<LoopEvent>,
+}
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct LoopEvent {
+    /// Onset measured in quarter-note beats from the start of this segment.
+    pub beat: f64,
+    pub pitches_hz: Vec<f32>,
+    pub strum_seconds: f64,
 }
 
 impl LoopSegment {
@@ -88,9 +105,9 @@ pub struct LoopReadiness {
 }
 
 impl LoopPlan {
-    /// Lower only material the current block-chord backing engine can honor.
-    /// Unsupported Cards fail admission together, without dropping or rounding
-    /// any of them. Hear and rehearsal retain their richer articulation paths.
+    /// Lower Cards the backing renderer can represent without changing their
+    /// authored material or articulation. Unsupported Cards fail admission
+    /// together, without dropping or rounding any of them.
     pub fn lower(
         owner: WorkingSetId,
         name: &str,
@@ -118,13 +135,20 @@ impl LoopPlan {
                 set: owner,
                 card: card.id,
             };
+            let legacy_block_chord = matches!(card.material, Material::Chord { .. })
+                && matches!(card.touch, Touch::Block);
+            let phrase_material = matches!(
+                card.material,
+                Material::Scale { .. }
+                    | Material::ScalePattern { .. }
+                    | Material::Path { .. }
+                    | Material::Chord { .. }
+            );
             let reason = if card.id == CardId::UNASSIGNED || !seen.insert(card.id) {
                 Some("Card identity is missing or duplicated.")
-            } else if !matches!(card.material, Material::Chord { .. })
-                || !matches!(card.touch, Touch::Block)
-            {
+            } else if !legacy_block_chord && !phrase_material {
                 Some(
-                    "Backing currently supports block Chords; Hear and rehearsal play this articulation.",
+                    "Backing currently supports block Chords, Scales, Scale Patterns, Paths and Chord articulations.",
                 )
             } else if !matches!(card.timing.hold, Hold::Bars(1..)) {
                 Some(
@@ -152,31 +176,104 @@ impl LoopPlan {
                 });
                 continue;
             }
-            // Resolve before marks as well: an unavailable shape/formula must
-            // not masquerade as an intentionally muted, silent segment.
-            let resolved = stage.card_voicing(card).and_then(|unmarked| {
-                stage.card_sounding_pitches_at_tempo(card, bpm).map(|marked| (unmarked, marked))
-            });
-            let ((unmarked, _, _), (pitches_hz, _, _)) = match resolved {
-                Ok(preview) => preview,
-                Err(error) => {
-                    issues.push(LoopReadiness { segment: Some(id), reason: error.to_string() });
-                    continue;
-                },
-            };
-            if unmarked.is_empty()
-                || pitches_hz
-                    .iter()
-                    .any(|pitch| !pitch.is_finite() || *pitch <= 0.0)
-            {
-                issues.push(LoopReadiness {
-                    segment: Some(id),
-                    reason: "The Card's chord or selected voicing cannot be resolved.".into(),
-                });
-                continue;
-            }
             let Hold::Bars(bars) = card.timing.hold else {
                 unreachable!()
+            };
+            // Keep the existing block-chord path intact, including deliberate
+            // mute: a resolved empty marked pitch list is a clocked silent bar.
+            let (pitches_hz, phrase) = if legacy_block_chord {
+                let resolved = stage.card_voicing(card).and_then(|unmarked| {
+                    stage
+                        .card_sounding_pitches_at_tempo(card, bpm)
+                        .map(|marked| (unmarked, marked))
+                });
+                let ((unmarked, _, _), (pitches_hz, _, _)) = match resolved {
+                    Ok(preview) => preview,
+                    Err(error) => {
+                        issues.push(LoopReadiness {
+                            segment: Some(id),
+                            reason: error.to_string(),
+                        });
+                        continue;
+                    },
+                };
+                if unmarked.is_empty()
+                    || pitches_hz
+                        .iter()
+                        .any(|pitch| !pitch.is_finite() || *pitch <= 0.0)
+                {
+                    issues.push(LoopReadiness {
+                        segment: Some(id),
+                        reason: "The Card's chord or selected voicing cannot be resolved.".into(),
+                    });
+                    continue;
+                }
+                (pitches_hz, None)
+            } else {
+                let mut one_card = Set::default();
+                one_card.push(card.clone());
+                let mut program = stage.practice_program(&one_card, bpm);
+                let lowered = program
+                    .cards
+                    .pop()
+                    .expect("one Card produces one practice result");
+                if let Some(reason) = lowered.unavailable {
+                    issues.push(LoopReadiness {
+                        segment: Some(id),
+                        reason,
+                    });
+                    continue;
+                }
+                if lowered.events.is_empty()
+                    || lowered.events.iter().any(|event| {
+                        !event.at.is_finite()
+                            || event.at < 0.0
+                            || event.pitches.is_empty()
+                            || event
+                                .pitches
+                                .iter()
+                                .any(|pitch| !pitch.is_finite() || *pitch <= 0.0)
+                            || !event.strum_seconds.is_finite()
+                            || event.strum_seconds < 0.0
+                    })
+                    || lowered
+                        .events
+                        .windows(2)
+                        .any(|pair| pair[0].at >= pair[1].at)
+                {
+                    issues.push(LoopReadiness {
+                        segment: Some(id),
+                        reason:
+                            "The Card's phrase has no finite, audible events for backing playback."
+                                .into(),
+                    });
+                    continue;
+                }
+                let events: Vec<_> = lowered
+                    .events
+                    .into_iter()
+                    .map(|event| LoopEvent {
+                        // P5's Bars hold is four quarter beats per bar. The Looper
+                        // supplies the explicit numerator, so scale its event grid
+                        // without changing order, repetition or authored strum.
+                        beat: event.at * f64::from(clock.beats) / 4.0,
+                        pitches_hz: event.pitches,
+                        strum_seconds: event.strum_seconds,
+                    })
+                    .collect();
+                let segment_beats = f64::from(clock.beats) * f64::from(bars);
+                if events.iter().any(|event| {
+                    !event.beat.is_finite() || event.beat < 0.0 || event.beat >= segment_beats
+                }) || events.windows(2).any(|pair| pair[0].beat >= pair[1].beat)
+                {
+                    issues.push(LoopReadiness {
+                        segment: Some(id),
+                        reason: "The Card's phrase events do not fit its ordered backing clock."
+                            .into(),
+                    });
+                    continue;
+                }
+                (Vec::new(), Some(LoopPhrase { events }))
             };
             segments.push(LoopSegment {
                 id,
@@ -185,6 +282,7 @@ impl LoopPlan {
                 beats: clock.beats,
                 bars,
                 pitches_hz,
+                phrase,
             });
         }
         if !issues.is_empty() {
@@ -263,7 +361,9 @@ mod tests {
     fn unsupported_or_unclocked_cards_fail_together_without_lossy_subset() {
         let (stage, mut set, clock) = fixture();
         set.cards[0].timing.hold = Hold::Seconds(2.1);
-        set.cards[1].touch = Touch::Walk;
+        set.cards[1].material = Material::Riff {
+            name: "Unknown".into(),
+        };
         let issues = LoopPlan::lower(WorkingSetId(7), "", &set, &stage, &clock).unwrap_err();
         assert_eq!(issues.len(), 2);
         assert_eq!(issues[0].segment.unwrap().card, set.cards[0].id);
@@ -318,5 +418,133 @@ mod tests {
         assert!(plan.segments[0].pitches_hz.is_empty());
         assert_eq!(plan.segments[0].duration_secs(), 4.0);
         assert!(!plan.segments[1].pitches_hz.is_empty());
+        assert!(plan.segments[0].phrase.is_none());
+    }
+
+    fn mixed_phrase_set() -> (StageState, Set) {
+        let mut stage = StageState::new();
+        stage.set_lens(Lens::Chords);
+        let mut block = stage.card_from_lens().unwrap();
+        block.timing.hold = Hold::Bars(2);
+        let mut arpeggio = block.clone();
+        arpeggio.touch = Touch::Arpeggiate {
+            direction: crate::ArpeggioDirection::UpDown,
+            inversion: 0,
+        };
+        arpeggio.label = "Chord arpeggio".into();
+        let mut set = Set::default();
+        set.push(block);
+        set.push(arpeggio);
+
+        stage.set_lens(Lens::Scales);
+        let mut walk = stage.card_from_lens().unwrap();
+        walk.timing.hold = Hold::Bars(2);
+        walk.touch = Touch::Walk;
+        walk.label = "Scale walk".into();
+        set.push(walk.clone());
+
+        let dots = stage.dots_for_card(&walk);
+        assert!(dots.len() >= 2);
+        let mut path = walk;
+        path.material = Material::Path {
+            positions: vec![
+                (dots[0].string_index, dots[0].fret),
+                (dots[1].string_index, dots[1].fret),
+                (dots[0].string_index, dots[0].fret),
+            ],
+            root: woodshedding::pitch::PitchClass::new(9),
+        };
+        path.label = "Repeated path".into();
+        set.push(path);
+        (stage, set)
+    }
+
+    #[test]
+    fn mixed_material_and_touch_lowering_preserves_block_and_ordered_phrase_identity() {
+        let (stage, set) = mixed_phrase_set();
+        let mut clock = LooperConfig {
+            beats: 3,
+            ..Default::default()
+        };
+        let three = LoopPlan::lower(WorkingSetId(7), "mixed", &set, &stage, &clock).unwrap();
+        assert!(three.segments[0].phrase.is_none());
+        assert!(!three.segments[0].pitches_hz.is_empty());
+        for segment in &three.segments[1..] {
+            assert!(segment.pitches_hz.is_empty());
+            assert!(
+                segment
+                    .phrase
+                    .as_ref()
+                    .is_some_and(|phrase| !phrase.events.is_empty())
+            );
+            assert!(segment.phrase.as_ref().unwrap().events.iter().all(|event| {
+                event.beat >= 0.0 && event.beat < f64::from(segment.beats * segment.bars)
+            }));
+        }
+        let path_id = three.segments[3].id;
+        let path_events = &three.segments[3].phrase.as_ref().unwrap().events;
+        assert_eq!(path_events[0].pitches_hz, path_events[2].pitches_hz);
+
+        clock.beats = 7;
+        let seven = LoopPlan::lower(WorkingSetId(7), "mixed", &set, &stage, &clock).unwrap();
+        let path_seven = seven
+            .segments
+            .iter()
+            .find(|segment| segment.id == path_id)
+            .unwrap();
+        let mut path_set = Set::default();
+        path_set.push(set.cards[3].clone());
+        let original = stage.practice_program(&path_set, 120.0);
+        let expected = &original.cards[0].events;
+        let actual = &path_seven.phrase.as_ref().unwrap().events;
+        assert_eq!(actual.len(), expected.len());
+        for (actual, expected) in actual.iter().zip(expected) {
+            assert_eq!(actual.pitches_hz, expected.pitches);
+            assert_eq!(actual.beat, expected.at * 7.0 / 4.0);
+            assert_eq!(actual.strum_seconds, expected.strum_seconds);
+        }
+        assert!(actual.last().unwrap().beat < 14.0);
+    }
+
+    #[test]
+    fn phrase_cards_reject_manual_seconds_reps_and_eventless_riffs_together() {
+        let (stage, mut set) = mixed_phrase_set();
+        set.cards[1].timing.hold = Hold::Manual;
+        set.cards[2].timing.hold = Hold::Seconds(2.0);
+        set.cards[3].timing.hold = Hold::Reps(2);
+        set.cards[0].material = Material::Riff {
+            name: "Known".into(),
+        };
+        let issues = LoopPlan::lower(WorkingSetId(7), "", &set, &stage, &LooperConfig::default())
+            .unwrap_err();
+        assert_eq!(issues.len(), 4);
+        assert!(issues.iter().all(|issue| issue.segment.is_some()));
+    }
+
+    #[test]
+    fn phrase_shape_failures_are_reported_without_substituting_stage_shape() {
+        let (stage, mut set) = mixed_phrase_set();
+        set.cards[1].setting.voicing_idx = Some(usize::MAX);
+        let issues = LoopPlan::lower(WorkingSetId(7), "", &set, &stage, &LooperConfig::default())
+            .unwrap_err();
+        assert!(issues.iter().any(|issue| issue.segment
+            == Some(LoopSegmentId {
+                set: WorkingSetId(7),
+                card: set.cards[1].id
+            })));
+
+        set.cards[1].setting.voicing_idx = None;
+        let before = set.cards[1].id;
+        let mut other_set = set.clone();
+        other_set.cards.retain(|card| card.id == before);
+        let plan = LoopPlan::lower(
+            WorkingSetId(8),
+            "",
+            &other_set,
+            &stage,
+            &LooperConfig::default(),
+        );
+        assert!(plan.is_ok());
+        assert_eq!(plan.unwrap().segments[0].id.card, before);
     }
 }

@@ -808,6 +808,7 @@ mod tests {
                 beats: 3,
                 bars: 2,
                 pitches_hz: vec![220.0, 277.182_62, 329.627_56],
+                phrase: None,
             }],
         }
     }
