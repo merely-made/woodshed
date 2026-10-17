@@ -1,0 +1,96 @@
+# One real mixed Set, driven by the existing output processor. Checkpoints
+# compare current source/history to the isolated sealed store.
+settle 90
+ui-zoom 1
+assert snap practice-saved == true
+act p6-mixed-set-example
+settle 5
+assert snap set-cards == 3
+assert text Current
+click .rehearsal-loop-mode
+assert snap p6-loop-mode == all
+click .rehearsal-run
+act p6-await-set-loop
+wait 6000
+assert snap p5clock-card-index == 0
+act p6-checkpoint set-loop
+
+# The focused Run button activates via Space. Loop edits retain that paused
+# device position, then Card mode repeats only the focused occurrence.
+key Space
+settle 3
+assert snap p5clock-paused == true
+assert snap p5clock-status == paused
+act p5clock-save-paused
+capture 01_mixed_set_paused_context
+click .rehearsal-loop-mode
+assert snap p6-loop-mode == card
+act p5clock-await-paused-hold
+wait 2000
+act p5clock-check-paused
+click .rehearsal-run
+act p6-await-card-loop
+wait 5000
+assert snap p5clock-card-index == 0
+act p6-checkpoint card-loop
+click .pill Tools
+settle 4
+assert snap rehearsal-running == true
+click .workspace-panel Set
+settle 4
+click .rehearsal-stop
+settle 4
+assert snap rehearsal-running == false
+click .rehearsal-run
+act p6-await-chord
+wait 2000
+click .rehearsal-run
+settle 3
+
+# Tab and Enter select Next while paused. Direct filmstrip selection is also
+# an epoch-fenced seek and must not start or credit the chosen Card yet.
+key Tab
+key Tab
+key Enter
+settle 4
+assert snap p5clock-card-index == 1
+assert snap p5clock-status == paused
+click .film-label Guided arpeggio
+settle 4
+assert snap p5clock-card-index == 2
+assert snap p5clock-status == paused
+capture 02_paused_seek_to_arpeggio
+click .rehearsal-run
+act p6-await-arpeggio
+wait 2000
+click .t-btn Hold:
+settle 4
+assert snap rehearsal-running == false
+assert text start Run again
+capture 03_edit_stops_old_source
+
+# Reps -> Manual is a visible Card edit. A fresh explicit Run admits it;
+# Manual waits for Next, including across pause and compact layout.
+click .rehearsal-run
+act p6-await-manual
+wait 10000
+assert snap p5clock-status == waiting_manual
+assert text waiting for Next
+capture 04_manual_waiting_for_next
+key Space
+settle 3
+assert snap p5clock-status == paused
+assert text Resume or Next
+resize 420 1100
+settle 6
+capture 05_compact_paused_manual
+key Tab
+key Tab
+key Enter
+act p6-await-complete
+wait 2000
+assert snap rehearsal-running == false
+assert snap practice-saved == true
+act p6-checkpoint final
+capture 06_completed_mixed_set
+log P6 guided runner seed complete

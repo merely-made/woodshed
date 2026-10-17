@@ -2034,9 +2034,9 @@ own scopes.
 
 ### P6. Finish Rehearsal as the guided Set runner
 
-**Current state: partial, still open.** A guided runner exists, but the mixed
-Set, articulation, edit recovery, and keyboard acceptance conditions have not
-all been re-receipted as one flow.
+**Status (2026-10-17): in progress.** P5's output-clock transport is qualified.
+This pass completes runner context/progress and focused Card looping, then
+qualifies mixed-Set playback, edit recovery and keyboard operation together.
 
 Rehearsal streams the current Set with previous/current/next context, a large
 instrument view, transport, Card progress, and loop controls. It supports Set
@@ -2046,6 +2046,29 @@ the shared Set controls. Tool panels may open without leaving the rehearsal.
 Done when a mixed Set can run from first Card to last, loop according to the
 selected mode, articulate sequences in sync, recover predictably after edits,
 and remain fully operable by keyboard.
+
+The bounded implementation and acceptance sequence is:
+
+- Add the retained `Card` loop choice beside `Off` and `All`. Automatic timed
+  completion repeats the current Card; explicit Next advances, Prev and direct
+  selection seek, and Manual continues to require explicit Next. Loop edits
+  preserve the current device position. Existing Off/All data retains its meaning.
+- Project previous/current/next context and current-Card progress from the
+  matching owner/Card clock observation. Beats use the host's published tick
+  scale; Seconds use device frames. Manual displays its explicit waiting state.
+  Selection while running uses the same epoch-fenced seek as transport controls.
+- Keep the shared Card editor and tools available. Material/order edits stop
+  the old run and expose the existing recovery notice; only a new explicit Run
+  lowers corrected source. BPM edits retain P5's phase-preserving behavior.
+- Prove Tab and Enter/Space operation through the shipping focusable controls,
+  including safe text editing. Run one mixed chord/scale/arpeggio Set through
+  automatic progression, both loop choices, Manual Next and correction/restart;
+  review native wide/compact captures and exact sealed fresh-process reopening.
+
+Preservation/input integration `cec2213` precedes this work. Its root, Hocket
+and Redshank CPU/build receipt remains separate from native preservation and
+the P6 runner receipt. Incoming-custody failure and deliberately held codec
+workers retain their test-only qualification unless observed in a native run.
 
 ### P7. Rebuild Song as Looper over Set
 
@@ -2154,6 +2177,23 @@ receipts are recorded before those platforms are advertised.
   are outside this plan.
 
 ## Findings
+
+- **2026-10-17, P6:** Rehearsal's filmstrip directly changed `Set.cursor`, which
+  the next device observation could overwrite. Selection now queues the same
+  epoch-fenced seek as Prev. Processor navigation also retains pause across
+  repeated Next and seeks; an unheard selection receives no Started history
+  until Resume. `LoopMode::Card` repeats automatic timed completion while
+  explicit Next leaves the Card. The portable projection carries its host's
+  tick scale, so progress does not assume an audio-specific unit. Existing
+  Cambium focusable controls supply Tab/Enter/Space; native buttons add semantic
+  labels. Manual progress describes events and explicit Next, rather than
+  inventing a timed completion during its tail or pause.
+- **2026-10-17, preservation integration follow-through:** Frame-originated
+  scenario completion could bypass Woodshed's dispatch/native close guard in
+  `woodshed-genet/src/main.rs`. Both dispatch and frame exits now share
+  `guard_requested_close`; a production-hook regression retains quarantined
+  source and bytes until explicit discard. This correction extends the
+  preservation integration and is qualified with the P6 native candidate.
 
 - The existing portable `Set` and `Card` model already carries material,
   setting, touch, timing, provenance, cursor, and loop mode.

@@ -5,8 +5,8 @@
 //! does not persist clock state.
 
 use super::UiState;
-use woodshed_core::history::EngagementKind;
 use woodshed_core::PracticeProgram;
+use woodshed_core::history::EngagementKind;
 use woodshedding::rehearsal::{Card, CardId};
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -39,6 +39,8 @@ pub struct PracticeClockObservation {
     pub active_frames: u64,
     pub sample_rate: u32,
     pub beat_ticks: u64,
+    /// Scale supplied by the audio host; views do not assume its tick unit.
+    pub ticks_per_beat: u64,
     pub card_frames: u64,
     pub status: PracticeClockStatus,
 }
@@ -55,6 +57,7 @@ pub struct PracticeClockProjection {
     pub active_frames: u64,
     pub sample_rate: u32,
     pub beat_ticks: u64,
+    pub ticks_per_beat: u64,
     pub card_frames: u64,
     pub status: PracticeClockStatus,
 }
@@ -114,14 +117,13 @@ impl UiState {
     }
 
     pub(super) fn validate_live_clock_source(&self) -> Result<(), String> {
-        let owner = self
-            .rehearsal_owner
-            .ok_or_else(|| "The rehearsal Set owner is unavailable; stop and start Run again.".to_string())?;
+        let owner = self.rehearsal_owner.ok_or_else(|| {
+            "The rehearsal Set owner is unavailable; stop and start Run again.".to_string()
+        })?;
         let source_order = &self.rehearsal_clock_source_order;
-        let set = self
-            .working_sets
-            .get(owner, &self.set)
-            .ok_or_else(|| "The rehearsal Set owner was removed; stop and start Run again.".to_string())?;
+        let set = self.working_sets.get(owner, &self.set).ok_or_else(|| {
+            "The rehearsal Set owner was removed; stop and start Run again.".to_string()
+        })?;
         let live_order = set.cards.iter().map(|card| card.id).collect::<Vec<_>>();
         if live_order != *source_order {
             return Err("The rehearsed Set order changed; stop and start Run again.".into());
@@ -160,6 +162,7 @@ impl UiState {
         if !self.practice_clock_managed
             || !self.rehearsal_running
             || observation.sample_rate == 0
+            || observation.ticks_per_beat == 0
             || !matches!(
                 observation.status,
                 PracticeClockStatus::Playing
@@ -195,6 +198,7 @@ impl UiState {
         self.rehearsal_observed_midi = None;
         self.rehearsal_observed_card = Some(card.clone());
         self.practice_clock_projection = Some(self.projection_for(&observation, card.id));
+        self.card_timing_notice = None;
         self.open_practice_history(&card, observation.owner);
         true
     }
@@ -205,6 +209,7 @@ impl UiState {
     pub fn observe_practice_clock(&mut self, observation: PracticeClockObservation) -> bool {
         if !self.practice_clock_managed
             || observation.sample_rate == 0
+            || observation.ticks_per_beat == 0
             || !self.clock_observation_matches(&observation)
         {
             return false;
@@ -391,6 +396,7 @@ impl UiState {
             active_frames: observation.active_frames,
             sample_rate: observation.sample_rate,
             beat_ticks: observation.beat_ticks,
+            ticks_per_beat: observation.ticks_per_beat,
             card_frames: observation.card_frames,
             status: observation.status,
         }
@@ -507,9 +513,9 @@ fn same_card_without_bpm(a: &Card, b: &Card) -> bool {
 
 #[cfg(test)]
 mod tests {
-    use woodshedding::rehearsal::Set;
     use super::super::UiState;
     use super::*;
+    use woodshedding::rehearsal::Set;
     use woodshedding::rehearsal::{Hold, Material, Timing};
 
     fn managed_ui() -> UiState {
@@ -562,6 +568,7 @@ mod tests {
             active_frames: 0,
             sample_rate: 48_000,
             beat_ticks: 0,
+            ticks_per_beat: 960,
             card_frames: 0,
             status: PracticeClockStatus::Playing,
         };
@@ -597,6 +604,7 @@ mod tests {
             active_frames: 0,
             sample_rate: 48_000,
             beat_ticks: 0,
+            ticks_per_beat: 960,
             card_frames: 0,
             status: PracticeClockStatus::Paused,
         };
@@ -629,6 +637,7 @@ mod tests {
             active_frames: 0,
             sample_rate: 48_000,
             beat_ticks: 0,
+            ticks_per_beat: 960,
             card_frames: 0,
             status: PracticeClockStatus::Playing,
         }));
@@ -706,6 +715,7 @@ mod tests {
             active_frames: 0,
             sample_rate: 48_000,
             beat_ticks: 0,
+            ticks_per_beat: 960,
             card_frames: 0,
             status: PracticeClockStatus::Playing,
         }));
@@ -750,6 +760,7 @@ mod tests {
             active_frames: 0,
             sample_rate: 48_000,
             beat_ticks: 0,
+            ticks_per_beat: 960,
             card_frames: 0,
             status: PracticeClockStatus::Playing,
         };

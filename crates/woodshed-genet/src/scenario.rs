@@ -46,6 +46,7 @@ use crate::shared::Shared;
 use crate::sync::Ctx;
 
 mod practice_clock;
+mod guided_rehearsal;
 
 /// Product commands and observations; Mesquite owns the frame pump and captures.
 pub struct Product {
@@ -109,7 +110,10 @@ impl mesquite::Product for Product {
         .snapshot()
         .with_field("take-playback-observed", self.take_playback_wait.as_ref()
             .is_some_and(|(_, _, observed)| observed.get()).to_string());
-        practice_clock::extend_snapshot(snapshot, ctx.runner.state(), &self.shared.borrow())
+        guided_rehearsal::extend_snapshot(
+            practice_clock::extend_snapshot(snapshot, ctx.runner.state(), &self.shared.borrow()),
+            ctx.runner.state(),
+        )
     }
     fn drain_events(&mut self, _: &mut Ctx<'_>) -> Vec<String> {
         std::mem::take(&mut self.shared.borrow_mut().events)
@@ -198,6 +202,9 @@ impl mesquite::Product for Product {
         )
     }
     fn act(&mut self, ctx: &mut Ctx<'_>, label: &str) -> bool {
+        if let Some(result) = guided_rehearsal::act(ctx, &self.shared, label) {
+            return result;
+        }
         if let Some(result) = practice_clock::product_act(self, ctx, label) {
             return result;
         }

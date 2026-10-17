@@ -755,6 +755,7 @@ enum ProgramPendingAction {
     None,
     CardStarted,
     NextCard,
+    AdvanceCard,
     Seek(usize),
     Stop,
 }
@@ -955,6 +956,7 @@ impl Processor {
                 self.program_status = ProgramStatus::Playing;
             },
             ProgramPendingAction::NextCard => self.move_program_card(None),
+            ProgramPendingAction::AdvanceCard => self.advance_program_card(),
             ProgramPendingAction::Seek(card) => self.move_program_card(Some(card)),
             ProgramPendingAction::Stop => {
                 for voice in &mut self.program_voices {
@@ -972,6 +974,7 @@ impl Processor {
     }
 
     fn apply_program_control(&mut self, control: DeferredProgramControl) {
+        let was_paused = self.program_status == ProgramStatus::Paused;
         match control {
             DeferredProgramControl::Seek(card) if self.program_card_started => {
                 let _ = self.program_transition(
@@ -987,6 +990,15 @@ impl Processor {
                 );
             },
             DeferredProgramControl::Stop => self.apply_program_action(ProgramPendingAction::Stop),
+        }
+        if was_paused
+            && !matches!(
+                self.program_status,
+                ProgramStatus::Stopped | ProgramStatus::Complete | ProgramStatus::WaitingObserver
+            )
+        {
+            self.program_resume_after_pause = self.program_status;
+            self.program_status = ProgramStatus::Paused;
         }
     }
 
@@ -1074,6 +1086,16 @@ impl Processor {
                 self.program_status = ProgramStatus::WaitingObserver;
                 false
             },
+        }
+    }
+
+    /// Explicit Next leaves a focused Card repeat. Automatic completion alone
+    /// consults that repeat mode; Set-wide looping still wraps at the boundary.
+    fn advance_program_card(&mut self) {
+        if self.program_loop_mode == ProgramLoop::Card {
+            self.move_program_card(Some(self.program_card_index.saturating_add(1)));
+        } else {
+            self.move_program_card(None);
         }
     }
 
@@ -1249,26 +1271,26 @@ impl Processor {
         }
         if self.program_advance {
             self.program_advance = false;
+            let was_paused = self.program_status == ProgramStatus::Paused;
             if self.program_card_started {
-                let was_paused = self.program_status == ProgramStatus::Paused;
                 let _ = self.program_transition(
                     ProgramTransitionKind::Ended(ProgramEndReason::Completed),
-                    ProgramPendingAction::NextCard,
+                    ProgramPendingAction::AdvanceCard,
                 );
                 if self.program_status == ProgramStatus::WaitingObserver {
                     return false;
                 }
-                if was_paused
-                    && !matches!(
-                        self.program_status,
-                        ProgramStatus::Stopped | ProgramStatus::Complete
-                    )
-                {
-                    self.program_resume_after_pause = self.program_status;
-                    self.program_status = ProgramStatus::Paused;
-                }
             } else {
-                self.move_program_card(None);
+                self.advance_program_card();
+            }
+            if was_paused
+                && !matches!(
+                    self.program_status,
+                    ProgramStatus::Stopped | ProgramStatus::Complete
+                )
+            {
+                self.program_resume_after_pause = self.program_status;
+                self.program_status = ProgramStatus::Paused;
             }
         }
         if self.program_status != ProgramStatus::Playing || self.program.is_none() {

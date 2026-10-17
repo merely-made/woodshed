@@ -19,6 +19,8 @@ before any other doc in this directory.
 
 ## Active Plans
 
+- [P6 guided Rehearsal runner](2026-07-11_stage_set_tools_plan.md#p6-finish-rehearsal-as-the-guided-set-runner) — October 17 implementation: previous/current/next context, output-clock Card progress, focused Card looping and paused navigation, keyboard controls and explicit edit recovery. Native mixed-Set/reopen qualification is in progress after preservation integration `cec2213`.
+
 - [Preservation and input admission](2026-10-16_preservation_input_admission_plan.md) — First audit-remediation pass: outgoing-work preservation, checked history/Set/project input, and nonwriting failed recovery. Integrated onto P5 October 17; 1,355 passing cases plus five child invocations and three desktop builds. Native qualification is separately owned. [Current integration receipt](../validation/preservation-input_20261017/integration.json); [isolated implementation receipt](../validation/preservation-input_20261016/receipt.json).
 
 - [P5 shared clock and visual articulation](2026-07-11_stage_set_tools_plan.md#p5-unify-the-clock-and-visual-articulation) — Qualified October 17: one processor clock for Card dwell, click, articulation and Fretboard event projection; preserved pause/resume and tempo phase, absolute Seconds, Manual Next and accepted-start history. 881 cases plus five child invocations, desktop build and five reviewed native Rehearsal/reopen captures with exact sealed Cards, owner and six history rows. [Receipt](../validation/stage-p5_20261017/receipt.json).

@@ -275,6 +275,106 @@ fn manual_program_keeps_started_span_open_until_explicit_advance() {
 }
 
 #[test]
+fn focused_card_auto_repeats_but_explicit_next_leaves_it_even_while_paused() {
+    let mut r = runtime();
+    let mut plan = program_with_card_count(2, ProgramEnd::DeviceFrames(10), 120.0);
+    plan.loop_mode = ProgramLoop::Card;
+    let epoch = r.start_program(r.prepare_program(plan).unwrap()).unwrap();
+    r.service().unwrap();
+    render(&mut r, 35);
+    assert_eq!(r.snapshot().program.card_index, 0);
+    let transitions = r.drain_program_transitions();
+    assert!(
+        transitions
+            .iter()
+            .filter(|t| t.kind == ProgramTransitionKind::Started)
+            .count()
+            >= 3
+    );
+    assert!(transitions.iter().all(|t| t.card_token == 10_000));
+    r.pause_program(epoch).unwrap();
+    r.service().unwrap();
+    render(&mut r, 1);
+    r.advance_program(epoch).unwrap();
+    r.service().unwrap();
+    render(&mut r, 1);
+    let selected = r.snapshot().program;
+    assert_eq!(selected.card_index, 1);
+    assert_eq!(selected.status, ProgramStatus::Paused);
+    assert!(
+        !r.drain_program_transitions()
+            .iter()
+            .any(|t| t.card_token == 10_001 && t.kind == ProgramTransitionKind::Started)
+    );
+    r.resume_program(epoch).unwrap();
+    r.service().unwrap();
+    render(&mut r, 35);
+    assert_eq!(r.snapshot().program.card_index, 1);
+    assert!(
+        r.drain_program_transitions()
+            .iter()
+            .filter(|t| t.card_token == 10_001 && t.kind == ProgramTransitionKind::Started)
+            .count()
+            >= 3
+    );
+    r.advance_program(epoch).unwrap();
+    r.service().unwrap();
+    render(&mut r, 1);
+    assert_eq!(r.snapshot().program.status, ProgramStatus::Complete);
+}
+
+#[test]
+fn repeated_paused_navigation_never_starts_an_unheard_card_before_resume() {
+    let mut r = runtime();
+    let epoch = r
+        .start_program(
+            r.prepare_program(program_with_card_count(
+                4,
+                ProgramEnd::DeviceFrames(10_000),
+                120.0,
+            ))
+            .unwrap(),
+        )
+        .unwrap();
+    r.service().unwrap();
+    render(&mut r, 10);
+    r.drain_program_transitions();
+    r.pause_program(epoch).unwrap();
+    r.service().unwrap();
+    render(&mut r, 1);
+    for target in [1, 2] {
+        r.advance_program(epoch).unwrap();
+        r.service().unwrap();
+        render(&mut r, 1);
+        assert_eq!(r.snapshot().program.card_index, target);
+        assert_eq!(r.snapshot().program.status, ProgramStatus::Paused);
+    }
+    for target in [0, 3] {
+        r.seek_program(epoch, target).unwrap();
+        r.service().unwrap();
+        render(&mut r, 1);
+        assert_eq!(r.snapshot().program.card_index, target);
+        assert_eq!(r.snapshot().program.status, ProgramStatus::Paused);
+    }
+    assert!(
+        !r.drain_program_transitions()
+            .iter()
+            .any(|t| t.kind == ProgramTransitionKind::Started)
+    );
+    r.resume_program(epoch).unwrap();
+    r.service().unwrap();
+    render(&mut r, 1);
+    let started = r.drain_program_transitions();
+    assert_eq!(
+        started
+            .iter()
+            .filter(|t| t.kind == ProgramTransitionKind::Started && t.card_token == 10_003)
+            .count(),
+        1
+    );
+}
+
+#[test]
 fn explicit_next_completes_a_timed_card_once_and_starts_the_next_card() {
     let mut r = runtime();
     let epoch = r

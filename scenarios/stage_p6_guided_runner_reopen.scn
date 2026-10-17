@@ -1,0 +1,14 @@
+settle 90
+ui-zoom 1
+assert snap practice-saved == true
+assert snap practice-save-problem == false
+assert snap set-cards == 3
+assert snap rehearsal-running == false
+assert snap p5clock-status == stopped
+assert snap p6-loop-mode == card
+act p6-verify-reopen
+capture 01_exact_guided_set_reopened
+resize 420 1100
+settle 6
+capture 02_compact_guided_set_reopened
+log P6 exact sealed fresh-process reopen complete
