@@ -1850,6 +1850,44 @@ captures, but their notices remain readable. Physical audibility/latency,
 broader responsive polish and the full P5 clock retain their separate gates.
 
 
+#### Catalog/discovery audition admission history (2026-10-16)
+
+**Status: in progress on refreshed `d3a1350`; bounded follow-through to P5a.**
+Catalog Hear and discovery previews currently record `Previewed` before the
+host's fallible audio admission. Freeze subject, source relation and exact
+event-time Card/owner provenance with each requested sound. Only the actual
+control-side acceptance records the observation, once per explicit request.
+Refusal, unavailable output and stale-session results earn no history; they
+remain visibly retryable without altering authored material.
+
+Separate Hear presses are independent even within one frame. Focus, navigation
+and same-session edits cannot redirect the frozen sound or its observation.
+Replacing the practice session invalidates queued requests and results. An
+older result cannot replace the newest audition notice. Empty or malformed
+pitch vectors must not turn the runtime's generic no-op into a successful
+audition observation. Preserve the existing exact timing/resource admission,
+one OutputRuntime, Card/Run history and generic AudioBackend convenience API.
+
+Phases: migrate the current immediate history writers and catalog context
+auditions; verify frozen acceptance/refusal/duplicate/session replacement with
+focused view and actual host controls; build and exercise real native acceptance,
+refusal/retry and exact sealed history reopening; reconcile evidence and publish
+directly to main after refreshing concurrent work. Ordered relation-pair
+`PreviewPhrase` history and the full shared P5 event clock stay separate.
+
+**Implementation and source checks (2026-10-16):** all immediate catalog and
+discovery `Previewed` writers now queue frozen observations. Generic context
+focus auditions also retain their formula/setup provenance. Session-bound,
+one-use tickets govern both host dispatch paths; only the newest result can
+change the audition notice. The actual Cpal path refuses empty, nonfinite or
+partially invalid pitch vectors before delegating to exact output admission.
+The affected core/view/host gate passes 676 suite/integration cases plus five
+separate child-process invocations, with seven existing host ignores. This
+includes frozen attribution, repeated presses/results, refusal/retry, current
+versus replaced sessions, and production offline output refusal preservation.
+Independent source review found no blocking defect. Desktop/native and exact
+sealed history reopening remain pending.
+
 ### P6. Finish Rehearsal as the guided Set runner
 
 **Current state: partial, still open.** A guided runner exists, but the mixed
