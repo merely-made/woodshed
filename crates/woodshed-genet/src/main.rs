@@ -124,6 +124,19 @@ fn desktop_root(ui: &UiState, commands: &WindowCommands) -> UiChild {
         .attr("class", "practice-close-panel")
         .attr("role", "alert")
     });
+    let persona_decision = ui.pending_persona_switch.as_ref().map(|pending| {
+        use woodshed_views::persona::SwitchDecision;
+        el("section", (
+            el("h3", text_node("Keep outgoing practice before switching persona")),
+            el("p", text_node(pending.notice.clone())),
+            clickable(el("button", text_node("Retry save and switch")).attr("class", "t-btn persona-save-retry"),
+                |ui: &mut UiState, _| if let Some(pending) = &mut ui.pending_persona_switch { pending.decision = Some(SwitchDecision::Retry); }),
+            clickable(el("button", text_node("Discard unsaved changes and switch")).attr("class", "t-btn persona-save-discard"),
+                |ui: &mut UiState, _| if let Some(pending) = &mut ui.pending_persona_switch { pending.decision = Some(SwitchDecision::Discard); }),
+            clickable(el("button", text_node("Cancel switch")).attr("class", "t-btn persona-save-cancel"),
+                |ui: &mut UiState, _| if let Some(pending) = &mut ui.pending_persona_switch { pending.decision = Some(SwitchDecision::Cancel); }),
+        )).attr("class", "practice-close-panel").attr("role", "alert")
+    });
     let draft_close = commands.clone();
     let draft_decision = ui.arrangement_editor.close_pending.then(|| {
         el(
@@ -153,7 +166,7 @@ fn desktop_root(ui: &UiState, commands: &WindowCommands) -> UiChild {
     Box::new(
         el(
             "div",
-            (desktop_chrome(commands), decision, draft_decision, stage_root(ui)),
+            (desktop_chrome(commands), decision, persona_decision, draft_decision, stage_root(ui)),
         )
         .attr("class", "desktop-frame"),
     )
@@ -166,6 +179,9 @@ fn prepare_close(
     ctx: &mut Ctx<'_>,
 ) -> cambium_genet_winit_host::CloseDisposition {
     use cambium_genet_winit_host::CloseDisposition;
+    if ctx.runner.state().pending_persona_switch.is_some() {
+        return CloseDisposition::KeepVisible;
+    }
     if ctx.runner.state().arrangement_editor.dirty() {
         ctx.runner.update(|ui| ui.arrangement_editor.close_pending = true);
         return CloseDisposition::KeepVisible;
@@ -470,6 +486,7 @@ fn hooks(shared: &Rc<RefCell<Shared>>) -> HostHooks<UiState, Logic, UiChild> {
                     capture_persistence::persist_if_changed(&mut shared, ui);
                 });
             }
+            persona::resume_switch(&mut shared, ctx);
             if wake_close_requested.get()
                 && !shared.capture_persistence.preparation_busy()
                 && wav_export::close_request(&mut shared, ctx).is_none()

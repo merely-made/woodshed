@@ -17,7 +17,7 @@ fn make_state(project: ActorHandle<ProjectRequest>) -> AppState {
         true,
     )
 }
-fn fixture() -> (AppState, Receiver<ProjectRequest>) {
+pub(super) fn fixture() -> (AppState, Receiver<ProjectRequest>) {
     let (worker, requests) = armillary::spawn::<ProjectRequest, ProjectRequest, _>(
         Arc::new(|| {}),
         |commands, updates| {
@@ -28,10 +28,10 @@ fn fixture() -> (AppState, Receiver<ProjectRequest>) {
     );
     (make_state(worker), requests)
 }
-fn next(requests: &Receiver<ProjectRequest>) -> ProjectRequest {
+pub(super) fn next(requests: &Receiver<ProjectRequest>) -> ProjectRequest {
     requests.recv_timeout(Duration::from_secs(5)).unwrap()
 }
-fn save(state: &AppState, path: &str) -> ProjectCommand {
+pub(super) fn save(state: &AppState, path: &str) -> ProjectCommand {
     ProjectCommand::Save {
         path: path.into(),
         saved_head: state.recorder.history.head,
@@ -42,13 +42,13 @@ fn save(state: &AppState, path: &str) -> ProjectCommand {
         media: state.recorder.store.clone(),
     }
 }
-fn reply(request: &ProjectRequest, value: ProjectUpdate) -> ProjectReply {
+pub(super) fn reply(request: &ProjectRequest, value: ProjectUpdate) -> ProjectReply {
     ProjectReply {
         scope: request.scope,
         update: Correlated::new(request.command.request, value),
     }
 }
-fn handoff(state: &AppState) -> (HandoffEnvelope, Ed25519PublicKey) {
+pub(super) fn handoff(state: &AppState) -> (HandoffEnvelope, Ed25519PublicKey) {
     let identity = personae::InMemoryProvider::from_seed([41; 32]);
     let key = identity.master_public_key();
     (
@@ -119,7 +119,7 @@ fn unsolicited_results_never_associate_a_file_or_change_status() {
     assert_eq!(state.project_status_label(), before);
 }
 #[test]
-fn same_session_acceptance_retires_old_save_and_old_failure_cannot_release_new_work() {
+fn same_session_acceptance_waits_for_save_and_old_failure_cannot_release_new_work() {
     let (mut state, requests) = fixture();
     assert!(state.submit_project(save(&state, "old.hock")));
     let old = next(&requests);
@@ -128,6 +128,17 @@ fn same_session_acceptance_retires_old_save_and_old_failure_cannot_release_new_w
     let session = state.recorder.session.id;
     state.accept_incoming();
     assert_eq!(state.recorder.session.id, session);
+    assert_eq!(state.project_scope(), old.scope);
+    assert!(state.incoming.is_some());
+    assert!(state.is_project_io_active());
+    state.apply_project_update(reply(
+        &old,
+        ProjectUpdate::Saved {
+            path: "old.hock".into(),
+            saved_head: state.recorder.history.head,
+        },
+    ));
+    state.retry_preservation();
     assert_ne!(state.project_scope(), old.scope);
     assert!(state.submit_project(save(&state, "new.hock")));
     let current = next(&requests);
@@ -148,7 +159,7 @@ fn same_session_acceptance_retires_old_save_and_old_failure_cannot_release_new_w
             saved_head: state.recorder.history.head,
         },
     ));
-    assert!(state.project_path.is_none());
+    assert_eq!(state.project_label(), "old");
     state.apply_project_update(reply(
         &current,
         ProjectUpdate::Saved {
@@ -348,6 +359,9 @@ fn real_worker_round_trip_connects_save_open_and_handoff_to_the_live_host() {
         path: dir.path().join("saved.hock")
     }));
     state.apply_project_update(updates.recv_timeout(Duration::from_secs(5)).unwrap());
+    assert_eq!(state.project_scope(), before);
+    assert!(state.has_loaded_project());
+    state.discard_for_preservation();
     assert_ne!(state.project_scope(), before);
     assert_eq!(state.recorder.session.tracks.len(), tracks);
     assert!(!state.is_dirty());

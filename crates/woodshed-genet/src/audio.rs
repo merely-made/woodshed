@@ -1104,6 +1104,31 @@ mod tests {
     }
 
     #[test]
+    fn preservation_refuses_an_armed_capture_without_retiring_its_token() {
+        use woodshed_core::storage::SessionStore;
+        use woodshed_views::stage::UiState;
+        let store = SessionStore::new(Box::new(muniment::MemoryBackend::default()) as crate::storage::HostBackend);
+        let shared = crate::shared::Shared::with_store(Some(store), None, None);
+        let mut shared = shared.borrow_mut();
+        let mut ui = UiState::new();
+        shared.backend = Some(backend(Box::new(successful_input)));
+        crate::capture_persistence::begin_session(&mut shared, &ui).unwrap();
+        let audio = shared.backend.as_mut().unwrap();
+        audio.try_set_song(&ui.song).unwrap();
+        audio.song_arm_record(0);
+        assert!(audio.loop_capture_busy());
+        let epoch = ui.audio_session.clone();
+        assert!(matches!(crate::capture_persistence::preserve_request(&mut shared, &mut ui),
+            crate::capture_persistence::Preservation::Blocked(_)));
+        assert!(shared.backend.as_ref().unwrap().loop_capture_busy());
+        assert!(Arc::ptr_eq(&epoch, &ui.audio_session));
+        assert!(crate::capture_persistence::close_request(&mut shared, &mut ui));
+        assert!(ui.practice_close_pending);
+        ui.practice_discard_close = true;
+        assert!(!crate::capture_persistence::close_request(&mut shared, &mut ui));
+    }
+
+    #[test]
     fn ordinary_synchronization_and_polls_do_not_open_microphone() {
         let mut audio = backend(Box::new(|| panic!("unexpected microphone open")));
         for _ in 0..10 {

@@ -630,28 +630,62 @@ pub fn persist(shared: &mut Shared, ui: &mut UiState) {
     crate::session::refresh_save_status(storage, ui);
 }
 
-/// Queue current capture preparation and let the host defer native close until
-/// publication completes. No join or codec execution runs on the UI thread.
+/// Facts used by every host transition that can retire outgoing practice.
+#[derive(Debug, PartialEq, Eq)]
+pub(crate) enum Preservation {
+    Ready,
+    Preparing,
+    Blocked(String),
+}
+
+/// Preserve the outgoing owner before a caller opens incoming custody or exits.
+/// Explicit discard belongs to the caller; it must bypass this write path.
+pub(crate) fn preserve_request(shared: &mut Shared, ui: &mut UiState) -> Preservation {
+    if shared.storage.is_none() {
+        return Preservation::Blocked("This practice has no writable store. Cancel to keep working, or explicitly discard the outgoing changes.".into());
+    }
+    if !session_current(shared, ui) {
+        return Preservation::Blocked("Wait for this practice session to finish restoring, then retry saving.".into());
+    }
+    if ui.arrangement_editor.dirty() {
+        return Preservation::Blocked("Save arrangement drafts before switching, or explicitly discard the outgoing changes.".into());
+    }
+    if shared.backend.as_ref().is_some_and(AudioBackend::loop_capture_busy) {
+        return Preservation::Blocked("Stop recording or armed capture before leaving this practice, or explicitly discard the outgoing changes.".into());
+    }
+    persist(shared, ui);
+    if let Some(storage) = shared.storage.as_ref() {
+        match serde_json::to_string(&ui.app_settings) {
+            Ok(json) => storage.save_settings(&json),
+            Err(error) => storage.session_unconfirmed(format!("Settings could not be encoded: {error}")),
+        }
+        crate::session::refresh_save_status(storage, ui);
+    }
+    if shared.capture_persistence.preparation_busy() {
+        return Preservation::Preparing;
+    }
+    if !ui.practice_saved || ui.practice_save_notice.is_some() {
+        return Preservation::Blocked(ui.practice_save_notice.clone().unwrap_or_else(||
+            "This practice session has not been saved. Choose an unlocked persona to retain it, or explicitly discard it before leaving.".into()));
+    }
+    Preservation::Ready
+}
+
+/// Native close uses the same preservation result as persona replacement.
 pub fn close_request(shared: &mut Shared, ui: &mut UiState) -> bool {
     if ui.practice_discard_close {
         ui.practice_close_pending = false;
         return false;
     }
-    persist(shared, ui);
-    if let Some(storage) = shared.storage.as_ref() {
-        if let Ok(json) = serde_json::to_string(&ui.app_settings) {
-            storage.save_settings(&json);
-        }
-        crate::session::refresh_save_status(storage, ui);
+    match preserve_request(shared, ui) {
+        Preservation::Ready => { ui.practice_close_pending = false; false },
+        Preservation::Preparing => true,
+        Preservation::Blocked(reason) => {
+            ui.practice_close_pending = true;
+            ui.practice_save_notice = Some(reason);
+            true
+        },
     }
-    if shared.capture_persistence.preparation_busy() {
-        return true;
-    }
-    ui.practice_close_pending = !ui.practice_saved || ui.practice_save_notice.is_some();
-    if ui.practice_close_pending && ui.practice_save_notice.is_none() {
-        ui.practice_save_notice = Some("This practice session has not been saved. Choose an unlocked persona to retain it, or explicitly discard it to close.".into());
-    }
-    ui.practice_close_pending
 }
 
 pub fn persist_if_changed(shared: &mut Shared, ui: &mut UiState) {
@@ -1344,6 +1378,44 @@ mod tests {
                 bits(&take.buffer.data)
             );
         }
+    }
+
+    #[test]
+    fn shared_transition_barrier_waits_for_exact_live_capture_publication() {
+        let storage: SessionStore<HostBackend> = SessionStore::new(Box::new(MemoryBackend::default()));
+        let shared = Shared::with_store(Some(storage), Some(PracticeSeal::Sealed {
+            persona: "outgoing".into(), protection: "fixture".into(),
+        }), None);
+        let (mut ui, take) = fixture();
+        let mut shared = shared.borrow_mut();
+        shared.backend = Some(CpalBackend::offline_for_test());
+        begin_session(&mut shared, &ui).unwrap();
+        shared.backend.as_mut().unwrap().restore_loop_captures(vec![take.clone()]).unwrap();
+        shared.backend.as_mut().unwrap().set_loop_plan(&ui.requested_loop_plan().unwrap()).unwrap();
+        let (started, started_rx) = std::sync::mpsc::channel();
+        let (release, release_rx) = std::sync::mpsc::channel();
+        let release_rx = std::sync::Mutex::new(release_rx);
+        shared.capture_persistence.worker = CodecWorker::with_encoder(Arc::new(move |rate, samples| {
+            started.send(()).unwrap();
+            release_rx.lock().unwrap().recv().unwrap();
+            woodshed_core::loop_capture::encode_capture(rate, samples)
+        }));
+        let completed = completion_wake(&mut shared.capture_persistence);
+        let epoch = ui.audio_session.clone();
+        assert_eq!(preserve_request(&mut shared, &mut ui), Preservation::Preparing);
+        await_completion(&started_rx);
+        assert!(Arc::ptr_eq(&epoch, &ui.audio_session));
+        assert!(ui.loop_captures.is_empty());
+        ui.set.cards[0].label = "latest outgoing instruction".into();
+        release.send(()).unwrap();
+        await_completion(&completed);
+        assert_eq!(preserve_request(&mut shared, &mut ui), Preservation::Ready);
+        assert!(Arc::ptr_eq(&epoch, &ui.audio_session));
+        let store = shared.storage.as_ref().unwrap();
+        let restored = woodshed_core::storage::decode_session(&store.load().unwrap()).unwrap().session;
+        assert_eq!(restored.set.cards[0].label, "latest outgoing instruction");
+        let reference = &restored.loop_captures.takes[0];
+        assert_eq!(bits(&store.try_read_capture(restored.loop_captures.namespace.as_deref().unwrap(), reference).unwrap()), bits(&take.buffer.data));
     }
 
     #[test]

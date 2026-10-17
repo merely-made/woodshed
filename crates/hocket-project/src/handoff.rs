@@ -80,6 +80,7 @@ struct UnsignedHandoff<'a> {
 
 #[derive(Debug)]
 pub enum HandoffError {
+    Manifest(hocket_model::PersistenceError),
     Encode(String),
     Decode(String),
     Identity(personae::IdentityError),
@@ -102,6 +103,7 @@ pub enum HandoffError {
 impl std::fmt::Display for HandoffError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
+            Self::Manifest(error) => write!(f, "handoff manifest failed: {error}"),
             Self::Encode(error) => write!(f, "handoff encoding failed: {error}"),
             Self::Decode(error) => write!(f, "handoff decoding failed: {error}"),
             Self::Identity(error) => write!(f, "handoff identity failed: {error}"),
@@ -159,6 +161,7 @@ impl HandoffEnvelope {
         recipient: Ed25519PublicKey,
         identity: &impl IdentityProvider,
     ) -> Result<Self, HandoffError> {
+        bundle.validate().map_err(HandoffError::Manifest)?;
         let references = referenced_media(bundle);
         let missing: BTreeSet<MediaRef> = references
             .iter()
@@ -264,6 +267,7 @@ impl HandoffEnvelope {
             return Err(HandoffError::InvalidSignature);
         }
 
+        self.payload.bundle.validate().map_err(HandoffError::Manifest)?;
         let references = referenced_media(&self.payload.bundle);
         let missing: BTreeSet<MediaRef> = references
             .iter()
@@ -307,6 +311,8 @@ impl ReceivedHandoff {
         local_bundle: &mut ProjectBundle,
         local_media: &mut InMemoryStore,
     ) -> Result<BranchAcceptance, HandoffError> {
+        local_bundle.validate().map_err(HandoffError::Manifest)?;
+        self.bundle.validate().map_err(HandoffError::Manifest)?;
         if local_bundle.session.id != self.bundle.session.id {
             return Err(HandoffError::SessionMismatch);
         }
@@ -356,7 +362,7 @@ impl ReceivedHandoff {
             let buffer = self
                 .media
                 .get(&reference)
-                .expect("received handoff validates all referenced media");
+                .ok_or_else(|| HandoffError::MissingMedia(BTreeSet::from([reference])))?;
             let actual = media.put(&buffer.samples, buffer.sample_rate);
             if actual != reference {
                 return Err(HandoffError::MediaHashMismatch {
@@ -426,6 +432,98 @@ mod tests {
             1,
         );
         ProjectBundle::new(session, history)
+    }
+
+    fn corrupt_history(bundle: &mut ProjectBundle, case: &str) {
+        let h = &mut bundle.history;
+        let head = h.head;
+        match case {
+            "self cycle" => h.nodes.get_mut(&head).unwrap().parent = Some(head),
+            "two node cycle" => {
+                let id = hocket_model::NodeId::new();
+                h.nodes.insert(id, hocket_model::HistoryNode { id, parent: Some(head),
+                    edit: Edit::SetBpm { from: 120.0, to: 90.0 }, timestamp_ms: 4 });
+                h.nodes.get_mut(&head).unwrap().parent = Some(id);
+            }
+            "missing root" => h.root = hocket_model::NodeId::new(),
+            "missing head" => h.head = hocket_model::NodeId::new(),
+            "invalid root" => h.nodes.get_mut(&h.root).unwrap().parent = Some(head),
+            "disconnected" => h.nodes.get_mut(&head).unwrap().parent = None,
+            "key mismatch" => h.nodes.get_mut(&head).unwrap().id = hocket_model::NodeId::new(),
+            _ => unreachable!(),
+        }
+    }
+
+    #[test]
+    fn malformed_graphs_are_refused_by_create_receive_and_accept_without_mutation() {
+        for case in ["self cycle", "two node cycle", "missing root", "missing head",
+            "invalid root", "disconnected", "key mismatch"] {
+            let sender = InMemoryProvider::from_seed([1; 32]);
+            let recipient = InMemoryProvider::from_seed([2; 32]);
+            let (mut local, mut local_media, incoming, incoming_media) = divergent_captures();
+            let mut envelope = HandoffEnvelope::create(&incoming, &incoming_media,
+                recipient.master_public_key(), &sender).unwrap();
+            corrupt_history(&mut envelope.payload.bundle, case);
+            assert!(matches!(HandoffEnvelope::create(&envelope.payload.bundle, &incoming_media,
+                recipient.master_public_key(), &sender), Err(HandoffError::Manifest(_))), "{case}");
+            // Sign the malformed payload as an authenticated hostile peer.
+            // Admission must fail for topology, after signature verification.
+            let unsigned = UnsignedHandoff { format_version: envelope.format_version,
+                session_id: envelope.session_id, sender: &envelope.sender,
+                recipient: envelope.recipient, payload: &envelope.payload };
+            envelope.signature = sender.derive_keypair(&handoff_salt(envelope.session_id)).unwrap()
+                .sign(&cbor_bytes(&unsigned).unwrap()).to_bytes().to_vec();
+            let decoded = HandoffEnvelope::from_bytes(&envelope.to_bytes().unwrap()).unwrap();
+            assert!(matches!(decoded.receive(recipient.master_public_key()),
+                Err(HandoffError::Manifest(_))), "{case}");
+            // Public ReceivedHandoff construction must not bypass validation.
+            let received = ReceivedHandoff { sender: sender.master_public_key(),
+                bundle: envelope.payload.bundle, media: incoming_media };
+            let before = local.clone();
+            let before_media = local_media.clone();
+            assert!(matches!(received.accept_branch(&mut local, &mut local_media),
+                Err(HandoffError::Manifest(_))), "{case}");
+            assert_eq!(local, before, "{case}");
+            assert_eq!(local_media.len(), before_media.len(), "{case}");
+            for phrase in before.session.phrases.values() {
+                assert_eq!(local_media.get(&phrase.media), before_media.get(&phrase.media), "{case}");
+            }
+        }
+    }
+
+    #[test]
+    fn acceptance_rejects_malformed_local_graph_without_mutation() {
+        let (mut local, mut local_media, incoming, incoming_media) = divergent_captures();
+        let received = receive_bundle(&incoming, &incoming_media);
+        corrupt_history(&mut local, "self cycle");
+        let before = local.clone();
+        let before_media = local_media.clone();
+        assert!(matches!(received.accept_branch(&mut local, &mut local_media),
+            Err(HandoffError::Manifest(_))));
+        assert_eq!(local, before);
+        assert_eq!(local_media.len(), before_media.len());
+        for phrase in before.session.phrases.values() {
+            assert_eq!(local_media.get(&phrase.media), before_media.get(&phrase.media));
+        }
+    }
+
+    #[test]
+    fn acceptance_rejects_missing_public_media_without_mutation() {
+        let (mut local, mut local_media, incoming, _) = divergent_captures();
+        let before = local.clone();
+        let before_media = local_media.clone();
+        let received = ReceivedHandoff {
+            sender: InMemoryProvider::from_seed([1; 32]).master_public_key(),
+            bundle: incoming,
+            media: InMemoryStore::new(),
+        };
+        assert!(matches!(received.accept_branch(&mut local, &mut local_media),
+            Err(HandoffError::MissingMedia(_))));
+        assert_eq!(local, before);
+        assert_eq!(local_media.len(), before_media.len());
+        for phrase in before.session.phrases.values() {
+            assert_eq!(local_media.get(&phrase.media), before_media.get(&phrase.media));
+        }
     }
 
     #[test]

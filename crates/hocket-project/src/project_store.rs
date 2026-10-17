@@ -129,6 +129,7 @@ impl<B: Backend> ProjectStore<B> {
         bundle: &ProjectBundle,
         media: &impl MediaStore,
     ) -> Result<(), ProjectStoreError> {
+        bundle.validate()?;
         let references = referenced_media(bundle);
         let missing: BTreeSet<MediaRef> = references
             .iter()
@@ -323,6 +324,43 @@ mod tests {
             1,
         );
         ProjectBundle::new(session, history)
+    }
+
+    #[test]
+    fn invalid_save_and_load_leave_existing_archive_bytes_intact() {
+        block_on(async {
+            let backend = MemoryBackend::new();
+            let project = ProjectStore::new(backend.clone());
+            let mut media = InMemoryStore::new();
+            let valid = bundle_with_one_layer(&mut media);
+            project.save(&valid, &media).await.unwrap();
+            let keys = backend.list("").await.unwrap();
+            let mut before = Vec::new();
+            for key in &keys {
+                before.push((key.clone(), backend.get(key).await.unwrap()));
+            }
+            let mut invalid = ProjectBundle::new(Session::new_default(), History::new());
+            invalid.history.head = hocket_model::NodeId::new();
+            assert!(matches!(project.save(&invalid, &InMemoryStore::new()).await,
+                Err(ProjectStoreError::Manifest(PersistenceError::History(_)))));
+            assert_eq!(backend.list("").await.unwrap(), keys);
+            for (key, bytes) in &before {
+                assert_eq!(backend.get(key).await.unwrap(), *bytes);
+            }
+            // Replace only the manifest to simulate a damaged archive, then
+            // ensure failed load never repairs or prunes its stored bytes.
+            let mut corrupt = Vec::new();
+            ciborium::into_writer(&invalid, &mut corrupt).unwrap();
+            backend.put(MANIFEST_KEY, &corrupt).await.unwrap();
+            assert!(matches!(project.load().await,
+                Err(ProjectStoreError::Manifest(PersistenceError::History(_)))));
+            assert_eq!(backend.get(MANIFEST_KEY).await.unwrap(), Some(corrupt));
+            for (key, bytes) in before {
+                if key != MANIFEST_KEY {
+                    assert_eq!(backend.get(&key).await.unwrap(), bytes);
+                }
+            }
+        });
     }
 
     #[test]
