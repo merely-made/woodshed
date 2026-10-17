@@ -45,6 +45,8 @@ use woodshed_views::stage::{
 use crate::shared::Shared;
 use crate::sync::Ctx;
 
+mod practice_clock;
+
 /// Product commands and observations; Mesquite owns the frame pump and captures.
 pub struct Product {
     shared: Rc<RefCell<Shared>>,
@@ -52,6 +54,7 @@ pub struct Product {
     export_wait: Option<(String, std::time::Instant)>,
     take_playback_wait: Option<(usize, std::time::Instant, std::cell::Cell<bool>)>,
     scenario_cursor_wait: RefCell<Option<ScenarioCursorWait>>,
+    practice_clock_wait: RefCell<Option<practice_clock::Wait>>,
 }
 
 #[derive(Clone, Copy)]
@@ -73,6 +76,7 @@ pub fn from_env(shared: Rc<RefCell<Shared>>) -> Option<mesquite::Lane<Product>> 
                 export_wait: None,
                 take_playback_wait: None,
                 scenario_cursor_wait: RefCell::new(None),
+                practice_clock_wait: RefCell::new(None),
             },
             cambium_genet_winit_host::read_file,
         )
@@ -98,13 +102,14 @@ impl mesquite::Product for Product {
         &self.sheet
     }
     fn snapshot(&self, ctx: &Ctx<'_>, _: usize, _: f32) -> ProbeSnapshot {
-        Snapshot {
+        let snapshot = Snapshot {
             ctx,
             shared: &self.shared.borrow(),
         }
         .snapshot()
         .with_field("take-playback-observed", self.take_playback_wait.as_ref()
-            .is_some_and(|(_, _, observed)| observed.get()).to_string())
+            .is_some_and(|(_, _, observed)| observed.get()).to_string());
+        practice_clock::extend_snapshot(snapshot, ctx.runner.state(), &self.shared.borrow())
     }
     fn drain_events(&mut self, _: &mut Ctx<'_>) -> Vec<String> {
         std::mem::take(&mut self.shared.borrow_mut().events)
@@ -159,8 +164,29 @@ impl mesquite::Product for Product {
                 None => false,
             }
         };
+        let practice_clock_wait = {
+            let mut wait = self.practice_clock_wait.borrow_mut();
+            match wait.as_ref() {
+                Some(wait)
+                    if !wait.matches(
+                        self.shared
+                            .borrow()
+                            .backend
+                            .as_ref()
+                            .and_then(|backend| backend.output_snapshot()),
+                    ) && wait.started.elapsed() < std::time::Duration::from_secs(45) =>
+                {
+                    true
+                }
+                Some(_) => {
+                    *wait = None;
+                    false
+                }
+                None => false,
+            }
+        };
         Some(
-            take_wait || scenario_cursor_wait || export_wait
+            take_wait || scenario_cursor_wait || practice_clock_wait || export_wait
                 || ctx.runner.state().loop_export_busy
                 || capture_pending
                 || self
@@ -172,6 +198,9 @@ impl mesquite::Product for Product {
         )
     }
     fn act(&mut self, ctx: &mut Ctx<'_>, label: &str) -> bool {
+        if let Some(result) = practice_clock::product_act(self, ctx, label) {
+            return result;
+        }
         let scenario_wait = match label {
             "p5a-wait-for-manual" => Some((2, std::time::Duration::from_secs(1))),
             "p5a-wait-on-manual" => Some((2, std::time::Duration::from_secs(2))),
@@ -2303,6 +2332,12 @@ impl Automatable for Probe<'_, '_> {
     }
 
     fn act(&mut self, label: &str) -> bool {
+        if let Some(result) = practice_clock::probe_act(self.ctx, self.shared, label) {
+            if result {
+                crate::sync::after_dispatch(self.shared, self.ctx);
+            }
+            return result;
+        }
         if label == "claims-remember-set" {
             let Ok(fingerprint) = serde_json::to_string(&self.ctx.runner.state().set) else {
                 return false;

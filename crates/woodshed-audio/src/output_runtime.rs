@@ -31,10 +31,16 @@ use std::{
     },
 };
 
+mod clock;
 mod preview;
 mod processor;
 #[cfg(test)]
 mod tests;
+pub use clock::{
+    BEAT_TICKS, PROGRAM_TICKS_PER_BEAT, PreparedProgram, ProgramCard, ProgramDuration, ProgramEnd,
+    ProgramEndReason, ProgramEpoch, ProgramEvent, ProgramLoop, ProgramPlan, ProgramPosition,
+    ProgramSnapshot, ProgramStatus, ProgramToken, ProgramTransition, ProgramTransitionKind,
+};
 use preview::PreviewWorker;
 use processor::{
     ChordCache, Command, CompletedRecording, OutputNode, PreparedBacking, PreparedClick, Recording,
@@ -44,6 +50,11 @@ use processor::{
 pub(crate) const COMMAND_BOUND: usize = 64;
 pub(crate) const MAX_BARS: usize = 256;
 pub(crate) const MAX_PCM_FRAMES: usize = 16_777_216;
+pub(crate) const MAX_PROGRAM_CARDS: usize = 256;
+pub(crate) const MAX_PROGRAM_EVENTS: usize = 4096;
+pub(crate) const MAX_PROGRAM_PCM_FRAMES: usize = 16_777_216;
+pub(crate) const MAX_PROGRAM_VOICES: usize = 256;
+pub(crate) const PROGRAM_TRANSITION_BOUND: usize = 256;
 pub(crate) type Wake = Arc<dyn Fn() + Send + Sync>;
 static RUNTIME_OBSERVATION_IDS: AtomicU64 = AtomicU64::new(1);
 
@@ -76,6 +87,7 @@ pub struct OutputSnapshot {
     pub preview_starts: u64,
     pub click_playing: bool,
     pub click_step: usize,
+    pub program: ProgramSnapshot,
 }
 
 pub struct OutputRuntime {
@@ -87,6 +99,7 @@ pub struct OutputRuntime {
     node: NodeID,
     shared: Arc<Shared>,
     returns: rtrb::Consumer<CompletedRecording>,
+    program_transitions: rtrb::Consumer<ProgramTransition>,
     preview: PreviewWorker,
     song: Song,
     chord_cache: Vec<ChordCache>,
@@ -97,6 +110,8 @@ pub struct OutputRuntime {
     native: bool,
     device_errors: u64,
     last_error: Option<OutputError>,
+    next_program_epoch: u64,
+    active_program_cards: Option<usize>,
 }
 
 impl OutputRuntime {
@@ -137,8 +152,13 @@ impl OutputRuntime {
         valid_rate(rate)?;
         let shared = Arc::new(Shared::default());
         let (return_tx, returns) = rtrb::RingBuffer::new(COMMAND_BOUND);
+        let (program_transition_tx, program_transitions) =
+            rtrb::RingBuffer::new(PROGRAM_TRANSITION_BOUND);
         let node = cx
-            .add_node(OutputNode::new(shared.clone(), return_tx), None)
+            .add_node(
+                OutputNode::new(shared.clone(), return_tx, program_transition_tx),
+                None,
+            )
             .map_err(|e| err(format!("output node: {e:?}")))?;
         cx.connect(node, cx.graph_out_node_id(), &[(0, 0), (0, 1)], false)
             .map_err(|e| err(format!("output wiring: {e:?}")))?;
@@ -151,6 +171,7 @@ impl OutputRuntime {
             node,
             shared,
             returns,
+            program_transitions,
             preview: PreviewWorker::new(),
             song: Song::new(),
             chord_cache: Vec::new(),
@@ -161,6 +182,8 @@ impl OutputRuntime {
             native,
             device_errors: 0,
             last_error: None,
+            next_program_epoch: 0,
+            active_program_cards: None,
         };
         result.set_click_pattern(SequencerPattern::metronome(
             120.0,
@@ -190,6 +213,139 @@ impl OutputRuntime {
     pub fn snapshot(&self) -> OutputSnapshot {
         self.shared.snapshot()
     }
+    /// Validate and prepare the complete disposable schedule on the control
+    /// thread. This does not start playback or mutate a retained song.
+    pub fn prepare_program(&self, plan: ProgramPlan) -> Result<PreparedProgram, OutputError> {
+        PreparedProgram::prepare(plan, self.rate)
+    }
+    /// Start an immutable prepared program at its declared start index.
+    pub fn start_program(
+        &mut self,
+        prepared: PreparedProgram,
+    ) -> Result<ProgramEpoch, OutputError> {
+        if prepared.rate != self.rate {
+            return Err(err(
+                "prepared program sample rate differs from this output runtime",
+            ));
+        }
+        if self.snapshot().playing
+            || self.song.playing
+            || self.capture_requested
+            || self.capture_busy()
+        {
+            return Err(err(
+                "program playback conflicts with backing or capture ownership",
+            ));
+        }
+        if self.preview.busy() || self.snapshot().preview_voices != 0 {
+            return Err(err(
+                "wait for one-shot preview playback to finish before starting a program",
+            ));
+        }
+        if (self.active_program_cards.is_some()
+            && !matches!(
+                self.snapshot().program.status,
+                ProgramStatus::Stopped | ProgramStatus::Complete
+            ))
+            || self.snapshot().program.status == ProgramStatus::Playing
+            || self.snapshot().program.status == ProgramStatus::Paused
+            || self.snapshot().program.status == ProgramStatus::WaitingManual
+            || self.snapshot().program.status == ProgramStatus::Refused
+            || self.snapshot().program.status == ProgramStatus::WaitingObserver
+        {
+            return Err(err("a prepared program already owns the output lane"));
+        }
+        self.next_program_epoch = self.next_program_epoch.wrapping_add(1).max(1);
+        let epoch = ProgramEpoch(self.next_program_epoch);
+        let card_count = prepared.cards.len();
+        self.send(Command::ProgramStart {
+            data: Some(OwnedGc::new(prepared)),
+            epoch,
+        })?;
+        self.active_program_cards = Some(card_count);
+        Ok(epoch)
+    }
+    pub fn pause_program(&mut self, epoch: ProgramEpoch) -> Result<(), OutputError> {
+        self.send(Command::ProgramPause {
+            epoch,
+            paused: true,
+        })
+    }
+    pub fn resume_program(&mut self, epoch: ProgramEpoch) -> Result<(), OutputError> {
+        self.send(Command::ProgramPause {
+            epoch,
+            paused: false,
+        })
+    }
+    pub fn set_program_tempo(
+        &mut self,
+        epoch: ProgramEpoch,
+        card: usize,
+        bpm: f64,
+    ) -> Result<(), OutputError> {
+        if !bpm.is_finite() || bpm <= 0.0 {
+            return Err(err("program tempo must be finite and positive"));
+        }
+        if !self.active_program_cards.is_some_and(|count| card < count) {
+            return Err(err(
+                "program tempo card index is outside the prepared program",
+            ));
+        }
+        let step = bpm * PROGRAM_TICKS_PER_BEAT as f64 * (u32::MAX as f64 + 1.0)
+            / (60.0 * self.rate as f64);
+        if !step.is_finite() || step < 1.0 || step > u64::MAX as f64 {
+            return Err(err(
+                "program tempo is outside the representable output clock range",
+            ));
+        }
+        self.send(Command::ProgramTempo { epoch, card, bpm })
+    }
+    /// Change looping without restarting the current card or re-crediting its
+    /// Started transition. The command is fenced to the current program epoch.
+    pub fn set_program_loop(
+        &mut self,
+        epoch: ProgramEpoch,
+        mode: ProgramLoop,
+    ) -> Result<(), OutputError> {
+        self.send(Command::ProgramLoopMode { epoch, mode })
+    }
+    pub fn advance_program(&mut self, epoch: ProgramEpoch) -> Result<(), OutputError> {
+        if self.snapshot().program.status == ProgramStatus::WaitingObserver {
+            return Err(err("drain pending program transitions before advancing"));
+        }
+        self.send(Command::ProgramAdvance { epoch })
+    }
+    /// Seek to a card in the current program. If accepted seeks accumulate
+    /// behind an observer-blocked transition before that status is published,
+    /// they coalesce to the latest requested destination; a pending stop
+    /// always takes precedence.
+    pub fn seek_program(&mut self, epoch: ProgramEpoch, card: usize) -> Result<(), OutputError> {
+        if !self.active_program_cards.is_some_and(|count| card < count) {
+            return Err(err(
+                "program seek card index is outside the prepared program",
+            ));
+        }
+        if self.snapshot().program.status == ProgramStatus::WaitingObserver {
+            return Err(err("drain pending program transitions before seeking"));
+        }
+        self.send(Command::ProgramSeek { epoch, card })
+    }
+    /// Stop the current program. An accepted stop is retained independently
+    /// of the bounded seek queue and cannot be displaced by observer pressure.
+    pub fn stop_program(&mut self, epoch: ProgramEpoch) -> Result<(), OutputError> {
+        if self.snapshot().program.status == ProgramStatus::WaitingObserver {
+            return Err(err("drain pending program transitions before stopping"));
+        }
+        self.send(Command::ProgramStop { epoch })
+    }
+    /// Drain callback-originated card transitions on the control thread.
+    pub fn drain_program_transitions(&mut self) -> Vec<ProgramTransition> {
+        let mut transitions = Vec::new();
+        while let Ok(transition) = self.program_transitions.pop() {
+            transitions.push(transition);
+        }
+        transitions
+    }
     pub fn last_error(&self) -> Option<&OutputError> {
         self.last_error.as_ref()
     }
@@ -204,6 +360,14 @@ impl OutputRuntime {
         self.preview.busy()
             || self.shared.commands.load(Ordering::Acquire) != 0
             || s.playing
+            || matches!(
+                s.program.status,
+                ProgramStatus::Playing
+                    | ProgramStatus::Paused
+                    | ProgramStatus::WaitingManual
+                    | ProgramStatus::Refused
+                    | ProgramStatus::WaitingObserver
+            )
             || s.click_playing
             || s.recording
             || s.capture_armed
@@ -336,6 +500,9 @@ impl OutputRuntime {
         &mut self,
         handle: &crate::LooperCaptureHandle,
     ) -> Result<(), OutputError> {
+        if self.program_owns_output() {
+            return Err(err("stop the prepared program before attaching capture"));
+        }
         if self.capture_busy() {
             return Err(err("cannot replace a busy input feed"));
         }
@@ -386,6 +553,19 @@ impl OutputRuntime {
     pub fn capture_busy(&self) -> bool {
         self.capture_observation().1
     }
+    fn program_owns_output(&self) -> bool {
+        let status = self.snapshot().program.status;
+        (self.active_program_cards.is_some()
+            && !matches!(status, ProgramStatus::Stopped | ProgramStatus::Complete))
+            || matches!(
+                status,
+                ProgramStatus::Playing
+                    | ProgramStatus::Paused
+                    | ProgramStatus::WaitingManual
+                    | ProgramStatus::Refused
+                    | ProgramStatus::WaitingObserver
+            )
+    }
     pub fn song(&self) -> Song {
         let mut song = self.song.clone();
         let s = self.snapshot();
@@ -400,6 +580,9 @@ impl OutputRuntime {
         song
     }
     pub fn set_song(&mut self, mut song: Song) -> Result<(), OutputError> {
+        if self.program_owns_output() {
+            return Err(err("stop the prepared program before replacing backing"));
+        }
         if self.capture_busy() {
             return Err(err(
                 "cannot replace backing while capture is armed or active",
@@ -503,6 +686,9 @@ impl OutputRuntime {
         Ok(())
     }
     pub fn play(&mut self) -> Result<(), OutputError> {
+        if self.program_owns_output() {
+            return Err(err("stop the prepared program before starting backing"));
+        }
         self.cancel_worker();
         self.send(Command::Playing(true))?;
         self.song.playing = true;
@@ -530,6 +716,9 @@ impl OutputRuntime {
         Ok(())
     }
     pub fn arm_capture(&mut self, bar_idx: usize, seek: bool) -> Result<(), OutputError> {
+        if self.program_owns_output() {
+            return Err(err("stop the prepared program before starting capture"));
+        }
         if !self.capture_attached {
             return Err(err("recording input is not attached"));
         }
@@ -564,6 +753,16 @@ impl OutputRuntime {
         self.send(Command::StopCapture)
     }
     pub fn queue(&mut self, change: PendingChange) -> Result<(), OutputError> {
+        if self.program_owns_output()
+            && matches!(
+                change,
+                PendingChange::SetPlaying(true) | PendingChange::StartRecording { .. }
+            )
+        {
+            return Err(err(
+                "prepared program owns the output lane; stop it before backing playback or capture",
+            ));
+        }
         match change {
             PendingChange::StartRecording { bar_idx } => self.arm_capture(bar_idx, false),
             other => {
@@ -591,15 +790,29 @@ impl OutputRuntime {
     }
     /// Admit an exact resolved Card duration, without generic audition minima.
     /// Refusal happens before cancellation or worker publication.
-    pub fn preview_card_pitches(&mut self, pitches: &[f32], duration: f32, strum_ms: f32) -> Result<(), OutputError> {
+    pub fn preview_card_pitches(
+        &mut self,
+        pitches: &[f32],
+        duration: f32,
+        strum_ms: f32,
+    ) -> Result<(), OutputError> {
+        if self.program_owns_output() {
+            return Err(err(
+                "stop the prepared program before starting a one-shot preview",
+            ));
+        }
         if !duration.is_finite() || duration <= 0.0 || !strum_ms.is_finite() || strum_ms < 0.0 {
-            return Err(err("Card preview requires finite positive duration and finite nonnegative spacing"));
+            return Err(err(
+                "Card preview requires finite positive duration and finite nonnegative spacing",
+            ));
         }
         if self.song.playing || self.snapshot().playing {
             return Err(err("Stop backing playback before auditioning this Card"));
         }
         if (duration * self.rate as f32).round() < 1.0 {
-            return Err(err("Card preview duration is shorter than one output frame"));
+            return Err(err(
+                "Card preview duration is shorter than one output frame",
+            ));
         }
         if pitches.len() > 1 && strum_ms > 0.0 && strum_ms / 1000.0 * (self.rate as f32) < 1.0 {
             return Err(err("Ordered Card spacing is shorter than one output frame"));
@@ -607,6 +820,11 @@ impl OutputRuntime {
         self.preview_pitches_inner(pitches, duration, strum_ms, true)
     }
     pub fn preview_note(&mut self, frequency: f32, duration: f32) -> Result<(), OutputError> {
+        if self.program_owns_output() {
+            return Err(err(
+                "stop the prepared program before starting a one-shot preview",
+            ));
+        }
         if !duration.is_finite() {
             return Err(err("preview requires a finite duration"));
         }
@@ -618,6 +836,11 @@ impl OutputRuntime {
         duration: f32,
         strum: f32,
     ) -> Result<(), OutputError> {
+        if self.program_owns_output() {
+            return Err(err(
+                "stop the prepared program before starting a one-shot preview",
+            ));
+        }
         // f32::max treats NaN as the other operand. Validate the authored
         // request before applying the existing finite convenience minima.
         if !duration.is_finite() || !strum.is_finite() {
@@ -680,6 +903,11 @@ impl OutputRuntime {
         gap_secs: f32,
         strum_ms: f32,
     ) -> Result<(), OutputError> {
+        if self.program_owns_output() {
+            return Err(err(
+                "stop the prepared program before starting a one-shot preview",
+            ));
+        }
         if self.snapshot().playing {
             return Ok(());
         }

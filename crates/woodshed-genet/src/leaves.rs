@@ -182,9 +182,17 @@ pub fn sync_all(shared: &mut Shared, ui: &UiState, leaves: &mut LeafRegistry<u64
     if ui.relationship_open && sig != shared.relationship_sig {
         shared.relationship_sig = sig;
         if let Some(swatch) = woodshed_views::stage::relationship_swatch(ui) {
-            let leaf = swatch.paint_leaf(|_: &&str| sprigging::ColorF {r:0.93,g:0.70,b:0.28,a:1.0});
+            let leaf = swatch.paint_leaf(|_: &&str| sprigging::ColorF {
+                r: 0.93,
+                g: 0.70,
+                b: 0.28,
+                a: 1.0,
+            });
             shared.painted_cameras[2] = painted_camera(leaf.viewport());
-            leaves.insert(woodshed_views::stage::RELATIONSHIP_GRAPH_LEAF_KEY, Box::new(leaf));
+            leaves.insert(
+                woodshed_views::stage::RELATIONSHIP_GRAPH_LEAF_KEY,
+                Box::new(leaf),
+            );
         }
     }
     sync_related_swatch(shared, ui, leaves);
@@ -548,7 +556,11 @@ fn sync_fretboard_active(ui: &UiState, leaves: &mut LeafRegistry<u64>) {
         Vec::new()
     };
     if let Some(leaf) = leaves.get_mut_as::<FretboardLeaf>(&FRETBOARD_LEAF_KEY) {
-        leaf.set_active(active);
+        if ui.practice_clock_managed && ui.stage_clock_event.is_some() {
+            leaf.set_active_contacts(&ui.stage_clock_contacts);
+        } else {
+            leaf.set_active(active);
+        }
         leaf.set_path(path, show_path);
     }
 }
@@ -598,6 +610,7 @@ fn sync_rehearsal_fretboard(shared: &mut Shared, ui: &UiState, leaves: &mut Leaf
     }
     let sig = h.finish();
     if sig == shared.rehearsal_fretboard_sig {
+        sync_rehearsal_active(ui, leaves);
         return;
     }
     shared.rehearsal_fretboard_sig = sig;
@@ -613,6 +626,26 @@ fn sync_rehearsal_fretboard(shared: &mut Shared, ui: &UiState, leaves: &mut Leaf
             MarkerStyle::from_name(&marker_style),
         )),
     );
+    sync_rehearsal_active(ui, leaves);
+}
+
+fn sync_rehearsal_active(ui: &UiState, leaves: &mut LeafRegistry<u64>) {
+    let contacts = ui
+        .practice_clock_projection
+        .as_ref()
+        .filter(|position| {
+            position.owner == ui.working_sets.active_id
+                && ui
+                    .set
+                    .cards
+                    .get(ui.set.cursor)
+                    .is_some_and(|card| card.id == position.card_id)
+        })
+        .map(|position| position.contacts.as_slice())
+        .unwrap_or_default();
+    if let Some(leaf) = leaves.get_mut_as::<FretboardLeaf>(&REHEARSAL_FRETBOARD_LEAF_KEY) {
+        leaf.set_active_contacts(contacts);
+    }
 }
 
 #[cfg(test)]

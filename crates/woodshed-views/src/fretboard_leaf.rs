@@ -208,11 +208,7 @@ impl BoardGeom {
     }
     /// Width of the open-string column — present only for a nut-anchored window.
     fn open_off(&self) -> f32 {
-        if self.fret_start == 0 {
-            OPEN_W
-        } else {
-            0.0
-        }
+        if self.fret_start == 0 { OPEN_W } else { 0.0 }
     }
     fn cell_count(&self) -> f32 {
         (self.fret_count as f32 - self.first_cell_fret() + 1.0).max(0.0)
@@ -318,7 +314,7 @@ pub struct FretboardLeaf {
     /// The (string, fret) sounding right now during a run, painted with the
     /// active accent. Pushed live by the host each step, like the neighbourhood
     /// leaf's values.
-    active: Option<(usize, u8)>,
+    active: Vec<(usize, u8)>,
     /// The touch's path, as an ordered visit list of `(string, fret)`. Drawn as
     /// a trail when `show_path` is on, so the treatment is visible.
     path: Vec<(usize, u8)>,
@@ -352,7 +348,7 @@ impl FretboardLeaf {
             distinguish_root,
             dots,
             marker_style,
-            active: None,
+            active: Vec::new(),
             path: Vec::new(),
             show_path: false,
             size: Size {
@@ -375,8 +371,15 @@ impl FretboardLeaf {
     /// Set the note sounding now (host pushes this each step). Repaints only on
     /// change so idle boards stay cached.
     pub fn set_active(&mut self, active: Option<(usize, u8)>) {
+        self.set_active_contacts(active.as_slice());
+    }
+
+    /// A sounding chord can have several physical contacts. Event identity
+    /// remains in the host; the leaf paints the complete observed group.
+    pub fn set_active_contacts(&mut self, active: &[(usize, u8)]) {
         if self.active != active {
-            self.active = active;
+            self.active.clear();
+            self.active.extend_from_slice(active);
             self.dirty = true;
         }
     }
@@ -441,10 +444,10 @@ impl Leaf for FretboardLeaf {
             match orient {
                 Orientation::Horizontal => {
                     cx.fill_rect(neck0, c - th / 2.0, neck1 - neck0, th, C_STRING)
-                }
+                },
                 Orientation::Vertical => {
                     cx.fill_rect(c - th / 2.0, neck0, th, neck1 - neck0, C_STRING)
-                }
+                },
             }
         }
 
@@ -456,10 +459,10 @@ impl Leaf for FretboardLeaf {
                 match orient {
                     Orientation::Horizontal => {
                         cx.fill_rect(a - thick / 2.0, cross0, thick, cross1 - cross0, color)
-                    }
+                    },
                     Orientation::Vertical => {
                         cx.fill_rect(cross0, a - thick / 2.0, cross1 - cross0, thick, color)
-                    }
+                    },
                 }
             };
             for f in self.fret_start.max(1)..=self.fret_count {
@@ -500,7 +503,7 @@ impl Leaf for FretboardLeaf {
                 continue;
             }
             let (x, y) = g.note_pos(d.string_index, d.fret);
-            let color = if Some((d.string_index, d.fret)) == self.active {
+            let color = if self.active.contains(&(d.string_index, d.fret)) {
                 C_ACTIVE
             } else if d.excluded {
                 C_EXCLUDED
@@ -515,7 +518,7 @@ impl Leaf for FretboardLeaf {
                 MarkerStyle::Rounded => cx.fill_path(rounded_rect(mx, my, mw, mh, 5.0), color),
                 MarkerStyle::Circle => {
                     cx.fill_path(sprigging::Path::circle(x, y, radius), color);
-                }
+                },
                 MarkerStyle::Diamond => {
                     let (dx, dy) = (mw * 0.46, mh * 0.66);
                     let path = sprigging::Path::new()
@@ -526,7 +529,7 @@ impl Leaf for FretboardLeaf {
                         .close()
                         .build();
                     cx.fill_path(path, color);
-                }
+                },
             }
             // An outline ring tracking the marker's silhouette (a halo, not a
             // second marker), inflated by `inflate`.
@@ -541,7 +544,7 @@ impl Leaf for FretboardLeaf {
                         .line_to(x - dx, y)
                         .close()
                         .build()
-                }
+                },
                 _ => rounded_rect(
                     mx - inflate,
                     my - inflate,

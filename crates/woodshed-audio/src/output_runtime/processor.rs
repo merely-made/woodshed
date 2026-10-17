@@ -1,3 +1,8 @@
+use super::clock::{
+    PreparedProgram, PreparedTone, ProgramDuration, ProgramEnd, ProgramEndReason, ProgramEpoch,
+    ProgramLoop, ProgramPosition, ProgramSnapshot, ProgramStatus, ProgramTransition,
+    ProgramTransitionKind,
+};
 use super::*;
 use crate::capture_feed::CaptureFeedConsumer;
 use audio_primitives::capture::CompletedTake;
@@ -33,6 +38,17 @@ pub(super) struct Shared {
     previews: AtomicUsize,
     preview_starts: AtomicU64,
     click_step: AtomicUsize,
+    program_epoch: AtomicU64,
+    program_card: AtomicUsize,
+    program_token: AtomicU64,
+    program_event: AtomicUsize,
+    program_event_token: AtomicU64,
+    program_ticks: AtomicU64,
+    program_bpm_bits: AtomicU64,
+    program_click_subdivision_ticks: AtomicU64,
+    program_frames: AtomicU64,
+    program_active_frames: AtomicU64,
+    program_status: AtomicUsize,
 }
 impl Shared {
     fn publish(&self, snapshot: OutputSnapshot) {
@@ -57,6 +73,32 @@ impl Shared {
             .store(snapshot.preview_starts, Ordering::Relaxed);
         self.click_step
             .store(snapshot.click_step, Ordering::Relaxed);
+        self.program_epoch
+            .store(snapshot.program.epoch.0, Ordering::Relaxed);
+        self.program_card
+            .store(snapshot.program.card_index, Ordering::Relaxed);
+        self.program_token.store(
+            snapshot.program.card_token.unwrap_or(u64::MAX),
+            Ordering::Relaxed,
+        );
+        self.program_event
+            .store(snapshot.program.event_index, Ordering::Relaxed);
+        self.program_event_token.store(
+            snapshot.program.event_token.unwrap_or(u64::MAX),
+            Ordering::Relaxed,
+        );
+        self.program_ticks
+            .store(snapshot.program.beat_ticks, Ordering::Relaxed);
+        self.program_bpm_bits
+            .store(snapshot.program.bpm_bits, Ordering::Relaxed);
+        self.program_click_subdivision_ticks
+            .store(snapshot.program.click_subdivision_ticks, Ordering::Relaxed);
+        self.program_frames
+            .store(snapshot.program.card_frames, Ordering::Relaxed);
+        self.program_active_frames
+            .store(snapshot.program.active_frames, Ordering::Relaxed);
+        self.program_status
+            .store(snapshot.program.status as usize, Ordering::Relaxed);
         self.sequence.fetch_add(1, Ordering::Release);
     }
     pub fn snapshot(&self) -> OutputSnapshot {
@@ -82,6 +124,36 @@ impl Shared {
                 preview_voices: self.previews.load(Ordering::Relaxed),
                 preview_starts: self.preview_starts.load(Ordering::Relaxed),
                 click_step: self.click_step.load(Ordering::Relaxed),
+                program: ProgramSnapshot {
+                    epoch: ProgramEpoch(self.program_epoch.load(Ordering::Relaxed)),
+                    device_frame: self.frames.load(Ordering::Relaxed),
+                    card_index: self.program_card.load(Ordering::Relaxed),
+                    card_token: match self.program_token.load(Ordering::Relaxed) {
+                        u64::MAX => None,
+                        token => Some(token),
+                    },
+                    event_index: self.program_event.load(Ordering::Relaxed),
+                    event_token: match self.program_event_token.load(Ordering::Relaxed) {
+                        u64::MAX => None,
+                        token => Some(token),
+                    },
+                    beat_ticks: self.program_ticks.load(Ordering::Relaxed),
+                    bpm_bits: self.program_bpm_bits.load(Ordering::Relaxed),
+                    click_subdivision_ticks: self
+                        .program_click_subdivision_ticks
+                        .load(Ordering::Relaxed),
+                    card_frames: self.program_frames.load(Ordering::Relaxed),
+                    active_frames: self.program_active_frames.load(Ordering::Relaxed),
+                    status: match self.program_status.load(Ordering::Relaxed) {
+                        1 => ProgramStatus::Playing,
+                        2 => ProgramStatus::Paused,
+                        3 => ProgramStatus::WaitingManual,
+                        4 => ProgramStatus::Refused,
+                        5 => ProgramStatus::Complete,
+                        6 => ProgramStatus::WaitingObserver,
+                        _ => ProgramStatus::Stopped,
+                    },
+                },
             };
             std::sync::atomic::fence(Ordering::Acquire);
             if before == self.sequence.load(Ordering::Relaxed) {
@@ -424,6 +496,33 @@ pub(super) enum Command {
     },
     Boundary(PendingChange),
     StopCapture,
+    ProgramStart {
+        data: Option<OwnedGc<PreparedProgram>>,
+        epoch: ProgramEpoch,
+    },
+    ProgramPause {
+        epoch: ProgramEpoch,
+        paused: bool,
+    },
+    ProgramTempo {
+        epoch: ProgramEpoch,
+        card: usize,
+        bpm: f64,
+    },
+    ProgramLoopMode {
+        epoch: ProgramEpoch,
+        mode: ProgramLoop,
+    },
+    ProgramAdvance {
+        epoch: ProgramEpoch,
+    },
+    ProgramSeek {
+        epoch: ProgramEpoch,
+        card: usize,
+    },
+    ProgramStop {
+        epoch: ProgramEpoch,
+    },
 }
 enum Boundary {
     Change(PendingChange),
@@ -469,12 +568,18 @@ fn trigger(voices: &mut [Option<Voice>], pcm: ArcGc<SampleBuffer>) {
 pub(super) struct OutputNode {
     shared: Arc<Shared>,
     returns: RefCell<Option<rtrb::Producer<CompletedRecording>>>,
+    program_transitions: RefCell<Option<rtrb::Producer<ProgramTransition>>>,
 }
 impl OutputNode {
-    pub fn new(shared: Arc<Shared>, returns: rtrb::Producer<CompletedRecording>) -> Self {
+    pub fn new(
+        shared: Arc<Shared>,
+        returns: rtrb::Producer<CompletedRecording>,
+        program_transitions: rtrb::Producer<ProgramTransition>,
+    ) -> Self {
         Self {
             shared,
             returns: RefCell::new(Some(returns)),
+            program_transitions: RefCell::new(Some(program_transitions)),
         }
     }
 }
@@ -500,6 +605,11 @@ impl AudioNode for OutputNode {
                 .borrow_mut()
                 .take()
                 .expect("output processor constructed once"),
+            program_transitions: self
+                .program_transitions
+                .borrow_mut()
+                .take()
+                .expect("program transition processor constructed once"),
             backing: None,
             click: None,
             feed: None,
@@ -529,12 +639,42 @@ impl AudioNode for OutputNode {
             blocks: 0,
             handled_commands: 0,
             invalid: false,
+            program: None,
+            program_status: ProgramStatus::Stopped,
+            program_epoch: ProgramEpoch::default(),
+            program_card_index: 0,
+            program_event_index: 0,
+            program_tick_phase_q32: 0,
+            program_card_frames: 0,
+            program_tail_remaining: 0,
+            program_advance: false,
+            program_transition_pending: None,
+            program_stop_pending: false,
+            program_resume_after_observer: ProgramStatus::Playing,
+            program_active_frames: 0,
+            program_click_last_beat: None,
+            program_voices: std::array::from_fn(|_| None),
+            program_event_token: None,
+            program_card_started: false,
+            program_pending_action: ProgramPendingAction::None,
+            program_deferred_controls: std::array::from_fn(|_| None),
+            program_deferred_len: 0,
+            current_frame: 0,
+            program_tail_started: false,
+            program_click_last_step: None,
+            program_tick_step_q32: 0,
+            program_event_due_frame: None,
+            program_event_group_base: None,
+            program_manual_body_done: false,
+            program_resume_after_pause: ProgramStatus::Playing,
+            program_loop_mode: ProgramLoop::Once,
         })
     }
 }
 struct Processor {
     shared: Arc<Shared>,
     returns: rtrb::Producer<CompletedRecording>,
+    program_transitions: rtrb::Producer<ProgramTransition>,
     backing: Option<OwnedGc<PreparedBacking>>,
     click: Option<OwnedGc<PreparedClick>>,
     feed: Option<OwnedGc<CaptureFeedConsumer>>,
@@ -567,6 +707,61 @@ struct Processor {
     blocks: u64,
     handled_commands: usize,
     invalid: bool,
+    program: Option<OwnedGc<PreparedProgram>>,
+    program_status: ProgramStatus,
+    program_epoch: ProgramEpoch,
+    program_card_index: usize,
+    program_event_index: usize,
+    program_tick_phase_q32: u128,
+    program_card_frames: u64,
+    program_tail_remaining: u64,
+    program_advance: bool,
+    program_transition_pending: Option<ProgramTransition>,
+    program_stop_pending: bool,
+    program_resume_after_observer: ProgramStatus,
+    program_active_frames: u64,
+    program_click_last_beat: Option<u64>,
+    program_voices: [Option<ProgramVoice>; MAX_PROGRAM_VOICES],
+    program_event_token: Option<u64>,
+    program_card_started: bool,
+    program_pending_action: ProgramPendingAction,
+    program_deferred_controls: [Option<DeferredProgramControl>; COMMAND_BOUND],
+    program_deferred_len: usize,
+    current_frame: u64,
+    program_tail_started: bool,
+    program_click_last_step: Option<u64>,
+    program_tick_step_q32: u64,
+    program_event_due_frame: Option<(usize, u64)>,
+    program_event_group_base: Option<(ProgramPosition, u64)>,
+    program_manual_body_done: bool,
+    program_resume_after_pause: ProgramStatus,
+    program_loop_mode: ProgramLoop,
+}
+
+struct ProgramVoice {
+    tone: ArcGc<PreparedTone>,
+    position: usize,
+    age: u64,
+    gate: ProgramDuration,
+    gate_end: u64,
+    amplitude: f32,
+    released: bool,
+    release_age: u64,
+    card_index: usize,
+}
+
+#[derive(Clone, Copy)]
+enum ProgramPendingAction {
+    None,
+    CardStarted,
+    NextCard,
+    Seek(usize),
+    Stop,
+}
+#[derive(Clone, Copy)]
+enum DeferredProgramControl {
+    Seek(usize),
+    Stop,
 }
 impl Processor {
     fn clear_voices(&mut self) {
@@ -718,13 +913,561 @@ impl Processor {
             trigger(&mut self.click_voices, pcm);
         }
     }
+    fn program_transition(
+        &mut self,
+        kind: ProgramTransitionKind,
+        action: ProgramPendingAction,
+    ) -> bool {
+        let Some(card) = self
+            .program
+            .as_ref()
+            .and_then(|program| program.cards.get(self.program_card_index))
+        else {
+            return false;
+        };
+        let transition = ProgramTransition {
+            epoch: self.program_epoch,
+            card_token: card.token,
+            device_frame: self.current_frame,
+            active_frames: self.program_active_frames,
+            kind,
+        };
+        match self.program_transitions.push(transition) {
+            Ok(()) => {
+                self.apply_program_action(action);
+                true
+            },
+            Err(rtrb::PushError::Full(transition)) => {
+                self.program_transition_pending = Some(transition);
+                self.program_pending_action = action;
+                self.program_resume_after_observer = self.program_status;
+                self.program_status = ProgramStatus::WaitingObserver;
+                false
+            },
+        }
+    }
+
+    fn apply_program_action(&mut self, action: ProgramPendingAction) {
+        match action {
+            ProgramPendingAction::None => {},
+            ProgramPendingAction::CardStarted => {
+                self.program_card_started = true;
+                self.program_status = ProgramStatus::Playing;
+            },
+            ProgramPendingAction::NextCard => self.move_program_card(None),
+            ProgramPendingAction::Seek(card) => self.move_program_card(Some(card)),
+            ProgramPendingAction::Stop => {
+                for voice in &mut self.program_voices {
+                    *voice = None;
+                }
+                self.program = None;
+                self.program_status = ProgramStatus::Stopped;
+                self.program_card_started = false;
+                self.program_event_token = None;
+                self.program_deferred_controls = std::array::from_fn(|_| None);
+                self.program_deferred_len = 0;
+                self.program_stop_pending = false;
+            },
+        }
+    }
+
+    fn apply_program_control(&mut self, control: DeferredProgramControl) {
+        match control {
+            DeferredProgramControl::Seek(card) if self.program_card_started => {
+                let _ = self.program_transition(
+                    ProgramTransitionKind::Ended(ProgramEndReason::Seek),
+                    ProgramPendingAction::Seek(card),
+                );
+            },
+            DeferredProgramControl::Seek(card) => self.move_program_card(Some(card)),
+            DeferredProgramControl::Stop if self.program_card_started => {
+                let _ = self.program_transition(
+                    ProgramTransitionKind::Ended(ProgramEndReason::Stop),
+                    ProgramPendingAction::Stop,
+                );
+            },
+            DeferredProgramControl::Stop => self.apply_program_action(ProgramPendingAction::Stop),
+        }
+    }
+
+    fn defer_program_control(&mut self, control: DeferredProgramControl) {
+        if self.program_transition_pending.is_some() {
+            match control {
+                // Stop is a dedicated bounded pending bit and always wins
+                // over queued seeks; observer pressure cannot lose it.
+                DeferredProgramControl::Stop => self.program_stop_pending = true,
+                DeferredProgramControl::Seek(card) => {
+                    if self.program_deferred_len < self.program_deferred_controls.len() {
+                        self.program_deferred_controls[self.program_deferred_len] =
+                            Some(DeferredProgramControl::Seek(card));
+                        self.program_deferred_len += 1;
+                    } else if self.program_deferred_len > 0 {
+                        // Under pressure, accepted seeks coalesce to the
+                        // newest destination. Their order is not meaningful;
+                        // Stop remains lossless and takes precedence.
+                        self.program_deferred_controls[self.program_deferred_len - 1] =
+                            Some(DeferredProgramControl::Seek(card));
+                    }
+                },
+            }
+            return;
+        }
+        self.apply_program_control(control);
+    }
+
+    fn dispatch_deferred_program_control(&mut self) {
+        if self.program_transition_pending.is_some() {
+            return;
+        }
+        if self.program_stop_pending {
+            self.program_stop_pending = false;
+            self.program_deferred_controls = std::array::from_fn(|_| None);
+            self.program_deferred_len = 0;
+            if self.program.is_some() {
+                self.apply_program_control(DeferredProgramControl::Stop);
+            }
+            return;
+        }
+        if self.program_deferred_len == 0 {
+            return;
+        }
+        let control = self.program_deferred_controls[0]
+            .take()
+            .expect("deferred program control slot is occupied");
+        for index in 1..self.program_deferred_len {
+            self.program_deferred_controls[index - 1] =
+                self.program_deferred_controls[index].take();
+        }
+        self.program_deferred_len -= 1;
+        self.apply_program_control(control);
+    }
+
+    fn flush_program_transition(&mut self) -> bool {
+        let Some(transition) = self.program_transition_pending.take() else {
+            return true;
+        };
+        match self.program_transitions.push(transition) {
+            Ok(()) => {
+                let action =
+                    std::mem::replace(&mut self.program_pending_action, ProgramPendingAction::None);
+                let was_paused = self.program_resume_after_observer == ProgramStatus::Paused;
+                self.program_status = if was_paused {
+                    self.program_resume_after_pause
+                } else {
+                    self.program_resume_after_observer
+                };
+                self.apply_program_action(action);
+                if was_paused
+                    && !matches!(
+                        self.program_status,
+                        ProgramStatus::Stopped | ProgramStatus::Complete
+                    )
+                {
+                    self.program_resume_after_pause = self.program_status;
+                    self.program_status = ProgramStatus::Paused;
+                }
+                self.dispatch_deferred_program_control();
+                true
+            },
+            Err(rtrb::PushError::Full(transition)) => {
+                self.program_transition_pending = Some(transition);
+                self.program_status = ProgramStatus::WaitingObserver;
+                false
+            },
+        }
+    }
+
+    fn move_program_card(&mut self, requested: Option<usize>) {
+        let Some(program) = self.program.as_ref() else {
+            return;
+        };
+        let next = if let Some(card) = requested {
+            Some(card)
+        } else {
+            match self.program_loop_mode {
+                ProgramLoop::Card => Some(self.program_card_index),
+                ProgramLoop::Set if self.program_card_index + 1 >= program.cards.len() => Some(0),
+                ProgramLoop::Set => Some(self.program_card_index + 1),
+                ProgramLoop::Once if self.program_card_index + 1 < program.cards.len() => {
+                    Some(self.program_card_index + 1)
+                },
+                ProgramLoop::Once => None,
+            }
+        };
+        match next {
+            Some(index) if index < program.cards.len() => {
+                self.program_card_index = index;
+                self.program_event_index = 0;
+                self.program_tick_phase_q32 = 0;
+                self.program_card_frames = 0;
+                self.program_tail_remaining = 0;
+                self.program_tail_started = false;
+                self.program_active_frames = 0;
+                self.program_card_started = false;
+                self.program_click_last_beat = None;
+                self.program_click_last_step = None;
+                self.program_event_due_frame = None;
+                self.program_event_group_base = None;
+                self.program_event_token = None;
+                self.program_manual_body_done = false;
+                self.program_status = ProgramStatus::Playing;
+            },
+            _ => {
+                self.program_status = ProgramStatus::Complete;
+                self.program_card_started = false;
+            },
+        }
+    }
+
+    fn enter_program_card(&mut self) {
+        let Some(program) = self.program.as_ref() else {
+            return;
+        };
+        let Some(card) = program.cards.get(self.program_card_index) else {
+            self.program_status = ProgramStatus::Complete;
+            return;
+        };
+        match card.end {
+            ProgramEnd::Refusal(code) => {
+                self.program_status = ProgramStatus::Refused;
+                let _ = self.program_transition(
+                    ProgramTransitionKind::Refused(code),
+                    ProgramPendingAction::None,
+                );
+            },
+            _ => {
+                let bpm = card.bpm;
+                self.program_tick_step_q32 =
+                    (bpm * super::clock::PROGRAM_TICKS_PER_BEAT as f64 * (u32::MAX as f64 + 1.0)
+                        / (60.0 * self.rate as f64))
+                        .round() as u64;
+                self.program_status = ProgramStatus::Playing;
+                let _ = self.program_transition(
+                    ProgramTransitionKind::Started,
+                    ProgramPendingAction::CardStarted,
+                );
+            },
+        }
+    }
+
+    fn trigger_program_events(&mut self) {
+        let Some(program) = self.program.as_ref() else {
+            return;
+        };
+        let Some(card) = program.cards.get(self.program_card_index) else {
+            return;
+        };
+        while let Some(event) = card.events.get(self.program_event_index) {
+            let onset_reached = match event.onset {
+                ProgramPosition::BeatTicks(ticks) => {
+                    (self.program_tick_phase_q32 >> 32) as u64 >= ticks
+                },
+                ProgramPosition::DeviceFrames(frames) => self.program_card_frames >= frames,
+            };
+            if !onset_reached {
+                break;
+            }
+            let group_base = match self.program_event_group_base {
+                Some((onset, base)) if onset == event.onset => base,
+                _ => {
+                    let base = self.program_card_frames;
+                    self.program_event_group_base = Some((event.onset, base));
+                    base
+                },
+            };
+            let due_frame = group_base.saturating_add(event.onset_offset_frames);
+            self.program_event_due_frame = Some((self.program_event_index, due_frame));
+            if self.program_card_frames < due_frame {
+                break;
+            }
+            let tone = program.tones[event.tone].clone();
+            let gate_end = match (event.onset, event.gate) {
+                (ProgramPosition::BeatTicks(at), ProgramDuration::BeatTicks(len)) => {
+                    at.saturating_add(len)
+                },
+                (ProgramPosition::DeviceFrames(at), ProgramDuration::DeviceFrames(len)) => {
+                    at.saturating_add(len)
+                },
+                (_, ProgramDuration::UntilCardEnd) => u64::MAX,
+                _ => u64::MAX,
+            };
+            let slot_index = self
+                .program_voices
+                .iter()
+                .position(Option::is_none)
+                .or_else(|| {
+                    // A previous card may still be inside its bounded release
+                    // tail. Reclaim its oldest released voice before sacrificing
+                    // an onset from the current card.
+                    self.program_voices
+                        .iter()
+                        .enumerate()
+                        .filter_map(|(index, voice)| {
+                            voice
+                                .as_ref()
+                                .filter(|voice| voice.released)
+                                .map(|voice| (index, voice.release_age))
+                        })
+                        .max_by_key(|(_, age)| *age)
+                        .map(|(index, _)| index)
+                });
+            let Some(slot_index) = slot_index else {
+                // Validation bounds same-card overlap. If a malformed or
+                // otherwise unexpected schedule exhausts the fixed pool,
+                // leave the event pending for a later frame instead of
+                // silently consuming it.
+                break;
+            };
+            self.program_voices[slot_index] = Some(ProgramVoice {
+                tone,
+                position: 0,
+                age: 0,
+                gate: event.gate,
+                gate_end: match event.gate {
+                    ProgramDuration::BeatTicks(length) => {
+                        ((self.program_tick_phase_q32 >> 32) as u64).saturating_add(length)
+                    },
+                    ProgramDuration::DeviceFrames(length) => {
+                        self.program_card_frames.saturating_add(length)
+                    },
+                    ProgramDuration::UntilCardEnd => gate_end,
+                },
+                amplitude: event.amplitude,
+                released: false,
+                release_age: 0,
+                card_index: self.program_card_index,
+            });
+            self.program_event_token = Some(event.token);
+            self.program_event_index += 1;
+            self.program_event_due_frame = None;
+        }
+    }
+
+    fn program_frame_start(&mut self) -> bool {
+        if !self.flush_program_transition() {
+            return false;
+        }
+        if self.program_advance {
+            self.program_advance = false;
+            if self.program_card_started {
+                let was_paused = self.program_status == ProgramStatus::Paused;
+                let _ = self.program_transition(
+                    ProgramTransitionKind::Ended(ProgramEndReason::Completed),
+                    ProgramPendingAction::NextCard,
+                );
+                if self.program_status == ProgramStatus::WaitingObserver {
+                    return false;
+                }
+                if was_paused
+                    && !matches!(
+                        self.program_status,
+                        ProgramStatus::Stopped | ProgramStatus::Complete
+                    )
+                {
+                    self.program_resume_after_pause = self.program_status;
+                    self.program_status = ProgramStatus::Paused;
+                }
+            } else {
+                self.move_program_card(None);
+            }
+        }
+        if self.program_status != ProgramStatus::Playing || self.program.is_none() {
+            return false;
+        }
+        if !self.program_card_started {
+            self.enter_program_card();
+            if !self.program_card_started {
+                return false;
+            }
+        }
+        self.trigger_program_events();
+        if self.click_playing {
+            if let Some(click) = self.click.as_ref() {
+                let ticks_per_step =
+                    (super::clock::PROGRAM_TICKS_PER_BEAT / click.divisions.max(1) as u64).max(1);
+                let beat_ticks = (self.program_tick_phase_q32 >> 32) as u64;
+                let step = beat_ticks / ticks_per_step;
+                if self.program_click_last_step != Some(step) {
+                    let index = (step % click.steps.len() as u64) as usize;
+                    if let Some(pcm) = &click.steps[index] {
+                        trigger(&mut self.click_voices, pcm.clone());
+                    }
+                    self.program_click_last_step = Some(step);
+                }
+            }
+        }
+        true
+    }
+
+    fn mix_program_voices(&mut self) -> f32 {
+        if self.program_status != ProgramStatus::Playing {
+            return 0.0;
+        }
+        let beat_ticks = (self.program_tick_phase_q32 >> 32) as u64;
+        let attack = (self.rate as f64 * 0.015).round().max(1.0) as u64;
+        let release = (self.rate as f64 * 0.250).round().max(1.0) as u64;
+        let current_card = self
+            .program
+            .as_ref()
+            .and_then(|program| program.cards.get(self.program_card_index));
+        let current_card_end = current_card.map(|card| card.end);
+        let current_card_bpm = current_card.map_or(120.0, |card| card.bpm);
+        let mut sum = 0.0;
+        for slot in &mut self.program_voices {
+            let Some(voice) = slot else {
+                continue;
+            };
+            let expired = voice.card_index != self.program_card_index
+                || match voice.gate {
+                    ProgramDuration::BeatTicks(_) => beat_ticks >= voice.gate_end,
+                    ProgramDuration::DeviceFrames(_) => self.program_card_frames >= voice.gate_end,
+                    ProgramDuration::UntilCardEnd => match current_card_end {
+                        Some(ProgramEnd::BeatTicks(end)) => {
+                            let release_ticks = (current_card_bpm
+                                * 0.250
+                                * super::clock::PROGRAM_TICKS_PER_BEAT as f64
+                                / 60.0)
+                                .ceil() as u64;
+                            beat_ticks >= end.saturating_sub(release_ticks)
+                        },
+                        Some(ProgramEnd::DeviceFrames(end)) => {
+                            self.program_card_frames >= end.saturating_sub(release)
+                        },
+                        Some(ProgramEnd::Manual { tail_frames, .. }) => {
+                            self.program_tail_started
+                                && self.program_tail_remaining <= release.min(tail_frames)
+                        },
+                        _ => false,
+                    },
+                };
+            if expired && !voice.released {
+                voice.released = true;
+                voice.release_age = 0;
+            }
+            if voice.released && voice.release_age >= release {
+                *slot = None;
+                continue;
+            }
+            let sample = voice.tone.pcm.data[voice.position];
+            voice.position += 1;
+            if voice.position == voice.tone.pcm.len() {
+                voice.position = 0;
+            }
+            let attack_gain = (voice.age as f32 / attack as f32).min(1.0);
+            let release_gain = if voice.released {
+                (1.0 - voice.release_age as f32 / release as f32).max(0.0)
+            } else {
+                1.0
+            };
+            sum += sample * voice.amplitude * attack_gain * release_gain;
+            voice.age = voice.age.saturating_add(1);
+            if voice.released {
+                voice.release_age = voice.release_age.saturating_add(1);
+            }
+        }
+        sum
+    }
+
+    fn program_frame_end(&mut self) {
+        if self.program_status == ProgramStatus::WaitingManual {
+            self.program_active_frames = self.program_active_frames.saturating_add(1);
+            return;
+        }
+        if self.program_status != ProgramStatus::Playing || !self.program_card_started {
+            return;
+        }
+        let Some(end) = self
+            .program
+            .as_ref()
+            .and_then(|program| program.cards.get(self.program_card_index))
+            .map(|card| card.end)
+        else {
+            return;
+        };
+        self.program_active_frames = self.program_active_frames.saturating_add(1);
+        self.program_card_frames = self.program_card_frames.saturating_add(1);
+        self.program_tick_phase_q32 = self
+            .program_tick_phase_q32
+            .saturating_add(u128::from(self.program_tick_step_q32));
+        let completed = match end {
+            ProgramEnd::BeatTicks(ticks) => {
+                (self.program_tick_phase_q32 >> 32) >= u128::from(ticks)
+            },
+            ProgramEnd::DeviceFrames(frames) => self.program_card_frames >= frames,
+            ProgramEnd::Manual {
+                preview_ticks,
+                tail_frames,
+            } => {
+                if !self.program_tail_started
+                    && (self.program_tick_phase_q32 >> 32) >= u128::from(preview_ticks)
+                {
+                    self.program_tail_started = true;
+                    self.program_tail_remaining = tail_frames;
+                    false
+                } else if self.program_tail_started {
+                    self.program_tail_remaining = self.program_tail_remaining.saturating_sub(1);
+                    self.program_tail_remaining == 0
+                } else {
+                    false
+                }
+            },
+            ProgramEnd::Refusal(_) => false,
+        };
+        if completed {
+            for voice in self.program_voices.iter_mut().flatten() {
+                if !voice.released {
+                    voice.released = true;
+                    voice.release_age = 0;
+                }
+            }
+            if matches!(end, ProgramEnd::Manual { .. }) {
+                for voice in &mut self.program_voices {
+                    *voice = None;
+                }
+                self.program_manual_body_done = true;
+                self.program_status = ProgramStatus::WaitingManual;
+            } else {
+                let _ = self.program_transition(
+                    ProgramTransitionKind::Ended(ProgramEndReason::Completed),
+                    ProgramPendingAction::NextCard,
+                );
+            }
+        }
+    }
+
+    fn program_snapshot(&self) -> ProgramSnapshot {
+        let current_card = self
+            .program
+            .as_ref()
+            .and_then(|program| program.cards.get(self.program_card_index));
+        let card_token = current_card.map(|card| card.token);
+        let click_subdivision_ticks = self.click.as_ref().map_or(0, |click| {
+            (super::clock::PROGRAM_TICKS_PER_BEAT / click.divisions.max(1) as u64).max(1)
+        });
+        ProgramSnapshot {
+            epoch: self.program_epoch,
+            device_frame: self.current_frame,
+            card_index: self.program_card_index,
+            card_token,
+            event_index: self.program_event_index,
+            event_token: self.program_event_token,
+            beat_ticks: (self.program_tick_phase_q32 >> 32).min(u128::from(u64::MAX)) as u64,
+            bpm_bits: current_card.map_or(0, |card| card.bpm.to_bits()),
+            click_subdivision_ticks,
+            card_frames: self.program_card_frames,
+            active_frames: self.program_active_frames,
+            status: self.program_status,
+        }
+    }
+
     fn frame(&mut self) -> f32 {
+        let program_running = self.program_frame_start();
         if self.take.is_none() {
             if let Some(feed) = self.feed.as_mut() {
                 let _ = feed.pop_sample();
             }
         }
-        if self.click_playing {
+        if self.click_playing && self.program.is_none() {
             if let Some(click) = self.click.as_ref() {
                 let beat_frames =
                     audio_primitives::frames_per_beat(self.rate, self.bpm, click.beat_unit).max(1);
@@ -739,7 +1482,11 @@ impl Processor {
                 self.click_position += click.divisions as f64;
             }
         }
-        let metro = mix(&mut self.click_voices).clamp(-1.0, 1.0);
+        let metro = if self.program.is_some() && self.program_status != ProgramStatus::Playing {
+            0.0
+        } else {
+            mix(&mut self.click_voices).clamp(-1.0, 1.0)
+        };
         let mut song_sample = 0.0;
         if self.playing && self.backing.is_some() {
             if self.count_in > 0 {
@@ -838,7 +1585,13 @@ impl Processor {
         } else {
             song_sample += mix(&mut self.preview_voices);
         }
-        (metro + (song_sample * self.gain).clamp(-1.0, 1.0)).clamp(-1.0, 1.0)
+        let program_sample = if program_running {
+            self.mix_program_voices()
+        } else {
+            0.0
+        };
+        self.program_frame_end();
+        (metro + (song_sample * self.gain).clamp(-1.0, 1.0) + program_sample).clamp(-1.0, 1.0)
     }
 }
 impl AudioNodeProcessor for Processor {
@@ -854,6 +1607,26 @@ impl AudioNodeProcessor for Processor {
                         generation,
                     } => {
                         if *clear {
+                            if self.program.is_some() {
+                                // Session replacement silences the old
+                                // program at this callback boundary. If an
+                                // earlier transition awaits observation,
+                                // retain a dedicated stop request so it
+                                // cannot be displaced by ordinary controls.
+                                for voice in &mut self.program_voices {
+                                    *voice = None;
+                                }
+                                for voice in &mut self.click_voices {
+                                    *voice = None;
+                                }
+                                if self.program_transition_pending.is_some() {
+                                    self.program_stop_pending = true;
+                                } else {
+                                    self.program_deferred_controls = std::array::from_fn(|_| None);
+                                    self.program_deferred_len = 0;
+                                    self.apply_program_control(DeferredProgramControl::Stop);
+                                }
+                            }
                             if let Some(take) = self.take.as_mut() {
                                 take.valid = false;
                             }
@@ -973,6 +1746,103 @@ impl AudioNodeProcessor for Processor {
                         self.push_boundary(Boundary::Change(change.clone()));
                     },
                     Command::StopCapture => self.stop_capture(),
+                    Command::ProgramStart { data, epoch } => {
+                        if !self.playing && self.take.is_none() {
+                            self.program = data.take();
+                            self.program_epoch = *epoch;
+                            self.program_loop_mode = self
+                                .program
+                                .as_ref()
+                                .map_or(ProgramLoop::Once, |program| program.loop_mode);
+                            self.program_card_index = self
+                                .program
+                                .as_ref()
+                                .map_or(0, |program| program.start_index);
+                            self.program_event_index = 0;
+                            self.program_tick_phase_q32 = 0;
+                            self.program_card_frames = 0;
+                            self.program_tail_remaining = 0;
+                            self.program_active_frames = 0;
+                            self.program_status = ProgramStatus::Playing;
+                            self.program_card_started = false;
+                            self.program_advance = false;
+                            self.program_transition_pending = None;
+                            self.program_stop_pending = false;
+                            self.program_pending_action = ProgramPendingAction::None;
+                            self.program_deferred_controls = std::array::from_fn(|_| None);
+                            self.program_deferred_len = 0;
+                            self.program_event_token = None;
+                            self.program_tail_started = false;
+                            self.program_click_last_step = None;
+                            self.program_event_due_frame = None;
+                            self.program_click_last_beat = None;
+                        }
+                    },
+                    Command::ProgramPause { epoch, paused } if *epoch == self.program_epoch => {
+                        if self.program_status == ProgramStatus::WaitingObserver {
+                            if *paused {
+                                if self.program_resume_after_observer != ProgramStatus::Paused {
+                                    self.program_resume_after_pause =
+                                        self.program_resume_after_observer;
+                                }
+                                self.program_resume_after_observer = ProgramStatus::Paused;
+                            } else if self.program_resume_after_observer == ProgramStatus::Paused {
+                                self.program_resume_after_observer =
+                                    self.program_resume_after_pause;
+                            }
+                        } else if *paused
+                            && self.program_status != ProgramStatus::Paused
+                            && self.program_status != ProgramStatus::Stopped
+                            && self.program_status != ProgramStatus::Complete
+                        {
+                            self.program_resume_after_pause = self.program_status;
+                            self.program_status = ProgramStatus::Paused;
+                        } else if !*paused && self.program_status == ProgramStatus::Paused {
+                            self.program_status = self.program_resume_after_pause;
+                        }
+                    },
+                    Command::ProgramPause { .. } => {},
+                    Command::ProgramTempo { epoch, card, bpm } if *epoch == self.program_epoch => {
+                        if let Some(program) = self.program.as_mut() {
+                            if let Some(target) = program.cards.get_mut(*card) {
+                                let step = *bpm
+                                    * super::clock::PROGRAM_TICKS_PER_BEAT as f64
+                                    * (u32::MAX as f64 + 1.0)
+                                    / (60.0 * self.rate as f64);
+                                if step.is_finite() && step >= 1.0 && step <= u64::MAX as f64 {
+                                    target.bpm = *bpm;
+                                    if *card == self.program_card_index {
+                                        self.program_tick_step_q32 = step.round() as u64;
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    Command::ProgramTempo { .. } => {},
+                    Command::ProgramLoopMode { epoch, mode } if *epoch == self.program_epoch => {
+                        self.program_loop_mode = *mode;
+                    },
+                    Command::ProgramLoopMode { .. } => {},
+                    Command::ProgramAdvance { epoch } if *epoch == self.program_epoch => {
+                        if matches!(
+                            self.program_status,
+                            ProgramStatus::Playing
+                                | ProgramStatus::Paused
+                                | ProgramStatus::WaitingManual
+                                | ProgramStatus::Refused
+                        ) {
+                            self.program_advance = true;
+                        }
+                    },
+                    Command::ProgramAdvance { .. } => {},
+                    Command::ProgramSeek { epoch, card } if *epoch == self.program_epoch => {
+                        self.defer_program_control(DeferredProgramControl::Seek(*card));
+                    },
+                    Command::ProgramSeek { .. } => {},
+                    Command::ProgramStop { epoch } if *epoch == self.program_epoch => {
+                        self.defer_program_control(DeferredProgramControl::Stop);
+                    },
+                    Command::ProgramStop { .. } => {},
                 }
                 self.handled_commands += 1;
             }
@@ -992,11 +1862,34 @@ impl AudioNodeProcessor for Processor {
                 feed.discard_pending();
             }
         }
-        for sample in &mut buffers.outputs[0][..info.frames] {
+        let first_frame = info.clock_samples.0.max(0) as u64;
+        for (offset, sample) in buffers.outputs[0][..info.frames].iter_mut().enumerate() {
+            self.current_frame = first_frame.saturating_add(offset as u64);
             *sample = self.frame();
         }
+        self.current_frame = first_frame.saturating_add(info.frames as u64);
         self.flush_return();
         self.blocks += 1;
+        let program = self.program_snapshot();
+        let click_step = if self.program.is_some()
+            && matches!(
+                self.program_status,
+                ProgramStatus::Playing
+                    | ProgramStatus::Paused
+                    | ProgramStatus::WaitingManual
+                    | ProgramStatus::WaitingObserver
+                    | ProgramStatus::Refused
+            ) {
+            self.click.as_ref().map_or(0, |click| {
+                let step_ticks =
+                    (super::clock::PROGRAM_TICKS_PER_BEAT / click.divisions.max(1) as u64).max(1);
+                ((program.beat_ticks / step_ticks) % click.steps.len().max(1) as u64) as usize
+            })
+        } else {
+            self.click.as_ref().map_or(0, |c| {
+                (self.last_click.unwrap_or(0) % c.steps.len() as u64) as usize
+            })
+        };
         self.shared.publish(OutputSnapshot {
             device_frames: info.clock_samples.0.max(0) as u64 + info.frames as u64,
             processing_blocks: self.blocks,
@@ -1011,9 +1904,8 @@ impl AudioNodeProcessor for Processor {
             preview_voices: self.preview_voices.iter().filter(|v| v.is_some()).count(),
             preview_starts: self.preview_starts,
             click_playing: self.click_playing,
-            click_step: self.click.as_ref().map_or(0, |c| {
-                (self.last_click.unwrap_or(0) % c.steps.len() as u64) as usize
-            }),
+            click_step,
+            program,
         });
         if self.handled_commands != 0 {
             self.shared

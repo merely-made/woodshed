@@ -257,12 +257,6 @@ pub struct Shared {
     pub reduce_motion: bool,
     pub text_scale: String,
 
-    /// Last arpeggio auto-advance instant (the step clock while the arpeggio
-    /// transport runs).
-    pub last_arp_step: Option<std::time::Instant>,
-    /// Last rehearsal dwell-advance instant.
-    pub last_rehearsal_step: Option<std::time::Instant>,
-    pub last_rehearsal_instruction: Option<String>,
     /// The song last pushed through the backend seam (push on change).
     pub last_song: Option<woodshed_core::song::SongDoc>,
     pub last_loop_plan: Option<woodshed_core::loop_plan::LoopPlan>,
@@ -330,9 +324,6 @@ impl Shared {
             appearance_sheet: None,
             reduce_motion: false,
             text_scale: "Normal".into(),
-            last_arp_step: None,
-            last_rehearsal_step: None,
-            last_rehearsal_instruction: None,
             last_song: None,
             last_loop_plan: None,
             last_audio_session: None,

@@ -201,6 +201,7 @@ fn boot_state(
         backend.set_wake(wake.callback());
     }
     let mut ui = UiState::new();
+    ui.enable_practice_clock();
     shared.wav_export.set_wake(wake.callback());
     shared.capture_persistence.set_wake(wake.callback());
     ui.event_clock = Some(drive::wall_time_ms);

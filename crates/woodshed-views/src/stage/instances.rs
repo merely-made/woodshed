@@ -187,6 +187,28 @@ impl UiState {
             .card_sounding_pitches_at_tempo(card, self.transport.bpm).map(Some)
     }
     pub fn stop_rehearsal(&mut self) {
+        if self.practice_clock_managed {
+            if self.rehearsal_observed_card.is_some() {
+                self.finish_rehearsal_observation(EngagementKind::Rehearsed);
+            }
+            self.rehearsal_epoch = self.rehearsal_epoch.wrapping_add(1);
+            self.rehearsal_pending = false;
+            self.rehearsal_running = false;
+            self.rehearsal_paused = false;
+            self.rehearsal_owner = None;
+            self.rehearsal_stage = None;
+            self.rehearsal_observed_midi = None;
+            self.rehearsal_clock_program = None;
+            self.rehearsal_clock_source_order.clear();
+            self.practice_clock_commands.clear();
+            self.practice_clock_projection = None;
+            self.rehearsal_active_frames = 0;
+            self.rehearsal_sample_rate = None;
+            self.stage_clock_event = None;
+            self.stage_clock_contacts.clear();
+            self.stage_clock_beat_ticks = 0;
+            return;
+        }
         self.rehearsal_epoch = self.rehearsal_epoch.wrapping_add(1);
         self.rehearsal_pending = false;
         if self.rehearsal_running {
@@ -199,6 +221,13 @@ impl UiState {
         self.rehearsal_observed_midi = None;
     }
     pub fn advance_rehearsal_cursor(&mut self) -> bool {
+        if self.practice_clock_managed {
+            if !self.rehearsal_running {
+                return false;
+            }
+            self.queue_practice_clock_command(super::PracticeClockCommand::Advance);
+            return true;
+        }
         if !self.rehearsal_running {
             return false;
         }
