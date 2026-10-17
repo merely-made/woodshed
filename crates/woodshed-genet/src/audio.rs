@@ -21,6 +21,7 @@ use woodshed_core::song::SongDoc;
 
 mod loop_projection;
 mod practice_clock;
+mod input_admission;
 #[cfg(test)]
 mod mixed_loop_tests;
 pub(crate) use loop_projection::CaptureSnapshot;
@@ -99,8 +100,12 @@ enum InputStream {
     Native {
         _engine: InputEngine,
     },
+    /// Native ownership stays on input_admission's worker; these are handles only.
+    Worker,
     #[cfg(test)]
     Test,
+    #[cfg(test)]
+    TestOwner { _owner: Box<dyn std::any::Any> },
 }
 
 struct InputSession {
@@ -153,6 +158,11 @@ pub struct CpalBackend {
     /// Opened only when an input feature is requested; retained across
     /// disabling features so all analyzers keep sharing one cpal stream.
     input: Option<InputSession>,
+    input_admission: input_admission::Worker,
+    pending_capture: Option<input_admission::CaptureReservation>,
+    pending_calibration: bool,
+    input_session_epoch: u64,
+    backing_revision: u64,
     /// Desired tuner state, including a failed enable request. Repeated
     /// synchronization must not reopen the microphone after a failure.
     tuner_requested: bool,
@@ -231,6 +241,7 @@ impl CpalBackend {
             .as_ref()
             .map(OutputRuntime::capture_observation)
             .unwrap_or_default();
+        let capture_busy = capture_busy || self.pending_capture.is_some();
         let plan = self.captures.plan.clone();
         let source = plan
             .as_ref()
@@ -261,12 +272,15 @@ impl CpalBackend {
             capture_target: self.recorder_capture_target.filter(|_| capture_busy),
             capture_epoch: capture_busy.then_some(self.recorder_capture_epoch),
             capture_busy,
-            capture_armed: snapshot.capture_armed,
+            capture_armed: self.pending_capture.is_some() || snapshot.capture_armed,
             capture_invalid: snapshot.capture_invalid,
             recording_bar: snapshot.recording.then_some(snapshot.cursor.bar_idx),
             output_rate,
             input_rate: self.capture_source_rate(),
-            status: self.error().map(str::to_owned).unwrap_or_else(|| {
+            status: if self.input_admission_pending() {
+                let pending = "Opening audio input… Stop cancels pending Record.";
+                self.error().map_or_else(|| pending.into(), |error| format!("{error}; {pending}"))
+            } else { self.error().map(str::to_owned).unwrap_or_else(|| {
                 if output_rate.is_none() {
                     "Audio output is unavailable.".into()
                 } else if self.input.is_none() {
@@ -274,30 +288,14 @@ impl CpalBackend {
                 } else {
                     "One shared output · input configuration opened".into()
                 }
-            }),
+            }) },
         }
     }
 
     /// Runtime execution of a frozen saved-bar request; positional targets do
     /// not pass through the mutable UI editor cursor.
     pub(crate) fn recorder_arm_saved(&mut self, index: usize) -> Result<(), String> {
-        if self.loop_capture_busy() {
-            return Err("Capture is already armed or active.".into());
-        }
-        self.check_set_capture_quota()?;
-        self.ensure_capture_input()?;
-        if let Some(input) = &self.input {
-            input.capture.set_enabled(true);
-        }
-        if let Err(error) = self.with_output(|output| output.arm_capture(index, false)) {
-            if let Some(input) = &self.input {
-                input.capture.set_enabled(false);
-            }
-            return Err(error);
-        }
-        self.recorder_capture_epoch = self.recorder_capture_epoch.wrapping_add(1);
-        self.recorder_capture_target = Some(index);
-        Ok(())
+        self.request_capture(index, false)
     }
     pub(crate) fn recorder_clear_saved(&mut self, index: usize) -> Result<(), String> {
         if self.loop_capture_busy() {
@@ -312,6 +310,7 @@ impl CpalBackend {
         {
             return Err("The accepted capture has changed. Use its current Stop control.".into());
         }
+        self.pending_capture = None;
         self.with_output(OutputRuntime::stop_capture_now)
     }
 
@@ -426,15 +425,17 @@ impl CpalBackend {
     }
 
     pub fn needs_service(&self) -> bool {
-        (!self.native_output || self.output_stream_count() != 0)
+        self.input_admission_pending() || self.pending_capture.is_some() || self.pending_calibration
+            || ((!self.native_output || self.output_stream_count() != 0)
             && self
                 .output
                 .as_ref()
-                .is_some_and(OutputRuntime::needs_service)
+                .is_some_and(OutputRuntime::needs_service))
     }
 
     /// Register both completion wakeups and the bounded idle context service.
     pub fn set_wake(&mut self, wake: Arc<dyn Fn() + Send + Sync>) {
+        self.input_admission.set_wake(wake.clone());
         if let Some(output) = &mut self.output {
             output.set_wake(wake.clone());
             self.heartbeat = Some(OutputHeartbeat::start(wake));
@@ -451,6 +452,7 @@ impl CpalBackend {
                 self.output_failure(error);
             }
         }
+        self.service_input_admission();
         if let Some(output) = &self.output {
             self.captures.remember(&output.song());
         }
@@ -530,6 +532,11 @@ impl CpalBackend {
             last_metronome: None,
             song_transport_requested: false,
             input: None,
+            input_admission: input_admission::Worker::new(),
+            pending_capture: None,
+            pending_calibration: false,
+            input_session_epoch: 0,
+            backing_revision: 0,
             tuner_requested: false,
             capture_attached: false,
             recorder_capture_target: None,
@@ -570,26 +577,22 @@ impl CpalBackend {
             return true;
         }
         #[cfg(test)]
-        let result = match self.input_factory.as_mut() {
-            Some(factory) => factory(),
-            None => InputSession::open(),
-        };
-        #[cfg(not(test))]
-        let result = InputSession::open();
+        if let Some(factory) = self.input_factory.as_mut() {
+            let result = factory();
+            return match result {
+                Ok(input) => {
+                    input.tuner.set_enabled(self.tuner_requested);
+                    self.input = Some(input);
+                    self.error = self.initial_error.clone();
+                    true
+                },
+                Err(error) => { self.input_error(error); false },
+            };
+        }
+        let result = self.input_admission.request(std::time::Instant::now());
         match result {
-            Ok(input) => {
-                input.tuner.set_enabled(self.tuner_requested);
-                self.input = Some(input);
-                self.error = self.initial_error.clone();
-                true
-            },
-            Err(error) => {
-                self.error = Some(match self.initial_error.as_ref() {
-                    Some(initial) => format!("{initial}; {error}"),
-                    None => error,
-                });
-                false
-            },
+            Ok(()) => false,
+            Err(error) => { self.input_error(error); false },
         }
     }
 
@@ -645,6 +648,7 @@ impl CpalBackend {
                 self.with_output(OutputRuntime::clear_session)?;
             }
             self.captures = LoopCaptures::default();
+            self.backing_revision = self.backing_revision.wrapping_add(1);
             self.session_reset_pending = false;
         }
         Ok(())
@@ -744,6 +748,7 @@ impl AudioBackend for CpalBackend {
         }
         projected.playing = current.playing;
         self.with_output(|output| output.set_song(projected))?;
+        self.backing_revision = self.backing_revision.wrapping_add(1);
         self.captures.plan = None;
         if let Some(input) = &self.input {
             input.capture.set_enabled(false);
@@ -765,11 +770,15 @@ impl AudioBackend for CpalBackend {
         let mut projected = self.captures.prepare_replacement(&current, plan)?;
         projected.playing = current.playing;
         self.with_output(|output| output.set_song(projected))?;
+        self.backing_revision = self.backing_revision.wrapping_add(1);
         self.captures.plan = Some(plan.clone());
         Ok(())
     }
 
     fn clear_loop_session(&mut self) {
+        self.input_session_epoch = self.input_session_epoch.wrapping_add(1);
+        self.pending_capture = None;
+        self.pending_calibration = false;
         self.recorder_capture_target = None;
         if let Some(input) = &self.input {
             input.capture.set_enabled(false);
@@ -781,23 +790,7 @@ impl AudioBackend for CpalBackend {
 
     fn loop_arm_record(&mut self, id: LoopSegmentId) -> Result<(), String> {
         let index = self.captures.index_of(id)?;
-        if self.loop_capture_busy() {
-            return Err("Capture is already armed or active.".into());
-        }
-        self.check_set_capture_quota()?;
-        self.ensure_capture_input()?;
-        if let Some(input) = &self.input {
-            input.capture.set_enabled(true);
-        }
-        if let Err(error) = self.with_output(|output| output.arm_selected_capture(index)) {
-            if let Some(input) = &self.input {
-                input.capture.set_enabled(false);
-            }
-            return Err(error);
-        }
-        self.recorder_capture_epoch = self.recorder_capture_epoch.wrapping_add(1);
-        self.recorder_capture_target = Some(index);
-        Ok(())
+        self.request_capture(index, true)
     }
 
     fn loop_clear(&mut self, id: LoopSegmentId) -> Result<(), String> {
@@ -811,12 +804,13 @@ impl AudioBackend for CpalBackend {
     }
 
     fn loop_capture_busy(&self) -> bool {
-        self.output
+        self.pending_capture.is_some() || self.output
             .as_ref()
             .is_some_and(OutputRuntime::capture_busy)
     }
 
     fn loop_stop_record(&mut self) {
+        self.pending_capture = None;
         let _ = self.with_output(OutputRuntime::stop_capture_now);
     }
 
@@ -871,8 +865,10 @@ impl AudioBackend for CpalBackend {
 
     fn calibration_start(&mut self) {
         if !self.ensure_input() {
+            self.pending_calibration = self.input_admission_pending();
             return;
         }
+        self.pending_calibration = false;
         let Some(onset) = self.input.as_ref().map(|input| input.onset.clone()) else {
             return;
         };
@@ -890,6 +886,12 @@ impl AudioBackend for CpalBackend {
     }
 
     fn calibration_poll(&mut self) -> CalibrationStatus {
+        if self.pending_calibration {
+            return CalibrationStatus::Running {
+                clicks_fired: 0,
+                total: woodshed_audio::calibration::CALIBRATION_CLICKS,
+            };
+        }
         let Some(onset) = self.input.as_ref().map(|input| input.onset.clone()) else {
             return CalibrationStatus::Unavailable;
         };
@@ -940,6 +942,7 @@ impl AudioBackend for CpalBackend {
     }
 
     fn calibration_cancel(&mut self) {
+        self.pending_calibration = false;
         if let Some(output) = self.output.as_mut() {
             let result = self.calib.cancel(output);
             if let Err(error) = result {
@@ -968,7 +971,9 @@ impl AudioBackend for CpalBackend {
     }
 
     fn song_clear_loop(&mut self, bar_idx: usize) {
-        let _ = self.with_output(|output| output.clear_recording(bar_idx));
+        if let Err(error) = self.recorder_clear_saved(bar_idx) {
+            self.input_error(error);
+        }
     }
 
     fn song_set_record_replace(&mut self, replace: bool) {
