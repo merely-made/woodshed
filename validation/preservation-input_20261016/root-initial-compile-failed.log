@@ -1,0 +1,91 @@
+warning: use of deprecated method `std::sync::atomic::Atomic::<u64>::fetch_update`: renamed to `try_update` for consistency
+  --> crates/woodshed-audio/src/capture_feed.rs:33:14
+   |
+33 |             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |generation| {
+   |              ^^^^^^^^^^^^
+   |
+   = note: `#[warn(deprecated)]` on by default
+help: replace the use of the deprecated method
+   |
+33 -             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |generation| {
+33 +             .try_update(Ordering::AcqRel, Ordering::Acquire, |generation| {
+   |
+
+warning: use of deprecated method `std::sync::atomic::Atomic::<usize>::fetch_update`: renamed to `try_update` for consistency
+   --> crates/woodshed-audio/src/output_runtime.rs:305:14
+    |
+305 |             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |              ^^^^^^^^^^^^
+    |
+help: replace the use of the deprecated method
+    |
+305 -             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+305 +             .try_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |
+
+warning: use of deprecated method `std::sync::atomic::Atomic::<usize>::fetch_update`: renamed to `try_update` for consistency
+   --> crates/woodshed-audio/src/output_runtime.rs:350:14
+    |
+350 |             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |              ^^^^^^^^^^^^
+    |
+help: replace the use of the deprecated method
+    |
+350 -             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+350 +             .try_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |
+
+warning: use of deprecated method `std::sync::atomic::Atomic::<usize>::fetch_update`: renamed to `try_update` for consistency
+   --> crates/woodshed-audio/src/output_runtime.rs:371:14
+    |
+371 |             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |              ^^^^^^^^^^^^
+    |
+help: replace the use of the deprecated method
+    |
+371 -             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+371 +             .try_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |
+
+error[E0433]: cannot find module or crate `pollster` in this scope
+  --> crates/woodshed-genet/src/persona_preservation_tests.rs:90:17
+   |
+90 |     let prior = pollster::block_on(muniment::Backend::get(&bytes, "session")).unwrap();
+   |                 ^^^^^^^^ use of unresolved module or unlinked crate `pollster`
+   |
+   = help: if you wanted to use a crate named `pollster`, use `cargo add pollster` to add it to your `Cargo.toml`
+
+error[E0433]: cannot find module or crate `pollster` in this scope
+   --> crates/woodshed-genet/src/persona_preservation_tests.rs:104:9
+    |
+104 |         pollster::block_on(muniment::Backend::get(&bytes, "session")).unwrap(),
+    |         ^^^^^^^^ use of unresolved module or unlinked crate `pollster`
+    |
+    = help: if you wanted to use a crate named `pollster`, use `cargo add pollster` to add it to your `Cargo.toml`
+
+error[E0433]: cannot find module or crate `pollster` in this scope
+   --> crates/woodshed-genet/src/persona_preservation_tests.rs:119:9
+    |
+119 |         pollster::block_on(muniment::Backend::get(&bytes, "session"))
+    |         ^^^^^^^^ use of unresolved module or unlinked crate `pollster`
+    |
+    = help: if you wanted to use a crate named `pollster`, use `cargo add pollster` to add it to your `Cargo.toml`
+
+error[E0433]: cannot find module or crate `pollster` in this scope
+   --> crates/woodshed-genet/src/persona_preservation_tests.rs:148:21
+    |
+148 |         let prior = pollster::block_on(muniment::Backend::get(&bytes, "session")).unwrap();
+    |                     ^^^^^^^^ use of unresolved module or unlinked crate `pollster`
+    |
+    = help: if you wanted to use a crate named `pollster`, use `cargo add pollster` to add it to your `Cargo.toml`
+
+error[E0433]: cannot find module or crate `pollster` in this scope
+   --> crates/woodshed-genet/src/persona_preservation_tests.rs:159:13
+    |
+159 |             pollster::block_on(muniment::Backend::get(&bytes, "session")).unwrap(),
+    |             ^^^^^^^^ use of unresolved module or unlinked crate `pollster`
+    |
+    = help: if you wanted to use a crate named `pollster`, use `cargo add pollster` to add it to your `Cargo.toml`
+
+For more information about this error, try `rustc --explain E0433`.
+error: could not compile `woodshed-genet` (bin "woodshed-genet" test) due to 5 previous errors

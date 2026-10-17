@@ -59,10 +59,44 @@ pub struct PersonaSwitch {
     pub losing_token: String,
 }
 
-#[derive(Clone, Copy)]
 struct PendingProject {
     request: RequestId,
     scope: ProjectScope,
+    saved_revision: Option<ProjectRevision>,
+}
+
+/// A save acknowledges the whole retained document, including inactive branches.
+/// The store is append-only and content-addressed: its count also detects new
+/// buffers not yet referenced by a history head, without cloning PCM per frame.
+struct ProjectRevision {
+    bundle: ProjectBundle,
+    media_count: usize,
+    missing_media: BTreeSet<MediaRef>,
+}
+
+impl ProjectRevision {
+    fn current(recorder: &Recorder) -> Self {
+        Self {
+            bundle: ProjectBundle::new(recorder.session.clone(), recorder.history.clone()),
+            media_count: recorder.store.len(),
+            missing_media: recorder.missing_media.clone(),
+        }
+    }
+
+    fn matches(&self, recorder: &Recorder) -> bool {
+        self.bundle.session == recorder.session
+            && self.bundle.history == recorder.history
+            && self.media_count == recorder.store.len()
+            && self.missing_media == recorder.missing_media
+    }
+}
+
+#[derive(Clone, Copy)]
+enum Preservation {
+    Close,
+    Open,
+    Accept,
+    Restart,
 }
 
 pub struct AppState {
@@ -72,7 +106,11 @@ pub struct AppState {
     audio: DesktopRecorderAudio,
     last_meter_tick: Instant,
     project_path: Option<PathBuf>,
-    saved_head: hocket_model::NodeId,
+    saved_revision: ProjectRevision,
+    preservation: Option<Preservation>,
+    loaded_project: Option<(PathBuf, hocket_project::project_store::LoadedProject)>,
+    continue_after_save: bool,
+    close_approval: Option<ProjectRevision>,
     project_status: ProjectStatus,
     project_requests: RequestIds,
     project_generation: u64,
@@ -168,15 +206,20 @@ impl AppState {
             "system audio"
         }
         .to_string();
-        let saved_head = history.head;
+        let recorder = Recorder::new(session, history, store, missing_media);
+        let saved_revision = ProjectRevision::current(&recorder);
         let mut state = Self {
             appearance: crate::appearance::AppearanceState::default(),
             window_commands: cambium_genet_winit_host::WindowCommands::new(),
-            recorder: Recorder::new(session, history, store, missing_media),
+            recorder,
             audio,
             last_meter_tick: Instant::now(),
             project_path: None,
-            saved_head,
+            saved_revision,
+            preservation: None,
+            loaded_project: None,
+            continue_after_save: false,
+            close_approval: None,
             project_status: ProjectStatus::Idle,
             project_requests: RequestIds::default(),
             project_generation: 0,
@@ -635,7 +678,22 @@ impl AppState {
     /// the local branch; when it is a new session, it is adopted wholesale. The
     /// sender becomes the reply recipient either way.
     pub fn accept_incoming(&mut self) {
-        let Some(received) = self.incoming.take() else {
+        if self.incoming.is_none() || self.preservation.is_some() {
+            return;
+        }
+        self.preservation = Some(Preservation::Accept);
+        self.retry_preservation();
+    }
+
+    fn adopt_incoming(&mut self) {
+        // Keep the original staged payload on failure so acceptance is retryable.
+        if let Some(received) = self.incoming.as_ref() {
+            if let Err(error) = received.bundle.validate() {
+                self.project_status = ProjectStatus::Error(format!("accept: {error}"));
+                return;
+            }
+        }
+        let Some(received) = self.incoming.clone() else {
             return;
         };
         let sender = received.sender;
@@ -697,6 +755,7 @@ impl AppState {
 
     pub fn is_project_io_active(&self) -> bool {
         self.pending_project
+            .as_ref()
             .is_some_and(|pending| pending.scope == self.project_scope())
     }
 
@@ -713,7 +772,15 @@ impl AppState {
             ProjectCommand::WriteHandoff { .. } => ProjectStatus::WritingHandoff,
             ProjectCommand::ReadHandoff { .. } => ProjectStatus::ReadingHandoff,
         };
-        self.pending_project = Some(PendingProject { request, scope });
+        let saved_revision = match &command {
+            ProjectCommand::Save { bundle, media, .. } => Some(ProjectRevision {
+                bundle: bundle.clone(),
+                media_count: media.len(),
+                missing_media: self.recorder.missing_media.clone(),
+            }),
+            _ => None,
+        };
+        self.pending_project = Some(PendingProject { request, scope, saved_revision });
         if !self.project_worker.command(ProjectRequest {
             scope,
             command: Correlated::new(request, command),
@@ -726,6 +793,16 @@ impl AppState {
     }
 
     pub fn choose_project_to_open(&mut self) {
+        if self.loaded_project.is_some() {
+            if self.preservation.is_none() {
+                self.preservation = Some(Preservation::Open);
+                self.retry_preservation();
+            }
+            return;
+        }
+        if self.preservation.is_some() {
+            return;
+        }
         if self.is_project_io_active() {
             return;
         }
@@ -757,15 +834,25 @@ impl AppState {
                 .save_file()
                 .map(|path| ensure_extension(path, "hock")),
         };
+        self.save_project_at(path);
+    }
+
+    /// Shared dialog outcome seam: cancellation never grants preservation.
+    fn save_project_at(&mut self, path: Option<PathBuf>) {
+        self.continue_after_save = false;
+        if self.is_recording() || self.is_project_io_active() {
+            return;
+        }
         if let Some(path) = path {
             let bundle =
                 ProjectBundle::new(self.recorder.session.clone(), self.recorder.history.clone());
-            self.submit_project(ProjectCommand::Save {
+            let admitted = self.submit_project(ProjectCommand::Save {
                 path,
                 bundle,
                 media: self.recorder.store.clone(),
                 saved_head: self.recorder.history.head,
             });
+            self.continue_after_save = admitted && self.preservation.is_some();
         }
     }
 
@@ -851,7 +938,13 @@ impl AppState {
                 version: version.clone(),
                 settings: self.update_settings,
             }),
-            UpdateStatus::ReadyToRestart { .. } => Some(UpdateCommand::ApplyAndRestart),
+            UpdateStatus::ReadyToRestart { .. } => {
+                if self.preservation.is_none() {
+                    self.preservation = Some(Preservation::Restart);
+                    self.retry_preservation();
+                }
+                None
+            },
             // A failure is worth one more try; the reason stays visible until
             // the retry reports something new.
             UpdateStatus::Failed { .. } | UpdateStatus::Idle | UpdateStatus::UpToDate { .. } => {
@@ -878,7 +971,7 @@ impl AppState {
     }
 
     pub fn apply_project_update(&mut self, reply: ProjectReply) {
-        let Some(pending) = self.pending_project else {
+        let Some(pending) = self.pending_project.as_ref() else {
             return;
         };
         if pending.request != reply.update.request || pending.scope != reply.scope {
@@ -886,30 +979,35 @@ impl AppState {
         }
         // A matching old terminal reply may retire its own pending slot, but
         // never changes the replacement session or releases a newer request.
-        self.pending_project = None;
+        let pending = self.pending_project.take().expect("matched pending request");
         if reply.scope != self.project_scope() {
             return;
         }
         match reply.update.value {
             ProjectUpdate::Saved { path, saved_head } => {
+                let Some(revision) = pending.saved_revision else {
+                    return;
+                };
+                if revision.bundle.history.head != saved_head {
+                    self.continue_after_save = false;
+                    self.project_status = ProjectStatus::Error("save revision mismatch".into());
+                    return;
+                }
                 self.project_path = Some(path);
-                self.saved_head = saved_head;
+                self.saved_revision = revision;
                 self.project_status = ProjectStatus::Saved;
+                if std::mem::take(&mut self.continue_after_save) {
+                    self.retry_preservation();
+                }
             },
             ProjectUpdate::Opened { path, loaded } => {
-                self.stop_all();
-                self.retire_project_work();
-                self.recorder.replace_project(
-                    loaded.bundle.session,
-                    loaded.bundle.history,
-                    loaded.media,
-                    loaded.missing_media,
-                );
-                self.project_path = Some(path);
-                self.saved_head = self.recorder.history.head;
-                self.project_status = ProjectStatus::Saved;
-                self.resync_tempo();
-                self.reconcile_all_playback();
+                self.loaded_project = Some((path, loaded));
+                if self.preservation.is_none() {
+                    self.preservation = Some(Preservation::Open);
+                    // Completion admission checks the live capture and full
+                    // revision, even if dispatch originally observed a clean host.
+                    self.retry_preservation();
+                }
             },
             ProjectUpdate::Exported { path } => {
                 self.project_status = ProjectStatus::Exported(path);
@@ -925,13 +1023,159 @@ impl AppState {
                 self.incoming = Some(received);
             },
             ProjectUpdate::Failed { action, message } => {
+                self.continue_after_save = false;
                 self.project_status = ProjectStatus::Error(format!("{action}: {message}"));
             },
         }
     }
 
     pub(crate) fn is_dirty(&self) -> bool {
-        self.recorder.history.head != self.saved_head
+        !self.saved_revision.matches(&self.recorder)
+    }
+
+    pub fn preservation_pending(&self) -> bool {
+        self.preservation.is_some()
+    }
+
+    pub fn has_loaded_project(&self) -> bool {
+        self.loaded_project.is_some()
+    }
+
+    pub fn preservation_message(&self) -> String {
+        let action = match self.preservation {
+            Some(Preservation::Close) => "closing Hocket",
+            Some(Preservation::Open) => "opening the loaded project",
+            Some(Preservation::Accept) => "accepting the hand-off",
+            Some(Preservation::Restart) => "restarting Hocket",
+            None => return String::new(),
+        };
+        let message = if self.is_recording() {
+            format!("Stop capture before {action}, then Retry. Your live capture is retained.")
+        } else if self.is_project_io_active() {
+            format!("Wait for project I/O before {action}, then Retry.")
+        } else if self.is_dirty() {
+            format!("Save your project before {action}, discard its unsaved changes, or cancel.")
+        } else {
+            format!("Retry to continue {action}, or cancel.")
+        };
+        if let ProjectStatus::Error(error) = &self.project_status {
+            format!("{message} Last operation failed: {error}")
+        } else {
+            message
+        }
+    }
+
+    /// Appearance permission is handled by the caller; it never grants project
+    /// permission. A discard approval is valid only for the exact revision.
+    pub fn request_project_close(&mut self) -> bool {
+        if !self.is_recording() && !self.is_project_io_active()
+            && self.close_approval.as_ref().is_some_and(|r| r.matches(&self.recorder))
+        {
+            return true;
+        }
+        self.close_approval = None;
+        if self.preservation.is_none() {
+            self.preservation = Some(Preservation::Close);
+        }
+        if matches!(self.preservation, Some(Preservation::Close | Preservation::Restart)) {
+            self.retry_preservation();
+        }
+        self.close_approval.is_some()
+    }
+
+    pub fn project_close_ready(&self) -> bool {
+        self.close_approval.is_some()
+    }
+
+    pub fn wait_for_appearance_close(&mut self) {
+        // Do not keep pumping an approved project close while the appearance
+        // confirmation is open: its Cancel must remain effective.
+        self.close_approval = None;
+    }
+
+    pub fn cancel_preservation(&mut self) {
+        self.preservation = None;
+        self.continue_after_save = false;
+        self.close_approval = None;
+        // Loaded Open and hand-off payloads deliberately survive cancellation.
+    }
+
+    pub fn retry_loaded_project(&mut self) {
+        if self.loaded_project.is_some() && self.preservation.is_none() {
+            self.preservation = Some(Preservation::Open);
+            self.retry_preservation();
+        }
+    }
+
+    pub fn discard_loaded_project(&mut self) {
+        if self.preservation.is_none() {
+            self.loaded_project = None;
+        }
+    }
+
+    pub fn retry_preservation(&mut self) {
+        self.resolve_preservation(false);
+    }
+
+    pub fn discard_for_preservation(&mut self) {
+        self.resolve_preservation(true);
+    }
+
+    fn resolve_preservation(&mut self, discard: bool) {
+        // A busy capture owns a usable stop token. Neither discard nor an Open
+        // reply may retire it, and admitted worker work must also finish first.
+        if self.is_recording() || self.is_project_io_active() || (!discard && self.is_dirty()) {
+            return;
+        }
+        let Some(intent) = self.preservation.take() else { return; };
+        self.continue_after_save = false;
+        match intent {
+            Preservation::Close => {
+                self.close_approval = Some(ProjectRevision::current(&self.recorder));
+            },
+            Preservation::Accept => self.adopt_incoming(),
+            Preservation::Open => {
+                if let Some((_, loaded)) = self.loaded_project.as_ref() {
+                    if let Err(error) = loaded.bundle.validate() {
+                        self.preservation = Some(Preservation::Open);
+                        self.project_status = ProjectStatus::Error(format!("open: {error}"));
+                        return;
+                    }
+                }
+                let Some((path, loaded)) = self.loaded_project.take() else { return; };
+                self.stop_all();
+                self.retire_project_work();
+                self.recorder.replace_project(
+                    loaded.bundle.session, loaded.bundle.history, loaded.media, loaded.missing_media,
+                );
+                self.project_path = Some(path);
+                self.saved_revision = ProjectRevision::current(&self.recorder);
+                self.project_status = ProjectStatus::Saved;
+                self.resync_tempo();
+                self.reconcile_all_playback();
+            },
+            Preservation::Restart => {
+                // Re-enter the ordinary close path so an appearance draft must
+                // resolve too. Dispatching the updater is done by that guard.
+                self.preservation = Some(Preservation::Restart);
+                self.close_approval = Some(ProjectRevision::current(&self.recorder));
+            },
+        }
+    }
+
+    pub fn apply_restart_after_close_guard(&mut self) -> bool {
+        if self.is_recording() || self.is_project_io_active()
+            || !self.close_approval.as_ref().is_some_and(|r| r.matches(&self.recorder))
+        {
+            return false;
+        }
+        if matches!(self.preservation, Some(Preservation::Restart)) {
+            self.preservation = None;
+            self.close_approval = None;
+            self.update_worker.command(crate::update::worker::UpdateCommand::ApplyAndRestart);
+            return true;
+        }
+        false
     }
 
     fn now_ms() -> u64 {
@@ -1083,3 +1327,7 @@ impl std::ops::DerefMut for AppState {
 #[cfg(test)]
 #[path = "project_correlation_tests.rs"]
 mod project_correlation_tests;
+
+#[cfg(test)]
+#[path = "native_lifecycle_tests.rs"]
+mod native_lifecycle_tests;

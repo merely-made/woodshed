@@ -1271,6 +1271,7 @@ pub struct UiState {
     /// host takes it, reads the vault, and puts the gate up; a view cannot,
     /// because reading the roster is vault work.
     pub persona_switch_requested: bool,
+    pub pending_persona_switch: Option<crate::persona::PendingSwitch>,
     /// What is protecting this session, reported by the store when it opened.
     /// `None` before a store opens at all, which includes a declined gate.
     pub seal: Option<crate::persona::PracticeSeal>,
@@ -1432,6 +1433,7 @@ impl UiState {
             practice_discard_close: false,
             persona: None,
             persona_switch_requested: false,
+            pending_persona_switch: None,
             seal: None,
             personal_relation_notice: None,
             stage,

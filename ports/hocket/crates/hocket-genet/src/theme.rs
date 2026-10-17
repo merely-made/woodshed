@@ -30,6 +30,12 @@ pub fn sheet() -> String {
        --record: #e2493a; --record-glow: rgba(226,73,58,0.28);
        background-color: var(--ground); color: var(--text); }
 .mono { font-family: monospace; }
+.project-preservation { display:flex; flex-wrap:wrap; align-items:center; gap:10px;
+    padding:12px 18px; flex-shrink:0; background:var(--surface); color:var(--text); }
+.project-preservation p { width:100%; margin:0; }
+.project-preservation button { display:block; padding:8px 12px;
+    border:1px solid currentColor; color:inherit; background:transparent; }
+.hocket-desktop > .hocket-editor { flex:1; height:auto; min-height:0; }
 
 /* top strip */
 .top { display: flex; align-items: center; flex-wrap: wrap; row-gap: 8px;

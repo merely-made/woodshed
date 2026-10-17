@@ -1,0 +1,411 @@
+{
+  "schema": "woodshed.preservation-input-remediation.v1",
+  "date": "2026-10-16",
+  "baseline": "21d0c2e697165770d9f5787dadc91f526c8e2b02",
+  "worktree": "/Users/markik/Code/testing/woodshed/audit-preservation-20261016",
+  "status": "source-and-device-free-tests-passed; native-qualification-open; local-commit-only",
+  "runs": [
+    {
+      "name": "root",
+      "command": [
+        "cargo",
+        "test",
+        "--offline",
+        "--locked",
+        "-p",
+        "woodshedding",
+        "-p",
+        "woodshed-core",
+        "-p",
+        "woodshed-views",
+        "-p",
+        "woodshed-genet",
+        "-p",
+        "hocket-model",
+        "-p",
+        "hocket-project",
+        "--quiet"
+      ],
+      "cwd": "/Users/markik/Code/testing/woodshed/audit-preservation-20261016",
+      "started_utc": "2026-10-17T03:40:55.345056+00:00",
+      "ended_utc": "2026-10-17T03:44:17.140721+00:00",
+      "exit_code": 0,
+      "log": "root-final.log",
+      "suites": [
+        {
+          "passed": 42,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered_out": 0
+        },
+        {
+          "passed": 2,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered_out": 0
+        },
+        {
+          "passed": 38,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered_out": 0
+        },
+        {
+          "passed": 277,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered_out": 0
+        },
+        {
+          "passed": 0,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered_out": 0
+        },
+        {
+          "passed": 0,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered_out": 0
+        },
+        {
+          "passed": 0,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered_out": 0
+        },
+        {
+          "passed": 0,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered_out": 0
+        },
+        {
+          "passed": 5,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered_out": 0
+        },
+        {
+          "passed": 1,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered_out": 0
+        },
+        {
+          "passed": 1,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered_out": 197
+        },
+        {
+          "passed": 1,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered_out": 197
+        },
+        {
+          "passed": 1,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered_out": 197
+        },
+        {
+          "passed": 1,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered_out": 197
+        },
+        {
+          "passed": 1,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered_out": 197
+        },
+        {
+          "passed": 191,
+          "failed": 0,
+          "ignored": 7,
+          "measured": 0,
+          "filtered_out": 0
+        },
+        {
+          "passed": 218,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered_out": 0
+        },
+        {
+          "passed": 187,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered_out": 0
+        },
+        {
+          "passed": 0,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered_out": 0
+        },
+        {
+          "passed": 0,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered_out": 0
+        },
+        {
+          "passed": 0,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered_out": 0
+        },
+        {
+          "passed": 0,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered_out": 0
+        },
+        {
+          "passed": 4,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered_out": 0
+        }
+      ]
+    },
+    {
+      "name": "hocket",
+      "command": [
+        "cargo",
+        "test",
+        "--offline",
+        "--locked",
+        "-p",
+        "hocket-genet",
+        "--quiet"
+      ],
+      "cwd": "/Users/markik/Code/testing/woodshed/audit-preservation-20261016/ports/hocket",
+      "started_utc": "2026-10-17T03:44:17.141322+00:00",
+      "ended_utc": "2026-10-17T03:45:04.701999+00:00",
+      "exit_code": 0,
+      "log": "hocket-final.log",
+      "suites": [
+        {
+          "passed": 90,
+          "failed": 0,
+          "ignored": 2,
+          "measured": 0,
+          "filtered_out": 0
+        }
+      ]
+    },
+    {
+      "name": "redshank",
+      "command": [
+        "cargo",
+        "test",
+        "--offline",
+        "--locked",
+        "-p",
+        "redshank-storage",
+        "-p",
+        "redshank-desktop",
+        "--quiet"
+      ],
+      "cwd": "/Users/markik/Code/testing/woodshed/audit-preservation-20261016/ports/redshank",
+      "exit_code": 0,
+      "exit_evidence": "exec session 67956 completed with exit_code 0; parent observed directly",
+      "log": "redshank-final.log",
+      "suites": [
+        {
+          "passed": 80,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered_out": 0
+        },
+        {
+          "passed": 15,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered_out": 0
+        },
+        {
+          "passed": 0,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered_out": 0
+        }
+      ]
+    }
+  ],
+  "counts": {
+    "distinct_passing_cases": 1150,
+    "separately_counted_capture_subprocess_invocations": 5,
+    "ignored": 9,
+    "repeated_runs_excluded": true
+  },
+  "sources": [
+    {
+      "path": "crates/hocket-model/src/history.rs",
+      "sha256": "724d627d113a719e162658873fa0c3aabc180ae51667e2acbeee0c9432bcb7fb"
+    },
+    {
+      "path": "crates/hocket-model/src/persistence.rs",
+      "sha256": "818385e79098662d515ea9318d1c4bdd5bb7f9e4418e424305bfd7de744afd59"
+    },
+    {
+      "path": "crates/hocket-project/src/handoff.rs",
+      "sha256": "b8f7a7f22994e410c924e1774cecf0caba610d29a4cc86dd38dc5776561667df"
+    },
+    {
+      "path": "crates/hocket-project/src/project_store.rs",
+      "sha256": "141bc78a0867d41ee276776906adad7c69244b2b9ad41a0a290c50e1dd2c2269"
+    },
+    {
+      "path": "crates/woodshed-core/src/history.rs",
+      "sha256": "fbefb93ca13cc8638809f97eeefe521dc62286837e54ef56c1b52a8c84526231"
+    },
+    {
+      "path": "crates/woodshed-core/src/storage.rs",
+      "sha256": "4a708f11f5b601c8cc1b17b4cfbdb44b426876de362fe2f04c755bf1cfa1faef"
+    },
+    {
+      "path": "crates/woodshed-genet/src/audio.rs",
+      "sha256": "f758fe5ee84049b4f0f2a708e921b514356e40053d38630783225b082e253716"
+    },
+    {
+      "path": "crates/woodshed-genet/src/capture_persistence.rs",
+      "sha256": "529ac802957087e7833d4af400645f1a85ad0a29cf495682992d76ea1c99b559"
+    },
+    {
+      "path": "crates/woodshed-genet/src/main.rs",
+      "sha256": "a2a8185c98d61b322595c35a88d918f2de884c559246527f797d72a4e378e40e"
+    },
+    {
+      "path": "crates/woodshed-genet/src/persona.rs",
+      "sha256": "b54e8819d65db52859c655df02af986dc91b24af58e7427fc2fc804e5331044d"
+    },
+    {
+      "path": "crates/woodshed-genet/src/persona_preservation_tests.rs",
+      "sha256": "c3ef842d0dd56a05c06a39e716d970636edf20718b9cf5c2c6f6ec3be78728b6"
+    },
+    {
+      "path": "crates/woodshed-genet/src/wav_export.rs",
+      "sha256": "6417ecc51e539fafeecf35a7ba3446cd26c37a5c562ffcecf9b4c1f4289cab60"
+    },
+    {
+      "path": "crates/woodshed-views/src/persona.rs",
+      "sha256": "1b9d0b35d472d08f0c051aa688aaecf7fea0e89d3a3b2afe77e0448b7cfa327e"
+    },
+    {
+      "path": "crates/woodshed-views/src/stage.rs",
+      "sha256": "f712a9b1ebd9d75ce86e22575ccda052c8687b7d6c041c55473c979c43a70dbc"
+    },
+    {
+      "path": "crates/woodshedding/src/rehearsal.rs",
+      "sha256": "e2bcb68dae6e724c328914a27c40c5e7dbbd3108181655d9e6b3f9c9dba5ba4c"
+    },
+    {
+      "path": "ports/hocket/crates/hocket-genet/src/main.rs",
+      "sha256": "06a4b57bcda17278c97e3f88e4624fce6586de5f951a3ab7753dbd921385a117"
+    },
+    {
+      "path": "ports/hocket/crates/hocket-genet/src/native_lifecycle_tests.rs",
+      "sha256": "68918bfd6aeea2740bf2360fe26c08d91209333f7c1cb984948d2b95d7a2f528"
+    },
+    {
+      "path": "ports/hocket/crates/hocket-genet/src/project_correlation_tests.rs",
+      "sha256": "0e183db63cff8471355da8e52adf422f926fa7a85b5a256fb672360ea3edb4de"
+    },
+    {
+      "path": "ports/hocket/crates/hocket-genet/src/state.rs",
+      "sha256": "d49b96ec05f818308ab49d9eba1f1095bb127973676cfc190d8789dc380b2751"
+    },
+    {
+      "path": "ports/hocket/crates/hocket-genet/src/theme.rs",
+      "sha256": "65f23f49bf673c038052fc43d6f786ed9b019db1767df5ef5f97a3740c56e6e9"
+    },
+    {
+      "path": "ports/hocket/crates/hocket-genet/src/view.rs",
+      "sha256": "1e554a005ff5550ac89fb1fcf96ac61271fde1ebb651f7da2f226b0f1a0a7f7d"
+    },
+    {
+      "path": "ports/redshank/desktop/src/main.rs",
+      "sha256": "ba6bf87845ba62c4784247affd4c39a19002574b012995cc2f5013325597c928"
+    },
+    {
+      "path": "ports/redshank/storage/src/lib.rs",
+      "sha256": "6fe384bbb1d97b00ba1051c4aae3d6cea82e5454096bba63e759d699e05a931a"
+    }
+  ],
+  "unchanged_lock_sha256": {
+    "Cargo.lock": "0f08201b603a9f78be73fef26ebf6ad9660dc26d6b3ce0ccf77295046ff71d3b",
+    "ports/hocket/Cargo.lock": "a55536801bf3883c0defb1541a19026bd70ee90829d8bc45498b49ca5ced9624",
+    "ports/redshank/Cargo.lock": "4e6f7da96b61053857e9ad34ed1d1238820b84fd1810946bb7d13d6affeda1d8"
+  },
+  "prior_failed_runs": [
+    {
+      "log": "root-initial-compile-failed.log",
+      "exit_code": 101,
+      "reason": "new test helper used undeclared pollster; replaced with immediate memory-future poll"
+    },
+    {
+      "log": "root-initial-scrub-failed.log",
+      "exit_code": 101,
+      "reason": "existing 16ms scrub failed after redundant full-graph validation per checkout; bounded validated paths replace it, assertion unchanged"
+    },
+    {
+      "log": "root-initial-close-fixture-failed.log",
+      "exit_code": 101,
+      "reason": "appearance fixture had no admitted session/store and was stopped by the new preservation barrier; fixture now supplies persistence"
+    }
+  ],
+  "ownership": {
+    "integration": "parent: Woodshed persona/capture/close preservation and receipt",
+    "core_input": "Turing: woodshed-core history/storage and woodshedding rehearsal",
+    "hocket_input": "Ohm: hocket-model and hocket-project",
+    "hocket_preservation": "Rawls: ports/hocket host",
+    "redshank_recovery": "Dalton: ports/redshank storage/desktop"
+  },
+  "peer_review": {
+    "core_supplier": "Ohm verified exact locked Stemma invariants; no compatibility blocker",
+    "history_union": "Turing confirmed corrected partial union, atomic refusal and bounded checkout",
+    "persona": "Dalton confirmed Pending incoming returns before outgoing reset/export revocation",
+    "redshank": "Rawls confirmed disappeared candidate fallback and nonwriting recovery"
+  },
+  "limits": [
+    "No native app/device/physical-audio qualification in this lane",
+    "New close/switch panels and OS interaction require a separately scheduled native receipt",
+    "Codec barrier and persona transition tested separately; combined worker-wake-to-install path has no new native receipt",
+    "Pending incoming opener regression retains export replacement UI; no added active export-worker cancellation regression",
+    "Supplier checked Stemma reconstruction remains future consolidation; current guard is consumer-scoped",
+    "Legacy void Set push/duplicate/ensure methods refuse exhaustion without mutation; fallible durable admission and copy report errors",
+    "No primary-checkout source changes, supplier repin, clock policy change or old PCM rewrite by this lane",
+    "Other audit findings remain outside this bounded remediation"
+  ]
+}

@@ -18,7 +18,7 @@ use dramatis::roster::Roster;
 use graphshell_endpoint::door::app_admission::AppId;
 use graphshell_endpoint::door::custody_client::BlockingCustodyClient;
 use persona_picker::PickerEvent;
-use woodshed_views::persona::{PersonaPick, PickPurpose};
+use woodshed_views::persona::{PendingSwitch, PersonaPick, PickPurpose, SwitchDecision};
 
 use crate::shared::Shared;
 use crate::storage::{CUSTODY_APP, open_store_as};
@@ -59,6 +59,10 @@ pub fn roster_now() -> Result<Roster, String> {
 /// skin, persistence) sees the restored session in the same beat the choice
 /// lands, rather than one frame later.
 pub fn after_dispatch(shared: &mut Shared, ctx: &mut Ctx<'_>) {
+    if ctx.runner.state().pending_persona_switch.is_some() {
+        resume_switch(shared, ctx);
+        return;
+    }
     // Most dispatches have nothing to do with the persona gate. Avoid a
     // `Runner::update` in that common case: even an empty update rebuilds the
     // retained root, which used to add a full rebuild to every graph-drag
@@ -112,7 +116,105 @@ pub fn after_dispatch(shared: &mut Shared, ctx: &mut Ctx<'_>) {
         // the create flow), so it never reaches here.
         PickerEvent::CreateRequested => return,
     };
-    settle(shared, ctx, chosen.as_ref(), purpose);
+    if purpose == PickPurpose::Switch {
+        let Some(profile) = chosen else {
+            return;
+        };
+        ctx.runner.update(|ui| {
+            ui.persona = None;
+            ui.practice_close_pending = false;
+            ui.practice_discard_close = false;
+            ui.pending_persona_switch = Some(PendingSwitch {
+                profile: profile.clone(),
+                decision: Some(SwitchDecision::Retry),
+                waiting: false,
+                notice: "Saving outgoing practice before switching…".into(),
+            });
+        });
+        resume_switch(shared, ctx);
+    } else {
+        settle(shared, ctx, chosen.as_ref(), purpose);
+    }
+}
+
+/// Retry only an explicit decision or a pending worker completion. The outgoing
+/// store, audio epoch and authored state remain installed until this succeeds.
+pub(crate) fn resume_switch(shared: &mut Shared, ctx: &mut Ctx<'_>) {
+    let Some(pending) = ctx.runner.state().pending_persona_switch.as_ref() else {
+        return;
+    };
+    if pending.decision.is_none() && !pending.waiting {
+        return;
+    }
+    resume_switch_with(shared, ctx, |profile| open_store_as(Some(profile)));
+}
+
+fn resume_switch_with(
+    shared: &mut Shared,
+    ctx: &mut Ctx<'_>,
+    mut open: impl FnMut(
+        &personae::ProfileId,
+    ) -> (
+        woodshed_core::storage::SessionStore<crate::storage::HostBackend>,
+        woodshed_views::persona::PracticeSeal,
+    ),
+) {
+    let mut chosen = None;
+    ctx.runner
+        .update(|ui| chosen = preserve_pending_switch(shared, ui));
+    if let Some(profile) = chosen {
+        let (storage, seal) = open(&profile);
+        install_store(shared, ctx, storage, seal, PickPurpose::Switch);
+    }
+}
+
+/// Returning the chosen identity permits an incoming open attempt, not an
+/// outgoing reset. Keep the target until that attempt establishes a seal.
+fn preserve_pending_switch(
+    shared: &mut Shared,
+    ui: &mut woodshed_views::stage::UiState,
+) -> Option<personae::ProfileId> {
+    let pending = ui.pending_persona_switch.as_mut()?;
+    if pending.decision.is_none() && !pending.waiting {
+        return None;
+    }
+    let decision = pending.decision.take();
+    let profile = pending.profile.clone();
+    if decision == Some(SwitchDecision::Cancel) {
+        ui.pending_persona_switch = None;
+        return None;
+    }
+    let mut outcome = crate::capture_persistence::Preservation::Ready;
+    if decision != Some(SwitchDecision::Discard) {
+        outcome = crate::capture_persistence::preserve_request(shared, ui);
+        if outcome == crate::capture_persistence::Preservation::Ready
+            && shared.wav_export.is_finishing()
+        {
+            outcome = crate::capture_persistence::Preservation::Preparing;
+        }
+    }
+    match outcome {
+        crate::capture_persistence::Preservation::Ready => {
+            if let Some(pending) = &mut ui.pending_persona_switch {
+                pending.waiting = false;
+            }
+            Some(profile)
+        },
+        crate::capture_persistence::Preservation::Preparing => {
+            if let Some(pending) = &mut ui.pending_persona_switch {
+                pending.waiting = true;
+                pending.notice = "Finishing outgoing media work before switching…".into();
+            }
+            None
+        },
+        crate::capture_persistence::Preservation::Blocked(reason) => {
+            if let Some(pending) = &mut ui.pending_persona_switch {
+                pending.waiting = false;
+                pending.notice = reason;
+            }
+            None
+        },
+    }
 }
 
 /// Put the switch gate up, or say why it cannot go up.
@@ -170,8 +272,34 @@ fn settle(
 ) {
     // djinn switches to the choice and remembers it for the family; a switch
     // it refuses leaves the store pending rather than on somebody else.
-    shared.wav_export.revoke_session();
     let (storage, seal) = open_store_as(chosen);
+    install_store(shared, ctx, storage, seal, purpose);
+}
+
+fn install_store(
+    shared: &mut Shared,
+    ctx: &mut Ctx<'_>,
+    storage: woodshed_core::storage::SessionStore<crate::storage::HostBackend>,
+    seal: woodshed_views::persona::PracticeSeal,
+    purpose: PickPurpose,
+) {
+    if purpose == PickPurpose::Switch {
+        if let woodshed_views::persona::PracticeSeal::Pending { reason } = &seal {
+            ctx.runner.update(|ui| {
+                if let Some(pending) = &mut ui.pending_persona_switch {
+                    pending.decision = None;
+                    pending.waiting = false;
+                    pending.notice = format!(
+                        "Incoming practice could not open ({reason}). Outgoing practice remains \
+                         active. Retry, cancel the switch, or explicitly discard outgoing changes \
+                         and retry opening the selected persona."
+                    );
+                }
+            });
+            return;
+        }
+    }
+    shared.wav_export.revoke_session();
     ctx.runner.update(|ui| {
         if purpose == PickPurpose::Switch {
             // The whole session goes, not just the parts the incoming persona
@@ -203,6 +331,7 @@ fn settle(
 /// process-wide authored library and its current editor model. Reloading that
 /// library here would introduce profile/environment I/O during a session reset.
 fn reset_for_persona(ui: &mut woodshed_views::stage::UiState) {
+    let event_clock = ui.event_clock;
     let appearance = std::mem::take(&mut ui.appearance);
     let authoring_available = ui.appearance_authoring_available;
     let library_notice = if authoring_available {
@@ -211,6 +340,7 @@ fn reset_for_persona(ui: &mut woodshed_views::stage::UiState) {
         ui.appearance_notice.take()
     };
     *ui = woodshed_views::stage::UiState::new();
+    ui.event_clock = event_clock;
     ui.appearance = appearance;
     ui.appearance_authoring_available = authoring_available;
     ui.appearance_notice = library_notice;
@@ -666,3 +796,7 @@ mod tests {
         assert!(seal.summary().contains("not saved"));
     }
 }
+
+#[cfg(test)]
+#[path = "persona_preservation_tests.rs"]
+mod preservation_tests;

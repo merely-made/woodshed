@@ -19,6 +19,8 @@ before any other doc in this directory.
 
 ## Active Plans
 
+- [Preservation and input admission](2026-10-16_preservation_input_admission_plan.md) — First audit-remediation pass: outgoing-work preservation, checked history/Set/project input, and nonwriting failed recovery. Implemented in an isolated checkout; 1,150 passing cases plus five child invocations, with native validation separately owned. [Receipt](../validation/preservation-input_20261016/receipt.json).
+
 - [Catalog/discovery audition admission history](2026-07-11_stage_set_tools_plan.md#catalogdiscovery-audition-admission-history-2026-10-16) — Qualified: frozen accepted-only observations, exact source/session binding and refusal/retry; 676 affected cases plus five child invocations, desktop build and four independently reviewed native seed/reopen captures with exact sealed Card/history preservation. [Receipt](../validation/catalog-audition_20261016/receipt.json).
 
 - [Session Mere selection folds](2026-07-11_stage_set_tools_plan.md#session-mere-selection-folds-2026-10-16) — Qualified on macOS against current native-arrangement main: member folds, view-owned v3 retention and undo/redo; 671 cases plus five child invocations, two native processes, eight reviewed captures and exact sealed fold reopening. [Receipt](../validation/mere-folds_20261016/README.md).

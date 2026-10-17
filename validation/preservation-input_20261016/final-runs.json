@@ -1,0 +1,218 @@
+[
+  {
+    "name": "root",
+    "command": [
+      "cargo",
+      "test",
+      "--offline",
+      "--locked",
+      "-p",
+      "woodshedding",
+      "-p",
+      "woodshed-core",
+      "-p",
+      "woodshed-views",
+      "-p",
+      "woodshed-genet",
+      "-p",
+      "hocket-model",
+      "-p",
+      "hocket-project",
+      "--quiet"
+    ],
+    "cwd": "/Users/markik/Code/testing/woodshed/audit-preservation-20261016",
+    "started_utc": "2026-10-17T03:40:55.345056+00:00",
+    "ended_utc": "2026-10-17T03:44:17.140721+00:00",
+    "exit_code": 0,
+    "log": "root-final.log",
+    "suites": [
+      {
+        "passed": 42,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered_out": 0
+      },
+      {
+        "passed": 2,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered_out": 0
+      },
+      {
+        "passed": 38,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered_out": 0
+      },
+      {
+        "passed": 277,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered_out": 0
+      },
+      {
+        "passed": 0,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered_out": 0
+      },
+      {
+        "passed": 0,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered_out": 0
+      },
+      {
+        "passed": 0,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered_out": 0
+      },
+      {
+        "passed": 0,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered_out": 0
+      },
+      {
+        "passed": 5,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered_out": 0
+      },
+      {
+        "passed": 1,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered_out": 0
+      },
+      {
+        "passed": 1,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered_out": 197
+      },
+      {
+        "passed": 1,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered_out": 197
+      },
+      {
+        "passed": 1,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered_out": 197
+      },
+      {
+        "passed": 1,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered_out": 197
+      },
+      {
+        "passed": 1,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered_out": 197
+      },
+      {
+        "passed": 191,
+        "failed": 0,
+        "ignored": 7,
+        "measured": 0,
+        "filtered_out": 0
+      },
+      {
+        "passed": 218,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered_out": 0
+      },
+      {
+        "passed": 187,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered_out": 0
+      },
+      {
+        "passed": 0,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered_out": 0
+      },
+      {
+        "passed": 0,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered_out": 0
+      },
+      {
+        "passed": 0,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered_out": 0
+      },
+      {
+        "passed": 0,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered_out": 0
+      },
+      {
+        "passed": 4,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered_out": 0
+      }
+    ]
+  },
+  {
+    "name": "hocket",
+    "command": [
+      "cargo",
+      "test",
+      "--offline",
+      "--locked",
+      "-p",
+      "hocket-genet",
+      "--quiet"
+    ],
+    "cwd": "/Users/markik/Code/testing/woodshed/audit-preservation-20261016/ports/hocket",
+    "started_utc": "2026-10-17T03:44:17.141322+00:00",
+    "ended_utc": "2026-10-17T03:45:04.701999+00:00",
+    "exit_code": 0,
+    "log": "hocket-final.log",
+    "suites": [
+      {
+        "passed": 90,
+        "failed": 0,
+        "ignored": 2,
+        "measured": 0,
+        "filtered_out": 0
+      }
+    ]
+  }
+]
