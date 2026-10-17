@@ -407,5 +407,31 @@
     "Legacy void Set push/duplicate/ensure methods refuse exhaustion without mutation; fallible durable admission and copy report errors",
     "No primary-checkout source changes, supplier repin, clock policy change or old PCM rewrite by this lane",
     "Other audit findings remain outside this bounded remediation"
-  ]
+  ],
+  "source_whitespace_check": {
+    "command": [
+      "git",
+      "diff",
+      "--check",
+      "21d0c2e697165770d9f5787dadc91f526c8e2b02",
+      "--",
+      "crates",
+      "ports",
+      "design_docs"
+    ],
+    "exit_code": 0,
+    "scope": "source and design docs; verbatim Cargo logs retain trailing terminal blank lines"
+  },
+  "raw_log_whitespace_check": {
+    "command": [
+      "git",
+      "diff",
+      "--cached",
+      "--check"
+    ],
+    "exit_code": 2,
+    "when": "before first local commit",
+    "reason": "three verbatim final Cargo logs end with a blank line; no source whitespace errors",
+    "note": "parent shell proceeded to local commit after the checker error; source/docs gate was then separately rerun and required exit zero; no raw logs altered"
+  }
 }
