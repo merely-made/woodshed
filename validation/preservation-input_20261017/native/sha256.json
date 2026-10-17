@@ -16,7 +16,7 @@
   "close-source-hashes.json": "f8fe29a7fdcfbcd497388e45b68790b49a3ecca795c23b3dfa4c4027e4b9eae9",
   "close-source.json": "e2b7e6b01b00d2aa501689bf4b4032f16fa8e8dbd3541b91ef7fa88dd03f8fa9",
   "completion.json": "11ac8035a23b0aeb25ce927ce1d0a19b45d78839e8643dba2b2d44e8b5061747",
-  "excluded/occluded/launch.json": "9dd3fdceee04ad50a074313590a9419f5b4ba3c20f70621f84a495a5933e5903",
+  "excluded/occluded/launch.partial.log": "9dd3fdceee04ad50a074313590a9419f5b4ba3c20f70621f84a495a5933e5903",
   "excluded/occluded/scenario.scn": "015c54e6f3dd453a564e6113428d876c5b674ea85c1a6ce3613790a91fa278ec",
   "excluded/persona-copy/launch.json": "8d5c6ade8220fca8252c0ec2dc47ec106f90acdbb739f5cfc70b32d2c00f7f51",
   "excluded/persona-copy/scenario.done": "672918331ecb46cfa247987669be7ac3284b002127ddf53269e6a9d90474ac4d",
