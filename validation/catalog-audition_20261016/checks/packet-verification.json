@@ -20,5 +20,46 @@
     ]
   ],
   "new_findings": [],
-  "raw_logs": "Preserved byte-for-byte. EOF blank lines, if reported by git diff --check, are retained as raw evidence."
+  "raw_logs": "Preserved byte-for-byte, including frame-trace trailing spaces and final Cargo blank lines.",
+  "git_diff_check": {
+    "source_docs_and_nonlog_metadata": "passed",
+    "raw_log_warnings": [
+      {
+        "file": "validation/catalog-audition_20261016/checks/affected-gate-v2.log",
+        "kind": "new blank line at EOF.",
+        "count": 1
+      },
+      {
+        "file": "validation/catalog-audition_20261016/checks/final-notice-host.log",
+        "kind": "new blank line at EOF.",
+        "count": 1
+      },
+      {
+        "file": "validation/catalog-audition_20261016/checks/final-notice-views.log",
+        "kind": "new blank line at EOF.",
+        "count": 1
+      },
+      {
+        "file": "validation/catalog-audition_20261016/checks/host-admission.log",
+        "kind": "new blank line at EOF.",
+        "count": 1
+      },
+      {
+        "file": "validation/catalog-audition_20261016/checks/views-admission-v2.log",
+        "kind": "new blank line at EOF.",
+        "count": 1
+      },
+      {
+        "file": "validation/catalog-audition_20261016/native/reopen/native.log",
+        "kind": "trailing whitespace.",
+        "count": 1028
+      },
+      {
+        "file": "validation/catalog-audition_20261016/native/seed/native.log",
+        "kind": "trailing whitespace.",
+        "count": 1802
+      }
+    ],
+    "handling": "Original log bytes preserved. Frame-trace lines contain trailing spaces; Cargo logs retain final blank lines. No product/source/doc whitespace errors."
+  }
 }
