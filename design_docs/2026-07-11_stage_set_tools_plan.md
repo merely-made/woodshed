@@ -4188,3 +4188,24 @@ The committed read-only verifier and raw evidence are under
 `validation/native-arrangement-spans_20261016/`. This completes the bounded
 native slice; metre editing remains the second-consumer gate before shared
 editing intents are extracted.
+
+
+### Shared span intents with authored metre (2026-10-17)
+
+Knot's second concrete editing consumer authors metrical position spans while
+preserving lexical stress/rhyme/source data. Extract the common move/start/end
+math and a source/revision/occurrence-qualified proposal into Scenomise. Woodshed
+validates those intents against a fresh source-owned draft scene before mapping
+the result to Card/rest fields. Beat quantization, per-Set protection, Save and
+playback remain app-owned. Done when both adapters consume the same intents,
+stale/forged intents refuse atomically, and native route checks still pass.
+
+Adopted and CPU-qualified: both adapters use `scenomise::span_edit`. Nine locked
+arrangement-editor cases pass on shared `4c4ea11d8`, including body/edge preview,
+Escape, keyboard/rest edits, resize/source/owner cancellation and a forged-intent
+control for each source/revision/occurrence/lane/prior-span/bounds field. Intent
+acceptance constructs and validates a candidate Set; only the existing explicit
+Save writes it. Zero movement preserves an off-grid span. All non-Mere Git pins
+are preserved. [Receipt](../validation/shared-span-intents_20261017/receipt.json).
+These are native route-handler/model checks; the October 16 headed receipt is
+retained separately and is not relabelled as a new native run.
