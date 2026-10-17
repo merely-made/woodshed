@@ -1,0 +1,35 @@
+{
+  "date": "2026-10-16",
+  "status": "qualified native spacing follow-up",
+  "source": {
+    "source": "f683bbea7f01e5653863cf7e66485fe27be97516",
+    "mere": "52fb4900efd958b38595037c8e46fe620fc10e59",
+    "lock_sha256": "0f08201b603a9f78be73fef26ebf6ad9660dc26d6b3ce0ccf77295046ff71d3b",
+    "binary_sha256": "afffe78177710a3602a0398c91dcee613034306779e92256ced636a4ba9b313d"
+  },
+  "shared_surface_tests": {
+    "passed": 5,
+    "receipt": "mere/validation/template-scene-height_20261016/receipt.json"
+  },
+  "consumer_tests": {
+    "views_passed": 214,
+    "native_arrangement_passed": 2,
+    "locked_desktop_build": "passed"
+  },
+  "native": {
+    "result": "ok",
+    "presented_frames": 131,
+    "reviewed_captures": 3,
+    "profile": "/Users/markik/Code/testing/woodshed/arrangement-spacing-20261016/profile",
+    "custody": "Isolated synthetic passphrase-backed real Keeper",
+    "helper_binary_sha256": "a05212f205e05a2037c57bd23de7e50ca34781964bc5dd6aab5ba5cda010a48e"
+  },
+  "observations": [
+    "Primary scene height 300 logical pixels.",
+    "Template row Y positions use the available height independently of horizontal timeline fit.",
+    "Title, supplied Card labels, expected role labels and phrase bracket are visibly separated.",
+    "Native compact scrolling shows both ends; fretboard proportions remain uniform.",
+    "Live and sealed Sets and the entire portable SceneDocument equal the previous qualified saved fixture exactly."
+  ],
+  "scope": "Presentation and inverse picking; device-free audio mode. This does not refresh physical-audio or browser deployment acceptance."
+}
