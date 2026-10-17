@@ -1,0 +1,25 @@
+{
+  "status": "affected checks and builds passed; committed native qualification pending",
+  "baseline": "9182823e351c6334b50f3ab52d61cb95b8cd7cab",
+  "counts": {
+    "affected_cases": 469,
+    "capture_child_invocations_separate": 5,
+    "affected_ignored": 7,
+    "recipe_cases": 11,
+    "recipe_ignored": 1
+  },
+  "checks": {
+    "focused": 0,
+    "recipe-all-targets": 0,
+    "recipe-tests": 0,
+    "desktop-build": 0,
+    "hocket-consumer": 0
+  },
+  "production_lock_unchanged": true,
+  "physical_audio": "pending user participation; enumeration only establishes built-in 48k input and output availability",
+  "limits": [
+    "Full touch/platform/reduced-motion acceptance remains outside this bounded Looper follow-up",
+    "Synthetic envelope does not qualify physical input, audible output or latency"
+  ],
+  "publication": "local candidate"
+}

@@ -334,7 +334,8 @@ where
             el(
                 "div",
                 (
-                    el("div", text("meter")).attr("class", "hocket-recorder-eyebrow"),
+                    el("div", text(transport.meter_heading.to_string()))
+                        .attr("class", "hocket-recorder-eyebrow"),
                     el("div", text(label.to_string()))
                         .attr("class", "hocket-recorder-readout-val hocket-recorder-mono"),
                 ),

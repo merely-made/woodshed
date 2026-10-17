@@ -2308,6 +2308,17 @@ and flat-line-only synthetic waveform evidence. These remain explicit layout,
 copy and waveform-fidelity limits; bounded Seconds-clock/custody/export acceptance
 does not claim whole-product responsive or physical-audio qualification.
 
+
+2026-10-17 bounded Looper follow-up is in progress: compact and short recorder
+surfaces use one scroll owner so rows precede the transport without overlap;
+timing headings remain host-authored. A separate stepped-triangle capture
+fixture makes signed peak rendering observable while retaining the quiet
+fixture. The independent recipe graph is aligned by Cargo to exact production
+supplier revisions, with no production lock change. Tests/build and committed
+native wheel/resize/zoom/fresh-reopen/WAV qualification are recorded separately
+in `validation/looper-followups_20261017/`. Physical input/audio/latency and broader
+P8 device coverage are not implied by those software checks.
+
 ### P8. Adaptive polish and release acceptance
 
 **Current state: open.** Windows alpha behavior exists. Three-width product

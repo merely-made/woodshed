@@ -1,0 +1,22 @@
+{
+  "command": [
+    "cargo",
+    "test",
+    "--offline",
+    "--locked",
+    "--quiet"
+  ],
+  "cwd": "/Users/markik/Code/repos/woodshed/validation/relationship-recipe",
+  "started_utc": "2026-10-17T15:08:33.258424+00:00",
+  "ended_utc": "2026-10-17T15:09:59.349513+00:00",
+  "exit_code": 0,
+  "suites": [
+    {
+      "passed": 11,
+      "failed": 0,
+      "ignored": 1,
+      "measured": 0,
+      "filtered_out": 0
+    }
+  ]
+}

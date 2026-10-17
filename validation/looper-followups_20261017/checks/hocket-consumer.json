@@ -1,0 +1,15 @@
+{
+  "command": [
+    "cargo",
+    "check",
+    "--offline",
+    "--locked",
+    "-p",
+    "hocket-genet"
+  ],
+  "cwd": "/Users/markik/Code/repos/woodshed/ports/hocket",
+  "started_utc": "2026-10-17T15:10:28.585541+00:00",
+  "ended_utc": "2026-10-17T15:10:40.137552+00:00",
+  "exit_code": 0,
+  "suites": []
+}

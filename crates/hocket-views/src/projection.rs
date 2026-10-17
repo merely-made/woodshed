@@ -89,6 +89,9 @@ pub struct TransportProjection<'a, K> {
     pub stop: Option<CommandControl<'a, K>>,
     pub rewind: Option<CommandControl<'a, K>>,
     pub tempo: Option<TempoControl<'a, K>>,
+    /// Host-owned heading for the timing summary. Standalone meter displays
+    /// retain their default; hosts may summarize duration and click clocks too.
+    pub meter_heading: Cow<'a, str>,
     pub meter_label: Option<Cow<'a, str>>,
     pub click: Option<ToggleControl<'a, K>>,
     pub replace: Option<ToggleControl<'a, K>>,
@@ -111,6 +114,7 @@ impl<'a, K> TransportProjection<'a, K> {
             stop: None,
             rewind: None,
             tempo: None,
+            meter_heading: "meter".into(),
             meter_label: None,
             click: None,
             replace: None,
