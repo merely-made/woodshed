@@ -1,0 +1,12 @@
+{
+  "active_frames": 224853,
+  "beat_ticks": 28480,
+  "bpm": 400.0,
+  "card_frames": 213601,
+  "card_index": 2,
+  "card_token": 3,
+  "device_frame": 1377280,
+  "epoch": 1,
+  "event_token": 28,
+  "status": "waiting_manual"
+}

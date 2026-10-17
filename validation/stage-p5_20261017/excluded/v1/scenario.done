@@ -1,0 +1,29 @@
+RESULT fail
+waited 0 frames
+captured 01_paused_device_position
+waited 0 frames
+FAIL: assert snap p5a-card-bpm Eq '25': got '30'
+FAIL: act: no command 'p5clock-check-paused-retime'
+captured 02_paused_retimed_same_position
+waited 0 frames
+FAIL: assert snap p5clock-card-index Eq '1': got '0'
+FAIL: assert snap p5clock-bpm Eq '20': got '30'
+FAIL: act: no command 'p5clock-save-seconds-point'
+FAIL: assert snap p5a-card-bpm Eq '25': got '35'
+FAIL: act: no command 'p5clock-check-seconds-retime'
+FAIL: assert snap p5clock-status Eq 'waiting_manual': got 'playing'
+FAIL: assert snap p5clock-card-index Eq '2': got '0'
+FAIL: assert snap p5clock-history-count Eq '5': got '1'
+FAIL: act: no command 'p5clock-save-manual-point'
+waited 202 frames
+FAIL: act: no command 'p5clock-check-manual-wait'
+captured 03_manual_waits_for_next
+FAIL: act: no command 'p5clock-save-final'
+captured 04_completed_run_and_history
+P5 shared device-clock seed complete
+capture 01_paused_device_position 2360x1800 digest=45874f445a7cf5e4 file=/Users/markik/Code/testing/woodshed/stage-p5-20261016/native-v1/seed/01_paused_device_position.png
+capture 02_paused_retimed_same_position 2360x1800 digest=bab58a038868a090 file=/Users/markik/Code/testing/woodshed/stage-p5-20261016/native-v1/seed/02_paused_retimed_same_position.png
+capture 03_manual_waits_for_next 2360x1800 digest=c7a37850290dd25a file=/Users/markik/Code/testing/woodshed/stage-p5-20261016/native-v1/seed/03_manual_waits_for_next.png
+capture 04_completed_run_and_history 2360x1800 digest=cfd07b32968bc83c file=/Users/markik/Code/testing/woodshed/stage-p5-20261016/native-v1/seed/04_completed_run_and_history.png
+frames: 4 captured, 0 blank, 4 distinct digests
+presentation: 373 frames, 374 redraws, 1 unpresented redraws

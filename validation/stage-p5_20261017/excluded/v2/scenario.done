@@ -1,0 +1,21 @@
+RESULT fail
+waited 0 frames
+waited 0 frames
+captured 01_paused_device_position
+waited 0 frames
+captured 02_paused_retimed_same_position
+waited 0 frames
+waited 124 frames
+waited 92 frames
+waited 0 frames
+captured 03_manual_waits_for_next
+waited 0 frames
+FAIL: act: no command 'p5clock-save-final'
+captured 04_completed_run_and_history
+P5 shared device-clock seed complete
+capture 01_paused_device_position 2360x1800 digest=44812219d4deecc4 file=/Users/markik/Code/testing/woodshed/stage-p5-20261016/native-v2/seed/01_paused_device_position.png
+capture 02_paused_retimed_same_position 2360x1800 digest=aed1aa8b293bded1 file=/Users/markik/Code/testing/woodshed/stage-p5-20261016/native-v2/seed/02_paused_retimed_same_position.png
+capture 03_manual_waits_for_next 2360x1800 digest=aea4c30772f3cc7f file=/Users/markik/Code/testing/woodshed/stage-p5-20261016/native-v2/seed/03_manual_waits_for_next.png
+capture 04_completed_run_and_history 2360x1800 digest=a27a5d5dcf8d8a16 file=/Users/markik/Code/testing/woodshed/stage-p5-20261016/native-v2/seed/04_completed_run_and_history.png
+frames: 4 captured, 0 blank, 4 distinct digests
+presentation: 391 frames, 392 redraws, 1 unpresented redraws

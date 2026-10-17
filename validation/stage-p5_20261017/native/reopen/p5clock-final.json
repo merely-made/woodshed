@@ -1,0 +1,350 @@
+{
+  "cards": [
+    {
+      "from": null,
+      "id": 1,
+      "label": "Beat clock 20 BPM",
+      "material": {
+        "Scale": {
+          "name": "Major",
+          "root": 0
+        }
+      },
+      "setting": {
+        "capo": null,
+        "fret_window": null,
+        "instrument": "",
+        "mark_mode": "Off",
+        "marked": [],
+        "tuning": null,
+        "voicing_fingerprint": null,
+        "voicing_idx": null,
+        "voicing_profile": null
+      },
+      "timing": {
+        "bpm": 30.0,
+        "hold": {
+          "Bars": 1
+        }
+      },
+      "touch": "Walk"
+    },
+    {
+      "from": null,
+      "id": 2,
+      "label": "Seconds clock 20 BPM",
+      "material": {
+        "Scale": {
+          "name": "Major",
+          "root": 4
+        }
+      },
+      "setting": {
+        "capo": null,
+        "fret_window": null,
+        "instrument": "",
+        "mark_mode": "Off",
+        "marked": [],
+        "tuning": null,
+        "voicing_fingerprint": null,
+        "voicing_idx": null,
+        "voicing_profile": null
+      },
+      "timing": {
+        "bpm": 30.0,
+        "hold": {
+          "Seconds": 2.0
+        }
+      },
+      "touch": "Walk"
+    },
+    {
+      "from": null,
+      "id": 3,
+      "label": "Manual clock 400 BPM",
+      "material": {
+        "Scale": {
+          "name": "Major",
+          "root": 7
+        }
+      },
+      "setting": {
+        "capo": null,
+        "fret_window": null,
+        "instrument": "",
+        "mark_mode": "Off",
+        "marked": [],
+        "tuning": null,
+        "voicing_fingerprint": null,
+        "voicing_idx": null,
+        "voicing_profile": null
+      },
+      "timing": {
+        "bpm": 400.0,
+        "hold": "Manual"
+      },
+      "touch": "Walk"
+    }
+  ],
+  "events_by_card": {
+    "Beat clock 20 BPM": {
+      "completed_ms": 8184,
+      "occurrence_id": 1,
+      "rehearsed": true
+    },
+    "Manual clock 400 BPM": {
+      "completed_ms": 7329,
+      "occurrence_id": 3,
+      "rehearsed": true
+    },
+    "Seconds clock 20 BPM": {
+      "completed_ms": 2000,
+      "occurrence_id": 2,
+      "rehearsed": true
+    }
+  },
+  "history": [
+    {
+      "at_ms": 1792210470948,
+      "from_id": null,
+      "kind": "Completed",
+      "practiced_ms": 7329,
+      "provenance": {
+        "card_snapshot": {
+          "from": null,
+          "id": 3,
+          "label": "Manual clock 400 BPM",
+          "material": {
+            "Scale": {
+              "name": "Major",
+              "root": 7
+            }
+          },
+          "setting": {
+            "capo": null,
+            "fret_window": null,
+            "instrument": "",
+            "mark_mode": "Off",
+            "marked": [],
+            "tuning": null,
+            "voicing_fingerprint": null,
+            "voicing_idx": null,
+            "voicing_profile": null
+          },
+          "timing": {
+            "bpm": 400.0,
+            "hold": "Manual"
+          },
+          "touch": "Walk"
+        },
+        "occurrence_id": 3,
+        "working_set_id": 1
+      },
+      "subject_id": "scale:Major"
+    },
+    {
+      "at_ms": 1792210463582,
+      "from_id": null,
+      "kind": "Rehearsed",
+      "practiced_ms": null,
+      "provenance": {
+        "card_snapshot": {
+          "from": null,
+          "id": 3,
+          "label": "Manual clock 400 BPM",
+          "material": {
+            "Scale": {
+              "name": "Major",
+              "root": 7
+            }
+          },
+          "setting": {
+            "capo": null,
+            "fret_window": null,
+            "instrument": "",
+            "mark_mode": "Off",
+            "marked": [],
+            "tuning": null,
+            "voicing_fingerprint": null,
+            "voicing_idx": null,
+            "voicing_profile": null
+          },
+          "timing": {
+            "bpm": 400.0,
+            "hold": "Manual"
+          },
+          "touch": "Walk"
+        },
+        "occurrence_id": 3,
+        "working_set_id": 1
+      },
+      "subject_id": "scale:Major"
+    },
+    {
+      "at_ms": 1792210463582,
+      "from_id": null,
+      "kind": "Completed",
+      "practiced_ms": 2000,
+      "provenance": {
+        "card_snapshot": {
+          "from": null,
+          "id": 2,
+          "label": "Seconds clock 20 BPM",
+          "material": {
+            "Scale": {
+              "name": "Major",
+              "root": 4
+            }
+          },
+          "setting": {
+            "capo": null,
+            "fret_window": null,
+            "instrument": "",
+            "mark_mode": "Off",
+            "marked": [],
+            "tuning": null,
+            "voicing_fingerprint": null,
+            "voicing_idx": null,
+            "voicing_profile": null
+          },
+          "timing": {
+            "bpm": 20.0,
+            "hold": {
+              "Seconds": 2.0
+            }
+          },
+          "touch": "Walk"
+        },
+        "occurrence_id": 2,
+        "working_set_id": 1
+      },
+      "subject_id": "scale:Major"
+    },
+    {
+      "at_ms": 1792210461566,
+      "from_id": null,
+      "kind": "Rehearsed",
+      "practiced_ms": null,
+      "provenance": {
+        "card_snapshot": {
+          "from": null,
+          "id": 2,
+          "label": "Seconds clock 20 BPM",
+          "material": {
+            "Scale": {
+              "name": "Major",
+              "root": 4
+            }
+          },
+          "setting": {
+            "capo": null,
+            "fret_window": null,
+            "instrument": "",
+            "mark_mode": "Off",
+            "marked": [],
+            "tuning": null,
+            "voicing_fingerprint": null,
+            "voicing_idx": null,
+            "voicing_profile": null
+          },
+          "timing": {
+            "bpm": 20.0,
+            "hold": {
+              "Seconds": 2.0
+            }
+          },
+          "touch": "Walk"
+        },
+        "occurrence_id": 2,
+        "working_set_id": 1
+      },
+      "subject_id": "scale:Major"
+    },
+    {
+      "at_ms": 1792210461566,
+      "from_id": null,
+      "kind": "Completed",
+      "practiced_ms": 8184,
+      "provenance": {
+        "card_snapshot": {
+          "from": null,
+          "id": 1,
+          "label": "Beat clock 20 BPM",
+          "material": {
+            "Scale": {
+              "name": "Major",
+              "root": 0
+            }
+          },
+          "setting": {
+            "capo": null,
+            "fret_window": null,
+            "instrument": "",
+            "mark_mode": "Off",
+            "marked": [],
+            "tuning": null,
+            "voicing_fingerprint": null,
+            "voicing_idx": null,
+            "voicing_profile": null
+          },
+          "timing": {
+            "bpm": 20.0,
+            "hold": {
+              "Bars": 1
+            }
+          },
+          "touch": "Walk"
+        },
+        "occurrence_id": 1,
+        "working_set_id": 1
+      },
+      "subject_id": "scale:Major"
+    },
+    {
+      "at_ms": 1792210450636,
+      "from_id": null,
+      "kind": "Rehearsed",
+      "practiced_ms": null,
+      "provenance": {
+        "card_snapshot": {
+          "from": null,
+          "id": 1,
+          "label": "Beat clock 20 BPM",
+          "material": {
+            "Scale": {
+              "name": "Major",
+              "root": 0
+            }
+          },
+          "setting": {
+            "capo": null,
+            "fret_window": null,
+            "instrument": "",
+            "mark_mode": "Off",
+            "marked": [],
+            "tuning": null,
+            "voicing_fingerprint": null,
+            "voicing_idx": null,
+            "voicing_profile": null
+          },
+          "timing": {
+            "bpm": 20.0,
+            "hold": {
+              "Bars": 1
+            }
+          },
+          "touch": "Walk"
+        },
+        "occurrence_id": 1,
+        "working_set_id": 1
+      },
+      "subject_id": "scale:Major"
+    }
+  ],
+  "owner": 1,
+  "persisted_cards_match": true,
+  "persisted_history_match": true,
+  "program_epoch": 1,
+  "program_status": "complete",
+  "sample_rate": 48000
+}

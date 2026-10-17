@@ -1,0 +1,20 @@
+RESULT ok
+waited 0 frames
+waited 0 frames
+captured 01_paused_device_position
+waited 16 frames
+captured 02_paused_retimed_same_position
+waited 16 frames
+waited 107 frames
+waited 93 frames
+waited 32 frames
+captured 03_manual_waits_for_next
+waited 0 frames
+captured 04_completed_run_and_history
+P5 shared device-clock seed complete
+capture 01_paused_device_position 2360x1800 digest=331b77dc6a4a7b6c file=/Users/markik/Code/testing/woodshed/stage-p5-20261016/native-v3/seed/01_paused_device_position.png
+capture 02_paused_retimed_same_position 2360x1800 digest=94e87689e98061c9 file=/Users/markik/Code/testing/woodshed/stage-p5-20261016/native-v3/seed/02_paused_retimed_same_position.png
+capture 03_manual_waits_for_next 2360x1800 digest=2698c072cd8057e9 file=/Users/markik/Code/testing/woodshed/stage-p5-20261016/native-v3/seed/03_manual_waits_for_next.png
+capture 04_completed_run_and_history 2360x1800 digest=a22a89a1c6b12a87 file=/Users/markik/Code/testing/woodshed/stage-p5-20261016/native-v3/seed/04_completed_run_and_history.png
+frames: 4 captured, 0 blank, 4 distinct digests
+presentation: 442 frames, 443 redraws, 1 unpresented redraws

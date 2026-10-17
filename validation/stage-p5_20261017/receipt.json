@@ -1,0 +1,138 @@
+{
+  "status": "qualified",
+  "date": "2026-10-17",
+  "scope": "P5 shared processor clock for Card dwell, articulation, click and Fretboard event projection; preserved pause/resume, retiming, Seconds and Manual semantics. Native scope is Rehearsal; live Stage sequence paths are covered by core/audio/desktop offline checks.",
+  "baseline": "21d0c2e697165770d9f5787dadc91f526c8e2b02",
+  "feature_source_revision": "80e8da9",
+  "integrated_gate_source_revision": "cbb324c9606f0e53d644c4832f9087f81d3b2b06",
+  "native_source_revision": "6f65f60f457337e2943346e8d537d5e0f21deac0",
+  "binary_sha256": "1fdb811d4413fee31884883b09136871038073e426547cd74b501475b585db5b",
+  "source_paths_unchanged": 207,
+  "suppliers": {
+    "mere": [
+      "d1e1d7aaed1b2b3f99fceca6fa7301ab09f5aa46"
+    ],
+    "genet": [
+      "6186c81ad7019ea51dd28861ef83574bfc992ed1"
+    ],
+    "dramatis": [
+      "2f27f1a939aa2e046b78f7db18dcd8f81e0d7c59"
+    ],
+    "netrender": [
+      "8960024f7b1f2b7a5ba382972f08b2f75eb7a0f0"
+    ],
+    "murm": [
+      "cba46d859d12660b8d85002d0a203e250a88975a"
+    ]
+  },
+  "concurrent_work": {
+    "arrangement_remote": "7c8d19d6d748ad01df1ca91d727f1192d43e00b8",
+    "merge": "cbb324c9606f0e53d644c4832f9087f81d3b2b06",
+    "supplier_change": "Mere d1e1d7aa belongs to the concurrent native arrangement span work; no independent P5 supplier/lock edits.",
+    "preservation_audit": "07c170b and 860c5c1 remain isolated and are not integrated."
+  },
+  "checks": {
+    "audio": 174,
+    "core_unit": 276,
+    "core_cli": 5,
+    "core_portability": 1,
+    "desktop": 195,
+    "views": 230,
+    "suite_total": 881,
+    "separate_desktop_child_invocations": 5,
+    "existing_desktop_ignores": 7,
+    "integrated_log": "checks/integrated-gate.log",
+    "desktop_build": "checks/final-desktop-build-v3.log",
+    "final_focused_desktop": 9,
+    "final_focused_log": "checks/final-host-focused-v3.log",
+    "post_full_gate_changes": "Only scenario observations/waits/receipt validation changed after the integrated gate. The nine desktop clock cases and desktop build were repeated; product clock source hashes remain unchanged."
+  },
+  "native": {
+    "trial": "native-v3 only",
+    "processes": 2,
+    "reviewed_captures": 5,
+    "viewport": "1180x900 logical;2360x1800 capture;zoom1",
+    "phases": {
+      "seed": {
+        "pid": 95869,
+        "exited": true,
+        "result": "ok",
+        "presented_frames": 442,
+        "redraws": 443,
+        "unpresented_redraws": 1,
+        "captures": 4,
+        "blank_captures": 0,
+        "distinct_captures": 4,
+        "phase_hashes_unchanged": true
+      },
+      "reopen": {
+        "pid": 96081,
+        "exited": true,
+        "result": "ok",
+        "presented_frames": 103,
+        "redraws": 104,
+        "unpresented_redraws": 1,
+        "captures": 1,
+        "blank_captures": 0,
+        "distinct_captures": 1,
+        "phase_hashes_unchanged": true
+      }
+    },
+    "rate": 48000,
+    "card_results": {
+      "Beat clock 20 BPM": {
+        "completed_ms": 8184,
+        "occurrence_id": 1,
+        "rehearsed": true
+      },
+      "Manual clock 400 BPM": {
+        "completed_ms": 7329,
+        "occurrence_id": 3,
+        "rehearsed": true
+      },
+      "Seconds clock 20 BPM": {
+        "completed_ms": 2000,
+        "occurrence_id": 2,
+        "rehearsed": true
+      }
+    },
+    "exact_reopen": {
+      "cards": true,
+      "owner": true,
+      "history": true
+    },
+    "history_rows": 6,
+    "transient_clock_reopened_stopped": true,
+    "seed_checkpoint_copied_after_exit": true,
+    "original_seed_hashes_unchanged_after_reopen": true,
+    "isolation": "Generated isolated Keeper and profile, frozen binary/scenarios, one-use launchers; app and Keeper processes exited. Four original generated fixture file hashes unchanged. No keys, vaults, sealed profile blobs or binaries are published.",
+    "keeper": {
+      "generated_isolated_fixture": true,
+      "pid": 95757,
+      "exited": true,
+      "binary_sha256": "848685e001d63724ca869fa58a97021b3fa15821f0d1fa9954c4853080c518f6",
+      "original_files": 4,
+      "original_file_hashes_unchanged": true
+    }
+  },
+  "observations": [
+    "Processor Started alone opens a Card observation; future refusal, stale session/source and rejected admission earn no start/completion.",
+    "Paused Next selects the following Card while keeping it uncredited until Resume; pause/resume preserve the same epoch and event/PCM position.",
+    "Tempo edits preserve beat phase; explicit Seconds retain exact active output-frame duration.",
+    "Manual body plays once, then beat/Card progress holds while active practice time continues until explicit Next; pause and observer pressure exclude active time.",
+    "Event ordinals preserve repeated physical contacts and chord groups. Managed presented_midi remains unset because snapshot polling cannot prove every played pitch.",
+    "Card history and cursor changes from the device enter the existing guarded save path without a later user input.",
+    "Callback rendering allocation/free controls, stale epochs, observer backpressure, session clear, fixed chord offsets, 256 voices and idle capture handoff have focused offline coverage."
+  ],
+  "excluded_trials": [
+    "v1 failed scenario BPM-minimum/wait assumptions; excluded from qualification.",
+    "v2 behavior assertions passed but final validator read newest-first history as chronological; excluded from qualification."
+  ],
+  "external_evidence": "/Users/markik/Code/testing/woodshed/stage-p5-20261016",
+  "evidence_whitespace": {
+    "all_staged_check_exit": 2,
+    "non_log_source_docs_evidence_exit": 0,
+    "reason": "Exact raw native frame traces retain trailing whitespace; raw Cargo logs retain EOF blank lines. Bytes are preserved and hashed.",
+    "external_diagnostics": "/Users/markik/Code/testing/woodshed/stage-p5-20261016/checks/staged-whitespace.log"
+  }
+}

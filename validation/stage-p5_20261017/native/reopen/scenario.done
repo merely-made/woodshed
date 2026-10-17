@@ -1,0 +1,6 @@
+RESULT ok
+captured 01_exact_sealed_clock_reopen
+P5 shared device-clock fresh-process reopen complete
+capture 01_exact_sealed_clock_reopen 2360x1800 digest=bec0eab57174a862 file=/Users/markik/Code/testing/woodshed/stage-p5-20261016/native-v3/reopen/01_exact_sealed_clock_reopen.png
+frames: 1 captured, 0 blank, 1 distinct digests
+presentation: 103 frames, 104 redraws, 1 unpresented redraws

@@ -1,0 +1,74 @@
+warning: patch `mere-proofs v0.1.0 (https://github.com/merely-made/mere.git?branch=main#d1e1d7aa)` was not used in the crate graph
+warning: patch `mere-transport v0.0.2 (https://github.com/merely-made/murm.git?branch=main#cba46d85)` was not used in the crate graph
+warning: patch `mere-webrtc-carrier v0.0.1 (https://github.com/merely-made/murm.git?branch=main#cba46d85)` was not used in the crate graph
+help: Check that the patched package version and available features are compatible
+      with the dependency requirements. If the patch has a different version from
+      what is locked in the Cargo.lock file, run `cargo update` to use the new
+      version. This may also occur with an optional dependency that is not enabled.
+warning: use of deprecated method `std::sync::atomic::Atomic::<u64>::fetch_update`: renamed to `try_update` for consistency
+  --> crates/woodshed-audio/src/capture_feed.rs:33:14
+   |
+33 |             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |generation| {
+   |              ^^^^^^^^^^^^
+   |
+   = note: `#[warn(deprecated)]` on by default
+help: replace the use of the deprecated method
+   |
+33 -             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |generation| {
+33 +             .try_update(Ordering::AcqRel, Ordering::Acquire, |generation| {
+   |
+
+warning: use of deprecated method `std::sync::atomic::Atomic::<usize>::fetch_update`: renamed to `try_update` for consistency
+   --> crates/woodshed-audio/src/output_runtime.rs:469:14
+    |
+469 |             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |              ^^^^^^^^^^^^
+    |
+help: replace the use of the deprecated method
+    |
+469 -             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+469 +             .try_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |
+
+warning: use of deprecated method `std::sync::atomic::Atomic::<usize>::fetch_update`: renamed to `try_update` for consistency
+   --> crates/woodshed-audio/src/output_runtime.rs:517:14
+    |
+517 |             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |              ^^^^^^^^^^^^
+    |
+help: replace the use of the deprecated method
+    |
+517 -             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+517 +             .try_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |
+
+warning: use of deprecated method `std::sync::atomic::Atomic::<usize>::fetch_update`: renamed to `try_update` for consistency
+   --> crates/woodshed-audio/src/output_runtime.rs:538:14
+    |
+538 |             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |              ^^^^^^^^^^^^
+    |
+help: replace the use of the deprecated method
+    |
+538 -             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+538 +             .try_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |
+
+warning: `woodshed-audio` (lib) generated 4 warnings (run `cargo fix --lib -p woodshed-audio` to apply 4 suggestions)
+   Compiling woodshed-genet v0.1.0 (/Users/markik/Code/repos/woodshed/crates/woodshed-genet)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 8.91s
+     Running unittests src/main.rs (target/build/debug/deps/woodshed_genet-5a706eb5dcdbea5a)
+
+running 9 tests
+test audio::practice_clock::tests::real_chord_strum_maps_to_absolute_device_offsets ... ok
+test audio::practice_clock::tests::explicit_next_interrupts_timed_card_and_pause_keeps_next_uncredited_until_resume ... ok
+test audio::practice_clock::tests::processor_start_opens_history_pause_resume_and_tempo_preserve_one_span ... ok
+test audio::practice_clock::tests::future_unavailable_card_refuses_at_boundary_without_credit ... ok
+test audio::practice_clock::tests::starting_later_with_loop_off_never_plays_earlier_cards ... ok
+test audio::practice_clock::tests::seconds_excludes_pause_and_keeps_duration_after_tempo_edit ... ok
+test audio::practice_clock::tests::source_edit_or_session_replacement_rejects_queued_started_transition ... ok
+test audio::practice_clock::tests::live_stage_projection_and_pause_resume_follow_processor_occurrences ... ok
+test audio::practice_clock::tests::manual_waits_for_explicit_next_and_keeps_its_span_open ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 193 filtered out; finished in 0.92s
+
