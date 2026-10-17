@@ -7,11 +7,21 @@ settle 6
 click .workspace-panel Arrangement
 click .arrangement-start
 click .arrangement-place-order
+click .arrangement-field @data-arrangement-field=extent
+input-text 80
+click .arrangement-field @data-arrangement-field=card-1-length
+input-text 8
+click .arrangement-field @data-arrangement-field=card-3-start
+input-text 48
+click .arrangement-field @data-arrangement-field=card-4-start
+input-text 64
+click .arrangement-field @data-arrangement-field=role-2-length
+input-text 48
 click .arrangement-add-rest
 click .arrangement-field @data-arrangement-field=rest-rest-1-start
-input-text 0
-click .arrangement-field @data-arrangement-field=rest-rest-1-length
 input-text 8
+click .arrangement-field @data-arrangement-field=rest-rest-1-length
+input-text 4
 click .arrangement-save
 settle 6
 checkpoint-arrangement before
@@ -65,11 +75,11 @@ press-arrangement-span rest-rest-1 body
 settle 2
 move-arrangement-span 4
 settle 3
-assert text rest-rest-1 · start 4 / length 8 ticks · drag preview
+assert text rest-rest-1 · start 12 / length 4 ticks · drag preview
 capture 03_compact_rest_preview
 release-arrangement-span 4
 settle 3
-assert text rest-rest-1 · start 4 / length 8 ticks
+assert text rest-rest-1 · start 12 / length 4 ticks
 click .arrangement-save
 settle 8
 assert snap arrangement-dirty == false

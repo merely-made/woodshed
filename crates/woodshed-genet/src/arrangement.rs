@@ -266,7 +266,11 @@ mod tests {
             };
             let owner = h.state().working_sets.active_id;
             h.press_at(at.0, at.1);
-            assert_eq!(h.pointer_capture(), Some(node));
+            assert_eq!(
+                h.pointer_capture(),
+                Some(node),
+                "width={width}, point={at:?}"
+            );
             h.move_to(at.0 + beat, at.1);
             h.relayout();
             assert_eq!(
@@ -282,8 +286,23 @@ mod tests {
             h.release_at(at.0 + beat, at.1);
             h.relayout();
             assert!(!h.state().arrangement_editor.dirty());
+            // A status line or linked reading can change scroll/layout after
+            // cancellation. Resolve the painted coordinates for each gesture.
+            let (next_x, next_y, _, _) = h.painted_rect(node).unwrap();
+            let at = (at.0 + next_x - x, at.1 + next_y - y);
             h.press_at(at.0, at.1);
+            assert!(
+                h.state().arrangement_editor.preview_active(),
+                "second down width={width} at={at:?}, rect={:?}",
+                h.painted_rect(node)
+            );
             h.move_to(at.0 + beat, at.1);
+            h.relayout();
+            assert!(
+                h.state().arrangement_editor.preview_active(),
+                "second move width={width} capture={:?}",
+                h.pointer_capture()
+            );
             h.release_at(at.0 + beat, at.1);
             h.relayout();
             assert_eq!(
@@ -338,16 +357,29 @@ mod tests {
                 "24"
             );
             h.set_modifiers(Default::default());
-            assert!(
-                h.click_on(&Selector::class("arrangement-span-edit").containing("Move earlier"))
-            );
+            let move_selector = Selector::class("arrangement-span-edit").containing("Move earlier");
+            let move_node = h.with_dom(|dom| taproot::matching(dom, &move_selector)[0]);
+            assert!(h.click_on(&move_selector));
             assert_eq!(
                 h.state()
                     .arrangement_editor
                     .field(owner, "card-1-start")
                     .unwrap()
                     .text(),
-                "0"
+                "0",
+                "width={width} button={:?} visible={:?} focus={:?} selected={:?} notice={:?}",
+                h.painted_rect(move_node),
+                h.visible_rect(move_node),
+                h.focus(),
+                h.state()
+                    .arrangement_editor
+                    .surfaces
+                    .borrow()
+                    .primary
+                    .as_ref()
+                    .and_then(|s| s.selected())
+                    .map(str::to_owned),
+                h.state().arrangement_editor.notice
             );
             // Save is still explicit and leaves the original Card instructions alone.
             assert_eq!(

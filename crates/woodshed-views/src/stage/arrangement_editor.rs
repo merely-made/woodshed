@@ -372,7 +372,8 @@ impl ArrangementEditor {
         self.drafts.get(&owner)?.fields.get(key)
     }
     pub fn field_mut(&mut self, owner: WorkingSetId, key: &str) -> Option<&mut TextInput> {
-        self.gesture = None;
+        // map_state also borrows fields while rebuilding an unchanged view.
+        // Actual text changes invalidate the captured draft signature in sync.
         self.drafts.get_mut(&owner)?.fields.get_mut(key)
     }
 }
@@ -517,6 +518,7 @@ impl UiState {
             self.arrangement_editor
                 .gesture
                 .as_ref()
+                .filter(|g| g.proposed != g.original)
                 .map(|g| (&g.key, g.proposed))
         );
         if self.arrangement_editor.owner == Some(owner)
@@ -880,11 +882,23 @@ pub fn screen(ui: &UiState) -> UiChild {
         )),
     ];
     let owner = ui.working_sets.active_id;
-    if let Some(notice) = &ui.arrangement_editor.notice {
-        body.push(Box::new(
-            el("p", text(notice.clone())).attr("role", "status"),
-        ));
-    }
+    // Keep a stable slot: clearing a notice must not retire the captured scene
+    // by shifting its ancestor's positional children during a gesture.
+    body.push(Box::new(
+        el(
+            "p",
+            text(ui.arrangement_editor.notice.clone().unwrap_or_default()),
+        )
+        .attr("role", "status")
+        .attr(
+            "style",
+            if ui.arrangement_editor.notice.is_some() {
+                ""
+            } else {
+                "display:none"
+            },
+        ),
+    ));
     body.push(Box::new(
         el(
             "div",
@@ -913,7 +927,14 @@ pub fn screen(ui: &UiState) -> UiChild {
                     crate::stage::ROOT_NAMES[usize::from((d.context.root_pc + 3) % 12).min(11)],
                     d.context.instrument,
                     d.context.tuning,
-                    if d.dirty() {
+                    if ui
+                        .arrangement_editor
+                        .gesture
+                        .as_ref()
+                        .is_some_and(|g| g.proposed != g.original)
+                    {
+                        "Drag preview — release to update draft"
+                    } else if d.dirty() {
                         "Draft — not saved"
                     } else {
                         "Saved arrangement"
@@ -1092,18 +1113,6 @@ pub fn screen(ui: &UiState) -> UiChild {
                 text("Scroll the scene sideways to inspect its full span."),
             )));
         }
-        if let Some(related) = &surfaces.related {
-            preview.push(Box::new(el("h3", text(related.scene().title.clone()))));
-            preview.push(Box::new(
-                custom_leaf::<UiState, ()>(RELATED_KEY, width, 270)
-                    .attr("aria-label", "Selected saved voicing scene"),
-            ));
-        } else {
-            preview.push(Box::new(el(
-                "p",
-                text("Select a Card with a saved voicing to inspect its fretboard."),
-            )));
-        }
         if let Some(key) = primary.selected() {
             if let Some(span) = ui
                 .arrangement_editor
@@ -1156,6 +1165,18 @@ pub fn screen(ui: &UiState) -> UiChild {
             }
         }
         preview.push(Box::new(el("p", text("Drag a span to move it; drag its edges to resize. Snap: 1 beat. Focus the scene: ← / → move; Shift changes the end; Alt changes the start. Escape cancels a drag."))));
+        if let Some(related) = &surfaces.related {
+            preview.push(Box::new(el("h3", text(related.scene().title.clone()))));
+            preview.push(Box::new(
+                custom_leaf::<UiState, ()>(RELATED_KEY, width, 270)
+                    .attr("aria-label", "Selected saved voicing scene"),
+            ));
+        } else {
+            preview.push(Box::new(el(
+                "p",
+                text("Select a Card with a saved voicing to inspect its fretboard."),
+            )));
+        }
         preview.push(Box::new(backdrop_scene_reading(
             primary.scene(),
             primary.selected(),

@@ -3919,3 +3919,13 @@ inspector and selection agree after commit/cancel; keyboard and native captured
 pointer routes work in wide and compact layouts; saved/reopened arrangements retain
 the edits. Keep domain edit semantics local until a second editing consumer proves
 a shared contract.
+
+
+Native interaction findings (2026-10-16): keep the notice's positional child
+slot stable so clearing it cannot retire a captured scene. A form field's mutable
+borrow also occurs during ordinary view reconstruction; only an actual change
+to the captured draft signature cancels a gesture. The native route regression
+covers a saved notice, selection, Escape, repeated captured motion, keyboard
+start/end edits and the visible one-beat controls at wide/compact widths.
+Selected span controls now sit immediately after the primary scene, ahead of
+its related fretboard reading.
