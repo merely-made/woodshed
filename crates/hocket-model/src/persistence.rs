@@ -30,7 +30,7 @@
 
 use serde::{Deserialize, Serialize};
 
-use crate::history::History;
+use crate::history::{History, HistoryError};
 use crate::session::Session;
 
 /// On-disk representation of a saved project. Session + history.
@@ -49,6 +49,7 @@ pub struct ProjectBundle {
 
 #[derive(Debug)]
 pub enum PersistenceError {
+    History(HistoryError),
     Encode(String),
     Decode(String),
     UnsupportedVersion(u16),
@@ -57,6 +58,7 @@ pub enum PersistenceError {
 impl std::fmt::Display for PersistenceError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
+            Self::History(error) => write!(f, "invalid project history: {error}"),
             Self::Encode(e) => write!(f, "encode failed: {e}"),
             Self::Decode(e) => write!(f, "decode failed: {e}"),
             Self::UnsupportedVersion(version) => {
@@ -80,9 +82,19 @@ impl ProjectBundle {
         }
     }
 
+    /// Check schema and retained history topology without changing the bundle.
+    /// This does not replay edits or change snapshot equality semantics.
+    pub fn validate(&self) -> Result<(), PersistenceError> {
+        if self.format_version != Self::FORMAT_VERSION {
+            return Err(PersistenceError::UnsupportedVersion(self.format_version));
+        }
+        self.history.validate().map_err(PersistenceError::History)
+    }
+
     /// Encode to CBOR bytes. Deterministic given equal input because all
     /// collections are `BTreeMap` (sorted keys, definite lengths).
     pub fn to_bytes(&self) -> Result<Vec<u8>, PersistenceError> {
+        self.validate()?;
         let mut bytes = Vec::new();
         ciborium::into_writer(self, &mut bytes)
             .map_err(|error| PersistenceError::Encode(error.to_string()))?;
@@ -93,9 +105,7 @@ impl ProjectBundle {
     pub fn from_bytes(bytes: &[u8]) -> Result<Self, PersistenceError> {
         let bundle: Self = ciborium::from_reader(bytes)
             .map_err(|error| PersistenceError::Decode(error.to_string()))?;
-        if bundle.format_version != Self::FORMAT_VERSION {
-            return Err(PersistenceError::UnsupportedVersion(bundle.format_version));
-        }
+        bundle.validate()?;
         Ok(bundle)
     }
 }
@@ -106,6 +116,32 @@ mod tests {
     use crate::history::Edit;
     use crate::ids::MediaRef;
     use crate::phrase::{Layer, Phrase};
+
+    #[test]
+    fn decode_and_encode_refuse_invalid_retained_history() {
+        let mut bundle = ProjectBundle::new(Session::new_default(), History::new());
+        bundle.history.head = crate::NodeId::new();
+        // Serialize directly to represent hostile durable input.
+        let mut bytes = Vec::new();
+        ciborium::into_writer(&bundle, &mut bytes).unwrap();
+        assert!(matches!(ProjectBundle::from_bytes(&bytes), Err(PersistenceError::History(_))));
+        assert!(matches!(bundle.to_bytes(), Err(PersistenceError::History(_))));
+    }
+
+    #[test]
+    fn round_trip_preserves_inactive_capture_pool_and_branches() {
+        let mut session = Session::new_default();
+        let mut history = History::new();
+        let phrase = Phrase::new(MediaRef([7; 32]), 4, 120.0, 1);
+        history.commit(Edit::AppendLayer { track_id: session.tracks[0].id,
+            layer: Layer::new(phrase.id), phrase }, &mut session, 1);
+        history.checkout(history.root, &mut session).unwrap();
+        history.commit(Edit::SetBpm { from: 120.0, to: 90.0 }, &mut session, 2);
+        let bundle = ProjectBundle::new(session, history);
+        assert_eq!(ProjectBundle::from_bytes(&bundle.to_bytes().unwrap()).unwrap(), bundle);
+        assert_eq!(bundle.session.phrases.len(), 1);
+        assert_eq!(bundle.history.nodes.len(), 3);
+    }
 
     /// FT2 validation criterion: build a session with multiple layers
     /// across multiple tracks, save, reload — bit-identical.

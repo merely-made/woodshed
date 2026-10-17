@@ -1,0 +1,79 @@
+warning: patch `mere-proofs v0.1.0 (https://github.com/merely-made/mere.git?branch=main#d1e1d7aa)` was not used in the crate graph
+warning: patch `mere-transport v0.0.2 (https://github.com/merely-made/murm.git?branch=main#cba46d85)` was not used in the crate graph
+warning: patch `mere-webrtc-carrier v0.0.1 (https://github.com/merely-made/murm.git?branch=main#cba46d85)` was not used in the crate graph
+help: Check that the patched package version and available features are compatible
+      with the dependency requirements. If the patch has a different version from
+      what is locked in the Cargo.lock file, run `cargo update` to use the new
+      version. This may also occur with an optional dependency that is not enabled.
+warning: use of deprecated method `std::sync::atomic::Atomic::<u64>::fetch_update`: renamed to `try_update` for consistency
+  --> crates/woodshed-audio/src/capture_feed.rs:33:14
+   |
+33 |             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |generation| {
+   |              ^^^^^^^^^^^^
+   |
+   = note: `#[warn(deprecated)]` on by default
+help: replace the use of the deprecated method
+   |
+33 -             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |generation| {
+33 +             .try_update(Ordering::AcqRel, Ordering::Acquire, |generation| {
+   |
+
+warning: use of deprecated method `std::sync::atomic::Atomic::<usize>::fetch_update`: renamed to `try_update` for consistency
+   --> crates/woodshed-audio/src/output_runtime.rs:469:14
+    |
+469 |             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |              ^^^^^^^^^^^^
+    |
+help: replace the use of the deprecated method
+    |
+469 -             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+469 +             .try_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |
+
+warning: use of deprecated method `std::sync::atomic::Atomic::<usize>::fetch_update`: renamed to `try_update` for consistency
+   --> crates/woodshed-audio/src/output_runtime.rs:517:14
+    |
+517 |             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |              ^^^^^^^^^^^^
+    |
+help: replace the use of the deprecated method
+    |
+517 -             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+517 +             .try_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |
+
+warning: use of deprecated method `std::sync::atomic::Atomic::<usize>::fetch_update`: renamed to `try_update` for consistency
+   --> crates/woodshed-audio/src/output_runtime.rs:538:14
+    |
+538 |             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |              ^^^^^^^^^^^^
+    |
+help: replace the use of the deprecated method
+    |
+538 -             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+538 +             .try_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |
+
+warning: `woodshed-audio` (lib) generated 4 warnings (run `cargo fix --lib -p woodshed-audio` to apply 4 suggestions)
+   Compiling woodshed-genet v0.1.0 (/Users/markik/Code/repos/woodshed/crates/woodshed-genet)
+warning: method `is_busy` is never used
+  --> crates/woodshed-genet/src/capture_persistence.rs:59:12
+   |
+52 | impl CapturePersistence {
+   | ----------------------- method in this implementation
+...
+59 |     pub fn is_busy(&self) -> bool {
+   |            ^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: method `admit_card` is never used
+   --> crates/woodshed-genet/src/drive.rs:218:8
+    |
+217 | pub(crate) trait CardPreviewAdmission: AudioBackend {
+    |                  -------------------- method in this trait
+218 |     fn admit_card(&mut self, preview: &woodshed_core::card_timing::CardPreview) -> Result<(), String>;
+    |        ^^^^^^^^^^
+
+warning: `woodshed-genet` (bin "woodshed-genet") generated 2 warnings
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 10.28s

@@ -18,6 +18,8 @@ const RETAINED_GENERATIONS: usize = 3;
 pub enum StoreError {
     Io(io::Error),
     Encode(serde_json::Error),
+    /// Published generations exist, but none can establish a listener model.
+    NoValidGeneration { paths: Vec<PathBuf> },
 }
 
 impl From<io::Error> for StoreError {
@@ -33,6 +35,7 @@ impl From<serde_json::Error> for StoreError {
 }
 
 pub trait ModelStore {
+    /// `None` means no published generations, never failed recovery.
     fn load(&self) -> Result<Option<RedshankModel>, StoreError>;
     fn save(&self, model: &RedshankModel) -> Result<(), StoreError>;
 }
@@ -41,7 +44,7 @@ pub trait ModelStore {
 /// Pending or corrupt newer files are ignored, leaving the latest valid prior
 /// generation readable. Successful publication retains the newest three valid
 /// generations. Pending files are never pruned: another writer may still be
-/// publishing them.
+/// publishing them. Failed recovery refuses publication before any writes.
 pub struct JsonDirectoryStore {
     root: PathBuf,
     #[cfg(test)]
@@ -102,6 +105,32 @@ impl JsonDirectoryStore {
         self.root.join(format!("state-{generation:020}.json"))
     }
 
+    fn load_with_reader(
+        &self,
+        mut read: impl FnMut(&Path) -> io::Result<Vec<u8>>,
+    ) -> Result<Option<RedshankModel>, StoreError> {
+        let generations = self.generations()?;
+        if generations.is_empty() {
+            return Ok(None);
+        }
+        for (_, path) in generations.iter().rev() {
+            let bytes = match read(path) {
+                Ok(bytes) => bytes,
+                // Another writer may prune a listed generation before this
+                // read. Keep trying older candidates, but retain the original
+                // inventory so exhausting them cannot be mistaken for empty.
+                Err(error) if error.kind() == io::ErrorKind::NotFound => continue,
+                Err(error) => return Err(error.into()),
+            };
+            if let Ok(model) = serde_json::from_slice(&bytes) {
+                return Ok(Some(model));
+            }
+        }
+        Err(StoreError::NoValidGeneration {
+            paths: generations.into_iter().map(|(_, path)| path).collect(),
+        })
+    }
+
     /// Only run after the replacement has been flushed and published. Count
     /// valid states rather than filenames so corruption cannot evict recovery
     /// data. A cleanup error is returned to the caller, but does not roll back
@@ -143,20 +172,13 @@ fn generation_number(name: &str, suffix: &str) -> Option<u64> {
 
 impl ModelStore for JsonDirectoryStore {
     fn load(&self) -> Result<Option<RedshankModel>, StoreError> {
-        for (_, path) in self.generations()?.into_iter().rev() {
-            let bytes = match fs::read(path) {
-                Ok(bytes) => bytes,
-                Err(error) if error.kind() == io::ErrorKind::NotFound => continue,
-                Err(error) => return Err(error.into()),
-            };
-            if let Ok(model) = serde_json::from_slice(&bytes) {
-                return Ok(Some(model));
-            }
-        }
-        Ok(None)
+        self.load_with_reader(|path| fs::read(path))
     }
 
     fn save(&self, model: &RedshankModel) -> Result<(), StoreError> {
+        // Publication and pruning require an empty or recoverable store. In
+        // particular, a default model must not replace failed recovery data.
+        self.load()?;
         fs::create_dir_all(&self.root)?;
         let generation = self.next_generation()?;
         let final_path = self.generation_path(generation);
@@ -417,14 +439,139 @@ mod tests {
     }
 
     #[test]
+    fn empty_and_missing_directories_have_no_published_state() {
+        let directory = tempdir().unwrap();
+        assert_eq!(
+            JsonDirectoryStore::new(directory.path()).load().unwrap(),
+            None
+        );
+        let missing = directory.path().join("not-created");
+        assert_eq!(JsonDirectoryStore::new(&missing).load().unwrap(), None);
+        assert!(!missing.exists());
+    }
+
+    #[test]
+    fn all_invalid_generations_refuse_replacement_and_preserve_every_byte() {
+        let directory = tempdir().unwrap();
+        let store = JsonDirectoryStore::new(directory.path());
+        let fixtures: [&[u8]; 3] = [b"not json", b"{}", b"null"];
+        for (index, bytes) in fixtures.iter().enumerate() {
+            fs::write(store.generation_path(index as u64 + 1), bytes).unwrap();
+        }
+        let error = store.load().unwrap_err();
+        let StoreError::NoValidGeneration { paths } = error else {
+            panic!("all-invalid state must differ from empty and I/O failure")
+        };
+        assert_eq!(paths.len(), fixtures.len());
+        assert!(matches!(
+            store.save(&RedshankModel::default()),
+            Err(StoreError::NoValidGeneration { .. })
+        ));
+        assert_eq!(
+            fs::read_dir(directory.path()).unwrap().count(),
+            fixtures.len()
+        );
+        for (index, bytes) in fixtures.iter().enumerate() {
+            assert_eq!(
+                fs::read(store.generation_path(index as u64 + 1)).unwrap(),
+                *bytes
+            );
+        }
+    }
+
+    #[test]
+    fn io_failure_refuses_load_and_save_without_publishing_or_pruning() {
+        let directory = tempdir().unwrap();
+        let store = JsonDirectoryStore::new(directory.path());
+        // Deterministic even when tests run with permission to bypass chmod.
+        fs::create_dir(store.generation_path(1)).unwrap();
+        let evidence = store.generation_path(1).join("retained-evidence");
+        fs::write(&evidence, b"original bytes").unwrap();
+        assert!(matches!(store.load(), Err(StoreError::Io(_))));
+        assert!(matches!(
+            store.save(&RedshankModel::default()),
+            Err(StoreError::Io(_))
+        ));
+        assert_eq!(fs::read(evidence).unwrap(), b"original bytes");
+        assert_eq!(fs::read_dir(directory.path()).unwrap().count(), 1);
+
+        let not_a_directory = directory.path().join("store-file");
+        fs::write(&not_a_directory, b"keep this file").unwrap();
+        let inaccessible = JsonDirectoryStore::new(&not_a_directory);
+        assert!(matches!(inaccessible.load(), Err(StoreError::Io(_))));
+        assert!(matches!(
+            inaccessible.save(&RedshankModel::default()),
+            Err(StoreError::Io(_))
+        ));
+        assert_eq!(fs::read(not_a_directory).unwrap(), b"keep this file");
+    }
+
+    #[test]
+    fn vanished_newest_candidate_falls_back_to_older_valid_generation() {
+        let directory = tempdir().unwrap();
+        let store = JsonDirectoryStore::new(directory.path());
+        let expected = populated_model();
+        store.save(&expected).unwrap();
+        let newest = store.generation_path(2);
+        fs::write(&newest, b"listed before removal").unwrap();
+        let mut reads = Vec::new();
+        let loaded = store.load_with_reader(|path| {
+            reads.push(path.to_path_buf());
+            if path == newest.as_path() {
+                fs::remove_file(path).unwrap();
+            }
+            fs::read(path)
+        });
+        assert_eq!(loaded.unwrap(), Some(expected.clone()));
+        assert_eq!(reads, vec![newest, store.generation_path(1)]);
+        assert_eq!(store.load().unwrap(), Some(expected));
+    }
+
+    #[test]
+    fn vanished_and_corrupt_candidates_never_become_an_empty_restore() {
+        for all_vanished in [false, true] {
+            let directory = tempdir().unwrap();
+            let store = JsonDirectoryStore::new(directory.path());
+            let older = store.generation_path(1);
+            let newest = store.generation_path(2);
+            fs::write(&older, b"retained corrupt evidence").unwrap();
+            fs::write(&newest, b"listed before removal").unwrap();
+            let mut reads = Vec::new();
+            let result = store.load_with_reader(|path| {
+                reads.push(path.to_path_buf());
+                if all_vanished || path == newest.as_path() {
+                    fs::remove_file(path).unwrap();
+                }
+                fs::read(path)
+            });
+            let Err(StoreError::NoValidGeneration { paths }) = result else {
+                panic!("exhausted listed candidates must fail recovery, never return empty")
+            };
+            assert_eq!(reads, vec![newest.clone(), older.clone()]);
+            assert_eq!(paths, vec![older.clone(), newest]);
+            if !all_vanished {
+                assert_eq!(fs::read(older).unwrap(), b"retained corrupt evidence");
+                assert!(matches!(
+                    store.save(&RedshankModel::default()),
+                    Err(StoreError::NoValidGeneration { .. })
+                ));
+                assert_eq!(fs::read_dir(directory.path()).unwrap().count(), 1);
+            }
+        }
+    }
+
+    #[test]
     fn corrupt_newer_generation_falls_back_to_the_latest_valid_state() {
         let directory = tempdir().unwrap();
         let store = JsonDirectoryStore::new(directory.path());
         let expected = populated_model();
         store.save(&expected).unwrap();
         fs::write(store.generation_path(2), b"not json").unwrap();
+        fs::write(store.generation_path(3), b"{}").unwrap();
 
         assert_eq!(store.load().unwrap(), Some(expected));
+        assert_eq!(fs::read(store.generation_path(2)).unwrap(), b"not json");
+        assert_eq!(fs::read(store.generation_path(3)).unwrap(), b"{}");
     }
 
     #[test]
@@ -522,11 +669,12 @@ mod tests {
         let directory = tempdir().unwrap();
         let store = JsonDirectoryStore::new(directory.path());
         // An unreadable generation is an I/O error rather than JSON corruption.
-        fs::create_dir(store.generation_path(1)).unwrap();
+        store.save(&populated_model()).unwrap();
+        fs::create_dir(store.generation_path(0)).unwrap();
         let replacement = populated_model();
         assert!(store.save(&replacement).is_err());
         assert_eq!(store.load().unwrap(), Some(replacement));
-        assert!(store.generation_path(1).is_dir());
+        assert!(store.generation_path(0).is_dir());
         assert!(store.generation_path(2).is_file());
     }
 

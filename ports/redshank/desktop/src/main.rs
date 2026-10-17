@@ -165,17 +165,49 @@ struct SaveRequest {
 /// Serial persistence is kept off the UI and audio threads. At most one save
 /// is in flight; the next request contains the latest complete model.
 struct Persistence {
-    requests: mpsc::Sender<SaveRequest>,
+    requests: Option<mpsc::Sender<SaveRequest>>,
     replies: mpsc::Receiver<IoReply>,
     reply_sender: mpsc::Sender<IoReply>,
     revision: u64,
     durable: u64,
     in_flight: Option<u64>,
     failed: bool,
+    // Separate from transient save failure: neither an edit nor close/retry
+    // can authorize replacement of a store that failed restoration.
+    recovery_error: Option<String>,
     diagnostics: diagnostics::Diagnostics,
 }
 
 impl Persistence {
+    fn restore(store: JsonDirectoryStore) -> (RedshankModel, Self) {
+        match store.load() {
+            Ok(model) => (model.unwrap_or_default(), Self::start(store)),
+            Err(error) => {
+                let (reply_sender, replies) = mpsc::channel();
+                let notice = format!(
+                    "Not saved: listener recovery failed ({error:?}). Changes stay in memory; \
+                     existing state is preserved. Repair the store and reopen Redshank before saving."
+                );
+                // There is no storage worker or save sender in this session.
+                // Other asynchronous listening replies still use this channel.
+                (
+                    RedshankModel::default(),
+                    Self {
+                        requests: None,
+                        replies,
+                        reply_sender,
+                        revision: 0,
+                        durable: 0,
+                        in_flight: None,
+                        failed: true,
+                        recovery_error: Some(notice),
+                        diagnostics: diagnostics::Diagnostics::from_env(),
+                    },
+                )
+            },
+        }
+    }
+
     fn start(store: JsonDirectoryStore) -> Self {
         Self::start_with_diagnostics(store, diagnostics::Diagnostics::from_env())
     }
@@ -208,6 +240,9 @@ impl Persistence {
                         Err(redshank_storage::StoreError::Encode(_)) => {
                             diagnostics::ResultKind::EncodeFailure
                         },
+                        Err(redshank_storage::StoreError::NoValidGeneration { .. }) => {
+                            diagnostics::ResultKind::Failure
+                        },
                     };
                     let mut observation = diagnostics::SaveObservation::new(
                         diagnostics::Phase::ExecutionFinished,
@@ -231,20 +266,21 @@ impl Persistence {
             })
             .expect("spawn Redshank storage worker");
         Self {
-            requests,
+            requests: Some(requests),
             replies,
             reply_sender,
             revision: 0,
             durable: 0,
             in_flight: None,
             failed: false,
+            recovery_error: None,
             diagnostics,
         }
     }
 
     fn changed(&mut self) {
         self.revision += 1;
-        self.failed = false;
+        self.failed = self.recovery_error.is_some();
         let mut observation = diagnostics::SaveObservation::new(
             diagnostics::Phase::DirtyRevisionObserved,
             self.revision,
@@ -256,6 +292,9 @@ impl Persistence {
     }
 
     fn flush(&mut self, model: &RedshankModel) -> Result<(), String> {
+        if let Some(error) = &self.recovery_error {
+            return Err(error.clone());
+        }
         if self.revision == self.durable || self.in_flight.is_some() || self.failed {
             return Ok(());
         }
@@ -266,6 +305,8 @@ impl Persistence {
         let request = self.diagnostics.record(observation, None);
         let result = self
             .requests
+            .as_ref()
+            .expect("admitted persistence has a storage worker")
             .send(SaveRequest {
                 revision: self.revision,
                 model: model.clone(),
@@ -297,6 +338,9 @@ impl Persistence {
         result: &Result<(), String>,
         execution: Option<apparatus::RecordRef>,
     ) {
+        if self.recovery_error.is_some() {
+            return;
+        }
         self.in_flight = None;
         match result {
             Ok(()) => {
@@ -552,6 +596,9 @@ impl Desktop {
     ) {
         let facts = self.host_facts();
         self.session.project(state, snapshot, &facts);
+        if let Some(error) = &self.persistence.recovery_error {
+            state.notice = Some(error.clone());
+        }
         for feed in &mut state.feeds {
             feed.failure = self.feed_failures.get(&feed.feed_url).cloned();
         }
@@ -2267,19 +2314,13 @@ fn main() {
     let receipt = HeadedReceipt::from_environment().expect("configure headed receipt");
     let data_root = data_directory();
     let store = JsonDirectoryStore::new(&data_root);
-    let (model, notice) = match store.load() {
-        Ok(model) => (model.unwrap_or_default(), None),
-        Err(error) => (
-            RedshankModel::default(),
-            Some(format!("Could not restore listener state: {error:?}")),
-        ),
-    };
+    let (model, persistence) = Persistence::restore(store);
     let fetch = own_fetch();
     let mut desktop = Desktop {
         fetch: fetch.clone(),
         session: Session::new(model),
         runtime: PlaybackRuntime::start_with(fetch),
-        persistence: Persistence::start(store),
+        persistence,
         dialog_pending: false,
         cache_pending: None,
         cache_removals: Vec::new(),
@@ -2310,7 +2351,7 @@ fn main() {
         projected_item: None,
     };
     let mut state = RedshankSurfaceState::default();
-    state.notice = notice;
+    state.notice = desktop.persistence.recovery_error.clone();
     state.compact.voice_capture_available = LocalVoiceCapture::is_available();
     // An optional local path or direct URL supports associations and reproducible receipts.
     let initial = std::env::args_os().nth(1);
@@ -3200,6 +3241,122 @@ mod tests {
             NoteBody::Text {
                 plain_text: "second version".into()
             }
+        );
+    }
+
+    #[test]
+    fn failed_restoration_never_dispatches_writes_after_edits_or_retry() {
+        for io_failure in [false, true] {
+            let directory = tempfile::tempdir().unwrap();
+            let generation = directory.path().join("state-00000000000000000001.json");
+            let evidence = if io_failure {
+                fs::create_dir(&generation).unwrap();
+                generation.join("evidence")
+            } else {
+                generation.clone()
+            };
+            fs::write(&evidence, b"original listener evidence").unwrap();
+            let (mut model, mut persistence) =
+                Persistence::restore(JsonDirectoryStore::new(directory.path()));
+            let notice = persistence.recovery_error.clone().unwrap();
+            assert!(notice.contains("Not saved"));
+            assert!(persistence.requests.is_none());
+            // Refusal applies even at revision 0, before any persistent action.
+            assert_eq!(persistence.flush(&model), Err(notice.clone()));
+            for offset in [10_000, 20_000, 30_000] {
+                model.settings.skip_forward_ms = offset;
+                persistence.changed();
+                persistence.failed = false; // Existing close/retry behavior.
+                assert_eq!(persistence.flush(&model), Err(notice.clone()));
+                assert!(persistence.in_flight.is_none());
+                assert_eq!(persistence.durable, 0);
+                assert!(persistence.replies.try_recv().is_err());
+                assert_eq!(fs::read(&evidence).unwrap(), b"original listener evidence");
+                assert_eq!(fs::read_dir(directory.path()).unwrap().count(), 1);
+            }
+            // Even a later readable store cannot silently reauthorize this
+            // in-memory replacement session: it needs an explicit safe reopen.
+            let repaired = directory.path().join("state-00000000000000000002.json");
+            fs::write(
+                &repaired,
+                serde_json::to_vec(&RedshankModel::default()).unwrap(),
+            )
+            .unwrap();
+            persistence.changed();
+            assert_eq!(persistence.flush(&model), Err(notice));
+            assert_eq!(fs::read(&evidence).unwrap(), b"original listener evidence");
+            assert_eq!(fs::read_dir(directory.path()).unwrap().count(), 2);
+            persistence.acknowledge(persistence.revision, &Ok(()));
+            assert_eq!(persistence.durable, 0);
+        }
+    }
+
+    #[test]
+    fn recovery_session_projects_not_saved_and_refuses_close_persistence() {
+        let directory = tempfile::tempdir().unwrap();
+        let generation = directory.path().join("state-00000000000000000001.json");
+        fs::write(&generation, b"unrecoverable listener").unwrap();
+        let (model, persistence) = Persistence::restore(JsonDirectoryStore::new(directory.path()));
+        let mut desktop = desktop(directory.path());
+        desktop.session = Session::new(model);
+        desktop.persistence = persistence;
+        let mut state = RedshankSurfaceState::default();
+        desktop
+            .command(&mut state, CompactCommand::SetRate(125))
+            .unwrap();
+        assert_eq!(desktop.session.model.settings.playback_rate_percent, 125);
+        state.notice = Some("temporary action notice".into());
+        let snapshot = desktop.runtime.snapshot();
+        desktop.project(&mut state, &snapshot);
+        assert_eq!(state.notice, desktop.persistence.recovery_error);
+        assert!(desktop.close(&mut state).unwrap_err().contains("Not saved"));
+        assert!(!desktop.closing);
+        desktop.poll(&mut state);
+        assert_eq!(state.notice, desktop.persistence.recovery_error);
+        assert!(desktop.persistence.in_flight.is_none());
+        assert_eq!(desktop.persistence.durable, 0);
+        assert_eq!(fs::read(&generation).unwrap(), b"unrecoverable listener");
+        assert_eq!(fs::read_dir(directory.path()).unwrap().count(), 1);
+    }
+
+    #[test]
+    fn successful_restoration_admits_empty_or_older_valid_state() {
+        let directory = tempfile::tempdir().unwrap();
+        let (model, persistence) = Persistence::restore(JsonDirectoryStore::new(directory.path()));
+        assert_eq!(model, RedshankModel::default());
+        assert!(persistence.requests.is_some());
+        assert!(persistence.recovery_error.is_none());
+        drop(persistence);
+
+        let mut expected = model;
+        expected.settings.skip_forward_ms = 45_000;
+        JsonDirectoryStore::new(directory.path())
+            .save(&expected)
+            .unwrap();
+        let corrupt = directory.path().join("state-00000000000000000002.json");
+        fs::write(&corrupt, b"invalid newer state").unwrap();
+        let (model, mut persistence) =
+            Persistence::restore(JsonDirectoryStore::new(directory.path()));
+        assert_eq!(model, expected);
+        assert!(persistence.recovery_error.is_none());
+        assert_eq!(fs::read(corrupt).unwrap(), b"invalid newer state");
+        persistence.changed();
+        persistence.flush(&model).unwrap();
+        let IoReply::Saved {
+            revision, result, ..
+        } = persistence
+            .replies
+            .recv_timeout(Duration::from_secs(5))
+            .unwrap()
+        else {
+            panic!("wrong reply")
+        };
+        assert!(result.is_ok());
+        persistence.acknowledge(revision, &result);
+        assert_eq!(persistence.durable, 1);
+        assert_eq!(
+            JsonDirectoryStore::new(directory.path()).load().unwrap(),
+            Some(expected)
         );
     }
 

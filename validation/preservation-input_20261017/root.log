@@ -1,0 +1,195 @@
+warning: use of deprecated method `std::sync::atomic::Atomic::<u64>::fetch_update`: renamed to `try_update` for consistency
+  --> crates/woodshed-audio/src/capture_feed.rs:33:14
+   |
+33 |             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |generation| {
+   |              ^^^^^^^^^^^^
+   |
+   = note: `#[warn(deprecated)]` on by default
+help: replace the use of the deprecated method
+   |
+33 -             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |generation| {
+33 +             .try_update(Ordering::AcqRel, Ordering::Acquire, |generation| {
+   |
+
+warning: use of deprecated method `std::sync::atomic::Atomic::<usize>::fetch_update`: renamed to `try_update` for consistency
+   --> crates/woodshed-audio/src/output_runtime.rs:469:14
+    |
+469 |             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |              ^^^^^^^^^^^^
+    |
+help: replace the use of the deprecated method
+    |
+469 -             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+469 +             .try_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |
+
+warning: use of deprecated method `std::sync::atomic::Atomic::<usize>::fetch_update`: renamed to `try_update` for consistency
+   --> crates/woodshed-audio/src/output_runtime.rs:517:14
+    |
+517 |             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |              ^^^^^^^^^^^^
+    |
+help: replace the use of the deprecated method
+    |
+517 -             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+517 +             .try_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |
+
+warning: use of deprecated method `std::sync::atomic::Atomic::<usize>::fetch_update`: renamed to `try_update` for consistency
+   --> crates/woodshed-audio/src/output_runtime.rs:538:14
+    |
+538 |             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |              ^^^^^^^^^^^^
+    |
+help: replace the use of the deprecated method
+    |
+538 -             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+538 +             .try_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |
+
+
+running 42 tests
+..........................................
+test result: ok. 42 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+
+running 2 tests
+..
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+
+running 38 tests
+......................................
+test result: ok. 38 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+
+
+running 174 tests
+....................................................................................... 87/174
+....................................................................................... 174/174
+
+test result: ok. 174 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.97s
+
+
+running 285 tests
+....................................................................................... 87/285
+....................................................................................... 174/285
+....................................................................................... 261/285
+........................
+test result: ok. 285 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.19s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 5 tests
+.....
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.42s
+
+
+running 1 test
+.
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 209 tests
+.....................................................i.....
+running 1 test
+...i..........i....sealed V1 raw capture seed: exact frames, no input device
+test capture_persistence::tests::fresh_process_fixture ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 208 filtered out; finished in 0.89s
+
+
+running 1 test
+......... 87/209
+...ii.....fresh process: V1 raw migrated to exact current WavPack; legacy blob retained
+test capture_persistence::tests::fresh_process_fixture ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 208 filtered out; finished in 0.90s
+
+
+running 1 test
+.fresh process: exact samples and Set/Card identity retained across reorder
+test capture_persistence::tests::fresh_process_fixture ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 208 filtered out; finished in 0.76s
+
+
+running 1 test
+.fresh process: clock refusal resolved by explicit clear and persisted
+test capture_persistence::tests::fresh_process_fixture ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 208 filtered out; finished in 0.84s
+
+
+running 1 test
+.fresh process: cleared capture remains absent
+test capture_persistence::tests::fresh_process_fixture ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 208 filtered out; finished in 0.86s
+
+....................................................................i..... 174/209
+........................i..........
+test result: ok. 202 passed; 0 failed; 7 ignored; 0 measured; 0 filtered out; finished in 18.71s
+
+
+running 230 tests
+....................................................................................... 87/230
+....................................................................................... 174/230
+........................................................
+test result: ok. 230 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 6.95s
+
+
+running 187 tests
+....................................................................................... 87/187
+....................................................................................... 174/187
+.............
+test result: ok. 187 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.23s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 4 tests
+....
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.04s
+

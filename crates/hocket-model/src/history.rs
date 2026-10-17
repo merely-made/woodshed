@@ -319,11 +319,25 @@ pub struct HistoryNode {
 pub enum HistoryError {
     /// Requested checkout target is absent from the history graph.
     UnknownNode(NodeId),
+    /// The designated root is absent.
+    MissingRoot(NodeId),
+    /// The active head is absent.
+    MissingHead(NodeId),
+    /// A map entry disagrees with its embedded identity.
+    KeyMismatch { key: NodeId, id: NodeId },
+    /// The designated root has a parent or is not Genesis.
+    InvalidRoot(NodeId),
+    /// A node other than the designated root is parentless.
+    UnexpectedRoot(NodeId),
+    /// Genesis is reserved for the designated root.
+    UnexpectedGenesis(NodeId),
+    /// A parent walk revisits a node instead of reaching the root.
+    Cycle(NodeId),
     /// Incoming graph belongs to a different session history.
     DifferentRoot { local: NodeId, incoming: NodeId },
     /// Two graphs contain different payloads under one globally unique node id.
     ConflictingNode(NodeId),
-    /// An incoming node points to a parent absent from the combined graph.
+    /// A retained node points to a parent absent from its history.
     MissingParent { node: NodeId, parent: NodeId },
 }
 
@@ -331,6 +345,13 @@ impl std::fmt::Display for HistoryError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             Self::UnknownNode(id) => write!(f, "history checkout target {id} is unknown"),
+            Self::MissingRoot(id) => write!(f, "history root {id} is missing"),
+            Self::MissingHead(id) => write!(f, "history head {id} is missing"),
+            Self::KeyMismatch { key, id } => write!(f, "history key {key} disagrees with node {id}"),
+            Self::InvalidRoot(id) => write!(f, "history root {id} must be parentless Genesis"),
+            Self::UnexpectedRoot(id) => write!(f, "history node {id} is an additional root"),
+            Self::UnexpectedGenesis(id) => write!(f, "history node {id} is a non-root Genesis"),
+            Self::Cycle(id) => write!(f, "history contains a cycle at {id}"),
             Self::DifferentRoot { local, incoming } => {
                 write!(
                     f,
@@ -377,6 +398,58 @@ impl History {
         }
     }
 
+    /// Validate the complete retained graph, including inactive branches.
+    /// Every node must reach the single parentless Genesis root. Walks are
+    /// iterative and memoized, so hostile depth cannot overflow the stack.
+    pub fn validate(&self) -> Result<(), HistoryError> {
+        let root = self
+            .nodes
+            .get(&self.root)
+            .ok_or(HistoryError::MissingRoot(self.root))?;
+        if !self.nodes.contains_key(&self.head) {
+            return Err(HistoryError::MissingHead(self.head));
+        }
+        if root.parent.is_some() || !matches!(root.edit, Edit::Genesis) {
+            return Err(HistoryError::InvalidRoot(self.root));
+        }
+        for (key, node) in &self.nodes {
+            if *key != node.id {
+                return Err(HistoryError::KeyMismatch {
+                    key: *key,
+                    id: node.id,
+                });
+            }
+            if let Some(parent) = node.parent {
+                if !self.nodes.contains_key(&parent) {
+                    return Err(HistoryError::MissingParent { node: *key, parent });
+                }
+            } else if *key != self.root {
+                return Err(HistoryError::UnexpectedRoot(*key));
+            }
+        }
+        let mut rooted = BTreeSet::from([self.root]);
+        for start in self.nodes.keys().copied() {
+            let mut path = BTreeSet::new();
+            let mut current = start;
+            while !rooted.contains(&current) {
+                if !path.insert(current) {
+                    return Err(HistoryError::Cycle(current));
+                }
+                // Presence and the sole parentless node were checked above.
+                current = self.nodes[&current]
+                    .parent
+                    .ok_or(HistoryError::UnexpectedRoot(current))?;
+            }
+            rooted.extend(path);
+        }
+        for (id, node) in &self.nodes {
+            if *id != self.root && matches!(node.edit, Edit::Genesis) {
+                return Err(HistoryError::UnexpectedGenesis(*id));
+            }
+        }
+        Ok(())
+    }
+
     /// Commit an edit. Applies it to the session, appends a new node pointing
     /// at the current head, and advances head. Existing descendants stay in the
     /// graph, so a commit from an earlier checkout creates a retained branch.
@@ -396,59 +469,81 @@ impl History {
         id
     }
 
-    /// Move the head to a different node, applying or inverting edits along the
-    /// path through the two heads' lowest common ancestor.
+    /// Move the head through the two heads' lowest common ancestor. Validate
+    /// both ancestry paths before changing the session; unrelated retained
+    /// branches are checked by full admission and integration validation.
     pub fn checkout(&mut self, target: NodeId, session: &mut Session) -> Result<(), HistoryError> {
-        if self.head == target {
-            return Ok(());
+        let root = self.nodes.get(&self.root).ok_or(HistoryError::MissingRoot(self.root))?;
+        if root.id != self.root {
+            return Err(HistoryError::KeyMismatch { key: self.root, id: root.id });
+        }
+        if root.parent.is_some() || !matches!(root.edit, Edit::Genesis) {
+            return Err(HistoryError::InvalidRoot(self.root));
+        }
+        if !self.nodes.contains_key(&self.head) {
+            return Err(HistoryError::MissingHead(self.head));
         }
         if !self.nodes.contains_key(&target) {
             return Err(HistoryError::UnknownNode(target));
         }
-
-        let head_chain = self.ancestor_chain(self.head);
-        let target_chain = self.ancestor_chain(target);
-        let Some((head_index, target_index)) =
-            head_chain
-                .iter()
-                .enumerate()
-                .find_map(|(head_index, common)| {
-                    target_chain
-                        .iter()
-                        .position(|target_node| target_node == common)
-                        .map(|target_index| (head_index, target_index))
-                })
-        else {
-            return Err(HistoryError::UnknownNode(target));
-        };
-
-        for &id in &head_chain[..head_index] {
-            self.nodes[&id].edit.invert(session);
+        let head_chain = self.ancestor_chain(self.head)?;
+        // A same-head request still checks every ancestor for public mutations.
+        if self.head == target {
+            return Ok(());
         }
-        for &id in target_chain[..target_index].iter().rev() {
-            self.nodes[&id].edit.apply(session);
+        let target_chain = self.ancestor_chain(target)?;
+        let shared = head_chain.iter().rev().zip(target_chain.iter().rev())
+            .take_while(|(head, target)| head.id == target.id)
+            .count();
+        let head_index = head_chain.len() - shared;
+        let target_index = target_chain.len() - shared;
+        // Both paths terminate at the designated root, so shared is nonzero.
+        for node in &head_chain[..head_index] {
+            node.edit.invert(session);
+        }
+        for node in target_chain[..target_index].iter().rev() {
+            node.edit.apply(session);
         }
         self.head = target;
         Ok(())
     }
 
-    /// Walk from `start` up via parent pointers to the root, inclusive.
-    fn ancestor_chain(&self, start: NodeId) -> Vec<NodeId> {
-        let mut chain = Vec::new();
-        let mut cur = Some(start);
-        while let Some(id) = cur {
-            chain.push(id);
-            cur = self.nodes.get(&id).and_then(|n| n.parent);
+    /// Check a path to the designated root, retaining nodes for edit application.
+    /// A path cannot contain more nodes than the map: exceeding that bound
+    /// proves a cycle without allocating a per-walk visited set.
+    fn ancestor_chain(&self, start: NodeId) -> Result<Vec<&HistoryNode>, HistoryError> {
+        let mut chain: Vec<&HistoryNode> = Vec::new();
+        let mut current = start;
+        loop {
+            let node = self.nodes.get(&current).ok_or_else(|| {
+                match chain.last() {
+                    Some(previous) => HistoryError::MissingParent { node: previous.id, parent: current },
+                    None => HistoryError::UnknownNode(current),
+                }
+            })?;
+            if chain.len() == self.nodes.len() {
+                return Err(HistoryError::Cycle(current));
+            }
+            if node.id != current {
+                return Err(HistoryError::KeyMismatch { key: current, id: node.id });
+            }
+            if current != self.root && matches!(node.edit, Edit::Genesis) {
+                return Err(HistoryError::UnexpectedGenesis(current));
+            }
+            chain.push(node);
+            match node.parent {
+                Some(parent) => current = parent,
+                None if current == self.root => return Ok(chain),
+                None => return Err(HistoryError::UnexpectedRoot(current)),
+            }
         }
-        chain
     }
 
-    /// Integrate nodes from a history with the same root without changing the
-    /// current head or session projection. Returns the number of new nodes.
-    ///
-    /// This is graph union, not semantic edit merge: callers may checkout an
-    /// incoming branch afterwards, but must not claim concurrent conflicting
-    /// edits have been reconciled into one new head.
+    /// Integrate nodes with the same root without moving the local head.
+    /// Incoming fragments may omit ancestors already present locally. Validate
+    /// the complete temporary union before publishing it; refusal is atomic.
+    /// Durable projects and handoffs separately require full valid snapshots.
+    /// This is graph union, not semantic reconciliation of concurrent edits.
     pub fn integrate(&mut self, incoming: &History) -> Result<usize, HistoryError> {
         if self.root != incoming.root {
             return Err(HistoryError::DifferentRoot {
@@ -463,25 +558,15 @@ impl History {
                 }
             }
         }
-        let combined_ids: BTreeSet<NodeId> = self
-            .nodes
-            .keys()
-            .chain(incoming.nodes.keys())
-            .copied()
-            .collect();
-        for node in incoming.nodes.values() {
-            if let Some(parent) = node.parent {
-                if !combined_ids.contains(&parent) {
-                    return Err(HistoryError::MissingParent {
-                        node: node.id,
-                        parent,
-                    });
-                }
-            }
+        let mut combined = self.clone();
+        combined.nodes.extend(incoming.nodes.clone());
+        combined.validate()?;
+        if !combined.nodes.contains_key(&incoming.head) {
+            return Err(HistoryError::MissingHead(incoming.head));
         }
-        let before = self.nodes.len();
-        self.nodes.extend(incoming.nodes.clone());
-        Ok(self.nodes.len() - before)
+        let added = combined.nodes.len() - self.nodes.len();
+        *self = combined;
+        Ok(added)
     }
 
     /// Whether there's an edit to undo (head is past the root).
@@ -530,6 +615,102 @@ impl Default for History {
 mod tests {
     use super::*;
     use crate::ids::MediaRef;
+
+    fn malformed_histories() -> Vec<(&'static str, History)> {
+        let mut session = Session::new_default();
+        let mut base = History::new();
+        let first = base.commit(Edit::SetBpm { from: 120.0, to: 90.0 }, &mut session, 1);
+        let second = base.commit(Edit::SetBpm { from: 90.0, to: 80.0 }, &mut session, 2);
+        let mut cases = Vec::new();
+        for case in ["self cycle", "two node cycle", "missing root", "missing head",
+            "root parent", "root edit", "extra root", "key mismatch", "missing parent",
+            "non-root genesis", "disconnected cycle"] {
+            let mut h = base.clone();
+            match case {
+                "self cycle" => h.nodes.get_mut(&second).unwrap().parent = Some(second),
+                "two node cycle" => h.nodes.get_mut(&first).unwrap().parent = Some(second),
+                "missing root" => h.root = NodeId::new(),
+                "missing head" => h.head = NodeId::new(),
+                "root parent" => h.nodes.get_mut(&h.root).unwrap().parent = Some(second),
+                "root edit" => h.nodes.get_mut(&h.root).unwrap().edit = Edit::SetBpm { from: 120.0, to: 1.0 },
+                "extra root" => h.nodes.get_mut(&first).unwrap().parent = None,
+                "key mismatch" => h.nodes.get_mut(&first).unwrap().id = NodeId::new(),
+                "missing parent" => h.nodes.get_mut(&first).unwrap().parent = Some(NodeId::new()),
+                "non-root genesis" => h.nodes.get_mut(&first).unwrap().edit = Edit::Genesis,
+                "disconnected cycle" => {
+                    let id = NodeId::new();
+                    h.nodes.insert(id, HistoryNode { id, parent: Some(id),
+                        edit: Edit::SetBpm { from: 120.0, to: 1.0 }, timestamp_ms: 3 });
+                }
+                _ => unreachable!(),
+            }
+            cases.push((case, h));
+        }
+        cases
+    }
+
+    #[test]
+    fn malformed_topology_is_refused_before_checkout_or_integration_mutation() {
+        for (case, mut malformed) in malformed_histories() {
+            assert!(malformed.validate().is_err(), "{case}");
+            let bundle = crate::ProjectBundle::new(Session::new_default(), malformed.clone());
+            let mut bytes = Vec::new();
+            ciborium::into_writer(&bundle, &mut bytes).unwrap();
+            assert!(matches!(crate::ProjectBundle::from_bytes(&bytes),
+                Err(crate::PersistenceError::History(_))), "{case}");
+            let before = malformed.clone();
+            let mut session = Session::new_default();
+            let before_session = session.clone();
+            if case == "disconnected cycle" {
+                // Unrelated corruption is refused by admission/integration;
+                // checkout validates only the paths it will traverse.
+                malformed.checkout(malformed.head, &mut session).unwrap();
+                let cyclic = malformed.nodes.values()
+                    .find(|node| node.parent == Some(node.id)).unwrap().id;
+                assert!(malformed.checkout(cyclic, &mut session).is_err());
+                malformed.head = cyclic;
+                assert!(malformed.checkout(cyclic, &mut session).is_err());
+                malformed.head = before.head;
+            } else {
+                assert!(malformed.checkout(malformed.head, &mut session).is_err(), "{case}");
+                assert!(malformed.checkout(malformed.root, &mut session).is_err(), "{case}");
+            }
+            assert_eq!(session, before_session, "{case}");
+            assert_eq!(malformed, before, "{case}");
+            // Same root exercises admission rather than DifferentRoot refusal.
+            let mut local = History {
+                root: malformed.root,
+                head: malformed.root,
+                nodes: BTreeMap::from([(malformed.root, HistoryNode {
+                    id: malformed.root,
+                    parent: None,
+                    edit: Edit::Genesis,
+                    timestamp_ms: 0,
+                })]),
+            };
+            let local_before = local.clone();
+            assert!(local.integrate(&malformed).is_err(), "{case}");
+            assert_eq!(local, local_before, "{case}");
+            assert!(malformed.integrate(&local).is_err(), "{case}");
+            assert_eq!(malformed, before, "{case}");
+        }
+    }
+
+    #[test]
+    fn valid_deep_history_and_retained_branches_are_rooted() {
+        let mut h = History::new();
+        let mut s = Session::new_default();
+        for i in 0..2048 {
+            h.commit(Edit::SetBpm { from: s.bpm, to: 90.0 }, &mut s, i);
+        }
+        let retained = h.head;
+        h.checkout(h.root, &mut s).unwrap();
+        h.commit(Edit::SetBpm { from: s.bpm, to: 80.0 }, &mut s, 2049);
+        h.validate().unwrap();
+        h.checkout(retained, &mut s).unwrap();
+        assert_eq!(s.bpm, 90.0);
+        assert_eq!(h.nodes.len(), 2050);
+    }
 
     #[test]
     fn new_history_has_only_root() {
@@ -727,6 +908,63 @@ mod tests {
         assert!(local.nodes.contains_key(&remote_head));
         local.checkout(remote_head, &mut shared_session).unwrap();
         assert_eq!(shared_session.bpm, 100.0);
+    }
+
+    #[test]
+    fn integrate_accepts_fragments_using_local_ancestors_without_moving_head() {
+        let mut session = Session::new_default();
+        let mut local = History::new();
+        local.commit(Edit::SetBpm { from: 120.0, to: 110.0 }, &mut session, 1);
+        let local_head = local.head;
+        let mut remote = local.clone();
+        let mut remote_session = session.clone();
+        let first = remote.commit(Edit::SetBpm { from: 110.0, to: 90.0 }, &mut remote_session, 2);
+        let second = remote.commit(Edit::SetBpm { from: 90.0, to: 80.0 }, &mut remote_session, 3);
+        remote.nodes.retain(|id, _| *id == first || *id == second);
+        assert!(remote.validate().is_err());
+        // A graph fragment is not a valid durable snapshot.
+        assert!(crate::ProjectBundle::new(remote_session, remote.clone()).to_bytes().is_err());
+        assert_eq!(local.integrate(&remote).unwrap(), 2);
+        assert_eq!(local.head, local_head);
+        assert_eq!(session.bpm, 110.0);
+        local.validate().unwrap();
+        assert_eq!(local.integrate(&remote).unwrap(), 0);
+        local.checkout(second, &mut session).unwrap();
+        assert_eq!(session.bpm, 80.0);
+        local.checkout(local_head, &mut session).unwrap();
+        assert_eq!(session.bpm, 110.0);
+    }
+
+    #[test]
+    fn invalid_fragment_union_is_atomic_even_with_a_valid_new_node() {
+        for case in ["self cycle", "two node cycle", "missing parent", "extra root",
+            "key mismatch", "missing head", "conflict"] {
+            let mut local = History::new();
+            let before = local.clone();
+            let good = NodeId::new();
+            let bad = NodeId::new();
+            let mut fragment = History { root: local.root, head: good, nodes: BTreeMap::new() };
+            fragment.nodes.insert(good, HistoryNode { id: good, parent: Some(local.root),
+                edit: Edit::SetBpm { from: 120.0, to: 90.0 }, timestamp_ms: 1 });
+            fragment.nodes.insert(bad, HistoryNode { id: bad, parent: Some(good),
+                edit: Edit::SetBpm { from: 90.0, to: 80.0 }, timestamp_ms: 2 });
+            match case {
+                "self cycle" => fragment.nodes.get_mut(&bad).unwrap().parent = Some(bad),
+                "two node cycle" => fragment.nodes.get_mut(&good).unwrap().parent = Some(bad),
+                "missing parent" => fragment.nodes.get_mut(&bad).unwrap().parent = Some(NodeId::new()),
+                "extra root" => fragment.nodes.get_mut(&bad).unwrap().parent = None,
+                "key mismatch" => fragment.nodes.get_mut(&bad).unwrap().id = NodeId::new(),
+                "missing head" => fragment.head = NodeId::new(),
+                "conflict" => {
+                    let mut root = local.nodes[&local.root].clone();
+                    root.timestamp_ms = 99;
+                    fragment.nodes.insert(local.root, root);
+                }
+                _ => unreachable!(),
+            }
+            assert!(local.integrate(&fragment).is_err(), "{case}");
+            assert_eq!(local, before, "{case}");
+        }
     }
 
     #[test]

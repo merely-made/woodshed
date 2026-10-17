@@ -1,0 +1,17 @@
+warning: method `path` is never used
+   --> crates/hocket-genet/src/update.rs:184:12
+    |
+153 | impl UpdateSettingsProvider {
+    | --------------------------- method in this implementation
+...
+184 |     pub fn path(&self) -> &Path {
+    |            ^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+
+running 92 tests
+.........i....i........................................................................ 87/92
+.....
+test result: ok. 90 passed; 0 failed; 2 ignored; 0 measured; 0 filtered out; finished in 19.74s
+

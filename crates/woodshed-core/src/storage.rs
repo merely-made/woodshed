@@ -523,7 +523,25 @@ pub struct SessionLoad {
 /// payload without making those fields part of the new session type.
 pub fn decode_session(contents: &str) -> Result<SessionLoad, serde_json::Error> {
     let value: serde_json::Value = serde_json::from_str(contents)?;
-    let session = serde_json::from_value(value.clone())?;
+    let mut session: PersistedSession = serde_json::from_value(value.clone())?;
+    // Identity is local to each Set: retained snapshots may intentionally
+    // share IDs with their source. Within one Set, ambiguity is a decode error
+    // so the host retains/quarantines the original instead of adopting it.
+    let admit = |set: &mut woodshedding::rehearsal::Set, owner: String| {
+        set.admit_card_ids().map_err(|error| {
+            <serde_json::Error as serde::de::Error>::custom(format!("{owner}: {error}"))
+        })
+    };
+    admit(
+        &mut session.set,
+        format!("Active working Set {}", session.working_sets.active_id.0),
+    )?;
+    for entry in &mut session.working_sets.inactive {
+        admit(&mut entry.set, format!("Inactive working Set {}", entry.id.0))?;
+    }
+    for entry in &mut session.retained_sets.entries {
+        admit(&mut entry.set, format!("Retained saved Set {}", entry.id.0))?;
+    }
     let has_legacy_settings = [
         "theme",
         "tuning_idx",
@@ -992,6 +1010,129 @@ mod tests {
             history.recent(1)[0].subject_id
         );
         assert_eq!(settings.stage.related, related);
+    }
+
+    #[test]
+    fn history_admission_failures_propagate_from_session_decode() {
+        assert_eq!(decode_session("{}").unwrap().session.practice_history.len(), 0);
+        for history in [
+            serde_json::json!({"entries": [], "visits": "damaged", "owners": []}),
+            serde_json::json!({"entries": [], "events": []}),
+            serde_json::json!({"entries": [], "visits": [], "owners": [{
+                "identity": "practitioner", "origin": null, "current": 0,
+                "creator": null, "pending_origin_parent": null, "owned_visits": []
+            }]}),
+        ] {
+            let contents = serde_json::json!({"practice_history": history}).to_string();
+            assert!(decode_session(&contents).is_err());
+        }
+        let legacy = serde_json::json!({"practice_history": {"events": [{
+            "subject_id": "scale:Major", "kind": "Rehearsed", "sequence": 0
+        }], "next_sequence": 1}}).to_string();
+        let session = decode_session(&legacy).unwrap().session;
+        let events = session.practice_history.recent(10);
+        let current = serde_json::to_string(&session).unwrap();
+        assert_eq!(decode_session(&current).unwrap().session.practice_history.recent(10), events);
+    }
+
+    #[test]
+    fn rejected_history_can_be_quarantined_without_replacing_saved_bytes() {
+        let contents = r#"{"practice_history":{"entries":[],"visits":"damaged","owners":[]}}"#;
+        let store = SessionStore::new(muniment::MemoryBackend::default());
+        store.try_save(contents).unwrap();
+        let loaded = store.try_load().unwrap().unwrap();
+        let error = decode_session(&loaded).unwrap_err();
+        // The desktop host owns this refusal decision. Its ordinary decode
+        // error path now receives malformed history instead of a default.
+        store.refuse_writes(error.to_string());
+        assert!(store.try_save("{}").is_err());
+        assert_eq!(store.try_load().unwrap().as_deref(), Some(contents));
+    }
+
+    fn session_with_all_set_banks() -> PersistedSession {
+        let mut session = PersistedSession::default();
+        let card = StageState::new().card_from_lens().unwrap();
+        session.set.push(card.clone());
+        session.set.push(card);
+        session.retained_sets.save_snapshot(&session.set, "Saved");
+        session.working_sets.inactive.push(crate::working_sets::WorkingSet {
+            id: crate::working_sets::WorkingSetId(2),
+            name: "Inactive".into(),
+            set: session.set.clone(),
+        });
+        session
+    }
+
+    #[test]
+    fn duplicate_card_identity_is_rejected_in_every_loaded_set_bank() {
+        for (path, owner) in [
+            ("/set", "Active working Set 1"),
+            ("/working_sets/inactive/0/set", "Inactive working Set 2"),
+            ("/retained_sets/entries/0/set", "Retained saved Set 1"),
+        ] {
+            let mut wire = serde_json::to_value(session_with_all_set_banks()).unwrap();
+            let set = wire.pointer_mut(path).unwrap();
+            set["cards"][1]["id"] = set["cards"][0]["id"].clone();
+            let error = decode_session(&wire.to_string()).unwrap_err().to_string();
+            assert!(error.contains(owner), "{error}");
+            assert!(error.contains("Duplicate Card identity"), "{error}");
+        }
+    }
+
+    #[test]
+    fn exhausted_card_mints_are_decode_errors_in_every_set_bank() {
+        for (path, owner) in [
+            ("/set", "Active working Set 1"),
+            ("/working_sets/inactive/0/set", "Inactive working Set 2"),
+            ("/retained_sets/entries/0/set", "Retained saved Set 1"),
+        ] {
+            for case in ["mint only", "maximum card", "migration consumes final id", "empty mint"] {
+                let mut wire = serde_json::to_value(session_with_all_set_banks()).unwrap();
+                let set = wire.pointer_mut(path).unwrap();
+                match case {
+                    "mint only" => set["last_card_id"] = serde_json::json!(u64::MAX),
+                    "maximum card" => set["cards"][0]["id"] = serde_json::json!(u64::MAX),
+                    "migration consumes final id" => {
+                        set["last_card_id"] = serde_json::json!(u64::MAX - 1);
+                        set["cards"][0]["id"] = serde_json::json!(0);
+                    },
+                    "empty mint" => {
+                        set["last_card_id"] = serde_json::json!(u64::MAX);
+                        set["cards"] = serde_json::json!([]);
+                    },
+                    _ => unreachable!(),
+                }
+                let error = decode_session(&wire.to_string()).unwrap_err().to_string();
+                assert!(error.contains(owner), "{case}: {error}");
+                assert!(error.contains("Card identity mint exhausted"), "{case}: {error}");
+            }
+        }
+    }
+
+    #[test]
+    fn every_set_bank_migrates_legacy_ids_and_current_snapshots_round_trip() {
+        let original = serde_json::to_value(session_with_all_set_banks()).unwrap();
+        // Snapshot/source IDs intentionally overlap across Sets and remain valid.
+        let current = decode_session(&original.to_string()).unwrap().session;
+        assert_eq!(serde_json::to_value(current).unwrap(), original);
+        let mut legacy = original;
+        for path in ["/set", "/working_sets/inactive/0/set", "/retained_sets/entries/0/set"] {
+            let set = legacy.pointer_mut(path).unwrap();
+            set["cards"][0].as_object_mut().unwrap().remove("id");
+            set["cards"][1]["id"] = serde_json::json!(0);
+            set.as_object_mut().unwrap().remove("last_card_id");
+            set["cursor"] = serde_json::json!(1);
+        }
+        let session = decode_session(&legacy.to_string()).unwrap().session;
+        for set in [&session.set, &session.working_sets.inactive[0].set, &session.retained_sets.entries[0].set] {
+            assert!(set.cards[0].id.is_assigned());
+            assert!(set.cards[1].id.is_assigned());
+            assert_ne!(set.cards[0].id, set.cards[1].id);
+            assert_eq!(set.cursor_id(), Some(set.cards[1].id));
+        }
+        let saved = serde_json::to_value(session).unwrap();
+        let reopened = decode_session(&saved.to_string()).unwrap().session;
+        assert_eq!(serde_json::to_value(reopened).unwrap(), saved);
     }
 
     #[test]

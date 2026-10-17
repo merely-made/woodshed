@@ -1,0 +1,30 @@
+warning: patch `mere-p2panda-net v0.7.5 (https://github.com/mark-ik/p2panda.git?tag=mere-p2panda-net-0.7.5-upstream-20261013#1f69c9bc)` was not used in the crate graph
+warning: patch `mere-proofs v0.1.0 (https://github.com/merely-made/mere.git?branch=main#91467c0b)` was not used in the crate graph
+warning: patch `muniment v0.1.2 (https://github.com/merely-made/mere.git?branch=main#91467c0b)` was not used in the crate graph
+warning: patch `p2panda-auth v0.7.1 (https://github.com/mark-ik/p2panda.git?tag=mere-p2panda-net-0.7.5-upstream-20261013#1f69c9bc)` was not used in the crate graph
+warning: patch `p2panda-core v0.7.1 (https://github.com/mark-ik/p2panda.git?tag=mere-p2panda-net-0.7.5-upstream-20261013#1f69c9bc)` was not used in the crate graph
+warning: patch `p2panda-discovery v0.7.1 (https://github.com/mark-ik/p2panda.git?tag=mere-p2panda-net-0.7.5-upstream-20261013#1f69c9bc)` was not used in the crate graph
+warning: patch `p2panda-encryption v0.7.1 (https://github.com/mark-ik/p2panda.git?tag=mere-p2panda-net-0.7.5-upstream-20261013#1f69c9bc)` was not used in the crate graph
+warning: patch `p2panda-store v0.7.1 (https://github.com/mark-ik/p2panda.git?tag=mere-p2panda-net-0.7.5-upstream-20261013#1f69c9bc)` was not used in the crate graph
+warning: patch `p2panda-stream v0.7.1 (https://github.com/mark-ik/p2panda.git?tag=mere-p2panda-net-0.7.5-upstream-20261013#1f69c9bc)` was not used in the crate graph
+warning: patch `p2panda-sync v0.7.1 (https://github.com/mark-ik/p2panda.git?tag=mere-p2panda-net-0.7.5-upstream-20261013#1f69c9bc)` was not used in the crate graph
+help: Check that the patched package version and available features are compatible
+      with the dependency requirements. If the patch has a different version from
+      what is locked in the Cargo.lock file, run `cargo update` to use the new
+      version. This may also occur with an optional dependency that is not enabled.
+   Compiling redshank-desktop v0.0.0 (/Users/markik/Code/repos/woodshed/ports/redshank/desktop)
+warning: use of deprecated method `std::sync::atomic::Atomic::<u64>::fetch_update`: renamed to `try_update` for consistency
+   --> desktop/src/diagnostics.rs:255:18
+    |
+255 |                 .fetch_update(Ordering::Relaxed, Ordering::Relaxed, |value| {
+    |                  ^^^^^^^^^^^^
+    |
+    = note: `#[warn(deprecated)]` on by default
+help: replace the use of the deprecated method
+    |
+255 -                 .fetch_update(Ordering::Relaxed, Ordering::Relaxed, |value| {
+255 +                 .try_update(Ordering::Relaxed, Ordering::Relaxed, |value| {
+    |
+
+warning: `redshank-desktop` (bin "redshank-desktop") generated 1 warning (run `cargo fix --bin "redshank-desktop" -p redshank-desktop` to apply 1 suggestion)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 9.46s

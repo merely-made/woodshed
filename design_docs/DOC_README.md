@@ -19,6 +19,8 @@ before any other doc in this directory.
 
 ## Active Plans
 
+- [Preservation and input admission](2026-10-16_preservation_input_admission_plan.md) — First audit-remediation pass: outgoing-work preservation, checked history/Set/project input, and nonwriting failed recovery. Integrated onto P5 October 17; 1,355 passing cases plus five child invocations and three desktop builds. Native qualification is separately owned. [Current integration receipt](../validation/preservation-input_20261017/integration.json); [isolated implementation receipt](../validation/preservation-input_20261016/receipt.json).
+
 - [P5 shared clock and visual articulation](2026-07-11_stage_set_tools_plan.md#p5-unify-the-clock-and-visual-articulation) — Qualified October 17: one processor clock for Card dwell, click, articulation and Fretboard event projection; preserved pause/resume and tempo phase, absolute Seconds, Manual Next and accepted-start history. 881 cases plus five child invocations, desktop build and five reviewed native Rehearsal/reopen captures with exact sealed Cards, owner and six history rows. [Receipt](../validation/stage-p5_20261017/receipt.json).
 
 - [Catalog/discovery audition admission history](2026-07-11_stage_set_tools_plan.md#catalogdiscovery-audition-admission-history-2026-10-16) — Qualified: frozen accepted-only observations, exact source/session binding and refusal/retry; 676 affected cases plus five child invocations, desktop build and four independently reviewed native seed/reopen captures with exact sealed Card/history preservation. [Receipt](../validation/catalog-audition_20261016/receipt.json).
@@ -66,7 +68,8 @@ before any other doc in this directory.
   the shared surface over its existing single OutputRuntime, preserving ordered
   clocks, capture custody and export. The separate adoption receipt records
   591 focused cases, seven native captures, compact reopening and exact WAV/media
-  retention; shared DSP extraction remains later work. On October 15 the root,
+  retention. Shared capture/countdown/feed/completion primitives were extracted on
+  October 16; further DSP consolidation remains open. On October 15 the root,
   Hocket, Redshank and recipe roots repinned to Mere `90ce8f12d` and take custody from
   `graphshell_endpoint::door` instead of `graphshell`. Coordinates
   standalone Firewheel streaming, independently gated consumer migration,

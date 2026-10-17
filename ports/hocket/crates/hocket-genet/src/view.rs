@@ -23,10 +23,29 @@ use crate::state::AppState;
 pub type Child = Box<dyn AnyView<AppState, (), GenetCtx, GenetElement>>;
 
 pub fn root(state: &AppState) -> Child {
-    if state.appearance.editor_open {
-        return crate::appearance_view::editor(state);
+    // Present the preservation decision independently of the appearance editor.
+    // Stop/Record remain reachable below so a free capture can finish normally.
+    let mut children: Vec<Child> = Vec::new();
+    if state.preservation_pending() {
+        children.push(preservation_panel(state));
     }
-    let mut children = vec![crate::appearance_view::chrome(state)];
+    if state.appearance.editor_open {
+        children.push(crate::appearance_view::editor(state));
+        return Box::new(el("div", children).attr("class", "hocket-desktop"));
+    }
+    children.push(crate::appearance_view::chrome(state));
+    if state.has_loaded_project() && !state.preservation_pending() {
+        children.push(Box::new(el("div", (
+            cambium::button(
+                "Retry loaded project",
+                |state: &mut AppState, _: cambium::PointerClick| state.retry_loaded_project(),
+            ).attr("data-action", "retry-loaded-project"),
+            cambium::button(
+                "Dismiss loaded project",
+                |state: &mut AppState, _: cambium::PointerClick| state.discard_loaded_project(),
+            ).attr("data-action", "dismiss-loaded-project"),
+        )).attr("class", "project-preservation")));
+    }
     if state.appearance.open {
         children.push(crate::appearance_view::panel(state));
     }
@@ -48,6 +67,24 @@ pub fn root(state: &AppState) -> Child {
         .attr("class", "app"),
     ));
     Box::new(el("div", children).attr("class", "hocket-desktop"))
+}
+
+fn preservation_panel(state: &AppState) -> Child {
+    Box::new(el("div", (
+        el("p", text(state.preservation_message())).attr("role", "status"),
+        cambium::button("Save", |s: &mut AppState, _: cambium::PointerClick| {
+            s.choose_project_to_save();
+        }).attr("data-action", "preservation-save"),
+        cambium::button("Discard changes and continue", |s: &mut AppState, _: cambium::PointerClick| {
+            s.discard_for_preservation();
+        }).attr("data-action", "preservation-discard"),
+        cambium::button("Cancel", |s: &mut AppState, _: cambium::PointerClick| {
+            s.cancel_preservation();
+        }).attr("data-action", "preservation-cancel"),
+        cambium::button("Retry", |s: &mut AppState, _: cambium::PointerClick| {
+            s.retry_preservation();
+        }).attr("data-action", "preservation-retry"),
+    )).attr("class", "project-preservation").attr("aria-label", "Preserve current project"))
 }
 
 /// The update state, shown only when there is something true to say.

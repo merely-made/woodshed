@@ -156,29 +156,28 @@ fn hooks(runtime: &Rc<RefCell<Runtime>>) -> HostHooks<AppState, Logic, Child> {
             // project for Save/Export; the frame hook still services live audio.
             ctx.runner.update(AppState::tick);
             appearance_dispatch(ctx);
-            if *ctx.close && defer_scenario_close(&dispatch_runtime) {
-                *ctx.close = false;
-            }
+            guard_exit(ctx, &dispatch_runtime);
         }),
         after_frame: Box::new(move |ctx| {
-            let mut runtime = scenario_runtime.borrow_mut();
-            let Some(mut run) = runtime.scenario.take() else {
-                return;
-            };
-            scenario::drive(&mut run, ctx);
-            runtime.scenario = Some(run);
+            {
+                let mut runtime = scenario_runtime.borrow_mut();
+                if let Some(mut run) = runtime.scenario.take() {
+                    scenario::drive(&mut run, ctx);
+                    runtime.scenario = Some(run);
+                }
+            }
+            guard_exit(ctx, &scenario_runtime);
         }),
         after_wake: Box::new(|_ctx| {}),
         close_request: Box::new(move |ctx, _request| {
-            let mut allow = true;
+            let mut allow = false;
             ctx.runner.update(|state| {
-                if state.appearance.editor_open {
-                    state.appearance.close_app = true;
-                    allow = state.appearance.workshop.request_close();
-                }
+                allow = close_admission(state);
             });
             if allow && !defer_scenario_close(&close_runtime) {
-                CloseDisposition::Exit
+                let mut restarting = false;
+                ctx.runner.update(|state| restarting = state.apply_restart_after_close_guard());
+                if restarting { CloseDisposition::KeepVisible } else { CloseDisposition::Exit }
             } else {
                 CloseDisposition::KeepVisible
             }
@@ -213,6 +212,35 @@ fn hooks(runtime: &Rc<RefCell<Runtime>>) -> HostHooks<AppState, Logic, Child> {
             })
         }),
         key_intercept: Box::new(|_runner, _press| false),
+    }
+}
+
+fn close_admission(state: &mut AppState) -> bool {
+    if state.appearance.editor_open {
+        state.appearance.close_app = true;
+        if !state.appearance.workshop.request_close() {
+            state.wait_for_appearance_close();
+            return false;
+        }
+    }
+    state.request_project_close()
+}
+
+/// Native, caption, appearance, save continuation and scenario exits all pass
+/// the same project admission before Mesquite may interrupt/read back and exit.
+fn guard_exit(ctx: &mut AppCtx<'_, AppState, Logic, Child>, runtime: &Rc<RefCell<Runtime>>) {
+    if !*ctx.close && !ctx.runner.state().project_close_ready() {
+        return;
+    }
+    let mut allow = false;
+    ctx.runner.update(|state| allow = close_admission(state));
+    *ctx.close = allow && !defer_scenario_close(runtime);
+    if *ctx.close {
+        ctx.runner.update(|state| {
+            if state.apply_restart_after_close_guard() {
+                *ctx.close = false;
+            }
+        });
     }
 }
 
