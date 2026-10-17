@@ -44,6 +44,7 @@ pub(super) fn act(ctx: &mut Ctx<'_>, shared: &Rc<RefCell<Shared>>, label: &str) 
             ui.set_tray_expanded = true;
             ui.select_app_section(woodshed_core::storage::AppSection::Looper);
         });
+        crate::sync::after_dispatch(&mut shared.borrow_mut(), ctx);
         return Some(true);
     }
     if label == "p7a-manual-refusal" || label == "p7a-recover-bars" {
@@ -60,10 +61,12 @@ pub(super) fn act(ctx: &mut Ctx<'_>, shared: &Rc<RefCell<Shared>>, label: &str) 
                 Hold::Bars(2)
             };
         });
+        crate::sync::after_dispatch(&mut shared.borrow_mut(), ctx);
         return Some(true);
     }
     if label == "p7a-reorder" {
         ctx.runner.update(|ui| ui.set.cards.swap(0, 1));
+        crate::sync::after_dispatch(&mut shared.borrow_mut(), ctx);
         return Some(true);
     }
     if let Some(name) = label.strip_prefix("p7a-checkpoint ") {
@@ -247,6 +250,14 @@ fn checkpoint(ui: &UiState, shared: &mut Shared, name: &str) -> bool {
             return Err(
                 "reordered selected Card must own the same captured take in row zero".into(),
             );
+        }
+        if report["captures"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .any(|take| take["id"]["card"] != 2 || take["id"]["set"] != 1)
+        {
+            return Err("the fixture take must remain owned by Scale Card 2 in Set 1".into());
         }
         if name == "final"
             && (report["playing"] != false || report["captures"].as_array().unwrap().len() != 1)
