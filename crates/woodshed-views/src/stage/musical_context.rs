@@ -1,6 +1,5 @@
 //! Explicit owner actions for musical material kept in the session Mere.
 use super::{UiState, WorkspacePanel};
-use woodshed_core::audio::AudioRequest;
 use woodshed_core::captured_arpeggio::CapturedRecipe;
 use woodshed_core::harmony::KeyedCatalogRef;
 use woodshed_core::history::{EngagementKind, ObservationProvenance, catalog_id_for_card};
@@ -12,6 +11,7 @@ use woodshedding::rehearsal::{Card, CardId, Material, Touch};
 #[cfg(test)]
 mod tests {
     use super::*;
+    use woodshed_core::audio::AudioRequest;
     use woodshed_core::settings::AppSettings;
     use woodshedding::pitch::PitchClass;
 
@@ -178,16 +178,15 @@ mod tests {
         let stage = restored.stage.catalog_id();
         let root = restored.stage.root_idx;
         assert!(restored.hear_musical_context(id));
-        match restored.audio_requests.last().unwrap() {
-            AudioRequest::PreviewPitches {
-                pitches,
-                duration_s,
-                strum_s,
-            } => {
-                assert_eq!((pitches.clone(), *duration_s, *strum_s), expected);
-            },
+        let request = match restored.audio_requests.last().unwrap() {
+            AudioRequest::Audition(request) => request.clone(),
             other => panic!("unexpected audio request: {other:?}"),
-        }
+        };
+        assert_eq!(request.preview, expected);
+        assert!(restored.practice_history.recent(20).iter().all(|event| {
+            event.kind != EngagementKind::Previewed
+        }));
+        restored.finish_audition_admission(&request, Ok(()));
         let preview = &restored.practice_history.recent(1)[0];
         assert_eq!(
             preview.provenance.as_ref().unwrap().working_set_id,
@@ -330,9 +329,15 @@ mod tests {
             reopened.pattern_notice = Some("Existing inspection".into());
             let stage = reopened.stage.catalog_id();
             assert!(reopened.hear_musical_context(id));
-            assert!(
-                matches!(reopened.audio_requests.last(), Some(AudioRequest::PreviewPitches { pitches, duration_s, strum_s }) if (pitches.clone(), *duration_s, *strum_s) == expected)
-            );
+            let request = match reopened.audio_requests.last().unwrap() {
+                AudioRequest::Audition(request) => request.clone(),
+                other => panic!("unexpected audio request: {other:?}"),
+            };
+            assert_eq!(request.preview, expected);
+            assert!(reopened.practice_history.recent(20).iter().all(|event| {
+                event.kind != EngagementKind::Previewed
+            }));
+            reopened.finish_audition_admission(&request, Ok(()));
             let observation = &reopened.practice_history.recent(1)[0];
             assert_eq!(
                 observation.provenance.as_ref().unwrap().working_set_id,
@@ -442,9 +447,12 @@ mod tests {
         ui.stage.fret_start = 10;
         ui.stage.fret_count = 14;
         assert!(ui.hear_musical_context(id));
-        assert!(
-            matches!(ui.audio_requests.last(), Some(AudioRequest::PreviewPitches { pitches, duration_s, strum_s }) if (pitches.clone(), *duration_s, *strum_s) == expected)
-        );
+        let request = match ui.audio_requests.last().unwrap() {
+            AudioRequest::Audition(request) => request.clone(),
+            other => panic!("unexpected audio request: {other:?}"),
+        };
+        assert_eq!(request.preview, expected);
+        ui.finish_audition_admission(&request, Ok(()));
         assert!(ui.add_musical_context_to_set(id));
         let mut added = ui.set.cards.last().unwrap().clone();
         added.id = saved.id;
@@ -654,21 +662,12 @@ impl UiState {
                 },
             };
             self.refresh_event_time();
-            if let Some(catalog) = catalog_id_for_card(&card) {
-                self.practice_history.record_observation(
-                    self.now_ms,
-                    catalog,
-                    EngagementKind::Previewed,
-                    None,
-                    None,
-                    ObservationProvenance::capture_in_set(&card, owner).ok(),
-                );
-            }
-            self.request(AudioRequest::PreviewPitches {
-                pitches,
-                duration_s,
-                strum_s,
-            });
+            self.request_observed_preview(
+                (pitches, duration_s, strum_s),
+                catalog_id_for_card(&card),
+                None,
+                ObservationProvenance::capture_in_set(&card, owner).ok(),
+            );
             return true;
         }
         let Some(subject) = self.retained_context_subject(id) else {

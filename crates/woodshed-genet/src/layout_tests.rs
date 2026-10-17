@@ -851,11 +851,8 @@ fn compatible_scale_controls_choose_audition_stage_and_drill_without_changing_th
             "hearing a relationship cannot author the Set"
         );
         let heard = match h.state().audio_requests.last().unwrap() {
-            AudioRequest::PreviewPitches {
-                pitches,
-                duration_s,
-                strum_s,
-            } => {
+            AudioRequest::Audition(request) => {
+                let (pitches, duration_s, strum_s) = &request.preview;
                 assert!(!pitches.is_empty());
                 assert!(
                     *strum_s > 0.0,
@@ -1000,11 +997,7 @@ fn discovered_scale_uses_its_saved_ukulele_board_and_physical_solo_contact() {
     assert!(h.click_on(&Selector::class("scale-choice").containing("C Major")));
     assert!(h.click_on(&Selector::class("t-btn").containing("Hear scale")));
     let heard = match h.state().audio_requests.last().unwrap() {
-        AudioRequest::PreviewPitches {
-            pitches,
-            duration_s,
-            strum_s,
-        } => (pitches.clone(), *duration_s, *strum_s),
+        AudioRequest::Audition(request) => request.preview.clone(),
         request => panic!("unexpected scale audition: {request:?}"),
     };
     assert!(h.click_on(&Selector::class("t-btn").containing("Stage scale")));
@@ -1142,7 +1135,7 @@ fn invalid_saved_scale_setup_shows_the_reason_and_cannot_sound_the_live_guitar()
             .audio_requests
             .iter()
             .all(|request| !matches!(request,
-        woodshed_core::audio::AudioRequest::PreviewPitches { pitches, .. } if !pitches.is_empty()))
+        woodshed_core::audio::AudioRequest::Audition(request) if !request.preview.0.is_empty()))
     );
 }
 
@@ -1195,11 +1188,7 @@ fn scale_pattern_controls_preserve_order_source_and_occurrences_in_wide_and_narr
                 "pattern audition cannot author the source"
             );
             let heard = match h.state().audio_requests.last().unwrap() {
-                AudioRequest::PreviewPitches {
-                    pitches,
-                    duration_s,
-                    strum_s,
-                } => (pitches.clone(), *duration_s, *strum_s),
+                AudioRequest::Audition(request) => request.preview.clone(),
                 request => panic!("unexpected pattern audition: {request:?}"),
             };
             let midi = heard
@@ -1418,11 +1407,7 @@ fn adjacent_chord_approach_controls_preserve_physical_pairs_shapes_and_originals
             assert_eq!(h.state().set.cards.len(), 2);
             assert!(h.click_on(&Selector::class("t-btn").containing("Hear approach")));
             let heard = match h.state().audio_requests.last().unwrap() {
-                AudioRequest::PreviewPitches {
-                    pitches,
-                    duration_s,
-                    strum_s,
-                } => (pitches.clone(), *duration_s, *strum_s),
+                AudioRequest::Audition(request) => request.preview.clone(),
                 request => panic!("unexpected approach audio request: {request:?}"),
             };
             let midi = heard
@@ -1575,11 +1560,7 @@ fn unselected_target_approach_keeps_repeated_pitch_visits_in_production_audio() 
     assert!(h.click_on(&Selector::class("chord-approach-choice").containing("Inspect from above")));
     assert!(h.click_on(&Selector::class("t-btn").containing("Hear approach")));
     let heard = match h.state().audio_requests.last().unwrap() {
-        AudioRequest::PreviewPitches {
-            pitches,
-            duration_s,
-            strum_s,
-        } => (pitches.clone(), *duration_s, *strum_s),
+        AudioRequest::Audition(request) => request.preview.clone(),
         request => panic!("unexpected approach audio request: {request:?}"),
     };
     let midi = heard

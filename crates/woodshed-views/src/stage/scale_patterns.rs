@@ -2,7 +2,6 @@
 //! Inspect and Hear retain the source occurrence; only Stage authors a Card.
 
 use cambium::{clickable, el, text};
-use woodshed_core::audio::AudioRequest;
 use woodshed_core::harmony::KeyedCatalogRef;
 use woodshed_core::history::{EngagementKind, ObservationProvenance, catalog_id_for_card};
 use woodshedding::rehearsal::{CardId, Material, ScalePattern};
@@ -55,21 +54,12 @@ impl UiState {
         if pitches.is_empty() {
             return;
         }
-        if let Some(catalog) = catalog_id_for_card(&card) {
-            self.practice_history.record_observation(
-                self.now_ms,
-                catalog,
-                EngagementKind::Previewed,
-                self.stage.catalog_id(),
-                None,
-                ObservationProvenance::capture_in_set(&card, self.working_sets.active_id).ok(),
-            );
-        }
-        self.request(AudioRequest::PreviewPitches {
-            pitches,
-            duration_s,
-            strum_s,
-        });
+        self.request_observed_preview(
+            (pitches, duration_s, strum_s),
+            catalog_id_for_card(&card),
+            self.stage.catalog_id(),
+            ObservationProvenance::capture_in_set(&card, self.working_sets.active_id).ok(),
+        );
     }
 
     pub(super) fn stage_context_scale_pattern(&mut self, subject: &KeyedCatalogRef) {
@@ -152,25 +142,16 @@ impl UiState {
                     );
                     return;
                 }
-                if let Some(catalog) = catalog_id_for_card(&discovery.preview) {
-                    self.practice_history.record_observation(
-                        self.now_ms,
-                        catalog,
-                        EngagementKind::Previewed,
-                        catalog_id_for_card(card),
-                        None,
-                        ObservationProvenance::capture_in_set(
-                            &discovery.preview,
-                            self.working_sets.active_id,
-                        )
-                        .ok(),
-                    );
-                }
-                self.request(AudioRequest::PreviewPitches {
-                    pitches,
-                    duration_s,
-                    strum_s,
-                });
+                self.request_observed_preview(
+                    (pitches, duration_s, strum_s),
+                    catalog_id_for_card(&discovery.preview),
+                    catalog_id_for_card(card),
+                    ObservationProvenance::capture_in_set(
+                        &discovery.preview,
+                        self.working_sets.active_id,
+                    )
+                    .ok(),
+                );
                 self.pattern_notice = None;
             },
             Err(reason) => self.pattern_notice = Some(reason.to_string()),
@@ -362,6 +343,7 @@ pub(super) fn panel(ui: &UiState) -> UiChild {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use woodshed_core::audio::AudioRequest;
     use woodshed_core::harmony::KeyedCatalogRef;
     use woodshedding::pitch::PitchClass;
     use woodshedding::rehearsal::FretWindow;
@@ -392,11 +374,7 @@ mod tests {
         assert!(ui.audio_requests.is_empty());
         ui.hear_scale_pattern();
         let heard = match ui.audio_requests.last().unwrap() {
-            AudioRequest::PreviewPitches {
-                pitches,
-                duration_s,
-                strum_s,
-            } => (pitches.clone(), *duration_s, *strum_s),
+            AudioRequest::Audition(request) => request.preview.clone(),
             request => panic!("unexpected request: {request:?}"),
         };
         assert!(heard.2 > 0.0);

@@ -19,6 +19,8 @@ before any other doc in this directory.
 
 ## Active Plans
 
+- [Catalog/discovery audition admission history](2026-07-11_stage_set_tools_plan.md#catalogdiscovery-audition-admission-history-2026-10-16) — In progress: frozen accepted-only preview observations, exact source/session binding and retry; 676 affected cases plus five child invocations pass. Desktop/native and sealed accepted-history reopen remain pending.
+
 - [Session Mere selection folds](2026-07-11_stage_set_tools_plan.md#session-mere-selection-folds-2026-10-16) — Qualified on macOS against current native-arrangement main: member folds, view-owned v3 retention and undo/redo; 671 cases plus five child invocations, two native processes, eight reviewed captures and exact sealed fold reopening. [Receipt](../validation/mere-folds_20261016/README.md).
 
 - [Native arrangement editor and panel](2026-07-11_stage_set_tools_plan.md#native-arrangement-editor-and-panel-2026-10-16) — Qualified on macOS: per-Set drafts, role/Card/rest editing and linked saved voicings over the shared scene surface; 393 parent-suite cases plus five child invocations, desktop build, two sealed native processes and 12 reviewed wide/narrow captures with exact Set/document reopening. [Receipt](../validation/native-arrangement_20261016/receipt.json). The shared-height spacing follow-up passes 214 view and two host cases, with three reviewed native captures. [Spacing receipt](../validation/native-arrangement-spacing_20261016/receipt.json).

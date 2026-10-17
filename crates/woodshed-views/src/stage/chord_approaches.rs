@@ -2,7 +2,6 @@
 //! The exercise is appended independently; inspection never edits the passage.
 
 use cambium::{clickable, el, text};
-use woodshed_core::audio::AudioRequest;
 use woodshed_core::harmony::KeyedCatalogRef;
 use woodshed_core::history::{EngagementKind, ObservationProvenance, catalog_id_for_card};
 use woodshedding::rehearsal::{ApproachDirection, Card, CardId, MarkMode, Material};
@@ -114,21 +113,12 @@ impl UiState {
         if pitches.is_empty() {
             return;
         }
-        if let Some(catalog) = catalog_id_for_card(card) {
-            self.practice_history.record_observation(
-                self.now_ms,
-                catalog,
-                EngagementKind::Previewed,
-                from,
-                None,
-                ObservationProvenance::capture_in_set(card, self.working_sets.active_id).ok(),
-            );
-        }
-        self.request(AudioRequest::PreviewPitches {
-            pitches,
-            duration_s,
-            strum_s,
-        });
+        self.request_observed_preview(
+            (pitches, duration_s, strum_s),
+            catalog_id_for_card(card),
+            from,
+            ObservationProvenance::capture_in_set(card, self.working_sets.active_id).ok(),
+        );
     }
 
     pub fn stage_chord_approach(&mut self) -> Option<CardId> {
@@ -379,6 +369,7 @@ pub(super) fn panel(ui: &UiState) -> UiChild {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use woodshed_core::audio::AudioRequest;
     use woodshed_core::storage::AppSection;
     use woodshedding::pitch::PitchClass;
     use woodshedding::rehearsal::{FretWindow, Hold};
@@ -423,11 +414,7 @@ mod tests {
         assert!(ui.audio_requests.is_empty());
         ui.hear_chord_approach();
         let heard = match ui.audio_requests.last().unwrap() {
-            AudioRequest::PreviewPitches {
-                pitches,
-                duration_s,
-                strum_s,
-            } => (pitches.clone(), *duration_s, *strum_s),
+            AudioRequest::Audition(request) => request.preview.clone(),
             request => panic!("unexpected request: {request:?}"),
         };
         assert!(heard.0.len() >= 2 && heard.0.len() % 2 == 0);
@@ -475,9 +462,10 @@ mod tests {
         let (source, target) = passage(&mut ui);
         assert!(ui.inspect_chord_approach(source, target, ApproachDirection::Above));
         ui.hear_chord_approach();
-        let AudioRequest::PreviewPitches { pitches, .. } = ui.audio_requests.last().unwrap() else {
+        let AudioRequest::Audition(request) = ui.audio_requests.last().unwrap() else {
             panic!("expected preview");
         };
+        let pitches = &request.preview.0;
         for pair in pitches.chunks_exact(2) {
             assert!((pair[0] / pair[1] - 2.0_f32.powf(1.0 / 12.0)).abs() < 0.0001);
         }
