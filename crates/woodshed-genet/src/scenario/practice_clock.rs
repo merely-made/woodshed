@@ -1,6 +1,11 @@
 //! Native scenario controls and receipts for the device-owned practice clock.
 
-use std::{cell::RefCell, path::PathBuf, rc::Rc, time::Instant};
+use std::{
+    cell::RefCell,
+    path::PathBuf,
+    rc::Rc,
+    time::{Duration, Instant},
+};
 
 use taproot::ProbeSnapshot;
 use woodshed_audio::output_runtime::{OutputSnapshot, ProgramSnapshot, ProgramStatus};
@@ -13,13 +18,16 @@ pub(super) struct Wait {
     pub(super) card_index: usize,
     pub(super) status: ProgramStatus,
     pub(super) started: Instant,
+    minimum: Duration,
 }
 
 impl Wait {
     pub(super) fn matches(&self, snapshot: Option<OutputSnapshot>) -> bool {
-        snapshot.is_some_and(|snapshot| {
-            snapshot.program.card_index == self.card_index && snapshot.program.status == self.status
-        })
+        self.started.elapsed() >= self.minimum
+            && snapshot.is_some_and(|snapshot| {
+                snapshot.program.card_index == self.card_index
+                    && snapshot.program.status == self.status
+            })
     }
 }
 
@@ -33,6 +41,7 @@ pub(super) fn product_act(
             card_index: target.0,
             status: target.1,
             started: Instant::now(),
+            minimum: target.2,
         }));
         return Some(true);
     }
@@ -111,12 +120,17 @@ pub(super) fn product_act(
     }
 }
 
-fn wait_target(label: &str) -> Option<(usize, ProgramStatus)> {
+fn wait_target(label: &str) -> Option<(usize, ProgramStatus, Duration)> {
     match label {
-        "p5clock-await-card-0" => Some((0, ProgramStatus::Playing)),
-        "p5clock-await-card-1" => Some((1, ProgramStatus::Playing)),
-        "p5clock-await-manual" => Some((2, ProgramStatus::WaitingManual)),
-        "p5clock-await-complete" => Some((2, ProgramStatus::Complete)),
+        "p5clock-await-card-0" => Some((0, ProgramStatus::Playing, Duration::ZERO)),
+        "p5clock-await-card-1" => Some((1, ProgramStatus::Playing, Duration::ZERO)),
+        "p5clock-await-manual" => Some((2, ProgramStatus::WaitingManual, Duration::ZERO)),
+        "p5clock-await-complete" => Some((2, ProgramStatus::Complete, Duration::ZERO)),
+        "p5clock-await-paused-hold" => Some((0, ProgramStatus::Paused, Duration::from_secs(1))),
+        "p5clock-await-resumed-hold" => Some((0, ProgramStatus::Playing, Duration::from_secs(1))),
+        "p5clock-await-manual-hold" => {
+            Some((2, ProgramStatus::WaitingManual, Duration::from_secs(2)))
+        },
         _ => None,
     }
 }
@@ -477,7 +491,9 @@ fn save_final(ctx: &mut super::Ctx<'_>, shared: &Rc<RefCell<Shared>>) -> bool {
     ];
     let mut event_pairs = serde_json::Map::new();
     let mut occurrence_ids = std::collections::BTreeSet::new();
-    for event in &history {
+    // `recent` is newest first; validate lifecycle order chronologically while
+    // retaining the exact original order in the sealed comparison/report.
+    for event in history.iter().rev() {
         let Some(snapshot) = event
             .provenance
             .as_ref()
