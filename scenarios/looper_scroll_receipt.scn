@@ -88,7 +88,9 @@ assert snap document-scroll-available == true
 assert snap document-scroll-x == 0
 assert snap document-scroll-y == 0
 capture 05_short_workspace_scroll_edges
-wheel 0 1800 px on .hocket-recorder-surface
+# At 2x DPI Card 3 starts near y=1304, with the surface clip at y=636.
+# Move 300 logical px to expose the whole row without clamping to transport end.
+wheel 0 300 px on .hocket-recorder-surface
 settle 5
 assert snap document-scroll-available == true
 assert snap document-scroll-x == 0
