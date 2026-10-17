@@ -1,0 +1,38 @@
+warning: patch `ipc-channel v0.22.0 (https://github.com/merely-made/genet.git?branch=main#e37762d7)` was not used in the crate graph
+warning: patch `mere-proofs v0.1.0 (https://github.com/merely-made/mere.git?branch=main#91467c0b)` was not used in the crate graph
+warning: patch `mere-transport v0.0.2 (https://github.com/merely-made/murm.git?branch=main#cba46d85)` was not used in the crate graph
+warning: patch `mere-webrtc-carrier v0.0.1 (https://github.com/merely-made/murm.git?branch=main#cba46d85)` was not used in the crate graph
+help: Check that the patched package version and available features are compatible
+      with the dependency requirements. If the patch has a different version from
+      what is locked in the Cargo.lock file, run `cargo update` to use the new
+      version. This may also occur with an optional dependency that is not enabled.
+   Compiling syn v2.0.118
+   Compiling getrandom v0.4.3
+    Checking uuid v1.23.5
+    Checking audio-primitives v0.1.0 (/Users/markik/Code/repos/woodshed/crates/audio-primitives)
+   Compiling bevy_macro_utils v0.19.1
+   Compiling thiserror-impl v2.0.18
+   Compiling tracing-attributes v0.1.31
+    Checking thiserror v2.0.18
+   Compiling firewheel-macros v0.14.0 (https://github.com/mark-ik/firewheel.git?rev=2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc#2b03846d)
+    Checking tracing v0.1.44
+    Checking firewheel-core v0.14.0 (https://github.com/mark-ik/firewheel.git?rev=2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc#2b03846d)
+   Compiling zerocopy-derive v0.8.54
+   Compiling visibility v0.1.1
+    Checking zerocopy v0.8.54
+    Checking rubato v5.0.1
+    Checking fixed-resample v0.13.0
+   Compiling serde_derive v1.0.228
+    Checking serde v1.0.228
+    Checking half v2.7.1
+    Checking ciborium-ll v0.2.2
+    Checking firewheel-graph v0.14.0 (https://github.com/mark-ik/firewheel.git?rev=2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc#2b03846d)
+    Checking symphonium v0.13.0
+    Checking firewheel-cpal v0.14.0 (https://github.com/mark-ik/firewheel.git?rev=2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc#2b03846d)
+    Checking firewheel-symphonium v0.14.0 (https://github.com/mark-ik/firewheel.git?rev=2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc#2b03846d)
+    Checking ciborium v0.2.2
+    Checking firewheel-nodes v0.14.0 (https://github.com/mark-ik/firewheel.git?rev=2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc#2b03846d)
+    Checking hocket-model v0.1.0 (/Users/markik/Code/repos/woodshed/crates/hocket-model)
+    Checking firewheel v0.14.0 (https://github.com/mark-ik/firewheel.git?rev=2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc#2b03846d)
+    Checking hocket-engine v0.1.0 (/Users/markik/Code/repos/woodshed/ports/hocket/crates/hocket-engine)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 9.10s

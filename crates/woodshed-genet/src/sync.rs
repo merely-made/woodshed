@@ -1250,7 +1250,7 @@ mod tests {
             assert!(
                 !taproot::matching(
                     &dom,
-                    &Selector::class("t-readout").containing("Choose a positive Bars hold")
+                    &Selector::class("t-readout").containing("Choose positive Bars or finite Seconds")
                 )
                 .is_empty()
             );

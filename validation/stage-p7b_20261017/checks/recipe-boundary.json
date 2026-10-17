@@ -1,0 +1,24 @@
+{
+  "check_exit_code": 101,
+  "selected_mere_revision": "91467c0b",
+  "failure": "unchanged source imports scenomise::{backdrops,template,document}, absent at this pinned supplier revision",
+  "source_evidence": [
+    {
+      "path": "crates/woodshed-core/src/fretboard_scene.rs",
+      "sha256": "9771769eb17800182c49826da3c09c65e2a51604eb6be43711311515588de605",
+      "unchanged_from_baseline": true
+    },
+    {
+      "path": "crates/woodshed-core/src/progression_scene.rs",
+      "sha256": "4f4c12b27fa69af7b753d161d7ce28cabb680a3fd106a1515a52b6fd7818b721",
+      "unchanged_from_baseline": true
+    },
+    {
+      "path": "crates/woodshed-core/src/arrangement_scene.rs",
+      "sha256": "c5922182f53d658db764c02de6081d26737a61b98e6233749b5850b6c6c26438",
+      "unchanged_from_baseline": true
+    }
+  ],
+  "supplier_repin_performed": false,
+  "baseline_execution_claimed": false
+}

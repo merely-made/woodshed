@@ -1,0 +1,14 @@
+{
+  "command": [
+    "cargo",
+    "check",
+    "--offline",
+    "--locked",
+    "-p",
+    "redshank-playback"
+  ],
+  "cwd": "/Users/markik/Code/repos/woodshed/ports/redshank",
+  "exit_code": 0,
+  "started_utc": "2026-10-17T11:46:22.262598+00:00",
+  "ended_utc": "2026-10-17T11:46:37.270545+00:00"
+}

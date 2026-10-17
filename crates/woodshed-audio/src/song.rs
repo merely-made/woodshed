@@ -97,6 +97,10 @@ pub struct Bar {
     /// selects this policy, and Clear removes it without changing old PCM.
     #[serde(default)]
     pub legacy_clock: bool,
+    /// Transient absolute segment duration. None retains the exact saved-Song
+    /// and Bars clocks. Explicit seconds cannot use legacy capture timing.
+    #[serde(skip)]
+    pub duration_seconds: Option<f64>,
 }
 
 /// Serde default for [`Bar::length`] — old saves predate the field and
@@ -117,6 +121,7 @@ impl Default for Bar {
             label: String::new(),
             length: 1,
             legacy_clock: false,
+            duration_seconds: None,
         }
     }
 }
@@ -143,7 +148,37 @@ impl Bar {
     }
 
     pub fn duration_secs(&self) -> f32 {
+        if let Some(seconds) = self.duration_seconds {
+            return seconds as f32;
+        }
         self.measure_secs() * self.length.max(1) as f32
+    }
+
+    /// Checked admission shared by backing, capture preparation and export.
+    /// Absolute durations must be at least 0.5 seconds; event units must match.
+    /// The click grid remains independent of an absolute segment endpoint.
+    pub fn checked_duration_frames(&self, rate: u32) -> Result<u64, &'static str> {
+        let duration = if let Some(seconds) = self.duration_seconds {
+            if seconds < 0.5 {
+                return Err("backing duration seconds must be at least 0.5");
+            }
+            if self.legacy_clock {
+                return Err("absolute seconds cannot use the legacy capture clock");
+            }
+            audio_primitives::timing::seconds_to_frames(seconds, rate)?
+        } else {
+            self.duration_samples(rate as f32).max(1)
+        };
+        if let Some(phrase) = &self.backing_phrase {
+            for event in &phrase.events {
+                let seconds_event =
+                    matches!(event.time, audio_primitives::timing::EventTime::Seconds(_));
+                if seconds_event != self.duration_seconds.is_some() {
+                    return Err("backing event timebase must match its segment duration");
+                }
+            }
+        }
+        Ok(duration)
     }
 
     /// Frames per beat: canonical clocks round once per denominator-aware
@@ -175,6 +210,13 @@ impl Bar {
     /// Canonical measures contain an integer number of rounded beats. Existing
     /// capture playback retains the exact pre-change whole-block expression.
     pub fn duration_samples(&self, sample_rate_hz: f32) -> u64 {
+        if let Some(seconds) = self.duration_seconds {
+            // Infallible document queries return zero for invalid conversion;
+            // admission uses checked_duration_frames for the product minimum,
+            // legacy policy and event units before allocation.
+            return audio_primitives::timing::seconds_to_frames(seconds, sample_rate_hz as u32)
+                .unwrap_or(0);
+        }
         if self.legacy_clock {
             (self.duration_secs() * sample_rate_hz).round() as u64
         } else {
@@ -774,6 +816,70 @@ mod clock_tests {
     use super::*;
 
     #[test]
+    fn absolute_duration_is_exact_and_transient_with_independent_beat_grid() {
+        for rate in [44_100, 48_000] {
+            for bpm in [20.0, 113.5, 400.0] {
+                let bar = Bar {
+                    bpm,
+                    time_signature: TimeSignature::new(7, 8),
+                    length: 3,
+                    duration_seconds: Some(2.10003),
+                    ..Default::default()
+                };
+                let frames = (2.10003 * rate as f64).round() as u64;
+                assert_eq!(bar.checked_duration_frames(rate), Ok(frames));
+                assert_eq!(bar.duration_samples(rate as f32), frames);
+                assert_eq!(
+                    bar.duration_secs().to_bits(),
+                    (2.10003_f64 as f32).to_bits()
+                );
+                let mut ordinary = bar.clone();
+                ordinary.duration_seconds = None;
+                assert_eq!(bar.beat_frames(rate), ordinary.beat_frames(rate));
+                assert_eq!(bar.count_in_frames(rate), ordinary.count_in_frames(rate));
+                assert_eq!(
+                    serde_json::to_value(&bar).unwrap(),
+                    serde_json::to_value(&ordinary).unwrap()
+                );
+                let restored: Bar =
+                    serde_json::from_value(serde_json::to_value(&bar).unwrap()).unwrap();
+                assert_eq!(restored.duration_seconds, None);
+            }
+        }
+    }
+
+    #[test]
+    fn bars_and_legacy_none_keep_their_exact_arithmetic() {
+        for rate in [44_100, 48_000] {
+            for bpm in [83.75_f32, 113.5, 137.0] {
+                for legacy in [false, true] {
+                    let bar = Bar {
+                        bpm,
+                        legacy_clock: legacy,
+                        time_signature: TimeSignature::new(7, 8),
+                        length: 3,
+                        ..Default::default()
+                    };
+                    let quarter = 60.0 / bpm.max(1.0);
+                    let expected_secs = if legacy {
+                        7.0 * quarter * 3.0
+                    } else {
+                        7.0 * (quarter * 4.0 / 8.0) * 3.0
+                    };
+                    let frames = if legacy {
+                        (expected_secs * rate as f32).round() as u64
+                    } else {
+                        audio_primitives::frames_per_bar(rate, bpm, 7, 8) as u64 * 3
+                    };
+                    assert_eq!(bar.duration_secs().to_bits(), expected_secs.to_bits());
+                    assert_eq!(bar.duration_samples(rate as f32), frames);
+                    assert_eq!(bar.checked_duration_frames(rate), Ok(frames));
+                }
+            }
+        }
+    }
+
+    #[test]
     fn canonical_clock_honors_meter_and_rounds_per_beat_before_measures() {
         for (rate, bpm, beats, unit, measures, expected) in [
             (48_000, 120.0, 3, 8, 1, 36_000),
@@ -827,5 +933,4 @@ mod clock_tests {
         assert_eq!(original.data[0], 0.25);
         assert!(!song.bars[0].legacy_clock);
     }
-
 }

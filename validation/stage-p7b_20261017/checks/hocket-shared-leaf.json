@@ -1,0 +1,14 @@
+{
+  "command": [
+    "cargo",
+    "check",
+    "--offline",
+    "--locked",
+    "-p",
+    "hocket-engine"
+  ],
+  "cwd": "/Users/markik/Code/repos/woodshed/ports/hocket",
+  "exit_code": 0,
+  "started_utc": "2026-10-17T11:46:13.108377+00:00",
+  "ended_utc": "2026-10-17T11:46:22.262253+00:00"
+}

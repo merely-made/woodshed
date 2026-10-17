@@ -41,7 +41,7 @@ click role:button @aria-label=Stop all loops
 settle 4
 act p7a-manual-refusal
 settle 4
-assert text Manual, Seconds and Reps are not backing durations
+assert text Manual and Reps are not backing durations
 act p7a-checkpoint refused
 capture 03_unready_card_keeps_loaded_backing
 act p7a-recover-bars

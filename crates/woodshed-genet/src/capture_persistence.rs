@@ -45,6 +45,7 @@ fn same_take(a: &CaptureSnapshot, b: &CaptureSnapshot) -> bool {
         && a.bpm == b.bpm
         && a.beats == b.beats
         && a.bars == b.bars
+        && a.seconds == b.seconds
         && a.buffer.sample_rate_hz == b.buffer.sample_rate_hz
         && Arc::ptr_eq(&a.buffer.data, &b.buffer.data)
 }
@@ -117,11 +118,12 @@ impl CapturePersistence {
                         legacy_clock: reference.legacy_clock(),
                         bpm: reference.bpm,
                         time_signature: woodshed_audio::TimeSignature::new(reference.beats, 4),
-                        length: reference.bars,
+                        length: if reference.seconds.is_some() { 1 } else { reference.bars },
+                        duration_seconds: reference.seconds,
                         ..Default::default()
                     }
-                    .duration_samples(reference.sample_rate as f32)
-                        == reference.frames as u64 =>
+                    .checked_duration_frames(reference.sample_rate)
+                        .is_ok_and(|frames| frames == reference.frames as u64) =>
                 {
                     state.buffers.push(CaptureSnapshot {
                         legacy_clock: reference.legacy_clock(),
@@ -129,6 +131,7 @@ impl CapturePersistence {
                         bpm: reference.bpm,
                         beats: reference.beats,
                         bars: reference.bars,
+                        seconds: reference.seconds,
                         buffer: SampleBuffer::new(samples, reference.sample_rate),
                     })
                 },
@@ -188,6 +191,7 @@ impl CapturePersistence {
                     bpm: take.bpm,
                     beats: take.beats,
                     bars: take.bars,
+                    seconds: take.seconds,
                     sample_rate: take.buffer.sample_rate_hz,
                     frames: take.buffer.len(),
                     codec: LoopCaptureCodec::RawF32V1,
@@ -201,18 +205,27 @@ impl CapturePersistence {
             let frames = woodshed_audio::Bar {
                 bpm: segment.bpm,
                 time_signature: woodshed_audio::TimeSignature::new(segment.beats, 4),
-                length: segment.bars,
+                length: if segment.seconds.is_some() { 1 } else { segment.bars },
+                duration_seconds: segment.seconds,
                 ..Default::default()
             }
-            .duration_samples(rate as f32) as usize;
+            .checked_duration_frames(rate)
+            .map_err(|error| error.to_string())?;
+            let frames = usize::try_from(frames)
+                .map_err(|_| "Capture duration is not representable on this platform.".to_string())?;
             retained.insert(
                 segment.id,
                 LoopCaptureRef {
-                    clock: Some(woodshed_core::loop_capture::PER_BEAT_CLOCK.into()),
+                    clock: Some(if segment.seconds.is_some() {
+                        woodshed_core::loop_capture::SECONDS_CLOCK
+                    } else {
+                        woodshed_core::loop_capture::PER_BEAT_CLOCK
+                    }.into()),
                     id: segment.id,
                     bpm: segment.bpm,
                     beats: segment.beats,
                     bars: segment.bars,
+                    seconds: segment.seconds,
                     sample_rate: rate,
                     frames,
                     codec: LoopCaptureCodec::RawF32V1,
@@ -266,7 +279,7 @@ impl CapturePersistence {
                 self.manifest
                     .takes
                     .iter()
-                    .find(|reference| reference.id == take.id)
+                    .find(|reference| reference.id == take.id && reference.seconds == take.seconds)
             })
     }
 
@@ -313,6 +326,7 @@ impl CapturePersistence {
                 bpm: take.bpm,
                 beats: take.beats,
                 bars: take.bars,
+                seconds: take.seconds,
                 sample_rate: take.buffer.sample_rate_hz,
                 frames: take.buffer.len(),
                 codec: LoopCaptureCodec::RawF32V1,
@@ -480,6 +494,7 @@ impl CapturePersistence {
                 bpm: take.bpm,
                 beats: take.beats,
                 bars: take.bars,
+                seconds: take.seconds,
                 sample_rate: take.buffer.sample_rate_hz,
                 frames: take.buffer.len(),
                 codec: old.map_or(LoopCaptureCodec::RawF32V1, |reference| {
@@ -746,12 +761,216 @@ mod tests {
             bpm: segment.bpm,
             beats: segment.beats,
             bars: segment.bars,
+            seconds: None,
             buffer: SampleBuffer::new(samples, 48_000),
         };
         (ui, take)
     }
 
     const LEGACY_NAMESPACE: &str = "0123456789abcdef0123456789abcdef";
+
+    #[test]
+    fn v3_bars_and_unavailable_old_reference_survive_v4_seconds_restore_and_republication() {
+        let inner = MemoryBackend::default();
+        let storage: SessionStore<HostBackend> =
+            SessionStore::new(Box::new(SealedBackend::new(inner.clone(), [79; 32])));
+        let (mut ui, mut bars) = fixture();
+        let mut backend = CpalBackend::offline_for_test();
+        let rate = backend.output_sample_rate().unwrap();
+        ui.looper.beats = 5;
+        ui.set.cards[0].timing.bpm = Some(113.5);
+        ui.set.cards[0].timing.hold = Hold::Bars(2);
+        ui.set.cards[1].timing.bpm = Some(137.0);
+        ui.set.cards[1].timing.hold = Hold::Seconds(0.50013);
+        ui.loop_working_set(ui.working_sets.active_id);
+        let plan = ui.requested_loop_plan().unwrap();
+        bars.bpm = 113.5;
+        bars.beats = 5;
+        bars.bars = 2;
+        bars.seconds = None;
+        bars.legacy_clock = false;
+        let frames = woodshed_audio::Bar {
+            bpm: bars.bpm,
+            time_signature: woodshed_audio::TimeSignature::new(bars.beats, 4),
+            length: bars.bars,
+            ..Default::default()
+        }.checked_duration_frames(rate).unwrap() as usize;
+        let bar_samples: Vec<_> = (0..frames).map(|i| [0.125, -0.0, -0.25, 0.5][i % 4]).collect();
+        bars.buffer = SampleBuffer::new(bar_samples.clone(), rate);
+        let (codec, digest, frames) = storage.try_write_capture_compressed(
+            LEGACY_NAMESPACE, rate, &bar_samples,
+        ).unwrap();
+        let bars_reference = LoopCaptureRef {
+            id: bars.id, bpm: bars.bpm, beats: bars.beats, bars: bars.bars,
+            seconds: None, sample_rate: rate, frames, codec, digest,
+            clock: Some(woodshed_core::loop_capture::PER_BEAT_CLOCK.into()),
+        };
+        let missing = LoopCaptureRef {
+            id: LoopSegmentId {
+                set: woodshed_core::working_sets::WorkingSetId(9),
+                card: woodshedding::rehearsal::CardId(91),
+            },
+            bpm: 137.0, beats: 7, bars: 3, seconds: None, sample_rate: 1_000,
+            frames: woodshed_audio::Bar {
+                legacy_clock: true, bpm: 137.0,
+                time_signature: woodshed_audio::TimeSignature::new(7, 4), length: 3,
+                ..Default::default()
+            }.checked_duration_frames(1_000).unwrap() as usize,
+            codec: LoopCaptureCodec::LegacyRawF32V1, digest: "f".repeat(64), clock: None,
+        };
+        let v3 = LoopCaptureManifest {
+            version: 3, namespace: Some(LEGACY_NAMESPACE.into()),
+            takes: vec![bars_reference.clone(), missing.clone()],
+        };
+        v3.validate().unwrap();
+        ui.loop_captures = v3.clone();
+        storage.try_save(&serde_json::to_string(&ui.to_persisted()).unwrap()).unwrap();
+        let bars_key = woodshed_core::loop_capture::pcm_key(LEGACY_NAMESPACE, &bars_reference.digest).unwrap();
+        let bars_blob = ready(inner.get(&bars_key)).unwrap().unwrap();
+        let missing_key = woodshed_core::loop_capture::pcm_key(LEGACY_NAMESPACE, &missing.digest).unwrap();
+        assert!(ready(inner.get(&missing_key)).unwrap().is_none());
+        let mut state = CapturePersistence::restore(Some(&storage), &v3, &mut backend).unwrap();
+        assert_eq!(state.unavailable, vec![missing.clone()]);
+        let mut takes = backend.capture_snapshot();
+        assert_eq!(takes.len(), 1);
+        assert_eq!(bits(&takes[0].buffer.data), bits(&bar_samples));
+        assert!(state.required(&takes).is_empty());
+        let seconds = plan.segments[1].seconds.unwrap();
+        let seconds_frames = woodshed_audio::Bar {
+            duration_seconds: Some(seconds), length: 1, ..Default::default()
+        }.checked_duration_frames(rate).unwrap() as usize;
+        let seconds_samples: Vec<_> = (0..seconds_frames).map(|i| [-0.0, 0.0625, -0.125][i % 3]).collect();
+        takes.push(CaptureSnapshot {
+            id: plan.segments[1].id, bpm: plan.segments[1].bpm,
+            beats: plan.segments[1].beats, bars: 0, seconds: Some(seconds), legacy_clock: false,
+            buffer: SampleBuffer::new(seconds_samples.clone(), rate),
+        });
+        state.persist(&storage, true, takes, &mut ui).unwrap();
+        assert_eq!(ui.loop_captures.version, 4);
+        assert_eq!(ui.loop_captures.namespace.as_deref(), Some(LEGACY_NAMESPACE));
+        for reference in [&bars_reference, &missing] {
+            assert_eq!(ui.loop_captures.takes.iter().find(|r| r.id == reference.id), Some(reference));
+        }
+        assert_eq!(ready(inner.get(&bars_key)).unwrap().unwrap(), bars_blob);
+        assert!(ready(inner.get(&missing_key)).unwrap().is_none());
+        let mixed = ui.loop_captures.clone();
+        let seconds_reference = mixed.takes.iter().find(|r| r.seconds.is_some()).unwrap().clone();
+        assert_eq!(bits(&storage.try_read_capture(LEGACY_NAMESPACE, &seconds_reference).unwrap()), bits(&seconds_samples));
+        let seconds_key = woodshed_core::loop_capture::pcm_key(LEGACY_NAMESPACE, &seconds_reference.digest).unwrap();
+        let seconds_blob = ready(inner.get(&seconds_key)).unwrap().unwrap();
+        let reopened = woodshed_core::storage::decode_session(&storage.load().unwrap()).unwrap().session;
+        assert_eq!(reopened.loop_captures, mixed);
+        let mut fresh = CpalBackend::offline_for_test();
+        let mut restored = CapturePersistence::restore(Some(&storage), &reopened.loop_captures, &mut fresh).unwrap();
+        assert_eq!(restored.unavailable, vec![missing.clone()]);
+        let hydrated = fresh.capture_snapshot();
+        assert_eq!(hydrated.len(), 2);
+        assert!(restored.required(&hydrated).is_empty());
+        for (id, expected) in [(bars.id, &bar_samples), (seconds_reference.id, &seconds_samples)] {
+            assert_eq!(bits(&hydrated.iter().find(|take| take.id == id).unwrap().buffer.data), bits(expected));
+        }
+        fresh.set_loop_plan(&plan).unwrap();
+        let mut reordered = plan.clone();
+        reordered.segments.swap(0, 1);
+        fresh.set_loop_plan(&reordered).unwrap();
+        restored.persist(&storage, true, fresh.capture_snapshot(), &mut ui).unwrap();
+        for reference in [&bars_reference, &seconds_reference, &missing] {
+            assert_eq!(ui.loop_captures.takes.iter().find(|r| r.id == reference.id), Some(reference));
+        }
+        assert_eq!(ready(inner.get(&bars_key)).unwrap().unwrap(), bars_blob);
+        assert_eq!(ready(inner.get(&seconds_key)).unwrap().unwrap(), seconds_blob);
+        assert!(ready(inner.get(&missing_key)).unwrap().is_none());
+    }
+
+    #[test]
+    fn sealed_seconds_capture_reopens_exactly_and_reuses_encoded_bytes_until_clear() {
+        let inner = MemoryBackend::default();
+        let storage: SessionStore<HostBackend> =
+            SessionStore::new(Box::new(SealedBackend::new(inner.clone(), [73; 32])));
+        let (mut ui, mut take) = fixture();
+        let seconds = f64::from(0.50013_f32);
+        let rate = 44_100;
+        ui.set.cards[0].timing.hold = Hold::Seconds(seconds as f32);
+        ui.set.cards[0].timing.bpm = Some(take.bpm);
+        ui.loop_working_set(ui.working_sets.active_id);
+        take.bars = 0;
+        take.seconds = Some(seconds);
+        let frames = (seconds * f64::from(rate)).round() as usize;
+        let samples: Vec<_> = (0..frames).map(|i| [0.125, -0.0, -0.25, 0.5][i % 4]).collect();
+        take.buffer = SampleBuffer::new(samples.clone(), rate);
+        let mut state = CapturePersistence::default();
+        state.persist(&storage, true, vec![take.clone()], &mut ui).unwrap();
+        let reference = ui.loop_captures.takes[0].clone();
+        assert_eq!(reference.seconds, Some(seconds));
+        assert_eq!(reference.bars, 0);
+        assert_eq!(reference.clock.as_deref(), Some(woodshed_core::loop_capture::SECONDS_CLOCK));
+        assert_eq!(reference.frames, frames);
+        assert_eq!(ui.loop_captures.version, CAPTURE_VERSION);
+        let namespace = ui.loop_captures.namespace.clone().unwrap();
+        let key = woodshed_core::loop_capture::pcm_key(&namespace, &reference.digest).unwrap();
+        let original_blob = ready(inner.get(&key)).unwrap().unwrap();
+        assert_eq!(bits(&storage.try_read_capture(&namespace, &reference).unwrap()), bits(&samples));
+        let reopened = woodshed_core::storage::decode_session(&storage.load().unwrap()).unwrap().session;
+        assert_eq!(reopened.loop_captures, ui.loop_captures);
+        let mut backend = CpalBackend::offline_for_test();
+        let mut restored = CapturePersistence::restore(Some(&storage), &reopened.loop_captures, &mut backend).unwrap();
+        assert!(restored.unavailable.is_empty());
+        let takes = backend.capture_snapshot();
+        assert_eq!(takes[0].seconds, Some(seconds));
+        assert_eq!(bits(&takes[0].buffer.data), bits(&samples));
+        assert!(!restored.changed(&takes));
+        assert!(restored.reference_for(&takes[0]).is_some());
+        assert!(restored.required(&takes).is_empty(), "restoration must not re-encode existing PCM");
+        let mut relabeled = takes[0].clone();
+        relabeled.seconds = Some(seconds + 0.25);
+        assert!(!same_take(&takes[0], &relabeled));
+        assert!(restored.reference_for(&relabeled).is_none());
+        // Reordering authorship never rewrites the capture clock or companion.
+        ui.set.cards.swap(0, 1);
+        restored.persist(&storage, true, takes, &mut ui).unwrap();
+        assert_eq!(ui.loop_captures.takes[0], reference);
+        assert_eq!(ready(inner.get(&key)).unwrap().unwrap(), original_blob);
+        restored.forget(take.id);
+        backend.clear_stored_capture(take.id).unwrap();
+        restored.persist(&storage, true, backend.capture_snapshot(), &mut ui).unwrap();
+        assert!(ui.loop_captures.takes.is_empty());
+        let after_clear = woodshed_core::storage::decode_session(&storage.load().unwrap()).unwrap().session;
+        assert!(after_clear.loop_captures.takes.is_empty());
+        assert_eq!(ready(inner.get(&key)).unwrap().unwrap(), original_blob,
+            "Clear removes the reference, not immutable stored evidence");
+    }
+
+    #[test]
+    fn seconds_capture_quota_and_unavailable_recovery_keep_the_absolute_clock() {
+        let (mut ui, mut take) = fixture();
+        ui.set.cards[0].timing.hold = Hold::Seconds(0.50013);
+        ui.loop_working_set(ui.working_sets.active_id);
+        let plan = ui.requested_loop_plan().unwrap();
+        let seconds = plan.segments[0].seconds.unwrap();
+        take.seconds = Some(seconds);
+        take.bars = 0;
+        take.buffer = SampleBuffer::new(vec![0.25; (seconds * 1_000.0).round() as usize], 1_000);
+        let state = CapturePersistence::default();
+        state.permit_record(&plan, 1_000, vec![take.clone()]).unwrap();
+        let mut oversized = plan.clone();
+        oversized.segments[0].seconds = Some(woodshed_core::loop_capture::MAX_CAPTURE_FRAMES as f64 / 1_000.0 + 1.0);
+        assert!(state.permit_record(&oversized, 1_000, vec![take.clone()]).is_err());
+        let reference = LoopCaptureRef {
+            id: take.id, bpm: take.bpm, beats: take.beats, bars: 0,
+            seconds: Some(seconds), sample_rate: 1_000, frames: take.buffer.len(),
+            clock: take.clock_field(), codec: LoopCaptureCodec::RawF32V1, digest: "0".repeat(64),
+        };
+        let manifest = LoopCaptureManifest {
+            namespace: Some(LEGACY_NAMESPACE.into()), takes: vec![reference.clone()], ..Default::default()
+        };
+        let storage: SessionStore<HostBackend> = SessionStore::new(Box::new(MemoryBackend::default()));
+        let mut backend = CpalBackend::offline_for_test();
+        let mut restored = CapturePersistence::restore(Some(&storage), &manifest, &mut backend).unwrap();
+        assert_eq!(restored.unavailable, vec![reference.clone()]);
+        assert!(restored.permit_record(&plan, 1_000, Vec::new()).is_err());
+        restored.persist(&storage, true, Vec::new(), &mut ui).unwrap();
+        assert_eq!(ui.loop_captures.takes, vec![reference]);
+    }
 
     fn seed_legacy(
         storage: &SessionStore<HostBackend>,
@@ -777,6 +996,7 @@ mod tests {
                 bpm: take.bpm,
                 beats: take.beats,
                 bars: take.bars,
+                seconds: None,
                 sample_rate: take.buffer.sample_rate_hz,
                 frames,
                 codec: LoopCaptureCodec::LegacyRawF32V1,
@@ -1567,6 +1787,7 @@ mod tests {
                 bpm: take.bpm,
                 beats: take.beats,
                 bars: take.bars,
+                seconds: None,
                 sample_rate: 48_000,
                 frames: take.buffer.len(),
                 codec: LoopCaptureCodec::RawF32V1,
@@ -2132,6 +2353,7 @@ mod tests {
             bpm: 120.0,
             beats: 4,
             bars: 1,
+            seconds: None,
             sample_rate: 48_000,
             frames: woodshed_core::loop_capture::MAX_CAPTURE_FRAMES,
             codec: LoopCaptureCodec::RawF32V1,
@@ -2501,6 +2723,7 @@ mod tests {
             bpm: 113.5,
             beats: 5,
             bars: 2,
+            seconds: None,
             sample_rate: 48_000,
             frames,
             digest,
@@ -2539,6 +2762,7 @@ mod tests {
             bpm: 137.0,
             beats: 5,
             bars: 1,
+            seconds: None,
             legacy_clock: false,
             buffer: SampleBuffer::new(vec![0.0625; canonical_frames], 48_000),
         });
@@ -2624,6 +2848,7 @@ mod tests {
             bpm: reference.bpm,
             beats: reference.beats,
             bars: reference.bars,
+            seconds: None,
             legacy_clock: true,
             buffer: SampleBuffer::new(samples, reference.sample_rate),
         };

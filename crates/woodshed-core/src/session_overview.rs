@@ -799,6 +799,7 @@ mod tests {
             one_shot: false,
             click: true,
             segments: vec![crate::loop_plan::LoopSegment {
+                seconds: None,
                 id: crate::loop_plan::LoopSegmentId {
                     set: owner,
                     card: woodshedding::rehearsal::CardId(7),
@@ -1248,6 +1249,7 @@ mod tests {
         card: u64,
     ) -> crate::loop_capture::LoopCaptureRef {
         crate::loop_capture::LoopCaptureRef {
+            seconds: None,
             clock: None,
             id: LoopSegmentId {
                 set,

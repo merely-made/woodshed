@@ -1,0 +1,16 @@
+{
+  "command": [
+    "cargo",
+    "test",
+    "--offline",
+    "--locked",
+    "-p",
+    "woodshed-genet",
+    "sync::tests::looper_controls_show_readiness_route_owned_capture_and_retain_saved_backing",
+    "--",
+    "--exact"
+  ],
+  "exit_code": 0,
+  "started_utc": "2026-10-17T11:42:20.959839+00:00",
+  "ended_utc": "2026-10-17T11:42:39.603637+00:00"
+}

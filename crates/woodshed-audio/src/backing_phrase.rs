@@ -2,10 +2,10 @@
 
 use crate::{ChordRender, SampleBuffer, chord_audio::render_chord};
 
-/// One grouped chord event, positioned in denominator-aware beats within a bar.
+/// One grouped chord event with an explicit beat or absolute-seconds position.
 #[derive(Clone, Debug, PartialEq)]
 pub struct BackingEvent {
-    pub beat: f64,
+    pub time: audio_primitives::timing::EventTime,
     pub pitches_hz: Vec<f32>,
     pub strum_seconds: f64,
 }
@@ -42,14 +42,13 @@ pub(crate) fn preflight(
     let mut starts = Vec::with_capacity(phrase.events.len());
     let mut prior_frame = None;
     for event in &phrase.events {
-        if !event.beat.is_finite() || event.beat < 0.0 || event.beat >= beats_per_bar as f64 {
-            return Err("backing phrase beats must be finite and inside the bar");
+        if let audio_primitives::timing::EventTime::Beats(beat) = event.time {
+            if !beat.is_finite() || beat < 0.0 || beat >= beats_per_bar as f64 {
+                return Err("backing phrase beats must be finite and inside the bar");
+            }
         }
-        let frame_f = event.beat * beat_frames as f64;
-        if !frame_f.is_finite() || frame_f < 0.0 || frame_f > usize::MAX as f64 {
-            return Err("backing phrase onset frame is not representable");
-        }
-        let onset = frame_f.round() as usize;
+        let onset = usize::try_from(event.time.to_frames(beat_frames, rate)?)
+            .map_err(|_| "backing phrase onset frame is not representable")?;
         if onset >= duration_frames || prior_frame.is_some_and(|prior| onset <= prior) {
             return Err(
                 "backing phrase onset frames must be distinct, ordered, and inside the bar",
@@ -68,11 +67,11 @@ pub(crate) fn preflight(
         if !event.strum_seconds.is_finite() || event.strum_seconds < 0.0 {
             return Err("backing phrase strum spacing must be finite and nonnegative");
         }
-        let strum_f = event.strum_seconds * rate as f64;
-        if !strum_f.is_finite() || strum_f > usize::MAX as f64 {
-            return Err("backing phrase strum frame is not representable");
-        }
-        let strum = strum_f.round() as usize;
+        let strum = usize::try_from(
+            audio_primitives::timing::EventTime::Seconds(event.strum_seconds)
+                .to_frames(beat_frames, rate)?,
+        )
+        .map_err(|_| "backing phrase strum frame is not representable")?;
         if event.pitches_hz.len() > 1 && event.strum_seconds > 0.0 && strum == 0 {
             return Err("backing phrase strum offsets must be distinct ordered frames");
         }
@@ -156,16 +155,70 @@ mod tests {
     use super::*;
 
     #[test]
-    fn phrase_is_bounded_to_exact_bar_frames_and_validates_ordered_onsets() {
+    fn seconds_onsets_keep_exact_frames_across_tempo_and_reject_frame_collisions() {
+        use audio_primitives::timing::EventTime;
         let phrase = BackingPhrase {
             events: vec![
                 BackingEvent {
-                    beat: 0.5,
+                    time: EventTime::Seconds(0.0137),
                     pitches_hz: vec![220.0],
                     strum_seconds: 0.0,
                 },
                 BackingEvent {
-                    beat: 2.0,
+                    time: EventTime::Seconds(0.1031),
+                    pitches_hz: vec![330.0],
+                    strum_seconds: 0.0,
+                },
+            ],
+        };
+        for rate in [44_100, 48_000] {
+            let frames = audio_primitives::timing::seconds_to_frames(0.137, rate).unwrap() as usize;
+            let slow = render(&phrase, frames, 100_000, 1, rate).unwrap();
+            let fast = render(&phrase, frames, 1, 1, rate).unwrap();
+            assert_eq!(
+                slow.data.iter().map(|s| s.to_bits()).collect::<Vec<_>>(),
+                fast.data.iter().map(|s| s.to_bits()).collect::<Vec<_>>()
+            );
+            let onset = (0.0137 * rate as f64).round() as usize;
+            assert!(slow.data[..onset].iter().all(|s| *s == 0.0));
+            assert!(slow.data[onset..].iter().any(|s| *s != 0.0));
+        }
+        let mut collision = phrase.clone();
+        collision.events[1].time = EventTime::Seconds(0.013700001);
+        assert!(preflight(&collision, 1_000, 1, 1, 1_000).is_err());
+        collision.events[1].time = EventTime::Seconds(1.0);
+        assert!(preflight(&collision, 1_000, 1, 1, 1_000).is_err());
+    }
+
+    #[test]
+    fn seconds_strum_and_render_work_are_bounded_before_render() {
+        use audio_primitives::timing::EventTime;
+        let mut phrase = BackingPhrase {
+            events: vec![BackingEvent {
+                time: EventTime::Seconds(0.09),
+                pitches_hz: vec![220.0, 330.0],
+                strum_seconds: 0.01,
+            }],
+        };
+        assert!(preflight(&phrase, 100, 1, 1, 1_000).is_err());
+        phrase.events[0].strum_seconds = 0.009;
+        assert!(preflight(&phrase, 100, 1, 1, 1_000).is_ok());
+        phrase.events[0].time = EventTime::Seconds(0.0);
+        phrase.events[0].pitches_hz = vec![220.0; 256];
+        assert!(preflight(&phrase, 1_000_000, 1, 1, 1_000).is_err());
+    }
+
+    #[test]
+    fn phrase_is_bounded_to_exact_bar_frames_and_validates_ordered_onsets() {
+        let phrase = BackingPhrase {
+            events: vec![
+                BackingEvent {
+                    time: audio_primitives::timing::EventTime::Beats(0.5),
+                    pitches_hz: vec![220.0],
+                    strum_seconds: 0.0,
+                },
+                BackingEvent {
+                    time: audio_primitives::timing::EventTime::Beats(2.0),
                     pitches_hz: vec![330.0],
                     strum_seconds: 0.0,
                 },
@@ -185,12 +238,12 @@ mod tests {
         let collision = BackingPhrase {
             events: vec![
                 BackingEvent {
-                    beat: 0.0,
+                    time: audio_primitives::timing::EventTime::Beats(0.0),
                     pitches_hz: vec![220.0],
                     strum_seconds: 0.0,
                 },
                 BackingEvent {
-                    beat: 0.00001,
+                    time: audio_primitives::timing::EventTime::Beats(0.00001),
                     pitches_hz: vec![330.0],
                     strum_seconds: 0.0,
                 },
@@ -203,7 +256,7 @@ mod tests {
     fn phrase_rejects_unbounded_and_nonfinite_inputs_before_render() {
         let invalid = BackingPhrase {
             events: vec![BackingEvent {
-                beat: f64::NAN,
+                time: audio_primitives::timing::EventTime::Beats(f64::NAN),
                 pitches_hz: vec![440.0],
                 strum_seconds: 0.0,
             }],
@@ -212,7 +265,7 @@ mod tests {
         let too_many = BackingPhrase {
             events: (0..MAX_EVENTS + 1)
                 .map(|i| BackingEvent {
-                    beat: i as f64 / 5000.0,
+                    time: audio_primitives::timing::EventTime::Beats(i as f64 / 5000.0),
                     pitches_hz: vec![440.0],
                     strum_seconds: 0.0,
                 })
@@ -226,7 +279,7 @@ mod tests {
         let phrase = BackingPhrase {
             events: (0..256)
                 .map(|index| BackingEvent {
-                    beat: (300 + index) as f64,
+                    time: audio_primitives::timing::EventTime::Beats((300 + index) as f64),
                     pitches_hz: vec![220.0; 4],
                     strum_seconds: 0.0,
                 })
@@ -255,7 +308,7 @@ mod tests {
             let plain = render(
                 &BackingPhrase {
                     events: vec![BackingEvent {
-                        beat: 0.0,
+                        time: audio_primitives::timing::EventTime::Beats(0.0),
                         pitches_hz: vec![173.3],
                         strum_seconds: 0.0,
                     }],
@@ -269,7 +322,7 @@ mod tests {
             let strummed = render(
                 &BackingPhrase {
                     events: vec![BackingEvent {
-                        beat: 0.0,
+                        time: audio_primitives::timing::EventTime::Beats(0.0),
                         pitches_hz: vec![173.3, 261.6],
                         strum_seconds: 0.018,
                     }],

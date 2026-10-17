@@ -2445,6 +2445,7 @@ impl Automatable for Probe<'_, '_> {
             // Only the self-drive fixture supplies these exact samples. The
             // native flow qualifies storage/replay without requesting a mic.
             let frames = woodshed_audio::Bar {
+                duration_seconds: segment.seconds,
                 bpm: segment.bpm,
                 time_signature: woodshed_audio::TimeSignature::new(segment.beats, 4),
                 length: segment.bars,
@@ -2457,6 +2458,7 @@ impl Automatable for Probe<'_, '_> {
             let mut takes = backend.capture_snapshot();
             takes.retain(|take| take.id != segment.id);
             takes.push(crate::audio::CaptureSnapshot {
+                seconds: segment.seconds,
                 legacy_clock: false,
                 id: segment.id,
                 bpm: segment.bpm,

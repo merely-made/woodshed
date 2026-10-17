@@ -1,0 +1,23 @@
+{
+  "Cargo.lock": {
+    "changed_local_package_records": [
+      "woodshed-core:0.1.0"
+    ],
+    "supplier_sources_versions_unchanged": true
+  },
+  "validation/relationship-recipe/Cargo.lock": {
+    "changed_local_package_records": [
+      "woodshed-core:0.1.0",
+      "woodshed-views:0.1.0"
+    ],
+    "supplier_sources_versions_unchanged": true
+  },
+  "ports/hocket/Cargo.lock": {
+    "changed_local_package_records": [],
+    "supplier_sources_versions_unchanged": true
+  },
+  "ports/redshank/Cargo.lock": {
+    "changed_local_package_records": [],
+    "supplier_sources_versions_unchanged": true
+  }
+}

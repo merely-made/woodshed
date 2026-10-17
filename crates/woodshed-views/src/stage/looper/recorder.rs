@@ -246,10 +246,10 @@ pub fn projection(ui: &super::UiState) -> RecorderProjection<'_, RecorderKey> {
                 (
                     segment.label.clone(),
                     format!("Set {} · Card {}", segment.id.set.0, segment.id.card.0),
-                    format!(
-                        "{} bpm · {}/4 × {}",
-                        segment.bpm, segment.beats, segment.bars
-                    ),
+                    match segment.seconds {
+                        Some(seconds) => format!("{seconds:.3} s · {} bpm click · {}/4", segment.bpm, segment.beats),
+                        None => format!("{} bpm · {}/4 × {}", segment.bpm, segment.beats, segment.bars),
+                    },
                 )
             },
             BackingGuard::Saved(song) => {
@@ -700,6 +700,31 @@ mod tests {
         };
         ui
     }
+    #[test]
+    fn seconds_lane_discloses_absolute_duration_and_stale_duration_command_refuses() {
+        let mut ui = ready();
+        ui.set.cards[0].timing.hold = Hold::Seconds(1.125);
+        let plan = ui.requested_loop_plan().unwrap();
+        ui.recorder_observation.plan = Some(plan.clone());
+        ui.loop_admitted = Some(plan);
+        let projection = projection(&ui);
+        assert!(projection.lanes[0].clock.contains("1.125 s"));
+        assert!(!projection.lanes[0].clock.contains("× 0"));
+        let stale = projection.transport.play.as_ref().unwrap().target.clone();
+        drop(projection);
+        ui.set.cards[0].timing.hold = Hold::Seconds(2.0);
+        let changed = ui.requested_loop_plan().unwrap();
+        ui.recorder_observation.plan = Some(changed.clone());
+        ui.loop_admitted = Some(changed);
+        assert_ne!(stale, context(&ui));
+        let playing = ui.song_playing;
+        ui.audio_requests.clear();
+        dispatch(&mut ui, HostAction::Play(stale));
+        assert_eq!(ui.song_playing, playing);
+        assert!(ui.audio_requests.is_empty());
+        assert!(ui.loop_notice.as_deref().unwrap().contains("changed"));
+    }
+
     #[test]
     fn heterogeneous_projection_uses_actual_pcm_and_render_target_without_authoring_a_second_session()
      {

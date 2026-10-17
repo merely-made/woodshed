@@ -557,6 +557,7 @@ mod capture_tests {
 
     fn reference(digest: String, frames: usize) -> LoopCaptureRef {
         LoopCaptureRef {
+            seconds: None,
             clock: None,
             id: woodshed_core::loop_plan::LoopSegmentId {
                 set: woodshed_core::working_sets::WorkingSetId(3),
