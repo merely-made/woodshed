@@ -1,0 +1,14 @@
+{
+  "command": [
+    "cargo",
+    "test",
+    "--locked",
+    "--offline",
+    "-j2",
+    "-p",
+    "woodshed-genet",
+    "audio::mixed_loop_tests"
+  ],
+  "exit_code": 0,
+  "finished": "2026-10-17T07:26:20.891950+00:00"
+}

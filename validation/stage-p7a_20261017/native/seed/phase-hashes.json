@@ -1,0 +1,21 @@
+{
+  "p7a-playing.json": "45f4ff688fcf253f0087011e7da24656762611defe2b9b011274fec300fc4a81",
+  "06_compact_mixed_backing.png": "910e4688027a7af9f0544f0ba69387ff23332ee70a9438cc6ab006bd3900b3c8",
+  "launch.once": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "p7a-refused.json": "549edb1a5c2154cedf3843fd269007569c81e293c6005d0777204ead4f0595a5",
+  "p7a-final.json": "d229b2796b503d986d13762d0694fd175f8380c248991b5dcec22ee4d1b9ad7b",
+  "03_unready_card_keeps_loaded_backing.png": "f6227c21851ddda0fada6daa9185273fb5157ac4711a2d6c014a14a475af5722",
+  "scenario.scn": "6efdda1feabf4a0a8654231f47fc9f116bf68cd18c17a21a03609eb57ca04594",
+  "02_capture_follows_reordered_scale.png": "fc7b8c4354df15046668ed5c1fe930b0f22806c328c64b15d9a7a63713aa9b16",
+  "native.log": "58ce66a10961d54f753585d6606d7c2cdb52e6b5fb58990cc84a1c44b0a7ea93",
+  "04_mixed_backing_and_capture_exported.png": "e6e10a8cce0225023ac1377e794edbc47646a862e5e350d92940d4519a3a0dd0",
+  "scenario.done": "0922c02088d354875f701f33a91e9aac157e5a7b08848b7d327079e045bdf20f",
+  "native.pid": "dd5f981c612941780c652b52a5c38292ee2ef71d94b335151c8bf4ac226f24bc",
+  "launch.json": "121f2f4087968476a03aad107813f62b95233b08260b13a5d1d3fb1829b698a9",
+  "p7a-reordered.json": "b25d720ad499dc95374318310c2d2a3b49841aa9434c3d5cc361d39e09afdbc5",
+  "p7a-baseline.json": "9a144ebaa7d8e758cb77b93003b1f28b45e4098d30913a1b13f7e05a6937de60",
+  "loop-export.wav": "c802d565f9e4bda9a96bdb4d8cca6cb5eb2e02c2fdab1f47845d930ca74e26d1",
+  "launcher.c": "d64c4d220ed87248644b373d2d5e4debf7dbc6f6ff428bab7084ffc700a5bde6",
+  "05_exact_saved_backing_compatibility.png": "dddcc29fd5561affeeecf9425def81ecf5dd11c493a66dd85b86cd61b069159c",
+  "01_mixed_phrase_playback.png": "e88aed992d616cfb97a88e4d2998c73a2d36aea4ed1758b30ec7bcdf829e30ff"
+}

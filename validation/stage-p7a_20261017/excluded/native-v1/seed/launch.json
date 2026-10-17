@@ -1,0 +1,30 @@
+{
+  "app": "/Users/markik/Code/testing/woodshed/stage-p7a-20261017/native-v1/seed/AcceptanceWoodshedSeedNativev1.app",
+  "env": {
+    "WOODSHED_SCENARIO": "/Users/markik/Code/testing/woodshed/stage-p7a-20261017/native-v1/seed/scenario.scn",
+    "WOODSHED_CAPTURE_DIR": "/Users/markik/Code/testing/woodshed/stage-p7a-20261017/native-v1/seed",
+    "WOODSHED_RECEIPT": "/Users/markik/Code/testing/woodshed/stage-p7a-20261017/native-v1/seed/scenario.done",
+    "WOODSHED_PRESENTATION_TIMEOUT_SECS": "60",
+    "WOODSHED_WIDTH": "1180",
+    "WOODSHED_HEIGHT": "1000",
+    "TMPDIR": "/tmp",
+    "CAMBIUM_HOST_FRAME_TRACE": "1",
+    "WOODSHED_STATE": "/Users/markik/Code/testing/woodshed/stage-p7a-20261017/native-v1/profile/practice.bin",
+    "WOODSHED_SETTINGS": "/Users/markik/Code/testing/woodshed/stage-p7a-20261017/native-v1/profile/settings.json",
+    "GRAPHSHELL_APP_ENDPOINT": "/tmp/ws-p7a-1017-v1.sock",
+    "XDG_DATA_HOME": "/Users/markik/Code/testing/woodshed/stage-p7a-20261017/native-v1/data",
+    "XDG_CONFIG_HOME": "/Users/markik/Code/testing/woodshed/stage-p7a-20261017/native-v1/config",
+    "XDG_CACHE_HOME": "/Users/markik/Code/testing/woodshed/stage-p7a-20261017/native-v1/cache",
+    "MERE_ROOT": "/Users/markik/Code/testing/woodshed/stage-p7a-20261017/native-v1/mere"
+  },
+  "source": {
+    "revision": "4304a068b2377a277126eee2bb3c845c0c16ee8f",
+    "worktree": "",
+    "binaries": {
+      "woodshed": "742adee3d77c269b00ed95a75ae2e1ced58358c41465f06e9477875518413b67"
+    },
+    "source_hashes_sha256": "ce94b02f4e1de5f9877e8c8e4b850ef459b9b71baa6125b3602c47d459befc21"
+  },
+  "scenario_sha256": "792665ca4e0dd25e410398bde94a3f9e3364918aa0f9c134b245e256dd232489",
+  "binary_sha256": "742adee3d77c269b00ed95a75ae2e1ced58358c41465f06e9477875518413b67"
+}

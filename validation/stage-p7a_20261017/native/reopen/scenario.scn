@@ -1,0 +1,19 @@
+settle 90
+ui-zoom 1
+assert snap practice-saved == true
+assert snap set-cards == 3
+assert snap recorder-rows == 3
+assert snap recorder-waveforms == 1
+assert snap song-playing == false
+assert snap loop-capture-references == 1
+assert snap output-streams == 1
+assert snap capture-input-rate == none
+act p7a-verify-reopen
+capture 01_exact_mixed_backing_reopened
+act wav-export-fixture
+settle 8
+assert text Exported
+resize 420 1100
+settle 6
+capture 02_compact_reopened_export
+log P7a sealed Set take and WAV fresh-process reopen complete

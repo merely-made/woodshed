@@ -1,0 +1,13 @@
+{
+  "command": [
+    "cargo",
+    "build",
+    "--locked",
+    "--offline",
+    "-j2",
+    "-p",
+    "woodshed-genet"
+  ],
+  "exit_code": 0,
+  "finished": "2026-10-17T07:30:36.383612+00:00"
+}

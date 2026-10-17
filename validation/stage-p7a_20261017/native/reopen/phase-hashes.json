@@ -1,0 +1,15 @@
+{
+  "launch.once": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "p7a-final.json": "d229b2796b503d986d13762d0694fd175f8380c248991b5dcec22ee4d1b9ad7b",
+  "scenario.scn": "9bd7f47ad511a237aaad7c96d932bb54dd598d8592c7a8be3998da0b55cc98db",
+  "expected-copy.json": "553a91f8842f59cf71a41ddf5e0910068a123c840fbaccdb5a43337e0cbbde99",
+  "02_compact_reopened_export.png": "5b2f86e25c09d0f086781c6ceffde967e20154cba8c681131d5a9abb818c6cfa",
+  "native.log": "ed2ca9363656a1e198117791d01015a78370a00bf39f36496513f4336a73f2ab",
+  "scenario.done": "4760ded1e03371611e2fd8f8fc2db19f0a46eb5da49565ec75d1d242af649803",
+  "native.pid": "7b8f099b9c43d12de4bd39c484b235d69b5d50140d2b8ed7ed35bc2e5f183fe3",
+  "launch.json": "7022bd4e6da538e90ee58e230c85a766a9616286c137a52686bf74615b83b02d",
+  "01_exact_mixed_backing_reopened.png": "8262205d6c3f50f9281bcc220791daab38be5ec8e0ed2d8b8e1c2b1639935881",
+  "loop-export.wav": "c802d565f9e4bda9a96bdb4d8cca6cb5eb2e02c2fdab1f47845d930ca74e26d1",
+  "launcher.c": "77a0cfbc272ee4cea4cbe6800a5f4221db032694acdf3ca2dd488ef58ac425af",
+  "p7a-reopened.json": "c2fd7ae85c18e67a49b9c50e749e43f4035690d664195d38d10245bfe64a30a4"
+}

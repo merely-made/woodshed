@@ -1,0 +1,25 @@
+RESULT fail
+FAIL: assert snap recorder-rows Eq '3': got '4'
+FAIL: assert snap loop-admitted-set Eq '1': got 'none'
+FAIL: act: no command 'p7a-checkpoint baseline'
+FAIL: assert snap take-playback-observed Eq 'true': got 'false'
+FAIL: assert snap song-playing Eq 'true': got 'false'
+captured 01_mixed_phrase_playback
+FAIL: act: no command 'p7a-checkpoint reordered'
+FAIL: assert snap take-playback-observed Eq 'true': got 'false'
+captured 02_capture_follows_reordered_scale
+FAIL: act: no command 'p7a-checkpoint refused'
+captured 03_unready_card_keeps_loaded_backing
+captured 04_mixed_backing_and_capture_exported
+captured 05_exact_saved_backing_compatibility
+captured 06_compact_mixed_backing
+P7a mixed Bars backing seed complete
+capture 01_mixed_phrase_playback 2360x2000 digest=72f2f80ccbd9ac02 file=/Users/markik/Code/testing/woodshed/stage-p7a-20261017/native-v1/seed/01_mixed_phrase_playback.png
+capture 02_capture_follows_reordered_scale 2360x2000 digest=00daabe0c184db0d file=/Users/markik/Code/testing/woodshed/stage-p7a-20261017/native-v1/seed/02_capture_follows_reordered_scale.png
+capture 03_unready_card_keeps_loaded_backing 2360x2000 digest=9351ee05ce4dab35 file=/Users/markik/Code/testing/woodshed/stage-p7a-20261017/native-v1/seed/03_unready_card_keeps_loaded_backing.png
+capture 04_mixed_backing_and_capture_exported 2360x2000 digest=53dbc591b185f3bb file=/Users/markik/Code/testing/woodshed/stage-p7a-20261017/native-v1/seed/04_mixed_backing_and_capture_exported.png
+capture 05_exact_saved_backing_compatibility 2360x2000 digest=1df17c5bfeabff76 file=/Users/markik/Code/testing/woodshed/stage-p7a-20261017/native-v1/seed/05_exact_saved_backing_compatibility.png
+capture 06_compact_mixed_backing 840x2200 digest=79b69791570f8bc7 file=/Users/markik/Code/testing/woodshed/stage-p7a-20261017/native-v1/seed/06_compact_mixed_backing.png
+frames: 6 captured, 0 blank, 6 distinct digests
+presentation: 212 frames, 213 redraws, 1 unpresented redraws
+FAIL: no current DOM target for Selector { surface: None, matcher: Role("switch"), text: None, attr: Some(("aria-label", "Select Card 2")) }

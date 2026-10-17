@@ -1,0 +1,113 @@
+{
+  "status": "qualified-bounded-p7a",
+  "date": "2026-10-17",
+  "baseline": "8aba70015020e627fd9a5b13938e6349a4ca98c9",
+  "implementation_revision": "4304a068b2377a277126eee2bb3c845c0c16ee8f",
+  "native_source_revision": "0fafd20a625ef915a5933678e21e43b9de48611e",
+  "binary_sha256": "b109723dd2bceaa295732489eb0e6e9a9a621acf75be1efa20f7e7e7086a6bae",
+  "source_paths_verified": 334,
+  "supplier_locks_unchanged": true,
+  "scope": "P7a mixed positive-Bars Set backing; P5 ordered Card realization adapted to explicit Looper meter, bounded control-thread phrase PCM, existing capture identity/clock and saved backing kept exact.",
+  "checks": {
+    "audio": 185,
+    "core_unit": 288,
+    "core_card_loop_integration": 1,
+    "core_cli": 5,
+    "core_portability": 1,
+    "desktop": 207,
+    "views": 238,
+    "suite_total": 925,
+    "separate_capture_child_invocations": 5,
+    "existing_full_gate_ignores": 7,
+    "separate_sealed_profile_wav_probe": 1,
+    "candidate_gate": "checks/candidate-gate.log",
+    "candidate_build": "checks/candidate-build.log",
+    "sealed_reference": "checks/sealed-reference.log",
+    "counting": "Actual candidate-gate exits zero across all four packages. Repeated gates/focused cases are not added; the separately invoked ignored sealed-reference helper is reported separately."
+  },
+  "native": {
+    "trial": "native-v3 only",
+    "phases": {
+      "seed": {
+        "presented_frames": 228,
+        "redraws": 230,
+        "unpresented_redraws": 2,
+        "result": "ok",
+        "captures": 6,
+        "blank_captures": 0,
+        "pid": 55510,
+        "process_exited": true,
+        "phase_hashes_unchanged": true
+      },
+      "reopen": {
+        "presented_frames": 124,
+        "redraws": 126,
+        "unpresented_redraws": 2,
+        "result": "ok",
+        "captures": 2,
+        "blank_captures": 0,
+        "pid": 55760,
+        "process_exited": true,
+        "phase_hashes_unchanged": true
+      }
+    },
+    "reviewed_captures": 8,
+    "viewports": "1180x1000 and 420x1100 logical at zoom1; 2x PNG",
+    "streams": 1,
+    "input_unopened": true,
+    "sample_rate": 48000,
+    "synthetic_capture": "Explicit deterministic fixture on Set1 Card2; 96000 exact decoded/sealed f32 frames. No microphone claim.",
+    "reopened_stopped": true,
+    "exact_reopen": {
+      "set": true,
+      "owner": true,
+      "looper": true,
+      "saved_backing": true,
+      "manifest": true,
+      "captures": true,
+      "admitted": true,
+      "backend_admitted": true,
+      "requested": true,
+      "wav_frames": true,
+      "wav_digest": true
+    },
+    "worker_wav_frames": 160800,
+    "worker_wav_seconds": 3.35,
+    "worker_wav_sha256": "c802d565f9e4bda9a96bdb4d8cca6cb5eb2e02c2fdab1f47845d930ca74e26d1",
+    "seed_reopen_and_separate_sealed_reference_wavs_byte_identical": true,
+    "all_owned_processes_exited": true,
+    "keeper_original_four_files_unchanged": true
+  },
+  "bounds": {
+    "events_per_phrase": 4096,
+    "total_pitches_per_phrase": 4096,
+    "pitches_per_event": 256,
+    "whole_snapshot_phrase_pitch_frame_work": 67108864,
+    "aggregate_prepared_pcm_frames": 16777216,
+    "backing_segments": 256
+  },
+  "observations": [
+    "Old block-Chord path including deliberate mute, once-per-measure strikes and saved-song compatibility stays unchanged. Existing clock and WAV regressions pass; historical gold receipts retain their own inputs.",
+    "Scale/path/chord phrase events retain ordered/repeated pitches and strum spacing; beat positions scale from P5 four-quarter Bars to explicit Looper numerator.",
+    "Preflight rejects invalid/over-budget/under-frame events before PCM preparation and before export touches a writer. Phrase synthesis is outside callback; allocation control test passes.",
+    "Rejected Manual readiness retains actual admitted backing; recovery restores current source. Captures follow stable CardId through row changes and source edits; clock changes require Clear.",
+    "Native checkpoints compare actual backend plan and actual output Song fields/events against the UI, and compare live Set/owner/Looper/saved SongDoc/manifest/decoded PCM against real sealed storage."
+  ],
+  "review": "Coordinator reviewed source, arithmetic, current tests, runtime/checkpoint/byte evidence and critical captures. Cheaper agents implemented disjoint core/audio lanes and reviewed each other; all eight qualified PNGs reviewed independently.",
+  "excluded_attempts": [
+    "core-focused compile: new fixture used private Set struct fields; corrected.",
+    "core-focused-v2: new fixture used Set.push and assumed retained identity rather than newly minted occurrence; corrected.",
+    "integrated-first: two new host fixtures restored PCM after live admission or indexed an empty SongDoc; corrected, final candidate gate passes.",
+    "native-v1: fixture mutation omitted normal host dispatch before admission/seal checks; RESULT fail, excluded entirely.",
+    "native-v2: device wait lacked established driver wait/settle steps; RESULT fail, excluded entirely. Assertions retained in native-v3."
+  ],
+  "limits": [
+    "Positive Bars only in this slice; Manual, Seconds, Reps and eventless exercise material remain explicit readiness failures.",
+    "Saved-backing migration/removal and saved-song PCM persistence remain open P7 work.",
+    "No physical audibility, latency, microphone/drift or other-OS qualification.",
+    "Phrase preparation is synchronous control work under a finite total work bound; preparation latency has no qualification claim.",
+    "Compact fixed recorder dock covers part of the lower scrollable Card list. Core controls/status remain visible; broader responsive/touch/reduced-motion acceptance is P8."
+  ],
+  "external_evidence": "/Users/markik/Code/testing/woodshed/stage-p7a-20261017",
+  "evidence_whitespace": "Exact raw Cargo/native logs retain original emitted whitespace; source/docs/structured artifacts pass non-log whitespace checks."
+}

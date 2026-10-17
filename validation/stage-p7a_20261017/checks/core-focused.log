@@ -1,0 +1,40 @@
+    Blocking waiting for file lock on package cache
+warning: patch `mere-proofs v0.1.0 (https://github.com/merely-made/mere.git?branch=main#4c4ea11d)` was not used in the crate graph
+warning: patch `mere-transport v0.0.2 (https://github.com/merely-made/murm.git?branch=main#cba46d85)` was not used in the crate graph
+warning: patch `mere-webrtc-carrier v0.0.1 (https://github.com/merely-made/murm.git?branch=main#cba46d85)` was not used in the crate graph
+help: Check that the patched package version and available features are compatible
+      with the dependency requirements. If the patch has a different version from
+      what is locked in the Cargo.lock file, run `cargo update` to use the new
+      version. This may also occur with an optional dependency that is not enabled.
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+   Compiling muniment v0.1.2 (https://github.com/merely-made/mere.git?branch=main#4c4ea11d)
+   Compiling sceno v0.0.5 (https://github.com/merely-made/mere.git?branch=main#4c4ea11d)
+   Compiling chartulary v0.2.2 (https://github.com/merely-made/mere.git?branch=main#4c4ea11d)
+   Compiling tinct v0.2.0 (https://github.com/merely-made/mere.git?branch=main#4c4ea11d)
+   Compiling woodshedding v0.1.0 (/Users/markik/Code/repos/woodshed/crates/woodshedding)
+   Compiling tabard v0.0.2 (https://github.com/merely-made/mere.git?branch=main#4c4ea11d)
+   Compiling woodshed-graph v0.1.0 (/Users/markik/Code/repos/woodshed/crates/woodshed-graph)
+   Compiling scenotime v0.0.4 (https://github.com/merely-made/mere.git?branch=main#4c4ea11d)
+   Compiling woodshed-core v0.1.0 (/Users/markik/Code/repos/woodshed/crates/woodshed-core)
+error[E0451]: field `last_card_id` of struct `woodshedding::rehearsal::Set` is private
+   --> crates/woodshed-core/src/loop_plan.rs:498:19
+    |
+496 |             &Set {
+    |              --- in this type
+497 |                 cards: vec![set.cards[3].clone()],
+498 |                 ..Default::default()
+    |                   ^^^^^^^^^^^^^^^^^^ field `last_card_id` is private
+
+error[E0451]: field `last_card_id` of struct `woodshedding::rehearsal::Set` is private
+   --> crates/woodshed-core/src/loop_plan.rs:546:19
+    |
+544 |             &Set {
+    |              --- in this type
+545 |                 cards: vec![set.cards[1].clone()],
+546 |                 ..Default::default()
+    |                   ^^^^^^^^^^^^^^^^^^ field `last_card_id` is private
+
+For more information about this error, try `rustc --explain E0451`.
+error: could not compile `woodshed-core` (lib test) due to 2 previous errors
+warning: build failed, waiting for other jobs to finish...
