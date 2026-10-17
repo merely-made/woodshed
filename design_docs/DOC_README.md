@@ -19,9 +19,9 @@ before any other doc in this directory.
 
 ## Active Plans
 
-- [P6 guided Rehearsal runner](2026-07-11_stage_set_tools_plan.md#p6-finish-rehearsal-as-the-guided-set-runner) — October 17 implementation: previous/current/next context, output-clock Card progress, focused Card looping and paused navigation, keyboard controls and explicit edit recovery. Native mixed-Set/reopen qualification is in progress after preservation integration `cec2213`.
+- [P6 guided Rehearsal runner](2026-07-11_stage_set_tools_plan.md#p6-finish-rehearsal-as-the-guided-set-runner) — Qualified October 17: previous/current/next context, output-clock Card progress, focused Card looping, paused navigation, keyboard controls and edit recovery. 910 cases plus five child invocations, desktop build and eight reviewed native captures; exact sealed Set, owner and 22 history rows reopen stopped. [Receipt](../validation/stage-p6_20261017/README.md).
 
-- [Preservation and input admission](2026-10-16_preservation_input_admission_plan.md) — First audit-remediation pass: outgoing-work preservation, checked history/Set/project input, and nonwriting failed recovery. Integrated onto P5 October 17; 1,355 passing cases plus five child invocations and three desktop builds. Native qualification is separately owned. [Current integration receipt](../validation/preservation-input_20261017/integration.json); [isolated implementation receipt](../validation/preservation-input_20261016/receipt.json).
+- [Preservation and input admission](2026-10-16_preservation_input_admission_plan.md) — First audit-remediation pass: outgoing-work preservation, checked history/Set/project input, and nonwriting failed recovery. Integrated onto P5 October 17; 1,355 passing cases plus five child invocations and three desktop builds. Bounded Woodshed persona/close/quarantine native qualification adds 12 reviewed captures; Hocket/Redshank remain CPU/build only. [Native receipt](../validation/preservation-input_20261017/native/README.md). [Current integration receipt](../validation/preservation-input_20261017/integration.json); [isolated implementation receipt](../validation/preservation-input_20261016/receipt.json).
 
 - [P5 shared clock and visual articulation](2026-07-11_stage_set_tools_plan.md#p5-unify-the-clock-and-visual-articulation) — Qualified October 17: one processor clock for Card dwell, click, articulation and Fretboard event projection; preserved pause/resume and tempo phase, absolute Seconds, Manual Next and accepted-start history. 881 cases plus five child invocations, desktop build and five reviewed native Rehearsal/reopen captures with exact sealed Cards, owner and six history rows. [Receipt](../validation/stage-p5_20261017/receipt.json).
 
@@ -222,7 +222,7 @@ before any other doc in this directory.
   — **In progress; product authority.** P1-P3 remain partial. P4a/P4b landed;
   the scene canvas and single-Card expansion have receipts, while the full P4e
   catalog remains partial; the bounded P4f practice/sound/fresh-reopen route is
-  qualified on October 16. P5 is qualified on October 17; P6-P8 remain open. A repaired
+  qualified on October 16. P5 and bounded P6 are qualified on October 17; P7-P8 remain open. A repaired
   release baseline does not close the 1.0 practice proof. The September 30
   connected exploration/drilling direction specifies cross-catalog context,
   shared realization, ambient Mere actions, and integrated acceptance slices.

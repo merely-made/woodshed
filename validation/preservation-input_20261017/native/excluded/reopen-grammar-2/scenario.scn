@@ -1,0 +1,6 @@
+settle 90
+assert-field practice-saved false
+assert-field practice-save-problem true
+assert-field set-cards 0
+capture 01_quarantine_reopened_without_discarded_cards
+log Quarantined source reopened without discarded live Cards

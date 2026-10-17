@@ -1,17 +1,16 @@
 # Preservation and input admission
 
-Date: 2026-10-16.
-Status: October 16 isolated implementation passed device-free gates; October 17 integration onto P5 main passed current-source CPU gates and all three desktop builds; local handoff ready. Native qualification/publication are owned by the coordinating chat after local handoff.
+Date: 2026-10-16; updated 2026-10-17.
+Status: Integrated onto P5 at `cec221348154fc8e6abe3f6136f00b14f9860b78`; the shared after-frame/dispatch guard follow-up is at `d955f5dc3b99ec1efd6ec9a56dd3ba007755409e`. Current-source CPU/build and bounded Woodshed native/reopen gates pass. Direct publication to `main` is authorized for the coordinating owner; Git refs establish publication separately. Hocket and Redshank have CPU/build evidence only. No physical audio qualification is claimed.
 
 ## Scope and ownership
 
 This is the first remediation pass from the complete-source audit frozen at
 `d12201bf`. Implementation began at `2c59bb8` and was fast-forwarded to `21d0c2e`,
 including the independently completed catalog/discovery admission-history receipt.
-The subsequent P5 shared-clock lane retains primary-checkout source and native
-ownership. Audit remediation runs in an
-isolated checkout and launches no native apps/devices. The integration owner
-serializes focused Cargo checks after agreement with the native lane.
+The work was integrated onto P5 and then extended with bounded Woodshed
+preservation UI/OS/reopen qualification. The coordinating owner serializes
+integration, validation and publication.
 
 - Integration owner: Woodshed preservation before persona replacement, shared
   host preservation decisions, documentation, integration and source review.
@@ -22,10 +21,11 @@ serializes focused Cargo checks after agreement with the native lane.
 - Hocket-preservation lane: native project dirty/save/close/replacement admission.
 - Redshank-recovery lane: storage load outcome and nonwriting failed-restore host.
 
-Agents edit disjoint paths, do not commit/push, and do not run Cargo/native
-independently. The parent owns integration and the eventual scoped local commit.
-No supplier repin, broad persona namespace migration, audio scheduling change,
-old PCM rewrite, new clock policy, or other audit cleanup is included.
+Agents edit disjoint paths and do not run Cargo/native independently. Direct
+publication to `main` is explicitly authorized for the coordinating owner; this
+authorization does not mean a push has occurred. No supplier repin, broad persona
+namespace migration, audio scheduling change, old PCM rewrite, new clock policy,
+or other audit cleanup is included.
 
 ## Phases and done-conditions
 
@@ -56,10 +56,11 @@ retain their exact semantics.
 Review the combined changes, run focused tests in a separate Cargo target during
 an agreed idle slot, and record exact source, commands and outcomes. Broader checks
 follow only from changed seams or failures. Native/physical acceptance remains
-separate. Commit locally only; publication is not requested by this task.
+separate. Direct publication to `main` is authorized for this integrated work.
 
 Done when relevant focused tests pass, the diff and documentation are reconciled,
-and the local commit/worktree state and remaining limits are reported.
+and the current-source revision, publication outcome and remaining limits are
+reported.
 
 ## Findings
 
@@ -162,12 +163,14 @@ index entries, and both `practice_clock_managed` and injected `event_clock` acro
 persona reset. The reset regression now checks both bindings while ensuring run
 position and processor program remain cleared.
 
-This lane owns primary source and CPU checks until a clean local commit handoff.
-It launches no native applications and does not publish. The coordinating P6 chat
-owns the subsequent bounded preservation UI/OS/reopen receipt and publication;
-P6 itself remains outside this integration. Historical October 16 receipts retain
-their original hashes, commands and qualification limits. Current-source results
-are recorded separately in `validation/preservation-input_20261017/integration.json`.
+This lane owned primary source and CPU checks through the local handoff. It
+launched no native applications and did not publish. The coordinating owner
+subsequently integrated the bounded preservation UI/OS/reopen work and owns the
+authorized direct publication. P6 remains separately scoped, though its bounded
+persona-preservation path was exercised in the native receipt. Historical October
+16 receipts retain their original hashes, commands and qualification limits.
+Current-source CPU/build results remain in
+`validation/preservation-input_20261017/integration.json`.
 
 
 2026-10-17 integrated test gate: root seven-package gate 1,170 passing cases,
@@ -181,9 +184,36 @@ A stale index sentence now distinguishes completed capture primitive extraction
 from remaining DSP consolidation. Serial desktop builds precede the local handoff.
 
 
-2026-10-17 final local integration gate: all three desktop builds exit zero;
-1,355 passing cases plus five separately counted capture child invocations, with
-nine existing ignores. Current changed-source and executable hashes match the
-receipt. Supplier lockfiles are byte-identical to P5 baseline. No native app was
-launched here. The coordinating chat receives the clean local revision, exact
-binaries, selector/fixture guidance and source/build/native scheduling ownership.
+2026-10-17 final integration gate at `cec221348154fc8e6abe3f6136f00b14f9860b78`:
+1,355 distinct parent/doc cases passed, five capture child invocations are counted
+separately, and nine tests were ignored. Woodshed, Hocket and Redshank desktop
+builds all exited zero. Supplier lockfiles are byte-identical to the P5 baseline.
+The CPU/build receipt is
+[`integration.json`](../validation/preservation-input_20261017/integration.json).
+
+2026-10-17 bounded Woodshed native qualification on `cec2213`: persona Retry and
+Cancel retained the three authored Cards; explicit discard/reset left the
+quarantined input untouched, and a fresh process reopened with zero discarded live
+Cards. The seed phase reports 191 presented frames across six distinct captures;
+the fresh-process reopen phase reports 98 presented frames and one capture. These
+results qualify only the scoped Woodshed behavior.
+
+2026-10-17 follow-up at `d955f5dc3b99ec1efd6ec9a56dd3ba007755409e` adds the shared
+`after_frame`/dispatch guard and one host regression. Its native close phase
+reports 139 presented frames across four captures. The actual macOS close → Retry
+→ explicit Discard sequence exited the owned process while preserving the
+original quarantined bytes. A corrected fresh-process quarantine-reopen run passed
+(`RESULT ok`) with one capture, 97 presented frames and 98 redraws; the screenshot
+shows the quarantine notice and zero Cards. Two earlier reopen attempts with
+invalid assertion syntax (`close-reopen` and `close-reopen-final`) are excluded;
+the corrected `quarantine-reopen` run supersedes them. Native manifests and
+reviewed captures are linked from
+[`native/README.md`](../validation/preservation-input_20261017/native/README.md).
+
+Hocket and Redshank remain qualified only by their CPU test and desktop-build
+commands in `integration.json`; neither has a native receipt from this work.
+Codec-worker failure and incoming-custody opener failure are covered by
+device-free tests, not the native runs. The broader audit findings remain out of
+scope. No physical microphone, playback, or other physical-audio result is
+claimed. Direct publication to `main` is authorized for the coordinating owner; its
+outcome is established separately by Git refs and the final coordinating report.

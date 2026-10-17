@@ -1,0 +1,80 @@
+{
+  "status": "qualified-bounded-woodshed-native",
+  "date": "2026-10-17",
+  "scope": "Woodshed quarantine persona Retry/Cancel/explicit discard, fresh-process quarantine reopening, and actual native close preservation. Hocket/Redshank remain CPU/build only.",
+  "persona_source_revision": "cec221348154fc8e6abe3f6136f00b14f9860b78",
+  "close_source_revision": "d955f5dc3b99ec1efd6ec9a56dd3ba007755409e",
+  "persona_source_bindings": 328,
+  "close_source_bindings": 331,
+  "phases": {
+    "persona": {
+      "result": "ok",
+      "presented_frames": 191,
+      "redraws": 193,
+      "unpresented_redraws": 2,
+      "captures": 6,
+      "blank_captures": 0,
+      "distinct_captures": 6,
+      "pid": 19570,
+      "process_exited": true,
+      "phase_hashes_unchanged": true
+    },
+    "persona-reopen": {
+      "result": "ok",
+      "presented_frames": 98,
+      "redraws": 99,
+      "unpresented_redraws": 1,
+      "captures": 1,
+      "blank_captures": 0,
+      "distinct_captures": 1,
+      "pid": 21666,
+      "process_exited": true,
+      "phase_hashes_unchanged": true
+    },
+    "close": {
+      "result": "ok",
+      "presented_frames": 139,
+      "redraws": 141,
+      "unpresented_redraws": 2,
+      "captures": 4,
+      "blank_captures": 0,
+      "distinct_captures": 4,
+      "pid": 25036,
+      "process_exited": true,
+      "phase_hashes_unchanged": true
+    },
+    "quarantine-reopen": {
+      "result": "ok",
+      "presented_frames": 97,
+      "redraws": 98,
+      "unpresented_redraws": 1,
+      "captures": 1,
+      "blank_captures": 0,
+      "distinct_captures": 1,
+      "pid": 28367,
+      "process_exited": true,
+      "phase_hashes_unchanged": true
+    }
+  },
+  "reviewed_captures": 12,
+  "actual_native_close": "CUA actual macOS close button after Cancel\u2192preservation panel\u2192Retry unchanged\u2192explicit Discard. Owned process exit and original invalid bytes independently checked; see close/native-close-actions.json. Scenario captures precede the final discard.",
+  "original_quarantined_files_unchanged": true,
+  "keeper_original_files_unchanged": true,
+  "all_owned_processes_exited": true,
+  "excluded_attempts": [
+    "native-v1: zero presented frames, occlusion timeout; excluded",
+    "native-v2/woodshed-quarantine: selector/focus fixture failed; excluded",
+    "native-v2/woodshed-preservation: persona wording assertion failed; excluded",
+    "P6 close-reopen and close-reopen-final: wrong scenario assertion grammar; excluded"
+  ],
+  "limits": [
+    "No Hocket or Redshank native UI qualification in this receipt.",
+    "Codec-to-persona wake sequencing, incoming-custody failure and capture replacement rejection retain CPU-test-only qualification.",
+    "No physical audibility, latency, microphone or cross-platform qualification."
+  ],
+  "external_evidence": [
+    "/Users/markik/Code/testing/woodshed/preservation-20261017",
+    "/Users/markik/Code/testing/woodshed/stage-p6-20261017"
+  ],
+  "current_p6_receipt": "../../stage-p6_20261017/receipt.json"
+}

@@ -1,0 +1,6 @@
+RESULT ok
+captured 01_quarantine_retained_on_fresh_reopen
+Original corrupt saved input remains quarantined after fresh-process reopen
+capture 01_quarantine_retained_on_fresh_reopen 2360x2000 digest=3e6b96d01890dde9 file=/Users/markik/Code/testing/woodshed/preservation-20261017/native-v2/woodshed-reopen/01_quarantine_retained_on_fresh_reopen.png
+frames: 1 captured, 0 blank, 1 distinct digests
+presentation: 98 frames, 99 redraws, 1 unpresented redraws

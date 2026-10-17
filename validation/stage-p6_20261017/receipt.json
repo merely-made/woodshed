@@ -1,0 +1,83 @@
+{
+  "status": "qualified",
+  "date": "2026-10-17",
+  "scope": "P6 guided Rehearsal: mixed Set progression, Off/All/Card loops, clock-projected context/progress, paused navigation, shared editor/tools, keyboard transport and edit recovery. Bounded preservation follow-through linked separately.",
+  "native_source_revision": "d955f5dc3b99ec1efd6ec9a56dd3ba007755409e",
+  "preservation_integration_revision": "cec221348154fc8e6abe3f6136f00b14f9860b78",
+  "binary_sha256": "74001d023d6d2d3c84b96dc370ffc656e1c199fe84abad2522dc9e00b523f93a",
+  "source_paths_verified": 331,
+  "suppliers_unchanged_from_preservation_integration": true,
+  "checks": {
+    "audio": 176,
+    "core_unit": 285,
+    "core_card_loop_integration": 1,
+    "core_cli": 5,
+    "core_portability": 1,
+    "desktop": 205,
+    "views": 237,
+    "suite_total": 910,
+    "separate_desktop_child_invocations": 5,
+    "existing_desktop_ignores": 7,
+    "integrated_log": "checks/integrated-final.log",
+    "desktop_guard_log": "checks/desktop-guard-final.log",
+    "candidate_build": "checks/candidate-build.log",
+    "final_fixture_check": "checks/final-fixture-check.log",
+    "counting": "909 unique cases at integrated-final plus the added frame-close guard regression; whole desktop rerun passes 205. Repeated and child invocations are not added to the unique case total.",
+    "post_gate_changes": "Only shipping scenario observation/close fixture additions followed the whole desktop gate; final guard regression and desktop build repeated against the frozen candidate. No product audio/core/view changes followed their integrated gate."
+  },
+  "native": {
+    "phases": {
+      "seed": {
+        "result": "ok",
+        "presented_frames": 294,
+        "redraws": 295,
+        "unpresented_redraws": 1,
+        "captures": 6,
+        "blank_captures": 0,
+        "distinct_captures": 6,
+        "pid": 22347,
+        "process_exited": true,
+        "phase_hashes_unchanged": true
+      },
+      "reopen": {
+        "result": "ok",
+        "presented_frames": 111,
+        "redraws": 112,
+        "unpresented_redraws": 1,
+        "captures": 2,
+        "blank_captures": 0,
+        "distinct_captures": 2,
+        "pid": 24519,
+        "process_exited": true,
+        "phase_hashes_unchanged": true
+      }
+    },
+    "reviewed_captures": 8,
+    "rate": 48000,
+    "history_rows": 22,
+    "exact_reopen": {
+      "set": true,
+      "owner": true,
+      "history": true
+    },
+    "transient_reopened_stopped": true,
+    "viewports": "1180x1000 and 420x1100 logical at zoom1; PNGs at 2x",
+    "isolation": "Generated Keeper; isolated sealed profile; frozen committed source/binary; one-use launchers. All owned app processes and Keeper exited; four original generated fixture files unchanged. No vaults, keys, sealed profile blobs or executables published."
+  },
+  "preservation_native_receipt": "../preservation-input_20261017/native/receipt.json",
+  "review": {
+    "coordinator": "Source, guard routing, test outcomes, runtime checkpoints and critical captures reviewed independently.",
+    "p6_gap_review": "Cheaper subagent reviewed UI seams and all eight P6 captures, plus preservation captures.",
+    "nonblocking_observations": [
+      "Compact filmstrip may require scrolling to see the third Card; current identity/context remains visible. Broader three-width/touch/reduced-motion acceptance remains P8.",
+      "Existing edit recovery copy says stop and start Run again although edit already stopped the old source; Run is visible. Copy refinement remains P8."
+    ]
+  },
+  "excluded_attempts": [
+    "integrated-first: test fixture compile errors corrected",
+    "integrated-second: new test fixture dwell/focus assumptions corrected",
+    "Additional quarantine reopen script attempts close-reopen and close-reopen-final used wrong assertion grammar; excluded entirely. Corrected quarantine-reopen passes."
+  ],
+  "external_evidence": "/Users/markik/Code/testing/woodshed/stage-p6-20261017",
+  "evidence_whitespace": "Exact raw Cargo and native frame logs retain original whitespace; non-log source/docs/evidence must pass git diff --check."
+}

@@ -1,0 +1,23 @@
+RESULT ok
+waited 26 frames
+captured 01_mixed_set_paused_context
+waited 19 frames
+waited 24 frames
+waited 0 frames
+captured 02_paused_seek_to_arpeggio
+waited 0 frames
+captured 03_edit_stops_old_source
+waited 5 frames
+captured 04_manual_waiting_for_next
+captured 05_compact_paused_manual
+waited 0 frames
+captured 06_completed_mixed_set
+P6 guided runner seed complete
+capture 01_mixed_set_paused_context 2360x2000 digest=c7c774b9985c04a4 file=/Users/markik/Code/testing/woodshed/stage-p6-20261017/native-v1/seed/01_mixed_set_paused_context.png
+capture 02_paused_seek_to_arpeggio 2360x2000 digest=1ba0df1554386ef6 file=/Users/markik/Code/testing/woodshed/stage-p6-20261017/native-v1/seed/02_paused_seek_to_arpeggio.png
+capture 03_edit_stops_old_source 2360x2000 digest=f791311737f5bead file=/Users/markik/Code/testing/woodshed/stage-p6-20261017/native-v1/seed/03_edit_stops_old_source.png
+capture 04_manual_waiting_for_next 2360x2000 digest=0dcca23b9cd51e72 file=/Users/markik/Code/testing/woodshed/stage-p6-20261017/native-v1/seed/04_manual_waiting_for_next.png
+capture 05_compact_paused_manual 840x2200 digest=50d6ba96e92e75ce file=/Users/markik/Code/testing/woodshed/stage-p6-20261017/native-v1/seed/05_compact_paused_manual.png
+capture 06_completed_mixed_set 840x2200 digest=00b5e601bd339503 file=/Users/markik/Code/testing/woodshed/stage-p6-20261017/native-v1/seed/06_completed_mixed_set.png
+frames: 6 captured, 0 blank, 6 distinct digests
+presentation: 294 frames, 295 redraws, 1 unpresented redraws

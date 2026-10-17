@@ -1,0 +1,12 @@
+{
+  "app": "/Users/markik/Code/testing/woodshed/preservation-20261017/native-v1/woodshed-quarantine/AcceptanceWoodshedWoodshedQuarantineNativev1.app",
+  "env": {
+    "WOODSHED_SCENARIO": "/Users/markik/Code/testing/woodshed/preservation-20261017/native-v1/woodshed-quarantine/scenario.scn",
+    "WOODSHED_CAPTURE_DIR": "/Users/markik/Code/testing/woodshed/preservation-20261017/native-v1/woodshed-quarantine",
+    "WOODSHED_RECEIPT": "/Users/markik/Code/testing/woodshed/preservation-20261017/native-v1/woodshed-quarantine/scenario.done",
+    "WOODSHED_PRESENTATION_TIMEOUT_SECS": "60",
+    "WOODSHED_WIDTH": "1180",
+    "WOODSHED_HEIGHT": "1000",
+    "TMPDIR": "/tmp",
+    "CAMBIUM_HOST_FRAME_TRACE": "1",
+    "WOODSHED_STATE": 

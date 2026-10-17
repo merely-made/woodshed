@@ -1,0 +1,7 @@
+settle 90
+ui-zoom 1
+assert snap practice-saved == false
+assert snap practice-save-problem == true
+assert snap set-cards == 0
+capture 01_quarantine_retained_on_fresh_reopen
+log Original corrupt saved input remains quarantined after fresh-process reopen

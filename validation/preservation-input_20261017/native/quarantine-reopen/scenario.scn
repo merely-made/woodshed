@@ -1,0 +1,6 @@
+settle 90
+assert snap practice-saved == false
+assert snap practice-save-problem == true
+assert snap set-cards == 0
+capture 01_quarantine_reopened_without_discarded_cards
+log Quarantined source reopened without discarded live Cards

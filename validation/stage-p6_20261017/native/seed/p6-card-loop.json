@@ -1,0 +1,650 @@
+{
+  "history": [
+    {
+      "at_ms": 1792217204712,
+      "from_id": null,
+      "kind": "Rehearsed",
+      "practiced_ms": null,
+      "provenance": {
+        "card_snapshot": {
+          "from": null,
+          "id": 1,
+          "label": "Guided chord",
+          "material": {
+            "Chord": {
+              "name": "Major",
+              "root": 9
+            }
+          },
+          "setting": {
+            "capo": null,
+            "fret_window": null,
+            "instrument": "Guitar",
+            "mark_mode": "Off",
+            "marked": [],
+            "tuning": "Standard",
+            "voicing_fingerprint": null,
+            "voicing_idx": null,
+            "voicing_profile": null
+          },
+          "timing": {
+            "bpm": 240.0,
+            "hold": {
+              "Bars": 1
+            }
+          },
+          "touch": "Block"
+        },
+        "occurrence_id": 1,
+        "working_set_id": 1
+      },
+      "subject_id": "chord:Major"
+    },
+    {
+      "at_ms": 1792217204712,
+      "from_id": null,
+      "kind": "Completed",
+      "practiced_ms": 1000,
+      "provenance": {
+        "card_snapshot": {
+          "from": null,
+          "id": 1,
+          "label": "Guided chord",
+          "material": {
+            "Chord": {
+              "name": "Major",
+              "root": 9
+            }
+          },
+          "setting": {
+            "capo": null,
+            "fret_window": null,
+            "instrument": "Guitar",
+            "mark_mode": "Off",
+            "marked": [],
+            "tuning": "Standard",
+            "voicing_fingerprint": null,
+            "voicing_idx": null,
+            "voicing_profile": null
+          },
+          "timing": {
+            "bpm": 240.0,
+            "hold": {
+              "Bars": 1
+            }
+          },
+          "touch": "Block"
+        },
+        "occurrence_id": 1,
+        "working_set_id": 1
+      },
+      "subject_id": "chord:Major"
+    },
+    {
+      "at_ms": 1792217203679,
+      "from_id": null,
+      "kind": "Rehearsed",
+      "practiced_ms": null,
+      "provenance": {
+        "card_snapshot": {
+          "from": null,
+          "id": 1,
+          "label": "Guided chord",
+          "material": {
+            "Chord": {
+              "name": "Major",
+              "root": 9
+            }
+          },
+          "setting": {
+            "capo": null,
+            "fret_window": null,
+            "instrument": "Guitar",
+            "mark_mode": "Off",
+            "marked": [],
+            "tuning": "Standard",
+            "voicing_fingerprint": null,
+            "voicing_idx": null,
+            "voicing_profile": null
+          },
+          "timing": {
+            "bpm": 240.0,
+            "hold": {
+              "Bars": 1
+            }
+          },
+          "touch": "Block"
+        },
+        "occurrence_id": 1,
+        "working_set_id": 1
+      },
+      "subject_id": "chord:Major"
+    },
+    {
+      "at_ms": 1792217203679,
+      "from_id": null,
+      "kind": "Completed",
+      "practiced_ms": 1000,
+      "provenance": {
+        "card_snapshot": {
+          "from": null,
+          "id": 1,
+          "label": "Guided chord",
+          "material": {
+            "Chord": {
+              "name": "Major",
+              "root": 9
+            }
+          },
+          "setting": {
+            "capo": null,
+            "fret_window": null,
+            "instrument": "Guitar",
+            "mark_mode": "Off",
+            "marked": [],
+            "tuning": "Standard",
+            "voicing_fingerprint": null,
+            "voicing_idx": null,
+            "voicing_profile": null
+          },
+          "timing": {
+            "bpm": 240.0,
+            "hold": {
+              "Bars": 1
+            }
+          },
+          "touch": "Block"
+        },
+        "occurrence_id": 1,
+        "working_set_id": 1
+      },
+      "subject_id": "chord:Major"
+    },
+    {
+      "at_ms": 1792217202733,
+      "from_id": null,
+      "kind": "Rehearsed",
+      "practiced_ms": null,
+      "provenance": {
+        "card_snapshot": {
+          "from": null,
+          "id": 1,
+          "label": "Guided chord",
+          "material": {
+            "Chord": {
+              "name": "Major",
+              "root": 9
+            }
+          },
+          "setting": {
+            "capo": null,
+            "fret_window": null,
+            "instrument": "Guitar",
+            "mark_mode": "Off",
+            "marked": [],
+            "tuning": "Standard",
+            "voicing_fingerprint": null,
+            "voicing_idx": null,
+            "voicing_profile": null
+          },
+          "timing": {
+            "bpm": 240.0,
+            "hold": {
+              "Bars": 1
+            }
+          },
+          "touch": "Block"
+        },
+        "occurrence_id": 1,
+        "working_set_id": 1
+      },
+      "subject_id": "chord:Major"
+    },
+    {
+      "at_ms": 1792217202733,
+      "from_id": null,
+      "kind": "Completed",
+      "practiced_ms": 1000,
+      "provenance": {
+        "card_snapshot": {
+          "from": null,
+          "id": 1,
+          "label": "Guided chord",
+          "material": {
+            "Chord": {
+              "name": "Major",
+              "root": 9
+            }
+          },
+          "setting": {
+            "capo": null,
+            "fret_window": null,
+            "instrument": "Guitar",
+            "mark_mode": "Off",
+            "marked": [],
+            "tuning": "Standard",
+            "voicing_fingerprint": null,
+            "voicing_idx": null,
+            "voicing_profile": null
+          },
+          "timing": {
+            "bpm": 240.0,
+            "hold": {
+              "Bars": 1
+            }
+          },
+          "touch": "Block"
+        },
+        "occurrence_id": 1,
+        "working_set_id": 1
+      },
+      "subject_id": "chord:Major"
+    },
+    {
+      "at_ms": 1792217199402,
+      "from_id": null,
+      "kind": "Rehearsed",
+      "practiced_ms": null,
+      "provenance": {
+        "card_snapshot": {
+          "from": null,
+          "id": 1,
+          "label": "Guided chord",
+          "material": {
+            "Chord": {
+              "name": "Major",
+              "root": 9
+            }
+          },
+          "setting": {
+            "capo": null,
+            "fret_window": null,
+            "instrument": "Guitar",
+            "mark_mode": "Off",
+            "marked": [],
+            "tuning": "Standard",
+            "voicing_fingerprint": null,
+            "voicing_idx": null,
+            "voicing_profile": null
+          },
+          "timing": {
+            "bpm": 240.0,
+            "hold": {
+              "Bars": 1
+            }
+          },
+          "touch": "Block"
+        },
+        "occurrence_id": 1,
+        "working_set_id": 1
+      },
+      "subject_id": "chord:Major"
+    },
+    {
+      "at_ms": 1792217199402,
+      "from_id": null,
+      "kind": "Completed",
+      "practiced_ms": 1000,
+      "provenance": {
+        "card_snapshot": {
+          "from": null,
+          "id": 3,
+          "label": "Guided arpeggio",
+          "material": {
+            "Chord": {
+              "name": "Major",
+              "root": 9
+            }
+          },
+          "setting": {
+            "capo": null,
+            "fret_window": null,
+            "instrument": "Guitar",
+            "mark_mode": "Off",
+            "marked": [],
+            "tuning": "Standard",
+            "voicing_fingerprint": null,
+            "voicing_idx": null,
+            "voicing_profile": null
+          },
+          "timing": {
+            "bpm": 240.0,
+            "hold": {
+              "Reps": 1
+            }
+          },
+          "touch": {
+            "Arpeggiate": {
+              "direction": "UpDown",
+              "inversion": 0
+            }
+          }
+        },
+        "occurrence_id": 3,
+        "working_set_id": 1
+      },
+      "subject_id": "arpeggio:Major"
+    },
+    {
+      "at_ms": 1792217198479,
+      "from_id": null,
+      "kind": "Rehearsed",
+      "practiced_ms": null,
+      "provenance": {
+        "card_snapshot": {
+          "from": null,
+          "id": 3,
+          "label": "Guided arpeggio",
+          "material": {
+            "Chord": {
+              "name": "Major",
+              "root": 9
+            }
+          },
+          "setting": {
+            "capo": null,
+            "fret_window": null,
+            "instrument": "Guitar",
+            "mark_mode": "Off",
+            "marked": [],
+            "tuning": "Standard",
+            "voicing_fingerprint": null,
+            "voicing_idx": null,
+            "voicing_profile": null
+          },
+          "timing": {
+            "bpm": 240.0,
+            "hold": {
+              "Reps": 1
+            }
+          },
+          "touch": {
+            "Arpeggiate": {
+              "direction": "UpDown",
+              "inversion": 0
+            }
+          }
+        },
+        "occurrence_id": 3,
+        "working_set_id": 1
+      },
+      "subject_id": "arpeggio:Major"
+    },
+    {
+      "at_ms": 1792217198479,
+      "from_id": null,
+      "kind": "Completed",
+      "practiced_ms": 2000,
+      "provenance": {
+        "card_snapshot": {
+          "from": null,
+          "id": 2,
+          "label": "Guided scale",
+          "material": {
+            "Scale": {
+              "name": "Minor Pentatonic",
+              "root": 9
+            }
+          },
+          "setting": {
+            "capo": null,
+            "fret_window": null,
+            "instrument": "Guitar",
+            "mark_mode": "Off",
+            "marked": [],
+            "tuning": "Standard",
+            "voicing_fingerprint": null,
+            "voicing_idx": null,
+            "voicing_profile": null
+          },
+          "timing": {
+            "bpm": 240.0,
+            "hold": {
+              "Seconds": 2.0
+            }
+          },
+          "touch": "Walk"
+        },
+        "occurrence_id": 2,
+        "working_set_id": 1
+      },
+      "subject_id": "scale:Minor Pentatonic"
+    },
+    {
+      "at_ms": 1792217196493,
+      "from_id": null,
+      "kind": "Rehearsed",
+      "practiced_ms": null,
+      "provenance": {
+        "card_snapshot": {
+          "from": null,
+          "id": 2,
+          "label": "Guided scale",
+          "material": {
+            "Scale": {
+              "name": "Minor Pentatonic",
+              "root": 9
+            }
+          },
+          "setting": {
+            "capo": null,
+            "fret_window": null,
+            "instrument": "Guitar",
+            "mark_mode": "Off",
+            "marked": [],
+            "tuning": "Standard",
+            "voicing_fingerprint": null,
+            "voicing_idx": null,
+            "voicing_profile": null
+          },
+          "timing": {
+            "bpm": 240.0,
+            "hold": {
+              "Seconds": 2.0
+            }
+          },
+          "touch": "Walk"
+        },
+        "occurrence_id": 2,
+        "working_set_id": 1
+      },
+      "subject_id": "scale:Minor Pentatonic"
+    },
+    {
+      "at_ms": 1792217196493,
+      "from_id": null,
+      "kind": "Completed",
+      "practiced_ms": 1000,
+      "provenance": {
+        "card_snapshot": {
+          "from": null,
+          "id": 1,
+          "label": "Guided chord",
+          "material": {
+            "Chord": {
+              "name": "Major",
+              "root": 9
+            }
+          },
+          "setting": {
+            "capo": null,
+            "fret_window": null,
+            "instrument": "Guitar",
+            "mark_mode": "Off",
+            "marked": [],
+            "tuning": "Standard",
+            "voicing_fingerprint": null,
+            "voicing_idx": null,
+            "voicing_profile": null
+          },
+          "timing": {
+            "bpm": 240.0,
+            "hold": {
+              "Bars": 1
+            }
+          },
+          "touch": "Block"
+        },
+        "occurrence_id": 1,
+        "working_set_id": 1
+      },
+      "subject_id": "chord:Major"
+    },
+    {
+      "at_ms": 1792217195514,
+      "from_id": null,
+      "kind": "Rehearsed",
+      "practiced_ms": null,
+      "provenance": {
+        "card_snapshot": {
+          "from": null,
+          "id": 1,
+          "label": "Guided chord",
+          "material": {
+            "Chord": {
+              "name": "Major",
+              "root": 9
+            }
+          },
+          "setting": {
+            "capo": null,
+            "fret_window": null,
+            "instrument": "Guitar",
+            "mark_mode": "Off",
+            "marked": [],
+            "tuning": "Standard",
+            "voicing_fingerprint": null,
+            "voicing_idx": null,
+            "voicing_profile": null
+          },
+          "timing": {
+            "bpm": 240.0,
+            "hold": {
+              "Bars": 1
+            }
+          },
+          "touch": "Block"
+        },
+        "occurrence_id": 1,
+        "working_set_id": 1
+      },
+      "subject_id": "chord:Major"
+    }
+  ],
+  "history_count": 13,
+  "owner": 1,
+  "paused": false,
+  "program": {
+    "active_frames": 37760,
+    "beat_ticks": 3020,
+    "card_frames": 37760,
+    "card_index": 0,
+    "device_frame": 982016,
+    "epoch": 1,
+    "event_token": 1,
+    "status": "Playing"
+  },
+  "running": true,
+  "sample_rate": 48000,
+  "sealed_exact": true,
+  "set": {
+    "cards": [
+      {
+        "from": null,
+        "id": 1,
+        "label": "Guided chord",
+        "material": {
+          "Chord": {
+            "name": "Major",
+            "root": 9
+          }
+        },
+        "setting": {
+          "capo": null,
+          "fret_window": null,
+          "instrument": "Guitar",
+          "mark_mode": "Off",
+          "marked": [],
+          "tuning": "Standard",
+          "voicing_fingerprint": null,
+          "voicing_idx": null,
+          "voicing_profile": null
+        },
+        "timing": {
+          "bpm": 240.0,
+          "hold": {
+            "Bars": 1
+          }
+        },
+        "touch": "Block"
+      },
+      {
+        "from": null,
+        "id": 2,
+        "label": "Guided scale",
+        "material": {
+          "Scale": {
+            "name": "Minor Pentatonic",
+            "root": 9
+          }
+        },
+        "setting": {
+          "capo": null,
+          "fret_window": null,
+          "instrument": "Guitar",
+          "mark_mode": "Off",
+          "marked": [],
+          "tuning": "Standard",
+          "voicing_fingerprint": null,
+          "voicing_idx": null,
+          "voicing_profile": null
+        },
+        "timing": {
+          "bpm": 240.0,
+          "hold": {
+            "Seconds": 2.0
+          }
+        },
+        "touch": "Walk"
+      },
+      {
+        "from": null,
+        "id": 3,
+        "label": "Guided arpeggio",
+        "material": {
+          "Chord": {
+            "name": "Major",
+            "root": 9
+          }
+        },
+        "setting": {
+          "capo": null,
+          "fret_window": null,
+          "instrument": "Guitar",
+          "mark_mode": "Off",
+          "marked": [],
+          "tuning": "Standard",
+          "voicing_fingerprint": null,
+          "voicing_idx": null,
+          "voicing_profile": null
+        },
+        "timing": {
+          "bpm": 240.0,
+          "hold": {
+            "Reps": 1
+          }
+        },
+        "touch": {
+          "Arpeggiate": {
+            "direction": "UpDown",
+            "inversion": 0
+          }
+        }
+      }
+    ],
+    "cursor": 0,
+    "last_card_id": 3,
+    "loop_mode": "Card"
+  },
+  "transient_cleared": false
+}

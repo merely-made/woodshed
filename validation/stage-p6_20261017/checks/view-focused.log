@@ -1,0 +1,58 @@
+warning: patch `mere-proofs v0.1.0 (https://github.com/merely-made/mere.git?branch=main#d1e1d7aa)` was not used in the crate graph
+warning: patch `mere-transport v0.0.2 (https://github.com/merely-made/murm.git?branch=main#cba46d85)` was not used in the crate graph
+warning: patch `mere-webrtc-carrier v0.0.1 (https://github.com/merely-made/murm.git?branch=main#cba46d85)` was not used in the crate graph
+help: Check that the patched package version and available features are compatible
+      with the dependency requirements. If the patch has a different version from
+      what is locked in the Cargo.lock file, run `cargo update` to use the new
+      version. This may also occur with an optional dependency that is not enabled.
+   Compiling sceno v0.0.5 (https://github.com/merely-made/mere.git?branch=main#d1e1d7aa)
+   Compiling mere-curation v0.1.1 (https://github.com/merely-made/mere.git?branch=main#d1e1d7aa)
+   Compiling tinct v0.2.0 (https://github.com/merely-made/mere.git?branch=main#d1e1d7aa)
+   Compiling scenograph v0.0.4 (https://github.com/merely-made/mere.git?branch=main#d1e1d7aa)
+   Compiling command-menu v0.1.0 (https://github.com/merely-made/mere.git?branch=main#d1e1d7aa)
+   Compiling muniment v0.1.2 (https://github.com/merely-made/mere.git?branch=main#d1e1d7aa)
+   Compiling sprigging v0.2.1 (https://github.com/merely-made/mere.git?branch=main#d1e1d7aa)
+   Compiling scenomise v0.0.5 (https://github.com/merely-made/mere.git?branch=main#d1e1d7aa)
+   Compiling chartulary v0.2.2 (https://github.com/merely-made/mere.git?branch=main#d1e1d7aa)
+   Compiling cambium v0.3.3 (https://github.com/merely-made/mere.git?branch=main#d1e1d7aa)
+   Compiling numen v0.2.0 (https://github.com/merely-made/mere.git?branch=main#d1e1d7aa)
+   Compiling hocket-model v0.1.0 (/Users/markik/Code/repos/woodshed/crates/hocket-model)
+   Compiling mere-forme v0.2.0 (https://github.com/merely-made/mere.git?branch=main#d1e1d7aa)
+   Compiling cambium-winit v0.3.0 (https://github.com/merely-made/mere.git?branch=main#d1e1d7aa)
+   Compiling inker v0.1.1 (https://github.com/merely-made/mere.git?branch=main#d1e1d7aa)
+   Compiling tabard v0.0.2 (https://github.com/merely-made/mere.git?branch=main#d1e1d7aa)
+   Compiling scenotime v0.0.4 (https://github.com/merely-made/mere.git?branch=main#d1e1d7aa)
+   Compiling hocket-project v0.1.0 (/Users/markik/Code/repos/woodshed/crates/hocket-project)
+   Compiling mere-kernel v0.0.2 (https://github.com/merely-made/mere.git?branch=main#d1e1d7aa)
+   Compiling document-canvas v0.1.0 (https://github.com/merely-made/mere.git?branch=main#d1e1d7aa)
+   Compiling cambium-rootstock v0.1.0 (https://github.com/merely-made/mere.git?branch=main#d1e1d7aa)
+   Compiling mere-fleece v0.0.1 (https://github.com/merely-made/mere.git?branch=main#d1e1d7aa)
+   Compiling woodshedding v0.1.0 (/Users/markik/Code/repos/woodshed/crates/woodshedding)
+   Compiling chirograph v0.0.2 (https://github.com/merely-made/mere.git?branch=main#d1e1d7aa)
+   Compiling woodshed-graph v0.1.0 (/Users/markik/Code/repos/woodshed/crates/woodshed-graph)
+   Compiling seiche v0.0.6 (https://github.com/merely-made/mere.git?branch=main#d1e1d7aa)
+   Compiling mere-document-lanes v0.1.0 (https://github.com/merely-made/mere.git?branch=main#d1e1d7aa)
+   Compiling cambium-winit-a11y v0.3.0 (https://github.com/merely-made/mere.git?branch=main#d1e1d7aa)
+   Compiling mere-cartography v0.0.2 (https://github.com/merely-made/mere.git?branch=main#d1e1d7aa)
+   Compiling hocket-recorder v0.1.0 (/Users/markik/Code/repos/woodshed/crates/hocket-recorder)
+   Compiling esp v0.1.0 (https://github.com/merely-made/mere.git?branch=main#d1e1d7aa)
+   Compiling woodshed-core v0.1.0 (/Users/markik/Code/repos/woodshed/crates/woodshed-core)
+   Compiling cambium-genet-winit-host v0.1.0 (https://github.com/merely-made/mere.git?branch=main#d1e1d7aa)
+   Compiling pictograph v0.2.0 (https://github.com/merely-made/mere.git?branch=main#d1e1d7aa)
+   Compiling mere-persona-picker v0.0.1 (https://github.com/merely-made/mere.git?branch=main#d1e1d7aa)
+   Compiling hocket-views v0.1.0 (/Users/markik/Code/repos/woodshed/crates/hocket-views)
+   Compiling tabard-workshop v0.0.1 (https://github.com/merely-made/mere.git?branch=main#d1e1d7aa)
+   Compiling woodshed-views v0.1.0 (/Users/markik/Code/repos/woodshed/crates/woodshed-views)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1m 06s
+     Running unittests src/lib.rs (target/build/debug/deps/woodshed_views-94869b58171f5855)
+
+running 6 tests
+test stage::rehearsal::rehearsal_tests::adjacent_context_matches_explicit_navigation_and_wraps_only_all ... ok
+test stage::rehearsal::rehearsal_tests::progress_and_context_fit_compact_rehearsal_layout ... ok
+test stage::rehearsal::rehearsal_tests::filmstrip_selection_queues_seek_during_managed_run ... ok
+test stage::rehearsal::rehearsal_tests::progress_uses_matching_projection_and_lowered_hold_units ... ok
+test stage::rehearsal::rehearsal_tests::rename_field_space_and_arrows_do_not_control_rehearsal_or_move_the_card ... ok
+test stage::rehearsal::rehearsal_tests::transport_buttons_are_keyboard_operable_for_run_pause_resume_seek_loop_and_stop ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 230 filtered out; finished in 4.30s
+

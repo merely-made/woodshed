@@ -1,0 +1,17 @@
+{
+  "source_revision": "d955f5dc3b99ec1efd6ec9a56dd3ba007755409e",
+  "observations": [
+    "After scenario completion, preservation panel remained visible with three authored Cards.",
+    "Cancel returned to the three-Card Rehearsal.",
+    "Native macOS close button reopened the preservation panel.",
+    "Retry save left the panel and three Cards unchanged.",
+    "Explicit Discard unsaved practice and close exited the owned process."
+  ],
+  "process_pid": 25036,
+  "process_exited": true,
+  "original_quarantined_files_unchanged": true,
+  "original_hashes": {
+    "practice.bin": "dcbd9b9cf320194f5609f4fb0835d3d6d8da88d8e4d92bbbdc0758d3a578ffe5"
+  },
+  "input_method": "CUA native accessibility actions; final process state and byte hashes independently checked"
+}

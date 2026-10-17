@@ -1,0 +1,46 @@
+settle 90
+ui-zoom 1
+assert snap practice-saved == false
+assert snap practice-save-problem == true
+act p5clock-device-clock-example
+settle 5
+assert snap set-cards == 3
+click .workspace-panel Set
+settle 5
+capture 01_quarantined_live_cards
+click .pill Settings
+settle 3
+click .t-btn Switch persona
+settle 5
+capture 02_persona_roster
+click .command-item @data-key=default
+settle 5
+assert text Keep outgoing practice before switching persona
+assert snap set-cards == 3
+capture 03_outgoing_retained
+click .persona-save-retry
+settle 5
+assert snap set-cards == 3
+assert snap practice-save-problem == true
+capture 04_retry_retains_work
+click .persona-save-cancel
+settle 5
+assert text Switch persona
+click .workspace-panel Set
+settle 4
+assert snap set-cards == 3
+capture 05_cancel_keeps_work
+click .pill Settings
+settle 3
+click .t-btn Switch persona
+settle 3
+click .command-item @data-key=default
+settle 4
+assert text Keep outgoing practice before switching persona
+click .persona-save-discard
+settle 6
+assert snap set-cards == 0
+assert snap practice-saved == false
+assert snap practice-save-problem == true
+capture 06_explicit_discard_reopens_quarantine
+log Persona preservation retry cancel and explicit discard exercised through visible controls

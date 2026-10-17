@@ -1,0 +1,20 @@
+{
+  "all_owned_app_processes_exited": true,
+  "keeper_exited": true,
+  "keeper_original_file_hashes_unchanged": true,
+  "keeper_original_file_count": 4,
+  "original_quarantined_files_unchanged": true,
+  "original_quarantined_hashes": {
+    "practice.bin": "dcbd9b9cf320194f5609f4fb0835d3d6d8da88d8e4d92bbbdc0758d3a578ffe5"
+  },
+  "excluded_attempts": [
+    "close-reopen: wrong assertion grammar",
+    "close-reopen-final: wrong assertion grammar"
+  ],
+  "qualified_phases": [
+    "seed",
+    "reopen",
+    "close",
+    "quarantine-reopen"
+  ]
+}

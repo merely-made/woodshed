@@ -1,0 +1,32 @@
+{
+  "app": "/Users/markik/Code/testing/woodshed/preservation-20261017/native-v2/woodshed-reopen/AcceptanceWoodshedWoodshedReopenNativev2.app",
+  "env": {
+    "WOODSHED_SCENARIO": "/Users/markik/Code/testing/woodshed/preservation-20261017/native-v2/woodshed-reopen/scenario.scn",
+    "WOODSHED_CAPTURE_DIR": "/Users/markik/Code/testing/woodshed/preservation-20261017/native-v2/woodshed-reopen",
+    "WOODSHED_RECEIPT": "/Users/markik/Code/testing/woodshed/preservation-20261017/native-v2/woodshed-reopen/scenario.done",
+    "WOODSHED_PRESENTATION_TIMEOUT_SECS": "60",
+    "WOODSHED_WIDTH": "1180",
+    "WOODSHED_HEIGHT": "1000",
+    "TMPDIR": "/tmp",
+    "CAMBIUM_HOST_FRAME_TRACE": "1",
+    "WOODSHED_STATE": "/Users/markik/Code/testing/woodshed/preservation-20261017/native-v2/woodshed-profile/practice.bin",
+    "WOODSHED_SETTINGS": "/Users/markik/Code/testing/woodshed/preservation-20261017/native-v2/woodshed-profile/settings.json",
+    "GRAPHSHELL_APP_ENDPOINT": "/tmp/ws-preserve-1017-v2.sock",
+    "XDG_DATA_HOME": "/Users/markik/Code/testing/woodshed/preservation-20261017/native-v2/data",
+    "XDG_CONFIG_HOME": "/Users/markik/Code/testing/woodshed/preservation-20261017/native-v2/config",
+    "XDG_CACHE_HOME": "/Users/markik/Code/testing/woodshed/preservation-20261017/native-v2/cache",
+    "MERE_ROOT": "/Users/markik/Code/testing/woodshed/preservation-20261017/native-v2/mere"
+  },
+  "source": {
+    "revision": "cec221348154fc8e6abe3f6136f00b14f9860b78",
+    "worktree": "",
+    "binaries": {
+      "woodshed": "e238473b7b88de2d2d0056031cf67b578e392a57538ad45cde63550967dca9f0",
+      "hocket": "32b6d2c7b0ffaf428308790cfaef4b40dd0125fc7daa9264da197b19f41c1e4e",
+      "redshank": "9e36bd094dcade1f39bb42b9a3473e7417fed2d8fa04e17a060bd01f1be8cd89"
+    },
+    "source_hashes_sha256": "a69befe03de4eadb88ab91a5a7a9228fbdad260937d1f14b5c59d347d4a35513"
+  },
+  "scenario_sha256": "e0d4756d3593893594f2ae28ae90c5cacfbe4ec181b82dfd044ef1689c149d7f",
+  "binary_sha256": "e238473b7b88de2d2d0056031cf67b578e392a57538ad45cde63550967dca9f0"
+}
