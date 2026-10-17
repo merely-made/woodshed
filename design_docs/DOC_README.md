@@ -1,3 +1,5 @@
+- [Independent progression document blocks](2026-07-11_stage_set_tools_plan.md#shared-scene-prototype-review-2026-10-17) — Current-source second-consumer proof for the shared Djot scene-document codec: real Card/rest/voicing facts round-trip without changing a Set, and Graphshell receives the actual export. Local supplier cohort only; native Woodshed block authoring and canonical dependency integration remain separate. [Receipt](../validation/document-blocks_20261017/receipt.json).
+
 # design_docs Index
 
 Rust policy (2026-10-13): working toolchain 1.99.0 and shared MSRV 1.97.1, qualified separately. Canonical policy: `mere/design_docs/2026-08-12_family_composition_thesis_brief.md`, section "Shared Rust toolchain and minimum version".

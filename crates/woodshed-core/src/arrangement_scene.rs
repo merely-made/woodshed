@@ -296,6 +296,20 @@ mod tests {
         )
     }
     #[test]
+    fn real_arrangement_round_trips_as_editable_djot_without_changing_its_set() {
+        let (stage, set, arrangement) = fixture();
+        let before = serde_json::to_value(&set).unwrap();
+        let document = arrangement_scene(&stage, &set, &arrangement, "study").unwrap();
+        let source = crate::arrangement_document::to_djot(&document).unwrap();
+        assert_eq!(crate::arrangement_document::from_djot(&source).unwrap(), document);
+        assert_eq!(serde_json::to_value(&set).unwrap(), before);
+        let mut changed = document.clone(); changed.primary.title = "Edited independent arrangement".into();
+        let next = crate::arrangement_document::to_djot(&changed).unwrap();
+        assert_eq!(crate::arrangement_document::from_djot(&next).unwrap(), changed);
+        assert_eq!(crate::arrangement_document::from_djot(&source).unwrap(), document);
+    }
+
+    #[test]
     fn repeated_tonics_keep_card_identity_and_different_saved_voicings() {
         let (stage, set, arrangement) = fixture();
         let before = serde_json::to_value(&set).unwrap();

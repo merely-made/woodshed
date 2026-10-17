@@ -4379,3 +4379,33 @@ reviewed captures, exact sealed take reopening and three byte-identical actual/
 reference WAVs. Fixture dispatch and wait errors in native-v1/v2 remain excluded.
 The canonical receipt is `validation/stage-p7a_20261017/`; no supplier repin or
 physical-input claim is included. Full P7 and P8 retain their explicit scope.
+
+### Shared scene prototype review (2026-10-17)
+
+Mark requests a prompted audit and refinement of these prototypes. Qualification
+above establishes observed behavior, not final product design. Track questions
+and explicit answers in
+`mere/design_docs/mere_docs/implementation_strategy/2026-08-15_projection_grammar_adoption_plan.md`,
+section "Shared scene prototype design review (2026-10-17)". Review shared
+vocabulary, arrangement versus playback meaning, template limits, saving,
+history and placement interactions before treating the current choices as
+settled. The initial 22-prompt audit is now answered; detailed future playback and holding-utility interactions remain open.
+
+Prompt 9 is answered verbatim in that record: an arrangement can drive playback
+when explicitly chosen for practice, alongside the existing Set-order path.
+The current separate alignment/playback implementation is therefore a prototype
+boundary to refine, not the final product behavior. Playback details remain open;
+do not infer clock conversion or live-edit semantics from this answer.
+
+
+The prompt-22 document-block slice validates Woodshed as the second concrete
+consumer: the existing arrangement exporter can emit/read an independent
+`progression` Djot block containing the existing versioned scene-document JSON.
+Card/rest spans and linked voicings round-trip exactly; reading/editing the copy
+does not mutate its source Set or select playback. Graphshell uses its same
+portable scene admission/surface for this exported block. This is a codec and
+concrete consumer proof, not a new textual music grammar or a native Woodshed
+block-composition interface. See
+`validation/document-blocks_20261017/receipt.json` for the current-source local
+supplier cohort checks. The source dependency patch is temporary; canonical
+lockfile integration and new native Woodshed acceptance remain separate.
