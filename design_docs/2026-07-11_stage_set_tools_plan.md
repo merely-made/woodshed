@@ -2362,8 +2362,13 @@ probe then opened in approximately 59 ms and received 96,256 samples over two
 seconds. The host now resolves authorization before HAL setup, distinguishes
 consent waiting from recording, and starts the ten-second hardware bound only
 after consent. Cancelled reservations remain cancelled after late approval.
-The 700-case affected gate plus five child invocations passes; actual committed
-15-second selected-Card recording and fresh reopening remain pending below the
+The 700-case affected gate plus five child invocations passes. Committed candidate
+`10486bc` passed 15.066 seconds of actual recording pinned to Card 2, advancing
+722,944 native output frames with clear capture integrity. The resulting
+54,000-frame phrase retained owner, Seconds clock and exact decoded PCM through
+sealed fresh reopening without input admission. Native seed/reopen workers and a
+separate sealed-profile reference produced byte-identical WAVs; the reference
+adds one executed test. Four captures were reviewed. Local only; see the
 [CoreAudio receipt](../validation/coreaudio-input_20261017/README.md). All Git
 supplier identities and prior dependency edges remain unchanged.
 

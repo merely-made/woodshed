@@ -1,0 +1,103 @@
+{
+  "schema": "woodshed-coreaudio-input-receipt/v1",
+  "source": {
+    "revision": "10486bcea3248ccd6adc80e55135435b9880ceca",
+    "worktree": "",
+    "binaries": {
+      "woodshed": "c4a60fe1ae65dd3f12472eafed48eba988432be56c473f0a0c84b7207603ee49"
+    },
+    "source_hashes_sha256": "490eab63aaa8791e9afb5693caacbca64b4b949aba622fbaf87bfdfb70d12218"
+  },
+  "native_complete": true,
+  "capture": [
+    {
+      "bars": 0,
+      "beats": 3,
+      "bpm": 180.0,
+      "frames": 54000,
+      "id": {
+        "card": 2,
+        "set": 1
+      },
+      "legacy_clock": false,
+      "pcm_bits_digest": "457c7ff90318a7ba151f19803c20aaaba3c3e5eae6ecf4455688a40f7fbc21f0",
+      "rate": 48000,
+      "sealed_pcm_exact": true,
+      "seconds": 1.125
+    }
+  ],
+  "capture_dwell_seconds": 15.066362,
+  "output_frame_advance": 722944,
+  "fresh_reopen": {
+    "exact_keys": [
+      "set",
+      "owner",
+      "looper",
+      "saved_backing",
+      "manifest",
+      "captures",
+      "admitted",
+      "backend_admitted",
+      "requested",
+      "selected",
+      "wav_frames",
+      "wav_digest"
+    ],
+    "sealed_exact": true,
+    "worker_wav_exact": true,
+    "input_unopened": true,
+    "playing": false
+  },
+  "export": {
+    "rate": 48000,
+    "frames": 132000,
+    "sha256": "1464e818a97c562470989892e6cc60a867fc27a6662c178b10510288dd223acb",
+    "native_seed_reopen_and_separate_reference_byte_identical": true,
+    "captured_input_contributes_signal": true
+  },
+  "native_tool_observations": [
+    "Warmup closed normally after consent; actual native worker open returned.",
+    "CUA timeouts and AX cannotComplete errors occurred; seed and reopen nevertheless launched, passed scenarios, and exited.",
+    "Initial historical-profile clone refused before copying; fresh warmup and seed profiles used."
+  ],
+  "artifacts_external": "/Users/markik/Code/testing/woodshed/coreaudio-admission-20261017/native-v1",
+  "raw_audio_in_git": false,
+  "publication": "local only",
+  "captures": [
+    {
+      "phase": "seed",
+      "name": "01_backing_before_microphone.png",
+      "sha256": "be7c0da647b83a092f4c2c345c6e4bde8242ecff123152658d25ccdda6edcf65",
+      "path": "/Users/markik/Code/testing/woodshed/coreaudio-admission-20261017/native-v1/seed/01_backing_before_microphone.png"
+    },
+    {
+      "phase": "seed",
+      "name": "02_live_input_recording.png",
+      "sha256": "03fed56327d51cf4df2437484aa17f772c7bfa2d65b68892c84c6b4920fe6a00",
+      "path": "/Users/markik/Code/testing/woodshed/coreaudio-admission-20261017/native-v1/seed/02_live_input_recording.png"
+    },
+    {
+      "phase": "seed",
+      "name": "03_actual_microphone_take_saved.png",
+      "sha256": "d1620eb27797e918849d6b931ba23d5f3c24d4ba7aab8776ae574531d3673396",
+      "path": "/Users/markik/Code/testing/woodshed/coreaudio-admission-20261017/native-v1/seed/03_actual_microphone_take_saved.png"
+    },
+    {
+      "phase": "reopen",
+      "name": "01_actual_microphone_take_reopened.png",
+      "sha256": "1c22cc23ef7cdd7448c755438bc1437618138d067677b0c6408268a2c6080b34",
+      "path": "/Users/markik/Code/testing/woodshed/coreaudio-admission-20261017/native-v1/reopen/01_actual_microphone_take_reopened.png"
+    }
+  ],
+  "review": {
+    "reviewer": "Dalton",
+    "blocking_mismatch": false,
+    "four_images_reviewed": true,
+    "seed_reopen_metadata_compared": true,
+    "actual_worker_wav_hashes_compared": true,
+    "limitation": "Reviewer did not independently decode sealed PCM; product verifier performed exact float-bit checks.",
+    "polish": "Active caption reads Record Recording Card 2."
+  },
+  "native_reopen_whole_profile_bytes_unchanged": false,
+  "native_reopen_profile_semantics_exact": true
+}

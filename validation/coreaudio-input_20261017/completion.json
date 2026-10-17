@@ -1,0 +1,25 @@
+{
+  "scenario_passed": true,
+  "exact_reopen_keys": [
+    "set",
+    "owner",
+    "looper",
+    "saved_backing",
+    "manifest",
+    "captures",
+    "admitted",
+    "backend_admitted",
+    "requested",
+    "selected",
+    "wav_frames",
+    "wav_digest"
+  ],
+  "worker_wav_sha256": "1464e818a97c562470989892e6cc60a867fc27a6662c178b10510288dd223acb",
+  "owned_apps_exited": true,
+  "owned_keeper_exited": true,
+  "keeper_original_fixture_files_unchanged": true,
+  "capture_companions_unchanged": true,
+  "profile_read_only_during_separate_reference": true,
+  "raw_audio_local_only": true,
+  "bundle_id": "made.merely.woodshed.acceptance.coreaudio20261017"
+}

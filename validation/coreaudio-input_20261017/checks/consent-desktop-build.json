@@ -1,0 +1,15 @@
+{
+  "command": [
+    "cargo",
+    "build",
+    "--offline",
+    "--locked",
+    "-p",
+    "woodshed-genet"
+  ],
+  "cwd": "/Users/markik/Code/repos/woodshed",
+  "started_utc": "2026-10-17T19:49:13.620432+00:00",
+  "ended_utc": "2026-10-17T19:49:28.908747+00:00",
+  "exit_code": 0,
+  "suites": []
+}

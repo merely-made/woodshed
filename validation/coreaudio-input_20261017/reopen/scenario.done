@@ -1,0 +1,6 @@
+RESULT ok
+captured 01_actual_microphone_take_reopened
+Physical microphone take sealed PCM and worker WAV fresh reopen verified
+capture 01_actual_microphone_take_reopened 2360x2000 digest=98c9e7aa86686b30 file=/Users/markik/Code/testing/woodshed/coreaudio-admission-20261017/native-v1/reopen/01_actual_microphone_take_reopened.png
+frames: 1 captured, 0 blank, 1 distinct digests
+presentation: 117 frames, 118 redraws, 1 unpresented redraws

@@ -1,0 +1,17 @@
+{
+  "native_seed_reopen_and_separate_reference_byte_identical": true,
+  "wav_sha256": "1464e818a97c562470989892e6cc60a867fc27a6662c178b10510288dd223acb",
+  "captured_input_contributes_signal": true,
+  "profile_hashes_before": {
+    "settings.json": "eca48450b4c62a1c5820e0cd406f2456273858b07aff631debd6419def258f79",
+    "practice.bin": "05f1d2d88edd70b04d530852b20a0f0b44ed8bb4d9c9706ac5e1c2c7529601c7",
+    "practice.loop-pcm/fe2786a146dac9aba78606b1ba28fd6c/ad69f52dfb97fbe208cd724f14f896b963dde6ff3d4a3e83c3706b4bd47d9765.bin": "099002251655e4341ef8a76a6afb977616c5ae6b01433b1b3dd6cf569c9de161"
+  },
+  "profile_hashes_after": {
+    "settings.json": "eca48450b4c62a1c5820e0cd406f2456273858b07aff631debd6419def258f79",
+    "practice.bin": "05f1d2d88edd70b04d530852b20a0f0b44ed8bb4d9c9706ac5e1c2c7529601c7",
+    "practice.loop-pcm/fe2786a146dac9aba78606b1ba28fd6c/ad69f52dfb97fbe208cd724f14f896b963dde6ff3d4a3e83c3706b4bd47d9765.bin": "099002251655e4341ef8a76a6afb977616c5ae6b01433b1b3dd6cf569c9de161"
+  },
+  "profile_unchanged": true,
+  "raw_audio_local_only": true
+}

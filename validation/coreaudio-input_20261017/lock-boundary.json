@@ -1,0 +1,18 @@
+{
+  "added": [
+    [
+      "objc2-av-foundation",
+      "0.3.2",
+      "registry+https://github.com/rust-lang/crates.io-index"
+    ]
+  ],
+  "removed": [],
+  "changed": [
+    [
+      "woodshed-genet",
+      "0.1.0",
+      ""
+    ]
+  ],
+  "all_existing_supplier_and_dependency_records_retained_except_host_direct_deps": true
+}
