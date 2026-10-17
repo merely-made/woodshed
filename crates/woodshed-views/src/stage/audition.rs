@@ -65,6 +65,13 @@ impl UiState {
                     .observation
                     .as_ref()
                     .map(|observation| {
+                        let label = observation
+                            .provenance
+                            .as_ref()
+                            .and_then(|p| p.card_snapshot.get("label"))
+                            .and_then(|value| value.as_str())
+                            .filter(|label| !label.trim().is_empty())
+                            .unwrap_or("Selected material");
                         observation
                             .provenance
                             .as_ref()
@@ -75,11 +82,11 @@ impl UiState {
                                 p.working_set_id.map(|owner| {
                                     format!(
                                         "{} · Set {} · Card {}",
-                                        observation.subject_id, owner.0, p.occurrence_id.0
+                                        label, owner.0, p.occurrence_id.0
                                     )
                                 })
                             })
-                            .unwrap_or_else(|| observation.subject_id.clone())
+                            .unwrap_or_else(|| label.to_string())
                     })
                     .unwrap_or_else(|| "Selected material".into());
                 self.audition_notice = Some(format!("{source}: {reason}"));
