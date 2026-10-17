@@ -1,0 +1,11 @@
+RESULT ok
+captured 01_move_preview
+captured 02_edges_and_keyboard
+captured 03_compact_rest_preview
+captured 04_compact_saved
+capture 01_move_preview 2360x2200 digest=7c1d0a8f26cd4786 file=/Users/markik/Code/testing/woodshed/arrangement-spans-20261016/seed-v3/01_move_preview.png
+capture 02_edges_and_keyboard 2360x2200 digest=04b73eb82c7bb535 file=/Users/markik/Code/testing/woodshed/arrangement-spans-20261016/seed-v3/02_edges_and_keyboard.png
+capture 03_compact_rest_preview 840x2200 digest=6ff14aa19021c82c file=/Users/markik/Code/testing/woodshed/arrangement-spans-20261016/seed-v3/03_compact_rest_preview.png
+capture 04_compact_saved 840x2200 digest=9552b250530399e4 file=/Users/markik/Code/testing/woodshed/arrangement-spans-20261016/seed-v3/04_compact_saved.png
+frames: 4 captured, 0 blank, 4 distinct digests
+presentation: 229 frames, 232 redraws, 3 unpresented redraws

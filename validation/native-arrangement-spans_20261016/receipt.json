@@ -1,0 +1,52 @@
+{
+  "date": "2026-10-16",
+  "status": "qualified native Card/rest span manipulation and sealed fresh-process reopening on this macOS host",
+  "source": {
+    "source": "b3afe76a655b9ce6f08cd08d2b73ff3ec5a0588e",
+    "mere": "d1e1d7aaed1b2b3f99fceca6fa7301ab09f5aa46",
+    "lock_sha256": "5d5992edd62d430f7d3c2bc848a9ecfd6054421bf32f4d4329638075893fb0cf",
+    "binary_sha256": "997712b21c679d3158100000a7c448c4800024c43b481b9ba7fa52303bb7e16a"
+  },
+  "shared_surface_tests": 6,
+  "consumer_tests": {
+    "command": "cargo test -p woodshed-genet -p woodshed-views --locked arrangement",
+    "native_host_passed": 3,
+    "views_passed": 11,
+    "locked_desktop_build": "passed"
+  },
+  "native": {
+    "seed_presented_frames": 229,
+    "reopen_presented_frames": 94,
+    "reviewed_captures": 5,
+    "profile": "/Users/markik/Code/testing/woodshed/arrangement-spans-20261016/profile",
+    "custody": "isolated synthetic passphrase-backed real Keeper",
+    "helper": {
+      "source": "c867737f80c6a924a25f87273f0801a89909b3fb",
+      "lock_sha256": "95210c388525ce55f9865a415625996ccd1040cca52ca6cbab27628b4b83caff",
+      "binary_sha256": "a05212f205e05a2037c57bd23de7e50ca34781964bc5dd6aab5ba5cda010a48e"
+    }
+  },
+  "observations": [
+    "Captured body and both edge gestures, one-beat snapping, Escape and keyboard movement pass in the actual native app.",
+    "Windowless native route tests also exercise Shift/Alt edge editing and the visible buttons at wide/compact widths.",
+    "Cancellation preserves the entire Set and portable document exactly.",
+    "Only Card 2 start/length and rest 1 start change after the baseline. Card instructions, role bindings, expected spans and all other Set fields are identical.",
+    "Live/sealed Sets and the entire portable document match after fresh-process reopening. Selection remains transient.",
+    "Ordinary form reconstruction preserves gestures; actual draft/source changes, owner/panel switches, capture loss and viewport changes invalidate them."
+  ],
+  "initial_failure": "initial/ preserves the first native refusal and route regression: conditional notice removal retired capture, and field access during view reconstruction cancelled preview. Stable notice slots and content-signature invalidation fix both.",
+  "scope": "Scene alignment authoring on macOS in device-free audio mode. Shared geometry is checked against progression/metre specimens; no shared source-edit intent API, Knot metre editing or new Graphshell editing route is claimed.",
+  "integration": {
+    "source": "2ad31ea571d8d45d2068b68024dee2301a29de15",
+    "preserved_concurrent_main": "21d0c2e",
+    "native_host_tests": 3,
+    "view_tests": 11,
+    "locked_desktop_build": "passed",
+    "byte_identical_to_native_capture_source": [
+      "Cargo.lock",
+      "crates/woodshed-views/src/stage/arrangement_editor.rs",
+      "crates/woodshed-genet/src/arrangement.rs"
+    ],
+    "native_capture_source": "b3afe76a655b9ce6f08cd08d2b73ff3ec5a0588e"
+  }
+}

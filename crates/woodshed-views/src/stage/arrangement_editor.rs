@@ -2,7 +2,7 @@
 use super::{UiChild, UiState, WorkspacePanel};
 use cambium::{
     BackdropSceneEvent, TextInput, backdrop_scene_reading, clickable, custom_leaf, el, map_state,
-    on_pointer, text, text_field,
+    on_key, on_pointer, text, text_field,
 };
 use pictograph::canvas::backdrop_surface::{BackdropSurface, SurfaceTheme};
 use scenomise::document::SceneDocument;
@@ -47,6 +47,7 @@ impl ArrangementSurfaces {
             })
             .flatten();
         let mut primary = surface(&doc.primary)?;
+        primary.show_span_handles = true;
         if let Some(key) = selection {
             let _ = primary.select(Some(&key));
         }
@@ -264,6 +265,88 @@ impl Draft {
         Ok(next)
     }
 }
+/// Local musical edit semantics. Portable documents carry facts, not write authority.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum SpanAction {
+    Move,
+    Start,
+    End,
+}
+impl SpanAction {
+    fn apply(self, original: Span, delta: f32, extent: u32) -> Span {
+        let end = original.start + original.length;
+        let snap = |v: f32| ((v / 4.0).round() * 4.0).clamp(0.0, extent as f32) as u32;
+        match self {
+            Self::Move => Span {
+                start: snap(original.start as f32 + delta).min(extent - original.length),
+                ..original
+            },
+            Self::Start => {
+                let start = snap(original.start as f32 + delta).min(end - 1);
+                Span {
+                    start,
+                    length: end - start,
+                }
+            },
+            Self::End => {
+                let end = snap(end as f32 + delta).max(original.start + 1);
+                Span {
+                    start: original.start,
+                    length: end - original.start,
+                }
+            },
+        }
+    }
+}
+#[derive(Clone, Debug)]
+struct SpanGesture {
+    owner: WorkingSetId,
+    key: String,
+    action: SpanAction,
+    original: Span,
+    proposed: Span,
+    origin_x: f32,
+    ticks_per_pixel: f32,
+    size: (f32, f32),
+    pointer: i32,
+    draft_signature: String,
+    source_signature: String,
+    extent: u32,
+    viewport_width: f32,
+}
+impl Draft {
+    fn occurrence_span(&self, key: &str) -> Option<Span> {
+        let card = self
+            .cards
+            .iter()
+            .any(|id| self.placed.contains(id) && key == format!("card-{}", id.0));
+        let rest = self.rests.iter().any(|k| key == format!("rest-{k}"));
+        (card || rest).then(|| self.span(key).ok()).flatten()
+    }
+    fn candidate_span(&self, set: &Set, key: &str, span: Span) -> Result<Set, String> {
+        self.occurrence_span(key)
+            .ok_or("Select a placed Card or rest to edit")?;
+        let mut next = self.candidate(set)?;
+        let alignment = &mut next.progression_arrangement.as_mut().unwrap().alignment;
+        if let Some(card) = alignment
+            .cards
+            .iter_mut()
+            .find(|c| key == format!("card-{}", c.card.0))
+        {
+            card.placement.as_mut().ok_or("Card is unplaced")?.span = span;
+        } else if let Some(rest) = alignment
+            .rests
+            .iter_mut()
+            .find(|r| key == format!("rest-{}", r.key))
+        {
+            rest.placement.span = span;
+        } else {
+            return Err("Occurrence is no longer in the draft".into());
+        }
+        saved_arrangement_scene(&next, "native-span-validation")?;
+        Ok(next)
+    }
+}
 #[derive(Default)]
 pub struct ArrangementEditor {
     pub drafts: BTreeMap<WorkingSetId, Draft>,
@@ -272,15 +355,25 @@ pub struct ArrangementEditor {
     signature: String,
     pub notice: Option<String>,
     pub close_pending: bool,
+    gesture: Option<SpanGesture>,
 }
 impl ArrangementEditor {
+    pub fn preview_active(&self) -> bool {
+        self.gesture.is_some()
+    }
     pub fn dirty(&self) -> bool {
         self.drafts.values().any(Draft::dirty)
+            || self
+                .gesture
+                .as_ref()
+                .is_some_and(|g| g.original != g.proposed)
     }
     pub fn field(&self, owner: WorkingSetId, key: &str) -> Option<&TextInput> {
         self.drafts.get(&owner)?.fields.get(key)
     }
     pub fn field_mut(&mut self, owner: WorkingSetId, key: &str) -> Option<&mut TextInput> {
+        // map_state also borrows fields while rebuilding an unchanged view.
+        // Actual text changes invalidate the captured draft signature in sync.
         self.drafts.get_mut(&owner)?.fields.get_mut(key)
     }
 }
@@ -336,6 +429,7 @@ impl UiState {
         self.sync_arrangement_scene();
     }
     pub fn reload_arrangement(&mut self) {
+        self.arrangement_editor.gesture = None;
         let owner = self.working_sets.active_id;
         self.arrangement_editor.drafts.remove(&owner);
         self.arrangement_editor.signature.clear();
@@ -343,6 +437,7 @@ impl UiState {
         self.sync_arrangement_scene();
     }
     pub fn save_arrangement(&mut self) {
+        self.commit_arrangement_gesture();
         let result = (|| {
             let d = self
                 .arrangement_editor
@@ -364,6 +459,14 @@ impl UiState {
         }
     }
     pub fn sync_arrangement_scene(&mut self) {
+        if self
+            .arrangement_editor
+            .gesture
+            .as_ref()
+            .is_some_and(|g| !self.arrangement_gesture_current(g))
+        {
+            self.arrangement_editor.gesture = None;
+        }
         if self.workspace.active_panel() != Some(WorkspacePanel::Arrangement) {
             return;
         }
@@ -404,14 +507,19 @@ impl UiState {
             warning: rgba(palette.danger),
         };
         let signature = format!(
-            "{:?}|{}|{}",
+            "{:?}|{}|{}|{:?}",
             theme,
             serde_json::to_string(&self.set).unwrap_or_default(),
             self.arrangement_editor
                 .drafts
                 .get(&owner)
                 .map(Draft::signature)
-                .unwrap_or_default()
+                .unwrap_or_default(),
+            self.arrangement_editor
+                .gesture
+                .as_ref()
+                .filter(|g| g.proposed != g.original)
+                .map(|g| (&g.key, g.proposed))
         );
         if self.arrangement_editor.owner == Some(owner)
             && self.arrangement_editor.signature == signature
@@ -427,7 +535,13 @@ impl UiState {
             .drafts
             .get(&owner)
             .ok_or("Start an arrangement to preview it".to_string())
-            .and_then(|d| d.candidate(&self.set))
+            .and_then(|d| {
+                if let Some(g) = &self.arrangement_editor.gesture {
+                    d.candidate_span(&self.set, &g.key, g.proposed)
+                } else {
+                    d.candidate(&self.set)
+                }
+            })
             .and_then(|set| {
                 saved_arrangement_scene(&set, &format!("woodshed/working-set/{}", owner.0))
             });
@@ -452,7 +566,206 @@ impl UiState {
             },
         }
     }
+    fn arrangement_gesture_current(&self, g: &SpanGesture) -> bool {
+        self.workspace.active_panel() == Some(WorkspacePanel::Arrangement)
+            && self.viewport_width == g.viewport_width
+            && self.persona.is_none()
+            && !self.appearance.workshop_open
+            && self.working_sets.active_id == g.owner
+            && self
+                .arrangement_editor
+                .drafts
+                .get(&g.owner)
+                .is_some_and(|d| d.signature() == g.draft_signature)
+            && serde_json::to_string(&self.set).unwrap_or_default() == g.source_signature
+    }
+    fn commit_arrangement_gesture(&mut self) {
+        if let Some(g) = self.arrangement_editor.gesture.take() {
+            if self.arrangement_gesture_current(&g) && g.proposed != g.original {
+                let d = self.arrangement_editor.drafts.get_mut(&g.owner).unwrap();
+                match d.candidate_span(&self.set, &g.key, g.proposed) {
+                    Ok(_) => d.span_fields(&g.key, g.proposed),
+                    Err(e) => self.arrangement_editor.notice = Some(e),
+                }
+            }
+        }
+        self.sync_arrangement_scene();
+    }
+    pub fn cancel_arrangement_gesture(&mut self) {
+        self.arrangement_editor.gesture = None;
+        self.sync_arrangement_scene();
+    }
+    /// Captured pointer route. A preview never writes draft fields or saved data.
+    pub fn arrangement_pointer(&mut self, event: cambium::PointerEvent) {
+        use cambium::{PointerButton, PointerPhase};
+        if event.button != PointerButton::Primary {
+            return;
+        }
+        if event.phase == PointerPhase::Cancel {
+            if self
+                .arrangement_editor
+                .gesture
+                .as_ref()
+                .is_some_and(|g| g.pointer == event.pointer_id)
+            {
+                self.cancel_arrangement_gesture();
+            }
+            return;
+        }
+        if !event.local.0.is_finite()
+            || !event.local.1.is_finite()
+            || !event.size.0.is_finite()
+            || !event.size.1.is_finite()
+        {
+            return;
+        }
+        if event.phase == PointerPhase::Down {
+            self.cancel_arrangement_gesture();
+            let (key, geometry) = {
+                let surfaces = self.arrangement_editor.surfaces.borrow();
+                let Some(s) = &surfaces.primary else {
+                    return;
+                };
+                let (w, h) = (event.size.0.round() as u32, event.size.1.round() as u32);
+                let key = s
+                    .pick(event.local.0, event.local.1, w, h)
+                    .map(str::to_owned);
+                let geometry = key
+                    .as_ref()
+                    .and_then(|k| s.occurrence_rect(k, w, h))
+                    .and_then(|rect| {
+                        let a = s.scene_point(0.0, 0.0, w, h)?;
+                        let b = s.scene_point(1.0, 0.0, w, h)?;
+                        Some((rect, (b.x - a.x) * 4.0 / 47.0))
+                    });
+                (key, geometry)
+            };
+            self.arrangement_select(
+                key.clone()
+                    .map(BackdropSceneEvent::Select)
+                    .unwrap_or(BackdropSceneEvent::Clear),
+            );
+            if let (Some(key), Some((rect, ticks_per_pixel))) = (key, geometry) {
+                let owner = self.working_sets.active_id;
+                let Some(d) = self.arrangement_editor.drafts.get(&owner) else {
+                    return;
+                };
+                if let (Some(original), Ok(extent)) = (d.occurrence_span(&key), d.number("extent"))
+                {
+                    let edge = 8.0_f32.min(rect.width / 3.0);
+                    let action = if event.local.0 <= rect.x + edge {
+                        SpanAction::Start
+                    } else if event.local.0 >= rect.x + rect.width - edge {
+                        SpanAction::End
+                    } else {
+                        SpanAction::Move
+                    };
+                    self.arrangement_editor.gesture = Some(SpanGesture {
+                        owner,
+                        key,
+                        action,
+                        original,
+                        proposed: original,
+                        origin_x: event.local.0,
+                        ticks_per_pixel,
+                        size: event.size,
+                        pointer: event.pointer_id,
+                        draft_signature: d.signature(),
+                        source_signature: serde_json::to_string(&self.set).unwrap_or_default(),
+                        extent,
+                        viewport_width: self.viewport_width,
+                    });
+                }
+            }
+        } else if let Some(mut g) = self.arrangement_editor.gesture.take() {
+            if event.pointer_id != g.pointer {
+                self.arrangement_editor.gesture = Some(g);
+                return;
+            }
+            if event.phase != PointerPhase::Cancel
+                && self.arrangement_gesture_current(&g)
+                && event.size == g.size
+            {
+                let dx = event.local.0 - g.origin_x;
+                g.proposed = if dx.abs() < 3.0 {
+                    g.original
+                } else {
+                    g.action.apply(g.original, dx * g.ticks_per_pixel, g.extent)
+                };
+                self.arrangement_editor.gesture = Some(g);
+                if event.phase == PointerPhase::Up {
+                    self.commit_arrangement_gesture();
+                }
+            }
+        }
+        event.prop.prevent_default();
+        self.sync_arrangement_scene();
+    }
+    pub fn edit_arrangement_span(&mut self, action: SpanAction, beats: i32) {
+        self.cancel_arrangement_gesture();
+        let key = self
+            .arrangement_editor
+            .surfaces
+            .borrow()
+            .primary
+            .as_ref()
+            .and_then(|s| s.selected())
+            .map(str::to_owned);
+        let Some(key) = key else {
+            return;
+        };
+        let Some(d) = self
+            .arrangement_editor
+            .drafts
+            .get_mut(&self.working_sets.active_id)
+        else {
+            return;
+        };
+        if let (Some(original), Ok(extent)) = (d.occurrence_span(&key), d.number("extent")) {
+            if original.length == 0
+                || original
+                    .start
+                    .checked_add(original.length)
+                    .is_none_or(|end| end > extent)
+            {
+                return;
+            }
+            let proposed = action.apply(original, beats as f32 * 4.0, extent);
+            match d.candidate_span(&self.set, &key, proposed) {
+                Ok(_) => d.span_fields(&key, proposed),
+                Err(e) => self.arrangement_editor.notice = Some(e),
+            }
+            self.sync_arrangement_scene();
+        }
+    }
+    pub fn arrangement_key(&mut self, event: cambium::KeyEvent) {
+        use cambium::{Key, NamedKey};
+        match event.key {
+            Key::Named(NamedKey::Escape) if self.arrangement_editor.gesture.is_some() => {
+                self.cancel_arrangement_gesture()
+            },
+            Key::Named(NamedKey::Enter) if self.arrangement_editor.gesture.is_some() => {
+                self.commit_arrangement_gesture()
+            },
+            Key::Named(key @ (NamedKey::ArrowLeft | NamedKey::ArrowRight))
+                if !event.mods.ctrl && !event.mods.meta =>
+            {
+                let action = if event.mods.alt {
+                    SpanAction::Start
+                } else if event.mods.shift {
+                    SpanAction::End
+                } else {
+                    SpanAction::Move
+                };
+                self.edit_arrangement_span(action, if key == NamedKey::ArrowLeft { -1 } else { 1 });
+            },
+            _ => return,
+        }
+        event.prevent_default();
+        event.stop_propagation();
+    }
     pub fn arrangement_select(&mut self, event: BackdropSceneEvent) {
+        self.cancel_arrangement_gesture();
         self.arrangement_editor.surfaces.borrow_mut().select(event);
     }
     pub fn place_arrangement_cards_in_order(&mut self) {
@@ -569,11 +882,23 @@ pub fn screen(ui: &UiState) -> UiChild {
         )),
     ];
     let owner = ui.working_sets.active_id;
-    if let Some(notice) = &ui.arrangement_editor.notice {
-        body.push(Box::new(
-            el("p", text(notice.clone())).attr("role", "status"),
-        ));
-    }
+    // Keep a stable slot: clearing a notice must not retire the captured scene
+    // by shifting its ancestor's positional children during a gesture.
+    body.push(Box::new(
+        el(
+            "p",
+            text(ui.arrangement_editor.notice.clone().unwrap_or_default()),
+        )
+        .attr("role", "status")
+        .attr(
+            "style",
+            if ui.arrangement_editor.notice.is_some() {
+                ""
+            } else {
+                "display:none"
+            },
+        ),
+    ));
     body.push(Box::new(
         el(
             "div",
@@ -602,7 +927,14 @@ pub fn screen(ui: &UiState) -> UiChild {
                     crate::stage::ROOT_NAMES[usize::from((d.context.root_pc + 3) % 12).min(11)],
                     d.context.instrument,
                     d.context.tuning,
-                    if d.dirty() {
+                    if ui
+                        .arrangement_editor
+                        .gesture
+                        .as_ref()
+                        .is_some_and(|g| g.proposed != g.original)
+                    {
+                        "Drag preview — release to update draft"
+                    } else if d.dirty() {
                         "Draft — not saved"
                     } else {
                         "Saved arrangement"
@@ -763,34 +1095,14 @@ pub fn screen(ui: &UiState) -> UiChild {
         preview.push(Box::new(
             el(
                 "div",
-                on_pointer(
-                    custom_leaf::<UiState, ()>(PRIMARY_KEY, primary_width, 300)
-                        .attr("aria-label", "Progression arrangement scene"),
-                    |ui: &mut UiState, event: cambium::PointerEvent| {
-                        if event.phase == cambium::PointerPhase::Up
-                            && event.button == cambium::PointerButton::Primary
-                        {
-                            let key = ui
-                                .arrangement_editor
-                                .surfaces
-                                .borrow()
-                                .primary
-                                .as_ref()
-                                .and_then(|s| {
-                                    s.pick(
-                                        event.local.0,
-                                        event.local.1,
-                                        event.size.0.round() as u32,
-                                        event.size.1.round() as u32,
-                                    )
-                                })
-                                .map(str::to_owned);
-                            ui.arrangement_select(
-                                key.map(BackdropSceneEvent::Select)
-                                    .unwrap_or(BackdropSceneEvent::Clear),
-                            );
-                        }
-                    },
+                on_key(
+                    on_pointer(
+                        custom_leaf::<UiState, ()>(PRIMARY_KEY, primary_width, 300)
+                            .attr("class", "arrangement-scene")
+                            .attr("aria-label", "Progression arrangement scene. Left and right move one beat; Shift resizes end; Alt resizes start; Escape cancels a drag."),
+                        UiState::arrangement_pointer,
+                    ),
+                    UiState::arrangement_key,
                 ),
             )
             .attr("class", "arrangement-scene-scroll"),
@@ -801,6 +1113,58 @@ pub fn screen(ui: &UiState) -> UiChild {
                 text("Scroll the scene sideways to inspect its full span."),
             )));
         }
+        if let Some(key) = primary.selected() {
+            if let Some(span) = ui
+                .arrangement_editor
+                .drafts
+                .get(&owner)
+                .and_then(|d| d.occurrence_span(key))
+            {
+                let proposed = ui
+                    .arrangement_editor
+                    .gesture
+                    .as_ref()
+                    .filter(|g| g.key == key)
+                    .map(|g| g.proposed)
+                    .unwrap_or(span);
+                let mut controls: Vec<UiChild> = vec![Box::new(
+                    el(
+                        "p",
+                        text(format!(
+                            "{} · start {} / length {} ticks{}",
+                            key,
+                            proposed.start,
+                            proposed.length,
+                            if proposed != span {
+                                " · drag preview"
+                            } else {
+                                ""
+                            }
+                        )),
+                    )
+                    .attr("role", "status")
+                    .attr("class", "arrangement-span-status"),
+                )];
+                for (action, label) in [
+                    (SpanAction::Move, "Move"),
+                    (SpanAction::Start, "Start"),
+                    (SpanAction::End, "End"),
+                ] {
+                    for (beats, direction) in [(-1, "earlier"), (1, "later")] {
+                        controls.push(button(
+                            format!("{label} {direction} 1 beat"),
+                            "arrangement-span-edit",
+                            move |ui| ui.edit_arrangement_span(action, beats),
+                        ));
+                    }
+                }
+                preview.push(Box::new(on_key(
+                    el("div", controls).attr("class", "arrangement-span-controls"),
+                    UiState::arrangement_key,
+                )));
+            }
+        }
+        preview.push(Box::new(el("p", text("Drag a span to move it; drag its edges to resize. Snap: 1 beat. Focus the scene: ← / → move; Shift changes the end; Alt changes the start. Escape cancels a drag."))));
         if let Some(related) = &surfaces.related {
             preview.push(Box::new(el("h3", text(related.scene().title.clone()))));
             preview.push(Box::new(
@@ -872,6 +1236,9 @@ pub const CSS:&str="
 .arrangement-preview .backdrop-scene-reading button { min-height:28px; text-align:left; }
 .arrangement-preview .backdrop-scene-occurrence { padding:5px; }
 .arrangement-preview .backdrop-scene-occurrence[aria-pressed=true] { outline:2px solid currentColor; }
+.arrangement-span-controls { display:flex; flex-wrap:wrap; gap:6px; align-items:center; }
+.arrangement-span-status { width:100%; }
+.arrangement-scene:focus { outline:2px solid currentColor; }
 .arrangement-form { display:flex; flex-direction:column; gap:6px; }
 ";
 
@@ -916,6 +1283,257 @@ mod tests {
     }
     fn value(v: &impl serde::Serialize) -> serde_json::Value {
         serde_json::to_value(v).unwrap()
+    }
+    fn card_span(ui: &UiState, key: &str) -> Span {
+        ui.arrangement_editor.drafts[&ui.working_sets.active_id]
+            .occurrence_span(key)
+            .unwrap()
+    }
+    fn gesture_point(ui: &UiState, key: &str, action: SpanAction) -> ((f32, f32), f32) {
+        let surfaces = ui.arrangement_editor.surfaces.borrow();
+        let surface = surfaces.primary.as_ref().unwrap();
+        let r = surface.occurrence_rect(key, 580, 300).unwrap();
+        let x = match action {
+            SpanAction::Move => r.x + r.width / 2.0,
+            SpanAction::Start => r.x + 1.0,
+            SpanAction::End => r.x + r.width - 1.0,
+        };
+        let a = surface
+            .viewport_point(sceno::Vec2::new(48.0, 50.0), 580, 300)
+            .unwrap();
+        let b = surface
+            .viewport_point(sceno::Vec2::new(95.0, 50.0), 580, 300)
+            .unwrap();
+        ((x, r.y + r.height / 2.0), b.x - a.x)
+    }
+    fn pointer(ui: &mut UiState, phase: cambium::PointerPhase, point: (f32, f32)) {
+        ui.arrangement_pointer(cambium::PointerEvent::new(phase, point, (580.0, 300.0)));
+    }
+    #[test]
+    fn span_gestures_preview_cancel_and_commit_without_mutating_cards_or_saved_source() {
+        use cambium::PointerPhase::*;
+        for (action, beats, expected) in [
+            (
+                SpanAction::Move,
+                1.0,
+                Span {
+                    start: 20,
+                    length: 16,
+                },
+            ),
+            (
+                SpanAction::Start,
+                -1.0,
+                Span {
+                    start: 12,
+                    length: 20,
+                },
+            ),
+            (
+                SpanAction::End,
+                1.0,
+                Span {
+                    start: 16,
+                    length: 20,
+                },
+            ),
+        ] {
+            let mut ui = fixture();
+            ui.place_arrangement_cards_in_order();
+            ui.save_arrangement();
+            let saved = value(&ui.set);
+            let original_doc = ui
+                .arrangement_editor
+                .surfaces
+                .borrow()
+                .document
+                .clone()
+                .unwrap();
+            let original = card_span(&ui, "card-2");
+            let (at, beat_width) = gesture_point(&ui, "card-2", action);
+            let target = (at.0 + beat_width * beats, at.1);
+            pointer(&mut ui, Down, at);
+            pointer(&mut ui, Move, target);
+            assert_eq!(
+                ui.arrangement_editor.gesture.as_ref().unwrap().proposed,
+                expected
+            );
+            assert_eq!(
+                card_span(&ui, "card-2"),
+                original,
+                "preview does not mutate fields"
+            );
+            assert_eq!(value(&ui.set), saved);
+            assert!(ui.arrangement_editor.dirty());
+            assert_ne!(
+                ui.arrangement_editor
+                    .surfaces
+                    .borrow()
+                    .document
+                    .as_ref()
+                    .unwrap(),
+                &original_doc
+            );
+            ui.arrangement_key(cambium::KeyEvent::new(cambium::Key::Named(
+                cambium::NamedKey::Escape,
+            )));
+            pointer(&mut ui, Up, target);
+            assert!(!ui.arrangement_editor.dirty());
+            assert_eq!(
+                ui.arrangement_editor
+                    .surfaces
+                    .borrow()
+                    .document
+                    .as_ref()
+                    .unwrap(),
+                &original_doc
+            );
+            pointer(&mut ui, Down, at);
+            pointer(&mut ui, Move, target);
+            pointer(&mut ui, Up, target);
+            assert_eq!(card_span(&ui, "card-2"), expected);
+            assert_eq!(value(&ui.set), saved);
+            ui.save_arrangement();
+            assert!(!ui.arrangement_editor.dirty());
+            assert_eq!(value(&ui.set.cards), saved["cards"]);
+            let binding = &ui
+                .set
+                .progression_arrangement
+                .as_ref()
+                .unwrap()
+                .alignment
+                .cards[1];
+            assert_eq!(binding.placement.as_ref().unwrap().span, expected);
+            assert_eq!(binding.role, Some(1));
+        }
+    }
+    #[test]
+    fn stale_cancelled_or_resized_gestures_cannot_write_drafts() {
+        use cambium::PointerPhase::*;
+        for cause in ["cancel", "field", "source", "owner", "panel", "resize"] {
+            let mut ui = fixture();
+            ui.place_arrangement_cards_in_order();
+            let owner = ui.working_sets.active_id;
+            let before = ui.arrangement_editor.drafts[&owner].signature();
+            let (at, beat_width) = gesture_point(&ui, "card-2", SpanAction::Move);
+            let target = (at.0 + beat_width, at.1);
+            pointer(&mut ui, Down, at);
+            pointer(&mut ui, Move, target);
+            match cause {
+                "cancel" => pointer(&mut ui, Cancel, target),
+                "field" => edit(&mut ui, "card-2-start", "8"),
+                "source" => {
+                    ui.set.cards[0].label.push_str(" changed");
+                    ui.sync_arrangement_scene();
+                },
+                "owner" => {
+                    ui.working_sets.active_id = WorkingSetId(99);
+                    ui.sync_arrangement_scene();
+                },
+                "panel" => {
+                    ui.activate_workspace_panel(WorkspacePanel::Practice);
+                    ui.sync_arrangement_scene();
+                },
+                "resize" => {
+                    ui.arrangement_pointer(cambium::PointerEvent::new(Move, target, (900.0, 300.0)))
+                },
+                _ => unreachable!(),
+            }
+            pointer(&mut ui, Up, target);
+            assert!(ui.arrangement_editor.gesture.is_none(), "{cause}");
+            if cause == "field" {
+                assert_eq!(
+                    ui.arrangement_editor.drafts[&owner].value("card-2-start"),
+                    "8"
+                );
+            } else {
+                assert_eq!(
+                    ui.arrangement_editor.drafts[&owner].signature(),
+                    before,
+                    "{cause}"
+                );
+            }
+        }
+    }
+    #[test]
+    fn keyboard_and_rest_edits_snap_clamp_and_preserve_bindings() {
+        let mut ui = fixture();
+        ui.place_arrangement_cards_in_order();
+        ui.add_arrangement_rest();
+        ui.arrangement_select(BackdropSceneEvent::Select("rest-rest-1".into()));
+        let key = |ui: &mut UiState, mods| {
+            ui.arrangement_key(cambium::KeyEvent::with_mods(
+                cambium::Key::Named(cambium::NamedKey::ArrowRight),
+                mods,
+            ))
+        };
+        key(&mut ui, cambium::Modifiers::default());
+        assert_eq!(
+            card_span(&ui, "rest-rest-1"),
+            Span {
+                start: 4,
+                length: 4
+            }
+        );
+        key(
+            &mut ui,
+            cambium::Modifiers {
+                shift: true,
+                ..Default::default()
+            },
+        );
+        assert_eq!(
+            card_span(&ui, "rest-rest-1"),
+            Span {
+                start: 4,
+                length: 8
+            }
+        );
+        key(
+            &mut ui,
+            cambium::Modifiers {
+                alt: true,
+                ..Default::default()
+            },
+        );
+        assert_eq!(
+            card_span(&ui, "rest-rest-1"),
+            Span {
+                start: 8,
+                length: 4
+            }
+        );
+        let before = card_span(&ui, "rest-rest-1");
+        key(
+            &mut ui,
+            cambium::Modifiers {
+                meta: true,
+                ..Default::default()
+            },
+        );
+        assert_eq!(card_span(&ui, "rest-rest-1"), before);
+        ui.edit_arrangement_span(SpanAction::Move, -100);
+        assert_eq!(card_span(&ui, "rest-rest-1").start, 0);
+        ui.edit_arrangement_span(SpanAction::Move, 100);
+        assert_eq!(card_span(&ui, "rest-rest-1").start, 60);
+        ui.edit_arrangement_span(SpanAction::Start, 100);
+        assert_eq!(
+            card_span(&ui, "rest-rest-1"),
+            Span {
+                start: 63,
+                length: 1
+            }
+        );
+        ui.edit_arrangement_span(SpanAction::End, -100);
+        assert_eq!(card_span(&ui, "rest-rest-1").length, 1);
+        // Expected roles and unplaced occurrences are selection only.
+        ui.arrangement_select(BackdropSceneEvent::Select("role-0".into()));
+        let before = ui.arrangement_editor.drafts[&ui.working_sets.active_id].signature();
+        ui.edit_arrangement_span(SpanAction::Move, 1);
+        assert_eq!(
+            ui.arrangement_editor.drafts[&ui.working_sets.active_id].signature(),
+            before
+        );
     }
     #[test]
     fn draft_preview_selection_and_save_preserve_instructions_and_voicings() {

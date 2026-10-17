@@ -1,0 +1,15 @@
+[woodshed] practice sealed to persona "default" (Passphrase (held by djinn))
+[cambium-winit] accessibility Installed, 287 nodes projected
+woodshed-genet: FAIL: assert snap arrangement-preview Eq 'true': got 'false'
+woodshed-genet: FAIL: assert text 'card-2 · start 20 / length 16 ticks · drag preview': not on any surface
+woodshed-genet: captured 01_move_preview
+woodshed-genet: FAIL: assert text 'card-2 · start 20 / length 16 ticks': not on any surface
+woodshed-genet: FAIL: assert text 'card-2 · start 24 / length 16 ticks': not on any surface
+woodshed-genet: FAIL: assert text 'card-2 · start 20 / length 20 ticks': not on any surface
+woodshed-genet: FAIL: assert text 'card-2 · start 20 / length 24 ticks': not on any surface
+woodshed-genet: captured 02_edges_and_keyboard
+woodshed-genet: FAIL: assert text 'rest-rest-1 · start 4 / length 8 ticks · drag preview': not on any surface
+woodshed-genet: captured 03_compact_rest_preview
+woodshed-genet: FAIL: assert text 'rest-rest-1 · start 4 / length 8 ticks': not on any surface
+woodshed-genet: captured 04_compact_saved
+woodshed-genet: RESULT fail (218 frames, 4 captures)
