@@ -764,7 +764,7 @@ pub fn screen(ui: &UiState) -> UiChild {
             el(
                 "div",
                 on_pointer(
-                    custom_leaf::<UiState, ()>(PRIMARY_KEY, primary_width, 230)
+                    custom_leaf::<UiState, ()>(PRIMARY_KEY, primary_width, 300)
                         .attr("aria-label", "Progression arrangement scene"),
                     |ui: &mut UiState, event: cambium::PointerEvent| {
                         if event.phase == cambium::PointerPhase::Up

@@ -3892,3 +3892,10 @@ SceneDocument reopen exactly. Compact captures show both ends of the scene
 through horizontal scrolling. The first failed pass is preserved beside the
 accepted receipt. Physical audio and other operating systems remain outside
 this qualification. [Receipt](../validation/native-arrangement_20261016/receipt.json).
+
+**Native spacing follow-up (2026-10-16):** In progress after visual feedback.
+The primary progression canvas increases to 300 logical pixels high. Shared
+Pictograph template framing must use that vertical space independently of the
+long musical timeline, while preserving span positions and inverse picking.
+Done when a new native capture shows separated title, supplied Cards, expected
+roles and grouping labels, with the linked fretboard still proportional.

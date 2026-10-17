@@ -1,0 +1,45 @@
+# Reproduce the previously qualified arrangement using native controls.
+settle 30
+ui-zoom 1
+assert snap practice-saved == true
+act arrangement-editor-example
+settle 6
+click .workspace-panel Arrangement
+settle 4
+click .arrangement-start
+click .arrangement-place-order
+settle 4
+click .arrangement-field @data-arrangement-field=name
+input-text Native ii-V-I study
+click .arrangement-field @data-arrangement-field=role-2-length
+input-text 32
+click .arrangement-field @data-arrangement-field=card-2-length
+input-text 8
+click .arrangement-field @data-arrangement-field=card-4-role
+input-text 3
+click .arrangement-add-rest
+click .arrangement-field @data-arrangement-field=rest-rest-1-start
+input-text 24
+click .arrangement-field @data-arrangement-field=rest-rest-1-length
+input-text 8
+settle 4
+click .arrangement-inspect Inspect Card 4
+settle 6
+assert snap arrangement-selection == card-4
+assert snap arrangement-related == true
+wheel 0 -2000 px on .workspace-screen
+settle 6
+capture 01_roomier_progression
+click .arrangement-save
+settle 8
+assert snap arrangement-dirty == false
+assert snap practice-saved == true
+checkpoint-arrangement spacing-saved
+resize 420 1100
+settle 8
+wheel 0 -2000 px on .workspace-screen
+settle 4
+capture 02_roomier_compact
+wheel 320 0 px on .arrangement-scene-scroll
+settle 4
+capture 03_roomier_compact_end
