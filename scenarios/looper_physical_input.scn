@@ -6,19 +6,26 @@ act p7b-seconds-example
 settle 8
 click role:switch @aria-label=Select Card 2
 click role:button @aria-label=Play backing
-act await-selected-take-playback
-wait 1800
-assert snap take-playback-observed == true
+act physical-backing-dwell-start
+# Polling frame cap only: the action requires 5 monotonic seconds AND rate*5 frames.
+wait 15000
+act physical-dwell-assert
 capture 01_backing_before_microphone
 click role:switch @aria-label=Record
+act physical-capture-dwell-start
+# Polling frame cap only. Armed/count-in time is excluded. Require 15 actual
+# active-recording seconds AND rate*15 frames, with admitted input and no
+# capture-invalid/overflow latch. Timeout or cap exhaustion fails the assert.
+# Actual recording bar and output cursor must remain on selected Card 2.
 wait 15000
+act physical-dwell-assert
 capture 02_live_input_recording
 click role:button @aria-label=Stop all loops
 settle 15
 assert snap output-capture-invalid == false
-assert snap loop-capture-references >= 1
-assert snap loop-capture-frames >= 1
-assert snap loop-active-captures >= 1
+assert snap loop-capture-references == 1
+assert snap loop-capture-frames == 54000
+assert snap loop-active-captures == 1
 assert snap capture-input-rate == 48000
 assert snap practice-saved == true
 act wav-export-fixture

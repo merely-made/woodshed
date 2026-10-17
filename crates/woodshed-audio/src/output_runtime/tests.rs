@@ -1543,3 +1543,6 @@ fn exact_card_preview_preserves_short_duration_and_refuses_unrepresentable_outpu
         "a refused preview retains the admitted backing"
     );
 }
+
+#[path = "selected_capture_tests.rs"]
+mod selected_capture_tests;

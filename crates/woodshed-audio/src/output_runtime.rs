@@ -44,7 +44,7 @@ pub use clock::{
 use preview::PreviewWorker;
 use processor::{
     ChordCache, Command, CompletedRecording, OutputNode, PreparedBacking, PreparedClick, Recording,
-    Shared,
+    RecordingScope, Shared,
 };
 
 pub(crate) const COMMAND_BOUND: usize = 64;
@@ -107,6 +107,7 @@ pub struct OutputRuntime {
     rate: u32,
     capture_attached: bool,
     capture_requested: bool,
+    selected_capture_requested: bool,
     native: bool,
     device_errors: u64,
     last_error: Option<OutputError>,
@@ -179,6 +180,7 @@ impl OutputRuntime {
             rate,
             capture_attached: false,
             capture_requested: false,
+            selected_capture_requested: false,
             native,
             device_errors: 0,
             last_error: None,
@@ -398,8 +400,9 @@ impl OutputRuntime {
             if take.stamp.valid
                 && take.stamp.generation == self.shared.generation.load(Ordering::Acquire)
             {
+                let scope = take.storage.scope;
                 for (idx, bar) in take.storage.bars.iter_mut().enumerate() {
-                    if bar.touched {
+                    if bar.touched && scope.includes(idx) {
                         self.song.bars[idx].audio_buffer = Some(bar.pcm.clone());
                     }
                 }
@@ -429,6 +432,7 @@ impl OutputRuntime {
         let s = self.snapshot();
         if self.shared.commands.load(Ordering::Acquire) == 0 && !s.capture_armed && !s.recording {
             self.capture_requested = false;
+            self.selected_capture_requested = false;
             self.song.pending.clear();
         }
         Ok(())
@@ -701,6 +705,9 @@ impl OutputRuntime {
         Ok(())
     }
     pub fn rewind(&mut self) -> Result<(), OutputError> {
+        if self.selected_capture_requested {
+            return Err(err("stop selected capture before rewinding backing"));
+        }
         self.cancel_worker();
         self.send(Command::Rewind)
     }
@@ -715,7 +722,23 @@ impl OutputRuntime {
         self.song.record_replace = replace;
         Ok(())
     }
+    /// Existing song capture follows backing traversal after its initial arm.
     pub fn arm_capture(&mut self, bar_idx: usize, seek: bool) -> Result<(), OutputError> {
+        self.arm_capture_scoped(bar_idx, seek, RecordingScope::Follow)
+    }
+
+    /// Seek at the admitted boundary, then repeat and record only this segment
+    /// until stopped. The saved-song follow API and its seek flag are unchanged.
+    pub fn arm_selected_capture(&mut self, bar_idx: usize) -> Result<(), OutputError> {
+        self.arm_capture_scoped(bar_idx, true, RecordingScope::Selected(bar_idx))
+    }
+
+    fn arm_capture_scoped(
+        &mut self,
+        bar_idx: usize,
+        seek: bool,
+        scope: RecordingScope,
+    ) -> Result<(), OutputError> {
         if self.program_owns_output() {
             return Err(err("stop the prepared program before starting capture"));
         }
@@ -733,17 +756,19 @@ impl OutputRuntime {
                 "Clear the legacy-clock loops before recording. Existing takes keep their original playback clocks.",
             ));
         }
-        let take = Recording::prepare(
+        let mut take = Recording::prepare(
             &self.song,
             self.rate,
             self.shared.generation.load(Ordering::Acquire),
         )?;
+        take.scope = scope;
         self.send_boundary(Command::Arm {
             bar_idx,
             seek,
             take: Some(OwnedGc::new(take)),
         })?;
         self.capture_requested = true;
+        self.selected_capture_requested = matches!(scope, RecordingScope::Selected(_));
         self.song
             .pending
             .push(PendingChange::StartRecording { bar_idx });
@@ -753,6 +778,11 @@ impl OutputRuntime {
         self.send(Command::StopCapture)
     }
     pub fn queue(&mut self, change: PendingChange) -> Result<(), OutputError> {
+        if self.selected_capture_requested && matches!(change, PendingChange::SeekTo { .. }) {
+            return Err(err(
+                "stop selected capture before selecting another backing segment",
+            ));
+        }
         if self.program_owns_output()
             && matches!(
                 change,

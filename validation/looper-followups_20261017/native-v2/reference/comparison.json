@@ -1,0 +1,16 @@
+{
+  "actual_native_worker_equals_separate_sealed_reference": true,
+  "wav_sha256": "370b53dcf2781e6f3e41f3d948765de3950d4222ed48bf2dd3a7e6dffb36ca52",
+  "profile_hashes_before": {
+    "settings.json": "0860d088831ee2442e36c0d1baa738af567bc5a214ff7751d47891bb1814651b",
+    "practice.bin": "3cf2a3a5b10fab86962090ea9c1a7861c8cc310486db47bcd2f9848fccb0cbf9",
+    "practice.loop-pcm/841eb9cabe7ff970d85e9235abd315ad/a1c4cec47e2bf7501d97c16dcb265c4fddea5cdd056a164e76787aebe0248029.bin": "d3688dd25de53fab8b5b4244ab03916f42ad24ce64bb977fc0bc596554cee1bd"
+  },
+  "profile_hashes_after": {
+    "settings.json": "0860d088831ee2442e36c0d1baa738af567bc5a214ff7751d47891bb1814651b",
+    "practice.bin": "3cf2a3a5b10fab86962090ea9c1a7861c8cc310486db47bcd2f9848fccb0cbf9",
+    "practice.loop-pcm/841eb9cabe7ff970d85e9235abd315ad/a1c4cec47e2bf7501d97c16dcb265c4fddea5cdd056a164e76787aebe0248029.bin": "d3688dd25de53fab8b5b4244ab03916f42ad24ce64bb977fc0bc596554cee1bd"
+  },
+  "profile_unchanged": true,
+  "source_revision": "e25f66860110215a7b3ebf07a7dda81da532c19b"
+}

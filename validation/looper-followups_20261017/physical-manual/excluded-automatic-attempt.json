@@ -1,0 +1,6 @@
+{
+  "status": "excluded from physical timing and audibility qualification",
+  "reason": "wait15000 was quiescence frame cap, returned0frames; userheard no backing and reported abrupt finish",
+  "observations": "Inputopened48000andcapturereferencecreated, but no15second oraudibilityclaim valid",
+  "source_revision": "f55755fc541c2a6e693e6b4b1b7030139a820064"
+}

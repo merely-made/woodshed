@@ -1,0 +1,2069 @@
+[woodshed] practice sealed to persona "default" (Passphrase (held by djinn))
+[cambium-winit] window-frame backend=macos policy=App decorated=true transparent=false
+[cambium-frame] host=1 last-presented=0 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=0 elapsed=631623us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=0 elapsed=631677us phase=shadows-end 
+[cambium-frame] host=1 last-presented=0 elapsed=631699us phase=raster-begin 
+[cambium-frame] host=1 last-presented=0 elapsed=763688us phase=raster-end 
+[cambium-frame] host=1 last-presented=0 elapsed=763763us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=0 elapsed=763811us phase=acquire-unavailable surface acquire skipped: Occluded
+[cambium-frame] host=1 last-presented=0 elapsed=763898us phase=return unwinding=false
+[cambium-winit] accessibility Installed, 122 nodes projected
+[cambium-host] initial reveal macos app_active=false app_hidden=false policy=NSApplicationActivationPolicy(0) launched=true window_visible=true key=false can_key=true active_space=true occlusion=NSWindowOcclusionState(8192) frame=CGRect { origin: CGPoint { x: 530.0, y: 130.0 }, size: CGSize { width: 1180.0, height: 1000.0 } }
+[cambium-frame] host=1 last-presented=0 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=0 elapsed=10234us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=0 elapsed=10302us phase=shadows-end 
+[cambium-frame] host=1 last-presented=0 elapsed=10330us phase=raster-begin 
+[cambium-frame] host=1 last-presented=0 elapsed=68771us phase=raster-end 
+[cambium-frame] host=1 last-presented=0 elapsed=68817us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=0 elapsed=68883us phase=acquire-unavailable surface acquire skipped: Occluded
+[cambium-frame] host=1 last-presented=0 elapsed=68955us phase=return unwinding=false
+[cambium-host] unpresented redraw macos app_active=false app_hidden=false policy=NSApplicationActivationPolicy(0) launched=true window_visible=true key=false can_key=true active_space=true occlusion=NSWindowOcclusionState(8192) frame=CGRect { origin: CGPoint { x: 530.0, y: 130.0 }, size: CGSize { width: 1180.0, height: 1000.0 } }
+[cambium-host] unpresented redraw visible=Some(true) focused=false minimized=Some(false)
+[cambium-frame] host=1 last-presented=0 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=0 elapsed=9364us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=0 elapsed=9413us phase=shadows-end 
+[cambium-frame] host=1 last-presented=0 elapsed=9452us phase=raster-begin 
+[cambium-frame] host=1 last-presented=0 elapsed=61615us phase=raster-end 
+[cambium-frame] host=1 last-presented=0 elapsed=61659us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=0 elapsed=62484us phase=acquire-end 
+[cambium-frame] host=1 last-presented=0 elapsed=67169us phase=compose-end 
+[cambium-frame] host=1 last-presented=0 elapsed=67209us phase=present-begin 
+[cambium-frame] host=1 last-presented=0 elapsed=67294us phase=present-end 
+[cambium-frame] host=1 last-presented=0 elapsed=67322us phase=presentation-recorded sequence=1
+[cambium-frame] host=1 last-presented=0 elapsed=67419us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=1 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=1 elapsed=7924us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=1 elapsed=7965us phase=shadows-end 
+[cambium-frame] host=1 last-presented=1 elapsed=7981us phase=raster-begin 
+[cambium-frame] host=1 last-presented=1 elapsed=60805us phase=raster-end 
+[cambium-frame] host=1 last-presented=1 elapsed=60844us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=1 elapsed=61141us phase=acquire-end 
+[cambium-frame] host=1 last-presented=1 elapsed=61640us phase=compose-end 
+[cambium-frame] host=1 last-presented=1 elapsed=61664us phase=present-begin 
+[cambium-frame] host=1 last-presented=1 elapsed=61735us phase=present-end 
+[cambium-frame] host=1 last-presented=1 elapsed=61765us phase=presentation-recorded sequence=2
+[cambium-frame] host=1 last-presented=1 elapsed=61828us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=2 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=2 elapsed=7894us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=2 elapsed=7974us phase=shadows-end 
+[cambium-frame] host=1 last-presented=2 elapsed=7985us phase=raster-begin 
+[cambium-frame] host=1 last-presented=2 elapsed=58649us phase=raster-end 
+[cambium-frame] host=1 last-presented=2 elapsed=58695us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=2 elapsed=58786us phase=acquire-end 
+[cambium-frame] host=1 last-presented=2 elapsed=59289us phase=compose-end 
+[cambium-frame] host=1 last-presented=2 elapsed=59306us phase=present-begin 
+[cambium-frame] host=1 last-presented=2 elapsed=59372us phase=present-end 
+[cambium-frame] host=1 last-presented=2 elapsed=59390us phase=presentation-recorded sequence=3
+[cambium-frame] host=1 last-presented=2 elapsed=59473us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=3 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=3 elapsed=7631us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=3 elapsed=7667us phase=shadows-end 
+[cambium-frame] host=1 last-presented=3 elapsed=7678us phase=raster-begin 
+[cambium-frame] host=1 last-presented=3 elapsed=56860us phase=raster-end 
+[cambium-frame] host=1 last-presented=3 elapsed=56921us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=3 elapsed=57008us phase=acquire-end 
+[cambium-frame] host=1 last-presented=3 elapsed=57409us phase=compose-end 
+[cambium-frame] host=1 last-presented=3 elapsed=57427us phase=present-begin 
+[cambium-frame] host=1 last-presented=3 elapsed=57485us phase=present-end 
+[cambium-frame] host=1 last-presented=3 elapsed=57501us phase=presentation-recorded sequence=4
+[cambium-frame] host=1 last-presented=3 elapsed=57539us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=4 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=4 elapsed=7557us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=4 elapsed=7586us phase=shadows-end 
+[cambium-frame] host=1 last-presented=4 elapsed=7599us phase=raster-begin 
+[cambium-frame] host=1 last-presented=4 elapsed=57809us phase=raster-end 
+[cambium-frame] host=1 last-presented=4 elapsed=57869us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=4 elapsed=58032us phase=acquire-end 
+[cambium-frame] host=1 last-presented=4 elapsed=58543us phase=compose-end 
+[cambium-frame] host=1 last-presented=4 elapsed=58564us phase=present-begin 
+[cambium-frame] host=1 last-presented=4 elapsed=58623us phase=present-end 
+[cambium-frame] host=1 last-presented=4 elapsed=58638us phase=presentation-recorded sequence=5
+[cambium-frame] host=1 last-presented=4 elapsed=58681us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=5 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=5 elapsed=7546us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=5 elapsed=7575us phase=shadows-end 
+[cambium-frame] host=1 last-presented=5 elapsed=7587us phase=raster-begin 
+[cambium-frame] host=1 last-presented=5 elapsed=60624us phase=raster-end 
+[cambium-frame] host=1 last-presented=5 elapsed=64519us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=5 elapsed=64599us phase=acquire-end 
+[cambium-frame] host=1 last-presented=5 elapsed=64987us phase=compose-end 
+[cambium-frame] host=1 last-presented=5 elapsed=65005us phase=present-begin 
+[cambium-frame] host=1 last-presented=5 elapsed=65057us phase=present-end 
+[cambium-frame] host=1 last-presented=5 elapsed=65073us phase=presentation-recorded sequence=6
+[cambium-frame] host=1 last-presented=5 elapsed=65110us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=6 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=6 elapsed=8017us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=6 elapsed=8046us phase=shadows-end 
+[cambium-frame] host=1 last-presented=6 elapsed=8058us phase=raster-begin 
+[cambium-frame] host=1 last-presented=6 elapsed=61888us phase=raster-end 
+[cambium-frame] host=1 last-presented=6 elapsed=61971us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=6 elapsed=62148us phase=acquire-end 
+[cambium-frame] host=1 last-presented=6 elapsed=62626us phase=compose-end 
+[cambium-frame] host=1 last-presented=6 elapsed=62709us phase=present-begin 
+[cambium-frame] host=1 last-presented=6 elapsed=62793us phase=present-end 
+[cambium-frame] host=1 last-presented=6 elapsed=62900us phase=presentation-recorded sequence=7
+[cambium-frame] host=1 last-presented=6 elapsed=63008us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=7 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=7 elapsed=8246us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=7 elapsed=8349us phase=shadows-end 
+[cambium-frame] host=1 last-presented=7 elapsed=8396us phase=raster-begin 
+[cambium-frame] host=1 last-presented=7 elapsed=64193us phase=raster-end 
+[cambium-frame] host=1 last-presented=7 elapsed=64238us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=7 elapsed=64334us phase=acquire-end 
+[cambium-frame] host=1 last-presented=7 elapsed=64971us phase=compose-end 
+[cambium-frame] host=1 last-presented=7 elapsed=65038us phase=present-begin 
+[cambium-frame] host=1 last-presented=7 elapsed=65251us phase=present-end 
+[cambium-frame] host=1 last-presented=7 elapsed=65274us phase=presentation-recorded sequence=8
+[cambium-frame] host=1 last-presented=7 elapsed=65384us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=8 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=8 elapsed=8376us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=8 elapsed=8410us phase=shadows-end 
+[cambium-frame] host=1 last-presented=8 elapsed=8423us phase=raster-begin 
+[cambium-frame] host=1 last-presented=8 elapsed=69729us phase=raster-end 
+[cambium-frame] host=1 last-presented=8 elapsed=69760us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=8 elapsed=69842us phase=acquire-end 
+[cambium-frame] host=1 last-presented=8 elapsed=70292us phase=compose-end 
+[cambium-frame] host=1 last-presented=8 elapsed=70307us phase=present-begin 
+[cambium-frame] host=1 last-presented=8 elapsed=70366us phase=present-end 
+[cambium-frame] host=1 last-presented=8 elapsed=70382us phase=presentation-recorded sequence=9
+[cambium-frame] host=1 last-presented=8 elapsed=70426us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=9 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=9 elapsed=8571us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=9 elapsed=8616us phase=shadows-end 
+[cambium-frame] host=1 last-presented=9 elapsed=8627us phase=raster-begin 
+[cambium-frame] host=1 last-presented=9 elapsed=60494us phase=raster-end 
+[cambium-frame] host=1 last-presented=9 elapsed=60547us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=9 elapsed=60604us phase=acquire-end 
+[cambium-frame] host=1 last-presented=9 elapsed=60991us phase=compose-end 
+[cambium-frame] host=1 last-presented=9 elapsed=61007us phase=present-begin 
+[cambium-frame] host=1 last-presented=9 elapsed=61051us phase=present-end 
+[cambium-frame] host=1 last-presented=9 elapsed=61065us phase=presentation-recorded sequence=10
+[cambium-frame] host=1 last-presented=9 elapsed=61102us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=10 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=10 elapsed=7403us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=10 elapsed=7446us phase=shadows-end 
+[cambium-frame] host=1 last-presented=10 elapsed=7456us phase=raster-begin 
+[cambium-frame] host=1 last-presented=10 elapsed=68292us phase=raster-end 
+[cambium-frame] host=1 last-presented=10 elapsed=68334us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=10 elapsed=68397us phase=acquire-end 
+[cambium-frame] host=1 last-presented=10 elapsed=68808us phase=compose-end 
+[cambium-frame] host=1 last-presented=10 elapsed=68825us phase=present-begin 
+[cambium-frame] host=1 last-presented=10 elapsed=68869us phase=present-end 
+[cambium-frame] host=1 last-presented=10 elapsed=68884us phase=presentation-recorded sequence=11
+[cambium-frame] host=1 last-presented=10 elapsed=68938us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=11 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=11 elapsed=7452us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=11 elapsed=7493us phase=shadows-end 
+[cambium-frame] host=1 last-presented=11 elapsed=7504us phase=raster-begin 
+[cambium-frame] host=1 last-presented=11 elapsed=65761us phase=raster-end 
+[cambium-frame] host=1 last-presented=11 elapsed=65887us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=11 elapsed=66004us phase=acquire-end 
+[cambium-frame] host=1 last-presented=11 elapsed=66486us phase=compose-end 
+[cambium-frame] host=1 last-presented=11 elapsed=66502us phase=present-begin 
+[cambium-frame] host=1 last-presented=11 elapsed=66580us phase=present-end 
+[cambium-frame] host=1 last-presented=11 elapsed=66597us phase=presentation-recorded sequence=12
+[cambium-frame] host=1 last-presented=11 elapsed=66645us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=12 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=12 elapsed=7379us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=12 elapsed=7406us phase=shadows-end 
+[cambium-frame] host=1 last-presented=12 elapsed=7416us phase=raster-begin 
+[cambium-frame] host=1 last-presented=12 elapsed=82815us phase=raster-end 
+[cambium-frame] host=1 last-presented=12 elapsed=82927us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=12 elapsed=82988us phase=acquire-end 
+[cambium-frame] host=1 last-presented=12 elapsed=83404us phase=compose-end 
+[cambium-frame] host=1 last-presented=12 elapsed=83429us phase=present-begin 
+[cambium-frame] host=1 last-presented=12 elapsed=83481us phase=present-end 
+[cambium-frame] host=1 last-presented=12 elapsed=83497us phase=presentation-recorded sequence=13
+[cambium-frame] host=1 last-presented=12 elapsed=83551us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=13 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=13 elapsed=8280us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=13 elapsed=8314us phase=shadows-end 
+[cambium-frame] host=1 last-presented=13 elapsed=8329us phase=raster-begin 
+[cambium-frame] host=1 last-presented=13 elapsed=60287us phase=raster-end 
+[cambium-frame] host=1 last-presented=13 elapsed=60327us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=13 elapsed=60386us phase=acquire-end 
+[cambium-frame] host=1 last-presented=13 elapsed=60749us phase=compose-end 
+[cambium-frame] host=1 last-presented=13 elapsed=60764us phase=present-begin 
+[cambium-frame] host=1 last-presented=13 elapsed=60812us phase=present-end 
+[cambium-frame] host=1 last-presented=13 elapsed=60826us phase=presentation-recorded sequence=14
+[cambium-frame] host=1 last-presented=13 elapsed=60866us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=14 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=14 elapsed=7447us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=14 elapsed=7474us phase=shadows-end 
+[cambium-frame] host=1 last-presented=14 elapsed=7485us phase=raster-begin 
+[cambium-frame] host=1 last-presented=14 elapsed=61231us phase=raster-end 
+[cambium-frame] host=1 last-presented=14 elapsed=61262us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=14 elapsed=61321us phase=acquire-end 
+[cambium-frame] host=1 last-presented=14 elapsed=61682us phase=compose-end 
+[cambium-frame] host=1 last-presented=14 elapsed=61698us phase=present-begin 
+[cambium-frame] host=1 last-presented=14 elapsed=61740us phase=present-end 
+[cambium-frame] host=1 last-presented=14 elapsed=61755us phase=presentation-recorded sequence=15
+[cambium-frame] host=1 last-presented=14 elapsed=61793us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=15 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=15 elapsed=7316us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=15 elapsed=7337us phase=shadows-end 
+[cambium-frame] host=1 last-presented=15 elapsed=7358us phase=raster-begin 
+[cambium-frame] host=1 last-presented=15 elapsed=59661us phase=raster-end 
+[cambium-frame] host=1 last-presented=15 elapsed=59696us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=15 elapsed=59778us phase=acquire-end 
+[cambium-frame] host=1 last-presented=15 elapsed=60319us phase=compose-end 
+[cambium-frame] host=1 last-presented=15 elapsed=60334us phase=present-begin 
+[cambium-frame] host=1 last-presented=15 elapsed=60391us phase=present-end 
+[cambium-frame] host=1 last-presented=15 elapsed=60406us phase=presentation-recorded sequence=16
+[cambium-frame] host=1 last-presented=15 elapsed=60472us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=16 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=16 elapsed=7450us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=16 elapsed=7486us phase=shadows-end 
+[cambium-frame] host=1 last-presented=16 elapsed=7497us phase=raster-begin 
+[cambium-frame] host=1 last-presented=16 elapsed=56846us phase=raster-end 
+[cambium-frame] host=1 last-presented=16 elapsed=56909us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=16 elapsed=56991us phase=acquire-end 
+[cambium-frame] host=1 last-presented=16 elapsed=57530us phase=compose-end 
+[cambium-frame] host=1 last-presented=16 elapsed=57547us phase=present-begin 
+[cambium-frame] host=1 last-presented=16 elapsed=57598us phase=present-end 
+[cambium-frame] host=1 last-presented=16 elapsed=57613us phase=presentation-recorded sequence=17
+[cambium-frame] host=1 last-presented=16 elapsed=57673us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=17 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=17 elapsed=8120us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=17 elapsed=8163us phase=shadows-end 
+[cambium-frame] host=1 last-presented=17 elapsed=8174us phase=raster-begin 
+[cambium-frame] host=1 last-presented=17 elapsed=55431us phase=raster-end 
+[cambium-frame] host=1 last-presented=17 elapsed=55466us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=17 elapsed=55525us phase=acquire-end 
+[cambium-frame] host=1 last-presented=17 elapsed=55871us phase=compose-end 
+[cambium-frame] host=1 last-presented=17 elapsed=55886us phase=present-begin 
+[cambium-frame] host=1 last-presented=17 elapsed=55934us phase=present-end 
+[cambium-frame] host=1 last-presented=17 elapsed=55948us phase=presentation-recorded sequence=18
+[cambium-frame] host=1 last-presented=17 elapsed=55983us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=18 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=18 elapsed=8051us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=18 elapsed=8087us phase=shadows-end 
+[cambium-frame] host=1 last-presented=18 elapsed=8097us phase=raster-begin 
+[cambium-frame] host=1 last-presented=18 elapsed=65652us phase=raster-end 
+[cambium-frame] host=1 last-presented=18 elapsed=65698us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=18 elapsed=65784us phase=acquire-end 
+[cambium-frame] host=1 last-presented=18 elapsed=66313us phase=compose-end 
+[cambium-frame] host=1 last-presented=18 elapsed=66329us phase=present-begin 
+[cambium-frame] host=1 last-presented=18 elapsed=66373us phase=present-end 
+[cambium-frame] host=1 last-presented=18 elapsed=66386us phase=presentation-recorded sequence=19
+[cambium-frame] host=1 last-presented=18 elapsed=66459us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=19 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=19 elapsed=7442us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=19 elapsed=7496us phase=shadows-end 
+[cambium-frame] host=1 last-presented=19 elapsed=7510us phase=raster-begin 
+[cambium-frame] host=1 last-presented=19 elapsed=63107us phase=raster-end 
+[cambium-frame] host=1 last-presented=19 elapsed=63143us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=19 elapsed=63224us phase=acquire-end 
+[cambium-frame] host=1 last-presented=19 elapsed=63642us phase=compose-end 
+[cambium-frame] host=1 last-presented=19 elapsed=63671us phase=present-begin 
+[cambium-frame] host=1 last-presented=19 elapsed=63716us phase=present-end 
+[cambium-frame] host=1 last-presented=19 elapsed=63730us phase=presentation-recorded sequence=20
+[cambium-frame] host=1 last-presented=19 elapsed=63766us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=20 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=20 elapsed=7392us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=20 elapsed=7418us phase=shadows-end 
+[cambium-frame] host=1 last-presented=20 elapsed=7428us phase=raster-begin 
+[cambium-frame] host=1 last-presented=20 elapsed=52728us phase=raster-end 
+[cambium-frame] host=1 last-presented=20 elapsed=52768us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=20 elapsed=52825us phase=acquire-end 
+[cambium-frame] host=1 last-presented=20 elapsed=53217us phase=compose-end 
+[cambium-frame] host=1 last-presented=20 elapsed=53231us phase=present-begin 
+[cambium-frame] host=1 last-presented=20 elapsed=53279us phase=present-end 
+[cambium-frame] host=1 last-presented=20 elapsed=53295us phase=presentation-recorded sequence=21
+[cambium-frame] host=1 last-presented=20 elapsed=53330us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=21 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=21 elapsed=7369us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=21 elapsed=7393us phase=shadows-end 
+[cambium-frame] host=1 last-presented=21 elapsed=7403us phase=raster-begin 
+[cambium-frame] host=1 last-presented=21 elapsed=54335us phase=raster-end 
+[cambium-frame] host=1 last-presented=21 elapsed=54375us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=21 elapsed=54430us phase=acquire-end 
+[cambium-frame] host=1 last-presented=21 elapsed=54798us phase=compose-end 
+[cambium-frame] host=1 last-presented=21 elapsed=54819us phase=present-begin 
+[cambium-frame] host=1 last-presented=21 elapsed=54870us phase=present-end 
+[cambium-frame] host=1 last-presented=21 elapsed=54884us phase=presentation-recorded sequence=22
+[cambium-frame] host=1 last-presented=21 elapsed=54924us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=22 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=22 elapsed=7559us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=22 elapsed=7592us phase=shadows-end 
+[cambium-frame] host=1 last-presented=22 elapsed=7603us phase=raster-begin 
+[cambium-frame] host=1 last-presented=22 elapsed=66650us phase=raster-end 
+[cambium-frame] host=1 last-presented=22 elapsed=66682us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=22 elapsed=66745us phase=acquire-end 
+[cambium-frame] host=1 last-presented=22 elapsed=67130us phase=compose-end 
+[cambium-frame] host=1 last-presented=22 elapsed=67144us phase=present-begin 
+[cambium-frame] host=1 last-presented=22 elapsed=67188us phase=present-end 
+[cambium-frame] host=1 last-presented=22 elapsed=67201us phase=presentation-recorded sequence=23
+[cambium-frame] host=1 last-presented=22 elapsed=67238us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=23 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=23 elapsed=7535us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=23 elapsed=7593us phase=shadows-end 
+[cambium-frame] host=1 last-presented=23 elapsed=7603us phase=raster-begin 
+[cambium-frame] host=1 last-presented=23 elapsed=62581us phase=raster-end 
+[cambium-frame] host=1 last-presented=23 elapsed=62624us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=23 elapsed=62680us phase=acquire-end 
+[cambium-frame] host=1 last-presented=23 elapsed=63052us phase=compose-end 
+[cambium-frame] host=1 last-presented=23 elapsed=63066us phase=present-begin 
+[cambium-frame] host=1 last-presented=23 elapsed=63109us phase=present-end 
+[cambium-frame] host=1 last-presented=23 elapsed=63123us phase=presentation-recorded sequence=24
+[cambium-frame] host=1 last-presented=23 elapsed=63162us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=24 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=24 elapsed=7314us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=24 elapsed=7357us phase=shadows-end 
+[cambium-frame] host=1 last-presented=24 elapsed=7368us phase=raster-begin 
+[cambium-frame] host=1 last-presented=24 elapsed=62954us phase=raster-end 
+[cambium-frame] host=1 last-presented=24 elapsed=63012us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=24 elapsed=63080us phase=acquire-end 
+[cambium-frame] host=1 last-presented=24 elapsed=63545us phase=compose-end 
+[cambium-frame] host=1 last-presented=24 elapsed=63559us phase=present-begin 
+[cambium-frame] host=1 last-presented=24 elapsed=63603us phase=present-end 
+[cambium-frame] host=1 last-presented=24 elapsed=63616us phase=presentation-recorded sequence=25
+[cambium-frame] host=1 last-presented=24 elapsed=63652us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=25 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=25 elapsed=7637us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=25 elapsed=7669us phase=shadows-end 
+[cambium-frame] host=1 last-presented=25 elapsed=7680us phase=raster-begin 
+[cambium-frame] host=1 last-presented=25 elapsed=64615us phase=raster-end 
+[cambium-frame] host=1 last-presented=25 elapsed=64641us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=25 elapsed=64695us phase=acquire-end 
+[cambium-frame] host=1 last-presented=25 elapsed=65077us phase=compose-end 
+[cambium-frame] host=1 last-presented=25 elapsed=65091us phase=present-begin 
+[cambium-frame] host=1 last-presented=25 elapsed=65134us phase=present-end 
+[cambium-frame] host=1 last-presented=25 elapsed=65147us phase=presentation-recorded sequence=26
+[cambium-frame] host=1 last-presented=25 elapsed=65184us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=26 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=26 elapsed=7429us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=26 elapsed=7457us phase=shadows-end 
+[cambium-frame] host=1 last-presented=26 elapsed=7468us phase=raster-begin 
+[cambium-frame] host=1 last-presented=26 elapsed=61131us phase=raster-end 
+[cambium-frame] host=1 last-presented=26 elapsed=61161us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=26 elapsed=61224us phase=acquire-end 
+[cambium-frame] host=1 last-presented=26 elapsed=61584us phase=compose-end 
+[cambium-frame] host=1 last-presented=26 elapsed=61598us phase=present-begin 
+[cambium-frame] host=1 last-presented=26 elapsed=61642us phase=present-end 
+[cambium-frame] host=1 last-presented=26 elapsed=61655us phase=presentation-recorded sequence=27
+[cambium-frame] host=1 last-presented=26 elapsed=61695us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=27 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=27 elapsed=7451us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=27 elapsed=7493us phase=shadows-end 
+[cambium-frame] host=1 last-presented=27 elapsed=7503us phase=raster-begin 
+[cambium-frame] host=1 last-presented=27 elapsed=59967us phase=raster-end 
+[cambium-frame] host=1 last-presented=27 elapsed=60002us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=27 elapsed=60060us phase=acquire-end 
+[cambium-frame] host=1 last-presented=27 elapsed=60432us phase=compose-end 
+[cambium-frame] host=1 last-presented=27 elapsed=60450us phase=present-begin 
+[cambium-frame] host=1 last-presented=27 elapsed=60498us phase=present-end 
+[cambium-frame] host=1 last-presented=27 elapsed=60512us phase=presentation-recorded sequence=28
+[cambium-frame] host=1 last-presented=27 elapsed=60547us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=28 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=28 elapsed=7237us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=28 elapsed=7259us phase=shadows-end 
+[cambium-frame] host=1 last-presented=28 elapsed=7269us phase=raster-begin 
+[cambium-frame] host=1 last-presented=28 elapsed=58329us phase=raster-end 
+[cambium-frame] host=1 last-presented=28 elapsed=58407us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=28 elapsed=58465us phase=acquire-end 
+[cambium-frame] host=1 last-presented=28 elapsed=58939us phase=compose-end 
+[cambium-frame] host=1 last-presented=28 elapsed=58963us phase=present-begin 
+[cambium-frame] host=1 last-presented=28 elapsed=59012us phase=present-end 
+[cambium-frame] host=1 last-presented=28 elapsed=59027us phase=presentation-recorded sequence=29
+[cambium-frame] host=1 last-presented=28 elapsed=59089us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=29 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=29 elapsed=7466us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=29 elapsed=7504us phase=shadows-end 
+[cambium-frame] host=1 last-presented=29 elapsed=7515us phase=raster-begin 
+[cambium-frame] host=1 last-presented=29 elapsed=66181us phase=raster-end 
+[cambium-frame] host=1 last-presented=29 elapsed=66218us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=29 elapsed=66276us phase=acquire-end 
+[cambium-frame] host=1 last-presented=29 elapsed=66661us phase=compose-end 
+[cambium-frame] host=1 last-presented=29 elapsed=66675us phase=present-begin 
+[cambium-frame] host=1 last-presented=29 elapsed=66717us phase=present-end 
+[cambium-frame] host=1 last-presented=29 elapsed=66730us phase=presentation-recorded sequence=30
+[cambium-frame] host=1 last-presented=29 elapsed=66768us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=30 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=30 elapsed=7841us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=30 elapsed=7865us phase=shadows-end 
+[cambium-frame] host=1 last-presented=30 elapsed=7876us phase=raster-begin 
+[cambium-frame] host=1 last-presented=30 elapsed=65628us phase=raster-end 
+[cambium-frame] host=1 last-presented=30 elapsed=65671us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=30 elapsed=65733us phase=acquire-end 
+[cambium-frame] host=1 last-presented=30 elapsed=66123us phase=compose-end 
+[cambium-frame] host=1 last-presented=30 elapsed=66138us phase=present-begin 
+[cambium-frame] host=1 last-presented=30 elapsed=66183us phase=present-end 
+[cambium-frame] host=1 last-presented=30 elapsed=66197us phase=presentation-recorded sequence=31
+[cambium-frame] host=1 last-presented=30 elapsed=66234us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=31 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=31 elapsed=7727us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=31 elapsed=7760us phase=shadows-end 
+[cambium-frame] host=1 last-presented=31 elapsed=7771us phase=raster-begin 
+[cambium-frame] host=1 last-presented=31 elapsed=56354us phase=raster-end 
+[cambium-frame] host=1 last-presented=31 elapsed=56397us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=31 elapsed=56458us phase=acquire-end 
+[cambium-frame] host=1 last-presented=31 elapsed=56834us phase=compose-end 
+[cambium-frame] host=1 last-presented=31 elapsed=56848us phase=present-begin 
+[cambium-frame] host=1 last-presented=31 elapsed=56890us phase=present-end 
+[cambium-frame] host=1 last-presented=31 elapsed=56903us phase=presentation-recorded sequence=32
+[cambium-frame] host=1 last-presented=31 elapsed=56942us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=32 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=32 elapsed=7884us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=32 elapsed=7918us phase=shadows-end 
+[cambium-frame] host=1 last-presented=32 elapsed=7928us phase=raster-begin 
+[cambium-frame] host=1 last-presented=32 elapsed=59414us phase=raster-end 
+[cambium-frame] host=1 last-presented=32 elapsed=59457us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=32 elapsed=59512us phase=acquire-end 
+[cambium-frame] host=1 last-presented=32 elapsed=59902us phase=compose-end 
+[cambium-frame] host=1 last-presented=32 elapsed=59916us phase=present-begin 
+[cambium-frame] host=1 last-presented=32 elapsed=59980us phase=present-end 
+[cambium-frame] host=1 last-presented=32 elapsed=59993us phase=presentation-recorded sequence=33
+[cambium-frame] host=1 last-presented=32 elapsed=60028us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=33 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=33 elapsed=7282us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=33 elapsed=7311us phase=shadows-end 
+[cambium-frame] host=1 last-presented=33 elapsed=7321us phase=raster-begin 
+[cambium-frame] host=1 last-presented=33 elapsed=67460us phase=raster-end 
+[cambium-frame] host=1 last-presented=33 elapsed=67502us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=33 elapsed=67560us phase=acquire-end 
+[cambium-frame] host=1 last-presented=33 elapsed=67943us phase=compose-end 
+[cambium-frame] host=1 last-presented=33 elapsed=67958us phase=present-begin 
+[cambium-frame] host=1 last-presented=33 elapsed=68008us phase=present-end 
+[cambium-frame] host=1 last-presented=33 elapsed=68024us phase=presentation-recorded sequence=34
+[cambium-frame] host=1 last-presented=33 elapsed=68060us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=34 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=34 elapsed=7724us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=34 elapsed=7759us phase=shadows-end 
+[cambium-frame] host=1 last-presented=34 elapsed=7770us phase=raster-begin 
+[cambium-frame] host=1 last-presented=34 elapsed=65187us phase=raster-end 
+[cambium-frame] host=1 last-presented=34 elapsed=65231us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=34 elapsed=65311us phase=acquire-end 
+[cambium-frame] host=1 last-presented=34 elapsed=65732us phase=compose-end 
+[cambium-frame] host=1 last-presented=34 elapsed=65751us phase=present-begin 
+[cambium-frame] host=1 last-presented=34 elapsed=65807us phase=present-end 
+[cambium-frame] host=1 last-presented=34 elapsed=65825us phase=presentation-recorded sequence=35
+[cambium-frame] host=1 last-presented=34 elapsed=65866us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=35 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=35 elapsed=7924us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=35 elapsed=7963us phase=shadows-end 
+[cambium-frame] host=1 last-presented=35 elapsed=7974us phase=raster-begin 
+[cambium-frame] host=1 last-presented=35 elapsed=67115us phase=raster-end 
+[cambium-frame] host=1 last-presented=35 elapsed=67150us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=35 elapsed=67223us phase=acquire-end 
+[cambium-frame] host=1 last-presented=35 elapsed=67730us phase=compose-end 
+[cambium-frame] host=1 last-presented=35 elapsed=67748us phase=present-begin 
+[cambium-frame] host=1 last-presented=35 elapsed=67799us phase=present-end 
+[cambium-frame] host=1 last-presented=35 elapsed=67813us phase=presentation-recorded sequence=36
+[cambium-frame] host=1 last-presented=35 elapsed=67856us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=36 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=36 elapsed=7659us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=36 elapsed=7700us phase=shadows-end 
+[cambium-frame] host=1 last-presented=36 elapsed=7710us phase=raster-begin 
+[cambium-frame] host=1 last-presented=36 elapsed=54355us phase=raster-end 
+[cambium-frame] host=1 last-presented=36 elapsed=54437us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=36 elapsed=54565us phase=acquire-end 
+[cambium-frame] host=1 last-presented=36 elapsed=55237us phase=compose-end 
+[cambium-frame] host=1 last-presented=36 elapsed=55252us phase=present-begin 
+[cambium-frame] host=1 last-presented=36 elapsed=55296us phase=present-end 
+[cambium-frame] host=1 last-presented=36 elapsed=55310us phase=presentation-recorded sequence=37
+[cambium-frame] host=1 last-presented=36 elapsed=55356us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=37 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=37 elapsed=7918us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=37 elapsed=7976us phase=shadows-end 
+[cambium-frame] host=1 last-presented=37 elapsed=7986us phase=raster-begin 
+[cambium-frame] host=1 last-presented=37 elapsed=60241us phase=raster-end 
+[cambium-frame] host=1 last-presented=37 elapsed=60292us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=37 elapsed=60352us phase=acquire-end 
+[cambium-frame] host=1 last-presented=37 elapsed=60739us phase=compose-end 
+[cambium-frame] host=1 last-presented=37 elapsed=60753us phase=present-begin 
+[cambium-frame] host=1 last-presented=37 elapsed=60797us phase=present-end 
+[cambium-frame] host=1 last-presented=37 elapsed=60810us phase=presentation-recorded sequence=38
+[cambium-frame] host=1 last-presented=37 elapsed=60850us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=38 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=38 elapsed=7459us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=38 elapsed=7489us phase=shadows-end 
+[cambium-frame] host=1 last-presented=38 elapsed=7505us phase=raster-begin 
+[cambium-frame] host=1 last-presented=38 elapsed=65550us phase=raster-end 
+[cambium-frame] host=1 last-presented=38 elapsed=65595us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=38 elapsed=65651us phase=acquire-end 
+[cambium-frame] host=1 last-presented=38 elapsed=66054us phase=compose-end 
+[cambium-frame] host=1 last-presented=38 elapsed=66069us phase=present-begin 
+[cambium-frame] host=1 last-presented=38 elapsed=66115us phase=present-end 
+[cambium-frame] host=1 last-presented=38 elapsed=66129us phase=presentation-recorded sequence=39
+[cambium-frame] host=1 last-presented=38 elapsed=66165us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=39 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=39 elapsed=7508us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=39 elapsed=7541us phase=shadows-end 
+[cambium-frame] host=1 last-presented=39 elapsed=7552us phase=raster-begin 
+[cambium-frame] host=1 last-presented=39 elapsed=56859us phase=raster-end 
+[cambium-frame] host=1 last-presented=39 elapsed=56902us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=39 elapsed=56957us phase=acquire-end 
+[cambium-frame] host=1 last-presented=39 elapsed=57360us phase=compose-end 
+[cambium-frame] host=1 last-presented=39 elapsed=57374us phase=present-begin 
+[cambium-frame] host=1 last-presented=39 elapsed=57427us phase=present-end 
+[cambium-frame] host=1 last-presented=39 elapsed=57440us phase=presentation-recorded sequence=40
+[cambium-frame] host=1 last-presented=39 elapsed=57485us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=40 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=40 elapsed=7232us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=40 elapsed=7266us phase=shadows-end 
+[cambium-frame] host=1 last-presented=40 elapsed=7276us phase=raster-begin 
+[cambium-frame] host=1 last-presented=40 elapsed=64070us phase=raster-end 
+[cambium-frame] host=1 last-presented=40 elapsed=64118us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=40 elapsed=64193us phase=acquire-end 
+[cambium-frame] host=1 last-presented=40 elapsed=64624us phase=compose-end 
+[cambium-frame] host=1 last-presented=40 elapsed=64639us phase=present-begin 
+[cambium-frame] host=1 last-presented=40 elapsed=64692us phase=present-end 
+[cambium-frame] host=1 last-presented=40 elapsed=64706us phase=presentation-recorded sequence=41
+[cambium-frame] host=1 last-presented=40 elapsed=64747us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=41 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=41 elapsed=7512us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=41 elapsed=7548us phase=shadows-end 
+[cambium-frame] host=1 last-presented=41 elapsed=7558us phase=raster-begin 
+[cambium-frame] host=1 last-presented=41 elapsed=46873us phase=raster-end 
+[cambium-frame] host=1 last-presented=41 elapsed=46954us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=41 elapsed=47022us phase=acquire-end 
+[cambium-frame] host=1 last-presented=41 elapsed=47403us phase=compose-end 
+[cambium-frame] host=1 last-presented=41 elapsed=47415us phase=present-begin 
+[cambium-frame] host=1 last-presented=41 elapsed=47458us phase=present-end 
+[cambium-frame] host=1 last-presented=41 elapsed=47471us phase=presentation-recorded sequence=42
+[cambium-frame] host=1 last-presented=41 elapsed=47506us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=42 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=42 elapsed=7353us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=42 elapsed=7387us phase=shadows-end 
+[cambium-frame] host=1 last-presented=42 elapsed=7398us phase=raster-begin 
+[cambium-frame] host=1 last-presented=42 elapsed=54778us phase=raster-end 
+[cambium-frame] host=1 last-presented=42 elapsed=54823us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=42 elapsed=54879us phase=acquire-end 
+[cambium-frame] host=1 last-presented=42 elapsed=55262us phase=compose-end 
+[cambium-frame] host=1 last-presented=42 elapsed=55279us phase=present-begin 
+[cambium-frame] host=1 last-presented=42 elapsed=55322us phase=present-end 
+[cambium-frame] host=1 last-presented=42 elapsed=55336us phase=presentation-recorded sequence=43
+[cambium-frame] host=1 last-presented=42 elapsed=55379us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=43 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=43 elapsed=7592us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=43 elapsed=7633us phase=shadows-end 
+[cambium-frame] host=1 last-presented=43 elapsed=7645us phase=raster-begin 
+[cambium-frame] host=1 last-presented=43 elapsed=56563us phase=raster-end 
+[cambium-frame] host=1 last-presented=43 elapsed=56606us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=43 elapsed=56665us phase=acquire-end 
+[cambium-frame] host=1 last-presented=43 elapsed=57051us phase=compose-end 
+[cambium-frame] host=1 last-presented=43 elapsed=57079us phase=present-begin 
+[cambium-frame] host=1 last-presented=43 elapsed=57134us phase=present-end 
+[cambium-frame] host=1 last-presented=43 elapsed=57149us phase=presentation-recorded sequence=44
+[cambium-frame] host=1 last-presented=43 elapsed=57222us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=44 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=44 elapsed=7665us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=44 elapsed=7706us phase=shadows-end 
+[cambium-frame] host=1 last-presented=44 elapsed=7717us phase=raster-begin 
+[cambium-frame] host=1 last-presented=44 elapsed=52168us phase=raster-end 
+[cambium-frame] host=1 last-presented=44 elapsed=52214us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=44 elapsed=52275us phase=acquire-end 
+[cambium-frame] host=1 last-presented=44 elapsed=52690us phase=compose-end 
+[cambium-frame] host=1 last-presented=44 elapsed=52708us phase=present-begin 
+[cambium-frame] host=1 last-presented=44 elapsed=52760us phase=present-end 
+[cambium-frame] host=1 last-presented=44 elapsed=52774us phase=presentation-recorded sequence=45
+[cambium-frame] host=1 last-presented=44 elapsed=52810us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=45 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=45 elapsed=7932us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=45 elapsed=7997us phase=shadows-end 
+[cambium-frame] host=1 last-presented=45 elapsed=8008us phase=raster-begin 
+[cambium-frame] host=1 last-presented=45 elapsed=67719us phase=raster-end 
+[cambium-frame] host=1 last-presented=45 elapsed=67765us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=45 elapsed=67821us phase=acquire-end 
+[cambium-frame] host=1 last-presented=45 elapsed=68193us phase=compose-end 
+[cambium-frame] host=1 last-presented=45 elapsed=68211us phase=present-begin 
+[cambium-frame] host=1 last-presented=45 elapsed=68254us phase=present-end 
+[cambium-frame] host=1 last-presented=45 elapsed=68268us phase=presentation-recorded sequence=46
+[cambium-frame] host=1 last-presented=45 elapsed=68314us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=46 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=46 elapsed=7444us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=46 elapsed=7470us phase=shadows-end 
+[cambium-frame] host=1 last-presented=46 elapsed=7481us phase=raster-begin 
+[cambium-frame] host=1 last-presented=46 elapsed=67984us phase=raster-end 
+[cambium-frame] host=1 last-presented=46 elapsed=68030us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=46 elapsed=68099us phase=acquire-end 
+[cambium-frame] host=1 last-presented=46 elapsed=68492us phase=compose-end 
+[cambium-frame] host=1 last-presented=46 elapsed=68508us phase=present-begin 
+[cambium-frame] host=1 last-presented=46 elapsed=68558us phase=present-end 
+[cambium-frame] host=1 last-presented=46 elapsed=68572us phase=presentation-recorded sequence=47
+[cambium-frame] host=1 last-presented=46 elapsed=68605us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=47 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=47 elapsed=7525us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=47 elapsed=7558us phase=shadows-end 
+[cambium-frame] host=1 last-presented=47 elapsed=7569us phase=raster-begin 
+[cambium-frame] host=1 last-presented=47 elapsed=54353us phase=raster-end 
+[cambium-frame] host=1 last-presented=47 elapsed=54396us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=47 elapsed=54445us phase=acquire-end 
+[cambium-frame] host=1 last-presented=47 elapsed=54833us phase=compose-end 
+[cambium-frame] host=1 last-presented=47 elapsed=54849us phase=present-begin 
+[cambium-frame] host=1 last-presented=47 elapsed=54923us phase=present-end 
+[cambium-frame] host=1 last-presented=47 elapsed=54941us phase=presentation-recorded sequence=48
+[cambium-frame] host=1 last-presented=47 elapsed=54998us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=48 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=48 elapsed=7495us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=48 elapsed=7527us phase=shadows-end 
+[cambium-frame] host=1 last-presented=48 elapsed=7537us phase=raster-begin 
+[cambium-frame] host=1 last-presented=48 elapsed=67288us phase=raster-end 
+[cambium-frame] host=1 last-presented=48 elapsed=67366us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=48 elapsed=67488us phase=acquire-end 
+[cambium-frame] host=1 last-presented=48 elapsed=67984us phase=compose-end 
+[cambium-frame] host=1 last-presented=48 elapsed=68008us phase=present-begin 
+[cambium-frame] host=1 last-presented=48 elapsed=68054us phase=present-end 
+[cambium-frame] host=1 last-presented=48 elapsed=68068us phase=presentation-recorded sequence=49
+[cambium-frame] host=1 last-presented=48 elapsed=68107us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=49 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=49 elapsed=8091us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=49 elapsed=8132us phase=shadows-end 
+[cambium-frame] host=1 last-presented=49 elapsed=8148us phase=raster-begin 
+[cambium-frame] host=1 last-presented=49 elapsed=65490us phase=raster-end 
+[cambium-frame] host=1 last-presented=49 elapsed=65692us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=49 elapsed=65955us phase=acquire-end 
+[cambium-frame] host=1 last-presented=49 elapsed=67204us phase=compose-end 
+[cambium-frame] host=1 last-presented=49 elapsed=67257us phase=present-begin 
+[cambium-frame] host=1 last-presented=49 elapsed=67332us phase=present-end 
+[cambium-frame] host=1 last-presented=49 elapsed=67371us phase=presentation-recorded sequence=50
+[cambium-frame] host=1 last-presented=49 elapsed=67469us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=50 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=50 elapsed=9980us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=50 elapsed=10028us phase=shadows-end 
+[cambium-frame] host=1 last-presented=50 elapsed=10052us phase=raster-begin 
+[cambium-frame] host=1 last-presented=50 elapsed=60488us phase=raster-end 
+[cambium-frame] host=1 last-presented=50 elapsed=60528us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=50 elapsed=60595us phase=acquire-end 
+[cambium-frame] host=1 last-presented=50 elapsed=61054us phase=compose-end 
+[cambium-frame] host=1 last-presented=50 elapsed=61112us phase=present-begin 
+[cambium-frame] host=1 last-presented=50 elapsed=61263us phase=present-end 
+[cambium-frame] host=1 last-presented=50 elapsed=61312us phase=presentation-recorded sequence=51
+[cambium-frame] host=1 last-presented=50 elapsed=61375us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=51 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=51 elapsed=7687us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=51 elapsed=7724us phase=shadows-end 
+[cambium-frame] host=1 last-presented=51 elapsed=7735us phase=raster-begin 
+[cambium-frame] host=1 last-presented=51 elapsed=65435us phase=raster-end 
+[cambium-frame] host=1 last-presented=51 elapsed=65520us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=51 elapsed=65587us phase=acquire-end 
+[cambium-frame] host=1 last-presented=51 elapsed=65966us phase=compose-end 
+[cambium-frame] host=1 last-presented=51 elapsed=65981us phase=present-begin 
+[cambium-frame] host=1 last-presented=51 elapsed=66076us phase=present-end 
+[cambium-frame] host=1 last-presented=51 elapsed=66101us phase=presentation-recorded sequence=52
+[cambium-frame] host=1 last-presented=51 elapsed=66143us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=52 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=52 elapsed=7583us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=52 elapsed=7615us phase=shadows-end 
+[cambium-frame] host=1 last-presented=52 elapsed=7626us phase=raster-begin 
+[cambium-frame] host=1 last-presented=52 elapsed=58705us phase=raster-end 
+[cambium-frame] host=1 last-presented=52 elapsed=58744us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=52 elapsed=58813us phase=acquire-end 
+[cambium-frame] host=1 last-presented=52 elapsed=59171us phase=compose-end 
+[cambium-frame] host=1 last-presented=52 elapsed=59185us phase=present-begin 
+[cambium-frame] host=1 last-presented=52 elapsed=59231us phase=present-end 
+[cambium-frame] host=1 last-presented=52 elapsed=59245us phase=presentation-recorded sequence=53
+[cambium-frame] host=1 last-presented=52 elapsed=59295us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=53 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=53 elapsed=7224us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=53 elapsed=7264us phase=shadows-end 
+[cambium-frame] host=1 last-presented=53 elapsed=7277us phase=raster-begin 
+[cambium-frame] host=1 last-presented=53 elapsed=60796us phase=raster-end 
+[cambium-frame] host=1 last-presented=53 elapsed=60831us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=53 elapsed=60909us phase=acquire-end 
+[cambium-frame] host=1 last-presented=53 elapsed=61339us phase=compose-end 
+[cambium-frame] host=1 last-presented=53 elapsed=61353us phase=present-begin 
+[cambium-frame] host=1 last-presented=53 elapsed=61406us phase=present-end 
+[cambium-frame] host=1 last-presented=53 elapsed=61420us phase=presentation-recorded sequence=54
+[cambium-frame] host=1 last-presented=53 elapsed=61458us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=54 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=54 elapsed=7795us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=54 elapsed=7829us phase=shadows-end 
+[cambium-frame] host=1 last-presented=54 elapsed=7840us phase=raster-begin 
+[cambium-frame] host=1 last-presented=54 elapsed=53424us phase=raster-end 
+[cambium-frame] host=1 last-presented=54 elapsed=53488us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=54 elapsed=53589us phase=acquire-end 
+[cambium-frame] host=1 last-presented=54 elapsed=54195us phase=compose-end 
+[cambium-frame] host=1 last-presented=54 elapsed=54234us phase=present-begin 
+[cambium-frame] host=1 last-presented=54 elapsed=54292us phase=present-end 
+[cambium-frame] host=1 last-presented=54 elapsed=54308us phase=presentation-recorded sequence=55
+[cambium-frame] host=1 last-presented=54 elapsed=54366us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=55 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=55 elapsed=7693us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=55 elapsed=7727us phase=shadows-end 
+[cambium-frame] host=1 last-presented=55 elapsed=7739us phase=raster-begin 
+[cambium-frame] host=1 last-presented=55 elapsed=65039us phase=raster-end 
+[cambium-frame] host=1 last-presented=55 elapsed=65082us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=55 elapsed=65161us phase=acquire-end 
+[cambium-frame] host=1 last-presented=55 elapsed=65608us phase=compose-end 
+[cambium-frame] host=1 last-presented=55 elapsed=65624us phase=present-begin 
+[cambium-frame] host=1 last-presented=55 elapsed=65678us phase=present-end 
+[cambium-frame] host=1 last-presented=55 elapsed=65692us phase=presentation-recorded sequence=56
+[cambium-frame] host=1 last-presented=55 elapsed=65735us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=56 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=56 elapsed=7559us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=56 elapsed=7594us phase=shadows-end 
+[cambium-frame] host=1 last-presented=56 elapsed=7606us phase=raster-begin 
+[cambium-frame] host=1 last-presented=56 elapsed=59670us phase=raster-end 
+[cambium-frame] host=1 last-presented=56 elapsed=59743us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=56 elapsed=59833us phase=acquire-end 
+[cambium-frame] host=1 last-presented=56 elapsed=60375us phase=compose-end 
+[cambium-frame] host=1 last-presented=56 elapsed=60390us phase=present-begin 
+[cambium-frame] host=1 last-presented=56 elapsed=60440us phase=present-end 
+[cambium-frame] host=1 last-presented=56 elapsed=60455us phase=presentation-recorded sequence=57
+[cambium-frame] host=1 last-presented=56 elapsed=60511us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=57 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=57 elapsed=7673us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=57 elapsed=7710us phase=shadows-end 
+[cambium-frame] host=1 last-presented=57 elapsed=7721us phase=raster-begin 
+[cambium-frame] host=1 last-presented=57 elapsed=65219us phase=raster-end 
+[cambium-frame] host=1 last-presented=57 elapsed=65260us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=57 elapsed=65319us phase=acquire-end 
+[cambium-frame] host=1 last-presented=57 elapsed=65677us phase=compose-end 
+[cambium-frame] host=1 last-presented=57 elapsed=65691us phase=present-begin 
+[cambium-frame] host=1 last-presented=57 elapsed=65735us phase=present-end 
+[cambium-frame] host=1 last-presented=57 elapsed=65748us phase=presentation-recorded sequence=58
+[cambium-frame] host=1 last-presented=57 elapsed=65787us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=58 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=58 elapsed=7869us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=58 elapsed=7918us phase=shadows-end 
+[cambium-frame] host=1 last-presented=58 elapsed=7928us phase=raster-begin 
+[cambium-frame] host=1 last-presented=58 elapsed=60915us phase=raster-end 
+[cambium-frame] host=1 last-presented=58 elapsed=60951us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=58 elapsed=61010us phase=acquire-end 
+[cambium-frame] host=1 last-presented=58 elapsed=61437us phase=compose-end 
+[cambium-frame] host=1 last-presented=58 elapsed=61459us phase=present-begin 
+[cambium-frame] host=1 last-presented=58 elapsed=61507us phase=present-end 
+[cambium-frame] host=1 last-presented=58 elapsed=61521us phase=presentation-recorded sequence=59
+[cambium-frame] host=1 last-presented=58 elapsed=61558us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=59 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=59 elapsed=7889us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=59 elapsed=7925us phase=shadows-end 
+[cambium-frame] host=1 last-presented=59 elapsed=7936us phase=raster-begin 
+[cambium-frame] host=1 last-presented=59 elapsed=65267us phase=raster-end 
+[cambium-frame] host=1 last-presented=59 elapsed=65306us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=59 elapsed=65362us phase=acquire-end 
+[cambium-frame] host=1 last-presented=59 elapsed=65735us phase=compose-end 
+[cambium-frame] host=1 last-presented=59 elapsed=65749us phase=present-begin 
+[cambium-frame] host=1 last-presented=59 elapsed=65823us phase=present-end 
+[cambium-frame] host=1 last-presented=59 elapsed=65839us phase=presentation-recorded sequence=60
+[cambium-frame] host=1 last-presented=59 elapsed=65911us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=60 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=60 elapsed=7215us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=60 elapsed=7242us phase=shadows-end 
+[cambium-frame] host=1 last-presented=60 elapsed=7254us phase=raster-begin 
+[cambium-frame] host=1 last-presented=60 elapsed=58702us phase=raster-end 
+[cambium-frame] host=1 last-presented=60 elapsed=58742us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=60 elapsed=58797us phase=acquire-end 
+[cambium-frame] host=1 last-presented=60 elapsed=59162us phase=compose-end 
+[cambium-frame] host=1 last-presented=60 elapsed=59178us phase=present-begin 
+[cambium-frame] host=1 last-presented=60 elapsed=59222us phase=present-end 
+[cambium-frame] host=1 last-presented=60 elapsed=59235us phase=presentation-recorded sequence=61
+[cambium-frame] host=1 last-presented=60 elapsed=59268us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=61 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=61 elapsed=8513us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=61 elapsed=8560us phase=shadows-end 
+[cambium-frame] host=1 last-presented=61 elapsed=8570us phase=raster-begin 
+[cambium-frame] host=1 last-presented=61 elapsed=60215us phase=raster-end 
+[cambium-frame] host=1 last-presented=61 elapsed=60256us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=61 elapsed=60313us phase=acquire-end 
+[cambium-frame] host=1 last-presented=61 elapsed=60696us phase=compose-end 
+[cambium-frame] host=1 last-presented=61 elapsed=60712us phase=present-begin 
+[cambium-frame] host=1 last-presented=61 elapsed=60758us phase=present-end 
+[cambium-frame] host=1 last-presented=61 elapsed=60774us phase=presentation-recorded sequence=62
+[cambium-frame] host=1 last-presented=61 elapsed=60810us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=62 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=62 elapsed=7207us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=62 elapsed=7231us phase=shadows-end 
+[cambium-frame] host=1 last-presented=62 elapsed=7243us phase=raster-begin 
+[cambium-frame] host=1 last-presented=62 elapsed=60972us phase=raster-end 
+[cambium-frame] host=1 last-presented=62 elapsed=61011us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=62 elapsed=61064us phase=acquire-end 
+[cambium-frame] host=1 last-presented=62 elapsed=61422us phase=compose-end 
+[cambium-frame] host=1 last-presented=62 elapsed=61435us phase=present-begin 
+[cambium-frame] host=1 last-presented=62 elapsed=61478us phase=present-end 
+[cambium-frame] host=1 last-presented=62 elapsed=61491us phase=presentation-recorded sequence=63
+[cambium-frame] host=1 last-presented=62 elapsed=61525us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=63 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=63 elapsed=7269us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=63 elapsed=7295us phase=shadows-end 
+[cambium-frame] host=1 last-presented=63 elapsed=7305us phase=raster-begin 
+[cambium-frame] host=1 last-presented=63 elapsed=62322us phase=raster-end 
+[cambium-frame] host=1 last-presented=63 elapsed=62399us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=63 elapsed=62471us phase=acquire-end 
+[cambium-frame] host=1 last-presented=63 elapsed=62975us phase=compose-end 
+[cambium-frame] host=1 last-presented=63 elapsed=62993us phase=present-begin 
+[cambium-frame] host=1 last-presented=63 elapsed=63080us phase=present-end 
+[cambium-frame] host=1 last-presented=63 elapsed=63095us phase=presentation-recorded sequence=64
+[cambium-frame] host=1 last-presented=63 elapsed=63156us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=64 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=64 elapsed=7574us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=64 elapsed=7605us phase=shadows-end 
+[cambium-frame] host=1 last-presented=64 elapsed=7616us phase=raster-begin 
+[cambium-frame] host=1 last-presented=64 elapsed=56393us phase=raster-end 
+[cambium-frame] host=1 last-presented=64 elapsed=56431us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=64 elapsed=56509us phase=acquire-end 
+[cambium-frame] host=1 last-presented=64 elapsed=56999us phase=compose-end 
+[cambium-frame] host=1 last-presented=64 elapsed=57013us phase=present-begin 
+[cambium-frame] host=1 last-presented=64 elapsed=57059us phase=present-end 
+[cambium-frame] host=1 last-presented=64 elapsed=57073us phase=presentation-recorded sequence=65
+[cambium-frame] host=1 last-presented=64 elapsed=57107us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=65 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=65 elapsed=7494us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=65 elapsed=7522us phase=shadows-end 
+[cambium-frame] host=1 last-presented=65 elapsed=7533us phase=raster-begin 
+[cambium-frame] host=1 last-presented=65 elapsed=66146us phase=raster-end 
+[cambium-frame] host=1 last-presented=65 elapsed=66180us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=65 elapsed=66249us phase=acquire-end 
+[cambium-frame] host=1 last-presented=65 elapsed=66840us phase=compose-end 
+[cambium-frame] host=1 last-presented=65 elapsed=66859us phase=present-begin 
+[cambium-frame] host=1 last-presented=65 elapsed=66936us phase=present-end 
+[cambium-frame] host=1 last-presented=65 elapsed=66952us phase=presentation-recorded sequence=66
+[cambium-frame] host=1 last-presented=65 elapsed=67051us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=66 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=66 elapsed=7615us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=66 elapsed=7641us phase=shadows-end 
+[cambium-frame] host=1 last-presented=66 elapsed=7654us phase=raster-begin 
+[cambium-frame] host=1 last-presented=66 elapsed=68239us phase=raster-end 
+[cambium-frame] host=1 last-presented=66 elapsed=68313us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=66 elapsed=68431us phase=acquire-end 
+[cambium-frame] host=1 last-presented=66 elapsed=69014us phase=compose-end 
+[cambium-frame] host=1 last-presented=66 elapsed=69029us phase=present-begin 
+[cambium-frame] host=1 last-presented=66 elapsed=69073us phase=present-end 
+[cambium-frame] host=1 last-presented=66 elapsed=69087us phase=presentation-recorded sequence=67
+[cambium-frame] host=1 last-presented=66 elapsed=69122us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=67 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=67 elapsed=7321us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=67 elapsed=7356us phase=shadows-end 
+[cambium-frame] host=1 last-presented=67 elapsed=7366us phase=raster-begin 
+[cambium-frame] host=1 last-presented=67 elapsed=62043us phase=raster-end 
+[cambium-frame] host=1 last-presented=67 elapsed=62070us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=67 elapsed=62126us phase=acquire-end 
+[cambium-frame] host=1 last-presented=67 elapsed=62500us phase=compose-end 
+[cambium-frame] host=1 last-presented=67 elapsed=62513us phase=present-begin 
+[cambium-frame] host=1 last-presented=67 elapsed=62578us phase=present-end 
+[cambium-frame] host=1 last-presented=67 elapsed=62615us phase=presentation-recorded sequence=68
+[cambium-frame] host=1 last-presented=67 elapsed=62650us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=68 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=68 elapsed=7334us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=68 elapsed=7363us phase=shadows-end 
+[cambium-frame] host=1 last-presented=68 elapsed=7373us phase=raster-begin 
+[cambium-frame] host=1 last-presented=68 elapsed=62292us phase=raster-end 
+[cambium-frame] host=1 last-presented=68 elapsed=62345us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=68 elapsed=62436us phase=acquire-end 
+[cambium-frame] host=1 last-presented=68 elapsed=62907us phase=compose-end 
+[cambium-frame] host=1 last-presented=68 elapsed=62922us phase=present-begin 
+[cambium-frame] host=1 last-presented=68 elapsed=62968us phase=present-end 
+[cambium-frame] host=1 last-presented=68 elapsed=62981us phase=presentation-recorded sequence=69
+[cambium-frame] host=1 last-presented=68 elapsed=63014us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=69 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=69 elapsed=7396us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=69 elapsed=7424us phase=shadows-end 
+[cambium-frame] host=1 last-presented=69 elapsed=7434us phase=raster-begin 
+[cambium-frame] host=1 last-presented=69 elapsed=64790us phase=raster-end 
+[cambium-frame] host=1 last-presented=69 elapsed=64831us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=69 elapsed=64883us phase=acquire-end 
+[cambium-frame] host=1 last-presented=69 elapsed=65243us phase=compose-end 
+[cambium-frame] host=1 last-presented=69 elapsed=65256us phase=present-begin 
+[cambium-frame] host=1 last-presented=69 elapsed=65301us phase=present-end 
+[cambium-frame] host=1 last-presented=69 elapsed=65315us phase=presentation-recorded sequence=70
+[cambium-frame] host=1 last-presented=69 elapsed=65349us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=70 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=70 elapsed=7500us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=70 elapsed=7540us phase=shadows-end 
+[cambium-frame] host=1 last-presented=70 elapsed=7551us phase=raster-begin 
+[cambium-frame] host=1 last-presented=70 elapsed=60109us phase=raster-end 
+[cambium-frame] host=1 last-presented=70 elapsed=60167us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=70 elapsed=60227us phase=acquire-end 
+[cambium-frame] host=1 last-presented=70 elapsed=60638us phase=compose-end 
+[cambium-frame] host=1 last-presented=70 elapsed=60658us phase=present-begin 
+[cambium-frame] host=1 last-presented=70 elapsed=60715us phase=present-end 
+[cambium-frame] host=1 last-presented=70 elapsed=60733us phase=presentation-recorded sequence=71
+[cambium-frame] host=1 last-presented=70 elapsed=60796us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=71 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=71 elapsed=7703us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=71 elapsed=7735us phase=shadows-end 
+[cambium-frame] host=1 last-presented=71 elapsed=7745us phase=raster-begin 
+[cambium-frame] host=1 last-presented=71 elapsed=53762us phase=raster-end 
+[cambium-frame] host=1 last-presented=71 elapsed=53833us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=71 elapsed=53922us phase=acquire-end 
+[cambium-frame] host=1 last-presented=71 elapsed=54434us phase=compose-end 
+[cambium-frame] host=1 last-presented=71 elapsed=54450us phase=present-begin 
+[cambium-frame] host=1 last-presented=71 elapsed=54504us phase=present-end 
+[cambium-frame] host=1 last-presented=71 elapsed=54518us phase=presentation-recorded sequence=72
+[cambium-frame] host=1 last-presented=71 elapsed=54591us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=72 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=72 elapsed=7394us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=72 elapsed=7446us phase=shadows-end 
+[cambium-frame] host=1 last-presented=72 elapsed=7459us phase=raster-begin 
+[cambium-frame] host=1 last-presented=72 elapsed=51402us phase=raster-end 
+[cambium-frame] host=1 last-presented=72 elapsed=51435us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=72 elapsed=51490us phase=acquire-end 
+[cambium-frame] host=1 last-presented=72 elapsed=51935us phase=compose-end 
+[cambium-frame] host=1 last-presented=72 elapsed=51962us phase=present-begin 
+[cambium-frame] host=1 last-presented=72 elapsed=52013us phase=present-end 
+[cambium-frame] host=1 last-presented=72 elapsed=52028us phase=presentation-recorded sequence=73
+[cambium-frame] host=1 last-presented=72 elapsed=52089us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=73 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=73 elapsed=7307us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=73 elapsed=7341us phase=shadows-end 
+[cambium-frame] host=1 last-presented=73 elapsed=7352us phase=raster-begin 
+[cambium-frame] host=1 last-presented=73 elapsed=59359us phase=raster-end 
+[cambium-frame] host=1 last-presented=73 elapsed=59402us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=73 elapsed=59460us phase=acquire-end 
+[cambium-frame] host=1 last-presented=73 elapsed=59842us phase=compose-end 
+[cambium-frame] host=1 last-presented=73 elapsed=59857us phase=present-begin 
+[cambium-frame] host=1 last-presented=73 elapsed=59916us phase=present-end 
+[cambium-frame] host=1 last-presented=73 elapsed=59930us phase=presentation-recorded sequence=74
+[cambium-frame] host=1 last-presented=73 elapsed=59971us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=74 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=74 elapsed=7822us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=74 elapsed=7873us phase=shadows-end 
+[cambium-frame] host=1 last-presented=74 elapsed=7883us phase=raster-begin 
+[cambium-frame] host=1 last-presented=74 elapsed=60560us phase=raster-end 
+[cambium-frame] host=1 last-presented=74 elapsed=60590us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=74 elapsed=60648us phase=acquire-end 
+[cambium-frame] host=1 last-presented=74 elapsed=61024us phase=compose-end 
+[cambium-frame] host=1 last-presented=74 elapsed=61038us phase=present-begin 
+[cambium-frame] host=1 last-presented=74 elapsed=61081us phase=present-end 
+[cambium-frame] host=1 last-presented=74 elapsed=61094us phase=presentation-recorded sequence=75
+[cambium-frame] host=1 last-presented=74 elapsed=61130us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=75 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=75 elapsed=7518us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=75 elapsed=7546us phase=shadows-end 
+[cambium-frame] host=1 last-presented=75 elapsed=7556us phase=raster-begin 
+[cambium-frame] host=1 last-presented=75 elapsed=63400us phase=raster-end 
+[cambium-frame] host=1 last-presented=75 elapsed=63450us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=75 elapsed=63508us phase=acquire-end 
+[cambium-frame] host=1 last-presented=75 elapsed=63920us phase=compose-end 
+[cambium-frame] host=1 last-presented=75 elapsed=63936us phase=present-begin 
+[cambium-frame] host=1 last-presented=75 elapsed=63980us phase=present-end 
+[cambium-frame] host=1 last-presented=75 elapsed=63994us phase=presentation-recorded sequence=76
+[cambium-frame] host=1 last-presented=75 elapsed=64028us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=76 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=76 elapsed=7317us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=76 elapsed=7354us phase=shadows-end 
+[cambium-frame] host=1 last-presented=76 elapsed=7365us phase=raster-begin 
+[cambium-frame] host=1 last-presented=76 elapsed=61296us phase=raster-end 
+[cambium-frame] host=1 last-presented=76 elapsed=61326us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=76 elapsed=61400us phase=acquire-end 
+[cambium-frame] host=1 last-presented=76 elapsed=61797us phase=compose-end 
+[cambium-frame] host=1 last-presented=76 elapsed=61811us phase=present-begin 
+[cambium-frame] host=1 last-presented=76 elapsed=61855us phase=present-end 
+[cambium-frame] host=1 last-presented=76 elapsed=61869us phase=presentation-recorded sequence=77
+[cambium-frame] host=1 last-presented=76 elapsed=61904us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=77 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=77 elapsed=7464us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=77 elapsed=7487us phase=shadows-end 
+[cambium-frame] host=1 last-presented=77 elapsed=7497us phase=raster-begin 
+[cambium-frame] host=1 last-presented=77 elapsed=80502us phase=raster-end 
+[cambium-frame] host=1 last-presented=77 elapsed=80535us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=77 elapsed=80607us phase=acquire-end 
+[cambium-frame] host=1 last-presented=77 elapsed=81093us phase=compose-end 
+[cambium-frame] host=1 last-presented=77 elapsed=81113us phase=present-begin 
+[cambium-frame] host=1 last-presented=77 elapsed=81168us phase=present-end 
+[cambium-frame] host=1 last-presented=77 elapsed=81182us phase=presentation-recorded sequence=78
+[cambium-frame] host=1 last-presented=77 elapsed=81240us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=78 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=78 elapsed=8426us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=78 elapsed=8466us phase=shadows-end 
+[cambium-frame] host=1 last-presented=78 elapsed=8477us phase=raster-begin 
+[cambium-frame] host=1 last-presented=78 elapsed=73953us phase=raster-end 
+[cambium-frame] host=1 last-presented=78 elapsed=73993us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=78 elapsed=74049us phase=acquire-end 
+[cambium-frame] host=1 last-presented=78 elapsed=74419us phase=compose-end 
+[cambium-frame] host=1 last-presented=78 elapsed=74440us phase=present-begin 
+[cambium-frame] host=1 last-presented=78 elapsed=74482us phase=present-end 
+[cambium-frame] host=1 last-presented=78 elapsed=74496us phase=presentation-recorded sequence=79
+[cambium-frame] host=1 last-presented=78 elapsed=74529us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=79 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=79 elapsed=8047us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=79 elapsed=8076us phase=shadows-end 
+[cambium-frame] host=1 last-presented=79 elapsed=8088us phase=raster-begin 
+[cambium-frame] host=1 last-presented=79 elapsed=65897us phase=raster-end 
+[cambium-frame] host=1 last-presented=79 elapsed=65942us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=79 elapsed=66002us phase=acquire-end 
+[cambium-frame] host=1 last-presented=79 elapsed=66398us phase=compose-end 
+[cambium-frame] host=1 last-presented=79 elapsed=66412us phase=present-begin 
+[cambium-frame] host=1 last-presented=79 elapsed=66465us phase=present-end 
+[cambium-frame] host=1 last-presented=79 elapsed=66481us phase=presentation-recorded sequence=80
+[cambium-frame] host=1 last-presented=79 elapsed=66546us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=80 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=80 elapsed=7361us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=80 elapsed=7395us phase=shadows-end 
+[cambium-frame] host=1 last-presented=80 elapsed=7409us phase=raster-begin 
+[cambium-frame] host=1 last-presented=80 elapsed=54013us phase=raster-end 
+[cambium-frame] host=1 last-presented=80 elapsed=54044us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=80 elapsed=54098us phase=acquire-end 
+[cambium-frame] host=1 last-presented=80 elapsed=54476us phase=compose-end 
+[cambium-frame] host=1 last-presented=80 elapsed=54489us phase=present-begin 
+[cambium-frame] host=1 last-presented=80 elapsed=54537us phase=present-end 
+[cambium-frame] host=1 last-presented=80 elapsed=54549us phase=presentation-recorded sequence=81
+[cambium-frame] host=1 last-presented=80 elapsed=54585us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=81 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=81 elapsed=7427us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=81 elapsed=7465us phase=shadows-end 
+[cambium-frame] host=1 last-presented=81 elapsed=7475us phase=raster-begin 
+[cambium-frame] host=1 last-presented=81 elapsed=55155us phase=raster-end 
+[cambium-frame] host=1 last-presented=81 elapsed=55221us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=81 elapsed=55350us phase=acquire-end 
+[cambium-frame] host=1 last-presented=81 elapsed=55932us phase=compose-end 
+[cambium-frame] host=1 last-presented=81 elapsed=55948us phase=present-begin 
+[cambium-frame] host=1 last-presented=81 elapsed=55996us phase=present-end 
+[cambium-frame] host=1 last-presented=81 elapsed=56013us phase=presentation-recorded sequence=82
+[cambium-frame] host=1 last-presented=81 elapsed=56115us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=82 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=82 elapsed=7908us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=82 elapsed=7937us phase=shadows-end 
+[cambium-frame] host=1 last-presented=82 elapsed=7949us phase=raster-begin 
+[cambium-frame] host=1 last-presented=82 elapsed=54511us phase=raster-end 
+[cambium-frame] host=1 last-presented=82 elapsed=54558us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=82 elapsed=54612us phase=acquire-end 
+[cambium-frame] host=1 last-presented=82 elapsed=55100us phase=compose-end 
+[cambium-frame] host=1 last-presented=82 elapsed=55129us phase=present-begin 
+[cambium-frame] host=1 last-presented=82 elapsed=55196us phase=present-end 
+[cambium-frame] host=1 last-presented=82 elapsed=55214us phase=presentation-recorded sequence=83
+[cambium-frame] host=1 last-presented=82 elapsed=55279us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=83 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=83 elapsed=7326us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=83 elapsed=7362us phase=shadows-end 
+[cambium-frame] host=1 last-presented=83 elapsed=7374us phase=raster-begin 
+[cambium-frame] host=1 last-presented=83 elapsed=61896us phase=raster-end 
+[cambium-frame] host=1 last-presented=83 elapsed=61934us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=83 elapsed=61992us phase=acquire-end 
+[cambium-frame] host=1 last-presented=83 elapsed=62369us phase=compose-end 
+[cambium-frame] host=1 last-presented=83 elapsed=62382us phase=present-begin 
+[cambium-frame] host=1 last-presented=83 elapsed=62427us phase=present-end 
+[cambium-frame] host=1 last-presented=83 elapsed=62440us phase=presentation-recorded sequence=84
+[cambium-frame] host=1 last-presented=83 elapsed=62477us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=84 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=84 elapsed=7176us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=84 elapsed=7199us phase=shadows-end 
+[cambium-frame] host=1 last-presented=84 elapsed=7208us phase=raster-begin 
+[cambium-frame] host=1 last-presented=84 elapsed=65184us phase=raster-end 
+[cambium-frame] host=1 last-presented=84 elapsed=65227us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=84 elapsed=65292us phase=acquire-end 
+[cambium-frame] host=1 last-presented=84 elapsed=65696us phase=compose-end 
+[cambium-frame] host=1 last-presented=84 elapsed=65711us phase=present-begin 
+[cambium-frame] host=1 last-presented=84 elapsed=65758us phase=present-end 
+[cambium-frame] host=1 last-presented=84 elapsed=65772us phase=presentation-recorded sequence=85
+[cambium-frame] host=1 last-presented=84 elapsed=65808us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=85 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=85 elapsed=7667us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=85 elapsed=7704us phase=shadows-end 
+[cambium-frame] host=1 last-presented=85 elapsed=7725us phase=raster-begin 
+[cambium-frame] host=1 last-presented=85 elapsed=59642us phase=raster-end 
+[cambium-frame] host=1 last-presented=85 elapsed=59681us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=85 elapsed=59736us phase=acquire-end 
+[cambium-frame] host=1 last-presented=85 elapsed=60097us phase=compose-end 
+[cambium-frame] host=1 last-presented=85 elapsed=60114us phase=present-begin 
+[cambium-frame] host=1 last-presented=85 elapsed=60158us phase=present-end 
+[cambium-frame] host=1 last-presented=85 elapsed=60172us phase=presentation-recorded sequence=86
+[cambium-frame] host=1 last-presented=85 elapsed=60206us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=86 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=86 elapsed=7232us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=86 elapsed=7259us phase=shadows-end 
+[cambium-frame] host=1 last-presented=86 elapsed=7271us phase=raster-begin 
+[cambium-frame] host=1 last-presented=86 elapsed=62946us phase=raster-end 
+[cambium-frame] host=1 last-presented=86 elapsed=63043us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=86 elapsed=63104us phase=acquire-end 
+[cambium-frame] host=1 last-presented=86 elapsed=63560us phase=compose-end 
+[cambium-frame] host=1 last-presented=86 elapsed=63574us phase=present-begin 
+[cambium-frame] host=1 last-presented=86 elapsed=63620us phase=present-end 
+[cambium-frame] host=1 last-presented=86 elapsed=63633us phase=presentation-recorded sequence=87
+[cambium-frame] host=1 last-presented=86 elapsed=63671us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=87 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=87 elapsed=7396us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=87 elapsed=7436us phase=shadows-end 
+[cambium-frame] host=1 last-presented=87 elapsed=7446us phase=raster-begin 
+[cambium-frame] host=1 last-presented=87 elapsed=66570us phase=raster-end 
+[cambium-frame] host=1 last-presented=87 elapsed=66603us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=87 elapsed=66658us phase=acquire-end 
+[cambium-frame] host=1 last-presented=87 elapsed=67035us phase=compose-end 
+[cambium-frame] host=1 last-presented=87 elapsed=67049us phase=present-begin 
+[cambium-frame] host=1 last-presented=87 elapsed=67096us phase=present-end 
+[cambium-frame] host=1 last-presented=87 elapsed=67109us phase=presentation-recorded sequence=88
+[cambium-frame] host=1 last-presented=87 elapsed=67147us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=88 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=88 elapsed=7364us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=88 elapsed=7396us phase=shadows-end 
+[cambium-frame] host=1 last-presented=88 elapsed=7406us phase=raster-begin 
+[cambium-frame] host=1 last-presented=88 elapsed=61811us phase=raster-end 
+[cambium-frame] host=1 last-presented=88 elapsed=61851us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=88 elapsed=61909us phase=acquire-end 
+[cambium-frame] host=1 last-presented=88 elapsed=62309us phase=compose-end 
+[cambium-frame] host=1 last-presented=88 elapsed=62323us phase=present-begin 
+[cambium-frame] host=1 last-presented=88 elapsed=62366us phase=present-end 
+[cambium-frame] host=1 last-presented=88 elapsed=62379us phase=presentation-recorded sequence=89
+[cambium-frame] host=1 last-presented=88 elapsed=62415us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=89 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=89 elapsed=7626us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=89 elapsed=7654us phase=shadows-end 
+[cambium-frame] host=1 last-presented=89 elapsed=7664us phase=raster-begin 
+[cambium-frame] host=1 last-presented=89 elapsed=63171us phase=raster-end 
+[cambium-frame] host=1 last-presented=89 elapsed=63219us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=89 elapsed=63284us phase=acquire-end 
+[cambium-frame] host=1 last-presented=89 elapsed=63686us phase=compose-end 
+[cambium-frame] host=1 last-presented=89 elapsed=63704us phase=present-begin 
+[cambium-frame] host=1 last-presented=89 elapsed=63752us phase=present-end 
+[cambium-frame] host=1 last-presented=89 elapsed=63766us phase=presentation-recorded sequence=90
+[cambium-frame] host=1 last-presented=89 elapsed=63806us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=90 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=90 elapsed=7641us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=90 elapsed=7701us phase=shadows-end 
+[cambium-frame] host=1 last-presented=90 elapsed=7712us phase=raster-begin 
+[cambium-frame] host=1 last-presented=90 elapsed=51939us phase=raster-end 
+[cambium-frame] host=1 last-presented=90 elapsed=51979us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=90 elapsed=52029us phase=acquire-end 
+[cambium-frame] host=1 last-presented=90 elapsed=52416us phase=compose-end 
+[cambium-frame] host=1 last-presented=90 elapsed=52434us phase=present-begin 
+[cambium-frame] host=1 last-presented=90 elapsed=52478us phase=present-end 
+[cambium-frame] host=1 last-presented=90 elapsed=52492us phase=presentation-recorded sequence=91
+[cambium-frame] host=1 last-presented=90 elapsed=52525us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=91 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=91 elapsed=7578us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=91 elapsed=7610us phase=shadows-end 
+[cambium-frame] host=1 last-presented=91 elapsed=7620us phase=raster-begin 
+[cambium-frame] host=1 last-presented=91 elapsed=60419us phase=raster-end 
+[cambium-frame] host=1 last-presented=91 elapsed=60491us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=91 elapsed=60567us phase=acquire-end 
+[cambium-frame] host=1 last-presented=91 elapsed=61073us phase=compose-end 
+[cambium-frame] host=1 last-presented=91 elapsed=61091us phase=present-begin 
+[cambium-frame] host=1 last-presented=91 elapsed=61140us phase=present-end 
+[cambium-frame] host=1 last-presented=91 elapsed=61155us phase=presentation-recorded sequence=92
+[cambium-frame] host=1 last-presented=91 elapsed=61212us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=92 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=92 elapsed=8377us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=92 elapsed=8412us phase=shadows-end 
+[cambium-frame] host=1 last-presented=92 elapsed=8422us phase=raster-begin 
+[cambium-frame] host=1 last-presented=92 elapsed=68819us phase=raster-end 
+[cambium-frame] host=1 last-presented=92 elapsed=68888us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=92 elapsed=68965us phase=acquire-end 
+[cambium-frame] host=1 last-presented=92 elapsed=69471us phase=compose-end 
+[cambium-frame] host=1 last-presented=92 elapsed=69492us phase=present-begin 
+[cambium-frame] host=1 last-presented=92 elapsed=69549us phase=present-end 
+[cambium-frame] host=1 last-presented=92 elapsed=69564us phase=presentation-recorded sequence=93
+[cambium-frame] host=1 last-presented=92 elapsed=69612us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=93 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=93 elapsed=7589us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=93 elapsed=7624us phase=shadows-end 
+[cambium-frame] host=1 last-presented=93 elapsed=7635us phase=raster-begin 
+[cambium-frame] host=1 last-presented=93 elapsed=87046us phase=raster-end 
+[cambium-frame] host=1 last-presented=93 elapsed=87147us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=93 elapsed=87211us phase=acquire-end 
+[cambium-frame] host=1 last-presented=93 elapsed=87693us phase=compose-end 
+[cambium-frame] host=1 last-presented=93 elapsed=87711us phase=present-begin 
+[cambium-frame] host=1 last-presented=93 elapsed=87763us phase=present-end 
+[cambium-frame] host=1 last-presented=93 elapsed=87780us phase=presentation-recorded sequence=94
+[cambium-frame] host=1 last-presented=93 elapsed=87818us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=94 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=94 elapsed=6874us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=94 elapsed=6902us phase=shadows-end 
+[cambium-frame] host=1 last-presented=94 elapsed=6912us phase=raster-begin 
+[cambium-frame] host=1 last-presented=94 elapsed=59355us phase=raster-end 
+[cambium-frame] host=1 last-presented=94 elapsed=59451us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=94 elapsed=59585us phase=acquire-end 
+[cambium-frame] host=1 last-presented=94 elapsed=60216us phase=compose-end 
+[cambium-frame] host=1 last-presented=94 elapsed=60241us phase=present-begin 
+[cambium-frame] host=1 last-presented=94 elapsed=60290us phase=present-end 
+[cambium-frame] host=1 last-presented=94 elapsed=60307us phase=presentation-recorded sequence=95
+[cambium-frame] host=1 last-presented=94 elapsed=60350us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=95 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=95 elapsed=7010us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=95 elapsed=7072us phase=shadows-end 
+[cambium-frame] host=1 last-presented=95 elapsed=7082us phase=raster-begin 
+[cambium-frame] host=1 last-presented=95 elapsed=54716us phase=raster-end 
+[cambium-frame] host=1 last-presented=95 elapsed=54757us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=95 elapsed=54810us phase=acquire-end 
+[cambium-frame] host=1 last-presented=95 elapsed=55182us phase=compose-end 
+[cambium-frame] host=1 last-presented=95 elapsed=55201us phase=present-begin 
+[cambium-frame] host=1 last-presented=95 elapsed=55249us phase=present-end 
+[cambium-frame] host=1 last-presented=95 elapsed=55262us phase=presentation-recorded sequence=96
+[cambium-frame] host=1 last-presented=95 elapsed=55297us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=96 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=96 elapsed=6796us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=96 elapsed=6822us phase=shadows-end 
+[cambium-frame] host=1 last-presented=96 elapsed=6833us phase=raster-begin 
+[cambium-frame] host=1 last-presented=96 elapsed=57094us phase=raster-end 
+[cambium-frame] host=1 last-presented=96 elapsed=57164us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=96 elapsed=57255us phase=acquire-end 
+[cambium-frame] host=1 last-presented=96 elapsed=57817us phase=compose-end 
+[cambium-frame] host=1 last-presented=96 elapsed=57844us phase=present-begin 
+[cambium-frame] host=1 last-presented=96 elapsed=57905us phase=present-end 
+[cambium-frame] host=1 last-presented=96 elapsed=57923us phase=presentation-recorded sequence=97
+[cambium-frame] host=1 last-presented=96 elapsed=58004us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=97 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=97 elapsed=7267us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=97 elapsed=7326us phase=shadows-end 
+[cambium-frame] host=1 last-presented=97 elapsed=7337us phase=raster-begin 
+[cambium-frame] host=1 last-presented=97 elapsed=75102us phase=raster-end 
+[cambium-frame] host=1 last-presented=97 elapsed=75143us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=97 elapsed=75196us phase=acquire-end 
+[cambium-frame] host=1 last-presented=97 elapsed=75690us phase=compose-end 
+[cambium-frame] host=1 last-presented=97 elapsed=75722us phase=present-begin 
+[cambium-frame] host=1 last-presented=97 elapsed=75792us phase=present-end 
+[cambium-frame] host=1 last-presented=97 elapsed=75810us phase=presentation-recorded sequence=98
+[cambium-frame] host=1 last-presented=97 elapsed=75855us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=98 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=98 elapsed=7688us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=98 elapsed=7725us phase=shadows-end 
+[cambium-frame] host=1 last-presented=98 elapsed=7736us phase=raster-begin 
+[cambium-frame] host=1 last-presented=98 elapsed=63682us phase=raster-end 
+[cambium-frame] host=1 last-presented=98 elapsed=63724us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=98 elapsed=63784us phase=acquire-end 
+[cambium-frame] host=1 last-presented=98 elapsed=64186us phase=compose-end 
+[cambium-frame] host=1 last-presented=98 elapsed=64206us phase=present-begin 
+[cambium-frame] host=1 last-presented=98 elapsed=64254us phase=present-end 
+[cambium-frame] host=1 last-presented=98 elapsed=64268us phase=presentation-recorded sequence=99
+[cambium-frame] host=1 last-presented=98 elapsed=64307us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=99 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=99 elapsed=8138us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=99 elapsed=8186us phase=shadows-end 
+[cambium-frame] host=1 last-presented=99 elapsed=8198us phase=raster-begin 
+[cambium-frame] host=1 last-presented=99 elapsed=78250us phase=raster-end 
+[cambium-frame] host=1 last-presented=99 elapsed=78291us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=99 elapsed=78363us phase=acquire-end 
+[cambium-frame] host=1 last-presented=99 elapsed=79100us phase=compose-end 
+[cambium-frame] host=1 last-presented=99 elapsed=79120us phase=present-begin 
+[cambium-frame] host=1 last-presented=99 elapsed=79190us phase=present-end 
+[cambium-frame] host=1 last-presented=99 elapsed=79206us phase=presentation-recorded sequence=100
+[cambium-frame] host=1 last-presented=99 elapsed=79305us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=100 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=100 elapsed=7839us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=100 elapsed=7895us phase=shadows-end 
+[cambium-frame] host=1 last-presented=100 elapsed=7908us phase=raster-begin 
+[cambium-frame] host=1 last-presented=100 elapsed=59791us phase=raster-end 
+[cambium-frame] host=1 last-presented=100 elapsed=59819us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=100 elapsed=59877us phase=acquire-end 
+[cambium-frame] host=1 last-presented=100 elapsed=60351us phase=compose-end 
+[cambium-frame] host=1 last-presented=100 elapsed=60368us phase=present-begin 
+[cambium-frame] host=1 last-presented=100 elapsed=60438us phase=present-end 
+[cambium-frame] host=1 last-presented=100 elapsed=60453us phase=presentation-recorded sequence=101
+[cambium-frame] host=1 last-presented=100 elapsed=60544us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=101 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=101 elapsed=7592us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=101 elapsed=7639us phase=shadows-end 
+[cambium-frame] host=1 last-presented=101 elapsed=7650us phase=raster-begin 
+[cambium-frame] host=1 last-presented=101 elapsed=76704us phase=raster-end 
+[cambium-frame] host=1 last-presented=101 elapsed=76742us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=101 elapsed=76821us phase=acquire-end 
+[cambium-frame] host=1 last-presented=101 elapsed=77254us phase=compose-end 
+[cambium-frame] host=1 last-presented=101 elapsed=77269us phase=present-begin 
+[cambium-frame] host=1 last-presented=101 elapsed=77316us phase=present-end 
+[cambium-frame] host=1 last-presented=101 elapsed=77331us phase=presentation-recorded sequence=102
+[cambium-frame] host=1 last-presented=101 elapsed=80684us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=102 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=102 elapsed=343133us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=102 elapsed=343177us phase=shadows-end 
+[cambium-frame] host=1 last-presented=102 elapsed=343194us phase=raster-begin 
+[cambium-frame] host=1 last-presented=102 elapsed=419584us phase=raster-end 
+[cambium-frame] host=1 last-presented=102 elapsed=419662us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=102 elapsed=419772us phase=acquire-end 
+[cambium-frame] host=1 last-presented=102 elapsed=420478us phase=compose-end 
+[cambium-frame] host=1 last-presented=102 elapsed=420510us phase=present-begin 
+[cambium-frame] host=1 last-presented=102 elapsed=420576us phase=present-end 
+[cambium-frame] host=1 last-presented=102 elapsed=420600us phase=presentation-recorded sequence=103
+[cambium-frame] host=1 last-presented=102 elapsed=420677us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=103 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=103 elapsed=339943us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=103 elapsed=339987us phase=shadows-end 
+[cambium-frame] host=1 last-presented=103 elapsed=340009us phase=raster-begin 
+[cambium-frame] host=1 last-presented=103 elapsed=399987us phase=raster-end 
+[cambium-frame] host=1 last-presented=103 elapsed=400036us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=103 elapsed=400098us phase=acquire-end 
+[cambium-frame] host=1 last-presented=103 elapsed=400631us phase=compose-end 
+[cambium-frame] host=1 last-presented=103 elapsed=400658us phase=present-begin 
+[cambium-frame] host=1 last-presented=103 elapsed=400717us phase=present-end 
+[cambium-frame] host=1 last-presented=103 elapsed=400737us phase=presentation-recorded sequence=104
+[cambium-frame] host=1 last-presented=103 elapsed=400803us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=104 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=104 elapsed=8093us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=104 elapsed=8131us phase=shadows-end 
+[cambium-frame] host=1 last-presented=104 elapsed=8148us phase=raster-begin 
+[cambium-frame] host=1 last-presented=104 elapsed=70158us phase=raster-end 
+[cambium-frame] host=1 last-presented=104 elapsed=70216us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=104 elapsed=70308us phase=acquire-end 
+[cambium-frame] host=1 last-presented=104 elapsed=70867us phase=compose-end 
+[cambium-frame] host=1 last-presented=104 elapsed=70889us phase=present-begin 
+[cambium-frame] host=1 last-presented=104 elapsed=70950us phase=present-end 
+[cambium-frame] host=1 last-presented=104 elapsed=70975us phase=presentation-recorded sequence=105
+[cambium-frame] host=1 last-presented=104 elapsed=71053us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=105 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=105 elapsed=8403us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=105 elapsed=8456us phase=shadows-end 
+[cambium-frame] host=1 last-presented=105 elapsed=8473us phase=raster-begin 
+[cambium-frame] host=1 last-presented=105 elapsed=64632us phase=raster-end 
+[cambium-frame] host=1 last-presented=105 elapsed=64732us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=105 elapsed=64867us phase=acquire-end 
+[cambium-frame] host=1 last-presented=105 elapsed=65443us phase=compose-end 
+[cambium-frame] host=1 last-presented=105 elapsed=65471us phase=present-begin 
+[cambium-frame] host=1 last-presented=105 elapsed=65536us phase=present-end 
+[cambium-frame] host=1 last-presented=105 elapsed=65558us phase=presentation-recorded sequence=106
+[cambium-frame] host=1 last-presented=105 elapsed=65636us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=106 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=106 elapsed=7628us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=106 elapsed=7691us phase=shadows-end 
+[cambium-frame] host=1 last-presented=106 elapsed=7708us phase=raster-begin 
+[cambium-frame] host=1 last-presented=106 elapsed=64635us phase=raster-end 
+[cambium-frame] host=1 last-presented=106 elapsed=64682us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=106 elapsed=64750us phase=acquire-end 
+[cambium-frame] host=1 last-presented=106 elapsed=65127us phase=compose-end 
+[cambium-frame] host=1 last-presented=106 elapsed=65146us phase=present-begin 
+[cambium-frame] host=1 last-presented=106 elapsed=65196us phase=present-end 
+[cambium-frame] host=1 last-presented=106 elapsed=65214us phase=presentation-recorded sequence=107
+[cambium-frame] host=1 last-presented=106 elapsed=65254us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=107 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=107 elapsed=7253us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=107 elapsed=7284us phase=shadows-end 
+[cambium-frame] host=1 last-presented=107 elapsed=7299us phase=raster-begin 
+[cambium-frame] host=1 last-presented=107 elapsed=66790us phase=raster-end 
+[cambium-frame] host=1 last-presented=107 elapsed=66839us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=107 elapsed=66910us phase=acquire-end 
+[cambium-frame] host=1 last-presented=107 elapsed=67305us phase=compose-end 
+[cambium-frame] host=1 last-presented=107 elapsed=67327us phase=present-begin 
+[cambium-frame] host=1 last-presented=107 elapsed=67379us phase=present-end 
+[cambium-frame] host=1 last-presented=107 elapsed=67399us phase=presentation-recorded sequence=108
+[cambium-frame] host=1 last-presented=107 elapsed=67448us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=108 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=108 elapsed=7731us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=108 elapsed=7780us phase=shadows-end 
+[cambium-frame] host=1 last-presented=108 elapsed=7802us phase=raster-begin 
+[cambium-frame] host=1 last-presented=108 elapsed=54423us phase=raster-end 
+[cambium-frame] host=1 last-presented=108 elapsed=54476us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=108 elapsed=54540us phase=acquire-end 
+[cambium-frame] host=1 last-presented=108 elapsed=54953us phase=compose-end 
+[cambium-frame] host=1 last-presented=108 elapsed=54973us phase=present-begin 
+[cambium-frame] host=1 last-presented=108 elapsed=55021us phase=present-end 
+[cambium-frame] host=1 last-presented=108 elapsed=55039us phase=presentation-recorded sequence=109
+[cambium-frame] host=1 last-presented=108 elapsed=55083us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=109 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=109 elapsed=7512us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=109 elapsed=7555us phase=shadows-end 
+[cambium-frame] host=1 last-presented=109 elapsed=7571us phase=raster-begin 
+[cambium-frame] host=1 last-presented=109 elapsed=71855us phase=raster-end 
+[cambium-frame] host=1 last-presented=109 elapsed=71903us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=109 elapsed=71964us phase=acquire-end 
+[cambium-frame] host=1 last-presented=109 elapsed=72340us phase=compose-end 
+[cambium-frame] host=1 last-presented=109 elapsed=72359us phase=present-begin 
+[cambium-frame] host=1 last-presented=109 elapsed=72408us phase=present-end 
+[cambium-frame] host=1 last-presented=109 elapsed=72426us phase=presentation-recorded sequence=110
+[cambium-frame] host=1 last-presented=109 elapsed=72468us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=110 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=110 elapsed=7956us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=110 elapsed=8006us phase=shadows-end 
+[cambium-frame] host=1 last-presented=110 elapsed=8021us phase=raster-begin 
+[cambium-frame] host=1 last-presented=110 elapsed=71720us phase=raster-end 
+[cambium-frame] host=1 last-presented=110 elapsed=71794us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=110 elapsed=71928us phase=acquire-end 
+[cambium-frame] host=1 last-presented=110 elapsed=72334us phase=compose-end 
+[cambium-frame] host=1 last-presented=110 elapsed=72357us phase=present-begin 
+[cambium-frame] host=1 last-presented=110 elapsed=72418us phase=present-end 
+[cambium-frame] host=1 last-presented=110 elapsed=72438us phase=presentation-recorded sequence=111
+[cambium-frame] host=1 last-presented=110 elapsed=72485us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=111 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=111 elapsed=7765us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=111 elapsed=7807us phase=shadows-end 
+[cambium-frame] host=1 last-presented=111 elapsed=7825us phase=raster-begin 
+[cambium-frame] host=1 last-presented=111 elapsed=68801us phase=raster-end 
+[cambium-frame] host=1 last-presented=111 elapsed=68855us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=111 elapsed=68920us phase=acquire-end 
+[cambium-frame] host=1 last-presented=111 elapsed=69316us phase=compose-end 
+[cambium-frame] host=1 last-presented=111 elapsed=69341us phase=present-begin 
+[cambium-frame] host=1 last-presented=111 elapsed=69395us phase=present-end 
+[cambium-frame] host=1 last-presented=111 elapsed=69417us phase=presentation-recorded sequence=112
+[cambium-frame] host=1 last-presented=111 elapsed=69460us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=112 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=112 elapsed=8026us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=112 elapsed=8062us phase=shadows-end 
+[cambium-frame] host=1 last-presented=112 elapsed=8078us phase=raster-begin 
+[cambium-frame] host=1 last-presented=112 elapsed=65728us phase=raster-end 
+[cambium-frame] host=1 last-presented=112 elapsed=65779us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=112 elapsed=65849us phase=acquire-end 
+[cambium-frame] host=1 last-presented=112 elapsed=66259us phase=compose-end 
+[cambium-frame] host=1 last-presented=112 elapsed=66279us phase=present-begin 
+[cambium-frame] host=1 last-presented=112 elapsed=66328us phase=present-end 
+[cambium-frame] host=1 last-presented=112 elapsed=66347us phase=presentation-recorded sequence=113
+[cambium-frame] host=1 last-presented=112 elapsed=66397us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=113 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=113 elapsed=7414us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=113 elapsed=7445us phase=shadows-end 
+[cambium-frame] host=1 last-presented=113 elapsed=7461us phase=raster-begin 
+[cambium-frame] host=1 last-presented=113 elapsed=70287us phase=raster-end 
+[cambium-frame] host=1 last-presented=113 elapsed=70338us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=113 elapsed=70404us phase=acquire-end 
+[cambium-frame] host=1 last-presented=113 elapsed=70789us phase=compose-end 
+[cambium-frame] host=1 last-presented=113 elapsed=70811us phase=present-begin 
+[cambium-frame] host=1 last-presented=113 elapsed=70861us phase=present-end 
+[cambium-frame] host=1 last-presented=113 elapsed=70879us phase=presentation-recorded sequence=114
+[cambium-frame] host=1 last-presented=113 elapsed=70924us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=114 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=114 elapsed=508271us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=114 elapsed=508307us phase=shadows-end 
+[cambium-frame] host=1 last-presented=114 elapsed=508324us phase=raster-begin 
+[cambium-frame] host=1 last-presented=114 elapsed=578801us phase=raster-end 
+[cambium-frame] host=1 last-presented=114 elapsed=578902us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=114 elapsed=579387us phase=acquire-end 
+[cambium-frame] host=1 last-presented=114 elapsed=579785us phase=compose-end 
+[cambium-frame] host=1 last-presented=114 elapsed=579807us phase=present-begin 
+[cambium-frame] host=1 last-presented=114 elapsed=579856us phase=present-end 
+[cambium-frame] host=1 last-presented=114 elapsed=579874us phase=presentation-recorded sequence=115
+[cambium-frame] host=1 last-presented=114 elapsed=579917us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=115 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=115 elapsed=7592us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=115 elapsed=7644us phase=shadows-end 
+[cambium-frame] host=1 last-presented=115 elapsed=7659us phase=raster-begin 
+[cambium-frame] host=1 last-presented=115 elapsed=60508us phase=raster-end 
+[cambium-frame] host=1 last-presented=115 elapsed=60561us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=115 elapsed=60915us phase=acquire-end 
+[cambium-frame] host=1 last-presented=115 elapsed=61417us phase=compose-end 
+[cambium-frame] host=1 last-presented=115 elapsed=61445us phase=present-begin 
+[cambium-frame] host=1 last-presented=115 elapsed=61503us phase=present-end 
+[cambium-frame] host=1 last-presented=115 elapsed=61525us phase=presentation-recorded sequence=116
+[cambium-frame] host=1 last-presented=115 elapsed=61612us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=116 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=116 elapsed=7473us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=116 elapsed=7519us phase=shadows-end 
+[cambium-frame] host=1 last-presented=116 elapsed=7534us phase=raster-begin 
+[cambium-frame] host=1 last-presented=116 elapsed=67450us phase=raster-end 
+[cambium-frame] host=1 last-presented=116 elapsed=67503us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=116 elapsed=67574us phase=acquire-end 
+[cambium-frame] host=1 last-presented=116 elapsed=67949us phase=compose-end 
+[cambium-frame] host=1 last-presented=116 elapsed=67975us phase=present-begin 
+[cambium-frame] host=1 last-presented=116 elapsed=68025us phase=present-end 
+[cambium-frame] host=1 last-presented=116 elapsed=68043us phase=presentation-recorded sequence=117
+[cambium-frame] host=1 last-presented=116 elapsed=68088us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=117 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=117 elapsed=7314us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=117 elapsed=7350us phase=shadows-end 
+[cambium-frame] host=1 last-presented=117 elapsed=7365us phase=raster-begin 
+[cambium-frame] host=1 last-presented=117 elapsed=56953us phase=raster-end 
+[cambium-frame] host=1 last-presented=117 elapsed=57077us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=117 elapsed=57200us phase=acquire-end 
+[cambium-frame] host=1 last-presented=117 elapsed=57713us phase=compose-end 
+[cambium-frame] host=1 last-presented=117 elapsed=57733us phase=present-begin 
+[cambium-frame] host=1 last-presented=117 elapsed=57801us phase=present-end 
+[cambium-frame] host=1 last-presented=117 elapsed=57822us phase=presentation-recorded sequence=118
+[cambium-frame] host=1 last-presented=117 elapsed=57880us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=118 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=118 elapsed=7884us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=118 elapsed=7940us phase=shadows-end 
+[cambium-frame] host=1 last-presented=118 elapsed=7955us phase=raster-begin 
+[cambium-frame] host=1 last-presented=118 elapsed=57012us phase=raster-end 
+[cambium-frame] host=1 last-presented=118 elapsed=57064us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=118 elapsed=57129us phase=acquire-end 
+[cambium-frame] host=1 last-presented=118 elapsed=57533us phase=compose-end 
+[cambium-frame] host=1 last-presented=118 elapsed=57555us phase=present-begin 
+[cambium-frame] host=1 last-presented=118 elapsed=57611us phase=present-end 
+[cambium-frame] host=1 last-presented=118 elapsed=57654us phase=presentation-recorded sequence=119
+[cambium-frame] host=1 last-presented=118 elapsed=57747us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=119 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=119 elapsed=7314us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=119 elapsed=7354us phase=shadows-end 
+[cambium-frame] host=1 last-presented=119 elapsed=7370us phase=raster-begin 
+[cambium-frame] host=1 last-presented=119 elapsed=61093us phase=raster-end 
+[cambium-frame] host=1 last-presented=119 elapsed=61139us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=119 elapsed=61205us phase=acquire-end 
+[cambium-frame] host=1 last-presented=119 elapsed=61579us phase=compose-end 
+[cambium-frame] host=1 last-presented=119 elapsed=61599us phase=present-begin 
+[cambium-frame] host=1 last-presented=119 elapsed=61650us phase=present-end 
+[cambium-frame] host=1 last-presented=119 elapsed=61668us phase=presentation-recorded sequence=120
+[cambium-frame] host=1 last-presented=119 elapsed=61711us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=120 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=120 elapsed=7612us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=120 elapsed=7652us phase=shadows-end 
+[cambium-frame] host=1 last-presented=120 elapsed=7669us phase=raster-begin 
+[cambium-frame] host=1 last-presented=120 elapsed=71120us phase=raster-end 
+[cambium-frame] host=1 last-presented=120 elapsed=71223us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=120 elapsed=71392us phase=acquire-end 
+[cambium-frame] host=1 last-presented=120 elapsed=71987us phase=compose-end 
+[cambium-frame] host=1 last-presented=120 elapsed=72007us phase=present-begin 
+[cambium-frame] host=1 last-presented=120 elapsed=72064us phase=present-end 
+[cambium-frame] host=1 last-presented=120 elapsed=72084us phase=presentation-recorded sequence=121
+[cambium-frame] host=1 last-presented=120 elapsed=72174us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=121 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=121 elapsed=7607us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=121 elapsed=7648us phase=shadows-end 
+[cambium-frame] host=1 last-presented=121 elapsed=7663us phase=raster-begin 
+[cambium-frame] host=1 last-presented=121 elapsed=66091us phase=raster-end 
+[cambium-frame] host=1 last-presented=121 elapsed=66149us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=121 elapsed=66215us phase=acquire-end 
+[cambium-frame] host=1 last-presented=121 elapsed=66660us phase=compose-end 
+[cambium-frame] host=1 last-presented=121 elapsed=66681us phase=present-begin 
+[cambium-frame] host=1 last-presented=121 elapsed=66730us phase=present-end 
+[cambium-frame] host=1 last-presented=121 elapsed=66752us phase=presentation-recorded sequence=122
+[cambium-frame] host=1 last-presented=121 elapsed=66794us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=122 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=122 elapsed=8156us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=122 elapsed=8203us phase=shadows-end 
+[cambium-frame] host=1 last-presented=122 elapsed=8218us phase=raster-begin 
+[cambium-frame] host=1 last-presented=122 elapsed=66962us phase=raster-end 
+[cambium-frame] host=1 last-presented=122 elapsed=67035us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=122 elapsed=67134us phase=acquire-end 
+[cambium-frame] host=1 last-presented=122 elapsed=67646us phase=compose-end 
+[cambium-frame] host=1 last-presented=122 elapsed=67667us phase=present-begin 
+[cambium-frame] host=1 last-presented=122 elapsed=67731us phase=present-end 
+[cambium-frame] host=1 last-presented=122 elapsed=67753us phase=presentation-recorded sequence=123
+[cambium-frame] host=1 last-presented=122 elapsed=68432us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=123 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=123 elapsed=7941us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=123 elapsed=8019us phase=shadows-end 
+[cambium-frame] host=1 last-presented=123 elapsed=8035us phase=raster-begin 
+[cambium-frame] host=1 last-presented=123 elapsed=69583us phase=raster-end 
+[cambium-frame] host=1 last-presented=123 elapsed=69636us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=123 elapsed=69713us phase=acquire-end 
+[cambium-frame] host=1 last-presented=123 elapsed=70149us phase=compose-end 
+[cambium-frame] host=1 last-presented=123 elapsed=70187us phase=present-begin 
+[cambium-frame] host=1 last-presented=123 elapsed=70239us phase=present-end 
+[cambium-frame] host=1 last-presented=123 elapsed=70258us phase=presentation-recorded sequence=124
+[cambium-frame] host=1 last-presented=123 elapsed=70332us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=124 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=124 elapsed=427537us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=124 elapsed=427599us phase=shadows-end 
+[cambium-frame] host=1 last-presented=124 elapsed=427617us phase=raster-begin 
+[cambium-frame] host=1 last-presented=124 elapsed=500597us phase=raster-end 
+[cambium-frame] host=1 last-presented=124 elapsed=500651us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=124 elapsed=501061us phase=acquire-end 
+[cambium-frame] host=1 last-presented=124 elapsed=501462us phase=compose-end 
+[cambium-frame] host=1 last-presented=124 elapsed=501485us phase=present-begin 
+[cambium-frame] host=1 last-presented=124 elapsed=501535us phase=present-end 
+[cambium-frame] host=1 last-presented=124 elapsed=501556us phase=presentation-recorded sequence=125
+[cambium-frame] host=1 last-presented=124 elapsed=501609us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=125 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=125 elapsed=7495us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=125 elapsed=7547us phase=shadows-end 
+[cambium-frame] host=1 last-presented=125 elapsed=7562us phase=raster-begin 
+[cambium-frame] host=1 last-presented=125 elapsed=73520us phase=raster-end 
+[cambium-frame] host=1 last-presented=125 elapsed=73581us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=125 elapsed=73886us phase=acquire-end 
+[cambium-frame] host=1 last-presented=125 elapsed=74308us phase=compose-end 
+[cambium-frame] host=1 last-presented=125 elapsed=74337us phase=present-begin 
+[cambium-frame] host=1 last-presented=125 elapsed=74392us phase=present-end 
+[cambium-frame] host=1 last-presented=125 elapsed=74413us phase=presentation-recorded sequence=126
+[cambium-frame] host=1 last-presented=125 elapsed=74466us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=126 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=126 elapsed=8063us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=126 elapsed=8113us phase=shadows-end 
+[cambium-frame] host=1 last-presented=126 elapsed=8129us phase=raster-begin 
+[cambium-frame] host=1 last-presented=126 elapsed=86430us phase=raster-end 
+[cambium-frame] host=1 last-presented=126 elapsed=86530us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=126 elapsed=86605us phase=acquire-end 
+[cambium-frame] host=1 last-presented=126 elapsed=87060us phase=compose-end 
+[cambium-frame] host=1 last-presented=126 elapsed=87081us phase=present-begin 
+[cambium-frame] host=1 last-presented=126 elapsed=87141us phase=present-end 
+[cambium-frame] host=1 last-presented=126 elapsed=87160us phase=presentation-recorded sequence=127
+[cambium-frame] host=1 last-presented=126 elapsed=87205us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=127 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=127 elapsed=8270us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=127 elapsed=8330us phase=shadows-end 
+[cambium-frame] host=1 last-presented=127 elapsed=8347us phase=raster-begin 
+[cambium-frame] host=1 last-presented=127 elapsed=66292us phase=raster-end 
+[cambium-frame] host=1 last-presented=127 elapsed=66352us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=127 elapsed=66422us phase=acquire-end 
+[cambium-frame] host=1 last-presented=127 elapsed=66850us phase=compose-end 
+[cambium-frame] host=1 last-presented=127 elapsed=66872us phase=present-begin 
+[cambium-frame] host=1 last-presented=127 elapsed=66932us phase=present-end 
+[cambium-frame] host=1 last-presented=127 elapsed=66953us phase=presentation-recorded sequence=128
+[cambium-frame] host=1 last-presented=127 elapsed=67004us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=128 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=128 elapsed=8869us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=128 elapsed=8913us phase=shadows-end 
+[cambium-frame] host=1 last-presented=128 elapsed=8930us phase=raster-begin 
+[cambium-frame] host=1 last-presented=128 elapsed=69739us phase=raster-end 
+[cambium-frame] host=1 last-presented=128 elapsed=69825us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=128 elapsed=69925us phase=acquire-end 
+[cambium-frame] host=1 last-presented=128 elapsed=70473us phase=compose-end 
+[cambium-frame] host=1 last-presented=128 elapsed=70510us phase=present-begin 
+[cambium-frame] host=1 last-presented=128 elapsed=70570us phase=present-end 
+[cambium-frame] host=1 last-presented=128 elapsed=70590us phase=presentation-recorded sequence=129
+[cambium-frame] host=1 last-presented=128 elapsed=70696us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=129 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=129 elapsed=7714us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=129 elapsed=7764us phase=shadows-end 
+[cambium-frame] host=1 last-presented=129 elapsed=7779us phase=raster-begin 
+[cambium-frame] host=1 last-presented=129 elapsed=56553us phase=raster-end 
+[cambium-frame] host=1 last-presented=129 elapsed=56614us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=129 elapsed=56678us phase=acquire-end 
+[cambium-frame] host=1 last-presented=129 elapsed=57079us phase=compose-end 
+[cambium-frame] host=1 last-presented=129 elapsed=57101us phase=present-begin 
+[cambium-frame] host=1 last-presented=129 elapsed=57155us phase=present-end 
+[cambium-frame] host=1 last-presented=129 elapsed=57175us phase=presentation-recorded sequence=130
+[cambium-frame] host=1 last-presented=129 elapsed=57225us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=130 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=130 elapsed=7325us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=130 elapsed=7360us phase=shadows-end 
+[cambium-frame] host=1 last-presented=130 elapsed=7375us phase=raster-begin 
+[cambium-frame] host=1 last-presented=130 elapsed=55960us phase=raster-end 
+[cambium-frame] host=1 last-presented=130 elapsed=56029us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=130 elapsed=56091us phase=acquire-end 
+[cambium-frame] host=1 last-presented=130 elapsed=56486us phase=compose-end 
+[cambium-frame] host=1 last-presented=130 elapsed=56516us phase=present-begin 
+[cambium-frame] host=1 last-presented=130 elapsed=56573us phase=present-end 
+[cambium-frame] host=1 last-presented=130 elapsed=56593us phase=presentation-recorded sequence=131
+[cambium-frame] host=1 last-presented=130 elapsed=56681us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=131 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=131 elapsed=7824us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=131 elapsed=7857us phase=shadows-end 
+[cambium-frame] host=1 last-presented=131 elapsed=7872us phase=raster-begin 
+[cambium-frame] host=1 last-presented=131 elapsed=67733us phase=raster-end 
+[cambium-frame] host=1 last-presented=131 elapsed=67787us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=131 elapsed=67874us phase=acquire-end 
+[cambium-frame] host=1 last-presented=131 elapsed=68242us phase=compose-end 
+[cambium-frame] host=1 last-presented=131 elapsed=68265us phase=present-begin 
+[cambium-frame] host=1 last-presented=131 elapsed=68321us phase=present-end 
+[cambium-frame] host=1 last-presented=131 elapsed=68355us phase=presentation-recorded sequence=132
+[cambium-frame] host=1 last-presented=131 elapsed=68433us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=132 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=132 elapsed=7782us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=132 elapsed=7816us phase=shadows-end 
+[cambium-frame] host=1 last-presented=132 elapsed=7833us phase=raster-begin 
+[cambium-frame] host=1 last-presented=132 elapsed=64300us phase=raster-end 
+[cambium-frame] host=1 last-presented=132 elapsed=64349us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=132 elapsed=64431us phase=acquire-end 
+[cambium-frame] host=1 last-presented=132 elapsed=64874us phase=compose-end 
+[cambium-frame] host=1 last-presented=132 elapsed=64898us phase=present-begin 
+[cambium-frame] host=1 last-presented=132 elapsed=64954us phase=present-end 
+[cambium-frame] host=1 last-presented=132 elapsed=64974us phase=presentation-recorded sequence=133
+[cambium-frame] host=1 last-presented=132 elapsed=65408us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=133 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=133 elapsed=449428us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=133 elapsed=449479us phase=shadows-end 
+[cambium-frame] host=1 last-presented=133 elapsed=449495us phase=raster-begin 
+[cambium-frame] host=1 last-presented=133 elapsed=490753us phase=raster-end 
+[cambium-frame] host=1 last-presented=133 elapsed=490813us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=133 elapsed=491256us phase=acquire-end 
+[cambium-frame] host=1 last-presented=133 elapsed=491822us phase=compose-end 
+[cambium-frame] host=1 last-presented=133 elapsed=491847us phase=present-begin 
+[cambium-frame] host=1 last-presented=133 elapsed=491908us phase=present-end 
+[cambium-frame] host=1 last-presented=133 elapsed=491928us phase=presentation-recorded sequence=134
+[cambium-frame] host=1 last-presented=133 elapsed=492002us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=134 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=134 elapsed=7173us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=134 elapsed=7203us phase=shadows-end 
+[cambium-frame] host=1 last-presented=134 elapsed=7218us phase=raster-begin 
+[cambium-frame] host=1 last-presented=134 elapsed=52347us phase=raster-end 
+[cambium-frame] host=1 last-presented=134 elapsed=52396us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=134 elapsed=52719us phase=acquire-end 
+[cambium-frame] host=1 last-presented=134 elapsed=53139us phase=compose-end 
+[cambium-frame] host=1 last-presented=134 elapsed=53164us phase=present-begin 
+[cambium-frame] host=1 last-presented=134 elapsed=53214us phase=present-end 
+[cambium-frame] host=1 last-presented=134 elapsed=53234us phase=presentation-recorded sequence=135
+[cambium-frame] host=1 last-presented=134 elapsed=53283us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=135 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=135 elapsed=7755us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=135 elapsed=7801us phase=shadows-end 
+[cambium-frame] host=1 last-presented=135 elapsed=7815us phase=raster-begin 
+[cambium-frame] host=1 last-presented=135 elapsed=58326us phase=raster-end 
+[cambium-frame] host=1 last-presented=135 elapsed=58373us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=135 elapsed=58436us phase=acquire-end 
+[cambium-frame] host=1 last-presented=135 elapsed=58829us phase=compose-end 
+[cambium-frame] host=1 last-presented=135 elapsed=58852us phase=present-begin 
+[cambium-frame] host=1 last-presented=135 elapsed=58911us phase=present-end 
+[cambium-frame] host=1 last-presented=135 elapsed=58932us phase=presentation-recorded sequence=136
+[cambium-frame] host=1 last-presented=135 elapsed=59023us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=136 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=136 elapsed=8323us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=136 elapsed=8369us phase=shadows-end 
+[cambium-frame] host=1 last-presented=136 elapsed=8385us phase=raster-begin 
+[cambium-frame] host=1 last-presented=136 elapsed=45498us phase=raster-end 
+[cambium-frame] host=1 last-presented=136 elapsed=45575us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=136 elapsed=45652us phase=acquire-end 
+[cambium-frame] host=1 last-presented=136 elapsed=46080us phase=compose-end 
+[cambium-frame] host=1 last-presented=136 elapsed=46105us phase=present-begin 
+[cambium-frame] host=1 last-presented=136 elapsed=46160us phase=present-end 
+[cambium-frame] host=1 last-presented=136 elapsed=46178us phase=presentation-recorded sequence=137
+[cambium-frame] host=1 last-presented=136 elapsed=46225us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=137 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=137 elapsed=7523us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=137 elapsed=7567us phase=shadows-end 
+[cambium-frame] host=1 last-presented=137 elapsed=7582us phase=raster-begin 
+[cambium-frame] host=1 last-presented=137 elapsed=40295us phase=raster-end 
+[cambium-frame] host=1 last-presented=137 elapsed=40337us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=137 elapsed=40404us phase=acquire-end 
+[cambium-frame] host=1 last-presented=137 elapsed=40812us phase=compose-end 
+[cambium-frame] host=1 last-presented=137 elapsed=40837us phase=present-begin 
+[cambium-frame] host=1 last-presented=137 elapsed=40887us phase=present-end 
+[cambium-frame] host=1 last-presented=137 elapsed=40906us phase=presentation-recorded sequence=138
+[cambium-frame] host=1 last-presented=137 elapsed=40950us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=138 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=138 elapsed=7430us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=138 elapsed=7468us phase=shadows-end 
+[cambium-frame] host=1 last-presented=138 elapsed=7484us phase=raster-begin 
+[cambium-frame] host=1 last-presented=138 elapsed=52976us phase=raster-end 
+[cambium-frame] host=1 last-presented=138 elapsed=53026us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=138 elapsed=53083us phase=acquire-end 
+[cambium-frame] host=1 last-presented=138 elapsed=53463us phase=compose-end 
+[cambium-frame] host=1 last-presented=138 elapsed=53485us phase=present-begin 
+[cambium-frame] host=1 last-presented=138 elapsed=53537us phase=present-end 
+[cambium-frame] host=1 last-presented=138 elapsed=53559us phase=presentation-recorded sequence=139
+[cambium-frame] host=1 last-presented=138 elapsed=53605us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=139 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=139 elapsed=7224us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=139 elapsed=7258us phase=shadows-end 
+[cambium-frame] host=1 last-presented=139 elapsed=7273us phase=raster-begin 
+[cambium-frame] host=1 last-presented=139 elapsed=52432us phase=raster-end 
+[cambium-frame] host=1 last-presented=139 elapsed=52480us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=139 elapsed=52537us phase=acquire-end 
+[cambium-frame] host=1 last-presented=139 elapsed=52924us phase=compose-end 
+[cambium-frame] host=1 last-presented=139 elapsed=52946us phase=present-begin 
+[cambium-frame] host=1 last-presented=139 elapsed=53002us phase=present-end 
+[cambium-frame] host=1 last-presented=139 elapsed=53024us phase=presentation-recorded sequence=140
+[cambium-frame] host=1 last-presented=139 elapsed=53068us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=140 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=140 elapsed=7620us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=140 elapsed=7654us phase=shadows-end 
+[cambium-frame] host=1 last-presented=140 elapsed=7669us phase=raster-begin 
+[cambium-frame] host=1 last-presented=140 elapsed=46916us phase=raster-end 
+[cambium-frame] host=1 last-presented=140 elapsed=46990us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=140 elapsed=47059us phase=acquire-end 
+[cambium-frame] host=1 last-presented=140 elapsed=47485us phase=compose-end 
+[cambium-frame] host=1 last-presented=140 elapsed=47506us phase=present-begin 
+[cambium-frame] host=1 last-presented=140 elapsed=47563us phase=present-end 
+[cambium-frame] host=1 last-presented=140 elapsed=47585us phase=presentation-recorded sequence=141
+[cambium-frame] host=1 last-presented=140 elapsed=47645us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=141 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=141 elapsed=7656us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=141 elapsed=7705us phase=shadows-end 
+[cambium-frame] host=1 last-presented=141 elapsed=7722us phase=raster-begin 
+[cambium-frame] host=1 last-presented=141 elapsed=63819us phase=raster-end 
+[cambium-frame] host=1 last-presented=141 elapsed=63886us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=141 elapsed=63981us phase=acquire-end 
+[cambium-frame] host=1 last-presented=141 elapsed=64498us phase=compose-end 
+[cambium-frame] host=1 last-presented=141 elapsed=64516us phase=present-begin 
+[cambium-frame] host=1 last-presented=141 elapsed=64571us phase=present-end 
+[cambium-frame] host=1 last-presented=141 elapsed=64584us phase=presentation-recorded sequence=142
+[cambium-frame] host=1 last-presented=141 elapsed=64632us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=142 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=142 elapsed=8119us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=142 elapsed=8154us phase=shadows-end 
+[cambium-frame] host=1 last-presented=142 elapsed=8164us phase=raster-begin 
+[cambium-frame] host=1 last-presented=142 elapsed=47279us phase=raster-end 
+[cambium-frame] host=1 last-presented=142 elapsed=47325us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=142 elapsed=47402us phase=acquire-end 
+[cambium-frame] host=1 last-presented=142 elapsed=47988us phase=compose-end 
+[cambium-frame] host=1 last-presented=142 elapsed=48003us phase=present-begin 
+[cambium-frame] host=1 last-presented=142 elapsed=48050us phase=present-end 
+[cambium-frame] host=1 last-presented=142 elapsed=48064us phase=presentation-recorded sequence=143
+[cambium-frame] host=1 last-presented=142 elapsed=48109us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=143 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=143 elapsed=8296us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=143 elapsed=8341us phase=shadows-end 
+[cambium-frame] host=1 last-presented=143 elapsed=8355us phase=raster-begin 
+[cambium-frame] host=1 last-presented=143 elapsed=55117us phase=raster-end 
+[cambium-frame] host=1 last-presented=143 elapsed=55158us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=143 elapsed=55246us phase=acquire-end 
+[cambium-frame] host=1 last-presented=143 elapsed=55950us phase=compose-end 
+[cambium-frame] host=1 last-presented=143 elapsed=55977us phase=present-begin 
+[cambium-frame] host=1 last-presented=143 elapsed=56264us phase=present-end 
+[cambium-frame] host=1 last-presented=143 elapsed=56332us phase=presentation-recorded sequence=144
+[cambium-frame] host=1 last-presented=143 elapsed=56505us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=144 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=144 elapsed=8068us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=144 elapsed=8104us phase=shadows-end 
+[cambium-frame] host=1 last-presented=144 elapsed=8115us phase=raster-begin 
+[cambium-frame] host=1 last-presented=144 elapsed=61551us phase=raster-end 
+[cambium-frame] host=1 last-presented=144 elapsed=61633us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=144 elapsed=61711us phase=acquire-end 
+[cambium-frame] host=1 last-presented=144 elapsed=62394us phase=compose-end 
+[cambium-frame] host=1 last-presented=144 elapsed=62417us phase=present-begin 
+[cambium-frame] host=1 last-presented=144 elapsed=62478us phase=present-end 
+[cambium-frame] host=1 last-presented=144 elapsed=62494us phase=presentation-recorded sequence=145
+[cambium-frame] host=1 last-presented=144 elapsed=62562us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=145 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=145 elapsed=8196us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=145 elapsed=8242us phase=shadows-end 
+[cambium-frame] host=1 last-presented=145 elapsed=8255us phase=raster-begin 
+[cambium-frame] host=1 last-presented=145 elapsed=61338us phase=raster-end 
+[cambium-frame] host=1 last-presented=145 elapsed=61382us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=145 elapsed=61441us phase=acquire-end 
+[cambium-frame] host=1 last-presented=145 elapsed=61799us phase=compose-end 
+[cambium-frame] host=1 last-presented=145 elapsed=61815us phase=present-begin 
+[cambium-frame] host=1 last-presented=145 elapsed=61873us phase=present-end 
+[cambium-frame] host=1 last-presented=145 elapsed=61886us phase=presentation-recorded sequence=146
+[cambium-frame] host=1 last-presented=145 elapsed=61926us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=146 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=146 elapsed=7283us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=146 elapsed=7306us phase=shadows-end 
+[cambium-frame] host=1 last-presented=146 elapsed=7315us phase=raster-begin 
+[cambium-frame] host=1 last-presented=146 elapsed=65503us phase=raster-end 
+[cambium-frame] host=1 last-presented=146 elapsed=65539us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=146 elapsed=65609us phase=acquire-end 
+[cambium-frame] host=1 last-presented=146 elapsed=66019us phase=compose-end 
+[cambium-frame] host=1 last-presented=146 elapsed=66041us phase=present-begin 
+[cambium-frame] host=1 last-presented=146 elapsed=66090us phase=present-end 
+[cambium-frame] host=1 last-presented=146 elapsed=66104us phase=presentation-recorded sequence=147
+[cambium-frame] host=1 last-presented=146 elapsed=66142us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=147 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=147 elapsed=7708us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=147 elapsed=7745us phase=shadows-end 
+[cambium-frame] host=1 last-presented=147 elapsed=7755us phase=raster-begin 
+[cambium-frame] host=1 last-presented=147 elapsed=55998us phase=raster-end 
+[cambium-frame] host=1 last-presented=147 elapsed=56045us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=147 elapsed=56120us phase=acquire-end 
+[cambium-frame] host=1 last-presented=147 elapsed=56701us phase=compose-end 
+[cambium-frame] host=1 last-presented=147 elapsed=56732us phase=present-begin 
+[cambium-frame] host=1 last-presented=147 elapsed=56790us phase=present-end 
+[cambium-frame] host=1 last-presented=147 elapsed=56806us phase=presentation-recorded sequence=148
+[cambium-frame] host=1 last-presented=147 elapsed=56876us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=148 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=148 elapsed=7444us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=148 elapsed=7474us phase=shadows-end 
+[cambium-frame] host=1 last-presented=148 elapsed=7484us phase=raster-begin 
+[cambium-frame] host=1 last-presented=148 elapsed=55750us phase=raster-end 
+[cambium-frame] host=1 last-presented=148 elapsed=55795us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=148 elapsed=55846us phase=acquire-end 
+[cambium-frame] host=1 last-presented=148 elapsed=56335us phase=compose-end 
+[cambium-frame] host=1 last-presented=148 elapsed=56352us phase=present-begin 
+[cambium-frame] host=1 last-presented=148 elapsed=56403us phase=present-end 
+[cambium-frame] host=1 last-presented=148 elapsed=56417us phase=presentation-recorded sequence=149
+[cambium-frame] host=1 last-presented=148 elapsed=56480us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=149 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=149 elapsed=7536us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=149 elapsed=7563us phase=shadows-end 
+[cambium-frame] host=1 last-presented=149 elapsed=7574us phase=raster-begin 
+[cambium-frame] host=1 last-presented=149 elapsed=44721us phase=raster-end 
+[cambium-frame] host=1 last-presented=149 elapsed=44772us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=149 elapsed=44870us phase=acquire-end 
+[cambium-frame] host=1 last-presented=149 elapsed=45469us phase=compose-end 
+[cambium-frame] host=1 last-presented=149 elapsed=45499us phase=present-begin 
+[cambium-frame] host=1 last-presented=149 elapsed=45563us phase=present-end 
+[cambium-frame] host=1 last-presented=149 elapsed=45581us phase=presentation-recorded sequence=150
+[cambium-frame] host=1 last-presented=149 elapsed=45656us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=150 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=150 elapsed=7825us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=150 elapsed=7861us phase=shadows-end 
+[cambium-frame] host=1 last-presented=150 elapsed=7876us phase=raster-begin 
+[cambium-frame] host=1 last-presented=150 elapsed=48465us phase=raster-end 
+[cambium-frame] host=1 last-presented=150 elapsed=48531us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=150 elapsed=48616us phase=acquire-end 
+[cambium-frame] host=1 last-presented=150 elapsed=49124us phase=compose-end 
+[cambium-frame] host=1 last-presented=150 elapsed=49145us phase=present-begin 
+[cambium-frame] host=1 last-presented=150 elapsed=49199us phase=present-end 
+[cambium-frame] host=1 last-presented=150 elapsed=49214us phase=presentation-recorded sequence=151
+[cambium-frame] host=1 last-presented=150 elapsed=49275us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=151 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=151 elapsed=8060us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=151 elapsed=8095us phase=shadows-end 
+[cambium-frame] host=1 last-presented=151 elapsed=8105us phase=raster-begin 
+[cambium-frame] host=1 last-presented=151 elapsed=48917us phase=raster-end 
+[cambium-frame] host=1 last-presented=151 elapsed=48955us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=151 elapsed=49014us phase=acquire-end 
+[cambium-frame] host=1 last-presented=151 elapsed=49461us phase=compose-end 
+[cambium-frame] host=1 last-presented=151 elapsed=49479us phase=present-begin 
+[cambium-frame] host=1 last-presented=151 elapsed=49528us phase=present-end 
+[cambium-frame] host=1 last-presented=151 elapsed=49545us phase=presentation-recorded sequence=152
+[cambium-frame] host=1 last-presented=151 elapsed=49590us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=152 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=152 elapsed=7388us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=152 elapsed=7415us phase=shadows-end 
+[cambium-frame] host=1 last-presented=152 elapsed=7427us phase=raster-begin 
+[cambium-frame] host=1 last-presented=152 elapsed=66357us phase=raster-end 
+[cambium-frame] host=1 last-presented=152 elapsed=66413us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=152 elapsed=66476us phase=acquire-end 
+[cambium-frame] host=1 last-presented=152 elapsed=66920us phase=compose-end 
+[cambium-frame] host=1 last-presented=152 elapsed=66942us phase=present-begin 
+[cambium-frame] host=1 last-presented=152 elapsed=66993us phase=present-end 
+[cambium-frame] host=1 last-presented=152 elapsed=67006us phase=presentation-recorded sequence=153
+[cambium-frame] host=1 last-presented=152 elapsed=67048us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=153 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=153 elapsed=8095us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=153 elapsed=8133us phase=shadows-end 
+[cambium-frame] host=1 last-presented=153 elapsed=8143us phase=raster-begin 
+[cambium-frame] host=1 last-presented=153 elapsed=66402us phase=raster-end 
+[cambium-frame] host=1 last-presented=153 elapsed=66499us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=153 elapsed=66601us phase=acquire-end 
+[cambium-frame] host=1 last-presented=153 elapsed=67091us phase=compose-end 
+[cambium-frame] host=1 last-presented=153 elapsed=67106us phase=present-begin 
+[cambium-frame] host=1 last-presented=153 elapsed=67164us phase=present-end 
+[cambium-frame] host=1 last-presented=153 elapsed=67182us phase=presentation-recorded sequence=154
+[cambium-frame] host=1 last-presented=153 elapsed=67265us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=154 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=154 elapsed=8047us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=154 elapsed=8088us phase=shadows-end 
+[cambium-frame] host=1 last-presented=154 elapsed=8099us phase=raster-begin 
+[cambium-frame] host=1 last-presented=154 elapsed=47855us phase=raster-end 
+[cambium-frame] host=1 last-presented=154 elapsed=47897us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=154 elapsed=47981us phase=acquire-end 
+[cambium-frame] host=1 last-presented=154 elapsed=48392us phase=compose-end 
+[cambium-frame] host=1 last-presented=154 elapsed=48407us phase=present-begin 
+[cambium-frame] host=1 last-presented=154 elapsed=48449us phase=present-end 
+[cambium-frame] host=1 last-presented=154 elapsed=48462us phase=presentation-recorded sequence=155
+[cambium-frame] host=1 last-presented=154 elapsed=48501us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=155 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=155 elapsed=8366us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=155 elapsed=8404us phase=shadows-end 
+[cambium-frame] host=1 last-presented=155 elapsed=8414us phase=raster-begin 
+[cambium-frame] host=1 last-presented=155 elapsed=52139us phase=raster-end 
+[cambium-frame] host=1 last-presented=155 elapsed=52178us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=155 elapsed=52235us phase=acquire-end 
+[cambium-frame] host=1 last-presented=155 elapsed=52605us phase=compose-end 
+[cambium-frame] host=1 last-presented=155 elapsed=52620us phase=present-begin 
+[cambium-frame] host=1 last-presented=155 elapsed=52666us phase=present-end 
+[cambium-frame] host=1 last-presented=155 elapsed=52681us phase=presentation-recorded sequence=156
+[cambium-frame] host=1 last-presented=155 elapsed=52722us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=156 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=156 elapsed=349600us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=156 elapsed=349638us phase=shadows-end 
+[cambium-frame] host=1 last-presented=156 elapsed=349649us phase=raster-begin 
+[cambium-frame] host=1 last-presented=156 elapsed=405065us phase=raster-end 
+[cambium-frame] host=1 last-presented=156 elapsed=405138us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=156 elapsed=405228us phase=acquire-end 
+[cambium-frame] host=1 last-presented=156 elapsed=405733us phase=compose-end 
+[cambium-frame] host=1 last-presented=156 elapsed=405762us phase=present-begin 
+[cambium-frame] host=1 last-presented=156 elapsed=405818us phase=present-end 
+[cambium-frame] host=1 last-presented=156 elapsed=405835us phase=presentation-recorded sequence=157
+[cambium-frame] host=1 last-presented=156 elapsed=405914us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=157 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=157 elapsed=7541us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=157 elapsed=7577us phase=shadows-end 
+[cambium-frame] host=1 last-presented=157 elapsed=7587us phase=raster-begin 
+[cambium-frame] host=1 last-presented=157 elapsed=57152us phase=raster-end 
+[cambium-frame] host=1 last-presented=157 elapsed=57191us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=157 elapsed=57246us phase=acquire-end 
+[cambium-frame] host=1 last-presented=157 elapsed=57616us phase=compose-end 
+[cambium-frame] host=1 last-presented=157 elapsed=57631us phase=present-begin 
+[cambium-frame] host=1 last-presented=157 elapsed=57680us phase=present-end 
+[cambium-frame] host=1 last-presented=157 elapsed=57698us phase=presentation-recorded sequence=158
+[cambium-frame] host=1 last-presented=157 elapsed=57737us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=158 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=158 elapsed=7879us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=158 elapsed=7908us phase=shadows-end 
+[cambium-frame] host=1 last-presented=158 elapsed=7918us phase=raster-begin 
+[cambium-frame] host=1 last-presented=158 elapsed=57372us phase=raster-end 
+[cambium-frame] host=1 last-presented=158 elapsed=57445us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=158 elapsed=57513us phase=acquire-end 
+[cambium-frame] host=1 last-presented=158 elapsed=57896us phase=compose-end 
+[cambium-frame] host=1 last-presented=158 elapsed=57911us phase=present-begin 
+[cambium-frame] host=1 last-presented=158 elapsed=57953us phase=present-end 
+[cambium-frame] host=1 last-presented=158 elapsed=57966us phase=presentation-recorded sequence=159
+[cambium-frame] host=1 last-presented=158 elapsed=58395us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=159 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=159 elapsed=7754us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=159 elapsed=7781us phase=shadows-end 
+[cambium-frame] host=1 last-presented=159 elapsed=7792us phase=raster-begin 
+[cambium-frame] host=1 last-presented=159 elapsed=52308us phase=raster-end 
+[cambium-frame] host=1 last-presented=159 elapsed=52341us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=159 elapsed=52403us phase=acquire-end 
+[cambium-frame] host=1 last-presented=159 elapsed=52822us phase=compose-end 
+[cambium-frame] host=1 last-presented=159 elapsed=52844us phase=present-begin 
+[cambium-frame] host=1 last-presented=159 elapsed=52900us phase=present-end 
+[cambium-frame] host=1 last-presented=159 elapsed=52915us phase=presentation-recorded sequence=160
+[cambium-frame] host=1 last-presented=159 elapsed=52986us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=160 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=160 elapsed=7782us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=160 elapsed=7812us phase=shadows-end 
+[cambium-frame] host=1 last-presented=160 elapsed=7823us phase=raster-begin 
+[cambium-frame] host=1 last-presented=160 elapsed=59101us phase=raster-end 
+[cambium-frame] host=1 last-presented=160 elapsed=59154us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=160 elapsed=59238us phase=acquire-end 
+[cambium-frame] host=1 last-presented=160 elapsed=59881us phase=compose-end 
+[cambium-frame] host=1 last-presented=160 elapsed=59897us phase=present-begin 
+[cambium-frame] host=1 last-presented=160 elapsed=59946us phase=present-end 
+[cambium-frame] host=1 last-presented=160 elapsed=59961us phase=presentation-recorded sequence=161
+[cambium-frame] host=1 last-presented=160 elapsed=60012us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=161 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=161 elapsed=7554us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=161 elapsed=7585us phase=shadows-end 
+[cambium-frame] host=1 last-presented=161 elapsed=7595us phase=raster-begin 
+[cambium-frame] host=1 last-presented=161 elapsed=44217us phase=raster-end 
+[cambium-frame] host=1 last-presented=161 elapsed=44289us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=161 elapsed=44366us phase=acquire-end 
+[cambium-frame] host=1 last-presented=161 elapsed=44864us phase=compose-end 
+[cambium-frame] host=1 last-presented=161 elapsed=44881us phase=present-begin 
+[cambium-frame] host=1 last-presented=161 elapsed=44931us phase=present-end 
+[cambium-frame] host=1 last-presented=161 elapsed=44945us phase=presentation-recorded sequence=162
+[cambium-frame] host=1 last-presented=161 elapsed=45012us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=162 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=162 elapsed=7667us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=162 elapsed=7698us phase=shadows-end 
+[cambium-frame] host=1 last-presented=162 elapsed=7708us phase=raster-begin 
+[cambium-frame] host=1 last-presented=162 elapsed=62884us phase=raster-end 
+[cambium-frame] host=1 last-presented=162 elapsed=62955us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=162 elapsed=63029us phase=acquire-end 
+[cambium-frame] host=1 last-presented=162 elapsed=63534us phase=compose-end 
+[cambium-frame] host=1 last-presented=162 elapsed=63559us phase=present-begin 
+[cambium-frame] host=1 last-presented=162 elapsed=63620us phase=present-end 
+[cambium-frame] host=1 last-presented=162 elapsed=63635us phase=presentation-recorded sequence=163
+[cambium-frame] host=1 last-presented=162 elapsed=63735us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=163 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=163 elapsed=7424us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=163 elapsed=7451us phase=shadows-end 
+[cambium-frame] host=1 last-presented=163 elapsed=7461us phase=raster-begin 
+[cambium-frame] host=1 last-presented=163 elapsed=57750us phase=raster-end 
+[cambium-frame] host=1 last-presented=163 elapsed=57863us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=163 elapsed=57971us phase=acquire-end 
+[cambium-frame] host=1 last-presented=163 elapsed=58363us phase=compose-end 
+[cambium-frame] host=1 last-presented=163 elapsed=58379us phase=present-begin 
+[cambium-frame] host=1 last-presented=163 elapsed=58428us phase=present-end 
+[cambium-frame] host=1 last-presented=163 elapsed=58444us phase=presentation-recorded sequence=164
+[cambium-frame] host=1 last-presented=163 elapsed=58483us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=164 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=164 elapsed=7667us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=164 elapsed=7693us phase=shadows-end 
+[cambium-frame] host=1 last-presented=164 elapsed=7703us phase=raster-begin 
+[cambium-frame] host=1 last-presented=164 elapsed=54567us phase=raster-end 
+[cambium-frame] host=1 last-presented=164 elapsed=54629us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=164 elapsed=54712us phase=acquire-end 
+[cambium-frame] host=1 last-presented=164 elapsed=55199us phase=compose-end 
+[cambium-frame] host=1 last-presented=164 elapsed=55215us phase=present-begin 
+[cambium-frame] host=1 last-presented=164 elapsed=55270us phase=present-end 
+[cambium-frame] host=1 last-presented=164 elapsed=55284us phase=presentation-recorded sequence=165
+[cambium-frame] host=1 last-presented=164 elapsed=55362us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=165 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=165 elapsed=7508us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=165 elapsed=7547us phase=shadows-end 
+[cambium-frame] host=1 last-presented=165 elapsed=7562us phase=raster-begin 
+[cambium-frame] host=1 last-presented=165 elapsed=58902us phase=raster-end 
+[cambium-frame] host=1 last-presented=165 elapsed=59028us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=165 elapsed=59159us phase=acquire-end 
+[cambium-frame] host=1 last-presented=165 elapsed=59690us phase=compose-end 
+[cambium-frame] host=1 last-presented=165 elapsed=59710us phase=present-begin 
+[cambium-frame] host=1 last-presented=165 elapsed=59760us phase=present-end 
+[cambium-frame] host=1 last-presented=165 elapsed=59776us phase=presentation-recorded sequence=166
+[cambium-frame] host=1 last-presented=165 elapsed=59817us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=166 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=166 elapsed=347414us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=166 elapsed=347718us phase=shadows-end 
+[cambium-frame] host=1 last-presented=166 elapsed=347734us phase=raster-begin 
+[cambium-frame] host=1 last-presented=166 elapsed=394475us phase=raster-end 
+[cambium-frame] host=1 last-presented=166 elapsed=394540us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=166 elapsed=394604us phase=acquire-end 
+[cambium-frame] host=1 last-presented=166 elapsed=395035us phase=compose-end 
+[cambium-frame] host=1 last-presented=166 elapsed=395062us phase=present-begin 
+[cambium-frame] host=1 last-presented=166 elapsed=395127us phase=present-end 
+[cambium-frame] host=1 last-presented=166 elapsed=395153us phase=presentation-recorded sequence=167
+[cambium-frame] host=1 last-presented=166 elapsed=395269us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=167 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=167 elapsed=7249us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=167 elapsed=7305us phase=shadows-end 
+[cambium-frame] host=1 last-presented=167 elapsed=7321us phase=raster-begin 
+[cambium-frame] host=1 last-presented=167 elapsed=52334us phase=raster-end 
+[cambium-frame] host=1 last-presented=167 elapsed=52385us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=167 elapsed=52443us phase=acquire-end 
+[cambium-frame] host=1 last-presented=167 elapsed=52882us phase=compose-end 
+[cambium-frame] host=1 last-presented=167 elapsed=52902us phase=present-begin 
+[cambium-frame] host=1 last-presented=167 elapsed=52957us phase=present-end 
+[cambium-frame] host=1 last-presented=167 elapsed=52975us phase=presentation-recorded sequence=168
+[cambium-frame] host=1 last-presented=167 elapsed=53032us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=168 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=168 elapsed=7953us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=168 elapsed=8004us phase=shadows-end 
+[cambium-frame] host=1 last-presented=168 elapsed=8021us phase=raster-begin 
+[cambium-frame] host=1 last-presented=168 elapsed=47330us phase=raster-end 
+[cambium-frame] host=1 last-presented=168 elapsed=47381us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=168 elapsed=47440us phase=acquire-end 
+[cambium-frame] host=1 last-presented=168 elapsed=47800us phase=compose-end 
+[cambium-frame] host=1 last-presented=168 elapsed=47826us phase=present-begin 
+[cambium-frame] host=1 last-presented=168 elapsed=47877us phase=present-end 
+[cambium-frame] host=1 last-presented=168 elapsed=47895us phase=presentation-recorded sequence=169
+[cambium-frame] host=1 last-presented=168 elapsed=47943us phase=return unwinding=false
+[cambium-frame] host=1 last-presented=169 elapsed=0us phase=begin 
+[cambium-frame] host=1 last-presented=169 elapsed=7839us phase=shadows-begin 
+[cambium-frame] host=1 last-presented=169 elapsed=7882us phase=shadows-end 
+[cambium-frame] host=1 last-presented=169 elapsed=7897us phase=raster-begin 
+[cambium-frame] host=1 last-presented=169 elapsed=56091us phase=raster-end 
+[cambium-frame] host=1 last-presented=169 elapsed=56153us phase=acquire-begin 
+[cambium-frame] host=1 last-presented=169 elapsed=56268us phase=acquire-end 
+[cambium-frame] host=1 last-presented=169 elapsed=56791us phase=compose-end 
+[cambium-frame] host=1 last-presented=169 elapsed=56812us phase=present-begin 
+[cambium-frame] host=1 last-presented=169 elapsed=56871us phase=present-end 
+[cambium-frame] host=1 last-presented=169 elapsed=56892us phase=presentation-recorded sequence=170
+[cambium-frame] host=1 last-presented=169 elapsed=56981us phase=return unwinding=false
+woodshed-genet: captured 01_exact_seconds_take_reopened
+woodshed-genet: captured 02_compact_seconds_reopened
+woodshed-genet: P7b sealed Seconds take and WAV fresh reopen complete
+woodshed-genet: captured 03_medium_envelope_reopened
+woodshed-genet: captured 04_short_third_card_reopened
+woodshed-genet: Looper followups exact envelope fresh reopen complete
+woodshed-genet: RESULT ok (170 frames, 4 captures)
