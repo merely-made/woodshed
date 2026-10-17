@@ -1,0 +1,8 @@
+{
+  "historical_receipt_git_revision": "7b68b4bfdc68c3180eb033bef35e03f01b620e2e",
+  "historical_receipt_path": "validation/canvas-p2_20261015/refresh-receipt.json",
+  "historical_source_revision": "4eddaba442cb57d5d2557f0d839a7dd8e4db9536",
+  "historical_related_fit_sha256": "6b57deb88fdb302f80289c897097a262d55f65c3e5f1c1648fdb885264862b8e",
+  "historical_image_matches_its_recorded_digest": true,
+  "observation": "Related Fit label overlap is visible in both the qualified October15 image and current receiving image. It predates this adoption; current bounded P2 camera/geometry qualification does not claim graph-label polish."
+}

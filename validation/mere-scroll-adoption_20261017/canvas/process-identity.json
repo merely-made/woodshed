@@ -1,0 +1,10 @@
+{
+  "source_revision" : "6b2c6b3e48cd7c029830a0928cf1b8d1afa24fcf",
+  "observed_executable" : "\/Users\/markik\/Code\/testing\/woodshed\/mere-scroll-adoption-20261017\/native-v2\/canvas\/Woodshed Scroll Adoption.app\/Contents\/MacOS\/woodshed",
+  "executable_identity_proven" : 1,
+  "child_pid" : 83169,
+  "expected_executable" : "\/Users\/markik\/Code\/testing\/woodshed\/mere-scroll-adoption-20261017\/native-v2\/canvas\/Woodshed Scroll Adoption.app\/Contents\/MacOS\/woodshed",
+  "binary_sha256" : "f43227bce168df2e629ebcead9b31b1731eee8d994d03562255fb0fe1ff2e780",
+  "supervisor_pid" : 83155,
+  "scenario_sha256" : "1cd813aadfb091a54e731f45b676ba64d76ae5f7ec6ab99750e0c09121bd9863"
+}

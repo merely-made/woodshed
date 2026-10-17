@@ -1,0 +1,66 @@
+[
+  {
+    "workspace": "ports/hocket",
+    "package": [
+      "tempfile",
+      "3.27.0"
+    ],
+    "reason": "restore original registry package dependency edges after Cargo supplier update"
+  },
+  {
+    "workspace": "ports/redshank",
+    "package": [
+      "errno",
+      "0.3.14"
+    ],
+    "reason": "restore original registry package dependency edges after Cargo supplier update"
+  },
+  {
+    "workspace": "ports/redshank",
+    "package": [
+      "quinn-udp",
+      "0.5.15"
+    ],
+    "reason": "restore original registry package dependency edges after Cargo supplier update"
+  },
+  {
+    "workspace": "ports/redshank",
+    "package": [
+      "rustix",
+      "1.1.4"
+    ],
+    "reason": "restore original registry package dependency edges after Cargo supplier update"
+  },
+  {
+    "workspace": "ports/redshank",
+    "package": [
+      "rustls-platform-verifier",
+      "0.7.0"
+    ],
+    "reason": "restore original registry package dependency edges after Cargo supplier update"
+  },
+  {
+    "workspace": "ports/redshank",
+    "package": [
+      "tempfile",
+      "3.27.0"
+    ],
+    "reason": "restore original registry package dependency edges after Cargo supplier update"
+  },
+  {
+    "workspace": "ports/redshank",
+    "package": [
+      "winapi-util",
+      "0.1.11"
+    ],
+    "reason": "restore original registry package dependency edges after Cargo supplier update"
+  },
+  {
+    "workspace": "validation/relationship-recipe",
+    "package": [
+      "tempfile",
+      "3.27.0"
+    ],
+    "reason": "restore original registry package dependency edges after Cargo supplier update"
+  }
+]

@@ -1,6 +1,6 @@
 # Looper follow-ups — 2026-10-17
 
-**Status: implemented locally; physical focus qualification and production supplier adoption remain incomplete.** Latest implementation source is `9cd9f13729a14d29d7be14a21ad8010e6aeefc91`. No follow-up commits have been pushed.
+**Historical follow-up receipt.** Its implementation was published through `4d9434a`. Physical focused capture and fresh reopening were subsequently qualified and published in the [CoreAudio receipt](../coreaudio-input_20261017/README.md). The [production Mere scroll adoption](../mere-scroll-adoption_20261017/README.md) now passes receiving qualification and awaits publication. The source-specific evidence below remains tied to its original revisions.
 
 The compact recorder uses one scroll owner, with rows before transport. Host copy now says Selected timing or Capture timing and Bars or Seconds hold. A separate stepped-triangle fixture exposes signed waveform peaks while retaining original quiet fixtures, captured clocks and PCM. The relationship-recipe supplier graph is aligned with the qualified production graph; the production root lock is unchanged.
 

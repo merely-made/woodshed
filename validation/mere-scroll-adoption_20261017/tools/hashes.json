@@ -1,0 +1,13 @@
+{
+  "archived_source_sha256": {
+    "stable_launcher.m": "94dc20e362524cb6c00afbce95a2e33a457634498118924d72df66311c182139",
+    "metadata.py": "8c4a42454ba7597fd539ba69633839faec2d9da512fd3003cd5d1d0f217d4b02",
+    "check.py": "56909031cff4bfdbcaa7ef987047c34e657cec5e71e91e8b60f4c4dc9efd8039",
+    "native.py": "cfb005046b52ec3bfd8e800ae718a2dbc4df3c3fe69ab432cbac01a0cdbbf2f5",
+    "native_tools.py": "4cf8d8219e12c3ecb90208b8a43d103acd4edd3fdc3310cdb7e430e225c8e854",
+    "reference.py": "752ae15504726dcaf0f2445f98b9e09df68d256beebf64b16ba83cd7e8b531bb",
+    "bound_build.py": "a9af7af5dd4f1a24c50db8f7a068dbf02988d2fd17f51e2f9fda93e9ff1e0173",
+    "lock_audit.py": "a7a1dcd015172b47c5d47ffbd274267dd206a7934b45ec1ad3ba100c2038b9fb"
+  },
+  "launch_route": "CUA Finder open, not the unused launch() helper in native_tools.py"
+}

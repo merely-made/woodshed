@@ -1,0 +1,26 @@
+{
+  "build_command": [
+    "cargo",
+    "test",
+    "--offline",
+    "--locked",
+    "-j2",
+    "-p",
+    "woodshed-genet",
+    "--no-run",
+    "--message-format=json"
+  ],
+  "build_exit_code": 0,
+  "command": [
+    "/Users/markik/Code/repos/woodshed/target/build/debug/deps/woodshed_genet-2dd7c54d95abce64",
+    "wav_export::tests::sealed_profile_export_reference",
+    "--exact",
+    "--ignored"
+  ],
+  "exit_code": 0,
+  "executable": "/Users/markik/Code/repos/woodshed/target/build/debug/deps/woodshed_genet-2dd7c54d95abce64",
+  "executable_sha256": "567e0b75442e7347a5383f3016eedaf42a70f3b89a241d66b6ec5c899dd55355",
+  "source_revision": "6b2c6b3e48cd7c029830a0928cf1b8d1afa24fcf",
+  "source_digest": "0d103fd4daa391deea3b8876052149cbe2b275c90d79c3059dc7ea1cb8da94ec",
+  "sources_unchanged_before_after": true
+}

@@ -1,0 +1,433 @@
+warning: unused variable: `time_range`
+   --> crates/cambium/scenes/scenomise/src/opened_link.rs:599:9
+    |
+599 |     let time_range = timeline_range(pending);
+    |         ^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_time_range`
+    |
+    = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default
+
+warning: use of deprecated method `std::sync::atomic::Atomic::<u64>::fetch_update`: renamed to `try_update` for consistency
+  --> crates/cambium/cambium-rootstock/src/producer/registry.rs:47:10
+   |
+47 |     next.fetch_update(Ordering::Relaxed, Ordering::Relaxed, |key| {
+   |          ^^^^^^^^^^^^
+   |
+   = note: `#[warn(deprecated)]` on by default
+help: replace the use of the deprecated method
+   |
+47 -     next.fetch_update(Ordering::Relaxed, Ordering::Relaxed, |key| {
+47 +     next.try_update(Ordering::Relaxed, Ordering::Relaxed, |key| {
+   |
+
+warning: use of deprecated method `std::sync::atomic::Atomic::<u64>::fetch_update`: renamed to `try_update` for consistency
+  --> crates/cambium/cambium-rootstock/src/scene_producer.rs:25:10
+   |
+25 |         .fetch_update(Ordering::Relaxed, Ordering::Relaxed, |value| {
+   |          ^^^^^^^^^^^^
+   |
+help: replace the use of the deprecated method
+   |
+25 -         .fetch_update(Ordering::Relaxed, Ordering::Relaxed, |value| {
+25 +         .try_update(Ordering::Relaxed, Ordering::Relaxed, |value| {
+   |
+
+warning: use of deprecated method `std::sync::atomic::Atomic::<usize>::fetch_update`: renamed to `try_update` for consistency
+   --> crates/cambium/cambium-rootstock/src/host.rs:116:10
+    |
+116 |     NEXT.fetch_update(Ordering::Relaxed, Ordering::Relaxed, |next| {
+    |          ^^^^^^^^^^^^
+    |
+help: replace the use of the deprecated method
+    |
+116 -     NEXT.fetch_update(Ordering::Relaxed, Ordering::Relaxed, |next| {
+116 +     NEXT.try_update(Ordering::Relaxed, Ordering::Relaxed, |next| {
+    |
+
+warning: calls to `std::mem::drop` with a reference instead of an owned value does nothing
+   --> crates/cambium/cambium-rootstock/src/producer/registry.rs:678:13
+    |
+678 |             drop(renderer);
+    |             ^^^^^--------^
+    |                  |
+    |                  argument has type `&Renderer`
+    |
+    = note: `#[warn(dropping_references)]` on by default
+help: use `let _ = ...` to ignore the expression or result
+    |
+678 -             drop(renderer);
+678 +             let _ = renderer;
+    |
+
+warning: unused import: `NSWindow`
+   --> crates/cambium/cambium-genet-winit-host/src/decorations.rs:511:25
+    |
+511 |     use objc2_app_kit::{NSWindow, NSWindowButton};
+    |                         ^^^^^^^^
+    |
+    = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: unnecessary `unsafe` block
+   --> crates/cambium/cambium-genet-winit-host/src/decorations.rs:540:46
+    |
+540 |             view.convertRect_fromView(frame, unsafe { ns_window.contentView() }.as_deref());
+    |                                              ^^^^^^ unnecessary `unsafe` block
+    |
+    = note: `#[warn(unused_unsafe)]` (part of `#[warn(unused)]`) on by default
+
+warning: function `window_control_node` is never used
+   --> crates/cambium/cambium-genet-winit-host/src/decorations.rs:113:4
+    |
+113 | fn window_control_node<D>(dom: &D, root: NodeId, accessible_label: &str) -> Option<NodeId>
+    |    ^^^^^^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: function `window_control_rect` is never used
+   --> crates/cambium/cambium-genet-winit-host/src/decorations.rs:139:15
+    |
+139 | pub(crate) fn window_control_rect<D>(
+    |               ^^^^^^^^^^^^^^^^^^^
+
+warning: function `window_control_rect` is never used
+   --> crates/cambium/cambium-genet-winit-host/src/decorations.rs:139:15
+    |
+139 | pub(crate) fn window_control_rect<D>(
+    |               ^^^^^^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: type alias `Child` is never used
+  --> crates/cambium/cambium-genet-winit-host/src/headed_tests.rs:27:6
+   |
+27 | type Child = Box<dyn AnyView<(), (), GenetCtx, GenetElement>>;
+   |      ^^^^^
+
+warning: type alias `Logic` is never used
+  --> crates/cambium/cambium-genet-winit-host/src/headed_tests.rs:28:6
+   |
+28 | type Logic = fn(&()) -> Child;
+   |      ^^^^^
+
+warning: function `root` is never used
+  --> crates/cambium/cambium-genet-winit-host/src/headed_tests.rs:30:4
+   |
+30 | fn root(_: &()) -> Child {
+   |    ^^^^
+
+warning: struct `Readings` is never constructed
+  --> crates/cambium/cambium-genet-winit-host/src/headed_tests.rs:36:8
+   |
+36 | struct Readings {
+   |        ^^^^^^^^
+
+warning: struct `Driver` is never constructed
+  --> crates/cambium/cambium-genet-winit-host/src/headed_tests.rs:46:8
+   |
+46 | struct Driver {
+   |        ^^^^^^
+
+warning: function `drive` is never used
+   --> crates/cambium/cambium-genet-winit-host/src/headed_tests.rs:118:4
+    |
+118 | fn drive(drop_core: bool) -> Readings {
+    |    ^^^^^
+
+warning: struct `Shared` is never constructed
+   --> crates/cambium/cambium-genet-winit-host/src/headed_tests.rs:231:8
+    |
+231 | struct Shared {
+    |        ^^^^^^
+
+warning: type alias `WChild` is never used
+   --> crates/cambium/cambium-genet-winit-host/src/headed_tests.rs:235:6
+    |
+235 | type WChild = Box<dyn AnyView<Shared, (), GenetCtx, GenetElement>>;
+    |      ^^^^^^
+
+warning: type alias `WLogic` is never used
+   --> crates/cambium/cambium-genet-winit-host/src/headed_tests.rs:236:6
+    |
+236 | type WLogic = Box<dyn FnMut(&Shared) -> WChild>;
+    |      ^^^^^^
+
+warning: constant `WSHEET` is never used
+   --> crates/cambium/cambium-genet-winit-host/src/headed_tests.rs:238:7
+    |
+238 | const WSHEET: &str = "div { display: block; height: 20px; } \
+    |       ^^^^^^
+
+warning: function `window_lens` is never used
+   --> crates/cambium/cambium-genet-winit-host/src/headed_tests.rs:241:4
+    |
+241 | fn window_lens(label: &'static str) -> WLogic {
+    |    ^^^^^^^^^^^
+
+warning: function `find` is never used
+   --> crates/cambium/cambium-genet-winit-host/src/headed_tests.rs:257:4
+    |
+257 | fn find(dom: &ScriptedDom, root: NodeId, needle: &str) -> Option<NodeId> {
+    |    ^^^^
+
+warning: function `text_under` is never used
+   --> crates/cambium/cambium-genet-winit-host/src/headed_tests.rs:268:4
+    |
+268 | fn text_under(dom: &ScriptedDom, root: NodeId) -> String {
+    |    ^^^^^^^^^^
+
+warning: struct `WindowsReadings` is never constructed
+   --> crates/cambium/cambium-genet-winit-host/src/headed_tests.rs:283:8
+    |
+283 | struct WindowsReadings {
+    |        ^^^^^^^^^^^^^^^
+
+warning: enum `AfterSettle` is never used
+   --> crates/cambium/cambium-genet-winit-host/src/headed_tests.rs:302:6
+    |
+302 | enum AfterSettle {
+    |      ^^^^^^^^^^^
+
+warning: enum `Step` is never used
+   --> crates/cambium/cambium-genet-winit-host/src/headed_tests.rs:313:6
+    |
+313 | enum Step {
+    |      ^^^^
+
+warning: struct `WindowsDriver` is never constructed
+   --> crates/cambium/cambium-genet-winit-host/src/headed_tests.rs:328:8
+    |
+328 | struct WindowsDriver {
+    |        ^^^^^^^^^^^^^
+
+warning: constant `A` is never used
+   --> crates/cambium/cambium-genet-winit-host/src/headed_tests.rs:342:7
+    |
+342 | const A: ProjectionId = ProjectionId(0);
+    |       ^
+
+warning: constant `B` is never used
+   --> crates/cambium/cambium-genet-winit-host/src/headed_tests.rs:343:7
+    |
+343 | const B: ProjectionId = ProjectionId(1);
+    |       ^
+
+warning: multiple methods are never used
+   --> crates/cambium/cambium-genet-winit-host/src/headed_tests.rs:346:8
+    |
+345 | impl WindowsDriver {
+    | ------------------ methods in this implementation
+346 |     fn boots(&self) -> u32 {
+    |        ^^^^^
+...
+354 |     fn presents(&self, id: ProjectionId) -> u64 {
+    |        ^^^^^^^^
+...
+359 |     fn device_of(&self, id: ProjectionId) -> Option<*const wgpu::Device> {
+    |        ^^^^^^^^^
+...
+367 |     fn launched(&mut self) {
+    |        ^^^^^^^^
+...
+391 |     fn click(&mut self, event_loop: &ActiveEventLoop) {
+    |        ^^^^^
+...
+424 |     fn settling(
+    |        ^^^^^^^^
+...
+479 |     fn animating(&mut self, event_loop: &ActiveEventLoop, a0: u64, b0: u64) {
+    |        ^^^^^^^^^
+
+warning: function `drive_windows` is never used
+   --> crates/cambium/cambium-genet-winit-host/src/headed_tests.rs:568:4
+    |
+568 | fn drive_windows(control: bool) -> WindowsReadings {
+    |    ^^^^^^^^^^^^^
+
+
+running 18 tests
+..................
+test result: ok. 18 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 6 tests
+......
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.48s
+
+
+running 1 test
+.
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.32s
+
+
+running 4 tests
+....
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.42s
+
+
+running 2 tests
+ii
+test result: ok. 0 passed; 0 failed; 2 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 8 tests
+........
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.47s
+
+
+running 1 test
+.
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.39s
+
+
+running 11 tests
+...........
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.44s
+
+
+running 4 tests
+....
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.32s
+
+
+running 1 test
+.
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.29s
+
+
+running 1 test
+.
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.41s
+
+
+running 2 tests
+..
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.39s
+
+
+running 18 tests
+..................
+test result: ok. 18 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.67s
+
+
+running 3 tests
+...
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 3 tests
+...
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.69s
+
+
+running 3 tests
+...
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.83s
+
+
+running 2 tests
+..
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.26s
+
+
+running 25 tests
+.........................
+test result: ok. 25 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.78s
+
+
+running 10 tests
+..........
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.38s
+
+
+running 8 tests
+........
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.81s
+
+
+running 5 tests
+.....
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.37s
+
+
+running 2 tests
+..
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.51s
+
+
+running 1 test
+.
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.66s
+
+
+running 1 test
+.
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.31s
+
+
+running 2 tests
+..
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.27s
+
+
+running 6 tests
+......
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 3.71s
+
+
+running 17 tests
+.................
+test result: ok. 17 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 6.65s
+
+
+running 7 tests
+.......
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.67s
+
+
+running 4 tests
+....
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.60s
+
+
+running 120 tests
+.........................i.i............................................i.............. 87/120
+................................test owned_layout::incremental_tests::incremental_style_equals_a_fresh_session_at_100_rows has been running for over 60 seconds
+.
+test result: ok. 117 passed; 0 failed; 3 ignored; 0 measured; 0 filtered out; finished in 64.14s
+
+
+running 5 tests
+.....
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 4 tests
+....
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.20s
+
+
+running 6 tests
+......
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.47s
+
+
+running 7 tests
+.......
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 2 tests
+..
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.42s
+
+
+running 2 tests
+ii
+test result: ok. 0 passed; 0 failed; 2 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+all doctests ran in 0.39s; merged doctests compilation took 0.20s
+
+running 1 test
+i
+test result: ok. 0 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+all doctests ran in 0.39s; merged doctests compilation took 0.20s

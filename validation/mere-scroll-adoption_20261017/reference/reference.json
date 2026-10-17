@@ -1,0 +1,29 @@
+{
+  "capture_manifest": {
+    "namespace": "114f4f12fdc5b46346074b560fea7835",
+    "takes": [
+      {
+        "bars": 0,
+        "beats": 3,
+        "bpm": 180.0,
+        "clock": "seconds-v1",
+        "codec": "wavpack-f32-v1",
+        "digest": "a1c4cec47e2bf7501d97c16dcb265c4fddea5cdd056a164e76787aebe0248029",
+        "frames": 54000,
+        "id": {
+          "card": 2,
+          "set": 1
+        },
+        "sample_rate": 48000,
+        "seconds": 1.125
+      }
+    ],
+    "version": 4
+  },
+  "captured_takes": 1,
+  "channels": 1,
+  "click": false,
+  "frames": 132000,
+  "rate": 48000,
+  "segments": 3
+}
