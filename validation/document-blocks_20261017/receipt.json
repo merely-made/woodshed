@@ -1,0 +1,31 @@
+{
+  "schema": "woodshed.independent-document-block-prototype/v1",
+  "created_at": "2026-10-17T19:17:50.148341+00:00",
+  "status": "current-source local supplier cohort qualified",
+  "source": "source.json",
+  "dependencies": "dependencies/scope.json",
+  "checks": {
+    "real_arrangement_round_trip": {
+      "pass": 1,
+      "core_source_base": "c6036f2",
+      "assertions": [
+        "existing versioned scene-document codec",
+        "real Card/rest spans and four linked voicings exactly preserved",
+        "independent copy edit does not change original document or source Set"
+      ]
+    },
+    "actual_export": {
+      "command": "cargo run --offline --config LOCAL_SOURCE_TOML -p woodshed-core --features portable-scenes --bin woodshed-arrangement-scene -- varied OUTPUT.djot",
+      "artifact": "Mere validation/editable-document-blocks_20261017/exports/arrangement-current.djot",
+      "byte_identical_to_graphshell_fixture": true
+    },
+    "graphshell": "Mere validation/editable-document-blocks_20261017/browser/result.json; actual WebGPU admission and independent copy/discard"
+  },
+  "refresh": "Fast-forwarded 28a0741 to c6036f2; preserved the upstream P7a acceptance text and local prototype review when resolving the plan append conflict.",
+  "limits": [
+    "No new native Woodshed run or native document-block authoring interface.",
+    "Reading the independent block does not edit a live Set or choose arrangement playback.",
+    "Explicit arrangement practice and detailed clock/edit semantics remain future work.",
+    "No canonical dependency pin promotion; non-Mere Git pins preserved and canonical lock restored."
+  ]
+}
