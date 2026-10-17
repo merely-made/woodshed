@@ -1,0 +1,51 @@
+{
+  "reviewer": "integration owner",
+  "images": [
+    {
+      "path": "seed/03_seconds_take_follows_card.png",
+      "sha256": "4424d2cf23a81a6db6502338f1dc50c18817b7d7c0cd6ff1efc16cef8a85bab5"
+    },
+    {
+      "path": "seed/07_compact_envelope.png",
+      "sha256": "f2b112e8dd55be3416657b3f66c83241bd9d717e81ac7016e17950cca85c85f0"
+    },
+    {
+      "path": "seed/08b_compact_transport_reached.png",
+      "sha256": "07f3c7164cf8fe7211bfc33f9c22061111271233391ae3770973dcba9ca1d455"
+    },
+    {
+      "path": "seed/10b_short_transport_reached.png",
+      "sha256": "a840ec2233ff60c5d0e1803cdc433b98a5c842771661801e339cdca12682289f"
+    },
+    {
+      "path": "seed/06_medium_envelope.png",
+      "sha256": "b75afc0e6179099694cee3b55ed290d9d1a7f80db154ec4615b7988c17264313"
+    },
+    {
+      "path": "seed/10_short_third_card_reached.png",
+      "sha256": "a2c37fb39539f27a55d1bf03349eaaa2f9b61dd16818c12d2e1998b032049496"
+    },
+    {
+      "path": "seed/11_zoomed_envelope.png",
+      "sha256": "0b55c7563a05e94b83c95b0161f3d6f82eee413f847c0bdd5d45cc03b8b81bd5"
+    },
+    {
+      "path": "reopen/01_exact_seconds_take_reopened.png",
+      "sha256": "e7c47dd5374b494cb8e95c67092ec7fff5abc491f3770dab544a5a63f4c07a5e"
+    },
+    {
+      "path": "reopen/04_short_third_card_reopened.png",
+      "sha256": "97b6b3cc454683156a7679d98993b555689cd431feb1486e3c12344838251a05"
+    }
+  ],
+  "observations": [
+    "Expected eight amplitude regions visible with true relative heights; baseline at both ends",
+    "Compact and short wheel/selection captures expose third Card and complete transport at distinct positions without former row/dock overlap",
+    "Host timing copy corrected; medium and zoomed controls readable",
+    "Fresh reopen retains envelope and owner"
+  ],
+  "limits": [
+    "Black lower strip visible after page scroll in several seed captures; investigation pending",
+    "Zoomed third-row scroll recovery not yet captured; table scroll remains separate in Full layout"
+  ]
+}

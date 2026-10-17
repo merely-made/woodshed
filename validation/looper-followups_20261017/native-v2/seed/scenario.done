@@ -1,0 +1,33 @@
+RESULT ok
+waited 5 frames
+captured 01_seconds_phrase_playback
+captured 02_absolute_seconds_after_tempo_meter_edit
+captured 03_seconds_take_follows_card
+captured 04_duration_edit_retains_captured_clock
+captured 05_mixed_duration_export
+captured 06_medium_envelope
+captured 07_compact_envelope
+captured scroll_before_select_third
+captured 08_compact_third_card_reached
+captured 08b_compact_transport_reached
+captured 09_short_envelope
+captured 10_short_third_card_reached
+captured 10b_short_transport_reached
+captured 11_zoomed_envelope
+Looper followups envelope and layout seed complete
+capture 01_seconds_phrase_playback 2360x2000 digest=de89cbdbd91994c9 file=/Users/markik/Code/testing/woodshed/looper-followups-20261017/native-v2/seed/01_seconds_phrase_playback.png
+capture 02_absolute_seconds_after_tempo_meter_edit 2360x2000 digest=7629c3eef94341b1 file=/Users/markik/Code/testing/woodshed/looper-followups-20261017/native-v2/seed/02_absolute_seconds_after_tempo_meter_edit.png
+capture 03_seconds_take_follows_card 2360x2000 digest=e2b8cbc59320b762 file=/Users/markik/Code/testing/woodshed/looper-followups-20261017/native-v2/seed/03_seconds_take_follows_card.png
+capture 04_duration_edit_retains_captured_clock 2360x2000 digest=f793fb25dc5b0fa8 file=/Users/markik/Code/testing/woodshed/looper-followups-20261017/native-v2/seed/04_duration_edit_retains_captured_clock.png
+capture 05_mixed_duration_export 2360x2000 digest=c27678871b61245d file=/Users/markik/Code/testing/woodshed/looper-followups-20261017/native-v2/seed/05_mixed_duration_export.png
+capture 06_medium_envelope 1520x1800 digest=7962835c81729f2d file=/Users/markik/Code/testing/woodshed/looper-followups-20261017/native-v2/seed/06_medium_envelope.png
+capture 07_compact_envelope 840x2200 digest=dcd93f6e8a45926b file=/Users/markik/Code/testing/woodshed/looper-followups-20261017/native-v2/seed/07_compact_envelope.png
+capture scroll_before_select_third 840x2200 digest=73ef2f7eefc9f702 file=/Users/markik/Code/testing/woodshed/looper-followups-20261017/native-v2/seed/scroll_before_select_third.png
+capture 08_compact_third_card_reached 840x2200 digest=eb86da0de4fa92af file=/Users/markik/Code/testing/woodshed/looper-followups-20261017/native-v2/seed/08_compact_third_card_reached.png
+capture 08b_compact_transport_reached 840x2200 digest=19fa9b3340f94c74 file=/Users/markik/Code/testing/woodshed/looper-followups-20261017/native-v2/seed/08b_compact_transport_reached.png
+capture 09_short_envelope 840x1440 digest=a363594a12ee03d3 file=/Users/markik/Code/testing/woodshed/looper-followups-20261017/native-v2/seed/09_short_envelope.png
+capture 10_short_third_card_reached 840x1440 digest=b8e5869c67307044 file=/Users/markik/Code/testing/woodshed/looper-followups-20261017/native-v2/seed/10_short_third_card_reached.png
+capture 10b_short_transport_reached 840x1440 digest=26fe326942f93d23 file=/Users/markik/Code/testing/woodshed/looper-followups-20261017/native-v2/seed/10b_short_transport_reached.png
+capture 11_zoomed_envelope 2360x2000 digest=5e51070ee015986c file=/Users/markik/Code/testing/woodshed/looper-followups-20261017/native-v2/seed/11_zoomed_envelope.png
+frames: 14 captured, 0 blank, 14 distinct digests
+presentation: 316 frames, 317 redraws, 1 unpresented redraws

@@ -1,0 +1,10 @@
+{
+  "owned_app_exited": true,
+  "owned_keeper_exited": true,
+  "original_fixture_files_unchanged": true,
+  "separate_sealed_load_export_passed": true,
+  "actual_recorded_mix_contains_signal": true,
+  "user_confirmed_audible_playback_and_recording": true,
+  "source_duration_claim": "No15secondclaimfrominitialquiescencewait",
+  "raw_audio_local_only": true
+}

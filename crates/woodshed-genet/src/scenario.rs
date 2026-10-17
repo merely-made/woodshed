@@ -48,6 +48,7 @@ use crate::sync::Ctx;
 mod practice_clock;
 mod guided_rehearsal;
 mod mixed_looper;
+mod physical_audio;
 
 /// Explicit synthetic acceptance PCM, unrelated to the historical quiet seeds.
 /// Every value is an exact multiple of 1/64: no gain normalization, noise,
@@ -182,6 +183,7 @@ pub struct Product {
     take_playback_wait: Option<(usize, std::time::Instant, std::cell::Cell<bool>)>,
     scenario_cursor_wait: RefCell<Option<ScenarioCursorWait>>,
     practice_clock_wait: RefCell<Option<practice_clock::Wait>>,
+    physical_dwell: RefCell<Option<physical_audio::Dwell>>,
 }
 
 #[derive(Clone, Copy)]
@@ -204,6 +206,7 @@ pub fn from_env(shared: Rc<RefCell<Shared>>) -> Option<mesquite::Lane<Product>> 
                 take_playback_wait: None,
                 scenario_cursor_wait: RefCell::new(None),
                 practice_clock_wait: RefCell::new(None),
+                physical_dwell: RefCell::new(None),
             },
             cambium_genet_winit_host::read_file,
         )
@@ -245,6 +248,8 @@ impl mesquite::Product for Product {
         std::mem::take(&mut self.shared.borrow_mut().events)
     }
     fn busy(&self, ctx: &Ctx<'_>, capture_pending: bool) -> Option<bool> {
+        let physical_wait = self.physical_dwell.borrow_mut().as_mut()
+            .is_some_and(|dwell| dwell.poll(ctx.runner.state(), &self.shared.borrow()));
         let export_wait = self
             .export_wait
             .as_ref()
@@ -316,7 +321,7 @@ impl mesquite::Product for Product {
             }
         };
         Some(
-            take_wait || scenario_cursor_wait || practice_clock_wait || export_wait
+            physical_wait || take_wait || scenario_cursor_wait || practice_clock_wait || export_wait
                 || ctx.runner.state().loop_export_busy
                 || capture_pending
                 || self
@@ -328,6 +333,9 @@ impl mesquite::Product for Product {
         )
     }
     fn act(&mut self, ctx: &mut Ctx<'_>, label: &str) -> bool {
+        if let Some(result) = physical_audio::act(self, ctx, label) {
+            return result;
+        }
         if let Some(result) = mixed_looper::act(ctx, &self.shared, label) {
             return result;
         }

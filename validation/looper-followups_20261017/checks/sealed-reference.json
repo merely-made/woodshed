@@ -1,0 +1,22 @@
+{
+  "command": [
+    "cargo",
+    "test",
+    "--locked",
+    "--offline",
+    "-j2",
+    "-p",
+    "woodshed-genet",
+    "wav_export::tests::sealed_profile_export_reference",
+    "--",
+    "--exact",
+    "--ignored"
+  ],
+  "exit_code": 0,
+  "environment": {
+    "WOODSHED_STATE": "/Users/markik/Code/testing/woodshed/looper-followups-20261017/native-v2/profile/practice.bin",
+    "WOODSHED_SETTINGS": "/Users/markik/Code/testing/woodshed/looper-followups-20261017/native-v2/profile/settings.json",
+    "GRAPHSHELL_APP_ENDPOINT": "/tmp/ws-followups-1017-v2.sock",
+    "WOODSHED_EXPORT_REFERENCE_DIR": "/Users/markik/Code/testing/woodshed/looper-followups-20261017/native-v2/reference"
+  }
+}

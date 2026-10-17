@@ -1,0 +1,30 @@
+{
+  "app": "/Users/markik/Code/testing/woodshed/looper-followups-20261017/native-v2/reopen/AcceptanceWoodshedReopenNativev2.app",
+  "env": {
+    "WOODSHED_SCENARIO": "/Users/markik/Code/testing/woodshed/looper-followups-20261017/native-v2/reopen/scenario.scn",
+    "WOODSHED_CAPTURE_DIR": "/Users/markik/Code/testing/woodshed/looper-followups-20261017/native-v2/reopen",
+    "WOODSHED_RECEIPT": "/Users/markik/Code/testing/woodshed/looper-followups-20261017/native-v2/reopen/scenario.done",
+    "WOODSHED_PRESENTATION_TIMEOUT_SECS": "60",
+    "WOODSHED_WIDTH": "1180",
+    "WOODSHED_HEIGHT": "1000",
+    "TMPDIR": "/tmp",
+    "CAMBIUM_HOST_FRAME_TRACE": "1",
+    "WOODSHED_STATE": "/Users/markik/Code/testing/woodshed/looper-followups-20261017/native-v2/profile/practice.bin",
+    "WOODSHED_SETTINGS": "/Users/markik/Code/testing/woodshed/looper-followups-20261017/native-v2/profile/settings.json",
+    "GRAPHSHELL_APP_ENDPOINT": "/tmp/ws-followups-1017-v2.sock",
+    "XDG_DATA_HOME": "/Users/markik/Code/testing/woodshed/looper-followups-20261017/native-v2/data",
+    "XDG_CONFIG_HOME": "/Users/markik/Code/testing/woodshed/looper-followups-20261017/native-v2/config",
+    "XDG_CACHE_HOME": "/Users/markik/Code/testing/woodshed/looper-followups-20261017/native-v2/cache",
+    "MERE_ROOT": "/Users/markik/Code/testing/woodshed/looper-followups-20261017/native-v2/mere"
+  },
+  "source": {
+    "revision": "e25f66860110215a7b3ebf07a7dda81da532c19b",
+    "worktree": "",
+    "binaries": {
+      "woodshed": "e592b453cdaa534641b531d8d626bc33429fec6d2b91c727e228b2c3be4dfbe7"
+    },
+    "source_hashes_sha256": "5f12f7f39636e6c3165cac12777100cbc90a4f65c1b7587ec9644783ae6afec3"
+  },
+  "scenario_sha256": "bea900ec9e020dac37f2bdfed546989c5bbd6f30f74f49c44f5a26a4a3565aa6",
+  "binary_sha256": "e592b453cdaa534641b531d8d626bc33429fec6d2b91c727e228b2c3be4dfbe7"
+}

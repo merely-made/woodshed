@@ -1,0 +1,18 @@
+{
+  "command": [
+    "cargo",
+    "test",
+    "--offline",
+    "--locked",
+    "-p",
+    "woodshed-genet",
+    "wav_export::tests::sealed_profile_export_reference",
+    "--",
+    "--exact",
+    "--ignored"
+  ],
+  "exit_code": 0,
+  "source_revision": "f55755fc541c2a6e693e6b4b1b7030139a820064",
+  "note": "Compiled current testsource with uncommitted selectedcapture/dwell edits; finalsourcehashesrecorded separately",
+  "raw_audio_local_only": true
+}

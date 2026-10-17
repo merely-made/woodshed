@@ -1,0 +1,1114 @@
+{
+  "admitted": {
+    "click": false,
+    "name": "Working Set 1",
+    "one_shot": false,
+    "owner": 1,
+    "segments": [
+      {
+        "bars": 0,
+        "beats": 5,
+        "bpm": 137.0,
+        "id": {
+          "card": 2,
+          "set": 1
+        },
+        "label": "Loop scale",
+        "phrase": [
+          {
+            "pitches_hz": [
+              82.40689086914062
+            ],
+            "strum_seconds": 0.0,
+            "time": {
+              "at": 0.0,
+              "unit": "seconds"
+            }
+          },
+          {
+            "pitches_hz": [
+              97.99885559082031
+            ],
+            "strum_seconds": 0.0,
+            "time": {
+              "at": 0.05625,
+              "unit": "seconds"
+            }
+          },
+          {
+            "pitches_hz": [
+              110.0
+            ],
+            "strum_seconds": 0.0,
+            "time": {
+              "at": 0.1125,
+              "unit": "seconds"
+            }
+          },
+          {
+            "pitches_hz": [
+              130.8127899169922
+            ],
+            "strum_seconds": 0.0,
+            "time": {
+              "at": 0.16875,
+              "unit": "seconds"
+            }
+          },
+          {
+            "pitches_hz": [
+              146.83238220214844
+            ],
+            "strum_seconds": 0.0,
+            "time": {
+              "at": 0.225,
+              "unit": "seconds"
+            }
+          },
+          {
+            "pitches_hz": [
+              164.81378173828125
+            ],
+            "strum_seconds": 0.0,
+            "time": {
+              "at": 0.28125,
+              "unit": "seconds"
+            }
+          },
+          {
+            "pitches_hz": [
+              195.99771118164062
+            ],
+            "strum_seconds": 0.0,
+            "time": {
+              "at": 0.3375,
+              "unit": "seconds"
+            }
+          },
+          {
+            "pitches_hz": [
+              220.0
+            ],
+            "strum_seconds": 0.0,
+            "time": {
+              "at": 0.39375,
+              "unit": "seconds"
+            }
+          },
+          {
+            "pitches_hz": [
+              261.6255798339844
+            ],
+            "strum_seconds": 0.0,
+            "time": {
+              "at": 0.45,
+              "unit": "seconds"
+            }
+          },
+          {
+            "pitches_hz": [
+              293.6647644042969
+            ],
+            "strum_seconds": 0.0,
+            "time": {
+              "at": 0.50625,
+              "unit": "seconds"
+            }
+          },
+          {
+            "pitches_hz": [
+              329.6275634765625
+            ],
+            "strum_seconds": 0.0,
+            "time": {
+              "at": 0.5625,
+              "unit": "seconds"
+            }
+          },
+          {
+            "pitches_hz": [
+              391.99542236328125
+            ],
+            "strum_seconds": 0.0,
+            "time": {
+              "at": 0.61875,
+              "unit": "seconds"
+            }
+          },
+          {
+            "pitches_hz": [
+              440.0
+            ],
+            "strum_seconds": 0.0,
+            "time": {
+              "at": 0.675,
+              "unit": "seconds"
+            }
+          },
+          {
+            "pitches_hz": [
+              523.2511596679688
+            ],
+            "strum_seconds": 0.0,
+            "time": {
+              "at": 0.7312500000000001,
+              "unit": "seconds"
+            }
+          },
+          {
+            "pitches_hz": [
+              587.3295288085938
+            ],
+            "strum_seconds": 0.0,
+            "time": {
+              "at": 0.7875,
+              "unit": "seconds"
+            }
+          },
+          {
+            "pitches_hz": [
+              659.255126953125
+            ],
+            "strum_seconds": 0.0,
+            "time": {
+              "at": 0.84375,
+              "unit": "seconds"
+            }
+          },
+          {
+            "pitches_hz": [
+              783.9908447265625
+            ],
+            "strum_seconds": 0.0,
+            "time": {
+              "at": 0.9,
+              "unit": "seconds"
+            }
+          },
+          {
+            "pitches_hz": [
+              880.0
+            ],
+            "strum_seconds": 0.0,
+            "time": {
+              "at": 0.95625,
+              "unit": "seconds"
+            }
+          },
+          {
+            "pitches_hz": [
+              1046.5023193359375
+            ],
+            "strum_seconds": 0.0,
+            "time": {
+              "at": 1.0125,
+              "unit": "seconds"
+            }
+          },
+          {
+            "pitches_hz": [
+              1174.6590576171875
+            ],
+            "strum_seconds": 0.0,
+            "time": {
+              "at": 1.06875,
+              "unit": "seconds"
+            }
+          }
+        ],
+        "pitches_hz": [],
+        "seconds": 1.125
+      },
+      {
+        "bars": 1,
+        "beats": 5,
+        "bpm": 240.0,
+        "id": {
+          "card": 1,
+          "set": 1
+        },
+        "label": "Loop chord",
+        "phrase": null,
+        "pitches_hz": [
+          220.0,
+          277.1826171875,
+          329.6275634765625
+        ],
+        "seconds": null
+      },
+      {
+        "bars": 0,
+        "beats": 5,
+        "bpm": 300.0,
+        "id": {
+          "card": 3,
+          "set": 1
+        },
+        "label": "Loop arpeggio",
+        "phrase": [
+          {
+            "pitches_hz": [
+              220.0
+            ],
+            "strum_seconds": 0.0,
+            "time": {
+              "at": 0.0,
+              "unit": "seconds"
+            }
+          },
+          {
+            "pitches_hz": [
+              277.1826171875
+            ],
+            "strum_seconds": 0.0,
+            "time": {
+              "at": 0.21875,
+              "unit": "seconds"
+            }
+          },
+          {
+            "pitches_hz": [
+              329.6275634765625
+            ],
+            "strum_seconds": 0.0,
+            "time": {
+              "at": 0.4375,
+              "unit": "seconds"
+            }
+          },
+          {
+            "pitches_hz": [
+              277.1826171875
+            ],
+            "strum_seconds": 0.0,
+            "time": {
+              "at": 0.65625,
+              "unit": "seconds"
+            }
+          }
+        ],
+        "pitches_hz": [],
+        "seconds": 0.875
+      }
+    ]
+  },
+  "backend_admitted": {
+    "click": false,
+    "name": "Working Set 1",
+    "one_shot": false,
+    "owner": 1,
+    "segments": [
+      {
+        "bars": 0,
+        "beats": 5,
+        "bpm": 137.0,
+        "id": {
+          "card": 2,
+          "set": 1
+        },
+        "label": "Loop scale",
+        "phrase": [
+          {
+            "pitches_hz": [
+              82.40689086914062
+            ],
+            "strum_seconds": 0.0,
+            "time": {
+              "at": 0.0,
+              "unit": "seconds"
+            }
+          },
+          {
+            "pitches_hz": [
+              97.99885559082031
+            ],
+            "strum_seconds": 0.0,
+            "time": {
+              "at": 0.05625,
+              "unit": "seconds"
+            }
+          },
+          {
+            "pitches_hz": [
+              110.0
+            ],
+            "strum_seconds": 0.0,
+            "time": {
+              "at": 0.1125,
+              "unit": "seconds"
+            }
+          },
+          {
+            "pitches_hz": [
+              130.8127899169922
+            ],
+            "strum_seconds": 0.0,
+            "time": {
+              "at": 0.16875,
+              "unit": "seconds"
+            }
+          },
+          {
+            "pitches_hz": [
+              146.83238220214844
+            ],
+            "strum_seconds": 0.0,
+            "time": {
+              "at": 0.225,
+              "unit": "seconds"
+            }
+          },
+          {
+            "pitches_hz": [
+              164.81378173828125
+            ],
+            "strum_seconds": 0.0,
+            "time": {
+              "at": 0.28125,
+              "unit": "seconds"
+            }
+          },
+          {
+            "pitches_hz": [
+              195.99771118164062
+            ],
+            "strum_seconds": 0.0,
+            "time": {
+              "at": 0.3375,
+              "unit": "seconds"
+            }
+          },
+          {
+            "pitches_hz": [
+              220.0
+            ],
+            "strum_seconds": 0.0,
+            "time": {
+              "at": 0.39375,
+              "unit": "seconds"
+            }
+          },
+          {
+            "pitches_hz": [
+              261.6255798339844
+            ],
+            "strum_seconds": 0.0,
+            "time": {
+              "at": 0.45,
+              "unit": "seconds"
+            }
+          },
+          {
+            "pitches_hz": [
+              293.6647644042969
+            ],
+            "strum_seconds": 0.0,
+            "time": {
+              "at": 0.50625,
+              "unit": "seconds"
+            }
+          },
+          {
+            "pitches_hz": [
+              329.6275634765625
+            ],
+            "strum_seconds": 0.0,
+            "time": {
+              "at": 0.5625,
+              "unit": "seconds"
+            }
+          },
+          {
+            "pitches_hz": [
+              391.99542236328125
+            ],
+            "strum_seconds": 0.0,
+            "time": {
+              "at": 0.61875,
+              "unit": "seconds"
+            }
+          },
+          {
+            "pitches_hz": [
+              440.0
+            ],
+            "strum_seconds": 0.0,
+            "time": {
+              "at": 0.675,
+              "unit": "seconds"
+            }
+          },
+          {
+            "pitches_hz": [
+              523.2511596679688
+            ],
+            "strum_seconds": 0.0,
+            "time": {
+              "at": 0.7312500000000001,
+              "unit": "seconds"
+            }
+          },
+          {
+            "pitches_hz": [
+              587.3295288085938
+            ],
+            "strum_seconds": 0.0,
+            "time": {
+              "at": 0.7875,
+              "unit": "seconds"
+            }
+          },
+          {
+            "pitches_hz": [
+              659.255126953125
+            ],
+            "strum_seconds": 0.0,
+            "time": {
+              "at": 0.84375,
+              "unit": "seconds"
+            }
+          },
+          {
+            "pitches_hz": [
+              783.9908447265625
+            ],
+            "strum_seconds": 0.0,
+            "time": {
+              "at": 0.9,
+              "unit": "seconds"
+            }
+          },
+          {
+            "pitches_hz": [
+              880.0
+            ],
+            "strum_seconds": 0.0,
+            "time": {
+              "at": 0.95625,
+              "unit": "seconds"
+            }
+          },
+          {
+            "pitches_hz": [
+              1046.5023193359375
+            ],
+            "strum_seconds": 0.0,
+            "time": {
+              "at": 1.0125,
+              "unit": "seconds"
+            }
+          },
+          {
+            "pitches_hz": [
+              1174.6590576171875
+            ],
+            "strum_seconds": 0.0,
+            "time": {
+              "at": 1.06875,
+              "unit": "seconds"
+            }
+          }
+        ],
+        "pitches_hz": [],
+        "seconds": 1.125
+      },
+      {
+        "bars": 1,
+        "beats": 5,
+        "bpm": 240.0,
+        "id": {
+          "card": 1,
+          "set": 1
+        },
+        "label": "Loop chord",
+        "phrase": null,
+        "pitches_hz": [
+          220.0,
+          277.1826171875,
+          329.6275634765625
+        ],
+        "seconds": null
+      },
+      {
+        "bars": 0,
+        "beats": 5,
+        "bpm": 300.0,
+        "id": {
+          "card": 3,
+          "set": 1
+        },
+        "label": "Loop arpeggio",
+        "phrase": [
+          {
+            "pitches_hz": [
+              220.0
+            ],
+            "strum_seconds": 0.0,
+            "time": {
+              "at": 0.0,
+              "unit": "seconds"
+            }
+          },
+          {
+            "pitches_hz": [
+              277.1826171875
+            ],
+            "strum_seconds": 0.0,
+            "time": {
+              "at": 0.21875,
+              "unit": "seconds"
+            }
+          },
+          {
+            "pitches_hz": [
+              329.6275634765625
+            ],
+            "strum_seconds": 0.0,
+            "time": {
+              "at": 0.4375,
+              "unit": "seconds"
+            }
+          },
+          {
+            "pitches_hz": [
+              277.1826171875
+            ],
+            "strum_seconds": 0.0,
+            "time": {
+              "at": 0.65625,
+              "unit": "seconds"
+            }
+          }
+        ],
+        "pitches_hz": [],
+        "seconds": 0.875
+      }
+    ]
+  },
+  "bar": 0,
+  "captures": [
+    {
+      "bars": 0,
+      "beats": 5,
+      "bpm": 137.0,
+      "frames": 54000,
+      "id": {
+        "card": 2,
+        "set": 1
+      },
+      "legacy_clock": false,
+      "pcm_bits_digest": "d433e1671d6ba6cc3f65c1861f9111858c93e621aa9c01312ec00b9372315019",
+      "rate": 48000,
+      "sealed_pcm_exact": true,
+      "seconds": 1.125
+    }
+  ],
+  "input_unopened": true,
+  "looper": {
+    "beats": 5,
+    "click": false,
+    "inherited_bpm": 120.0,
+    "one_shot": false,
+    "source": {
+      "Set": 1
+    }
+  },
+  "manifest": {
+    "namespace": "841eb9cabe7ff970d85e9235abd315ad",
+    "takes": [
+      {
+        "bars": 0,
+        "beats": 5,
+        "bpm": 137.0,
+        "clock": "seconds-v1",
+        "codec": "wavpack-f32-v1",
+        "digest": "a1c4cec47e2bf7501d97c16dcb265c4fddea5cdd056a164e76787aebe0248029",
+        "frames": 54000,
+        "id": {
+          "card": 2,
+          "set": 1
+        },
+        "sample_rate": 48000,
+        "seconds": 1.125
+      }
+    ],
+    "version": 4
+  },
+  "output_frames": 1155072,
+  "owner": 1,
+  "phrase_segments": 2,
+  "playing": false,
+  "rate": 48000,
+  "requested": {
+    "click": false,
+    "name": "Working Set 1",
+    "one_shot": false,
+    "owner": 1,
+    "segments": [
+      {
+        "bars": 0,
+        "beats": 5,
+        "bpm": 137.0,
+        "id": {
+          "card": 2,
+          "set": 1
+        },
+        "label": "Loop scale",
+        "phrase": [
+          {
+            "pitches_hz": [
+              82.40689086914062
+            ],
+            "strum_seconds": 0.0,
+            "time": {
+              "at": 0.0,
+              "unit": "seconds"
+            }
+          },
+          {
+            "pitches_hz": [
+              97.99885559082031
+            ],
+            "strum_seconds": 0.0,
+            "time": {
+              "at": 0.05625,
+              "unit": "seconds"
+            }
+          },
+          {
+            "pitches_hz": [
+              110.0
+            ],
+            "strum_seconds": 0.0,
+            "time": {
+              "at": 0.1125,
+              "unit": "seconds"
+            }
+          },
+          {
+            "pitches_hz": [
+              130.8127899169922
+            ],
+            "strum_seconds": 0.0,
+            "time": {
+              "at": 0.16875,
+              "unit": "seconds"
+            }
+          },
+          {
+            "pitches_hz": [
+              146.83238220214844
+            ],
+            "strum_seconds": 0.0,
+            "time": {
+              "at": 0.225,
+              "unit": "seconds"
+            }
+          },
+          {
+            "pitches_hz": [
+              164.81378173828125
+            ],
+            "strum_seconds": 0.0,
+            "time": {
+              "at": 0.28125,
+              "unit": "seconds"
+            }
+          },
+          {
+            "pitches_hz": [
+              195.99771118164062
+            ],
+            "strum_seconds": 0.0,
+            "time": {
+              "at": 0.3375,
+              "unit": "seconds"
+            }
+          },
+          {
+            "pitches_hz": [
+              220.0
+            ],
+            "strum_seconds": 0.0,
+            "time": {
+              "at": 0.39375,
+              "unit": "seconds"
+            }
+          },
+          {
+            "pitches_hz": [
+              261.6255798339844
+            ],
+            "strum_seconds": 0.0,
+            "time": {
+              "at": 0.45,
+              "unit": "seconds"
+            }
+          },
+          {
+            "pitches_hz": [
+              293.6647644042969
+            ],
+            "strum_seconds": 0.0,
+            "time": {
+              "at": 0.50625,
+              "unit": "seconds"
+            }
+          },
+          {
+            "pitches_hz": [
+              329.6275634765625
+            ],
+            "strum_seconds": 0.0,
+            "time": {
+              "at": 0.5625,
+              "unit": "seconds"
+            }
+          },
+          {
+            "pitches_hz": [
+              391.99542236328125
+            ],
+            "strum_seconds": 0.0,
+            "time": {
+              "at": 0.61875,
+              "unit": "seconds"
+            }
+          },
+          {
+            "pitches_hz": [
+              440.0
+            ],
+            "strum_seconds": 0.0,
+            "time": {
+              "at": 0.675,
+              "unit": "seconds"
+            }
+          },
+          {
+            "pitches_hz": [
+              523.2511596679688
+            ],
+            "strum_seconds": 0.0,
+            "time": {
+              "at": 0.7312500000000001,
+              "unit": "seconds"
+            }
+          },
+          {
+            "pitches_hz": [
+              587.3295288085938
+            ],
+            "strum_seconds": 0.0,
+            "time": {
+              "at": 0.7875,
+              "unit": "seconds"
+            }
+          },
+          {
+            "pitches_hz": [
+              659.255126953125
+            ],
+            "strum_seconds": 0.0,
+            "time": {
+              "at": 0.84375,
+              "unit": "seconds"
+            }
+          },
+          {
+            "pitches_hz": [
+              783.9908447265625
+            ],
+            "strum_seconds": 0.0,
+            "time": {
+              "at": 0.9,
+              "unit": "seconds"
+            }
+          },
+          {
+            "pitches_hz": [
+              880.0
+            ],
+            "strum_seconds": 0.0,
+            "time": {
+              "at": 0.95625,
+              "unit": "seconds"
+            }
+          },
+          {
+            "pitches_hz": [
+              1046.5023193359375
+            ],
+            "strum_seconds": 0.0,
+            "time": {
+              "at": 1.0125,
+              "unit": "seconds"
+            }
+          },
+          {
+            "pitches_hz": [
+              1174.6590576171875
+            ],
+            "strum_seconds": 0.0,
+            "time": {
+              "at": 1.06875,
+              "unit": "seconds"
+            }
+          }
+        ],
+        "pitches_hz": [],
+        "seconds": 1.125
+      },
+      {
+        "bars": 1,
+        "beats": 5,
+        "bpm": 240.0,
+        "id": {
+          "card": 1,
+          "set": 1
+        },
+        "label": "Loop chord",
+        "phrase": null,
+        "pitches_hz": [
+          220.0,
+          277.1826171875,
+          329.6275634765625
+        ],
+        "seconds": null
+      },
+      {
+        "bars": 0,
+        "beats": 5,
+        "bpm": 300.0,
+        "id": {
+          "card": 3,
+          "set": 1
+        },
+        "label": "Loop arpeggio",
+        "phrase": [
+          {
+            "pitches_hz": [
+              220.0
+            ],
+            "strum_seconds": 0.0,
+            "time": {
+              "at": 0.0,
+              "unit": "seconds"
+            }
+          },
+          {
+            "pitches_hz": [
+              277.1826171875
+            ],
+            "strum_seconds": 0.0,
+            "time": {
+              "at": 0.21875,
+              "unit": "seconds"
+            }
+          },
+          {
+            "pitches_hz": [
+              329.6275634765625
+            ],
+            "strum_seconds": 0.0,
+            "time": {
+              "at": 0.4375,
+              "unit": "seconds"
+            }
+          },
+          {
+            "pitches_hz": [
+              277.1826171875
+            ],
+            "strum_seconds": 0.0,
+            "time": {
+              "at": 0.65625,
+              "unit": "seconds"
+            }
+          }
+        ],
+        "pitches_hz": [],
+        "seconds": 0.875
+      }
+    ]
+  },
+  "requested_ready": true,
+  "sample_in_bar": 0,
+  "saved_backing": {
+    "bars": [
+      {
+        "beats": 4,
+        "bpm": 240.0,
+        "chord_label": "C",
+        "formula_name": "Major",
+        "label": "Bar 1",
+        "length": 1,
+        "pitches_hz": [
+          130.8127899169922,
+          164.81378173828125,
+          195.99771118164062
+        ],
+        "root_freq_hz": 130.8127899169922,
+        "root_pc": 0
+      },
+      {
+        "beats": 4,
+        "bpm": 240.0,
+        "chord_label": "F",
+        "formula_name": "Major",
+        "label": "Bar 2",
+        "length": 1,
+        "pitches_hz": [
+          174.61412048339844,
+          220.0,
+          261.6255798339844
+        ],
+        "root_freq_hz": 174.61412048339844,
+        "root_pc": 5
+      },
+      {
+        "beats": 4,
+        "bpm": 240.0,
+        "chord_label": "G",
+        "formula_name": "Major",
+        "label": "Bar 3",
+        "length": 1,
+        "pitches_hz": [
+          195.99771118164062,
+          246.941650390625,
+          293.6647644042969
+        ],
+        "root_freq_hz": 195.99771118164062,
+        "root_pc": 7
+      },
+      {
+        "beats": 4,
+        "bpm": 240.0,
+        "chord_label": "C",
+        "formula_name": "Major",
+        "label": "Bar 4",
+        "length": 1,
+        "pitches_hz": [
+          130.8127899169922,
+          164.81378173828125,
+          195.99771118164062
+        ],
+        "root_freq_hz": 130.8127899169922,
+        "root_pc": 0
+      }
+    ],
+    "click": false,
+    "name": "Chord cache qualification",
+    "one_shot": false
+  },
+  "sealed_exact": true,
+  "selected": {
+    "card": 2,
+    "set": 1
+  },
+  "selected_has_capture": true,
+  "selected_index": 0,
+  "set": {
+    "cards": [
+      {
+        "from": null,
+        "id": 2,
+        "label": "Loop scale",
+        "material": {
+          "Scale": {
+            "name": "Minor Pentatonic",
+            "root": 9
+          }
+        },
+        "setting": {
+          "capo": null,
+          "fret_window": null,
+          "instrument": "Guitar",
+          "mark_mode": "Off",
+          "marked": [],
+          "tuning": "Standard",
+          "voicing_fingerprint": null,
+          "voicing_idx": null,
+          "voicing_profile": null
+        },
+        "timing": {
+          "bpm": 137.0,
+          "hold": {
+            "Seconds": 1.125
+          }
+        },
+        "touch": "Walk"
+      },
+      {
+        "from": null,
+        "id": 1,
+        "label": "Loop chord",
+        "material": {
+          "Chord": {
+            "name": "Major",
+            "root": 9
+          }
+        },
+        "setting": {
+          "capo": null,
+          "fret_window": null,
+          "instrument": "Guitar",
+          "mark_mode": "Off",
+          "marked": [],
+          "tuning": "Standard",
+          "voicing_fingerprint": null,
+          "voicing_idx": null,
+          "voicing_profile": null
+        },
+        "timing": {
+          "bpm": 240.0,
+          "hold": {
+            "Bars": 1
+          }
+        },
+        "touch": "Block"
+      },
+      {
+        "from": null,
+        "id": 3,
+        "label": "Loop arpeggio",
+        "material": {
+          "Chord": {
+            "name": "Major",
+            "root": 9
+          }
+        },
+        "setting": {
+          "capo": null,
+          "fret_window": null,
+          "instrument": "Guitar",
+          "mark_mode": "Off",
+          "marked": [],
+          "tuning": "Standard",
+          "voicing_fingerprint": null,
+          "voicing_idx": null,
+          "voicing_profile": null
+        },
+        "timing": {
+          "bpm": 300.0,
+          "hold": {
+            "Seconds": 0.875
+          }
+        },
+        "touch": {
+          "Arpeggiate": {
+            "direction": "UpDown",
+            "inversion": 0
+          }
+        }
+      }
+    ],
+    "cursor": 0,
+    "last_card_id": 3,
+    "loop_mode": "Off"
+  },
+  "streams": 1,
+  "wav_digest": "2f94d47946a468f3473b65821efd77f61e4ed9fbfb62d69046bb54eaa11a1ca5",
+  "wav_frames": 156000,
+  "worker_wav_exact": true
+}

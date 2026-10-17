@@ -1,0 +1,13 @@
+RESULT ok
+captured 01_exact_seconds_take_reopened
+captured 02_compact_seconds_reopened
+P7b sealed Seconds take and WAV fresh reopen complete
+captured 03_medium_envelope_reopened
+captured 04_short_third_card_reopened
+Looper followups exact envelope fresh reopen complete
+capture 01_exact_seconds_take_reopened 2360x2000 digest=ad7d84e6ed43fa9f file=/Users/markik/Code/testing/woodshed/looper-followups-20261017/native-v2/reopen/01_exact_seconds_take_reopened.png
+capture 02_compact_seconds_reopened 840x2200 digest=a2bde3a1d321f04f file=/Users/markik/Code/testing/woodshed/looper-followups-20261017/native-v2/reopen/02_compact_seconds_reopened.png
+capture 03_medium_envelope_reopened 1520x1800 digest=bc1277ee6a40f108 file=/Users/markik/Code/testing/woodshed/looper-followups-20261017/native-v2/reopen/03_medium_envelope_reopened.png
+capture 04_short_third_card_reopened 840x1440 digest=369d3ef5ceabdb3a file=/Users/markik/Code/testing/woodshed/looper-followups-20261017/native-v2/reopen/04_short_third_card_reopened.png
+frames: 4 captured, 0 blank, 4 distinct digests
+presentation: 170 frames, 171 redraws, 1 unpresented redraws

@@ -329,8 +329,22 @@ pub fn projection(ui: &super::UiState) -> RecorderProjection<'_, RecorderKey> {
             },
         });
     }
-    let selected_clock = selected
-        .and_then(|key| lanes.iter().find(|lane| lane.key == *key))
+    // Inspection selection remains independent of an accepted Set capture.
+    // Its epoch-qualified owner, never a newly selected row, supplies busy
+    // transport focus. Lane recording indicators still use runtime truth above.
+    let set_capture_busy = busy && matches!(context.source, LooperSource::Set(_));
+    let accepted_set_capture = accepted_capture_key.as_ref().filter(|key| {
+        context.admitted
+            && key.capture_epoch.is_some()
+            && matches!(key.target, RecorderTarget::Card(_))
+    });
+    let focus = if set_capture_busy {
+        accepted_set_capture
+    } else {
+        selected
+    };
+    let focus_clock = focus
+        .and_then(|key| lanes.iter().find(|lane| lane.key.target == key.target))
         .map(|lane| lane.clock.clone());
     let mut transport = TransportProjection::new(context.clone());
     transport.playing = ui.song_playing;
@@ -341,7 +355,9 @@ pub fn projection(ui: &super::UiState) -> RecorderProjection<'_, RecorderKey> {
     } else {
         RecordingState::Idle
     };
-    transport.status = if observed.capture_invalid {
+    transport.status = if set_capture_busy && accepted_set_capture.is_none() {
+        "Capture target unavailable · stop all loops before recording again".into()
+    } else if observed.capture_invalid {
         "Capture input fault · take will be rejected on retirement".into()
     } else if busy && observed.recording_bar.is_none() {
         "Capture armed / waiting for playback or boundary".into()
@@ -355,22 +371,40 @@ pub fn projection(ui: &super::UiState) -> RecorderProjection<'_, RecorderKey> {
             |rate| format!("Input configuration: {rate} Hz"),
         )
         .into();
-    transport.record_note = selected
+    transport.record_note = focus
         .map_or_else(
-            || "Choose an admitted segment".to_string(),
+            || if set_capture_busy {
+                "Capture target unavailable".to_string()
+            } else {
+                "Choose an admitted segment".to_string()
+            },
             |key| match key.target {
+                RecorderTarget::Card(id) if set_capture_busy => format!(
+                    "{} Card {}",
+                    if observed.recording_bar.is_some() { "Recording" } else { "Armed" },
+                    id.card.0,
+                ),
                 RecorderTarget::Card(id) => format!("Selected Card {}", id.card.0),
                 RecorderTarget::SavedBar(i) => format!("Selected bar {}", i + 1),
                 _ => String::new(),
             },
         )
         .into();
-    if let Some(key) = capture_target.or(selected) {
+    if set_capture_busy {
+        // Keep the unavailable caption visible without targeting selection.
+        transport.record = Some(command(
+            accepted_set_capture.unwrap_or(&context).clone(), "Record", false,
+        ));
+    } else if let Some(key) = capture_target.or(selected) {
         transport.record = Some(command(key.clone(), "Record", !busy && output));
     }
-    if let Some(key) = capture_target.filter(|_| busy) {
+    if set_capture_busy {
+        if let Some(key) = accepted_set_capture {
+            transport.stop_capture = Some(command(key.clone(), "Stop recording / armed", true));
+        }
+    } else if let Some(key) = capture_target.filter(|_| busy) {
         transport.stop_capture = Some(command(
-            accepted_capture_key.unwrap_or_else(|| key.clone()),
+            accepted_capture_key.clone().unwrap_or_else(|| key.clone()),
             "Stop recording / armed",
             true,
         ));
@@ -386,8 +420,8 @@ pub fn projection(ui: &super::UiState) -> RecorderProjection<'_, RecorderKey> {
     ));
     transport.stop = Some(command(context.clone(), "Stop all loops", output));
     transport.rewind = Some(command(context.clone(), "Rewind", output && !busy));
-    transport.meter_heading = "Selected timing".into();
-    transport.meter_label = selected_clock;
+    transport.meter_heading = if set_capture_busy { "Capture timing" } else { "Selected timing" }.into();
+    transport.meter_label = focus_clock;
     transport.replace = Some(toggle(
         context.clone(),
         "Replace capture",
@@ -781,17 +815,31 @@ mod tests {
         assert!(ui.audio_requests.is_empty());
     }
     #[test]
-    fn accepted_capture_target_survives_selection_and_active_row_advances_independently() {
+    fn scoped_capture_focus_survives_selection_and_returns_to_selection_when_idle() {
         let mut ui = ready();
         ui.recorder_observation.capture_busy = true;
         ui.recorder_observation.capture_target = Some(0);
         ui.recorder_observation.capture_epoch = Some(1);
         ui.song_recording = true;
-        ui.loop_selected = Some(ui.recorder_observation.plan.as_ref().unwrap().segments[1].id);
-        ui.recorder_observation.recording_bar = Some(1);
+        let other = projection(&ui).lanes[1].key.clone();
+        dispatch(&mut ui, HostAction::Select(other));
+        let selected = ui.loop_selected;
+        let armed = projection(&ui);
+        assert_eq!(armed.transport.record_note, "Armed Card 1");
+        assert_eq!(armed.transport.meter_heading, "Capture timing");
+        assert_eq!(armed.transport.meter_label.as_deref(), Some("90 bpm · 7/4 × 1"));
+        assert!(armed.lanes[1].selected && !armed.lanes[0].selected);
+        assert_eq!(armed.lanes[0].recording, RecordingState::Armed);
+        drop(armed);
+        ui.recorder_observation.recording_bar = Some(0);
         let display = projection(&ui);
-        assert_eq!(display.lanes[0].recording, RecordingState::Idle);
-        assert_eq!(display.lanes[1].recording, RecordingState::Recording);
+        assert_eq!(display.lanes[0].recording, RecordingState::Recording);
+        assert_eq!(display.lanes[1].recording, RecordingState::Idle);
+        assert_eq!(display.transport.record_note, "Recording Card 1");
+        assert_eq!(display.transport.meter_label.as_deref(), Some("90 bpm · 7/4 × 1"));
+        let record = display.transport.record.as_ref().unwrap();
+        assert!(!record.enabled);
+        assert_eq!(record.target.capture_epoch, Some(1));
         let stop = display
             .transport
             .stop_capture
@@ -814,6 +862,78 @@ mod tests {
                 .unwrap()
                 .contains("Stop recording")
         );
+        ui.recorder_observation.capture_busy = false;
+        ui.recorder_observation.capture_target = None;
+        ui.recorder_observation.capture_epoch = None;
+        ui.recorder_observation.recording_bar = None;
+        ui.song_recording = false;
+        let idle = projection(&ui);
+        assert_eq!(ui.loop_selected, selected);
+        assert_eq!(idle.transport.record_note, "Selected Card 2");
+        assert_eq!(idle.transport.meter_heading, "Selected timing");
+        assert_eq!(idle.transport.meter_label.as_deref(), Some("150 bpm · 7/4 × 2"));
+        assert!(idle.transport.record.as_ref().unwrap().enabled);
+        assert!(idle.transport.stop_capture.is_none());
+    }
+    #[test]
+    fn busy_set_capture_without_accepted_mapping_never_falls_back_to_selection() {
+        for (target, epoch) in [(None, Some(1)), (Some(99), Some(1)), (Some(0), None)] {
+            let mut ui = ready();
+            ui.loop_selected = Some(ui.recorder_observation.plan.as_ref().unwrap().segments[1].id);
+            ui.recorder_observation.capture_busy = true;
+            ui.recorder_observation.capture_target = target;
+            ui.recorder_observation.capture_epoch = epoch;
+            let display = projection(&ui);
+            assert_eq!(display.transport.record_note, "Capture target unavailable");
+            assert!(display.transport.status.contains("Capture target unavailable"));
+            assert_eq!(display.transport.meter_heading, "Capture timing");
+            assert!(display.transport.meter_label.is_none());
+            let record = display.transport.record.as_ref().unwrap();
+            assert!(!record.enabled);
+            assert_eq!(record.target.target, RecorderTarget::Context);
+            assert!(display.transport.stop_capture.is_none());
+            assert!(display.transport.stop.as_ref().unwrap().enabled);
+            assert!(display.lanes[1].selected);
+        }
+    }
+    #[test]
+    fn recording_lane_reports_runtime_destination_even_if_it_disagrees_with_set_target() {
+        let mut ui = ready();
+        ui.recorder_observation.capture_busy = true;
+        ui.recorder_observation.capture_target = Some(0);
+        ui.recorder_observation.capture_epoch = Some(1);
+        ui.recorder_observation.recording_bar = Some(1);
+        let display = projection(&ui);
+        assert_eq!(display.lanes[0].recording, RecordingState::Idle);
+        assert_eq!(display.lanes[1].recording, RecordingState::Recording);
+        assert_eq!(display.transport.record_note, "Recording Card 1");
+    }
+    #[test]
+    fn saved_song_capture_keeps_moving_destination_and_selection_contract() {
+        let mut ui = super::super::UiState::new();
+        ui.song.bars = vec![Default::default(), Default::default()];
+        ui.looper.source = LooperSource::SavedSong;
+        ui.song_edit_cursor = 1;
+        ui.recorder_observation = RecorderObservation {
+            source: Some(LooperSource::SavedSong),
+            saved_song: Some(ui.song.clone()),
+            capture_busy: true,
+            capture_target: Some(0),
+            capture_epoch: Some(1),
+            recording_bar: Some(1),
+            output_rate: Some(48000),
+            ..Default::default()
+        };
+        let display = projection(&ui);
+        assert_eq!(display.lanes[0].recording, RecordingState::Idle);
+        assert_eq!(display.lanes[1].recording, RecordingState::Recording);
+        assert!(display.lanes[1].selected);
+        assert_eq!(display.transport.record_note, "Selected bar 2");
+        assert_eq!(display.transport.meter_heading, "Selected timing");
+        assert_eq!(display.transport.meter_label.as_ref(), Some(&display.lanes[1].clock));
+        let stop = &display.transport.stop_capture.as_ref().unwrap().target;
+        assert_eq!(stop.target, RecorderTarget::SavedBar(0));
+        assert_eq!(stop.capture_epoch, Some(1));
     }
     #[test]
     fn mounted_component_routes_real_select_record_and_clear_controls() {
