@@ -1,0 +1,6 @@
+RESULT ok
+captured 01_quarantine_reopened_without_discarded_cards
+Quarantined source reopened without discarded live Cards
+capture 01_quarantine_reopened_without_discarded_cards 2360x2000 digest=f09db55237d5b662 file=/Users/markik/Code/testing/woodshed/stage-p6-20261017/native-v1/quarantine-reopen/01_quarantine_reopened_without_discarded_cards.png
+frames: 1 captured, 0 blank, 1 distinct digests
+presentation: 97 frames, 98 redraws, 1 unpresented redraws

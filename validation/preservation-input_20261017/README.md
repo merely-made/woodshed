@@ -50,3 +50,10 @@ passing cases plus five capture child invocations counted separately, nine ignor
 tests. Original supplier lock bytes remain unchanged. Executable hashes and exact
 paths are in `integration.json`; native acceptance and publication are pending in
 the coordinating chat.
+
+
+Bounded Woodshed native follow-through is now recorded in
+[`native/README.md`](native/README.md). Its historical persona run uses `cec2213`;
+the P6 candidate `d955f5d` adds and qualifies the shared frame/dispatch close
+guard. Hocket/Redshank native UI and test-only failure cases retain their limits.
+The CPU receipt above remains unchanged and does not acquire native claims.

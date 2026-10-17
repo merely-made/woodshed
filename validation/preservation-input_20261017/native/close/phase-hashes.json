@@ -1,0 +1,10 @@
+{
+  "02_close_retry_retains_work.png": "a4fad7e14f337f552ff9b46a669b04f7ace20e6e0aa4445ebe81b24447ab541f",
+  "04_explicit_close_decision.png": "2708f1427913b5968b796e5fd5483929fc46ee9f28a9c219baeb7b5060f86e39",
+  "native-close-actions.json": "8b77143742e8c7ef3e054fa095831b7e60846d41cee1d71e760a99973b9ab3c9",
+  "03_close_cancel_retains_work.png": "e241cc22db140abe4f04892039bd76da6cd81e88b26fb4e09b49a85bbf06368c",
+  "01_close_keeps_quarantined_work.png": "e94a88f570168c05958eb7e39e7db005798d85e66bfb6997bf9538c5a6794d93",
+  "scenario.scn": "0420815f39a817922d5ac0d29b40abd848660e221c23b10893f46c5922d96caf",
+  "scenario.done": "9151b7a5db355e4c8ce723099f6b2745a7b550d630afb4ed906b29ef8af673b3",
+  "launch.json": "e5e2aa1e9fd14811c5f3f766311db60cbaed67ccc6bb5d21f5dc665c18a05f6d"
+}

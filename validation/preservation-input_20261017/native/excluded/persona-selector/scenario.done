@@ -1,0 +1,19 @@
+RESULT fail
+captured 01_quarantined_live_cards
+captured 02_persona_roster
+FAIL: assert text 'Keep outgoing practice before switching persona': not on any surface
+captured 03_outgoing_retained
+captured 04_retry_retains_work
+FAIL: assert text 'Practising as': not on any surface
+captured 05_cancel_keeps_work
+Preservation persona retry/cancel passed; original bytes must remain unchanged
+capture 01_quarantined_live_cards 2360x2000 digest=5dcbe2214725199a file=/Users/markik/Code/testing/woodshed/preservation-20261017/native-v2/woodshed-quarantine/01_quarantined_live_cards.png
+capture 02_persona_roster 2360x2000 digest=6177bce53ef07866 file=/Users/markik/Code/testing/woodshed/preservation-20261017/native-v2/woodshed-quarantine/02_persona_roster.png
+capture 03_outgoing_retained 2360x2000 digest=2efe20ba53ee993d file=/Users/markik/Code/testing/woodshed/preservation-20261017/native-v2/woodshed-quarantine/03_outgoing_retained.png
+capture 04_retry_retains_work 2360x2000 digest=2c59abafe073983c file=/Users/markik/Code/testing/woodshed/preservation-20261017/native-v2/woodshed-quarantine/04_retry_retains_work.png
+capture 05_cancel_keeps_work 2360x2000 digest=603a1255023236b9 file=/Users/markik/Code/testing/woodshed/preservation-20261017/native-v2/woodshed-quarantine/05_cancel_keeps_work.png
+frames: 5 captured, 0 blank, 5 distinct digests
+presentation: 165 frames, 166 redraws, 1 unpresented redraws
+FAIL: no current DOM target for Selector { surface: None, matcher: Class("persona-save-retry"), text: None, attr: None }
+FAIL: no current DOM target for Selector { surface: None, matcher: Class("persona-save-cancel"), text: None, attr: None }
+FAIL: no current DOM target for Selector { surface: None, matcher: Class("workspace-panel"), text: Some("Set"), attr: None }

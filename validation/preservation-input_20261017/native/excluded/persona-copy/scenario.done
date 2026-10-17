@@ -1,0 +1,17 @@
+RESULT fail
+captured 01_quarantined_live_cards
+captured 02_persona_roster
+captured 03_outgoing_retained
+captured 04_retry_retains_work
+FAIL: assert text 'Practising as': not on any surface
+captured 05_cancel_keeps_work
+captured 06_explicit_discard_reopens_quarantine
+Persona preservation retry cancel and explicit discard exercised through visible controls
+capture 01_quarantined_live_cards 2360x2000 digest=b32c3340d466b2cd file=/Users/markik/Code/testing/woodshed/preservation-20261017/native-v2/woodshed-preservation/01_quarantined_live_cards.png
+capture 02_persona_roster 2360x2000 digest=c2305d3c818d201d file=/Users/markik/Code/testing/woodshed/preservation-20261017/native-v2/woodshed-preservation/02_persona_roster.png
+capture 03_outgoing_retained 2360x2000 digest=2a752af573fa1f12 file=/Users/markik/Code/testing/woodshed/preservation-20261017/native-v2/woodshed-preservation/03_outgoing_retained.png
+capture 04_retry_retains_work 2360x2000 digest=264093300be3eb30 file=/Users/markik/Code/testing/woodshed/preservation-20261017/native-v2/woodshed-preservation/04_retry_retains_work.png
+capture 05_cancel_keeps_work 2360x2000 digest=3a730d1c1ced0d32 file=/Users/markik/Code/testing/woodshed/preservation-20261017/native-v2/woodshed-preservation/05_cancel_keeps_work.png
+capture 06_explicit_discard_reopens_quarantine 2360x2000 digest=f864531490775f0c file=/Users/markik/Code/testing/woodshed/preservation-20261017/native-v2/woodshed-preservation/06_explicit_discard_reopens_quarantine.png
+frames: 6 captured, 0 blank, 6 distinct digests
+presentation: 191 frames, 192 redraws, 1 unpresented redraws

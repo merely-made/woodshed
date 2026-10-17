@@ -1,0 +1,32 @@
+# Runner supplies an isolated sealed Keeper and a deliberately corrupt session
+# file. No test backend or pretend save result is injected.
+settle 90
+ui-zoom 1
+assert snap practice-saved == false
+assert snap practice-save-problem == true
+act p6-mixed-set-example
+settle 5
+assert snap set-cards == 3
+act preservation-request-close
+settle 4
+assert snap p6-close-pending == true
+assert text Practice is not confirmed saved
+capture 01_close_keeps_quarantined_work
+click .practice-close-retry
+settle 4
+assert snap p6-close-pending == true
+assert snap set-cards == 3
+capture 02_close_retry_retains_work
+click .practice-close-cancel
+settle 4
+assert snap p6-close-pending == false
+assert snap set-cards == 3
+capture 03_close_cancel_retains_work
+act preservation-request-close
+settle 4
+assert snap p6-close-pending == true
+capture 04_explicit_close_decision
+# Frame completion now reaches the same preservation guard and leaves this
+# window open. The coordinator must visibly choose Discard to exit this owned
+# fixture, then verify that its original corrupt bytes remain unchanged.
+log Quarantined practice retained pending explicit native discard

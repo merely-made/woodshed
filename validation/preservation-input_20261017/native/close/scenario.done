@@ -1,0 +1,12 @@
+RESULT ok
+captured 01_close_keeps_quarantined_work
+captured 02_close_retry_retains_work
+captured 03_close_cancel_retains_work
+captured 04_explicit_close_decision
+Quarantined practice retained pending explicit native discard
+capture 01_close_keeps_quarantined_work 2360x2000 digest=9c8a53d523d02847 file=/Users/markik/Code/testing/woodshed/stage-p6-20261017/native-v1/close/01_close_keeps_quarantined_work.png
+capture 02_close_retry_retains_work 2360x2000 digest=24b74f59be90763d file=/Users/markik/Code/testing/woodshed/stage-p6-20261017/native-v1/close/02_close_retry_retains_work.png
+capture 03_close_cancel_retains_work 2360x2000 digest=7a3c003ec71ee9d7 file=/Users/markik/Code/testing/woodshed/stage-p6-20261017/native-v1/close/03_close_cancel_retains_work.png
+capture 04_explicit_close_decision 2360x2000 digest=ceb7aade78332bc5 file=/Users/markik/Code/testing/woodshed/stage-p6-20261017/native-v1/close/04_explicit_close_decision.png
+frames: 4 captured, 0 blank, 4 distinct digests
+presentation: 139 frames, 141 redraws, 2 unpresented redraws

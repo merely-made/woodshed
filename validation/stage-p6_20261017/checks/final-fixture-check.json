@@ -1,0 +1,13 @@
+{
+  "command": [
+    "cargo",
+    "test",
+    "--locked",
+    "--offline",
+    "-j2",
+    "-p",
+    "woodshed-genet",
+    "frame_requested_exit_keeps_quarantined_work_until_explicit_discard"
+  ],
+  "exit_code": 0
+}

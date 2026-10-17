@@ -1,0 +1,11 @@
+settle 90
+ui-zoom 1
+assert snap practice-saved == false
+assert snap practice-save-problem == true
+act p5clock-device-clock-example
+settle 5
+assert snap set-cards == 3
+click .workspace-panel Set
+settle 5
+capture 01_quarantined_live_cards
+log Quarantined session retained; completion requests guarded close

@@ -1,0 +1,12 @@
+{
+  "command": [
+    "cargo",
+    "test",
+    "--locked",
+    "--offline",
+    "-j2",
+    "-p",
+    "woodshed-genet"
+  ],
+  "exit_code": 0
+}

@@ -2034,9 +2034,10 @@ own scopes.
 
 ### P6. Finish Rehearsal as the guided Set runner
 
-**Status (2026-10-17): in progress.** P5's output-clock transport is qualified.
-This pass completes runner context/progress and focused Card looping, then
-qualifies mixed-Set playback, edit recovery and keyboard operation together.
+**Status (2026-10-17): qualified on macOS for the bounded P6 runner.**
+Source `d955f5dc3b99ec1efd6ec9a56dd3ba007755409e` completes runner
+context/progress, focused Card looping, paused navigation, keyboard transport
+and edit recovery over P5's qualified output clock.
 
 Rehearsal streams the current Set with previous/current/next context, a large
 instrument view, transport, Card progress, and loop controls. It supports Set
@@ -2069,6 +2070,27 @@ Preservation/input integration `cec2213` precedes this work. Its root, Hocket
 and Redshank CPU/build receipt remains separate from native preservation and
 the P6 runner receipt. Incoming-custody failure and deliberately held codec
 workers retain their test-only qualification unless observed in a native run.
+
+P6 acceptance: 910 distinct affected cases pass, with five capture child
+invocations counted separately and seven existing ignored tests. The whole
+desktop gate was repeated after the frame-close guard correction; the final
+fixture regression and desktop build pass on the frozen candidate. Two native
+processes present 294 and 111 frames. Eight reviewed wide/compact captures show
+mixed chord/scale/arpeggio playback, Set and Card loops, paused Next and direct
+selection, Tools without leaving the run, edit-stop/restart, Manual waiting and
+keyboard controls. The actual sealed Set, owner and all 22 accepted history rows
+match the fresh process exactly; transient playback reopens stopped. All 331
+frozen Rust/manifest/lock paths bind to historical Git source. The owned app
+processes and generated Keeper exit with its four original files unchanged.
+[Receipt and verifier](../validation/stage-p6_20261017/README.md).
+
+The separate preservation receipt records seven persona/quarantine captures at
+`cec2213`, then five close/quarantine-reopen captures at `d955f5d`. Actual native
+close, Retry, Cancel and explicit Discard retain work until the explicit decision;
+original corrupt source bytes remain untouched. Hocket/Redshank native UI,
+codec-worker/incoming-custody failure observation, physical audio, and broader
+P8 acceptance keep their separate limits.
+[Preservation native receipt](../validation/preservation-input_20261017/native/README.md).
 
 ### P7. Rebuild Song as Looper over Set
 
@@ -2147,6 +2169,10 @@ The October 11 Set-capture review also records an existing rendering residual:
 the `⟳` recorded-loop marker appears as an empty square at 2360×1600. Saved
 count, Card ownership and explicit stored-reference Clear remain readable.
 This belongs to P8 rendering polish, separate from qualified PCM retention.
+The October 17 P6 captures also retain two polish items: scrolling the compact
+filmstrip to see a third Card, and changing the old edit notice's "stop and
+start Run again" wording when the edit has already stopped playback. Current
+identity and Run remain visible; neither blocks the bounded P6 flow.
 
 Give each section explicit wide, medium, and narrow compositions. Wide layouts
 may expose the Set tray and tool panels simultaneously. Narrow layouts use one

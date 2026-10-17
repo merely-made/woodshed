@@ -1,0 +1,16 @@
+RESULT ok
+captured 01_quarantined_live_cards
+captured 02_persona_roster
+captured 03_outgoing_retained
+captured 04_retry_retains_work
+captured 05_cancel_keeps_work
+captured 06_explicit_discard_reopens_quarantine
+Persona preservation retry cancel and explicit discard exercised through visible controls
+capture 01_quarantined_live_cards 2360x2000 digest=00f2009d94bf5cf9 file=/Users/markik/Code/testing/woodshed/preservation-20261017/native-v2/woodshed-final/01_quarantined_live_cards.png
+capture 02_persona_roster 2360x2000 digest=9c1aef4593e01999 file=/Users/markik/Code/testing/woodshed/preservation-20261017/native-v2/woodshed-final/02_persona_roster.png
+capture 03_outgoing_retained 2360x2000 digest=6c447fd9f450587c file=/Users/markik/Code/testing/woodshed/preservation-20261017/native-v2/woodshed-final/03_outgoing_retained.png
+capture 04_retry_retains_work 2360x2000 digest=b7f8ad1b35aca87e file=/Users/markik/Code/testing/woodshed/preservation-20261017/native-v2/woodshed-final/04_retry_retains_work.png
+capture 05_cancel_keeps_work 2360x2000 digest=b197d8031a877f9f file=/Users/markik/Code/testing/woodshed/preservation-20261017/native-v2/woodshed-final/05_cancel_keeps_work.png
+capture 06_explicit_discard_reopens_quarantine 2360x2000 digest=84ac838f180612c5 file=/Users/markik/Code/testing/woodshed/preservation-20261017/native-v2/woodshed-final/06_explicit_discard_reopens_quarantine.png
+frames: 6 captured, 0 blank, 6 distinct digests
+presentation: 191 frames, 193 redraws, 2 unpresented redraws

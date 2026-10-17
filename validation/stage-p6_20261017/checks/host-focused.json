@@ -1,0 +1,13 @@
+{
+  "command": [
+    "cargo",
+    "test",
+    "--locked",
+    "--offline",
+    "-j2",
+    "-p",
+    "woodshed-genet",
+    "audio::practice_clock::tests::card_loop_"
+  ],
+  "exit_code": 0
+}

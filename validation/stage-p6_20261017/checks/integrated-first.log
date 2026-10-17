@@ -1,0 +1,146 @@
+warning: patch `mere-proofs v0.1.0 (https://github.com/merely-made/mere.git?branch=main#d1e1d7aa)` was not used in the crate graph
+warning: patch `mere-transport v0.0.2 (https://github.com/merely-made/murm.git?branch=main#cba46d85)` was not used in the crate graph
+warning: patch `mere-webrtc-carrier v0.0.1 (https://github.com/merely-made/murm.git?branch=main#cba46d85)` was not used in the crate graph
+help: Check that the patched package version and available features are compatible
+      with the dependency requirements. If the patch has a different version from
+      what is locked in the Cargo.lock file, run `cargo update` to use the new
+      version. This may also occur with an optional dependency that is not enabled.
+   Compiling woodshedding v0.1.0 (/Users/markik/Code/repos/woodshed/crates/woodshedding)
+   Compiling woodshed-audio v0.1.0 (/Users/markik/Code/repos/woodshed/crates/woodshed-audio)
+warning: use of deprecated method `std::sync::atomic::Atomic::<u64>::fetch_update`: renamed to `try_update` for consistency
+  --> crates/woodshed-audio/src/capture_feed.rs:33:14
+   |
+33 |             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |generation| {
+   |              ^^^^^^^^^^^^
+   |
+   = note: `#[warn(deprecated)]` on by default
+help: replace the use of the deprecated method
+   |
+33 -             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |generation| {
+33 +             .try_update(Ordering::AcqRel, Ordering::Acquire, |generation| {
+   |
+
+warning: use of deprecated method `std::sync::atomic::Atomic::<usize>::fetch_update`: renamed to `try_update` for consistency
+   --> crates/woodshed-audio/src/output_runtime.rs:469:14
+    |
+469 |             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |              ^^^^^^^^^^^^
+    |
+help: replace the use of the deprecated method
+    |
+469 -             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+469 +             .try_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |
+
+warning: use of deprecated method `std::sync::atomic::Atomic::<usize>::fetch_update`: renamed to `try_update` for consistency
+   --> crates/woodshed-audio/src/output_runtime.rs:517:14
+    |
+517 |             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |              ^^^^^^^^^^^^
+    |
+help: replace the use of the deprecated method
+    |
+517 -             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+517 +             .try_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |
+
+warning: use of deprecated method `std::sync::atomic::Atomic::<usize>::fetch_update`: renamed to `try_update` for consistency
+   --> crates/woodshed-audio/src/output_runtime.rs:538:14
+    |
+538 |             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |              ^^^^^^^^^^^^
+    |
+help: replace the use of the deprecated method
+    |
+538 -             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+538 +             .try_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |
+
+   Compiling woodshed-graph v0.1.0 (/Users/markik/Code/repos/woodshed/crates/woodshed-graph)
+warning: `woodshed-audio` (lib) generated 4 warnings (run `cargo fix --lib -p woodshed-audio` to apply 4 suggestions)
+   Compiling woodshed-core v0.1.0 (/Users/markik/Code/repos/woodshed/crates/woodshed-core)
+   Compiling woodshed-views v0.1.0 (/Users/markik/Code/repos/woodshed/crates/woodshed-views)
+error[E0308]: mismatched types
+   --> crates/woodshed-views/src/stage/rehearsal_tests.rs:87:20
+    |
+ 87 |     host.key_named(NamedKey::ArrowLeft);
+    |          --------- ^^^^^^^^^^^^^^^^^^^ expected `winit::keyboard::NamedKey`, found `cambium_genet_winit_host::NamedKey`
+    |          |
+    |          arguments to this method are incorrect
+    |
+    = note: `cambium_genet_winit_host::NamedKey` and `winit::keyboard::NamedKey` have similar names, but are actually distinct types
+note: `cambium_genet_winit_host::NamedKey` is defined in crate `cambium_rootstock`
+   --> /Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/d1e1d7a/crates/cambium/cambium-rootstock/src/lib.rs:550:1
+    |
+550 | pub enum NamedKey {
+    | ^^^^^^^^^^^^^^^^^
+note: `winit::keyboard::NamedKey` is defined in crate `winit`
+   --> /Users/markik/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/winit-0.30.13/src/keyboard.rs:755:1
+    |
+755 | pub enum NamedKey {
+    | ^^^^^^^^^^^^^^^^^
+note: method defined here
+   --> /Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/d1e1d7a/crates/cambium/cambium-genet-winit-host/src/harness.rs:630:12
+    |
+630 |     pub fn key_named(&mut self, named: NamedKey) {
+    |            ^^^^^^^^^
+
+error[E0308]: mismatched types
+   --> crates/woodshed-views/src/stage/rehearsal_tests.rs:88:20
+    |
+ 88 |     host.key_named(NamedKey::ArrowRight);
+    |          --------- ^^^^^^^^^^^^^^^^^^^^ expected `winit::keyboard::NamedKey`, found `cambium_genet_winit_host::NamedKey`
+    |          |
+    |          arguments to this method are incorrect
+    |
+    = note: `cambium_genet_winit_host::NamedKey` and `winit::keyboard::NamedKey` have similar names, but are actually distinct types
+note: `cambium_genet_winit_host::NamedKey` is defined in crate `cambium_rootstock`
+   --> /Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/d1e1d7a/crates/cambium/cambium-rootstock/src/lib.rs:550:1
+    |
+550 | pub enum NamedKey {
+    | ^^^^^^^^^^^^^^^^^
+note: `winit::keyboard::NamedKey` is defined in crate `winit`
+   --> /Users/markik/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/winit-0.30.13/src/keyboard.rs:755:1
+    |
+755 | pub enum NamedKey {
+    | ^^^^^^^^^^^^^^^^^
+note: method defined here
+   --> /Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/d1e1d7a/crates/cambium/cambium-genet-winit-host/src/harness.rs:630:12
+    |
+630 |     pub fn key_named(&mut self, named: NamedKey) {
+    |            ^^^^^^^^^
+
+error[E0599]: no method named `clone` found for struct `stage::UiState` in the current scope
+    --> crates/woodshed-views/src/stage/rehearsal_tests.rs:145:28
+     |
+ 145 |     let mut paused = beats.clone();
+     |                            ^^^^^ method not found in `stage::UiState`
+     |
+    ::: crates/woodshed-views/src/stage.rs:1020:1
+     |
+1020 | pub struct UiState {
+     | ------------------ method `clone` not found for this struct
+     |
+     = help: items from traits can only be used if the trait is implemented and in scope
+     = note: the following trait defines an item `clone`, perhaps you need to implement it:
+             candidate #1: `Clone`
+
+error[E0599]: no method named `clone` found for struct `stage::UiState` in the current scope
+    --> crates/woodshed-views/src/stage/rehearsal_tests.rs:159:33
+     |
+ 159 |     let mut other_owner = beats.clone();
+     |                                 ^^^^^ method not found in `stage::UiState`
+     |
+    ::: crates/woodshed-views/src/stage.rs:1020:1
+     |
+1020 | pub struct UiState {
+     | ------------------ method `clone` not found for this struct
+     |
+     = help: items from traits can only be used if the trait is implemented and in scope
+     = note: the following trait defines an item `clone`, perhaps you need to implement it:
+             candidate #1: `Clone`
+
+Some errors have detailed explanations: E0308, E0599.
+For more information about an error, try `rustc --explain E0308`.
+error: could not compile `woodshed-views` (lib test) due to 4 previous errors
+warning: build failed, waiting for other jobs to finish...

@@ -1,0 +1,14 @@
+{
+  "process_pid": 28367,
+  "process_exited": true,
+  "observations": [
+    "Fresh process asserted practice-saved false, save-problem true and zero Cards.",
+    "After RESULT ok, frame completion retained the preservation decision window.",
+    "Explicit Discard unsaved practice and close exited the owned fresh process."
+  ],
+  "original_quarantined_files_unchanged": true,
+  "original_hashes": {
+    "practice.bin": "dcbd9b9cf320194f5609f4fb0835d3d6d8da88d8e4d92bbbdc0758d3a578ffe5"
+  },
+  "input_method": "CUA native accessibility actions; process state and byte hashes independently checked"
+}

@@ -1,0 +1,16 @@
+{
+  "command": [
+    "cargo",
+    "test",
+    "--locked",
+    "--offline",
+    "-j2",
+    "-p",
+    "woodshed-audio",
+    "focused_card_auto_repeats_but_explicit_next_leaves_it_even_while_paused",
+    "--",
+    "--nocapture"
+  ],
+  "start": "2026-10-17T05:51:40.240767+00:00",
+  "exit_code": 0
+}

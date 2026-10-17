@@ -1,0 +1,13 @@
+{
+  "command": [
+    "cargo",
+    "test",
+    "--locked",
+    "--offline",
+    "-j2",
+    "-p",
+    "woodshed-views",
+    "stage::rehearsal::"
+  ],
+  "exit_code": 0
+}
