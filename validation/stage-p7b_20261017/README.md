@@ -20,3 +20,9 @@ admitted snapshot, and refusal state against the preceding checkpoint.
 
 Native seed/reopen acceptance remains pending. No physical input or broader
 responsive qualification is claimed. Publication is separate.
+
+The prepared native-v1 launch was blocked by the locked Mac before any app PID,
+scenario receipt or capture existed. It is excluded from acceptance. The generated
+Keeper was stopped with its original four fixture files unchanged. Native/reopen
+qualification and publication await a manual unlock; source remains `bc6c460`.
+`verify.py` checks historical source and CPU evidence without modifying artifacts.

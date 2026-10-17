@@ -1,0 +1,15 @@
+{
+  "source_revision": "bc6c460d158bf16174ecd42b7c9f663b7b8709ec",
+  "source_files_verified": 335,
+  "frozen_binary_verified": true,
+  "launch_attempt": "cua.getApp(full fixture app path)",
+  "launch_result": "Mac locked; manual unlock requested",
+  "native_pid_file_exists": false,
+  "scenario_receipt_exists": false,
+  "native_qualified": false,
+  "keeper_exited": true,
+  "original_keeper_fixture_files_unchanged": true,
+  "keeper_fixture_file_count": 4,
+  "native_app_launched": false,
+  "capture_count": 0
+}
