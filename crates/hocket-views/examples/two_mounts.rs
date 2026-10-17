@@ -460,7 +460,7 @@ mod tests {
         for mount in [FULL, COMPACT] {
             let key = mount.wave_key(track).to_string();
             assert!(host.with_dom(|dom| {
-                !taproot::matching(
+                !taproot::matching_classes(
                     dom,
                     &Selector::class("hocket-recorder-wave-leaf").with_attr("key", &key),
                 )
@@ -503,7 +503,7 @@ mod tests {
         assert_ne!(first, second);
         for key in [first, second] {
             assert!(host.with_dom(|dom| {
-                !taproot::matching(
+                !taproot::matching_classes(
                     dom,
                     &Selector::class("hocket-recorder-wave-leaf").with_attr("key", key.to_string()),
                 )

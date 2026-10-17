@@ -134,9 +134,10 @@ fn lazy_input_does_not_disable_first_record_request() {
     assert!(host.click_on(&Selector::role("switch").containing("Record")));
     assert_eq!(host.state().actions, [ProjectedAction::Record(key(1))]);
     assert!(host.with_dom(|dom| {
-        !taproot::matching(
+        !taproot::matching_with_projection(
             dom,
             &Selector::role("status").containing("Input opens on Record"),
+            &host.a11y_projection(),
         )
         .is_empty()
     }));
@@ -163,7 +164,7 @@ fn heterogeneous_clocks_and_unsupported_controls_remain_honest() {
     let host = mount(HostOwned::default());
     for clock in ["83.75 bpm", "7/8", "110 bpm", "5/4"] {
         assert!(host.with_dom(|dom| {
-            !taproot::matching(
+            !taproot::matching_classes(
                 dom,
                 &Selector::class("hocket-recorder-tag").containing(clock),
             )
@@ -172,7 +173,12 @@ fn heterogeneous_clocks_and_unsupported_controls_remain_honest() {
     }
     for label in ["Master clock", "Mute segment", "Solo segment"] {
         assert!(host.with_dom(|dom| {
-            taproot::matching(dom, &Selector::role("switch").containing(label)).is_empty()
+            taproot::matching_with_projection(
+                dom,
+                &Selector::role("switch").containing(label),
+                &host.a11y_projection(),
+            )
+            .is_empty()
         }));
     }
     for class in [
@@ -180,7 +186,7 @@ fn heterogeneous_clocks_and_unsupported_controls_remain_honest() {
         "hocket-recorder-meter",
         "hocket-recorder-meter-leaf",
     ] {
-        assert!(host.with_dom(|dom| taproot::matching(dom, &Selector::class(class)).is_empty()));
+        assert!(host.with_dom(|dom| taproot::matching_classes(dom, &Selector::class(class)).is_empty()));
     }
 }
 
@@ -212,13 +218,13 @@ fn timing_summary_uses_the_host_heading_and_keeps_standalone_meter_default() {
         };
         let mut host = Harness::new(theme::sheet(), HostOwned::default(), root);
         host.layout_at(1000.0, 700.0);
-        assert!(host.with_dom(|dom| !taproot::matching(
+        assert!(host.with_dom(|dom| !taproot::matching_classes(
             dom,
             &Selector::class("hocket-recorder-eyebrow")
                 .containing(host_heading.unwrap_or("meter")),
         ).is_empty()));
         if host_heading.is_some() {
-            assert!(host.with_dom(|dom| taproot::matching(
+            assert!(host.with_dom(|dom| taproot::matching_classes(
                 dom,
                 &Selector::class("hocket-recorder-eyebrow").containing("meter"),
             ).is_empty()));

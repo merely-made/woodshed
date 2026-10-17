@@ -26,7 +26,7 @@ fn mount(ui: UiState) -> RehearsalHarness {
 
 fn focus_class(host: &mut RehearsalHarness, class: &str) {
     for _ in 0..256 {
-        let node = host.with_dom(|dom| taproot::matching(dom, &Selector::class(class))[0]);
+        let node = host.with_dom(|dom| taproot::matching_classes(dom, &Selector::class(class))[0]);
         if host.focus() == Some(node) {
             return;
         }
@@ -97,7 +97,7 @@ fn filmstrip_selection_queues_seek_during_managed_run() {
     ui.toggle_rehearsal();
     let mut host = mount(ui);
     host.layout_at(900.0, 700.0);
-    let second = host.with_dom(|dom| taproot::matching(dom, &Selector::class("film-card"))[1]);
+    let second = host.with_dom(|dom| taproot::matching_classes(dom, &Selector::class("film-card"))[1]);
     let (x, y, w, h) = host.painted_rect(second).unwrap();
     host.click_at(x + w / 2.0, y + h / 2.0);
     assert_eq!(
@@ -209,7 +209,7 @@ fn progress_and_context_fit_compact_rehearsal_layout() {
             .is_some()
     );
     let node =
-        host.with_dom(|dom| taproot::matching(dom, &Selector::class("rehearsal-context"))[0]);
+        host.with_dom(|dom| taproot::matching_classes(dom, &Selector::class("rehearsal-context"))[0]);
     let (x, _, width, _) = host.painted_rect(node).unwrap();
     assert!(
         x >= 0.0 && x + width <= 420.1,

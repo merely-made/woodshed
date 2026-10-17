@@ -2372,6 +2372,15 @@ adds one executed test. Four captures were reviewed. Local only; see the
 [CoreAudio receipt](../validation/coreaudio-input_20261017/README.md). All Git
 supplier identities and prior dependency edges remain unchanged.
 
+2026-10-17 production scroll adoption continuation: Mere’s isolated clipping fix
+and optional document-scroll query are ported onto main-based candidate
+`2d95d95e9`, with the current drained-mutation relayout regression. The consumer
+adopts locked Genet `917f88e6`, unifies Netrender at exact `e8cda06`, and migrates
+role queries to retained semantic projections. Root, Hocket, Redshank and recipe
+qualification are in progress; native scroll, sealed reopen and P2 receiving
+checks remain pending. Publication remains separate. See the
+[production adoption receipt](../validation/mere-scroll-adoption_20261017/README.md).
+
 ### P8. Adaptive polish and release acceptance
 
 **Current state: open.** Windows alpha behavior exists. Three-width product

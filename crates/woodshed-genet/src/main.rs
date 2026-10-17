@@ -881,12 +881,12 @@ mod tests {
         for (width, height) in [(1180.0, 800.0), (640.0, 800.0)] {
             h.layout_at(width, height);
             let bar =
-                h.with_dom(|dom| taproot::matching(dom, &Selector::class("cambium-title-bar"))[0]);
+                h.with_dom(|dom| taproot::matching_classes(dom, &Selector::class("cambium-title-bar"))[0]);
             let (x, y, w, _) = h.painted_rect(bar).unwrap();
             assert!(x.abs() < 1.0 && y.abs() < 1.0);
             assert!((w - width).abs() < 1.0, "titlebar {w} viewport {width}");
             let editor =
-                h.with_dom(|dom| taproot::matching(dom, &Selector::class("woodshed-workshop"))[0]);
+                h.with_dom(|dom| taproot::matching_classes(dom, &Selector::class("woodshed-workshop"))[0]);
             let (_, top, _, _) = h.painted_rect(editor).unwrap();
             assert!(top >= 36.0);
         }

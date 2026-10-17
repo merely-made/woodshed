@@ -1248,7 +1248,7 @@ mod tests {
             let dom = h.runner().dom();
             let dom = dom.borrow();
             assert!(
-                !taproot::matching(
+                !taproot::matching_classes(
                     &dom,
                     &Selector::class("t-readout").containing("Choose positive Bars or finite Seconds")
                 )

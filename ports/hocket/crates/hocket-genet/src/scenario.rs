@@ -165,7 +165,7 @@ impl mesquite::Product for Product {
         if ctx.runner.state().appearance.editor_open {
             return None;
         }
-        let node = taproot::matching(&ctx.runner.dom().borrow(), &taproot::Selector::class("app"))
+        let node = taproot::matching_classes(&ctx.runner.dom().borrow(), &taproot::Selector::class("app"))
             .into_iter()
             .next()?;
         let (x, y, width, height) = ctx.painted_rect(node)?;

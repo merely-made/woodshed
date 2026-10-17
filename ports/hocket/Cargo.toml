@@ -104,9 +104,9 @@ workbench = { git = "https://github.com/merely-made/mere.git", branch = "main", 
 image = { version = "0.25", default-features = false, features = ["png"] }
 # Match Genet's immutable Netrender source identity. A branch reference here
 # creates a second `ExternalTexturePlacement` beside the host's renderer API.
-netrender = { git = "https://github.com/merely-made/netrender.git", branch = "main" }
-paint_list_api = { git = "https://github.com/merely-made/netrender.git", branch = "main" }
-paint_list_render = { git = "https://github.com/merely-made/netrender.git", branch = "main" }
+netrender = { git = "https://github.com/merely-made/netrender.git", rev = "e8cda06efc11c11595f2fa1bb30bce7e72979537" }
+paint_list_api = { git = "https://github.com/merely-made/netrender.git", rev = "e8cda06efc11c11595f2fa1bb30bce7e72979537" }
+paint_list_render = { git = "https://github.com/merely-made/netrender.git", rev = "e8cda06efc11c11595f2fa1bb30bce7e72979537" }
 # Host-side surface/compose types only; backend features come from
 # netrender's per-target split. Single wgpu 29 tree now the Masonry app
 # (wgpu 28) is retired.
@@ -114,7 +114,7 @@ wgpu = { version = "30", default-features = false, features = ["std"] }
 # Pure OKLCH seed-to-palette theming (shared; woodshed's too). A Cambium
 # component, in mere since the 2026-09-03 boundary pass; the standalone mirror
 # repo retired with the 2026-07-23 consolidation.
-tinct = { git = "https://github.com/merely-made/mere.git", branch = "main", version = "0.1.2" }
+tinct = { git = "https://github.com/merely-made/mere.git", branch = "main", version = "0.2.0" }
 mesquite = { git = "https://github.com/merely-made/mere.git", branch = "main" }
 tabard = { git = "https://github.com/merely-made/mere.git", branch = "main" }
 tabard-workshop = { git = "https://github.com/merely-made/mere.git", branch = "main", features = ["native-host"] }
