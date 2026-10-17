@@ -224,6 +224,156 @@ mod tests {
         assert!(h.state().set.progression_arrangement.is_some());
     }
     #[test]
+    fn native_arrangement_scene_routes_captured_spans_and_keyboard_edits() {
+        use cambium_genet_winit_host::{Harness, Modifiers};
+        use winit::keyboard::NamedKey;
+        for width in [1180.0, 420.0] {
+            let mut ui = UiState::new();
+            seed_example(&mut ui);
+            ui.set_viewport_width(width);
+            ui.activate_workspace_panel(WorkspacePanel::Arrangement);
+            ui.start_arrangement();
+            ui.place_arrangement_cards_in_order();
+            ui.save_arrangement();
+            let original_cards = serde_json::to_value(&ui.set.cards).unwrap();
+            let logic: crate::sync::Logic = Box::new(woodshed_views::stage::stage_root);
+            let mut h = Harness::new(crate::appearance::stylesheet(&ui), ui, logic);
+            h.layout_at(width, 1100.0);
+            let selector = Selector::class("arrangement-scene");
+            // Scrolling to the actual custom leaf uses the same path as native clicks.
+            assert!(h.click_on(&selector));
+            let node = h.with_dom(|dom| taproot::matching(dom, &selector)[0]);
+            let (x, y, w, height) = h.painted_rect(node).unwrap();
+            let (at, beat) = {
+                let surfaces = h.state().arrangement_editor.surfaces.borrow();
+                let surface = surfaces.primary.as_ref().unwrap();
+                let rect = surface
+                    .occurrence_rect("card-1", w.round() as u32, height.round() as u32)
+                    .unwrap();
+                let a = surface
+                    .scene_point(0.0, 0.0, w.round() as u32, height.round() as u32)
+                    .unwrap();
+                let b = surface
+                    .scene_point(1.0, 0.0, w.round() as u32, height.round() as u32)
+                    .unwrap();
+                (
+                    (
+                        x + rect.x + rect.width / 2.0,
+                        y + rect.y + rect.height / 2.0,
+                    ),
+                    47.0 / (b.x - a.x),
+                )
+            };
+            let owner = h.state().working_sets.active_id;
+            h.press_at(at.0, at.1);
+            assert_eq!(h.pointer_capture(), Some(node));
+            h.move_to(at.0 + beat, at.1);
+            h.relayout();
+            assert_eq!(
+                h.state()
+                    .arrangement_editor
+                    .field(owner, "card-1-start")
+                    .unwrap()
+                    .text(),
+                "0"
+            );
+            // Escape must reach the focused scene while capture is still active.
+            h.key_named(NamedKey::Escape);
+            h.release_at(at.0 + beat, at.1);
+            h.relayout();
+            assert!(!h.state().arrangement_editor.dirty());
+            h.press_at(at.0, at.1);
+            h.move_to(at.0 + beat, at.1);
+            h.release_at(at.0 + beat, at.1);
+            h.relayout();
+            assert_eq!(
+                h.state()
+                    .arrangement_editor
+                    .field(owner, "card-1-start")
+                    .unwrap()
+                    .text(),
+                "4"
+            );
+            h.key_named(NamedKey::ArrowRight);
+            assert_eq!(
+                h.state()
+                    .arrangement_editor
+                    .field(owner, "card-1-start")
+                    .unwrap()
+                    .text(),
+                "8"
+            );
+            h.set_modifiers(Modifiers {
+                shift: true,
+                ..Default::default()
+            });
+            h.key_named(NamedKey::ArrowRight);
+            assert_eq!(
+                h.state()
+                    .arrangement_editor
+                    .field(owner, "card-1-length")
+                    .unwrap()
+                    .text(),
+                "20"
+            );
+            h.set_modifiers(Modifiers {
+                alt: true,
+                ..Default::default()
+            });
+            h.key_named(NamedKey::ArrowLeft);
+            assert_eq!(
+                h.state()
+                    .arrangement_editor
+                    .field(owner, "card-1-start")
+                    .unwrap()
+                    .text(),
+                "4"
+            );
+            assert_eq!(
+                h.state()
+                    .arrangement_editor
+                    .field(owner, "card-1-length")
+                    .unwrap()
+                    .text(),
+                "24"
+            );
+            h.set_modifiers(Default::default());
+            assert!(
+                h.click_on(&Selector::class("arrangement-span-edit").containing("Move earlier"))
+            );
+            assert_eq!(
+                h.state()
+                    .arrangement_editor
+                    .field(owner, "card-1-start")
+                    .unwrap()
+                    .text(),
+                "0"
+            );
+            // Save is still explicit and leaves the original Card instructions alone.
+            assert_eq!(
+                h.state()
+                    .set
+                    .progression_arrangement
+                    .as_ref()
+                    .unwrap()
+                    .alignment
+                    .cards[0]
+                    .placement
+                    .as_ref()
+                    .unwrap()
+                    .span
+                    .start,
+                0
+            );
+            assert!(h.click_on(&Selector::class("arrangement-save")));
+            assert_eq!(
+                serde_json::to_value(&h.state().set.cards).unwrap(),
+                original_cards
+            );
+            assert!(!h.state().arrangement_editor.dirty());
+        }
+    }
+    #[test]
     fn native_arrangement_layout_keeps_preview_in_wide_and_narrow_viewports() {
         for width in [1180.0, 420.0] {
             let mut ui = UiState::new();
