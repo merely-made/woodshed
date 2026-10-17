@@ -1,0 +1,37 @@
+settle 90
+ui-zoom 1
+assert snap practice-saved == true
+assert snap set-cards == 3
+assert snap recorder-waveforms == 1
+assert snap song-playing == false
+assert snap loop-capture-references == 1
+assert snap capture-input-rate == none
+act p7b-verify-reopen
+act verify-selected-envelope-capture
+capture 01_exact_seconds_take_reopened
+act wav-export-fixture
+settle 8
+assert text Exported
+act p7b-checkpoint reopenexport
+resize 420 1100
+settle 6
+capture 02_compact_seconds_reopened
+log P7b sealed Seconds take and WAV fresh reopen complete
+resize 760 900
+settle 6
+capture 03_medium_envelope_reopened
+resize 420 720
+settle 6
+wheel 0 500 px on .workspace-screen
+settle 5
+wheel 0 1800 px on .hocket-recorder-surface
+settle 5
+click role:switch @aria-label=Select Card 3
+assert snap recorder-selected-card == 3
+capture 04_short_third_card_reopened
+wheel 0 -1800 px on .hocket-recorder-surface
+settle 5
+click role:switch @aria-label=Select Card 2
+assert snap recorder-selected-card == 2
+act verify-selected-envelope-capture
+log Looper followups exact envelope fresh reopen complete

@@ -386,6 +386,7 @@ pub fn projection(ui: &super::UiState) -> RecorderProjection<'_, RecorderKey> {
     ));
     transport.stop = Some(command(context.clone(), "Stop all loops", output));
     transport.rewind = Some(command(context.clone(), "Rewind", output && !busy));
+    transport.meter_heading = "Selected timing".into();
     transport.meter_label = selected_clock;
     transport.replace = Some(toggle(
         context.clone(),
@@ -656,7 +657,9 @@ pub fn surface(ui: &super::UiState) -> super::UiChild {
     hocket_views::projected_surface(
         &display,
         RECORDER_MOUNT,
-        if ui.viewport_width > 0.0 && ui.viewport_width < 700.0 {
+        if (ui.viewport_width > 0.0 && ui.viewport_width < 700.0)
+            || (ui.viewport_h > 0.0 && ui.viewport_h < 800.0)
+        {
             hocket_views::RecorderLayout::Compact
         } else {
             hocket_views::RecorderLayout::Full
@@ -710,6 +713,7 @@ mod tests {
         let projection = projection(&ui);
         assert!(projection.lanes[0].clock.contains("1.125 s"));
         assert!(!projection.lanes[0].clock.contains("× 0"));
+        assert_eq!(projection.transport.meter_heading, "Selected timing");
         let stale = projection.transport.play.as_ref().unwrap().target.clone();
         drop(projection);
         ui.set.cards[0].timing.hold = Hold::Seconds(2.0);

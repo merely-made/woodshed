@@ -30,9 +30,9 @@ tempfile = "3"
 muniment = { git = "https://github.com/merely-made/mere.git", branch = "main" }
 
 # Shared view and graph tests use the same provider as the production host.
-netrender-vello = { git = "https://github.com/mark-ik/vello.git", rev = "276b46648c08f3d2062e70559afa999842e1873c" }
-vello_encoding = { git = "https://github.com/mark-ik/vello.git", rev = "276b46648c08f3d2062e70559afa999842e1873c" }
-vello_shaders = { git = "https://github.com/mark-ik/vello.git", rev = "276b46648c08f3d2062e70559afa999842e1873c" }
+netrender-vello = { git = "https://github.com/mark-ik/vello", rev = "276b46648c08f3d2062e70559afa999842e1873c" }
+vello_encoding = { git = "https://github.com/mark-ik/vello", rev = "276b46648c08f3d2062e70559afa999842e1873c" }
+vello_shaders = { git = "https://github.com/mark-ik/vello", rev = "276b46648c08f3d2062e70559afa999842e1873c" }
 layout-dom-api = { git = "https://github.com/merely-made/genet.git", branch = "main", version = "=0.1.1" }
 genet-scripted-dom = { git = "https://github.com/merely-made/genet.git", branch = "main", version = "=0.1.2" }
 taffy = { package = "genet-taffy", git = "https://github.com/merely-made/genet.git", branch = "main", version = "=0.14.0" }

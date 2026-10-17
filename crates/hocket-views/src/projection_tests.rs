@@ -193,3 +193,35 @@ fn unavailable_command_cannot_emit_a_host_action() {
     host.click_on(&Selector::role("switch").containing("Record"));
     assert!(host.state().actions.is_empty());
 }
+
+#[test]
+fn timing_summary_uses_the_host_heading_and_keeps_standalone_meter_default() {
+    for host_heading in [None, Some("Selected timing")] {
+        let root = move |state: &HostOwned| {
+            let mut projection = display(state);
+            projection.transport.meter_label = Some("1.125 s · 137 bpm click · 5/4".into());
+            if let Some(heading) = host_heading {
+                projection.transport.meter_heading = heading.into();
+            }
+            projected_surface(
+                &projection,
+                RecorderMount::new(74),
+                RecorderLayout::Full,
+                |state: &mut HostOwned, action| state.actions.push(action),
+            )
+        };
+        let mut host = Harness::new(theme::sheet(), HostOwned::default(), root);
+        host.layout_at(1000.0, 700.0);
+        assert!(host.with_dom(|dom| !taproot::matching(
+            dom,
+            &Selector::class("hocket-recorder-eyebrow")
+                .containing(host_heading.unwrap_or("meter")),
+        ).is_empty()));
+        if host_heading.is_some() {
+            assert!(host.with_dom(|dom| taproot::matching(
+                dom,
+                &Selector::class("hocket-recorder-eyebrow").containing("meter"),
+            ).is_empty()));
+        }
+    }
+}
