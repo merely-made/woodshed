@@ -27,7 +27,7 @@ pub fn sheet() -> &'static str {
 .hocket-recorder-table-hint { flex-grow: 1; text-align: right; color: var(--text-faint); font-size: 12px; }
 
 .hocket-recorder-lane { display: flex; align-items: stretch; background-color: var(--surface);
-        border: 1px solid var(--line-soft); border-radius: 14px; padding: 11px 15px; margin-bottom: 9px; }
+        flex-shrink: 0; border: 1px solid var(--line-soft); border-radius: 14px; padding: 11px 15px; margin-bottom: 9px; }
 .hocket-recorder-lane-armed { border: 1px solid var(--voice); background-color: var(--surface-2); }
 .hocket-recorder-lane-rec { border: 1px solid var(--record); background-color: var(--surface-2); }
 
@@ -113,7 +113,10 @@ pub fn sheet() -> &'static str {
 .hocket-recorder-mpeak { color: var(--text-dim); font-size: 11px; }
 
 /* Compact changes arrangement only; all recorder actions and real leaves stay. */
-.hocket-recorder-compact.hocket-recorder-table { padding:8px; }
+/* One compact scroll surface keeps the transport after every lane, even when
+   its wrapped controls are taller than the available recorder viewport. */
+.hocket-recorder-compact.hocket-recorder-surface { overflow:auto; }
+.hocket-recorder-compact.hocket-recorder-table { flex:0 0 auto; overflow:visible; padding:8px; }
 .hocket-recorder-compact .hocket-recorder-lane { flex-direction:column; padding:10px; }
 .hocket-recorder-compact .hocket-recorder-lane-id { width:auto; }
 .hocket-recorder-compact .hocket-recorder-lane-wave { padding:8px 0; }

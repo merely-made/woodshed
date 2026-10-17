@@ -1,0 +1,67 @@
+{
+  "schema": "woodshed.recipe-lock-review.v1",
+  "review": "independent read-only comparison; external report only",
+  "verdict": "no blockers",
+  "baseline_HEAD": "9182823e351c6334b50f3ab52d61cb95b8cd7cab",
+  "checks": {
+    "all_recipe_git_name_version_source_ids_present_in_production": true,
+    "registry_package_records_byte_identical_to_HEAD": true,
+    "local_package_records_byte_identical_to_HEAD": true,
+    "unused_patch_records_unchanged": true,
+    "manifest_only_three_vello_URL_normalizations": true,
+    "recipe_Rust_source_unchanged_from_HEAD": true,
+    "production_lock_unchanged_qualified_sha256": true
+  },
+  "counts": {
+    "recipe_packages_before": 552,
+    "recipe_packages_after": 552,
+    "registry_packages_unchanged": 474,
+    "git_packages_qualified": 68,
+    "git_package_records_changed": 45,
+    "registry_added": 0,
+    "registry_removed": 0,
+    "registry_changed": 0
+  },
+  "git_sources": {
+    "git+https://github.com/mark-ik/vello?rev=276b46648c08f3d2062e70559afa999842e1873c#276b46648c08f3d2062e70559afa999842e1873c": 3,
+    "git+https://github.com/merely-made/dramatis.git?branch=main#2f27f1a939aa2e046b78f7db18dcd8f81e0d7c59": 5,
+    "git+https://github.com/merely-made/genet.git?branch=main#6186c81ad7019ea51dd28861ef83574bfc992ed1": 18,
+    "git+https://github.com/merely-made/mere.git?branch=main#4c4ea11d8ea4b0210fd70af62638484e25f29d5e": 37,
+    "git+https://github.com/merely-made/netrender.git?branch=main#8960024f7b1f2b7a5ba382972f08b2f75eb7a0f0": 4,
+    "git+https://github.com/merely-made/wavicle.git?rev=2c5a49fd48db7a54aeab9e712804fd065411aef9#2c5a49fd48db7a54aeab9e712804fd065411aef9": 1
+  },
+  "version_changes": [
+    {
+      "name": "tabard",
+      "old_version": "0.0.1",
+      "new_version": "0.0.2",
+      "dependencies_changed": false
+    },
+    {
+      "name": "tinct",
+      "old_version": "0.1.2",
+      "new_version": "0.2.0",
+      "dependencies_changed": false
+    }
+  ],
+  "dependency_edge_changes": [
+    "eidetic adds existing zeroize dependency",
+    "esp adds existing zeroize dependency"
+  ],
+  "hashes": {
+    "Cargo.lock": "6ad8e0c8904f477164c7741f750a332c4f41411f9c46ff90d9ae3af8845c7154",
+    "validation/relationship-recipe/Cargo.lock": "599dd9159d26a2963ffe18dbeec63a1e67a5f87942dcd9016bb6b734a10362c0",
+    "validation/relationship-recipe/Cargo.toml": "95763c5f34cf2874d7622a764563f23d64a011cf35b75cffccdbb53e545f47ce",
+    "validation/relationship-recipe/src/main.rs": "0cf8422559178136dc2d9bdf31002187cd721daa779f42a9bc582e38052c4bc6"
+  },
+  "execution": {
+    "reviewer_cargo_runs": 0,
+    "reviewer_git_mutations": 0,
+    "parent_reports_all_targets_check": "passed --offline --locked --all-targets",
+    "recipe_tests": "parent-owned and running at request; not inspected or claimed passed"
+  },
+  "limits": [
+    "Package selection review, not repeated compilation or native qualification.",
+    "Registry choices inherited from HEAD are unchanged; whole recipe and production registry graphs need not be identical."
+  ]
+}
