@@ -119,9 +119,10 @@ fn shared_fields_keep_usable_height_and_titlebar_controls_stay_inside_the_viewpo
     for (width, height) in [(420.0, 1000.0), (1180.0, 700.0)] {
         host.layout_at(width, height);
         let toggle = host.with_dom(|dom| {
-            taproot::matching(
+            taproot::matching_with_projection(
                 dom,
                 &Selector::role("button").with_attr("data-action", "toggle-appearance"),
+                &host.a11y_projection(),
             )[0]
         });
         let (x, y, w, h) = host.painted_rect(toggle).unwrap();
@@ -134,9 +135,10 @@ fn shared_fields_keep_usable_height_and_titlebar_controls_stay_inside_the_viewpo
         host.layout_at(width, height);
         for field in ["name", "seed-hex"] {
             let node = host.with_dom(|dom| {
-                taproot::matching(
+                taproot::matching_with_projection(
                     dom,
                     &Selector::role("textbox").with_attr("data-field", field),
+                    &host.a11y_projection(),
                 )[0]
             });
             let (_, _, w, h) = host.painted_rect(node).unwrap();
@@ -202,7 +204,7 @@ fn canonical_mode_changes_preserve_the_visible_record_dot() {
     let dir = tempfile::tempdir().unwrap();
     let mut host = mounted(&dir);
     let dot = |host: &Host| {
-        host.with_dom(|dom| taproot::matching(dom, &Selector::class("hocket-recorder-record-core"))[0])
+        host.with_dom(|dom| taproot::matching_classes(dom, &Selector::class("hocket-recorder-record-core"))[0])
     };
     let baseline = host.computed_value(dot(&host), "background-color").unwrap();
     click(&mut host, "toggle-appearance");

@@ -3683,7 +3683,7 @@ mod evidence_tests {
         );
         host.layout_at(1180.0, 900.0);
         let panel = host.with_dom(|dom| {
-            taproot::matching(dom, &taproot::Selector::class("related-panel"))[0]
+            taproot::matching_classes(dom, &taproot::Selector::class("related-panel"))[0]
         });
         let (_, _, width, _) = host.painted_rect(panel).unwrap();
         assert!(width > 1000.0, "full Related workspace width: {width}");

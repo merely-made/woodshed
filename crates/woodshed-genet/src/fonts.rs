@@ -111,7 +111,7 @@ mod tests {
     }
 
     fn width(host: &Host, class: &str) -> f32 {
-        let node = host.with_dom(|dom| taproot::matching(dom, &Selector::class(class))[0]);
+        let node = host.with_dom(|dom| taproot::matching_classes(dom, &Selector::class(class))[0]);
         host.painted_rect(node).expect("painted glyph probe").2
     }
 
@@ -318,9 +318,10 @@ mod tests {
         );
         host.layout_at(1000.0, 800.0);
         let node = host.with_dom(|dom| {
-            taproot::matching(
+            taproot::matching_with_projection(
                 dom,
                 &Selector::role("button").with_attr("data-appearance-theme", "woodshed:slate"),
+                &host.a11y_projection(),
             )[0]
         });
         let bounds = host.painted_rect(node).unwrap();

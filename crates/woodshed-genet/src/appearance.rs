@@ -312,9 +312,10 @@ mod tests {
         assert_eq!(std::fs::read_to_string(path).unwrap(), "corrupt library");
         let host = mount(ui, Rc::new(RefCell::new(None)));
         assert!(host.with_dom(|dom| {
-            taproot::matching(
+            taproot::matching_with_projection(
                 dom,
                 &Selector::role("button").with_attr("data-action", "edit-appearance"),
+                &host.a11y_projection(),
             )
             .is_empty()
         }));

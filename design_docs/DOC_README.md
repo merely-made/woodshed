@@ -19,6 +19,8 @@ before any other doc in this directory.
 
 ## Active Plans
 
+- [Production Mere scroll adoption](2026-07-11_stage_set_tools_plan.md#p7-rebuild-song-as-looper-over-set) — Main-based clipping/observation supplier, coherent renderer closure and retained selector migration; software/native qualification in progress, publication pending. [Receipt](../validation/mere-scroll-adoption_20261017/README.md).
+
 - [CoreAudio input admission](2026-07-11_stage_set_tools_plan.md#p7-rebuild-song-as-looper-over-set) — Explicit macOS microphone consent before HAL setup; consent waits preserve pending capture authority and have a separate hardware deadline. 700 affected cases plus five child invocations pass; committed native 15.066-second Card 2 recording, sealed fresh reopen and three-way WAV parity pass. Local only. [Receipt](../validation/coreaudio-input_20261017/README.md).
 
 - [Looper follow-ups](2026-07-11_stage_set_tools_plan.md#p7-rebuild-song-as-looper-over-set) — Published compact/copy/waveform/recipe and selected-Card fixes. The historical native input-opening stall is resolved and qualified in the CoreAudio receipt above. The isolated Mere scroll proof passes; production supplier adoption remains open. [Receipt](../validation/looper-followups_20261017/README.md).

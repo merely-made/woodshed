@@ -195,7 +195,7 @@ mod tests {
         );
         h.with_dom(|dom| {
             assert_eq!(
-                taproot::matching(dom, &Selector::class("arrangement-error")).len(),
+                taproot::matching_classes(dom, &Selector::class("arrangement-error")).len(),
                 1
             );
         });
@@ -242,7 +242,7 @@ mod tests {
             let selector = Selector::class("arrangement-scene");
             // Scrolling to the actual custom leaf uses the same path as native clicks.
             assert!(h.click_on(&selector));
-            let node = h.with_dom(|dom| taproot::matching(dom, &selector)[0]);
+            let node = h.with_dom(|dom| taproot::matching_classes(dom, &selector)[0]);
             let (x, y, w, height) = h.painted_rect(node).unwrap();
             let (at, beat) = {
                 let surfaces = h.state().arrangement_editor.surfaces.borrow();
@@ -358,7 +358,7 @@ mod tests {
             );
             h.set_modifiers(Default::default());
             let move_selector = Selector::class("arrangement-span-edit").containing("Move earlier");
-            let move_node = h.with_dom(|dom| taproot::matching(dom, &move_selector)[0]);
+            let move_node = h.with_dom(|dom| taproot::matching_classes(dom, &move_selector)[0]);
             assert!(h.click_on(&move_selector));
             assert_eq!(
                 h.state()
@@ -420,7 +420,7 @@ mod tests {
             h.layout_at(width, 1100.0);
             let dom = h.runner().dom();
             let dom = dom.borrow();
-            let nodes = taproot::matching(&dom, &Selector::class("arrangement-preview"));
+            let nodes = taproot::matching_classes(&dom, &Selector::class("arrangement-preview"));
             assert_eq!(nodes.len(), 1);
             let (_, _, w, _) = h.painted_rect(nodes[0]).unwrap();
             assert!(w <= width, "preview {w} exceeds viewport {width}");

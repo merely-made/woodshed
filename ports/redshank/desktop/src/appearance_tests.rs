@@ -68,7 +68,7 @@ fn click(host: &mut Host, selector: Selector) {
 }
 
 fn rendered_color(host: &Host, class: &str, property: &str, expected: tinct::Srgb) {
-    let node = host.with_dom(|dom| taproot::matching(dom, &Selector::class(class))[0]);
+    let node = host.with_dom(|dom| taproot::matching_classes(dom, &Selector::class(class))[0]);
     let actual = host
         .computed_value(node, property)
         .unwrap()
@@ -189,9 +189,10 @@ fn corrupt_stores_and_failed_choice_writes_preserve_owned_bytes_and_presentation
     assert!(messages.contains("preferences could not be read"));
     assert!(messages.contains("theme library could not be opened"));
     assert!(host.with_dom(|dom| {
-        taproot::matching(
+        taproot::matching_with_projection(
             dom,
             &Selector::role("button").with_attr("data-action", "edit-appearance"),
+            &host.a11y_projection(),
         )
         .is_empty()
     }));
@@ -426,7 +427,7 @@ fn narrow_editor_keeps_parent_actions_visible_and_saves_through_shared_controls(
     );
     for action in ["back-to-redshank", "apply-to-redshank"] {
         let selector = Selector::role("button").with_attr("data-action", action);
-        let node = host.with_dom(|dom| taproot::matching(dom, &selector)[0]);
+        let node = host.with_dom(|dom| taproot::matching_with_projection(dom, &selector, &host.a11y_projection())[0]);
         let (x, y, width, height) = host.painted_rect(node).unwrap();
         assert!(width > 0.0 && height > 0.0);
         assert!(x >= 0.0 && x + width <= 420.5, "{action}: {x}+{width}");

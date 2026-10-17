@@ -187,7 +187,7 @@ persona-picker = { package = "mere-persona-picker", git = "https://github.com/me
 muniment = { git = "https://github.com/merely-made/mere.git", branch = "main" }
 mere-proofs = { git = "https://github.com/merely-made/mere.git", branch = "main" }
 # Mirror the agreed Mere renderer source; git dependencies do not inherit patches.
-netrender_device = { git = "https://github.com/merely-made/netrender.git", branch = "main" }
+netrender_device = { git = "https://github.com/merely-made/netrender.git", rev = "e8cda06efc11c11595f2fa1bb30bce7e72979537" }
 layout-dom-api = { git = "https://github.com/merely-made/genet.git", branch = "main", version = "=0.1.1" }
 genet-scripted-dom = { git = "https://github.com/merely-made/genet.git", branch = "main", version = "=0.1.2" }
 taffy = { package = "genet-taffy", git = "https://github.com/merely-made/genet.git", branch = "main", version = "=0.14.0" }
