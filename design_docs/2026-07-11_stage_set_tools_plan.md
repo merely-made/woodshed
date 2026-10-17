@@ -1885,8 +1885,15 @@ The affected core/view/host gate passes 676 suite/integration cases plus five
 separate child-process invocations, with seven existing host ignores. This
 includes frozen attribution, repeated presses/results, refusal/retry, current
 versus replaced sessions, and production offline output refusal preservation.
-Independent source review found no blocking defect. Desktop/native and exact
-sealed history reopening remain pending.
+Independent source review found no blocking defect. The locked desktop build
+passes on committed candidate `3689a77`. Two isolated native attempts exited
+before their first presented frame or scenario action (807 and 799 unpresented
+redraws; no captures). The second trace reaches rasterization and then repeatedly
+reports `surface acquire skipped: Occluded`. These attempts are excluded from
+acceptance; interactive presentation and exact sealed history reopening remain
+pending. Both native processes exited and their generated Keeper fixtures retain
+their original hashes. The coordinator requested an unlocked, foreground desktop
+before a fresh guarded run; no source defect is inferred from these attempts.
 
 ### P6. Finish Rehearsal as the guided Set runner
 
