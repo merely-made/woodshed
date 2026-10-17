@@ -1,0 +1,46 @@
+# Explicit synthetic input fixture; actual output and sealed storage.
+settle 90
+ui-zoom 1
+assert snap practice-saved == true
+act song-cache-example
+act p7b-seconds-example
+settle 6
+act p7b-checkpoint baseline
+assert text 1.125 s
+click role:switch @aria-label=Select Card 2
+click role:button @aria-label=Play backing
+act await-selected-take-playback
+wait 1800
+settle 3
+assert snap take-playback-observed == true
+capture 01_seconds_phrase_playback
+click role:button @aria-label=Stop all loops
+settle 4
+act p7b-retime
+settle 6
+act p7b-checkpoint retimed
+assert text 1.125 s
+capture 02_absolute_seconds_after_tempo_meter_edit
+act seed-selected-loop-capture
+settle 8
+assert snap loop-capture-references == 1
+act p7a-reorder
+settle 6
+act p7b-checkpoint reordered
+capture 03_seconds_take_follows_card
+act p7b-duration-refusal
+settle 4
+assert text Clear the captured loop
+act p7b-checkpoint duration-refused
+capture 04_duration_edit_retains_captured_clock
+act p7b-recover-seconds
+settle 6
+act wav-export-fixture
+settle 8
+assert text Exported
+act p7b-checkpoint final
+capture 05_mixed_duration_export
+resize 420 1100
+settle 6
+capture 06_compact_seconds_backing
+log P7b absolute Seconds seed complete

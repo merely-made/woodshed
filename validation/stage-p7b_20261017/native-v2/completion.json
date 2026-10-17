@@ -1,0 +1,25 @@
+{
+  "source_revision": "1a2e9c26acc2b3d3c4264effb3ea322c1920346f",
+  "all_owned_processes_exited": true,
+  "keeper_exited": true,
+  "keeper_original_files_unchanged": true,
+  "keeper_original_file_count": 4,
+  "exact_reopen": {
+    "set": true,
+    "owner": true,
+    "looper": true,
+    "saved_backing": true,
+    "manifest": true,
+    "captures": true,
+    "admitted": true,
+    "backend_admitted": true,
+    "requested": true,
+    "wav_frames": true,
+    "wav_digest": true
+  },
+  "actual_worker_wav_sha256": "9bbfc7c10c52c1ea404578bc3ddcbfe1dd8ffcd7d10c4d9fcf2ad73f48f51697",
+  "actual_worker_wavs_byte_identical": true,
+  "worker_wav_frames": 156000,
+  "input_unopened": true,
+  "sample_rate": 48000
+}

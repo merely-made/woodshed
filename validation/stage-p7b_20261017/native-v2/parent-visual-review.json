@@ -1,0 +1,51 @@
+{
+  "reviewer": "integration owner",
+  "reviewed_images": [
+    {
+      "path": "seed/01_seconds_phrase_playback.png",
+      "sha256": "a9400c98e4619464d7333b225aaaac68b55e259dd911722e1a1b52bc76771399",
+      "review": "Scale selected, 1.125 s at 180 bpm and 3/4; pause control indicates playing; input unopened."
+    },
+    {
+      "path": "seed/02_absolute_seconds_after_tempo_meter_edit.png",
+      "sha256": "71b26e700cc3738e8defca819b26036794bbe48e6efcafc7dd350fe93d23ae6a",
+      "review": "Scale remains 1.125 s after 137 bpm and 5/4; arpeggio remains 0.875 s."
+    },
+    {
+      "path": "seed/03_seconds_take_follows_card.png",
+      "sha256": "9188f1e9dafba9ed0ed9906b75c73d488d7af4e0f33018ad6db06dd694e38ad5",
+      "review": "Scale moved first, retains Set 1 Card 2 identity and waveform centerline; saved count 1."
+    },
+    {
+      "path": "seed/04_duration_edit_retains_captured_clock.png",
+      "sha256": "cc2fe623785265734fe89798f9356f4e959ef39e540cee1b071f3559ab84d062",
+      "review": "Explicit Clear-before-tempo/meter/hold notice; admitted scale retains 1.125 s and waveform."
+    },
+    {
+      "path": "seed/05_mixed_duration_export.png",
+      "sha256": "08a920c4589b9e68d151525cfb37c507da562108f41f7a36487073081d7e2187",
+      "review": "Export success reads 3.250 s at 48000 Hz, backing plus completed loops."
+    },
+    {
+      "path": "seed/06_compact_seconds_backing.png",
+      "sha256": "afe686954f483a7061baf04a5b4fbd97a163d77835c723b9ccbd9d3da189ba23",
+      "review": "420-point compact layout retains readable duration/owner, Clear, transport and export status; lower Cards require scrolling."
+    },
+    {
+      "path": "reopen/01_exact_seconds_take_reopened.png",
+      "sha256": "477b140dfb7704f6bb2ada62f959965e5ea73d2c71679f2c49c084085e77e824",
+      "review": "Fresh reopen retains selected first Scale, Set 1 Card 2, 1.125 s, waveform, saved count and stopped transport."
+    },
+    {
+      "path": "reopen/02_compact_seconds_reopened.png",
+      "sha256": "b2bf3086ecfdf6d2397001d1d425cab2bf397088b9c5c0ad9fe535fbe58c5e4c",
+      "review": "Fresh compact reopen retains owner, duration, saved count and 3.250 s export status with visible transport."
+    }
+  ],
+  "functional_blockers": [],
+  "residuals": [
+    "Inherited footer still says Bars hold; Seconds duration labels and explicit Clear refusal are correct.",
+    "Full three-width/scrolling/touch/reduced-motion acceptance remains P8 scope."
+  ],
+  "limits": "Synthetic completed take; no physical microphone, audible output or latency qualification."
+}

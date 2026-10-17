@@ -1,0 +1,8 @@
+RESULT ok
+captured 01_exact_seconds_take_reopened
+captured 02_compact_seconds_reopened
+P7b sealed Seconds take and WAV fresh reopen complete
+capture 01_exact_seconds_take_reopened 2360x2000 digest=c06c9ee3e93e3e54 file=/Users/markik/Code/testing/woodshed/stage-p7b-20261017/p7b-native-v2/reopen/01_exact_seconds_take_reopened.png
+capture 02_compact_seconds_reopened 840x2200 digest=e11596dfdb6bac22 file=/Users/markik/Code/testing/woodshed/stage-p7b-20261017/p7b-native-v2/reopen/02_compact_seconds_reopened.png
+frames: 2 captured, 0 blank, 2 distinct digests
+presentation: 123 frames, 124 redraws, 1 unpresented redraws

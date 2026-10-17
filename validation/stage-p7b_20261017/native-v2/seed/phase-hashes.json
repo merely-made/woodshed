@@ -1,0 +1,21 @@
+{
+  "launch.once": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "06_compact_seconds_backing.png": "afe686954f483a7061baf04a5b4fbd97a163d77835c723b9ccbd9d3da189ba23",
+  "05_mixed_duration_export.png": "08a920c4589b9e68d151525cfb37c507da562108f41f7a36487073081d7e2187",
+  "01_seconds_phrase_playback.png": "a9400c98e4619464d7333b225aaaac68b55e259dd911722e1a1b52bc76771399",
+  "03_seconds_take_follows_card.png": "9188f1e9dafba9ed0ed9906b75c73d488d7af4e0f33018ad6db06dd694e38ad5",
+  "p7b-duration-refused.json": "4cf14f6f41c47741e350e2a568ea28227ae367d1b70a9f602a856f092f42f226",
+  "04_duration_edit_retains_captured_clock.png": "cc2fe623785265734fe89798f9356f4e959ef39e540cee1b071f3559ab84d062",
+  "scenario.scn": "e95c3737d9c74f1f6660e80eb75df0e51aa027db3b46b8156661f2db7887d92d",
+  "p7b-reordered.json": "ec38b18beacf4fc8c33425561e13997fe8cba261f7f35890a6c9e4af70845b8f",
+  "native.log": "41a6d22a3020b50040ca6821946f935cb5ffffa0a6b95e325851b29cfb98f6c7",
+  "scenario.done": "7e4df893cbca31ae43b9ecf4020e298463c91538be90b0b7befa50ee7fbf2107",
+  "native.pid": "17f866d39590443159499837141eaa91363bc5e1e222e9197737eba842a3790b",
+  "p7b-final.json": "b0032f8c1fd38de99a01d403705d382ef81b0a1d5b71f21f7778a9534a6c8114",
+  "02_absolute_seconds_after_tempo_meter_edit.png": "71b26e700cc3738e8defca819b26036794bbe48e6efcafc7dd350fe93d23ae6a",
+  "launch.json": "19e3cc47e26825f138fd3b279493b0dcfd23c1552324c651439693da72e833ef",
+  "loop-export.wav": "9bbfc7c10c52c1ea404578bc3ddcbfe1dd8ffcd7d10c4d9fcf2ad73f48f51697",
+  "launcher.c": "52051e39c4616ac0e28917148a915df6f9b8060b23412655d2f267a9ae54380c",
+  "p7b-baseline.json": "dc6c0056836a83da4df06bd4903a92a348d2cbb4de9785c86aba129ecf825763",
+  "p7b-retimed.json": "38d008f9790c86906317c0e394d432aa80eeba307705016e59d3b2e038386b10"
+}

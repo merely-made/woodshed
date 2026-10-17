@@ -1,0 +1,16 @@
+{
+  "01_exact_seconds_take_reopened.png": "477b140dfb7704f6bb2ada62f959965e5ea73d2c71679f2c49c084085e77e824",
+  "launch.once": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "scenario.scn": "f56b8a511268b05c0c672866f942cc4748f26a59ad875b197cba05b31f3fe422",
+  "expected-copy.json": "11ab58a0fa04443ec46c1df189ed3305e8ac950125b5bc4d1ddd026567d2b422",
+  "native.log": "2490a29796f7d5cedd0f751aaf4286373e62e4f6f70af8f33acdbbc6e3f1a268",
+  "scenario.done": "256e294dc86bba343441d8d55b7cf3bf90b0bd3a009c69a2040329663d280e79",
+  "native.pid": "f7d1135602ccb0675aa00348fbbc718d4e3a721804839fe575cea319f2563611",
+  "02_compact_seconds_reopened.png": "b2bf3086ecfdf6d2397001d1d425cab2bf397088b9c5c0ad9fe535fbe58c5e4c",
+  "p7b-final.json": "b0032f8c1fd38de99a01d403705d382ef81b0a1d5b71f21f7778a9534a6c8114",
+  "p7b-reopenexport.json": "693035de37625dd3b800ff1077b4c5ce48ecc8cd94e934818525abf3fd83674e",
+  "launch.json": "216f91590d2fb0e25baff1653f2db0442597b83e92167a8a6a99d97e3db84934",
+  "p7b-reopened.json": "3a6f82fc9db1c1d31ae10c3b8fde78d790db25851a336ff503698c8bd322a890",
+  "loop-export.wav": "9bbfc7c10c52c1ea404578bc3ddcbfe1dd8ffcd7d10c4d9fcf2ad73f48f51697",
+  "launcher.c": "8893e381af760c34e2af4223680db1f30393cbf3afb75539a36341f77fdf18a3"
+}

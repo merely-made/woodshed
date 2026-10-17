@@ -2217,7 +2217,8 @@ and tempo match the LoopPlan, and the UI contains no Song or DAW language.
 
 #### P7b. Seconds-held Looper material (2026-10-17)
 
-**Status: implementation and CPU/build gates passed on `c08ab27a`; native acceptance pending. Primary source/Cargo/native
+**Status: implementation `bc6c460` and CPU/build gates passed; native seed and
+fresh sealed reopen qualified on clean `1a2e9c2`. Primary source/Cargo/native
 ownership handed over from the P7a coordinator.** No new supplier revision or
 saved-backing migration is included.
 
@@ -2286,6 +2287,26 @@ incomplete. Manual unlock was requested. The generated Keeper exited and its
 four original fixture files remain unchanged. No publication occurred. The
 read-only historical verifier and blocked-attempt evidence are retained in the
 P7b receipt; continuation starts with a fresh native trial after manual unlock.
+
+
+2026-10-17 P7b native-v2 completed after unlock: two exited app processes and
+eight reviewed nonblank captures, bound to 335 source hashes at clean `1a2e9c2`.
+Selected-Card callback playback was observed. Seconds duration and phrase times
+stayed fixed across 180→137 BPM and 3/4→5/4; reorder retained Card 2 and a duration
+edit preserved the admitted clock/capture with explicit Clear. The sealed fresh
+reopen retained exact 54,000-frame PCM, owner and version-four compressed take.
+Actual seed/reopened worker WAVs and a separate sealed-profile-loaded export
+match byte for byte (156,000 mono frames, 48 kHz, 3.250 s). The reference probe
+passed separately from the 1,015-case gate. Owned processes exited and all four
+original Keeper files are unchanged. Native-v1 stays excluded. The receipt now
+contains source/checkpoint/capture/WAV verification; physical input/audio/latency
+and broader P8 qualification remain open. An inherited helper footer still says
+“Bars hold”; record the copy follow-up with P8 without relabelling these captures.
+Independent image review also records the compact dock obscuring lower Card
+content (scroll recovery unverified), the METER summary heading above duration,
+and flat-line-only synthetic waveform evidence. These remain explicit layout,
+copy and waveform-fidelity limits; bounded Seconds-clock/custody/export acceptance
+does not claim whole-product responsive or physical-audio qualification.
 
 ### P8. Adaptive polish and release acceptance
 

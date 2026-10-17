@@ -1,0 +1,17 @@
+RESULT ok
+waited 7 frames
+captured 01_seconds_phrase_playback
+captured 02_absolute_seconds_after_tempo_meter_edit
+captured 03_seconds_take_follows_card
+captured 04_duration_edit_retains_captured_clock
+captured 05_mixed_duration_export
+captured 06_compact_seconds_backing
+P7b absolute Seconds seed complete
+capture 01_seconds_phrase_playback 2360x2000 digest=d0433e82e1d9ea69 file=/Users/markik/Code/testing/woodshed/stage-p7b-20261017/p7b-native-v2/seed/01_seconds_phrase_playback.png
+capture 02_absolute_seconds_after_tempo_meter_edit 2360x2000 digest=0752a2d91ef7d351 file=/Users/markik/Code/testing/woodshed/stage-p7b-20261017/p7b-native-v2/seed/02_absolute_seconds_after_tempo_meter_edit.png
+capture 03_seconds_take_follows_card 2360x2000 digest=ff9a1cdf0123beab file=/Users/markik/Code/testing/woodshed/stage-p7b-20261017/p7b-native-v2/seed/03_seconds_take_follows_card.png
+capture 04_duration_edit_retains_captured_clock 2360x2000 digest=b4bc59d04e426788 file=/Users/markik/Code/testing/woodshed/stage-p7b-20261017/p7b-native-v2/seed/04_duration_edit_retains_captured_clock.png
+capture 05_mixed_duration_export 2360x2000 digest=3303d6a9e988c340 file=/Users/markik/Code/testing/woodshed/stage-p7b-20261017/p7b-native-v2/seed/05_mixed_duration_export.png
+capture 06_compact_seconds_backing 840x2200 digest=74a72f6abeb618b8 file=/Users/markik/Code/testing/woodshed/stage-p7b-20261017/p7b-native-v2/seed/06_compact_seconds_backing.png
+frames: 6 captured, 0 blank, 6 distinct digests
+presentation: 200 frames, 201 redraws, 1 unpresented redraws
