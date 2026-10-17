@@ -1,0 +1,10 @@
+{
+  "qualified": false,
+  "result": "history receipt validator read newest-first history as chronological",
+  "behavior_assertions_passed": true,
+  "source_revision": "49680850988ee1aff1e9981970bab050568d647a",
+  "captures": 4,
+  "native_app_exited": true,
+  "owned_keeper_stop_requested": true,
+  "original_keeper_files_unchanged": true
+}

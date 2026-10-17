@@ -1,0 +1,13 @@
+{
+  "qualified": false,
+  "result": "failed scenario assumptions",
+  "source_revision": "cbb324c9606f0e53d644c4832f9087f81d3b2b06",
+  "reason": [
+    "visible Card BPM nudge preserves existing UI minimum30, not expected25",
+    "await actions need an explicit wait before checking boundary",
+    "Manual wait active_frames increases while beat/card position stays fixed"
+  ],
+  "captures": 4,
+  "keeper_exited": true,
+  "original_keeper_files_unchanged": true
+}

@@ -1,0 +1,717 @@
+warning: patch `mere-proofs v0.1.0 (https://github.com/merely-made/mere.git?branch=main#52fb4900)` was not used in the crate graph
+warning: patch `mere-transport v0.0.2 (https://github.com/merely-made/murm.git?branch=main#cba46d85)` was not used in the crate graph
+warning: patch `mere-webrtc-carrier v0.0.1 (https://github.com/merely-made/murm.git?branch=main#cba46d85)` was not used in the crate graph
+help: Check that the patched package version and available features are compatible
+      with the dependency requirements. If the patch has a different version from
+      what is locked in the Cargo.lock file, run `cargo update` to use the new
+      version. This may also occur with an optional dependency that is not enabled.
+   Compiling woodshed-audio v0.1.0 (/Users/markik/Code/repos/woodshed/crates/woodshed-audio)
+warning: use of deprecated method `std::sync::atomic::Atomic::<u64>::fetch_update`: renamed to `try_update` for consistency
+  --> crates/woodshed-audio/src/capture_feed.rs:33:14
+   |
+33 |             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |generation| {
+   |              ^^^^^^^^^^^^
+   |
+   = note: `#[warn(deprecated)]` on by default
+help: replace the use of the deprecated method
+   |
+33 -             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |generation| {
+33 +             .try_update(Ordering::AcqRel, Ordering::Acquire, |generation| {
+   |
+
+warning: use of deprecated method `std::sync::atomic::Atomic::<usize>::fetch_update`: renamed to `try_update` for consistency
+   --> crates/woodshed-audio/src/output_runtime.rs:405:14
+    |
+405 |             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |              ^^^^^^^^^^^^
+    |
+help: replace the use of the deprecated method
+    |
+405 -             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+405 +             .try_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |
+
+warning: use of deprecated method `std::sync::atomic::Atomic::<usize>::fetch_update`: renamed to `try_update` for consistency
+   --> crates/woodshed-audio/src/output_runtime.rs:453:14
+    |
+453 |             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |              ^^^^^^^^^^^^
+    |
+help: replace the use of the deprecated method
+    |
+453 -             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+453 +             .try_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |
+
+warning: use of deprecated method `std::sync::atomic::Atomic::<usize>::fetch_update`: renamed to `try_update` for consistency
+   --> crates/woodshed-audio/src/output_runtime.rs:474:14
+    |
+474 |             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |              ^^^^^^^^^^^^
+    |
+help: replace the use of the deprecated method
+    |
+474 -             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+474 +             .try_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |
+
+error[E0004]: non-exhaustive patterns: `output_runtime::clock::ProgramLoop::Set` not covered
+   --> crates/woodshed-audio/src/output_runtime/processor.rs:932:19
+    |
+932 |             match self.program_loop_mode {
+    |                   ^^^^^^^^^^^^^^^^^^^^^^ pattern `output_runtime::clock::ProgramLoop::Set` not covered
+    |
+note: `output_runtime::clock::ProgramLoop` defined here
+   --> crates/woodshed-audio/src/output_runtime/clock.rs:61:10
+    |
+ 61 | pub enum ProgramLoop {
+    |          ^^^^^^^^^^^
+ 62 |     Once,
+ 63 |     Set,
+    |     --- not covered
+    = note: the matched value is of type `output_runtime::clock::ProgramLoop`
+    = note: match arms with guards don't count towards exhaustivity
+help: ensure that all possible cases are being handled by adding a match arm with a wildcard pattern or an explicit pattern as shown
+    |
+936 ~                 ProgramLoop::Once => None,
+937 ~                 output_runtime::clock::ProgramLoop::Set => todo!(),
+    |
+
+warning: variable does not need to be mutable
+   --> crates/woodshed-audio/src/output_runtime/clock.rs:176:27
+    |
+176 |     pub(super) fn prepare(mut plan: ProgramPlan, rate: u32) -> Result<Self, OutputError> {
+    |                           ----^^^^
+    |                           |
+    |                           help: remove this `mut`
+    |
+    = note: `#[warn(unused_mut)]` (part of `#[warn(unused)]`) on by default
+
+For more information about this error, try `rustc --explain E0004`.
+warning: `woodshed-audio` (lib test) generated 5 warnings
+error: could not compile `woodshed-audio` (lib test) due to 1 previous error; 5 warnings emitted
+    Blocking waiting for file lock on package cache
+warning: patch `mere-proofs v0.1.0 (https://github.com/merely-made/mere.git?branch=main#52fb4900)` was not used in the crate graph
+warning: patch `mere-transport v0.0.2 (https://github.com/merely-made/murm.git?branch=main#cba46d85)` was not used in the crate graph
+warning: patch `mere-webrtc-carrier v0.0.1 (https://github.com/merely-made/murm.git?branch=main#cba46d85)` was not used in the crate graph
+help: Check that the patched package version and available features are compatible
+      with the dependency requirements. If the patch has a different version from
+      what is locked in the Cargo.lock file, run `cargo update` to use the new
+      version. This may also occur with an optional dependency that is not enabled.
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+   Compiling woodshed-audio v0.1.0 (/Users/markik/Code/repos/woodshed/crates/woodshed-audio)
+warning: use of deprecated method `std::sync::atomic::Atomic::<u64>::fetch_update`: renamed to `try_update` for consistency
+  --> crates/woodshed-audio/src/capture_feed.rs:33:14
+   |
+33 |             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |generation| {
+   |              ^^^^^^^^^^^^
+   |
+   = note: `#[warn(deprecated)]` on by default
+help: replace the use of the deprecated method
+   |
+33 -             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |generation| {
+33 +             .try_update(Ordering::AcqRel, Ordering::Acquire, |generation| {
+   |
+
+warning: use of deprecated method `std::sync::atomic::Atomic::<usize>::fetch_update`: renamed to `try_update` for consistency
+   --> crates/woodshed-audio/src/output_runtime.rs:405:14
+    |
+405 |             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |              ^^^^^^^^^^^^
+    |
+help: replace the use of the deprecated method
+    |
+405 -             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+405 +             .try_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |
+
+warning: use of deprecated method `std::sync::atomic::Atomic::<usize>::fetch_update`: renamed to `try_update` for consistency
+   --> crates/woodshed-audio/src/output_runtime.rs:453:14
+    |
+453 |             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |              ^^^^^^^^^^^^
+    |
+help: replace the use of the deprecated method
+    |
+453 -             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+453 +             .try_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |
+
+warning: use of deprecated method `std::sync::atomic::Atomic::<usize>::fetch_update`: renamed to `try_update` for consistency
+   --> crates/woodshed-audio/src/output_runtime.rs:474:14
+    |
+474 |             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |              ^^^^^^^^^^^^
+    |
+help: replace the use of the deprecated method
+    |
+474 -             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+474 +             .try_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |
+
+warning: variable does not need to be mutable
+   --> crates/woodshed-audio/src/output_runtime/clock.rs:176:27
+    |
+176 |     pub(super) fn prepare(mut plan: ProgramPlan, rate: u32) -> Result<Self, OutputError> {
+    |                           ----^^^^
+    |                           |
+    |                           help: remove this `mut`
+    |
+    = note: `#[warn(unused_mut)]` (part of `#[warn(unused)]`) on by default
+
+warning: variant `WaitManual` is never constructed
+   --> crates/woodshed-audio/src/output_runtime/processor.rs:706:5
+    |
+701 | enum ProgramPendingAction {
+    |      -------------------- variant in this enum
+...
+706 |     WaitManual,
+    |     ^^^^^^^^^^
+    |
+    = note: `ProgramPendingAction` has a derived impl for the trait `Clone`, but this is intentionally ignored during dead code analysis
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: field `actual_frequency_hz` is never read
+   --> crates/woodshed-audio/src/output_runtime/clock.rs:172:9
+    |
+170 | pub(super) struct PreparedTone {
+    |                   ------------ field in this struct
+171 |     pub pcm: SampleBuffer,
+172 |     pub actual_frequency_hz: f64,
+    |         ^^^^^^^^^^^^^^^^^^^
+    |
+    = note: `PreparedTone` has a derived impl for the trait `Debug`, but this is intentionally ignored during dead code analysis
+
+warning: `woodshed-audio` (lib test) generated 7 warnings (run `cargo fix --lib -p woodshed-audio --tests` to apply 5 suggestions)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 5.95s
+     Running unittests src/lib.rs (target/build/debug/deps/woodshed_audio-30aee66853da8853)
+
+running 28 tests
+test output_runtime::tests::cancellation_keeps_accepted_boundary_operations_in_fifo_order ... ok
+test output_runtime::tests::both_metronome_transport_edges_cancel_previews_but_tempo_only_preserves_them ... ok
+test output_runtime::tests::clearing_pcm_preserves_play_accepted_before_the_first_graph_block ... ok
+test output_runtime::tests::backing_click_is_independent_of_calibration_pattern ... ok
+test output_runtime::tests::a_one_step_click_pattern_retriggers_every_cycle ... ok
+test output_runtime::tests::arbitrary_finite_tempo_edits_preserve_beat_phase_and_loop_changes_do_not_restart ... FAILED
+test output_runtime::tests::atomic_calibration_start_uses_one_slot_and_full_queue_rejection_preserves_pattern ... ok
+test output_runtime::tests::canonical_metronome_uses_rounded_denominator_beats_without_boundary_drift ... ok
+test output_runtime::tests::boundary_operations_remain_bounded_after_command_acknowledgement ... ok
+test output_runtime::tests::count_in_waits_one_measure_and_muted_click_skips_it ... ok
+test output_runtime::tests::manual_program_keeps_started_span_open_until_explicit_advance ... ok
+test output_runtime::tests::idle_attached_capture_does_not_block_program_after_take_is_retired ... ok
+test output_runtime::tests::fractional_tempo_count_in_uses_one_canonical_measure ... ok
+test output_runtime::tests::prepared_chord_matches_legacy_strum_and_warm_cache_reuses_pcm ... ok
+test output_runtime::tests::overflow_before_boundary_is_ignored_but_during_take_invalidates ... ok
+test output_runtime::tests::nonfinite_preview_inputs_are_refused_before_normalization_without_cancelling_valid_work ... ok
+test output_runtime::tests::cancelled_previews_do_not_publish_and_preview_voices_are_bounded ... ok
+test output_runtime::tests::exact_card_preview_preserves_short_duration_and_refuses_unrepresentable_output ... ok
+test output_runtime::tests::primed_input_survives_in_block_seek_arm_and_replays_without_edit ... ok
+test output_runtime::tests::production_graph_is_silent_stopped_and_has_one_device_clock ... ok
+test output_runtime::tests::unsupported_rates_and_aggregate_resources_are_rejected_before_publication ... ok
+test output_runtime::tests::variable_tempo_blocks_and_one_shot_clear_the_entire_tail ... ok
+test output_runtime::tests::starvation_invalidates_and_reset_does_not_publish_old_owner_pcm ... ok
+test output_runtime::tests::tempo_edit_preserves_fractional_metronome_phase ... ok
+test output_runtime::tests::terminal_one_shot_cancels_an_unreachable_arm ... ok
+test output_runtime::tests::grouped_strum_offsets_share_one_onset_and_all_256_legacy_pitch_slots_are_supported ... ok
+test output_runtime::tests::legacy_capture_plays_exactly_but_clear_is_required_before_new_recording ... ok
+test output_runtime::tests::fractional_and_eighth_meter_count_in_and_capture_end_on_exact_frames_without_allocating ... ok
+
+failures:
+
+---- output_runtime::tests::arbitrary_finite_tempo_edits_preserve_beat_phase_and_loop_changes_do_not_restart stdout ----
+
+thread 'output_runtime::tests::arbitrary_finite_tempo_edits_preserve_beat_phase_and_loop_changes_do_not_restart' (40076071) panicked at crates/woodshed-audio/src/output_runtime/tests.rs:189:5:
+assertion `left == right` failed: tempo edit preserves phase at command boundary
+  left: 10
+ right: 3
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    output_runtime::tests::arbitrary_finite_tempo_edits_preserve_beat_phase_and_loop_changes_do_not_restart
+
+test result: FAILED. 27 passed; 1 failed; 0 ignored; 0 measured; 136 filtered out; finished in 0.23s
+
+error: test failed, to rerun pass `-p woodshed-audio --lib`
+warning: patch `mere-proofs v0.1.0 (https://github.com/merely-made/mere.git?branch=main#52fb4900)` was not used in the crate graph
+warning: patch `mere-transport v0.0.2 (https://github.com/merely-made/murm.git?branch=main#cba46d85)` was not used in the crate graph
+warning: patch `mere-webrtc-carrier v0.0.1 (https://github.com/merely-made/murm.git?branch=main#cba46d85)` was not used in the crate graph
+help: Check that the patched package version and available features are compatible
+      with the dependency requirements. If the patch has a different version from
+      what is locked in the Cargo.lock file, run `cargo update` to use the new
+      version. This may also occur with an optional dependency that is not enabled.
+   Compiling autocfg v1.5.1
+   Compiling proc-macro2 v1.0.107
+   Compiling num-traits v0.2.19
+   Compiling quote v1.0.47
+   Compiling unicode-ident v1.0.26
+   Compiling objc2 v0.6.4
+   Compiling objc2-encode v4.1.0
+   Compiling bitflags v2.13.2
+   Compiling libc v0.2.190
+   Compiling equivalent v1.0.2
+   Compiling syn v2.0.119
+   Compiling crossbeam-utils v0.8.23
+   Compiling portable-atomic v1.15.0
+   Compiling winnow v1.0.4
+   Compiling hashbrown v0.17.1
+   Compiling indexmap v2.14.2
+   Compiling toml_parser v1.1.3+spec-1.1.0
+   Compiling block2 v0.6.2
+   Compiling syn v3.0.6
+   Compiling portable-atomic-util v0.2.8
+   Compiling toml_datetime v1.1.1+spec-1.1.0
+   Compiling audio-codec-algorithms v0.8.1
+   Compiling audioadapter-sample v5.2.0
+   Compiling toml_edit v0.25.15+spec-1.1.0
+   Compiling dispatch2 v0.3.1
+   Compiling num-integer v0.1.47
+   Compiling serde_core v1.0.229
+   Compiling winnow v0.7.15
+   Compiling audioadapter v5.0.0
+   Compiling toml_datetime v0.7.5+spec-1.1.0
+   Compiling thiserror v2.0.21
+   Compiling audioadapter-buffers v5.2.0
+   Compiling toml_edit v0.23.10+spec-1.0.0
+   Compiling objc2-core-foundation v0.3.2
+   Compiling bevy_macro_utils v0.19.1
+   Compiling ringbuf v0.5.3
+   Compiling thiserror-impl v2.0.21
+   Compiling objc2-foundation v0.3.2
+   Compiling objc2-core-audio-types v0.3.2
+   Compiling hashbrown v0.16.1
+   Compiling spin v0.10.1
+   Compiling foldhash v0.2.0
+   Compiling objc2-core-audio v0.3.2
+   Compiling bevy_platform v0.19.1
+   Compiling firewheel-macros v0.14.0 (https://github.com/mark-ik/firewheel.git?rev=2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc#2b03846d)
+   Compiling num-complex v0.2.4
+   Compiling thunderdome v0.6.1
+   Compiling arrayvec v0.7.8
+   Compiling memchr v2.8.3
+   Compiling smallvec v1.16.2
+   Compiling firewheel-core v0.14.0 (https://github.com/mark-ik/firewheel.git?rev=2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc#2b03846d)
+   Compiling objc2-audio-toolbox v0.3.2
+   Compiling cpal v0.18.2
+   Compiling thiserror v1.0.69
+   Compiling ndarray v0.13.1
+   Compiling core-foundation-sys v0.8.7
+   Compiling itoa v1.0.18
+   Compiling rawpointer v0.2.1
+   Compiling strength_reduce v0.2.4
+   Compiling coremidi-sys v3.2.1
+   Compiling transpose v0.2.3
+   Compiling matrixmultiply v0.2.4
+   Compiling coreaudio-rs v0.14.2
+   Compiling csv-core v0.1.13
+   Compiling primal-check v0.3.4
+   Compiling triple_buffer v9.0.0
+   Compiling thiserror-impl v1.0.69
+   Compiling approx v0.3.2
+   Compiling num-complex v0.4.6
+   Compiling ryu v1.0.23
+   Compiling anyhow v1.0.104
+   Compiling zmij v1.0.23
+   Compiling mach2 v0.6.0
+   Compiling dasp_sample v0.11.0
+   Compiling csv v1.4.0
+   Compiling rustfft v6.4.1
+   Compiling firewheel-graph v0.14.0 (https://github.com/mark-ik/firewheel.git?rev=2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc#2b03846d)
+   Compiling core-foundation v0.10.1
+   Compiling fixed-resample v0.13.0
+   Compiling either v1.18.0
+   Compiling midir v0.11.0
+   Compiling serde_json v1.0.151
+   Compiling serde v1.0.229
+   Compiling itertools v0.10.5
+   Compiling firewheel-cpal v0.14.0 (https://github.com/mark-ik/firewheel.git?rev=2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc#2b03846d)
+   Compiling coremidi v0.9.2
+   Compiling fitting v0.3.0
+   Compiling peak_finder v1.0.1
+   Compiling firewheel-nodes v0.14.0 (https://github.com/mark-ik/firewheel.git?rev=2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc#2b03846d)
+   Compiling serde_derive v1.0.229
+   Compiling apodize v1.0.0
+   Compiling log v0.4.34
+   Compiling pitch-detector v0.3.1
+   Compiling firewheel v0.14.0 (https://github.com/mark-ik/firewheel.git?rev=2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc#2b03846d)
+   Compiling pitch-detection v0.3.0
+   Compiling audio-primitives v0.1.0 (/Users/markik/Code/repos/woodshed/crates/audio-primitives)
+   Compiling hound v3.5.1
+   Compiling rtrb v0.3.5
+   Compiling woodshed-audio v0.1.0 (/Users/markik/Code/repos/woodshed/crates/woodshed-audio)
+warning: use of deprecated method `std::sync::atomic::Atomic::<u64>::fetch_update`: renamed to `try_update` for consistency
+  --> crates/woodshed-audio/src/capture_feed.rs:33:14
+   |
+33 |             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |generation| {
+   |              ^^^^^^^^^^^^
+   |
+   = note: `#[warn(deprecated)]` on by default
+help: replace the use of the deprecated method
+   |
+33 -             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |generation| {
+33 +             .try_update(Ordering::AcqRel, Ordering::Acquire, |generation| {
+   |
+
+warning: use of deprecated method `std::sync::atomic::Atomic::<usize>::fetch_update`: renamed to `try_update` for consistency
+   --> crates/woodshed-audio/src/output_runtime.rs:454:14
+    |
+454 |             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |              ^^^^^^^^^^^^
+    |
+help: replace the use of the deprecated method
+    |
+454 -             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+454 +             .try_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |
+
+warning: use of deprecated method `std::sync::atomic::Atomic::<usize>::fetch_update`: renamed to `try_update` for consistency
+   --> crates/woodshed-audio/src/output_runtime.rs:502:14
+    |
+502 |             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |              ^^^^^^^^^^^^
+    |
+help: replace the use of the deprecated method
+    |
+502 -             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+502 +             .try_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |
+
+warning: use of deprecated method `std::sync::atomic::Atomic::<usize>::fetch_update`: renamed to `try_update` for consistency
+   --> crates/woodshed-audio/src/output_runtime.rs:523:14
+    |
+523 |             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |              ^^^^^^^^^^^^
+    |
+help: replace the use of the deprecated method
+    |
+523 -             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+523 +             .try_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |
+
+warning: `woodshed-audio` (lib test) generated 4 warnings (run `cargo fix --lib -p woodshed-audio --tests` to apply 4 suggestions)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 25.24s
+     Running unittests src/lib.rs (/Users/markik/Code/testing/woodshed/stage-p5-20261016/audio-build/debug/deps/woodshed_audio-30aee66853da8853)
+
+running 32 tests
+test output_runtime::tests::backing_click_is_independent_of_calibration_pattern ... ok
+test output_runtime::tests::a_one_step_click_pattern_retriggers_every_cycle ... ok
+test output_runtime::tests::both_metronome_transport_edges_cancel_previews_but_tempo_only_preserves_them ... ok
+test output_runtime::tests::cancelled_previews_do_not_publish_and_preview_voices_are_bounded ... ok
+test output_runtime::tests::arbitrary_finite_tempo_edits_preserve_beat_phase_and_loop_changes_do_not_restart ... ok
+test output_runtime::tests::clearing_pcm_preserves_play_accepted_before_the_first_graph_block ... ok
+test output_runtime::tests::boundary_operations_remain_bounded_after_command_acknowledgement ... ok
+test output_runtime::tests::cancellation_keeps_accepted_boundary_operations_in_fifo_order ... ok
+test output_runtime::tests::count_in_waits_one_measure_and_muted_click_skips_it ... ok
+test output_runtime::tests::canonical_metronome_uses_rounded_denominator_beats_without_boundary_drift ... ok
+test output_runtime::tests::atomic_calibration_start_uses_one_slot_and_full_queue_rejection_preserves_pattern ... ok
+test output_runtime::tests::idle_attached_capture_does_not_block_program_after_take_is_retired ... ok
+test output_runtime::tests::fractional_tempo_count_in_uses_one_canonical_measure ... ok
+test output_runtime::tests::exact_card_preview_preserves_short_duration_and_refuses_unrepresentable_output ... ok
+test output_runtime::tests::manual_program_keeps_started_span_open_until_explicit_advance ... ok
+test output_runtime::tests::prepared_chord_matches_legacy_strum_and_warm_cache_reuses_pcm ... ok
+test output_runtime::tests::nonfinite_preview_inputs_are_refused_before_normalization_without_cancelling_valid_work ... ok
+test output_runtime::tests::full_transition_queue_freezes_clock_and_resume_preserves_every_card_event ... ok
+test output_runtime::tests::overflow_before_boundary_is_ignored_but_during_take_invalidates ... ok
+test output_runtime::tests::primed_input_survives_in_block_seek_arm_and_replays_without_edit ... ok
+test output_runtime::tests::pause_freezes_program_position_and_pcm_then_resume_continues_the_same_event ... ok
+test output_runtime::tests::production_graph_is_silent_stopped_and_has_one_device_clock ... ok
+test output_runtime::tests::stale_epoch_commands_cannot_pause_or_retime_a_replacement_program ... ok
+test output_runtime::tests::starvation_invalidates_and_reset_does_not_publish_old_owner_pcm ... ok
+test output_runtime::tests::tempo_edit_preserves_fractional_metronome_phase ... ok
+test output_runtime::tests::terminal_one_shot_cancels_an_unreachable_arm ... ok
+test output_runtime::tests::seconds_domain_card_and_gate_keep_fixed_device_frame_duration_across_tempo_edit ... ok
+test output_runtime::tests::unsupported_rates_and_aggregate_resources_are_rejected_before_publication ... ok
+test output_runtime::tests::variable_tempo_blocks_and_one_shot_clear_the_entire_tail ... ok
+test output_runtime::tests::grouped_strum_offsets_share_one_onset_and_all_256_legacy_pitch_slots_are_supported ... ok
+test output_runtime::tests::legacy_capture_plays_exactly_but_clear_is_required_before_new_recording ... ok
+test output_runtime::tests::fractional_and_eighth_meter_count_in_and_capture_end_on_exact_frames_without_allocating ... ok
+
+test result: ok. 32 passed; 0 failed; 0 ignored; 0 measured; 136 filtered out; finished in 0.23s
+
+warning: patch `mere-proofs v0.1.0 (https://github.com/merely-made/mere.git?branch=main#52fb4900)` was not used in the crate graph
+warning: patch `mere-transport v0.0.2 (https://github.com/merely-made/murm.git?branch=main#cba46d85)` was not used in the crate graph
+warning: patch `mere-webrtc-carrier v0.0.1 (https://github.com/merely-made/murm.git?branch=main#cba46d85)` was not used in the crate graph
+help: Check that the patched package version and available features are compatible
+      with the dependency requirements. If the patch has a different version from
+      what is locked in the Cargo.lock file, run `cargo update` to use the new
+      version. This may also occur with an optional dependency that is not enabled.
+   Compiling woodshed-audio v0.1.0 (/Users/markik/Code/repos/woodshed/crates/woodshed-audio)
+error[E0425]: cannot find value `MAX_PROGRAM_TONE_FRAMES` in this scope
+   --> crates/woodshed-audio/src/output_runtime/tests.rs:336:31
+    |
+336 |     assert!(tone.pcm.len() <= MAX_PROGRAM_TONE_FRAMES);
+    |                               ^^^^^^^^^^^^^^^^^^^^^^^
+    |
+   ::: crates/woodshed-audio/src/output_runtime.rs:55:1
+    |
+ 55 | pub(crate) const MAX_PROGRAM_PCM_FRAMES: usize = 16_777_216;
+    | ------------------------------------------------------------ similarly named constant `MAX_PROGRAM_PCM_FRAMES` defined here
+    |
+help: a constant with a similar name exists
+    |
+336 -     assert!(tone.pcm.len() <= MAX_PROGRAM_TONE_FRAMES);
+336 +     assert!(tone.pcm.len() <= MAX_PROGRAM_PCM_FRAMES);
+    |
+help: consider importing this constant
+    |
+  1 + use crate::output_runtime::clock::MAX_PROGRAM_TONE_FRAMES;
+    |
+
+warning: use of deprecated method `std::sync::atomic::Atomic::<u64>::fetch_update`: renamed to `try_update` for consistency
+  --> crates/woodshed-audio/src/capture_feed.rs:33:14
+   |
+33 |             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |generation| {
+   |              ^^^^^^^^^^^^
+   |
+   = note: `#[warn(deprecated)]` on by default
+help: replace the use of the deprecated method
+   |
+33 -             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |generation| {
+33 +             .try_update(Ordering::AcqRel, Ordering::Acquire, |generation| {
+   |
+
+warning: use of deprecated method `std::sync::atomic::Atomic::<usize>::fetch_update`: renamed to `try_update` for consistency
+   --> crates/woodshed-audio/src/output_runtime.rs:463:14
+    |
+463 |             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |              ^^^^^^^^^^^^
+    |
+help: replace the use of the deprecated method
+    |
+463 -             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+463 +             .try_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |
+
+warning: use of deprecated method `std::sync::atomic::Atomic::<usize>::fetch_update`: renamed to `try_update` for consistency
+   --> crates/woodshed-audio/src/output_runtime.rs:511:14
+    |
+511 |             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |              ^^^^^^^^^^^^
+    |
+help: replace the use of the deprecated method
+    |
+511 -             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+511 +             .try_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |
+
+warning: use of deprecated method `std::sync::atomic::Atomic::<usize>::fetch_update`: renamed to `try_update` for consistency
+   --> crates/woodshed-audio/src/output_runtime.rs:532:14
+    |
+532 |             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |              ^^^^^^^^^^^^
+    |
+help: replace the use of the deprecated method
+    |
+532 -             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+532 +             .try_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |
+
+For more information about this error, try `rustc --explain E0425`.
+warning: `woodshed-audio` (lib test) generated 4 warnings
+error: could not compile `woodshed-audio` (lib test) due to 1 previous error; 4 warnings emitted
+warning: patch `mere-proofs v0.1.0 (https://github.com/merely-made/mere.git?branch=main#52fb4900)` was not used in the crate graph
+warning: patch `mere-transport v0.0.2 (https://github.com/merely-made/murm.git?branch=main#cba46d85)` was not used in the crate graph
+warning: patch `mere-webrtc-carrier v0.0.1 (https://github.com/merely-made/murm.git?branch=main#cba46d85)` was not used in the crate graph
+help: Check that the patched package version and available features are compatible
+      with the dependency requirements. If the patch has a different version from
+      what is locked in the Cargo.lock file, run `cargo update` to use the new
+      version. This may also occur with an optional dependency that is not enabled.
+   Compiling woodshed-audio v0.1.0 (/Users/markik/Code/repos/woodshed/crates/woodshed-audio)
+warning: use of deprecated method `std::sync::atomic::Atomic::<u64>::fetch_update`: renamed to `try_update` for consistency
+  --> crates/woodshed-audio/src/capture_feed.rs:33:14
+   |
+33 |             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |generation| {
+   |              ^^^^^^^^^^^^
+   |
+   = note: `#[warn(deprecated)]` on by default
+help: replace the use of the deprecated method
+   |
+33 -             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |generation| {
+33 +             .try_update(Ordering::AcqRel, Ordering::Acquire, |generation| {
+   |
+
+warning: use of deprecated method `std::sync::atomic::Atomic::<usize>::fetch_update`: renamed to `try_update` for consistency
+   --> crates/woodshed-audio/src/output_runtime.rs:469:14
+    |
+469 |             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |              ^^^^^^^^^^^^
+    |
+help: replace the use of the deprecated method
+    |
+469 -             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+469 +             .try_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |
+
+warning: use of deprecated method `std::sync::atomic::Atomic::<usize>::fetch_update`: renamed to `try_update` for consistency
+   --> crates/woodshed-audio/src/output_runtime.rs:517:14
+    |
+517 |             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |              ^^^^^^^^^^^^
+    |
+help: replace the use of the deprecated method
+    |
+517 -             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+517 +             .try_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |
+
+warning: use of deprecated method `std::sync::atomic::Atomic::<usize>::fetch_update`: renamed to `try_update` for consistency
+   --> crates/woodshed-audio/src/output_runtime.rs:538:14
+    |
+538 |             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |              ^^^^^^^^^^^^
+    |
+help: replace the use of the deprecated method
+    |
+538 -             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+538 +             .try_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |
+
+warning: `woodshed-audio` (lib test) generated 4 warnings (run `cargo fix --lib -p woodshed-audio --tests` to apply 4 suggestions)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 4.02s
+     Running unittests src/lib.rs (/Users/markik/Code/testing/woodshed/stage-p5-20261016/audio-build/debug/deps/woodshed_audio-30aee66853da8853)
+
+running 37 tests
+test output_runtime::tests::backing_click_is_independent_of_calibration_pattern ... ok
+test output_runtime::tests::both_metronome_transport_edges_cancel_previews_but_tempo_only_preserves_them ... ok
+test output_runtime::tests::cancellation_keeps_accepted_boundary_operations_in_fifo_order ... ok
+test output_runtime::tests::boundary_operations_remain_bounded_after_command_acknowledgement ... ok
+test output_runtime::tests::clear_session_silences_and_retires_program_even_when_observer_queue_is_full ... ok
+test output_runtime::tests::cancelled_previews_do_not_publish_and_preview_voices_are_bounded ... ok
+test output_runtime::tests::arbitrary_finite_tempo_edits_preserve_beat_phase_and_loop_changes_do_not_restart ... ok
+test output_runtime::tests::fixed_strum_offset_must_fit_before_the_card_ends ... ok
+test output_runtime::tests::atomic_calibration_start_uses_one_slot_and_full_queue_rejection_preserves_pattern ... ok
+test output_runtime::tests::a_one_step_click_pattern_retriggers_every_cycle ... ok
+test output_runtime::tests::clearing_pcm_preserves_play_accepted_before_the_first_graph_block ... ok
+test output_runtime::tests::clear_session_stops_an_audible_program_at_the_next_callback_boundary ... ok
+test output_runtime::tests::canonical_metronome_uses_rounded_denominator_beats_without_boundary_drift ... ok
+test output_runtime::tests::count_in_waits_one_measure_and_muted_click_skips_it ... ok
+test output_runtime::tests::idle_attached_capture_does_not_block_program_after_take_is_retired ... ok
+test output_runtime::tests::fractional_tempo_count_in_uses_one_canonical_measure ... ok
+test output_runtime::tests::exact_card_preview_preserves_short_duration_and_refuses_unrepresentable_output ... ok
+test output_runtime::tests::prepared_chord_matches_legacy_strum_and_warm_cache_reuses_pcm ... ok
+test output_runtime::tests::full_transition_queue_freezes_clock_and_resume_preserves_every_card_event ... ok
+test output_runtime::tests::manual_program_keeps_started_span_open_until_explicit_advance ... ok
+test output_runtime::tests::nonfinite_preview_inputs_are_refused_before_normalization_without_cancelling_valid_work ... ok
+test output_runtime::tests::overflow_before_boundary_is_ignored_but_during_take_invalidates ... ok
+test output_runtime::tests::prepared_integer_cycle_tone_meets_frequency_error_and_has_bounded_loop_seam ... ok
+test output_runtime::tests::primed_input_survives_in_block_seek_arm_and_replays_without_edit ... ok
+test output_runtime::tests::pause_freezes_program_position_and_pcm_then_resume_continues_the_same_event ... ok
+test output_runtime::tests::stale_epoch_commands_cannot_pause_or_retime_a_replacement_program ... ok
+test output_runtime::tests::production_graph_is_silent_stopped_and_has_one_device_clock ... ok
+test output_runtime::tests::starvation_invalidates_and_reset_does_not_publish_old_owner_pcm ... ok
+test output_runtime::tests::tempo_edit_preserves_fractional_metronome_phase ... ok
+test output_runtime::tests::seconds_domain_card_and_gate_keep_fixed_device_frame_duration_across_tempo_edit ... ok
+test output_runtime::tests::unsupported_rates_and_aggregate_resources_are_rejected_before_publication ... ok
+test output_runtime::tests::variable_tempo_blocks_and_one_shot_clear_the_entire_tail ... ok
+test output_runtime::tests::unrepresentable_future_tone_becomes_a_per_card_refusal_sentinel ... ok
+test output_runtime::tests::terminal_one_shot_cancels_an_unreachable_arm ... ok
+test output_runtime::tests::grouped_strum_offsets_share_one_onset_and_all_256_legacy_pitch_slots_are_supported ... ok
+test output_runtime::tests::legacy_capture_plays_exactly_but_clear_is_required_before_new_recording ... ok
+test output_runtime::tests::fractional_and_eighth_meter_count_in_and_capture_end_on_exact_frames_without_allocating ... ok
+
+test result: ok. 37 passed; 0 failed; 0 ignored; 0 measured; 136 filtered out; finished in 0.19s
+
+warning: patch `mere-proofs v0.1.0 (https://github.com/merely-made/mere.git?branch=main#52fb4900)` was not used in the crate graph
+warning: patch `mere-transport v0.0.2 (https://github.com/merely-made/murm.git?branch=main#cba46d85)` was not used in the crate graph
+warning: patch `mere-webrtc-carrier v0.0.1 (https://github.com/merely-made/murm.git?branch=main#cba46d85)` was not used in the crate graph
+help: Check that the patched package version and available features are compatible
+      with the dependency requirements. If the patch has a different version from
+      what is locked in the Cargo.lock file, run `cargo update` to use the new
+      version. This may also occur with an optional dependency that is not enabled.
+   Compiling woodshed-audio v0.1.0 (/Users/markik/Code/repos/woodshed/crates/woodshed-audio)
+warning: use of deprecated method `std::sync::atomic::Atomic::<u64>::fetch_update`: renamed to `try_update` for consistency
+  --> crates/woodshed-audio/src/capture_feed.rs:33:14
+   |
+33 |             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |generation| {
+   |              ^^^^^^^^^^^^
+   |
+   = note: `#[warn(deprecated)]` on by default
+help: replace the use of the deprecated method
+   |
+33 -             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |generation| {
+33 +             .try_update(Ordering::AcqRel, Ordering::Acquire, |generation| {
+   |
+
+warning: use of deprecated method `std::sync::atomic::Atomic::<usize>::fetch_update`: renamed to `try_update` for consistency
+   --> crates/woodshed-audio/src/output_runtime.rs:469:14
+    |
+469 |             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |              ^^^^^^^^^^^^
+    |
+help: replace the use of the deprecated method
+    |
+469 -             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+469 +             .try_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |
+
+warning: use of deprecated method `std::sync::atomic::Atomic::<usize>::fetch_update`: renamed to `try_update` for consistency
+   --> crates/woodshed-audio/src/output_runtime.rs:517:14
+    |
+517 |             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |              ^^^^^^^^^^^^
+    |
+help: replace the use of the deprecated method
+    |
+517 -             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+517 +             .try_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |
+
+warning: use of deprecated method `std::sync::atomic::Atomic::<usize>::fetch_update`: renamed to `try_update` for consistency
+   --> crates/woodshed-audio/src/output_runtime.rs:538:14
+    |
+538 |             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |              ^^^^^^^^^^^^
+    |
+help: replace the use of the deprecated method
+    |
+538 -             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+538 +             .try_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |
+
+warning: `woodshed-audio` (lib test) generated 4 warnings (run `cargo fix --lib -p woodshed-audio --tests` to apply 4 suggestions)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2.06s
+     Running unittests src/lib.rs (/Users/markik/Code/testing/woodshed/stage-p5-20261016/audio-build/debug/deps/woodshed_audio-30aee66853da8853)
+
+running 38 tests
+test output_runtime::tests::backing_click_is_independent_of_calibration_pattern ... ok
+test output_runtime::tests::both_metronome_transport_edges_cancel_previews_but_tempo_only_preserves_them ... ok
+test output_runtime::tests::cancellation_keeps_accepted_boundary_operations_in_fifo_order ... ok
+test output_runtime::tests::a_one_step_click_pattern_retriggers_every_cycle ... ok
+test output_runtime::tests::arbitrary_finite_tempo_edits_preserve_beat_phase_and_loop_changes_do_not_restart ... ok
+test output_runtime::tests::canonical_metronome_uses_rounded_denominator_beats_without_boundary_drift ... ok
+test output_runtime::tests::cancelled_previews_do_not_publish_and_preview_voices_are_bounded ... ok
+test output_runtime::tests::fixed_strum_offset_must_fit_before_the_card_ends ... ok
+test output_runtime::tests::clear_session_silences_and_retires_program_even_when_observer_queue_is_full ... ok
+test output_runtime::tests::boundary_operations_remain_bounded_after_command_acknowledgement ... ok
+test output_runtime::tests::atomic_calibration_start_uses_one_slot_and_full_queue_rejection_preserves_pattern ... ok
+test output_runtime::tests::exact_card_preview_preserves_short_duration_and_refuses_unrepresentable_output ... ok
+test output_runtime::tests::clearing_pcm_preserves_play_accepted_before_the_first_graph_block ... ok
+test output_runtime::tests::explicit_next_completes_a_timed_card_once_and_starts_the_next_card ... ok
+test output_runtime::tests::clear_session_stops_an_audible_program_at_the_next_callback_boundary ... ok
+test output_runtime::tests::count_in_waits_one_measure_and_muted_click_skips_it ... ok
+test output_runtime::tests::fractional_tempo_count_in_uses_one_canonical_measure ... ok
+test output_runtime::tests::idle_attached_capture_does_not_block_program_after_take_is_retired ... ok
+test output_runtime::tests::full_transition_queue_freezes_clock_and_resume_preserves_every_card_event ... ok
+test output_runtime::tests::prepared_chord_matches_legacy_strum_and_warm_cache_reuses_pcm ... ok
+test output_runtime::tests::nonfinite_preview_inputs_are_refused_before_normalization_without_cancelling_valid_work ... ok
+test output_runtime::tests::manual_program_keeps_started_span_open_until_explicit_advance ... ok
+test output_runtime::tests::prepared_integer_cycle_tone_meets_frequency_error_and_has_bounded_loop_seam ... ok
+test output_runtime::tests::primed_input_survives_in_block_seek_arm_and_replays_without_edit ... ok
+test output_runtime::tests::overflow_before_boundary_is_ignored_but_during_take_invalidates ... ok
+test output_runtime::tests::production_graph_is_silent_stopped_and_has_one_device_clock ... ok
+test output_runtime::tests::seconds_domain_card_and_gate_keep_fixed_device_frame_duration_across_tempo_edit ... ok
+test output_runtime::tests::pause_freezes_program_position_and_pcm_then_resume_continues_the_same_event ... ok
+test output_runtime::tests::stale_epoch_commands_cannot_pause_or_retime_a_replacement_program ... ok
+test output_runtime::tests::terminal_one_shot_cancels_an_unreachable_arm ... ok
+test output_runtime::tests::starvation_invalidates_and_reset_does_not_publish_old_owner_pcm ... ok
+test output_runtime::tests::unrepresentable_future_tone_becomes_a_per_card_refusal_sentinel ... ok
+test output_runtime::tests::unsupported_rates_and_aggregate_resources_are_rejected_before_publication ... ok
+test output_runtime::tests::tempo_edit_preserves_fractional_metronome_phase ... ok
+test output_runtime::tests::variable_tempo_blocks_and_one_shot_clear_the_entire_tail ... ok
+test output_runtime::tests::grouped_strum_offsets_share_one_onset_and_all_256_legacy_pitch_slots_are_supported ... ok
+test output_runtime::tests::legacy_capture_plays_exactly_but_clear_is_required_before_new_recording ... ok
+test output_runtime::tests::fractional_and_eighth_meter_count_in_and_capture_end_on_exact_frames_without_allocating ... ok
+
+test result: ok. 38 passed; 0 failed; 0 ignored; 0 measured; 136 filtered out; finished in 0.19s
+

@@ -1,0 +1,17 @@
+{
+  "01_paused_device_position.png": "9ff5435bdfc35a550649930eff3a4f14f183f2dd70ce9764d9708f58cad130ac",
+  "02_paused_retimed_same_position.png": "a39779b009b2b5ded76fcdaadfb46f97ff5a3de51c2e013d31aea7c5003079e4",
+  "03_manual_waits_for_next.png": "a0cdfef07b02d478f50ba6aa7db64210836226dc1af1052cd464b6d6503ce347",
+  "04_completed_run_and_history.png": "0d031c85cf056cf34c7a3c7a689e4f63d151599c93139f1510f4df64aadce88d",
+  "launch.json": "cc54c2ec2b8dea9234ee3dde5979d954eca7da0fef3c97e6afdd119148794e3d",
+  "launch.once": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "launcher.c": "a53e095129942c18db2b9c5f1e2a726c70998514907e7058c4d3efe41070aec7",
+  "native.log": "2d8aa995c5c8a4a21113b8b8b92119b3cc96eafcd207cc0d7148eb7c06c97475",
+  "native.pid": "cc40fdc602a212d265f12f2bed6dc171900c9f8658f56ca14058752bb44c9944",
+  "p5clock-final.json": "4b2ab68c9f116c4ef53353f1fea27b9f33bebc11684af79c06465280b55e683d",
+  "p5clock-manual.json": "99b237e93fe6762ce7f6a0990fac1b406931dc62b3204f3c8db8f4679bf3d431",
+  "p5clock-paused.json": "153f5c695cbf9c296d4bce869f7081b712c9ba3ff55d221d71e325dee87a3017",
+  "p5clock-resume.json": "dbdfd7ac54a880bd17ebafd1fe27b28b78f8ab352838013c6500ab6248713446",
+  "p5clock-seconds.json": "10b5eeb25a48fd65552872f056ced68e01e0cb55a65859e98c9a5777919324bf",
+  "scenario.done": "5b661733a9a137f8cbded53655eb14b464de552e7fe7927b21de0f999db993b6"
+}

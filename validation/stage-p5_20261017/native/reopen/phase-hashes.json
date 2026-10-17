@@ -1,0 +1,12 @@
+{
+  "01_exact_sealed_clock_reopen.png": "0696d710c5f704027d48dabd2d8e15134a87cea46bf38dfb12bd1fdde6f83962",
+  "expected-copy.json": "2c48c4bed9e7d0f8bd29b6c4cf31ee0659f1ff8e41ae9fe84af1e4978fab5f41",
+  "launch.json": "e25b639b49867dffb8748c07721e1f574d414533bb5cd641800ed8f2f0ccb8ef",
+  "launch.once": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "launcher.c": "950595504f0e273fc0b39e043c0961c3aa6d98c86f19b159dbe303ebe2d5a907",
+  "native.log": "9df2ca10e5d080b44c4f7fea72befcc527e4feeac56bd26c762f7ff860cc9d3a",
+  "native.pid": "a36e406f6a3fc8ce4ecd0a36f1248536c5665377570f24f250d50c07cf15b546",
+  "p5clock-final.json": "4b2ab68c9f116c4ef53353f1fea27b9f33bebc11684af79c06465280b55e683d",
+  "p5clock-reopened.json": "9db8a7aa5a4406686076c6d7d66041e25fdf3b4177c4c3567be2bb8ba40571f4",
+  "scenario.done": "b5d814c3d29a0ffc582e176480bdd2a2d6e894cf375af76a6a52c39349651a6d"
+}

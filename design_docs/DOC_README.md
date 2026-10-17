@@ -19,7 +19,7 @@ before any other doc in this directory.
 
 ## Active Plans
 
-- [P5 shared clock and visual articulation](2026-07-11_stage_set_tools_plan.md#p5-unify-the-clock-and-visual-articulation) — In progress: processor-owned event position, preserved pause/resume and beat phase on tempo edits, absolute Seconds holds, Manual advancement and accepted-start history. P5a remains separately qualified below; full P5 native qualification is pending.
+- [P5 shared clock and visual articulation](2026-07-11_stage_set_tools_plan.md#p5-unify-the-clock-and-visual-articulation) — Qualified October 17: one processor clock for Card dwell, click, articulation and Fretboard event projection; preserved pause/resume and tempo phase, absolute Seconds, Manual Next and accepted-start history. 881 cases plus five child invocations, desktop build and five reviewed native Rehearsal/reopen captures with exact sealed Cards, owner and six history rows. [Receipt](../validation/stage-p5_20261017/receipt.json).
 
 - [Catalog/discovery audition admission history](2026-07-11_stage_set_tools_plan.md#catalogdiscovery-audition-admission-history-2026-10-16) — Qualified: frozen accepted-only observations, exact source/session binding and refusal/retry; 676 affected cases plus five child invocations, desktop build and four independently reviewed native seed/reopen captures with exact sealed Card/history preservation. [Receipt](../validation/catalog-audition_20261016/receipt.json).
 
@@ -29,7 +29,7 @@ before any other doc in this directory.
 
 - [Saved progression arrangements](2026-07-11_stage_set_tools_plan.md#saved-progression-arrangements-and-portable-export-2026-10-16) — Qualified: Set-owned musical alignment, identity-safe snapshot copies and explicit session exchange export to Graphshell; 656 suite cases, feature-disabled retention, fresh CLI processes and browser receiving.
 
-- [Stage P5a Card timing and admission](2026-07-11_stage_set_tools_plan.md#p5a-admit-one-resolved-card-timing-contract-2026-10-16) — Bounded slice qualified: shared fallible dwell/ordered-preview timing, literal authored BPM, visible refusal and retry; 804 cases plus five child invocations, desktop build and eight reviewed native seed/reopen captures with exact sealed Card/resolution preservation. Full P5 shared clock remains open. [Receipt](../validation/stage-p5a_20261016/receipt.json).
+- [Stage P5a Card timing and admission](2026-07-11_stage_set_tools_plan.md#p5a-admit-one-resolved-card-timing-contract-2026-10-16) — Bounded slice qualified: shared fallible dwell/ordered-preview timing, literal authored BPM, visible refusal and retry; 804 cases plus five child invocations, desktop build and eight reviewed native seed/reopen captures with exact sealed Card/resolution preservation. Full P5 is qualified above. [Receipt](../validation/stage-p5a_20261016/receipt.json).
 
 - [Stage P4f continuation](2026-07-11_stage_set_tools_plan.md#p4f-join-graph-understanding-to-sound-and-practice) — Bounded practice-flow gate qualified: honest save/close outcomes, visible frontier → voicing → exact directed audition → numbered Rehearsal → sealed fresh reopen; 789 cases plus five child invocations, desktop build and 14 reviewed captures. [Receipt](../validation/stage-p4f_20261016/receipt.json).
 
@@ -217,7 +217,7 @@ before any other doc in this directory.
   — **In progress; product authority.** P1-P3 remain partial. P4a/P4b landed;
   the scene canvas and single-Card expansion have receipts, while the full P4e
   catalog remains partial; the bounded P4f practice/sound/fresh-reopen route is
-  qualified on October 16. P5-P8 remain open. A repaired
+  qualified on October 16. P5 is qualified on October 17; P6-P8 remain open. A repaired
   release baseline does not close the 1.0 practice proof. The September 30
   connected exploration/drilling direction specifies cross-catalog context,
   shared realization, ambient Mere actions, and integrated acceptance slices.

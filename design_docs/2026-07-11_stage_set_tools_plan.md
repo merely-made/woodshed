@@ -16,11 +16,11 @@ scenarios passed. Their source-hashed receipt and four GPU frames are under
 `mere/ports/graphshell/docs/receipts/`. The musical-projections plan's review
 addendum identifies the next product questions and corrections before S1-S4.
 
-**Status (reviewed 2026-10-16): in progress.** P1-P3 are partial. P4a and
+**Status (updated 2026-10-17): in progress.** P1-P3 are partial. P4a and
 P4b landed; P4c and P4d have bounded headed receipts; P4e is partial. The
 bounded P4f practice-flow gate is qualified with native/fresh-process evidence.
-P5-P8 remain open. Clean-lock and local validation are release-baseline gates,
-not completion of this product plan.
+P5 is qualified on October 17; P6-P8 remain open. Clean-lock and local validation
+are release-baseline gates, not completion of this product plan.
 
 ### Opened-link continuation (2026-10-16)
 
@@ -1705,7 +1705,7 @@ retained notes; the earlier ambiguous empty-board observation is not reproduced.
 evidence; physical audibility, microphone and latency qualification remain
 separate. Narrow layouts use ordinary scrolling; verbose source IDs and long
 voicing summaries retain polish work. Full persona namespace migration, other
-audit findings, the full P4e catalog and P5-P8 remain open. Hocket/Redshank/Ringdown
+audit findings and the full P4e catalog remain open; P5 is qualified below and P6-P8 remain open. Hocket/Redshank/Ringdown
 remediation stays outside this slice.
 
 Selecting a node updates Stage and the Fretboard. Selecting an edge exposes its
@@ -1733,9 +1733,14 @@ settings after restart.
 
 ### P5. Unify the clock and visual articulation
 
-**Current state: in progress (2026-10-16).** P5a is qualified below. The full
-shared clock is now being implemented against `21d0c2e`: the existing
-OutputRuntime processor will own musical position as well as output frames.
+**Current state: implemented and qualified (2026-10-17).** The existing
+OutputRuntime processor owns musical position as well as output frames.
+The affected gate passes 881 cases plus five child invocations (seven existing
+ignores), and the final desktop build passes. The native Rehearsal flow and
+fresh-process sealed reopening pass with five reviewed captures. Live Stage
+clock paths have core/audio/desktop offline coverage. The
+[qualification receipt](../validation/stage-p5_20261017/receipt.json) binds the
+combined source, checks, binary, native captures and exact reopened history.
 
 Create one core clock snapshot with beat, subdivision, Set cursor, Card-local
 progress, and active sequence step. Map scale, arpeggio, chord, and exercise
@@ -1824,6 +1829,36 @@ change belongs to that concurrent arrangement work; P5 introduces no separate
 supplier or lockfile policy. Preservation/input audit commits `07c170b` and
 `860c5c1` remain isolated and are not part of this P5 checkpoint.
 
+**Qualification and closeout (2026-10-17):** the clean normal merge is
+`cbb324c`; its repeated affected gate passes 174 audio, 276 core, five CLI,
+one portability, 195 desktop and 230 view cases, plus five separate capture
+subprocess invocations. Seven existing desktop cases remain ignored. The
+final scenario-only fixes repeated all nine desktop clock cases and the
+desktop build. Production clock source is unchanged from that combined gate.
+
+Native v3 qualifies committed source `6f65f60`, binary
+`1fdb811d4413fee31884883b09136871038073e426547cd74b501475b585db5b`.
+The seed presents 442 frames and four reviewed captures; fresh reopening
+presents 103 frames and one reviewed capture. Pause holds the exact event,
+beat and Card position across a real one-second hold and applied tempo edit;
+Resume continues the same epoch. The two-second Card completes at exactly
+2,000 ms from 48 kHz active frames. Manual waits at its body end for a real
+two-second hold, then explicit Next completes it. All three occurrence-bound
+Started/Completed pairs, exact authored Cards and owner match the sealed
+session and fresh reopen; transient run state reopens stopped. All 207 frozen
+source-path hashes, the seed artifacts after exit and four original generated
+Keeper fixture hashes remain unchanged. Both app processes and the Keeper
+exited. Five captures were independently reviewed at 1180×900 logical size.
+
+Native v1 is excluded because its scenario expected a BPM nudge below the
+existing UI minimum and omitted explicit boundary waits. V2 passes behavior
+checks but is excluded because its receipt validator read newest-first history
+as chronological. V3 corrects those scenario assumptions and validates lifecycle
+order chronologically without rewriting the history. The receipt keeps these
+attempts distinct. Live Stage sequence, chord grouping, refusal/retry, stale
+source/session, callback allocation, capture handoff and observer-pressure
+claims have scoped core/audio/desktop offline coverage.
+
 #### P5a. Admit one resolved Card timing contract (2026-10-16)
 
 **Status: bounded P5a implemented and qualified (2026-10-16).** Shared fallible
@@ -1831,7 +1866,7 @@ core timing now serves automatic rehearsal dwell and ordered scale, arpeggio
 and chord-approach preview articulation. Authored Card values and Manual
 semantics are preserved. Invalid or unrepresentable timing is visibly unavailable;
 current audio refusal stops the rejected Run without practice/completion credit
-and permits correction/retry. P5's full shared device/event clock remains open.
+and permits correction/retry. The full P5 clock was subsequently qualified above.
 The [qualification receipt](../validation/stage-p5a_20261016/receipt.json) binds
 source, automated checks, desktop binary, native captures and sealed reopening.
 
