@@ -282,6 +282,18 @@ impl mesquite::Product for Product {
         if let Some(stem) = label.strip_prefix("p5a-verify-") {
             return p5a_write_card_receipt(ctx, &self.shared, stem, true);
         }
+        if label == "catalog-audition-save-baseline" {
+            return catalog_audition_receipt(ctx, &self.shared, CatalogAuditionReceipt::Baseline);
+        }
+        if label == "catalog-audition-check-one" {
+            return catalog_audition_receipt(ctx, &self.shared, CatalogAuditionReceipt::OneAccepted);
+        }
+        if label == "catalog-audition-save-final" {
+            return catalog_audition_receipt(ctx, &self.shared, CatalogAuditionReceipt::SaveFinal);
+        }
+        if label == "catalog-audition-verify-final" {
+            return catalog_audition_receipt(ctx, &self.shared, CatalogAuditionReceipt::VerifyFinal);
+        }
         if label == "wav-export-fixture" || label == "wav-export-backing-fixture" {
             let Some(directory) = std::env::var_os("WOODSHED_CAPTURE_DIR") else {
                 return false;
@@ -471,6 +483,204 @@ fn p5a_write_card_receipt(
             false
         }
     }
+}
+
+#[derive(Clone, Copy)]
+enum CatalogAuditionReceipt {
+    Baseline,
+    OneAccepted,
+    SaveFinal,
+    VerifyFinal,
+}
+
+fn catalog_audition_events(
+    history: &woodshed_core::history::PracticeHistory,
+) -> Vec<woodshed_core::history::PracticeEvent> {
+    history.recent(history.len())
+}
+
+fn catalog_audition_cards(ui: &UiState) -> Result<serde_json::Value, String> {
+    serde_json::to_value(&ui.set.cards).map_err(|error| error.to_string())
+}
+
+fn valid_pattern_audition(
+    event: &woodshed_core::history::PracticeEvent,
+    subject: &str,
+    from: &str,
+    owner: woodshed_core::working_sets::WorkingSetId,
+) -> bool {
+    event.kind == woodshed_core::history::EngagementKind::Previewed
+        && event.subject_id == subject
+        && event.from_id.as_deref() == Some(from)
+        && event.provenance.as_ref().is_some_and(|provenance| {
+            provenance.working_set_id == Some(owner)
+                && serde_json::to_string(&provenance.card_snapshot)
+                    .is_ok_and(|snapshot| snapshot.contains("ScalePattern"))
+        })
+}
+
+fn catalog_audition_receipt(
+    ctx: &mut Ctx<'_>,
+    shared: &Rc<RefCell<Shared>>,
+    receipt: CatalogAuditionReceipt,
+) -> bool {
+    let fail = |reason: &str| {
+        eprintln!("Catalog audition receipt refused: {reason}");
+        false
+    };
+    let Some(directory) = std::env::var_os("WOODSHED_CAPTURE_DIR") else {
+        return fail("no isolated receipt directory");
+    };
+    let path = std::path::PathBuf::from(directory);
+    let Some(shared_storage) = shared.borrow().storage.as_ref().and_then(|storage| storage.load()) else {
+        return fail("sealed session is unreadable");
+    };
+    let persisted = match woodshed_core::storage::decode_session(&shared_storage) {
+        Ok(decoded) => decoded.session,
+        Err(error) => return fail(&format!("session decode failed: {error}")),
+    };
+    let ui = ctx.runner.state();
+    if !matches!(
+        shared.borrow().seal.as_ref(),
+        Some(woodshed_views::persona::PracticeSeal::Sealed { .. })
+    ) {
+        return fail("profile is not sealed");
+    }
+    let events = catalog_audition_events(&ui.practice_history);
+    let cards = match catalog_audition_cards(ui) {
+        Ok(cards) => cards,
+        Err(error) => return fail(&format!("live Card encoding failed: {error}")),
+    };
+    let owner = ui.working_sets.active_id;
+    let baseline_path = path.join("catalog-audition-baseline.json");
+    match receipt {
+        CatalogAuditionReceipt::Baseline => {
+            let report = serde_json::json!({
+                "owner": owner,
+                "events": events,
+                "cards": cards,
+            });
+            write_new_json(&baseline_path, &report).is_ok()
+        },
+        CatalogAuditionReceipt::OneAccepted => {
+            let Some(baseline) = std::fs::read(&baseline_path)
+                .ok()
+                .and_then(|bytes| serde_json::from_slice::<serde_json::Value>(&bytes).ok())
+            else {
+                return fail("baseline checkpoint is missing or invalid");
+            };
+            let Some(baseline_events) = baseline
+                .get("events")
+                .and_then(|value| serde_json::from_value::<Vec<woodshed_core::history::PracticeEvent>>(value.clone()).ok())
+            else {
+                return fail("baseline event history is invalid");
+            };
+            let Some(baseline_cards) = baseline.get("cards") else {
+                return fail("baseline Card snapshot is missing");
+            };
+            if baseline.get("owner") != Some(&serde_json::json!(owner))
+                || baseline_cards != &cards
+                || events.len() != baseline_events.len() + 1
+                || events.get(1..) != Some(baseline_events.as_slice())
+                || !events.first().is_some_and(|event| {
+                    valid_pattern_audition(event, "exercise:scale-thirds/v1:Major", "scale:Major", owner)
+                })
+            {
+                return fail("refused audition changed authored Cards or history, or accepted event attribution differs");
+            }
+            true
+        },
+        CatalogAuditionReceipt::SaveFinal | CatalogAuditionReceipt::VerifyFinal => {
+            let final_path = path.join("catalog-audition-final.json");
+            let reopened_path = path.join("catalog-audition-reopened.json");
+            let expected = if matches!(receipt, CatalogAuditionReceipt::VerifyFinal) {
+                let Some(expected) = std::fs::read(&final_path)
+                    .ok()
+                    .and_then(|bytes| serde_json::from_slice::<serde_json::Value>(&bytes).ok())
+                else {
+                    return fail("final checkpoint is missing or invalid");
+                };
+                Some(expected)
+            } else {
+                None
+            };
+            let baseline_events = if let Some(expected) = &expected {
+                expected.get("baseline_events")
+                    .and_then(|value| serde_json::from_value::<Vec<woodshed_core::history::PracticeEvent>>(value.clone()).ok())
+            } else {
+                std::fs::read(&baseline_path)
+                    .ok()
+                    .and_then(|bytes| serde_json::from_slice::<serde_json::Value>(&bytes).ok())
+                    .and_then(|baseline| baseline.get("events").cloned())
+                    .and_then(|value| serde_json::from_value::<Vec<woodshed_core::history::PracticeEvent>>(value).ok())
+            };
+            let Some(baseline_events) = baseline_events else {
+                return fail("baseline event history is missing or invalid");
+            };
+            if events.len() != baseline_events.len() + 2
+                || events.get(2..) != Some(baseline_events.as_slice())
+                || !events.first().is_some_and(|event| {
+                    valid_pattern_audition(event, "exercise:scale-thirds/v1:Minor", "scale:Minor", owner)
+                })
+                || !events.get(1).is_some_and(|event| {
+                    valid_pattern_audition(event, "exercise:scale-thirds/v1:Major", "scale:Major", owner)
+                })
+            {
+                return fail("accepted-only pattern history or exact source attribution differs");
+            }
+            let persisted_events = catalog_audition_events(&persisted.practice_history);
+            let persisted_cards = match serde_json::to_value(&persisted.set.cards) {
+                Ok(cards) => cards,
+                Err(error) => return fail(&format!("persisted Card encoding failed: {error}")),
+            };
+            if persisted_events != events || persisted_cards != cards {
+                return fail("live and sealed accepted history or Card data differ");
+            }
+            let report = serde_json::json!({
+                "owner": owner,
+                "cards": cards,
+                "events": events,
+                "baseline_events": baseline_events,
+                "persisted_events_match": true,
+                "output_observation_id": shared.borrow().backend.as_ref().and_then(|backend| backend.output_observation_id()),
+                "output_sample_rate": shared.borrow().backend.as_ref().and_then(|backend| backend.output_sample_rate()),
+                "preview_starts": shared.borrow().backend.as_ref().and_then(|backend| backend.output_snapshot()).map(|snapshot| snapshot.preview_starts),
+            });
+            if matches!(receipt, CatalogAuditionReceipt::SaveFinal) {
+                write_new_json(&final_path, &report).is_ok()
+            } else {
+                let expected = expected.expect("verify branch loads its checkpoint");
+                if expected.get("owner") != Some(&serde_json::json!(owner))
+                    || expected.get("cards") != Some(&cards)
+                    || expected.get("events") != report.get("events")
+                    || expected.get("baseline_events") != report.get("baseline_events")
+                {
+                    return fail("freshly reopened accepted history or source data differs");
+                }
+                let reopened = serde_json::json!({
+                    "owner": owner,
+                    "cards": cards,
+                    "events": events,
+                    "output_observation_id": shared.borrow().backend.as_ref().and_then(|backend| backend.output_observation_id()),
+                    "output_sample_rate": shared.borrow().backend.as_ref().and_then(|backend| backend.output_sample_rate()),
+                    "preview_starts": shared.borrow().backend.as_ref().and_then(|backend| backend.output_snapshot()).map(|snapshot| snapshot.preview_starts),
+                    "matches_final_checkpoint": true,
+                    "persisted_events_match": true,
+                    "persisted_cards_match": true,
+                });
+                write_new_json(&reopened_path, &reopened).is_ok()
+            }
+        },
+    }
+}
+
+fn write_new_json(path: &std::path::Path, value: &serde_json::Value) -> std::io::Result<()> {
+    use std::io::Write;
+    let mut file = std::fs::OpenOptions::new()
+        .write(true)
+        .create_new(true)
+        .open(path)?;
+    file.write_all(serde_json::to_string_pretty(value).unwrap().as_bytes())
 }
 
 pub fn drive(lane: &mut mesquite::Lane<Product>, ctx: &mut Ctx<'_>) {
@@ -1414,6 +1624,43 @@ impl Snapshot<'_, '_> {
                 output_sample_rate.map_or("none".into(), |rate| rate.to_string()),
             )
             .with_field("history-events", ui.practice_history.len().to_string())
+            .with_field("audition-notice", ui.audition_notice.clone().unwrap_or_default())
+            .with_field("audition-notice-empty", ui.audition_notice.is_none().to_string())
+            .with_field("catalog-audition-previewed", {
+                ui.practice_history
+                    .recent(ui.practice_history.len())
+                    .iter()
+                    .filter(|event| {
+                        event.kind == woodshed_core::history::EngagementKind::Previewed
+                            && event.subject_id.starts_with("exercise:scale-thirds/v1:")
+                    })
+                    .count()
+                    .to_string()
+            })
+            .with_field("catalog-audition-last-subject", {
+                ui.practice_history
+                    .recent(ui.practice_history.len())
+                    .iter()
+                    .find(|event| {
+                        event.kind == woodshed_core::history::EngagementKind::Previewed
+                            && event.subject_id.starts_with("exercise:scale-thirds/v1:")
+                    })
+                    .map_or("".into(), |event| event.subject_id.clone())
+            })
+            .with_field("catalog-audition-last-from", {
+                ui.practice_history
+                    .recent(ui.practice_history.len())
+                    .iter()
+                    .find(|event| {
+                        event.kind == woodshed_core::history::EngagementKind::Previewed
+                            && event.subject_id.starts_with("exercise:scale-thirds/v1:")
+                    })
+                    .and_then(|event| event.from_id.clone())
+                    .unwrap_or_default()
+            })
+            .with_field("catalog-audition-output-rate", {
+                output_sample_rate.map_or("none".into(), |rate| rate.to_string())
+            })
             .with_field(
                 "history-observed",
                 ui.practice_history
@@ -2412,6 +2659,44 @@ impl Automatable for Probe<'_, '_> {
                 ui.set.select_id(id);
             },
             "arrangement-editor-example" => crate::arrangement::seed_example(ui),
+            "catalog-audition-admission-example" => {
+                use woodshed_core::harmony::KeyedCatalogRef;
+                use woodshedding::pitch::PitchClass;
+                use woodshedding::rehearsal::{FretWindow, Hold, Set, Timing};
+
+                ui.stop_rehearsal();
+                ui.set = Set::default();
+                ui.stage.set_lens(Lens::Scales);
+                for (label, name, root, bpm, hold) in [
+                    ("Accepted source", "Major", 0, 120.0, Hold::Bars(1)),
+                    (
+                        "Output refusal source",
+                        "Minor",
+                        9,
+                        400.0,
+                        Hold::Seconds(1e10),
+                    ),
+                ] {
+                    let mut card = KeyedCatalogRef {
+                        formula_id: format!("scale:{name}"),
+                        root: PitchClass::new(root),
+                    }
+                    .to_card()
+                    .expect("fixture scale exists");
+                    card.label = label.into();
+                    card.setting.fret_window = Some(FretWindow { start: 0, span: 8 });
+                    card.timing = Timing {
+                        bpm: Some(bpm),
+                        hold,
+                    };
+                    ui.set.push(card);
+                }
+                ui.set.cursor = 0;
+                ui.set_tray_expanded = true;
+                ui.set_graph_card_expanded = true;
+                ui.activate_workspace_panel(woodshed_views::workspace::WorkspacePanel::Practice);
+                ui.select_app_section(woodshed_core::storage::AppSection::Stage);
+            },
             "p5a-timing-admission-example" => {
                 use woodshed_core::harmony::KeyedCatalogRef;
                 use woodshedding::pitch::PitchClass;

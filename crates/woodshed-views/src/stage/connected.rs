@@ -3,7 +3,6 @@
 //! source so an edit or removal cannot silently stage a stale preview.
 
 use cambium::{clickable, el, text};
-use woodshed_core::audio::AudioRequest;
 use woodshed_core::history::{EngagementKind, ObservationProvenance, catalog_id_for_card};
 use woodshedding::rehearsal::CardId;
 
@@ -71,23 +70,16 @@ impl UiState {
                     self.discovery_notice = Some("This realization has no sounding notes. Choose an available shape or change the note selection.".into());
                     return;
                 }
-                self.practice_history.record_observation(
-                    self.now_ms,
-                    discovery.subject.formula_id.clone(),
-                    EngagementKind::Previewed,
+                self.request_observed_preview(
+                    (pitches, duration_s, strum_s),
+                    Some(discovery.subject.formula_id.clone()),
                     catalog_id_for_card(card),
-                    None,
                     ObservationProvenance::capture_in_set(
                         &discovery.preview,
                         self.working_sets.active_id,
                     )
                     .ok(),
                 );
-                self.request(AudioRequest::PreviewPitches {
-                    pitches,
-                    duration_s,
-                    strum_s,
-                });
                 self.discovery_notice = None;
             },
             Err(reason) => self.discovery_notice = Some(reason.to_string()),
@@ -213,6 +205,7 @@ pub(super) fn panel(ui: &UiState) -> UiChild {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use woodshed_core::audio::AudioRequest;
     use woodshed_core::harmony::KeyedCatalogRef;
     use woodshedding::pitch::PitchClass;
     use woodshedding::rehearsal::Touch;
@@ -235,8 +228,28 @@ mod tests {
         assert_eq!(serde_json::to_value(&ui.set.cards).unwrap(), before);
         assert!(ui.audio_requests.is_empty());
         ui.hear_chord_arpeggio();
-        assert!(
-            matches!(ui.audio_requests.last(), Some(AudioRequest::PreviewPitches { strum_s, .. }) if *strum_s > 0.0)
+        let audition = match ui.audio_requests.last().unwrap() {
+            AudioRequest::Audition(request) => request.clone(),
+            other => panic!("unexpected audio request: {other:?}"),
+        };
+        assert!(audition.preview.2 > 0.0);
+        assert!(ui.practice_history.recent(20).iter().all(|event| {
+            event.kind != EngagementKind::Previewed
+        }));
+        ui.finish_audition_admission(&audition, Ok(()));
+        let accepted = ui
+            .practice_history
+            .recent(20)
+            .into_iter()
+            .find(|event| event.kind == EngagementKind::Previewed)
+            .unwrap();
+        assert_eq!(
+            accepted.subject_id,
+            audition.observation.as_ref().unwrap().subject_id
+        );
+        assert_eq!(
+            accepted.from_id,
+            audition.observation.as_ref().unwrap().from_id
         );
         assert_eq!(serde_json::to_value(&ui.set.cards).unwrap(), before);
         let added = ui.stage_chord_arpeggio().unwrap();
@@ -260,9 +273,10 @@ mod tests {
         assert_eq!(ui.arpeggio_source, Some(source));
         assert_eq!(ui.set.cards.len(), 1);
         ui.audition_context_focus();
-        assert!(
-            matches!(ui.audio_requests.last(), Some(AudioRequest::PreviewPitches { strum_s, .. }) if *strum_s > 0.0)
-        );
+        assert!(matches!(
+            ui.audio_requests.last(),
+            Some(AudioRequest::Audition(request)) if request.preview.2 > 0.0
+        ));
         ui.add_context_focus_to_set();
         assert_eq!(ui.set.cards.len(), 2);
         assert_eq!(ui.set.cards[1].timing.bpm, Some(83.0));
@@ -277,13 +291,13 @@ mod tests {
         ui.transport.bpm = 60.0;
         ui.hear_chord_arpeggio();
         let slow = match ui.audio_requests.pop().unwrap() {
-            AudioRequest::PreviewPitches { strum_s, .. } => strum_s,
+            AudioRequest::Audition(request) => request.preview.2,
             request => panic!("unexpected request: {request:?}"),
         };
         ui.transport.bpm = 120.0;
         ui.hear_chord_arpeggio();
         let fast = match ui.audio_requests.pop().unwrap() {
-            AudioRequest::PreviewPitches { strum_s, .. } => strum_s,
+            AudioRequest::Audition(request) => request.preview.2,
             request => panic!("unexpected request: {request:?}"),
         };
         assert!((slow - 2.0 * fast).abs() < 0.001);
@@ -309,7 +323,10 @@ mod tests {
         ui.transport.bpm = 60.0;
         ui.audition_context_focus();
         assert!(
-            matches!(ui.audio_requests.last(), Some(AudioRequest::PreviewPitches { strum_s, .. }) if *strum_s > 0.5)
+            matches!(
+                ui.audio_requests.last(),
+                Some(AudioRequest::Audition(request)) if request.preview.2 > 0.5
+            )
         );
         assert!(ui.set.cards.is_empty());
     }

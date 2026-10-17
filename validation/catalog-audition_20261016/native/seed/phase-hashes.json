@@ -1,0 +1,13 @@
+{
+  "01_accepted_major_pattern.png": "a5f7e9cefef301aef3e7617675b752d3a7363a0d11cc6854fb2451e14098ef71",
+  "02_refused_minor_pattern.png": "3b27de3cb0bcb8e9eaf917ffa53a372f2242277d7bcdcbf1cc50b4ee93746ac5",
+  "03_accepted_retry_and_history.png": "3672711e9573888455b8b58320a07a00b9d36bf0b0cc3d3f931673204f81acb0",
+  "catalog-audition-baseline.json": "1abbbcb5e2b46ff13c7e227e706fa52ecd0cf3a9bef855763af2d887ca543504",
+  "catalog-audition-final.json": "e2f682b5871fbf7f6d0035f17be0bcbfa9c017865d85d9af47b17878c6a16969",
+  "launch.json": "400dc7fde62f73d7b02b7b3183886fac188ae3fd948286bcfb16c233abedf1cb",
+  "launch.once": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "launcher.c": "44b857a4e1fb279955afdfb31b7505ff512484c91efe30f4aa55853fd12f3811",
+  "native.log": "8261c9cf48d891771b6c0f3704f4d584203e3ff65fb0c5cfcacc1e0727c96b54",
+  "native.pid": "0c22942dd2dbf8b2611392bd968f80274b34a2ee5c4db9f37ec952cf71be4a11",
+  "scenario.done": "e140ce9629ff914cc2cf6bc87169469300c844e66a67a734af3058e855a5dd21"
+}

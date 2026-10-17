@@ -138,6 +138,32 @@ impl PartialEq for CardPreviewRequest {
     }
 }
 
+/// Frozen event-time context for an audition observation. Admission does not
+/// reconstruct this from the later focus or edited Set.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct PreviewObservation {
+    pub subject_id: String,
+    pub from_id: Option<String>,
+    pub provenance: Option<crate::history::ObservationProvenance>,
+}
+
+/// One explicit audition, retained through host admission. Separate presses
+/// have separate tickets even when they request identical musical material.
+#[derive(Clone, Debug)]
+pub struct AuditionRequest {
+    pub session: std::sync::Arc<()>,
+    pub ticket: std::sync::Arc<()>,
+    pub preview: crate::card_timing::CardPreview,
+    pub observation: Option<PreviewObservation>,
+}
+impl PartialEq for AuditionRequest {
+    fn eq(&self, other: &Self) -> bool {
+        std::sync::Arc::ptr_eq(&self.session, &other.session)
+            && std::sync::Arc::ptr_eq(&self.ticket, &other.ticket)
+            && self.preview == other.preview && self.observation == other.observation
+    }
+}
+
 /// One thing the view layer asks the audio host to do, once.
 ///
 /// These are commands, not settings: continuous state (metronome transport,
@@ -154,6 +180,7 @@ impl PartialEq for CardPreviewRequest {
 /// queued command. Recording/calibration results remain host-polled.
 #[derive(Clone, Debug, PartialEq)]
 pub enum AudioRequest {
+    Audition(AuditionRequest),
     CardPreview(CardPreviewRequest),
     /// The reusable surface freezes source/epoch and positional targets until execution.
     Recorder(RecorderRequest),

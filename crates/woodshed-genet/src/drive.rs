@@ -208,20 +208,41 @@ fn refresh_rehearsal_clock(
     }
 }
 
-/// Explicit control-side Card admission; no fallback to the void audio API.
+/// Explicit control-side preview admission; no fallback to the void audio API.
 pub(crate) trait CardPreviewAdmission: AudioBackend {
     fn admit_card(&mut self, preview: &woodshed_core::card_timing::CardPreview) -> Result<(), String>;
+    fn admit_audition(&mut self, _preview: &woodshed_core::card_timing::CardPreview) -> Result<(), String> {
+        Err("This host cannot confirm audition admission.".into())
+    }
 }
 impl CardPreviewAdmission for crate::audio::CpalBackend {
     fn admit_card(&mut self, preview: &woodshed_core::card_timing::CardPreview) -> Result<(), String> {
         self.admit_card_preview(preview)
     }
+    fn admit_audition(&mut self, preview: &woodshed_core::card_timing::CardPreview) -> Result<(), String> {
+        self.admit_audition_preview(preview)
+    }
+}
+
+pub(crate) fn service_audition_request(
+    ui: &mut UiState,
+    backend: &mut impl CardPreviewAdmission,
+    request: &woodshed_core::audio::AuditionRequest,
+) {
+    if ui.audition_is_current(request) {
+        let result = backend.admit_audition(&request.preview);
+        ui.finish_audition_admission(request, result);
+    }
 }
 fn service_card_requests(ui: &mut UiState, backend: &mut impl CardPreviewAdmission) {
-    // Consume only the leading Card/cancel commands; other host requests keep
+    // Consume only the leading audition/Card/cancel commands; other requests keep
     // their ordering and remain for the ordinary dispatch tail.
     loop {
         match ui.audio_requests.first() {
+            Some(woodshed_core::audio::AudioRequest::Audition(_)) => {
+                let woodshed_core::audio::AudioRequest::Audition(request) = ui.audio_requests.remove(0) else { unreachable!() };
+                service_audition_request(ui, backend, &request);
+            },
             Some(woodshed_core::audio::AudioRequest::CardPreview(_)) => {
                 let woodshed_core::audio::AudioRequest::CardPreview(request) = ui.audio_requests.remove(0) else { unreachable!() };
                 if ui.card_preview_is_current(&request) {

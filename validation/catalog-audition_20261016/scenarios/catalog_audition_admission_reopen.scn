@@ -1,0 +1,12 @@
+# Fresh process with the same isolated sealed profile. The launcher copies only
+# catalog-audition-final.json into this process's distinct capture directory.
+settle 90
+ui-zoom 1
+assert snap practice-saved == true
+assert snap practice-save-problem == false
+assert snap set-cards == 2
+assert snap audition-notice-empty == true
+assert snap catalog-audition-previewed >= 2
+act catalog-audition-verify-final
+capture 01_exact_accepted_history_reopen
+log Catalog audition accepted-history fresh-process reopen complete

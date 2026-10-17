@@ -1819,9 +1819,9 @@ Exact audio admission preserves short durations and refuses sub-frame spacing or
 resource overflow at the actual rate. The combined affected gate passes 804
 suite/integration cases plus five separate fresh-process child checks, with seven
 existing host ignores. The final native receipt probes record exact authored
-Cards and resolved bits, runtime identity and processor starts. Discovery/catalog interest still
-records the request before host admission; this slice qualifies the bound
-selected-Card/Run history seam rather than all audition history.
+Cards and resolved bits, runtime identity and processor starts. At this original
+checkpoint discovery/catalog interest still recorded the request before host
+admission. The qualified follow-through below closes that separate history gap.
 
 **Native and reopening qualification (2026-10-16):** source `3b73f75` carries
 the feature; final Rust harness `409c93c` repeats the 180-case host gate plus
@@ -1849,6 +1849,74 @@ Very large imported Seconds values widen the Hold controls in the refusal
 captures, but their notices remain readable. Physical audibility/latency,
 broader responsive polish and the full P5 clock retain their separate gates.
 
+
+#### Catalog/discovery audition admission history (2026-10-16)
+
+**Status: implemented and qualified (2026-10-16), over refreshed `d3a1350`.**
+At baseline, catalog Hear and discovery previews recorded `Previewed` before
+the host's fallible audio admission. Requests now freeze subject, source relation
+and exact event-time Card/owner provenance with each requested sound. Only actual
+control-side acceptance records the observation, once per explicit request.
+Refusal, unavailable output and stale-session results earn no history; they
+remain visibly retryable without altering authored material.
+The [qualification receipt](../validation/catalog-audition_20261016/receipt.json)
+binds source, tests, desktop binary, reviewed captures and exact sealed reopening.
+
+Separate Hear presses are independent even within one frame. Focus, navigation
+and same-session edits cannot redirect the frozen sound or its observation.
+Replacing the practice session invalidates queued requests and results. An
+older result cannot replace the newest audition notice. Empty or malformed
+pitch vectors must not turn the runtime's generic no-op into a successful
+audition observation. Preserve the existing exact timing/resource admission,
+one OutputRuntime, Card/Run history and generic AudioBackend convenience API.
+
+Completed phases: migrated immediate history writers and catalog context
+auditions; verified frozen acceptance/refusal/duplicate/session replacement with
+focused view and actual host controls; built and exercised real native acceptance,
+refusal/retry and exact sealed history reopening; reconciled evidence for direct
+main publication after refreshing concurrent work. Ordered relation-pair
+`PreviewPhrase` history and the full shared P5 event clock stay separate.
+
+**Implementation and source checks (2026-10-16):** all immediate catalog and
+discovery `Previewed` writers now queue frozen observations. Generic context
+focus auditions also retain their formula/setup provenance. Session-bound,
+one-use tickets govern both host dispatch paths; only the newest result can
+change the audition notice. The actual Cpal path refuses empty, nonfinite or
+partially invalid pitch vectors before delegating to exact output admission.
+The affected core/view/host gate passes 676 suite/integration cases plus five
+separate child-process invocations, with seven existing host ignores. This
+includes frozen attribution, repeated presses/results, refusal/retry, current
+versus replaced sessions, and production offline output refusal preservation.
+Independent source review found no blocking defect. The locked desktop build
+passes on committed candidate `3689a77`. Two isolated native attempts exited
+before their first presented frame or scenario action (807 and 799 unpresented
+redraws; no captures). The second trace reaches rasterization and then repeatedly
+reports `surface acquire skipped: Occluded`. These attempts are excluded from
+acceptance. Both processes exited and generated Keeper fixtures retained their
+original hashes. After the maintainer made the desktop interactive, native-v3
+passed the behavioral and fresh-process history checks. Capture review prompted
+a final readable-notice change, followed by three focused view cases, the actual
+Cpal admission case and another locked desktop build, all passing.
+
+**Final native and sealed-history qualification (2026-10-16):** committed Rust
+`bd8ff18` freezes binary SHA256
+`bf07df27b300f35851e1fcd7b51c5b2121012612c19c8ee40606ba12dfb90bc3`.
+Native-v4 seed and separate reopen complete with 179 and 101 presented frames,
+three plus one nonblank captures, at default zoom and 1180×900 logical size.
+The coordinator and an independent agent reviewed all four originals. Actual
+48 kHz output admits the Major thirds preview, refuses the inherited Minor
+Seconds(1e10) preview without a new history event or processor start, then admits
+retry after the visible Hold control changes the source to Manual. The readable
+refusal names “A Minor in thirds”; source Card and pattern context remain visible.
+Processor-start assertions are exactly 1, 1, 2 on one seed runtime. Two accepted
+events, including their subject/from/time/full Card-owner provenance, match live
+and sealed storage and the separate fresh process exactly; refused output adds
+none. Authored Cards and owner also match exactly on reopening. All 202 frozen
+Rust/manifest/lock paths and the built/frozen binary match. Both app processes
+and the generated Keeper exit; its four original fixture files remain unchanged.
+Physical audibility/latency, relation-pair history, broader responsive polish,
+the full shared P5 clock and the separate preservation/input audit keep their
+own scopes.
 
 ### P6. Finish Rehearsal as the guided Set runner
 
