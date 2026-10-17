@@ -1,0 +1,15 @@
+{
+  "date": "2026-10-17",
+  "user_authorization": "Push",
+  "order": [
+    "mere",
+    "woodshed"
+  ],
+  "qualified_commits_verified_pushed": {
+    "mere": "1eba417ebdf0036fe64f3423f02fb10989a9d54f",
+    "woodshed": "b01c922b643812a167d4d40484dcd8b227891d34"
+  },
+  "consumed_mere_source": "2d95d95e9d843ed6ebb0d38f47f77444823834bb",
+  "native_woodshed_source": "6b2c6b3e48cd7c029830a0928cf1b8d1afa24fcf",
+  "note": "Qualification commits were published first; subsequent documentation-only commits record publication. Native source, suppliers and evidence are unchanged."
+}

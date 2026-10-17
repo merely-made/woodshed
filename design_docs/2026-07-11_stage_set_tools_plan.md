@@ -2383,7 +2383,8 @@ reopening and all three P2 canvas command/wheel surfaces, producing 31 captures.
 Seed, reopened and separate-reference WAVs match byte-for-byte; owner, Seconds
 clock and decoded envelope PCM remain exact with input unopened. All apps exit
 normally with status zero. The background occlusion trial is excluded.
-Publication remains pending. See the
+Published to Mere main through `1eba417eb`, then Woodshed main through
+`b01c922`. See the
 [production adoption receipt](../validation/mere-scroll-adoption_20261017/README.md).
 
 ### P8. Adaptive polish and release acceptance
