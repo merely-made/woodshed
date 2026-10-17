@@ -13,6 +13,7 @@ click .film-label Beat clock 20 BPM
 settle 2
 click .t-btn Run
 act p5clock-await-card-0
+wait 2000
 assert snap p5clock-status == playing
 assert snap p5clock-card-index == 0
 assert snap p5clock-sample-rate >= 1
@@ -32,7 +33,7 @@ wait 1000
 act p5clock-check-paused
 click .t-btn +
 settle 2
-assert snap p5a-card-bpm == 25
+assert snap p5a-card-bpm == 30
 act p5clock-check-paused-retime
 capture 02_paused_retimed_same_position
 
@@ -43,6 +44,7 @@ act p5clock-check-resumed
 assert snap p5clock-status == playing
 assert snap p5clock-card-index == 0
 act p5clock-await-card-1
+wait 2000
 assert snap p5clock-status == playing
 assert snap p5clock-card-index == 1
 assert snap p5clock-bpm == 20
@@ -53,9 +55,10 @@ act p5clock-save-seconds-point
 # is checked against measured device frames at the end of the run.
 click .t-btn +
 settle 1
-assert snap p5a-card-bpm == 25
+assert snap p5a-card-bpm == 30
 act p5clock-check-seconds-retime
 act p5clock-await-manual
+wait 2000
 assert snap p5clock-status == waiting_manual
 assert snap p5clock-card-index == 2
 assert snap p5clock-history-count == 5
@@ -68,6 +71,7 @@ capture 03_manual_waits_for_next
 # Manual has no automatic dwell. The actual visible Next control completes it.
 click .t-btn Next
 act p5clock-await-complete
+wait 2000
 assert snap p5clock-status == complete
 assert snap rehearsal-running == false
 assert snap p5clock-history-count == 6

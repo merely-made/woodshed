@@ -55,7 +55,7 @@ pub(super) fn product_act(
             &product.shared,
             "p5clock-paused.json",
             |before, now| {
-                same_position(before, now) && now.status == "paused" && now.bpm == Some(25.0)
+                same_position(before, now) && now.status == "paused" && now.bpm == Some(30.0)
             },
         )),
         "p5clock-save-resume-point" => Some(save_program_point(
@@ -87,7 +87,7 @@ pub(super) fn product_act(
                     && now.card_index == 1
                     && now.status == "playing"
                     && now.card_frames >= before.card_frames
-                    && now.bpm == Some(25.0)
+                    && now.bpm == Some(30.0)
             },
         )),
         "p5clock-save-manual-point" => Some(save_program_point(
@@ -99,9 +99,10 @@ pub(super) fn product_act(
             &product.shared,
             "p5clock-manual.json",
             |before, now| {
-                same_position(before, now)
+                same_transport_position(before, now)
                     && now.status == "waiting_manual"
                     && now.device_frame > before.device_frame
+                    && now.active_frames > before.active_frames
             },
         )),
         "p5clock-save-final" => Some(save_final(ctx, &product.shared)),
@@ -330,13 +331,16 @@ fn point(snapshot: ProgramSnapshot) -> ClockPoint {
 }
 
 fn same_position(before: &ClockPoint, now: &ClockPoint) -> bool {
+    same_transport_position(before, now) && before.active_frames == now.active_frames
+}
+
+fn same_transport_position(before: &ClockPoint, now: &ClockPoint) -> bool {
     before.epoch == now.epoch
         && before.card_index == now.card_index
         && before.card_token == now.card_token
         && before.event_token == now.event_token
         && before.beat_ticks == now.beat_ticks
         && before.card_frames == now.card_frames
-        && before.active_frames == now.active_frames
 }
 
 fn save_program_point(
