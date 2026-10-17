@@ -1,0 +1,16 @@
+{
+  "reviewer": "p1_seam",
+  "source": "3689a77",
+  "status": "no blocking source finding",
+  "findings": [
+    "Per-request Arc ticket and session pointer consumed once before history mutation",
+    "Frozen source survives same-session focus/edit/navigation; replacement session invalidates pending requests",
+    "Both normal dispatch and rehearsal service use direct admission Result; missing backend refuses",
+    "Malformed or empty pitches refuse before no-op/filter success can create history",
+    "Latest-ticket-only notices; unassigned Card0 wording corrected",
+    "Pre-first-frame notice is None and request/result path is inactive before explicit UI actions"
+  ],
+  "native": "Final v4 seed/reopen and four original captures complete; exact records in comparison.json, independent visual observations in independent-capture-review.json.",
+  "changes_by_reviewer": "Assigned caller migration only; subsequent integration and source review read-only.",
+  "final_label_review": "p1_seam reviewed bd8ff18: label is read only from the frozen Card snapshot, with Selected material fallback, assigned occurrence qualification and no unassigned Card0 suffix."
+}

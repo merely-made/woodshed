@@ -1,0 +1,6 @@
+RESULT ok
+captured 01_exact_accepted_history_reopen
+Catalog audition accepted-history fresh-process reopen complete
+capture 01_exact_accepted_history_reopen 2360x1800 digest=04ea1e79e859433c file=/Users/markik/Code/testing/woodshed/catalog-audition-20261016/native-v4/reopen/01_exact_accepted_history_reopen.png
+frames: 1 captured, 0 blank, 1 distinct digests
+presentation: 101 frames, 103 redraws, 2 unpresented redraws

@@ -1,0 +1,24 @@
+{
+  "status": "passed",
+  "scope": "Curated payload/source/phase hashes and newly added doc links; no whole-tree doc acceptance claim.",
+  "packet_payloads_verified": 41,
+  "unchanged_source_paths": 202,
+  "phase_payload_hashes_verified": true,
+  "frozen_scenarios_match": true,
+  "new_doc_links_checked": [
+    [
+      "design_docs/2026-07-11_stage_set_tools_plan.md",
+      "../validation/catalog-audition_20261016/receipt.json"
+    ],
+    [
+      "design_docs/DOC_README.md",
+      "2026-07-11_stage_set_tools_plan.md#catalogdiscovery-audition-admission-history-2026-10-16"
+    ],
+    [
+      "design_docs/DOC_README.md",
+      "../validation/catalog-audition_20261016/receipt.json"
+    ]
+  ],
+  "new_findings": [],
+  "raw_logs": "Preserved byte-for-byte. EOF blank lines, if reported by git diff --check, are retained as raw evidence."
+}

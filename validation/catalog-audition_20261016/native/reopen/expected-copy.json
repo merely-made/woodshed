@@ -1,0 +1,6 @@
+{
+  "source": "seed/catalog-audition-final.json",
+  "destination": "reopen/catalog-audition-final.json",
+  "sha256": "e2f682b5871fbf7f6d0035f17be0bcbfa9c017865d85d9af47b17878c6a16969",
+  "copied_after_seed_exit": true
+}
