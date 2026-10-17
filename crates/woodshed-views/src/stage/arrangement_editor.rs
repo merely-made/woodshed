@@ -265,39 +265,8 @@ impl Draft {
         Ok(next)
     }
 }
-/// Local musical edit semantics. Portable documents carry facts, not write authority.
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub enum SpanAction {
-    Move,
-    Start,
-    End,
-}
-impl SpanAction {
-    fn apply(self, original: Span, delta: f32, extent: u32) -> Span {
-        let end = original.start + original.length;
-        let snap = |v: f32| ((v / 4.0).round() * 4.0).clamp(0.0, extent as f32) as u32;
-        match self {
-            Self::Move => Span {
-                start: snap(original.start as f32 + delta).min(extent - original.length),
-                ..original
-            },
-            Self::Start => {
-                let start = snap(original.start as f32 + delta).min(end - 1);
-                Span {
-                    start,
-                    length: end - start,
-                }
-            },
-            Self::End => {
-                let end = snap(end as f32 + delta).max(original.start + 1);
-                Span {
-                    start: original.start,
-                    length: end - original.start,
-                }
-            },
-        }
-    }
-}
+pub use scenomise::span_edit::SpanEdit as SpanAction;
+use scenomise::span_edit::SpanEditIntent;
 #[derive(Clone, Debug)]
 struct SpanGesture {
     owner: WorkingSetId,
@@ -305,6 +274,7 @@ struct SpanGesture {
     action: SpanAction,
     original: Span,
     proposed: Span,
+    intent: SpanEditIntent,
     origin_x: f32,
     ticks_per_pixel: f32,
     size: (f32, f32),
@@ -323,10 +293,21 @@ impl Draft {
         let rest = self.rests.iter().any(|k| key == format!("rest-{k}"));
         (card || rest).then(|| self.span(key).ok()).flatten()
     }
-    fn candidate_span(&self, set: &Set, key: &str, span: Span) -> Result<Set, String> {
+    fn candidate_intent(
+        &self,
+        set: &Set,
+        intent: &SpanEditIntent,
+        reading_id: &str,
+    ) -> Result<Set, String> {
+        let mut next = self.candidate(set)?;
+        intent.validate(&saved_arrangement_scene(&next, reading_id)?.primary)?;
+        let key = intent.occurrence.as_str();
+        let span = Span {
+            start: intent.after.start,
+            length: intent.after.length,
+        };
         self.occurrence_span(key)
             .ok_or("Select a placed Card or rest to edit")?;
-        let mut next = self.candidate(set)?;
         let alignment = &mut next.progression_arrangement.as_mut().unwrap().alignment;
         if let Some(card) = alignment
             .cards
@@ -537,7 +518,11 @@ impl UiState {
             .ok_or("Start an arrangement to preview it".to_string())
             .and_then(|d| {
                 if let Some(g) = &self.arrangement_editor.gesture {
-                    d.candidate_span(&self.set, &g.key, g.proposed)
+                    d.candidate_intent(
+                        &self.set,
+                        &g.intent,
+                        &format!("woodshed/working-set/{}", g.owner.0),
+                    )
                 } else {
                     d.candidate(&self.set)
                 }
@@ -583,7 +568,11 @@ impl UiState {
         if let Some(g) = self.arrangement_editor.gesture.take() {
             if self.arrangement_gesture_current(&g) && g.proposed != g.original {
                 let d = self.arrangement_editor.drafts.get_mut(&g.owner).unwrap();
-                match d.candidate_span(&self.set, &g.key, g.proposed) {
+                match d.candidate_intent(
+                    &self.set,
+                    &g.intent,
+                    &format!("woodshed/working-set/{}", g.owner.0),
+                ) {
                     Ok(_) => d.span_fields(&g.key, g.proposed),
                     Err(e) => self.arrangement_editor.notice = Some(e),
                 }
@@ -660,12 +649,25 @@ impl UiState {
                     } else {
                         SpanAction::Move
                     };
+                    let input = self
+                        .arrangement_editor
+                        .surfaces
+                        .borrow()
+                        .document
+                        .as_ref()
+                        .unwrap()
+                        .primary
+                        .clone();
+                    let Ok(intent) = SpanEditIntent::propose(&input, &key, action, 0.0, 4) else {
+                        return;
+                    };
                     self.arrangement_editor.gesture = Some(SpanGesture {
                         owner,
                         key,
                         action,
                         original,
                         proposed: original,
+                        intent,
                         origin_x: event.local.0,
                         ticks_per_pixel,
                         size: event.size,
@@ -690,7 +692,25 @@ impl UiState {
                 g.proposed = if dx.abs() < 3.0 {
                     g.original
                 } else {
-                    g.action.apply(g.original, dx * g.ticks_per_pixel, g.extent)
+                    let Ok(span) = g.action.apply(
+                        scenomise::template::Span {
+                            start: g.original.start,
+                            length: g.original.length,
+                        },
+                        dx * g.ticks_per_pixel,
+                        g.extent,
+                        4,
+                    ) else {
+                        return;
+                    };
+                    Span {
+                        start: span.start,
+                        length: span.length,
+                    }
+                };
+                g.intent.after = scenomise::template::Span {
+                    start: g.proposed.start,
+                    length: g.proposed.length,
                 };
                 self.arrangement_editor.gesture = Some(g);
                 if event.phase == PointerPhase::Up {
@@ -730,8 +750,21 @@ impl UiState {
             {
                 return;
             }
-            let proposed = action.apply(original, beats as f32 * 4.0, extent);
-            match d.candidate_span(&self.set, &key, proposed) {
+            let reading_id = format!("woodshed/working-set/{}", self.working_sets.active_id.0);
+            let result = d
+                .candidate(&self.set)
+                .and_then(|set| saved_arrangement_scene(&set, &reading_id))
+                .and_then(|doc| {
+                    SpanEditIntent::propose(&doc.primary, &key, action, beats as f32 * 4.0, 4)
+                });
+            let Ok(intent) = result else {
+                return;
+            };
+            let proposed = Span {
+                start: intent.after.start,
+                length: intent.after.length,
+            };
+            match d.candidate_intent(&self.set, &intent, &reading_id) {
                 Ok(_) => d.span_fields(&key, proposed),
                 Err(e) => self.arrangement_editor.notice = Some(e),
             }
@@ -1308,6 +1341,40 @@ mod tests {
     }
     fn pointer(ui: &mut UiState, phase: cambium::PointerPhase, point: (f32, f32)) {
         ui.arrangement_pointer(cambium::PointerEvent::new(phase, point, (580.0, 300.0)));
+    }
+    #[test]
+    fn shared_intents_recheck_the_working_set_reading_before_native_acceptance() {
+        let mut ui = fixture();
+        ui.place_arrangement_cards_in_order();
+        ui.save_arrangement();
+        let before = value(&ui.set);
+        let owner = ui.working_sets.active_id;
+        let reading = format!("woodshed/working-set/{}", owner.0);
+        let draft = &ui.arrangement_editor.drafts[&owner];
+        let doc = saved_arrangement_scene(&draft.candidate(&ui.set).unwrap(), &reading).unwrap();
+        let intent =
+            SpanEditIntent::propose(&doc.primary, "card-2", SpanAction::Move, 4.0, 4).unwrap();
+        let accepted = draft.candidate_intent(&ui.set, &intent, &reading).unwrap();
+        assert_ne!(value(&accepted), before);
+        assert_eq!(value(&ui.set), before);
+        assert!(
+            draft
+                .candidate_intent(&ui.set, &intent, "other-set")
+                .is_err()
+        );
+        for cause in 0..6 {
+            let mut bad = intent.clone();
+            match cause {
+                0 => bad.source.id.push('x'),
+                1 => bad.revision.push('x'),
+                2 => bad.occurrence = "card-999".into(),
+                3 => bad.lane += 1,
+                4 => bad.before.start += 1,
+                _ => bad.after.length = u32::MAX,
+            }
+            assert!(draft.candidate_intent(&ui.set, &bad, &reading).is_err());
+            assert_eq!(value(&ui.set), before);
+        }
     }
     #[test]
     fn span_gestures_preview_cancel_and_commit_without_mutating_cards_or_saved_source() {
