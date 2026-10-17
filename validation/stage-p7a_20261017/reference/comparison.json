@@ -1,0 +1,16 @@
+{
+  "actual_native_worker_equals_separate_sealed_reference": true,
+  "wav_sha256": "c802d565f9e4bda9a96bdb4d8cca6cb5eb2e02c2fdab1f47845d930ca74e26d1",
+  "profile_hashes_before": {
+    "settings.json": "eb6a97f599a529fc30fddf6a78e41ae6043c2588e96ef76146dc73a6dc0a68c9",
+    "practice.bin": "bf375666053671d6aeec0eb7f405236022d9effcfc572f0fc43e56443d587f77",
+    "practice.loop-pcm/819a450bcf603706651b8e07a88df4d0/aa60d8b25e04f9d08e28a428fb20b2c9cbfc5cecd7254ed386c81d88700da50e.bin": "e41bde9fff68603edc2dc1d5fb6d2dd3106cdbd96606a45fb7784c38f511f06b"
+  },
+  "profile_hashes_after": {
+    "settings.json": "eb6a97f599a529fc30fddf6a78e41ae6043c2588e96ef76146dc73a6dc0a68c9",
+    "practice.bin": "bf375666053671d6aeec0eb7f405236022d9effcfc572f0fc43e56443d587f77",
+    "practice.loop-pcm/819a450bcf603706651b8e07a88df4d0/aa60d8b25e04f9d08e28a428fb20b2c9cbfc5cecd7254ed386c81d88700da50e.bin": "e41bde9fff68603edc2dc1d5fb6d2dd3106cdbd96606a45fb7784c38f511f06b"
+  },
+  "profile_unchanged": true,
+  "source_revision": "0fafd20a625ef915a5933678e21e43b9de48611e"
+}

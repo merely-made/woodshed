@@ -1,0 +1,20 @@
+{
+  "command": [
+    "cargo",
+    "test",
+    "--locked",
+    "--offline",
+    "-j2",
+    "-p",
+    "woodshed-core",
+    "-p",
+    "woodshed-audio",
+    "-p",
+    "woodshed-views",
+    "-p",
+    "woodshed-genet",
+    "--no-fail-fast"
+  ],
+  "exit_code": 0,
+  "finished": "2026-10-17T07:30:29.187506+00:00"
+}

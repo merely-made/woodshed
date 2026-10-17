@@ -1,0 +1,14 @@
+{
+  "command": [
+    "cargo",
+    "test",
+    "--locked",
+    "--offline",
+    "-j2",
+    "-p",
+    "woodshed-core",
+    "loop_plan"
+  ],
+  "exit_code": 101,
+  "finished": "2026-10-17T07:18:38.772445+00:00"
+}

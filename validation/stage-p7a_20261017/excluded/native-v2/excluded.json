@@ -1,0 +1,6 @@
+{
+  "reason": "Playback observation assertions ran without the required wait/settle driver step. All assertions retained; attempt RESULT fail and entirely excluded.",
+  "app_exited": true,
+  "keeper_exited": true,
+  "original_keeper_files_unchanged": true
+}

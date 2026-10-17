@@ -1,0 +1,67 @@
+# Isolated real sealed store and one native output. Capture samples are an
+# explicit synthetic fixture; no microphone or physical latency is qualified.
+settle 90
+ui-zoom 1
+assert snap practice-saved == true
+act song-cache-example
+act p7a-mixed-set-example
+settle 6
+assert snap set-cards == 3
+assert snap recorder-rows == 3
+assert snap loop-admitted-set == 1
+act p7a-checkpoint baseline
+click role:switch @aria-label=Select Card 2
+click role:button @aria-label=Play backing
+act await-selected-take-playback
+wait 1800
+settle 3
+assert snap take-playback-observed == true
+assert snap song-playing == true
+act p7a-checkpoint playing
+capture 01_mixed_phrase_playback
+click role:button @aria-label=Stop all loops
+settle 4
+act seed-selected-loop-capture
+settle 8
+assert snap loop-capture-references == 1
+assert snap output-streams == 1
+assert snap capture-input-rate == none
+act p7a-reorder
+settle 6
+act p7a-checkpoint reordered
+click role:switch @aria-label=Select Card 2
+click role:button @aria-label=Play backing
+act await-selected-take-playback
+wait 1800
+settle 3
+assert snap take-playback-observed == true
+assert snap recorder-waveforms == 1
+capture 02_capture_follows_reordered_scale
+click role:button @aria-label=Stop all loops
+settle 4
+act p7a-manual-refusal
+settle 4
+assert text Manual, Seconds and Reps are not backing durations
+act p7a-checkpoint refused
+capture 03_unready_card_keeps_loaded_backing
+act p7a-recover-bars
+settle 4
+act wav-export-fixture
+settle 8
+assert text Exported
+assert snap capture-input-rate == none
+capture 04_mixed_backing_and_capture_exported
+click .t-btn Saved backing
+settle 4
+assert snap song-bars == 4
+assert snap song-first-bpm == 240
+capture 05_exact_saved_backing_compatibility
+click .t-btn Loop this Set
+settle 6
+resize 420 1100
+settle 6
+assert snap recorder-rows == 3
+assert snap recorder-waveforms == 1
+act p7a-checkpoint final
+capture 06_compact_mixed_backing
+log P7a mixed Bars backing seed complete

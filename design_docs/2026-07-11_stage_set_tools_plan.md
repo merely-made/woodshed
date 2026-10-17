@@ -2106,8 +2106,9 @@ change. [Final merged receipt](../validation/stage-p6-merged_20261017/README.md)
 
 ### P7. Rebuild Song as Looper over Set
 
-**Status (2026-10-17): P7a mixed Bars backing in progress.** Baseline `8aba700`
-is current and clean. This bounded slice admits ordered scale/path/chord
+**Status (2026-10-17): P7a mixed Bars backing qualified on macOS.**
+Source `0fafd20a625ef915a5933678e21e43b9de48611e` follows baseline `8aba700`.
+This bounded slice admits ordered scale/path/chord
 articulation over the existing explicit Looper Bars clock. It preserves the
 old block-Chord renderer, Set/Card take identities, capture clock metadata,
 saved-backing authority, and the existing single output runtime.
@@ -2128,6 +2129,23 @@ Implementation and done-conditions:
   edits and take identity, exact one-cycle WAV/frame parity, sealed saving and
   fresh-process reopening. Keep physical audio and full P7 migration separate.
 
+
+P7a acceptance: 925 distinct cases, five separately counted child invocations,
+seven existing full-gate ignores, desktop build, and one separately invoked
+sealed-profile WAV reference probe pass. Two qualified native processes present
+228 and 124 frames across eight reviewed wide/compact captures. Actual
+Set/owner/Looper/saved backing/manifest/decoded PCM and backend admission reopen
+exactly and stopped. The Scale take stays Set 1 / Card 2 after reordering. Actual
+seed/reopen worker WAVs equal the separate sealed-profile reference byte for byte:
+160,800 mono float32 frames at 48 kHz, 3.350 seconds. All 334 frozen source paths
+bind to historical Git; apps and generated Keeper exit with its four original
+fixture files unchanged. Two failed fixture attempts are excluded and retained.
+[Receipt and verifier](../validation/stage-p7a_20261017/README.md).
+
+The compact fixed recorder dock covers part of the lower scrollable Card list;
+controls/status remain available. Full responsive acceptance stays P8. Manual,
+Seconds, Reps, eventless exercises, saved-backing migration/removal and saved-song
+PCM durability remain outside this bounded slice. Physical audio is unqualified.
 
 **October 11 slice: durable Set captures — implemented and qualified for
 bounded synthetic storage, native reopen and recovery.** Completed
@@ -2156,17 +2174,18 @@ keep their takes, failed writes cannot publish dangling references, and clear
 survives reopening. Saved-song PCM, hardware capture/drift and full P7 remain
 separate; the October 12 WAV follow-through is described below.
 
-**Current state (2026-10-12): bounded Set backing and WAV export implemented;
-P7 remains open.**
-`LoopPlan` now derives block-chord backing from explicitly owned Set Cards with
-Bars holds, instrument/tuning and an explicit quarter-note clock. Readiness
+**Current state (2026-10-17): mixed positive-Bars Set backing and WAV export
+qualified; full P7 remains open.**
+`LoopPlan` derives existing block-Chord backing and ordered Scale/Scale Pattern/
+Path/Chord articulation from explicitly owned Cards with Bars holds,
+instrument/tuning and an explicit quarter-note clock. Readiness
 names unsupported Cards rather than silently dropping or approximating them.
 The desktop preserves captures by Set/Card identity across reorder and pitch
 edits, refuses clock changes while dependent PCM exists, and refuses source
 changes during armed or active capture. Set source and clock settings persist.
 `SongDoc` remains the exact saved-backing compatibility path; its authored
-pitches, meter and duration are preserved. Full saved-song migration, mixed
-material lowering and saved-song PCM persistence remain open.
+pitches, meter and duration are preserved. Full saved-song migration, non-Bars
+material timing and saved-song PCM persistence remain open.
 Set/Card companion persistence is implemented in the October 11 slice above.
 
 The overview now routes Looper relations to the host-admitted Set owner,
@@ -2246,7 +2265,8 @@ receipts are recorded before those platforms are advertised.
   prepared before the callback under a whole-snapshot work bound. Capture
   clock metadata remains unchanged, and saved backing stays exact. The affected
   gate passes 925 distinct cases plus five child invocations, seven existing
-  ignores, and the desktop build; native/reopen qualification follows.
+  ignores, and the desktop build. Native/reopen and exact WAV qualification are
+  recorded in the P7a receipt.
 
 - **2026-10-17, P6:** Rehearsal's filmstrip directly changed `Set.cursor`, which
   the next device observation could overwrite. Selection now queues the same
@@ -4259,3 +4279,10 @@ Save writes it. Zero movement preserves an off-grid span. All non-Mere Git pins
 are preserved. [Receipt](../validation/shared-span-intents_20261017/receipt.json).
 These are native route-handler/model checks; the October 16 headed receipt is
 retained separately and is not relabelled as a new native run.
+
+
+2026-10-17 P7a acceptance: native-v3 qualifies the committed source with eight
+reviewed captures, exact sealed take reopening and three byte-identical actual/
+reference WAVs. Fixture dispatch and wait errors in native-v1/v2 remain excluded.
+The canonical receipt is `validation/stage-p7a_20261017/`; no supplier repin or
+physical-input claim is included. Full P7 and P8 retain their explicit scope.

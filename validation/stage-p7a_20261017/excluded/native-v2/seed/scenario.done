@@ -1,0 +1,18 @@
+RESULT fail
+FAIL: assert snap take-playback-observed Eq 'true': got 'false'
+captured 01_mixed_phrase_playback
+FAIL: assert snap take-playback-observed Eq 'true': got 'false'
+captured 02_capture_follows_reordered_scale
+captured 03_unready_card_keeps_loaded_backing
+captured 04_mixed_backing_and_capture_exported
+captured 05_exact_saved_backing_compatibility
+captured 06_compact_mixed_backing
+P7a mixed Bars backing seed complete
+capture 01_mixed_phrase_playback 2360x2000 digest=d6118792514d47cd file=/Users/markik/Code/testing/woodshed/stage-p7a-20261017/native-v2/seed/01_mixed_phrase_playback.png
+capture 02_capture_follows_reordered_scale 2360x2000 digest=830a6d554ce0da3c file=/Users/markik/Code/testing/woodshed/stage-p7a-20261017/native-v2/seed/02_capture_follows_reordered_scale.png
+capture 03_unready_card_keeps_loaded_backing 2360x2000 digest=413ca9f922e9ce9a file=/Users/markik/Code/testing/woodshed/stage-p7a-20261017/native-v2/seed/03_unready_card_keeps_loaded_backing.png
+capture 04_mixed_backing_and_capture_exported 2360x2000 digest=6fda871df3fe2c23 file=/Users/markik/Code/testing/woodshed/stage-p7a-20261017/native-v2/seed/04_mixed_backing_and_capture_exported.png
+capture 05_exact_saved_backing_compatibility 2360x2000 digest=3fe82606768865cd file=/Users/markik/Code/testing/woodshed/stage-p7a-20261017/native-v2/seed/05_exact_saved_backing_compatibility.png
+capture 06_compact_mixed_backing 840x2200 digest=4ec6240ce1981a48 file=/Users/markik/Code/testing/woodshed/stage-p7a-20261017/native-v2/seed/06_compact_mixed_backing.png
+frames: 6 captured, 0 blank, 6 distinct digests
+presentation: 212 frames, 213 redraws, 1 unpresented redraws

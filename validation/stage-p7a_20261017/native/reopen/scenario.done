@@ -1,0 +1,8 @@
+RESULT ok
+captured 01_exact_mixed_backing_reopened
+captured 02_compact_reopened_export
+P7a sealed Set take and WAV fresh-process reopen complete
+capture 01_exact_mixed_backing_reopened 2360x2000 digest=d823f3f17e14f3be file=/Users/markik/Code/testing/woodshed/stage-p7a-20261017/native-v3/reopen/01_exact_mixed_backing_reopened.png
+capture 02_compact_reopened_export 840x2200 digest=7795d1cc69005463 file=/Users/markik/Code/testing/woodshed/stage-p7a-20261017/native-v3/reopen/02_compact_reopened_export.png
+frames: 2 captured, 0 blank, 2 distinct digests
+presentation: 124 frames, 126 redraws, 2 unpresented redraws
