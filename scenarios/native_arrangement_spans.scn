@@ -1,0 +1,78 @@
+# Native owner-controlled edits via ordinary captured pointer/key delivery.
+settle 60
+ui-zoom 1
+assert snap practice-saved == true
+act arrangement-editor-example
+settle 6
+click .workspace-panel Arrangement
+click .arrangement-start
+click .arrangement-place-order
+click .arrangement-add-rest
+click .arrangement-field @data-arrangement-field=rest-rest-1-start
+input-text 0
+click .arrangement-field @data-arrangement-field=rest-rest-1-length
+input-text 8
+click .arrangement-save
+settle 6
+checkpoint-arrangement before
+wheel 0 -2000 px on .workspace-screen
+settle 4
+press-arrangement-span card-2 body
+settle 2
+move-arrangement-span 4
+settle 3
+assert snap arrangement-preview == true
+assert text card-2 · start 20 / length 16 ticks · drag preview
+capture 01_move_preview
+key Escape
+settle 2
+release-arrangement-span 4
+settle 3
+assert snap arrangement-preview == false
+assert snap arrangement-dirty == false
+assert text card-2 · start 16 / length 16 ticks
+checkpoint-arrangement cancelled
+press-arrangement-span card-2 body
+settle 2
+move-arrangement-span 4
+settle 2
+release-arrangement-span 4
+settle 3
+assert text card-2 · start 20 / length 16 ticks
+key ArrowRight
+settle 3
+assert text card-2 · start 24 / length 16 ticks
+press-arrangement-span card-2 start
+settle 2
+move-arrangement-span -4
+settle 2
+release-arrangement-span -4
+settle 3
+assert text card-2 · start 20 / length 20 ticks
+press-arrangement-span card-2 end
+settle 2
+move-arrangement-span 4
+settle 2
+release-arrangement-span 4
+settle 3
+assert text card-2 · start 20 / length 24 ticks
+capture 02_edges_and_keyboard
+resize 420 1100
+settle 8
+wheel 0 -2000 px on .workspace-screen
+settle 4
+press-arrangement-span rest-rest-1 body
+settle 2
+move-arrangement-span 4
+settle 3
+assert text rest-rest-1 · start 4 / length 8 ticks · drag preview
+capture 03_compact_rest_preview
+release-arrangement-span 4
+settle 3
+assert text rest-rest-1 · start 4 / length 8 ticks
+click .arrangement-save
+settle 8
+assert snap arrangement-dirty == false
+assert snap practice-saved == true
+checkpoint-arrangement saved
+capture 04_compact_saved

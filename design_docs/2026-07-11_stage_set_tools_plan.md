@@ -3902,3 +3902,20 @@ three reviewed wide/compact captures show separated title, Cards, expected
 roles and grouping labels, with a proportional fretboard. The live and actual
 sealed Set and complete portable document equal the previous saved fixture
 exactly. [Spacing receipt](../validation/native-arrangement-spacing_20261016/receipt.json).
+
+
+### Direct arrangement scene editing (2026-10-16, in progress)
+
+The next bounded native slice adds beat-snapped dragging of placed Card/rest
+occurrences and their start/end edges, keyboard equivalents, and Escape/capture-loss
+cancellation. A gesture previews against a captured draft/source revision; release
+commits only to that draft. Save keeps the existing optimistic attachment check.
+Unplaced occurrences and expected-role markers remain inspectable; moving does not
+infer a new role, reorder Cards, or change their playback instructions.
+
+Done conditions: movement and both resize edges use the shared surface transform;
+invalid/stale gestures cannot write another Set or overwrite field edits; preview,
+inspector and selection agree after commit/cancel; keyboard and native captured
+pointer routes work in wide and compact layouts; saved/reopened arrangements retain
+the edits. Keep domain edit semantics local until a second editing consumer proves
+a shared contract.
