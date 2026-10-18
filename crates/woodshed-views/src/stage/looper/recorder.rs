@@ -949,7 +949,7 @@ mod tests {
         assert_ne!(context(&ui), old, "a queued control cannot silently adopt changed audibility");
         ui.recorder_observation.capture_invalid = true;
         let display = projection(&ui);
-        assert!(display.lanes[0].label.contains("silent"));
+        assert!(display.lanes[0].name.contains("silent"));
         assert_eq!(display.transport.recording, RecordingState::Idle);
         assert!(display.transport.status.contains("no new take saved"));
         ui.recorder_observation.capture_busy = true;
