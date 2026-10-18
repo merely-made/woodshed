@@ -59,6 +59,6 @@ assert snap related-label-geometry-available == true
 assert snap related-label-count >= 3
 assert snap related-label-collisions == 0
 assert snap related-label-outside == 0
-assert snap material == Major Pentatonic
+assert snap material == A Major Pentatonic
 capture 07_related_node_navigation
 assert snap set-cards == 3
