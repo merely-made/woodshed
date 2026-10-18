@@ -1,0 +1,252 @@
+{
+  "revision": "d12201bfe80cc94345c6308c46caaebf4a9fe42e",
+  "files": [
+    {
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/annotations/annotationMusts.test",
+      "sha256": "7e93d89f1503ec62b6ea208946b9920f47c99c8fa6388b1313825d50da18b4c7",
+      "lines": 63,
+      "kind": "source",
+      "status": "complete",
+      "read_ranges": [
+        [
+          1,
+          63
+        ]
+      ],
+      "reader": "parent"
+    },
+    {
+      "path": "crates/woodshed-genet/src/sync.rs",
+      "sha256": "4845e1e76cb4d610072feb22ef8ec21d9bdaed9728b72f2c39fdcd0d450e364d",
+      "lines": 1343,
+      "bytes": 57316,
+      "kind": "source",
+      "read_ranges": [
+        [
+          1,
+          820
+        ]
+      ],
+      "status": "partial",
+      "reader": "parent"
+    },
+    {
+      "path": "crates/woodshed-genet/src/drive.rs",
+      "sha256": "b2ad68aa2396c2783c13919e8a6c90ce1e57f15bb29053458e23e12c6731bf10",
+      "lines": 485,
+      "bytes": 18371,
+      "kind": "source",
+      "read_ranges": [
+        [
+          1,
+          485
+        ]
+      ],
+      "status": "complete",
+      "reader": "parent"
+    },
+    {
+      "path": "crates/woodshed-core/src/audio.rs",
+      "sha256": "1b284ac61e9da23417cd853a04a970a7c73a3e1ac31b70f81cd1b1e33ea2f3c0",
+      "lines": 296,
+      "bytes": 12018,
+      "kind": "source",
+      "read_ranges": [
+        [
+          1,
+          296
+        ]
+      ],
+      "status": "complete",
+      "reader": "parent"
+    },
+    {
+      "path": "crates/woodshed-genet/src/session.rs",
+      "sha256": "22af13555e6615312c731fd7a5d0bb5ff94c6ec5b010e17067c2c0303709773e",
+      "lines": 1355,
+      "bytes": 60783,
+      "kind": "source",
+      "read_ranges": [
+        [
+          1,
+          250
+        ]
+      ],
+      "status": "partial",
+      "reader": "parent"
+    },
+    {
+      "path": "crates/woodshed-genet/src/storage.rs",
+      "sha256": "e23d181cb7ed3fac88b7b54f84664428589fc368ec51f1142238f7f87cbd61bc",
+      "lines": 883,
+      "bytes": 34175,
+      "kind": "source",
+      "read_ranges": [
+        [
+          1,
+          480
+        ]
+      ],
+      "status": "partial",
+      "reader": "parent"
+    },
+    {
+      "path": "crates/woodshed-core/src/storage.rs",
+      "sha256": "849dabb177f540fdf90cc0189bcaf55179c48fb31005a2a20cb854c6c3df9906",
+      "lines": 1123,
+      "bytes": 45734,
+      "kind": "source",
+      "read_ranges": [
+        [
+          1,
+          520
+        ]
+      ],
+      "status": "partial",
+      "reader": "parent"
+    },
+    {
+      "path": "crates/woodshed-genet/src/capture_persistence.rs",
+      "sha256": "0cda01ea66cb994a948b057472690d1e982ea5d20a4c82a53c5f0b5b6cae7eee",
+      "lines": 2595,
+      "bytes": 106090,
+      "kind": "source",
+      "read_ranges": [
+        [
+          1,
+          580
+        ]
+      ],
+      "status": "partial",
+      "reader": "parent"
+    },
+    {
+      "path": "crates/woodshed-genet/src/wav_export.rs",
+      "sha256": "2902020f73fcdd6623b0a590858a89344e857ae3256cdbf4c7fe6cdeef98df52",
+      "lines": 1210,
+      "bytes": 43454,
+      "kind": "source",
+      "read_ranges": [
+        [
+          1,
+          560
+        ]
+      ],
+      "status": "partial",
+      "reader": "parent"
+    },
+    {
+      "path": "crates/woodshed-genet/src/shared.rs",
+      "sha256": "ef258cff198a8bc83c3431a96392358029ee4213a4c1b2d8e8cc8460e1837f74",
+      "lines": 383,
+      "bytes": 15972,
+      "kind": "source",
+      "read_ranges": [
+        [
+          1,
+          260
+        ]
+      ],
+      "status": "partial",
+      "reader": "parent"
+    },
+    {
+      "path": "crates/woodshed-genet/src/main.rs",
+      "sha256": "e2839bc9230cf3d2a4bc775a3f23daf5c97c1fdcbc0cda3f011e84588e8c8db8",
+      "lines": 776,
+      "bytes": 31404,
+      "kind": "source",
+      "read_ranges": [
+        [
+          1,
+          260
+        ]
+      ],
+      "status": "partial",
+      "reader": "parent"
+    },
+    {
+      "path": "crates/woodshed-core/src/working_sets.rs",
+      "sha256": "6fd586639149ff8bce66089bf68962840aa170a8d6da3449358aff855918df7e",
+      "lines": 189,
+      "bytes": 6580,
+      "kind": "source",
+      "read_ranges": [
+        [
+          1,
+          189
+        ]
+      ],
+      "status": "complete",
+      "reader": "parent"
+    },
+    {
+      "path": "crates/woodshed-core/src/retained_sets.rs",
+      "sha256": "9a6f78e0c921379ceaca85652430e2862d0d1cdee6d5db8920d496d36986804b",
+      "lines": 161,
+      "bytes": 6153,
+      "kind": "source",
+      "read_ranges": [
+        [
+          1,
+          161
+        ]
+      ],
+      "status": "complete",
+      "reader": "parent"
+    },
+    {
+      "path": "crates/woodshed-views/src/stage/instances.rs",
+      "sha256": "5fbf42e70ca06ecdc68b053bfe76ab26659faaa6ef9fc4880ebf59b3b9c176c8",
+      "lines": 512,
+      "bytes": 20613,
+      "kind": "source",
+      "read_ranges": [
+        [
+          1,
+          280
+        ]
+      ],
+      "status": "partial",
+      "reader": "parent"
+    },
+    {
+      "path": "crates/woodshed-core/src/sealed_backend.rs",
+      "sha256": "717ce38cb83debe6501f02c0a5f0cd709725b93f080e9df24c5dfe23234ab432",
+      "lines": 289,
+      "bytes": 11044,
+      "kind": "source",
+      "read_ranges": [
+        [
+          1,
+          220
+        ]
+      ],
+      "status": "partial",
+      "reader": "parent"
+    },
+    {
+      "path": "crates/woodshed-genet/src/audio.rs",
+      "sha256": "af0ffd959611f82d3c1101d83902da6cacf2403e569d2e4e5cbc240d784e2c97",
+      "lines": 1867,
+      "bytes": 69442,
+      "kind": "source",
+      "read_ranges": [
+        [
+          1,
+          250
+        ],
+        [
+          400,
+          700
+        ],
+        [
+          920,
+          1170
+        ]
+      ],
+      "status": "partial",
+      "reader": "parent"
+    }
+  ]
+}

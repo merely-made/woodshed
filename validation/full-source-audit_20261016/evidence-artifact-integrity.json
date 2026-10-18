@@ -1,0 +1,218 @@
+[
+  {
+    "manifest": "design_docs/receipts/audio_foundation_20261011/integration/summary.json",
+    "existing_hashed_files": 0,
+    "mismatches": [],
+    "references_not_present_under_manifest_parent": 54
+  },
+  {
+    "manifest": "design_docs/receipts/audio_foundation_20261011/redshank-consumer/summary.json",
+    "existing_hashed_files": 29,
+    "mismatches": [],
+    "references_not_present_under_manifest_parent": 0
+  },
+  {
+    "manifest": "design_docs/receipts/audio_foundation_20261011/retention/summary.json",
+    "existing_hashed_files": 22,
+    "mismatches": [],
+    "references_not_present_under_manifest_parent": 0
+  },
+  {
+    "manifest": "validation/canonical-clock_20261016/receipt.json",
+    "existing_hashed_files": 0,
+    "mismatches": [],
+    "references_not_present_under_manifest_parent": 22
+  },
+  {
+    "manifest": "validation/canvas-p2_20261015/receipt.json",
+    "existing_hashed_files": 0,
+    "mismatches": [],
+    "references_not_present_under_manifest_parent": 8
+  },
+  {
+    "manifest": "validation/canvas-p2_20261015/refresh-receipt.json",
+    "existing_hashed_files": 0,
+    "mismatches": [],
+    "references_not_present_under_manifest_parent": 12
+  },
+  {
+    "manifest": "validation/compressed-captures_font-family_20261012/cleanup.json",
+    "existing_hashed_files": 0,
+    "mismatches": [],
+    "references_not_present_under_manifest_parent": 3
+  },
+  {
+    "manifest": "validation/compressed-captures_font-family_20261012/codec-parity.json",
+    "existing_hashed_files": 0,
+    "mismatches": [],
+    "references_not_present_under_manifest_parent": 3
+  },
+  {
+    "manifest": "validation/font-roles_20261012/checks.json",
+    "existing_hashed_files": 0,
+    "mismatches": [],
+    "references_not_present_under_manifest_parent": 8
+  },
+  {
+    "manifest": "validation/font-roles_20261012/cleanup.json",
+    "existing_hashed_files": 0,
+    "mismatches": [],
+    "references_not_present_under_manifest_parent": 3
+  },
+  {
+    "manifest": "validation/hocket-looper_20261013/receipt.json",
+    "existing_hashed_files": 7,
+    "mismatches": [],
+    "references_not_present_under_manifest_parent": 0
+  },
+  {
+    "manifest": "validation/hocket-native-project_20261016/receipt.json",
+    "existing_hashed_files": 0,
+    "mismatches": [],
+    "references_not_present_under_manifest_parent": 11
+  },
+  {
+    "manifest": "validation/hocket-native-project_20261016/verification.json",
+    "existing_hashed_files": 0,
+    "mismatches": [],
+    "references_not_present_under_manifest_parent": 3
+  },
+  {
+    "manifest": "validation/hocket-project-correlation_20261016/receipt.json",
+    "existing_hashed_files": 0,
+    "mismatches": [],
+    "references_not_present_under_manifest_parent": 5
+  },
+  {
+    "manifest": "validation/hocket-recorder_20261013/receipt.json",
+    "existing_hashed_files": 28,
+    "mismatches": [],
+    "references_not_present_under_manifest_parent": 0
+  },
+  {
+    "manifest": "validation/link-model-p3_20261016/receipt.json",
+    "existing_hashed_files": 25,
+    "mismatches": [],
+    "references_not_present_under_manifest_parent": 25
+  },
+  {
+    "manifest": "validation/link-model-p4_20261016/sha256.json",
+    "existing_hashed_files": 64,
+    "mismatches": [],
+    "references_not_present_under_manifest_parent": 0
+  },
+  {
+    "manifest": "validation/link-model-p6_20261016/sha256.json",
+    "existing_hashed_files": 31,
+    "mismatches": [],
+    "references_not_present_under_manifest_parent": 0
+  },
+  {
+    "manifest": "validation/mere-take-acceptance_20261016/receipt.json",
+    "existing_hashed_files": 0,
+    "mismatches": [],
+    "references_not_present_under_manifest_parent": 6
+  },
+  {
+    "manifest": "validation/mere-take-acceptance_20261016/retention-comparison.json",
+    "existing_hashed_files": 0,
+    "mismatches": [],
+    "references_not_present_under_manifest_parent": 1
+  },
+  {
+    "manifest": "validation/preview-worker_20261008/receipt.json",
+    "existing_hashed_files": 0,
+    "mismatches": [],
+    "references_not_present_under_manifest_parent": 6
+  },
+  {
+    "manifest": "validation/redshank-browser-a11y_20261007/artifact-manifest.json",
+    "existing_hashed_files": 36,
+    "mismatches": [],
+    "references_not_present_under_manifest_parent": 0
+  },
+  {
+    "manifest": "validation/redshank-browser-a11y_20261007/preparation.json",
+    "existing_hashed_files": 0,
+    "mismatches": [],
+    "references_not_present_under_manifest_parent": 37
+  },
+  {
+    "manifest": "validation/redshank-current-stack_20261007/artifact-manifest.json",
+    "existing_hashed_files": 45,
+    "mismatches": [],
+    "references_not_present_under_manifest_parent": 0
+  },
+  {
+    "manifest": "validation/redshank-current-stack_20261007/baseline-guard.json",
+    "existing_hashed_files": 0,
+    "mismatches": [],
+    "references_not_present_under_manifest_parent": 4
+  },
+  {
+    "manifest": "validation/saved-arrangements_20261016/evidence-manifest.json",
+    "existing_hashed_files": 23,
+    "mismatches": [],
+    "references_not_present_under_manifest_parent": 0
+  },
+  {
+    "manifest": "validation/shared-capture-seams_20261016/receipt.json",
+    "existing_hashed_files": 0,
+    "mismatches": [],
+    "references_not_present_under_manifest_parent": 8
+  },
+  {
+    "manifest": "validation/shared-capture_20261016/receipt.json",
+    "existing_hashed_files": 0,
+    "mismatches": [],
+    "references_not_present_under_manifest_parent": 4
+  },
+  {
+    "manifest": "validation/song-cache_20261008/receipt.json",
+    "existing_hashed_files": 0,
+    "mismatches": [],
+    "references_not_present_under_manifest_parent": 4
+  },
+  {
+    "manifest": "validation/stage-p4f_20261016/coordinator-review.json",
+    "existing_hashed_files": 0,
+    "mismatches": [],
+    "references_not_present_under_manifest_parent": 12
+  },
+  {
+    "manifest": "validation/stage-p4f_20261016/native/layout/completed-phase.json",
+    "existing_hashed_files": 8,
+    "mismatches": [],
+    "references_not_present_under_manifest_parent": 6
+  },
+  {
+    "manifest": "validation/stage-p4f_20261016/native/reopen/completed-phase.json",
+    "existing_hashed_files": 4,
+    "mismatches": [],
+    "references_not_present_under_manifest_parent": 6
+  },
+  {
+    "manifest": "validation/stage-p4f_20261016/native/seed/completed-phase.json",
+    "existing_hashed_files": 15,
+    "mismatches": [],
+    "references_not_present_under_manifest_parent": 6
+  },
+  {
+    "manifest": "validation/stage-p4f_20261016/receipt.json",
+    "existing_hashed_files": 0,
+    "mismatches": [],
+    "references_not_present_under_manifest_parent": 1
+  },
+  {
+    "manifest": "validation/tabard-adoption_20261008/visual/artifact-sha256.json",
+    "existing_hashed_files": 34,
+    "mismatches": [],
+    "references_not_present_under_manifest_parent": 0
+  },
+  {
+    "manifest": "validation/tabard-adoption_20261010/artifact-sha256.json",
+    "existing_hashed_files": 20,
+    "mismatches": [],
+    "references_not_present_under_manifest_parent": 0
+  }
+]

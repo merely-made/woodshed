@@ -1,0 +1,131 @@
+{
+  "audit_date": "2026-10-16",
+  "source_revision": "d12201bfe80cc94345c6308c46caaebf4a9fe42e",
+  "status": "complete collective published-source read; findings and recommendations only",
+  "read_only_product_audit": true,
+  "coverage": {
+    "assigned_files": 936,
+    "assigned_lines": 231127,
+    "additional_parent_read": {
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/annotations/annotationMusts.test",
+      "sha256": "7e93d89f1503ec62b6ea208946b9920f47c99c8fa6388b1313825d50da18b4c7",
+      "lines": 63,
+      "kind": "source",
+      "status": "complete",
+      "read_ranges": [
+        [
+          1,
+          63
+        ]
+      ],
+      "reader": "parent"
+    },
+    "combined_files": 937,
+    "combined_lines": 231190,
+    "program_source_and_tests": {
+      "files": 303,
+      "lines": 149331
+    },
+    "zero_assignment_gaps": true
+  },
+  "execution": {
+    "product_builds_run": false,
+    "product_tests_run": false,
+    "native_runs": false,
+    "physical_device_checks": false,
+    "isolated_helper_counterexamples": "parent-verification.json"
+  },
+  "local_p5a_overlay": {
+    "scope": "complete collective semantic read of all 33 frozen overlay assigned files; 34,861 lines; separate from current qualification",
+    "report": "local-overlay-report.md",
+    "publication_acceptance": false,
+    "files": 33,
+    "semantic_lines": 34861,
+    "source_coverage_gaps": 0,
+    "continuation_date": "2026-10-17",
+    "coverage_sha256": "20aef7e4401f8b2a85229b4b245e8b428e3ea38ef3a2ea1f09b407ba03f23128"
+  },
+  "reports": [
+    {
+      "path": "core-report.md",
+      "sha256": "353736e0e244d3a1c6c256d71f168bf4bf1fb856d51e1d6ba4e2c25b9835c8b9"
+    },
+    {
+      "path": "views-report.md",
+      "sha256": "05961ad48c2bcccb8e083b5c6082828fc69b7c2408ef9a099b19c5750fa31e04"
+    },
+    {
+      "path": "host-report.md",
+      "sha256": "b080ef081bbf2c7ea248e53aee95bc97947a0e3615d43713e67b7afb75985dba"
+    },
+    {
+      "path": "audio-report.md",
+      "sha256": "8b1d9bb1c0a3cfd4e391ff2a989e79523dcb50438125e92423996cf64318e555"
+    },
+    {
+      "path": "shared-report.md",
+      "sha256": "f41a813cabb309969eaa8e5974ba390d429c9a874b1cd5cbfc489e453325d4b7"
+    },
+    {
+      "path": "theory-report.md",
+      "sha256": "ebd1ae28d4b3be640dae7f4c4f784c436792a938f4bbe4501de3716c3debb000"
+    },
+    {
+      "path": "hocket-report.md",
+      "sha256": "f32b96ef6c9d9994fab391da5dfc84f1ea347df67d60adb333f1a28c8ffaef53"
+    },
+    {
+      "path": "redshank-report.md",
+      "sha256": "ae25efa8fc8ba614643800c095084a32a79c5fd267dd4e6e3a07476a0cb17e38"
+    },
+    {
+      "path": "ringdown-report.md",
+      "sha256": "d1be95fa067a48a8bbd2da92524cb4fddb572d4571c444219efd25e08b8d321d"
+    },
+    {
+      "path": "tooling-report.md",
+      "sha256": "8b99487b69e3a1a4bc55b024878a71faabc59e976aee011ce2b917f3ce31a4d9"
+    },
+    {
+      "path": "evidence-report.md",
+      "sha256": "6c7204680ed0c13f135b39e7a1f32e8ca8be06d9f0f59a89c2899dd03910a795"
+    },
+    {
+      "path": "local-overlay-report.md",
+      "sha256": "f1b2c4729acb7182097dc282b637b498f52e530d6eacc87bec5026fda8d80549"
+    }
+  ],
+  "summary": {
+    "path": "AUDIT.md",
+    "sha256": "6620bfb70dcdf6ca624ad48251460fb58c78b71713af1061dfb8114237ae0343"
+  },
+  "publication": {
+    "committed_by_audit": false,
+    "pushed_by_audit": false
+  },
+  "scope_limits": [
+    "fixed revision; excludes subsequent primary implementation edits",
+    "binary assets and all historical screenshot visual review excluded",
+    "third party dependencies inspected only as needed",
+    "historical logs and receipt JSON structurally verified separately from every-line program reads",
+    "reader range attestations plus SHA checks establish recorded coverage; do not prove absence of bugs"
+  ],
+  "ringdown_instrument_reconciliation_20261017": {
+    "status": "folded into collective remediation plan; no product work",
+    "prior_summary_sha256": "1f1093de7cf93ac0fc3e74cb4d9d54ef7a58165a1ab352d51bd2685b7ece907c",
+    "semantic_read_head": "125be57d184f46b9f878463243d5a6ed8d8df4c3",
+    "later_hash_sample_head": "b8095653f66a718ba5b39fa5b10232b549bce906",
+    "artifacts": [
+      {
+        "path": "REMEDIATION_PLAN.md",
+        "sha256": "a3499fa8bca9c977376a3b94569512d1826cde9ab361b66b2fe4c0046234e85d"
+      },
+      {
+        "path": "reconciliation-20261017.json",
+        "sha256": "f07bc42dfe4f267949cb9e535390952ecf6b6748dfc18cc138a469d4d641a68e"
+      }
+    ],
+    "published_coverage_counts_unchanged": true,
+    "original_ringdown_theory_reports_unchanged": true
+  }
+}

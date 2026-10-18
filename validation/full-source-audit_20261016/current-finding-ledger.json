@@ -1,0 +1,1445 @@
+{
+  "date": "2026-10-17",
+  "frozen_revision": "d12201bfe80cc94345c6308c46caaebf4a9fe42e",
+  "current_source_revision": "a42477297b692feb7df4d8be74fba4cb83bcaf8c",
+  "scope": "Targeted finding reconciliation; not a new complete current-tree semantic read or current-head execution",
+  "raw_index_rows": 93,
+  "mapped_raw_index_rows": 93,
+  "extra_named_observations_or_followups": [
+    "evidence:O1",
+    "local-overlay:LO-4",
+    "local-overlay:LO-5",
+    "local-overlay:LO-K1"
+  ],
+  "raw_rows_are_not_unique_production_bug_count": true,
+  "preserved_aliases": {
+    "ringdown:X1": "theory:T2",
+    "local-overlay:LO-5": "core:CORE-4"
+  },
+  "findings": [
+    {
+      "id": "audio:AUDIO-01",
+      "classification": "unchanged implementation/current reachability confirmed",
+      "package": "B3",
+      "current_observation": "Saved-bar request now passes async input reservation but still calls arm_capture(index,false). Boundary drains Arm once and starts only at matching cursor, then resets pending_len. Selected-Card pinning is a different scope.",
+      "qualification": "unassessed",
+      "alias_of": null,
+      "detail": "current/runtime.json",
+      "original_index_title": "AUDIO-01 \u2014 Preserve a saved-bar arm until playback reaches its target",
+      "original_report": "audio-report.md"
+    },
+    {
+      "id": "audio:AUDIO-02",
+      "classification": "unchanged implementation/current reachability confirmed",
+      "package": "B4",
+      "current_observation": "Changed preparation still accepts finite positive saved-chord inputs and renders/cache-publishes without a completed-sample finiteness check; imported PCM checks rate/length. New bounded phrase preparation does not close this saved-chord/imported-PCM seam.",
+      "qualification": "unassessed",
+      "alias_of": null,
+      "detail": "current/runtime.json",
+      "original_index_title": "AUDIO-02 \u2014 Use one finite-PCM admission rule before publishing live resources",
+      "original_report": "audio-report.md"
+    },
+    {
+      "id": "audio:AUDIO-03",
+      "classification": "unchanged implementation/current reachability confirmed",
+      "package": "B4",
+      "current_observation": "Primitive and Woodshed onset adapter retain frozen bytes. feed counts a partial prefix, then adds the full completed frame including that prefix again. Adapter still calls detector.feed.",
+      "qualification": "unassessed",
+      "alias_of": null,
+      "detail": "current/runtime.json",
+      "original_index_title": "AUDIO-03 \u2014 Count each input sample once in the shared onset clock",
+      "original_report": "audio-report.md"
+    },
+    {
+      "id": "audio:AUDIO-04",
+      "classification": "unchanged implementation/current reachability confirmed",
+      "package": "B4",
+      "current_observation": "Unchanged estimator rejects negative offsets while count_matches accepts either sign. Unchanged calibration session combines those results and Settings displays the count.",
+      "qualification": "unassessed",
+      "alias_of": null,
+      "detail": "current/runtime.json",
+      "original_index_title": "AUDIO-04 \u2014 Report the estimator's admitted calibration pairs",
+      "original_report": "audio-report.md"
+    },
+    {
+      "id": "audio:AUDIO-05",
+      "classification": "unchanged implementation/current reachability confirmed",
+      "package": "K1/D13",
+      "current_observation": "Legacy Looper/offline executors retain frozen bytes; Song::advance still coexists with Processor. Targeted caller search finds no product construction of Looper or Song::advance calls; render_pattern has its export wrapper and tests.",
+      "qualification": "unassessed",
+      "alias_of": null,
+      "detail": "current/runtime.json",
+      "original_index_title": "AUDIO-05 \u2014 Retire or explicitly isolate unused legacy execution algorithms",
+      "original_report": "audio-report.md"
+    },
+    {
+      "id": "audio:AUDIO-06",
+      "classification": "unchanged implementation/current reachability confirmed",
+      "package": "Q1",
+      "current_observation": "audio_ddx is byte-identical. Runtime completion/exit criterion still differs from raw zero-event criterion. No historical false pass is inferred where event counts were inspected.",
+      "qualification": "unassessed",
+      "alias_of": null,
+      "detail": "current/runtime.json",
+      "original_index_title": "AUDIO-06 \u2014 Make the hardware diagnostic's terminal result state what passed",
+      "original_report": "audio-report.md"
+    },
+    {
+      "id": "core:CORE-1",
+      "classification": "implemented; historical CPU qualified",
+      "package": "A4",
+      "current_observation": "Any recognized entries/visits/owners key commits to current decoding. Legacy FlatLog requires events. Decode errors flow through session restore to refused writes instead of empty-history adoption.",
+      "qualification": [
+        "CPU16/CPU17 root. history.rs unchanged from both tested hashes. storage.rs now differs only by seconds: None in a test capture fixture versus the hash-verified CPU16 source.",
+        "Native quarantine input is syntactically invalid JSON (logs say expected value at line 1 column 1); it does not qualify the malformed-current-history discriminator fixture."
+      ],
+      "limits": [
+        "Exact malformed-current history native/reopen case absent; no current-head execution."
+      ],
+      "detail": "current/safety.json",
+      "original_index_title": "CORE-1 \u2014 P2: malformed current history can be accepted as an empty legacy history",
+      "original_report": "core-report.md"
+    },
+    {
+      "id": "core:CORE-2",
+      "classification": "implemented via consumer guard; historical CPU qualified",
+      "package": "A4",
+      "current_observation": "Consumer validates snapshot bounds, duplicate identities/keys, reciprocal links, iterative visit/owner acyclicity, ownership and visit counts before trusted Lineage::from_snapshot. Real session caller quarantines returned errors.",
+      "qualification": [
+        "CPU16/CPU17 root; guard file byte-identical. Historical integration records supplier-invariant peer review."
+      ],
+      "limits": [
+        "Supplier-owned fallible reconstruction API remains future consolidation; current code still calls trusted from_snapshot after local validation. Supplier has since repinned (locks differ); no new supplier/runtime validation was performed here.",
+        "No malformed-index/cycle native fixture in the bounded quarantine receipt."
+      ],
+      "detail": "current/safety.json",
+      "original_index_title": "CORE-2 \u2014 P2: a typed but invalid history reference can panic before session quarantine",
+      "original_report": "core-report.md"
+    },
+    {
+      "id": "core:CORE-3",
+      "classification": "unchanged implementation/current reachability confirmed",
+      "package": "D7",
+      "current_observation": "Related ranking still consumes practice with stated origin. Staging carries origin, but managed open_practice_history, legacy admission and completion still pass None. New clock lifecycle does not connect this producer to that consumer.",
+      "qualification": "unassessed",
+      "alias_of": null,
+      "detail": "current/runtime.json",
+      "original_index_title": "CORE-3 \u2014 P2: practice-based Related promotion has no normal UI producer",
+      "original_report": "core-report.md"
+    },
+    {
+      "id": "core:CORE-4",
+      "classification": "unchanged implementation/current reachability confirmed",
+      "package": "B1",
+      "current_observation": "Saved Path setup is retained, but generic dots/audio and new managed Path lowering still build from self.tuning and live string/fret limits. Capturing a running Stage does not restore the saved Path setup. LO-5 corroborates this defect.",
+      "qualification": "unassessed",
+      "alias_of": null,
+      "detail": "current/runtime.json",
+      "original_index_title": "CORE-4 \u2014 P2: saved drawn Paths are retuned by the live exploration setup",
+      "original_report": "core-report.md"
+    },
+    {
+      "id": "core:CORE-5",
+      "classification": "unchanged implementation/current reachability confirmed",
+      "package": "B2",
+      "current_observation": "Byte-identical SongBar::toggle_silent clears formula_name then substitutes Major and revoices. Current Looper control still calls it.",
+      "qualification": "unassessed",
+      "alias_of": null,
+      "detail": "current/runtime.json",
+      "original_index_title": "CORE-5 \u2014 P2: the saved-song silent toggle replaces the authored chord with Major",
+      "original_report": "core-report.md"
+    },
+    {
+      "id": "core:CORE-6",
+      "classification": "unchanged implementation/current reachability confirmed",
+      "package": "B1",
+      "current_observation": "Nonempty Solo matching no dot still falls back to card_voicing in generic Hear. Shape editing and retained recipe paths remain. Managed clock now has additional contact/preview agreement refusal; that does not remove the generic fallback.",
+      "qualification": "unassessed",
+      "alias_of": null,
+      "detail": "current/runtime.json",
+      "original_index_title": "CORE-6 \u2014 P2: stale nonempty Solo marks fall back to sounding the complete chord",
+      "original_report": "core-report.md"
+    },
+    {
+      "id": "core:CORE-7",
+      "classification": "unchanged implementation/current reachability confirmed",
+      "package": "C3",
+      "current_observation": "stage_scene and pitch_motion_reading are byte-identical to d122. Context offsets and staged subject_position still differ; sequential identity/scoring policy remains disconnected.",
+      "qualification": "unassessed",
+      "alias_of": null,
+      "detail": "current/runtime.json",
+      "original_index_title": "CORE-7 \u2014 P2: Pitch motion has two placement policies for the same sequential material",
+      "original_report": "core-report.md"
+    },
+    {
+      "id": "core:CORE-8",
+      "classification": "unchanged implementation/current reachability confirmed",
+      "package": "C3",
+      "current_observation": "Unchanged scene still supplies explicit Context. Current Some(source) arm uses only set_graph_relation_visible; reading-specific context_relation_visible is confined to None.",
+      "qualification": "unassessed",
+      "alias_of": null,
+      "detail": "current/runtime.json",
+      "original_index_title": "CORE-8 \u2014 P2: explicit Context metadata bypasses the reading's edge-disclosure policy",
+      "original_report": "core-report.md"
+    },
+    {
+      "id": "core:CORE-C1",
+      "classification": "unchanged implementation/current reachability confirmed",
+      "package": "D10",
+      "current_observation": "Byte-identical stage_context and stage_scene retain repeated keyed relation derivation, incidental shared_tones weighting and competing endpoint identity construction. Still a consolidation candidate.",
+      "qualification": "unassessed",
+      "alias_of": null,
+      "detail": "current/runtime.json",
+      "original_index_title": "CORE-C1 \u2014 P3 candidate: keyed relation derivation is repeated in the builder and scene adapter",
+      "original_report": "core-report.md"
+    },
+    {
+      "id": "core:CORE-C2",
+      "classification": "unchanged implementation/current reachability confirmed",
+      "package": "K1/D13",
+      "current_observation": "Byte-identical snapshot reasons() ignores captured inventory and recomputes supplied Set facts. Current targeted snapshot caller search finds tests, while production uses detail/source accessors.",
+      "qualification": "unassessed",
+      "alias_of": null,
+      "detail": "current/runtime.json",
+      "original_index_title": "CORE-C2 \u2014 P3 candidate: `StageGraphSnapshot::reasons()` recomputes live Set facts and ignores its snapshot",
+      "original_report": "core-report.md"
+    },
+    {
+      "id": "evidence:E1",
+      "classification": "original acceptance implementations unchanged; misleading-success risk remains",
+      "package": "Q1",
+      "current_observation": "Current writer and font verifier are byte-identical to frozen findings. Existing isolated counterexamples retained. New feature check wrappers record actual exits, but do not repair these old operational helpers. No historical run reclassified as failed.",
+      "qualification": "targeted current source/metadata comparison; historical receipts retain original inputs",
+      "detail": "current/evidence-tooling-current.json",
+      "original_index_title": "Finding E1 \u2014 P2: Passing test summaries can turn a failed Cargo run into a passing receipt",
+      "original_report": "evidence-report.md"
+    },
+    {
+      "id": "evidence:E2",
+      "classification": "original helper unchanged; baseline-target regression risk remains",
+      "package": "Q1",
+      "current_observation": "Current helper still reads historical referrers and current target bytes. Byte-identical to frozen input; prior isolated deleted-heading counterexample retained.",
+      "qualification": "targeted current source/metadata comparison; historical receipts retain original inputs",
+      "detail": "current/evidence-tooling-current.json",
+      "original_index_title": "Finding E2 \u2014 P2: The link-regression audit reads current targets for the historical baseline",
+      "original_report": "evidence-report.md"
+    },
+    {
+      "id": "evidence:O1",
+      "classification": "source cohort alignment corrected; current instrument execution not requalified here",
+      "package": "Q5",
+      "current_observation": "Current four-root metadata uses one Mere d1a200b18, Genet917f88e and Netrendere8cda source each. Earlier production-scroll receipt executed eleven recipe cases on Mere2d95d95e. New label task updates locks and metadata; no new recipe runtime claim.",
+      "qualification": "targeted current source/metadata comparison; historical receipts retain original inputs",
+      "detail": "current/evidence-tooling-current.json"
+    },
+    {
+      "id": "hocket:H1",
+      "classification": "implemented host refusal/defer policy; historical CPU/build only",
+      "package": "A2",
+      "current_observation": "Accept enters preservation. Open checks live capture at dispatch and again through matching completion/preservation. resolve_preservation refuses active capture and pending I/O even for Discard, preserving the stop token and staged incoming payload.",
+      "qualification": [
+        "CPU16/CPU17 Hocket 90 passing/2 ignored, plus CPU17 desktop build. Relevant state/main/test source hashes match current. Free-capture tests use fake device execution with real recorder services."
+      ],
+      "limits": [
+        "Shared Recorder::replace_project still clears the ticket if directly called during recording; fix is the Woodshed-family Hocket host admission policy, not a generic replacement-during-capture retirement handshake.",
+        "No Hocket native, physical capture, or current-head integrated qualification."
+      ],
+      "detail": "current/safety.json",
+      "original_index_title": "H1 \u2014 P1: project replacement can orphan an ongoing free capture indefinitely",
+      "original_report": "hocket-report.md"
+    },
+    {
+      "id": "hocket:H2",
+      "classification": "implemented; historical CPU/build only",
+      "package": "A2",
+      "current_observation": "Native/dispatch/frame exit hooks enter product close admission, appearance cancellation retains the window, revision-bound approval waits for capture/I/O and dirty-project resolution; update restart re-enters this path. Failed/canceled Save retains the pending decision.",
+      "qualification": [
+        "CPU16/CPU17 Hocket; CPU17 desktop build. Mounted production-hook assertions are CPU tests."
+      ],
+      "limits": [
+        "No actual Hocket OS-close, Save-dialog, restart or fresh-process native receipt from this work."
+      ],
+      "detail": "current/safety.json",
+      "original_index_title": "H2 \u2014 P1: native close has appearance-save protection but drops unsaved recorder projects",
+      "original_report": "hocket-report.md"
+    },
+    {
+      "id": "hocket:H3",
+      "classification": "unresolved; persona binding still open",
+      "package": "A3 confirmation only",
+      "current_observation": "Offer stages cached family profile and losing token. Confirmation takes _staged but ignores it. join_family reconnects via CustodyIdentity::connect, writes the cached profile with the returned master key, and displays the cached profile. No target-profile/key equality or renewed consent check is present.",
+      "qualification": [
+        "Preservation plan explicitly leaves H3 separate; current state.rs is identical to CPU16/CPU17, so passing those suites cannot establish a binding fix."
+      ],
+      "limits": [
+        "Bind shown profile and key to actual accepted identity or re-offer on change; add change-between-offer-and-confirmation and persisted-consent/reopen evidence before closure. No fix authorized here."
+      ],
+      "detail": "current/safety.json",
+      "original_index_title": "H3 \u2014 P1: persona confirmation can switch to a different family identity than the one shown",
+      "original_report": "hocket-report.md"
+    },
+    {
+      "id": "hocket:H4",
+      "classification": "implemented; historical CPU/build only",
+      "package": "A2",
+      "current_observation": "saved_revision compares complete session/history plus append-only content-addressed media count and missing-media facts. Save acknowledges the submitted snapshot, so concurrent edits or same-head imported branches/media remain dirty.",
+      "qualification": [
+        "CPU16/CPU17 Hocket; same-head retained branch/media import regression asserts dirty and close refusal. Current state and regression files match recorded source hashes."
+      ],
+      "limits": [
+        "Specific off-head import test stops at in-memory dirty/close assertions; it is not a native save/reopen/full-bundle comparison.",
+        "No current-head pass and no Hocket native/reopen gate."
+      ],
+      "detail": "current/safety.json",
+      "original_index_title": "H4 \u2014 P2: the saved-head marker misses imported retained branches and media",
+      "original_report": "hocket-report.md"
+    },
+    {
+      "id": "hocket:H5",
+      "classification": "unresolved",
+      "package": "A2",
+      "current_observation": "Same-session acceptance imports media into a cloned store but replaces the recorder with self.recorder.missing_media.clone(). Recorder directly installs that set. Missing facts are not recomputed after imported blobs become available.",
+      "qualification": [
+        "Plan explicitly excludes missing-media presentation (H5); Hocket passing suite/build is not evidence of this defect being fixed. Current host implementation is identical to both CPU receipt hashes."
+      ],
+      "limits": [
+        "Recompute missing-media facts after successful same-session import and qualify the missing-then-restored-media case before closing H5. No fix authorized in this reconciliation."
+      ],
+      "detail": "current/safety.json",
+      "original_index_title": "H5 \u2014 P2: restored media still appears missing after same-session acceptance",
+      "original_report": "hocket-report.md"
+    },
+    {
+      "id": "hocket:H6",
+      "classification": "unchanged_finding_mechanism",
+      "package": "D8",
+      "current_observation": "Persisted channel/cadence have no execution effect",
+      "qualification": {
+        "focused_regression": "unassessed",
+        "integration_build": "unassessed",
+        "native": "unassessed",
+        "fresh_process": "unassessed",
+        "physical_device": "unassessed",
+        "publication": "unassessed"
+      },
+      "canonical_id": "hocket:H6",
+      "limits": "Policy checks work; provider adoption is incomplete, not the whole updater.",
+      "detail": "current/ports.json",
+      "original_index_title": "H6 \u2014 P2: update channel and check cadence are persisted controls with no execution effect",
+      "original_report": "hocket-report.md"
+    },
+    {
+      "id": "hocket:H7",
+      "classification": "unchanged_finding_mechanism",
+      "package": "B11 / D8",
+      "current_observation": "Apply re-resolves feed instead of consuming staged offer",
+      "qualification": {
+        "focused_regression": "unassessed",
+        "integration_build": "unassessed",
+        "native": "unassessed",
+        "fresh_process": "unassessed",
+        "physical_device": "unassessed",
+        "publication": "unassessed"
+      },
+      "canonical_id": "hocket:H7",
+      "limits": "Selectable A/B adapter; no arbitrary unverified-bytes install claim.",
+      "detail": "current/ports.json",
+      "original_index_title": "H7 \u2014 P2: the Velopack adapter re-resolves the feed instead of applying the staged offer",
+      "original_report": "hocket-report.md"
+    },
+    {
+      "id": "hocket:H8",
+      "classification": "unchanged_finding_mechanism",
+      "package": "B11",
+      "current_observation": "Handoff hashes, clones and serializes media on frame thread",
+      "qualification": {
+        "focused_regression": "unassessed",
+        "integration_build": "unassessed",
+        "native": "unassessed",
+        "fresh_process": "unassessed",
+        "physical_device": "unassessed",
+        "publication": "unassessed"
+      },
+      "canonical_id": "hocket:H8",
+      "limits": "New bundle validation does not move bulk preparation off frame thread. No latency/peak-memory measurement.",
+      "detail": "current/ports.json",
+      "original_index_title": "H8 \u2014 P2: handoff preparation performs a full media serialization on the frame-owning thread",
+      "original_report": "hocket-report.md"
+    },
+    {
+      "id": "host:H1",
+      "classification": "implemented; historical CPU and bounded Woodshed native/reopen qualified",
+      "package": "A1",
+      "current_observation": "Persona replacement calls the same preserve_request used by close, retains blocked/preparing work, distinguishes Retry/Cancel/Discard, waits for finishing WAV export, and rejects Pending incoming custody before outgoing reset. after_wake resumes the pending switch. Explicit discard is the caller-owned bypass.",
+      "qualification": [
+        "CPU16 root and CPU17 root; persona test file and persona.rs match CPU17 hashes.",
+        "N-persona/ N-persona-reopen at cec221348154fc8e6abe3f6136f00b14f9860b78; N-close/ N-quarantine-reopen at d955f5dc3b99ec1efd6ec9a56dd3ba007755409e. Only corrupt-input quarantine, three authored Cards, Retry/Cancel/explicit Discard, original bytes and fresh quarantine reopen."
+      ],
+      "limits": [
+        "Current capture_persistence.rs/main.rs and dependencies differ from both native inputs; no a424772 native acceptance.",
+        "Held codec worker, failed incoming custody and capture replacement are CPU-only. Combined codec-worker wake to persona installation has no scoped native proof."
+      ],
+      "detail": "current/safety.json",
+      "original_index_title": "H1 \u2014 P1: Persona replacement independently decides to discard outgoing work",
+      "original_report": "host-report.md"
+    },
+    {
+      "id": "host:H10",
+      "classification": "unchanged implementation/current reachability confirmed",
+      "package": "K1/D13",
+      "current_observation": "Three legacy variants and sync arms remain; targeted crates/ports search finds no view producers. Active Recorder carries frozen authority. Busy guards advanced, so every old weaker-arm behavior is not carried forward.",
+      "qualification": "unassessed",
+      "alias_of": null,
+      "detail": "current/runtime.json",
+      "original_index_title": "H10 \u2014 P3: Dormant capture commands preserve a weaker parallel executor",
+      "original_report": "host-report.md"
+    },
+    {
+      "id": "host:H11",
+      "classification": "unchanged implementation/current reachability confirmed",
+      "package": "K2",
+      "current_observation": "awaiting_commit remains written and only read by combined is_busy; targeted combined-reader references are test-only. Production preservation reads worker/preparation and SessionStore facts.",
+      "qualification": "unassessed",
+      "alias_of": null,
+      "detail": "current/runtime.json",
+      "original_index_title": "H11 \u2014 P3: Capture busy status has a test-only second definition",
+      "original_report": "host-report.md"
+    },
+    {
+      "id": "host:H2",
+      "classification": "unchanged implementation/current reachability confirmed",
+      "package": "D1",
+      "current_observation": "open_store_as still uses FsBackend::new per identity. Preservation/reset improvements do not create independent mutable persona slots. Wrong-key quarantine remains protective.",
+      "qualification": "unassessed",
+      "alias_of": null,
+      "detail": "current/runtime.json",
+      "original_index_title": "H2 \u2014 P2, acknowledged open gap: Persona keys share singleton mutable files",
+      "original_report": "host-report.md"
+    },
+    {
+      "id": "host:H3",
+      "classification": "unchanged implementation/current reachability confirmed",
+      "package": "C1",
+      "current_observation": "leaves.rs adds fretboard clock projection, but Related/Set relation signatures still omit marks/strength while hashing ID/visibility/emphasis/route.",
+      "qualification": "unassessed",
+      "alias_of": null,
+      "detail": "current/runtime.json",
+      "original_index_title": "H3 \u2014 P2: Native graph caching drops part of the shared paint contract",
+      "original_report": "host-report.md"
+    },
+    {
+      "id": "host:H4",
+      "classification": "unchanged implementation/current reachability confirmed",
+      "package": "C1",
+      "current_observation": "New arrangement-field support does not register personal-reason note or retained-Set name. Ordinary registry remains Search/CardRename/RelationshipLabel. Ordinary key insertion is not claimed broken.",
+      "qualification": "unassessed",
+      "alias_of": null,
+      "detail": "current/runtime.json",
+      "original_index_title": "H4 \u2014 P2: Two editable fields never enter the native text seam",
+      "original_report": "host-report.md"
+    },
+    {
+      "id": "host:H5",
+      "classification": "implemented; historical CPU qualified",
+      "package": "A1",
+      "current_observation": "reset_for_persona carries event_clock and practice_clock_managed across UiState replacement; current persona.rs is byte-identical to CPU17 and both historical native source manifests.",
+      "qualification": [
+        "CPU16 reset/event-clock regression; CPU17 combined reset regression. Native receipts exercise reset but do not assert event timestamps after long idle."
+      ],
+      "limits": [
+        "No current-head test run; no long-idle/event-timestamp native assertion in these receipts."
+      ],
+      "detail": "current/safety.json",
+      "original_index_title": "H5 \u2014 P2: Persona reset drops process-owned event-time injection",
+      "original_report": "host-report.md"
+    },
+    {
+      "id": "host:H6",
+      "classification": "unchanged implementation/current reachability confirmed",
+      "package": "B6",
+      "current_observation": "reset_for_persona preserves clock/appearance but replaces UiState without retaining MIDI inventory or requesting rescan. midi_devices rescans only on refresh_requested.",
+      "qualification": "unassessed",
+      "alias_of": null,
+      "detail": "current/runtime.json",
+      "original_index_title": "H6 \u2014 P2: Persona reset loses device inventory without the promised refill",
+      "original_report": "host-report.md"
+    },
+    {
+      "id": "host:H7",
+      "classification": "unchanged implementation/current reachability confirmed",
+      "package": "B6",
+      "current_observation": "Rescan replaces lists without rebinding positional dropdown selection to prior desired port identity.",
+      "qualification": "unassessed",
+      "alias_of": null,
+      "detail": "current/runtime.json",
+      "original_index_title": "H7 \u2014 P2: MIDI discovery changes reinterpret the user's selected index",
+      "original_report": "host-report.md"
+    },
+    {
+      "id": "host:H8",
+      "classification": "unchanged implementation/current reachability confirmed",
+      "package": "B6",
+      "current_observation": "Byte-identical MIDI host publishes requested output name before worker open, suppresses connection errors via .ok and has no accepted-status result channel. sync reflects it as connected.",
+      "qualification": "unassessed",
+      "alias_of": null,
+      "detail": "current/runtime.json",
+      "original_index_title": "H8 \u2014 P2: Requested MIDI output is reported as accepted despite worker failure",
+      "original_report": "host-report.md"
+    },
+    {
+      "id": "host:H9",
+      "classification": "unchanged implementation/current reachability confirmed",
+      "package": "B6",
+      "current_observation": "Unchanged worker replaces connection without old Stop/new Start while last_transport survives.",
+      "qualification": "unassessed",
+      "alias_of": null,
+      "detail": "current/runtime.json",
+      "original_index_title": "H9 \u2014 P2: MIDI transport state survives replacement of the connection it belongs to",
+      "original_report": "host-report.md"
+    },
+    {
+      "id": "local-overlay:LO-1",
+      "classification": "source replacement observed",
+      "package": "P5a/P5 verification",
+      "current_observation": "bound_card_preview checks underlying scale/approach/shape and unmarked availability. Empty admitted preview performs fallible output.cancel_preview. Managed lowering also carries unavailable/refusal. Frozen empty-success trigger has replacement source.",
+      "qualification": "unassessed",
+      "alias_of": null,
+      "detail": "current/runtime.json",
+      "original_index_title": "LO-1 \u2014 P2 \u2014 Do not admit an unavailable realization as intentional silence",
+      "original_report": "local-overlay-report.md"
+    },
+    {
+      "id": "local-overlay:LO-2",
+      "classification": "source replacement observed",
+      "package": "P5a/P5 fixture verification",
+      "current_observation": "Inspected connected clock fixture now toggles Run before acknowledgement; request assertion precedes drain. rehearsal_dwell is cfg(test); production frame uses sync_practice_clock. Not all fixture bodies are requalified.",
+      "qualification": "unassessed",
+      "alias_of": null,
+      "detail": "current/runtime.json",
+      "original_index_title": "LO-2 \u2014 P2 \u2014 Finish the admission-fixture migration before trusting affected gates",
+      "original_report": "local-overlay-report.md"
+    },
+    {
+      "id": "local-overlay:LO-3",
+      "classification": "source replacement observed",
+      "package": "Catalog audition; D7 for wider semantics",
+      "current_observation": "Inspected catalog/discovery sites queue request_observed_preview. One-use session ticket acknowledgement returns on error before Previewed write. Host uses operation result and refuses no-output.",
+      "qualification": "unassessed",
+      "alias_of": null,
+      "detail": "current/runtime.json",
+      "original_index_title": "LO-3 \u2014 P2 \u2014 Discovery/catalog history still credits requests before fallible admission",
+      "original_report": "local-overlay-report.md"
+    },
+    {
+      "id": "local-overlay:LO-4",
+      "classification": "source replacement observed",
+      "package": "P5 managed timing; residual Walk Hear",
+      "current_observation": "Managed lowering emits sequential events with Beats/Seconds even onsets; production uses sync_practice_clock and legacy dwell is test-only. Generic Path/Walk Hear still uses fixed 130ms voicing_shape; arpeggiate_preview transforms only Arpeggiate. Frozen dwell-truncation trigger cannot be carried forward wholesale.",
+      "qualification": "unassessed",
+      "alias_of": null,
+      "detail": "current/runtime.json"
+    },
+    {
+      "id": "local-overlay:LO-5",
+      "classification": "unchanged implementation/current reachability confirmed",
+      "package": "B1",
+      "current_observation": "Same retained Path setup gap as CORE-4; managed Path also uses live tuning. Count once.",
+      "qualification": "unassessed",
+      "alias_of": "core:CORE-4",
+      "detail": "current/runtime.json"
+    },
+    {
+      "id": "local-overlay:LO-K1",
+      "classification": "source replacement observed",
+      "package": "P5a fixture verification",
+      "current_observation": "Former undefined pitches assertion now uses request.preview.0. Frozen compiler blocker is historical.",
+      "qualification": "unassessed",
+      "alias_of": null,
+      "detail": "current/runtime.json"
+    },
+    {
+      "id": "redshank:R01",
+      "classification": "implemented; historical CPU/build only",
+      "package": "A5",
+      "current_observation": "Storage differentiates empty inventory from exhausted invalid generations, propagates restore I/O errors, permits readable older fallback, and refuses publication/pruning unless load succeeds. Failed desktop restore starts an in-memory model with no save worker/sender, latched recovery error, blocked flush and ignored save acknowledgements.",
+      "qualification": [
+        "CPU16/CPU17 Redshank: 80 desktop + 15 storage, no ignores; CPU17 desktop build. Both product files match both receipts. Invalid-generation and I/O fixtures check original bytes and inventory; valid older fallback tested separately."
+      ],
+      "limits": [
+        "No Redshank native/reopen acceptance. Recovery/reset interaction remains a separate product decision; current safe policy is nonwriting until repair and reopen. Dependency lock differs from receipts."
+      ],
+      "detail": "current/safety.json",
+      "original_index_title": "R01 \u2014 Preserve existing state when restoration cannot establish a model [P1]",
+      "original_report": "redshank-report.md"
+    },
+    {
+      "id": "redshank:R02",
+      "classification": "unchanged_finding_mechanism",
+      "package": "B8",
+      "current_observation": "Preview output can ignore listener mute",
+      "qualification": {
+        "focused_regression": "unassessed",
+        "integration_build": "unassessed",
+        "native": "unassessed",
+        "fresh_process": "unassessed",
+        "physical_device": "unassessed",
+        "publication": "unassessed"
+      },
+      "canonical_id": "redshank:R02",
+      "limits": "Separate preview controller is legitimate; desired output gain should be shared.",
+      "detail": "current/ports.json",
+      "original_index_title": "R02 \u2014 Put desired output gain in the shared output owner [P2]",
+      "original_report": "redshank-report.md"
+    },
+    {
+      "id": "redshank:R03",
+      "classification": "unchanged_finding_mechanism",
+      "package": "B8",
+      "current_observation": "Worker recreation resets effective controls but retains published values",
+      "qualification": {
+        "focused_regression": "unassessed",
+        "integration_build": "unassessed",
+        "native": "unassessed",
+        "fresh_process": "unassessed",
+        "physical_device": "unassessed",
+        "publication": "unassessed"
+      },
+      "canonical_id": "redshank:R03",
+      "limits": "Nondefault rate/gain/duck recovery not qualified.",
+      "detail": "current/ports.json",
+      "original_index_title": "R03 \u2014 Restore accepted controls when recreating a worker session [P2]",
+      "original_report": "redshank-report.md"
+    },
+    {
+      "id": "redshank:R04",
+      "classification": "unchanged_finding_mechanism",
+      "package": "B10",
+      "current_observation": "Native idle predicate omits alignment/export jobs",
+      "qualification": {
+        "focused_regression": "unassessed",
+        "integration_build": "unassessed",
+        "native": "unassessed",
+        "fresh_process": "unassessed",
+        "physical_device": "unassessed",
+        "publication": "unassessed"
+      },
+      "canonical_id": "redshank:R04",
+      "limits": "Current predicate reread; scenario waits do not prove idle native completion.",
+      "detail": "current/ports.json",
+      "original_index_title": "R04 \u2014 Use one pending-job inventory for native scheduling and scripted waits [P2]",
+      "original_report": "redshank-report.md"
+    },
+    {
+      "id": "redshank:R05",
+      "classification": "unchanged_finding_mechanism",
+      "package": "B9",
+      "current_observation": "Dock projection removes pointer release target",
+      "qualification": {
+        "focused_regression": "unassessed",
+        "integration_build": "unassessed",
+        "native": "unassessed",
+        "fresh_process": "unassessed",
+        "physical_device": "unassessed",
+        "publication": "unassessed"
+      },
+      "canonical_id": "redshank:R05",
+      "limits": "Full press \u2192 recording render \u2192 release remains unqualified.",
+      "detail": "current/ports.json",
+      "original_index_title": "R05 \u2014 Keep the voice gesture owner alive until release [P2]",
+      "original_report": "redshank-report.md"
+    },
+    {
+      "id": "redshank:R06",
+      "classification": "unchanged_finding_mechanism",
+      "package": "B8",
+      "current_observation": "Integrity refusal can nest mutable borrow and panic",
+      "qualification": {
+        "focused_regression": "unassessed",
+        "integration_build": "unassessed",
+        "native": "unassessed",
+        "fresh_process": "unassessed",
+        "physical_device": "unassessed",
+        "publication": "unassessed"
+      },
+      "canonical_id": "redshank:R06",
+      "limits": "Direct-backend integrity tests do not cover this worker branch.",
+      "detail": "current/ports.json",
+      "original_index_title": "R06 \u2014 Drop cached-admission's mutable borrow before handling refusal [P2]",
+      "original_report": "redshank-report.md"
+    },
+    {
+      "id": "redshank:R07",
+      "classification": "unchanged_finding_mechanism",
+      "package": "B8",
+      "current_observation": "Exact-end seek can remain Buffering without first frame",
+      "qualification": {
+        "focused_regression": "unassessed",
+        "integration_build": "unassessed",
+        "native": "unassessed",
+        "fresh_process": "unassessed",
+        "physical_device": "unassessed",
+        "publication": "unassessed"
+      },
+      "canonical_id": "redshank:R07",
+      "limits": "Exact-duration seek/reopen terminal outcome unqualified.",
+      "detail": "current/ports.json",
+      "original_index_title": "R07 \u2014 Admit EOF before first-frame readiness as a terminal fact [P2]",
+      "original_report": "redshank-report.md"
+    },
+    {
+      "id": "redshank:R08",
+      "classification": "unchanged_finding_mechanism",
+      "package": "B10",
+      "current_observation": "Sanitized ItemIds collide and overwrite export",
+      "qualification": {
+        "focused_regression": "unassessed",
+        "integration_build": "unassessed",
+        "native": "unassessed",
+        "fresh_process": "unassessed",
+        "physical_device": "unassessed",
+        "publication": "unassessed"
+      },
+      "canonical_id": "redshank:R08",
+      "limits": "Current worker and sanitizer reread; destination custody stays host-owned.",
+      "detail": "current/ports.json",
+      "original_index_title": "R08 \u2014 Preserve full item identity in annotation-export destinations [P2]",
+      "original_report": "redshank-report.md"
+    },
+    {
+      "id": "redshank:R09",
+      "classification": "unchanged_finding_mechanism",
+      "package": "B9 / D3",
+      "current_observation": "Ten-minute sample cap silently drops tail",
+      "qualification": {
+        "focused_regression": "unassessed",
+        "integration_build": "unassessed",
+        "native": "unassessed",
+        "fresh_process": "unassessed",
+        "physical_device": "unassessed",
+        "publication": "unassessed"
+      },
+      "canonical_id": "redshank:R09",
+      "limits": "Accepted frames differ from host wall-clock duration; no long capture executed.",
+      "detail": "current/ports.json",
+      "original_index_title": "R09 \u2014 Report capture capacity instead of silently discarding the tail [P2]",
+      "original_report": "redshank-report.md"
+    },
+    {
+      "id": "redshank:R10",
+      "classification": "unchanged_finding_mechanism",
+      "package": "C4",
+      "current_observation": "Explicit Local audio selection falls back to feed",
+      "qualification": {
+        "focused_regression": "unassessed",
+        "integration_build": "unassessed",
+        "native": "unassessed",
+        "fresh_process": "unassessed",
+        "physical_device": "unassessed",
+        "publication": "unassessed"
+      },
+      "canonical_id": "redshank:R10",
+      "limits": "Other local-file entry routes remain available.",
+      "detail": "current/ports.json",
+      "original_index_title": "R10 \u2014 Separate explicit local scope from automatic feed fallback [P2]",
+      "original_report": "redshank-report.md"
+    },
+    {
+      "id": "redshank:R11",
+      "classification": "unchanged_finding_mechanism",
+      "package": "C4",
+      "current_observation": "Rail Seek slider has no seek handlers",
+      "qualification": {
+        "focused_regression": "unassessed",
+        "integration_build": "unassessed",
+        "native": "unassessed",
+        "fresh_process": "unassessed",
+        "physical_device": "unassessed",
+        "publication": "unassessed"
+      },
+      "canonical_id": "redshank:R11",
+      "limits": "Visual/ARIA presence does not establish interaction.",
+      "detail": "current/ports.json",
+      "original_index_title": "R11 \u2014 Share seek interaction across dock and rail [P2]",
+      "original_report": "redshank-report.md"
+    },
+    {
+      "id": "redshank:R12",
+      "classification": "unchanged_finding_mechanism",
+      "package": "C4",
+      "current_observation": "Connections card invents cached match",
+      "qualification": {
+        "focused_regression": "unassessed",
+        "integration_build": "unassessed",
+        "native": "unassessed",
+        "fresh_process": "unassessed",
+        "physical_device": "unassessed",
+        "publication": "unassessed"
+      },
+      "canonical_id": "redshank:R12",
+      "limits": "Exact-note guards remain separate; no wrong-source seek claim.",
+      "detail": "current/ports.json",
+      "original_index_title": "R12 \u2014 Remove the cached-location identity success claim [P2]",
+      "original_report": "redshank-report.md"
+    },
+    {
+      "id": "redshank:R13",
+      "classification": "unchanged_finding_mechanism",
+      "package": "C4",
+      "current_observation": "All notes merges offsets under selected-item timeline",
+      "qualification": {
+        "focused_regression": "unassessed",
+        "integration_build": "unassessed",
+        "native": "unassessed",
+        "fresh_process": "unassessed",
+        "physical_device": "unassessed",
+        "publication": "unassessed"
+      },
+      "canonical_id": "redshank:R13",
+      "limits": "OpenNote retains annotation identity; misleading projection, not proven wrong-source seek.",
+      "detail": "current/ports.json",
+      "original_index_title": "R13 \u2014 Keep item identity visible when projecting All notes [P2]",
+      "original_report": "redshank-report.md"
+    },
+    {
+      "id": "redshank:R14",
+      "classification": "unchanged_finding_mechanism",
+      "package": "Q2",
+      "current_observation": "Subscription proof requires pruned generations to survive",
+      "qualification": {
+        "focused_regression": "unassessed",
+        "integration_build": "unassessed",
+        "native": "unassessed",
+        "fresh_process": "unassessed",
+        "physical_device": "unassessed",
+        "publication": "unassessed"
+      },
+      "canonical_id": "redshank:R14",
+      "limits": "Store deliberately retains three valid generations; script not executed.",
+      "detail": "current/ports.json",
+      "original_index_title": "R14 \u2014 Remove stale all-generation preservation from the subscription receipt [P3]",
+      "original_report": "redshank-report.md"
+    },
+    {
+      "id": "redshank:R15",
+      "classification": "unchanged_finding_mechanism",
+      "package": "C4",
+      "current_observation": "Retained total is mislabeled this week",
+      "qualification": {
+        "focused_regression": "unassessed",
+        "integration_build": "unassessed",
+        "native": "unassessed",
+        "fresh_process": "unassessed",
+        "physical_device": "unassessed",
+        "publication": "unassessed"
+      },
+      "canonical_id": "redshank:R15",
+      "limits": "No host-bounded weekly aggregate verified.",
+      "detail": "current/ports.json",
+      "original_index_title": "R15 \u2014 Stop inventing a weekly bound in the Trail projection [P3]",
+      "original_report": "redshank-report.md"
+    },
+    {
+      "id": "redshank:R16",
+      "classification": "unchanged_finding_mechanism",
+      "package": "K2",
+      "current_observation": "Production range history grows without bound",
+      "qualification": {
+        "focused_regression": "unassessed",
+        "integration_build": "unassessed",
+        "native": "unassessed",
+        "fresh_process": "unassessed",
+        "physical_device": "unassessed",
+        "publication": "unassessed"
+      },
+      "canonical_id": "redshank:R16",
+      "limits": "Growth mechanism only; no normal-episode exhaustion claim.",
+      "detail": "current/ports.json",
+      "original_index_title": "R16 \u2014 Keep full range traces out of the production source [P3]",
+      "original_report": "redshank-report.md"
+    },
+    {
+      "id": "redshank:R17",
+      "classification": "unchanged_finding_mechanism",
+      "package": "B8",
+      "current_observation": "Rate changes bypass admitted controller",
+      "qualification": {
+        "focused_regression": "unassessed",
+        "integration_build": "unassessed",
+        "native": "unassessed",
+        "fresh_process": "unassessed",
+        "physical_device": "unassessed",
+        "publication": "unassessed"
+      },
+      "canonical_id": "redshank:R17",
+      "limits": "Controller authority mismatch; not an assertion of wrong audible pitch.",
+      "detail": "current/ports.json",
+      "original_index_title": "R17 \u2014 Route effective rate through the existing controller contract [P3]",
+      "original_report": "redshank-report.md"
+    },
+    {
+      "id": "ringdown:R1",
+      "classification": "unchanged_finding_mechanism",
+      "package": "K3 / D14",
+      "current_observation": "Restore loses negative re-push receipts",
+      "qualification": {
+        "focused_regression": "unassessed",
+        "integration_build": "unassessed",
+        "native": "unassessed",
+        "fresh_process": "unassessed",
+        "physical_device": "unassessed",
+        "publication": "unassessed"
+      },
+      "canonical_id": "ringdown:R1",
+      "limits": "Public library; current caller search found only test restore caller. Supported field scope narrower than exact-bank promise.",
+      "detail": "current/ports.json",
+      "original_index_title": "R1 \u2014 Preserve failed re-push receipts in the restore result",
+      "original_report": "ringdown-report.md"
+    },
+    {
+      "id": "ringdown:R2",
+      "classification": "unchanged_finding_mechanism",
+      "package": "B12",
+      "current_observation": "Even-byte Unicode hex can panic",
+      "qualification": {
+        "focused_regression": "unassessed",
+        "integration_build": "unassessed",
+        "native": "unassessed",
+        "fresh_process": "unassessed",
+        "physical_device": "unassessed",
+        "publication": "unassessed"
+      },
+      "canonical_id": "ringdown:R2",
+      "limits": "Probe fetch and public instrument fetch reach client; malformed input not observed on hardware.",
+      "detail": "current/ports.json",
+      "original_index_title": "R2 \u2014 Decode file hex without slicing through UTF-8 characters",
+      "original_report": "ringdown-report.md"
+    },
+    {
+      "id": "ringdown:R3",
+      "classification": "unchanged_finding_mechanism",
+      "package": "B12 / D9",
+      "current_observation": "Sparse status becomes confident observed defaults",
+      "qualification": {
+        "focused_regression": "unassessed",
+        "integration_build": "unassessed",
+        "native": "unassessed",
+        "fresh_process": "unassessed",
+        "physical_device": "unassessed",
+        "publication": "unassessed"
+      },
+      "canonical_id": "ringdown:R3",
+      "limits": "Preserve presence before partial-status policy; companion theory:T5 is distinct.",
+      "detail": "current/ports.json",
+      "original_index_title": "R3 \u2014 Keep absent status fields absent through the consumer projection",
+      "original_report": "ringdown-report.md"
+    },
+    {
+      "id": "ringdown:R4",
+      "classification": "unchanged_finding_mechanism",
+      "package": "B14",
+      "current_observation": "Failed requested file save still returns success",
+      "qualification": {
+        "focused_regression": "unassessed",
+        "integration_build": "unassessed",
+        "native": "unassessed",
+        "fresh_process": "unassessed",
+        "physical_device": "unassessed",
+        "publication": "unassessed"
+      },
+      "canonical_id": "ringdown:R4",
+      "limits": "Checksum success is separate from persistence.",
+      "detail": "current/ports.json",
+      "original_index_title": "R4 \u2014 Propagate local save failure from --fetch to the process result",
+      "original_report": "ringdown-report.md"
+    },
+    {
+      "id": "ringdown:R5",
+      "classification": "unchanged_finding_mechanism",
+      "package": "B12",
+      "current_observation": "ACK accepts wrong or extra envelope",
+      "qualification": {
+        "focused_regression": "unassessed",
+        "integration_build": "unassessed",
+        "native": "unassessed",
+        "fresh_process": "unassessed",
+        "physical_device": "unassessed",
+        "publication": "unassessed"
+      },
+      "canonical_id": "ringdown:R5",
+      "limits": "Malformed notification trigger; no assertion reference hardware emits it.",
+      "detail": "current/ports.json",
+      "original_index_title": "R5 \u2014 Make Ack2 itself enforce the acknowledgement shape",
+      "original_report": "ringdown-report.md"
+    },
+    {
+      "id": "ringdown:R6",
+      "classification": "unchanged_finding_mechanism",
+      "package": "B14 / D9",
+      "current_observation": "ACL/ATT decoding loses connection identity",
+      "qualification": {
+        "focused_regression": "unassessed",
+        "integration_build": "unassessed",
+        "native": "unassessed",
+        "fresh_process": "unassessed",
+        "physical_device": "unassessed",
+        "publication": "unassessed"
+      },
+      "canonical_id": "ringdown:R6",
+      "limits": "Multiple connections and incomplete/reused transfers unqualified.",
+      "detail": "current/ports.json",
+      "original_index_title": "R6 \u2014 Retain connection identity across capture reassembly and ATT interpretation",
+      "original_report": "ringdown-report.md"
+    },
+    {
+      "id": "ringdown:R7",
+      "classification": "unchanged_finding_mechanism",
+      "package": "B14",
+      "current_observation": "Uncheckable/skipped metadata becomes all-match claim",
+      "qualification": {
+        "focused_regression": "unassessed",
+        "integration_build": "unassessed",
+        "native": "unassessed",
+        "fresh_process": "unassessed",
+        "physical_device": "unassessed",
+        "publication": "unassessed"
+      },
+      "canonical_id": "ringdown:R7",
+      "limits": "Core three-way result is legitimate; consumer collapses unknowns.",
+      "detail": "current/ports.json",
+      "original_index_title": "R7 \u2014 Count uncheckable loop headers separately from matching ones",
+      "original_report": "ringdown-report.md"
+    },
+    {
+      "id": "ringdown:R8",
+      "classification": "unchanged_finding_mechanism",
+      "package": "K3",
+      "current_observation": "Wedging-method fact duplicated in instrument host",
+      "qualification": {
+        "focused_regression": "unassessed",
+        "integration_build": "unassessed",
+        "native": "unassessed",
+        "fresh_process": "unassessed",
+        "physical_device": "unassessed",
+        "publication": "unassessed"
+      },
+      "canonical_id": "ringdown:R8",
+      "limits": "No default guarded-path bypass: case-insensitive driver guard catches host case miss. Preserve any stricter absolute host prohibition.",
+      "detail": "current/ports.json",
+      "original_index_title": "R8 \u2014 Consolidate the firmware wedging fact while preserving any absolute host policy",
+      "original_report": "ringdown-report.md"
+    },
+    {
+      "id": "ringdown:R9",
+      "classification": "unchanged_finding_mechanism",
+      "package": "K3 / D9",
+      "current_observation": "Driver/probe disagree on extensionless names",
+      "qualification": {
+        "focused_regression": "unassessed",
+        "integration_build": "unassessed",
+        "native": "unassessed",
+        "fresh_process": "unassessed",
+        "physical_device": "unassessed",
+        "publication": "unassessed"
+      },
+      "canonical_id": "ringdown:R9",
+      "limits": "Observed fixtures end .wav; no established hardware regression from extensionless trigger.",
+      "detail": "current/ports.json",
+      "original_index_title": "R9 \u2014 Share the recording-name grammar instead of maintaining two parsers",
+      "original_report": "ringdown-report.md"
+    },
+    {
+      "id": "ringdown:X1",
+      "classification": "unchanged_finding_mechanism",
+      "package": "B13",
+      "current_observation": "Readback mismatch does not fail hardware proof",
+      "qualification": {
+        "focused_regression": "unassessed",
+        "integration_build": "unassessed",
+        "native": "unassessed",
+        "fresh_process": "unassessed",
+        "physical_device": "unassessed",
+        "publication": "unassessed"
+      },
+      "canonical_id": "theory:T2",
+      "limits": "Alias of theory:T2; count once. T2 additionally covers skipped restoration after intervening error.",
+      "detail": "current/ports.json",
+      "original_index_title": "X1 \u2014 Cross-partition: the metronome hardware example does not fail its own read-back gate",
+      "original_report": "ringdown-report.md"
+    },
+    {
+      "id": "shared:C1",
+      "classification": "unchanged_finding_mechanism",
+      "package": "D13",
+      "current_observation": "Compatibility conversion drops frozen action targets",
+      "qualification": {
+        "focused_regression": "unassessed",
+        "integration_build": "unassessed",
+        "native": "unassessed",
+        "fresh_process": "unassessed",
+        "physical_device": "unassessed",
+        "publication": "unassessed"
+      },
+      "canonical_id": "shared:C1",
+      "limits": "Public queued/retained callback gap; native/two-mount immediate dispatch mitigates ordinary exposure. Native race unassessed.",
+      "detail": "current/ports.json",
+      "original_index_title": "C1 \u2014 P2 API contract gap; normal native dispatch mitigates it: compatibility conversion drops frozen action targets",
+      "original_report": "shared-report.md"
+    },
+    {
+      "id": "shared:S1",
+      "classification": "implemented; historical CPU qualified",
+      "package": "A4",
+      "current_observation": "Model owns whole-graph validation for key/id, root/head, references, acyclicity and rooted reachability; checkout bounds both executed ancestry walks. Integration validates a temporary union, preserving compatible fragments. Project decode/save, signed handoff create/receive, portable accept and host adoption call validation before mutation.",
+      "qualification": [
+        "CPU16/CPU17 root (hocket-model/project) plus Hocket host 90 passing/2 ignored. All four model/project receipt source hashes and host state hash match current.",
+        "The filename native_lifecycle_tests.rs denotes device-free mounted-hook tests, not an OS/native run."
+      ],
+      "limits": [
+        "Ports have CPU/build evidence only; dependency locks differ, so unchanged local files do not establish a current-head integrated pass."
+      ],
+      "detail": "current/safety.json",
+      "original_index_title": "S1 \u2014 P1: An authenticated cyclic history can hang same-session acceptance",
+      "original_report": "shared-report.md"
+    },
+    {
+      "id": "shared:S2",
+      "classification": "unchanged_finding_mechanism",
+      "package": "B5",
+      "current_observation": "Capture/import/unmute bypass SelectOne eligibility",
+      "qualification": {
+        "focused_regression": "unassessed",
+        "integration_build": "unassessed",
+        "native": "unassessed",
+        "fresh_process": "unassessed",
+        "physical_device": "unassessed",
+        "publication": "unassessed"
+      },
+      "canonical_id": "shared:S2",
+      "limits": "Supported serialized SelectOne admission suffices; deferred Deeler UI is not claimed shipped.",
+      "detail": "current/ports.json",
+      "original_index_title": "S2 \u2014 P2: Live playback bypasses the model's SelectOne audibility rule",
+      "original_report": "shared-report.md"
+    },
+    {
+      "id": "shared:S3",
+      "classification": "unchanged_finding_mechanism",
+      "package": "D5 then B5-based correction",
+      "current_observation": "Live BPM nudge stops accepted loops without Resume",
+      "qualification": {
+        "focused_regression": "unassessed",
+        "integration_build": "unassessed",
+        "native": "unassessed",
+        "fresh_process": "unassessed",
+        "physical_device": "unassessed",
+        "publication": "unassessed"
+      },
+      "canonical_id": "shared:S3",
+      "limits": "Keep/restart versus explicit pause/Resume remains an owning product decision.",
+      "detail": "current/ports.json",
+      "original_index_title": "S3 \u2014 P2: Every live BPM nudge stops all loops without resuming them",
+      "original_report": "shared-report.md"
+    },
+    {
+      "id": "shared:S4",
+      "classification": "unchanged_finding_mechanism",
+      "package": "B7",
+      "current_observation": "Reusable wrapper drops backend failure status",
+      "qualification": {
+        "focused_regression": "unassessed",
+        "integration_build": "unassessed",
+        "native": "unassessed",
+        "fresh_process": "unassessed",
+        "physical_device": "unassessed",
+        "publication": "unassessed"
+      },
+      "canonical_id": "shared:S4",
+      "limits": "Native Hocket accessory partly masks gap; generic manually supplied status tests do not exercise wrapper forwarding.",
+      "detail": "current/ports.json",
+      "original_index_title": "S4 \u2014 P2: The reusable Recorder adapter suppresses runtime failure diagnostics",
+      "original_report": "shared-report.md"
+    },
+    {
+      "id": "theory:T1",
+      "classification": "unchanged_finding_mechanism",
+      "package": "B13",
+      "current_observation": "Cached sent request is called a matched metronome",
+      "qualification": {
+        "focused_regression": "unassessed",
+        "integration_build": "unassessed",
+        "native": "unassessed",
+        "fresh_process": "unassessed",
+        "physical_device": "unassessed",
+        "publication": "unassessed"
+      },
+      "canonical_id": "theory:T1",
+      "limits": "Follow/Drive and omitted denominator are product policy. No GUI consumer found.",
+      "detail": "current/ports.json",
+      "original_index_title": "T1 \u2014 P2: an attempted instrument write becomes a confirmed match without a receipt",
+      "original_report": "theory-report.md"
+    },
+    {
+      "id": "theory:T2",
+      "classification": "unchanged_finding_mechanism",
+      "package": "B13",
+      "current_observation": "Mismatch can certify success; intervening error skips restore",
+      "qualification": {
+        "focused_regression": "unassessed",
+        "integration_build": "unassessed",
+        "native": "unassessed",
+        "fresh_process": "unassessed",
+        "physical_device": "unassessed",
+        "publication": "unassessed"
+      },
+      "canonical_id": "theory:T2",
+      "limits": "Canonical for ringdown:X1; BPM/numerator target and restore must gate proof. Historical successful runs not disproved.",
+      "detail": "current/ports.json",
+      "original_index_title": "T2 \u2014 P2: the hardware proof can print a mismatch and still report confirmation; failures also skip restoration",
+      "original_report": "theory-report.md"
+    },
+    {
+      "id": "theory:T3",
+      "classification": "unchanged_finding_mechanism",
+      "package": "D11",
+      "current_observation": "Pentatonic Box Shift uses approximate translated geometry",
+      "qualification": {
+        "focused_regression": "unassessed",
+        "integration_build": "unassessed",
+        "native": "unassessed",
+        "fresh_process": "unassessed",
+        "physical_device": "unassessed",
+        "publication": "unassessed"
+      },
+      "canonical_id": "theory:T3",
+      "limits": "Live generator caller rechecked; choose true scale exercise versus accurate mechanical-drill name.",
+      "detail": "current/ports.json",
+      "original_index_title": "T3 \u2014 P2: \u201cPentatonic Box Shift\u201d uses its own approximate geometry instead of the theory and tuning authority",
+      "original_report": "theory-report.md"
+    },
+    {
+      "id": "theory:T4",
+      "classification": "implemented; historical CPU qualified",
+      "package": "A4",
+      "current_observation": "Set::admit_card_ids preflights duplicate assigned IDs and mint exhaustion atomically, migrates only zero IDs, and is reused in copy. decode_session applies admission to active, inactive and retained Sets; IDs may legitimately overlap across separate Sets.",
+      "qualification": [
+        "CPU16/CPU17 root. Current admission body is unchanged versus hash-verified CPU16 source. rehearsal.rs differs only by added Repeat::Card variant, and is identical to the d955f5d close-source manifest; storage.rs only adds seconds: None in a test fixture."
+      ],
+      "limits": [
+        "No duplicate-ID native/reopen fixture in bounded receipts; no current-head test run."
+      ],
+      "detail": "current/safety.json",
+      "original_index_title": "T4 \u2014 P2: Set load admission accepts duplicate occurrence identities although actions and graphs treat identity as unique",
+      "original_report": "theory-report.md"
+    },
+    {
+      "id": "theory:T5",
+      "classification": "unchanged_finding_mechanism",
+      "package": "B12",
+      "current_observation": "Defaults and unchecked narrowing invent measurements",
+      "qualification": {
+        "focused_regression": "unassessed",
+        "integration_build": "unassessed",
+        "native": "unassessed",
+        "fresh_process": "unassessed",
+        "physical_device": "unassessed",
+        "publication": "unassessed"
+      },
+      "canonical_id": "theory:T5",
+      "limits": "Distinct from ringdown:R3; same B12 package. Public library, no GUI/device evidence.",
+      "detail": "current/ports.json",
+      "original_index_title": "T5 \u2014 P3: the instrument's typed decoder fabricates valid-looking measurements, and its resonance test never calls that decoder",
+      "original_report": "theory-report.md"
+    },
+    {
+      "id": "theory:T6",
+      "classification": "unchanged_finding_mechanism",
+      "package": "C5",
+      "current_observation": "Same-tones copy contradicts root-preserving Related action",
+      "qualification": {
+        "focused_regression": "unassessed",
+        "integration_build": "unassessed",
+        "native": "unassessed",
+        "fresh_process": "unassessed",
+        "physical_device": "unassessed",
+        "publication": "unassessed"
+      },
+      "canonical_id": "theory:T6",
+      "limits": "Formula family is deliberate; current select_related caller still preserves root.",
+      "detail": "current/ports.json",
+      "original_index_title": "T6 \u2014 P3: modal-family copy promises \u201csame tones\u201d while the related action preserves the tonic",
+      "original_report": "theory-report.md"
+    },
+    {
+      "id": "theory:T7",
+      "classification": "unchanged_finding_mechanism",
+      "package": "C5",
+      "current_observation": "Quartal Tetrad final tone violates ascending compound register",
+      "qualification": {
+        "focused_regression": "unassessed",
+        "integration_build": "unassessed",
+        "native": "unassessed",
+        "fresh_process": "unassessed",
+        "physical_device": "unassessed",
+        "publication": "unassessed"
+      },
+      "canonical_id": "theory:T7",
+      "limits": "Correction belongs to formula owner; consumer sorting is not a repair.",
+      "detail": "current/ports.json",
+      "original_index_title": "T7 \u2014 P3: Quartal Tetrad violates the catalog's ascending compound-interval contract",
+      "original_report": "theory-report.md"
+    },
+    {
+      "id": "theory:T8",
+      "classification": "unchanged_finding_mechanism",
+      "package": "D12",
+      "current_observation": "Tenor (fifths) data is ADGC fourths",
+      "qualification": {
+        "focused_regression": "unassessed",
+        "integration_build": "unassessed",
+        "native": "unassessed",
+        "fresh_process": "unassessed",
+        "physical_device": "unassessed",
+        "publication": "unassessed"
+      },
+      "canonical_id": "theory:T8",
+      "limits": "Resolve catalog identity with retained-name migration/alias; do not silently retune.",
+      "detail": "current/ports.json",
+      "original_index_title": "T8 \u2014 P3: \u201cTenor (fifths)\u201d is cataloged in fourths; the current test proves only that the name exists",
+      "original_report": "theory-report.md"
+    },
+    {
+      "id": "tooling:T1",
+      "classification": "all nine original scenario files unchanged; retired selectors remain",
+      "package": "Q2",
+      "current_observation": "scenario-source-check.json contains exact current hashes and retired selector/readout strings. New scenario receipts do not establish these old nine execute.",
+      "qualification": "targeted current source/metadata comparison; historical receipts retain original inputs",
+      "detail": "current/evidence-tooling-current.json",
+      "original_index_title": "T1 \u2014 P2: Nine retained scenarios address Looper controls and text removed by the shared recorder",
+      "original_report": "tooling-report.md"
+    },
+    {
+      "id": "tooling:T2",
+      "classification": "release package provenance binding still open",
+      "package": "Q3",
+      "current_observation": "Linux/Windows scripts unchanged; macOS changes only microphone explanation. New acceptance-build wrappers bind individual candidates, not general release packagers.",
+      "qualification": "targeted current source/metadata comparison; historical receipts retain original inputs",
+      "detail": "current/evidence-tooling-current.json",
+      "original_index_title": "T2 \u2014 P2: Package source receipts are not bound to the executable they identify",
+      "original_report": "tooling-report.md"
+    },
+    {
+      "id": "tooling:T3",
+      "classification": "Windows EXE architecture admission unchanged",
+      "package": "Q3",
+      "current_observation": "Windows packager hash identical to frozen source. No packaging/architecture test run in this audit.",
+      "qualification": "targeted current source/metadata comparison; historical receipts retain original inputs",
+      "detail": "current/evidence-tooling-current.json",
+      "original_index_title": "T3 \u2014 P2: Windows packaging labels any existing EXE as x86_64",
+      "original_report": "tooling-report.md"
+    },
+    {
+      "id": "tooling:T4",
+      "classification": "missing notes array still defaults to empty",
+      "package": "Q4",
+      "current_observation": "audio_analysis_bench.py identical to frozen source; current validate_document uses document.get(\"notes\", []).",
+      "qualification": "targeted current source/metadata comparison; historical receipts retain original inputs",
+      "detail": "current/evidence-tooling-current.json",
+      "original_index_title": "T4 \u2014 P2: Missing note arrays become perfect benchmark scores",
+      "original_report": "tooling-report.md"
+    },
+    {
+      "id": "tooling:T5",
+      "classification": "scorer source identity admission still open",
+      "package": "Q4",
+      "current_observation": "Same unchanged scorer; earlier source-traced source_id gap remains. No analyzer-quality or current run-failure claim.",
+      "qualification": "targeted current source/metadata comparison; historical receipts retain original inputs",
+      "detail": "current/evidence-tooling-current.json",
+      "original_index_title": "T5 \u2014 P2: Benchmark results can be attributed to the wrong audio source",
+      "original_report": "tooling-report.md"
+    },
+    {
+      "id": "tooling:T6",
+      "classification": "macOS copy corrected; Linux/Windows wording still excludes recording",
+      "package": "Q3",
+      "current_observation": "Current macOS usage string names recording, tuner and calibration. Linux and Windows scripts are byte-identical to frozen source and retain narrower wording.",
+      "qualification": "targeted current source/metadata comparison; historical receipts retain original inputs",
+      "detail": "current/evidence-tooling-current.json",
+      "original_index_title": "T6 \u2014 P3: Packaged microphone explanations omit the shipping recorder",
+      "original_report": "tooling-report.md"
+    },
+    {
+      "id": "tooling:T7",
+      "classification": "macOS universal architecture membership remains final-token-only",
+      "package": "Q3",
+      "current_observation": "Current case pattern still lacks trailing wildcard. The one macOS source change is microphone wording, not membership admission.",
+      "qualification": "targeted current source/metadata comparison; historical receipts retain original inputs",
+      "detail": "current/evidence-tooling-current.json",
+      "original_index_title": "T7 \u2014 P3: The macOS architecture-membership test only accepts the final architecture",
+      "original_report": "tooling-report.md"
+    },
+    {
+      "id": "views:V01",
+      "classification": "unchanged implementation/current reachability confirmed",
+      "package": "C2",
+      "current_observation": "CSS reduction still uses copied incomplete overrides. Overview dynamics/atmosphere use overview_reduced_motion without application accessibility reduction.",
+      "qualification": "unassessed",
+      "alias_of": null,
+      "detail": "current/runtime.json",
+      "original_index_title": "V01 \u2014 P2: Make one effective reduced-motion policy govern CSS and scene motion",
+      "original_report": "views-report.md"
+    },
+    {
+      "id": "views:V02",
+      "classification": "unchanged implementation/current reachability confirmed",
+      "package": "C2",
+      "current_observation": "Both overview ticks still gate only on remembered Overview panel; host calls both. Legacy sections and relationship/replacement surfaces are absent from that predicate.",
+      "qualification": "unassessed",
+      "alias_of": null,
+      "detail": "current/runtime.json",
+      "original_index_title": "V02 \u2014 P2: Gate animation with the surface that is actually rendered",
+      "original_report": "views-report.md"
+    },
+    {
+      "id": "views:V03",
+      "classification": "unchanged implementation/current reachability confirmed",
+      "package": "B7",
+      "current_observation": "Frozen-byte Settings/Tools infer both streams open from no error and listening from requested tuner.enabled. New consent worker has explicit lazy/pending/refused facts but those views do not project them.",
+      "qualification": "unassessed",
+      "alias_of": null,
+      "detail": "current/runtime.json",
+      "original_index_title": "V03 \u2014 P2: Project accepted audio availability into every audio surface",
+      "original_report": "views-report.md"
+    },
+    {
+      "id": "views:V04",
+      "classification": "unchanged implementation/current reachability confirmed",
+      "package": "C2",
+      "current_observation": "Tuner process Open still selects Tools without selecting ToolPage::Tuner.",
+      "qualification": "unassessed",
+      "alias_of": null,
+      "detail": "current/runtime.json",
+      "original_index_title": "V04 \u2014 P3: Tuner process navigation must select the Tuner page",
+      "original_report": "views-report.md"
+    },
+    {
+      "id": "views:V05",
+      "classification": "unchanged implementation/current reachability confirmed",
+      "package": "K2",
+      "current_observation": "Retired Card/bar-chip selector blocks and mappings remain beside current tray/recorder owners. Retired-class emission is not established in current scoped paths.",
+      "qualification": "unassessed",
+      "alias_of": null,
+      "detail": "current/runtime.json",
+      "original_index_title": "V05 \u2014 P3: Remove unreachable presentation branches after renderer replacement",
+      "original_report": "views-report.md"
+    },
+    {
+      "id": "views:V06",
+      "classification": "unchanged implementation/current reachability confirmed",
+      "package": "C2",
+      "current_observation": "Rehearsal uses raw Song bar while tray displays bar+1; supported persisted/imported enum remains. New UI production not established.",
+      "qualification": "unassessed",
+      "alias_of": null,
+      "detail": "current/runtime.json",
+      "original_index_title": "V06 \u2014 P3: Share Song provenance formatting between Card views",
+      "original_report": "views-report.md"
+    }
+  ]
+}

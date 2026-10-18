@@ -1,0 +1,240 @@
+[
+  {
+    "path": "crates/audio-primitives/Cargo.toml",
+    "sha256": "83083866eb22113a298ecf17c66dfe28b2fe76f3a845098e698d6261e6f3d9fe",
+    "lines": 19,
+    "bytes": 762,
+    "kind": "source"
+  },
+  {
+    "path": "crates/audio-primitives/src/alignment.rs",
+    "sha256": "8d9c281416de783b0c7c87439de9f92d1230ff1c4a1623289c1c5b44be916eef",
+    "lines": 732,
+    "bytes": 25390,
+    "kind": "source"
+  },
+  {
+    "path": "crates/audio-primitives/src/buffer.rs",
+    "sha256": "a87e16d6c89907ffe461f70ea590b9679527be4b481fe92e6800e63756a60ace",
+    "lines": 69,
+    "bytes": 2054,
+    "kind": "source"
+  },
+  {
+    "path": "crates/audio-primitives/src/calibration.rs",
+    "sha256": "4c275fc7204eecb9f08b50f36e79de59d12a6e404d20e8ac98a9d233a641d971",
+    "lines": 172,
+    "bytes": 7328,
+    "kind": "source"
+  },
+  {
+    "path": "crates/audio-primitives/src/capture.rs",
+    "sha256": "a3b6976ba1b53942c6c14e59b4840d2a845fc16bc449a3a71e6b12208033bd90",
+    "lines": 177,
+    "bytes": 6191,
+    "kind": "source"
+  },
+  {
+    "path": "crates/audio-primitives/src/click.rs",
+    "sha256": "c1ffce6bb162b1f8b60c7c8e4d2a15f638effb74a4dc07e8f0fefa13ea19a608",
+    "lines": 194,
+    "bytes": 7165,
+    "kind": "source"
+  },
+  {
+    "path": "crates/audio-primitives/src/lib.rs",
+    "sha256": "484d2b0ab4d47f19b89dec7cf8a2ece04862761aa94979c2b5aa90bed3a59ffa",
+    "lines": 55,
+    "bytes": 2727,
+    "kind": "source"
+  },
+  {
+    "path": "crates/audio-primitives/src/meter.rs",
+    "sha256": "14c5211ff40e0f859e7ee2b7e04fc3ea5c59359c72a1d6431959c002b3775a04",
+    "lines": 169,
+    "bytes": 5060,
+    "kind": "source"
+  },
+  {
+    "path": "crates/audio-primitives/src/onset.rs",
+    "sha256": "cd40a8fa8f61b14dbce684a2b6bea40efb4b9636c1ec5d8670b2de8695dece18",
+    "lines": 547,
+    "bytes": 20763,
+    "kind": "source"
+  },
+  {
+    "path": "crates/audio-primitives/src/stretch.rs",
+    "sha256": "e57cb87d5759c2dc21ec6d0989963b8aba70073201144d42b1b2eeea1253dfc5",
+    "lines": 518,
+    "bytes": 19731,
+    "kind": "source"
+  },
+  {
+    "path": "crates/audio-primitives/src/waveform.rs",
+    "sha256": "c6c9442a263588e5ac5db7e0a4016d821bada38c6c11a0b2ce059bc7a76a19d2",
+    "lines": 110,
+    "bytes": 3208,
+    "kind": "source"
+  },
+  {
+    "path": "crates/audio-primitives/tests/capture_harness.rs",
+    "sha256": "11d804b5ac538487586b4a626a8c617eb5a5005d217c9ff3d918a7cee9de14c1",
+    "lines": 140,
+    "bytes": 5075,
+    "kind": "source"
+  },
+  {
+    "path": "crates/woodshed-audio/Cargo.toml",
+    "sha256": "fbee19737731c7b9d3cae38ec1aa48ad9052f1d6f991acf076d560aee75cdb15",
+    "lines": 31,
+    "bytes": 1075,
+    "kind": "source"
+  },
+  {
+    "path": "crates/woodshed-audio/examples/audio_ddx.rs",
+    "sha256": "d6aa4d0685b22ca046390decd74986a5b94aaa39515f91245281366e8da8b158",
+    "lines": 219,
+    "bytes": 7321,
+    "kind": "source"
+  },
+  {
+    "path": "crates/woodshed-audio/src/calibration.rs",
+    "sha256": "29de685751f6b3a5642972fd8c5a8f9c04e6becd8683f590ad7b94f37364ba7d",
+    "lines": 454,
+    "bytes": 17354,
+    "kind": "source"
+  },
+  {
+    "path": "crates/woodshed-audio/src/capture_feed.rs",
+    "sha256": "09859f554673721b4a297acacf366b62b893a589a50163d796b23f4224ca2d51",
+    "lines": 244,
+    "bytes": 7916,
+    "kind": "source"
+  },
+  {
+    "path": "crates/woodshed-audio/src/chord_audio.rs",
+    "sha256": "934aa382bdeafbc368012253193ec06faa3cf82364d58d6324dd2aff37a7ab8d",
+    "lines": 352,
+    "bytes": 13225,
+    "kind": "source"
+  },
+  {
+    "path": "crates/woodshed-audio/src/engine.rs",
+    "sha256": "1834a77b86839edb1ddbe6d091360588ee46782129a216756082865a3547d723",
+    "lines": 34,
+    "bytes": 1246,
+    "kind": "source"
+  },
+  {
+    "path": "crates/woodshed-audio/src/input.rs",
+    "sha256": "803ab5c766676031fdcd64535390d69802ed3281fcc49a9ac6fdaed11e6cbf0e",
+    "lines": 1092,
+    "bytes": 38315,
+    "kind": "source"
+  },
+  {
+    "path": "crates/woodshed-audio/src/lib.rs",
+    "sha256": "031f1e29034579389a963169c7ef98f47d21604e76efa76bb91d3125edc39e5f",
+    "lines": 69,
+    "bytes": 2840,
+    "kind": "source"
+  },
+  {
+    "path": "crates/woodshed-audio/src/looper.rs",
+    "sha256": "fb2d73574968a537ee35490f0f6bcea35b3d5e75874f7969bc5a0336cc6f90f7",
+    "lines": 378,
+    "bytes": 12845,
+    "kind": "source"
+  },
+  {
+    "path": "crates/woodshed-audio/src/midi.rs",
+    "sha256": "9f2474b8dd0cfa7ae24dc7b1f62ac7685168930113b4718322b1409a5143fee9",
+    "lines": 579,
+    "bytes": 17762,
+    "kind": "source"
+  },
+  {
+    "path": "crates/woodshed-audio/src/offline/song_export/tests.rs",
+    "sha256": "d8287b219ddce748d16ac3a13d015fd153ae5453430eff4970efbccab22095f2",
+    "lines": 310,
+    "bytes": 10162,
+    "kind": "source"
+  },
+  {
+    "path": "crates/woodshed-audio/src/offline/song_export.rs",
+    "sha256": "9001050936c67f9377308cf7123ac9a1552d6e4d416c06d699a1bc6f620d9013",
+    "lines": 200,
+    "bytes": 7390,
+    "kind": "source"
+  },
+  {
+    "path": "crates/woodshed-audio/src/offline.rs",
+    "sha256": "b18486dd649b9493a87617d1e831dcf430fc5e5ee51b4ffd31693b62cdb99fb5",
+    "lines": 454,
+    "bytes": 16832,
+    "kind": "source"
+  },
+  {
+    "path": "crates/woodshed-audio/src/onset.rs",
+    "sha256": "f02ce805acde4b66a358cec8c04a9138cf1b9178ff465922cfa157fd05ccf652",
+    "lines": 226,
+    "bytes": 8124,
+    "kind": "source"
+  },
+  {
+    "path": "crates/woodshed-audio/src/output_runtime/preview.rs",
+    "sha256": "cf3ededb70f9b0f2af56d3d56b3ba06bcdc4499edd148a7212cc161a841df0b5",
+    "lines": 137,
+    "bytes": 4374,
+    "kind": "source"
+  },
+  {
+    "path": "crates/woodshed-audio/src/output_runtime/processor.rs",
+    "sha256": "584ec80432ad4229e27f96fdd6ef3b9b1b46c91566d23597bf2b83556c42f83d",
+    "lines": 1039,
+    "bytes": 39755,
+    "kind": "source"
+  },
+  {
+    "path": "crates/woodshed-audio/src/output_runtime/tests.rs",
+    "sha256": "1f5ae04270feb5fdcc598782b9312eea58d78e7c113a7f30ebd19c29ef8a94d1",
+    "lines": 663,
+    "bytes": 21770,
+    "kind": "source"
+  },
+  {
+    "path": "crates/woodshed-audio/src/output_runtime.rs",
+    "sha256": "8c72f788eeb3e26d9cdddeba7b20bcc4707f9e412c5378349551f48a52316bd3",
+    "lines": 745,
+    "bytes": 26823,
+    "kind": "source"
+  },
+  {
+    "path": "crates/woodshed-audio/src/samples.rs",
+    "sha256": "fe828259b1d720a16b53281f15963848032735e656eef6a2e3e5e16d227a2c41",
+    "lines": 345,
+    "bytes": 11578,
+    "kind": "source"
+  },
+  {
+    "path": "crates/woodshed-audio/src/sequencer.rs",
+    "sha256": "35a21e4eea6463f7e2fe26e3769c53cd88699cf89f6cdbed27ec688ff7677b18",
+    "lines": 273,
+    "bytes": 8865,
+    "kind": "source"
+  },
+  {
+    "path": "crates/woodshed-audio/src/song.rs",
+    "sha256": "7f8156a98f802cdbf37ab4c8021afa92c75291aeae69b7db04e1bfd49f31558f",
+    "lines": 826,
+    "bytes": 29589,
+    "kind": "source"
+  },
+  {
+    "path": "crates/woodshed-audio/src/sound.rs",
+    "sha256": "f9ff48f987289ca3520a23f3d02960d78719ae2d9065ae0f6dbb1d7265b3e82b",
+    "lines": 442,
+    "bytes": 15001,
+    "kind": "source"
+  }
+]

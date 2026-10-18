@@ -1,0 +1,2392 @@
+{
+  "schema": "woodshed.audit.safety-reconciliation.v1",
+  "date": "2026-10-17",
+  "mode": "read-only product reconciliation; only two owner outputs written",
+  "baseline": {
+    "revision": "d12201bfe80cc94345c6308c46caaebf4a9fe42e",
+    "files": 937,
+    "lines": 231190,
+    "source": "/Users/markik/Code/testing/woodshed/full-source-audit-20261016/source-d12201bf",
+    "coverage": "Parent supplied complete frozen baseline; not re-audited in this targeted pass."
+  },
+  "current": {
+    "repo": "/Users/markik/Code/repos/woodshed",
+    "revision_label": "a424772",
+    "revision_provenance": "User supplied HEAD label; no Git/ref commands or publication verification performed. Current refs/hashes describe files read in this pass.",
+    "current_head_execution_performed": false
+  },
+  "scope": [
+    "A1",
+    "A2",
+    "A4",
+    "A5"
+  ],
+  "confirmation_only": [
+    "hocket:H3"
+  ],
+  "summary": {
+    "implemented_findings": 10,
+    "unresolved_findings": [
+      "hocket:H5",
+      "hocket:H3"
+    ],
+    "package_dispositions": {
+      "A1": "implemented; historical bounded Woodshed native/reopen plus CPU, no current-head native",
+      "A2": "partially implemented; H1/H2/H4 CPU/build only; H5 unresolved",
+      "A4": "implemented guarded admission; historical CPU only; supplier checked API still deferred",
+      "A5": "implemented nonwriting failed recovery; historical CPU/build only"
+    },
+    "current_head_native_acceptance": false,
+    "publication": "Not checked; outside scope"
+  },
+  "receipt_identity": {
+    "CPU16": {
+      "path": "/Users/markik/Code/repos/woodshed/validation/preservation-input_20261016/receipt.json",
+      "baseline": "21d0c2e697165770d9f5787dadc91f526c8e2b02",
+      "candidate_label": "07c170b (preservation plan integration label, not a test-revision field in receipt)",
+      "identity_limit": "Tested identity is baseline plus explicit per-file hashes; receipt has no final tested commit field. The retained isolated implementation matches every listed source hash.",
+      "isolated_snapshot_all_recorded_source_hashes_match": true,
+      "counts": {
+        "distinct_passing_cases": 1150,
+        "separately_counted_capture_subprocess_invocations": 5,
+        "ignored": 9,
+        "repeated_runs_excluded": true
+      },
+      "final_runs_index": {
+        "path": "/Users/markik/Code/repos/woodshed/validation/preservation-input_20261016/final-runs.json",
+        "sha256": "c13158eec3cbf616a7dee1e8ca88fabc8632f5421fc7d919b172467624227e6f",
+        "listed_runs": [
+          "root",
+          "hocket"
+        ],
+        "missing_run": "redshank",
+        "listed_runs_equal_receipt_entries": true,
+        "disposition": "Incomplete convenience index; receipt.json records the Redshank command/exit and redshank-final.log independently reports 80+15 passing cases. No fabricated third final-runs entry."
+      }
+    },
+    "CPU17": {
+      "path": "/Users/markik/Code/repos/woodshed/validation/preservation-input_20261017/integration.json",
+      "baseline": "b88cb26836cffb4c4b091d15c53bb1014d575cdc",
+      "integrated_labels": [
+        "07c170b",
+        "860c5c1"
+      ],
+      "candidate_revision": "cec221348154fc8e6abe3f6136f00b14f9860b78",
+      "candidate_revision_basis": "Preservation plan final integration gate and native/source.json. integration.json itself records baseline, imported labels and source hashes, not final HEAD.",
+      "all_integration_sources_match_cec_native_manifest": true,
+      "counts": {
+        "passing_parent_and_doc_cases": 1355,
+        "capture_child_invocations_counted_separately": 5,
+        "ignored": 9
+      }
+    },
+    "native": {
+      "receipt": "/Users/markik/Code/repos/woodshed/validation/preservation-input_20261017/native/receipt.json",
+      "completion": "/Users/markik/Code/repos/woodshed/validation/preservation-input_20261017/native/completion.json",
+      "original_reviewed_capture_count": 12,
+      "new_visual_review": false,
+      "artifact_manifest_entries": 70,
+      "artifact_manifest_mismatches": [],
+      "phases": [
+        {
+          "name": "persona",
+          "source_revision": "cec221348154fc8e6abe3f6136f00b14f9860b78",
+          "binary_sha256": "e238473b7b88de2d2d0056031cf67b578e392a57538ad45cde63550967dca9f0",
+          "launch": "/Users/markik/Code/repos/woodshed/validation/preservation-input_20261017/native/persona/launch.json",
+          "scenario": "/Users/markik/Code/repos/woodshed/validation/preservation-input_20261017/native/persona/scenario.scn",
+          "done": "/Users/markik/Code/repos/woodshed/validation/preservation-input_20261017/native/persona/scenario.done",
+          "real_log": "/Users/markik/Code/repos/woodshed/validation/preservation-input_20261017/native/persona/native.log",
+          "real_log_sha256": "7df71d9be9c142eaf67eb19681763bbd11edfd536425930520f5b813aa59b725",
+          "result_lines": [
+            {
+              "line": 2349,
+              "text": "woodshed-genet: RESULT ok (191 frames, 6 captures)"
+            }
+          ],
+          "done_presentation_lines": [
+            "RESULT ok",
+            "frames: 6 captured, 0 blank, 6 distinct digests",
+            "presentation: 191 frames, 193 redraws, 2 unpresented redraws"
+          ],
+          "phase_hash_entries": 13,
+          "phase_hash_mismatches": [],
+          "scenario_hash_matches_launch": true,
+          "qualification": {
+            "result": "ok",
+            "presented_frames": 191,
+            "redraws": 193,
+            "unpresented_redraws": 2,
+            "captures": 6,
+            "blank_captures": 0,
+            "distinct_captures": 6,
+            "pid": 19570,
+            "process_exited": true,
+            "phase_hashes_unchanged": true
+          },
+          "new_visual_review_performed": false
+        },
+        {
+          "name": "persona-reopen",
+          "source_revision": "cec221348154fc8e6abe3f6136f00b14f9860b78",
+          "binary_sha256": "e238473b7b88de2d2d0056031cf67b578e392a57538ad45cde63550967dca9f0",
+          "launch": "/Users/markik/Code/repos/woodshed/validation/preservation-input_20261017/native/persona-reopen/launch.json",
+          "scenario": "/Users/markik/Code/repos/woodshed/validation/preservation-input_20261017/native/persona-reopen/scenario.scn",
+          "done": "/Users/markik/Code/repos/woodshed/validation/preservation-input_20261017/native/persona-reopen/scenario.done",
+          "real_log": "/Users/markik/Code/repos/woodshed/validation/preservation-input_20261017/native/persona-reopen/native.log",
+          "real_log_sha256": "317bf66f1f08135af79885bed27b54093f0c2816e6836de112b8981fad942d52",
+          "result_lines": [
+            {
+              "line": 1202,
+              "text": "woodshed-genet: RESULT ok (98 frames, 1 captures)"
+            }
+          ],
+          "done_presentation_lines": [
+            "RESULT ok",
+            "frames: 1 captured, 0 blank, 1 distinct digests",
+            "presentation: 98 frames, 99 redraws, 1 unpresented redraws"
+          ],
+          "phase_hash_entries": 8,
+          "phase_hash_mismatches": [],
+          "scenario_hash_matches_launch": true,
+          "qualification": {
+            "result": "ok",
+            "presented_frames": 98,
+            "redraws": 99,
+            "unpresented_redraws": 1,
+            "captures": 1,
+            "blank_captures": 0,
+            "distinct_captures": 1,
+            "pid": 21666,
+            "process_exited": true,
+            "phase_hashes_unchanged": true
+          },
+          "new_visual_review_performed": false
+        },
+        {
+          "name": "close",
+          "source_revision": "d955f5dc3b99ec1efd6ec9a56dd3ba007755409e",
+          "binary_sha256": "74001d023d6d2d3c84b96dc370ffc656e1c199fe84abad2522dc9e00b523f93a",
+          "launch": "/Users/markik/Code/repos/woodshed/validation/preservation-input_20261017/native/close/launch.json",
+          "scenario": "/Users/markik/Code/repos/woodshed/validation/preservation-input_20261017/native/close/scenario.scn",
+          "done": "/Users/markik/Code/repos/woodshed/validation/preservation-input_20261017/native/close/scenario.done",
+          "real_log": "/Users/markik/Code/repos/woodshed/validation/preservation-input_20261017/native/close/native.log",
+          "real_log_sha256": "8edbfc54233a312d790c59bcacdbfdaf7ce0e6c615b2fbbeb8fe940b655a4e69",
+          "result_lines": [
+            {
+              "line": 1715,
+              "text": "woodshed-genet: RESULT ok (139 frames, 4 captures)"
+            }
+          ],
+          "done_presentation_lines": [
+            "RESULT ok",
+            "frames: 4 captured, 0 blank, 4 distinct digests",
+            "presentation: 139 frames, 141 redraws, 2 unpresented redraws"
+          ],
+          "phase_hash_entries": 8,
+          "phase_hash_mismatches": [],
+          "scenario_hash_matches_launch": true,
+          "qualification": {
+            "result": "ok",
+            "presented_frames": 139,
+            "redraws": 141,
+            "unpresented_redraws": 2,
+            "captures": 4,
+            "blank_captures": 0,
+            "distinct_captures": 4,
+            "pid": 25036,
+            "process_exited": true,
+            "phase_hashes_unchanged": true
+          },
+          "new_visual_review_performed": false
+        },
+        {
+          "name": "quarantine-reopen",
+          "source_revision": "d955f5dc3b99ec1efd6ec9a56dd3ba007755409e",
+          "binary_sha256": "74001d023d6d2d3c84b96dc370ffc656e1c199fe84abad2522dc9e00b523f93a",
+          "launch": "/Users/markik/Code/repos/woodshed/validation/preservation-input_20261017/native/quarantine-reopen/launch.json",
+          "scenario": "/Users/markik/Code/repos/woodshed/validation/preservation-input_20261017/native/quarantine-reopen/scenario.scn",
+          "done": "/Users/markik/Code/repos/woodshed/validation/preservation-input_20261017/native/quarantine-reopen/scenario.done",
+          "real_log": "/Users/markik/Code/repos/woodshed/validation/preservation-input_20261017/native/quarantine-reopen/native.log",
+          "real_log_sha256": "bd51cfa2804e110d3918839158d22e467c6deb724e1113fc98d2df4fd5853abd",
+          "result_lines": [
+            {
+              "line": 1190,
+              "text": "woodshed-genet: RESULT ok (97 frames, 1 captures)"
+            }
+          ],
+          "done_presentation_lines": [
+            "RESULT ok",
+            "frames: 1 captured, 0 blank, 1 distinct digests",
+            "presentation: 97 frames, 98 redraws, 1 unpresented redraws"
+          ],
+          "phase_hash_entries": 5,
+          "phase_hash_mismatches": [],
+          "scenario_hash_matches_launch": true,
+          "qualification": {
+            "result": "ok",
+            "presented_frames": 97,
+            "redraws": 98,
+            "unpresented_redraws": 1,
+            "captures": 1,
+            "blank_captures": 0,
+            "distinct_captures": 1,
+            "pid": 28367,
+            "process_exited": true,
+            "phase_hashes_unchanged": true
+          },
+          "new_visual_review_performed": false
+        }
+      ],
+      "limits": [
+        "No Hocket or Redshank native UI qualification in this receipt.",
+        "Codec-to-persona wake sequencing, incoming-custody failure and capture replacement rejection retain CPU-test-only qualification.",
+        "No physical audibility, latency, microphone or cross-platform qualification."
+      ],
+      "excluded_attempts": [
+        "native-v1: zero presented frames, occlusion timeout; excluded",
+        "native-v2/woodshed-quarantine: selector/focus fixture failed; excluded",
+        "native-v2/woodshed-preservation: persona wording assertion failed; excluded",
+        "P6 close-reopen and close-reopen-final: wrong scenario assertion grammar; excluded"
+      ]
+    }
+  },
+  "findings": [
+    {
+      "id": "host:H1",
+      "package": "A1",
+      "disposition": "implemented; historical CPU and bounded Woodshed native/reopen qualified",
+      "current_source": "Persona replacement calls the same preserve_request used by close, retains blocked/preparing work, distinguishes Retry/Cancel/Discard, waits for finishing WAV export, and rejects Pending incoming custody before outgoing reset. after_wake resumes the pending switch. Explicit discard is the caller-owned bypass.",
+      "current_refs": [
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-genet/src/persona.rs",
+          "start_line": 143,
+          "end_line": 218
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-genet/src/persona.rs",
+          "start_line": 279,
+          "end_line": 327
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-genet/src/capture_persistence.rs",
+          "start_line": 648,
+          "end_line": 704
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-genet/src/main.rs",
+          "start_line": 175,
+          "end_line": 212
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-genet/src/main.rs",
+          "start_line": 456,
+          "end_line": 511
+        }
+      ],
+      "test_source_refs": [
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-genet/src/persona_preservation_tests.rs",
+          "start_line": 116,
+          "end_line": 311
+        }
+      ],
+      "receipt_scope": [
+        "CPU16 root and CPU17 root; persona test file and persona.rs match CPU17 hashes.",
+        "N-persona/ N-persona-reopen at cec221348154fc8e6abe3f6136f00b14f9860b78; N-close/ N-quarantine-reopen at d955f5dc3b99ec1efd6ec9a56dd3ba007755409e. Only corrupt-input quarantine, three authored Cards, Retry/Cancel/explicit Discard, original bytes and fresh quarantine reopen."
+      ],
+      "blockers_or_limits": [
+        "Current capture_persistence.rs/main.rs and dependencies differ from both native inputs; no a424772 native acceptance.",
+        "Held codec worker, failed incoming custody and capture replacement are CPU-only. Combined codec-worker wake to persona installation has no scoped native proof."
+      ],
+      "current_head_tested": false,
+      "current_head_native_accepted": false
+    },
+    {
+      "id": "host:H5",
+      "package": "A1",
+      "disposition": "implemented; historical CPU qualified",
+      "current_source": "reset_for_persona carries event_clock and practice_clock_managed across UiState replacement; current persona.rs is byte-identical to CPU17 and both historical native source manifests.",
+      "current_refs": [
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-genet/src/persona.rs",
+          "start_line": 330,
+          "end_line": 348
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-genet/src/main.rs",
+          "start_line": 228,
+          "end_line": 234
+        }
+      ],
+      "test_source_refs": [
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-genet/src/persona.rs",
+          "start_line": 366,
+          "end_line": 380
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-genet/src/persona_preservation_tests.rs",
+          "start_line": 287,
+          "end_line": 311
+        }
+      ],
+      "receipt_scope": [
+        "CPU16 reset/event-clock regression; CPU17 combined reset regression. Native receipts exercise reset but do not assert event timestamps after long idle."
+      ],
+      "blockers_or_limits": [
+        "No current-head test run; no long-idle/event-timestamp native assertion in these receipts."
+      ],
+      "current_head_tested": false,
+      "current_head_native_accepted": false
+    },
+    {
+      "id": "core:CORE-1",
+      "package": "A4",
+      "disposition": "implemented; historical CPU qualified",
+      "current_source": "Any recognized entries/visits/owners key commits to current decoding. Legacy FlatLog requires events. Decode errors flow through session restore to refused writes instead of empty-history adoption.",
+      "current_refs": [
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-core/src/history.rs",
+          "start_line": 390,
+          "end_line": 395
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-core/src/history.rs",
+          "start_line": 535,
+          "end_line": 573
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-core/src/storage.rs",
+          "start_line": 524,
+          "end_line": 526
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-genet/src/session.rs",
+          "start_line": 45,
+          "end_line": 80
+        }
+      ],
+      "test_source_refs": [
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-core/src/history.rs",
+          "start_line": 1019,
+          "end_line": 1040
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-core/src/storage.rs",
+          "start_line": 1017,
+          "end_line": 1051
+        }
+      ],
+      "receipt_scope": [
+        "CPU16/CPU17 root. history.rs unchanged from both tested hashes. storage.rs now differs only by seconds: None in a test capture fixture versus the hash-verified CPU16 source.",
+        "Native quarantine input is syntactically invalid JSON (logs say expected value at line 1 column 1); it does not qualify the malformed-current-history discriminator fixture."
+      ],
+      "blockers_or_limits": [
+        "Exact malformed-current history native/reopen case absent; no current-head execution."
+      ],
+      "current_head_tested": false,
+      "current_head_native_accepted": false
+    },
+    {
+      "id": "core:CORE-2",
+      "package": "A4",
+      "disposition": "implemented via consumer guard; historical CPU qualified",
+      "current_source": "Consumer validates snapshot bounds, duplicate identities/keys, reciprocal links, iterative visit/owner acyclicity, ownership and visit counts before trusted Lineage::from_snapshot. Real session caller quarantines returned errors.",
+      "current_refs": [
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-core/src/history.rs",
+          "start_line": 397,
+          "end_line": 527
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-core/src/history.rs",
+          "start_line": 548,
+          "end_line": 552
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-genet/src/session.rs",
+          "start_line": 61,
+          "end_line": 80
+        }
+      ],
+      "test_source_refs": [
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-core/src/storage.rs",
+          "start_line": 1017,
+          "end_line": 1051
+        }
+      ],
+      "receipt_scope": [
+        "CPU16/CPU17 root; guard file byte-identical. Historical integration records supplier-invariant peer review."
+      ],
+      "blockers_or_limits": [
+        "Supplier-owned fallible reconstruction API remains future consolidation; current code still calls trusted from_snapshot after local validation. Supplier has since repinned (locks differ); no new supplier/runtime validation was performed here.",
+        "No malformed-index/cycle native fixture in the bounded quarantine receipt."
+      ],
+      "current_head_tested": false,
+      "current_head_native_accepted": false
+    },
+    {
+      "id": "shared:S1",
+      "package": "A4",
+      "disposition": "implemented; historical CPU qualified",
+      "current_source": "Model owns whole-graph validation for key/id, root/head, references, acyclicity and rooted reachability; checkout bounds both executed ancestry walks. Integration validates a temporary union, preserving compatible fragments. Project decode/save, signed handoff create/receive, portable accept and host adoption call validation before mutation.",
+      "current_refs": [
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/hocket-model/src/history.rs",
+          "start_line": 404,
+          "end_line": 450
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/hocket-model/src/history.rs",
+          "start_line": 475,
+          "end_line": 566
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/hocket-model/src/persistence.rs",
+          "start_line": 87,
+          "end_line": 109
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/hocket-project/src/project_store.rs",
+          "start_line": 128,
+          "end_line": 133
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/hocket-project/src/project_store.rs",
+          "start_line": 199,
+          "end_line": 230
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/hocket-project/src/handoff.rs",
+          "start_line": 158,
+          "end_line": 164
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/hocket-project/src/handoff.rs",
+          "start_line": 263,
+          "end_line": 271
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/hocket-project/src/handoff.rs",
+          "start_line": 309,
+          "end_line": 379
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/ports/hocket/crates/hocket-genet/src/state.rs",
+          "start_line": 688,
+          "end_line": 704
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/ports/hocket/crates/hocket-genet/src/state.rs",
+          "start_line": 1137,
+          "end_line": 1154
+        }
+      ],
+      "test_source_refs": [
+        {
+          "path": "/Users/markik/Code/repos/woodshed/ports/hocket/crates/hocket-genet/src/native_lifecycle_tests.rs",
+          "start_line": 128,
+          "end_line": 158
+        }
+      ],
+      "receipt_scope": [
+        "CPU16/CPU17 root (hocket-model/project) plus Hocket host 90 passing/2 ignored. All four model/project receipt source hashes and host state hash match current.",
+        "The filename native_lifecycle_tests.rs denotes device-free mounted-hook tests, not an OS/native run."
+      ],
+      "blockers_or_limits": [
+        "Ports have CPU/build evidence only; dependency locks differ, so unchanged local files do not establish a current-head integrated pass."
+      ],
+      "current_head_tested": false,
+      "current_head_native_accepted": false
+    },
+    {
+      "id": "theory:T4",
+      "package": "A4",
+      "disposition": "implemented; historical CPU qualified",
+      "current_source": "Set::admit_card_ids preflights duplicate assigned IDs and mint exhaustion atomically, migrates only zero IDs, and is reused in copy. decode_session applies admission to active, inactive and retained Sets; IDs may legitimately overlap across separate Sets.",
+      "current_refs": [
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/woodshedding/src/rehearsal.rs",
+          "start_line": 525,
+          "end_line": 569
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-core/src/storage.rs",
+          "start_line": 524,
+          "end_line": 544
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-genet/src/session.rs",
+          "start_line": 61,
+          "end_line": 80
+        }
+      ],
+      "test_source_refs": [
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-core/src/storage.rs",
+          "start_line": 1068,
+          "end_line": 1135
+        }
+      ],
+      "receipt_scope": [
+        "CPU16/CPU17 root. Current admission body is unchanged versus hash-verified CPU16 source. rehearsal.rs differs only by added Repeat::Card variant, and is identical to the d955f5d close-source manifest; storage.rs only adds seconds: None in a test fixture."
+      ],
+      "blockers_or_limits": [
+        "No duplicate-ID native/reopen fixture in bounded receipts; no current-head test run."
+      ],
+      "current_head_tested": false,
+      "current_head_native_accepted": false
+    },
+    {
+      "id": "hocket:H1",
+      "package": "A2",
+      "disposition": "implemented host refusal/defer policy; historical CPU/build only",
+      "current_source": "Accept enters preservation. Open checks live capture at dispatch and again through matching completion/preservation. resolve_preservation refuses active capture and pending I/O even for Discard, preserving the stop token and staged incoming payload.",
+      "current_refs": [
+        {
+          "path": "/Users/markik/Code/repos/woodshed/ports/hocket/crates/hocket-genet/src/state.rs",
+          "start_line": 680,
+          "end_line": 685
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/ports/hocket/crates/hocket-genet/src/state.rs",
+          "start_line": 795,
+          "end_line": 818
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/ports/hocket/crates/hocket-genet/src/state.rs",
+          "start_line": 973,
+          "end_line": 1009
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/ports/hocket/crates/hocket-genet/src/state.rs",
+          "start_line": 1124,
+          "end_line": 1163
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/hocket-recorder/src/lib.rs",
+          "start_line": 849,
+          "end_line": 868
+        }
+      ],
+      "test_source_refs": [
+        {
+          "path": "/Users/markik/Code/repos/woodshed/ports/hocket/crates/hocket-genet/src/native_lifecycle_tests.rs",
+          "start_line": 280,
+          "end_line": 365
+        }
+      ],
+      "receipt_scope": [
+        "CPU16/CPU17 Hocket 90 passing/2 ignored, plus CPU17 desktop build. Relevant state/main/test source hashes match current. Free-capture tests use fake device execution with real recorder services."
+      ],
+      "blockers_or_limits": [
+        "Shared Recorder::replace_project still clears the ticket if directly called during recording; fix is the Woodshed-family Hocket host admission policy, not a generic replacement-during-capture retirement handshake.",
+        "No Hocket native, physical capture, or current-head integrated qualification."
+      ],
+      "current_head_tested": false,
+      "current_head_native_accepted": false
+    },
+    {
+      "id": "hocket:H2",
+      "package": "A2",
+      "disposition": "implemented; historical CPU/build only",
+      "current_source": "Native/dispatch/frame exit hooks enter product close admission, appearance cancellation retains the window, revision-bound approval waits for capture/I/O and dirty-project resolution; update restart re-enters this path. Failed/canceled Save retains the pending decision.",
+      "current_refs": [
+        {
+          "path": "/Users/markik/Code/repos/woodshed/ports/hocket/crates/hocket-genet/src/main.rs",
+          "start_line": 154,
+          "end_line": 183
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/ports/hocket/crates/hocket-genet/src/main.rs",
+          "start_line": 218,
+          "end_line": 244
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/ports/hocket/crates/hocket-genet/src/state.rs",
+          "start_line": 821,
+          "end_line": 856
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/ports/hocket/crates/hocket-genet/src/state.rs",
+          "start_line": 987,
+          "end_line": 1001
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/ports/hocket/crates/hocket-genet/src/state.rs",
+          "start_line": 1068,
+          "end_line": 1178
+        }
+      ],
+      "test_source_refs": [
+        {
+          "path": "/Users/markik/Code/repos/woodshed/ports/hocket/crates/hocket-genet/src/native_lifecycle_tests.rs",
+          "start_line": 28,
+          "end_line": 112
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/ports/hocket/crates/hocket-genet/src/native_lifecycle_tests.rs",
+          "start_line": 391,
+          "end_line": 449
+        }
+      ],
+      "receipt_scope": [
+        "CPU16/CPU17 Hocket; CPU17 desktop build. Mounted production-hook assertions are CPU tests."
+      ],
+      "blockers_or_limits": [
+        "No actual Hocket OS-close, Save-dialog, restart or fresh-process native receipt from this work."
+      ],
+      "current_head_tested": false,
+      "current_head_native_accepted": false
+    },
+    {
+      "id": "hocket:H4",
+      "package": "A2",
+      "disposition": "implemented; historical CPU/build only",
+      "current_source": "saved_revision compares complete session/history plus append-only content-addressed media count and missing-media facts. Save acknowledges the submitted snapshot, so concurrent edits or same-head imported branches/media remain dirty.",
+      "current_refs": [
+        {
+          "path": "/Users/markik/Code/repos/woodshed/ports/hocket/crates/hocket-genet/src/state.rs",
+          "start_line": 68,
+          "end_line": 91
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/ports/hocket/crates/hocket-genet/src/state.rs",
+          "start_line": 775,
+          "end_line": 783
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/ports/hocket/crates/hocket-genet/src/state.rs",
+          "start_line": 987,
+          "end_line": 1001
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/ports/hocket/crates/hocket-genet/src/state.rs",
+          "start_line": 1032,
+          "end_line": 1034
+        }
+      ],
+      "test_source_refs": [
+        {
+          "path": "/Users/markik/Code/repos/woodshed/ports/hocket/crates/hocket-genet/src/native_lifecycle_tests.rs",
+          "start_line": 113,
+          "end_line": 126
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/ports/hocket/crates/hocket-genet/src/native_lifecycle_tests.rs",
+          "start_line": 189,
+          "end_line": 219
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/ports/hocket/crates/hocket-genet/src/project_correlation_tests.rs",
+          "start_line": 237,
+          "end_line": 254
+        }
+      ],
+      "receipt_scope": [
+        "CPU16/CPU17 Hocket; same-head retained branch/media import regression asserts dirty and close refusal. Current state and regression files match recorded source hashes."
+      ],
+      "blockers_or_limits": [
+        "Specific off-head import test stops at in-memory dirty/close assertions; it is not a native save/reopen/full-bundle comparison.",
+        "No current-head pass and no Hocket native/reopen gate."
+      ],
+      "current_head_tested": false,
+      "current_head_native_accepted": false
+    },
+    {
+      "id": "hocket:H5",
+      "package": "A2",
+      "disposition": "unresolved",
+      "current_source": "Same-session acceptance imports media into a cloned store but replaces the recorder with self.recorder.missing_media.clone(). Recorder directly installs that set. Missing facts are not recomputed after imported blobs become available.",
+      "current_refs": [
+        {
+          "path": "/Users/markik/Code/repos/woodshed/ports/hocket/crates/hocket-genet/src/state.rs",
+          "start_line": 700,
+          "end_line": 713
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/hocket-project/src/handoff.rs",
+          "start_line": 361,
+          "end_line": 379
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/hocket-recorder/src/lib.rs",
+          "start_line": 849,
+          "end_line": 868
+        }
+      ],
+      "test_source_refs": [],
+      "receipt_scope": [
+        "Plan explicitly excludes missing-media presentation (H5); Hocket passing suite/build is not evidence of this defect being fixed. Current host implementation is identical to both CPU receipt hashes."
+      ],
+      "blockers_or_limits": [
+        "Recompute missing-media facts after successful same-session import and qualify the missing-then-restored-media case before closing H5. No fix authorized in this reconciliation."
+      ],
+      "current_head_tested": false,
+      "current_head_native_accepted": false
+    },
+    {
+      "id": "redshank:R01",
+      "package": "A5",
+      "disposition": "implemented; historical CPU/build only",
+      "current_source": "Storage differentiates empty inventory from exhausted invalid generations, propagates restore I/O errors, permits readable older fallback, and refuses publication/pruning unless load succeeds. Failed desktop restore starts an in-memory model with no save worker/sender, latched recovery error, blocked flush and ignored save acknowledgements.",
+      "current_refs": [
+        {
+          "path": "/Users/markik/Code/repos/woodshed/ports/redshank/storage/src/lib.rs",
+          "start_line": 108,
+          "end_line": 132
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/ports/redshank/storage/src/lib.rs",
+          "start_line": 178,
+          "end_line": 181
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/ports/redshank/desktop/src/main.rs",
+          "start_line": 182,
+          "end_line": 208
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/ports/redshank/desktop/src/main.rs",
+          "start_line": 281,
+          "end_line": 298
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/ports/redshank/desktop/src/main.rs",
+          "start_line": 335,
+          "end_line": 348
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/ports/redshank/desktop/src/main.rs",
+          "start_line": 592,
+          "end_line": 601
+        }
+      ],
+      "test_source_refs": [
+        {
+          "path": "/Users/markik/Code/repos/woodshed/ports/redshank/storage/src/lib.rs",
+          "start_line": 454,
+          "end_line": 503
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/ports/redshank/storage/src/lib.rs",
+          "start_line": 531,
+          "end_line": 577
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/ports/redshank/desktop/src/main.rs",
+          "start_line": 3248,
+          "end_line": 3341
+        }
+      ],
+      "receipt_scope": [
+        "CPU16/CPU17 Redshank: 80 desktop + 15 storage, no ignores; CPU17 desktop build. Both product files match both receipts. Invalid-generation and I/O fixtures check original bytes and inventory; valid older fallback tested separately."
+      ],
+      "blockers_or_limits": [
+        "No Redshank native/reopen acceptance. Recovery/reset interaction remains a separate product decision; current safe policy is nonwriting until repair and reopen. Dependency lock differs from receipts."
+      ],
+      "current_head_tested": false,
+      "current_head_native_accepted": false
+    },
+    {
+      "id": "hocket:H3",
+      "package": "A3 confirmation only",
+      "disposition": "unresolved; persona binding still open",
+      "current_source": "Offer stages cached family profile and losing token. Confirmation takes _staged but ignores it. join_family reconnects via CustodyIdentity::connect, writes the cached profile with the returned master key, and displays the cached profile. No target-profile/key equality or renewed consent check is present.",
+      "current_refs": [
+        {
+          "path": "/Users/markik/Code/repos/woodshed/ports/hocket/crates/hocket-genet/src/state.rs",
+          "start_line": 552,
+          "end_line": 562
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/ports/hocket/crates/hocket-genet/src/state.rs",
+          "start_line": 588,
+          "end_line": 607
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/ports/hocket/crates/hocket-genet/src/identity.rs",
+          "start_line": 207,
+          "end_line": 227
+        }
+      ],
+      "test_source_refs": [],
+      "receipt_scope": [
+        "Preservation plan explicitly leaves H3 separate; current state.rs is identical to CPU16/CPU17, so passing those suites cannot establish a binding fix."
+      ],
+      "blockers_or_limits": [
+        "Bind shown profile and key to actual accepted identity or re-offer on change; add change-between-offer-and-confirmation and persisted-consent/reopen evidence before closure. No fix authorized here."
+      ],
+      "current_head_tested": false,
+      "current_head_native_accepted": false
+    }
+  ],
+  "source_hash_comparisons": {
+    "CPU16": [
+      {
+        "path": "/Users/markik/Code/repos/woodshed/crates/hocket-model/src/history.rs",
+        "relative_path": "crates/hocket-model/src/history.rs",
+        "recorded_sha256": "724d627d113a719e162658873fa0c3aabc180ae51667e2acbeee0c9432bcb7fb",
+        "current_sha256": "724d627d113a719e162658873fa0c3aabc180ae51667e2acbeee0c9432bcb7fb",
+        "equal": true
+      },
+      {
+        "path": "/Users/markik/Code/repos/woodshed/crates/hocket-model/src/persistence.rs",
+        "relative_path": "crates/hocket-model/src/persistence.rs",
+        "recorded_sha256": "818385e79098662d515ea9318d1c4bdd5bb7f9e4418e424305bfd7de744afd59",
+        "current_sha256": "818385e79098662d515ea9318d1c4bdd5bb7f9e4418e424305bfd7de744afd59",
+        "equal": true
+      },
+      {
+        "path": "/Users/markik/Code/repos/woodshed/crates/hocket-project/src/handoff.rs",
+        "relative_path": "crates/hocket-project/src/handoff.rs",
+        "recorded_sha256": "b8f7a7f22994e410c924e1774cecf0caba610d29a4cc86dd38dc5776561667df",
+        "current_sha256": "b8f7a7f22994e410c924e1774cecf0caba610d29a4cc86dd38dc5776561667df",
+        "equal": true
+      },
+      {
+        "path": "/Users/markik/Code/repos/woodshed/crates/hocket-project/src/project_store.rs",
+        "relative_path": "crates/hocket-project/src/project_store.rs",
+        "recorded_sha256": "141bc78a0867d41ee276776906adad7c69244b2b9ad41a0a290c50e1dd2c2269",
+        "current_sha256": "141bc78a0867d41ee276776906adad7c69244b2b9ad41a0a290c50e1dd2c2269",
+        "equal": true
+      },
+      {
+        "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-core/src/history.rs",
+        "relative_path": "crates/woodshed-core/src/history.rs",
+        "recorded_sha256": "fbefb93ca13cc8638809f97eeefe521dc62286837e54ef56c1b52a8c84526231",
+        "current_sha256": "fbefb93ca13cc8638809f97eeefe521dc62286837e54ef56c1b52a8c84526231",
+        "equal": true
+      },
+      {
+        "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-core/src/storage.rs",
+        "relative_path": "crates/woodshed-core/src/storage.rs",
+        "recorded_sha256": "4a708f11f5b601c8cc1b17b4cfbdb44b426876de362fe2f04c755bf1cfa1faef",
+        "current_sha256": "0702b4b58efa6303dcd773bb03a03e77fb34a53afe636cdaa39381512f078560",
+        "equal": false
+      },
+      {
+        "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-genet/src/audio.rs",
+        "relative_path": "crates/woodshed-genet/src/audio.rs",
+        "recorded_sha256": "f758fe5ee84049b4f0f2a708e921b514356e40053d38630783225b082e253716",
+        "current_sha256": "797cd49d2e63bf2b5e09071cbcae88783201082f1189eb803fb66ce93d0f69ae",
+        "equal": false
+      },
+      {
+        "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-genet/src/capture_persistence.rs",
+        "relative_path": "crates/woodshed-genet/src/capture_persistence.rs",
+        "recorded_sha256": "529ac802957087e7833d4af400645f1a85ad0a29cf495682992d76ea1c99b559",
+        "current_sha256": "a77aa503423aa96f4e27ff3fae8e715d6e2b799d294721ab5401a6e46185103c",
+        "equal": false
+      },
+      {
+        "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-genet/src/main.rs",
+        "relative_path": "crates/woodshed-genet/src/main.rs",
+        "recorded_sha256": "a2a8185c98d61b322595c35a88d918f2de884c559246527f797d72a4e378e40e",
+        "current_sha256": "d7ce28d17658a5ff2665964c38845707c4afe67d7019db2da533bc45f559fc65",
+        "equal": false
+      },
+      {
+        "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-genet/src/persona.rs",
+        "relative_path": "crates/woodshed-genet/src/persona.rs",
+        "recorded_sha256": "b54e8819d65db52859c655df02af986dc91b24af58e7427fc2fc804e5331044d",
+        "current_sha256": "b42a9d61f4d3ec893e166b4a1bda34e28e4bda85295c633d6109e90d171e5147",
+        "equal": false
+      },
+      {
+        "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-genet/src/persona_preservation_tests.rs",
+        "relative_path": "crates/woodshed-genet/src/persona_preservation_tests.rs",
+        "recorded_sha256": "c3ef842d0dd56a05c06a39e716d970636edf20718b9cf5c2c6f6ec3be78728b6",
+        "current_sha256": "c3ef842d0dd56a05c06a39e716d970636edf20718b9cf5c2c6f6ec3be78728b6",
+        "equal": true
+      },
+      {
+        "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-genet/src/wav_export.rs",
+        "relative_path": "crates/woodshed-genet/src/wav_export.rs",
+        "recorded_sha256": "6417ecc51e539fafeecf35a7ba3446cd26c37a5c562ffcecf9b4c1f4289cab60",
+        "current_sha256": "6417ecc51e539fafeecf35a7ba3446cd26c37a5c562ffcecf9b4c1f4289cab60",
+        "equal": true
+      },
+      {
+        "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-views/src/persona.rs",
+        "relative_path": "crates/woodshed-views/src/persona.rs",
+        "recorded_sha256": "1b9d0b35d472d08f0c051aa688aaecf7fea0e89d3a3b2afe77e0448b7cfa327e",
+        "current_sha256": "1b9d0b35d472d08f0c051aa688aaecf7fea0e89d3a3b2afe77e0448b7cfa327e",
+        "equal": true
+      },
+      {
+        "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-views/src/stage.rs",
+        "relative_path": "crates/woodshed-views/src/stage.rs",
+        "recorded_sha256": "f712a9b1ebd9d75ce86e22575ccda052c8687b7d6c041c55473c979c43a70dbc",
+        "current_sha256": "00ae020cd10da3af8602ce9496d0325ae77dcc2536a5517c151e2d5d6a08fe5f",
+        "equal": false
+      },
+      {
+        "path": "/Users/markik/Code/repos/woodshed/crates/woodshedding/src/rehearsal.rs",
+        "relative_path": "crates/woodshedding/src/rehearsal.rs",
+        "recorded_sha256": "e2bcb68dae6e724c328914a27c40c5e7dbbd3108181655d9e6b3f9c9dba5ba4c",
+        "current_sha256": "446f5826c9ce9cb424842bf43c0ffcab086eaa7dbbd7695b6b16541e0776bc74",
+        "equal": false
+      },
+      {
+        "path": "/Users/markik/Code/repos/woodshed/ports/hocket/crates/hocket-genet/src/main.rs",
+        "relative_path": "ports/hocket/crates/hocket-genet/src/main.rs",
+        "recorded_sha256": "06a4b57bcda17278c97e3f88e4624fce6586de5f951a3ab7753dbd921385a117",
+        "current_sha256": "06a4b57bcda17278c97e3f88e4624fce6586de5f951a3ab7753dbd921385a117",
+        "equal": true
+      },
+      {
+        "path": "/Users/markik/Code/repos/woodshed/ports/hocket/crates/hocket-genet/src/native_lifecycle_tests.rs",
+        "relative_path": "ports/hocket/crates/hocket-genet/src/native_lifecycle_tests.rs",
+        "recorded_sha256": "68918bfd6aeea2740bf2360fe26c08d91209333f7c1cb984948d2b95d7a2f528",
+        "current_sha256": "68918bfd6aeea2740bf2360fe26c08d91209333f7c1cb984948d2b95d7a2f528",
+        "equal": true
+      },
+      {
+        "path": "/Users/markik/Code/repos/woodshed/ports/hocket/crates/hocket-genet/src/project_correlation_tests.rs",
+        "relative_path": "ports/hocket/crates/hocket-genet/src/project_correlation_tests.rs",
+        "recorded_sha256": "0e183db63cff8471355da8e52adf422f926fa7a85b5a256fb672360ea3edb4de",
+        "current_sha256": "0e183db63cff8471355da8e52adf422f926fa7a85b5a256fb672360ea3edb4de",
+        "equal": true
+      },
+      {
+        "path": "/Users/markik/Code/repos/woodshed/ports/hocket/crates/hocket-genet/src/state.rs",
+        "relative_path": "ports/hocket/crates/hocket-genet/src/state.rs",
+        "recorded_sha256": "d49b96ec05f818308ab49d9eba1f1095bb127973676cfc190d8789dc380b2751",
+        "current_sha256": "d49b96ec05f818308ab49d9eba1f1095bb127973676cfc190d8789dc380b2751",
+        "equal": true
+      },
+      {
+        "path": "/Users/markik/Code/repos/woodshed/ports/hocket/crates/hocket-genet/src/theme.rs",
+        "relative_path": "ports/hocket/crates/hocket-genet/src/theme.rs",
+        "recorded_sha256": "65f23f49bf673c038052fc43d6f786ed9b019db1767df5ef5f97a3740c56e6e9",
+        "current_sha256": "65f23f49bf673c038052fc43d6f786ed9b019db1767df5ef5f97a3740c56e6e9",
+        "equal": true
+      },
+      {
+        "path": "/Users/markik/Code/repos/woodshed/ports/hocket/crates/hocket-genet/src/view.rs",
+        "relative_path": "ports/hocket/crates/hocket-genet/src/view.rs",
+        "recorded_sha256": "1e554a005ff5550ac89fb1fcf96ac61271fde1ebb651f7da2f226b0f1a0a7f7d",
+        "current_sha256": "1e554a005ff5550ac89fb1fcf96ac61271fde1ebb651f7da2f226b0f1a0a7f7d",
+        "equal": true
+      },
+      {
+        "path": "/Users/markik/Code/repos/woodshed/ports/redshank/desktop/src/main.rs",
+        "relative_path": "ports/redshank/desktop/src/main.rs",
+        "recorded_sha256": "ba6bf87845ba62c4784247affd4c39a19002574b012995cc2f5013325597c928",
+        "current_sha256": "ba6bf87845ba62c4784247affd4c39a19002574b012995cc2f5013325597c928",
+        "equal": true
+      },
+      {
+        "path": "/Users/markik/Code/repos/woodshed/ports/redshank/storage/src/lib.rs",
+        "relative_path": "ports/redshank/storage/src/lib.rs",
+        "recorded_sha256": "6fe384bbb1d97b00ba1051c4aae3d6cea82e5454096bba63e759d699e05a931a",
+        "current_sha256": "6fe384bbb1d97b00ba1051c4aae3d6cea82e5454096bba63e759d699e05a931a",
+        "equal": true
+      }
+    ],
+    "CPU17": [
+      {
+        "path": "/Users/markik/Code/repos/woodshed/crates/hocket-model/src/history.rs",
+        "relative_path": "crates/hocket-model/src/history.rs",
+        "recorded_sha256": "724d627d113a719e162658873fa0c3aabc180ae51667e2acbeee0c9432bcb7fb",
+        "current_sha256": "724d627d113a719e162658873fa0c3aabc180ae51667e2acbeee0c9432bcb7fb",
+        "equal": true
+      },
+      {
+        "path": "/Users/markik/Code/repos/woodshed/crates/hocket-model/src/persistence.rs",
+        "relative_path": "crates/hocket-model/src/persistence.rs",
+        "recorded_sha256": "818385e79098662d515ea9318d1c4bdd5bb7f9e4418e424305bfd7de744afd59",
+        "current_sha256": "818385e79098662d515ea9318d1c4bdd5bb7f9e4418e424305bfd7de744afd59",
+        "equal": true
+      },
+      {
+        "path": "/Users/markik/Code/repos/woodshed/crates/hocket-project/src/handoff.rs",
+        "relative_path": "crates/hocket-project/src/handoff.rs",
+        "recorded_sha256": "b8f7a7f22994e410c924e1774cecf0caba610d29a4cc86dd38dc5776561667df",
+        "current_sha256": "b8f7a7f22994e410c924e1774cecf0caba610d29a4cc86dd38dc5776561667df",
+        "equal": true
+      },
+      {
+        "path": "/Users/markik/Code/repos/woodshed/crates/hocket-project/src/project_store.rs",
+        "relative_path": "crates/hocket-project/src/project_store.rs",
+        "recorded_sha256": "141bc78a0867d41ee276776906adad7c69244b2b9ad41a0a290c50e1dd2c2269",
+        "current_sha256": "141bc78a0867d41ee276776906adad7c69244b2b9ad41a0a290c50e1dd2c2269",
+        "equal": true
+      },
+      {
+        "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-core/src/history.rs",
+        "relative_path": "crates/woodshed-core/src/history.rs",
+        "recorded_sha256": "fbefb93ca13cc8638809f97eeefe521dc62286837e54ef56c1b52a8c84526231",
+        "current_sha256": "fbefb93ca13cc8638809f97eeefe521dc62286837e54ef56c1b52a8c84526231",
+        "equal": true
+      },
+      {
+        "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-core/src/storage.rs",
+        "relative_path": "crates/woodshed-core/src/storage.rs",
+        "recorded_sha256": "4a708f11f5b601c8cc1b17b4cfbdb44b426876de362fe2f04c755bf1cfa1faef",
+        "current_sha256": "0702b4b58efa6303dcd773bb03a03e77fb34a53afe636cdaa39381512f078560",
+        "equal": false
+      },
+      {
+        "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-genet/src/audio.rs",
+        "relative_path": "crates/woodshed-genet/src/audio.rs",
+        "recorded_sha256": "ae3270e731b35ada02d3515e5877b117b453448495da09286e8d0bdeb3186fde",
+        "current_sha256": "797cd49d2e63bf2b5e09071cbcae88783201082f1189eb803fb66ce93d0f69ae",
+        "equal": false
+      },
+      {
+        "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-genet/src/capture_persistence.rs",
+        "relative_path": "crates/woodshed-genet/src/capture_persistence.rs",
+        "recorded_sha256": "529ac802957087e7833d4af400645f1a85ad0a29cf495682992d76ea1c99b559",
+        "current_sha256": "a77aa503423aa96f4e27ff3fae8e715d6e2b799d294721ab5401a6e46185103c",
+        "equal": false
+      },
+      {
+        "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-genet/src/main.rs",
+        "relative_path": "crates/woodshed-genet/src/main.rs",
+        "recorded_sha256": "8f1717f2a6899780a7d5300975a17624413b439349175404e8f789e0f592c4ed",
+        "current_sha256": "d7ce28d17658a5ff2665964c38845707c4afe67d7019db2da533bc45f559fc65",
+        "equal": false
+      },
+      {
+        "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-genet/src/persona.rs",
+        "relative_path": "crates/woodshed-genet/src/persona.rs",
+        "recorded_sha256": "b42a9d61f4d3ec893e166b4a1bda34e28e4bda85295c633d6109e90d171e5147",
+        "current_sha256": "b42a9d61f4d3ec893e166b4a1bda34e28e4bda85295c633d6109e90d171e5147",
+        "equal": true
+      },
+      {
+        "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-genet/src/persona_preservation_tests.rs",
+        "relative_path": "crates/woodshed-genet/src/persona_preservation_tests.rs",
+        "recorded_sha256": "c3ef842d0dd56a05c06a39e716d970636edf20718b9cf5c2c6f6ec3be78728b6",
+        "current_sha256": "c3ef842d0dd56a05c06a39e716d970636edf20718b9cf5c2c6f6ec3be78728b6",
+        "equal": true
+      },
+      {
+        "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-genet/src/wav_export.rs",
+        "relative_path": "crates/woodshed-genet/src/wav_export.rs",
+        "recorded_sha256": "6417ecc51e539fafeecf35a7ba3446cd26c37a5c562ffcecf9b4c1f4289cab60",
+        "current_sha256": "6417ecc51e539fafeecf35a7ba3446cd26c37a5c562ffcecf9b4c1f4289cab60",
+        "equal": true
+      },
+      {
+        "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-views/src/persona.rs",
+        "relative_path": "crates/woodshed-views/src/persona.rs",
+        "recorded_sha256": "1b9d0b35d472d08f0c051aa688aaecf7fea0e89d3a3b2afe77e0448b7cfa327e",
+        "current_sha256": "1b9d0b35d472d08f0c051aa688aaecf7fea0e89d3a3b2afe77e0448b7cfa327e",
+        "equal": true
+      },
+      {
+        "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-views/src/stage.rs",
+        "relative_path": "crates/woodshed-views/src/stage.rs",
+        "recorded_sha256": "0b7a470340a90a967f5f0054d652c1d3b82ccfc0b0840a2bf232757293d856da",
+        "current_sha256": "00ae020cd10da3af8602ce9496d0325ae77dcc2536a5517c151e2d5d6a08fe5f",
+        "equal": false
+      },
+      {
+        "path": "/Users/markik/Code/repos/woodshed/crates/woodshedding/src/rehearsal.rs",
+        "relative_path": "crates/woodshedding/src/rehearsal.rs",
+        "recorded_sha256": "e2bcb68dae6e724c328914a27c40c5e7dbbd3108181655d9e6b3f9c9dba5ba4c",
+        "current_sha256": "446f5826c9ce9cb424842bf43c0ffcab086eaa7dbbd7695b6b16541e0776bc74",
+        "equal": false
+      },
+      {
+        "path": "/Users/markik/Code/repos/woodshed/ports/hocket/crates/hocket-genet/src/main.rs",
+        "relative_path": "ports/hocket/crates/hocket-genet/src/main.rs",
+        "recorded_sha256": "06a4b57bcda17278c97e3f88e4624fce6586de5f951a3ab7753dbd921385a117",
+        "current_sha256": "06a4b57bcda17278c97e3f88e4624fce6586de5f951a3ab7753dbd921385a117",
+        "equal": true
+      },
+      {
+        "path": "/Users/markik/Code/repos/woodshed/ports/hocket/crates/hocket-genet/src/native_lifecycle_tests.rs",
+        "relative_path": "ports/hocket/crates/hocket-genet/src/native_lifecycle_tests.rs",
+        "recorded_sha256": "68918bfd6aeea2740bf2360fe26c08d91209333f7c1cb984948d2b95d7a2f528",
+        "current_sha256": "68918bfd6aeea2740bf2360fe26c08d91209333f7c1cb984948d2b95d7a2f528",
+        "equal": true
+      },
+      {
+        "path": "/Users/markik/Code/repos/woodshed/ports/hocket/crates/hocket-genet/src/project_correlation_tests.rs",
+        "relative_path": "ports/hocket/crates/hocket-genet/src/project_correlation_tests.rs",
+        "recorded_sha256": "0e183db63cff8471355da8e52adf422f926fa7a85b5a256fb672360ea3edb4de",
+        "current_sha256": "0e183db63cff8471355da8e52adf422f926fa7a85b5a256fb672360ea3edb4de",
+        "equal": true
+      },
+      {
+        "path": "/Users/markik/Code/repos/woodshed/ports/hocket/crates/hocket-genet/src/state.rs",
+        "relative_path": "ports/hocket/crates/hocket-genet/src/state.rs",
+        "recorded_sha256": "d49b96ec05f818308ab49d9eba1f1095bb127973676cfc190d8789dc380b2751",
+        "current_sha256": "d49b96ec05f818308ab49d9eba1f1095bb127973676cfc190d8789dc380b2751",
+        "equal": true
+      },
+      {
+        "path": "/Users/markik/Code/repos/woodshed/ports/hocket/crates/hocket-genet/src/theme.rs",
+        "relative_path": "ports/hocket/crates/hocket-genet/src/theme.rs",
+        "recorded_sha256": "65f23f49bf673c038052fc43d6f786ed9b019db1767df5ef5f97a3740c56e6e9",
+        "current_sha256": "65f23f49bf673c038052fc43d6f786ed9b019db1767df5ef5f97a3740c56e6e9",
+        "equal": true
+      },
+      {
+        "path": "/Users/markik/Code/repos/woodshed/ports/hocket/crates/hocket-genet/src/view.rs",
+        "relative_path": "ports/hocket/crates/hocket-genet/src/view.rs",
+        "recorded_sha256": "1e554a005ff5550ac89fb1fcf96ac61271fde1ebb651f7da2f226b0f1a0a7f7d",
+        "current_sha256": "1e554a005ff5550ac89fb1fcf96ac61271fde1ebb651f7da2f226b0f1a0a7f7d",
+        "equal": true
+      },
+      {
+        "path": "/Users/markik/Code/repos/woodshed/ports/redshank/desktop/src/main.rs",
+        "relative_path": "ports/redshank/desktop/src/main.rs",
+        "recorded_sha256": "ba6bf87845ba62c4784247affd4c39a19002574b012995cc2f5013325597c928",
+        "current_sha256": "ba6bf87845ba62c4784247affd4c39a19002574b012995cc2f5013325597c928",
+        "equal": true
+      },
+      {
+        "path": "/Users/markik/Code/repos/woodshed/ports/redshank/storage/src/lib.rs",
+        "relative_path": "ports/redshank/storage/src/lib.rs",
+        "recorded_sha256": "6fe384bbb1d97b00ba1051c4aae3d6cea82e5454096bba63e759d699e05a931a",
+        "current_sha256": "6fe384bbb1d97b00ba1051c4aae3d6cea82e5454096bba63e759d699e05a931a",
+        "equal": true
+      }
+    ]
+  },
+  "native_source_drift": {
+    "N-persona": {
+      "manifest": "/Users/markik/Code/repos/woodshed/validation/preservation-input_20261017/native/source-hashes.json",
+      "manifest_sha256": "a69befe03de4eadb88ab91a5a7a9228fbdad260937d1f14b5c59d347d4a35513",
+      "bound_paths": 328,
+      "matching_paths": 275,
+      "differing_paths": [
+        {
+          "path": "/Users/markik/Code/repos/woodshed/Cargo.lock",
+          "recorded_sha256": "5d5992edd62d430f7d3c2bc848a9ecfd6054421bf32f4d4329638075893fb0cf",
+          "current_sha256": "79ffc562fa1f473c5ad05288fbcb4b271f8c5d19fb593d67aeb08c05a2220d3e"
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/Cargo.toml",
+          "recorded_sha256": "8d7f51e6e3b8d74f1b41cd3bfc8e326f06e9cb3ff083f5fc458034f3ed2102f9",
+          "current_sha256": "943115f83b951465f63dfef222e9e7ea023c5e92947961967a55efb7ebf76fec"
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/audio-primitives/src/lib.rs",
+          "recorded_sha256": "484d2b0ab4d47f19b89dec7cf8a2ece04862761aa94979c2b5aa90bed3a59ffa",
+          "current_sha256": "5231698b01e72fa31062fd3cc0b44c7c10fdff4f820ec9db4f4990dc75844963"
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/hocket-views/Cargo.toml",
+          "recorded_sha256": "c115bccb050cbf7cd46d9c15950f448649306089e83b6c8cb3d016171e020440",
+          "current_sha256": "b7fa7a1aae9387f1cee5cf12dc25064c46ea305a388324d626fc0ac73d23844f"
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/hocket-views/examples/two_mounts.rs",
+          "recorded_sha256": "a05e9b3f5a77064aed7e4eab348d8abe9e1e616874ca520231a1ae417c66fbf5",
+          "current_sha256": "965087e28f662036a40f6a9cff0ae66a3c9fe81d320f0d4603aec22322410b98"
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/hocket-views/src/projection.rs",
+          "recorded_sha256": "02165e95d008b812e1de1f90fbbafcda5158c9bfdd7aa874bc550fbd321f0d49",
+          "current_sha256": "72810a865c9086732f3c1595e154fa49cf0fb79a550d6b6bea4943c345c42e1e"
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/hocket-views/src/projection_tests.rs",
+          "recorded_sha256": "473c96b4cbf75eb01411314580d272559b3bb03a35791be6a4b6cb3ae12f88c5",
+          "current_sha256": "7aa52d6e974216f0acdae3cd2357967581443a786d95150cc1d0b8ac06972f05"
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/hocket-views/src/surface.rs",
+          "recorded_sha256": "b59f0991dcb3cda252701e0d6801d660125dd3738180eaae1097789a6606455e",
+          "current_sha256": "43e01298ee50c6e54fe68f67df3f093e00892b8c0b60f071fb89ab144a5f37c9"
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/hocket-views/src/theme.rs",
+          "recorded_sha256": "adc7347846826a86fba7c4f5783832da7ad84fa7ed37950f63e48835c6a6fce0",
+          "current_sha256": "f7fdc51d690d49da02b0dbcc697b15e4838e7a78397daea1853354800fdfb11d"
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-audio/src/lib.rs",
+          "recorded_sha256": "031f1e29034579389a963169c7ef98f47d21604e76efa76bb91d3125edc39e5f",
+          "current_sha256": "e34752ada70177556ec8a73da66bb32e958379f6ba86a8ff471f70e381ab7e23"
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-audio/src/offline/song_export.rs",
+          "recorded_sha256": "9001050936c67f9377308cf7123ac9a1552d6e4d416c06d699a1bc6f620d9013",
+          "current_sha256": "a27fa9d4a939f08b9b9a64a3b511d532904ef2aed3b6cdb4df322f25508c45c1"
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-audio/src/offline/song_export/tests.rs",
+          "recorded_sha256": "d8287b219ddce748d16ac3a13d015fd153ae5453430eff4970efbccab22095f2",
+          "current_sha256": "cbcfb8abdb02514d83f78d31cd00a095b332285f34613dbf3dfe29b57227a1fd"
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-audio/src/output_runtime.rs",
+          "recorded_sha256": "53a2177bbeef6457578fb48672e2728c67adb1a49cef7a246ad0bea7f6f0e261",
+          "current_sha256": "c8c84e289ebc2df0e59ac1b51f973d6e4870afe456e5dbcd858700614d5df97e"
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-audio/src/output_runtime/processor.rs",
+          "recorded_sha256": "c79f5680eaeacfa06fe730e893711767ba2b043be0cd099c2f659c578d7d491f",
+          "current_sha256": "bf7450caa19b35bdd88a79e8253cd7fc12aa903682a266392d433447898b44c5"
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-audio/src/output_runtime/tests.rs",
+          "recorded_sha256": "0a0b5ef2eb7b81dca5b03f7fa78a580be50b00bca363223d136dfe103fe719c0",
+          "current_sha256": "f1f22cab94a3b3f0de0c91f41a57c06630445848ee0fe1d2d6ac9f86100da5a2"
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-audio/src/song.rs",
+          "recorded_sha256": "7f8156a98f802cdbf37ab4c8021afa92c75291aeae69b7db04e1bfd49f31558f",
+          "current_sha256": "36a182314eb482330563fe96e135cf34e2b27319d4c8eef81b8ae0e9b889f94a"
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-core/Cargo.toml",
+          "recorded_sha256": "10c726fdc4bd084f249b1385d71fd2f7929c5f50fbba8518eed79f352f9371c4",
+          "current_sha256": "293b53fc38dbfcbd6981f201fa16779ba51ef1cc50f72afbdbdf4a5bb81226de"
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-core/src/lib.rs",
+          "recorded_sha256": "fc639658c499c1f3c1511bbccb339bf4998fe750e06eef9954e5a5093e6f596c",
+          "current_sha256": "53eb759364e4803f9755f9a52d9e1403005f8a94c92ad520d99189997537bc6b"
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-core/src/loop_capture.rs",
+          "recorded_sha256": "a88f218076475aa1689c83ac16cf3c4e3c4ab269238cb3e2a50895febf09b582",
+          "current_sha256": "aa5d90aafe5e783c8ff6e10cfccf200162787f511e8b7bd74a33579333b5de1c"
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-core/src/loop_plan.rs",
+          "recorded_sha256": "94edc634d39ff3f3bc10e886879d77b567ad5809d0bb70d2f0b3ce5ae642c52d",
+          "current_sha256": "fa80b6aa61074e7096c59bea43e885897f3df57f068ac60ce3464f8a47390b39"
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-core/src/session_overview.rs",
+          "recorded_sha256": "fe2a1a4e257a73e7425e47988885f9180f971e4e47b07748c25fddd98eaadcb6",
+          "current_sha256": "39c50f0311d216a90bd7cb878e6d27da38f342d9695eb53258252cc044e634ad"
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-core/src/storage.rs",
+          "recorded_sha256": "4a708f11f5b601c8cc1b17b4cfbdb44b426876de362fe2f04c755bf1cfa1faef",
+          "current_sha256": "0702b4b58efa6303dcd773bb03a03e77fb34a53afe636cdaa39381512f078560"
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-genet/Cargo.toml",
+          "recorded_sha256": "6c6b0cac3496a9c63a26714c4079ffac82b9b53f74bdec9dd675ee5edbac9f7e",
+          "current_sha256": "8631562a70faa2d7b7ca2b8a507b7c898f625724eb756ad2f00e234e68479ddf"
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-genet/src/appearance.rs",
+          "recorded_sha256": "41ded074fa5158bffa41f1db9b0d06610c9475f2fb9f3ce37e00a7b8a3d07983",
+          "current_sha256": "452841f6c7b6d6e1aba63466fcd5ec27c110c3ccf396ec761e8788f82cb2dc56"
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-genet/src/arrangement.rs",
+          "recorded_sha256": "7ae84b8e7bcfb43d380c1c7e410bef8303bf8bcc228b49bd3db1134c6740043c",
+          "current_sha256": "b96eff943fdb5849d59b0fba81c3b20e7f9300772e9c33f477992a24e6cd2353"
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-genet/src/audio.rs",
+          "recorded_sha256": "ae3270e731b35ada02d3515e5877b117b453448495da09286e8d0bdeb3186fde",
+          "current_sha256": "797cd49d2e63bf2b5e09071cbcae88783201082f1189eb803fb66ce93d0f69ae"
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-genet/src/audio/loop_projection.rs",
+          "recorded_sha256": "20f29f71e3ef828971852b93ff4395e163334bf1efa4c10f54b9c7a4b22f602c",
+          "current_sha256": "ca3fb430c923637025925630e7b6f4ab7f4bf5480202de30d9a3c3537acf99b6"
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-genet/src/audio/practice_clock.rs",
+          "recorded_sha256": "c2d5041be6b8acfd4db56567b7255b5294c631dea3c106139cfab3c7034aeb5c",
+          "current_sha256": "76427bb40e40151dd3fd3ca5dcbaae831def8d006d1cd7f97d81d981e81a17ed"
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-genet/src/capture_persistence.rs",
+          "recorded_sha256": "529ac802957087e7833d4af400645f1a85ad0a29cf495682992d76ea1c99b559",
+          "current_sha256": "a77aa503423aa96f4e27ff3fae8e715d6e2b799d294721ab5401a6e46185103c"
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-genet/src/fonts.rs",
+          "recorded_sha256": "d66a396c84ca5b25830a6529bec0dafedb9883bcf83b3d68622401a659310517",
+          "current_sha256": "2c36aea63b28b1f8ecf4afebc42474f7d1bdb8a74b82232505716d3434f14e69"
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-genet/src/layout_tests.rs",
+          "recorded_sha256": "d7e5868ceb3de446a1bc25757ea8febe746a32434b480a9538dfb766563fe206",
+          "current_sha256": "508b45b3b79c1cd7a1faa35e320607b7ecf75bda7e2a18b6c7ea06874f09d6a4"
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-genet/src/main.rs",
+          "recorded_sha256": "8f1717f2a6899780a7d5300975a17624413b439349175404e8f789e0f592c4ed",
+          "current_sha256": "d7ce28d17658a5ff2665964c38845707c4afe67d7019db2da533bc45f559fc65"
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-genet/src/scenario.rs",
+          "recorded_sha256": "44c61e36c43cf5cb0b202ec7e81bed93832a88951a46a8387d9b38bca8f8cd3b",
+          "current_sha256": "5915ed0baee01630e5e50e6d5d63f5a2dc8c826e88c9da245a7291ee61132c3b"
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-genet/src/scenario/practice_clock.rs",
+          "recorded_sha256": "e5efe96d8587338c1172a4eda2327418d6642a7d9582c9c2536c4ef1bcb375b9",
+          "current_sha256": "79da7bb0cc8954f9f5bbd9338ae432a82cc7e190dda9d12b15ad75a8d5a9e2d6"
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-genet/src/storage.rs",
+          "recorded_sha256": "e23d181cb7ed3fac88b7b54f84664428589fc368ec51f1142238f7f87cbd61bc",
+          "current_sha256": "bac0ea9dfc371b12be4af1b95cf0610883abe00c3687c7cb3477a54b51481cbb"
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-genet/src/sync.rs",
+          "recorded_sha256": "931eff83b98b092c80d03b11524298014faed9d9e62e46b98f63f38baeb8f8d2",
+          "current_sha256": "44329b2bc3ce19232bb051599b272069a8fffc7db378115b4b208d049471a1d5"
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-views/src/appearance/view_tests.rs",
+          "recorded_sha256": "778d0c718612c8fb2b8fadd7e6a4e2c14cc8437558645af515fda0715c77a55c",
+          "current_sha256": "c12c9c2957505b57429d44b6c930bdc526a521cc785394bb6254d49a2f7d1612"
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-views/src/stage.rs",
+          "recorded_sha256": "0b7a470340a90a967f5f0054d652c1d3b82ccfc0b0840a2bf232757293d856da",
+          "current_sha256": "00ae020cd10da3af8602ce9496d0325ae77dcc2536a5517c151e2d5d6a08fe5f"
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-views/src/stage/arrangement_editor.rs",
+          "recorded_sha256": "dd9d898113529798b4fd600f006484f7bf1b6f5768cdf848e8eb0c855311f185",
+          "current_sha256": "36929d7376915ff88d61e689aea98f09cd01872653f80727d9c6e4fb877ea77d"
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-views/src/stage/looper.rs",
+          "recorded_sha256": "f6bf5fa9820935889ce9f6ff5b535819f0a9f967f7c42381771de86d51ecb049",
+          "current_sha256": "05032334db44b592155cb61f9e5d95e74cd7b5aa64d8415383aa0613a283eb20"
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-views/src/stage/looper/recorder.rs",
+          "recorded_sha256": "4b782629c8febaafd3eb0144af2a705e265fbdfc06b2d299d0d931b93199cc78",
+          "current_sha256": "64a1273a0f0fd32cd6d37aef04ce6296335ad08c0773f1efc1836bf4c58184fa"
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-views/src/stage/overview.rs",
+          "recorded_sha256": "5de653b1829196e865f9c9b6a75d84369b1bd3e8581a3a49e9bccfc761cb425b",
+          "current_sha256": "ae4a4955df3340686a49ee8f5cceed49d6f078428e96d93a1bb29543fc0904ad"
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-views/src/stage/practice_clock.rs",
+          "recorded_sha256": "dba81313827aa72189fec5703c0b6a774ae088484ec8df67f6904919dea4d3bb",
+          "current_sha256": "64517d5289d2673a73d5d2a09f21bfbd99e549eed1dd9633265d6b97e43f5714"
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-views/src/stage/rehearsal.rs",
+          "recorded_sha256": "14e4846497be8f8c2729f5c96f9f4c38c6d52f9cb1fb1e464462d60d6e0b4a03",
+          "current_sha256": "1d6057694a8ed24c68179a969955b898edc61daa4150f81a821ee2d13e279247"
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-views/src/stage/set_tray.rs",
+          "recorded_sha256": "eadff54e22e00c1ddbf91b90a7da61413eca5b83a5c54ab7142e9bc4f097ac5f",
+          "current_sha256": "73c5fc0fc8d522c15d1fc2c1bafcb9c1b98dd54500167d8e1f25e437ee5f69f8"
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-views/src/theme.rs",
+          "recorded_sha256": "4f0a00186d89066bbc4b8e0e552669c90b6caa39152ce72a7d8b53ba2108eedd",
+          "current_sha256": "f04a8a3c1b55d678c2b3b4e64de9ff6154c3aebeb3d548981fec054c45be3de9"
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/woodshedding/src/rehearsal.rs",
+          "recorded_sha256": "e2bcb68dae6e724c328914a27c40c5e7dbbd3108181655d9e6b3f9c9dba5ba4c",
+          "current_sha256": "446f5826c9ce9cb424842bf43c0ffcab086eaa7dbbd7695b6b16541e0776bc74"
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/ports/hocket/Cargo.lock",
+          "recorded_sha256": "a55536801bf3883c0defb1541a19026bd70ee90829d8bc45498b49ca5ced9624",
+          "current_sha256": "934fb64b6d8c93efe0ef32866a9045f25f21bb707e4a7f9f481fe977b9675e45"
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/ports/hocket/Cargo.toml",
+          "recorded_sha256": "f1288749deb69bd3038b4edd8723834e57bbb6e465c48d72189a1bfa33c2bcc8",
+          "current_sha256": "ca3b61e6c67375c574a4612147c454891e91664a9eb10d017188923dcfd99ffe"
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/ports/hocket/crates/hocket-genet/src/appearance_tests.rs",
+          "recorded_sha256": "297144f85c46808e9e2e59fb04361790d77f46363b16d65d8144938b2458542c",
+          "current_sha256": "75a625bbac05578bf9ed004e46e56a980a79c1203b02a635fe6437b8be1bb0b2"
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/ports/hocket/crates/hocket-genet/src/scenario.rs",
+          "recorded_sha256": "a3679354ebc32038d6e01a2b2cadd95a9b5af08e8e6572c544b3173f90fe0e14",
+          "current_sha256": "dc1e89281ae080cd44c812e456f5f3c3f74ef267eaa80ba04e7fce5ca27a352a"
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/ports/redshank/Cargo.lock",
+          "recorded_sha256": "4e6f7da96b61053857e9ad34ed1d1238820b84fd1810946bb7d13d6affeda1d8",
+          "current_sha256": "9e975dd1fb546a2b31291a20764cfe78b4f76fb76e2703f4a6e8147c0b557ba8"
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/ports/redshank/desktop/src/appearance_tests.rs",
+          "recorded_sha256": "d460e0a0ee31ec0c26d255f65e18d2fb54bfdc3bbf97804584ae75e3f6473c22",
+          "current_sha256": "4c21a1a01322b87e55c32f1a52e865869e10a0cf4625700b0a80ebf68e07ca18"
+        }
+      ]
+    },
+    "N-close": {
+      "manifest": "/Users/markik/Code/repos/woodshed/validation/preservation-input_20261017/native/close-source-hashes.json",
+      "manifest_sha256": "f8fe29a7fdcfbcd497388e45b68790b49a3ecca795c23b3dfa4c4027e4b9eae9",
+      "bound_paths": 331,
+      "matching_paths": 285,
+      "differing_paths": [
+        {
+          "path": "/Users/markik/Code/repos/woodshed/Cargo.lock",
+          "recorded_sha256": "5d5992edd62d430f7d3c2bc848a9ecfd6054421bf32f4d4329638075893fb0cf",
+          "current_sha256": "79ffc562fa1f473c5ad05288fbcb4b271f8c5d19fb593d67aeb08c05a2220d3e"
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/Cargo.toml",
+          "recorded_sha256": "8d7f51e6e3b8d74f1b41cd3bfc8e326f06e9cb3ff083f5fc458034f3ed2102f9",
+          "current_sha256": "943115f83b951465f63dfef222e9e7ea023c5e92947961967a55efb7ebf76fec"
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/audio-primitives/src/lib.rs",
+          "recorded_sha256": "484d2b0ab4d47f19b89dec7cf8a2ece04862761aa94979c2b5aa90bed3a59ffa",
+          "current_sha256": "5231698b01e72fa31062fd3cc0b44c7c10fdff4f820ec9db4f4990dc75844963"
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/hocket-views/Cargo.toml",
+          "recorded_sha256": "c115bccb050cbf7cd46d9c15950f448649306089e83b6c8cb3d016171e020440",
+          "current_sha256": "b7fa7a1aae9387f1cee5cf12dc25064c46ea305a388324d626fc0ac73d23844f"
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/hocket-views/examples/two_mounts.rs",
+          "recorded_sha256": "a05e9b3f5a77064aed7e4eab348d8abe9e1e616874ca520231a1ae417c66fbf5",
+          "current_sha256": "965087e28f662036a40f6a9cff0ae66a3c9fe81d320f0d4603aec22322410b98"
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/hocket-views/src/projection.rs",
+          "recorded_sha256": "02165e95d008b812e1de1f90fbbafcda5158c9bfdd7aa874bc550fbd321f0d49",
+          "current_sha256": "72810a865c9086732f3c1595e154fa49cf0fb79a550d6b6bea4943c345c42e1e"
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/hocket-views/src/projection_tests.rs",
+          "recorded_sha256": "473c96b4cbf75eb01411314580d272559b3bb03a35791be6a4b6cb3ae12f88c5",
+          "current_sha256": "7aa52d6e974216f0acdae3cd2357967581443a786d95150cc1d0b8ac06972f05"
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/hocket-views/src/surface.rs",
+          "recorded_sha256": "b59f0991dcb3cda252701e0d6801d660125dd3738180eaae1097789a6606455e",
+          "current_sha256": "43e01298ee50c6e54fe68f67df3f093e00892b8c0b60f071fb89ab144a5f37c9"
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/hocket-views/src/theme.rs",
+          "recorded_sha256": "adc7347846826a86fba7c4f5783832da7ad84fa7ed37950f63e48835c6a6fce0",
+          "current_sha256": "f7fdc51d690d49da02b0dbcc697b15e4838e7a78397daea1853354800fdfb11d"
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-audio/src/lib.rs",
+          "recorded_sha256": "031f1e29034579389a963169c7ef98f47d21604e76efa76bb91d3125edc39e5f",
+          "current_sha256": "e34752ada70177556ec8a73da66bb32e958379f6ba86a8ff471f70e381ab7e23"
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-audio/src/offline/song_export.rs",
+          "recorded_sha256": "9001050936c67f9377308cf7123ac9a1552d6e4d416c06d699a1bc6f620d9013",
+          "current_sha256": "a27fa9d4a939f08b9b9a64a3b511d532904ef2aed3b6cdb4df322f25508c45c1"
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-audio/src/offline/song_export/tests.rs",
+          "recorded_sha256": "d8287b219ddce748d16ac3a13d015fd153ae5453430eff4970efbccab22095f2",
+          "current_sha256": "cbcfb8abdb02514d83f78d31cd00a095b332285f34613dbf3dfe29b57227a1fd"
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-audio/src/output_runtime.rs",
+          "recorded_sha256": "53a2177bbeef6457578fb48672e2728c67adb1a49cef7a246ad0bea7f6f0e261",
+          "current_sha256": "c8c84e289ebc2df0e59ac1b51f973d6e4870afe456e5dbcd858700614d5df97e"
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-audio/src/output_runtime/processor.rs",
+          "recorded_sha256": "c2c48895dd4e60e06c546b7ac04ab9e811f9e0a2eb677479bdb8662d0aa58017",
+          "current_sha256": "bf7450caa19b35bdd88a79e8253cd7fc12aa903682a266392d433447898b44c5"
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-audio/src/output_runtime/tests.rs",
+          "recorded_sha256": "96cfac42d0bd4a30ca61d990f9c835f5c8d8ae9c6ae09ed45049971e5d81c8c4",
+          "current_sha256": "f1f22cab94a3b3f0de0c91f41a57c06630445848ee0fe1d2d6ac9f86100da5a2"
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-audio/src/song.rs",
+          "recorded_sha256": "7f8156a98f802cdbf37ab4c8021afa92c75291aeae69b7db04e1bfd49f31558f",
+          "current_sha256": "36a182314eb482330563fe96e135cf34e2b27319d4c8eef81b8ae0e9b889f94a"
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-core/Cargo.toml",
+          "recorded_sha256": "10c726fdc4bd084f249b1385d71fd2f7929c5f50fbba8518eed79f352f9371c4",
+          "current_sha256": "293b53fc38dbfcbd6981f201fa16779ba51ef1cc50f72afbdbdf4a5bb81226de"
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-core/src/loop_capture.rs",
+          "recorded_sha256": "a88f218076475aa1689c83ac16cf3c4e3c4ab269238cb3e2a50895febf09b582",
+          "current_sha256": "aa5d90aafe5e783c8ff6e10cfccf200162787f511e8b7bd74a33579333b5de1c"
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-core/src/loop_plan.rs",
+          "recorded_sha256": "94edc634d39ff3f3bc10e886879d77b567ad5809d0bb70d2f0b3ce5ae642c52d",
+          "current_sha256": "fa80b6aa61074e7096c59bea43e885897f3df57f068ac60ce3464f8a47390b39"
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-core/src/session_overview.rs",
+          "recorded_sha256": "fe2a1a4e257a73e7425e47988885f9180f971e4e47b07748c25fddd98eaadcb6",
+          "current_sha256": "39c50f0311d216a90bd7cb878e6d27da38f342d9695eb53258252cc044e634ad"
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-core/src/storage.rs",
+          "recorded_sha256": "4a708f11f5b601c8cc1b17b4cfbdb44b426876de362fe2f04c755bf1cfa1faef",
+          "current_sha256": "0702b4b58efa6303dcd773bb03a03e77fb34a53afe636cdaa39381512f078560"
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-genet/Cargo.toml",
+          "recorded_sha256": "6c6b0cac3496a9c63a26714c4079ffac82b9b53f74bdec9dd675ee5edbac9f7e",
+          "current_sha256": "8631562a70faa2d7b7ca2b8a507b7c898f625724eb756ad2f00e234e68479ddf"
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-genet/src/appearance.rs",
+          "recorded_sha256": "41ded074fa5158bffa41f1db9b0d06610c9475f2fb9f3ce37e00a7b8a3d07983",
+          "current_sha256": "452841f6c7b6d6e1aba63466fcd5ec27c110c3ccf396ec761e8788f82cb2dc56"
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-genet/src/arrangement.rs",
+          "recorded_sha256": "7ae84b8e7bcfb43d380c1c7e410bef8303bf8bcc228b49bd3db1134c6740043c",
+          "current_sha256": "b96eff943fdb5849d59b0fba81c3b20e7f9300772e9c33f477992a24e6cd2353"
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-genet/src/audio.rs",
+          "recorded_sha256": "ae3270e731b35ada02d3515e5877b117b453448495da09286e8d0bdeb3186fde",
+          "current_sha256": "797cd49d2e63bf2b5e09071cbcae88783201082f1189eb803fb66ce93d0f69ae"
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-genet/src/audio/loop_projection.rs",
+          "recorded_sha256": "20f29f71e3ef828971852b93ff4395e163334bf1efa4c10f54b9c7a4b22f602c",
+          "current_sha256": "ca3fb430c923637025925630e7b6f4ab7f4bf5480202de30d9a3c3537acf99b6"
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-genet/src/capture_persistence.rs",
+          "recorded_sha256": "529ac802957087e7833d4af400645f1a85ad0a29cf495682992d76ea1c99b559",
+          "current_sha256": "a77aa503423aa96f4e27ff3fae8e715d6e2b799d294721ab5401a6e46185103c"
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-genet/src/fonts.rs",
+          "recorded_sha256": "d66a396c84ca5b25830a6529bec0dafedb9883bcf83b3d68622401a659310517",
+          "current_sha256": "2c36aea63b28b1f8ecf4afebc42474f7d1bdb8a74b82232505716d3434f14e69"
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-genet/src/layout_tests.rs",
+          "recorded_sha256": "d7e5868ceb3de446a1bc25757ea8febe746a32434b480a9538dfb766563fe206",
+          "current_sha256": "508b45b3b79c1cd7a1faa35e320607b7ecf75bda7e2a18b6c7ea06874f09d6a4"
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-genet/src/main.rs",
+          "recorded_sha256": "c30d52799f5a4127eb3b30c3504e7e47a173c35e615fc61fe9f9f8957408ba94",
+          "current_sha256": "d7ce28d17658a5ff2665964c38845707c4afe67d7019db2da533bc45f559fc65"
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-genet/src/scenario.rs",
+          "recorded_sha256": "3a31fed734213377a3416501db5cfbd064c73eae4a7901f4938572ff1ccdfd71",
+          "current_sha256": "5915ed0baee01630e5e50e6d5d63f5a2dc8c826e88c9da245a7291ee61132c3b"
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-genet/src/storage.rs",
+          "recorded_sha256": "e23d181cb7ed3fac88b7b54f84664428589fc368ec51f1142238f7f87cbd61bc",
+          "current_sha256": "bac0ea9dfc371b12be4af1b95cf0610883abe00c3687c7cb3477a54b51481cbb"
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-genet/src/sync.rs",
+          "recorded_sha256": "931eff83b98b092c80d03b11524298014faed9d9e62e46b98f63f38baeb8f8d2",
+          "current_sha256": "44329b2bc3ce19232bb051599b272069a8fffc7db378115b4b208d049471a1d5"
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-views/src/appearance/view_tests.rs",
+          "recorded_sha256": "778d0c718612c8fb2b8fadd7e6a4e2c14cc8437558645af515fda0715c77a55c",
+          "current_sha256": "c12c9c2957505b57429d44b6c930bdc526a521cc785394bb6254d49a2f7d1612"
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-views/src/stage.rs",
+          "recorded_sha256": "0b7a470340a90a967f5f0054d652c1d3b82ccfc0b0840a2bf232757293d856da",
+          "current_sha256": "00ae020cd10da3af8602ce9496d0325ae77dcc2536a5517c151e2d5d6a08fe5f"
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-views/src/stage/arrangement_editor.rs",
+          "recorded_sha256": "dd9d898113529798b4fd600f006484f7bf1b6f5768cdf848e8eb0c855311f185",
+          "current_sha256": "36929d7376915ff88d61e689aea98f09cd01872653f80727d9c6e4fb877ea77d"
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-views/src/stage/looper.rs",
+          "recorded_sha256": "f6bf5fa9820935889ce9f6ff5b535819f0a9f967f7c42381771de86d51ecb049",
+          "current_sha256": "05032334db44b592155cb61f9e5d95e74cd7b5aa64d8415383aa0613a283eb20"
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-views/src/stage/looper/recorder.rs",
+          "recorded_sha256": "4b782629c8febaafd3eb0144af2a705e265fbdfc06b2d299d0d931b93199cc78",
+          "current_sha256": "64a1273a0f0fd32cd6d37aef04ce6296335ad08c0773f1efc1836bf4c58184fa"
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-views/src/stage/overview.rs",
+          "recorded_sha256": "5de653b1829196e865f9c9b6a75d84369b1bd3e8581a3a49e9bccfc761cb425b",
+          "current_sha256": "ae4a4955df3340686a49ee8f5cceed49d6f078428e96d93a1bb29543fc0904ad"
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-views/src/stage/rehearsal_tests.rs",
+          "recorded_sha256": "3e9821b5ae3cb97bbf544d5365bd970fa7527f7c6b6ebed9a6f0b6aa9212153e",
+          "current_sha256": "045ef95c6ab4e714ef04c1fea054a76eb55f25ac59c91ab0f279fb3d57329e0c"
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/ports/hocket/Cargo.lock",
+          "recorded_sha256": "a55536801bf3883c0defb1541a19026bd70ee90829d8bc45498b49ca5ced9624",
+          "current_sha256": "934fb64b6d8c93efe0ef32866a9045f25f21bb707e4a7f9f481fe977b9675e45"
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/ports/hocket/Cargo.toml",
+          "recorded_sha256": "f1288749deb69bd3038b4edd8723834e57bbb6e465c48d72189a1bfa33c2bcc8",
+          "current_sha256": "ca3b61e6c67375c574a4612147c454891e91664a9eb10d017188923dcfd99ffe"
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/ports/hocket/crates/hocket-genet/src/appearance_tests.rs",
+          "recorded_sha256": "297144f85c46808e9e2e59fb04361790d77f46363b16d65d8144938b2458542c",
+          "current_sha256": "75a625bbac05578bf9ed004e46e56a980a79c1203b02a635fe6437b8be1bb0b2"
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/ports/hocket/crates/hocket-genet/src/scenario.rs",
+          "recorded_sha256": "a3679354ebc32038d6e01a2b2cadd95a9b5af08e8e6572c544b3173f90fe0e14",
+          "current_sha256": "dc1e89281ae080cd44c812e456f5f3c3f74ef267eaa80ba04e7fce5ca27a352a"
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/ports/redshank/Cargo.lock",
+          "recorded_sha256": "4e6f7da96b61053857e9ad34ed1d1238820b84fd1810946bb7d13d6affeda1d8",
+          "current_sha256": "9e975dd1fb546a2b31291a20764cfe78b4f76fb76e2703f4a6e8147c0b557ba8"
+        },
+        {
+          "path": "/Users/markik/Code/repos/woodshed/ports/redshank/desktop/src/appearance_tests.rs",
+          "recorded_sha256": "d460e0a0ee31ec0c26d255f65e18d2fb54bfdc3bbf97804584ae75e3f6473c22",
+          "current_sha256": "4c21a1a01322b87e55c32f1a52e865869e10a0cf4625700b0a80ebf68e07ca18"
+        }
+      ]
+    }
+  },
+  "contract_body_comparisons": {
+    "preserve_request": {
+      "equal_to_hash_verified_CPU16_source": true,
+      "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-genet/src/capture_persistence.rs"
+    },
+    "decode_session": {
+      "equal_to_hash_verified_CPU16_source": true,
+      "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-core/src/storage.rs"
+    },
+    "admit_card_ids": {
+      "equal_to_hash_verified_CPU16_source": true,
+      "path": "/Users/markik/Code/repos/woodshed/crates/woodshedding/src/rehearsal.rs"
+    }
+  },
+  "real_cpu_build_logs": [
+    {
+      "path": "/Users/markik/Code/repos/woodshed/validation/preservation-input_20261016/root-final.log",
+      "sha256": "d79a477c272d20d8b8e20b6899e479e4d4e01d016d789561c01126a6c7112458",
+      "name": "root",
+      "command": [
+        "cargo",
+        "test",
+        "--offline",
+        "--locked",
+        "-p",
+        "woodshedding",
+        "-p",
+        "woodshed-core",
+        "-p",
+        "woodshed-views",
+        "-p",
+        "woodshed-genet",
+        "-p",
+        "hocket-model",
+        "-p",
+        "hocket-project",
+        "--quiet"
+      ],
+      "cwd": "/Users/markik/Code/testing/woodshed/audit-preservation-20261016",
+      "recorded_process_exit": 0,
+      "suites_from_real_log": [
+        {
+          "line": 53,
+          "result": "ok",
+          "passed": 42,
+          "failed": 0,
+          "ignored": 0,
+          "filtered": 0
+        },
+        {
+          "line": 58,
+          "result": "ok",
+          "passed": 2,
+          "failed": 0,
+          "ignored": 0,
+          "filtered": 0
+        },
+        {
+          "line": 63,
+          "result": "ok",
+          "passed": 38,
+          "failed": 0,
+          "ignored": 0,
+          "filtered": 0
+        },
+        {
+          "line": 71,
+          "result": "ok",
+          "passed": 277,
+          "failed": 0,
+          "ignored": 0,
+          "filtered": 0
+        },
+        {
+          "line": 76,
+          "result": "ok",
+          "passed": 0,
+          "failed": 0,
+          "ignored": 0,
+          "filtered": 0
+        },
+        {
+          "line": 81,
+          "result": "ok",
+          "passed": 0,
+          "failed": 0,
+          "ignored": 0,
+          "filtered": 0
+        },
+        {
+          "line": 86,
+          "result": "ok",
+          "passed": 0,
+          "failed": 0,
+          "ignored": 0,
+          "filtered": 0
+        },
+        {
+          "line": 91,
+          "result": "ok",
+          "passed": 0,
+          "failed": 0,
+          "ignored": 0,
+          "filtered": 0
+        },
+        {
+          "line": 96,
+          "result": "ok",
+          "passed": 5,
+          "failed": 0,
+          "ignored": 0,
+          "filtered": 0
+        },
+        {
+          "line": 101,
+          "result": "ok",
+          "passed": 1,
+          "failed": 0,
+          "ignored": 0,
+          "filtered": 0
+        },
+        {
+          "line": 110,
+          "result": "ok",
+          "passed": 1,
+          "failed": 0,
+          "ignored": 0,
+          "filtered": 197
+        },
+        {
+          "line": 117,
+          "result": "ok",
+          "passed": 1,
+          "failed": 0,
+          "ignored": 0,
+          "filtered": 197
+        },
+        {
+          "line": 125,
+          "result": "ok",
+          "passed": 1,
+          "failed": 0,
+          "ignored": 0,
+          "filtered": 197
+        },
+        {
+          "line": 132,
+          "result": "ok",
+          "passed": 1,
+          "failed": 0,
+          "ignored": 0,
+          "filtered": 197
+        },
+        {
+          "line": 139,
+          "result": "ok",
+          "passed": 1,
+          "failed": 0,
+          "ignored": 0,
+          "filtered": 197
+        },
+        {
+          "line": 143,
+          "result": "ok",
+          "passed": 191,
+          "failed": 0,
+          "ignored": 7,
+          "filtered": 0
+        },
+        {
+          "line": 150,
+          "result": "ok",
+          "passed": 218,
+          "failed": 0,
+          "ignored": 0,
+          "filtered": 0
+        },
+        {
+          "line": 157,
+          "result": "ok",
+          "passed": 187,
+          "failed": 0,
+          "ignored": 0,
+          "filtered": 0
+        },
+        {
+          "line": 162,
+          "result": "ok",
+          "passed": 0,
+          "failed": 0,
+          "ignored": 0,
+          "filtered": 0
+        },
+        {
+          "line": 167,
+          "result": "ok",
+          "passed": 0,
+          "failed": 0,
+          "ignored": 0,
+          "filtered": 0
+        },
+        {
+          "line": 172,
+          "result": "ok",
+          "passed": 0,
+          "failed": 0,
+          "ignored": 0,
+          "filtered": 0
+        },
+        {
+          "line": 177,
+          "result": "ok",
+          "passed": 0,
+          "failed": 0,
+          "ignored": 0,
+          "filtered": 0
+        },
+        {
+          "line": 182,
+          "result": "ok",
+          "passed": 4,
+          "failed": 0,
+          "ignored": 0,
+          "filtered": 0
+        }
+      ],
+      "passing_parent_doc_cases": 965,
+      "capture_child_invocations": 5,
+      "ignored": 7,
+      "build_finished_line": null,
+      "note": "Exit status is the existing recorder value; real log result lines checked independently, no process rerun."
+    },
+    {
+      "path": "/Users/markik/Code/repos/woodshed/validation/preservation-input_20261016/hocket-final.log",
+      "sha256": "aece70f6ed4c0daa0665249ee43c6ac679878cbdc04d920823a6c8d494375154",
+      "name": "hocket",
+      "command": [
+        "cargo",
+        "test",
+        "--offline",
+        "--locked",
+        "-p",
+        "hocket-genet",
+        "--quiet"
+      ],
+      "cwd": "/Users/markik/Code/testing/woodshed/audit-preservation-20261016/ports/hocket",
+      "recorded_process_exit": 0,
+      "suites_from_real_log": [
+        {
+          "line": 16,
+          "result": "ok",
+          "passed": 90,
+          "failed": 0,
+          "ignored": 2,
+          "filtered": 0
+        }
+      ],
+      "passing_parent_doc_cases": 90,
+      "capture_child_invocations": 0,
+      "ignored": 2,
+      "build_finished_line": null,
+      "note": "Exit status is the existing recorder value; real log result lines checked independently, no process rerun."
+    },
+    {
+      "path": "/Users/markik/Code/repos/woodshed/validation/preservation-input_20261016/redshank-final.log",
+      "sha256": "ebb8dfe532892e8aa585f76829034bd565598cc388e9e04f6821ea0fb99529be",
+      "name": "redshank",
+      "command": [
+        "cargo",
+        "test",
+        "--offline",
+        "--locked",
+        "-p",
+        "redshank-storage",
+        "-p",
+        "redshank-desktop",
+        "--quiet"
+      ],
+      "cwd": "/Users/markik/Code/testing/woodshed/audit-preservation-20261016/ports/redshank",
+      "recorded_process_exit": 0,
+      "suites_from_real_log": [
+        {
+          "line": 17,
+          "result": "ok",
+          "passed": 80,
+          "failed": 0,
+          "ignored": 0,
+          "filtered": 0
+        },
+        {
+          "line": 22,
+          "result": "ok",
+          "passed": 15,
+          "failed": 0,
+          "ignored": 0,
+          "filtered": 0
+        },
+        {
+          "line": 27,
+          "result": "ok",
+          "passed": 0,
+          "failed": 0,
+          "ignored": 0,
+          "filtered": 0
+        }
+      ],
+      "passing_parent_doc_cases": 95,
+      "capture_child_invocations": 0,
+      "ignored": 0,
+      "build_finished_line": null,
+      "note": "Exit status is the existing recorder value; real log result lines checked independently, no process rerun."
+    },
+    {
+      "path": "/Users/markik/Code/repos/woodshed/validation/preservation-input_20261017/root.log",
+      "sha256": "486b17c10a529e40523909108f271e139fa7ccc29d1cbe24cb96b3da1e9ecb6f",
+      "name": "root",
+      "command": [
+        "cargo",
+        "test",
+        "--offline",
+        "--locked",
+        "-p",
+        "woodshedding",
+        "-p",
+        "woodshed-audio",
+        "-p",
+        "woodshed-core",
+        "-p",
+        "woodshed-views",
+        "-p",
+        "woodshed-genet",
+        "-p",
+        "hocket-model",
+        "-p",
+        "hocket-project",
+        "--quiet"
+      ],
+      "cwd": "/Users/markik/Code/repos/woodshed",
+      "recorded_process_exit": 0,
+      "suites_from_real_log": [
+        {
+          "line": 53,
+          "result": "ok",
+          "passed": 42,
+          "failed": 0,
+          "ignored": 0,
+          "filtered": 0
+        },
+        {
+          "line": 58,
+          "result": "ok",
+          "passed": 2,
+          "failed": 0,
+          "ignored": 0,
+          "filtered": 0
+        },
+        {
+          "line": 63,
+          "result": "ok",
+          "passed": 38,
+          "failed": 0,
+          "ignored": 0,
+          "filtered": 0
+        },
+        {
+          "line": 70,
+          "result": "ok",
+          "passed": 174,
+          "failed": 0,
+          "ignored": 0,
+          "filtered": 0
+        },
+        {
+          "line": 78,
+          "result": "ok",
+          "passed": 285,
+          "failed": 0,
+          "ignored": 0,
+          "filtered": 0
+        },
+        {
+          "line": 83,
+          "result": "ok",
+          "passed": 0,
+          "failed": 0,
+          "ignored": 0,
+          "filtered": 0
+        },
+        {
+          "line": 88,
+          "result": "ok",
+          "passed": 0,
+          "failed": 0,
+          "ignored": 0,
+          "filtered": 0
+        },
+        {
+          "line": 93,
+          "result": "ok",
+          "passed": 0,
+          "failed": 0,
+          "ignored": 0,
+          "filtered": 0
+        },
+        {
+          "line": 98,
+          "result": "ok",
+          "passed": 0,
+          "failed": 0,
+          "ignored": 0,
+          "filtered": 0
+        },
+        {
+          "line": 103,
+          "result": "ok",
+          "passed": 5,
+          "failed": 0,
+          "ignored": 0,
+          "filtered": 0
+        },
+        {
+          "line": 108,
+          "result": "ok",
+          "passed": 1,
+          "failed": 0,
+          "ignored": 0,
+          "filtered": 0
+        },
+        {
+          "line": 117,
+          "result": "ok",
+          "passed": 1,
+          "failed": 0,
+          "ignored": 0,
+          "filtered": 208
+        },
+        {
+          "line": 125,
+          "result": "ok",
+          "passed": 1,
+          "failed": 0,
+          "ignored": 0,
+          "filtered": 208
+        },
+        {
+          "line": 132,
+          "result": "ok",
+          "passed": 1,
+          "failed": 0,
+          "ignored": 0,
+          "filtered": 208
+        },
+        {
+          "line": 139,
+          "result": "ok",
+          "passed": 1,
+          "failed": 0,
+          "ignored": 0,
+          "filtered": 208
+        },
+        {
+          "line": 146,
+          "result": "ok",
+          "passed": 1,
+          "failed": 0,
+          "ignored": 0,
+          "filtered": 208
+        },
+        {
+          "line": 150,
+          "result": "ok",
+          "passed": 202,
+          "failed": 0,
+          "ignored": 7,
+          "filtered": 0
+        },
+        {
+          "line": 157,
+          "result": "ok",
+          "passed": 230,
+          "failed": 0,
+          "ignored": 0,
+          "filtered": 0
+        },
+        {
+          "line": 164,
+          "result": "ok",
+          "passed": 187,
+          "failed": 0,
+          "ignored": 0,
+          "filtered": 0
+        },
+        {
+          "line": 169,
+          "result": "ok",
+          "passed": 0,
+          "failed": 0,
+          "ignored": 0,
+          "filtered": 0
+        },
+        {
+          "line": 174,
+          "result": "ok",
+          "passed": 0,
+          "failed": 0,
+          "ignored": 0,
+          "filtered": 0
+        },
+        {
+          "line": 179,
+          "result": "ok",
+          "passed": 0,
+          "failed": 0,
+          "ignored": 0,
+          "filtered": 0
+        },
+        {
+          "line": 184,
+          "result": "ok",
+          "passed": 0,
+          "failed": 0,
+          "ignored": 0,
+          "filtered": 0
+        },
+        {
+          "line": 189,
+          "result": "ok",
+          "passed": 0,
+          "failed": 0,
+          "ignored": 0,
+          "filtered": 0
+        },
+        {
+          "line": 194,
+          "result": "ok",
+          "passed": 4,
+          "failed": 0,
+          "ignored": 0,
+          "filtered": 0
+        }
+      ],
+      "passing_parent_doc_cases": 1170,
+      "capture_child_invocations": 5,
+      "ignored": 7,
+      "build_finished_line": null,
+      "note": "Exit status is the existing recorder value; real log result lines checked independently, no process rerun."
+    },
+    {
+      "path": "/Users/markik/Code/repos/woodshed/validation/preservation-input_20261017/hocket.log",
+      "sha256": "fcb6f89e2cefc44e4e0615b5b85330804e7877a0577b3e0396ac5fb75cad419e",
+      "name": "hocket",
+      "command": [
+        "cargo",
+        "test",
+        "--offline",
+        "--locked",
+        "-p",
+        "hocket-genet",
+        "--quiet"
+      ],
+      "cwd": "/Users/markik/Code/repos/woodshed/ports/hocket",
+      "recorded_process_exit": 0,
+      "suites_from_real_log": [
+        {
+          "line": 16,
+          "result": "ok",
+          "passed": 90,
+          "failed": 0,
+          "ignored": 2,
+          "filtered": 0
+        }
+      ],
+      "passing_parent_doc_cases": 90,
+      "capture_child_invocations": 0,
+      "ignored": 2,
+      "build_finished_line": null,
+      "note": "Exit status is the existing recorder value; real log result lines checked independently, no process rerun."
+    },
+    {
+      "path": "/Users/markik/Code/repos/woodshed/validation/preservation-input_20261017/redshank.log",
+      "sha256": "2006342d5fc10a96097b7226ba27f956481adca1196527342fb84a9be7161c93",
+      "name": "redshank",
+      "command": [
+        "cargo",
+        "test",
+        "--offline",
+        "--locked",
+        "-p",
+        "redshank-storage",
+        "-p",
+        "redshank-desktop",
+        "--quiet"
+      ],
+      "cwd": "/Users/markik/Code/repos/woodshed/ports/redshank",
+      "recorded_process_exit": 0,
+      "suites_from_real_log": [
+        {
+          "line": 17,
+          "result": "ok",
+          "passed": 80,
+          "failed": 0,
+          "ignored": 0,
+          "filtered": 0
+        },
+        {
+          "line": 22,
+          "result": "ok",
+          "passed": 15,
+          "failed": 0,
+          "ignored": 0,
+          "filtered": 0
+        },
+        {
+          "line": 27,
+          "result": "ok",
+          "passed": 0,
+          "failed": 0,
+          "ignored": 0,
+          "filtered": 0
+        }
+      ],
+      "passing_parent_doc_cases": 95,
+      "capture_child_invocations": 0,
+      "ignored": 0,
+      "build_finished_line": null,
+      "note": "Exit status is the existing recorder value; real log result lines checked independently, no process rerun."
+    },
+    {
+      "path": "/Users/markik/Code/repos/woodshed/validation/preservation-input_20261017/woodshed-build.log",
+      "sha256": "563736d016bd7106ab37f802aada11ff814fd8b1d4d89352fc986dd967762bea",
+      "name": "woodshed",
+      "command": [
+        "cargo",
+        "build",
+        "--offline",
+        "--locked",
+        "-p",
+        "woodshed-genet"
+      ],
+      "cwd": "/Users/markik/Code/repos/woodshed",
+      "recorded_process_exit": 0,
+      "suites_from_real_log": [],
+      "passing_parent_doc_cases": 0,
+      "capture_child_invocations": 0,
+      "ignored": 0,
+      "build_finished_line": "    Finished `dev` profile [unoptimized + debuginfo] target(s) in 10.28s",
+      "note": "Exit status is the existing recorder value; real log result lines checked independently, no process rerun."
+    },
+    {
+      "path": "/Users/markik/Code/repos/woodshed/validation/preservation-input_20261017/hocket-build.log",
+      "sha256": "9865511cd966d44a89703c2f53936605270b9c2c3a38a2b7f7fa574289596b40",
+      "name": "hocket",
+      "command": [
+        "cargo",
+        "build",
+        "--offline",
+        "--locked",
+        "-p",
+        "hocket-genet"
+      ],
+      "cwd": "/Users/markik/Code/repos/woodshed/ports/hocket",
+      "recorded_process_exit": 0,
+      "suites_from_real_log": [],
+      "passing_parent_doc_cases": 0,
+      "capture_child_invocations": 0,
+      "ignored": 0,
+      "build_finished_line": "    Finished `dev` profile [unoptimized + debuginfo] target(s) in 10.11s",
+      "note": "Exit status is the existing recorder value; real log result lines checked independently, no process rerun."
+    },
+    {
+      "path": "/Users/markik/Code/repos/woodshed/validation/preservation-input_20261017/redshank-build.log",
+      "sha256": "e5b0fb9f16c35bd0e00d2f1a6ad7ccffdc1d9583e38ce4fa403b454d786b62ae",
+      "name": "redshank",
+      "command": [
+        "cargo",
+        "build",
+        "--offline",
+        "--locked",
+        "-p",
+        "redshank-desktop"
+      ],
+      "cwd": "/Users/markik/Code/repos/woodshed/ports/redshank",
+      "recorded_process_exit": 0,
+      "suites_from_real_log": [],
+      "passing_parent_doc_cases": 0,
+      "capture_child_invocations": 0,
+      "ignored": 0,
+      "build_finished_line": "    Finished `dev` profile [unoptimized + debuginfo] target(s) in 9.46s",
+      "note": "Exit status is the existing recorder value; real log result lines checked independently, no process rerun."
+    }
+  ],
+  "historical_failed_runs": [
+    {
+      "log": "root-initial-compile-failed.log",
+      "exit_code": 101,
+      "reason": "new test helper used undeclared pollster; replaced with immediate memory-future poll",
+      "path": "/Users/markik/Code/repos/woodshed/validation/preservation-input_20261016/root-initial-compile-failed.log",
+      "sha256": "68561bfbeee9834240f682658aa5e341bde9a9c8ec9637ff57528a92d57a4f4e"
+    },
+    {
+      "log": "root-initial-scrub-failed.log",
+      "exit_code": 101,
+      "reason": "existing 16ms scrub failed after redundant full-graph validation per checkout; bounded validated paths replace it, assertion unchanged",
+      "path": "/Users/markik/Code/repos/woodshed/validation/preservation-input_20261016/root-initial-scrub-failed.log",
+      "sha256": "44435f760c4499c15621acc3206ff1df1f2ecdd0e8656e04fc3301ae1c2800a4"
+    },
+    {
+      "log": "root-initial-close-fixture-failed.log",
+      "exit_code": 101,
+      "reason": "appearance fixture had no admitted session/store and was stopped by the new preservation barrier; fixture now supplies persistence",
+      "path": "/Users/markik/Code/repos/woodshed/validation/preservation-input_20261016/root-initial-close-fixture-failed.log",
+      "sha256": "f5be6ccdce7b1291c736283e7db923363ea44fd215d3d7a1fc2f64aa67d48151"
+    }
+  ],
+  "primary_inputs": [
+    "/Users/markik/Code/repos/woodshed/design_docs/2026-10-16_preservation_input_admission_plan.md",
+    "/Users/markik/Code/testing/woodshed/full-source-audit-20261016/REMEDIATION_PLAN.md"
+  ],
+  "prohibited_actions_performed": [],
+  "limits": [
+    "No tests, builds, native launches, Git, network or messages executed.",
+    "Historical native captures were not newly visually reviewed; read existing receipt, launch/scenario/result/close-action records and real logs, and independently checked artifact hashes.",
+    "Existing CPU log success plus receipt-recorded exits qualify their original inputs only; no new integrated qualification at a424772.",
+    "No broadened whole-audit, physical-audio, port-native or publication claim."
+  ]
+}

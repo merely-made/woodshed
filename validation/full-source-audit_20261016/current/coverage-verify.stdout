@@ -1,0 +1,67 @@
+{
+  "complete": true,
+  "frozen_revision": "d12201bfe80cc94345c6308c46caaebf4a9fe42e",
+  "files": 937,
+  "lines": 231190,
+  "partitions": [
+    {
+      "lane": "core",
+      "files": 49,
+      "lines": 23561
+    },
+    {
+      "lane": "views",
+      "files": 37,
+      "lines": 23962
+    },
+    {
+      "lane": "host",
+      "files": 20,
+      "lines": 18828
+    },
+    {
+      "lane": "audio",
+      "files": 34,
+      "lines": 12014
+    },
+    {
+      "lane": "shared",
+      "files": 33,
+      "lines": 9587
+    },
+    {
+      "lane": "theory",
+      "files": 21,
+      "lines": 11180
+    },
+    {
+      "lane": "hocket",
+      "files": 73,
+      "lines": 20440
+    },
+    {
+      "lane": "redshank",
+      "files": 178,
+      "lines": 51557
+    },
+    {
+      "lane": "ringdown",
+      "files": 23,
+      "lines": 11066
+    },
+    {
+      "lane": "tooling",
+      "files": 97,
+      "lines": 13362
+    },
+    {
+      "lane": "evidence",
+      "files": 371,
+      "lines": 35570
+    }
+  ],
+  "overlay_files": 33,
+  "overlay_semantic_lines": 34861,
+  "overlapping_overlay_not_added_to_unique_total": true,
+  "scope": "Recorded collective reads and exact frozen inputs; not current-head full read or runtime qualification."
+}

@@ -1,0 +1,44 @@
+{
+  "scope": "Isolated logical counterexamples against actual retained validation helper, not evidence that a historical product run failed. No product source or original receipts changed.",
+  "doc_link_baseline": {
+    "helper": "validation/link-model-p6_20261016/doc_link_audit.py",
+    "base_fixture_heading": "# Original",
+    "current_fixture_heading": "# Renamed",
+    "baseline_result": {
+      "checked_local_links": 1,
+      "findings": [
+        {
+          "document": "doc.md",
+          "target": "target.md#original",
+          "reason": "missing heading"
+        }
+      ]
+    },
+    "current_result": {
+      "checked_local_links": 1,
+      "findings": [
+        {
+          "document": "doc.md",
+          "target": "target.md#original",
+          "reason": "missing heading"
+        }
+      ]
+    },
+    "helper_no_new_findings": true,
+    "expected_new_failure": true,
+    "input_git_show": "mocked baseline doc text; only target heading changes"
+  },
+  "test_log_failure": {
+    "helper": "validation/font-roles_20261012/verify.py",
+    "input": "test result: ok. 236 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out\n\ntest result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out\nerror: test failed\n",
+    "actual_regex_results": [
+      [
+        "236",
+        "0",
+        "0"
+      ]
+    ],
+    "current_assertion_would_accept": true,
+    "expected_accept": false
+  }
+}

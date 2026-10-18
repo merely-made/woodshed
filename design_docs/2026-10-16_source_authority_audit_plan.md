@@ -1,0 +1,154 @@
+# Woodshed source authority audit and remediation
+
+Date: 2026-10-16; coordination closure: 2026-10-17.
+Status: complete collective read of frozen `d12201bf`; current-source finding
+reconciliation complete and receipt committed locally. Remediation remains open.
+No new product fixes or product qualification are performed by this closure.
+
+## Scope and result
+
+The full read-through covered 936 assigned files / 231,127 lines plus one
+otherwise omitted 63-line W3C fixture: **937 files / 231,190 unique lines**.
+Program source and tests account for 303 files / 149,331 lines. Configuration,
+scenarios, lockfiles, fixtures and receipt metadata account for the rest.
+Receipt JSON received complete structural review; binary media, fonts, every
+historical screenshot/log and third-party implementation code were not an
+exhaustive reading scope. This was a collective read, not a claim that the
+coordinator personally read every partition.
+
+The separate frozen P5a overlay has 33 files / 34,861 semantic lines, including
+all its unchanged ranges. It overlaps the published baseline and is not added
+to that unique total. Read coverage is source evidence, not passing tests or
+native acceptance.
+
+The main architectural finding is competing decisions around accepted facts:
+projections infer execution, lifecycle paths bypass preservation, compatibility
+adapters discard identity, and verification helpers infer success from incomplete
+observations. Existing model, product-runtime and shared-stack owners should
+remain; consolidate their bypasses rather than introduce a universal framework.
+
+The [frozen synthesis](../validation/full-source-audit_20261016/AUDIT.md), all
+eleven partition reports, exact coverage ledgers and original receipts are
+archived in the [audit record](../validation/full-source-audit_20261016/README.md).
+The [original package catalog and complete finding crosswalk](../validation/full-source-audit_20261016/REMEDIATION_PLAN.md#complete-finding-crosswalk)
+retain scopes and aliases as dated planning evidence. This document and the
+current reconciliation ledger own the present frontier; the archived proposals
+do not supersede later rulings or qualify implementation.
+
+## Phases and done-conditions
+
+### P1 Complete and verify the frozen collective read
+
+Done: all eleven assignment sets and ranges cover the exact frozen inputs;
+937 unique file hashes and line counts match Git blobs at `d12201bf`. The
+33-file overlay's exact external source and semantic range ledger also match.
+The verifier distinguishes partial parent corroboration from additional unique
+coverage, refuses optimized Python, and has negative range controls. Its
+execution receipt records the actual process exit.
+
+### P2 Reconcile existing fixes before proposing more implementation
+
+Current read-only comparison uses local source `a424772`. Of the original 936
+assigned paths, 841 remain byte-identical and 95 changed; none is missing. These
+hashes are metadata, not a full semantic audit of all changed/new current files.
+The current ledger uses targeted caller/source and existing-receipt review.
+Every historical receipt retains its original source, suppliers and limits.
+There is no new current-head native, port-native, physical-device or audio claim.
+
+Done when the raw finding index has an explicit disposition or unassessed state
+for every entry, aliases are preserved, existing safety work is credited with
+its actual receipt scope, and open work has an owner and acceptance boundary.
+
+### P3 Close coordination and keep one actionable frontier
+
+Done when the synthesis, coverage and current reconciliation are indexed in
+DOC_README, exact source/receipt identities are retained, no product code has
+been changed, and publication status is stated separately. This closes the
+source-audit delivery; it does not mark the remaining fixes complete.
+
+## Current findings and next implementation order
+
+1. **Preservation and input admission already have implementations.** A1, A4 and
+   A5 are present. Hocket A2's capture/close/full-revision dirty guards are
+   implemented, but its missing-media facts (H5) remain open. The preservation
+   receipts establish their exact historical software/build results and twelve
+   bounded Woodshed persona/close/quarantine/reopen captures. They do not
+   establish Hocket/Redshank native acceptance or current-head integration after
+   subsequent source/supplier changes. Reuse these owners and the existing
+   [preservation plan](2026-10-16_preservation_input_admission_plan.md).
+2. **A3 Hocket persona binding remains a first safety correction.** Confirmation
+   discards the staged offer, connects without the offered profile binding, and
+   pairs the returned key with cached profile text. Bind accepted custody to
+   what was offered or re-offer when it changes. Hocket H5 must recompute media
+   availability after successful import. Neither is closed by project topology
+   or dirty-save tests.
+3. **Q1 evidence integrity remains open.** The original CI/font helpers still
+   ignore later FAILED suites; the link checker still reads current targets for
+   historical referrers. Exact files match the frozen source. New source-bound
+   feature wrappers do not repair these older helpers. Fix retained operational
+   gates before relying on them for more acceptance. This does not assert any
+   historical accepted product run actually failed.
+4. **Continue live model/runtime corrections through their owners.** Retained
+   Path setup and stale Solo (B1), lossy saved-song silence toggling (B2),
+   non-seeking future-bar capture arms (B3), finite PCM/onset/calibration admission
+   (B4), shared Recorder SelectOne admission (B5), Hocket tempo replay and failure reporting,
+   Redshank preview/runtime control and idle-worker completion remain separate
+   product/controller seams. Protocol/instrument fixes B12–B14 preserve write,
+   readback, restoration, incomplete data and output-file outcomes. Ringdown X1
+   aliases theory T2; R8 is a P3 metadata duplication, not an established default
+   hardware-guard bypass.
+5. **Projection, packaging and compatibility cleanup follow actual reachability.**
+   All nine named obsolete Looper scenarios remain unchanged (Q2). Release
+   packagers still need build-to-binary binding and architecture checks (Q3),
+   and the scorer still admits missing notes/mismatched source identity (Q4).
+   macOS microphone wording now includes recording; Windows/Linux wording does
+   not. The recipe supplier cohort has since aligned, but new lock metadata is
+   not a new instrument execution receipt. Public legacy executors/query APIs
+   remain compatibility-gated removals (K1); do not delete saved formats, PCM,
+   inactive media or live orphan-clear paths merely to reduce duplication.
+
+The [current per-finding ledger](../validation/full-source-audit_20261016/current-finding-ledger.json)
+maps every one of the 93 original raw index rows, plus O1 and the separately
+named LO-4/LO-5/LO-K1 items. No entry is silently omitted or counted as a unique
+confirmed bug. The runtime reviewer records five source replacements in the
+old overlay findings: LO-1, LO-2, LO-K1, LO-3 and LO-4. The undefined-pitches
+compile failure is historical, and generic Walk/Hear timing remains distinct
+from the managed processor-clock path. Source replacement is not a new
+current-head acceptance claim. Full details and evidence limits are in the
+[safety](../validation/full-source-audit_20261016/current/safety.md),
+[runtime](../validation/full-source-audit_20261016/current/runtime.md),
+[port/protocol](../validation/full-source-audit_20261016/current/ports.md), and
+[evidence/tooling](../validation/full-source-audit_20261016/current/evidence-tooling-current.md)
+reconciliations.
+
+## Existing rulings and authority boundaries
+
+After save failure, keep the window open with Retry and an explicit
+Discard-and-close path; Cancel retains work. Accepted preservation behavior is
+not reopened as an unanswered product-policy question.
+
+Existing takes retain their original playback clocks and PCM. New capture clock
+adoption does not authorize rewriting old media. Saved-song compatibility stays
+until its representation is lossless. These earlier user instructions constrain
+all remaining cleanup.
+
+Keep one Woodshed output runtime; Hocket's polling schedule and Woodshed's
+sample-driven schedule remain deliberately distinct. Shared structural APIs
+return facts; product owners decide musical interpretation, durable admission,
+custody and user-facing wording. Neither synthetic PCM nor a correct control
+request proves microphone, audibility, device timing or round-trip latency.
+
+## Progress
+
+2026-10-16: eleven frozen partitions and parent corroboration completed;
+recommendations and isolated evidence-helper counterexamples recorded externally.
+
+2026-10-17: P5a's full 33-file semantic continuation and Ringdown/instrument
+reconciliation completed. Preservation/input implementation and later timed
+practice/audio qualification retain their separate owning receipts.
+
+2026-10-17 coordination closure: frozen Git/range/hash verification passes;
+safety/runtime/port/evidence reconciliation is archived with its current input
+revision. Audit documentation and verifier only; no product fixes, new native
+runs, physical checks or publication added by this closure. The label-layout
+implementation remains a separate preceding local change.

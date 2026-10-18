@@ -1,0 +1,560 @@
+[
+  {
+    "partition": "audio",
+    "title": "AUDIO-01 \u2014 Preserve a saved-bar arm until playback reaches its target",
+    "report": "audio-report.md",
+    "status": "reviewer source-traced; parent corroboration selected by family in AUDIT.md"
+  },
+  {
+    "partition": "audio",
+    "title": "AUDIO-02 \u2014 Use one finite-PCM admission rule before publishing live resources",
+    "report": "audio-report.md",
+    "status": "reviewer source-traced; parent corroboration selected by family in AUDIT.md"
+  },
+  {
+    "partition": "audio",
+    "title": "AUDIO-03 \u2014 Count each input sample once in the shared onset clock",
+    "report": "audio-report.md",
+    "status": "reviewer source-traced; parent corroboration selected by family in AUDIT.md"
+  },
+  {
+    "partition": "audio",
+    "title": "AUDIO-04 \u2014 Report the estimator's admitted calibration pairs",
+    "report": "audio-report.md",
+    "status": "reviewer source-traced; parent corroboration selected by family in AUDIT.md"
+  },
+  {
+    "partition": "audio",
+    "title": "AUDIO-05 \u2014 Retire or explicitly isolate unused legacy execution algorithms",
+    "report": "audio-report.md",
+    "status": "reviewer source-traced; parent corroboration selected by family in AUDIT.md"
+  },
+  {
+    "partition": "audio",
+    "title": "AUDIO-06 \u2014 Make the hardware diagnostic's terminal result state what passed",
+    "report": "audio-report.md",
+    "status": "reviewer source-traced; parent corroboration selected by family in AUDIT.md"
+  },
+  {
+    "partition": "core",
+    "title": "CORE-1 \u2014 P2: malformed current history can be accepted as an empty legacy history",
+    "report": "core-report.md",
+    "status": "reviewer source-traced; parent corroboration selected by family in AUDIT.md"
+  },
+  {
+    "partition": "core",
+    "title": "CORE-2 \u2014 P2: a typed but invalid history reference can panic before session quarantine",
+    "report": "core-report.md",
+    "status": "reviewer source-traced; parent corroboration selected by family in AUDIT.md"
+  },
+  {
+    "partition": "core",
+    "title": "CORE-3 \u2014 P2: practice-based Related promotion has no normal UI producer",
+    "report": "core-report.md",
+    "status": "reviewer source-traced; parent corroboration selected by family in AUDIT.md"
+  },
+  {
+    "partition": "core",
+    "title": "CORE-4 \u2014 P2: saved drawn Paths are retuned by the live exploration setup",
+    "report": "core-report.md",
+    "status": "reviewer source-traced; parent corroboration selected by family in AUDIT.md"
+  },
+  {
+    "partition": "core",
+    "title": "CORE-5 \u2014 P2: the saved-song silent toggle replaces the authored chord with Major",
+    "report": "core-report.md",
+    "status": "reviewer source-traced; parent corroboration selected by family in AUDIT.md"
+  },
+  {
+    "partition": "core",
+    "title": "CORE-6 \u2014 P2: stale nonempty Solo marks fall back to sounding the complete chord",
+    "report": "core-report.md",
+    "status": "reviewer source-traced; parent corroboration selected by family in AUDIT.md"
+  },
+  {
+    "partition": "core",
+    "title": "CORE-7 \u2014 P2: Pitch motion has two placement policies for the same sequential material",
+    "report": "core-report.md",
+    "status": "reviewer source-traced; parent corroboration selected by family in AUDIT.md"
+  },
+  {
+    "partition": "core",
+    "title": "CORE-8 \u2014 P2: explicit Context metadata bypasses the reading's edge-disclosure policy",
+    "report": "core-report.md",
+    "status": "reviewer source-traced; parent corroboration selected by family in AUDIT.md"
+  },
+  {
+    "partition": "core",
+    "title": "CORE-C1 \u2014 P3 candidate: keyed relation derivation is repeated in the builder and scene adapter",
+    "report": "core-report.md",
+    "status": "reviewer source-traced; parent corroboration selected by family in AUDIT.md"
+  },
+  {
+    "partition": "core",
+    "title": "CORE-C2 \u2014 P3 candidate: `StageGraphSnapshot::reasons()` recomputes live Set facts and ignores its snapshot",
+    "report": "core-report.md",
+    "status": "reviewer source-traced; parent corroboration selected by family in AUDIT.md"
+  },
+  {
+    "partition": "evidence",
+    "title": "Finding E1 \u2014 P2: Passing test summaries can turn a failed Cargo run into a passing receipt",
+    "report": "evidence-report.md",
+    "status": "reviewer source-traced; parent corroboration selected by family in AUDIT.md"
+  },
+  {
+    "partition": "evidence",
+    "title": "Finding E2 \u2014 P2: The link-regression audit reads current targets for the historical baseline",
+    "report": "evidence-report.md",
+    "status": "reviewer source-traced; parent corroboration selected by family in AUDIT.md"
+  },
+  {
+    "partition": "hocket",
+    "title": "H1 \u2014 P1: project replacement can orphan an ongoing free capture indefinitely",
+    "report": "hocket-report.md",
+    "status": "reviewer source-traced; parent corroboration selected by family in AUDIT.md"
+  },
+  {
+    "partition": "hocket",
+    "title": "H2 \u2014 P1: native close has appearance-save protection but drops unsaved recorder projects",
+    "report": "hocket-report.md",
+    "status": "reviewer source-traced; parent corroboration selected by family in AUDIT.md"
+  },
+  {
+    "partition": "hocket",
+    "title": "H3 \u2014 P1: persona confirmation can switch to a different family identity than the one shown",
+    "report": "hocket-report.md",
+    "status": "reviewer source-traced; parent corroboration selected by family in AUDIT.md"
+  },
+  {
+    "partition": "hocket",
+    "title": "H4 \u2014 P2: the saved-head marker misses imported retained branches and media",
+    "report": "hocket-report.md",
+    "status": "reviewer source-traced; parent corroboration selected by family in AUDIT.md"
+  },
+  {
+    "partition": "hocket",
+    "title": "H5 \u2014 P2: restored media still appears missing after same-session acceptance",
+    "report": "hocket-report.md",
+    "status": "reviewer source-traced; parent corroboration selected by family in AUDIT.md"
+  },
+  {
+    "partition": "hocket",
+    "title": "H6 \u2014 P2: update channel and check cadence are persisted controls with no execution effect",
+    "report": "hocket-report.md",
+    "status": "reviewer source-traced; parent corroboration selected by family in AUDIT.md"
+  },
+  {
+    "partition": "hocket",
+    "title": "H7 \u2014 P2: the Velopack adapter re-resolves the feed instead of applying the staged offer",
+    "report": "hocket-report.md",
+    "status": "reviewer source-traced; parent corroboration selected by family in AUDIT.md"
+  },
+  {
+    "partition": "hocket",
+    "title": "H8 \u2014 P2: handoff preparation performs a full media serialization on the frame-owning thread",
+    "report": "hocket-report.md",
+    "status": "reviewer source-traced; parent corroboration selected by family in AUDIT.md"
+  },
+  {
+    "partition": "host",
+    "title": "H1 \u2014 P1: Persona replacement independently decides to discard outgoing work",
+    "report": "host-report.md",
+    "status": "reviewer source-traced; parent corroboration selected by family in AUDIT.md"
+  },
+  {
+    "partition": "host",
+    "title": "H2 \u2014 P2, acknowledged open gap: Persona keys share singleton mutable files",
+    "report": "host-report.md",
+    "status": "reviewer source-traced; parent corroboration selected by family in AUDIT.md"
+  },
+  {
+    "partition": "host",
+    "title": "H3 \u2014 P2: Native graph caching drops part of the shared paint contract",
+    "report": "host-report.md",
+    "status": "reviewer source-traced; parent corroboration selected by family in AUDIT.md"
+  },
+  {
+    "partition": "host",
+    "title": "H4 \u2014 P2: Two editable fields never enter the native text seam",
+    "report": "host-report.md",
+    "status": "reviewer source-traced; parent corroboration selected by family in AUDIT.md"
+  },
+  {
+    "partition": "host",
+    "title": "H5 \u2014 P2: Persona reset drops process-owned event-time injection",
+    "report": "host-report.md",
+    "status": "reviewer source-traced; parent corroboration selected by family in AUDIT.md"
+  },
+  {
+    "partition": "host",
+    "title": "H6 \u2014 P2: Persona reset loses device inventory without the promised refill",
+    "report": "host-report.md",
+    "status": "reviewer source-traced; parent corroboration selected by family in AUDIT.md"
+  },
+  {
+    "partition": "host",
+    "title": "H7 \u2014 P2: MIDI discovery changes reinterpret the user's selected index",
+    "report": "host-report.md",
+    "status": "reviewer source-traced; parent corroboration selected by family in AUDIT.md"
+  },
+  {
+    "partition": "host",
+    "title": "H8 \u2014 P2: Requested MIDI output is reported as accepted despite worker failure",
+    "report": "host-report.md",
+    "status": "reviewer source-traced; parent corroboration selected by family in AUDIT.md"
+  },
+  {
+    "partition": "host",
+    "title": "H9 \u2014 P2: MIDI transport state survives replacement of the connection it belongs to",
+    "report": "host-report.md",
+    "status": "reviewer source-traced; parent corroboration selected by family in AUDIT.md"
+  },
+  {
+    "partition": "host",
+    "title": "H10 \u2014 P3: Dormant capture commands preserve a weaker parallel executor",
+    "report": "host-report.md",
+    "status": "reviewer source-traced; parent corroboration selected by family in AUDIT.md"
+  },
+  {
+    "partition": "host",
+    "title": "H11 \u2014 P3: Capture busy status has a test-only second definition",
+    "report": "host-report.md",
+    "status": "reviewer source-traced; parent corroboration selected by family in AUDIT.md"
+  },
+  {
+    "partition": "local-overlay",
+    "title": "LO-1 \u2014 P2 \u2014 Do not admit an unavailable realization as intentional silence",
+    "report": "local-overlay-report.md",
+    "status": "reviewer source-traced; parent corroboration selected by family in AUDIT.md"
+  },
+  {
+    "partition": "local-overlay",
+    "title": "LO-2 \u2014 P2 \u2014 Finish the admission-fixture migration before trusting affected gates",
+    "report": "local-overlay-report.md",
+    "status": "reviewer source-traced; parent corroboration selected by family in AUDIT.md"
+  },
+  {
+    "partition": "local-overlay",
+    "title": "LO-3 \u2014 P2 \u2014 Discovery/catalog history still credits requests before fallible admission",
+    "report": "local-overlay-report.md",
+    "status": "reviewer source-traced; parent corroboration selected by family in AUDIT.md"
+  },
+  {
+    "partition": "redshank",
+    "title": "R01 \u2014 Preserve existing state when restoration cannot establish a model [P1]",
+    "report": "redshank-report.md",
+    "status": "reviewer source-traced; parent corroboration selected by family in AUDIT.md"
+  },
+  {
+    "partition": "redshank",
+    "title": "R02 \u2014 Put desired output gain in the shared output owner [P2]",
+    "report": "redshank-report.md",
+    "status": "reviewer source-traced; parent corroboration selected by family in AUDIT.md"
+  },
+  {
+    "partition": "redshank",
+    "title": "R03 \u2014 Restore accepted controls when recreating a worker session [P2]",
+    "report": "redshank-report.md",
+    "status": "reviewer source-traced; parent corroboration selected by family in AUDIT.md"
+  },
+  {
+    "partition": "redshank",
+    "title": "R04 \u2014 Use one pending-job inventory for native scheduling and scripted waits [P2]",
+    "report": "redshank-report.md",
+    "status": "reviewer source-traced; parent corroboration selected by family in AUDIT.md"
+  },
+  {
+    "partition": "redshank",
+    "title": "R05 \u2014 Keep the voice gesture owner alive until release [P2]",
+    "report": "redshank-report.md",
+    "status": "reviewer source-traced; parent corroboration selected by family in AUDIT.md"
+  },
+  {
+    "partition": "redshank",
+    "title": "R06 \u2014 Drop cached-admission's mutable borrow before handling refusal [P2]",
+    "report": "redshank-report.md",
+    "status": "reviewer source-traced; parent corroboration selected by family in AUDIT.md"
+  },
+  {
+    "partition": "redshank",
+    "title": "R07 \u2014 Admit EOF before first-frame readiness as a terminal fact [P2]",
+    "report": "redshank-report.md",
+    "status": "reviewer source-traced; parent corroboration selected by family in AUDIT.md"
+  },
+  {
+    "partition": "redshank",
+    "title": "R08 \u2014 Preserve full item identity in annotation-export destinations [P2]",
+    "report": "redshank-report.md",
+    "status": "reviewer source-traced; parent corroboration selected by family in AUDIT.md"
+  },
+  {
+    "partition": "redshank",
+    "title": "R09 \u2014 Report capture capacity instead of silently discarding the tail [P2]",
+    "report": "redshank-report.md",
+    "status": "reviewer source-traced; parent corroboration selected by family in AUDIT.md"
+  },
+  {
+    "partition": "redshank",
+    "title": "R10 \u2014 Separate explicit local scope from automatic feed fallback [P2]",
+    "report": "redshank-report.md",
+    "status": "reviewer source-traced; parent corroboration selected by family in AUDIT.md"
+  },
+  {
+    "partition": "redshank",
+    "title": "R11 \u2014 Share seek interaction across dock and rail [P2]",
+    "report": "redshank-report.md",
+    "status": "reviewer source-traced; parent corroboration selected by family in AUDIT.md"
+  },
+  {
+    "partition": "redshank",
+    "title": "R12 \u2014 Remove the cached-location identity success claim [P2]",
+    "report": "redshank-report.md",
+    "status": "reviewer source-traced; parent corroboration selected by family in AUDIT.md"
+  },
+  {
+    "partition": "redshank",
+    "title": "R13 \u2014 Keep item identity visible when projecting All notes [P2]",
+    "report": "redshank-report.md",
+    "status": "reviewer source-traced; parent corroboration selected by family in AUDIT.md"
+  },
+  {
+    "partition": "redshank",
+    "title": "R14 \u2014 Remove stale all-generation preservation from the subscription receipt [P3]",
+    "report": "redshank-report.md",
+    "status": "reviewer source-traced; parent corroboration selected by family in AUDIT.md"
+  },
+  {
+    "partition": "redshank",
+    "title": "R15 \u2014 Stop inventing a weekly bound in the Trail projection [P3]",
+    "report": "redshank-report.md",
+    "status": "reviewer source-traced; parent corroboration selected by family in AUDIT.md"
+  },
+  {
+    "partition": "redshank",
+    "title": "R16 \u2014 Keep full range traces out of the production source [P3]",
+    "report": "redshank-report.md",
+    "status": "reviewer source-traced; parent corroboration selected by family in AUDIT.md"
+  },
+  {
+    "partition": "redshank",
+    "title": "R17 \u2014 Route effective rate through the existing controller contract [P3]",
+    "report": "redshank-report.md",
+    "status": "reviewer source-traced; parent corroboration selected by family in AUDIT.md"
+  },
+  {
+    "partition": "ringdown",
+    "title": "R1 \u2014 Preserve failed re-push receipts in the restore result",
+    "report": "ringdown-report.md",
+    "status": "reviewer source-traced; parent corroboration selected by family in AUDIT.md"
+  },
+  {
+    "partition": "ringdown",
+    "title": "R2 \u2014 Decode file hex without slicing through UTF-8 characters",
+    "report": "ringdown-report.md",
+    "status": "reviewer source-traced; parent corroboration selected by family in AUDIT.md"
+  },
+  {
+    "partition": "ringdown",
+    "title": "R3 \u2014 Keep absent status fields absent through the consumer projection",
+    "report": "ringdown-report.md",
+    "status": "reviewer source-traced; parent corroboration selected by family in AUDIT.md"
+  },
+  {
+    "partition": "ringdown",
+    "title": "R4 \u2014 Propagate local save failure from --fetch to the process result",
+    "report": "ringdown-report.md",
+    "status": "reviewer source-traced; parent corroboration selected by family in AUDIT.md"
+  },
+  {
+    "partition": "ringdown",
+    "title": "R5 \u2014 Make Ack2 itself enforce the acknowledgement shape",
+    "report": "ringdown-report.md",
+    "status": "reviewer source-traced; parent corroboration selected by family in AUDIT.md"
+  },
+  {
+    "partition": "ringdown",
+    "title": "R6 \u2014 Retain connection identity across capture reassembly and ATT interpretation",
+    "report": "ringdown-report.md",
+    "status": "reviewer source-traced; parent corroboration selected by family in AUDIT.md"
+  },
+  {
+    "partition": "ringdown",
+    "title": "R7 \u2014 Count uncheckable loop headers separately from matching ones",
+    "report": "ringdown-report.md",
+    "status": "reviewer source-traced; parent corroboration selected by family in AUDIT.md"
+  },
+  {
+    "partition": "ringdown",
+    "title": "R8 \u2014 Consolidate the firmware wedging fact while preserving any absolute host policy",
+    "report": "ringdown-report.md",
+    "status": "reviewer source-traced; parent corroboration selected by family in AUDIT.md"
+  },
+  {
+    "partition": "ringdown",
+    "title": "R9 \u2014 Share the recording-name grammar instead of maintaining two parsers",
+    "report": "ringdown-report.md",
+    "status": "reviewer source-traced; parent corroboration selected by family in AUDIT.md"
+  },
+  {
+    "partition": "ringdown",
+    "title": "X1 \u2014 Cross-partition: the metronome hardware example does not fail its own read-back gate",
+    "report": "ringdown-report.md",
+    "status": "reviewer source-traced; parent corroboration selected by family in AUDIT.md"
+  },
+  {
+    "partition": "shared",
+    "title": "S1 \u2014 P1: An authenticated cyclic history can hang same-session acceptance",
+    "report": "shared-report.md",
+    "status": "reviewer source-traced; parent corroboration selected by family in AUDIT.md"
+  },
+  {
+    "partition": "shared",
+    "title": "S2 \u2014 P2: Live playback bypasses the model's SelectOne audibility rule",
+    "report": "shared-report.md",
+    "status": "reviewer source-traced; parent corroboration selected by family in AUDIT.md"
+  },
+  {
+    "partition": "shared",
+    "title": "S3 \u2014 P2: Every live BPM nudge stops all loops without resuming them",
+    "report": "shared-report.md",
+    "status": "reviewer source-traced; parent corroboration selected by family in AUDIT.md"
+  },
+  {
+    "partition": "shared",
+    "title": "S4 \u2014 P2: The reusable Recorder adapter suppresses runtime failure diagnostics",
+    "report": "shared-report.md",
+    "status": "reviewer source-traced; parent corroboration selected by family in AUDIT.md"
+  },
+  {
+    "partition": "shared",
+    "title": "C1 \u2014 P2 API contract gap; normal native dispatch mitigates it: compatibility conversion drops frozen action targets",
+    "report": "shared-report.md",
+    "status": "reviewer source-traced; parent corroboration selected by family in AUDIT.md"
+  },
+  {
+    "partition": "theory",
+    "title": "T1 \u2014 P2: an attempted instrument write becomes a confirmed match without a receipt",
+    "report": "theory-report.md",
+    "status": "reviewer source-traced; parent corroboration selected by family in AUDIT.md"
+  },
+  {
+    "partition": "theory",
+    "title": "T2 \u2014 P2: the hardware proof can print a mismatch and still report confirmation; failures also skip restoration",
+    "report": "theory-report.md",
+    "status": "reviewer source-traced; parent corroboration selected by family in AUDIT.md"
+  },
+  {
+    "partition": "theory",
+    "title": "T3 \u2014 P2: \u201cPentatonic Box Shift\u201d uses its own approximate geometry instead of the theory and tuning authority",
+    "report": "theory-report.md",
+    "status": "reviewer source-traced; parent corroboration selected by family in AUDIT.md"
+  },
+  {
+    "partition": "theory",
+    "title": "T4 \u2014 P2: Set load admission accepts duplicate occurrence identities although actions and graphs treat identity as unique",
+    "report": "theory-report.md",
+    "status": "reviewer source-traced; parent corroboration selected by family in AUDIT.md"
+  },
+  {
+    "partition": "theory",
+    "title": "T5 \u2014 P3: the instrument's typed decoder fabricates valid-looking measurements, and its resonance test never calls that decoder",
+    "report": "theory-report.md",
+    "status": "reviewer source-traced; parent corroboration selected by family in AUDIT.md"
+  },
+  {
+    "partition": "theory",
+    "title": "T6 \u2014 P3: modal-family copy promises \u201csame tones\u201d while the related action preserves the tonic",
+    "report": "theory-report.md",
+    "status": "reviewer source-traced; parent corroboration selected by family in AUDIT.md"
+  },
+  {
+    "partition": "theory",
+    "title": "T7 \u2014 P3: Quartal Tetrad violates the catalog's ascending compound-interval contract",
+    "report": "theory-report.md",
+    "status": "reviewer source-traced; parent corroboration selected by family in AUDIT.md"
+  },
+  {
+    "partition": "theory",
+    "title": "T8 \u2014 P3: \u201cTenor (fifths)\u201d is cataloged in fourths; the current test proves only that the name exists",
+    "report": "theory-report.md",
+    "status": "reviewer source-traced; parent corroboration selected by family in AUDIT.md"
+  },
+  {
+    "partition": "tooling",
+    "title": "T1 \u2014 P2: Nine retained scenarios address Looper controls and text removed by the shared recorder",
+    "report": "tooling-report.md",
+    "status": "reviewer source-traced; parent corroboration selected by family in AUDIT.md"
+  },
+  {
+    "partition": "tooling",
+    "title": "T2 \u2014 P2: Package source receipts are not bound to the executable they identify",
+    "report": "tooling-report.md",
+    "status": "reviewer source-traced; parent corroboration selected by family in AUDIT.md"
+  },
+  {
+    "partition": "tooling",
+    "title": "T3 \u2014 P2: Windows packaging labels any existing EXE as x86_64",
+    "report": "tooling-report.md",
+    "status": "reviewer source-traced; parent corroboration selected by family in AUDIT.md"
+  },
+  {
+    "partition": "tooling",
+    "title": "T4 \u2014 P2: Missing note arrays become perfect benchmark scores",
+    "report": "tooling-report.md",
+    "status": "reviewer source-traced; parent corroboration selected by family in AUDIT.md"
+  },
+  {
+    "partition": "tooling",
+    "title": "T5 \u2014 P2: Benchmark results can be attributed to the wrong audio source",
+    "report": "tooling-report.md",
+    "status": "reviewer source-traced; parent corroboration selected by family in AUDIT.md"
+  },
+  {
+    "partition": "tooling",
+    "title": "T6 \u2014 P3: Packaged microphone explanations omit the shipping recorder",
+    "report": "tooling-report.md",
+    "status": "reviewer source-traced; parent corroboration selected by family in AUDIT.md"
+  },
+  {
+    "partition": "tooling",
+    "title": "T7 \u2014 P3: The macOS architecture-membership test only accepts the final architecture",
+    "report": "tooling-report.md",
+    "status": "reviewer source-traced; parent corroboration selected by family in AUDIT.md"
+  },
+  {
+    "partition": "views",
+    "title": "V01 \u2014 P2: Make one effective reduced-motion policy govern CSS and scene motion",
+    "report": "views-report.md",
+    "status": "reviewer source-traced; parent corroboration selected by family in AUDIT.md"
+  },
+  {
+    "partition": "views",
+    "title": "V02 \u2014 P2: Gate animation with the surface that is actually rendered",
+    "report": "views-report.md",
+    "status": "reviewer source-traced; parent corroboration selected by family in AUDIT.md"
+  },
+  {
+    "partition": "views",
+    "title": "V03 \u2014 P2: Project accepted audio availability into every audio surface",
+    "report": "views-report.md",
+    "status": "reviewer source-traced; parent corroboration selected by family in AUDIT.md"
+  },
+  {
+    "partition": "views",
+    "title": "V04 \u2014 P3: Tuner process navigation must select the Tuner page",
+    "report": "views-report.md",
+    "status": "reviewer source-traced; parent corroboration selected by family in AUDIT.md"
+  },
+  {
+    "partition": "views",
+    "title": "V05 \u2014 P3: Remove unreachable presentation branches after renderer replacement",
+    "report": "views-report.md",
+    "status": "reviewer source-traced; parent corroboration selected by family in AUDIT.md"
+  },
+  {
+    "partition": "views",
+    "title": "V06 \u2014 P3: Share Song provenance formatting between Card views",
+    "report": "views-report.md",
+    "status": "reviewer source-traced; parent corroboration selected by family in AUDIT.md"
+  }
+]

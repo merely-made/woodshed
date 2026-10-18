@@ -1,0 +1,653 @@
+{
+  "schema_version": 1,
+  "audit_partition": "host",
+  "snapshot": "/Users/markik/Code/testing/woodshed/full-source-audit-20261016/source-d12201bf",
+  "revision": "d12201bfe80cc94345c6308c46caaebf4a9fe42e",
+  "completed_utc": "2026-10-16T20:42:21.917975+00:00",
+  "status": "complete",
+  "coverage_basis": "Collective complete line read by host coordinator and three explicitly authorized parallel subreviewers; coordinator independently verified hashes and finding evidence.",
+  "assigned_files": 20,
+  "assigned_lines": 18828,
+  "read_files": 20,
+  "read_lines": 18828,
+  "files": [
+    {
+      "path": "crates/woodshed-genet/Cargo.toml",
+      "sha256": "421d118f581f7ebacbddb7c1810da3d1b153a755b35ad91a9c2bc2b706311885",
+      "lines": 63,
+      "bytes": 2965,
+      "kind": "source",
+      "actual_sha256": "421d118f581f7ebacbddb7c1810da3d1b153a755b35ad91a9c2bc2b706311885",
+      "actual_lines": 63,
+      "hash_matches": true,
+      "read_by": "host coordinator /root",
+      "read_ranges": [
+        [
+          1,
+          63
+        ]
+      ],
+      "read_lines": 63,
+      "status": "complete"
+    },
+    {
+      "path": "crates/woodshed-genet/src/appearance.rs",
+      "sha256": "41ded074fa5158bffa41f1db9b0d06610c9475f2fb9f3ce37e00a7b8a3d07983",
+      "lines": 491,
+      "bytes": 18569,
+      "kind": "source",
+      "actual_sha256": "41ded074fa5158bffa41f1db9b0d06610c9475f2fb9f3ce37e00a7b8a3d07983",
+      "actual_lines": 491,
+      "hash_matches": true,
+      "read_by": "host coordinator /root",
+      "read_ranges": [
+        [
+          1,
+          260
+        ],
+        [
+          261,
+          491
+        ]
+      ],
+      "read_lines": 491,
+      "status": "complete"
+    },
+    {
+      "path": "crates/woodshed-genet/src/audio/loop_projection.rs",
+      "sha256": "20f29f71e3ef828971852b93ff4395e163334bf1efa4c10f54b9c7a4b22f602c",
+      "lines": 729,
+      "bytes": 27221,
+      "kind": "source",
+      "actual_sha256": "20f29f71e3ef828971852b93ff4395e163334bf1efa4c10f54b9c7a4b22f602c",
+      "actual_lines": 729,
+      "hash_matches": true,
+      "read_by": "host_audio_read",
+      "read_ranges": [
+        [
+          1,
+          280
+        ],
+        [
+          281,
+          729
+        ]
+      ],
+      "read_lines": 729,
+      "status": "complete"
+    },
+    {
+      "path": "crates/woodshed-genet/src/audio.rs",
+      "sha256": "af0ffd959611f82d3c1101d83902da6cacf2403e569d2e4e5cbc240d784e2c97",
+      "lines": 1867,
+      "bytes": 69442,
+      "kind": "source",
+      "actual_sha256": "af0ffd959611f82d3c1101d83902da6cacf2403e569d2e4e5cbc240d784e2c97",
+      "actual_lines": 1867,
+      "hash_matches": true,
+      "read_by": "host_audio_read",
+      "read_ranges": [
+        [
+          1,
+          360
+        ],
+        [
+          361,
+          760
+        ],
+        [
+          761,
+          1160
+        ],
+        [
+          1161,
+          1530
+        ],
+        [
+          1531,
+          1867
+        ]
+      ],
+      "read_lines": 1867,
+      "status": "complete"
+    },
+    {
+      "path": "crates/woodshed-genet/src/capture_persistence/codec_worker.rs",
+      "sha256": "9ece09be493f6b37b611e0d2c358835b94b764b07a4778771a6713bde482bf7c",
+      "lines": 222,
+      "bytes": 7286,
+      "kind": "source",
+      "actual_sha256": "9ece09be493f6b37b611e0d2c358835b94b764b07a4778771a6713bde482bf7c",
+      "actual_lines": 222,
+      "hash_matches": true,
+      "read_by": "host_persistence_read",
+      "read_ranges": [
+        [
+          1,
+          222
+        ]
+      ],
+      "read_lines": 222,
+      "status": "complete"
+    },
+    {
+      "path": "crates/woodshed-genet/src/capture_persistence.rs",
+      "sha256": "0cda01ea66cb994a948b057472690d1e982ea5d20a4c82a53c5f0b5b6cae7eee",
+      "lines": 2595,
+      "bytes": 106090,
+      "kind": "source",
+      "actual_sha256": "0cda01ea66cb994a948b057472690d1e982ea5d20a4c82a53c5f0b5b6cae7eee",
+      "actual_lines": 2595,
+      "hash_matches": true,
+      "read_by": "host_persistence_read",
+      "read_ranges": [
+        [
+          1,
+          300
+        ],
+        [
+          301,
+          600
+        ],
+        [
+          601,
+          900
+        ],
+        [
+          901,
+          1200
+        ],
+        [
+          1201,
+          1500
+        ],
+        [
+          1501,
+          1800
+        ],
+        [
+          1801,
+          2100
+        ],
+        [
+          2101,
+          2400
+        ],
+        [
+          2401,
+          2595
+        ]
+      ],
+      "read_lines": 2595,
+      "status": "complete"
+    },
+    {
+      "path": "crates/woodshed-genet/src/drive.rs",
+      "sha256": "b2ad68aa2396c2783c13919e8a6c90ce1e57f15bb29053458e23e12c6731bf10",
+      "lines": 485,
+      "bytes": 18371,
+      "kind": "source",
+      "actual_sha256": "b2ad68aa2396c2783c13919e8a6c90ce1e57f15bb29053458e23e12c6731bf10",
+      "actual_lines": 485,
+      "hash_matches": true,
+      "read_by": "host_audio_read",
+      "read_ranges": [
+        [
+          1,
+          260
+        ],
+        [
+          261,
+          485
+        ]
+      ],
+      "read_lines": 485,
+      "status": "complete"
+    },
+    {
+      "path": "crates/woodshed-genet/src/fonts.rs",
+      "sha256": "d66a396c84ca5b25830a6529bec0dafedb9883bcf83b3d68622401a659310517",
+      "lines": 339,
+      "bytes": 12906,
+      "kind": "source",
+      "actual_sha256": "d66a396c84ca5b25830a6529bec0dafedb9883bcf83b3d68622401a659310517",
+      "actual_lines": 339,
+      "hash_matches": true,
+      "read_by": "host coordinator /root",
+      "read_ranges": [
+        [
+          1,
+          339
+        ]
+      ],
+      "read_lines": 339,
+      "status": "complete"
+    },
+    {
+      "path": "crates/woodshed-genet/src/layout_tests.rs",
+      "sha256": "d37b6a004f23e482213701972aea140025cd557f5372480cb508e5d3d2e0c755",
+      "lines": 1749,
+      "bytes": 71344,
+      "kind": "source",
+      "actual_sha256": "d37b6a004f23e482213701972aea140025cd557f5372480cb508e5d3d2e0c755",
+      "actual_lines": 1749,
+      "hash_matches": true,
+      "read_by": "host coordinator /root",
+      "read_ranges": [
+        [
+          1,
+          360
+        ],
+        [
+          361,
+          720
+        ],
+        [
+          721,
+          1080
+        ],
+        [
+          1081,
+          1440
+        ],
+        [
+          1441,
+          1749
+        ]
+      ],
+      "read_lines": 1749,
+      "status": "complete"
+    },
+    {
+      "path": "crates/woodshed-genet/src/leaves.rs",
+      "sha256": "00705e12db7951c1039f15e662c56b361dcc3b5e83d28b7b6630e0e018eca840",
+      "lines": 709,
+      "bytes": 25308,
+      "kind": "source",
+      "actual_sha256": "00705e12db7951c1039f15e662c56b361dcc3b5e83d28b7b6630e0e018eca840",
+      "actual_lines": 709,
+      "hash_matches": true,
+      "read_by": "host_audio_read",
+      "read_ranges": [
+        [
+          1,
+          355
+        ],
+        [
+          356,
+          709
+        ]
+      ],
+      "read_lines": 709,
+      "status": "complete"
+    },
+    {
+      "path": "crates/woodshed-genet/src/main.rs",
+      "sha256": "e2839bc9230cf3d2a4bc775a3f23daf5c97c1fdcbc0cda3f011e84588e8c8db8",
+      "lines": 776,
+      "bytes": 31404,
+      "kind": "source",
+      "actual_sha256": "e2839bc9230cf3d2a4bc775a3f23daf5c97c1fdcbc0cda3f011e84588e8c8db8",
+      "actual_lines": 776,
+      "hash_matches": true,
+      "read_by": "host_audio_read",
+      "read_ranges": [
+        [
+          1,
+          280
+        ],
+        [
+          281,
+          560
+        ],
+        [
+          561,
+          776
+        ]
+      ],
+      "read_lines": 776,
+      "status": "complete"
+    },
+    {
+      "path": "crates/woodshed-genet/src/midi.rs",
+      "sha256": "d10ec69d3971936ccfefcf56974790f004d0d8d0ff4734eb126170e220da338f",
+      "lines": 231,
+      "bytes": 7402,
+      "kind": "source",
+      "actual_sha256": "d10ec69d3971936ccfefcf56974790f004d0d8d0ff4734eb126170e220da338f",
+      "actual_lines": 231,
+      "hash_matches": true,
+      "read_by": "host_audio_read",
+      "read_ranges": [
+        [
+          1,
+          231
+        ]
+      ],
+      "read_lines": 231,
+      "status": "complete"
+    },
+    {
+      "path": "crates/woodshed-genet/src/persona.rs",
+      "sha256": "461c139f9fe0b87914f9fdd1763281180f66a6e557598c0733b43a388929a88e",
+      "lines": 668,
+      "bytes": 26701,
+      "kind": "source",
+      "actual_sha256": "461c139f9fe0b87914f9fdd1763281180f66a6e557598c0733b43a388929a88e",
+      "actual_lines": 668,
+      "hash_matches": true,
+      "read_by": "host_state_read",
+      "read_ranges": [
+        [
+          1,
+          240
+        ],
+        [
+          241,
+          470
+        ],
+        [
+          471,
+          668
+        ]
+      ],
+      "read_lines": 668,
+      "status": "complete"
+    },
+    {
+      "path": "crates/woodshed-genet/src/scenario.rs",
+      "sha256": "0b065ba5aceb32b0536e2d340c7db52f9caa2ddc49f3b116c4e1cdfa8f5379a6",
+      "lines": 2638,
+      "bytes": 109061,
+      "kind": "source",
+      "actual_sha256": "0b065ba5aceb32b0536e2d340c7db52f9caa2ddc49f3b116c4e1cdfa8f5379a6",
+      "actual_lines": 2638,
+      "hash_matches": true,
+      "read_by": "host coordinator /root",
+      "read_ranges": [
+        [
+          1,
+          400
+        ],
+        [
+          401,
+          800
+        ],
+        [
+          801,
+          1200
+        ],
+        [
+          1201,
+          1600
+        ],
+        [
+          1601,
+          2000
+        ],
+        [
+          2001,
+          2400
+        ],
+        [
+          2401,
+          2638
+        ]
+      ],
+      "read_lines": 2638,
+      "status": "complete"
+    },
+    {
+      "path": "crates/woodshed-genet/src/session.rs",
+      "sha256": "22af13555e6615312c731fd7a5d0bb5ff94c6ec5b010e17067c2c0303709773e",
+      "lines": 1355,
+      "bytes": 60783,
+      "kind": "source",
+      "actual_sha256": "22af13555e6615312c731fd7a5d0bb5ff94c6ec5b010e17067c2c0303709773e",
+      "actual_lines": 1355,
+      "hash_matches": true,
+      "read_by": "host_state_read",
+      "read_ranges": [
+        [
+          1,
+          280
+        ],
+        [
+          281,
+          550
+        ],
+        [
+          551,
+          830
+        ],
+        [
+          831,
+          1100
+        ],
+        [
+          1101,
+          1355
+        ]
+      ],
+      "read_lines": 1355,
+      "status": "complete"
+    },
+    {
+      "path": "crates/woodshed-genet/src/shared.rs",
+      "sha256": "ef258cff198a8bc83c3431a96392358029ee4213a4c1b2d8e8cc8460e1837f74",
+      "lines": 383,
+      "bytes": 15972,
+      "kind": "source",
+      "actual_sha256": "ef258cff198a8bc83c3431a96392358029ee4213a4c1b2d8e8cc8460e1837f74",
+      "actual_lines": 383,
+      "hash_matches": true,
+      "read_by": "host_audio_read",
+      "read_ranges": [
+        [
+          1,
+          383
+        ]
+      ],
+      "read_lines": 383,
+      "status": "complete"
+    },
+    {
+      "path": "crates/woodshed-genet/src/storage.rs",
+      "sha256": "e23d181cb7ed3fac88b7b54f84664428589fc368ec51f1142238f7f87cbd61bc",
+      "lines": 883,
+      "bytes": 34175,
+      "kind": "source",
+      "actual_sha256": "e23d181cb7ed3fac88b7b54f84664428589fc368ec51f1142238f7f87cbd61bc",
+      "actual_lines": 883,
+      "hash_matches": true,
+      "read_by": "host_persistence_read",
+      "read_ranges": [
+        [
+          1,
+          300
+        ],
+        [
+          301,
+          600
+        ],
+        [
+          601,
+          883
+        ]
+      ],
+      "read_lines": 883,
+      "status": "complete"
+    },
+    {
+      "path": "crates/woodshed-genet/src/sync.rs",
+      "sha256": "4845e1e76cb4d610072feb22ef8ec21d9bdaed9728b72f2c39fdcd0d450e364d",
+      "lines": 1343,
+      "bytes": 57316,
+      "kind": "source",
+      "actual_sha256": "4845e1e76cb4d610072feb22ef8ec21d9bdaed9728b72f2c39fdcd0d450e364d",
+      "actual_lines": 1343,
+      "hash_matches": true,
+      "read_by": "host_state_read",
+      "read_ranges": [
+        [
+          1,
+          270
+        ],
+        [
+          271,
+          540
+        ],
+        [
+          541,
+          810
+        ],
+        [
+          811,
+          1080
+        ],
+        [
+          1081,
+          1343
+        ]
+      ],
+      "read_lines": 1343,
+      "status": "complete"
+    },
+    {
+      "path": "crates/woodshed-genet/src/text.rs",
+      "sha256": "1ef381a9cf2e6c950debae7de4f5ac2ffd07f598ec5f8a1673adfef85e7eefa9",
+      "lines": 92,
+      "bytes": 3583,
+      "kind": "source",
+      "actual_sha256": "1ef381a9cf2e6c950debae7de4f5ac2ffd07f598ec5f8a1673adfef85e7eefa9",
+      "actual_lines": 92,
+      "hash_matches": true,
+      "read_by": "host coordinator /root",
+      "read_ranges": [
+        [
+          1,
+          92
+        ]
+      ],
+      "read_lines": 92,
+      "status": "complete"
+    },
+    {
+      "path": "crates/woodshed-genet/src/wav_export.rs",
+      "sha256": "2902020f73fcdd6623b0a590858a89344e857ae3256cdbf4c7fe6cdeef98df52",
+      "lines": 1210,
+      "bytes": 43454,
+      "kind": "source",
+      "actual_sha256": "2902020f73fcdd6623b0a590858a89344e857ae3256cdbf4c7fe6cdeef98df52",
+      "actual_lines": 1210,
+      "hash_matches": true,
+      "read_by": "host_persistence_read",
+      "read_ranges": [
+        [
+          1,
+          300
+        ],
+        [
+          301,
+          600
+        ],
+        [
+          601,
+          900
+        ],
+        [
+          901,
+          1210
+        ]
+      ],
+      "read_lines": 1210,
+      "status": "complete"
+    }
+  ],
+  "guidance_complete_reads": [
+    {
+      "path": "CLAUDE.md",
+      "ranges": [
+        [
+          1,
+          117
+        ]
+      ]
+    },
+    {
+      "path": "design_docs/DOC_README.md",
+      "ranges": [
+        [
+          1,
+          120
+        ],
+        [
+          121,
+          260
+        ],
+        [
+          261,
+          413
+        ]
+      ]
+    },
+    {
+      "path": "design_docs/2026-10-15_woodshed_codex_handoff.md",
+      "ranges": [
+        [
+          1,
+          175
+        ],
+        [
+          176,
+          319
+        ]
+      ]
+    },
+    {
+      "path": "design_docs/2026-10-16_shared_capture_accumulator_plan.md",
+      "ranges": [
+        [
+          1,
+          66
+        ]
+      ]
+    },
+    {
+      "path": "design_docs/2026-08-06_settings_persistence_split_plan.md",
+      "ranges": [
+        [
+          1,
+          54
+        ]
+      ]
+    },
+    {
+      "path": "design_docs/2026-10-16_mere_take_acceptance_plan.md",
+      "ranges": [
+        [
+          1,
+          54
+        ]
+      ]
+    }
+  ],
+  "supplemental_scope": "Bounded neighboring source and exact locked Mere6575075 supplier were inspected to verify caller reachability, repaint semantics, and native text seam. Relevant primary sources were compared read-only for dirty P5a separation. These are not claimed as full neighboring-tree coverage.",
+  "execution_constraints": {
+    "source_changes": false,
+    "git_mutations": false,
+    "builds": false,
+    "tests_run": false,
+    "native_runs": false,
+    "network": false,
+    "writes": [
+      "host-coverage.json",
+      "host-report.md"
+    ]
+  },
+  "notes": [
+    "Assigned source chunks were read without truncation by their named readers. A preliminary DOC_README output was truncated and was reread completely in the explicit ranges recorded above. A broad neighboring-file locator search was truncated; it is not coverage evidence.",
+    "No source acceptance is inferred from historical memory or plan receipt counts.",
+    "Report findings use frozen snapshot line numbers."
+  ]
+}

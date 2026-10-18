@@ -1,0 +1,8 @@
+test_exact_once_or_overlapping_reads_cover_the_whole_file (test_verify_coverage.CoverageRanges) ... ok
+test_missing_first_middle_or_last_line_cannot_count_complete (test_verify_coverage.CoverageRanges) ... ok
+test_ranges_outside_the_file_or_reversed_are_rejected (test_verify_coverage.CoverageRanges) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.000s
+
+OK

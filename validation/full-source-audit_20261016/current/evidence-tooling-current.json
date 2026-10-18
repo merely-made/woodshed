@@ -1,0 +1,66 @@
+{
+  "current_revision": "a424772",
+  "scope": "Targeted source/hash and existing-receipt reconciliation; no new product tests or native runs",
+  "findings": [
+    {
+      "id": "evidence:E1",
+      "package": "Q1",
+      "status": "original acceptance implementations unchanged; misleading-success risk remains",
+      "evidence": "Current writer and font verifier are byte-identical to frozen findings. Existing isolated counterexamples retained. New feature check wrappers record actual exits, but do not repair these old operational helpers. No historical run reclassified as failed."
+    },
+    {
+      "id": "evidence:E2",
+      "package": "Q1",
+      "status": "original helper unchanged; baseline-target regression risk remains",
+      "evidence": "Current helper still reads historical referrers and current target bytes. Byte-identical to frozen input; prior isolated deleted-heading counterexample retained."
+    },
+    {
+      "id": "evidence:O1",
+      "package": "Q5",
+      "status": "source cohort alignment corrected; current instrument execution not requalified here",
+      "evidence": "Current four-root metadata uses one Mere d1a200b18, Genet917f88e and Netrendere8cda source each. Earlier production-scroll receipt executed eleven recipe cases on Mere2d95d95e. New label task updates locks and metadata; no new recipe runtime claim."
+    },
+    {
+      "id": "tooling:T1",
+      "package": "Q2",
+      "status": "all nine original scenario files unchanged; retired selectors remain",
+      "evidence": "scenario-source-check.json contains exact current hashes and retired selector/readout strings. New scenario receipts do not establish these old nine execute."
+    },
+    {
+      "id": "tooling:T2",
+      "package": "Q3",
+      "status": "release package provenance binding still open",
+      "evidence": "Linux/Windows scripts unchanged; macOS changes only microphone explanation. New acceptance-build wrappers bind individual candidates, not general release packagers."
+    },
+    {
+      "id": "tooling:T3",
+      "package": "Q3",
+      "status": "Windows EXE architecture admission unchanged",
+      "evidence": "Windows packager hash identical to frozen source. No packaging/architecture test run in this audit."
+    },
+    {
+      "id": "tooling:T4",
+      "package": "Q4",
+      "status": "missing notes array still defaults to empty",
+      "evidence": "audio_analysis_bench.py identical to frozen source; current validate_document uses document.get(\"notes\", [])."
+    },
+    {
+      "id": "tooling:T5",
+      "package": "Q4",
+      "status": "scorer source identity admission still open",
+      "evidence": "Same unchanged scorer; earlier source-traced source_id gap remains. No analyzer-quality or current run-failure claim."
+    },
+    {
+      "id": "tooling:T6",
+      "package": "Q3",
+      "status": "macOS copy corrected; Linux/Windows wording still excludes recording",
+      "evidence": "Current macOS usage string names recording, tuner and calibration. Linux and Windows scripts are byte-identical to frozen source and retain narrower wording."
+    },
+    {
+      "id": "tooling:T7",
+      "package": "Q3",
+      "status": "macOS universal architecture membership remains final-token-only",
+      "evidence": "Current case pattern still lacks trailing wildcard. The one macOS source change is microphone wording, not membership admission."
+    }
+  ]
+}

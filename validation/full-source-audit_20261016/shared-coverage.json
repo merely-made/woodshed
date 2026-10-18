@@ -1,0 +1,640 @@
+{
+  "revision": "d12201bfe80cc94345c6308c46caaebf4a9fe42e",
+  "partition": "shared",
+  "snapshot": "/Users/markik/Code/testing/woodshed/full-source-audit-20261016/source-d12201bf",
+  "complete": true,
+  "files": [
+    {
+      "path": "crates/hocket-model/Cargo.toml",
+      "sha256": "8c06b3ec64c6bac10e5ea92bb78e2b89973ee680bbb2436aae23da6035564d84",
+      "lines": 18,
+      "bytes": 501,
+      "kind": "source",
+      "observed_sha256": "8c06b3ec64c6bac10e5ea92bb78e2b89973ee680bbb2436aae23da6035564d84",
+      "read_ranges": [
+        [
+          1,
+          18
+        ]
+      ],
+      "status": "complete",
+      "read_line_count": 18,
+      "hash_matches": true
+    },
+    {
+      "path": "crates/hocket-model/src/history.rs",
+      "sha256": "5de0cdfd6690bb0f7d24e380a3cff853cad41abc04ed05309f47e338acd8fec9",
+      "lines": 1052,
+      "bytes": 32865,
+      "kind": "source",
+      "observed_sha256": "5de0cdfd6690bb0f7d24e380a3cff853cad41abc04ed05309f47e338acd8fec9",
+      "read_ranges": [
+        [
+          1,
+          350
+        ],
+        [
+          351,
+          730
+        ],
+        [
+          731,
+          1052
+        ]
+      ],
+      "status": "complete",
+      "read_line_count": 1052,
+      "hash_matches": true
+    },
+    {
+      "path": "crates/hocket-model/src/ids.rs",
+      "sha256": "f82cfc7ae84f2f6fe7402bb7d07fb365104cf74c7cd066249e1f164337bd9c45",
+      "lines": 103,
+      "bytes": 2965,
+      "kind": "source",
+      "observed_sha256": "f82cfc7ae84f2f6fe7402bb7d07fb365104cf74c7cd066249e1f164337bd9c45",
+      "read_ranges": [
+        [
+          1,
+          103
+        ]
+      ],
+      "status": "complete",
+      "read_line_count": 103,
+      "hash_matches": true
+    },
+    {
+      "path": "crates/hocket-model/src/lib.rs",
+      "sha256": "5edf255b5669f59c919466c3b576fefe7163706ffac9e166cdd343f811613127",
+      "lines": 44,
+      "bytes": 1710,
+      "kind": "source",
+      "observed_sha256": "5edf255b5669f59c919466c3b576fefe7163706ffac9e166cdd343f811613127",
+      "read_ranges": [
+        [
+          1,
+          44
+        ]
+      ],
+      "status": "complete",
+      "read_line_count": 44,
+      "hash_matches": true
+    },
+    {
+      "path": "crates/hocket-model/src/persistence.rs",
+      "sha256": "cab90715db2e0ad1ae2d3a7dee782b2bdf19288ce0716ee097e814d863799842",
+      "lines": 172,
+      "bytes": 6613,
+      "kind": "source",
+      "observed_sha256": "cab90715db2e0ad1ae2d3a7dee782b2bdf19288ce0716ee097e814d863799842",
+      "read_ranges": [
+        [
+          1,
+          172
+        ]
+      ],
+      "status": "complete",
+      "read_line_count": 172,
+      "hash_matches": true
+    },
+    {
+      "path": "crates/hocket-model/src/phrase.rs",
+      "sha256": "864c46574603a51d30d39e75dac3fc707bad774f47cfdf319a132ac9d5fe9bc5",
+      "lines": 105,
+      "bytes": 3488,
+      "kind": "source",
+      "observed_sha256": "864c46574603a51d30d39e75dac3fc707bad774f47cfdf319a132ac9d5fe9bc5",
+      "read_ranges": [
+        [
+          1,
+          105
+        ]
+      ],
+      "status": "complete",
+      "read_line_count": 105,
+      "hash_matches": true
+    },
+    {
+      "path": "crates/hocket-model/src/session.rs",
+      "sha256": "647e1b9a38805817ffad54ab2ba500551b50a713835b0d887895eea985dcc6d0",
+      "lines": 221,
+      "bytes": 8180,
+      "kind": "source",
+      "observed_sha256": "647e1b9a38805817ffad54ab2ba500551b50a713835b0d887895eea985dcc6d0",
+      "read_ranges": [
+        [
+          1,
+          221
+        ]
+      ],
+      "status": "complete",
+      "read_line_count": 221,
+      "hash_matches": true
+    },
+    {
+      "path": "crates/hocket-model/src/track.rs",
+      "sha256": "a449de22dbc2389da5cb73062555699a75849c7683e1071ede2fcd80ec3c1c69",
+      "lines": 230,
+      "bytes": 7809,
+      "kind": "source",
+      "observed_sha256": "a449de22dbc2389da5cb73062555699a75849c7683e1071ede2fcd80ec3c1c69",
+      "read_ranges": [
+        [
+          1,
+          230
+        ]
+      ],
+      "status": "complete",
+      "read_line_count": 230,
+      "hash_matches": true
+    },
+    {
+      "path": "crates/hocket-model/tests/validation.rs",
+      "sha256": "49d177f0f7cfa3d3b4bd2badb45ab990fa83f3e2ee9c5c62e90cad859c4f3a37",
+      "lines": 184,
+      "bytes": 6182,
+      "kind": "source",
+      "observed_sha256": "49d177f0f7cfa3d3b4bd2badb45ab990fa83f3e2ee9c5c62e90cad859c4f3a37",
+      "read_ranges": [
+        [
+          1,
+          184
+        ]
+      ],
+      "status": "complete",
+      "read_line_count": 184,
+      "hash_matches": true
+    },
+    {
+      "path": "crates/hocket-project/Cargo.toml",
+      "sha256": "20e9ecd10b3050134970fb37b8c14f0d95c615df902436d577f38ef101aa3c03",
+      "lines": 27,
+      "bytes": 607,
+      "kind": "source",
+      "observed_sha256": "20e9ecd10b3050134970fb37b8c14f0d95c615df902436d577f38ef101aa3c03",
+      "read_ranges": [
+        [
+          1,
+          27
+        ]
+      ],
+      "status": "complete",
+      "read_line_count": 27,
+      "hash_matches": true
+    },
+    {
+      "path": "crates/hocket-project/src/export.rs",
+      "sha256": "4ee4f8e30176707a137e6712c7a4779c2ff763ff471abcc5a5828e1ed0af531c",
+      "lines": 540,
+      "bytes": 18252,
+      "kind": "source",
+      "observed_sha256": "4ee4f8e30176707a137e6712c7a4779c2ff763ff471abcc5a5828e1ed0af531c",
+      "read_ranges": [
+        [
+          1,
+          300
+        ],
+        [
+          301,
+          540
+        ]
+      ],
+      "status": "complete",
+      "read_line_count": 540,
+      "hash_matches": true
+    },
+    {
+      "path": "crates/hocket-project/src/handoff.rs",
+      "sha256": "dc35a2ec035a4da362c9e716192f725a94c78ff1cbf6fa630d7adcb2ccf03fe5",
+      "lines": 725,
+      "bytes": 28247,
+      "kind": "source",
+      "observed_sha256": "dc35a2ec035a4da362c9e716192f725a94c78ff1cbf6fa630d7adcb2ccf03fe5",
+      "read_ranges": [
+        [
+          1,
+          270
+        ],
+        [
+          271,
+          725
+        ]
+      ],
+      "status": "complete",
+      "read_line_count": 725,
+      "hash_matches": true
+    },
+    {
+      "path": "crates/hocket-project/src/lib.rs",
+      "sha256": "2e975a8c0fa9f7d67c5399ed8ff4a91a7171ff3121f7bb9473bea76dcadd667e",
+      "lines": 20,
+      "bytes": 733,
+      "kind": "source",
+      "observed_sha256": "2e975a8c0fa9f7d67c5399ed8ff4a91a7171ff3121f7bb9473bea76dcadd667e",
+      "read_ranges": [
+        [
+          1,
+          20
+        ]
+      ],
+      "status": "complete",
+      "read_line_count": 20,
+      "hash_matches": true
+    },
+    {
+      "path": "crates/hocket-project/src/media.rs",
+      "sha256": "a9a851ef81b927c8287b21f5f76ce1aed92edb23cde887accc3b6f3c3326919d",
+      "lines": 151,
+      "bytes": 5014,
+      "kind": "source",
+      "observed_sha256": "a9a851ef81b927c8287b21f5f76ce1aed92edb23cde887accc3b6f3c3326919d",
+      "read_ranges": [
+        [
+          1,
+          151
+        ]
+      ],
+      "status": "complete",
+      "read_line_count": 151,
+      "hash_matches": true
+    },
+    {
+      "path": "crates/hocket-project/src/project_store.rs",
+      "sha256": "6155ae3fecc47be345d419879483ad4ea0e980f9f99342be7cb753fb96e5d525",
+      "lines": 505,
+      "bytes": 19393,
+      "kind": "source",
+      "observed_sha256": "6155ae3fecc47be345d419879483ad4ea0e980f9f99342be7cb753fb96e5d525",
+      "read_ranges": [
+        [
+          1,
+          300
+        ],
+        [
+          301,
+          505
+        ]
+      ],
+      "status": "complete",
+      "read_line_count": 505,
+      "hash_matches": true
+    },
+    {
+      "path": "crates/hocket-project/src/waveform.rs",
+      "sha256": "afd561d806eeedaf0e45989fd317c17f6cd3167fa7d3cbe4438b3c6e46d29184",
+      "lines": 178,
+      "bytes": 5800,
+      "kind": "source",
+      "observed_sha256": "afd561d806eeedaf0e45989fd317c17f6cd3167fa7d3cbe4438b3c6e46d29184",
+      "read_ranges": [
+        [
+          1,
+          178
+        ]
+      ],
+      "status": "complete",
+      "read_line_count": 178,
+      "hash_matches": true
+    },
+    {
+      "path": "crates/hocket-recorder/Cargo.toml",
+      "sha256": "003f205117b796f626b23b642865d167c6bbf23d783eaca54a030efbcef00dd9",
+      "lines": 16,
+      "bytes": 391,
+      "kind": "source",
+      "observed_sha256": "003f205117b796f626b23b642865d167c6bbf23d783eaca54a030efbcef00dd9",
+      "read_ranges": [
+        [
+          1,
+          16
+        ]
+      ],
+      "status": "complete",
+      "read_line_count": 16,
+      "hash_matches": true
+    },
+    {
+      "path": "crates/hocket-recorder/src/host_policy.rs",
+      "sha256": "5f5a15b77cc879717764f81455de36090121a2f9b6214cc2ed30820c417bd664",
+      "lines": 603,
+      "bytes": 22199,
+      "kind": "source",
+      "observed_sha256": "5f5a15b77cc879717764f81455de36090121a2f9b6214cc2ed30820c417bd664",
+      "read_ranges": [
+        [
+          1,
+          330
+        ],
+        [
+          331,
+          603
+        ]
+      ],
+      "status": "complete",
+      "read_line_count": 603,
+      "hash_matches": true
+    },
+    {
+      "path": "crates/hocket-recorder/src/lib.rs",
+      "sha256": "7133dcc2ef5021b32c3226f9807694e3a523676c1f3f7c4f56d763a02ba4eda4",
+      "lines": 1603,
+      "bytes": 56319,
+      "kind": "source",
+      "observed_sha256": "7133dcc2ef5021b32c3226f9807694e3a523676c1f3f7c4f56d763a02ba4eda4",
+      "read_ranges": [
+        [
+          1,
+          240
+        ],
+        [
+          241,
+          480
+        ],
+        [
+          481,
+          1020
+        ],
+        [
+          1021,
+          1370
+        ],
+        [
+          1371,
+          1603
+        ]
+      ],
+      "status": "complete",
+      "read_line_count": 1603,
+      "hash_matches": true
+    },
+    {
+      "path": "crates/hocket-views/Cargo.toml",
+      "sha256": "c115bccb050cbf7cd46d9c15950f448649306089e83b6c8cb3d016171e020440",
+      "lines": 25,
+      "bytes": 663,
+      "kind": "source",
+      "observed_sha256": "c115bccb050cbf7cd46d9c15950f448649306089e83b6c8cb3d016171e020440",
+      "read_ranges": [
+        [
+          1,
+          25
+        ]
+      ],
+      "status": "complete",
+      "read_line_count": 25,
+      "hash_matches": true
+    },
+    {
+      "path": "crates/hocket-views/examples/two_mounts.rs",
+      "sha256": "a05e9b3f5a77064aed7e4eab348d8abe9e1e616874ca520231a1ae417c66fbf5",
+      "lines": 518,
+      "bytes": 18009,
+      "kind": "source",
+      "observed_sha256": "a05e9b3f5a77064aed7e4eab348d8abe9e1e616874ca520231a1ae417c66fbf5",
+      "read_ranges": [
+        [
+          1,
+          290
+        ],
+        [
+          291,
+          518
+        ]
+      ],
+      "status": "complete",
+      "read_line_count": 518,
+      "hash_matches": true
+    },
+    {
+      "path": "crates/hocket-views/examples/two_mounts.scn",
+      "sha256": "6727825883468cfa73678f8635c01bd66103e00f7982be660d4a2c91bb4a5ecf",
+      "lines": 19,
+      "bytes": 622,
+      "kind": "source",
+      "observed_sha256": "6727825883468cfa73678f8635c01bd66103e00f7982be660d4a2c91bb4a5ecf",
+      "read_ranges": [
+        [
+          1,
+          19
+        ]
+      ],
+      "status": "complete",
+      "read_line_count": 19,
+      "hash_matches": true
+    },
+    {
+      "path": "crates/hocket-views/src/leaves.rs",
+      "sha256": "a7c57d224693203232c14e9fea11be8cb491dec71edd10369bff8e879cadc9e5",
+      "lines": 647,
+      "bytes": 22303,
+      "kind": "source",
+      "observed_sha256": "a7c57d224693203232c14e9fea11be8cb491dec71edd10369bff8e879cadc9e5",
+      "read_ranges": [
+        [
+          1,
+          360
+        ],
+        [
+          361,
+          647
+        ]
+      ],
+      "status": "complete",
+      "read_line_count": 647,
+      "hash_matches": true
+    },
+    {
+      "path": "crates/hocket-views/src/lib.rs",
+      "sha256": "c23878fc5cd6dce7df1ca04201dbcb191cb9de9d12910d80893cbc24d986aa8e",
+      "lines": 101,
+      "bytes": 2688,
+      "kind": "source",
+      "observed_sha256": "c23878fc5cd6dce7df1ca04201dbcb191cb9de9d12910d80893cbc24d986aa8e",
+      "read_ranges": [
+        [
+          1,
+          101
+        ]
+      ],
+      "status": "complete",
+      "read_line_count": 101,
+      "hash_matches": true
+    },
+    {
+      "path": "crates/hocket-views/src/projection.rs",
+      "sha256": "02165e95d008b812e1de1f90fbbafcda5158c9bfdd7aa874bc550fbd321f0d49",
+      "lines": 168,
+      "bytes": 4970,
+      "kind": "source",
+      "observed_sha256": "02165e95d008b812e1de1f90fbbafcda5158c9bfdd7aa874bc550fbd321f0d49",
+      "read_ranges": [
+        [
+          1,
+          168
+        ]
+      ],
+      "status": "complete",
+      "read_line_count": 168,
+      "hash_matches": true
+    },
+    {
+      "path": "crates/hocket-views/src/projection_tests.rs",
+      "sha256": "473c96b4cbf75eb01411314580d272559b3bb03a35791be6a4b6cb3ae12f88c5",
+      "lines": 195,
+      "bytes": 6097,
+      "kind": "source",
+      "observed_sha256": "473c96b4cbf75eb01411314580d272559b3bb03a35791be6a4b6cb3ae12f88c5",
+      "read_ranges": [
+        [
+          1,
+          195
+        ]
+      ],
+      "status": "complete",
+      "read_line_count": 195,
+      "hash_matches": true
+    },
+    {
+      "path": "crates/hocket-views/src/recorder_adapter.rs",
+      "sha256": "6e23fd2ac0ca04dbd8b8df02244fd17c4184cdbb7be384d9a6552f013921dc0e",
+      "lines": 276,
+      "bytes": 10147,
+      "kind": "source",
+      "observed_sha256": "6e23fd2ac0ca04dbd8b8df02244fd17c4184cdbb7be384d9a6552f013921dc0e",
+      "read_ranges": [
+        [
+          1,
+          276
+        ]
+      ],
+      "status": "complete",
+      "read_line_count": 276,
+      "hash_matches": true
+    },
+    {
+      "path": "crates/hocket-views/src/surface.rs",
+      "sha256": "b59f0991dcb3cda252701e0d6801d660125dd3738180eaae1097789a6606455e",
+      "lines": 697,
+      "bytes": 23126,
+      "kind": "source",
+      "observed_sha256": "b59f0991dcb3cda252701e0d6801d660125dd3738180eaae1097789a6606455e",
+      "read_ranges": [
+        [
+          1,
+          300
+        ],
+        [
+          301,
+          697
+        ]
+      ],
+      "status": "complete",
+      "read_line_count": 697,
+      "hash_matches": true
+    },
+    {
+      "path": "crates/hocket-views/src/theme.rs",
+      "sha256": "adc7347846826a86fba7c4f5783832da7ad84fa7ed37950f63e48835c6a6fce0",
+      "lines": 126,
+      "bytes": 8939,
+      "kind": "source",
+      "observed_sha256": "adc7347846826a86fba7c4f5783832da7ad84fa7ed37950f63e48835c6a6fce0",
+      "read_ranges": [
+        [
+          1,
+          126
+        ]
+      ],
+      "status": "complete",
+      "read_line_count": 126,
+      "hash_matches": true
+    },
+    {
+      "path": "crates/timed-text/Cargo.toml",
+      "sha256": "a5f55cb56e5710bb14ac866104092c0e5f7fbfb5d2950c2fa3ab0aa7d2e6d541",
+      "lines": 9,
+      "bytes": 197,
+      "kind": "source",
+      "observed_sha256": "a5f55cb56e5710bb14ac866104092c0e5f7fbfb5d2950c2fa3ab0aa7d2e6d541",
+      "read_ranges": [
+        [
+          1,
+          9
+        ]
+      ],
+      "status": "complete",
+      "read_line_count": 9,
+      "hash_matches": true
+    },
+    {
+      "path": "crates/timed-text/src/lib.rs",
+      "sha256": "ce1662770bdb87938a886f1149809453f160663b01c46ecb6c7e0eac8eb2f988",
+      "lines": 172,
+      "bytes": 6132,
+      "kind": "source",
+      "observed_sha256": "ce1662770bdb87938a886f1149809453f160663b01c46ecb6c7e0eac8eb2f988",
+      "read_ranges": [
+        [
+          1,
+          172
+        ]
+      ],
+      "status": "complete",
+      "read_line_count": 172,
+      "hash_matches": true
+    },
+    {
+      "path": "crates/woodshed-web/Cargo.toml",
+      "sha256": "92707634165c42cd29c2aa59c89970b87a4cfefdbd8557ebd82930b3ce74841c",
+      "lines": 32,
+      "bytes": 1200,
+      "kind": "source",
+      "observed_sha256": "92707634165c42cd29c2aa59c89970b87a4cfefdbd8557ebd82930b3ce74841c",
+      "read_ranges": [
+        [
+          1,
+          32
+        ]
+      ],
+      "status": "complete",
+      "read_line_count": 32,
+      "hash_matches": true
+    },
+    {
+      "path": "crates/woodshed-web/src/lib.rs",
+      "sha256": "a2059d68b0d640e031e3c2a00018be7162981a15fff7279adb2f550888e51f85",
+      "lines": 105,
+      "bytes": 4260,
+      "kind": "source",
+      "observed_sha256": "a2059d68b0d640e031e3c2a00018be7162981a15fff7279adb2f550888e51f85",
+      "read_ranges": [
+        [
+          1,
+          105
+        ]
+      ],
+      "status": "complete",
+      "read_line_count": 105,
+      "hash_matches": true
+    }
+  ],
+  "assigned_file_count": 33,
+  "assigned_line_count": 9587,
+  "read_file_count": 33,
+  "read_line_count": 9587,
+  "method": "Every assigned line displayed with source line numbers in nontruncated tool batches; ranges recorded only after inspection. Snapshot hashes reverified after complete read.",
+  "limitations": [
+    "No builds, tests, native runs or network access performed. Neighboring files inspected for caller evidence are not part of exhaustive assigned coverage."
+  ],
+  "report_path": "/Users/markik/Code/testing/woodshed/full-source-audit-20261016/shared-report.md",
+  "finding_ids": [
+    "S1",
+    "S2",
+    "S3",
+    "S4"
+  ],
+  "triage_concern_ids": [
+    "C1"
+  ],
+  "local_p5a_overlap": "No assigned-file diff paths observed in the primary checkout; no shared finding claimed fixed by dirty P5a."
+}
