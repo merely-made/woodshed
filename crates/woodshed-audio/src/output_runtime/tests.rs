@@ -1072,6 +1072,17 @@ fn one_shot_ending_before_a_future_arm_reports_invalid_capture() {
     assert!(r.song().bars[0].audio_buffer.is_none());
     r.service().unwrap();
     assert!(!r.capture_busy());
+    r.arm_capture(0, false).unwrap();
+    r.service().unwrap();
+    render(&mut r, 1);
+    assert!(r.snapshot().capture_armed);
+    assert!(!r.snapshot().recording);
+    assert!(!r.snapshot().capture_invalid, "a new arm must not inherit the prior attempt's failure");
+    r.stop_capture_now().unwrap();
+    r.service().unwrap();
+    render(&mut r, 1);
+    r.service().unwrap();
+    assert!(!r.capture_busy());
 }
 
 #[test]

@@ -96,12 +96,12 @@ fn song_bar_editor(ui: &UiState) -> UiChild {
         .song_edit_cursor
         .min(ui.song.bars.len().saturating_sub(1));
     let bar = &ui.song.bars[cursor];
-    let root_label = if bar.formula_name.is_empty() {
+    let root_label = if bar.is_silent() {
         "silent".to_string()
     } else {
         bar.root_name()
     };
-    let chord_label = if bar.formula_name.is_empty() {
+    let chord_label = if bar.is_silent() {
         "—".to_string()
     } else {
         bar.formula_name.clone()
