@@ -1,10 +1,13 @@
 # Ringdown
 
-An independent desktop controller for the HyVibe smart guitar, with performance
+An independent cross-platform desktop controller for the HyVibe smart guitar, with performance
 control and scripting as its next product target: prepare tones, trigger the
 guitar from a keyboard or MIDI controller, and recall song cues. The existing
 client speaks the instrument's JSON-RPC-over-Bluetooth app protocol; a software
 Bluetooth stomp box and control of the new Beats rhythms are planned together.
+The performance target covers Windows, Linux and macOS through shared Rust
+logic and Cambium views, with native transport adapters. The Mac experiment
+below is one adapter receipt within that cross-platform target.
 
 A *ringdown* is how a resonating system decays once it stops being driven — the
 tail of a struck string, or of a guitar body rung by the actuator inside it.

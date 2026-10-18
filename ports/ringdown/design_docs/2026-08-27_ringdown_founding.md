@@ -8,11 +8,13 @@ These receipts name their historical instrument/firmware and do not qualify
 the owner's recent update. `ReadConfig` wedged that firmware (H18) and remains
 guarded; it is not a prerequisite to performance control.
 
-The next product target is **desktop performance control and scripting**,
+The next product target is **cross-platform desktop performance control and scripting**,
 assessing a software Bluetooth stomp box together with the new Beats feature.
 The current assessment, evidence boundaries and P0–P4 implementation phases
 live in the [client surface plan](2026-09-02_client_surface_plan.md#desktop-performance-assessment-2026-10-17).
-The findings below retain the protocol and hardware history.
+Windows, Linux and macOS are first-implementation product targets (owner
+ruling, 2026-10-18), with shared Rust logic, Cambium views and thin native I/O
+shells. The findings below retain the protocol and hardware history.
 
 ---
 
