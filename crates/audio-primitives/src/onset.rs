@@ -495,9 +495,18 @@ mod tests {
         warmup_detector(&mut one_shot, sample_rate);
         let warmup_samples = one_shot.samples_consumed();
         let one_shot_onsets = one_shot.feed(&signal);
+        assert!(
+            !one_shot_onsets.is_empty(),
+            "fixture must produce onsets before comparing chunking"
+        );
         assert_eq!(
             one_shot.samples_consumed(),
             warmup_samples + signal.len() as u64
+        );
+        assert!(
+            one_shot_onsets
+                .iter()
+                .all(|sample| { sample % DEFAULT_FRAME_SIZE as u64 == 0 })
         );
 
         let mut chunked = OnsetDetector::new(sample_rate);
@@ -530,6 +539,18 @@ mod tests {
             201,
             "fixture retains a partial tail"
         );
+
+        let mut samplewise = OnsetDetector::new(sample_rate);
+        warmup_detector(&mut samplewise, sample_rate);
+        let mut samplewise_onsets = Vec::new();
+        for sample in &signal {
+            samplewise_onsets.extend(samplewise.feed(std::slice::from_ref(sample)));
+        }
+        assert_eq!(
+            samplewise.samples_consumed(),
+            warmup_samples + signal.len() as u64
+        );
+        assert_eq!(samplewise_onsets, one_shot_onsets);
     }
 
     // === Tempo estimation ===
