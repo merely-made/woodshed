@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "run_id": "hocket-admission-final-20261017",
+  "command": [
+    "cargo",
+    "test",
+    "--locked",
+    "-p",
+    "hocket-genet"
+  ],
+  "started_at": "2026-10-18T02:16:13.938627Z",
+  "ended_at": "2026-10-18T02:16:27.295234Z",
+  "exit_code": 0,
+  "cwd": "/Users/markik/Code/repos/woodshed/ports/hocket",
+  "log": "/Users/markik/Code/testing/woodshed/admission-evidence-20261017/hocket-final.log",
+  "log_sha256": "1593e14d5ac7f8e9d753b6d9202f568ee55b46becd33a1cfaf6e09ece7bd440e"
+}

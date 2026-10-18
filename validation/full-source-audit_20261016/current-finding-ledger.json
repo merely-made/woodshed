@@ -205,23 +205,43 @@
     },
     {
       "id": "evidence:E1",
-      "classification": "original acceptance implementations unchanged; misleading-success risk remains",
+      "classification": "implemented; executable controls pass",
       "package": "Q1",
-      "current_observation": "Current writer and font verifier are byte-identical to frozen findings. Existing isolated counterexamples retained. New feature check wrappers record actual exits, but do not repair these old operational helpers. No historical run reclassified as failed.",
-      "qualification": "targeted current source/metadata comparison; historical receipts retain original inputs",
-      "detail": "current/evidence-tooling-current.json",
+      "current_observation": "Both operational gates require observed process receipts; all suite outcomes and unclosed runs checked; historical context and actual command facts separated; original receipts untouched.",
+      "qualification": "114 distinct batch passes (93 Hocket, 14 process, 7 link); no native custody, reopen or device claim.",
+      "detail": "../admission-evidence_20261017/receipt.json",
       "original_index_title": "Finding E1 \u2014 P2: Passing test summaries can turn a failed Cargo run into a passing receipt",
-      "original_report": "evidence-report.md"
+      "original_report": "evidence-report.md",
+      "reconciliation_at_a424772": {
+        "classification": "original acceptance implementations unchanged; misleading-success risk remains",
+        "current_observation": "Current writer and font verifier are byte-identical to frozen findings. Existing isolated counterexamples retained. New feature check wrappers record actual exits, but do not repair these old operational helpers. No historical run reclassified as failed.",
+        "qualification": "targeted current source/metadata comparison; historical receipts retain original inputs",
+        "detail": "current/evidence-tooling-current.json"
+      },
+      "implementation_revision": "0effba1",
+      "limits": [
+        "Historical executions are not requalified; see batch scope limits."
+      ]
     },
     {
       "id": "evidence:E2",
-      "classification": "original helper unchanged; baseline-target regression risk remains",
+      "classification": "implemented; executable controls pass",
       "package": "Q1",
-      "current_observation": "Current helper still reads historical referrers and current target bytes. Byte-identical to frozen input; prior isolated deleted-heading counterexample retained.",
-      "qualification": "targeted current source/metadata comparison; historical receipts retain original inputs",
-      "detail": "current/evidence-tooling-current.json",
+      "current_observation": "Historical repository-local target existence and Markdown headings use historical tree; binary targets remain existence checks; seven regressions and real two-document scan pass.",
+      "qualification": "114 distinct batch passes (93 Hocket, 14 process, 7 link); no native custody, reopen or device claim.",
+      "detail": "../admission-evidence_20261017/receipt.json",
       "original_index_title": "Finding E2 \u2014 P2: The link-regression audit reads current targets for the historical baseline",
-      "original_report": "evidence-report.md"
+      "original_report": "evidence-report.md",
+      "reconciliation_at_a424772": {
+        "classification": "original helper unchanged; baseline-target regression risk remains",
+        "current_observation": "Current helper still reads historical referrers and current target bytes. Byte-identical to frozen input; prior isolated deleted-heading counterexample retained.",
+        "qualification": "targeted current source/metadata comparison; historical receipts retain original inputs",
+        "detail": "current/evidence-tooling-current.json"
+      },
+      "implementation_revision": "0effba1",
+      "limits": [
+        "Historical executions are not requalified; see batch scope limits."
+      ]
     },
     {
       "id": "evidence:O1",
@@ -264,18 +284,25 @@
     },
     {
       "id": "hocket:H3",
-      "classification": "unresolved; persona binding still open",
+      "classification": "implemented; CPU qualified; native custody/reopen pending",
       "package": "A3 confirmation only",
-      "current_observation": "Offer stages cached family profile and losing token. Confirmation takes _staged but ignores it. join_family reconnects via CustodyIdentity::connect, writes the cached profile with the returned master key, and displays the cached profile. No target-profile/key equality or renewed consent check is present.",
-      "qualification": [
-        "Preservation plan explicitly leaves H3 separate; current state.rs is identical to CPU16/CPU17, so passing those suites cannot establish a binding fix."
-      ],
+      "current_observation": "Staged profile, target key and losing token bind actual custody admission before consent/switch; rejected drift and consent I/O failure retain prior facts.",
+      "qualification": "114 distinct batch passes (93 Hocket, 14 process, 7 link); no native custody, reopen or device claim.",
       "limits": [
-        "Bind shown profile and key to actual accepted identity or re-offer on change; add change-between-offer-and-confirmation and persisted-consent/reopen evidence before closure. No fix authorized here."
+        "Native custody/reopen remains separate."
       ],
-      "detail": "current/safety.json",
+      "detail": "../admission-evidence_20261017/receipt.json",
       "original_index_title": "H3 \u2014 P1: persona confirmation can switch to a different family identity than the one shown",
-      "original_report": "hocket-report.md"
+      "original_report": "hocket-report.md",
+      "reconciliation_at_a424772": {
+        "classification": "unresolved; persona binding still open",
+        "current_observation": "Offer stages cached family profile and losing token. Confirmation takes _staged but ignores it. join_family reconnects via CustodyIdentity::connect, writes the cached profile with the returned master key, and displays the cached profile. No target-profile/key equality or renewed consent check is present.",
+        "qualification": [
+          "Preservation plan explicitly leaves H3 separate; current state.rs is identical to CPU16/CPU17, so passing those suites cannot establish a binding fix."
+        ],
+        "detail": "current/safety.json"
+      },
+      "implementation_revision": "0effba1"
     },
     {
       "id": "hocket:H4",
@@ -295,18 +322,25 @@
     },
     {
       "id": "hocket:H5",
-      "classification": "unresolved",
+      "classification": "implemented; CPU qualified",
       "package": "A2",
-      "current_observation": "Same-session acceptance imports media into a cloned store but replaces the recorder with self.recorder.missing_media.clone(). Recorder directly installs that set. Missing facts are not recomputed after imported blobs become available.",
-      "qualification": [
-        "Plan explicitly excludes missing-media presentation (H5); Hocket passing suite/build is not evidence of this defect being fixed. Current host implementation is identical to both CPU receipt hashes."
-      ],
+      "current_observation": "Accepted same-session phrase pool and imported media recompute missing references; regression preserves unresolved local-only media, branch and prior PCM.",
+      "qualification": "114 distinct batch passes (93 Hocket, 14 process, 7 link); no native custody, reopen or device claim.",
       "limits": [
-        "Recompute missing-media facts after successful same-session import and qualify the missing-then-restored-media case before closing H5. No fix authorized in this reconciliation."
+        "Native custody/reopen remains separate."
       ],
-      "detail": "current/safety.json",
+      "detail": "../admission-evidence_20261017/receipt.json",
       "original_index_title": "H5 \u2014 P2: restored media still appears missing after same-session acceptance",
-      "original_report": "hocket-report.md"
+      "original_report": "hocket-report.md",
+      "reconciliation_at_a424772": {
+        "classification": "unresolved",
+        "current_observation": "Same-session acceptance imports media into a cloned store but replaces the recorder with self.recorder.missing_media.clone(). Recorder directly installs that set. Missing facts are not recomputed after imported blobs become available.",
+        "qualification": [
+          "Plan explicitly excludes missing-media presentation (H5); Hocket passing suite/build is not evidence of this defect being fixed. Current host implementation is identical to both CPU receipt hashes."
+        ],
+        "detail": "current/safety.json"
+      },
+      "implementation_revision": "0effba1"
     },
     {
       "id": "hocket:H6",
@@ -1441,5 +1475,6 @@
       "original_index_title": "V06 \u2014 P3: Share Song provenance formatting between Card views",
       "original_report": "views-report.md"
     }
-  ]
+  ],
+  "implementation_followup": "../admission-evidence_20261017/receipt.json"
 }

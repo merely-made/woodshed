@@ -1,0 +1,18 @@
+{
+  "command": [
+    "python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "validation",
+    "-p",
+    "test_evidence_process.py",
+    "-v"
+  ],
+  "started_at": "2026-10-18T02:14:13.135449+00:00",
+  "ended_at": "2026-10-18T02:14:15.026596+00:00",
+  "exit_code": 0,
+  "source_revision": "5949d3f28d39c20e8d6224aed1cf12b8a792b0ce",
+  "log_sha256": "6a42d6626ee359cd6cb48d11df5dd7ea016f685b3dbae88bde7e795993f9d1ac"
+}
