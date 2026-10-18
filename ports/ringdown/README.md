@@ -15,9 +15,11 @@ is for.
 > probe exist. Earlier hardware sessions established status, metronome and
 > effect control, recording retrieval and playable preset creation. The
 > [desktop performance assessment and plan](design_docs/2026-09-02_client_surface_plan.md)
-> covers MIDI pedal emulation, Beats, a desktop surface and scripting. Those
-> features are not implemented or qualified against the owner's recent
-> firmware update. The [founding plan](design_docs/2026-08-27_ringdown_founding.md)
+> covers MIDI pedal emulation, Beats, a desktop surface and scripting. A
+> [Mac peripheral experiment](validation/midi-pedal_20261017/README.md) now has
+> one owner-confirmed Effect Next trigger. The production performance surfaces,
+> Beats control and complete current-firmware qualification remain pending.
+> The [founding plan](design_docs/2026-08-27_ringdown_founding.md)
 > preserves the protocol map and historical hardware findings.
 
 ## Existing capabilities

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>CFBundleIdentifier</key><string>com.merelymade.ringdown-midi-probe</string>
+    <key>CFBundleName</key><string>Ringdown MIDI Probe</string>
+    <key>CFBundleExecutable</key><string>ringdown-ble-midi</string>
+    <key>CFBundlePackageType</key><string>APPL</string>
+    <key>LSUIElement</key><true/>
+    <key>NSBluetoothAlwaysUsageDescription</key>
+    <string>Test Bluetooth MIDI pedal control of your guitar with explicit manual triggers.</string>
+</dict>
+</plist>

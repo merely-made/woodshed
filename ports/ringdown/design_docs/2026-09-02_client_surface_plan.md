@@ -1,10 +1,11 @@
 # Client surface plan: desktop performance control, Beats, and scripting
 
 **Date:** 2026-09-02
-**Updated:** 2026-10-17.
-**Status (2026-10-17):** in progress. The source and documentation assessment
-of software stomp-box control and Beats is complete below; current-firmware
-device qualification and performance implementation are pending. Phases A–C
+**Updated:** 2026-10-18.
+**Status (2026-10-18):** in progress. The source/documentation assessment is
+complete and the first Mac software-pedal Effect Next trigger has an owner
+confirmation. P0 firmware/capability qualification and production performance
+implementation remain open. Phases A–C
 landed (77207ef, 3611c55, 86c266a); B/C have scripted-link evidence, not device
 qualification of the complete typed/profile path. Phase D closed on hardware
 2026-09-02: a client can create a playable bank (H47). Those older receipts
@@ -72,8 +73,9 @@ processor versions before selecting a capability profile.
 2. **Pedal MIDI:** send the messages bound in the instrument's MIDI menu.
    The guitar scanning for the pedal implies the desktop must expose the
    peripheral side of BLE MIDI, or use an OS MIDI endpoint that supplies it.
-   This is a role inference from the documented pairing flow, awaiting a
-   guitar connection. It is a separate adapter from the app RPC `Link`.
+   The Q-PC experiment below confirms this role and one owner-observed
+   Effect Next change through a direct peripheral. It is a separate adapter
+   from the app RPC `Link`; broader delivery semantics remain unqualified.
 
 The current [btleplug upstream](https://github.com/deviceplug/btleplug)
 explicitly supports central operation only. Reusing the current BLE shell
@@ -83,7 +85,7 @@ alone is not proof that the guitar can discover the computer.
 
 | Platform | First candidate and qualification boundary |
 |---|---|
-| macOS, first device experiment | [Audio MIDI Setup can advertise the Mac as a Bluetooth MIDI peripheral](https://support.apple.com/guide/audio-midi-setup/set-up-bluetooth-midi-devices-ams33f013765/mac). Try that OS route and its MIDI endpoint first. Advertise/discover/connect/send/reconnect with this guitar remain unproven. If insufficient, assess [CoreBluetooth peripheral services](https://developer.apple.com/documentation/corebluetooth/cbperipheralmanager). |
+| macOS, first device experiment | [Audio MIDI Setup can advertise the Mac as a Bluetooth MIDI peripheral](https://support.apple.com/guide/audio-midi-setup/set-up-bluetooth-midi-devices-ams33f013765/mac). On Q-PC, pairing succeeded but CoreMIDI supplied no destination. A direct [CoreBluetooth peripheral](https://developer.apple.com/documentation/corebluetooth/cbperipheralmanager) obtained a subscription with explicit unencrypted diagnostic access, and the owner confirmed Effect Next changed after one CC event pair. The strict encrypted-access attempt did not subscribe. See the P0 receipt; firmware baseline, value/release semantics, latency and automatic reconnect remain open. |
 | Windows | Inspect the installed OS MIDI transport first. [GATT service publication](https://learn.microsoft.com/en-us/windows/apps/develop/devices-sensors/gatt-server) and [adapter peripheral-role support](https://learn.microsoft.com/en-us/uwp/api/windows.devices.bluetooth.bluetoothadapter.isperipheralrolesupported) provide a possible custom route. Neither documents Ringdown compatibility; qualify the actual OS, adapter, MIDI routing and guitar. |
 | Linux | [BlueZ GATT registration](https://github.com/bluez/bluez/blob/master/doc/org.bluez.GattManager.rst) and [LE advertising](https://github.com/bluez/bluez/blob/master/doc/org.bluez.LEAdvertisingManager.rst) provide a possible route. Assess the existing MIDI stack, controller capabilities and permissions before choosing an adapter. No Linux guitar receipt exists for this target. |
 | Web | [Web Bluetooth provides the central role](https://developer.chrome.com/docs/capabilities/bluetooth). A supported browser may implement the existing app `Link`; that does not let it advertise as a pedal. Editing/mappings can work offline; a paired native companion can own control where direct access is unavailable. Direct RPC and companion control require separate qualification. |
@@ -159,6 +161,37 @@ supported actions and a visible limitation.
 
 **Feature target:** an evidence-backed action/path table for current firmware.
 
+**First software-pedal trigger succeeded (2026-10-17):**
+[Q-PC experiment record](../validation/midi-pedal_20261017/README.md) and
+[structured observation](../validation/midi-pedal_20261017/effect-next-observation.json).
+The direct `Ringdown` CoreBluetooth peripheral obtained a guitar subscription
+and sent channel-1 CC 67, value 127 then 0 after a scheduled 50 ms. The owner
+had assigned that binding to Effect Next, saw the MIDI indicator, and confirmed
+that the effect changed. Exact effect names and advance count were not supplied.
+
+CoreMIDI's advertised route exposed no destination. The strict direct service
+requiring encryption connected without a MIDI subscription; an ATT request
+failed before disconnection. The explicit `--unencrypted-diagnostic` variation
+then subscribed and carried the successful event pair. This supports a session
+compatibility constraint, not a decoded error or a shipping security decision.
+
+This is owner-confirmed control plus transport logs, not a current-firmware
+protocol Finding with the required `GetStatus` positive control. The app-service
+scan found no guitar; versions, app RPC, Beats, Note/Program Change, isolated
+press/release semantics, latency and automatic reconnect remain unqualified.
+P0 is partially complete.
+
+**MIDI menu inspection (2026-10-18, owner-reported):** the complete list is
+[recorded here](../validation/midi-pedal_20261017/midi-action-menu.json): loop
+record, loop record met, loop play stop, looper set volume, effect next, effect
+previous, effect switch, effect control, effect set volume, effect on/off,
+loop record met bars. There is no standalone Beats/metronome action in that
+menu. The `loop record met` labels do not establish independent Beats control
+and were not triggered. Scope initial MIDI performance work to effect/loop
+controls with per-action qualification; investigate Beats through observed
+panel/app behavior and recovered RPC. Volume/parameter actions are candidates
+for continuous input, not yet proven message semantics.
+
 Done-conditions:
 
 - Record guitar model/id, both processor versions, OS/adapter, app version,
@@ -167,7 +200,9 @@ Done-conditions:
   tones and recordings; factory reset or opening the app is not a neutral
   restoration step, because the app may overwrite the profile.
 - Advertise the Mac through Audio MIDI Setup and attempt the guitar's MIDI
-  pairing. Identify the usable MIDI endpoint. Prove a nondestructive action
+  pairing. Identify the usable MIDI endpoint or direct peripheral subscription.
+  The Q-PC direct route has the first Effect Next observation; qualify the
+  remaining paths and behaviors. Prove a nondestructive action
   first, then record the exact press/release/hold sequences and observed
   behavior for the desired pedal actions. Test erasure only on an explicitly
   disposable loop with the owner. If a physical pedal is available, capture
@@ -201,7 +236,13 @@ another write. This document update does not itself execute that session.
 Done-conditions:
 
 - One typed dispatch vocabulary and capability check select the proven route;
-  raw research calls remain in the probe. The RPC guard against `ReadConfig`
+  raw research calls remain in the probe. Start the macOS MIDI shell from the
+  direct-peripheral result; keep binding/channel/value configuration separate
+  from semantic actions. One CLI command must dispatch through the resident
+  peripheral rather than create a new advertiser for each trigger. Keep the
+  experimental Swift helper as evidence, not the production control surface.
+  Make the device's access-requirement compatibility explicit and qualify it
+  before choosing a shipping policy. The RPC guard against `ReadConfig`
   remains in force for firmware without evidence of a fix.
 - A CLI can identify/select a guitar, report capabilities, recall a prepared
   tone and trigger a proven action through one resident session. Define
@@ -448,8 +489,9 @@ listen; count before indexing; nothing sent while he is comparing by ear.
   evidence table above is the current assessment record. Pedal MIDI is a
   distinct path from app RPC; macOS supplies a candidate advertised MIDI
   peripheral route. Beats is owner-reported and publicly supported at the
-  drum-machine product level, with remote operations still unknown. No new
-  device or current-firmware qualification was performed.
+  drum-machine product level, with remote operations still unknown. The later
+  P0 experiment below adds a transport trace and owner-confirmed Effect Next
+  observation; current-firmware RPC qualification remains open.
 - **2026-09-02 — The H38 bank object is unrecorded.** Not in the founding
   doc, the commit, or the probe source; the call went through `--call` with
   a literal typed at the shell. The finding "the bank it makes never
@@ -578,6 +620,32 @@ listen; count before indexing; nothing sent while he is comparing by ear.
 - **2026-10-17 — Beats scope clarified.** Narrowed P3 to the guitar's built-in
   timekeeping patterns and recorded custom rhythm authoring as a separate
   possible extension. No new device capability is claimed.
+
+- **2026-10-17 — P0 Q-PC session started.** Built a CoreMIDI inventory/pulse
+  helper, a CoreBluetooth peripheral diagnostic, and the existing RPC probe.
+  Pairing succeeded; daemon logs confirm H2-CC340 connected with the Mac in
+  the peripheral role. No CoreMIDI destination or direct notification
+  subscription appeared. An ATT request failed before an unencrypted link
+  disconnected; the internal status has not been decoded. A five-second
+  app-service scan found no guitar. Saved observations under
+  `validation/midi-pedal_20261017`; the one guarded pulse was refused locally.
+  The explicit unencrypted-access variation then obtained a MIDI subscription.
+  One channel-1 CC-67 press/release pair was accepted by macOS and the owner
+  confirmed the effect changed. Exact effect names/advance count were not
+  supplied. This is a scoped owner observation plus transport evidence; the
+  `GetStatus` firmware baseline and broader performance qualification remain
+  open. P1 now has a concrete macOS peripheral route to develop.
+
+
+## P0 transport trial close (2026-10-18)
+
+The first Mac software-pedal trial ended after one owner-confirmed Effect Next
+change and the full MIDI-menu readout. The helper exited normally and removed
+its service. The bindings/pairing entered by the owner remain on the guitar.
+No recording, erase, bulk profile operation or guessed Beats command was sent.
+The [receipt](../validation/midi-pedal_20261017/README.md) preserves source,
+logs and observation limits. This closes the bounded connectivity/first-trigger
+experiment, not all P0 capability qualification or any production phase.
 
 ## Phase D session log (2026-09-02, H2-CC340, owner at the panel)
 

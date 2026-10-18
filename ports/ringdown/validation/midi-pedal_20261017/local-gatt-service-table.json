@@ -1,0 +1,155 @@
+{
+  "source": "bluetoothd local database dump when the diagnostic service was registered; host only",
+  "events": [
+    {
+      "timestamp": "2026-10-17 23:54:14.718783-0400",
+      "category": "Server.GATT",
+      "message": "statedump: Local database:"
+    },
+    {
+      "timestamp": "2026-10-17 23:54:14.718792-0400",
+      "category": "Server.GATT",
+      "message": "statedump:    0x0001 Primary Service      [ serviceUUID: 0x1800, endHandle: 0x0005, discoveredCharacteristics: none ]"
+    },
+    {
+      "timestamp": "2026-10-17 23:54:14.718796-0400",
+      "category": "Server.GATT",
+      "message": "statedump:    0x0002 Characteristic       [ valueUUID: 0x2A00, valueHandle: 0x0003, properties: read, discoveredDescriptors: none ]"
+    },
+    {
+      "timestamp": "2026-10-17 23:54:14.718801-0400",
+      "category": "Server.GATT",
+      "message": "statedump:    0x0003 0x2A00               [ 51 2D 50 43 ]"
+    },
+    {
+      "timestamp": "2026-10-17 23:54:14.718803-0400",
+      "category": "Server.GATT",
+      "message": "statedump:    0x0004 Characteristic       [ valueUUID: 0x2A01, valueHandle: 0x0005, properties: read, discoveredDescriptors: none ]"
+    },
+    {
+      "timestamp": "2026-10-17 23:54:14.718805-0400",
+      "category": "Server.GATT",
+      "message": "statedump:    0x0005 0x2A01               [ 80 02 ]"
+    },
+    {
+      "timestamp": "2026-10-17 23:54:14.718808-0400",
+      "category": "Server.GATT",
+      "message": "statedump:    0x0006 Primary Service      [ serviceUUID: 0x1801, endHandle: 0x0009, discoveredCharacteristics: none ]"
+    },
+    {
+      "timestamp": "2026-10-17 23:54:14.718810-0400",
+      "category": "Server.GATT",
+      "message": "statedump:    0x0007 Characteristic       [ valueUUID: 0x2A05, valueHandle: 0x0008, properties: indicate, discoveredDescriptors: none ]"
+    },
+    {
+      "timestamp": "2026-10-17 23:54:14.718811-0400",
+      "category": "Server.GATT",
+      "message": "statedump:    0x0008 0x2A05               [ NULL ]"
+    },
+    {
+      "timestamp": "2026-10-17 23:54:14.718813-0400",
+      "category": "Server.GATT",
+      "message": "statedump:    0x0009 Client Configuration [ none ]"
+    },
+    {
+      "timestamp": "2026-10-17 23:54:14.718815-0400",
+      "category": "Server.GATT",
+      "message": "statedump:    0x000A Primary Service      [ serviceUUID: 0x180A, endHandle: 0x000E, discoveredCharacteristics: none ]"
+    },
+    {
+      "timestamp": "2026-10-17 23:54:14.718817-0400",
+      "category": "Server.GATT",
+      "message": "statedump:    0x000B Characteristic       [ valueUUID: 0x2A29, valueHandle: 0x000C, properties: read, discoveredDescriptors: none ]"
+    },
+    {
+      "timestamp": "2026-10-17 23:54:14.718820-0400",
+      "category": "Server.GATT",
+      "message": "statedump:    0x000C 0x2A29               [ 41 70 70 6C 65 20 49 6E 63 2E ]"
+    },
+    {
+      "timestamp": "2026-10-17 23:54:14.718822-0400",
+      "category": "Server.GATT",
+      "message": "statedump:    0x000D Characteristic       [ valueUUID: 0x2A24, valueHandle: 0x000E, properties: read, discoveredDescriptors: none ]"
+    },
+    {
+      "timestamp": "2026-10-17 23:54:14.718824-0400",
+      "category": "Server.GATT",
+      "message": "statedump:    0x000E 0x2A24               [ 69 4D 61 63 50 72 6F 31 2C 31 ]"
+    },
+    {
+      "timestamp": "2026-10-17 23:54:14.718828-0400",
+      "category": "Server.GATT",
+      "message": "statedump:    0x000F Primary Service      [ serviceUUID: D0611E78-BBB4-4591-A5F8-487910AE4366, endHandle: 0x0013, discoveredCharacteristics: none, ID: 0x00010001 ]"
+    },
+    {
+      "timestamp": "2026-10-17 23:54:14.718832-0400",
+      "category": "Server.GATT",
+      "message": "statedump:    0x0010 Characteristic       [ valueUUID: 8667556C-9A37-4C91-84ED-54EE27D90049, valueHandle: 0x0011, properties: write notify extended, discoveredDescriptors: none ]"
+    },
+    {
+      "timestamp": "2026-10-17 23:54:14.718834-0400",
+      "category": "Server.GATT",
+      "message": "statedump:    0x0011 8667556C-9A37-4C91-84ED-54EE27D90049 [ NULL ]"
+    },
+    {
+      "timestamp": "2026-10-17 23:54:14.718835-0400",
+      "category": "Server.GATT",
+      "message": "statedump:    0x0012 Extended Properties  [ reliable-write ]"
+    },
+    {
+      "timestamp": "2026-10-17 23:54:14.718836-0400",
+      "category": "Server.GATT",
+      "message": "statedump:    0x0013 Client Configuration [ none ]"
+    },
+    {
+      "timestamp": "2026-10-17 23:54:14.718839-0400",
+      "category": "Server.GATT",
+      "message": "statedump:    0x0014 Primary Service      [ serviceUUID: 9FA480E0-4967-4542-9390-D343DC5D04AE, endHandle: 0x0018, discoveredCharacteristics: none, ID: 0x00010003 ]"
+    },
+    {
+      "timestamp": "2026-10-17 23:54:14.718842-0400",
+      "category": "Server.GATT",
+      "message": "statedump:    0x0015 Characteristic       [ valueUUID: AF0BADB1-5B99-43CD-917A-A77BC549E3CC, valueHandle: 0x0016, properties: write notify extended, discoveredDescriptors: none ]"
+    },
+    {
+      "timestamp": "2026-10-17 23:54:14.718844-0400",
+      "category": "Server.GATT",
+      "message": "statedump:    0x0016 AF0BADB1-5B99-43CD-917A-A77BC549E3CC [ NULL ]"
+    },
+    {
+      "timestamp": "2026-10-17 23:54:14.718845-0400",
+      "category": "Server.GATT",
+      "message": "statedump:    0x0017 Extended Properties  [ reliable-write ]"
+    },
+    {
+      "timestamp": "2026-10-17 23:54:14.718846-0400",
+      "category": "Server.GATT",
+      "message": "statedump:    0x0018 Client Configuration [ none ]"
+    },
+    {
+      "timestamp": "2026-10-17 23:54:14.718849-0400",
+      "category": "Server.GATT",
+      "message": "statedump:    0x0019 Primary Service      [ serviceUUID: 03B80E5A-EDE8-4B33-A751-6CE34EC4C700, endHandle: 0x001D, discoveredCharacteristics: none, ID: 0x00430001 ]"
+    },
+    {
+      "timestamp": "2026-10-17 23:54:14.718852-0400",
+      "category": "Server.GATT",
+      "message": "statedump:    0x001A Characteristic       [ valueUUID: 7772E5DB-3868-4112-A1A9-F2669D106BF3, valueHandle: 0x001B, properties: read responseless-writes notify extended, discoveredDescriptors: none ]"
+    },
+    {
+      "timestamp": "2026-10-17 23:54:14.718853-0400",
+      "category": "Server.GATT",
+      "message": "statedump:    0x001B 7772E5DB-3868-4112-A1A9-F2669D106BF3 [ NULL ]"
+    },
+    {
+      "timestamp": "2026-10-17 23:54:14.718854-0400",
+      "category": "Server.GATT",
+      "message": "statedump:    0x001C Extended Properties  [ reliable-write ]"
+    },
+    {
+      "timestamp": "2026-10-17 23:54:14.718859-0400",
+      "category": "Server.GATT",
+      "message": "statedump:    0x001D Client Configuration [ none ]"
+    }
+  ]
+}
