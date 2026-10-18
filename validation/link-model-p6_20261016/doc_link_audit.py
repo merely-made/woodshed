@@ -17,6 +17,23 @@ from urllib.parse import unquote, urlsplit
 def scan(repo, names, revision=None):
     findings = []
     checked = 0
+    repo = repo.resolve()
+
+    def read_target(target):
+        """Read a target from the scanned tree, when it belongs to the repo."""
+        try:
+            relative = target.relative_to(repo)
+        except ValueError:
+            return target.read_text() if target.exists() else None
+        if revision:
+            try:
+                return subprocess.check_output(
+                    ["git", "show", f"{revision}:{relative.as_posix()}"],
+                    cwd=repo, text=True)
+            except subprocess.CalledProcessError:
+                return None
+        return target.read_text() if target.exists() else None
+
     for name in names:
         text = (subprocess.check_output(["git", "show", f"{revision}:{name}"], cwd=repo, text=True)
                 if revision else (repo / name).read_text())
@@ -29,11 +46,12 @@ def scan(repo, names, revision=None):
                 continue
             target = ((repo / name).parent / unquote(parsed.path)).resolve() if parsed.path else repo / name
             checked += 1
-            if not target.exists():
+            target_text = read_target(target)
+            if target_text is None:
                 findings.append({"document": name, "target": destination, "reason": "missing path"})
             elif parsed.fragment and target.suffix == ".md":
-                anchors = set(re.findall(r'<a\s+(?:id|name)=["\']([^"\']+)', target.read_text()))
-                for heading in re.findall(r"^#{1,6}\s+(.+?)\s*#*\s*$", target.read_text(), re.M):
+                anchors = set(re.findall(r'<a\s+(?:id|name)=["\']([^"\']+)', target_text))
+                for heading in re.findall(r"^#{1,6}\s+(.+?)\s*#*\s*$", target_text, re.M):
                     heading = re.sub(r"[`*_]", "", heading).lower()
                     anchors.add(re.sub(r"\s+", "-", re.sub(r"[^\w\s-]", "", heading)))
                 if unquote(parsed.fragment) not in anchors:
