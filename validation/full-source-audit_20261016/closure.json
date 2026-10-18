@@ -1,5 +1,5 @@
 {
-  "status": "frozen collective source audit complete; all original finding entries reconciled; remediation open; publication pending",
+  "status": "frozen collective source audit complete; all original finding entries reconciled; remediation open; published through 8204688; see publication.json",
   "frozen_revision": "d12201bfe80cc94345c6308c46caaebf4a9fe42e",
   "current_reconciliation_input": "a42477297b692feb7df4d8be74fba4cb83bcaf8c",
   "original_artifact_sha256": {
@@ -168,11 +168,12 @@
   "canonical_plan": "design_docs/2026-10-16_source_authority_audit_plan.md",
   "external_originals": "/Users/markik/Code/testing/woodshed/full-source-audit-20261016",
   "coordination_artifact_sha256": {
-    "validation/full-source-audit_20261016/README.md": "89ce3540b3aeeed082abecbb4d909ecf664d41b00e1a1fad9675f7434ed8c0ec",
+    "validation/full-source-audit_20261016/README.md": "9714c79de195777ec72d45c3d23ea1306d197192db56faf0ee42d05c9f909a13",
     "validation/full-source-audit_20261016/current-finding-ledger.json": "3ce36a5fcdf5271be0fbe94db2c3bafb4ae3d68f619f74312d94c6e452d19de2",
     "validation/full-source-audit_20261016/verify_coverage.py": "2814ed0bebba4b97f1cc1b023295d8bdf8aace874b3431a7738fd17333930add",
     "validation/full-source-audit_20261016/test_verify_coverage.py": "9b464695e4db29708029e84ac54cda87081ae94f002b2274fbb211503c5eac3a",
     "design_docs/2026-10-16_source_authority_audit_plan.md": "a36fe3c3dc1a31851e02d14b6ef1ab3b18372b433dda99601d95ee47eba8040b",
-    "design_docs/DOC_README.md": "63d7a55462a16e7356edd2c02edeb368bd160ab1ac693dea999e385659c36df3"
-  }
+    "design_docs/DOC_README.md": "6165e48e51c58318ec6bbc26cc52fe3391b4deda3dd093c135aadc6b01f48a02"
+  },
+  "publication_record": "publication.json"
 }

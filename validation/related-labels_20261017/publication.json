@@ -1,0 +1,8 @@
+{
+  "status": "published",
+  "woodshed_revision": "8204688db9cace84fcf09cd700ea3a3cf2f75b82",
+  "mere_integration_revision": "c8d316b601c89badb3d051f1d30d037435412818",
+  "mere_publication_receipt_revision": "e6250fd1c",
+  "qualified_mere_revision": "d1a200b1877223f5b6ced7f5fbaca3671c10f5dd",
+  "scope": "Publishes label adoption/native receipt and frozen audit closeout. Source-bound qualification records retain their original inputs and pre-publication status fields. This publication record supersedes those pending-publication fields; no new native or full current-source audit claim."
+}

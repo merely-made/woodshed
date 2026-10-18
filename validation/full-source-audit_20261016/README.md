@@ -1,7 +1,7 @@
 # Woodshed source authority audit — frozen read and coordination closure
 
 Status: frozen collective source read and finding reconciliation complete;
-remediation open; repository record committed locally, publication pending.
+remediation open; repository record published through `8204688` ([publication record](publication.json)).
 The canonical current frontier is the
 [design plan](../../design_docs/2026-10-16_source_authority_audit_plan.md).
 
