@@ -1,0 +1,61 @@
+{
+  "experiment": "Q-PC as a software BLE MIDI pedal; first Effect Next trigger",
+  "session_date_local": "2026-10-17",
+  "host": {
+    "name": "Q-PC",
+    "os": "macOS 15.8.1",
+    "build": "24H32",
+    "architecture": "Intel"
+  },
+  "device": {
+    "name": "H2-CC340",
+    "installed_firmware_versions": null
+  },
+  "binding": {
+    "action": "Effect Next",
+    "channel": 1,
+    "type": "Control Change",
+    "number": 67,
+    "source": "owner configured; after re-pairing answered ok to binding confirmation and Effects-screen request"
+  },
+  "transport": {
+    "implementation": "CoreBluetooth peripheral diagnostic",
+    "advertised_name": "Ringdown",
+    "access_mode": "unencrypted_diagnostic",
+    "subscription_observed_utc": "2026-10-18T03:56:57Z",
+    "maximum_notification_bytes": 497
+  },
+  "stimulus": {
+    "console_command": "pulse67",
+    "press": [
+      176,
+      67,
+      127
+    ],
+    "release": [
+      176,
+      67,
+      0
+    ],
+    "scheduled_release_delay_ms": 50,
+    "press_and_release_accepted_by_os": true,
+    "log": "direct-peripheral-unencrypted.log"
+  },
+  "owner_observation": {
+    "midi_indicator": "The MIDI sign appeared.",
+    "effect_change": "it did",
+    "effect_names": null,
+    "number_of_advances": null,
+    "audible_result": null,
+    "latency_ms": null
+  },
+  "qualification": {
+    "transport_subscription_observed": true,
+    "effect_change_owner_confirmed": true,
+    "get_status_positive_control": false,
+    "current_firmware_rpc_qualified": false,
+    "beats_control_qualified": false,
+    "automatic_reconnect_qualified": false
+  },
+  "scope": "One event pair on this owner-configured binding. CC 67 is not a universal HyVibe action assignment. Exact effect names and number of advances were not supplied."
+}

@@ -1,0 +1,25 @@
+ringdown probe — Phase 1 control run
+everything below is predicted from static analysis until it answers
+
+[1/4] scanning 5s...
+      looking for service eb65b6c6-fec3-4ed1-a6fc-9eff755a4160
+      or a device named like the System Menu's BT ID (e.g. H2-SE614)
+
+FAILED: no guitar found while scanning for 5s
+
+Nothing in range looked like a guitar.
+
+Most likely it is simply asleep. These power down on their own, and a
+session of repeated connections drains the battery noticeably. Tap the
+knob and check the screen lights before reading further.
+
+If it is definitely awake:
+The scan is unfiltered and matches on the service UUID *or* the name, so
+this is not a scan-filter false negative. Check, in order:
+- Is it powered on, and is USB mode OFF? USB mode makes it a mass-storage
+drive, not a Bluetooth peripheral.
+- Is the phone app connected? It holds the one connection the guitar has.
+- Is it paired as a Bluetooth *speaker* in the OS? That is Bluetooth Classic
+audio, a different radio path from the app's BLE control link. Unpair it.
+- Check the System Menu for the BT ID (e.g. H2-SE614). If the name does not
+start with H2- and does not contain 'hyvibe', tell ringdown what to match.

@@ -1,0 +1,35 @@
+{
+  "source": "owner read the guitar MIDI action menu in order",
+  "reported_date_local": "2026-10-18",
+  "actions_in_order": [
+    "loop record",
+    "loop record met",
+    "loop play stop",
+    "looper set volume",
+    "effect next",
+    "effect previous",
+    "effect switch",
+    "effect control",
+    "effect set volume",
+    "effect on/off",
+    "loop record met bars"
+  ],
+  "normalization": "Owner spoke effect on slash off; rendered as effect on/off. Labels otherwise transcribed as reported, without claiming exact panel capitalization.",
+  "standalone_beats_or_metronome_action_reported": false,
+  "interpretation": "No standalone rhythm action was exposed in this reported menu. The behavior of the two loop record met entries is untested; no inference that they control Beats independently. This does not establish RPC support or lack of support.",
+  "tested_actions": [
+    "effect next"
+  ],
+  "untested_actions": [
+    "loop record",
+    "loop record met",
+    "loop play stop",
+    "looper set volume",
+    "effect previous",
+    "effect switch",
+    "effect control",
+    "effect set volume",
+    "effect on/off",
+    "loop record met bars"
+  ]
+}

@@ -1,0 +1,12 @@
+{"access_mode":"unencrypted_diagnostic","advertising":false,"commands":"status advertise pulse67 stop quit","event":"started","timestamp":"2026-10-18T03:54:14Z"}
+{"authorization":3,"event":"manager_state","state":5,"timestamp":"2026-10-18T03:54:14Z"}
+{"error":"none","event":"service_registered","ready":true,"timestamp":"2026-10-18T03:54:14Z"}
+{"advertising":true,"error":"none","event":"advertising_result","timestamp":"2026-10-18T03:54:17Z"}
+{"advertising":true,"event":"status","service_ready":true,"subscriber_count":0,"timestamp":"2026-10-18T03:54:52Z"}
+{"advertising":true,"event":"status","service_ready":true,"subscriber_count":0,"timestamp":"2026-10-18T03:55:30Z"}
+{"central":"189623FF-5FAF-6324-0221-3D850229A00B","event":"subscribed","maximum_notification_bytes":497,"subscriber_count":1,"timestamp":"2026-10-18T03:56:57Z"}
+{"advertising":false,"event":"status","service_ready":true,"subscriber_count":1,"timestamp":"2026-10-18T03:57:58Z"}
+{"accepted_by_os":true,"bytes":[185,164,176,67,127],"central":"189623FF-5FAF-6324-0221-3D850229A00B","event":"midi_notification","musical_result":"not_observed","phase":"press","timestamp":"2026-10-18T03:58:00Z"}
+{"accepted_by_os":true,"bytes":[185,217,176,67,0],"central":"189623FF-5FAF-6324-0221-3D850229A00B","event":"midi_notification","musical_result":"not_observed","phase":"release","timestamp":"2026-10-18T03:58:01Z"}
+{"advertising":false,"event":"status","service_ready":true,"subscriber_count":1,"timestamp":"2026-10-18T03:59:29Z"}
+{"event":"exit","timestamp":"2026-10-18T04:00:25Z"}

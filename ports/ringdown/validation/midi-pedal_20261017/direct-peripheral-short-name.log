@@ -1,0 +1,9 @@
+{"advertising":false,"commands":"status advertise pulse67 stop quit","event":"started","timestamp":"2026-10-18T03:34:32Z"}
+{"authorization":3,"event":"manager_state","state":5,"timestamp":"2026-10-18T03:34:32Z"}
+{"error":"none","event":"service_registered","ready":true,"timestamp":"2026-10-18T03:34:32Z"}
+{"advertising":true,"error":"none","event":"advertising_result","timestamp":"2026-10-18T03:34:36Z"}
+{"advertising":true,"event":"status","service_ready":true,"subscriber_count":0,"timestamp":"2026-10-18T03:36:19Z"}
+{"advertising":true,"event":"status","service_ready":true,"subscriber_count":0,"timestamp":"2026-10-18T03:48:14Z"}
+{"event":"pulse_refused","reason":"need exactly one subscriber and no pending pulse","timestamp":"2026-10-18T03:49:49Z"}
+{"advertising":true,"event":"status","service_ready":true,"subscriber_count":0,"timestamp":"2026-10-18T03:53:40Z"}
+{"event":"exit","timestamp":"2026-10-18T03:53:46Z"}

@@ -1,0 +1,23 @@
+{
+  "README.md": "b99431172313fd2971ecc07d34787417a3ad0b75f685355beefc4ebcfbffafdf",
+  "ble-midi-probe-info.plist": "8e39c2ceded2f3a5147de06338fdfce52da971a001f0dabaaa4913ae693e9760",
+  "ble_midi_peripheral.swift": "fe5b945c959a6935dd14c37809db3c9a1f11a357278d6f4aebd6e86739aa3c0c",
+  "bluetooth-gatt-handshake.json": "29a2f3ebeefd90f6b620a597c0dfe69b99280677390072b74ca27d9794c4c378",
+  "bluetooth-midi-handshake.log": "96a0188136b849ec2305fe41c5ddbfc4d68e63aaa2c92e09ebe020a7a9f6316d",
+  "bluetooth-unencrypted-handshake.json": "96521dd88a1372a62a68b17ccedb59071d0a4302f72dcbb7ffdd7d9cd1a02d82",
+  "direct-peripheral-short-name.log": "12dbc04f28686857eef04771dfd9ff38fee3717014ab2a38b2e478796cf01f4e",
+  "direct-peripheral-unencrypted.log": "9658ff9c1c82a9568e3aec7aa31f7b371d5b032b43d630e56c647169ba46546d",
+  "direct-peripheral.log": "6c651b2f5289c22ee8902171da258c4df9205c2ca80f3abf9208961c7fe8e4e5",
+  "effect-next-observation.json": "895e53632bd63399ed3db5568203a5a446f7ced229fd6c4aa7355369d8f3114a",
+  "endpoint-reconnect-watch.log": "987f22ee5ab3b2c15ab08dfdc5901e4d87f6a1b5dcf0646fb61828a28df6d1fa",
+  "endpoint-watch.log": "48516017633c316e2881de839df3d790ea96ec278ccafcdb62340e82d1636d98",
+  "endpoints-after-fresh-pairing.json": "0720c9e2afe4e23e3ca9ce95d710598f3a9efcb540bcff0e6248bc600e08e171",
+  "endpoints-after-midi-toggle.json": "de6148c3719f899fa94c4e4708201c4155a0a2a8d91420d5118476c030ca3c95",
+  "endpoints-after-reported-pairing.json": "fc24f87ce9e0a23787a884f12f4241385108e828de8cda16860d947e52748aab",
+  "endpoints-before-pairing.json": "2ad44a2560247ddf877c2625511e0c7dfa11c894fa766ed4b5c144bd980159a6",
+  "local-gatt-service-table.json": "9322402f8c8e7249aaa3ef7c7217fedc4b32917d4ec868f519c8fd8c2b2c83b1",
+  "midi-action-menu.json": "5d4e3defc39228b3b86cfbc7e20adead30cc2954c699ea9acf5cfd019cbcca48",
+  "midi-server.log": "9f56fca152030dba9e8ee76dee4fc8967ab667507b5878f0f9ab819d55b6b9a6",
+  "midi_probe.swift": "76e975f4b501f8d4d551bff9d8fcfa0b122d7c5db0dc001e9b66db296181d822",
+  "rpc-status.log": "2d9c1c973fc5d09ebe3515164547456604ef5ece84ae817c7f794b7176559d90"
+}

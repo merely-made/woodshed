@@ -1,0 +1,420 @@
+{
+  "source": "bluetoothd unified log; scoped to GATT/ATT/LE connection categories and 23:47:46-23:48:18 local session; hardware address and peer UUID redacted",
+  "events": [
+    {
+      "timestamp": "2026-10-17 23:47:46.569726-0400",
+      "category": "Stack.GATT",
+      "message": " _GATT_LE_ConnectCompleteCB notification from lmHandle 0x00000041 with status OI_OK"
+    },
+    {
+      "timestamp": "2026-10-17 23:47:46.569790-0400",
+      "category": "Server.LE.Connection",
+      "message": "Incoming LE Connection complete for handle 0x7fa6e8b040e0 address Public [address redacted] with status 0"
+    },
+    {
+      "timestamp": "2026-10-17 23:47:46.569796-0400",
+      "category": "Server.LE.Connection",
+      "message": "handleConnectionCompleteCallback address=Public [address redacted] handle=0x7fa6e8b040e0 status=0 connectionIsActive=1, wakeupEvent=0"
+    },
+    {
+      "timestamp": "2026-10-17 23:47:46.570163-0400",
+      "category": "Server.LE.Connection",
+      "message": "Incoming connection from device \"[guitar central]\" (Public [address redacted]) with handle:0x7fa6e8b040e0 was successful with connection interval 12 active=1"
+    },
+    {
+      "timestamp": "2026-10-17 23:47:46.570164-0400",
+      "category": "Server.LE.Connection",
+      "message": "Connection Complete: setting LE device \"[guitar central]\" connection threshold to 300 events with interval 12, LSTO 600"
+    },
+    {
+      "timestamp": "2026-10-17 23:47:46.570167-0400",
+      "category": "Server.LE.Connection",
+      "message": "Failed to set prioritization threshold"
+    },
+    {
+      "timestamp": "2026-10-17 23:47:46.570244-0400",
+      "category": "Server.LE.Connection",
+      "message": "Skipping processConnectingDevices, reissueConnections=0"
+    },
+    {
+      "timestamp": "2026-10-17 23:47:46.570250-0400",
+      "category": "Server.GATT",
+      "message": "Gatt device connected on transport 2 on handle 0x7fa6e8b040e0 address:Public [address redacted] with status 0"
+    },
+    {
+      "timestamp": "2026-10-17 23:47:46.570254-0400",
+      "category": "Server.GATT",
+      "message": "Notify gattDeviceConnected [guitar central] transport=LE handle=0x7fa6e8b040e0"
+    },
+    {
+      "timestamp": "2026-10-17 23:47:46.570280-0400",
+      "category": "Server.GATT",
+      "message": "GattServer device \"[guitar central]\" connected for session 0x7fa6e8b04240"
+    },
+    {
+      "timestamp": "2026-10-17 23:47:46.570284-0400",
+      "category": "Server.GATT",
+      "message": "GattGateway device \"[guitar central]\" is connected with Gatt handle 0xf6"
+    },
+    {
+      "timestamp": "2026-10-17 23:47:46.668169-0400",
+      "category": "Server.LE.Connection",
+      "message": "LE Link Ready for handle 0x7fa6e8b040e0 with status 0 fastLEConnectionEnabled:0 linkReadyDurationMS:99 requiresCTOFix:0"
+    },
+    {
+      "timestamp": "2026-10-17 23:47:46.668181-0400",
+      "category": "Stack.ATT",
+      "message": " No pending ATT MTU requests"
+    },
+    {
+      "timestamp": "2026-10-17 23:47:46.668183-0400",
+      "category": "Stack.ATT",
+      "message": " ATT peripheral MTU 527 (calculated 0): for rx 251 bytes, tx 251 bytes, ce 7500 us, probestate 1"
+    },
+    {
+      "timestamp": "2026-10-17 23:47:46.668185-0400",
+      "category": "Stack.GATT",
+      "message": " _GATT_LE_LinkReadyCB notification from lmHandle 0x00000041 with status OI_OK"
+    },
+    {
+      "timestamp": "2026-10-17 23:47:46.668197-0400",
+      "category": "Server.LE.Connection",
+      "message": "Le link \"[guitar central]\" is ready with status 0"
+    },
+    {
+      "timestamp": "2026-10-17 23:47:46.668597-0400",
+      "category": "Server.GATT",
+      "message": "Gatt device ready with mtu 527 and status 0"
+    },
+    {
+      "timestamp": "2026-10-17 23:47:46.668610-0400",
+      "category": "Server.GATT",
+      "message": "GattGateway device \"[guitar central]\" is ready with mtu 527"
+    },
+    {
+      "timestamp": "2026-10-17 23:47:46.668614-0400",
+      "category": "Server.GATT",
+      "message": "GattGateway init on device \"[guitar central]\" with mtu 0"
+    },
+    {
+      "timestamp": "2026-10-17 23:47:46.668616-0400",
+      "category": "Server.GATT",
+      "message": "Beginning init sequence for device \"[guitar central]\""
+    },
+    {
+      "timestamp": "2026-10-17 23:47:46.668626-0400",
+      "category": "Server.GATT",
+      "message": "Skipping MTU 0 set on remote to discovering services for device \"<private>\""
+    },
+    {
+      "timestamp": "2026-10-17 23:47:46.668626-0400",
+      "category": "Server.GATT",
+      "message": "Attempting to find all services on device \"<private>\""
+    },
+    {
+      "timestamp": "2026-10-17 23:47:46.668643-0400",
+      "category": "Server.GATT",
+      "message": "Enqueuing a delayed command for device \"[guitar central]\""
+    },
+    {
+      "timestamp": "2026-10-17 23:47:46.758716-0400",
+      "category": "Server.GATT",
+      "message": "Trying to detect built in services on device <private>"
+    },
+    {
+      "timestamp": "2026-10-17 23:47:46.758728-0400",
+      "category": "Server.GATT",
+      "message": "statedump: 0x0001 Primary Service      [ serviceUUID: 0x1801, endHandle: 0x0005, discoveredCharacteristics: none ]"
+    },
+    {
+      "timestamp": "2026-10-17 23:47:46.758731-0400",
+      "category": "Server.GATT",
+      "message": "statedump: 0x0014 Primary Service      [ serviceUUID: 0x1800, endHandle: 0x001C, discoveredCharacteristics: none ]"
+    },
+    {
+      "timestamp": "2026-10-17 23:47:46.758735-0400",
+      "category": "Server.GATT",
+      "message": "statedump: 0x0028 Primary Service      [ serviceUUID: EB65B6C6-FEC3-4ED1-A6FC-9EFF755A4160, endHandle: 0xFFFF, discoveredCharacteristics: none ]"
+    },
+    {
+      "timestamp": "2026-10-17 23:47:46.758738-0400",
+      "category": "Server.GATT",
+      "message": "shouldNotifyBuiltInService device:<private> service:<private> notify:1"
+    },
+    {
+      "timestamp": "2026-10-17 23:47:46.758740-0400",
+      "category": "Server.GATT",
+      "message": "shouldNotifyBuiltInService device:<private> service:<private> notify:1"
+    },
+    {
+      "timestamp": "2026-10-17 23:47:46.758741-0400",
+      "category": "Server.GATT",
+      "message": "shouldNotifyBuiltInService device:<private> service:<private> notify:1"
+    },
+    {
+      "timestamp": "2026-10-17 23:47:46.758742-0400",
+      "category": "Server.GATT",
+      "message": "shouldNotifyBuiltInService device:<private> service:<private> notify:1"
+    },
+    {
+      "timestamp": "2026-10-17 23:47:46.758743-0400",
+      "category": "Server.GATT",
+      "message": "shouldNotifyBuiltInService device:<private> service:<private> notify:1"
+    },
+    {
+      "timestamp": "2026-10-17 23:47:46.758744-0400",
+      "category": "Server.GATT",
+      "message": "Finding GATT service changed characteristic handle on device \"<private>\""
+    },
+    {
+      "timestamp": "2026-10-17 23:47:46.818452-0400",
+      "category": "Server.GATT",
+      "message": "Found service \"0x0001 Primary Service      [ serviceUUID: 0x1801, endHandle: 0x0005, discoveredCharacteristics: none ]\" for characteristic \"0x0002 Characteristic       [ valueUUID: 0x2A05, valueHandle: 0x0003, properties: indicate, discoveredDescriptors: none ]\""
+    },
+    {
+      "timestamp": "2026-10-17 23:47:46.818489-0400",
+      "category": "Server.GATT",
+      "message": "Enabling GATT service changed indications on device \"<private>\""
+    },
+    {
+      "timestamp": "2026-10-17 23:47:46.818493-0400",
+      "category": "Server.GATT",
+      "message": "Don't have client configuration descriptor yet for characteristic at handle 0x0002 on device \"<private>\""
+    },
+    {
+      "timestamp": "2026-10-17 23:47:46.818494-0400",
+      "category": "Server.GATT",
+      "message": "Attempting to discover descriptors in range [0x0004, 0x0005] on device \"<private>\""
+    },
+    {
+      "timestamp": "2026-10-17 23:47:46.878448-0400",
+      "category": "Server.GATT",
+      "message": "Found service \"0x0001 Primary Service      [ serviceUUID: 0x1801, endHandle: 0x0005, discoveredCharacteristics: some ]\" for descriptor \"0x0004 Client Configuration [ none ]\""
+    },
+    {
+      "timestamp": "2026-10-17 23:47:46.878473-0400",
+      "category": "Server.GATT",
+      "message": "Found client configuration descriptor at handle 0x0004"
+    },
+    {
+      "timestamp": "2026-10-17 23:47:46.878479-0400",
+      "category": "Server.GATT",
+      "message": "Enabling indications on client configuration descriptor for characteristic at handle 0x0002 on device \"<private>\""
+    },
+    {
+      "timestamp": "2026-10-17 23:47:47.522927-0400",
+      "category": "Stack.ATT",
+      "message": " ATT peripheral MTU 527 (calculated 0): for rx 251 bytes, tx 251 bytes, ce 7500 us, probestate 1"
+    },
+    {
+      "timestamp": "2026-10-17 23:47:47.522928-0400",
+      "category": "Stack.ATT",
+      "message": " MTU response: desiredMTU 527, remoteMTU 500"
+    },
+    {
+      "timestamp": "2026-10-17 23:47:47.522975-0400",
+      "category": "Server.GATT",
+      "message": "MTU is now 500 for device \"[guitar central]\""
+    },
+    {
+      "timestamp": "2026-10-17 23:47:47.582971-0400",
+      "category": "Stack.ATT",
+      "message": "LE_ATT_DB_ProcessClientRequest opcode 0x00000012 failed with  STATUS 4305 (status=65535)"
+    },
+    {
+      "timestamp": "2026-10-17 23:47:47.714946-0400",
+      "category": "Server.GATT",
+      "message": "Reading GAP name characteristic value on device \"<private>\""
+    },
+    {
+      "timestamp": "2026-10-17 23:47:47.733061-0400",
+      "category": "Server.GATT",
+      "message": "Found service \"0x0014 Primary Service      [ serviceUUID: 0x1800, endHandle: 0x001C, discoveredCharacteristics: none ]\" for value \"0x0016 Characteristic Value [ 48 32 2D 43 43 33 34 30 ]\""
+    },
+    {
+      "timestamp": "2026-10-17 23:47:47.733071-0400",
+      "category": "Server.GATT",
+      "message": "The device \"<private>\" is named \"<private>\""
+    },
+    {
+      "timestamp": "2026-10-17 23:47:47.733150-0400",
+      "category": "Server.GATT",
+      "message": "statedump: 0x0001 Primary Service      [ serviceUUID: 0x1801, endHandle: 0x0005, discoveredCharacteristics: some ]"
+    },
+    {
+      "timestamp": "2026-10-17 23:47:47.733154-0400",
+      "category": "Server.GATT",
+      "message": "statedump: 0x0002 Characteristic       [ valueUUID: 0x2A05, valueHandle: 0x0003, properties: indicate, discoveredDescriptors: all ]"
+    },
+    {
+      "timestamp": "2026-10-17 23:47:47.733156-0400",
+      "category": "Server.GATT",
+      "message": "statedump: 0x0004 Client Configuration [ none ]"
+    },
+    {
+      "timestamp": "2026-10-17 23:47:47.733159-0400",
+      "category": "Server.GATT",
+      "message": "statedump: 0x0014 Primary Service      [ serviceUUID: 0x1800, endHandle: 0x001C, discoveredCharacteristics: none ]"
+    },
+    {
+      "timestamp": "2026-10-17 23:47:47.733162-0400",
+      "category": "Server.GATT",
+      "message": "statedump: 0x0028 Primary Service      [ serviceUUID: EB65B6C6-FEC3-4ED1-A6FC-9EFF755A4160, endHandle: 0xFFFF, discoveredCharacteristics: none ]"
+    },
+    {
+      "timestamp": "2026-10-17 23:48:17.813102-0400",
+      "category": "Server.LE.Connection",
+      "message": "Device \"[guitar central]\" does not require low latency"
+    },
+    {
+      "timestamp": "2026-10-17 23:48:17.813119-0400",
+      "category": "Server.LE.Connection",
+      "message": "Disconnecting connected device \"[guitar central]\""
+    },
+    {
+      "timestamp": "2026-10-17 23:48:17.854248-0400",
+      "category": "Stack.ATT",
+      "message": " LE_ATT_DB_DestroySession dequeue count: 0"
+    },
+    {
+      "timestamp": "2026-10-17 23:48:17.854255-0400",
+      "category": "Stack.GATT",
+      "message": " _GATT_LE_DisconnectedCB on handle 0x00007FA6E8B040E0 with reason  STATUS 722"
+    },
+    {
+      "timestamp": "2026-10-17 23:48:17.854279-0400",
+      "category": "Server.LE.Connection",
+      "message": "LE Link disconnected for handle 0x7fa6e8b040e0 address Public [address redacted] with reason 722 encryptionPending 0"
+    },
+    {
+      "timestamp": "2026-10-17 23:48:17.854295-0400",
+      "category": "Server.LE.Connection",
+      "message": "LE ConnManager disconnection complete reason 722 address=Public [address redacted] localRole=Peripheral wakeUp=No encrypted:0 timeOffsetInMs:0"
+    },
+    {
+      "timestamp": "2026-10-17 23:48:17.855319-0400",
+      "category": "Server.LE.Connection",
+      "message": "Found override reason 1 for device \"[guitar central]\""
+    },
+    {
+      "timestamp": "2026-10-17 23:48:17.855323-0400",
+      "category": "Server.LE.Connection",
+      "message": "Found link-ready device calling disconnection notification"
+    },
+    {
+      "timestamp": "2026-10-17 23:48:17.855323-0400",
+      "category": "Server.LE.Connection",
+      "message": "Disconnected from device \"[guitar central]\" successfully (locally-initiated)"
+    },
+    {
+      "timestamp": "2026-10-17 23:48:17.855324-0400",
+      "category": "Server.LE.Connection",
+      "message": "linkReady:1 disconnectDevice:1 localRole:1 reason:722 result:0"
+    },
+    {
+      "timestamp": "2026-10-17 23:48:17.855324-0400",
+      "category": "Server.LE.Connection",
+      "message": "Device \"[guitar central]\" does not require low latency"
+    },
+    {
+      "timestamp": "2026-10-17 23:48:17.855343-0400",
+      "category": "Server.LE.Connection",
+      "message": "Sending LESessionEndedMetric <private>"
+    },
+    {
+      "timestamp": "2026-10-17 23:48:17.855473-0400",
+      "category": "Stack.ATT",
+      "message": "Couldn't find active session 0x00007FA6E8B04240! (status=65535)"
+    },
+    {
+      "timestamp": "2026-10-17 23:48:17.855505-0400",
+      "category": "Stack.ATT",
+      "message": "Couldn't find active session 0x00007FA6E8B04240! (status=65535)"
+    },
+    {
+      "timestamp": "2026-10-17 23:48:17.855532-0400",
+      "category": "Stack.ATT",
+      "message": "Couldn't find active session 0x00007FA6E8B04240! (status=65535)"
+    },
+    {
+      "timestamp": "2026-10-17 23:48:17.855567-0400",
+      "category": "Stack.ATT",
+      "message": "Couldn't find active session 0x00007FA6E8B04240! (status=65535)"
+    },
+    {
+      "timestamp": "2026-10-17 23:48:17.855591-0400",
+      "category": "Stack.ATT",
+      "message": "Couldn't find active session 0x00007FA6E8B04240! (status=65535)"
+    },
+    {
+      "timestamp": "2026-10-17 23:48:17.855614-0400",
+      "category": "Stack.ATT",
+      "message": "Couldn't find active session 0x00007FA6E8B04240! (status=65535)"
+    },
+    {
+      "timestamp": "2026-10-17 23:48:17.855635-0400",
+      "category": "Stack.ATT",
+      "message": "Couldn't find active session 0x00007FA6E8B04240! (status=65535)"
+    },
+    {
+      "timestamp": "2026-10-17 23:48:17.855664-0400",
+      "category": "Stack.ATT",
+      "message": "Couldn't find active session 0x00007FA6E8B04240! (status=65535)"
+    },
+    {
+      "timestamp": "2026-10-17 23:48:17.855720-0400",
+      "category": "Stack.ATT",
+      "message": "Couldn't find active session 0x00007FA6E8B04240! (status=65535)"
+    },
+    {
+      "timestamp": "2026-10-17 23:48:17.855747-0400",
+      "category": "Stack.ATT",
+      "message": "Couldn't find active session 0x00007FA6E8B04240! (status=65535)"
+    },
+    {
+      "timestamp": "2026-10-17 23:48:17.855768-0400",
+      "category": "Stack.ATT",
+      "message": "Couldn't find active session 0x00007FA6E8B04240! (status=65535)"
+    },
+    {
+      "timestamp": "2026-10-17 23:48:17.855792-0400",
+      "category": "Stack.ATT",
+      "message": "Couldn't find active session 0x00007FA6E8B04240! (status=65535)"
+    },
+    {
+      "timestamp": "2026-10-17 23:48:17.855814-0400",
+      "category": "Stack.ATT",
+      "message": "Couldn't find active session 0x00007FA6E8B04240! (status=65535)"
+    },
+    {
+      "timestamp": "2026-10-17 23:48:17.855908-0400",
+      "category": "Server.LE.Connection",
+      "message": "handleDisconnectionCompleteCallback skipping processConnectingList, processConnectingList=0, LE Connection Manager State is Active"
+    },
+    {
+      "timestamp": "2026-10-17 23:48:17.855914-0400",
+      "category": "Server.LE.Connection",
+      "message": "BLE Disconnected Unspecified [guitar central] reason 722"
+    },
+    {
+      "timestamp": "2026-10-17 23:48:17.855930-0400",
+      "category": "Server.GATT",
+      "message": "Gatt device disconnected on handle 0x7fa6e8b040e0 with status 722"
+    },
+    {
+      "timestamp": "2026-10-17 23:48:17.855967-0400",
+      "category": "Server.GATT",
+      "message": "GattGateway device \"[guitar central]\" is disconnected"
+    },
+    {
+      "timestamp": "2026-10-17 23:48:17.855987-0400",
+      "category": "Server.GATT",
+      "message": "Cached service hit!"
+    },
+    {
+      "timestamp": "2026-10-17 23:48:17.855994-0400",
+      "category": "Server.GATT",
+      "message": "Clearing database cache for device \"[guitar central]\""
+    }
+  ]
+}

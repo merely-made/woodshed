@@ -1,0 +1,64 @@
+{
+  "computer_name" : "Q-PC",
+  "device_count" : 3,
+  "devices" : [
+    {
+      "driver_owner" : "com.apple.AppleMIDIRTPDriver",
+      "endpoint_ref" : 326242316,
+      "entities" : [
+
+      ],
+      "kind" : "device",
+      "name" : "Network",
+      "offline" : false,
+      "unique_id" : 1339868329
+    },
+    {
+      "driver_owner" : "com.apple.AppleMIDIIACDriver",
+      "endpoint_ref" : 326242317,
+      "entities" : [
+        {
+          "destinations" : [
+            {
+              "display_name" : "IAC Driver Bus 1",
+              "driver_owner" : "com.apple.AppleMIDIIACDriver",
+              "endpoint_ref" : 326242320,
+              "kind" : "destination",
+              "name" : "Bus 1",
+              "offline" : true,
+              "unique_id" : -1922242002
+            }
+          ],
+          "driver_owner" : "com.apple.AppleMIDIIACDriver",
+          "endpoint_ref" : 326242318,
+          "kind" : "entity",
+          "name" : "Bus 1",
+          "offline" : true,
+          "unique_id" : 235979248
+        }
+      ],
+      "kind" : "device",
+      "name" : "IAC Driver",
+      "offline" : true,
+      "unique_id" : 1644221753
+    },
+    {
+      "driver_owner" : "com.apple.AppleMIDIBluetoothDriver",
+      "endpoint_ref" : 326242321,
+      "entities" : [
+
+      ],
+      "kind" : "device",
+      "name" : "Bluetooth",
+      "offline" : false,
+      "unique_id" : 2090779457
+    }
+  ],
+  "endpoints" : [
+
+  ],
+  "midi_client_created" : true,
+  "operation" : "list",
+  "os" : "Version 15.8.1 (Build 24H32)",
+  "timestamp" : "2026-10-18T03:24:54Z"
+}

@@ -53,5 +53,12 @@ shell, receipt-driven validation).
 | [`2026-09-01_effects_handoff.md`](2026-09-01_effects_handoff.md) | Historical H27–H38 session and experiment discipline; bank-creation limits were superseded by H47. |
 | [`2026-09-02_client_surface_plan.md`](2026-09-02_client_surface_plan.md) | Current performance plan: joint software stomp-box/Beats assessment, MIDI versus RPC paths, P0–P4 device/CLI/desktop/cue/scripting targets; retains A–D typed/profile foundation. |
 
+Current device session: [Q-PC MIDI pedal experiment](../validation/midi-pedal_20261017/README.md)
+records the first successful software-pedal trigger: a direct CoreBluetooth
+subscription and one owner-confirmed Effect Next change using the configured
+channel-1 CC-67 binding. Firmware/RPC baseline, Beats, timing, and broader
+performance qualification remain open. The owner-reported MIDI menu has no
+standalone Beats action; the diagnostic trial has ended and its helper is closed.
+
 `PROJECT_DESCRIPTION.md` (maintainer-owned, DOC_POLICY §7) is not yet written;
 the founding plan carries the product intent until it is.
