@@ -1182,6 +1182,77 @@ fn prepared_chord_matches_legacy_strum_and_warm_cache_reuses_pcm() {
 }
 
 #[test]
+fn invalid_saved_audio_is_rejected_without_replacing_backing_or_chord_cache() {
+    let mut accepted = song(1);
+    accepted.playing = true;
+    accepted.bars[0].chord_ref = Some(ChordRef {
+        formula_name: "accepted".into(),
+        root_freq_hz: 220.0,
+        pitches_hz: vec![220.0, 330.0],
+        label: "accepted".into(),
+    });
+    let mut live = runtime();
+    live.set_song(accepted.clone()).unwrap();
+    live.rewind().unwrap();
+    live.service().unwrap();
+    render(&mut live, 3);
+    let before = live.snapshot();
+    let accepted_pcm = live.chord_cache[0].pcm.data.clone();
+
+    for invalid_sample in [f32::NAN, f32::INFINITY, f32::NEG_INFINITY] {
+        let mut invalid = accepted.clone();
+        invalid.bars[0].audio_buffer = Some(SampleBuffer::new(vec![invalid_sample; 10], 1000));
+        let exact_rejected_pcm = invalid.bars[0].audio_buffer.as_ref().unwrap().data.clone();
+        assert_eq!(exact_rejected_pcm.len(), 10);
+        assert_eq!(
+            invalid.bars[0]
+                .audio_buffer
+                .as_ref()
+                .unwrap()
+                .sample_rate_hz,
+            1000
+        );
+        let error = live.set_song(invalid).unwrap_err();
+        assert!(error.to_string().contains("nonfinite samples"), "{error}");
+        assert_eq!(live.snapshot(), before);
+        assert!(live.song().bars[0].audio_buffer.is_none());
+        assert_eq!(live.chord_cache.len(), 1);
+        assert!(Arc::ptr_eq(&accepted_pcm, &live.chord_cache[0].pcm.data));
+        assert_eq!(
+            exact_rejected_pcm
+                .iter()
+                .map(|sample| sample.to_bits())
+                .collect::<Vec<_>>(),
+            vec![invalid_sample.to_bits(); 10],
+            "rejected source PCM is not modified"
+        );
+    }
+
+    let mut pathological = accepted.clone();
+    pathological.bars[0].chord_ref.as_mut().unwrap().pitches_hz = vec![f32::MAX];
+    assert!(live.set_song(pathological).is_err());
+    assert_eq!(live.snapshot(), before);
+    assert_eq!(
+        live.song().bars[0].chord_ref.as_ref().unwrap().pitches_hz,
+        [220.0, 330.0]
+    );
+    assert!(Arc::ptr_eq(&accepted_pcm, &live.chord_cache[0].pcm.data));
+
+    live.chord_cache[0].pcm = ArcGc::new(SampleBuffer::new(vec![f32::NAN], 1000));
+    let error = live.set_song(accepted.clone()).unwrap_err();
+    assert!(
+        error
+            .to_string()
+            .contains("prepared chord contains nonfinite PCM")
+    );
+    assert_eq!(live.snapshot(), before);
+    assert_eq!(
+        live.song().bars[0].chord_ref.as_ref().unwrap().pitches_hz,
+        [220.0, 330.0]
+    );
+}
+
+#[test]
 fn phrase_mixes_with_capture_and_click_across_loop_boundaries_without_callback_allocation() {
     let mut s = song(1);
     s.playing = true;

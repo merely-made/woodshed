@@ -58,6 +58,11 @@ impl SampleBuffer {
         self.data.is_empty()
     }
 
+    /// Whether every stored PCM sample is finite.
+    pub fn has_finite_samples(&self) -> bool {
+        self.data.iter().all(|sample| sample.is_finite())
+    }
+
     // --- Loop-shaping ops (sampler) ---
     //
     // Thin wrappers over `audio_primitives::buffer` — the shared

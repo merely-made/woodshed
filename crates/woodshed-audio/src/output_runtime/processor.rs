@@ -270,6 +270,9 @@ impl PreparedBacking {
                 if pcm.len() != duration as usize {
                     return Err(err("backing PCM must fit its segment duration"));
                 }
+                if !pcm.has_finite_samples() {
+                    return Err(err("backing PCM contains nonfinite samples"));
+                }
             }
             let chord = if let Some(chord) = &bar.chord_ref {
                 if chord.pitches_hz.len() > 256 {
@@ -286,6 +289,12 @@ impl PreparedBacking {
                 // The existing backing strikes once per measure, even for long blocks.
                 let duration_seconds = bar.chord_measure_secs();
                 let duration_seconds = duration_seconds.max(0.5).clamp(0.3, 2.0);
+                if !crate::chord_audio::chord_frequencies_render_finite(
+                    &pitches,
+                    f64::from(duration_seconds),
+                ) {
+                    return Err(err("backing chord frequencies cannot render finite PCM"));
+                }
                 let bits: Vec<_> = pitches.iter().map(|f| f.to_bits()).collect();
                 let pcm = if let Some(hit) = cache.iter().find(|c| {
                     c.pitches == bits && c.duration == duration_seconds.to_bits() && c.rate == rate
@@ -297,6 +306,9 @@ impl PreparedBacking {
                         rate,
                     ))
                 };
+                if !pcm.has_finite_samples() {
+                    return Err(err("prepared chord contains nonfinite PCM"));
+                }
                 next_cache.push(ChordCache {
                     pitches: bits,
                     duration: duration_seconds.to_bits(),

@@ -32,6 +32,18 @@
 
 use crate::sound::SampleBuffer;
 
+/// Reject frequencies whose third harmonic can overflow the renderer's f32
+/// phase calculation over the requested duration.
+pub(crate) fn chord_frequencies_render_finite(pitches_hz: &[f32], duration_seconds: f64) -> bool {
+    let max_phase = f64::from(f32::MAX) / 2.0;
+    pitches_hz.iter().all(|frequency| {
+        frequency.is_finite()
+            && *frequency > 0.0
+            && f64::from(*frequency) * duration_seconds * 3.0 * f64::from(std::f32::consts::TAU)
+                <= max_phase
+    })
+}
+
 /// Parameters for one chord render. Defaults via [`Default::default`]
 /// give a 1-second piano-ish strum suitable for a chord-card preview.
 #[derive(Clone, Debug)]
