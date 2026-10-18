@@ -223,4 +223,53 @@ mod tests {
         handle.set_threshold(0.2);
         assert!((handle.threshold() - 1.0).abs() < 1e-6);
     }
+
+    #[test]
+    fn analyzer_preserves_sample_indices_across_irregular_chunks() {
+        let warmup = vec![0.0_f32; 14_400];
+        let mut signal = vec![0.0_f32; 48_073];
+        for hit in [12_000, 24_000, 36_000] {
+            for (offset, sample) in signal[hit..hit + 256].iter_mut().enumerate() {
+                *sample = 0.8 * (-0.02 * offset as f32).exp();
+            }
+        }
+
+        let mut whole_analyzer = OnsetAnalyzer::new();
+        let whole_handle = whole_analyzer.handle();
+        whole_handle.set_enabled(true);
+        whole_analyzer.process(&warmup, 48_000.0, Instant::now());
+        whole_analyzer.process(&signal, 48_000.0, Instant::now());
+        let whole_indices: Vec<u64> = whole_handle
+            .snapshot()
+            .recent
+            .into_iter()
+            .map(|onset| onset.sample_index)
+            .collect();
+        assert!(!whole_indices.is_empty(), "fixture must produce onsets");
+
+        let mut chunked_analyzer = OnsetAnalyzer::new();
+        let chunked_handle = chunked_analyzer.handle();
+        chunked_handle.set_enabled(true);
+        chunked_analyzer.process(&warmup, 48_000.0, Instant::now());
+        let chunk_sizes = [1, 37, 256, 19, 513, 7, 1024, 63];
+        let mut cursor = 0;
+        let mut chunk_index = 0;
+        while cursor < signal.len() {
+            // `at` intentionally varies between callbacks. This checks
+            // sample-clock parity only, not wall-clock calibration.
+            chunked_analyzer.process(&[], 48_000.0, Instant::now());
+            let end = (cursor + chunk_sizes[chunk_index % chunk_sizes.len()]).min(signal.len());
+            chunked_analyzer.process(&signal[cursor..end], 48_000.0, Instant::now());
+            cursor = end;
+            chunk_index += 1;
+        }
+        let chunked_indices: Vec<u64> = chunked_handle
+            .snapshot()
+            .recent
+            .into_iter()
+            .map(|onset| onset.sample_index)
+            .collect();
+
+        assert_eq!(chunked_indices, whole_indices);
+    }
 }
