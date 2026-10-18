@@ -916,23 +916,6 @@ impl Processor {
         }
         self.pending_len = write;
     }
-    fn discard_unreachable_arms(&mut self) {
-        let mut write = 0;
-        for read in 0..self.pending_len {
-            match self.pending[read].take() {
-                Some(Boundary::Arm { .. }) => {
-                    self.invalid = true;
-                    self.shared.boundaries.fetch_sub(1, Ordering::Release);
-                },
-                Some(op) => {
-                    self.pending[write] = Some(op);
-                    write += 1;
-                },
-                None => {},
-            }
-        }
-        self.pending_len = write;
-    }
     fn push_boundary(&mut self, op: Boundary) {
         if self.pending_len < COMMAND_BOUND {
             self.pending[self.pending_len] = Some(op);
@@ -1723,7 +1706,9 @@ impl Processor {
                         if backing.one_shot {
                             self.playing = false;
                             self.clear_voices();
-                            self.discard_unreachable_arms();
+                            self.invalid |= self.pending[..self.pending_len]
+                                .iter()
+                                .any(|op| matches!(op, Some(Boundary::Arm { .. })));
                             self.stop_capture();
                             for op in &mut self.pending {
                                 if op.take().is_some() {
