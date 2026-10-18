@@ -71,12 +71,14 @@ nor those historical receipts establishes current-head integrated acceptance.
 No new product suite, desktop build, native launch, fresh reopen, microphone,
 physical audibility, protocol hardware or other-platform gate ran in this closure.
 
-First remaining delivery: retain the existing preservation owners, correct
-Hocket's offered-profile/key binding and stale media availability, and repair
-operational Q1 evidence gates before relying on them. Then follow B1–B7 material,
-capture and accepted-runtime work; protocol/instrument, projection and
-compatibility-gated removal retain their own owners. Existing media, playback
-clocks, saved-song compatibility and native validation lanes are protected.
+H3/H5 and Q1 were CPU qualified and published through `6e6498a`;
+B1–B3 through `b1c9dfd`. B4 now has a separate local
+[PCM/timing receipt](../pcm-timing_20261018/README.md): 308 distinct passes at
+`5dd01ae`. These targeted implementations do not refresh the frozen full read
+or establish native acceptance. The next runtime frontier starts at B5 shared
+Recorder SelectOne admission, with subsequent product/controller, protocol and
+compatibility work retaining their existing owners. Existing media, playback
+clocks and native validation lanes remain protected.
 The source audit is finished; the implementation backlog is not.
 
 [Closure and artifact hashes](closure.json) bind these records. Raw original

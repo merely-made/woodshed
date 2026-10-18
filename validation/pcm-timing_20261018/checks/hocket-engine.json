@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "run_id": "b4-final-hocket-engine",
+  "command": [
+    "cargo",
+    "test",
+    "--locked",
+    "-p",
+    "hocket-engine",
+    "--lib"
+  ],
+  "started_at": "2026-10-18T16:11:01.706076Z",
+  "ended_at": "2026-10-18T16:11:22.747600Z",
+  "exit_code": 0,
+  "cwd": "/Users/markik/Code/repos/woodshed/ports/hocket",
+  "log": "/Users/markik/Code/repos/woodshed/validation/pcm-timing_20261018/checks/hocket-engine.log",
+  "log_sha256": "7c25a83bb18ac70d4e78e7016c4bf820a32aa5aded27cf26a4bcf1ce61053d2e",
+  "source_commit": "5dd01aee953e83edd40767dca9c4b5f55846a86c"
+}

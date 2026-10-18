@@ -40,36 +40,66 @@
     },
     {
       "id": "audio:AUDIO-02",
-      "classification": "unchanged implementation/current reachability confirmed",
+      "classification": "implemented; CPU qualified",
       "package": "B4",
-      "current_observation": "Changed preparation still accepts finite positive saved-chord inputs and renders/cache-publishes without a completed-sample finiteness check; imported PCM checks rate/length. New bounded phrase preparation does not close this saved-chord/imported-PCM seam.",
-      "qualification": "unassessed",
+      "current_observation": "Prepared backing rejects nonfinite imported and completed rendered PCM before cache/publication; rejected inputs retain accepted backing. Shared frequency predicate serves live saved chords, phrases and export.",
+      "qualification": "308 distinct final library passes: 61 shared primitives, 211 Woodshed audio, 36 Hocket engine; no ignored cases or nested child invocations.",
       "alias_of": null,
-      "detail": "current/runtime.json",
+      "detail": "../pcm-timing_20261018/receipt.json",
       "original_index_title": "AUDIO-02 \u2014 Use one finite-PCM admission rule before publishing live resources",
-      "original_report": "audio-report.md"
+      "original_report": "audio-report.md",
+      "reconciliation_before_pcm_timing_batch": {
+        "classification": "unchanged implementation/current reachability confirmed",
+        "current_observation": "Changed preparation still accepts finite positive saved-chord inputs and renders/cache-publishes without a completed-sample finiteness check; imported PCM checks rate/length. New bounded phrase preparation does not close this saved-chord/imported-PCM seam.",
+        "qualification": "unassessed",
+        "detail": "current/runtime.json"
+      },
+      "implementation_revision": "5dd01aee953e83edd40767dca9c4b5f55846a86c",
+      "limits": [
+        "CPU only; no native/device or fresh-process native qualification. Calibration remains approximate; original take PCM/clocks unchanged."
+      ]
     },
     {
       "id": "audio:AUDIO-03",
-      "classification": "unchanged implementation/current reachability confirmed",
+      "classification": "implemented; CPU qualified",
       "package": "B4",
-      "current_observation": "Primitive and Woodshed onset adapter retain frozen bytes. feed counts a partial prefix, then adds the full completed frame including that prefix again. Adapter still calls detector.feed.",
-      "qualification": "unassessed",
+      "current_observation": "Completed onset frames count newly consumed samples only; partial prefixes are not counted twice. Nonempty onset indices agree across monolithic, irregular, empty and single-sample feeds, with a Woodshed analyzer receiving regression.",
+      "qualification": "308 distinct final library passes: 61 shared primitives, 211 Woodshed audio, 36 Hocket engine; no ignored cases or nested child invocations.",
       "alias_of": null,
-      "detail": "current/runtime.json",
+      "detail": "../pcm-timing_20261018/receipt.json",
       "original_index_title": "AUDIO-03 \u2014 Count each input sample once in the shared onset clock",
-      "original_report": "audio-report.md"
+      "original_report": "audio-report.md",
+      "reconciliation_before_pcm_timing_batch": {
+        "classification": "unchanged implementation/current reachability confirmed",
+        "current_observation": "Primitive and Woodshed onset adapter retain frozen bytes. feed counts a partial prefix, then adds the full completed frame including that prefix again. Adapter still calls detector.feed.",
+        "qualification": "unassessed",
+        "detail": "current/runtime.json"
+      },
+      "implementation_revision": "5dd01aee953e83edd40767dca9c4b5f55846a86c",
+      "limits": [
+        "CPU only; no native/device or fresh-process native qualification. Calibration remains approximate; original take PCM/clocks unchanged."
+      ]
     },
     {
       "id": "audio:AUDIO-04",
-      "classification": "unchanged implementation/current reachability confirmed",
+      "classification": "implemented; CPU qualified",
       "package": "B4",
-      "current_observation": "Unchanged estimator rejects negative offsets while count_matches accepts either sign. Unchanged calibration session combines those results and Settings displays the count.",
-      "qualification": "unassessed",
+      "current_observation": "Shared pairing returns estimate and admitted support together; the Woodshed session consumes one result for both outcome paths. Existing Settings displays that support; nearest and upper-median rules retained.",
+      "qualification": "308 distinct final library passes: 61 shared primitives, 211 Woodshed audio, 36 Hocket engine; no ignored cases or nested child invocations.",
       "alias_of": null,
-      "detail": "current/runtime.json",
+      "detail": "../pcm-timing_20261018/receipt.json",
       "original_index_title": "AUDIO-04 \u2014 Report the estimator's admitted calibration pairs",
-      "original_report": "audio-report.md"
+      "original_report": "audio-report.md",
+      "reconciliation_before_pcm_timing_batch": {
+        "classification": "unchanged implementation/current reachability confirmed",
+        "current_observation": "Unchanged estimator rejects negative offsets while count_matches accepts either sign. Unchanged calibration session combines those results and Settings displays the count.",
+        "qualification": "unassessed",
+        "detail": "current/runtime.json"
+      },
+      "implementation_revision": "5dd01aee953e83edd40767dca9c4b5f55846a86c",
+      "limits": [
+        "CPU only; no native/device or fresh-process native qualification. Calibration remains approximate; original take PCM/clocks unchanged."
+      ]
     },
     {
       "id": "audio:AUDIO-05",
@@ -1528,5 +1558,6 @@
   ],
   "implementation_followup": "../admission-evidence_20261017/receipt.json",
   "runtime_followup": "../runtime-authority_20261018/receipt.json",
-  "targeted_runtime_revision": "662cda5baf767530ebf22bb3ea7c212e9095116d"
+  "targeted_runtime_revision": "662cda5baf767530ebf22bb3ea7c212e9095116d",
+  "pcm_timing_followup": "../pcm-timing_20261018/receipt.json"
 }

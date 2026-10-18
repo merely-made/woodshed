@@ -168,19 +168,34 @@
   "canonical_plan": "design_docs/2026-10-16_source_authority_audit_plan.md",
   "external_originals": "/Users/markik/Code/testing/woodshed/full-source-audit-20261016",
   "coordination_artifact_sha256": {
-    "validation/full-source-audit_20261016/README.md": "9714c79de195777ec72d45c3d23ea1306d197192db56faf0ee42d05c9f909a13",
-    "validation/full-source-audit_20261016/current-finding-ledger.json": "c955b069ac4aabfe578ae09a9cff3e51b28922e24a4b2d9320f82f78c9d479fe",
+    "validation/full-source-audit_20261016/README.md": "5864504b4d184fc2f843318b24c087442169b2afa619f88958a96185d8782588",
+    "validation/full-source-audit_20261016/current-finding-ledger.json": "c96af3f4781f9d002ba5b64008456b0f1fe369ab651a595d9ad24bc6cb20aea8",
     "validation/full-source-audit_20261016/verify_coverage.py": "2814ed0bebba4b97f1cc1b023295d8bdf8aace874b3431a7738fd17333930add",
     "validation/full-source-audit_20261016/test_verify_coverage.py": "9b464695e4db29708029e84ac54cda87081ae94f002b2274fbb211503c5eac3a",
-    "design_docs/2026-10-16_source_authority_audit_plan.md": "48dd8043363e4dd42ac91d98a80fd7c845691fcb8cd1c8289a0b12f90e6f27cd",
-    "design_docs/DOC_README.md": "42d42ace7992a09bb79bffad9ba6e58b721789b6d1d7f999970f76811513e1aa"
+    "design_docs/2026-10-16_source_authority_audit_plan.md": "657a32d98a492c8205b7d3659b83da27fe13134bf74a868f59085e876313f677",
+    "design_docs/DOC_README.md": "6355fe720b889ba09c0dccdc5e098643ed4f6a6fd1ac41e742ef691afe5b4f47"
   },
   "publication_record": "publication.json",
   "implementation_followup": "../admission-evidence_20261017/receipt.json",
   "runtime_followup": "../runtime-authority_20261018/receipt.json",
   "runtime_followup_artifact_sha256": {
-    "validation/runtime-authority_20261018/README.md": "8d76c83bda5bd38d037841b37166e7f13c5e291f3655b26c1c15df2a7553c2bd",
+    "validation/runtime-authority_20261018/README.md": "2852f70d1eaae20b56226749c9dae4eaa14db7f3b9e6c29fc141350543fc4a6e",
     "validation/runtime-authority_20261018/receipt.json": "48dc683605a56b8d30e8fab7fe53edde8e4620a0b8976d9481b1a38f7b54dacd",
-    "validation/admission-evidence_20261017/publication.json": "9f5c94cb193ec69b9bc89748ea1836b232cd95190e248d4924f64ddc3156451f"
+    "validation/admission-evidence_20261017/publication.json": "9f5c94cb193ec69b9bc89748ea1836b232cd95190e248d4924f64ddc3156451f",
+    "validation/runtime-authority_20261018/publication.json": "b0619c84820ea66f772b5f1213e7bcd8c1c73672319ca717bdb2e72365cc8f2b"
+  },
+  "pcm_timing_followup": "../pcm-timing_20261018/receipt.json",
+  "pcm_timing_followup_artifact_sha256": {
+    "validation/pcm-timing_20261018/README.md": "f6815eed077226478a64cf904e89b10899349e4e779c98eb27e4b11f6f40163e",
+    "validation/pcm-timing_20261018/checks/audio.json": "b784f2706dcf0ae613c249739890317e358a5a1a8a39479fe982a5ecb7d05d86",
+    "validation/pcm-timing_20261018/checks/audio.log": "bb64f5e7d3363a123d69840588b0b2ef47575738a9601049af60a93ee965f478",
+    "validation/pcm-timing_20261018/checks/doc-links.json": "3a000e682cba9850c8ba492741a6599654797a8594853104f77779967c4b1573",
+    "validation/pcm-timing_20261018/checks/hocket-engine.json": "d9a85f392b039dfa8e1a129359f74247f3230f42ba77ce1ce70aa6cf6deac998",
+    "validation/pcm-timing_20261018/checks/hocket-engine.log": "7c25a83bb18ac70d4e78e7016c4bf820a32aa5aded27cf26a4bcf1ce61053d2e",
+    "validation/pcm-timing_20261018/checks/primitives.json": "efab59cfdabef281ec517961aceec0756db4ff5aa027b2f9a177bcb2d1cbc850",
+    "validation/pcm-timing_20261018/checks/primitives.log": "67d51c5b548510a9a17edc65fa09f04492fdb97b0bacd4ffbb7915354a1136cb",
+    "validation/pcm-timing_20261018/checks/whitespace.json": "aa2fdc0882e299b4cc00977ce216d4604d8f5e077553dad7abe2dfea9d289d49",
+    "validation/pcm-timing_20261018/checks/whitespace.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "validation/pcm-timing_20261018/receipt.json": "09e2ab148dbdb15257c296411f06635160a128fdcc3f2f373ebf3758cce4dd63"
   }
 }
