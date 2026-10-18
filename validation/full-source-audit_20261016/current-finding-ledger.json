@@ -19,14 +19,24 @@
   "findings": [
     {
       "id": "audio:AUDIO-01",
-      "classification": "unchanged implementation/current reachability confirmed",
+      "classification": "implemented; CPU qualified",
       "package": "B3",
-      "current_observation": "Saved-bar request now passes async input reservation but still calls arm_capture(index,false). Boundary drains Arm once and starts only at matching cursor, then resets pending_len. Selected-Card pinning is a different scope.",
-      "qualification": "unassessed",
+      "current_observation": "Nonseeking future Arms persist in the existing bounded queue until their target; boundary stop cancels earlier Arms, pause and ordered seek remain supported. One-shot unreachable Arms invalidate and retire through existing cleanup; new attempts clear prior failure state.",
+      "qualification": "Scoped source review and 859 affected parent/library cases, with five child invocations separate and seven existing ignores. Per-gate scope is in the runtime receipt.",
       "alias_of": null,
-      "detail": "current/runtime.json",
+      "detail": "../runtime-authority_20261018/receipt.json",
       "original_index_title": "AUDIO-01 \u2014 Preserve a saved-bar arm until playback reaches its target",
-      "original_report": "audio-report.md"
+      "original_report": "audio-report.md",
+      "reconciliation_before_runtime_batch": {
+        "classification": "unchanged implementation/current reachability confirmed",
+        "current_observation": "Saved-bar request now passes async input reservation but still calls arm_capture(index,false). Boundary drains Arm once and starts only at matching cursor, then resets pending_len. Selected-Card pinning is a different scope.",
+        "qualification": "unassessed",
+        "detail": "current/runtime.json"
+      },
+      "implementation_revision": "662cda5baf767530ebf22bb3ea7c212e9095116d",
+      "limits": [
+        "CPU fixture serialization/reopen only; no native/device or fresh-process native qualification."
+      ]
     },
     {
       "id": "audio:AUDIO-02",
@@ -128,36 +138,66 @@
     },
     {
       "id": "core:CORE-4",
-      "classification": "unchanged implementation/current reachability confirmed",
+      "classification": "implemented; CPU qualified",
       "package": "B1",
-      "current_observation": "Saved Path setup is retained, but generic dots/audio and new managed Path lowering still build from self.tuning and live string/fret limits. Capturing a running Stage does not restore the saved Path setup. LO-5 corroborates this defect.",
-      "qualification": "unassessed",
+      "current_observation": "Retained Path setup uses one resolver for display, generic sound and managed lowering; authored order/repeats survive tuning/instrument changes. Viewport clipping is separate from physical availability; rehearsal geometry uses retained string count.",
+      "qualification": "Scoped source review and 859 affected parent/library cases, with five child invocations separate and seven existing ignores. Per-gate scope is in the runtime receipt.",
       "alias_of": null,
-      "detail": "current/runtime.json",
+      "detail": "../runtime-authority_20261018/receipt.json",
       "original_index_title": "CORE-4 \u2014 P2: saved drawn Paths are retuned by the live exploration setup",
-      "original_report": "core-report.md"
+      "original_report": "core-report.md",
+      "reconciliation_before_runtime_batch": {
+        "classification": "unchanged implementation/current reachability confirmed",
+        "current_observation": "Saved Path setup is retained, but generic dots/audio and new managed Path lowering still build from self.tuning and live string/fret limits. Capturing a running Stage does not restore the saved Path setup. LO-5 corroborates this defect.",
+        "qualification": "unassessed",
+        "detail": "current/runtime.json"
+      },
+      "implementation_revision": "662cda5baf767530ebf22bb3ea7c212e9095116d",
+      "limits": [
+        "CPU fixture serialization/reopen only; no native/device or fresh-process native qualification."
+      ]
     },
     {
       "id": "core:CORE-5",
-      "classification": "unchanged implementation/current reachability confirmed",
+      "classification": "implemented; CPU qualified",
       "package": "B2",
-      "current_observation": "Byte-identical SongBar::toggle_silent clears formula_name then substitutes Major and revoices. Current Looper control still calls it.",
-      "qualification": "unassessed",
+      "current_observation": "A serde-defaulted mute flag preserves exact authored formula, pitches, labels and timing; one is_silent method gates audio and saved-song projections. Legacy no-payload rests do not invent Major.",
+      "qualification": "Scoped source review and 859 affected parent/library cases, with five child invocations separate and seven existing ignores. Per-gate scope is in the runtime receipt.",
       "alias_of": null,
-      "detail": "current/runtime.json",
+      "detail": "../runtime-authority_20261018/receipt.json",
       "original_index_title": "CORE-5 \u2014 P2: the saved-song silent toggle replaces the authored chord with Major",
-      "original_report": "core-report.md"
+      "original_report": "core-report.md",
+      "reconciliation_before_runtime_batch": {
+        "classification": "unchanged implementation/current reachability confirmed",
+        "current_observation": "Byte-identical SongBar::toggle_silent clears formula_name then substitutes Major and revoices. Current Looper control still calls it.",
+        "qualification": "unassessed",
+        "detail": "current/runtime.json"
+      },
+      "implementation_revision": "662cda5baf767530ebf22bb3ea7c212e9095116d",
+      "limits": [
+        "CPU fixture serialization/reopen only; no native/device or fresh-process native qualification."
+      ]
     },
     {
       "id": "core:CORE-6",
-      "classification": "unchanged implementation/current reachability confirmed",
+      "classification": "implemented; CPU qualified",
       "package": "B1",
-      "current_observation": "Nonempty Solo matching no dot still falls back to card_voicing in generic Hear. Shape editing and retained recipe paths remain. Managed clock now has additional contact/preview agreement refusal; that does not remove the generic fallback.",
-      "qualification": "unassessed",
+      "current_observation": "Generic and managed mark paths use shared effective contacts. Stale Solo does not fall back to full chord. Captured chord recipes reject mixed valid and unavailable marks like scale recipes.",
+      "qualification": "Scoped source review and 859 affected parent/library cases, with five child invocations separate and seven existing ignores. Per-gate scope is in the runtime receipt.",
       "alias_of": null,
-      "detail": "current/runtime.json",
+      "detail": "../runtime-authority_20261018/receipt.json",
       "original_index_title": "CORE-6 \u2014 P2: stale nonempty Solo marks fall back to sounding the complete chord",
-      "original_report": "core-report.md"
+      "original_report": "core-report.md",
+      "reconciliation_before_runtime_batch": {
+        "classification": "unchanged implementation/current reachability confirmed",
+        "current_observation": "Nonempty Solo matching no dot still falls back to card_voicing in generic Hear. Shape editing and retained recipe paths remain. Managed clock now has additional contact/preview agreement refusal; that does not remove the generic fallback.",
+        "qualification": "unassessed",
+        "detail": "current/runtime.json"
+      },
+      "implementation_revision": "662cda5baf767530ebf22bb3ea7c212e9095116d",
+      "limits": [
+        "CPU fixture serialization/reopen only; no native/device or fresh-process native qualification."
+      ]
     },
     {
       "id": "core:CORE-7",
@@ -574,12 +614,22 @@
     },
     {
       "id": "local-overlay:LO-5",
-      "classification": "unchanged implementation/current reachability confirmed",
+      "classification": "alias of core:CORE-4; implementation CPU qualified",
       "package": "B1",
-      "current_observation": "Same retained Path setup gap as CORE-4; managed Path also uses live tuning. Count once.",
-      "qualification": "unassessed",
+      "current_observation": "Duplicate retained Path setup evidence; resolved with core:CORE-4 in B1, not counted as another canonical defect.",
+      "qualification": "Scoped source review and 859 affected parent/library cases, with five child invocations separate and seven existing ignores. Per-gate scope is in the runtime receipt.",
       "alias_of": "core:CORE-4",
-      "detail": "current/runtime.json"
+      "detail": "../runtime-authority_20261018/receipt.json",
+      "reconciliation_before_runtime_batch": {
+        "classification": "unchanged implementation/current reachability confirmed",
+        "current_observation": "Same retained Path setup gap as CORE-4; managed Path also uses live tuning. Count once.",
+        "qualification": "unassessed",
+        "detail": "current/runtime.json"
+      },
+      "implementation_revision": "662cda5baf767530ebf22bb3ea7c212e9095116d",
+      "limits": [
+        "CPU fixture serialization/reopen only; no native/device or fresh-process native qualification."
+      ]
     },
     {
       "id": "local-overlay:LO-K1",
@@ -1476,5 +1526,7 @@
       "original_report": "views-report.md"
     }
   ],
-  "implementation_followup": "../admission-evidence_20261017/receipt.json"
+  "implementation_followup": "../admission-evidence_20261017/receipt.json",
+  "runtime_followup": "../runtime-authority_20261018/receipt.json",
+  "targeted_runtime_revision": "662cda5baf767530ebf22bb3ea7c212e9095116d"
 }

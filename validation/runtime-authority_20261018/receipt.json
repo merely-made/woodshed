@@ -1,0 +1,199 @@
+{
+  "date": "2026-10-18",
+  "status": "implemented and CPU qualified; unpublished",
+  "baseline": "6e6498af7927a7a821f7c04215dddcaf0ddc25af",
+  "implementation_revision": "662cda5baf767530ebf22bb3ea7c212e9095116d",
+  "scope": {
+    "B1": [
+      "core:CORE-4",
+      "core:CORE-6"
+    ],
+    "B2": [
+      "core:CORE-5"
+    ],
+    "B3": [
+      "audio:AUDIO-01"
+    ],
+    "alias": "local-overlay:LO-5 duplicates core:CORE-4; count once"
+  },
+  "workers": {
+    "count": 3,
+    "model": "gpt-6-luna",
+    "ownership": [
+      "retained Path/contact realization",
+      "SongBar silence",
+      "output capture queue"
+    ],
+    "coordinator": "Source review; cross-consumer audibility/status integration; retained Path neck geometry; final process-bound checks."
+  },
+  "checks": {
+    "core-portable-v2": {
+      "process_receipt": "checks/core-portable-v2.json",
+      "passed": 309,
+      "failed": 0,
+      "ignored": 0,
+      "nested_child_invocations": 0,
+      "source_commit": null,
+      "command": [
+        "cargo",
+        "test",
+        "--locked",
+        "-p",
+        "woodshed-core",
+        "--features",
+        "portable-scenes",
+        "--lib"
+      ]
+    },
+    "views-v4": {
+      "process_receipt": "checks/views-v4.json",
+      "passed": 244,
+      "failed": 0,
+      "ignored": 0,
+      "nested_child_invocations": 0,
+      "source_commit": null,
+      "command": [
+        "cargo",
+        "test",
+        "--locked",
+        "-p",
+        "woodshed-views",
+        "--lib"
+      ]
+    },
+    "host-v2": {
+      "process_receipt": "checks/host-v2.json",
+      "passed": 246,
+      "failed": 0,
+      "ignored": 7,
+      "nested_child_invocations": 5,
+      "source_commit": null,
+      "command": [
+        "cargo",
+        "test",
+        "--locked",
+        "-p",
+        "woodshed-genet",
+        "--bin",
+        "woodshed-genet"
+      ]
+    },
+    "runtime": {
+      "process_receipt": "checks/runtime.json",
+      "passed": 59,
+      "failed": 0,
+      "ignored": 0,
+      "nested_child_invocations": 0,
+      "source_commit": null,
+      "command": [
+        "cargo",
+        "test",
+        "--locked",
+        "-p",
+        "woodshed-audio",
+        "output_runtime::tests::"
+      ]
+    },
+    "wav-parity": {
+      "process_receipt": "checks/wav-parity.json",
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0,
+      "nested_child_invocations": 0,
+      "source_commit": null,
+      "command": [
+        "cargo",
+        "test",
+        "--locked",
+        "-p",
+        "woodshed-audio",
+        "wav_matches_live_processor_across_fractional_clocks_measures_and_chunk_boundaries"
+      ]
+    }
+  },
+  "distinct_parent_library_passes": 859,
+  "child_invocations_separate": 5,
+  "existing_ignored": 7,
+  "source_sha256": {
+    "crates/woodshed-audio/src/output_runtime/processor.rs": "62cd27dd24f4971b6c8ae8a1264c83ffc0c24fb908f15f76481d5e753121ffed",
+    "crates/woodshed-audio/src/output_runtime/tests.rs": "d27655d03c7e9c76b3cd346a445348cc0eb9d7deafcc7313e8f134dc58c3134e",
+    "crates/woodshed-core/src/captured_arpeggio.rs": "c2f1c208dc98fd4d50bd92592d4b21a3052cc8f95d18a3fbd1b55b438bb0be77",
+    "crates/woodshed-core/src/card_shapes.rs": "3c4f2665b4a67bc911b7d052f0ff7b194eb6f0f17c19ee63403b233aeeb39417",
+    "crates/woodshed-core/src/lib.rs": "49e32da67d1efa62bdf2c7df87a7d9e3d5fbb8db384691403718f100b6898459",
+    "crates/woodshed-core/src/practice_clock.rs": "ccdc1ef239be1c6d777569ba181b5df7ff3f8880adc2db5c62d098c9fe609d61",
+    "crates/woodshed-core/src/progression_scene.rs": "ebe76838920fbb3ed303a980691df2be5dbaafbe0ac0da7b6cfc2895e50a04a3",
+    "crates/woodshed-core/src/session_overview.rs": "c8ab0a90fd4952740995d553836b4ce690a552dbd4441f2daaca7cbb1638c98e",
+    "crates/woodshed-core/src/song.rs": "abba140219bed22a262fa4f5d3c02e068938f68530c563c46155ae7537090a88",
+    "crates/woodshed-genet/src/audio.rs": "d21aaa87d7ab3dec281d0e39bf55f70ee23997528829832bbc3b1a62cd3c5165",
+    "crates/woodshed-views/src/stage/looper.rs": "bf66e446120ac54420b9e3fe31ac72e7105417b54a19e367b3702285ebc509ff",
+    "crates/woodshed-views/src/stage/looper/recorder.rs": "f72eb8dbd97f5cda46d72bc4b565d11b105cb15d6cffb85ae48380cb8361f12f",
+    "crates/woodshed-views/src/stage/shapes.rs": "7f966ffaedba9aff46f0a22c836cf4262c68847bc96cdfb00369c7f256bf8070"
+  },
+  "lock_sha256": {
+    "Cargo.lock": "79ffc562fa1f473c5ad05288fbcb4b271f8c5d19fb593d67aeb08c05a2220d3e",
+    "ports/hocket/Cargo.lock": "934fb64b6d8c93efe0ef32866a9045f25f21bb707e4a7f9f481fe977b9675e45",
+    "ports/redshank/Cargo.lock": "9e975dd1fb546a2b31291a20764cfe78b4f76fb76e2703f4a6e8147c0b557ba8",
+    "validation/relationship-recipe/Cargo.lock": "acf93e9754667700a508ec610264e2c7c5a35e1480bb87c717e091b8492d22c5"
+  },
+  "source_continuity": {
+    "runtime_and_wav_gate_revision": "2200350",
+    "changes_from_that_gate_to_final_revision": [
+      "crates/woodshed-core/src/card_shapes.rs",
+      "crates/woodshed-views/src/stage/shapes.rs"
+    ],
+    "explanation": "Only Card neck geometry and its receiving test changed afterwards. Audio runtime, offline export, manifests and locks are identical; their gates are not rerun or counted again."
+  },
+  "excluded": {
+    "views": "Coordinator receiving test referenced label rather than shared LaneProjection.name; actual exit 101 retained.",
+    "views-v2": "Coordinator receiving test held a borrowed projection while mutating the observation; actual exit 101 retained.",
+    "worker_context": "Earlier worker compile/fixture attempts and superseded positive gates are described in lane reports, not promoted to final acceptance or added to distinct counts."
+  },
+  "review": {
+    "skill": "engineering:code-review",
+    "corrections": [
+      "Removed recursive formatting outside owned source.",
+      "Reused stop_capture instead of a duplicate unreachable-arm compaction helper.",
+      "Validated Path Solo/Mute outside viewport and mixed valid/stale recipe contacts.",
+      "Connected all saved-song audibility consumers to is_silent.",
+      "Restored source truth in invalid capture status and reset it for a new arm.",
+      "Added retained-instrument neck geometry, sharing the existing EMPTY geometry sentinel."
+    ]
+  },
+  "limits": [
+    "No native application, resident custody service, browser acceptance, microphone, physical audio or fresh-process native reopen run.",
+    "Serialization/reopen and exact f32 payload checks are CPU fixtures, not native persistence qualification.",
+    "Legacy no-payload rests stay rests; lost historical chords are not reconstructed.",
+    "B4 numeric/audio admission and later audit packages remain open."
+  ],
+  "publication": "Previous six commits published through baseline; this new batch remains local.",
+  "artifact_sha256": {
+    "checks/core-portable-v2.json": "6df73b3aa61f06d19614ab172f8f11d37abfb32fc56b11421307fb061b2dca3b",
+    "checks/core-portable-v2.log": "3f100fae5dad9fd2e19379e20dd755bf16419cff4b85ddb86d99f6f7dfd6a1d9",
+    "checks/current-receipt-links.json": "ffbaf77af3656f11d75138ee66c6f5450a014a56c0d14089894e58541180ec54",
+    "checks/doc-regressions.json": "64fde9028c020d489ef3304de3e2c44d4fa0bfc0be444afcd369559d39b959c7",
+    "checks/doc-regressions.log": "13ec8a9d7bc77e7540a4d91effc9795fbf9c3a4ea1a9db62d20717d48d90b913",
+    "checks/host-v2.json": "e394420bbb9958c0d714db5ab515bf0d219d00ac353d9eaf9140da50e1bfa38f",
+    "checks/host-v2.log": "8682fbf65760008249322b478a199c5cbd926162d15eeb03c3cf4bce2c6ad5a1",
+    "checks/runtime.json": "4c26db078b24cba35eb59091daece1e4191af4239e5072ad0bc58142d378cd30",
+    "checks/runtime.log": "077e746776f083a360e19921a205b27911da2a9b39bb66bacbc835f9048f55f8",
+    "checks/source-whitespace.json": "cb21387528b4e7301049e5cd57b170710d7090d9a468c8bfce057bf8a2006cdc",
+    "checks/source-whitespace.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "checks/views-v4.json": "03ee2a7317c862aebf89e954918df413895e7292740a510864d1cb9c0719d324",
+    "checks/views-v4.log": "67ec99ac8985bbc30e2cb8b6ffe8e015428b5973a2ea766a2dffa6f628bdb994",
+    "checks/wav-parity.json": "16bbacc878acd3ceaabfa2d114f5cdd06ee7e5ee6e1df08f9464740f936779e1",
+    "checks/wav-parity.log": "7b63e5f898428ec18eee2bc4f2d32e50898ace02bfc7041d8933e2795345bb8d",
+    "excluded/views-v2.json": "51a91a593660a4009fc829caba902ba67dc7fb2bbdca195511c3cce4b04c87aa",
+    "excluded/views-v2.log": "f24d87adda674c05cb98422cd56ae34eb5e9ab5b1ad05047cad41b456fbbe398",
+    "excluded/views.json": "b02e5ed11bee8fce7cccdbc16887e9658997fc41278380dc0424526ef27fe397",
+    "excluded/views.log": "cebae0fd69ba0748057aabc9a2c0c022e4af9210dcbd901c7251d1f44226e5ed",
+    "lanes/capture.log": "aba87f2e1d862c7d6de568690e0d576fdd1e20a326ed2e230b3955f07a11f589",
+    "lanes/material.md": "e1c71b70ab9ba2cd80fc0f4e3d3e0821f82b89fcf11973693e03ea66117ff3cb",
+    "lanes/silence.md": "447844cdad6f7385ba457b22312719a2a939a4ad2d79773535f60fedf2fa4cfd"
+  },
+  "documentation_checks": {
+    "regression": "checks/doc-regressions.json",
+    "current_plan_and_receipt": "checks/current-receipt-links.json",
+    "source_whitespace": "checks/source-whitespace.json",
+    "raw_logs": "Preserved byte-for-byte, excluded from source whitespace normalization."
+  }
+}

@@ -169,12 +169,18 @@
   "external_originals": "/Users/markik/Code/testing/woodshed/full-source-audit-20261016",
   "coordination_artifact_sha256": {
     "validation/full-source-audit_20261016/README.md": "9714c79de195777ec72d45c3d23ea1306d197192db56faf0ee42d05c9f909a13",
-    "validation/full-source-audit_20261016/current-finding-ledger.json": "64a7663a808b3912be04622c445e560051bd5b7f7dd72f4370ad81fac9f5b156",
+    "validation/full-source-audit_20261016/current-finding-ledger.json": "c955b069ac4aabfe578ae09a9cff3e51b28922e24a4b2d9320f82f78c9d479fe",
     "validation/full-source-audit_20261016/verify_coverage.py": "2814ed0bebba4b97f1cc1b023295d8bdf8aace874b3431a7738fd17333930add",
     "validation/full-source-audit_20261016/test_verify_coverage.py": "9b464695e4db29708029e84ac54cda87081ae94f002b2274fbb211503c5eac3a",
-    "design_docs/2026-10-16_source_authority_audit_plan.md": "d829a952b9a941b4ce623cf172de13ade271679912569b92cc5c1ec647b0065a",
-    "design_docs/DOC_README.md": "83eff42b23a594a2b2058c28692deb588d6131ed1069bdb47226605ef30f89fd"
+    "design_docs/2026-10-16_source_authority_audit_plan.md": "48dd8043363e4dd42ac91d98a80fd7c845691fcb8cd1c8289a0b12f90e6f27cd",
+    "design_docs/DOC_README.md": "42d42ace7992a09bb79bffad9ba6e58b721789b6d1d7f999970f76811513e1aa"
   },
   "publication_record": "publication.json",
-  "implementation_followup": "../admission-evidence_20261017/receipt.json"
+  "implementation_followup": "../admission-evidence_20261017/receipt.json",
+  "runtime_followup": "../runtime-authority_20261018/receipt.json",
+  "runtime_followup_artifact_sha256": {
+    "validation/runtime-authority_20261018/README.md": "8d76c83bda5bd38d037841b37166e7f13c5e291f3655b26c1c15df2a7553c2bd",
+    "validation/runtime-authority_20261018/receipt.json": "48dc683605a56b8d30e8fab7fe53edde8e4620a0b8976d9481b1a38f7b54dacd",
+    "validation/admission-evidence_20261017/publication.json": "9f5c94cb193ec69b9bc89748ea1836b232cd95190e248d4924f64ddc3156451f"
+  }
 }

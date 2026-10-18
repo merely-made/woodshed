@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "run_id": "runtime-authority-20261018-runtime",
+  "command": [
+    "cargo",
+    "test",
+    "--locked",
+    "-p",
+    "woodshed-audio",
+    "output_runtime::tests::"
+  ],
+  "started_at": "2026-10-18T08:04:52.828509Z",
+  "ended_at": "2026-10-18T08:04:57.285207Z",
+  "exit_code": 0,
+  "cwd": "/Users/markik/Code/repos/woodshed",
+  "log": "/Users/markik/Code/testing/woodshed/runtime-authority-20261018/final/runtime.log",
+  "log_sha256": "077e746776f083a360e19921a205b27911da2a9b39bb66bacbc835f9048f55f8"
+}

@@ -1,6 +1,6 @@
 # Hocket admission and evidence-gate corrections
 
-Status: implemented and CPU qualified at `0effba1`; local commits only. This is the
+Status: implemented and CPU qualified at `0effba1`; published through `6e6498a` on 2026-10-18 ([publication](publication.json)). This is the
 first implementation batch after the frozen source audit closeout. It addresses
 Hocket H3/H5 and evidence E1/E2 through their existing owners.
 
