@@ -260,7 +260,7 @@ pub fn projection(ui: &super::UiState) -> RecorderProjection<'_, RecorderKey> {
                     format!(
                         "Bar {} · {}",
                         index + 1,
-                        if bar.chord_label.is_empty() {
+                        if bar.is_silent() {
                             "silent"
                         } else {
                             &bar.chord_label
@@ -360,7 +360,11 @@ pub fn projection(ui: &super::UiState) -> RecorderProjection<'_, RecorderKey> {
     transport.status = if set_capture_busy && accepted_set_capture.is_none() {
         "Capture target unavailable · stop all loops before recording again".into()
     } else if observed.capture_invalid {
-        "Capture input fault · take will be rejected on retirement".into()
+        if busy {
+            "Capture incomplete · take will be discarded".into()
+        } else {
+            "Capture incomplete · no new take saved".into()
+        }
     } else if busy && observed.input_permission_pending {
         "Allow microphone access in macOS · recording has not started".into()
     } else if busy && observed.recording_bar.is_none() && observed.input_rate.is_none() {
@@ -928,6 +932,31 @@ mod tests {
         assert_eq!(display.lanes[1].recording, RecordingState::Recording);
         assert_eq!(display.transport.record_note, "Recording Card 1");
     }
+    #[test]
+    fn saved_mute_changes_the_admitted_control_scope_and_failed_capture_is_not_armed() {
+        let mut ui = super::super::UiState::new();
+        ui.song.bars = vec![Default::default()];
+        ui.looper.source = LooperSource::SavedSong;
+        ui.recorder_observation = RecorderObservation {
+            source: Some(LooperSource::SavedSong),
+            saved_song: Some(ui.song.clone()),
+            output_rate: Some(48000),
+            ..Default::default()
+        };
+        let old = context(&ui);
+        ui.song.bars[0].toggle_silent();
+        ui.recorder_observation.saved_song = Some(ui.song.clone());
+        assert_ne!(context(&ui), old, "a queued control cannot silently adopt changed audibility");
+        ui.recorder_observation.capture_invalid = true;
+        let display = projection(&ui);
+        assert!(display.lanes[0].label.contains("silent"));
+        assert_eq!(display.transport.recording, RecordingState::Idle);
+        assert!(display.transport.status.contains("no new take saved"));
+        ui.recorder_observation.capture_busy = true;
+        let display = projection(&ui);
+        assert!(display.transport.status.contains("take will be discarded"));
+    }
+
     #[test]
     fn saved_song_capture_keeps_moving_destination_and_selection_contract() {
         let mut ui = super::super::UiState::new();

@@ -22,7 +22,7 @@ pub struct SongBar {
     /// Section / role label ("I", "Chorus"); doubles as the section
     /// marker in the timeline.
     pub label: String,
-    /// Chord display label ("A", "Dm7"); empty = silent bar.
+    /// Authored chord display label ("A", "Dm7"), retained while muted.
     pub chord_label: String,
     /// Chord catalog key for backends that re-derive ("Major", "Minor 7").
     pub formula_name: String,
@@ -34,7 +34,7 @@ pub struct SongBar {
     /// default keeps older saves (which predate the field) loading.
     #[serde(default)]
     pub root_pc: u8,
-    /// Root frequency in Hz (0.0 = silent bar, click only).
+    /// Authored root frequency in Hz; legacy zero-root bars remain inaudible.
     pub root_freq_hz: f32,
     /// Pre-computed chord-tone frequencies, lowest first.
     pub pitches_hz: Vec<f32>,
@@ -97,8 +97,8 @@ impl SongBar {
     }
 
     /// Recompute `root_freq_hz`, `pitches_hz`, and `chord_label` from the
-    /// current `root_pc` + `formula_name`. Called after any chord edit; a
-    /// silent bar (empty formula) clears the voicing.
+    /// current `root_pc` + `formula_name`. An empty formula clears authored
+    /// voicing. Chord edits leave the explicit mute state unchanged.
     pub fn revoice(&mut self) {
         if self.formula_name.is_empty() {
             self.root_freq_hz = 0.0;
@@ -126,7 +126,7 @@ impl SongBar {
     }
 
     /// Cycle the chord quality through the catalog (revoicing). An empty
-    /// `formula_name` (silent) re-enters at the first catalog entry.
+    /// `formula_name` re-enters at the first catalog entry.
     pub fn cycle_formula(&mut self) {
         let names: Vec<&str> = chord_catalog().iter().map(|c| c.name).collect();
         let next = match names.iter().position(|n| *n == self.formula_name.as_str()) {

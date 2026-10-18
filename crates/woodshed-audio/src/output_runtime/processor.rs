@@ -1875,6 +1875,10 @@ impl AudioNodeProcessor for Processor {
                         take,
                     } => {
                         if let Some(take) = take.take() {
+                            // This is a new accepted attempt, not the prior
+                            // invalidated take's waiting phase. Queue refusal
+                            // below still publishes its own invalid result.
+                            self.invalid = false;
                             self.push_boundary(Boundary::Arm {
                                 bar: *bar_idx,
                                 seek: *seek,
