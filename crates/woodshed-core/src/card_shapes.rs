@@ -67,7 +67,7 @@ impl std::fmt::Display for CardShapeUnavailable {
 
 impl std::error::Error for CardShapeUnavailable {}
 
-/// The card-specific neck geometry a selected shape uses. Frets are physical
+/// Card-specific neck geometry shared by retained musical realizations. Frets are physical
 /// nut-relative coordinates; `capo` is retained so a view can distinguish the
 /// capoed open position from the nut's open string.
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -76,6 +76,16 @@ pub struct CardShapeGeometry {
     pub physical_fret_start: u8,
     pub physical_fret_end: u8,
     pub capo: u8,
+}
+
+impl CardShapeGeometry {
+    /// An unavailable retained setup must not borrow the live neck geometry.
+    pub const EMPTY: Self = Self {
+        string_count: 0,
+        physical_fret_start: 0,
+        physical_fret_end: 0,
+        capo: 0,
+    };
 }
 
 /// The exact effective setup used to resolve a selected shape. The concert
@@ -405,10 +415,27 @@ impl StageState {
         self.selected_card_shape(card)
     }
 
-    /// Geometry for a selected chord shape, including a selected-but-invalid
-    /// ordinal when its setup itself resolves. `None` preserves the ordinary
-    /// live-board geometry for unselected/non-chord cards.
+    /// Geometry for a retained Path or selected chord shape, including an
+    /// invalid chord ordinal when its setup itself resolves. Other unselected
+    /// material retains the ordinary live-board geometry.
     pub fn card_shape_geometry(&self, card: &Card) -> Option<CardShapeGeometry> {
+        if matches!(card.material, Material::Path { .. }) {
+            // Path notes already use this retained tuning resolver. The neck
+            // must use its string count too; the live window clips display.
+            return Some(match self.resolve_card_tuning(card) {
+                Ok(tuning) => {
+                    let limit = tuning.instrument.standard_fret_count();
+                    let start = self.fret_start.min(limit);
+                    CardShapeGeometry {
+                        string_count: tuning.string_count(),
+                        physical_fret_start: start,
+                        physical_fret_end: self.fret_count.min(limit).max(start),
+                        capo: card.setting.capo.unwrap_or(0),
+                    }
+                },
+                Err(_) => CardShapeGeometry::EMPTY,
+            });
+        }
         if !matches!(card.material, Material::Chord { .. }) || card.setting.voicing_idx.is_none() {
             return None;
         }
