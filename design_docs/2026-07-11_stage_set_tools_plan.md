@@ -2394,6 +2394,18 @@ overlap, also present in the hash-verified October 15 capture. Camera controls
 and hit-face geometry pass; graph-label readability remains polish work. The
 recorder scroll matrix has no reviewed black lower strip or footer clipping.
 
+Shared label-placement continuation (2026-10-17, in progress): the overlap
+originates in Mere's Cambium `graph_canvas` component, not Woodshed's material
+projection. The shared resolver will try alternate anchored sides in screen
+space, use one rectangle for culling and CSS, and suppress a lower-priority
+label only when no clear side remains. Node identity, full accessible names
+and navigation targets remain intact. Selected, focused and hovered labels
+get placement priority without a mutual-overlap exemption. Receiving done
+conditions: shared component and retained-layout regressions, locked desktop
+build, actual retained native label boxes disjoint and bounded, and reviewed
+Related default/Fit/zoom/pan/compact/node-navigation captures. Publication is
+separate; old captures retain their original source and observations.
+
 **Current state: open.** Windows alpha behavior exists. Three-width product
 acceptance, touch/reduced-motion coverage, and Mac/Linux receipts remain open.
 The October 11 Set-capture review also records an existing rendering residual:

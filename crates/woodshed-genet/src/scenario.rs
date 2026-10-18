@@ -1056,6 +1056,29 @@ impl Snapshot<'_, '_> {
             })
     }
 
+    /// Inspect the actual retained label boxes; absent geometry is a failed
+    /// observation, never a zero-collision success. Only used on Related.
+    fn related_label_geometry(&self) -> Option<(usize, usize, usize)> {
+        use layout_dom_api::LayoutDom;
+        let dom = self.ctx.runner.dom();
+        let dom = dom.borrow();
+        let roots = dom.all_with_class(dom.document(), "graph-canvas-swatch");
+        if roots.len() != 1 { return None; }
+        let (x, y, width, height) = self.ctx.painted_rect(roots[0])?;
+        let labels = dom.all_with_class(dom.document(), "graph-canvas-swatch-label");
+        let boxes: Option<Vec<_>> = labels.iter().map(|&node| self.ctx.painted_rect(node)).collect();
+        let boxes = boxes?;
+        let outside = boxes.iter().filter(|&&(lx, ly, w, h)| w <= 0.0 || h <= 0.0
+            || lx < x - 0.5 || ly < y - 0.5 || lx + w > x + width + 0.5 || ly + h > y + height + 0.5).count();
+        let mut collisions = 0;
+        for (i, &(ax, ay, aw, ah)) in boxes.iter().enumerate() {
+            for &(bx, by, bw, bh) in &boxes[i + 1..] {
+                if ax < bx + bw && bx < ax + aw && ay < by + bh && by < ay + ah { collisions += 1; }
+            }
+        }
+        Some((boxes.len(), collisions, outside))
+    }
+
     fn graph_node_card_count(&self) -> usize {
         use layout_dom_api::LayoutDom;
         let dom = self.ctx.runner.dom();
@@ -2406,6 +2429,13 @@ impl Snapshot<'_, '_> {
                         .collect::<Vec<_>>()
                         .join(","),
                 );
+        }
+        let label_geometry = self.related_label_geometry();
+        snap = snap.with_field("related-label-geometry-available", label_geometry.is_some().to_string());
+        if let Some((count, collisions, outside)) = label_geometry {
+            snap = snap.with_field("related-label-count", count.to_string())
+                .with_field("related-label-collisions", collisions.to_string())
+                .with_field("related-label-outside", outside.to_string());
         }
         // Graphshell stack lift P2: each graph surface's camera, and pictograph's
         // face measurement of hit targets against painted nodes.
