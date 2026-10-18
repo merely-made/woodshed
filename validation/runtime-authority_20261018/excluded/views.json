@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "run_id": "runtime-authority-20261018-views",
+  "command": [
+    "cargo",
+    "test",
+    "--locked",
+    "-p",
+    "woodshed-views",
+    "--lib"
+  ],
+  "started_at": "2026-10-18T08:01:24.107251Z",
+  "ended_at": "2026-10-18T08:01:39.419416Z",
+  "exit_code": 101,
+  "cwd": "/Users/markik/Code/repos/woodshed",
+  "log": "/Users/markik/Code/testing/woodshed/runtime-authority-20261018/final/views.log",
+  "log_sha256": "cebae0fd69ba0748057aabc9a2c0c022e4af9210dcbd901c7251d1f44226e5ed"
+}

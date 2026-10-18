@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "run_id": "runtime-authority-20261018-host-v2",
+  "command": [
+    "cargo",
+    "test",
+    "--locked",
+    "-p",
+    "woodshed-genet",
+    "--bin",
+    "woodshed-genet"
+  ],
+  "started_at": "2026-10-18T08:07:54.199265Z",
+  "ended_at": "2026-10-18T08:08:38.630848Z",
+  "exit_code": 0,
+  "cwd": "/Users/markik/Code/repos/woodshed",
+  "log": "/Users/markik/Code/testing/woodshed/runtime-authority-20261018/final/host-v2.log",
+  "log_sha256": "8682fbf65760008249322b478a199c5cbd926162d15eeb03c3cf4bce2c6ad5a1"
+}

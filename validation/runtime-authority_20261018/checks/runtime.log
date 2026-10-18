@@ -1,0 +1,124 @@
+warning: patch `mere-proofs v0.1.0 (https://github.com/merely-made/mere.git?branch=main#d1a200b1)` was not used in the crate graph
+warning: patch `mere-transport v0.0.2 (https://github.com/merely-made/murm.git?branch=main#cba46d85)` was not used in the crate graph
+warning: patch `mere-webrtc-carrier v0.0.1 (https://github.com/merely-made/murm.git?branch=main#cba46d85)` was not used in the crate graph
+help: Check that the patched package version and available features are compatible
+      with the dependency requirements. If the patch has a different version from
+      what is locked in the Cargo.lock file, run `cargo update` to use the new
+      version. This may also occur with an optional dependency that is not enabled.
+   Compiling woodshed-audio v0.1.0 (/Users/markik/Code/repos/woodshed/crates/woodshed-audio)
+warning: use of deprecated method `std::sync::atomic::Atomic::<u64>::fetch_update`: renamed to `try_update` for consistency
+  --> crates/woodshed-audio/src/capture_feed.rs:33:14
+   |
+33 |             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |generation| {
+   |              ^^^^^^^^^^^^
+   |
+   = note: `#[warn(deprecated)]` on by default
+help: replace the use of the deprecated method
+   |
+33 -             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |generation| {
+33 +             .try_update(Ordering::AcqRel, Ordering::Acquire, |generation| {
+   |
+
+warning: use of deprecated method `std::sync::atomic::Atomic::<usize>::fetch_update`: renamed to `try_update` for consistency
+   --> crates/woodshed-audio/src/output_runtime.rs:473:14
+    |
+473 |             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |              ^^^^^^^^^^^^
+    |
+help: replace the use of the deprecated method
+    |
+473 -             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+473 +             .try_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |
+
+warning: use of deprecated method `std::sync::atomic::Atomic::<usize>::fetch_update`: renamed to `try_update` for consistency
+   --> crates/woodshed-audio/src/output_runtime.rs:521:14
+    |
+521 |             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |              ^^^^^^^^^^^^
+    |
+help: replace the use of the deprecated method
+    |
+521 -             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+521 +             .try_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |
+
+warning: use of deprecated method `std::sync::atomic::Atomic::<usize>::fetch_update`: renamed to `try_update` for consistency
+   --> crates/woodshed-audio/src/output_runtime.rs:542:14
+    |
+542 |             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |              ^^^^^^^^^^^^
+    |
+help: replace the use of the deprecated method
+    |
+542 -             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+542 +             .try_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |
+
+warning: `woodshed-audio` (lib test) generated 4 warnings (run `cargo fix --lib -p woodshed-audio --tests` to apply 4 suggestions)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 3.46s
+     Running unittests src/lib.rs (target/build/debug/deps/woodshed_audio-3f62f34122ac02da)
+
+running 59 tests
+test output_runtime::tests::backing_phrase_render_work_is_bounded_across_the_whole_snapshot ... ok
+test output_runtime::tests::both_metronome_transport_edges_cancel_previews_but_tempo_only_preserves_them ... ok
+test output_runtime::tests::a_one_step_click_pattern_retriggers_every_cycle ... ok
+test output_runtime::tests::backing_click_is_independent_of_calibration_pattern ... ok
+test output_runtime::tests::arm_after_seek_resolves_at_that_same_ordered_boundary ... ok
+test output_runtime::tests::a_new_arm_after_cancellation_supersedes_the_old_future_target ... ok
+test output_runtime::tests::arbitrary_finite_tempo_edits_preserve_beat_phase_and_loop_changes_do_not_restart ... ok
+test output_runtime::tests::boundary_stop_cancels_an_earlier_unstarted_future_arm ... ok
+test output_runtime::tests::boundary_operations_remain_bounded_after_command_acknowledgement ... ok
+test output_runtime::tests::cancelling_a_future_arm_before_its_target_releases_it_without_recording ... ok
+test output_runtime::tests::cancellation_keeps_accepted_boundary_operations_in_fifo_order ... ok
+test output_runtime::tests::atomic_calibration_start_uses_one_slot_and_full_queue_rejection_preserves_pattern ... ok
+test output_runtime::tests::canonical_metronome_uses_rounded_denominator_beats_without_boundary_drift ... ok
+test output_runtime::tests::clear_session_stops_an_audible_program_at_the_next_callback_boundary ... ok
+test output_runtime::tests::cancelled_previews_do_not_publish_and_preview_voices_are_bounded ... ok
+test output_runtime::tests::fixed_strum_offset_must_fit_before_the_card_ends ... ok
+test output_runtime::tests::count_in_waits_one_measure_and_muted_click_skips_it ... ok
+test output_runtime::tests::exact_card_preview_preserves_short_duration_and_refuses_unrepresentable_output ... ok
+test output_runtime::tests::clearing_pcm_preserves_play_accepted_before_the_first_graph_block ... ok
+test output_runtime::tests::explicit_next_completes_a_timed_card_once_and_starts_the_next_card ... ok
+test output_runtime::tests::clear_session_silences_and_retires_program_even_when_observer_queue_is_full ... ok
+test output_runtime::tests::fractional_tempo_count_in_uses_one_canonical_measure ... ok
+test output_runtime::tests::future_saved_bar_arm_survives_variable_intermediate_boundaries ... ok
+test output_runtime::tests::focused_card_auto_repeats_but_explicit_next_leaves_it_even_while_paused ... ok
+test output_runtime::tests::full_transition_queue_freezes_clock_and_resume_preserves_every_card_event ... ok
+test output_runtime::tests::idle_attached_capture_does_not_block_program_after_take_is_retired ... ok
+test output_runtime::tests::invalid_absolute_timing_preserves_admitted_backing_and_capture_refuses_it ... ok
+test output_runtime::tests::nonfinite_preview_inputs_are_refused_before_normalization_without_cancelling_valid_work ... ok
+test output_runtime::tests::manual_program_keeps_started_span_open_until_explicit_advance ... ok
+test output_runtime::tests::overflow_before_boundary_is_ignored_but_during_take_invalidates ... ok
+test output_runtime::tests::invalid_phrase_replacement_preserves_the_accepted_runtime ... ok
+test output_runtime::tests::prepared_chord_matches_legacy_strum_and_warm_cache_reuses_pcm ... ok
+test output_runtime::tests::one_shot_ending_before_a_future_arm_reports_invalid_capture ... ok
+test output_runtime::tests::prepared_integer_cycle_tone_meets_frequency_error_and_has_bounded_loop_seam ... ok
+test output_runtime::tests::pausing_preserves_a_future_arm_until_playback_resumes ... ok
+test output_runtime::tests::production_graph_is_silent_stopped_and_has_one_device_clock ... ok
+test output_runtime::tests::pause_freezes_program_position_and_pcm_then_resume_continues_the_same_event ... ok
+test output_runtime::tests::repeated_paused_navigation_never_starts_an_unheard_card_before_resume ... ok
+test output_runtime::tests::phrase_mixes_with_capture_and_click_across_loop_boundaries_without_callback_allocation ... ok
+test output_runtime::tests::seconds_phrase_work_is_bounded_across_segments ... ok
+test output_runtime::tests::primed_input_survives_in_block_seek_arm_and_replays_without_edit ... ok
+test output_runtime::tests::selected_capture_tests::selected_arm_waits_through_count_in_and_boundary_without_recording_lead_input ... ok
+test output_runtime::tests::seconds_domain_card_and_gate_keep_fixed_device_frame_duration_across_tempo_edit ... ok
+test output_runtime::tests::selected_capture_tests::selected_stop_cancels_unstarted_arm_and_preserves_follow_and_legacy_guards ... ok
+test output_runtime::tests::selected_capture_tests::existing_follow_capture_still_crosses_nonuniform_song_segments_with_either_seek_flag ... ok
+test output_runtime::tests::selected_capture_tests::selection_and_stale_seek_or_rewind_cannot_redirect_a_reserved_or_active_take ... ok
+test output_runtime::tests::stale_epoch_commands_cannot_pause_or_retime_a_replacement_program ... ok
+test output_runtime::tests::starvation_invalidates_and_reset_does_not_publish_old_owner_pcm ... ok
+test output_runtime::tests::selected_capture_tests::selected_invalid_input_never_publishes_partial_pcm_or_changes_other_takes ... ok
+test output_runtime::tests::terminal_one_shot_cancels_an_unreachable_arm ... ok
+test output_runtime::tests::unrepresentable_future_tone_becomes_a_per_card_refusal_sentinel ... ok
+test output_runtime::tests::tempo_edit_preserves_fractional_metronome_phase ... ok
+test output_runtime::tests::unsupported_rates_and_aggregate_resources_are_rejected_before_publication ... ok
+test output_runtime::tests::variable_tempo_blocks_and_one_shot_clear_the_entire_tail ... ok
+test output_runtime::tests::absolute_backing_duration_and_phrase_are_block_size_invariant_without_callback_allocation ... ok
+test output_runtime::tests::selected_capture_tests::selected_bars_and_seconds_repeat_replace_or_overdub_only_the_original_target ... ok
+test output_runtime::tests::grouped_strum_offsets_share_one_onset_and_all_256_legacy_pitch_slots_are_supported ... ok
+test output_runtime::tests::legacy_capture_plays_exactly_but_clear_is_required_before_new_recording ... ok
+test output_runtime::tests::fractional_and_eighth_meter_count_in_and_capture_end_on_exact_frames_without_allocating ... ok
+
+test result: ok. 59 passed; 0 failed; 0 ignored; 0 measured; 148 filtered out; finished in 0.21s
+

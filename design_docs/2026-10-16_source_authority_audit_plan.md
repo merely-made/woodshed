@@ -3,7 +3,8 @@
 Date: 2026-10-16; coordination closure: 2026-10-17.
 Status: complete collective read of frozen `d12201bf`; current-source finding
 reconciliation complete and published through `8204688`. Remediation remains open;
-H3/H5 and Q1 implementation is CPU qualified in a separate local batch. The frozen
+H3/H5 and Q1 implementation is CPU qualified and published through `6e6498a`.
+B1–B3 runtime authority corrections are CPU qualified in a separate local batch. The frozen
 audit closure itself adds no product fixes or product qualification.
 
 ## Scope and result
@@ -69,7 +70,7 @@ source-audit delivery; it does not mark the remaining fixes complete.
 
 ### P4 Repair Hocket admission and operational evidence gates
 
-Status (2026-10-17): implemented and CPU qualified at `0effba1`; unpublished. Three
+Status (2026-10-18): implemented and CPU qualified at `0effba1`; published through `6e6498a`. Three
 lower-cost parallel workers have disjoint ownership: Hocket host identity/media
 admission (H3/H5), CI/font process evidence (E1), and revision-scoped target
 resolution in the link checker (E2). The coordinator owns integration and custody
@@ -83,8 +84,32 @@ and meaningful regression controls pass with observed process exits. Native
 custody/reopen and physical qualification remain separate. The [batch receipt](../validation/admission-evidence_20261017/README.md) records
 93 Hocket, 14 process and seven link controls (114 distinct passes), two existing
 ignores, real exits and retained excluded attempts. New implementation
-commits stay local for review; the preceding push authorized the already
-qualified label adoption and audit closeout.
+commits were published on 2026-10-18 under explicit user authorization.
+
+### P5 Reduce competing runtime/material decisions (B1–B3)
+
+Status (2026-10-18): implemented and CPU qualified at `662cda5`; unpublished.
+Baseline: published `6e6498a`. Three Luna workers
+have disjoint code ownership: core retained-setup/selection realization (B1),
+SongBar payload-preserving silence (B2), and processor future-bar capture arms
+(B3). The coordinator owns cross-consumer integration, authority review and the
+receipt. No worker owns native validation, device operations, supplier updates,
+or capture clock migration.
+
+Prefer one resolution of retained instrument/setup and selected contacts, one
+lossless authored song payload with explicit audibility, and the existing bounded
+processor command authority. Do not add parallel schedulers, material caches,
+backup chord copies or a universal framework. Compatibility must preserve old
+SongDoc content, existing takes and PCM. Done when meaningful CPU regressions
+prove retained/inherited setup and repeated Path order, no full-chord fallback
+for stale Solo, exact silence/serialization preservation, future-bar arm retention
+and cancellation/termination, with relevant no-allocation/parity checks. Native
+qualification remains separate. The [runtime receipt](../validation/runtime-authority_20261018/README.md)
+records 859 distinct parent/library passes, five separate child invocations and
+seven existing ignores, with real process exits and excluded draft runs. Path
+neck geometry shares retained setup and the existing empty-geometry contract;
+no separate scheduler, backup chord store or cleanup path was retained. New
+implementation stays local for review.
 
 ## Current findings and next implementation order
 
@@ -110,10 +135,14 @@ qualified label adoption and audit closeout.
    process controls, seven link controls and the real documentation scan pass.
    Historical artifacts remain unchanged; their missing execution metadata is
    not synthesized and their product runs are not reclassified as failures.
-4. **Continue live model/runtime corrections through their owners.** Retained
-   Path setup and stale Solo (B1), lossy saved-song silence toggling (B2),
-   non-seeking future-bar capture arms (B3), finite PCM/onset/calibration admission
-   (B4), shared Recorder SelectOne admission (B5), Hocket tempo replay and failure reporting,
+4. **B1–B3 now have scoped CPU-qualified corrections.** Retained Path/contact
+   resolution is shared across display, generic sound, managed lowering and
+   durable recipe validation, with retained neck geometry in the view. SongBar
+   silence preserves authored payload and one audibility rule. Future-bar Arms
+   use the existing bounded queue and cleanup, with ordered stop/pause/seek and
+   unreachable-target observations. The next runtime work is finite
+   PCM/onset/calibration admission (B4), shared Recorder SelectOne admission
+   (B5), Hocket tempo replay and failure reporting,
    Redshank preview/runtime control and idle-worker completion remain separate
    product/controller seams. Protocol/instrument fixes B12–B14 preserve write,
    readback, restoration, incomplete data and output-file outcomes. Ringdown X1
@@ -178,3 +207,7 @@ implementation remains a separate preceding local change.
 2026-10-17 implementation restart: user approved the next H3/H5 and Q1 fixes with cheaper parallel workers. Historical reports and source-bound qualification inputs remain unchanged; this batch will record its own source and executable checks.
 
 2026-10-17 H3/H5 and Q1 implementation: three Luna workers supplied disjoint patches; coordinator source review and final H5 fixture completed integration. Source `0effba1` passes 93 Hocket cases; process/link controls contribute 21 distinct cases. The original H4 dirty-state regression remains unchanged. New commits remain local, with native custody/reopen and physical evidence explicitly outside this batch.
+
+2026-10-18: published six H3/H5 and Q1 commits through `6e6498a` after remote refresh; started B1–B3 with cheaper parallel workers and explicit ownership. The native lane remains untouched.
+
+2026-10-18 B1–B3 completion: source `662cda5` is CPU qualified, with 859 distinct parent/library passes, five separate child invocations and seven existing ignores. The final review added the retained-instrument Path neck receiving case and reused the existing empty geometry and capture cancellation. Four canonical findings are addressed; LO-5 remains an alias of CORE-4. All new commits remain local. No native/device or fresh-process native acceptance is claimed.

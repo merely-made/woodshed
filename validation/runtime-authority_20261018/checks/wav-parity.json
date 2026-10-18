@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "run_id": "runtime-authority-20261018-wav-parity",
+  "command": [
+    "cargo",
+    "test",
+    "--locked",
+    "-p",
+    "woodshed-audio",
+    "wav_matches_live_processor_across_fractional_clocks_measures_and_chunk_boundaries"
+  ],
+  "started_at": "2026-10-18T08:04:57.336776Z",
+  "ended_at": "2026-10-18T08:04:58.249398Z",
+  "exit_code": 0,
+  "cwd": "/Users/markik/Code/repos/woodshed",
+  "log": "/Users/markik/Code/testing/woodshed/runtime-authority-20261018/final/wav-parity.log",
+  "log_sha256": "7b63e5f898428ec18eee2bc4f2d32e50898ace02bfc7041d8933e2795345bb8d"
+}
