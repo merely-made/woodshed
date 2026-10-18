@@ -1,19 +1,18 @@
-# Ringdown — an independent client for the HyVibe smart guitar
+# Ringdown — desktop performance control for the HyVibe smart guitar
 
 **Date:** 2026-08-27
-**Status:** in progress. **Phase 1 is complete** as of 2026-08-27: the
-protocol is hardware-verified, both transports are implemented, and the one
-method that resisted (`ReadConfig`) is established as broken in the firmware
-rather than blocked by anything ringdown does — its contents reachable by
-composing methods that work (H19). Detail below.
+**Status (2026-10-17):** in progress. Phase 0 and the Phase 1 transport/status
+proof landed; both LLT transports exist. Later hardware sessions established
+metronome and effect control, file retrieval and playable bank creation (H47).
+These receipts name their historical instrument/firmware and do not qualify
+the owner's recent update. `ReadConfig` wedged that firmware (H18) and remains
+guarded; it is not a prerequisite to performance control.
 
-Phase 0 landed 2026-08-27. **Phase 1 record:** the GATT surface (H1), the version banner (H2), and a full `GetStatus`
-round-trip (H4) are hardware-verified against instrument H2-CC340, with the
-device's reply pinned as a test fixture. Remaining before the phase closes: `ReadConfig`,
-which needs **LLT2** (H6/F14). The file mechanism was explored as a way around
-that and does not reach the configuration (H16), so Phase 2.5 is confirmed
-necessary rather than merely likely. Nothing has been written to the guitar's
-configuration; every exchange so far has been a read.
+The next product target is **desktop performance control and scripting**,
+assessing a software Bluetooth stomp box together with the new Beats feature.
+The current assessment, evidence boundaries and P0–P4 implementation phases
+live in the [client surface plan](2026-09-02_client_surface_plan.md#desktop-performance-assessment-2026-10-17).
+The findings below retain the protocol and hardware history.
 
 ---
 
@@ -21,11 +20,13 @@ configuration; every exchange so far has been a read.
 
 The HyVibe system turns an acoustic guitar into its own amplifier, multi-effect
 processor, looper, and speaker, with the DSP running on hardware inside the
-instrument. The only way to configure it is the vendor's iOS/Android app.
-**Ringdown is an independent desktop client** that speaks the guitar's own
-Bluetooth protocol directly, so the instrument can be configured — eventually
-past what the phone app exposes — from a computer, and so its capability is
-owned rather than rented from an app that could disappear.
+instrument. The vendor provides an iOS/Android configuration app and Bluetooth
+MIDI pedal support. **Ringdown is an independent desktop controller** for
+preparing tones, triggering performance actions and scripting the guitar from
+a computer. Existing code speaks the app's Bluetooth protocol; the software
+pedal path and remote Beats controls are the next assessment targets. HyVibe's
+continued firmware development makes version-scoped capability discovery part
+of the product, rather than freezing the instrument at its original feature set.
 
 **Ringdown** is how a resonating system decays once it stops being driven — the
 tail of a struck string or a rung body. The name carries the mechanism rather
@@ -89,15 +90,20 @@ crates/
                      (Bank, Effect, Parameter, Equalizer, Status, …). No BLE,
                      no async runtime, no_std-capable. Publish-tier; the named
                      crate. Replayable against captured fixtures.
+  ringdown-client/   Protocol driver over a platform Link; typed writes,
+                     guarded calls and profile restoration.
   ringdown-ble/      Transport shell: btleplug on desktop (Windows/macOS/Linux).
                      The tokio side of "sans-io core, tokio shell". Plain
                      hyphenated support-crate name per the tier rule; likely
                      publish = false until it has an audience.
 apps/
-  <spike-cli>/       The consumer that reveals the library's shape (the park.rs
-                     / linkboy precedent): connect, GetStatus, ReadConfig, dump.
-                     Plain descriptive name, settled in Phase 0. publish = false.
+  probe/            Existing research CLI: connect, status, captures and
+                     protocol probes. publish = false.
 ```
+
+Performance CLI/session and desktop app placement is planned in the client
+surface plan. They do not exist yet. BLE MIDI output will use an OS MIDI
+route or a separate peripheral adapter, not the current central-only shell.
 
 Woodshed consumes `ringdown` + `ringdown-ble` through
 `crates/woodshed-instrument`; Ringdown code lives only in its `ports/ringdown`
@@ -107,15 +113,15 @@ nested workspace rather than in Woodshed application crates.
 
 ## Non-goals (v1)
 
-- **No audio over Bluetooth.** The DSP is on the instrument; there is no audio
-  stream to carry. Ringdown configures the guitar, it does not process its
-  sound on the desktop. (Aux-jack audio routing on the guitar is configured via
-  RPC, but the samples never touch the computer.)
-- **No file-transfer or firmware-upload paths in the client.** The protocol has
-  `sendFile` / `.part` chunking machinery; it is out of scope for the client
-  and deliberately left alone (§ Findings, "Gaps").
-- **No mobile client.** The protocol is identical from iOS, but ringdown is a
-  desktop project.
+- **Control is the performance target.** Effects, Beats and loops run on the
+  instrument. Bluetooth audio streaming and desktop audio processing are
+  outside this target; retrieving an existing recording is a separate operation.
+- **No file upload or firmware upload in this target.** Existing recording
+  retrieval remains available; `sendFile` / `.part` upload machinery remains
+  outside the client plan.
+- **Desktop first.** Browser editing, direct RPC in supported browsers and a
+  native companion are secondary paths in the client assessment. Native
+  mobile packaging is not part of the first desktop performance slice.
 - **Firmware is not a v1 goal.** It is Phase 4, gated behind its own
   assessment; see below.
 
@@ -175,16 +181,19 @@ Done-conditions:
   by a test in both directions. 37 tests green.
 - **`ringdown-ble` connects to the guitar over GATT**, negotiates MTU, writes
   to RX (`…4161`), subscribes to notifications on TX (`…4162`).
-- **The spike CLI issues `GetStatus` and prints** `device`, `cpuID`,
-  `battLeft`, `versionESP`, and `versionSTM` from the real instrument. This is
-  the positive control: it promotes the whole static map from static-read to
-  hardware-verified in one shot, per the repo's provenance rule.
+- **The spike CLI issues `GetStatus` and prints** identity, battery and both
+  processor versions from the real instrument. This positive control proves
+  the live status/transport path. Other methods require their own device
+  receipts; a status reply cannot qualify the entire static protocol map.
 - **`GetStatus` answers from the real instrument.** — **met 2026-08-27** (H4);
   the reply is pinned as a fixture in `rpc.rs`.
 - **`ReadConfig` returns the live effect catalog**, and it is persisted as the
   authoritative fixture. This closes the "effect catalog lives in the vendor's
   Firebase, not the APK" gap (Findings, Gaps) by reading it from the guitar
   instead.
+  **Superseded by H18/H19:** this call wedges the observed firmware. Compose
+  the working reads and preserve the driver's refusal; no live-config dump
+  is required to close the transport proof.
 - **The two hardware unknowns are answered** and recorded in Findings: does the
   device require BLE bonding, and how does it advertise (name, service UUID in
   the advertisement)?
@@ -216,10 +225,11 @@ Done-conditions:
   connects and switches banks, proving the sibling-consumer topology end to
   end.
 
-> **2026-09-02.** The `ReadBank` round-trip receipt above is not available on
-> this firmware (H25). The typed write surface, its receipts, and the open
-> question of bank creation are planned in `2026-09-02_client_surface_plan.md`;
-> the feature target here is unchanged.
+> **2026-10-17 reconciliation.** `ReadBank` round-trip receipts are unavailable
+> on the observed firmware (H25). A–C of the client surface plan supply typed
+> writes/profile machinery; H47 closes playable bank creation. Configuration
+> breadth remains incomplete and is not a gate on the bounded performance
+> actions. The desktop surface remains pending; see that plan's P0–P4.
 
 ### Phase 2.5 — LLT2 (inserted 2026-08-27, discovered by hardware)
 
@@ -237,33 +247,28 @@ Done-conditions:
 - A payload captured from the device decodes to valid JSON.
 - LLT2 binary framing (transfer type, object id, little-endian index) chunks and
   reassembles; CRC32 matches on file transfers.
-- `ReadConfig` returns the live configuration from the instrument.
+- `ReadConfig` was an original target, **superseded by H18/H19**: its firmware
+  hang is independent of LLT2 and the call stays guarded. Large working calls
+  supply the transport evidence.
 
-### Phase 3 — Beyond the app
+### Phase 3 — Desktop performance control and scripting
 
-**Feature target:** the things the phone app cannot do — the reason to own the
-protocol rather than rent it.
+**Feature target (Mark, 2026-10-17):** use Ringdown as a software stomp box,
+recall prepared tones and supported Beats settings, and trigger the same
+actions from desktop inputs or scripts.
 
-**The dictionary named the targets** (F15). Nineteen methods exist in firmware
-that the vendor's app never calls, and the strongest of them is
-`SetSpeakerBiquads` — raw biquad coefficients on the speaker path, i.e.
-arbitrary filter design on the instrument, reachable without any firmware work.
-`GetLevels`, `StartTuner`/`StopTuner`, and `StartAnalysis`/`GetAnalysis` are the
-other immediate ones, and the tuner in particular already has a UI waiting for
-it in woodshed.
+The [client surface plan](2026-09-02_client_surface_plan.md#desktop-performance-assessment-2026-10-17)
+owns the assessment and done-conditions: P0 establishes current MIDI/RPC/Beats
+capabilities; P1 builds the shared session and CLI; P2 adds the desktop stomp
+box; P3 adds supported Beats/song cues; P4 adds performance sequences and host
+integration. Ringdown remains independently runnable, with Woodshed consuming
+the same action surface. No complete-app parity or firmware replacement is
+required before the first useful performance.
 
-Candidate scope (Decision D3 sets the actual target):
-
-- Preset (bank) management as real files on the desktop: export, import,
-  version, diff, share.
-- Controller remapping via `SetController` beyond the app's partial exposure
-  (`Control.source` binds a physical knob/pedal to a parameter with its own
-  min/max scaling).
-- Parameter automation, and driving the guitar's metronome/looper transport
-  from woodshed's own.
-
-Done-conditions: **deferred**, set once Phase 1 reveals what the DSP actually
-implements.
+Advanced speaker filters, physical-control remapping via `SetController`,
+resonance visualization and bulk recording retrieval remain separate follow-up
+possibilities, below this priority. `SetController` is not established as the
+pedal's MIDI binding interface; do not conflate the paths.
 
 ### Phase 4 — Alternative firmware (SEPARATE OBJECTIVE — its own assessment required)
 
@@ -271,7 +276,8 @@ This phase is recorded, not planned. Per the workspace method, open-source
 firmware is a **new objective** and gets its own Assess pass before any Assemble
 or Action; it is not folded into this client project. What Phase 1 buys is the
 instrumentation that makes that assessment possible — `GetStatus.cpuID` names
-the exact silicon, `ReadConfig` enumerates what the current DSP does.
+the processor identity; working reads and scoped device probes establish DSP
+capabilities. `ReadConfig` remains guarded rather than providing a DSP catalog.
 
 Known shape, and the honest blockers, so the future assessment starts informed:
 
@@ -2431,7 +2437,6 @@ is the truth, whatever the APK said.
 ---
 
 ## Progress
-
 - **2026-08-27** — Repo founded: `git init`, `.gitignore`, `DOC_POLICY.md`
   (canonical core + ringdown addendum), `DOC_README.md`, this plan. Protocol
   map recorded in Findings from the v1.1.2 APK teardown.
@@ -2603,3 +2608,9 @@ is the truth, whatever the APK said.
   The bank-creation test with the app's field set is the next wire step;
   the crate corrections (H41, H43, H44, H45) follow in the client surface
   plan.
+
+- **2026-10-17 — Performance direction assessed and planned.** Updated the
+  product target around standalone desktop control and scripting, with pedal
+  MIDI and Beats assessed together in the client surface plan. Reconciled the
+  early read-only status, H47 bank creation and obsolete `ReadConfig` gates.
+  This is documentation/source assessment, not a new guitar receipt.

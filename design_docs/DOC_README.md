@@ -252,10 +252,13 @@ before any other doc in this directory.
   instrument realization, progression recipes, keyboard, listening, and full
   articulation acceptance remain open.
 - [2026-08-27_smart_instrument_plan.md](2026-08-27_smart_instrument_plan.md)
-  — **W1 and W2 landed and hardware-verified; W3 open.** The
+  — **W1 and W2 landed with historical hardware evidence; W3 open.** The
   `woodshed-instrument` connection and metronome authority model work in both
   directions. Retrieval and resonance reads exist in the crate, but the crate
   is not integrated into `woodshed-views`, so there is no product surface yet.
+  Ringdown's [current client plan](../ports/ringdown/design_docs/2026-09-02_client_surface_plan.md#desktop-performance-assessment-2026-10-17)
+  prioritizes desktop performance, software pedal/Beats assessment and scripting;
+  Woodshed consumes that action surface.
 - [2026-08-12_persona_picker_plan.md](2026-08-12_persona_picker_plan.md)
   — **P1/P2 landed; P3 open.** Startup selection and a live Settings switch
   swap the sealed practice store without restart. Creating a persona inside

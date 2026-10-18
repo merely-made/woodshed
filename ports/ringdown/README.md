@@ -1,24 +1,30 @@
 # Ringdown
 
-An independent desktop client for the HyVibe smart guitar. It speaks the
-instrument's own JSON-RPC-over-Bluetooth protocol directly, so the guitar can be
-configured — eventually past what the vendor's phone app exposes — from a
-computer, with that capability owned rather than rented from an app.
+An independent desktop controller for the HyVibe smart guitar, with performance
+control and scripting as its next product target: prepare tones, trigger the
+guitar from a keyboard or MIDI controller, and recall song cues. The existing
+client speaks the instrument's JSON-RPC-over-Bluetooth app protocol; a software
+Bluetooth stomp box and control of the new Beats rhythms are planned together.
 
 A *ringdown* is how a resonating system decays once it stops being driven — the
 tail of a struck string, or of a guitar body rung by the actuator inside it.
 Controlling how long the instrument keeps sounding is much of what this thing
 is for.
 
-> **Status (2026-09-01):** the protocol is **hardware-verified**. The client
-> connects, reads the instrument's status, drives its metronome, reads the
-> body resonances the guitar measured of itself, and edits a preset's effect
-> chain audibly. Both transports are implemented, including the compressed
-> one this firmware selects, and a compressed round trip has been confirmed on
-> a real instrument. The plan and the full protocol map live in
-> [`design_docs/2026-08-27_ringdown_founding.md`](design_docs/2026-08-27_ringdown_founding.md).
+> **Status (2026-10-17):** reusable protocol/client libraries and a research
+> probe exist. Earlier hardware sessions established status, metronome and
+> effect control, recording retrieval and playable preset creation. The
+> [desktop performance assessment and plan](design_docs/2026-09-02_client_surface_plan.md)
+> covers MIDI pedal emulation, Beats, a desktop surface and scripting. Those
+> features are not implemented or qualified against the owner's recent
+> firmware update. The [founding plan](design_docs/2026-08-27_ringdown_founding.md)
+> preserves the protocol map and historical hardware findings.
 
-## What it can do
+## Existing capabilities
+
+The following have historical device evidence; current firmware needs a fresh
+qualification run. The typed driver/profile path also has scripted-link
+coverage, which is distinct from those hardware sessions.
 
 - Read identity, battery, storage and both firmware versions.
 - Read and drive the instrument's metronome.
@@ -27,14 +33,15 @@ is for.
 - Edit a preset's effect chain and hear it: add, remove, reorder and bypass
   any of the thirteen effects, with every knob the vendor app exposes. Rename
   presets and switch between them. Read the recordings stored on the device.
-  How the vendor app creates a new preset is not yet worked out, and the app
-  overwrites every change when it next connects.
-- Reach methods the vendor's app never calls, five of which are confirmed to
-  exist on current firmware.
+  Create a playable preset with the bank shape established by H47; save a
+  local shadow profile for restoration. The vendor app was observed to
+  overwrite the guitar's profile when it connects.
+- Reach methods the vendor's app did not call in the original investigation,
+  five of which were confirmed to exist on that firmware.
 
-One method is refused rather than exposed: `ReadConfig` hangs the instrument's
-RPC handler until it is power-cycled. Its contents are reachable by composing
-calls that work.
+The driver refuses `ReadConfig`: it hung the observed firmware's RPC handler
+until power-cycled. Working calls reach portions of that information. The
+performance path retains this guard unless a firmware fix is established.
 
 ## Design
 

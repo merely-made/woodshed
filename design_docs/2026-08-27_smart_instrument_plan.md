@@ -1,12 +1,23 @@
 # Smart-instrument control: Woodshed drives a HyVibe guitar
 
 **Date:** 2026-08-27
-**Status:** in progress. **W1 and W2 landed and are hardware-verified; W3 is
-open.** `crates/woodshed-instrument` builds and tests inside the workspace, but
-it is not integrated into `woodshed-views`, so Woodshed has no product-facing
-instrument surface yet. Getting W1 to resolve required repairing three stale
-Genet overrides; see Findings. The protocol side is hardware-verified; see
-`ringdown/design_docs/2026-08-27_ringdown_founding.md`.
+**Status (2026-10-17):** in progress. **W1 and W2 landed and have historical
+hardware evidence; W3 is open.** `crates/woodshed-instrument` exists but is not
+integrated into `woodshed-views`, so Woodshed has no product-facing instrument
+surface yet. Earlier build and device receipts are recorded below. Getting W1
+to resolve required repairing three stale Genet overrides; see Findings. The
+historical protocol findings live in
+`ports/ringdown/design_docs/2026-08-27_ringdown_founding.md`.
+
+**Current priority (2026-10-17).** Ringdown's
+[client surface plan](../ports/ringdown/design_docs/2026-09-02_client_surface_plan.md#desktop-performance-assessment-2026-10-17)
+now assesses desktop performance control, a software BLE MIDI stomp box and
+Beats together, followed by a shared action/session surface, CLI, desktop
+controls and scripting. Ringdown owns the standalone controller; Woodshed
+consumes its proven actions while retaining Set, recorder and transport
+authority. W1/W2 receipts do not qualify the owner's updated firmware or
+establish phase synchronization. This supersedes the W3 candidates' old
+priority order; this plan continues to own Woodshed integration.
 
 ---
 
@@ -186,8 +197,9 @@ Done-conditions and prerequisite status:
   ahead of `fmt ` and `data`.
 - **The resonance report is readable.** — **met.** `Connection::read_resonances`
   returns the instrument's measured body modes as typed rows.
-- **Bank management as files** — deferred; the reference instrument has no
-  banks, so there is nothing to export until one exists.
+- **Bank management as files** — the original empty-instrument blocker is
+  superseded by Ringdown H47's playable bank creation. The client has a
+  serializable shadow profile; Woodshed's product surface remains pending.
 - **`SetSpeakerBiquads`** — assessed below and **not attempted**.
 
 ### Findings from building it
@@ -571,3 +583,8 @@ alongside the dependency that motivated them.
   rather than trusting a comment. Five tests, clippy clean, built against the
   captured replies from the reference instrument. Added to the workspace
   members list; the workspace cannot build for the unrelated reason above.
+
+- **2026-10-17 — Ringdown performance priority linked.** The client surface
+  plan now owns software stomp-box/Beats assessment and desktop scripting;
+  this plan retains Woodshed integration. Reconciled the stale empty-bank
+  blocker with H47; no new instrument qualification was performed.
