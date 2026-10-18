@@ -54,7 +54,9 @@ use crate::sequencer::{SequencerPattern, Subdivision, TimeSignature};
 // Strophe. Re-exported so existing
 // `woodshed_audio::{estimate_latency_from_pairs, MATCH_WINDOW}` paths
 // resolve unchanged. The live session driver below builds on it.
-pub use audio_primitives::calibration::{MATCH_WINDOW, count_matches, estimate_latency_from_pairs};
+pub use audio_primitives::calibration::{
+    MATCH_WINDOW, count_matches, estimate_latency_and_count, estimate_latency_from_pairs,
+};
 
 /// BPM the calibration metronome runs at. 60 BPM = one click per
 /// second — slow enough to leave plenty of "guard space" between
@@ -124,6 +126,23 @@ pub enum CalibrationOutcome {
     /// The audio engines aren't available (e.g. mic permission
     /// denied). UI should surface this and not try again.
     EngineUnavailable,
+}
+
+fn outcome_from_estimate(
+    estimate: audio_primitives::calibration::LatencyEstimate,
+    total_clicks: usize,
+) -> CalibrationOutcome {
+    match estimate.latency {
+        Some(latency) => CalibrationOutcome::Success {
+            latency,
+            matched_pairs: estimate.matched_pairs,
+            total_clicks,
+        },
+        None => CalibrationOutcome::InsufficientPairs {
+            matched_pairs: estimate.matched_pairs,
+            total_clicks,
+        },
+    }
 }
 
 /// Stateful driver for one calibration run.
@@ -286,19 +305,8 @@ impl CalibrationSession {
         let onset_instants: Vec<Instant> = snapshot.recent.iter().map(|o| o.at).collect();
         // Require at least half the clicks to have matched.
         let minimum = self.total_clicks / 2;
-        Ok(
-            match estimate_latency_from_pairs(&self.expected_clicks, &onset_instants, minimum) {
-                Some(latency) => CalibrationOutcome::Success {
-                    latency,
-                    matched_pairs: count_matches(&self.expected_clicks, &onset_instants),
-                    total_clicks: self.total_clicks,
-                },
-                None => CalibrationOutcome::InsufficientPairs {
-                    matched_pairs: count_matches(&self.expected_clicks, &onset_instants),
-                    total_clicks: self.total_clicks,
-                },
-            },
-        )
+        let estimate = estimate_latency_and_count(&self.expected_clicks, &onset_instants, minimum);
+        Ok(outcome_from_estimate(estimate, self.total_clicks))
     }
 }
 
@@ -450,5 +458,22 @@ mod tests {
     fn session_with_total_clicks_clamps_minimum() {
         let s = CalibrationSession::new().with_total_clicks(0);
         assert!(s.total_clicks >= 2);
+    }
+
+    #[test]
+    fn session_outcome_uses_pairing_result_support_for_display() {
+        let click = Instant::now();
+        let estimate = audio_primitives::calibration::estimate_latency_and_count(
+            &[click, click + Duration::from_secs(1)],
+            &[click - Duration::from_millis(20)],
+            2,
+        );
+        assert!(matches!(
+            outcome_from_estimate(estimate, 2),
+            CalibrationOutcome::InsufficientPairs {
+                matched_pairs: 0,
+                total_clicks: 2
+            }
+        ));
     }
 }
