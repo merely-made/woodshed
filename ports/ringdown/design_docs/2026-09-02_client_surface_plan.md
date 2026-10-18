@@ -54,7 +54,7 @@ app version and MIDI bindings have not been recorded.
 | [BLE shell](../crates/ringdown-ble/src/lib.rs), [workspace](../Cargo.toml), [probe](../apps/probe/src/main.rs) | **Static-read.** The desktop connects as a central to the guitar's app GATT service. The only Ringdown app is the research probe; there is no performance UI, resident control service or BLE MIDI pedal adapter. |
 | Founding Findings H24/H25/H27/H32/H43/H47 | **Historical hardware-verified.** Preset/effect editing, metronome control and playable bank creation have evidence. Read-back is limited, the phone app overwrites profiles on connect, and a parsed reply alone cannot establish effect state. Recheck applicability on current firmware. |
 | [HyVibe MIDI instructions](https://www.hyvibeguitar.com/airturn-midi-instructions/) | **Static-read of vendor documentation.** The guitar scans for a BLE MIDI pedal; bindings include loop record, play/stop and effect actions. Channel 1 and configurable CC/Note On bindings are documented. The four-switch AirTurn numbers are 64, 66, 65, 67; these identify switches, not universal guitar commands. Message values, release behavior and the documented hold-to-erase gesture still need device evidence. |
-| Owner report, 2026-10-17; [HyVibe feature overview](https://www.hyvibeguitar.com/) | **Owner-reported for Beats; static-read for vendor drum-machine claim.** The owner reports drum patterns replacing the metronome presentation with “Beats.” This does not identify a remote-control protocol. |
+| Owner report and clarification, 2026-10-17; [HyVibe feature overview](https://www.hyvibeguitar.com/) | **Owner-reported for Beats; static-read for vendor drum-machine claim.** The owner describes built-in rhythm patterns as alternatives to the metronome click, with no custom beat authoring. The product label does not establish a programmable drum machine or a remote-control protocol. |
 | [Existing RPC vocabulary](../crates/ringdown/src/rpc.rs), `METRONOME` and `Method`; [compression dictionary](../crates/ringdown/src/compress.rs) | **Static-read.** Known metronome parameters cover `bpm`, `num`, `den`, `bars`; no explicit Beats-pattern or MIDI-pedal implementation was found. `StartRecording`/`StopRecording` are not evidence of looper pedal equivalence. A new firmware capability may use extra fields, new methods, MIDI, or panel-only control. |
 
 The [vendor downloads page](https://www.hyvibeguitar.com/downloads/) lists
@@ -230,13 +230,17 @@ Done-conditions:
 
 #### P3 — Beats and song cues
 
-**Feature target:** a song preparation can recall supported guitar rhythm settings.
+**Feature target:** a song preparation can recall supported built-in guitar
+timekeeping patterns and settings. The owner's clarification describes Beats
+as preset alternatives to a metronome click; user-authored patterns are a
+separate possible extension.
 
 Done-conditions:
 
-- Model discovered pattern identity and supported controls without inventing
-  a drum sequencer, fills or an editor the guitar does not expose. Preserve
-  manual-only/unsupported Beats capabilities visibly on older or limited devices.
+- Model discovered built-in pattern identity and supported controls. Assess
+  selection, tempo and start/stop without assuming a sequencer, fills or a
+  pattern editor in the guitar. Preserve manual-only/unsupported Beats
+  capabilities visibly on older or limited devices.
 - A versioned local cue references prepared tone identity, tempo and optional
   Beats settings. Resolve the tone to a slot for the prepared profile; a
   renumbered bank must not silently become a different song's tone.
@@ -244,6 +248,15 @@ Done-conditions:
   Manual Next works independently of timed execution. Device evidence covers
   the chosen pattern/tempo/start behavior and interaction with a guitar loop;
   no bar-quantized claim without a usable phase source and device proof.
+
+**Possible later extension — custom beat authoring.** Mark identified this as
+something our software could add. An app-owned pattern editor/player could
+support authored steps, accents and song variations. Assess it separately
+from controlling built-in Beats: determine where the rhythm is rendered and
+how its audio reaches the intended output. Computer playback is a different
+path from guitar-native playback. Neither programmable pattern upload nor
+drum-note synthesis on the guitar has been established. This possibility
+does not change the first performance slice into a desktop audio engine.
 
 #### P4 — Performance sequences and host integration
 
@@ -427,6 +440,10 @@ listen; count before indexing; nothing sent while he is comparing by ear.
 
 ## Findings
 
+- **2026-10-17 — Beats scope clarified by the owner (owner-reported).** Beats
+  provides built-in timekeeping patterns replacing the usual metronome click;
+  it is not described as a custom beat editor. Custom authoring is a possible
+  software extension, with its rendering/output path still to be assessed.
 - **2026-10-17 — Desktop performance assessment.** The source/documentation
   evidence table above is the current assessment record. Pedal MIDI is a
   distinct path from app RPC; macOS supplies a candidate advertised MIDI
@@ -448,6 +465,7 @@ listen; count before indexing; nothing sent while he is comparing by ear.
   refused rather than exposed. The guard is a comment; Phase B makes it code.
 
 ## Progress
+
 - **2026-09-02** — Plan written after the effects handoff review. Doc drift
   fixed the same session: `den` wording in the handoff, `params::bank` doc
   moved from H36 to H38, stale `bypass` and crate-status docs, README
@@ -556,6 +574,10 @@ listen; count before indexing; nothing sent while he is comparing by ear.
   protocol evidence, and defined P0–P4. Reconciled README/founding/index
   pointers and H47 bank-creation status. Implementation and the current
   guitar session remain pending.
+
+- **2026-10-17 — Beats scope clarified.** Narrowed P3 to the guitar's built-in
+  timekeeping patterns and recorded custom rhythm authoring as a separate
+  possible extension. No new device capability is claimed.
 
 ## Phase D session log (2026-09-02, H2-CC340, owner at the panel)
 
