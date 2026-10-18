@@ -6,9 +6,17 @@ import json
 import re
 from pathlib import Path
 import subprocess
+import sys
+
+if not __debug__:
+    raise SystemExit('qualification is disabled under python -O; run with normal Python assertions enabled')
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from evidence_process import validate_process, validate_run
 
 parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument('--local', action='store_true')
+parser.add_argument('--process-evidence', type=Path, required=True,
+                    help='JSON mapping core/views/host/build to receipt, run_id, and exact command; historical receipts without process evidence are unverified.')
 args = parser.parse_args()
 root = Path(__file__).resolve().parent
 repo = root.parent.parent
@@ -29,11 +37,32 @@ for name, expected in freeze['source_files'].items():
     assert hashlib.sha256(committed).hexdigest() == expected, name
 
 checks = read(root / 'checks.json')
+process_evidence = read(args.process_evidence)
+validated_outcomes = {}
+for name in ('core', 'views', 'host'):
+    evidence = process_evidence.get(name)
+    if not evidence:
+        raise SystemExit(f'{name}: missing process evidence; historical check is unverified')
+    log = root / 'cpu' / f'combined-{name}.log'
+    if Path(evidence.get('log', '')).resolve() != log.resolve():
+        raise SystemExit(f'{name}: process evidence points to a different log')
+    _, validated_outcomes[name], _ = validate_run(
+        args.process_evidence.parent / evidence['receipt'], run_id=evidence.get('run_id'),
+        command=evidence.get('command'), log_path=log)
+build = process_evidence.get('build')
+if not build:
+    raise SystemExit('build: missing observed process exit; historical check is unverified')
+build_log = root / 'cpu/build.log'
+if Path(build.get('log', '')).resolve() != build_log.resolve():
+    raise SystemExit('build: process evidence points to a different log')
+observed_build, _ = validate_process(args.process_evidence.parent / build['receipt'], run_id=build.get('run_id'),
+                                     command=build.get('command'), log_path=build_log)
+if checks['tests']['build']['exit'] != observed_build['exit_code']:
+    raise SystemExit('build: recorded check status disagrees with observed process exit')
 assert sum(checks['tests'][name]['tests'][0] for name in ['core', 'views', 'host']) == 556
 for name, expected in [('core', 236), ('views', 161), ('host', 159)]:
-    log = (root / 'cpu' / ('combined-' + name + '.log')).read_text()
-    results = re.findall(r'test result: ok\. (\d+) passed; (\d+) failed; (\d+) ignored', log)
-    assert results and int(results[-1][0]) == expected and results[-1][1] == '0'
+    results = validated_outcomes[name]
+    assert results and int(results[-1].group(2)) == expected and results[-1].group(3) == '0'
 assert checks['tests']['build']['exit'] == 0
 
 for packet, runs, captures, frames in [(root, 3, 19, 230), (codec, 2, 3, 54)]:
