@@ -86,24 +86,14 @@ impl UiState {
                     self.current_card_stage()
                         .scale_card_realization(card)
                         .map(|scale| scale.geometry)
-                        .unwrap_or(woodshed_core::card_shapes::CardShapeGeometry {
-                            string_count: 0,
-                            physical_fret_start: 0,
-                            physical_fret_end: 0,
-                            capo: 0,
-                        }),
+                        .unwrap_or(woodshed_core::card_shapes::CardShapeGeometry::EMPTY),
                 )
             } else if matches!(card.material, Material::ChordApproach { .. }) {
                 Some(
                     self.current_card_stage()
                         .chord_approach_realization(card)
                         .map(|approach| approach.geometry)
-                        .unwrap_or(woodshed_core::card_shapes::CardShapeGeometry {
-                            string_count: 0,
-                            physical_fret_start: 0,
-                            physical_fret_end: 0,
-                            capo: 0,
-                        }),
+                        .unwrap_or(woodshed_core::card_shapes::CardShapeGeometry::EMPTY),
                 )
             } else {
                 self.current_card_stage().card_shape_geometry(card)
@@ -285,6 +275,35 @@ fn movement_details(ui: &UiState) -> UiChild {
 mod scale_tests {
     use super::*;
     use woodshed_core::harmony::KeyedCatalogRef;
+
+    #[test]
+    fn saved_path_neck_and_sound_keep_the_retained_instrument_after_live_instrument_changes() {
+        let mut ui = UiState::new();
+        assert_eq!(ui.stage.string_count(), 6);
+        ui.stage.append_to_path(5, 2);
+        let card = ui.stage.card_from_drawn_path().expect("six-string Path");
+        let sound = ui.stage.card_voicing(&card).unwrap().0;
+        ui.set.push(card);
+        let four_strings = woodshed_core::tunings().iter()
+            .position(|spec| spec.strings.len() == 4).expect("four-string catalog instrument");
+        ui.stage.set_tuning(four_strings);
+        assert_eq!(ui.stage.string_count(), 4);
+        let card = &ui.set.cards[0];
+        let geometry = ui.rehearsal_board_geometry();
+        let dots = ui.stage.dots_for_card(card);
+        assert_eq!(geometry.string_count, 6);
+        assert_eq!(dots.len(), 1);
+        assert!(dots.iter().all(|dot| dot.string_index < geometry.string_count));
+        assert_eq!(ui.stage.card_voicing(card).unwrap().0, sound);
+        ui.stage.fret_start = 8;
+        ui.stage.fret_count = 12;
+        assert!(ui.stage.dots_for_card(&ui.set.cards[0]).is_empty());
+        assert_eq!(ui.rehearsal_board_geometry().string_count, 6);
+        assert_eq!(ui.stage.card_voicing(&ui.set.cards[0]).unwrap().0, sound);
+        ui.set.cards[0].setting.instrument = "Unknown saved instrument".into();
+        assert_eq!(ui.rehearsal_board_geometry().string_count, 0);
+        assert!(ui.stage.dots_for_card(&ui.set.cards[0]).is_empty());
+    }
 
     #[test]
     fn returning_to_running_inherited_card_keeps_board_hear_and_related_pattern_on_captured_setup()
