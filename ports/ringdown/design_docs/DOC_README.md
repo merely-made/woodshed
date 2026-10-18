@@ -65,5 +65,10 @@ channel-1 CC-67 binding. Firmware/RPC baseline, Beats, timing, and broader
 performance qualification remain open. The owner-reported MIDI menu has no
 standalone Beats action; the diagnostic trial has ended and its helper is closed.
 
+USB follow-up: [storage and Beats inspection](../validation/usb_20261018/README.md)
+observed two configuration files, nine tone banks, ten drum MIDI files and
+stored Beats selection keys. Private configurations were captured outside Git;
+custom pattern acceptance and RPC control remain untested. The drive was ejected.
+
 `PROJECT_DESCRIPTION.md` (maintainer-owned, DOC_POLICY §7) is not yet written;
 the founding plan carries the product intent until it is.

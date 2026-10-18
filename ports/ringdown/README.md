@@ -48,6 +48,11 @@ The driver refuses `ReadConfig`: it hung the observed firmware's RPC handler
 until power-cycled. Working calls reach portions of that information. The
 performance path retains this guard unless a firmware fix is established.
 
+The [2026-10-18 USB inspection](validation/usb_20261018/README.md) read
+stored user/device configuration with nine tone banks, listed 44 recording
+files, and inspected ten drum MIDI-file headers. This supplies a file-based
+snapshot source and stored Beats selection keys; custom pattern loading and live RPC control remain untested.
+
 ## Design
 
 The protocol was reverse-engineered for interoperability from the vendor's own

@@ -1,0 +1,260 @@
+{
+  "session_date_local": "2026-10-18",
+  "host": "Q-PC",
+  "owner_setup": "USB-C to USB-C cable; guitar powered on and USB mode enabled",
+  "usb_device": {
+    "product": "MCU MASS STORAGE",
+    "manufacturer": "NXP SEMICONDUCTORS",
+    "vendor_id": "0x1fc9",
+    "product_id": "0x0093",
+    "configurations": 1,
+    "active_interface_descriptors": [
+      {
+        "bInterfaceNumber": 0,
+        "bAlternateSetting": 0,
+        "bInterfaceClass": 8,
+        "bInterfaceSubClass": 6,
+        "bInterfaceProtocol": 80,
+        "bNumEndpoints": 2
+      }
+    ]
+  },
+  "storage": {
+    "volume_name": "HYVIBE",
+    "mount_point": "/Volumes/HYVIBE",
+    "filesystem": "FAT32",
+    "partition_bytes": 7818150400,
+    "whole_device_bytes": 7818182656,
+    "inspection_mount": "Initially remounted read-only; disk later disappeared during pending permission. After owner USB OFF/ON, normal read/write mount was left unchanged; investigator performed file reads only."
+  },
+  "additional_interfaces": {
+    "new_midi_endpoints": 0,
+    "serial_inventory_changed": false,
+    "scope": "Current exported USB mode only; no claim about other firmware or boot modes."
+  },
+  "file_inspection": {
+    "status": "complete",
+    "root_entries": [
+      {
+        "name": "Calibration",
+        "directory": true,
+        "bytes": 32768
+      },
+      {
+        "name": "Drums",
+        "directory": true,
+        "bytes": 32768
+      },
+      {
+        "name": "Loops",
+        "directory": true,
+        "bytes": 32768
+      },
+      {
+        "name": "config_device.json",
+        "directory": false,
+        "bytes": 6526
+      },
+      {
+        "name": "config_user.json",
+        "directory": false,
+        "bytes": 27050
+      }
+    ],
+    "config_user": {
+      "bytes": 27050,
+      "sha256": "2b16a03ba0f0f206a3bb8f2d29f31130473846dbaabbc8720c52545c48ba8b97"
+    },
+    "config_device": {
+      "bytes": 6526,
+      "sha256": "0457f529156cf75749c656bf0dcb94508f8d245dddf545a5552fe9b47565e4e8"
+    },
+    "config_user_root_keys": [
+      "file_type",
+      "version",
+      "aux_out_drywet",
+      "aux_in_drywet",
+      "startup_bank",
+      "startup_effects_onoff",
+      "looper_solo_effect",
+      "user_banks",
+      "input_bank",
+      "output_bank",
+      "metronome"
+    ],
+    "config_device_root_keys": [
+      "file_type",
+      "version",
+      "gain_preamp",
+      "gain_codec_in",
+      "gain_looper",
+      "gain_metro",
+      "gain_effect",
+      "phase_invert",
+      "input_bank",
+      "auxout_bank",
+      "calibration",
+      "notch_calibration",
+      "calibration_on",
+      "midi",
+      "actual_conf",
+      "fbk_params",
+      "sliders",
+      "shortcuts",
+      "tone_control",
+      "tone_bands"
+    ],
+    "config_schema_versions": {
+      "user": 3,
+      "device": 2
+    },
+    "metronome": {
+      "drums_loop": true,
+      "dl_filename": "6-Blues.mid",
+      "bpm": 100,
+      "num": 4,
+      "den": 4,
+      "nbbars": 12
+    },
+    "user_bank_count": 9,
+    "loop_file_count": 44,
+    "drum_files": [
+      {
+        "name": "1-Rock.mid",
+        "bytes": 537,
+        "sha256": "b494bf734d64116adacb74e7ee54094b8ecfeb68542e98a00a70cf48a96ffb10",
+        "header_magic": "MThd",
+        "header_length": 6,
+        "format": 0,
+        "tracks": 1,
+        "division": 480
+      },
+      {
+        "name": "2-Funky_16th.mid",
+        "bytes": 763,
+        "sha256": "7ed267bd214f6f2d4cd3693bc6ba3e2c6aacfe357e10a286f1eeb21109a53d4a",
+        "header_magic": "MThd",
+        "header_length": 6,
+        "format": 0,
+        "tracks": 1,
+        "division": 480
+      },
+      {
+        "name": "3-Funky_8th.mid",
+        "bytes": 570,
+        "sha256": "cb05434a06be680b879aa35c2709a9fc8e471b68c175b9faa3cbf7ec62b00cb0",
+        "header_magic": "MThd",
+        "header_length": 6,
+        "format": 0,
+        "tracks": 1,
+        "division": 480
+      },
+      {
+        "name": "4-Shuffle_Groove.mid",
+        "bytes": 597,
+        "sha256": "36c863b8fa4a406163775219de73016069f2cd74603b116b651ae21b107edd31",
+        "header_magic": "MThd",
+        "header_length": 6,
+        "format": 0,
+        "tracks": 1,
+        "division": 480
+      },
+      {
+        "name": "5-Shuffle_Rock.mid",
+        "bytes": 529,
+        "sha256": "8cd62ba117addb186b7506eaad499894db4053e72a5952ea38da49dced56fc9f",
+        "header_magic": "MThd",
+        "header_length": 6,
+        "format": 0,
+        "tracks": 1,
+        "division": 480
+      },
+      {
+        "name": "6-Blues.mid",
+        "bytes": 1354,
+        "sha256": "5dc7b121b915ef8501eeb17dd9cefd0cd6d978e04cbc9e633b5fa98870fdfc6e",
+        "header_magic": "MThd",
+        "header_length": 6,
+        "format": 0,
+        "tracks": 1,
+        "division": 480
+      },
+      {
+        "name": "7-Pure_Swing.mid",
+        "bytes": 839,
+        "sha256": "b3021c67ae2c84b1794488c86edb352c68d5c4d3a0b65fe80f3049e0455b5aaf",
+        "header_magic": "MThd",
+        "header_length": 6,
+        "format": 0,
+        "tracks": 1,
+        "division": 480
+      },
+      {
+        "name": "8-Jazz_Waltz.mid",
+        "bytes": 343,
+        "sha256": "bf18b97495a7b13daf062a8ec4604df9f4b28a8f312146af2d13e0c2c6715b0c",
+        "header_magic": "MThd",
+        "header_length": 6,
+        "format": 0,
+        "tracks": 1,
+        "division": 480
+      },
+      {
+        "name": "9-Bossa_Nova.mid",
+        "bytes": 612,
+        "sha256": "e2893a0dabf59ed7b4435969f92a46a80e8200cc301fa8d347e087df9c1ec0c2",
+        "header_magic": "MThd",
+        "header_length": 6,
+        "format": 0,
+        "tracks": 1,
+        "division": 480
+      },
+      {
+        "name": "10-Salsa.mid",
+        "bytes": 650,
+        "sha256": "32193e10edbf28902b021a72ecdb8bb9a28296b6c8f0bab8f79b9d844fb969ea",
+        "header_magic": "MThd",
+        "header_length": 6,
+        "format": 0,
+        "tracks": 1,
+        "division": 480
+      }
+    ],
+    "midi": {
+      "activate": true,
+      "paired_device_name": "Ringdown",
+      "bindings": [
+        {
+          "channel": 1,
+          "type": "Ctrl Chge",
+          "value": 67,
+          "action": 4
+        }
+      ]
+    }
+  },
+  "comparison": "Previous USB-A cable setup did not enumerate, including after USB ON/restart. Cable and computer connector changed together, so cause of prior non-enumeration is unisolated.",
+  "limits": [
+    "USB storage is observed; USB MIDI/serial/control is not demonstrated.",
+    "USB descriptor manufacturer is not proof of the guitar processor architecture.",
+    "No application-initiated writes to the guitar files, firmware, configuration or recording controls.",
+    "Configuration version 3/2 denotes file schema, not installed processor firmware versions.",
+    "MIDI headers inspected; full event semantics, note map, looping rules and custom file acceptance unqualified.",
+    "Stored configuration snapshot is not a live RPC readback or proof that Bluetooth accepts these fields.",
+    "Pattern bytes and original configurations are not included in the public receipt."
+  ],
+  "observed_at_utc": "2026-10-18T05:06:34.221086+00:00",
+  "permission_and_media": {
+    "owner_granted_removable_volume_access": true,
+    "first_directory_read_error": "EIO after storage media disappeared",
+    "usb_interface_remained_present": true,
+    "owner_confirmed_power_and_usb_on": true,
+    "recovery": "owner toggled USB OFF then ON; disk and file reads returned",
+    "cause": "unisolated; read-only remount and pending permission preceded loss"
+  },
+  "closeout": {
+    "eject_exit_code": 0,
+    "eject_output": "Disk /dev/disk2 ejected",
+    "guitar_files_written_by_investigator": false
+  }
+}

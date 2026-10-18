@@ -253,6 +253,21 @@ controls with per-action qualification; investigate Beats through observed
 panel/app behavior and recovered RPC. Volume/parameter actions are candidates
 for continuous input, not yet proven message semantics.
 
+**USB inspection (2026-10-18, file-observed; no RPC positive control):**
+[USB receipt](../validation/usb_20261018/README.md). USB-C–to–USB-C exposed a
+FAT32 `HYVIBE` mass-storage volume; no new USB MIDI/serial endpoint appeared.
+The files include two readable configuration JSONs, nine user banks, 44 loop
+WAVs and ten named drum MIDI files. Their headers declare format 0, one track,
+division 480. Stored metronome fields are `drums_loop`, `dl_filename`, `bpm`,
+`num`, `den`, `nbbars`; the snapshot selected `6-Blues.mid`, 100 BPM, 4/4,
+with `nbbars: 12`. Schema versions 3/2 are not firmware versions.
+
+Private configuration snapshots permit offline work and preservation without
+calling `ReadConfig`. They are a captured file source, not live readback or
+an automatically valid shadow profile. USB loading of added/edited patterns,
+pattern event semantics and the RPC path for the stored Beats fields remain
+untested. The disk was ejected after inspection; no guitar files were edited.
+
 Done-conditions:
 
 - Record Windows/Linux/macOS adapter requirements and capability gaps for both
@@ -320,6 +335,10 @@ Done-conditions:
 - A CLI can identify/select a guitar, report capabilities, recall a prepared
   tone and trigger a proven action through the maintained session. Define
   machine-readable outcomes, exit status, cancellation and connection ownership.
+- Explicit USB snapshot intake validates file schema and bank/effect mapping
+  into the existing model before using it as preparation. Keep stored snapshots,
+  intended edits and live observations distinct. Use portable filesystem I/O;
+  do not infer USB MIDI/RPC support from the storage volume.
 - A dry run validates actions/cues and prints their planned order without
   sending device commands. Record dispatch logs with cue/action identity and
   timings. Fixture checks cover duplicate input, press/release handling,
@@ -354,9 +373,10 @@ separate possible extension.
 
 Done-conditions:
 
-- Model discovered built-in pattern identity and supported controls. Assess
-  selection, tempo and start/stop without assuming a sequencer, fills or a
-  pattern editor in the guitar. Preserve manual-only/unsupported Beats
+- Model discovered built-in pattern identity and supported controls. Use the
+  USB-observed pattern names and stored Beats keys as research inputs, not
+  assumed RPC arguments. Assess selection, tempo and start/stop without
+  assuming a sequencer, fills or a pattern editor in the guitar. Preserve manual-only/unsupported Beats
   capabilities visibly on older or limited devices.
 - A versioned local cue references prepared tone identity, tempo and optional
   Beats settings. Resolve the tone to a slot for the prepared profile; a
@@ -367,13 +387,18 @@ Done-conditions:
   no bar-quantized claim without a usable phase source and device proof.
 
 **Possible later extension — custom beat authoring.** Mark identified this as
-something our software could add. An app-owned pattern editor/player could
-support authored steps, accents and song variations. Assess it separately
-from controlling built-in Beats: determine where the rhythm is rendered and
-how its audio reaches the intended output. Computer playback is a different
-path from guitar-native playback. Neither programmable pattern upload nor
-drum-note synthesis on the guitar has been established. This possibility
-does not change the first performance slice into a desktop audio engine.
+something our software could add. The USB inspection now gives a concrete
+first candidate: author compatible MIDI files for the guitar's existing drum
+player. Assess file discovery/naming, note mapping, timing, loop boundaries
+and a new pattern's actual acceptance in an explicitly approved device-write
+trial. Preserve the original files and make the authored artifact reviewable
+before requesting that write. No custom pattern has been installed or played.
+
+An app-owned editor could support authored steps, accents and song variations.
+Computer-rendered playback remains a separate alternative with its own audio
+output path. Assess the observed guitar-native file route before committing
+to a new desktop audio engine. The vendor's UI is still described by the owner
+as built-in timekeeping patterns, with no custom editor.
 
 #### P4 — Performance sequences and host integration
 
@@ -724,6 +749,14 @@ listen; count before indexing; nothing sent while he is comparing by ear.
   not authorize a new background resident. P1/P2 now carry cross-platform
   qualification; applicable audit repairs stay with their current owners.
   This pass changed documentation only; no builds, tests or hardware calls.
+
+- **2026-10-18 — USB storage and Beats files observed.** Read two configuration
+  files and inspected ten drum MIDI headers after the owner connected USB-C.
+  Preserved private config snapshots outside Git; public receipt contains facts
+  and hashes. This adds an offline profile source and a concrete guitar-native
+  custom-pattern candidate, not a live RPC or custom-loading proof. Recovered
+  from media loss with owner USB OFF/ON after the file-access prompt; safely
+  ejected at closeout. No guitar files were edited or production code changed.
 
 ## P0 transport trial close (2026-10-18)
 
