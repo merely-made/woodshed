@@ -1,0 +1,146 @@
+warning: patch `ipc-channel v0.22.0 (https://github.com/merely-made/genet.git?branch=main#917f88e6)` was not used in the crate graph
+warning: patch `mere-proofs v0.1.0 (https://github.com/merely-made/mere.git?branch=main#d1a200b1)` was not used in the crate graph
+warning: patch `mere-transport v0.0.2 (https://github.com/merely-made/murm.git?branch=main#cba46d85)` was not used in the crate graph
+warning: patch `mere-webrtc-carrier v0.0.1 (https://github.com/merely-made/murm.git?branch=main#cba46d85)` was not used in the crate graph
+help: Check that the patched package version and available features are compatible
+      with the dependency requirements. If the patch has a different version from
+      what is locked in the Cargo.lock file, run `cargo update` to use the new
+      version. This may also occur with an optional dependency that is not enabled.
+   Compiling unicode-ident v1.0.24
+   Compiling getrandom v0.4.3
+   Compiling num-traits v0.2.19
+   Compiling objc2 v0.6.4
+   Compiling hashbrown v0.17.1
+   Compiling arrayvec v0.7.8
+   Compiling crossbeam-utils v0.8.22
+   Compiling serde_core v1.0.228
+   Compiling smallvec v1.15.2
+   Compiling toml_datetime v1.1.1+spec-1.1.0
+   Compiling proc-macro2 v1.0.106
+   Compiling semver v1.0.28
+   Compiling serde v1.0.228
+   Compiling thiserror v2.0.18
+   Compiling cc v1.2.67
+   Compiling indexmap v2.14.0
+   Compiling quote v1.0.46
+   Compiling syn v2.0.118
+   Compiling ringbuf v0.5.3
+   Compiling toml_edit v0.25.12+spec-1.1.0
+   Compiling toml_edit v0.23.10+spec-1.0.0
+   Compiling crypto-common v0.2.2
+   Compiling rustc_version v0.4.1
+   Compiling hashbrown v0.16.1
+   Compiling blake3 v1.8.5
+   Compiling curve25519-dalek v5.0.0
+   Compiling num-complex v0.4.6
+   Compiling num-integer v0.1.46
+   Compiling audioadapter-sample v5.2.0
+   Compiling audioadapter-buffers v5.2.0
+   Compiling block2 v0.6.2
+   Compiling dispatch2 v0.3.1
+   Compiling transpose v0.2.3
+   Compiling primal-check v0.3.4
+   Compiling bevy_platform v0.19.1
+   Compiling objc2-foundation v0.3.2
+   Compiling objc2-core-audio-types v0.3.2
+   Compiling bytemuck v1.25.1
+   Compiling rustfft v6.4.1
+   Compiling objc2-core-foundation v0.3.2
+   Compiling digest v0.11.3
+   Compiling symphonia-core v0.6.1
+   Compiling windowfunctions v0.1.1
+   Compiling sha2 v0.11.0
+   Compiling universal-hash v0.6.1
+   Compiling cipher v0.5.2
+   Compiling triple_buffer v9.0.0
+   Compiling serde_json v1.0.150
+   Compiling poly1305 v0.9.1
+   Compiling aead v0.6.1
+   Compiling uuid v1.23.5
+   Compiling memchr v2.8.3
+   Compiling audio-primitives v0.1.0 (/Users/markik/Code/repos/woodshed/crates/audio-primitives)
+   Compiling symphonia-metadata v0.6.1
+   Compiling symphonia v0.6.1
+   Compiling bevy_macro_utils v0.19.1
+   Compiling objc2-core-audio v0.3.2
+   Compiling realfft v3.5.0
+   Compiling objc2-audio-toolbox v0.3.2
+   Compiling zeroize_derive v1.5.0
+   Compiling serde_derive v1.0.228
+   Compiling thiserror-impl v2.0.18
+   Compiling zerocopy-derive v0.8.54
+   Compiling firewheel-macros v0.14.0 (https://github.com/mark-ik/firewheel.git?rev=2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc#2b03846d)
+   Compiling tracing-attributes v0.1.31
+   Compiling visibility v0.1.1
+   Compiling thiserror-impl v1.0.69
+   Compiling async-trait v0.1.89
+   Compiling coreaudio-rs v0.14.2
+   Compiling rubato v5.0.1
+   Compiling zeroize v1.9.0
+   Compiling fixed-resample v0.13.0
+   Compiling chacha20 v0.10.1
+   Compiling tracing v0.1.44
+   Compiling cpal v0.18.2
+   Compiling thiserror v1.0.69
+   Compiling chacha20poly1305 v0.11.0
+   Compiling symphonium v0.13.0
+   Compiling zerocopy v0.8.54
+   Compiling ed25519-dalek v3.0.0
+   Compiling firewheel-core v0.14.0 (https://github.com/mark-ik/firewheel.git?rev=2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc#2b03846d)
+   Compiling firewheel-graph v0.14.0 (https://github.com/mark-ik/firewheel.git?rev=2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc#2b03846d)
+   Compiling firewheel-nodes v0.14.0 (https://github.com/mark-ik/firewheel.git?rev=2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc#2b03846d)
+   Compiling firewheel-symphonium v0.14.0 (https://github.com/mark-ik/firewheel.git?rev=2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc#2b03846d)
+   Compiling insigne v0.0.2 (https://github.com/merely-made/dramatis.git?branch=main#cf562f47)
+   Compiling muniment v0.1.2 (https://github.com/merely-made/mere.git?branch=main#d1a200b1)
+   Compiling firewheel-cpal v0.14.0 (https://github.com/mark-ik/firewheel.git?rev=2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc#2b03846d)
+   Compiling personae v0.3.0 (https://github.com/merely-made/dramatis.git?branch=main#cf562f47)
+   Compiling firewheel v0.14.0 (https://github.com/mark-ik/firewheel.git?rev=2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc#2b03846d)
+   Compiling half v2.7.1
+   Compiling ciborium-ll v0.2.2
+   Compiling ciborium v0.2.2
+   Compiling hocket-model v0.1.0 (/Users/markik/Code/repos/woodshed/crates/hocket-model)
+   Compiling hocket-project v0.1.0 (/Users/markik/Code/repos/woodshed/crates/hocket-project)
+   Compiling hocket-engine v0.1.0 (/Users/markik/Code/repos/woodshed/ports/hocket/crates/hocket-engine)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 20.69s
+     Running unittests src/lib.rs (target/build/debug/deps/hocket_engine-1b3101c93f405ac9)
+
+running 36 tests
+test capture::tests::new_capture_is_idle ... ok
+test capture::tests::feed_in_idle_is_noop ... ok
+test capture::tests::progress_tracks_proportion ... ok
+test capture::tests::feed_slice_batches_correctly ... ok
+test capture::tests::cancel_returns_to_idle ... ok
+test capture::tests::rearm_after_drain_reserves_storage_before_feed ... ok
+test capture::tests::rearm_clears_previous_buffer ... ok
+test capture::tests::arm_then_feed_to_completion ... ok
+test capture::tests::zero_length_capture_keeps_first_sample_completion_behavior ... ok
+test click::tests::render_click_loop_is_silent_between_clicks ... ok
+test click::tests::render_click_loop_honors_the_beat_unit ... ok
+test click::tests::render_click_loop_has_expected_length ... ok
+test click::tests::render_click_loop_starts_with_accent ... ok
+test offline_tests::input_only_reader_captures_without_monitor_and_keeps_silence ... ok
+test offline_tests::drained_input_start_feeds_the_whole_overshooting_batch ... ok
+test offline_tests::output_only_stream_refuses_both_capture_modes ... ok
+test offline_tests::completed_capture_survives_later_background_reader_overflow ... ok
+test alloc_tests::capture_feed_allocates_only_the_phrase_buffer_at_start ... ok
+test offline_tests::immediate_start_supersedes_older_queued_pcm_for_the_same_key ... ok
+test offline_tests::count_in_waits_a_full_bar_then_captures_exact_phrase_length ... ok
+test offline_tests::source_sample_rate_preserves_one_shot_duration_after_device_change ... ok
+test alloc_tests::free_capture_feed_allocation_is_only_vec_growth ... ok
+test offline_tests::reader_finish_drains_and_restart_discards_old_generation ... ok
+test offline_tests::rendered_gain_and_voice_mix_follow_linear_mute_solo_projection ... ok
+test offline_tests::sampler_resource_events_restart_existing_voice_and_swap_click_in_place ... ok
+test offline_tests::queued_replay_waits_for_boundary_then_loops ... ok
+test offline_tests::stop_clears_capture_and_queued_replay ... ok
+test offline_tests::active_voice_limit_rejects_queue_at_admission_and_existing_key_can_restart ... ok
+test offline_tests::reader_overflow_aborts_capture_and_next_capture_is_clean ... ok
+test tests::playback_speed_preserves_source_duration_across_device_rates ... ok
+test tests::invalid_device_ids_fall_back_to_system_defaults ... ok
+test offline_tests::stopping_all_queued_keys_before_boundary_allows_only_replacement_project_to_sound ... ok
+test offline_tests::pending_voice_reservations_reject_extra_immediate_or_queued_keys_before_tick ... ok
+test offline_tests::tempo_change_rearms_waiting_capture_on_the_restarted_grid ... ok
+test offline_tests::stopping_one_queued_layer_preserves_other_stored_rate_start_without_resurrection ... ok
+test offline_tests::wait_only_start_begins_with_an_empty_capture ... ok
+
+test result: ok. 36 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+

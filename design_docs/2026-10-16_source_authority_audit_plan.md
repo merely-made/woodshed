@@ -4,7 +4,7 @@ Date: 2026-10-16; coordination closure: 2026-10-17.
 Status: complete collective read of frozen `d12201bf`; current-source finding
 reconciliation complete and published through `8204688`. Remediation remains open;
 H3/H5 and Q1 implementation is CPU qualified and published through `6e6498a`.
-B1–B3 runtime authority corrections are CPU qualified in a separate local batch. The frozen
+B1–B3 runtime authority corrections are CPU qualified and published through `b1c9dfd`. B4 PCM/onset/calibration corrections are CPU qualified at `5dd01ae` and local for review. The frozen
 audit closure itself adds no product fixes or product qualification.
 
 ## Scope and result
@@ -88,7 +88,7 @@ commits were published on 2026-10-18 under explicit user authorization.
 
 ### P5 Reduce competing runtime/material decisions (B1–B3)
 
-Status (2026-10-18): implemented and CPU qualified at `662cda5`; unpublished.
+Status (2026-10-18): implemented and CPU qualified at `662cda5`; published through `b1c9dfd`.
 Baseline: published `6e6498a`. Three Luna workers
 have disjoint code ownership: core retained-setup/selection realization (B1),
 SongBar payload-preserving silence (B2), and processor future-bar capture arms
@@ -108,8 +108,13 @@ qualification remains separate. The [runtime receipt](../validation/runtime-auth
 records 859 distinct parent/library passes, five separate child invocations and
 seven existing ignores, with real process exits and excluded draft runs. Path
 neck geometry shares retained setup and the existing empty-geometry contract;
-no separate scheduler, backup chord store or cleanup path was retained. New
-implementation stays local for review.
+no separate scheduler, backup chord store or cleanup path was retained. The nine reviewed commits were published under explicit user authorization.
+
+### P6 Unify bounded PCM and timing evidence admission (B4)
+
+Status (2026-10-18): implemented and CPU qualified at `5dd01ae`; local for review. Baseline: published `b1c9dfd`. Three Luna workers own disjoint PCM preparation/export, onset accounting, and calibration pairing/session files. The coordinator owns integration, independent source review and evidence.
+
+Done when imported and rendered nonfinite PCM is refused before resource publication while accepted backing survives rejection; onset clocks count each incoming sample once independent of chunk boundaries; calibration estimate and displayed support derive from one admitted pairing result. Preserve existing take PCM and clocks. No supplier/lock updates or native/device lane operations. New implementation remains local for review. The [process-bound receipt](../validation/pcm-timing_20261018/README.md) records 308 distinct library passes (61 primitives, 211 Woodshed audio, 36 Hocket engine), no ignores or nested child invocations, 11 exact source hashes and four unchanged locks.
 
 ## Current findings and next implementation order
 
@@ -140,9 +145,9 @@ implementation stays local for review.
    durable recipe validation, with retained neck geometry in the view. SongBar
    silence preserves authored payload and one audibility rule. Future-bar Arms
    use the existing bounded queue and cleanup, with ordered stop/pause/seek and
-   unreachable-target observations. The next runtime work is finite
-   PCM/onset/calibration admission (B4), shared Recorder SelectOne admission
-   (B5), Hocket tempo replay and failure reporting,
+   unreachable-target observations. B4 now has scoped CPU-qualified finite PCM rejection, chunk-invariant onset
+   accounting and a single calibration estimate/support result. The next runtime
+   work is shared Recorder SelectOne admission (B5), Hocket tempo replay and failure reporting,
    Redshank preview/runtime control and idle-worker completion remain separate
    product/controller seams. Protocol/instrument fixes B12–B14 preserve write,
    readback, restoration, incomplete data and output-file outcomes. Ringdown X1
@@ -211,3 +216,7 @@ implementation remains a separate preceding local change.
 2026-10-18: published six H3/H5 and Q1 commits through `6e6498a` after remote refresh; started B1–B3 with cheaper parallel workers and explicit ownership. The native lane remains untouched.
 
 2026-10-18 B1–B3 completion: source `662cda5` is CPU qualified, with 859 distinct parent/library passes, five separate child invocations and seven existing ignores. The final review added the retained-instrument Path neck receiving case and reused the existing empty geometry and capture cancellation. Four canonical findings are addressed; LO-5 remains an alias of CORE-4. All new commits remain local. No native/device or fresh-process native acceptance is claimed.
+
+2026-10-18: pushed the nine reviewed B1–B3 commits through `b1c9dfd` after refreshing origin/main. Started B4 with three cheaper Luna workers and explicit disjoint ownership; native validation remains untouched.
+
+2026-10-18 B4 completion: source `5dd01ae` passes 308 distinct cases across shared primitives, Woodshed audio and the Hocket engine. Source review consolidated the third frequency-bound copy in phrase preparation and removed a test-only session outcome helper. Imported and completed rendered PCM reject nonfinite values before publication; existing resources survive failed preparation. Onset accounting counts new samples once; calibration displays the estimator’s admitted support. The next frontier starts at B5. Implementation remains local; no native lane, device, supplier or original-media operations were performed.

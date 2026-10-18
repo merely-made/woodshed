@@ -1,0 +1,22 @@
+{
+  "baseline_revision": "b1c9dfd",
+  "scope": [
+    "design_docs/DOC_README.md",
+    "design_docs/2026-10-16_source_authority_audit_plan.md",
+    "validation/full-source-audit_20261016/README.md",
+    "validation/runtime-authority_20261018/README.md"
+  ],
+  "baseline": {
+    "checked_local_links": 111,
+    "findings": []
+  },
+  "current": {
+    "checked_local_links": 115,
+    "findings": []
+  },
+  "added_findings": [],
+  "new_receipt_readme": {
+    "checked_local_links": 1,
+    "findings": []
+  }
+}

@@ -1,0 +1,75 @@
+warning: patch `mere-proofs v0.1.0 (https://github.com/merely-made/mere.git?branch=main#d1a200b1)` was not used in the crate graph
+warning: patch `mere-transport v0.0.2 (https://github.com/merely-made/murm.git?branch=main#cba46d85)` was not used in the crate graph
+warning: patch `mere-webrtc-carrier v0.0.1 (https://github.com/merely-made/murm.git?branch=main#cba46d85)` was not used in the crate graph
+help: Check that the patched package version and available features are compatible
+      with the dependency requirements. If the patch has a different version from
+      what is locked in the Cargo.lock file, run `cargo update` to use the new
+      version. This may also occur with an optional dependency that is not enabled.
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2.19s
+     Running unittests src/lib.rs (target/build/debug/deps/audio_primitives-eb201ab0f4e19a26)
+
+running 61 tests
+test buffer::tests::gain_scales_and_clamps ... ok
+test buffer::tests::normalize_brings_peak_to_target ... ok
+test buffer::tests::normalize_silent_is_noop ... ok
+test calibration::tests::count_matches_includes_only_within_window ... ok
+test calibration::tests::estimate_latency_drops_onsets_outside_match_window ... ok
+test buffer::tests::reverse_flips_order ... ok
+test calibration::tests::estimate_latency_filters_negative_offsets ... ok
+test calibration::tests::estimate_latency_finds_median ... ok
+test calibration::tests::estimate_latency_rejects_outliers_via_median ... ok
+test calibration::tests::estimate_latency_returns_none_below_minimum_pairs ... ok
+test calibration::tests::nearest_negative_pair_is_not_replaced_by_a_later_positive_pair ... ok
+test calibration::tests::pairing_result_reports_support_when_insufficient_or_empty ... ok
+test calibration::tests::zero_offset_and_match_window_boundary_are_admitted ... ok
+test capture::tests::append_retains_bits_and_stops_at_capacity ... ok
+test capture::tests::empty_storage_refuses_all_modes ... ok
+test capture::tests::indexed_modes_preserve_clipping_and_repeated_overdubs ... ok
+test click::tests::click_sample_amplitude_bounded ... ok
+test click::tests::click_sample_returns_none_past_duration ... ok
+test click::tests::click_sample_starts_nonzero_and_decays ... ok
+test click::tests::meter_aware_bar_length_honors_the_beat_unit ... ok
+test click::tests::render_click_bar_accents_downbeat ... ok
+test click::tests::render_click_bar_clicks_on_downbeat_then_silence ... ok
+test meter::tests::attack_is_faster_than_release ... ok
+test click::tests::render_click_bar_has_expected_length ... ok
+test meter::tests::invalid_input_becomes_silence_and_reset_clears_state ... ok
+test meter::tests::peak_holds_then_decays_without_crossing_level ... ok
+test meter::tests::timing_is_frame_rate_independent ... ok
+test onset::tests::detector_debounces_too_close_hits ... ok
+test onset::tests::detector_finds_isolated_impulse ... ok
+test alignment::tests::silence_stationary_and_short_material_refuse ... ok
+test onset::tests::detector_warmup_returns_no_onsets ... ok
+test onset::tests::detector_finds_multiple_well_spaced_impulses ... ok
+test onset::tests::detector_reset_clears_history ... ok
+test onset::tests::estimate_bpm_120bpm_from_quarter_intervals ... ok
+test onset::tests::estimate_bpm_60bpm_from_one_second_intervals ... ok
+test onset::tests::estimate_bpm_clamps_excessive_tempo ... ok
+test onset::tests::estimate_bpm_clamps_too_slow_tempo ... ok
+test onset::tests::estimate_bpm_median_rejects_outlier ... ok
+test onset::tests::estimate_bpm_returns_none_below_two_onsets ... ok
+test onset::tests::detector_handles_split_buffer_seam ... ok
+test stretch::tests::ratio_is_clamped_to_the_supported_range ... ok
+test alignment::tests::validates_bounds_versions_and_pcm_without_partial_mutation ... ok
+test onset::tests::irregular_chunks_count_each_sample_once_and_preserve_onset_times ... ok
+test stretch::tests::reset_clears_state_and_counters ... ok
+test stretch::tests::ratio_changes_mid_stream_stay_continuous ... ok
+test stretch::tests::unity_ratio_is_a_bit_exact_passthrough ... ok
+test timing::tests::invalid_values_and_float_integer_boundary_are_refused ... ok
+test timing::tests::seconds_are_absolute_and_beats_preserve_the_old_expression ... ok
+test waveform::tests::an_impulse_survives_downsampling ... ok
+test waveform::tests::partitions_every_sample_into_signed_columns ... ok
+test waveform::tests::scaling_preserves_order_for_negative_gain ... ok
+test waveform::tests::silence_and_short_buffers_are_stable ... ok
+test alignment::tests::presented_anchor_excludes_lookahead_and_tracks_eviction ... ok
+test alignment::tests::strong_earlier_match_cannot_override_a_different_tail ... ok
+test stretch::tests::source_front_trails_consumption_by_less_than_a_window ... ok
+test alignment::tests::tolerates_gain_noise_and_different_pcm_sample_rate ... ok
+test alignment::tests::finds_thirty_second_insert_and_longer_preroll ... ok
+test alignment::tests::refuses_unrelated_repeated_deleted_and_discontinuous_audio ... ok
+test stretch::tests::retimed_sine_keeps_its_fundamental_and_hits_the_ratio ... ok
+test stretch::tests::stereo_channels_keep_their_own_pitch ... ok
+test stretch::tests::counters_track_the_ratio_within_one_hop ... ok
+
+test result: ok. 61 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.39s
+

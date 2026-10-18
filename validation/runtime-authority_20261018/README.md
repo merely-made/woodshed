@@ -1,6 +1,6 @@
 # Runtime and material authority corrections
 
-Date: 2026-10-18. Status: implemented and CPU qualified at `662cda5`; unpublished.
+Date: 2026-10-18. Status: implemented and CPU qualified at `662cda5`; published through `b1c9dfd`. See [publication](publication.json).
 Baseline: published `6e6498a`. This bounded batch addresses B1 (CORE-4/CORE-6,
 with LO-5 an alias), B2 (CORE-5) and B3 (AUDIO-01). It is separate from the
 preceding H3/H5 and Q1 batch, now published through that baseline.
