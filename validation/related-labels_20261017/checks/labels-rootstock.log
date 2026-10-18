@@ -1,0 +1,191 @@
+warning: unused variable: `time_range`
+   --> crates/cambium/scenes/scenomise/src/opened_link.rs:599:9
+    |
+599 |     let time_range = timeline_range(pending);
+    |         ^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_time_range`
+    |
+    = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default
+
+warning: `scenomise` (lib) generated 1 warning (run `cargo fix --lib -p scenomise` to apply 1 suggestion)
+warning: use of deprecated method `std::sync::atomic::Atomic::<u64>::fetch_update`: renamed to `try_update` for consistency
+  --> crates/cambium/cambium-rootstock/src/producer/registry.rs:47:10
+   |
+47 |     next.fetch_update(Ordering::Relaxed, Ordering::Relaxed, |key| {
+   |          ^^^^^^^^^^^^
+   |
+   = note: `#[warn(deprecated)]` on by default
+help: replace the use of the deprecated method
+   |
+47 -     next.fetch_update(Ordering::Relaxed, Ordering::Relaxed, |key| {
+47 +     next.try_update(Ordering::Relaxed, Ordering::Relaxed, |key| {
+   |
+
+warning: use of deprecated method `std::sync::atomic::Atomic::<u64>::fetch_update`: renamed to `try_update` for consistency
+  --> crates/cambium/cambium-rootstock/src/scene_producer.rs:25:10
+   |
+25 |         .fetch_update(Ordering::Relaxed, Ordering::Relaxed, |value| {
+   |          ^^^^^^^^^^^^
+   |
+help: replace the use of the deprecated method
+   |
+25 -         .fetch_update(Ordering::Relaxed, Ordering::Relaxed, |value| {
+25 +         .try_update(Ordering::Relaxed, Ordering::Relaxed, |value| {
+   |
+
+warning: use of deprecated method `std::sync::atomic::Atomic::<usize>::fetch_update`: renamed to `try_update` for consistency
+   --> crates/cambium/cambium-rootstock/src/host.rs:116:10
+    |
+116 |     NEXT.fetch_update(Ordering::Relaxed, Ordering::Relaxed, |next| {
+    |          ^^^^^^^^^^^^
+    |
+help: replace the use of the deprecated method
+    |
+116 -     NEXT.fetch_update(Ordering::Relaxed, Ordering::Relaxed, |next| {
+116 +     NEXT.try_update(Ordering::Relaxed, Ordering::Relaxed, |next| {
+    |
+
+warning: calls to `std::mem::drop` with a reference instead of an owned value does nothing
+   --> crates/cambium/cambium-rootstock/src/producer/registry.rs:678:13
+    |
+678 |             drop(renderer);
+    |             ^^^^^--------^
+    |                  |
+    |                  argument has type `&Renderer`
+    |
+    = note: `#[warn(dropping_references)]` on by default
+help: use `let _ = ...` to ignore the expression or result
+    |
+678 -             drop(renderer);
+678 +             let _ = renderer;
+    |
+
+warning: `cambium-rootstock` (lib test) generated 4 warnings (run `cargo fix --lib -p cambium-rootstock --tests` to apply 3 suggestions)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.09s
+     Running unittests src/lib.rs (target/build/debug/deps/cambium_rootstock-4fb5263aae0dfc86)
+
+running 122 tests
+test host::zoom_tests::a_degenerate_design_does_not_divide_by_zero ... ok
+test host::window_frame_tests::app_frame_insets_are_css_pixels_and_carry_zoom ... ok
+test host::zoom_tests::every_rung_is_reachable_by_stepping_up_from_the_bottom ... ok
+test host::zoom_tests::the_fit_is_the_binding_axis ... ok
+test host::zoom_tests::a_value_off_the_ladder_steps_to_the_next_rung_past_it ... ok
+test host::window_frame_tests::host_frame_is_the_default ... ok
+test host::window_frame_tests::the_old_false_input_still_selects_an_app_frame ... ok
+test host::window_frame_tests::app_frame_insets_only_apply_to_an_app_frame ... ok
+test host::window_frame_tests::an_app_frame_is_explicit ... ok
+test host::zoom_tests::the_ladder_steps_both_ways_and_clamps_at_its_ends ... ok
+test mount_probe_tests::withdrawal_walks_parents_so_it_needs_the_owner_outside_the_shadow_root ... ok
+test host::disposal_controls::disposed_actual_host_releases_retained_producer_and_refuses_captures_outside_borrow_once ... ok
+test frame::gpu_binding_controls::actual_host_missing_gpu_binding_refuses_all_capture_forms_once_and_keeps_authority ... ok
+test accessibility_tests::accessibility_sync_tracks_focus_changes_and_clear_without_hover ... ok
+test accessibility_tests::accessibility_bounds_follow_nested_and_document_scroll ... ok
+test mount_probe_tests::control_a_plain_div_mount_lets_the_document_rule_in ... ok
+test mount_probe_tests::control_a_guest_style_outside_the_shadow_root_leaks_out ... ok
+test mount_probe_tests::an_owner_that_is_the_shadow_host_scopes_the_guest_the_same_way ... ok
+test multi_host_tests::a_click_in_one_window_changes_what_the_other_shows_in_the_same_pass ... ok
+test multi_host_tests::a_change_only_one_window_shows_rebuilds_only_that_windows_layout ... ok
+test multi_host_tests::a_hidden_element_leaves_the_accessibility_tree ... ok
+test mount_probe_tests::a_shadow_root_mount_scopes_the_guest_and_stays_hittable_and_accessible ... ok
+test multi_host_tests::a_turn_opens_and_closes_windows_through_its_tree ... ok
+test multi_host_tests::a_node_moved_between_windows_keeps_its_identity_and_its_leaf_keeps_its_painter ... ok
+test owned_layout::graph_label_tests::oversized_ahem_graph_label_has_a_retained_clip_boundary ... ok
+test multi_host_tests::queued_secondary_release_and_cancel_follow_host_capture_routing ... ok
+test owned_layout::graph_label_tests::radial_graph_labels_stay_disjoint_inside_retained_layout_after_emphasis ... ok
+test owned_layout::incremental_tests::a_text_change_and_a_row_attribute_change_restyle_locally ... ignored, 1,000-row layouts take minutes unoptimised; run with cargo test --release
+test owned_layout::hidden_panel_tests::a_closed_accordion_panel_generates_no_box ... ok
+test owned_layout::incremental_tests::incremental_style_equals_a_fresh_session_at_1000_rows ... ignored, 1,000-row layouts take minutes unoptimised; run with cargo test --release
+test multi_host_tests::native_form_state_change_rebuilds_only_its_owning_window ... ok
+test multi_host_tests::each_windows_accessibility_tree_is_its_own_subtree ... ok
+test multi_host_tests::each_window_lays_out_its_own_subtree_at_its_own_size_and_scale ... ok
+test multi_host_tests::native_interaction_option_and_custom_validity_reach_only_their_window ... ok
+test multi_host_tests::native_form_metadata_notifications_reach_only_the_owning_window ... ok
+test owned_layout::hidden_panel_tests::a_collapsed_tree_group_generates_no_box ... ok
+test multi_host_tests::a_sheet_one_window_swaps_from_a_hook_reaches_the_other ... ok
+test owned_layout::hidden_panel_tests::a_closed_disclosure_panel_generates_no_box ... ok
+test owned_layout::interaction::tests::equal_hover_cascade_retains_geometry_text_generation_and_scroll ... ok
+test owned_layout::interaction::tests::hover_can_reflow_text_in_a_different_element ... ok
+test owned_layout::interaction::tests::focus_changes_and_later_dom_rebuilds_keep_the_current_interaction ... ok
+test owned_layout::interaction::tests::changed_color_is_not_mistaken_for_an_equal_cascade ... ok
+test owned_layout::interaction::tests::hover_geometry_changes_apply_and_revert_on_leave ... ok
+test owned_layout::tests::a_box_that_stops_scrolling_or_leaves_the_dom_loses_its_offset ... ok
+test owned_layout::tests::a_caret_paints_in_its_fields_text_colour ... ok
+test owned_layout::interaction::tests::hover_without_dependent_rules_skips_cascade_even_when_focus_has_rules ... ok
+test owned_layout::tests::a_shrinking_container_pulls_its_offset_back_to_the_new_end ... ok
+test owned_layout::tests::an_unrelated_container_keeps_the_offset_it_had ... ok
+test owned_layout::incremental_tests::a_viewport_change_falls_back_to_a_full_restyle ... ok
+test owned_layout::tests::a_plane_carried_onto_a_fresh_session_is_clamped_as_it_is_set ... ok
+test owned_layout::tests::document_extent_nested_recorder_repeated_wheel_stays_in_child ... ok
+test owned_layout::tests::document_extent_clips_only_the_bounded_axis ... ok
+test owned_layout::tests::document_extent_preserves_inline_bounds_and_rebuild_reclamps_after_clipping ... ok
+test owned_layout::tests::element_reveal_notifies_each_two_axis_plane_once_and_keeps_start_vertical ... ok
+test owned_layout::tests::document_extent_preserves_visible_outer_overflow_and_boundary_border_box ... ok
+test owned_layout::interaction::tests::escaped_commented_and_mixed_case_hover_rules_still_apply ... ok
+test owned_layout::text_paint_tests::an_empty_field_still_paints_a_caret_inside_its_scope ... ok
+test owned_layout::tests::later_text_fragments_contribute_beyond_short_formatting_lines ... ok
+test owned_layout::text_paint_tests::a_later_dom_overlay_covers_both_source_selection_and_caret ... ok
+test owned_layout::tests::document_extent_excludes_hidden_clip_auto_and_scroll_descendants ... ok
+test producer::registry::checked_refusal_tests::checked_refusal_invalidates_slot_without_retiring_bound_source ... ok
+test producer::registry::namespace_controls::actual_registry_refuses_unstaged_and_unknown_local_sources ... ok
+test producer::registry::namespace_controls::authored_high_local_key_is_remapped_with_local_command_identity_preserved ... ok
+test producer::registry::namespace_controls::equal_local_keys_stamps_and_extents_remap_to_distinct_physical_resources ... ok
+test producer::registry::namespace_controls::missing_late_binding_refuses_without_partial_scene_or_sidechannel_rewrite ... ok
+test producer::registry::namespace_controls::physical_identity_exhaustion_is_typed_and_never_wraps ... ok
+test producer::registry::namespace_controls::physical_identity_is_distinct_stable_and_never_recycled_for_same_local_key ... ok
+test producer::registry::namespace_controls::stale_generation_and_foreign_inline_payload_are_typed_refusals ... ok
+test owned_layout::text_paint_tests::a_positive_z_overlay_inside_a_field_also_covers_its_decorations ... ok
+test owned_layout::incremental_tests::incremental_style_equals_a_fresh_session_under_a_window_root ... ok
+test owned_layout::tests::formatting_lines_supply_own_and_visible_descendant_scroll_range ... ok
+test producer::registry::portable::tests::default_gpu_only_source_refuses_without_registry_mutation ... ok
+test owned_layout::text_paint_tests::normal_highlighted_text_keeps_its_selection_visible_over_opaque_tokens ... ok
+test producer::registry::portable::tests::lifecycle::portable_presentation_advances_once_and_export_only_observes ... ok
+test producer::registry::portable::tests::portable_refusal_preserves_live_gpu_view_and_stamp ... ignored, real-device cache proof; root serializes GPU acceptance
+test producer::registry::portable::tests::late_whole_envelope_refusal_preserves_prior_stamps_and_registration ... ok
+test producer::registry::shadow_namespace_tests::blurred_shadow_without_producers_is_accepted_and_mask_key_is_preserved ... ok
+test producer::registry::shadow_namespace_tests::duplicate_or_inline_colliding_shadow_mask_is_rejected_without_rewrite ... ok
+test producer::registry::shadow_namespace_tests::late_producer_binding_failure_leaves_shadow_masks_ops_and_metadata_unchanged ... ok
+test producer::registry::shadow_namespace_tests::producer_key_equal_to_raw_mask_local_bits_remaps_image_and_pattern_separately ... ok
+test producer::registry::shadow_namespace_tests::shadow_and_producer_keep_clip_opacity_order_geometry_and_distinct_keys ... ok
+test producer::registry::shadow_namespace_tests::shadow_mask_outside_reserved_translator_range_is_rejected_without_rewrite ... ok
+test owned_layout::text_paint_tests::raw_decoration_geometry_inherits_nested_scroll_clip_opacity_and_transform_once ... ok
+test owned_layout::text_paint_tests::the_original_window_overlay_order_is_a_failing_control ... ok
+test producer::tests::cpu_physical_extent_accounts_for_zoom_fractional_size_and_device_limits ... ok
+test producer::tests::cpu_registration_rejects_aliases_and_does_not_replace_a_live_producer ... ok
+test producer::registry::portable::tests::lifecycle::portable_presentation_suspends_once_per_visibility_transition ... ok
+test owned_layout::tests::clipped_descendant_lines_do_not_expand_the_outer_scroll_range ... ok
+test producer::registry::portable::tests::oversized_callback_scene_refuses_before_digest_and_preserves_accepted_stamp ... ok
+test producer::tests::cpu_content_extent_and_pointer_mapping_exclude_border_and_padding ... ok
+test producer::tests::cpu_appearance_reads_only_declared_values_with_typed_used_color ... ok
+test producer::registry::portable::tests::two_source_aggregate_refusal_preserves_all_accepted_metadata ... ok
+test owned_layout::tests::host_generic_faces_reach_actual_paint_and_refuse_invalid_font_bytes ... ok
+test recovery::raster_refusal_tests::healthy_provider_failure_refuses_all_captures_once_without_recovery ... ok
+test scene_producer::tests::an_absent_semantic_projection_keeps_the_host_dom_semantics ... ok
+test scene_producer::tests::rebinding_redirects_all_callbacks_even_when_revisions_coincide ... ok
+test spatial_tests::alignment_beats_raw_distance ... ok
+test spatial_tests::the_opposite_direction_is_never_a_candidate ... ok
+test spatial_tests::the_same_row_is_not_below ... ok
+test tests::a_chord_is_a_command_not_typing ... ok
+test tests::a_dead_key_never_types_even_carrying_text ... ok
+test tests::alt_is_not_a_chord_because_altgr_types ... ok
+test tests::an_unidentified_key_with_no_text_is_dropped ... ok
+test tests::arrows_resolve_to_directions ... ok
+test producer::registry::portable::tests::lifecycle::portable_rebind_preserves_metadata_and_removal_commits_after_admission ... ok
+test tests::character_press_carries_its_text ... ok
+test tests::control_characters_are_not_typed ... ok
+test tests::injected_text_only_for_unidentified_keys ... ok
+test tests::injected_text_reaches_the_runner_as_a_character ... ok
+test tests::menu_entry_keys_lower_without_losing_identity_or_modifiers ... ok
+test tests::word_granularity_follows_the_caller ... ok
+test window_dom::tests::native_form_state_reads_through_the_window_view ... ok
+test window_dom::tests::nested_shadow_trees_belong_to_the_window_holding_their_hosts ... ok
+test producer::tests::gpu_a_producer_another_window_holds_is_not_retired ... ok
+test producer::tests::gpu_unsupported_encoding_and_duplicate_dom_key_refuse_stale_pixels ... ok
+test producer::tests::gpu_a_closed_windows_producers_retire ... ok
+test producer::tests::gpu_host_timestamps_and_visibility_reach_the_producer ... ok
+test producer::tests::gpu_one_key_in_two_windows_is_a_duplicate_not_a_theft ... ok
+test producer::tests::gpu_a_producer_moved_to_another_window_survives_either_order ... ok
+test producer::tests::gpu_producer_refresh_resize_suspend_remove_and_recreate_use_fresh_images ... ok
+test tests::cambium_textbox_projection_reads_committed_value_and_preserves_semantics ... ok
+test owned_layout::incremental_tests::incremental_style_equals_a_fresh_session_at_100_rows ... ok
+
+test result: ok. 119 passed; 0 failed; 3 ignored; 0 measured; 0 filtered out; finished in 33.76s
+

@@ -1,0 +1,17 @@
+RESULT ok
+captured 01_related_default
+captured 02_related_fit
+captured 03_related_zoomed
+captured 04_related_panned
+captured 05_related_compact
+captured 06_related_compact_ui_zoom
+captured 07_related_node_navigation
+capture 01_related_default 2360x2000 digest=8a6b6114b470dae9 file=/Users/markik/Code/testing/woodshed/related-labels-20261017/native-v2/labels/01_related_default.png
+capture 02_related_fit 2360x2000 digest=87e0f5ba0b468c00 file=/Users/markik/Code/testing/woodshed/related-labels-20261017/native-v2/labels/02_related_fit.png
+capture 03_related_zoomed 2360x2000 digest=e11e57ca9a6e6e67 file=/Users/markik/Code/testing/woodshed/related-labels-20261017/native-v2/labels/03_related_zoomed.png
+capture 04_related_panned 2360x2000 digest=d9670029d3e1b46e file=/Users/markik/Code/testing/woodshed/related-labels-20261017/native-v2/labels/04_related_panned.png
+capture 05_related_compact 840x2000 digest=cefc40f5b3e433fe file=/Users/markik/Code/testing/woodshed/related-labels-20261017/native-v2/labels/05_related_compact.png
+capture 06_related_compact_ui_zoom 840x2000 digest=cb4d3c0e9591af98 file=/Users/markik/Code/testing/woodshed/related-labels-20261017/native-v2/labels/06_related_compact_ui_zoom.png
+capture 07_related_node_navigation 2360x2000 digest=0c4769ddf3166d4b file=/Users/markik/Code/testing/woodshed/related-labels-20261017/native-v2/labels/07_related_node_navigation.png
+frames: 7 captured, 0 blank, 7 distinct digests
+presentation: 198 frames, 200 redraws, 2 unpresented redraws

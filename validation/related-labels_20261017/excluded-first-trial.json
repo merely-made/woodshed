@@ -1,0 +1,7 @@
+{
+  "reason": "Harness expected material title omitted existing A root prefix. Actual A Major Pentatonic proves navigation but scenario failed. No acceptance claim. All seven captures retained; all geometry assertions passed.",
+  "source_revision": "f8db74a6cb2e613fb88e2dddcf3d534f3edc566f",
+  "product_binary_unchanged": true,
+  "normal_exit_zero": true,
+  "keeper_stopped_originals_unchanged": true
+}

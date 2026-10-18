@@ -19,7 +19,7 @@ before any other doc in this directory.
 
 ## Active Plans
 
-- [Related graph label placement](2026-07-11_stage_set_tools_plan.md#p8-adaptive-polish-and-release-acceptance) — In progress: shared Cambium collision-aware label placement and Woodshed default/Fit/zoom/pan/compact/native navigation qualification. No local material-specific label workaround.
+- [Related graph label placement](2026-07-11_stage_set_tools_plan.md#p8-adaptive-polish-and-release-acceptance) — Locally qualified shared Cambium label collision repair: 640 affected passes, desktop build and 16 native captures; publication pending. Narrow toolbar/125% graph clipping remains P8 work. [Receipt](../validation/related-labels_20261017/README.md).
 
 - [Production Mere scroll adoption](2026-07-11_stage_set_tools_plan.md#p7-rebuild-song-as-looper-over-set) — Main-based clipping/observation supplier, coherent renderer closure and retained selector migration; software gates, 31 native captures, exact sealed reopen and three-way WAV parity pass on committed source. Published through Mere `1eba417eb` and Woodshed `b01c922`. [Receipt](../validation/mere-scroll-adoption_20261017/README.md).
 

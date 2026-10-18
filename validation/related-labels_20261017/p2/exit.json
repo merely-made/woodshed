@@ -1,0 +1,15 @@
+{
+  "binary_unchanged" : true,
+  "normal_exit" : true,
+  "exit_code" : 0,
+  "supervisor_pid" : 23418,
+  "source_revision" : "b8095653f66a718ba5b39fa5b10232b549bce906",
+  "expected_executable" : "\/Users\/markik\/Code\/testing\/woodshed\/related-labels-20261017\/native-v2\/p2\/Woodshed Related Labels.app\/Contents\/MacOS\/woodshed",
+  "scenario_sha256" : "1cd813aadfb091a54e731f45b676ba64d76ae5f7ec6ab99750e0c09121bd9863",
+  "observed_executable" : "\/Users\/markik\/Code\/testing\/woodshed\/related-labels-20261017\/native-v2\/p2\/Woodshed Related Labels.app\/Contents\/MacOS\/woodshed",
+  "executable_identity_proven" : 1,
+  "signal" : 0,
+  "child_pid" : 23420,
+  "binary_sha256" : "09c172db4def6110c74fb57fd8cdec068149b92371753f42b1910f41c51242bb",
+  "scenario_unchanged" : true
+}

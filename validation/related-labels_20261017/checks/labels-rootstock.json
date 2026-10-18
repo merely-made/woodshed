@@ -1,0 +1,25 @@
+{
+  "command": [
+    "cargo",
+    "test",
+    "--offline",
+    "--locked",
+    "-p",
+    "cambium-rootstock",
+    "--lib",
+    "--no-default-features"
+  ],
+  "cwd": "/Users/markik/Code/testing/woodshed/related-labels-20261017/mere-labels",
+  "started_utc": "2026-10-18T01:16:55.314949+00:00",
+  "ended_utc": "2026-10-18T01:17:30.239466+00:00",
+  "exit_code": 0,
+  "suites": [
+    {
+      "passed": 119,
+      "failed": 0,
+      "ignored": 3,
+      "measured": 0,
+      "filtered_out": 0
+    }
+  ]
+}

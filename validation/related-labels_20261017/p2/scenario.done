@@ -1,0 +1,23 @@
+RESULT ok
+P2: canvas commands over the Session Mere, relationship editor and Related graph
+captured 01_overview_zoomed
+captured 02_overview_fit
+captured 03_relationship_zoomed
+captured 04_relationship_fit
+captured 04b_relationship_wheel
+captured 05_related_zoomed
+captured 06_related_fit
+captured 07_related_wheel
+captured 08_overview_wheel
+P2 canvas commands held on all three surfaces
+capture 01_overview_zoomed 2360x2000 digest=9d23cda949856ece file=/Users/markik/Code/testing/woodshed/related-labels-20261017/native-v2/p2/01_overview_zoomed.png
+capture 02_overview_fit 2360x2000 digest=ee095854ba0cc79a file=/Users/markik/Code/testing/woodshed/related-labels-20261017/native-v2/p2/02_overview_fit.png
+capture 03_relationship_zoomed 2360x2000 digest=07fcf5ea5bfd1070 file=/Users/markik/Code/testing/woodshed/related-labels-20261017/native-v2/p2/03_relationship_zoomed.png
+capture 04_relationship_fit 2360x2000 digest=c009a7300ee2ef26 file=/Users/markik/Code/testing/woodshed/related-labels-20261017/native-v2/p2/04_relationship_fit.png
+capture 04b_relationship_wheel 2360x2000 digest=f4c487255ee5f022 file=/Users/markik/Code/testing/woodshed/related-labels-20261017/native-v2/p2/04b_relationship_wheel.png
+capture 05_related_zoomed 2360x2000 digest=4ea95930f05a8a48 file=/Users/markik/Code/testing/woodshed/related-labels-20261017/native-v2/p2/05_related_zoomed.png
+capture 06_related_fit 2360x2000 digest=e2bcf6ea13d9dbea file=/Users/markik/Code/testing/woodshed/related-labels-20261017/native-v2/p2/06_related_fit.png
+capture 07_related_wheel 2360x2000 digest=1e4e3dbcb63b12bf file=/Users/markik/Code/testing/woodshed/related-labels-20261017/native-v2/p2/07_related_wheel.png
+capture 08_overview_wheel 2360x2000 digest=0d5983ffa82e0892 file=/Users/markik/Code/testing/woodshed/related-labels-20261017/native-v2/p2/08_overview_wheel.png
+frames: 9 captured, 0 blank, 9 distinct digests
+presentation: 274 frames, 276 redraws, 2 unpresented redraws

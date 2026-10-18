@@ -1,0 +1,10 @@
+{
+  "source_revision" : "b8095653f66a718ba5b39fa5b10232b549bce906",
+  "observed_executable" : "\/Users\/markik\/Code\/testing\/woodshed\/related-labels-20261017\/native-v2\/p2\/Woodshed Related Labels.app\/Contents\/MacOS\/woodshed",
+  "executable_identity_proven" : 1,
+  "child_pid" : 23420,
+  "expected_executable" : "\/Users\/markik\/Code\/testing\/woodshed\/related-labels-20261017\/native-v2\/p2\/Woodshed Related Labels.app\/Contents\/MacOS\/woodshed",
+  "binary_sha256" : "09c172db4def6110c74fb57fd8cdec068149b92371753f42b1910f41c51242bb",
+  "supervisor_pid" : 23418,
+  "scenario_sha256" : "1cd813aadfb091a54e731f45b676ba64d76ae5f7ec6ab99750e0c09121bd9863"
+}
