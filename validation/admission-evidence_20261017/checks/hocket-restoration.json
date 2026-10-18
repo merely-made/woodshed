@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "run_id": "hocket-restoration-20261017",
+  "command": [
+    "cargo",
+    "test",
+    "--locked",
+    "-p",
+    "hocket-genet",
+    "same_session_import_restores_one_missing_phrase_and_keeps_local_missing_facts"
+  ],
+  "started_at": "2026-10-18T02:15:50.480603Z",
+  "ended_at": "2026-10-18T02:15:57.049417Z",
+  "exit_code": 0,
+  "cwd": "/Users/markik/Code/repos/woodshed/ports/hocket",
+  "log": "/Users/markik/Code/testing/woodshed/admission-evidence-20261017/hocket-restoration.log",
+  "log_sha256": "90d00c9f2d4ea775bd20419b4b954d23843b1d4a169746a66e23cff0c969f802"
+}

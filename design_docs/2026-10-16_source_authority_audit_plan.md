@@ -2,8 +2,9 @@
 
 Date: 2026-10-16; coordination closure: 2026-10-17.
 Status: complete collective read of frozen `d12201bf`; current-source finding
-reconciliation complete and receipt committed locally. Remediation remains open.
-No new product fixes or product qualification are performed by this closure.
+reconciliation complete and published through `8204688`. Remediation remains open;
+H3/H5 and Q1 implementation is CPU qualified in a separate local batch. The frozen
+audit closure itself adds no product fixes or product qualification.
 
 ## Scope and result
 
@@ -66,28 +67,49 @@ DOC_README, exact source/receipt identities are retained, no product code has
 been changed, and publication status is stated separately. This closes the
 source-audit delivery; it does not mark the remaining fixes complete.
 
+### P4 Repair Hocket admission and operational evidence gates
+
+Status (2026-10-17): implemented and CPU qualified at `0effba1`; unpublished. Three
+lower-cost parallel workers have disjoint ownership: Hocket host identity/media
+admission (H3/H5), CI/font process evidence (E1), and revision-scoped target
+resolution in the link checker (E2). The coordinator owns integration and custody
+review. No worker owns native validation or supplier/lock updates.
+
+Done when staged identity consent binds the actual accepted profile/key and
+preserves the current identity on rejection; successful same-session import
+refreshes missing-media facts; process gates reject failed, incomplete or
+unbound executions; historical link targets resolve from the historical tree;
+and meaningful regression controls pass with observed process exits. Native
+custody/reopen and physical qualification remain separate. The [batch receipt](../validation/admission-evidence_20261017/README.md) records
+93 Hocket, 14 process and seven link controls (114 distinct passes), two existing
+ignores, real exits and retained excluded attempts. New implementation
+commits stay local for review; the preceding push authorized the already
+qualified label adoption and audit closeout.
+
 ## Current findings and next implementation order
 
 1. **Preservation and input admission already have implementations.** A1, A4 and
    A5 are present. Hocket A2's capture/close/full-revision dirty guards are
-   implemented, but its missing-media facts (H5) remain open. The preservation
+   implemented, and its missing-media facts (H5) now have the separate CPU-qualified correction below. The preservation
    receipts establish their exact historical software/build results and twelve
    bounded Woodshed persona/close/quarantine/reopen captures. They do not
    establish Hocket/Redshank native acceptance or current-head integration after
    subsequent source/supplier changes. Reuse these owners and the existing
    [preservation plan](2026-10-16_preservation_input_admission_plan.md).
-2. **A3 Hocket persona binding remains a first safety correction.** Confirmation
-   discards the staged offer, connects without the offered profile binding, and
-   pairs the returned key with cached profile text. Bind accepted custody to
-   what was offered or re-offer when it changes. Hocket H5 must recompute media
-   availability after successful import. Neither is closed by project topology
-   or dirty-save tests.
-3. **Q1 evidence integrity remains open.** The original CI/font helpers still
-   ignore later FAILED suites; the link checker still reads current targets for
-   historical referrers. Exact files match the frozen source. New source-bound
-   feature wrappers do not repair these older helpers. Fix retained operational
-   gates before relying on them for more acceptance. This does not assert any
-   historical accepted product run actually failed.
+2. **A3 Hocket persona binding and A2 missing-media refresh are implemented.**
+   The offered profile, target key and losing token are checked against actual
+   admission before consent or identity changes. CPU controls cover drift,
+   consent-write refusal and persisted exact target facts. Same-session import
+   refreshes availability while retaining unresolved local media and branches.
+   Real custody IPC, Hocket native interaction and fresh-process persona reopen
+   remain unqualified; no native lane was taken over.
+3. **Q1 evidence integrity has scoped executable fixes.** CI/font gates now
+   require observed process evidence and reject failed or unfinished suites.
+   The link checker resolves historical local targets from the same tree as
+   historical referrers, while binary links remain existence checks. Fourteen
+   process controls, seven link controls and the real documentation scan pass.
+   Historical artifacts remain unchanged; their missing execution metadata is
+   not synthesized and their product runs are not reclassified as failures.
 4. **Continue live model/runtime corrections through their owners.** Retained
    Path setup and stale Solo (B1), lossy saved-song silence toggling (B2),
    non-seeking future-bar capture arms (B3), finite PCM/onset/calibration admission
@@ -152,3 +174,7 @@ safety/runtime/port/evidence reconciliation is archived with its current input
 revision. Audit documentation and verifier only; no product fixes, new native
 runs, physical checks or publication added by this closure. The label-layout
 implementation remains a separate preceding local change.
+
+2026-10-17 implementation restart: user approved the next H3/H5 and Q1 fixes with cheaper parallel workers. Historical reports and source-bound qualification inputs remain unchanged; this batch will record its own source and executable checks.
+
+2026-10-17 H3/H5 and Q1 implementation: three Luna workers supplied disjoint patches; coordinator source review and final H5 fixture completed integration. Source `0effba1` passes 93 Hocket cases; process/link controls contribute 21 distinct cases. The original H4 dirty-state regression remains unchanged. New commits remain local, with native custody/reopen and physical evidence explicitly outside this batch.

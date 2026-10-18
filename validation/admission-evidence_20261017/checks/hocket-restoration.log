@@ -1,0 +1,29 @@
+warning: patch `ipc-channel v0.22.0 (https://github.com/merely-made/genet.git?branch=main#917f88e6)` was not used in the crate graph
+warning: patch `mere-proofs v0.1.0 (https://github.com/merely-made/mere.git?branch=main#d1a200b1)` was not used in the crate graph
+warning: patch `mere-transport v0.0.2 (https://github.com/merely-made/murm.git?branch=main#cba46d85)` was not used in the crate graph
+warning: patch `mere-webrtc-carrier v0.0.1 (https://github.com/merely-made/murm.git?branch=main#cba46d85)` was not used in the crate graph
+help: Check that the patched package version and available features are compatible
+      with the dependency requirements. If the patch has a different version from
+      what is locked in the Cargo.lock file, run `cargo update` to use the new
+      version. This may also occur with an optional dependency that is not enabled.
+   Compiling hocket-genet v0.2.0 (/Users/markik/Code/repos/woodshed/ports/hocket/crates/hocket-genet)
+warning: method `path` is never used
+   --> crates/hocket-genet/src/update.rs:184:12
+    |
+153 | impl UpdateSettingsProvider {
+    | --------------------------- method in this implementation
+...
+184 |     pub fn path(&self) -> &Path {
+    |            ^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `hocket-genet` (bin "hocket-genet" test) generated 1 warning
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 5.06s
+     Running unittests src/main.rs (target/build/debug/deps/hocket_genet-92f9c08705494e5a)
+
+running 1 test
+test state::native_lifecycle_tests::same_session_import_restores_one_missing_phrase_and_keeps_local_missing_facts ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 94 filtered out; finished in 0.21s
+
