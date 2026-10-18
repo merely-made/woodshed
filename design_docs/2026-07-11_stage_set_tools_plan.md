@@ -2389,22 +2389,24 @@ Published to Mere main through `1eba417eb`, then Woodshed main through
 
 ### P8. Adaptive polish and release acceptance
 
-The October 17 production scroll/P2 receiving run retains Related Fit label
-overlap, also present in the hash-verified October 15 capture. Camera controls
-and hit-face geometry pass; graph-label readability remains polish work. The
-recorder scroll matrix has no reviewed black lower strip or footer clipping.
+The historical October 17 scroll/P2 receiving run retained Related Fit label
+overlap, also present in the hash-verified October 15 capture. Shared label
+placement is now locally qualified on Mere `d1a200b18` and committed Woodshed
+`b809565`: 640 affected cases pass (three existing ignores), desktop build,
+seven label/native navigation captures and nine existing P2 camera captures.
+The shared Cambium resolver tries alternate anchored sides, uses one rectangle
+for culling and CSS, and lets lower-priority visible labels yield when no clear
+side remains. Full accessible names and node navigation targets survive.
+Selected, focused and hovered labels get priority without mutual collisions.
+[Receipt](../validation/related-labels_20261017/README.md). Publication pending;
+historical captures retain their original source and observations.
 
-Shared label-placement continuation (2026-10-17, in progress): the overlap
-originates in Mere's Cambium `graph_canvas` component, not Woodshed's material
-projection. The shared resolver will try alternate anchored sides in screen
-space, use one rectangle for culling and CSS, and suppress a lower-priority
-label only when no clear side remains. Node identity, full accessible names
-and navigation targets remain intact. Selected, focused and hovered labels
-get placement priority without a mutual-overlap exemption. Receiving done
-conditions: shared component and retained-layout regressions, locked desktop
-build, actual retained native label boxes disjoint and bounded, and reviewed
-Related default/Fit/zoom/pan/compact/node-navigation captures. Publication is
-separate; old captures retain their original source and observations.
+The new receiving matrix also records horizontal camera-toolbar overflow at
+420px, and clipping of the graph/control region at 125% UI zoom. Labels are
+disjoint within the allocated graph, but allocated bounds do not prove full
+screen visibility. This responsive composition remains open. Some edge strokes
+pass behind text; label/edge separation is not claimed. The previous recorder
+scroll matrix has no reviewed black lower strip or footer clipping.
 
 **Current state: open.** Windows alpha behavior exists. Three-width product
 acceptance, touch/reduced-motion coverage, and Mac/Linux receipts remain open.

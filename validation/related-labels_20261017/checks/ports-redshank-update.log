@@ -1,0 +1,106 @@
+warning: patch `mere-p2panda-net v0.7.5 (https://github.com/mark-ik/p2panda.git?tag=mere-p2panda-net-0.7.5-upstream-20261013#1f69c9bc)` was not used in the crate graph
+warning: patch `mere-proofs v0.1.0 (https://github.com/merely-made/mere.git?branch=main#d1a200b1)` was not used in the crate graph
+warning: patch `muniment v0.1.2 (https://github.com/merely-made/mere.git?branch=main#d1a200b1)` was not used in the crate graph
+warning: patch `p2panda-auth v0.7.1 (https://github.com/mark-ik/p2panda.git?tag=mere-p2panda-net-0.7.5-upstream-20261013#1f69c9bc)` was not used in the crate graph
+warning: patch `p2panda-core v0.7.1 (https://github.com/mark-ik/p2panda.git?tag=mere-p2panda-net-0.7.5-upstream-20261013#1f69c9bc)` was not used in the crate graph
+warning: patch `p2panda-discovery v0.7.1 (https://github.com/mark-ik/p2panda.git?tag=mere-p2panda-net-0.7.5-upstream-20261013#1f69c9bc)` was not used in the crate graph
+warning: patch `p2panda-encryption v0.7.1 (https://github.com/mark-ik/p2panda.git?tag=mere-p2panda-net-0.7.5-upstream-20261013#1f69c9bc)` was not used in the crate graph
+warning: patch `p2panda-store v0.7.1 (https://github.com/mark-ik/p2panda.git?tag=mere-p2panda-net-0.7.5-upstream-20261013#1f69c9bc)` was not used in the crate graph
+warning: patch `p2panda-stream v0.7.1 (https://github.com/mark-ik/p2panda.git?tag=mere-p2panda-net-0.7.5-upstream-20261013#1f69c9bc)` was not used in the crate graph
+warning: patch `p2panda-sync v0.7.1 (https://github.com/mark-ik/p2panda.git?tag=mere-p2panda-net-0.7.5-upstream-20261013#1f69c9bc)` was not used in the crate graph
+help: Check that the patched package version and available features are compatible
+      with the dependency requirements. If the patch has a different version from
+      what is locked in the Cargo.lock file, run `cargo update` to use the new
+      version. This may also occur with an optional dependency that is not enabled.
+    Updating backstep v0.1.0 (https://github.com/merely-made/mere.git?branch=main#2d95d95e) -> #d1a200b1
+    Updating buckram v0.0.3 (https://github.com/merely-made/genet.git?branch=main#917f88e6) -> #4db9557c
+    Updating cadency v0.0.1 (https://github.com/merely-made/genet.git?branch=main#917f88e6) -> #4db9557c
+    Updating cambium v0.3.3 (https://github.com/merely-made/mere.git?branch=main#2d95d95e) -> #d1a200b1
+    Updating cambium-genet-web-host v0.1.0 (https://github.com/merely-made/mere.git?branch=main#2d95d95e) -> #d1a200b1
+    Updating cambium-genet-winit-host v0.1.0 (https://github.com/merely-made/mere.git?branch=main#2d95d95e) -> #d1a200b1
+    Updating cambium-rootstock v0.1.0 (https://github.com/merely-made/mere.git?branch=main#2d95d95e) -> #d1a200b1
+    Updating cambium-winit v0.3.0 (https://github.com/merely-made/mere.git?branch=main#2d95d95e) -> #d1a200b1
+    Updating cambium-winit-a11y v0.3.0 (https://github.com/merely-made/mere.git?branch=main#2d95d95e) -> #d1a200b1
+    Updating command-menu v0.1.0 (https://github.com/merely-made/mere.git?branch=main#2d95d95e) -> #d1a200b1
+    Updating document-canvas v0.1.0 (https://github.com/merely-made/mere.git?branch=main#2d95d95e) -> #d1a200b1
+    Updating document-session-api v0.1.0 (https://github.com/merely-made/genet.git?branch=main#917f88e6) -> #4db9557c
+    Updating engine-observables-api v0.2.0 (https://github.com/merely-made/genet.git?branch=main#917f88e6) -> #4db9557c
+    Updating errand v0.4.0 (https://github.com/merely-made/mere.git?branch=main#2d95d95e) -> #d1a200b1
+    Updating fleece v0.5.0 (https://github.com/merely-made/genet.git?branch=main#917f88e6) -> #4db9557c
+    Updating genet-css-flow v0.1.0 (https://github.com/merely-made/genet.git?branch=main#917f88e6) -> #4db9557c
+    Updating genet-document-resources v0.2.1 (https://github.com/merely-made/genet.git?branch=main#917f88e6) -> #4db9557c
+    Updating genet-fontique v0.10.0 (https://github.com/merely-made/genet.git?branch=main#917f88e6) -> #4db9557c
+    Updating genet-host-api v0.2.0 (https://github.com/merely-made/genet.git?branch=main#917f88e6) -> #4db9557c
+    Updating genet-livery v0.0.4 (https://github.com/merely-made/genet.git?branch=main#917f88e6) -> #4db9557c
+    Updating genet-paint-types v0.2.0 (https://github.com/merely-made/genet.git?branch=main#917f88e6) -> #4db9557c
+    Updating genet-parley v0.10.0 (https://github.com/merely-made/genet.git?branch=main#917f88e6) -> #4db9557c
+    Updating genet-render v0.2.0 (https://github.com/merely-made/genet.git?branch=main#917f88e6) -> #4db9557c
+    Updating genet-render-host v0.2.0 (https://github.com/merely-made/genet.git?branch=main#917f88e6) -> #4db9557c
+    Updating genet-scripted-dom v0.1.2 (https://github.com/merely-made/genet.git?branch=main#917f88e6) -> #4db9557c
+    Updating genet-static-dom v0.1.1 (https://github.com/merely-made/genet.git?branch=main#917f88e6) -> #4db9557c
+    Updating genet-text v0.1.0 (https://github.com/merely-made/genet.git?branch=main#917f88e6) -> #4db9557c
+    Updating genet-winit-host v0.2.0 (https://github.com/merely-made/genet.git?branch=main#917f88e6) -> #4db9557c
+    Updating illume v0.0.2 (https://github.com/merely-made/mere.git?branch=main#2d95d95e) -> #d1a200b1
+    Updating inker v0.1.1 (https://github.com/merely-made/mere.git?branch=main#2d95d95e) -> #d1a200b1
+    Updating layout-dom-api v0.1.1 (https://github.com/merely-made/genet.git?branch=main#917f88e6) -> #4db9557c
+    Updating livery v0.0.5 (https://github.com/merely-made/genet.git?branch=main#917f88e6) -> #4db9557c
+    Updating mere-apparatus v0.0.1 (https://github.com/merely-made/mere.git?branch=main#2d95d95e) -> #d1a200b1
+    Updating mere-curation v0.1.1 (https://github.com/merely-made/mere.git?branch=main#2d95d95e) -> #d1a200b1
+    Updating mere-document-lanes v0.1.0 (https://github.com/merely-made/mere.git?branch=main#2d95d95e) -> #d1a200b1
+    Updating mere-fetch v0.0.1 (https://github.com/merely-made/mere.git?branch=main#2d95d95e) -> #d1a200b1
+    Updating mere-fleece v0.0.1 (https://github.com/merely-made/mere.git?branch=main#2d95d95e) -> #d1a200b1
+    Updating mere-page-load v0.0.1 (https://github.com/merely-made/mere.git?branch=main#2d95d95e) -> #d1a200b1
+    Updating mere-surface-api v0.1.0 (https://github.com/merely-made/mere.git?branch=main#2d95d95e) -> #d1a200b1
+    Updating meristem v0.2.0 (https://github.com/merely-made/mere.git?branch=main#2d95d95e) -> #d1a200b1
+    Updating mesquite v0.1.0 (https://github.com/merely-made/mere.git?branch=main#2d95d95e) -> #d1a200b1
+    Updating murm-wire v0.1.0 (https://github.com/merely-made/murm.git?branch=main#cba46d85) -> #d81a606f
+    Updating netfetcher v0.1.1 (https://github.com/merely-made/genet.git?branch=main#917f88e6) -> #4db9557c
+    Updating regress v0.11.1 (https://github.com/merely-made/genet.git?branch=main#917f88e6) -> #4db9557c
+    Updating sceno v0.0.5 (https://github.com/merely-made/mere.git?branch=main#2d95d95e) -> #d1a200b1
+    Updating scenograph v0.0.4 (https://github.com/merely-made/mere.git?branch=main#2d95d95e) -> #d1a200b1
+    Updating scenomise v0.0.5 (https://github.com/merely-made/mere.git?branch=main#2d95d95e) -> #d1a200b1
+    Updating sprigging v0.2.1 (https://github.com/merely-made/mere.git?branch=main#2d95d95e) -> #d1a200b1
+    Updating tabard v0.0.2 (https://github.com/merely-made/mere.git?branch=main#2d95d95e) -> #d1a200b1
+    Updating tabard-workshop v0.0.1 (https://github.com/merely-made/mere.git?branch=main#2d95d95e) -> #d1a200b1
+    Updating taproot v0.1.0 (https://github.com/merely-made/genet.git?branch=main#917f88e6) -> #4db9557c
+    Updating tinct v0.2.0 (https://github.com/merely-made/mere.git?branch=main#2d95d95e) -> #d1a200b1
+    Updating workbench v0.1.0 (https://github.com/merely-made/mere.git?branch=main#2d95d95e) -> #d1a200b1
+note: pass `--verbose` to see 76 unchanged dependencies behind latest
+warning: patch `mere-p2panda-net v0.7.5 (https://github.com/mark-ik/p2panda.git?tag=mere-p2panda-net-0.7.5-upstream-20261013#1f69c9bc)` was not used in the crate graph
+warning: patch `mere-proofs v0.1.0 (https://github.com/merely-made/mere.git?branch=main#d1a200b1)` was not used in the crate graph
+warning: patch `muniment v0.1.2 (https://github.com/merely-made/mere.git?branch=main#d1a200b1)` was not used in the crate graph
+warning: patch `p2panda-auth v0.7.1 (https://github.com/mark-ik/p2panda.git?tag=mere-p2panda-net-0.7.5-upstream-20261013#1f69c9bc)` was not used in the crate graph
+warning: patch `p2panda-core v0.7.1 (https://github.com/mark-ik/p2panda.git?tag=mere-p2panda-net-0.7.5-upstream-20261013#1f69c9bc)` was not used in the crate graph
+warning: patch `p2panda-discovery v0.7.1 (https://github.com/mark-ik/p2panda.git?tag=mere-p2panda-net-0.7.5-upstream-20261013#1f69c9bc)` was not used in the crate graph
+warning: patch `p2panda-encryption v0.7.1 (https://github.com/mark-ik/p2panda.git?tag=mere-p2panda-net-0.7.5-upstream-20261013#1f69c9bc)` was not used in the crate graph
+warning: patch `p2panda-store v0.7.1 (https://github.com/mark-ik/p2panda.git?tag=mere-p2panda-net-0.7.5-upstream-20261013#1f69c9bc)` was not used in the crate graph
+warning: patch `p2panda-stream v0.7.1 (https://github.com/mark-ik/p2panda.git?tag=mere-p2panda-net-0.7.5-upstream-20261013#1f69c9bc)` was not used in the crate graph
+warning: patch `p2panda-sync v0.7.1 (https://github.com/mark-ik/p2panda.git?tag=mere-p2panda-net-0.7.5-upstream-20261013#1f69c9bc)` was not used in the crate graph
+help: Check that the patched package version and available features are compatible
+      with the dependency requirements. If the patch has a different version from
+      what is locked in the Cargo.lock file, run `cargo update` to use the new
+      version. This may also occur with an optional dependency that is not enabled.
+    Updating buckram v0.0.3 (https://github.com/merely-made/genet.git?branch=main#4db9557c) -> #917f88e6
+    Updating cadency v0.0.1 (https://github.com/merely-made/genet.git?branch=main#4db9557c) -> #917f88e6
+    Updating document-session-api v0.1.0 (https://github.com/merely-made/genet.git?branch=main#4db9557c) -> #917f88e6
+    Updating engine-observables-api v0.2.0 (https://github.com/merely-made/genet.git?branch=main#4db9557c) -> #917f88e6
+    Updating fleece v0.5.0 (https://github.com/merely-made/genet.git?branch=main#4db9557c) -> #917f88e6
+    Updating genet-css-flow v0.1.0 (https://github.com/merely-made/genet.git?branch=main#4db9557c) -> #917f88e6
+    Updating genet-document-resources v0.2.1 (https://github.com/merely-made/genet.git?branch=main#4db9557c) -> #917f88e6
+    Updating genet-fontique v0.10.0 (https://github.com/merely-made/genet.git?branch=main#4db9557c) -> #917f88e6
+    Updating genet-host-api v0.2.0 (https://github.com/merely-made/genet.git?branch=main#4db9557c) -> #917f88e6
+    Updating genet-livery v0.0.4 (https://github.com/merely-made/genet.git?branch=main#4db9557c) -> #917f88e6
+    Updating genet-paint-types v0.2.0 (https://github.com/merely-made/genet.git?branch=main#4db9557c) -> #917f88e6
+    Updating genet-parley v0.10.0 (https://github.com/merely-made/genet.git?branch=main#4db9557c) -> #917f88e6
+    Updating genet-render v0.2.0 (https://github.com/merely-made/genet.git?branch=main#4db9557c) -> #917f88e6
+    Updating genet-render-host v0.2.0 (https://github.com/merely-made/genet.git?branch=main#4db9557c) -> #917f88e6
+    Updating genet-scripted-dom v0.1.2 (https://github.com/merely-made/genet.git?branch=main#4db9557c) -> #917f88e6
+    Updating genet-static-dom v0.1.1 (https://github.com/merely-made/genet.git?branch=main#4db9557c) -> #917f88e6
+    Updating genet-text v0.1.0 (https://github.com/merely-made/genet.git?branch=main#4db9557c) -> #917f88e6
+    Updating genet-winit-host v0.2.0 (https://github.com/merely-made/genet.git?branch=main#4db9557c) -> #917f88e6
+    Updating layout-dom-api v0.1.1 (https://github.com/merely-made/genet.git?branch=main#4db9557c) -> #917f88e6
+    Updating livery v0.0.5 (https://github.com/merely-made/genet.git?branch=main#4db9557c) -> #917f88e6
+    Updating netfetcher v0.1.1 (https://github.com/merely-made/genet.git?branch=main#4db9557c) -> #917f88e6
+    Updating regress v0.11.1 (https://github.com/merely-made/genet.git?branch=main#4db9557c) -> #917f88e6
+    Updating taproot v0.1.0 (https://github.com/merely-made/genet.git?branch=main#4db9557c) -> #917f88e6
+note: pass `--verbose` to see 76 unchanged dependencies behind latest

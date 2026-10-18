@@ -1,0 +1,64 @@
+# Shared Cambium label placement receiving proof. Geometry comes from the
+# retained native layout, not the label resolver's own estimates.
+settle 90
+ui-zoom 1
+resize 1180 1000
+act relationship-example
+settle 5
+click .workspace-panel Related
+settle 5
+assert snap related-label-geometry-available == true
+assert snap related-label-count >= 8
+assert snap related-label-collisions == 0
+assert snap related-label-outside == 0
+assert snap related-paint-current == true
+capture 01_related_default
+click .related-camera-fit Fit
+settle 4
+assert snap related-label-count >= 8
+assert snap related-label-collisions == 0
+assert snap related-label-outside == 0
+assert snap related-face-missing == 0
+capture 02_related_fit
+click .related-camera-zoom-in Zoom in
+settle 4
+assert snap related-label-count >= 6
+assert snap related-label-collisions == 0
+assert snap related-label-outside == 0
+assert snap related-paint-current == true
+capture 03_related_zoomed
+click .related-camera-pan-left Pan left
+settle 4
+assert snap related-label-count >= 3
+assert snap related-label-collisions == 0
+assert snap related-label-outside == 0
+capture 04_related_panned
+click .related-camera-fit Fit
+resize 420 1000
+settle 6
+assert snap related-label-geometry-available == true
+assert snap related-label-count >= 8
+assert snap related-label-collisions == 0
+assert snap related-label-outside == 0
+capture 05_related_compact
+ui-zoom 1.25
+settle 6
+assert snap related-label-geometry-available == true
+assert snap related-label-count >= 8
+assert snap related-label-collisions == 0
+assert snap related-label-outside == 0
+capture 06_related_compact_ui_zoom
+ui-zoom 1
+resize 1180 1000
+settle 6
+# Exercise an actual node target after labels move. Text remains transparent
+# to input and the selected material becomes the next graph's centre.
+click .graph-canvas-swatch-node @aria-label=Major Pentatonic
+settle 6
+assert snap related-label-geometry-available == true
+assert snap related-label-count >= 3
+assert snap related-label-collisions == 0
+assert snap related-label-outside == 0
+assert snap material == A Major Pentatonic
+capture 07_related_node_navigation
+assert snap set-cards == 3

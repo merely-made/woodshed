@@ -1,0 +1,25 @@
+{
+  "command": [
+    "cargo",
+    "test",
+    "--offline",
+    "--locked",
+    "-j2",
+    "-p",
+    "woodshed-views",
+    "--lib"
+  ],
+  "cwd": "/Users/markik/Code/repos/woodshed",
+  "started_utc": "2026-10-18T01:18:22.554377+00:00",
+  "ended_utc": "2026-10-18T01:21:12.857549+00:00",
+  "exit_code": 0,
+  "suites": [
+    {
+      "passed": 242,
+      "failed": 0,
+      "ignored": 0,
+      "measured": 0,
+      "filtered_out": 0
+    }
+  ]
+}

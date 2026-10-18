@@ -1,0 +1,33 @@
+{
+  "app": "/Users/markik/Code/testing/woodshed/related-labels-20261017/native-v2/labels/Woodshed Related Labels.app",
+  "env": {
+    "WOODSHED_CAPTURE_DIR": "/Users/markik/Code/testing/woodshed/related-labels-20261017/native-v2/labels",
+    "WOODSHED_RECEIPT": "/Users/markik/Code/testing/woodshed/related-labels-20261017/native-v2/labels/scenario.done",
+    "WOODSHED_SCENARIO": "/Users/markik/Code/testing/woodshed/related-labels-20261017/native-v2/labels/scenario.scn",
+    "WOODSHED_PRESENTATION_TIMEOUT_SECS": "60",
+    "WOODSHED_WIDTH": "1180",
+    "WOODSHED_HEIGHT": "1000",
+    "TMPDIR": "/tmp",
+    "CAMBIUM_HOST_FRAME_TRACE": "1",
+    "WOODSHED_STATE": "/Users/markik/Code/testing/woodshed/related-labels-20261017/native-v2/labels-profile/practice.bin",
+    "WOODSHED_SETTINGS": "/Users/markik/Code/testing/woodshed/related-labels-20261017/native-v2/labels-profile/settings.json",
+    "GRAPHSHELL_APP_ENDPOINT": "/tmp/ws-labels1017-v2.sock",
+    "XDG_DATA_HOME": "/Users/markik/Code/testing/woodshed/related-labels-20261017/native-v2/data",
+    "XDG_CONFIG_HOME": "/Users/markik/Code/testing/woodshed/related-labels-20261017/native-v2/config",
+    "XDG_CACHE_HOME": "/Users/markik/Code/testing/woodshed/related-labels-20261017/native-v2/cache",
+    "MERE_ROOT": "/Users/markik/Code/testing/woodshed/related-labels-20261017/native-v2/mere"
+  },
+  "source": {
+    "revision": "b8095653f66a718ba5b39fa5b10232b549bce906",
+    "worktree": "",
+    "binaries": {
+      "woodshed": "09c172db4def6110c74fb57fd8cdec068149b92371753f42b1910f41c51242bb",
+      "launcher": "8a3a469a9f183e400982b37dc8092237b11e8c28edd3a291fbb2edb4a692aa0e"
+    },
+    "source_hashes_sha256": "537cc73f4a73c0749ff9c382a2e2e3de8eb7e09ffd8d8053872a5b8470e8a047"
+  },
+  "bundle_id": "made.merely.woodshed.relatedlabels20261017",
+  "launcher_sha256": "8a3a469a9f183e400982b37dc8092237b11e8c28edd3a291fbb2edb4a692aa0e",
+  "binary_sha256": "09c172db4def6110c74fb57fd8cdec068149b92371753f42b1910f41c51242bb",
+  "scenario_sha256": "1fd2cd3bad7454419d387c5b8e82e149ebb144dc807f1457c66626d63cdf849f"
+}
