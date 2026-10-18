@@ -952,6 +952,7 @@ mod tests {
         assert!(display.lanes[0].name.contains("silent"));
         assert_eq!(display.transport.recording, RecordingState::Idle);
         assert!(display.transport.status.contains("no new take saved"));
+        drop(display);
         ui.recorder_observation.capture_busy = true;
         let display = projection(&ui);
         assert!(display.transport.status.contains("take will be discarded"));
