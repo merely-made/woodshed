@@ -1,12 +1,14 @@
-# Client surface plan: typed writes, a shadow profile, and the bank-creation question
+# Client surface plan: desktop performance control, Beats, and scripting
 
 **Date:** 2026-09-02
-**Status:** in progress. Decisions 1–4 below were taken by Mark on
-2026-09-02. **Phase A landed 2026-09-02** (commit 77207ef). **Phase B landed 2026-09-02**
-(commit 3611c55). **Phase C landed 2026-09-02** (uncommitted at time of
-writing). B and C are verified against a scripted link only, not against the
-instrument. **Phase D closed 2026-09-02**: bank creation works (H47). Phases A–C landed
-(77207ef, 3611c55, 86c266a); the session log is at the foot.
+**Updated:** 2026-10-17.
+**Status (2026-10-17):** in progress. The source and documentation assessment
+of software stomp-box control and Beats is complete below; current-firmware
+device qualification and performance implementation are pending. Phases A–C
+landed (77207ef, 3611c55, 86c266a); B/C have scripted-link evidence, not device
+qualification of the complete typed/profile path. Phase D closed on hardware
+2026-09-02: a client can create a playable bank (H47). Those older receipts
+do not establish behavior on the owner's recently updated firmware.
 
 Findings that ground this live in `2026-08-27_ringdown_founding.md` (H25–H38)
 and the session handoff `2026-09-01_effects_handoff.md`. This plan does not
@@ -14,13 +16,257 @@ restate them; it says what the client's surface becomes because of them.
 
 ## Objective
 
-Give a consumer (woodshed first) a typed way to do what the hardware sessions
-proved by hand through the probe's `--call Method key=value` path: edit a
-preset's effect chain, rename and select presets, drive the metronome, and
-keep a record of what was sent so it can be checked and re-sent. Today
-`ringdown-client::Guitar` types only status and files; every verified write
-is a string method name and a `serde_json::Value`, and woodshed carries its
-own guard against the one call that wedges the firmware.
+Make Ringdown an independent desktop performance controller for a HyVibe
+guitar: prepare tones and song cues, trigger supported actions from a screen,
+keyboard, MIDI controller or script, and control the instrument's own Beats
+rhythms where the firmware exposes them. HyVibe continues to add instrument
+features; Ringdown should extend access to those features through desktop and
+automation workflows.
+
+The typed writes and serializable shadow profile from A–D supply the
+configuration foundation. The next target is a software equivalent of the
+Bluetooth stomp box, assessed together with Beats. Woodshed consumes this
+capability; running Ringdown must not require launching the practice toolkit.
+
+## Desktop performance assessment (2026-10-17)
+
+### Direction and assessment scope
+
+Mark requested this assessment and plan update on 2026-10-17 after identifying
+live control, performance scripting, and the guitar's new Beats feature as
+product opportunities. This authorizes the planning direction; the adapters,
+command names and cue format below are implementation candidates.
+
+This pass inspected Woodshed `c6036f21afad72dd6d4850b8dd23a9c090ff49e1`,
+Ringdown source and earlier receipts, and the primary sources linked below.
+Fetched `origin/main` at `125be57` before delivery: Ringdown and
+`woodshed-instrument` are unchanged from that source baseline, and there is
+still no instrument integration in the desktop host or views.
+It performed no Bluetooth discovery, device writes, firmware installation or
+new hardware qualification. The owner's current firmware versions, updated
+app version and MIDI bindings have not been recorded.
+
+### Evidence and what it establishes
+
+| Evidence | Confidence and implication |
+|---|---|
+| [Typed planners](../crates/ringdown/src/plan.rs), [shadow profile](../crates/ringdown/src/profile.rs), [driver](../crates/ringdown-client/src/lib.rs) | **Static-read of current source; earlier fixture and hardware receipts remain scoped to their runs.** Reusable configuration machinery exists. `Sent` distinguishes a parsed reply from an observed musical result. |
+| [BLE shell](../crates/ringdown-ble/src/lib.rs), [workspace](../Cargo.toml), [probe](../apps/probe/src/main.rs) | **Static-read.** The desktop connects as a central to the guitar's app GATT service. The only Ringdown app is the research probe; there is no performance UI, resident control service or BLE MIDI pedal adapter. |
+| Founding Findings H24/H25/H27/H32/H43/H47 | **Historical hardware-verified.** Preset/effect editing, metronome control and playable bank creation have evidence. Read-back is limited, the phone app overwrites profiles on connect, and a parsed reply alone cannot establish effect state. Recheck applicability on current firmware. |
+| [HyVibe MIDI instructions](https://www.hyvibeguitar.com/airturn-midi-instructions/) | **Static-read of vendor documentation.** The guitar scans for a BLE MIDI pedal; bindings include loop record, play/stop and effect actions. Channel 1 and configurable CC/Note On bindings are documented. The four-switch AirTurn numbers are 64, 66, 65, 67; these identify switches, not universal guitar commands. Message values, release behavior and the documented hold-to-erase gesture still need device evidence. |
+| Owner report, 2026-10-17; [HyVibe feature overview](https://www.hyvibeguitar.com/) | **Owner-reported for Beats; static-read for vendor drum-machine claim.** The owner reports drum patterns replacing the metronome presentation with “Beats.” This does not identify a remote-control protocol. |
+| [Existing RPC vocabulary](../crates/ringdown/src/rpc.rs), `METRONOME` and `Method`; [compression dictionary](../crates/ringdown/src/compress.rs) | **Static-read.** Known metronome parameters cover `bpm`, `num`, `den`, `bars`; no explicit Beats-pattern or MIDI-pedal implementation was found. `StartRecording`/`StopRecording` are not evidence of looper pedal equivalence. A new firmware capability may use extra fields, new methods, MIDI, or panel-only control. |
+
+The [vendor downloads page](https://www.hyvibeguitar.com/downloads/) lists
+separate H1, H2 and Essential firmware families. Its version labels do not
+establish the owner's installed versions, a Beats introduction version, or
+support across every model. Capture the actual instrument and both reported
+processor versions before selecting a capability profile.
+
+### Two output paths, one set of performance actions
+
+1. **App RPC:** use the existing `Guitar<Link>` for tone preparation, absolute
+   preset selection, parameter writes and metronome operations. Assess Beats
+   extensions here. Preserve the JSON field order and compression discipline
+   already established by device work.
+2. **Pedal MIDI:** send the messages bound in the instrument's MIDI menu.
+   The guitar scanning for the pedal implies the desktop must expose the
+   peripheral side of BLE MIDI, or use an OS MIDI endpoint that supplies it.
+   This is a role inference from the documented pairing flow, awaiting a
+   guitar connection. It is a separate adapter from the app RPC `Link`.
+
+The current [btleplug upstream](https://github.com/deviceplug/btleplug)
+explicitly supports central operation only. Reusing the current BLE shell
+does not implement pedal emulation. Prefer an existing OS MIDI route before
+owning BLE MIDI framing. A [virtual MIDI port](https://developer.apple.com/library/archive/qa/qa1831/_index.html)
+alone is not proof that the guitar can discover the computer.
+
+| Platform | First candidate and qualification boundary |
+|---|---|
+| macOS, first device experiment | [Audio MIDI Setup can advertise the Mac as a Bluetooth MIDI peripheral](https://support.apple.com/guide/audio-midi-setup/set-up-bluetooth-midi-devices-ams33f013765/mac). Try that OS route and its MIDI endpoint first. Advertise/discover/connect/send/reconnect with this guitar remain unproven. If insufficient, assess [CoreBluetooth peripheral services](https://developer.apple.com/documentation/corebluetooth/cbperipheralmanager). |
+| Windows | Inspect the installed OS MIDI transport first. [GATT service publication](https://learn.microsoft.com/en-us/windows/apps/develop/devices-sensors/gatt-server) and [adapter peripheral-role support](https://learn.microsoft.com/en-us/uwp/api/windows.devices.bluetooth.bluetoothadapter.isperipheralrolesupported) provide a possible custom route. Neither documents Ringdown compatibility; qualify the actual OS, adapter, MIDI routing and guitar. |
+| Linux | [BlueZ GATT registration](https://github.com/bluez/bluez/blob/master/doc/org.bluez.GattManager.rst) and [LE advertising](https://github.com/bluez/bluez/blob/master/doc/org.bluez.LEAdvertisingManager.rst) provide a possible route. Assess the existing MIDI stack, controller capabilities and permissions before choosing an adapter. No Linux guitar receipt exists for this target. |
+| Web | [Web Bluetooth provides the central role](https://developer.chrome.com/docs/capabilities/bluetooth). A supported browser may implement the existing app `Link`; that does not let it advertise as a pedal. Editing/mappings can work offline; a paired native companion can own control where direct access is unavailable. Direct RPC and companion control require separate qualification. |
+
+Use the [BLE MIDI specification](https://midi.org/midi-over-bluetooth-low-energy-ble-midi)
+if a custom transport is necessary. Do not substitute unframed MIDI bytes for
+BLE MIDI packets or infer guitar clock-following from MIDI connectivity.
+
+### Product and ownership shape
+
+Keep pure action, cue, binding and capability state beneath the native
+adapters; retain the existing sans-io core. The driver continues to own RPC.
+A native session coordinates MIDI and RPC with one ordered dispatch path;
+screen buttons, keyboard, controller input, CLI and Woodshed use that same
+path. The native host owns connections and OS MIDI resources. Exact crate
+boundaries and the desktop host adapter are settled during implementation;
+reuse the repository's Cambium/Genet host conventions.
+
+Build a small Ringdown desktop surface with connection status, the loaded
+song/cue, large action buttons and explicit input mappings. Save preparations
+and cue files locally. One resident session owns each guitar: a CLI invocation
+must reach that session, rather than reconnecting for every cue or competing
+with the UI for the radio. Start scripting with typed commands and structured
+results usable by an ordinary shell or DAW; a new embedded scripting language
+is unnecessary for the first implementation.
+
+Keep Ringdown independently runnable and released under `ports/ringdown`.
+Woodshed owns its Set, practice transport and recorder data; its instrument
+adapter consumes Ringdown actions. A guitar loop, a Woodshed take and Hocket
+transport are distinct resources. Mounting a UI or sharing a tempo does not
+merge their state or demonstrate synchronized clocks.
+
+### Performance semantics
+
+- Bind actions, not guessed button numbers. Distinguish an absolute preset
+  selection from next/previous, an explicit start from a toggle, and button
+  press/release from hold. Record the actual guitar binding and MIDI values.
+  Suppress keyboard autorepeat and duplicate input dispatch.
+- A capability record names the instrument, processor firmware, app/capture
+  version, connection path and evidence for each action. Keep untested,
+  observed-working and observed-unsupported distinct. Separate tempo and
+  start/stop from Beats-pattern selection; connectivity is not capability.
+- Preserve the difference between queued, sent, parsed, refused, outcome
+  unknown and observed state. MIDI delivery has no automatic musical
+  acknowledgement. After a timeout, do not retry a toggle, record or erase
+  action blindly, or resend it through the other path.
+- Preload tone banks and other slow preparation before performance. A cue is
+  ordered but not atomic across MIDI and RPC. Stop on a failed/unknown step,
+  report completed steps and require explicit recovery. Coalesce continuous
+  parameter updates; keep bulk retrieval/profile restoration out of the live
+  command queue.
+- Prefer the guitar's local Beats clock. Tempo matching does not establish
+  phase alignment. Measure input-to-observed-action latency and jitter,
+  distinguish host send times from audio onset, and record trial counts,
+  median, p95, worst case and misses. Set an acceptable budget for each
+  action before qualifying it for live use; do not promise sample accuracy,
+  MIDI clock following, fills or bar-boundary changes without evidence.
+- Disconnect cancels pending live triggers and disarms automation. Reconnect
+  requires explicit resume; it never replays stale presses or an erase hold.
+  “Cancel cues” stops local dispatch, not necessarily a running guitar loop
+  or beat. Expose a guitar stop only where that action is proven. Preparation
+  and live operation are explicit so a performance trigger cannot silently
+  rebuild a profile or destroy an existing recording.
+
+### Phases for the next implementation
+
+These extend A–D below. P0 supplies the hardware facts; P1 starts a usable CLI
+and P2 the desktop surface. P3 depends only on the Beats capabilities P0
+establishes. If Beats control is unavailable, P1/P2/P4 can progress with the
+supported actions and a visible limitation.
+
+#### P0 — Establish pedal and Beats capabilities on the reference guitar
+
+**Feature target:** an evidence-backed action/path table for current firmware.
+
+Done-conditions:
+
+- Record guitar model/id, both processor versions, OS/adapter, app version,
+  existing MIDI bindings and an initial `GetStatus` positive control. Establish
+  which pre-update Ringdown reads/writes still work. Preserve the current
+  tones and recordings; factory reset or opening the app is not a neutral
+  restoration step, because the app may overwrite the profile.
+- Advertise the Mac through Audio MIDI Setup and attempt the guitar's MIDI
+  pairing. Identify the usable MIDI endpoint. Prove a nondestructive action
+  first, then record the exact press/release/hold sequences and observed
+  behavior for the desired pedal actions. Test erasure only on an explicitly
+  disposable loop with the owner. If a physical pedal is available, capture
+  it; ownership of one is not assumed.
+- Check MIDI alone, RPC alone, and coexistence. Determine whether the guitar
+  accepts both, whether a physical pedal can remain connected, whether either
+  steals the other's connection, and what disconnect/reconnect does. A shared
+  controller is exposed only for the combinations actually demonstrated.
+- For Beats, first observe the current panel and app. Preserve raw replies
+  from known reads, then capture one official-app operation at a time where
+  the app exposes the feature. Identify pattern names/ids, tempo, level,
+  start/stop, persistence and any MIDI bindings. Do not guess new RPC names or
+  reuse undocumented `SetConfig` fields to discover them. If the app has no
+  control, record that boundary and inspect the panel's MIDI assignments.
+- Replay only recovered operations with owner observation and before/after
+  positive controls. Classify every desired action as working, unsupported
+  or still untested for the exact firmware/path. Assess pattern switching
+  while running, loop interaction and phase behavior without assuming them.
+  Establish timing budgets from observed trials and the intended musical use.
+
+The smallest joint proof is two prepared tones selected from a desktop input,
+a working pedal-style loop action, and Beats start/stop or pattern selection
+where reachable. Record partial success honestly. Stop a device experiment
+on lost positive control or ambiguous state; recover with the owner before
+another write. This document update does not itself execute that session.
+
+#### P1 — Shared performance actions and a scriptable resident session
+
+**Feature target:** the proven P0 actions are callable without the research probe.
+
+Done-conditions:
+
+- One typed dispatch vocabulary and capability check select the proven route;
+  raw research calls remain in the probe. The RPC guard against `ReadConfig`
+  remains in force for firmware without evidence of a fix.
+- A CLI can identify/select a guitar, report capabilities, recall a prepared
+  tone and trigger a proven action through one resident session. Define
+  machine-readable outcomes, exit status, cancellation and connection ownership.
+- A dry run validates actions/cues and prints their planned order without
+  sending device commands. Record dispatch logs with cue/action identity and
+  timings. Fixture checks cover duplicate input, press/release handling,
+  refusal, timeout uncertainty and disconnection with pending triggers.
+- A fresh physical run proves the CLI path on the named guitar. Software
+  checks alone do not close this phase's device-control criterion.
+
+#### P2 — Desktop stomp box and external controller mappings
+
+**Feature target:** play a small performance without using the phone app.
+
+Done-conditions:
+
+- Independently launchable Ringdown UI on the shared native host; large
+  keyboard-accessible controls, connection/capability status, loaded cue and
+  editable bindings for keyboard and an OS MIDI input. Use the P1 dispatcher.
+- Persist mappings and prepared tones. Make observed state, intended state
+  and unknown state understandable; expose explicit release of the guitar.
+- Qualify focus loss, key repeat, duplicate bindings, held input, link loss,
+  cancel and explicit resume. The owner demonstrates tone changes and a
+  supported loop action with repeated triggers inside the agreed budgets.
+
+#### P3 — Beats and song cues
+
+**Feature target:** a song preparation can recall supported guitar rhythm settings.
+
+Done-conditions:
+
+- Model discovered pattern identity and supported controls without inventing
+  a drum sequencer, fills or an editor the guitar does not expose. Preserve
+  manual-only/unsupported Beats capabilities visibly on older or limited devices.
+- A versioned local cue references prepared tone identity, tempo and optional
+  Beats settings. Resolve the tone to a slot for the prepared profile; a
+  renumbered bank must not silently become a different song's tone.
+- Validate the whole cue before dispatch and report partial application.
+  Manual Next works independently of timed execution. Device evidence covers
+  the chosen pattern/tempo/start behavior and interaction with a guitar loop;
+  no bar-quantized claim without a usable phase source and device proof.
+
+#### P4 — Performance sequences and host integration
+
+**Feature target:** the same actions can be driven by a set list, script or host.
+
+Done-conditions:
+
+- CLI and desktop load the same cue data; shell/DAW input and Woodshed call
+  the same session actions. A running desktop and a script share connection
+  ownership and ordered dispatch. No second protocol or recorder authority.
+- Support cancellable manual sequences first. Add relative/absolute timing
+  only with an explicit clock source, deadline policy and late-event result;
+  local timing must not masquerade as the guitar's bar position.
+- Qualify a short multi-cue performance with the owner, including a deliberate
+  disconnect: no stale record, toggle or erase is replayed on resume. Capture
+  the exact source, platform, firmware, bindings and timing results. Additional
+  desktop platforms and browser/companion control each need their own receipt.
+
+## Original configuration foundation (A–D)
+
+The sections below retain the 2026-09-02 design and session record. Their
+historical “today,” catalog and firmware observations refer to that work;
+the assessment above controls the next product target.
 
 ## Decisions taken (Mark, 2026-09-02)
 
@@ -39,9 +285,10 @@ own guard against the one call that wedges the firmware.
    round-trips are replaced by receipts of the kind this protocol can give:
    the remove-count and the owner's panel and ears.
 
-Two things are settled and not on the table: the **effect catalog is closed**
-at thirteen (H28, read off the app with the scrollbar at both ends), and
-adding effect types is firmware work outside this plan's objective.
+The **then-observed effect catalog contained thirteen kinds** (H28, read off
+that app with the scrollbar at both ends). That is the implemented vocabulary,
+not a claim that later vendor firmware cannot add effects. Implementing new
+DSP effects in firmware remains outside this client plan.
 
 ## What the hardware fixes about the shape
 
@@ -180,6 +427,12 @@ listen; count before indexing; nothing sent while he is comparing by ear.
 
 ## Findings
 
+- **2026-10-17 — Desktop performance assessment.** The source/documentation
+  evidence table above is the current assessment record. Pedal MIDI is a
+  distinct path from app RPC; macOS supplies a candidate advertised MIDI
+  peripheral route. Beats is owner-reported and publicly supported at the
+  drum-machine product level, with remote operations still unknown. No new
+  device or current-firmware qualification was performed.
 - **2026-09-02 — The H38 bank object is unrecorded.** Not in the founding
   doc, the commit, or the probe source; the call went through `--call` with
   a literal typed at the shell. The finding "the bank it makes never
@@ -195,7 +448,6 @@ listen; count before indexing; nothing sent while he is comparing by ear.
   refused rather than exposed. The guard is a comment; Phase B makes it code.
 
 ## Progress
-
 - **2026-09-02** — Plan written after the effects handoff review. Doc drift
   fixed the same session: `den` wording in the handoff, `params::bank` doc
   moved from H36 to H38, stale `bypass` and crate-status docs, README
@@ -297,6 +549,13 @@ listen; count before indexing; nothing sent while he is comparing by ear.
     in H33 order with the exact method sequence, and listening refuses
     writes while `status` still answers. 148 tests, clippy and rustdoc
     clean.
+
+- **2026-10-17 — Assessment and plan update complete.** Adopted desktop
+  performance control and scripting as the next product direction at Mark's
+  request; assessed software pedal and Beats together, linked platform and
+  protocol evidence, and defined P0–P4. Reconciled README/founding/index
+  pointers and H47 bank-creation status. Implementation and the current
+  guitar session remain pending.
 
 ## Phase D session log (2026-09-02, H2-CC340, owner at the panel)
 

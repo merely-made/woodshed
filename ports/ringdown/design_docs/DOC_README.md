@@ -5,8 +5,11 @@ this first, then `DOC_POLICY.md`, before starting work.
 
 ## What ringdown is
 
-An independent desktop client for the HyVibe smart guitar, speaking the
-instrument's own JSON-RPC-over-Bluetooth protocol directly. The protocol was
+An independent desktop controller for the HyVibe smart guitar, targeting live
+performance and scripting through reusable instrument actions. Existing code
+speaks the instrument's JSON-RPC-over-Bluetooth app protocol; software MIDI
+pedal emulation and the new Beats rhythms are assessed together in the client
+surface plan. The protocol was
 reverse-engineered for interoperability from the vendor's Android app; ringdown
 reimplements it independently from the recovered facts and interfaces. Woodshed
 is the first consumer. Structural template is retinue (sans-io core, thin I/O
@@ -29,6 +32,11 @@ shell, receipt-driven validation).
   against fixtures, `no_std`-capable — I/O lives in a separate shell. This is
   what keeps the future-firmware option open without committing to it, and it
   is the retinue discipline the repo is modelled on.
+- **Qualify each performance path.** App RPC, pedal MIDI and Beats support
+  need evidence tied to the actual instrument, processor versions and platform.
+  Keep untested capabilities and unknown outcomes explicit; no stale live
+  trigger is replayed after reconnect. A positive status reply does not prove
+  another method or a musical action.
 - **Nothing irreversible without sign-off.** Publishing to crates.io, pushing,
   or writing to the guitar's persistent config are Action-tier: they enter
   deliberately, with Mark's go, never as drift from exploration.
@@ -41,9 +49,9 @@ shell, receipt-driven validation).
 | Doc | What's there |
 |---|---|
 | [`DOC_POLICY.md`](DOC_POLICY.md) | Documentation governance (canonical core + ringdown addendum). |
-| [`2026-08-27_ringdown_founding.md`](2026-08-27_ringdown_founding.md) | Founding plan: the decision, crate layout, phases with done-conditions, and the full recovered protocol map (Findings). |
-| [`2026-09-01_effects_handoff.md`](2026-09-01_effects_handoff.md) | Handoff from the effects hardware session: what is established (H27–H38), what is open, the failure modes that cost time, and the instrument's state. |
-| [`2026-09-02_client_surface_plan.md`](2026-09-02_client_surface_plan.md) | Client surface: typed planners in the core, driver guards and typed writes, a shadow profile, and the bank-creation research. |
+| [`2026-08-27_ringdown_founding.md`](2026-08-27_ringdown_founding.md) | Product direction and protocol/hardware history; current Phase 3 targets desktop performance control and scripting. |
+| [`2026-09-01_effects_handoff.md`](2026-09-01_effects_handoff.md) | Historical H27–H38 session and experiment discipline; bank-creation limits were superseded by H47. |
+| [`2026-09-02_client_surface_plan.md`](2026-09-02_client_surface_plan.md) | Current performance plan: joint software stomp-box/Beats assessment, MIDI versus RPC paths, P0–P4 device/CLI/desktop/cue/scripting targets; retains A–D typed/profile foundation. |
 
 `PROJECT_DESCRIPTION.md` (maintainer-owned, DOC_POLICY §7) is not yet written;
 the founding plan carries the product intent until it is.
