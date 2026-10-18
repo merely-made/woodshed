@@ -11,6 +11,7 @@ from datetime import datetime, timezone
 import hashlib
 import json
 import os
+import os
 from pathlib import Path
 import selectors
 import subprocess
@@ -30,6 +31,8 @@ def main():
     parser.add_argument('--receipt', required=True, type=Path)
     parser.add_argument('--log', required=True, type=Path)
     parser.add_argument('--run-id', required=True, help='Unique human-readable identity for this invocation')
+    parser.add_argument('--source-root', type=Path,
+                        help='Optional Git checkout whose source revision should be recorded for this run.')
     parser.add_argument('--timeout-seconds', type=int, default=MAX_RUNTIME_SECONDS)
     parser.add_argument('command', nargs=argparse.REMAINDER, help='Command after --')
     args = parser.parse_args()
@@ -37,6 +40,10 @@ def main():
     if not args.run_id.strip() or not command or args.timeout_seconds < 1 or args.timeout_seconds > MAX_RUNTIME_SECONDS:
         parser.error('provide --run-id, a command after --, and timeout from 1 to 1800 seconds')
     started = now()
+    source_commit = None
+    if args.source_root:
+        source_commit = subprocess.check_output(
+            ['git', 'rev-parse', 'HEAD'], cwd=args.source_root, text=True).strip()
     args.log.parent.mkdir(parents=True, exist_ok=True)
     args.receipt.parent.mkdir(parents=True, exist_ok=True)
     if args.log.resolve() == args.receipt.resolve():
@@ -103,9 +110,12 @@ def main():
     record = {
         'schema_version': 1, 'run_id': args.run_id, 'command': command,
         'started_at': started, 'ended_at': ended, 'exit_code': status,
+        'cwd': os.getcwd(),
         'log': str(args.log.resolve()),
         'log_sha256': hashlib.sha256(args.log.read_bytes()).hexdigest(),
     }
+    if source_commit is not None:
+        record['source_commit'] = source_commit
     if reason:
         record['capture_error'] = reason
     with args.receipt.open('w', encoding='utf-8') as receipt_file:

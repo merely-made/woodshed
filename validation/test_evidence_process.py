@@ -99,6 +99,7 @@ class ProcessEvidenceTests(unittest.TestCase):
                                       command=[sys.executable, '-c',
                                                "print('running 1 test\\ntest result: ok. 1 passed; 0 failed; 0 ignored')"],
                                       log_path=log)[0]['exit_code'], 0)
+        self.assertNotIn('source_commit', json.loads(receipt.read_text()))
 
     def test_capture_cli_preserves_nonzero_exit(self):
         log = self.root / 'failed.log'
@@ -183,7 +184,8 @@ class ProcessEvidenceTests(unittest.TestCase):
             receipt = evidence_dir / f'{key}.json'
             command = [sys.executable, '-c', f'print({output!r})']
             call = [sys.executable, str(capture_cli), '--receipt', str(receipt),
-                    '--log', str(log), '--run-id', f'fixture-{key}', '--', *command]
+                    '--log', str(log), '--run-id', f'fixture-{key}',
+                    '--source-root', str(repo), '--', *command]
             result = subprocess.run(call, check=False, capture_output=True, text=True, timeout=10)
             if result.returncode != 0:
                 raise AssertionError(result.stderr)
@@ -215,6 +217,22 @@ class ProcessEvidenceTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr)
         receipt = json.loads(output.read_text())
         self.assertEqual(receipt['cpu_totals'], {'passed': 1328, 'failed': 0, 'ignored': 8})
+        self.assertEqual(receipt['historical_context']['date'], '2026-10-11')
+        self.assertEqual(receipt['historical_context']['branch'], 'codex/audio-foundation-ci-20261011')
+        self.assertIn('original 2026-10-11 receipt context only',
+                      receipt['historical_context']['provenance_note'])
+        self.assertEqual(receipt['historical_context']['expected_test_totals']['woodshed'],
+                         {'passed': 770, 'ignored': 0})
+        self.assertNotIn('date', receipt)
+        self.assertNotIn('branch', receipt)
+        self.assertNotIn('source_base', receipt)
+        self.assertNotIn('cpu_commands', receipt)
+        observed_test = receipt['cpu_tests']['woodshed']
+        self.assertEqual(observed_test['source_commit'], receipt['assembly_context']['head_at_assembly'])
+        self.assertEqual(observed_test['cwd'], str(Path.cwd()))
+        self.assertEqual(observed_test['command'], [sys.executable, '-c',
+                                                    "print('running 770 tests\\ntest result: ok. 770 passed; 0 failed; 0 ignored\\n')"])
+        self.assertEqual(receipt['workflow_validation']['command'][0], sys.executable)
         self.assertTrue(all(check['exit_code'] == 0 for check in receipt['locked_metadata'].values()))
         self.assertEqual(receipt['workflow_validation']['exit_code'], 0)
 
