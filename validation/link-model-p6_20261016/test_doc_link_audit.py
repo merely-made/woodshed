@@ -12,7 +12,7 @@ README = "design_docs/DOC_README.md"
 
 
 class HistoricalTargetTests(unittest.TestCase):
-    def run_audit(self, changes=None, stage=None, readme=None, target=None):
+    def run_audit(self, changes=None, stage=None, readme=None, target=None, prepare=None):
         with tempfile.TemporaryDirectory() as directory:
             repo = Path(directory)
             docs = repo / "design_docs"
@@ -21,6 +21,8 @@ class HistoricalTargetTests(unittest.TestCase):
             (docs / Path(README).name).write_text(readme or "# Docs\n")
             if target is not None:
                 (docs / "target.md").write_text(target)
+            if prepare:
+                prepare(docs)
             subprocess.run(["git", "init", "-q"], cwd=repo, check=True)
             subprocess.run(["git", "config", "user.email", "audit@example.invalid"], cwd=repo, check=True)
             subprocess.run(["git", "config", "user.name", "Audit Fixture"], cwd=repo, check=True)
@@ -87,6 +89,32 @@ class HistoricalTargetTests(unittest.TestCase):
         self.assertEqual(output["baseline"]["findings"], [])
         self.assertEqual(output["current"]["findings"], [])
         self.assertEqual(output["new_findings"], [])
+
+    def test_valid_binary_links_do_not_require_text_decoding(self):
+        def prepare(docs):
+            for name in ("image.png", "document.pdf", "audio.wav"):
+                (docs / name).write_bytes(b"\x89\xff\x00\xfe")
+
+        code, output = self.run_audit(
+            readme="# Docs\n[png](image.png)\n[pdf](document.pdf)\n[wav](audio.wav)\n",
+            prepare=prepare)
+        self.assertEqual(code, 0)
+        for tree in ("baseline", "current"):
+            self.assertEqual(output[tree]["checked_local_links"], 3)
+            self.assertEqual(output[tree]["findings"], [])
+
+    def test_baseline_path_does_not_follow_current_symlink(self):
+        def replace_with_symlink(docs):
+            (docs / "target.md").unlink()
+            (docs / "replacement.md").write_text("# Renamed\n")
+            (docs / "target.md").symlink_to("replacement.md")
+
+        code, output = self.run_audit(
+            readme="# Docs\n[target](target.md#original)\n", target="# Original\n",
+            changes=replace_with_symlink)
+        self.assertEqual(code, 1)
+        self.assertEqual(output["baseline"]["findings"], [])
+        self.assertEqual(output["new_findings"][0]["reason"], "missing heading")
 
 
 if __name__ == "__main__":

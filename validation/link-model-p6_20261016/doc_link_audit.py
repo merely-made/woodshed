@@ -8,6 +8,7 @@
 import argparse
 from collections import Counter
 import json
+import os
 from pathlib import Path
 import re
 import subprocess
@@ -19,24 +20,16 @@ def scan(repo, names, revision=None):
     checked = 0
     repo = repo.resolve()
 
-    def read_target(target):
-        """Read a target from the scanned tree, when it belongs to the repo."""
+    def historical_path(target):
         try:
-            relative = target.relative_to(repo)
+            return f"{revision}:{target.relative_to(repo).as_posix()}" if revision else None
         except ValueError:
-            return target.read_text() if target.exists() else None
-        if revision:
-            try:
-                return subprocess.check_output(
-                    ["git", "show", f"{revision}:{relative.as_posix()}"],
-                    cwd=repo, text=True)
-            except subprocess.CalledProcessError:
-                return None
-        return target.read_text() if target.exists() else None
+            return None
 
     for name in names:
         text = (subprocess.check_output(["git", "show", f"{revision}:{name}"], cwd=repo, text=True)
                 if revision else (repo / name).read_text())
+        document_text = text
         text = re.sub(r"```[\s\S]*?```", lambda match: "\n" * match[0].count("\n"), text)
         for match in re.finditer(r"(?<!!)\[[^\]\n]*\]\((<[^>\n]+>|[^)\n]+)\)", text):
             destination = match[1].strip().strip("<>")
@@ -44,12 +37,24 @@ def scan(repo, names, revision=None):
             parsed = urlsplit(destination)
             if parsed.scheme or parsed.netloc:
                 continue
-            target = ((repo / name).parent / unquote(parsed.path)).resolve() if parsed.path else repo / name
+            target = (repo / name).parent / unquote(parsed.path) if parsed.path else repo / name
+            # Historical paths must not follow symlinks in today's worktree.
+            target = Path(os.path.abspath(target)) if revision else target.resolve()
+            historical = historical_path(target)
             checked += 1
-            target_text = read_target(target)
-            if target_text is None:
+            exists = (subprocess.run(["git", "cat-file", "-e", historical], cwd=repo,
+                                     stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).returncode == 0
+                      if historical else target.exists())
+            if not exists:
                 findings.append({"document": name, "target": destination, "reason": "missing path"})
             elif parsed.fragment and target.suffix == ".md":
+                if not parsed.path:
+                    target_text = document_text
+                elif historical:
+                    target_text = subprocess.check_output(
+                        ["git", "show", historical], cwd=repo, text=True)
+                else:
+                    target_text = target.read_text()
                 anchors = set(re.findall(r'<a\s+(?:id|name)=["\']([^"\']+)', target_text))
                 for heading in re.findall(r"^#{1,6}\s+(.+?)\s*#*\s*$", target_text, re.M):
                     heading = re.sub(r"[`*_]", "", heading).lower()
