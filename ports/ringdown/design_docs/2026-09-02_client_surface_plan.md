@@ -17,8 +17,8 @@ restate them; it says what the client's surface becomes because of them.
 
 ## Objective
 
-Make Ringdown an independent desktop performance controller for a HyVibe
-guitar: prepare tones and song cues, trigger supported actions from a screen,
+Make Ringdown an independent cross-platform desktop performance controller
+for a HyVibe guitar: prepare tones and song cues, trigger supported actions from a screen,
 keyboard, MIDI controller or script, and control the instrument's own Beats
 rhythms where the firmware exposes them. HyVibe continues to add instrument
 features; Ringdown should extend access to those features through desktop and
@@ -46,6 +46,66 @@ still no instrument integration in the desktop host or views.
 It performed no Bluetooth discovery, device writes, firmware installation or
 new hardware qualification. The owner's current firmware versions, updated
 app version and MIDI bindings have not been recorded.
+
+### Cross-platform requirement and stack review (2026-10-18)
+
+**Owner ruling:** Ringdown is cross-platform software. Windows, Linux and
+macOS are product targets from the first performance implementation. A Mac
+hardware experiment is evidence for one adapter; it does not select a Mac
+application, Mac-specific service, or a later-porting strategy. Direct browser
+control remains capability-dependent, with shared portable logic and the
+existing native-companion candidate where the browser cannot supply the role.
+
+The review read the founding layout/phase history and effects handoff, the
+Woodshed smart-instrument and audio-ports rehome plans, the shared desktop-host
+migration, current crate seams, and the current source-audit reconciliation.
+The relevant existing decisions are:
+
+- **Reuse the protocol and driver split.** `ringdown` is `no_std`/sans-io;
+  `ringdown-client::Guitar<Link>` owns the RPC exchange. `Link` deliberately
+  avoids mandatory `Send` futures so browser adapters remain possible. Its
+  discovery/connection lifecycle is platform-owned. The driver still uses
+  Tokio deadlines; browser/runtime portability needs a timing seam before
+  claiming that path works. This is not a reason to duplicate the driver.
+- **Add the pedal role beside app RPC.** The existing `Link` carries an
+  already-open app GATT connection. Advertising a local MIDI service and
+  managing its subscribers needs its own adapter contract. Put MIDI messages,
+  framing, bindings, action/cue state and outcomes in shared Rust logic, and
+  keep OS objects/callbacks in thin transport shells. The Swift diagnostic is
+  a retained experiment, not the product implementation.
+- **Compose the existing UI stack.** Woodshed's host migration extracted the
+  window/layout/input/accessibility assembly into `cambium-genet-winit-host`,
+  now supplied by Mere. Ringdown views use Cambium and the existing native
+  host; a browser host can consume portable views subject to its capabilities.
+  Do not introduce another toolkit or copy the native event loop. Sources:
+  Woodshed [host migration](../../../design_docs/2026-08-09_cambium_desktop_host_migration.md);
+  `mere/design_docs/cambium_docs/technical_architecture/2026-09-03_cambium_architecture.md`.
+- **Preserve product authority.** Woodshed already has a long-lived instrument
+  `Session`, explicit release and Detached/Follow/Drive metronome policy.
+  Ringdown owns reusable performance actions and connection mechanics;
+  Woodshed retains practice/Set and tempo-authority policy. The rehome keeps
+  independent nested workspaces and releases, not a port-to-port runtime
+  dependency or a second practice/recorder state owner.
+- **Separate connection lifetime from background residency.** One maintained
+  session is needed for UI/CLI dispatch. That does not establish a new daemon.
+  Use existing host wake/lifetime contracts. If operation with all application
+  hosts closed becomes a requirement, assess composition with the family's
+  designated Djinn resident before implementation. Djinn owns background
+  service lifetime while domain crates retain semantics; no Ringdown service
+  or completed generic scheduler is inferred from that design. Sources:
+  `mere/design_docs/mere_docs/implementation_strategy/2026-08-22_djinn_family_resident_services_plan.md`, §1;
+  `mere/design_docs/2026-08-12_family_composition_thesis_brief.md`, §7.
+
+The [Ringdown audit](../../../validation/full-source-audit_20261016/ringdown-report.md)
+and [current finding ledger](../../../validation/full-source-audit_20261016/current-finding-ledger.json)
+remain the remediation authority. Current source inspection reconfirmed the
+mechanisms for absent status fields becoming defaults (R3), restoration losing
+negative per-write receipts (R1), weak ACK-envelope admission (R5), and malformed
+Unicode hex slicing (R2). No tests or fresh hardware calls were run for this
+review. Scope fixes to operations entering the performance surface: preserve
+status presence and qualify RPC admission before presenting live RPC status;
+retain individual refusal receipts before exposing restoration as preparation.
+Pedal work need not absorb unrelated file-transfer or capture-tool cleanup.
 
 ### Evidence and what it establishes
 
@@ -100,13 +160,14 @@ Keep pure action, cue, binding and capability state beneath the native
 adapters; retain the existing sans-io core. The driver continues to own RPC.
 A native session coordinates MIDI and RPC with one ordered dispatch path;
 screen buttons, keyboard, controller input, CLI and Woodshed use that same
-path. The native host owns connections and OS MIDI resources. Exact crate
-boundaries and the desktop host adapter are settled during implementation;
-reuse the repository's Cambium/Genet host conventions.
+path. Ringdown's application host owns connections and OS MIDI resources;
+the shared Cambium host supplies UI lifecycle/input/wake hooks, not an async
+runtime or instrument service. Exact crate boundaries and transport adapters
+are settled against the cross-platform requirements before implementation.
 
-Build a small Ringdown desktop surface with connection status, the loaded
-song/cue, large action buttons and explicit input mappings. Save preparations
-and cue files locally. One resident session owns each guitar: a CLI invocation
+Build one Ringdown desktop surface for Windows, Linux and macOS with
+connection status, the loaded song/cue, large action buttons and explicit input mappings. Save preparations
+and cue files locally. One maintained session owns each guitar: a CLI invocation
 must reach that session, rather than reconnecting for every cue or competing
 with the UI for the radio. Start scripting with typed commands and structured
 results usable by an ordinary shell or DAW; a new embedded scripting language
@@ -194,6 +255,10 @@ for continuous input, not yet proven message semantics.
 
 Done-conditions:
 
+- Record Windows/Linux/macOS adapter requirements and capability gaps for both
+  roles: app RPC central and pedal peripheral. Assess advertising, subscription,
+  access requirements, release and reconnect before fixing a common contract.
+  Q-PC supplies one adapter result; the other desktop targets remain open.
 - Record guitar model/id, both processor versions, OS/adapter, app version,
   existing MIDI bindings and an initial `GetStatus` positive control. Establish
   which pre-update Ringdown reads/writes still work. Preserve the current
@@ -229,30 +294,40 @@ where reachable. Record partial success honestly. Stop a device experiment
 on lost positive control or ambiguous state; recover with the owner before
 another write. This document update does not itself execute that session.
 
-#### P1 — Shared performance actions and a scriptable resident session
+#### P1 — Shared performance actions, maintained session and CLI
 
 **Feature target:** the proven P0 actions are callable without the research probe.
 
 Done-conditions:
 
-- One typed dispatch vocabulary and capability check select the proven route;
-  raw research calls remain in the probe. Start the macOS MIDI shell from the
-  direct-peripheral result; keep binding/channel/value configuration separate
-  from semantic actions. One CLI command must dispatch through the resident
-  peripheral rather than create a new advertiser for each trigger. Keep the
-  experimental Swift helper as evidence, not the production control surface.
-  Make the device's access-requirement compatibility explicit and qualify it
-  before choosing a shipping policy. The RPC guard against `ReadConfig`
-  remains in force for firmware without evidence of a fix.
+- Shared Rust action, binding, cue, capability and session logic dispatches
+  through distinct RPC and pedal-output seams. Keep channel/value/framing
+  rules out of UI, CLI and OS callbacks. Preserve the existing `Guitar<Link>`
+  driver and its `ReadConfig` guard; raw research calls remain in the probe.
+- Define the pedal adapter against Windows, Linux and macOS requirements before
+  fixing its interface. Implement the desktop shells as part of this phase;
+  the Q-PC result informs the macOS adapter only. Report hardware/OS capability
+  limits explicitly. A successful Mac build or stubbed other-platform adapter
+  does not close cross-platform control. The Swift helper stays experimental.
+- CLI commands dispatch through the one session holding the connection instead
+  of advertising/reconnecting per trigger. Define app/headless host lifetime,
+  wake, release and cancellation using existing stack contracts; persistent
+  background service ownership requires the Djinn assessment above. Qualify
+  access-requirement compatibility before choosing a shipping policy.
+- Before exposing an RPC operation, address the relevant audit finding at its
+  existing owner and retain raw/per-action outcomes. Scope status, ACK admission
+  and preparation receipts to the operations actually included.
 - A CLI can identify/select a guitar, report capabilities, recall a prepared
-  tone and trigger a proven action through one resident session. Define
+  tone and trigger a proven action through the maintained session. Define
   machine-readable outcomes, exit status, cancellation and connection ownership.
 - A dry run validates actions/cues and prints their planned order without
   sending device commands. Record dispatch logs with cue/action identity and
   timings. Fixture checks cover duplicate input, press/release handling,
   refusal, timeout uncertainty and disconnection with pending triggers.
-- A fresh physical run proves the CLI path on the named guitar. Software
-  checks alone do not close this phase's device-control criterion.
+- Build and exercise the same CLI/session contract on Windows, Linux and
+  macOS, and record physical guitar-control receipts for each advertised
+  transport. Shared-core fixtures establish semantics; they do not replace
+  adapter/device qualification. Record unavailable hardware as an open gate.
 
 #### P2 — Desktop stomp box and external controller mappings
 
@@ -260,7 +335,8 @@ Done-conditions:
 
 Done-conditions:
 
-- Independently launchable Ringdown UI on the shared native host; large
+- Independently launchable Ringdown UI for Windows, Linux and macOS on the
+  existing Cambium shared native host, with common product views and large
   keyboard-accessible controls, connection/capability status, loaded cue and
   editable bindings for keyboard and an OS MIDI input. Use the P1 dispatcher.
 - Persist mappings and prepared tones. Make observed state, intended state
@@ -313,8 +389,9 @@ Done-conditions:
   local timing must not masquerade as the guitar's bar position.
 - Qualify a short multi-cue performance with the owner, including a deliberate
   disconnect: no stale record, toggle or erase is replayed on resume. Capture
-  the exact source, platform, firmware, bindings and timing results. Additional
-  desktop platforms and browser/companion control each need their own receipt.
+  the exact source, platform, firmware, bindings and timing results. Required
+  Windows/Linux/macOS qualification starts in P1/P2; it is not deferred to P4.
+  Browser/companion control needs its own receipt.
 
 ## Original configuration foundation (A–D)
 
@@ -634,8 +711,19 @@ listen; count before indexing; nothing sent while he is comparing by ear.
   confirmed the effect changed. Exact effect names/advance count were not
   supplied. This is a scoped owner observation plus transport evidence; the
   `GetStatus` firmware baseline and broader performance qualification remain
-  open. P1 now has a concrete macOS peripheral route to develop.
+  open. This supplies one macOS adapter experiment for the cross-platform
+  performance implementation.
 
+
+- **2026-10-18 — Cross-platform ruling and stack review.** Corrected the
+  Mac-specific P1 direction after the owner's ruling. Windows, Linux and macOS
+  are first-implementation targets with shared Rust performance logic and
+  thin transport shells. Reviewed existing protocol/driver seams, Woodshed's
+  session policy, Cambium host extraction, independent port release boundaries,
+  family resident ownership and the source audit. A maintained connection does
+  not authorize a new background resident. P1/P2 now carry cross-platform
+  qualification; applicable audit repairs stay with their current owners.
+  This pass changed documentation only; no builds, tests or hardware calls.
 
 ## P0 transport trial close (2026-10-18)
 
