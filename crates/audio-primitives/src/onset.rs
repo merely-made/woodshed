@@ -194,10 +194,11 @@ impl OnsetDetector {
 
             cursor += needed;
 
-            // Update global sample clock for the just-completed frame
-            // BEFORE deciding on an onset, so onset timestamps land at
-            // the *end* of the frame they were detected in.
-            self.samples_consumed += self.frame_size as u64;
+            // Count only samples supplied in this call. Any pending
+            // prefix was counted when it was first fed. Advance before
+            // deciding on an onset so timestamps land at the end of
+            // the completed frame.
+            self.samples_consumed += needed as u64;
 
             if let Some(onset_sample) = self.evaluate_frame(energy) {
                 // Record the onset's timestamp so the debounce window
@@ -482,6 +483,52 @@ mod tests {
         assert!(
             delta <= DEFAULT_FRAME_SIZE as u64,
             "single={single:?} split={combined:?}"
+        );
+    }
+
+    #[test]
+    fn irregular_chunks_count_each_sample_once_and_preserve_onset_times() {
+        let sample_rate = 48_000.0;
+        let signal = synthetic_signal(48_000 + 73, &[12_000, 24_000, 36_000]);
+
+        let mut one_shot = OnsetDetector::new(sample_rate);
+        warmup_detector(&mut one_shot, sample_rate);
+        let warmup_samples = one_shot.samples_consumed();
+        let one_shot_onsets = one_shot.feed(&signal);
+        assert_eq!(
+            one_shot.samples_consumed(),
+            warmup_samples + signal.len() as u64
+        );
+
+        let mut chunked = OnsetDetector::new(sample_rate);
+        warmup_detector(&mut chunked, sample_rate);
+        let mut chunked_onsets = Vec::new();
+        let mut cursor = 0;
+        let chunk_sizes = [1, 37, 256, 19, 513, 7, 1024, 63];
+        let mut chunk_index = 0;
+        while cursor < signal.len() {
+            // Empty feeds must not move the sample clock or disturb a
+            // partial frame.
+            assert!(chunked.feed(&[]).is_empty());
+            let end = (cursor + chunk_sizes[chunk_index % chunk_sizes.len()]).min(signal.len());
+            chunked_onsets.extend(chunked.feed(&signal[cursor..end]));
+            cursor = end;
+            chunk_index += 1;
+        }
+
+        assert_eq!(
+            chunked.samples_consumed(),
+            warmup_samples + signal.len() as u64
+        );
+        assert_eq!(chunked_onsets, one_shot_onsets);
+        assert_eq!(
+            chunked.samples_consumed() - warmup_samples,
+            signal.len() as u64
+        );
+        assert_eq!(
+            signal.len() % DEFAULT_FRAME_SIZE,
+            201,
+            "fixture retains a partial tail"
         );
     }
 
