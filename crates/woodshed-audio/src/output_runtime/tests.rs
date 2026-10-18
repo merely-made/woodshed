@@ -893,6 +893,188 @@ fn terminal_one_shot_cancels_an_unreachable_arm() {
 }
 
 #[test]
+fn future_saved_bar_arm_survives_variable_intermediate_boundaries() {
+    let mut r = runtime();
+    let (mut producer, _) = feed(&mut r, 64);
+    let mut s = song(3);
+    s.playing = true;
+    r.set_song(s).unwrap();
+    r.service().unwrap();
+    render(&mut r, 1);
+
+    r.arm_capture(2, false).unwrap();
+    r.service().unwrap();
+    for (frames, expected_bar) in [(3, 0), (8, 1), (4, 1), (4, 2)] {
+        render(&mut r, frames);
+        assert_eq!(r.snapshot().cursor.bar_idx, expected_bar);
+        if expected_bar < 2 {
+            assert!(!r.snapshot().recording, "must wait through earlier bars");
+        }
+    }
+    assert_eq!(r.snapshot().cursor.bar_idx, 2);
+    assert!(
+        r.snapshot().recording,
+        "future arm must start at its exact bar"
+    );
+    producer.push_samples(&[0.375; 2]);
+    render(&mut r, 2);
+    r.stop_capture_now().unwrap();
+    r.service().unwrap();
+    render(&mut r, 1);
+    r.service().unwrap();
+    assert!(!r.snapshot().capture_invalid);
+    assert!(!r.capture_busy());
+    let song = r.song();
+    assert!(song.bars[0].audio_buffer.is_none());
+    assert!(song.bars[1].audio_buffer.is_none());
+    let target = song.bars[2].audio_buffer.as_ref().unwrap();
+    assert_eq!(target.data[0].to_bits(), 0.375f32.to_bits());
+    assert_eq!(target.data[1].to_bits(), 0.375f32.to_bits());
+}
+
+#[test]
+fn cancelling_a_future_arm_before_its_target_releases_it_without_recording() {
+    let mut r = runtime();
+    let _ = feed(&mut r, 64);
+    let mut s = song(3);
+    s.playing = true;
+    r.set_song(s).unwrap();
+    r.service().unwrap();
+    render(&mut r, 1);
+    r.arm_capture(2, false).unwrap();
+    r.service().unwrap();
+    render(&mut r, 10);
+    r.stop_capture_now().unwrap();
+    r.service().unwrap();
+    render(&mut r, 1);
+    r.service().unwrap();
+    assert!(!r.snapshot().recording);
+    assert!(!r.capture_busy());
+    assert!(!r.snapshot().capture_invalid);
+}
+
+#[test]
+fn a_new_arm_after_cancellation_supersedes_the_old_future_target() {
+    let mut r = runtime();
+    let _ = feed(&mut r, 64);
+    let mut s = song(4);
+    s.playing = true;
+    r.set_song(s).unwrap();
+    r.service().unwrap();
+    render(&mut r, 1);
+    r.arm_capture(3, false).unwrap();
+    r.service().unwrap();
+    r.stop_capture_now().unwrap();
+    r.service().unwrap();
+    render(&mut r, 1);
+    r.service().unwrap();
+    assert!(!r.capture_busy());
+    r.arm_capture(1, false).unwrap();
+    r.service().unwrap();
+    render(&mut r, 8);
+    assert_eq!(r.snapshot().cursor.bar_idx, 1);
+    assert!(r.snapshot().recording);
+    r.stop_capture_now().unwrap();
+    r.service().unwrap();
+    render(&mut r, 1);
+    r.service().unwrap();
+    assert!(!r.snapshot().recording);
+    assert!(!r.capture_busy());
+}
+
+#[test]
+fn boundary_stop_cancels_an_earlier_unstarted_future_arm() {
+    let mut r = runtime();
+    let _ = feed(&mut r, 64);
+    let mut s = song(3);
+    s.playing = true;
+    r.set_song(s).unwrap();
+    r.service().unwrap();
+    render(&mut r, 1);
+    r.arm_capture(2, false).unwrap();
+    r.queue(PendingChange::StopRecording).unwrap();
+    r.service().unwrap();
+    render(&mut r, 9);
+    assert_eq!(r.snapshot().cursor.bar_idx, 1);
+    assert!(!r.snapshot().recording);
+    assert!(!r.snapshot().capture_armed);
+    r.service().unwrap();
+    assert!(!r.capture_busy());
+}
+
+#[test]
+fn arm_after_seek_resolves_at_that_same_ordered_boundary() {
+    let mut r = runtime();
+    let _ = feed(&mut r, 64);
+    let mut s = song(3);
+    s.playing = true;
+    r.set_song(s).unwrap();
+    r.service().unwrap();
+    render(&mut r, 1);
+    r.queue(PendingChange::SeekTo { bar_idx: 2 }).unwrap();
+    r.arm_capture(2, false).unwrap();
+    r.service().unwrap();
+    render(&mut r, 9);
+    assert_eq!(r.snapshot().cursor.bar_idx, 2);
+    assert!(r.snapshot().recording);
+    r.stop_capture_now().unwrap();
+    r.service().unwrap();
+    render(&mut r, 1);
+    r.service().unwrap();
+}
+
+#[test]
+fn pausing_preserves_a_future_arm_until_playback_resumes() {
+    let mut r = runtime();
+    let _ = feed(&mut r, 64);
+    let mut s = song(3);
+    s.playing = true;
+    r.set_song(s).unwrap();
+    r.service().unwrap();
+    render(&mut r, 1);
+    r.arm_capture(2, false).unwrap();
+    r.queue(PendingChange::SetPlaying(false)).unwrap();
+    r.service().unwrap();
+    render(&mut r, 9);
+    assert!(!r.snapshot().playing);
+    assert!(!r.snapshot().recording);
+    assert!(r.snapshot().capture_armed);
+    r.play().unwrap();
+    r.service().unwrap();
+    render(&mut r, 10);
+    assert_eq!(r.snapshot().cursor.bar_idx, 2);
+    assert!(r.snapshot().recording);
+    r.stop_capture_now().unwrap();
+    r.service().unwrap();
+    render(&mut r, 1);
+    r.service().unwrap();
+}
+
+#[test]
+fn one_shot_ending_before_a_future_arm_reports_invalid_capture() {
+    let mut r = runtime();
+    let _ = feed(&mut r, 64);
+    let mut s = song(1);
+    s.playing = true;
+    s.one_shot = true;
+    r.set_song(s).unwrap();
+    r.service().unwrap();
+    render(&mut r, 4);
+    r.arm_capture(0, true).unwrap();
+    r.service().unwrap();
+    render(&mut r, 1);
+    assert!(r.snapshot().capture_armed);
+    assert!(!r.snapshot().recording);
+    render(&mut r, 5);
+    assert!(!r.snapshot().playing);
+    assert!(!r.snapshot().recording);
+    assert!(r.snapshot().capture_invalid);
+    assert!(r.song().bars[0].audio_buffer.is_none());
+    r.service().unwrap();
+    assert!(!r.capture_busy());
+}
+
+#[test]
 fn fractional_tempo_count_in_uses_one_canonical_measure() {
     let mut r = runtime();
     let mut s = song(1);

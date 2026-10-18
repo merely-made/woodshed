@@ -916,6 +916,23 @@ impl Processor {
         }
         self.pending_len = write;
     }
+    fn discard_unreachable_arms(&mut self) {
+        let mut write = 0;
+        for read in 0..self.pending_len {
+            match self.pending[read].take() {
+                Some(Boundary::Arm { .. }) => {
+                    self.invalid = true;
+                    self.shared.boundaries.fetch_sub(1, Ordering::Release);
+                },
+                Some(op) => {
+                    self.pending[write] = Some(op);
+                    write += 1;
+                },
+                None => {},
+            }
+        }
+        self.pending_len = write;
+    }
     fn push_boundary(&mut self, op: Boundary) {
         if self.pending_len < COMMAND_BOUND {
             self.pending[self.pending_len] = Some(op);
@@ -944,8 +961,16 @@ impl Processor {
     fn boundary(&mut self) {
         self.song_last_beat = None;
         self.song_last_measure = None;
-        for idx in 0..self.pending_len {
+        let pending_len = self.pending_len;
+        let mut retained = 0;
+        for idx in 0..pending_len {
             if let Some(op) = self.pending[idx].take() {
+                if matches!(&op, Boundary::Arm { seek: false, bar, .. } if self.cursor.bar_idx != *bar)
+                {
+                    self.pending[retained] = Some(op);
+                    retained += 1;
+                    continue;
+                }
                 self.shared.boundaries.fetch_sub(1, Ordering::Release);
                 match op {
                     Boundary::Change(PendingChange::SeekTo { bar_idx }) => {
@@ -961,7 +986,18 @@ impl Processor {
                             };
                         }
                     },
-                    Boundary::Change(PendingChange::StopRecording) => self.finish_take(),
+                    Boundary::Change(PendingChange::StopRecording) => {
+                        self.finish_take();
+                        // A boundary stop cancels earlier queued arms as well
+                        // as an active take. Later arms retain FIFO semantics.
+                        for slot in &mut self.pending[..retained] {
+                            if matches!(slot, Some(Boundary::Arm { .. })) {
+                                *slot = None;
+                                retained -= 1;
+                                self.shared.boundaries.fetch_sub(1, Ordering::Release);
+                            }
+                        }
+                    },
                     Boundary::Change(PendingChange::SetPlaying(playing)) => {
                         self.playing = playing;
                         if !playing {
@@ -994,7 +1030,7 @@ impl Processor {
                 }
             }
         }
-        self.pending_len = 0;
+        self.pending_len = retained;
     }
     fn click_trigger(&mut self, accent: bool, song: bool) {
         // Backing always uses the same pre-rendered quarter click as the
@@ -1687,6 +1723,7 @@ impl Processor {
                         if backing.one_shot {
                             self.playing = false;
                             self.clear_voices();
+                            self.discard_unreachable_arms();
                             self.stop_capture();
                             for op in &mut self.pending {
                                 if op.take().is_some() {
