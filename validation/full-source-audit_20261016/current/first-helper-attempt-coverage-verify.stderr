@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "/Users/markik/Code/repos/woodshed/validation/full-source-audit_20261016/verify_coverage.py", line 109, in <module>
+    print(json.dumps(verify(Path(__file__).resolve().parent,
+  File "/Users/markik/Code/repos/woodshed/validation/full-source-audit_20261016/verify_coverage.py", line 70, in verify
+    assert row['path'] not in seen, 'parent double count'
+AssertionError: parent double count

@@ -1,0 +1,513 @@
+[
+  {
+    "path": "ports/hocket/Cargo.lock",
+    "sha256": "a55536801bf3883c0defb1541a19026bd70ee90829d8bc45498b49ca5ced9624",
+    "lines": 8683,
+    "bytes": 210452,
+    "kind": "source"
+  },
+  {
+    "path": "ports/hocket/Cargo.toml",
+    "sha256": "f1288749deb69bd3038b4edd8723834e57bbb6e465c48d72189a1bfa33c2bcc8",
+    "lines": 189,
+    "bytes": 11542,
+    "kind": "source"
+  },
+  {
+    "path": "ports/hocket/crates/hocket-engine/Cargo.toml",
+    "sha256": "566616c3f29de3044a772a3c16a727af156c245a2467aa1fcb0487703b1e559e",
+    "lines": 22,
+    "bytes": 623,
+    "kind": "source"
+  },
+  {
+    "path": "ports/hocket/crates/hocket-engine/src/alloc_tests.rs",
+    "sha256": "deb51420723277725c22de44a2c04bf5de83c3b27698e9545a483e63f36d31e8",
+    "lines": 165,
+    "bytes": 5897,
+    "kind": "source"
+  },
+  {
+    "path": "ports/hocket/crates/hocket-engine/src/capture.rs",
+    "sha256": "7ac0768dd34ce29f8560f7507f6340451aba917078037a4b5a158a655105188c",
+    "lines": 300,
+    "bytes": 9858,
+    "kind": "source"
+  },
+  {
+    "path": "ports/hocket/crates/hocket-engine/src/click.rs",
+    "sha256": "60652e1c30239ee502365c07fbb922dc64bd9d9dea2592c736760e63eb0fdb41",
+    "lines": 91,
+    "bytes": 3527,
+    "kind": "source"
+  },
+  {
+    "path": "ports/hocket/crates/hocket-engine/src/lib.rs",
+    "sha256": "f49751b4c6995ff524b250855611b3781bfb13bb3f6ac5d0650ef2f93901bbd2",
+    "lines": 1177,
+    "bytes": 45786,
+    "kind": "source"
+  },
+  {
+    "path": "ports/hocket/crates/hocket-engine/src/offline_tests.rs",
+    "sha256": "c5161a38f9641836a1c6a60beb0b77c8b54c0169309e26162ab5c88071af6ae5",
+    "lines": 782,
+    "bytes": 27152,
+    "kind": "source"
+  },
+  {
+    "path": "ports/hocket/crates/hocket-engine/tests/capture_pipeline.rs",
+    "sha256": "5c4b0dd89d79ee6b4788a0ea9acd9ecc08e9db071e5a0fc463ceafd261f365ba",
+    "lines": 191,
+    "bytes": 6527,
+    "kind": "source"
+  },
+  {
+    "path": "ports/hocket/crates/hocket-genet/Cargo.toml",
+    "sha256": "af0b613d7fc8bd67e299ed5d58de7dda1f9aa3393d81454e84e9ccd0465d842b",
+    "lines": 82,
+    "bytes": 3436,
+    "kind": "source"
+  },
+  {
+    "path": "ports/hocket/crates/hocket-genet/src/appearance.rs",
+    "sha256": "8c9263a8d05a06df336fe52bb2b2c02b89e7e0d5b25ac6fb6768d41754c9ec99",
+    "lines": 679,
+    "bytes": 26507,
+    "kind": "source"
+  },
+  {
+    "path": "ports/hocket/crates/hocket-genet/src/appearance_tests.rs",
+    "sha256": "297144f85c46808e9e2e59fb04361790d77f46363b16d65d8144938b2458542c",
+    "lines": 231,
+    "bytes": 8315,
+    "kind": "source"
+  },
+  {
+    "path": "ports/hocket/crates/hocket-genet/src/appearance_view.rs",
+    "sha256": "980597dae6289f5e38badc5e8aacb2e08b8f1ba4b17e3283640b12eb23211386",
+    "lines": 227,
+    "bytes": 9326,
+    "kind": "source"
+  },
+  {
+    "path": "ports/hocket/crates/hocket-genet/src/identity.rs",
+    "sha256": "64a8589e192ea96fe9ddc190ddc784b394d9f600e9ffc49f3ce9bc375a185929",
+    "lines": 445,
+    "bytes": 17739,
+    "kind": "source"
+  },
+  {
+    "path": "ports/hocket/crates/hocket-genet/src/leaves.rs",
+    "sha256": "6bf2aeb8c8866d9a317118da62f3241997af3175a091917a0a5f427ff3891cdb",
+    "lines": 32,
+    "bytes": 993,
+    "kind": "source"
+  },
+  {
+    "path": "ports/hocket/crates/hocket-genet/src/main.rs",
+    "sha256": "981ffb02232fb3b756cefe0ae697c83243f857a5eed5126a2004758f3832648b",
+    "lines": 301,
+    "bytes": 10626,
+    "kind": "source"
+  },
+  {
+    "path": "ports/hocket/crates/hocket-genet/src/project_correlation_tests.rs",
+    "sha256": "028a0fd0fada60c6d711342e9ff9de4a7c69ec2a96d976be777e01914ae2510c",
+    "lines": 372,
+    "bytes": 12570,
+    "kind": "source"
+  },
+  {
+    "path": "ports/hocket/crates/hocket-genet/src/project_io.rs",
+    "sha256": "c1a5b312406d9eac08e495533516f71cf10787edc8d5939b120a57811cf5a872",
+    "lines": 495,
+    "bytes": 18124,
+    "kind": "source"
+  },
+  {
+    "path": "ports/hocket/crates/hocket-genet/src/recorder_audio.rs",
+    "sha256": "9ff6e840bb3ac1e8b3e2b38edd5195e003066dc077f8fa4cd965ab232675b3c2",
+    "lines": 181,
+    "bytes": 6349,
+    "kind": "source"
+  },
+  {
+    "path": "ports/hocket/crates/hocket-genet/src/scenario.rs",
+    "sha256": "a3679354ebc32038d6e01a2b2cadd95a9b5af08e8e6572c544b3173f90fe0e14",
+    "lines": 368,
+    "bytes": 15048,
+    "kind": "source"
+  },
+  {
+    "path": "ports/hocket/crates/hocket-genet/src/state.rs",
+    "sha256": "f36b056a95c7308b776a6350888f10e44c77c763f14df908b5f42e2164e62863",
+    "lines": 1085,
+    "bytes": 41909,
+    "kind": "source"
+  },
+  {
+    "path": "ports/hocket/crates/hocket-genet/src/theme.rs",
+    "sha256": "253e39dfd86551b5f0cad9fcec8406dc67608212d9773f9a8184ec3cf85c779f",
+    "lines": 165,
+    "bytes": 10248,
+    "kind": "source"
+  },
+  {
+    "path": "ports/hocket/crates/hocket-genet/src/update/cli.rs",
+    "sha256": "2d290a9b19317511a2755d1a005ab344bd22633f0fc0098be1db4c24f883dc0c",
+    "lines": 242,
+    "bytes": 8392,
+    "kind": "source"
+  },
+  {
+    "path": "ports/hocket/crates/hocket-genet/src/update/luggage_transport.rs",
+    "sha256": "c2d52ab08a3ab738150858633ae5e2777554b57e9c6f63879d32f4e19ea7aa88",
+    "lines": 227,
+    "bytes": 8610,
+    "kind": "source"
+  },
+  {
+    "path": "ports/hocket/crates/hocket-genet/src/update/velopack_transport.rs",
+    "sha256": "8de3a6fc3b0f148bd8a61bf7118953c916c29226ede8bbea33a5bfd3d20153cb",
+    "lines": 196,
+    "bytes": 7160,
+    "kind": "source"
+  },
+  {
+    "path": "ports/hocket/crates/hocket-genet/src/update/worker.rs",
+    "sha256": "dc460e39c96597441d04a19e5d7cb5d72df5ec1136b84556a0dcbc7fb68374ce",
+    "lines": 355,
+    "bytes": 11350,
+    "kind": "source"
+  },
+  {
+    "path": "ports/hocket/crates/hocket-genet/src/update.rs",
+    "sha256": "236fc0a9bb4b43fe430e16dfa7f05e828b8efa120efe170752e7754851a2b424",
+    "lines": 697,
+    "bytes": 24721,
+    "kind": "source"
+  },
+  {
+    "path": "ports/hocket/crates/hocket-genet/src/view.rs",
+    "sha256": "1637b1f657ec3f4bf9e836413799109ffda0f6a07324b6615628cf390a35f893",
+    "lines": 483,
+    "bytes": 19626,
+    "kind": "source"
+  },
+  {
+    "path": "ports/hocket/crates/hocket-headless/Cargo.toml",
+    "sha256": "b8bf175c74f6171e2b4ecc700c0a5027b81e7840cb44d763644bcf298b95bf3e",
+    "lines": 19,
+    "bytes": 420,
+    "kind": "source"
+  },
+  {
+    "path": "ports/hocket/crates/hocket-headless/src/main.rs",
+    "sha256": "9a3eee1bccf0af91acf808ccee36c64297e020fca4977403389d27ef647a9aec",
+    "lines": 231,
+    "bytes": 8568,
+    "kind": "source"
+  },
+  {
+    "path": "ports/hocket/design_docs/receipts/firewheel_20261011/appearance.json",
+    "sha256": "94cbe08be3789094f09e81aafbf50af50c3df7a4b0e0b790a71a8a47529c822b",
+    "lines": 1,
+    "bytes": 48,
+    "kind": "source"
+  },
+  {
+    "path": "ports/hocket/design_docs/receipts/firewheel_20261011/dependency-summary.json",
+    "sha256": "e2c1d59bc1ece767a015ee9c293f876bff2045c2016a19625b1f790c06991839",
+    "lines": 81,
+    "bytes": 2686,
+    "kind": "source"
+  },
+  {
+    "path": "ports/hocket/design_docs/receipts/firewheel_20261011/manual-cli.json",
+    "sha256": "ace7eaee9ae381c4d23bbb5093af9944b25e31badbbe550c99000d4a0c45c82e",
+    "lines": 33,
+    "bytes": 2320,
+    "kind": "source"
+  },
+  {
+    "path": "ports/hocket/design_docs/receipts/firewheel_20261011/native-recorder/process.json",
+    "sha256": "a9578e472cf723b9a4917985a18edbf6cc818c9dc73080048bae41578e05ad3c",
+    "lines": 11,
+    "bytes": 381,
+    "kind": "source"
+  },
+  {
+    "path": "ports/hocket/design_docs/receipts/firewheel_20261011/native-reopen/process.json",
+    "sha256": "9408a0583c23459b72eea3fbf33b2ac401a3b281037268aa5904af95b7001177",
+    "lines": 11,
+    "bytes": 381,
+    "kind": "source"
+  },
+  {
+    "path": "ports/hocket/design_docs/receipts/firewheel_20261011/native-reopen-brown/process.json",
+    "sha256": "dca2e2c3b624c2ca4e2f60aab856b2c9039f8c28d4a7f0185a5f733f058efdd3",
+    "lines": 11,
+    "bytes": 381,
+    "kind": "source"
+  },
+  {
+    "path": "ports/hocket/design_docs/receipts/firewheel_20261011/native-results.json",
+    "sha256": "06647781a12cd8213a35d02defa39d908a1d4fab103cd7aa115079314e40c6ae",
+    "lines": 67,
+    "bytes": 2404,
+    "kind": "source"
+  },
+  {
+    "path": "ports/hocket/design_docs/receipts/firewheel_20261011/native-same-id/process.json",
+    "sha256": "77fd28826c524a6be5d0be45dd41d271fd3db4663ed5430947879fb5b0d0f295",
+    "lines": 11,
+    "bytes": 382,
+    "kind": "source"
+  },
+  {
+    "path": "ports/hocket/design_docs/receipts/firewheel_20261011/native-seed/process.json",
+    "sha256": "090b00b8ba75303924887727808ee81577580fb1ae28d23f1f18c1678a56e8e0",
+    "lines": 11,
+    "bytes": 382,
+    "kind": "source"
+  },
+  {
+    "path": "ports/hocket/design_docs/receipts/firewheel_20261011/run_native.py",
+    "sha256": "b5cfd1517251b7ed7c71ac9858bcf61a8db559cb7da7239328bf77ef77e5359b",
+    "lines": 27,
+    "bytes": 1823,
+    "kind": "source"
+  },
+  {
+    "path": "ports/hocket/design_docs/receipts/firewheel_20261011/source-freeze.json",
+    "sha256": "3cde7356dce7e4aee956642507398e6f65475e140d811932d246b66074db2c34",
+    "lines": 57,
+    "bytes": 6386,
+    "kind": "source"
+  },
+  {
+    "path": "ports/hocket/design_docs/receipts/firewheel_20261011/summary.json",
+    "sha256": "8ce60a71c8e5db77f6318c606094bdc6bc86ef66a25228f740ce7eeeeee902b9",
+    "lines": 297,
+    "bytes": 10792,
+    "kind": "source"
+  },
+  {
+    "path": "ports/hocket/design_docs/receipts/firewheel_20261011/themes.json",
+    "sha256": "70bd7ffdaba9e8c57077cf63ff7b09a8af3b35bf6914f438778438e00c88010b",
+    "lines": 58,
+    "bytes": 1514,
+    "kind": "source"
+  },
+  {
+    "path": "ports/hocket/design_docs/receipts/host_acceptance_20261011/appearance.json",
+    "sha256": "94cbe08be3789094f09e81aafbf50af50c3df7a4b0e0b790a71a8a47529c822b",
+    "lines": 1,
+    "bytes": 48,
+    "kind": "source"
+  },
+  {
+    "path": "ports/hocket/design_docs/receipts/host_acceptance_20261011/manual-cli.json",
+    "sha256": "6622972b0fabf8b2d58cad56247bb383345681c91222394988d4fc95ca39b510",
+    "lines": 37,
+    "bytes": 2416,
+    "kind": "source"
+  },
+  {
+    "path": "ports/hocket/design_docs/receipts/host_acceptance_20261011/native-recorder/process.json",
+    "sha256": "8419508a2d208ed5b63f53fa757eb661303c660db464c6df9b768d0c82faae90",
+    "lines": 11,
+    "bytes": 381,
+    "kind": "source"
+  },
+  {
+    "path": "ports/hocket/design_docs/receipts/host_acceptance_20261011/native-reopen/process.json",
+    "sha256": "0655c664673855c6ab01edae3de4ae8a79b56147bee17a77d84c33dfd6c03a6b",
+    "lines": 11,
+    "bytes": 381,
+    "kind": "source"
+  },
+  {
+    "path": "ports/hocket/design_docs/receipts/host_acceptance_20261011/native-reopen-brown/process.json",
+    "sha256": "ffcbe06309bdf16819fa7ac02e938412d368cd6cc669662ec10341eced0b7c93",
+    "lines": 11,
+    "bytes": 381,
+    "kind": "source"
+  },
+  {
+    "path": "ports/hocket/design_docs/receipts/host_acceptance_20261011/native-same-id/process.json",
+    "sha256": "06806e0a2e3529562896712a6122a67042608d67570104cc50b6cfec5b257ffc",
+    "lines": 11,
+    "bytes": 381,
+    "kind": "source"
+  },
+  {
+    "path": "ports/hocket/design_docs/receipts/host_acceptance_20261011/native-seed/process.json",
+    "sha256": "19bcfee06fb5b1e7a3fe71c4cfb422bd6e617b0822a2a92f37de4269606ec42d",
+    "lines": 11,
+    "bytes": 382,
+    "kind": "source"
+  },
+  {
+    "path": "ports/hocket/design_docs/receipts/host_acceptance_20261011/source-freeze.json",
+    "sha256": "6242d733c22e98638327cb25a4bf80b690f7c3c0ba5f00dae722c69303ff7c47",
+    "lines": 25,
+    "bytes": 2516,
+    "kind": "source"
+  },
+  {
+    "path": "ports/hocket/design_docs/receipts/host_acceptance_20261011/summary.json",
+    "sha256": "4838c8f3d7e7345f727fa011d7d04cf236847cb74cf90d28b36910e24973145b",
+    "lines": 297,
+    "bytes": 9485,
+    "kind": "source"
+  },
+  {
+    "path": "ports/hocket/design_docs/receipts/host_acceptance_20261011/themes.json",
+    "sha256": "70bd7ffdaba9e8c57077cf63ff7b09a8af3b35bf6914f438778438e00c88010b",
+    "lines": 58,
+    "bytes": 1514,
+    "kind": "source"
+  },
+  {
+    "path": "ports/hocket/design_docs/receipts/tabard_20261011/appearance.json",
+    "sha256": "94cbe08be3789094f09e81aafbf50af50c3df7a4b0e0b790a71a8a47529c822b",
+    "lines": 1,
+    "bytes": 48,
+    "kind": "source"
+  },
+  {
+    "path": "ports/hocket/design_docs/receipts/tabard_20261011/rejected-attempts.json",
+    "sha256": "81187d9f39af6fcaa0cae5c76e8aa878637ac43acf40a9071e4572b39e7e8dc7",
+    "lines": 47,
+    "bytes": 1629,
+    "kind": "source"
+  },
+  {
+    "path": "ports/hocket/design_docs/receipts/tabard_20261011/reopen/process.json",
+    "sha256": "8e54237071c87223386f0346e4cdee8b39928f8d8c276a708ea6fdd75bbe5ae4",
+    "lines": 11,
+    "bytes": 382,
+    "kind": "source"
+  },
+  {
+    "path": "ports/hocket/design_docs/receipts/tabard_20261011/reopen-final/process.json",
+    "sha256": "0a5c445e71eb6195dda840d2663a73613bd5527985b9b69be92556510f305622",
+    "lines": 11,
+    "bytes": 382,
+    "kind": "source"
+  },
+  {
+    "path": "ports/hocket/design_docs/receipts/tabard_20261011/same-id/process.json",
+    "sha256": "2d01d312c7d84f1943be237db0d1e79ae8bd3d810d636f2515d176365baae53a",
+    "lines": 11,
+    "bytes": 382,
+    "kind": "source"
+  },
+  {
+    "path": "ports/hocket/design_docs/receipts/tabard_20261011/seed/process.json",
+    "sha256": "3f15e7d476245a3e8f68a2beed39385119bdc69431293982e64eef39ff3525f8",
+    "lines": 11,
+    "bytes": 381,
+    "kind": "source"
+  },
+  {
+    "path": "ports/hocket/design_docs/receipts/tabard_20261011/source-freeze.json",
+    "sha256": "821b9368520962b7d90f9e15550d29fcff88e4c3d4a21ae0dec99a6b21ca447a",
+    "lines": 50,
+    "bytes": 5012,
+    "kind": "source"
+  },
+  {
+    "path": "ports/hocket/design_docs/receipts/tabard_20261011/summary.json",
+    "sha256": "0392aed940aec463f84ffa200811905711d3a3a051a9b26d2ba55add7429c12c",
+    "lines": 76,
+    "bytes": 3239,
+    "kind": "source"
+  },
+  {
+    "path": "ports/hocket/design_docs/receipts/tabard_20261011/themes.json",
+    "sha256": "70bd7ffdaba9e8c57077cf63ff7b09a8af3b35bf6914f438778438e00c88010b",
+    "lines": 58,
+    "bytes": 1514,
+    "kind": "source"
+  },
+  {
+    "path": "ports/hocket/rust-toolchain.toml",
+    "sha256": "e3f02c5d2480ee3b0629cf83d4dfb5f9519c837eda29bec63a01cbe207070262",
+    "lines": 5,
+    "bytes": 138,
+    "kind": "source"
+  },
+  {
+    "path": "ports/hocket/rustfmt.toml",
+    "sha256": "948ddbb2504264fd8339ce7ce06152cb516a76b6ab8b9fa079cc7b5266c2754c",
+    "lines": 19,
+    "bytes": 1082,
+    "kind": "source"
+  },
+  {
+    "path": "ports/hocket/scenarios/handoff_circle.scn",
+    "sha256": "15c588bae27af5270067d9a1edfb8b5bb2a65ce2b9980043fed50e96d5000013",
+    "lines": 15,
+    "bytes": 612,
+    "kind": "source"
+  },
+  {
+    "path": "ports/hocket/scenarios/project_native_reopen.scn",
+    "sha256": "63ba7879e6a1e45b929a57dd45995f3c273f8ee3a14bb8b5b30760f8bc42c863",
+    "lines": 37,
+    "bytes": 1118,
+    "kind": "source"
+  },
+  {
+    "path": "ports/hocket/scenarios/project_native_seed.scn",
+    "sha256": "acd3f8e3e7d2a17c8d1514ea4281de8707d0e7a3a9a3835441889ec882f92175",
+    "lines": 49,
+    "bytes": 1483,
+    "kind": "source"
+  },
+  {
+    "path": "ports/hocket/scenarios/recorder_controls.scn",
+    "sha256": "d10a7abb03847efaff5cad622b45912ab890e62300507ea131d7233080601e12",
+    "lines": 29,
+    "bytes": 1068,
+    "kind": "source"
+  },
+  {
+    "path": "ports/hocket/scenarios/tabard_appearance.scn",
+    "sha256": "5cbbf5ca9ddb9f8d9a967d85f61ac48f6586edf6a66af296e7670793d32a6fd7",
+    "lines": 52,
+    "bytes": 2238,
+    "kind": "source"
+  },
+  {
+    "path": "ports/hocket/scenarios/tabard_appearance_reopen.scn",
+    "sha256": "b5f80cdc939271e160cc6002886e83a2faa590a297c22556b3da75d98fef6dec",
+    "lines": 17,
+    "bytes": 551,
+    "kind": "source"
+  },
+  {
+    "path": "ports/hocket/scenarios/tabard_appearance_same_id.scn",
+    "sha256": "01afa701c4be69b21a93caeebbce3d8636a0e90ebe6c3b46314a12aac1ecb9bf",
+    "lines": 30,
+    "bytes": 1686,
+    "kind": "source"
+  },
+  {
+    "path": "ports/hocket/scenarios/update_action.scn",
+    "sha256": "7c418a4cf22ace97d00fca09bf0a8829f5001f4b9e6c0c1162d602a0d07eb194",
+    "lines": 28,
+    "bytes": 1242,
+    "kind": "source"
+  },
+  {
+    "path": "ports/hocket/scenarios/update_status.scn",
+    "sha256": "73634cf27e44b7d082d3ea3fb3bc522acd6745b8bfa9ae09447a6974cc129a2e",
+    "lines": 21,
+    "bytes": 903,
+    "kind": "source"
+  }
+]

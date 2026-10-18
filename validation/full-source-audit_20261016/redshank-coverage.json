@@ -1,0 +1,3743 @@
+{
+  "schema_version": 1,
+  "partition": "redshank",
+  "status": "complete",
+  "frozen_revision": "d12201bfe80cc94345c6308c46caaebf4a9fe42e",
+  "source_root": "/Users/markik/Code/testing/woodshed/full-source-audit-20261016/source-d12201bf",
+  "assigned_manifest": "/Users/markik/Code/testing/woodshed/full-source-audit-20261016/redshank-assigned.json",
+  "assigned_manifest_sha256": "7d261a2a357d1fa5c47587e2fc4379a0090215b1b197ed972db494de265eafc5",
+  "coverage_method": "Collective full literal source read in successful untruncated inclusive line ranges; primary read locks/scripts/scenarios/receipts and three private explicitly assigned reviewers read desktop, model/playback, and surfaces/storage/web. Hashing, grep, parsing, and summaries were not substituted for these reads.",
+  "totals": {
+    "assigned_files": 178,
+    "complete_files": 178,
+    "assigned_lines": 51557,
+    "read_lines": 51557,
+    "assigned_bytes": 1712889,
+    "hash_matches": 178
+  },
+  "reviewer_totals": {
+    "redshank-primary": {
+      "files": 47,
+      "lines": 11483
+    },
+    "redshank_desktop": {
+      "files": 13,
+      "lines": 13414
+    },
+    "redshank_model_playback": {
+      "files": 77,
+      "lines": 13824
+    },
+    "redshank_surface_storage": {
+      "files": 41,
+      "lines": 12836
+    }
+  },
+  "truncated_attempts_excluded": [
+    "Primary initial combined discovery/manifest output; initial DOC_README combined output replaced by explicit 1-170 and171-413 reads.",
+    "Desktop initial broad discovery output excluded.",
+    "Surface initial combined manifest/docs excluded; tabs/mod.rs fully reread1-306 after clipped combined attempt."
+  ],
+  "supplemental_context": [
+    {
+      "path": "CLAUDE.md",
+      "ranges": [
+        [
+          1,
+          117
+        ]
+      ],
+      "reviewer": "redshank_surface_storage",
+      "sha256": "1dc92eb52d2ab16bbcba919210844c98b7e69160615664885ebba5747c8c3ead",
+      "lines": 117,
+      "status": "context_read_ranges"
+    },
+    {
+      "path": "design_docs/DOC_README.md",
+      "ranges": [
+        [
+          1,
+          170
+        ],
+        [
+          171,
+          413
+        ]
+      ],
+      "reviewer": "redshank-primary",
+      "sha256": "f88abef1c4ae554ddfc415b2a473eb3a67da63846844e80466cc3b95771f9cf0",
+      "lines": 413,
+      "status": "context_read_ranges"
+    },
+    {
+      "path": "design_docs/2026-09-13_redshank_gui_implementation_plan.md",
+      "ranges": [
+        [
+          1,
+          320
+        ],
+        [
+          321,
+          633
+        ]
+      ],
+      "reviewer": "redshank_surface_storage",
+      "sha256": "f57a0e189916dca25d791d980a7731ff64ec04b2a627daeceda7aa7d26f0a7ef",
+      "lines": 633,
+      "status": "context_read_ranges"
+    },
+    {
+      "path": "design_docs/2026-09-26_timed_transcripts_plan.md",
+      "ranges": [
+        [
+          1,
+          129
+        ]
+      ],
+      "reviewer": "redshank-primary",
+      "sha256": "4a461778e03c728cf5c2b30343df8a7e1be943c2de5be94fdb720a7886590a5f",
+      "lines": 129,
+      "status": "context_read_ranges"
+    },
+    {
+      "path": "design_docs/2026-09-01_listening_annotation_port_plan.md",
+      "ranges": [
+        [
+          1,
+          336
+        ],
+        [
+          503,
+          655
+        ],
+        [
+          939,
+          1180
+        ],
+        [
+          1615,
+          1671
+        ]
+      ],
+      "reviewer": "redshank-primary",
+      "sha256": "8107db325cd8718dc8dc36990185d0b6a5c2c81e5fb6a636bf47b5afc9dcf9c5",
+      "lines": 1671,
+      "status": "context_read_ranges"
+    }
+  ],
+  "supplier_verification": {
+    "mere_revision": "91467c0bbf6f92cc26262579dec634155ee33f2d",
+    "cached_source": "/Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/91467c0",
+    "purpose": "Exact pinned Cambium pointer teardown and native idle scheduling traces; source-only read.",
+    "additional_contract_revision": "Genet e37762d752e423dc43f920bd728c83f70c47f2cc Player seek boundary; Symphonia0.5.5 EOF seek boundary, inspected read-only by playback reviewer."
+  },
+  "primary_comparison": {
+    "root": "/Users/markik/Code/repos/woodshed",
+    "scope": "all178 assigned paths",
+    "different_paths": [],
+    "interpretation": "No Redshank finding was already fixed in the current dirty local P5a source at comparison time; this is not an audit of unrelated local changes."
+  },
+  "verification_limits": [
+    "No tests executed.",
+    "No full builds, native runs, network browsing or Git mutations.",
+    "Source reachability and source contracts established; new runtime/physical acceptance not claimed."
+  ],
+  "allowed_artifacts": [
+    "/Users/markik/Code/testing/woodshed/full-source-audit-20261016/redshank-coverage.json",
+    "/Users/markik/Code/testing/woodshed/full-source-audit-20261016/redshank-report.md"
+  ],
+  "files": [
+    {
+      "manifest_index": 0,
+      "path": "ports/redshank/Cargo.lock",
+      "sha256": "4e6f7da96b61053857e9ad34ed1d1238820b84fd1810946bb7d13d6affeda1d8",
+      "lines": 8720,
+      "bytes": 213010,
+      "kind": "source",
+      "actual_sha256": "4e6f7da96b61053857e9ad34ed1d1238820b84fd1810946bb7d13d6affeda1d8",
+      "actual_lines": 8720,
+      "status": "complete",
+      "reviewer": "redshank-primary",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 1200
+        },
+        {
+          "start": 1201,
+          "end": 2400
+        },
+        {
+          "start": 2401,
+          "end": 3600
+        },
+        {
+          "start": 3601,
+          "end": 4800
+        },
+        {
+          "start": 4801,
+          "end": 6000
+        },
+        {
+          "start": 6001,
+          "end": 7200
+        },
+        {
+          "start": 7201,
+          "end": 8400
+        },
+        {
+          "start": 8401,
+          "end": 8720
+        }
+      ],
+      "lines_read": 8720
+    },
+    {
+      "manifest_index": 1,
+      "path": "ports/redshank/Cargo.toml",
+      "sha256": "f9a8070dbc254b2688166f7c1e5a7d4baeb8008a3cd6741b71a335beb2fe05e4",
+      "lines": 86,
+      "bytes": 5705,
+      "kind": "source",
+      "actual_sha256": "f9a8070dbc254b2688166f7c1e5a7d4baeb8008a3cd6741b71a335beb2fe05e4",
+      "actual_lines": 86,
+      "status": "complete",
+      "reviewer": "redshank_surface_storage",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 86
+        }
+      ],
+      "lines_read": 86
+    },
+    {
+      "manifest_index": 2,
+      "path": "ports/redshank/cache/Cargo.toml",
+      "sha256": "c9f8cf539cfdee3bbc7c134eb4a4ac5450f63a731801fe2a2ad303dfea23ee7e",
+      "lines": 16,
+      "bytes": 284,
+      "kind": "source",
+      "actual_sha256": "c9f8cf539cfdee3bbc7c134eb4a4ac5450f63a731801fe2a2ad303dfea23ee7e",
+      "actual_lines": 16,
+      "status": "complete",
+      "reviewer": "redshank_surface_storage",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 16
+        }
+      ],
+      "lines_read": 16
+    },
+    {
+      "manifest_index": 3,
+      "path": "ports/redshank/cache/src/lib.rs",
+      "sha256": "8f68ce7a15aab394eed7e8e46dca4ebd10329c05b00a3b3e4001108c0bc265f3",
+      "lines": 474,
+      "bytes": 15516,
+      "kind": "source",
+      "actual_sha256": "8f68ce7a15aab394eed7e8e46dca4ebd10329c05b00a3b3e4001108c0bc265f3",
+      "actual_lines": 474,
+      "status": "complete",
+      "reviewer": "redshank_surface_storage",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 474
+        }
+      ],
+      "lines_read": 474
+    },
+    {
+      "manifest_index": 4,
+      "path": "ports/redshank/desktop/Cargo.toml",
+      "sha256": "9c40cc5a48de625bd31975e35910dfc67432fae1d2cc5e7fec5d69d792bba4af",
+      "lines": 37,
+      "bytes": 985,
+      "kind": "source",
+      "actual_sha256": "9c40cc5a48de625bd31975e35910dfc67432fae1d2cc5e7fec5d69d792bba4af",
+      "actual_lines": 37,
+      "status": "complete",
+      "reviewer": "redshank_desktop",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 37
+        }
+      ],
+      "lines_read": 37
+    },
+    {
+      "manifest_index": 5,
+      "path": "ports/redshank/desktop/src/appearance.rs",
+      "sha256": "cc28f23c92137b101db830be0229ccabb2be862bee8f546e0c3f58649abd0248",
+      "lines": 359,
+      "bytes": 13542,
+      "kind": "source",
+      "actual_sha256": "cc28f23c92137b101db830be0229ccabb2be862bee8f546e0c3f58649abd0248",
+      "actual_lines": 359,
+      "status": "complete",
+      "reviewer": "redshank_desktop",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 359
+        }
+      ],
+      "lines_read": 359
+    },
+    {
+      "manifest_index": 6,
+      "path": "ports/redshank/desktop/src/appearance_host.rs",
+      "sha256": "ba991fdcf1dbfd921a3b02e2e38b1834e1e1e89abfb3d0bdbaf7b1cc3ed1bdb9",
+      "lines": 109,
+      "bytes": 3780,
+      "kind": "source",
+      "actual_sha256": "ba991fdcf1dbfd921a3b02e2e38b1834e1e1e89abfb3d0bdbaf7b1cc3ed1bdb9",
+      "actual_lines": 109,
+      "status": "complete",
+      "reviewer": "redshank_desktop",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 109
+        }
+      ],
+      "lines_read": 109
+    },
+    {
+      "manifest_index": 7,
+      "path": "ports/redshank/desktop/src/appearance_tests.rs",
+      "sha256": "d460e0a0ee31ec0c26d255f65e18d2fb54bfdc3bbf97804584ae75e3f6473c22",
+      "lines": 448,
+      "bytes": 16392,
+      "kind": "source",
+      "actual_sha256": "d460e0a0ee31ec0c26d255f65e18d2fb54bfdc3bbf97804584ae75e3f6473c22",
+      "actual_lines": 448,
+      "status": "complete",
+      "reviewer": "redshank_desktop",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 448
+        }
+      ],
+      "lines_read": 448
+    },
+    {
+      "manifest_index": 8,
+      "path": "ports/redshank/desktop/src/appearance_view.rs",
+      "sha256": "b9ceb03797579e32bf83fed124c4da6f551aee39c5e9832a9e40d2816d1f3404",
+      "lines": 232,
+      "bytes": 9430,
+      "kind": "source",
+      "actual_sha256": "b9ceb03797579e32bf83fed124c4da6f551aee39c5e9832a9e40d2816d1f3404",
+      "actual_lines": 232,
+      "status": "complete",
+      "reviewer": "redshank_desktop",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 232
+        }
+      ],
+      "lines_read": 232
+    },
+    {
+      "manifest_index": 9,
+      "path": "ports/redshank/desktop/src/diagnostics.rs",
+      "sha256": "0f932e1040a0e6593809c87de0abe5213029ef870170a9ab544ea53da6ece448",
+      "lines": 444,
+      "bytes": 15406,
+      "kind": "source",
+      "actual_sha256": "0f932e1040a0e6593809c87de0abe5213029ef870170a9ab544ea53da6ece448",
+      "actual_lines": 444,
+      "status": "complete",
+      "reviewer": "redshank_desktop",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 444
+        }
+      ],
+      "lines_read": 444
+    },
+    {
+      "manifest_index": 10,
+      "path": "ports/redshank/desktop/src/diagnostics_worker_tests.rs",
+      "sha256": "fd6543c1d4ec9ebfe20c46bbcf8f25c6dda98a588d3820c9c52a5dda4749d7ca",
+      "lines": 215,
+      "bytes": 7371,
+      "kind": "source",
+      "actual_sha256": "fd6543c1d4ec9ebfe20c46bbcf8f25c6dda98a588d3820c9c52a5dda4749d7ca",
+      "actual_lines": 215,
+      "status": "complete",
+      "reviewer": "redshank_desktop",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 215
+        }
+      ],
+      "lines_read": 215
+    },
+    {
+      "manifest_index": 11,
+      "path": "ports/redshank/desktop/src/headed_receipt.rs",
+      "sha256": "4acd46ea48027febd254901fd15aa787c681e257d195941d22b8ed4a8e9e151f",
+      "lines": 695,
+      "bytes": 29337,
+      "kind": "source",
+      "actual_sha256": "4acd46ea48027febd254901fd15aa787c681e257d195941d22b8ed4a8e9e151f",
+      "actual_lines": 695,
+      "status": "complete",
+      "reviewer": "redshank_desktop",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 360
+        },
+        {
+          "start": 361,
+          "end": 695
+        }
+      ],
+      "lines_read": 695
+    },
+    {
+      "manifest_index": 12,
+      "path": "ports/redshank/desktop/src/main.rs",
+      "sha256": "5c03d933d20c38a31a0787af268d85da57a953795a90c7732e3257c243453887",
+      "lines": 3417,
+      "bytes": 135466,
+      "kind": "source",
+      "actual_sha256": "5c03d933d20c38a31a0787af268d85da57a953795a90c7732e3257c243453887",
+      "actual_lines": 3417,
+      "status": "complete",
+      "reviewer": "redshank_desktop",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 500
+        },
+        {
+          "start": 501,
+          "end": 1000
+        },
+        {
+          "start": 1001,
+          "end": 1500
+        },
+        {
+          "start": 1501,
+          "end": 2000
+        },
+        {
+          "start": 2001,
+          "end": 2500
+        },
+        {
+          "start": 2501,
+          "end": 3000
+        },
+        {
+          "start": 3001,
+          "end": 3417
+        }
+      ],
+      "lines_read": 3417
+    },
+    {
+      "manifest_index": 13,
+      "path": "ports/redshank/desktop/src/scenario.rs",
+      "sha256": "cce6de79ce2d83c01213535c8688bc119a6a5cd0908be1e217853dd38f9bae1e",
+      "lines": 881,
+      "bytes": 33910,
+      "kind": "source",
+      "actual_sha256": "cce6de79ce2d83c01213535c8688bc119a6a5cd0908be1e217853dd38f9bae1e",
+      "actual_lines": 881,
+      "status": "complete",
+      "reviewer": "redshank_desktop",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 450
+        },
+        {
+          "start": 451,
+          "end": 881
+        }
+      ],
+      "lines_read": 881
+    },
+    {
+      "manifest_index": 14,
+      "path": "ports/redshank/desktop/src/session.rs",
+      "sha256": "c3d40458a9825d1bf4495dad850aa85e126e8be442cc440b06d7c2a8e9d5e896",
+      "lines": 1789,
+      "bytes": 68687,
+      "kind": "source",
+      "actual_sha256": "c3d40458a9825d1bf4495dad850aa85e126e8be442cc440b06d7c2a8e9d5e896",
+      "actual_lines": 1789,
+      "status": "complete",
+      "reviewer": "redshank_desktop",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 450
+        },
+        {
+          "start": 451,
+          "end": 900
+        },
+        {
+          "start": 901,
+          "end": 1350
+        },
+        {
+          "start": 1351,
+          "end": 1789
+        }
+      ],
+      "lines_read": 1789
+    },
+    {
+      "manifest_index": 15,
+      "path": "ports/redshank/desktop/src/voice.rs",
+      "sha256": "8f3aff139a1d11118c177b35426b869fc17d9315842b4d9cf626237c231cecc9",
+      "lines": 289,
+      "bytes": 10380,
+      "kind": "source",
+      "actual_sha256": "8f3aff139a1d11118c177b35426b869fc17d9315842b4d9cf626237c231cecc9",
+      "actual_lines": 289,
+      "status": "complete",
+      "reviewer": "redshank_desktop",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 289
+        }
+      ],
+      "lines_read": 289
+    },
+    {
+      "manifest_index": 16,
+      "path": "ports/redshank/feed/Cargo.toml",
+      "sha256": "c7bb88da9572380d11a881b0c10fa9e2b1a82d18d31b564d4e2e021c3613a3f8",
+      "lines": 14,
+      "bytes": 259,
+      "kind": "source",
+      "actual_sha256": "c7bb88da9572380d11a881b0c10fa9e2b1a82d18d31b564d4e2e021c3613a3f8",
+      "actual_lines": 14,
+      "status": "complete",
+      "reviewer": "redshank_surface_storage",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 14
+        }
+      ],
+      "lines_read": 14
+    },
+    {
+      "manifest_index": 17,
+      "path": "ports/redshank/feed/src/lib.rs",
+      "sha256": "9e08e97bf1604860d4f33c2b81cd668f50e1e8d356d10f63a1ce6ef514cb6119",
+      "lines": 148,
+      "bytes": 6016,
+      "kind": "source",
+      "actual_sha256": "9e08e97bf1604860d4f33c2b81cd668f50e1e8d356d10f63a1ce6ef514cb6119",
+      "actual_lines": 148,
+      "status": "complete",
+      "reviewer": "redshank_surface_storage",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 148
+        }
+      ],
+      "lines_read": 148
+    },
+    {
+      "manifest_index": 18,
+      "path": "ports/redshank/model/Cargo.toml",
+      "sha256": "63900b444de11e47fdc8fd67d7f408e9fefb64a5f632679342e58ab4e31f535c",
+      "lines": 16,
+      "bytes": 300,
+      "kind": "source",
+      "actual_sha256": "63900b444de11e47fdc8fd67d7f408e9fefb64a5f632679342e58ab4e31f535c",
+      "actual_lines": 16,
+      "status": "complete",
+      "reviewer": "redshank_model_playback",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 16
+        }
+      ],
+      "lines_read": 16
+    },
+    {
+      "manifest_index": 19,
+      "path": "ports/redshank/model/examples/selected_export.rs",
+      "sha256": "6ca361b99e16dbc7f1868d9cdd6256afe6636c526638d94a8e5a706f0f64d4bb",
+      "lines": 51,
+      "bytes": 1853,
+      "kind": "source",
+      "actual_sha256": "6ca361b99e16dbc7f1868d9cdd6256afe6636c526638d94a8e5a706f0f64d4bb",
+      "actual_lines": 51,
+      "status": "complete",
+      "reviewer": "redshank_model_playback",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 51
+        }
+      ],
+      "lines_read": 51
+    },
+    {
+      "manifest_index": 20,
+      "path": "ports/redshank/model/src/lib.rs",
+      "sha256": "944eaef775dae2371b337260bbd60001a1d7d440ffaa6b7e368cee49c31ea7ea",
+      "lines": 1609,
+      "bytes": 56023,
+      "kind": "source",
+      "actual_sha256": "944eaef775dae2371b337260bbd60001a1d7d440ffaa6b7e368cee49c31ea7ea",
+      "actual_lines": 1609,
+      "status": "complete",
+      "reviewer": "redshank_model_playback",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 400
+        },
+        {
+          "start": 401,
+          "end": 850
+        },
+        {
+          "start": 851,
+          "end": 1250
+        },
+        {
+          "start": 1251,
+          "end": 1609
+        }
+      ],
+      "lines_read": 1609
+    },
+    {
+      "manifest_index": 21,
+      "path": "ports/redshank/model/src/selected_export.rs",
+      "sha256": "f53aa506e33cdab95b16378169752d4f9408cc9ecb9928dff038720605652412",
+      "lines": 100,
+      "bytes": 3798,
+      "kind": "source",
+      "actual_sha256": "f53aa506e33cdab95b16378169752d4f9408cc9ecb9928dff038720605652412",
+      "actual_lines": 100,
+      "status": "complete",
+      "reviewer": "redshank_model_playback",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 100
+        }
+      ],
+      "lines_read": 100
+    },
+    {
+      "manifest_index": 22,
+      "path": "ports/redshank/model/tests/alignment.rs",
+      "sha256": "a6b309c4713051c981be4a883761df782ec73ad046f567751de63a6da1b6d078",
+      "lines": 285,
+      "bytes": 9860,
+      "kind": "source",
+      "actual_sha256": "a6b309c4713051c981be4a883761df782ec73ad046f567751de63a6da1b6d078",
+      "actual_lines": 285,
+      "status": "complete",
+      "reviewer": "redshank_model_playback",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 285
+        }
+      ],
+      "lines_read": 285
+    },
+    {
+      "manifest_index": 23,
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/annotations/3.1-annotationContextValidated.json",
+      "sha256": "b265595283a135199842a85ffab1a0ccea3ef30458a6307c7a7876cee0f3ff14",
+      "lines": 20,
+      "bytes": 920,
+      "kind": "source",
+      "actual_sha256": "b265595283a135199842a85ffab1a0ccea3ef30458a6307c7a7876cee0f3ff14",
+      "actual_lines": 20,
+      "status": "complete",
+      "reviewer": "redshank_model_playback",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 20
+        }
+      ],
+      "lines_read": 20
+    },
+    {
+      "manifest_index": 24,
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/annotations/3.1-annotationIdValidated.json",
+      "sha256": "f7cc4e98fe3e6d7e1854cddf5845d1fc144f3be4982a5ce10cb5e3c052100f82",
+      "lines": 11,
+      "bytes": 644,
+      "kind": "source",
+      "actual_sha256": "f7cc4e98fe3e6d7e1854cddf5845d1fc144f3be4982a5ce10cb5e3c052100f82",
+      "actual_lines": 11,
+      "status": "complete",
+      "reviewer": "redshank_model_playback",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 11
+        }
+      ],
+      "lines_read": 11
+    },
+    {
+      "manifest_index": 25,
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/annotations/3.1-annotationTypeValidated.json",
+      "sha256": "bbe23803180270747b7747089822b2ec35a6d942067aaee274337cf77bb3b952",
+      "lines": 12,
+      "bytes": 555,
+      "kind": "source",
+      "actual_sha256": "bbe23803180270747b7747089822b2ec35a6d942067aaee274337cf77bb3b952",
+      "actual_lines": 12,
+      "status": "complete",
+      "reviewer": "redshank_model_playback",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 12
+        }
+      ],
+      "lines_read": 12
+    },
+    {
+      "manifest_index": 26,
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/annotations/3.1-targetKeyFound.json",
+      "sha256": "3221e6eba11f28693f5509f70f2e8ce915a17ea4dec3c237a4a146975786e082",
+      "lines": 12,
+      "bytes": 489,
+      "kind": "source",
+      "actual_sha256": "3221e6eba11f28693f5509f70f2e8ce915a17ea4dec3c237a4a146975786e082",
+      "actual_lines": 12,
+      "status": "complete",
+      "reviewer": "redshank_model_playback",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 12
+        }
+      ],
+      "lines_read": 12
+    },
+    {
+      "manifest_index": 27,
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/annotations/3.2-bodyObjectsRecognized.json",
+      "sha256": "2f0b8289d618ebf36d901b34f3da2570ae25d8fb0e1d61f12c586f07052b7e73",
+      "lines": 22,
+      "bytes": 1218,
+      "kind": "source",
+      "actual_sha256": "2f0b8289d618ebf36d901b34f3da2570ae25d8fb0e1d61f12c586f07052b7e73",
+      "actual_lines": 22,
+      "status": "complete",
+      "reviewer": "redshank_model_playback",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 22
+        }
+      ],
+      "lines_read": 22
+    },
+    {
+      "manifest_index": 28,
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/annotations/3.2-targetObjectsRecognized.json",
+      "sha256": "f2bd4968a06f2ea250d0dbe804a3c24a409a419a2488b1456426c3180b309195",
+      "lines": 23,
+      "bytes": 1139,
+      "kind": "source",
+      "actual_sha256": "f2bd4968a06f2ea250d0dbe804a3c24a409a419a2488b1456426c3180b309195",
+      "actual_lines": 23,
+      "status": "complete",
+      "reviewer": "redshank_model_playback",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 23
+        }
+      ],
+      "lines_read": 23
+    },
+    {
+      "manifest_index": 29,
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/annotations/3.2.5-bodyValueValidated.json",
+      "sha256": "9772be5633258cbfead48df915af581d843d5d20c20bfbad53b1be37367406b7",
+      "lines": 13,
+      "bytes": 710,
+      "kind": "source",
+      "actual_sha256": "9772be5633258cbfead48df915af581d843d5d20c20bfbad53b1be37367406b7",
+      "actual_lines": 13,
+      "status": "complete",
+      "reviewer": "redshank_model_playback",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 13
+        }
+      ],
+      "lines_read": 13
+    },
+    {
+      "manifest_index": 30,
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/annotations/3.2.5-notBodyBodyValue.json",
+      "sha256": "a387a0c13a777a0f80c27d736e761ed853aa265981d8c3adf115d49604b69982",
+      "lines": 13,
+      "bytes": 658,
+      "kind": "source",
+      "actual_sha256": "a387a0c13a777a0f80c27d736e761ed853aa265981d8c3adf115d49604b69982",
+      "actual_lines": 13,
+      "status": "complete",
+      "reviewer": "redshank_model_playback",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 13
+        }
+      ],
+      "lines_read": 13
+    },
+    {
+      "manifest_index": 31,
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/annotations/3.3.1-annotationCreatedValidated.json",
+      "sha256": "690727568a9bb85d2c41d8f26486a1804d739591fae300a2abb494c2e1973498",
+      "lines": 14,
+      "bytes": 797,
+      "kind": "source",
+      "actual_sha256": "690727568a9bb85d2c41d8f26486a1804d739591fae300a2abb494c2e1973498",
+      "actual_lines": 14,
+      "status": "complete",
+      "reviewer": "redshank_model_playback",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 14
+        }
+      ],
+      "lines_read": 14
+    },
+    {
+      "manifest_index": 32,
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/annotations/3.3.1-annotationGeneratedValidated.json",
+      "sha256": "bf8b934564de19fe0bf54a983b6c3f90a1d14d32872c939aa4cd635e236628b6",
+      "lines": 14,
+      "bytes": 811,
+      "kind": "source",
+      "actual_sha256": "bf8b934564de19fe0bf54a983b6c3f90a1d14d32872c939aa4cd635e236628b6",
+      "actual_lines": 14,
+      "status": "complete",
+      "reviewer": "redshank_model_playback",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 14
+        }
+      ],
+      "lines_read": 14
+    },
+    {
+      "manifest_index": 33,
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/annotations/3.3.1-annotationModifiedValidated.json",
+      "sha256": "470a935447243e6df5851edd910f6d6c4291ec0b7d781cd489ce4236f5ae9e9c",
+      "lines": 14,
+      "bytes": 804,
+      "kind": "source",
+      "actual_sha256": "470a935447243e6df5851edd910f6d6c4291ec0b7d781cd489ce4236f5ae9e9c",
+      "actual_lines": 14,
+      "status": "complete",
+      "reviewer": "redshank_model_playback",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 14
+        }
+      ],
+      "lines_read": 14
+    },
+    {
+      "manifest_index": 34,
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/annotations/3.3.6-annotationRightsValidated.json",
+      "sha256": "de54ef7abb26e8c31a8217e72b09278afeb98b742f3f86d051dd3ac0dd0218a0",
+      "lines": 14,
+      "bytes": 755,
+      "kind": "source",
+      "actual_sha256": "de54ef7abb26e8c31a8217e72b09278afeb98b742f3f86d051dd3ac0dd0218a0",
+      "actual_lines": 14,
+      "status": "complete",
+      "reviewer": "redshank_model_playback",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 14
+        }
+      ],
+      "lines_read": 14
+    },
+    {
+      "manifest_index": 35,
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/annotations/3.3.7-annotationCanonicalValidated.json",
+      "sha256": "4dbca458c3518fc14468517b4d808256db4ee06d15b03f9632666cec0c7b55d6",
+      "lines": 14,
+      "bytes": 793,
+      "kind": "source",
+      "actual_sha256": "4dbca458c3518fc14468517b4d808256db4ee06d15b03f9632666cec0c7b55d6",
+      "actual_lines": 14,
+      "status": "complete",
+      "reviewer": "redshank_model_playback",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 14
+        }
+      ],
+      "lines_read": 14
+    },
+    {
+      "manifest_index": 36,
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/annotations/3.3.7-annotationViaValidated.json",
+      "sha256": "9c526da7eec9c94e7e3e9a777a5b052bb3b46e8fcd63ee39825292d21bad651e",
+      "lines": 14,
+      "bytes": 707,
+      "kind": "source",
+      "actual_sha256": "9c526da7eec9c94e7e3e9a777a5b052bb3b46e8fcd63ee39825292d21bad651e",
+      "actual_lines": 14,
+      "status": "complete",
+      "reviewer": "redshank_model_playback",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 14
+        }
+      ],
+      "lines_read": 14
+    },
+    {
+      "manifest_index": 37,
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/annotations/bodiesTargets/3.2.1-bodyTextDirectionValidated.json",
+      "sha256": "3e16a2940ae99f726d31af4db87b6ddd1974bd81cc12b53a2a1b6dd6079c39c2",
+      "lines": 44,
+      "bytes": 1921,
+      "kind": "source",
+      "actual_sha256": "3e16a2940ae99f726d31af4db87b6ddd1974bd81cc12b53a2a1b6dd6079c39c2",
+      "actual_lines": 44,
+      "status": "complete",
+      "reviewer": "redshank_model_playback",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 44
+        }
+      ],
+      "lines_read": 44
+    },
+    {
+      "manifest_index": 38,
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/annotations/bodiesTargets/3.2.1-targTextDirectionValidated.json",
+      "sha256": "ae773a03d96c4111eeefca6668a1b2bd705920a277e73888bda98b8dca947e5b",
+      "lines": 44,
+      "bytes": 1939,
+      "kind": "source",
+      "actual_sha256": "ae773a03d96c4111eeefca6668a1b2bd705920a277e73888bda98b8dca947e5b",
+      "actual_lines": 44,
+      "status": "complete",
+      "reviewer": "redshank_model_playback",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 44
+        }
+      ],
+      "lines_read": 44
+    },
+    {
+      "manifest_index": 39,
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/annotations/bodiesTargets/3.2.4-bodyChoiceSetNoValue.json",
+      "sha256": "3d7f1f3cbd7c6b8362ec979a0a13391cc7c23bc2edb3b611ad01775b9160e2fa",
+      "lines": 21,
+      "bytes": 975,
+      "kind": "source",
+      "actual_sha256": "3d7f1f3cbd7c6b8362ec979a0a13391cc7c23bc2edb3b611ad01775b9160e2fa",
+      "actual_lines": 21,
+      "status": "complete",
+      "reviewer": "redshank_model_playback",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 21
+        }
+      ],
+      "lines_read": 21
+    },
+    {
+      "manifest_index": 40,
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/annotations/bodiesTargets/3.2.4-targChoiceSetNoValue.json",
+      "sha256": "24dd8ddeab2261770bfe177645fbd1997c4c5ee23f6faf1d6b5d709e7ba5a10b",
+      "lines": 21,
+      "bytes": 983,
+      "kind": "source",
+      "actual_sha256": "24dd8ddeab2261770bfe177645fbd1997c4c5ee23f6faf1d6b5d709e7ba5a10b",
+      "actual_lines": 21,
+      "status": "complete",
+      "reviewer": "redshank_model_playback",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 21
+        }
+      ],
+      "lines_read": 21
+    },
+    {
+      "manifest_index": 41,
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/annotations/bodiesTargets/3.2.4-targNoTypeTextualBody.json",
+      "sha256": "1c57aa2ee125b9b6aa4ea456a3b6ca8126f765ce54ea179fbbf6d1aad2c33e99",
+      "lines": 32,
+      "bytes": 1611,
+      "kind": "source",
+      "actual_sha256": "1c57aa2ee125b9b6aa4ea456a3b6ca8126f765ce54ea179fbbf6d1aad2c33e99",
+      "actual_lines": 32,
+      "status": "complete",
+      "reviewer": "redshank_model_playback",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 32
+        }
+      ],
+      "lines_read": 32
+    },
+    {
+      "manifest_index": 42,
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/annotations/bodiesTargets/3.2.7-bodyEWRNoItems.json",
+      "sha256": "20124cf359bc5bdbd0824902599dc9d832ee68557f4b0ba2c452f1a98280fadc",
+      "lines": 25,
+      "bytes": 1418,
+      "kind": "source",
+      "actual_sha256": "20124cf359bc5bdbd0824902599dc9d832ee68557f4b0ba2c452f1a98280fadc",
+      "actual_lines": 25,
+      "status": "complete",
+      "reviewer": "redshank_model_playback",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 25
+        }
+      ],
+      "lines_read": 25
+    },
+    {
+      "manifest_index": 43,
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/annotations/bodiesTargets/3.2.7-bodyEmbeddedTextualNoItems.json",
+      "sha256": "cce5656a31945d941afc0dd2c6a51b31432939caeb41c465bc79e8c898ef4f1b",
+      "lines": 23,
+      "bytes": 1219,
+      "kind": "source",
+      "actual_sha256": "cce5656a31945d941afc0dd2c6a51b31432939caeb41c465bc79e8c898ef4f1b",
+      "actual_lines": 23,
+      "status": "complete",
+      "reviewer": "redshank_model_playback",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 23
+        }
+      ],
+      "lines_read": 23
+    },
+    {
+      "manifest_index": 44,
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/annotations/bodiesTargets/3.2.7-bodySpecificResourceNoItems.json",
+      "sha256": "3a870c304943002d8c98f86d17b709d59e984ff2a35bb543fc30866adc1c1d5f",
+      "lines": 23,
+      "bytes": 1234,
+      "kind": "source",
+      "actual_sha256": "3a870c304943002d8c98f86d17b709d59e984ff2a35bb543fc30866adc1c1d5f",
+      "actual_lines": 23,
+      "status": "complete",
+      "reviewer": "redshank_model_playback",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 23
+        }
+      ],
+      "lines_read": 23
+    },
+    {
+      "manifest_index": 45,
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/annotations/bodiesTargets/3.2.7-targEWRNoItems.json",
+      "sha256": "ff6c5de734679f196f25c0c0fbb438963405ce41dd32edb55d14498a3fcba26f",
+      "lines": 25,
+      "bytes": 1453,
+      "kind": "source",
+      "actual_sha256": "ff6c5de734679f196f25c0c0fbb438963405ce41dd32edb55d14498a3fcba26f",
+      "actual_lines": 25,
+      "status": "complete",
+      "reviewer": "redshank_model_playback",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 25
+        }
+      ],
+      "lines_read": 25
+    },
+    {
+      "manifest_index": 46,
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/annotations/bodiesTargets/3.2.7-targSpecificResourceNoItems.json",
+      "sha256": "ecf3920a0a5dc6d3c524339e6ef02456646764053c1565efa7a27634afce485d",
+      "lines": 23,
+      "bytes": 1250,
+      "kind": "source",
+      "actual_sha256": "ecf3920a0a5dc6d3c524339e6ef02456646764053c1565efa7a27634afce485d",
+      "actual_lines": 23,
+      "status": "complete",
+      "reviewer": "redshank_model_playback",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 23
+        }
+      ],
+      "lines_read": 23
+    },
+    {
+      "manifest_index": 47,
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/annotations/bodiesTargets/3.3.1-bodyCreatedValidated.json",
+      "sha256": "ca673b0edd5d9c299b35f4026f60cdb016aa6c316e44bc6028ca949cc19a9909",
+      "lines": 43,
+      "bytes": 1818,
+      "kind": "source",
+      "actual_sha256": "ca673b0edd5d9c299b35f4026f60cdb016aa6c316e44bc6028ca949cc19a9909",
+      "actual_lines": 43,
+      "status": "complete",
+      "reviewer": "redshank_model_playback",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 43
+        }
+      ],
+      "lines_read": 43
+    },
+    {
+      "manifest_index": 48,
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/annotations/bodiesTargets/3.3.1-bodyModifiedValidated.json",
+      "sha256": "8c2889ab4cb0ee61ba652dcc5c2c439c5018ad7ac93a3ee34880493966822f59",
+      "lines": 44,
+      "bytes": 1859,
+      "kind": "source",
+      "actual_sha256": "8c2889ab4cb0ee61ba652dcc5c2c439c5018ad7ac93a3ee34880493966822f59",
+      "actual_lines": 44,
+      "status": "complete",
+      "reviewer": "redshank_model_playback",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 44
+        }
+      ],
+      "lines_read": 44
+    },
+    {
+      "manifest_index": 49,
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/annotations/bodiesTargets/3.3.1-targCreatedValidated.json",
+      "sha256": "ae5d2b9682c0899ec2259e21532b8cb8cd81cc213bea6fd7db712df81129c826",
+      "lines": 43,
+      "bytes": 1836,
+      "kind": "source",
+      "actual_sha256": "ae5d2b9682c0899ec2259e21532b8cb8cd81cc213bea6fd7db712df81129c826",
+      "actual_lines": 43,
+      "status": "complete",
+      "reviewer": "redshank_model_playback",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 43
+        }
+      ],
+      "lines_read": 43
+    },
+    {
+      "manifest_index": 50,
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/annotations/bodiesTargets/3.3.1-targModifiedValidated.json",
+      "sha256": "5708a0408eaa0dc972f93e0344bae1fea0108092417ed31cc106a93dcae06c1b",
+      "lines": 44,
+      "bytes": 1877,
+      "kind": "source",
+      "actual_sha256": "5708a0408eaa0dc972f93e0344bae1fea0108092417ed31cc106a93dcae06c1b",
+      "actual_lines": 44,
+      "status": "complete",
+      "reviewer": "redshank_model_playback",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 44
+        }
+      ],
+      "lines_read": 44
+    },
+    {
+      "manifest_index": 51,
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/annotations/bodiesTargets/3.3.5-bodyChoiceSetNoPurpose.json",
+      "sha256": "36af0b6b76146bac65534a59ccd64dde897c2644e8a1431a30fd41119b37dd87",
+      "lines": 21,
+      "bytes": 1014,
+      "kind": "source",
+      "actual_sha256": "36af0b6b76146bac65534a59ccd64dde897c2644e8a1431a30fd41119b37dd87",
+      "actual_lines": 21,
+      "status": "complete",
+      "reviewer": "redshank_model_playback",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 21
+        }
+      ],
+      "lines_read": 21
+    },
+    {
+      "manifest_index": 52,
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/annotations/bodiesTargets/3.3.5-bodyEWRNoPurpose.json",
+      "sha256": "f22859738bb2aebc80ae8789dd051bab96381d6bc4376f5268658946f284af1e",
+      "lines": 24,
+      "bytes": 1489,
+      "kind": "source",
+      "actual_sha256": "f22859738bb2aebc80ae8789dd051bab96381d6bc4376f5268658946f284af1e",
+      "actual_lines": 24,
+      "status": "complete",
+      "reviewer": "redshank_model_playback",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 24
+        }
+      ],
+      "lines_read": 24
+    },
+    {
+      "manifest_index": 53,
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/annotations/bodiesTargets/3.3.5-targChoiceSetNoPurpose.json",
+      "sha256": "6a9e278c70f1928d50ce608a8d25e70c9ae8c42b1bbbc57686c25c135e9d3bed",
+      "lines": 21,
+      "bytes": 1022,
+      "kind": "source",
+      "actual_sha256": "6a9e278c70f1928d50ce608a8d25e70c9ae8c42b1bbbc57686c25c135e9d3bed",
+      "actual_lines": 21,
+      "status": "complete",
+      "reviewer": "redshank_model_playback",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 21
+        }
+      ],
+      "lines_read": 21
+    },
+    {
+      "manifest_index": 54,
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/annotations/bodiesTargets/3.3.5-targEWRNoPurpose.json",
+      "sha256": "3f3effb7607ff976022eaf377cfafb4b8abf8e7875b5cc004af44751f3b81c20",
+      "lines": 25,
+      "bytes": 1475,
+      "kind": "source",
+      "actual_sha256": "3f3effb7607ff976022eaf377cfafb4b8abf8e7875b5cc004af44751f3b81c20",
+      "actual_lines": 25,
+      "status": "complete",
+      "reviewer": "redshank_model_playback",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 25
+        }
+      ],
+      "lines_read": 25
+    },
+    {
+      "manifest_index": 55,
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/annotations/bodiesTargets/3.3.6-bodyRightsValidated.json",
+      "sha256": "e14aaf84f34d6f8690dc815a9fcc55b444601281a5a5da50fd551f91e6811bcb",
+      "lines": 44,
+      "bytes": 1747,
+      "kind": "source",
+      "actual_sha256": "e14aaf84f34d6f8690dc815a9fcc55b444601281a5a5da50fd551f91e6811bcb",
+      "actual_lines": 44,
+      "status": "complete",
+      "reviewer": "redshank_model_playback",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 44
+        }
+      ],
+      "lines_read": 44
+    },
+    {
+      "manifest_index": 56,
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/annotations/bodiesTargets/3.3.6-targRightsValidated.json",
+      "sha256": "7e60cc213271ef4706aa5e62268c8aea20325ace4768c44df7ac9ed16d9a2ef9",
+      "lines": 44,
+      "bytes": 1763,
+      "kind": "source",
+      "actual_sha256": "7e60cc213271ef4706aa5e62268c8aea20325ace4768c44df7ac9ed16d9a2ef9",
+      "actual_lines": 44,
+      "status": "complete",
+      "reviewer": "redshank_model_playback",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 44
+        }
+      ],
+      "lines_read": 44
+    },
+    {
+      "manifest_index": 57,
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/annotations/bodiesTargets/3.3.7-bodyCanonicalValidated.json",
+      "sha256": "d57d54ccb03c81a20606ac53f73749bbc718ace553ff1c7891269a96e5a8aaf1",
+      "lines": 44,
+      "bytes": 1865,
+      "kind": "source",
+      "actual_sha256": "d57d54ccb03c81a20606ac53f73749bbc718ace553ff1c7891269a96e5a8aaf1",
+      "actual_lines": 44,
+      "status": "complete",
+      "reviewer": "redshank_model_playback",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 44
+        }
+      ],
+      "lines_read": 44
+    },
+    {
+      "manifest_index": 58,
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/annotations/bodiesTargets/3.3.7-bodyViaValidated.json",
+      "sha256": "87578a31a6d100975d7d20ebed3c7b9507c67520f948c2179ccfce7e4b0aa5e8",
+      "lines": 43,
+      "bytes": 1717,
+      "kind": "source",
+      "actual_sha256": "87578a31a6d100975d7d20ebed3c7b9507c67520f948c2179ccfce7e4b0aa5e8",
+      "actual_lines": 43,
+      "status": "complete",
+      "reviewer": "redshank_model_playback",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 43
+        }
+      ],
+      "lines_read": 43
+    },
+    {
+      "manifest_index": 59,
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/annotations/bodiesTargets/3.3.7-targCanonicalValidated.json",
+      "sha256": "4c6b03a80b625ed2214cafd7ebc51a255bd30b758801ab205cf9b982c92d5642",
+      "lines": 44,
+      "bytes": 1883,
+      "kind": "source",
+      "actual_sha256": "4c6b03a80b625ed2214cafd7ebc51a255bd30b758801ab205cf9b982c92d5642",
+      "actual_lines": 44,
+      "status": "complete",
+      "reviewer": "redshank_model_playback",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 44
+        }
+      ],
+      "lines_read": 44
+    },
+    {
+      "manifest_index": 60,
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/annotations/bodiesTargets/3.3.7-targViaValidated.json",
+      "sha256": "c695962411b015cb2c0afbbed88c3d0a306ae6f61babfe0de79975a681432089",
+      "lines": 43,
+      "bytes": 1733,
+      "kind": "source",
+      "actual_sha256": "c695962411b015cb2c0afbbed88c3d0a306ae6f61babfe0de79975a681432089",
+      "actual_lines": 43,
+      "status": "complete",
+      "reviewer": "redshank_model_playback",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 43
+        }
+      ],
+      "lines_read": 43
+    },
+    {
+      "manifest_index": 61,
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/annotations/bodiesTargets/4-bodyChoiceSetNoSource.json",
+      "sha256": "9e214afe0ce8ae54c9eb79551f3e6670e67c0b8fa3a13473c0de849d7062dda5",
+      "lines": 21,
+      "bytes": 962,
+      "kind": "source",
+      "actual_sha256": "9e214afe0ce8ae54c9eb79551f3e6670e67c0b8fa3a13473c0de849d7062dda5",
+      "actual_lines": 21,
+      "status": "complete",
+      "reviewer": "redshank_model_playback",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 21
+        }
+      ],
+      "lines_read": 21
+    },
+    {
+      "manifest_index": 62,
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/annotations/bodiesTargets/4-bodyEmbeddedTextualNoSource.json",
+      "sha256": "f36e47eacd74d9a83c9b039d53db26894f4ec501e9047229f365b6a614fe3a28",
+      "lines": 23,
+      "bytes": 1213,
+      "kind": "source",
+      "actual_sha256": "f36e47eacd74d9a83c9b039d53db26894f4ec501e9047229f365b6a614fe3a28",
+      "actual_lines": 23,
+      "status": "complete",
+      "reviewer": "redshank_model_playback",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 23
+        }
+      ],
+      "lines_read": 23
+    },
+    {
+      "manifest_index": 63,
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/annotations/bodiesTargets/4-bodySpecificResourceNoValue.json",
+      "sha256": "a0bb205b6c1067838733997072dd2556a048729888b0f3a7331724c7176caa73",
+      "lines": 23,
+      "bytes": 1222,
+      "kind": "source",
+      "actual_sha256": "a0bb205b6c1067838733997072dd2556a048729888b0f3a7331724c7176caa73",
+      "actual_lines": 23,
+      "status": "complete",
+      "reviewer": "redshank_model_playback",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 23
+        }
+      ],
+      "lines_read": 23
+    },
+    {
+      "manifest_index": 64,
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/annotations/bodiesTargets/4-targChoiceSetNoSource.json",
+      "sha256": "b311f4b6007beecb4fb82bf5327099358a4f6ed3317ed0e241dd15c236e49277",
+      "lines": 21,
+      "bytes": 970,
+      "kind": "source",
+      "actual_sha256": "b311f4b6007beecb4fb82bf5327099358a4f6ed3317ed0e241dd15c236e49277",
+      "actual_lines": 21,
+      "status": "complete",
+      "reviewer": "redshank_model_playback",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 21
+        }
+      ],
+      "lines_read": 21
+    },
+    {
+      "manifest_index": 65,
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/annotations/bodiesTargets/4-targSpecificResourceNoValue.json",
+      "sha256": "2b6524ec6828d6f5822d3c2127fd2b738649d22e8ba4a9aa81727e4d787db3b7",
+      "lines": 23,
+      "bytes": 1227,
+      "kind": "source",
+      "actual_sha256": "2b6524ec6828d6f5822d3c2127fd2b738649d22e8ba4a9aa81727e4d787db3b7",
+      "actual_lines": 23,
+      "status": "complete",
+      "reviewer": "redshank_model_playback",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 23
+        }
+      ],
+      "lines_read": 23
+    },
+    {
+      "manifest_index": 66,
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/annotations/specificResource/4.2-TextDataPositionSelectorValid.json",
+      "sha256": "30024a884160bd78e1607fb0921eed5d39c316b5e5ae5cca778f323d5c96d0f2",
+      "lines": 110,
+      "bytes": 3551,
+      "kind": "source",
+      "actual_sha256": "30024a884160bd78e1607fb0921eed5d39c316b5e5ae5cca778f323d5c96d0f2",
+      "actual_lines": 110,
+      "status": "complete",
+      "reviewer": "redshank_model_playback",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 110
+        }
+      ],
+      "lines_read": 110
+    },
+    {
+      "manifest_index": 67,
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/annotations/specificResource/4.2-fragmentCssXPathSelectorValid.json",
+      "sha256": "33ece027052ed42bef15fa91c2ee06ec2ba2167a92f558c323ab2bd0f0be4e2a",
+      "lines": 112,
+      "bytes": 3632,
+      "kind": "source",
+      "actual_sha256": "33ece027052ed42bef15fa91c2ee06ec2ba2167a92f558c323ab2bd0f0be4e2a",
+      "actual_lines": 112,
+      "status": "complete",
+      "reviewer": "redshank_model_playback",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 112
+        }
+      ],
+      "lines_read": 112
+    },
+    {
+      "manifest_index": 68,
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/annotations/specificResource/4.2-selectorValidIfPresent.json",
+      "sha256": "859f7bed560dee5e14deeded8c01652a341a4e6ee08ce14860b760742f2000fc",
+      "lines": 43,
+      "bytes": 2290,
+      "kind": "source",
+      "actual_sha256": "859f7bed560dee5e14deeded8c01652a341a4e6ee08ce14860b760742f2000fc",
+      "actual_lines": 43,
+      "status": "complete",
+      "reviewer": "redshank_model_playback",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 43
+        }
+      ],
+      "lines_read": 43
+    },
+    {
+      "manifest_index": 69,
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/annotations/specificResource/4.2.4-textQuoteSelectorValid.json",
+      "sha256": "4942799afdcae7b140333e64767e2e187633e2d02d46303f329f95560fe0d3e1",
+      "lines": 107,
+      "bytes": 3187,
+      "kind": "source",
+      "actual_sha256": "4942799afdcae7b140333e64767e2e187633e2d02d46303f329f95560fe0d3e1",
+      "actual_lines": 107,
+      "status": "complete",
+      "reviewer": "redshank_model_playback",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 107
+        }
+      ],
+      "lines_read": 107
+    },
+    {
+      "manifest_index": 70,
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/annotations/specificResource/4.2.7-svgSelectorValid.json",
+      "sha256": "d5108aee899f5c74d954f22f4e4dc21332678c2fd4ed5442b0063fa7bb51fe6b",
+      "lines": 107,
+      "bytes": 3164,
+      "kind": "source",
+      "actual_sha256": "d5108aee899f5c74d954f22f4e4dc21332678c2fd4ed5442b0063fa7bb51fe6b",
+      "actual_lines": 107,
+      "status": "complete",
+      "reviewer": "redshank_model_playback",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 107
+        }
+      ],
+      "lines_read": 107
+    },
+    {
+      "manifest_index": 71,
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/annotations/specificResource/4.2.8-rangeSelectorValid.json",
+      "sha256": "c59f8ede678d657d1622c3b71432f9f62ebb8674e279a9fc595e7952dbbb7184",
+      "lines": 107,
+      "bytes": 3235,
+      "kind": "source",
+      "actual_sha256": "c59f8ede678d657d1622c3b71432f9f62ebb8674e279a9fc595e7952dbbb7184",
+      "actual_lines": 107,
+      "status": "complete",
+      "reviewer": "redshank_model_playback",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 107
+        }
+      ],
+      "lines_read": 107
+    },
+    {
+      "manifest_index": 72,
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/annotations/specificResource/4.3-stateValidIfPresent.json",
+      "sha256": "468114bdebf27c1a4003ec653d43fead0da9334c46b6cd1d8657938984703c20",
+      "lines": 43,
+      "bytes": 1906,
+      "kind": "source",
+      "actual_sha256": "468114bdebf27c1a4003ec653d43fead0da9334c46b6cd1d8657938984703c20",
+      "actual_lines": 43,
+      "status": "complete",
+      "reviewer": "redshank_model_playback",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 43
+        }
+      ],
+      "lines_read": 43
+    },
+    {
+      "manifest_index": 73,
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/annotations/specificResource/4.3.1-timeStateValid.json",
+      "sha256": "aa4908261f6694a13a5c0073271ee350633d4000ed010eb913734ff865ec0cf6",
+      "lines": 107,
+      "bytes": 3350,
+      "kind": "source",
+      "actual_sha256": "aa4908261f6694a13a5c0073271ee350633d4000ed010eb913734ff865ec0cf6",
+      "actual_lines": 107,
+      "status": "complete",
+      "reviewer": "redshank_model_playback",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 107
+        }
+      ],
+      "lines_read": 107
+    },
+    {
+      "manifest_index": 74,
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/annotations/specificResource/4.3.2-httpRequestStateValid.json",
+      "sha256": "1e08418d18321899209707eea7fa0c2ac66d332ab17db63d692d891357732889",
+      "lines": 107,
+      "bytes": 3104,
+      "kind": "source",
+      "actual_sha256": "1e08418d18321899209707eea7fa0c2ac66d332ab17db63d692d891357732889",
+      "actual_lines": 107,
+      "status": "complete",
+      "reviewer": "redshank_model_playback",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 107
+        }
+      ],
+      "lines_read": 107
+    },
+    {
+      "manifest_index": 75,
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/annotations/specificResource/4.3.3-refinedByValidated.json",
+      "sha256": "31612616529c4f4f48dff2d9c374da48973f760ddd7359bbc09e961d43f70883",
+      "lines": 45,
+      "bytes": 1992,
+      "kind": "source",
+      "actual_sha256": "31612616529c4f4f48dff2d9c374da48973f760ddd7359bbc09e961d43f70883",
+      "actual_lines": 45,
+      "status": "complete",
+      "reviewer": "redshank_model_playback",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 45
+        }
+      ],
+      "lines_read": 45
+    },
+    {
+      "manifest_index": 76,
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/annotations/specificResource/4.4-styleClassValidIfPresent.json",
+      "sha256": "c62b0766c7efbef6bff9e307abfb688a3be5285a6e3cb5cbdd82acd7c2789c57",
+      "lines": 88,
+      "bytes": 3032,
+      "kind": "source",
+      "actual_sha256": "c62b0766c7efbef6bff9e307abfb688a3be5285a6e3cb5cbdd82acd7c2789c57",
+      "actual_lines": 88,
+      "status": "complete",
+      "reviewer": "redshank_model_playback",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 88
+        }
+      ],
+      "lines_read": 88
+    },
+    {
+      "manifest_index": 77,
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/definitions/annotations.json",
+      "sha256": "530a5c60b3bed13fbc209f3be2546ab17e49f682962959e51cdeef6bcb537700",
+      "lines": 212,
+      "bytes": 7299,
+      "kind": "source",
+      "actual_sha256": "530a5c60b3bed13fbc209f3be2546ab17e49f682962959e51cdeef6bcb537700",
+      "actual_lines": 212,
+      "status": "complete",
+      "reviewer": "redshank_model_playback",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 212
+        }
+      ],
+      "lines_read": 212
+    },
+    {
+      "manifest_index": 78,
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/definitions/bodyTarget.json",
+      "sha256": "2ace7d91f0b0c9d0e17930854b6541023b2601cd876ee77d6be8208ee4a0436c",
+      "lines": 1092,
+      "bytes": 35766,
+      "kind": "source",
+      "actual_sha256": "2ace7d91f0b0c9d0e17930854b6541023b2601cd876ee77d6be8208ee4a0436c",
+      "actual_lines": 1092,
+      "status": "complete",
+      "reviewer": "redshank_model_playback",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 550
+        },
+        {
+          "start": 551,
+          "end": 1092
+        }
+      ],
+      "lines_read": 1092
+    },
+    {
+      "manifest_index": 79,
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/definitions/choiceSet.json",
+      "sha256": "2910cb6560ada7c38211c45e828523611d566a3d2898e227b85c57680271d393",
+      "lines": 127,
+      "bytes": 3764,
+      "kind": "source",
+      "actual_sha256": "2910cb6560ada7c38211c45e828523611d566a3d2898e227b85c57680271d393",
+      "actual_lines": 127,
+      "status": "complete",
+      "reviewer": "redshank_model_playback",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 127
+        }
+      ],
+      "lines_read": 127
+    },
+    {
+      "manifest_index": 80,
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/definitions/collections.json",
+      "sha256": "e02213ae371d5b9f412ffadfff92d09282d4c6bbb4571008fda7532889ef421e",
+      "lines": 428,
+      "bytes": 14639,
+      "kind": "source",
+      "actual_sha256": "e02213ae371d5b9f412ffadfff92d09282d4c6bbb4571008fda7532889ef421e",
+      "actual_lines": 428,
+      "status": "complete",
+      "reviewer": "redshank_model_playback",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 428
+        }
+      ],
+      "lines_read": 428
+    },
+    {
+      "manifest_index": 81,
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/definitions/id.json",
+      "sha256": "82c7dbb1c70fe59a63c52b2077131a6c42925ab79f8b92803d3f29b0c666fffb",
+      "lines": 38,
+      "bytes": 925,
+      "kind": "source",
+      "actual_sha256": "82c7dbb1c70fe59a63c52b2077131a6c42925ab79f8b92803d3f29b0c666fffb",
+      "actual_lines": 38,
+      "status": "complete",
+      "reviewer": "redshank_model_playback",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 38
+        }
+      ],
+      "lines_read": 38
+    },
+    {
+      "manifest_index": 82,
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/definitions/otherProperties.json",
+      "sha256": "c3f2a9f6477f1f630c8f984a96c92c1e03b0a7da28a255b8e166c49388314c37",
+      "lines": 1472,
+      "bytes": 46267,
+      "kind": "source",
+      "actual_sha256": "c3f2a9f6477f1f630c8f984a96c92c1e03b0a7da28a255b8e166c49388314c37",
+      "actual_lines": 1472,
+      "status": "complete",
+      "reviewer": "redshank_model_playback",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 500
+        },
+        {
+          "start": 501,
+          "end": 1000
+        },
+        {
+          "start": 1001,
+          "end": 1472
+        }
+      ],
+      "lines_read": 1472
+    },
+    {
+      "manifest_index": 83,
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/definitions/specificResource.json",
+      "sha256": "1d951b027cfa0375e297078694ed3af746cf7f2303c3c73d69deb7b17b782d4f",
+      "lines": 1128,
+      "bytes": 36654,
+      "kind": "source",
+      "actual_sha256": "1d951b027cfa0375e297078694ed3af746cf7f2303c3c73d69deb7b17b782d4f",
+      "actual_lines": 1128,
+      "status": "complete",
+      "reviewer": "redshank_model_playback",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 560
+        },
+        {
+          "start": 561,
+          "end": 1128
+        }
+      ],
+      "lines_read": 1128
+    },
+    {
+      "manifest_index": 84,
+      "path": "ports/redshank/model/tests/representation_identity.rs",
+      "sha256": "ee21175532465654d96c664091da1453be6a6d23feebd0a1e9b3f2965426a6bb",
+      "lines": 215,
+      "bytes": 7281,
+      "kind": "source",
+      "actual_sha256": "ee21175532465654d96c664091da1453be6a6d23feebd0a1e9b3f2965426a6bb",
+      "actual_lines": 215,
+      "status": "complete",
+      "reviewer": "redshank_model_playback",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 215
+        }
+      ],
+      "lines_read": 215
+    },
+    {
+      "manifest_index": 85,
+      "path": "ports/redshank/model/tests/w3c_conformance.rs",
+      "sha256": "be82b9eb836f018679d3e3268a351efaa7969c554c74fb8e5c604d34c3b84c74",
+      "lines": 271,
+      "bytes": 9160,
+      "kind": "source",
+      "actual_sha256": "be82b9eb836f018679d3e3268a351efaa7969c554c74fb8e5c604d34c3b84c74",
+      "actual_lines": 271,
+      "status": "complete",
+      "reviewer": "redshank_model_playback",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 150
+        },
+        {
+          "start": 151,
+          "end": 271
+        }
+      ],
+      "lines_read": 271
+    },
+    {
+      "manifest_index": 86,
+      "path": "ports/redshank/playback/Cargo.toml",
+      "sha256": "c9a71cf072fb82e398664161ab608c7e55e67cc9bd2e2fe4b5e2798201faf147",
+      "lines": 23,
+      "bytes": 487,
+      "kind": "source",
+      "actual_sha256": "c9a71cf072fb82e398664161ab608c7e55e67cc9bd2e2fe4b5e2798201faf147",
+      "actual_lines": 23,
+      "status": "complete",
+      "reviewer": "redshank_model_playback",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 23
+        }
+      ],
+      "lines_read": 23
+    },
+    {
+      "manifest_index": 87,
+      "path": "ports/redshank/playback/src/alignment.rs",
+      "sha256": "9901e975e16c92f1433a2768bb878418c38f3fa51ed0c39b772c46f10d79bfd8",
+      "lines": 299,
+      "bytes": 12066,
+      "kind": "source",
+      "actual_sha256": "9901e975e16c92f1433a2768bb878418c38f3fa51ed0c39b772c46f10d79bfd8",
+      "actual_lines": 299,
+      "status": "complete",
+      "reviewer": "redshank_model_playback",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 299
+        }
+      ],
+      "lines_read": 299
+    },
+    {
+      "manifest_index": 88,
+      "path": "ports/redshank/playback/src/backend.rs",
+      "sha256": "970d337fc61a32fd39e7d9fa85537c1f2fd3996ac66dc22cfa5deab5b569a3e0",
+      "lines": 1112,
+      "bytes": 42114,
+      "kind": "source",
+      "actual_sha256": "970d337fc61a32fd39e7d9fa85537c1f2fd3996ac66dc22cfa5deab5b569a3e0",
+      "actual_lines": 1112,
+      "status": "complete",
+      "reviewer": "redshank_model_playback",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 400
+        },
+        {
+          "start": 401,
+          "end": 800
+        },
+        {
+          "start": 801,
+          "end": 1112
+        }
+      ],
+      "lines_read": 1112
+    },
+    {
+      "manifest_index": 89,
+      "path": "ports/redshank/playback/src/controller_adapter.rs",
+      "sha256": "1dd09b3a019e736604cf1ede3ca16297bf8d10a1741c4547d8fb97d01ab5098c",
+      "lines": 191,
+      "bytes": 6035,
+      "kind": "source",
+      "actual_sha256": "1dd09b3a019e736604cf1ede3ca16297bf8d10a1741c4547d8fb97d01ab5098c",
+      "actual_lines": 191,
+      "status": "complete",
+      "reviewer": "redshank_model_playback",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 191
+        }
+      ],
+      "lines_read": 191
+    },
+    {
+      "manifest_index": 90,
+      "path": "ports/redshank/playback/src/http_range.rs",
+      "sha256": "85039fa223206f8f61daf8ceb3d9c30023266c11149ef10ce2246efa7e5a07f6",
+      "lines": 514,
+      "bytes": 18972,
+      "kind": "source",
+      "actual_sha256": "85039fa223206f8f61daf8ceb3d9c30023266c11149ef10ce2246efa7e5a07f6",
+      "actual_lines": 514,
+      "status": "complete",
+      "reviewer": "redshank_model_playback",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 215
+        },
+        {
+          "start": 216,
+          "end": 514
+        }
+      ],
+      "lines_read": 514
+    },
+    {
+      "manifest_index": 91,
+      "path": "ports/redshank/playback/src/lib.rs",
+      "sha256": "9a3be551e705c897ee70e292791b943c5540136116afdb7fa31c4573f2cba14e",
+      "lines": 1088,
+      "bytes": 41311,
+      "kind": "source",
+      "actual_sha256": "9a3be551e705c897ee70e292791b943c5540136116afdb7fa31c4573f2cba14e",
+      "actual_lines": 1088,
+      "status": "complete",
+      "reviewer": "redshank_model_playback",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 200
+        },
+        {
+          "start": 201,
+          "end": 600
+        },
+        {
+          "start": 601,
+          "end": 1088
+        }
+      ],
+      "lines_read": 1088
+    },
+    {
+      "manifest_index": 92,
+      "path": "ports/redshank/playback/src/output.rs",
+      "sha256": "9ab867c3884cb32610e42f4b02e0596b39536d45f1560aff955e4e69744fdb69",
+      "lines": 501,
+      "bytes": 18768,
+      "kind": "source",
+      "actual_sha256": "9ab867c3884cb32610e42f4b02e0596b39536d45f1560aff955e4e69744fdb69",
+      "actual_lines": 501,
+      "status": "complete",
+      "reviewer": "redshank_model_playback",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 501
+        }
+      ],
+      "lines_read": 501
+    },
+    {
+      "manifest_index": 93,
+      "path": "ports/redshank/playback/src/worker.rs",
+      "sha256": "ce35b566c7e9610dd550c072b35a2e666955aa2f294acfd8ac3b016eac3108f0",
+      "lines": 893,
+      "bytes": 31163,
+      "kind": "source",
+      "actual_sha256": "ce35b566c7e9610dd550c072b35a2e666955aa2f294acfd8ac3b016eac3108f0",
+      "actual_lines": 893,
+      "status": "complete",
+      "reviewer": "redshank_model_playback",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 350
+        },
+        {
+          "start": 351,
+          "end": 700
+        },
+        {
+          "start": 701,
+          "end": 893
+        }
+      ],
+      "lines_read": 893
+    },
+    {
+      "manifest_index": 94,
+      "path": "ports/redshank/playback/tests/ipc_consumer.rs",
+      "sha256": "395a33eff0b6a63d6c9a21180764b5d0dd4a7a06da1a0f3179f3c1f880e9feb2",
+      "lines": 54,
+      "bytes": 1944,
+      "kind": "source",
+      "actual_sha256": "395a33eff0b6a63d6c9a21180764b5d0dd4a7a06da1a0f3179f3c1f880e9feb2",
+      "actual_lines": 54,
+      "status": "complete",
+      "reviewer": "redshank_model_playback",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 54
+        }
+      ],
+      "lines_read": 54
+    },
+    {
+      "manifest_index": 95,
+      "path": "ports/redshank/receipts/alignment-guard/8khz-failure-summary.json",
+      "sha256": "f254da77e23000f0fa67c8fbc103278b3a8a39c51b84464610d9b745e02ae104",
+      "lines": 23,
+      "bytes": 1154,
+      "kind": "source",
+      "actual_sha256": "f254da77e23000f0fa67c8fbc103278b3a8a39c51b84464610d9b745e02ae104",
+      "actual_lines": 23,
+      "status": "complete",
+      "reviewer": "redshank-primary",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 23
+        }
+      ],
+      "lines_read": 23
+    },
+    {
+      "manifest_index": 96,
+      "path": "ports/redshank/receipts/alignment-guard/clock-tolerance-failure-summary.json",
+      "sha256": "b1b7cbdcfa18c8dc079050460e2c38c2f01cdb95138ed8a093e40709a9a96e87",
+      "lines": 23,
+      "bytes": 1154,
+      "kind": "source",
+      "actual_sha256": "b1b7cbdcfa18c8dc079050460e2c38c2f01cdb95138ed8a093e40709a9a96e87",
+      "actual_lines": 23,
+      "status": "complete",
+      "reviewer": "redshank-primary",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 23
+        }
+      ],
+      "lines_read": 23
+    },
+    {
+      "manifest_index": 97,
+      "path": "ports/redshank/receipts/alignment-guard/summary.json",
+      "sha256": "287ed3694679492c44ac26f4b16c370b27c3614a24a17e2aef925ad1e0b8c58e",
+      "lines": 26,
+      "bytes": 1458,
+      "kind": "source",
+      "actual_sha256": "287ed3694679492c44ac26f4b16c370b27c3614a24a17e2aef925ad1e0b8c58e",
+      "actual_lines": 26,
+      "status": "complete",
+      "reviewer": "redshank-primary",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 26
+        }
+      ],
+      "lines_read": 26
+    },
+    {
+      "manifest_index": 98,
+      "path": "ports/redshank/receipts/alignment-guard-8khz/summary.json",
+      "sha256": "daab5d158b30babbc664b96f698cb0e3c823dfe818235fbc7dec52e9b5c91e96",
+      "lines": 26,
+      "bytes": 1497,
+      "kind": "source",
+      "actual_sha256": "daab5d158b30babbc664b96f698cb0e3c823dfe818235fbc7dec52e9b5c91e96",
+      "actual_lines": 26,
+      "status": "complete",
+      "reviewer": "redshank-primary",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 26
+        }
+      ],
+      "lines_read": 26
+    },
+    {
+      "manifest_index": 99,
+      "path": "ports/redshank/receipts/identity-guard/initial-summary.json",
+      "sha256": "53ecffeb758d16fee20315303dbc9da8ca118c0e332425e8697a4a67b8062ae0",
+      "lines": 22,
+      "bytes": 918,
+      "kind": "source",
+      "actual_sha256": "53ecffeb758d16fee20315303dbc9da8ca118c0e332425e8697a4a67b8062ae0",
+      "actual_lines": 22,
+      "status": "complete",
+      "reviewer": "redshank-primary",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 22
+        }
+      ],
+      "lines_read": 22
+    },
+    {
+      "manifest_index": 100,
+      "path": "ports/redshank/receipts/identity-guard/pre-resampler-summary.json",
+      "sha256": "3ec238870d67d7a4473640e164210ca94f7d01c3b0fc29039758c6564086237c",
+      "lines": 22,
+      "bytes": 918,
+      "kind": "source",
+      "actual_sha256": "3ec238870d67d7a4473640e164210ca94f7d01c3b0fc29039758c6564086237c",
+      "actual_lines": 22,
+      "status": "complete",
+      "reviewer": "redshank-primary",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 22
+        }
+      ],
+      "lines_read": 22
+    },
+    {
+      "manifest_index": 101,
+      "path": "ports/redshank/receipts/identity-guard/summary.json",
+      "sha256": "bf8e5c317de5dd6531dbbdc894afb48535841942afea1fa70b5b2a112fd93dc8",
+      "lines": 24,
+      "bytes": 1074,
+      "kind": "source",
+      "actual_sha256": "bf8e5c317de5dd6531dbbdc894afb48535841942afea1fa70b5b2a112fd93dc8",
+      "actual_lines": 24,
+      "status": "complete",
+      "reviewer": "redshank-primary",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 24
+        }
+      ],
+      "lines_read": 24
+    },
+    {
+      "manifest_index": 102,
+      "path": "ports/redshank/receipts/identity-guard/timing-failure-summary.json",
+      "sha256": "bc79dae4f9dd0a8dc744b409ccaf593bb889880ccef8f4b659c326ec5f8adbc0",
+      "lines": 22,
+      "bytes": 921,
+      "kind": "source",
+      "actual_sha256": "bc79dae4f9dd0a8dc744b409ccaf593bb889880ccef8f4b659c326ec5f8adbc0",
+      "actual_lines": 22,
+      "status": "complete",
+      "reviewer": "redshank-primary",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 22
+        }
+      ],
+      "lines_read": 22
+    },
+    {
+      "manifest_index": 103,
+      "path": "ports/redshank/scenarios/apparatus_persistence.scn",
+      "sha256": "ceaa147e821df32ca6838c8908f133fb0e4a9849f2dbabb5e57ce5113fb42465",
+      "lines": 14,
+      "bytes": 286,
+      "kind": "source",
+      "actual_sha256": "ceaa147e821df32ca6838c8908f133fb0e4a9849f2dbabb5e57ce5113fb42465",
+      "actual_lines": 14,
+      "status": "complete",
+      "reviewer": "redshank-primary",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 14
+        }
+      ],
+      "lines_read": 14
+    },
+    {
+      "manifest_index": 104,
+      "path": "ports/redshank/scenarios/completed.scn",
+      "sha256": "9f3903a7868ef8c2444fa7fa683506a54a762d2daa6fac0e2a9686fa9bfe2a7b",
+      "lines": 11,
+      "bytes": 254,
+      "kind": "source",
+      "actual_sha256": "9f3903a7868ef8c2444fa7fa683506a54a762d2daa6fac0e2a9686fa9bfe2a7b",
+      "actual_lines": 11,
+      "status": "complete",
+      "reviewer": "redshank-primary",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 11
+        }
+      ],
+      "lines_read": 11
+    },
+    {
+      "manifest_index": 105,
+      "path": "ports/redshank/scenarios/design_completions.scn",
+      "sha256": "255ac2e4947a43696a4072f6021a9552bb3903f12d6fc8cd45755c7c9ac5bbd7",
+      "lines": 45,
+      "bytes": 798,
+      "kind": "source",
+      "actual_sha256": "255ac2e4947a43696a4072f6021a9552bb3903f12d6fc8cd45755c7c9ac5bbd7",
+      "actual_lines": 45,
+      "status": "complete",
+      "reviewer": "redshank-primary",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 45
+        }
+      ],
+      "lines_read": 45
+    },
+    {
+      "manifest_index": 106,
+      "path": "ports/redshank/scenarios/empty.scn",
+      "sha256": "f92ccc277b25551221793e793fb71161e4e26f8a7b77f8973917427ea7ce6c52",
+      "lines": 21,
+      "bytes": 401,
+      "kind": "source",
+      "actual_sha256": "f92ccc277b25551221793e793fb71161e4e26f8a7b77f8973917427ea7ce6c52",
+      "actual_lines": 21,
+      "status": "complete",
+      "reviewer": "redshank-primary",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 21
+        }
+      ],
+      "lines_read": 21
+    },
+    {
+      "manifest_index": 107,
+      "path": "ports/redshank/scenarios/fixtures/cluster/state-00000000000000000001.json",
+      "sha256": "4aafdccdfd36c2e97389be36cb60e29163195e2c9cc928471bfdcaabb2b943d3",
+      "lines": 309,
+      "bytes": 7913,
+      "kind": "source",
+      "actual_sha256": "4aafdccdfd36c2e97389be36cb60e29163195e2c9cc928471bfdcaabb2b943d3",
+      "actual_lines": 309,
+      "status": "complete",
+      "reviewer": "redshank-primary",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 309
+        }
+      ],
+      "lines_read": 309
+    },
+    {
+      "manifest_index": 108,
+      "path": "ports/redshank/scenarios/fixtures/completed/state-00000000000000000001.json",
+      "sha256": "d0bdd23ccb62890491ba486538c65869b60b2b02fae51bf189a756357f42574a",
+      "lines": 42,
+      "bytes": 899,
+      "kind": "source",
+      "actual_sha256": "d0bdd23ccb62890491ba486538c65869b60b2b02fae51bf189a756357f42574a",
+      "actual_lines": 42,
+      "status": "complete",
+      "reviewer": "redshank-primary",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 42
+        }
+      ],
+      "lines_read": 42
+    },
+    {
+      "manifest_index": 109,
+      "path": "ports/redshank/scenarios/fixtures/empty/state-00000000000000000001.json",
+      "sha256": "a793308e794f55d5b480c1a3cc869d1f16588ac1216e263d52f054ab06c5bfe2",
+      "lines": 15,
+      "bytes": 287,
+      "kind": "source",
+      "actual_sha256": "a793308e794f55d5b480c1a3cc869d1f16588ac1216e263d52f054ab06c5bfe2",
+      "actual_lines": 15,
+      "status": "complete",
+      "reviewer": "redshank-primary",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 15
+        }
+      ],
+      "lines_read": 15
+    },
+    {
+      "manifest_index": 110,
+      "path": "ports/redshank/scenarios/fixtures/local-playing/state-00000000000000000001.json",
+      "sha256": "4cc6c3af4626bbf716b9ae257ae5e186eea13bf307be64a7a33539e352be7cac",
+      "lines": 120,
+      "bytes": 2981,
+      "kind": "source",
+      "actual_sha256": "4cc6c3af4626bbf716b9ae257ae5e186eea13bf307be64a7a33539e352be7cac",
+      "actual_lines": 120,
+      "status": "complete",
+      "reviewer": "redshank-primary",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 120
+        }
+      ],
+      "lines_read": 120
+    },
+    {
+      "manifest_index": 111,
+      "path": "ports/redshank/scenarios/fixtures/local-transcript/state-00000000000000000001.json",
+      "sha256": "f6d7d472a31a30e5c47607db4c3d91223f89961a74d3ac9402ef37c72d11ce15",
+      "lines": 57,
+      "bytes": 1511,
+      "kind": "source",
+      "actual_sha256": "f6d7d472a31a30e5c47607db4c3d91223f89961a74d3ac9402ef37c72d11ce15",
+      "actual_lines": 57,
+      "status": "complete",
+      "reviewer": "redshank-primary",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 57
+        }
+      ],
+      "lines_read": 57
+    },
+    {
+      "manifest_index": 112,
+      "path": "ports/redshank/scenarios/fixtures/longnames/state-00000000000000000001.json",
+      "sha256": "ad3dde99d66fed028e1cf6e24ae9df6c365ef2427053eac6e2f6475ff8d84426",
+      "lines": 92,
+      "bytes": 2776,
+      "kind": "source",
+      "actual_sha256": "ad3dde99d66fed028e1cf6e24ae9df6c365ef2427053eac6e2f6475ff8d84426",
+      "actual_lines": 92,
+      "status": "complete",
+      "reviewer": "redshank-primary",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 92
+        }
+      ],
+      "lines_read": 92
+    },
+    {
+      "manifest_index": 113,
+      "path": "ports/redshank/scenarios/fixtures/make_fixtures.py",
+      "sha256": "1c3e084ec8f63bb387786f4300016829ea9a0ebd69c4c120243dbf0fa4deae8d",
+      "lines": 398,
+      "bytes": 14594,
+      "kind": "source",
+      "actual_sha256": "1c3e084ec8f63bb387786f4300016829ea9a0ebd69c4c120243dbf0fa4deae8d",
+      "actual_lines": 398,
+      "status": "complete",
+      "reviewer": "redshank-primary",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 398
+        }
+      ],
+      "lines_read": 398
+    },
+    {
+      "manifest_index": 114,
+      "path": "ports/redshank/scenarios/fixtures/podnews-transcript/state-00000000000000000001.json",
+      "sha256": "31625e8dc685aa4fd4688570eb2b3a56f6616f4a92eef58f8b287d9d23d0975f",
+      "lines": 57,
+      "bytes": 1560,
+      "kind": "source",
+      "actual_sha256": "31625e8dc685aa4fd4688570eb2b3a56f6616f4a92eef58f8b287d9d23d0975f",
+      "actual_lines": 57,
+      "status": "complete",
+      "reviewer": "redshank-primary",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 57
+        }
+      ],
+      "lines_read": 57
+    },
+    {
+      "manifest_index": 115,
+      "path": "ports/redshank/scenarios/fixtures/remote-buffering/state-00000000000000000001.json",
+      "sha256": "36b51a73d80cb326be328faea67bcc5c525602c0b83538cc12d87c72db58332d",
+      "lines": 94,
+      "bytes": 2373,
+      "kind": "source",
+      "actual_sha256": "36b51a73d80cb326be328faea67bcc5c525602c0b83538cc12d87c72db58332d",
+      "actual_lines": 94,
+      "status": "complete",
+      "reviewer": "redshank-primary",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 94
+        }
+      ],
+      "lines_read": 94
+    },
+    {
+      "manifest_index": 116,
+      "path": "ports/redshank/scenarios/fixtures/tabard_role_library.json",
+      "sha256": "0f766f9b65201ba40e0dc01a169c94b5c1647fbcff22813f3483f410b0287443",
+      "lines": 59,
+      "bytes": 1331,
+      "kind": "source",
+      "actual_sha256": "0f766f9b65201ba40e0dc01a169c94b5c1647fbcff22813f3483f410b0287443",
+      "actual_lines": 59,
+      "status": "complete",
+      "reviewer": "redshank-primary",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 59
+        }
+      ],
+      "lines_read": 59
+    },
+    {
+      "manifest_index": 117,
+      "path": "ports/redshank/scenarios/fixtures/unavailable/state-00000000000000000001.json",
+      "sha256": "2fef2dbf73a05f2bde68e3f6e23470ce0149f0a21f2f2c1e3a1679cb1fcba146",
+      "lines": 27,
+      "bytes": 533,
+      "kind": "source",
+      "actual_sha256": "2fef2dbf73a05f2bde68e3f6e23470ce0149f0a21f2f2c1e3a1679cb1fcba146",
+      "actual_lines": 27,
+      "status": "complete",
+      "reviewer": "redshank-primary",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 27
+        }
+      ],
+      "lines_read": 27
+    },
+    {
+      "manifest_index": 118,
+      "path": "ports/redshank/scenarios/library_feed.scn",
+      "sha256": "94eda7acdbc1c43893f3f52ce43721d34801a80c703461ee7a3810ccf2862b5d",
+      "lines": 28,
+      "bytes": 589,
+      "kind": "source",
+      "actual_sha256": "94eda7acdbc1c43893f3f52ce43721d34801a80c703461ee7a3810ccf2862b5d",
+      "actual_lines": 28,
+      "status": "complete",
+      "reviewer": "redshank-primary",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 28
+        }
+      ],
+      "lines_read": 28
+    },
+    {
+      "manifest_index": 119,
+      "path": "ports/redshank/scenarios/listen_playing.scn",
+      "sha256": "f1e905fee19c0ace4d2d45c3d63a231e7e3a67ddf828b59214f16983e921bf9f",
+      "lines": 82,
+      "bytes": 1852,
+      "kind": "source",
+      "actual_sha256": "f1e905fee19c0ace4d2d45c3d63a231e7e3a67ddf828b59214f16983e921bf9f",
+      "actual_lines": 82,
+      "status": "complete",
+      "reviewer": "redshank-primary",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 82
+        }
+      ],
+      "lines_read": 82
+    },
+    {
+      "manifest_index": 120,
+      "path": "ports/redshank/scenarios/longnames.scn",
+      "sha256": "3b0bfbd73af1e6da7a11485321e5ad09d76c52eed38055f7591303e8e310ad36",
+      "lines": 40,
+      "bytes": 1000,
+      "kind": "source",
+      "actual_sha256": "3b0bfbd73af1e6da7a11485321e5ad09d76c52eed38055f7591303e8e310ad36",
+      "actual_lines": 40,
+      "status": "complete",
+      "reviewer": "redshank-primary",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 40
+        }
+      ],
+      "lines_read": 40
+    },
+    {
+      "manifest_index": 121,
+      "path": "ports/redshank/scenarios/mesquite_lifecycle.scn",
+      "sha256": "9e3f07309b01b40c1589e0c51c2ffe2e708e2c4e738d3767d06ecba5adade75b",
+      "lines": 18,
+      "bytes": 490,
+      "kind": "source",
+      "actual_sha256": "9e3f07309b01b40c1589e0c51c2ffe2e708e2c4e738d3767d06ecba5adade75b",
+      "actual_lines": 18,
+      "status": "complete",
+      "reviewer": "redshank-primary",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 18
+        }
+      ],
+      "lines_read": 18
+    },
+    {
+      "manifest_index": 122,
+      "path": "ports/redshank/scenarios/mesquite_transcript_offline.scn",
+      "sha256": "1c37712b0e332cc57ac647283056a94ee8f0cea7475b778c181f62a28e4a5a45",
+      "lines": 15,
+      "bytes": 540,
+      "kind": "source",
+      "actual_sha256": "1c37712b0e332cc57ac647283056a94ee8f0cea7475b778c181f62a28e4a5a45",
+      "actual_lines": 15,
+      "status": "complete",
+      "reviewer": "redshank-primary",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 15
+        }
+      ],
+      "lines_read": 15
+    },
+    {
+      "manifest_index": 123,
+      "path": "ports/redshank/scenarios/mesquite_transcript_wait.scn",
+      "sha256": "9e2a84939941f0b1f78ce33c4cafe68ece0a662ee6f5a2669254b0ca1c38cba8",
+      "lines": 20,
+      "bytes": 820,
+      "kind": "source",
+      "actual_sha256": "9e2a84939941f0b1f78ce33c4cafe68ece0a662ee6f5a2669254b0ca1c38cba8",
+      "actual_lines": 20,
+      "status": "complete",
+      "reviewer": "redshank-primary",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 20
+        }
+      ],
+      "lines_read": 20
+    },
+    {
+      "manifest_index": 124,
+      "path": "ports/redshank/scenarios/notes_cluster.scn",
+      "sha256": "af5477c1e6a492f5ab5dbe1f02ebe21393b9d96812ee63c882a88581a322ae9e",
+      "lines": 19,
+      "bytes": 387,
+      "kind": "source",
+      "actual_sha256": "af5477c1e6a492f5ab5dbe1f02ebe21393b9d96812ee63c882a88581a322ae9e",
+      "actual_lines": 19,
+      "status": "complete",
+      "reviewer": "redshank-primary",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 19
+        }
+      ],
+      "lines_read": 19
+    },
+    {
+      "manifest_index": 125,
+      "path": "ports/redshank/scenarios/recording.scn",
+      "sha256": "5628a893fff2f3e310aaf63c27574b2064e4b332bc585c3c21eeeb5446a74a06",
+      "lines": 15,
+      "bytes": 489,
+      "kind": "source",
+      "actual_sha256": "5628a893fff2f3e310aaf63c27574b2064e4b332bc585c3c21eeeb5446a74a06",
+      "actual_lines": 15,
+      "status": "complete",
+      "reviewer": "redshank-primary",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 15
+        }
+      ],
+      "lines_read": 15
+    },
+    {
+      "manifest_index": 126,
+      "path": "ports/redshank/scenarios/tabard_authored_reopen.scn",
+      "sha256": "89f16ca7cfbe3d8af2299360e9acd559ba87685dbab27feeef98459de8d73974",
+      "lines": 10,
+      "bytes": 357,
+      "kind": "source",
+      "actual_sha256": "89f16ca7cfbe3d8af2299360e9acd559ba87685dbab27feeef98459de8d73974",
+      "actual_lines": 10,
+      "status": "complete",
+      "reviewer": "redshank-primary",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 10
+        }
+      ],
+      "lines_read": 10
+    },
+    {
+      "manifest_index": 127,
+      "path": "ports/redshank/scenarios/tabard_authored_roles.scn",
+      "sha256": "1a3052661bc5d83d9195296fb1298abade66652f1dad4bb86f77857f024e3f7e",
+      "lines": 21,
+      "bytes": 695,
+      "kind": "source",
+      "actual_sha256": "1a3052661bc5d83d9195296fb1298abade66652f1dad4bb86f77857f024e3f7e",
+      "actual_lines": 21,
+      "status": "complete",
+      "reviewer": "redshank-primary",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 21
+        }
+      ],
+      "lines_read": 21
+    },
+    {
+      "manifest_index": 128,
+      "path": "ports/redshank/scenarios/tabard_authoring.scn",
+      "sha256": "fa93da44be570208ec099ab3f909a053998841b73300b31f20c3df897394fe3c",
+      "lines": 46,
+      "bytes": 1393,
+      "kind": "source",
+      "actual_sha256": "fa93da44be570208ec099ab3f909a053998841b73300b31f20c3df897394fe3c",
+      "actual_lines": 46,
+      "status": "complete",
+      "reviewer": "redshank-primary",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 46
+        }
+      ],
+      "lines_read": 46
+    },
+    {
+      "manifest_index": 129,
+      "path": "ports/redshank/scenarios/tabard_reopen.scn",
+      "sha256": "ce4c49f7f45a30f7524f1f545c9f20d565091e5fc619497364b82ba8acff517b",
+      "lines": 10,
+      "bytes": 344,
+      "kind": "source",
+      "actual_sha256": "ce4c49f7f45a30f7524f1f545c9f20d565091e5fc619497364b82ba8acff517b",
+      "actual_lines": 10,
+      "status": "complete",
+      "reviewer": "redshank-primary",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 10
+        }
+      ],
+      "lines_read": 10
+    },
+    {
+      "manifest_index": 130,
+      "path": "ports/redshank/scenarios/transcript_live.scn",
+      "sha256": "6aab540b13ae76ef223736958d9f6431d20a05dce565ca27bc6c1905a353fee2",
+      "lines": 53,
+      "bytes": 2069,
+      "kind": "source",
+      "actual_sha256": "6aab540b13ae76ef223736958d9f6431d20a05dce565ca27bc6c1905a353fee2",
+      "actual_lines": 53,
+      "status": "complete",
+      "reviewer": "redshank-primary",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 53
+        }
+      ],
+      "lines_read": 53
+    },
+    {
+      "manifest_index": 131,
+      "path": "ports/redshank/scenarios/transcript_offline_seed.scn",
+      "sha256": "2b7338c7c2edb74494f94343d81fa2a99947bbdd189399086d18193799ce1515",
+      "lines": 24,
+      "bytes": 879,
+      "kind": "source",
+      "actual_sha256": "2b7338c7c2edb74494f94343d81fa2a99947bbdd189399086d18193799ce1515",
+      "actual_lines": 24,
+      "status": "complete",
+      "reviewer": "redshank-primary",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 24
+        }
+      ],
+      "lines_read": 24
+    },
+    {
+      "manifest_index": 132,
+      "path": "ports/redshank/scenarios/transcript_offline_verify.scn",
+      "sha256": "3ceb0b7b34f9139f34e3d2f04b627f274cd43604d3e7223036bfe5c54fda14b8",
+      "lines": 15,
+      "bytes": 533,
+      "kind": "source",
+      "actual_sha256": "3ceb0b7b34f9139f34e3d2f04b627f274cd43604d3e7223036bfe5c54fda14b8",
+      "actual_lines": 15,
+      "status": "complete",
+      "reviewer": "redshank-primary",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 15
+        }
+      ],
+      "lines_read": 15
+    },
+    {
+      "manifest_index": 133,
+      "path": "ports/redshank/scenarios/transcript_timing.scn",
+      "sha256": "df2ffebc7e4da7d8d28ee0457cb46f3aa6fc5be37df0bb2ad7f9961edad61eaa",
+      "lines": 21,
+      "bytes": 517,
+      "kind": "source",
+      "actual_sha256": "df2ffebc7e4da7d8d28ee0457cb46f3aa6fc5be37df0bb2ad7f9961edad61eaa",
+      "actual_lines": 21,
+      "status": "complete",
+      "reviewer": "redshank-primary",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 21
+        }
+      ],
+      "lines_read": 21
+    },
+    {
+      "manifest_index": 134,
+      "path": "ports/redshank/scenarios/unavailable.scn",
+      "sha256": "1cb2aa49da235fafde3818136759d4c266db5c0cea3e0cf7f33dbafe27c154de",
+      "lines": 10,
+      "bytes": 227,
+      "kind": "source",
+      "actual_sha256": "1cb2aa49da235fafde3818136759d4c266db5c0cea3e0cf7f33dbafe27c154de",
+      "actual_lines": 10,
+      "status": "complete",
+      "reviewer": "redshank-primary",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 10
+        }
+      ],
+      "lines_read": 10
+    },
+    {
+      "manifest_index": 135,
+      "path": "ports/redshank/scenarios/validation/tabard_appearance_acceptance.json",
+      "sha256": "a13b730488758afc9b1f761a3fbc30952990c533750967f229ed553eb1d68d59",
+      "lines": 180,
+      "bytes": 8147,
+      "kind": "source",
+      "actual_sha256": "a13b730488758afc9b1f761a3fbc30952990c533750967f229ed553eb1d68d59",
+      "actual_lines": 180,
+      "status": "complete",
+      "reviewer": "redshank-primary",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 180
+        }
+      ],
+      "lines_read": 180
+    },
+    {
+      "manifest_index": 136,
+      "path": "ports/redshank/scripts/alignment-guard-receipt.ps1",
+      "sha256": "962696d737eb0a12ef8faa5cf5fdc431c7229890b5406470df814d13ce3d45fc",
+      "lines": 68,
+      "bytes": 3548,
+      "kind": "source",
+      "actual_sha256": "962696d737eb0a12ef8faa5cf5fdc431c7229890b5406470df814d13ce3d45fc",
+      "actual_lines": 68,
+      "status": "complete",
+      "reviewer": "redshank-primary",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 68
+        }
+      ],
+      "lines_read": 68
+    },
+    {
+      "manifest_index": 137,
+      "path": "ports/redshank/scripts/identity-guard-receipt.ps1",
+      "sha256": "75ebf37169cc62361f1e071101fe9b4a0b9e8a2780946828c8af40772adea971",
+      "lines": 111,
+      "bytes": 6276,
+      "kind": "source",
+      "actual_sha256": "75ebf37169cc62361f1e071101fe9b4a0b9e8a2780946828c8af40772adea971",
+      "actual_lines": 111,
+      "status": "complete",
+      "reviewer": "redshank-primary",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 111
+        }
+      ],
+      "lines_read": 111
+    },
+    {
+      "manifest_index": 138,
+      "path": "ports/redshank/scripts/mesquite-receipt.ps1",
+      "sha256": "939c7db07a3a0cec4dbda5776f6c3855c3e7207fd6191e0dad92fdf7a499a488",
+      "lines": 183,
+      "bytes": 12553,
+      "kind": "source",
+      "actual_sha256": "939c7db07a3a0cec4dbda5776f6c3855c3e7207fd6191e0dad92fdf7a499a488",
+      "actual_lines": 183,
+      "status": "complete",
+      "reviewer": "redshank-primary",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 183
+        }
+      ],
+      "lines_read": 183
+    },
+    {
+      "manifest_index": 139,
+      "path": "ports/redshank/scripts/subscribe-podcasts.ps1",
+      "sha256": "af4ec2b310b2be2c08e5dbc30d194b8cf139b189bd0df0544e3f50e503d49182",
+      "lines": 188,
+      "bytes": 11906,
+      "kind": "source",
+      "actual_sha256": "af4ec2b310b2be2c08e5dbc30d194b8cf139b189bd0df0544e3f50e503d49182",
+      "actual_lines": 188,
+      "status": "complete",
+      "reviewer": "redshank-primary",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 188
+        }
+      ],
+      "lines_read": 188
+    },
+    {
+      "manifest_index": 140,
+      "path": "ports/redshank/scripts/transcript-receipt-server.py",
+      "sha256": "b8fa43b65801f1f8bf0734f84b2a39aa0a719afa8dab6ea9e38dd40fe27a3937",
+      "lines": 37,
+      "bytes": 1348,
+      "kind": "source",
+      "actual_sha256": "b8fa43b65801f1f8bf0734f84b2a39aa0a719afa8dab6ea9e38dd40fe27a3937",
+      "actual_lines": 37,
+      "status": "complete",
+      "reviewer": "redshank-primary",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 37
+        }
+      ],
+      "lines_read": 37
+    },
+    {
+      "manifest_index": 141,
+      "path": "ports/redshank/spikes/playback/Cargo.lock",
+      "sha256": "65f2002c876e686ba9339d0c41408a192edf55c70d540a925577958d199ffa43",
+      "lines": 4499,
+      "bytes": 111729,
+      "kind": "source",
+      "actual_sha256": "65f2002c876e686ba9339d0c41408a192edf55c70d540a925577958d199ffa43",
+      "actual_lines": 4499,
+      "status": "complete",
+      "reviewer": "redshank_desktop",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 750
+        },
+        {
+          "start": 751,
+          "end": 1500
+        },
+        {
+          "start": 1501,
+          "end": 2250
+        },
+        {
+          "start": 2251,
+          "end": 3000
+        },
+        {
+          "start": 3001,
+          "end": 3750
+        },
+        {
+          "start": 3751,
+          "end": 4499
+        }
+      ],
+      "lines_read": 4499
+    },
+    {
+      "manifest_index": 142,
+      "path": "ports/redshank/spikes/playback/Cargo.toml",
+      "sha256": "0e605cf38f4a66d7f939e6c1fa999fc92dd74b83346769b3cb16feaf729f667d",
+      "lines": 16,
+      "bytes": 523,
+      "kind": "source",
+      "actual_sha256": "0e605cf38f4a66d7f939e6c1fa999fc92dd74b83346769b3cb16feaf729f667d",
+      "actual_lines": 16,
+      "status": "complete",
+      "reviewer": "redshank_surface_storage",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 16
+        }
+      ],
+      "lines_read": 16
+    },
+    {
+      "manifest_index": 143,
+      "path": "ports/redshank/spikes/playback/common/Cargo.toml",
+      "sha256": "8c89db173e3ae4e95c5bae7e03cc4a3d84828e9b1e592fc88bef511362c82121",
+      "lines": 12,
+      "bytes": 226,
+      "kind": "source",
+      "actual_sha256": "8c89db173e3ae4e95c5bae7e03cc4a3d84828e9b1e592fc88bef511362c82121",
+      "actual_lines": 12,
+      "status": "complete",
+      "reviewer": "redshank_surface_storage",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 12
+        }
+      ],
+      "lines_read": 12
+    },
+    {
+      "manifest_index": 144,
+      "path": "ports/redshank/spikes/playback/common/src/lib.rs",
+      "sha256": "c735a97ff6e6815c3e079aa42a500af41c359b6ac8bd9baa7eca40ee5ab1234d",
+      "lines": 248,
+      "bytes": 7762,
+      "kind": "source",
+      "actual_sha256": "c735a97ff6e6815c3e079aa42a500af41c359b6ac8bd9baa7eca40ee5ab1234d",
+      "actual_lines": 248,
+      "status": "complete",
+      "reviewer": "redshank_surface_storage",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 248
+        }
+      ],
+      "lines_read": 248
+    },
+    {
+      "manifest_index": 145,
+      "path": "ports/redshank/spikes/playback/gstreamer-path/Cargo.toml",
+      "sha256": "abd7a3259fdd157a207b6868f115b86077bb5458f2b88864b7d15a2482e73b14",
+      "lines": 14,
+      "bytes": 418,
+      "kind": "source",
+      "actual_sha256": "abd7a3259fdd157a207b6868f115b86077bb5458f2b88864b7d15a2482e73b14",
+      "actual_lines": 14,
+      "status": "complete",
+      "reviewer": "redshank_surface_storage",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 14
+        }
+      ],
+      "lines_read": 14
+    },
+    {
+      "manifest_index": 146,
+      "path": "ports/redshank/spikes/playback/gstreamer-path/src/main.rs",
+      "sha256": "1992fdfe742c84a497422bcfd817bf556cfac872af64a0aec3d25ca2eb214b4f",
+      "lines": 245,
+      "bytes": 8322,
+      "kind": "source",
+      "actual_sha256": "1992fdfe742c84a497422bcfd817bf556cfac872af64a0aec3d25ca2eb214b4f",
+      "actual_lines": 245,
+      "status": "complete",
+      "reviewer": "redshank_surface_storage",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 245
+        }
+      ],
+      "lines_read": 245
+    },
+    {
+      "manifest_index": 147,
+      "path": "ports/redshank/spikes/playback/scripts/make-fixtures.ps1",
+      "sha256": "6d88f134641bc098e3991186bd16fa35f56e1cd0477c54dd3c384c3b8dec573e",
+      "lines": 22,
+      "bytes": 1081,
+      "kind": "source",
+      "actual_sha256": "6d88f134641bc098e3991186bd16fa35f56e1cd0477c54dd3c384c3b8dec573e",
+      "actual_lines": 22,
+      "status": "complete",
+      "reviewer": "redshank_surface_storage",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 22
+        }
+      ],
+      "lines_read": 22
+    },
+    {
+      "manifest_index": 148,
+      "path": "ports/redshank/spikes/playback/scripts/range_server.py",
+      "sha256": "aebd1aeadf6d921cf7c7cc17347cafe2499556da1b1300c691431e06c7d8a82e",
+      "lines": 94,
+      "bytes": 3309,
+      "kind": "source",
+      "actual_sha256": "aebd1aeadf6d921cf7c7cc17347cafe2499556da1b1300c691431e06c7d8a82e",
+      "actual_lines": 94,
+      "status": "complete",
+      "reviewer": "redshank_surface_storage",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 94
+        }
+      ],
+      "lines_read": 94
+    },
+    {
+      "manifest_index": 149,
+      "path": "ports/redshank/spikes/playback/symphonia-path/Cargo.toml",
+      "sha256": "b13628f102681318ea84703a2e5746aa3ddbb1715fea65ef4483d7ec1cd477aa",
+      "lines": 14,
+      "bytes": 290,
+      "kind": "source",
+      "actual_sha256": "b13628f102681318ea84703a2e5746aa3ddbb1715fea65ef4483d7ec1cd477aa",
+      "actual_lines": 14,
+      "status": "complete",
+      "reviewer": "redshank_surface_storage",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 14
+        }
+      ],
+      "lines_read": 14
+    },
+    {
+      "manifest_index": 150,
+      "path": "ports/redshank/spikes/playback/symphonia-path/src/http_range.rs",
+      "sha256": "67bbbae38354f0fb38f9c6ab58a4bd8897bb63f286ab38ced362167322fea0a7",
+      "lines": 185,
+      "bytes": 5852,
+      "kind": "source",
+      "actual_sha256": "67bbbae38354f0fb38f9c6ab58a4bd8897bb63f286ab38ced362167322fea0a7",
+      "actual_lines": 185,
+      "status": "complete",
+      "reviewer": "redshank_surface_storage",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 185
+        }
+      ],
+      "lines_read": 185
+    },
+    {
+      "manifest_index": 151,
+      "path": "ports/redshank/spikes/playback/symphonia-path/src/main.rs",
+      "sha256": "2d373431e9d0e63f87a333069e2c3915edb7c67b30e4351e9e64d1b636430398",
+      "lines": 224,
+      "bytes": 7443,
+      "kind": "source",
+      "actual_sha256": "2d373431e9d0e63f87a333069e2c3915edb7c67b30e4351e9e64d1b636430398",
+      "actual_lines": 224,
+      "status": "complete",
+      "reviewer": "redshank_surface_storage",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 224
+        }
+      ],
+      "lines_read": 224
+    },
+    {
+      "manifest_index": 152,
+      "path": "ports/redshank/storage/Cargo.toml",
+      "sha256": "444c53af6113a13e1522ee251080303e5ed344a61445f959fa0d7913105676ff",
+      "lines": 15,
+      "bytes": 267,
+      "kind": "source",
+      "actual_sha256": "444c53af6113a13e1522ee251080303e5ed344a61445f959fa0d7913105676ff",
+      "actual_lines": 15,
+      "status": "complete",
+      "reviewer": "redshank_surface_storage",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 15
+        }
+      ],
+      "lines_read": 15
+    },
+    {
+      "manifest_index": 153,
+      "path": "ports/redshank/storage/src/lib.rs",
+      "sha256": "a98f35e6c0f5a1a3eeb6f5d6e8b1401df120c814d3a5b5926f00dec2c714c6b7",
+      "lines": 547,
+      "bytes": 19473,
+      "kind": "source",
+      "actual_sha256": "a98f35e6c0f5a1a3eeb6f5d6e8b1401df120c814d3a5b5926f00dec2c714c6b7",
+      "actual_lines": 547,
+      "status": "complete",
+      "reviewer": "redshank_surface_storage",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 290
+        },
+        {
+          "start": 291,
+          "end": 547
+        }
+      ],
+      "lines_read": 547
+    },
+    {
+      "manifest_index": 154,
+      "path": "ports/redshank/surfaces/Cargo.toml",
+      "sha256": "34d4ed84c461a945a8e84d935480064d3bb65751158c879de9edbfc5cc4100c1",
+      "lines": 25,
+      "bytes": 688,
+      "kind": "source",
+      "actual_sha256": "34d4ed84c461a945a8e84d935480064d3bb65751158c879de9edbfc5cc4100c1",
+      "actual_lines": 25,
+      "status": "complete",
+      "reviewer": "redshank_surface_storage",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 25
+        }
+      ],
+      "lines_read": 25
+    },
+    {
+      "manifest_index": 155,
+      "path": "ports/redshank/surfaces/src/dock.rs",
+      "sha256": "b0f614a760b0aac6d7724456b0bce8c596ff3741951823caaa2aaa34286d19f2",
+      "lines": 797,
+      "bytes": 28830,
+      "kind": "source",
+      "actual_sha256": "b0f614a760b0aac6d7724456b0bce8c596ff3741951823caaa2aaa34286d19f2",
+      "actual_lines": 797,
+      "status": "complete",
+      "reviewer": "redshank_surface_storage",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 400
+        },
+        {
+          "start": 401,
+          "end": 797
+        }
+      ],
+      "lines_read": 797
+    },
+    {
+      "manifest_index": 156,
+      "path": "ports/redshank/surfaces/src/lib.rs",
+      "sha256": "936ffb17be20e84654a0b9a69005670ad032d2b39b96a7a56411510a93a2e82c",
+      "lines": 876,
+      "bytes": 27176,
+      "kind": "source",
+      "actual_sha256": "936ffb17be20e84654a0b9a69005670ad032d2b39b96a7a56411510a93a2e82c",
+      "actual_lines": 876,
+      "status": "complete",
+      "reviewer": "redshank_surface_storage",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 440
+        },
+        {
+          "start": 441,
+          "end": 876
+        }
+      ],
+      "lines_read": 876
+    },
+    {
+      "manifest_index": 157,
+      "path": "ports/redshank/surfaces/src/rail.rs",
+      "sha256": "ae3c5a3a637c5f86421b8796f362f36e408ff539a3ebf218d6d6228ee14f6bb5",
+      "lines": 293,
+      "bytes": 10478,
+      "kind": "source",
+      "actual_sha256": "ae3c5a3a637c5f86421b8796f362f36e408ff539a3ebf218d6d6228ee14f6bb5",
+      "actual_lines": 293,
+      "status": "complete",
+      "reviewer": "redshank_surface_storage",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 293
+        }
+      ],
+      "lines_read": 293
+    },
+    {
+      "manifest_index": 158,
+      "path": "ports/redshank/surfaces/src/redshank.css",
+      "sha256": "d2d78e72cac1f6e3c29b84a090ddd62d222fc5e43f8e054f17ec6ed99ce17a2b",
+      "lines": 722,
+      "bytes": 13319,
+      "kind": "source",
+      "actual_sha256": "d2d78e72cac1f6e3c29b84a090ddd62d222fc5e43f8e054f17ec6ed99ce17a2b",
+      "actual_lines": 722,
+      "status": "complete",
+      "reviewer": "redshank_surface_storage",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 365
+        },
+        {
+          "start": 366,
+          "end": 722
+        }
+      ],
+      "lines_read": 722
+    },
+    {
+      "manifest_index": 159,
+      "path": "ports/redshank/surfaces/src/scene/card.rs",
+      "sha256": "a92ee13c410f3262502ee56e945b0bda18b13830e90f1245fcfc64d1411a2610",
+      "lines": 152,
+      "bytes": 5142,
+      "kind": "source",
+      "actual_sha256": "a92ee13c410f3262502ee56e945b0bda18b13830e90f1245fcfc64d1411a2610",
+      "actual_lines": 152,
+      "status": "complete",
+      "reviewer": "redshank_surface_storage",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 152
+        }
+      ],
+      "lines_read": 152
+    },
+    {
+      "manifest_index": 160,
+      "path": "ports/redshank/surfaces/src/scene/chain.rs",
+      "sha256": "c2d52b3cfd7cfde8f357eeeeb7118ee9282d1064582d78017ccbfbac41bdcf72",
+      "lines": 449,
+      "bytes": 16052,
+      "kind": "source",
+      "actual_sha256": "c2d52b3cfd7cfde8f357eeeeb7118ee9282d1064582d78017ccbfbac41bdcf72",
+      "actual_lines": 449,
+      "status": "complete",
+      "reviewer": "redshank_surface_storage",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 230
+        },
+        {
+          "start": 231,
+          "end": 449
+        }
+      ],
+      "lines_read": 449
+    },
+    {
+      "manifest_index": 161,
+      "path": "ports/redshank/surfaces/src/scene/geometry.rs",
+      "sha256": "33552e3874f1bb95c204542807b0e89ab5462db3664751999c2240cd9a65855a",
+      "lines": 274,
+      "bytes": 8895,
+      "kind": "source",
+      "actual_sha256": "33552e3874f1bb95c204542807b0e89ab5462db3664751999c2240cd9a65855a",
+      "actual_lines": 274,
+      "status": "complete",
+      "reviewer": "redshank_surface_storage",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 274
+        }
+      ],
+      "lines_read": 274
+    },
+    {
+      "manifest_index": 162,
+      "path": "ports/redshank/surfaces/src/scene/mod.rs",
+      "sha256": "40e38f840709b1eede70acf8d026e7e12936df1bfcd14d7439d439ea514eda1e",
+      "lines": 561,
+      "bytes": 22721,
+      "kind": "source",
+      "actual_sha256": "40e38f840709b1eede70acf8d026e7e12936df1bfcd14d7439d439ea514eda1e",
+      "actual_lines": 561,
+      "status": "complete",
+      "reviewer": "redshank_surface_storage",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 285
+        },
+        {
+          "start": 286,
+          "end": 561
+        }
+      ],
+      "lines_read": 561
+    },
+    {
+      "manifest_index": 163,
+      "path": "ports/redshank/surfaces/src/scene/orrery.rs",
+      "sha256": "b83333efeb784963927ec3c8baca21b1da5f2c80f2af7e13890e400d9e7fa41a",
+      "lines": 277,
+      "bytes": 10168,
+      "kind": "source",
+      "actual_sha256": "b83333efeb784963927ec3c8baca21b1da5f2c80f2af7e13890e400d9e7fa41a",
+      "actual_lines": 277,
+      "status": "complete",
+      "reviewer": "redshank_surface_storage",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 277
+        }
+      ],
+      "lines_read": 277
+    },
+    {
+      "manifest_index": 164,
+      "path": "ports/redshank/surfaces/src/scene/trail.rs",
+      "sha256": "70dba4d0737fc4bc0a7ae55ff682fddfb4e39c618fbc85c223c054c4298f3f69",
+      "lines": 205,
+      "bytes": 7186,
+      "kind": "source",
+      "actual_sha256": "70dba4d0737fc4bc0a7ae55ff682fddfb4e39c618fbc85c223c054c4298f3f69",
+      "actual_lines": 205,
+      "status": "complete",
+      "reviewer": "redshank_surface_storage",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 205
+        }
+      ],
+      "lines_read": 205
+    },
+    {
+      "manifest_index": 165,
+      "path": "ports/redshank/surfaces/src/shell.rs",
+      "sha256": "a8d88a636df7297b881b4f494bdeb863deb4c4ba5ff96cc40858041712ae58c1",
+      "lines": 509,
+      "bytes": 19396,
+      "kind": "source",
+      "actual_sha256": "a8d88a636df7297b881b4f494bdeb863deb4c4ba5ff96cc40858041712ae58c1",
+      "actual_lines": 509,
+      "status": "complete",
+      "reviewer": "redshank_surface_storage",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 260
+        },
+        {
+          "start": 261,
+          "end": 509
+        }
+      ],
+      "lines_read": 509
+    },
+    {
+      "manifest_index": 166,
+      "path": "ports/redshank/surfaces/src/surface_api.rs",
+      "sha256": "3ebaf278310b80fe92c85df279a7ef8d08553fa40d2f6b904aee35128a8f9f1b",
+      "lines": 382,
+      "bytes": 13913,
+      "kind": "source",
+      "actual_sha256": "3ebaf278310b80fe92c85df279a7ef8d08553fa40d2f6b904aee35128a8f9f1b",
+      "actual_lines": 382,
+      "status": "complete",
+      "reviewer": "redshank_surface_storage",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 382
+        }
+      ],
+      "lines_read": 382
+    },
+    {
+      "manifest_index": 167,
+      "path": "ports/redshank/surfaces/src/tabs/controls.rs",
+      "sha256": "09cbbc09601d0ac4fb791886eca04d84b60804041f7d1c785ef7cc596dd949ff",
+      "lines": 128,
+      "bytes": 4362,
+      "kind": "source",
+      "actual_sha256": "09cbbc09601d0ac4fb791886eca04d84b60804041f7d1c785ef7cc596dd949ff",
+      "actual_lines": 128,
+      "status": "complete",
+      "reviewer": "redshank_surface_storage",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 128
+        }
+      ],
+      "lines_read": 128
+    },
+    {
+      "manifest_index": 168,
+      "path": "ports/redshank/surfaces/src/tabs/library.rs",
+      "sha256": "5e0ffc540269a64dad0378c164a6ec200bd6b2c2bdb905e274a604cdc4fb1da5",
+      "lines": 762,
+      "bytes": 25084,
+      "kind": "source",
+      "actual_sha256": "5e0ffc540269a64dad0378c164a6ec200bd6b2c2bdb905e274a604cdc4fb1da5",
+      "actual_lines": 762,
+      "status": "complete",
+      "reviewer": "redshank_surface_storage",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 380
+        },
+        {
+          "start": 381,
+          "end": 762
+        }
+      ],
+      "lines_read": 762
+    },
+    {
+      "manifest_index": 169,
+      "path": "ports/redshank/surfaces/src/tabs/listen.rs",
+      "sha256": "a56eec69cf2232a527c8fa8b856c465ed143886e59986ec80e2686ed15035c4e",
+      "lines": 737,
+      "bytes": 26052,
+      "kind": "source",
+      "actual_sha256": "a56eec69cf2232a527c8fa8b856c465ed143886e59986ec80e2686ed15035c4e",
+      "actual_lines": 737,
+      "status": "complete",
+      "reviewer": "redshank_surface_storage",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 375
+        },
+        {
+          "start": 376,
+          "end": 737
+        }
+      ],
+      "lines_read": 737
+    },
+    {
+      "manifest_index": 170,
+      "path": "ports/redshank/surfaces/src/tabs/mod.rs",
+      "sha256": "d54d016d84faf42eb2caa2e02aeb0acbf0f8b2af03d567944d3cdfeaeab4b8f0",
+      "lines": 306,
+      "bytes": 16117,
+      "kind": "source",
+      "actual_sha256": "d54d016d84faf42eb2caa2e02aeb0acbf0f8b2af03d567944d3cdfeaeab4b8f0",
+      "actual_lines": 306,
+      "status": "complete",
+      "reviewer": "redshank_surface_storage",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 306
+        }
+      ],
+      "lines_read": 306
+    },
+    {
+      "manifest_index": 171,
+      "path": "ports/redshank/surfaces/src/tabs/notes.rs",
+      "sha256": "9b217730aed2aa53b208aae4e227c12d6de77c2aeeb0c0bd3cad2293949ee54c",
+      "lines": 667,
+      "bytes": 24188,
+      "kind": "source",
+      "actual_sha256": "9b217730aed2aa53b208aae4e227c12d6de77c2aeeb0c0bd3cad2293949ee54c",
+      "actual_lines": 667,
+      "status": "complete",
+      "reviewer": "redshank_surface_storage",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 340
+        },
+        {
+          "start": 341,
+          "end": 667
+        }
+      ],
+      "lines_read": 667
+    },
+    {
+      "manifest_index": 172,
+      "path": "ports/redshank/surfaces/src/tabs/rows.rs",
+      "sha256": "392f0a3962782baf787f4450ae9b39b3b5ce1d4255c0ef28588d2b6a112ccacb",
+      "lines": 367,
+      "bytes": 12784,
+      "kind": "source",
+      "actual_sha256": "392f0a3962782baf787f4450ae9b39b3b5ce1d4255c0ef28588d2b6a112ccacb",
+      "actual_lines": 367,
+      "status": "complete",
+      "reviewer": "redshank_surface_storage",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 367
+        }
+      ],
+      "lines_read": 367
+    },
+    {
+      "manifest_index": 173,
+      "path": "ports/redshank/surfaces/src/tabs/settings.rs",
+      "sha256": "fd99f81eb71295f47dcc7c2db813cac3d5bf796f2faa37916d7ebecb0da85bef",
+      "lines": 773,
+      "bytes": 26487,
+      "kind": "source",
+      "actual_sha256": "fd99f81eb71295f47dcc7c2db813cac3d5bf796f2faa37916d7ebecb0da85bef",
+      "actual_lines": 773,
+      "status": "complete",
+      "reviewer": "redshank_surface_storage",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 390
+        },
+        {
+          "start": 391,
+          "end": 773
+        }
+      ],
+      "lines_read": 773
+    },
+    {
+      "manifest_index": 174,
+      "path": "ports/redshank/surfaces/src/theme.rs",
+      "sha256": "42e67ee4418d2644474fc42eb2c1c6b085f6802b679dee423b70047630054857",
+      "lines": 432,
+      "bytes": 15958,
+      "kind": "source",
+      "actual_sha256": "42e67ee4418d2644474fc42eb2c1c6b085f6802b679dee423b70047630054857",
+      "actual_lines": 432,
+      "status": "complete",
+      "reviewer": "redshank_surface_storage",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 432
+        }
+      ],
+      "lines_read": 432
+    },
+    {
+      "manifest_index": 175,
+      "path": "ports/redshank/web/Cargo.toml",
+      "sha256": "ea646b299602e01ff55c623196969e98e4111d4bf569eb7dbcca12590172c58e",
+      "lines": 30,
+      "bytes": 1164,
+      "kind": "source",
+      "actual_sha256": "ea646b299602e01ff55c623196969e98e4111d4bf569eb7dbcca12590172c58e",
+      "actual_lines": 30,
+      "status": "complete",
+      "reviewer": "redshank_surface_storage",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 30
+        }
+      ],
+      "lines_read": 30
+    },
+    {
+      "manifest_index": 176,
+      "path": "ports/redshank/web/src/lib.rs",
+      "sha256": "5f423d3f389d5d75ad3a7b3f87877a00c7ca4565227f25dce5adde93dac4775c",
+      "lines": 704,
+      "bytes": 26564,
+      "kind": "source",
+      "actual_sha256": "5f423d3f389d5d75ad3a7b3f87877a00c7ca4565227f25dce5adde93dac4775c",
+      "actual_lines": 704,
+      "status": "complete",
+      "reviewer": "redshank_surface_storage",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 360
+        },
+        {
+          "start": 361,
+          "end": 704
+        }
+      ],
+      "lines_read": 704
+    },
+    {
+      "manifest_index": 177,
+      "path": "ports/redshank/web/www/index.html",
+      "sha256": "2314a14e6912610935d55a9efd810a8a2638bbc912cf07d2798c03a8fdf2c139",
+      "lines": 34,
+      "bytes": 857,
+      "kind": "source",
+      "actual_sha256": "2314a14e6912610935d55a9efd810a8a2638bbc912cf07d2798c03a8fdf2c139",
+      "actual_lines": 34,
+      "status": "complete",
+      "reviewer": "redshank_surface_storage",
+      "read_ranges": [
+        {
+          "start": 1,
+          "end": 34
+        }
+      ],
+      "lines_read": 34
+    }
+  ],
+  "findings": {
+    "report": "/Users/markik/Code/testing/woodshed/full-source-audit-20261016/redshank-report.md",
+    "count": 17,
+    "priorities": {
+      "P1": 1,
+      "P2": 12,
+      "P3": 4
+    },
+    "status": "source_review_complete_runtime_qualification_open"
+  }
+}

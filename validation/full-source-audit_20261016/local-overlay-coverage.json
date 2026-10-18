@@ -1,0 +1,4209 @@
+{
+  "schema": "woodshed-local-p5a-overlay-coverage-v1",
+  "review_date": "2026-10-17",
+  "scope": "Full semantic read of all 33 frozen local P5a assigned files, including production code, tests, comments, design documentation, and all patch hunks. Separate from published-main audit and runtime qualification.",
+  "root": "/Users/markik/Code/testing/woodshed/full-source-audit-20261016/local-p5a-overlay",
+  "published_context_root": "/Users/markik/Code/testing/woodshed/full-source-audit-20261016/source-d12201bf",
+  "base_revision_supplied": "1bc4f6a",
+  "published_context_revision_supplied": "d12201bf",
+  "revision_method": "Supplied frozen identities; no Git commands or live-checkout inspection performed.",
+  "patch": {
+    "path": "/Users/markik/Code/testing/woodshed/full-source-audit-20261016/local-uncommitted.patch",
+    "sha256": "6d9b088429359e2a2059977a473e19bce3132f3a47f8a3a8351759d17cb6c66f",
+    "lines": 2203,
+    "read_ranges": [
+      [
+        1,
+        2203
+      ]
+    ],
+    "tracked_files": 31,
+    "hunks": 155,
+    "added_lines": 473,
+    "deleted_lines": 349
+  },
+  "totals": {
+    "assigned_files": 33,
+    "assigned_lines": 34861,
+    "whole_file_byte_read_and_hash_verified_files": 33,
+    "changed_content_reviewed_files": 33,
+    "new_module_lines": 296,
+    "added_or_new_lines_reviewed": 769,
+    "semantic_review_unique_lines": 34861,
+    "whole_file_semantic_review_files": 33,
+    "remaining_semantic_lines": 0,
+    "new_semantic_lines_in_continuation": 27662,
+    "assigned_bytes": 1490015
+  },
+  "completion": {
+    "all_assigned_files_byte_read": true,
+    "all_assigned_file_hashes_verified": true,
+    "all_patch_hunks_semantically_reviewed": true,
+    "all_new_modules_fully_reviewed": true,
+    "critical_seams_traced": true,
+    "full_34861_line_semantic_audit_claimed": true,
+    "changed_content_gaps": [],
+    "all_assigned_ranges_semantically_reviewed": true,
+    "semantic_read_gaps": []
+  },
+  "gaps": [
+    "No builds, tests, native run, physical audio observation, fresh reopening, or final integrated-v2 qualification was performed, as instructed.",
+    "Overlay patch is relative to local 1bc4f6a; source-d12201bf includes two additional arrangement commits. No synthetic combined checkout was constructed.",
+    "Full semantic coverage applies to the 33 assigned frozen files. Additional published-source seam context is covered only at its listed ranges; this does not claim a whole-repository audit."
+  ],
+  "findings": [
+    {
+      "id": "LO-1",
+      "priority": "P2",
+      "classification": "introduced selected-Card success credit; inherited rehearsal realization ambiguity",
+      "title": "Empty preview success conflates unavailable material with intentional silence"
+    },
+    {
+      "id": "LO-2",
+      "priority": "P2",
+      "classification": "introduced test regressions; source-predicted, not executed",
+      "title": "Admission fixture migration leaves stale failing or vacuous assertions"
+    },
+    {
+      "id": "LO-3",
+      "priority": "P2",
+      "classification": "remaining untouched behavior",
+      "title": "Discovery and catalog Previewed history still precedes fallible host admission"
+    },
+    {
+      "id": "LO-4",
+      "priority": "P2",
+      "classification": "remaining untouched behavior; follow-up outside newly changed scale/arpeggio timing routes",
+      "title": "Ordinary chord and drawn-path Walk previews retain fixed timing instead of resolved dwell",
+      "path": "crates/woodshed-core/src/lib.rs",
+      "lines": [
+        1967,
+        1988
+      ]
+    },
+    {
+      "id": "LO-5",
+      "priority": "P2",
+      "classification": "remaining untouched retained-setup authority gap",
+      "title": "Saved drawn paths replay using later Stage tuning and fret limits",
+      "path": "crates/woodshed-core/src/lib.rs",
+      "lines": [
+        1971,
+        1976
+      ]
+    }
+  ],
+  "known_blockers": [
+    {
+      "id": "LO-K1",
+      "priority": "P1",
+      "classification": "known supplied integrated-v2 compile failure; source confirmed only",
+      "path": "crates/woodshed-genet/src/layout_tests.rs",
+      "line": 1082,
+      "detail": "pitches is undefined after match binding changes to CardPreview(request)"
+    }
+  ],
+  "files": [
+    {
+      "path": "crates/woodshed-audio/src/output_runtime.rs",
+      "sha256": "cbb814c1eef46236eb158215ee5cd6c92f033b020203ba4648750147c017ea7e",
+      "lines": 762,
+      "actual_sha256": "cbb814c1eef46236eb158215ee5cd6c92f033b020203ba4648750147c017ea7e",
+      "bytes": 27880,
+      "hash_matches": true,
+      "whole_file_byte_read_ranges": [
+        [
+          1,
+          762
+        ]
+      ],
+      "kind": "tracked_patch",
+      "patch_hunk_new_ranges": [
+        [
+          589,
+          611
+        ]
+      ],
+      "semantic_review_ranges": [
+        [
+          1,
+          762
+        ]
+      ],
+      "semantic_review_line_count": 762,
+      "whole_file_semantic_review": true,
+      "unchanged_ranges_not_line_audited": [],
+      "changed_content_review_complete": true
+    },
+    {
+      "path": "crates/woodshed-audio/src/output_runtime/tests.rs",
+      "sha256": "d60ac3f18e8cbe82c4c2716a7bda28acfb16f3a1225e60330b7eac61447650e8",
+      "lines": 686,
+      "actual_sha256": "d60ac3f18e8cbe82c4c2716a7bda28acfb16f3a1225e60330b7eac61447650e8",
+      "bytes": 22929,
+      "hash_matches": true,
+      "whole_file_byte_read_ranges": [
+        [
+          1,
+          686
+        ]
+      ],
+      "kind": "tracked_patch",
+      "patch_hunk_new_ranges": [
+        [
+          661,
+          686
+        ]
+      ],
+      "semantic_review_ranges": [
+        [
+          1,
+          686
+        ]
+      ],
+      "semantic_review_line_count": 686,
+      "whole_file_semantic_review": true,
+      "unchanged_ranges_not_line_audited": [],
+      "changed_content_review_complete": true
+    },
+    {
+      "path": "crates/woodshed-core/src/audio.rs",
+      "sha256": "2dae9a7e3631bc4768587d3d465bb75d73e13408b734d66af612c7aadf9f4489",
+      "lines": 317,
+      "actual_sha256": "2dae9a7e3631bc4768587d3d465bb75d73e13408b734d66af612c7aadf9f4489",
+      "bytes": 12899,
+      "hash_matches": true,
+      "whole_file_byte_read_ranges": [
+        [
+          1,
+          317
+        ]
+      ],
+      "kind": "tracked_patch",
+      "patch_hunk_new_ranges": [
+        [
+          118,
+          143
+        ],
+        [
+          154,
+          160
+        ]
+      ],
+      "semantic_review_ranges": [
+        [
+          1,
+          317
+        ]
+      ],
+      "semantic_review_line_count": 317,
+      "whole_file_semantic_review": true,
+      "unchanged_ranges_not_line_audited": [],
+      "changed_content_review_complete": true
+    },
+    {
+      "path": "crates/woodshed-core/src/captured_arpeggio.rs",
+      "sha256": "51c2dbb1a8f2e12fd999289e0f1f1333337cd96b9a0404833713b4b8b3fe1ed5",
+      "lines": 442,
+      "actual_sha256": "51c2dbb1a8f2e12fd999289e0f1f1333337cd96b9a0404833713b4b8b3fe1ed5",
+      "bytes": 19143,
+      "hash_matches": true,
+      "whole_file_byte_read_ranges": [
+        [
+          1,
+          442
+        ]
+      ],
+      "kind": "tracked_patch",
+      "patch_hunk_new_ranges": [
+        [
+          131,
+          137
+        ],
+        [
+          246,
+          252
+        ],
+        [
+          330,
+          340
+        ],
+        [
+          373,
+          379
+        ],
+        [
+          387,
+          393
+        ]
+      ],
+      "semantic_review_ranges": [
+        [
+          1,
+          442
+        ]
+      ],
+      "semantic_review_line_count": 442,
+      "whole_file_semantic_review": true,
+      "unchanged_ranges_not_line_audited": [],
+      "changed_content_review_complete": true
+    },
+    {
+      "path": "crates/woodshed-core/src/card_shapes.rs",
+      "sha256": "25ffda9dde3e1e2efa32f970bf102c8dc81106f94137fe70d223f3429a10685e",
+      "lines": 842,
+      "actual_sha256": "25ffda9dde3e1e2efa32f970bf102c8dc81106f94137fe70d223f3429a10685e",
+      "bytes": 31696,
+      "hash_matches": true,
+      "whole_file_byte_read_ranges": [
+        [
+          1,
+          842
+        ]
+      ],
+      "kind": "tracked_patch",
+      "patch_hunk_new_ranges": [
+        [
+          564,
+          570
+        ],
+        [
+          595,
+          601
+        ],
+        [
+          652,
+          663
+        ],
+        [
+          699,
+          705
+        ]
+      ],
+      "semantic_review_ranges": [
+        [
+          1,
+          842
+        ]
+      ],
+      "semantic_review_line_count": 842,
+      "whole_file_semantic_review": true,
+      "unchanged_ranges_not_line_audited": [],
+      "changed_content_review_complete": true
+    },
+    {
+      "path": "crates/woodshed-core/src/chord_approach.rs",
+      "sha256": "52b05b4ad4ec880c6e47e2ad46cedf43c3967c5770c45984d9959b63822036c3",
+      "lines": 668,
+      "actual_sha256": "52b05b4ad4ec880c6e47e2ad46cedf43c3967c5770c45984d9959b63822036c3",
+      "bytes": 26210,
+      "hash_matches": true,
+      "whole_file_byte_read_ranges": [
+        [
+          1,
+          668
+        ]
+      ],
+      "kind": "tracked_patch",
+      "patch_hunk_new_ranges": [
+        [
+          253,
+          261
+        ],
+        [
+          439,
+          445
+        ],
+        [
+          611,
+          617
+        ],
+        [
+          621,
+          636
+        ],
+        [
+          661,
+          668
+        ]
+      ],
+      "semantic_review_ranges": [
+        [
+          1,
+          668
+        ]
+      ],
+      "semantic_review_line_count": 668,
+      "whole_file_semantic_review": true,
+      "unchanged_ranges_not_line_audited": [],
+      "changed_content_review_complete": true
+    },
+    {
+      "path": "crates/woodshed-core/src/connected_catalog.rs",
+      "sha256": "92a93775e7a508de13073be7c9cd92cd2f52323df7913a4e893700114e2cbab2",
+      "lines": 390,
+      "actual_sha256": "92a93775e7a508de13073be7c9cd92cd2f52323df7913a4e893700114e2cbab2",
+      "bytes": 15243,
+      "hash_matches": true,
+      "whole_file_byte_read_ranges": [
+        [
+          1,
+          390
+        ]
+      ],
+      "kind": "tracked_patch",
+      "patch_hunk_new_ranges": [
+        [
+          103,
+          120
+        ],
+        [
+          151,
+          159
+        ],
+        [
+          234,
+          241
+        ],
+        [
+          260,
+          267
+        ],
+        [
+          337,
+          343
+        ],
+        [
+          349,
+          355
+        ],
+        [
+          362,
+          368
+        ],
+        [
+          377,
+          390
+        ]
+      ],
+      "semantic_review_ranges": [
+        [
+          1,
+          390
+        ]
+      ],
+      "semantic_review_line_count": 390,
+      "whole_file_semantic_review": true,
+      "unchanged_ranges_not_line_audited": [],
+      "changed_content_review_complete": true
+    },
+    {
+      "path": "crates/woodshed-core/src/lib.rs",
+      "sha256": "0ad54885a88857325f7a0054539cdc3885bfeb98c3a72989d21c29298999472e",
+      "lines": 2726,
+      "actual_sha256": "0ad54885a88857325f7a0054539cdc3885bfeb98c3a72989d21c29298999472e",
+      "bytes": 104726,
+      "hash_matches": true,
+      "whole_file_byte_read_ranges": [
+        [
+          1,
+          2726
+        ]
+      ],
+      "kind": "tracked_patch",
+      "patch_hunk_new_ranges": [
+        [
+          13,
+          20
+        ],
+        [
+          610,
+          617
+        ],
+        [
+          1917,
+          1924
+        ],
+        [
+          1979,
+          1991
+        ],
+        [
+          1999,
+          2005
+        ],
+        [
+          2008,
+          2015
+        ],
+        [
+          2019,
+          2028
+        ],
+        [
+          2045,
+          2051
+        ],
+        [
+          2059,
+          2074
+        ],
+        [
+          2176,
+          2216
+        ],
+        [
+          2383,
+          2395
+        ],
+        [
+          2438,
+          2444
+        ],
+        [
+          2564,
+          2570
+        ],
+        [
+          2575,
+          2581
+        ],
+        [
+          2584,
+          2590
+        ]
+      ],
+      "semantic_review_ranges": [
+        [
+          1,
+          2726
+        ]
+      ],
+      "semantic_review_line_count": 2726,
+      "whole_file_semantic_review": true,
+      "unchanged_ranges_not_line_audited": [],
+      "changed_content_review_complete": true
+    },
+    {
+      "path": "crates/woodshed-core/src/loop_plan.rs",
+      "sha256": "94edc634d39ff3f3bc10e886879d77b567ad5809d0bb70d2f0b3ce5ae642c52d",
+      "lines": 322,
+      "actual_sha256": "94edc634d39ff3f3bc10e886879d77b567ad5809d0bb70d2f0b3ce5ae642c52d",
+      "bytes": 11708,
+      "hash_matches": true,
+      "whole_file_byte_read_ranges": [
+        [
+          1,
+          322
+        ]
+      ],
+      "kind": "tracked_patch",
+      "patch_hunk_new_ranges": [
+        [
+          154,
+          169
+        ],
+        [
+          242,
+          248
+        ],
+        [
+          291,
+          297
+        ]
+      ],
+      "semantic_review_ranges": [
+        [
+          1,
+          322
+        ]
+      ],
+      "semantic_review_line_count": 322,
+      "whole_file_semantic_review": true,
+      "unchanged_ranges_not_line_audited": [],
+      "changed_content_review_complete": true
+    },
+    {
+      "path": "crates/woodshed-core/src/scale_pattern_discovery.rs",
+      "sha256": "73fe1da7b38a9000b0a624a2e73fab50ffec6d052027635028ad1a0dd6708259",
+      "lines": 326,
+      "actual_sha256": "73fe1da7b38a9000b0a624a2e73fab50ffec6d052027635028ad1a0dd6708259",
+      "bytes": 12667,
+      "hash_matches": true,
+      "whole_file_byte_read_ranges": [
+        [
+          1,
+          326
+        ]
+      ],
+      "kind": "tracked_patch",
+      "patch_hunk_new_ranges": [
+        [
+          146,
+          152
+        ],
+        [
+          226,
+          235
+        ],
+        [
+          295,
+          308
+        ]
+      ],
+      "semantic_review_ranges": [
+        [
+          1,
+          326
+        ]
+      ],
+      "semantic_review_line_count": 326,
+      "whole_file_semantic_review": true,
+      "unchanged_ranges_not_line_audited": [],
+      "changed_content_review_complete": true
+    },
+    {
+      "path": "crates/woodshed-core/src/scale_realization.rs",
+      "sha256": "12bfc133fad845198c66a5ced4775da1e128e620c4614e7bfe34b8df3bd0ce1a",
+      "lines": 458,
+      "actual_sha256": "12bfc133fad845198c66a5ced4775da1e128e620c4614e7bfe34b8df3bd0ce1a",
+      "bytes": 17534,
+      "hash_matches": true,
+      "whole_file_byte_read_ranges": [
+        [
+          1,
+          458
+        ]
+      ],
+      "kind": "tracked_patch",
+      "patch_hunk_new_ranges": [
+        [
+          11,
+          17
+        ],
+        [
+          179,
+          187
+        ],
+        [
+          222,
+          243
+        ],
+        [
+          303,
+          309
+        ],
+        [
+          343,
+          352
+        ],
+        [
+          354,
+          360
+        ],
+        [
+          369,
+          375
+        ],
+        [
+          445,
+          456
+        ]
+      ],
+      "semantic_review_ranges": [
+        [
+          1,
+          458
+        ]
+      ],
+      "semantic_review_line_count": 458,
+      "whole_file_semantic_review": true,
+      "unchanged_ranges_not_line_audited": [],
+      "changed_content_review_complete": true
+    },
+    {
+      "path": "crates/woodshed-genet/src/audio.rs",
+      "sha256": "0aed38079e36cf42b9073137f0b9e7fe967056ce4e5622c1d9362e6b94827a24",
+      "lines": 1875,
+      "actual_sha256": "0aed38079e36cf42b9073137f0b9e7fe967056ce4e5622c1d9362e6b94827a24",
+      "bytes": 70028,
+      "hash_matches": true,
+      "whole_file_byte_read_ranges": [
+        [
+          1,
+          1875
+        ]
+      ],
+      "kind": "tracked_patch",
+      "patch_hunk_new_ranges": [
+        [
+          468,
+          481
+        ]
+      ],
+      "semantic_review_ranges": [
+        [
+          1,
+          1875
+        ]
+      ],
+      "semantic_review_line_count": 1875,
+      "whole_file_semantic_review": true,
+      "unchanged_ranges_not_line_audited": [],
+      "changed_content_review_complete": true
+    },
+    {
+      "path": "crates/woodshed-genet/src/drive.rs",
+      "sha256": "6c06d879d96b201241050478ecc8598cdbc327dee86f7db280f14db5f004d7dd",
+      "lines": 520,
+      "actual_sha256": "6c06d879d96b201241050478ecc8598cdbc327dee86f7db280f14db5f004d7dd",
+      "bytes": 20137,
+      "hash_matches": true,
+      "whole_file_byte_read_ranges": [
+        [
+          1,
+          520
+        ]
+      ],
+      "kind": "tracked_patch",
+      "patch_hunk_new_ranges": [
+        [
+          208,
+          274
+        ],
+        [
+          276,
+          282
+        ],
+        [
+          378,
+          389
+        ],
+        [
+          422,
+          429
+        ],
+        [
+          453,
+          462
+        ]
+      ],
+      "semantic_review_ranges": [
+        [
+          1,
+          520
+        ]
+      ],
+      "semantic_review_line_count": 520,
+      "whole_file_semantic_review": true,
+      "unchanged_ranges_not_line_audited": [],
+      "changed_content_review_complete": true
+    },
+    {
+      "path": "crates/woodshed-genet/src/layout_tests.rs",
+      "sha256": "24886f80b571f3548fd99c58340c43e08ac23f56fbdd111cd6ec76ac5f34f25a",
+      "lines": 1757,
+      "actual_sha256": "24886f80b571f3548fd99c58340c43e08ac23f56fbdd111cd6ec76ac5f34f25a",
+      "bytes": 72084,
+      "hash_matches": true,
+      "whole_file_byte_read_ranges": [
+        [
+          1,
+          1757
+        ]
+      ],
+      "kind": "tracked_patch",
+      "patch_hunk_new_ranges": [
+        [
+          55,
+          61
+        ],
+        [
+          210,
+          218
+        ],
+        [
+          226,
+          234
+        ],
+        [
+          268,
+          274
+        ],
+        [
+          358,
+          367
+        ],
+        [
+          400,
+          408
+        ],
+        [
+          412,
+          422
+        ],
+        [
+          642,
+          648
+        ],
+        [
+          785,
+          791
+        ],
+        [
+          893,
+          904
+        ],
+        [
+          1033,
+          1041
+        ],
+        [
+          1065,
+          1071
+        ],
+        [
+          1076,
+          1085
+        ],
+        [
+          1131,
+          1140
+        ],
+        [
+          1245,
+          1251
+        ],
+        [
+          1256,
+          1264
+        ],
+        [
+          1469,
+          1481
+        ],
+        [
+          1599,
+          1605
+        ]
+      ],
+      "semantic_review_ranges": [
+        [
+          1,
+          1757
+        ]
+      ],
+      "semantic_review_line_count": 1757,
+      "whole_file_semantic_review": true,
+      "unchanged_ranges_not_line_audited": [],
+      "changed_content_review_complete": true
+    },
+    {
+      "path": "crates/woodshed-genet/src/main.rs",
+      "sha256": "2bbc56aead9e23e1787d70aa5919ea1d5f3639929e6a4e817b10a2629a279532",
+      "lines": 787,
+      "actual_sha256": "2bbc56aead9e23e1787d70aa5919ea1d5f3639929e6a4e817b10a2629a279532",
+      "bytes": 31958,
+      "hash_matches": true,
+      "whole_file_byte_read_ranges": [
+        [
+          1,
+          787
+        ]
+      ],
+      "kind": "tracked_patch",
+      "patch_hunk_new_ranges": [
+        [
+          477,
+          493
+        ]
+      ],
+      "semantic_review_ranges": [
+        [
+          1,
+          787
+        ]
+      ],
+      "semantic_review_line_count": 787,
+      "whole_file_semantic_review": true,
+      "unchanged_ranges_not_line_audited": [],
+      "changed_content_review_complete": true
+    },
+    {
+      "path": "crates/woodshed-genet/src/scenario.rs",
+      "sha256": "058f65d6a4769cedab3e0c5e510bd6b405c9b657167233d589863c909e1078af",
+      "lines": 2637,
+      "actual_sha256": "058f65d6a4769cedab3e0c5e510bd6b405c9b657167233d589863c909e1078af",
+      "bytes": 109452,
+      "hash_matches": true,
+      "whole_file_byte_read_ranges": [
+        [
+          1,
+          2637
+        ]
+      ],
+      "kind": "tracked_patch",
+      "patch_hunk_new_ranges": [
+        [
+          633,
+          639
+        ],
+        [
+          1054,
+          1060
+        ],
+        [
+          1066,
+          1072
+        ],
+        [
+          1122,
+          1133
+        ],
+        [
+          1156,
+          1164
+        ],
+        [
+          2324,
+          2332
+        ]
+      ],
+      "semantic_review_ranges": [
+        [
+          1,
+          2637
+        ]
+      ],
+      "semantic_review_line_count": 2637,
+      "whole_file_semantic_review": true,
+      "unchanged_ranges_not_line_audited": [],
+      "changed_content_review_complete": true
+    },
+    {
+      "path": "crates/woodshed-genet/src/session.rs",
+      "sha256": "7cf05e7ecc8d7694093005c21b5c844e414fe6b178bf71561e3e6c33c13463c1",
+      "lines": 1355,
+      "actual_sha256": "7cf05e7ecc8d7694093005c21b5c844e414fe6b178bf71561e3e6c33c13463c1",
+      "bytes": 61602,
+      "hash_matches": true,
+      "whole_file_byte_read_ranges": [
+        [
+          1,
+          1355
+        ]
+      ],
+      "kind": "tracked_patch",
+      "patch_hunk_new_ranges": [
+        [
+          458,
+          466
+        ],
+        [
+          478,
+          484
+        ],
+        [
+          574,
+          587
+        ],
+        [
+          640,
+          646
+        ],
+        [
+          653,
+          659
+        ],
+        [
+          758,
+          771
+        ],
+        [
+          817,
+          823
+        ],
+        [
+          940,
+          953
+        ],
+        [
+          1000,
+          1006
+        ],
+        [
+          1035,
+          1041
+        ],
+        [
+          1107,
+          1120
+        ],
+        [
+          1168,
+          1174
+        ],
+        [
+          1247,
+          1253
+        ],
+        [
+          1258,
+          1264
+        ],
+        [
+          1276,
+          1285
+        ],
+        [
+          1329,
+          1335
+        ],
+        [
+          1344,
+          1350
+        ]
+      ],
+      "semantic_review_ranges": [
+        [
+          1,
+          1355
+        ]
+      ],
+      "semantic_review_line_count": 1355,
+      "whole_file_semantic_review": true,
+      "unchanged_ranges_not_line_audited": [],
+      "changed_content_review_complete": true
+    },
+    {
+      "path": "crates/woodshed-genet/src/sync.rs",
+      "sha256": "28c56d3540cd0c6f5cd765be4616240463cdfb3f9b376756cf5e39ef15ced26b",
+      "lines": 1355,
+      "actual_sha256": "28c56d3540cd0c6f5cd765be4616240463cdfb3f9b376756cf5e39ef15ced26b",
+      "bytes": 58063,
+      "hash_matches": true,
+      "whole_file_byte_read_ranges": [
+        [
+          1,
+          1355
+        ]
+      ],
+      "kind": "tracked_patch",
+      "patch_hunk_new_ranges": [
+        [
+          120,
+          131
+        ],
+        [
+          142,
+          154
+        ],
+        [
+          157,
+          165
+        ]
+      ],
+      "semantic_review_ranges": [
+        [
+          1,
+          1355
+        ]
+      ],
+      "semantic_review_line_count": 1355,
+      "whole_file_semantic_review": true,
+      "unchanged_ranges_not_line_audited": [],
+      "changed_content_review_complete": true
+    },
+    {
+      "path": "crates/woodshed-views/src/stage.rs",
+      "sha256": "ffed271824a738b2e330639aa23d784023711dbe1ce56cbf7f3c7e08b1ce945e",
+      "lines": 4552,
+      "actual_sha256": "ffed271824a738b2e330639aa23d784023711dbe1ce56cbf7f3c7e08b1ce945e",
+      "bytes": 183730,
+      "hash_matches": true,
+      "whole_file_byte_read_ranges": [
+        [
+          1,
+          4552
+        ]
+      ],
+      "kind": "tracked_patch",
+      "patch_hunk_new_ranges": [
+        [
+          53,
+          59
+        ],
+        [
+          1068,
+          1076
+        ],
+        [
+          1327,
+          1335
+        ],
+        [
+          2154,
+          2167
+        ],
+        [
+          2171,
+          2198
+        ],
+        [
+          2261,
+          2284
+        ],
+        [
+          2323,
+          2329
+        ],
+        [
+          2334,
+          2342
+        ],
+        [
+          2425,
+          2433
+        ],
+        [
+          3567,
+          3576
+        ],
+        [
+          3618,
+          3624
+        ],
+        [
+          3628,
+          3636
+        ],
+        [
+          4449,
+          4455
+        ],
+        [
+          4467,
+          4473
+        ],
+        [
+          4483,
+          4489
+        ],
+        [
+          4497,
+          4503
+        ]
+      ],
+      "semantic_review_ranges": [
+        [
+          1,
+          4552
+        ]
+      ],
+      "semantic_review_line_count": 4552,
+      "whole_file_semantic_review": true,
+      "unchanged_ranges_not_line_audited": [],
+      "changed_content_review_complete": true
+    },
+    {
+      "path": "crates/woodshed-views/src/stage/chord_approaches.rs",
+      "sha256": "987e90e508d35b102952faf0485db71f944dc28167198c3467fa9a561aba90bb",
+      "lines": 598,
+      "actual_sha256": "987e90e508d35b102952faf0485db71f944dc28167198c3467fa9a561aba90bb",
+      "bytes": 23568,
+      "hash_matches": true,
+      "whole_file_byte_read_ranges": [
+        [
+          1,
+          598
+        ]
+      ],
+      "kind": "tracked_patch",
+      "patch_hunk_new_ranges": [
+        [
+          107,
+          116
+        ],
+        [
+          453,
+          459
+        ],
+        [
+          592,
+          598
+        ]
+      ],
+      "semantic_review_ranges": [
+        [
+          1,
+          598
+        ]
+      ],
+      "semantic_review_line_count": 598,
+      "whole_file_semantic_review": true,
+      "unchanged_ranges_not_line_audited": [],
+      "changed_content_review_complete": true
+    },
+    {
+      "path": "crates/woodshed-views/src/stage/connected.rs",
+      "sha256": "364137f12f6bc193f6eb97c3ee5fc0e87ffe45f139d7daac8289a8b1e27e94ba",
+      "lines": 404,
+      "actual_sha256": "364137f12f6bc193f6eb97c3ee5fc0e87ffe45f139d7daac8289a8b1e27e94ba",
+      "bytes": 16111,
+      "hash_matches": true,
+      "whole_file_byte_read_ranges": [
+        [
+          1,
+          404
+        ]
+      ],
+      "kind": "tracked_patch",
+      "patch_hunk_new_ranges": [
+        [
+          61,
+          72
+        ],
+        [
+          290,
+          297
+        ],
+        [
+          321,
+          327
+        ],
+        [
+          382,
+          392
+        ]
+      ],
+      "semantic_review_ranges": [
+        [
+          1,
+          404
+        ]
+      ],
+      "semantic_review_line_count": 404,
+      "whole_file_semantic_review": true,
+      "unchanged_ranges_not_line_audited": [],
+      "changed_content_review_complete": true
+    },
+    {
+      "path": "crates/woodshed-views/src/stage/connected_scales.rs",
+      "sha256": "a0bff5056889f1272666167742796c5eca67415c6a47c1ef6ddca06614324cbb",
+      "lines": 430,
+      "actual_sha256": "a0bff5056889f1272666167742796c5eca67415c6a47c1ef6ddca06614324cbb",
+      "bytes": 16249,
+      "hash_matches": true,
+      "whole_file_byte_read_ranges": [
+        [
+          1,
+          430
+        ]
+      ],
+      "kind": "tracked_patch",
+      "patch_hunk_new_ranges": [
+        [
+          79,
+          90
+        ]
+      ],
+      "semantic_review_ranges": [
+        [
+          1,
+          430
+        ]
+      ],
+      "semantic_review_line_count": 430,
+      "whole_file_semantic_review": true,
+      "unchanged_ranges_not_line_audited": [],
+      "changed_content_review_complete": true
+    },
+    {
+      "path": "crates/woodshed-views/src/stage/context.rs",
+      "sha256": "a72bd06b4a1e40eafc827dae8edb123ced7fd96fc94d66e3e4f6699ccaa767f2",
+      "lines": 854,
+      "actual_sha256": "a72bd06b4a1e40eafc827dae8edb123ced7fd96fc94d66e3e4f6699ccaa767f2",
+      "bytes": 33809,
+      "hash_matches": true,
+      "whole_file_byte_read_ranges": [
+        [
+          1,
+          854
+        ]
+      ],
+      "kind": "tracked_patch",
+      "patch_hunk_new_ranges": [
+        [
+          104,
+          113
+        ]
+      ],
+      "semantic_review_ranges": [
+        [
+          1,
+          854
+        ]
+      ],
+      "semantic_review_line_count": 854,
+      "whole_file_semantic_review": true,
+      "unchanged_ranges_not_line_audited": [],
+      "changed_content_review_complete": true
+    },
+    {
+      "path": "crates/woodshed-views/src/stage/instances.rs",
+      "sha256": "16dc43635145da25e2d5d152209a49049009f9672a32e5bfb7ecfda4b4f5a825",
+      "lines": 510,
+      "actual_sha256": "16dc43635145da25e2d5d152209a49049009f9672a32e5bfb7ecfda4b4f5a825",
+      "bytes": 20983,
+      "hash_matches": true,
+      "whole_file_byte_read_ranges": [
+        [
+          1,
+          510
+        ]
+      ],
+      "kind": "tracked_patch",
+      "patch_hunk_new_ranges": [
+        [
+          181,
+          194
+        ],
+        [
+          295,
+          305
+        ],
+        [
+          309,
+          316
+        ],
+        [
+          330,
+          336
+        ],
+        [
+          354,
+          360
+        ],
+        [
+          441,
+          447
+        ],
+        [
+          482,
+          488
+        ],
+        [
+          499,
+          505
+        ]
+      ],
+      "semantic_review_ranges": [
+        [
+          1,
+          510
+        ]
+      ],
+      "semantic_review_line_count": 510,
+      "whole_file_semantic_review": true,
+      "unchanged_ranges_not_line_audited": [],
+      "changed_content_review_complete": true
+    },
+    {
+      "path": "crates/woodshed-views/src/stage/overview.rs",
+      "sha256": "ee4beee84b5458f978d22918661f0d500a77949e502c8e2cb33ca432f4df27a1",
+      "lines": 1761,
+      "actual_sha256": "ee4beee84b5458f978d22918661f0d500a77949e502c8e2cb33ca432f4df27a1",
+      "bytes": 74380,
+      "hash_matches": true,
+      "whole_file_byte_read_ranges": [
+        [
+          1,
+          1761
+        ]
+      ],
+      "kind": "tracked_patch",
+      "patch_hunk_new_ranges": [
+        [
+          1549,
+          1555
+        ]
+      ],
+      "semantic_review_ranges": [
+        [
+          1,
+          1761
+        ]
+      ],
+      "semantic_review_line_count": 1761,
+      "whole_file_semantic_review": true,
+      "unchanged_ranges_not_line_audited": [],
+      "changed_content_review_complete": true
+    },
+    {
+      "path": "crates/woodshed-views/src/stage/rehearsal.rs",
+      "sha256": "2097cd548b36cb5f2ebbc14be3c0776495567dc549acf0be44f35ac97ac0413d",
+      "lines": 406,
+      "actual_sha256": "2097cd548b36cb5f2ebbc14be3c0776495567dc549acf0be44f35ac97ac0413d",
+      "bytes": 16370,
+      "hash_matches": true,
+      "whole_file_byte_read_ranges": [
+        [
+          1,
+          406
+        ]
+      ],
+      "kind": "tracked_patch",
+      "patch_hunk_new_ranges": [
+        [
+          54,
+          60
+        ]
+      ],
+      "semantic_review_ranges": [
+        [
+          1,
+          406
+        ]
+      ],
+      "semantic_review_line_count": 406,
+      "whole_file_semantic_review": true,
+      "unchanged_ranges_not_line_audited": [],
+      "changed_content_review_complete": true
+    },
+    {
+      "path": "crates/woodshed-views/src/stage/related.rs",
+      "sha256": "63c30c70c42ce4ad0b4ee46fae31edb17b5165368dab52d483415aae94cb4a2e",
+      "lines": 1532,
+      "actual_sha256": "63c30c70c42ce4ad0b4ee46fae31edb17b5165368dab52d483415aae94cb4a2e",
+      "bytes": 63217,
+      "hash_matches": true,
+      "whole_file_byte_read_ranges": [
+        [
+          1,
+          1532
+        ]
+      ],
+      "kind": "tracked_patch",
+      "patch_hunk_new_ranges": [
+        [
+          437,
+          443
+        ]
+      ],
+      "semantic_review_ranges": [
+        [
+          1,
+          1532
+        ]
+      ],
+      "semantic_review_line_count": 1532,
+      "whole_file_semantic_review": true,
+      "unchanged_ranges_not_line_audited": [],
+      "changed_content_review_complete": true
+    },
+    {
+      "path": "crates/woodshed-views/src/stage/scale_patterns.rs",
+      "sha256": "d3542920f96a5c5945a7f5145040ee6cc580b9915fb072eb202e3a2c4df7cba9",
+      "lines": 553,
+      "actual_sha256": "d3542920f96a5c5945a7f5145040ee6cc580b9915fb072eb202e3a2c4df7cba9",
+      "bytes": 21392,
+      "hash_matches": true,
+      "whole_file_byte_read_ranges": [
+        [
+          1,
+          553
+        ]
+      ],
+      "kind": "tracked_patch",
+      "patch_hunk_new_ranges": [
+        [
+          46,
+          57
+        ],
+        [
+          140,
+          151
+        ],
+        [
+          416,
+          422
+        ]
+      ],
+      "semantic_review_ranges": [
+        [
+          1,
+          553
+        ]
+      ],
+      "semantic_review_line_count": 553,
+      "whole_file_semantic_review": true,
+      "unchanged_ranges_not_line_audited": [],
+      "changed_content_review_complete": true
+    },
+    {
+      "path": "crates/woodshed-views/src/stage/set_tray.rs",
+      "sha256": "eadff54e22e00c1ddbf91b90a7da61413eca5b83a5c54ab7142e9bc4f097ac5f",
+      "lines": 569,
+      "actual_sha256": "eadff54e22e00c1ddbf91b90a7da61413eca5b83a5c54ab7142e9bc4f097ac5f",
+      "bytes": 23659,
+      "hash_matches": true,
+      "whole_file_byte_read_ranges": [
+        [
+          1,
+          569
+        ]
+      ],
+      "kind": "tracked_patch",
+      "patch_hunk_new_ranges": [
+        [
+          75,
+          81
+        ]
+      ],
+      "semantic_review_ranges": [
+        [
+          1,
+          569
+        ]
+      ],
+      "semantic_review_line_count": 569,
+      "whole_file_semantic_review": true,
+      "unchanged_ranges_not_line_audited": [],
+      "changed_content_review_complete": true
+    },
+    {
+      "path": "crates/woodshed-views/src/stage/shapes.rs",
+      "sha256": "89b3c37ab56585c57e5037825e0e1cf9b731410c25764fc6c514da424b3e4951",
+      "lines": 452,
+      "actual_sha256": "89b3c37ab56585c57e5037825e0e1cf9b731410c25764fc6c514da424b3e4951",
+      "bytes": 19154,
+      "hash_matches": true,
+      "whole_file_byte_read_ranges": [
+        [
+          1,
+          452
+        ]
+      ],
+      "kind": "tracked_patch",
+      "patch_hunk_new_ranges": [
+        [
+          317,
+          324
+        ],
+        [
+          334,
+          340
+        ],
+        [
+          361,
+          367
+        ],
+        [
+          372,
+          383
+        ],
+        [
+          423,
+          429
+        ],
+        [
+          444,
+          450
+        ]
+      ],
+      "semantic_review_ranges": [
+        [
+          1,
+          452
+        ]
+      ],
+      "semantic_review_line_count": 452,
+      "whole_file_semantic_review": true,
+      "unchanged_ranges_not_line_audited": [],
+      "changed_content_review_complete": true
+    },
+    {
+      "path": "design_docs/2026-07-11_stage_set_tools_plan.md",
+      "sha256": "410121e32c1684192fe53e9a372c25a8c136218024c8fdf97db24a7d5d72e71e",
+      "lines": 3719,
+      "actual_sha256": "410121e32c1684192fe53e9a372c25a8c136218024c8fdf97db24a7d5d72e71e",
+      "bytes": 236696,
+      "hash_matches": true,
+      "whole_file_byte_read_ranges": [
+        [
+          1,
+          3719
+        ]
+      ],
+      "kind": "tracked_patch",
+      "patch_hunk_new_ranges": [
+        [
+          1747,
+          1754
+        ],
+        [
+          1762,
+          1772
+        ],
+        [
+          1793,
+          1799
+        ]
+      ],
+      "semantic_review_ranges": [
+        [
+          1,
+          3719
+        ]
+      ],
+      "semantic_review_line_count": 3719,
+      "whole_file_semantic_review": true,
+      "unchanged_ranges_not_line_audited": [],
+      "changed_content_review_complete": true
+    },
+    {
+      "path": "crates/woodshed-core/src/card_timing.rs",
+      "sha256": "5ebb815b2f6381bb5f3ccabe482aafc4489ec67403b13bf3714011a13dfb184d",
+      "lines": 116,
+      "actual_sha256": "5ebb815b2f6381bb5f3ccabe482aafc4489ec67403b13bf3714011a13dfb184d",
+      "bytes": 5632,
+      "hash_matches": true,
+      "whole_file_byte_read_ranges": [
+        [
+          1,
+          116
+        ]
+      ],
+      "kind": "new_untracked_module",
+      "patch_hunk_new_ranges": [],
+      "semantic_review_ranges": [
+        [
+          1,
+          116
+        ]
+      ],
+      "semantic_review_line_count": 116,
+      "whole_file_semantic_review": true,
+      "unchanged_ranges_not_line_audited": [],
+      "changed_content_review_complete": true
+    },
+    {
+      "path": "crates/woodshed-views/src/stage/timing.rs",
+      "sha256": "c954f868cffcea4a4e01fa0ecae51cf1d83a9c5372d3ecf9d8299b860088f33f",
+      "lines": 180,
+      "actual_sha256": "c954f868cffcea4a4e01fa0ecae51cf1d83a9c5372d3ecf9d8299b860088f33f",
+      "bytes": 9106,
+      "hash_matches": true,
+      "whole_file_byte_read_ranges": [
+        [
+          1,
+          180
+        ]
+      ],
+      "kind": "new_untracked_module",
+      "patch_hunk_new_ranges": [],
+      "semantic_review_ranges": [
+        [
+          1,
+          180
+        ]
+      ],
+      "semantic_review_line_count": 180,
+      "whole_file_semantic_review": true,
+      "unchanged_ranges_not_line_audited": [],
+      "changed_content_review_complete": true
+    }
+  ],
+  "patch_hunk_ledger": [
+    {
+      "path": "crates/woodshed-audio/src/output_runtime.rs",
+      "patch_line": 5,
+      "new_range": [
+        589,
+        611
+      ]
+    },
+    {
+      "path": "crates/woodshed-audio/src/output_runtime/tests.rs",
+      "patch_line": 33,
+      "new_range": [
+        661,
+        686
+      ]
+    },
+    {
+      "path": "crates/woodshed-core/src/audio.rs",
+      "patch_line": 64,
+      "new_range": [
+        118,
+        143
+      ]
+    },
+    {
+      "path": "crates/woodshed-core/src/audio.rs",
+      "patch_line": 91,
+      "new_range": [
+        154,
+        160
+      ]
+    },
+    {
+      "path": "crates/woodshed-core/src/captured_arpeggio.rs",
+      "patch_line": 103,
+      "new_range": [
+        131,
+        137
+      ]
+    },
+    {
+      "path": "crates/woodshed-core/src/captured_arpeggio.rs",
+      "patch_line": 112,
+      "new_range": [
+        246,
+        252
+      ]
+    },
+    {
+      "path": "crates/woodshed-core/src/captured_arpeggio.rs",
+      "patch_line": 121,
+      "new_range": [
+        330,
+        340
+      ]
+    },
+    {
+      "path": "crates/woodshed-core/src/captured_arpeggio.rs",
+      "patch_line": 135,
+      "new_range": [
+        373,
+        379
+      ]
+    },
+    {
+      "path": "crates/woodshed-core/src/captured_arpeggio.rs",
+      "patch_line": 144,
+      "new_range": [
+        387,
+        393
+      ]
+    },
+    {
+      "path": "crates/woodshed-core/src/card_shapes.rs",
+      "patch_line": 157,
+      "new_range": [
+        564,
+        570
+      ]
+    },
+    {
+      "path": "crates/woodshed-core/src/card_shapes.rs",
+      "patch_line": 166,
+      "new_range": [
+        595,
+        601
+      ]
+    },
+    {
+      "path": "crates/woodshed-core/src/card_shapes.rs",
+      "patch_line": 175,
+      "new_range": [
+        652,
+        663
+      ]
+    },
+    {
+      "path": "crates/woodshed-core/src/card_shapes.rs",
+      "patch_line": 190,
+      "new_range": [
+        699,
+        705
+      ]
+    },
+    {
+      "path": "crates/woodshed-core/src/chord_approach.rs",
+      "patch_line": 203,
+      "new_range": [
+        253,
+        261
+      ]
+    },
+    {
+      "path": "crates/woodshed-core/src/chord_approach.rs",
+      "patch_line": 215,
+      "new_range": [
+        439,
+        445
+      ]
+    },
+    {
+      "path": "crates/woodshed-core/src/chord_approach.rs",
+      "patch_line": 224,
+      "new_range": [
+        611,
+        617
+      ]
+    },
+    {
+      "path": "crates/woodshed-core/src/chord_approach.rs",
+      "patch_line": 233,
+      "new_range": [
+        621,
+        636
+      ]
+    },
+    {
+      "path": "crates/woodshed-core/src/chord_approach.rs",
+      "patch_line": 253,
+      "new_range": [
+        661,
+        668
+      ]
+    },
+    {
+      "path": "crates/woodshed-core/src/connected_catalog.rs",
+      "patch_line": 268,
+      "new_range": [
+        103,
+        120
+      ]
+    },
+    {
+      "path": "crates/woodshed-core/src/connected_catalog.rs",
+      "patch_line": 290,
+      "new_range": [
+        151,
+        159
+      ]
+    },
+    {
+      "path": "crates/woodshed-core/src/connected_catalog.rs",
+      "patch_line": 320,
+      "new_range": [
+        234,
+        241
+      ]
+    },
+    {
+      "path": "crates/woodshed-core/src/connected_catalog.rs",
+      "patch_line": 331,
+      "new_range": [
+        260,
+        267
+      ]
+    },
+    {
+      "path": "crates/woodshed-core/src/connected_catalog.rs",
+      "patch_line": 342,
+      "new_range": [
+        337,
+        343
+      ]
+    },
+    {
+      "path": "crates/woodshed-core/src/connected_catalog.rs",
+      "patch_line": 351,
+      "new_range": [
+        349,
+        355
+      ]
+    },
+    {
+      "path": "crates/woodshed-core/src/connected_catalog.rs",
+      "patch_line": 360,
+      "new_range": [
+        362,
+        368
+      ]
+    },
+    {
+      "path": "crates/woodshed-core/src/connected_catalog.rs",
+      "patch_line": 369,
+      "new_range": [
+        377,
+        390
+      ]
+    },
+    {
+      "path": "crates/woodshed-core/src/lib.rs",
+      "patch_line": 391,
+      "new_range": [
+        13,
+        20
+      ]
+    },
+    {
+      "path": "crates/woodshed-core/src/lib.rs",
+      "patch_line": 400,
+      "new_range": [
+        610,
+        617
+      ]
+    },
+    {
+      "path": "crates/woodshed-core/src/lib.rs",
+      "patch_line": 423,
+      "new_range": [
+        1917,
+        1924
+      ]
+    },
+    {
+      "path": "crates/woodshed-core/src/lib.rs",
+      "patch_line": 433,
+      "new_range": [
+        1979,
+        1991
+      ]
+    },
+    {
+      "path": "crates/woodshed-core/src/lib.rs",
+      "patch_line": 449,
+      "new_range": [
+        1999,
+        2005
+      ]
+    },
+    {
+      "path": "crates/woodshed-core/src/lib.rs",
+      "patch_line": 458,
+      "new_range": [
+        2008,
+        2015
+      ]
+    },
+    {
+      "path": "crates/woodshed-core/src/lib.rs",
+      "patch_line": 468,
+      "new_range": [
+        2019,
+        2028
+      ]
+    },
+    {
+      "path": "crates/woodshed-core/src/lib.rs",
+      "patch_line": 481,
+      "new_range": [
+        2045,
+        2051
+      ]
+    },
+    {
+      "path": "crates/woodshed-core/src/lib.rs",
+      "patch_line": 490,
+      "new_range": [
+        2059,
+        2074
+      ]
+    },
+    {
+      "path": "crates/woodshed-core/src/lib.rs",
+      "patch_line": 510,
+      "new_range": [
+        2176,
+        2216
+      ]
+    },
+    {
+      "path": "crates/woodshed-core/src/lib.rs",
+      "patch_line": 555,
+      "new_range": [
+        2383,
+        2395
+      ]
+    },
+    {
+      "path": "crates/woodshed-core/src/lib.rs",
+      "patch_line": 571,
+      "new_range": [
+        2438,
+        2444
+      ]
+    },
+    {
+      "path": "crates/woodshed-core/src/lib.rs",
+      "patch_line": 580,
+      "new_range": [
+        2564,
+        2570
+      ]
+    },
+    {
+      "path": "crates/woodshed-core/src/lib.rs",
+      "patch_line": 589,
+      "new_range": [
+        2575,
+        2581
+      ]
+    },
+    {
+      "path": "crates/woodshed-core/src/lib.rs",
+      "patch_line": 598,
+      "new_range": [
+        2584,
+        2590
+      ]
+    },
+    {
+      "path": "crates/woodshed-core/src/loop_plan.rs",
+      "patch_line": 611,
+      "new_range": [
+        154,
+        169
+      ]
+    },
+    {
+      "path": "crates/woodshed-core/src/loop_plan.rs",
+      "patch_line": 630,
+      "new_range": [
+        242,
+        248
+      ]
+    },
+    {
+      "path": "crates/woodshed-core/src/loop_plan.rs",
+      "patch_line": 639,
+      "new_range": [
+        291,
+        297
+      ]
+    },
+    {
+      "path": "crates/woodshed-core/src/scale_pattern_discovery.rs",
+      "patch_line": 652,
+      "new_range": [
+        146,
+        152
+      ]
+    },
+    {
+      "path": "crates/woodshed-core/src/scale_pattern_discovery.rs",
+      "patch_line": 661,
+      "new_range": [
+        226,
+        235
+      ]
+    },
+    {
+      "path": "crates/woodshed-core/src/scale_pattern_discovery.rs",
+      "patch_line": 674,
+      "new_range": [
+        295,
+        308
+      ]
+    },
+    {
+      "path": "crates/woodshed-core/src/scale_realization.rs",
+      "patch_line": 695,
+      "new_range": [
+        11,
+        17
+      ]
+    },
+    {
+      "path": "crates/woodshed-core/src/scale_realization.rs",
+      "patch_line": 704,
+      "new_range": [
+        179,
+        187
+      ]
+    },
+    {
+      "path": "crates/woodshed-core/src/scale_realization.rs",
+      "patch_line": 716,
+      "new_range": [
+        222,
+        243
+      ]
+    },
+    {
+      "path": "crates/woodshed-core/src/scale_realization.rs",
+      "patch_line": 762,
+      "new_range": [
+        303,
+        309
+      ]
+    },
+    {
+      "path": "crates/woodshed-core/src/scale_realization.rs",
+      "patch_line": 771,
+      "new_range": [
+        343,
+        352
+      ]
+    },
+    {
+      "path": "crates/woodshed-core/src/scale_realization.rs",
+      "patch_line": 784,
+      "new_range": [
+        354,
+        360
+      ]
+    },
+    {
+      "path": "crates/woodshed-core/src/scale_realization.rs",
+      "patch_line": 793,
+      "new_range": [
+        369,
+        375
+      ]
+    },
+    {
+      "path": "crates/woodshed-core/src/scale_realization.rs",
+      "patch_line": 802,
+      "new_range": [
+        445,
+        456
+      ]
+    },
+    {
+      "path": "crates/woodshed-genet/src/audio.rs",
+      "patch_line": 822,
+      "new_range": [
+        468,
+        481
+      ]
+    },
+    {
+      "path": "crates/woodshed-genet/src/drive.rs",
+      "patch_line": 841,
+      "new_range": [
+        208,
+        274
+      ]
+    },
+    {
+      "path": "crates/woodshed-genet/src/drive.rs",
+      "patch_line": 925,
+      "new_range": [
+        276,
+        282
+      ]
+    },
+    {
+      "path": "crates/woodshed-genet/src/drive.rs",
+      "patch_line": 934,
+      "new_range": [
+        378,
+        389
+      ]
+    },
+    {
+      "path": "crates/woodshed-genet/src/drive.rs",
+      "patch_line": 947,
+      "new_range": [
+        422,
+        429
+      ]
+    },
+    {
+      "path": "crates/woodshed-genet/src/drive.rs",
+      "patch_line": 958,
+      "new_range": [
+        453,
+        462
+      ]
+    },
+    {
+      "path": "crates/woodshed-genet/src/layout_tests.rs",
+      "patch_line": 975,
+      "new_range": [
+        55,
+        61
+      ]
+    },
+    {
+      "path": "crates/woodshed-genet/src/layout_tests.rs",
+      "patch_line": 984,
+      "new_range": [
+        210,
+        218
+      ]
+    },
+    {
+      "path": "crates/woodshed-genet/src/layout_tests.rs",
+      "patch_line": 995,
+      "new_range": [
+        226,
+        234
+      ]
+    },
+    {
+      "path": "crates/woodshed-genet/src/layout_tests.rs",
+      "patch_line": 1007,
+      "new_range": [
+        268,
+        274
+      ]
+    },
+    {
+      "path": "crates/woodshed-genet/src/layout_tests.rs",
+      "patch_line": 1016,
+      "new_range": [
+        358,
+        367
+      ]
+    },
+    {
+      "path": "crates/woodshed-genet/src/layout_tests.rs",
+      "patch_line": 1028,
+      "new_range": [
+        400,
+        408
+      ]
+    },
+    {
+      "path": "crates/woodshed-genet/src/layout_tests.rs",
+      "patch_line": 1039,
+      "new_range": [
+        412,
+        422
+      ]
+    },
+    {
+      "path": "crates/woodshed-genet/src/layout_tests.rs",
+      "patch_line": 1053,
+      "new_range": [
+        642,
+        648
+      ]
+    },
+    {
+      "path": "crates/woodshed-genet/src/layout_tests.rs",
+      "patch_line": 1062,
+      "new_range": [
+        785,
+        791
+      ]
+    },
+    {
+      "path": "crates/woodshed-genet/src/layout_tests.rs",
+      "patch_line": 1070,
+      "new_range": [
+        893,
+        904
+      ]
+    },
+    {
+      "path": "crates/woodshed-genet/src/layout_tests.rs",
+      "patch_line": 1084,
+      "new_range": [
+        1033,
+        1041
+      ]
+    },
+    {
+      "path": "crates/woodshed-genet/src/layout_tests.rs",
+      "patch_line": 1096,
+      "new_range": [
+        1065,
+        1071
+      ]
+    },
+    {
+      "path": "crates/woodshed-genet/src/layout_tests.rs",
+      "patch_line": 1105,
+      "new_range": [
+        1076,
+        1085
+      ]
+    },
+    {
+      "path": "crates/woodshed-genet/src/layout_tests.rs",
+      "patch_line": 1118,
+      "new_range": [
+        1131,
+        1140
+      ]
+    },
+    {
+      "path": "crates/woodshed-genet/src/layout_tests.rs",
+      "patch_line": 1131,
+      "new_range": [
+        1245,
+        1251
+      ]
+    },
+    {
+      "path": "crates/woodshed-genet/src/layout_tests.rs",
+      "patch_line": 1140,
+      "new_range": [
+        1256,
+        1264
+      ]
+    },
+    {
+      "path": "crates/woodshed-genet/src/layout_tests.rs",
+      "patch_line": 1151,
+      "new_range": [
+        1469,
+        1481
+      ]
+    },
+    {
+      "path": "crates/woodshed-genet/src/layout_tests.rs",
+      "patch_line": 1167,
+      "new_range": [
+        1599,
+        1605
+      ]
+    },
+    {
+      "path": "crates/woodshed-genet/src/main.rs",
+      "patch_line": 1180,
+      "new_range": [
+        477,
+        493
+      ]
+    },
+    {
+      "path": "crates/woodshed-genet/src/scenario.rs",
+      "patch_line": 1202,
+      "new_range": [
+        633,
+        639
+      ]
+    },
+    {
+      "path": "crates/woodshed-genet/src/scenario.rs",
+      "patch_line": 1211,
+      "new_range": [
+        1054,
+        1060
+      ]
+    },
+    {
+      "path": "crates/woodshed-genet/src/scenario.rs",
+      "patch_line": 1220,
+      "new_range": [
+        1066,
+        1072
+      ]
+    },
+    {
+      "path": "crates/woodshed-genet/src/scenario.rs",
+      "patch_line": 1231,
+      "new_range": [
+        1122,
+        1133
+      ]
+    },
+    {
+      "path": "crates/woodshed-genet/src/scenario.rs",
+      "patch_line": 1248,
+      "new_range": [
+        1156,
+        1164
+      ]
+    },
+    {
+      "path": "crates/woodshed-genet/src/scenario.rs",
+      "patch_line": 1258,
+      "new_range": [
+        2324,
+        2332
+      ]
+    },
+    {
+      "path": "crates/woodshed-genet/src/session.rs",
+      "patch_line": 1275,
+      "new_range": [
+        458,
+        466
+      ]
+    },
+    {
+      "path": "crates/woodshed-genet/src/session.rs",
+      "patch_line": 1287,
+      "new_range": [
+        478,
+        484
+      ]
+    },
+    {
+      "path": "crates/woodshed-genet/src/session.rs",
+      "patch_line": 1296,
+      "new_range": [
+        574,
+        587
+      ]
+    },
+    {
+      "path": "crates/woodshed-genet/src/session.rs",
+      "patch_line": 1315,
+      "new_range": [
+        640,
+        646
+      ]
+    },
+    {
+      "path": "crates/woodshed-genet/src/session.rs",
+      "patch_line": 1324,
+      "new_range": [
+        653,
+        659
+      ]
+    },
+    {
+      "path": "crates/woodshed-genet/src/session.rs",
+      "patch_line": 1333,
+      "new_range": [
+        758,
+        771
+      ]
+    },
+    {
+      "path": "crates/woodshed-genet/src/session.rs",
+      "patch_line": 1351,
+      "new_range": [
+        817,
+        823
+      ]
+    },
+    {
+      "path": "crates/woodshed-genet/src/session.rs",
+      "patch_line": 1360,
+      "new_range": [
+        940,
+        953
+      ]
+    },
+    {
+      "path": "crates/woodshed-genet/src/session.rs",
+      "patch_line": 1378,
+      "new_range": [
+        1000,
+        1006
+      ]
+    },
+    {
+      "path": "crates/woodshed-genet/src/session.rs",
+      "patch_line": 1387,
+      "new_range": [
+        1035,
+        1041
+      ]
+    },
+    {
+      "path": "crates/woodshed-genet/src/session.rs",
+      "patch_line": 1396,
+      "new_range": [
+        1107,
+        1120
+      ]
+    },
+    {
+      "path": "crates/woodshed-genet/src/session.rs",
+      "patch_line": 1413,
+      "new_range": [
+        1168,
+        1174
+      ]
+    },
+    {
+      "path": "crates/woodshed-genet/src/session.rs",
+      "patch_line": 1422,
+      "new_range": [
+        1247,
+        1253
+      ]
+    },
+    {
+      "path": "crates/woodshed-genet/src/session.rs",
+      "patch_line": 1431,
+      "new_range": [
+        1258,
+        1264
+      ]
+    },
+    {
+      "path": "crates/woodshed-genet/src/session.rs",
+      "patch_line": 1440,
+      "new_range": [
+        1276,
+        1285
+      ]
+    },
+    {
+      "path": "crates/woodshed-genet/src/session.rs",
+      "patch_line": 1453,
+      "new_range": [
+        1329,
+        1335
+      ]
+    },
+    {
+      "path": "crates/woodshed-genet/src/session.rs",
+      "patch_line": 1462,
+      "new_range": [
+        1344,
+        1350
+      ]
+    },
+    {
+      "path": "crates/woodshed-genet/src/sync.rs",
+      "patch_line": 1475,
+      "new_range": [
+        120,
+        131
+      ]
+    },
+    {
+      "path": "crates/woodshed-genet/src/sync.rs",
+      "patch_line": 1488,
+      "new_range": [
+        142,
+        154
+      ]
+    },
+    {
+      "path": "crates/woodshed-genet/src/sync.rs",
+      "patch_line": 1505,
+      "new_range": [
+        157,
+        165
+      ]
+    },
+    {
+      "path": "crates/woodshed-views/src/stage.rs",
+      "patch_line": 1520,
+      "new_range": [
+        53,
+        59
+      ]
+    },
+    {
+      "path": "crates/woodshed-views/src/stage.rs",
+      "patch_line": 1528,
+      "new_range": [
+        1068,
+        1076
+      ]
+    },
+    {
+      "path": "crates/woodshed-views/src/stage.rs",
+      "patch_line": 1538,
+      "new_range": [
+        1327,
+        1335
+      ]
+    },
+    {
+      "path": "crates/woodshed-views/src/stage.rs",
+      "patch_line": 1548,
+      "new_range": [
+        2154,
+        2167
+      ]
+    },
+    {
+      "path": "crates/woodshed-views/src/stage.rs",
+      "patch_line": 1565,
+      "new_range": [
+        2171,
+        2198
+      ]
+    },
+    {
+      "path": "crates/woodshed-views/src/stage.rs",
+      "patch_line": 1615,
+      "new_range": [
+        2261,
+        2284
+      ]
+    },
+    {
+      "path": "crates/woodshed-views/src/stage.rs",
+      "patch_line": 1673,
+      "new_range": [
+        2323,
+        2329
+      ]
+    },
+    {
+      "path": "crates/woodshed-views/src/stage.rs",
+      "patch_line": 1690,
+      "new_range": [
+        2334,
+        2342
+      ]
+    },
+    {
+      "path": "crates/woodshed-views/src/stage.rs",
+      "patch_line": 1700,
+      "new_range": [
+        2425,
+        2433
+      ]
+    },
+    {
+      "path": "crates/woodshed-views/src/stage.rs",
+      "patch_line": 1710,
+      "new_range": [
+        3567,
+        3576
+      ]
+    },
+    {
+      "path": "crates/woodshed-views/src/stage.rs",
+      "patch_line": 1721,
+      "new_range": [
+        3618,
+        3624
+      ]
+    },
+    {
+      "path": "crates/woodshed-views/src/stage.rs",
+      "patch_line": 1730,
+      "new_range": [
+        3628,
+        3636
+      ]
+    },
+    {
+      "path": "crates/woodshed-views/src/stage.rs",
+      "patch_line": 1748,
+      "new_range": [
+        4449,
+        4455
+      ]
+    },
+    {
+      "path": "crates/woodshed-views/src/stage.rs",
+      "patch_line": 1757,
+      "new_range": [
+        4467,
+        4473
+      ]
+    },
+    {
+      "path": "crates/woodshed-views/src/stage.rs",
+      "patch_line": 1766,
+      "new_range": [
+        4483,
+        4489
+      ]
+    },
+    {
+      "path": "crates/woodshed-views/src/stage.rs",
+      "patch_line": 1775,
+      "new_range": [
+        4497,
+        4503
+      ]
+    },
+    {
+      "path": "crates/woodshed-views/src/stage/chord_approaches.rs",
+      "patch_line": 1788,
+      "new_range": [
+        107,
+        116
+      ]
+    },
+    {
+      "path": "crates/woodshed-views/src/stage/chord_approaches.rs",
+      "patch_line": 1801,
+      "new_range": [
+        453,
+        459
+      ]
+    },
+    {
+      "path": "crates/woodshed-views/src/stage/chord_approaches.rs",
+      "patch_line": 1810,
+      "new_range": [
+        592,
+        598
+      ]
+    },
+    {
+      "path": "crates/woodshed-views/src/stage/connected.rs",
+      "patch_line": 1823,
+      "new_range": [
+        61,
+        72
+      ]
+    },
+    {
+      "path": "crates/woodshed-views/src/stage/connected.rs",
+      "patch_line": 1838,
+      "new_range": [
+        290,
+        297
+      ]
+    },
+    {
+      "path": "crates/woodshed-views/src/stage/connected.rs",
+      "patch_line": 1849,
+      "new_range": [
+        321,
+        327
+      ]
+    },
+    {
+      "path": "crates/woodshed-views/src/stage/connected.rs",
+      "patch_line": 1858,
+      "new_range": [
+        382,
+        392
+      ]
+    },
+    {
+      "path": "crates/woodshed-views/src/stage/connected_scales.rs",
+      "patch_line": 1877,
+      "new_range": [
+        79,
+        90
+      ]
+    },
+    {
+      "path": "crates/woodshed-views/src/stage/context.rs",
+      "patch_line": 1896,
+      "new_range": [
+        104,
+        113
+      ]
+    },
+    {
+      "path": "crates/woodshed-views/src/stage/instances.rs",
+      "patch_line": 1913,
+      "new_range": [
+        181,
+        194
+      ]
+    },
+    {
+      "path": "crates/woodshed-views/src/stage/instances.rs",
+      "patch_line": 1936,
+      "new_range": [
+        295,
+        305
+      ]
+    },
+    {
+      "path": "crates/woodshed-views/src/stage/instances.rs",
+      "patch_line": 1950,
+      "new_range": [
+        309,
+        316
+      ]
+    },
+    {
+      "path": "crates/woodshed-views/src/stage/instances.rs",
+      "patch_line": 1961,
+      "new_range": [
+        330,
+        336
+      ]
+    },
+    {
+      "path": "crates/woodshed-views/src/stage/instances.rs",
+      "patch_line": 1970,
+      "new_range": [
+        354,
+        360
+      ]
+    },
+    {
+      "path": "crates/woodshed-views/src/stage/instances.rs",
+      "patch_line": 1979,
+      "new_range": [
+        441,
+        447
+      ]
+    },
+    {
+      "path": "crates/woodshed-views/src/stage/instances.rs",
+      "patch_line": 1988,
+      "new_range": [
+        482,
+        488
+      ]
+    },
+    {
+      "path": "crates/woodshed-views/src/stage/instances.rs",
+      "patch_line": 1997,
+      "new_range": [
+        499,
+        505
+      ]
+    },
+    {
+      "path": "crates/woodshed-views/src/stage/overview.rs",
+      "patch_line": 2010,
+      "new_range": [
+        1549,
+        1555
+      ]
+    },
+    {
+      "path": "crates/woodshed-views/src/stage/rehearsal.rs",
+      "patch_line": 2023,
+      "new_range": [
+        54,
+        60
+      ]
+    },
+    {
+      "path": "crates/woodshed-views/src/stage/related.rs",
+      "patch_line": 2036,
+      "new_range": [
+        437,
+        443
+      ]
+    },
+    {
+      "path": "crates/woodshed-views/src/stage/scale_patterns.rs",
+      "patch_line": 2049,
+      "new_range": [
+        46,
+        57
+      ]
+    },
+    {
+      "path": "crates/woodshed-views/src/stage/scale_patterns.rs",
+      "patch_line": 2064,
+      "new_range": [
+        140,
+        151
+      ]
+    },
+    {
+      "path": "crates/woodshed-views/src/stage/scale_patterns.rs",
+      "patch_line": 2079,
+      "new_range": [
+        416,
+        422
+      ]
+    },
+    {
+      "path": "crates/woodshed-views/src/stage/set_tray.rs",
+      "patch_line": 2092,
+      "new_range": [
+        75,
+        81
+      ]
+    },
+    {
+      "path": "crates/woodshed-views/src/stage/shapes.rs",
+      "patch_line": 2104,
+      "new_range": [
+        317,
+        324
+      ]
+    },
+    {
+      "path": "crates/woodshed-views/src/stage/shapes.rs",
+      "patch_line": 2115,
+      "new_range": [
+        334,
+        340
+      ]
+    },
+    {
+      "path": "crates/woodshed-views/src/stage/shapes.rs",
+      "patch_line": 2124,
+      "new_range": [
+        361,
+        367
+      ]
+    },
+    {
+      "path": "crates/woodshed-views/src/stage/shapes.rs",
+      "patch_line": 2133,
+      "new_range": [
+        372,
+        383
+      ]
+    },
+    {
+      "path": "crates/woodshed-views/src/stage/shapes.rs",
+      "patch_line": 2148,
+      "new_range": [
+        423,
+        429
+      ]
+    },
+    {
+      "path": "crates/woodshed-views/src/stage/shapes.rs",
+      "patch_line": 2157,
+      "new_range": [
+        444,
+        450
+      ]
+    },
+    {
+      "path": "design_docs/2026-07-11_stage_set_tools_plan.md",
+      "patch_line": 2170,
+      "new_range": [
+        1747,
+        1754
+      ]
+    },
+    {
+      "path": "design_docs/2026-07-11_stage_set_tools_plan.md",
+      "patch_line": 2181,
+      "new_range": [
+        1762,
+        1772
+      ]
+    },
+    {
+      "path": "design_docs/2026-07-11_stage_set_tools_plan.md",
+      "patch_line": 2195,
+      "new_range": [
+        1793,
+        1799
+      ]
+    }
+  ],
+  "additional_context": [
+    {
+      "snapshot": "source-d12201bf",
+      "path": "crates/woodshed-audio/src/output_runtime/preview.rs",
+      "sha256": "cf3ededb70f9b0f2af56d3d56b3ba06bcdc4499edd148a7212cc161a841df0b5",
+      "lines": 137,
+      "semantic_review_ranges": [
+        [
+          1,
+          137
+        ]
+      ]
+    },
+    {
+      "snapshot": "source-d12201bf",
+      "path": "crates/woodshed-audio/src/chord_audio.rs",
+      "sha256": "934aa382bdeafbc368012253193ec06faa3cf82364d58d6324dd2aff37a7ab8d",
+      "lines": 352,
+      "semantic_review_ranges": [
+        [
+          1,
+          310
+        ]
+      ]
+    },
+    {
+      "snapshot": "source-d12201bf",
+      "path": "crates/woodshed-audio/src/output_runtime/processor.rs",
+      "sha256": "584ec80432ad4229e27f96fdd6ef3b9b1b46c91566d23597bf2b83556c42f83d",
+      "lines": 1039,
+      "semantic_review_ranges": [
+        [
+          860,
+          1000
+        ]
+      ]
+    },
+    {
+      "snapshot": "source-d12201bf",
+      "path": "crates/woodshed-core/src/lib.rs",
+      "sha256": "a5692292474e6651357e69532c1660b645cf586d46733bcbfe5a17615003fe7b",
+      "lines": 2711,
+      "semantic_review_ranges": [
+        [
+          1327,
+          1353
+        ],
+        [
+          1974,
+          2000
+        ]
+      ],
+      "purpose": "Verify the two drawn-path findings predate the local overlay."
+    }
+  ],
+  "prohibited_work_performed": {
+    "product_writes": false,
+    "git_commands": false,
+    "cargo_commands": false,
+    "builds_or_tests": false,
+    "native_or_product_process_control": false,
+    "other_chat_messaging": false
+  },
+  "output_files": [
+    "/Users/markik/Code/testing/woodshed/full-source-audit-20261016/local-overlay-coverage.json",
+    "/Users/markik/Code/testing/woodshed/full-source-audit-20261016/local-overlay-report.md"
+  ],
+  "semantic_read_passes": [
+    {
+      "date": "2026-10-16",
+      "kind": "initial_changed_content_and_seams",
+      "lines": 7199,
+      "per_file_ranges": {
+        "crates/woodshed-audio/src/output_runtime.rs": [
+          [
+            1,
+            762
+          ]
+        ],
+        "crates/woodshed-audio/src/output_runtime/tests.rs": [
+          [
+            661,
+            686
+          ]
+        ],
+        "crates/woodshed-core/src/audio.rs": [
+          [
+            1,
+            317
+          ]
+        ],
+        "crates/woodshed-core/src/captured_arpeggio.rs": [
+          [
+            1,
+            208
+          ],
+          [
+            246,
+            252
+          ],
+          [
+            330,
+            340
+          ],
+          [
+            373,
+            379
+          ],
+          [
+            387,
+            393
+          ]
+        ],
+        "crates/woodshed-core/src/card_shapes.rs": [
+          [
+            564,
+            570
+          ],
+          [
+            595,
+            601
+          ],
+          [
+            652,
+            663
+          ],
+          [
+            699,
+            705
+          ]
+        ],
+        "crates/woodshed-core/src/chord_approach.rs": [
+          [
+            235,
+            310
+          ],
+          [
+            439,
+            445
+          ],
+          [
+            611,
+            617
+          ],
+          [
+            621,
+            636
+          ],
+          [
+            661,
+            668
+          ]
+        ],
+        "crates/woodshed-core/src/connected_catalog.rs": [
+          [
+            1,
+            160
+          ],
+          [
+            234,
+            241
+          ],
+          [
+            260,
+            267
+          ],
+          [
+            337,
+            343
+          ],
+          [
+            349,
+            355
+          ],
+          [
+            362,
+            368
+          ],
+          [
+            377,
+            390
+          ]
+        ],
+        "crates/woodshed-core/src/lib.rs": [
+          [
+            13,
+            20
+          ],
+          [
+            610,
+            617
+          ],
+          [
+            697,
+            710
+          ],
+          [
+            1905,
+            2095
+          ],
+          [
+            2176,
+            2216
+          ],
+          [
+            2383,
+            2395
+          ],
+          [
+            2438,
+            2444
+          ],
+          [
+            2564,
+            2570
+          ],
+          [
+            2575,
+            2581
+          ],
+          [
+            2584,
+            2590
+          ]
+        ],
+        "crates/woodshed-core/src/loop_plan.rs": [
+          [
+            1,
+            230
+          ],
+          [
+            242,
+            248
+          ],
+          [
+            291,
+            297
+          ]
+        ],
+        "crates/woodshed-core/src/scale_pattern_discovery.rs": [
+          [
+            146,
+            152
+          ],
+          [
+            226,
+            235
+          ],
+          [
+            295,
+            308
+          ]
+        ],
+        "crates/woodshed-core/src/scale_realization.rs": [
+          [
+            1,
+            245
+          ],
+          [
+            303,
+            309
+          ],
+          [
+            343,
+            352
+          ],
+          [
+            354,
+            360
+          ],
+          [
+            369,
+            375
+          ],
+          [
+            445,
+            456
+          ]
+        ],
+        "crates/woodshed-genet/src/audio.rs": [
+          [
+            1,
+            155
+          ],
+          [
+            350,
+            520
+          ],
+          [
+            740,
+            860
+          ]
+        ],
+        "crates/woodshed-genet/src/drive.rs": [
+          [
+            1,
+            520
+          ]
+        ],
+        "crates/woodshed-genet/src/layout_tests.rs": [
+          [
+            55,
+            61
+          ],
+          [
+            210,
+            218
+          ],
+          [
+            226,
+            234
+          ],
+          [
+            268,
+            274
+          ],
+          [
+            358,
+            367
+          ],
+          [
+            400,
+            408
+          ],
+          [
+            412,
+            422
+          ],
+          [
+            642,
+            648
+          ],
+          [
+            785,
+            791
+          ],
+          [
+            893,
+            904
+          ],
+          [
+            1033,
+            1041
+          ],
+          [
+            1065,
+            1086
+          ],
+          [
+            1131,
+            1140
+          ],
+          [
+            1245,
+            1251
+          ],
+          [
+            1256,
+            1264
+          ],
+          [
+            1469,
+            1481
+          ],
+          [
+            1599,
+            1605
+          ]
+        ],
+        "crates/woodshed-genet/src/main.rs": [
+          [
+            330,
+            445
+          ],
+          [
+            477,
+            493
+          ]
+        ],
+        "crates/woodshed-genet/src/scenario.rs": [
+          [
+            633,
+            639
+          ],
+          [
+            1054,
+            1060
+          ],
+          [
+            1066,
+            1072
+          ],
+          [
+            1122,
+            1133
+          ],
+          [
+            1156,
+            1164
+          ],
+          [
+            2324,
+            2332
+          ]
+        ],
+        "crates/woodshed-genet/src/session.rs": [
+          [
+            458,
+            466
+          ],
+          [
+            478,
+            484
+          ],
+          [
+            574,
+            587
+          ],
+          [
+            640,
+            646
+          ],
+          [
+            653,
+            659
+          ],
+          [
+            758,
+            771
+          ],
+          [
+            817,
+            823
+          ],
+          [
+            940,
+            953
+          ],
+          [
+            1000,
+            1006
+          ],
+          [
+            1035,
+            1041
+          ],
+          [
+            1107,
+            1120
+          ],
+          [
+            1168,
+            1174
+          ],
+          [
+            1247,
+            1253
+          ],
+          [
+            1258,
+            1264
+          ],
+          [
+            1276,
+            1285
+          ],
+          [
+            1329,
+            1335
+          ],
+          [
+            1344,
+            1350
+          ]
+        ],
+        "crates/woodshed-genet/src/sync.rs": [
+          [
+            1,
+            290
+          ]
+        ],
+        "crates/woodshed-views/src/stage.rs": [
+          [
+            53,
+            59
+          ],
+          [
+            1068,
+            1076
+          ],
+          [
+            1327,
+            1335
+          ],
+          [
+            1758,
+            1830
+          ],
+          [
+            1955,
+            1996
+          ],
+          [
+            2145,
+            2472
+          ],
+          [
+            3567,
+            3576
+          ],
+          [
+            3584,
+            3636
+          ],
+          [
+            4420,
+            4552
+          ]
+        ],
+        "crates/woodshed-views/src/stage/chord_approaches.rs": [
+          [
+            75,
+            150
+          ],
+          [
+            453,
+            459
+          ],
+          [
+            592,
+            598
+          ]
+        ],
+        "crates/woodshed-views/src/stage/connected.rs": [
+          [
+            1,
+            150
+          ],
+          [
+            255,
+            335
+          ],
+          [
+            368,
+            404
+          ]
+        ],
+        "crates/woodshed-views/src/stage/connected_scales.rs": [
+          [
+            60,
+            114
+          ]
+        ],
+        "crates/woodshed-views/src/stage/context.rs": [
+          [
+            35,
+            124
+          ]
+        ],
+        "crates/woodshed-views/src/stage/instances.rs": [
+          [
+            1,
+            305
+          ],
+          [
+            309,
+            316
+          ],
+          [
+            330,
+            336
+          ],
+          [
+            354,
+            360
+          ],
+          [
+            441,
+            447
+          ],
+          [
+            482,
+            488
+          ],
+          [
+            499,
+            505
+          ]
+        ],
+        "crates/woodshed-views/src/stage/overview.rs": [
+          [
+            1549,
+            1555
+          ]
+        ],
+        "crates/woodshed-views/src/stage/rehearsal.rs": [
+          [
+            1,
+            406
+          ]
+        ],
+        "crates/woodshed-views/src/stage/related.rs": [
+          [
+            437,
+            443
+          ]
+        ],
+        "crates/woodshed-views/src/stage/scale_patterns.rs": [
+          [
+            1,
+            180
+          ],
+          [
+            416,
+            422
+          ]
+        ],
+        "crates/woodshed-views/src/stage/set_tray.rs": [
+          [
+            1,
+            250
+          ]
+        ],
+        "crates/woodshed-views/src/stage/shapes.rs": [
+          [
+            317,
+            324
+          ],
+          [
+            334,
+            340
+          ],
+          [
+            361,
+            367
+          ],
+          [
+            372,
+            383
+          ],
+          [
+            423,
+            429
+          ],
+          [
+            444,
+            450
+          ]
+        ],
+        "design_docs/2026-07-11_stage_set_tools_plan.md": [
+          [
+            1660,
+            1815
+          ]
+        ],
+        "crates/woodshed-core/src/card_timing.rs": [
+          [
+            1,
+            116
+          ]
+        ],
+        "crates/woodshed-views/src/stage/timing.rs": [
+          [
+            1,
+            180
+          ]
+        ]
+      }
+    },
+    {
+      "date": "2026-10-17",
+      "kind": "remaining_ranges_continuation",
+      "status": "complete",
+      "initial_missing_lines": 27662,
+      "remaining_ranges_at_start": {
+        "crates/woodshed-audio/src/output_runtime/tests.rs": [
+          [
+            1,
+            660
+          ]
+        ],
+        "crates/woodshed-core/src/captured_arpeggio.rs": [
+          [
+            209,
+            245
+          ],
+          [
+            253,
+            329
+          ],
+          [
+            341,
+            372
+          ],
+          [
+            380,
+            386
+          ],
+          [
+            394,
+            442
+          ]
+        ],
+        "crates/woodshed-core/src/card_shapes.rs": [
+          [
+            1,
+            563
+          ],
+          [
+            571,
+            594
+          ],
+          [
+            602,
+            651
+          ],
+          [
+            664,
+            698
+          ],
+          [
+            706,
+            842
+          ]
+        ],
+        "crates/woodshed-core/src/chord_approach.rs": [
+          [
+            1,
+            234
+          ],
+          [
+            311,
+            438
+          ],
+          [
+            446,
+            610
+          ],
+          [
+            618,
+            620
+          ],
+          [
+            637,
+            660
+          ]
+        ],
+        "crates/woodshed-core/src/connected_catalog.rs": [
+          [
+            161,
+            233
+          ],
+          [
+            242,
+            259
+          ],
+          [
+            268,
+            336
+          ],
+          [
+            344,
+            348
+          ],
+          [
+            356,
+            361
+          ],
+          [
+            369,
+            376
+          ]
+        ],
+        "crates/woodshed-core/src/lib.rs": [
+          [
+            1,
+            12
+          ],
+          [
+            21,
+            609
+          ],
+          [
+            618,
+            696
+          ],
+          [
+            711,
+            1904
+          ],
+          [
+            2096,
+            2175
+          ],
+          [
+            2217,
+            2382
+          ],
+          [
+            2396,
+            2437
+          ],
+          [
+            2445,
+            2563
+          ],
+          [
+            2571,
+            2574
+          ],
+          [
+            2582,
+            2583
+          ],
+          [
+            2591,
+            2726
+          ]
+        ],
+        "crates/woodshed-core/src/loop_plan.rs": [
+          [
+            231,
+            241
+          ],
+          [
+            249,
+            290
+          ],
+          [
+            298,
+            322
+          ]
+        ],
+        "crates/woodshed-core/src/scale_pattern_discovery.rs": [
+          [
+            1,
+            145
+          ],
+          [
+            153,
+            225
+          ],
+          [
+            236,
+            294
+          ],
+          [
+            309,
+            326
+          ]
+        ],
+        "crates/woodshed-core/src/scale_realization.rs": [
+          [
+            246,
+            302
+          ],
+          [
+            310,
+            342
+          ],
+          [
+            353,
+            353
+          ],
+          [
+            361,
+            368
+          ],
+          [
+            376,
+            444
+          ],
+          [
+            457,
+            458
+          ]
+        ],
+        "crates/woodshed-genet/src/audio.rs": [
+          [
+            156,
+            349
+          ],
+          [
+            521,
+            739
+          ],
+          [
+            861,
+            1875
+          ]
+        ],
+        "crates/woodshed-genet/src/layout_tests.rs": [
+          [
+            1,
+            54
+          ],
+          [
+            62,
+            209
+          ],
+          [
+            219,
+            225
+          ],
+          [
+            235,
+            267
+          ],
+          [
+            275,
+            357
+          ],
+          [
+            368,
+            399
+          ],
+          [
+            409,
+            411
+          ],
+          [
+            423,
+            641
+          ],
+          [
+            649,
+            784
+          ],
+          [
+            792,
+            892
+          ],
+          [
+            905,
+            1032
+          ],
+          [
+            1042,
+            1064
+          ],
+          [
+            1087,
+            1130
+          ],
+          [
+            1141,
+            1244
+          ],
+          [
+            1252,
+            1255
+          ],
+          [
+            1265,
+            1468
+          ],
+          [
+            1482,
+            1598
+          ],
+          [
+            1606,
+            1757
+          ]
+        ],
+        "crates/woodshed-genet/src/main.rs": [
+          [
+            1,
+            329
+          ],
+          [
+            446,
+            476
+          ],
+          [
+            494,
+            787
+          ]
+        ],
+        "crates/woodshed-genet/src/scenario.rs": [
+          [
+            1,
+            632
+          ],
+          [
+            640,
+            1053
+          ],
+          [
+            1061,
+            1065
+          ],
+          [
+            1073,
+            1121
+          ],
+          [
+            1134,
+            1155
+          ],
+          [
+            1165,
+            2323
+          ],
+          [
+            2333,
+            2637
+          ]
+        ],
+        "crates/woodshed-genet/src/session.rs": [
+          [
+            1,
+            457
+          ],
+          [
+            467,
+            477
+          ],
+          [
+            485,
+            573
+          ],
+          [
+            588,
+            639
+          ],
+          [
+            647,
+            652
+          ],
+          [
+            660,
+            757
+          ],
+          [
+            772,
+            816
+          ],
+          [
+            824,
+            939
+          ],
+          [
+            954,
+            999
+          ],
+          [
+            1007,
+            1034
+          ],
+          [
+            1042,
+            1106
+          ],
+          [
+            1121,
+            1167
+          ],
+          [
+            1175,
+            1246
+          ],
+          [
+            1254,
+            1257
+          ],
+          [
+            1265,
+            1275
+          ],
+          [
+            1286,
+            1328
+          ],
+          [
+            1336,
+            1343
+          ],
+          [
+            1351,
+            1355
+          ]
+        ],
+        "crates/woodshed-genet/src/sync.rs": [
+          [
+            291,
+            1355
+          ]
+        ],
+        "crates/woodshed-views/src/stage.rs": [
+          [
+            1,
+            52
+          ],
+          [
+            60,
+            1067
+          ],
+          [
+            1077,
+            1326
+          ],
+          [
+            1336,
+            1757
+          ],
+          [
+            1831,
+            1954
+          ],
+          [
+            1997,
+            2144
+          ],
+          [
+            2473,
+            3566
+          ],
+          [
+            3577,
+            3583
+          ],
+          [
+            3637,
+            4419
+          ]
+        ],
+        "crates/woodshed-views/src/stage/chord_approaches.rs": [
+          [
+            1,
+            74
+          ],
+          [
+            151,
+            452
+          ],
+          [
+            460,
+            591
+          ]
+        ],
+        "crates/woodshed-views/src/stage/connected.rs": [
+          [
+            151,
+            254
+          ],
+          [
+            336,
+            367
+          ]
+        ],
+        "crates/woodshed-views/src/stage/connected_scales.rs": [
+          [
+            1,
+            59
+          ],
+          [
+            115,
+            430
+          ]
+        ],
+        "crates/woodshed-views/src/stage/context.rs": [
+          [
+            1,
+            34
+          ],
+          [
+            125,
+            854
+          ]
+        ],
+        "crates/woodshed-views/src/stage/instances.rs": [
+          [
+            306,
+            308
+          ],
+          [
+            317,
+            329
+          ],
+          [
+            337,
+            353
+          ],
+          [
+            361,
+            440
+          ],
+          [
+            448,
+            481
+          ],
+          [
+            489,
+            498
+          ],
+          [
+            506,
+            510
+          ]
+        ],
+        "crates/woodshed-views/src/stage/overview.rs": [
+          [
+            1,
+            1548
+          ],
+          [
+            1556,
+            1761
+          ]
+        ],
+        "crates/woodshed-views/src/stage/related.rs": [
+          [
+            1,
+            436
+          ],
+          [
+            444,
+            1532
+          ]
+        ],
+        "crates/woodshed-views/src/stage/scale_patterns.rs": [
+          [
+            181,
+            415
+          ],
+          [
+            423,
+            553
+          ]
+        ],
+        "crates/woodshed-views/src/stage/set_tray.rs": [
+          [
+            251,
+            569
+          ]
+        ],
+        "crates/woodshed-views/src/stage/shapes.rs": [
+          [
+            1,
+            316
+          ],
+          [
+            325,
+            333
+          ],
+          [
+            341,
+            360
+          ],
+          [
+            368,
+            371
+          ],
+          [
+            384,
+            422
+          ],
+          [
+            430,
+            443
+          ],
+          [
+            451,
+            452
+          ]
+        ],
+        "design_docs/2026-07-11_stage_set_tools_plan.md": [
+          [
+            1,
+            1659
+          ],
+          [
+            1816,
+            3719
+          ]
+        ]
+      },
+      "completed_lanes": [
+        {
+          "reader": "root",
+          "files": [
+            "crates/woodshed-views/src/stage.rs",
+            "design_docs/2026-07-11_stage_set_tools_plan.md"
+          ],
+          "newly_read_lines": 7451,
+          "unread_ranges": []
+        },
+        {
+          "reader": "internal_views_review",
+          "files": [
+            "crates/woodshed-views/src/stage/chord_approaches.rs",
+            "crates/woodshed-views/src/stage/connected.rs",
+            "crates/woodshed-views/src/stage/connected_scales.rs",
+            "crates/woodshed-views/src/stage/context.rs",
+            "crates/woodshed-views/src/stage/instances.rs",
+            "crates/woodshed-views/src/stage/overview.rs",
+            "crates/woodshed-views/src/stage/related.rs",
+            "crates/woodshed-views/src/stage/scale_patterns.rs",
+            "crates/woodshed-views/src/stage/set_tray.rs",
+            "crates/woodshed-views/src/stage/shapes.rs"
+          ],
+          "newly_read_lines": 6313,
+          "unread_ranges": [],
+          "method": "Every remaining exact numbered range read; truncated set_tray output reread at 251-390; hash and line counts matched."
+        },
+        {
+          "reader": "internal_host_review",
+          "files": [
+            "crates/woodshed-genet/src/audio.rs",
+            "crates/woodshed-genet/src/layout_tests.rs",
+            "crates/woodshed-genet/src/main.rs",
+            "crates/woodshed-genet/src/scenario.rs",
+            "crates/woodshed-genet/src/session.rs",
+            "crates/woodshed-genet/src/sync.rs"
+          ],
+          "newly_read_lines": 8528,
+          "unread_ranges": [],
+          "method": "Every remaining exact numbered range read in untruncated chunks, including tests and scenario harness; hash and line counts matched."
+        },
+        {
+          "reader": "internal_core_review",
+          "files": [
+            "crates/woodshed-audio/src/output_runtime/tests.rs",
+            "crates/woodshed-core/src/captured_arpeggio.rs",
+            "crates/woodshed-core/src/card_shapes.rs",
+            "crates/woodshed-core/src/chord_approach.rs",
+            "crates/woodshed-core/src/connected_catalog.rs",
+            "crates/woodshed-core/src/lib.rs",
+            "crates/woodshed-core/src/loop_plan.rs",
+            "crates/woodshed-core/src/scale_pattern_discovery.rs",
+            "crates/woodshed-core/src/scale_realization.rs"
+          ],
+          "newly_read_lines": 5370,
+          "unread_ranges": [],
+          "method": "Every remaining exact numbered range read including tests, comments and whitespace, with adjacent context reread; hash and line counts matched."
+        }
+      ]
+    }
+  ],
+  "initial_review_date": "2026-10-16",
+  "source_coverage_gaps": [],
+  "input_integrity_on_completion": {
+    "all_assigned_hashes_match": true,
+    "all_assigned_line_counts_match": true,
+    "patch_hash_matches": true,
+    "assigned_inventory_sha256": "ffb1ef2c0c73e383fdf18df973aec7e6670af1b5a68eae70ecf729d2fb3c1983"
+  },
+  "review_method": "Initial 7,199-line changed-content/seam review plus actual numbered semantic reads of all 27,662 remaining lines by the root and three internal source-review lanes. Every original missing interval is retained in semantic_read_passes; hashing alone is not semantic coverage. No messages were sent to other Codex chats.",
+  "report_sha256": "f1b2c4729acb7182097dc282b637b498f52e530d6eacc87bec5026fda8d80549"
+}

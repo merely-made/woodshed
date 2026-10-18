@@ -1,0 +1,12 @@
+{
+  "command": [
+    "python3",
+    "validation/full-source-audit_20261016/verify_coverage.py",
+    "--repository",
+    "/Users/markik/Code/repos/woodshed",
+    "--overlay-source",
+    "/Users/markik/Code/testing/woodshed/full-source-audit-20261016/local-p5a-overlay"
+  ],
+  "exit_code": 1,
+  "completed_utc": "2026-10-18T01:31:57.012361+00:00"
+}

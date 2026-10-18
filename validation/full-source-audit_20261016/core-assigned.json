@@ -1,0 +1,345 @@
+[
+  {
+    "path": "crates/woodshed-core/Cargo.toml",
+    "sha256": "10c726fdc4bd084f249b1385d71fd2f7929c5f50fbba8518eed79f352f9371c4",
+    "lines": 72,
+    "bytes": 3262,
+    "kind": "source"
+  },
+  {
+    "path": "crates/woodshed-core/examples/musical_comparison_export.rs",
+    "sha256": "b395095105b4de96fdb94c86f8e7c16bad5a0dafb4877939099bb0806b63ef67",
+    "lines": 469,
+    "bytes": 15047,
+    "kind": "source"
+  },
+  {
+    "path": "crates/woodshed-core/examples/relationship_disclosure_export.rs",
+    "sha256": "b2445d343d33ddd7b61a9149c4faf5fccafd54755a41d4eed833bb7acb6ea79c",
+    "lines": 47,
+    "bytes": 1459,
+    "kind": "source"
+  },
+  {
+    "path": "crates/woodshed-core/examples/stage_projection_export.rs",
+    "sha256": "933abacb3c05df424743d334ca0165bb6fd46a785ec19f3be08cc839c2c689f0",
+    "lines": 275,
+    "bytes": 9767,
+    "kind": "source"
+  },
+  {
+    "path": "crates/woodshed-core/src/arpeggio.rs",
+    "sha256": "2f34728e332c2849b6180c454773d06d6ea8bd385d508c0f34d6d76b17916172",
+    "lines": 222,
+    "bytes": 7681,
+    "kind": "source"
+  },
+  {
+    "path": "crates/woodshed-core/src/arrangement.rs",
+    "sha256": "8f9d69e663f4b9bd735e0a72944138fe7d68c9cef00e799b23fcb4a61a622207",
+    "lines": 318,
+    "bytes": 10027,
+    "kind": "source"
+  },
+  {
+    "path": "crates/woodshed-core/src/arrangement_scene.rs",
+    "sha256": "c5922182f53d658db764c02de6081d26737a61b98e6233749b5850b6c6c26438",
+    "lines": 360,
+    "bytes": 12987,
+    "kind": "source"
+  },
+  {
+    "path": "crates/woodshed-core/src/audio.rs",
+    "sha256": "1b284ac61e9da23417cd853a04a970a7c73a3e1ac31b70f81cd1b1e33ea2f3c0",
+    "lines": 296,
+    "bytes": 12018,
+    "kind": "source"
+  },
+  {
+    "path": "crates/woodshed-core/src/bin/woodshed-arrangement-scene.rs",
+    "sha256": "be12376096c60e8457e8a62a851121d155eca2afa6396463909e6e95747028ef",
+    "lines": 113,
+    "bytes": 3358,
+    "kind": "source"
+  },
+  {
+    "path": "crates/woodshed-core/src/bin/woodshed-fretboard-scene.rs",
+    "sha256": "82192073fdf7fff80a34223d8913aa2782bdf9a2a21e2cfc5f8e303cb0e59e17",
+    "lines": 43,
+    "bytes": 1504,
+    "kind": "source"
+  },
+  {
+    "path": "crates/woodshed-core/src/bin/woodshed-progression-scene.rs",
+    "sha256": "747b1a1f97d0124965e34f0c5d9a87a6a80f0446932dc2312698e91050450f03",
+    "lines": 46,
+    "bytes": 1655,
+    "kind": "source"
+  },
+  {
+    "path": "crates/woodshed-core/src/bin/woodshed-saved-arrangement.rs",
+    "sha256": "c7f4dc99fb75eae5eda2588014ca0c3f9a6d0be40843ac40cf3c6df6995e29a2",
+    "lines": 108,
+    "bytes": 4856,
+    "kind": "source"
+  },
+  {
+    "path": "crates/woodshed-core/src/captured_arpeggio.rs",
+    "sha256": "1bf6cad58a1d6bb8d18d83d450eda587b5da2ebeb938146c03cf84f3e6be2fa0",
+    "lines": 442,
+    "bytes": 19062,
+    "kind": "source"
+  },
+  {
+    "path": "crates/woodshed-core/src/card_shapes.rs",
+    "sha256": "d9b82c5df0f29a933a3fa8ba678712879e22b55ec5e64b877b11169b8ce3eda8",
+    "lines": 842,
+    "bytes": 31651,
+    "kind": "source"
+  },
+  {
+    "path": "crates/woodshed-core/src/catalog_explorations.rs",
+    "sha256": "3708c8c0d771e4a89fd64f6e2f43187c7b92b769c327c536c5471b3e0af6bec8",
+    "lines": 259,
+    "bytes": 9216,
+    "kind": "source"
+  },
+  {
+    "path": "crates/woodshed-core/src/chord_approach.rs",
+    "sha256": "3a2def2a06a456c00b17cde7e74522a8a7ae345175ba2fe2abe1bc6022feef15",
+    "lines": 668,
+    "bytes": 26139,
+    "kind": "source"
+  },
+  {
+    "path": "crates/woodshed-core/src/comparison_disclosure.rs",
+    "sha256": "64552dddb6d0e36f2fa15628aad507ee28231f8413b24049ee24df759871b0b4",
+    "lines": 712,
+    "bytes": 26503,
+    "kind": "source"
+  },
+  {
+    "path": "crates/woodshed-core/src/connected_catalog.rs",
+    "sha256": "e0b268af85dd1afbe538148e88a3f06af6d15b7f1703cc5eac488e0fc07c3ae4",
+    "lines": 407,
+    "bytes": 15825,
+    "kind": "source"
+  },
+  {
+    "path": "crates/woodshed-core/src/connected_scales.rs",
+    "sha256": "1ee312bc1a5fba429ab5f95b00375e58a58b4564b3813c8c5fcc100c56bb3d14",
+    "lines": 393,
+    "bytes": 15342,
+    "kind": "source"
+  },
+  {
+    "path": "crates/woodshed-core/src/fretboard_scene.rs",
+    "sha256": "9771769eb17800182c49826da3c09c65e2a51604eb6be43711311515588de605",
+    "lines": 240,
+    "bytes": 8164,
+    "kind": "source"
+  },
+  {
+    "path": "crates/woodshed-core/src/harmony.rs",
+    "sha256": "7e7cbf57aa1d1d928db96951272ee799d76b0078a92506b7a0a3a3eedca93c88",
+    "lines": 341,
+    "bytes": 12819,
+    "kind": "source"
+  },
+  {
+    "path": "crates/woodshed-core/src/history.rs",
+    "sha256": "0650b77adf8a381219ec38dfa1f3650f7425324827e8aee1fd5a1e5a00df9bf0",
+    "lines": 956,
+    "bytes": 36100,
+    "kind": "source"
+  },
+  {
+    "path": "crates/woodshed-core/src/lib.rs",
+    "sha256": "a5692292474e6651357e69532c1660b645cf586d46733bcbfe5a17615003fe7b",
+    "lines": 2711,
+    "bytes": 103605,
+    "kind": "source"
+  },
+  {
+    "path": "crates/woodshed-core/src/loop_capture.rs",
+    "sha256": "a88f218076475aa1689c83ac16cf3c4e3c4ab269238cb3e2a50895febf09b582",
+    "lines": 947,
+    "bytes": 38823,
+    "kind": "source"
+  },
+  {
+    "path": "crates/woodshed-core/src/loop_plan.rs",
+    "sha256": "ab499eeb1b8b31a5580ca297a4b4e8a392f8861db0acad1e19035f7674373b6e",
+    "lines": 314,
+    "bytes": 11343,
+    "kind": "source"
+  },
+  {
+    "path": "crates/woodshed-core/src/mere.rs",
+    "sha256": "452aa9870ca86b1a8edfbc2b8a533d3a57e80aed55ee9cfbac353e81b65952e5",
+    "lines": 300,
+    "bytes": 9687,
+    "kind": "source"
+  },
+  {
+    "path": "crates/woodshed-core/src/midi.rs",
+    "sha256": "7d60941c7a65d54a3f715d6066d20b5278b930029c20bbc3580486cc6f857c00",
+    "lines": 45,
+    "bytes": 2497,
+    "kind": "source"
+  },
+  {
+    "path": "crates/woodshed-core/src/musical_context.rs",
+    "sha256": "cd07c18cddab31b87213d66057eaf23111cd3fec99493922d4a76580ed95855a",
+    "lines": 365,
+    "bytes": 14055,
+    "kind": "source"
+  },
+  {
+    "path": "crates/woodshed-core/src/personal_relations.rs",
+    "sha256": "db19eba6cfeb68e1f560dbead69243430fb38cd886d8c1868992784d0517e9c2",
+    "lines": 494,
+    "bytes": 17544,
+    "kind": "source"
+  },
+  {
+    "path": "crates/woodshed-core/src/pitch_motion_reading.rs",
+    "sha256": "3a1dec2a86b3f40a4464b60390ab304270906def29529222899f61938379fbdc",
+    "lines": 297,
+    "bytes": 10408,
+    "kind": "source"
+  },
+  {
+    "path": "crates/woodshed-core/src/progression_scene.rs",
+    "sha256": "4f4c12b27fa69af7b753d161d7ce28cabb680a3fd106a1515a52b6fd7818b721",
+    "lines": 224,
+    "bytes": 8088,
+    "kind": "source"
+  },
+  {
+    "path": "crates/woodshed-core/src/retained_sets.rs",
+    "sha256": "9a6f78e0c921379ceaca85652430e2862d0d1cdee6d5db8920d496d36986804b",
+    "lines": 161,
+    "bytes": 6153,
+    "kind": "source"
+  },
+  {
+    "path": "crates/woodshed-core/src/saved_arrangements.rs",
+    "sha256": "981cbd264957fe7a4283f120179b6ad3aef264bf59208ec8cc2d6278d8f6f668",
+    "lines": 222,
+    "bytes": 8072,
+    "kind": "source"
+  },
+  {
+    "path": "crates/woodshed-core/src/scale_pattern_discovery.rs",
+    "sha256": "e36348ff2720eff1ef905bdd9b4138f5181c7f954ff35b0285de9ca53797ef98",
+    "lines": 326,
+    "bytes": 12622,
+    "kind": "source"
+  },
+  {
+    "path": "crates/woodshed-core/src/scale_realization.rs",
+    "sha256": "3b740903bcb92e41d3703a6734b8256f220a8409d8961f7016d021e1b9da51f3",
+    "lines": 472,
+    "bytes": 17974,
+    "kind": "source"
+  },
+  {
+    "path": "crates/woodshed-core/src/sealed_backend.rs",
+    "sha256": "717ce38cb83debe6501f02c0a5f0cd709725b93f080e9df24c5dfe23234ab432",
+    "lines": 289,
+    "bytes": 11044,
+    "kind": "source"
+  },
+  {
+    "path": "crates/woodshed-core/src/search.rs",
+    "sha256": "f0515dbeeb631e93e79e2c9a871adf308023d49a96b93144514eabf557422223",
+    "lines": 141,
+    "bytes": 4641,
+    "kind": "source"
+  },
+  {
+    "path": "crates/woodshed-core/src/session_overview.rs",
+    "sha256": "fe2a1a4e257a73e7425e47988885f9180f971e4e47b07748c25fddd98eaadcb6",
+    "lines": 1783,
+    "bytes": 68483,
+    "kind": "source"
+  },
+  {
+    "path": "crates/woodshed-core/src/settings.rs",
+    "sha256": "62ce96c25ff29451b9bd19ec1d8e3a224494452cc0a2978a584e942e0ef7923f",
+    "lines": 508,
+    "bytes": 16650,
+    "kind": "source"
+  },
+  {
+    "path": "crates/woodshed-core/src/shape_movement.rs",
+    "sha256": "fca578dc51a5630bdb7da1b2be626453ca9629add55aced534d606ea06f543fe",
+    "lines": 389,
+    "bytes": 13976,
+    "kind": "source"
+  },
+  {
+    "path": "crates/woodshed-core/src/song.rs",
+    "sha256": "c0df0263e9b81ad366d61f521803e6dd9b7d29b57d71ad9d72cdbbddcf324882",
+    "lines": 334,
+    "bytes": 11248,
+    "kind": "source"
+  },
+  {
+    "path": "crates/woodshed-core/src/stage_candidates.rs",
+    "sha256": "46e38afb5ea9a023f4696529a30875a11c90b34b75e1aeeecc2166a76425a66a",
+    "lines": 201,
+    "bytes": 6940,
+    "kind": "source"
+  },
+  {
+    "path": "crates/woodshed-core/src/stage_context.rs",
+    "sha256": "2c001b4b147ac93df91b93a24c7492d73b08ebfbcfcb7fedc1b7a197fb9197c7",
+    "lines": 850,
+    "bytes": 30467,
+    "kind": "source"
+  },
+  {
+    "path": "crates/woodshed-core/src/stage_scene.rs",
+    "sha256": "adae4f351e9c81b4f5d99e520464f95763f76ad752b7e3d2397a83a58ce63b35",
+    "lines": 2537,
+    "bytes": 99919,
+    "kind": "source"
+  },
+  {
+    "path": "crates/woodshed-core/src/storage.rs",
+    "sha256": "849dabb177f540fdf90cc0189bcaf55179c48fb31005a2a20cb854c6c3df9906",
+    "lines": 1123,
+    "bytes": 45734,
+    "kind": "source"
+  },
+  {
+    "path": "crates/woodshed-core/src/tonnetz.rs",
+    "sha256": "f1ca3beed248aeb3a6e5b884be10390b26c4ed54a14f4792a46a7c90b90abfd7",
+    "lines": 331,
+    "bytes": 11226,
+    "kind": "source"
+  },
+  {
+    "path": "crates/woodshed-core/src/working_sets.rs",
+    "sha256": "6fd586639149ff8bce66089bf68962840aa170a8d6da3449358aff855918df7e",
+    "lines": 189,
+    "bytes": 6580,
+    "kind": "source"
+  },
+  {
+    "path": "crates/woodshed-core/tests/saved_arrangements.rs",
+    "sha256": "8e0c2358a0e8efb7fe1a6469db3ac06188c47a17f2b3fb6434713f1b93239f9d",
+    "lines": 355,
+    "bytes": 12913,
+    "kind": "source"
+  },
+  {
+    "path": "crates/woodshed-core/tests/stage_backdrop.rs",
+    "sha256": "3e699317b1fca9355a13ff4004226890eefdac7062bb09017e25d3b54163bbfc",
+    "lines": 24,
+    "bytes": 878,
+    "kind": "source"
+  }
+]

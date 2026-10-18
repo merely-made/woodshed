@@ -1,0 +1,167 @@
+[
+  {
+    "path": "crates/woodshed-audio/src/output_runtime.rs",
+    "sha256": "cbb814c1eef46236eb158215ee5cd6c92f033b020203ba4648750147c017ea7e",
+    "lines": 762
+  },
+  {
+    "path": "crates/woodshed-audio/src/output_runtime/tests.rs",
+    "sha256": "d60ac3f18e8cbe82c4c2716a7bda28acfb16f3a1225e60330b7eac61447650e8",
+    "lines": 686
+  },
+  {
+    "path": "crates/woodshed-core/src/audio.rs",
+    "sha256": "2dae9a7e3631bc4768587d3d465bb75d73e13408b734d66af612c7aadf9f4489",
+    "lines": 317
+  },
+  {
+    "path": "crates/woodshed-core/src/captured_arpeggio.rs",
+    "sha256": "51c2dbb1a8f2e12fd999289e0f1f1333337cd96b9a0404833713b4b8b3fe1ed5",
+    "lines": 442
+  },
+  {
+    "path": "crates/woodshed-core/src/card_shapes.rs",
+    "sha256": "25ffda9dde3e1e2efa32f970bf102c8dc81106f94137fe70d223f3429a10685e",
+    "lines": 842
+  },
+  {
+    "path": "crates/woodshed-core/src/chord_approach.rs",
+    "sha256": "52b05b4ad4ec880c6e47e2ad46cedf43c3967c5770c45984d9959b63822036c3",
+    "lines": 668
+  },
+  {
+    "path": "crates/woodshed-core/src/connected_catalog.rs",
+    "sha256": "92a93775e7a508de13073be7c9cd92cd2f52323df7913a4e893700114e2cbab2",
+    "lines": 390
+  },
+  {
+    "path": "crates/woodshed-core/src/lib.rs",
+    "sha256": "0ad54885a88857325f7a0054539cdc3885bfeb98c3a72989d21c29298999472e",
+    "lines": 2726
+  },
+  {
+    "path": "crates/woodshed-core/src/loop_plan.rs",
+    "sha256": "94edc634d39ff3f3bc10e886879d77b567ad5809d0bb70d2f0b3ce5ae642c52d",
+    "lines": 322
+  },
+  {
+    "path": "crates/woodshed-core/src/scale_pattern_discovery.rs",
+    "sha256": "73fe1da7b38a9000b0a624a2e73fab50ffec6d052027635028ad1a0dd6708259",
+    "lines": 326
+  },
+  {
+    "path": "crates/woodshed-core/src/scale_realization.rs",
+    "sha256": "12bfc133fad845198c66a5ced4775da1e128e620c4614e7bfe34b8df3bd0ce1a",
+    "lines": 458
+  },
+  {
+    "path": "crates/woodshed-genet/src/audio.rs",
+    "sha256": "0aed38079e36cf42b9073137f0b9e7fe967056ce4e5622c1d9362e6b94827a24",
+    "lines": 1875
+  },
+  {
+    "path": "crates/woodshed-genet/src/drive.rs",
+    "sha256": "6c06d879d96b201241050478ecc8598cdbc327dee86f7db280f14db5f004d7dd",
+    "lines": 520
+  },
+  {
+    "path": "crates/woodshed-genet/src/layout_tests.rs",
+    "sha256": "24886f80b571f3548fd99c58340c43e08ac23f56fbdd111cd6ec76ac5f34f25a",
+    "lines": 1757
+  },
+  {
+    "path": "crates/woodshed-genet/src/main.rs",
+    "sha256": "2bbc56aead9e23e1787d70aa5919ea1d5f3639929e6a4e817b10a2629a279532",
+    "lines": 787
+  },
+  {
+    "path": "crates/woodshed-genet/src/scenario.rs",
+    "sha256": "058f65d6a4769cedab3e0c5e510bd6b405c9b657167233d589863c909e1078af",
+    "lines": 2637
+  },
+  {
+    "path": "crates/woodshed-genet/src/session.rs",
+    "sha256": "7cf05e7ecc8d7694093005c21b5c844e414fe6b178bf71561e3e6c33c13463c1",
+    "lines": 1355
+  },
+  {
+    "path": "crates/woodshed-genet/src/sync.rs",
+    "sha256": "28c56d3540cd0c6f5cd765be4616240463cdfb3f9b376756cf5e39ef15ced26b",
+    "lines": 1355
+  },
+  {
+    "path": "crates/woodshed-views/src/stage.rs",
+    "sha256": "ffed271824a738b2e330639aa23d784023711dbe1ce56cbf7f3c7e08b1ce945e",
+    "lines": 4552
+  },
+  {
+    "path": "crates/woodshed-views/src/stage/chord_approaches.rs",
+    "sha256": "987e90e508d35b102952faf0485db71f944dc28167198c3467fa9a561aba90bb",
+    "lines": 598
+  },
+  {
+    "path": "crates/woodshed-views/src/stage/connected.rs",
+    "sha256": "364137f12f6bc193f6eb97c3ee5fc0e87ffe45f139d7daac8289a8b1e27e94ba",
+    "lines": 404
+  },
+  {
+    "path": "crates/woodshed-views/src/stage/connected_scales.rs",
+    "sha256": "a0bff5056889f1272666167742796c5eca67415c6a47c1ef6ddca06614324cbb",
+    "lines": 430
+  },
+  {
+    "path": "crates/woodshed-views/src/stage/context.rs",
+    "sha256": "a72bd06b4a1e40eafc827dae8edb123ced7fd96fc94d66e3e4f6699ccaa767f2",
+    "lines": 854
+  },
+  {
+    "path": "crates/woodshed-views/src/stage/instances.rs",
+    "sha256": "16dc43635145da25e2d5d152209a49049009f9672a32e5bfb7ecfda4b4f5a825",
+    "lines": 510
+  },
+  {
+    "path": "crates/woodshed-views/src/stage/overview.rs",
+    "sha256": "ee4beee84b5458f978d22918661f0d500a77949e502c8e2cb33ca432f4df27a1",
+    "lines": 1761
+  },
+  {
+    "path": "crates/woodshed-views/src/stage/rehearsal.rs",
+    "sha256": "2097cd548b36cb5f2ebbc14be3c0776495567dc549acf0be44f35ac97ac0413d",
+    "lines": 406
+  },
+  {
+    "path": "crates/woodshed-views/src/stage/related.rs",
+    "sha256": "63c30c70c42ce4ad0b4ee46fae31edb17b5165368dab52d483415aae94cb4a2e",
+    "lines": 1532
+  },
+  {
+    "path": "crates/woodshed-views/src/stage/scale_patterns.rs",
+    "sha256": "d3542920f96a5c5945a7f5145040ee6cc580b9915fb072eb202e3a2c4df7cba9",
+    "lines": 553
+  },
+  {
+    "path": "crates/woodshed-views/src/stage/set_tray.rs",
+    "sha256": "eadff54e22e00c1ddbf91b90a7da61413eca5b83a5c54ab7142e9bc4f097ac5f",
+    "lines": 569
+  },
+  {
+    "path": "crates/woodshed-views/src/stage/shapes.rs",
+    "sha256": "89b3c37ab56585c57e5037825e0e1cf9b731410c25764fc6c514da424b3e4951",
+    "lines": 452
+  },
+  {
+    "path": "design_docs/2026-07-11_stage_set_tools_plan.md",
+    "sha256": "410121e32c1684192fe53e9a372c25a8c136218024c8fdf97db24a7d5d72e71e",
+    "lines": 3719
+  },
+  {
+    "path": "crates/woodshed-core/src/card_timing.rs",
+    "sha256": "5ebb815b2f6381bb5f3ccabe482aafc4489ec67403b13bf3714011a13dfb184d",
+    "lines": 116
+  },
+  {
+    "path": "crates/woodshed-views/src/stage/timing.rs",
+    "sha256": "c954f868cffcea4a4e01fa0ecae51cf1d83a9c5372d3ecf9d8299b860088f33f",
+    "lines": 180
+  }
+]

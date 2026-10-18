@@ -1,0 +1,929 @@
+{
+  "partition": "theory",
+  "revision": "d12201bfe80cc94345c6308c46caaebf4a9fe42e",
+  "snapshot_root": "/Users/markik/Code/testing/woodshed/full-source-audit-20261016/source-d12201bf",
+  "assignment": "/Users/markik/Code/testing/woodshed/full-source-audit-20261016/theory-assigned.json",
+  "completed_at_utc": "2026-10-16T20:38:55.421278+00:00",
+  "status": "complete",
+  "assigned_file_count": 21,
+  "assigned_line_count": 11180,
+  "read_file_count": 21,
+  "read_line_count": 11180,
+  "all_assignment_hashes_match": true,
+  "method": "Read every assigned line in explicit numbered untruncated chunks, including tests and configuration. Searches were used only afterward to locate callers and authority context. Initial aggregate output truncation in context batches was repaired by explicit smaller rereads.",
+  "files": [
+    {
+      "path": "crates/woodshed-graph/Cargo.toml",
+      "sha256": "2ec4d4e962f6a9a33bd7de4b5a375cced77d6ee815fb5df5b76e4e7ad5c586ff",
+      "lines": 18,
+      "bytes": 867,
+      "kind": "source",
+      "actual_sha256": "2ec4d4e962f6a9a33bd7de4b5a375cced77d6ee815fb5df5b76e4e7ad5c586ff",
+      "actual_lines": 18,
+      "sha256_matches_assignment": true,
+      "read_ranges": [
+        [
+          1,
+          18
+        ]
+      ],
+      "read_lines": 18,
+      "status": "complete",
+      "tests_and_configs_included": true
+    },
+    {
+      "path": "crates/woodshed-graph/src/lib.rs",
+      "sha256": "0e1bb09a1b0161f93e06788fab237385a1b2dc76f95d3e59366fd23e5ae58c9e",
+      "lines": 1735,
+      "bytes": 66019,
+      "kind": "source",
+      "actual_sha256": "0e1bb09a1b0161f93e06788fab237385a1b2dc76f95d3e59366fd23e5ae58c9e",
+      "actual_lines": 1735,
+      "sha256_matches_assignment": true,
+      "read_ranges": [
+        [
+          1,
+          440
+        ],
+        [
+          441,
+          900
+        ],
+        [
+          901,
+          1320
+        ],
+        [
+          1321,
+          1735
+        ]
+      ],
+      "read_lines": 1735,
+      "status": "complete",
+      "tests_and_configs_included": true
+    },
+    {
+      "path": "crates/woodshed-instrument/Cargo.toml",
+      "sha256": "93407e693b77d3e670dbed2b1b4c4b6d5ad70c7246de7edfaac4b8a8e2411d9b",
+      "lines": 26,
+      "bytes": 895,
+      "kind": "source",
+      "actual_sha256": "93407e693b77d3e670dbed2b1b4c4b6d5ad70c7246de7edfaac4b8a8e2411d9b",
+      "actual_lines": 26,
+      "sha256_matches_assignment": true,
+      "read_ranges": [
+        [
+          1,
+          26
+        ]
+      ],
+      "read_lines": 26,
+      "status": "complete",
+      "tests_and_configs_included": true
+    },
+    {
+      "path": "crates/woodshed-instrument/examples/metronome_link.rs",
+      "sha256": "9e6f67ffe80c4aa7b1fb4a079c9dba5ba769fec32365b49850d42003a6308f3b",
+      "lines": 135,
+      "bytes": 4875,
+      "kind": "source",
+      "actual_sha256": "9e6f67ffe80c4aa7b1fb4a079c9dba5ba769fec32365b49850d42003a6308f3b",
+      "actual_lines": 135,
+      "sha256_matches_assignment": true,
+      "read_ranges": [
+        [
+          1,
+          135
+        ]
+      ],
+      "read_lines": 135,
+      "status": "complete",
+      "tests_and_configs_included": true
+    },
+    {
+      "path": "crates/woodshed-instrument/src/lib.rs",
+      "sha256": "68af5b15806b5448f6efb70171626f18fd3a9ac1e4de95fadb98daf47bda5216",
+      "lines": 463,
+      "bytes": 18711,
+      "kind": "source",
+      "actual_sha256": "68af5b15806b5448f6efb70171626f18fd3a9ac1e4de95fadb98daf47bda5216",
+      "actual_lines": 463,
+      "sha256_matches_assignment": true,
+      "read_ranges": [
+        [
+          1,
+          180
+        ],
+        [
+          181,
+          463
+        ]
+      ],
+      "read_lines": 463,
+      "status": "complete",
+      "tests_and_configs_included": true
+    },
+    {
+      "path": "crates/woodshed-instrument/src/session.rs",
+      "sha256": "5f6d4479c7cf277824d21fab037be56e0259b8fb29e692fd3d697d33c514d520",
+      "lines": 304,
+      "bytes": 11027,
+      "kind": "source",
+      "actual_sha256": "5f6d4479c7cf277824d21fab037be56e0259b8fb29e692fd3d697d33c514d520",
+      "actual_lines": 304,
+      "sha256_matches_assignment": true,
+      "read_ranges": [
+        [
+          1,
+          304
+        ]
+      ],
+      "read_lines": 304,
+      "status": "complete",
+      "tests_and_configs_included": true
+    },
+    {
+      "path": "crates/woodshedding/Cargo.toml",
+      "sha256": "02bc8966085b2225a17b241ff1752ec8fd1c2c69871131059d1f2826136c8d9f",
+      "lines": 23,
+      "bytes": 885,
+      "kind": "source",
+      "actual_sha256": "02bc8966085b2225a17b241ff1752ec8fd1c2c69871131059d1f2826136c8d9f",
+      "actual_lines": 23,
+      "sha256_matches_assignment": true,
+      "read_ranges": [
+        [
+          1,
+          23
+        ]
+      ],
+      "read_lines": 23,
+      "status": "complete",
+      "tests_and_configs_included": true
+    },
+    {
+      "path": "crates/woodshedding/src/chord.rs",
+      "sha256": "fd10d73952e49444498aa5bd5f89aebe75c08abad7a20dd5270f6503ec7ccdb3",
+      "lines": 768,
+      "bytes": 21077,
+      "kind": "source",
+      "actual_sha256": "fd10d73952e49444498aa5bd5f89aebe75c08abad7a20dd5270f6503ec7ccdb3",
+      "actual_lines": 768,
+      "sha256_matches_assignment": true,
+      "read_ranges": [
+        [
+          1,
+          430
+        ],
+        [
+          431,
+          768
+        ]
+      ],
+      "read_lines": 768,
+      "status": "complete",
+      "tests_and_configs_included": true
+    },
+    {
+      "path": "crates/woodshedding/src/exercise.rs",
+      "sha256": "0c9bcb729712e252ce2380612ad2df7af689ba97450d8ab08a7b85258ad50eb1",
+      "lines": 648,
+      "bytes": 21022,
+      "kind": "source",
+      "actual_sha256": "0c9bcb729712e252ce2380612ad2df7af689ba97450d8ab08a7b85258ad50eb1",
+      "actual_lines": 648,
+      "sha256_matches_assignment": true,
+      "read_ranges": [
+        [
+          1,
+          340
+        ],
+        [
+          341,
+          648
+        ]
+      ],
+      "read_lines": 648,
+      "status": "complete",
+      "tests_and_configs_included": true
+    },
+    {
+      "path": "crates/woodshedding/src/fretboard.rs",
+      "sha256": "76777551908350e89adcbd82b3abe1e0f1bfeac0640274c3d90a16f99afe0253",
+      "lines": 948,
+      "bytes": 33288,
+      "kind": "source",
+      "actual_sha256": "76777551908350e89adcbd82b3abe1e0f1bfeac0640274c3d90a16f99afe0253",
+      "actual_lines": 948,
+      "sha256_matches_assignment": true,
+      "read_ranges": [
+        [
+          1,
+          480
+        ],
+        [
+          481,
+          948
+        ]
+      ],
+      "read_lines": 948,
+      "status": "complete",
+      "tests_and_configs_included": true
+    },
+    {
+      "path": "crates/woodshedding/src/interval.rs",
+      "sha256": "e137af6c7870de6426e2e0f160e76eeea5b5d964608de0614c69564dfbb980d7",
+      "lines": 257,
+      "bytes": 9433,
+      "kind": "source",
+      "actual_sha256": "e137af6c7870de6426e2e0f160e76eeea5b5d964608de0614c69564dfbb980d7",
+      "actual_lines": 257,
+      "sha256_matches_assignment": true,
+      "read_ranges": [
+        [
+          1,
+          257
+        ]
+      ],
+      "read_lines": 257,
+      "status": "complete",
+      "tests_and_configs_included": true
+    },
+    {
+      "path": "crates/woodshedding/src/lib.rs",
+      "sha256": "91850e39aca50c0890f126908ea8899e6d90057b302d9142532e037978c24636",
+      "lines": 27,
+      "bytes": 1022,
+      "kind": "source",
+      "actual_sha256": "91850e39aca50c0890f126908ea8899e6d90057b302d9142532e037978c24636",
+      "actual_lines": 27,
+      "sha256_matches_assignment": true,
+      "read_ranges": [
+        [
+          1,
+          27
+        ]
+      ],
+      "read_lines": 27,
+      "status": "complete",
+      "tests_and_configs_included": true
+    },
+    {
+      "path": "crates/woodshedding/src/pitch.rs",
+      "sha256": "d0237c6c3d2b3e2430a6a7e26bdbeda260340ae464cbbe29220daedccd3df253",
+      "lines": 496,
+      "bytes": 16715,
+      "kind": "source",
+      "actual_sha256": "d0237c6c3d2b3e2430a6a7e26bdbeda260340ae464cbbe29220daedccd3df253",
+      "actual_lines": 496,
+      "sha256_matches_assignment": true,
+      "read_ranges": [
+        [
+          1,
+          496
+        ]
+      ],
+      "read_lines": 496,
+      "status": "complete",
+      "tests_and_configs_included": true
+    },
+    {
+      "path": "crates/woodshedding/src/pitch_class_set.rs",
+      "sha256": "280ed7f8140e3cbf01c89a4bc1729c8347f75adf40df3c942bf768ea532997ce",
+      "lines": 292,
+      "bytes": 10017,
+      "kind": "source",
+      "actual_sha256": "280ed7f8140e3cbf01c89a4bc1729c8347f75adf40df3c942bf768ea532997ce",
+      "actual_lines": 292,
+      "sha256_matches_assignment": true,
+      "read_ranges": [
+        [
+          1,
+          292
+        ]
+      ],
+      "read_lines": 292,
+      "status": "complete",
+      "tests_and_configs_included": true
+    },
+    {
+      "path": "crates/woodshedding/src/practice.rs",
+      "sha256": "9bd0b3969e920c270ee449c290378a704a0e4f51cfd81b1b0fc14a95c14ab75b",
+      "lines": 363,
+      "bytes": 11237,
+      "kind": "source",
+      "actual_sha256": "9bd0b3969e920c270ee449c290378a704a0e4f51cfd81b1b0fc14a95c14ab75b",
+      "actual_lines": 363,
+      "sha256_matches_assignment": true,
+      "read_ranges": [
+        [
+          1,
+          363
+        ]
+      ],
+      "read_lines": 363,
+      "status": "complete",
+      "tests_and_configs_included": true
+    },
+    {
+      "path": "crates/woodshedding/src/progression.rs",
+      "sha256": "ec4700a73b0509628f683b1d80da382a73e6c01f5452628f591a0f106bb9cf83",
+      "lines": 615,
+      "bytes": 19522,
+      "kind": "source",
+      "actual_sha256": "ec4700a73b0509628f683b1d80da382a73e6c01f5452628f591a0f106bb9cf83",
+      "actual_lines": 615,
+      "sha256_matches_assignment": true,
+      "read_ranges": [
+        [
+          1,
+          360
+        ],
+        [
+          361,
+          615
+        ]
+      ],
+      "read_lines": 615,
+      "status": "complete",
+      "tests_and_configs_included": true
+    },
+    {
+      "path": "crates/woodshedding/src/rehearsal/arrangement.rs",
+      "sha256": "7543e3cf5dfaf71d64b7dfdf442b143ba7d3f4e5de1683e2f12fda911228f305",
+      "lines": 57,
+      "bytes": 1810,
+      "kind": "source",
+      "actual_sha256": "7543e3cf5dfaf71d64b7dfdf442b143ba7d3f4e5de1683e2f12fda911228f305",
+      "actual_lines": 57,
+      "sha256_matches_assignment": true,
+      "read_ranges": [
+        [
+          1,
+          57
+        ]
+      ],
+      "read_lines": 57,
+      "status": "complete",
+      "tests_and_configs_included": true
+    },
+    {
+      "path": "crates/woodshedding/src/rehearsal.rs",
+      "sha256": "c6ee7d82485c43523e4dcf969f3bd2af195723310e14ebbba1d13f54dafecaee",
+      "lines": 871,
+      "bytes": 29997,
+      "kind": "source",
+      "actual_sha256": "c6ee7d82485c43523e4dcf969f3bd2af195723310e14ebbba1d13f54dafecaee",
+      "actual_lines": 871,
+      "sha256_matches_assignment": true,
+      "read_ranges": [
+        [
+          1,
+          480
+        ],
+        [
+          481,
+          871
+        ]
+      ],
+      "read_lines": 871,
+      "status": "complete",
+      "tests_and_configs_included": true
+    },
+    {
+      "path": "crates/woodshedding/src/scale.rs",
+      "sha256": "301e33d58ae2552c51ebc48d2c8988bb6e185da4790daa5af5c21f0490b326ee",
+      "lines": 896,
+      "bytes": 26186,
+      "kind": "source",
+      "actual_sha256": "301e33d58ae2552c51ebc48d2c8988bb6e185da4790daa5af5c21f0490b326ee",
+      "actual_lines": 896,
+      "sha256_matches_assignment": true,
+      "read_ranges": [
+        [
+          1,
+          450
+        ],
+        [
+          451,
+          896
+        ]
+      ],
+      "read_lines": 896,
+      "status": "complete",
+      "tests_and_configs_included": true
+    },
+    {
+      "path": "crates/woodshedding/src/scale_pattern.rs",
+      "sha256": "297bf20b90c030a39f49afbece9129ad8664ade52232bdd8941b5456557ef0ba",
+      "lines": 134,
+      "bytes": 4649,
+      "kind": "source",
+      "actual_sha256": "297bf20b90c030a39f49afbece9129ad8664ade52232bdd8941b5456557ef0ba",
+      "actual_lines": 134,
+      "sha256_matches_assignment": true,
+      "read_ranges": [
+        [
+          1,
+          134
+        ]
+      ],
+      "read_lines": 134,
+      "status": "complete",
+      "tests_and_configs_included": true
+    },
+    {
+      "path": "crates/woodshedding/src/tuning.rs",
+      "sha256": "7315ef45e2fa754f1b94b58fb3efde845ceac9a81ef3602d79c04390050a78c9",
+      "lines": 2104,
+      "bytes": 66151,
+      "kind": "source",
+      "actual_sha256": "7315ef45e2fa754f1b94b58fb3efde845ceac9a81ef3602d79c04390050a78c9",
+      "actual_lines": 2104,
+      "sha256_matches_assignment": true,
+      "read_ranges": [
+        [
+          1,
+          450
+        ],
+        [
+          451,
+          900
+        ],
+        [
+          901,
+          1350
+        ],
+        [
+          1351,
+          1800
+        ],
+        [
+          1801,
+          2104
+        ]
+      ],
+      "read_lines": 2104,
+      "status": "complete",
+      "tests_and_configs_included": true
+    }
+  ],
+  "context_files": [
+    {
+      "path": "CLAUDE.md",
+      "sha256": "1dc92eb52d2ab16bbcba919210844c98b7e69160615664885ebba5747c8c3ead",
+      "total_lines": 117,
+      "read_ranges": [
+        [
+          1,
+          117
+        ]
+      ],
+      "read_lines": 117,
+      "status": "complete"
+    },
+    {
+      "path": "design_docs/DOC_README.md",
+      "sha256": "f88abef1c4ae554ddfc415b2a473eb3a67da63846844e80466cc3b95771f9cf0",
+      "total_lines": 413,
+      "read_ranges": [
+        [
+          1,
+          118
+        ],
+        [
+          119,
+          270
+        ],
+        [
+          271,
+          413
+        ]
+      ],
+      "read_lines": 413,
+      "status": "complete"
+    },
+    {
+      "path": "design_docs/2026-08-27_smart_instrument_plan.md",
+      "sha256": "75432cfc6f14193424752bea60e185d9f9f1ed214dcacd1f05d13642c8159fb3",
+      "total_lines": 573,
+      "read_ranges": [
+        [
+          1,
+          300
+        ],
+        [
+          301,
+          573
+        ]
+      ],
+      "read_lines": 573,
+      "status": "complete"
+    },
+    {
+      "path": "design_docs/2026-09-04_musical_projections_plan.md",
+      "sha256": "37fdc7079007e1a24749f878b19429f41e2d6ca745bfdcab62dee65681c34875",
+      "total_lines": 798,
+      "read_ranges": [
+        [
+          50,
+          85
+        ],
+        [
+          220,
+          245
+        ],
+        [
+          502,
+          538
+        ]
+      ],
+      "read_lines": 99,
+      "status": "partial-context-only"
+    },
+    {
+      "path": "design_docs/2026-07-11_stage_set_tools_plan.md",
+      "sha256": "e7b8cf43b2b477d7ab7f25488d13a737497cbd19798c2c0e5a9478cef7198332",
+      "total_lines": 3757,
+      "read_ranges": [
+        [
+          1172,
+          1257
+        ],
+        [
+          1748,
+          1795
+        ],
+        [
+          3718,
+          3757
+        ]
+      ],
+      "read_lines": 174,
+      "status": "partial-context-only"
+    },
+    {
+      "path": "design_docs/2026-07-14_instruments_and_fretboard_rendering_plan.md",
+      "sha256": "2109093188e0fd7753a2be0e208d1dc9dfca03cdf773ae0fd21ff8f5ae9286cc",
+      "total_lines": 479,
+      "read_ranges": [
+        [
+          109,
+          160
+        ]
+      ],
+      "read_lines": 52,
+      "status": "partial-context-only"
+    },
+    {
+      "path": "crates/woodshed-core/src/lib.rs",
+      "sha256": "a5692292474e6651357e69532c1660b645cf586d46733bcbfe5a17615003fe7b",
+      "total_lines": 2711,
+      "read_ranges": [
+        [
+          527,
+          610
+        ],
+        [
+          805,
+          870
+        ],
+        [
+          870,
+          945
+        ],
+        [
+          997,
+          1105
+        ],
+        [
+          1170,
+          1215
+        ],
+        [
+          1400,
+          1440
+        ],
+        [
+          1870,
+          1905
+        ],
+        [
+          1930,
+          2000
+        ],
+        [
+          2090,
+          2140
+        ],
+        [
+          50,
+          100
+        ],
+        [
+          512,
+          526
+        ],
+        [
+          614,
+          650
+        ],
+        [
+          770,
+          805
+        ]
+      ],
+      "read_lines": 717,
+      "status": "partial-context-only"
+    },
+    {
+      "path": "crates/woodshed-core/src/harmony.rs",
+      "sha256": "7e7cbf57aa1d1d928db96951272ee799d76b0078a92506b7a0a3a3eedca93c88",
+      "total_lines": 341,
+      "read_ranges": [
+        [
+          140,
+          260
+        ]
+      ],
+      "read_lines": 121,
+      "status": "partial-context-only"
+    },
+    {
+      "path": "crates/woodshed-core/src/mere.rs",
+      "sha256": "452aa9870ca86b1a8edfbc2b8a533d3a57e80aed55ee9cfbac353e81b65952e5",
+      "total_lines": 300,
+      "read_ranges": [
+        [
+          75,
+          145
+        ]
+      ],
+      "read_lines": 71,
+      "status": "partial-context-only"
+    },
+    {
+      "path": "crates/woodshed-core/src/storage.rs",
+      "sha256": "849dabb177f540fdf90cc0189bcaf55179c48fb31005a2a20cb854c6c3df9906",
+      "total_lines": 1123,
+      "read_ranges": [
+        [
+          400,
+          525
+        ],
+        [
+          522,
+          545
+        ]
+      ],
+      "read_lines": 146,
+      "status": "partial-context-only"
+    },
+    {
+      "path": "crates/woodshed-core/src/working_sets.rs",
+      "sha256": "6fd586639149ff8bce66089bf68962840aa170a8d6da3449358aff855918df7e",
+      "total_lines": 189,
+      "read_ranges": [
+        [
+          75,
+          132
+        ],
+        [
+          1,
+          74
+        ]
+      ],
+      "read_lines": 132,
+      "status": "partial-context-only"
+    },
+    {
+      "path": "crates/woodshed-views/src/stage/templates.rs",
+      "sha256": "3fc44a709409d4114c92516d59206117756896fb239730286ccbc79525e5b8fe",
+      "total_lines": 44,
+      "read_ranges": [
+        [
+          1,
+          44
+        ]
+      ],
+      "read_lines": 44,
+      "status": "complete"
+    },
+    {
+      "path": "crates/woodshed-views/src/stage/instances.rs",
+      "sha256": "5fbf42e70ca06ecdc68b053bfe76ab26659faaa6ef9fc4880ebf59b3b9c176c8",
+      "total_lines": 512,
+      "read_ranges": [
+        [
+          105,
+          150
+        ]
+      ],
+      "read_lines": 46,
+      "status": "partial-context-only"
+    },
+    {
+      "path": "crates/woodshed-views/src/stage/related.rs",
+      "sha256": "c8609e4cb6ae01001b5978dba8e6922c6c35f0019c1944713f58af2cac574d52",
+      "total_lines": 1532,
+      "read_ranges": [
+        [
+          50,
+          109
+        ],
+        [
+          640,
+          710
+        ]
+      ],
+      "read_lines": 131,
+      "status": "partial-context-only"
+    },
+    {
+      "path": "crates/woodshed-views/src/stage.rs",
+      "sha256": "26698c8d2219d9124ead185ef66aa4a5a870452fe303935f19a5f99f2f2bf273",
+      "total_lines": 4573,
+      "read_ranges": [
+        [
+          2390,
+          2448
+        ],
+        [
+          2490,
+          2555
+        ],
+        [
+          2898,
+          2925
+        ]
+      ],
+      "read_lines": 153,
+      "status": "partial-context-only"
+    },
+    {
+      "path": "crates/woodshed-genet/src/drive.rs",
+      "sha256": "b2ad68aa2396c2783c13919e8a6c90ce1e57f15bb29053458e23e12c6731bf10",
+      "total_lines": 485,
+      "read_ranges": [
+        [
+          265,
+          292
+        ]
+      ],
+      "read_lines": 28,
+      "status": "partial-context-only"
+    },
+    {
+      "path": "ports/ringdown/crates/ringdown-ble/src/lib.rs",
+      "sha256": "423b09de03bb983143ecb88025c65ef7de9bfccc00e2352b27ce52e1621f39cb",
+      "total_lines": 384,
+      "read_ranges": [
+        [
+          1,
+          130
+        ],
+        [
+          130,
+          215
+        ]
+      ],
+      "read_lines": 215,
+      "status": "partial-context-only"
+    },
+    {
+      "path": "ports/ringdown/crates/ringdown-client/src/lib.rs",
+      "sha256": "13e030037875a1e9c94ab581b6f1997e2c37add6e6ff7834af3d7230474c628a",
+      "total_lines": 1409,
+      "read_ranges": [
+        [
+          215,
+          286
+        ],
+        [
+          430,
+          515
+        ],
+        [
+          615,
+          707
+        ],
+        [
+          928,
+          945
+        ]
+      ],
+      "read_lines": 269,
+      "status": "partial-context-only"
+    },
+    {
+      "path": "crates/woodshed-core/src/retained_sets.rs",
+      "sha256": "9a6f78e0c921379ceaca85652430e2862d0d1cdee6d5db8920d496d36986804b",
+      "total_lines": 161,
+      "read_ranges": [
+        [
+          35,
+          88
+        ]
+      ],
+      "read_lines": 54,
+      "status": "partial-context-only"
+    },
+    {
+      "path": "crates/woodshed-core/src/connected_catalog.rs",
+      "sha256": "e0b268af85dd1afbe538148e88a3f06af6d15b7f1703cc5eac488e0fc07c3ae4",
+      "total_lines": 407,
+      "read_ranges": [
+        [
+          106,
+          165
+        ],
+        [
+          154,
+          184
+        ]
+      ],
+      "read_lines": 79,
+      "status": "partial-context-only"
+    },
+    {
+      "path": "crates/woodshed-core/src/scale_realization.rs",
+      "sha256": "3b740903bcb92e41d3703a6734b8256f220a8409d8961f7016d021e1b9da51f3",
+      "total_lines": 472,
+      "read_ranges": [
+        [
+          225,
+          275
+        ]
+      ],
+      "read_lines": 51,
+      "status": "partial-context-only"
+    }
+  ],
+  "local_P5a_context": [
+    {
+      "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-core/src/card_timing.rs",
+      "sha256_at_read": "5ebb815b2f6381bb5f3ccabe482aafc4489ec67403b13bf3714011a13dfb184d",
+      "read_ranges": [
+        [
+          1,
+          116
+        ]
+      ],
+      "status": "read-only-local-P5a-context-not-frozen-proof"
+    },
+    {
+      "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-core/src/lib.rs",
+      "sha256_at_read": "0ad54885a88857325f7a0054539cdc3885bfeb98c3a72989d21c29298999472e",
+      "read_ranges": [
+        [
+          608,
+          618
+        ]
+      ],
+      "status": "read-only-local-P5a-context-not-frozen-proof"
+    },
+    {
+      "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-core/src/connected_catalog.rs",
+      "sha256_at_read": "92a93775e7a508de13073be7c9cd92cd2f52323df7913a4e893700114e2cbab2",
+      "read_ranges": [
+        [
+          145,
+          175
+        ]
+      ],
+      "status": "read-only-local-P5a-context-not-frozen-proof"
+    },
+    {
+      "path": "/Users/markik/Code/repos/woodshed/crates/woodshed-core/src/scale_realization.rs",
+      "sha256_at_read": "12bfc133fad845198c66a5ced4775da1e128e620c4614e7bfe34b8df3bd0ce1a",
+      "read_ranges": [
+        [
+          225,
+          250
+        ]
+      ],
+      "status": "read-only-local-P5a-context-not-frozen-proof"
+    }
+  ],
+  "executed_builds_tests_native_or_network": false,
+  "writes_restricted_to": [
+    "/Users/markik/Code/testing/woodshed/full-source-audit-20261016/theory-coverage.json",
+    "/Users/markik/Code/testing/woodshed/full-source-audit-20261016/theory-report.md"
+  ],
+  "final_hash_recheck_utc": "2026-10-16T20:42:31.433874+00:00",
+  "findings_summary": {
+    "P2": [
+      "T1",
+      "T2",
+      "T3",
+      "T4"
+    ],
+    "P3": [
+      "T5",
+      "T6",
+      "T7",
+      "T8"
+    ],
+    "unresolved_questions": 2
+  }
+}

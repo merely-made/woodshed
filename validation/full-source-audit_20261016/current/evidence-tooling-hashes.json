@@ -1,0 +1,44 @@
+[
+  {
+    "path": "design_docs/receipts/audio_foundation_20261011/ci/write-receipt.py",
+    "frozen_sha256": "76c439875474a049305cee9af33c076a34eb4863b788e8ffb34e52859fb44c51",
+    "current_sha256": "76c439875474a049305cee9af33c076a34eb4863b788e8ffb34e52859fb44c51",
+    "same_bytes": true
+  },
+  {
+    "path": "validation/font-roles_20261012/verify.py",
+    "frozen_sha256": "0886ae108436960452a3b6d459f1a16a06f2b0eb55a81f62f4c0fac1dd71fe92",
+    "current_sha256": "0886ae108436960452a3b6d459f1a16a06f2b0eb55a81f62f4c0fac1dd71fe92",
+    "same_bytes": true
+  },
+  {
+    "path": "validation/link-model-p6_20261016/doc_link_audit.py",
+    "frozen_sha256": "a550bf7f3b186c04700e9ca01e944f8cdfa03edfa12051a62d2520c01eb99b16",
+    "current_sha256": "a550bf7f3b186c04700e9ca01e944f8cdfa03edfa12051a62d2520c01eb99b16",
+    "same_bytes": true
+  },
+  {
+    "path": "scripts/audio_analysis_bench.py",
+    "frozen_sha256": "4f63d7f65fac99845260d794f98ae79670526067c0db724f33cbf8afb228b8f5",
+    "current_sha256": "4f63d7f65fac99845260d794f98ae79670526067c0db724f33cbf8afb228b8f5",
+    "same_bytes": true
+  },
+  {
+    "path": "scripts/package-macos.sh",
+    "frozen_sha256": "03f4cb034f3cca6b81a5ef67b992abaf0fd0b269c6f9a682128faa15c2928b74",
+    "current_sha256": "9a7ce121bc34203c71220ced8b155ee359d1a0b8d315e44763ece80875a61a93",
+    "same_bytes": false
+  },
+  {
+    "path": "scripts/package-windows.ps1",
+    "frozen_sha256": "a1cfd2590d6cdd5d3133b41ea8c39f79b4df437f069544a600d0e75ee8e7e157",
+    "current_sha256": "a1cfd2590d6cdd5d3133b41ea8c39f79b4df437f069544a600d0e75ee8e7e157",
+    "same_bytes": true
+  },
+  {
+    "path": "scripts/package-linux.sh",
+    "frozen_sha256": "16a7454c5b342430816572e47e288f6c05fef9e863acab0b9d03e3346ea174aa",
+    "current_sha256": "16a7454c5b342430816572e47e288f6c05fef9e863acab0b9d03e3346ea174aa",
+    "same_bytes": true
+  }
+]

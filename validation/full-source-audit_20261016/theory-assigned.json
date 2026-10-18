@@ -1,0 +1,149 @@
+[
+  {
+    "path": "crates/woodshed-graph/Cargo.toml",
+    "sha256": "2ec4d4e962f6a9a33bd7de4b5a375cced77d6ee815fb5df5b76e4e7ad5c586ff",
+    "lines": 18,
+    "bytes": 867,
+    "kind": "source"
+  },
+  {
+    "path": "crates/woodshed-graph/src/lib.rs",
+    "sha256": "0e1bb09a1b0161f93e06788fab237385a1b2dc76f95d3e59366fd23e5ae58c9e",
+    "lines": 1735,
+    "bytes": 66019,
+    "kind": "source"
+  },
+  {
+    "path": "crates/woodshed-instrument/Cargo.toml",
+    "sha256": "93407e693b77d3e670dbed2b1b4c4b6d5ad70c7246de7edfaac4b8a8e2411d9b",
+    "lines": 26,
+    "bytes": 895,
+    "kind": "source"
+  },
+  {
+    "path": "crates/woodshed-instrument/examples/metronome_link.rs",
+    "sha256": "9e6f67ffe80c4aa7b1fb4a079c9dba5ba769fec32365b49850d42003a6308f3b",
+    "lines": 135,
+    "bytes": 4875,
+    "kind": "source"
+  },
+  {
+    "path": "crates/woodshed-instrument/src/lib.rs",
+    "sha256": "68af5b15806b5448f6efb70171626f18fd3a9ac1e4de95fadb98daf47bda5216",
+    "lines": 463,
+    "bytes": 18711,
+    "kind": "source"
+  },
+  {
+    "path": "crates/woodshed-instrument/src/session.rs",
+    "sha256": "5f6d4479c7cf277824d21fab037be56e0259b8fb29e692fd3d697d33c514d520",
+    "lines": 304,
+    "bytes": 11027,
+    "kind": "source"
+  },
+  {
+    "path": "crates/woodshedding/Cargo.toml",
+    "sha256": "02bc8966085b2225a17b241ff1752ec8fd1c2c69871131059d1f2826136c8d9f",
+    "lines": 23,
+    "bytes": 885,
+    "kind": "source"
+  },
+  {
+    "path": "crates/woodshedding/src/chord.rs",
+    "sha256": "fd10d73952e49444498aa5bd5f89aebe75c08abad7a20dd5270f6503ec7ccdb3",
+    "lines": 768,
+    "bytes": 21077,
+    "kind": "source"
+  },
+  {
+    "path": "crates/woodshedding/src/exercise.rs",
+    "sha256": "0c9bcb729712e252ce2380612ad2df7af689ba97450d8ab08a7b85258ad50eb1",
+    "lines": 648,
+    "bytes": 21022,
+    "kind": "source"
+  },
+  {
+    "path": "crates/woodshedding/src/fretboard.rs",
+    "sha256": "76777551908350e89adcbd82b3abe1e0f1bfeac0640274c3d90a16f99afe0253",
+    "lines": 948,
+    "bytes": 33288,
+    "kind": "source"
+  },
+  {
+    "path": "crates/woodshedding/src/interval.rs",
+    "sha256": "e137af6c7870de6426e2e0f160e76eeea5b5d964608de0614c69564dfbb980d7",
+    "lines": 257,
+    "bytes": 9433,
+    "kind": "source"
+  },
+  {
+    "path": "crates/woodshedding/src/lib.rs",
+    "sha256": "91850e39aca50c0890f126908ea8899e6d90057b302d9142532e037978c24636",
+    "lines": 27,
+    "bytes": 1022,
+    "kind": "source"
+  },
+  {
+    "path": "crates/woodshedding/src/pitch.rs",
+    "sha256": "d0237c6c3d2b3e2430a6a7e26bdbeda260340ae464cbbe29220daedccd3df253",
+    "lines": 496,
+    "bytes": 16715,
+    "kind": "source"
+  },
+  {
+    "path": "crates/woodshedding/src/pitch_class_set.rs",
+    "sha256": "280ed7f8140e3cbf01c89a4bc1729c8347f75adf40df3c942bf768ea532997ce",
+    "lines": 292,
+    "bytes": 10017,
+    "kind": "source"
+  },
+  {
+    "path": "crates/woodshedding/src/practice.rs",
+    "sha256": "9bd0b3969e920c270ee449c290378a704a0e4f51cfd81b1b0fc14a95c14ab75b",
+    "lines": 363,
+    "bytes": 11237,
+    "kind": "source"
+  },
+  {
+    "path": "crates/woodshedding/src/progression.rs",
+    "sha256": "ec4700a73b0509628f683b1d80da382a73e6c01f5452628f591a0f106bb9cf83",
+    "lines": 615,
+    "bytes": 19522,
+    "kind": "source"
+  },
+  {
+    "path": "crates/woodshedding/src/rehearsal/arrangement.rs",
+    "sha256": "7543e3cf5dfaf71d64b7dfdf442b143ba7d3f4e5de1683e2f12fda911228f305",
+    "lines": 57,
+    "bytes": 1810,
+    "kind": "source"
+  },
+  {
+    "path": "crates/woodshedding/src/rehearsal.rs",
+    "sha256": "c6ee7d82485c43523e4dcf969f3bd2af195723310e14ebbba1d13f54dafecaee",
+    "lines": 871,
+    "bytes": 29997,
+    "kind": "source"
+  },
+  {
+    "path": "crates/woodshedding/src/scale.rs",
+    "sha256": "301e33d58ae2552c51ebc48d2c8988bb6e185da4790daa5af5c21f0490b326ee",
+    "lines": 896,
+    "bytes": 26186,
+    "kind": "source"
+  },
+  {
+    "path": "crates/woodshedding/src/scale_pattern.rs",
+    "sha256": "297bf20b90c030a39f49afbece9129ad8664ade52232bdd8941b5456557ef0ba",
+    "lines": 134,
+    "bytes": 4649,
+    "kind": "source"
+  },
+  {
+    "path": "crates/woodshedding/src/tuning.rs",
+    "sha256": "7315ef45e2fa754f1b94b58fb3efde845ceac9a81ef3602d79c04390050a78c9",
+    "lines": 2104,
+    "bytes": 66151,
+    "kind": "source"
+  }
+]

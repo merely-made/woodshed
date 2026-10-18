@@ -1,0 +1,838 @@
+{
+  "revision": "d12201bfe80cc94345c6308c46caaebf4a9fe42e",
+  "snapshot": "/Users/markik/Code/testing/woodshed/full-source-audit-20261016/source-d12201bf",
+  "partition": "ringdown",
+  "status": "complete",
+  "method": "Every assigned line displayed in bounded numbered source chunks; no builds, native execution or tests.",
+  "files": [
+    {
+      "path": "ports/ringdown/Cargo.lock",
+      "sha256": "9c1b9afdd823e02effcade345140463f20185b9a79b83e8844d3109df395f6c0",
+      "lines": 1015,
+      "bytes": 25202,
+      "kind": "source",
+      "actual_sha256": "9c1b9afdd823e02effcade345140463f20185b9a79b83e8844d3109df395f6c0",
+      "actual_lines": 1015,
+      "read_ranges": [
+        [
+          1,
+          520
+        ],
+        [
+          521,
+          1015
+        ]
+      ],
+      "status": "complete",
+      "final_sha256": "9c1b9afdd823e02effcade345140463f20185b9a79b83e8844d3109df395f6c0",
+      "hash_matches_assignment": true,
+      "line_count_matches_assignment": true,
+      "primary_read_only_sha256": "9c1b9afdd823e02effcade345140463f20185b9a79b83e8844d3109df395f6c0",
+      "primary_matches_snapshot": true
+    },
+    {
+      "path": "ports/ringdown/Cargo.toml",
+      "sha256": "5b33dd170a08e14711f43946e0931f5c6a2d9e417a122c2dee64ceaba0370fe7",
+      "lines": 25,
+      "bytes": 802,
+      "kind": "source",
+      "actual_sha256": "5b33dd170a08e14711f43946e0931f5c6a2d9e417a122c2dee64ceaba0370fe7",
+      "actual_lines": 25,
+      "read_ranges": [
+        [
+          1,
+          25
+        ]
+      ],
+      "status": "complete",
+      "final_sha256": "5b33dd170a08e14711f43946e0931f5c6a2d9e417a122c2dee64ceaba0370fe7",
+      "hash_matches_assignment": true,
+      "line_count_matches_assignment": true,
+      "primary_read_only_sha256": "5b33dd170a08e14711f43946e0931f5c6a2d9e417a122c2dee64ceaba0370fe7",
+      "primary_matches_snapshot": true
+    },
+    {
+      "path": "ports/ringdown/apps/probe/Cargo.toml",
+      "sha256": "e9f22aa2e34c1ab4a6a276eebc1c4e759860c0cc2e3a20dab137e71eaf8f0daf",
+      "lines": 21,
+      "bytes": 607,
+      "kind": "source",
+      "actual_sha256": "e9f22aa2e34c1ab4a6a276eebc1c4e759860c0cc2e3a20dab137e71eaf8f0daf",
+      "actual_lines": 21,
+      "read_ranges": [
+        [
+          1,
+          21
+        ]
+      ],
+      "status": "complete",
+      "final_sha256": "e9f22aa2e34c1ab4a6a276eebc1c4e759860c0cc2e3a20dab137e71eaf8f0daf",
+      "hash_matches_assignment": true,
+      "line_count_matches_assignment": true,
+      "primary_read_only_sha256": "e9f22aa2e34c1ab4a6a276eebc1c4e759860c0cc2e3a20dab137e71eaf8f0daf",
+      "primary_matches_snapshot": true
+    },
+    {
+      "path": "ports/ringdown/apps/probe/src/main.rs",
+      "sha256": "f9e73604ecc47abc8d2b6a61ed7840d9852aa74ffc38367bae5eb59b823d13f6",
+      "lines": 1419,
+      "bytes": 53448,
+      "kind": "source",
+      "actual_sha256": "f9e73604ecc47abc8d2b6a61ed7840d9852aa74ffc38367bae5eb59b823d13f6",
+      "actual_lines": 1419,
+      "read_ranges": [
+        [
+          1,
+          280
+        ],
+        [
+          281,
+          560
+        ],
+        [
+          561,
+          850
+        ],
+        [
+          851,
+          1140
+        ],
+        [
+          1141,
+          1419
+        ]
+      ],
+      "status": "complete",
+      "final_sha256": "f9e73604ecc47abc8d2b6a61ed7840d9852aa74ffc38367bae5eb59b823d13f6",
+      "hash_matches_assignment": true,
+      "line_count_matches_assignment": true,
+      "primary_read_only_sha256": "f9e73604ecc47abc8d2b6a61ed7840d9852aa74ffc38367bae5eb59b823d13f6",
+      "primary_matches_snapshot": true
+    },
+    {
+      "path": "ports/ringdown/apps/probe/src/pklg.rs",
+      "sha256": "ea145bc3f53fe8c7fdd65c9d69e879ace75e5112324afc0263e9100ff4e8b233",
+      "lines": 470,
+      "bytes": 17939,
+      "kind": "source",
+      "actual_sha256": "ea145bc3f53fe8c7fdd65c9d69e879ace75e5112324afc0263e9100ff4e8b233",
+      "actual_lines": 470,
+      "read_ranges": [
+        [
+          1,
+          250
+        ],
+        [
+          251,
+          470
+        ]
+      ],
+      "status": "complete",
+      "final_sha256": "ea145bc3f53fe8c7fdd65c9d69e879ace75e5112324afc0263e9100ff4e8b233",
+      "hash_matches_assignment": true,
+      "line_count_matches_assignment": true,
+      "primary_read_only_sha256": "ea145bc3f53fe8c7fdd65c9d69e879ace75e5112324afc0263e9100ff4e8b233",
+      "primary_matches_snapshot": true
+    },
+    {
+      "path": "ports/ringdown/crates/ringdown/Cargo.toml",
+      "sha256": "943f39e312f491ea8fe972df3ca12bfba071fe44a05e75dc903dd6c40798a1ef",
+      "lines": 25,
+      "bytes": 1121,
+      "kind": "source",
+      "actual_sha256": "943f39e312f491ea8fe972df3ca12bfba071fe44a05e75dc903dd6c40798a1ef",
+      "actual_lines": 25,
+      "read_ranges": [
+        [
+          1,
+          25
+        ]
+      ],
+      "status": "complete",
+      "final_sha256": "943f39e312f491ea8fe972df3ca12bfba071fe44a05e75dc903dd6c40798a1ef",
+      "hash_matches_assignment": true,
+      "line_count_matches_assignment": true,
+      "primary_read_only_sha256": "943f39e312f491ea8fe972df3ca12bfba071fe44a05e75dc903dd6c40798a1ef",
+      "primary_matches_snapshot": true
+    },
+    {
+      "path": "ports/ringdown/crates/ringdown/src/compress.rs",
+      "sha256": "6723cd04e61fd91fb16a54df6841a057a6dbb51d068ffeb857c66bbac4c8e8d5",
+      "lines": 900,
+      "bytes": 27571,
+      "kind": "source",
+      "actual_sha256": "6723cd04e61fd91fb16a54df6841a057a6dbb51d068ffeb857c66bbac4c8e8d5",
+      "actual_lines": 900,
+      "read_ranges": [
+        [
+          1,
+          330
+        ],
+        [
+          331,
+          630
+        ],
+        [
+          631,
+          900
+        ]
+      ],
+      "status": "complete",
+      "final_sha256": "6723cd04e61fd91fb16a54df6841a057a6dbb51d068ffeb857c66bbac4c8e8d5",
+      "hash_matches_assignment": true,
+      "line_count_matches_assignment": true,
+      "primary_read_only_sha256": "6723cd04e61fd91fb16a54df6841a057a6dbb51d068ffeb857c66bbac4c8e8d5",
+      "primary_matches_snapshot": true
+    },
+    {
+      "path": "ports/ringdown/crates/ringdown/src/crc32.rs",
+      "sha256": "cbe0856c7d89d7e1dca3bb2c28f890f8f2f028bb6461950c9f13cc59db968039",
+      "lines": 153,
+      "bytes": 4804,
+      "kind": "source",
+      "actual_sha256": "cbe0856c7d89d7e1dca3bb2c28f890f8f2f028bb6461950c9f13cc59db968039",
+      "actual_lines": 153,
+      "read_ranges": [
+        [
+          1,
+          153
+        ]
+      ],
+      "status": "complete",
+      "final_sha256": "cbe0856c7d89d7e1dca3bb2c28f890f8f2f028bb6461950c9f13cc59db968039",
+      "hash_matches_assignment": true,
+      "line_count_matches_assignment": true,
+      "primary_read_only_sha256": "cbe0856c7d89d7e1dca3bb2c28f890f8f2f028bb6461950c9f13cc59db968039",
+      "primary_matches_snapshot": true
+    },
+    {
+      "path": "ports/ringdown/crates/ringdown/src/effects.rs",
+      "sha256": "474c59386beafd140dbb0a442bc5bd426bf7ea8eb2c9acd929962ddaa5057684",
+      "lines": 652,
+      "bytes": 26398,
+      "kind": "source",
+      "actual_sha256": "474c59386beafd140dbb0a442bc5bd426bf7ea8eb2c9acd929962ddaa5057684",
+      "actual_lines": 652,
+      "read_ranges": [
+        [
+          1,
+          330
+        ],
+        [
+          331,
+          652
+        ]
+      ],
+      "status": "complete",
+      "final_sha256": "474c59386beafd140dbb0a442bc5bd426bf7ea8eb2c9acd929962ddaa5057684",
+      "hash_matches_assignment": true,
+      "line_count_matches_assignment": true,
+      "primary_read_only_sha256": "474c59386beafd140dbb0a442bc5bd426bf7ea8eb2c9acd929962ddaa5057684",
+      "primary_matches_snapshot": true
+    },
+    {
+      "path": "ports/ringdown/crates/ringdown/src/handshake.rs",
+      "sha256": "8ddaa4039b5a2a85d4f816fe1a308d79872e810984520892e64211cbd74e52dd",
+      "lines": 336,
+      "bytes": 10975,
+      "kind": "source",
+      "actual_sha256": "8ddaa4039b5a2a85d4f816fe1a308d79872e810984520892e64211cbd74e52dd",
+      "actual_lines": 336,
+      "read_ranges": [
+        [
+          1,
+          336
+        ]
+      ],
+      "status": "complete",
+      "final_sha256": "8ddaa4039b5a2a85d4f816fe1a308d79872e810984520892e64211cbd74e52dd",
+      "hash_matches_assignment": true,
+      "line_count_matches_assignment": true,
+      "primary_read_only_sha256": "8ddaa4039b5a2a85d4f816fe1a308d79872e810984520892e64211cbd74e52dd",
+      "primary_matches_snapshot": true
+    },
+    {
+      "path": "ports/ringdown/crates/ringdown/src/lib.rs",
+      "sha256": "63fb45e0239a18a5d24a52812b0cb7121aab293e0191afaeb33407a5eb7f619f",
+      "lines": 130,
+      "bytes": 5044,
+      "kind": "source",
+      "actual_sha256": "63fb45e0239a18a5d24a52812b0cb7121aab293e0191afaeb33407a5eb7f619f",
+      "actual_lines": 130,
+      "read_ranges": [
+        [
+          1,
+          130
+        ]
+      ],
+      "status": "complete",
+      "final_sha256": "63fb45e0239a18a5d24a52812b0cb7121aab293e0191afaeb33407a5eb7f619f",
+      "hash_matches_assignment": true,
+      "line_count_matches_assignment": true,
+      "primary_read_only_sha256": "63fb45e0239a18a5d24a52812b0cb7121aab293e0191afaeb33407a5eb7f619f",
+      "primary_matches_snapshot": true
+    },
+    {
+      "path": "ports/ringdown/crates/ringdown/src/link.rs",
+      "sha256": "98118b762fd4ea4dc043c493f72daeaf9d010a1d9068936c412bb4949f7cb8c8",
+      "lines": 98,
+      "bytes": 4574,
+      "kind": "source",
+      "actual_sha256": "98118b762fd4ea4dc043c493f72daeaf9d010a1d9068936c412bb4949f7cb8c8",
+      "actual_lines": 98,
+      "read_ranges": [
+        [
+          1,
+          98
+        ]
+      ],
+      "status": "complete",
+      "final_sha256": "98118b762fd4ea4dc043c493f72daeaf9d010a1d9068936c412bb4949f7cb8c8",
+      "hash_matches_assignment": true,
+      "line_count_matches_assignment": true,
+      "primary_read_only_sha256": "98118b762fd4ea4dc043c493f72daeaf9d010a1d9068936c412bb4949f7cb8c8",
+      "primary_matches_snapshot": true
+    },
+    {
+      "path": "ports/ringdown/crates/ringdown/src/llt.rs",
+      "sha256": "bbf6f7302c6555278ad0c2ca84eb41e2beb1f96cf5aa89c43df85af3ca1337cb",
+      "lines": 489,
+      "bytes": 17341,
+      "kind": "source",
+      "actual_sha256": "bbf6f7302c6555278ad0c2ca84eb41e2beb1f96cf5aa89c43df85af3ca1337cb",
+      "actual_lines": 489,
+      "read_ranges": [
+        [
+          1,
+          489
+        ]
+      ],
+      "status": "complete",
+      "final_sha256": "bbf6f7302c6555278ad0c2ca84eb41e2beb1f96cf5aa89c43df85af3ca1337cb",
+      "hash_matches_assignment": true,
+      "line_count_matches_assignment": true,
+      "primary_read_only_sha256": "bbf6f7302c6555278ad0c2ca84eb41e2beb1f96cf5aa89c43df85af3ca1337cb",
+      "primary_matches_snapshot": true
+    },
+    {
+      "path": "ports/ringdown/crates/ringdown/src/llt2.rs",
+      "sha256": "3dbf224c60bd1bf83c7b2c686f8c87f1443bd43d7dadb606e61afa03edafeb87",
+      "lines": 476,
+      "bytes": 16267,
+      "kind": "source",
+      "actual_sha256": "3dbf224c60bd1bf83c7b2c686f8c87f1443bd43d7dadb606e61afa03edafeb87",
+      "actual_lines": 476,
+      "read_ranges": [
+        [
+          1,
+          476
+        ]
+      ],
+      "status": "complete",
+      "final_sha256": "3dbf224c60bd1bf83c7b2c686f8c87f1443bd43d7dadb606e61afa03edafeb87",
+      "hash_matches_assignment": true,
+      "line_count_matches_assignment": true,
+      "primary_read_only_sha256": "3dbf224c60bd1bf83c7b2c686f8c87f1443bd43d7dadb606e61afa03edafeb87",
+      "primary_matches_snapshot": true
+    },
+    {
+      "path": "ports/ringdown/crates/ringdown/src/loopfile.rs",
+      "sha256": "1f2663495af60f09508754d5c75e07f1ebe4811b290f63b725501fdde2e0d94f",
+      "lines": 737,
+      "bytes": 27853,
+      "kind": "source",
+      "actual_sha256": "1f2663495af60f09508754d5c75e07f1ebe4811b290f63b725501fdde2e0d94f",
+      "actual_lines": 737,
+      "read_ranges": [
+        [
+          1,
+          370
+        ],
+        [
+          371,
+          737
+        ]
+      ],
+      "status": "complete",
+      "final_sha256": "1f2663495af60f09508754d5c75e07f1ebe4811b290f63b725501fdde2e0d94f",
+      "hash_matches_assignment": true,
+      "line_count_matches_assignment": true,
+      "primary_read_only_sha256": "1f2663495af60f09508754d5c75e07f1ebe4811b290f63b725501fdde2e0d94f",
+      "primary_matches_snapshot": true
+    },
+    {
+      "path": "ports/ringdown/crates/ringdown/src/plan.rs",
+      "sha256": "1dd51afce7e1fb87d1ae7ec5a16dfb5a59304ce177959cb4e7772e50a6ba05bb",
+      "lines": 541,
+      "bytes": 17856,
+      "kind": "source",
+      "actual_sha256": "1dd51afce7e1fb87d1ae7ec5a16dfb5a59304ce177959cb4e7772e50a6ba05bb",
+      "actual_lines": 541,
+      "read_ranges": [
+        [
+          1,
+          300
+        ],
+        [
+          301,
+          541
+        ]
+      ],
+      "status": "complete",
+      "final_sha256": "1dd51afce7e1fb87d1ae7ec5a16dfb5a59304ce177959cb4e7772e50a6ba05bb",
+      "hash_matches_assignment": true,
+      "line_count_matches_assignment": true,
+      "primary_read_only_sha256": "1dd51afce7e1fb87d1ae7ec5a16dfb5a59304ce177959cb4e7772e50a6ba05bb",
+      "primary_matches_snapshot": true
+    },
+    {
+      "path": "ports/ringdown/crates/ringdown/src/profile.rs",
+      "sha256": "cef5ce39ccf95b2c59ac93f56dfd2cf2a9223ae06e4737f8a2137582b3aca0ef",
+      "lines": 436,
+      "bytes": 15487,
+      "kind": "source",
+      "actual_sha256": "cef5ce39ccf95b2c59ac93f56dfd2cf2a9223ae06e4737f8a2137582b3aca0ef",
+      "actual_lines": 436,
+      "read_ranges": [
+        [
+          1,
+          436
+        ]
+      ],
+      "status": "complete",
+      "final_sha256": "cef5ce39ccf95b2c59ac93f56dfd2cf2a9223ae06e4737f8a2137582b3aca0ef",
+      "hash_matches_assignment": true,
+      "line_count_matches_assignment": true,
+      "primary_read_only_sha256": "cef5ce39ccf95b2c59ac93f56dfd2cf2a9223ae06e4737f8a2137582b3aca0ef",
+      "primary_matches_snapshot": true
+    },
+    {
+      "path": "ports/ringdown/crates/ringdown/src/rpc.rs",
+      "sha256": "891eea52d1eecf487642cd96b111339e48023dc121112134728b5a7a12f27a37",
+      "lines": 1280,
+      "bytes": 48348,
+      "kind": "source",
+      "actual_sha256": "891eea52d1eecf487642cd96b111339e48023dc121112134728b5a7a12f27a37",
+      "actual_lines": 1280,
+      "read_ranges": [
+        [
+          1,
+          350
+        ],
+        [
+          351,
+          700
+        ],
+        [
+          701,
+          1000
+        ],
+        [
+          1001,
+          1280
+        ]
+      ],
+      "status": "complete",
+      "final_sha256": "891eea52d1eecf487642cd96b111339e48023dc121112134728b5a7a12f27a37",
+      "hash_matches_assignment": true,
+      "line_count_matches_assignment": true,
+      "primary_read_only_sha256": "891eea52d1eecf487642cd96b111339e48023dc121112134728b5a7a12f27a37",
+      "primary_matches_snapshot": true
+    },
+    {
+      "path": "ports/ringdown/crates/ringdown-ble/Cargo.toml",
+      "sha256": "33a387f8bef7c8ff352b65bbe74d094355bb4f81f548dc2f6cb1c3af35853f2a",
+      "lines": 24,
+      "bytes": 590,
+      "kind": "source",
+      "actual_sha256": "33a387f8bef7c8ff352b65bbe74d094355bb4f81f548dc2f6cb1c3af35853f2a",
+      "actual_lines": 24,
+      "read_ranges": [
+        [
+          1,
+          24
+        ]
+      ],
+      "status": "complete",
+      "final_sha256": "33a387f8bef7c8ff352b65bbe74d094355bb4f81f548dc2f6cb1c3af35853f2a",
+      "hash_matches_assignment": true,
+      "line_count_matches_assignment": true,
+      "primary_read_only_sha256": "33a387f8bef7c8ff352b65bbe74d094355bb4f81f548dc2f6cb1c3af35853f2a",
+      "primary_matches_snapshot": true
+    },
+    {
+      "path": "ports/ringdown/crates/ringdown-ble/src/lib.rs",
+      "sha256": "423b09de03bb983143ecb88025c65ef7de9bfccc00e2352b27ce52e1621f39cb",
+      "lines": 384,
+      "bytes": 14085,
+      "kind": "source",
+      "actual_sha256": "423b09de03bb983143ecb88025c65ef7de9bfccc00e2352b27ce52e1621f39cb",
+      "actual_lines": 384,
+      "read_ranges": [
+        [
+          1,
+          384
+        ]
+      ],
+      "status": "complete",
+      "final_sha256": "423b09de03bb983143ecb88025c65ef7de9bfccc00e2352b27ce52e1621f39cb",
+      "hash_matches_assignment": true,
+      "line_count_matches_assignment": true,
+      "primary_read_only_sha256": "423b09de03bb983143ecb88025c65ef7de9bfccc00e2352b27ce52e1621f39cb",
+      "primary_matches_snapshot": true
+    },
+    {
+      "path": "ports/ringdown/crates/ringdown-client/Cargo.toml",
+      "sha256": "b2869e0ec8d87acde83374dc347213a759a259e0d5c6eb59b7b9012966104b71",
+      "lines": 27,
+      "bytes": 816,
+      "kind": "source",
+      "actual_sha256": "b2869e0ec8d87acde83374dc347213a759a259e0d5c6eb59b7b9012966104b71",
+      "actual_lines": 27,
+      "read_ranges": [
+        [
+          1,
+          27
+        ]
+      ],
+      "status": "complete",
+      "final_sha256": "b2869e0ec8d87acde83374dc347213a759a259e0d5c6eb59b7b9012966104b71",
+      "hash_matches_assignment": true,
+      "line_count_matches_assignment": true,
+      "primary_read_only_sha256": "b2869e0ec8d87acde83374dc347213a759a259e0d5c6eb59b7b9012966104b71",
+      "primary_matches_snapshot": true
+    },
+    {
+      "path": "ports/ringdown/crates/ringdown-client/src/lib.rs",
+      "sha256": "13e030037875a1e9c94ab581b6f1997e2c37add6e6ff7834af3d7230474c628a",
+      "lines": 1409,
+      "bytes": 54359,
+      "kind": "source",
+      "actual_sha256": "13e030037875a1e9c94ab581b6f1997e2c37add6e6ff7834af3d7230474c628a",
+      "actual_lines": 1409,
+      "read_ranges": [
+        [
+          1,
+          320
+        ],
+        [
+          321,
+          650
+        ],
+        [
+          651,
+          960
+        ],
+        [
+          961,
+          1409
+        ]
+      ],
+      "status": "complete",
+      "final_sha256": "13e030037875a1e9c94ab581b6f1997e2c37add6e6ff7834af3d7230474c628a",
+      "hash_matches_assignment": true,
+      "line_count_matches_assignment": true,
+      "primary_read_only_sha256": "13e030037875a1e9c94ab581b6f1997e2c37add6e6ff7834af3d7230474c628a",
+      "primary_matches_snapshot": true
+    },
+    {
+      "path": "ports/ringdown/rustfmt.toml",
+      "sha256": "948ddbb2504264fd8339ce7ce06152cb516a76b6ab8b9fa079cc7b5266c2754c",
+      "lines": 19,
+      "bytes": 1082,
+      "kind": "source",
+      "actual_sha256": "948ddbb2504264fd8339ce7ce06152cb516a76b6ab8b9fa079cc7b5266c2754c",
+      "actual_lines": 19,
+      "read_ranges": [
+        [
+          1,
+          19
+        ]
+      ],
+      "status": "complete",
+      "final_sha256": "948ddbb2504264fd8339ce7ce06152cb516a76b6ab8b9fa079cc7b5266c2754c",
+      "hash_matches_assignment": true,
+      "line_count_matches_assignment": true,
+      "primary_read_only_sha256": "948ddbb2504264fd8339ce7ce06152cb516a76b6ab8b9fa079cc7b5266c2754c",
+      "primary_matches_snapshot": true
+    }
+  ],
+  "assigned_files": 23,
+  "assigned_lines": 11066,
+  "assigned_bytes": 392569,
+  "read_files": 23,
+  "read_lines": 11066,
+  "all_assigned_hashes_verified": true,
+  "all_assigned_lines_read": true,
+  "no_assigned_read_output_truncated": true,
+  "builds_run": false,
+  "tests_run": false,
+  "native_runs": false,
+  "network_used": false,
+  "context_reads": [
+    {
+      "path": "CLAUDE.md",
+      "read_ranges": [
+        [
+          1,
+          117
+        ]
+      ],
+      "status": "complete"
+    },
+    {
+      "path": "design_docs/DOC_README.md",
+      "read_ranges": [
+        [
+          1,
+          180
+        ],
+        [
+          181,
+          413
+        ]
+      ],
+      "status": "complete"
+    },
+    {
+      "path": "design_docs/2026-09-09_audio_ports_rehome_plan.md",
+      "read_ranges": [
+        [
+          1,
+          115
+        ]
+      ],
+      "status": "relevant ringdown rehome sections"
+    },
+    {
+      "path": "ports/ringdown/design_docs/DOC_README.md",
+      "read_ranges": [
+        [
+          1,
+          49
+        ]
+      ],
+      "status": "complete"
+    },
+    {
+      "path": "ports/ringdown/design_docs/DOC_POLICY.md",
+      "read_ranges": [
+        [
+          1,
+          157
+        ]
+      ],
+      "status": "complete"
+    },
+    {
+      "path": "ports/ringdown/README.md",
+      "read_ranges": [
+        [
+          1,
+          53
+        ]
+      ],
+      "status": "complete"
+    },
+    {
+      "path": "ports/ringdown/design_docs/2026-09-01_effects_handoff.md",
+      "read_ranges": [
+        [
+          1,
+          71
+        ]
+      ],
+      "status": "complete"
+    },
+    {
+      "path": "ports/ringdown/design_docs/2026-09-02_client_surface_plan.md",
+      "read_ranges": [
+        [
+          1,
+          234
+        ],
+        [
+          235,
+          387
+        ],
+        [
+          388,
+          553
+        ]
+      ],
+      "status": "complete; middle range re-read after truncated broad context output"
+    },
+    {
+      "path": "ports/ringdown/design_docs/2026-08-27_ringdown_founding.md",
+      "read_ranges": [
+        [
+          1,
+          210
+        ],
+        [
+          211,
+          304
+        ],
+        [
+          660,
+          756
+        ]
+      ],
+      "status": "relevant founding/phase/ruling and H47 sections; remaining historical protocol findings not claimed as read"
+    },
+    {
+      "path": "crates/woodshed-instrument/src/lib.rs",
+      "read_ranges": [
+        [
+          1,
+          330
+        ],
+        [
+          331,
+          463
+        ]
+      ],
+      "status": "complete additional caller evidence"
+    },
+    {
+      "path": "crates/woodshed-instrument/src/session.rs",
+      "read_ranges": [
+        [
+          1,
+          183
+        ],
+        [
+          184,
+          304
+        ]
+      ],
+      "status": "complete additional caller evidence"
+    },
+    {
+      "path": "crates/woodshed-instrument/examples/metronome_link.rs",
+      "read_ranges": [
+        [
+          1,
+          135
+        ]
+      ],
+      "status": "complete additional caller evidence"
+    },
+    {
+      "path": "crates/woodshed-instrument/Cargo.toml",
+      "read_ranges": [
+        [
+          1,
+          26
+        ]
+      ],
+      "status": "complete additional dependency evidence"
+    },
+    {
+      "path": "Cargo.toml",
+      "read_ranges": [
+        [
+          1,
+          40
+        ]
+      ],
+      "status": "partial root workspace topology evidence"
+    },
+    {
+      "path": "design_docs/2026-08-27_smart_instrument_plan.md",
+      "read_ranges": [
+        [
+          1,
+          175
+        ]
+      ],
+      "status": "relevant W1-W3 ownership and acceptance sections"
+    }
+  ],
+  "primary_dirty_overlap": {
+    "scope": "Read-only git diff --name-only and SHA-256 comparison of assigned paths; no Git mutations.",
+    "assigned_files_changed_from_snapshot": 0,
+    "p5a_disposition": "No assigned Ringdown file differs from snapshot; no assigned finding is counted as already fixed by dirty local P5a."
+  },
+  "additional_primary_comparison": [
+    {
+      "path": "crates/woodshed-instrument/src/lib.rs",
+      "snapshot_sha256": "68af5b15806b5448f6efb70171626f18fd3a9ac1e4de95fadb98daf47bda5216",
+      "primary_sha256": "68af5b15806b5448f6efb70171626f18fd3a9ac1e4de95fadb98daf47bda5216",
+      "matches": true
+    },
+    {
+      "path": "crates/woodshed-instrument/src/session.rs",
+      "snapshot_sha256": "5f6d4479c7cf277824d21fab037be56e0259b8fb29e692fd3d697d33c514d520",
+      "primary_sha256": "5f6d4479c7cf277824d21fab037be56e0259b8fb29e692fd3d697d33c514d520",
+      "matches": true
+    },
+    {
+      "path": "crates/woodshed-instrument/examples/metronome_link.rs",
+      "snapshot_sha256": "9e6f67ffe80c4aa7b1fb4a079c9dba5ba769fec32365b49850d42003a6308f3b",
+      "primary_sha256": "9e6f67ffe80c4aa7b1fb4a079c9dba5ba769fec32365b49850d42003a6308f3b",
+      "matches": true
+    }
+  ],
+  "report": "/Users/markik/Code/testing/woodshed/full-source-audit-20261016/ringdown-report.md",
+  "findings": [
+    {
+      "id": "R1",
+      "severity": "P2",
+      "scope": "public Ringdown restore API"
+    },
+    {
+      "id": "R2",
+      "severity": "P2",
+      "scope": "live Ringdown file decode"
+    },
+    {
+      "id": "R3",
+      "severity": "P2",
+      "scope": "Ringdown status and consumer projection"
+    },
+    {
+      "id": "R4",
+      "severity": "P2",
+      "scope": "probe persistence result"
+    },
+    {
+      "id": "R5",
+      "severity": "P2",
+      "scope": "live Ringdown ACK parsing"
+    },
+    {
+      "id": "R6",
+      "severity": "P2",
+      "scope": "offline probe capture identity"
+    },
+    {
+      "id": "R7",
+      "severity": "P2",
+      "scope": "probe loop-index evidence"
+    },
+    {
+      "id": "R8",
+      "severity": "P3",
+      "scope": "cross-partition canonical guard fact"
+    },
+    {
+      "id": "R9",
+      "severity": "P3",
+      "scope": "driver/probe duplicated recording grammar"
+    },
+    {
+      "id": "X1",
+      "severity": "P2",
+      "scope": "additional cross-partition hardware acceptance example"
+    }
+  ],
+  "final_verification": {
+    "assigned_files": 23,
+    "assigned_lines": 11066,
+    "all_hashes_match": true,
+    "coverage_ranges_contiguous": true,
+    "report_local_links_resolve": true,
+    "report_bytes": 33670
+  }
+}

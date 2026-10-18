@@ -1,0 +1,1123 @@
+{
+  "revision": "d12201bfe80cc94345c6308c46caaebf4a9fe42e",
+  "status": "complete",
+  "files": [
+    {
+      "path": "crates/woodshed-views/Cargo.toml",
+      "sha256": "e40718a47f2c2a3c419317dd88125bf9791a2b05a8a979e5a76d86c7e401c469",
+      "lines": 43,
+      "bytes": 1507,
+      "kind": "source",
+      "actual_sha256": "e40718a47f2c2a3c419317dd88125bf9791a2b05a8a979e5a76d86c7e401c469",
+      "read_ranges": [
+        [
+          1,
+          43
+        ]
+      ],
+      "status": "complete",
+      "hash_matches_assignment": true,
+      "actual_lines": 43,
+      "read_chunks": [
+        [
+          1,
+          43
+        ]
+      ],
+      "actual_bytes": 1507,
+      "content_review_status": "full_line_by_line_source_read"
+    },
+    {
+      "path": "crates/woodshed-views/src/appearance/fonts.rs",
+      "sha256": "13319c4279829d84944504128240139d063316fe3ec017a356cb14c595732e6d",
+      "lines": 121,
+      "bytes": 4738,
+      "kind": "source",
+      "actual_sha256": "13319c4279829d84944504128240139d063316fe3ec017a356cb14c595732e6d",
+      "read_ranges": [
+        [
+          1,
+          121
+        ]
+      ],
+      "status": "complete",
+      "hash_matches_assignment": true,
+      "actual_lines": 121,
+      "read_chunks": [
+        [
+          1,
+          121
+        ]
+      ],
+      "actual_bytes": 4738,
+      "content_review_status": "full_line_by_line_source_read"
+    },
+    {
+      "path": "crates/woodshed-views/src/appearance/view.rs",
+      "sha256": "c00e587911132556017a3591158ca6b80d3f7f6d8adb2415b85418c4519649d4",
+      "lines": 212,
+      "bytes": 8895,
+      "kind": "source",
+      "actual_sha256": "c00e587911132556017a3591158ca6b80d3f7f6d8adb2415b85418c4519649d4",
+      "read_ranges": [
+        [
+          1,
+          212
+        ]
+      ],
+      "status": "complete",
+      "hash_matches_assignment": true,
+      "actual_lines": 212,
+      "read_chunks": [
+        [
+          1,
+          212
+        ]
+      ],
+      "actual_bytes": 8895,
+      "content_review_status": "full_line_by_line_source_read"
+    },
+    {
+      "path": "crates/woodshed-views/src/appearance/view_tests.rs",
+      "sha256": "778d0c718612c8fb2b8fadd7e6a4e2c14cc8437558645af515fda0715c77a55c",
+      "lines": 471,
+      "bytes": 16029,
+      "kind": "source",
+      "actual_sha256": "778d0c718612c8fb2b8fadd7e6a4e2c14cc8437558645af515fda0715c77a55c",
+      "read_ranges": [
+        [
+          1,
+          471
+        ]
+      ],
+      "status": "complete",
+      "hash_matches_assignment": true,
+      "actual_lines": 471,
+      "read_chunks": [
+        [
+          1,
+          471
+        ]
+      ],
+      "actual_bytes": 16029,
+      "content_review_status": "full_line_by_line_source_read"
+    },
+    {
+      "path": "crates/woodshed-views/src/appearance.rs",
+      "sha256": "d58b0d80269a14d601c0eea715da51d6c82a062bfbfac3824ef45e698a248ef4",
+      "lines": 645,
+      "bytes": 24053,
+      "kind": "source",
+      "actual_sha256": "d58b0d80269a14d601c0eea715da51d6c82a062bfbfac3824ef45e698a248ef4",
+      "read_ranges": [
+        [
+          1,
+          645
+        ]
+      ],
+      "status": "complete",
+      "hash_matches_assignment": true,
+      "actual_lines": 645,
+      "read_chunks": [
+        [
+          1,
+          645
+        ]
+      ],
+      "actual_bytes": 24053,
+      "content_review_status": "full_line_by_line_source_read"
+    },
+    {
+      "path": "crates/woodshed-views/src/demo.rs",
+      "sha256": "fbdd4bd1e7d04f9ede90e27d65c9f60ad1c9bde947654d76b4a2edb10b05ba20",
+      "lines": 151,
+      "bytes": 5316,
+      "kind": "source",
+      "actual_sha256": "fbdd4bd1e7d04f9ede90e27d65c9f60ad1c9bde947654d76b4a2edb10b05ba20",
+      "read_ranges": [
+        [
+          1,
+          151
+        ]
+      ],
+      "status": "complete",
+      "hash_matches_assignment": true,
+      "actual_lines": 151,
+      "read_chunks": [
+        [
+          1,
+          151
+        ],
+        [
+          1,
+          32
+        ]
+      ],
+      "actual_bytes": 5316,
+      "content_review_status": "full_line_by_line_source_read"
+    },
+    {
+      "path": "crates/woodshed-views/src/fretboard_leaf.rs",
+      "sha256": "2a83e58e8126aac936c0735581f773c932657e6d3fe810a222c7bc53a8ff042a",
+      "lines": 650,
+      "bytes": 22707,
+      "kind": "source",
+      "actual_sha256": "2a83e58e8126aac936c0735581f773c932657e6d3fe810a222c7bc53a8ff042a",
+      "read_ranges": [
+        [
+          1,
+          650
+        ]
+      ],
+      "status": "complete",
+      "hash_matches_assignment": true,
+      "actual_lines": 650,
+      "read_chunks": [
+        [
+          1,
+          650
+        ]
+      ],
+      "actual_bytes": 22707,
+      "content_review_status": "full_line_by_line_source_read"
+    },
+    {
+      "path": "crates/woodshed-views/src/lib.rs",
+      "sha256": "8cce68f8482beef66d5f83bec8f5fd442f82dbae82776a29fa529b037efbb35f",
+      "lines": 21,
+      "bytes": 693,
+      "kind": "source",
+      "actual_sha256": "8cce68f8482beef66d5f83bec8f5fd442f82dbae82776a29fa529b037efbb35f",
+      "read_ranges": [
+        [
+          1,
+          21
+        ]
+      ],
+      "status": "complete",
+      "hash_matches_assignment": true,
+      "actual_lines": 21,
+      "read_chunks": [
+        [
+          1,
+          21
+        ]
+      ],
+      "actual_bytes": 693,
+      "content_review_status": "full_line_by_line_source_read"
+    },
+    {
+      "path": "crates/woodshed-views/src/persona.rs",
+      "sha256": "f12951b8e2b21b937599eacad39ab2cea9f2433b868d0052cedaa007ba344002",
+      "lines": 410,
+      "bytes": 16075,
+      "kind": "source",
+      "actual_sha256": "f12951b8e2b21b937599eacad39ab2cea9f2433b868d0052cedaa007ba344002",
+      "read_ranges": [
+        [
+          1,
+          410
+        ]
+      ],
+      "status": "complete",
+      "hash_matches_assignment": true,
+      "actual_lines": 410,
+      "read_chunks": [
+        [
+          1,
+          410
+        ]
+      ],
+      "actual_bytes": 16075,
+      "content_review_status": "full_line_by_line_source_read"
+    },
+    {
+      "path": "crates/woodshed-views/src/settings_provider.rs",
+      "sha256": "205ca1674daa59dfba7553ba526cea09d52c1515492199c779530e02044e878a",
+      "lines": 261,
+      "bytes": 9253,
+      "kind": "source",
+      "actual_sha256": "205ca1674daa59dfba7553ba526cea09d52c1515492199c779530e02044e878a",
+      "read_ranges": [
+        [
+          1,
+          261
+        ]
+      ],
+      "status": "complete",
+      "hash_matches_assignment": true,
+      "actual_lines": 261,
+      "read_chunks": [
+        [
+          1,
+          261
+        ]
+      ],
+      "actual_bytes": 9253,
+      "content_review_status": "full_line_by_line_source_read"
+    },
+    {
+      "path": "crates/woodshed-views/src/stage/canvas_camera.rs",
+      "sha256": "1e20a609ea3f0ef37904b78021a39d6047eaa59876fbe312fcdab21d603227b5",
+      "lines": 652,
+      "bytes": 22968,
+      "kind": "source",
+      "actual_sha256": "1e20a609ea3f0ef37904b78021a39d6047eaa59876fbe312fcdab21d603227b5",
+      "read_ranges": [
+        [
+          1,
+          652
+        ]
+      ],
+      "status": "complete",
+      "hash_matches_assignment": true,
+      "actual_lines": 652,
+      "read_chunks": [
+        [
+          1,
+          652
+        ]
+      ],
+      "actual_bytes": 22968,
+      "content_review_status": "full_line_by_line_source_read"
+    },
+    {
+      "path": "crates/woodshed-views/src/stage/chord_approaches.rs",
+      "sha256": "2d7d06c0175ae363ffcb85fc374c562c71aab42cd18939b748e48416bc8dbe36",
+      "lines": 596,
+      "bytes": 23358,
+      "kind": "source",
+      "actual_sha256": "2d7d06c0175ae363ffcb85fc374c562c71aab42cd18939b748e48416bc8dbe36",
+      "read_ranges": [
+        [
+          1,
+          596
+        ]
+      ],
+      "status": "complete",
+      "hash_matches_assignment": true,
+      "actual_lines": 596,
+      "read_chunks": [
+        [
+          1,
+          596
+        ]
+      ],
+      "actual_bytes": 23358,
+      "content_review_status": "full_line_by_line_source_read"
+    },
+    {
+      "path": "crates/woodshed-views/src/stage/connected.rs",
+      "sha256": "b251ed8fc2a211f39001fe033ba2189c5d2b7f1dba2b85cedf56ff6cbb5dde8c",
+      "lines": 401,
+      "bytes": 15748,
+      "kind": "source",
+      "actual_sha256": "b251ed8fc2a211f39001fe033ba2189c5d2b7f1dba2b85cedf56ff6cbb5dde8c",
+      "read_ranges": [
+        [
+          1,
+          401
+        ]
+      ],
+      "status": "complete",
+      "hash_matches_assignment": true,
+      "actual_lines": 401,
+      "read_chunks": [
+        [
+          1,
+          401
+        ]
+      ],
+      "actual_bytes": 15748,
+      "content_review_status": "full_line_by_line_source_read"
+    },
+    {
+      "path": "crates/woodshed-views/src/stage/connected_scales.rs",
+      "sha256": "0e8e851d0125172b5109c2d26e4f6ed993bbcd46f357273e619ed77cae8d7882",
+      "lines": 427,
+      "bytes": 16045,
+      "kind": "source",
+      "actual_sha256": "0e8e851d0125172b5109c2d26e4f6ed993bbcd46f357273e619ed77cae8d7882",
+      "read_ranges": [
+        [
+          1,
+          427
+        ]
+      ],
+      "status": "complete",
+      "hash_matches_assignment": true,
+      "actual_lines": 427,
+      "read_chunks": [
+        [
+          1,
+          427
+        ]
+      ],
+      "actual_bytes": 16045,
+      "content_review_status": "full_line_by_line_source_read"
+    },
+    {
+      "path": "crates/woodshed-views/src/stage/context.rs",
+      "sha256": "e60a5f40cc90e01ae3eddbf7a1ad69bbbb5c4a6ccda0f48a1ea6d29b47c71eeb",
+      "lines": 852,
+      "bytes": 33626,
+      "kind": "source",
+      "actual_sha256": "e60a5f40cc90e01ae3eddbf7a1ad69bbbb5c4a6ccda0f48a1ea6d29b47c71eeb",
+      "read_ranges": [
+        [
+          1,
+          852
+        ]
+      ],
+      "status": "complete",
+      "hash_matches_assignment": true,
+      "actual_lines": 852,
+      "read_chunks": [
+        [
+          1,
+          852
+        ]
+      ],
+      "actual_bytes": 33626,
+      "content_review_status": "full_line_by_line_source_read"
+    },
+    {
+      "path": "crates/woodshed-views/src/stage/context_tests.rs",
+      "sha256": "191cb406fdb79a81e788c34ed592ff86242e979632eec5fbfb4288e18df5a62c",
+      "lines": 347,
+      "bytes": 12401,
+      "kind": "source",
+      "actual_sha256": "191cb406fdb79a81e788c34ed592ff86242e979632eec5fbfb4288e18df5a62c",
+      "read_ranges": [
+        [
+          1,
+          347
+        ]
+      ],
+      "status": "complete",
+      "hash_matches_assignment": true,
+      "actual_lines": 347,
+      "read_chunks": [
+        [
+          1,
+          347
+        ]
+      ],
+      "actual_bytes": 12401,
+      "content_review_status": "full_line_by_line_source_read"
+    },
+    {
+      "path": "crates/woodshed-views/src/stage/instances.rs",
+      "sha256": "5fbf42e70ca06ecdc68b053bfe76ab26659faaa6ef9fc4880ebf59b3b9c176c8",
+      "lines": 512,
+      "bytes": 20613,
+      "kind": "source",
+      "actual_sha256": "5fbf42e70ca06ecdc68b053bfe76ab26659faaa6ef9fc4880ebf59b3b9c176c8",
+      "read_ranges": [
+        [
+          1,
+          512
+        ]
+      ],
+      "status": "complete",
+      "hash_matches_assignment": true,
+      "actual_lines": 512,
+      "read_chunks": [
+        [
+          1,
+          512
+        ],
+        [
+          448,
+          463
+        ]
+      ],
+      "actual_bytes": 20613,
+      "content_review_status": "full_line_by_line_source_read"
+    },
+    {
+      "path": "crates/woodshed-views/src/stage/looper/recorder.rs",
+      "sha256": "4b782629c8febaafd3eb0144af2a705e265fbdfc06b2d299d0d931b93199cc78",
+      "lines": 921,
+      "bytes": 34722,
+      "kind": "source",
+      "actual_sha256": "4b782629c8febaafd3eb0144af2a705e265fbdfc06b2d299d0d931b93199cc78",
+      "read_ranges": [
+        [
+          1,
+          921
+        ]
+      ],
+      "status": "complete",
+      "hash_matches_assignment": true,
+      "actual_lines": 921,
+      "read_chunks": [
+        [
+          1,
+          921
+        ]
+      ],
+      "actual_bytes": 34722,
+      "content_review_status": "full_line_by_line_source_read"
+    },
+    {
+      "path": "crates/woodshed-views/src/stage/looper.rs",
+      "sha256": "f6bf5fa9820935889ce9f6ff5b535819f0a9f967f7c42381771de86d51ecb049",
+      "lines": 693,
+      "bytes": 26922,
+      "kind": "source",
+      "actual_sha256": "f6bf5fa9820935889ce9f6ff5b535819f0a9f967f7c42381771de86d51ecb049",
+      "read_ranges": [
+        [
+          1,
+          693
+        ]
+      ],
+      "status": "complete",
+      "hash_matches_assignment": true,
+      "actual_lines": 693,
+      "read_chunks": [
+        [
+          1,
+          693
+        ]
+      ],
+      "actual_bytes": 26922,
+      "content_review_status": "full_line_by_line_source_read"
+    },
+    {
+      "path": "crates/woodshed-views/src/stage/musical_context.rs",
+      "sha256": "a84a3269252d22b8ec8ea14bf498a6c06f8e5697fad24a4d5de7ebb9c23931f3",
+      "lines": 754,
+      "bytes": 30777,
+      "kind": "source",
+      "actual_sha256": "a84a3269252d22b8ec8ea14bf498a6c06f8e5697fad24a4d5de7ebb9c23931f3",
+      "read_ranges": [
+        [
+          1,
+          754
+        ]
+      ],
+      "status": "complete",
+      "hash_matches_assignment": true,
+      "actual_lines": 754,
+      "read_chunks": [
+        [
+          1,
+          754
+        ]
+      ],
+      "actual_bytes": 30777,
+      "content_review_status": "full_line_by_line_source_read"
+    },
+    {
+      "path": "crates/woodshed-views/src/stage/overview.rs",
+      "sha256": "dfe47e582a713d99b83bf955f0b17d54f0e834e67c50cd70738b9f4b05448628",
+      "lines": 1761,
+      "bytes": 74350,
+      "kind": "source",
+      "actual_sha256": "dfe47e582a713d99b83bf955f0b17d54f0e834e67c50cd70738b9f4b05448628",
+      "read_ranges": [
+        [
+          1,
+          1761
+        ]
+      ],
+      "status": "complete",
+      "hash_matches_assignment": true,
+      "actual_lines": 1761,
+      "read_chunks": [
+        [
+          1,
+          850
+        ],
+        [
+          851,
+          1761
+        ]
+      ],
+      "actual_bytes": 74350,
+      "content_review_status": "full_line_by_line_source_read"
+    },
+    {
+      "path": "crates/woodshed-views/src/stage/overview_atmosphere.rs",
+      "sha256": "3d026e591adbd240119fbaa29c9b605eabef1473549d86d66a396e29a79b48fd",
+      "lines": 159,
+      "bytes": 5157,
+      "kind": "source",
+      "actual_sha256": "3d026e591adbd240119fbaa29c9b605eabef1473549d86d66a396e29a79b48fd",
+      "read_ranges": [
+        [
+          1,
+          159
+        ]
+      ],
+      "status": "complete",
+      "hash_matches_assignment": true,
+      "actual_lines": 159,
+      "read_chunks": [
+        [
+          1,
+          159
+        ]
+      ],
+      "actual_bytes": 5157,
+      "content_review_status": "full_line_by_line_source_read"
+    },
+    {
+      "path": "crates/woodshed-views/src/stage/overview_dynamics.rs",
+      "sha256": "098f7160191bd131f7b313e7f292668a2d3d4d1865d635dee9ac67ce31e2af98",
+      "lines": 410,
+      "bytes": 13814,
+      "kind": "source",
+      "actual_sha256": "098f7160191bd131f7b313e7f292668a2d3d4d1865d635dee9ac67ce31e2af98",
+      "read_ranges": [
+        [
+          1,
+          410
+        ]
+      ],
+      "status": "complete",
+      "hash_matches_assignment": true,
+      "actual_lines": 410,
+      "read_chunks": [
+        [
+          1,
+          410
+        ]
+      ],
+      "actual_bytes": 13814,
+      "content_review_status": "full_line_by_line_source_read"
+    },
+    {
+      "path": "crates/woodshed-views/src/stage/overview_presentation.rs",
+      "sha256": "acbeba81642e3c1ca455dc32c3d610823f34ce7e95c528ccfe53ad84c3a81f5e",
+      "lines": 374,
+      "bytes": 14647,
+      "kind": "source",
+      "actual_sha256": "acbeba81642e3c1ca455dc32c3d610823f34ce7e95c528ccfe53ad84c3a81f5e",
+      "read_ranges": [
+        [
+          1,
+          374
+        ]
+      ],
+      "status": "complete",
+      "hash_matches_assignment": true,
+      "actual_lines": 374,
+      "read_chunks": [
+        [
+          1,
+          374
+        ]
+      ],
+      "actual_bytes": 14647,
+      "content_review_status": "full_line_by_line_source_read"
+    },
+    {
+      "path": "crates/woodshed-views/src/stage/pitch_motion.rs",
+      "sha256": "9f3d0a3bb2a84c072a080241aa02c2039596d773a67c7fb5c1961fb08c733dc7",
+      "lines": 91,
+      "bytes": 3575,
+      "kind": "source",
+      "actual_sha256": "9f3d0a3bb2a84c072a080241aa02c2039596d773a67c7fb5c1961fb08c733dc7",
+      "read_ranges": [
+        [
+          1,
+          91
+        ]
+      ],
+      "status": "complete",
+      "hash_matches_assignment": true,
+      "actual_lines": 91,
+      "read_chunks": [
+        [
+          1,
+          91
+        ]
+      ],
+      "actual_bytes": 3575,
+      "content_review_status": "full_line_by_line_source_read"
+    },
+    {
+      "path": "crates/woodshed-views/src/stage/rehearsal.rs",
+      "sha256": "1b0528c352a431b465119fb8876a8724ebabb97de9716b411ba6734e3bd15862",
+      "lines": 406,
+      "bytes": 16318,
+      "kind": "source",
+      "actual_sha256": "1b0528c352a431b465119fb8876a8724ebabb97de9716b411ba6734e3bd15862",
+      "read_ranges": [
+        [
+          1,
+          406
+        ]
+      ],
+      "status": "complete",
+      "hash_matches_assignment": true,
+      "actual_lines": 406,
+      "read_chunks": [
+        [
+          1,
+          406
+        ]
+      ],
+      "actual_bytes": 16318,
+      "content_review_status": "full_line_by_line_source_read"
+    },
+    {
+      "path": "crates/woodshed-views/src/stage/related.rs",
+      "sha256": "c8609e4cb6ae01001b5978dba8e6922c6c35f0019c1944713f58af2cac574d52",
+      "lines": 1532,
+      "bytes": 63211,
+      "kind": "source",
+      "actual_sha256": "c8609e4cb6ae01001b5978dba8e6922c6c35f0019c1944713f58af2cac574d52",
+      "read_ranges": [
+        [
+          1,
+          1532
+        ]
+      ],
+      "status": "complete",
+      "hash_matches_assignment": true,
+      "actual_lines": 1532,
+      "read_chunks": [
+        [
+          1,
+          790
+        ],
+        [
+          791,
+          1532
+        ]
+      ],
+      "actual_bytes": 63211,
+      "content_review_status": "full_line_by_line_source_read"
+    },
+    {
+      "path": "crates/woodshed-views/src/stage/relationship.rs",
+      "sha256": "eaf378e79cdcd4593d58791d99ca68834a889d6927a54d52a9f8491e808ce70f",
+      "lines": 1417,
+      "bytes": 57803,
+      "kind": "source",
+      "actual_sha256": "eaf378e79cdcd4593d58791d99ca68834a889d6927a54d52a9f8491e808ce70f",
+      "read_ranges": [
+        [
+          1,
+          1417
+        ]
+      ],
+      "status": "complete",
+      "hash_matches_assignment": true,
+      "actual_lines": 1417,
+      "read_chunks": [
+        [
+          1,
+          730
+        ],
+        [
+          731,
+          1417
+        ]
+      ],
+      "actual_bytes": 57803,
+      "content_review_status": "full_line_by_line_source_read"
+    },
+    {
+      "path": "crates/woodshed-views/src/stage/scale_patterns.rs",
+      "sha256": "dc7deb2726aaf859d33ca2fc32540724c691b33670086c0c2b634015b9057ad5",
+      "lines": 547,
+      "bytes": 20975,
+      "kind": "source",
+      "actual_sha256": "dc7deb2726aaf859d33ca2fc32540724c691b33670086c0c2b634015b9057ad5",
+      "read_ranges": [
+        [
+          1,
+          547
+        ]
+      ],
+      "status": "complete",
+      "hash_matches_assignment": true,
+      "actual_lines": 547,
+      "read_chunks": [
+        [
+          1,
+          547
+        ]
+      ],
+      "actual_bytes": 20975,
+      "content_review_status": "full_line_by_line_source_read"
+    },
+    {
+      "path": "crates/woodshed-views/src/stage/set_tray.rs",
+      "sha256": "04e5f7cc1809e9d8f5c88febfe895376b3b3f782cae0ade7130f9f1dc779ffe3",
+      "lines": 568,
+      "bytes": 23501,
+      "kind": "source",
+      "actual_sha256": "04e5f7cc1809e9d8f5c88febfe895376b3b3f782cae0ade7130f9f1dc779ffe3",
+      "read_ranges": [
+        [
+          1,
+          568
+        ]
+      ],
+      "status": "complete",
+      "hash_matches_assignment": true,
+      "actual_lines": 568,
+      "read_chunks": [
+        [
+          1,
+          568
+        ]
+      ],
+      "actual_bytes": 23501,
+      "content_review_status": "full_line_by_line_source_read"
+    },
+    {
+      "path": "crates/woodshed-views/src/stage/settings.rs",
+      "sha256": "20f138a4afbbb2b0a3017034857db8bedb56b1eb05ed352e03a3f14853179698",
+      "lines": 825,
+      "bytes": 31381,
+      "kind": "source",
+      "actual_sha256": "20f138a4afbbb2b0a3017034857db8bedb56b1eb05ed352e03a3f14853179698",
+      "read_ranges": [
+        [
+          1,
+          825
+        ]
+      ],
+      "status": "complete",
+      "hash_matches_assignment": true,
+      "actual_lines": 825,
+      "read_chunks": [
+        [
+          1,
+          825
+        ]
+      ],
+      "actual_bytes": 31381,
+      "content_review_status": "full_line_by_line_source_read"
+    },
+    {
+      "path": "crates/woodshed-views/src/stage/shapes.rs",
+      "sha256": "636eb0dbc25b4f92a575790d2c027805238bd83fba0eb9d756aff8a1de77c0c9",
+      "lines": 452,
+      "bytes": 19061,
+      "kind": "source",
+      "actual_sha256": "636eb0dbc25b4f92a575790d2c027805238bd83fba0eb9d756aff8a1de77c0c9",
+      "read_ranges": [
+        [
+          1,
+          452
+        ]
+      ],
+      "status": "complete",
+      "hash_matches_assignment": true,
+      "actual_lines": 452,
+      "read_chunks": [
+        [
+          1,
+          452
+        ]
+      ],
+      "actual_bytes": 19061,
+      "content_review_status": "full_line_by_line_source_read"
+    },
+    {
+      "path": "crates/woodshed-views/src/stage/templates.rs",
+      "sha256": "3fc44a709409d4114c92516d59206117756896fb239730286ccbc79525e5b8fe",
+      "lines": 44,
+      "bytes": 1474,
+      "kind": "source",
+      "actual_sha256": "3fc44a709409d4114c92516d59206117756896fb239730286ccbc79525e5b8fe",
+      "read_ranges": [
+        [
+          1,
+          44
+        ]
+      ],
+      "status": "complete",
+      "hash_matches_assignment": true,
+      "actual_lines": 44,
+      "read_chunks": [
+        [
+          1,
+          44
+        ]
+      ],
+      "actual_bytes": 1474,
+      "content_review_status": "full_line_by_line_source_read"
+    },
+    {
+      "path": "crates/woodshed-views/src/stage/tools.rs",
+      "sha256": "fb445e4adde8bc553d19d8f240c2ed9b09c820e1245af664002f961b7bfff4ba",
+      "lines": 119,
+      "bytes": 4020,
+      "kind": "source",
+      "actual_sha256": "fb445e4adde8bc553d19d8f240c2ed9b09c820e1245af664002f961b7bfff4ba",
+      "read_ranges": [
+        [
+          1,
+          119
+        ]
+      ],
+      "status": "complete",
+      "hash_matches_assignment": true,
+      "actual_lines": 119,
+      "read_chunks": [
+        [
+          1,
+          119
+        ]
+      ],
+      "actual_bytes": 4020,
+      "content_review_status": "full_line_by_line_source_read"
+    },
+    {
+      "path": "crates/woodshed-views/src/stage.rs",
+      "sha256": "26698c8d2219d9124ead185ef66aa4a5a870452fe303935f19a5f99f2f2bf273",
+      "lines": 4573,
+      "bytes": 183195,
+      "kind": "source",
+      "actual_sha256": "26698c8d2219d9124ead185ef66aa4a5a870452fe303935f19a5f99f2f2bf273",
+      "read_ranges": [
+        [
+          1,
+          4573
+        ]
+      ],
+      "status": "complete",
+      "hash_matches_assignment": true,
+      "actual_lines": 4573,
+      "read_chunks": [
+        [
+          1,
+          800
+        ],
+        [
+          801,
+          1600
+        ],
+        [
+          1205,
+          1210
+        ],
+        [
+          1601,
+          2300
+        ],
+        [
+          2301,
+          3000
+        ],
+        [
+          3001,
+          3700
+        ],
+        [
+          3701,
+          4573
+        ]
+      ],
+      "actual_bytes": 183195,
+      "content_review_status": "full_line_by_line_source_read"
+    },
+    {
+      "path": "crates/woodshed-views/src/theme.rs",
+      "sha256": "4f0a00186d89066bbc4b8e0e552669c90b6caa39152ce72a7d8b53ba2108eedd",
+      "lines": 740,
+      "bytes": 44906,
+      "kind": "source",
+      "actual_sha256": "4f0a00186d89066bbc4b8e0e552669c90b6caa39152ce72a7d8b53ba2108eedd",
+      "read_ranges": [
+        [
+          1,
+          740
+        ]
+      ],
+      "status": "complete",
+      "hash_matches_assignment": true,
+      "actual_lines": 740,
+      "read_chunks": [
+        [
+          1,
+          740
+        ]
+      ],
+      "actual_bytes": 44906,
+      "content_review_status": "full_line_by_line_source_read"
+    },
+    {
+      "path": "crates/woodshed-views/src/workspace.rs",
+      "sha256": "babfbbaa3eac59c445d15f4a9986fd9e20ce43fa3c0420e8347486857fc56af2",
+      "lines": 804,
+      "bytes": 29908,
+      "kind": "source",
+      "actual_sha256": "babfbbaa3eac59c445d15f4a9986fd9e20ce43fa3c0420e8347486857fc56af2",
+      "read_ranges": [
+        [
+          1,
+          804
+        ]
+      ],
+      "status": "complete",
+      "hash_matches_assignment": true,
+      "actual_lines": 804,
+      "read_chunks": [
+        [
+          1,
+          804
+        ]
+      ],
+      "actual_bytes": 29908,
+      "content_review_status": "full_line_by_line_source_read"
+    }
+  ],
+  "summary": {
+    "assigned_files": 37,
+    "assigned_lines": 23962,
+    "complete_files": 37,
+    "read_lines": 23962,
+    "all_hashes_match": true
+  },
+  "method": "Read complete file contents with numbered source lines; chunks bounded to avoid truncation. Narrow rereads repaired all tool-output omissions before completion. Search was used only for reachability and neighboring evidence, never as a substitute for the assigned read.",
+  "truncation_repairs": [
+    {
+      "path": "crates/woodshed-views/src/lib.rs",
+      "reread": [
+        1,
+        21
+      ]
+    },
+    {
+      "path": "crates/woodshed-views/src/demo.rs",
+      "reread": [
+        1,
+        32
+      ]
+    },
+    {
+      "path": "crates/woodshed-views/src/stage.rs",
+      "reread": [
+        1205,
+        1210
+      ]
+    },
+    {
+      "path": "crates/woodshed-views/src/stage/instances.rs",
+      "reread": [
+        448,
+        463
+      ]
+    }
+  ],
+  "required_context": [
+    {
+      "path": "CLAUDE.md",
+      "read_ranges": [
+        [
+          1,
+          117
+        ]
+      ],
+      "sha256": "1dc92eb52d2ab16bbcba919210844c98b7e69160615664885ebba5747c8c3ead",
+      "status": "complete"
+    },
+    {
+      "path": "design_docs/DOC_README.md",
+      "read_ranges": [
+        [
+          1,
+          413
+        ]
+      ],
+      "reread_chunks": [
+        [
+          125,
+          149
+        ],
+        [
+          150,
+          413
+        ]
+      ],
+      "sha256": "f88abef1c4ae554ddfc415b2a473eb3a67da63846844e80466cc3b95771f9cf0",
+      "status": "complete"
+    },
+    {
+      "path": "design_docs/2026-07-11_stage_set_tools_plan.md",
+      "read_ranges": [
+        [
+          1,
+          60
+        ],
+        [
+          1734,
+          1805
+        ],
+        [
+          2515,
+          2542
+        ],
+        [
+          2570,
+          2648
+        ],
+        [
+          2650,
+          2700
+        ]
+      ],
+      "status": "relevant_sections_read"
+    },
+    {
+      "path": "design_docs/2026-08-06_settings_persistence_split_plan.md",
+      "read_ranges": [
+        [
+          1,
+          54
+        ]
+      ],
+      "status": "complete"
+    }
+  ],
+  "constraints": {
+    "product_mutations": false,
+    "git_mutations": false,
+    "builds": false,
+    "tests_run": false,
+    "native_runs": false,
+    "network_browsing": false,
+    "writes": [
+      "views-coverage.json",
+      "views-report.md"
+    ]
+  },
+  "report": "views-report.md",
+  "findings": [
+    {
+      "id": "V01",
+      "priority": "P2"
+    },
+    {
+      "id": "V02",
+      "priority": "P2"
+    },
+    {
+      "id": "V03",
+      "priority": "P2"
+    },
+    {
+      "id": "V04",
+      "priority": "P3"
+    },
+    {
+      "id": "V05",
+      "priority": "P3"
+    },
+    {
+      "id": "V06",
+      "priority": "P3"
+    }
+  ],
+  "known_dirty_local_work": "P5a Card timing and audio admission; primary source inspected read-only, not built or independently qualified"
+}

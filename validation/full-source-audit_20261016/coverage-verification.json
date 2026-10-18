@@ -1,0 +1,78 @@
+{
+  "revision": "d12201bfe80cc94345c6308c46caaebf4a9fe42e",
+  "scope": "Collective reader attestations verified for every assigned line range and SHA-256; not a test, native, physical or publication receipt.",
+  "expected_files": 936,
+  "complete_files": 936,
+  "lines": 231127,
+  "partitions": [
+    {
+      "lane": "core",
+      "assigned": 49,
+      "complete": 49,
+      "lines": 23561
+    },
+    {
+      "lane": "views",
+      "assigned": 37,
+      "complete": 37,
+      "lines": 23962
+    },
+    {
+      "lane": "host",
+      "assigned": 20,
+      "complete": 20,
+      "lines": 18828
+    },
+    {
+      "lane": "audio",
+      "assigned": 34,
+      "complete": 34,
+      "lines": 12014
+    },
+    {
+      "lane": "shared",
+      "assigned": 33,
+      "complete": 33,
+      "lines": 9587
+    },
+    {
+      "lane": "theory",
+      "assigned": 21,
+      "complete": 21,
+      "lines": 11180
+    },
+    {
+      "lane": "hocket",
+      "assigned": 73,
+      "complete": 73,
+      "lines": 20440
+    },
+    {
+      "lane": "redshank",
+      "assigned": 178,
+      "complete": 178,
+      "lines": 51557
+    },
+    {
+      "lane": "ringdown",
+      "assigned": 23,
+      "complete": 23,
+      "lines": 11066
+    },
+    {
+      "lane": "tooling",
+      "assigned": 97,
+      "complete": 97,
+      "lines": 13362
+    },
+    {
+      "lane": "evidence",
+      "assigned": 371,
+      "complete": 371,
+      "lines": 35570
+    }
+  ],
+  "missing": [],
+  "problems": [],
+  "complete": true
+}

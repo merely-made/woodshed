@@ -1,0 +1,16 @@
+{
+  "command": [
+    "python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "validation/full-source-audit_20261016",
+    "-p",
+    "test_verify_coverage.py",
+    "-v"
+  ],
+  "exit_code": 0,
+  "helper_sha256": "2814ed0bebba4b97f1cc1b023295d8bdf8aace874b3431a7738fd17333930add",
+  "scope": "Three audit-verifier tests; not product tests"
+}

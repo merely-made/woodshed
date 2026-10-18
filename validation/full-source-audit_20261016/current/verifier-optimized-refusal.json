@@ -1,0 +1,11 @@
+{
+  "command": [
+    "python3",
+    "-O",
+    "/Users/markik/Code/repos/woodshed/validation/full-source-audit_20261016/verify_coverage.py"
+  ],
+  "exit_code": 1,
+  "expected_refusal": true,
+  "helper_sha256": "2814ed0bebba4b97f1cc1b023295d8bdf8aace874b3431a7738fd17333930add",
+  "stderr": "Traceback (most recent call last):\n  File \"/Users/markik/Code/repos/woodshed/validation/full-source-audit_20261016/verify_coverage.py\", line 15, in <module>\n    raise RuntimeError(\"Coverage verification refuses optimized Python\")\nRuntimeError: Coverage verification refuses optimized Python\n"
+}

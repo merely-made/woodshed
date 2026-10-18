@@ -1,0 +1,16 @@
+{
+  "fetched_origin_main": "125be57d184f46b9f878463243d5a6ed8d8df4c3",
+  "scope": "Reachability of exact historical qualified commits; no current-head requalification",
+  "checks": [
+    {
+      "revision": "cec221348154fc8e6abe3f6136f00b14f9860b78",
+      "ancestor_of_fetched_origin_main": true,
+      "exit_code": 0
+    },
+    {
+      "revision": "d955f5dc3b99ec1efd6ec9a56dd3ba007755409e",
+      "ancestor_of_fetched_origin_main": true,
+      "exit_code": 0
+    }
+  ]
+}

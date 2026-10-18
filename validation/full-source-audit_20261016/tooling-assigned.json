@@ -1,0 +1,681 @@
+[
+  {
+    "path": ".cargo/config.toml",
+    "sha256": "af174c7f9ac5ae8e0536a8fd2fa0251e680f23edab3ffbb5098aa914a48cdb01",
+    "lines": 2,
+    "bytes": 52,
+    "kind": "source"
+  },
+  {
+    "path": "Cargo.lock",
+    "sha256": "02056748cfc7580fabf88b9260bcae1c9245eb8676f5588482ca4e61a36bc145",
+    "lines": 8999,
+    "bytes": 218027,
+    "kind": "source"
+  },
+  {
+    "path": "Cargo.toml",
+    "sha256": "f0c8a84a41a58a0b2c4c8e9fae56a8ab1e684362b45d561e273e4fa0ca8df598",
+    "lines": 265,
+    "bytes": 14628,
+    "kind": "source"
+  },
+  {
+    "path": "rust-toolchain.toml",
+    "sha256": "0825b0dd5ce327e08440351f42880e728f21cf5be410aac844fc4281096dd8ab",
+    "lines": 3,
+    "bytes": 66,
+    "kind": "source"
+  },
+  {
+    "path": "rustfmt.toml",
+    "sha256": "948ddbb2504264fd8339ce7ce06152cb516a76b6ab8b9fa079cc7b5266c2754c",
+    "lines": 19,
+    "bytes": 1082,
+    "kind": "source"
+  },
+  {
+    "path": "scenarios/anchored_pitch_motion.scn",
+    "sha256": "acac4ad13529fee6dcfb3366152147e28484cbe439951fdac1c832ad75accfbf",
+    "lines": 24,
+    "bytes": 565,
+    "kind": "source"
+  },
+  {
+    "path": "scenarios/canvas_controls_p2.scn",
+    "sha256": "1cd813aadfb091a54e731f45b676ba64d76ae5f7ec6ab99750e0c09121bd9863",
+    "lines": 117,
+    "bytes": 3984,
+    "kind": "source"
+  },
+  {
+    "path": "scenarios/chord_approaches.scn",
+    "sha256": "ec76117025a5a724176be64a0f22cc76029c19fce7808d14a9f9313a8bf5c4f7",
+    "lines": 42,
+    "bytes": 1025,
+    "kind": "source"
+  },
+  {
+    "path": "scenarios/chord_approaches_reopen.scn",
+    "sha256": "a3a130b3f116d433fbb4122c8f06f47d166a9b394e8df1c48aecac9ae72d4d58",
+    "lines": 11,
+    "bytes": 340,
+    "kind": "source"
+  },
+  {
+    "path": "scenarios/claims_reopen.scn",
+    "sha256": "43e0b0e65b2b20fbcf67d42228ea307274530937b7a9cc52898bbfa9ad714236",
+    "lines": 30,
+    "bytes": 1082,
+    "kind": "source"
+  },
+  {
+    "path": "scenarios/claims_seed.scn",
+    "sha256": "d205a50f8f31ff800acc66e63b5e35e865f475238b30fe1e8898016e8f6aab18",
+    "lines": 73,
+    "bytes": 2776,
+    "kind": "source"
+  },
+  {
+    "path": "scenarios/compressed_capture_migrate.scn",
+    "sha256": "0d4e61e2296e2badc0fe3fc366ea02806a4efced8648257b12eb6a8be7216936",
+    "lines": 20,
+    "bytes": 745,
+    "kind": "source"
+  },
+  {
+    "path": "scenarios/compressed_capture_reopen.scn",
+    "sha256": "5f851885fad0c218aecf43c2e36b1c40e8036cdfbf09e52c56af7f0f4ab6768e",
+    "lines": 12,
+    "bytes": 446,
+    "kind": "source"
+  },
+  {
+    "path": "scenarios/connected_practice.scn",
+    "sha256": "dac38a365981344925998e3ee387d408af12c856a92fb061a60f854912ff9ec4",
+    "lines": 47,
+    "bytes": 1116,
+    "kind": "source"
+  },
+  {
+    "path": "scenarios/connected_practice_reopen.scn",
+    "sha256": "cd1cbe615a1c4cbdb8fe3b481ce8098a1acf2e67a37fc5e9e163c94655f92e4b",
+    "lines": 16,
+    "bytes": 478,
+    "kind": "source"
+  },
+  {
+    "path": "scenarios/connected_scales.scn",
+    "sha256": "44f0737db8cf4ca5c51c27085eb894bbbacef7979be240ae8299867b947d8555",
+    "lines": 33,
+    "bytes": 743,
+    "kind": "source"
+  },
+  {
+    "path": "scenarios/connected_scales_reopen.scn",
+    "sha256": "9c7939acb62aff4230d62d0bcd3f61c7db8b84e837c65c8709707535822386f2",
+    "lines": 7,
+    "bytes": 209,
+    "kind": "source"
+  },
+  {
+    "path": "scenarios/font_roles.scn",
+    "sha256": "819bea2b291773e5fc840c49ad973c09a7be14f5e61c42f95e1e9dc3c363aece",
+    "lines": 84,
+    "bytes": 2660,
+    "kind": "source"
+  },
+  {
+    "path": "scenarios/font_roles_compact_reopen.scn",
+    "sha256": "b6f1ca3dae7e6fea5450a36912e11a9eb27b0f0b9a17493b6f10797081636f4c",
+    "lines": 26,
+    "bytes": 789,
+    "kind": "source"
+  },
+  {
+    "path": "scenarios/font_roles_reopen.scn",
+    "sha256": "7b92c4a991cd07a42230fa8cf909c1350028b75a3c7bf8361ff744c2fb7db34e",
+    "lines": 31,
+    "bytes": 981,
+    "kind": "source"
+  },
+  {
+    "path": "scenarios/hocket_looper_compact_reopen.scn",
+    "sha256": "c82319f3908ab967bb90f1e4da213c82dac0578c7473dc7122a1d2793ae44f02",
+    "lines": 15,
+    "bytes": 496,
+    "kind": "source"
+  },
+  {
+    "path": "scenarios/hocket_looper_offline.scn",
+    "sha256": "ac3ad7ce626c4b76cbfa2f03a0646f7309830c12b9aab8c282a01b5c5b29b17b",
+    "lines": 14,
+    "bytes": 454,
+    "kind": "source"
+  },
+  {
+    "path": "scenarios/hocket_looper_reopen.scn",
+    "sha256": "9650457e0d91ac38b4a0e8492c0c339d84ec9f6493b0ef80d59f3608d431dab2",
+    "lines": 27,
+    "bytes": 920,
+    "kind": "source"
+  },
+  {
+    "path": "scenarios/large_fractional_zoom.scn",
+    "sha256": "ebe095419c143a78dcbf937636378b379ea844b612f348e8bbac6c744998031f",
+    "lines": 14,
+    "bytes": 381,
+    "kind": "source"
+  },
+  {
+    "path": "scenarios/mere_arpeggio_recipe.scn",
+    "sha256": "309ce7deea2d3637d800c138e194ab0d4f312fae1e33b80927cbb9163b26e126",
+    "lines": 41,
+    "bytes": 1262,
+    "kind": "source"
+  },
+  {
+    "path": "scenarios/mere_arpeggio_recipe_reopen.scn",
+    "sha256": "c079247ab862956eb219ca08c485845279f9c5281e051a673d2f985ada29fe72",
+    "lines": 28,
+    "bytes": 898,
+    "kind": "source"
+  },
+  {
+    "path": "scenarios/mere_atmosphere.scn",
+    "sha256": "185d936826bc6343ce9b4483dcf60e5fb8ad8f55148b98eb788a250c31e0ac2c",
+    "lines": 52,
+    "bytes": 1666,
+    "kind": "source"
+  },
+  {
+    "path": "scenarios/mere_atmosphere_reopen.scn",
+    "sha256": "2d76b7feac4deda5a21e51aca94f6c79e3a5b30b54cf4657c6835e1b23d05113",
+    "lines": 43,
+    "bytes": 1395,
+    "kind": "source"
+  },
+  {
+    "path": "scenarios/mere_musical_context.scn",
+    "sha256": "19674e3d73ee2f69d1d4819e23d40e7055458699d650c79ecc4f6ba5851c0824",
+    "lines": 55,
+    "bytes": 1543,
+    "kind": "source"
+  },
+  {
+    "path": "scenarios/mere_musical_context_reopen.scn",
+    "sha256": "3850cd4b10eab2fa20a1675ed0c0503ba20f534bce89c5e1363b968054cb9803",
+    "lines": 21,
+    "bytes": 645,
+    "kind": "source"
+  },
+  {
+    "path": "scenarios/mere_presentation.scn",
+    "sha256": "96cbe4a8e2cf6da4be5ac37c0456f24003d3299d10029552f87be95e0aa37ecf",
+    "lines": 41,
+    "bytes": 1391,
+    "kind": "source"
+  },
+  {
+    "path": "scenarios/mere_presentation_reopen.scn",
+    "sha256": "3c45f292b2304347de4cc4d15bc9fba25b19a9597d4ea030cbbc5774137c24f3",
+    "lines": 41,
+    "bytes": 1302,
+    "kind": "source"
+  },
+  {
+    "path": "scenarios/mere_scale_pattern_recipe.scn",
+    "sha256": "b56ba064370eddce78a1edf70798c7bcde6872c0e1d4c8c4feed77c3b659529d",
+    "lines": 41,
+    "bytes": 1288,
+    "kind": "source"
+  },
+  {
+    "path": "scenarios/mere_scale_pattern_recipe_reopen.scn",
+    "sha256": "69ce8b14ee89e5fb72cf1e2afa84a9994e902c6e8d3264038a23690f6659a18f",
+    "lines": 28,
+    "bytes": 908,
+    "kind": "source"
+  },
+  {
+    "path": "scenarios/mere_take_reopen.scn",
+    "sha256": "8f6ee18e172f41885069e8e4cc7a1554d1dfcc3d02e6e91b8372f5e93e05881b",
+    "lines": 35,
+    "bytes": 1030,
+    "kind": "source"
+  },
+  {
+    "path": "scenarios/mere_take_seed.scn",
+    "sha256": "7c02a0fcc81c579c51521f1ccbf368dfd0d23b94249feca30106467a1364f5b7",
+    "lines": 45,
+    "bytes": 1347,
+    "kind": "source"
+  },
+  {
+    "path": "scenarios/nearby_candidates.scn",
+    "sha256": "74297e2ad9383dd7e9c7984281a6eb879b056486ed53b675af4165a6a024395e",
+    "lines": 27,
+    "bytes": 599,
+    "kind": "source"
+  },
+  {
+    "path": "scenarios/neck_comparison.scn",
+    "sha256": "9354639fa1308c687d138d835003b390a3a6e19de9d553825ae5bd532fe2aa71",
+    "lines": 12,
+    "bytes": 283,
+    "kind": "source"
+  },
+  {
+    "path": "scenarios/p4a_occurrence_identity.scn",
+    "sha256": "3dcaa0b5ecb3e21d56e1422ab5eb02a7c715491750fdb3d2f73a8a0d4ad9ea49",
+    "lines": 55,
+    "bytes": 1718,
+    "kind": "source"
+  },
+  {
+    "path": "scenarios/p4b_typed_relations.scn",
+    "sha256": "60775a4f0ad7e8f7aec5637d04d6dcc58b48358b4dcea944fd99c33acd0cd192",
+    "lines": 38,
+    "bytes": 1461,
+    "kind": "source"
+  },
+  {
+    "path": "scenarios/p4c_drag_performance.scn",
+    "sha256": "21b4a7fa59cb617e3952959ca6936e3579cef7b9f18c916de7efb6ddbe5c9584",
+    "lines": 43,
+    "bytes": 1060,
+    "kind": "source"
+  },
+  {
+    "path": "scenarios/p4c_relation_inventory_fast_drag.scn",
+    "sha256": "5e28135c4a90a2f846fb00b1167564e643d1adbd2d4344bc023a00bedf3e443d",
+    "lines": 43,
+    "bytes": 1256,
+    "kind": "source"
+  },
+  {
+    "path": "scenarios/p4c_scene_canvas.scn",
+    "sha256": "56d5b29b8a1774d8e5e6a59170e55cf841d62f48d03bdb6444106d352a862a08",
+    "lines": 39,
+    "bytes": 1100,
+    "kind": "source"
+  },
+  {
+    "path": "scenarios/p4d_stage_node_cards.scn",
+    "sha256": "af6398abf912c0da9eb5cc3d17a087fbfb2f3fcb0e734157b517018ef6b838ba",
+    "lines": 56,
+    "bytes": 1710,
+    "kind": "source"
+  },
+  {
+    "path": "scenarios/p4e_musical_context.scn",
+    "sha256": "ce9afbab05735b12dcc178edb472b73c80ddab4ccbb8786b0e44d502fb7ab031",
+    "lines": 35,
+    "bytes": 981,
+    "kind": "source"
+  },
+  {
+    "path": "scenarios/p4e_pitch_motion.scn",
+    "sha256": "1f6fbb0abf8d2004746b760cde97d1039404f28201922f4cdf7145c6f3886bf9",
+    "lines": 39,
+    "bytes": 1122,
+    "kind": "source"
+  },
+  {
+    "path": "scenarios/p4e_stage_layouts.scn",
+    "sha256": "be04b0165e332212d339354902d0947e25436f6a0b63f263af09d6a8dfee975f",
+    "lines": 32,
+    "bytes": 974,
+    "kind": "source"
+  },
+  {
+    "path": "scenarios/p4e_tonnetz.scn",
+    "sha256": "2056e32a7709054cbecaf1a0db9117737415de5683178a106d01cce26d3f1111",
+    "lines": 39,
+    "bytes": 1119,
+    "kind": "source"
+  },
+  {
+    "path": "scenarios/p4f_relationship_link_rest.scn",
+    "sha256": "fa74abba83d15365fe7c7c9b6e1f65afe5024d5bccc674394ef967fae30fad90",
+    "lines": 23,
+    "bytes": 656,
+    "kind": "source"
+  },
+  {
+    "path": "scenarios/p4f_relationship_link_rest_reopen.scn",
+    "sha256": "35b7c73efaf0302e1b055fa754af71c5ba36392630981919d332ee8afb363c6d",
+    "lines": 22,
+    "bytes": 704,
+    "kind": "source"
+  },
+  {
+    "path": "scenarios/passage_relationships.scn",
+    "sha256": "6c936a65ccd83f9d7153bfb64c8b4e476256aff70e5ab6242d49b9d764826177",
+    "lines": 49,
+    "bytes": 1690,
+    "kind": "source"
+  },
+  {
+    "path": "scenarios/passage_relationships_reopen.scn",
+    "sha256": "5e0a2ba37b1dfcb7433655de28452533c2e3225deeb446136b3dd3a3c51927d8",
+    "lines": 16,
+    "bytes": 560,
+    "kind": "source"
+  },
+  {
+    "path": "scenarios/persona_line_sealed.scn",
+    "sha256": "bb22e6ac1a4b3f3b337373cb24a45fdd1482025626434ab518698ef77bef45bd",
+    "lines": 29,
+    "bytes": 1040,
+    "kind": "source"
+  },
+  {
+    "path": "scenarios/persona_line_unsealed.scn",
+    "sha256": "1e07b837470ad194ff7c48fab7c13648bcf40a4e25e7e1b4a79d7682e3c7a1a9",
+    "lines": 21,
+    "bytes": 708,
+    "kind": "source"
+  },
+  {
+    "path": "scenarios/preview_worker.scn",
+    "sha256": "8a546ee70691d357cd16cf1f8ac3acad111ad34387a314a7c0a21af6f5f211e2",
+    "lines": 54,
+    "bytes": 1624,
+    "kind": "source"
+  },
+  {
+    "path": "scenarios/preview_worker_reopen.scn",
+    "sha256": "3f8ddce318582fce3123d11c00acc66654465f09004d355029589dcc60c5fb88",
+    "lines": 40,
+    "bytes": 1239,
+    "kind": "source"
+  },
+  {
+    "path": "scenarios/relationship_recipe.scn",
+    "sha256": "00ba69c02fd8318082fc8e66c20ec9b76e82f16b2005cc75259c1cf6117b947f",
+    "lines": 79,
+    "bytes": 2496,
+    "kind": "source"
+  },
+  {
+    "path": "scenarios/relationship_recipe_reopen.scn",
+    "sha256": "4cb08776088e1e61c67c04004975672279e4c463d40953c58684ff17cdd4f01c",
+    "lines": 20,
+    "bytes": 633,
+    "kind": "source"
+  },
+  {
+    "path": "scenarios/responsive_components.scn",
+    "sha256": "6defa663a8c7a703839f63af366a3b84935f16b249933e8c7ad02815d9328be0",
+    "lines": 17,
+    "bytes": 423,
+    "kind": "source"
+  },
+  {
+    "path": "scenarios/scale_patterns.scn",
+    "sha256": "77cec3df990461a61dbf8bdfdda69a214e48f1606bd2cb8c7d05adebc7c4c68f",
+    "lines": 52,
+    "bytes": 1238,
+    "kind": "source"
+  },
+  {
+    "path": "scenarios/scale_patterns_reopen.scn",
+    "sha256": "648494f9ea2beed083f62e5c22c7dbfcf1fdbdff525d728347eb3b5d03bf6796",
+    "lines": 12,
+    "bytes": 381,
+    "kind": "source"
+  },
+  {
+    "path": "scenarios/scale_realization.scn",
+    "sha256": "734e4375ddfa64854bc47af59019f6d26da9a9dcc7e95ec41f803f4156a0cbbc",
+    "lines": 36,
+    "bytes": 832,
+    "kind": "source"
+  },
+  {
+    "path": "scenarios/scale_realization_reopen.scn",
+    "sha256": "51a0eac6cca04a143cfde81cd68fd608e7ad4cb423ec9e383271500bbba371d0",
+    "lines": 9,
+    "bytes": 278,
+    "kind": "source"
+  },
+  {
+    "path": "scenarios/selected_shapes.scn",
+    "sha256": "45fe923c5be4acab63e5e057c47936b74e2913213ec354a5f11fef55ccc454e4",
+    "lines": 29,
+    "bytes": 664,
+    "kind": "source"
+  },
+  {
+    "path": "scenarios/session_mere.scn",
+    "sha256": "50890566d9257e38c009d323ea39584e7ed0d72b2d78e75561101fa4e71c9713",
+    "lines": 60,
+    "bytes": 1567,
+    "kind": "source"
+  },
+  {
+    "path": "scenarios/session_mere_narrow.scn",
+    "sha256": "774936af1bf429af216533a311afa00c115aec669974dc174f980d16c75003eb",
+    "lines": 16,
+    "bytes": 470,
+    "kind": "source"
+  },
+  {
+    "path": "scenarios/session_mere_reopen.scn",
+    "sha256": "f7c6c555016b1878460730016f8a444fea8afbf4fc492ce0b57962c9f3fc15f9",
+    "lines": 20,
+    "bytes": 598,
+    "kind": "source"
+  },
+  {
+    "path": "scenarios/set_capture_cleared_reopen.scn",
+    "sha256": "8d50cb09b12818f4e6f0e522a33f1144e65f390148df69dbf1b7cab1c6a8d489",
+    "lines": 12,
+    "bytes": 417,
+    "kind": "source"
+  },
+  {
+    "path": "scenarios/set_capture_missing_reopen.scn",
+    "sha256": "5a53d4b5c7e371ba802df5612779b78f996a5eedcb1d14362b56729a8d30544f",
+    "lines": 21,
+    "bytes": 747,
+    "kind": "source"
+  },
+  {
+    "path": "scenarios/set_capture_reopen.scn",
+    "sha256": "d1f7686410d6d8ca9a4becbbec6d7167035bbea05e0acae3aa250bd98ccb374c",
+    "lines": 28,
+    "bytes": 854,
+    "kind": "source"
+  },
+  {
+    "path": "scenarios/set_capture_seed.scn",
+    "sha256": "bf037df7c7bc43d5565e15a91f2fa9d5e5691b05f91663949afa7a8c190bbf70",
+    "lines": 27,
+    "bytes": 742,
+    "kind": "source"
+  },
+  {
+    "path": "scenarios/set_loop_plan.scn",
+    "sha256": "4670b9c45c61bbda52ea739f88688ce0e7ca0b8e0b163242c1ebf332cf4a3050",
+    "lines": 49,
+    "bytes": 1383,
+    "kind": "source"
+  },
+  {
+    "path": "scenarios/set_loop_plan_reopen.scn",
+    "sha256": "36be45927f740b973600de0f7a0d831a17af3093ddfab36f33c317e2578dcf5e",
+    "lines": 28,
+    "bytes": 729,
+    "kind": "source"
+  },
+  {
+    "path": "scenarios/song_cache.scn",
+    "sha256": "72f134ba763206e47156e199a32e452d2e7ae16fc64d2424117ccd766222d9ce",
+    "lines": 40,
+    "bytes": 882,
+    "kind": "source"
+  },
+  {
+    "path": "scenarios/song_cache_reopen.scn",
+    "sha256": "7a15798f3cdab081977b6b9c98676bf690dcb88d06b74b2e820d606bb1d4432c",
+    "lines": 19,
+    "bytes": 485,
+    "kind": "source"
+  },
+  {
+    "path": "scenarios/stage_clipping.scn",
+    "sha256": "eba9e68a7c0c9f2b2a2f83e165e83281e288256021c1f8348f23c3920e97dd3c",
+    "lines": 16,
+    "bytes": 425,
+    "kind": "source"
+  },
+  {
+    "path": "scenarios/stage_p4f_exploration.scn",
+    "sha256": "def3970ec8aa888849b9876f2590b6619bc1b2320dd1e506367b2e65c4958fb0",
+    "lines": 106,
+    "bytes": 2795,
+    "kind": "source"
+  },
+  {
+    "path": "scenarios/stage_p4f_layout.scn",
+    "sha256": "4a1c89894f7663837367bf7dfe56d3eacca7df1bc10e3f81d4109fb4d2bd53a3",
+    "lines": 36,
+    "bytes": 951,
+    "kind": "source"
+  },
+  {
+    "path": "scenarios/stage_p4f_reopen.scn",
+    "sha256": "8f1562c6131892a2707df89e293f7942033d87a99530e0f7b04d35c09d1043dd",
+    "lines": 15,
+    "bytes": 464,
+    "kind": "source"
+  },
+  {
+    "path": "scenarios/tabard_appearance.scn",
+    "sha256": "4c36ab80c0c15668af8ca90431b6670dc526a02041a4630e98909875c8b64155",
+    "lines": 72,
+    "bytes": 3033,
+    "kind": "source"
+  },
+  {
+    "path": "scenarios/tabard_appearance_reopen.scn",
+    "sha256": "d7a57a150cf46ac3521345548f99f0ee8583226b6d3cb50748a3e248c89629fd",
+    "lines": 16,
+    "bytes": 545,
+    "kind": "source"
+  },
+  {
+    "path": "scenarios/tone_relationships.scn",
+    "sha256": "dcef8c287598310f1045843f76a999685c4d8769f79235fb335fffadc08c3c68",
+    "lines": 47,
+    "bytes": 1622,
+    "kind": "source"
+  },
+  {
+    "path": "scenarios/tone_relationships_reopen.scn",
+    "sha256": "5e0a2ba37b1dfcb7433655de28452533c2e3225deeb446136b3dd3a3c51927d8",
+    "lines": 16,
+    "bytes": 560,
+    "kind": "source"
+  },
+  {
+    "path": "scenarios/woodshed_musical_comparison.json",
+    "sha256": "e159ca8c6ee70cb324027b92ff24e047d2bce21c0c22b04590a0aeaa7ebe841b",
+    "lines": 94,
+    "bytes": 1612,
+    "kind": "source"
+  },
+  {
+    "path": "scenarios/woodshed_relationships.json",
+    "sha256": "7593345332ace5b923917e61c6b4f461619afb6fa4f9fedc37eb7ef22167c031",
+    "lines": 116,
+    "bytes": 2913,
+    "kind": "source"
+  },
+  {
+    "path": "scenarios/woodshed_stage_projection.json",
+    "sha256": "e23353cd22fa22b309ff4e46e1941429525b3b20c7a5f832fbf66e3011f32b7f",
+    "lines": 156,
+    "bytes": 3340,
+    "kind": "source"
+  },
+  {
+    "path": "scenarios/working_instances.scn",
+    "sha256": "9449e54b5ebeb8359bcee9ad71ca0bca996ae4bedb74a957011b5021fd46c2b7",
+    "lines": 85,
+    "bytes": 2177,
+    "kind": "source"
+  },
+  {
+    "path": "scenarios/working_instances_narrow.scn",
+    "sha256": "6c04514dea65008a09fbc09ec49553902d62f7a070604bfcca4130af459bdc48",
+    "lines": 16,
+    "bytes": 472,
+    "kind": "source"
+  },
+  {
+    "path": "scenarios/working_instances_reopen.scn",
+    "sha256": "8f5efde27ca998a2c85ca9dff473ff209a7ddd94140cdb04df4cf14d8b92db27",
+    "lines": 31,
+    "bytes": 877,
+    "kind": "source"
+  },
+  {
+    "path": "scripts/audio_analysis_bench.py",
+    "sha256": "4f63d7f65fac99845260d794f98ae79670526067c0db724f33cbf8afb228b8f5",
+    "lines": 250,
+    "bytes": 9714,
+    "kind": "source"
+  },
+  {
+    "path": "scripts/fixtures/audio-analysis/prediction.json",
+    "sha256": "3be36bbaf5173274fbfe89e6dacb4c98c2e0f5f3b1b4c468e220d17de39257f7",
+    "lines": 18,
+    "bytes": 569,
+    "kind": "source"
+  },
+  {
+    "path": "scripts/fixtures/audio-analysis/reference.json",
+    "sha256": "6f0a085a8833b854a1f0fb8b2a5c28abcb991ca786f00cbb7d26af2e122c6265",
+    "lines": 10,
+    "bytes": 381,
+    "kind": "source"
+  },
+  {
+    "path": "scripts/package-linux.sh",
+    "sha256": "16a7454c5b342430816572e47e288f6c05fef9e863acab0b9d03e3346ea174aa",
+    "lines": 229,
+    "bytes": 8211,
+    "kind": "source"
+  },
+  {
+    "path": "scripts/package-macos.sh",
+    "sha256": "03f4cb034f3cca6b81a5ef67b992abaf0fd0b269c6f9a682128faa15c2928b74",
+    "lines": 161,
+    "bytes": 4857,
+    "kind": "source"
+  },
+  {
+    "path": "scripts/package-windows.ps1",
+    "sha256": "a1cfd2590d6cdd5d3133b41ea8c39f79b4df437f069544a600d0e75ee8e7e157",
+    "lines": 58,
+    "bytes": 2121,
+    "kind": "source"
+  },
+  {
+    "path": "scripts/test_audio_analysis_bench.py",
+    "sha256": "367b9c1a2f2ebbf65f0734f205dd81201b35e4a112e023a50fb9077c4a003c60",
+    "lines": 54,
+    "bytes": 1963,
+    "kind": "source"
+  },
+  {
+    "path": "scripts/validate-workspace.sh",
+    "sha256": "8d9771f0bcc3265d5bef3e62d353b85783c5abc16bec7230ab4e11d068512a13",
+    "lines": 72,
+    "bytes": 2292,
+    "kind": "source"
+  }
+]

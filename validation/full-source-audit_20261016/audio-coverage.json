@@ -1,0 +1,848 @@
+{
+  "revision": "d12201bfe80cc94345c6308c46caaebf4a9fe42e",
+  "snapshot": "/Users/markik/Code/testing/woodshed/full-source-audit-20261016/source-d12201bf",
+  "assigned_file_count": 34,
+  "assigned_line_count": 12014,
+  "method": "Every-line source read; no tests or builds run. Ranges recorded after inspection.",
+  "files": [
+    {
+      "path": "crates/audio-primitives/Cargo.toml",
+      "sha256": "83083866eb22113a298ecf17c66dfe28b2fe76f3a845098e698d6261e6f3d9fe",
+      "lines": 19,
+      "bytes": 762,
+      "kind": "source",
+      "status": "complete",
+      "read_ranges": [
+        [
+          1,
+          19
+        ]
+      ]
+    },
+    {
+      "path": "crates/audio-primitives/src/alignment.rs",
+      "sha256": "8d9c281416de783b0c7c87439de9f92d1230ff1c4a1623289c1c5b44be916eef",
+      "lines": 732,
+      "bytes": 25390,
+      "kind": "source",
+      "status": "complete",
+      "read_ranges": [
+        [
+          1,
+          380
+        ],
+        [
+          381,
+          732
+        ]
+      ]
+    },
+    {
+      "path": "crates/audio-primitives/src/buffer.rs",
+      "sha256": "a87e16d6c89907ffe461f70ea590b9679527be4b481fe92e6800e63756a60ace",
+      "lines": 69,
+      "bytes": 2054,
+      "kind": "source",
+      "status": "complete",
+      "read_ranges": [
+        [
+          1,
+          69
+        ]
+      ]
+    },
+    {
+      "path": "crates/audio-primitives/src/calibration.rs",
+      "sha256": "4c275fc7204eecb9f08b50f36e79de59d12a6e404d20e8ac98a9d233a641d971",
+      "lines": 172,
+      "bytes": 7328,
+      "kind": "source",
+      "status": "complete",
+      "read_ranges": [
+        [
+          1,
+          172
+        ]
+      ]
+    },
+    {
+      "path": "crates/audio-primitives/src/capture.rs",
+      "sha256": "a3b6976ba1b53942c6c14e59b4840d2a845fc16bc449a3a71e6b12208033bd90",
+      "lines": 177,
+      "bytes": 6191,
+      "kind": "source",
+      "status": "complete",
+      "read_ranges": [
+        [
+          1,
+          177
+        ]
+      ]
+    },
+    {
+      "path": "crates/audio-primitives/src/click.rs",
+      "sha256": "c1ffce6bb162b1f8b60c7c8e4d2a15f638effb74a4dc07e8f0fefa13ea19a608",
+      "lines": 194,
+      "bytes": 7165,
+      "kind": "source",
+      "status": "complete",
+      "read_ranges": [
+        [
+          1,
+          194
+        ]
+      ]
+    },
+    {
+      "path": "crates/audio-primitives/src/lib.rs",
+      "sha256": "484d2b0ab4d47f19b89dec7cf8a2ece04862761aa94979c2b5aa90bed3a59ffa",
+      "lines": 55,
+      "bytes": 2727,
+      "kind": "source",
+      "status": "complete",
+      "read_ranges": [
+        [
+          1,
+          55
+        ]
+      ]
+    },
+    {
+      "path": "crates/audio-primitives/src/meter.rs",
+      "sha256": "14c5211ff40e0f859e7ee2b7e04fc3ea5c59359c72a1d6431959c002b3775a04",
+      "lines": 169,
+      "bytes": 5060,
+      "kind": "source",
+      "status": "complete",
+      "read_ranges": [
+        [
+          1,
+          169
+        ]
+      ]
+    },
+    {
+      "path": "crates/audio-primitives/src/onset.rs",
+      "sha256": "cd40a8fa8f61b14dbce684a2b6bea40efb4b9636c1ec5d8670b2de8695dece18",
+      "lines": 547,
+      "bytes": 20763,
+      "kind": "source",
+      "status": "complete",
+      "read_ranges": [
+        [
+          1,
+          300
+        ],
+        [
+          301,
+          547
+        ]
+      ]
+    },
+    {
+      "path": "crates/audio-primitives/src/stretch.rs",
+      "sha256": "e57cb87d5759c2dc21ec6d0989963b8aba70073201144d42b1b2eeea1253dfc5",
+      "lines": 518,
+      "bytes": 19731,
+      "kind": "source",
+      "status": "complete",
+      "read_ranges": [
+        [
+          1,
+          300
+        ],
+        [
+          301,
+          518
+        ]
+      ]
+    },
+    {
+      "path": "crates/audio-primitives/src/waveform.rs",
+      "sha256": "c6c9442a263588e5ac5db7e0a4016d821bada38c6c11a0b2ce059bc7a76a19d2",
+      "lines": 110,
+      "bytes": 3208,
+      "kind": "source",
+      "status": "complete",
+      "read_ranges": [
+        [
+          1,
+          110
+        ]
+      ]
+    },
+    {
+      "path": "crates/audio-primitives/tests/capture_harness.rs",
+      "sha256": "11d804b5ac538487586b4a626a8c617eb5a5005d217c9ff3d918a7cee9de14c1",
+      "lines": 140,
+      "bytes": 5075,
+      "kind": "source",
+      "status": "complete",
+      "read_ranges": [
+        [
+          1,
+          140
+        ]
+      ]
+    },
+    {
+      "path": "crates/woodshed-audio/Cargo.toml",
+      "sha256": "fbee19737731c7b9d3cae38ec1aa48ad9052f1d6f991acf076d560aee75cdb15",
+      "lines": 31,
+      "bytes": 1075,
+      "kind": "source",
+      "status": "complete",
+      "read_ranges": [
+        [
+          1,
+          31
+        ]
+      ]
+    },
+    {
+      "path": "crates/woodshed-audio/examples/audio_ddx.rs",
+      "sha256": "d6aa4d0685b22ca046390decd74986a5b94aaa39515f91245281366e8da8b158",
+      "lines": 219,
+      "bytes": 7321,
+      "kind": "source",
+      "status": "complete",
+      "read_ranges": [
+        [
+          1,
+          219
+        ]
+      ]
+    },
+    {
+      "path": "crates/woodshed-audio/src/calibration.rs",
+      "sha256": "29de685751f6b3a5642972fd8c5a8f9c04e6becd8683f590ad7b94f37364ba7d",
+      "lines": 454,
+      "bytes": 17354,
+      "kind": "source",
+      "status": "complete",
+      "read_ranges": [
+        [
+          1,
+          454
+        ]
+      ]
+    },
+    {
+      "path": "crates/woodshed-audio/src/capture_feed.rs",
+      "sha256": "09859f554673721b4a297acacf366b62b893a589a50163d796b23f4224ca2d51",
+      "lines": 244,
+      "bytes": 7916,
+      "kind": "source",
+      "status": "complete",
+      "read_ranges": [
+        [
+          1,
+          244
+        ]
+      ]
+    },
+    {
+      "path": "crates/woodshed-audio/src/chord_audio.rs",
+      "sha256": "934aa382bdeafbc368012253193ec06faa3cf82364d58d6324dd2aff37a7ab8d",
+      "lines": 352,
+      "bytes": 13225,
+      "kind": "source",
+      "status": "complete",
+      "read_ranges": [
+        [
+          1,
+          352
+        ]
+      ]
+    },
+    {
+      "path": "crates/woodshed-audio/src/engine.rs",
+      "sha256": "1834a77b86839edb1ddbe6d091360588ee46782129a216756082865a3547d723",
+      "lines": 34,
+      "bytes": 1246,
+      "kind": "source",
+      "status": "complete",
+      "read_ranges": [
+        [
+          1,
+          34
+        ]
+      ]
+    },
+    {
+      "path": "crates/woodshed-audio/src/input.rs",
+      "sha256": "803ab5c766676031fdcd64535390d69802ed3281fcc49a9ac6fdaed11e6cbf0e",
+      "lines": 1092,
+      "bytes": 38315,
+      "kind": "source",
+      "status": "complete",
+      "read_ranges": [
+        [
+          1,
+          550
+        ],
+        [
+          551,
+          1092
+        ]
+      ]
+    },
+    {
+      "path": "crates/woodshed-audio/src/lib.rs",
+      "sha256": "031f1e29034579389a963169c7ef98f47d21604e76efa76bb91d3125edc39e5f",
+      "lines": 69,
+      "bytes": 2840,
+      "kind": "source",
+      "status": "complete",
+      "read_ranges": [
+        [
+          1,
+          69
+        ]
+      ]
+    },
+    {
+      "path": "crates/woodshed-audio/src/looper.rs",
+      "sha256": "fb2d73574968a537ee35490f0f6bcea35b3d5e75874f7969bc5a0336cc6f90f7",
+      "lines": 378,
+      "bytes": 12845,
+      "kind": "source",
+      "status": "complete",
+      "read_ranges": [
+        [
+          1,
+          378
+        ]
+      ]
+    },
+    {
+      "path": "crates/woodshed-audio/src/midi.rs",
+      "sha256": "9f2474b8dd0cfa7ae24dc7b1f62ac7685168930113b4718322b1409a5143fee9",
+      "lines": 579,
+      "bytes": 17762,
+      "kind": "source",
+      "status": "complete",
+      "read_ranges": [
+        [
+          1,
+          579
+        ]
+      ]
+    },
+    {
+      "path": "crates/woodshed-audio/src/offline/song_export/tests.rs",
+      "sha256": "d8287b219ddce748d16ac3a13d015fd153ae5453430eff4970efbccab22095f2",
+      "lines": 310,
+      "bytes": 10162,
+      "kind": "source",
+      "status": "complete",
+      "read_ranges": [
+        [
+          1,
+          310
+        ]
+      ]
+    },
+    {
+      "path": "crates/woodshed-audio/src/offline/song_export.rs",
+      "sha256": "9001050936c67f9377308cf7123ac9a1552d6e4d416c06d699a1bc6f620d9013",
+      "lines": 200,
+      "bytes": 7390,
+      "kind": "source",
+      "status": "complete",
+      "read_ranges": [
+        [
+          1,
+          200
+        ]
+      ]
+    },
+    {
+      "path": "crates/woodshed-audio/src/offline.rs",
+      "sha256": "b18486dd649b9493a87617d1e831dcf430fc5e5ee51b4ffd31693b62cdb99fb5",
+      "lines": 454,
+      "bytes": 16832,
+      "kind": "source",
+      "status": "complete",
+      "read_ranges": [
+        [
+          1,
+          454
+        ]
+      ]
+    },
+    {
+      "path": "crates/woodshed-audio/src/onset.rs",
+      "sha256": "f02ce805acde4b66a358cec8c04a9138cf1b9178ff465922cfa157fd05ccf652",
+      "lines": 226,
+      "bytes": 8124,
+      "kind": "source",
+      "status": "complete",
+      "read_ranges": [
+        [
+          1,
+          226
+        ]
+      ]
+    },
+    {
+      "path": "crates/woodshed-audio/src/output_runtime/preview.rs",
+      "sha256": "cf3ededb70f9b0f2af56d3d56b3ba06bcdc4499edd148a7212cc161a841df0b5",
+      "lines": 137,
+      "bytes": 4374,
+      "kind": "source",
+      "status": "complete",
+      "read_ranges": [
+        [
+          1,
+          137
+        ]
+      ]
+    },
+    {
+      "path": "crates/woodshed-audio/src/output_runtime/processor.rs",
+      "sha256": "584ec80432ad4229e27f96fdd6ef3b9b1b46c91566d23597bf2b83556c42f83d",
+      "lines": 1039,
+      "bytes": 39755,
+      "kind": "source",
+      "status": "complete",
+      "read_ranges": [
+        [
+          1,
+          365
+        ],
+        [
+          366,
+          720
+        ],
+        [
+          721,
+          1039
+        ]
+      ]
+    },
+    {
+      "path": "crates/woodshed-audio/src/output_runtime/tests.rs",
+      "sha256": "1f5ae04270feb5fdcc598782b9312eea58d78e7c113a7f30ebd19c29ef8a94d1",
+      "lines": 663,
+      "bytes": 21770,
+      "kind": "source",
+      "status": "complete",
+      "read_ranges": [
+        [
+          1,
+          360
+        ],
+        [
+          361,
+          663
+        ]
+      ]
+    },
+    {
+      "path": "crates/woodshed-audio/src/output_runtime.rs",
+      "sha256": "8c72f788eeb3e26d9cdddeba7b20bcc4707f9e412c5378349551f48a52316bd3",
+      "lines": 745,
+      "bytes": 26823,
+      "kind": "source",
+      "status": "complete",
+      "read_ranges": [
+        [
+          1,
+          400
+        ],
+        [
+          401,
+          745
+        ]
+      ]
+    },
+    {
+      "path": "crates/woodshed-audio/src/samples.rs",
+      "sha256": "fe828259b1d720a16b53281f15963848032735e656eef6a2e3e5e16d227a2c41",
+      "lines": 345,
+      "bytes": 11578,
+      "kind": "source",
+      "status": "complete",
+      "read_ranges": [
+        [
+          1,
+          345
+        ]
+      ]
+    },
+    {
+      "path": "crates/woodshed-audio/src/sequencer.rs",
+      "sha256": "35a21e4eea6463f7e2fe26e3769c53cd88699cf89f6cdbed27ec688ff7677b18",
+      "lines": 273,
+      "bytes": 8865,
+      "kind": "source",
+      "status": "complete",
+      "read_ranges": [
+        [
+          1,
+          273
+        ]
+      ]
+    },
+    {
+      "path": "crates/woodshed-audio/src/song.rs",
+      "sha256": "7f8156a98f802cdbf37ab4c8021afa92c75291aeae69b7db04e1bfd49f31558f",
+      "lines": 826,
+      "bytes": 29589,
+      "kind": "source",
+      "status": "complete",
+      "read_ranges": [
+        [
+          1,
+          420
+        ],
+        [
+          421,
+          826
+        ]
+      ]
+    },
+    {
+      "path": "crates/woodshed-audio/src/sound.rs",
+      "sha256": "f9ff48f987289ca3520a23f3d02960d78719ae2d9065ae0f6dbb1d7265b3e82b",
+      "lines": 442,
+      "bytes": 15001,
+      "kind": "source",
+      "status": "complete",
+      "read_ranges": [
+        [
+          1,
+          442
+        ]
+      ]
+    }
+  ],
+  "supplemental_reads": [
+    {
+      "path": "CLAUDE.md",
+      "sha256": "1dc92eb52d2ab16bbcba919210844c98b7e69160615664885ebba5747c8c3ead",
+      "lines": 117,
+      "read_ranges": [
+        [
+          1,
+          117
+        ]
+      ],
+      "status": "complete"
+    },
+    {
+      "path": "design_docs/DOC_README.md",
+      "sha256": "f88abef1c4ae554ddfc415b2a473eb3a67da63846844e80466cc3b95771f9cf0",
+      "lines": 413,
+      "read_ranges": [
+        [
+          1,
+          220
+        ],
+        [
+          221,
+          413
+        ]
+      ],
+      "status": "complete"
+    },
+    {
+      "path": "design_docs/2026-10-15_woodshed_codex_handoff.md",
+      "sha256": "5ec756efec934c3e298c60d30b50bca513d5c5e43f399deac619598f2b0e13ca",
+      "lines": 319,
+      "read_ranges": [
+        [
+          1,
+          319
+        ]
+      ],
+      "status": "complete"
+    },
+    {
+      "path": "design_docs/2026-10-16_shared_capture_accumulator_plan.md",
+      "sha256": "6659dd11169787b3b3192201f1359511a0dbe3e438e337f6e03d5d438fc8921e",
+      "lines": 66,
+      "read_ranges": [
+        [
+          1,
+          66
+        ]
+      ],
+      "status": "complete"
+    },
+    {
+      "path": "design_docs/2026-09-09_audio_ports_rehome_plan.md",
+      "sha256": "f311c8b8bc493042f624463849ffddb6d9f02466ff80ba7ffff2908d8c0031c1",
+      "lines": 678,
+      "read_ranges": [
+        [
+          116,
+          230
+        ],
+        [
+          228,
+          382
+        ]
+      ],
+      "status": "partial_context_only"
+    },
+    {
+      "path": "design_docs/2026-07-11_stage_set_tools_plan.md",
+      "sha256": "e7b8cf43b2b477d7ab7f25488d13a737497cbd19798c2c0e5a9478cef7198332",
+      "lines": 3757,
+      "read_ranges": [
+        [
+          1734,
+          1858
+        ],
+        [
+          2916,
+          2965
+        ],
+        [
+          3135,
+          3199
+        ]
+      ],
+      "status": "partial_context_only"
+    },
+    {
+      "path": "crates/woodshed-genet/src/audio.rs",
+      "sha256": "af0ffd959611f82d3c1101d83902da6cacf2403e569d2e4e5cbc240d784e2c97",
+      "lines": 1867,
+      "read_ranges": [
+        [
+          1,
+          330
+        ],
+        [
+          450,
+          540
+        ],
+        [
+          540,
+          645
+        ],
+        [
+          685,
+          780
+        ],
+        [
+          800,
+          940
+        ]
+      ],
+      "status": "partial_context_only"
+    },
+    {
+      "path": "crates/woodshed-genet/src/audio/loop_projection.rs",
+      "sha256": "20f29f71e3ef828971852b93ff4395e163334bf1efa4c10f54b9c7a4b22f602c",
+      "lines": 729,
+      "read_ranges": [
+        [
+          610,
+          685
+        ]
+      ],
+      "status": "partial_context_only"
+    },
+    {
+      "path": "crates/woodshed-genet/src/sync.rs",
+      "sha256": "4845e1e76cb4d610072feb22ef8ec21d9bdaed9728b72f2c39fdcd0d450e364d",
+      "lines": 1343,
+      "read_ranges": [
+        [
+          100,
+          190
+        ],
+        [
+          455,
+          550
+        ],
+        [
+          565,
+          650
+        ]
+      ],
+      "status": "partial_context_only"
+    },
+    {
+      "path": "crates/woodshed-core/src/song.rs",
+      "sha256": "c0df0263e9b81ad366d61f521803e6dd9b7d29b57d71ad9d72cdbbddcf324882",
+      "lines": 334,
+      "read_ranges": [
+        [
+          1,
+          90
+        ]
+      ],
+      "status": "partial_context_only"
+    },
+    {
+      "path": "crates/woodshed-core/src/audio.rs",
+      "sha256": "1b284ac61e9da23417cd853a04a970a7c73a3e1ac31b70f81cd1b1e33ea2f3c0",
+      "lines": 296,
+      "read_ranges": [
+        [
+          220,
+          280
+        ]
+      ],
+      "status": "partial_context_only"
+    },
+    {
+      "path": "crates/woodshed-views/src/stage/looper/recorder.rs",
+      "sha256": "4b782629c8febaafd3eb0144af2a705e265fbdfc06b2d299d0d931b93199cc78",
+      "lines": 921,
+      "read_ranges": [
+        [
+          1,
+          245
+        ],
+        [
+          300,
+          440
+        ],
+        [
+          439,
+          635
+        ]
+      ],
+      "status": "partial_context_only"
+    },
+    {
+      "path": "crates/woodshed-views/src/stage/settings.rs",
+      "sha256": "20f138a4afbbb2b0a3017034857db8bedb56b1eb05ed352e03a3f14853179698",
+      "lines": 825,
+      "read_ranges": [
+        [
+          85,
+          155
+        ]
+      ],
+      "status": "partial_context_only"
+    },
+    {
+      "path": "crates/woodshed-views/src/stage.rs",
+      "sha256": "26698c8d2219d9124ead185ef66aa4a5a870452fe303935f19a5f99f2f2bf273",
+      "lines": 4573,
+      "read_ranges": [
+        [
+          2430,
+          2475
+        ]
+      ],
+      "status": "partial_context_only"
+    },
+    {
+      "path": "ports/hocket/crates/hocket-engine/src/lib.rs",
+      "sha256": "f49751b4c6995ff524b250855611b3781bfb13bb3f6ac5d0650ef2f93901bbd2",
+      "lines": 1177,
+      "read_ranges": [
+        [
+          410,
+          448
+        ],
+        [
+          448,
+          500
+        ]
+      ],
+      "status": "partial_context_only"
+    },
+    {
+      "path": "validation/song-cache_20261008/README.md",
+      "sha256": "62cf908f14576328546ad2ce412b8ac5c7e13f551999c1f9991b79d63d872553",
+      "lines": 39,
+      "read_ranges": [
+        [
+          1,
+          39
+        ]
+      ],
+      "status": "complete"
+    }
+  ],
+  "primary_dirty_P5a_observation": {
+    "checkout": "/Users/markik/Code/repos/woodshed",
+    "HEAD": "d12201bfe80cc94345c6308c46caaebf4a9fe42e",
+    "claim": "Read-only local source mitigation comparison only; not tested or published by this auditor. Hashes are at receipt-finalization time while concurrent work is active.",
+    "files": [
+      {
+        "path": "crates/woodshed-audio/src/output_runtime.rs",
+        "sha256_at_finalization": "cbb814c1eef46236eb158215ee5cd6c92f033b020203ba4648750147c017ea7e",
+        "lines_at_finalization": 762,
+        "read_mode": "git diff plus local excerpt",
+        "read_ranges": [
+          [
+            585,
+            616
+          ]
+        ],
+        "status": "partial_dirty_comparison_only"
+      },
+      {
+        "path": "crates/woodshed-audio/src/output_runtime/tests.rs",
+        "sha256_at_finalization": "d60ac3f18e8cbe82c4c2716a7bda28acfb16f3a1225e60330b7eac61447650e8",
+        "lines_at_finalization": 686,
+        "read_mode": "git diff",
+        "read_ranges": [],
+        "status": "partial_dirty_comparison_only"
+      },
+      {
+        "path": "crates/woodshed-genet/src/audio.rs",
+        "sha256_at_finalization": "0aed38079e36cf42b9073137f0b9e7fe967056ce4e5622c1d9362e6b94827a24",
+        "lines_at_finalization": 1875,
+        "read_mode": "git diff plus local excerpt",
+        "read_ranges": [
+          [
+            470,
+            488
+          ]
+        ],
+        "status": "partial_dirty_comparison_only"
+      },
+      {
+        "path": "crates/woodshed-core/src/audio.rs",
+        "sha256_at_finalization": "2dae9a7e3631bc4768587d3d465bb75d73e13408b734d66af612c7aadf9f4489",
+        "lines_at_finalization": 317,
+        "read_mode": "git diff",
+        "read_ranges": [],
+        "status": "partial_dirty_comparison_only"
+      },
+      {
+        "path": "crates/woodshed-genet/src/sync.rs",
+        "sha256_at_finalization": "28c56d3540cd0c6f5cd765be4616240463cdfb3f9b376756cf5e39ef15ced26b",
+        "lines_at_finalization": 1355,
+        "read_mode": "local excerpt",
+        "read_ranges": [
+          [
+            117,
+            180
+          ]
+        ],
+        "status": "partial_dirty_comparison_only"
+      }
+    ]
+  },
+  "status": "complete",
+  "completed_file_count": 34,
+  "completed_line_count": 12014,
+  "verification": {
+    "all_assigned_hashes_matched_before_read": true,
+    "all_assigned_hashes_matched_after_read": true,
+    "all_assigned_ranges_contiguous_without_gaps_or_overlaps": true,
+    "assigned_read_output_truncated": false,
+    "tests_executed": false,
+    "builds_executed": false,
+    "native_or_device_runs_executed": false,
+    "network_browsing": false,
+    "product_or_snapshot_changes": false,
+    "git_mutations": false,
+    "artifacts_written": [
+      "audio-coverage.json",
+      "audio-report.md"
+    ]
+  }
+}

@@ -1,0 +1,360 @@
+{
+  "date": "2026-10-17",
+  "scope": "Ringdown/instrument reconciliation and prioritized cleanup before code changes",
+  "canonical_plan": "REMEDIATION_PLAN.md",
+  "frozen_revision": "d12201bfe80cc94345c6308c46caaebf4a9fe42e",
+  "published_coverage_counts_unchanged": {
+    "assigned_files": 936,
+    "assigned_lines": 231127,
+    "additional_parent_read": {
+      "path": "ports/redshank/model/tests/fixtures/w3c-web-annotation/annotations/annotationMusts.test",
+      "sha256": "7e93d89f1503ec62b6ea208946b9920f47c99c8fa6388b1313825d50da18b4c7",
+      "lines": 63,
+      "kind": "source",
+      "status": "complete",
+      "read_ranges": [
+        [
+          1,
+          63
+        ]
+      ],
+      "reader": "parent"
+    },
+    "combined_files": 937,
+    "combined_lines": 231190,
+    "program_source_and_tests": {
+      "files": 303,
+      "lines": 149331
+    },
+    "zero_assignment_gaps": true
+  },
+  "semantic_read_head": "125be57d184f46b9f878463243d5a6ed8d8df4c3",
+  "later_hash_sample_head": "b8095653f66a718ba5b39fa5b10232b549bce906",
+  "later_locally_stored_origin_main": "125be57d184f46b9f878463243d5a6ed8d8df4c3",
+  "fetch_performed": false,
+  "current_full_source_audit_claimed": false,
+  "current_receipts_requalified": false,
+  "tracked_dirty_paths_observed": [],
+  "source_comparisons": [
+    {
+      "path": "ports/ringdown/Cargo.lock",
+      "frozen_sha256": "9c1b9afdd823e02effcade345140463f20185b9a79b83e8844d3109df395f6c0",
+      "current_sha256": "9c1b9afdd823e02effcade345140463f20185b9a79b83e8844d3109df395f6c0",
+      "same_bytes": true
+    },
+    {
+      "path": "ports/ringdown/Cargo.toml",
+      "frozen_sha256": "5b33dd170a08e14711f43946e0931f5c6a2d9e417a122c2dee64ceaba0370fe7",
+      "current_sha256": "5b33dd170a08e14711f43946e0931f5c6a2d9e417a122c2dee64ceaba0370fe7",
+      "same_bytes": true
+    },
+    {
+      "path": "ports/ringdown/apps/probe/Cargo.toml",
+      "frozen_sha256": "e9f22aa2e34c1ab4a6a276eebc1c4e759860c0cc2e3a20dab137e71eaf8f0daf",
+      "current_sha256": "e9f22aa2e34c1ab4a6a276eebc1c4e759860c0cc2e3a20dab137e71eaf8f0daf",
+      "same_bytes": true
+    },
+    {
+      "path": "ports/ringdown/apps/probe/src/main.rs",
+      "frozen_sha256": "f9e73604ecc47abc8d2b6a61ed7840d9852aa74ffc38367bae5eb59b823d13f6",
+      "current_sha256": "f9e73604ecc47abc8d2b6a61ed7840d9852aa74ffc38367bae5eb59b823d13f6",
+      "same_bytes": true
+    },
+    {
+      "path": "ports/ringdown/apps/probe/src/pklg.rs",
+      "frozen_sha256": "ea145bc3f53fe8c7fdd65c9d69e879ace75e5112324afc0263e9100ff4e8b233",
+      "current_sha256": "ea145bc3f53fe8c7fdd65c9d69e879ace75e5112324afc0263e9100ff4e8b233",
+      "same_bytes": true
+    },
+    {
+      "path": "ports/ringdown/crates/ringdown/Cargo.toml",
+      "frozen_sha256": "943f39e312f491ea8fe972df3ca12bfba071fe44a05e75dc903dd6c40798a1ef",
+      "current_sha256": "943f39e312f491ea8fe972df3ca12bfba071fe44a05e75dc903dd6c40798a1ef",
+      "same_bytes": true
+    },
+    {
+      "path": "ports/ringdown/crates/ringdown/src/compress.rs",
+      "frozen_sha256": "6723cd04e61fd91fb16a54df6841a057a6dbb51d068ffeb857c66bbac4c8e8d5",
+      "current_sha256": "6723cd04e61fd91fb16a54df6841a057a6dbb51d068ffeb857c66bbac4c8e8d5",
+      "same_bytes": true
+    },
+    {
+      "path": "ports/ringdown/crates/ringdown/src/crc32.rs",
+      "frozen_sha256": "cbe0856c7d89d7e1dca3bb2c28f890f8f2f028bb6461950c9f13cc59db968039",
+      "current_sha256": "cbe0856c7d89d7e1dca3bb2c28f890f8f2f028bb6461950c9f13cc59db968039",
+      "same_bytes": true
+    },
+    {
+      "path": "ports/ringdown/crates/ringdown/src/effects.rs",
+      "frozen_sha256": "474c59386beafd140dbb0a442bc5bd426bf7ea8eb2c9acd929962ddaa5057684",
+      "current_sha256": "474c59386beafd140dbb0a442bc5bd426bf7ea8eb2c9acd929962ddaa5057684",
+      "same_bytes": true
+    },
+    {
+      "path": "ports/ringdown/crates/ringdown/src/handshake.rs",
+      "frozen_sha256": "8ddaa4039b5a2a85d4f816fe1a308d79872e810984520892e64211cbd74e52dd",
+      "current_sha256": "8ddaa4039b5a2a85d4f816fe1a308d79872e810984520892e64211cbd74e52dd",
+      "same_bytes": true
+    },
+    {
+      "path": "ports/ringdown/crates/ringdown/src/lib.rs",
+      "frozen_sha256": "63fb45e0239a18a5d24a52812b0cb7121aab293e0191afaeb33407a5eb7f619f",
+      "current_sha256": "63fb45e0239a18a5d24a52812b0cb7121aab293e0191afaeb33407a5eb7f619f",
+      "same_bytes": true
+    },
+    {
+      "path": "ports/ringdown/crates/ringdown/src/link.rs",
+      "frozen_sha256": "98118b762fd4ea4dc043c493f72daeaf9d010a1d9068936c412bb4949f7cb8c8",
+      "current_sha256": "98118b762fd4ea4dc043c493f72daeaf9d010a1d9068936c412bb4949f7cb8c8",
+      "same_bytes": true
+    },
+    {
+      "path": "ports/ringdown/crates/ringdown/src/llt.rs",
+      "frozen_sha256": "bbf6f7302c6555278ad0c2ca84eb41e2beb1f96cf5aa89c43df85af3ca1337cb",
+      "current_sha256": "bbf6f7302c6555278ad0c2ca84eb41e2beb1f96cf5aa89c43df85af3ca1337cb",
+      "same_bytes": true
+    },
+    {
+      "path": "ports/ringdown/crates/ringdown/src/llt2.rs",
+      "frozen_sha256": "3dbf224c60bd1bf83c7b2c686f8c87f1443bd43d7dadb606e61afa03edafeb87",
+      "current_sha256": "3dbf224c60bd1bf83c7b2c686f8c87f1443bd43d7dadb606e61afa03edafeb87",
+      "same_bytes": true
+    },
+    {
+      "path": "ports/ringdown/crates/ringdown/src/loopfile.rs",
+      "frozen_sha256": "1f2663495af60f09508754d5c75e07f1ebe4811b290f63b725501fdde2e0d94f",
+      "current_sha256": "1f2663495af60f09508754d5c75e07f1ebe4811b290f63b725501fdde2e0d94f",
+      "same_bytes": true
+    },
+    {
+      "path": "ports/ringdown/crates/ringdown/src/plan.rs",
+      "frozen_sha256": "1dd51afce7e1fb87d1ae7ec5a16dfb5a59304ce177959cb4e7772e50a6ba05bb",
+      "current_sha256": "1dd51afce7e1fb87d1ae7ec5a16dfb5a59304ce177959cb4e7772e50a6ba05bb",
+      "same_bytes": true
+    },
+    {
+      "path": "ports/ringdown/crates/ringdown/src/profile.rs",
+      "frozen_sha256": "cef5ce39ccf95b2c59ac93f56dfd2cf2a9223ae06e4737f8a2137582b3aca0ef",
+      "current_sha256": "cef5ce39ccf95b2c59ac93f56dfd2cf2a9223ae06e4737f8a2137582b3aca0ef",
+      "same_bytes": true
+    },
+    {
+      "path": "ports/ringdown/crates/ringdown/src/rpc.rs",
+      "frozen_sha256": "891eea52d1eecf487642cd96b111339e48023dc121112134728b5a7a12f27a37",
+      "current_sha256": "891eea52d1eecf487642cd96b111339e48023dc121112134728b5a7a12f27a37",
+      "same_bytes": true
+    },
+    {
+      "path": "ports/ringdown/crates/ringdown-ble/Cargo.toml",
+      "frozen_sha256": "33a387f8bef7c8ff352b65bbe74d094355bb4f81f548dc2f6cb1c3af35853f2a",
+      "current_sha256": "33a387f8bef7c8ff352b65bbe74d094355bb4f81f548dc2f6cb1c3af35853f2a",
+      "same_bytes": true
+    },
+    {
+      "path": "ports/ringdown/crates/ringdown-ble/src/lib.rs",
+      "frozen_sha256": "423b09de03bb983143ecb88025c65ef7de9bfccc00e2352b27ce52e1621f39cb",
+      "current_sha256": "423b09de03bb983143ecb88025c65ef7de9bfccc00e2352b27ce52e1621f39cb",
+      "same_bytes": true
+    },
+    {
+      "path": "ports/ringdown/crates/ringdown-client/Cargo.toml",
+      "frozen_sha256": "b2869e0ec8d87acde83374dc347213a759a259e0d5c6eb59b7b9012966104b71",
+      "current_sha256": "b2869e0ec8d87acde83374dc347213a759a259e0d5c6eb59b7b9012966104b71",
+      "same_bytes": true
+    },
+    {
+      "path": "ports/ringdown/crates/ringdown-client/src/lib.rs",
+      "frozen_sha256": "13e030037875a1e9c94ab581b6f1997e2c37add6e6ff7834af3d7230474c628a",
+      "current_sha256": "13e030037875a1e9c94ab581b6f1997e2c37add6e6ff7834af3d7230474c628a",
+      "same_bytes": true
+    },
+    {
+      "path": "ports/ringdown/rustfmt.toml",
+      "frozen_sha256": "948ddbb2504264fd8339ce7ce06152cb516a76b6ab8b9fa079cc7b5266c2754c",
+      "current_sha256": "948ddbb2504264fd8339ce7ce06152cb516a76b6ab8b9fa079cc7b5266c2754c",
+      "same_bytes": true
+    },
+    {
+      "path": "crates/woodshed-instrument/src/lib.rs",
+      "frozen_sha256": "68af5b15806b5448f6efb70171626f18fd3a9ac1e4de95fadb98daf47bda5216",
+      "current_sha256": "68af5b15806b5448f6efb70171626f18fd3a9ac1e4de95fadb98daf47bda5216",
+      "same_bytes": true
+    },
+    {
+      "path": "crates/woodshed-instrument/src/session.rs",
+      "frozen_sha256": "5f6d4479c7cf277824d21fab037be56e0259b8fb29e692fd3d697d33c514d520",
+      "current_sha256": "5f6d4479c7cf277824d21fab037be56e0259b8fb29e692fd3d697d33c514d520",
+      "same_bytes": true
+    },
+    {
+      "path": "crates/woodshed-instrument/examples/metronome_link.rs",
+      "frozen_sha256": "9e6f67ffe80c4aa7b1fb4a079c9dba5ba769fec32365b49850d42003a6308f3b",
+      "current_sha256": "9e6f67ffe80c4aa7b1fb4a079c9dba5ba769fec32365b49850d42003a6308f3b",
+      "same_bytes": true
+    },
+    {
+      "path": "crates/woodshed-genet/src/persona.rs",
+      "frozen_sha256": "461c139f9fe0b87914f9fdd1763281180f66a6e557598c0733b43a388929a88e",
+      "current_sha256": "b42a9d61f4d3ec893e166b4a1bda34e28e4bda85295c633d6109e90d171e5147",
+      "same_bytes": false
+    },
+    {
+      "path": "crates/woodshed-core/src/history.rs",
+      "frozen_sha256": "0650b77adf8a381219ec38dfa1f3650f7425324827e8aee1fd5a1e5a00df9bf0",
+      "current_sha256": "fbefb93ca13cc8638809f97eeefe521dc62286837e54ef56c1b52a8c84526231",
+      "same_bytes": false
+    },
+    {
+      "path": "crates/woodshedding/src/rehearsal.rs",
+      "frozen_sha256": "c6ee7d82485c43523e4dcf969f3bd2af195723310e14ebbba1d13f54dafecaee",
+      "current_sha256": "446f5826c9ce9cb424842bf43c0ffcab086eaa7dbbd7695b6b16541e0776bc74",
+      "same_bytes": false
+    },
+    {
+      "path": "crates/hocket-model/src/history.rs",
+      "frozen_sha256": "5de0cdfd6690bb0f7d24e380a3cff853cad41abc04ed05309f47e338acd8fec9",
+      "current_sha256": "724d627d113a719e162658873fa0c3aabc180ae51667e2acbeee0c9432bcb7fb",
+      "same_bytes": false
+    },
+    {
+      "path": "ports/hocket/crates/hocket-genet/src/state.rs",
+      "frozen_sha256": "f36b056a95c7308b776a6350888f10e44c77c763f14df908b5f42e2164e62863",
+      "current_sha256": "d49b96ec05f818308ab49d9eba1f1095bb127973676cfc190d8789dc380b2751",
+      "same_bytes": false
+    },
+    {
+      "path": "ports/hocket/crates/hocket-genet/src/main.rs",
+      "frozen_sha256": "981ffb02232fb3b756cefe0ae697c83243f857a5eed5126a2004758f3832648b",
+      "current_sha256": "06a4b57bcda17278c97e3f88e4624fce6586de5f951a3ab7753dbd921385a117",
+      "same_bytes": false
+    },
+    {
+      "path": "ports/hocket/crates/hocket-genet/src/identity.rs",
+      "frozen_sha256": "64a8589e192ea96fe9ddc190ddc784b394d9f600e9ffc49f3ce9bc375a185929",
+      "current_sha256": "64a8589e192ea96fe9ddc190ddc784b394d9f600e9ffc49f3ce9bc375a185929",
+      "same_bytes": true
+    },
+    {
+      "path": "ports/redshank/storage/src/lib.rs",
+      "frozen_sha256": "a98f35e6c0f5a1a3eeb6f5d6e8b1401df120c814d3a5b5926f00dec2c714c6b7",
+      "current_sha256": "6fe384bbb1d97b00ba1051c4aae3d6cea82e5454096bba63e759d699e05a931a",
+      "same_bytes": false
+    },
+    {
+      "path": "crates/woodshed-genet/src/layout_tests.rs",
+      "frozen_sha256": "d37b6a004f23e482213701972aea140025cd557f5372480cb508e5d3d2e0c755",
+      "current_sha256": "508b45b3b79c1cd7a1faa35e320607b7ecf75bda7e2a18b6c7ea06874f09d6a4",
+      "same_bytes": false
+    }
+  ],
+  "canonical_reconciliation": [
+    {
+      "canonical_id": "instrument:readback-proof",
+      "canonical_source": "theory:T2",
+      "aliases": [
+        "ringdown:X1"
+      ],
+      "severity": "P2",
+      "plan_package": "B13",
+      "count_once": true,
+      "merged_scope": [
+        "false success after target mismatch",
+        "missing supported numerator comparison",
+        "restoration not verified",
+        "intervening errors skip restoration",
+        "aggregate experiment/restore/release errors"
+      ]
+    },
+    {
+      "canonical_id": "instrument:write-receipts",
+      "canonical_source": "theory:T1",
+      "severity": "P2",
+      "plan_package": "B13",
+      "distinct_from": "instrument:readback-proof"
+    },
+    {
+      "canonical_id": "instrument:guard-metadata",
+      "canonical_source": "ringdown:R8",
+      "corroboration": "theory-report.md:152",
+      "severity": "P3",
+      "plan_package": "K3",
+      "ordinary_default_bypass_claimed": false,
+      "stricter_host_policy_preserved": true
+    },
+    {
+      "canonical_source": "core:CORE-4",
+      "corroboration": "overlay:LO-5",
+      "count_once": true,
+      "plan_package": "B1"
+    },
+    {
+      "canonical_source": "overlay:LO-4",
+      "classification": "distinct inherited ordinary Walk timing follow-up; current retarget required"
+    }
+  ],
+  "source_disposition_at_semantic_read": {
+    "replacement_source_observed_not_requalified": [
+      "host:H1",
+      "core:CORE-1",
+      "core:CORE-2",
+      "shared:S1",
+      "theory:T4",
+      "hocket:H1",
+      "hocket:H2",
+      "redshank:R01"
+    ],
+    "first_new_product_fix_proposed": "hocket:H3 / A3 after A0",
+    "old_p5a_compile_failure_not_asserted_current": true
+  },
+  "priority_sequence": [
+    "A0 current source/receipt closure",
+    "remaining safety gaps and A3 identity binding; Q1 alongside",
+    "live material/runtime and host contracts",
+    "B12 Ringdown admission, B13 instrument receipt/proof, B14 diagnostics",
+    "C projections and compatibility-gated K cleanup according to reachability; operational evidence prerequisites before use"
+  ],
+  "overlay_continuation": {
+    "files": 33,
+    "semantic_lines": 34861,
+    "newly_read_by_reviewer": 27662,
+    "verified_recorded_ranges_and_input_hashes": true,
+    "full_read_by_this_coordinator_claimed": false,
+    "report_sha256": "f1b2c4729acb7182097dc282b637b498f52e530d6eacc87bec5026fda8d80549",
+    "coverage_sha256": "20aef7e4401f8b2a85229b4b245e8b428e3ea38ef3a2ea1f09b407ba03f23128"
+  },
+  "input_artifact_hashes": {
+    "AUDIT.md": "1f1093de7cf93ac0fc3e74cb4d9d54ef7a58165a1ab352d51bd2685b7ece907c",
+    "REMEDIATION_PLAN.md": "76563f4bb096f7c53774fb60c4f0672c15c368109a5be24adb7322f859fa61d8",
+    "reviewer-finding-index.json": "387f19006208afd82bd50ac6585ef808eedab8ed2458203b2623d37d173deb73",
+    "audit-receipt.json": "bdf63f4ac76e6e584c6a605b425f33a6134aa7ad8d1171c58f5b436d21e2c885",
+    "ringdown-report.md": "d1be95fa067a48a8bbd2da92524cb4fddb572d4571c444219efd25e08b8d321d",
+    "theory-report.md": "ebd1ae28d4b3be640dae7f4c4f784c436792a938f4bbe4501de3716c3debb000",
+    "local-overlay-report.md": "f1b2c4729acb7182097dc282b637b498f52e530d6eacc87bec5026fda8d80549",
+    "local-overlay-coverage.json": "20aef7e4401f8b2a85229b4b245e8b428e3ea38ef3a2ea1f09b407ba03f23128"
+  },
+  "output_artifacts": [
+    {
+      "path": "AUDIT.md",
+      "sha256": "6620bfb70dcdf6ca624ad48251460fb58c78b71713af1061dfb8114237ae0343"
+    },
+    {
+      "path": "REMEDIATION_PLAN.md",
+      "sha256": "a3499fa8bca9c977376a3b94569512d1826cde9ab361b66b2fe4c0046234e85d"
+    }
+  ],
+  "raw_index_preserved": true,
+  "raw_index_not_unique_bug_count": true,
+  "execution": {
+    "product_edits": false,
+    "snapshot_edits": false,
+    "locks": false,
+    "deletions": false,
+    "tests": false,
+    "builds": false,
+    "native": false,
+    "hardware": false,
+    "network": false,
+    "git_mutations": false,
+    "messages_to_other_tasks": false
+  }
+}

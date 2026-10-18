@@ -1,0 +1,178 @@
+{
+  "status": "frozen collective source audit complete; all original finding entries reconciled; remediation open; publication pending",
+  "frozen_revision": "d12201bfe80cc94345c6308c46caaebf4a9fe42e",
+  "current_reconciliation_input": "a42477297b692feb7df4d8be74fba4cb83bcaf8c",
+  "original_artifact_sha256": {
+    "evidence-artifact-integrity.json": "57cacf2c2d02d3854b9f3b6f11fcaa0b2b082ec85c4b00d50c1e4ba72f4c95fb",
+    "core-report.md": "353736e0e244d3a1c6c256d71f168bf4bf1fb856d51e1d6ba4e2c25b9835c8b9",
+    "shared-assigned.json": "be473d23ec5c8c7abba8a2bbcef3447ed9d31b3d5f4a8ed511eec1f2cd0b2481",
+    "theory-report.md": "ebd1ae28d4b3be640dae7f4c4f784c436792a938f4bbe4501de3716c3debb000",
+    "theory-coverage.json": "d4f9117b033e3e1185b0e3c3b19105c2c319ddc6c5c12e8209225397dd019c4d",
+    "audio-coverage.json": "5efde5ae6cf1c63c20572f36164a3a7af0baafb23b12a689bd2c711f8b8f37a8",
+    "views-assigned.json": "714f33cd11a06ce8c3f2bd38247ee5575e3c7816ff66986fb0d4c066e3e67ea2",
+    "parent-verification.json": "eb83212c7e99babd2d4f1dbf4defe4ca2482de054c1397322f98c0c982266fcf",
+    "tooling-report.md": "8b99487b69e3a1a4bc55b024878a71faabc59e976aee011ce2b917f3ce31a4d9",
+    "views-report.md": "05961ad48c2bcccb8e083b5c6082828fc69b7c2408ef9a099b19c5750fa31e04",
+    "tooling-assigned.json": "23e6021bdd0d9ad28ef838396226c223df12eea471f6c174ac8c1ba4a9cb1401",
+    "core-coverage.json": "ce7b6f45c4cabb9f72e2cdabdc49ac3dc942ce26af66812a4435944fa08da6c5",
+    "host-report.md": "b080ef081bbf2c7ea248e53aee95bc97947a0e3615d43713e67b7afb75985dba",
+    "reviewer-finding-index.json": "387f19006208afd82bd50ac6585ef808eedab8ed2458203b2623d37d173deb73",
+    "audio-report.md": "8b1d9bb1c0a3cfd4e391ff2a989e79523dcb50438125e92423996cf64318e555",
+    "ringdown-coverage.json": "0a0e26eb28e3c0c783411302e85bb3f5769dcfdc77d6036a59fe32407ebad9f1",
+    "hocket-assigned.json": "01916e15d9b41d3ad843df87154e37f413fb7d68e4b893f08cb8fba9cdad0424",
+    "evidence-coverage.json": "2be0162b126e7bea6054fcd616440c38aee0dc665fd2a2680acd205cc7c09eb4",
+    "host-coverage.json": "39ba2ca45b885238e0218d36497283b1906d99fef167666a6ae4665bf0b9c271",
+    "redshank-assigned.json": "7d261a2a357d1fa5c47587e2fc4379a0090215b1b197ed972db494de265eafc5",
+    "evidence-report.md": "6c7204680ed0c13f135b39e7a1f32e8ca8be06d9f0f59a89c2899dd03910a795",
+    "local-overlay-assigned.json": "ffb1ef2c0c73e383fdf18df973aec7e6670af1b5a68eae70ecf729d2fb3c1983",
+    "shared-report.md": "f41a813cabb309969eaa8e5974ba390d429c9a874b1cd5cbfc489e453325d4b7",
+    "REMEDIATION_PLAN.md": "a3499fa8bca9c977376a3b94569512d1826cde9ab361b66b2fe4c0046234e85d",
+    "theory-assigned.json": "b9f26031cee13342ac559ef98c73f973f4c986e748bd93846958cc7062311f23",
+    "AUDIT.md": "6620bfb70dcdf6ca624ad48251460fb58c78b71713af1061dfb8114237ae0343",
+    "shared-coverage.json": "004102faffb45cd08d26cfa1b230d4c1732444493de46792b2c60d7e6ce133cf",
+    "ringdown-report.md": "d1be95fa067a48a8bbd2da92524cb4fddb572d4571c444219efd25e08b8d321d",
+    "views-coverage.json": "edfe770e5c5349d0a8586235c784c2995c6a06d8839e82f5c78832769e45d372",
+    "local-overlay-report.md": "f1b2c4729acb7182097dc282b637b498f52e530d6eacc87bec5026fda8d80549",
+    "redshank-report.md": "ae25efa8fc8ba614643800c095084a32a79c5fd267dd4e6e3a07476a0cb17e38",
+    "audio-assigned.json": "1d24c2ca420da606a471b0823389c83ec9f63167a172a4c0712f20f0de56c5e1",
+    "inventory.json": "41a30901493f3bb3bee7045f133e070ba6946eb5355b1c0af3e02ad32861b8b9",
+    "parent-coverage.json": "8295af1c86547e3763a731ebd8d71bd12ea1d2ca1f70774702acffba7bf4f595",
+    "reconciliation-20261017.json": "f07bc42dfe4f267949cb9e535390952ecf6b6748dfc18cc138a469d4d641a68e",
+    "tooling-coverage.json": "a4e8a663b9b343ef4d99868ed0905eebe4fd4b9330e3110ea90bdd05c0a45584",
+    "core-assigned.json": "e7a12256760b7d00760856712c51369ed1c8695ce2e9e2ebe7c212839f9c43bd",
+    "hocket-report.md": "f32b96ef6c9d9994fab391da5dfc84f1ea347df67d60adb333f1a28c8ffaef53",
+    "local-overlay-coverage.json": "20aef7e4401f8b2a85229b4b245e8b428e3ea38ef3a2ea1f09b407ba03f23128",
+    "coverage-verification.json": "35496c05c30c7cd81396e5d17d457387e0d149cfd38bbf87b7f2f2091ffb61b1",
+    "redshank-coverage.json": "901fe67102f0c81522e4e337c968cb2598b87a14cd1d5cd554848c112900c55d",
+    "host-assigned.json": "7dbeab94804dd75a38fbee9ca72f1d1900e82ec9797826c622855ab5995e25f3",
+    "evidence-assigned.json": "568126c279ccafa51f87c47b8f070569fdc8763b49f32f82516c3828c5666a66",
+    "hocket-coverage.json": "e1b47a328c4d9ab6a20eb672653215de726863237c0507710a6cb2851524280e",
+    "audit-receipt.json": "42d1bb945c19db5eebf6eb6a06693d42c7cdd572d7c83d71af5ef608e47530ab",
+    "ringdown-assigned.json": "37809de362a35cd1d80f2a9f87140b5ff58b3027aba378f972dd62276aa65ffd"
+  },
+  "current_artifact_sha256": {
+    "current-source-comparison.json": "9320cd83b7051028cf32a485c0d939671bc0033089457dfe8a034973fd7dd677",
+    "evidence-tooling-hashes.json": "e32788a608d56de566708b618889ecd2c162f7c2e69d0509bf77ff259c73571f",
+    "runtime.json": "d3dde86310b0fe7ed4d983120dfedd4e67663b1d3c3d0e23ffda5797c8c45afc",
+    "first-helper-attempt-coverage-verify.stderr": "906edf766a144fac0de0193a665fa556d3d323c9a198c6280ea1517ccbf590cf",
+    "ports.json": "2d8af52dac7f341d04186dba049b9329f7c64a034269658362f5d4b4b94ff449",
+    "evidence-tooling-current.md": "780ef5af45c8d61faa15324a690a6af555e17dbf23882c873bcbd7d15af2f909",
+    "evidence-tooling-current.json": "66338097ad5d169da64e31ad598ecf91f516039f80d774cab9974a9d64b5beb4",
+    "safety.md": "7588b0223dff5c88b3c382d2c1f6e728da4e0e5ffd73ce5583b93918bef59f34",
+    "verifier-negative-controls.log": "bad132c093d5b4a2c6558a5d0f3eb1101eec6c507cf08aa95885e30adb0ac34b",
+    "safety-publication-refs.json": "d87210bff8a69108b2363693bdacd8ea48419bc91e903897d792e9ae121b375f",
+    "coverage-verify-process.json": "eece5e013af813fd9b6309a44d6f246e97fb82f86fcbaf755e534869bf2d242a",
+    "coverage-verify.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "verifier-optimized-refusal.json": "a25a303f1f4b7ac232a4de2f091d78136332fe1807271610bb69b01d327d2eb0",
+    "safety.json": "df8caae5a07a616089cba50f62ca0fc6a5d8f3869087faff54bf8dd058c58a42",
+    "verifier-controls-process.json": "5685b9b13876751282273df53cc12fb39d716f744f69fcaad9db6f7e7159737a",
+    "runtime.md": "3a6cebd4d729905274f473eefe78cf940a49a49a941ea19b9b3bba7ab8e4dfaf",
+    "coverage-verify.stdout": "728611d99aaae201541a599a8be20bef6f55bf57a7752e5f6ef4bc7fc7a0fa88",
+    "scenario-source-check.json": "e35ed590cb9327c72339c5bdf4658df4ce0be6834320428c1a7b608d3d897209",
+    "ports.md": "fe75fdc6952f1f1d4624c4a330499b5487410e43ac53698893ea547afc295de7",
+    "first-helper-attempt-coverage-verify-process.json": "963e7b938ec608af243c02605c707c654816d25f9cd72aac5bccd9389d9019c1"
+  },
+  "frozen_coverage": {
+    "complete": true,
+    "frozen_revision": "d12201bfe80cc94345c6308c46caaebf4a9fe42e",
+    "files": 937,
+    "lines": 231190,
+    "partitions": [
+      {
+        "lane": "core",
+        "files": 49,
+        "lines": 23561
+      },
+      {
+        "lane": "views",
+        "files": 37,
+        "lines": 23962
+      },
+      {
+        "lane": "host",
+        "files": 20,
+        "lines": 18828
+      },
+      {
+        "lane": "audio",
+        "files": 34,
+        "lines": 12014
+      },
+      {
+        "lane": "shared",
+        "files": 33,
+        "lines": 9587
+      },
+      {
+        "lane": "theory",
+        "files": 21,
+        "lines": 11180
+      },
+      {
+        "lane": "hocket",
+        "files": 73,
+        "lines": 20440
+      },
+      {
+        "lane": "redshank",
+        "files": 178,
+        "lines": 51557
+      },
+      {
+        "lane": "ringdown",
+        "files": 23,
+        "lines": 11066
+      },
+      {
+        "lane": "tooling",
+        "files": 97,
+        "lines": 13362
+      },
+      {
+        "lane": "evidence",
+        "files": 371,
+        "lines": 35570
+      }
+    ],
+    "overlay_files": 33,
+    "overlay_semantic_lines": 34861,
+    "overlapping_overlay_not_added_to_unique_total": true,
+    "scope": "Recorded collective reads and exact frozen inputs; not current-head full read or runtime qualification."
+  },
+  "coverage_verifier_process": {
+    "command": [
+      "python3",
+      "/Users/markik/Code/repos/woodshed/validation/full-source-audit_20261016/verify_coverage.py",
+      "--repository",
+      "/Users/markik/Code/repos/woodshed",
+      "--overlay-source",
+      "/Users/markik/Code/testing/woodshed/full-source-audit-20261016/local-p5a-overlay"
+    ],
+    "exit_code": 0,
+    "helper_sha256": "2814ed0bebba4b97f1cc1b023295d8bdf8aace874b3431a7738fd17333930add",
+    "completed_utc": "2026-10-18T01:39:19.156121+00:00"
+  },
+  "mapped_raw_findings": 93,
+  "additional_named_items": [
+    "evidence:O1",
+    "local-overlay:LO-4",
+    "local-overlay:LO-5",
+    "local-overlay:LO-K1"
+  ],
+  "limits": [
+    "No new full-current-source read claim: 841 original inventory paths unchanged,95 changed; added paths not exhaustively audited in this closure",
+    "No product changes, product tests/builds/native/device executions in audit closure",
+    "Historical safety/software/native qualification remains bound to its recorded inputs; current acceptance unassessed",
+    "Raw counts include aliases,candidates,policy boundaries; not a unique bug count"
+  ],
+  "canonical_plan": "design_docs/2026-10-16_source_authority_audit_plan.md",
+  "external_originals": "/Users/markik/Code/testing/woodshed/full-source-audit-20261016",
+  "coordination_artifact_sha256": {
+    "validation/full-source-audit_20261016/README.md": "89ce3540b3aeeed082abecbb4d909ecf664d41b00e1a1fad9675f7434ed8c0ec",
+    "validation/full-source-audit_20261016/current-finding-ledger.json": "3ce36a5fcdf5271be0fbe94db2c3bafb4ae3d68f619f74312d94c6e452d19de2",
+    "validation/full-source-audit_20261016/verify_coverage.py": "2814ed0bebba4b97f1cc1b023295d8bdf8aace874b3431a7738fd17333930add",
+    "validation/full-source-audit_20261016/test_verify_coverage.py": "9b464695e4db29708029e84ac54cda87081ae94f002b2274fbb211503c5eac3a",
+    "design_docs/2026-10-16_source_authority_audit_plan.md": "a36fe3c3dc1a31851e02d14b6ef1ab3b18372b433dda99601d95ee47eba8040b",
+    "design_docs/DOC_README.md": "63d7a55462a16e7356edd2c02edeb368bd160ab1ac693dea999e385659c36df3"
+  }
+}
