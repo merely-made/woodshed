@@ -17,6 +17,11 @@ use woodshed_core::{
 };
 use woodshedding::rehearsal::{CardId, Set, arrangement::*};
 
+mod observation;
+#[cfg(test)]
+mod observation_tests;
+use observation::{ArrangementObservation, DraftSnapshot, PreviewSnapshot};
+
 pub const PRIMARY_KEY: u64 = 0x5753_4152;
 pub const RELATED_KEY: u64 = 0x5753_4153;
 #[derive(Default)]
@@ -88,17 +93,17 @@ impl ArrangementSurfaces {
 
 pub struct Draft {
     context: SavedProgressionArrangement,
-    base: Option<serde_json::Value>,
+    base: Option<SavedProgressionArrangement>,
     pub fields: BTreeMap<String, TextInput>,
     cards: Vec<CardId>,
     placed: BTreeSet<CardId>,
     rests: Vec<String>,
-    original: String,
+    original: Option<DraftSnapshot>,
 }
 impl Draft {
     fn from_saved(
         context: SavedProgressionArrangement,
-        base: Option<serde_json::Value>,
+        base: Option<SavedProgressionArrangement>,
         set: &Set,
     ) -> Self {
         let mut d = Self {
@@ -108,7 +113,7 @@ impl Draft {
             cards: vec![],
             placed: BTreeSet::new(),
             rests: vec![],
-            original: String::new(),
+            original: None,
         };
         let a = d.context.alignment.clone();
         d.put("name", a.name);
@@ -128,7 +133,7 @@ impl Draft {
             d.rests.push(r.key);
         }
         d.add_current_cards(set);
-        d.original = d.signature();
+        d.original = Some(d.snapshot());
         d
     }
     fn put(&mut self, key: &str, value: impl ToString) {
@@ -233,27 +238,18 @@ impl Draft {
                 .collect::<Result<_, String>>()?,
         })
     }
-    fn signature(&self) -> String {
-        format!(
-            "{}|{:?}|{:?}|{:?}|{:?}",
-            serde_json::to_string(&self.context).expect("serializable arrangement context"),
-            self.fields
-                .iter()
-                .map(|(k, v)| (k, v.text()))
-                .collect::<Vec<_>>(),
-            self.cards,
-            self.placed,
-            self.rests
-        )
+    fn snapshot(&self) -> DraftSnapshot {
+        DraftSnapshot::capture(self)
     }
     pub fn dirty(&self) -> bool {
-        self.base.as_ref() != serde_json::to_value(&self.context).ok().as_ref()
-            || self.signature() != self.original
+        self.base.as_ref() != Some(&self.context)
+            || self
+                .original
+                .as_ref()
+                .is_none_or(|original| !original.matches(self))
     }
     fn candidate(&self, set: &Set) -> Result<Set, String> {
-        if serde_json::to_value(&set.progression_arrangement).ok()
-            != Some(self.base.clone().unwrap_or(serde_json::Value::Null))
-        {
+        if set.progression_arrangement != self.base {
             return Err(
                 "The saved arrangement changed. Reload it before saving this draft.".into(),
             );
@@ -269,7 +265,7 @@ pub use scenomise::span_edit::SpanEdit as SpanAction;
 use scenomise::span_edit::SpanEditIntent;
 #[derive(Clone, Debug)]
 struct SpanGesture {
-    owner: WorkingSetId,
+    observation: ArrangementObservation,
     key: String,
     action: SpanAction,
     original: Span,
@@ -279,8 +275,6 @@ struct SpanGesture {
     ticks_per_pixel: f32,
     size: (f32, f32),
     pointer: i32,
-    draft_signature: String,
-    source_signature: String,
     extent: u32,
     viewport_width: f32,
 }
@@ -332,8 +326,8 @@ impl Draft {
 pub struct ArrangementEditor {
     pub drafts: BTreeMap<WorkingSetId, Draft>,
     pub surfaces: Rc<RefCell<ArrangementSurfaces>>,
-    owner: Option<WorkingSetId>,
-    signature: String,
+    preview: Option<PreviewSnapshot>,
+    presentation_owner: Option<WorkingSetId>,
     pub notice: Option<String>,
     pub close_pending: bool,
     gesture: Option<SpanGesture>,
@@ -354,7 +348,7 @@ impl ArrangementEditor {
     }
     pub fn field_mut(&mut self, owner: WorkingSetId, key: &str) -> Option<&mut TextInput> {
         // map_state also borrows fields while rebuilding an unchanged view.
-        // Actual text changes invalidate the captured draft signature in sync.
+        // Actual text changes invalidate the captured observation in sync.
         self.drafts.get_mut(&owner)?.fields.get_mut(key)
     }
 }
@@ -394,9 +388,7 @@ impl UiState {
             save_progression_arrangement(&self.stage, &mut copy, a)?;
             Ok::<_, String>(Draft::from_saved(
                 copy.progression_arrangement.unwrap(),
-                serde_json::to_value(&self.set.progression_arrangement)
-                    .ok()
-                    .filter(|v| !v.is_null()),
+                self.set.progression_arrangement.clone(),
                 &self.set,
             ))
         })();
@@ -413,7 +405,7 @@ impl UiState {
         self.arrangement_editor.gesture = None;
         let owner = self.working_sets.active_id;
         self.arrangement_editor.drafts.remove(&owner);
-        self.arrangement_editor.signature.clear();
+        self.arrangement_editor.preview = None;
         self.arrangement_editor.notice = None;
         self.sync_arrangement_scene();
     }
@@ -440,15 +432,8 @@ impl UiState {
         }
     }
     pub fn sync_arrangement_scene(&mut self) {
-        if self
-            .arrangement_editor
-            .gesture
-            .as_ref()
-            .is_some_and(|g| !self.arrangement_gesture_current(g))
-        {
-            self.arrangement_editor.gesture = None;
-        }
         if self.workspace.active_panel() != Some(WorkspacePanel::Arrangement) {
+            self.arrangement_editor.gesture = None;
             return;
         }
         let owner = self.working_sets.active_id;
@@ -456,12 +441,21 @@ impl UiState {
             if let Some(saved) = &self.set.progression_arrangement {
                 self.arrangement_editor.drafts.insert(
                     owner,
-                    Draft::from_saved(saved.clone(), serde_json::to_value(saved).ok(), &self.set),
+                    Draft::from_saved(saved.clone(), Some(saved.clone()), &self.set),
                 );
             }
         }
         if let Some(d) = self.arrangement_editor.drafts.get_mut(&owner) {
             d.add_current_cards(&self.set);
+        }
+        let observation = self.arrangement_observation();
+        if self
+            .arrangement_editor
+            .gesture
+            .as_ref()
+            .is_some_and(|g| !self.arrangement_gesture_matches(g, &observation))
+        {
+            self.arrangement_editor.gesture = None;
         }
         let palette = self
             .appearance
@@ -487,30 +481,22 @@ impl UiState {
             fifth: rgba(palette.primary),
             warning: rgba(palette.danger),
         };
-        let signature = format!(
-            "{:?}|{}|{}|{:?}",
-            theme,
-            serde_json::to_string(&self.set).unwrap_or_default(),
-            self.arrangement_editor
-                .drafts
-                .get(&owner)
-                .map(Draft::signature)
-                .unwrap_or_default(),
+        let preview = PreviewSnapshot::capture(
+            observation,
+            &theme,
             self.arrangement_editor
                 .gesture
                 .as_ref()
                 .filter(|g| g.proposed != g.original)
-                .map(|g| (&g.key, g.proposed))
+                .map(|g| (g.key.clone(), g.proposed)),
         );
-        if self.arrangement_editor.owner == Some(owner)
-            && self.arrangement_editor.signature == signature
-        {
+        if self.arrangement_editor.preview.as_ref() == Some(&preview) {
             return;
         }
         self.arrangement_editor.notice = None;
-        let preserve = self.arrangement_editor.owner == Some(owner);
-        self.arrangement_editor.owner = Some(owner);
-        self.arrangement_editor.signature = signature;
+        let preserve = self.arrangement_editor.presentation_owner == Some(owner);
+        self.arrangement_editor.presentation_owner = Some(owner);
+        self.arrangement_editor.preview = Some(preview);
         let result = self
             .arrangement_editor
             .drafts
@@ -521,7 +507,7 @@ impl UiState {
                     d.candidate_intent(
                         &self.set,
                         &g.intent,
-                        &format!("woodshed/working-set/{}", g.owner.0),
+                        &format!("woodshed/working-set/{}", g.observation.owner.0),
                     )
                 } else {
                     d.candidate(&self.set)
@@ -551,27 +537,40 @@ impl UiState {
             },
         }
     }
+    fn arrangement_observation(&self) -> ArrangementObservation {
+        let owner = self.working_sets.active_id;
+        ArrangementObservation::capture(
+            owner,
+            &self.set,
+            self.arrangement_editor.drafts.get(&owner),
+        )
+    }
     fn arrangement_gesture_current(&self, g: &SpanGesture) -> bool {
+        self.arrangement_gesture_matches(g, &self.arrangement_observation())
+    }
+    fn arrangement_gesture_matches(
+        &self,
+        g: &SpanGesture,
+        observation: &ArrangementObservation,
+    ) -> bool {
         self.workspace.active_panel() == Some(WorkspacePanel::Arrangement)
             && self.viewport_width == g.viewport_width
             && self.persona.is_none()
             && !self.appearance.workshop_open
-            && self.working_sets.active_id == g.owner
-            && self
-                .arrangement_editor
-                .drafts
-                .get(&g.owner)
-                .is_some_and(|d| d.signature() == g.draft_signature)
-            && serde_json::to_string(&self.set).unwrap_or_default() == g.source_signature
+            && g.observation == *observation
     }
     fn commit_arrangement_gesture(&mut self) {
         if let Some(g) = self.arrangement_editor.gesture.take() {
             if self.arrangement_gesture_current(&g) && g.proposed != g.original {
-                let d = self.arrangement_editor.drafts.get_mut(&g.owner).unwrap();
+                let d = self
+                    .arrangement_editor
+                    .drafts
+                    .get_mut(&g.observation.owner)
+                    .unwrap();
                 match d.candidate_intent(
                     &self.set,
                     &g.intent,
-                    &format!("woodshed/working-set/{}", g.owner.0),
+                    &format!("woodshed/working-set/{}", g.observation.owner.0),
                 ) {
                     Ok(_) => d.span_fields(&g.key, g.proposed),
                     Err(e) => self.arrangement_editor.notice = Some(e),
@@ -662,7 +661,7 @@ impl UiState {
                         return;
                     };
                     self.arrangement_editor.gesture = Some(SpanGesture {
-                        owner,
+                        observation: self.arrangement_observation(),
                         key,
                         action,
                         original,
@@ -672,8 +671,6 @@ impl UiState {
                         ticks_per_pixel,
                         size: event.size,
                         pointer: event.pointer_id,
-                        draft_signature: d.signature(),
-                        source_signature: serde_json::to_string(&self.set).unwrap_or_default(),
                         extent,
                         viewport_width: self.viewport_width,
                     });
@@ -1481,7 +1478,7 @@ mod tests {
             let mut ui = fixture();
             ui.place_arrangement_cards_in_order();
             let owner = ui.working_sets.active_id;
-            let before = ui.arrangement_editor.drafts[&owner].signature();
+            let before = ui.arrangement_editor.drafts[&owner].snapshot();
             let (at, beat_width) = gesture_point(&ui, "card-2", SpanAction::Move);
             let target = (at.0 + beat_width, at.1);
             pointer(&mut ui, Down, at);
@@ -1515,7 +1512,7 @@ mod tests {
                 );
             } else {
                 assert_eq!(
-                    ui.arrangement_editor.drafts[&owner].signature(),
+                    ui.arrangement_editor.drafts[&owner].snapshot(),
                     before,
                     "{cause}"
                 );
@@ -1595,10 +1592,10 @@ mod tests {
         assert_eq!(card_span(&ui, "rest-rest-1").length, 1);
         // Expected roles and unplaced occurrences are selection only.
         ui.arrangement_select(BackdropSceneEvent::Select("role-0".into()));
-        let before = ui.arrangement_editor.drafts[&ui.working_sets.active_id].signature();
+        let before = ui.arrangement_editor.drafts[&ui.working_sets.active_id].snapshot();
         ui.edit_arrangement_span(SpanAction::Move, 1);
         assert_eq!(
-            ui.arrangement_editor.drafts[&ui.working_sets.active_id].signature(),
+            ui.arrangement_editor.drafts[&ui.working_sets.active_id].snapshot(),
             before
         );
     }
