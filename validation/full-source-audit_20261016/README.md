@@ -75,8 +75,10 @@ H3/H5 and Q1 were CPU qualified and published through `6e6498a`;
 B1–B3 through `b1c9dfd`. B4 now has a separate local
 [PCM/timing receipt](../pcm-timing_20261018/README.md): 308 distinct passes at
 `5dd01ae`. These targeted implementations do not refresh the frozen full read
-or establish native acceptance. The next runtime frontier starts at B5 shared
-Recorder SelectOne admission, with subsequent product/controller, protocol and
+or establish native acceptance. B5 now has a separate local [Recorder admission receipt](../recorder-select-one_20261019/README.md):
+176 distinct passes and three expected baseline failures at `b804d901`.
+The next runtime frontier is Hocket tempo replay and runtime diagnostics, with
+subsequent product/controller, protocol and
 compatibility work retaining their existing owners. Existing media, playback
 clocks and native validation lanes remain protected.
 The source audit is finished; the implementation backlog is not.

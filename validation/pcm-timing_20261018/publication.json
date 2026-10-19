@@ -1,0 +1,6 @@
+{
+  "status": "published",
+  "published_revision": "8da953b615b4b81d405855728aa57344e1a9bdd1",
+  "date": "2026-10-19",
+  "scope": "Seven reviewed B4 commits pushed after remote refresh, followed by a successful fast-forward-only pull. Original source-bound CPU qualification unchanged; no native qualification added."
+}

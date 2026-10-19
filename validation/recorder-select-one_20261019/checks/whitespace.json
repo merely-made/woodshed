@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "run_id": "b5-whitespace",
+  "command": [
+    "git",
+    "diff",
+    "--check",
+    "8da953b"
+  ],
+  "started_at": "2026-10-19T18:28:45.910321Z",
+  "ended_at": "2026-10-19T18:28:45.936600Z",
+  "exit_code": 0,
+  "cwd": "/Users/markik/Code/repos/woodshed",
+  "log": "/Users/markik/Code/repos/woodshed/validation/recorder-select-one_20261019/checks/whitespace.log",
+  "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "source_commit": "b804d90104bd86caca6b8fc20e8176e1afd5feae"
+}

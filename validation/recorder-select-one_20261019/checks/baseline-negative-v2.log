@@ -1,0 +1,110 @@
+   Compiling proc-macro2 v1.0.107
+   Compiling quote v1.0.47
+   Compiling unicode-ident v1.0.26
+   Compiling cfg-if v1.0.5
+   Compiling libc v0.2.190
+   Compiling getrandom v0.4.3
+   Compiling typenum v1.20.1
+   Compiling rand_core v0.10.1
+   Compiling serde_core v1.0.229
+   Compiling shlex v2.0.1
+   Compiling find-msvc-tools v0.1.14
+   Compiling semver v1.0.28
+   Compiling serde v1.0.229
+   Compiling zerocopy v0.8.59
+   Compiling cc v1.6.0
+   Compiling cmov v0.5.4
+   Compiling rustc_version v0.4.1
+   Compiling zmij v1.0.23
+   Compiling hybrid-array v0.4.15
+   Compiling ctutils v0.4.2
+   Compiling curve25519-dalek v5.0.0
+   Compiling subtle v2.6.1
+   Compiling constant_time_eq v0.4.2
+   Compiling arrayvec v0.7.8
+   Compiling signature v3.0.0
+   Compiling block-buffer v0.12.1
+   Compiling inout v0.2.2
+   Compiling ed25519 v3.0.0
+   Compiling serde_json v1.0.151
+   Compiling getrandom v0.3.4
+   Compiling ciborium-io v0.2.2
+   Compiling thiserror v1.0.69
+   Compiling memchr v2.8.3
+   Compiling itoa v1.0.18
+   Compiling blake3 v1.8.7
+   Compiling syn v2.0.119
+   Compiling syn v3.0.6
+   Compiling cpufeatures v0.3.1
+   Compiling hound v3.5.1
+   Compiling crypto-common v0.2.2
+   Compiling wavicle v0.1.0 (https://github.com/merely-made/wavicle.git?rev=2c5a49fd48db7a54aeab9e712804fd065411aef9#2c5a49fd)
+   Compiling audio-primitives v0.1.0 (/Users/markik/Code/repos/woodshed/crates/audio-primitives)
+   Compiling uuid v1.27.0
+   Compiling digest v0.11.3
+   Compiling universal-hash v0.6.1
+   Compiling cipher v0.5.2
+   Compiling aead v0.6.1
+   Compiling poly1305 v0.9.1
+   Compiling sha2 v0.11.0
+   Compiling serde_derive v1.0.229
+   Compiling async-trait v0.1.92
+   Compiling zeroize_derive v1.5.0
+   Compiling zerocopy-derive v0.8.59
+   Compiling thiserror-impl v1.0.69
+   Compiling zeroize v1.9.0
+   Compiling chacha20 v0.10.2
+   Compiling chacha20poly1305 v0.11.0
+   Compiling ed25519-dalek v3.0.0
+   Compiling insigne v0.0.2 (https://github.com/merely-made/dramatis.git?branch=main#cf562f47)
+   Compiling muniment v0.1.2 (https://github.com/merely-made/mere.git?branch=main#d1a200b1)
+   Compiling personae v0.3.0 (https://github.com/merely-made/dramatis.git?branch=main#cf562f47)
+   Compiling half v2.7.1
+   Compiling ciborium-ll v0.2.2
+   Compiling ciborium v0.2.2
+   Compiling hocket-model v0.1.0 (/Users/markik/Code/repos/woodshed/crates/hocket-model)
+   Compiling hocket-project v0.1.0 (/Users/markik/Code/repos/woodshed/crates/hocket-project)
+   Compiling hocket-recorder v0.1.0 (/Users/markik/Code/testing/woodshed/select-one-baseline-20261019)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 12.04s
+     Running tests/select_one.rs (/Users/markik/Code/repos/woodshed/target/debug/deps/select_one-f6163d7a812fe989)
+
+running 5 tests
+test one_cycle_export_pcm_matches_sum_and_selected_recorder_voices ... ok
+test mute_solo_and_reconcile_keep_active_selection_and_refuse_missing_or_muted_layers ... FAILED
+test capture_promotion_obeys_select_one_and_keeps_free_or_clocked_alignment ... FAILED
+test imported_replay_respects_selection_and_uses_stored_rate_and_gain ... FAILED
+test reconciliation_admits_only_model_selected_layers_and_preserves_sum_behavior ... ok
+
+failures:
+
+---- mute_solo_and_reconcile_keep_active_selection_and_refuse_missing_or_muted_layers stdout ----
+
+thread 'mute_solo_and_reconcile_keep_active_selection_and_refuse_missing_or_muted_layers' (46665184) panicked at tests/select_one.rs:485:5:
+assertion `left == right` failed: unmuting an inactive variation cannot start it
+  left: 2
+ right: 1
+
+---- capture_promotion_obeys_select_one_and_keeps_free_or_clocked_alignment stdout ----
+
+thread 'capture_promotion_obeys_select_one_and_keeps_free_or_clocked_alignment' (46665182) panicked at tests/select_one.rs:319:9:
+assertion `left == right` failed
+  left: {LayerKey { track_id: TrackId(aec7d161-fb4e-4044-b7ed-0be1e9b94ce8), layer_index: 0 }}
+ right: {}
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+---- imported_replay_respects_selection_and_uses_stored_rate_and_gain stdout ----
+
+thread 'imported_replay_respects_selection_and_uses_stored_rate_and_gain' (46665183) panicked at tests/select_one.rs:367:5:
+assertion `left == right` failed
+  left: {LayerKey { track_id: TrackId(2fe3bca1-258f-44e1-8981-4f328846010c), layer_index: 0 }, LayerKey { track_id: TrackId(2fe3bca1-258f-44e1-8981-4f328846010c), layer_index: 1 }}
+ right: {LayerKey { track_id: TrackId(2fe3bca1-258f-44e1-8981-4f328846010c), layer_index: 0 }}
+
+
+failures:
+    capture_promotion_obeys_select_one_and_keeps_free_or_clocked_alignment
+    imported_replay_respects_selection_and_uses_stored_rate_and_gain
+    mute_solo_and_reconcile_keep_active_selection_and_refuse_missing_or_muted_layers
+
+test result: FAILED. 2 passed; 3 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `--test select_one`

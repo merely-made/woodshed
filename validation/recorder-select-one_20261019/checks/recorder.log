@@ -1,0 +1,53 @@
+warning: patch `mere-proofs v0.1.0 (https://github.com/merely-made/mere.git?branch=main#d1a200b1)` was not used in the crate graph
+warning: patch `mere-transport v0.0.2 (https://github.com/merely-made/murm.git?branch=main#cba46d85)` was not used in the crate graph
+warning: patch `mere-webrtc-carrier v0.0.1 (https://github.com/merely-made/murm.git?branch=main#cba46d85)` was not used in the crate graph
+help: Check that the patched package version and available features are compatible
+      with the dependency requirements. If the patch has a different version from
+      what is locked in the Cargo.lock file, run `cargo update` to use the new
+      version. This may also occur with an optional dependency that is not enabled.
+   Compiling hocket-recorder v0.1.0 (/Users/markik/Code/repos/woodshed/crates/hocket-recorder)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.78s
+     Running unittests src/lib.rs (target/build/debug/deps/hocket_recorder-42009db8c5d9f13d)
+
+running 27 tests
+test host_policy::tests::armed_or_recording_target_guards_retargeting_clear_and_clock_policy ... ok
+test host_policy::tests::stale_context_and_row_keys_cannot_mutate_another_session ... ok
+test host_policy::tests::unavailable_audio_refuses_play_record_but_preserves_explicit_reference_clear ... ok
+test host_policy::tests::rendered_target_survives_selection_change_and_stop_uses_accepted_target ... ok
+test host_policy::tests::busy_capture_without_projectable_target_still_guards_clock_clear_source_and_record ... ok
+test host_policy::tests::heterogeneous_row_tempo_uses_qualified_target_without_authoring_other_rows ... ok
+test host_policy::tests::record_requests_lazy_input_but_never_claims_or_changes_capture_admission ... ok
+test host_policy::tests::backing_refusal_does_not_lose_stop_or_retained_clear_operations ... ok
+test host_policy::tests::unsupported_hocket_controls_and_invalid_clock_are_refused ... ok
+test tests::capture_admission_and_invalid_completion_fail_without_history_or_media_mutation ... ok
+test tests::deleted_capture_target_does_not_receive_or_store_a_delayed_take ... ok
+test tests::delayed_capture_keeps_admitted_track_clock_and_sample_rate ... ok
+test tests::fixed_rearm_and_clock_changes_are_refused_while_free_stop_keeps_its_target ... ok
+test tests::failed_voice_stop_refuses_clock_commit_and_preserves_accepted_key ... ok
+test tests::duplicate_phrase_action_targets_qualified_layer_occurrence ... ok
+test tests::later_unmute_supersedes_a_still_failed_stop_without_late_silencing ... ok
+test tests::failed_target_mute_retries_without_another_action_or_unrelated_restart ... ok
+test tests::imported_audio_only_starts_the_appended_layer_at_its_stored_rate ... ok
+test tests::failed_stop_all_retries_only_remaining_accepted_keys ... ok
+test tests::muted_click_clock_admission_and_input_absence_remain_truthful ... ok
+test tests::playback_failure_retains_completed_pcm_without_claiming_an_accepted_voice ... ok
+test tests::recreated_controller_for_same_session_cannot_reuse_capture_ticket ... ok
+test tests::replacing_project_stops_old_voices_even_while_retired_capture_drains ... ok
+test tests::stale_completion_cannot_consume_current_ticket_and_idle_needs_explicit_retirement ... ok
+test tests::same_session_replacement_retires_delayed_capture_and_queued_actions ... ok
+test tests::target_mute_keeps_unrelated_voices_and_missing_media_remains_visible ... ok
+test tests::offline_project_authors_clock_then_syncs_on_recovery_but_live_refusal_does_not_author ... ok
+
+test result: ok. 27 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/select_one.rs (target/build/debug/deps/select_one-83e7c695a47e662b)
+
+running 5 tests
+test imported_replay_respects_selection_and_uses_stored_rate_and_gain ... ok
+test mute_solo_and_reconcile_keep_active_selection_and_refuse_missing_or_muted_layers ... ok
+test one_cycle_export_pcm_matches_sum_and_selected_recorder_voices ... ok
+test capture_promotion_obeys_select_one_and_keeps_free_or_clocked_alignment ... ok
+test reconciliation_admits_only_model_selected_layers_and_preserves_sum_behavior ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

@@ -1,0 +1,44 @@
+warning: patch `mere-proofs v0.1.0 (https://github.com/merely-made/mere.git?branch=main#d1a200b1)` was not used in the crate graph
+warning: patch `mere-transport v0.0.2 (https://github.com/merely-made/murm.git?branch=main#cba46d85)` was not used in the crate graph
+warning: patch `mere-webrtc-carrier v0.0.1 (https://github.com/merely-made/murm.git?branch=main#cba46d85)` was not used in the crate graph
+help: Check that the patched package version and available features are compatible
+      with the dependency requirements. If the patch has a different version from
+      what is locked in the Cargo.lock file, run `cargo update` to use the new
+      version. This may also occur with an optional dependency that is not enabled.
+   Compiling sceno v0.0.5 (https://github.com/merely-made/mere.git?branch=main#d1a200b1)
+   Compiling sprigging v0.2.1 (https://github.com/merely-made/mere.git?branch=main#d1a200b1)
+   Compiling meristem v0.2.0 (https://github.com/merely-made/mere.git?branch=main#d1a200b1)
+   Compiling muniment v0.1.2 (https://github.com/merely-made/mere.git?branch=main#d1a200b1)
+   Compiling hocket-model v0.1.0 (/Users/markik/Code/repos/woodshed/crates/hocket-model)
+   Compiling mere-apparatus v0.0.1 (https://github.com/merely-made/mere.git?branch=main#d1a200b1)
+   Compiling scenograph v0.0.4 (https://github.com/merely-made/mere.git?branch=main#d1a200b1)
+   Compiling hocket-project v0.1.0 (/Users/markik/Code/repos/woodshed/crates/hocket-project)
+   Compiling scenomise v0.0.5 (https://github.com/merely-made/mere.git?branch=main#d1a200b1)
+   Compiling hocket-recorder v0.1.0 (/Users/markik/Code/repos/woodshed/crates/hocket-recorder)
+   Compiling cambium v0.3.3 (https://github.com/merely-made/mere.git?branch=main#d1a200b1)
+   Compiling cambium-winit v0.3.0 (https://github.com/merely-made/mere.git?branch=main#d1a200b1)
+   Compiling cambium-rootstock v0.1.0 (https://github.com/merely-made/mere.git?branch=main#d1a200b1)
+   Compiling cambium-winit-a11y v0.3.0 (https://github.com/merely-made/mere.git?branch=main#d1a200b1)
+   Compiling mesquite v0.1.0 (https://github.com/merely-made/mere.git?branch=main#d1a200b1)
+   Compiling cambium-genet-winit-host v0.1.0 (https://github.com/merely-made/mere.git?branch=main#d1a200b1)
+   Compiling hocket-views v0.1.0 (/Users/markik/Code/repos/woodshed/crates/hocket-views)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 21.11s
+     Running unittests src/lib.rs (target/build/debug/deps/hocket_views-96690077034ed635)
+
+running 13 tests
+test leaves::tests::model_identity_produces_stable_distinct_leaf_keys ... ok
+test leaves::tests::silent_waveform_paints_a_center_line ... ok
+test leaves::tests::quiet_pcm_keeps_visible_silence_baseline_and_exact_subpixel_envelope ... ok
+test leaves::tests::lazy_host_projection_is_evaluated_only_when_material_revision_changes ... ok
+test leaves::tests::unchanged_waveform_signature_produces_zero_repaints ... ok
+test leaves::tests::host_owned_pcm_uses_same_retained_leaf_without_fabricated_meters ... ok
+test leaves::tests::same_phrase_occurrences_render_independent_real_gain_envelopes ... ok
+test leaves::tests::mount_reconciliation_reorder_and_unmount_preserve_other_leaf_owners ... ok
+test projection_tests::heterogeneous_clocks_and_unsupported_controls_remain_honest ... ok
+test projection_tests::unavailable_command_cannot_emit_a_host_action ... ok
+test projection_tests::lazy_input_does_not_disable_first_record_request ... ok
+test projection_tests::accepted_capture_target_is_independent_of_current_selection ... ok
+test projection_tests::timing_summary_uses_the_host_heading_and_keeps_standalone_meter_default ... ok
+
+test result: ok. 13 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.87s
+

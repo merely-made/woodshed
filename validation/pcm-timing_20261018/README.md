@@ -1,6 +1,6 @@
 # Finite PCM admission and timing support
 
-Date: 2026-10-18. Status: implemented and CPU qualified at `5dd01ae`; local for review.
+Date: 2026-10-18. Status: implemented and CPU qualified at `5dd01ae`; published through `8da953b` ([publication](publication.json)).
 Baseline: published `b1c9dfd` (the nine previously reviewed commits).
 
 B4 addresses AUDIO-02 (finite prepared backing), AUDIO-03 (onset sample clock),
@@ -61,5 +61,5 @@ establish measured round-trip latency. Existing nearest pairing can reuse an
 onset; this batch does not change that policy. Original take PCM and playback
 clocks are not migrated. No supplier or lockfile updates were made.
 
-The B4 commits remain local for review; publication authorization in this turn
-covered the preceding nine commits. The broader audit remediation remains open.
+The seven reviewed B4 commits were published on 2026-10-19 under explicit user
+authorization; the original process-bound receipt retains its dated local status. The broader audit remediation remains open.

@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "run_id": "b5-final-recorder",
+  "command": [
+    "cargo",
+    "test",
+    "--locked",
+    "-p",
+    "hocket-recorder",
+    "--tests"
+  ],
+  "started_at": "2026-10-19T18:26:04.174180Z",
+  "ended_at": "2026-10-19T18:26:06.680240Z",
+  "exit_code": 0,
+  "cwd": "/Users/markik/Code/repos/woodshed",
+  "log": "/Users/markik/Code/repos/woodshed/validation/recorder-select-one_20261019/checks/recorder.log",
+  "log_sha256": "b3d4548f1c0d0cce2792829d3c49b8adb0664c26338cdcce1ab9216ed567bda2",
+  "source_commit": "b804d90104bd86caca6b8fc20e8176e1afd5feae"
+}

@@ -168,12 +168,12 @@
   "canonical_plan": "design_docs/2026-10-16_source_authority_audit_plan.md",
   "external_originals": "/Users/markik/Code/testing/woodshed/full-source-audit-20261016",
   "coordination_artifact_sha256": {
-    "validation/full-source-audit_20261016/README.md": "5864504b4d184fc2f843318b24c087442169b2afa619f88958a96185d8782588",
-    "validation/full-source-audit_20261016/current-finding-ledger.json": "c96af3f4781f9d002ba5b64008456b0f1fe369ab651a595d9ad24bc6cb20aea8",
+    "validation/full-source-audit_20261016/README.md": "1ee17286066bfc904f06d83e415275ae5601838f75ca169369bad94cb98fcad6",
+    "validation/full-source-audit_20261016/current-finding-ledger.json": "9cdef39b211bab3d0ad024613aecd34685553c1837656805b2eece0a981a154c",
     "validation/full-source-audit_20261016/verify_coverage.py": "2814ed0bebba4b97f1cc1b023295d8bdf8aace874b3431a7738fd17333930add",
     "validation/full-source-audit_20261016/test_verify_coverage.py": "9b464695e4db29708029e84ac54cda87081ae94f002b2274fbb211503c5eac3a",
-    "design_docs/2026-10-16_source_authority_audit_plan.md": "657a32d98a492c8205b7d3659b83da27fe13134bf74a868f59085e876313f677",
-    "design_docs/DOC_README.md": "6355fe720b889ba09c0dccdc5e098643ed4f6a6fd1ac41e742ef691afe5b4f47"
+    "design_docs/2026-10-16_source_authority_audit_plan.md": "b60df11ad1c32cfaae2af543d0552712156525753af23225a9952c8ea2c62e5a",
+    "design_docs/DOC_README.md": "0a2ded451254af145c6d3a5e83b758e07bd2894b93a69d914b1a55188d34644a"
   },
   "publication_record": "publication.json",
   "implementation_followup": "../admission-evidence_20261017/receipt.json",
@@ -186,7 +186,7 @@
   },
   "pcm_timing_followup": "../pcm-timing_20261018/receipt.json",
   "pcm_timing_followup_artifact_sha256": {
-    "validation/pcm-timing_20261018/README.md": "f6815eed077226478a64cf904e89b10899349e4e779c98eb27e4b11f6f40163e",
+    "validation/pcm-timing_20261018/README.md": "dd66611f515407e9bbf6a8a68111b8530d295b40da2ba9a8b068339df65851d2",
     "validation/pcm-timing_20261018/checks/audio.json": "b784f2706dcf0ae613c249739890317e358a5a1a8a39479fe982a5ecb7d05d86",
     "validation/pcm-timing_20261018/checks/audio.log": "bb64f5e7d3363a123d69840588b0b2ef47575738a9601049af60a93ee965f478",
     "validation/pcm-timing_20261018/checks/doc-links.json": "3a000e682cba9850c8ba492741a6599654797a8594853104f77779967c4b1573",
@@ -196,6 +196,27 @@
     "validation/pcm-timing_20261018/checks/primitives.log": "67d51c5b548510a9a17edc65fa09f04492fdb97b0bacd4ffbb7915354a1136cb",
     "validation/pcm-timing_20261018/checks/whitespace.json": "aa2fdc0882e299b4cc00977ce216d4604d8f5e077553dad7abe2dfea9d289d49",
     "validation/pcm-timing_20261018/checks/whitespace.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "validation/pcm-timing_20261018/receipt.json": "09e2ab148dbdb15257c296411f06635160a128fdcc3f2f373ebf3758cce4dd63"
+    "validation/pcm-timing_20261018/receipt.json": "09e2ab148dbdb15257c296411f06635160a128fdcc3f2f373ebf3758cce4dd63",
+    "validation/pcm-timing_20261018/publication.json": "a066ba46c003269e919a34b8ed974eb10df84d47ee63d4fd7716e003a6773fbd"
+  },
+  "select_one_followup": "../recorder-select-one_20261019/receipt.json",
+  "select_one_followup_artifact_sha256": {
+    "validation/recorder-select-one_20261019/README.md": "c81cc7a3b24b6231a96dd192e8c35509152b4f8315f53d429c4d3cea5cd7d21d",
+    "validation/recorder-select-one_20261019/checks/baseline-negative-v2.json": "37fa346340b496d9271e396d984ebbf1f2af62cee670e95332ca532c423d7117",
+    "validation/recorder-select-one_20261019/checks/baseline-negative-v2.log": "d4a038400004c4bb38b92a6920136c526cf33a72d304afe3f351429c67284e62",
+    "validation/recorder-select-one_20261019/checks/baseline-negative.json": "17b198994956adbb4ad921d4e0f5552c77a3c385f70dcb181db7de4fc7ba9618",
+    "validation/recorder-select-one_20261019/checks/baseline-negative.log": "82211f9c8bb7ba831ea4decc8e91eecaf644a7e46fb4bf89cb6c09b3eceac7f9",
+    "validation/recorder-select-one_20261019/checks/doc-links.json": "27be676477294ba244eefa1c23ed2e4f420486a4da34c9eb17d72e4285281c7a",
+    "validation/recorder-select-one_20261019/checks/hocket-host.json": "0bebb6adddef73fd90fa5305a2a1ad4b728ee85b03f9bf65cea40d0f9143ac76",
+    "validation/recorder-select-one_20261019/checks/hocket-host.log": "6f9d34f61d326df3913b8ef4009f2726d3a1ea3a6de1c187d56ca5eb42c52547",
+    "validation/recorder-select-one_20261019/checks/project.json": "15f5a2d33c6f15316402cdc41b3eea93cdb2114451c20d3fc63a3ec0a76ab7e5",
+    "validation/recorder-select-one_20261019/checks/project.log": "bd0bb5aba8f4e6820c1b590118538db497032bb79abfd8420e13992144dcaecb",
+    "validation/recorder-select-one_20261019/checks/recorder.json": "39e6765cb86c019e98b02962a426b7fa3aceaea174b4a9c84e29b605b113a6f2",
+    "validation/recorder-select-one_20261019/checks/recorder.log": "b3d4548f1c0d0cce2792829d3c49b8adb0664c26338cdcce1ab9216ed567bda2",
+    "validation/recorder-select-one_20261019/checks/views.json": "f85705f3dd2ad8c9a51affbf74274573b19513cddb0ed238260efb839a3c0e57",
+    "validation/recorder-select-one_20261019/checks/views.log": "81c5b220bd2e084666a39c05f75e3c1cdc1a1c531817862c00fa6112597f78d2",
+    "validation/recorder-select-one_20261019/checks/whitespace.json": "2c34b80ef2ed1af6c1e457a16bfd6d848331e60523129108372b647da2c0a2eb",
+    "validation/recorder-select-one_20261019/checks/whitespace.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "validation/recorder-select-one_20261019/receipt.json": "365c8d8e51b243486c5ae3399e3080a08a6a6676a512a98486a99e89517600c2"
   }
 }

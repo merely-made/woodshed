@@ -4,7 +4,7 @@ Date: 2026-10-16; coordination closure: 2026-10-17.
 Status: complete collective read of frozen `d12201bf`; current-source finding
 reconciliation complete and published through `8204688`. Remediation remains open;
 H3/H5 and Q1 implementation is CPU qualified and published through `6e6498a`.
-B1–B3 runtime authority corrections are CPU qualified and published through `b1c9dfd`. B4 PCM/onset/calibration corrections are CPU qualified at `5dd01ae` and local for review. The frozen
+B1–B3 runtime authority corrections are CPU qualified and published through `b1c9dfd`. B4 PCM/onset/calibration corrections are CPU qualified at `5dd01ae` and published through `8da953b`. B5 shared Recorder admission is CPU qualified at `b804d901` and local for review. The frozen
 audit closure itself adds no product fixes or product qualification.
 
 ## Scope and result
@@ -112,9 +112,29 @@ no separate scheduler, backup chord store or cleanup path was retained. The nine
 
 ### P6 Unify bounded PCM and timing evidence admission (B4)
 
-Status (2026-10-18): implemented and CPU qualified at `5dd01ae`; local for review. Baseline: published `b1c9dfd`. Three Luna workers own disjoint PCM preparation/export, onset accounting, and calibration pairing/session files. The coordinator owns integration, independent source review and evidence.
+Status (2026-10-18): implemented and CPU qualified at `5dd01ae`; published through `8da953b`. Baseline: published `b1c9dfd`. Three Luna workers own disjoint PCM preparation/export, onset accounting, and calibration pairing/session files. The coordinator owns integration, independent source review and evidence.
 
-Done when imported and rendered nonfinite PCM is refused before resource publication while accepted backing survives rejection; onset clocks count each incoming sample once independent of chunk boundaries; calibration estimate and displayed support derive from one admitted pairing result. Preserve existing take PCM and clocks. No supplier/lock updates or native/device lane operations. New implementation remains local for review. The [process-bound receipt](../validation/pcm-timing_20261018/README.md) records 308 distinct library passes (61 primitives, 211 Woodshed audio, 36 Hocket engine), no ignores or nested child invocations, 11 exact source hashes and four unchanged locks.
+Done when imported and rendered nonfinite PCM is refused before resource publication while accepted backing survives rejection; onset clocks count each incoming sample once independent of chunk boundaries; calibration estimate and displayed support derive from one admitted pairing result. Preserve existing take PCM and clocks. No supplier/lock updates or native/device lane operations. The seven reviewed commits were published on 2026-10-19. The [process-bound receipt](../validation/pcm-timing_20261018/README.md) records 308 distinct library passes (61 primitives, 211 Woodshed audio, 36 Hocket engine), no ignores or nested child invocations, 11 exact source hashes and four unchanged locks.
+
+### P7 Admit shared Recorder voices from one occurrence rule (B5)
+
+Status (2026-10-19): implemented and CPU qualified at `b804d901`; local for review. Baseline: published `8da953b`. A Luna worker owns
+shared Recorder production admission; an independent Luna worker owns black-box
+regressions in a separate integration test file. The coordinator owns host/export
+boundary review and evidence. No worker owns native validation or supplier pins.
+
+Done when capture promotion, import replay, layer unmute and reconciliation all
+admit voice starts through one occurrence rule using the model's existing
+`PlaybackMode::is_layer_audible`, plus track mute/solo. Retain inactive captures
+and imports without silently selecting them; preserve Sum behavior, free/clocked
+start alignment, media, stored sample rates and failure bookkeeping. Supported
+serialized SelectOne sessions suffice; this does not ship the deferred Deeler UI.
+The [receipt](../validation/recorder-select-one_20261019/README.md) records 176
+distinct final cases and two existing ignores. The same five integration tests
+against isolated published Recorder source give three expected bypass failures
+and two passes; the setup lock refusal is excluded. Both source/test files and
+four unchanged locks are hash bound. New implementation remains local for review;
+native/device checks stay separate.
 
 ## Current findings and next implementation order
 
@@ -146,8 +166,9 @@ Done when imported and rendered nonfinite PCM is refused before resource publica
    silence preserves authored payload and one audibility rule. Future-bar Arms
    use the existing bounded queue and cleanup, with ordered stop/pause/seek and
    unreachable-target observations. B4 now has scoped CPU-qualified finite PCM rejection, chunk-invariant onset
-   accounting and a single calibration estimate/support result. The next runtime
-   work is shared Recorder SelectOne admission (B5), Hocket tempo replay and failure reporting,
+   accounting and a single calibration estimate/support result. B5 now admits capture/import/unmute/reconciliation through one occurrence rule
+   using the existing model predicate; inactive media remains retained. The next
+   runtime work is Hocket tempo replay and failure reporting,
    Redshank preview/runtime control and idle-worker completion remain separate
    product/controller seams. Protocol/instrument fixes B12–B14 preserve write,
    readback, restoration, incomplete data and output-file outcomes. Ringdown X1
@@ -220,3 +241,7 @@ implementation remains a separate preceding local change.
 2026-10-18: pushed the nine reviewed B1–B3 commits through `b1c9dfd` after refreshing origin/main. Started B4 with three cheaper Luna workers and explicit disjoint ownership; native validation remains untouched.
 
 2026-10-18 B4 completion: source `5dd01ae` passes 308 distinct cases across shared primitives, Woodshed audio and the Hocket engine. Source review consolidated the third frequency-bound copy in phrase preparation and removed a test-only session outcome helper. Imported and completed rendered PCM reject nonfinite values before publication; existing resources survive failed preparation. Onset accounting counts new samples once; calibration displays the estimator’s admitted support. The next frontier starts at B5. Implementation remains local; no native lane, device, supplier or original-media operations were performed.
+
+2026-10-19: refreshed remote, pushed seven reviewed B4 commits through `8da953b`, then pulled with `--ff-only` (already current). Started B5 shared occurrence admission and independent public-API tests with two Luna agents. No native/device or supplier operations authorized for this batch.
+
+2026-10-19 B5 completion: source `b804d901` passes 176 distinct cases with two existing Hocket host ignores. A public-API test fixture roundtrips CBOR and compares actual accepted voices with model eligibility and offline one-cycle PCM. Isolated published source reproduces three bypass failures with the identical tests; a preceding standalone lock setup refusal is explicitly excluded. Source review removed repeated caller decisions and the unused track-only wrapper; both actual start sites use one occurrence rule. New work remains local; B6 tempo/replay and diagnostics stay separate, and the native lane remains untouched.
