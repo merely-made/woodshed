@@ -1363,11 +1363,6 @@ impl Recorder {
             self.stop_voice(audio, key);
         }
     }
-    fn track_is_audible(&self, index: usize) -> bool {
-        self.session.tracks.get(index).is_some_and(|track| {
-            !track.muted && (self.solo.is_empty() || self.solo.contains(&track.id))
-        })
-    }
     fn occurrence_is_audible(&self, track_index: usize, layer_index: usize) -> bool {
         let Some(track) = self.session.tracks.get(track_index) else {
             return false;
@@ -1375,7 +1370,8 @@ impl Recorder {
         let Ok(layer_index_u16) = u16::try_from(layer_index) else {
             return false;
         };
-        self.track_is_audible(track_index)
+        !track.muted
+            && (self.solo.is_empty() || self.solo.contains(&track.id))
             && track.layers.get(layer_index).is_some_and(|layer| {
                 track
                     .playback_mode
