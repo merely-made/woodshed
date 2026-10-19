@@ -445,3 +445,5 @@ section whenever a durable working insight emerges from a session.
   apply an interval pattern). The same pattern will apply to scales and
   chords: named-scale catalog + apply-formula-to-root algorithm. Don't
   pick one over the other — they answer different questions.
+
+Foundation source adoption (2026-10-19): canonical promoted-family revisions and consumer source validation are recorded in `mere/design_docs/mere_docs/implementation_strategy/2026-10-19_family_promotion_plan.md`. Existing application and domain authority remain with their owning components.
