@@ -1216,22 +1216,40 @@
     },
     {
       "id": "shared:S2",
-      "classification": "unchanged_finding_mechanism",
+      "classification": "implemented; CPU qualified",
       "package": "B5",
-      "current_observation": "Capture/import/unmute bypass SelectOne eligibility",
+      "current_observation": "Capture promotion and store-backed starts share one occurrence gate combining track mute/solo with model PlaybackMode and layer mute. Import, unmute and reconciliation delegate to that gate; inactive media remains stored without auto-selection.",
       "qualification": {
-        "focused_regression": "unassessed",
-        "integration_build": "unassessed",
+        "focused_regression": "5 independent cases pass; identical tests reproduce 3 expected bypass failures on isolated published Recorder code",
+        "affected_cpu_suites": "176 distinct cases, 2 existing ignores",
         "native": "unassessed",
         "fresh_process": "unassessed",
         "physical_device": "unassessed",
-        "publication": "unassessed"
+        "publication": "local for review"
       },
       "canonical_id": "shared:S2",
-      "limits": "Supported serialized SelectOne admission suffices; deferred Deeler UI is not claimed shipped.",
-      "detail": "current/ports.json",
+      "limits": [
+        "In-process CBOR roundtrip is CPU admission only; deferred Deeler UI is not shipped.",
+        "No native/device/fresh-process qualification; B6 tempo replay and diagnostics remain separate."
+      ],
+      "detail": "../recorder-select-one_20261019/receipt.json",
       "original_index_title": "S2 \u2014 P2: Live playback bypasses the model's SelectOne audibility rule",
-      "original_report": "shared-report.md"
+      "original_report": "shared-report.md",
+      "reconciliation_before_select_one_batch": {
+        "classification": "unchanged_finding_mechanism",
+        "current_observation": "Capture/import/unmute bypass SelectOne eligibility",
+        "qualification": {
+          "focused_regression": "unassessed",
+          "integration_build": "unassessed",
+          "native": "unassessed",
+          "fresh_process": "unassessed",
+          "physical_device": "unassessed",
+          "publication": "unassessed"
+        },
+        "limits": "Supported serialized SelectOne admission suffices; deferred Deeler UI is not claimed shipped.",
+        "detail": "current/ports.json"
+      },
+      "implementation_revision": "b804d90104bd86caca6b8fc20e8176e1afd5feae"
     },
     {
       "id": "shared:S3",
@@ -1559,5 +1577,6 @@
   "implementation_followup": "../admission-evidence_20261017/receipt.json",
   "runtime_followup": "../runtime-authority_20261018/receipt.json",
   "targeted_runtime_revision": "662cda5baf767530ebf22bb3ea7c212e9095116d",
-  "pcm_timing_followup": "../pcm-timing_20261018/receipt.json"
+  "pcm_timing_followup": "../pcm-timing_20261018/receipt.json",
+  "select_one_followup": "../recorder-select-one_20261019/receipt.json"
 }
