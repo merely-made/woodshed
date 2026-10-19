@@ -972,11 +972,12 @@ impl Recorder {
         }
         for (track, layer, phrase) in std::mem::take(&mut self.imported_replay) {
             if let Some(index) = self.session.tracks.iter().position(|t| t.id == track) {
-                if self.track_is_audible(index)
-                    && self.session.tracks[index]
-                        .layers
-                        .get(usize::from(layer))
-                        .is_some_and(|l| l.phrase_id == phrase)
+                if self
+                    .session
+                    .tracks
+                    .get(index)
+                    .and_then(|track| track.layers.get(usize::from(layer)))
+                    .is_some_and(|occurrence| occurrence.phrase_id == phrase)
                 {
                     self.play_from_store(audio, index, usize::from(layer));
                 }
@@ -1156,9 +1157,7 @@ impl Recorder {
                 if !from {
                     self.stop_track(audio, id);
                 } else if let Some(index) = self.session.tracks.iter().position(|t| t.id == id) {
-                    if self.track_is_audible(index) {
-                        self.reconcile_track(audio, index);
-                    }
+                    self.reconcile_track(audio, index);
                 }
             },
             RecorderAction::ToggleLayerMute {
@@ -1191,9 +1190,7 @@ impl Recorder {
                 if !from {
                     self.stop_voice(audio, key);
                 } else if let Some(index) = self.session.tracks.iter().position(|t| t.id == track) {
-                    if self.track_is_audible(index) {
-                        self.play_from_store(audio, index, usize::from(layer_index));
-                    }
+                    self.play_from_store(audio, index, usize::from(layer_index));
                 }
             },
             RecorderAction::NudgeBpm(delta) => {
@@ -1307,7 +1304,7 @@ impl Recorder {
             track_id: ticket.track,
             layer_index,
         };
-        if self.track_is_audible(index) {
+        if self.occurrence_is_audible(index, usize::from(layer_index)) {
             audio.play_layer(
                 key,
                 completion.samples,
@@ -1371,26 +1368,35 @@ impl Recorder {
             !track.muted && (self.solo.is_empty() || self.solo.contains(&track.id))
         })
     }
+    fn occurrence_is_audible(&self, track_index: usize, layer_index: usize) -> bool {
+        let Some(track) = self.session.tracks.get(track_index) else {
+            return false;
+        };
+        let Ok(layer_index_u16) = u16::try_from(layer_index) else {
+            return false;
+        };
+        self.track_is_audible(track_index)
+            && track.layers.get(layer_index).is_some_and(|layer| {
+                track
+                    .playback_mode
+                    .is_layer_audible(layer_index_u16, layer.muted)
+            })
+    }
     fn reconcile_all(&mut self, audio: &mut impl RecorderAudio) {
         self.stop_voices(audio);
         for index in 0..self.session.tracks.len() {
-            if !self.track_is_audible(index) {
-                continue;
-            }
             self.reconcile_track(audio, index);
         }
     }
     fn reconcile_track(&mut self, audio: &mut impl RecorderAudio, index: usize) {
         for layer in 0..self.session.tracks[index].layers.len() {
-            if self.session.tracks[index]
-                .playback_mode
-                .is_layer_audible(layer as u16, self.session.tracks[index].layers[layer].muted)
-            {
-                self.play_from_store(audio, index, layer);
-            }
+            self.play_from_store(audio, index, layer);
         }
     }
     fn play_from_store(&mut self, audio: &mut impl RecorderAudio, index: usize, li: usize) {
+        if !self.occurrence_is_audible(index, li) {
+            return;
+        }
         if self.needs_sync || self.retire_voices {
             self.needs_replay = true;
             return;
