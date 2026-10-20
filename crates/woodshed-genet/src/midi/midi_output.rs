@@ -8,9 +8,11 @@ pub(super) enum Command {
         request_id: u64,
         target: Option<String>,
     },
-    Enabled(bool),
-    Playing(bool),
-    Bpm(f32),
+    Clock {
+        enabled: bool,
+        playing: bool,
+        bpm: f32,
+    },
     Stop,
 }
 
@@ -127,11 +129,8 @@ impl<C: Connector> OutputMachine<C> {
             self.connection = None;
             self.transporting = false;
             self.request_id = request_id;
-            self.write_error = disconnect_error.clone();
+            self.write_error = None;
             self.reported_error = disconnect_error.clone();
-            if disconnect_error.is_none() {
-                self.reported_error = None;
-            }
             self.reported_write_error = false;
             return Ack {
                 request_id,
@@ -199,18 +198,15 @@ impl<C: Connector> OutputMachine<C> {
     fn apply(&mut self, command: Command) -> Option<Ack> {
         match command {
             Command::Connect { request_id, target } => Some(self.connect(request_id, target)),
-            Command::Enabled(enabled) => {
+            Command::Clock {
+                enabled,
+                playing,
+                bpm,
+            } => {
                 self.enabled = enabled;
-                self.set_transport();
-                None
-            },
-            Command::Playing(playing) => {
                 self.playing = playing;
-                self.set_transport();
-                None
-            },
-            Command::Bpm(bpm) => {
                 self.bpm = bpm;
+                self.set_transport();
                 None
             },
             Command::Stop => return None,
@@ -390,11 +386,38 @@ mod tests {
     }
 
     #[test]
+    fn clock_configuration_is_one_transport_transition() {
+        let fake = FakeConnector::default();
+        let mut machine = OutputMachine::new(fake.clone());
+        machine.connect(1, Some("A".into()));
+        machine.apply(Command::Clock {
+            enabled: false,
+            playing: true,
+            bpm: 120.0,
+        });
+        machine.apply(Command::Clock {
+            enabled: true,
+            playing: false,
+            bpm: 130.0,
+        });
+        assert!(events(&fake, "A").is_empty());
+        machine.apply(Command::Clock {
+            enabled: true,
+            playing: true,
+            bpm: 130.0,
+        });
+        assert_eq!(events(&fake, "A"), ["start"]);
+    }
+
+    #[test]
     fn replacing_while_playing_stops_old_and_starts_new() {
         let fake = FakeConnector::default();
         let mut machine = OutputMachine::new(fake.clone());
-        machine.apply(Command::Enabled(true));
-        machine.apply(Command::Playing(true));
+        machine.apply(Command::Clock {
+            enabled: true,
+            playing: true,
+            bpm: 120.0,
+        });
         assert_eq!(
             machine.connect(1, Some("A".into())).accepted.as_deref(),
             Some("A")
@@ -408,12 +431,15 @@ mod tests {
     }
 
     #[test]
-    fn failed_replacement_retains_and_restarts_old_connection() {
+    fn failed_replacement_keeps_old_transport_uninterrupted() {
         let mut fake = FakeConnector::default();
         fake.failures.push("missing".into());
         let mut machine = OutputMachine::new(fake.clone());
-        machine.apply(Command::Enabled(true));
-        machine.apply(Command::Playing(true));
+        machine.apply(Command::Clock {
+            enabled: true,
+            playing: true,
+            bpm: 120.0,
+        });
         machine.connect(1, Some("A".into()));
         let ack = machine.connect(2, Some("missing".into()));
         assert_eq!(ack.accepted.as_deref(), Some("A"));
@@ -429,8 +455,11 @@ mod tests {
     fn same_accepted_target_is_acknowledged_without_reopening() {
         let fake = FakeConnector::default();
         let mut machine = OutputMachine::new(fake.clone());
-        machine.apply(Command::Enabled(true));
-        machine.apply(Command::Playing(true));
+        machine.apply(Command::Clock {
+            enabled: true,
+            playing: true,
+            bpm: 120.0,
+        });
         machine.connect(1, Some("A".into()));
         let ack = machine.connect(2, Some("A".into()));
         assert_eq!(ack.connection_request_id, Some(1));
@@ -440,9 +469,17 @@ mod tests {
     #[test]
     fn invalid_bpm_keeps_clock_interval_finite() {
         let mut machine = OutputMachine::new(FakeConnector::default());
-        machine.apply(Command::Bpm(f32::NAN));
+        machine.apply(Command::Clock {
+            enabled: false,
+            playing: false,
+            bpm: f32::NAN,
+        });
         assert!(machine.interval().as_secs_f32().is_finite());
-        machine.apply(Command::Bpm(f32::INFINITY));
+        machine.apply(Command::Clock {
+            enabled: false,
+            playing: false,
+            bpm: f32::INFINITY,
+        });
         assert!(machine.interval().as_secs_f32().is_finite());
     }
 
@@ -453,8 +490,11 @@ mod tests {
             ..FakeConnector::default()
         };
         let mut machine = OutputMachine::new(fake);
-        machine.apply(Command::Enabled(true));
-        machine.apply(Command::Playing(true));
+        machine.apply(Command::Clock {
+            enabled: true,
+            playing: true,
+            bpm: 120.0,
+        });
         let ack = machine.connect(7, Some("A".into()));
         assert_eq!(ack.accepted.as_deref(), Some("A"));
         assert_eq!(ack.error.as_deref(), Some("fake writer failed"));
@@ -468,8 +508,11 @@ mod tests {
     fn disconnect_stops_active_transport_and_clears_connection() {
         let fake = FakeConnector::default();
         let mut machine = OutputMachine::new(fake.clone());
-        machine.apply(Command::Enabled(true));
-        machine.apply(Command::Playing(true));
+        machine.apply(Command::Clock {
+            enabled: true,
+            playing: true,
+            bpm: 120.0,
+        });
         machine.connect(1, Some("A".into()));
         assert_eq!(machine.connect(2, None).accepted, None);
         assert_eq!(events(&fake, "A"), ["start", "stop"]);
