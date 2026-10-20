@@ -950,6 +950,8 @@ pub struct MidiUiState {
     /// Host-populated connection status.
     pub connected_in: Option<String>,
     pub connected_out: Option<String>,
+    /// Host-reported backend diagnostic, when MIDI setup or refresh fails.
+    pub error: Option<String>,
     /// Host-polled recent-events readout (newest last).
     pub events: Vec<String>,
     /// One-shot: re-scan the port lists. Host consumes after dispatch.
@@ -968,10 +970,42 @@ impl MidiUiState {
             clock_bpm: None,
             connected_in: None,
             connected_out: None,
+            error: None,
             events: Vec::new(),
             refresh_requested: false,
         }
     }
+
+    pub fn selected_input(&self) -> Option<&str> {
+        selected_port_name(&self.input_ports, self.input_dd.selected)
+    }
+
+    pub fn selected_output(&self) -> Option<&str> {
+        selected_port_name(&self.output_ports, self.output_dd.selected)
+    }
+
+    /// Replace the available port lists while preserving selections by name.
+    /// A selected port that disappeared becomes "None"; its old index is
+    /// never applied to the replacement list.
+    pub fn refresh_ports(&mut self, inputs: Vec<String>, outputs: Vec<String>) {
+        self.input_dd.selected = self
+            .selected_input()
+            .and_then(|selected| inputs.iter().position(|port| port == selected))
+            .map_or(0, |index| index + 1);
+        self.output_dd.selected = self
+            .selected_output()
+            .and_then(|selected| outputs.iter().position(|port| port == selected))
+            .map_or(0, |index| index + 1);
+        self.input_ports = inputs;
+        self.output_ports = outputs;
+    }
+}
+
+fn selected_port_name(ports: &[String], selection: usize) -> Option<&str> {
+    selection
+        .checked_sub(1)
+        .and_then(|index| ports.get(index))
+        .map(String::as_str)
 }
 
 impl Default for MidiUiState {
