@@ -300,6 +300,12 @@ before any other doc in this directory.
 
 ## Current Supporting Design
 
+- [2026-10-19_fundsp_firewheel_brief.md](2026-10-19_fundsp_firewheel_brief.md)
+  — Research brief: no upstream fundsp/Firewheel integration exists (one
+  unlicensed bevy_seedling-author demo); proposes an own adapter crate with
+  block processing, event-split params and a generator-safe silence policy,
+  gated by zero-alloc, block-size invariance and live/offline parity, with
+  chord audition as first consumer. Not scheduled.
 - [2026-10-14_dsp_graphshell_hocket_survey_brief.md](2026-10-14_dsp_graphshell_hocket_survey_brief.md)
   — Verified survey of shared frame-driven DSP between Hocket and Woodshed
   (divergent capture schedules and bar-length rules, Hocket guard gaps), what
