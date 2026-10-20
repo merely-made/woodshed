@@ -219,6 +219,44 @@ fn queued_replay_waits_for_boundary_then_loops() {
 }
 
 #[test]
+fn tempo_requeue_keeps_current_voice_until_keyed_replacement_boundary() {
+    let mut offline = Offline::new(48_000);
+    offline.fast_bar();
+    let key = Offline::key(0);
+    offline
+        .engine
+        .play_layer(key, vec![0.125; 48], 1.0, true)
+        .unwrap();
+    offline.engine.cx.update().unwrap();
+    assert_level(&offline.block(&[0.0; 2048]), 0.125);
+
+    offline.engine.set_tempo(480.0, 1, 4).unwrap();
+    offline.engine.set_click_enabled(false);
+    for level in [0.75, 0.375] {
+        offline
+            .engine
+            .play_layer_at_next_bar_at_sample_rate(key, vec![level; 44], 44_100, 0.5, true)
+            .unwrap();
+    }
+    assert_eq!(offline.engine.pending_layers.len(), 1);
+    offline.engine.cx.update().unwrap();
+    let mut waiting_blocks = 0;
+    while !offline.engine.pending_layers.is_empty() {
+        assert!(
+            waiting_blocks < 64,
+            "replacement must reach the new clock boundary"
+        );
+        // Admission queues a replacement; it does not stop the current voice.
+        assert_level(&offline.block(&[0.0; 256]), 0.125);
+        waiting_blocks += 1;
+    }
+    assert!(waiting_blocks > 1);
+    assert_eq!(offline.engine.voice_count(), 1);
+    assert_level(&offline.block(&[0.0; 2048]), 0.1875);
+    assert_level(&offline.block(&[0.0; 2048]), 0.1875);
+}
+
+#[test]
 fn reader_finish_drains_and_restart_discards_old_generation() {
     let mut offline = Offline::new(48_000);
     offline.engine.reader_state.stop_stream();
