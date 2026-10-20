@@ -3,6 +3,14 @@
 Date: 2026-10-16; updated 2026-10-17.
 Status: Integrated onto P5 at `cec221348154fc8e6abe3f6136f00b14f9860b78`; the shared after-frame/dispatch guard follow-up is at `d955f5dc3b99ec1efd6ec9a56dd3ba007755409e`. Current-source CPU/build and bounded Woodshed native/reopen gates pass. Direct publication to `main` is authorized for the coordinating owner; Git refs establish publication separately. Hocket and Redshank have CPU/build evidence only. No physical audio qualification is claimed.
 
+2026-10-20 recheck: the user authorized parallel A1–A5/Q1 work and local commits
+only. The current wave overrides this document's historical publication
+authorization. Existing preservation/admission fixes remain; a bounded A1 guard
+now refuses incoming custody sealed as another persona before retiring outgoing
+work. Current device-free results and remaining design/native boundaries are in
+the [first-wave recheck receipt](../validation/first-wave-recheck_20261020/README.md).
+P5a stays with its existing owner. No push was performed.
+
 ## Scope and ownership
 
 This is the first remediation pass from the complete-source audit frozen at

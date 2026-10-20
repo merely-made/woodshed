@@ -1,0 +1,412 @@
+{
+  "date": "2026-10-20",
+  "assembled_at": "2026-10-20T21:02:08.645958+00:00",
+  "baseline": "9f80bb5eabc4b513e057b22af6f80d83ecb8e9ac",
+  "implementation_source_commit": "6a65a4d7d340ec635900188bd8f4e6a6207a6756",
+  "implementation_commits": [
+    "22c9900102d9eda5958c6b8adafa6b388d5c0a41",
+    "6a65a4d7d340ec635900188bd8f4e6a6207a6756"
+  ],
+  "branch": "codex/audit-first-wave-20261020",
+  "checkout": "/Users/markik/Code/worktrees/woodshed-audit-first-wave-20261020",
+  "source_identity_note": "Runs begun before implementation commits retained their captured HEAD. Their tested source bytes are unchanged in the implementation commit except the separately recorded A1/Q1 patches; final A1/Q1 and root-model gates capture the implementation HEAD. The only code-path working-tree difference from that HEAD is the history supplier comment below.",
+  "comment_only_diff_from_source_commit_sha256": "3d88e181928d6529d2c893188bc27a03675df3e7583121798c9a863fbe7163a8",
+  "sources": [
+    {
+      "path": "Cargo.lock",
+      "sha256": "9233c3fee1f1bfd613cea22080263c08f25db8ac0b74af65278edfe705cda63b"
+    },
+    {
+      "path": "Cargo.toml",
+      "sha256": "e6921549277aa6a4e736d77b9e2f2922922945251c0e7e4c89fb79b2ab56687d"
+    },
+    {
+      "path": "crates/hocket-model/src/history.rs",
+      "sha256": "724d627d113a719e162658873fa0c3aabc180ae51667e2acbeee0c9432bcb7fb"
+    },
+    {
+      "path": "crates/hocket-model/src/persistence.rs",
+      "sha256": "818385e79098662d515ea9318d1c4bdd5bb7f9e4418e424305bfd7de744afd59"
+    },
+    {
+      "path": "crates/hocket-project/src/handoff.rs",
+      "sha256": "b8f7a7f22994e410c924e1774cecf0caba610d29a4cc86dd38dc5776561667df"
+    },
+    {
+      "path": "crates/hocket-project/src/media.rs",
+      "sha256": "a9a851ef81b927c8287b21f5f76ce1aed92edb23cde887accc3b6f3c3326919d"
+    },
+    {
+      "path": "crates/hocket-project/src/project_store.rs",
+      "sha256": "141bc78a0867d41ee276776906adad7c69244b2b9ad41a0a290c50e1dd2c2269"
+    },
+    {
+      "path": "crates/woodshed-audio/examples/audio_ddx.rs",
+      "sha256": "09b422d341e4f6c6eee23f1282615468560c4823b16c3214def5969c1a40e728"
+    },
+    {
+      "path": "crates/woodshed-core/src/history.rs",
+      "sha256": "3cfb9e9606640ae77b4b55807f42d70a7bc1cae003c317f3766ecdc7123c1182"
+    },
+    {
+      "path": "crates/woodshed-core/src/storage.rs",
+      "sha256": "0702b4b58efa6303dcd773bb03a03e77fb34a53afe636cdaa39381512f078560"
+    },
+    {
+      "path": "crates/woodshed-genet/src/capture_persistence.rs",
+      "sha256": "924a14332da739849642c4cee58a25ba7cd56eb3898beb9dba1cc624174c5aba"
+    },
+    {
+      "path": "crates/woodshed-genet/src/main.rs",
+      "sha256": "3cf8b8bc8eb5ebd13feb530a680d16a7ba4c23503742da790b542a2b0b25f09b"
+    },
+    {
+      "path": "crates/woodshed-genet/src/persona.rs",
+      "sha256": "ec2201bea656bc6f3d6bde7ca48107c76ee8f70e00ecd83fa7170cf1b1c49608"
+    },
+    {
+      "path": "crates/woodshed-genet/src/persona_preservation_tests.rs",
+      "sha256": "1ca0c4617a69918fd25fbfc0f7fc3520416991709e38c8df62f6c448efca6c11"
+    },
+    {
+      "path": "crates/woodshed-genet/src/session.rs",
+      "sha256": "7cf05e7ecc8d7694093005c21b5c844e414fe6b178bf71561e3e6c33c13463c1"
+    },
+    {
+      "path": "crates/woodshed-genet/src/storage.rs",
+      "sha256": "bac0ea9dfc371b12be4af1b95cf0610883abe00c3687c7cb3477a54b51481cbb"
+    },
+    {
+      "path": "crates/woodshed-genet/src/sync.rs",
+      "sha256": "2b38d2d4ad068734eebec9eff2080e984c02cd3d19162ace63c81723cd758b76"
+    },
+    {
+      "path": "crates/woodshedding/src/rehearsal.rs",
+      "sha256": "429dbf95f232d74e8d0e2d61d6e4963a7f2d44059ccbe84b474026dddf2972dd"
+    },
+    {
+      "path": "design_docs/receipts/audio_foundation_20261011/ci/write-receipt.py",
+      "sha256": "fa3f696e20c94f99973ba8e17f415bf8814762f5bd2085b56093d31b828fd673"
+    },
+    {
+      "path": "ports/hocket/Cargo.lock",
+      "sha256": "14dc52d1f86209de64a7b702be3c25d80a3016f3548983614cc992de41286c93"
+    },
+    {
+      "path": "ports/hocket/Cargo.toml",
+      "sha256": "0a6d9ed26246ba15927c38aa64af112d568647bbc6b0537703f4ec72d384efee"
+    },
+    {
+      "path": "ports/hocket/crates/hocket-genet/src/identity.rs",
+      "sha256": "6cd49673fc7fe224f50dd05be5dcee50ded4fc44c41645dde6a79b539a297b20"
+    },
+    {
+      "path": "ports/hocket/crates/hocket-genet/src/main.rs",
+      "sha256": "06a4b57bcda17278c97e3f88e4624fce6586de5f951a3ab7753dbd921385a117"
+    },
+    {
+      "path": "ports/hocket/crates/hocket-genet/src/native_lifecycle_tests.rs",
+      "sha256": "632343c9a8218477debb9726770d0bff37887aef0e7a352a6706623200ad0dac"
+    },
+    {
+      "path": "ports/hocket/crates/hocket-genet/src/project_correlation_tests.rs",
+      "sha256": "0e183db63cff8471355da8e52adf422f926fa7a85b5a256fb672360ea3edb4de"
+    },
+    {
+      "path": "ports/hocket/crates/hocket-genet/src/project_io.rs",
+      "sha256": "c1a5b312406d9eac08e495533516f71cf10787edc8d5939b120a57811cf5a872"
+    },
+    {
+      "path": "ports/hocket/crates/hocket-genet/src/state.rs",
+      "sha256": "ea5c7bd5e9035615eb4c61898956085e351eb63921f21c0c8153260ebe4d69b9"
+    },
+    {
+      "path": "ports/hocket/crates/hocket-genet/src/view.rs",
+      "sha256": "8d592e54d9d89019886d1baf7fc3f214cd9e68f39dc0a5cd533471c989fa4d24"
+    },
+    {
+      "path": "ports/redshank/Cargo.lock",
+      "sha256": "3d6728ac8a01e6fe6bc1071a9d8875dd9333c78f833ed45e26c2ce7569d99f07"
+    },
+    {
+      "path": "ports/redshank/Cargo.toml",
+      "sha256": "ad81bd9ff1006ecfe8a51b7a5351c6d2f912a4d09e0db5c46cdee831b73bd895"
+    },
+    {
+      "path": "ports/redshank/desktop/Cargo.toml",
+      "sha256": "7e1844899006f6e8b6dff3ab0dc16cab21ef8bf143b94c11c8c86c94463c7b4a"
+    },
+    {
+      "path": "ports/redshank/desktop/src/appearance_host.rs",
+      "sha256": "ba991fdcf1dbfd921a3b02e2e38b1834e1e1e89abfb3d0bdbaf7b1cc3ed1bdb9"
+    },
+    {
+      "path": "ports/redshank/desktop/src/main.rs",
+      "sha256": "03e4bcf529f71c6ef73525c485691ea5b4301e1f28e7f5bea2dd32b934dba569"
+    },
+    {
+      "path": "ports/redshank/storage/Cargo.toml",
+      "sha256": "444c53af6113a13e1522ee251080303e5ed344a61445f959fa0d7913105676ff"
+    },
+    {
+      "path": "ports/redshank/storage/src/lib.rs",
+      "sha256": "6fe384bbb1d97b00ba1051c4aae3d6cea82e5454096bba63e759d699e05a931a"
+    },
+    {
+      "path": "ports/redshank/surfaces/src/shell.rs",
+      "sha256": "a8d88a636df7297b881b4f494bdeb863deb4c4ba5ff96cc40858041712ae58c1"
+    },
+    {
+      "path": "validation/capture_process.py",
+      "sha256": "460faadbeefae8aa9c9e8dfe13fd2a200d1042d7e69e1d5b407f23a8ac4df277"
+    },
+    {
+      "path": "validation/evidence_process.py",
+      "sha256": "db9192f01d8ef5a688084cca523ba9e3b280e9d15e1c2bdad789ad39acb00749"
+    },
+    {
+      "path": "validation/font-roles_20261012/verify.py",
+      "sha256": "4372b3540f96135d3e2f0b6e6deee49ae105cb24d8594eef707911ed3293e8bc"
+    },
+    {
+      "path": "validation/link-model-p6_20261016/doc_link_audit.py",
+      "sha256": "2bd24fc2c75b0ac3868b1fe22f7b20b9bc2755f3cc40cc3087691d09615b42be"
+    },
+    {
+      "path": "validation/link-model-p6_20261016/test_doc_link_audit.py",
+      "sha256": "7455a39cf0905ed8e29216dcfd15a10666a8f85f63249e1ffab3a34078f29cc4"
+    },
+    {
+      "path": "validation/test_evidence_process.py",
+      "sha256": "51334bd627f96140be610bf2f5899afd6c7e120c6fbdf8f6ad24376c3cc6fa21"
+    }
+  ],
+  "runs": [
+    {
+      "name": "root-models-final",
+      "process_receipt": "checks/root-models-final.json",
+      "log": "checks/root-models-final.log",
+      "process_receipt_sha256": "fbf6b2b43e6edaede483f3885d893b0f6976ce78b1fa0bb9b5bcc8f3cd772352",
+      "log_sha256": "2cd2d95a13cbb759422f2fee3f93c4bf8e681935a36da5dfd7d8ca38a0be572b",
+      "captured_source_commit": "6a65a4d7d340ec635900188bd8f4e6a6207a6756",
+      "parent_cases": {
+        "passed": 603,
+        "failed": 0,
+        "ignored": 0
+      },
+      "nested_children": {
+        "passed": 0,
+        "failed": 0,
+        "ignored": 0,
+        "invocations": 0
+      },
+      "actual_exit": 0
+    },
+    {
+      "name": "woodshed-host-final",
+      "process_receipt": "checks/woodshed-host-final.json",
+      "log": "checks/woodshed-host-final.log",
+      "process_receipt_sha256": "16410bc74b2f13308536707ac6ddf2726e7c37d709d9e6c7d6ed47beefb87273",
+      "log_sha256": "a81899386a0513e5b605f76fc16df6b1b2efe395eebca08bba47db8815de3bd7",
+      "captured_source_commit": "6a65a4d7d340ec635900188bd8f4e6a6207a6756",
+      "parent_cases": {
+        "passed": 281,
+        "failed": 0,
+        "ignored": 7
+      },
+      "nested_children": {
+        "passed": 5,
+        "failed": 0,
+        "ignored": 0,
+        "invocations": 5
+      },
+      "actual_exit": 0
+    },
+    {
+      "name": "hocket-host",
+      "process_receipt": "checks/hocket-host.json",
+      "log": "checks/hocket-host.log",
+      "process_receipt_sha256": "2e215b91fa8e407b58606167cccc9b518af07be923f1f697ac64bf794ce79037",
+      "log_sha256": "a2f2fdae90359e27acbc0e5cfb290ad6153c21d207f037edff087bb5fe3f8b39",
+      "captured_source_commit": "9f80bb5eabc4b513e057b22af6f80d83ecb8e9ac",
+      "parent_cases": {
+        "passed": 94,
+        "failed": 0,
+        "ignored": 2
+      },
+      "nested_children": {
+        "passed": 0,
+        "failed": 0,
+        "ignored": 0,
+        "invocations": 0
+      },
+      "actual_exit": 0
+    },
+    {
+      "name": "redshank-storage",
+      "process_receipt": "checks/redshank-storage.json",
+      "log": "checks/redshank-storage.log",
+      "process_receipt_sha256": "3f9572eaf18ad72bf91c9395f10e55e36f6bb365f7223cfce665cc2a5368e6dc",
+      "log_sha256": "f85c74aeed6e3c984892a06d55230f84f25039f1e4f53421415c76823333a54e",
+      "captured_source_commit": "9f80bb5eabc4b513e057b22af6f80d83ecb8e9ac",
+      "parent_cases": {
+        "passed": 15,
+        "failed": 0,
+        "ignored": 0
+      },
+      "nested_children": {
+        "passed": 0,
+        "failed": 0,
+        "ignored": 0,
+        "invocations": 0
+      },
+      "actual_exit": 0
+    },
+    {
+      "name": "redshank-restoration",
+      "process_receipt": "checks/redshank-restoration.json",
+      "log": "checks/redshank-restoration.log",
+      "process_receipt_sha256": "ee6da09e27f9ad9d8f5e505aa0cd049ee4841471747ffec91969f01a2c5b7b44",
+      "log_sha256": "ce67709ea074dc694dd6c02046f7498562972150e334ef3146481f71ec0a4730",
+      "captured_source_commit": "9f80bb5eabc4b513e057b22af6f80d83ecb8e9ac",
+      "parent_cases": {
+        "passed": 2,
+        "failed": 0,
+        "ignored": 0
+      },
+      "nested_children": {
+        "passed": 0,
+        "failed": 0,
+        "ignored": 0,
+        "invocations": 0
+      },
+      "actual_exit": 0
+    },
+    {
+      "name": "redshank-recovery-final",
+      "process_receipt": "checks/redshank-recovery-final.json",
+      "log": "checks/redshank-recovery-final.log",
+      "process_receipt_sha256": "b9df00c0af90e79d8be1d579554e2944f5ac67807b2b58014af052ea9730a447",
+      "log_sha256": "905b61a197c55cd9f2af35eb8bace57641e22965f137553342bae5e72492b7b2",
+      "captured_source_commit": "6a65a4d7d340ec635900188bd8f4e6a6207a6756",
+      "parent_cases": {
+        "passed": 1,
+        "failed": 0,
+        "ignored": 0
+      },
+      "nested_children": {
+        "passed": 0,
+        "failed": 0,
+        "ignored": 0,
+        "invocations": 0
+      },
+      "actual_exit": 0
+    },
+    {
+      "name": "q1-python-baseline",
+      "process_receipt": "checks/q1-python-baseline.json",
+      "log": "checks/q1-python-baseline.log",
+      "process_receipt_sha256": "29b76078f759d60b7689b767ce154fb2f73b2509a9ebae9f23644b02f57f4569",
+      "log_sha256": "888cdd92e2af296d241e57926bfc0f948d5b1f5534b8410795c732149b3f7b3e",
+      "captured_source_commit": "9f80bb5eabc4b513e057b22af6f80d83ecb8e9ac",
+      "parent_cases": {
+        "passed": 14,
+        "failed": 0,
+        "ignored": 0
+      },
+      "nested_children": {
+        "passed": 0,
+        "failed": 0,
+        "ignored": 0,
+        "invocations": 0
+      },
+      "actual_exit": 0
+    },
+    {
+      "name": "q1-links",
+      "process_receipt": "checks/q1-links.json",
+      "log": "checks/q1-links.log",
+      "process_receipt_sha256": "97c8781286f07ce2b00dbfe5dfcae8307b27c6199ec33801a855200e443f03ae",
+      "log_sha256": "65c22797700f9ce4552befc4c568e6f8c5c3a654339e950b54baf593a555619b",
+      "captured_source_commit": "9f80bb5eabc4b513e057b22af6f80d83ecb8e9ac",
+      "parent_cases": {
+        "passed": 7,
+        "failed": 0,
+        "ignored": 0
+      },
+      "nested_children": {
+        "passed": 0,
+        "failed": 0,
+        "ignored": 0,
+        "invocations": 0
+      },
+      "actual_exit": 0
+    },
+    {
+      "name": "q1-audio-final",
+      "process_receipt": "checks/q1-audio-final.json",
+      "log": "checks/q1-audio-final.log",
+      "process_receipt_sha256": "5da236b8ac8d9a7a41f1230155a852e886c39850054f6b245b6ab2184ea1ac4a",
+      "log_sha256": "d40dafa37c2f1e1f7f37b758fc1bf1fbab84d2e007575b56779682cdfcc60e9a",
+      "captured_source_commit": "6a65a4d7d340ec635900188bd8f4e6a6207a6756",
+      "parent_cases": {
+        "passed": 3,
+        "failed": 0,
+        "ignored": 0
+      },
+      "nested_children": {
+        "passed": 0,
+        "failed": 0,
+        "ignored": 0,
+        "invocations": 0
+      },
+      "actual_exit": 0
+    }
+  ],
+  "distinct_parent_cases": {
+    "passed": 1020,
+    "failed": 0,
+    "ignored": 9
+  },
+  "nested_child_invocations_separate": {
+    "passed": 5,
+    "failed": 0,
+    "ignored": 0,
+    "invocations": 5
+  },
+  "preliminary_runs_not_counted": [
+    "root-models-baseline",
+    "q1-audio",
+    "woodshed-persona"
+  ],
+  "preliminary_storage": "/Users/markik/Code/testing/woodshed/first-wave-20261020",
+  "process_receipt_portability": "Original process receipts and log bytes are copied without modification. Their absolute log paths identify the original external capture. Repository-local copies are indexed by relative paths and verified by the same recorded SHA-256 digests.",
+  "unchanged_locks": [
+    "Cargo.lock",
+    "ports/hocket/Cargo.lock",
+    "ports/redshank/Cargo.lock"
+  ],
+  "review": "Independent read-only A1/Q1 review found no actionable correctness/preservation blocker; coordinator reviewed source and actual process outcomes.",
+  "p5a": "Existing owner retained; no timing/drive/processor/view scheduling or native acceptance changed.",
+  "remaining_design_decisions": [
+    "D1 persona storage namespaces and migration",
+    "D2 future capture replacement and same-persona no-op behavior",
+    "D3 explicit failed-recovery/reset/exit interaction"
+  ],
+  "concrete_supplier_followup": "Expose checked Stemma reconstruction in the supplier and deliberately adopt it; locked Eidetic 738ef159 remains guarded by the current consumer.",
+  "qualification_limits": [
+    "No headed desktop run or new native captures",
+    "No real custody IPC or native fresh-process persona/project reopening",
+    "No physical audio/microphone/MIDI run",
+    "Unit-test child processes are not headed native acceptance",
+    "No push or publication"
+  ],
+  "documentation_scan": {
+    "process_receipt": "checks/final-doc-links-process.json",
+    "log": "checks/final-doc-links.log",
+    "exit_code": 0,
+    "new_findings": 0,
+    "baseline": "9f80bb5eabc4b513e057b22af6f80d83ecb8e9ac",
+    "log_sha256": "2d14dfb9d244e700d481f41f2088beca6c9c2b90eac3dca9aafb671fa62536d1"
+  }
+}

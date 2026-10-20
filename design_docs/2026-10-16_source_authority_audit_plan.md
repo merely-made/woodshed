@@ -3,7 +3,7 @@
 Date: 2026-10-16; coordination closure: 2026-10-17.
 Status: complete collective read of frozen `d12201bf`; current-source finding
 reconciliation complete and published through `8204688`. Remediation remains open;
-H3/H5 and Q1 implementation is CPU qualified and published through `6e6498a`.
+H3/H5 and Q1 process/link implementation is CPU qualified and published through `6e6498a`.
 B1–B3 runtime authority corrections are CPU qualified and published through `b1c9dfd`. B4 PCM/onset/calibration corrections are CPU qualified at `5dd01ae` and published through `8da953b`. B5 shared Recorder admission is CPU qualified at `b804d901` and published through `4fab895`. The requested B6 Recorder runtime slice is CPU qualified at `7b161a9` and local for review, with the separate shared-view unit gate blocked. The frozen
 audit closure itself adds no product fixes or product qualification.
 
@@ -183,6 +183,48 @@ CPU fakes through production transitions. Supplier intake, device enumeration,
 native validation and physical MIDI timing remain outside this batch. New work
 stays published through `20bcc1c`. The preceding nine B6 commits were integrated and pushed
 through `fd9fb82`; original qualification source identities remain unchanged.
+
+### P10 Recheck A1–A5 and Q1 against current source (2026-10-20)
+
+The user authorized parallel rechecks and concrete corrections, local commits
+only, with P5a retained by its existing owner. The isolated branch starts at
+fetched `origin/main` `9f80bb5eabc4b513e057b22af6f80d83ecb8e9ac`; the primary
+checkout and unrelated work remain in place.
+
+Shared seams have one owner: A1 owns Woodshed lifecycle/preservation; one Hocket
+owner combines A2/A3 and Hocket's A4 model/project/custody admission; A5 owns
+Redshank storage/desktop recovery; the coordinator owns Woodshed A4 history/Set
+admission, Q1 diagnostics/evidence, integration, documentation and Git. Agents
+do not run Cargo/native or commit independently. P5a timing, audio scheduling
+and native acceptance remain with the existing owner.
+
+Source rechecks find the original first-wave preservation/admission fixes already
+implemented. A1 still accepted a seal for a different persona if the family
+selection changed during incoming open. The live-switch guard now refuses that
+mismatch before replacing outgoing state, retaining the target for explicit
+Retry; the regression covers saved instructions, the audio epoch, export state
+and both clock bindings. Same-persona behavior is unchanged.
+The locked Stemma supplier is now Eidetic `738ef159`, whose
+`from_snapshot` remains trusted/infallible; Woodshed's consumer guard remains
+necessary. Q1's process/link fixes are present. Runtime `audio_ddx` modes
+previously reported device events but returned success. All diagnostic
+modes now require output progress and zero device events, using the same strict
+terminal result; device-free negative tests cover refusal. Product recovery
+policy is unchanged.
+
+Done when owning lanes finish production-caller rechecks, focused current-source
+CPU gates record real process exits and source/lock identity, the combined diff
+is reviewed, and source/receipts are committed locally. Native runs, physical
+audio, fresh-process custody/reopen and unresolved design rulings retain their
+own acceptance boundaries. Selecting the same persona and future capture
+replacement/recovery interactions remain design choices, not new fixes here.
+
+Current gate: **1,020 distinct passing parent/library/control cases**, nine
+existing ignores, and five child invocations recorded separately. All nine
+counted processes exited zero. A1 and Q1 corrections are local at `22c9900` and
+`6a65a4d`; no push. The [current-source receipt](../validation/first-wave-recheck_20261020/README.md)
+retains source/lock hashes, original process evidence, ownership and qualification
+limits. Existing native evidence is not transferred to this revision.
 
 ## Current findings and next implementation order
 

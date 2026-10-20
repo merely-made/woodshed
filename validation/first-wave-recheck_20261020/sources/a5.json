@@ -1,0 +1,77 @@
+{
+  "lane": "A5 Redshank failed recovery",
+  "rechecked_date": "2026-10-20",
+  "source_root": "/Users/markik/Code/worktrees/woodshed-audit-first-wave-20261020",
+  "base_revision_from_coordinator": "9f80bb5eabc4b513e057b22af6f80d83ecb8e9ac",
+  "disposition": "Already implemented; current-source review found no concrete regression; no source patch",
+  "shared_seam_owner": "A5 owns Redshank storage load/save admission and desktop restore/persistence boundary; coordinator owns documentation, Git and Cargo scheduling",
+  "scope": "Model-generation publication/pruning after failed restoration; no unrelated playback/surface changes",
+  "files": [
+    {
+      "path": "ports/redshank/storage/src/lib.rs",
+      "sha256": "6fe384bbb1d97b00ba1051c4aae3d6cea82e5454096bba63e759d699e05a931a",
+      "lines": 695
+    },
+    {
+      "path": "ports/redshank/desktop/src/main.rs",
+      "sha256": "03e4bcf529f71c6ef73525c485691ea5b4301e1f28e7f5bea2dd32b934dba569",
+      "lines": 3577
+    },
+    {
+      "path": "ports/redshank/desktop/src/appearance_host.rs",
+      "sha256": "ba991fdcf1dbfd921a3b02e2e38b1834e1e1e89abfb3d0bdbaf7b1cc3ed1bdb9",
+      "lines": 109
+    },
+    {
+      "path": "ports/redshank/surfaces/src/shell.rs",
+      "sha256": "a8d88a636df7297b881b4f494bdeb863deb4c4ba5ff96cc40858041712ae58c1",
+      "lines": 509
+    },
+    {
+      "path": "ports/redshank/storage/Cargo.toml",
+      "sha256": "444c53af6113a13e1522ee251080303e5ed344a61445f959fa0d7913105676ff",
+      "lines": 15
+    },
+    {
+      "path": "ports/redshank/desktop/Cargo.toml",
+      "sha256": "7e1844899006f6e8b6dff3ab0dc16cab21ef8bf143b94c11c8c86c94463c7b4a",
+      "lines": 40
+    },
+    {
+      "path": "ports/redshank/Cargo.lock",
+      "sha256": "3d6728ac8a01e6fe6bc1071a9d8875dd9333c78f833ed45e26c2ce7569d99f07",
+      "lines": 8827
+    }
+  ],
+  "supplier": {
+    "mere_revision": "7de937d0e708db24d9a325cbff3fbe5beb3a4d3c",
+    "lock_reference": "ports/redshank/Cargo.lock:1096-1098",
+    "reviewed_files": [
+      "/Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/7de937d/crates/cambium/cambium-rootstock/src/host.rs:31-58,1788-1853,1898-1920",
+      "/Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/7de937d/crates/cambium/cambium-genet-winit-host/src/lib.rs:570-645,1265-1330"
+    ]
+  },
+  "proposed_checks": [
+    {
+      "command": "cargo test --manifest-path ports/redshank/Cargo.toml --locked --offline -p redshank-storage",
+      "status": "not run by A5; submitted to coordinator"
+    },
+    {
+      "command": "cargo test --manifest-path ports/redshank/Cargo.toml --locked --offline -p redshank-desktop restoration",
+      "status": "not run by A5; submitted to coordinator"
+    },
+    {
+      "command": "cargo test --manifest-path ports/redshank/Cargo.toml --locked --offline -p redshank-desktop recovery_session_projects_not_saved_and_refuses_close_persistence",
+      "status": "not run by A5; submitted to coordinator"
+    }
+  ],
+  "qualification": {
+    "current_source_review": "complete for assigned A5 boundary",
+    "current_tests": "not run by A5",
+    "current_build": "not run by A5",
+    "native": "not run; historical preservation receipt explicitly limits Redshank to CPU/build",
+    "physical_audio": "not run"
+  },
+  "product_changes": [],
+  "git_mutations": []
+}

@@ -114,46 +114,67 @@
     },
     {
       "id": "audio:AUDIO-06",
-      "classification": "unchanged implementation/current reachability confirmed",
+      "classification": "implemented; current-source CPU qualified; native/device separate",
       "package": "Q1",
-      "current_observation": "audio_ddx is byte-identical. Runtime completion/exit criterion still differs from raw zero-event criterion. No historical false pass is inferred where event counts were inspected.",
-      "qualification": "unassessed",
+      "current_observation": "All six diagnostic modes require output progress and zero observed device events; recoverable runtime events now return an unsuccessful terminal result.",
+      "qualification": "Three device-free diagnostic outcome cases pass; runtime event counts retain control-side observation scope.",
       "alias_of": null,
-      "detail": "current/runtime.json",
+      "detail": "../first-wave-recheck_20261020/receipt.json",
       "original_index_title": "AUDIO-06 \u2014 Make the hardware diagnostic's terminal result state what passed",
-      "original_report": "audio-report.md"
+      "original_report": "audio-report.md",
+      "before_first_wave_recheck_20261020": {
+        "classification": "unchanged implementation/current reachability confirmed",
+        "current_observation": "audio_ddx is byte-identical. Runtime completion/exit criterion still differs from raw zero-event criterion. No historical false pass is inferred where event counts were inspected.",
+        "qualification": "unassessed",
+        "detail": "current/runtime.json"
+      },
+      "targeted_recheck_revision": "6a65a4d7d340ec635900188bd8f4e6a6207a6756"
     },
     {
       "id": "core:CORE-1",
-      "classification": "implemented; historical CPU qualified",
+      "classification": "implemented; current-source CPU qualified; native/device separate",
       "package": "A4",
-      "current_observation": "Any recognized entries/visits/owners key commits to current decoding. Legacy FlatLog requires events. Decode errors flow through session restore to refused writes instead of empty-history adoption.",
-      "qualification": [
-        "CPU16/CPU17 root. history.rs unchanged from both tested hashes. storage.rs now differs only by seconds: None in a test capture fixture versus the hash-verified CPU16 source.",
-        "Native quarantine input is syntactically invalid JSON (logs say expected value at line 1 column 1); it does not qualify the malformed-current-history discriminator fixture."
-      ],
+      "current_observation": "Current-history keys commit to checked current decode; only explicit legacy events may migrate. Malformed current data cannot become empty history.",
+      "qualification": "313 current woodshed-core cases pass, including session decode and malformed history controls.",
       "limits": [
         "Exact malformed-current history native/reopen case absent; no current-head execution."
       ],
-      "detail": "current/safety.json",
+      "detail": "../first-wave-recheck_20261020/receipt.json",
       "original_index_title": "CORE-1 \u2014 P2: malformed current history can be accepted as an empty legacy history",
-      "original_report": "core-report.md"
+      "original_report": "core-report.md",
+      "before_first_wave_recheck_20261020": {
+        "classification": "implemented; historical CPU qualified",
+        "current_observation": "Any recognized entries/visits/owners key commits to current decoding. Legacy FlatLog requires events. Decode errors flow through session restore to refused writes instead of empty-history adoption.",
+        "qualification": [
+          "CPU16/CPU17 root. history.rs unchanged from both tested hashes. storage.rs now differs only by seconds: None in a test capture fixture versus the hash-verified CPU16 source.",
+          "Native quarantine input is syntactically invalid JSON (logs say expected value at line 1 column 1); it does not qualify the malformed-current-history discriminator fixture."
+        ],
+        "detail": "current/safety.json"
+      },
+      "targeted_recheck_revision": "6a65a4d7d340ec635900188bd8f4e6a6207a6756"
     },
     {
       "id": "core:CORE-2",
-      "classification": "implemented via consumer guard; historical CPU qualified",
+      "classification": "implemented; current-source CPU qualified; native/device separate",
       "package": "A4",
-      "current_observation": "Consumer validates snapshot bounds, duplicate identities/keys, reciprocal links, iterative visit/owner acyclicity, ownership and visit counts before trusted Lineage::from_snapshot. Real session caller quarantines returned errors.",
-      "qualification": [
-        "CPU16/CPU17 root; guard file byte-identical. Historical integration records supplier-invariant peer review."
-      ],
+      "current_observation": "Woodshed consumer guard validates references, parent/child/binding consistency, ancestry and owner cursors before locked Eidetic 738ef159 trusted reconstruction. Supplier still has no checked API.",
+      "qualification": "313 current woodshed-core cases pass; fallible supplier API/adoption remains a concrete follow-up.",
       "limits": [
         "Supplier-owned fallible reconstruction API remains future consolidation; current code still calls trusted from_snapshot after local validation. Supplier has since repinned (locks differ); no new supplier/runtime validation was performed here.",
         "No malformed-index/cycle native fixture in the bounded quarantine receipt."
       ],
-      "detail": "current/safety.json",
+      "detail": "../first-wave-recheck_20261020/receipt.json",
       "original_index_title": "CORE-2 \u2014 P2: a typed but invalid history reference can panic before session quarantine",
-      "original_report": "core-report.md"
+      "original_report": "core-report.md",
+      "before_first_wave_recheck_20261020": {
+        "classification": "implemented via consumer guard; historical CPU qualified",
+        "current_observation": "Consumer validates snapshot bounds, duplicate identities/keys, reciprocal links, iterative visit/owner acyclicity, ownership and visit counts before trusted Lineage::from_snapshot. Real session caller quarantines returned errors.",
+        "qualification": [
+          "CPU16/CPU17 root; guard file byte-identical. Historical integration records supplier-invariant peer review."
+        ],
+        "detail": "current/safety.json"
+      },
+      "targeted_recheck_revision": "6a65a4d7d340ec635900188bd8f4e6a6207a6756"
     },
     {
       "id": "core:CORE-3",
@@ -275,11 +296,11 @@
     },
     {
       "id": "evidence:E1",
-      "classification": "implemented; executable controls pass",
+      "classification": "implemented; current-source CPU qualified; native/device separate",
       "package": "Q1",
-      "current_observation": "Both operational gates require observed process receipts; all suite outcomes and unclosed runs checked; historical context and actual command facts separated; original receipts untouched.",
-      "qualification": "114 distinct batch passes (93 Hocket, 14 process, 7 link); no native custody, reopen or device claim.",
-      "detail": "../admission-evidence_20261017/receipt.json",
+      "current_observation": "CI/font gates still consume observed command/run/timestamps/actual exit and exact log digests, rejecting later failed, wrapper-failed and incomplete suites.",
+      "qualification": "14 current process-evidence controls pass, including capture and CI-writer entrypoints. Historical product receipts remain unchanged.",
+      "detail": "../first-wave-recheck_20261020/receipt.json",
       "original_index_title": "Finding E1 \u2014 P2: Passing test summaries can turn a failed Cargo run into a passing receipt",
       "original_report": "evidence-report.md",
       "reconciliation_at_a424772": {
@@ -291,15 +312,22 @@
       "implementation_revision": "0effba1",
       "limits": [
         "Historical executions are not requalified; see batch scope limits."
-      ]
+      ],
+      "before_first_wave_recheck_20261020": {
+        "classification": "implemented; executable controls pass",
+        "current_observation": "Both operational gates require observed process receipts; all suite outcomes and unclosed runs checked; historical context and actual command facts separated; original receipts untouched.",
+        "qualification": "114 distinct batch passes (93 Hocket, 14 process, 7 link); no native custody, reopen or device claim.",
+        "detail": "../admission-evidence_20261017/receipt.json"
+      },
+      "targeted_recheck_revision": "6a65a4d7d340ec635900188bd8f4e6a6207a6756"
     },
     {
       "id": "evidence:E2",
-      "classification": "implemented; executable controls pass",
+      "classification": "implemented; current-source CPU qualified; native/device separate",
       "package": "Q1",
-      "current_observation": "Historical repository-local target existence and Markdown headings use historical tree; binary targets remain existence checks; seven regressions and real two-document scan pass.",
-      "qualification": "114 distinct batch passes (93 Hocket, 14 process, 7 link); no native custody, reopen or device claim.",
-      "detail": "../admission-evidence_20261017/receipt.json",
+      "current_observation": "Historical local targets/headings still resolve in the same Git tree as historical referrers; current targets use the current filesystem.",
+      "qualification": "Seven current historical-link controls pass; final documentation scan has zero new findings.",
+      "detail": "../first-wave-recheck_20261020/receipt.json",
       "original_index_title": "Finding E2 \u2014 P2: The link-regression audit reads current targets for the historical baseline",
       "original_report": "evidence-report.md",
       "reconciliation_at_a424772": {
@@ -311,7 +339,14 @@
       "implementation_revision": "0effba1",
       "limits": [
         "Historical executions are not requalified; see batch scope limits."
-      ]
+      ],
+      "before_first_wave_recheck_20261020": {
+        "classification": "implemented; executable controls pass",
+        "current_observation": "Historical repository-local target existence and Markdown headings use historical tree; binary targets remain existence checks; seven regressions and real two-document scan pass.",
+        "qualification": "114 distinct batch passes (93 Hocket, 14 process, 7 link); no native custody, reopen or device claim.",
+        "detail": "../admission-evidence_20261017/receipt.json"
+      },
+      "targeted_recheck_revision": "6a65a4d7d340ec635900188bd8f4e6a6207a6756"
     },
     {
       "id": "evidence:O1",
@@ -323,45 +358,59 @@
     },
     {
       "id": "hocket:H1",
-      "classification": "implemented host refusal/defer policy; historical CPU/build only",
+      "classification": "implemented; current-source CPU qualified; native/device separate",
       "package": "A2",
-      "current_observation": "Accept enters preservation. Open checks live capture at dispatch and again through matching completion/preservation. resolve_preservation refuses active capture and pending I/O even for Discard, preserving the stop token and staged incoming payload.",
-      "qualification": [
-        "CPU16/CPU17 Hocket 90 passing/2 ignored, plus CPU17 desktop build. Relevant state/main/test source hashes match current. Free-capture tests use fake device execution with real recorder services."
-      ],
+      "current_observation": "Existing Close/Open/Accept/Restart preservation, capture and pending-I/O barriers remain on production request and completion paths.",
+      "qualification": "94 current Hocket host passes and two existing ignores; native interaction remains separate.",
       "limits": [
         "Shared Recorder::replace_project still clears the ticket if directly called during recording; fix is the Woodshed-family Hocket host admission policy, not a generic replacement-during-capture retirement handshake.",
         "No Hocket native, physical capture, or current-head integrated qualification."
       ],
-      "detail": "current/safety.json",
+      "detail": "../first-wave-recheck_20261020/receipt.json",
       "original_index_title": "H1 \u2014 P1: project replacement can orphan an ongoing free capture indefinitely",
-      "original_report": "hocket-report.md"
+      "original_report": "hocket-report.md",
+      "before_first_wave_recheck_20261020": {
+        "classification": "implemented host refusal/defer policy; historical CPU/build only",
+        "current_observation": "Accept enters preservation. Open checks live capture at dispatch and again through matching completion/preservation. resolve_preservation refuses active capture and pending I/O even for Discard, preserving the stop token and staged incoming payload.",
+        "qualification": [
+          "CPU16/CPU17 Hocket 90 passing/2 ignored, plus CPU17 desktop build. Relevant state/main/test source hashes match current. Free-capture tests use fake device execution with real recorder services."
+        ],
+        "detail": "current/safety.json"
+      },
+      "targeted_recheck_revision": "6a65a4d7d340ec635900188bd8f4e6a6207a6756"
     },
     {
       "id": "hocket:H2",
-      "classification": "implemented; historical CPU/build only",
+      "classification": "implemented; current-source CPU qualified; native/device separate",
       "package": "A2",
-      "current_observation": "Native/dispatch/frame exit hooks enter product close admission, appearance cancellation retains the window, revision-bound approval waits for capture/I/O and dirty-project resolution; update restart re-enters this path. Failed/canceled Save retains the pending decision.",
-      "qualification": [
-        "CPU16/CPU17 Hocket; CPU17 desktop build. Mounted production-hook assertions are CPU tests."
-      ],
+      "current_observation": "Full-bundle/media revision dirtiness and submitted-revision save acknowledgement remain, including unchanged-head imports and later edits/media.",
+      "qualification": "94 current Hocket host passes and two existing ignores; no native Save/reopen claim.",
       "limits": [
         "No actual Hocket OS-close, Save-dialog, restart or fresh-process native receipt from this work."
       ],
-      "detail": "current/safety.json",
+      "detail": "../first-wave-recheck_20261020/receipt.json",
       "original_index_title": "H2 \u2014 P1: native close has appearance-save protection but drops unsaved recorder projects",
-      "original_report": "hocket-report.md"
+      "original_report": "hocket-report.md",
+      "before_first_wave_recheck_20261020": {
+        "classification": "implemented; historical CPU/build only",
+        "current_observation": "Native/dispatch/frame exit hooks enter product close admission, appearance cancellation retains the window, revision-bound approval waits for capture/I/O and dirty-project resolution; update restart re-enters this path. Failed/canceled Save retains the pending decision.",
+        "qualification": [
+          "CPU16/CPU17 Hocket; CPU17 desktop build. Mounted production-hook assertions are CPU tests."
+        ],
+        "detail": "current/safety.json"
+      },
+      "targeted_recheck_revision": "6a65a4d7d340ec635900188bd8f4e6a6207a6756"
     },
     {
       "id": "hocket:H3",
-      "classification": "implemented; CPU qualified; native custody/reopen pending",
+      "classification": "implemented; current-source CPU qualified; native/device separate",
       "package": "A3 confirmation only",
-      "current_observation": "Staged profile, target key and losing token bind actual custody admission before consent/switch; rejected drift and consent I/O failure retain prior facts.",
-      "qualification": "114 distinct batch passes (93 Hocket, 14 process, 7 link); no native custody, reopen or device claim.",
+      "current_observation": "Exact offered profile, target key and losing token remain bound to actual admission before consent write or identity install; drift and consent I/O refusal retain prior facts.",
+      "qualification": "94 current Hocket host passes and two existing ignores; real custody IPC and native fresh-process identity reopening remain separate.",
       "limits": [
         "Native custody/reopen remains separate."
       ],
-      "detail": "../admission-evidence_20261017/receipt.json",
+      "detail": "../first-wave-recheck_20261020/receipt.json",
       "original_index_title": "H3 \u2014 P1: persona confirmation can switch to a different family identity than the one shown",
       "original_report": "hocket-report.md",
       "reconciliation_at_a424772": {
@@ -372,34 +421,48 @@
         ],
         "detail": "current/safety.json"
       },
-      "implementation_revision": "0effba1"
+      "implementation_revision": "0effba1",
+      "before_first_wave_recheck_20261020": {
+        "classification": "implemented; CPU qualified; native custody/reopen pending",
+        "current_observation": "Staged profile, target key and losing token bind actual custody admission before consent/switch; rejected drift and consent I/O failure retain prior facts.",
+        "qualification": "114 distinct batch passes (93 Hocket, 14 process, 7 link); no native custody, reopen or device claim.",
+        "detail": "../admission-evidence_20261017/receipt.json"
+      },
+      "targeted_recheck_revision": "6a65a4d7d340ec635900188bd8f4e6a6207a6756"
     },
     {
       "id": "hocket:H4",
-      "classification": "implemented; historical CPU/build only",
+      "classification": "implemented; current-source CPU qualified; native/device separate",
       "package": "A2",
-      "current_observation": "saved_revision compares complete session/history plus append-only content-addressed media count and missing-media facts. Save acknowledges the submitted snapshot, so concurrent edits or same-head imported branches/media remain dirty.",
-      "qualification": [
-        "CPU16/CPU17 Hocket; same-head retained branch/media import regression asserts dirty and close refusal. Current state and regression files match recorded source hashes."
-      ],
+      "current_observation": "Existing capture/close guards retain admitted execution tokens and defer replacement through Open completion, Accept and Discard.",
+      "qualification": "94 current Hocket host passes and two existing ignores; device-free recorder fixtures only.",
       "limits": [
         "Specific off-head import test stops at in-memory dirty/close assertions; it is not a native save/reopen/full-bundle comparison.",
         "No current-head pass and no Hocket native/reopen gate."
       ],
-      "detail": "current/safety.json",
+      "detail": "../first-wave-recheck_20261020/receipt.json",
       "original_index_title": "H4 \u2014 P2: the saved-head marker misses imported retained branches and media",
-      "original_report": "hocket-report.md"
+      "original_report": "hocket-report.md",
+      "before_first_wave_recheck_20261020": {
+        "classification": "implemented; historical CPU/build only",
+        "current_observation": "saved_revision compares complete session/history plus append-only content-addressed media count and missing-media facts. Save acknowledges the submitted snapshot, so concurrent edits or same-head imported branches/media remain dirty.",
+        "qualification": [
+          "CPU16/CPU17 Hocket; same-head retained branch/media import regression asserts dirty and close refusal. Current state and regression files match recorded source hashes."
+        ],
+        "detail": "current/safety.json"
+      },
+      "targeted_recheck_revision": "6a65a4d7d340ec635900188bd8f4e6a6207a6756"
     },
     {
       "id": "hocket:H5",
-      "classification": "implemented; CPU qualified",
+      "classification": "implemented; current-source CPU qualified; native/device separate",
       "package": "A2",
-      "current_observation": "Accepted same-session phrase pool and imported media recompute missing references; regression preserves unresolved local-only media, branch and prior PCM.",
-      "qualification": "114 distinct batch passes (93 Hocket, 14 process, 7 link); no native custody, reopen or device claim.",
+      "current_observation": "Accepted same-session media availability is recomputed from the complete accepted phrase pool and imported store while retaining unresolved local media and branches.",
+      "qualification": "94 current Hocket host passes and two existing ignores; no native project reopen claim.",
       "limits": [
         "Native custody/reopen remains separate."
       ],
-      "detail": "../admission-evidence_20261017/receipt.json",
+      "detail": "../first-wave-recheck_20261020/receipt.json",
       "original_index_title": "H5 \u2014 P2: restored media still appears missing after same-session acceptance",
       "original_report": "hocket-report.md",
       "reconciliation_at_a424772": {
@@ -410,7 +473,14 @@
         ],
         "detail": "current/safety.json"
       },
-      "implementation_revision": "0effba1"
+      "implementation_revision": "0effba1",
+      "before_first_wave_recheck_20261020": {
+        "classification": "implemented; CPU qualified",
+        "current_observation": "Accepted same-session phrase pool and imported media recompute missing references; regression preserves unresolved local-only media, branch and prior PCM.",
+        "qualification": "114 distinct batch passes (93 Hocket, 14 process, 7 link); no native custody, reopen or device claim.",
+        "detail": "../admission-evidence_20261017/receipt.json"
+      },
+      "targeted_recheck_revision": "6a65a4d7d340ec635900188bd8f4e6a6207a6756"
     },
     {
       "id": "hocket:H6",
@@ -471,20 +541,27 @@
     },
     {
       "id": "host:H1",
-      "classification": "implemented; historical CPU and bounded Woodshed native/reopen qualified",
+      "classification": "implemented; current-source CPU qualified; native/device separate",
       "package": "A1",
-      "current_observation": "Persona replacement calls the same preserve_request used by close, retains blocked/preparing work, distinguishes Retry/Cancel/Discard, waits for finishing WAV export, and rejects Pending incoming custody before outgoing reset. after_wake resumes the pending switch. Explicit discard is the caller-owned bypass.",
-      "qualification": [
-        "CPU16 root and CPU17 root; persona test file and persona.rs match CPU17 hashes.",
-        "N-persona/ N-persona-reopen at cec221348154fc8e6abe3f6136f00b14f9860b78; N-close/ N-quarantine-reopen at d955f5dc3b99ec1efd6ec9a56dd3ba007755409e. Only corrupt-input quarantine, three authored Cards, Retry/Cancel/explicit Discard, original bytes and fresh quarantine reopen."
-      ],
+      "current_observation": "Existing preserve/retry/cancel/discard barrier remains; incoming seals for a profile other than the selected pending target are now refused before outgoing revocation/reset. Explicit Retry can admit the intended persona.",
+      "qualification": "281 current Woodshed host passes, seven existing ignores and five child invocations recorded separately; new production-hook mismatch/Retry regression passes.",
       "limits": [
         "Current capture_persistence.rs/main.rs and dependencies differ from both native inputs; no a424772 native acceptance.",
         "Held codec worker, failed incoming custody and capture replacement are CPU-only. Combined codec-worker wake to persona installation has no scoped native proof."
       ],
-      "detail": "current/safety.json",
+      "detail": "../first-wave-recheck_20261020/receipt.json",
       "original_index_title": "H1 \u2014 P1: Persona replacement independently decides to discard outgoing work",
-      "original_report": "host-report.md"
+      "original_report": "host-report.md",
+      "before_first_wave_recheck_20261020": {
+        "classification": "implemented; historical CPU and bounded Woodshed native/reopen qualified",
+        "current_observation": "Persona replacement calls the same preserve_request used by close, retains blocked/preparing work, distinguishes Retry/Cancel/Discard, waits for finishing WAV export, and rejects Pending incoming custody before outgoing reset. after_wake resumes the pending switch. Explicit discard is the caller-owned bypass.",
+        "qualification": [
+          "CPU16 root and CPU17 root; persona test file and persona.rs match CPU17 hashes.",
+          "N-persona/ N-persona-reopen at cec221348154fc8e6abe3f6136f00b14f9860b78; N-close/ N-quarantine-reopen at d955f5dc3b99ec1efd6ec9a56dd3ba007755409e. Only corrupt-input quarantine, three authored Cards, Retry/Cancel/explicit Discard, original bytes and fresh quarantine reopen."
+        ],
+        "detail": "current/safety.json"
+      },
+      "targeted_recheck_revision": "6a65a4d7d340ec635900188bd8f4e6a6207a6756"
     },
     {
       "id": "host:H10",
@@ -543,18 +620,25 @@
     },
     {
       "id": "host:H5",
-      "classification": "implemented; historical CPU qualified",
+      "classification": "implemented; current-source CPU qualified; native/device separate",
       "package": "A1",
-      "current_observation": "reset_for_persona carries event_clock and practice_clock_managed across UiState replacement; current persona.rs is byte-identical to CPU17 and both historical native source manifests.",
-      "qualification": [
-        "CPU16 reset/event-clock regression; CPU17 combined reset regression. Native receipts exercise reset but do not assert event timestamps after long idle."
-      ],
+      "current_observation": "Persona reset retains event_clock and practice_clock_managed; the new admitted-switch regression checks both after mismatch refusal and explicit Retry.",
+      "qualification": "281 current Woodshed host passes, seven existing ignores; no new native clock observation.",
       "limits": [
         "No current-head test run; no long-idle/event-timestamp native assertion in these receipts."
       ],
-      "detail": "current/safety.json",
+      "detail": "../first-wave-recheck_20261020/receipt.json",
       "original_index_title": "H5 \u2014 P2: Persona reset drops process-owned event-time injection",
-      "original_report": "host-report.md"
+      "original_report": "host-report.md",
+      "before_first_wave_recheck_20261020": {
+        "classification": "implemented; historical CPU qualified",
+        "current_observation": "reset_for_persona carries event_clock and practice_clock_managed across UiState replacement; current persona.rs is byte-identical to CPU17 and both historical native source manifests.",
+        "qualification": [
+          "CPU16 reset/event-clock regression; CPU17 combined reset regression. Native receipts exercise reset but do not assert event timestamps after long idle."
+        ],
+        "detail": "current/safety.json"
+      },
+      "targeted_recheck_revision": "6a65a4d7d340ec635900188bd8f4e6a6207a6756"
     },
     {
       "id": "host:H6",
@@ -712,18 +796,25 @@
     },
     {
       "id": "redshank:R01",
-      "classification": "implemented; historical CPU/build only",
+      "classification": "implemented; current-source CPU qualified; native/device separate",
       "package": "A5",
-      "current_observation": "Storage differentiates empty inventory from exhausted invalid generations, propagates restore I/O errors, permits readable older fallback, and refuses publication/pruning unless load succeeds. Failed desktop restore starts an in-memory model with no save worker/sender, latched recovery error, blocked flush and ignored save acknowledgements.",
-      "qualification": [
-        "CPU16/CPU17 Redshank: 80 desktop + 15 storage, no ignores; CPU17 desktop build. Both product files match both receipts. Invalid-generation and I/O fixtures check original bytes and inventory; valid older fallback tested separately."
-      ],
+      "current_observation": "Nonempty exhausted/corrupt recovery refuses writable defaults and pruning; desktop recovery has no save worker, latches refusal across edits/retry/ack/close and retains valid older fallback.",
+      "qualification": "15 storage and three targeted desktop cases pass; no new native recovery/close/reopen qualification.",
       "limits": [
         "No Redshank native/reopen acceptance. Recovery/reset interaction remains a separate product decision; current safe policy is nonwriting until repair and reopen. Dependency lock differs from receipts."
       ],
-      "detail": "current/safety.json",
+      "detail": "../first-wave-recheck_20261020/receipt.json",
       "original_index_title": "R01 \u2014 Preserve existing state when restoration cannot establish a model [P1]",
-      "original_report": "redshank-report.md"
+      "original_report": "redshank-report.md",
+      "before_first_wave_recheck_20261020": {
+        "classification": "implemented; historical CPU/build only",
+        "current_observation": "Storage differentiates empty inventory from exhausted invalid generations, propagates restore I/O errors, permits readable older fallback, and refuses publication/pruning unless load succeeds. Failed desktop restore starts an in-memory model with no save worker/sender, latched recovery error, blocked flush and ignored save acknowledgements.",
+        "qualification": [
+          "CPU16/CPU17 Redshank: 80 desktop + 15 storage, no ignores; CPU17 desktop build. Both product files match both receipts. Invalid-generation and I/O fixtures check original bytes and inventory; valid older fallback tested separately."
+        ],
+        "detail": "current/safety.json"
+      },
+      "targeted_recheck_revision": "6a65a4d7d340ec635900188bd8f4e6a6207a6756"
     },
     {
       "id": "redshank:R02",
@@ -1240,19 +1331,26 @@
     },
     {
       "id": "shared:S1",
-      "classification": "implemented; historical CPU qualified",
+      "classification": "implemented; current-source CPU qualified; native/device separate",
       "package": "A4",
-      "current_observation": "Model owns whole-graph validation for key/id, root/head, references, acyclicity and rooted reachability; checkout bounds both executed ancestry walks. Integration validates a temporary union, preserving compatible fragments. Project decode/save, signed handoff create/receive, portable accept and host adoption call validation before mutation.",
-      "qualification": [
-        "CPU16/CPU17 root (hocket-model/project) plus Hocket host 90 passing/2 ignored. All four model/project receipt source hashes and host state hash match current.",
-        "The filename native_lifecycle_tests.rs denotes device-free mounted-hook tests, not an OS/native run."
-      ],
+      "current_observation": "Model-owned iterative graph checks, bounded checkout, atomic union and portable project/handoff admission remain; valid partial unions are retained.",
+      "qualification": "42 hocket-model, 38 hocket-project and 94 Hocket host passes; two host ignores; no native/custody qualification.",
       "limits": [
         "Ports have CPU/build evidence only; dependency locks differ, so unchanged local files do not establish a current-head integrated pass."
       ],
-      "detail": "current/safety.json",
+      "detail": "../first-wave-recheck_20261020/receipt.json",
       "original_index_title": "S1 \u2014 P1: An authenticated cyclic history can hang same-session acceptance",
-      "original_report": "shared-report.md"
+      "original_report": "shared-report.md",
+      "before_first_wave_recheck_20261020": {
+        "classification": "implemented; historical CPU qualified",
+        "current_observation": "Model owns whole-graph validation for key/id, root/head, references, acyclicity and rooted reachability; checkout bounds both executed ancestry walks. Integration validates a temporary union, preserving compatible fragments. Project decode/save, signed handoff create/receive, portable accept and host adoption call validation before mutation.",
+        "qualification": [
+          "CPU16/CPU17 root (hocket-model/project) plus Hocket host 90 passing/2 ignored. All four model/project receipt source hashes and host state hash match current.",
+          "The filename native_lifecycle_tests.rs denotes device-free mounted-hook tests, not an OS/native run."
+        ],
+        "detail": "current/safety.json"
+      },
+      "targeted_recheck_revision": "6a65a4d7d340ec635900188bd8f4e6a6207a6756"
     },
     {
       "id": "shared:S2",
@@ -1433,18 +1531,25 @@
     },
     {
       "id": "theory:T4",
-      "classification": "implemented; historical CPU qualified",
+      "classification": "implemented; current-source CPU qualified; native/device separate",
       "package": "A4",
-      "current_observation": "Set::admit_card_ids preflights duplicate assigned IDs and mint exhaustion atomically, migrates only zero IDs, and is reused in copy. decode_session applies admission to active, inactive and retained Sets; IDs may legitimately overlap across separate Sets.",
-      "qualification": [
-        "CPU16/CPU17 root. Current admission body is unchanged versus hash-verified CPU16 source. rehearsal.rs differs only by added Repeat::Card variant, and is identical to the d955f5d close-source manifest; storage.rs only adds seconds: None in a test fixture."
-      ],
+      "current_observation": "Set admission preflights duplicate assigned Card IDs and mint exhaustion; valid zero-ID migration remains. Session decode applies admission to active, inactive and retained banks.",
+      "qualification": "210 woodshedding and 313 woodshed-core cases pass, including all loaded banks and nonmutating refusal.",
       "limits": [
         "No duplicate-ID native/reopen fixture in bounded receipts; no current-head test run."
       ],
-      "detail": "current/safety.json",
+      "detail": "../first-wave-recheck_20261020/receipt.json",
       "original_index_title": "T4 \u2014 P2: Set load admission accepts duplicate occurrence identities although actions and graphs treat identity as unique",
-      "original_report": "theory-report.md"
+      "original_report": "theory-report.md",
+      "before_first_wave_recheck_20261020": {
+        "classification": "implemented; historical CPU qualified",
+        "current_observation": "Set::admit_card_ids preflights duplicate assigned IDs and mint exhaustion atomically, migrates only zero IDs, and is reused in copy. decode_session applies admission to active, inactive and retained Sets; IDs may legitimately overlap across separate Sets.",
+        "qualification": [
+          "CPU16/CPU17 root. Current admission body is unchanged versus hash-verified CPU16 source. rehearsal.rs differs only by added Repeat::Card variant, and is identical to the d955f5d close-source manifest; storage.rs only adds seconds: None in a test fixture."
+        ],
+        "detail": "current/safety.json"
+      },
+      "targeted_recheck_revision": "6a65a4d7d340ec635900188bd8f4e6a6207a6756"
     },
     {
       "id": "theory:T5",
@@ -1664,5 +1769,8 @@
   "targeted_runtime_revision": "662cda5baf767530ebf22bb3ea7c212e9095116d",
   "pcm_timing_followup": "../pcm-timing_20261018/receipt.json",
   "select_one_followup": "../recorder-select-one_20261019/receipt.json",
-  "recorder_runtime_followup": "../recorder-runtime_20261019/receipt.json"
+  "recorder_runtime_followup": "../recorder-runtime_20261019/receipt.json",
+  "first_wave_recheck_followup": "../first-wave-recheck_20261020/receipt.json",
+  "first_wave_recheck_revision": "6a65a4d7d340ec635900188bd8f4e6a6207a6756",
+  "first_wave_recheck_scope": "Only A1\u2013A5 and Q1 targeted production seams and focused CPU controls; other findings retain their earlier dated reconciliation."
 }
