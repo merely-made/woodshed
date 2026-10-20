@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "run_id": "midi-final-persona-v3",
+  "command": [
+    "cargo",
+    "test",
+    "--locked",
+    "-p",
+    "woodshed-genet",
+    "--bin",
+    "woodshed-genet",
+    "persona::tests"
+  ],
+  "started_at": "2026-10-20T02:50:48.873697Z",
+  "ended_at": "2026-10-20T02:51:07.805522Z",
+  "exit_code": 0,
+  "cwd": "/Users/markik/Code/worktrees/woodshed-b6-20261019",
+  "log": "/Users/markik/Code/worktrees/woodshed-b6-20261019/validation/midi-admission_20261019/checks/persona-v3.log",
+  "log_sha256": "59c6a9f96b258f107c7d1ed8e9d24b79d0e7df41d1e22790b1cc5bfc19576a36",
+  "source_commit": "480c0d6d36d65d5252940782313525aa5c91ac3f"
+}

@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "run_id": "midi-final-midi",
+  "command": [
+    "cargo",
+    "test",
+    "--locked",
+    "-p",
+    "woodshed-genet",
+    "--bin",
+    "woodshed-genet",
+    "midi"
+  ],
+  "started_at": "2026-10-20T02:32:47.003644Z",
+  "ended_at": "2026-10-20T02:45:19.670470Z",
+  "exit_code": 101,
+  "cwd": "/Users/markik/Code/worktrees/woodshed-b6-20261019",
+  "log": "/Users/markik/Code/worktrees/woodshed-b6-20261019/validation/midi-admission_20261019/checks/midi.log",
+  "log_sha256": "8e62cbbc0740f54e4a07c8c22e179600aba8bcb5155620d0c657bb01c8ef2ee6",
+  "source_commit": "75f297517625904d7e596282806facefea02477b"
+}

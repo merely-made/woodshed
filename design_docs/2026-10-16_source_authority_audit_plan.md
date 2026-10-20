@@ -138,7 +138,7 @@ native/device checks stay separate.
 
 ### P8 Preserve tempo playback and surface Recorder diagnostics (requested B6 slice)
 
-Status (2026-10-19): scoped CPU qualification complete at `7b161a9`; local for review. Baseline: published `4fab895`, integrated on remote `be4d6d0`. Work is isolated in `codex/woodshed-b6-20261019`; the primary checkout
+Status (2026-10-19): scoped CPU qualification complete at `7b161a9`; published through `fd9fb82`. Baseline: published `4fab895`, integrated on remote `be4d6d0`. Work is isolated in `codex/woodshed-b6-20261019`; the primary checkout
 and supplier/native owners remain untouched. Three Luna workers own production
 Recorder tempo admission, independent tempo tests, and shared wrapper diagnostic
 projection/DOM tests. The coordinator owns the engine offline contract test,
@@ -157,7 +157,32 @@ records 171 distinct passes, two existing ignores, three expected baseline
 failures and actual process bindings. Nine source/test files and five unchanged
 locks are hash bound. The full shared-view unit target remains blocked by the
 existing paint API type mismatch; its new public-wrapper integration target
-passes independently. New work stays local for review.
+passes independently. New work stays published through `fd9fb82`.
+
+### P9 — MIDI admission and connection ownership (2026-10-19)
+
+Status: scoped CPU qualification complete at `480c0d6`; local for review.
+[Receipt](../validation/midi-admission_20261019/README.md): 42 distinct passes,
+zero ignores, with failed/canceled attempts retained separately. Ordinary host
+frames service pending completion; atomic clock configuration avoids transient
+transport changes. Historical source observations remain preserved in the ledger.
+
+This bounded follow-up addresses historical host H6–H9. One Luna worker owns
+MidiUiState discovery reconciliation and pure selection tests; a second owns
+the output worker and fake-connection tests. The coordinator owns persona reset,
+backend completion polling, host projection and diagnostics, review and receipts.
+Port names remain the backend identity; rescanning must retain the selected name
+or clear it when absent. Persona changes retain process routing and inventory.
+Output status must describe the worker's accepted connection, with open failures
+visible and stale completions unable to overwrite newer requests. Replacement
+must stop the old running connection and start the new one.
+
+Reuse the existing backend seam, one refresh helper and one output worker state
+machine; do not add another scheduler or desired-state framework. Qualify with
+CPU fakes through production transitions. Supplier intake, device enumeration,
+native validation and physical MIDI timing remain outside this batch. New work
+stays local for review. The preceding nine B6 commits were integrated and pushed
+through `fd9fb82`; original qualification source identities remain unchanged.
 
 ## Current findings and next implementation order
 
@@ -273,4 +298,4 @@ implementation remains a separate preceding local change.
 
 2026-10-19 publication/B6 start: primary checkout contained additional unrelated local history and remote had advanced. Applied only the four reviewed B5 commits to isolated current main; source/test bytes match original review, automatic DOC_README merge retains incoming entries, and coordination hash was refreshed. Pushed through `4fab895`, then pulled successfully. Started the requested tempo/replay and diagnostic slice with three Luna workers. Engine already supports keyed next-bar replacement while the old voice continues; use that capability rather than stop-before-clock or a new replay state store. Supplier intake and native lane remain outside ownership.
 
-2026-10-19 requested B6 completion: source `7b161a9` is scoped CPU qualified with 171 distinct passes and two existing Hocket host ignores. The isolated published Recorder control produces three expected failures with identical tests. Engine execution proves old voice continuity and latest keyed replacement; public wrapper and standalone CPU DOM tests prove status delivery and one visible owner. The failed selector compile attempt and blocked shared-view paint unit gate remain separately recorded, never counted as passing. Product source did not change after accepted recorder/wrapper/engine gates; the final host gate covers the sole receiving-test selector correction. Supplier inputs, native lane and primary source were preserved. Historical MIDI H6–H9 remain open and separate.
+2026-10-19 requested B6 completion: source `7b161a9` is scoped CPU qualified with 171 distinct passes and two existing Hocket host ignores. The isolated published Recorder control produces three expected failures with identical tests. Engine execution proves old voice continuity and latest keyed replacement; public wrapper and standalone CPU DOM tests prove status delivery and one visible owner. The failed selector compile attempt and blocked shared-view paint unit gate remain separately recorded, never counted as passing. Product source did not change after accepted recorder/wrapper/engine gates; the final host gate covers the sole receiving-test selector correction. Supplier inputs, native lane and primary source were preserved. At that boundary historical MIDI H6–H9 remained open; P9 records their later scoped CPU follow-up.
