@@ -14,6 +14,10 @@
 pub trait MidiBackend {
     /// Drain host completion facts before projecting accepted connection state.
     fn poll(&mut self) {}
+    /// Keep host frames running while asynchronous MIDI work needs observation.
+    fn needs_service(&self) -> bool {
+        false
+    }
 
     /// Available input port names (a fresh scan each call — ports come
     /// and go as gear is plugged in).

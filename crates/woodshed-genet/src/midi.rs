@@ -148,6 +148,10 @@ impl Default for MidiHost {
 }
 
 impl MidiBackend for MidiHost {
+    fn needs_service(&self) -> bool {
+        self.output.requested.is_some() || (self.last_out.0 && self.last_out.1)
+    }
+
     fn poll(&mut self) {
         self.output.poll();
     }
