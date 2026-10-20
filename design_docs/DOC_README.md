@@ -52,6 +52,8 @@ before any other doc in this directory.
 
 - [Shared span-edit intents with metre](2026-07-11_stage_set_tools_plan.md#shared-span-intents-with-authored-metre-2026-10-17) — Adopted on shared Mere `4c4ea11d8`; nine locked arrangement-editor route/model cases pass with forged-intent and stale gesture controls. Domain validation and explicit Save remain in Woodshed. [Receipt](../validation/shared-span-intents_20261017/receipt.json).
 
+- [Relationship source return](2026-10-19_relationship_source_return_plan.md) — Implemented and qualified in an isolated checkout: direct/member source return reuses one reading and current source while preserving selection installation and refusal order; 312 frozen observations match, 313 core and 306 view tests pass. Widths 2/3/64 prove one v3 selection resolution. Evidence stays in testing.
+
 - [Relationship passage selection construction](2026-10-19_passage_selection_plan.md) — Implemented and qualified locally: one selected-material resolution and one occurrence dataset per passage; 38 frozen differential cases, 306 core and 254 receiving view tests pass. Widths 2/3/64 prove construction counts; public APIs, legacy policies and feature-disabled core remain. Publication is separate; evidence stays in testing.
 
 - [Arrangement authoring observations](2026-10-19_arrangement_observation_plan.md) — Implemented and qualified: typed draft baselines and one captured owner/Set/draft observation for gesture/preview checks. 254 view, three mounted-host and five persistence/export tests pass, including ten new guard regressions and fresh CLI processes. Explicit Save, full-Set guards and host persistence remain. This commit records the qualified consolidation; a native GUI rerun remains separate. Evidence stays in testing.

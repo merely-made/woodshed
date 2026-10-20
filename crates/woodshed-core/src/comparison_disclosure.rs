@@ -146,9 +146,34 @@ pub fn passage_projection_json(
     // Preserve the passage's pair-selection error precedence, then resolve every
     // selected identity/material once before constructing any returned passage.
     let selection = ResolvedSelection::capture(owner, revision, set, selected, pair)?;
-    let mut value = projection::dataset(owner, revision, &selection.occurrences);
+    project_passage(owner, revision, &selection.occurrences)
+}
+
+/// Project a passage after checking an explicit comparison pair. The comparison
+/// comes before the passage bound, matching retained source reconstruction's
+/// established error order. This returns facts, not navigation authority.
+pub fn comparison_passage_projection_json(
+    owner: WorkingSetId,
+    revision: &str,
+    set: &Set,
+    selected: &[CardId],
+    pair: (CardId, CardId),
+) -> Result<serde_json::Value, DisclosureError> {
+    let facts = disclose_comparison(owner, revision, set, selected, pair)?;
+    if selected.len() > 64 {
+        return Err(DisclosureError::SelectionTooLarge);
+    }
+    project_passage(facts.owner, &facts.revision, &facts.occurrences)
+}
+
+fn project_passage(
+    owner: WorkingSetId,
+    revision: &str,
+    occurrences: &[SelectedOccurrence],
+) -> Result<serde_json::Value, DisclosureError> {
+    let mut value = projection::dataset(owner, revision, occurrences);
     let mut relationships = Vec::new();
-    for pair in selection.occurrences.windows(2) {
+    for pair in occurrences.windows(2) {
         let (left, right) = (&pair[0], &pair[1]);
         let comparison = compare_pitch_sets(&left.material, &right.material)
             .ok_or(DisclosureError::UnsupportedMaterial(left.card))?;

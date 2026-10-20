@@ -23,6 +23,10 @@ use std::collections::{BTreeMap, BTreeSet};
 use woodshed_core::{comparison_disclosure, working_sets::WorkingSetId};
 use woodshedding::rehearsal::{CardId, Set};
 
+mod source_return;
+#[cfg(test)]
+mod source_return_stats;
+
 pub const RELATIONSHIP_GRAPH_LEAF_KEY: u64 = 0x5753_5243;
 pub const MAX_READING_BYTES: usize = 2 * 1024 * 1024;
 
@@ -46,6 +50,8 @@ pub struct RelationshipReading {
 }
 impl RelationshipReading {
     pub fn decode(json: &str) -> Result<Self, String> {
+        #[cfg(test)]
+        source_return_stats::record(source_return_stats::Event::Decode);
         if json.len() > MAX_READING_BYTES {
             return Err("Retained reading exceeds the 2 MiB limit.".into());
         }
@@ -72,6 +78,8 @@ impl RelationshipReading {
         Ok(reading)
     }
     pub fn compile(&self) -> Result<CompiledRelationshipProjection, String> {
+        #[cfg(test)]
+        source_return_stats::record(source_return_stats::Event::Compile);
         // This host retains the established card footprint when reopening readings.
         // Scenomise now requires its consumer to supply representation sizes.
         ProjectionCompiler::new(ItemSizes {
@@ -83,6 +91,8 @@ impl RelationshipReading {
 }
 // Cursor navigation is presentation. Every ordered Card instruction is content.
 fn revision(owner: WorkingSetId, set: &Set) -> String {
+    #[cfg(test)]
+    source_return_stats::record(source_return_stats::Event::Revision);
     let bytes = serde_json::to_vec(&(owner, &set.cards)).expect("Set serializes");
     blake3::hash(&bytes).to_hex().to_string()
 }
@@ -103,6 +113,8 @@ fn finish(
         .map_err(|e| format!("Recipe edit refused: {e:?}"))
 }
 fn owner_set(ui: &UiState, owner: WorkingSetId) -> Result<&Set, String> {
+    #[cfg(test)]
+    source_return_stats::record(source_return_stats::Event::Owner);
     let count = usize::from(ui.working_sets.active_id == owner)
         + ui.working_sets
             .inactive
@@ -311,18 +323,19 @@ fn open_relationship_member(
     let Some(source) = reading.source.as_ref() else {
         return Err("This retained relationship has no current owner action.".into());
     };
-    let owner = source.owner;
-    let source_revision = source.revision.clone();
-    let set = owner_set(ui, owner)?;
-    if revision(owner, set) != source_revision {
-        return Err(
-            "Source instructions changed. Explicitly rebind before opening a source Card.".into(),
-        );
-    }
+    let set = source_return::current_set(
+        ui,
+        source,
+        "Source instructions changed. Explicitly rebind before opening a source Card.",
+    )?;
     reading.snapshot.selected_occurrence = Some(target.from.clone());
     reading.snapshot.selected_relationship = Some(member.id.clone());
-    ui.install_relationship(reading)?;
-    ui.open_relationship_source()
+    // Prepare in the old installation order. Keep a late source refusal until
+    // after installation, preserving the selected reading even on that refusal.
+    let installation = source_return::PreparedReading::prepare(&reading)?;
+    let destination = source_return::destination(&reading, source, set);
+    installation.install(ui);
+    source_return::navigate(ui, destination?)
 }
 
 impl UiState {
@@ -333,14 +346,7 @@ impl UiState {
             .transpose()
     }
     fn install_relationship(&mut self, reading: RelationshipReading) -> Result<(), String> {
-        reading.compile()?;
-        let json = serde_json::to_string(&reading).map_err(|e| e.to_string())?;
-        if json.len() > MAX_READING_BYTES {
-            return Err("Reading exceeds the 2 MiB limit.".into());
-        }
-        self.relationship_label =
-            cambium::TextInput::new(reading.snapshot.recipe.definition.label.clone());
-        self.relationship_reading_json = Some(json);
+        source_return::PreparedReading::prepare(&reading)?.install(self);
         Ok(())
     }
     pub fn open_relationship_recipe(&mut self) {
@@ -474,67 +480,13 @@ impl UiState {
         let source = reading.source.as_ref().ok_or(
             "This retained disclosure has no owner action. Explicitly rebind to a Woodshed Set.",
         )?;
-        let set = owner_set(self, source.owner)?;
-        if revision(source.owner, set) != source.revision {
-            return Err(
-                "Source instructions changed. Explicitly rebind before returning to a Card.".into(),
-            );
-        }
-        let id = reading
-            .snapshot
-            .selected_occurrence
-            .as_ref()
-            .ok_or("Select a recipe occurrence first.")?;
-        let matches: Vec<_> = set
-            .cards
-            .iter()
-            .filter(|card| {
-                comparison_disclosure::occurrence_id(source.owner, card.id) == *id
-                    && source.cards.contains(&card.id)
-            })
-            .collect();
-        if matches.len() != 1 {
-            return Err("The selected source occurrence is unavailable or ambiguous.".into());
-        }
-        let card = matches[0].id;
-        // Validate the retained disclosure itself against current owner-owned facts.
-        let disclose = if reading.version >= 2 {
-            comparison_disclosure::disclose_comparison
-        } else {
-            comparison_disclosure::disclose
-        };
-        let facts = disclose(
-            source.owner,
-            &source.revision,
-            set,
-            &source.cards,
-            source.pair,
-        )
-        .map_err(|e| format!("Source refused: {e:?}"))?;
-        let current: RelationshipDataset = serde_json::from_value(if reading.version >= 3 {
-            comparison_disclosure::passage_projection_json(
-                source.owner,
-                &source.revision,
-                set,
-                &source.cards,
-            )
-            .map_err(|e| format!("Source refused: {e:?}"))?
-        } else if reading.version >= 2 {
-            comparison_disclosure::comparison_projection_json(&facts)
-        } else {
-            comparison_disclosure::projection_json(&facts)
-        })
-        .map_err(|e| e.to_string())?;
-        if serde_json::to_value(current).map_err(|e| e.to_string())?
-            != serde_json::to_value(&reading.dataset).map_err(|e| e.to_string())?
-        {
-            return Err("Retained disclosure does not match the source Set.".into());
-        }
-        self.activate_working_set(source.owner);
-        self.set.select_id(card);
-        self.set_graph_card_expanded = true;
-        self.relationship_open = false;
-        Ok(())
+        let set = source_return::current_set(
+            self,
+            source,
+            "Source instructions changed. Explicitly rebind before returning to a Card.",
+        )?;
+        let destination = source_return::destination(&reading, source, set)?;
+        source_return::navigate(self, destination)
     }
     pub fn relationship_result(&mut self, result: Result<(), String>) {
         self.relationship_notice = Some(match result {
@@ -942,6 +894,9 @@ pub(super) fn screen(ui: &UiState) -> UiChild {
     }
     Box::new(el("div", children).attr("class", "relationship-screen claims-link-inspection"))
 }
+
+#[cfg(test)]
+mod source_return_tests;
 
 #[cfg(test)]
 mod tests {
