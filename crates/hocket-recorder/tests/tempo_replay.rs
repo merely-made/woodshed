@@ -185,6 +185,15 @@ fn successful_nudges_replay_only_currently_eligible_live_voices_in_order() {
     let mut audio = FakeAudio::default();
     start_playback(&mut recorder, &mut audio);
     assert_eq!(recorder.accepted_voice_count(), 3);
+    assert_eq!(
+        audio.active.keys().copied().collect::<BTreeSet<_>>(),
+        [
+            key(&recorder, 0, 0),
+            key(&recorder, 0, 1),
+            key(&recorder, 1, 1)
+        ]
+        .into()
+    );
     assert_eq!(audio.active[&key(&recorder, 0, 0)].sample_rate, 44_100);
     assert_eq!(audio.active[&key(&recorder, 0, 1)].gain, 0.6);
     assert_eq!(audio.active[&key(&recorder, 1, 1)].samples, vec![0.6]);
@@ -238,6 +247,10 @@ fn refused_clock_keeps_existing_voices_and_history_untouched() {
     start_playback(&mut recorder, &mut audio);
     let live_before = audio.active.clone();
     assert_eq!(live_before.len(), 1);
+    assert_eq!(
+        live_before.keys().copied().collect::<BTreeSet<_>>(),
+        [key(&recorder, 0, 0)].into()
+    );
     let bpm_before = recorder.session.bpm;
     let history_before = recorder.history.head;
     let accepted_before = recorder.accepted_voice_count();
@@ -282,6 +295,10 @@ fn stop_all_then_nudge_does_not_replay_silent_model_layers() {
     let mut audio = FakeAudio::default();
     start_playback(&mut recorder, &mut audio);
     assert_eq!(recorder.accepted_voice_count(), 2);
+    assert_eq!(
+        audio.active.keys().copied().collect::<BTreeSet<_>>(),
+        [key(&recorder, 0, 0), key(&recorder, 0, 1)].into()
+    );
 
     recorder.stop_all();
     service(&mut recorder, &mut audio);
@@ -339,6 +356,10 @@ fn refused_stop_or_replay_reports_only_accepted_voices() {
     start_playback(&mut recorder, &mut audio);
     let first = key(&recorder, 0, 0);
     let second = key(&recorder, 0, 1);
+    assert_eq!(
+        audio.active.keys().copied().collect::<BTreeSet<_>>(),
+        [first, second].into()
+    );
     audio.fail_play.insert(second);
     audio.events.clear();
     recorder.bpm_nudge(2.0);
