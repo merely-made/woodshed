@@ -17,6 +17,7 @@
 //! [`timing`] derives exact note/rest schedules from that music, without
 //! depending on an application or an output engine.
 
+pub mod card_shapes;
 pub mod chord;
 pub mod exercise;
 pub mod fretboard;

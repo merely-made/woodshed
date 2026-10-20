@@ -8458,6 +8458,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "woodshed-notation"
+version = "0.1.0"
+dependencies = [
+ "accesskit",
+ "serde_json",
+ "sprigging",
+ "ttf-parser",
+ "woodshedding",
+]
+
+[[package]]
 name = "woodshed-views"
 version = "0.1.0"
 dependencies = [
@@ -8485,6 +8496,7 @@ dependencies = [
  "tinct",
  "ttf-parser",
  "woodshed-core",
+ "woodshed-notation",
  "woodshedding",
  "workbench",
 ]
