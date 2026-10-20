@@ -869,3 +869,6 @@ mod tests {
         assert!(!s.chord_suggestions(0).contains(&h.unwrap()))
     }
 }
+
+/// Explicit authored-notation conversion; never called by a read-only view.
+pub mod draft;

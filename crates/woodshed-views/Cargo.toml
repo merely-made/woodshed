@@ -9,6 +9,7 @@ repository.workspace = true
 description = "Woodshed's Cambium view layer: view fns + CSS sheets for the Genet host (desktop and web). Genet-host plan S0+."
 
 [dependencies]
+woodshed-notation.workspace = true
 curation.workspace = true
 hocket-views.workspace = true
 hocket-recorder.workspace = true
@@ -35,7 +36,7 @@ dramatis = { workspace = true }
 personae = { workspace = true }
 # For the fretboard leaf's accessibility() hook — the same accesskit sprigging's
 # Leaf trait speaks, so the neck can announce itself to assistive tech.
-accesskit = "0.24"
+accesskit = "0.25"
 ttf-parser = "0.25.1"
 serde = { workspace = true }
 serde_json = { workspace = true }

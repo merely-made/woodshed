@@ -68,7 +68,7 @@ use arpeggio::{ArpeggioDirection, ArpeggioRun, generate_shapes};
 use std::cell::RefCell;
 use woodshedding::chord::{ChordFormula, catalog as chord_catalog};
 use woodshedding::exercise::{Exercise, ExerciseParams, catalog as exercise_catalog};
-use woodshedding::fretboard::{ChordVoicing, Fretboard, Position, StringPlay};
+use woodshedding::fretboard::{Fretboard, Position, StringPlay};
 use woodshedding::interval::Interval;
 use woodshedding::pitch::PitchClass;
 use woodshedding::pitch::{Pitch, Spelling};
@@ -80,7 +80,7 @@ use woodshedding::rehearsal::{
     Card, CardId, FretWindow, LoopMode, MarkMode, Material, Recipe, Set, Setting, Timing, Touch,
 };
 use woodshedding::scale::{ScaleFormula, catalog as scale_catalog};
-use woodshedding::tuning::{Instrument, Tuning, TuningSpec, catalog as tuning_catalog};
+use woodshedding::tuning::{Tuning, TuningSpec, catalog as tuning_catalog};
 
 /// The fretboard lens strip (redesign-plan vocabulary).
 #[derive(Clone, Copy, Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize, Default)]

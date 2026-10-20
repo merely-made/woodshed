@@ -4770,3 +4770,73 @@ lowering supplies exact gates/rests/chords and physical contacts, while the nati
 binding supplies Set/session custody and processor-confirmed music revisions.
 No persistent Cards or Card practice-history entries are fabricated for music.
 Existing Card-order rehearsal remains a separate explicit practice path.
+
+
+### ADR: shared notation readings in Graphshell (2026-10-19)
+
+**Status:** Accepted by the maintainer in the integration chat; implementation
+is being reconciled with current published main before provider-first publication. **Decider:** repository maintainer.
+
+**Context.** Graphshell's progression block retains a real Woodshed Set and
+saved arrangement inside its ordinary Djot source buffer. Chart, Tab and Score
+need to read one musical authority across hosts. The earlier renderer lived in
+`woodshed-views`, and Set-to-notation conversion depended on the application's
+Stage selected-shape resolver. Importing that product view or duplicating the
+resolver would give Graphshell an unnecessary application dependency.
+
+**Decision.** `woodshedding` owns the MusicXML document/profile, authored bar
+model, explicit notation conversion, and the existing pure selected-shape
+inventory and fingerprint/profile validation. `woodshed-core` retains its
+Stage/context wrapper and bounded shape cache, delegating the musical operation
+to that same pure resolver. The optional Set-owned `music` document survives
+instruction copying and ordinary session serialization.
+
+`woodshed-notation` owns the existing Sprigging notation leaf and its Bravura
+asset/license. Its supported output is:
+
+- intrinsic size and whole-measure wrapping with aligned staff rows;
+- engraving through portable paint commands and Bravura SMuFL outlines;
+- positions and strings for ordinary host-rendered bar/chord labels;
+- event rectangles indexed by measure/event in the current document reading.
+
+The input is a validated `woodshedding::notation::Score`, Chart/Tab/Score view,
+current attention, available width, and host-resolved ink/accent colors. The
+leaf accepts no persistence, editor, audio, browser, or application authority.
+The two host adapters own controls, accessible event buttons, text, view state,
+selection lifetime, document undo, and save/export. Rectangles are geometry for
+the current source; they do not create durable event identities.
+
+**Product boundary.** Graphshell offers selectable readings, with no note
+editing in this slice. Opening or switching a reading does not generate or
+rewrite music. If no MusicXML exists, the explicit **Write notation** action
+uses the authored meter/placements and concrete Card shapes, with a visible
+whole-number tempo for Cards lacking one. Validation finishes before the
+operation patches only `set.music` in the retained JSON tree. Unknown fields,
+Cards, alignment and the div body remain intact. The write is one ordinary
+Knot document undo step; Save and fresh-page reopen use that document's existing
+compare-and-swap store. Existing, invalid or unsupported MusicXML is retained
+rather than silently replaced. Native Woodshed retains its existing MusicXML editor, gestures and playback;
+its leaf module reexports the shared renderer, including the optional paint-only
+playhead and accessibility description.
+
+**Options considered.** Keeping the renderer inside `woodshed-views` would avoid
+a crate but require a product dependency or a copy in Graphshell. Moving it
+into `woodshedding` would put UI/paint dependencies into the pure operation
+core. A separate backend-neutral engraving framework would add an unproven
+API while both actual hosts already use Sprigging. The selected small renderer
+crate shares the demonstrated use and leaves a deeper extraction until another
+consumer needs it.
+
+**Consequences and limits.** The renderer remains intentionally bounded: one
+fretted instrument/tuning and one sequential voice, supported exact durations,
+complete authored bars, and the existing harmony profile. General MusicXML
+import, arbitrary polyphony, advanced engraving, note editing in Graphshell,
+are separate work for Graphshell. Native score-driven playback remains owned
+by Woodshed. Mere will consume the published immutable provider revision. Woodshed's other Mere
+suppliers retain their current lock; the shared renderer tests and source
+checks do not claim broad native/device qualification.
+
+Validation evidence is owned by
+`mere/ports/graphshell/docs/receipts/notation_readings_20261019/`. That packet
+records actual source hashes, command outcomes and observed browser coverage;
+its limits take precedence over any broader inference from this ADR.
