@@ -161,7 +161,7 @@ passes independently. New work stays published through `fd9fb82`.
 
 ### P9 — MIDI admission and connection ownership (2026-10-19)
 
-Status: scoped CPU qualification complete at `480c0d6`; local for review.
+Status: scoped CPU qualification complete at `480c0d6`; published through `20bcc1c`.
 [Receipt](../validation/midi-admission_20261019/README.md): 42 distinct passes,
 zero ignores, with failed/canceled attempts retained separately. Ordinary host
 frames service pending completion; atomic clock configuration avoids transient
@@ -181,7 +181,7 @@ Reuse the existing backend seam, one refresh helper and one output worker state
 machine; do not add another scheduler or desired-state framework. Qualify with
 CPU fakes through production transitions. Supplier intake, device enumeration,
 native validation and physical MIDI timing remain outside this batch. New work
-stays local for review. The preceding nine B6 commits were integrated and pushed
+stays published through `20bcc1c`. The preceding nine B6 commits were integrated and pushed
 through `fd9fb82`; original qualification source identities remain unchanged.
 
 ## Current findings and next implementation order

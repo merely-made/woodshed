@@ -561,7 +561,7 @@
       "classification": "source replacement implemented; scoped CPU qualification complete",
       "package": "B6",
       "current_observation": "Persona reset retains process-owned MIDI inventory, routing and diagnostics instead of replacing them with empty state.",
-      "qualification": "42 distinct scoped CPU passes at 480c0d6; native/device unassessed",
+      "qualification": "42 distinct scoped CPU passes at 480c0d6, repeated on merged source 20bcc1c and published; native/device unassessed",
       "alias_of": null,
       "detail": "../midi-admission_20261019/receipt.json",
       "original_index_title": "H6 \u2014 P2: Persona reset loses device inventory without the promised refill",
@@ -573,14 +573,16 @@
         "detail": "current/runtime.json"
       },
       "followup_receipt": "../midi-admission_20261019/README.md",
-      "followup_source_revision": "480c0d6d36d65d5252940782313525aa5c91ac3f"
+      "followup_source_revision": "480c0d6d36d65d5252940782313525aa5c91ac3f",
+      "publication_revision": "20bcc1c362407f35bc26dac8b63e30e7befebec9",
+      "publication_receipt": "../midi-admission_20261019/publication.json"
     },
     {
       "id": "host:H7",
       "classification": "source replacement implemented; scoped CPU qualification complete",
       "package": "B6",
       "current_observation": "One MidiUiState name resolver owns index interpretation and rescan reconciliation; missing or invalid selections clear. Host lookup duplication removed.",
-      "qualification": "42 distinct scoped CPU passes at 480c0d6; native/device unassessed",
+      "qualification": "42 distinct scoped CPU passes at 480c0d6, repeated on merged source 20bcc1c and published; native/device unassessed",
       "alias_of": null,
       "detail": "../midi-admission_20261019/receipt.json",
       "original_index_title": "H7 \u2014 P2: MIDI discovery changes reinterpret the user's selected index",
@@ -592,14 +594,16 @@
         "detail": "current/runtime.json"
       },
       "followup_receipt": "../midi-admission_20261019/README.md",
-      "followup_source_revision": "480c0d6d36d65d5252940782313525aa5c91ac3f"
+      "followup_source_revision": "480c0d6d36d65d5252940782313525aa5c91ac3f",
+      "publication_revision": "20bcc1c362407f35bc26dac8b63e30e7befebec9",
+      "publication_receipt": "../midi-admission_20261019/publication.json"
     },
     {
       "id": "host:H8",
       "classification": "source replacement implemented; scoped CPU qualification complete",
       "package": "B6",
       "current_observation": "OutputControl reports worker acknowledgements rather than requested targets; request identity fences stale responses, failed replacement retains accepted connection, channel closure clears acceptance, and ordinary frames project diagnostics.",
-      "qualification": "42 distinct scoped CPU passes at 480c0d6; native/device unassessed",
+      "qualification": "42 distinct scoped CPU passes at 480c0d6, repeated on merged source 20bcc1c and published; native/device unassessed",
       "alias_of": null,
       "detail": "../midi-admission_20261019/receipt.json",
       "original_index_title": "H8 \u2014 P2: Requested MIDI output is reported as accepted despite worker failure",
@@ -611,14 +615,16 @@
         "detail": "current/runtime.json"
       },
       "followup_receipt": "../midi-admission_20261019/README.md",
-      "followup_source_revision": "480c0d6d36d65d5252940782313525aa5c91ac3f"
+      "followup_source_revision": "480c0d6d36d65d5252940782313525aa5c91ac3f",
+      "publication_revision": "20bcc1c362407f35bc26dac8b63e30e7befebec9",
+      "publication_receipt": "../midi-admission_20261019/publication.json"
     },
     {
       "id": "host:H9",
       "classification": "source replacement implemented; scoped CPU qualification complete",
       "package": "B6",
       "current_observation": "One OutputMachine owns connection transport. Candidate open precedes old Stop; replacement starts new connection, failed open leaves old transport untouched. One clock configuration command prevents intermediate transitions.",
-      "qualification": "42 distinct scoped CPU passes at 480c0d6; native/device unassessed",
+      "qualification": "42 distinct scoped CPU passes at 480c0d6, repeated on merged source 20bcc1c and published; native/device unassessed",
       "alias_of": null,
       "detail": "../midi-admission_20261019/receipt.json",
       "original_index_title": "H9 \u2014 P2: MIDI transport state survives replacement of the connection it belongs to",
@@ -630,7 +636,9 @@
         "detail": "current/runtime.json"
       },
       "followup_receipt": "../midi-admission_20261019/README.md",
-      "followup_source_revision": "480c0d6d36d65d5252940782313525aa5c91ac3f"
+      "followup_source_revision": "480c0d6d36d65d5252940782313525aa5c91ac3f",
+      "publication_revision": "20bcc1c362407f35bc26dac8b63e30e7befebec9",
+      "publication_receipt": "../midi-admission_20261019/publication.json"
     },
     {
       "id": "local-overlay:LO-1",
