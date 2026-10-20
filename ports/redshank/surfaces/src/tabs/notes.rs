@@ -419,6 +419,29 @@ mod tests {
     }
 
     #[test]
+    fn selected_clip_export_requires_owner_capability_and_a_shareable_note() {
+        let id = AnnotationId("selected-note".into());
+        for (available, private) in [(false, false), (true, true), (true, false)] {
+            let mut state = notes_state();
+            let mut selected = note(&id.0, 18_000, None);
+            selected.private = private;
+            state.notes = vec![selected];
+            state.note_clip_export_available = available;
+            state.open_menu = Some(crate::MenuTarget::Note(id.clone()));
+            let mut view = runner(state, panel);
+            let html = view.dom().borrow().outer_html(view.root());
+            assert_eq!(html.contains("Export note clip"), available && !private);
+            if available && !private {
+                click(&mut view, "Export note clip at 0:18");
+                assert_eq!(
+                    commands(&mut view),
+                    [CompactCommand::ExportNoteClip(id.clone())]
+                );
+            }
+        }
+    }
+
+    #[test]
     fn the_header_reads_the_selected_item_facts() {
         let markup = markup(notes_state(), panel);
         assert!(markup.contains("IN OUR TIME · OFFLINE · COMPLETED SEP 12"));

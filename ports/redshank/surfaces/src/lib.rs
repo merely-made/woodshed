@@ -375,6 +375,8 @@ pub enum CompactCommand {
     SelectListenPane(ListenPane),
     /// Serialize the current item's annotations as W3C Web Annotation JSON.
     ExportAnnotations,
+    /// One explicit, shareable note and its own body; not its recording.
+    ExportNoteClip(AnnotationId),
     UpdateSettings(ListenerSettings),
 }
 
@@ -605,6 +607,8 @@ pub enum Mode {
 
 #[derive(Clone, Debug, Eq, PartialEq, Default)]
 pub struct RedshankSurfaceState {
+    /// The embedding owner supplies a selected-note package writer.
+    pub note_clip_export_available: bool,
     pub transcript: Option<(
         ItemId,
         redshank_model::SavedTranscript,
