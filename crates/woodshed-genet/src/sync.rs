@@ -8,7 +8,6 @@
 use cambium_genet_winit_host::AppCtx;
 use woodshed_core::audio::{AudioBackend, AudioRequest, CalibrationStatus};
 use woodshed_core::loop_plan::{LoopPlan, LooperSource};
-use woodshed_core::midi::MidiBackend as _;
 use woodshed_core::song::SongDoc;
 use woodshed_views::stage::{UiChild, UiState};
 
@@ -752,7 +751,7 @@ mod tests {
         assert_eq!(
             taproot::matching_classes(
                 &dom,
-                &Selector::role("status").containing("output refused by fake connector")
+                &Selector::class("settings-line").with_attr("role", "status").containing("output refused by fake connector")
             )
             .len(),
             1
