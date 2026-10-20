@@ -4774,8 +4774,10 @@ Existing Card-order rehearsal remains a separate explicit practice path.
 
 ### ADR: shared notation readings in Graphshell (2026-10-19)
 
-**Status:** Accepted by the maintainer in the integration chat; implementation
-is being reconciled with current published main before provider-first publication. **Decider:** repository maintainer.
+**Status:** Accepted by the maintainer in the integration chat. The shared
+provider is published at `111da595ec5720d04f0dccd7fb775b81fa634874`; current Mere
+reconciliation and the optional accessibility adapter refinement are local.
+**Decider:** repository maintainer.
 
 **Context.** Graphshell's progression block retains a real Woodshed Set and
 saved arrangement inside its ordinary Djot source buffer. Chart, Tab and Score
@@ -4836,7 +4838,29 @@ by Woodshed. Mere will consume the published immutable provider revision. Woodsh
 suppliers retain their current lock; the shared renderer tests and source
 checks do not claim broad native/device qualification.
 
+Current-host reconciliation on 2026-10-20 makes the renderer's fallback
+`accessibility` adapter optional and default-on. Woodshed keeps its existing
+fallback label and playback description. Graphshell supplies its own notation
+label and focusable event controls, so it disables that adapter while sharing
+the same paint/layout/labels/rectangles. This avoids coupling Graphshell's
+AccessKit 0.25 host to the native provider's direct 0.24 adapter. It does not
+introduce a second engraver, a renderer-specific editor, or a generic music
+framework in Mere. The provider refinement needs publication before a clean
+standalone Mere clone can consume it through an immutable Git pin.
+
 Validation evidence is owned by
 `mere/ports/graphshell/docs/receipts/notation_readings_20261019/`. That packet
 records actual source hashes, command outcomes and observed browser coverage;
 its limits take precedence over any broader inference from this ADR.
+
+The current AccessKit 0.25 Graphshell reconciliation is recorded separately at
+`mere/ports/graphshell/docs/receipts/notation_readings_20261020/`. Its two renderer
+configurations and browser checks qualify local source integration; publication
+of the optional adapter refinement remains separate.
+
+The maintainer confirmed the full whole-number 1–400 BPM range for explicit
+Set-to-MusicXML drafting on 2026-10-20. The shared converter now admits both
+fallback and saved Card tempos in that range, matching the score model;
+fractional, non-finite and out-of-range values still fail. Practice speed keeps
+its separate control. The Graphshell command follows the same range. Follow-up
+evidence is in `mere/ports/graphshell/docs/receipts/notation_tempo_20261020/`.

@@ -1,8 +1,13 @@
-//! A deliberately bounded native chart, tablature and treble-staff renderer.
+//! Bounded chart, tablature and staff notation for Sprigging hosts.
 //!
 //! Musical outlines are Bravura (SMuFL), not approximated clefs or Unicode
 //! fallback text. Ordinary labels are exposed for the host's DOM text overlay.
 //! Geometry is authored once and shared with the host's event controls.
+//!
+//! The default `accessibility` feature supplies fallback leaf labels and a
+//! playback description for native consumers. Hosts that supply accessible
+//! event controls and their own leaf label can disable default features; the
+//! same paint, layout, labels and event rectangles remain available.
 pub use sprigging::ColorF;
 use sprigging::{Leaf, PaintCx, Path, Size, SizeHint};
 use woodshedding::notation::{NoteValue, Score};
@@ -605,6 +610,7 @@ impl Leaf for NotationLeaf {
         }
         self.dirty = false;
     }
+    #[cfg(feature = "accessibility")]
     fn accessibility(&mut self, node: &mut accesskit::Node) {
         node.set_role(accesskit::Role::GraphicsObject);
         if let Some((bar, event)) = self.playhead {
@@ -871,22 +877,29 @@ mod tests {
                     serde_json::to_value(&commands[3..]).unwrap(),
                     serde_json::to_value(&baseline).unwrap()
                 );
+                #[cfg(feature = "accessibility")]
                 let mut node = accesskit::Node::new(accesskit::Role::GenericContainer);
-                node.set_label("Authored score label");
-                playing.accessibility(&mut node);
-                assert_eq!(node.label(), Some("Authored score label"));
-                assert_eq!(
-                    node.state_description(),
-                    Some(if rest {
-                        "Playback: bar 2, event 1, rest"
-                    } else {
-                        "Playback: bar 2, event 1, sounding notes"
-                    })
-                );
+                #[cfg(feature = "accessibility")]
+                {
+                    node.set_label("Authored score label");
+                    playing.accessibility(&mut node);
+                    assert_eq!(node.label(), Some("Authored score label"));
+                    assert_eq!(
+                        node.state_description(),
+                        Some(if rest {
+                            "Playback: bar 2, event 1, rest"
+                        } else {
+                            "Playback: bar 2, event 1, sounding notes"
+                        })
+                    );
+                }
                 let mut stopped = playing.with_playhead(None);
                 assert!(stopped.paint_dirty());
-                stopped.accessibility(&mut node);
-                assert!(node.state_description().is_none());
+                #[cfg(feature = "accessibility")]
+                {
+                    stopped.accessibility(&mut node);
+                    assert!(node.state_description().is_none());
+                }
                 let mut cleared = Vec::new();
                 stopped.paint(&mut PaintCx::new(&mut cleared, size));
                 assert_eq!(
