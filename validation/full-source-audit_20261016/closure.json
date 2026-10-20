@@ -173,7 +173,7 @@
     "validation/full-source-audit_20261016/verify_coverage.py": "2814ed0bebba4b97f1cc1b023295d8bdf8aace874b3431a7738fd17333930add",
     "validation/full-source-audit_20261016/test_verify_coverage.py": "9b464695e4db29708029e84ac54cda87081ae94f002b2274fbb211503c5eac3a",
     "design_docs/2026-10-16_source_authority_audit_plan.md": "d788b3933ab35bced2a5f070ceb6c334376a5a542c5a2a2e252426485fc913f2",
-    "design_docs/DOC_README.md": "c98599de007e446bdeb3749296302771d08660f209ef16eabdebab94e64bc902"
+    "design_docs/DOC_README.md": "8dd6a915145b9f6a1f6ffd0f77a58e7748f664515c790268b0d7b105a3c591e0"
   },
   "publication_record": "publication.json",
   "implementation_followup": "../admission-evidence_20261017/receipt.json",
