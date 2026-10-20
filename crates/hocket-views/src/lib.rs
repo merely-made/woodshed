@@ -99,3 +99,6 @@ pub fn transport<S: 'static>(
 
 #[cfg(test)]
 mod projection_tests;
+
+#[cfg(test)]
+mod recorder_adapter_tests;

@@ -140,6 +140,7 @@ pub fn recorder_projection(state: &Recorder) -> RecorderProjection<'_, HocketKey
     }
     let context = HocketKey::Transport(state.session.id);
     let mut transport = TransportProjection::new(context);
+    transport.status = state.audio_status_label().into();
     transport.playing = state.accepted_voice_count() > 0;
     transport.recording = recording;
     transport.record = Some(CommandControl {
