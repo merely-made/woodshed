@@ -12,6 +12,10 @@
 //! future web frontend, future CLI) depend on this crate for the canonical
 //! model of pitches, intervals, tunings, scales, chords, progressions,
 //! exercises, fretboard mappings, voicings, and practice sets.
+//!
+//! [`notation`] reads and writes the editable fretted MusicXML profile.
+//! [`timing`] derives exact note/rest schedules from that music, without
+//! depending on an application or an output engine.
 
 pub mod chord;
 pub mod exercise;
@@ -25,4 +29,5 @@ pub mod progression;
 pub mod rehearsal;
 pub mod scale;
 pub mod scale_pattern;
+pub mod timing;
 pub mod tuning;

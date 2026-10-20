@@ -1,0 +1,358 @@
+warning: skipping duplicate package `cambium v0.3.3 (https://github.com/merely-made/mere.git?branch=main#77d82002)`:
+  /Users/markik/Code/worktrees/mere-vello-release-adoption/crates/cambium/cambium/Cargo.toml
+in favor of /Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/77d8200/crates/cambium/cambium/Cargo.toml
+
+warning: skipping duplicate package `sprigging v0.2.1 (https://github.com/merely-made/mere.git?branch=main#77d82002)`:
+  /Users/markik/Code/worktrees/mere-vello-release-adoption/crates/cambium/sprigging/Cargo.toml
+in favor of /Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/77d8200/crates/cambium/sprigging/Cargo.toml
+
+warning: skipping duplicate package `mere-surface-api v0.1.0 (https://github.com/merely-made/mere.git?branch=main#77d82002)`:
+  /Users/markik/Code/worktrees/mere-vello-release-adoption/crates/system/surface-api/Cargo.toml
+in favor of /Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/77d8200/crates/system/surface-api/Cargo.toml
+
+warning: skipping duplicate package `workbench v0.1.0 (https://github.com/merely-made/mere.git?branch=main#77d82002)`:
+  /Users/markik/Code/worktrees/mere-vello-release-adoption/crates/cambium/workbench/Cargo.toml
+in favor of /Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/77d8200/crates/cambium/workbench/Cargo.toml
+
+warning: skipping duplicate package `meristem v0.2.0 (https://github.com/merely-made/mere.git?branch=main#77d82002)`:
+  /Users/markik/Code/worktrees/mere-vello-release-adoption/crates/cambium/meristem/Cargo.toml
+in favor of /Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/77d8200/crates/cambium/meristem/Cargo.toml
+
+warning: skipping duplicate package `cambium-winit v0.3.0 (https://github.com/merely-made/mere.git?branch=main#77d82002)`:
+  /Users/markik/Code/worktrees/mere-vello-release-adoption/crates/cambium/cambium-winit/Cargo.toml
+in favor of /Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/77d8200/crates/cambium/cambium-winit/Cargo.toml
+
+warning: skipping duplicate package `mere-apparatus v0.0.1 (https://github.com/merely-made/mere.git?branch=main#77d82002)`:
+  /Users/markik/Code/worktrees/mere-vello-release-adoption/crates/domain/apparatus/Cargo.toml
+in favor of /Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/77d8200/crates/domain/apparatus/Cargo.toml
+
+warning: skipping duplicate package `mere-kernel v0.0.2 (https://github.com/merely-made/mere.git?branch=main#77d82002)`:
+  /Users/markik/Code/worktrees/mere-vello-release-adoption/crates/graph/graph-kernel/Cargo.toml
+in favor of /Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/77d8200/crates/graph/graph-kernel/Cargo.toml
+
+warning: skipping duplicate package `numen v0.2.0 (https://github.com/merely-made/mere.git?branch=main#77d82002)`:
+  /Users/markik/Code/worktrees/mere-vello-release-adoption/crates/conatus/numen/Cargo.toml
+in favor of /Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/77d8200/crates/conatus/numen/Cargo.toml
+
+warning: skipping duplicate package `document-canvas v0.1.0 (https://github.com/merely-made/mere.git?branch=main#77d82002)`:
+  /Users/markik/Code/worktrees/mere-vello-release-adoption/crates/inker/document-canvas/Cargo.toml
+in favor of /Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/77d8200/crates/inker/document-canvas/Cargo.toml
+
+warning: skipping duplicate package `inker v0.1.1 (https://github.com/merely-made/mere.git?branch=main#77d82002)`:
+  /Users/markik/Code/worktrees/mere-vello-release-adoption/crates/inker/inker/Cargo.toml
+in favor of /Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/77d8200/crates/inker/inker/Cargo.toml
+
+warning: skipping duplicate package `mere-document-lanes v0.1.0 (https://github.com/merely-made/mere.git?branch=main#77d82002)`:
+  /Users/markik/Code/worktrees/mere-vello-release-adoption/crates/system/document-lanes/Cargo.toml
+in favor of /Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/77d8200/crates/system/document-lanes/Cargo.toml
+
+warning: skipping duplicate package `pandect v0.1.1 (https://github.com/merely-made/mere.git?branch=main#77d82002)`:
+  /Users/markik/Code/worktrees/mere-vello-release-adoption/crates/system/pandect/Cargo.toml
+in favor of /Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/77d8200/crates/system/pandect/Cargo.toml
+
+warning: skipping duplicate package `illume v0.0.2 (https://github.com/merely-made/mere.git?branch=main#77d82002)`:
+  /Users/markik/Code/worktrees/mere-vello-release-adoption/crates/nematic/illume/Cargo.toml
+in favor of /Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/77d8200/crates/nematic/illume/Cargo.toml
+
+warning: skipping duplicate package `mere-alembic v0.0.1 (https://github.com/merely-made/mere.git?branch=main#77d82002)`:
+  /Users/markik/Code/worktrees/mere-vello-release-adoption/crates/distillery/alembic/Cargo.toml
+in favor of /Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/77d8200/crates/distillery/alembic/Cargo.toml
+
+warning: skipping duplicate package `incipit v0.2.0 (https://github.com/merely-made/mere.git?branch=main#77d82002)`:
+  /Users/markik/Code/worktrees/mere-vello-release-adoption/crates/incipit/Cargo.toml
+in favor of /Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/77d8200/crates/incipit/Cargo.toml
+
+warning: patch `commons-spine v0.0.1 (https://github.com/merely-made/gemot.git?rev=6a5023a9ca478ebcc342dd9b7c9e418ccacfc6b5#6a5023a9)` was not used in the crate graph
+warning: patch `dict-protocol v0.1.0 (https://github.com/merely-made/errand.git?rev=dce1f08546b8475e42a5a01ca1ea18794c6e9b97#dce1f085)` was not used in the crate graph
+warning: patch `errand v0.4.0 (https://github.com/merely-made/errand.git?rev=dce1f08546b8475e42a5a01ca1ea18794c6e9b97#dce1f085)` was not used in the crate graph
+warning: patch `finger-protocol v0.1.1 (https://github.com/merely-made/errand.git?rev=dce1f08546b8475e42a5a01ca1ea18794c6e9b97#dce1f085)` was not used in the crate graph
+warning: patch `fsp-protocol v0.1.0 (https://github.com/merely-made/errand.git?rev=dce1f08546b8475e42a5a01ca1ea18794c6e9b97#dce1f085)` was not used in the crate graph
+warning: patch `gemini-protocol v0.1.7 (https://github.com/merely-made/errand.git?rev=dce1f08546b8475e42a5a01ca1ea18794c6e9b97#dce1f085)` was not used in the crate graph
+warning: patch `gemot v0.1.1 (https://github.com/merely-made/gemot.git?rev=6a5023a9ca478ebcc342dd9b7c9e418ccacfc6b5#6a5023a9)` was not used in the crate graph
+warning: patch `gopher-protocol v0.2.0 (https://github.com/merely-made/errand.git?rev=dce1f08546b8475e42a5a01ca1ea18794c6e9b97#dce1f085)` was not used in the crate graph
+warning: patch `guppy-protocol v0.1.1 (https://github.com/merely-made/errand.git?rev=dce1f08546b8475e42a5a01ca1ea18794c6e9b97#dce1f085)` was not used in the crate graph
+warning: patch `hagiograph v0.0.1 (https://github.com/merely-made/eidetic.git?rev=de6b1dce75dd6725d72c79b829e4878c7903a381#de6b1dce)` was not used in the crate graph
+warning: patch `kepler-protocol v0.1.0 (https://github.com/merely-made/errand.git?rev=dce1f08546b8475e42a5a01ca1ea18794c6e9b97#dce1f085)` was not used in the crate graph
+warning: patch `luggage v0.1.0 (https://github.com/merely-made/eidetic.git?rev=de6b1dce75dd6725d72c79b829e4878c7903a381#de6b1dce)` was not used in the crate graph
+warning: patch `mere-proofs v0.1.0 (https://github.com/merely-made/eidetic.git?rev=de6b1dce75dd6725d72c79b829e4878c7903a381#de6b1dce)` was not used in the crate graph
+warning: patch `mien v0.0.1 (https://github.com/merely-made/gemot.git?rev=6a5023a9ca478ebcc342dd9b7c9e418ccacfc6b5#6a5023a9)` was not used in the crate graph
+warning: patch `misfin v0.0.4 (https://github.com/merely-made/errand.git?rev=dce1f08546b8475e42a5a01ca1ea18794c6e9b97#dce1f085)` was not used in the crate graph
+warning: patch `moothold v0.1.0 (https://github.com/merely-made/gemot.git?rev=6a5023a9ca478ebcc342dd9b7c9e418ccacfc6b5#6a5023a9)` was not used in the crate graph
+warning: patch `mooting v0.1.0 (https://github.com/merely-made/gemot.git?rev=6a5023a9ca478ebcc342dd9b7c9e418ccacfc6b5#6a5023a9)` was not used in the crate graph
+warning: patch `nex-protocol v0.1.1 (https://github.com/merely-made/errand.git?rev=dce1f08546b8475e42a5a01ca1ea18794c6e9b97#dce1f085)` was not used in the crate graph
+warning: patch `scorpion-protocol v0.1.0 (https://github.com/merely-made/errand.git?rev=dce1f08546b8475e42a5a01ca1ea18794c6e9b97#dce1f085)` was not used in the crate graph
+warning: patch `scroll-protocol v0.1.0 (https://github.com/merely-made/errand.git?rev=dce1f08546b8475e42a5a01ca1ea18794c6e9b97#dce1f085)` was not used in the crate graph
+warning: patch `servitor v0.0.2 (https://github.com/merely-made/eidetic.git?rev=de6b1dce75dd6725d72c79b829e4878c7903a381#de6b1dce)` was not used in the crate graph
+warning: patch `spartan-protocol v0.1.1 (https://github.com/merely-made/errand.git?rev=dce1f08546b8475e42a5a01ca1ea18794c6e9b97#dce1f085)` was not used in the crate graph
+warning: patch `stickleback v0.1.1 (https://github.com/merely-made/eidetic.git?rev=de6b1dce75dd6725d72c79b829e4878c7903a381#de6b1dce)` was not used in the crate graph
+warning: patch `text-protocol v0.1.0 (https://github.com/merely-made/errand.git?rev=dce1f08546b8475e42a5a01ca1ea18794c6e9b97#dce1f085)` was not used in the crate graph
+warning: patch `commons-spine v0.0.1 (https://github.com/merely-made/gemot.git?rev=6a5023a9ca478ebcc342dd9b7c9e418ccacfc6b5#6a5023a9)` was not used in the crate graph
+warning: patch `errand v0.4.0 (https://github.com/merely-made/errand.git?rev=dce1f08546b8475e42a5a01ca1ea18794c6e9b97#dce1f085)` was not used in the crate graph
+warning: patch `gemot v0.1.1 (https://github.com/merely-made/gemot.git?rev=6a5023a9ca478ebcc342dd9b7c9e418ccacfc6b5#6a5023a9)` was not used in the crate graph
+warning: patch `hagiograph v0.0.1 (https://github.com/merely-made/eidetic.git?rev=de6b1dce75dd6725d72c79b829e4878c7903a381#de6b1dce)` was not used in the crate graph
+warning: patch `luggage v0.1.0 (https://github.com/merely-made/eidetic.git?rev=de6b1dce75dd6725d72c79b829e4878c7903a381#de6b1dce)` was not used in the crate graph
+warning: patch `mere-proofs v0.1.0 (https://github.com/merely-made/eidetic.git?rev=de6b1dce75dd6725d72c79b829e4878c7903a381#de6b1dce)` was not used in the crate graph
+warning: patch `mere-transport v0.0.2 (https://github.com/merely-made/murm.git?branch=main#cba46d85)` was not used in the crate graph
+warning: patch `mere-webrtc-carrier v0.0.1 (https://github.com/merely-made/murm.git?branch=main#cba46d85)` was not used in the crate graph
+warning: patch `mien v0.0.1 (https://github.com/merely-made/gemot.git?rev=6a5023a9ca478ebcc342dd9b7c9e418ccacfc6b5#6a5023a9)` was not used in the crate graph
+warning: patch `moothold v0.1.0 (https://github.com/merely-made/gemot.git?rev=6a5023a9ca478ebcc342dd9b7c9e418ccacfc6b5#6a5023a9)` was not used in the crate graph
+warning: patch `mooting v0.1.0 (https://github.com/merely-made/gemot.git?rev=6a5023a9ca478ebcc342dd9b7c9e418ccacfc6b5#6a5023a9)` was not used in the crate graph
+warning: patch `servitor v0.0.2 (https://github.com/merely-made/eidetic.git?rev=de6b1dce75dd6725d72c79b829e4878c7903a381#de6b1dce)` was not used in the crate graph
+warning: patch `stickleback v0.1.1 (https://github.com/merely-made/eidetic.git?rev=de6b1dce75dd6725d72c79b829e4878c7903a381#de6b1dce)` was not used in the crate graph
+warning: patch `commons-spine v0.0.1 (https://github.com/merely-made/gemot.git?rev=6a5023a9ca478ebcc342dd9b7c9e418ccacfc6b5#6a5023a9)` was not used in the crate graph
+warning: patch `errand v0.4.0 (https://github.com/merely-made/errand.git?rev=dce1f08546b8475e42a5a01ca1ea18794c6e9b97#dce1f085)` was not used in the crate graph
+warning: patch `gemot v0.1.1 (https://github.com/merely-made/gemot.git?rev=6a5023a9ca478ebcc342dd9b7c9e418ccacfc6b5#6a5023a9)` was not used in the crate graph
+warning: patch `hagiograph v0.0.1 (https://github.com/merely-made/eidetic.git?rev=de6b1dce75dd6725d72c79b829e4878c7903a381#de6b1dce)` was not used in the crate graph
+warning: patch `luggage v0.1.0 (https://github.com/merely-made/eidetic.git?rev=de6b1dce75dd6725d72c79b829e4878c7903a381#de6b1dce)` was not used in the crate graph
+warning: patch `mere-proofs v0.1.0 (https://github.com/merely-made/eidetic.git?rev=de6b1dce75dd6725d72c79b829e4878c7903a381#de6b1dce)` was not used in the crate graph
+warning: patch `mien v0.0.1 (https://github.com/merely-made/gemot.git?rev=6a5023a9ca478ebcc342dd9b7c9e418ccacfc6b5#6a5023a9)` was not used in the crate graph
+warning: patch `moothold v0.1.0 (https://github.com/merely-made/gemot.git?rev=6a5023a9ca478ebcc342dd9b7c9e418ccacfc6b5#6a5023a9)` was not used in the crate graph
+warning: patch `mooting v0.1.0 (https://github.com/merely-made/gemot.git?rev=6a5023a9ca478ebcc342dd9b7c9e418ccacfc6b5#6a5023a9)` was not used in the crate graph
+warning: patch `servitor v0.0.2 (https://github.com/merely-made/eidetic.git?rev=de6b1dce75dd6725d72c79b829e4878c7903a381#de6b1dce)` was not used in the crate graph
+warning: patch `stickleback v0.1.1 (https://github.com/merely-made/eidetic.git?rev=de6b1dce75dd6725d72c79b829e4878c7903a381#de6b1dce)` was not used in the crate graph
+help: Check that the patched package version and available features are compatible
+      with the dependency requirements. If the patch has a different version from
+      what is locked in the Cargo.lock file, run `cargo update` to use the new
+      version. This may also occur with an optional dependency that is not enabled.
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+   Compiling proc-macro2 v1.0.107
+   Compiling quote v1.0.47
+   Compiling unicode-ident v1.0.26
+   Compiling serde_core v1.0.229
+   Compiling memchr v2.8.3
+   Compiling serde v1.0.229
+   Compiling zmij v1.0.23
+   Compiling serde_json v1.0.151
+   Compiling itoa v1.0.18
+   Compiling roxmltree v0.21.1
+   Compiling syn v3.0.6
+   Compiling serde_derive v1.0.229
+   Compiling woodshedding v0.1.0 (/Users/markik/Code/worktrees/woodshed-arrangement-playback/crates/woodshedding)
+    Finished `test` profile [unoptimized] target(s) in 45.58s
+     Running unittests src/lib.rs (target/build/debug/deps/woodshedding-f09d0f22c4cb836c)
+
+running 208 tests
+test chord::tests::c7sharp9_uses_d_sharp_not_e_flat ... ok
+test chord::tests::c_major_triad_is_c_e_g ... ok
+test chord::tests::c7_is_c_e_g_bb ... ok
+test chord::tests::all_catalog_chords_apply_cleanly_to_c ... ok
+test chord::tests::catalog_in_category_filters_correctly ... ok
+test chord::tests::caug_is_c_e_g_sharp ... ok
+test chord::tests::cdim7_uses_double_flat_for_seventh ... ok
+test chord::tests::c_minor_triad_is_c_eb_g ... ok
+test chord::tests::cmaj13_has_seven_notes ... ok
+test chord::tests::cm7b5_is_c_eb_gb_bb ... ok
+test chord::tests::cmaj7_is_c_e_g_b ... ok
+test chord::tests::csus4_is_c_f_g ... ok
+test chord::tests::d_major_triad_includes_f_sharp ... ok
+test chord::tests::quartal_triad_is_c_f_bb ... ok
+test chord::tests::quintal_triad_is_c_g_d ... ok
+test chord::tests::round_trip_recognize_dominant_7 ... ok
+test chord::tests::round_trip_recognize_half_diminished ... ok
+test chord::tests::round_trip_recognize_major_triad ... ok
+test exercise::tests::all_exercises_generate_at_least_one_step ... ok
+test exercise::tests::catalog_in_category_filters ... ok
+test exercise::tests::chromatic_ascending_only_produces_24_notes_on_six_strings ... ok
+test exercise::tests::chromatic_both_directions_produces_48_notes ... ok
+test exercise::tests::chromatic_starts_at_specified_fret ... ok
+test exercise::tests::exercises_work_with_arbitrary_string_counts ... ok
+test exercise::tests::ladder_produces_diagonal_pattern ... ok
+test exercise::tests::pentatonic_box_shift_produces_two_boxes ... ok
+test exercise::tests::spider_1324_uses_finger_order_1_3_2_4 ... ok
+test exercise::tests::trill_alternates_two_frets ... ok
+test exercise::tests::two_string_climb_uses_only_two_strings ... ok
+test exercise::tests::x_pattern_alternates_outer_strings ... ok
+test fretboard::tests::b_flat_major_scale_positions_use_flat_spelling ... ok
+test fretboard::tests::bounded_search_marks_a_result_limited_prefix_incomplete ... ok
+test fretboard::tests::c_major_chord_positions_only_contain_chord_tones ... ok
+test fretboard::tests::any_chord_tone_bass_finds_inversions ... ok
+test fretboard::tests::c_major_scale_positions_cover_every_string ... ok
+test fretboard::tests::c_major_scale_positions_only_use_pitch_classes_in_scale ... ok
+test fretboard::tests::d_major_scale_positions_use_sharp_spelling ... ok
+test fretboard::tests::fretboard_works_with_alternative_tunings ... ok
+test fretboard::tests::pitch_at_fret_5_string_6_is_a2 ... ok
+test fretboard::tests::pitch_at_open_strings_matches_tuning ... ok
+test fretboard::tests::pitch_at_uses_sharps_by_default ... ok
+test fretboard::tests::root_bass_uses_sounding_order_for_reentrant_tunings ... ok
+test fretboard::tests::first_position_e_major_voicing_is_found ... ok
+test fretboard::tests::root_constraint_default_excludes_inversions ... ok
+test fretboard::tests::ukulele_c_major_positions_exist ... ok
+test fretboard::tests::slash_chord_with_chord_tone_bass_works ... ok
+test fretboard::tests::voicings_contain_all_chord_tones ... ok
+test fretboard::tests::voicing_count_is_finite_and_reasonable ... ok
+test interval::tests::compound_intervals_extend_correctly ... ok
+test interval::tests::perfect_eligibility_repeats_at_octave ... ok
+test interval::tests::try_new_rejects_perfect_for_imperfect_degree ... ok
+test interval::tests::major_minor_intervals_have_correct_semitones ... ok
+test interval::tests::perfect_intervals_have_correct_semitones ... ok
+test interval::tests::augmented_and_diminished_match_enharmonic_neighbors ... ok
+test interval::tests::try_new_rejects_invalid_quality_for_perfect_degree ... ok
+test interval::tests::try_new_rejects_zero_number ... ok
+test interval::tests::try_new_accepts_valid_combinations ... ok
+test fretboard::tests::voicings_satisfy_root_in_bass ... ok
+test fretboard::tests::voicings_respect_fret_span ... ok
+test notation::tests::harmony_stays_written ... ok
+test notation::tests::rejects_invalid_model ... ok
+test pitch::tests::b_sharp_3_equals_c_4_enharmonic ... ok
+test notation::tests::triplet_brackets_and_incomplete_groups ... ok
+test pitch::tests::c_flat_4_equals_b_3_enharmonic ... ok
+test pitch::tests::concert_a_is_midi_69_and_440_hz ... ok
+test pitch::tests::display_format ... ok
+test pitch::tests::enharmonic_spellings_have_same_midi ... ok
+test pitch::tests::frequency_octave_doubles ... ok
+test notation::tests::changed_tab_refused ... ok
+test pitch::tests::from_midi_sharps_uses_sharps_for_black_keys ... ok
+test pitch::tests::from_midi_flats_uses_flats_for_black_keys ... ok
+test pitch::tests::low_e_guitar_is_midi_40 ... ok
+test pitch::tests::middle_c_is_midi_60 ... ok
+test pitch::tests::note_name_index_round_trip ... ok
+test pitch::tests::from_midi_round_trips_for_full_range ... ok
+test pitch::tests::pitch_class_ignores_octave_and_spelling ... ok
+test pitch::tests::standard_midi_range ... ok
+test pitch::tests::transpose_b_flat_up_minor_third_is_d_flat ... ok
+test pitch::tests::transpose_b_up_minor_second_is_c ... ok
+test pitch::tests::transpose_c_up_diminished_fourth_is_f_flat ... ok
+test pitch::tests::transpose_c_up_major_third_is_e ... ok
+test pitch::tests::transpose_c_up_perfect_octave_is_c_next_octave ... ok
+test pitch::tests::transpose_d_up_major_third_is_f_sharp ... ok
+test pitch::tests::transpose_down_c_perfect_octave_crosses_octave_boundary ... ok
+test pitch::tests::transpose_down_e_minor_third_is_c_sharp ... ok
+test pitch::tests::transpose_f_sharp_up_major_third_is_a_sharp ... ok
+test pitch::tests::transpose_preserves_midi_in_addition_to_spelling ... ok
+test pitch_class_set::tests::c_major_to_f_sharp_minor_has_exact_circular_cost_five ... ok
+test pitch_class_set::tests::disjoint_and_empty_material_do_not_lose_differences ... ok
+test pitch_class_set::tests::minimum_motion_holds_common_tones_and_handles_known_triads ... ok
+test pitch_class_set::tests::minimum_motion_rejects_unequal_or_empty_sets ... ok
+test pitch_class_set::tests::minimum_motion_is_bijective_deterministic_and_symmetric_in_cost ... ok
+test notation::tests::extreme_midi_tunings_round_trip ... ok
+test notation::tests::alternate_tuning_and_rests ... ok
+test pitch_class_set::tests::subset_assignment_beats_a_nearest_available_greedy_choice ... ok
+test pitch_class_set::tests::unequal_cardinality_and_reversal_preserve_every_tone ... ok
+test practice::tests::caged_chord_set_has_five_items ... ok
+test notation::tests::unknown_source_refused ... ok
+test practice::tests::catalog_is_nonempty ... ok
+test practice::tests::chromatic_scales_set_has_12_items ... ok
+test practice::tests::circle_of_fifths_has_12_items_and_starts_with_c ... ok
+test practice::tests::diatonic_modes_has_seven_items ... ok
+test practice::tests::exercise_positions_produces_one_item_per_fret ... ok
+test practice::tests::item_labels_are_human_readable ... ok
+test progression::tests::andalusian_uses_flat_alterations ... ok
+test progression::tests::catalog_in_category_filters ... ok
+test progression::tests::i_iv_v_in_c_produces_c_f_g ... ok
+test progression::tests::i_iv_v_in_d_produces_d_g_a ... ok
+test progression::tests::ii_v_i_dm7_pitches_are_d_f_a_c ... ok
+test progression::tests::ii_v_i_in_c_produces_dm7_g7_cmaj7 ... ok
+test progression::tests::out_of_range_degree_returns_error ... ok
+test progression::tests::pop_i_v_vi_iv_in_g_produces_g_d_em_c ... ok
+test fretboard::tests::slash_chord_bass_uses_none_interval_for_non_chord_tone ... ok
+test progression::tests::role_quality_chord_formula_lookup_works_for_every_variant ... ok
+test progression::tests::twelve_bar_blues_has_twelve_chords ... ok
+test rehearsal::arrangement::bars::tests::malformed_order_and_zero_extent_return_errors_without_panicking ... ok
+test rehearsal::arrangement::bars::tests::meter_changes_at_bar_boundary_and_partial_final_bar_is_explicit ... ok
+test rehearsal::arrangement::bars::tests::absent_meter_keeps_legacy_arrangements_without_bars ... ok
+test rehearsal::arrangement::bars::tests::regroup_replaces_whole_groups_and_refuses_partial_overlap ... ok
+test rehearsal::arrangement::bars::tests::rejects_invalid_meters_and_overlapping_groups ... ok
+test fretboard::tests::slash_chord_with_non_chord_tone_bass_works ... ok
+test rehearsal::tests::a_legacy_set_gains_ids_at_load_without_colliding ... ok
+test rehearsal::tests::a_round_trip_preserves_occurrence_identity_and_the_selected_card ... ok
+test rehearsal::tests::duplicating_mints_a_new_occurrence_and_editing_keeps_one ... ok
+test rehearsal::tests::chromatic_approach_partners_are_bounded_and_legacy_chord_wire_is_unchanged ... ok
+test rehearsal::tests::card_identity_admission_migrates_only_zeros_and_keeps_mint_and_cursor ... ok
+test rehearsal::tests::card_identity_admission_rejects_duplicates_without_mutation_or_copy ... ok
+test rehearsal::tests::exhausted_arrangement_reference_mint_refuses_copy_atomically ... ok
+test rehearsal::tests::admitted_near_exhaustion_sets_never_wrap_on_push_duplicate_or_copy ... ok
+test rehearsal::tests::hiding_a_relation_family_changes_only_the_view ... ok
+test rehearsal::tests::exhausted_legacy_card_migration_is_an_error_without_mutation ... ok
+test rehearsal::tests::removal_drops_only_incident_edges_and_never_reuses_the_id ... ok
+test rehearsal::tests::set_graph_numbers_occurrences_and_exposes_sequence_edges ... ok
+test rehearsal::tests::reorder_changes_numbering_without_changing_identity ... ok
+test rehearsal::tests::exhausted_card_mints_are_refused_even_without_legacy_cards ... ok
+test scale::tests::all_catalog_scales_apply_cleanly_to_c ... ok
+test scale::tests::altered_scale_pitches_match_jazz_convention ... ok
+test scale::tests::b_flat_major_produces_correct_flats ... ok
+test scale::tests::c_major_produces_c_d_e_f_g_a_b ... ok
+test scale::tests::c_minor_produces_c_d_eb_f_g_ab_bb ... ok
+test scale::tests::catalog_in_category_filters_correctly ... ok
+test scale::tests::chromatic_has_twelve_pitches ... ok
+test scale::tests::d_major_produces_correct_sharps ... ok
+test scale::tests::diminished_scales_have_eight_pitches ... ok
+test scale::tests::lydian_has_sharp_four ... ok
+test scale::tests::pentatonic_has_five_pitches ... ok
+test scale::tests::phrygian_dominant_is_flamenco_scale ... ok
+test scale::tests::round_trip_recognize_c_major ... ok
+test scale::tests::round_trip_recognize_d_dorian ... ok
+test scale::tests::round_trip_recognize_minor_pentatonic ... ok
+test scale::tests::whole_tone_has_six_pitches ... ok
+test scale_pattern::tests::legacy_scale_wire_and_explicit_pattern_wire_remain_distinct ... ok
+test scale_pattern::tests::missing_degrees_do_not_change_the_interval_recipe ... ok
+test scale_pattern::tests::thirds_and_fourths_follow_degrees_and_cross_octaves ... ok
+test timing::tests::absolute_frequency_uses_sounding_pitch_not_guitar_written_octave ... ok
+test timing::tests::all_rest_bar_keeps_authored_event_selection_and_timing ... ok
+test timing::tests::invalid_score_and_tempo_are_atomic_refusals ... ok
+test timing::tests::mixed_meters_and_reentrant_four_strings_preserve_physical_contacts ... ok
+test timing::tests::progression_keeps_chords_and_override_is_disposable ... ok
+test timing::tests::rhythm_gates_triplets_and_rest_lookup_are_exact ... ok
+test tuning::tests::arbitrary_five_string_bass_tuning_constructs_cleanly ... ok
+test tuning::tests::arbitrary_seven_string_tuning_constructs_cleanly ... ok
+test tuning::tests::balalaika_prima_has_two_unison_e_strings ... ok
+test tuning::tests::banjo_catalog_includes_modal_and_fifths_variants ... ok
+test tuning::tests::baritone_category_has_entries ... ok
+test tuning::tests::bass_catalog_includes_extended_range_and_dropped ... ok
+test tuning::tests::bowed_family_are_named_instruments ... ok
+test tuning::tests::bowed_quartet_standard_tunings_are_in_fifths ... ok
+test tuning::tests::catalog_for_covers_the_bowed_family ... ok
+test tuning::tests::catalog_for_covers_world_folk ... ok
+test tuning::tests::catalog_for_filters_by_instrument ... ok
+test tuning::tests::catalog_is_nonempty_and_includes_standard_guitar ... ok
+test tuning::tests::cavaquinho_brazilian_is_dgbd ... ok
+test tuning::tests::cello_is_an_octave_below_viola ... ok
+test tuning::tests::charango_standard_is_re_entrant ... ok
+test tuning::tests::custom_tuning_uses_custom_category ... ok
+test tuning::tests::display_format ... ok
+test tuning::tests::double_bass_orchestral_is_in_fourths ... ok
+test tuning::tests::drop_d_lowers_only_the_sixth_string ... ok
+test tuning::tests::dropped_lowers_string_by_amount ... ok
+test tuning::tests::every_instrument_has_a_sane_standard_neck ... ok
+test tuning::tests::extended_range_has_seven_and_eight_strings ... ok
+test tuning::tests::find_disambiguates_across_instruments ... ok
+test tuning::tests::find_disambiguates_bass_from_double_bass ... ok
+test tuning::tests::five_string_bass_has_low_b ... ok
+test notation::tests::examples_round_trip ... ok
+test tuning::tests::from_pattern_reproduces_standard_guitar_pitches ... ok
+test tuning::tests::generators_default_to_custom_category ... ok
+test tuning::tests::nashville_high_strung_has_octave_4_g_string ... ok
+test tuning::tests::irish_tenor_banjo_is_octave_below_violin ... ok
+test tuning::tests::irish_bouzouki_gdae_shares_octave_mandolin_pitches ... ok
+test tuning::tests::open_d_includes_f_sharp ... ok
+test tuning::tests::standard_guitar_has_six_strings_in_eadgbe ... ok
+test tuning::tests::strings_are_ordered_as_written ... ok
+test tuning::tests::transposed_minus_one_with_flats_matches_eb_standard_spelling ... ok
+test tuning::tests::piccolo_bass_pitches_are_octave_above_standard_4 ... ok
+test tuning::tests::regular_all_fourths_reproduces_catalog_pitches ... ok
+test tuning::tests::regular_all_fifths_reproduces_catalog_pitches ... ok
+test tuning::tests::transposed_minus_two_reproduces_d_standard_pitches ... ok
+test tuning::tests::ostrich_tuning_is_all_e ... ok
+test tuning::tests::ukulele_catalog_includes_d_tuning_and_u_bass ... ok
+test tuning::tests::ukulele_high_g_is_above_c ... ok
+test tuning::tests::violin_viola_cello_match_the_mandolin_family_pitches ... ok
+test tuning::tests::with_string_reproduces_drop_d_pitches ... ok
+test tuning::tests::world_folk_are_named_instruments ... ok
+test timing::tests::musical_timing_is_independent_of_output_engine_capacity ... ok
+test notation::tests::instrument_clefs_and_written_pitch ... ok
+test pitch_class_set::tests::assignment_matches_independent_exhaustive_three_tone_oracle ... ok
+
+test result: ok. 208 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.55s
+
+   Doc-tests woodshedding
+
+running 5 tests
+test crates/woodshedding/src/scale.rs - scale (line 14) ... ok
+test crates/woodshedding/src/chord.rs - chord (line 13) ... ok
+test crates/woodshedding/src/timing.rs - timing (line 8) ... ok
+test crates/woodshedding/src/fretboard.rs - fretboard (line 22) ... ok
+test crates/woodshedding/src/progression.rs - progression (line 10) ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 10.54s
+

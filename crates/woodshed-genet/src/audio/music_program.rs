@@ -3,10 +3,14 @@ use woodshed_audio::output_runtime::{
     BEAT_TICKS, ProgramCard, ProgramDuration, ProgramEnd, ProgramEvent, ProgramLoop, ProgramPlan,
     ProgramPosition,
 };
-use woodshed_core::music_playback::{
-    ArrangementSchedule, MAX_PLAYBACK_EVENTS, MAX_PLAYBACK_MEASURES, MAX_PLAYBACK_NOTES,
-    TICKS_PER_QUARTER,
-};
+use woodshedding::timing::{ArrangementSchedule, TICKS_PER_QUARTER};
+
+// OutputRuntime accepts at most 256 segments and 4096 sounding events. Also
+// bound logical events (including rests) in this adapter before allocating an
+// output program. These are admission limits, not musical score constraints.
+const MAX_PLAYBACK_MEASURES: usize = 256;
+const MAX_PLAYBACK_NOTES: usize = 4096;
+const MAX_PLAYBACK_EVENTS: usize = 4096;
 
 fn ticks(value: u64) -> Result<u64, String> {
     let scaled = value
@@ -28,18 +32,28 @@ pub(super) fn lower_program(
     if schedule.measures.is_empty() || schedule.measures.len() > MAX_PLAYBACK_MEASURES {
         return Err("Arrangement output requires 1..=256 measures.".into());
     }
-    let mut cards = Vec::with_capacity(schedule.measures.len());
     let mut logical_count = 0usize;
     let mut sounding_count = 0usize;
-    for (bar, measure) in schedule.measures.iter().enumerate() {
-        if measure.measure_index != bar || measure.duration_ticks == 0 {
-            return Err("Arrangement measure identity or duration is invalid.".into());
-        }
+    for measure in &schedule.measures {
         logical_count = logical_count
             .checked_add(measure.events.len())
             .ok_or("Arrangement event count overflow.")?;
         if logical_count > MAX_PLAYBACK_EVENTS {
             return Err("Arrangement exceeds 4096 logical events.".into());
+        }
+        for event in &measure.events {
+            sounding_count = sounding_count
+                .checked_add(event.notes.len())
+                .ok_or("Arrangement sounding count overflow.")?;
+            if sounding_count > MAX_PLAYBACK_NOTES {
+                return Err("Arrangement exceeds 4096 sounding contacts.".into());
+            }
+        }
+    }
+    let mut cards = Vec::with_capacity(schedule.measures.len());
+    for (bar, measure) in schedule.measures.iter().enumerate() {
+        if measure.measure_index != bar || measure.duration_ticks == 0 {
+            return Err("Arrangement measure identity or duration is invalid.".into());
         }
         let mut events = Vec::new();
         let mut expected_onset = 0u64;
@@ -55,12 +69,6 @@ pub(super) fn lower_program(
                 .checked_add(event.gate_ticks)
                 .filter(|end| *end <= measure.duration_ticks)
                 .ok_or("Arrangement event gate exceeds its measure.")?;
-            sounding_count = sounding_count
-                .checked_add(event.notes.len())
-                .ok_or("Arrangement sounding count overflow.")?;
-            if sounding_count > MAX_PLAYBACK_NOTES {
-                return Err("Arrangement exceeds 4096 sounding contacts.".into());
-            }
             let token = u64::try_from(index)
                 .ok()
                 .and_then(|n| n.checked_add(1))
@@ -286,5 +294,78 @@ mod tests {
         render(&mut runtime, 100);
         assert_eq!(runtime.snapshot().program.epoch, epoch);
         assert_eq!(runtime.snapshot().program.status, ProgramStatus::Playing);
+    }
+
+    #[test]
+    fn valid_music_exceeding_engine_capacity_is_refused_only_by_adapter() {
+        let mut score = Score::progression_example();
+        let measure = score.measures[0].clone();
+        score.measures = vec![measure.clone(); MAX_PLAYBACK_MEASURES];
+        let timing = ArrangementSchedule::from_score(&score, 120.0).unwrap();
+        assert_eq!(
+            lower_program(&timing, ProgramLoop::Once)
+                .unwrap()
+                .cards
+                .len(),
+            256
+        );
+        score.measures.push(measure.clone());
+        let timing = ArrangementSchedule::from_score(&score, 120.0).unwrap();
+        assert!(
+            lower_program(&timing, ProgramLoop::Once)
+                .unwrap_err()
+                .contains("256")
+        );
+
+        let mut chord_bar = measure;
+        assert_eq!(chord_bar.events[0].notes.len(), 4);
+        chord_bar.events = vec![
+            NoteEvent {
+                value: NoteValue::Eighth,
+                ..chord_bar.events[0].clone()
+            };
+            8
+        ];
+        score.measures = vec![chord_bar.clone(); 128];
+        let timing = ArrangementSchedule::from_score(&score, 120.0).unwrap();
+        let program = lower_program(&timing, ProgramLoop::Once).unwrap();
+        assert_eq!(
+            program.cards.iter().map(|c| c.events.len()).sum::<usize>(),
+            4096
+        );
+        score.measures.push(chord_bar.clone());
+        let timing = ArrangementSchedule::from_score(&score, 120.0).unwrap();
+        assert!(
+            lower_program(&timing, ProgramLoop::Once)
+                .unwrap_err()
+                .contains("sounding contacts")
+        );
+
+        let mut rest_bar = chord_bar;
+        rest_bar.meter.beats = 16;
+        rest_bar.events = vec![
+            NoteEvent {
+                notes: Vec::new(),
+                rest: true,
+                value: NoteValue::Eighth,
+            };
+            32
+        ];
+        score.measures = vec![rest_bar.clone(); 128];
+        let timing = ArrangementSchedule::from_score(&score, 120.0).unwrap();
+        assert!(
+            lower_program(&timing, ProgramLoop::Once)
+                .unwrap()
+                .cards
+                .iter()
+                .all(|c| c.events.is_empty())
+        );
+        score.measures.push(rest_bar);
+        let timing = ArrangementSchedule::from_score(&score, 120.0).unwrap();
+        assert!(
+            lower_program(&timing, ProgramLoop::Once)
+                .unwrap_err()
+                .contains("logical events")
+        );
     }
 }
