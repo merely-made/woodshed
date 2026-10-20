@@ -237,6 +237,19 @@ pub(super) struct Decoder {
     discard_before_ts: Option<u64>,
 }
 
+pub(super) fn open_memory(bytes: Vec<u8>) -> Result<(Decoder, RepresentationReceipt)> {
+    if bytes.is_empty() || bytes.len() > crate::MAX_HOST_BLOB_BYTES {
+        return Err(anyhow!("host audio exceeds its byte budget"));
+    }
+    let receipt = RepresentationReceipt {
+        byte_length: Some(bytes.len() as u64),
+        complete_digest: Some(format!("blake3:{}", blake3::hash(&bytes).to_hex())),
+        ..RepresentationReceipt::default()
+    };
+    let decoder = open_decoder(Box::new(std::io::Cursor::new(bytes)), "host-blob.wav")?;
+    Ok((decoder, receipt))
+}
+
 pub(super) fn open_local(path: &Path) -> Result<(Decoder, RepresentationReceipt)> {
     let (file, receipt) = snapshot_local(path)?;
     let decoder = open_decoder(Box::new(file), path.to_str().unwrap_or_default())?;
@@ -346,6 +359,7 @@ pub(super) struct Backend {
     audio: Rc<RefCell<Option<AudioRuntime>>>,
     /// The host's fetch handle: every remote read goes through its policy.
     fetch: Arc<dyn Fetch>,
+    blobs: Option<crate::HostBlobReader>,
     decoder: Option<Decoder>,
     sink: Option<Sink>,
     /// Decoded source frames waiting to be retimed.
@@ -391,6 +405,7 @@ impl Backend {
         Self {
             audio,
             fetch,
+            blobs: None,
             decoder: None,
             sink: None,
             pending: Vec::new(),
@@ -415,6 +430,15 @@ impl Backend {
             #[cfg(test)]
             test_ready_sent: false,
         }
+    }
+
+    pub(super) fn with_blobs(mut self, blobs: Option<crate::HostBlobReader>) -> Self {
+        self.blobs = blobs;
+        self
+    }
+
+    pub(super) fn blob_reader(&self) -> Option<crate::HostBlobReader> {
+        self.blobs.clone()
     }
 
     pub(super) fn fetch_handle(&self) -> Arc<dyn Fetch> {
@@ -482,15 +506,21 @@ impl Backend {
                 (decoder, representation, source_label)
             },
             servo_media_player::controller::MediaSource::HostBlob { id } => {
-                return Err(format!("host blob playback needs the embedding host: {id}"));
+                let reader = self
+                    .blobs
+                    .as_ref()
+                    .ok_or_else(|| format!("host blob playback needs the embedding host: {id}"))?;
+                let bytes = reader(id)?;
+                let (decoder, representation) = open_memory(bytes).map_err(|e| e.to_string())?;
+                (decoder, representation, format!("blob:{id}"))
             },
         };
         // A local or published cache object is wholly seekable; the HTTP range
         // source keeps only a sliding window, so it can claim no buffered head.
         self.buffered_percent = match source {
-            servo_media_player::controller::MediaSource::Local { .. } => 100,
-            servo_media_player::controller::MediaSource::Http { .. }
-            | servo_media_player::controller::MediaSource::HostBlob { .. } => 0,
+            servo_media_player::controller::MediaSource::Local { .. }
+            | servo_media_player::controller::MediaSource::HostBlob { .. } => 100,
+            servo_media_player::controller::MediaSource::Http { .. } => 0,
         };
         let duration = decoder.duration_ms.map(Duration::from_millis);
         self.decoder = Some(decoder);
@@ -1108,5 +1138,75 @@ mod runtime_generation_tests {
         preview.clear().unwrap();
         assert!(preview.sink.is_none());
         assert!(!state.is_active());
+    }
+}
+
+#[cfg(test)]
+mod retained_blob_tests {
+    use super::*;
+    #[test]
+    fn host_blob_decodes_without_a_filesystem_source_and_has_exact_evidence() {
+        let mut wav = Vec::new();
+        let samples = [100i16; 64];
+        wav.extend_from_slice(b"RIFF");
+        wav.extend_from_slice(&(36u32 + samples.len() as u32 * 2).to_le_bytes());
+        wav.extend_from_slice(b"WAVEfmt ");
+        wav.extend_from_slice(&16u32.to_le_bytes());
+        wav.extend_from_slice(&1u16.to_le_bytes());
+        wav.extend_from_slice(&1u16.to_le_bytes());
+        wav.extend_from_slice(&48000u32.to_le_bytes());
+        wav.extend_from_slice(&96000u32.to_le_bytes());
+        wav.extend_from_slice(&2u16.to_le_bytes());
+        wav.extend_from_slice(&16u16.to_le_bytes());
+        wav.extend_from_slice(b"data");
+        wav.extend_from_slice(&(samples.len() as u32 * 2).to_le_bytes());
+        for sample in samples {
+            wav.extend_from_slice(&sample.to_le_bytes());
+        }
+        let (mut decoder, receipt) = open_memory(wav.to_vec()).unwrap();
+        assert_eq!(
+            receipt.complete_digest,
+            Some(format!("blake3:{}", blake3::hash(&wav).to_hex()))
+        );
+        let mut frames = 0;
+        loop {
+            match decode_packet(&mut decoder).unwrap() {
+                Decoded::Frames(samples) => frames += samples.len(),
+                Decoded::Skipped => continue,
+                Decoded::EndOfFile => break,
+            }
+        }
+        assert!(frames > 0);
+        let supplied = wav.clone();
+        let reader: crate::HostBlobReader = Arc::new(move |id| {
+            if id == "admitted" {
+                Ok(supplied.clone())
+            } else {
+                Err("body not admitted".into())
+            }
+        });
+        let mut admitted = Backend::new(crate::own_fetch()).with_blobs(Some(reader));
+        admitted
+            .load(&servo_media_player::controller::MediaSource::HostBlob {
+                id: "admitted".into(),
+            })
+            .unwrap();
+        assert_eq!(admitted.representation.as_ref().unwrap(), &receipt);
+        assert!(
+            admitted
+                .load(&servo_media_player::controller::MediaSource::HostBlob { id: "other".into() })
+                .is_err()
+        );
+        assert!(open_memory(vec![]).is_err());
+        assert!(open_memory(b"invalid audio".to_vec()).is_err());
+        assert!(open_memory(vec![0; crate::MAX_HOST_BLOB_BYTES + 1]).is_err());
+        let mut backend = Backend::new(crate::own_fetch());
+        assert!(
+            backend
+                .load(&servo_media_player::controller::MediaSource::HostBlob {
+                    id: "absent".into()
+                })
+                .is_err()
+        );
     }
 }

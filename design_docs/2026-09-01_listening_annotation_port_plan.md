@@ -1669,3 +1669,44 @@ ECS, and Linux dependency inspection retains the existing ALSA prerequisite.
 An independent source review closes fallible node cleanup, stale episode/preview
 generation handling, integer source clock mapping and EOF drain findings. Actual
 output disconnect/retry remains a physical-device gate.
+
+
+### Retained private voice bodies — 2026-10-19
+
+**Status:** implemented locally; focused native checks pass. The existing
+playback `HostBlob` source now has an embedding-host byte reader for Turnstone's
+private retained clips. It reuses the
+Symphonia decoder, controller, shared audio output and preview lifecycle; source
+lookup stays with the host. Supplied bytes have a bounded size and exact digest
+receipt and are decoded from memory. A host blob never becomes a filesystem
+path or an HTTP request. A preview inherits the host reader; an absent reader or
+missing admitted body refuses. No new durable `MediaSource` variant or microphone
+adapter is needed. Shared contract and custody acceptance remain in
+`eidetic/design_docs/eidetic_docs/implementation_strategy/2026-10-11_eidetic_development_plan.md`.
+
+Done when the real decoder accepts a supplied WAV and reports its exact digest,
+refuses missing/invalid/over-budget blobs, preserves preview/main-controller
+isolation, and Turnstone's sealed source-absent playback uses no plaintext WAV
+cache. Physical audio and other platforms retain their separately scoped gates.
+
+The standalone note row also offers **Export note clip** when its owner has a
+writer and the selected note is shareable. The desktop host snapshots the owner
+export, resolves only its own content-addressed voice body, verifies that hash
+and a 512 KiB budget before creating output, and publishes without replacing an
+existing file. Private, changed and missing-body refusals preserve the source.
+This package discloses the selected body; it does not acquire the recording.
+The isolated process receipt consumes this actual owner-generated voice package
+after the owner source blob is removed, then removes the package before sealed
+receiver reopen. That receipt does not qualify a headed export interaction or
+physical output.
+
+Owning-workspace native checks pass: selected owner export 2 (its process helper
+is run separately), playback 32 with seven existing device/external-fixture
+ignores, and surfaces 103. The new surface regression verifies both owner
+capability and per-note sharing before emitting the selected-note command.
+The actual in-memory decoder checks exact digest evidence, invalid/missing/
+over-budget refusal and controller preview isolation through the existing suite.
+The process receipt is recorded in Turnstone's
+`docs/receipts/2026-10-19_retained_custody/qualification.json`. These checks
+exercise owner supply, sealed reopen and memory decoding; renewed headed
+Turnstone Play interaction with custody and physical output remain open.

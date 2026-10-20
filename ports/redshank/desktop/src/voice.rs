@@ -198,7 +198,11 @@ where
         .map_err(|error| format!("Could not open the microphone: {error}"))
 }
 
-fn write_blob(root: &Path, sample_rate: u32, samples: &[f32]) -> Result<NoteBody, String> {
+pub(super) fn write_blob(
+    root: &Path,
+    sample_rate: u32,
+    samples: &[f32],
+) -> Result<NoteBody, String> {
     if samples.is_empty() {
         return Err("The microphone captured no audio".into());
     }
