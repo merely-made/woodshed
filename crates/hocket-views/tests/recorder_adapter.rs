@@ -4,12 +4,12 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 // SPDX-License-Identifier: MPL-2.0
 
-use crate::{Child, RecorderLayout, RecorderMount, surface};
 use cambium_genet_winit_host::Harness;
 use hocket_recorder::{
     AudioAvailability, AudioObservation, CaptureCompletion, CaptureMode, CapturePhase,
     CaptureToken, LayerKey, Recorder, RecorderAction, RecorderAudio,
 };
+use hocket_views::{Child, RecorderLayout, RecorderMount, surface};
 use taproot::Selector;
 
 #[derive(Default)]
@@ -100,7 +100,7 @@ type Host = Harness<UiState, fn(&UiState) -> Child<UiState>, Child<UiState>>;
 
 fn mount(recorder: Recorder) -> Host {
     let mut host = Harness::new(
-        crate::theme::sheet(),
+        hocket_views::theme::sheet(),
         UiState { recorder },
         root as fn(&UiState) -> Child<UiState>,
     );
