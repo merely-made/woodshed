@@ -15,7 +15,7 @@ hocket-views.workspace = true
 hocket-recorder.workspace = true
 # The desktop realization of muniment's Backend. woodshed-core names the slots;
 # this crate only decides which file each one lives in.
-muniment = { git = "https://github.com/merely-made/eidetic.git", rev = "543f5ff38f87a09afc04dbc59f57c2dfbc6a9943" }
+muniment = { git = "https://github.com/merely-made/eidetic.git", rev = "738ef15956a29a125820b2d6c2280d39a6214f8e" }
 # The family-shared identity vault: which persona this machine practices as,
 # and the key its practice session is sealed under. Desktop-only, which is why
 # it is declared here rather than in the portable core. Declared in the
@@ -39,7 +39,7 @@ tabard-workshop = { workspace = true }
 tabard = { workspace = true }
 sprigging = { workspace = true }
 # Preserve the wrapped graph leaf's accessibility publication.
-accesskit = "0.24"
+accesskit = "0.25"
 layout-dom-api = { workspace = true }
 genet-scripted-dom = { workspace = true }
 # The shared automatability substrate: selector resolution + the scenario
