@@ -9,7 +9,7 @@ description = "Chart, tablature and staff notation leaves over woodshedding musi
 [dependencies]
 woodshedding.workspace = true
 sprigging.workspace = true
-accesskit = "0.24"
+accesskit = "0.25"
 ttf-parser = "0.25.1"
 
 [dev-dependencies]
