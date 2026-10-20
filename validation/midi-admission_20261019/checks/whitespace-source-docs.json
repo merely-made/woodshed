@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "run_id": "midi-whitespace-source-docs",
+  "command": [
+    "git",
+    "diff",
+    "--check",
+    "fd9fb82",
+    "--",
+    ".",
+    ":(exclude)**/*.log"
+  ],
+  "started_at": "2026-10-20T02:54:58.703256Z",
+  "ended_at": "2026-10-20T02:54:58.728341Z",
+  "exit_code": 0,
+  "cwd": "/Users/markik/Code/worktrees/woodshed-b6-20261019",
+  "log": "/Users/markik/Code/worktrees/woodshed-b6-20261019/validation/midi-admission_20261019/checks/whitespace-source-docs.log",
+  "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "source_commit": "1c327bf00aca0513e2ce39953f23b57063449d1c"
+}

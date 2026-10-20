@@ -76,3 +76,5 @@ An obsolete queued v2 gate was canceled (real exit -15), and passing development
 repeats are excluded. Original recordings and playback clocks are outside the
 changed paths. This batch is local; no new native or physical qualification is
 claimed.
+
+Whitespace qualification compares the full source/document diff from `fd9fb82` and excludes raw `.log` files. The unfiltered check returns 2 solely for original terminal blank lines in those logs; that observed result is retained. Raw process bytes and their digests are preserved. Earlier unstaged whitespace checks are narrower and are not the final source gate.

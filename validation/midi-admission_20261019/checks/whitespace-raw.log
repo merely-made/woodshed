@@ -1,0 +1,7 @@
+validation/midi-admission_20261019/checks/host-dev.log:387: new blank line at EOF.
+validation/midi-admission_20261019/checks/midi-v3.log:143: new blank line at EOF.
+validation/midi-admission_20261019/checks/persona-v3.log:146: new blank line at EOF.
+validation/midi-admission_20261019/checks/selection-v3.log:78: new blank line at EOF.
+validation/midi-admission_20261019/checks/selection.log:124: new blank line at EOF.
+validation/recorder-runtime_20261019/integration/diagnostics.log:64: new blank line at EOF.
+validation/recorder-runtime_20261019/integration/recorder.log:112: new blank line at EOF.
