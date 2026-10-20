@@ -631,3 +631,16 @@ run against the same contract.
     git sources.
   - **Open gates.** Native presentation/audio, browser runtime and human
     accessibility gates are unchanged.
+
+- **2026-10-19, selected voice export headed acceptance.** The native owner
+  keeps private notes out of the export menu, makes the selected note shareable
+  through its visible control, and exports exactly its hash-verified 100 ms WAV
+  with the original 1250–4500 ms selector and 1400 ms pressed offset. The first
+  headed run exposed missing-recording explanations pushing the span's menu
+  outside the window; the span action row now wraps inside its card. A mounted
+  regression passes at 960 and 420 logical pixels, and the shipping native
+  rerun passes with three reviewed captures. The original failure is preserved
+  alongside the accepted [receipt](../docs/receipts/2026-10-19_selected_note_export/qualification.json).
+  This verifies the owner export controls and bytes; receiver custody/playback
+  belongs to Turnstone's separate receipt, and microphone/acoustic qualification
+  remains separate.
