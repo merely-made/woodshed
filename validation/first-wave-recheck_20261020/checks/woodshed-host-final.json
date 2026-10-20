@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "run_id": "first-wave-woodshed-host-final-20261020",
+  "command": [
+    "cargo",
+    "test",
+    "--locked",
+    "-j",
+    "4",
+    "-p",
+    "woodshed-genet"
+  ],
+  "started_at": "2026-10-20T20:58:31.825754Z",
+  "ended_at": "2026-10-20T21:00:38.102044Z",
+  "exit_code": 0,
+  "cwd": "/Users/markik/Code/worktrees/woodshed-audit-first-wave-20261020",
+  "log": "/Users/markik/Code/testing/woodshed/first-wave-20261020/woodshed-host-final.log",
+  "log_sha256": "a81899386a0513e5b605f76fc16df6b1b2efe395eebca08bba47db8815de3bd7",
+  "source_commit": "6a65a4d7d340ec635900188bd8f4e6a6207a6756"
+}

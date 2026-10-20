@@ -397,7 +397,7 @@ struct FlatLog {
 type HistorySnapshot = chartulary::stemma::StemmaSnapshot<String, (), String, Engagement>;
 
 /// Durable-input guard for the locked supplier's trusted, infallible
-/// `from_snapshot` (Mere 52fb4900). That revision has no checked reconstruction
+/// `from_snapshot` (Eidetic 738ef159). That revision has no checked reconstruction
 /// API. Keep reconstruction in the supplier; replace this guard when it gains
 /// a fallible seam. Do not normalize malformed references or discard branches.
 fn validate_history_snapshot(snapshot: &HistorySnapshot) -> Result<(), String> {
