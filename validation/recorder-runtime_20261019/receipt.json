@@ -1,0 +1,179 @@
+{
+  "date": "2026-10-19",
+  "status": "Scoped CPU qualification complete; full shared-view unit target blocked; implementation local for review",
+  "requested_slice": "B6 tempo replay and runtime diagnostics; historical package labels preserved",
+  "findings": [
+    "shared:S3",
+    "shared:S4"
+  ],
+  "baseline_published_revision": "4fab895ccd18fe4955668d92f1b1aea6139e756c",
+  "source_revision": "7b161a9f5f22af92bc94728f80128b84c6ec20fd",
+  "worktree": "/Users/markik/Code/worktrees/woodshed-b6-20261019",
+  "branch": "codex/woodshed-b6-20261019",
+  "source_tree_note": "All 9 changed source/test files match committed source. Documentation/validation were being edited during gates; process metadata alone is not a clean-tree claim.",
+  "source_sha256": {
+    "crates/hocket-recorder/src/lib.rs": "bbc7f9ef58869bb8659541dbf0bfabba7f67b35dbfc905329d20e0ec3c1e81f3",
+    "crates/hocket-recorder/tests/tempo_replay.rs": "553d401f1bac543b174a9938c7fc79ec969574b7c2856e256374f1eaf79795f8",
+    "crates/hocket-views/src/recorder_adapter.rs": "ce53a7ce61e2da2877a309963f0058075bae6125366f190bdd124696fe1b7bbe",
+    "crates/hocket-views/tests/recorder_adapter.rs": "f381ed8e13634f012be2e9ff942863d2192c041b9f256976ffe618e1268ee90c",
+    "ports/hocket/crates/hocket-engine/src/offline_tests.rs": "3f20b6e5936a1dedc1170cd3e40297843d07961d0f7995888ea4778a8b089813",
+    "ports/hocket/crates/hocket-genet/src/appearance_tests.rs": "da366cd42739ec85d89fbaaef700b05fc7d1af75aa592d8d5237ede469557e8b",
+    "ports/hocket/crates/hocket-genet/src/state.rs": "ea5c7bd5e9035615eb4c61898956085e351eb63921f21c0c8153260ebe4d69b9",
+    "ports/hocket/crates/hocket-genet/src/theme.rs": "527b1ab8d2922abffc28d8246f2a93198cd6cbd2d05bbc643f4692eca46e2ac4",
+    "ports/hocket/crates/hocket-genet/src/view.rs": "8d592e54d9d89019886d1baf7fc3f214cd9e68f39dc0a5cd533471c989fa4d24"
+  },
+  "unchanged_lock_sha256": {
+    "Cargo.lock": "fd60c83d3fbb03060d0519f8161cadb7011e5c21058c0d80f328dca18602cd63",
+    "ports/hocket/Cargo.lock": "8db3378dd2d9dee7cc2e886c40097b85786c96268cd80357b4db9ffeaf6d0c24",
+    "ports/redshank/Cargo.lock": "65553591e32039b0f26e07220954695e3952f376a88c82e4d277121ac5b0a6cf",
+    "ports/ringdown/Cargo.lock": "9c1b9afdd823e02effcade345140463f20185b9a79b83e8844d3109df395f6c0",
+    "validation/relationship-recipe/Cargo.lock": "415623ff2ff97317fc8d49998dc8e54f33c4265113a03b76c4a54e31f09c5e11"
+  },
+  "gates": [
+    {
+      "name": "recorder",
+      "command": [
+        "cargo",
+        "test",
+        "--locked",
+        "-p",
+        "hocket-recorder",
+        "--tests"
+      ],
+      "cwd": "/Users/markik/Code/worktrees/woodshed-b6-20261019",
+      "process_receipt": "checks/recorder.json",
+      "log": "checks/recorder.log",
+      "source_commit": "f32212da1948757df40e663cf82db973c4141b5c",
+      "passed": 38,
+      "ignored": 0,
+      "exit_code": 0
+    },
+    {
+      "name": "diagnostics",
+      "command": [
+        "cargo",
+        "test",
+        "--locked",
+        "-p",
+        "hocket-views",
+        "--test",
+        "recorder_adapter"
+      ],
+      "cwd": "/Users/markik/Code/worktrees/woodshed-b6-20261019",
+      "process_receipt": "checks/diagnostics.json",
+      "log": "checks/diagnostics.log",
+      "source_commit": "f32212da1948757df40e663cf82db973c4141b5c",
+      "passed": 2,
+      "ignored": 0,
+      "exit_code": 0
+    },
+    {
+      "name": "engine",
+      "command": [
+        "cargo",
+        "test",
+        "--locked",
+        "-p",
+        "hocket-engine",
+        "--lib"
+      ],
+      "cwd": "/Users/markik/Code/worktrees/woodshed-b6-20261019/ports/hocket",
+      "process_receipt": "checks/engine.json",
+      "log": "checks/engine.log",
+      "source_commit": "f32212da1948757df40e663cf82db973c4141b5c",
+      "passed": 37,
+      "ignored": 0,
+      "exit_code": 0
+    },
+    {
+      "name": "hocket-host-v2",
+      "command": [
+        "cargo",
+        "test",
+        "--locked",
+        "--manifest-path",
+        "ports/hocket/Cargo.toml",
+        "-p",
+        "hocket-genet",
+        "--bin",
+        "hocket-genet"
+      ],
+      "cwd": "/Users/markik/Code/worktrees/woodshed-b6-20261019",
+      "process_receipt": "checks/hocket-host-v2.json",
+      "log": "checks/hocket-host-v2.log",
+      "source_commit": "7b161a9f5f22af92bc94728f80128b84c6ec20fd",
+      "passed": 94,
+      "ignored": 2,
+      "exit_code": 0
+    }
+  ],
+  "distinct_passing_cases": 171,
+  "ignored": 2,
+  "nested_child_invocations": 0,
+  "counting": "28 recorder unit + 5 SelectOne + 5 tempo + 2 public-wrapper integration + 37 offline engine + 94 Hocket CPU host; repeats, failed attempts and baseline cases excluded.",
+  "source_continuity": {
+    "earlier_source": "f32212da1948757df40e663cf82db973c4141b5c",
+    "final_source": "7b161a9f5f22af92bc94728f80128b84c6ec20fd",
+    "only_intervening_path": "ports/hocket/crates/hocket-genet/src/appearance_tests.rs",
+    "change": "Correct unsupported Selector::any to supported class selector; test-only change.",
+    "receiving_gate": "checks/hocket-host-v2.json",
+    "scope": "All product files, manifests and locks unchanged between the accepted earlier gates and final receiving gate."
+  },
+  "baseline_negative_control": {
+    "directory": "/Users/markik/Code/testing/woodshed/recorder-runtime-baseline-20261019",
+    "baseline_code_revision": "4fab895ccd18fe4955668d92f1b1aea6139e756c",
+    "source_sha256": {
+      "src/lib.rs": "f943c29cc4a1f5a4c2280670f51c458fb157bceed15f0ea7176d3e2ae0a17f11",
+      "src/host_policy.rs": "5f5a15b77cc879717764f81455de36090121a2f9b6214cc2ed30820c417bd664"
+    },
+    "test_sha256": "553d401f1bac543b174a9938c7fc79ec969574b7c2856e256374f1eaf79795f8",
+    "manifest_sha256": "f313b1ab674ae6ff925e915d2efcfca668776c31342c05679180b6ee16caad5f",
+    "pruned_temporary_lock_sha256": "53f47437441aaf2d20b5ffd82372e3d4ad0de0e28d0bd4e4245d4ccc5a6859b7",
+    "external_package_identities_checked": 83,
+    "all_match_baseline_root_lock": true,
+    "process_receipt": "checks/tempo-baseline.json",
+    "expected_exit_code": 101,
+    "expected_failed_tests": [
+      "refused_clock_keeps_existing_voices_and_history_untouched",
+      "refused_stop_or_replay_reports_only_accepted_voices",
+      "successful_nudges_replay_only_currently_eligible_live_voices_in_order"
+    ],
+    "passed_not_added_to_positive_total": 2,
+    "source_metadata_note": "Process source_commit identifies coordinator checkout. Separate byte checks/hashes establish the extracted baseline recorder under test; only temporary standalone manifest/lock adapted offline."
+  },
+  "blocked_gate": {
+    "process_receipt": "checks/views-unit-blocked.json",
+    "exit_code": 101,
+    "reason": "Unchanged leaves.rs unit tests mix expected sprigging PaintCmd from locked netrender d920501 with direct dev dependency PaintCmd pinned e8cda06. Four E0308 errors.",
+    "scope": "Full hocket-views library unit target did not run. New diagnostics integration target uses public library APIs and passes independently.",
+    "supplier_inputs_unchanged": true
+  },
+  "excluded_attempts": [
+    {
+      "process_receipt": "checks/hocket-host.json",
+      "reason": "Coordinator regression used unsupported Selector::any; compile failed. Corrected test is covered by final host-v2 gate."
+    }
+  ],
+  "ownership": {
+    "Luna tempo": "Recorder tempo admission, shared playback helper and status recovery",
+    "Luna independent tempo tests": "tests/tempo_replay.rs",
+    "Luna diagnostics": "Shared Recorder projection and public wrapper harness tests",
+    "coordinator": "Selective publication/pull, isolated worktree, engine continuity regression, removal of duplicate standalone status/dead accessor/CSS, receiving test, review and evidence"
+  },
+  "review": [
+    "Clock admission occurs before history or voice mutations; refusal preserves accepted BPM/history and playback.",
+    "Accepted tempo edits queue same-key next-bar replacements only for accepted keys excluding pending stop intent, using the existing B5 model gate and shared media lookup.",
+    "No new scheduler, clock, desired-voice set, replay queue or diagnostic state store; temporary accepted-key iteration only.",
+    "Keyed replacement refusal keeps old accepted voice; RecorderAudio contract documents this. Engine offline execution verifies old voice until boundary, latest same-key queued replacement wins, stored rate/gain and one voice slot.",
+    "Healthy status reconstruction shares one helper. Transient poll errors use existing availability error facts for recovery; successful tempo retry clears old refusal before new replacement errors can override it. Pending stop failures remain visible.",
+    "Wrapper forwards existing Recorder status into existing status role. Standalone duplicate label, forwarding accessor and obsolete CSS removed; CPU host confirms one shared status node.",
+    "No supplier intake, Cargo manifest/lock edit, original take PCM or capture/playback clock migration."
+  ],
+  "limits": [
+    "No native apps, browser lane, resident services, microphone/device/physical audio or fresh-process native reopen qualification.",
+    "Full hocket-views unit target remains blocked by the existing supplier type mismatch; do not infer full workspace/renderer acceptance from targeted gates.",
+    "Historical B6 MIDI H6-H9 and other audits remain separate; only shared:S3/S4 addressed here.",
+    "Remote main advanced during qualification; this work remains on its recorded isolated baseline. Primary checkout was not reset/rebased or modified by this batch.",
+    "New B6 commits remain local; publication authorization covered only the preceding four B5 commits."
+  ]
+}

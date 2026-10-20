@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "run_id": "b6-tempo-baseline",
+  "command": [
+    "env",
+    "CARGO_TARGET_DIR=/Users/markik/Code/worktrees/woodshed-b6-20261019/target",
+    "CARGO_BUILD_BUILD_DIR=/Users/markik/Code/worktrees/woodshed-b6-20261019/target/build",
+    "cargo",
+    "test",
+    "--offline",
+    "--manifest-path",
+    "/Users/markik/Code/testing/woodshed/recorder-runtime-baseline-20261019/Cargo.toml",
+    "--test",
+    "tempo_replay"
+  ],
+  "started_at": "2026-10-20T02:03:57.648449Z",
+  "ended_at": "2026-10-20T02:06:41.515676Z",
+  "exit_code": 101,
+  "cwd": "/Users/markik/Code/testing/woodshed/recorder-runtime-baseline-20261019",
+  "log": "/Users/markik/Code/worktrees/woodshed-b6-20261019/validation/recorder-runtime_20261019/checks/tempo-baseline.log",
+  "log_sha256": "f0c8c6d568555633a6e4555322437f1744878eb379b90b0ce6c54cbb812e79a9",
+  "source_commit": "a35e48110b3664d9e0d950183f4df9f161967940"
+}
