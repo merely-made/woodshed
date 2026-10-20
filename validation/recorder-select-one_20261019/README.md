@@ -1,7 +1,7 @@
 # Shared Recorder SelectOne admission
 
-Date: 2026-10-19. Status: implemented and CPU qualified at `b804d901`; local for
-review. Baseline: published `8da953b`, following the authorized seven-commit
+Date: 2026-10-19. Status: implemented and CPU qualified at `b804d901`; published through `4fab895`
+([publication](publication.json)). Baseline: published `8da953b`, following the authorized seven-commit
 push and successful fast-forward-only pull.
 
 B5 addresses shared:S2. One cheaper Luna worker owned recorder production
@@ -82,5 +82,6 @@ No native app, browser lane, resident service, microphone/device, physical audio
 or fresh-process native reopen was used or qualified. CBOR roundtrip is
 in-process CPU admission only; the deferred Deeler UI is not shipped by this
 change. No supplier update, old PCM mutation or playback/capture clock migration
-was made. The new B5 commits remain local for review. B6 tempo replay and runtime
+was made. The four reviewed B5 commits were published on current remote main through
+`4fab895`; the original qualification remains tied to its recorded supplier cohort. B6 tempo replay and runtime
 diagnostics retain their separate audit owners; broader remediation stays open.

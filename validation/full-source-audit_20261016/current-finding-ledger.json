@@ -1225,7 +1225,7 @@
         "native": "unassessed",
         "fresh_process": "unassessed",
         "physical_device": "unassessed",
-        "publication": "local for review"
+        "publication": "published through 4fab895; original source/supplier qualification remains dated"
       },
       "canonical_id": "shared:S2",
       "limits": [
@@ -1249,45 +1249,90 @@
         "limits": "Supported serialized SelectOne admission suffices; deferred Deeler UI is not claimed shipped.",
         "detail": "current/ports.json"
       },
-      "implementation_revision": "b804d90104bd86caca6b8fc20e8176e1afd5feae"
+      "implementation_revision": "b804d90104bd86caca6b8fc20e8176e1afd5feae",
+      "publication_record": "../recorder-select-one_20261019/publication.json"
     },
     {
       "id": "shared:S3",
-      "classification": "unchanged_finding_mechanism",
+      "classification": "implemented; scoped CPU qualified",
       "package": "D5 then B5-based correction",
-      "current_observation": "Live BPM nudge stops accepted loops without Resume",
+      "current_observation": "Clock admission precedes history/voice mutation; accepted tempo requeues only accepted non-pending-stop keys through shared B5 store admission and existing engine next-bar replacement. Failed clock/replacement preserves existing voice; StopAll does not resurrect model-only layers.",
       "qualification": {
-        "focused_regression": "unassessed",
-        "integration_build": "unassessed",
+        "affected_cpu_cases": 171,
+        "ignored": 2,
+        "baseline_control": "3 expected failures, 2 passes excluded from positive total",
+        "full_shared_view_unit": "blocked by existing paint API source/type mismatch",
         "native": "unassessed",
         "fresh_process": "unassessed",
         "physical_device": "unassessed",
-        "publication": "unassessed"
+        "publication": "local for review"
       },
       "canonical_id": "shared:S3",
-      "limits": "Keep/restart versus explicit pause/Resume remains an owning product decision.",
-      "detail": "current/ports.json",
+      "limits": [
+        "No supplier/manifest/lock change, native/device or fresh-process native qualification.",
+        "Public-wrapper integration passes; blocked shared-view paint unit tests and full workspace are not qualified.",
+        "Historical B6 MIDI H6-H9 remains separate."
+      ],
+      "detail": "../recorder-runtime_20261019/receipt.json",
       "original_index_title": "S3 \u2014 P2: Every live BPM nudge stops all loops without resuming them",
-      "original_report": "shared-report.md"
+      "original_report": "shared-report.md",
+      "reconciliation_before_recorder_runtime_batch": {
+        "classification": "unchanged_finding_mechanism",
+        "current_observation": "Live BPM nudge stops accepted loops without Resume",
+        "qualification": {
+          "focused_regression": "unassessed",
+          "integration_build": "unassessed",
+          "native": "unassessed",
+          "fresh_process": "unassessed",
+          "physical_device": "unassessed",
+          "publication": "unassessed"
+        },
+        "limits": "Keep/restart versus explicit pause/Resume remains an owning product decision.",
+        "detail": "current/ports.json"
+      },
+      "requested_slice": "B6 tempo replay and runtime diagnostics; historical package label retained",
+      "implementation_revision": "7b161a9f5f22af92bc94728f80128b84c6ec20fd"
     },
     {
       "id": "shared:S4",
-      "classification": "unchanged_finding_mechanism",
+      "classification": "implemented; scoped CPU qualified",
       "package": "B7",
-      "current_observation": "Reusable wrapper drops backend failure status",
+      "current_observation": "Reusable Recorder wrapper forwards existing status to the shared renderer. Poll errors recover through existing availability facts and successful tempo retry clears prior refusal before new errors override it. Standalone duplicate status/accessor/CSS removed.",
       "qualification": {
-        "focused_regression": "unassessed",
-        "integration_build": "unassessed",
+        "affected_cpu_cases": 171,
+        "ignored": 2,
+        "baseline_control": "3 expected failures, 2 passes excluded from positive total",
+        "full_shared_view_unit": "blocked by existing paint API source/type mismatch",
         "native": "unassessed",
         "fresh_process": "unassessed",
         "physical_device": "unassessed",
-        "publication": "unassessed"
+        "publication": "local for review"
       },
       "canonical_id": "shared:S4",
-      "limits": "Native Hocket accessory partly masks gap; generic manually supplied status tests do not exercise wrapper forwarding.",
-      "detail": "current/ports.json",
+      "limits": [
+        "No supplier/manifest/lock change, native/device or fresh-process native qualification.",
+        "Public-wrapper integration passes; blocked shared-view paint unit tests and full workspace are not qualified.",
+        "Historical B6 MIDI H6-H9 remains separate."
+      ],
+      "detail": "../recorder-runtime_20261019/receipt.json",
       "original_index_title": "S4 \u2014 P2: The reusable Recorder adapter suppresses runtime failure diagnostics",
-      "original_report": "shared-report.md"
+      "original_report": "shared-report.md",
+      "reconciliation_before_recorder_runtime_batch": {
+        "classification": "unchanged_finding_mechanism",
+        "current_observation": "Reusable wrapper drops backend failure status",
+        "qualification": {
+          "focused_regression": "unassessed",
+          "integration_build": "unassessed",
+          "native": "unassessed",
+          "fresh_process": "unassessed",
+          "physical_device": "unassessed",
+          "publication": "unassessed"
+        },
+        "limits": "Native Hocket accessory partly masks gap; generic manually supplied status tests do not exercise wrapper forwarding.",
+        "detail": "current/ports.json"
+      },
+      "requested_slice": "B6 tempo replay and runtime diagnostics; historical package label retained",
+      "implementation_revision": "7b161a9f5f22af92bc94728f80128b84c6ec20fd"
     },
     {
       "id": "theory:T1",
@@ -1578,5 +1623,6 @@
   "runtime_followup": "../runtime-authority_20261018/receipt.json",
   "targeted_runtime_revision": "662cda5baf767530ebf22bb3ea7c212e9095116d",
   "pcm_timing_followup": "../pcm-timing_20261018/receipt.json",
-  "select_one_followup": "../recorder-select-one_20261019/receipt.json"
+  "select_one_followup": "../recorder-select-one_20261019/receipt.json",
+  "recorder_runtime_followup": "../recorder-runtime_20261019/receipt.json"
 }

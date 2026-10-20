@@ -1,0 +1,131 @@
+    Blocking waiting for file lock on package cache
+warning: patch `commons-spine v0.0.1 (https://github.com/merely-made/gemot.git?rev=6a5023a9ca478ebcc342dd9b7c9e418ccacfc6b5#6a5023a9)` was not used in the crate graph
+warning: patch `dict-protocol v0.1.0 (https://github.com/merely-made/errand.git?rev=dce1f08546b8475e42a5a01ca1ea18794c6e9b97#dce1f085)` was not used in the crate graph
+warning: patch `errand v0.4.0 (https://github.com/merely-made/errand.git?rev=dce1f08546b8475e42a5a01ca1ea18794c6e9b97#dce1f085)` was not used in the crate graph
+warning: patch `finger-protocol v0.1.1 (https://github.com/merely-made/errand.git?rev=dce1f08546b8475e42a5a01ca1ea18794c6e9b97#dce1f085)` was not used in the crate graph
+warning: patch `fsp-protocol v0.1.0 (https://github.com/merely-made/errand.git?rev=dce1f08546b8475e42a5a01ca1ea18794c6e9b97#dce1f085)` was not used in the crate graph
+warning: patch `gemini-protocol v0.1.7 (https://github.com/merely-made/errand.git?rev=dce1f08546b8475e42a5a01ca1ea18794c6e9b97#dce1f085)` was not used in the crate graph
+warning: patch `gemot v0.1.1 (https://github.com/merely-made/gemot.git?rev=6a5023a9ca478ebcc342dd9b7c9e418ccacfc6b5#6a5023a9)` was not used in the crate graph
+warning: patch `gopher-protocol v0.2.0 (https://github.com/merely-made/errand.git?rev=dce1f08546b8475e42a5a01ca1ea18794c6e9b97#dce1f085)` was not used in the crate graph
+warning: patch `guppy-protocol v0.1.1 (https://github.com/merely-made/errand.git?rev=dce1f08546b8475e42a5a01ca1ea18794c6e9b97#dce1f085)` was not used in the crate graph
+warning: patch `hagiograph v0.0.1 (https://github.com/merely-made/eidetic.git?rev=de6b1dce75dd6725d72c79b829e4878c7903a381#de6b1dce)` was not used in the crate graph
+warning: patch `kepler-protocol v0.1.0 (https://github.com/merely-made/errand.git?rev=dce1f08546b8475e42a5a01ca1ea18794c6e9b97#dce1f085)` was not used in the crate graph
+warning: patch `luggage v0.1.0 (https://github.com/merely-made/eidetic.git?rev=de6b1dce75dd6725d72c79b829e4878c7903a381#de6b1dce)` was not used in the crate graph
+warning: patch `mere-proofs v0.1.0 (https://github.com/merely-made/eidetic.git?rev=de6b1dce75dd6725d72c79b829e4878c7903a381#de6b1dce)` was not used in the crate graph
+warning: patch `mien v0.0.1 (https://github.com/merely-made/gemot.git?rev=6a5023a9ca478ebcc342dd9b7c9e418ccacfc6b5#6a5023a9)` was not used in the crate graph
+warning: patch `misfin v0.0.4 (https://github.com/merely-made/errand.git?rev=dce1f08546b8475e42a5a01ca1ea18794c6e9b97#dce1f085)` was not used in the crate graph
+warning: patch `moothold v0.1.0 (https://github.com/merely-made/gemot.git?rev=6a5023a9ca478ebcc342dd9b7c9e418ccacfc6b5#6a5023a9)` was not used in the crate graph
+warning: patch `mooting v0.1.0 (https://github.com/merely-made/gemot.git?rev=6a5023a9ca478ebcc342dd9b7c9e418ccacfc6b5#6a5023a9)` was not used in the crate graph
+warning: patch `nex-protocol v0.1.1 (https://github.com/merely-made/errand.git?rev=dce1f08546b8475e42a5a01ca1ea18794c6e9b97#dce1f085)` was not used in the crate graph
+warning: patch `scorpion-protocol v0.1.0 (https://github.com/merely-made/errand.git?rev=dce1f08546b8475e42a5a01ca1ea18794c6e9b97#dce1f085)` was not used in the crate graph
+warning: patch `scroll-protocol v0.1.0 (https://github.com/merely-made/errand.git?rev=dce1f08546b8475e42a5a01ca1ea18794c6e9b97#dce1f085)` was not used in the crate graph
+warning: patch `servitor v0.0.2 (https://github.com/merely-made/eidetic.git?rev=de6b1dce75dd6725d72c79b829e4878c7903a381#de6b1dce)` was not used in the crate graph
+warning: patch `spartan-protocol v0.1.1 (https://github.com/merely-made/errand.git?rev=dce1f08546b8475e42a5a01ca1ea18794c6e9b97#dce1f085)` was not used in the crate graph
+warning: patch `stickleback v0.1.1 (https://github.com/merely-made/eidetic.git?rev=de6b1dce75dd6725d72c79b829e4878c7903a381#de6b1dce)` was not used in the crate graph
+warning: patch `text-protocol v0.1.0 (https://github.com/merely-made/errand.git?rev=dce1f08546b8475e42a5a01ca1ea18794c6e9b97#dce1f085)` was not used in the crate graph
+warning: patch `commons-spine v0.0.1 (https://github.com/merely-made/gemot.git?rev=6a5023a9ca478ebcc342dd9b7c9e418ccacfc6b5#6a5023a9)` was not used in the crate graph
+warning: patch `errand v0.4.0 (https://github.com/merely-made/errand.git?rev=dce1f08546b8475e42a5a01ca1ea18794c6e9b97#dce1f085)` was not used in the crate graph
+warning: patch `gemot v0.1.1 (https://github.com/merely-made/gemot.git?rev=6a5023a9ca478ebcc342dd9b7c9e418ccacfc6b5#6a5023a9)` was not used in the crate graph
+warning: patch `hagiograph v0.0.1 (https://github.com/merely-made/eidetic.git?rev=de6b1dce75dd6725d72c79b829e4878c7903a381#de6b1dce)` was not used in the crate graph
+warning: patch `luggage v0.1.0 (https://github.com/merely-made/eidetic.git?rev=de6b1dce75dd6725d72c79b829e4878c7903a381#de6b1dce)` was not used in the crate graph
+warning: patch `mere-proofs v0.1.0 (https://github.com/merely-made/eidetic.git?rev=de6b1dce75dd6725d72c79b829e4878c7903a381#de6b1dce)` was not used in the crate graph
+warning: patch `mere-transport v0.0.2 (https://github.com/merely-made/murm.git?branch=main#cba46d85)` was not used in the crate graph
+warning: patch `mere-webrtc-carrier v0.0.1 (https://github.com/merely-made/murm.git?branch=main#cba46d85)` was not used in the crate graph
+warning: patch `mien v0.0.1 (https://github.com/merely-made/gemot.git?rev=6a5023a9ca478ebcc342dd9b7c9e418ccacfc6b5#6a5023a9)` was not used in the crate graph
+warning: patch `moothold v0.1.0 (https://github.com/merely-made/gemot.git?rev=6a5023a9ca478ebcc342dd9b7c9e418ccacfc6b5#6a5023a9)` was not used in the crate graph
+warning: patch `mooting v0.1.0 (https://github.com/merely-made/gemot.git?rev=6a5023a9ca478ebcc342dd9b7c9e418ccacfc6b5#6a5023a9)` was not used in the crate graph
+warning: patch `servitor v0.0.2 (https://github.com/merely-made/eidetic.git?rev=de6b1dce75dd6725d72c79b829e4878c7903a381#de6b1dce)` was not used in the crate graph
+warning: patch `stickleback v0.1.1 (https://github.com/merely-made/eidetic.git?rev=de6b1dce75dd6725d72c79b829e4878c7903a381#de6b1dce)` was not used in the crate graph
+warning: patch `commons-spine v0.0.1 (https://github.com/merely-made/gemot.git?rev=6a5023a9ca478ebcc342dd9b7c9e418ccacfc6b5#6a5023a9)` was not used in the crate graph
+warning: patch `errand v0.4.0 (https://github.com/merely-made/errand.git?rev=dce1f08546b8475e42a5a01ca1ea18794c6e9b97#dce1f085)` was not used in the crate graph
+warning: patch `gemot v0.1.1 (https://github.com/merely-made/gemot.git?rev=6a5023a9ca478ebcc342dd9b7c9e418ccacfc6b5#6a5023a9)` was not used in the crate graph
+warning: patch `hagiograph v0.0.1 (https://github.com/merely-made/eidetic.git?rev=de6b1dce75dd6725d72c79b829e4878c7903a381#de6b1dce)` was not used in the crate graph
+warning: patch `luggage v0.1.0 (https://github.com/merely-made/eidetic.git?rev=de6b1dce75dd6725d72c79b829e4878c7903a381#de6b1dce)` was not used in the crate graph
+warning: patch `mere-proofs v0.1.0 (https://github.com/merely-made/eidetic.git?rev=de6b1dce75dd6725d72c79b829e4878c7903a381#de6b1dce)` was not used in the crate graph
+warning: patch `mien v0.0.1 (https://github.com/merely-made/gemot.git?rev=6a5023a9ca478ebcc342dd9b7c9e418ccacfc6b5#6a5023a9)` was not used in the crate graph
+warning: patch `moothold v0.1.0 (https://github.com/merely-made/gemot.git?rev=6a5023a9ca478ebcc342dd9b7c9e418ccacfc6b5#6a5023a9)` was not used in the crate graph
+warning: patch `mooting v0.1.0 (https://github.com/merely-made/gemot.git?rev=6a5023a9ca478ebcc342dd9b7c9e418ccacfc6b5#6a5023a9)` was not used in the crate graph
+warning: patch `servitor v0.0.2 (https://github.com/merely-made/eidetic.git?rev=de6b1dce75dd6725d72c79b829e4878c7903a381#de6b1dce)` was not used in the crate graph
+warning: patch `stickleback v0.1.1 (https://github.com/merely-made/eidetic.git?rev=de6b1dce75dd6725d72c79b829e4878c7903a381#de6b1dce)` was not used in the crate graph
+help: Check that the patched package version and available features are compatible
+      with the dependency requirements. If the patch has a different version from
+      what is locked in the Cargo.lock file, run `cargo update` to use the new
+      version. This may also occur with an optional dependency that is not enabled.
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+   Compiling hocket-views v0.1.0 (/Users/markik/Code/worktrees/woodshed-b6-20261019/crates/hocket-views)
+error[E0308]: mismatched types
+   --> crates/hocket-views/src/leaves.rs:427:48
+    |
+427 |         assert!(matches!(commands.as_slice(), [PaintCmd::DrawRect(_)]));
+    |                                                ^^^^^^^^^^^^^^^^^^^^^ expected `sprigging::PaintCmd`, found `paint_list_api::PaintCmd`
+    |
+note: there are multiple different versions of crate `paint_list_api` in the dependency graph
+   --> /Users/markik/.cargo/git/checkouts/netrender-a79f0762881dec01/d920501/paint_list_api/src/lib.rs:210:1
+    |
+210 | pub enum PaintCmd {
+    | ^^^^^^^^^^^^^^^^^ this is the expected type
+    |
+   ::: /Users/markik/.cargo/git/checkouts/netrender-a79f0762881dec01/e8cda06/paint_list_api/src/lib.rs:210:1
+    |
+210 | pub enum PaintCmd {
+    | ----------------- this is the found type
+    = help: you can use `cargo tree` to explore your dependency tree
+
+error[E0308]: mismatched types
+   --> crates/hocket-views/src/leaves.rs:446:14
+    |
+446 |         let [PaintCmd::DrawRect(silent_baseline)] = silence.as_slice() else {
+    |              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ expected `sprigging::PaintCmd`, found `paint_list_api::PaintCmd`
+    |
+note: there are multiple different versions of crate `paint_list_api` in the dependency graph
+   --> /Users/markik/.cargo/git/checkouts/netrender-a79f0762881dec01/d920501/paint_list_api/src/lib.rs:210:1
+    |
+210 | pub enum PaintCmd {
+    | ^^^^^^^^^^^^^^^^^ this is the expected type
+    |
+   ::: /Users/markik/.cargo/git/checkouts/netrender-a79f0762881dec01/e8cda06/paint_list_api/src/lib.rs:210:1
+    |
+210 | pub enum PaintCmd {
+    | ----------------- this is the found type
+    = help: you can use `cargo tree` to explore your dependency tree
+
+error[E0308]: mismatched types
+   --> crates/hocket-views/src/leaves.rs:454:14
+    |
+454 |         let [PaintCmd::DrawRect(baseline), PaintCmd::DrawPath(envelope)] = quiet.as_slice() else {
+    |              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ expected `sprigging::PaintCmd`, found `paint_list_api::PaintCmd`
+    |
+note: there are multiple different versions of crate `paint_list_api` in the dependency graph
+   --> /Users/markik/.cargo/git/checkouts/netrender-a79f0762881dec01/d920501/paint_list_api/src/lib.rs:210:1
+    |
+210 | pub enum PaintCmd {
+    | ^^^^^^^^^^^^^^^^^ this is the expected type
+    |
+   ::: /Users/markik/.cargo/git/checkouts/netrender-a79f0762881dec01/e8cda06/paint_list_api/src/lib.rs:210:1
+    |
+210 | pub enum PaintCmd {
+    | ----------------- this is the found type
+    = help: you can use `cargo tree` to explore your dependency tree
+
+error[E0308]: mismatched types
+   --> crates/hocket-views/src/leaves.rs:454:44
+    |
+454 |         let [PaintCmd::DrawRect(baseline), PaintCmd::DrawPath(envelope)] = quiet.as_slice() else {
+    |                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ expected `sprigging::PaintCmd`, found `paint_list_api::PaintCmd`
+    |
+note: there are multiple different versions of crate `paint_list_api` in the dependency graph
+   --> /Users/markik/.cargo/git/checkouts/netrender-a79f0762881dec01/d920501/paint_list_api/src/lib.rs:210:1
+    |
+210 | pub enum PaintCmd {
+    | ^^^^^^^^^^^^^^^^^ this is the expected type
+    |
+   ::: /Users/markik/.cargo/git/checkouts/netrender-a79f0762881dec01/e8cda06/paint_list_api/src/lib.rs:210:1
+    |
+210 | pub enum PaintCmd {
+    | ----------------- this is the found type
+    = help: you can use `cargo tree` to explore your dependency tree
+
+For more information about this error, try `rustc --explain E0308`.
+error: could not compile `hocket-views` (lib test) due to 4 previous errors

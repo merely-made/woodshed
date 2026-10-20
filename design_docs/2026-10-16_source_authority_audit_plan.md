@@ -4,7 +4,7 @@ Date: 2026-10-16; coordination closure: 2026-10-17.
 Status: complete collective read of frozen `d12201bf`; current-source finding
 reconciliation complete and published through `8204688`. Remediation remains open;
 H3/H5 and Q1 implementation is CPU qualified and published through `6e6498a`.
-B1–B3 runtime authority corrections are CPU qualified and published through `b1c9dfd`. B4 PCM/onset/calibration corrections are CPU qualified at `5dd01ae` and published through `8da953b`. B5 shared Recorder admission is CPU qualified at `b804d901` and local for review. The frozen
+B1–B3 runtime authority corrections are CPU qualified and published through `b1c9dfd`. B4 PCM/onset/calibration corrections are CPU qualified at `5dd01ae` and published through `8da953b`. B5 shared Recorder admission is CPU qualified at `b804d901` and published through `4fab895`. The requested B6 Recorder runtime slice is CPU qualified at `7b161a9` and local for review, with the separate shared-view unit gate blocked. The frozen
 audit closure itself adds no product fixes or product qualification.
 
 ## Scope and result
@@ -118,7 +118,7 @@ Done when imported and rendered nonfinite PCM is refused before resource publica
 
 ### P7 Admit shared Recorder voices from one occurrence rule (B5)
 
-Status (2026-10-19): implemented and CPU qualified at `b804d901`; local for review. Baseline: published `8da953b`. A Luna worker owns
+Status (2026-10-19): implemented and CPU qualified at `b804d901`; published through `4fab895`. Baseline: published `8da953b`. A Luna worker owns
 shared Recorder production admission; an independent Luna worker owns black-box
 regressions in a separate integration test file. The coordinator owns host/export
 boundary review and evidence. No worker owns native validation or supplier pins.
@@ -135,6 +135,29 @@ against isolated published Recorder source give three expected bypass failures
 and two passes; the setup lock refusal is excluded. Both source/test files and
 four unchanged locks are hash bound. New implementation remains local for review;
 native/device checks stay separate.
+
+### P8 Preserve tempo playback and surface Recorder diagnostics (requested B6 slice)
+
+Status (2026-10-19): scoped CPU qualification complete at `7b161a9`; local for review. Baseline: published `4fab895`, integrated on remote `be4d6d0`. Work is isolated in `codex/woodshed-b6-20261019`; the primary checkout
+and supplier/native owners remain untouched. Three Luna workers own production
+Recorder tempo admission, independent tempo tests, and shared wrapper diagnostic
+projection/DOM tests. The coordinator owns the engine offline contract test,
+integration and evidence.
+
+Done when clock refusal leaves previous tempo/history/voices untouched, accepted
+tempo changes requeue only previously accepted voices on the new grid without
+stopping them first, and a failed replacement preserves the prior accepted key
+with a visible error. Explicit pending stop intent must not be superseded by a
+tempo edit. Reuse B5 admission and existing keyed engine replacement; no second
+desired-voice store. Wrapper status must come from Recorder facts and render via
+the existing shared surface. No supplier/lock edits or native/device operations.
+This requested slice targets shared:S3/S4; historically named B6 MIDI H6–H9
+remain separate. The [receipt](../validation/recorder-runtime_20261019/README.md)
+records 171 distinct passes, two existing ignores, three expected baseline
+failures and actual process bindings. Nine source/test files and five unchanged
+locks are hash bound. The full shared-view unit target remains blocked by the
+existing paint API type mismatch; its new public-wrapper integration target
+passes independently. New work stays local for review.
 
 ## Current findings and next implementation order
 
@@ -167,8 +190,10 @@ native/device checks stay separate.
    use the existing bounded queue and cleanup, with ordered stop/pause/seek and
    unreachable-target observations. B4 now has scoped CPU-qualified finite PCM rejection, chunk-invariant onset
    accounting and a single calibration estimate/support result. B5 now admits capture/import/unmute/reconciliation through one occurrence rule
-   using the existing model predicate; inactive media remains retained. The next
-   runtime work is Hocket tempo replay and failure reporting,
+   using the existing model predicate; inactive media remains retained. The requested shared Recorder tempo replay and runtime diagnostic slice now
+   has scoped CPU qualification: accepted-clock-first keyed replacement,
+   preserved failure facts and one shared status renderer. Its full shared-view
+   unit gate is blocked by the pre-existing paint API mismatch.
    Redshank preview/runtime control and idle-worker completion remain separate
    product/controller seams. Protocol/instrument fixes B12–B14 preserve write,
    readback, restoration, incomplete data and output-file outcomes. Ringdown X1
@@ -245,3 +270,7 @@ implementation remains a separate preceding local change.
 2026-10-19: refreshed remote, pushed seven reviewed B4 commits through `8da953b`, then pulled with `--ff-only` (already current). Started B5 shared occurrence admission and independent public-API tests with two Luna agents. No native/device or supplier operations authorized for this batch.
 
 2026-10-19 B5 completion: source `b804d901` passes 176 distinct cases with two existing Hocket host ignores. A public-API test fixture roundtrips CBOR and compares actual accepted voices with model eligibility and offline one-cycle PCM. Isolated published source reproduces three bypass failures with the identical tests; a preceding standalone lock setup refusal is explicitly excluded. Source review removed repeated caller decisions and the unused track-only wrapper; both actual start sites use one occurrence rule. New work remains local; B6 tempo/replay and diagnostics stay separate, and the native lane remains untouched.
+
+2026-10-19 publication/B6 start: primary checkout contained additional unrelated local history and remote had advanced. Applied only the four reviewed B5 commits to isolated current main; source/test bytes match original review, automatic DOC_README merge retains incoming entries, and coordination hash was refreshed. Pushed through `4fab895`, then pulled successfully. Started the requested tempo/replay and diagnostic slice with three Luna workers. Engine already supports keyed next-bar replacement while the old voice continues; use that capability rather than stop-before-clock or a new replay state store. Supplier intake and native lane remain outside ownership.
+
+2026-10-19 requested B6 completion: source `7b161a9` is scoped CPU qualified with 171 distinct passes and two existing Hocket host ignores. The isolated published Recorder control produces three expected failures with identical tests. Engine execution proves old voice continuity and latest keyed replacement; public wrapper and standalone CPU DOM tests prove status delivery and one visible owner. The failed selector compile attempt and blocked shared-view paint unit gate remain separately recorded, never counted as passing. Product source did not change after accepted recorder/wrapper/engine gates; the final host gate covers the sole receiving-test selector correction. Supplier inputs, native lane and primary source were preserved. Historical MIDI H6–H9 remain open and separate.

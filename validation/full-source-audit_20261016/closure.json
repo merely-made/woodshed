@@ -168,12 +168,12 @@
   "canonical_plan": "design_docs/2026-10-16_source_authority_audit_plan.md",
   "external_originals": "/Users/markik/Code/testing/woodshed/full-source-audit-20261016",
   "coordination_artifact_sha256": {
-    "validation/full-source-audit_20261016/README.md": "1ee17286066bfc904f06d83e415275ae5601838f75ca169369bad94cb98fcad6",
-    "validation/full-source-audit_20261016/current-finding-ledger.json": "9cdef39b211bab3d0ad024613aecd34685553c1837656805b2eece0a981a154c",
+    "validation/full-source-audit_20261016/README.md": "63973ce3da998e4caefba6a3a5262b122a0198b261659445d1721e960489842f",
+    "validation/full-source-audit_20261016/current-finding-ledger.json": "795522df727b12815905f32280bb0eb1b5b864c344a591579584291ad784e949",
     "validation/full-source-audit_20261016/verify_coverage.py": "2814ed0bebba4b97f1cc1b023295d8bdf8aace874b3431a7738fd17333930add",
     "validation/full-source-audit_20261016/test_verify_coverage.py": "9b464695e4db29708029e84ac54cda87081ae94f002b2274fbb211503c5eac3a",
-    "design_docs/2026-10-16_source_authority_audit_plan.md": "b60df11ad1c32cfaae2af543d0552712156525753af23225a9952c8ea2c62e5a",
-    "design_docs/DOC_README.md": "0a2ded451254af145c6d3a5e83b758e07bd2894b93a69d914b1a55188d34644a"
+    "design_docs/2026-10-16_source_authority_audit_plan.md": "d788b3933ab35bced2a5f070ceb6c334376a5a542c5a2a2e252426485fc913f2",
+    "design_docs/DOC_README.md": "c98599de007e446bdeb3749296302771d08660f209ef16eabdebab94e64bc902"
   },
   "publication_record": "publication.json",
   "implementation_followup": "../admission-evidence_20261017/receipt.json",
@@ -201,7 +201,7 @@
   },
   "select_one_followup": "../recorder-select-one_20261019/receipt.json",
   "select_one_followup_artifact_sha256": {
-    "validation/recorder-select-one_20261019/README.md": "c81cc7a3b24b6231a96dd192e8c35509152b4f8315f53d429c4d3cea5cd7d21d",
+    "validation/recorder-select-one_20261019/README.md": "1de8563fee9b8e67ac954e1038f834e4e59c15413c547dfbf056bd975becffaa",
     "validation/recorder-select-one_20261019/checks/baseline-negative-v2.json": "37fa346340b496d9271e396d984ebbf1f2af62cee670e95332ca532c423d7117",
     "validation/recorder-select-one_20261019/checks/baseline-negative-v2.log": "d4a038400004c4bb38b92a6920136c526cf33a72d304afe3f351429c67284e62",
     "validation/recorder-select-one_20261019/checks/baseline-negative.json": "17b198994956adbb4ad921d4e0f5552c77a3c385f70dcb181db7de4fc7ba9618",
@@ -217,6 +217,29 @@
     "validation/recorder-select-one_20261019/checks/views.log": "81c5b220bd2e084666a39c05f75e3c1cdc1a1c531817862c00fa6112597f78d2",
     "validation/recorder-select-one_20261019/checks/whitespace.json": "2c34b80ef2ed1af6c1e457a16bfd6d848331e60523129108372b647da2c0a2eb",
     "validation/recorder-select-one_20261019/checks/whitespace.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "validation/recorder-select-one_20261019/receipt.json": "365c8d8e51b243486c5ae3399e3080a08a6a6676a512a98486a99e89517600c2"
+    "validation/recorder-select-one_20261019/receipt.json": "365c8d8e51b243486c5ae3399e3080a08a6a6676a512a98486a99e89517600c2",
+    "validation/recorder-select-one_20261019/publication.json": "4b349af11cba933a411ac53f02f7eb0979958cd00ccf387a9bb8b8cdf08a1f92"
+  },
+  "recorder_runtime_followup": "../recorder-runtime_20261019/receipt.json",
+  "recorder_runtime_followup_artifact_sha256": {
+    "validation/recorder-runtime_20261019/README.md": "da60db5992752ecfb98af7467c3a49b2ecc5c0ce69dd219734c3724eeb2e73db",
+    "validation/recorder-runtime_20261019/checks/diagnostics.json": "d1daa670aee8591f129e2cdee9c67817b61dacb3235fd777eaff6fd0a38cec00",
+    "validation/recorder-runtime_20261019/checks/diagnostics.log": "6846ce3538e24d3c72a1a4a6b5abef7e3943bdca075af8e30f8975c919517bf4",
+    "validation/recorder-runtime_20261019/checks/doc-links.json": "568aa7c3a197010200f41c0991d355c260e01843153a1a6b7d0ef93fdb19ecf9",
+    "validation/recorder-runtime_20261019/checks/engine.json": "cffe4634a3eb93ce2c7535cc79655d6208476ebe71be9b6faaed15753263cda9",
+    "validation/recorder-runtime_20261019/checks/engine.log": "c46d15dab37ff4a2ceb208c9df1213de79fcd2f4c12338dab9a3ba6a54fc64fa",
+    "validation/recorder-runtime_20261019/checks/hocket-host-v2.json": "3576e8b62b8b603968e4b034fdd6668d73043ca952cab5c8b5ad99904335c7e0",
+    "validation/recorder-runtime_20261019/checks/hocket-host-v2.log": "d0107e53c6e6f8bccd2e2ab68693ca697f72c41296e3178dd454800b6f3d8953",
+    "validation/recorder-runtime_20261019/checks/hocket-host.json": "c7d58fbc5e6c07ca641a59342205749a0553012eb4bf47fb3ee44e938b85f646",
+    "validation/recorder-runtime_20261019/checks/hocket-host.log": "72c3fc26beb195bedafdf00a6dc9dfb4819e519c64c077bfa81ab8337410a12a",
+    "validation/recorder-runtime_20261019/checks/recorder.json": "422e3f82b0578dab8785902fed616950d6e5fdf4953e9880c40285425c1e471e",
+    "validation/recorder-runtime_20261019/checks/recorder.log": "f06de3b3c9337be58c42fe8673896a2bde77a356d430d1dd72932acde35e5538",
+    "validation/recorder-runtime_20261019/checks/tempo-baseline.json": "8e4f800b183433868e798f286234a1ffbdc765585e958a2dc687eed512327bc3",
+    "validation/recorder-runtime_20261019/checks/tempo-baseline.log": "f0c8c6d568555633a6e4555322437f1744878eb379b90b0ce6c54cbb812e79a9",
+    "validation/recorder-runtime_20261019/checks/views-unit-blocked.json": "4a8619f910201ae5e1d76447490b30767645b36beda085e07fb00f5ec500a949",
+    "validation/recorder-runtime_20261019/checks/views-unit-blocked.log": "204784ff62041f38a18fdaf2dedd986135eacd91004116ffcf0a7c0f5576327f",
+    "validation/recorder-runtime_20261019/checks/whitespace.json": "3290d2787fe15fd1e5846506ed16b10fb315752725deca39e51e4568578259dc",
+    "validation/recorder-runtime_20261019/checks/whitespace.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "validation/recorder-runtime_20261019/receipt.json": "7f15383b369f38b14030766de2462d9aad6153a3e6aa2dc20dcada3f580ed95e"
   }
 }
