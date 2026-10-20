@@ -1,0 +1,20 @@
+    Blocking waiting for file lock on package cache
+   Compiling woodshedding v0.1.0 (/Users/markik/Code/worktrees/woodshed-arrangement-playback/crates/woodshedding)
+   Compiling musicxml-timing v0.1.0 (/Users/markik/Code/worktrees/woodshed-arrangement-playback/examples/musicxml-timing)
+    Finished `test` profile [unoptimized] target(s) in 13.82s
+     Running unittests src/main.rs (examples/musicxml-timing/target/build/debug/deps/musicxml_timing-bd4ed4d876b168e6)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/consumer.rs (examples/musicxml-timing/target/build/debug/deps/consumer-e54dabeeca3c691e)
+
+running 4 tests
+test parsed_musicxml_can_be_timed_beyond_audio_engine_capacity ... ok
+test musicxml_triplets_rests_and_disposable_tempo_survive_file_to_timing ... ok
+test progression_keeps_chord_contacts_simultaneous_and_defaults_to_written_tempo ... ok
+test invalid_tempo_is_a_failure_without_partial_timing_output ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.92s
+

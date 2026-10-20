@@ -1,0 +1,15 @@
+[package]
+name = "musicxml-timing"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.97.1"
+license = "MPL-2.0"
+publish = false
+
+# An independent consumer: resolving this workspace does not resolve Woodshed,
+# Mere, any UI toolkit, persistence, or an audio engine.
+[workspace]
+resolver = "3"
+
+[dependencies]
+woodshedding = { path = "../../crates/woodshedding" }
