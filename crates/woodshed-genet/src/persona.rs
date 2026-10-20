@@ -164,6 +164,22 @@ fn resume_switch_with(
         .update(|ui| chosen = preserve_pending_switch(shared, ui));
     if let Some(profile) = chosen {
         let (storage, seal) = open(&profile);
+        // A successful custody connection can still answer as another profile
+        // if the family's choice changed while it was reopening. The selected
+        // identity, not that convention, authorizes retiring outgoing practice.
+        let seal = match seal {
+            woodshed_views::persona::PracticeSeal::Sealed { ref persona, .. }
+                if persona != &profile.0 =>
+            {
+                woodshed_views::persona::PracticeSeal::Pending {
+                    reason: format!(
+                        "djinn opened persona {persona:?} instead of the selected persona {:?}",
+                        profile.0
+                    ),
+                }
+            },
+            seal => seal,
+        };
         install_store(shared, ctx, storage, seal, PickPurpose::Switch);
     }
 }

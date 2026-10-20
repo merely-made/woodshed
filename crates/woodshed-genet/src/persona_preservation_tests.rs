@@ -38,7 +38,22 @@ fn fixture() -> (
     fixture_with_pending_opens(0)
 }
 
-fn fixture_with_pending_opens(mut pending_opens: usize) -> (
+fn fixture_with_pending_opens(pending_opens: usize) -> (
+    Rc<RefCell<Shared>>,
+    cambium_genet_winit_host::Harness<UiState, crate::sync::Logic, UiChild>,
+    Arc<AtomicBool>,
+    Rc<Cell<usize>>,
+    muniment::MemoryBackend,
+) {
+    fixture_with_initial_seals(vec![
+        PracticeSeal::Pending {
+            reason: "incoming custody unavailable".into(),
+        };
+        pending_opens
+    ])
+}
+
+fn fixture_with_initial_seals(initial_seals: Vec<PracticeSeal>) -> (
     Rc<RefCell<Shared>>,
     cambium_genet_winit_host::Harness<UiState, crate::sync::Logic, UiChild>,
     Arc<AtomicBool>,
@@ -68,6 +83,7 @@ fn fixture_with_pending_opens(mut pending_opens: usize) -> (
     let opened = Rc::new(Cell::new(0));
     let open_count = opened.clone();
     let mut incoming = Some(incoming);
+    let mut initial_seals = initial_seals.into_iter();
     let transition_shared = shared.clone();
     let mut hooks = crate::hooks(&shared);
     hooks.after_dispatch = Box::new(move |ctx| {
@@ -75,13 +91,12 @@ fn fixture_with_pending_opens(mut pending_opens: usize) -> (
         resume_switch_with(&mut shared, ctx, |id| {
             assert_eq!(id.0, "incoming");
             open_count.set(open_count.get() + 1);
-            if pending_opens > 0 {
-                pending_opens -= 1;
+            if let Some(seal) = initial_seals.next() {
                 return (
                     SessionStore::new(
                         Box::new(muniment::MemoryBackend::default()) as crate::storage::HostBackend
                     ),
-                    PracticeSeal::Pending { reason: "incoming custody unavailable".into() },
+                    seal,
                 );
             }
             (
@@ -110,6 +125,77 @@ fn fixture_with_pending_opens(mut pending_opens: usize) -> (
         cambium_genet_winit_host::HostOptions::default(),
     );
     (shared, host, refusing, opened, bytes)
+}
+
+#[test]
+fn mismatched_incoming_seal_retains_outgoing_work_and_selected_target_until_retry() {
+    let (shared, mut host, _refusing, opened, _bytes) =
+        fixture_with_initial_seals(vec![PracticeSeal::Sealed {
+            persona: "another-persona".into(),
+            protection: "test".into(),
+        }]);
+    let epoch = host.state().audio_session.clone();
+    let seal = host.state().seal.clone();
+    host.update(|ui| {
+        ui.enable_practice_clock();
+        ui.event_clock = Some(|| Some(123_456));
+        ui.set.cards[0].label = "outgoing instruction retained across identity mismatch".into();
+        ui.loop_export_replace = Some((17, "outgoing.wav".into()));
+        pending(ui, SwitchDecision::Retry);
+    });
+    host.after_dispatch();
+    assert_eq!(opened.get(), 1);
+    assert!(Arc::ptr_eq(&epoch, &host.state().audio_session));
+    assert_eq!(host.state().seal, seal);
+    assert_eq!(shared.borrow().seal, seal);
+    assert_eq!(
+        host.state().set.cards[0].label,
+        "outgoing instruction retained across identity mismatch"
+    );
+    assert_eq!(
+        host.state().loop_export_replace,
+        Some((17, "outgoing.wav".into()))
+    );
+    assert!(crate::capture_persistence::session_current(
+        &shared.borrow(),
+        host.state()
+    ));
+    let outgoing = shared.borrow().storage.as_ref().unwrap().load().unwrap();
+    assert_eq!(
+        woodshed_core::storage::decode_session(&outgoing)
+            .unwrap()
+            .session
+            .set
+            .cards[0]
+            .label,
+        "outgoing instruction retained across identity mismatch"
+    );
+    let pending = host.state().pending_persona_switch.as_ref().unwrap();
+    assert_eq!(pending.profile.0, "incoming");
+    assert!(pending.decision.is_none());
+    assert!(!pending.waiting);
+    assert!(pending.notice.contains("another-persona"));
+    assert!(pending.notice.contains("selected persona \"incoming\""));
+    host.after_dispatch();
+    assert_eq!(
+        opened.get(),
+        1,
+        "an identity mismatch awaits an explicit decision"
+    );
+    host.update(|ui| {
+        ui.pending_persona_switch.as_mut().unwrap().decision = Some(SwitchDecision::Retry);
+    });
+    host.after_dispatch();
+    assert_eq!(opened.get(), 2);
+    assert!(host.state().pending_persona_switch.is_none());
+    assert!(!Arc::ptr_eq(&epoch, &host.state().audio_session));
+    assert!(host.state().set.cards.is_empty());
+    assert!(
+        matches!(host.state().seal.as_ref(), Some(PracticeSeal::Sealed { persona, .. }) if persona == "incoming")
+    );
+    assert!(host.state().practice_clock_managed);
+    host.update(UiState::refresh_event_time);
+    assert_eq!(host.state().now_ms, Some(123_456));
 }
 
 #[test]
