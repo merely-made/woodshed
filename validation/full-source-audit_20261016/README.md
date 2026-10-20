@@ -82,7 +82,7 @@ published [runtime receipt](../recorder-runtime_20261019/README.md): 171 distinc
 passes, two existing ignores and three expected baseline failures at `7b161a9`,
 published through `fd9fb82`.
 The full shared-view unit target is blocked by an existing paint API mismatch.
-Historical B6 MIDI H6–H9 have a separate local [admission receipt](../midi-admission_20261019/README.md): 42 distinct CPU passes at `480c0d6`, with native/device qualification unassessed.
+Historical B6 MIDI H6–H9 have a separate published [admission receipt](../midi-admission_20261019/README.md): 42 distinct CPU passes at `480c0d6`, repeated on integration and published through `20bcc1c`; native/device qualification remains unassessed.
 Subsequent product/controller, protocol and
 compatibility work retain their existing owners. Existing media, playback
 clocks and native validation lanes remain protected.

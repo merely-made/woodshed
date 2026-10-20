@@ -168,12 +168,12 @@
   "canonical_plan": "design_docs/2026-10-16_source_authority_audit_plan.md",
   "external_originals": "/Users/markik/Code/testing/woodshed/full-source-audit-20261016",
   "coordination_artifact_sha256": {
-    "validation/full-source-audit_20261016/README.md": "6529596616c9a7c9ccd8ff7502a4c6ae78433ab6be0cfe4678b488c784aceaf3",
-    "validation/full-source-audit_20261016/current-finding-ledger.json": "3bd0f5051ac16174d6268e1f4621ff483dcb9535f7ea4af1b84f7ef2c8c02c02",
+    "validation/full-source-audit_20261016/README.md": "a92abb0b87684e6f8ffc1ef261e1145283881f9d888b539834c8701087da40e8",
+    "validation/full-source-audit_20261016/current-finding-ledger.json": "2f30de8c6efad34950e1b6d5dc7638765c41175cceb12cdb895e754d23339547",
     "validation/full-source-audit_20261016/verify_coverage.py": "2814ed0bebba4b97f1cc1b023295d8bdf8aace874b3431a7738fd17333930add",
     "validation/full-source-audit_20261016/test_verify_coverage.py": "9b464695e4db29708029e84ac54cda87081ae94f002b2274fbb211503c5eac3a",
-    "design_docs/2026-10-16_source_authority_audit_plan.md": "5074ec3e541cfa807c35522e301d94d165e528f93857c72684b876150b02452f",
-    "design_docs/DOC_README.md": "0d48741aa2422e64f17002f57bb6c84ee7af43d290803ecfef617e9d5102b571"
+    "design_docs/2026-10-16_source_authority_audit_plan.md": "d66942a28f97c7c8b58c6a874b207cb8f8da973966db59b605b7aa03c94c9cd6",
+    "design_docs/DOC_README.md": "ca368e878c588926cb181257f0e72b8f531813240acc2b8f013a664b4a39ae63"
   },
   "publication_record": "publication.json",
   "implementation_followup": "../admission-evidence_20261017/receipt.json",
@@ -248,7 +248,7 @@
     "validation/recorder-runtime_20261019/receipt.json": "7f15383b369f38b14030766de2462d9aad6153a3e6aa2dc20dcada3f580ed95e"
   },
   "midi_admission_followup_artifact_sha256": {
-    "validation/midi-admission_20261019/README.md": "aa5be8c7b3b0ca8182754024103779a9ffe196a7577ca22e4e77edb43f70683e",
+    "validation/midi-admission_20261019/README.md": "a70fe5fc458cd27e5bfbf1fff5efe8a06b40dd006969a94a522d06857b45aa93",
     "validation/midi-admission_20261019/checks/doc-links-final.json": "4781f309b2527273e395ba6d1c9f6fbc8d82dc554fba7f5285c6859ce69d8642",
     "validation/midi-admission_20261019/checks/doc-links-final.log": "eddbda075cf7c4df1dd65d6e9644647d16f7bab0d0d56595896c381013e7d5ef",
     "validation/midi-admission_20261019/checks/doc-links.json": "09a82183747bec56810e3cec094b66acc9cb34de6b6995c960ff54bb95af7e36",
@@ -277,6 +277,19 @@
     "validation/midi-admission_20261019/checks/whitespace-source-docs.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
     "validation/midi-admission_20261019/checks/whitespace.json": "9514f378e746e354fe778c873adbd4aeea0a2ec743260e28666b912ae4a85cf9",
     "validation/midi-admission_20261019/checks/whitespace.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "validation/midi-admission_20261019/integration/doc-links-v2.json": "bcaa61fc0ff3abf358b70475892e09d172dd6e2f7f592cee2d7c2e7bc4ab1db8",
+    "validation/midi-admission_20261019/integration/doc-links-v2.log": "6b4e24ec9c2fccbceba3ab057fad55646c032101a1b652b031b2cf9edabd970d",
+    "validation/midi-admission_20261019/integration/doc-links.json": "4be9fea478f321db27d481f07859985188c3ad6427eb001550183014606937c9",
+    "validation/midi-admission_20261019/integration/doc-links.log": "03d9723bc5ea4929fcc733db285e007b74fa8f19ca2d969237cc7962b9574259",
+    "validation/midi-admission_20261019/integration/midi.json": "af3c3737ba1b730a4de6311d7f40de8fdcd05a84944039102067c8927697e515",
+    "validation/midi-admission_20261019/integration/midi.log": "9e8bbab68cab675ca3e30e461a9bf3e71cc0376d2d1abf8b50503d485069e5ab",
+    "validation/midi-admission_20261019/integration/persona.json": "89cb75990771900b82072e7023f092d0abb4c6be27d8a4dbf8a95ca09701894b",
+    "validation/midi-admission_20261019/integration/persona.log": "cd227cea58f06a68a8734d693aff2dd09bd0e535f68047c40545ddbb5f1a9bd3",
+    "validation/midi-admission_20261019/integration/selection.json": "e8a69bbd3b7e4e8c874a9029fa757179c473dc6ae1642a3c7620326e34277654",
+    "validation/midi-admission_20261019/integration/selection.log": "defb412c367005aef51afd37aba456c7d918b50afe83eb00dc9f76d3722bc58a",
+    "validation/midi-admission_20261019/integration/whitespace.json": "878c509dc6f392cf27e585e63e98cdf5461a7c99d985c3840d1f4cec753752b8",
+    "validation/midi-admission_20261019/integration/whitespace.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "validation/midi-admission_20261019/publication.json": "3c1481b20ef3e2d0f324efd75ebc83c71b9f23e2451243bdeb30e78e6549f9c1",
     "validation/midi-admission_20261019/receipt.json": "2c983c9a3f495a633dd9774e1284383a0ef52f81960d46612549be8135347be0"
   }
 }
