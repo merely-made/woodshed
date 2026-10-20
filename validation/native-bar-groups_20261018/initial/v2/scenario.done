@@ -1,0 +1,19 @@
+RESULT fail
+captured 01_bar_group_preview
+FAIL: assert snap arrangement-group-counts Eq '1 + 3': got '2 + 2'
+FAIL: assert snap arrangement-groups Eq '1 + 3': got '2 + 2'
+FAIL: assert snap arrangement-groups Eq '2 + 2': got 'none'
+FAIL: assert snap arrangement-dirty Eq 'false': got 'true'
+FAIL: assert snap arrangement-dirty Eq 'false': got 'true'
+FAIL: assert snap arrangement-group-counts Eq '1 + 3': got '2 + 2'
+captured 02_narrow_bar_groups
+captured 03_narrow_scene
+FAIL: assert snap arrangement-groups Eq '2 + 2': got 'none'
+captured 04_panel_return
+capture 01_bar_group_preview 2360x2200 digest=78bd67de23d73f46 file=/Users/markik/Code/output/graphshell-meter-native-20261018/native-run-v2/seed/01_bar_group_preview.png
+capture 02_narrow_bar_groups 840x2200 digest=9b1288a719a06af8 file=/Users/markik/Code/output/graphshell-meter-native-20261018/native-run-v2/seed/02_narrow_bar_groups.png
+capture 03_narrow_scene 840x2200 digest=a745fba0c2d1b294 file=/Users/markik/Code/output/graphshell-meter-native-20261018/native-run-v2/seed/03_narrow_scene.png
+capture 04_panel_return 840x2200 digest=d535e9e5ad3483a3 file=/Users/markik/Code/output/graphshell-meter-native-20261018/native-run-v2/seed/04_panel_return.png
+frames: 4 captured, 0 blank, 4 distinct digests
+presentation: 216 frames, 219 redraws, 3 unpresented redraws
+FAIL: no current DOM target for Selector { surface: None, matcher: Class("t-btn"), text: None, attr: Some(("data-arrangement-action", "group-choice-update")) }

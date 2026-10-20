@@ -1,0 +1,43 @@
+diff --git a/crates/cambium/scenes/scenomise/src/backdrops.rs b/crates/cambium/scenes/scenomise/src/backdrops.rs
+index 033da4422..e36a23bd6 100644
+--- a/crates/cambium/scenes/scenomise/src/backdrops.rs
++++ b/crates/cambium/scenes/scenomise/src/backdrops.rs
+@@ -880,7 +880,12 @@ fn compile_metre(out: &mut BackdropScene, src: sceno::SourceIx, grid: &MetreGrid
+             .collect(),
+     };
+     draw_template(out, src, &template);
+-    let right = template.x(max_syllables as f32) + 38.0;
++    // Source text stays visible even when syllable analysis is unavailable.
++    // Caption width reserves presentation space, not invented metrical units.
++    let caption_width = |line: &VerseLine| line.text.chars().count() as f32 * 11.0;
++    let text_right = grid.lines.iter().filter(|line| line.syllables.is_empty())
++        .map(|line| 48.0 + caption_width(line) + 38.0).fold(0.0_f32, f32::max);
++    let right = (template.x(max_syllables as f32) + 38.0).max(text_right);
+     out.scene.bounds = Rect::new(
+         Vec2::ZERO,
+         Size2::new(right + 90.0, 42.0 + row * grid.lines.len().max(1) as f32),
+@@ -911,6 +916,12 @@ fn compile_metre(out: &mut BackdropScene, src: sceno::SourceIx, grid: &MetreGrid
+             size: Size2::new(36.0, 44.0),
+         });
+         rows.push(id);
++        if line.syllables.is_empty() {
++            out.guides.push(GuideLabel {
++                at: Vec2::new(48.0 + caption_width(line) / 2.0, y + 17.0),
++                text: line.text.clone(),
++            });
++        }
+         for (j, syllable) in line.syllables.iter().enumerate() {
+             let Some(span) = grid.placement(i, j) else {
+                 out.unplaced.push(Unplaced {
+diff --git a/crates/nematic/illume/src/lib.rs b/crates/nematic/illume/src/lib.rs
+index 0e6940de1..2d2fa255c 100644
+--- a/crates/nematic/illume/src/lib.rs
++++ b/crates/nematic/illume/src/lib.rs
+@@ -18,6 +18,7 @@
+ //! lexers), so native and the browser build the same way. See
+ //! `design_docs/mere_docs/implementation_strategy/2026-06-24_djot_editor_knot_nodes_plan.md`.
+ 
++pub mod blocks;
+ pub mod entity;
+ pub mod highlight;
+ pub mod injection;

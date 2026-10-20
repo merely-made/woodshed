@@ -1,0 +1,15 @@
+[woodshed] practice sealed to persona "default" (Passphrase (held by djinn))
+[cambium-winit] accessibility Installed, 287 nodes projected
+woodshed-genet: captured 01_bar_group_preview
+woodshed-genet: FAIL: assert snap arrangement-group-counts Eq '1 + 3': got '2 + 2'
+woodshed-genet: FAIL: assert snap arrangement-groups Eq '1 + 3': got '2 + 2'
+woodshed-genet: FAIL: assert snap arrangement-groups Eq '2 + 2': got 'none'
+woodshed-genet: FAIL: assert snap arrangement-dirty Eq 'false': got 'true'
+woodshed-genet: FAIL: assert snap arrangement-dirty Eq 'false': got 'true'
+woodshed-genet: FAIL: assert snap arrangement-group-counts Eq '1 + 3': got '2 + 2'
+woodshed-genet: captured 02_narrow_bar_groups
+woodshed-genet: captured 03_narrow_scene
+woodshed-genet: FAIL: assert snap arrangement-groups Eq '2 + 2': got 'none'
+woodshed-genet: captured 04_panel_return
+woodshed-genet: FAIL: no current DOM target for Selector { surface: None, matcher: Class("t-btn"), text: None, attr: Some(("data-arrangement-action", "group-choice-update")) }
+woodshed-genet: RESULT fail (216 frames, 4 captures)

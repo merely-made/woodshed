@@ -13,7 +13,7 @@ use woodshedding::rehearsal::arrangement::{Placement, Span};
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let args = std::env::args().skip(1).collect::<Vec<_>>();
     if args.len() != 2 || !matches!(args[0].as_str(), "regular" | "varied") {
-        return Err("usage: woodshed-arrangement-scene regular|varied OUTPUT.json".into());
+        return Err("usage: woodshed-arrangement-scene regular|varied OUTPUT.json|OUTPUT.djot".into());
     }
     let varied = args[0] == "varied";
     let mut stage = StageState::default();
@@ -97,13 +97,18 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         } else {
             vec![]
         },
+        time_signatures: vec![],
+        bar_groups: vec![],
     };
     let doc = arrangement_scene(&stage, &set, &arrangement, "ii-V-I-study")?;
+    let bytes = if args[1].ends_with(".djot") {
+        woodshed_core::arrangement_document::to_djot(&doc)?.into_bytes()
+    } else { serde_json::to_vec_pretty(&doc)? };
     std::fs::OpenOptions::new()
         .write(true)
         .create_new(true)
         .open(&args[1])?
-        .write_all(&serde_json::to_vec_pretty(&doc)?)?;
+        .write_all(&bytes)?;
     println!(
         "Exported {} with {} supplied voicings",
         arrangement.name,

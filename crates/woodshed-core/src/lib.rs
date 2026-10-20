@@ -28,6 +28,8 @@ pub mod loop_plan;
 pub mod mere;
 pub mod midi;
 pub mod musical_context;
+pub mod music;
+pub mod music_playback;
 pub mod personal_relations;
 pub mod pitch_motion_reading;
 pub mod practice_clock;
@@ -53,6 +55,8 @@ pub mod fretboard_scene;
 pub mod progression_scene;
 #[cfg(feature = "portable-scenes")]
 pub mod arrangement_scene;
+#[cfg(feature = "portable-scenes")]
+pub mod arrangement_document;
 pub mod storage;
 pub mod tonnetz;
 pub mod working_sets;

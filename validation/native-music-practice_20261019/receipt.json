@@ -1,0 +1,25 @@
+{
+  "status": "qualified-native-software-output",
+  "date": "2026-10-19",
+  "mere_supplier": "77d820026ff0c1c5fa08b12eee7039f49206a028",
+  "source_ledger": "source.json",
+  "native_run": "native-run-v4",
+  "canonical_manifest_build": true,
+  "local_supplier_overrides": false,
+  "woodshed_cases": 732,
+  "supplier_cases": 13,
+  "native_processes": 2,
+  "native_captures": 10,
+  "source_input_count": 254,
+  "qualification_limits": [
+    "Supported MusicXML profile only",
+    "Software OutputRuntime PCM, no CPAL hardware requalification",
+    "Earlier external-manifest receipts remain historical",
+    "Opacity-dependent scrolling remains a framework boundary; this context uses opaque theme colours"
+  ],
+  "shared_practice_tempo_bpm": [
+    1,
+    400
+  ],
+  "practice_tempo_restores_from_normal_settings": true
+}

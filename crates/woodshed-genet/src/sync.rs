@@ -51,6 +51,7 @@ pub fn after_dispatch(shared: &mut Shared, ctx: &mut Ctx<'_>) {
     shared.full_dispatch_syncs = shared.full_dispatch_syncs.saturating_add(1);
     push_backend(shared, ctx);
     crate::wav_export::after_dispatch(shared, ctx);
+    crate::music_export::after_dispatch(ctx);
     // Window verbs used to be drained here from four `UiState` flags. The
     // host owns them now: the caption buttons call `WindowCommands` directly
     // and the title bar drags from its `--app-region` declaration.

@@ -1,0 +1,22 @@
+settle 10
+ui-zoom 1
+click .workspace-panel Arrangement
+settle 6
+assert snap music-dirty == false
+assert snap music-practice-status == stopped
+assert snap music-playback-bar == none
+assert snap music-bars == 2
+assert snap music-pitch == 61
+act music-practice-checkpoint-reopened
+capture 01_reopened_music
+click .music-practice-match-tempo
+click .music-repeat-Arrangement
+click .music-practice-play
+act music-clock-advance-241000
+assert snap music-practice-status == playing
+assert snap music-playback-bar == 0
+act music-practice-checkpoint-repeat
+click .music-practice-stop
+act music-clock-advance-1000
+assert snap music-practice-status == stopped
+capture 02_reopened_repeat

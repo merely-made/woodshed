@@ -1,0 +1,42 @@
+{
+  "canonical_own_manifests": true,
+  "foreign_local_package_paths": [],
+  "cargo_lock_sha256": "fd60c83d3fbb03060d0519f8161cadb7011e5c21058c0d80f328dca18602cd63",
+  "packages": [
+    {
+      "name": "cambium-rootstock",
+      "source": "git+https://github.com/merely-made/mere.git?branch=main#77d820026ff0c1c5fa08b12eee7039f49206a028",
+      "manifest_path": "/Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/77d8200/crates/cambium/cambium-rootstock/Cargo.toml"
+    },
+    {
+      "name": "genet-render",
+      "source": "git+https://github.com/merely-made/genet.git?branch=main#17635c3596d1a08370a93867863eff724bb4b3b0",
+      "manifest_path": "/Users/markik/.cargo/git/checkouts/genet-0bbbe1b4c8511eb3/17635c3/components/genet-render/Cargo.toml"
+    },
+    {
+      "name": "muniment",
+      "source": "git+https://github.com/merely-made/eidetic.git?rev=de6b1dce75dd6725d72c79b829e4878c7903a381#de6b1dce75dd6725d72c79b829e4878c7903a381",
+      "manifest_path": "/Users/markik/.cargo/git/checkouts/eidetic-da5f5f1bff0a3046/de6b1dc/crates/muniment/Cargo.toml"
+    },
+    {
+      "name": "netrender_device",
+      "source": "git+https://github.com/merely-made/netrender.git?rev=d92050146768357ead4e4e42967866be7061262e#d92050146768357ead4e4e42967866be7061262e",
+      "manifest_path": "/Users/markik/.cargo/git/checkouts/netrender-a79f0762881dec01/d920501/netrender_device/Cargo.toml"
+    },
+    {
+      "name": "scenomise",
+      "source": "git+https://github.com/merely-made/mere.git?branch=main#77d820026ff0c1c5fa08b12eee7039f49206a028",
+      "manifest_path": "/Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/77d8200/crates/cambium/scenes/scenomise/Cargo.toml"
+    },
+    {
+      "name": "woodshed-core",
+      "source": null,
+      "manifest_path": "/Users/markik/Code/worktrees/woodshed-arrangement-playback/crates/woodshed-core/Cargo.toml"
+    },
+    {
+      "name": "woodshedding",
+      "source": null,
+      "manifest_path": "/Users/markik/Code/worktrees/woodshed-arrangement-playback/crates/woodshedding/Cargo.toml"
+    }
+  ]
+}

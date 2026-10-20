@@ -36,6 +36,7 @@ personae = { workspace = true }
 # For the fretboard leaf's accessibility() hook — the same accesskit sprigging's
 # Leaf trait speaks, so the neck can announce itself to assistive tech.
 accesskit = "0.24"
+ttf-parser = "0.25.1"
 serde = { workspace = true }
 serde_json = { workspace = true }
 

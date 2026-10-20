@@ -4477,3 +4477,296 @@ reviewed captures, exact sealed take reopening and three byte-identical actual/
 reference WAVs. Fixture dispatch and wait errors in native-v1/v2 remain excluded.
 The canonical receipt is `validation/stage-p7a_20261017/`; no supplier repin or
 physical-input claim is included. Full P7 and P8 retain their explicit scope.
+
+### Shared scene prototype review (2026-10-17)
+
+Mark requests a prompted audit and refinement of these prototypes. Qualification
+above establishes observed behavior, not final product design. Track questions
+and explicit answers in
+`mere/design_docs/mere_docs/implementation_strategy/2026-08-15_projection_grammar_adoption_plan.md`,
+section "Shared scene prototype design review (2026-10-17)". Review shared
+vocabulary, arrangement versus playback meaning, template limits, saving,
+history and placement interactions before treating the current choices as
+settled. The initial 22-prompt audit is now answered; detailed future playback and holding-utility interactions remain open.
+
+Prompt 9 is answered verbatim in that record: an arrangement can drive playback
+when explicitly chosen for practice, alongside the existing Set-order path.
+The current separate alignment/playback implementation is therefore a prototype
+boundary to refine, not the final product behavior. Playback details remain open;
+do not infer clock conversion or live-edit semantics from this answer.
+
+
+The prompt-22 document-block slice validates Woodshed as the second concrete
+consumer: the existing arrangement exporter can emit/read an independent
+`progression` Djot block containing the existing versioned scene-document JSON.
+Card/rest spans and linked voicings round-trip exactly; reading/editing the copy
+does not mutate its source Set or select playback. Graphshell uses its same
+portable scene admission/surface for this exported block. This is a codec and
+concrete consumer proof, not a new textual music grammar or a native Woodshed
+block-composition interface. See
+`validation/document-blocks_20261017/receipt.json` for the current-source local
+supplier cohort checks. The source dependency patch is temporary; canonical
+lockfile integration and new native Woodshed acceptance remain separate.
+
+
+### Native authored bar grouping refinement (2026-10-18)
+
+The next prototype slice uses the owner time-signature map to select consecutive
+bars, enter counts such as `2 + 2`, preview the group brackets on the existing
+portable scene, and apply or cancel in the ordinary arrangement draft. Conflicts
+start at Keep local, with Use update available. One chronological draft history
+covers arrangement fields, span gestures and applied grouping; proposal text,
+selection and preview are transient. Save retains history and updates its saved
+marker. No new shared editing crate is introduced.
+
+A native run caught a full-width grouping label whose center click missed its
+text box; shrink-wrapping that label makes count entry reachable. An existing
+narrow span-route regression caught a duplicate outer horizontal scroller
+intercepting button hits; the scene's dedicated scroller remains. The fixed
+span route and 18 focused draft cases pass against the local Mere prototype.
+The final two-process native grouping/save/reopen run passes with 306 presented
+frames and seven reviewed wide/compact captures. Only bar groups change; the
+complete live/sealed Sets and portable documents reopen exactly. A subsequent
+compact capture also caught the inner scroll viewport auto-collapsing; it now
+retains the leaf's full 300px height, with a wide-to-narrow layout regression.
+See `validation/native-bar-groups_20261018/` for frozen-source identities,
+intermediate failures, captures and the read-only verifier.
+
+Dedicated meter-map controls remain pending explicit answers about musical
+position versus bar-relative preservation, existing-group remapping, anchoring
+of later meter changes, and undo in an unapplied proposal field. These are new
+product decisions; the current tick/index representation does not settle them.
+Ordinary arrangements still acquire no implicit time signature.
+
+### Native notation-led music editing (2026-10-18)
+
+**Status (2026-10-18): bounded native prototype qualified on the local supplier cohort.** The maintainer approved the interactive
+chart/tab/score study and asked to implement it in native Woodshed with MusicXML
+as the foundation. This changes the next feature target from exposing the
+arrangement's tick/role machinery to editing music in familiar notation.
+The Arrangement panel remains the entry point and authored music saves with its
+working Set. It does not become another top-level document or practice bank.
+
+#### Feature target and validation
+
+1. Add a checked, bounded MusicXML 4.0 document to the Set. XML is the saved and
+   exported musical source; chart, tab, score and contextual commands use one
+   derived working reading. Standard notation and TAB retain the same sounding
+   pitches, time signatures, rational durations, rests, tuplets, tuning and
+   explicit chord symbols. Strings follow MusicXML's highest-first numbering;
+   the adapter reverses Woodshed's conventional tuning order without sorting
+   pitches, preserving re-entrant instruments. Validation must exercise both
+   the progression and rhythmic study plus another string count.
+2. Mount familiar chart, rhythmic chart, tablature and staff notation in the
+   existing native Arrangement panel. Select the music, edit its notes/fingering,
+   split a quarter note into eighths or a triplet, change rests, chord symbols,
+   voicings and rhythm/picking patterns through local commands. Use one chronological
+   musical history, including undo across Save. Musical selection and view
+   switches are presentation changes. A linked fretboard follows selection and
+   authors the selected event. Wrap whole measures when width changes.
+3. Save/reopen through the existing working Set/session authority and export
+   uncompressed `.musicxml` through the native save dialog. A new process must
+   reopen the exact saved source and musical reading. Switching Sets must keep
+   drafts and histories attached to their owners; unsaved notation must use the
+   existing close/persona preservation gate. Source-generation or edit failures
+   must leave the current source and saved Set unchanged.
+4. Qualify real native controls at wide and narrow widths, review rendered
+   chart/tab/score/fretboard captures, and assert that view changes do not author
+   music. Validate emitted examples against the W3C MusicXML 4.0 XSD and an
+   independent reader where available. Scope any import/engraving limitations
+   explicitly; a schema pass alone does not establish third-party fidelity.
+
+#### Decisions and boundaries
+
+The maintainer chose (2026-10-18) to keep a written chord symbol when a fretboard
+edit produces different notes, flag that disagreement, and offer explicit chord
+suggestions. Suggestions never rewrite the symbol automatically. Notation stays
+inside Arrangement and the ordinary Set save/reopen workflow.
+
+Existing Card-order practice and its playback remain available. Authored music
+is an arrangement attached to that same Set; editing its notes does not silently
+rewrite Card instructions or start practice. Existing tick-based arrangements
+remain preserved for real prototype data and their already-qualified scene
+workflow. Entering notation from those instructions must be explicit, must not
+lose an unsaved older draft, and must not quantize triplets back into quarter-
+beat ticks. The initial notation profile is deliberately bounded and uses the
+standard's names and musical relationships; it is not a claim to implement every
+MusicXML feature or a publication-grade engraver. Unsupported retained XML must
+remain intact and report why editing is unavailable. General external import,
+complex polyphony, arbitrary meter-map rewrite policies and arrangement-driven
+Rehearsal remain separate feature targets until their interactions are decided.
+
+#### Findings (2026-10-18)
+
+- `woodshedding::rehearsal::Set` already owns saved progression arrangements;
+  `woodshed-core::storage::PersistedSession` saves active/inactive/snapshot Sets.
+  Adding music there reuses that ownership instead of creating another store.
+- The existing `stage::arrangement_editor` presents spans in four ticks per
+  quarter note. That representation cannot express triplet eighths exactly.
+- Native painting already supports custom Sprigging leaves and paths; musical
+  glyph outlines can use the established SMuFL/Bravura repertoire while native
+  DOM buttons supply selection, commands and accessibility.
+- MusicXML's staff tuning numbers run from the lowest visual staff line while
+  technical string 1 is the highest string. These mappings must not be confused
+  with a pitch sort for re-entrant tuning. Source: W3C MusicXML 4.0 tablature
+  tutorial, https://www.w3.org/2021/06/musicxml40/tutorial/tablature/.
+
+#### Progress (2026-10-18)
+
+The musical document/codec, native notation geometry and editing controls are
+implemented. The final native candidate is qualified for the bounded workflow
+below; canonical supplier integration and broader notation remain open.
+
+The maintainer refined the native input on the same date: clicking empty
+fretboard space adds a simultaneous note; dragging an existing note moves it.
+An existing note is selected by clicking, and an explicit Remove command avoids
+turning selection into deletion. A captured drag previews without changing the
+source, commits once on release and cancels with Escape. A different note already
+on the destination string is a physical playing conflict and is reported without
+erasing either note.
+
+Arpeggiation now requires choosing a rhythm/picking pattern before Apply. The
+prototype offers ascending/descending quarter notes and an up/down eighth-note
+pattern, previews exact pitches and the number of source chord tones visited,
+and preserves the written harmony. A fixed four-note shortcut is superseded.
+The proposal, its selection and Cancel are presentation state; only Apply enters
+the musical history. A stale owner, selection or score refuses application.
+
+#### Qualification and remaining boundary (2026-10-18)
+
+The final candidate passes **60 focused cases**: nine model/codec, four native
+Set adapters, seven musical-paint/layout, 17 editing/history/gesture/picking,
+one production native input/save/close case, three existing arrangement cases,
+and 19 persona cases. This is a focused qualification, not the full suites.
+
+Two real macOS native processes produced **12 reviewed captures** at 1180 and
+420 logical pixels. The edit process exercises Card-derived progression music,
+Chart/Tab/Score switching, preview/Cancel/Apply, captured fret moves, click-to-add,
+undo/redo, triplet/rest edits, Save and the native export writer. A fresh process
+reopens byte-identical MusicXML and the same musical reading for the edited Set;
+the inactive progression Set and all original Card instructions also survive.
+Previews leave the stored Set and authored score unchanged. The normal export
+path uses the OS destination dialog; the scenario selects an isolated export
+path to qualify the writer without automating that dialog.
+
+Six Rust-emitted fixtures plus the actual edited native export validate against
+the W3C 4.0 XSD and the independent `musicxml` 1.1.2 reader. Independent semantic
+checks compare **101 pitched score/TAB pairs, three rest pairs and 24 measures**,
+including written-to-sounding transposition, re-entrant tuning, durations,
+triplet ratios/brackets and technical string/fret. The six fixtures include the
+guitar progression/rhythm, Bass, Ukulele, Viola and Cello. These results establish
+the emitted profile, not third-party engraving or playback fidelity.
+
+Visual review fixed staff alignment within each wrapped row, group-level
+triplet brackets and rhythm clearance below TAB. Native key entry exposed a
+shared-host ordering bug: keyboard handlers can change contextual controls before
+the focus restyle sees their computed styles. The local Rootstock input path now
+applies pending DOM/layout updates before that restyle. The native regression
+covers Space/Enter, captured cancellation, Save and dirty-close preservation;
+existing arrangement/persona checks pass with that supplier fix.
+
+**Integration boundary:** the worktree's canonical locked dependency still
+refuses resolution because its pinned `scenomise` lacks the prototype's `djot`
+feature. Qualification uses external actual-source manifests and the local Mere
+supplier cohort; no supplier revision was repinned. The binary and **955 source
+inputs** are hashed unchanged across build and both native runs. General MusicXML
+import, arbitrary polyphony/notation, fractional tempos, arbitrary meter-map
+rewrites, full-piece practice playback and hardware audio remain outside this
+prototype's qualification. Unsupported retained XML remains exportable unchanged.
+
+Evidence: [native workflow, captures and reproduction notes](../validation/native-musicxml_20261018/README.md),
+[receipt](../validation/native-musicxml_20261018/receipt.json). Source and prior
+prototype work remain uncommitted in their existing worktrees.
+
+
+### Canonical music integration and arrangement practice (2026-10-19)
+
+**Status (2026-10-19): qualified on canonical dependencies.** The maintainer requested canonical
+supplier integration, then practice driven by the authored arrangement. The
+existing MusicXML is the music authority. Existing Card-order Rehearsal remains
+available; choosing arrangement practice is explicit.
+
+#### Feature targets and validation
+
+1. Bring the minimal shared Djot scene-document transport and required native
+   input fix forward onto current Mere main, qualify its canonical manifests,
+   then update Woodshed's canonical lock and required APIs to that supplier.
+   Preserve recent safety fixes and the newly promoted foundation sources.
+   Done condition: relevant locked canonical tests/builds pass without the
+   prototype's external actual-source manifests or local supplier overrides.
+2. Lower the supported MusicXML reading into a disposable schedule retaining
+   exact note/rest durations, simultaneous chord tones, metre changes, tuning
+   and occurrence positions. Reuse the existing prepared audio-program engine
+   and output clock. Done condition: model and software audio tests establish
+   exact triplet onset/gate, silent rests, chords, variable metre and refusal
+   without source mutation; Card-order playback stays qualified.
+3. Add music-focused practice controls and output-clock highlighting to the
+   Arrangement panel. Save/reopen retains music; playback is transient and
+   reopens stopped. Done condition: native start/pause/resume/stop and end,
+   source ownership/edit recovery, practice tempo, view switching and fresh
+   reopen are demonstrated with reviewed captures and receipts.
+
+#### Findings (2026-10-19)
+
+- Current supplier main does not yet have the optional scenomise Djot codec
+  used by the prototype. That small shared transport is distinct from app
+  music analysis and must be promoted without the rest of the Graphshell draft.
+- Current main promotes Eidetic and other foundations to canonical repository
+  sources. The old prototype checkouts are behind that move and remain dirty;
+  new isolated integration worktrees preserve their exact source and receipts.
+- `woodshed-audio::output_runtime::ProgramPlan` already supplies 960 ticks per
+  quarter, explicit note gates, simultaneous events, bounded preparation,
+  epoch-qualified commands and device-frame observations. It can play a music
+  schedule without inventing persistent Cards or a second audio scheduler.
+- The current `BackingPhrase` does not carry explicit per-note gates and would
+  let tones continue through authored rests; it is not this adapter's target.
+
+#### Product decisions (2026-10-19)
+
+- Practice plays the music currently shown, including unsaved edits. It does not
+  require Save and does not write the Set merely by starting playback.
+- One shared practice tempo across Woodshed covers 1–400 BPM and restores
+  through normal application settings. Written tempo is displayed as a reference
+  with a Match written tempo action; practice never rewrites authored tempo.
+- Musical edits take effect at the next natural bar boundary. The current bar
+  retains its prepared notes and durations. Rapid edits coalesce to the latest
+  submitted version; the visible pending state clears only on processor receipt.
+- When an edit leaves no next bar, begin the edited arrangement at its start.
+- Arrangement practice uses the Set's existing repeat setting. Off/All/Card are
+  presented here as Off/Arrangement/Bar. Bar repetition starts from the selected
+  bar and repeats the playing bar, without introducing another repeat preference.
+- The linked fretboard keeps the editing selection by default. Follow playback
+  is an explicit read-only view of the contact union across the whole arrangement
+  or a chosen bar range, with sounding contacts highlighted against that context.
+  Playback and authoring selections remain independent.
+
+#### Progress (2026-10-19)
+
+Fetched both canonical main refs and preserved initial dirty diffs/untracked
+inventories. Integration uses `woodshed-arrangement-playback` and
+`mere-scene-canonical-integration`; original prototype worktrees remain untouched.
+The supplier transport, free/unknown-stress support and keyboard layout repair
+are published on Mere main at `77d820026ff0c1c5fa08b12eee7039f49206a028`.
+Woodshed now resolves the canonical Git cohort through its own manifests and
+lockfile, including the promoted foundation repositories and current renderer;
+there are no local supplier patches or external build manifests in this gate.
+The canonical gates pass 732 distinct Woodshed cases, including the complete
+322-case core with portable scenes, 301-case view library and 69-case OutputRuntime
+suite. The native music binding and existing Set clock pass 21 cases. Two headed
+processes pass with ten captures, exact saved XML reopening, silent paused/stopped
+advances and processor-confirmed next-bar updates. All 254 source inputs and the
+frozen binary remain unchanged across both runs. Shared practice tempo restores
+at 92 BPM while the written music remains at 96 BPM.
+
+See the [canonical practice receipt](../validation/native-music-practice_20261019/README.md).
+This qualifies the native UI and real software output processor; hardware audio
+is not requalified. Narrow capture review replaced redundant opacity with opaque
+theme dim colours in the playback context; a general framework opacity/scrolling
+repair remains separate.
+
+The runtime gains a generic, epoch-fenced prepared-program replacement, applied
+only at a natural segment boundary, and a single batched tempo command. MusicXML
+lowering supplies exact gates/rests/chords and physical contacts, while the native
+binding supplies Set/session custody and processor-confirmed music revisions.
+No persistent Cards or Card practice-history entries are fabricated for music.
+Existing Card-order rehearsal remains a separate explicit practice path.

@@ -338,14 +338,13 @@ fn appearance_settings_offer_named_themes_modes_and_keyboard_focus_without_autho
     let focused = host
         .focus()
         .expect("Appearance buttons participate in keyboard focus");
-    assert!(host.with_dom(|dom| {
-        taproot::matching_with_projection(
-            dom,
-            &Selector::role("button"),
-            &host.a11y_projection(),
-        )
-        .contains(&focused)
-    }));
+    let projection = host.a11y_projection();
+    assert!(
+        host.with_dom(|dom| {
+            taproot::matching_with_projection(dom, &Selector::role("button"), &projection)
+                .contains(&focused)
+        })
+    );
 }
 
 #[test]

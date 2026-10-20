@@ -1,0 +1,7 @@
+RESULT ok
+captured 01_reopened_music
+captured 02_reopened_repeat
+capture 01_reopened_music 2360x2200 digest=55c41a12ca29a0bd file=/Users/markik/Code/output/woodshed-arrangement-playback-20261019/native-run-v4/reopen/01_reopened_music.png
+capture 02_reopened_repeat 2360x2200 digest=78bf20211f717160 file=/Users/markik/Code/output/woodshed-arrangement-playback-20261019/native-run-v4/reopen/02_reopened_repeat.png
+frames: 2 captured, 0 blank, 2 distinct digests
+presentation: 39 frames, 42 redraws, 3 unpresented redraws

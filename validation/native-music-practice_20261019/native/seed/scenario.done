@@ -1,0 +1,19 @@
+RESULT ok
+captured 01_music_practice
+captured 02_contextual_fretboard
+captured 02b_selected_bar_context
+captured 03_playing_tab
+captured 04_playing_score
+captured 04b_narrow_playback
+captured 04c_narrow_fretboard
+captured 05_saved_music
+capture 01_music_practice 2360x2200 digest=c35515f5fc7d15f1 file=/Users/markik/Code/output/woodshed-arrangement-playback-20261019/native-run-v4/seed/01_music_practice.png
+capture 02_contextual_fretboard 2360x2200 digest=69a007edd5cd9426 file=/Users/markik/Code/output/woodshed-arrangement-playback-20261019/native-run-v4/seed/02_contextual_fretboard.png
+capture 02b_selected_bar_context 2360x2200 digest=17fb7fe6b29f6f11 file=/Users/markik/Code/output/woodshed-arrangement-playback-20261019/native-run-v4/seed/02b_selected_bar_context.png
+capture 03_playing_tab 2360x2200 digest=f4df643ba0fcdaab file=/Users/markik/Code/output/woodshed-arrangement-playback-20261019/native-run-v4/seed/03_playing_tab.png
+capture 04_playing_score 2360x2200 digest=b9cadda5a3182911 file=/Users/markik/Code/output/woodshed-arrangement-playback-20261019/native-run-v4/seed/04_playing_score.png
+capture 04b_narrow_playback 840x2200 digest=e94c0f0709b638c6 file=/Users/markik/Code/output/woodshed-arrangement-playback-20261019/native-run-v4/seed/04b_narrow_playback.png
+capture 04c_narrow_fretboard 840x2200 digest=d83220186f5a3c3f file=/Users/markik/Code/output/woodshed-arrangement-playback-20261019/native-run-v4/seed/04c_narrow_fretboard.png
+capture 05_saved_music 2360x2200 digest=53f790ae0a41ff67 file=/Users/markik/Code/output/woodshed-arrangement-playback-20261019/native-run-v4/seed/05_saved_music.png
+frames: 8 captured, 0 blank, 8 distinct digests
+presentation: 137 frames, 143 redraws, 6 unpresented redraws

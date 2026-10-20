@@ -11,7 +11,7 @@ description = "Woodshed's portable state/logic core: app state over the woodshed
 [dependencies]
 audio-primitives = { workspace = true }
 woodshedding = { workspace = true }
-scenomise = { workspace = true, optional = true }
+scenomise = { workspace = true, optional = true, features = ["djot"] }
 blake3 = { version = "1", optional = true }
 woodshed-graph = { workspace = true }
 # The portable scene contract. woodshed owns the musical facts and

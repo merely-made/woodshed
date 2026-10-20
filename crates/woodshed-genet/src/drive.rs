@@ -5,7 +5,9 @@
 //! Returns whether any of them wants another frame — the host keeps frames
 //! coming while it does, and sleeps when it does not.
 
-use woodshed_core::audio::{AudioBackend, CalibrationStatus};
+use woodshed_core::audio::{
+    AudioBackend, CalibrationStatus, TRANSPORT_MAX_BPM, TRANSPORT_MIN_BPM,
+};
 use woodshed_core::midi::MidiBackend as _;
 use woodshed_views::stage::UiState;
 
@@ -147,7 +149,7 @@ pub fn frame(shared: &mut Shared, ui: &mut UiState) -> bool {
     }
     if midi_in_connected && ui.midi.clock_slave {
         if let Some(bpm) = midi_clock_bpm {
-            let bpm = bpm.clamp(30.0, 300.0);
+            let bpm = bpm.clamp(TRANSPORT_MIN_BPM, TRANSPORT_MAX_BPM);
             if (ui.transport.bpm - bpm).abs() > 0.3 {
                 ui.set_bpm(bpm);
                 backend.set_metronome(ui.transport);
