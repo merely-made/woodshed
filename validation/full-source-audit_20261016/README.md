@@ -78,10 +78,12 @@ B1–B3 through `b1c9dfd`. B4 has a separate published
 or establish native acceptance. B5 has a separate published [Recorder admission receipt](../recorder-select-one_20261019/README.md):
 176 distinct passes and three expected baseline failures at `b804d901`, published through `4fab895`.
 The requested shared Recorder tempo/replay and diagnostic slice has a separate
-local [runtime receipt](../recorder-runtime_20261019/README.md): 171 distinct
-passes, two existing ignores and three expected baseline failures at `7b161a9`.
+published [runtime receipt](../recorder-runtime_20261019/README.md): 171 distinct
+passes, two existing ignores and three expected baseline failures at `7b161a9`,
+published through `fd9fb82`.
 The full shared-view unit target is blocked by an existing paint API mismatch.
-Subsequent product/controller, MIDI, protocol and
+Historical B6 MIDI H6–H9 have a separate local [admission receipt](../midi-admission_20261019/README.md): 42 distinct CPU passes at `480c0d6`, with native/device qualification unassessed.
+Subsequent product/controller, protocol and
 compatibility work retain their existing owners. Existing media, playback
 clocks and native validation lanes remain protected.
 The source audit is finished; the implementation backlog is not.

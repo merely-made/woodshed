@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "run_id": "midi-host-dev",
+  "command": [
+    "cargo",
+    "test",
+    "--locked",
+    "-p",
+    "woodshed-genet",
+    "--bin",
+    "woodshed-genet",
+    "persona_reset_preserves_process_midi"
+  ],
+  "started_at": "2026-10-20T02:24:48.475796Z",
+  "ended_at": "2026-10-20T02:45:19.294885Z",
+  "exit_code": 0,
+  "cwd": "/Users/markik/Code/worktrees/woodshed-b6-20261019",
+  "log": "/Users/markik/Code/testing/woodshed/midi-admission-20261019/host-dev.log",
+  "log_sha256": "d9e2a66eed866fb444af576e9903916679ae76912426940e5cce04e12523e296",
+  "source_commit": "fd9fb821381af950b5dd052402a0e53d24fcec80"
+}

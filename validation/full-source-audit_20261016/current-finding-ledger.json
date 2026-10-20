@@ -558,47 +558,79 @@
     },
     {
       "id": "host:H6",
-      "classification": "unchanged implementation/current reachability confirmed",
+      "classification": "source replacement implemented; scoped CPU qualification complete",
       "package": "B6",
-      "current_observation": "reset_for_persona preserves clock/appearance but replaces UiState without retaining MIDI inventory or requesting rescan. midi_devices rescans only on refresh_requested.",
-      "qualification": "unassessed",
+      "current_observation": "Persona reset retains process-owned MIDI inventory, routing and diagnostics instead of replacing them with empty state.",
+      "qualification": "42 distinct scoped CPU passes at 480c0d6; native/device unassessed",
       "alias_of": null,
-      "detail": "current/runtime.json",
+      "detail": "../midi-admission_20261019/receipt.json",
       "original_index_title": "H6 \u2014 P2: Persona reset loses device inventory without the promised refill",
-      "original_report": "host-report.md"
+      "original_report": "host-report.md",
+      "reconciliation_before_midi_admission_20261019": {
+        "classification": "unchanged implementation/current reachability confirmed",
+        "current_observation": "reset_for_persona preserves clock/appearance but replaces UiState without retaining MIDI inventory or requesting rescan. midi_devices rescans only on refresh_requested.",
+        "qualification": "unassessed",
+        "detail": "current/runtime.json"
+      },
+      "followup_receipt": "../midi-admission_20261019/README.md",
+      "followup_source_revision": "480c0d6d36d65d5252940782313525aa5c91ac3f"
     },
     {
       "id": "host:H7",
-      "classification": "unchanged implementation/current reachability confirmed",
+      "classification": "source replacement implemented; scoped CPU qualification complete",
       "package": "B6",
-      "current_observation": "Rescan replaces lists without rebinding positional dropdown selection to prior desired port identity.",
-      "qualification": "unassessed",
+      "current_observation": "One MidiUiState name resolver owns index interpretation and rescan reconciliation; missing or invalid selections clear. Host lookup duplication removed.",
+      "qualification": "42 distinct scoped CPU passes at 480c0d6; native/device unassessed",
       "alias_of": null,
-      "detail": "current/runtime.json",
+      "detail": "../midi-admission_20261019/receipt.json",
       "original_index_title": "H7 \u2014 P2: MIDI discovery changes reinterpret the user's selected index",
-      "original_report": "host-report.md"
+      "original_report": "host-report.md",
+      "reconciliation_before_midi_admission_20261019": {
+        "classification": "unchanged implementation/current reachability confirmed",
+        "current_observation": "Rescan replaces lists without rebinding positional dropdown selection to prior desired port identity.",
+        "qualification": "unassessed",
+        "detail": "current/runtime.json"
+      },
+      "followup_receipt": "../midi-admission_20261019/README.md",
+      "followup_source_revision": "480c0d6d36d65d5252940782313525aa5c91ac3f"
     },
     {
       "id": "host:H8",
-      "classification": "unchanged implementation/current reachability confirmed",
+      "classification": "source replacement implemented; scoped CPU qualification complete",
       "package": "B6",
-      "current_observation": "Byte-identical MIDI host publishes requested output name before worker open, suppresses connection errors via .ok and has no accepted-status result channel. sync reflects it as connected.",
-      "qualification": "unassessed",
+      "current_observation": "OutputControl reports worker acknowledgements rather than requested targets; request identity fences stale responses, failed replacement retains accepted connection, channel closure clears acceptance, and ordinary frames project diagnostics.",
+      "qualification": "42 distinct scoped CPU passes at 480c0d6; native/device unassessed",
       "alias_of": null,
-      "detail": "current/runtime.json",
+      "detail": "../midi-admission_20261019/receipt.json",
       "original_index_title": "H8 \u2014 P2: Requested MIDI output is reported as accepted despite worker failure",
-      "original_report": "host-report.md"
+      "original_report": "host-report.md",
+      "reconciliation_before_midi_admission_20261019": {
+        "classification": "unchanged implementation/current reachability confirmed",
+        "current_observation": "Byte-identical MIDI host publishes requested output name before worker open, suppresses connection errors via .ok and has no accepted-status result channel. sync reflects it as connected.",
+        "qualification": "unassessed",
+        "detail": "current/runtime.json"
+      },
+      "followup_receipt": "../midi-admission_20261019/README.md",
+      "followup_source_revision": "480c0d6d36d65d5252940782313525aa5c91ac3f"
     },
     {
       "id": "host:H9",
-      "classification": "unchanged implementation/current reachability confirmed",
+      "classification": "source replacement implemented; scoped CPU qualification complete",
       "package": "B6",
-      "current_observation": "Unchanged worker replaces connection without old Stop/new Start while last_transport survives.",
-      "qualification": "unassessed",
+      "current_observation": "One OutputMachine owns connection transport. Candidate open precedes old Stop; replacement starts new connection, failed open leaves old transport untouched. One clock configuration command prevents intermediate transitions.",
+      "qualification": "42 distinct scoped CPU passes at 480c0d6; native/device unassessed",
       "alias_of": null,
-      "detail": "current/runtime.json",
+      "detail": "../midi-admission_20261019/receipt.json",
       "original_index_title": "H9 \u2014 P2: MIDI transport state survives replacement of the connection it belongs to",
-      "original_report": "host-report.md"
+      "original_report": "host-report.md",
+      "reconciliation_before_midi_admission_20261019": {
+        "classification": "unchanged implementation/current reachability confirmed",
+        "current_observation": "Unchanged worker replaces connection without old Stop/new Start while last_transport survives.",
+        "qualification": "unassessed",
+        "detail": "current/runtime.json"
+      },
+      "followup_receipt": "../midi-admission_20261019/README.md",
+      "followup_source_revision": "480c0d6d36d65d5252940782313525aa5c91ac3f"
     },
     {
       "id": "local-overlay:LO-1",

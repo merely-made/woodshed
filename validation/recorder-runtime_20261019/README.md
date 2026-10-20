@@ -1,7 +1,6 @@
 # Recorder tempo replay and runtime diagnostics
 
-Date: 2026-10-19. Status: scoped CPU qualification complete at `7b161a9`; local
-for review. Baseline: published `4fab895`. The full shared-view unit target is
+Date: 2026-10-19. Status: scoped CPU qualification complete at `7b161a9`; published through `fd9fb82`; see [publication record](publication.json). Baseline: published `4fab895`. The full shared-view unit target is
 blocked by an existing paint API type mismatch, recorded separately below.
 
 This requested B6 runtime slice addresses shared:S3 and shared:S4. It does not
@@ -109,3 +108,5 @@ harnesses and offline Firewheel execution do not establish device behavior.
 Existing command-failure semantics beyond the tested tempo/poll recovery cases
 are not broadly requalified. Historical MIDI findings and supplier intake remain
 with their separate owners. New B6 implementation stays local for review.
+
+Publication integration: the nine reviewed commits were merged with current main and pushed through `fd9fb82`. Forty repeated Recorder/diagnostics cases passed at the first merge. A subsequent merge retained incoming relationship changes and supplier version requirements without editing them; it is not supplier or native qualification. Original source receipts remain unchanged.

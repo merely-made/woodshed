@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "run_id": "midi-final-selection-v3",
+  "command": [
+    "cargo",
+    "test",
+    "--locked",
+    "-p",
+    "woodshed-views",
+    "--test",
+    "midi_state"
+  ],
+  "started_at": "2026-10-20T02:51:08.042073Z",
+  "ended_at": "2026-10-20T02:51:21.841660Z",
+  "exit_code": 0,
+  "cwd": "/Users/markik/Code/worktrees/woodshed-b6-20261019",
+  "log": "/Users/markik/Code/worktrees/woodshed-b6-20261019/validation/midi-admission_20261019/checks/selection-v3.log",
+  "log_sha256": "eb1316be6513442f4365412261efc4928489ea1db503e4eda2f06b16ca8f94d0",
+  "source_commit": "480c0d6d36d65d5252940782313525aa5c91ac3f"
+}

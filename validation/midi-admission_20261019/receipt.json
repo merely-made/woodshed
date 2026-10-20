@@ -1,0 +1,182 @@
+{
+  "date": "2026-10-19",
+  "status": "scoped CPU qualification complete; local for review",
+  "findings": [
+    "host:H6",
+    "host:H7",
+    "host:H8",
+    "host:H9"
+  ],
+  "baseline_published_revision": "fd9fb821381af950b5dd052402a0e53d24fcec80",
+  "source_revision": "480c0d6d36d65d5252940782313525aa5c91ac3f",
+  "source_sha256": {
+    "crates/woodshed-core/src/midi.rs": "e226f0f3aeaa139f36db46adc0af690ef38e843e0e4107d2b7514460b1679dc2",
+    "crates/woodshed-genet/src/drive.rs": "ed0f055c0bc2432d312e55d340c37939eb64dbcb52a16a7dbf8e92dab8795983",
+    "crates/woodshed-genet/src/midi.rs": "3e1660d663941d4b3ba79a078a90d73528be94386846995008e836d8eeee4cb0",
+    "crates/woodshed-genet/src/midi/midi_output.rs": "9e3b784d4a8f76da198e29768fca9fe7a0e1ff32066b0c0767eae444c5fed800",
+    "crates/woodshed-genet/src/persona.rs": "6c99c5eb6b2db8d1c57a2c09b82122fc07189f541246f808108f616703457689",
+    "crates/woodshed-genet/src/sync.rs": "2b38d2d4ad068734eebec9eff2080e984c02cd3d19162ace63c81723cd758b76",
+    "crates/woodshed-views/src/stage.rs": "84aed0f003edce0cd7e3afc1156e8cf3dd2feafcfd33089bdf96e27ddb953793",
+    "crates/woodshed-views/src/stage/settings.rs": "3e1b4a6159fac49260f3b14c443cfb464611ea0b78015fede3026daa2e0fe8dc",
+    "crates/woodshed-views/tests/midi_state.rs": "2c531641ed5d0b6692d139b873045598f5c273224bc25c35ea7e2c478cdfb716"
+  },
+  "gates": [
+    {
+      "receipt": "checks/midi-v3.json",
+      "command": [
+        "cargo",
+        "test",
+        "--locked",
+        "-p",
+        "woodshed-genet",
+        "--bin",
+        "woodshed-genet",
+        "midi"
+      ],
+      "passed": 18,
+      "ignored": 0,
+      "log_sha256": "ecde98e8a5dd8f30f8cedad08c90b2a3dc54e1fd6ea480f2bcc55db0a0b82a05"
+    },
+    {
+      "receipt": "checks/persona-v3.json",
+      "command": [
+        "cargo",
+        "test",
+        "--locked",
+        "-p",
+        "woodshed-genet",
+        "--bin",
+        "woodshed-genet",
+        "persona::tests"
+      ],
+      "passed": 20,
+      "ignored": 0,
+      "log_sha256": "59c6a9f96b258f107c7d1ed8e9d24b79d0e7df41d1e22790b1cc5bfc19576a36"
+    },
+    {
+      "receipt": "checks/selection-v3.json",
+      "command": [
+        "cargo",
+        "test",
+        "--locked",
+        "-p",
+        "woodshed-views",
+        "--test",
+        "midi_state"
+      ],
+      "passed": 5,
+      "ignored": 0,
+      "log_sha256": "eb1316be6513442f4365412261efc4928489ea1db503e4eda2f06b16ca8f94d0"
+    }
+  ],
+  "distinct_passing_cases": 42,
+  "passing_invocations_total": 43,
+  "ignored": 0,
+  "counting": "Unique passing test names per binary: 18 MIDI +20 persona +5 selection minus one overlapping persona reset case. No nested child invocations. Failed/canceled/development attempts excluded.",
+  "passing_cases": [
+    "host:midi::midi_output::tests::clock_configuration_is_one_transport_transition",
+    "host:midi::midi_output::tests::connect_command_returns_the_worker_acknowledgement",
+    "host:midi::midi_output::tests::disconnect_stops_active_transport_and_clears_connection",
+    "host:midi::midi_output::tests::failed_replacement_keeps_old_transport_uninterrupted",
+    "host:midi::midi_output::tests::invalid_bpm_keeps_clock_interval_finite",
+    "host:midi::midi_output::tests::replacing_while_playing_stops_old_and_starts_new",
+    "host:midi::midi_output::tests::same_accepted_target_is_acknowledged_without_reopening",
+    "host:midi::midi_output::tests::transport_write_error_is_reported_once_per_connection",
+    "host:midi::output_request_tests::closed_worker_clears_accepted_connection_and_reports_failure",
+    "host:midi::output_request_tests::production_channel_dedupes_failed_target_until_user_returns_to_accepted_route",
+    "host:midi::output_request_tests::production_channel_supersedes_pending_with_currently_accepted_target",
+    "host:midi::output_request_tests::production_channel_supersedes_pending_with_disconnect_and_ignores_stale_ack",
+    "host:midi::output_request_tests::superseding_pending_target_restores_accepted_or_disconnect_choice",
+    "host:persona::tests::a_chosen_persona_is_not_asked_again",
+    "host:persona::tests::a_pending_store_reads_but_never_writes",
+    "host:persona::tests::a_sole_persona_is_not_a_question",
+    "host:persona::tests::asking_for_a_new_persona_keeps_the_gate_up_and_says_why",
+    "host:persona::tests::clicking_a_persona_records_the_choice_the_host_acts_on",
+    "host:persona::tests::declining_is_not_a_dead_end_the_settings_switch_starts_saving",
+    "host:persona::tests::djinn_absent_is_stepped_over_rather_than_asked_about",
+    "host:persona::tests::escape_dismisses_the_gate_so_practice_is_never_blocked",
+    "host:persona::tests::persona_reset_keeps_the_host_clock_binding_and_clears_run_position",
+    "host:persona::tests::persona_reset_preserves_process_midi_routing_and_inventory",
+    "host:persona::tests::switching_into_an_unused_persona_does_not_carry_the_last_one_in",
+    "host:persona::tests::switching_persona_retains_the_global_authored_library_but_restores_incoming_selection",
+    "host:persona::tests::switching_persona_retains_the_global_library_load_error",
+    "host:persona::tests::the_gate_is_reachable_by_a_driver",
+    "host:persona::tests::the_gate_stands_in_front_of_the_product_rather_than_over_it",
+    "host:persona::tests::the_gate_takes_the_keyboard_without_a_tab",
+    "host:persona::tests::the_settings_row_asks_even_when_the_startup_rule_would_not",
+    "host:persona::tests::the_unsaved_notice_is_on_screen_for_a_declined_session",
+    "host:persona::tests::two_personas_and_no_choice_is_the_one_case_worth_asking_about",
+    "host:persona::tests::two_personas_sharing_a_name_are_still_told_apart",
+    "host:sync::tests::midi_sync_error_reaches_settings_status",
+    "host:sync::tests::midi_sync_forwards_return_to_accepted_route_to_cancel_pending_replacement",
+    "host:sync::tests::midi_sync_keeps_requested_and_accepted_output_distinct",
+    "host:sync::tests::midi_sync_rescan_keeps_route_by_name",
+    "views:backend_error_starts_empty",
+    "views:refresh_clears_an_invalid_stale_index",
+    "views:refresh_clears_removed_port_selections_instead_of_reusing_the_old_index",
+    "views:refresh_keeps_none_selected",
+    "views:refresh_preserves_selected_ports_by_name_when_order_changes"
+  ],
+  "unchanged_lock_sha256": {
+    "Cargo.lock": "fd60c83d3fbb03060d0519f8161cadb7011e5c21058c0d80f328dca18602cd63",
+    "ports/hocket/Cargo.lock": "8db3378dd2d9dee7cc2e886c40097b85786c96268cd80357b4db9ffeaf6d0c24",
+    "ports/redshank/Cargo.lock": "65553591e32039b0f26e07220954695e3952f376a88c82e4d277121ac5b0a6cf",
+    "ports/ringdown/Cargo.lock": "9c1b9afdd823e02effcade345140463f20185b9a79b83e8844d3109df395f6c0",
+    "validation/relationship-recipe/Cargo.lock": "415623ff2ff97317fc8d49998dc8e54f33c4265113a03b76c4a54e31f09c5e11"
+  },
+  "excluded_attempts": [
+    {
+      "receipt": "checks/midi.json",
+      "exit_code": 101,
+      "reason": "Receiving fixture used role selector without accessibility projection: real exit 101,17 passed/1 failed; excluded."
+    },
+    {
+      "receipt": "checks/midi-v2.json",
+      "exit_code": -15,
+      "reason": "Superseded queued gate canceled after selector correction: real exit -15; no pass claim."
+    },
+    {
+      "receipt": "checks/selection.json",
+      "exit_code": 0,
+      "reason": "Passing development repeat excluded from distinct count."
+    },
+    {
+      "receipt": "checks/host-dev.json",
+      "archived_log": "checks/host-dev.log",
+      "exit_code": 0,
+      "reason": "Single reset development case excluded as repeat; log archived byte-identically, process receipt retains original external log identity. Source was changing during initial compile."
+    }
+  ],
+  "external_development_gate": "/Users/markik/Code/testing/woodshed/midi-admission-20261019/host-dev.json; one passing reset case, excluded as development repeat; process began before final source. Worker queued attempts were stopped and are not evidence of passing tests.",
+  "ownership": {
+    "Luna selection worker": [
+      "crates/woodshed-views/src/stage.rs",
+      "crates/woodshed-views/tests/midi_state.rs"
+    ],
+    "Luna output worker": [
+      "crates/woodshed-genet/src/midi.rs",
+      "crates/woodshed-genet/src/midi/midi_output.rs"
+    ],
+    "coordinator": "Host trait/sync/persona/settings, review corrections, frame service and atomic clock transition, source gates and evidence",
+    "Luna independent reviewer": "Read-only review; identified missing ordinary-frame polling and verified bounded correction"
+  },
+  "limits": [
+    "CPU fake connections/channels and DOM Harness only; no native window, device enumeration, physical MIDI timing, audio device or fresh-process native reopen.",
+    "No supplier or manifest/lock changes; no full workspace or full view-unit qualification claim.",
+    "Discovery empty-list fallback, input-open failure policy and identically named device ambiguity remain separate.",
+    "Original frozen audit coverage remains historical; targeted source changes do not constitute a refreshed full read."
+  ],
+  "source_tree_note": "All nine source/test hashes frozen before final gates at 480c0d6 and checked afterward. Docs/receipts were dirty during gates; revision metadata alone is not a clean-tree claim.",
+  "document_checks": [
+    {
+      "receipt": "checks/doc-links-final.json",
+      "log_sha256": "eddbda075cf7c4df1dd65d6e9644647d16f7bab0d0d56595896c381013e7d5ef",
+      "exit_code": 0
+    },
+    {
+      "receipt": "checks/whitespace-final.json",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "exit_code": 0
+    }
+  ]
+}
