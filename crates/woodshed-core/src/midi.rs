@@ -12,6 +12,9 @@
 /// tolerant of a missing subsystem: construct in a degraded state and
 /// report through [`error`](Self::error) rather than failing the app.
 pub trait MidiBackend {
+    /// Drain host completion facts before projecting accepted connection state.
+    fn poll(&mut self) {}
+
     /// Available input port names (a fresh scan each call — ports come
     /// and go as gear is plugged in).
     fn input_ports(&self) -> Vec<String>;
@@ -22,11 +25,13 @@ pub trait MidiBackend {
     /// events feed [`recent_events`](Self::recent_events).
     fn connect_input(&mut self, port: Option<&str>);
     /// Connect the named output port; `None` disconnects. The clock-out
-    /// master (see [`set_clock_out`](Self::set_clock_out)) drives it.
+    /// master (see [`set_clock_out`](Self::set_clock_out)) drives it. Repeated
+    /// requests are idempotent, including pending/refused targets. A new target
+    /// supersedes an outstanding request even if it equals the accepted port.
     fn connect_output(&mut self, port: Option<&str>);
     /// The connected input port name, if any.
     fn connected_input(&self) -> Option<&str>;
-    /// The connected output port name, if any.
+    /// The accepted output connection, if any; a pending request is not acceptance.
     fn connected_output(&self) -> Option<&str>;
     /// BPM derived from incoming MIDI clock — `None` when the input is
     /// disconnected or not receiving clock. The host polls this to slave

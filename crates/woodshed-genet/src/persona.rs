@@ -328,12 +328,14 @@ fn install_store(
 }
 
 /// Replace persona-owned practice and application settings while retaining the
-/// process-wide authored library and its current editor model. Reloading that
+/// process-wide MIDI routing, authored library and its current editor model. Reloading that
 /// library here would introduce profile/environment I/O during a session reset.
 fn reset_for_persona(ui: &mut woodshed_views::stage::UiState) {
     let practice_clock_managed = ui.practice_clock_managed;
     let event_clock = ui.event_clock;
     let appearance = std::mem::take(&mut ui.appearance);
+    // Port inventory and routing belong to the running host, not a persona.
+    let midi = std::mem::take(&mut ui.midi);
     let authoring_available = ui.appearance_authoring_available;
     let library_notice = if authoring_available {
         None
@@ -344,6 +346,7 @@ fn reset_for_persona(ui: &mut woodshed_views::stage::UiState) {
     ui.practice_clock_managed = practice_clock_managed;
     ui.event_clock = event_clock;
     ui.appearance = appearance;
+    ui.midi = midi;
     ui.appearance_authoring_available = authoring_available;
     ui.appearance_notice = library_notice;
 }
@@ -362,6 +365,26 @@ mod tests {
     use taproot::Selector;
     use winit::keyboard::NamedKey;
     use woodshed_views::stage::{UiChild, UiState};
+
+    #[test]
+    fn persona_reset_preserves_process_midi_routing_and_inventory() {
+        let mut ui = UiState::new();
+        ui.midi.input_ports = vec!["keyboard".into()];
+        ui.midi.output_ports = vec!["synth".into()];
+        ui.midi.input_dd.selected = 1;
+        ui.midi.output_dd.selected = 1;
+        ui.midi.clock_out = true;
+        ui.midi.connected_out = Some("synth".into());
+        ui.midi.error = Some("pending diagnostic".into());
+        reset_for_persona(&mut ui);
+        assert_eq!(ui.midi.input_ports, ["keyboard"]);
+        assert_eq!(ui.midi.output_ports, ["synth"]);
+        assert_eq!(ui.midi.input_dd.selected, 1);
+        assert_eq!(ui.midi.output_dd.selected, 1);
+        assert!(ui.midi.clock_out);
+        assert_eq!(ui.midi.connected_out.as_deref(), Some("synth"));
+        assert_eq!(ui.midi.error.as_deref(), Some("pending diagnostic"));
+    }
 
     #[test]
     fn persona_reset_keeps_the_host_clock_binding_and_clears_run_position() {

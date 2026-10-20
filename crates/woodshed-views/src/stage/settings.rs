@@ -79,6 +79,9 @@ fn midi_panel(ui: &UiState) -> UiChild {
             )
             .attr("class", "transport"),
             el("div", text(status)).attr("class", "settings-line"),
+            el("div", text(ui.midi.error.clone().unwrap_or_default()))
+                .attr("class", "settings-line")
+                .attr("role", "status"),
             el("div", text(events_line)).attr("class", "settings-line midi-events"),
         ),
     ))
