@@ -1,0 +1,13 @@
+[package]
+name = "woodshed-notation"
+version = "0.1.0"
+edition.workspace = true
+rust-version = "1.97.1"
+license.workspace = true
+repository.workspace = true
+description = "Chart, tablature and staff notation leaves over woodshedding musical documents"
+[dependencies]
+woodshedding.workspace = true
+sprigging.workspace = true
+accesskit = "0.24"
+ttf-parser = "0.25.1"

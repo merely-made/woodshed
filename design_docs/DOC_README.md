@@ -19,6 +19,8 @@ before any other doc in this directory.
 
 ## Active Plans
 
+- [Shared notation readings in Graphshell](2026-07-11_stage_set_tools_plan.md#adr-shared-notation-readings-in-graphshell-2026-10-19) — Accepted pure-model/shared-leaf boundary; canonical main source integration, explicit MusicXML creation, and selectable Chart/Tab/Score. Qualification and publication limits are recorded with the implementation.
+
 - [Source authority audit and remediation](2026-10-16_source_authority_audit_plan.md) — Frozen collective read complete: 937 files / 231,190 lines, plus separate 33-file P5a overlay. All 93 raw finding entries reconciled against later work with qualification limits; remediation remains open. [Audit record](../validation/full-source-audit_20261016/README.md). Coordination closure published through `8204688`.
 
 

@@ -62,6 +62,7 @@ pub fn save_progression_arrangement(
 
 fn validate_alignment(set: &Set, saved: &SavedProgressionArrangement) -> Result<(), String> {
     let a = &saved.alignment;
+    woodshedding::rehearsal::arrangement::bars::validate_groups(a)?;
     if saved.version != 1 {
         return Err("Unsupported saved arrangement version; attachment retained".into());
     }
@@ -206,6 +207,9 @@ mod tests {
                 }),
             }],
             rests: vec![],
+
+            time_signatures: vec![],
+            bar_groups: vec![],
         };
         save_progression_arrangement(&stage, &mut set, a).unwrap();
         let bytes = serde_json::to_vec(&set).unwrap();

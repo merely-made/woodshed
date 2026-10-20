@@ -15,8 +15,8 @@ pub mod audio;
 pub mod card_shapes;
 pub mod card_timing;
 pub use card_timing::{CardPreviewResult, CardTimingError, resolve_card_timing};
-pub mod catalog_explorations;
 pub mod captured_arpeggio;
+pub mod catalog_explorations;
 pub mod chord_approach;
 pub mod comparison_disclosure;
 pub mod connected_catalog;
@@ -27,6 +27,7 @@ pub mod loop_capture;
 pub mod loop_plan;
 pub mod mere;
 pub mod midi;
+pub mod music;
 pub mod musical_context;
 pub mod personal_relations;
 pub mod pitch_motion_reading;
@@ -34,6 +35,12 @@ pub mod practice_clock;
 pub use practice_clock::{
     LiveSequenceKind, PracticeCard, PracticeEvent, PracticeHold, PracticeProgram,
 };
+#[cfg(feature = "portable-scenes")]
+pub mod arrangement_scene;
+#[cfg(feature = "portable-scenes")]
+pub mod fretboard_scene;
+#[cfg(feature = "portable-scenes")]
+pub mod progression_scene;
 pub mod retained_sets;
 pub mod saved_arrangements;
 pub mod scale_pattern_discovery;
@@ -47,12 +54,6 @@ pub mod song;
 pub mod stage_candidates;
 pub mod stage_context;
 pub mod stage_scene;
-#[cfg(feature = "portable-scenes")]
-pub mod fretboard_scene;
-#[cfg(feature = "portable-scenes")]
-pub mod progression_scene;
-#[cfg(feature = "portable-scenes")]
-pub mod arrangement_scene;
 pub mod storage;
 pub mod tonnetz;
 pub mod working_sets;
@@ -65,7 +66,7 @@ use arpeggio::{ArpeggioDirection, ArpeggioRun, generate_shapes};
 use std::cell::RefCell;
 use woodshedding::chord::{ChordFormula, catalog as chord_catalog};
 use woodshedding::exercise::{Exercise, ExerciseParams, catalog as exercise_catalog};
-use woodshedding::fretboard::{ChordVoicing, Fretboard, Position, StringPlay};
+use woodshedding::fretboard::{Fretboard, Position, StringPlay};
 use woodshedding::interval::Interval;
 use woodshedding::pitch::PitchClass;
 use woodshedding::pitch::{Pitch, Spelling};
@@ -77,7 +78,7 @@ use woodshedding::rehearsal::{
     Card, CardId, FretWindow, LoopMode, MarkMode, Material, Recipe, Set, Setting, Timing, Touch,
 };
 use woodshedding::scale::{ScaleFormula, catalog as scale_catalog};
-use woodshedding::tuning::{Instrument, Tuning, TuningSpec, catalog as tuning_catalog};
+use woodshedding::tuning::{Tuning, TuningSpec, catalog as tuning_catalog};
 
 /// The fretboard lens strip (redesign-plan vocabulary).
 #[derive(Clone, Copy, Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize, Default)]
@@ -615,7 +616,10 @@ pub fn set_from_practice(ps: &PracticeSet) -> Set {
 /// `None` = manual (no auto-advance). The card's own bpm wins over the
 /// transport's; `Reps` counts as bars (one rep per bar until per-rep
 /// audio lands).
-pub fn card_dwell(card: &Card, fallback_bpm: f32) -> Result<Option<std::time::Duration>, CardTimingError> {
+pub fn card_dwell(
+    card: &Card,
+    fallback_bpm: f32,
+) -> Result<Option<std::time::Duration>, CardTimingError> {
     Ok(resolve_card_timing(&card.timing, fallback_bpm)?.dwell)
 }
 
@@ -1377,7 +1381,12 @@ impl StageState {
             let end_limit = tuning.instrument.standard_fret_count();
             let (start, end) = card.setting.fret_window.map_or(
                 (self.fret_start, self.fret_count.min(end_limit)),
-                |window| (window.start, window.start.saturating_add(window.span).min(end_limit)),
+                |window| {
+                    (
+                        window.start,
+                        window.start.saturating_add(window.span).min(end_limit),
+                    )
+                },
             );
             let start = start.max(card.setting.capo.unwrap_or(0));
             if start > end {
@@ -1390,7 +1399,8 @@ impl StageState {
                 .find(|formula| formula.name == name)
                 .and_then(|formula| board.positions_for_chord(formula, root).ok())
                 .map(|positions| {
-                    positions.into_iter()
+                    positions
+                        .into_iter()
                         .filter(|position| position.fret >= start && position.fret <= end)
                         .map(FretDot::from_position)
                         .collect()
@@ -2188,7 +2198,10 @@ mod tests {
         stage.set_lens(Lens::Chords);
         let mut card = stage.card_from_lens().unwrap();
         card.timing.hold = Hold::Bars(1);
-        card.touch = Touch::Arpeggiate { direction: ArpeggioDirection::Up, inversion: 0 };
+        card.touch = Touch::Arpeggiate {
+            direction: ArpeggioDirection::Up,
+            inversion: 0,
+        };
         for bpm in [20.0, 400.0] {
             card.timing.bpm = Some(bpm);
             let retained = serde_json::to_value(&card).unwrap();
@@ -2200,7 +2213,8 @@ mod tests {
             let mut scale = StageState::new().card_from_lens().unwrap();
             scale.touch = Touch::Walk;
             scale.timing = card.timing.clone();
-            let (_, scale_duration, _) = stage.card_sounding_pitches_at_tempo(&scale, 90.0).unwrap();
+            let (_, scale_duration, _) =
+                stage.card_sounding_pitches_at_tempo(&scale, 90.0).unwrap();
             assert!((scale_duration - dwell).abs() < 0.0001);
         }
     }
@@ -2210,7 +2224,10 @@ mod tests {
         use woodshedding::rehearsal::Hold;
         let s = StageState::new();
         let mut card = s.card_from_lens().unwrap();
-        assert!(card_dwell(&card, 120.0).unwrap().is_none(), "manual by default");
+        assert!(
+            card_dwell(&card, 120.0).unwrap().is_none(),
+            "manual by default"
+        );
         card.timing.hold = Hold::Bars(2);
         let d = card_dwell(&card, 120.0).unwrap().unwrap();
         assert!((d.as_secs_f32() - 4.0).abs() < 0.01, "2 bars at 120 = 4s");
