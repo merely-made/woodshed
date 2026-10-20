@@ -345,6 +345,55 @@ mod tests {
         );
     }
     #[test]
+    fn adapter_refuses_large_start_without_changing_the_editable_music() {
+        let (mut ui, mut backend) = fixture();
+        let owner = ui.working_sets.active_id;
+        let score = &mut ui.music_editor.drafts.get_mut(&owner).unwrap().score;
+        score.measures = vec![score.measures[0].clone(); 257];
+        let before = score.clone();
+        ui.practice_music();
+        assert!(ui.music_practice_requested()); // portable timing accepts the music
+        pump(&mut ui, &mut backend, 1024);
+        assert_eq!(ui.music_editor.practice.status(), PracticeStatus::Stopped);
+        assert!(ui.music_editor.notice.as_ref().unwrap().contains("256"));
+        assert_eq!(ui.music_draft().unwrap().score, before);
+        assert!(ui.set.music.is_none());
+    }
+    #[test]
+    fn adapter_refuses_large_update_keeps_playing_and_accepts_a_later_edit() {
+        let (mut ui, mut backend) = fixture();
+        ui.practice_music();
+        pump(&mut ui, &mut backend, 1024);
+        let original = ui.music_draft().unwrap().score.clone();
+        let epoch = backend.output_snapshot().unwrap().program.epoch;
+        let owner = ui.working_sets.active_id;
+        ui.music_editor
+            .drafts
+            .get_mut(&owner)
+            .unwrap()
+            .score
+            .measures = vec![original.measures[0].clone(); 257];
+        pump(&mut ui, &mut backend, 96_000);
+        assert!(ui.music_editor.practice.pending_update());
+        assert!(ui.music_editor.notice.as_ref().unwrap().contains("256"));
+        let active = backend.output_snapshot().unwrap().program;
+        assert_eq!(active.epoch, epoch);
+        assert_eq!(active.revision, 0);
+        assert_eq!(active.status, ProgramStatus::Playing);
+        assert_eq!(ui.music_editor.practice.applied_score(), Some(&original));
+
+        ui.music_editor.drafts.get_mut(&owner).unwrap().score = original;
+        ui.music_fret(6, 1);
+        pump(&mut ui, &mut backend, 96_000);
+        assert_eq!(backend.output_snapshot().unwrap().program.epoch, epoch);
+        assert_eq!(ui.music_editor.practice.applied_revision(), 2);
+        assert!(!ui.music_editor.practice.pending_update());
+        assert_eq!(
+            ui.music_editor.practice.applied_score(),
+            Some(&ui.music_draft().unwrap().score)
+        );
+    }
+    #[test]
     fn practice_tempo_and_shared_bar_repeat_preserve_authored_music() {
         let (mut ui, mut backend) = fixture();
         let written = ui.music_draft().unwrap().score.tempo;

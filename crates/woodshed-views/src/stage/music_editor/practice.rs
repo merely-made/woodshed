@@ -9,11 +9,11 @@ use std::sync::{
     atomic::{AtomicU64, Ordering},
 };
 
-use woodshed_core::{
-    music_playback::{ArrangementSchedule, PlaybackEvent},
-    working_sets::WorkingSetId,
+use woodshed_core::working_sets::WorkingSetId;
+use woodshedding::{
+    notation::Score,
+    timing::{ArrangementSchedule, PlaybackEvent},
 };
-use woodshedding::notation::Score;
 
 static NEXT_RUN_EPOCH: AtomicU64 = AtomicU64::new(1);
 
@@ -83,7 +83,7 @@ impl Default for MusicPractice {
 }
 
 impl MusicPractice {
-    /// Capture one immutable score reading and prepare its bounded schedule.
+    /// Capture one immutable score reading and derive its musical timing.
     /// This does not write the draft, MusicXML, Set, or editor history.
     pub fn start(
         &mut self,

@@ -1,0 +1,8 @@
+    Blocking waiting for file lock on package cache
+    Checking memchr v2.8.3
+    Checking serde_core v1.0.229
+    Checking roxmltree v0.21.1
+    Checking serde v1.0.229
+    Checking woodshedding v0.1.0 (/Users/markik/Code/worktrees/woodshed-arrangement-playback/crates/woodshedding)
+    Checking musicxml-timing v0.1.0 (/Users/markik/Code/worktrees/woodshed-arrangement-playback/examples/musicxml-timing)
+    Finished `dev` profile [unoptimized] target(s) in 28.35s

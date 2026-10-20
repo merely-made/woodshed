@@ -1,15 +1,25 @@
-//! Disposable score-derived practice timing. MusicXML remains musical authority;
-//! this module owns neither transport state nor audio/device preparation.
-use woodshedding::notation::{FrettedNote, Score};
+//! Exact score-derived timing for fretted music.
+//!
+//! MusicXML remains musical authority. Schedules are disposable readings at a
+//! chosen tempo; deriving one never changes the score. This module owns no
+//! transport, I/O, audio preparation, or output-engine capacity policy. The
+//! supported score profile is validated by [`Score::validate`].
+//!
+//! ```
+//! use woodshedding::{notation::Score, timing::ArrangementSchedule};
+//! let score = Score::rhythm_example();
+//! let schedule = ArrangementSchedule::from_score(&score, 73.5)?;
+//! assert_eq!(score.tempo, 96);
+//! assert_eq!(schedule.measures[1].events[0].gate_ticks, 320);
+//! assert!(schedule.event_at(0, 2880).unwrap().is_rest());
+//! # Ok::<(), String>(())
+//! ```
+use crate::notation::{FrettedNote, Score};
 
-/// Quarter-note tick scale shared with the existing generic output program.
+/// Integer ticks per quarter note, representing every supported note value
+/// exactly (including triplet eighths). Output adapters convert this scale to
+/// their own clock and apply their own capacity limits.
 pub const TICKS_PER_QUARTER: u64 = 960;
-/// One score measure becomes one generic program segment (engine limit: 256).
-pub const MAX_PLAYBACK_MEASURES: usize = 256;
-/// Each sounding contact becomes one generic program event (engine limit: 4096).
-pub const MAX_PLAYBACK_NOTES: usize = 4096;
-/// Also bound logical events, including rests, before allocating a schedule.
-pub const MAX_PLAYBACK_EVENTS: usize = 4096;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct ArrangementSchedule {
@@ -45,29 +55,6 @@ impl PlaybackEvent {
 }
 impl ArrangementSchedule {
     pub fn from_score(score: &Score, tempo_bpm: f64) -> Result<Self, String> {
-        // Bound vector walks before full validation; reject the entire score,
-        // never partially lower a prefix or omit a problematic event.
-        if score.measures.is_empty() || score.measures.len() > MAX_PLAYBACK_MEASURES {
-            return Err("Arrangement playback requires 1..=256 measures.".into());
-        }
-        let mut events = 0usize;
-        let mut notes = 0usize;
-        for measure in &score.measures {
-            events = events
-                .checked_add(measure.events.len())
-                .ok_or("Playback event count overflow.")?;
-            if events > MAX_PLAYBACK_EVENTS {
-                return Err("Arrangement exceeds 4096 playback events including rests.".into());
-            }
-            for event in &measure.events {
-                notes = notes
-                    .checked_add(event.notes.len())
-                    .ok_or("Playback note count overflow.")?;
-                if notes > MAX_PLAYBACK_NOTES {
-                    return Err("Arrangement exceeds 4096 sounding playback contacts.".into());
-                }
-            }
-        }
         if !tempo_bpm.is_finite() || !(1.0..=400.0).contains(&tempo_bpm) {
             return Err(
                 "Practice tempo must be finite and within 1..=400 quarter notes per minute.".into(),
@@ -82,7 +69,7 @@ impl ArrangementSchedule {
                 .ok_or("Measure duration overflow.")?;
             let denominator = u64::from(measure.meter.beat_type);
             if denominator == 0 || numerator % denominator != 0 {
-                return Err("Meter cannot be represented exactly on the practice clock.".into());
+                return Err("Meter cannot be represented exactly on the timing grid.".into());
             }
             let duration_ticks = numerator / denominator;
             let mut onset_ticks = 0u64;
@@ -95,7 +82,7 @@ impl ArrangementSchedule {
                     .ok_or("Event duration overflow.")?;
                 if numerator % 6 != 0 {
                     return Err(
-                        "Note duration cannot be represented exactly on the practice clock.".into(),
+                        "Note duration cannot be represented exactly on the timing grid.".into(),
                     );
                 }
                 let gate_ticks = numerator / 6;
@@ -161,7 +148,7 @@ pub fn lower_score(score: &Score, tempo_bpm: f64) -> Result<ArrangementSchedule,
 #[cfg(test)]
 mod tests {
     use super::*;
-    use woodshedding::notation::{Measure, NoteEvent, NoteValue, TimeSignature};
+    use crate::notation::{Measure, NoteEvent, NoteValue, TimeSignature};
     #[test]
     fn progression_keeps_chords_and_override_is_disposable() {
         let score = Score::progression_example();
@@ -269,7 +256,7 @@ mod tests {
         }
     }
     #[test]
-    fn invalid_score_tempo_and_resource_exhaustion_are_atomic_refusals() {
+    fn invalid_score_and_tempo_are_atomic_refusals() {
         let mut s = Score::rhythm_example();
         for bpm in [
             f64::NAN,
@@ -287,18 +274,53 @@ mod tests {
         s = Score::rhythm_example();
         s.measures[0].events.pop();
         assert!(lower_score(&s, 96.0).is_err());
-        s = Score::progression_example();
-        s.measures = vec![s.measures[0].clone(); 257];
-        assert!(lower_score(&s, 96.0).is_err());
-        s = Score::progression_example();
-        let e = NoteEvent {
-            notes: s.measures[0].events[0].notes.clone(),
-            value: NoteValue::Eighth,
-            rest: false,
-        };
-        s.measures[0].events = vec![e; 8];
-        s.measures = vec![s.measures[0].clone(); 129];
-        assert!(lower_score(&s, 96.0).unwrap_err().contains("contacts"));
+    }
+    #[test]
+    fn musical_timing_is_independent_of_output_engine_capacity() {
+        let mut score = Score::progression_example();
+        score.measures = vec![score.measures[0].clone(); 257];
+        assert_eq!(lower_score(&score, 96.0).unwrap().measures.len(), 257);
+
+        let mut measure = score.measures[0].clone();
+        measure.events = vec![
+            NoteEvent {
+                value: NoteValue::Eighth,
+                ..measure.events[0].clone()
+            };
+            8
+        ];
+        score.measures = vec![measure.clone(); 129];
+        let timing = lower_score(&score, 96.0).unwrap();
+        assert!(
+            timing
+                .measures
+                .iter()
+                .flat_map(|m| &m.events)
+                .map(|e| e.notes.len())
+                .sum::<usize>()
+                > 4096
+        );
+
+        measure.meter.beats = 16;
+        measure.events = vec![
+            NoteEvent {
+                notes: Vec::new(),
+                value: NoteValue::Eighth,
+                rest: true,
+            };
+            32
+        ];
+        score.measures = vec![measure; 129];
+        let timing = lower_score(&score, 96.0).unwrap();
+        assert_eq!(
+            timing
+                .measures
+                .iter()
+                .map(|m| m.events.len())
+                .sum::<usize>(),
+            4128
+        );
+        assert!(timing.event_at(128, 14880).unwrap().is_rest());
     }
     #[test]
     fn all_rest_bar_keeps_authored_event_selection_and_timing() {
