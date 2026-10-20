@@ -9,48 +9,130 @@
 //! connection, so the `midir` handle never crosses a thread boundary.
 //! The web host implements the same trait over Web MIDI.
 
-use std::sync::mpsc::{channel, Receiver, Sender, TryRecvError};
+use std::sync::mpsc::{Receiver, Sender, channel};
 use std::thread::JoinHandle;
-use std::time::Duration;
 
-use woodshed_audio::{list_midi_input_ports, list_midi_output_ports, MidiEvent, MidiIn, MidiOut};
+use woodshed_audio::{MidiEvent, MidiIn, list_midi_input_ports, list_midi_output_ports};
 use woodshed_core::midi::MidiBackend;
 
-/// Commands to the clock-out thread. The thread owns the output
-/// connection (it calls `connect_by_name` itself), so no `midir` handle
-/// crosses the channel — only these plain-data messages do.
-enum ClockCmd {
-    Connect(Option<String>),
-    Enabled(bool),
-    Playing(bool),
-    Bpm(f32),
-    Stop,
+mod midi_output;
+use midi_output::{Ack, Command};
+
+fn output_request_needed(
+    accepted: Option<&str>,
+    pending: Option<Option<&str>>,
+    last_failed: Option<Option<&str>>,
+    target: Option<&str>,
+) -> bool {
+    if pending == Some(target) {
+        return false;
+    }
+    if pending.is_some() {
+        return true;
+    }
+    accepted != target && last_failed != Some(target)
 }
 
 pub struct MidiHost {
     input: Option<MidiIn>,
     connected_in: Option<String>,
-    connected_out: Option<String>,
-    clock_tx: Sender<ClockCmd>,
+    output: OutputControl,
+    clock_tx: Sender<Command>,
     _clock_thread: JoinHandle<()>,
     /// De-dup the per-tick clock-out pushes so a steady transport doesn't
     /// spam the channel every frame.
     last_out: (bool, bool, i32),
+    input_error: Option<String>,
+}
+
+struct OutputControl {
+    accepted: Option<String>,
+    requested: Option<(u64, Option<String>)>,
+    last_attempt: Option<Option<String>>,
+    active_request: Option<u64>,
+    next_request: u64,
+    tx: Sender<Command>,
+    ack_rx: Receiver<Ack>,
     error: Option<String>,
+}
+
+impl OutputControl {
+    fn new(tx: Sender<Command>, ack_rx: Receiver<Ack>) -> Self {
+        Self {
+            accepted: None,
+            requested: None,
+            last_attempt: None,
+            active_request: None,
+            next_request: 0,
+            tx,
+            ack_rx,
+            error: None,
+        }
+    }
+
+    fn poll(&mut self) {
+        while let Ok(ack) = self.ack_rx.try_recv() {
+            let current = self
+                .requested
+                .as_ref()
+                .is_some_and(|(id, _)| *id == ack.request_id);
+            let active =
+                self.active_request.is_some() && ack.connection_request_id == self.active_request;
+            if current || active {
+                self.accepted = ack.accepted;
+                if current {
+                    self.requested = None;
+                    self.active_request = ack.connection_request_id;
+                }
+                if let Some(error) = ack.error {
+                    self.error = Some(format!("midi out: {error}"));
+                } else if current {
+                    self.error = None;
+                    self.last_attempt = None;
+                }
+            }
+        }
+    }
+
+    fn connect(&mut self, port: Option<&str>) {
+        let pending = self.requested.as_ref().map(|(_, target)| target.as_deref());
+        let last_failed = self
+            .last_attempt
+            .as_ref()
+            .filter(|_| self.requested.is_none())
+            .map(|target| target.as_deref());
+        if !output_request_needed(self.accepted.as_deref(), pending, last_failed, port) {
+            return;
+        }
+        self.next_request = self.next_request.wrapping_add(1);
+        let request_id = self.next_request;
+        let target = port.map(str::to_string);
+        self.requested = Some((request_id, target.clone()));
+        self.last_attempt = Some(target.clone());
+        if self
+            .tx
+            .send(Command::Connect { request_id, target })
+            .is_err()
+        {
+            self.requested = None;
+            self.error = Some("midi out: clock worker is unavailable".into());
+        }
+    }
 }
 
 impl MidiHost {
     pub fn new() -> Self {
-        let (tx, rx) = channel::<ClockCmd>();
-        let thread = std::thread::spawn(move || clock_out_loop(rx));
+        let (tx, rx) = channel::<Command>();
+        let (ack_tx, ack_rx) = channel::<Ack>();
+        let thread = std::thread::spawn(move || midi_output::clock_out_loop(rx, ack_tx));
         Self {
             input: None,
             connected_in: None,
-            connected_out: None,
+            output: OutputControl::new(tx.clone(), ack_rx),
             clock_tx: tx,
             _clock_thread: thread,
             last_out: (false, false, -1),
-            error: None,
+            input_error: None,
         }
     }
 }
@@ -62,6 +144,10 @@ impl Default for MidiHost {
 }
 
 impl MidiBackend for MidiHost {
+    fn poll(&mut self) {
+        self.output.poll();
+    }
+
     fn input_ports(&self) -> Vec<String> {
         list_midi_input_ports().unwrap_or_default()
     }
@@ -75,7 +161,8 @@ impl MidiBackend for MidiHost {
             None => {
                 self.input = None;
                 self.connected_in = None;
-            }
+                self.input_error = None;
+            },
             Some(name) => {
                 if self.connected_in.as_deref() == Some(name) {
                     return;
@@ -84,25 +171,20 @@ impl MidiBackend for MidiHost {
                     Ok(m) => {
                         self.input = Some(m);
                         self.connected_in = Some(name.to_string());
-                    }
+                        self.input_error = None;
+                    },
                     Err(e) => {
                         self.input = None;
                         self.connected_in = None;
-                        self.error = Some(format!("midi in: {e}"));
-                    }
+                        self.input_error = Some(format!("midi in: {e}"));
+                    },
                 }
-            }
+            },
         }
     }
 
     fn connect_output(&mut self, port: Option<&str>) {
-        if self.connected_out.as_deref() == port {
-            return;
-        }
-        self.connected_out = port.map(|s| s.to_string());
-        let _ = self
-            .clock_tx
-            .send(ClockCmd::Connect(port.map(|s| s.to_string())));
+        self.output.connect(port);
     }
 
     fn connected_input(&self) -> Option<&str> {
@@ -110,7 +192,7 @@ impl MidiBackend for MidiHost {
     }
 
     fn connected_output(&self) -> Option<&str> {
-        self.connected_out.as_deref()
+        self.output.accepted.as_deref()
     }
 
     fn clock_bpm(&self) -> Option<f32> {
@@ -144,19 +226,141 @@ impl MidiBackend for MidiHost {
             return;
         }
         self.last_out = key;
-        let _ = self.clock_tx.send(ClockCmd::Enabled(enabled));
-        let _ = self.clock_tx.send(ClockCmd::Playing(playing));
-        let _ = self.clock_tx.send(ClockCmd::Bpm(bpm));
+        let _ = self.clock_tx.send(Command::Enabled(enabled));
+        let _ = self.clock_tx.send(Command::Playing(playing));
+        let _ = self.clock_tx.send(Command::Bpm(bpm));
     }
 
     fn error(&self) -> Option<&str> {
-        self.error.as_deref()
+        self.output.error.as_deref().or(self.input_error.as_deref())
+    }
+}
+
+#[cfg(test)]
+mod output_request_tests {
+    use super::{Ack, Command, OutputControl, output_request_needed};
+    use std::sync::mpsc::channel;
+
+    fn control() -> (
+        OutputControl,
+        std::sync::mpsc::Receiver<Command>,
+        std::sync::mpsc::Sender<Ack>,
+    ) {
+        let (command_tx, command_rx) = channel();
+        let (ack_tx, ack_rx) = channel();
+        (OutputControl::new(command_tx, ack_rx), command_rx, ack_tx)
+    }
+
+    fn request_id(command: Command) -> u64 {
+        match command {
+            Command::Connect { request_id, .. } => request_id,
+            _ => panic!("expected output connect request"),
+        }
+    }
+
+    #[test]
+    fn superseding_pending_target_restores_accepted_or_disconnect_choice() {
+        assert!(output_request_needed(
+            Some("A"),
+            Some(Some("B")),
+            None,
+            Some("A")
+        ));
+        assert!(output_request_needed(None, Some(Some("B")), None, None));
+        assert!(!output_request_needed(
+            Some("A"),
+            Some(Some("B")),
+            None,
+            Some("B")
+        ));
+        assert!(!output_request_needed(
+            Some("A"),
+            None,
+            Some(Some("B")),
+            Some("B")
+        ));
+    }
+
+    #[test]
+    fn production_channel_supersedes_pending_with_currently_accepted_target() {
+        let (mut output, commands, acks) = control();
+        output.connect(Some("A"));
+        let first_id = request_id(commands.recv().unwrap());
+        acks.send(Ack {
+            request_id: first_id,
+            connection_request_id: Some(first_id),
+            accepted: Some("A".into()),
+            error: None,
+        })
+        .unwrap();
+        output.poll();
+
+        output.connect(Some("B"));
+        let b_id = request_id(commands.recv().unwrap());
+        output.connect(Some("A"));
+        let a_id = request_id(commands.recv().unwrap());
+        assert!(a_id > b_id);
+
+        acks.send(Ack {
+            request_id: b_id,
+            connection_request_id: Some(b_id),
+            accepted: Some("B".into()),
+            error: None,
+        })
+        .unwrap();
+        acks.send(Ack {
+            request_id: a_id,
+            connection_request_id: Some(a_id),
+            accepted: Some("A".into()),
+            error: None,
+        })
+        .unwrap();
+        output.poll();
+        assert_eq!(output.accepted.as_deref(), Some("A"));
+        assert!(output.requested.is_none());
+    }
+
+    #[test]
+    fn production_channel_supersedes_pending_with_disconnect_and_ignores_stale_ack() {
+        let (mut output, commands, acks) = control();
+        output.connect(Some("A"));
+        let first_id = request_id(commands.recv().unwrap());
+        acks.send(Ack {
+            request_id: first_id,
+            connection_request_id: Some(first_id),
+            accepted: Some("A".into()),
+            error: None,
+        })
+        .unwrap();
+        output.poll();
+
+        output.connect(Some("B"));
+        let b_id = request_id(commands.recv().unwrap());
+        output.connect(None);
+        let disconnect_id = request_id(commands.recv().unwrap());
+        acks.send(Ack {
+            request_id: b_id,
+            connection_request_id: Some(b_id),
+            accepted: Some("B".into()),
+            error: None,
+        })
+        .unwrap();
+        acks.send(Ack {
+            request_id: disconnect_id,
+            connection_request_id: None,
+            accepted: None,
+            error: None,
+        })
+        .unwrap();
+        output.poll();
+        assert_eq!(output.accepted, None);
+        assert!(output.requested.is_none());
     }
 }
 
 impl Drop for MidiHost {
     fn drop(&mut self) {
-        let _ = self.clock_tx.send(ClockCmd::Stop);
+        let _ = self.clock_tx.send(Command::Stop);
     }
 }
 
@@ -168,64 +372,20 @@ fn fmt_event(e: &MidiEvent) -> String {
             velocity,
         } => {
             format!("NoteOn ch{} {} v{}", channel + 1, note, velocity)
-        }
+        },
         MidiEvent::NoteOff { channel, note, .. } => {
             format!("NoteOff ch{} {}", channel + 1, note)
-        }
+        },
         MidiEvent::ControlChange {
             channel,
             controller,
             value,
         } => {
             format!("CC ch{} #{}={}", channel + 1, controller, value)
-        }
+        },
         MidiEvent::Clock => "Clock".to_string(),
         MidiEvent::Start => "Start".to_string(),
         MidiEvent::Continue => "Continue".to_string(),
         MidiEvent::Stop => "Stop".to_string(),
-    }
-}
-
-/// The clock-out generator loop. Owns the output connection; while
-/// enabled + playing with a port connected, it emits 24-PPQN MIDI clock
-/// at the current BPM and sends Start/Stop on the play-state transitions.
-fn clock_out_loop(rx: Receiver<ClockCmd>) {
-    let mut conn: Option<MidiOut> = None;
-    let mut enabled = false;
-    let mut playing = false;
-    let mut bpm = 120.0_f32;
-    let mut last_transport = false;
-    loop {
-        // Drain all pending commands before deciding what to send.
-        loop {
-            match rx.try_recv() {
-                Ok(ClockCmd::Connect(Some(name))) => {
-                    conn = MidiOut::connect_by_name(&name).ok();
-                }
-                Ok(ClockCmd::Connect(None)) => conn = None,
-                Ok(ClockCmd::Enabled(e)) => enabled = e,
-                Ok(ClockCmd::Playing(p)) => playing = p,
-                Ok(ClockCmd::Bpm(b)) => bpm = b,
-                Ok(ClockCmd::Stop) => return,
-                Err(TryRecvError::Empty) => break,
-                Err(TryRecvError::Disconnected) => return,
-            }
-        }
-        let want = enabled && playing && conn.is_some();
-        if want != last_transport {
-            if let Some(c) = conn.as_mut() {
-                let _ = if want { c.send_start() } else { c.send_stop() };
-            }
-            last_transport = want;
-        }
-        if want {
-            if let Some(c) = conn.as_mut() {
-                let _ = c.send_clock_tick();
-            }
-            let interval = 60.0 / (bpm.max(1.0) * 24.0);
-            std::thread::sleep(Duration::from_secs_f32(interval));
-        } else {
-            std::thread::sleep(Duration::from_millis(20));
-        }
     }
 }
