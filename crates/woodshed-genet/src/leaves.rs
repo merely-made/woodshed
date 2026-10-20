@@ -166,6 +166,19 @@ fn hasher() -> std::collections::hash_map::DefaultHasher {
 /// Refresh every leaf from the current state. Called from the frame hook,
 /// before the host lays out and paints.
 pub fn sync_all(shared: &mut Shared, ui: &UiState, leaves: &mut LeafRegistry<u64>) {
+    let signature = woodshed_views::stage::notation_reading::signature(ui);
+    if signature != shared.notation_sig {
+        shared.notation_sig = signature.clone();
+        leaves.remove(&woodshed_views::notation_leaf::NOTATION_LEAF_KEY);
+        if signature.is_some() {
+            if let Some(leaf) = woodshed_views::stage::notation_reading::leaf(ui) {
+                leaves.insert(
+                    woodshed_views::notation_leaf::NOTATION_LEAF_KEY,
+                    Box::new(leaf),
+                );
+            }
+        }
+    }
     let recorder = woodshed_views::stage::recorder_projection(ui);
     shared
         .recorder_leaves

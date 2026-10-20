@@ -8544,6 +8544,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "woodshed-notation"
+version = "0.1.0"
+dependencies = [
+ "accesskit",
+ "sprigging",
+ "ttf-parser",
+ "woodshedding",
+]
+
+[[package]]
 name = "woodshed-views"
 version = "0.1.0"
 dependencies = [
@@ -8570,6 +8580,7 @@ dependencies = [
  "taproot",
  "tinct",
  "woodshed-core",
+ "woodshed-notation",
  "woodshedding",
  "workbench",
 ]
@@ -8594,6 +8605,7 @@ dependencies = [
 name = "woodshedding"
 version = "0.1.0"
 dependencies = [
+ "roxmltree",
  "serde",
  "serde_json",
 ]

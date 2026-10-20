@@ -231,6 +231,9 @@ impl Draft {
                     })
                 })
                 .collect::<Result<_, String>>()?,
+
+            time_signatures: self.context.alignment.time_signatures.clone(),
+            bar_groups: self.context.alignment.bar_groups.clone(),
         })
     }
     fn signature(&self) -> String {
@@ -389,6 +392,9 @@ impl UiState {
                     .collect(),
                 cards: vec![],
                 rests: vec![],
+
+                time_signatures: vec![],
+                bar_groups: vec![],
             };
             let mut copy = self.set.clone();
             save_progression_arrangement(&self.stage, &mut copy, a)?;
@@ -914,6 +920,7 @@ pub fn screen(ui: &UiState) -> UiChild {
             ),
         )),
     ];
+    body.push(super::notation_reading::screen(ui));
     let owner = ui.working_sets.active_id;
     // Keep a stable slot: clearing a notice must not retire the captured scene
     // by shifting its ancestor's positional children during a gesture.
@@ -1308,6 +1315,25 @@ mod tests {
         ui.activate_workspace_panel(WorkspacePanel::Arrangement);
         ui.start_arrangement();
         ui
+    }
+    #[test]
+    fn ordinary_arrangement_draft_preserves_authored_meter_and_groups() {
+        let mut ui = fixture();
+        let owner = ui.working_sets.active_id;
+        let draft = ui.arrangement_editor.drafts.get_mut(&owner).unwrap();
+        draft.context.alignment.time_signatures = vec![TimeSignatureChange {
+            start: 0,
+            numerator: 4,
+            denominator: 4,
+        }];
+        draft.context.alignment.bar_groups = vec![BarGroup { first: 0, count: 2 }];
+        draft.put("name", "Renamed without regrouping");
+        let alignment = draft.alignment().unwrap();
+        assert_eq!(
+            alignment.time_signatures,
+            draft.context.alignment.time_signatures
+        );
+        assert_eq!(alignment.bar_groups, draft.context.alignment.bar_groups);
     }
     fn edit(ui: &mut UiState, key: &str, value: &str) {
         let owner = ui.working_sets.active_id;

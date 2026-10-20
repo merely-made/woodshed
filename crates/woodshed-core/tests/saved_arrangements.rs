@@ -74,6 +74,9 @@ fn fixture() -> (StageState, Set, ProgressionArrangement) {
                 },
             },
         }],
+
+        time_signatures: vec![],
+        bar_groups: vec![],
     };
     (stage, set, a)
 }

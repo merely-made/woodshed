@@ -292,6 +292,9 @@ mod tests {
                     },
                     role: None,
                 }],
+
+                time_signatures: vec![],
+                bar_groups: vec![],
             },
         )
     }

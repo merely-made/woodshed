@@ -46,6 +46,7 @@ use crate::workspace::{
 };
 
 pub mod arrangement_editor;
+mod audition;
 pub mod canvas_camera;
 mod chord_approaches;
 mod connected;
@@ -54,23 +55,25 @@ mod context;
 #[cfg(test)]
 mod context_tests;
 mod instances;
-mod audition;
-mod timing;
 mod looper;
 mod musical_context;
+pub mod notation_reading;
 mod overview;
 pub mod overview_atmosphere;
 pub mod overview_dynamics;
 pub mod overview_folds;
 mod overview_presentation;
+mod timing;
 pub use overview_presentation::OverviewPresentation;
 mod practice_clock;
 pub use practice_clock::{
-    PracticeCardEndReason, PracticeClockCommand, PracticeClockObservation,
-    PracticeClockProjection, PracticeClockStatus,
+    PracticeCardEndReason, PracticeClockCommand, PracticeClockObservation, PracticeClockProjection,
+    PracticeClockStatus,
 };
 pub mod relationship;
-pub use overview::{OVERVIEW_GRAPH_LEAF_KEY, overview_snapshot, overview_source_swatch, overview_swatch};
+pub use overview::{
+    OVERVIEW_GRAPH_LEAF_KEY, overview_snapshot, overview_source_swatch, overview_swatch,
+};
 pub use relationship::{RELATIONSHIP_GRAPH_LEAF_KEY, relationship_swatch};
 mod pitch_motion;
 mod rehearsal;
@@ -1043,6 +1046,7 @@ pub struct UiState {
     pub relationship_opened_link_layout: Option<scenograph::link::OpenedLinkLayout>,
     pub retained_set_name: TextInput,
     pub arrangement_editor: arrangement_editor::ArrangementEditor,
+    pub notation_reading: notation_reading::Reading,
     pub overview_focus: Option<woodshed_core::session_overview::OverviewNodeId>,
     pub overview_notice: Option<String>,
     pub overview_folds: overview_folds::OverviewFolds,
@@ -1339,6 +1343,7 @@ impl UiState {
             relationship_opened_link_layout: None,
             retained_set_name: TextInput::new(""),
             arrangement_editor: Default::default(),
+            notation_reading: Default::default(),
             overview_focus: None,
             overview_notice: None,
             overview_folds: Default::default(),
@@ -1802,7 +1807,7 @@ impl UiState {
                 self.app_settings.tuning.tuning_idx = self.stage.tuning_idx;
                 self.tuning_dd = SelectState::new(self.stage.tuning_idx);
                 self.section = AppSection::Stage;
-            }
+            },
         }
         if practice {
             self.activate_workspace_panel(WorkspacePanel::Practice);
@@ -2236,17 +2241,33 @@ impl UiState {
         }
         let (pitches, duration_s, strum_s) = self.stage.voicing_preview();
         let card = self.stage.card_from_lens();
-        let subject = card.as_ref().and_then(catalog_id_for_card).or_else(|| self.stage.catalog_id());
-        let provenance = card.as_ref().and_then(|card| ObservationProvenance::capture_in_set(card, self.working_sets.active_id).ok());
+        let subject = card
+            .as_ref()
+            .and_then(catalog_id_for_card)
+            .or_else(|| self.stage.catalog_id());
+        let provenance = card.as_ref().and_then(|card| {
+            ObservationProvenance::capture_in_set(card, self.working_sets.active_id).ok()
+        });
         self.request_observed_preview((pitches, duration_s, strum_s), subject, None, provenance);
     }
 
     /// Resolve retained sound at the interaction, retaining its source through admission.
     pub fn request_card_preview(&mut self) {
-        let Some(card) = self.current_card().cloned() else { return; };
-        let preview = match self.current_card_stage().card_sounding_pitches_at_tempo(&card, self.transport.bpm) {
+        let Some(card) = self.current_card().cloned() else {
+            return;
+        };
+        let preview = match self
+            .current_card_stage()
+            .card_sounding_pitches_at_tempo(&card, self.transport.bpm)
+        {
             Ok(preview) => preview,
-            Err(error) => { self.card_timing_notice = Some(format!("Set {} · Card {}: {error}", self.working_sets.active_id.0, card.id.0)); return; },
+            Err(error) => {
+                self.card_timing_notice = Some(format!(
+                    "Set {} · Card {}: {error}",
+                    self.working_sets.active_id.0, card.id.0
+                ));
+                return;
+            },
         };
         self.card_timing_notice = None;
         match self.bound_card_preview(&card, self.working_sets.active_id, None, preview) {
@@ -2308,12 +2329,25 @@ impl UiState {
         if self.rehearsal_owner.is_none() {
             self.rehearsal_owner = Some(self.working_sets.active_id);
         }
-        if self.rehearsal_stage.is_none() { self.capture_runner_stage(); }
-        let Some(card) = self.rehearsal_card().cloned() else { return; };
+        if self.rehearsal_stage.is_none() {
+            self.capture_runner_stage();
+        }
+        let Some(card) = self.rehearsal_card().cloned() else {
+            return;
+        };
         let preview = match self.rehearsal_sounding_pitches() {
             Ok(Some(preview)) => preview,
             Ok(None) => return,
-            Err(error) => { self.refuse_current_rehearsal(format!("Set {} · Card {}: {error}", self.rehearsal_owner.unwrap_or(self.working_sets.active_id).0, card.id.0)); return; },
+            Err(error) => {
+                self.refuse_current_rehearsal(format!(
+                    "Set {} · Card {}: {error}",
+                    self.rehearsal_owner
+                        .unwrap_or(self.working_sets.active_id)
+                        .0,
+                    card.id.0
+                ));
+                return;
+            },
         };
         let owner = self.rehearsal_owner.unwrap_or(self.working_sets.active_id);
         match self.bound_card_preview(&card, owner, Some(self.rehearsal_epoch), preview) {
@@ -2377,7 +2411,6 @@ impl UiState {
             self.capture_runner_stage();
             self.rehearsal_running = true;
             self.record_rehearsal_cursor();
-
         }
     }
 
@@ -3546,9 +3579,9 @@ fn tab_content(ui: &UiState) -> UiChild {
             Some(WorkspacePanel::Overview) if ui.relationship_open => relationship::screen(ui),
             Some(WorkspacePanel::Overview) => overview::screen(ui),
             Some(WorkspacePanel::Arrangement) => arrangement_editor::screen(ui),
-            Some(WorkspacePanel::Related) => Box::new(
-                el("div", related::panel(ui)).attr("class", "related-workspace"),
-            ),
+            Some(WorkspacePanel::Related) => {
+                Box::new(el("div", related::panel(ui)).attr("class", "related-workspace"))
+            },
             _ => return stage_screen(ui),
         },
         AppSection::Rehearsal => rehearsal::screen(ui),
@@ -3645,11 +3678,13 @@ pub fn stage_root(ui: &UiState) -> UiChild {
                     }),
                 ui.card_timing_notice.as_ref().map(|notice| {
                     el("div", text(format!("Card audio unavailable: {notice}")))
-                        .attr("class", "card-timing-notice").attr("role", "status")
+                        .attr("class", "card-timing-notice")
+                        .attr("role", "status")
                 }),
                 ui.audition_notice.as_ref().map(|notice| {
                     el("div", text(format!("Audition unavailable: {notice}")))
-                        .attr("class", "audition-notice").attr("role", "status")
+                        .attr("class", "audition-notice")
+                        .attr("role", "status")
                 }),
                 tab_content(ui),
             ),
@@ -3698,7 +3733,8 @@ mod evidence_tests {
         let before = serde_json::to_value(&ui.set).unwrap();
         let expected = ui
             .stage
-            .card_sounding_pitches_at_tempo(&ui.set.cards[0], ui.transport.bpm).unwrap();
+            .card_sounding_pitches_at_tempo(&ui.set.cards[0], ui.transport.bpm)
+            .unwrap();
         ui.stage.set_root(3);
         assert_ne!(
             ui.stage.voicing_preview().0,
@@ -3708,7 +3744,9 @@ mod evidence_tests {
         assert_eq!(ui.section, AppSection::Stage);
         ui.request_card_preview();
         assert_eq!(serde_json::to_value(&ui.set).unwrap(), before);
-        let Some(AudioRequest::CardPreview(request)) = ui.audio_requests.last() else { panic!("frozen source-bound Card preview"); };
+        let Some(AudioRequest::CardPreview(request)) = ui.audio_requests.last() else {
+            panic!("frozen source-bound Card preview");
+        };
         assert_eq!(request.preview, expected);
         assert!(ui.card_preview_is_current(request));
     }

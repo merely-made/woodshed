@@ -19,3 +19,6 @@ pub mod theme;
 pub mod workspace;
 
 pub use cambium;
+
+/// The same notation widget used by Graphshell.
+pub use woodshed_notation as notation_leaf;
