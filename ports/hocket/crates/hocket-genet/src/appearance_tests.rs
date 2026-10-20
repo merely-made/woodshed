@@ -248,8 +248,9 @@ fn standalone_uses_one_shared_recorder_status_node() {
     assert!(host.with_dom(|dom| {
         taproot::matching_with_projection(
             dom,
-            &Selector::any().with_attr("class", "audio-status mono"),
+            &Selector::class("audio-status"),
             &host.a11y_projection(),
-        ).is_empty()
+        )
+        .is_empty()
     }));
 }
