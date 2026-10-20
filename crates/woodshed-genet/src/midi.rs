@@ -9,7 +9,7 @@
 //! connection, so the `midir` handle never crosses a thread boundary.
 //! The web host implements the same trait over Web MIDI.
 
-use std::sync::mpsc::{Receiver, Sender, channel};
+use std::sync::mpsc::{Receiver, Sender, TryRecvError, channel};
 use std::thread::JoinHandle;
 
 use woodshed_audio::{MidiEvent, MidiIn, list_midi_input_ports, list_midi_output_ports};
@@ -71,7 +71,18 @@ impl OutputControl {
     }
 
     fn poll(&mut self) {
-        while let Ok(ack) = self.ack_rx.try_recv() {
+        loop {
+            let ack = match self.ack_rx.try_recv() {
+                Ok(ack) => ack,
+                Err(TryRecvError::Empty) => break,
+                Err(TryRecvError::Disconnected) => {
+                    self.accepted = None;
+                    self.requested = None;
+                    self.active_request = None;
+                    self.error = Some("midi out: clock worker is unavailable".into());
+                    break;
+                },
+            };
             let current = self
                 .requested
                 .as_ref()
@@ -272,6 +283,33 @@ mod output_request_tests {
             Command::Connect { request_id, .. } => request_id,
             _ => panic!("expected output connect request"),
         }
+    }
+
+    #[test]
+    fn closed_worker_clears_accepted_connection_and_reports_failure() {
+        let (mut output, commands, acks) = control();
+        output.connect(Some("A"));
+        let id = request_id(commands.recv().unwrap());
+        acks.send(Ack {
+            request_id: id,
+            connection_request_id: Some(id),
+            accepted: Some("A".into()),
+            error: None,
+        })
+        .unwrap();
+        output.poll();
+        assert_eq!(output.accepted.as_deref(), Some("A"));
+        drop(acks);
+        output.poll();
+        assert!(output.accepted.is_none());
+        assert!(output.requested.is_none());
+        assert!(
+            output
+                .error
+                .as_deref()
+                .unwrap()
+                .contains("worker is unavailable")
+        );
     }
 
     #[test]
