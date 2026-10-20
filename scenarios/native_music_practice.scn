@@ -1,0 +1,77 @@
+# Canonical native MusicXML practice through the real software sample clock.
+settle 10
+ui-zoom 1
+act music-rhythm-example
+settle 5
+click .music-save
+settle 5
+assert snap music-dirty == false
+click .music-practice-match-tempo
+click .music-repeat-Off
+click .music-practice-play
+act music-clock-advance-12000
+assert snap music-practice-status == playing
+assert snap music-playback-bar == 0
+assert snap music-playback-event == 0
+act music-practice-checkpoint-start
+capture 01_music_practice
+# The edit is visible immediately, its audio version waits for the bar boundary.
+click .music-pitch-up
+settle 4
+assert snap music-dirty == true
+assert snap music-pending-update == true
+assert snap music-applied-revision == 0
+act music-practice-checkpoint-queued
+click .music-practice-pause
+act music-clock-advance-24000
+assert snap music-practice-status == paused
+act music-practice-checkpoint-paused
+click .music-practice-resume
+act music-clock-advance-80000
+assert snap music-practice-status == playing
+assert snap music-applied-revision == 0
+assert snap music-playback-rest == true
+act music-practice-checkpoint-rest
+# At written 96 BPM the first bar lasts 120000 frames, including its rest.
+act music-clock-advance-29000
+assert snap music-playback-bar == 1
+assert snap music-applied-revision == 1
+assert snap music-pending-update == false
+act music-practice-checkpoint-applied
+click .music-follow-playback
+settle 4
+capture 02_contextual_fretboard
+click .music-follow-selected
+settle 3
+capture 02b_selected_bar_context
+click .music-follow-all
+settle 3
+click .music-view @data-music-view=Tab
+settle 3
+capture 03_playing_tab
+click .music-view @data-music-view=Score
+settle 3
+capture 04_playing_score
+resize 420 1100
+settle 5
+capture 04b_narrow_playback
+wheel 0 480 px on .workspace-screen
+settle 4
+capture 04c_narrow_fretboard
+resize 1180 1100
+settle 5
+wheel 0 -1200 px on .workspace-screen
+settle 4
+# Practice tempo changes do not author a new written tempo.
+click .music-practice-slower
+act music-clock-advance-2000
+act music-practice-checkpoint-retimed
+click .music-practice-stop
+act music-clock-advance-2000
+assert snap music-practice-status == stopped
+# Save authorship normally; transport is transient across reopen.
+click .music-save
+settle 6
+assert snap music-dirty == false
+act music-practice-checkpoint-saved
+capture 05_saved_music

@@ -39,6 +39,8 @@ pub(super) struct Shared {
     preview_starts: AtomicU64,
     click_step: AtomicUsize,
     program_epoch: AtomicU64,
+    program_revision: AtomicU64,
+    program_card_count: AtomicUsize,
     program_card: AtomicUsize,
     program_token: AtomicU64,
     program_event: AtomicUsize,
@@ -75,6 +77,10 @@ impl Shared {
             .store(snapshot.click_step, Ordering::Relaxed);
         self.program_epoch
             .store(snapshot.program.epoch.0, Ordering::Relaxed);
+        self.program_revision
+            .store(snapshot.program.revision, Ordering::Relaxed);
+        self.program_card_count
+            .store(snapshot.program.card_count, Ordering::Relaxed);
         self.program_card
             .store(snapshot.program.card_index, Ordering::Relaxed);
         self.program_token.store(
@@ -125,6 +131,8 @@ impl Shared {
                 preview_starts: self.preview_starts.load(Ordering::Relaxed),
                 click_step: self.click_step.load(Ordering::Relaxed),
                 program: ProgramSnapshot {
+                    revision: self.program_revision.load(Ordering::Relaxed),
+                    card_count: self.program_card_count.load(Ordering::Relaxed),
                     epoch: ProgramEpoch(self.program_epoch.load(Ordering::Relaxed)),
                     device_frame: self.frames.load(Ordering::Relaxed),
                     card_index: self.program_card.load(Ordering::Relaxed),
@@ -586,6 +594,11 @@ pub(super) enum Command {
         data: Option<OwnedGc<PreparedProgram>>,
         epoch: ProgramEpoch,
     },
+    ProgramReplace {
+        epoch: ProgramEpoch,
+        revision: u64,
+        data: Option<OwnedGc<PreparedProgram>>,
+    },
     ProgramPause {
         epoch: ProgramEpoch,
         paused: bool,
@@ -593,6 +606,10 @@ pub(super) enum Command {
     ProgramTempo {
         epoch: ProgramEpoch,
         card: usize,
+        bpm: f64,
+    },
+    ProgramTempoAll {
+        epoch: ProgramEpoch,
         bpm: f64,
     },
     ProgramLoopMode {
@@ -726,6 +743,9 @@ impl AudioNode for OutputNode {
             handled_commands: 0,
             invalid: false,
             program: None,
+            program_replacement: None,
+            program_revision: 0,
+            program_requested_revision: 0,
             program_status: ProgramStatus::Stopped,
             program_epoch: ProgramEpoch::default(),
             program_card_index: 0,
@@ -794,6 +814,9 @@ struct Processor {
     handled_commands: usize,
     invalid: bool,
     program: Option<OwnedGc<PreparedProgram>>,
+    program_replacement: Option<(u64, OwnedGc<PreparedProgram>)>,
+    program_revision: u64,
+    program_requested_revision: u64,
     program_status: ProgramStatus,
     program_epoch: ProgramEpoch,
     program_card_index: usize,
@@ -1078,13 +1101,29 @@ impl Processor {
                 self.program_card_started = true;
                 self.program_status = ProgramStatus::Playing;
             },
-            ProgramPendingAction::NextCard => self.move_program_card(None),
+            ProgramPendingAction::NextCard => {
+                if let Some((revision, replacement)) = self.program_replacement.take() {
+                    let next = if self.program_loop_mode == ProgramLoop::Card {
+                        Some(self.program_card_index)
+                    } else {
+                        self.program_card_index.checked_add(1)
+                    }
+                    .filter(|index| *index < replacement.cards.len())
+                    .unwrap_or(0);
+                    self.program = Some(replacement);
+                    self.program_revision = revision;
+                    self.move_program_card(Some(next));
+                } else {
+                    self.move_program_card(None);
+                }
+            },
             ProgramPendingAction::AdvanceCard => self.advance_program_card(),
             ProgramPendingAction::Seek(card) => self.move_program_card(Some(card)),
             ProgramPendingAction::Stop => {
                 for voice in &mut self.program_voices {
                     *voice = None;
                 }
+                self.program_replacement = None;
                 self.program = None;
                 self.program_status = ProgramStatus::Stopped;
                 self.program_card_started = false;
@@ -1126,6 +1165,9 @@ impl Processor {
     }
 
     fn defer_program_control(&mut self, control: DeferredProgramControl) {
+        // Cancel as soon as the control is accepted, including while an Ended
+        // transition awaits observation; it must not apply on a deferred seek.
+        self.program_replacement = None;
         if self.program_transition_pending.is_some() {
             match control {
                 // Stop is a dedicated bounded pending bit and always wins
@@ -1590,6 +1632,11 @@ impl Processor {
             (super::clock::PROGRAM_TICKS_PER_BEAT / click.divisions.max(1) as u64).max(1)
         });
         ProgramSnapshot {
+            revision: self.program_revision,
+            card_count: self
+                .program
+                .as_ref()
+                .map_or(0, |program| program.cards.len()),
             epoch: self.program_epoch,
             device_frame: self.current_frame,
             card_index: self.program_card_index,
@@ -1762,6 +1809,7 @@ impl AudioNodeProcessor for Processor {
                         generation,
                     } => {
                         if *clear {
+                            self.program_replacement = None;
                             if self.program.is_some() {
                                 // Session replacement silences the old
                                 // program at this callback boundary. If an
@@ -1912,6 +1960,9 @@ impl AudioNodeProcessor for Processor {
                     Command::StopCapture => self.stop_capture(),
                     Command::ProgramStart { data, epoch } => {
                         if !self.playing && self.take.is_none() {
+                            self.program_replacement = None;
+                            self.program_revision = 0;
+                            self.program_requested_revision = 0;
                             self.program = data.take();
                             self.program_epoch = *epoch;
                             self.program_loop_mode = self
@@ -1942,6 +1993,25 @@ impl AudioNodeProcessor for Processor {
                             self.program_click_last_beat = None;
                         }
                     },
+                    Command::ProgramReplace {
+                        epoch,
+                        revision,
+                        data,
+                    } if *epoch == self.program_epoch
+                        && *revision > self.program_requested_revision
+                        && self.program.is_some()
+                        && !matches!(
+                            self.program_status,
+                            ProgramStatus::Stopped | ProgramStatus::Complete
+                        )
+                        && !self.program_stop_pending =>
+                    {
+                        if let Some(replacement) = data.take() {
+                            self.program_requested_revision = *revision;
+                            self.program_replacement = Some((*revision, replacement));
+                        }
+                    },
+                    Command::ProgramReplace { .. } => {},
                     Command::ProgramPause { epoch, paused } if *epoch == self.program_epoch => {
                         if self.program_status == ProgramStatus::WaitingObserver {
                             if *paused {
@@ -1981,13 +2051,39 @@ impl AudioNodeProcessor for Processor {
                                 }
                             }
                         }
+                        if let Some((_, pending)) = self.program_replacement.as_mut() {
+                            if let Some(target) = pending.cards.get_mut(*card) {
+                                target.bpm = *bpm;
+                            }
+                        }
                     },
                     Command::ProgramTempo { .. } => {},
+                    Command::ProgramTempoAll { epoch, bpm } if *epoch == self.program_epoch => {
+                        let step = *bpm
+                            * super::clock::PROGRAM_TICKS_PER_BEAT as f64
+                            * (u32::MAX as f64 + 1.0)
+                            / (60.0 * self.rate as f64);
+                        if step.is_finite() && step >= 1.0 && step <= u64::MAX as f64 {
+                            if let Some(program) = self.program.as_mut() {
+                                for card in &mut program.cards {
+                                    card.bpm = *bpm;
+                                }
+                                self.program_tick_step_q32 = step.round() as u64;
+                            }
+                            if let Some((_, pending)) = self.program_replacement.as_mut() {
+                                for card in &mut pending.cards {
+                                    card.bpm = *bpm;
+                                }
+                            }
+                        }
+                    },
+                    Command::ProgramTempoAll { .. } => {},
                     Command::ProgramLoopMode { epoch, mode } if *epoch == self.program_epoch => {
                         self.program_loop_mode = *mode;
                     },
                     Command::ProgramLoopMode { .. } => {},
                     Command::ProgramAdvance { epoch } if *epoch == self.program_epoch => {
+                        self.program_replacement = None;
                         if matches!(
                             self.program_status,
                             ProgramStatus::Playing

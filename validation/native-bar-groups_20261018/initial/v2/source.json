@@ -1,0 +1,9 @@
+{
+  "woodshed_head": "493197eba778869f6952cfff7f023898edc72c67",
+  "mere_head": "7077ea440f926932714fb607bfafcbdf44b1343e",
+  "source_state": "dirty prototype; no integration",
+  "source_ledger_entries": 920,
+  "binary_sha256": "bd46a41e602886cae1ecbd9aa43eee22582059829e55e11c95cca1dd3a4ce124",
+  "lock_sha256": "51bdc48280bfa3fe341841f7d6d52a3c82b0cc8cc6e3c853c2959cd11ba57949",
+  "canonical_locks_modified": false
+}

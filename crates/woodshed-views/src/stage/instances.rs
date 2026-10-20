@@ -115,6 +115,7 @@ impl UiState {
     /// Open supplied instructions under a new owner, leaving the previous Set
     /// and any background runner intact.
     pub fn create_working_set_from(&mut self, name: impl Into<String>, set: Set) -> WorkingSetId {
+        self.leave_music_owner();
         self.sync_card_rename();
         self.park_set_presentation();
         let id = self.working_sets.create(&mut self.set, name, set);
@@ -135,6 +136,7 @@ impl UiState {
         self.clear_occurrence_inspectors();
     }
     pub fn duplicate_working_set(&mut self) -> WorkingSetId {
+        self.leave_music_owner();
         self.sync_card_rename();
         self.park_set_presentation();
         let source = self.working_sets.active_id;
@@ -152,6 +154,7 @@ impl UiState {
             return false;
         }
         if id != self.working_sets.active_id {
+            self.leave_music_owner();
             self.sync_card_rename();
             self.park_set_presentation();
             self.working_sets.activate(id, &mut self.set);

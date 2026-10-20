@@ -1,0 +1,34 @@
+    Blocking waiting for file lock on build directory
+   Compiling unicode-ident v1.0.27
+   Compiling crc32fast v1.5.2
+   Compiling serde_json v1.0.154
+   Compiling musicxml_internal v1.1.2
+   Compiling aho-corasick v1.1.5
+   Compiling miniz_oxide v0.8.9
+   Compiling proc-macro2 v1.0.107
+   Compiling quote v1.0.47
+   Compiling regex-automata v0.4.18
+   Compiling syn v2.0.119
+   Compiling syn v3.0.9
+   Compiling musicxml_macros v1.1.2
+   Compiling regex v1.13.1
+   Compiling serde_derive v1.0.229
+   Compiling musicxml v1.1.2
+   Compiling serde v1.0.229
+   Compiling woodshed-notation-model-check v0.0.0 (/Users/markik/Code/output/woodshed-native-musicxml-20261018/model-check)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 33.53s
+     Running unittests /Users/markik/Code/worktrees/woodshed-portable-fretboard/crates/woodshedding/src/lib.rs (/Users/markik/Code/worktrees/mere-portable-scene-backdrops/target/build/debug/deps/woodshed_notation_model_check-5823a64562db8ee8)
+
+running 9 tests
+test notation::tests::harmony_stays_written ... ok
+test notation::tests::rejects_invalid_model ... ok
+test notation::tests::triplet_brackets_and_incomplete_groups ... ok
+test notation::tests::changed_tab_refused ... ok
+test notation::tests::alternate_tuning_and_rests ... ok
+test notation::tests::unknown_source_refused ... ok
+test notation::tests::extreme_midi_tunings_round_trip ... ok
+test notation::tests::examples_round_trip ... ok
+test notation::tests::instrument_clefs_and_written_pitch ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 192 filtered out; finished in 0.02s
+

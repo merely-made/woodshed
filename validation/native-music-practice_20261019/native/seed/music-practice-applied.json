@@ -1,0 +1,88 @@
+{
+  "authoring_selection": [
+    0,
+    0
+  ],
+  "device": {
+    "active_frames": 999,
+    "bar": 1,
+    "beat_ticks": 31,
+    "bpm": 96.0,
+    "card_frames": 999,
+    "event": 1,
+    "native_stream_count": 0,
+    "output_frame": 145000,
+    "processing_blocks": 19,
+    "program_epoch": 1,
+    "program_revision": 1,
+    "program_status": "Playing",
+    "sample_rate": 48000
+  },
+  "kind": "woodshed-native-music-practice-output-runtime",
+  "music": {
+    "applied_canonical_xml_blake3": "b3a85af9ff2ac254ea79f8790a484c76abf9bae907c8683391ef80cec2add489",
+    "draft_canonical_xml_blake3": "b3a85af9ff2ac254ea79f8790a484c76abf9bae907c8683391ef80cec2add489",
+    "draft_dirty": true,
+    "saved_exact_xml_blake3": "bec421d42a32072a6813622af93b89712af4d638da075d5c227a602083740e08",
+    "stored_exact_xml_blake3": "bec421d42a32072a6813622af93b89712af4d638da075d5c227a602083740e08"
+  },
+  "owner": 2,
+  "pcm": {
+    "advances": [
+      {
+        "device_frame_end": 12000,
+        "device_frame_start": 0,
+        "nonzero_samples": 23998,
+        "pcm_f32le_blake3": "2a3a82e516f890a4febfc12b9e125cd38111a0060490126735c1f377c6e4f937",
+        "processor_blocks": 2,
+        "rendered_samples": 24000,
+        "requested_frames": 12000
+      },
+      {
+        "device_frame_end": 36000,
+        "device_frame_start": 12000,
+        "nonzero_samples": 0,
+        "pcm_f32le_blake3": "fab951d069991121abd5ad10c5a361171408f280a427e9a0d0e72aa66c51da6a",
+        "processor_blocks": 3,
+        "rendered_samples": 48000,
+        "requested_frames": 24000
+      },
+      {
+        "device_frame_end": 116000,
+        "device_frame_start": 36000,
+        "nonzero_samples": 159992,
+        "pcm_f32le_blake3": "7aa16094fbf28b00d14a3945f64e6faf40236a39e5c36e6eafe510162716a9fc",
+        "processor_blocks": 10,
+        "rendered_samples": 160000,
+        "requested_frames": 80000
+      },
+      {
+        "device_frame_end": 145000,
+        "device_frame_start": 116000,
+        "nonzero_samples": 21996,
+        "pcm_f32le_blake3": "1ee3b9025d187c0248e0c98f720ff93180791b4c9d0cd8e73d26a0a9cf26e175",
+        "processor_blocks": 4,
+        "rendered_samples": 58000,
+        "requested_frames": 29000
+      }
+    ],
+    "cumulative_blake3": "ee5d2aeb50e6e1a89124a143252430920b8290d161ae24ee5d36a1ddc98c31d1",
+    "encoding": "f32 IEEE-754 bit patterns, little endian, interleaved stereo",
+    "frames": 145000,
+    "nonzero_samples": 205986,
+    "samples": 290000
+  },
+  "playback": {
+    "applied_revision": 1,
+    "bar": 1,
+    "bar_beat_ticks": 31,
+    "bpm": 96.0,
+    "desired_revision": 1,
+    "event": 0,
+    "owner": 2,
+    "pending_update": false,
+    "rest": false,
+    "run_epoch": 1,
+    "status": "playing"
+  }
+}

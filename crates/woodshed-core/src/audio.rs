@@ -6,6 +6,10 @@
 //! browser. The core never touches an audio API, so the same state drives
 //! both.
 
+/// Shared user-controlled transport tempo limits used across Woodshed.
+pub const TRANSPORT_MIN_BPM: f32 = 1.0;
+pub const TRANSPORT_MAX_BPM: f32 = 400.0;
+
 /// One tuner analysis snapshot, host-agnostic.
 #[derive(Clone, Debug, PartialEq)]
 pub struct TunerReading {
@@ -38,7 +42,31 @@ impl Default for TransportState {
 
 impl TransportState {
     pub fn nudge_bpm(&mut self, delta: f32) {
-        self.bpm = (self.bpm + delta).clamp(30.0, 300.0);
+        self.bpm = (self.bpm + delta).clamp(TRANSPORT_MIN_BPM, TRANSPORT_MAX_BPM);
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn transport_nudges_respect_shared_one_to_four_hundred_bpm_range() {
+        let mut transport = TransportState::default();
+        transport.bpm = 30.0;
+        transport.nudge_bpm(-100.0);
+        assert_eq!(transport.bpm, TRANSPORT_MIN_BPM);
+
+        transport.bpm = 300.0;
+        transport.nudge_bpm(100.0);
+        assert_eq!(transport.bpm, TRANSPORT_MAX_BPM);
+
+        transport.bpm = TRANSPORT_MIN_BPM;
+        transport.nudge_bpm(-1.0);
+        assert_eq!(transport.bpm, TRANSPORT_MIN_BPM);
+        transport.bpm = TRANSPORT_MAX_BPM;
+        transport.nudge_bpm(1.0);
+        assert_eq!(transport.bpm, TRANSPORT_MAX_BPM);
     }
 }
 

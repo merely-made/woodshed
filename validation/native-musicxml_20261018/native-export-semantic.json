@@ -1,0 +1,43 @@
+{
+  "date_utc": "2026-10-18T18:00:25.429740+00:00",
+  "scope": "One actual native-edited MusicXML export; structural XSD/independent reader admission plus independent semantic pitch/duration/fingering checks, not third-party engraving or playback qualification.",
+  "sources": {
+    "/Users/markik/Code/worktrees/woodshed-portable-fretboard/crates/woodshedding/src/notation.rs": "6be214e7e287b9b79f0ea842c2c7335954978893a80c51c82fd1e94f501961ec",
+    "/Users/markik/Code/output/woodshed-native-musicxml-20261018/model-check/Cargo.toml": "93f5df3b3a96d6cc330a549d32836ba9716d9600964f1d1498bd4c0e7fb489ef",
+    "/Users/markik/Code/output/woodshed-native-musicxml-20261018/model-check/Cargo.lock": "97c4b2ad226a536f4dabd7a5fd6deab185f46ed88a97a9a0330dcfe4bb073ef9",
+    "/Users/markik/Code/output/woodshed-native-musicxml-20261018/model-check/src/bin/export.rs": "1bbdf9d88233fb1d9f0a657293d1380be72fd03e9e8d6ec086ec7ff8b0c0d063",
+    "/Users/markik/Code/output/woodshed-native-musicxml-20261018/qualify_native_export.py": "d5aeecdcf9b46a807bce624878915e410370b61d46439baf1521d57876211016"
+  },
+  "schemas": {
+    "/Users/markik/Code/output/woodshed-notation-study-20261018/musicxml.xsd": "f13ddfd7a0b2d849cb15ec2eeb01c7c0207f5768ba13bc47b29ffbe6970ed8c8",
+    "/Users/markik/Code/output/woodshed-notation-study-20261018/xml.xsd": "616a3077df5cfc954ac74a75abe9697b95eef7a85dbe09367d995a483e840eb5",
+    "/Users/markik/Code/output/woodshed-notation-study-20261018/xlink.xsd": "6e601f8eeb41618b50e4c7f944dff754e57ea43b602755470dda24c9c2f6df92"
+  },
+  "independent_reader": {
+    "crate": "musicxml",
+    "version": "1.1.2",
+    "accepted": 1,
+    "log": "/Users/markik/Code/output/woodshed-native-musicxml-20261018/native-export-reader.log"
+  },
+  "exports": [
+    {
+      "file": "/Users/markik/Code/output/woodshed-native-musicxml-20261018/native-run-v2/seed/exported.musicxml",
+      "sha256": "ee62262466e515c7913b5a1e2d576d94055f93bd346fa6aabb595b816ba6554c",
+      "xsd_pass": true,
+      "pitched_staff_pairs": 11,
+      "rest_staff_pairs": 2,
+      "events": 13,
+      "measures": 2,
+      "independent_pitch_duration_and_fingering_pass": true,
+      "xmllint": "/Users/markik/Code/output/woodshed-native-musicxml-20261018/native-run-v2/seed/exported.musicxml validates"
+    }
+  ],
+  "pass_counts": {
+    "xsd": 1,
+    "independent_reader": 1,
+    "semantic_fixture_checks": 1,
+    "pitched_staff_pairs": 11,
+    "rest_staff_pairs": 2,
+    "measures": 2
+  }
+}

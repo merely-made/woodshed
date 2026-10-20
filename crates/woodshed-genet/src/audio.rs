@@ -21,6 +21,8 @@ use woodshed_core::song::SongDoc;
 
 mod loop_projection;
 mod practice_clock;
+mod music_program;
+mod music_clock;
 mod input_admission;
 mod microphone_access;
 #[cfg(test)]
@@ -556,6 +558,27 @@ impl CpalBackend {
             initial_error: error.clone(),
             error,
         }
+    }
+
+    /// Isolated scenario lane: the same sample processor without a device.
+    pub(crate) fn offline_for_receipt() -> Self {
+        Self::with_runtime(OutputRuntime::offline(48_000))
+    }
+    pub(crate) fn advance_receipt_frames(&mut self, frames: usize) -> Result<Vec<f32>, String> {
+        if self.native_output || frames > 8192 {
+            return Err(
+                "Receipt frame pump requires a software output and at most 8192 frames.".into(),
+            );
+        }
+        self.service();
+        let mut pcm = vec![0.0; frames * 2];
+        self.output
+            .as_mut()
+            .ok_or("No software output")?
+            .render_offline(&mut pcm)
+            .map_err(|e| e.to_string())?;
+        self.service();
+        Ok(pcm)
     }
 
     #[cfg(test)]

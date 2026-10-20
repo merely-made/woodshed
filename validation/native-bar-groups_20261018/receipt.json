@@ -1,0 +1,55 @@
+{
+  "status": "qualified native bar grouping; map controls pending user decisions",
+  "platform": "macOS native Woodshed, local Mere prototype cohort",
+  "source": {
+    "woodshed_head": "493197eba778869f6952cfff7f023898edc72c67",
+    "mere_head": "7077ea440f926932714fb607bfafcbdf44b1343e",
+    "source_state": "dirty prototype; no integration",
+    "source_ledger_entries": 920,
+    "binary_sha256": "a848178b4dd59228597a569b0d47e8f6858df7d91157626634aca570f51262b3",
+    "lock_sha256": "51bdc48280bfa3fe341841f7d6d52a3c82b0cc8cc6e3c853c2959cd11ba57949",
+    "canonical_locks_modified": false
+  },
+  "source_inputs_unchanged_after_native_runs": true,
+  "tests": {
+    "graphshell_editing": {
+      "passed": 22
+    },
+    "woodshed_draft": {
+      "passed": 18
+    },
+    "native_arrangement": {
+      "passed": 3
+    }
+  },
+  "native": {
+    "seed": "RESULT ok",
+    "reopen": "RESULT ok",
+    "presented_frames": 306,
+    "reviewed_captures": 7,
+    "logical_viewports": [
+      [
+        1180,
+        1100
+      ],
+      [
+        420,
+        1100
+      ]
+    ],
+    "profile": "isolated synthetic Keeper profile",
+    "binary": "/Users/markik/Code/output/graphshell-meter-native-20261018/native-run-v3/frozen/woodshed-genet"
+  },
+  "verified": "Preview preserves the full Set; only bar_groups change after Save; live/sealed Sets and complete portable scene reopen exactly.",
+  "pending": [
+    "time-signature controls: preserve musical position or bar-relative position",
+    "meter changes: preserve grouped passage or bar numbers",
+    "anchor meter changes to fixed musical positions or bar numbers",
+    "undo in unapplied proposal input"
+  ],
+  "limits": [
+    "No canonical dependency integration or publication",
+    "No full-suite or physical-audio claim",
+    "No completed time-signature-map UI claim"
+  ]
+}

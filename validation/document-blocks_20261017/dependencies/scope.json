@@ -1,0 +1,10 @@
+{
+  "canonical_lock_restored": true,
+  "canonical_lock_sha256": "6ad8e0c8904f477164c7741f750a332c4f41411f9c46ff90d9ae3af8845c7154",
+  "non_mere_git_pins_preserved": true,
+  "local_cohort_lock_sha256": "750909e1fbf131ba7a1a3d0aa7cb6c8527905961ac4e86cb0aecc4fda4ff9e7d",
+  "temporary_patch": "local-source.toml",
+  "helper": "/Users/markik/Code/worktrees/mere-portable-scene-backdrops/support/design-studies/backdrops/with_local_scene_source.py",
+  "helper_option": "--document-blocks",
+  "canonical_dependency_integration_qualified": false
+}

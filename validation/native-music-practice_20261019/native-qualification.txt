@@ -1,0 +1,4 @@
+run_dir: /Users/markik/Code/output/woodshed-arrangement-playback-20261019/native-run-v4
+source_root: /Users/markik/Code/worktrees/woodshed-arrangement-playback
+checkpoints: start, queued, paused, rest, applied, retimed, saved, reopened, repeat
+PASS: practice checkpoints, PCM receipts, frozen binary hash, and source input ledger match.

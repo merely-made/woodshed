@@ -17,6 +17,7 @@ pub mod chord;
 pub mod exercise;
 pub mod fretboard;
 pub mod interval;
+pub mod notation;
 pub mod pitch;
 pub mod pitch_class_set;
 pub mod practice;

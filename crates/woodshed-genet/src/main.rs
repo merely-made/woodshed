@@ -33,6 +33,7 @@ mod fold_receipt;
 mod layout_tests;
 mod leaves;
 mod midi;
+mod music_export;
 mod persona;
 mod scenario;
 mod session;
@@ -154,6 +155,7 @@ fn desktop_root(ui: &UiState, commands: &WindowCommands) -> UiChild {
                         .attr("class", "t-btn arrangement-close-discard"),
                     move |ui: &mut UiState, _| {
                         ui.arrangement_editor.drafts.clear();
+                        ui.music_editor.drafts.clear();
                         ui.arrangement_editor.close_pending = false;
                         draft_close.close();
                     },
@@ -166,7 +168,13 @@ fn desktop_root(ui: &UiState, commands: &WindowCommands) -> UiChild {
     Box::new(
         el(
             "div",
-            (desktop_chrome(commands), decision, persona_decision, draft_decision, stage_root(ui)),
+            (
+                desktop_chrome(commands),
+                decision,
+                persona_decision,
+                draft_decision,
+                stage_root(ui),
+            ),
         )
         .attr("class", "desktop-frame"),
     )
@@ -182,8 +190,9 @@ fn prepare_close(
     if ctx.runner.state().pending_persona_switch.is_some() {
         return CloseDisposition::KeepVisible;
     }
-    if ctx.runner.state().arrangement_editor.dirty() {
-        ctx.runner.update(|ui| ui.arrangement_editor.close_pending = true);
+    if ctx.runner.state().arrangement_drafts_dirty() {
+        ctx.runner
+            .update(|ui| ui.arrangement_editor.close_pending = true);
         return CloseDisposition::KeepVisible;
     }
     if !ctx.runner.state().practice_discard_close {
@@ -206,8 +215,7 @@ fn prepare_close(
 fn guard_requested_close(shared: &mut Shared, ctx: &mut Ctx<'_>) {
     if *ctx.close {
         *ctx.close = false;
-        *ctx.close = prepare_close(shared, ctx)
-            == cambium_genet_winit_host::CloseDisposition::Exit;
+        *ctx.close = prepare_close(shared, ctx) == cambium_genet_winit_host::CloseDisposition::Exit;
     }
 }
 
@@ -221,8 +229,13 @@ fn boot_state(
     wake: &cambium_genet_winit_host::HostWake,
 ) -> Init<UiState, Logic> {
     let mut shared = shared.borrow_mut();
-    let device_free_receipt = appearance::device_free_receipt();
-    let mut backend = (!device_free_receipt).then(CpalBackend::new);
+    let music_practice_receipt = scenario::music_practice_receipt();
+    let device_free_receipt = appearance::device_free_receipt() || music_practice_receipt;
+    let mut backend = if music_practice_receipt {
+        Some(CpalBackend::offline_for_receipt())
+    } else {
+        (!device_free_receipt).then(CpalBackend::new)
+    };
     if let Some(backend) = &mut backend {
         backend.set_wake(wake.callback());
     }
@@ -325,6 +338,16 @@ fn escape_policy(runner: &mut Runner<UiState, Logic, UiChild>, press: &KeyPress)
         runner.update(|ui| {
             if let Some(pick) = ui.persona.as_mut() {
                 pick.record(woodshed_views::persona::dismissed());
+            }
+        });
+        return true;
+    }
+    // A captured musical gesture must cancel even when focus has moved.
+    if runner.state().music_drag_active() || runner.state().music_preview_active() {
+        runner.update(|ui| {
+            ui.cancel_music_drag();
+            if ui.music_preview_active() {
+                ui.cancel_music_pattern();
             }
         });
         return true;
@@ -548,7 +571,9 @@ mod tests {
         let requests = ui.audio_requests.clone();
         for request in requests {
             if let woodshed_core::audio::AudioRequest::CardPreview(request) = request {
-                if request.run_epoch.is_some() { ui.finish_card_preview_admission(&request, Ok(())); }
+                if request.run_epoch.is_some() {
+                    ui.finish_card_preview_admission(&request, Ok(()));
+                }
             }
         }
     }
@@ -654,14 +679,26 @@ mod tests {
         host.relayout();
         assert!(!host.close_requested());
         assert!(host.state().practice_close_pending);
-        assert_eq!(serde_json::to_value(&host.state().set.cards).unwrap(), cards);
-        assert_eq!(shared.borrow().storage.as_ref().unwrap().load().unwrap(), original);
+        assert_eq!(
+            serde_json::to_value(&host.state().set.cards).unwrap(),
+            cards
+        );
+        assert_eq!(
+            shared.borrow().storage.as_ref().unwrap().load().unwrap(),
+            original
+        );
         assert!(host.click_on(&taproot::Selector::class("practice-close-retry")));
         assert!(!host.close_requested());
-        assert_eq!(serde_json::to_value(&host.state().set.cards).unwrap(), cards);
+        assert_eq!(
+            serde_json::to_value(&host.state().set.cards).unwrap(),
+            cards
+        );
         assert!(host.click_on(&taproot::Selector::class("practice-close-discard")));
         assert!(host.close_requested());
-        assert_eq!(shared.borrow().storage.as_ref().unwrap().load().unwrap(), original);
+        assert_eq!(
+            shared.borrow().storage.as_ref().unwrap().load().unwrap(),
+            original
+        );
     }
 
     #[test]

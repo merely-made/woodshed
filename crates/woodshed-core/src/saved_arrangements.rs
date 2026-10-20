@@ -78,6 +78,7 @@ fn validate_alignment(set: &Set, saved: &SavedProgressionArrangement) -> Result<
     {
         return Err("Arrangement requires a named, bounded template with one span per role".into());
     }
+    woodshedding::rehearsal::arrangement::bars::validate_groups(a)?;
     let valid_span = |s: Span| {
         s.length > 0
             && s.start
@@ -206,6 +207,8 @@ mod tests {
                 }),
             }],
             rests: vec![],
+            time_signatures: vec![],
+            bar_groups: vec![],
         };
         save_progression_arrangement(&stage, &mut set, a).unwrap();
         let bytes = serde_json::to_vec(&set).unwrap();
