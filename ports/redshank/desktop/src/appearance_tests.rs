@@ -427,7 +427,9 @@ fn narrow_editor_keeps_parent_actions_visible_and_saves_through_shared_controls(
     );
     for action in ["back-to-redshank", "apply-to-redshank"] {
         let selector = Selector::role("button").with_attr("data-action", action);
-        let node = host.with_dom(|dom| taproot::matching_with_projection(dom, &selector, &host.a11y_projection())[0]);
+        let node = host.with_dom(|dom| {
+            taproot::matching_with_projection(dom, &selector, &host.a11y_projection())[0]
+        });
         let (x, y, width, height) = host.painted_rect(node).unwrap();
         assert!(width > 0.0 && height > 0.0);
         assert!(x >= 0.0 && x + width <= 420.5, "{action}: {x}+{width}");
@@ -446,4 +448,58 @@ fn narrow_editor_keeps_parent_actions_visible_and_saves_through_shared_controls(
     assert!(!host.state().appearance.editor_open);
     assert_eq!(host.state().surface, RedshankSurfaceState::default());
     host.update(|state| assert_eq!(state.surface.drain_commands().count(), 0));
+}
+
+#[test]
+fn selected_span_note_menu_and_export_stay_inside_the_window() {
+    use redshank_model::{AnnotationId, ItemId};
+    use redshank_surfaces::{
+        MenuTarget, NoteSummary, NoteSummaryBody, SurfaceTab, VoiceNotePreview,
+    };
+    let dir = tempfile::tempdir().unwrap();
+    let mut host = launch(
+        &dir.path().join("appearance.json"),
+        &dir.path().join("themes.json"),
+    );
+    host.update(|state| {
+        let surface = &mut state.surface;
+        surface.active_tab = SurfaceTab::Notes;
+        surface.notes_filter = redshank_surfaces::NotesFilter::AllNotes;
+        surface.compact.now_playing = None;
+        surface.note_clip_export_available = true;
+        surface.notes = vec![NoteSummary {
+            id: AnnotationId("selected-voice".into()),
+            item_id: ItemId("source-recording".into()),
+            offset_ms: 1250,
+            end_offset_ms: Some(4500),
+            private: false,
+            body: NoteSummaryBody::Voice {
+                duration_ms: 100,
+                preview: VoiceNotePreview::Idle,
+            },
+        }];
+        surface.note_alignments.insert(
+            AnnotationId("selected-voice".into()),
+            redshank_surfaces::NoteAlignment::Unavailable(
+                "No audio fingerprint was captured for this note.".into(),
+            ),
+        );
+        surface.open_menu = Some(MenuTarget::Note(AnnotationId("selected-voice".into())));
+    });
+    for width in [960.0, 420.0] {
+        host.layout_at(width, 720.0);
+        for label in ["More actions for note at 0:01", "Export note clip at 0:01"] {
+            let selector = Selector::role("button").containing(label);
+            let node = host.with_dom(|dom| {
+                taproot::matching_with_projection(dom, &selector, &host.a11y_projection())[0]
+            });
+            let (x, y, w, h) = host.painted_rect(node).unwrap();
+            assert!(w > 0.0 && h > 0.0);
+            assert!(
+                x >= 0.0 && x + w <= width + 0.5,
+                "{label} at {width}: {x}+{w}"
+            );
+            assert!(y >= 0.0 && y + h <= 720.5, "{label}: {y}+{h}");
+        }
+    }
 }

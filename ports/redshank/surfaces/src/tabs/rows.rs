@@ -250,7 +250,8 @@ pub fn note_actions(state: &RedshankSurfaceState, note: &NoteSummary) -> FullVie
         use crate::NoteAlignment;
         match alignment {
             NoteAlignment::Unavailable(reason) => {
-                Box::new(el("span", text(reason.clone()))) as FullView
+                Box::new(el("span", text(reason.clone())).attr("class", "rs-note-alignment"))
+                    as FullView
             },
             NoteAlignment::Download => action(
                 "Download to realign",
