@@ -10,6 +10,19 @@ upstream!" The [April plan](2026-04-30_initial_plan.md) (line 638) had deferred
 fundsp: a sine-burst click "adds zero dependency surface", with fundsp to come
 "when we want richer drum sounds".
 
+## Target versions
+
+The adapter targets current releases, not the demo's versions:
+
+- **Firewheel 0.14.0** (crates.io 2026-09-05; upstream `main` sits at that
+  release). Woodshed's fork `2b03846` (2026-10-11) is 0.14.0 plus owned
+  changes, so a 0.14 adapter builds on both.
+- **fundsp 0.23.0** (2026-01-07; `master` unchanged since March, edition
+  2024).
+
+The demo below is on firewheel 0.7.1 and fundsp 0.20.0, so it shows the shape
+only.
+
 ## The two layers
 
 - **Firewheel** is the engine: node graph, scheduling, device I/O,
@@ -53,8 +66,12 @@ Woodshed's version must not inherit its defects:
 1. **Silenced generators.** `skip_silence` defaults to on and returns
    `ClearAllOutputs` whenever all inputs are silent. A zero-input generator is
    always "silent", and effect tails are cut the moment input stops.
-2. **Audio-thread allocation.** `new_stream` calls `allocate()` on a
-   sample-rate change.
+2. **An outdated API.** It predates 0.14's `events()`/`process()` split and the
+   `ProcStreamCtx` argument to `new_stream`/`stream_stopped`. In 0.14,
+   `new_stream` runs on the main thread, and the docs call allocating there
+   safe. So the demo's `allocate()` in `new_stream` is acceptable under
+   current Firewheel. `stream_stopped` may run on the realtime thread, so it
+   must stay non-allocating.
 3. **Parameters that aren't sample-accurate.** `ProcEvents` is ignored, so
    parameters move only through fundsp's atomic `Shared` values.
 4. **Slow processing.** It ticks one sample at a time through dynamic
@@ -65,11 +82,16 @@ Woodshed's version must not inherit its defects:
 - **Placement.** A small root crate, so Hocket can use it later. Not
   `audio-primitives`, which is ruled pure-std with zero dependencies, and not
   the Firewheel fork.
-- **Construction.** The unit is built, its sample rate set and its buffers
-  allocated on the control thread. A stream change rebuilds the processor off
-  the audio thread.
-- **Processing.** fundsp's block processing, chunked to at most 64 frames.
-  Parameter events split blocks at their frame offsets.
+- **Construction.** Against the Firewheel 0.14 API: `AudioNode::info`,
+  `construct_processor` and `update` on the control side. The unit is built,
+  its sample rate set and its buffers allocated there. `new_stream` (main
+  thread) re-sets the sample rate and reallocates.
+- **Processing.** fundsp 0.23's block `process(size, &BufferRef, &mut
+  BufferMut)`, in chunks of at most `MAX_BUFFER_SIZE` = 64 frames (SIMD width
+  8). Copy through preallocated fundsp buffers, because Firewheel hands plain
+  per-channel `f32` slices. Parameter events arrive through 0.14's
+  `events()`, and blocks split at their frame offsets. Every output channel is
+  filled, or the node returns `ClearAllOutputs`/`Bypass`, as 0.14 requires.
 - **Silence policy.** Generators always run. Effects declare a tail length, or
   report silence from their own output.
 - **Determinism.** Units are seeded and reset, so offline renders equal live
