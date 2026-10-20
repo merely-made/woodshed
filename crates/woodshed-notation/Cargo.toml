@@ -6,10 +6,18 @@ rust-version = "1.97.1"
 license.workspace = true
 repository.workspace = true
 description = "Chart, tablature and staff notation leaves over woodshedding musical documents"
+
+[features]
+# Native consumers keep the leaf's fallback labels and playback description.
+# Hosts supplying their own accessible controls can omit this adapter, avoiding
+# a second direct AccessKit version beside their Sprigging host's contract.
+default = ["accessibility"]
+accessibility = ["dep:accesskit"]
+
 [dependencies]
 woodshedding.workspace = true
 sprigging.workspace = true
-accesskit = "0.24"
+accesskit = { version = "0.24", optional = true }
 ttf-parser = "0.25.1"
 
 [dev-dependencies]
