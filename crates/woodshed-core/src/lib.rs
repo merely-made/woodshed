@@ -29,7 +29,6 @@ pub mod mere;
 pub mod midi;
 pub mod musical_context;
 pub mod music;
-pub mod music_playback;
 pub mod personal_relations;
 pub mod pitch_motion_reading;
 pub mod practice_clock;
