@@ -1224,10 +1224,6 @@ impl AppState {
         audio_device_options(&self.audio_devices.outputs)
     }
 
-    pub fn audio_status_label(&self) -> &str {
-        self.recorder.audio_status_label()
-    }
-
     /// Service the host adapter and device-free recorder controller.
     pub fn tick(&mut self) {
         let now = Instant::now();

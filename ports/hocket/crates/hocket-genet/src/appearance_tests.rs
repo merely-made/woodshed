@@ -231,3 +231,25 @@ fn canonical_mode_changes_preserve_the_visible_record_dot() {
         );
     }
 }
+
+#[test]
+fn standalone_uses_one_shared_recorder_status_node() {
+    let dir = tempfile::tempdir().unwrap();
+    let host = mounted(&dir);
+    let status = host.state().recorder.audio_status_label().to_string();
+    let matches = host.with_dom(|dom| {
+        taproot::matching_with_projection(
+            dom,
+            &Selector::role("status").containing(&status),
+            &host.a11y_projection(),
+        )
+    });
+    assert_eq!(matches.len(), 1);
+    assert!(host.with_dom(|dom| {
+        taproot::matching_with_projection(
+            dom,
+            &Selector::any().with_attr("class", "audio-status mono"),
+            &host.a11y_projection(),
+        ).is_empty()
+    }));
+}

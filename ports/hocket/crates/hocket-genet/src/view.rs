@@ -509,8 +509,6 @@ fn audio_device_controls(state: &AppState) -> Child {
                     ),
                 )
                 .attr("class", "device-select"),
-                el("span", text(state.audio_status_label().to_string()))
-                    .attr("class", "audio-status mono"),
             ),
         )
         .attr("class", "audio-devices"),
