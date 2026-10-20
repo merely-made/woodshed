@@ -95,6 +95,10 @@ impl OutputControl {
     }
 
     fn connect(&mut self, port: Option<&str>) {
+        if self.requested.is_none() && self.accepted.as_deref() == port {
+            self.last_attempt = None;
+            return;
+        }
         let pending = self.requested.as_ref().map(|(_, target)| target.as_deref());
         let last_failed = self
             .last_attempt
@@ -355,6 +359,42 @@ mod output_request_tests {
         output.poll();
         assert_eq!(output.accepted, None);
         assert!(output.requested.is_none());
+    }
+
+    #[test]
+    fn production_channel_dedupes_failed_target_until_user_returns_to_accepted_route() {
+        let (mut output, commands, acks) = control();
+        output.connect(Some("A"));
+        let a_id = request_id(commands.recv().unwrap());
+        acks.send(Ack {
+            request_id: a_id,
+            connection_request_id: Some(a_id),
+            accepted: Some("A".into()),
+            error: None,
+        })
+        .unwrap();
+        output.poll();
+
+        output.connect(Some("B"));
+        let failed_b_id = request_id(commands.recv().unwrap());
+        acks.send(Ack {
+            request_id: failed_b_id,
+            connection_request_id: Some(a_id),
+            accepted: Some("A".into()),
+            error: Some("cannot open B".into()),
+        })
+        .unwrap();
+        output.poll();
+        output.connect(Some("B"));
+        assert!(
+            commands.try_recv().is_err(),
+            "steady failed target must stay deduped"
+        );
+
+        output.connect(Some("A"));
+        output.connect(Some("B"));
+        let retried_b_id = request_id(commands.recv().unwrap());
+        assert!(retried_b_id > failed_b_id);
     }
 }
 
