@@ -145,6 +145,11 @@
       "archived_log": "checks/host-dev.log",
       "exit_code": 0,
       "reason": "Single reset development case excluded as repeat; log archived byte-identically, process receipt retains original external log identity. Source was changing during initial compile."
+    },
+    {
+      "receipt": "checks/whitespace-raw.json",
+      "exit_code": 2,
+      "reason": "Full staged/source diff identifies only final blank lines in immutable raw Cargo logs; logs retain exact original digests. Earlier unstaged whitespace checks do not claim coverage of untracked logs."
     }
   ],
   "external_development_gate": "/Users/markik/Code/testing/woodshed/midi-admission-20261019/host-dev.json; one passing reset case, excluded as development repeat; process began before final source. Worker queued attempts were stopped and are not evidence of passing tests.",
@@ -174,9 +179,10 @@
       "exit_code": 0
     },
     {
-      "receipt": "checks/whitespace-final.json",
+      "receipt": "checks/whitespace-source-docs.json",
       "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-      "exit_code": 0
+      "exit_code": 0,
+      "scope": "Full diff from published fd9fb82; raw .log files excluded to preserve observed subprocess bytes."
     }
   ]
 }

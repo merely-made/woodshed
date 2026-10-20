@@ -248,7 +248,7 @@
     "validation/recorder-runtime_20261019/receipt.json": "7f15383b369f38b14030766de2462d9aad6153a3e6aa2dc20dcada3f580ed95e"
   },
   "midi_admission_followup_artifact_sha256": {
-    "validation/midi-admission_20261019/README.md": "0e914b373aa84c67e03ecde22494121d2f6093b1fdd4584040517908736a853a",
+    "validation/midi-admission_20261019/README.md": "aa5be8c7b3b0ca8182754024103779a9ffe196a7577ca22e4e77edb43f70683e",
     "validation/midi-admission_20261019/checks/doc-links-final.json": "4781f309b2527273e395ba6d1c9f6fbc8d82dc554fba7f5285c6859ce69d8642",
     "validation/midi-admission_20261019/checks/doc-links-final.log": "eddbda075cf7c4df1dd65d6e9644647d16f7bab0d0d56595896c381013e7d5ef",
     "validation/midi-admission_20261019/checks/doc-links.json": "09a82183747bec56810e3cec094b66acc9cb34de6b6995c960ff54bb95af7e36",
@@ -271,8 +271,12 @@
     "validation/midi-admission_20261019/checks/selection.log": "907f9f84665c188cca4dde787fa1225daa0218ab5bfb28f988bcadd7b35556ed",
     "validation/midi-admission_20261019/checks/whitespace-final.json": "df1aefffd0137a92764196e62249a2327e04c5e34f8b291737505eed5c66533c",
     "validation/midi-admission_20261019/checks/whitespace-final.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "validation/midi-admission_20261019/checks/whitespace-raw.json": "bb4e441543c94b2f26155abda8160999941be0769f138ef7222c98a75258e68e",
+    "validation/midi-admission_20261019/checks/whitespace-raw.log": "0822802038dcadda81743aff26ccb6c8c98480cd56d851644651da01ebcc4260",
+    "validation/midi-admission_20261019/checks/whitespace-source-docs.json": "57c4959ac45731cebffe761d5c14cae10a8cefc7b3091b3fedd1486f6569353f",
+    "validation/midi-admission_20261019/checks/whitespace-source-docs.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
     "validation/midi-admission_20261019/checks/whitespace.json": "9514f378e746e354fe778c873adbd4aeea0a2ec743260e28666b912ae4a85cf9",
     "validation/midi-admission_20261019/checks/whitespace.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "validation/midi-admission_20261019/receipt.json": "3c71ed2581a7cdd051e9dee53cea1dd410f4800d8dd862825e6057c530322703"
+    "validation/midi-admission_20261019/receipt.json": "2c983c9a3f495a633dd9774e1284383a0ef52f81960d46612549be8135347be0"
   }
 }
