@@ -215,7 +215,6 @@ impl<C: Connector> OutputMachine<C> {
             },
             Command::Stop => return None,
         }
-        None
     }
 
     fn tick(&mut self) {
@@ -375,6 +374,19 @@ mod tests {
             .get(name)
             .cloned()
             .unwrap_or_default()
+    }
+
+    #[test]
+    fn connect_command_returns_the_worker_acknowledgement() {
+        let mut machine = OutputMachine::new(FakeConnector::default());
+        let ack = machine
+            .apply(Command::Connect {
+                request_id: 1,
+                target: Some("A".into()),
+            })
+            .expect("worker must acknowledge connection commands");
+        assert_eq!(ack.request_id, 1);
+        assert_eq!(ack.accepted.as_deref(), Some("A"));
     }
 
     #[test]
