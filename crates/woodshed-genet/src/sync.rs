@@ -558,7 +558,6 @@ fn midi_devices(shared: &mut Shared, ctx: &mut Ctx<'_>) {
 
 /// Project completion facts and reconcile product routing through the backend.
 fn sync_midi_devices(ui: &mut UiState, midi: &mut impl woodshed_core::midi::MidiBackend) {
-    midi.poll();
     if std::mem::take(&mut ui.midi.refresh_requested) {
         ui.midi
             .refresh_ports(midi.input_ports(), midi.output_ports());
@@ -571,9 +570,19 @@ fn sync_midi_devices(ui: &mut UiState, midi: &mut impl woodshed_core::midi::Midi
     // A pending replacement must also be superseded when intent returns to
     // the currently accepted port; the backend deduplicates desired requests.
     midi.connect_output(out_target.as_deref());
+    poll_midi_state(ui, midi);
+}
+
+/// Observe asynchronous MIDI completion on ordinary frames as well as dispatch.
+pub(crate) fn poll_midi_state(
+    ui: &mut UiState,
+    midi: &mut impl woodshed_core::midi::MidiBackend,
+) -> bool {
+    midi.poll();
     ui.midi.connected_in = midi.connected_input().map(str::to_string);
     ui.midi.connected_out = midi.connected_output().map(str::to_string);
     ui.midi.error = midi.error().map(str::to_string);
+    midi.needs_service()
 }
 
 /// Publish the admitted snapshot to the view. A refused edit must not make the
@@ -717,7 +726,8 @@ mod tests {
         assert_eq!(ui.midi.error.as_deref(), Some("B refused"));
         backend.completion = Some("B".into());
         backend.error = None;
-        sync_midi_devices(&mut ui, &mut backend);
+        // An ordinary frame observes completion without a new input dispatch.
+        poll_midi_state(&mut ui, &mut backend);
         assert_eq!(ui.midi.connected_out.as_deref(), Some("B"));
         assert!(ui.midi.error.is_none());
     }

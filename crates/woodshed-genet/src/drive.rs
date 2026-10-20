@@ -36,6 +36,7 @@ pub fn requires_live_frame(shared: &Shared, ui: &UiState) -> bool {
         || ui.stage.exercise_playing
         || ui.stage.scale_run_playing
         || ui.calib_active
+        || shared.midi.needs_service()
         || shared
             .backend
             .as_ref()
@@ -108,7 +109,7 @@ pub fn frame(shared: &mut Shared, ui: &mut UiState) -> bool {
         }
         return false;
     }
-    let mut animating = false;
+    let mut animating = crate::sync::poll_midi_state(ui, &mut shared.midi);
     let previous_history = ui.practice_history.len();
     let previous_cursor = ui.rehearsal_set().cursor;
     if let Some(observation) = poll_audio(shared) {
@@ -129,7 +130,7 @@ pub fn frame(shared: &mut Shared, ui: &mut UiState) -> bool {
             ui.stop_rehearsal();
             ui.card_timing_notice = Some("Audio output is unavailable. Run requires an active output clock.".into());
         }
-        return false;
+        return animating;
     };
 
     if ui.tuner.enabled {
