@@ -2,6 +2,7 @@
 resolver = "3"
 members = [
     "crates/woodshedding",
+    "crates/woodshed-notation",
     "crates/woodshed-audio",
     "crates/audio-primitives",
     "crates/hocket-model",
@@ -42,6 +43,7 @@ scenograph = { git = "https://github.com/merely-made/mere.git", branch = "main" 
 scenomise = { git = "https://github.com/merely-made/mere.git", branch = "main" }
 blake3 = "1"
 # Internal crates
+woodshed-notation = { path = "crates/woodshed-notation", version = "0.1.0" }
 hocket-model = { path = "crates/hocket-model", version = "0.1.0" }
 hocket-project = { path = "crates/hocket-project", version = "0.1.0" }
 hocket-recorder = { path = "crates/hocket-recorder", version = "0.1.0" }
