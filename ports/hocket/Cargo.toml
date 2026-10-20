@@ -104,9 +104,9 @@ workbench = { git = "https://github.com/merely-made/mere.git", branch = "main", 
 image = { version = "0.25", default-features = false, features = ["png"] }
 # Match Genet's immutable Netrender source identity. A branch reference here
 # creates a second `ExternalTexturePlacement` beside the host's renderer API.
-netrender = { git = "https://github.com/merely-made/netrender.git", rev = "e8cda06efc11c11595f2fa1bb30bce7e72979537" }
-paint_list_api = { git = "https://github.com/merely-made/netrender.git", rev = "e8cda06efc11c11595f2fa1bb30bce7e72979537" }
-paint_list_render = { git = "https://github.com/merely-made/netrender.git", rev = "e8cda06efc11c11595f2fa1bb30bce7e72979537" }
+netrender = { git = "https://github.com/merely-made/netrender.git", branch = "main" }
+paint_list_api = { git = "https://github.com/merely-made/netrender.git", branch = "main" }
+paint_list_render = { git = "https://github.com/merely-made/netrender.git", branch = "main" }
 # Host-side surface/compose types only; backend features come from
 # netrender's per-target split. Single wgpu 29 tree now the Masonry app
 # (wgpu 28) is retired.
