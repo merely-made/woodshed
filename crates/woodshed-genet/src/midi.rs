@@ -234,9 +234,17 @@ impl MidiBackend for MidiHost {
             return;
         }
         self.last_out = key;
-        let _ = self.clock_tx.send(Command::Enabled(enabled));
-        let _ = self.clock_tx.send(Command::Playing(playing));
-        let _ = self.clock_tx.send(Command::Bpm(bpm));
+        if self
+            .clock_tx
+            .send(Command::Clock {
+                enabled,
+                playing,
+                bpm,
+            })
+            .is_err()
+        {
+            self.output.error = Some("midi out: clock worker is unavailable".into());
+        }
     }
 
     fn error(&self) -> Option<&str> {
