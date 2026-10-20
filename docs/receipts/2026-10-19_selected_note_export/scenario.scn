@@ -1,0 +1,19 @@
+settle 8
+act tab:notes
+act notes:all
+settle 8
+assert snap tab == Notes
+assert snap note-count == 1
+click role:button More actions for note at 0:01
+settle 3
+capture 01_private_note_menu
+click role:button Make shareable: note at 0:01
+settle 8
+click role:button More actions for note at 0:01
+settle 3
+capture 02_shareable_note_menu
+click role:button Export note clip at 0:01
+settle 12
+assert snap notice ~ Exported to
+capture 03_selected_voice_exported
+log Selected voice body exported through the visible note-row control
