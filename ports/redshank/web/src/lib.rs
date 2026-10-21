@@ -483,6 +483,9 @@ fn apply(state: &mut RedshankSurfaceState, command: CompactCommand) {
         },
         C::Subscribe(_) => refuse(state, "Subscribe (no feed fetcher)"),
         C::RefreshSubscription(_) => refuse(state, "RefreshSubscription (no feed fetcher)"),
+        C::SaveRecoveryCopy | C::KeepWorking | C::ExitWithoutSaving => {
+            refuse(state, "Listener recovery (no durable store)")
+        },
         C::ExportAnnotations => refuse(state, "ExportAnnotations (no file writer)"),
         C::ExportNoteClip(_) => refuse(state, "ExportNoteClip (no selected-note writer)"),
     }

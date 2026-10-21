@@ -9,6 +9,7 @@ mod diagnostics;
 #[cfg(test)]
 mod diagnostics_worker_tests;
 mod headed_receipt;
+mod recovery;
 mod scenario;
 mod selected_clip;
 mod session;
@@ -124,6 +125,8 @@ fn fetch_transcript(
 }
 
 enum IoReply {
+    RecoveryPicked(Option<PathBuf>),
+    RecoveryCopied(Result<PathBuf, String>),
     Aligned {
         id: AnnotationId,
         result: Result<Box<redshank_model::DerivedPosition>, String>,
@@ -185,9 +188,21 @@ impl Persistence {
             Ok(model) => (model.unwrap_or_default(), Self::start(store)),
             Err(error) => {
                 let (reply_sender, replies) = mpsc::channel();
+                eprintln!("Listener recovery failed: {error:?}");
+                let detail = match &error {
+                    redshank_storage::StoreError::NoValidGeneration { paths } => {
+                        format!("{} saved generations could not be restored", paths.len())
+                    },
+                    redshank_storage::StoreError::Io(error) => {
+                        format!("storage could not be read: {error}")
+                    },
+                    redshank_storage::StoreError::Encode(error) => {
+                        format!("saved state could not be decoded: {error}")
+                    },
+                };
                 let notice = format!(
-                    "Not saved: listener recovery failed ({error:?}). Changes stay in memory; \
-                     existing state is preserved. Repair the store and reopen Redshank before saving."
+                    "Not saved: listener recovery failed ({detail}). Changes stay in memory; \
+                     existing state is preserved. Save a recovery copy to a new directory to retain this session."
                 );
                 // There is no storage worker or save sender in this session.
                 // Other asynchronous listening replies still use this channel.
@@ -435,6 +450,7 @@ struct Desktop {
     export_pending: bool,
     data_root: PathBuf,
     closing: bool,
+    recovery: recovery::Recovery,
     saved_draft: Option<SavedDraft>,
     receipt: Option<HeadedReceipt>,
     last_progress: Instant,
@@ -450,14 +466,15 @@ impl Desktop {
         let snapshot = self.runtime.snapshot();
         self.dialog_pending
             || self.cache_pending.is_some()
-            || !self.cache_removals.is_empty()
+            || (self.persistence.recovery_error.is_none() && !self.cache_removals.is_empty())
             || self.cache_removals_in_flight > 0
-            || !self.voice_removals.is_empty()
+            || (self.persistence.recovery_error.is_none() && !self.voice_removals.is_empty())
             || self.voice_removals_in_flight > 0
             || self.feed_pending.is_some()
             || self.transcript_pending.is_some()
             || self.alignment_pending.is_some()
             || self.export_pending
+            || self.recovery.copying
             || self.pending_note_open.is_some()
             || self.pending_note_seek.is_some()
             || self.persistence.in_flight.is_some()
@@ -598,9 +615,7 @@ impl Desktop {
         let facts = self.host_facts();
         self.session.project(state, snapshot, &facts);
         state.note_clip_export_available = true;
-        if let Some(error) = &self.persistence.recovery_error {
-            state.notice = Some(error.clone());
-        }
+        self.project_recovery(state);
         for feed in &mut state.feeds {
             feed.failure = self.feed_failures.get(&feed.feed_url).cloned();
         }
@@ -1068,7 +1083,15 @@ impl Desktop {
         ) {
             self.pending_note_open = None;
         }
+        if (self.recovery.copying || self.recovery.exit_requested)
+            && self.persistence.recovery_error.is_some()
+        {
+            return Err("Wait for the recovery operation to finish".into());
+        }
         match command {
+            CompactCommand::SaveRecoveryCopy => self.choose_recovery_copy(state)?,
+            CompactCommand::KeepWorking => self.keep_recovery()?,
+            CompactCommand::ExitWithoutSaving => self.discard_recovery(state)?,
             CompactCommand::RealignNote(id) => {
                 if self.alignment_pending.is_some() {
                     return Err("An audio search is already running".into());
@@ -1654,7 +1677,9 @@ impl Desktop {
         self.settle_duck(state);
         let snapshot = self.runtime.snapshot();
         self.project(state, &snapshot);
-        if let Err(error) = self.persistence.flush(&self.session.model) {
+        if self.persistence.recovery_error.is_none()
+            && let Err(error) = self.persistence.flush(&self.session.model)
+        {
             state.notice = Some(error);
         }
     }
@@ -1662,6 +1687,22 @@ impl Desktop {
     fn poll(&mut self, state: &mut RedshankSurfaceState) {
         while let Ok(reply) = self.persistence.replies.try_recv() {
             match reply {
+                IoReply::RecoveryPicked(path) => {
+                    if !self.recovery.copying || self.persistence.recovery_error.is_none() {
+                        continue;
+                    }
+                    if let Some(path) = path {
+                        if let Err(error) = self.start_recovery_copy(state, path) {
+                            self.recovery.copying = false;
+                            self.recovery.notice = Some(error);
+                        }
+                    } else {
+                        self.recovery.copying = false;
+                        self.recovery.notice =
+                            Some("Recovery copy canceled; changes remain in memory".into());
+                    }
+                },
+                IoReply::RecoveryCopied(result) => self.finish_recovery_copy(state, result),
                 IoReply::Aligned { id, result } => {
                     if self.alignment_pending.as_ref() != Some(&id) {
                         continue;
@@ -1818,6 +1859,9 @@ impl Desktop {
                     result,
                     execution,
                 } => {
+                    if self.persistence.recovery_error.is_some() {
+                        continue;
+                    }
                     self.persistence
                         .acknowledge_with_cause(revision, &result, execution);
                     match result {
@@ -1901,8 +1945,9 @@ impl Desktop {
                 state.notice = Some(error);
             }
         }
-        if snapshot.state != PlaybackState::Playing
-            || self.last_progress.elapsed() >= Duration::from_secs(5)
+        if !self.recovery.exit_requested
+            && (snapshot.state != PlaybackState::Playing
+                || self.last_progress.elapsed() >= Duration::from_secs(5))
         {
             self.last_progress = Instant::now();
             if self.session.record_progress(&snapshot, now_ms()) {
@@ -1911,7 +1956,9 @@ impl Desktop {
         }
         self.settle_duck(state);
         self.project(state, &snapshot);
-        if let Err(error) = self.persistence.flush(&self.session.model) {
+        if self.persistence.recovery_error.is_none()
+            && let Err(error) = self.persistence.flush(&self.session.model)
+        {
             state.notice = Some(error);
             self.persistence.failed = true;
             self.closing = false;
@@ -1919,6 +1966,11 @@ impl Desktop {
     }
 
     fn close(&mut self, state: &mut RedshankSurfaceState) -> Result<(), String> {
+        if self.persistence.recovery_error.is_some() {
+            let result = self.close_recovery(state);
+            self.project_recovery(state);
+            return result;
+        }
         self.pending_note_open = None;
         self.span_stop_ms = None;
         self.send(PlaybackCommand::Pause)?;
@@ -2199,30 +2251,32 @@ fn hooks(
                 }
                 desktop.receipt = Some(receipt);
             }
-            if desktop.closing
-                && desktop.transcript_pending.is_none()
-                && desktop.persistence.durable == desktop.persistence.revision
-                && desktop.cache_removals.is_empty()
-                && desktop.cache_removals_in_flight == 0
-                && desktop.voice_removals.is_empty()
-                && desktop.voice_removals_in_flight == 0
-                && desktop
-                    .receipt
-                    .as_ref()
-                    .is_none_or(|receipt| !receipt.active())
-            {
-                *ctx.close = true;
+            if desktop.ready_to_close() {
+                let mut admitted = false;
+                ctx.runner
+                    .update(|state| admitted = appearance_host::prepare_close(state));
+                if admitted {
+                    *ctx.close = true;
+                } else {
+                    desktop.closing = false;
+                    desktop.recovery.exit_requested = false;
+                }
             }
             // Worker changes need polling until playback and persistence settle.
             appearance_host::refresh_stylesheet(ctx);
             let snap = desktop.runtime.snapshot();
             desktop.closing
                 || desktop.dialog_pending
+                || desktop.recovery.copying
+                || desktop.alignment_pending.is_some()
+                || desktop.export_pending
                 || desktop.cache_pending.is_some()
-                || !desktop.cache_removals.is_empty()
+                || (desktop.persistence.recovery_error.is_none()
+                    && !desktop.cache_removals.is_empty())
                 || desktop.cache_removals_in_flight > 0
                 || desktop.voice_session.is_some()
-                || !desktop.voice_removals.is_empty()
+                || (desktop.persistence.recovery_error.is_none()
+                    && !desktop.voice_removals.is_empty())
                 || desktop.voice_removals_in_flight > 0
                 || desktop.feed_pending.is_some()
                 || desktop.transcript_pending.is_some()
@@ -2346,6 +2400,7 @@ fn main() {
         export_pending: false,
         data_root,
         closing: false,
+        recovery: recovery::Recovery::default(),
         saved_draft: None,
         receipt,
         last_progress: Instant::now(),
@@ -2354,7 +2409,7 @@ fn main() {
         projected_item: None,
     };
     let mut state = RedshankSurfaceState::default();
-    state.notice = desktop.persistence.recovery_error.clone();
+    desktop.project_recovery(&mut state);
     state.compact.voice_capture_available = LocalVoiceCapture::is_available();
     // An optional local path or direct URL supports associations and reproducible receipts.
     let initial = std::env::args_os().nth(1);
@@ -3031,6 +3086,7 @@ mod tests {
             export_pending: false,
             data_root: directory.to_owned(),
             closing: false,
+            recovery: recovery::Recovery::default(),
             saved_draft: None,
             receipt: None,
             last_progress: Instant::now(),
@@ -3294,32 +3350,193 @@ mod tests {
         }
     }
 
-    #[test]
-    fn recovery_session_projects_not_saved_and_refuses_close_persistence() {
-        let directory = tempfile::tempdir().unwrap();
-        let generation = directory.path().join("state-00000000000000000001.json");
-        fs::write(&generation, b"unrecoverable listener").unwrap();
-        let (model, persistence) = Persistence::restore(JsonDirectoryStore::new(directory.path()));
-        let mut desktop = desktop(directory.path());
+    pub(super) fn recovery_desktop(directory: &std::path::Path) -> Desktop {
+        fs::write(
+            directory.join("state-00000000000000000001.json"),
+            b"unrecoverable listener",
+        )
+        .unwrap();
+        let (model, persistence) = Persistence::restore(JsonDirectoryStore::new(directory));
+        let mut desktop = desktop(directory);
         desktop.session = Session::new(model);
         desktop.persistence = persistence;
+        desktop
+    }
+
+    #[test]
+    fn unchanged_recovery_closes_without_attempting_persistence() {
+        let directory = tempfile::tempdir().unwrap();
+        let mut desktop = recovery_desktop(directory.path());
+        let mut state = RedshankSurfaceState::default();
+        desktop.close(&mut state).unwrap();
+        assert!(desktop.ready_to_close());
+        desktop.poll(&mut state);
+        assert!(desktop.ready_to_close());
+        assert!(desktop.persistence.requests.is_none());
+        assert_eq!(desktop.persistence.durable, 0);
+        assert_eq!(fs::read_dir(directory.path()).unwrap().count(), 1);
+        assert_eq!(
+            fs::read(directory.path().join("state-00000000000000000001.json")).unwrap(),
+            b"unrecoverable listener"
+        );
+    }
+
+    #[test]
+    fn recovery_close_keeps_work_and_transient_notices_until_explicit_discard() {
+        let directory = tempfile::tempdir().unwrap();
+        let mut desktop = recovery_desktop(directory.path());
         let mut state = RedshankSurfaceState::default();
         desktop
             .command(&mut state, CompactCommand::SetRate(125))
             .unwrap();
-        assert_eq!(desktop.session.model.settings.playback_rate_percent, 125);
         state.notice = Some("temporary action notice".into());
-        let snapshot = desktop.runtime.snapshot();
-        desktop.project(&mut state, &snapshot);
-        assert_eq!(state.notice, desktop.persistence.recovery_error);
-        assert!(desktop.close(&mut state).unwrap_err().contains("Not saved"));
-        assert!(!desktop.closing);
+        desktop.project(&mut state, &Default::default());
+        assert_eq!(state.notice.as_deref(), Some("temporary action notice"));
+        assert!(state.recovery.as_ref().unwrap().error.contains("Not saved"));
+        let model = desktop.session.model.clone();
+        desktop.close(&mut state).unwrap();
+        assert!(!desktop.ready_to_close());
+        assert!(state.recovery.as_ref().unwrap().close_requested);
+        desktop
+            .command(&mut state, CompactCommand::KeepWorking)
+            .unwrap();
+        assert_eq!(desktop.session.model, model);
+        assert!(!desktop.recovery.close_requested);
+        desktop.close(&mut state).unwrap();
+        desktop.export_pending = true;
+        assert!(
+            desktop
+                .command(&mut state, CompactCommand::ExitWithoutSaving)
+                .is_err()
+        );
+        assert!(!desktop.ready_to_close());
+        desktop.export_pending = false;
+        desktop
+            .command(&mut state, CompactCommand::ExitWithoutSaving)
+            .unwrap();
         desktop.poll(&mut state);
-        assert_eq!(state.notice, desktop.persistence.recovery_error);
-        assert!(desktop.persistence.in_flight.is_none());
+        assert!(desktop.ready_to_close());
+        assert!(desktop.persistence.requests.is_none());
         assert_eq!(desktop.persistence.durable, 0);
-        assert_eq!(fs::read(&generation).unwrap(), b"unrecoverable listener");
         assert_eq!(fs::read_dir(directory.path()).unwrap().count(), 1);
+    }
+
+    #[test]
+    fn revision_zero_recovery_draft_is_retained_by_keep_working() {
+        let directory = tempfile::tempdir().unwrap();
+        let mut desktop = recovery_desktop(directory.path());
+        let mut state = RedshankSurfaceState::default();
+        let capture = TextCapture {
+            anchor: CaptureAnchor {
+                item_id: ItemId("draft-only".into()),
+                offset_ms: 12,
+                end_offset_ms: None,
+                pressed_offset_ms: None,
+                representation: Default::default(),
+                fingerprint: None,
+            },
+            draft: "important text".into(),
+            end_offset_ms: None,
+        };
+        state.text_capture = Some(capture.clone());
+        state.set_text_draft("important text");
+        desktop.close(&mut state).unwrap();
+        assert_eq!(desktop.persistence.revision, 0);
+        assert!(!desktop.ready_to_close());
+        assert!(state.recovery.as_ref().unwrap().dirty);
+        desktop
+            .command(&mut state, CompactCommand::KeepWorking)
+            .unwrap();
+        assert_eq!(state.text_capture, Some(capture));
+        assert_eq!(state.text_editor.text(), "important text");
+        assert!(desktop.session.model.annotations.is_empty());
+        assert_eq!(desktop.persistence.revision, 0);
+    }
+
+    #[test]
+    fn canceled_and_failed_recovery_copy_keep_session_nonwriting() {
+        let directory = tempfile::tempdir().unwrap();
+        let mut desktop = recovery_desktop(directory.path());
+        let mut state = RedshankSurfaceState::default();
+        desktop
+            .command(&mut state, CompactCommand::SetRate(125))
+            .unwrap();
+        desktop.close(&mut state).unwrap();
+        desktop.recovery.copying = true;
+        desktop
+            .persistence
+            .reply_sender
+            .send(IoReply::RecoveryPicked(None))
+            .unwrap();
+        desktop.poll(&mut state);
+        assert!(
+            desktop
+                .recovery
+                .notice
+                .as_ref()
+                .unwrap()
+                .contains("canceled")
+        );
+        assert!(!desktop.ready_to_close());
+        desktop.recovery.copying = true;
+        desktop
+            .start_recovery_copy(&mut state, directory.path().to_owned())
+            .unwrap();
+        for _ in 0..1000 {
+            desktop.poll(&mut state);
+            if !desktop.recovery.copying {
+                break;
+            }
+            thread::sleep(Duration::from_millis(2));
+        }
+        assert!(!desktop.recovery.copying);
+        assert!(desktop.recovery.notice.as_ref().unwrap().contains("failed"));
+        assert!(!desktop.ready_to_close());
+        assert!(desktop.persistence.requests.is_none());
+        assert_eq!(desktop.persistence.durable, 0);
+        assert_eq!(fs::read_dir(directory.path()).unwrap().count(), 1);
+    }
+
+    #[test]
+    fn successful_recovery_copy_reopens_and_closes_without_original_durability() {
+        let parent = tempfile::tempdir().unwrap();
+        let original = parent.path().join("original");
+        fs::create_dir(&original).unwrap();
+        let mut desktop = recovery_desktop(&original);
+        let mut state = RedshankSurfaceState::default();
+        desktop
+            .command(&mut state, CompactCommand::SetRate(125))
+            .unwrap();
+        desktop.close(&mut state).unwrap();
+        desktop.recovery.copying = true;
+        let copy = parent.path().join("copy");
+        desktop
+            .start_recovery_copy(&mut state, copy.clone())
+            .unwrap();
+        assert!(
+            desktop
+                .command(&mut state, CompactCommand::ExitWithoutSaving)
+                .is_err()
+        );
+        for _ in 0..1000 {
+            desktop.poll(&mut state);
+            if !desktop.recovery.copying {
+                break;
+            }
+            thread::sleep(Duration::from_millis(2));
+        }
+        assert!(desktop.ready_to_close());
+        let (model, persistence) = Persistence::restore(JsonDirectoryStore::new(&copy));
+        assert_eq!(model.settings.playback_rate_percent, 125);
+        assert!(persistence.recovery_error.is_none());
+        assert!(persistence.requests.is_some());
+        assert!(desktop.persistence.requests.is_none());
+        assert_eq!(desktop.persistence.durable, 0);
+        assert_eq!(fs::read_dir(&original).unwrap().count(), 1);
+        assert_eq!(
+            fs::read(original.join("state-00000000000000000001.json")).unwrap(),
+            b"unrecoverable listener"
+        );
     }
 
     #[test]

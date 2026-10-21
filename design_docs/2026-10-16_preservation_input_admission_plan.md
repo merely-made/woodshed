@@ -72,7 +72,7 @@ reported.
 
 ### P4 Current-persona selection
 
-2026-10-21 D2 local candidate: selecting the canonical profile that already owns
+2026-10-21 D2 implementation: selecting the canonical profile that already owns
 the installed sealed store should only dismiss the switch picker when its
 roster also records that profile as the family's chosen persona. Otherwise the
 existing preservation/admission transaction must run. This keeps a selection
@@ -92,8 +92,46 @@ expected pending-transition assertion (exit 101). With the guard, all 28
 `persona::` cases pass, including five negative identity/store/family scenarios
 in the second new case. Exact source/lock bytes match the committed candidate;
 the [receipt](../validation/persona-selection-noop_20261021/README.md) preserves
-both process outcomes. Native/custody/capture acceptance and publication remain
-separate. Redshank recovery remains the next substantial proposed product slice.
+both process outcomes. This qualified source and evidence were published at `01c4b3af` on October 21.
+Native/custody/capture acceptance remains separate. D3 is accepted below.
+
+### P5 D3 explicit failed-recovery exit and independent copy
+
+**Status (2026-10-21): implemented; focused CPU checks pass; publication pending.** The maintainer
+approved D3 and direct publication to main. This supersedes the current wave's
+local-only publication instruction above. The already qualified P4 persona
+candidate and receipt were published at `01c4b3af` before this D3 work began.
+
+A failed original restore keeps its generation store nonwriting for the whole
+process. An unchanged recovery session closes without a save attempt. A changed
+session offers **Save Recovery Copy**, **Keep Working**, and **Exit Without
+Saving**. Keep Working retains drafts and active capture. Copy requires capture
+and admitted listener jobs to settle; explicit discard cancels capture only
+after the choice. Application appearance retains its existing close decision.
+
+Recovery copy is an independent export to a new, nonexisting directory outside
+the original root. It preserves the complete current model, copies referenced
+local/cache/voice media, and rewrites only copied library paths. Origin URLs,
+representation receipts, transcript bytes and timed-target evidence retain
+their meanings. Unsupported/missing media refuses publication. Model publication
+comes last; failure may leave an incomplete new directory that cannot be reused.
+A copy neither acknowledges original durability nor admits media deletion. Copy
+success may finish a pending close only when the captured revision and draft
+still match. Existing `REDSHANK_DATA_DIR` selects the copy on a fresh launch;
+its absolute media paths keep the chosen directory location significant.
+
+Owners are disjoint: storage snapshot and tests; shared recovery presentation
+and tests; desktop lifecycle/worker integration, docs, qualification and Git by
+the coordinator; independent read-only integration review. P5a stays with its
+existing owner. Recording-capacity policy, persona-store migration and checked
+supplier API intake are separate work.
+
+Done when focused production-hook tests cover clean/dirty close, exact Keep
+Working retention, cancellation/failure, revision/draft changes during copying,
+original generation/media preservation and coherent independent reopen; both
+surface layouts emit the intended controls; integration is reviewed, checked,
+committed and published. Native chooser/window/appearance interaction remains
+a separate observation unless exercised explicitly.
 
 ## Findings
 
@@ -261,3 +299,17 @@ new captures and exact 22-row sealed reopen are recorded in
 The historical preservation captures above remain bound to their recorded source;
 no new Hocket/Redshank native claim follows from this merge. The supplier's checked
 keyboard and close-hook blobs have no delta in the repin.
+
+2026-10-21: accepted D3; current source refreshed at `71ac17e1`, P4 published at
+`01c4b3af`, isolated D3 worktree created from that published source.
+
+2026-10-21 D3 implementation: recovery copy uses snapshot-only draft
+materialization, preserving point/span targets and the live editor. Review also
+corrected recovery's never-admitted removal queues in idle/scenario predicates
+and replaced an unbounded generation-path banner with a count. Focused locked
+gates pass 22 storage, 107 surface and 92 desktop tests (221 distinct passes,
+one existing desktop ignore). Desktop tests include both native/application
+close hooks, actual Keep Working control and the final dirty-appearance barrier
+in the GPU-free host harness. Ordinary desktop and actual Wasm browser checks pass. Source/receipt commitment
+and publication are being finalized. Native window,
+picker, fresh-process and physical-device observations are not claimed.

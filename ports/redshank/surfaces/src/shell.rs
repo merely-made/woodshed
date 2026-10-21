@@ -9,7 +9,7 @@ use crate::{
     CompactCommand, CompactPlayerState, FullView, Layout, RedshankSurfaceState, SurfaceTab, dock,
     rail, scene, tabs,
 };
-use cambium::{button_with, el, lens, text};
+use cambium::{button, button_with, el, lens, text};
 
 fn tab_button(active: SurfaceTab, tab: SurfaceTab, class: &str) -> FullView {
     let class = if tab == active {
@@ -99,6 +99,87 @@ fn notice(state: &RedshankSurfaceState) -> Vec<FullView> {
         .collect()
 }
 
+fn recovery_action(label: &'static str, command: CompactCommand, copying: bool) -> FullView {
+    Box::new(
+        button(label, move |state: &mut RedshankSurfaceState, _| {
+            if !copying
+                && state
+                    .recovery
+                    .as_ref()
+                    .is_some_and(|recovery| !recovery.copying)
+            {
+                state.request(command.clone());
+            }
+        })
+        .attr("class", "rs-btn rs-recovery-action")
+        .attr("aria-label", label)
+        .attr("aria-disabled", if copying { "true" } else { "false" })
+        .attr("tabindex", if copying { "-1" } else { "0" }),
+    )
+}
+
+/// Kept separate from ordinary status messages so a transient command result
+/// cannot hide the nonwriting session or its recovery-copy outcome.
+fn recovery(state: &RedshankSurfaceState) -> Vec<FullView> {
+    let Some(recovery) = &state.recovery else {
+        return Vec::new();
+    };
+    let mut children: Vec<FullView> = vec![
+        Box::new(el("p", text(recovery.error.clone())).attr("class", "rs-recovery-error")),
+        Box::new(el(
+            "p",
+            text(if recovery.copying {
+                "Saving a separate recovery copy…"
+            } else if recovery.dirty && recovery.close_requested {
+                "Keep working, save a separate recovery copy, or exit without saving these changes."
+            } else if recovery.dirty {
+                "Changes are only in memory. Save a recovery copy to keep this session."
+            } else {
+                "No changes have been made in this recovery session."
+            }),
+        )),
+    ];
+    if let Some(notice) = &recovery.copy_notice {
+        children.push(Box::new(
+            el("p", text(notice.clone()))
+                .attr("class", "rs-recovery-result")
+                .attr("role", "status"),
+        ));
+    }
+    let mut actions = Vec::new();
+    if recovery.dirty {
+        actions.push(recovery_action(
+            "Save Recovery Copy",
+            CompactCommand::SaveRecoveryCopy,
+            recovery.copying,
+        ));
+    }
+    if recovery.close_requested {
+        actions.push(recovery_action(
+            "Keep Working",
+            CompactCommand::KeepWorking,
+            recovery.copying,
+        ));
+        actions.push(recovery_action(
+            "Exit Without Saving",
+            CompactCommand::ExitWithoutSaving,
+            recovery.copying,
+        ));
+    }
+    if !actions.is_empty() {
+        children.push(Box::new(
+            el("div", actions).attr("class", "rs-recovery-actions"),
+        ));
+    }
+    vec![Box::new(
+        el("section", children)
+            .attr("class", "rs-recovery")
+            .attr("role", "region")
+            .attr("aria-label", "Listener recovery")
+            .attr("aria-busy", if recovery.copying { "true" } else { "false" }),
+    )]
+}
+
 /// The dock, lensed onto the compact state so it is the same view a host can
 /// mount alone. The slot is `display: contents`, so the DOM holds exactly one
 /// `.rs-dock`.
@@ -137,6 +218,7 @@ pub fn surface(state: &RedshankSurfaceState) -> FullView {
     match state.layout {
         Layout::Dock => {
             children.push(header(state));
+            children.extend(recovery(state));
             children.extend(notice(state));
             children.push(work(state));
             children.push(dock_slot());
@@ -155,6 +237,7 @@ pub fn surface(state: &RedshankSurfaceState) -> FullView {
                 "rs-tab",
                 "Destinations",
             )];
+            column.extend(recovery(state));
             column.extend(notice(state));
             column.push(work(state));
             children.push(Box::new(
@@ -175,7 +258,7 @@ pub fn surface(state: &RedshankSurfaceState) -> FullView {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::{Mode, Seed, theme};
+    use crate::{Mode, RecoveryState, Seed, theme};
     use cambium::{DomHandle, GenetAppRunner, PointerClick};
     use cambium_genet_winit_host::Harness;
     use genet_scripted_dom::{NodeId, ScriptedDom};
@@ -242,6 +325,32 @@ mod tests {
         panic!("missing tab for {control}");
     }
 
+    fn node_with_label(dom: &ScriptedDom, root: NodeId, label: &str) -> NodeId {
+        let attribute = LocalName::from("aria-label");
+        let empty = Namespace::from("");
+        let mut pending = vec![root];
+        while let Some(node) = pending.pop() {
+            if dom
+                .attribute(node, &empty, &attribute)
+                .is_some_and(|value| value == label)
+            {
+                return node;
+            }
+            pending.extend(dom.dom_children(node));
+        }
+        panic!("missing action for {label}");
+    }
+
+    fn recovery_state(dirty: bool, close_requested: bool, copying: bool) -> RecoveryState {
+        RecoveryState {
+            error: "Listener recovery failed; original state is preserved.".into(),
+            dirty,
+            close_requested,
+            copying,
+            copy_notice: Some("Recovery copy failed: destination already exists.".into()),
+        }
+    }
+
     #[test]
     fn shell_carries_the_scope_layout_and_one_panel() {
         let runner = runner(state_with(TransportState::Playing));
@@ -298,6 +407,119 @@ mod tests {
         let markup = runner.dom().borrow().outer_html(runner.root());
         assert!(markup.contains("class=\"rs-notice\" role=\"status\""));
         assert!(markup.contains("Feed refreshed"));
+    }
+
+    #[test]
+    fn recovery_and_copy_outcomes_stay_visible_in_both_layouts() {
+        for layout in [Layout::Dock, Layout::Rail] {
+            let state = RedshankSurfaceState {
+                layout,
+                recovery: Some(recovery_state(true, true, false)),
+                notice: Some("Playback unavailable".into()),
+                ..Default::default()
+            };
+            let runner = runner(state);
+            let markup = runner.dom().borrow().outer_html(runner.root());
+            assert_eq!(
+                markup.matches("aria-label=\"Listener recovery\"").count(),
+                1
+            );
+            assert!(markup.contains("original state is preserved"));
+            assert!(markup.contains("Recovery copy failed: destination already exists"));
+            assert!(markup.contains("Playback unavailable"));
+            for label in ["Save Recovery Copy", "Keep Working", "Exit Without Saving"] {
+                assert_eq!(
+                    markup.matches(&format!("aria-label=\"{label}\"")).count(),
+                    1
+                );
+            }
+        }
+    }
+
+    #[test]
+    fn recovery_actions_emit_intents_without_changing_host_facts() {
+        for layout in [Layout::Dock, Layout::Rail] {
+            for (label, expected) in [
+                ("Save Recovery Copy", CompactCommand::SaveRecoveryCopy),
+                ("Keep Working", CompactCommand::KeepWorking),
+                ("Exit Without Saving", CompactCommand::ExitWithoutSaving),
+            ] {
+                let recovery = recovery_state(true, true, false);
+                let mut runner = runner(RedshankSurfaceState {
+                    layout,
+                    recovery: Some(recovery.clone()),
+                    ..Default::default()
+                });
+                let action = node_with_label(&runner.dom().borrow(), runner.root(), label);
+                runner.dispatch_click(action, PointerClick::at((1.0, 1.0)));
+                let mut commands = Vec::new();
+                runner.update(|state| {
+                    assert_eq!(state.recovery, Some(recovery.clone()));
+                    commands.extend(state.drain_commands());
+                });
+                assert_eq!(commands, [expected]);
+            }
+        }
+    }
+
+    #[test]
+    fn copying_disables_recovery_actions_and_rejects_clicks() {
+        for layout in [Layout::Dock, Layout::Rail] {
+            let mut runner = runner(RedshankSurfaceState {
+                layout,
+                recovery: Some(recovery_state(true, true, true)),
+                ..Default::default()
+            });
+            let markup = runner.dom().borrow().outer_html(runner.root());
+            assert!(markup.contains("aria-busy=\"true\""));
+            assert!(markup.contains("Saving a separate recovery copy"));
+            for label in ["Save Recovery Copy", "Keep Working", "Exit Without Saving"] {
+                let action = node_with_label(&runner.dom().borrow(), runner.root(), label);
+                assert_eq!(
+                    runner.dom().borrow().attribute(
+                        action,
+                        &Namespace::from(""),
+                        &LocalName::from("aria-disabled"),
+                    ),
+                    Some("true".into()),
+                );
+                runner.dispatch_click(action, PointerClick::at((1.0, 1.0)));
+            }
+            runner.update(|state| assert_eq!(state.drain_commands().count(), 0));
+        }
+    }
+
+    #[test]
+    fn recovery_actions_follow_host_dirty_and_close_facts() {
+        for layout in [Layout::Dock, Layout::Rail] {
+            let clean = runner(RedshankSurfaceState {
+                layout,
+                recovery: Some(recovery_state(false, false, false)),
+                ..Default::default()
+            });
+            let markup = clean.dom().borrow().outer_html(clean.root());
+            assert!(markup.contains("No changes have been made"));
+            assert!(!markup.contains("aria-label=\"Save Recovery Copy\""));
+            assert!(!markup.contains("aria-label=\"Keep Working\""));
+            assert!(!markup.contains("aria-label=\"Exit Without Saving\""));
+
+            let dirty = runner(RedshankSurfaceState {
+                layout,
+                recovery: Some(recovery_state(true, false, false)),
+                ..Default::default()
+            });
+            let markup = dirty.dom().borrow().outer_html(dirty.root());
+            assert!(markup.contains("aria-label=\"Save Recovery Copy\""));
+            assert!(!markup.contains("aria-label=\"Keep Working\""));
+            assert!(!markup.contains("aria-label=\"Exit Without Saving\""));
+
+            let ordinary = runner(RedshankSurfaceState {
+                layout,
+                ..Default::default()
+            });
+            let markup = ordinary.dom().borrow().outer_html(ordinary.root());
+            assert!(!markup.contains("aria-label=\"Listener recovery\""));
+        }
     }
 
     /// Does Livery mount an `svg` element at all? The mark is a styled span
@@ -450,11 +672,9 @@ mod tests {
         let directory = tempfile::tempdir().unwrap();
         let file = directory.path().join("artwork.png");
         const PNG: &[u8] = &[
-            137, 80, 78, 71, 13, 10, 26, 10, 0, 0, 0, 13, 73, 72, 68, 82,
-            0, 0, 0, 1, 0, 0, 0, 1, 8, 6, 0, 0, 0, 31, 21, 196,
-            137, 0, 0, 0, 13, 73, 68, 65, 84, 120, 156, 99, 96, 96, 96, 248,
-            15, 0, 1, 4, 1, 0, 95, 229, 195, 75, 0, 0, 0, 0, 73, 69,
-            78, 68, 174, 66, 96, 130,
+            137, 80, 78, 71, 13, 10, 26, 10, 0, 0, 0, 13, 73, 72, 68, 82, 0, 0, 0, 1, 0, 0, 0, 1,
+            8, 6, 0, 0, 0, 31, 21, 196, 137, 0, 0, 0, 13, 73, 68, 65, 84, 120, 156, 99, 96, 96, 96,
+            248, 15, 0, 1, 4, 1, 0, 95, 229, 195, 75, 0, 0, 0, 0, 73, 69, 78, 68, 174, 66, 96, 130,
         ];
         std::fs::write(&file, PNG).unwrap();
         let artwork_url = url::Url::from_file_path(&file).unwrap();
