@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "run_id": "d3-desktop-qualified-final-20261021",
+  "command": [
+    "cargo",
+    "test",
+    "--locked",
+    "-j",
+    "4",
+    "-p",
+    "redshank-desktop"
+  ],
+  "started_at": "2026-10-21T23:34:13.800947Z",
+  "ended_at": "2026-10-21T23:34:23.452299Z",
+  "exit_code": 0,
+  "cwd": "/Users/markik/Code/worktrees/woodshed-redshank-recovery-20261021/ports/redshank",
+  "log": "/Users/markik/Code/testing/woodshed-redshank-recovery-20261021/checks/desktop-qualified-final.log",
+  "log_sha256": "8a0abd94928c6903a24f05c5a3eac5bc030fdec745bf240b6f71ffa56c809544",
+  "source_commit": "01c4b3af61d17af69779619d2bd7fd77bf06abdc"
+}

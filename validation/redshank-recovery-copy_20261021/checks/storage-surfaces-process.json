@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "run_id": "d3-storage-surfaces-20261021",
+  "command": [
+    "cargo",
+    "test",
+    "--locked",
+    "-j",
+    "4",
+    "-p",
+    "redshank-storage",
+    "-p",
+    "redshank-surfaces"
+  ],
+  "started_at": "2026-10-21T23:28:42.505848Z",
+  "ended_at": "2026-10-21T23:29:39.162109Z",
+  "exit_code": 0,
+  "cwd": "/Users/markik/Code/worktrees/woodshed-redshank-recovery-20261021/ports/redshank",
+  "log": "/Users/markik/Code/testing/woodshed-redshank-recovery-20261021/checks/storage-surfaces.log",
+  "log_sha256": "f49a480e670d84388a02e643a2a14014527257199181c9c507e6a8c76a38a9fe",
+  "source_commit": "01c4b3af61d17af69779619d2bd7fd77bf06abdc"
+}

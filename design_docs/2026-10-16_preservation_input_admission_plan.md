@@ -97,7 +97,7 @@ Native/custody/capture acceptance remains separate. D3 is accepted below.
 
 ### P5 D3 explicit failed-recovery exit and independent copy
 
-**Status (2026-10-21): implemented; focused CPU checks pass; publication pending.** The maintainer
+**Status (2026-10-21): CPU qualified at `421ea8e5`; publication pending.** The maintainer
 approved D3 and direct publication to main. This supersedes the current wave's
 local-only publication instruction above. The already qualified P4 persona
 candidate and receipt were published at `01c4b3af` before this D3 work began.
@@ -311,5 +311,5 @@ gates pass 22 storage, 107 surface and 92 desktop tests (221 distinct passes,
 one existing desktop ignore). Desktop tests include both native/application
 close hooks, actual Keep Working control and the final dirty-appearance barrier
 in the GPU-free host harness. Ordinary desktop and actual Wasm browser checks pass. Source/receipt commitment
-and publication are being finalized. Native window,
+and publication are being finalized. The [D3 receipt](../validation/redshank-recovery-copy_20261021/README.md) records exact commands, logs, source hashes and archived audit chats. Native window,
 picker, fresh-process and physical-device observations are not claimed.

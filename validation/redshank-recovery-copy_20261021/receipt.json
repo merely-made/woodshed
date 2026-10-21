@@ -1,0 +1,99 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-21",
+  "source_commit": "421ea8e5bd865175a9b54a0d59e886cb857bb431",
+  "base": "01c4b3af61d17af69779619d2bd7fd77bf06abdc",
+  "decision": "D3 accepted by maintainer; publication authorized; failed original generations stay nonwriting; explicit close and independent coherent copy",
+  "accepted_checks": [
+    {
+      "name": "storage-surfaces",
+      "process": "checks/storage-surfaces-process.json",
+      "log": "checks/storage-surfaces.log",
+      "exit_code": 0,
+      "passes": 129,
+      "ignored": 0,
+      "log_sha256": "f49a480e670d84388a02e643a2a14014527257199181c9c507e6a8c76a38a9fe"
+    },
+    {
+      "name": "desktop-qualified-final",
+      "process": "checks/desktop-qualified-final-process.json",
+      "log": "checks/desktop-qualified-final.log",
+      "exit_code": 0,
+      "passes": 92,
+      "ignored": 1,
+      "log_sha256": "8a0abd94928c6903a24f05c5a3eac5bc030fdec745bf240b6f71ffa56c809544"
+    },
+    {
+      "name": "build-web",
+      "process": "checks/build-web-process.json",
+      "log": "checks/build-web.log",
+      "exit_code": 0,
+      "passes": null,
+      "ignored": null,
+      "log_sha256": "ab83dfd1728aad5b72a4c3366af6b2dc7f2791c38798d6176923e01fff1b2151"
+    },
+    {
+      "name": "web-wasm",
+      "process": "checks/web-wasm-process.json",
+      "log": "checks/web-wasm.log",
+      "exit_code": 0,
+      "passes": null,
+      "ignored": null,
+      "log_sha256": "13f190696dc61db85da289ae4908918665e08f2c4b1b1511f236d028fff8fe04"
+    },
+    {
+      "name": "doc-links",
+      "process": "checks/doc-links-process.json",
+      "log": "checks/doc-links.log",
+      "exit_code": 0,
+      "log_sha256": "8cbdd7b9e5aaad5607b7de545c4da508878d0bd2bdde4e9dc6936a425be370f5"
+    }
+  ],
+  "distinct_passes": 221,
+  "ignored": 1,
+  "superseded_attempts": [
+    {
+      "name": "desktop-close-final",
+      "process": "checks/desktop-close-final-process.json",
+      "log": "checks/desktop-close-final.log",
+      "exit_code": 101,
+      "qualification": "Superseded; excluded from final totals"
+    },
+    {
+      "name": "desktop-close",
+      "process": "checks/desktop-close-process.json",
+      "log": "checks/desktop-close.log",
+      "exit_code": 101,
+      "qualification": "Superseded; excluded from final totals"
+    },
+    {
+      "name": "desktop-final",
+      "process": "checks/desktop-final-process.json",
+      "log": "checks/desktop-final.log",
+      "exit_code": 0,
+      "qualification": "Superseded; excluded from final totals"
+    },
+    {
+      "name": "desktop",
+      "process": "checks/desktop-process.json",
+      "log": "checks/desktop.log",
+      "exit_code": 101,
+      "qualification": "Superseded; excluded from final totals"
+    },
+    {
+      "name": "desktop-qualified",
+      "process": "checks/desktop-qualified-process.json",
+      "log": "checks/desktop-qualified.log",
+      "exit_code": 101,
+      "qualification": "Superseded; excluded from final totals"
+    }
+  ],
+  "artifact_relocation": "Raw process receipts and logs are copied byte-for-byte. Original absolute log paths remain in the original process receipts; package paths are listed above. Original receipts were validated against actual process status and log hashes before copying.",
+  "native_window_or_picker_exercised": false,
+  "fresh_process_reopen_exercised": false,
+  "model_store_reopen_exercised": true,
+  "physical_audio_exercised": false,
+  "p5a_changed": false,
+  "thread_archive_count": 11,
+  "review": "Independent storage, surface and desktop authority review completed; span-draft preservation, unadmitted-removal idle behavior and bounded failure banner corrected before final qualification."
+}
