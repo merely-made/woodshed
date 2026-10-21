@@ -1,0 +1,26 @@
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on build directory
+warning: use of deprecated method `std::sync::atomic::Atomic::<u64>::fetch_update`: renamed to `try_update` for consistency
+   --> desktop/src/diagnostics.rs:255:18
+    |
+255 |                 .fetch_update(Ordering::Relaxed, Ordering::Relaxed, |value| {
+    |                  ^^^^^^^^^^^^
+    |
+    = note: `#[warn(deprecated)]` on by default
+help: replace the use of the deprecated method
+    |
+255 -                 .fetch_update(Ordering::Relaxed, Ordering::Relaxed, |value| {
+255 +                 .try_update(Ordering::Relaxed, Ordering::Relaxed, |value| {
+    |
+
+warning: `redshank-desktop` (bin "redshank-desktop" test) generated 1 warning (run `cargo fix --bin "redshank-desktop" -p redshank-desktop --tests` to apply 1 suggestion)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 46.77s
+     Running unittests src/main.rs (target/build/debug/deps/redshank_desktop-a1d1d968756f839a)
+
+running 1 test
+test tests::recovery_session_projects_not_saved_and_refuses_close_persistence ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 83 filtered out; finished in 0.01s
+

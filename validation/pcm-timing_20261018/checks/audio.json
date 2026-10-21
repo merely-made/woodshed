@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "run_id": "b4-final-audio",
+  "command": [
+    "cargo",
+    "test",
+    "--locked",
+    "-p",
+    "woodshed-audio",
+    "--lib"
+  ],
+  "started_at": "2026-10-18T16:11:00.109541Z",
+  "ended_at": "2026-10-18T16:11:01.663564Z",
+  "exit_code": 0,
+  "cwd": "/Users/markik/Code/repos/woodshed",
+  "log": "/Users/markik/Code/repos/woodshed/validation/pcm-timing_20261018/checks/audio.log",
+  "log_sha256": "bb64f5e7d3363a123d69840588b0b2ef47575738a9601049af60a93ee965f478",
+  "source_commit": "5dd01aee953e83edd40767dca9c4b5f55846a86c"
+}

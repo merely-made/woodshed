@@ -113,6 +113,7 @@ pub struct OutputRuntime {
     last_error: Option<OutputError>,
     next_program_epoch: u64,
     active_program_cards: Option<usize>,
+    requested_program_revision: u64,
 }
 
 impl OutputRuntime {
@@ -186,6 +187,7 @@ impl OutputRuntime {
             last_error: None,
             next_program_epoch: 0,
             active_program_cards: None,
+            requested_program_revision: 0,
         };
         result.set_click_pattern(SequencerPattern::metronome(
             120.0,
@@ -265,7 +267,59 @@ impl OutputRuntime {
             epoch,
         })?;
         self.active_program_cards = Some(card_count);
+        self.requested_program_revision = 0;
         Ok(epoch)
+    }
+    /// Queue an already-prepared complete program for the next natural segment
+    /// boundary. The current segment is unchanged. Revisions increase within an
+    /// epoch; the latest queued revision wins. After swapping, playback continues
+    /// at the next ordinal segment (the same ordinal for Card repeat), or at
+    /// segment zero if that ordinal no longer exists.
+    /// Pause defers the boundary. Seek, explicit advance, stop and session clear
+    /// cancel pending replacements. Loop controls remain independently applied.
+    pub fn replace_program_at_boundary(
+        &mut self,
+        epoch: ProgramEpoch,
+        revision: u64,
+        prepared: PreparedProgram,
+    ) -> Result<(), OutputError> {
+        if prepared.rate != self.rate {
+            return Err(err(
+                "replacement sample rate differs from this output runtime",
+            ));
+        }
+        let snapshot = self.snapshot().program;
+        if epoch.0 == 0
+            || epoch.0 != self.next_program_epoch
+            || self.active_program_cards.is_none()
+            || (snapshot.epoch == epoch
+                && matches!(
+                    snapshot.status,
+                    ProgramStatus::Stopped | ProgramStatus::Complete
+                ))
+        {
+            return Err(err("replacement requires the current active program epoch"));
+        }
+        if revision == 0 || revision <= self.requested_program_revision {
+            return Err(err(
+                "replacement revision must increase within its program epoch",
+            ));
+        }
+        self.send(Command::ProgramReplace {
+            epoch,
+            revision,
+            data: Some(OwnedGc::new(prepared)),
+        })?;
+        self.requested_program_revision = revision;
+        Ok(())
+    }
+    fn program_card_count(&self, epoch: ProgramEpoch) -> Option<usize> {
+        let snapshot = self.snapshot().program;
+        if snapshot.epoch == epoch && snapshot.card_count != 0 {
+            Some(snapshot.card_count)
+        } else {
+            self.active_program_cards
+        }
     }
     pub fn pause_program(&mut self, epoch: ProgramEpoch) -> Result<(), OutputError> {
         self.send(Command::ProgramPause {
@@ -288,7 +342,10 @@ impl OutputRuntime {
         if !bpm.is_finite() || bpm <= 0.0 {
             return Err(err("program tempo must be finite and positive"));
         }
-        if !self.active_program_cards.is_some_and(|count| card < count) {
+        if !self
+            .program_card_count(epoch)
+            .is_some_and(|count| card < count)
+        {
             return Err(err(
                 "program tempo card index is outside the prepared program",
             ));
@@ -301,6 +358,25 @@ impl OutputRuntime {
             ));
         }
         self.send(Command::ProgramTempo { epoch, card, bpm })
+    }
+    /// Apply one tempo command to the complete active and pending programs.
+    /// Keeps the current tick phase and avoids one queue entry per segment.
+    pub fn set_program_tempo_all(
+        &mut self,
+        epoch: ProgramEpoch,
+        bpm: f64,
+    ) -> Result<(), OutputError> {
+        if !bpm.is_finite() || bpm <= 0.0 {
+            return Err(err("program tempo must be finite and positive"));
+        }
+        let step = bpm * PROGRAM_TICKS_PER_BEAT as f64 * (u32::MAX as f64 + 1.0)
+            / (60.0 * self.rate as f64);
+        if !step.is_finite() || step < 1.0 || step > u64::MAX as f64 {
+            return Err(err(
+                "program tempo is outside the representable output clock range",
+            ));
+        }
+        self.send(Command::ProgramTempoAll { epoch, bpm })
     }
     /// Change looping without restarting the current card or re-crediting its
     /// Started transition. The command is fenced to the current program epoch.
@@ -322,7 +398,10 @@ impl OutputRuntime {
     /// they coalesce to the latest requested destination; a pending stop
     /// always takes precedence.
     pub fn seek_program(&mut self, epoch: ProgramEpoch, card: usize) -> Result<(), OutputError> {
-        if !self.active_program_cards.is_some_and(|count| card < count) {
+        if !self
+            .program_card_count(epoch)
+            .is_some_and(|count| card < count)
+        {
             return Err(err(
                 "program seek card index is outside the prepared program",
             ));

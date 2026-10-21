@@ -1,0 +1,81 @@
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+   Compiling proc-macro2 v1.0.107
+   Compiling quote v1.0.47
+   Compiling unicode-ident v1.0.24
+   Compiling stable_deref_trait v1.2.1
+   Compiling writeable v0.6.4
+   Compiling litemap v0.8.3
+   Compiling icu_properties_data v2.3.0
+   Compiling icu_normalizer_data v2.3.0
+   Compiling utf8_iter v1.0.4
+   Compiling smallvec v1.16.0
+   Compiling serde_core v1.0.229
+   Compiling libc v0.2.189
+   Compiling syn v2.0.119
+   Compiling syn v3.0.4
+   Compiling zmij v1.0.23
+   Compiling synstructure v0.13.2
+   Compiling zerovec-derive v0.11.6
+   Compiling displaydoc v0.2.7
+   Compiling zerofrom-derive v0.1.7
+   Compiling yoke-derive v0.8.2
+   Compiling zerofrom v0.1.8
+   Compiling serde v1.0.229
+   Compiling serde_json v1.0.151
+   Compiling percent-encoding v2.3.2
+   Compiling yoke v0.8.3
+   Compiling form_urlencoded v1.2.2
+   Compiling serde_derive v1.0.229
+   Compiling zerovec v0.11.8
+   Compiling zerotrie v0.2.5
+   Compiling rustix v1.1.4
+   Compiling getrandom v0.4.3
+   Compiling memchr v2.8.3
+   Compiling itoa v1.0.18
+   Compiling tinystr v0.8.4
+   Compiling potential_utf v0.1.6
+   Compiling icu_locale_core v2.3.0
+   Compiling icu_collections v2.3.0
+   Compiling icu_provider v2.3.1
+   Compiling icu_normalizer v2.3.0
+   Compiling icu_properties v2.3.0
+   Compiling errno v0.3.14
+   Compiling bitflags v2.13.1
+   Compiling cfg-if v1.0.4
+   Compiling once_cell v1.21.4
+   Compiling fastrand v2.5.0
+   Compiling idna_adapter v1.2.2
+   Compiling idna v1.1.0
+   Compiling url v2.5.8
+   Compiling tempfile v3.27.0
+   Compiling redshank-model v0.0.0 (/Users/markik/Code/worktrees/woodshed-audit-first-wave-20261020/ports/redshank/model)
+   Compiling redshank-storage v0.0.0 (/Users/markik/Code/worktrees/woodshed-audit-first-wave-20261020/ports/redshank/storage)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 16.02s
+     Running unittests src/lib.rs (target/build/debug/deps/redshank_storage-ccc3f1d3e74593af)
+
+running 15 tests
+test tests::empty_and_missing_directories_have_no_published_state ... ok
+test tests::all_invalid_generations_refuse_replacement_and_preserve_every_byte ... ok
+test tests::earlier_schema_one_without_selection_keeps_progress_and_notes ... ok
+test tests::library_progress_queue_and_annotations_survive_restart ... ok
+test tests::io_failure_refuses_load_and_save_without_publishing_or_pruning ... ok
+test tests::explicitly_saved_transcript_survives_restart_and_item_removal ... ok
+test tests::schema_one_without_selected_item_still_loads ... ok
+test tests::corrupt_newer_generation_falls_back_to_the_latest_valid_state ... ok
+test tests::cleanup_error_reports_failure_without_rolling_back_published_state ... ok
+test tests::failed_publish_leaves_the_previous_generation_readable ... ok
+test tests::vanished_and_corrupt_candidates_never_become_an_empty_restore ... ok
+test tests::vanished_newest_candidate_falls_back_to_older_valid_generation ... ok
+test tests::failed_publication_does_not_prune_retained_recovery_states ... ok
+test tests::pruning_counts_valid_states_and_leaves_pending_and_unrelated_files ... ok
+test tests::repeated_saves_bound_disk_history_and_keep_two_recovery_states ... ok
+
+test result: ok. 15 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.47s
+
+   Doc-tests redshank_storage
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

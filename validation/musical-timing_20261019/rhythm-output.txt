@@ -1,0 +1,15 @@
+Rhythm study
+Guitar | 6 strings | written 96 BPM | timing 73.5 BPM | 960 ticks/quarter
+bar 1 | 4/4 | 3840 ticks
+  event 1 | onset 0 | duration 960 | MIDI 60 string 2 fret 1 (261.626 Hz)
+  event 2 | onset 960 | duration 480 | MIDI 62 string 2 fret 3 (293.665 Hz)
+  event 3 | onset 1440 | duration 480 | MIDI 64 string 1 fret 0 (329.628 Hz)
+  event 4 | onset 1920 | duration 960 | MIDI 65 string 1 fret 1 (349.228 Hz)
+  event 5 | onset 2880 | duration 960 | rest
+bar 2 | 4/4 | 3840 ticks
+  event 1 | onset 0 | duration 320 | MIDI 67 string 1 fret 3 (391.995 Hz)
+  event 2 | onset 320 | duration 320 | MIDI 69 string 1 fret 5 (440.000 Hz)
+  event 3 | onset 640 | duration 320 | MIDI 71 string 1 fret 7 (493.883 Hz)
+  event 4 | onset 960 | duration 960 | MIDI 72 string 1 fret 8 (523.251 Hz)
+  event 5 | onset 1920 | duration 960 | MIDI 67 string 1 fret 3 (391.995 Hz)
+  event 6 | onset 2880 | duration 960 | MIDI 64 string 1 fret 0 (329.628 Hz)

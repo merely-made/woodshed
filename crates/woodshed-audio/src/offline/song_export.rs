@@ -205,15 +205,10 @@ fn validate(song: &Song, sample_rate: u32) -> Result<u64, SongExportError> {
             let chord_duration = (bar.time_signature.numerator as f32 * (60.0 / bar.bpm.max(1.0)))
                 .max(0.5)
                 .clamp(0.3, 2.0);
-            if pitches.iter().any(|frequency| {
-                !frequency.is_finite()
-                    || *frequency <= 0.0
-                    || *frequency as f64
-                        * chord_duration as f64
-                        * 3.0
-                        * std::f32::consts::TAU as f64
-                        > f32::MAX as f64 / 2.0
-            }) {
+            if !crate::chord_audio::chord_frequencies_render_finite(
+                pitches,
+                f64::from(chord_duration),
+            ) {
                 return Err(invalid(
                     "Backing export chord frequencies cannot render finite PCM.",
                 ));
@@ -225,7 +220,7 @@ fn validate(song: &Song, sample_rate: u32) -> Result<u64, SongExportError> {
                     "Captured loop rate or frame count differs from its accepted backing clock.",
                 ));
             }
-            if capture.data.iter().any(|sample| !sample.is_finite()) {
+            if !capture.has_finite_samples() {
                 return Err(invalid("Captured loop contains nonfinite PCM."));
             }
         }

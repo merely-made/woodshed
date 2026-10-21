@@ -1,0 +1,113 @@
+    Blocking waiting for file lock on package cache
+warning: patch `commons-spine v0.0.1 (https://github.com/merely-made/gemot.git?rev=6a5023a9ca478ebcc342dd9b7c9e418ccacfc6b5#6a5023a9)` was not used in the crate graph
+warning: patch `dict-protocol v0.1.0 (https://github.com/merely-made/errand.git?rev=dce1f08546b8475e42a5a01ca1ea18794c6e9b97#dce1f085)` was not used in the crate graph
+warning: patch `errand v0.4.0 (https://github.com/merely-made/errand.git?rev=dce1f08546b8475e42a5a01ca1ea18794c6e9b97#dce1f085)` was not used in the crate graph
+warning: patch `finger-protocol v0.1.1 (https://github.com/merely-made/errand.git?rev=dce1f08546b8475e42a5a01ca1ea18794c6e9b97#dce1f085)` was not used in the crate graph
+warning: patch `fsp-protocol v0.1.0 (https://github.com/merely-made/errand.git?rev=dce1f08546b8475e42a5a01ca1ea18794c6e9b97#dce1f085)` was not used in the crate graph
+warning: patch `gemini-protocol v0.1.7 (https://github.com/merely-made/errand.git?rev=dce1f08546b8475e42a5a01ca1ea18794c6e9b97#dce1f085)` was not used in the crate graph
+warning: patch `gemot v0.1.1 (https://github.com/merely-made/gemot.git?rev=6a5023a9ca478ebcc342dd9b7c9e418ccacfc6b5#6a5023a9)` was not used in the crate graph
+warning: patch `gopher-protocol v0.2.0 (https://github.com/merely-made/errand.git?rev=dce1f08546b8475e42a5a01ca1ea18794c6e9b97#dce1f085)` was not used in the crate graph
+warning: patch `guppy-protocol v0.1.1 (https://github.com/merely-made/errand.git?rev=dce1f08546b8475e42a5a01ca1ea18794c6e9b97#dce1f085)` was not used in the crate graph
+warning: patch `hagiograph v0.0.1 (https://github.com/merely-made/eidetic.git?rev=de6b1dce75dd6725d72c79b829e4878c7903a381#de6b1dce)` was not used in the crate graph
+warning: patch `kepler-protocol v0.1.0 (https://github.com/merely-made/errand.git?rev=dce1f08546b8475e42a5a01ca1ea18794c6e9b97#dce1f085)` was not used in the crate graph
+warning: patch `luggage v0.1.0 (https://github.com/merely-made/eidetic.git?rev=de6b1dce75dd6725d72c79b829e4878c7903a381#de6b1dce)` was not used in the crate graph
+warning: patch `mere-proofs v0.1.0 (https://github.com/merely-made/eidetic.git?rev=de6b1dce75dd6725d72c79b829e4878c7903a381#de6b1dce)` was not used in the crate graph
+warning: patch `mien v0.0.1 (https://github.com/merely-made/gemot.git?rev=6a5023a9ca478ebcc342dd9b7c9e418ccacfc6b5#6a5023a9)` was not used in the crate graph
+warning: patch `misfin v0.0.4 (https://github.com/merely-made/errand.git?rev=dce1f08546b8475e42a5a01ca1ea18794c6e9b97#dce1f085)` was not used in the crate graph
+warning: patch `moothold v0.1.0 (https://github.com/merely-made/gemot.git?rev=6a5023a9ca478ebcc342dd9b7c9e418ccacfc6b5#6a5023a9)` was not used in the crate graph
+warning: patch `mooting v0.1.0 (https://github.com/merely-made/gemot.git?rev=6a5023a9ca478ebcc342dd9b7c9e418ccacfc6b5#6a5023a9)` was not used in the crate graph
+warning: patch `nex-protocol v0.1.1 (https://github.com/merely-made/errand.git?rev=dce1f08546b8475e42a5a01ca1ea18794c6e9b97#dce1f085)` was not used in the crate graph
+warning: patch `scorpion-protocol v0.1.0 (https://github.com/merely-made/errand.git?rev=dce1f08546b8475e42a5a01ca1ea18794c6e9b97#dce1f085)` was not used in the crate graph
+warning: patch `scroll-protocol v0.1.0 (https://github.com/merely-made/errand.git?rev=dce1f08546b8475e42a5a01ca1ea18794c6e9b97#dce1f085)` was not used in the crate graph
+warning: patch `servitor v0.0.2 (https://github.com/merely-made/eidetic.git?rev=de6b1dce75dd6725d72c79b829e4878c7903a381#de6b1dce)` was not used in the crate graph
+warning: patch `spartan-protocol v0.1.1 (https://github.com/merely-made/errand.git?rev=dce1f08546b8475e42a5a01ca1ea18794c6e9b97#dce1f085)` was not used in the crate graph
+warning: patch `stickleback v0.1.1 (https://github.com/merely-made/eidetic.git?rev=de6b1dce75dd6725d72c79b829e4878c7903a381#de6b1dce)` was not used in the crate graph
+warning: patch `text-protocol v0.1.0 (https://github.com/merely-made/errand.git?rev=dce1f08546b8475e42a5a01ca1ea18794c6e9b97#dce1f085)` was not used in the crate graph
+warning: patch `commons-spine v0.0.1 (https://github.com/merely-made/gemot.git?rev=6a5023a9ca478ebcc342dd9b7c9e418ccacfc6b5#6a5023a9)` was not used in the crate graph
+warning: patch `errand v0.4.0 (https://github.com/merely-made/errand.git?rev=dce1f08546b8475e42a5a01ca1ea18794c6e9b97#dce1f085)` was not used in the crate graph
+warning: patch `gemot v0.1.1 (https://github.com/merely-made/gemot.git?rev=6a5023a9ca478ebcc342dd9b7c9e418ccacfc6b5#6a5023a9)` was not used in the crate graph
+warning: patch `hagiograph v0.0.1 (https://github.com/merely-made/eidetic.git?rev=de6b1dce75dd6725d72c79b829e4878c7903a381#de6b1dce)` was not used in the crate graph
+warning: patch `luggage v0.1.0 (https://github.com/merely-made/eidetic.git?rev=de6b1dce75dd6725d72c79b829e4878c7903a381#de6b1dce)` was not used in the crate graph
+warning: patch `mere-proofs v0.1.0 (https://github.com/merely-made/eidetic.git?rev=de6b1dce75dd6725d72c79b829e4878c7903a381#de6b1dce)` was not used in the crate graph
+warning: patch `mere-transport v0.0.2 (https://github.com/merely-made/murm.git?branch=main#cba46d85)` was not used in the crate graph
+warning: patch `mere-webrtc-carrier v0.0.1 (https://github.com/merely-made/murm.git?branch=main#cba46d85)` was not used in the crate graph
+warning: patch `mien v0.0.1 (https://github.com/merely-made/gemot.git?rev=6a5023a9ca478ebcc342dd9b7c9e418ccacfc6b5#6a5023a9)` was not used in the crate graph
+warning: patch `moothold v0.1.0 (https://github.com/merely-made/gemot.git?rev=6a5023a9ca478ebcc342dd9b7c9e418ccacfc6b5#6a5023a9)` was not used in the crate graph
+warning: patch `mooting v0.1.0 (https://github.com/merely-made/gemot.git?rev=6a5023a9ca478ebcc342dd9b7c9e418ccacfc6b5#6a5023a9)` was not used in the crate graph
+warning: patch `servitor v0.0.2 (https://github.com/merely-made/eidetic.git?rev=de6b1dce75dd6725d72c79b829e4878c7903a381#de6b1dce)` was not used in the crate graph
+warning: patch `stickleback v0.1.1 (https://github.com/merely-made/eidetic.git?rev=de6b1dce75dd6725d72c79b829e4878c7903a381#de6b1dce)` was not used in the crate graph
+warning: patch `commons-spine v0.0.1 (https://github.com/merely-made/gemot.git?rev=6a5023a9ca478ebcc342dd9b7c9e418ccacfc6b5#6a5023a9)` was not used in the crate graph
+warning: patch `errand v0.4.0 (https://github.com/merely-made/errand.git?rev=dce1f08546b8475e42a5a01ca1ea18794c6e9b97#dce1f085)` was not used in the crate graph
+warning: patch `gemot v0.1.1 (https://github.com/merely-made/gemot.git?rev=6a5023a9ca478ebcc342dd9b7c9e418ccacfc6b5#6a5023a9)` was not used in the crate graph
+warning: patch `hagiograph v0.0.1 (https://github.com/merely-made/eidetic.git?rev=de6b1dce75dd6725d72c79b829e4878c7903a381#de6b1dce)` was not used in the crate graph
+warning: patch `luggage v0.1.0 (https://github.com/merely-made/eidetic.git?rev=de6b1dce75dd6725d72c79b829e4878c7903a381#de6b1dce)` was not used in the crate graph
+warning: patch `mere-proofs v0.1.0 (https://github.com/merely-made/eidetic.git?rev=de6b1dce75dd6725d72c79b829e4878c7903a381#de6b1dce)` was not used in the crate graph
+warning: patch `mien v0.0.1 (https://github.com/merely-made/gemot.git?rev=6a5023a9ca478ebcc342dd9b7c9e418ccacfc6b5#6a5023a9)` was not used in the crate graph
+warning: patch `moothold v0.1.0 (https://github.com/merely-made/gemot.git?rev=6a5023a9ca478ebcc342dd9b7c9e418ccacfc6b5#6a5023a9)` was not used in the crate graph
+warning: patch `mooting v0.1.0 (https://github.com/merely-made/gemot.git?rev=6a5023a9ca478ebcc342dd9b7c9e418ccacfc6b5#6a5023a9)` was not used in the crate graph
+warning: patch `servitor v0.0.2 (https://github.com/merely-made/eidetic.git?rev=de6b1dce75dd6725d72c79b829e4878c7903a381#de6b1dce)` was not used in the crate graph
+warning: patch `stickleback v0.1.1 (https://github.com/merely-made/eidetic.git?rev=de6b1dce75dd6725d72c79b829e4878c7903a381#de6b1dce)` was not used in the crate graph
+help: Check that the patched package version and available features are compatible
+      with the dependency requirements. If the patch has a different version from
+      what is locked in the Cargo.lock file, run `cargo update` to use the new
+      version. This may also occur with an optional dependency that is not enabled.
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1m 59s
+     Running unittests src/lib.rs (target/build/debug/deps/hocket_recorder-8f0fd49608786aac)
+
+running 28 tests
+test host_policy::tests::unavailable_audio_refuses_play_record_but_preserves_explicit_reference_clear ... ok
+test host_policy::tests::record_requests_lazy_input_but_never_claims_or_changes_capture_admission ... ok
+test tests::capture_admission_and_invalid_completion_fail_without_history_or_media_mutation ... ok
+test host_policy::tests::backing_refusal_does_not_lose_stop_or_retained_clear_operations ... ok
+test host_policy::tests::armed_or_recording_target_guards_retargeting_clear_and_clock_policy ... ok
+test host_policy::tests::busy_capture_without_projectable_target_still_guards_clock_clear_source_and_record ... ok
+test host_policy::tests::stale_context_and_row_keys_cannot_mutate_another_session ... ok
+test host_policy::tests::unsupported_hocket_controls_and_invalid_clock_are_refused ... ok
+test host_policy::tests::rendered_target_survives_selection_change_and_stop_uses_accepted_target ... ok
+test tests::failed_target_mute_retries_without_another_action_or_unrelated_restart ... ok
+test tests::fixed_rearm_and_clock_changes_are_refused_while_free_stop_keeps_its_target ... ok
+test host_policy::tests::heterogeneous_row_tempo_uses_qualified_target_without_authoring_other_rows ... ok
+test tests::deleted_capture_target_does_not_receive_or_store_a_delayed_take ... ok
+test tests::delayed_capture_keeps_admitted_track_clock_and_sample_rate ... ok
+test tests::imported_audio_only_starts_the_appended_layer_at_its_stored_rate ... ok
+test tests::later_unmute_supersedes_a_still_failed_stop_without_late_silencing ... ok
+test tests::duplicate_phrase_action_targets_qualified_layer_occurrence ... ok
+test tests::playback_failure_retains_completed_pcm_without_claiming_an_accepted_voice ... ok
+test tests::failed_stop_all_retries_only_remaining_accepted_keys ... ok
+test tests::muted_click_clock_admission_and_input_absence_remain_truthful ... ok
+test tests::recovered_poll_error_resets_status_from_healthy_availability ... ok
+test tests::recreated_controller_for_same_session_cannot_reuse_capture_ticket ... ok
+test tests::stale_completion_cannot_consume_current_ticket_and_idle_needs_explicit_retirement ... ok
+test tests::target_mute_keeps_unrelated_voices_and_missing_media_remains_visible ... ok
+test tests::same_session_replacement_retires_delayed_capture_and_queued_actions ... ok
+test tests::replacing_project_stops_old_voices_even_while_retired_capture_drains ... ok
+test tests::offline_project_authors_clock_then_syncs_on_recovery_but_live_refusal_does_not_author ... ok
+test tests::tempo_nudge_requeues_accepted_voice_without_stopping_it ... ok
+
+test result: ok. 28 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/select_one.rs (target/build/debug/deps/select_one-5ef600a265195fed)
+
+running 5 tests
+test imported_replay_respects_selection_and_uses_stored_rate_and_gain ... ok
+test mute_solo_and_reconcile_keep_active_selection_and_refuse_missing_or_muted_layers ... ok
+test capture_promotion_obeys_select_one_and_keeps_free_or_clocked_alignment ... ok
+test one_cycle_export_pcm_matches_sum_and_selected_recorder_voices ... ok
+test reconciliation_admits_only_model_selected_layers_and_preserves_sum_behavior ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/tempo_replay.rs (target/build/debug/deps/tempo_replay-8d1386fb4a7e676d)
+
+running 5 tests
+test offline_tempo_authoring_replays_audible_layers_after_audio_recovers ... ok
+test refused_stop_or_replay_reports_only_accepted_voices ... ok
+test successful_nudges_replay_only_currently_eligible_live_voices_in_order ... ok
+test stop_all_then_nudge_does_not_replay_silent_model_layers ... ok
+test refused_clock_keeps_existing_voices_and_history_untouched ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

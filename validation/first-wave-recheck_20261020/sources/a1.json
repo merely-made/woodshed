@@ -1,0 +1,84 @@
+{
+  "scope": "A1 current-source preservation and selected-profile admission recheck",
+  "source_root": "/Users/markik/Code/worktrees/woodshed-audit-first-wave-20261020",
+  "baseline": "9f80bb5eabc4b513e057b22af6f80d83ecb8e9ac",
+  "observed_head_at_handoff": "9f80bb5eabc4b513e057b22af6f80d83ecb8e9ac",
+  "source_status": "bounded correction implemented; coordinating owner owns all executable qualification and commits",
+  "paths_changed_by_this_agent": [
+    "crates/woodshed-genet/src/persona.rs",
+    "crates/woodshed-genet/src/persona_preservation_tests.rs"
+  ],
+  "source_hashes": [
+    {
+      "path": "crates/woodshed-genet/src/persona.rs",
+      "sha256": "ec2201bea656bc6f3d6bde7ca48107c76ee8f70e00ecd83fa7170cf1b1c49608",
+      "lines": 860
+    },
+    {
+      "path": "crates/woodshed-genet/src/persona_preservation_tests.rs",
+      "sha256": "1ca0c4617a69918fd25fbfc0f7fc3520416991709e38c8df62f6c448efca6c11",
+      "lines": 397
+    },
+    {
+      "path": "crates/woodshed-genet/src/capture_persistence.rs",
+      "sha256": "924a14332da739849642c4cee58a25ba7cd56eb3898beb9dba1cc624174c5aba",
+      "lines": 2894
+    },
+    {
+      "path": "crates/woodshed-genet/src/main.rs",
+      "sha256": "3cf8b8bc8eb5ebd13feb530a680d16a7ba4c23503742da790b542a2b0b25f09b",
+      "lines": 931
+    },
+    {
+      "path": "crates/woodshed-genet/src/storage.rs",
+      "sha256": "bac0ea9dfc371b12be4af1b95cf0610883abe00c3687c7cb3477a54b51481cbb",
+      "lines": 884
+    },
+    {
+      "path": "crates/woodshed-genet/src/session.rs",
+      "sha256": "7cf05e7ecc8d7694093005c21b5c844e414fe6b178bf71561e3e6c33c13463c1",
+      "lines": 1355
+    },
+    {
+      "path": "crates/woodshed-genet/src/sync.rs",
+      "sha256": "2b38d2d4ad068734eebec9eff2080e984c02cd3d19162ace63c81723cd758b76",
+      "lines": 1486
+    },
+    {
+      "path": "Cargo.lock",
+      "sha256": "9233c3fee1f1bfd613cea22080263c08f25db8ac0b74af65278edfe705cda63b",
+      "lines": 8971
+    }
+  ],
+  "checks_run_by_this_agent": [
+    {
+      "command": "git diff --check -- crates/woodshed-genet/src/persona.rs crates/woodshed-genet/src/persona_preservation_tests.rs",
+      "exit_code": 0
+    }
+  ],
+  "build_test_native_runs_by_this_agent": [],
+  "git_mutations_by_this_agent": [],
+  "current_dispositions": {
+    "existing_outgoing_preservation": "implemented and source traced; native/build receipts remain bound to historical source",
+    "same_persona": "unchanged full preservation/reopen path; no-op remains D2 design decision",
+    "pending_codec": "preserve_request returns Preparing while codec preparation is busy; dispatch and completion wake resume the same pending switch",
+    "unconfirmed_saves": "per-slot SessionStore failures survive other-slot success; preservation blocks on practice_saved/save_notice after attempting session and settings",
+    "incoming_custody_failure": "existing Pending response retains outgoing session and intended target; explicit decision needed before another opener attempt",
+    "incoming_profile_mismatch": "new guard rejects sealed identity unequal to selected pending target before outgoing revocation/reset; explicit Retry can admit intended identity",
+    "process_clocks": "reset retains event_clock and practice_clock_managed; existing reset test and new admitted-switch regression assert bindings"
+  },
+  "suggested_coordinator_commands": [
+    "cargo test --locked -p woodshed-genet persona::",
+    "cargo test --locked -p woodshed-genet capture_persistence::tests::shared_transition_barrier_waits_for_exact_live_capture_publication",
+    "cargo test --locked -p woodshed-genet capture_persistence::tests::mounted_main_close_waits_for_capture_worker_then_preserves_dirty_appearance_gate",
+    "cargo test --locked -p woodshed-genet tests::quarantined_close_can_cancel_retry_and_explicitly_discard_without_writing",
+    "cargo test --locked -p woodshed-genet tests::retry_after_transient_write_failure_verifies_both_slots_before_closing"
+  ],
+  "boundaries": [
+    "No P5 or P5a timing, audio, drive, core, or view path changed.",
+    "No storage/supplier/lockfile changes.",
+    "No persona namespace migration or same-persona policy change.",
+    "The new guard protects live Switch, the A1 outgoing-preservation boundary. Startup settle remains a separate incoming-only identity path.",
+    "No current-source native, device, or physical acceptance asserted."
+  ]
+}

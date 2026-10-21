@@ -219,51 +219,41 @@ fn queued_replay_waits_for_boundary_then_loops() {
 }
 
 #[test]
-fn queued_replay_starts_when_sparse_ticks_miss_the_bar_wrap() {
+fn tempo_requeue_keeps_current_voice_until_keyed_replacement_boundary() {
     let mut offline = Offline::new(48_000);
     offline.fast_bar();
-    // Let the tempo restart settle before queuing against the running grid.
-    for _ in 0..4 {
-        offline.block(&[0.0; 256]);
-    }
     let key = Offline::key(0);
     offline
         .engine
-        .play_layer_at_next_bar(key, vec![0.2; 48], 1.0, true)
+        .play_layer(key, vec![0.125; 48], 1.0, true)
         .unwrap();
-    // Each observation advances 3/4 bar. The backwards phase step is only
-    // 1/4 bar, below BarCountdown's jitter threshold, so wrap detection misses it.
-    offline.block(&[0.0; 3600]);
-    offline.block(&[0.0; 3600]);
-    assert!(offline.engine.is_layer_assigned(key));
-    assert_eq!(offline.engine.pending_layer_count(), 0);
-    assert_level(&offline.block(&[0.0; 2048]), 0.2);
-}
-
-#[test]
-fn queued_replay_rearms_deadline_after_tempo_restart() {
-    let mut offline = Offline::new(48_000);
-    offline.fast_bar();
-    for _ in 0..4 {
-        offline.block(&[0.0; 256]);
-    }
-    let key = Offline::key(0);
-    offline
-        .engine
-        .play_layer_at_next_bar(key, vec![0.2; 48], 1.0, true)
-        .unwrap();
-    offline.engine.set_tempo(300.0, 1, 4).unwrap();
-    offline.engine.set_click_enabled(false);
     offline.engine.cx.update().unwrap();
-    for _ in 0..4 {
-        offline.block(&[0.0; 256]);
+    assert_level(&offline.block(&[0.0; 2048]), 0.125);
+
+    offline.engine.set_tempo(480.0, 1, 4).unwrap();
+    offline.engine.set_click_enabled(false);
+    for level in [0.75, 0.375] {
+        offline
+            .engine
+            .play_layer_at_next_bar_at_sample_rate(key, vec![level; 44], 44_100, 0.5, true)
+            .unwrap();
     }
-    // Pass the obsolete fast-bar deadline, but not the new 9600-frame bar.
-    offline.block(&[0.0; 4800]);
-    assert!(!offline.engine.is_layer_assigned(key));
-    offline.block(&[0.0; 4800]);
-    assert!(offline.engine.is_layer_assigned(key));
-    assert_level(&offline.block(&[0.0; 2048]), 0.2);
+    assert_eq!(offline.engine.pending_layers.len(), 1);
+    offline.engine.cx.update().unwrap();
+    let mut waiting_blocks = 0;
+    while !offline.engine.pending_layers.is_empty() {
+        assert!(
+            waiting_blocks < 64,
+            "replacement must reach the new clock boundary"
+        );
+        // Admission queues a replacement; it does not stop the current voice.
+        assert_level(&offline.block(&[0.0; 256]), 0.125);
+        waiting_blocks += 1;
+    }
+    assert!(waiting_blocks > 1);
+    assert_eq!(offline.engine.voice_count(), 1);
+    assert_level(&offline.block(&[0.0; 2048]), 0.1875);
+    assert_level(&offline.block(&[0.0; 2048]), 0.1875);
 }
 
 #[test]
@@ -827,6 +817,54 @@ fn wait_only_start_begins_with_an_empty_capture() {
         "first frame drained after the observing tick"
     );
     assert_eq!(captured[4799], 5512.0 + 4799.0);
+}
+
+#[test]
+fn queued_replay_starts_when_sparse_ticks_miss_the_bar_wrap() {
+    let mut offline = Offline::new(48_000);
+    offline.fast_bar();
+    // Let the tempo restart settle before queuing against the running grid.
+    for _ in 0..4 {
+        offline.block(&[0.0; 256]);
+    }
+    let key = Offline::key(0);
+    offline
+        .engine
+        .play_layer_at_next_bar(key, vec![0.2; 48], 1.0, true)
+        .unwrap();
+    // Each observation advances 3/4 bar. The backwards phase step is only
+    // 1/4 bar, below BarCountdown's jitter threshold, so wrap detection misses it.
+    offline.block(&[0.0; 3600]);
+    offline.block(&[0.0; 3600]);
+    assert!(offline.engine.is_layer_assigned(key));
+    assert_eq!(offline.engine.pending_layer_count(), 0);
+    assert_level(&offline.block(&[0.0; 2048]), 0.2);
+}
+
+#[test]
+fn queued_replay_rearms_deadline_after_tempo_restart() {
+    let mut offline = Offline::new(48_000);
+    offline.fast_bar();
+    for _ in 0..4 {
+        offline.block(&[0.0; 256]);
+    }
+    let key = Offline::key(0);
+    offline
+        .engine
+        .play_layer_at_next_bar(key, vec![0.2; 48], 1.0, true)
+        .unwrap();
+    offline.engine.set_tempo(300.0, 1, 4).unwrap();
+    offline.engine.set_click_enabled(false);
+    offline.engine.cx.update().unwrap();
+    for _ in 0..4 {
+        offline.block(&[0.0; 256]);
+    }
+    // Pass the obsolete fast-bar deadline, but not the new 9600-frame bar.
+    offline.block(&[0.0; 4800]);
+    assert!(!offline.engine.is_layer_assigned(key));
+    offline.block(&[0.0; 4800]);
+    assert!(offline.engine.is_layer_assigned(key));
+    assert_level(&offline.block(&[0.0; 2048]), 0.2);
 }
 
 #[test]

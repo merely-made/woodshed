@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "run_id": "b5-baseline-negative-v2",
+  "command": [
+    "env",
+    "CARGO_TARGET_DIR=/Users/markik/Code/repos/woodshed/target",
+    "cargo",
+    "test",
+    "--offline",
+    "--manifest-path",
+    "/Users/markik/Code/testing/woodshed/select-one-baseline-20261019/Cargo.toml",
+    "--test",
+    "select_one"
+  ],
+  "started_at": "2026-10-19T18:26:34.945983Z",
+  "ended_at": "2026-10-19T18:26:47.657653Z",
+  "exit_code": 101,
+  "cwd": "/Users/markik/Code/testing/woodshed/select-one-baseline-20261019",
+  "log": "/Users/markik/Code/repos/woodshed/validation/recorder-select-one_20261019/checks/baseline-negative-v2.log",
+  "log_sha256": "d4a038400004c4bb38b92a6920136c526cf33a72d304afe3f351429c67284e62",
+  "source_commit": "b804d90104bd86caca6b8fc20e8176e1afd5feae"
+}

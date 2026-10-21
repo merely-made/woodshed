@@ -829,6 +829,7 @@ mod tests {
                 label: "Exact old material".into(),
                 chord_label: "Custom pitches".into(),
                 formula_name: "Custom formula".into(),
+                silent: false,
                 root_pc: 9,
                 root_freq_hz: 217.3,
                 pitches_hz: vec![217.3, 281.6, 336.2],

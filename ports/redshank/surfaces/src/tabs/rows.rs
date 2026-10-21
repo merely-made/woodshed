@@ -250,7 +250,8 @@ pub fn note_actions(state: &RedshankSurfaceState, note: &NoteSummary) -> FullVie
         use crate::NoteAlignment;
         match alignment {
             NoteAlignment::Unavailable(reason) => {
-                Box::new(el("span", text(reason.clone()))) as FullView
+                Box::new(el("span", text(reason.clone())).attr("class", "rs-note-alignment"))
+                    as FullView
             },
             NoteAlignment::Download => action(
                 "Download to realign",
@@ -311,6 +312,14 @@ pub fn note_actions(state: &RedshankSurfaceState, note: &NoteSummary) -> FullVie
         ));
     }
     // Private notes stay out of the export; the row is where that flips.
+    if state.note_clip_export_available && !note.private {
+        actions.push(action(
+            "Export note clip",
+            format!("Export note clip at {at}"),
+            "rs-row-action",
+            CompactCommand::ExportNoteClip(note.id.clone()),
+        ));
+    }
     let (privacy_label, privacy) = if note.private {
         ("Make shareable", NotePrivacy::Shareable)
     } else {

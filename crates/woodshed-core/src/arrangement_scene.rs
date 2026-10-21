@@ -61,6 +61,7 @@ pub fn arrangement_scene(
             "Arrangement needs one expectation span per role and bounded source occurrences".into(),
         );
     }
+    let derived_bars = woodshedding::rehearsal::arrangement::bars::bars(arrangement)?;
     let mut ids = HashSet::new();
     if set
         .cards
@@ -167,6 +168,55 @@ pub fn arrangement_scene(
                 .into(),
         })
         .collect();
+    let mut groups = vec![TemplateGroup {
+        key: "phrase".into(),
+        lane: 0,
+        span: Span {
+            start: 0,
+            length: arrangement.extent,
+        },
+        parent: None,
+        label: progression.name.into(),
+    }];
+    if !arrangement.time_signatures.is_empty() {
+        let mut bar_parents = vec!["phrase".to_owned(); derived_bars.len()];
+        for (index, group) in arrangement.bar_groups.iter().enumerate() {
+            let first = group.first as usize;
+            let last = (group.first + group.count - 1) as usize;
+            let start = derived_bars[first].start;
+            let end = derived_bars[last].start + derived_bars[last].length;
+            let key = format!("bar-group-{index}");
+            groups.push(TemplateGroup {
+                key: key.clone(),
+                lane: 0,
+                span: Span {
+                    start,
+                    length: end - start,
+                },
+                parent: Some("phrase".into()),
+                label: format!("Bars {}–{}", group.first + 1, group.first + group.count),
+            });
+            for parent in &mut bar_parents[first..=last] {
+                *parent = key.clone();
+            }
+        }
+        for (index, bar) in derived_bars.iter().enumerate() {
+            groups.push(TemplateGroup {
+                key: format!("bar-{index}"),
+                lane: 0,
+                span: Span {
+                    start: bar.start,
+                    length: bar.length,
+                },
+                parent: Some(bar_parents[index].clone()),
+                label: format!(
+                    "Bar {}{}",
+                    index + 1,
+                    if bar.complete { "" } else { " · partial" }
+                ),
+            });
+        }
+    }
     let template = SequenceTemplate {
         lanes: vec![format!(
             "{} · expected roles below / supplied occurrences above",
@@ -175,16 +225,7 @@ pub fn arrangement_scene(
         extent: arrangement.extent,
         ticks_per_unit: 4,
         unit_label: "quarter-note beat (4 ticks); supplied spans, no playback clock".into(),
-        groups: vec![TemplateGroup {
-            key: "phrase".into(),
-            lane: 0,
-            span: Span {
-                start: 0,
-                length: arrangement.extent,
-            },
-            parent: None,
-            label: progression.name.into(),
-        }],
+        groups,
     };
     let facts = SceneFacts::TemplatedSequence(TemplatedSequence {
         template,
@@ -292,12 +333,25 @@ mod tests {
                     },
                     role: None,
                 }],
-
                 time_signatures: vec![],
                 bar_groups: vec![],
             },
         )
     }
+    #[test]
+    fn real_arrangement_round_trips_as_editable_djot_without_changing_its_set() {
+        let (stage, set, arrangement) = fixture();
+        let before = serde_json::to_value(&set).unwrap();
+        let document = arrangement_scene(&stage, &set, &arrangement, "study").unwrap();
+        let source = crate::arrangement_document::to_djot(&document).unwrap();
+        assert_eq!(crate::arrangement_document::from_djot(&source).unwrap(), document);
+        assert_eq!(serde_json::to_value(&set).unwrap(), before);
+        let mut changed = document.clone(); changed.primary.title = "Edited independent arrangement".into();
+        let next = crate::arrangement_document::to_djot(&changed).unwrap();
+        assert_eq!(crate::arrangement_document::from_djot(&next).unwrap(), changed);
+        assert_eq!(crate::arrangement_document::from_djot(&source).unwrap(), document);
+    }
+
     #[test]
     fn repeated_tonics_keep_card_identity_and_different_saved_voicings() {
         let (stage, set, arrangement) = fixture();
@@ -315,6 +369,27 @@ mod tests {
             doc,
             SceneDocument::parse(&serde_json::to_string(&doc).unwrap()).unwrap()
         );
+    }
+    #[test]
+    fn explicit_meter_exports_bars_and_authored_groups_under_the_phrase() {
+        let (stage, set, mut arrangement) = fixture();
+        arrangement.time_signatures = vec![woodshedding::rehearsal::arrangement::TimeSignatureChange {
+            start: 0,
+            numerator: 4,
+            denominator: 4,
+        }];
+        arrangement.bar_groups = vec![woodshedding::rehearsal::arrangement::BarGroup {
+            first: 0,
+            count: 2,
+        }];
+        let doc = arrangement_scene(&stage, &set, &arrangement, "study").unwrap();
+        let SceneFacts::TemplatedSequence(sequence) = &doc.primary.facts else {
+            unreachable!()
+        };
+        assert_eq!(sequence.template.groups.len(), 6);
+        assert_eq!(sequence.template.groups[1].parent.as_deref(), Some("phrase"));
+        assert_eq!(sequence.template.groups[2].parent.as_deref(), Some("bar-group-0"));
+        assert_eq!(sequence.template.groups[4].parent.as_deref(), Some("phrase"));
     }
     #[test]
     fn reorder_insert_and_reopen_preserve_selection_keys_and_bindings() {

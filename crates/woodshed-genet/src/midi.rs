@@ -47,6 +47,8 @@ enum ClockCmd {
 #[derive(Clone, Default, serde::Serialize)]
 pub(crate) struct OutputState {
     connected: Option<String>,
+    /// Latest selection whose open/close attempt has completed.
+    settled_revision: u64,
     revision: u64,
     status: Option<String>,
     error: Option<String>,
@@ -105,6 +107,7 @@ pub struct MidiHost {
     output_error: Option<String>,
     clock_tx: Sender<ClockCmd>,
     clock_thread: Option<JoinHandle<()>>,
+    worker_unavailable: bool,
     /// De-dup the per-tick clock-out pushes so a steady transport doesn't
     /// spam the channel every frame.
     last_out: (bool, bool, i32),
@@ -145,6 +148,7 @@ impl MidiHost {
             output_error: None,
             clock_tx: tx,
             clock_thread: Some(thread),
+            worker_unavailable: false,
             last_out: (false, false, -1),
             error: None,
         }
@@ -171,6 +175,42 @@ impl Default for MidiHost {
 }
 
 impl MidiBackend for MidiHost {
+    fn needs_service(&self) -> bool {
+        !self.worker_unavailable
+            && (self.requested_out.is_some()
+                || self.output_state.lock().unwrap().settled_revision
+                    != self.selection_revision.load(Ordering::Acquire)
+                || self.pedal.busy.load(Ordering::Acquire))
+    }
+    fn poll(&mut self) {
+        let mut state = self.output_state.lock().unwrap();
+        let mut invalidate = false;
+        if !self.worker_unavailable
+            && self
+                .clock_thread
+                .as_ref()
+                .is_some_and(|thread| thread.is_finished())
+        {
+            self.worker_unavailable = true;
+            self.selection_revision.fetch_add(1, Ordering::AcqRel);
+            state.connected = None;
+            state.ready = false;
+            state.generation = None;
+            state.failure(
+                "MIDI output worker is unavailable; connection acceptance cleared; no replay"
+                    .into(),
+            );
+            invalidate = true;
+        }
+        self.connected_out = state.connected.clone();
+        self.output_error = state.error.clone();
+        self.output_notice = state.status.clone().or_else(|| state.error.clone());
+        drop(state);
+        if invalidate {
+            self.controller.lock().unwrap().invalidate();
+        }
+    }
+
     fn set_diagnostics_recording(&mut self, recording: bool) {
         diagnostics::set_recording(recording);
     }
@@ -260,6 +300,7 @@ impl MidiBackend for MidiHost {
             None => {
                 self.input = None;
                 self.connected_in = None;
+                self.error = None;
             },
             Some(name) => {
                 if self.connected_in.as_deref() == Some(name) {
@@ -276,6 +317,7 @@ impl MidiBackend for MidiHost {
                     Ok(m) => {
                         self.input = Some(m);
                         self.connected_in = Some(name.to_string());
+                        self.error = None;
                     },
                     Err(e) => {
                         self.controller.lock().unwrap().replace_source(false);
@@ -510,5 +552,83 @@ fn fmt_event(e: &MidiEvent) -> String {
         MidiEvent::Start => "Start".to_string(),
         MidiEvent::Continue => "Continue".to_string(),
         MidiEvent::Stop => "Stop".to_string(),
+    }
+}
+
+#[cfg(test)]
+mod output_request_tests {
+    use super::*;
+    use std::time::{Duration, Instant};
+
+    #[test]
+    fn closed_worker_clears_accepted_connection_and_reports_failure() {
+        let mut host = MidiHost::new();
+        host.output_state.lock().unwrap().connected = Some("previous".into());
+        host.output_state.lock().unwrap().ready = true;
+        host.clock_tx.send(ClockCmd::Stop).unwrap();
+        let deadline = Instant::now() + Duration::from_secs(2);
+        while !host.clock_thread.as_ref().unwrap().is_finished() {
+            assert!(Instant::now() < deadline);
+            std::thread::sleep(Duration::from_millis(1));
+        }
+        host.poll();
+        assert!(host.connected_output().is_none());
+        assert!(!host.output_ready());
+        assert!(host.error().unwrap().contains("worker is unavailable"));
+        assert!(!host.needs_service());
+    }
+
+    #[test]
+    fn production_channel_supersedes_pending_and_dedupes_failed_target() {
+        let mut host = MidiHost::new();
+        host.clock_tx.send(ClockCmd::Stop).unwrap();
+        host.clock_thread.take().unwrap().join().unwrap();
+        let (tx, rx) = channel();
+        host.clock_tx = tx;
+        host.requested_out = Some("A".into());
+        host.output_state.lock().unwrap().connected = Some("A".into());
+        host.connect_output(Some("B"));
+        let ClockCmd::Connect {
+            revision: first, ..
+        } = rx.recv().unwrap()
+        else {
+            panic!()
+        };
+        host.output_state
+            .lock()
+            .unwrap()
+            .failure("cannot open B".into());
+        host.connect_output(Some("B"));
+        assert!(rx.try_recv().is_err());
+        host.connect_output(Some("A"));
+        let ClockCmd::Connect {
+            target,
+            revision: second,
+        } = rx.recv().unwrap()
+        else {
+            panic!()
+        };
+        assert_eq!(target.as_deref(), Some("A"));
+        assert!(second > first);
+        host.connect_output(Some("B"));
+        let ClockCmd::Connect {
+            revision: third, ..
+        } = rx.recv().unwrap()
+        else {
+            panic!()
+        };
+        assert!(third > second);
+        host.connect_output(None);
+        let ClockCmd::Connect {
+            target,
+            revision: fourth,
+        } = rx.recv().unwrap()
+        else {
+            panic!()
+        };
+        assert!(target.is_none());
+        assert!(fourth > third);
+        host.connect_output(None);
+        assert!(rx.try_recv().is_err());
     }
 }

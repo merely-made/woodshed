@@ -53,9 +53,6 @@ impl StageState {
         candidates
     }
 
-    /// Resolve a card's persisted setup without considering material or
-    /// enumerating shapes. Empty instrument identity deliberately keeps the
-    /// legacy live-or-unique-tuning behavior; explicit identity always wins.
     fn shape_context(&self) -> ShapeContext {
         ShapeContext {
             tuning: self.tuning(),
@@ -92,10 +89,27 @@ impl StageState {
         self.selected_card_shape(card)
     }
 
-    /// Geometry for a selected chord shape, including a selected-but-invalid
-    /// ordinal when its setup itself resolves. `None` preserves the ordinary
-    /// live-board geometry for unselected/non-chord cards.
+    /// Geometry for a retained Path or selected chord shape, including an
+    /// invalid chord ordinal when its setup itself resolves. Other unselected
+    /// material retains the ordinary live-board geometry.
     pub fn card_shape_geometry(&self, card: &Card) -> Option<CardShapeGeometry> {
+        if matches!(card.material, Material::Path { .. }) {
+            // Path notes already use this retained tuning resolver. The neck
+            // must use its string count too; the live window clips display.
+            return Some(match self.resolve_card_tuning(card) {
+                Ok(tuning) => {
+                    let limit = tuning.instrument.standard_fret_count();
+                    let start = self.fret_start.min(limit);
+                    CardShapeGeometry {
+                        string_count: tuning.string_count(),
+                        physical_fret_start: start,
+                        physical_fret_end: self.fret_count.min(limit).max(start),
+                        capo: card.setting.capo.unwrap_or(0),
+                    }
+                },
+                Err(_) => CardShapeGeometry::EMPTY,
+            });
+        }
         if !matches!(card.material, Material::Chord { .. }) || card.setting.voicing_idx.is_none() {
             return None;
         }

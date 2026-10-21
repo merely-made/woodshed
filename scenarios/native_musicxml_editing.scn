@@ -1,0 +1,101 @@
+# Real Set material, owner-scoped edits, native note gestures, and sealed save.
+settle 10
+ui-zoom 1
+assert snap practice-saved == true
+act music-progression-example
+settle 5
+click .music-from-set
+settle 6
+assert snap music-bars == 4
+click .music-save
+settle 6
+assert snap music-dirty == false
+checkpoint-music progression-initial
+capture 01_progression_chart
+click .music-view @data-music-view=Score
+settle 4
+capture 02_progression_score
+click .music-view @data-music-view=Tab
+settle 4
+capture 03_progression_tab
+click .music-pick-up
+settle 5
+assert snap music-preview == true
+assert snap music-dirty == false
+checkpoint-music progression-preview
+capture 04_picking_preview
+click .music-pick-cancel
+assert snap music-preview == false
+assert snap music-dirty == false
+click .music-pick-eighths
+click .music-pick-apply
+settle 5
+assert snap music-dirty == true
+click .music-undo
+assert snap music-dirty == false
+click .music-redo
+assert snap music-dirty == true
+click .music-save
+settle 6
+checkpoint-music progression-picked
+act music-rhythm-example
+settle 6
+click .music-view @data-music-view=Score
+click .music-save
+settle 6
+assert snap music-pitch == 60
+checkpoint-music rhythm-initial
+capture 05_rhythm_score
+# Captured drag moves the existing C on string2 to D; preview remains unauthored.
+press-music-fret 2 1
+settle 2
+assert snap music-drag == true
+move-music-fret 2 3
+settle 3
+assert snap music-pitch == 60
+assert snap music-dirty == false
+assert snap music-drag-position == s2/f3/
+release-music-fret 2 3
+settle 5
+assert snap music-pitch == 62
+assert snap music-dirty == true
+click .music-undo
+assert snap music-pitch == 60
+assert snap music-dirty == false
+# Click an unused string to add a simultaneous note.
+click .music-fret @data-music-position=s1/f0/
+settle 5
+assert snap music-notes == 2
+click .music-undo
+assert snap music-notes == 1
+click .music-triplet
+settle 5
+click .music-rest
+settle 4
+assert snap music-rest == true
+click .music-undo
+assert snap music-rest == false
+click .music-redo
+assert snap music-rest == true
+click .music-save
+settle 8
+assert snap music-dirty == false
+checkpoint-music rhythm-edited
+click .music-export
+settle 6
+click .music-view @data-music-view=Tab
+settle 5
+capture 06_rhythm_tab
+resize 420 1100
+settle 8
+capture 07_narrow_music
+wheel 0 450 px on .workspace-screen
+settle 5
+capture 08_narrow_fretboard
+click .workspace-panel Practice
+settle 4
+click .workspace-panel Arrangement
+settle 5
+assert snap music-dirty == false
+assert snap practice-saved == true
+checkpoint-music final

@@ -26,6 +26,10 @@ pub(crate) use backend::Backend;
 #[cfg(test)]
 use backend::{Decoded, RateStage, consume_frames, decode_packet, drained, open_http, open_local};
 
+/// Supplied, already-admitted bytes. The player never resolves a host blob as a path or URL.
+pub type HostBlobReader = Arc<dyn Fn(&str) -> std::result::Result<Vec<u8>, String> + Send + Sync>;
+pub const MAX_HOST_BLOB_BYTES: usize = 16 * 1024 * 1024;
+
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub enum PlaybackState {
     Empty,
@@ -175,6 +179,11 @@ impl PlaybackRuntime {
 
     /// Start with the host's fetch handle.
     pub fn start_with(fetch: Arc<dyn Fetch>) -> Self {
+        Self::start_with_blobs(fetch, None)
+    }
+
+    /// Start with a bounded host-blob source, for retained private audio.
+    pub fn start_with_blobs(fetch: Arc<dyn Fetch>, blobs: Option<HostBlobReader>) -> Self {
         let (sender, receiver) = mpsc::channel();
         let snapshot = Arc::new(Mutex::new(SnapshotCell {
             value: PlaybackSnapshot::default(),
@@ -184,7 +193,7 @@ impl PlaybackRuntime {
         let worker_snapshot = Arc::clone(&snapshot);
         thread::Builder::new()
             .name("redshank-playback".into())
-            .spawn(move || worker::run(receiver, worker_snapshot, fetch))
+            .spawn(move || worker::run(receiver, worker_snapshot, fetch, blobs))
             .expect("spawn Redshank playback worker");
         Self {
             inner: Arc::new(RuntimeInner {

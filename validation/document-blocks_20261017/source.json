@@ -1,0 +1,14 @@
+{
+  "base_commit": "c6036f21afad72dd6d4850b8dd23a9c090ff49e1",
+  "fetched_origin_main": "c6036f21afad72dd6d4850b8dd23a9c090ff49e1",
+  "source_state": "local prototype changes over base commit",
+  "sha256": {
+    "crates/woodshed-core/Cargo.toml": "9dc27e4c35ae27e77ad2fb2f8ac5ce5bf1f51d157f2fb478fc3d0321a1aed782",
+    "crates/woodshed-core/src/arrangement_document.rs": "be6aece08b4c69948e9b1470f7b1104f75bc57bc1ae55600754a4084451bddf5",
+    "crates/woodshed-core/src/arrangement_scene.rs": "2d1fac2fc6787baad3ff450c4d042c7d6f34e4466736364b7648f4c1e39f729c",
+    "crates/woodshed-core/src/bin/woodshed-arrangement-scene.rs": "fe69a8d9d470518444e9d5545415a7692d7885af8efc6cbff2e7934980501931",
+    "crates/woodshed-core/src/lib.rs": "bad134611dc627fb2daeb049003e4f8eeea96a5deb3ced821d5ed1b728ac2dd0",
+    "design_docs/2026-07-11_stage_set_tools_plan.md": "7f88bd3be031f24ac4fd601304196db5078f690c394b30811cd6ee2f93b9e345",
+    "design_docs/DOC_README.md": "330a7e3eba8b503fc7462ad891de983d021b649d7ab6f5d05663962d6591489e"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "baseline_revision": "4fab895",
+  "scope": [
+    "design_docs/DOC_README.md",
+    "design_docs/2026-10-16_source_authority_audit_plan.md",
+    "validation/full-source-audit_20261016/README.md",
+    "validation/recorder-select-one_20261019/README.md"
+  ],
+  "baseline": {
+    "checked_local_links": 127,
+    "findings": []
+  },
+  "current": {
+    "checked_local_links": 131,
+    "findings": []
+  },
+  "added_findings": [],
+  "new_receipt_readme": {
+    "checked_local_links": 6,
+    "findings": []
+  }
+}

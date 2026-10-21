@@ -1,0 +1,18 @@
+{
+  "WOODSHED_SCENARIO": "/Users/markik/Code/output/woodshed-arrangement-playback-20261019/native-run-v4/frozen/native_music_practice_reopen.scn",
+  "WOODSHED_CAPTURE_DIR": "/Users/markik/Code/output/woodshed-arrangement-playback-20261019/native-run-v4/reopen",
+  "WOODSHED_RECEIPT": "/Users/markik/Code/output/woodshed-arrangement-playback-20261019/native-run-v4/reopen/scenario.done",
+  "WOODSHED_PRESENTATION_TIMEOUT_SECS": "60",
+  "WOODSHED_WIDTH": "1180",
+  "WOODSHED_HEIGHT": "1100",
+  "WOODSHED_STATE": "/Users/markik/Code/output/woodshed-arrangement-playback-20261019/native-run-v4/profile/practice.bin",
+  "WOODSHED_SETTINGS": "/Users/markik/Code/output/woodshed-arrangement-playback-20261019/native-run-v4/profile/settings.json",
+  "WOODSHED_APPEARANCE_RECEIPT": "1",
+  "WOODSHED_MUSIC_PRACTICE_RECEIPT": "1",
+  "GRAPHSHELL_APP_ENDPOINT": "/tmp/woodshed-music-practice-v4-20261019.sock",
+  "TMPDIR": "/tmp",
+  "XDG_DATA_HOME": "/Users/markik/Code/output/woodshed-arrangement-playback-20261019/native-run-v4/data",
+  "XDG_CONFIG_HOME": "/Users/markik/Code/output/woodshed-arrangement-playback-20261019/native-run-v4/config",
+  "XDG_CACHE_HOME": "/Users/markik/Code/output/woodshed-arrangement-playback-20261019/native-run-v4/cache",
+  "MERE_ROOT": "/Users/markik/Code/output/woodshed-arrangement-playback-20261019/native-run-v4/mere"
+}

@@ -59,6 +59,8 @@ pub struct PersonaSwitch {
     /// Shown so the confirmation is about a concrete thing the user has
     /// already given people, not an abstraction.
     pub losing_token: String,
+    /// The exact family contact token whose acceptance is being confirmed.
+    pub gaining_token: String,
 }
 
 struct PendingProject {
@@ -559,15 +561,29 @@ impl AppState {
     /// Reads the cost off the identity rather than describing it in the
     /// abstract: the token that stops working is the one on screen.
     pub fn offer_persona_switch(&mut self) {
-        let Ok(identity) = self.identity.as_ref() else {
-            return;
-        };
-        let Some(profile) = identity.family_to_join() else {
-            return;
+        let (profile, gaining_token, losing_token) = match self.identity.as_ref() {
+            Ok(identity) => match identity.family_offer() {
+                Ok((profile, gaining_token)) => {
+                    (profile, gaining_token, identity.contact_token())
+                },
+                Err(error) => {
+                    self.persona_switch = None;
+                    self.project_status =
+                        ProjectStatus::Error(format!("persona offer unavailable: {error}"));
+                    return;
+                },
+            },
+            Err(error) => {
+                self.persona_switch = None;
+                self.project_status =
+                    ProjectStatus::Error(format!("persona offer unavailable: {error}"));
+                return;
+            },
         };
         self.persona_switch = Some(PersonaSwitch {
-            profile: profile.to_string(),
-            losing_token: identity.contact_token(),
+            profile,
+            losing_token,
+            gaining_token,
         });
     }
 
@@ -595,14 +611,20 @@ impl AppState {
     /// invalidated the token every peer holds and saying so is the only thing
     /// that makes the change recoverable for them.
     pub fn confirm_persona_switch(&mut self) {
-        let Some(_staged) = self.persona_switch.take() else {
+        let Some(staged) = self.persona_switch.as_ref() else {
             return;
         };
-        let Ok(identity) = self.identity.as_mut() else {
-            return;
+        let result = match self.identity.as_mut() {
+            Ok(identity) => identity.join_family(
+                &staged.profile,
+                &staged.gaining_token,
+                &staged.losing_token,
+            ),
+            Err(error) => Err(personae::IdentityError::Backend(error.clone())),
         };
-        match identity.join_family() {
+        match result {
             Ok(()) => {
+                self.persona_switch = None;
                 self.retire_project_work();
                 self.reshare_notice = true;
                 // The addressed reply belonged to the old identity's
@@ -611,6 +633,8 @@ impl AppState {
                 self.recipient = None;
             },
             Err(error) => {
+                self.project_status =
+                    ProjectStatus::Error(format!("persona offer expired: {error}"));
                 eprintln!("[hocket] could not join the family persona: {error}");
             },
         }
@@ -714,11 +738,18 @@ impl AppState {
                 Ok(_report) => {
                     self.stop_all();
                     self.retire_project_work();
+                    let missing_media = bundle
+                        .session
+                        .phrases
+                        .values()
+                        .map(|phrase| phrase.media)
+                        .filter(|reference| media.get(reference).is_none())
+                        .collect();
                     self.recorder.replace_project(
                         bundle.session,
                         bundle.history,
                         media,
-                        self.recorder.missing_media.clone(),
+                        missing_media,
                     );
                     self.recorder.audio_pack = bundle.audio_pack;
                     self.recipient = Some(sender);
@@ -1231,10 +1262,6 @@ impl AppState {
 
     pub fn output_device_options(&self) -> Vec<String> {
         audio_device_options(&self.audio_devices.outputs)
-    }
-
-    pub fn audio_status_label(&self) -> &str {
-        self.recorder.audio_status_label()
     }
 
     /// Service the host adapter and device-free recorder controller.

@@ -12,6 +12,7 @@
 pub mod appearance;
 pub mod demo;
 pub mod fretboard_leaf;
+pub mod notation_leaf;
 pub mod persona;
 pub mod settings_provider;
 pub mod stage;
@@ -19,6 +20,3 @@ pub mod theme;
 pub mod workspace;
 
 pub use cambium;
-
-/// The same notation widget used by Graphshell.
-pub use woodshed_notation as notation_leaf;

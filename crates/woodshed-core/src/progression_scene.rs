@@ -58,8 +58,8 @@ pub fn progression_scene(
         });
         occurrences.push(TemplateOccurrence {
             key:format!("bar-{i}"),
-            source:SourceRef {adapter:"woodshed.chord".into(),id:if bar.chord_label.is_empty(){"rest".into()}else{format!("{}:{}",bar.root_pc,bar.formula_name)}},
-            label:if bar.chord_label.is_empty(){"Rest".into()}else{bar.chord_label.clone()},
+            source:SourceRef {adapter:"woodshed.chord".into(),id:if bar.is_silent(){"rest".into()}else{format!("{}:{}",bar.root_pc,bar.formula_name)}},
+            label:if bar.is_silent(){"Rest".into()}else{bar.chord_label.clone()},
             detail:format!("{}#bar={} · {} · {} beats × {} bars · {} BPM · ordinal alignment supplied by Woodshed",reading_id,i,bar.label,bar.beats,bar.length,bar.bpm),
             placement:Some(Placement {lane:0,span}),slot:Some(slot),
         });

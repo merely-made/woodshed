@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "run_id": "midi-publication-doc-links",
+  "command": [
+    "python3",
+    "-c",
+    "from pathlib import Path\nimport importlib.util,json\ns=importlib.util.spec_from_file_location(\"links\",\"validation/link-model-p6_20261016/doc_link_audit.py\");m=importlib.util.module_from_spec(s);s.loader.exec_module(m)\nnames=[\"design_docs/DOC_README.md\",\"design_docs/2026-10-16_source_authority_audit_plan.md\",\"validation/full-source-audit_20261016/README.md\"]\nb=m.scan(Path(\".\"),names,\"b2fe4df\");n=m.scan(Path(\".\"),names+[\"validation/midi-admission_20261019/README.md\"])\nassert not b[\"findings\"] and not n[\"findings\"],(b,n)\nprint(json.dumps({\"baseline\":b,\"published_documents\":n},indent=2))\n"
+  ],
+  "started_at": "2026-10-20T19:40:27.905029Z",
+  "ended_at": "2026-10-20T19:40:31.643841Z",
+  "exit_code": 1,
+  "cwd": "/Users/markik/Code/worktrees/woodshed-b6-20261019",
+  "log": "/Users/markik/Code/testing/woodshed/midi-publication-20261020/doc-links.log",
+  "log_sha256": "03d9723bc5ea4929fcc733db285e007b74fa8f19ca2d969237cc7962b9574259",
+  "source_commit": "20bcc1c362407f35bc26dac8b63e30e7befebec9"
+}

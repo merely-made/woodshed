@@ -10,8 +10,8 @@
 
 use serde::{Deserialize, Serialize};
 
-use crate::{format_role, StageState};
-use woodshedding::chord::{catalog as chord_catalog, ChordFormula};
+use crate::{StageState, format_role};
+use woodshedding::chord::{ChordFormula, catalog as chord_catalog};
 use woodshedding::pitch::{Pitch, Spelling};
 use woodshedding::progression::catalog as progression_catalog;
 use woodshedding::scale::catalog as scale_catalog;
@@ -22,15 +22,19 @@ pub struct SongBar {
     /// Section / role label ("I", "Chorus"); doubles as the section
     /// marker in the timeline.
     pub label: String,
-    /// Chord display label ("A", "Dm7"); empty = silent bar.
+    /// Authored chord display label ("A", "Dm7"), retained while muted.
     pub chord_label: String,
     /// Chord catalog key for backends that re-derive ("Major", "Minor 7").
     pub formula_name: String,
+    /// Whether this bar is explicitly muted. Older playback admitted a chord
+    /// only when its root frequency was positive, which `is_silent` retains.
+    #[serde(default)]
+    pub silent: bool,
     /// Root pitch class (0 = C .. 11 = B), the editor's handle. Serde
     /// default keeps older saves (which predate the field) loading.
     #[serde(default)]
     pub root_pc: u8,
-    /// Root frequency in Hz (0.0 = silent bar, click only).
+    /// Authored root frequency in Hz; legacy zero-root bars remain inaudible.
     pub root_freq_hz: f32,
     /// Pre-computed chord-tone frequencies, lowest first.
     pub pitches_hz: Vec<f32>,
@@ -50,6 +54,7 @@ impl Default for SongBar {
             label: String::new(),
             chord_label: String::new(),
             formula_name: "Major".to_string(),
+            silent: false,
             root_pc: 0,
             root_freq_hz: 0.0,
             pitches_hz: Vec::new(),
@@ -63,6 +68,13 @@ impl Default for SongBar {
 }
 
 impl SongBar {
+    /// Whether playback should omit this bar's chord while retaining its
+    /// authored voicing for a later unmute. The positive-root check matches
+    /// legacy playback, including custom/empty-formula bars.
+    pub fn is_silent(&self) -> bool {
+        self.silent || !(self.root_freq_hz > 0.0)
+    }
+
     /// The root pitch for this bar's `root_pc` (C-relative, octave 3).
     fn root_pitch(&self) -> Pitch {
         Pitch::from_midi(
@@ -85,8 +97,8 @@ impl SongBar {
     }
 
     /// Recompute `root_freq_hz`, `pitches_hz`, and `chord_label` from the
-    /// current `root_pc` + `formula_name`. Called after any chord edit; a
-    /// silent bar (empty formula) clears the voicing.
+    /// current `root_pc` + `formula_name`. An empty formula clears authored
+    /// voicing. Chord edits leave the explicit mute state unchanged.
     pub fn revoice(&mut self) {
         if self.formula_name.is_empty() {
             self.root_freq_hz = 0.0;
@@ -114,7 +126,7 @@ impl SongBar {
     }
 
     /// Cycle the chord quality through the catalog (revoicing). An empty
-    /// `formula_name` (silent) re-enters at the first catalog entry.
+    /// `formula_name` re-enters at the first catalog entry.
     pub fn cycle_formula(&mut self) {
         let names: Vec<&str> = chord_catalog().iter().map(|c| c.name).collect();
         let next = match names.iter().position(|n| *n == self.formula_name.as_str()) {
@@ -125,15 +137,15 @@ impl SongBar {
         self.revoice();
     }
 
-    /// Toggle between the current chord and a silent (click-only) bar,
-    /// remembering the chord so toggling back restores it.
+    /// Toggle chord playback without changing any authored chord payload.
+    /// An old inaudible bar with no chord payload remains a rest when unmuted;
+    /// the toggle never invents a chord or rewrites authored fields.
     pub fn toggle_silent(&mut self) {
-        if self.formula_name.is_empty() {
-            self.formula_name = "Major".to_string();
+        if self.is_silent() {
+            self.silent = false;
         } else {
-            self.formula_name.clear();
+            self.silent = true;
         }
-        self.revoice();
     }
 
     pub fn nudge_bpm(&mut self, delta: f32) {
@@ -250,6 +262,7 @@ pub fn song_from_progression(state: &StageState, bpm: f32) -> Option<SongDoc> {
                 label: format_role(&c.role),
                 chord_label: String::new(),
                 formula_name: c.formula.name.to_string(),
+                silent: false,
                 root_pc: c.root.pitch_class(),
                 root_freq_hz: 0.0,
                 pitches_hz: Vec::new(),
@@ -304,11 +317,153 @@ mod tests {
         bar.cycle_formula(); // Major -> next (Minor)
         assert_ne!(bar.formula_name, "Major");
         assert!(bar.root_freq_hz > 0.0);
+        let authored = bar.clone();
         bar.toggle_silent();
-        assert_eq!(bar.root_freq_hz, 0.0, "silent clears voicing");
-        assert!(bar.chord_label.is_empty());
+        assert!(bar.is_silent());
+        assert_eq!(
+            (
+                bar.chord_label.as_str(),
+                bar.formula_name.as_str(),
+                bar.root_pc
+            ),
+            (
+                authored.chord_label.as_str(),
+                authored.formula_name.as_str(),
+                authored.root_pc
+            ),
+            "mute retains authored chord identity"
+        );
+        assert_eq!(bar.root_freq_hz.to_bits(), authored.root_freq_hz.to_bits());
+        assert_eq!(
+            bar.pitches_hz
+                .iter()
+                .map(|pitch| pitch.to_bits())
+                .collect::<Vec<_>>(),
+            authored
+                .pitches_hz
+                .iter()
+                .map(|pitch| pitch.to_bits())
+                .collect::<Vec<_>>()
+        );
         bar.toggle_silent();
-        assert!(bar.root_freq_hz > 0.0, "toggle back restores a chord");
+        assert!(!bar.is_silent());
+        assert_eq!(bar, authored, "unmute restores the exact authored chord");
+    }
+
+    #[test]
+    fn silent_toggle_and_serde_reopen_preserve_exact_payload() {
+        let mut bar = SongBar {
+            label: "Odd meter".into(),
+            chord_label: "bespoke voicing".into(),
+            formula_name: "Custom formula".into(),
+            root_pc: 9,
+            root_freq_hz: f32::from_bits(0x4356_789a),
+            pitches_hz: vec![
+                f32::from_bits(0x42f6_e979),
+                -0.0,
+                f32::from_bits(0x447a_1234),
+            ],
+            bpm: f32::from_bits(0x42e3_8001),
+            beats: 7,
+            length: 3,
+            ..SongBar::default()
+        };
+        let authored = bar.clone();
+        bar.toggle_silent();
+        assert!(bar.is_silent());
+        let mut authored_muted = authored.clone();
+        authored_muted.silent = true;
+        assert_eq!(bar, authored_muted);
+
+        let encoded = serde_json::to_vec(&SongDoc {
+            bars: vec![bar],
+            ..SongDoc::default()
+        })
+        .unwrap();
+        let reopened: SongDoc = serde_json::from_slice(&encoded).unwrap();
+        let reopened = &reopened.bars[0];
+        assert!(reopened.is_silent());
+        assert_eq!(reopened.chord_label, authored.chord_label);
+        assert_eq!(reopened.formula_name, authored.formula_name);
+        assert_eq!(reopened.root_pc, authored.root_pc);
+        assert_eq!(
+            reopened.root_freq_hz.to_bits(),
+            authored.root_freq_hz.to_bits()
+        );
+        assert_eq!(
+            reopened
+                .pitches_hz
+                .iter()
+                .map(|pitch| pitch.to_bits())
+                .collect::<Vec<_>>(),
+            authored
+                .pitches_hz
+                .iter()
+                .map(|pitch| pitch.to_bits())
+                .collect::<Vec<_>>()
+        );
+        assert_eq!(reopened.bpm.to_bits(), authored.bpm.to_bits());
+        assert_eq!(
+            (reopened.beats, reopened.length),
+            (authored.beats, authored.length)
+        );
+
+        let mut reopened = reopened.clone();
+        reopened.toggle_silent();
+        assert_eq!(reopened, authored);
+    }
+
+    #[test]
+    fn legacy_song_bars_admit_voiced_and_silent_payloads() {
+        let voiced: SongBar = serde_json::from_value(serde_json::json!({
+            "label": "old", "chord_label": "Dm", "formula_name": "Minor",
+            "root_pc": 2, "root_freq_hz": 146.83, "pitches_hz": [146.83, 174.61],
+            "bpm": 96.0, "beats": 3, "length": 2
+        }))
+        .unwrap();
+        assert!(!voiced.is_silent());
+        assert!(!voiced.silent, "missing marker defaults to voiced");
+
+        let legacy_custom_voiced: SongBar = serde_json::from_value(serde_json::json!({
+            "label": "old custom", "chord_label": "", "formula_name": "",
+            "root_pc": 0, "root_freq_hz": 220.0, "pitches_hz": [220.0, 330.0],
+            "bpm": 120.0, "beats": 4, "length": 1
+        }))
+        .unwrap();
+        assert!(
+            !legacy_custom_voiced.is_silent(),
+            "legacy playback admitted positive-root custom voicings regardless of formula/display text"
+        );
+
+        let silent: SongBar = serde_json::from_value(serde_json::json!({
+            "label": "old silent", "chord_label": "", "formula_name": "",
+            "root_pc": 0, "root_freq_hz": 0.0, "pitches_hz": [],
+            "bpm": 120.0, "beats": 4, "length": 1
+        }))
+        .unwrap();
+        assert!(silent.is_silent(), "legacy no-root bar stays silent");
+        let mut silent = silent;
+        silent.toggle_silent();
+        assert!(
+            silent.is_silent(),
+            "unmuting a no-payload rest cannot invent sound"
+        );
+        assert!(silent.formula_name.is_empty());
+    }
+
+    #[test]
+    fn chord_edits_while_silent_update_voicing_without_unmuting() {
+        let mut bar = SongBar::default();
+        bar.toggle_silent();
+        bar.cycle_root();
+        assert!(bar.is_silent());
+        assert_eq!(bar.root_pc, 1);
+        assert_eq!(bar.chord_label, "C#");
+        assert!(bar.root_freq_hz > 0.0);
+        let mut edited_payload = bar.clone();
+        bar.toggle_silent();
+        edited_payload.silent = false;
+        assert_eq!(bar, edited_payload);
     }
 
     #[test]

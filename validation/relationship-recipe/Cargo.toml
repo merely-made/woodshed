@@ -12,7 +12,7 @@ publish = false
 woodshed-core = { path = "../../crates/woodshed-core" }
 woodshedding = { path = "../../crates/woodshedding" }
 woodshed-views = { path = "../../crates/woodshed-views" }
-muniment = { git = "https://github.com/merely-made/mere.git", branch = "main" }
+muniment = { git = "https://github.com/merely-made/eidetic.git", rev = "738ef15956a29a125820b2d6c2280d39a6214f8e" }
 personae = { git = "https://github.com/merely-made/dramatis.git", branch = "main" }
 async-trait = "0.1"
 # woodshed-genet's storage.rs (included below by path) reaches djinn through Graphshell's application door.
@@ -27,7 +27,11 @@ serde_json = "1"
 tempfile = "3"
 
 [patch.crates-io]
-muniment = { git = "https://github.com/merely-made/mere.git", branch = "main" }
+# Promoted sources shared with immutable older Mere suppliers.
+# Canonical promoted families; keep registry and Git consumers type-identical.
+chartulary = { git = "https://github.com/merely-made/eidetic.git", rev = "738ef15956a29a125820b2d6c2280d39a6214f8e" }
+eidetic = { git = "https://github.com/merely-made/eidetic.git", rev = "738ef15956a29a125820b2d6c2280d39a6214f8e" }
+muniment = { git = "https://github.com/merely-made/eidetic.git", rev = "738ef15956a29a125820b2d6c2280d39a6214f8e" }
 
 # Shared view and graph tests use the same provider as the production host.
 netrender-vello = { git = "https://github.com/mark-ik/vello", rev = "276b46648c08f3d2062e70559afa999842e1873c" }
@@ -42,8 +46,15 @@ rust-version = "1.97.1"
 
 # Root patches are not inherited from the imported Murm suppliers.
 [patch."https://github.com/merely-made/mere.git"]
+# Promoted sources shared with immutable older Mere suppliers.
+chartulary = { git = "https://github.com/merely-made/eidetic.git", rev = "738ef15956a29a125820b2d6c2280d39a6214f8e" }
+eidetic = { git = "https://github.com/merely-made/eidetic.git", rev = "738ef15956a29a125820b2d6c2280d39a6214f8e" }
+muniment = { git = "https://github.com/merely-made/eidetic.git", rev = "738ef15956a29a125820b2d6c2280d39a6214f8e" }
 insigne = { git = "https://github.com/merely-made/dramatis.git", branch = "main" }
-mere-transport = { git = "https://github.com/merely-made/murm.git", branch = "main" }
 notochord = { git = "https://github.com/merely-made/dramatis.git", branch = "main" }
 personae = { git = "https://github.com/merely-made/dramatis.git", branch = "main" }
-mere-webrtc-carrier = { git = "https://github.com/merely-made/murm.git", branch = "main" }
+
+[patch."https://www.github.com/merely-made/mere.git"]
+chartulary = { git = "https://github.com/merely-made/eidetic.git", rev = "738ef15956a29a125820b2d6c2280d39a6214f8e" }
+eidetic = { git = "https://github.com/merely-made/eidetic.git", rev = "738ef15956a29a125820b2d6c2280d39a6214f8e" }
+muniment = { git = "https://github.com/merely-made/eidetic.git", rev = "738ef15956a29a125820b2d6c2280d39a6214f8e" }

@@ -101,6 +101,21 @@ The requested four-hour display/system sleep assertion runs independently until
 2026-10-11 20:21:46 UTC (4:21 p.m. Eastern). It prevents idle sleep; it does not
 unlock the Mac or disable authentication.
 
+## Foundation supplier intake — 2026-10-19
+
+The root, Hocket, Redshank and relationship-recipe manifests now pin the
+repaired Eidetic, Gemot, ESP and Armillary cohort. Cargo-generated locks were
+refreshed, including Hocket's Mere SDK intake at `4d60510c` for its Cambium
+0.4.0 and Sprigging 0.2.2 constraints. Locked, offline metadata resolves one
+source per active family in all four graphs, with no local path overrides.
+Woodshed, Redshank and the recipe retain Mere `48fd3385`; Hocket resolves Mere
+`4d60510c`. The exact graph identities and focused check receipts are recorded
+in [supplier-intake-20261019.json](supplier-intake-20261019.json).
+
+The focused root core/graph test passes 331 cases. Hocket, Redshank and the
+relationship-recipe workspace checks pass. These gates validate the CPU and
+dependency graph intake; they do not add a native or device qualification.
+
 
 ## Later port reopen evidence
 

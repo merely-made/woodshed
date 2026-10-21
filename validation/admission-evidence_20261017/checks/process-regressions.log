@@ -1,0 +1,19 @@
+test_capture_cli_preserves_nonzero_exit (test_evidence_process.ProcessEvidenceTests) ... ok
+test_capture_cli_records_real_exit_and_validates_its_log (test_evidence_process.ProcessEvidenceTests) ... ok
+test_capture_cli_refuses_existing_log_and_receipt (test_evidence_process.ProcessEvidenceTests) ... ok
+test_capture_cli_times_out_after_child_closes_output (test_evidence_process.ProcessEvidenceTests) ... ok
+test_ci_writer_requires_evidence_and_never_replaces_existing_output (test_evidence_process.ProcessEvidenceTests) ... ok
+test_ci_writer_validates_temporary_receipts_end_to_end (test_evidence_process.ProcessEvidenceTests) ... ok
+test_late_failed_suite_is_rejected (test_evidence_process.ProcessEvidenceTests) ... ok
+test_missing_or_mismatched_receipt_is_rejected (test_evidence_process.ProcessEvidenceTests) ... ok
+test_nested_child_summaries_close_without_double_counting_parent (test_evidence_process.ProcessEvidenceTests) ... ok
+test_nonzero_wrapper_after_passing_summaries_is_rejected (test_evidence_process.ProcessEvidenceTests) ... ok
+test_running_suite_without_outcome_is_rejected (test_evidence_process.ProcessEvidenceTests) ... ok
+test_truncated_log_is_rejected (test_evidence_process.ProcessEvidenceTests) ... ok
+test_unordered_timestamps_are_rejected (test_evidence_process.ProcessEvidenceTests) ... ok
+test_valid_run (test_evidence_process.ProcessEvidenceTests) ... ok
+
+----------------------------------------------------------------------
+Ran 14 tests in 1.852s
+
+OK

@@ -304,7 +304,10 @@ fn start_preview(
 
     let audio = backend.borrow().audio_handle();
     let fetch = backend.borrow().fetch_handle();
-    let preview_backend = Rc::new(RefCell::new(Backend::with_audio(audio, fetch)));
+    let blobs = backend.borrow().blob_reader();
+    let preview_backend = Rc::new(RefCell::new(
+        Backend::with_audio(audio, fetch).with_blobs(blobs),
+    ));
     let preview_controller = controller_adapter::controller(preview_backend.clone());
     *preview = Some(PreviewSession {
         id: id.clone(),
@@ -503,8 +506,9 @@ fn run_session(
     receiver: &mpsc::Receiver<PlaybackCommand>,
     snapshot: Arc<Mutex<SnapshotCell>>,
     fetch: Arc<dyn Fetch>,
+    blobs: Option<crate::HostBlobReader>,
 ) {
-    let backend = Rc::new(RefCell::new(Backend::new(fetch)));
+    let backend = Rc::new(RefCell::new(Backend::new(fetch).with_blobs(blobs)));
     let mut controller = controller_adapter::controller(backend.clone());
     let mut token = None;
     let mut preview = None;
@@ -862,10 +866,16 @@ pub(super) fn run(
     receiver: mpsc::Receiver<PlaybackCommand>,
     snapshot: Arc<Mutex<SnapshotCell>>,
     fetch: Arc<dyn Fetch>,
+    blobs: Option<crate::HostBlobReader>,
 ) {
     loop {
         if catch_unwind(AssertUnwindSafe(|| {
-            run_session(&receiver, Arc::clone(&snapshot), fetch.clone());
+            run_session(
+                &receiver,
+                Arc::clone(&snapshot),
+                fetch.clone(),
+                blobs.clone(),
+            );
         }))
         .is_ok()
         {

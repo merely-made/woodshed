@@ -218,6 +218,61 @@ fn unchanged_saved_head_imports_retained_branch_and_media_as_dirty() {
     assert!(!state.request_project_close());
 }
 
+#[test]
+fn same_session_import_restores_one_missing_phrase_and_keeps_local_missing_facts() {
+    let (mut state, _requests) = fixture();
+    let mut sender_media = InMemoryStore::new();
+    let restored_pcm = vec![0.5, -0.25, 0.75, -1.0];
+    let restored = sender_media.put(&restored_pcm, 48_000);
+    let phrase = hocket_model::Phrase::new(restored, 4, state.recorder.session.bpm, 10);
+    let layer = hocket_model::Layer::new(phrase.id);
+    state.recorder.history.commit(hocket_model::Edit::AppendLayer {
+        track_id: state.recorder.session.tracks[0].id, phrase, layer,
+    }, &mut state.recorder.session, 10);
+    let sender_bundle = ProjectBundle::new(
+        state.recorder.session.clone(), state.recorder.history.clone(),
+    );
+    let accepted_head = sender_bundle.history.head;
+
+    // The local project also retains a branch the sender has never seen.
+    // Both referenced blobs are missing locally, as after a partial-media open.
+    let mut absent_media = InMemoryStore::new();
+    let still_missing = absent_media.put(&[0.125, -0.375], 48_000);
+    let local_phrase = hocket_model::Phrase::new(
+        still_missing, 4, state.recorder.session.bpm, 20,
+    );
+    let local_layer = hocket_model::Layer::new(local_phrase.id);
+    state.recorder.history.commit(hocket_model::Edit::AppendLayer {
+        track_id: state.recorder.session.tracks[0].id,
+        phrase: local_phrase, layer: local_layer,
+    }, &mut state.recorder.session, 20);
+    let local_head = state.recorder.history.head;
+    let retained_pcm = vec![0.0625, -0.0625];
+    let retained = state.recorder.store.put(&retained_pcm, 48_000);
+    state.recorder.missing_media = BTreeSet::from([restored, still_missing]);
+    // Simulate the already-opened, unchanged project without a save or device.
+    state.saved_revision = ProjectRevision::current(&state.recorder);
+    assert!(!state.is_dirty());
+    assert!(state.recorder.store.get(&restored).is_none());
+
+    let identity = personae::InMemoryProvider::from_seed([29; 32]);
+    let key = identity.master_public_key();
+    let envelope = HandoffEnvelope::create(
+        &sender_bundle, &sender_media, key, &identity,
+    ).unwrap();
+    state.incoming = Some(envelope.receive(key).unwrap());
+    state.accept_incoming();
+
+    assert_eq!(state.recorder.history.head, accepted_head);
+    assert!(state.recorder.history.nodes.contains_key(&local_head));
+    assert!(state.recorder.session.phrases.values().any(|p| p.media == still_missing));
+    assert_eq!(state.recorder.missing_media, BTreeSet::from([still_missing]));
+    assert_eq!(state.recorder.store.get(&restored).unwrap().samples, restored_pcm);
+    assert_eq!(state.recorder.store.get(&retained).unwrap().samples, retained_pcm);
+    assert!(state.recorder.store.get(&still_missing).is_none());
+    assert!(state.is_dirty());
+}
+
 /// Real recorder services, fake device execution. A stopped free capture emits
 /// its accepted token back through the normal promotion path.
 #[derive(Default)]

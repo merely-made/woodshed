@@ -1,3 +1,9 @@
+- [Canonical arrangement practice](2026-07-11_stage_set_tools_plan.md#canonical-music-integration-and-arrangement-practice-2026-10-19) — Qualified from real Git suppliers: 732 Woodshed cases, 13 supplier cases, two native processes and ten captures. MusicXML drives sample-clock practice, next-bar edits, shared 1–400 BPM tempo, Set repeat and contextual fretboard views; exact XML reopens stopped. [Receipt](../validation/native-music-practice_20261019/README.md).
+
+- [Native MusicXML arrangement editing](2026-07-11_stage_set_tools_plan.md#native-notation-led-music-editing-2026-10-18) — Bounded native Chart/Tab/Score and linked fretboard, click/add and drag/move, explicit picking previews, Set save/reopen and MusicXML export. Qualified on the local supplier cohort: 60 focused cases, two native processes, 12 reviewed captures, seven schema/reader/semantic export checks and exact saved-source reopening. Canonical integration and practice are qualified in the entry above. [Receipt](../validation/native-musicxml_20261018/README.md).
+
+- [Independent progression document blocks](2026-07-11_stage_set_tools_plan.md#shared-scene-prototype-review-2026-10-17) — Current-source second-consumer proof for the shared Djot scene-document codec: real Card/rest/voicing facts round-trip without changing a Set, and Graphshell receives the actual export. Local supplier cohort only; native Woodshed block authoring and canonical dependency integration remain separate. [Receipt](../validation/document-blocks_20261017/receipt.json).
+
 # design_docs Index
 
 Rust policy (2026-10-13): working toolchain 1.99.0 and shared MSRV 1.97.1, qualified separately. Canonical policy: `mere/design_docs/2026-08-12_family_composition_thesis_brief.md`, section "Shared Rust toolchain and minimum version".
@@ -18,8 +24,6 @@ before any other doc in this directory.
 - [DOC_POLICY.md](DOC_POLICY.md) — Documentation governance.
 
 ## Active Plans
-
-- [Shared notation readings in Graphshell](2026-07-11_stage_set_tools_plan.md#adr-shared-notation-readings-in-graphshell-2026-10-19) — Accepted pure-model/shared-leaf boundary; canonical main source integration, explicit MusicXML creation, and selectable Chart/Tab/Score. Qualification and publication limits are recorded with the implementation.
 
 - [Shared data-defined audio packs](2026-09-09_audio_ports_rehome_plan.md#shared-data-defined-audio-packs-2026-10-19)
   — **AP1/AP2 implemented; AP3 bounded macOS/guitar acceptance (2026-10-20).** Shared
@@ -53,7 +57,12 @@ before any other doc in this directory.
   fourteen native captures).
 
 
-- [Source authority audit and remediation](2026-10-16_source_authority_audit_plan.md) — Frozen collective read complete: 937 files / 231,190 lines, plus separate 33-file P5a overlay. All 93 raw finding entries reconciled against later work with qualification limits; remediation remains open. [Audit record](../validation/full-source-audit_20261016/README.md). Coordination closure published through `8204688`.
+
+- [A1–A5 and Q1 current-source recheck](../validation/first-wave-recheck_20261020/README.md) — October 20 parallel recheck from fetched `9f80bb5e`: existing first-wave fixes retained, selected-persona admission and strict audio diagnostic result published through `cb4ed31` on October 21. 1,020 distinct CPU passes, nine existing ignores and five child invocations counted separately; 50 focused publication reruns and fresh remote source/evidence verification also pass. [Publication](../validation/first-wave-recheck_20261020/publication.json). P5a remains with its existing owner; no new native/device qualification. Current phase and ownership are in the [source authority plan](2026-10-16_source_authority_audit_plan.md#p10-recheck-a1a5-and-q1-against-current-source-2026-10-20).
+
+- [Shared notation readings in Graphshell](2026-07-11_stage_set_tools_plan.md#adr-shared-notation-readings-in-graphshell-2026-10-19) — Accepted pure-model/shared-leaf boundary; canonical main source integration, explicit MusicXML creation, and selectable Chart/Tab/Score. Qualification and publication limits are recorded with the implementation.
+
+- [Source authority audit and remediation](2026-10-16_source_authority_audit_plan.md) — Frozen collective read complete: 937 files / 231,190 lines, plus separate 33-file P5a overlay. All 93 raw finding entries reconciled against later work with qualification limits; remediation remains open. [Audit record](../validation/full-source-audit_20261016/README.md). Coordination closure published through `8204688`. H3/H5 and Q1 now have a separate CPU-qualified [implementation receipt](../validation/admission-evidence_20261017/README.md): 114 distinct passes, published through `6e6498a`; native custody/reopen remains separate. B1–B3 have a separate published [runtime receipt](../validation/runtime-authority_20261018/README.md): 859 parent/library passes plus five child invocations, published through `b1c9dfd`; native qualification remains separate. B4 finite PCM, onset accounting and calibration support are CPU qualified at `5dd01ae`, published through `8da953b`: 308 distinct passes across primitives, Woodshed audio and Hocket engine; [receipt](../validation/pcm-timing_20261018/README.md). B5 shared Recorder SelectOne admission is CPU qualified at `b804d901`, published through `4fab895`: 176 distinct passes, two existing ignores and three reproduced baseline bypass failures; [receipt](../validation/recorder-select-one_20261019/README.md). Requested B6 tempo replay and wrapper diagnostics are CPU qualified at `7b161a9`, published through `fd9fb82`: 171 distinct passes and two existing ignores; [receipt](../validation/recorder-runtime_20261019/README.md). The original B6 receipt records its shared-view unit paint API blockage on that tested cohort. Historical B6 MIDI H6–H9 are scoped CPU qualified at `480c0d6`, published through `20bcc1c`: 42 distinct passes; [receipt](../validation/midi-admission_20261019/README.md). Supplier intake and native validation remain separate.
 
 
 - [Related graph label placement](2026-07-11_stage_set_tools_plan.md#p8-adaptive-polish-and-release-acceptance) — Locally qualified shared Cambium label collision repair: 640 affected passes, desktop build and 16 native captures; published through `8204688` (Mere `c8d316b60`). Narrow toolbar/125% graph clipping remains P8 work. [Receipt](../validation/related-labels_20261017/README.md).
@@ -80,6 +89,12 @@ before any other doc in this directory.
 
 - [Shared span-edit intents with metre](2026-07-11_stage_set_tools_plan.md#shared-span-intents-with-authored-metre-2026-10-17) — Adopted on shared Mere `4c4ea11d8`; nine locked arrangement-editor route/model cases pass with forged-intent and stale gesture controls. Domain validation and explicit Save remain in Woodshed. [Receipt](../validation/shared-span-intents_20261017/receipt.json).
 
+- [Relationship source return](2026-10-19_relationship_source_return_plan.md) — Implemented and qualified in an isolated checkout: direct/member source return reuses one reading and current source while preserving selection installation and refusal order; 312 frozen observations match, 313 core and 306 view tests pass. Widths 2/3/64 prove one v3 selection resolution. Evidence stays in testing.
+
+- [Relationship passage selection construction](2026-10-19_passage_selection_plan.md) — Implemented and qualified locally: one selected-material resolution and one occurrence dataset per passage; 38 frozen differential cases, 306 core and 254 receiving view tests pass. Widths 2/3/64 prove construction counts; public APIs, legacy policies and feature-disabled core remain. Publication is separate; evidence stays in testing.
+
+- [Arrangement authoring observations](2026-10-19_arrangement_observation_plan.md) — Implemented and qualified: typed draft baselines and one captured owner/Set/draft observation for gesture/preview checks. 254 view, three mounted-host and five persistence/export tests pass, including ten new guard regressions and fresh CLI processes. Explicit Save, full-Set guards and host persistence remain. This commit records the qualified consolidation; a native GUI rerun remains separate. Evidence stays in testing.
+
 - [Native arrangement editor and panel](2026-07-11_stage_set_tools_plan.md#native-arrangement-editor-and-panel-2026-10-16) — Qualified on macOS: per-Set drafts, role/Card/rest editing and linked saved voicings over the shared scene surface; 393 parent-suite cases plus five child invocations, desktop build, two sealed native processes and 12 reviewed wide/narrow captures with exact Set/document reopening. [Receipt](../validation/native-arrangement_20261016/receipt.json). The shared-height spacing follow-up passes 214 view and two host cases, with three reviewed native captures. [Spacing receipt](../validation/native-arrangement-spacing_20261016/receipt.json). Direct span manipulation is also qualified: captured move/resize, keyboard controls and cancellation; 14 focused cases, two native processes, five reviewed captures and exact sealed Set/document reopening. [Span editing receipt](../validation/native-arrangement-spans_20261016/README.md).
 
 - [Saved progression arrangements](2026-07-11_stage_set_tools_plan.md#saved-progression-arrangements-and-portable-export-2026-10-16) — Qualified: Set-owned musical alignment, identity-safe snapshot copies and explicit session exchange export to Graphshell; 656 suite cases, feature-disabled retention, fresh CLI processes and browser receiving.
@@ -97,6 +112,7 @@ before any other doc in this directory.
 - [2026-10-15_woodshed_codex_handoff.md](2026-10-15_woodshed_codex_handoff.md) — **Handoff for Codex.** Where Woodshed, Hocket, Redshank and Firewheel stand after the Graphshell lift (door, P2 canvas receipt `4005c5a`), the binding rulings, and ordered tasks: join the repin round (remote mere route spec §7.6; Murm `main` `fb6360c12b`), move bar length to Hocket's rule, the shared pure-state DSP crate, and the loop-take node checks. Lists what waits on design or other lanes, and the native-run traps.
 
 - [2026-10-08_tabard_adoption_plan.md](2026-10-08_tabard_adoption_plan.md) — Shared appearance authoring and native title-bar adoption in Woodshed; October 12 root font roles are qualified on the agreed Mere `8568f42` family with 556 combined CPU cases, three native font processes and 19 reviewed captures, preserving application requests, authored precedence, domain geometry and exact WAV bytes. Separate normal-output capture migration/reopen passes on the same build. Earlier qualification preserves named themes and persona settings; the October 10 coherent stack and repaired renderer pass 444 CPU tests and four native lanes with 20 reviewed captures. The October 11 Classic 0.11 family is integrated across the three independent UI workspaces: 1,454 active tests and eight native runs with 38 reviewed captures; Woodshed Set, preview/rehearsal and appearance reopening pass, and the later Hocket/Redshank appearance reopen follow-through passes with four additional reviewed captures.
+  The October 19 repaired foundation supplier intake is recorded in [the stack-family validation receipt](../validation/stack-family_20261011/README.md#foundation-supplier-intake--2026-10-19), including locked graph identities and focused check results.
 
 - [2026-09-13_redshank_gui_implementation_plan.md](2026-09-13_redshank_gui_implementation_plan.md)
   — **Active.** Implements the endorsed Redshank design canvas: fixed-height
@@ -286,13 +302,10 @@ before any other doc in this directory.
   instrument realization, progression recipes, keyboard, listening, and full
   articulation acceptance remain open.
 - [2026-08-27_smart_instrument_plan.md](2026-08-27_smart_instrument_plan.md)
-  — **W1 and W2 landed with historical hardware evidence; W3 open.** The
+  — **W1 and W2 landed and hardware-verified; W3 open.** The
   `woodshed-instrument` connection and metronome authority model work in both
   directions. Retrieval and resonance reads exist in the crate, but the crate
   is not integrated into `woodshed-views`, so there is no product surface yet.
-  Ringdown's [current client plan](../ports/ringdown/design_docs/2026-09-02_client_surface_plan.md#desktop-performance-assessment-2026-10-17)
-  prioritizes desktop performance, software pedal/Beats assessment and scripting;
-  Woodshed consumes that action surface.
 - [2026-08-12_persona_picker_plan.md](2026-08-12_persona_picker_plan.md)
   — **P1/P2 landed; P3 open.** Startup selection and a live Settings switch
   swap the sealed practice store without restart. Creating a persona inside
@@ -327,6 +340,12 @@ before any other doc in this directory.
 
 ## Current Supporting Design
 
+- [2026-10-19_fundsp_firewheel_brief.md](2026-10-19_fundsp_firewheel_brief.md)
+  — Research brief: no upstream fundsp/Firewheel integration exists (one
+  unlicensed bevy_seedling-author demo); proposes an own adapter crate with
+  block processing, event-split params and a generator-safe silence policy,
+  gated by zero-alloc, block-size invariance and live/offline parity, with
+  chord audition as first consumer. Not scheduled.
 - [2026-10-14_dsp_graphshell_hocket_survey_brief.md](2026-10-14_dsp_graphshell_hocket_survey_brief.md)
   — Verified survey of shared frame-driven DSP between Hocket and Woodshed
   (divergent capture schedules and bar-length rules, Hocket guard gaps), what
@@ -340,32 +359,7 @@ before any other doc in this directory.
   — Material and Touch reframe for the Stage/Set model; design direction, not a
   standalone implementation plan.
 - [2026-05-15_midi_design.md](2026-05-15_midi_design.md) — Current MIDI
-  transport and clock-sync reference for the landed audio implementation;
-  shared Effect Next/Previous bindings, retained preparation, existing-worker
-  triggers and same-owner JSONL scripting have bounded macOS/native/guitar
-  acceptance and 57 focused software cases. The [pedal contract](../ports/ringdown/design_docs/2026-09-02_client_surface_plan.md#software-pedal-controls-and-scripting-2026-10-20)
-  and [acceptance receipt](../ports/ringdown/validation/pedal-acceptance_20261020/README.md)
-  retain native-platform, radio-fault and timing limits. Saved keyboard/Note/CC
-  mappings now feed that same dispatcher with focused input checks; the
-  [input contract](../ports/ringdown/design_docs/2026-09-02_client_surface_plan.md#keyboard-and-incoming-controller-mappings-2026-10-20)
-  records the shared-host synthesized-press correction and native input limits.
-  [Input acceptance](../ports/ringdown/validation/pedal-input-acceptance_20261020/README.md)
-  records render-independent callback admission, explicit input reconnect repair
-  and 48 focused cases/35 exact native messages across saved/Clear/reassign
-  reopenings. Separate real-key/guitar checks finish with quiet reconnect/holds,
-  five observed single changes and one unresolved Note-triggered no-change.
-  The [Previous comparison](../ports/ringdown/design_docs/2026-09-02_client_surface_plan.md#previous-source-diagnostics-2026-10-21)
-  adds opt-in bounded input/writer/BLE history and a separate keyboard-versus-Note
-  investigation through the existing owner: 38 focused cases, eight exact native
-  receiver messages, and owner-confirmed real P/sparse Note/held Note Rev → Off.
-  The historical miss did not reproduce and remains unexplained.
-  [Desktop diagnostic controls](../ports/ringdown/design_docs/2026-09-02_client_surface_plan.md#desktop-diagnostic-controls-2026-10-21)
-  expose default-off session recording, recent history and full JSON snapshot
-  export using that same status path. The separate [diagnostic acceptance](../ports/ringdown/validation/midi-diagnostics-acceptance_20261021/README.md)
-  records 39 passing cases, native Cancel/Save, exact Status parity, default-off
-  same-profile reopen and both pending host-command close branches. Native macOS
-  Quit's modal refusal is recorded separately; Windows/Linux dialogs remain unqualified.
-
+  transport and clock-sync reference for the landed audio implementation.
 - [2026-06-15_redesign_plan.md](2026-06-15_redesign_plan.md) — Current visual
   reference; its product/navigation framing is superseded by Stage/Set/Tools.
 - [2026-05-21_arpeggio_lens_plan.md](2026-05-21_arpeggio_lens_plan.md) — Partial
@@ -454,10 +448,6 @@ section whenever a durable working insight emerges from a session.
   identify material, realize it on an instrument, arrange it into
   progressions/exercises/practice sets, and feed app shells that rehearse
   it.
-- **A MIDI send trace is not a guitar acknowledgement**: keep opt-in bounded
-  input/admission/writer/transport observations separate from owner-observed
-  effect changes. Later success does not explain an earlier unobserved action;
-  diagnostics must not add hot-path file I/O, retries or a second writer.
 - **Pure core, thin shell**: `crates/woodshedding` must remain pure data
   + math — no I/O, no UI, no audio. It may model the portable operations
   required for woodshedding, but app-specific rehearsal UI, persistence,
@@ -494,11 +484,6 @@ section whenever a durable working insight emerges from a session.
 - **Tools project shared state**: Fretboard, Metronome, and Tuner have
   standalone homes and contextual forms. Settings owns their durable
   configuration; contextual controls edit that same canonical state.
-- **Audio packs share existing owners**: bundled and user-installed data
-  definitions plus assets use one shared admission contract. Reuse the existing
-  sequencer and assess embeddable Rust suppliers before building more. Product
-  state remains authoritative and Firewheel projects prepared runtime state;
-  MIDI-file export does not require audio-device or graph ownership.
 - **Desktop first, mobile later**: ship to itch.io / Gumroad for desktop
   before attempting mobile. Mobile is a shell around the web build (see the
   genet-host plan's M track); building toward it is part of the project's
@@ -514,3 +499,5 @@ section whenever a durable working insight emerges from a session.
   apply an interval pattern). The same pattern will apply to scales and
   chords: named-scale catalog + apply-formula-to-root algorithm. Don't
   pick one over the other — they answer different questions.
+
+Foundation source adoption (2026-10-19): canonical promoted-family revisions and consumer source validation are recorded in `mere/design_docs/mere_docs/implementation_strategy/2026-10-19_family_promotion_plan.md`. Existing application and domain authority remain with their owning components.

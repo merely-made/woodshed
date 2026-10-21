@@ -264,25 +264,14 @@ impl StageState {
             },
             Material::Chord { name, root } => self.chord_visits(card, name, *root),
             Material::Riff { .. } => Ok(Vec::new()),
-            Material::Path { positions, .. } => {
-                if positions.is_empty() {
-                    return Err("Path has no positions".into());
-                }
-                let board = Fretboard::new(self.tuning(), self.fret_count);
-                let strings = self.string_count();
-                let visits = positions
-                    .iter()
-                    .filter(|(string, fret)| *string < strings && *fret <= self.fret_count)
-                    .map(|&(string, fret)| NoteVisit {
-                        pitch: board.pitch_at(string, fret).frequency() as f32,
-                        contact: (string, fret),
-                    })
-                    .collect::<Vec<_>>();
-                if visits.is_empty() {
-                    return Err("Path has no playable positions in the current setup".into());
-                }
-                Ok(visits)
-            },
+            Material::Path { .. } => Ok(self
+                .path_contact_pitches(card)?
+                .into_iter()
+                .map(|(contact, pitch)| NoteVisit {
+                    pitch: pitch.frequency() as f32,
+                    contact,
+                })
+                .collect()),
         }
     }
 
@@ -379,14 +368,14 @@ impl StageState {
             .iter()
             .copied()
             .collect::<std::collections::BTreeSet<_>>();
-        let dots = self.dots_for_card(card);
+        let dots = self.card_contact_pitches(card).unwrap_or_default();
         match card.setting.mark_mode {
             MarkMode::Off => {},
             MarkMode::Mute => {
                 let muted = dots
                     .iter()
-                    .filter(|dot| marked.contains(&(dot.string_index, dot.fret)))
-                    .map(|dot| crate::pc_from_hz(dot.frequency))
+                    .filter(|(contact, _)| marked.contains(contact))
+                    .map(|(_, frequency)| crate::pc_from_hz(*frequency))
                     .collect::<std::collections::BTreeSet<_>>();
                 visits.retain(|visit| !muted.contains(&crate::pc_from_hz(visit.pitch)));
             },
@@ -399,10 +388,10 @@ impl StageState {
                 // the authored selected physical position.
                 let mut selected = dots
                     .into_iter()
-                    .filter(|dot| marked.contains(&(dot.string_index, dot.fret)))
-                    .map(|dot| NoteVisit {
-                        pitch: dot.frequency,
-                        contact: (dot.string_index, dot.fret),
+                    .filter(|(contact, _)| marked.contains(contact))
+                    .map(|(contact, frequency)| NoteVisit {
+                        pitch: frequency,
+                        contact,
                     })
                     .collect::<Vec<_>>();
                 selected.sort_by(|a, b| a.pitch.total_cmp(&b.pitch));
@@ -412,10 +401,10 @@ impl StageState {
             MarkMode::Solo => {
                 let selected = dots
                     .into_iter()
-                    .filter(|dot| marked.contains(&(dot.string_index, dot.fret)))
-                    .map(|dot| NoteVisit {
-                        pitch: dot.frequency,
-                        contact: (dot.string_index, dot.fret),
+                    .filter(|(contact, _)| marked.contains(contact))
+                    .map(|(contact, frequency)| NoteVisit {
+                        pitch: frequency,
+                        contact,
                     })
                     .collect::<Vec<_>>();
                 let is_pattern = matches!(&card.material, Material::ScalePattern { .. });
@@ -670,8 +659,10 @@ mod tests {
 
     #[test]
     fn set_lowering_preserves_ordered_repeated_physical_visits_and_seconds() {
-        let stage = stage();
+        let mut stage = stage();
         let card = path_card(&stage, vec![(0, 1), (0, 2), (0, 1)]);
+        let expected = stage.card_voicing(&card).unwrap().0;
+        stage.set_tuning(1);
         let mut card = card;
         card.timing.hold = Hold::Seconds(3.0);
         let set = set(vec![card]);
@@ -691,6 +682,15 @@ mod tests {
         assert_eq!(lowered.events[0].contacts, vec![(0, 1)]);
         assert_eq!(lowered.events[2].contacts, vec![(0, 1)]);
         assert_eq!(lowered.events[0].pitches, lowered.events[2].pitches);
+        assert_eq!(
+            lowered
+                .events
+                .iter()
+                .map(|event| event.pitches[0])
+                .collect::<Vec<_>>(),
+            expected,
+            "generic preview and managed lowering use the same retained Path contacts"
+        );
         assert!(
             lowered
                 .events
@@ -698,6 +698,88 @@ mod tests {
                 .all(|event| event.strum_seconds == 0.0)
         );
         assert!((lowered.events[1].at - 1.0).abs() < 1e-9);
+    }
+
+    #[test]
+    fn unavailable_saved_path_contacts_refuse_display_sound_and_managed_lowering() {
+        let stage = stage();
+        let card = path_card(&stage, vec![(usize::MAX, u8::MAX)]);
+        assert!(stage.dots_for_card(&card).is_empty());
+        assert!(stage.card_voicing(&card).unwrap().0.is_empty());
+        let program = stage.practice_program(&set(vec![card]), 120.0);
+        assert!(program.cards[0].unavailable.is_some());
+        assert!(program.cards[0].events.is_empty());
+    }
+
+    #[test]
+    fn path_solo_marks_share_full_ordered_contacts_outside_viewport() {
+        let mut stage = stage();
+        let mut card = path_card(&stage, vec![(0, 1), (0, 2), (0, 1)]);
+        card.setting.mark_mode = MarkMode::Solo;
+        card.setting.marked = vec![(0, 1), (0, 2)];
+        stage.fret_start = 8;
+        stage.fret_count = 12;
+
+        assert!(stage.dots_for_card(&card).is_empty(), "viewport clips dots only");
+        let generic = stage.card_sounding_pitches(&card).unwrap().0;
+        let program = stage.practice_program(&set(vec![card]), 120.0);
+        let managed = program.cards[0]
+            .events
+            .iter()
+            .flat_map(|event| event.pitches.iter().copied())
+            .collect::<Vec<_>>();
+        assert_eq!(generic, managed);
+        assert_eq!(generic.len(), 3, "the authored repeated contact remains repeated");
+        assert_eq!(program.cards[0].events[0].contacts, vec![(0, 1)]);
+        assert_eq!(program.cards[0].events[2].contacts, vec![(0, 1)]);
+    }
+
+    #[test]
+    fn path_mute_marks_share_full_ordered_contacts_outside_viewport() {
+        let mut stage = stage();
+        let mut card = path_card(&stage, vec![(0, 1), (0, 2), (0, 1)]);
+        card.setting.mark_mode = MarkMode::Mute;
+        card.setting.marked = vec![(0, 2)];
+        stage.fret_start = 8;
+        stage.fret_count = 12;
+
+        assert!(stage.dots_for_card(&card).is_empty(), "viewport clips dots only");
+        let generic = stage.card_sounding_pitches(&card).unwrap().0;
+        let program = stage.practice_program(&set(vec![card]), 120.0);
+        let managed = program.cards[0]
+            .events
+            .iter()
+            .flat_map(|event| event.pitches.iter().copied())
+            .collect::<Vec<_>>();
+        assert_eq!(generic, managed);
+        assert_eq!(generic.len(), 2);
+        assert_eq!(program.cards[0].events[0].contacts, vec![(0, 1)]);
+        assert_eq!(program.cards[0].events[1].contacts, vec![(0, 1)]);
+    }
+
+    #[test]
+    fn path_contact_setup_supports_legacy_inheritance_and_refuses_unknown_identity() {
+        let stage = stage();
+        let mut inherited = path_card(&stage, vec![(0, 1), (0, 2), (0, 1)]);
+        inherited.setting.instrument.clear();
+        inherited.setting.tuning = None;
+        let expected = stage.card_voicing(&inherited).unwrap().0;
+        let program = stage.practice_program(&set(vec![inherited.clone()]), 120.0);
+        assert_eq!(
+            program.cards[0]
+                .events
+                .iter()
+                .map(|event| event.pitches[0])
+                .collect::<Vec<_>>(),
+            expected
+        );
+
+        inherited.setting.instrument = "unknown instrument".into();
+        inherited.setting.tuning = Some("unknown tuning".into());
+        assert!(stage.card_voicing(&inherited).unwrap().0.is_empty());
+        let refused = stage.practice_program(&set(vec![inherited]), 120.0);
+        assert!(refused.cards[0].unavailable.is_some());
+        assert!(refused.cards[0].events.is_empty());
     }
 
     #[test]

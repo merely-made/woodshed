@@ -1,0 +1,5 @@
+     Locking 4 packages to highest Rust 1.97.1 compatible versions
+      Adding audio-pack-views v0.1.0 (/Users/markik/Code/worktrees/woodshed-ringdown-sync/crates/audio-pack-views)
+      Adding audio-packs v0.1.0 (/Users/markik/Code/worktrees/woodshed-ringdown-sync/crates/audio-packs)
+      Adding audio-pattern v0.1.0 (/Users/markik/Code/worktrees/woodshed-ringdown-sync/crates/audio-pattern)
+      Adding midly v0.5.3

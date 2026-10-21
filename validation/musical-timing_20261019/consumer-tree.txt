@@ -1,0 +1,15 @@
+musicxml-timing v0.1.0 (/Users/markik/Code/worktrees/woodshed-arrangement-playback/examples/musicxml-timing)
+└── woodshedding v0.1.0 (/Users/markik/Code/worktrees/woodshed-arrangement-playback/crates/woodshedding)
+    ├── roxmltree v0.21.1
+    │   └── memchr v2.8.3
+    └── serde v1.0.229
+        ├── serde_core v1.0.229
+        └── serde_derive v1.0.229 (proc-macro)
+            ├── proc-macro2 v1.0.107
+            │   └── unicode-ident v1.0.27
+            ├── quote v1.0.47
+            │   └── proc-macro2 v1.0.107 (*)
+            └── syn v3.0.9
+                ├── proc-macro2 v1.0.107 (*)
+                ├── quote v1.0.47 (*)
+                └── unicode-ident v1.0.27

@@ -1,0 +1,16 @@
+{
+  "date_utc": "2026-10-20T00:24:00.278613+00:00",
+  "command": "cargo test --locked -p woodshed-audio output_runtime::tests",
+  "tests_passed": 69,
+  "tests_failed": 0,
+  "new_replacement_and_batch_tempo_tests": 9,
+  "scope": "Canonical workspace real OutputRuntime offline processor; existing callback allocator/deallocator guard active. No physical device qualification.",
+  "log": "/Users/markik/Code/output/woodshed-arrangement-playback-20261019/audio-output-runtime-tests.log",
+  "source_sha256": {
+    "crates/woodshed-audio/src/output_runtime.rs": "65112f6330c67ea5b43d1beabea02510f4e2863579791927343a5e0331e3e426",
+    "crates/woodshed-audio/src/output_runtime/clock.rs": "66179b39b01a4e56acddd09784ec7894d79a828e3fd7c488bf0d35f0f45e7410",
+    "crates/woodshed-audio/src/output_runtime/processor.rs": "47cc7205571c4b08d423bc100b4b5ed1bc6183bbb5417b20cddee3b0e027b3c3",
+    "crates/woodshed-audio/src/output_runtime/tests.rs": "818f7f1e922d46edf03cf567c77954bf5e0e8e8ca34aec0ac27f30bf28010ad0",
+    "Cargo.lock": "fd60c83d3fbb03060d0519f8161cadb7011e5c21058c0d80f328dca18602cd63"
+  }
+}

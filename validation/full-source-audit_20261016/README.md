@@ -71,12 +71,21 @@ nor those historical receipts establishes current-head integrated acceptance.
 No new product suite, desktop build, native launch, fresh reopen, microphone,
 physical audibility, protocol hardware or other-platform gate ran in this closure.
 
-First remaining delivery: retain the existing preservation owners, correct
-Hocket's offered-profile/key binding and stale media availability, and repair
-operational Q1 evidence gates before relying on them. Then follow B1–B7 material,
-capture and accepted-runtime work; protocol/instrument, projection and
-compatibility-gated removal retain their own owners. Existing media, playback
-clocks, saved-song compatibility and native validation lanes are protected.
+H3/H5 and Q1 were CPU qualified and published through `6e6498a`;
+B1–B3 through `b1c9dfd`. B4 has a separate published
+[PCM/timing receipt](../pcm-timing_20261018/README.md): 308 distinct passes at
+`5dd01ae`, published through `8da953b`. These targeted implementations do not refresh the frozen full read
+or establish native acceptance. B5 has a separate published [Recorder admission receipt](../recorder-select-one_20261019/README.md):
+176 distinct passes and three expected baseline failures at `b804d901`, published through `4fab895`.
+The requested shared Recorder tempo/replay and diagnostic slice has a separate
+published [runtime receipt](../recorder-runtime_20261019/README.md): 171 distinct
+passes, two existing ignores and three expected baseline failures at `7b161a9`,
+published through `fd9fb82`.
+The full shared-view unit target is blocked by an existing paint API mismatch.
+Historical B6 MIDI H6–H9 have a separate published [admission receipt](../midi-admission_20261019/README.md): 42 distinct CPU passes at `480c0d6`, repeated on integration and published through `20bcc1c`; native/device qualification remains unassessed.
+Subsequent product/controller, protocol and
+compatibility work retain their existing owners. Existing media, playback
+clocks and native validation lanes remain protected.
 The source audit is finished; the implementation backlog is not.
 
 [Closure and artifact hashes](closure.json) bind these records. Raw original

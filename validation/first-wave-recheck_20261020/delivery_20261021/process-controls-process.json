@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "run_id": "first-wave-publication-process-controls-20261021",
+  "command": [
+    "/Users/markik/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "validation",
+    "-p",
+    "test_evidence_process.py",
+    "-v"
+  ],
+  "started_at": "2026-10-21T19:05:50.665522Z",
+  "ended_at": "2026-10-21T19:05:52.524431Z",
+  "exit_code": 0,
+  "cwd": "/Users/markik/Code/worktrees/woodshed-audit-first-wave-20261020",
+  "log": "/Users/markik/Code/testing/woodshed-first-wave-publication-20261021/process-controls.log",
+  "log_sha256": "a22b3670dfa6c0c839e586de206a7faf550bda4f286cd942947b3d09d34b3658",
+  "source_commit": "cb4ed31e0865abb8158ad41a41fa31a43c2c4cf6"
+}

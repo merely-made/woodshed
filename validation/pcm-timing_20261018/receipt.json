@@ -1,0 +1,108 @@
+{
+  "date": "2026-10-18",
+  "status": "CPU qualified; implementation local for review",
+  "baseline_published_revision": "b1c9dfd05a75614919e8b7188e2346a6d5f60a43",
+  "source_revision": "5dd01aee953e83edd40767dca9c4b5f55846a86c",
+  "source_tree_note": "All 11 changed product source/test files match the committed revision. Documentation/validation edits were in progress during tests; no clean-tree claim from process metadata.",
+  "findings": [
+    "audio:AUDIO-02",
+    "audio:AUDIO-03",
+    "audio:AUDIO-04"
+  ],
+  "ownership": {
+    "Luna PCM": "processor prepared resources, chord helper, SampleBuffer finite predicate, export and regressions",
+    "Luna onset": "shared detector and Woodshed adapter regressions",
+    "Luna calibration": "shared pairing result and Woodshed session",
+    "coordinator": "publication, phrase predicate reuse, source review, process gates, evidence and canonical docs"
+  },
+  "source_sha256": {
+    "crates/audio-primitives/src/calibration.rs": "de05826902597a53eeeb25b46016d785a290676efd2f0827e06c9a0e2497e499",
+    "crates/audio-primitives/src/onset.rs": "2d1f88acad99a001e32c8effc774d4c913e631c111f4475db2174c4c65dbc42e",
+    "crates/woodshed-audio/src/backing_phrase.rs": "8be4a3c63415ddcc635effc17a6d0587a4b62f6a060f88ed8c02dfce4d382ef9",
+    "crates/woodshed-audio/src/calibration.rs": "e5a444404c54730107782cd934c8b20cf6fdba336ac56390cf8f4ad83499058f",
+    "crates/woodshed-audio/src/chord_audio.rs": "bb2698b0c6eb64581f2fb500be1a304fba546a0df287cf616d54e08ec078dce0",
+    "crates/woodshed-audio/src/offline/song_export.rs": "29db134dae62b6fd04383ffde7efe4d4ccf94fd79debe9e46cd0df4754391f0b",
+    "crates/woodshed-audio/src/offline/song_export/tests.rs": "fdd22cd87002207d1da3ef04600de820dcfd969e981cc046100031d243935b9b",
+    "crates/woodshed-audio/src/onset.rs": "b0dc73a5163160e2bef810087f2ce95ee5ffc6969f420381d3a9362769bb9a81",
+    "crates/woodshed-audio/src/output_runtime/processor.rs": "ae56d1c7bc972acd137427ee6de5af530e6d699d2fb62325e7a593b549cbc94d",
+    "crates/woodshed-audio/src/output_runtime/tests.rs": "5a2a82ce498ed6562773051dd74a87879db22f602b609f331083a6ac201fcfed",
+    "crates/woodshed-audio/src/sound.rs": "39ebb758ada21d0b7e534aa46cfc46c4cf2d3eb7a55ac0073be2cc28ad203016"
+  },
+  "lock_sha256": {
+    "Cargo.lock": "79ffc562fa1f473c5ad05288fbcb4b271f8c5d19fb593d67aeb08c05a2220d3e",
+    "ports/hocket/Cargo.lock": "934fb64b6d8c93efe0ef32866a9045f25f21bb707e4a7f9f481fe977b9675e45",
+    "ports/redshank/Cargo.lock": "9e975dd1fb546a2b31291a20764cfe78b4f76fb76e2703f4a6e8147c0b557ba8",
+    "ports/ringdown/Cargo.lock": "9c1b9afdd823e02effcade345140463f20185b9a79b83e8844d3109df395f6c0"
+  },
+  "gates": [
+    {
+      "name": "primitives",
+      "command": [
+        "cargo",
+        "test",
+        "--locked",
+        "-p",
+        "audio-primitives",
+        "--lib"
+      ],
+      "cwd": "/Users/markik/Code/repos/woodshed",
+      "process_receipt": "checks/primitives.json",
+      "log": "checks/primitives.log",
+      "passed": 61,
+      "ignored": 0,
+      "exit_code": 0
+    },
+    {
+      "name": "audio",
+      "command": [
+        "cargo",
+        "test",
+        "--locked",
+        "-p",
+        "woodshed-audio",
+        "--lib"
+      ],
+      "cwd": "/Users/markik/Code/repos/woodshed",
+      "process_receipt": "checks/audio.json",
+      "log": "checks/audio.log",
+      "passed": 211,
+      "ignored": 0,
+      "exit_code": 0
+    },
+    {
+      "name": "hocket-engine",
+      "command": [
+        "cargo",
+        "test",
+        "--locked",
+        "-p",
+        "hocket-engine",
+        "--lib"
+      ],
+      "cwd": "/Users/markik/Code/repos/woodshed/ports/hocket",
+      "process_receipt": "checks/hocket-engine.json",
+      "log": "checks/hocket-engine.log",
+      "passed": 36,
+      "ignored": 0,
+      "exit_code": 0
+    }
+  ],
+  "distinct_parent_library_passes": 308,
+  "ignored": 0,
+  "nested_child_invocations": 0,
+  "counting": "All final gates are disjoint library suites. Worker focused/repeated and failed development runs are excluded from totals.",
+  "source_review": [
+    "Imported NaN and both infinities rejected with matching clock/rate before backing or cache replacement; source PCM bits untouched.",
+    "Finite positive overflowing chord pitches rejected by shared preflight; completed chord buffers checked including warm cache; poisoned-cache negative control exercises the completed-sample gate.",
+    "Phrase, live saved chord and export share one frequency bound; SampleBuffer predicate reused across admission paths. Checks run during preparation, outside callback.",
+    "Onset counts new consumed samples once, with nonempty frame-aligned onsets invariant across monolithic, irregular, empty and one-sample feeds; adapter sample indices agree.",
+    "Session uses one pairing result for estimate/support; negative nearest offsets excluded from both. Existing nearest policy and upper median preserved, zero-support/zero-minimum returns None rather than indexing empty.",
+    "Settings already consumes matched support from the outcome; no separate UI estimator."
+  ],
+  "limits": [
+    "No native apps, resident services, browser lane, devices, microphones, physical latency or fresh-process native reopen used or qualified.",
+    "Calibration remains approximate wall-clock/tap based; sample-index correction does not establish measured round-trip latency. Existing onset reuse/nearest pairing policy unchanged.",
+    "No supplier/lock update or old PCM/playback-clock migration.",
+    "B4 implementation remains local; user push authorization covered the preceding nine commits only."
+  ]
+}

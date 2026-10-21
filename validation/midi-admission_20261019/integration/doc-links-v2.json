@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "run_id": "midi-publication-doc-links-v2",
+  "command": [
+    "python3",
+    "-c",
+    "from pathlib import Path\nfrom collections import Counter\nimport importlib.util,json\ns=importlib.util.spec_from_file_location(\"links\",\"validation/link-model-p6_20261016/doc_link_audit.py\");m=importlib.util.module_from_spec(s);s.loader.exec_module(m)\nnames=[\"design_docs/DOC_README.md\",\"design_docs/2026-10-16_source_authority_audit_plan.md\",\"validation/full-source-audit_20261016/README.md\"]\nb=m.scan(Path(\".\"),names,\"b2fe4df\");n=m.scan(Path(\".\"),names+[\"validation/midi-admission_20261019/README.md\"])\nnew=Counter(json.dumps(x,sort_keys=True) for x in n[\"findings\"])-Counter(json.dumps(x,sort_keys=True) for x in b[\"findings\"])\nassert not new,new\nprint(json.dumps({\"baseline\":b,\"published_documents\":n,\"new_findings\":[]},indent=2))\n"
+  ],
+  "started_at": "2026-10-20T19:41:08.532068Z",
+  "ended_at": "2026-10-20T19:41:12.040210Z",
+  "exit_code": 0,
+  "cwd": "/Users/markik/Code/worktrees/woodshed-b6-20261019",
+  "log": "/Users/markik/Code/testing/woodshed/midi-publication-20261020/doc-links-v2.log",
+  "log_sha256": "6b4e24ec9c2fccbceba3ab057fad55646c032101a1b652b031b2cf9edabd970d",
+  "source_commit": "20bcc1c362407f35bc26dac8b63e30e7befebec9"
+}

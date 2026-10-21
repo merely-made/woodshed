@@ -1,0 +1,29 @@
+{
+  "scope": [
+    "design_docs/2026-07-11_stage_set_tools_plan.md",
+    "design_docs/DOC_README.md"
+  ],
+  "baseline_revision": "9f80bb5eabc4b513e057b22af6f80d83ecb8e9ac",
+  "baseline": {
+    "checked_local_links": 142,
+    "findings": [
+      {
+        "document": "design_docs/DOC_README.md",
+        "target": "../validation/stack-family_20261011/README.md#foundation-supplier-intake--2026-10-19",
+        "reason": "missing heading"
+      }
+    ]
+  },
+  "current": {
+    "checked_local_links": 144,
+    "findings": [
+      {
+        "document": "design_docs/DOC_README.md",
+        "target": "../validation/stack-family_20261011/README.md#foundation-supplier-intake--2026-10-19",
+        "reason": "missing heading"
+      }
+    ]
+  },
+  "new_findings": [],
+  "no_new_findings": true
+}

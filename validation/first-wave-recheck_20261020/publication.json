@@ -1,0 +1,67 @@
+{
+  "date": "2026-10-21",
+  "published_source_revision": "cb4ed31e0865abb8158ad41a41fa31a43c2c4cf6",
+  "remote_main_observed": "cb4ed31e0865abb8158ad41a41fa31a43c2c4cf6",
+  "remote_main_before": "9f80bb5eabc4b513e057b22af6f80d83ecb8e9ac",
+  "integration": "Exact qualified three-commit branch fast-forwarded current remote main; no rebase, merge conflict, supplier or lock change.",
+  "source_push_process": "delivery_20261021/source-push-process.json",
+  "source_push_log": "delivery_20261021/source-push.log",
+  "original_qualification": {
+    "receipt": "receipt.json",
+    "distinct_passed": 1020,
+    "ignored": 9,
+    "child_invocations_separate": 5,
+    "all_source_and_evidence_hashes_match": true
+  },
+  "publication_rechecks": [
+    {
+      "name": "persona",
+      "passed": 26,
+      "exit_code": 0,
+      "process_receipt": "delivery_20261021/persona-process.json",
+      "log": "delivery_20261021/persona.log",
+      "log_sha256": "e7b4ce452f5a3ccaa39281e1a6d8fc96adcc48c7585b969554a38b1bd211a95b"
+    },
+    {
+      "name": "audio",
+      "passed": 3,
+      "exit_code": 0,
+      "process_receipt": "delivery_20261021/audio-process.json",
+      "log": "delivery_20261021/audio.log",
+      "log_sha256": "bdf9938f7bcb4b3a69e24ae1ec88db046fb3d96c2739c0702fa2545f6d47467c"
+    },
+    {
+      "name": "process-controls",
+      "passed": 14,
+      "exit_code": 0,
+      "process_receipt": "delivery_20261021/process-controls-process.json",
+      "log": "delivery_20261021/process-controls.log",
+      "log_sha256": "a22b3670dfa6c0c839e586de206a7faf550bda4f286cd942947b3d09d34b3658"
+    },
+    {
+      "name": "link-controls",
+      "passed": 7,
+      "exit_code": 0,
+      "process_receipt": "delivery_20261021/link-controls-process.json",
+      "log": "delivery_20261021/link-controls.log",
+      "log_sha256": "f06e53acf940b5ddcd6b7355bdfa4a66b064f813c09fb9bfbbf96394c8f25c41"
+    }
+  ],
+  "repeated_focused_passes": 50,
+  "counts_note": "Publication reruns repeat existing tests; they are not added to the original distinct-case total.",
+  "fresh_remote_clone": "delivery_20261021/fresh-source-verification.json",
+  "authority": "Human publication and cleanup authorization verified in coordinating chat 01a14181-bec3-7042-b812-77738b0f7e95; no PR requested.",
+  "cleanup_scope": "Only codex/audit-first-wave-20261020 and its completed worktree after publication. Tracked receipts remain in main; ignored paths are Cargo/Python caches. Final cleanup and final metadata-head verification are recorded externally under /Users/markik/Code/testing/woodshed-first-wave-publication-20261021. Primary, iMac, historical branches, other worktrees and stashes remain excluded.",
+  "qualification_limits": [
+    "No new headed/native product run",
+    "No real custody IPC, native persona/project reopen or physical audio run",
+    "P5a remains with its existing owner",
+    "Fresh remote clone is Git/source verification, not product acceptance"
+  ],
+  "documentation_scan": {
+    "process_receipt": "delivery_20261021/publication-doc-links-process.json",
+    "log": "delivery_20261021/publication-doc-links.log",
+    "exit_code": 0,
+    "new_findings": 0
+  }
+}

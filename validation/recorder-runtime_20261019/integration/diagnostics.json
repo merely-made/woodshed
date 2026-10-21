@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "run_id": "b6-merge-diagnostics",
+  "command": [
+    "cargo",
+    "test",
+    "--locked",
+    "-p",
+    "hocket-views",
+    "--test",
+    "recorder_adapter"
+  ],
+  "started_at": "2026-10-20T02:21:42.055823Z",
+  "ended_at": "2026-10-20T02:22:45.762039Z",
+  "exit_code": 0,
+  "cwd": "/Users/markik/Code/worktrees/woodshed-b6-20261019",
+  "log": "/Users/markik/Code/testing/woodshed/recorder-runtime-integration-20261019/diagnostics.log",
+  "log_sha256": "7b24525fc4484e368a37a5a084e23f9e23eaca826b6964d2fbf94e01c0cc7fc4",
+  "source_commit": "e158f87bd1f29509c112cedda17dbc08e4ed68b8"
+}

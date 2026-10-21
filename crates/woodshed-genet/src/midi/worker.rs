@@ -233,6 +233,7 @@ fn run_with<P: Connection>(
                             },
                         }
                     }
+                    output.lock().unwrap().settled_revision = revision;
                 },
                 Ok(ClockCmd::Transport {
                     enabled,

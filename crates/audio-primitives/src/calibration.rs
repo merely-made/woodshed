@@ -29,19 +29,25 @@ use std::time::{Duration, Instant};
 /// matching random ambient noise.
 pub const MATCH_WINDOW: Duration = Duration::from_millis(200);
 
-/// Given a sequence of expected click instants (in wall-clock time)
-/// and a sequence of detected onset instants, pair each click with
-/// the nearest onset that falls within [`MATCH_WINDOW`] and return
-/// the median latency.
+/// Result of pairing expected clicks with detected onsets.
 ///
-/// Returns `None` if fewer than `minimum_pairs` good matches survive
-/// the window filter (the run was too noisy, or the user wasn't
-/// actually playing).
-pub fn estimate_latency_from_pairs(
+/// `matched_pairs` counts the same non-negative nearest pairs that can
+/// contribute to `latency`. It remains available when the pair count is below
+/// the requested minimum.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct LatencyEstimate {
+    pub latency: Option<Duration>,
+    pub matched_pairs: usize,
+}
+
+/// Pair each click with its nearest in-window onset and calculate the median
+/// from admitted (non-negative) offsets. The count and estimate are derived
+/// from the same pairing pass.
+pub fn estimate_latency_and_count(
     expected_clicks: &[Instant],
     detected_onsets: &[Instant],
     minimum_pairs: usize,
-) -> Option<Duration> {
+) -> LatencyEstimate {
     let mut deltas_ms: Vec<f32> = Vec::new();
     for &expected in expected_clicks {
         let mut best: Option<(f32, f32)> = None; // (abs_delta_ms, signed_delta_ms)
@@ -56,43 +62,53 @@ pub fn estimate_latency_from_pairs(
                 continue;
             }
             match best {
-                Some((a, _)) if a <= abs => {}
+                Some((a, _)) if a <= abs => {},
                 _ => best = Some((abs, signed_delta_ms)),
             }
         }
         if let Some((_, signed)) = best {
-            // We only care about onsets that arrive *after* their
-            // click — anything earlier is the user playing ahead of
-            // the click, not system latency. Filter to positive
-            // values for the median.
+            // An onset before its nearest click is the player anticipating
+            // the beat, not a latency contribution.
             if signed >= 0.0 {
                 deltas_ms.push(signed);
             }
         }
     }
-    if deltas_ms.len() < minimum_pairs {
-        return None;
+    let matched_pairs = deltas_ms.len();
+    if matched_pairs == 0 || matched_pairs < minimum_pairs {
+        return LatencyEstimate {
+            latency: None,
+            matched_pairs,
+        };
     }
     deltas_ms.sort_by(|a, b| a.partial_cmp(b).unwrap());
-    let median_ms = deltas_ms[deltas_ms.len() / 2];
-    Some(Duration::from_secs_f32(median_ms / 1000.0))
+    let median_ms = deltas_ms[matched_pairs / 2];
+    LatencyEstimate {
+        latency: Some(Duration::from_secs_f32(median_ms / 1000.0)),
+        matched_pairs,
+    }
 }
 
-/// Count how many click-onset pairs fall within the match window.
-/// Lets a UI report an honest "matched 5/6 pairs" even when overall
-/// calibration succeeds.
+/// Given a sequence of expected click instants (in wall-clock time)
+/// and a sequence of detected onset instants, pair each click with
+/// the nearest onset that falls within [`MATCH_WINDOW`] and return
+/// the median latency.
+///
+/// Returns `None` if fewer than `minimum_pairs` good matches survive
+/// the window filter (the run was too noisy, or the user wasn't
+/// actually playing).
+pub fn estimate_latency_from_pairs(
+    expected_clicks: &[Instant],
+    detected_onsets: &[Instant],
+    minimum_pairs: usize,
+) -> Option<Duration> {
+    estimate_latency_and_count(expected_clicks, detected_onsets, minimum_pairs).latency
+}
+
+/// Count the admitted non-negative nearest click-onset pairs within the match
+/// window. This reports the same support used by the latency estimator.
 pub fn count_matches(clicks: &[Instant], onsets: &[Instant]) -> usize {
-    let mut n = 0;
-    for &c in clicks {
-        let matched = onsets.iter().any(|&o| {
-            let delta = if o >= c { o - c } else { c - o };
-            delta <= MATCH_WINDOW
-        });
-        if matched {
-            n += 1;
-        }
-    }
-    n
+    estimate_latency_and_count(clicks, onsets, 0).matched_pairs
 }
 
 #[cfg(test)]
@@ -168,5 +184,48 @@ mod tests {
                                 // clicks[3] has no onset at all
         ];
         assert_eq!(count_matches(&clicks, &onsets), 2);
+    }
+
+    #[test]
+    fn nearest_negative_pair_is_not_replaced_by_a_later_positive_pair() {
+        let click = Instant::now();
+        let onsets = [click - ms(20), click + ms(30)];
+        let result = estimate_latency_and_count(&[click], &onsets, 0);
+        assert_eq!(result.matched_pairs, 0);
+        assert_eq!(result.latency, None);
+        assert_eq!(count_matches(&[click], &onsets), 0);
+    }
+
+    #[test]
+    fn zero_offset_and_match_window_boundary_are_admitted() {
+        let now = Instant::now();
+        let clicks = [now, now + ms(1000)];
+        let onsets = [clicks[0], clicks[1] + MATCH_WINDOW];
+        let result = estimate_latency_and_count(&clicks, &onsets, 2);
+        assert_eq!(result.matched_pairs, 2);
+        // Even-sized support keeps the existing upper-median behavior.
+        let latency_ms = result.latency.unwrap().as_secs_f32() * 1000.0;
+        assert!((latency_ms - MATCH_WINDOW.as_secs_f32() * 1000.0).abs() < 0.01);
+    }
+
+    #[test]
+    fn pairing_result_reports_support_when_insufficient_or_empty() {
+        let click = Instant::now();
+        let one_pair = estimate_latency_and_count(&[click, click + ms(1000)], &[click], 2);
+        assert_eq!(
+            one_pair,
+            LatencyEstimate {
+                latency: None,
+                matched_pairs: 1
+            }
+        );
+        let no_pairs = estimate_latency_and_count(&[click], &[click + ms(500)], 1);
+        assert_eq!(
+            no_pairs,
+            LatencyEstimate {
+                latency: None,
+                matched_pairs: 0
+            }
+        );
     }
 }

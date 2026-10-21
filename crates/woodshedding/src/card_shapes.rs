@@ -90,6 +90,16 @@ pub struct CardShapeGeometry {
     pub capo: u8,
 }
 
+impl CardShapeGeometry {
+    /// An unavailable retained setup must not borrow the live neck geometry.
+    pub const EMPTY: Self = Self {
+        string_count: 0,
+        physical_fret_start: 0,
+        physical_fret_end: 0,
+        capo: 0,
+    };
+}
+
 /// The exact effective setup used to resolve a selected shape. The concert
 /// open-string MIDI values protect comparison from treating two differently
 /// pitched tunings with the same display name as interchangeable.

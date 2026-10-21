@@ -1,0 +1,144 @@
+{
+  "date": "2026-10-19",
+  "status": "CPU qualified; new implementation local for review",
+  "baseline_published_revision": "8da953b615b4b81d405855728aa57344e1a9bdd1",
+  "source_revision": "b804d90104bd86caca6b8fc20e8176e1afd5feae",
+  "finding": "shared:S2",
+  "package": "B5",
+  "source_tree_note": "Both changed source/test files match the committed revision; docs and validation were being updated during checks. Process revision metadata alone does not establish a clean tree.",
+  "source_sha256": {
+    "crates/hocket-recorder/src/lib.rs": "f943c29cc4a1f5a4c2280670f51c458fb157bceed15f0ea7176d3e2ae0a17f11",
+    "crates/hocket-recorder/tests/select_one.rs": "d2294624fa29e569c2f5dc73a8ef9074fc81c6d2798513766380423bd82c80b2"
+  },
+  "lock_sha256": {
+    "Cargo.lock": "79ffc562fa1f473c5ad05288fbcb4b271f8c5d19fb593d67aeb08c05a2220d3e",
+    "ports/hocket/Cargo.lock": "934fb64b6d8c93efe0ef32866a9045f25f21bb707e4a7f9f481fe977b9675e45",
+    "ports/redshank/Cargo.lock": "9e975dd1fb546a2b31291a20764cfe78b4f76fb76e2703f4a6e8147c0b557ba8",
+    "ports/ringdown/Cargo.lock": "9c1b9afdd823e02effcade345140463f20185b9a79b83e8844d3109df395f6c0"
+  },
+  "ownership": {
+    "Luna implementation": "Recorder production admission only",
+    "Luna independent tests": "tests/select_one.rs only",
+    "coordinator": "publication/pull, host/export boundary review, isolated negative control, final process gates and canonical audit records"
+  },
+  "gates": [
+    {
+      "name": "recorder",
+      "command": [
+        "cargo",
+        "test",
+        "--locked",
+        "-p",
+        "hocket-recorder",
+        "--tests"
+      ],
+      "cwd": "/Users/markik/Code/repos/woodshed",
+      "process_receipt": "checks/recorder.json",
+      "log": "checks/recorder.log",
+      "passed": 32,
+      "ignored": 0,
+      "exit_code": 0
+    },
+    {
+      "name": "project",
+      "command": [
+        "cargo",
+        "test",
+        "--locked",
+        "-p",
+        "hocket-project",
+        "--lib"
+      ],
+      "cwd": "/Users/markik/Code/repos/woodshed",
+      "process_receipt": "checks/project.json",
+      "log": "checks/project.log",
+      "passed": 38,
+      "ignored": 0,
+      "exit_code": 0
+    },
+    {
+      "name": "views",
+      "command": [
+        "cargo",
+        "test",
+        "--locked",
+        "-p",
+        "hocket-views",
+        "--lib"
+      ],
+      "cwd": "/Users/markik/Code/repos/woodshed",
+      "process_receipt": "checks/views.json",
+      "log": "checks/views.log",
+      "passed": 13,
+      "ignored": 0,
+      "exit_code": 0
+    },
+    {
+      "name": "hocket-host",
+      "command": [
+        "cargo",
+        "test",
+        "--locked",
+        "-p",
+        "hocket-genet",
+        "--bin",
+        "hocket-genet"
+      ],
+      "cwd": "/Users/markik/Code/repos/woodshed/ports/hocket",
+      "process_receipt": "checks/hocket-host.json",
+      "log": "checks/hocket-host.log",
+      "passed": 93,
+      "ignored": 2,
+      "exit_code": 0
+    }
+  ],
+  "distinct_parent_library_and_integration_passes": 176,
+  "ignored": 2,
+  "nested_child_invocations": 0,
+  "counting": "27 recorder library + 5 integration + 38 project + 13 views + 93 Hocket host cases; each distinct suite counted once. Worker repeats and all baseline runs excluded from positive total.",
+  "baseline_negative_control": {
+    "directory": "/Users/markik/Code/testing/woodshed/select-one-baseline-20261019",
+    "source_revision": "8da953b615b4b81d405855728aa57344e1a9bdd1",
+    "baseline_source_sha256": {
+      "src/lib.rs": "7133dcc2ef5021b32c3226f9807694e3a523676c1f3f7c4f56d763a02ba4eda4",
+      "src/host_policy.rs": "5f5a15b77cc879717764f81455de36090121a2f9b6214cc2ed30820c417bd664"
+    },
+    "test_sha256": "d2294624fa29e569c2f5dc73a8ef9074fc81c6d2798513766380423bd82c80b2",
+    "standalone_manifest_sha256": "617411ed41402eef9d29915f02ff56c3149654ccab6a2aed2f8c6d5ef3af7320",
+    "pruned_temp_lock_sha256": "e1cd2e62a70da9b0ba7954137e600b81356058f952daf6fb3643819965211849",
+    "external_packages_checked": 83,
+    "all_remaining_external_source_identities_match_root_lock": true,
+    "process_receipt": "checks/baseline-negative-v2.json",
+    "expected_exit_code": 101,
+    "expected_failed_tests": [
+      "capture_promotion_obeys_select_one_and_keeps_free_or_clocked_alignment",
+      "imported_replay_respects_selection_and_uses_stored_rate_and_gain",
+      "mute_solo_and_reconcile_keep_active_selection_and_refuse_missing_or_muted_layers"
+    ],
+    "passed_not_added_to_positive_total": 2,
+    "source_metadata_note": "The process source_commit records the coordinator checkout revision, not the extracted code revision. Baseline source byte checks above and recorded hashes establish the code under negative control. Only the temporary standalone manifest/lock are adapted; root dependencies and product locks remain unchanged."
+  },
+  "excluded_attempts": [
+    {
+      "process_receipt": "checks/baseline-negative.json",
+      "reason": "Setup refusal: copied whole-workspace lock requires standalone pruning; --locked stopped before compilation/tests. Not a behavioral negative control."
+    }
+  ],
+  "review": [
+    "One occurrence eligibility rule combines track mute/solo with PlaybackMode::is_layer_audible and checked u16 occurrence index.",
+    "Store start gate runs before deferred replay, media lookup, clone and pending-stop supersession. Direct capture start uses the same predicate with its original sample rate, gain and alignment.",
+    "Import retains PhraseId occurrence check before start; appends do not auto-select, and inactive captures/imports remain stored.",
+    "Redundant caller/track-only checks removed; display waveform queries retain their distinct model-only meaning.",
+    "Two actual play_layer calls remain and both are occurrence gated; no second selection policy, queue, scheduler, persisted state or public API added.",
+    "Standalone DesktopRecorderAudio honors aligned flag. Export already uses the same model predicate; CPU test compares admitted voice PCM/gain with one-cycle offline mix.",
+    "Woodshed embedded Looper uses host-policy and Card/backing authority rather than a second Hocket Session; no runtime merger or host product edits."
+  ],
+  "limits": [
+    "No native apps/browser lane, resident services, microphone/device/physical audio or fresh-process native reopen qualification.",
+    "CBOR ProjectBundle roundtrip is in-process CPU admission only; deferred Deeler UI not shipped or qualified.",
+    "No supplier/lock updates, old PCM or capture/playback clock migration.",
+    "Existing failure bookkeeping is preserved and existing library controls pass; no new physical backend failure qualification.",
+    "B6 tempo replay and runtime diagnostics remain separate findings; this batch closes only B5 admission.",
+    "New commits remain local; user push authorization applied to preceding seven B4 commits."
+  ]
+}

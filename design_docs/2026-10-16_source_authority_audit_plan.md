@@ -2,8 +2,10 @@
 
 Date: 2026-10-16; coordination closure: 2026-10-17.
 Status: complete collective read of frozen `d12201bf`; current-source finding
-reconciliation complete and receipt committed locally. Remediation remains open.
-No new product fixes or product qualification are performed by this closure.
+reconciliation complete and published through `8204688`. Remediation remains open;
+H3/H5 and Q1 process/link implementation is CPU qualified and published through `6e6498a`.
+B1–B3 runtime authority corrections are CPU qualified and published through `b1c9dfd`. B4 PCM/onset/calibration corrections are CPU qualified at `5dd01ae` and published through `8da953b`. B5 shared Recorder admission is CPU qualified at `b804d901` and published through `4fab895`. The requested B6 Recorder runtime slice is CPU qualified at `7b161a9` and local for review, with the separate shared-view unit gate blocked. The frozen
+audit closure itself adds no product fixes or product qualification.
 
 ## Scope and result
 
@@ -66,32 +68,207 @@ DOC_README, exact source/receipt identities are retained, no product code has
 been changed, and publication status is stated separately. This closes the
 source-audit delivery; it does not mark the remaining fixes complete.
 
+### P4 Repair Hocket admission and operational evidence gates
+
+Status (2026-10-18): implemented and CPU qualified at `0effba1`; published through `6e6498a`. Three
+lower-cost parallel workers have disjoint ownership: Hocket host identity/media
+admission (H3/H5), CI/font process evidence (E1), and revision-scoped target
+resolution in the link checker (E2). The coordinator owns integration and custody
+review. No worker owns native validation or supplier/lock updates.
+
+Done when staged identity consent binds the actual accepted profile/key and
+preserves the current identity on rejection; successful same-session import
+refreshes missing-media facts; process gates reject failed, incomplete or
+unbound executions; historical link targets resolve from the historical tree;
+and meaningful regression controls pass with observed process exits. Native
+custody/reopen and physical qualification remain separate. The [batch receipt](../validation/admission-evidence_20261017/README.md) records
+93 Hocket, 14 process and seven link controls (114 distinct passes), two existing
+ignores, real exits and retained excluded attempts. New implementation
+commits were published on 2026-10-18 under explicit user authorization.
+
+### P5 Reduce competing runtime/material decisions (B1–B3)
+
+Status (2026-10-18): implemented and CPU qualified at `662cda5`; published through `b1c9dfd`.
+Baseline: published `6e6498a`. Three Luna workers
+have disjoint code ownership: core retained-setup/selection realization (B1),
+SongBar payload-preserving silence (B2), and processor future-bar capture arms
+(B3). The coordinator owns cross-consumer integration, authority review and the
+receipt. No worker owns native validation, device operations, supplier updates,
+or capture clock migration.
+
+Prefer one resolution of retained instrument/setup and selected contacts, one
+lossless authored song payload with explicit audibility, and the existing bounded
+processor command authority. Do not add parallel schedulers, material caches,
+backup chord copies or a universal framework. Compatibility must preserve old
+SongDoc content, existing takes and PCM. Done when meaningful CPU regressions
+prove retained/inherited setup and repeated Path order, no full-chord fallback
+for stale Solo, exact silence/serialization preservation, future-bar arm retention
+and cancellation/termination, with relevant no-allocation/parity checks. Native
+qualification remains separate. The [runtime receipt](../validation/runtime-authority_20261018/README.md)
+records 859 distinct parent/library passes, five separate child invocations and
+seven existing ignores, with real process exits and excluded draft runs. Path
+neck geometry shares retained setup and the existing empty-geometry contract;
+no separate scheduler, backup chord store or cleanup path was retained. The nine reviewed commits were published under explicit user authorization.
+
+### P6 Unify bounded PCM and timing evidence admission (B4)
+
+Status (2026-10-18): implemented and CPU qualified at `5dd01ae`; published through `8da953b`. Baseline: published `b1c9dfd`. Three Luna workers own disjoint PCM preparation/export, onset accounting, and calibration pairing/session files. The coordinator owns integration, independent source review and evidence.
+
+Done when imported and rendered nonfinite PCM is refused before resource publication while accepted backing survives rejection; onset clocks count each incoming sample once independent of chunk boundaries; calibration estimate and displayed support derive from one admitted pairing result. Preserve existing take PCM and clocks. No supplier/lock updates or native/device lane operations. The seven reviewed commits were published on 2026-10-19. The [process-bound receipt](../validation/pcm-timing_20261018/README.md) records 308 distinct library passes (61 primitives, 211 Woodshed audio, 36 Hocket engine), no ignores or nested child invocations, 11 exact source hashes and four unchanged locks.
+
+### P7 Admit shared Recorder voices from one occurrence rule (B5)
+
+Status (2026-10-19): implemented and CPU qualified at `b804d901`; published through `4fab895`. Baseline: published `8da953b`. A Luna worker owns
+shared Recorder production admission; an independent Luna worker owns black-box
+regressions in a separate integration test file. The coordinator owns host/export
+boundary review and evidence. No worker owns native validation or supplier pins.
+
+Done when capture promotion, import replay, layer unmute and reconciliation all
+admit voice starts through one occurrence rule using the model's existing
+`PlaybackMode::is_layer_audible`, plus track mute/solo. Retain inactive captures
+and imports without silently selecting them; preserve Sum behavior, free/clocked
+start alignment, media, stored sample rates and failure bookkeeping. Supported
+serialized SelectOne sessions suffice; this does not ship the deferred Deeler UI.
+The [receipt](../validation/recorder-select-one_20261019/README.md) records 176
+distinct final cases and two existing ignores. The same five integration tests
+against isolated published Recorder source give three expected bypass failures
+and two passes; the setup lock refusal is excluded. Both source/test files and
+four unchanged locks are hash bound. New implementation remains local for review;
+native/device checks stay separate.
+
+### P8 Preserve tempo playback and surface Recorder diagnostics (requested B6 slice)
+
+Status (2026-10-19): scoped CPU qualification complete at `7b161a9`; published through `fd9fb82`. Baseline: published `4fab895`, integrated on remote `be4d6d0`. Work is isolated in `codex/woodshed-b6-20261019`; the primary checkout
+and supplier/native owners remain untouched. Three Luna workers own production
+Recorder tempo admission, independent tempo tests, and shared wrapper diagnostic
+projection/DOM tests. The coordinator owns the engine offline contract test,
+integration and evidence.
+
+Done when clock refusal leaves previous tempo/history/voices untouched, accepted
+tempo changes requeue only previously accepted voices on the new grid without
+stopping them first, and a failed replacement preserves the prior accepted key
+with a visible error. Explicit pending stop intent must not be superseded by a
+tempo edit. Reuse B5 admission and existing keyed engine replacement; no second
+desired-voice store. Wrapper status must come from Recorder facts and render via
+the existing shared surface. No supplier/lock edits or native/device operations.
+This requested slice targets shared:S3/S4; historically named B6 MIDI H6–H9
+remain separate. The [receipt](../validation/recorder-runtime_20261019/README.md)
+records 171 distinct passes, two existing ignores, three expected baseline
+failures and actual process bindings. Nine source/test files and five unchanged
+locks are hash bound. The full shared-view unit target remains blocked by the
+existing paint API type mismatch; its new public-wrapper integration target
+passes independently. New work stays published through `fd9fb82`.
+
+### P9 — MIDI admission and connection ownership (2026-10-19)
+
+Status: scoped CPU qualification complete at `480c0d6`; published through `20bcc1c`.
+[Receipt](../validation/midi-admission_20261019/README.md): 42 distinct passes,
+zero ignores, with failed/canceled attempts retained separately. Ordinary host
+frames service pending completion; atomic clock configuration avoids transient
+transport changes. Historical source observations remain preserved in the ledger.
+
+This bounded follow-up addresses historical host H6–H9. One Luna worker owns
+MidiUiState discovery reconciliation and pure selection tests; a second owns
+the output worker and fake-connection tests. The coordinator owns persona reset,
+backend completion polling, host projection and diagnostics, review and receipts.
+Port names remain the backend identity; rescanning must retain the selected name
+or clear it when absent. Persona changes retain process routing and inventory.
+Output status must describe the worker's accepted connection, with open failures
+visible and stale completions unable to overwrite newer requests. Replacement
+must stop the old running connection and start the new one.
+
+Reuse the existing backend seam, one refresh helper and one output worker state
+machine; do not add another scheduler or desired-state framework. Qualify with
+CPU fakes through production transitions. Supplier intake, device enumeration,
+native validation and physical MIDI timing remain outside this batch. New work
+stays published through `20bcc1c`. The preceding nine B6 commits were integrated and pushed
+through `fd9fb82`; original qualification source identities remain unchanged.
+
+### P10 Recheck A1–A5 and Q1 against current source (2026-10-20)
+
+The user authorized parallel rechecks and concrete corrections, local commits
+only, with P5a retained by its existing owner. The isolated branch starts at
+fetched `origin/main` `9f80bb5eabc4b513e057b22af6f80d83ecb8e9ac`; the primary
+checkout and unrelated work remain in place.
+
+Shared seams have one owner: A1 owns Woodshed lifecycle/preservation; one Hocket
+owner combines A2/A3 and Hocket's A4 model/project/custody admission; A5 owns
+Redshank storage/desktop recovery; the coordinator owns Woodshed A4 history/Set
+admission, Q1 diagnostics/evidence, integration, documentation and Git. Agents
+do not run Cargo/native or commit independently. P5a timing, audio scheduling
+and native acceptance remain with the existing owner.
+
+Source rechecks find the original first-wave preservation/admission fixes already
+implemented. A1 still accepted a seal for a different persona if the family
+selection changed during incoming open. The live-switch guard now refuses that
+mismatch before replacing outgoing state, retaining the target for explicit
+Retry; the regression covers saved instructions, the audio epoch, export state
+and both clock bindings. Same-persona behavior is unchanged.
+The locked Stemma supplier is now Eidetic `738ef159`, whose
+`from_snapshot` remains trusted/infallible; Woodshed's consumer guard remains
+necessary. Q1's process/link fixes are present. Runtime `audio_ddx` modes
+previously reported device events but returned success. All diagnostic
+modes now require output progress and zero device events, using the same strict
+terminal result; device-free negative tests cover refusal. Product recovery
+policy is unchanged.
+
+Done when owning lanes finish production-caller rechecks, focused current-source
+CPU gates record real process exits and source/lock identity, the combined diff
+is reviewed, and source/receipts are committed locally. Native runs, physical
+audio, fresh-process custody/reopen and unresolved design rulings retain their
+own acceptance boundaries. Selecting the same persona and future capture
+replacement/recovery interactions remain design choices, not new fixes here.
+
+Current gate: **1,020 distinct passing parent/library/control cases**, nine
+existing ignores, and five child invocations recorded separately. All nine
+counted processes exited zero. A1 and Q1 corrections are local at `22c9900` and
+`6a65a4d`; no push. The [current-source receipt](../validation/first-wave-recheck_20261020/README.md)
+retains source/lock hashes, original process evidence, ownership and qualification
+limits. Existing native evidence is not transferred to this revision.
+
+2026-10-21 delivery: the user authorized publication and scoped cleanup. Remote
+`main` remained at `9f80bb5e`; the qualified three-commit branch fast-forwarded
+it to `cb4ed31`. Fifty repeated focused A1/Q1 checks pass and all original
+source/evidence hashes match. A fresh remote clone verifies the published source
+and retained receipt bytes. The [publication record](../validation/first-wave-recheck_20261020/publication.json)
+keeps actual process exits and the narrow cleanup scope. Native/custody/device
+acceptance, P5a and unresolved design decisions retain their existing boundaries.
+
 ## Current findings and next implementation order
 
 1. **Preservation and input admission already have implementations.** A1, A4 and
    A5 are present. Hocket A2's capture/close/full-revision dirty guards are
-   implemented, but its missing-media facts (H5) remain open. The preservation
+   implemented, and its missing-media facts (H5) now have the separate CPU-qualified correction below. The preservation
    receipts establish their exact historical software/build results and twelve
    bounded Woodshed persona/close/quarantine/reopen captures. They do not
    establish Hocket/Redshank native acceptance or current-head integration after
    subsequent source/supplier changes. Reuse these owners and the existing
    [preservation plan](2026-10-16_preservation_input_admission_plan.md).
-2. **A3 Hocket persona binding remains a first safety correction.** Confirmation
-   discards the staged offer, connects without the offered profile binding, and
-   pairs the returned key with cached profile text. Bind accepted custody to
-   what was offered or re-offer when it changes. Hocket H5 must recompute media
-   availability after successful import. Neither is closed by project topology
-   or dirty-save tests.
-3. **Q1 evidence integrity remains open.** The original CI/font helpers still
-   ignore later FAILED suites; the link checker still reads current targets for
-   historical referrers. Exact files match the frozen source. New source-bound
-   feature wrappers do not repair these older helpers. Fix retained operational
-   gates before relying on them for more acceptance. This does not assert any
-   historical accepted product run actually failed.
-4. **Continue live model/runtime corrections through their owners.** Retained
-   Path setup and stale Solo (B1), lossy saved-song silence toggling (B2),
-   non-seeking future-bar capture arms (B3), finite PCM/onset/calibration admission
-   (B4), shared Recorder SelectOne admission (B5), Hocket tempo replay and failure reporting,
+2. **A3 Hocket persona binding and A2 missing-media refresh are implemented.**
+   The offered profile, target key and losing token are checked against actual
+   admission before consent or identity changes. CPU controls cover drift,
+   consent-write refusal and persisted exact target facts. Same-session import
+   refreshes availability while retaining unresolved local media and branches.
+   Real custody IPC, Hocket native interaction and fresh-process persona reopen
+   remain unqualified; no native lane was taken over.
+3. **Q1 evidence integrity has scoped executable fixes.** CI/font gates now
+   require observed process evidence and reject failed or unfinished suites.
+   The link checker resolves historical local targets from the same tree as
+   historical referrers, while binary links remain existence checks. Fourteen
+   process controls, seven link controls and the real documentation scan pass.
+   Historical artifacts remain unchanged; their missing execution metadata is
+   not synthesized and their product runs are not reclassified as failures.
+4. **B1–B3 now have scoped CPU-qualified corrections.** Retained Path/contact
+   resolution is shared across display, generic sound, managed lowering and
+   durable recipe validation, with retained neck geometry in the view. SongBar
+   silence preserves authored payload and one audibility rule. Future-bar Arms
+   use the existing bounded queue and cleanup, with ordered stop/pause/seek and
+   unreachable-target observations. B4 now has scoped CPU-qualified finite PCM rejection, chunk-invariant onset
+   accounting and a single calibration estimate/support result. B5 now admits capture/import/unmute/reconciliation through one occurrence rule
+   using the existing model predicate; inactive media remains retained. The requested shared Recorder tempo replay and runtime diagnostic slice now
+   has scoped CPU qualification: accepted-clock-first keyed replacement,
+   preserved failure facts and one shared status renderer. Its full shared-view
+   unit gate is blocked by the pre-existing paint API mismatch.
    Redshank preview/runtime control and idle-worker completion remain separate
    product/controller seams. Protocol/instrument fixes B12–B14 preserve write,
    readback, restoration, incomplete data and output-file outcomes. Ringdown X1
@@ -152,3 +329,23 @@ safety/runtime/port/evidence reconciliation is archived with its current input
 revision. Audit documentation and verifier only; no product fixes, new native
 runs, physical checks or publication added by this closure. The label-layout
 implementation remains a separate preceding local change.
+
+2026-10-17 implementation restart: user approved the next H3/H5 and Q1 fixes with cheaper parallel workers. Historical reports and source-bound qualification inputs remain unchanged; this batch will record its own source and executable checks.
+
+2026-10-17 H3/H5 and Q1 implementation: three Luna workers supplied disjoint patches; coordinator source review and final H5 fixture completed integration. Source `0effba1` passes 93 Hocket cases; process/link controls contribute 21 distinct cases. The original H4 dirty-state regression remains unchanged. New commits remain local, with native custody/reopen and physical evidence explicitly outside this batch.
+
+2026-10-18: published six H3/H5 and Q1 commits through `6e6498a` after remote refresh; started B1–B3 with cheaper parallel workers and explicit ownership. The native lane remains untouched.
+
+2026-10-18 B1–B3 completion: source `662cda5` is CPU qualified, with 859 distinct parent/library passes, five separate child invocations and seven existing ignores. The final review added the retained-instrument Path neck receiving case and reused the existing empty geometry and capture cancellation. Four canonical findings are addressed; LO-5 remains an alias of CORE-4. All new commits remain local. No native/device or fresh-process native acceptance is claimed.
+
+2026-10-18: pushed the nine reviewed B1–B3 commits through `b1c9dfd` after refreshing origin/main. Started B4 with three cheaper Luna workers and explicit disjoint ownership; native validation remains untouched.
+
+2026-10-18 B4 completion: source `5dd01ae` passes 308 distinct cases across shared primitives, Woodshed audio and the Hocket engine. Source review consolidated the third frequency-bound copy in phrase preparation and removed a test-only session outcome helper. Imported and completed rendered PCM reject nonfinite values before publication; existing resources survive failed preparation. Onset accounting counts new samples once; calibration displays the estimator’s admitted support. The next frontier starts at B5. Implementation remains local; no native lane, device, supplier or original-media operations were performed.
+
+2026-10-19: refreshed remote, pushed seven reviewed B4 commits through `8da953b`, then pulled with `--ff-only` (already current). Started B5 shared occurrence admission and independent public-API tests with two Luna agents. No native/device or supplier operations authorized for this batch.
+
+2026-10-19 B5 completion: source `b804d901` passes 176 distinct cases with two existing Hocket host ignores. A public-API test fixture roundtrips CBOR and compares actual accepted voices with model eligibility and offline one-cycle PCM. Isolated published source reproduces three bypass failures with the identical tests; a preceding standalone lock setup refusal is explicitly excluded. Source review removed repeated caller decisions and the unused track-only wrapper; both actual start sites use one occurrence rule. New work remains local; B6 tempo/replay and diagnostics stay separate, and the native lane remains untouched.
+
+2026-10-19 publication/B6 start: primary checkout contained additional unrelated local history and remote had advanced. Applied only the four reviewed B5 commits to isolated current main; source/test bytes match original review, automatic DOC_README merge retains incoming entries, and coordination hash was refreshed. Pushed through `4fab895`, then pulled successfully. Started the requested tempo/replay and diagnostic slice with three Luna workers. Engine already supports keyed next-bar replacement while the old voice continues; use that capability rather than stop-before-clock or a new replay state store. Supplier intake and native lane remain outside ownership.
+
+2026-10-19 requested B6 completion: source `7b161a9` is scoped CPU qualified with 171 distinct passes and two existing Hocket host ignores. The isolated published Recorder control produces three expected failures with identical tests. Engine execution proves old voice continuity and latest keyed replacement; public wrapper and standalone CPU DOM tests prove status delivery and one visible owner. The failed selector compile attempt and blocked shared-view paint unit gate remain separately recorded, never counted as passing. Product source did not change after accepted recorder/wrapper/engine gates; the final host gate covers the sole receiving-test selector correction. Supplier inputs, native lane and primary source were preserved. At that boundary historical MIDI H6–H9 remained open; P9 records their later scoped CPU follow-up.

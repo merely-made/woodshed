@@ -63,6 +63,7 @@ mod files;
 mod harness;
 #[cfg(test)]
 mod headed_tests;
+mod key_admission;
 mod scene_producer;
 mod windows;
 #[cfg(target_os = "windows")]
@@ -72,16 +73,14 @@ pub use windows_snap::SnapLayoutBridge;
 #[cfg(target_os = "linux")]
 mod x11_frame;
 
-mod key_admission;
-
 pub use cambium_rootstock::{
-    HOST_WHEEL_LINE_PX, AppCtx, AppFrameInsets, AppHook, AppRegion, CaptureFn, CaptureFrame, CloseDisposition,
+    AppCtx, AppFrameInsets, AppHook, AppRegion, CaptureFn, CaptureFrame, CloseDisposition,
     CloseRequest, CloseRequestHook, Direction, FocusedTextHook, FocusedTextSlot, Frame, FrameHook,
-    FrameProfile, Host, HostFont, HostHooks, HostImage, HostOptions, HostPointer, HostWake,
-    HostWindow, IdlePolicy, Init, Key, KeyInterceptHook, KeyPress, Modifiers, NamedKey,
-    PaintCaptureFn, RelayoutProfile, Runner, ScrollAlign, ScrollIntoView, Surface, WheelUnit,
-    WindowCommand, WindowCommands, WindowFrame, WindowGeometry, WindowTree, ZOOM_LADDER, fit_zoom,
-    ladder_step, read_frame,
+    FrameProfile, HOST_WHEEL_LINE_PX, Host, HostFont, HostHooks, HostImage, HostOptions,
+    HostPointer, HostWake, HostWindow, IdlePolicy, Init, Key, KeyInterceptHook, KeyPress,
+    Modifiers, NamedKey, PaintCaptureFn, RelayoutProfile, Runner, ScrollAlign, ScrollIntoView,
+    Surface, WheelUnit, WindowCommand, WindowCommands, WindowFrame, WindowGeometry, WindowTree,
+    ZOOM_LADDER, fit_zoom, ladder_step, read_frame,
 };
 pub use caption_controls::{CaptionLabels, platform_caption_controls, window_caption_controls};
 pub use files::{DialogFileChooser, choose_save_path, read_file};
@@ -1216,7 +1215,6 @@ where
                 is_synthetic,
                 ..
             } => match event.state {
-                // Focus snapshots describe held state, not a fresh gesture.
                 ElementState::Pressed if !key_admission::fresh_key_press(is_synthetic) => {},
                 ElementState::Pressed => {
                     let press = key_press_from_winit(&event, self.core.s.modifiers);
@@ -1253,6 +1251,9 @@ where
                 {
                     #[cfg(target_os = "macos")]
                     trace_owned_macos_window(window, "unpresented redraw");
+                    if let Some(failure) = &self.s.last_presentation_failure {
+                        eprintln!("[cambium-host] unpresented refusal: {failure}");
+                    }
                     eprintln!(
                         "[cambium-host] unpresented redraw visible={:?} focused={} minimized={:?}",
                         window.is_visible(),

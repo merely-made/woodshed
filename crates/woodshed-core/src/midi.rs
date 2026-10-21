@@ -44,6 +44,12 @@ pub trait MidiBackend {
     fn diagnostics_export(&self) -> Result<Vec<u8>, String> {
         Err("MIDI diagnostics are unavailable in this host".into())
     }
+    /// Drain host completion facts before projecting accepted connection state.
+    fn poll(&mut self) {}
+    /// Keep host frames running while asynchronous MIDI work needs observation.
+    fn needs_service(&self) -> bool {
+        false
+    }
 
     /// Available input port names (a fresh scan each call — ports come
     /// and go as gear is plugged in).
@@ -56,12 +62,15 @@ pub trait MidiBackend {
     /// Deduplicate requested intent; explicit None must retire an old request
     /// even after the confirmed endpoint has disappeared. Reopen is explicit.
     fn connect_input(&mut self, port: Option<&str>);
-    /// Connect the named output port; `None` disconnects. Clock and explicit
-    /// pedal gestures share this output owner.
+    /// Connect the named output port; `None` disconnects. The clock-out
+    /// master (see [`set_clock_out`](Self::set_clock_out)) drives it. Repeated
+    /// requests are idempotent, including pending/refused targets. A new target
+    /// supersedes an outstanding request even if it equals the accepted port.
+    /// Explicit pedal gestures share this same output owner.
     fn connect_output(&mut self, port: Option<&str>);
     /// The connected input port name, if any.
     fn connected_input(&self) -> Option<&str>;
-    /// The connected output port name, if any.
+    /// The accepted output connection, if any; a pending request is not acceptance.
     fn connected_output(&self) -> Option<&str>;
     /// BPM derived from incoming MIDI clock — `None` when the input is
     /// disconnected or not receiving clock. The host polls this to slave

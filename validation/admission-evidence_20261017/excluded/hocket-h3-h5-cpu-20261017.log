@@ -1,0 +1,39 @@
+command=cargo test --locked -p hocket-genet
+start_utc=2026-10-18T02:13:04Z
+warning: patch `ipc-channel v0.22.0 (https://github.com/merely-made/genet.git?branch=main#917f88e6)` was not used in the crate graph
+warning: patch `mere-proofs v0.1.0 (https://github.com/merely-made/mere.git?branch=main#d1a200b1)` was not used in the crate graph
+warning: patch `mere-transport v0.0.2 (https://github.com/merely-made/murm.git?branch=main#cba46d85)` was not used in the crate graph
+warning: patch `mere-webrtc-carrier v0.0.1 (https://github.com/merely-made/murm.git?branch=main#cba46d85)` was not used in the crate graph
+help: Check that the patched package version and available features are compatible
+      with the dependency requirements. If the patch has a different version from
+      what is locked in the Cargo.lock file, run `cargo update` to use the new
+      version. This may also occur with an optional dependency that is not enabled.
+   Compiling hocket-model v0.1.0 (/Users/markik/Code/repos/woodshed/crates/hocket-model)
+   Compiling audio-primitives v0.1.0 (/Users/markik/Code/repos/woodshed/crates/audio-primitives)
+   Compiling hocket-project v0.1.0 (/Users/markik/Code/repos/woodshed/crates/hocket-project)
+   Compiling hocket-engine v0.1.0 (/Users/markik/Code/repos/woodshed/ports/hocket/crates/hocket-engine)
+   Compiling hocket-recorder v0.1.0 (/Users/markik/Code/repos/woodshed/crates/hocket-recorder)
+   Compiling hocket-views v0.1.0 (/Users/markik/Code/repos/woodshed/crates/hocket-views)
+   Compiling hocket-genet v0.2.0 (/Users/markik/Code/repos/woodshed/ports/hocket/crates/hocket-genet)
+error[E0308]: `match` arms have incompatible types
+   --> crates/hocket-genet/src/state.rs:614:27
+    |
+608 |           let result = match self.identity.as_mut() {
+    |                        ---------------------------- `match` arms have incompatible types
+609 |               Ok(identity) => identity.join_family(
+    |  _____________________________-
+610 | |                 &staged.profile,
+611 | |                 &staged.gaining_token,
+612 | |                 &staged.losing_token,
+613 | |             ),
+    | |_____________- this is found to be of type `Result<(), IdentityError>`
+614 |               Err(error) => Err(error.clone()),
+    |                             ^^^^^^^^^^^^^^^^^^ expected `Result<(), IdentityError>`, found `Result<_, String>`
+    |
+    = note: expected enum `Result<(), IdentityError>`
+               found enum `Result<_, std::string::String>`
+
+For more information about this error, try `rustc --explain E0308`.
+error: could not compile `hocket-genet` (bin "hocket-genet" test) due to 1 previous error
+end_utc=2026-10-18T02:13:10Z
+exit=101

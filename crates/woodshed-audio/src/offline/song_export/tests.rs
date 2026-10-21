@@ -215,7 +215,7 @@ impl Seek for UntouchedWriter {
 
 #[test]
 fn malformed_snapshots_and_preparation_bounds_refuse_before_touching_the_writer() {
-    for corruption in 0..17 {
+    for corruption in 0..19 {
         let mut song = captured_song();
         let mut rate = 1000;
         match corruption {
@@ -238,11 +238,19 @@ fn malformed_snapshots_and_preparation_bounds_refuse_before_touching_the_writer(
                 Arc::make_mut(&mut song.bars[0].audio_buffer.as_mut().unwrap().data)[0] = f32::NAN
             },
             14 => {
+                Arc::make_mut(&mut song.bars[0].audio_buffer.as_mut().unwrap().data)[0] =
+                    f32::INFINITY
+            },
+            15 => {
+                Arc::make_mut(&mut song.bars[0].audio_buffer.as_mut().unwrap().data)[0] =
+                    f32::NEG_INFINITY
+            },
+            16 => {
                 song.bars[0].bpm = 1.0;
                 song.bars[0].length = 255;
                 song.bars[0].time_signature.numerator = 16;
             },
-            15 => {
+            17 => {
                 song.bars[0].chord_ref = Some(ChordRef {
                     formula_name: "invalid".into(),
                     root_freq_hz: f32::MAX,

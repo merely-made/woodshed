@@ -1,0 +1,20 @@
+{
+  "status": "published",
+  "date": "2026-10-19",
+  "published_revision": "4fab895ccd18fe4955668d92f1b1aea6139e756c",
+  "integration_baseline": "be4d6d042e421ae5178d742d30137d7d59206322",
+  "original_reviewed_commits": [
+    "c6daed61a90ff48d939d28243367487b9918b892",
+    "0dcdce1",
+    "b804d90104bd86caca6b8fc20e8176e1afd5feae",
+    "d863a8077fd958b5273b284220a21edab40187ca"
+  ],
+  "published_commits": [
+    "8409008",
+    "f6f1978",
+    "080a861",
+    "4fab895ccd18fe4955668d92f1b1aea6139e756c"
+  ],
+  "scope": "Four reviewed commits applied to current remote main in an isolated worktree. Both product source/test files match reviewed originals; automatic DOC_README merge preserved incoming entries and its coordination hash was refreshed. Ordinary push succeeded, followed by successful --ff-only pull. Primary checkout and unrelated local history untouched.",
+  "qualification_limit": "Original B5 receipt retains its tested source/supplier identities. This publication does not requalify the intervening supplier intake or native lane."
+}

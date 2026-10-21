@@ -3,6 +3,7 @@
 //! Run `cargo run -p woodshed-audio --example audio_ddx --locked -- <mode>`.
 //! Modes: raw, idle, chord, scale, render, song. Each mode owns one output
 //! stream. Runtime processing blocks are graph blocks, not CPAL callbacks.
+//! Every mode requires output progress and zero device events to qualify.
 use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
 use std::sync::{
     Arc,
@@ -12,6 +13,18 @@ use std::time::{Duration, Instant};
 use woodshed_audio::{ChordRef, ChordRender, OutputRuntime, Song, render_chord};
 
 type DiagnosticResult = Result<(), Box<dyn std::error::Error>>;
+
+fn qualification_outcome(output_progress: u64, device_events: u64) -> Result<(), String> {
+    if output_progress == 0 {
+        return Err("native output made no progress".into());
+    }
+    if device_events != 0 {
+        return Err(format!(
+            "native output reported {device_events} device event(s); diagnostic did not qualify"
+        ));
+    }
+    Ok(())
+}
 
 fn main() -> DiagnosticResult {
     let mode = std::env::args().nth(1).unwrap_or_else(|| "raw".into());
@@ -127,20 +140,18 @@ fn runtime_diagnostic(mode: &str) -> DiagnosticResult {
         runtime.service()?;
     }
     let snapshot = runtime.snapshot();
-    assert!(
-        snapshot.device_frames > 0,
-        "native output never processed frames"
-    );
+    let device_events = runtime.device_error_count();
     eprintln!(
         "DDX complete output_streams={} device_frames={} processing_blocks={} device_events={}",
         runtime.native_stream_count(),
         snapshot.device_frames,
         snapshot.processing_blocks,
-        runtime.device_error_count(),
+        device_events,
     );
     if let Some(error) = runtime.last_error() {
         eprintln!("DDX last_output_error={error}");
     }
+    qualification_outcome(snapshot.device_frames, device_events)?;
     Ok(())
 }
 
@@ -204,16 +215,43 @@ fn raw_diagnostic(mode: &str) -> DiagnosticResult {
         );
         std::thread::sleep(Duration::from_secs(2));
     }
+    drop(stream);
+    let callbacks = callbacks.load(Ordering::Relaxed);
+    let device_events = errors.load(Ordering::Relaxed);
     eprintln!(
         "DDX complete output_streams=1 callbacks={} device_events={} max_callback_gap_us={}",
-        callbacks.load(Ordering::Relaxed),
-        errors.load(Ordering::Relaxed),
+        callbacks,
+        device_events,
         max_gap.load(Ordering::Relaxed)
     );
-    assert_eq!(
-        errors.load(Ordering::Relaxed),
-        0,
-        "raw stream reported a device error"
-    );
+    qualification_outcome(callbacks, device_events)?;
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn active_output_without_device_events_qualifies() {
+        assert_eq!(qualification_outcome(1, 0), Ok(()));
+    }
+
+    #[test]
+    fn device_events_refuse_qualification_even_after_output_progress() {
+        for events in [1, 3, u64::MAX] {
+            let error = qualification_outcome(128, events).unwrap_err();
+            assert!(error.contains(&events.to_string()));
+            assert!(error.contains("did not qualify"));
+        }
+    }
+
+    #[test]
+    fn no_output_never_qualifies() {
+        assert_eq!(
+            qualification_outcome(0, 0),
+            Err("native output made no progress".into())
+        );
+        assert!(qualification_outcome(0, 1).is_err());
+    }
 }

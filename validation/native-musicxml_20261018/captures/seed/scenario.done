@@ -1,0 +1,19 @@
+RESULT ok
+captured 01_progression_chart
+captured 02_progression_score
+captured 03_progression_tab
+captured 04_picking_preview
+captured 05_rhythm_score
+captured 06_rhythm_tab
+captured 07_narrow_music
+captured 08_narrow_fretboard
+capture 01_progression_chart 2360x2200 digest=f5b59b7fe5fbdf75 file=/Users/markik/Code/output/woodshed-native-musicxml-20261018/native-run-v2/seed/01_progression_chart.png
+capture 02_progression_score 2360x2200 digest=959e552732fe36d7 file=/Users/markik/Code/output/woodshed-native-musicxml-20261018/native-run-v2/seed/02_progression_score.png
+capture 03_progression_tab 2360x2200 digest=83688b91f7de8f4f file=/Users/markik/Code/output/woodshed-native-musicxml-20261018/native-run-v2/seed/03_progression_tab.png
+capture 04_picking_preview 2360x2200 digest=a7b35af498a5aa11 file=/Users/markik/Code/output/woodshed-native-musicxml-20261018/native-run-v2/seed/04_picking_preview.png
+capture 05_rhythm_score 2360x2200 digest=2aea7bb47971ca65 file=/Users/markik/Code/output/woodshed-native-musicxml-20261018/native-run-v2/seed/05_rhythm_score.png
+capture 06_rhythm_tab 2360x2200 digest=de2d92396d34825a file=/Users/markik/Code/output/woodshed-native-musicxml-20261018/native-run-v2/seed/06_rhythm_tab.png
+capture 07_narrow_music 840x2200 digest=5f553e2f9e19fa3d file=/Users/markik/Code/output/woodshed-native-musicxml-20261018/native-run-v2/seed/07_narrow_music.png
+capture 08_narrow_fretboard 840x2200 digest=cff80c239fd6ce41 file=/Users/markik/Code/output/woodshed-native-musicxml-20261018/native-run-v2/seed/08_narrow_fretboard.png
+frames: 8 captured, 0 blank, 8 distinct digests
+presentation: 227 frames, 230 redraws, 3 unpresented redraws

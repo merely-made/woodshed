@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "run_id": "first-wave-redshank-recovery-final-20261020",
+  "command": [
+    "cargo",
+    "test",
+    "--locked",
+    "-j",
+    "4",
+    "-p",
+    "redshank-desktop",
+    "recovery_session_projects_not_saved_and_refuses_close_persistence"
+  ],
+  "started_at": "2026-10-20T20:58:32.951482Z",
+  "ended_at": "2026-10-20T20:59:20.987779Z",
+  "exit_code": 0,
+  "cwd": "/Users/markik/Code/worktrees/woodshed-audit-first-wave-20261020/ports/redshank",
+  "log": "/Users/markik/Code/testing/woodshed/first-wave-20261020/redshank-recovery-final.log",
+  "log_sha256": "905b61a197c55cd9f2af35eb8bace57641e22965f137553342bae5e72492b7b2",
+  "source_commit": "6a65a4d7d340ec635900188bd8f4e6a6207a6756"
+}

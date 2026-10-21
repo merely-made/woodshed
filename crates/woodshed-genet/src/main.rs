@@ -34,6 +34,7 @@ mod layout_tests;
 mod leaves;
 mod midi;
 mod midi_diagnostics;
+mod music_export;
 mod pack_io;
 mod pedal_inputs;
 mod persona;
@@ -186,6 +187,7 @@ fn desktop_root(ui: &UiState, commands: &WindowCommands) -> UiChild {
                         .attr("class", "t-btn arrangement-close-discard"),
                     move |ui: &mut UiState, _| {
                         ui.arrangement_editor.drafts.clear();
+                        ui.music_editor.drafts.clear();
                         ui.arrangement_editor.close_pending = false;
                         draft_close.close();
                     },
@@ -220,7 +222,7 @@ fn prepare_close(
     if ctx.runner.state().pending_persona_switch.is_some() {
         return CloseDisposition::KeepVisible;
     }
-    if ctx.runner.state().arrangement_editor.dirty() {
+    if ctx.runner.state().arrangement_drafts_dirty() {
         ctx.runner
             .update(|ui| ui.arrangement_editor.close_pending = true);
         return CloseDisposition::KeepVisible;
@@ -262,8 +264,13 @@ fn boot_state(
     wake: &cambium_genet_winit_host::HostWake,
 ) -> Init<UiState, Logic> {
     let mut shared = shared.borrow_mut();
-    let device_free_receipt = appearance::device_free_receipt();
-    let mut backend = (!device_free_receipt).then(CpalBackend::new);
+    let music_practice_receipt = scenario::music_practice_receipt();
+    let device_free_receipt = appearance::device_free_receipt() || music_practice_receipt;
+    let mut backend = if music_practice_receipt {
+        Some(CpalBackend::offline_for_receipt())
+    } else {
+        (!device_free_receipt).then(CpalBackend::new)
+    };
     if let Some(backend) = &mut backend {
         backend.set_wake(wake.callback());
     }
@@ -392,6 +399,16 @@ fn escape_policy(runner: &mut Runner<UiState, Logic, UiChild>, press: &KeyPress)
         });
         return true;
     }
+    // A captured musical gesture must cancel even when focus has moved.
+    if runner.state().music_drag_active() || runner.state().music_preview_active() {
+        runner.update(|ui| {
+            ui.cancel_music_drag();
+            if ui.music_preview_active() {
+                ui.cancel_music_pattern();
+            }
+        });
+        return true;
+    }
     // Otherwise it closes any open dropdown.
     runner.update(|ui| {
         ui.tuning_dd.open = false;
@@ -493,7 +510,10 @@ fn hooks(shared: &Rc<RefCell<Shared>>) -> HostHooks<UiState, Logic, UiChild> {
                 .midi
                 .set_pedal_bindings(&ctx.runner.state().app_settings.audio_midi.midi_pedal);
             shared.midi.set_clock_out(out_enabled, out_playing, out_bpm);
-            sync::poll_midi_state(&mut shared, ctx);
+            ctx.runner.update(|ui| {
+                animating |= sync::poll_midi_state(ui, &mut shared.midi);
+            });
+            pedal_inputs::sync(&mut shared, ctx.runner.state());
             let phase = std::time::Instant::now();
             if drag_active && !drive_rebuilt {
                 leaves::sync_set_graph(&mut shared, ctx.runner.state(), ctx.leaves);

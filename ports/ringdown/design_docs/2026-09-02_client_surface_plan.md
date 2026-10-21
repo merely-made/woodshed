@@ -660,6 +660,14 @@ native controls/dialogs are not qualified here. No guitar was used or needed.
 Earlier device evidence stays tied to its original source. See the separate
 [implementation/build packet](../validation/midi-diagnostics-ui_20261021/README.md).
 
+The later [current-main integration](../../../validation/ringdown-sync_20261021/README.md)
+retains these controls on the current notation/audio cohort, folds upstream
+completion/failure projection into the same pedal writer, and updates the
+existing host admission patch to that cohort. Merged desktop/Hocket compilation
+and 43 focused desktop MIDI/diagnostic cases pass. This does not extend the
+historical native/device acceptance; Windows/Linux native dialogs remain pending.
+
+
 ### Pedal acceptance (2026-10-20)
 
 **Bounded acceptance passes; the final native readout cohort is recorded in the

@@ -1,0 +1,109 @@
+{
+  "status": "implemented and CPU qualified; native custody/reopen not performed; unpublished",
+  "baseline": "b123bf7cb9a6b8b23f141dfd58865eec689d2bfe",
+  "implementation_revision": "0effba1f844f2859208e3a05129ca55db337205b",
+  "workers": {
+    "model": "gpt-6-luna",
+    "count": 3,
+    "ownership": [
+      "Hocket host identity/media",
+      "CI and font process evidence",
+      "revision-scoped documentation link checks"
+    ],
+    "integration": "Coordinator reviewed all patches; corrected final Hocket fixture locally; original H4 regression preserved byte-for-byte."
+  },
+  "source_sha256": {
+    "design_docs/receipts/audio_foundation_20261011/ci/write-receipt.py": "fa3f696e20c94f99973ba8e17f415bf8814762f5bd2085b56093d31b828fd673",
+    "ports/hocket/crates/hocket-genet/src/identity.rs": "6cd49673fc7fe224f50dd05be5dcee50ded4fc44c41645dde6a79b539a297b20",
+    "ports/hocket/crates/hocket-genet/src/native_lifecycle_tests.rs": "632343c9a8218477debb9726770d0bff37887aef0e7a352a6706623200ad0dac",
+    "ports/hocket/crates/hocket-genet/src/state.rs": "3efffc6eeb917274dae2e0f09c196d08bce3c0dcdb7b7a94a6b55baaa15a1bb3",
+    "ports/hocket/crates/hocket-genet/src/view.rs": "2f26cd03937297c89c873ba5497951f9a42918d3dc687c4eecc60108b9547302",
+    "validation/capture_process.py": "460faadbeefae8aa9c9e8dfe13fd2a200d1042d7e69e1d5b407f23a8ac4df277",
+    "validation/evidence_process.py": "db9192f01d8ef5a688084cca523ba9e3b280e9d15e1c2bdad789ad39acb00749",
+    "validation/font-roles_20261012/verify.py": "4372b3540f96135d3e2f0b6e6deee49ae105cb24d8594eef707911ed3293e8bc",
+    "validation/link-model-p6_20261016/doc_link_audit.py": "2bd24fc2c75b0ac3868b1fe22f7b20b9bc2755f3cc40cc3087691d09615b42be",
+    "validation/link-model-p6_20261016/test_doc_link_audit.py": "7455a39cf0905ed8e29216dcfd15a10666a8f85f63249e1ffab3a34078f29cc4",
+    "validation/test_evidence_process.py": "51334bd627f96140be610bf2f5899afd6c7e120c6fbdf8f6ad24376c3cc6fa21"
+  },
+  "scope": [
+    "hocket:H3",
+    "hocket:H5",
+    "evidence:E1",
+    "evidence:E2"
+  ],
+  "checks": {
+    "process_controls": 14,
+    "link_controls": 7,
+    "optimized_python": "Both qualification entrypoints explicitly refuse, observed exit 1",
+    "hocket": {
+      "command": [
+        "cargo",
+        "test",
+        "--locked",
+        "-p",
+        "hocket-genet"
+      ],
+      "exit_code": 0,
+      "passed": 93,
+      "failed": 0,
+      "ignored": 2,
+      "process_receipt": "checks/hocket-final.json"
+    },
+    "distinct_passing_cases": 114,
+    "focused_media_pass_is_included_in_full_hocket_total": true,
+    "final_doc_scan": {
+      "scope": [
+        "design_docs/2026-07-11_stage_set_tools_plan.md",
+        "design_docs/DOC_README.md"
+      ],
+      "baseline_revision": "b123bf7",
+      "baseline": {
+        "checked_local_links": 121,
+        "findings": []
+      },
+      "current": {
+        "checked_local_links": 122,
+        "findings": []
+      },
+      "new_findings": [],
+      "no_new_findings": true
+    },
+    "initial_real_doc_links_per_tree": 121
+  },
+  "limits": [
+    "No native app, resident custody service, fresh-process identity reopen, or physical/device qualification.",
+    "H3 CPU tests exercise the production admission/consent helper with temporary files; no real custody IPC is claimed.",
+    "Historical logs/receipts remain preserved; missing process evidence is not invented and prior acceptance is not reclassified as failed.",
+    "Link audit remains scoped to its two receiving documents and local targets; historical symlink contents are not followed.",
+    "capture source_commit records the Git revision at invocation, not a clean-worktree assertion."
+  ],
+  "excluded": {
+    "hocket-h3-h5-cpu-20261017.log": "Agent draft compile failed, recorded exit 101.",
+    "hocket-h3-h5-cpu-20261017-r2.log": "Earlier passing 92-case state superseded by stronger H5 fixture; not counted again.",
+    "hocket-h3-h5-cpu-20261017-r3.log": "Agent replacement fixture asserted the wrong history head; recorded exit 101; original dirty-state regression restored."
+  },
+  "publication": "New implementation remains local; preceding label adoption and frozen audit closure published separately.",
+  "artifact_sha256": {
+    "checks/ci-optimized-refusal.json": "48e5f0f0abf12b3916f965347420d124b669c0bc003d1f5de684cea097d4504f",
+    "checks/ci-optimized-refusal.log": "c9fbab0c45054b9494fb67ac40d3ec17082a8bf8e1e0098d5a84814340f6b761",
+    "checks/final-link-scan.json": "210ccb10465a3eea327d3d2f808cd5c547d4c78461108b9a03f8d45e003f5a5c",
+    "checks/final-link-scan.log": "0dfd1b9684aac4d9e94270fc4831ef05fe064827da73ff1fef0fe72e3cfdec34",
+    "checks/final-whitespace.json": "1f567874ea4cb600eaa83a3a50c108728b4e3d03937c16e1dc2292a763c0c0d6",
+    "checks/final-whitespace.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "checks/font-optimized-refusal.json": "248884f01d1cf6fbf879043f2652f2edd7bcebc1210bb188de26c66e68a00b16",
+    "checks/font-optimized-refusal.log": "c9fbab0c45054b9494fb67ac40d3ec17082a8bf8e1e0098d5a84814340f6b761",
+    "checks/hocket-final.json": "a398c872ec4bac2b34358829baec2ae8ae59d9f7e10639ab8ac930285335df0a",
+    "checks/hocket-final.log": "1593e14d5ac7f8e9d753b6d9202f568ee55b46becd33a1cfaf6e09ece7bd440e",
+    "checks/hocket-restoration.json": "e82252a16a41fd845a5d86bbae2c4b0c004790b2b9b8caf13ff3d2f90879669d",
+    "checks/hocket-restoration.log": "90d00c9f2d4ea775bd20419b4b954d23843b1d4a169746a66e23cff0c969f802",
+    "checks/link-current.json": "833577743bf3dc0c5fc758c4369312add25a27400c55ef579cfe60806232e4ac",
+    "checks/link-current.log": "5350265562c86c1249ef4dc4d15b940ba737f21933f5a9c196eec67e15f481bc",
+    "checks/link-regressions.json": "ce68461cc3c5674d691e3ad5e05e506fea156d8a34ccf69fac72e6eb4ff21384",
+    "checks/link-regressions.log": "10c97f167070e34ad4f17280bdf010266d97e8c44d10e6430f1c363e784f6999",
+    "checks/process-regressions.json": "f4fd20f04738650d0f9d2c4681c971b07b6b299956c414c3a4625de1e2fee28f",
+    "checks/process-regressions.log": "6a42d6626ee359cd6cb48d11df5dd7ea016f685b3dbae88bde7e795993f9d1ac",
+    "excluded/hocket-h3-h5-cpu-20261017-r2.log": "f154aeae1c80ea77de97d1bf5814bedfad459a7ff546c2b59736ceed540d3395",
+    "excluded/hocket-h3-h5-cpu-20261017-r3.log": "2e75af520cb8cbc449c73eac142ab424cee6a145e0feb2787ba93849decdbb13",
+    "excluded/hocket-h3-h5-cpu-20261017.log": "5f75742a2027542424b1875ed30ea55a59cd539d06a29bfe3b47f58d95852dab"
+  }
+}

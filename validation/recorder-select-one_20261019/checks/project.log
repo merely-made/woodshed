@@ -1,0 +1,76 @@
+warning: patch `mere-proofs v0.1.0 (https://github.com/merely-made/mere.git?branch=main#d1a200b1)` was not used in the crate graph
+warning: patch `mere-transport v0.0.2 (https://github.com/merely-made/murm.git?branch=main#cba46d85)` was not used in the crate graph
+warning: patch `mere-webrtc-carrier v0.0.1 (https://github.com/merely-made/murm.git?branch=main#cba46d85)` was not used in the crate graph
+help: Check that the patched package version and available features are compatible
+      with the dependency requirements. If the patch has a different version from
+      what is locked in the Cargo.lock file, run `cargo update` to use the new
+      version. This may also occur with an optional dependency that is not enabled.
+   Compiling libc v0.2.190
+   Compiling once_cell v1.21.4
+   Compiling getrandom v0.4.3
+   Compiling cpufeatures v0.3.1
+   Compiling errno v0.3.14
+   Compiling getrandom v0.3.4
+   Compiling rustix v1.1.5
+   Compiling crypto-common v0.2.2
+   Compiling uuid v1.27.0
+   Compiling hocket-model v0.1.0 (/Users/markik/Code/repos/woodshed/crates/hocket-model)
+   Compiling digest v0.11.3
+   Compiling universal-hash v0.6.1
+   Compiling cipher v0.5.2
+   Compiling aead v0.6.1
+   Compiling tempfile v3.27.0
+   Compiling poly1305 v0.9.1
+   Compiling sha2 v0.11.0
+   Compiling curve25519-dalek v5.0.0
+   Compiling chacha20 v0.10.2
+   Compiling chacha20poly1305 v0.11.0
+   Compiling ed25519-dalek v3.0.0
+   Compiling insigne v0.0.2 (https://github.com/merely-made/dramatis.git?branch=main#cf562f47)
+   Compiling personae v0.3.0 (https://github.com/merely-made/dramatis.git?branch=main#cf562f47)
+   Compiling hocket-project v0.1.0 (/Users/markik/Code/repos/woodshed/crates/hocket-project)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 5.50s
+     Running unittests src/lib.rs (target/build/debug/deps/hocket_project-08f1ce06fc7b07e7)
+
+running 38 tests
+test export::tests::explicit_frames_repeat_shorter_loops ... ok
+test export::tests::wav_bytes_round_trip_preserves_mono_samples ... ok
+test export::tests::render_reports_an_unrepresentable_frame_request ... ok
+test export::tests::one_cycle_requires_equal_loop_lengths ... ok
+test export::tests::one_cycle_sums_audible_layers_with_gain ... ok
+test export::tests::solo_and_track_mute_control_the_export_mix ... ok
+test export::tests::bar_duration_requires_at_least_one_bar ... ok
+test export::tests::writes_stereo_float_wav ... ok
+test handoff::tests::acceptance_rejects_missing_public_media_without_mutation ... ok
+test export::tests::bar_duration_repeats_unequal_free_loops_with_session_meter ... ok
+test handoff::tests::acceptance_rejects_malformed_local_graph_without_mutation ... ok
+test handoff::tests::acceptance_retains_incoming_captures_from_an_inactive_branch ... ok
+test handoff::tests::accepting_a_same_root_handoff_retains_the_local_branch ... ok
+test handoff::tests::accepting_divergent_captures_retains_both_pools_and_local_checkout ... ok
+test handoff::tests::acceptance_rejects_conflicting_phrase_identity_without_mutation ... ok
+test handoff::tests::handoff_requires_all_referenced_media ... ok
+test handoff::tests::handoff_rejects_the_wrong_recipient_and_tampering ... ok
+test media::tests::get_round_trips_buffer ... ok
+test media::tests::hash_buffer_matches_put_ref ... ok
+test media::tests::put_different_bytes_yields_different_refs ... ok
+test media::tests::put_returns_stable_ref_for_same_bytes ... ok
+test media::tests::put_same_samples_different_rate_yields_different_ref ... ok
+test project_store::tests::save_rejects_manifest_that_references_missing_media ... ok
+test project_store::tests::corrupt_media_is_rejected ... ok
+test project_store::tests::save_prunes_media_the_new_project_no_longer_references ... ok
+test project_store::tests::load_keeps_project_when_a_media_blob_is_missing ... ok
+test project_store::tests::save_heals_a_corrupt_existing_media_blob ... ok
+test project_store::tests::save_and_load_round_trip_manifest_and_media ... ok
+test project_store::tests::save_uses_human_friendly_entry_names ... ok
+test waveform::tests::layer_peaks_remain_available_while_muted ... ok
+test waveform::tests::track_peaks_follow_select_one_and_layer_mute ... ok
+test waveform::tests::missing_media_is_reported_instead_of_fabricated ... ok
+test waveform::tests::track_peaks_use_real_mixed_samples_and_gain ... ok
+test waveform::tests::zero_columns_is_an_empty_projection ... ok
+test project_store::tests::invalid_save_and_load_leave_existing_archive_bytes_intact ... ok
+test handoff::tests::signed_handoff_round_trips_complete_project_media ... ok
+test handoff::tests::acceptance_rejects_malformed_snapshots_without_mutation ... ok
+test handoff::tests::malformed_graphs_are_refused_by_create_receive_and_accept_without_mutation ... ok
+
+test result: ok. 38 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+

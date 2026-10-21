@@ -1,0 +1,227 @@
+{
+  "date": "2026-10-20",
+  "revision": "9f80bb5eabc4b513e057b22af6f80d83ecb8e9ac",
+  "checkout": "/Users/markik/Code/worktrees/woodshed-audit-first-wave-20261020",
+  "owner": "hocket_first_wave",
+  "seam": "A2 Hocket lifecycle, A3 exact identity consent, A4 Hocket model/portable project/handoff admission",
+  "status": "source recheck complete; existing implementations retained; no product patch required; current-head checks delegated to integration owner",
+  "product_edits": [],
+  "tests_run_by_this_agent": [],
+  "builds_run_by_this_agent": [],
+  "native_or_device_runs": [],
+  "sources": [
+    {
+      "path": "ports/hocket/crates/hocket-genet/src/main.rs",
+      "sha256": "06a4b57bcda17278c97e3f88e4624fce6586de5f951a3ab7753dbd921385a117",
+      "lines": 329,
+      "historical_hash_match": {
+        "validation/preservation-input_20261016/receipt.json": true,
+        "validation/preservation-input_20261017/integration.json": true
+      }
+    },
+    {
+      "path": "ports/hocket/crates/hocket-genet/src/state.rs",
+      "sha256": "ea5c7bd5e9035615eb4c61898956085e351eb63921f21c0c8153260ebe4d69b9",
+      "lines": 1360,
+      "historical_hash_match": {
+        "validation/preservation-input_20261016/receipt.json": false,
+        "validation/preservation-input_20261017/integration.json": false,
+        "validation/admission-evidence_20261017/receipt.json": false
+      }
+    },
+    {
+      "path": "ports/hocket/crates/hocket-genet/src/native_lifecycle_tests.rs",
+      "sha256": "632343c9a8218477debb9726770d0bff37887aef0e7a352a6706623200ad0dac",
+      "lines": 504,
+      "historical_hash_match": {
+        "validation/preservation-input_20261016/receipt.json": false,
+        "validation/preservation-input_20261017/integration.json": false,
+        "validation/admission-evidence_20261017/receipt.json": true
+      }
+    },
+    {
+      "path": "ports/hocket/crates/hocket-genet/src/project_correlation_tests.rs",
+      "sha256": "0e183db63cff8471355da8e52adf422f926fa7a85b5a256fb672360ea3edb4de",
+      "lines": 386,
+      "historical_hash_match": {
+        "validation/preservation-input_20261016/receipt.json": true,
+        "validation/preservation-input_20261017/integration.json": true
+      }
+    },
+    {
+      "path": "ports/hocket/crates/hocket-genet/src/identity.rs",
+      "sha256": "6cd49673fc7fe224f50dd05be5dcee50ded4fc44c41645dde6a79b539a297b20",
+      "lines": 596,
+      "historical_hash_match": {
+        "validation/admission-evidence_20261017/receipt.json": true
+      }
+    },
+    {
+      "path": "ports/hocket/crates/hocket-genet/src/view.rs",
+      "sha256": "8d592e54d9d89019886d1baf7fc3f214cd9e68f39dc0a5cd533471c989fa4d24",
+      "lines": 520,
+      "historical_hash_match": {
+        "validation/preservation-input_20261016/receipt.json": false,
+        "validation/preservation-input_20261017/integration.json": false,
+        "validation/admission-evidence_20261017/receipt.json": false
+      }
+    },
+    {
+      "path": "ports/hocket/crates/hocket-genet/src/project_io.rs",
+      "sha256": "c1a5b312406d9eac08e495533516f71cf10787edc8d5939b120a57811cf5a872",
+      "lines": 495,
+      "historical_hash_match": {}
+    },
+    {
+      "path": "crates/hocket-model/src/history.rs",
+      "sha256": "724d627d113a719e162658873fa0c3aabc180ae51667e2acbeee0c9432bcb7fb",
+      "lines": 1290,
+      "historical_hash_match": {
+        "validation/preservation-input_20261016/receipt.json": true,
+        "validation/preservation-input_20261017/integration.json": true
+      }
+    },
+    {
+      "path": "crates/hocket-model/src/persistence.rs",
+      "sha256": "818385e79098662d515ea9318d1c4bdd5bb7f9e4418e424305bfd7de744afd59",
+      "lines": 208,
+      "historical_hash_match": {
+        "validation/preservation-input_20261016/receipt.json": true,
+        "validation/preservation-input_20261017/integration.json": true
+      }
+    },
+    {
+      "path": "crates/hocket-project/src/project_store.rs",
+      "sha256": "141bc78a0867d41ee276776906adad7c69244b2b9ad41a0a290c50e1dd2c2269",
+      "lines": 543,
+      "historical_hash_match": {
+        "validation/preservation-input_20261016/receipt.json": true,
+        "validation/preservation-input_20261017/integration.json": true
+      }
+    },
+    {
+      "path": "crates/hocket-project/src/handoff.rs",
+      "sha256": "b8f7a7f22994e410c924e1774cecf0caba610d29a4cc86dd38dc5776561667df",
+      "lines": 823,
+      "historical_hash_match": {
+        "validation/preservation-input_20261016/receipt.json": true,
+        "validation/preservation-input_20261017/integration.json": true
+      }
+    },
+    {
+      "path": "crates/hocket-project/src/media.rs",
+      "sha256": "a9a851ef81b927c8287b21f5f76ce1aed92edb23cde887accc3b6f3c3326919d",
+      "lines": 151,
+      "historical_hash_match": {}
+    },
+    {
+      "path": "Cargo.lock",
+      "sha256": "9233c3fee1f1bfd613cea22080263c08f25db8ac0b74af65278edfe705cda63b",
+      "lines": 8971,
+      "historical_hash_match": {}
+    },
+    {
+      "path": "ports/hocket/Cargo.lock",
+      "sha256": "14dc52d1f86209de64a7b702be3c25d80a3016f3548983614cc992de41286c93",
+      "lines": 8703,
+      "historical_hash_match": {}
+    }
+  ],
+  "dispositions": [
+    {
+      "package": "A2",
+      "findings": [
+        "hocket:H1",
+        "hocket:H2",
+        "hocket:H4",
+        "hocket:H5"
+      ],
+      "implementation": "present and source traced",
+      "source": [
+        "ports/hocket/crates/hocket-genet/src/state.rs:69-94",
+        "ports/hocket/crates/hocket-genet/src/state.rs:704-768",
+        "ports/hocket/crates/hocket-genet/src/state.rs:826-887",
+        "ports/hocket/crates/hocket-genet/src/state.rs:1016-1065",
+        "ports/hocket/crates/hocket-genet/src/state.rs:1101-1209",
+        "ports/hocket/crates/hocket-genet/src/main.rs:154-185",
+        "ports/hocket/crates/hocket-genet/src/main.rs:218-246"
+      ],
+      "regressions": "ports/hocket/crates/hocket-genet/src/native_lifecycle_tests.rs:27-507"
+    },
+    {
+      "package": "A3",
+      "findings": [
+        "hocket:H3"
+      ],
+      "implementation": "present and source traced",
+      "source": [
+        "ports/hocket/crates/hocket-genet/src/state.rs:554-632",
+        "ports/hocket/crates/hocket-genet/src/identity.rs:129-166",
+        "ports/hocket/crates/hocket-genet/src/identity.rs:249-315",
+        "ports/hocket/crates/hocket-genet/src/view.rs:325-364"
+      ],
+      "regressions": "ports/hocket/crates/hocket-genet/src/identity.rs:476-538"
+    },
+    {
+      "package": "A4",
+      "findings": [
+        "shared:S1"
+      ],
+      "implementation": "present and source traced; valid partial node-set union preserved",
+      "source": [
+        "crates/hocket-model/src/history.rs:404-451",
+        "crates/hocket-model/src/history.rs:475-570",
+        "crates/hocket-model/src/persistence.rs:90-115",
+        "crates/hocket-project/src/project_store.rs:127-229",
+        "crates/hocket-project/src/handoff.rs:158-214",
+        "crates/hocket-project/src/handoff.rs:233-300",
+        "crates/hocket-project/src/handoff.rs:309-385"
+      ],
+      "regressions": [
+        "crates/hocket-model/src/history.rs:619-713",
+        "crates/hocket-model/src/history.rs:914-968",
+        "crates/hocket-project/src/project_store.rs:330-364",
+        "crates/hocket-project/src/handoff.rs:458-526",
+        "ports/hocket/crates/hocket-genet/src/native_lifecycle_tests.rs:128-156"
+      ]
+    }
+  ],
+  "proposed_checks": [
+    {
+      "cwd": "/Users/markik/Code/worktrees/woodshed-audit-first-wave-20261020",
+      "argv": [
+        "cargo",
+        "test",
+        "--locked",
+        "-p",
+        "hocket-model",
+        "-p",
+        "hocket-project"
+      ]
+    },
+    {
+      "cwd": "/Users/markik/Code/worktrees/woodshed-audit-first-wave-20261020/ports/hocket",
+      "argv": [
+        "cargo",
+        "test",
+        "--locked",
+        "-p",
+        "hocket-genet",
+        "--bin",
+        "hocket-genet"
+      ]
+    }
+  ],
+  "limits": [
+    "No current-head CPU execution by this agent.",
+    "Historical results remain bound to historical manifests and dependencies.",
+    "Hocket OS dialog/close/restart and fresh-process native preservation remain unqualified for this batch.",
+    "A3 tests exercise the production pure admission helper and temporary consent files; real custody IPC/reopen remains separate.",
+    "Updater staged-artifact identity, broader public API cleanup, tempo policy and P5a remain outside this seam."
+  ],
+  "additional_review": {
+    "media_count_assumption": "InMemoryStore buffers private; only insertion via content hash, get immutable; no removal/mutation API. This supports append-only count in ProjectRevision rather than cloning PCM each frame.",
+    "state_delta_since_h3_h5_receipt": "Only removal of audio_status_label wrapper at prior lines 1227-1229.",
+    "view_delta_since_h3_h5_receipt": "Only removal of duplicate audio-status span at prior lines 512-513."
+  }
+}

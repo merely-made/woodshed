@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "run_id": "runtime-authority-20261018-core-portable-v2",
+  "command": [
+    "cargo",
+    "test",
+    "--locked",
+    "-p",
+    "woodshed-core",
+    "--features",
+    "portable-scenes",
+    "--lib"
+  ],
+  "started_at": "2026-10-18T08:07:23.494490Z",
+  "ended_at": "2026-10-18T08:07:28.682148Z",
+  "exit_code": 0,
+  "cwd": "/Users/markik/Code/repos/woodshed",
+  "log": "/Users/markik/Code/testing/woodshed/runtime-authority-20261018/final/core-portable-v2.log",
+  "log_sha256": "3f100fae5dad9fd2e19379e20dd755bf16419cff4b85ddb86d99f6f7dfd6a1d9"
+}

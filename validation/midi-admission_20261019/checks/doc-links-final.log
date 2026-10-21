@@ -1,0 +1,14 @@
+{
+  "baseline": {
+    "checked_local_links": 134,
+    "findings": []
+  },
+  "current": {
+    "checked_local_links": 138,
+    "findings": []
+  },
+  "new_receipt": {
+    "checked_local_links": 1,
+    "findings": []
+  }
+}
